@@ -4,6 +4,9 @@
 ### Features:
 ### Utilities
 ### Infrastructure:
+
+- ctest now works on Windows too by removing time-wrappers
+
 ### Fixes:
 
 # 6.0.7

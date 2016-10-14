@@ -121,7 +121,7 @@ std::string formatDate(
 {
     auto const time_t = std::chrono::system_clock::to_time_t(time);
     char time_str[100];
-    if (std::strftime(time_str, sizeof(time_str), "%F %T%z",
+    if (std::strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S%z",
                       std::localtime(&time_t))) {
         return time_str;
     } else {

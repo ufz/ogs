@@ -10,7 +10,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/cube_1x1x1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-15 RELTOL 1e-15
             DIFF_DATA
@@ -22,7 +21,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/cube_1x1x1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}_newton.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-15 RELTOL 1e-15
             DIFF_DATA
@@ -34,7 +32,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/cube_1x1x1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-1 RELTOL 1e-1
             DIFF_DATA
@@ -48,7 +45,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/cube_1x1x1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-13 RELTOL 1e-13
             DIFF_DATA
@@ -60,7 +56,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/cube_1x1x1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-2 RELTOL 1e-2
             DIFF_DATA
@@ -75,7 +70,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/square_1x1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS square_${mesh_size}.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-13 RELTOL 1e-13
             DIFF_DATA
@@ -87,7 +81,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/square_1x1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-1 RELTOL 1e-1
             DIFF_DATA
@@ -101,7 +94,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/square_1x1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS square_${mesh_size}.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-12 RELTOL 1e-16
             DIFF_DATA
@@ -113,7 +105,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/square_1x1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-02 RELTOL 1e-02
             DIFF_DATA
@@ -128,7 +119,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/line_1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-15 RELTOL 1e-15
             DIFF_DATA
@@ -140,7 +130,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/line_1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}_neumann.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA
@@ -152,7 +141,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/line_1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}_robin_right_picard.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 4e-14 RELTOL 2e-14
             DIFF_DATA
@@ -164,7 +152,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/line_1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}_robin_left_picard.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA
@@ -176,7 +163,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/line_1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}_time_dep_dirichlet.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA
@@ -190,7 +176,6 @@ if(NOT OGS_USE_MPI)
             PATH Elliptic/line_1_GroundWaterFlow
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}_time_dep_neumann.prj
-            WRAPPER time
             TESTER vtkdiff
             ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA
@@ -206,7 +191,6 @@ if(NOT OGS_USE_MPI)
         PATH Elliptic/cube_1x1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_top_neumann.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
@@ -217,7 +201,6 @@ if(NOT OGS_USE_MPI)
         PATH Elliptic/cube_1x1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_bottom_neumann.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
@@ -229,7 +212,6 @@ if(NOT OGS_USE_MPI)
         PATH Elliptic/cube_1x1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_top_neumann_newton.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
@@ -240,7 +222,6 @@ if(NOT OGS_USE_MPI)
         PATH Elliptic/cube_1x1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_bottom_neumann_newton.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
@@ -253,7 +234,6 @@ if(NOT OGS_USE_MPI)
         PATH Elliptic/cube_1x1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_calculatesurfaceflux.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-15 RELTOL 1e-15
         DIFF_DATA
@@ -264,7 +244,6 @@ if(NOT OGS_USE_MPI)
         PATH Elliptic/cube_1x1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_neumann_calculatesurfaceflux.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-15 RELTOL 1e-15
         DIFF_DATA
@@ -276,7 +255,6 @@ if(NOT OGS_USE_MPI)
         PATH Parabolic/TES/1D
         EXECUTABLE ogs
         EXECUTABLE_ARGS tes-1D-zeolite-discharge-small.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-7 RELTOL 5e-9
         DIFF_DATA
@@ -292,7 +270,6 @@ if(NOT OGS_USE_MPI)
         PATH Parabolic/TES/1D
         EXECUTABLE ogs
         EXECUTABLE_ARGS tes-1D-zeolite-discharge-large.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-3 RELTOL 1e-4
         DIFF_DATA
@@ -308,7 +285,6 @@ if(NOT OGS_USE_MPI)
         PATH Parabolic/TES/1D
         EXECUTABLE ogs
         EXECUTABLE_ARGS tes-1D-zeolite-discharge-small-newton.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1.5e-3 RELTOL 1.5e-3
         DIFF_DATA
@@ -323,7 +299,6 @@ if(NOT OGS_USE_MPI)
          PATH Parabolic/T/1D_dirichlet
          EXECUTABLE ogs
          EXECUTABLE_ARGS line_60_heat.prj
-         WRAPPER time
          TESTER vtkdiff
          ABSTOL 1e-5 RELTOL 1e-5
          DIFF_DATA
@@ -336,7 +311,6 @@ if(NOT OGS_USE_MPI)
          PATH Parabolic/T/1D_neumann
          EXECUTABLE ogs
          EXECUTABLE_ARGS line_60_heat.prj
-         WRAPPER time
          TESTER vtkdiff
          ABSTOL 1e-4 RELTOL 1e-4
          DIFF_DATA
@@ -350,7 +324,6 @@ if(NOT OGS_USE_MPI)
         PATH Mechanics/Linear
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_1e0.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
@@ -361,7 +334,6 @@ if(NOT OGS_USE_MPI)
         PATH Mechanics/Linear
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_1e2.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
@@ -372,7 +344,6 @@ if(NOT OGS_USE_MPI)
         PATH Mechanics/Linear
         EXECUTABLE ogs
         EXECUTABLE_ARGS disc_with_hole.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
@@ -383,7 +354,6 @@ if(NOT OGS_USE_MPI)
         PATH Mechanics/Linear
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_1e5.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
@@ -407,7 +377,6 @@ if(NOT OGS_USE_MPI)
         PATH Mechanics/Burgers
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e0.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
@@ -419,7 +388,6 @@ if(NOT OGS_USE_MPI)
         PATH Mechanics/Burgers
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
@@ -434,7 +402,6 @@ if(NOT OGS_USE_MPI)
         PATH Elliptic/square_1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_1e2_axi.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1.6e-5 RELTOL 1e-5
         DIFF_DATA
@@ -455,7 +422,6 @@ if(NOT OGS_USE_MPI)
         PATH Elliptic/square_1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_1e4_axi.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 1.6e-5 RELTOL 1e-5
         DIFF_DATA
@@ -475,7 +441,6 @@ if(NOT OGS_USE_MPI)
         PATH Mechanics/Linear
         EXECUTABLE ogs
         EXECUTABLE_ARGS ring_plane_strain.prj
-        WRAPPER time
         TESTER vtkdiff
         ABSTOL 6e-4 RELTOL 1e-4
         DIFF_DATA
@@ -491,7 +456,6 @@ if(NOT OGS_USE_MPI)
          PATH Parabolic/T/2D_axially_symmetric
          EXECUTABLE ogs
          EXECUTABLE_ARGS square_1e2_axi.prj
-         WRAPPER time
          TESTER vtkdiff
          ABSTOL 1.7e-5 RELTOL 1e-5
          DIFF_DATA
@@ -513,7 +477,6 @@ if(NOT OGS_USE_MPI)
         PATH Parabolic/TES/2D
         EXECUTABLE ogs
         EXECUTABLE_ARGS tes-inert-axi.prj
-        WRAPPER time
         TESTER vtkdiff
         # Note: Since the temperature and pressure only vary by a factor of ~ 1.e-6 in x-direction
         # the relative tolerance has to be much smaller than 1.e-6

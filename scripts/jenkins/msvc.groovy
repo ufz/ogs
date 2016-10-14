@@ -26,6 +26,7 @@ node('win && conan') {
 
         stage 'Test (Win)'
         build.win 'build', 'tests'
+        build.win 'build', 'ctest'
 
         stage 'Data Explorer (Win)'
         configure.win 'build', "${defaultCMakeOptions} ${guiCMakeOptions}",
