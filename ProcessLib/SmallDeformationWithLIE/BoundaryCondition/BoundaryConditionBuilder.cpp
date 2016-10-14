@@ -14,7 +14,6 @@
 
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 #include "ProcessLib/BoundaryCondition/DirichletBoundaryCondition.h"
-#include "ProcessLib/BoundaryCondition/RobinBoundaryCondition.h"
 
 #include "NeumannBoundaryCondition.h"
 
@@ -101,17 +100,9 @@ std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::createBoundaryCondi
             mesh.isAxiallySymmetric(), integration_order, mesh.getDimension(),
             parameters, _fracture_prop);
     }
-    else if (type == "Robin") {
-        return createRobinBoundaryCondition(
-            config.config,
-            getClonedElements(boundary_element_searcher, config.geometry),
-            dof_table, variable_id, config.component_id,
-            mesh.isAxiallySymmetric(), integration_order, mesh.getDimension(),
-            parameters);
-    }
     else
     {
-        OGS_FATAL("Unknown boundary condition type: `%s'.", type.c_str());
+        OGS_FATAL("Unknown boundary condition type for displacement jumps: `%s'.", type.c_str());
     }
 }
 
