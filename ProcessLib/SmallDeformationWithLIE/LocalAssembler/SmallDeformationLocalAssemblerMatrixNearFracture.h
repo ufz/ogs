@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_SMALLDEFORMATIONLOCALASSEMBLER_MATRIX_NEAR_FRACTUER_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_SMALLDEFORMATIONLOCALASSEMBLER_MATRIX_NEAR_FRACTUER_H_
 
 #include <vector>
 
@@ -57,7 +58,7 @@ public:
         std::size_t const n_variables,
         std::size_t const local_matrix_size,
         std::vector<unsigned> const& dofIndex_to_localIndex,
-        bool is_axially_symmetric,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data);
 
@@ -169,3 +170,4 @@ private:
 
 #include "SmallDeformationLocalAssemblerMatrixNearFracture-impl.h"
 
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_SMALLDEFORMATIONLOCALASSEMBLER_MATRIX_H_
