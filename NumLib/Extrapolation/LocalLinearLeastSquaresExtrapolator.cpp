@@ -88,25 +88,24 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         extrapolatables.getIntegrationPointValues(
             element_index, _integration_point_values_cache);
 
-    // number of nodes in the element
-    const auto nn = extrapolatables.getShapeMatrix(element_index, 0).cols();
-    // number of integration points in the element
-    const auto ni = integration_point_values.size();
+    const unsigned num_nodes =
+        extrapolatables.getShapeMatrix(element_index, 0).cols();
+    const unsigned num_int_pts = integration_point_values.size();
 
-    assert(ni >= static_cast<decltype(ni)>(nn) &&
+    assert(num_int_pts >= num_nodes &&
            "Least squares is not possible if there are more nodes than"
            "integration points.");
 
     auto& N = _local_matrix_cache; // TODO make that local?
-    N.resize(ni, nn); // TODO: might reallocate very often
+    N.resize(num_int_pts, num_nodes); // TODO: might reallocate very often
 
-    for (auto int_pt = decltype(ni){0}; int_pt < ni; ++int_pt) {
+    for (unsigned int_pt = 0; int_pt < num_int_pts; ++int_pt) {
         auto const& shp_mat =
             extrapolatables.getShapeMatrix(element_index, int_pt);
-        assert(shp_mat.cols() == nn);
+        assert(shp_mat.cols() == num_nodes);
 
-        // copy shape matrix to extrapolation matrix columnwise
-        N.block(int_pt, 0, 1, nn) = shp_mat;
+        // copy shape matrix to extrapolation matrix row-wise
+        N.row(int_pt) = shp_mat;
     }
 
     // TODO make gp_vals an Eigen::VectorXd const& ?
@@ -140,34 +139,35 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
     std::size_t const element_index,
     ExtrapolatableElementCollection const& extrapolatables)
 {
-    auto const& gp_vals = extrapolatables.getIntegrationPointValues(
+    auto const& int_pt_vals = extrapolatables.getIntegrationPointValues(
         element_index, _integration_point_values_cache);
-    const unsigned ni = gp_vals.size();  // number of gauss points
 
     // TODO: for now always zeroth component is used
     const auto& global_indices = _local_to_global(element_index, 0).rows;
 
+    const unsigned num_int_pts = int_pt_vals.size();
+    const unsigned num_nodes = global_indices.size();
+
     // filter nodal values of the current element
-    std::vector<double> nodal_vals_element;
-    nodal_vals_element.resize(global_indices.size());
-    for (unsigned i = 0; i < global_indices.size(); ++i) {
+    std::vector<double> nodal_vals_element(num_nodes);
+    for (unsigned i = 0; i < num_nodes; ++i) {
         // TODO PETSc negative indices?
         nodal_vals_element[i] = _nodal_values[global_indices[i]];
     }
 
     double residual = 0.0;
-    double gp_val_extrapol = 0.0;
+    double int_pt_val_extrapolated = 0.0;
 
-    for (unsigned gp = 0; gp < ni; ++gp) {
+    for (unsigned int_pt = 0; int_pt < num_int_pts; ++int_pt) {
         NumLib::shapeFunctionInterpolate(
             nodal_vals_element,
-            extrapolatables.getShapeMatrix(element_index, gp),
-            gp_val_extrapol);
-        auto const& ax_m_b = gp_val_extrapol - gp_vals[gp];
+            extrapolatables.getShapeMatrix(element_index, int_pt),
+            int_pt_val_extrapolated);
+        auto const& ax_m_b = int_pt_val_extrapolated - int_pt_vals[int_pt];
         residual += ax_m_b * ax_m_b;
     }
 
-    _residuals.set(element_index, std::sqrt(residual / ni));
+    _residuals.set(element_index, std::sqrt(residual / num_int_pts));
 }
 
 }  // namespace NumLib
