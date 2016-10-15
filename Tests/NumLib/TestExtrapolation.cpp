@@ -196,8 +196,8 @@ void extrapolate(TestProcess const& pcs, IntegrationPointValuesMethod method,
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto const tolerance_dx  = 20.0 * std::numeric_limits<double>::epsilon();
-    auto const tolerance_res =  5.0 * std::numeric_limits<double>::epsilon();
+    auto const tolerance_dx  = 30.0 * std::numeric_limits<double>::epsilon();
+    auto const tolerance_res = 15.0 * std::numeric_limits<double>::epsilon();
 
     auto const result = pcs.extrapolate(method);
     auto const& x_extra = *result.first;
