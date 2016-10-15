@@ -99,19 +99,14 @@ private:
     //! Avoids frequent reallocations.
     std::vector<double> _integration_point_values_cache;
 
-    //! Stores a QR decomposition of some matrix.
-    struct CachedData {
-        explicit CachedData(Eigen::Ref<const Eigen::RowVectorXd> N_0_)
-            : N_0(N_0_)
-        {
-        }
+    //! Stores a matrix and its Moore-Penrose pseudo-inverse.
+    struct CachedData
+    {
+        //! The matrix A.
+        Eigen::MatrixXd A;
 
-        //! Zeroth shape matrix. Used for assertion only.
-        Eigen::RowVectorXd const N_0;
-
-        //! Moore-Penrose pseudo-inverse of the nodal value to integration point
-        //! value interpolation matrix.
-        Eigen::MatrixXd p_inv;
+        //! Moore-Penrose pseudo-inverse of A.
+        Eigen::MatrixXd A_pinv;
     };
 
     /*! Maps (#nodes, #int_pts) to (N_0, QR decomposition),

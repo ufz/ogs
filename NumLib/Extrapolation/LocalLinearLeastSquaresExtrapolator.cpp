@@ -96,7 +96,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
            "integration points.");
 
     auto const pair_it_inserted = _qr_decomposition_cache.emplace(
-        std::make_pair(num_nodes, num_int_pts), CachedData{N_0});
+        std::make_pair(num_nodes, num_int_pts), CachedData{});
 
     auto& cached_data = pair_it_inserted.first->second;
     if (pair_it_inserted.second)
@@ -106,9 +106,11 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         // interpolation_matrix * nodal_values = integration_point_values
         // We are going to pseudo-invert this relation now using singular value
         // decomposition.
-        Eigen::MatrixXd interpolation_matrix(num_int_pts, num_nodes);
+        auto& interpolation_matrix = cached_data.A;
+        interpolation_matrix.resize(num_int_pts, num_nodes);
 
-        for (unsigned int_pt = 0; int_pt < num_int_pts; ++int_pt) {
+        interpolation_matrix.row(0) = N_0;
+        for (unsigned int_pt = 1; int_pt < num_int_pts; ++int_pt) {
             auto const& shp_mat =
                 extrapolatables.getShapeMatrix(element_index, int_pt);
             assert(shp_mat.cols() == num_nodes);
@@ -134,12 +136,12 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         assert(rank == num_nodes);
 
         // cf. http://eigen.tuxfamily.org/dox/JacobiSVD_8h_source.html
-        cached_data.p_inv.noalias() =
+        cached_data.A_pinv.noalias() =
             V.leftCols(rank) *
             S.head(rank).asDiagonal().inverse() *
             U.leftCols(rank).transpose();
     }
-    else if (cached_data.N_0 != N_0) {
+    else if (cached_data.A.row(0) != N_0) {
         OGS_FATAL("The cached and the passed shapematrices differ.");
     }
 
@@ -149,7 +151,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
 
     // Apply the pre-computed pseudo-inverse.
     Eigen::VectorXd const nodal_values =
-        cached_data.p_inv * integration_point_values_vec;
+        cached_data.A_pinv * integration_point_values_vec;
 
     // TODO: for now always zeroth component is used. This has to be extended if
     // multi-component properties shall be extrapolated
@@ -174,23 +176,18 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
     const unsigned num_nodes = global_indices.size();
 
     // filter nodal values of the current element
-    std::vector<double> nodal_vals_element(num_nodes);
+    Eigen::VectorXd nodal_vals_element(num_nodes);
     for (unsigned i = 0; i < num_nodes; ++i) {
         // TODO PETSc negative indices?
         nodal_vals_element[i] = _nodal_values[global_indices[i]];
     }
 
-    double residual = 0.0;
-    double int_pt_val_extrapolated = 0.0;
+    auto const& interpolation_matrix =
+        _qr_decomposition_cache.find({num_nodes, num_int_pts})->second.A;
 
-    for (unsigned int_pt = 0; int_pt < num_int_pts; ++int_pt) {
-        NumLib::shapeFunctionInterpolate(
-            nodal_vals_element,
-            extrapolatables.getShapeMatrix(element_index, int_pt),
-            int_pt_val_extrapolated);
-        auto const& ax_m_b = int_pt_val_extrapolated - int_pt_vals[int_pt];
-        residual += ax_m_b * ax_m_b;
-    }
+    double const residual = (interpolation_matrix * nodal_vals_element -
+                             MathLib::toVector(int_pt_vals))
+                                .squaredNorm();
 
     _residuals.set(element_index, std::sqrt(residual / num_int_pts));
 }
