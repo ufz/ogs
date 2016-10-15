@@ -106,11 +106,12 @@ private:
         {
         }
 
-        //! Zeroth shape matrix. Used for assertion only
+        //! Zeroth shape matrix. Used for assertion only.
         Eigen::RowVectorXd const N_0;
 
-        Eigen::MatrixXd Q_T; //!< Transpose of Q from the QR decomposition.
-        Eigen::MatrixXd R;   //!< R from the QR decomposition.
+        //! Moore-Penrose pseudo-inverse of the nodal value to integration point
+        //! value interpolation matrix.
+        Eigen::MatrixXd p_inv;
     };
 
     /*! Maps (#nodes, #int_pts) to (N_0, QR decomposition),

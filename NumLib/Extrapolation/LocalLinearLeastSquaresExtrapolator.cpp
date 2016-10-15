@@ -9,9 +9,7 @@
 
 #include "LocalLinearLeastSquaresExtrapolator.h"
 
-#include <functional>
-
-#include <Eigen/Core>
+#include <Eigen/SVD>
 #include <logog/include/logog.hpp>
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -103,10 +101,11 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
     auto& cached_data = pair_it_inserted.first->second;
     if (pair_it_inserted.second)
     {
-        INFO("Computing new QR decomposition");
+        DBUG("Computing new singular value decomposition");
 
         // interpolation_matrix * nodal_values = integration_point_values
-        // We are going to invert this relation now using QR decomposition.
+        // We are going to pseudo-invert this relation now using singular value
+        // decomposition.
         Eigen::MatrixXd interpolation_matrix(num_int_pts, num_nodes);
 
         for (unsigned int_pt = 0; int_pt < num_int_pts; ++int_pt) {
@@ -118,25 +117,39 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
             interpolation_matrix.row(int_pt) = shp_mat;
         }
 
-        // Compute and save the QR decomposition.
-        auto const QR_decomp = interpolation_matrix.householderQr();
-        cached_data.Q_T = QR_decomp.householderQ().transpose();
-        cached_data.R = QR_decomp.matrixQR().triangularView<Eigen::Upper>();
+        // JacobiSVD is extremely reliable, but fast only for small matrices.
+        // But we usually have small matrices and we don't compute very often.
+        // Cf. http://eigen.tuxfamily.org/dox/group__TopicLinearAlgebraDecompositions.html
+        //
+        // Decomposes interpolation_matrix = U S V^T.
+        Eigen::JacobiSVD<Eigen::MatrixXd> svd(
+            interpolation_matrix, Eigen::ComputeThinU | Eigen::ComputeThinV);
+
+        auto const& S = svd.singularValues();
+        auto const& U = svd.matrixU();
+        auto const& V = svd.matrixV();
+
+        // Compute and save the pseudo inverse V * S^{-1} * U^T.
+        auto const rank = svd.rank();
+        assert(rank == num_nodes);
+
+        // cf. http://eigen.tuxfamily.org/dox/JacobiSVD_8h_source.html
+        cached_data.p_inv.noalias() =
+            V.leftCols(rank) *
+            S.head(rank).asDiagonal().inverse() *
+            U.leftCols(rank).transpose();
     }
     else if (cached_data.N_0 != N_0) {
         OGS_FATAL("The cached and the passed shapematrices differ.");
     }
 
-    auto const& Q_T = cached_data.Q_T;
-    auto const& R = cached_data.R;
-
     // TODO make gp_vals an Eigen::VectorXd const& ?
     auto const integration_point_values_vec =
         MathLib::toVector(integration_point_values);
 
-    // Apply the pre-computed QR decomposition.
-    Eigen::VectorXd nodal_values = Q_T * integration_point_values_vec;
-    R.triangularView<Eigen::Upper>().solveInPlace(nodal_values);
+    // Apply the pre-computed pseudo-inverse.
+    Eigen::VectorXd const nodal_values =
+        cached_data.p_inv * integration_point_values_vec;
 
     // TODO: for now always zeroth component is used. This has to be extended if
     // multi-component properties shall be extrapolated
