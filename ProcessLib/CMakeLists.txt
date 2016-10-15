@@ -33,6 +33,8 @@ APPEND_SOURCE_FILES(SOURCES HeatConduction)
 
 APPEND_SOURCE_FILES(SOURCES RichardsFlow)
 
+APPEND_SOURCE_FILES(SOURCES DensityDrivenFlow)
+
 add_subdirectory(CalculateSurfaceFlux)
 APPEND_SOURCE_FILES(SOURCES CalculateSurfaceFlux)
 

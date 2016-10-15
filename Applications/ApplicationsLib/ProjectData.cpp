@@ -41,6 +41,7 @@
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/LIE/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
+#include "ProcessLib/DensityDrivenFlow/CreateDensityDrivenFlowProcess.h"
 
 namespace detail
 {
@@ -350,6 +351,13 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                         "HYDRO_MECHANICS process does not support given "
                         "dimension");
             }
+        }
+        else if (type == "DensityDrivenFlow")
+        {
+            process = ProcessLib::DensityDrivenFlow::createDensityDrivenFlowProcess(
+                *_mesh_vec[0], std::move(jacobian_assembler),
+                _process_variables, _parameters, integration_order,
+                process_config);
         }
         else if (type == "SMALL_DEFORMATION")
         {
