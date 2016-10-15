@@ -14,6 +14,7 @@
 #include <Eigen/Core>
 #include <logog/include/logog.hpp>
 
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/Assembler/SerialExecutor.h"
@@ -88,50 +89,61 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         extrapolatables.getIntegrationPointValues(
             element_index, _integration_point_values_cache);
 
-    const unsigned num_nodes =
-        extrapolatables.getShapeMatrix(element_index, 0).cols();
+    auto const& N_0 = extrapolatables.getShapeMatrix(element_index, 0);
+    const unsigned num_nodes = N_0.cols();
     const unsigned num_int_pts = integration_point_values.size();
 
     assert(num_int_pts >= num_nodes &&
            "Least squares is not possible if there are more nodes than"
            "integration points.");
 
-    auto& N = _local_matrix_cache; // TODO make that local?
-    N.resize(num_int_pts, num_nodes); // TODO: might reallocate very often
+    auto const pair_it_inserted = _qr_decomposition_cache.emplace(
+        std::make_pair(num_nodes, num_int_pts), CachedData{N_0});
 
-    for (unsigned int_pt = 0; int_pt < num_int_pts; ++int_pt) {
-        auto const& shp_mat =
-            extrapolatables.getShapeMatrix(element_index, int_pt);
-        assert(shp_mat.cols() == num_nodes);
+    auto& cached_data = pair_it_inserted.first->second;
+    if (pair_it_inserted.second)
+    {
+        INFO("Computing new QR decomposition");
 
-        // copy shape matrix to extrapolation matrix row-wise
-        N.row(int_pt) = shp_mat;
+        // interpolation_matrix * nodal_values = integration_point_values
+        // We are going to invert this relation now using QR decomposition.
+        Eigen::MatrixXd interpolation_matrix(num_int_pts, num_nodes);
+
+        for (unsigned int_pt = 0; int_pt < num_int_pts; ++int_pt) {
+            auto const& shp_mat =
+                extrapolatables.getShapeMatrix(element_index, int_pt);
+            assert(shp_mat.cols() == num_nodes);
+
+            // copy shape matrix to extrapolation matrix row-wise
+            interpolation_matrix.row(int_pt) = shp_mat;
+        }
+
+        // Compute and save the QR decomposition.
+        auto const QR_decomp = interpolation_matrix.householderQr();
+        cached_data.Q_T = QR_decomp.householderQ().transpose();
+        cached_data.R = QR_decomp.matrixQR().triangularView<Eigen::Upper>();
+    }
+    else if (cached_data.N_0 != N_0) {
+        OGS_FATAL("The cached and the passed shapematrices differ.");
     }
 
+    auto const& Q_T = cached_data.Q_T;
+    auto const& R = cached_data.R;
+
     // TODO make gp_vals an Eigen::VectorXd const& ?
-    Eigen::Map<const Eigen::VectorXd> const integration_point_values_vec(
-        integration_point_values.data(), integration_point_values.size());
+    auto const integration_point_values_vec =
+        MathLib::toVector(integration_point_values);
 
-    // TODO
-    // optimization: Store decomposition of N*N^T or N^T for reuse?
-    //   cf. http://eigen.tuxfamily.org/dox/classEigen_1_1FullPivLU.html
-    //   cf. http://eigen.tuxfamily.org/dox/classEigen_1_1LLT.html
-    //   cf. http://eigen.tuxfamily.org/dox/classEigen_1_1LDLT.html
-    //   cf. https://eigen.tuxfamily.org/dox/classEigen_1_1HouseholderQR.html
-    // Extrapolate several values at once?
+    // Apply the pre-computed QR decomposition.
+    Eigen::VectorXd nodal_values = Q_T * integration_point_values_vec;
+    R.triangularView<Eigen::Upper>().solveInPlace(nodal_values);
 
-    // do the least squares computation using QR decomposition.
-    Eigen::VectorXd tmp = N.householderQr().solve(integration_point_values_vec);
-
-    // option: do the least squares computation using LDLT decomposition.
-    // Eigen::VectorXd tmp =
-    //         (N*N.transpose()).ldlt().solve(N*integration_point_values_vec);
-
-    // TODO: for now always zeroth component is used
+    // TODO: for now always zeroth component is used. This has to be extended if
+    // multi-component properties shall be extrapolated
     auto const& global_indices = _local_to_global(element_index, 0).rows;
 
-    _nodal_values.add(global_indices,
-                      tmp);  // TODO does that give rise to PETSc problems?
+    // TODO does that give rise to PETSc problems?
+    _nodal_values.add(global_indices, nodal_values);
     counts.add(global_indices, std::vector<double>(global_indices.size(), 1.0));
 }
 

@@ -10,6 +10,8 @@
 #ifndef NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
 #define NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
 
+#include <map>
+
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "Extrapolator.h"
@@ -95,10 +97,33 @@ private:
     NumLib::LocalToGlobalIndexMap const& _local_to_global;
 
     //! Avoids frequent reallocations.
-    Eigen::MatrixXd _local_matrix_cache;
-
-    //! Avoids frequent reallocations.
     std::vector<double> _integration_point_values_cache;
+
+    //! Stores a QR decomposition of some matrix.
+    struct CachedData {
+        explicit CachedData(Eigen::Ref<const Eigen::RowVectorXd> N_0_)
+            : N_0(N_0_)
+        {
+        }
+
+        //! Zeroth shape matrix. Used for assertion only
+        Eigen::RowVectorXd const N_0;
+
+        Eigen::MatrixXd Q_T; //!< Transpose of Q from the QR decomposition.
+        Eigen::MatrixXd R;   //!< R from the QR decomposition.
+    };
+
+    /*! Maps (#nodes, #int_pts) to (N_0, QR decomposition),
+     * where N_0 is the shape matrix of the first integration point.
+     *
+     * \note It is assumed that the pair (#nodes, #int_pts) uniquely identifies
+     * the set of all shape matrices N for a mesh element (i.e., only N, not
+     * dN/dx etc.).
+     *
+     * \todo Add the element dimension as identifying criterion, or change to
+     * typeid.
+     */
+    std::map<std::pair<unsigned, unsigned>, CachedData> _qr_decomposition_cache;
 };
 
 }  // namespace NumLib
