@@ -62,7 +62,7 @@ public:
                 {new MaterialStateVariables{*this}};
         }
 
-        void pushBackState() {}
+        void pushBackState() override {}
     };
 
     std::unique_ptr<
