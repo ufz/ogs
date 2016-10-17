@@ -121,8 +121,6 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
             vec_n_components,
             vec_var_elements,
             NumLib::ComponentOrder::BY_COMPONENT));
-
-    //std::cout << *_local_to_global_index_map.get();
 }
 
 
