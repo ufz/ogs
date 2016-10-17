@@ -12,9 +12,21 @@
 
 #include "NumLib/NumericsConfig.h"
 
+namespace GeoLib
+{
+class GeoObject;
+}
+
 namespace MeshLib
 {
+class Element;
 class Mesh;
+}
+
+namespace MeshGeoToolsLib
+{
+class MeshNodeSearcher;
+class BoundaryElementsSearcher;
 }
 
 namespace NumLib
@@ -65,6 +77,41 @@ public:
         const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
         const int variable_id, const unsigned integration_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters);
+
+protected:
+    virtual std::unique_ptr<BoundaryCondition> createDirichletBoundaryCondition(
+        const BoundaryConditionConfig& config,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
+        const MeshLib::Mesh& mesh, const int variable_id,
+        const unsigned integration_order,
+        const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
+            parameters,
+        MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher,
+        MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher);
+
+    virtual std::unique_ptr<BoundaryCondition> createNeumannBoundaryCondition(
+        const BoundaryConditionConfig& config,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
+        const MeshLib::Mesh& mesh, const int variable_id,
+        const unsigned integration_order,
+        const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
+            parameters,
+        MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher,
+        MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher);
+
+    virtual std::unique_ptr<BoundaryCondition> createRobinBoundaryCondition(
+        const BoundaryConditionConfig& config,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
+        const MeshLib::Mesh& mesh, const int variable_id,
+        const unsigned integration_order,
+        const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
+            parameters,
+        MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher,
+        MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher);
+
+    static std::vector<MeshLib::Element*> getClonedElements(
+        MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,
+        GeoLib::GeoObject const& geometry);
 };
 
 }  // ProcessLib
