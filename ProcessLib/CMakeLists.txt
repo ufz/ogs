@@ -17,6 +17,7 @@ APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 APPEND_SOURCE_FILES(SOURCES SmallDeformation)
 
 APPEND_SOURCE_FILES(SOURCES SmallDeformationWithLIE)
+APPEND_SOURCE_FILES(SOURCES SmallDeformationWithLIE/BoundaryCondition)
 APPEND_SOURCE_FILES(SOURCES SmallDeformationWithLIE/Common)
 APPEND_SOURCE_FILES(SOURCES SmallDeformationWithLIE/LocalAssembler)
 

@@ -1,0 +1,42 @@
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_NEUMANNBOUNDARYCONDITION_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_NEUMANNBOUNDARYCONDITION_H_
+
+#include "ProcessLib/Parameter/Parameter.h"
+#include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
+
+#include "ProcessLib/SmallDeformationWithLIE/Common/FractureProperty.h"
+
+
+namespace MeshLib
+{
+class Element;
+}
+
+namespace ProcessLib
+{
+namespace SmallDeformationWithLIE
+{
+
+std::unique_ptr<BoundaryCondition>
+createNeumannBoundaryCondition(
+    BaseLib::ConfigTree const& config,
+    std::vector<MeshLib::Element*>&& elements,
+    NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
+    int const component_id, bool is_axially_symmetric,
+    unsigned const integration_order, unsigned const global_dim,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    FractureProperty const& fracture_prop);
+
+}  // SmallDeformationWithLIE
+}  // ProcessLib
+
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_NEUMANNBOUNDARYCONDITION_H_
