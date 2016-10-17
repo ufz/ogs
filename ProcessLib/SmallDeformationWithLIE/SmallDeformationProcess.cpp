@@ -173,21 +173,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         "sigma_xy", 1,
         makeExtrapolator(
             getExtrapolator(), _local_assemblers,
-            &SmallDeformationLocalAssemblerInterface::getIntPtSigmaZZ));
-
-    if (DisplacementDim == 3) {
-        Base::_secondary_variables.addSecondaryVariable(
-            "sigma_xz", 1,
-            makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
-                &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXZ));
-
-        Base::_secondary_variables.addSecondaryVariable(
-            "sigma_yz", 1,
-            makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
-                &SmallDeformationLocalAssemblerInterface::getIntPtSigmaYZ));
-    }
+            &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXY));
 
     auto mesh_prop_sigma_xx = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("stress_xx", MeshLib::MeshItemType::Cell);
     mesh_prop_sigma_xx->resize(mesh.getNumberOfElements());
