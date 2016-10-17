@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *   \file TestFluidSpecificHeatCapacityModel.cpp
+ *   \file TestFluidThermalConductivityModel.cpp
  *
  */
 
@@ -20,32 +20,33 @@
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/Fluid/ConstantFluidProperty.h"
-#include "MaterialLib/Fluid/SpecificHeatCapacity/CreateSpecificFluidHeatCapacityModel.h"
+#include "MaterialLib/Fluid/ThermalConductivity/CreateFluidThermalConductivityModel.h"
+#include "MaterialLib/Fluid/Density/LiquidDensity.h"
 
 using namespace MaterialLib;
 using namespace MaterialLib::Fluid;
 
 using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
 
-std::unique_ptr<FluidProperty> createSpecificFluidHeatCapacityModel(
+std::unique_ptr<FluidProperty> createFluidThermalConductivityModel(
     const char xml[])
 {
     auto const ptree = readXml(xml);
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
-    auto const& sub_config = conf.getConfigSubtree("specific_heat_capacity");
-    return createSpecificFluidHeatCapacityModel(sub_config);
+    auto const& sub_config = conf.getConfigSubtree("thermal_conductivity");
+    return createFluidThermalConductivityModel(sub_config);
 }
 
-TEST(MaterialFluid, checkConstantSpecificFluidHeatCapacityModel)
+TEST(Material, checkConstantFluidThermalConductivity)
 {
     const char xml[] =
-        "<specific_heat_capacity>"
+        "<thermal_conductivity>"
         "   <type>Constant</type>"
-        "   <value> 900. </value> "
-        "</specific_heat_capacity>";
-    const auto cp = createSpecificFluidHeatCapacityModel(xml);
+        "   <value> .45 </value> "
+        "</thermal_conductivity>";
+    const auto lambda = createFluidThermalConductivityModel(xml);
 
     ArrayType dummy;
-    ASSERT_EQ(900., cp->getValue(dummy));
+    ASSERT_EQ(.45, lambda->getValue(dummy));
 }
