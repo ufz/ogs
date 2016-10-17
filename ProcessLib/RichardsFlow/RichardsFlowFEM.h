@@ -114,7 +114,7 @@ public:
             auto const body_force = _process_data.specific_body_force(t, pos);
             assert(body_force.size() == GlobalDim);
             auto const b =
-                MathLib::toVector<Eigen::VectorXd>(body_force, GlobalDim);
+                MathLib::toVector<GlobalDimVectorType>(body_force, GlobalDim);
             double Pc = -P_int_pt;
 
             double Sw = interpolated_Pc.getValue(Pc);
