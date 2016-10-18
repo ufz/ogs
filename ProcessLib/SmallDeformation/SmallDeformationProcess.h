@@ -101,7 +101,7 @@ private:
             "sigma_xy", 1,
             makeExtrapolator(
                 getExtrapolator(), _local_assemblers,
-                &SmallDeformationLocalAssemblerInterface::getIntPtSigmaZZ));
+                &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXY));
 
         if (DisplacementDim == 3) {
             Base::_secondary_variables.addSecondaryVariable(
