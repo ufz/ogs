@@ -11,7 +11,6 @@
 #define PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 #include "GroundwaterFlowFEM.h"
 #include "GroundwaterFlowProcessData.h"

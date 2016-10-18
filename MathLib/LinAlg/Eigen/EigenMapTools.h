@@ -188,6 +188,28 @@ Eigen::Map<Vector> toVector(std::vector<double>& data,
     return {data.data(), size};
 }
 
+/*! Creates an Eigen mapped vector from the given data vector.
+ *
+ * This is a convienence method which makes the specification of dynamically
+ * allocated Eigen vectors as return type easier.
+ */
+inline Eigen::Map<const Eigen::VectorXd> toVector(
+    std::vector<double> const& data)
+{
+    return {data.data(), static_cast<Eigen::VectorXd::Index>(data.size())};
+}
+
+/*! Creates an Eigen mapped vector from the given data vector.
+ *
+ * This is a convienence method which makes the specification of dynamically
+ * allocated Eigen vectors as return type easier.
+ */
+inline Eigen::Map<Eigen::VectorXd> toVector(
+    std::vector<double>& data)
+{
+    return {data.data(), static_cast<Eigen::VectorXd::Index>(data.size())};
+}
+
 }  // MathLib
 
 #endif  // MATHLIB_EIGENMAPTOOLS_H

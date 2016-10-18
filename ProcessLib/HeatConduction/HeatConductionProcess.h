@@ -10,7 +10,6 @@
 #ifndef PROCESS_LIB_HEATCONDUCTIONPROCESS_H_
 #define PROCESS_LIB_HEATCONDUCTIONPROCESS_H_
 
-#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 #include "HeatConductionFEM.h"
 #include "HeatConductionProcessData.h"

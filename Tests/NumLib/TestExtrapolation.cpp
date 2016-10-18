@@ -12,6 +12,7 @@
 #include "MathLib/LinAlg/LinAlg.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/MatrixProviderUser.h"
@@ -31,7 +32,6 @@
 
 namespace
 {
-
 template<typename ShapeMatrices>
 void interpolateNodalValuesToIntegrationPoints(
         std::vector<double> const& local_nodal_values,
@@ -45,7 +45,7 @@ void interpolateNodalValuesToIntegrationPoints(
     }
 }
 
-}
+} // anonymous namespace
 
 class LocalAssemblerDataInterface : public NumLib::ExtrapolatableElement
 {
@@ -171,6 +171,7 @@ public:
     {
         auto const extrapolatables =
             NumLib::makeExtrapolatable(_local_assemblers, method);
+
         _extrapolator->extrapolate(extrapolatables);
         _extrapolator->calculateResiduals(extrapolatables);
 
@@ -195,8 +196,8 @@ void extrapolate(TestProcess const& pcs, IntegrationPointValuesMethod method,
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto const tolerance_dx  = 20.0 * std::numeric_limits<double>::epsilon();
-    auto const tolerance_res =  5.0 * std::numeric_limits<double>::epsilon();
+    auto const tolerance_dx  = 30.0 * std::numeric_limits<double>::epsilon();
+    auto const tolerance_res = 15.0 * std::numeric_limits<double>::epsilon();
 
     auto const result = pcs.extrapolate(method);
     auto const& x_extra = *result.first;
@@ -234,18 +235,17 @@ TEST(NumLib, DISABLED_Extrapolation)
      * x.
      */
 
+    const double mesh_length = 1.0;
+    const std::size_t mesh_elements_in_each_direction = 5;
+
+    // generate mesh
+    std::unique_ptr<MeshLib::Mesh> mesh(
+                MeshLib::MeshGenerator::generateRegularHexMesh(
+                    mesh_length, mesh_elements_in_each_direction));
+
     for (unsigned integration_order : {2, 3, 4})
     {
-
         namespace LinAlg = MathLib::LinAlg;
-
-        const double mesh_length = 1.0;
-        const double mesh_elements_in_each_direction = 5.0;
-
-        // generate mesh
-        std::unique_ptr<MeshLib::Mesh> mesh(
-                    MeshLib::MeshGenerator::generateRegularHexMesh(
-                        mesh_length, mesh_elements_in_each_direction));
 
         auto const nnodes    = mesh->getNumberOfNodes();
         auto const nelements = mesh->getNumberOfElements();
