@@ -122,7 +122,7 @@ assembleWithJacobian(
     auto const n_fractures = _fracture_props.size();
 
     using BlockVectorType = typename Eigen::VectorXd::FixedSegmentReturnType<N_DOF_PER_VAR>::Type;
-    using BlockMatrixType = typename Eigen::MatrixXd::FixedBlockXpr<N_DOF_PER_VAR,N_DOF_PER_VAR>::Type;
+    using BlockMatrixType = Eigen::Block<Eigen::MatrixXd,N_DOF_PER_VAR,N_DOF_PER_VAR>;
 
     //--------------------------------------------------------------------------------------
     // prepare sub vectors, matrices for regular displacement (u) and displacement jumps (g)
