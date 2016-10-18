@@ -139,10 +139,10 @@ public:
                                  sm.detJ * sm.integralMeasure * wp.getWeight();
 
             local_M.noalias() += sm.N.transpose() * mass_mat_coeff * sm.N *
-                                 sm.detJ * wp.getWeight();
+                                 sm.detJ * sm.integralMeasure * wp.getWeight();
 
             local_b.noalias() += sm.dNdx.transpose() * K_mat_coeff * rho_w * b *
-                                 sm.detJ * wp.getWeight();
+                                 sm.detJ * sm.integralMeasure * wp.getWeight();
         }  // end of GP
         if (_process_data.has_mass_lumping)
         {
