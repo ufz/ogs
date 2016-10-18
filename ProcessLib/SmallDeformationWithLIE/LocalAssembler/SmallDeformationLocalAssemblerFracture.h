@@ -149,6 +149,7 @@ private:
     }
 
     SmallDeformationProcessData<DisplacementDim>& _process_data;
+    FractureProperty const* _fracture_property = nullptr;
 
     std::vector<IntegrationPointDataFracture<HMatricesType, DisplacementDim>> _ip_data;
 

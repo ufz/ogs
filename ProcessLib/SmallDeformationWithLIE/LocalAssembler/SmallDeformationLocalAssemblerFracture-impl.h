@@ -55,7 +55,9 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
     _ip_data.reserve(n_integration_points);
     _secondary_data.N.resize(n_integration_points);
 
-    auto const* frac_prop = _process_data._fracture_property.get();
+    auto mat_id = (*_process_data._mesh_prop_materialIDs)[e.getID()];
+    auto frac_id = _process_data._map_materialID_to_fractureID[mat_id];
+    _fracture_property = _process_data._vec_fracture_property[frac_id].get();
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -82,7 +84,7 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         ip_data._sigma.resize(DisplacementDim);
         ip_data._sigma_prev.resize(DisplacementDim);
         ip_data._C.resize(DisplacementDim, DisplacementDim);
-        ip_data._aperture0 = (*frac_prop->aperture0)(0, x_position)[0];
+        ip_data._aperture0 = (*_fracture_property->aperture0)(0, x_position)[0];
         ip_data._aperture_prev = ip_data._aperture0;
 
         _secondary_data.N[ip] = sm.N;
@@ -102,8 +104,7 @@ assembleWithJacobian(
 {
     auto const& nodal_jump = local_u;
 
-    FractureProperty const& frac_prop = *_process_data._fracture_property;
-    auto const& R = frac_prop.R;
+    auto const& R = _fracture_property->R;
 
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector
