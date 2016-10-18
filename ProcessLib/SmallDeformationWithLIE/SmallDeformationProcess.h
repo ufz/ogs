@@ -111,11 +111,12 @@ private:
         _local_to_global_index_map_single_component;
 
     std::vector<MeshLib::Element*> _vec_matrix_elements;
-    std::vector<MeshLib::Element*> _vec_fracture_elements;
-    std::vector<MeshLib::Element*> _vec_fracture_matrix_elements;
-    std::vector<MeshLib::Node*> _vec_fracture_nodes;
+    std::vector<int> _vec_fracture_mat_IDs;
+    std::vector<std::vector<MeshLib::Element*>> _vec_fracture_elements;
+    std::vector<std::vector<MeshLib::Element*>> _vec_fracture_matrix_elements;
+    std::vector<std::vector<MeshLib::Node*>> _vec_fracture_nodes;
 
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_fracture_nodes;
+    std::vector<std::unique_ptr<MeshLib::MeshSubset const>> _mesh_subset_fracture_nodes;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_matrix_nodes;
 };
 
