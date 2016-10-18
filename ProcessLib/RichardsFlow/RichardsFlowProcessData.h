@@ -31,6 +31,7 @@ struct RichardsFlowProcessData
         Parameter<double> const& storage_,
         Parameter<double> const& water_density_,
         Parameter<double> const& specific_body_force_,
+        bool const has_gravity_,
         bool const has_mass_lumping_,
         std::map<std::string,
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
@@ -41,6 +42,7 @@ struct RichardsFlowProcessData
           storage(storage_),
           water_density(water_density_),
           specific_body_force(specific_body_force_),
+          has_gravity(has_gravity_),
           has_mass_lumping(has_mass_lumping_),
           curves(curves_)
     {
@@ -53,6 +55,7 @@ struct RichardsFlowProcessData
           storage(other.storage),
           water_density(other.water_density),
           specific_body_force(other.specific_body_force),
+          has_gravity(other.has_gravity),
           has_mass_lumping(other.has_mass_lumping),
           curves(other.curves)
     {
@@ -73,6 +76,7 @@ struct RichardsFlowProcessData
     Parameter<double> const& storage;
     Parameter<double> const& water_density;
     Parameter<double> const& specific_body_force;
+    bool const has_gravity;
     bool const has_mass_lumping;
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&

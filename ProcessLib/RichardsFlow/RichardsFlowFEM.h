@@ -110,11 +110,6 @@ public:
             auto const poro = _process_data.porosity(t, pos)[0];
             auto const mu = _process_data.viscosity(t, pos)[0];
             auto const storage = _process_data.storage(t, pos)[0];
-            auto const rho_w = _process_data.water_density(t, pos)[0];
-            auto const body_force = _process_data.specific_body_force(t, pos);
-            assert(body_force.size() == GlobalDim);
-            auto const b =
-                MathLib::toVector<GlobalDimVectorType>(body_force, GlobalDim);
             double const Pc = -P_int_pt;
 
             double Sw = interpolated_Pc.getValue(Pc);
@@ -140,10 +135,19 @@ public:
 
             local_M.noalias() += sm.N.transpose() * mass_mat_coeff * sm.N *
                                  sm.detJ * sm.integralMeasure * wp.getWeight();
-
-            local_b.noalias() += sm.dNdx.transpose() * K_mat_coeff * rho_w * b *
-                                 sm.detJ * sm.integralMeasure * wp.getWeight();
-        }  // end of GP
+            if (_process_data.has_gravity)
+            {
+                auto const rho_w = _process_data.water_density(t, pos)[0];
+                auto const body_force =
+                    _process_data.specific_body_force(t, pos);
+                assert(body_force.size() == GlobalDim);
+                auto const b = MathLib::toVector<GlobalDimVectorType>(
+                    body_force, GlobalDim);
+                local_b.noalias() += sm.dNdx.transpose() * K_mat_coeff * rho_w *
+                                     b * sm.detJ * sm.integralMeasure *
+                                     wp.getWeight();
+            }
+        }      // end of GP
         if (_process_data.has_mass_lumping)
         {
             for (int idx_ml = 0; idx_ml < local_M.cols(); idx_ml++)

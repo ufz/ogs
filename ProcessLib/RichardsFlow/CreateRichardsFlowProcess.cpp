@@ -11,6 +11,7 @@
 
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
+#include "ProcessLib/Parameter/ConstantParameter.h"
 #include "RichardsFlowProcess.h"
 #include "RichardsFlowProcessData.h"
 
@@ -89,12 +90,24 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     DBUG("Use \'%s\' as specific body force parameter.",
          specific_body_force.name.c_str());
 
+    // Assume constant parameter, then check the norm at arbitrary
+    // SpatialPosition and time.
+    assert(dynamic_cast<ConstantParameter<double>*>(&specific_body_force));
+    bool const has_gravity =
+        MathLib::toVector(specific_body_force(0, SpatialPosition{})).norm() > 0;
+
     // has mass lumping
     auto mass_lump = config.getConfigParameter<bool>("mass_lumping");
 
-    RichardsFlowProcessData process_data{
-        intrinsic_permeability, porosity,  viscosity, storage, water_density,
-        specific_body_force,    mass_lump, curves};
+    RichardsFlowProcessData process_data{intrinsic_permeability,
+                                         porosity,
+                                         viscosity,
+                                         storage,
+                                         water_density,
+                                         specific_body_force,
+                                         has_gravity,
+                                         mass_lump,
+                                         curves};
     SecondaryVariableCollection secondary_variables;
 
     NumLib::NamedFunctionCaller named_function_caller(
