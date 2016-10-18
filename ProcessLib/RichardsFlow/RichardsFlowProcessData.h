@@ -76,11 +76,11 @@ struct RichardsFlowProcessData
     Parameter<double> const& storage;
     Parameter<double> const& water_density;
     Parameter<double> const& specific_body_force;
+    bool const has_gravity;
+    bool const has_mass_lumping;
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves;
-    bool const has_gravity;
-    bool const has_mass_lumping;
 };
 
 }  // namespace RichardsFlow

@@ -261,12 +261,12 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
     //! \ogs_file_param{prj__processes__process}
     for (auto process_config : processes_config.getConfigSubtreeList("process"))
     {
-        //! \ogs_file_param{process__type}
         auto const type =
+            //! \ogs_file_param{process__type}
             process_config.peekConfigParameter<std::string>("type");
 
-        //! \ogs_file_param{process__name}
         auto const name =
+            //! \ogs_file_param{process__name}
             process_config.getConfigParameter<std::string>("name");
 
         auto const integration_order =

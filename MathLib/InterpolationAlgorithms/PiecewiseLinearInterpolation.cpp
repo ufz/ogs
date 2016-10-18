@@ -72,7 +72,7 @@ double PiecewiseLinearInterpolation::getDerivative(
 
     auto const& it(std::lower_bound(_supp_pnts.begin(), _supp_pnts.end(),
                                     pnt_to_interpolate));
-	std::size_t interval_idx = std::distance(_supp_pnts.begin(), it);
+    std::size_t interval_idx = std::distance(_supp_pnts.begin(), it);
 
     if (pnt_to_interpolate == _supp_pnts.front())
     {
@@ -104,10 +104,12 @@ double PiecewiseLinearInterpolation::getDerivative(
 
 double PiecewiseLinearInterpolation::getSupportMax() const
 {
+    assert(!_supp_pnts.empty());
     return _supp_pnts.back();
 }
 double PiecewiseLinearInterpolation::getSupportMin() const
 {
+    assert(!_supp_pnts.empty());
     return _supp_pnts.front();
 }
 }  // end MathLib

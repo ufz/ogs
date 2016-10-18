@@ -82,9 +82,9 @@ public:
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
 
         MathLib::PiecewiseLinearInterpolation const& interpolated_Pc =
-            *_process_data.curves.at("curveA");
+            *_process_data.curves.at("curve_PC_S");
         MathLib::PiecewiseLinearInterpolation const& interpolated_Kr =
-            *_process_data.curves.at("curveB");
+            *_process_data.curves.at("curve_S_Krel");
 
         auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
             local_M_data, local_matrix_size, local_matrix_size);
@@ -97,13 +97,13 @@ public:
             _integration_method.getNumberOfPoints();
         SpatialPosition pos;
         pos.setElementID(_element.getID());
-        double P_int_pt = 0.0;
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             auto const& wp = _integration_method.getWeightedPoint(ip);
 
+            double P_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, sm.N, P_int_pt);
 
             auto const K = _process_data.intrinsic_permeability(t, pos)[0];
@@ -115,7 +115,7 @@ public:
             assert(body_force.size() == GlobalDim);
             auto const b =
                 MathLib::toVector<GlobalDimVectorType>(body_force, GlobalDim);
-            double Pc = -P_int_pt;
+            double const Pc = -P_int_pt;
 
             double Sw = interpolated_Pc.getValue(Pc);
             double dSwdPc = interpolated_Pc.getDerivative(Pc);
@@ -179,8 +179,6 @@ private:
 
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices> _shape_matrices;
-
-    unsigned _dim;
 
     std::vector<double> _saturation;
 };
