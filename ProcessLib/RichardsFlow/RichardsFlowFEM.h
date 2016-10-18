@@ -140,12 +140,10 @@ public:
 
             local_M.noalias() += sm.N.transpose() * mass_mat_coeff * sm.N *
                                  sm.detJ * wp.getWeight();
-            if (_process_data.has_gravity)
-            {
-                local_b.noalias() += sm.dNdx.transpose() * K_mat_coeff * rho_w *
-                                     b * sm.detJ * wp.getWeight();
-            }  // end of if hasGravityEffect
-        }      // end of GP
+
+            local_b.noalias() += sm.dNdx.transpose() * K_mat_coeff * rho_w * b *
+                                 sm.detJ * wp.getWeight();
+        }  // end of GP
         if (_process_data.has_mass_lumping)
         {
             for (int idx_ml = 0; idx_ml < local_M.cols(); idx_ml++)
