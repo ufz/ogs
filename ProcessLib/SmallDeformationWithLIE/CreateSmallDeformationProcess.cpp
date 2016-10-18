@@ -69,8 +69,9 @@ createSmallDeformationProcess(
 
         process_variables.emplace_back(const_cast<ProcessVariable&>(*variable));
     }
-    if (process_variables.size() > 2)
-        OGS_FATAL("Currently only one displacement jump is supported");
+    auto const n_fractures = process_variables.size()-1;
+    if (n_fractures < 1)
+        OGS_FATAL("No displacement jump variables are specified");
 
     DBUG("Associate displacement with process variable \'%s\'.",
          process_variables.back().get().getName().c_str());
