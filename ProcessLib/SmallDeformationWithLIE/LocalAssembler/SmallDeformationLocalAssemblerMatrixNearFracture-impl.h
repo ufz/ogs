@@ -118,7 +118,7 @@ assembleWithJacobian(
 {
     assert (_element.getDimension() == DisplacementDim);
 
-    auto constexpr N_DOF_PER_VAR = ShapeFunction::NPOINTS * DisplacementDim;
+    auto const N_DOF_PER_VAR = ShapeFunction::NPOINTS * DisplacementDim;
     auto const n_fractures = _fracture_props.size();
 
     using BlockVectorType = typename Eigen::VectorXd::FixedSegmentReturnType<N_DOF_PER_VAR>::Type;
