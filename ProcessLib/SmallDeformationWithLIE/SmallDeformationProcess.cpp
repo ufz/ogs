@@ -57,13 +57,13 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
 {
     getFractureMatrixDataInMesh(mesh,
                                 _vec_matrix_elements,
-                                _vec_fracutre_elements,
-                                _vec_fracutre_matrix_elements,
-                                _vec_fracutre_nodes);
+                                _vec_fracture_elements,
+                                _vec_fracture_matrix_elements,
+                                _vec_fracture_nodes);
 
     // set fracture property assuming a fracture forms a straight line
     setFractureProperty(DisplacementDim,
-                        *_vec_fracutre_elements[0],
+                        *_vec_fracture_elements[0],
                         *_process_data._fracture_property.get());
 
     // need to use a custom Neumann BC assembler for displacement jumps
@@ -90,7 +90,7 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     // regular u
     _mesh_subset_matrix_nodes.reset(new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
     // u jump
-    _mesh_subset_fracture_nodes.reset(new MeshLib::MeshSubset(_mesh, &_vec_fracutre_nodes));
+    _mesh_subset_fracture_nodes.reset(new MeshLib::MeshSubset(_mesh, &_vec_fracture_nodes));
 
     // Collect the mesh subsets in a vector.
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
@@ -113,7 +113,7 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
 
     std::vector<std::vector<MeshLib::Element*>const*> vec_var_elements;
     vec_var_elements.push_back(&_vec_matrix_elements);
-    vec_var_elements.push_back(&_vec_fracutre_matrix_elements);
+    vec_var_elements.push_back(&_vec_fracture_matrix_elements);
 
     _local_to_global_index_map.reset(
         new NumLib::LocalToGlobalIndexMap(
