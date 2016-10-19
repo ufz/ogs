@@ -21,7 +21,6 @@ APPEND_SOURCE_FILES(SOURCES SmallDeformationWithLIE/BoundaryCondition)
 APPEND_SOURCE_FILES(SOURCES SmallDeformationWithLIE/Common)
 APPEND_SOURCE_FILES(SOURCES SmallDeformationWithLIE/LocalAssembler)
 
-add_subdirectory(TES)
 APPEND_SOURCE_FILES(SOURCES TES)
 
 add_subdirectory(HeatConduction)
