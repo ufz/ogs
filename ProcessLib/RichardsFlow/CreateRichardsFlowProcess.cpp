@@ -107,7 +107,8 @@ std::unique_ptr<Process> createRichardsFlowProcess(
                                          specific_body_force,
                                          has_gravity,
                                          mass_lump,
-                                         curves};
+                                         *curves.at("curve_PC_S"),
+                                         *curves.at("curve_S_Krel")};
     SecondaryVariableCollection secondary_variables;
 
     NumLib::NamedFunctionCaller named_function_caller(

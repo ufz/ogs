@@ -33,9 +33,8 @@ struct RichardsFlowProcessData
         Parameter<double> const& specific_body_force_,
         bool const has_gravity_,
         bool const has_mass_lumping_,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves_)
+        MathLib::PiecewiseLinearInterpolation const& interpolated_Pc_,
+        MathLib::PiecewiseLinearInterpolation const& interpolated_Kr_)
         : intrinsic_permeability(intrinsic_permeability_),
           porosity(porosity_),
           viscosity(viscosity_),
@@ -44,7 +43,8 @@ struct RichardsFlowProcessData
           specific_body_force(specific_body_force_),
           has_gravity(has_gravity_),
           has_mass_lumping(has_mass_lumping_),
-          curves(curves_)
+          interpolated_Pc(interpolated_Pc_),
+          interpolated_Kr(interpolated_Kr_)
     {
     }
 
@@ -57,7 +57,8 @@ struct RichardsFlowProcessData
           specific_body_force(other.specific_body_force),
           has_gravity(other.has_gravity),
           has_mass_lumping(other.has_mass_lumping),
-          curves(other.curves)
+          interpolated_Pc(other.interpolated_Pc),
+          interpolated_Kr(other.interpolated_Kr)
     {
     }
 
@@ -78,9 +79,8 @@ struct RichardsFlowProcessData
     Parameter<double> const& specific_body_force;
     bool const has_gravity;
     bool const has_mass_lumping;
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves;
+    MathLib::PiecewiseLinearInterpolation const& interpolated_Pc;
+    MathLib::PiecewiseLinearInterpolation const& interpolated_Kr;
 };
 
 }  // namespace RichardsFlow
