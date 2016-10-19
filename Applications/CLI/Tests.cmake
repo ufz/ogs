@@ -318,7 +318,7 @@ if(NOT OGS_USE_MPI)
          temperature_analytical.vtu line_60_heat_pcs_0_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature
     )
     AddTest(
-         NAME 2D_RichardsFlow_h_us_quad
+        NAME LARGE_2D_RichardsFlow_h_us_quad
          PATH Parabolic/Richards
          EXECUTABLE ogs
          EXECUTABLE_ARGS RichardsFlow_2d.prj
