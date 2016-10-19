@@ -112,7 +112,6 @@ public:
             auto const storage = _process_data.storage(t, pos)[0];
             double const Pc = -P_int_pt;
 
-            double Sw = interpolated_Pc.getValue(Pc);
             double dSwdPc = interpolated_Pc.getDerivative(Pc);
             if (Pc > interpolated_Pc.getSupportMax())
                 dSwdPc = interpolated_Pc.getDerivative(
@@ -121,10 +120,11 @@ public:
                 dSwdPc = interpolated_Pc.getDerivative(
                     interpolated_Pc.getSupportMin());
 
+            double const Sw = interpolated_Pc.getValue(Pc);
             _saturation[ip] = Sw;
 
-            double k_rel = interpolated_Kr.getValue(Sw);
-            double drhow_dp(0.0);
+            double const k_rel = interpolated_Kr.getValue(Sw);
+            double const drhow_dp(0.0);
 
             double const mass_mat_coeff =
                 storage * Sw + poro * Sw * drhow_dp - poro * dSwdPc;
@@ -147,7 +147,7 @@ public:
                                      b * sm.detJ * sm.integralMeasure *
                                      wp.getWeight();
             }
-        }      // end of GP
+        }  // end of GP
         if (_process_data.has_mass_lumping)
         {
             for (int idx_ml = 0; idx_ml < local_M.cols(); idx_ml++)
