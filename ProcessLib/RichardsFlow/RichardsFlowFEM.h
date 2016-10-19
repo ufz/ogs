@@ -82,9 +82,9 @@ public:
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
 
         MathLib::PiecewiseLinearInterpolation const& interpolated_Pc =
-            *_process_data.curves.at("curve_PC_S");
+            _process_data.interpolated_Pc;
         MathLib::PiecewiseLinearInterpolation const& interpolated_Kr =
-            *_process_data.curves.at("curve_S_Krel");
+            _process_data.interpolated_Kr;
 
         auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
             local_M_data, local_matrix_size, local_matrix_size);
