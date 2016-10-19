@@ -75,6 +75,8 @@ public:
      * using linear interpolation.
      */
     double getDerivative(double const pnt_to_interpolate) const;
+    double getSupportMax() const;
+    double getSupportMin() const;
 
 private:
     std::vector<double> _supp_pnts;
