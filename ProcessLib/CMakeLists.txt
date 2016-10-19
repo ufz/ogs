@@ -27,6 +27,8 @@ APPEND_SOURCE_FILES(SOURCES TES)
 add_subdirectory(HeatConduction)
 APPEND_SOURCE_FILES(SOURCES HeatConduction)
 
+APPEND_SOURCE_FILES(SOURCES RichardsFlow)
+
 add_subdirectory(CalculateSurfaceFlux)
 APPEND_SOURCE_FILES(SOURCES CalculateSurfaceFlux)
 
