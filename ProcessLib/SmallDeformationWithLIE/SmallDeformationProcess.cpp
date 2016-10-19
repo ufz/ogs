@@ -175,43 +175,71 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXY));
 
-    auto mesh_prop_sigma_xx = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("stress_xx", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_sigma_xx = const_cast<MeshLib::Mesh&>(mesh)
+                                  .getProperties()
+                                  .template createNewPropertyVector<double>(
+                                      "stress_xx", MeshLib::MeshItemType::Cell);
     mesh_prop_sigma_xx->resize(mesh.getNumberOfElements());
     _process_data._mesh_prop_stress_xx = mesh_prop_sigma_xx;
 
-    auto mesh_prop_sigma_yy = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("stress_yy", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_sigma_yy = const_cast<MeshLib::Mesh&>(mesh)
+                                  .getProperties()
+                                  .template createNewPropertyVector<double>(
+                                      "stress_yy", MeshLib::MeshItemType::Cell);
     mesh_prop_sigma_yy->resize(mesh.getNumberOfElements());
     _process_data._mesh_prop_stress_yy = mesh_prop_sigma_yy;
 
-    auto mesh_prop_sigma_xy = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("stress_xy", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_sigma_xy = const_cast<MeshLib::Mesh&>(mesh)
+                                  .getProperties()
+                                  .template createNewPropertyVector<double>(
+                                      "stress_xy", MeshLib::MeshItemType::Cell);
     mesh_prop_sigma_xy->resize(mesh.getNumberOfElements());
     _process_data._mesh_prop_stress_xy = mesh_prop_sigma_xy;
 
-    auto mesh_prop_epsilon_xx = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("strain_xx", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_epsilon_xx =
+        const_cast<MeshLib::Mesh&>(mesh)
+            .getProperties()
+            .template createNewPropertyVector<double>(
+                "strain_xx", MeshLib::MeshItemType::Cell);
     mesh_prop_epsilon_xx->resize(mesh.getNumberOfElements());
     _process_data._mesh_prop_strain_xx = mesh_prop_epsilon_xx;
 
-    auto mesh_prop_epsilon_yy = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("strain_yy", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_epsilon_yy =
+        const_cast<MeshLib::Mesh&>(mesh)
+            .getProperties()
+            .template createNewPropertyVector<double>(
+                "strain_yy", MeshLib::MeshItemType::Cell);
     mesh_prop_epsilon_yy->resize(mesh.getNumberOfElements());
     _process_data._mesh_prop_strain_yy = mesh_prop_epsilon_yy;
 
-    auto mesh_prop_epsilon_xy = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("strain_xy", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_epsilon_xy =
+        const_cast<MeshLib::Mesh&>(mesh)
+            .getProperties()
+            .template createNewPropertyVector<double>(
+                "strain_xy", MeshLib::MeshItemType::Cell);
     mesh_prop_epsilon_xy->resize(mesh.getNumberOfElements());
     _process_data._mesh_prop_strain_xy = mesh_prop_epsilon_xy;
 
-    auto mesh_prop_levelset =
-            const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("levelset1", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_levelset = const_cast<MeshLib::Mesh&>(mesh)
+                                  .getProperties()
+                                  .template createNewPropertyVector<double>(
+                                      "levelset1", MeshLib::MeshItemType::Cell);
     mesh_prop_levelset->resize(mesh.getNumberOfElements());
     for (MeshLib::Element const* e : _mesh.getElements())
     {
         if (e->getDimension() < DisplacementDim)
             continue;
 
-        double const levelsets = calculateLevelSetFunction(*_process_data._fracture_property, e->getCenterOfGravity().getCoords());
+        double const levelsets =
+            calculateLevelSetFunction(*_process_data._fracture_property,
+                                      e->getCenterOfGravity().getCoords());
         (*mesh_prop_levelset)[e->getID()] = levelsets;
     }
 
-    auto mesh_prop_b = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("aperture", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_b = const_cast<MeshLib::Mesh&>(mesh)
+                           .getProperties()
+                           .template createNewPropertyVector<double>(
+                               "aperture", MeshLib::MeshItemType::Cell);
     mesh_prop_b->resize(mesh.getNumberOfElements());
     auto mesh_prop_matid = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
     auto frac = _process_data._fracture_property.get();
