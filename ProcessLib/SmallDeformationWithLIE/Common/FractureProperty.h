@@ -17,7 +17,6 @@
 
 #include "ProcessLib/Parameter/Parameter.h"
 
-#include "FractureProperty.h"
 #include "Utils.h"
 
 
