@@ -27,6 +27,8 @@ ProcessVariable::ProcessVariable(
       _mesh(mesh),
       //! \ogs_file_param{prj__process_variables__process_variable__components}
       _n_components(config.getConfigParameter<int>("components")),
+      //! \ogs_file_param{prj__process_variables__process_variable__order}
+      _shapefunction_order(config.getConfigParameter<int>("order")),
       _initial_condition(findParameter<double>(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
@@ -95,6 +97,7 @@ ProcessVariable::ProcessVariable(ProcessVariable&& other)
     : _name(std::move(other._name)),
       _mesh(other._mesh),
       _n_components(other._n_components),
+      _shapefunction_order(other._shapefunction_order),
       _initial_condition(std::move(other._initial_condition)),
       _bc_configs(std::move(other._bc_configs)),
       _bc_builder(std::move(other._bc_builder))

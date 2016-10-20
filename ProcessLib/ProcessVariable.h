@@ -64,10 +64,14 @@ public:
     // components.
     MeshLib::PropertyVector<double>& getOrCreateMeshProperty();
 
+    unsigned getShapeFunctionOrder() const { return _shapefunction_order; }
+
 private:
     std::string const _name;
     MeshLib::Mesh& _mesh;
     const int _n_components;
+    unsigned _shapefunction_order;  ///< Order of the shapefunctions. Requires
+                               /// appropriate mesh.
     Parameter<double> const& _initial_condition;
 
     std::vector<BoundaryConditionConfig> _bc_configs;
