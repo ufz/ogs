@@ -56,7 +56,7 @@ class LocalAssemblerData : public RichardsFlowLocalAssemblerInterface
 
 public:
     LocalAssemblerData(MeshLib::Element const& element,
-                       std::size_t const local_matrix_size,
+                       std::size_t const /*local_matrix_size*/,
                        bool is_axially_symmetric,
                        unsigned const integration_order,
                        RichardsFlowProcessData const& process_data)

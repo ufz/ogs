@@ -28,7 +28,7 @@ class SmallDeformationLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    SmallDeformationLocalAssemblerInterface() {}
+    SmallDeformationLocalAssemblerInterface() : _dofIndex_to_localIndex{} {}
 
     SmallDeformationLocalAssemblerInterface(
             std::size_t n_local_size,
