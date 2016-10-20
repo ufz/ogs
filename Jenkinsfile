@@ -1,47 +1,52 @@
 #!/usr/bin/env groovy
+def builders = [:]
+def helper = new ogs.helper()
 
-configure = null
-build = null
-post = null
-helper = null
-
-node('master') {
-    step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins build']])
-    checkout scm
-
-    configure = load 'scripts/jenkins/lib/configure.groovy'
-    build     = load 'scripts/jenkins/lib/build.groovy'
-    post      = load 'scripts/jenkins/lib/post.groovy'
-    helper    = load 'scripts/jenkins/lib/helper.groovy'
-
-    def builders = [:]
-    builders['gcc'] = { load 'scripts/jenkins/gcc.groovy' }
-    builders['msvc'] = { load 'scripts/jenkins/msvc.groovy' }
-    builders['mac'] = { load 'scripts/jenkins/mac.groovy' }
-
-    if (helper.isRelease()) {
-        builders['msvc32'] = { load 'scripts/jenkins/msvc32.groovy' }
+builders['gcc'] = {
+    node('docker') {
+        dir('ogs') { checkout scm }
+        load 'ogs/scripts/jenkins/gcc.groovy'
     }
-    if (helper.isOriginMaster()) {
-        builders['docs'] = { load 'scripts/jenkins/docs.groovy' }
+}
+
+builders['msvc'] = {
+    node('win && conan') {
+        dir('ogs') { checkout scm }
+        load 'ogs/scripts/jenkins/msvc.groovy'
     }
+}
 
-    parallel builders
+builders['mac'] = {
+    node('mac') {
+        dir('ogs') { checkout scm }
+        load 'ogs/scripts/jenkins/mac.groovy'
+    }
+}
 
-    step([$class: 'GitHubCommitStatusSetter'])
-
-    if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
-        if (helper.isOriginMaster()) {
-            build job: 'OGS-6/clang-sanitizer', wait: false
-            build job: 'OGS-6/Deploy', wait: false
+if (helper.isRelease(this)) {
+    builders['msvc32'] = {
+        node('win && conan') {
+            dir('ogs') { checkout scm }
+            load 'ogs/scripts/jenkins/msvc32.groovy'
+        }
+    }
+}
+if (helper.isOriginMaster(this)) {
+    builders['docs'] = {
+        node('docker') {
+            dir('ogs') { checkout scm }
+            load 'ogs/scripts/jenkins/docs.groovy'
         }
     }
 }
 
-properties([[
-    $class: 'org.jenkinsci.plugins.workflow.job.properties.BuildDiscarderProperty',
-    strategy: [$class: 'LogRotator',
-    artifactDaysToKeepStr: '',
-    artifactNumToKeepStr: '5',
-    daysToKeepStr: '',
-    numToKeepStr: '25']]])
+parallel builders
+
+node { step([$class: 'GitHubCommitStatusSetter']) }
+
+if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
+    if (helper.isOriginMaster(this)) {
+        build job: 'OGS-6/clang-sanitizer', wait: false
+        build job: 'OGS-6/Deploy', wait: false
+    }
+}
