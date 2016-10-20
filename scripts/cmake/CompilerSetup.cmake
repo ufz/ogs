@@ -23,8 +23,8 @@ if(BUILD_SHARED_LIBS)
     set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 endif()
 
-# Set additional user-given compiler flags
-set(CMAKE_CXX_FLAGS ${OGS_CXX_FLAGS})
+# Set additional environment or user-given compiler flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} $ENV{CPPFLAGS} ${OGS_CXX_FLAGS}")
 
 if(OGS_CPU_ARCHITECTURE STREQUAL "generic")
     set(CPU_FLAGS "-mtune=generic")
