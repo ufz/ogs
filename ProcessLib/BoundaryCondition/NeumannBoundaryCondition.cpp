@@ -17,7 +17,9 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     std::vector<MeshLib::Element*>&& elements,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, bool is_axially_symmetric,
-    unsigned const integration_order, unsigned const global_dim,
+    unsigned const integration_order,
+    unsigned const shapefunction_order,
+    unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     DBUG("Constructing Neumann BC from config.");
@@ -31,7 +33,7 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     auto const& param = findParameter<double>(param_name, parameters, 1);
 
     return std::unique_ptr<NeumannBoundaryCondition>(
-        new NeumannBoundaryCondition(is_axially_symmetric, integration_order,
+        new NeumannBoundaryCondition(is_axially_symmetric, integration_order, shapefunction_order,
                                      dof_table, variable_id, component_id,
                                      global_dim, std::move(elements), param));
 }

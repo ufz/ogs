@@ -22,6 +22,7 @@ std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::createBoundaryCondi
     const BoundaryConditionConfig& config,
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned integration_order,
+    const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
     MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
@@ -37,21 +38,21 @@ std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::createBoundaryCondi
     {
         return createDirichletBoundaryCondition(
                     config, dof_table, mesh, variable_id,
-                    integration_order, parameters,
+                    integration_order, shapefunction_order, parameters,
                     mesh_node_searcher, boundary_element_searcher);
     }
     else if (type == "Neumann")
     {
         return createNeumannBoundaryCondition(
                     config, dof_table, mesh, variable_id,
-                    integration_order, parameters,
+                    integration_order, shapefunction_order, parameters,
                     mesh_node_searcher, boundary_element_searcher);
     }
     else if (type == "Robin")
     {
         return createRobinBoundaryCondition(
                     config, dof_table, mesh, variable_id,
-                    integration_order, parameters,
+                    integration_order, shapefunction_order, parameters,
                     mesh_node_searcher, boundary_element_searcher);
     }
     else
@@ -65,6 +66,7 @@ BoundaryConditionBuilder::createDirichletBoundaryCondition(
         const BoundaryConditionConfig& config,
         const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
         const int variable_id, const unsigned /*integration_order*/,
+        const unsigned /*shapefunction_order*/,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
         MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher,
         MeshGeoToolsLib::BoundaryElementsSearcher& /*boundary_element_searcher*/)
@@ -110,6 +112,7 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
         const BoundaryConditionConfig& config,
         const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
         const int variable_id, const unsigned integration_order,
+        const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
         MeshGeoToolsLib::MeshNodeSearcher& /*mesh_node_searcher*/,
         MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher)
@@ -118,7 +121,7 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
         config.config,
         getClonedElements(boundary_element_searcher, config.geometry),
         dof_table, variable_id, config.component_id,
-        mesh.isAxiallySymmetric(), integration_order, mesh.getDimension(),
+        mesh.isAxiallySymmetric(), integration_order, shapefunction_order, mesh.getDimension(),
         parameters);
 }
 
@@ -127,6 +130,7 @@ BoundaryConditionBuilder::createRobinBoundaryCondition(
         const BoundaryConditionConfig& config,
         const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
         const int variable_id, const unsigned integration_order,
+        const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
         MeshGeoToolsLib::MeshNodeSearcher& /*mesh_node_searcher*/,
         MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher)
@@ -135,7 +139,7 @@ BoundaryConditionBuilder::createRobinBoundaryCondition(
         config.config,
         getClonedElements(boundary_element_searcher, config.geometry),
         dof_table, variable_id, config.component_id,
-        mesh.isAxiallySymmetric(), integration_order, mesh.getDimension(),
+        mesh.isAxiallySymmetric(), integration_order, shapefunction_order, mesh.getDimension(),
         parameters);
 }
 

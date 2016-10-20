@@ -26,6 +26,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
                          typename std::decay<Data>::type>::value,
             bool>::type is_axially_symmetric,
         unsigned const integration_order,
+        unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
         unsigned const global_dim, std::vector<MeshLib::Element*>&& elements,
@@ -55,7 +56,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         variable_id, component_id, std::move(all_mesh_subsets), _elements));
 
     createLocalAssemblers<LocalAssemblerImplementation>(
-        global_dim, _elements, *_dof_table_boundary, _local_assemblers,
+        global_dim, _elements, *_dof_table_boundary, shapefunction_order, _local_assemblers,
         is_axially_symmetric, _integration_order, _data);
 }
 
