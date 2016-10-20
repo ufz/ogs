@@ -125,7 +125,7 @@ public:
 
             double const k_rel = interpolated_Kr.getValue(Sw);
             // \TODO Extend to pressure dependent density.
-            double const drhow_dp(0.0); 
+            double const drhow_dp(0.0);
 
             double const mass_mat_coeff =
                 storage * Sw + poro * Sw * drhow_dp - poro * dSwdPc;
