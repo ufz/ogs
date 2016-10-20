@@ -16,7 +16,7 @@ namespace MeshLib
 class Mesh;
 namespace IO
 {
-void writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name);
+int writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name);
 }
 }
 
