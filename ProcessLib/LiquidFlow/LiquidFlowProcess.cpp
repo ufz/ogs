@@ -118,9 +118,9 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
 {
     DBUG("Compute the velocity for LiquidFlowProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
-            &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
-            _local_assemblers, *_local_to_global_index_map, t, x);
+        &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
+        _local_assemblers, *_local_to_global_index_map, t, x);
 }
-        
+
 }  // end of namespace
 }  // end of namespace
