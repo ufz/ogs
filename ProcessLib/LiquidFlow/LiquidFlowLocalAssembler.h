@@ -126,6 +126,44 @@ private:
             GlobalDim,
             std::vector<double>(_integration_method.getNumberOfPoints()));
 
+    /**
+     *  Calculator of the Laplacian and the gravity term for anisotropic
+     *  permeability tensor
+     */
+    struct AnisotropicLaplacianAndGravityTermCalculator
+    {
+        static void calculate(Eigen::Map<NodalMatrixType>& local_K,
+                              Eigen::Map<NodalVectorType>& local_b,
+                              ShapeMatrices const& sm,
+                              Eigen::MatrixXd const& perm,
+                              double const integration_factor, double const mu,
+                              double const rho_g,
+                              int const gravitational_axis_id);
+    };
+
+    /**
+     *  Calculator of the Laplacian and the gravity term for isotropic
+     *  permeability tensor
+     */
+    struct IsotropicLaplacianAndGravityTermCalculator
+    {
+        static void calculate(Eigen::Map<NodalMatrixType>& local_K,
+                              Eigen::Map<NodalVectorType>& local_b,
+                              ShapeMatrices const& sm,
+                              Eigen::MatrixXd const& perm,
+                              double const integration_factor, double const mu,
+                              double const rho_g,
+                              int const gravitational_axis_id);
+    };
+
+    template <typename LaplacianAndGravityTermCalculator>
+    void local_assemble(double const t, std::vector<double> const& local_x,
+                        std::vector<double>& local_M_data,
+                        std::vector<double>& local_K_data,
+                        std::vector<double>& local_b_data,
+                        SpatialPosition const& pos,
+                        Eigen::MatrixXd const& perm);
+
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
     LiquidFlowMaterialProperties& _material_properties;

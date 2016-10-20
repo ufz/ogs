@@ -29,6 +29,34 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
              std::vector<double>& local_K_data,
              std::vector<double>& local_b_data)
 {
+    SpatialPosition pos;
+    pos.setElementID(_element.getID());
+    _material_properties.setMaterialID(pos);
+
+    const Eigen::MatrixXd& perm =
+        _material_properties.getPermeability(t, pos, _element.getDimension());
+    // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
+    //  the assert must be changed to perm.rows() == _element->getDimension()
+    assert(perm.rows() == GlobalDim || perm.rows() == 1);
+
+    if (perm.size() == 1)  // isotropic or 1D problem.
+        local_assemble<IsotropicLaplacianAndGravityTermCalculator>(
+            t, local_x, local_M_data, local_K_data, local_b_data, pos, perm);
+    else
+        local_assemble<AnisotropicLaplacianAndGravityTermCalculator>(
+            t, local_x, local_M_data, local_K_data, local_b_data, pos, perm);
+}
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+template <typename LaplacianAndGravityTermCalculator>
+void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+    local_assemble(double const t, std::vector<double> const& local_x,
+                   std::vector<double>& local_M_data,
+                   std::vector<double>& local_K_data,
+                   std::vector<double>& local_b_data,
+                   SpatialPosition const& pos, Eigen::MatrixXd const& perm)
+{
     auto const local_matrix_size = local_x.size();
     assert(local_matrix_size == ShapeFunction::NPOINTS);
 
@@ -41,17 +69,6 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
-
-    SpatialPosition pos;
-    pos.setElementID(_element.getID());
-    _material_properties.setMaterialID(pos);
-
-    const Eigen::MatrixXd& perm =
-        _material_properties.getPermeability(t, pos, _element.getDimension());
-
-    // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
-    //  the assert must be changed to perm.rows() == _element->getDimension()
-    assert(perm.rows() == GlobalDim || perm.rows() == 1);
 
     // TODO: The following two variables should be calculated inside the
     //       the integration loop for non-constant porosity and storage models.
@@ -83,34 +100,50 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         const double mu = _material_properties.getViscosity(p, _temperature);
 
         // Assemble Laplacian, K, and RHS by the gravitational term
-        if (perm.size() == 1)
-        {
-            //  Use scalar number for isotropic permeability
-            //  to save the computation time.
-            const double K = perm(0, 0) / mu;
-            const double fac = K * integration_factor;
-            local_K.noalias() += fac * sm.dNdx.transpose() * sm.dNdx;
-            if (_gravitational_axis_id >= 0)
-            {
-                local_b.noalias() -=
-                    fac * sm.dNdx.transpose().col(_gravitational_axis_id) *
-                    rho_g;
-            }
-        }
-        else
-        {
-            const double fac = integration_factor / mu;
-            local_K.noalias() += fac * sm.dNdx.transpose() * perm * sm.dNdx;
-            if (_gravitational_axis_id >= 0)
-            {
-                local_b.noalias() -= fac * rho_g * sm.dNdx.transpose() *
-                                     perm.col(_gravitational_axis_id);
-            }
-        }
+        LaplacianAndGravityTermCalculator::calculate(
+            local_K, local_b, sm, perm, integration_factor, mu, rho_g,
+            _gravitational_axis_id);
     }
 }
 
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+    IsotropicLaplacianAndGravityTermCalculator::calculate(
+        Eigen::Map<NodalMatrixType>& local_K,
+        Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
+        Eigen::MatrixXd const& perm, double const integration_factor,
+        double const mu, double const rho_g, int const gravitational_axis_id)
+{
+    const double K = perm(0, 0) / mu;
+    const double fac = K * integration_factor;
+    local_K.noalias() += fac * sm.dNdx.transpose() * sm.dNdx;
+
+    if (gravitational_axis_id >= 0)
+    {
+        local_b.noalias() -=
+            fac * sm.dNdx.transpose().col(gravitational_axis_id) * rho_g;
+    }
+}
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+    AnisotropicLaplacianAndGravityTermCalculator::calculate(
+        Eigen::Map<NodalMatrixType>& local_K,
+        Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
+        Eigen::MatrixXd const& perm, double const integration_factor,
+        double const mu, double const rho_g, int const gravitational_axis_id)
+{
+    const double fac = integration_factor / mu;
+    local_K.noalias() += fac * sm.dNdx.transpose() * perm * sm.dNdx;
+    if (gravitational_axis_id >= 0)
+    {
+        local_b.noalias() -=
+            fac * rho_g * sm.dNdx.transpose() * perm.col(gravitational_axis_id);
+    }
+}
 }  // end of namespace
 }  // end of namespace
 
-#endif
+#endif  /* OGS_LIQUIDFLOWLOCALASSEMBLER_IMPL_H */
