@@ -22,19 +22,22 @@ namespace MeshLib
 {
 namespace IO
 {
-void writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name)
+int writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name)
 {
     if (BaseLib::hasFileExtension("msh", file_name))
     {
         MeshLib::IO::Legacy::MeshIO meshIO;
         meshIO.setMesh(&mesh);
         meshIO.writeToFile(file_name);
+        return 0;
     } else if (BaseLib::hasFileExtension("vtu", file_name)) {
         MeshLib::IO::VtuInterface writer(&mesh);
         writer.writeToFile(file_name);
-    } else {
-        ERR("writeMeshToFile(): Unknown mesh file format in file %s.", file_name.c_str());
+        return 0;
     }
+
+    ERR("writeMeshToFile(): Unknown mesh file format in file %s.", file_name.c_str());
+    return -1;
 }
 
 } // end namespace IO

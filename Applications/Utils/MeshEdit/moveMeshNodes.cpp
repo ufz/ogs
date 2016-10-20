@@ -18,7 +18,6 @@
 
 #include "GeoLib/AABB.h"
 
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
@@ -75,7 +74,6 @@ int main (int argc, char* argv[])
         INFO("Usage: %s <msh-file.msh> <keyword> [<value1>] [<value2>]",
              argv[0]);
         INFO("Available keywords:");
-        //for (std::size_t i=0; i<keywords.size(); i++)
         INFO(
             "\t-ALL <value1> <value2> : changes the elevation of all mesh "
             "nodes by <value2> in direction <value1> [x,y,z].");
@@ -209,7 +207,10 @@ int main (int argc, char* argv[])
     }
     /**** add other keywords here ****/
 
-    MeshLib::IO::VtuInterface vtu (mesh.get(), 0, false);
-    vtu.writeToFile(msh_name.substr(0, msh_name.length() - 4) + "_new.vtu");
+    std::string const new_mesh_name (msh_name.substr(0, msh_name.length() - 4) + "_new.vtu");
+    if (MeshLib::IO::writeMeshToFile(*mesh, new_mesh_name) != 0)
+        return EXIT_FAILURE;
+
+    INFO ("Result successfully written.")
     return EXIT_SUCCESS;
 }
