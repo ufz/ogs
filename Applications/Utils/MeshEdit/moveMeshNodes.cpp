@@ -85,7 +85,7 @@ int main (int argc, char* argv[])
         INFO(
             "\t-LOWPASS : applies a lowpass filter over node elevation using "
             "directly connected nodes.");
-        return -1;
+        return EXIT_FAILURE;
     }
 
     const std::string msh_name(argv[1]);
@@ -95,7 +95,7 @@ int main (int argc, char* argv[])
     {
         ERR("Error: Parameter 1 must be a mesh-file (*.msh / *.vtu).");
         INFO("Usage: %s <msh-file.gml> <keyword> <value>", argv[0]);
-        return -1;
+        return EXIT_FAILURE;
     }
 
     bool is_keyword(false);
@@ -111,7 +111,7 @@ int main (int argc, char* argv[])
         ERR("Keyword not recognised. Available keywords:");
         for (auto const& keyword : keywords)
             INFO("\t%s", keyword.c_str());
-        return -1;
+        return EXIT_FAILURE;
     }
 
     std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::IO::readMeshFromFile(msh_name));
@@ -129,7 +129,7 @@ int main (int argc, char* argv[])
         if (argc < 5)
         {
             ERR("Missing parameter...");
-            return -1;
+            return EXIT_FAILURE;
         }
         const std::string dir(argv[3]);
         unsigned idx = (dir.compare("x") == 0) ? 0 : (dir.compare("y") == 0) ? 1 : 2;
@@ -151,16 +151,16 @@ int main (int argc, char* argv[])
         if (argc < 5)
         {
             ERR("Missing parameter...");
-            return -1;
+            return EXIT_FAILURE;
         }
         const std::string value (argv[3]);
         double max_dist(pow(strtod(argv[4],0), 2));
         double offset (0.0); // additional offset for elevation (should be 0)
         std::unique_ptr<MeshLib::Mesh> ground_truth (MeshLib::IO::readMeshFromFile(value));
-        if (mesh == nullptr)
+        if (ground_truth == nullptr)
         {
             ERR ("Error reading mesh file.");
-            return 1;
+            return EXIT_FAILURE;
         }
 
         const std::vector<MeshLib::Node*>& ground_truth_nodes (ground_truth->getNodes());
@@ -211,5 +211,5 @@ int main (int argc, char* argv[])
 
     MeshLib::IO::VtuInterface vtu (mesh.get(), 0, false);
     vtu.writeToFile(msh_name.substr(0, msh_name.length() - 4) + "_new.vtu");
-    return 1;
+    return EXIT_SUCCESS;
 }
