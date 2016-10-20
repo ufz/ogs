@@ -875,6 +875,8 @@ void MainWindow::mapGeometry(const std::string &geo_name)
         mapper.advancedMapOnMesh(*mesh);
         _geo_model->updateGeometry(new_geo_name);
     }
+    if (choice == 0)
+        delete mesh;
 }
 
 void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
