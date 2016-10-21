@@ -18,6 +18,10 @@ namespace SmallDeformationWithLIE
 namespace
 {
 
+// A class to check whether a node is located on a crack tip with
+// the following conditions:
+// - the number of connected fracture elements is one
+// - the node is not located on a domain boundary
 class IsCrackTip
 {
 public:
