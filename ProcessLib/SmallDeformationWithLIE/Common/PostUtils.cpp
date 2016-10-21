@@ -101,10 +101,10 @@ PostProcessTool::PostProcessTool(
 template <typename T>
 void PostProcessTool::createProperties()
 {
-    MeshLib::Properties const& src_properteis = _org_mesh.getProperties();
-    for (auto name : src_properteis.getPropertyVectorNames())
+    MeshLib::Properties const& src_properties = _org_mesh.getProperties();
+    for (auto name : src_properties.getPropertyVectorNames())
     {
-        auto const* src_prop = src_properteis.getPropertyVector<T>(name);
+        auto const* src_prop = src_properties.getPropertyVector<T>(name);
         if (!src_prop)
             continue;
         auto const n_src_comp = src_prop->getNumberOfComponents();
@@ -132,10 +132,10 @@ void PostProcessTool::createProperties()
 template <typename T>
 void PostProcessTool::copyProperties()
 {
-    MeshLib::Properties const& src_properteis = _org_mesh.getProperties();
-    for (auto name : src_properteis.getPropertyVectorNames())
+    MeshLib::Properties const& src_properties = _org_mesh.getProperties();
+    for (auto name : src_properties.getPropertyVectorNames())
     {
-        auto const* src_prop = src_properteis.getPropertyVector<T>(name);
+        auto const* src_prop = src_properties.getPropertyVector<T>(name);
         if (!src_prop)
             continue;
         auto* dest_prop = _output_mesh->getProperties().getPropertyVector<T>(name);
