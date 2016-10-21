@@ -249,6 +249,50 @@ if(NOT OGS_USE_MPI)
         DIFF_DATA
         cube_1x1x1_hex_1e3_complete_surface.vtu cube_1x1x1_hex_1e3_complete_surface_neumann_surfaceflux.vtu surfaceflux_neumann_reference surfaceflux
     )
+    AddTest(
+        NAME GroundWaterFlowProcess_cube_1x1x1_2e3_prism_surfaceflux_left_right
+        PATH Elliptic/cube_1x1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_2e3_prism_surfaceflux_left_right.prj
+        TESTER vtkdiff
+        ABSTOL 1e-15 RELTOL 1e-15
+        DIFF_DATA
+        cube_1x1x1_prism_2e3_complete_surface.vtu cube_1x1x1_prism_2e3_complete_surface_left_right_dirichlet_surfaceflux.vtu surfaceflux_left_right_reference surfaceflux_left_right
+    )
+
+    AddTest(
+        NAME GroundWaterFlowProcess_cube_1x1x1_2e3_prism_surfaceflux_front_back
+        PATH Elliptic/cube_1x1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_2e3_prism_surfaceflux_front_back.prj
+        TESTER vtkdiff
+        ABSTOL 1e-15 RELTOL 1e-15
+        DIFF_DATA
+        cube_1x1x1_prism_2e3_complete_surface.vtu cube_1x1x1_prism_2e3_complete_surface_front_back_dirichlet_surfaceflux.vtu surfaceflux_front_back_reference surfaceflux_front_back
+    )
+
+    AddTest(
+        NAME GroundWaterFlowProcess_cube_1x1x1_2e3_prism_surfaceflux_top_bottom
+        PATH Elliptic/cube_1x1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_2e3_prism_surfaceflux_top_bottom.prj
+        TESTER vtkdiff
+        ABSTOL 1e-15 RELTOL 1e-15
+        DIFF_DATA
+        cube_1x1x1_prism_2e3_complete_surface.vtu cube_1x1x1_prism_2e3_complete_surface_top_bottom_dirichlet_surfaceflux.vtu surfaceflux_top_bottom_reference surfaceflux_top_bottom
+    )
+
+    AddTest(
+        NAME GroundWaterFlowProcess_wedge_1x1x1_1e3_prism_surfaceflux
+        PATH Elliptic/wedge_1x1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS wedge_1e3_prism_surfaceflux_diagonal.prj
+        TESTER vtkdiff
+        ABSTOL 1e-15 RELTOL 1e-15
+        DIFF_DATA
+        wedge_1x1x1_1e3_prism_complete_surface.vtu wedge_1x1x1_1e3_prism_complete_surface_surfaceflux.vtu surfaceflux_reference surfaceflux
+    )
+
     # TES tests
     AddTest(
         NAME TES_zeolite_discharge_small
