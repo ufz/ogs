@@ -77,14 +77,17 @@ PostProcessTool::PostProcessTool(
         MeshLib::Element* e = new_eles[eid];
         for (unsigned i=0; i<e->getNumberOfNodes(); i++)
         {
+            // only fracture nodes
             auto itr = _map_dup_newNodeIDs.find(e->getNodeIndex(i));
             if (itr == _map_dup_newNodeIDs.end())
                 continue;
 
+            // check if a node belongs to the particular fracture group
             auto itr2 = std::find_if(vec_fracture_nodes.begin(), vec_fracture_nodes.end(),
                                      [&](MeshLib::Node const*node) { return node->getID()==e->getNodeIndex(i);});
             if (itr2 == vec_fracture_nodes.end())
                 continue;
+
             e->setNode(i, new_nodes[itr->second]);
         }
     }
