@@ -51,7 +51,7 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
         "    <porous_medium>"
         "        <porous_medium  id=\"0\">"
         "            <permeability>"
-        "                <values>2.e-10 0. 0. 0. 3.e-10 0. 0. 0. 4.0e-10</values>"
+        "              <values>2.e-10 0. 0. 0. 3.e-10 0. 0. 0. 4.0e-10</values>"
         "            </permeability>"
         "            <porosity>"
         "                <type>Constant</type>"
@@ -72,10 +72,12 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
 
     MeshLib::Properties dummy_property;
     auto const& dummy_property_vector =
-                dummy_property.createNewPropertyVector<int>(
-                               "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+        dummy_property.createNewPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
 
-    LiquidFlowMaterialProperties lprop(sub_config, *dummy_property_vector);
+    const bool has_material_ids = false;
+    LiquidFlowMaterialProperties lprop(sub_config, has_material_ids,
+                                       *dummy_property_vector);
 
     ProcessLib::SpatialPosition pos;
     pos.setElementID(0);

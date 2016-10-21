@@ -35,7 +35,7 @@
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
 #include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
-#include "ProcessLib/LiquidFlow/createLiquidFlowProcess.h"
+#include "ProcessLib/LiquidFlow/CreateLiquidFlowProcess.h"
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/SmallDeformationWithLIE/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"

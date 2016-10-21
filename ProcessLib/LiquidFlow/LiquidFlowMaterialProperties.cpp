@@ -16,7 +16,6 @@
 
 #include "BaseLib/reorderVector.h"
 
-#include "MeshLib/Mesh.h"
 #include "MeshLib/PropertyVector.h"
 
 #include "ProcessLib/Parameter/Parameter.h"
@@ -32,8 +31,9 @@ namespace LiquidFlow
 {
 LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
     BaseLib::ConfigTree const& config,
+    bool const has_material_ids,
     MeshLib::PropertyVector<int> const& material_ids)
-    : _material_ids(material_ids)
+    : _has_material_ids(has_material_ids), _material_ids(material_ids)
 {
     DBUG("Reading material properties of liquid flow process.");
 
@@ -82,11 +82,14 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
 
 void LiquidFlowMaterialProperties::setMaterialID(const SpatialPosition& pos)
 {
-    if (_material_ids.empty())
+    if (!_has_material_ids)
     {
-        assert(pos.getElementID().get() < _material_ids.size());
-        _current_material_id = _material_ids[pos.getElementID().get()];
+        _current_material_id = 0;
+        return;
     }
+
+    assert(pos.getElementID().get() < _material_ids.size());
+    _current_material_id = _material_ids[pos.getElementID().get()];
 }
 
 double LiquidFlowMaterialProperties::getLiquidDensity(const double p,

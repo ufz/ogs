@@ -64,6 +64,7 @@ public:
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
         MeshLib::PropertyVector<int> const& material_ids,
+        bool const has_material_ids,
         int const gravitational_axis_id,
         double const gravitational_acceleration,
         BaseLib::ConfigTree const& config);

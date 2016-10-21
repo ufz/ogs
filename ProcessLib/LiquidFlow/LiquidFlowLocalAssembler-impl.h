@@ -121,7 +121,11 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     if (gravitational_axis_id >= 0)
     {
-        local_b.noalias() -=
+        // Note: Since perm, K, is a scalar number in this function,
+        // (gradN)*K*V becomes K*(grad N)*V. With the gravity vector of V,
+        // the simplification of (grad N)*V is the gravitational_axis_id th
+        // column of the transpose of (grad N) multiplied with rho_g.
+        local_b.noalias() +=
             fac * sm.dNdx.transpose().col(gravitational_axis_id) * rho_g;
     }
 }
@@ -139,11 +143,14 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     local_K.noalias() += fac * sm.dNdx.transpose() * perm * sm.dNdx;
     if (gravitational_axis_id >= 0)
     {
-        local_b.noalias() -=
+        // Note: perm * gravity_vector = rho_g * perm.col(gravitational_axis_id)
+        //       i.e the result is the gravitational_axis_id th column of
+        //       perm multiplied with rho_g.
+        local_b.noalias() +=
             fac * rho_g * sm.dNdx.transpose() * perm.col(gravitational_axis_id);
     }
 }
 }  // end of namespace
 }  // end of namespace
 
-#endif  /* OGS_LIQUIDFLOWLOCALASSEMBLER_IMPL_H */
+#endif /* OGS_LIQUIDFLOWLOCALASSEMBLER_IMPL_H */

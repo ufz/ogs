@@ -46,6 +46,7 @@ public:
 
     LiquidFlowMaterialProperties(
         BaseLib::ConfigTree const& config,
+        bool const has_material_ids,
         MeshLib::PropertyVector<int> const& material_ids);
 
     void setMaterialID(const SpatialPosition& pos);
@@ -83,6 +84,9 @@ private:
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> _liquid_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> _viscosity;
 
+    /// A flag to indicate whether the reference member, _material_ids,
+    /// is not assigned.
+    const bool _has_material_ids;
     /** Use porous medium models for different material zones.
      *  Material IDs must be given as mesh element properties.
      */
