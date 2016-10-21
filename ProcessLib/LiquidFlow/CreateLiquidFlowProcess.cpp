@@ -51,33 +51,18 @@ std::unique_ptr<Process> createLiquidFlowProcess(
                                         named_function_caller);
 
     // Get the gravity vector for the Darcy velocity
-    auto const gravity_vector =
-        //! \ogs_file_param_special{process__LIQUID_FLOW__darcy_gravity_vector}
-        config.getConfigParameter<std::vector<double>>("darcy_gravity_vector");
-    assert(gravity_vector.size() == mesh.getDimension());
-
-    int gravity_axis_id = -1;
-    double g = 0;
-    const int size_gravity_vector = static_cast<int>(gravity_vector.size());
-    if (size_gravity_vector > 1)
-    {
-        const int number_non_zeros =
-            std::count(gravity_vector.begin(), gravity_vector.end(), 0.);
-        if (number_non_zeros < size_gravity_vector)
-        {
-            // If found a non-zero entry, to make sure that it is the only one.
-            assert(number_non_zeros == size_gravity_vector - 1);
-            // Find the non-zero term, which contains the gravity acceleration.
-            const auto it =
-                std::find_if(gravity_vector.begin(), gravity_vector.end(),
-                             [](const double& a) { return a != 0.; });
-            if (it != std::end(gravity_vector))
-            {
-                gravity_axis_id = static_cast<int>(it - gravity_vector.begin());
-                g = *it;
-            }
-        }
-    }
+    //! \ogs_file_param{process__LIQUID_FLOW__darcy_gravity}
+    auto const& darcy_g_config = config.getConfigSubtree("darcy_gravity");
+    int gravity_axis_id =
+        //! \ogs_file_param_special{process__LIQUID_FLOW__darcy_gravity_axis_id}
+        darcy_g_config.getConfigParameter<int>("axis_id");
+    assert(gravity_axis_id < static_cast<int>(mesh.getDimension()));
+    const double g =
+        //! \ogs_file_param_special{process__LIQUID_FLOW__darcy_gravity_g}
+        darcy_g_config.getConfigParameter<double>("g");
+    assert(g <= 0.);
+    if (g == 0.)
+        gravity_axis_id = -1;
 
     //! \ogs_file_param{process__LIQUID_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
