@@ -126,6 +126,13 @@ void PostProcessTool::createProperties()
                     name, MeshLib::MeshItemType::Cell, n_dest_comp);
             new_prop->resize(src_prop->size());
         }
+        else
+        {
+            WARN(
+                "Property '%s' cannot be created because its mesh item type is "
+                "not supported.",
+                name.c_str());
+        }
     }
 }
 
@@ -164,6 +171,13 @@ void PostProcessTool::copyProperties()
         else if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Cell)
         {
             std::copy(src_prop->begin(), src_prop->end(), dest_prop->begin());
+        }
+        else
+        {
+            WARN(
+                "Property '%s' cannot be created because its mesh item type is "
+                "not supported.",
+                name.c_str());
         }
     }
 }
