@@ -162,6 +162,9 @@ protected:
     /// connected if they are shared by an element.
     void setNodesConnectedByElements();
 
+    /// Check if all the nonlinear nodes are stored at the end of the node vector
+    void checkNonlinearNodeIDs() const;
+
     std::size_t const _id;
     unsigned _mesh_dimension;
     /// The minimal and maximal edge length over all elements in the mesh
