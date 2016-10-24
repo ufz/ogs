@@ -53,16 +53,15 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     // Get the gravity vector for the Darcy velocity
     //! \ogs_file_param{process__LIQUID_FLOW__darcy_gravity}
     auto const& darcy_g_config = config.getConfigSubtree("darcy_gravity");
-    int gravity_axis_id =
+    const int gravity_axis_id_input =
         //! \ogs_file_param_special{process__LIQUID_FLOW__darcy_gravity_axis_id}
         darcy_g_config.getConfigParameter<int>("axis_id");
-    assert(gravity_axis_id < static_cast<int>(mesh.getDimension()));
+    assert(gravity_axis_id_input < static_cast<int>(mesh.getDimension()));
     const double g =
         //! \ogs_file_param_special{process__LIQUID_FLOW__darcy_gravity_g}
         darcy_g_config.getConfigParameter<double>("g");
-    assert(g <= 0.);
-    if (g == 0.)
-        gravity_axis_id = -1;
+    assert(g >= 0.);
+    const int gravity_axis_id = (g == 0.) ? -1 : gravity_axis_id_input;
 
     //! \ogs_file_param{process__LIQUID_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
