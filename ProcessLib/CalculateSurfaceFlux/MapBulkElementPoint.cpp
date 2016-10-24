@@ -58,6 +58,32 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Hex const& /*hex*/,
     }
 }
 
+MathLib::Point3d getBulkElementPoint(MeshLib::Prism const& /*prism*/,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint2D const& wp)
+{
+    switch (face_id)
+    {
+        case 0:
+            return MathLib::Point3d{
+                std::array<double, 3>{{wp[1], wp[0], -1.0}}};
+        case 1:
+            return MathLib::Point3d{
+                std::array<double, 3>{{wp[0]/2.0 + 0.5, 0.0, wp[1]}}};
+        case 2:
+            return MathLib::Point3d{
+                std::array<double, 3>{{0.5 - wp[0]/2.0, 0.5 + wp[0]/2.0, wp[1]}}};
+        case 3:
+            return MathLib::Point3d{
+                std::array<double, 3>{{0, -wp[0]/2.0 + 0.5, wp[1]}}};
+        case 4:
+            return MathLib::Point3d{
+                std::array<double, 3>{{wp[0], wp[1], 1.0}}};
+        default:
+            OGS_FATAL("Invalid face id '%u' for the prism.", face_id);
+    }
+}
+
 MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
                                      std::size_t const bulk_element_id,
                                      std::size_t const bulk_face_id,
@@ -83,6 +109,12 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
     {
         MeshLib::Hex const& hex(*dynamic_cast<MeshLib::Hex const*>(element));
         return getBulkElementPoint(hex, bulk_face_id, wp);
+    }
+    if (element->getCellType() == MeshLib::CellType::PRISM6)
+    {
+        MeshLib::Prism const& prism(
+            *dynamic_cast<MeshLib::Prism const*>(element));
+        return getBulkElementPoint(prism, bulk_face_id, wp);
     }
     OGS_FATAL("Wrong cell type '%s' or functionality not yet implemented.",
               MeshLib::CellType2String(element->getCellType()).c_str());

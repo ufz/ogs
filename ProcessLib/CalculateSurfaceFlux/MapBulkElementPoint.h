@@ -38,6 +38,13 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Hex const& hex,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint2D const& wp);
 
+/// Maps the given lower dimensional 2d boundary point \c wp of a quad or
+/// triangle element, given in local coordinates of the quad or triangle, to a
+/// 3d point existing on a prism face also in local coordinates.
+MathLib::Point3d getBulkElementPoint(MeshLib::Prism const& prism,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint2D const& wp);
+
 /// Maps the given 1d boundary point \c wp of a boundary element, given in local
 /// coordinates of the boundary element, to 3d point existing on a bulk element
 /// also in local coordinates.
