@@ -25,3 +25,14 @@ AddTest(
     TESTER diff
     DIFF_DATA RiverNetwork-Mapped.gml
 )
+
+AddTest(
+    NAME postLIE
+    PATH LIE/PostProcessing
+    EXECUTABLE postLIE
+    EXECUTABLE_ARGS -i single_joint_pcs_0.pvd -o ${CMAKE_BINARY_DIR}/Tests/Data/LIE/PostProcessing/post_single_joint_pcs_0.pvd
+    ABSTOL 1e-14 RELTOL 1e-14
+    TESTER vtkdiff
+    DIFF_DATA
+    expected_post_single_joint_pcs_0_ts_1_t_1.000000.vtu post_single_joint_pcs_0_ts_1_t_1.000000.vtu u u
+)
