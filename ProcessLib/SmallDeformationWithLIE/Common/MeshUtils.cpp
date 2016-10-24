@@ -8,11 +8,56 @@
 
 #include "MeshUtils.h"
 
+#include "MeshLib/MeshSearch/NodeSearch.h"
 
 namespace ProcessLib
 {
 namespace SmallDeformationWithLIE
 {
+
+namespace
+{
+
+// A class to check whether a node is located on a crack tip with
+// the following conditions:
+// - the number of connected fracture elements is one
+// - the node is not located on a domain boundary
+class IsCrackTip
+{
+public:
+    explicit IsCrackTip(MeshLib::Mesh const& mesh)
+        : _fracture_element_dim(mesh.getDimension()-1)
+    {
+        _is_internal_node.resize(mesh.getNumberOfNodes(), true);
+
+        MeshLib::NodeSearch nodeSearch(mesh);
+        nodeSearch.searchBoundaryNodes();
+        for (auto i : nodeSearch.getSearchedNodeIDs())
+            _is_internal_node[i] = false;
+    }
+
+    bool operator()(MeshLib::Node const& node) const
+    {
+        if (!_is_internal_node[node.getID()])
+            return false;
+
+        unsigned n_connected_fracture_elements = 0;
+        for (MeshLib::Element const* e : node.getElements())
+            if (e->getDimension() == _fracture_element_dim)
+                n_connected_fracture_elements++;
+        assert(n_connected_fracture_elements>0);
+
+        return (n_connected_fracture_elements == 1);
+    }
+
+private:
+    unsigned const _fracture_element_dim;
+    std::vector<bool> _is_internal_node;
+};
+
+
+} // no named namespace
+
 
 void getFractureMatrixDataInMesh(
         MeshLib::Mesh const& mesh,
@@ -22,6 +67,8 @@ void getFractureMatrixDataInMesh(
         std::vector<MeshLib::Node*>& vec_fracture_nodes
         )
 {
+    IsCrackTip isCrackTip(mesh);
+
     // get vectors of matrix elements and fracture elements
     vec_matrix_elements.reserve(mesh.getNumberOfElements());
     for (MeshLib::Element* e : mesh.getElements())
@@ -39,6 +86,8 @@ void getFractureMatrixDataInMesh(
     {
         for (unsigned i=0; i<e->getNumberOfNodes(); i++)
         {
+            if (isCrackTip(*e->getNode(i)))
+                continue;
             vec_fracture_nodes.push_back(const_cast<MeshLib::Node*>(e->getNode(i)));
         }
     }
@@ -58,6 +107,8 @@ void getFractureMatrixDataInMesh(
         for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
         {
             MeshLib::Node const* node = e->getNode(i);
+            if (isCrackTip(*node))
+                continue;
             for (unsigned j=0; j<node->getNumberOfElements(); j++)
             {
                 // only matrix elements
