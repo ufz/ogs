@@ -81,6 +81,10 @@ add_executable(swapNodeCoordinateAxes swapNodeCoordinateAxes.cpp)
 target_link_libraries(swapNodeCoordinateAxes MeshLib)
 set_target_properties(swapNodeCoordinateAxes PROPERTIES FOLDER Utilities)
 
+add_executable(createQuadraticeMesh createQuadraticeMesh.cpp )
+target_link_libraries(createQuadraticeMesh MeshLib)
+set_target_properties(createQuadraticeMesh PROPERTIES FOLDER Utilities)
+
 ####################
 ### Installation ###
 ####################
@@ -90,6 +94,7 @@ install(TARGETS
     checkMesh
     CreateBoundaryConditionsAlongPolylines
     createLayeredMeshFromRasters
+    createQuadraticeMesh
     editMaterialID
     ExtractSurface
     MapGeometryToMeshSurface
