@@ -87,13 +87,13 @@ public:
         }
 
         x = _solver.solveWithGuess(b, x);
+        INFO("\t iteration: %d/%ld", _solver.iterations(), opt.max_iterations);
+        INFO("\t residual: %e\n", _solver.error());
+
         if(_solver.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solve");
             return false;
         }
-
-        INFO("\t iteration: %d/%ld", _solver.iterations(), opt.max_iterations);
-        INFO("\t residual: %e\n", _solver.error());
 
         return true;
     }
