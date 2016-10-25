@@ -34,8 +34,8 @@ inline void sort_unique(std::vector<T> &vec)
 
 PostProcessTool::PostProcessTool(
     MeshLib::Mesh const& org_mesh,
-    std::vector<MeshLib::Node*> const& vec_fracture_nodes,
-    std::vector<MeshLib::Element*> const& vec_fracutre_matrix_elements)
+    std::vector<std::vector<MeshLib::Node*>> const& vec_vec_fracture_nodes,
+    std::vector<std::vector<MeshLib::Element*>> const& vec_vec_fracutre_matrix_elements)
     :_org_mesh(org_mesh)
 {
     if (!org_mesh.getProperties().hasPropertyVector("displacement")
@@ -52,43 +52,52 @@ PostProcessTool::PostProcessTool(
         MeshLib::copyElementVector(org_mesh.getElements(), new_nodes));
 
     // duplicate fracture nodes
-    for (auto const* org_node : vec_fracture_nodes)
+    for (auto const& vec_fracture_nodes : vec_vec_fracture_nodes)
     {
-        auto duplicated_node = new MeshLib::Node(org_node->getCoords(), new_nodes.size());
-        new_nodes.push_back(duplicated_node);
-        _map_dup_newNodeIDs[org_node->getID()] = duplicated_node->getID();
+        for (auto const* org_node : vec_fracture_nodes)
+        {
+            auto duplicated_node = new MeshLib::Node(org_node->getCoords(), new_nodes.size());
+            new_nodes.push_back(duplicated_node);
+            assert(_map_dup_newNodeIDs.count(org_node->getID())==0);
+            _map_dup_newNodeIDs[org_node->getID()] = duplicated_node->getID();
+        }
     }
 
     // split elements using the new duplicated nodes
-    auto prop_levelset = org_mesh.getProperties().getPropertyVector<double>("levelset1");
-    for (auto const* org_e : vec_fracutre_matrix_elements)
+    for (unsigned fracture_id=0; fracture_id<=vec_vec_fracutre_matrix_elements.size(); fracture_id++)
     {
-        // only matrix elements
-        if (org_e->getDimension() != org_mesh.getDimension())
-            continue;
-
-        auto const eid = org_e->getID();
-
-        // keep original if the element has levelset=0
-        if ((*prop_levelset)[eid] == 0)
-            continue;
-
-        // replace fracture nodes with duplicated ones
-        MeshLib::Element* e = new_eles[eid];
-        for (unsigned i=0; i<e->getNumberOfNodes(); i++)
+        auto const& vec_fracutre_matrix_elements = vec_vec_fracutre_matrix_elements[fracture_id];
+        auto const& vec_fracture_nodes = vec_vec_fracture_nodes[fracture_id];
+        auto prop_levelset = org_mesh.getProperties().getPropertyVector<double>("levelset" + std::to_string(fracture_id+1));
+        for (auto const* org_e : vec_fracutre_matrix_elements)
         {
-            // only fracture nodes
-            auto itr = _map_dup_newNodeIDs.find(e->getNodeIndex(i));
-            if (itr == _map_dup_newNodeIDs.end())
+            // only matrix elements
+            if (org_e->getDimension() != org_mesh.getDimension())
                 continue;
 
-            // check if a node belongs to the particular fracture group
-            auto itr2 = std::find_if(vec_fracture_nodes.begin(), vec_fracture_nodes.end(),
-                                     [&](MeshLib::Node const*node) { return node->getID()==e->getNodeIndex(i);});
-            if (itr2 == vec_fracture_nodes.end())
+            auto const eid = org_e->getID();
+
+            // keep original if the element has levelset=0
+            if ((*prop_levelset)[eid] == 0)
                 continue;
 
-            e->setNode(i, new_nodes[itr->second]);
+            // replace fracture nodes with duplicated ones
+            MeshLib::Element* e = new_eles[eid];
+            for (unsigned i=0; i<e->getNumberOfNodes(); i++)
+            {
+                // only fracture nodes
+                auto itr = _map_dup_newNodeIDs.find(e->getNodeIndex(i));
+                if (itr == _map_dup_newNodeIDs.end())
+                    continue;
+
+                // check if a node belongs to the particular fracture group
+                auto itr2 = std::find_if(vec_fracture_nodes.begin(), vec_fracture_nodes.end(),
+                                         [&](MeshLib::Node const*node) { return node->getID()==e->getNodeIndex(i);});
+                if (itr2 == vec_fracture_nodes.end())
+                    continue;
+
+                e->setNode(i, new_nodes[itr->second]);
+            }
         }
     }
 
@@ -98,7 +107,7 @@ PostProcessTool::PostProcessTool(
     createProperties<double>();
     copyProperties<int>();
     copyProperties<double>();
-    calculateTotalDisplacement();
+    calculateTotalDisplacement(vec_vec_fracture_nodes.size());
 }
 
 template <typename T>
@@ -185,28 +194,11 @@ void PostProcessTool::copyProperties()
     }
 }
 
-void PostProcessTool::calculateTotalDisplacement()
+void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures)
 {
-    // nodal value of levelset
-    std::vector<double> nodal_levelset(_output_mesh->getNodes().size(), 0.0);
-    auto const& ele_levelset =  *_output_mesh->getProperties().getPropertyVector<double>("levelset1");
-    for (MeshLib::Element const* e : _output_mesh->getElements())
-    {
-        if (e->getDimension() != _output_mesh->getDimension())
-            continue;
-        const double e_levelset = ele_levelset[e->getID()];
-        if (e_levelset == 0)
-            continue;
-
-        for (unsigned i=0; i<e->getNumberOfNodes(); i++)
-            nodal_levelset[e->getNodeIndex(i)] = e_levelset;
-    }
-
-    // total displacements
     auto const& u =  *_output_mesh->getProperties().getPropertyVector<double>("displacement");
     auto const n_u_comp = u.getNumberOfComponents();
     assert(u.size() == _output_mesh->getNodes().size() * 3);
-    auto const& g =  *_output_mesh->getProperties().getPropertyVector<double>("displacement_jump1");
     auto& total_u =
         *_output_mesh->getProperties().createNewPropertyVector<double>(
             "u", MeshLib::MeshItemType::Node, n_u_comp);
@@ -214,8 +206,35 @@ void PostProcessTool::calculateTotalDisplacement()
     for (unsigned i=0; i<_output_mesh->getNodes().size(); i++)
     {
         for (unsigned j=0; j<n_u_comp; j++)
-            total_u[i*n_u_comp+j] = u[i*n_u_comp+j] + nodal_levelset[i] * g[i*n_u_comp+j];
+            total_u[i*n_u_comp+j] = u[i*n_u_comp+j];
     }
+
+    for (unsigned fracture_id=0; fracture_id<n_fractures; fracture_id++)
+    {
+        // nodal value of levelset
+        std::vector<double> nodal_levelset(_output_mesh->getNodes().size(), 0.0);
+        auto const& ele_levelset =  *_output_mesh->getProperties().getPropertyVector<double>("levelset" + std::to_string(fracture_id+1));
+        for (MeshLib::Element const* e : _output_mesh->getElements())
+        {
+            if (e->getDimension() != _output_mesh->getDimension())
+                continue;
+            const double e_levelset = ele_levelset[e->getID()];
+            if (e_levelset == 0)
+                continue;
+
+            for (unsigned i=0; i<e->getNumberOfNodes(); i++)
+                nodal_levelset[e->getNodeIndex(i)] = e_levelset;
+        }
+
+        // update total displacements
+        auto const& g =  *_output_mesh->getProperties().getPropertyVector<double>("displacement_jump" + std::to_string(fracture_id+1));
+        for (unsigned i=0; i<_output_mesh->getNodes().size(); i++)
+        {
+            for (unsigned j=0; j<n_u_comp; j++)
+                total_u[i*n_u_comp+j] += nodal_levelset[i] * g[i*n_u_comp+j];
+        }
+    }
+
 }
 
 }  // namespace SmallDeformationWithLIE
