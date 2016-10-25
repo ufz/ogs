@@ -107,6 +107,12 @@ public:
         std::vector<std::size_t> const& exclude_elem_ids,
         std::vector<std::size_t> const& exclude_node_ids) const;
 
+    /** copy all PropertyVector objects stored in the (internal) map but
+     * PropertyVector objects with the given MeshItemType are excluded.
+     */
+    Properties excludeCopyProperties(
+        std::vector<MeshItemType> const& exclude_mesh_item_types) const;
+
     Properties() {}
 
     Properties(Properties const& properties);
