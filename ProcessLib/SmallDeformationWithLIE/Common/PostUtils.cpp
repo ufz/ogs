@@ -68,7 +68,8 @@ PostProcessTool::PostProcessTool(
     {
         auto const& vec_fracutre_matrix_elements = vec_vec_fracutre_matrix_elements[fracture_id];
         auto const& vec_fracture_nodes = vec_vec_fracture_nodes[fracture_id];
-        auto prop_levelset = org_mesh.getProperties().getPropertyVector<double>("levelset" + std::to_string(fracture_id+1));
+        auto prop_levelset = org_mesh.getProperties().getPropertyVector<double>(
+            "levelset" + std::to_string(fracture_id + 1));
         for (auto const* org_e : vec_fracutre_matrix_elements)
         {
             // only matrix elements
@@ -91,8 +92,11 @@ PostProcessTool::PostProcessTool(
                     continue;
 
                 // check if a node belongs to the particular fracture group
-                auto itr2 = std::find_if(vec_fracture_nodes.begin(), vec_fracture_nodes.end(),
-                                         [&](MeshLib::Node const*node) { return node->getID()==e->getNodeIndex(i);});
+                auto itr2 = std::find_if(
+                    vec_fracture_nodes.begin(), vec_fracture_nodes.end(),
+                    [&](MeshLib::Node const* node) {
+                        return node->getID() == e->getNodeIndex(i);
+                    });
                 if (itr2 == vec_fracture_nodes.end())
                     continue;
 
@@ -177,7 +181,8 @@ void PostProcessTool::copyProperties()
             for (auto itr : _map_dup_newNodeIDs)
             {
                 for (unsigned j=0; j<n_dest_comp; j++)
-                    (*dest_prop)[itr.second*n_dest_comp + j] = (*dest_prop)[itr.first*n_dest_comp + j];
+                    (*dest_prop)[itr.second * n_dest_comp + j] =
+                        (*dest_prop)[itr.first * n_dest_comp + j];
             }
         }
         else if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Cell)
@@ -213,7 +218,9 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures)
     {
         // nodal value of levelset
         std::vector<double> nodal_levelset(_output_mesh->getNodes().size(), 0.0);
-        auto const& ele_levelset =  *_output_mesh->getProperties().getPropertyVector<double>("levelset" + std::to_string(fracture_id+1));
+        auto const& ele_levelset =
+            *_output_mesh->getProperties().getPropertyVector<double>(
+                "levelset" + std::to_string(fracture_id + 1));
         for (MeshLib::Element const* e : _output_mesh->getElements())
         {
             if (e->getDimension() != _output_mesh->getDimension())
@@ -227,8 +234,10 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures)
         }
 
         // update total displacements
-        auto const& g =  *_output_mesh->getProperties().getPropertyVector<double>("displacement_jump" + std::to_string(fracture_id+1));
-        for (unsigned i=0; i<_output_mesh->getNodes().size(); i++)
+        auto const& g =
+            *_output_mesh->getProperties().getPropertyVector<double>(
+                "displacement_jump" + std::to_string(fracture_id + 1));
+        for (unsigned i = 0; i < _output_mesh->getNodes().size(); i++)
         {
             for (unsigned j=0; j<n_u_comp; j++)
                 total_u[i*n_u_comp+j] += nodal_levelset[i] * g[i*n_u_comp+j];
