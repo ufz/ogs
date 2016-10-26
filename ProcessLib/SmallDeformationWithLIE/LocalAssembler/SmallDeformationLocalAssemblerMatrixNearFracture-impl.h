@@ -133,7 +133,7 @@ assembleWithJacobian(
     //     |b(g2)|
     //
     //     |J(u,u)  J(u,g1)  J(u,g2) |
-    // J = |J(g1,u) J(g1,g1) J(g2,g2)|
+    // J = |J(g1,u) J(g1,g1) J(g1,g2)|
     //     |J(g2,u) J(g2,g1) J(g2,g2)|
     //--------------------------------------------------------------------------------------
     auto local_b_u = local_b.segment<N_DOF_PER_VAR>(0);
