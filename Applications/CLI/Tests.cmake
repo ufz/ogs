@@ -574,6 +574,52 @@ if(NOT OGS_USE_MPI)
         single_joint_inside_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_inside_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1
     )
 
+    # Liquid flow
+    AddTest(
+        NAME LiquidFlow_LineDirichletNeumannBC
+        PATH Parabolic/LiquidFlow/LineDirichletNeumannBC
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_dirichlet_neumannBC.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-8 RELTOL 1e-8
+        DIFF_DATA
+        sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
+    )
+    AddTest(
+        NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
+        PATH Parabolic/LiquidFlow/PressureBCatCornerOfAnisotropicSquare
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS pressureBC_at_corner_of_anisotropic_square.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-8 RELTOL 1e-8
+        DIFF_DATA
+        mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure
+    )
+    AddTest(
+        NAME LiquidFlow_GravityDriven
+        PATH Parabolic/LiquidFlow/GravityDriven
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS gravity_driven.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-8 RELTOL 1e-8
+        DIFF_DATA
+        mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
+    )
+    AddTest(
+        NAME LiquidFlow_AxisymTheis
+        PATH Parabolic/LiquidFlow/AxiSymTheis
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS axisym_theis.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-8 RELTOL 1e-8
+        DIFF_DATA
+        axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure
+    )
+
 else()
     # MPI groundwater flow tests
     AddTest(
@@ -782,4 +828,51 @@ else()
         tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000_0.vtu v_mass_frac v_mass_frac
 #        tes_zeolite_discharge_large_ts_28_t_1_0.vtu solid_density solid_density
     )
+
+    # Liquid flow
+    AddTest(
+        NAME LiquidFlow_LineDirichletNeumannBC
+        PATH Parabolic/LiquidFlow/LineDirichletNeumannBC
+        EXECUTABLE_ARGS line_dirichlet_neumannBC.prj
+        WRAPPER mpirun
+        WRAPPER_ARGS -np 1
+        TESTER vtkdiff
+        ABSTOL 1e-8 RELTOL 1e-8
+        DIFF_DATA
+        sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
+    )
+    AddTest(
+        NAME LiquidFlow_GravityDriven
+        PATH Parabolic/LiquidFlow/GravityDriven
+        EXECUTABLE_ARGS gravity_driven.prj
+        WRAPPER mpirun
+        WRAPPER_ARGS -np 1
+        TESTER vtkdiff
+        ABSTOL 1e-8 RELTOL 1e-8
+        DIFF_DATA
+        mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
+    )
+    AddTest(
+        NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
+        PATH Parabolic/LiquidFlow/PressureBCatCornerOfAnisotropicSquare
+        EXECUTABLE_ARGS pressureBC_at_corner_of_anisotropic_square.prj
+        WRAPPER mpirun
+        WRAPPER_ARGS -np 1
+        TESTER vtkdiff
+        ABSTOL 1e-8 RELTOL 1e-8
+        DIFF_DATA
+        mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure
+    )
+    AddTest(
+        NAME LiquidFlow_AxisymTheis
+        PATH Parabolic/LiquidFlow/AxiSymTheis
+        EXECUTABLE_ARGS axisym_theis.prj
+        WRAPPER mpirun
+        WRAPPER_ARGS -np 1
+        TESTER vtkdiff
+        ABSTOL 1e-8 RELTOL 1e-8
+        DIFF_DATA
+        axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure
+    )
+
 endif()

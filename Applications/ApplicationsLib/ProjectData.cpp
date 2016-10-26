@@ -35,6 +35,7 @@
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
 #include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
+#include "ProcessLib/LiquidFlow/CreateLiquidFlowProcess.h"
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/SmallDeformationWithLIE/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
@@ -291,6 +292,12 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config, project_directory, output_directory);
+        }
+        else if (type == "LIQUID_FLOW")
+        {
+            process = ProcessLib::LiquidFlow::createLiquidFlowProcess(
+                *_mesh_vec[0], std::move(jacobian_assembler), _process_variables,
+                _parameters, integration_order, process_config);
         }
         else if (type == "TES")
         {
