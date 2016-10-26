@@ -72,6 +72,26 @@ Properties Properties::excludeCopyProperties(
     return exclude_copy;
 }
 
+Properties Properties::excludeCopyProperties(
+    std::vector<MeshItemType> const& exclude_mesh_item_types) const
+{
+    Properties new_properties;
+    for (auto property_vector : _properties) {
+        if (std::find(exclude_mesh_item_types.begin(),
+                      exclude_mesh_item_types.end(),
+                      property_vector.second->getMeshItemType()) !=
+            exclude_mesh_item_types.end())
+            continue;
+
+        std::vector<std::size_t> const exclude_positions;
+        new_properties._properties.insert(
+            std::make_pair(property_vector.first,
+            property_vector.second->clone(exclude_positions))
+        );
+    }
+    return new_properties;
+}
+
 Properties::Properties(Properties const& properties)
     : _properties(properties._properties)
 {
