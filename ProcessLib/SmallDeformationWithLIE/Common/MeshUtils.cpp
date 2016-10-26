@@ -99,11 +99,11 @@ void getFractureMatrixDataInMesh(
     {
         const auto frac_mat_id = vec_fracture_mat_IDs[frac_id];
         std::vector<MeshLib::Element*> &vec_elements = vec_fracture_elements[frac_id];
-        for (MeshLib::Element* e : all_fracture_elements)
-        {
-            if ((*opt_material_ids)[e->getID()] == frac_mat_id)
-                vec_elements.push_back(e);
-        }
+        std::copy_if(all_fracture_elements.begin(), all_fracture_elements.end(),
+                     std::back_inserter(vec_elements),
+                     [&](MeshLib::Element* e) {
+                         return (*opt_material_ids)[e->getID()] == frac_mat_id;
+                     });
         DBUG("-> found %d elements on the fracture %d", vec_elements.size(), frac_id);
     }
 
@@ -158,7 +158,8 @@ void getFractureMatrixDataInMesh(
             });
 
         // second, append fracture elements
-        vec_ele.insert(vec_ele.end(), fracture_elements.begin(), fracture_elements.end());
+        std::copy(fracture_elements.begin(), fracture_elements.end(),
+                  std::back_inserter(vec_ele));
 
         vec_fracture_matrix_elements.push_back(vec_ele);
     }
