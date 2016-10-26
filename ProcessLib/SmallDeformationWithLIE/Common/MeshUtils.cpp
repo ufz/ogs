@@ -8,6 +8,7 @@
 
 #include "MeshUtils.h"
 
+#include "BaseLib/makeVectorUnique.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 
 namespace ProcessLib
@@ -89,10 +90,7 @@ void getFractureMatrixDataInMesh(
         OGS_FATAL("MaterialIDs propery vector not found in a mesh");
     for (MeshLib::Element* e : all_fracture_elements)
         vec_fracture_mat_IDs.push_back((*opt_material_ids)[e->getID()]);
-    std::sort(vec_fracture_mat_IDs.begin(), vec_fracture_mat_IDs.end());
-    vec_fracture_mat_IDs.erase(
-        std::unique(vec_fracture_mat_IDs.begin(), vec_fracture_mat_IDs.end()),
-        vec_fracture_mat_IDs.end());
+    BaseLib::makeVectorUnique(vec_fracture_mat_IDs);
     DBUG("-> found %d fracture material groups", vec_fracture_mat_IDs.size());
 
     // create a vector of fracture elements for each group
@@ -123,10 +121,11 @@ void getFractureMatrixDataInMesh(
                 vec_nodes.push_back(const_cast<MeshLib::Node*>(e->getNode(i)));
             }
         }
-        std::sort(vec_nodes.begin(), vec_nodes.end(),
-            [](MeshLib::Node* node1, MeshLib::Node* node2) { return (node1->getID() < node2->getID()); }
-            );
-        vec_nodes.erase(std::unique(vec_nodes.begin(), vec_nodes.end()), vec_nodes.end());
+        BaseLib::makeVectorUnique(
+            vec_nodes,
+            [](MeshLib::Node* node1, MeshLib::Node* node2) {
+                return node1->getID() < node2->getID();
+            });
         DBUG("-> found %d nodes on the fracture %d", vec_nodes.size(), frac_id);
     }
 
@@ -152,10 +151,11 @@ void getFractureMatrixDataInMesh(
                 }
             }
         }
-        std::sort(vec_ele.begin(), vec_ele.end(),
-            [](MeshLib::Element* p1, MeshLib::Element* p2) { return (p1->getID() < p2->getID()); }
-            );
-        vec_ele.erase(std::unique(vec_ele.begin(), vec_ele.end()), vec_ele.end());
+        BaseLib::makeVectorUnique(
+            vec_ele,
+            [](MeshLib::Element* e1, MeshLib::Element* e2) {
+                return e1->getID() < e2->getID();
+            });
 
         // second, append fracture elements
         vec_ele.insert(vec_ele.end(), fracture_elements.begin(), fracture_elements.end());
