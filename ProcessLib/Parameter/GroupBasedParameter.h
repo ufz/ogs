@@ -37,10 +37,12 @@ struct GroupBasedParameter final
      * @param property    a property vector of index for mesh items
      * @param vec_values  a vector of values for each index
      */
-    GroupBasedParameter(
-        MeshLib::PropertyVector<int> const& property,
-        std::vector<std::vector<double>> const& vec_values)
-        : _property_index(property), _vec_values(vec_values)
+    GroupBasedParameter(std::string const& name_,
+                        MeshLib::PropertyVector<int> const& property,
+                        std::vector<std::vector<double>> const& vec_values)
+        : Parameter<T>(name_),
+          _property_index(property),
+          _vec_values(vec_values)
     {
     }
 
@@ -82,9 +84,10 @@ private:
     std::vector<std::vector<T>> const _vec_values;
 };
 
-
 std::unique_ptr<ParameterBase> createGroupBasedParameter(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
+    std::string const& name,
+    BaseLib::ConfigTree const& config,
+    MeshLib::Mesh const& mesh);
 
 }  // ProcessLib
 

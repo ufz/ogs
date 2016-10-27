@@ -36,36 +36,31 @@ std::unique_ptr<ParameterBase> createParameter(
     if (type == "Constant")
     {
         INFO("ConstantParameter: %s", name.c_str());
-        auto param = createConstantParameter(config);
-        param->name = name;
+        auto param = createConstantParameter(name, config);
         return param;
     }
     else if (type == "CurveScaled")
     {
         INFO("CurveScaledParameter: %s", name.c_str());
-        auto param = createCurveScaledParameter(config, curves);
-        param->name = name;
+        auto param = createCurveScaledParameter(name, config, curves);
         return param;
     }
     else if (type == "Group")
     {
         INFO("GroupBasedParameter: %s", name.c_str());
-        auto param = createGroupBasedParameter(config, *meshes.front());
-        param->name = name;
+        auto param = createGroupBasedParameter(name, config, *meshes.front());
         return param;
     }
     else if (type == "MeshElement")
     {
         INFO("MeshElementParameter: %s", name.c_str());
-        auto param = createMeshElementParameter(config, *meshes.front());
-        param->name = name;
+        auto param = createMeshElementParameter(name, config, *meshes.front());
         return param;
     }
     else if (type == "MeshNode")
     {
         INFO("MeshElementParameter: %s", name.c_str());
-        auto param = createMeshNodeParameter(config, *meshes.front());
-        param->name = name;
+        auto param = createMeshNodeParameter(name, config, *meshes.front());
         return param;
     }
     else

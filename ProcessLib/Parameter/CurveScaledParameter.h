@@ -19,10 +19,10 @@ namespace ProcessLib
 {
 template <typename T>
 struct CurveScaledParameter final : public Parameter<T> {
-    CurveScaledParameter(MathLib::PiecewiseLinearInterpolation const& curve,
+    CurveScaledParameter(std::string const& name_,
+                         MathLib::PiecewiseLinearInterpolation const& curve,
                          std::string const& parameter_name)
-        : _curve(curve),
-          _parameter_name(parameter_name)
+        : Parameter<T>(name_), _curve(curve), _parameter_name(parameter_name)
     {
     }
 
@@ -63,6 +63,7 @@ private:
 };
 
 std::unique_ptr<ParameterBase> createCurveScaledParameter(
+    std::string const& name,
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&

@@ -15,7 +15,8 @@
 namespace ProcessLib
 {
 std::unique_ptr<ParameterBase> createMeshNodeParameter(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
+    std::string const& name, BaseLib::ConfigTree const& config,
+    MeshLib::Mesh const& mesh)
 {
     //! \ogs_file_param{parameter__type}
     config.checkConfigParameter("type", "MeshNode");
@@ -42,7 +43,7 @@ std::unique_ptr<ParameterBase> createMeshNodeParameter(
     }
 
     return std::unique_ptr<ParameterBase>(
-        new MeshNodeParameter<double>(*property));
+        new MeshNodeParameter<double>(name, *property));
 }
 
 }  // ProcessLib

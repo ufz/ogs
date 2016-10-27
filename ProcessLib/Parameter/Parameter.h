@@ -37,6 +37,8 @@ namespace ProcessLib
 /// Its property name helps addressing the right parameter.
 struct ParameterBase
 {
+    ParameterBase(std::string const& name_) : name(name_) {}
+
     virtual ~ParameterBase() = default;
 
     virtual bool isTimeDependent() const = 0;
@@ -49,7 +51,7 @@ struct ParameterBase
     {
     }
 
-    std::string name;
+    std::string const name;
 };
 
 /*! A Parameter is a function \f$ (t, x) \mapsto f(t, x) \in T^n \f$.
@@ -61,6 +63,8 @@ struct ParameterBase
 template <typename T>
 struct Parameter : public ParameterBase
 {
+    Parameter(std::string const& name_) : ParameterBase(name_) {}
+
     virtual ~Parameter() = default;
 
     //! Returns the number of components this Parameter has at every position and

@@ -19,11 +19,16 @@ template <typename T>
 struct ConstantParameter final : public Parameter<T>
 {
     /// Construction with single value.
-    explicit ConstantParameter(T const& value) : _values({value}) {}
+    explicit ConstantParameter(std::string const& name_, T const& value)
+        : Parameter<T>(name_), _values({value})
+    {
+    }
 
     /// Construction with a tuple.
     /// The given tuple must be non-empty.
-    explicit ConstantParameter(std::vector<T> const& values) : _values(values)
+    explicit ConstantParameter(std::string const& name_,
+                               std::vector<T> const& values)
+        : Parameter<T>(name_), _values(values)
     {
         assert(!values.empty());
     }
@@ -46,7 +51,7 @@ private:
 };
 
 std::unique_ptr<ParameterBase> createConstantParameter(
-    BaseLib::ConfigTree const& config);
+    std::string const& name, BaseLib::ConfigTree const& config);
 
 }  // ProcessLib
 
