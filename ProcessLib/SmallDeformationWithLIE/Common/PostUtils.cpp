@@ -58,7 +58,8 @@ PostProcessTool::PostProcessTool(
         {
             auto duplicated_node = new MeshLib::Node(org_node->getCoords(), new_nodes.size());
             new_nodes.push_back(duplicated_node);
-            assert(_map_dup_newNodeIDs.count(org_node->getID())==0);
+            if (_map_dup_newNodeIDs.count(org_node->getID())>0)
+                OGS_FATAL("Intersection of fractures is not supported");
             _map_dup_newNodeIDs[org_node->getID()] = duplicated_node->getID();
         }
     }
