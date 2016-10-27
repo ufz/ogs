@@ -35,7 +35,7 @@ inline void sort_unique(std::vector<T> &vec)
 PostProcessTool::PostProcessTool(
     MeshLib::Mesh const& org_mesh,
     std::vector<std::vector<MeshLib::Node*>> const& vec_vec_fracture_nodes,
-    std::vector<std::vector<MeshLib::Element*>> const& vec_vec_fracutre_matrix_elements)
+    std::vector<std::vector<MeshLib::Element*>> const& vec_vec_fracture_matrix_elements)
     :_org_mesh(org_mesh)
 {
     if (!org_mesh.getProperties().hasPropertyVector("displacement")
@@ -65,13 +65,13 @@ PostProcessTool::PostProcessTool(
     }
 
     // split elements using the new duplicated nodes
-    for (unsigned fracture_id=0; fracture_id<=vec_vec_fracutre_matrix_elements.size(); fracture_id++)
+    for (unsigned fracture_id=0; fracture_id<=vec_vec_fracture_matrix_elements.size(); fracture_id++)
     {
-        auto const& vec_fracutre_matrix_elements = vec_vec_fracutre_matrix_elements[fracture_id];
+        auto const& vec_fracture_matrix_elements = vec_vec_fracture_matrix_elements[fracture_id];
         auto const& vec_fracture_nodes = vec_vec_fracture_nodes[fracture_id];
         auto prop_levelset = org_mesh.getProperties().getPropertyVector<double>(
             "levelset" + std::to_string(fracture_id + 1));
-        for (auto const* org_e : vec_fracutre_matrix_elements)
+        for (auto const* org_e : vec_fracture_matrix_elements)
         {
             // only matrix elements
             if (org_e->getDimension() != org_mesh.getDimension())
