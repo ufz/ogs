@@ -39,6 +39,7 @@ struct MechanicsBase
     /// createMaterialStateVariables().
     struct MaterialStateVariables
     {
+        virtual std::unique_ptr<MaterialStateVariables> clone() = 0;
         virtual ~MaterialStateVariables() = default;
         virtual void pushBackState() = 0;
     };

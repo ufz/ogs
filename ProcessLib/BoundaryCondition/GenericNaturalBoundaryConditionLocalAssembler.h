@@ -49,7 +49,10 @@ public:
 
 protected:
     IntegrationMethod const _integration_method;
-    std::vector<typename ShapeMatricesType::ShapeMatrices> const _shape_matrices;
+    std::vector<typename ShapeMatricesType::ShapeMatrices,
+                Eigen::aligned_allocator<
+                    typename ShapeMatricesType::ShapeMatrices>> const
+        _shape_matrices;
 };
 
 }  // ProcessLib

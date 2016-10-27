@@ -32,11 +32,12 @@
 
 namespace
 {
-template<typename ShapeMatrices>
+template <typename ShapeMatrices>
 void interpolateNodalValuesToIntegrationPoints(
-        std::vector<double> const& local_nodal_values,
-        std::vector<ShapeMatrices> const& shape_matrices,
-        std::vector<double>& interpolated_values)
+    std::vector<double> const& local_nodal_values,
+    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>> const&
+        shape_matrices,
+    std::vector<double>& interpolated_values)
 {
     for (unsigned ip=0; ip<shape_matrices.size(); ++ip)
     {
@@ -116,7 +117,10 @@ public:
     }
 
 private:
-    std::vector<ShapeMatrices> _shape_matrices;
+    std::vector<
+        typename ShapeMatricesType::ShapeMatrices,
+        Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
+        _shape_matrices;
     std::vector<double> _int_pt_values;
 };
 

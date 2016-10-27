@@ -31,6 +31,8 @@
 template <typename BMatricesType, int DisplacementDim>
 struct IntegrationPointData final
 {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     explicit IntegrationPointData(
         MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material)
         : _solid_material(solid_material),
@@ -39,9 +41,22 @@ struct IntegrationPointData final
     {
     }
 
-#if defined(_MSC_VER) && _MSC_VER < 1900
-    // The default generated move-ctor is correctly generated for other
-    // compilers.
+    explicit IntegrationPointData(IntegrationPointData const& other)
+        : _b_matrices(other._b_matrices),
+          _sigma(other._sigma),
+          _sigma_prev(other._sigma_prev),
+          _eps(other._eps),
+          _eps_prev(other._eps_prev),
+          _solid_material(other._solid_material),
+          _material_state_variables(other._material_state_variables->clone()),
+          _C(other._C),
+          _detJ(other._detJ),
+          _integralMeasure(other._integralMeasure)
+    {
+    }
+
+    ~IntegrationPointData() = default;
+
     explicit IntegrationPointData(IntegrationPointData&& other)
         : _b_matrices(std::move(other._b_matrices)),
           _sigma(std::move(other._sigma)),
@@ -55,7 +70,6 @@ struct IntegrationPointData final
           _integralMeasure(other._integralMeasure)
     {
     }
-#endif  // _MSC_VER
 
     typename BMatricesType::BMatrixType _b_matrices;
     typename BMatricesType::KelvinVectorType _sigma, _sigma_prev;
@@ -88,7 +102,7 @@ namespace SmallDeformation
 template <typename ShapeMatrixType>
 struct SecondaryData
 {
-    std::vector<ShapeMatrixType> N;
+    std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N;
 };
 
 struct SmallDeformationLocalAssemblerInterface
@@ -337,7 +351,10 @@ private:
 
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
-    std::vector<IntegrationPointData<BMatricesType, DisplacementDim>> _ip_data;
+    std::vector<IntegrationPointData<BMatricesType, DisplacementDim>,
+                Eigen::aligned_allocator<
+                    IntegrationPointData<BMatricesType, DisplacementDim>>>
+        _ip_data;
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;

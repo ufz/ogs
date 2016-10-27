@@ -14,6 +14,7 @@
 #define SHAPEMATRICES_H_
 
 #include <ostream>
+#include <Eigen/Core>
 
 namespace NumLib
 {
@@ -43,6 +44,8 @@ enum class ShapeMatrixType
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
 struct ShapeMatrices
 {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     typedef T_N ShapeType;
     typedef T_DNDR DrShapeType;
     typedef T_J JacobianType;

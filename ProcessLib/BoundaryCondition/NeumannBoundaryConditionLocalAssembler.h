@@ -22,6 +22,8 @@ class NeumannBoundaryConditionLocalAssembler final
     : public GenericNaturalBoundaryConditionLocalAssembler<
           ShapeFunction, IntegrationMethod, GlobalDim>
 {
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using Base = GenericNaturalBoundaryConditionLocalAssembler<
         ShapeFunction, IntegrationMethod, GlobalDim>;
 

@@ -55,7 +55,14 @@ public:
     struct MaterialStateVariables
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
-        void pushBackState() {}
+        std::unique_ptr<typename MechanicsBase<DisplacementDim>::MaterialStateVariables> clone() override
+        {
+            return std::unique_ptr<
+                typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
+                {new MaterialStateVariables{*this}};
+        }
+
+        void pushBackState() override {}
     };
 
     std::unique_ptr<
