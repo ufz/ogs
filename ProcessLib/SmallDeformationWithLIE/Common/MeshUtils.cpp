@@ -137,7 +137,9 @@ void getFractureMatrixDataInMesh(
         // first, collect matrix elements
         for (MeshLib::Element*e : fracture_elements)
         {
-            for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
+            // it is sufficient to iterate over base nodes, because they are
+            // already connected to all neighbours
+            for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
             {
                 MeshLib::Node const* node = e->getNode(i);
                 if (isCrackTip(*node))
