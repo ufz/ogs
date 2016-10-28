@@ -27,8 +27,6 @@ ProcessVariable::ProcessVariable(
       _mesh(mesh),
       //! \ogs_file_param{prj__process_variables__process_variable__components}
       _n_components(config.getConfigParameter<int>("components")),
-      //! \ogs_file_param{prj__process_variables__process_variable__order}
-      _shapefunction_order(config.getConfigParameter<int>("order")),
       _initial_condition(findParameter<double>(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
@@ -36,6 +34,9 @@ ProcessVariable::ProcessVariable(
       _bc_builder(new BoundaryConditionBuilder())
 {
     DBUG("Constructing process variable %s", _name.c_str());
+    //! \ogs_file_param{prj__process_variables__process_variable__order}
+    auto opt_shapefunction_order = config.getConfigParameterOptional<int>("order");
+    _shapefunction_order = (opt_shapefunction_order ? opt_shapefunction_order.get() : 1);
 
     // Boundary conditions
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions}
