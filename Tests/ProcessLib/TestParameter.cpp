@@ -36,15 +36,20 @@ TEST(ProcessLib_Parameter, GroupBasedParameterElement)
             "</parameter>";
     auto const ptree = readXml(xml);
 
-    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::MeshGenerator::generateLineMesh(4u, 1.0));
-    std::vector<int> mat_ids({0,1,2,3});
-    MeshLib::addPropertyToMesh(*mesh, "MaterialIDs", MeshLib::MeshItemType::Cell, 1, mat_ids);
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::MeshGenerator::generateLineMesh(4u, 1.0));
+    std::vector<int> mat_ids({0, 1, 2, 3});
+    MeshLib::addPropertyToMesh(*mesh, "MaterialIDs",
+                               MeshLib::MeshItemType::Cell, 1, mat_ids);
 
-    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
-    std::unique_ptr<ProcessLib::ParameterBase> parameter_base
-            = ProcessLib::createGroupBasedParameter(conf.getConfigSubtree("parameter"), *mesh);
+    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
+                             BaseLib::ConfigTree::onwarning);
+    std::unique_ptr<ProcessLib::ParameterBase> parameter_base =
+        ProcessLib::createGroupBasedParameter(
+            "", conf.getConfigSubtree("parameter"), *mesh);
 
-    auto parameter = dynamic_cast<ProcessLib::Parameter<double>*>(parameter_base.get());
+    auto parameter =
+        dynamic_cast<ProcessLib::Parameter<double>*>(parameter_base.get());
     double t = 0;
     ProcessLib::SpatialPosition x;
     x.setElementID(0);
@@ -70,15 +75,20 @@ TEST(ProcessLib_Parameter, GroupBasedParameterNode)
             "</parameter>";
     auto const ptree = readXml(xml);
 
-    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::MeshGenerator::generateLineMesh(4u, 1.0));
-    std::vector<int> group_ids({0,1,2,3,4});
-    MeshLib::addPropertyToMesh(*mesh, "PointGroupIDs", MeshLib::MeshItemType::Node, 1, group_ids);
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::MeshGenerator::generateLineMesh(4u, 1.0));
+    std::vector<int> group_ids({0, 1, 2, 3, 4});
+    MeshLib::addPropertyToMesh(*mesh, "PointGroupIDs",
+                               MeshLib::MeshItemType::Node, 1, group_ids);
 
-    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
-    std::unique_ptr<ProcessLib::ParameterBase> parameter_base
-            = ProcessLib::createGroupBasedParameter(conf.getConfigSubtree("parameter"), *mesh);
+    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
+                             BaseLib::ConfigTree::onwarning);
+    std::unique_ptr<ProcessLib::ParameterBase> parameter_base =
+        ProcessLib::createGroupBasedParameter(
+            "", conf.getConfigSubtree("parameter"), *mesh);
 
-    auto parameter = dynamic_cast<ProcessLib::Parameter<double>*>(parameter_base.get());
+    auto parameter =
+        dynamic_cast<ProcessLib::Parameter<double>*>(parameter_base.get());
     double t = 0;
     ProcessLib::SpatialPosition x;
     x.setNodeID(0);
