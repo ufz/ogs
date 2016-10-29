@@ -620,6 +620,30 @@ if(NOT OGS_USE_MPI)
         axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure
     )
 
+    AddTest(
+        NAME LARGE_LiquidFlow_Anisotropic_GravityDriven3D
+        PATH Parabolic/LiquidFlow/GravityDriven3D
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS anisotropic_gravity_driven3D.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-6 RELTOL 1e-6
+        DIFF_DATA
+        hex.vtu anisotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
+    )
+
+    AddTest(
+        NAME LARGE_LiquidFlow_Isotropic_GravityDriven3D
+        PATH Parabolic/LiquidFlow/GravityDriven3D
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS isotropic_gravity_driven3D.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-6 RELTOL 1e-6
+        DIFF_DATA
+        hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
+    )
+
 else()
     # MPI groundwater flow tests
     AddTest(
@@ -873,6 +897,31 @@ else()
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure
+    )
+    AddTest(
+        NAME LARGE_LiquidFlow_Anisotropic_GravityDriven3D
+        PATH Parabolic/LiquidFlow/GravityDriven3D
+        EXECUTABLE_ARGS anisotropic_gravity_driven3D.prj
+        WRAPPER mpirun
+        WRAPPER_ARGS -np 1
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-6 RELTOL 1e-6
+        DIFF_DATA
+        hex.vtu anisotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
+    )
+
+    AddTest(
+        NAME LARGE_LiquidFlow_Isotropic_GravityDriven3D
+        PATH Parabolic/LiquidFlow/GravityDriven3D
+        EXECUTABLE_ARGS isotropic_gravity_driven3D.prj
+        WRAPPER mpirun
+        WRAPPER_ARGS -np 1
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-6 RELTOL 1e-6
+        DIFF_DATA
+        hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
     )
 
 endif()
