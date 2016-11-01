@@ -37,6 +37,9 @@ ProcessVariable::ProcessVariable(
 {
     DBUG("Constructing process variable %s", _name.c_str());
 
+    if (_shapefunction_order < 1 || 2 < _shapefunction_order)
+        OGS_FATAL("The given shape function order %d is not supported", _shapefunction_order);
+
     // Boundary conditions
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions}
     if (auto bcs_config = config.getConfigSubtreeOptional("boundary_conditions"))
