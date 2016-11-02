@@ -24,7 +24,8 @@ struct EigenOption final
         CG,
         BiCGSTAB,
         SparseLU,
-        PardisoLU
+        PardisoLU,
+        GMRES
     };
 
     /// Preconditioner type

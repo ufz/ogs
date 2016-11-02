@@ -16,6 +16,8 @@
 #endif
 
 #ifdef USE_EIGEN_UNSUPPORTED
+#include <iostream> // to fix compiling errors in Eigen
+#include <unsupported/Eigen/IterativeSolvers>
 #include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
 #endif
 
@@ -152,6 +154,11 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::SolverType::CG: {
             return createIterativeSolver<EigenCGSolver>(precon_type);
         }
+#ifdef USE_EIGEN_UNSUPPORTED
+        case EigenOption::SolverType::GMRES: {
+            return createIterativeSolver<Eigen::GMRES>(precon_type);
+        }
+#endif
         default:
             OGS_FATAL("Invalid Eigen iterative linear solver type. Aborting.");
     }
@@ -179,6 +186,9 @@ EigenLinearSolver::EigenLinearSolver(
         }
         case EigenOption::SolverType::BiCGSTAB:
         case EigenOption::SolverType::CG:
+#ifdef USE_EIGEN_UNSUPPORTED
+        case EigenOption::SolverType::GMRES:
+#endif
             _solver = details::createIterativeSolver(_option.solver_type,
                                                      _option.precon_type);
             return;
