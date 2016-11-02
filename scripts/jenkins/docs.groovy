@@ -8,7 +8,9 @@ def build = new ogs.build()
 def post = new ogs.post()
 def helper = new ogs.helper()
 
-docker.image('ogs6/gcc-base:latest').inside() {
+def image = docker.image('ogs6/gcc-base:latest')
+image.pull()
+image.inside() {
     stage('Configure (Docs)') {
         configure.linux 'build', "${defaultCMakeOptions}"
     }

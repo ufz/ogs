@@ -18,7 +18,9 @@ node('docker') {
         dir('ogs') { checkout scm }
     }
 
-    docker.image('ogs6/clang-base:latest').inside(defaultDockerArgs) {
+    def image = docker.image('ogs6/clang-base:latest')
+    image.pull()
+    image.inside(defaultDockerArgs) {
         stage('Configure (Clang)') {
             configure.linux 'build', "${defaultCMakeOptions}"
         }

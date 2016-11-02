@@ -7,7 +7,9 @@ node('docker') {
     stage('Checkout') { dir('ogs') { checkout scm } }
 
     stage('Build') {
-        docker.image('ogs6/gcc-base:latest').inside(defaultDockerArgs) {
+        def image = docker.image('ogs6/gcc-base:latest')
+        image.pull()
+        image.inside(defaultDockerArgs) {
             build this, 'build', '-DOGS_COVERAGE=ON',
                 'testrunner_coverage_cobertura ctest_coverage_cobertura'
         }
