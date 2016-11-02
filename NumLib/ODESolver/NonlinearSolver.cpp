@@ -218,61 +218,60 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
             _convergence_criterion->checkResidual(res);
 
-        BaseLib::RunTime time_linear_solver;
-        time_linear_solver.start();
-        bool iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
-        INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
-
-        if (!iteration_succeeded)
+        if (!_convergence_criterion->isSatisfied())
         {
-            ERR("Newton: The linear solver failed.");
-        }
-        else
-        {
-            // TODO could be solved in a better way
-            // cf.
-            // http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
-            auto& x_new =
-                NumLib::GlobalVectorProvider::provider.getVector(
-                    x, _x_new_id);
-            LinAlg::axpy(x_new, -_alpha, minus_delta_x);
+            BaseLib::RunTime time_linear_solver;
+            time_linear_solver.start();
+            bool iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
+            INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
 
-            if (postIterationCallback)
-                postIterationCallback(iteration, x_new);
-
-            switch(sys.postIteration(x_new))
+            if (!iteration_succeeded)
             {
-                case IterationResult::SUCCESS:
-                    break;
-                case IterationResult::FAILURE:
-                    ERR("Newton: The postIteration() hook reported a "
-                        "non-recoverable error.");
-                    iteration_succeeded = false;
-                    break;
-                case IterationResult::REPEAT_ITERATION:
-                    INFO(
-                        "Newton: The postIteration() hook decided that this "
-                        "iteration"
-                        " has to be repeated.");
-                    // TODO introduce some onDestroy hook.
-                    NumLib::GlobalVectorProvider::provider
-                        .releaseVector(x_new);
-                    continue;  // That throws the iteration result away.
+                ERR("Newton: The linear solver failed.");
+                // Don't compute further error norms, but break here.
+                error_norms_met = false;
+                break;
             }
-
-            // TODO could be done via swap. Note: that also requires swapping
-            // the ids. Same for the Picard scheme.
-            LinAlg::copy(x_new, x);  // copy new solution to x
-            NumLib::GlobalVectorProvider::provider.releaseVector(
-                x_new);
+        } else {
+            minus_delta_x.setZero();
         }
 
-        if (!iteration_succeeded)
+        // TODO could be solved in a better way
+        // cf.
+        // http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
+        auto& x_new =
+            NumLib::GlobalVectorProvider::provider.getVector(
+                x, _x_new_id);
+        LinAlg::axpy(x_new, -_alpha, minus_delta_x);
+
+        if (postIterationCallback)
+            postIterationCallback(iteration, x_new);
+
+        switch(sys.postIteration(x_new))
         {
-            // Don't compute further error norms, but break here.
-            error_norms_met = false;
-            break;
+            case IterationResult::SUCCESS:
+                break;
+            case IterationResult::FAILURE:
+                ERR("Newton: The postIteration() hook reported a "
+                    "non-recoverable error.");
+                error_norms_met = false;
+                break;
+            case IterationResult::REPEAT_ITERATION:
+                INFO(
+                    "Newton: The postIteration() hook decided that this "
+                    "iteration"
+                    " has to be repeated.");
+                // TODO introduce some onDestroy hook.
+                NumLib::GlobalVectorProvider::provider
+                    .releaseVector(x_new);
+                continue;  // That throws the iteration result away.
         }
+
+        // TODO could be done via swap. Note: that also requires swapping
+        // the ids. Same for the Picard scheme.
+        LinAlg::copy(x_new, x);  // copy new solution to x
+        NumLib::GlobalVectorProvider::provider.releaseVector(
+            x_new);
 
         if (sys.isLinear()) {
             error_norms_met = true;
