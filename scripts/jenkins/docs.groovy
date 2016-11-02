@@ -1,13 +1,14 @@
 def defaultCMakeOptions =
     '-DOGS_LIB_BOOST=System ' +
-    '-DOGS_LIB_VTK=System'
+    '-DOGS_LIB_VTK=System ' +
+    '-DDOCS_GENERATE_LOGFILE=ON'
 
 def configure = new ogs.configure()
 def build = new ogs.build()
 def post = new ogs.post()
 def helper = new ogs.helper()
 
-docker.image('ogs6/gcc-base:16.04').inside() {
+docker.image('ogs6/gcc-base:latest').inside() {
     stage('Configure (Docs)') {
         configure.linux 'build', "${defaultCMakeOptions}"
     }
@@ -20,11 +21,12 @@ docker.image('ogs6/gcc-base:16.04').inside() {
 stage('Reports (Docs)') {
     publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false,
         reportDir: 'build/docs', reportFiles: 'index.html', reportName: 'Doxygen'])
-    step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
-        canRunOnFailed: true, consoleParsers: [[parserName: 'Doxygen']],
-        defaultEncoding: '', excludePattern: '', healthy: '',
-        includePattern: '', messagesPattern: '', unHealthy: '',
-        unstableNewAll: '0', useStableBuildAsReference: true])
+    step([$class: 'WarningsPublisher', canComputeNew: false,
+        canResolveRelativePaths: false, defaultEncoding: '', excludePattern: '',
+        healthy: '', includePattern: '', messagesPattern: '',
+        parserConfigurations: [[parserName: 'Doxygen', pattern:
+            'build/DoxygenWarnings.log']],
+        unHealthy: ''])
 }
 
 if (helper.isOriginMaster(this)) {

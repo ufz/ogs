@@ -1,6 +1,7 @@
 if(DOXYGEN_FOUND)
 
     option(DOCS_GENERATE_DOCSET "Generate Dash Docsets." OFF)
+    option(DOCS_GENERATE_LOGFILE "Outputs Doxygen warnings to a file in the build directory." OFF)
 
     set(DOT_FOUND "NO")
     if(DOXYGEN_DOT_FOUND)
@@ -34,6 +35,10 @@ if(DOXYGEN_FOUND)
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/docs
             COMMENT "Generating docset ...")
         configure_file(Documentation/DocsetFeed.xml.in ${PROJECT_BINARY_DIR}/docs/ogs6.xml)
+    endif()
+
+    if(DOCS_GENERATE_LOGFILE)
+        set(OGS_DOXYGEN_LOGFILE "${PROJECT_BINARY_DIR}/DoxygenWarnings.log" CACHE INTERNAL "")
     endif()
 
     configure_file(Documentation/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
