@@ -33,11 +33,11 @@ public:
         std::vector<double>&& relative_tolerances,
         MathLib::VecNormType norm_type);
 
-    bool hasDeltaXCheck() const override { return false; }
+    bool hasDeltaXCheck() const override { return true; }
     bool hasResidualCheck() const override { return true; }
 
-    void checkDeltaX(const GlobalVector& /*minus_delta_x*/,
-                     GlobalVector const& /*x*/) override {}
+    void checkDeltaX(const GlobalVector& minus_delta_x,
+                     GlobalVector const& x) override;
     void checkResidual(const GlobalVector& residual) override;
 
     void preFirstIteration() override { _is_first_iteration = true; }
