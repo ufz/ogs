@@ -10,4 +10,5 @@ node {
                 sourceFile: "lastSuccessfulArtifacts.json", storageClass: 'STANDARD',
                 uploadFromSlave: true, useServerSideEncryption: false]], profileName: 'S3 UFZ',
                 userMetadata: [[key: 'Content-Type', value: 'Application/json']]])
+    }
 }
