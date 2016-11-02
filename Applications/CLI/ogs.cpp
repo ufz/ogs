@@ -74,7 +74,16 @@ int main(int argc, char *argv[])
         "warnings from parsing the configuration file will not trigger program abortion");
     cmd.add(nonfatal_arg);
 
+    TCLAP::SwitchArg unbuffered_cout_arg("",
+        "unbuffered-std-out",
+        "use unbuffered standard output");
+    cmd.add(unbuffered_cout_arg);
+
     cmd.parse(argc, argv);
+
+    // deactivate buffer for standard output if specified
+    if (unbuffered_cout_arg.isSet())
+        std::cout.setf(std::ios::unitbuf);
 
     ApplicationsLib::LogogSetup logog_setup;
     logog_setup.setLevel(log_level_arg.getValue());
