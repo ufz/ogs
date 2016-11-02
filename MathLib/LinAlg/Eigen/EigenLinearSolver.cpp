@@ -15,6 +15,10 @@
 #include <Eigen/PardisoSupport>
 #endif
 
+#ifdef USE_EIGEN_UNSUPPORTED
+#include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
+#endif
+
 #include "BaseLib/ConfigTree.h"
 #include "EigenVector.h"
 #include "EigenMatrix.h"
@@ -224,6 +228,13 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
             ptSolver->getConfigParameterOptional<int>("max_iteration_step")) {
         _option.max_iterations = *max_iteration_step;
     }
+#ifdef USE_EIGEN_UNSUPPORTED
+    if (auto scaling =
+            //! \ogs_file_param{linear_solver__eigen__scaling}
+            ptSolver->getConfigParameterOptional<int>("scaling")) {
+        _option.scaling = static_cast<bool>(*scaling);
+    }
+#endif
 }
 
 bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
@@ -231,8 +242,22 @@ bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
     INFO("------------------------------------------------------------------");
     INFO("*** Eigen solver computation");
 
+#ifdef USE_EIGEN_UNSUPPORTED
+    std::unique_ptr<Eigen::IterScaling<EigenMatrix::RawMatrixType>> scal;
+    if (_option.scaling)
+    {
+        INFO("-> scale");
+        scal.reset(new Eigen::IterScaling<EigenMatrix::RawMatrixType>());
+        scal->computeRef(A.getRawMatrix());
+        b.getRawVector() = scal->LeftScaling().cwiseProduct(b.getRawVector());
+    }
+#endif
     auto const success = _solver->solve(A.getRawMatrix(), b.getRawVector(),
                                         x.getRawVector(), _option);
+#ifdef USE_EIGEN_UNSUPPORTED
+    if (scal)
+        x.getRawVector() = scal->RightScaling().cwiseProduct(x.getRawVector());
+#endif
 
     INFO("------------------------------------------------------------------");
 
