@@ -13,7 +13,7 @@ docker.image('ogs6/gcc-base:16.04').inside() {
     }
 
     stage('Generate (Docs)') {
-        build.linux 'build', 'doc'
+        build.linux this, 'build', 'doc'
     }
 }
 
