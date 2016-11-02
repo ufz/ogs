@@ -115,6 +115,10 @@ if(OGS_USE_LIS)
     find_package( LIS REQUIRED )
 endif()
 
+if(OGS_USE_MKL)
+    find_package( MKL REQUIRED )
+endif()
+
 if(OGS_USE_PETSC)
     message(STATUS "Configuring for PETSc")
 

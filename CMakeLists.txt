@@ -84,6 +84,9 @@ option(OGS_USE_EIGEN "Use Eigen linear solver" ON)
 option(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Use dynamically allocated shape matrices" ON)
 option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
+# MKL
+option(OGS_USE_MKL "Use Intel MKL" OFF)
+
 # Logging
 option(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
@@ -133,6 +136,11 @@ if(OGS_USE_LIS)
     add_definitions(-DUSE_LIS)
     include_directories(SYSTEM ${LIS_INCLUDE_DIR})
     set(OGS_USE_EIGEN ON)
+endif()
+
+if(OGS_USE_MKL)
+    add_definitions(-DUSE_MKL)
+    include_directories(SYSTEM ${MKL_INCLUDE_DIR})
 endif()
 
 if(OGS_USE_PETSC)

@@ -43,6 +43,10 @@ if (OGS_USE_LIS)
     target_link_libraries(MathLib ${LIS_LIBRARIES})
 endif()
 
+if (OGS_USE_MKL)
+    target_link_libraries(MathLib ${MKL_LIBRARIES})
+endif()
+
 if (OGS_USE_PETSC)
     target_link_libraries(MathLib ${PETSC_LIBRARIES})
 endif()
