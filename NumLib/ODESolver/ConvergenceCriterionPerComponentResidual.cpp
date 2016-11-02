@@ -78,14 +78,14 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
                              *_dof_table, *_mesh);
 
         if (_is_first_iteration) {
-            INFO("Convergence criterion: |r0|=%.4e", norm_res);
+            INFO("Convergence criterion, component %u: |r0|=%.4e", global_component, norm_res);
             _residual_norms_0[global_component] = norm_res;
         } else {
             auto const norm_res0 = _residual_norms_0[global_component];
             INFO(
                 "Convergence criterion, component %u: |r|=%.4e, |r0|=%.4e, "
                 "|r|/|r0|=%.4e",
-                norm_res, global_component, norm_res0, norm_res / norm_res0);
+                global_component, norm_res, norm_res0, norm_res / norm_res0);
         }
 
         satisfied_abs = satisfied_abs && norm_res < _abstols[global_component];
