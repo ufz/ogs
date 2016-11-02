@@ -29,6 +29,10 @@ EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_nam
         return SolverType::BiCGSTAB;
     if (solver_name == "SparseLU")
         return SolverType::SparseLU;
+#ifdef USE_MKL
+    if (solver_name == "PardisoLU")
+        return SolverType::PardisoLU;
+#endif
 
     OGS_FATAL("Unknown Eigen solver type `%s'", solver_name.c_str());
 }
