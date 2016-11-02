@@ -70,7 +70,7 @@ Mesh::Mesh(const Mesh &mesh)
     const std::size_t nElements (elements.size());
     for (unsigned i=0; i<nElements; ++i)
     {
-        const std::size_t nElemNodes = elements[i]->getNumberOfBaseNodes();
+        const std::size_t nElemNodes = elements[i]->getNumberOfNodes();
         _elements[i] = elements[i]->clone();
         for (unsigned j=0; j<nElemNodes; ++j)
             _elements[i]->_nodes[j] = _nodes[elements[i]->getNode(j)->getID()];
@@ -104,7 +104,7 @@ void Mesh::addElement(Element* elem)
     _elements.push_back(elem);
 
     // add element information to nodes
-    unsigned nNodes (elem->getNumberOfBaseNodes());
+    unsigned nNodes (elem->getNumberOfNodes());
     for (unsigned i=0; i<nNodes; ++i)
         elem->_nodes[i]->addElement(elem);
 }
@@ -144,7 +144,7 @@ void Mesh::setElementsConnectedToNodes()
 {
     for (auto e = _elements.begin(); e != _elements.end(); ++e)
     {
-        const unsigned nNodes ((*e)->getNumberOfBaseNodes());
+        const unsigned nNodes ((*e)->getNumberOfNodes());
         for (unsigned j=0; j<nNodes; ++j)
             (*e)->_nodes[j]->addElement(*e);
     }
@@ -215,18 +215,45 @@ void Mesh::setNodesConnectedByEdges()
         const std::size_t nConnElems (conn_elems.size());
         for (unsigned j=0; j<nConnElems; ++j)
         {
-            const unsigned idx (conn_elems[j]->getNodeIDinElement(node));
-            const unsigned nElemNodes (conn_elems[j]->getNumberOfBaseNodes());
+            MeshLib::Element* conn_ele = conn_elems[j];
+            const unsigned idx (conn_ele->getNodeIDinElement(node));
+            const unsigned nElemNodes (conn_ele->getNumberOfBaseNodes());
             for (unsigned k(0); k<nElemNodes; ++k)
             {
+                MeshLib::Node const* node_k = conn_ele->getNode(k);
                 bool is_in_vector (false);
                 const std::size_t nConnNodes (conn_set.size());
                 for (unsigned l(0); l<nConnNodes; ++l)
-                    if (conn_elems[j]->getNode(k) == conn_set[l])
+                    if (node_k == conn_set[l])
                         is_in_vector = true;
                 if (is_in_vector) continue;
-                if (conn_elems[j]->isEdge(idx, k)) //TODO doesn't work with higher order nodes
-                    conn_set.push_back(_nodes[conn_elems[j]->getNode(k)->getID()]);
+
+                if (conn_ele->getNumberOfBaseNodes() == conn_ele->getNumberOfNodes())
+                {
+                    if (conn_ele->isEdge(idx, k))
+                        conn_set.push_back(const_cast<MeshLib::Node*>(node_k));
+                }
+                else
+                {
+                    for (unsigned l=0; l<conn_ele->getNumberOfEdges(); l++)
+                    {
+                        std::unique_ptr<Element const> edge(conn_ele->getEdge(l));
+                        unsigned match = 0;
+                        for (unsigned m=0; m<edge->getNumberOfBaseNodes(); m++)
+                        {
+                            auto edge_node = edge->getNode(m);
+                            if (edge_node == node || edge_node == node_k)
+                                match++;
+                        }
+                        if (match != 2)
+                            continue;
+                        conn_set.push_back(const_cast<MeshLib::Node*>(node_k));
+                        for (unsigned m=edge->getNumberOfBaseNodes(); m<edge->getNumberOfNodes(); m++)
+                            conn_set.push_back(const_cast<MeshLib::Node*>(edge->getNode(m)));
+                        break;
+                    }
+                }
+
             }
         }
         node->setConnectedNodes(conn_set);
@@ -248,7 +275,7 @@ void Mesh::setNodesConnectedByElements()
         for (Element const* const element : conn_elems)
         {
             Node* const* const single_elem_nodes = element->getNodes();
-            std::size_t const nnodes = element->getNumberOfBaseNodes();
+            std::size_t const nnodes = element->getNumberOfNodes();
             for (std::size_t n = 0; n < nnodes; n++)
                 adjacent_nodes.push_back(single_elem_nodes[n]);
         }
