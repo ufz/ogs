@@ -27,6 +27,8 @@ ProcessVariable::ProcessVariable(
       _mesh(mesh),
       //! \ogs_file_param{prj__process_variables__process_variable__components}
       _n_components(config.getConfigParameter<int>("components")),
+      //! \ogs_file_param{prj__process_variables__process_variable__order}
+      _shapefunction_order(config.getConfigParameter<unsigned>("order")),
       _initial_condition(findParameter<double>(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
@@ -34,6 +36,9 @@ ProcessVariable::ProcessVariable(
       _bc_builder(new BoundaryConditionBuilder())
 {
     DBUG("Constructing process variable %s", _name.c_str());
+
+    if (_shapefunction_order < 1 || 2 < _shapefunction_order)
+        OGS_FATAL("The given shape function order %d is not supported", _shapefunction_order);
 
     // Boundary conditions
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions}
@@ -95,6 +100,7 @@ ProcessVariable::ProcessVariable(ProcessVariable&& other)
     : _name(std::move(other._name)),
       _mesh(other._mesh),
       _n_components(other._n_components),
+      _shapefunction_order(other._shapefunction_order),
       _initial_condition(std::move(other._initial_condition)),
       _bc_configs(std::move(other._bc_configs)),
       _bc_builder(std::move(other._bc_builder))
@@ -142,7 +148,7 @@ ProcessVariable::createBoundaryConditions(
 
     for (auto& config : _bc_configs)
         bcs.emplace_back(_bc_builder->createBoundaryCondition(
-            config, dof_table, _mesh, variable_id, integration_order, parameters));
+            config, dof_table, _mesh, variable_id, integration_order, _shapefunction_order, parameters));
 
     return bcs;
 }

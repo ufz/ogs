@@ -37,6 +37,7 @@ public:
                          typename std::decay<Data>::type>::value,
             bool>::type is_axially_symmetric,
         unsigned const integration_order,
+        unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
         unsigned const global_dim,

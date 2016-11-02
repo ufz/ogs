@@ -23,6 +23,7 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
         const BoundaryConditionConfig& config,
         const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
         const int variable_id, const unsigned integration_order,
+        const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
         MeshGeoToolsLib::MeshNodeSearcher& /*mesh_node_searcher*/,
         MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher)
@@ -31,7 +32,7 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
         config.config,
         getClonedElements(boundary_element_searcher, config.geometry),
         dof_table, variable_id, config.component_id,
-        mesh.isAxiallySymmetric(), integration_order, mesh.getDimension(),
+        mesh.isAxiallySymmetric(), integration_order, shapefunction_order, mesh.getDimension(),
         parameters, _fracture_prop);
 }
 

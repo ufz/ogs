@@ -22,13 +22,13 @@ namespace SmallDeformationWithLIE
 using NeumannBoundaryCondition = GenericNaturalBoundaryCondition<
     Parameter<double> const&, NeumannBoundaryConditionLocalAssembler>;
 
-std::unique_ptr<BoundaryCondition>
-createNeumannBoundaryCondition(
+std::unique_ptr<BoundaryCondition> createNeumannBoundaryCondition(
     BaseLib::ConfigTree const& config,
     std::vector<MeshLib::Element*>&& elements,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
-        int const component_id, bool is_axially_symmetric,
-        unsigned const integration_order, unsigned const global_dim,
+    int const component_id, bool is_axially_symmetric,
+    unsigned const integration_order, unsigned const shapefunction_order,
+    unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     FractureProperty const& fracture_prop)
 {
@@ -44,7 +44,7 @@ createNeumannBoundaryCondition(
 
     return std::unique_ptr<BoundaryCondition>(
         new NeumannBoundaryCondition(
-            is_axially_symmetric, integration_order,
+            is_axially_symmetric, integration_order, shapefunction_order,
             dof_table, variable_id, component_id,
             global_dim, std::move(elements), param, fracture_prop));
 }

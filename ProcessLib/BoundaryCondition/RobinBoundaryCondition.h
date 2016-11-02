@@ -40,7 +40,9 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     std::vector<MeshLib::Element*>&& elements,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, bool is_axially_symmetric,
-    unsigned const integration_order, unsigned const global_dim,
+    unsigned const integration_order,
+    unsigned const shapefunction_order,
+    unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
 }  // ProcessLib
