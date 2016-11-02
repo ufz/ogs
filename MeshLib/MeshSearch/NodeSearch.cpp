@@ -36,7 +36,7 @@ std::size_t NodeSearch::searchNodesConnectedToOnlyGivenElements(
     for(std::size_t eid : elements)
     {
         auto* e = _mesh.getElement(eid);
-        for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++) {
+        for (unsigned i=0; i<e->getNumberOfNodes(); i++) {
             node_marked_counts[e->getNodeIndex(i)]++;
         }
     }

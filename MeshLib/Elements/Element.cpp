@@ -134,7 +134,7 @@ const Element* Element::getNeighbor(unsigned i) const
 
 unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
 {
-    const unsigned nNodes (this->getNumberOfBaseNodes());
+    const unsigned nNodes (this->getNumberOfNodes());
     for (unsigned i(0); i<nNodes; i++)
         if (node == _nodes[i])
             return i;
