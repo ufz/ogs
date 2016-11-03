@@ -20,7 +20,6 @@
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
 
-
 #ifndef OGS_MAX_ELEMENT_DIM
 static_assert(false, "The macro OGS_MAX_ELEMENT_DIM is undefined.");
 #endif
@@ -47,7 +46,7 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
 #ifdef OGS_ENABLE_ELEMENT_PRISM
 #define ENABLED_ELEMENT_TYPE_PRISM 1u << 2
 #else
-#define ENABLED_ELEMENT_TYPE_PRISM   0u
+#define ENABLED_ELEMENT_TYPE_PRISM 0u
 #endif
 
 #ifdef OGS_ENABLE_ELEMENT_PYRAMID
@@ -58,19 +57,18 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
 
 // Dependent element types.
 // Faces of tets, pyramids and prisms are triangles
-#define ENABLED_ELEMENT_TYPE_TRI  ((ENABLED_ELEMENT_TYPE_SIMPLEX) | (ENABLED_ELEMENT_TYPE_PYRAMID) \
-                                  |(ENABLED_ELEMENT_TYPE_PRISM))
+#define ENABLED_ELEMENT_TYPE_TRI                                       \
+    ((ENABLED_ELEMENT_TYPE_SIMPLEX) | (ENABLED_ELEMENT_TYPE_PYRAMID) | \
+     (ENABLED_ELEMENT_TYPE_PRISM))
 // Faces of hexes, pyramids and prisms are quads
-#define ENABLED_ELEMENT_TYPE_QUAD ((ENABLED_ELEMENT_TYPE_CUBOID) | (ENABLED_ELEMENT_TYPE_PYRAMID) \
-                                  |(ENABLED_ELEMENT_TYPE_PRISM))
+#define ENABLED_ELEMENT_TYPE_QUAD                                     \
+    ((ENABLED_ELEMENT_TYPE_CUBOID) | (ENABLED_ELEMENT_TYPE_PYRAMID) | \
+     (ENABLED_ELEMENT_TYPE_PRISM))
 
 // All enabled element types
-#define OGS_ENABLED_ELEMENTS \
-    ( (ENABLED_ELEMENT_TYPE_SIMPLEX) \
-    | (ENABLED_ELEMENT_TYPE_CUBOID ) \
-    | (ENABLED_ELEMENT_TYPE_PYRAMID) \
-    | (ENABLED_ELEMENT_TYPE_PRISM  ) )
-
+#define OGS_ENABLED_ELEMENTS                                          \
+    ((ENABLED_ELEMENT_TYPE_SIMPLEX) | (ENABLED_ELEMENT_TYPE_CUBOID) | \
+     (ENABLED_ELEMENT_TYPE_PYRAMID) | (ENABLED_ELEMENT_TYPE_PRISM))
 
 // Include only what is needed (Well, the conditions are not sharp).
 #if OGS_ENABLED_ELEMENTS != 0
@@ -115,18 +113,19 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 /// The LocalDataInitializer is a functor creating a local assembler data with
 /// corresponding to the mesh element type shape functions and calling
 /// initialization of the new local assembler data.
 /// For example for MeshLib::Quad a local assembler data with template argument
 /// NumLib::ShapeQuad4 is created.
-template <
-    typename LocalAssemblerInterface,
-    template <typename, typename, unsigned, int> class LocalAssemblerDataMatrix,
-    template <typename, typename, unsigned, int> class LocalAssemblerDataMatrixNearFracture,
-    template <typename, typename, unsigned, int> class LocalAssemblerDataFracture,
-    unsigned GlobalDim, int DisplacementDim, typename... ConstructorArgs>
+template <typename LocalAssemblerInterface,
+          template <typename, typename, unsigned, int>
+          class LocalAssemblerDataMatrix,
+          template <typename, typename, unsigned, int>
+          class LocalAssemblerDataMatrixNearFracture,
+          template <typename, typename, unsigned, int>
+          class LocalAssemblerDataFracture,
+          unsigned GlobalDim, int DisplacementDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:
@@ -136,12 +135,12 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table)
         : _dof_table(dof_table)
     {
-        //REMARKS: At the moment, only a 2D mesh with 1D elements are supported.
+// REMARKS: At the moment, only a 2D mesh with 1D elements are supported.
 
-        // /// Quads and Hexahedra ///////////////////////////////////
+// /// Quads and Hexahedra ///////////////////////////////////
 
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 \
-    && OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Quad))] =
             makeLocalAssemblerBuilder<NumLib::ShapeQuad4>();
 #endif
@@ -154,8 +153,8 @@ public:
 #endif
 */
 
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 \
-    && OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Quad8))] =
             makeLocalAssemblerBuilder<NumLib::ShapeQuad8>();
         _builder[std::type_index(typeid(MeshLib::Quad9))] =
@@ -170,11 +169,10 @@ public:
 #endif
 */
 
+// /// Simplices ////////////////////////////////////////////////
 
-        // /// Simplices ////////////////////////////////////////////////
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 \
-    && OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Tri))] =
             makeLocalAssemblerBuilder<NumLib::ShapeTri3>();
 #endif
@@ -187,8 +185,8 @@ public:
 #endif
 */
 
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 \
-    && OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Tri6))] =
             makeLocalAssemblerBuilder<NumLib::ShapeTri6>();
 #endif
@@ -201,8 +199,7 @@ public:
 #endif
 */
 
-
-        // /// Prisms ////////////////////////////////////////////////////
+// /// Prisms ////////////////////////////////////////////////////
 
 /*
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 \
@@ -218,7 +215,7 @@ public:
 #endif
 */
 
-        // /// Pyramids //////////////////////////////////////////////////
+// /// Pyramids //////////////////////////////////////////////////
 
 /*
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 \
@@ -233,7 +230,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapePyra13>();
 #endif
 */
-        // /// Lines ///////////////////////////////////
+// /// Lines ///////////////////////////////////
 
 #if OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Line))] =
@@ -251,87 +248,97 @@ public:
     /// \attention
     /// The index \c id is not necessarily the mesh item's id. Especially when
     /// having multiple meshes it will differ from the latter.
-    void operator()(
-            std::size_t const id,
-            MeshLib::Element const& mesh_item,
-            LADataIntfPtr& data_ptr,
-            ConstructorArgs&&... args) const
+    void operator()(std::size_t const id,
+                    MeshLib::Element const& mesh_item,
+                    LADataIntfPtr& data_ptr,
+                    ConstructorArgs&&... args) const
     {
         auto const type_idx = std::type_index(typeid(mesh_item));
         auto const it = _builder.find(type_idx);
 
-        if (it != _builder.end()) {
+        if (it != _builder.end())
+        {
             auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
-            auto const n_global_components = _dof_table.getNumberOfElementComponents(id);
-            const std::vector<std::size_t> varIDs(_dof_table.getElementVariableIDs(id));
+            auto const n_global_components =
+                _dof_table.getNumberOfElementComponents(id);
+            const std::vector<std::size_t> varIDs(
+                _dof_table.getElementVariableIDs(id));
 
             std::vector<unsigned> dofIndex_to_localIndex;
-            if (mesh_item.getDimension() < GlobalDim
-                || n_global_components > GlobalDim)
+            if (mesh_item.getDimension() < GlobalDim ||
+                n_global_components > GlobalDim)
             {
                 dofIndex_to_localIndex.resize(n_local_dof);
                 unsigned dof_id = 0;
                 unsigned local_id = 0;
                 for (auto i : varIDs)
                 {
-                    for (unsigned j=0; j<_dof_table.getNumberOfVariableComponents(i); j++)
+                    for (unsigned j = 0;
+                         j < _dof_table.getNumberOfVariableComponents(i); j++)
                     {
                         auto& mss = _dof_table.getMeshSubsets(i, j);
                         assert(mss.size() == 1);
                         auto mesh_id = mss.getMeshSubset(0).getMeshID();
-                        for (unsigned k=0; k<mesh_item.getNumberOfNodes(); k++)
+                        for (unsigned k = 0; k < mesh_item.getNumberOfNodes();
+                             k++)
                         {
                             MeshLib::Location l(mesh_id,
                                                 MeshLib::MeshItemType::Node,
                                                 mesh_item.getNodeIndex(k));
-                            auto global_index = _dof_table.getGlobalIndex(l, i, j);
+                            auto global_index =
+                                _dof_table.getGlobalIndex(l, i, j);
                             if (global_index != NumLib::MeshComponentMap::nop)
                                 dofIndex_to_localIndex[dof_id++] = local_id;
                             local_id++;
                         }
                     }
                 }
-
             }
 
-
-            data_ptr = it->second(
-                           mesh_item, varIDs.size(), n_local_dof, dofIndex_to_localIndex,
-                           std::forward<ConstructorArgs>(args)...);
-        } else {
-            OGS_FATAL("You are trying to build a local assembler for an unknown mesh element type (%s)."
-                " Maybe you have disabled this mesh element type in your build configuration.",
+            data_ptr = it->second(mesh_item, varIDs.size(), n_local_dof,
+                                  dofIndex_to_localIndex,
+                                  std::forward<ConstructorArgs>(args)...);
+        }
+        else
+        {
+            OGS_FATAL(
+                "You are trying to build a local assembler for an unknown mesh "
+                "element type (%s)."
+                " Maybe you have disabled this mesh element type in your build "
+                "configuration.",
                 type_idx.name());
         }
     }
 
 private:
     using LADataBuilder = std::function<LADataIntfPtr(
-            MeshLib::Element const& e,
-            std::size_t const n_variables,
-            std::size_t const local_matrix_size,
-            std::vector<unsigned> const& dofIndex_to_localIndex,
-            ConstructorArgs&&...
-        )>;
+        MeshLib::Element const& e,
+        std::size_t const n_variables,
+        std::size_t const local_matrix_size,
+        std::vector<unsigned> const& dofIndex_to_localIndex,
+        ConstructorArgs&&...)>;
 
     template <typename ShapeFunction>
     using IntegrationMethod = typename NumLib::GaussIntegrationPolicy<
-                typename ShapeFunction::MeshElement>::IntegrationMethod;
+        typename ShapeFunction::MeshElement>::IntegrationMethod;
 
     template <typename ShapeFunction>
     using LADataMatrix =
-        LocalAssemblerDataMatrix<ShapeFunction, IntegrationMethod<ShapeFunction>,
-                           GlobalDim, DisplacementDim>;
+        LocalAssemblerDataMatrix<ShapeFunction,
+                                 IntegrationMethod<ShapeFunction>, GlobalDim,
+                                 DisplacementDim>;
 
     template <typename ShapeFunction>
     using LADataMatrixNearFracture =
-        LocalAssemblerDataMatrixNearFracture<ShapeFunction, IntegrationMethod<ShapeFunction>,
-                           GlobalDim, DisplacementDim>;
+        LocalAssemblerDataMatrixNearFracture<ShapeFunction,
+                                             IntegrationMethod<ShapeFunction>,
+                                             GlobalDim, DisplacementDim>;
 
     template <typename ShapeFunction>
     using LAFractureData =
-        LocalAssemblerDataFracture<ShapeFunction, IntegrationMethod<ShapeFunction>,
-                           GlobalDim, DisplacementDim>;
+        LocalAssemblerDataFracture<ShapeFunction,
+                                   IntegrationMethod<ShapeFunction>, GlobalDim,
+                                   DisplacementDim>;
 
     /// Generates a function that creates a new LocalAssembler of type LAData<SHAPE_FCT>
     template<typename ShapeFct>
@@ -341,30 +348,26 @@ private:
                   std::size_t const n_variables,
                   std::size_t const local_matrix_size,
                   std::vector<unsigned> const& dofIndex_to_localIndex,
-                  ConstructorArgs&&... args)
-        {
+                  ConstructorArgs&&... args) {
             if (e.getDimension() == GlobalDim)
             {
                 if (dofIndex_to_localIndex.empty())
                 {
-                    return LADataIntfPtr{
-                        new LADataMatrix<ShapeFct>{
-                            e, local_matrix_size,
-                            std::forward<ConstructorArgs>(args)...
-                        }};
-                } else {
-                    return LADataIntfPtr{
-                        new LADataMatrixNearFracture<ShapeFct>{
-                            e, n_variables, local_matrix_size, dofIndex_to_localIndex,
-                            std::forward<ConstructorArgs>(args)...
-                        }};
+                    return LADataIntfPtr{new LADataMatrix<ShapeFct>{
+                        e, local_matrix_size,
+                        std::forward<ConstructorArgs>(args)...}};
+                }
+                else
+                {
+                    return LADataIntfPtr{new LADataMatrixNearFracture<ShapeFct>{
+                        e, n_variables, local_matrix_size,
+                        dofIndex_to_localIndex,
+                        std::forward<ConstructorArgs>(args)...}};
                 }
             }
-            return LADataIntfPtr{
-                new LAFractureData<ShapeFct>{
-                    e, local_matrix_size, dofIndex_to_localIndex,
-                    std::forward<ConstructorArgs>(args)...
-                }};
+            return LADataIntfPtr{new LAFractureData<ShapeFct>{
+                e, local_matrix_size, dofIndex_to_localIndex,
+                std::forward<ConstructorArgs>(args)...}};
         };
     }
 
@@ -374,10 +377,9 @@ private:
     NumLib::LocalToGlobalIndexMap const& _dof_table;
 };
 
-}  // namespace SmallDeformation
-}   // namespace LIE
+}   // namespace SmallDeformationWithLIE
 }   // namespace ProcessLib
-
+}   // namespace ProcessLib
 
 #undef ENABLED_ELEMENT_TYPE_SIMPLEX
 #undef ENABLED_ELEMENT_TYPE_CUBOID
