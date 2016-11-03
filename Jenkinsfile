@@ -2,6 +2,8 @@
 def builders = [:]
 def helper = new ogs.helper()
 
+timestamps {
+
 builders['gcc'] = {
     node('docker') {
         dir('ogs') { checkout scm }
@@ -57,3 +59,5 @@ if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
         }
     }
 }
+
+} // end timestamps
