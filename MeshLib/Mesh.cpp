@@ -280,13 +280,10 @@ void Mesh::checkNonlinearNodeIDs() const
 
 bool Mesh::hasNonlinearElement() const
 {
-    for (auto* const e : _elements)
-    {
-        if (e->getNumberOfNodes() == e->getNumberOfBaseNodes())
-            continue;
-        return true;
-    }
-    return false;
+    return std::any_of(std::begin(_elements), std::end(_elements),
+        [](Element const* const e) {
+            return e->getNumberOfNodes() != e->getNumberOfBaseNodes();
+        });
 }
 
 void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
