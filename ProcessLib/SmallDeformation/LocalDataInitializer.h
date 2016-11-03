@@ -249,9 +249,15 @@ private:
         LocalAssemblerData<ShapeFunction, IntegrationMethod<ShapeFunction>,
                            GlobalDim, DisplacementDim>;
 
-    /// Generates a function that creates a new LocalAssembler of type LAData<SHAPE_FCT>
-    template<typename ShapeFct>
-    static LADataBuilder makeLocalAssemblerBuilder()
+    /// Generates a function that creates a new LocalAssembler of type
+    /// LAData<ShapeFct>. Only functions with shape function's dimension less or
+    /// equal to the global dimension are instantiated, e.g. following
+    /// combinations of shape functions and global dimensions: (Line2, 1),
+    /// (Line2, 2), (Line2, 3), (Hex20, 3) but not (Hex20, 2) or (Hex20, 1).
+    template <typename ShapeFct>
+    static
+        typename std::enable_if<GlobalDim >= ShapeFct::DIM, LADataBuilder>::type
+        makeLocalAssemblerBuilder()
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,
@@ -259,6 +265,16 @@ private:
             return LADataIntfPtr{new LAData<ShapeFct>{
                 e, local_matrix_size, std::forward<ConstructorArgs>(args)...}};
         };
+    }
+
+    /// Returns nullptr for shape functions whose dimensions are less than the
+    /// global dimension.
+    template <typename ShapeFct>
+        static
+        typename std::enable_if < GlobalDim<ShapeFct::DIM, LADataBuilder>::type
+                                  makeLocalAssemblerBuilder()
+    {
+        return nullptr;
     }
 
     /// Mapping of element types to local assembler constructors.
