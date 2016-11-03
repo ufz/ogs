@@ -218,6 +218,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         if (_convergence_criterion->hasResidualCheck())
             _convergence_criterion->checkResidual(res);
 
+        GlobalVector* x_old = nullptr;
         if (_convergence_criterion->hasResidualCheck() && _convergence_criterion->isSatisfied())
         {
             minus_delta_x.setZero();
@@ -236,20 +237,20 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                 error_norms_met = false;
                 break;
             }
+
+            // copy previous solution to x_old
+            x_old =
+                &NumLib::GlobalVectorProvider::provider.getVector(
+                    x, _x_old_id);
+            LinAlg::copy(x, *x_old);
+            // update solution
+            LinAlg::axpy(x, -_alpha, minus_delta_x);
         }
 
-        // TODO could be solved in a better way
-        // cf.
-        // http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
-        auto& x_new =
-            NumLib::GlobalVectorProvider::provider.getVector(
-                x, _x_new_id);
-        LinAlg::axpy(x_new, -_alpha, minus_delta_x);
-
         if (postIterationCallback)
-            postIterationCallback(iteration, x_new);
+            postIterationCallback(iteration, x);
 
-        switch(sys.postIteration(x_new))
+        switch(sys.postIteration(x))
         {
             case IterationResult::SUCCESS:
                 break;
@@ -264,16 +265,16 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                     "iteration"
                     " has to be repeated.");
                 // TODO introduce some onDestroy hook.
-                NumLib::GlobalVectorProvider::provider
-                    .releaseVector(x_new);
+                if (x_old)
+                {
+                    // TODO could be done via swap. Note: that also requires swapping
+                    // the ids. Same for the Picard scheme.
+                    LinAlg::copy(*x_old, x);  // restore previous solution
+                    NumLib::GlobalVectorProvider::provider
+                        .releaseVector(*x_old);
+                }
                 continue;  // That throws the iteration result away.
         }
-
-        // TODO could be done via swap. Note: that also requires swapping
-        // the ids. Same for the Picard scheme.
-        LinAlg::copy(x_new, x);  // copy new solution to x
-        NumLib::GlobalVectorProvider::provider.releaseVector(
-            x_new);
 
         if (sys.isLinear()) {
             error_norms_met = true;
