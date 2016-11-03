@@ -16,8 +16,8 @@
 #endif
 
 #ifdef USE_EIGEN_UNSUPPORTED
-#include <iostream> // to fix compiling errors in Eigen
-#include <unsupported/Eigen/IterativeSolvers>
+#include <Eigen/Sparse>
+#include <unsupported/Eigen/src/IterativeSolvers/GMRES.h>
 #include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
 #endif
 
