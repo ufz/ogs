@@ -18,11 +18,14 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
+#include "BaseLib/makeVectorUnique.h"
+
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Node.h"
 
 /// Re-ordering mesh elements to correct Data Explorer 5 meshes to work with Data Explorer 6.
 void reorderNodes(std::vector<MeshLib::Element*> &elements)
@@ -93,13 +96,45 @@ void reorderNodes2(std::vector<MeshLib::Element*> &elements)
     }
 }
 
+void reorderNonlinearNodes(MeshLib::Mesh &mesh)
+{
+    std::vector<MeshLib::Node*> base_nodes;
+    std::vector<MeshLib::Node*> nonlinear_nodes;
+    for (MeshLib::Element const* e : mesh.getElements())
+    {
+        for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
+            base_nodes.push_back(const_cast<MeshLib::Node*>(e->getNode(i)));
+        for (unsigned i=e->getNumberOfBaseNodes(); i<e->getNumberOfNodes(); i++)
+            nonlinear_nodes.push_back(const_cast<MeshLib::Node*>(e->getNode(i)));
+    }
+
+    BaseLib::makeVectorUnique(base_nodes,
+                              [](MeshLib::Node* a, MeshLib::Node* b) {
+                                  return a->getID() < b->getID();
+                              });
+    BaseLib::makeVectorUnique(nonlinear_nodes,
+                              [](MeshLib::Node* a, MeshLib::Node* b) {
+                                  return a->getID() < b->getID();
+                              });
+
+    std::vector<MeshLib::Node*>& allnodes =
+        const_cast<std::vector<MeshLib::Node*>&>(mesh.getNodes());
+    allnodes.clear();
+
+    allnodes.insert(allnodes.end(), base_nodes.begin(), base_nodes.end());
+    allnodes.insert(allnodes.end(), nonlinear_nodes.begin(), nonlinear_nodes.end());
+
+    mesh.resetNodeIDs();
+}
+
 int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logo_setup;
 
     TCLAP::CmdLine cmd("Reordering of mesh nodes to make OGS Data Explorer 5 meshes compatible with OGS6.\n" \
                        "Method 1 is the re-ordering between DataExplorer 5 and DataExplorer 6 meshes,\n" \
-                       "Method 2 is the re-ordering with and without InSitu-Lib in OGS6.",
+                       "Method 2 is the re-ordering with and without InSitu-Lib in OGS6.\n" \
+                       "Method 3 is the re-ordering of nonlinear nodes.",
                        ' ', "0.1");
     TCLAP::UnlabeledValueArg<std::string> input_mesh_arg("input_mesh",
                                                          "the name of the input mesh file",
@@ -121,6 +156,8 @@ int main (int argc, char* argv[])
         reorderNodes(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
     else if (method_arg.getValue() == 2)
         reorderNodes2(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
+    else if (method_arg.getValue() == 3)
+        reorderNonlinearNodes(*mesh);
     else
     {
         ERR ("Unknown re-ordering method. Exit program...");
