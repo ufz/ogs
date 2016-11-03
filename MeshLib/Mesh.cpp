@@ -36,7 +36,7 @@ Mesh::Mesh(const std::string &name,
       _edge_length(std::numeric_limits<double>::max(), 0),
       _node_distance(std::numeric_limits<double>::max(), 0),
       _name(name), _nodes(nodes), _elements(elements),
-      _n_base_nodes(n_base_nodes==0 ? nodes.size() : n_base_nodes),
+      _n_base_nodes(n_base_nodes),
       _properties(properties)
 {
     assert(n_base_nodes <= nodes.size());
@@ -114,6 +114,15 @@ void Mesh::resetNodeIDs()
     const std::size_t nNodes (this->_nodes.size());
     for (unsigned i=0; i<nNodes; ++i)
         _nodes[i]->setID(i);
+
+    if (_n_base_nodes==0)
+    {
+        unsigned max_basenode_ID = 0;
+        for (Element const* e : _elements)
+            for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
+                max_basenode_ID = std::max(max_basenode_ID, e->getNodeIndex(i));
+        _n_base_nodes = max_basenode_ID + 1;
+    }
 }
 
 void Mesh::resetElementIDs()
