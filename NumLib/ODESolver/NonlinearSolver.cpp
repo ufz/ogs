@@ -215,10 +215,14 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
         INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
 
-        if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
+        if (_convergence_criterion->hasResidualCheck())
             _convergence_criterion->checkResidual(res);
 
-        if (!_convergence_criterion->isSatisfied())
+        if (_convergence_criterion->hasResidualCheck() && _convergence_criterion->isSatisfied())
+        {
+            minus_delta_x.setZero();
+        }
+        else
         {
             BaseLib::RunTime time_linear_solver;
             time_linear_solver.start();
@@ -232,8 +236,6 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                 error_norms_met = false;
                 break;
             }
-        } else {
-            minus_delta_x.setZero();
         }
 
         // TODO could be solved in a better way
