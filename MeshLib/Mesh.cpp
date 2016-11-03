@@ -42,7 +42,7 @@ Mesh::Mesh(const std::string &name,
     assert(n_base_nodes <= nodes.size());
     this->resetNodeIDs();
     this->resetElementIDs();
-    if (isNonlinear())
+    if ((n_base_nodes==0 && hasNonlinearElement()) || isNonlinear())
         this->checkNonlinearNodeIDs();
     this->setDimension();
     this->setElementsConnectedToNodes();
@@ -276,6 +276,17 @@ void Mesh::checkNonlinearNodeIDs() const
                     e->getNodeIndex(i), getNumberOfBaseNodes());
         }
     }
+}
+
+bool Mesh::hasNonlinearElement() const
+{
+    for (auto* const e : _elements)
+    {
+        if (e->getNumberOfNodes() == e->getNumberOfBaseNodes())
+            continue;
+        return true;
+    }
+    return false;
 }
 
 void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
