@@ -87,6 +87,12 @@ private:
     const double _mm;      ///< Exponent (<=1.0), n=1/(1-mm).
     const double _Pc_max;  ///< Maximum capillaray pressure
 
+    /** A small number for an offset:
+     *  1. to set the bound of S, the saturation, such that
+     *     S in  [_Sr+_minor_offset, _Smax-_minor_offset]
+     *  2. to set the bound of Pc, the capillary pressure, such that
+     *     Pc in [_minor_offset, _Pc_max]
+     */
     const double _minor_offset = std::numeric_limits<double>::epsilon();
 };
 

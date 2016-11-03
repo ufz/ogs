@@ -31,8 +31,7 @@ namespace PorousMedium
                   and it has a tag of <capillary_pressure>
 */
 static std::unique_ptr<CapillaryPressureSaturation>
-                         createBrookCorey(BaseLib::ConfigTree const& config,
-                                          const bool is_brook_corey)
+                         createBrookCorey(BaseLib::ConfigTree const& config)
 {
     std::array<double, 5> parameters = {
         {//! \ogs_file_param{material_property__porous_medium__porous_medium__capillary_pressure__type__pd}
@@ -57,8 +56,7 @@ static std::unique_ptr<CapillaryPressureSaturation>
                   and it has a tag of <capillary_pressure>
 */
 static std::unique_ptr<CapillaryPressureSaturation>
-                         createVanGenuchten(BaseLib::ConfigTree const& config,
-                                            const bool is_brook_corey)
+                         createVanGenuchten(BaseLib::ConfigTree const& config)
 {
     std::array<double, 5> parameters = {
         {//! \ogs_file_param{material_property__porous_medium__porous_medium__capillary_pressure__type__pd}
@@ -85,13 +83,11 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
 
     if (type == "BrookCorey")
     {
-        const bool brook_corey = true;
-        return createBrookCorey(config, brook_corey);
+        return createBrookCorey(config);
     }
     else if (type == "vanGenuchten")
     {
-        const bool brook_corey = false;
-        return createVanGenuchten(config, brook_corey);
+        return createVanGenuchten(config);
     }
     else
     {
