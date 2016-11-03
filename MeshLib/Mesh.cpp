@@ -259,21 +259,18 @@ void Mesh::checkNonlinearNodeIDs() const
 {
     for (MeshLib::Element const* e : _elements)
     {
-        for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
-        {
-            if (!(e->getNodeIndex(i) < getNumberOfBaseNodes()))
-                OGS_FATAL(
-                    "Node %d is a base/linear node, but the ID is not smaller "
-                    "than the number of base nodes %d. Please renumber node IDs in the mesh.",
-                    e->getNodeIndex(i), getNumberOfBaseNodes());
-        }
         for (unsigned i=e->getNumberOfBaseNodes(); i<e->getNumberOfNodes(); i++)
         {
-            if (!(e->getNodeIndex(i) >= getNumberOfBaseNodes()))
-                OGS_FATAL(
-                    "Node %d is a non-linear node, but the ID is smaller "
-                    "than the number of base nodes %d. Please renumber node IDs in the mesh.",
-                    e->getNodeIndex(i), getNumberOfBaseNodes());
+            if (e->getNodeIndex(i) >= getNumberOfBaseNodes())
+                continue;
+
+            DBUG(
+                "Node %d is a non-linear node, but the ID is smaller "
+                "than the number of base nodes %d.",
+                e->getNodeIndex(i), getNumberOfBaseNodes());
+            ERR("Found a nonlinear node whose ID is smaller than base node IDs."
+                "Some functions may not work properly.");
+            return;
         }
     }
 }
