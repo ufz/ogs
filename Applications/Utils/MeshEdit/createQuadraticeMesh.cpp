@@ -131,7 +131,8 @@ static std::unique_ptr<MeshLib::Mesh> createQuadraticOrderMesh(MeshLib::Mesh con
         new MeshLib::Mesh(org_mesh.getName(), vec_new_nodes, vec_new_eles,
                           org_mesh.getProperties().excludeCopyProperties(
                               std::vector<MeshLib::MeshItemType>(
-                                  1, MeshLib::MeshItemType::Node))));
+                                  1, MeshLib::MeshItemType::Node)),
+                          org_mesh.getNumberOfNodes()));
     return new_mesh;
 }
 
