@@ -31,7 +31,7 @@ public:
     virtual double getCapillaryPressure(const double saturation) const = 0;
 
     /// Get capillary pressure.
-    virtual double getSturation(const double capillary_ressure) const = 0;
+    virtual double getSaturation(const double capillary_ressure) const = 0;
 
     /// Get the derivative of the capillary pressure with respect to saturation
     virtual double getdPcdS(const double saturation) const = 0;

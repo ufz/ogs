@@ -121,8 +121,8 @@ inline double to_radians(double degrees) {
 }
 
 template<typename Type> Type limitValueInInterval(const Type variable,
-                                               const Type lower_bound,
-                                               const Type upper_bound)
+                                                  const Type lower_bound,
+                                                  const Type upper_bound)
 {
     if (variable < lower_bound)
         return lower_bound;

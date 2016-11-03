@@ -18,8 +18,8 @@
 #include "BaseLib/Error.h"
 
 #include "CapillaryPressureSaturation.h"
-#include "BrookCoreyCapillaryPressure.h"
-#include "vanGenuchtenCapillaryPressure.h"
+#include "BrookCoreyCapillaryPressureSaturation.h"
+#include "vanGenuchtenCapillaryPressureSaturation.h"
 
 namespace MaterialLib
 {
@@ -27,12 +27,12 @@ namespace PorousMedium
 {
 /**
     \param config ConfigTree object which contains the input data
-                  including <type>BrookCorey</type> or <type>vanGenuchten</type>
+                  including <type>BrookCorey</type>
                   and it has a tag of <capillary_pressure>
 */
 static std::unique_ptr<CapillaryPressureSaturation>
-createBrookCoreyOrVanGenuchten(BaseLib::ConfigTree const& config,
-                               const bool is_brook_corey)
+                         createBrookCorey(BaseLib::ConfigTree const& config,
+                                          const bool is_brook_corey)
 {
     std::array<double, 5> parameters = {
         {//! \ogs_file_param{material_property__porous_medium__porous_medium__capillary_pressure__type__pd}
@@ -45,17 +45,36 @@ createBrookCoreyOrVanGenuchten(BaseLib::ConfigTree const& config,
          config.getConfigParameter<double>("m"),
          //! \ogs_file_param{material_property__porous_medium__porous_medium__capillary_pressure__type__pc_max}
          config.getConfigParameter<double>("pc_max")}};
-    if (is_brook_corey)
-        assert(parameters[3] >= 1.0);  // m >= 1
-    else
-        assert(parameters[3] <= 1.0);  // m <= 1
 
-    if (is_brook_corey)
-        return std::unique_ptr<CapillaryPressureSaturation>(
-            new BrookCoreyCapillaryPressure(parameters));
-    else
-        return std::unique_ptr<CapillaryPressureSaturation>(
-            new vanGenuchtenCapillaryPressure(parameters));
+    assert(parameters[3] >= 1.0);  // m >= 1
+    return std::unique_ptr<CapillaryPressureSaturation>(
+                        new BrookCoreyCapillaryPressureSaturation(parameters));
+}
+
+/**
+    \param config ConfigTree object which contains the input data
+                  including <type>vanGenuchten</type>
+                  and it has a tag of <capillary_pressure>
+*/
+static std::unique_ptr<CapillaryPressureSaturation>
+                         createVanGenuchten(BaseLib::ConfigTree const& config,
+                                            const bool is_brook_corey)
+{
+    std::array<double, 5> parameters = {
+        {//! \ogs_file_param{material_property__porous_medium__porous_medium__capillary_pressure__type__pd}
+         config.getConfigParameter<double>("pd"),
+         //! \ogs_file_param{material_property__porous_medium__porous_medium__capillary_pressure__type__sr}
+         config.getConfigParameter<double>("sr"),
+         //! \ogs_file_param{material_property__porous_medium__porous_medium__capillary_pressure__type__smax}
+         config.getConfigParameter<double>("smax"),
+         //! \ogs_file_param{material_property__porous_medium__porous_medium__capillary_pressure__type__m}
+         config.getConfigParameter<double>("m"),
+         //! \ogs_file_param{material_property__porous_medium__porous_medium__capillary_pressure__type__pc_max}
+         config.getConfigParameter<double>("pc_max")}};
+
+    assert(parameters[3] <= 1.0);  // m <= 1
+    return std::unique_ptr<CapillaryPressureSaturation>(
+                      new vanGenuchtenCapillaryPressureSaturation(parameters));
 }
 
 std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
@@ -67,12 +86,12 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     if (type == "BrookCorey")
     {
         const bool brook_corey = true;
-        return createBrookCoreyOrVanGenuchten(config, brook_corey);
+        return createBrookCorey(config, brook_corey);
     }
     else if (type == "vanGenuchten")
     {
         const bool brook_corey = false;
-        return createBrookCoreyOrVanGenuchten(config, brook_corey);
+        return createVanGenuchten(config, brook_corey);
     }
     else
     {

@@ -49,6 +49,7 @@ TEST(MaterialPorousMedium, checkBrookCoreyCapillaryPressure)
     auto const pc_model = createCapillaryPressureModel(xml);
 
     std::vector<double> S = {0.11, 0.2, 0.3, 0.44, 0.52, 0.6, 0.85};
+    // The following expected data are calculated by using  OGS5.
     std::vector<double> pc = {185941.926417901, 58800,
                               41577.878733769,  31888.7772993424,
                               28691.4621446869, 26296.1594153975,
@@ -61,11 +62,12 @@ TEST(MaterialPorousMedium, checkBrookCoreyCapillaryPressure)
     for (std::size_t i = 0; i < S.size(); i++)
     {
         ASSERT_NEAR(pc[i], pc_model->getCapillaryPressure(S[i]), 1.e-5);
-        ASSERT_NEAR(S[i], pc_model->getSturation(pc[i]), 1.e-5);
+        ASSERT_NEAR(S[i], pc_model->getSaturation(pc[i]), 1.e-5);
         ASSERT_NEAR(dpc_dS[i], pc_model->getdPcdS(S[i]), 1.e-5);
     }
 }
 
+// In the following test, the expected results are calculated by using OGS5.
 TEST(MaterialPorousMedium, checkVanGenuchtenCapillaryPressure)
 {
     // rho=1000, alpha = 0.37, pd=rho*g/alpha
@@ -81,6 +83,7 @@ TEST(MaterialPorousMedium, checkVanGenuchtenCapillaryPressure)
     auto const pc_model = createCapillaryPressureModel(xml);
 
     std::vector<double> S = {0.11, 0.2, 0.3, 0.44, 0.52, 0.6, 0.85};
+    // The following expected data are calculated by using  OGS5.
     std::vector<double> pc = {
         67392.5090996789, 51197.5842770154, 41864.8480636163, 33730.6152475992,
         30210.4060771713, 27091.7425032625, 17726.625235802};
@@ -92,7 +95,7 @@ TEST(MaterialPorousMedium, checkVanGenuchtenCapillaryPressure)
     for (std::size_t i = 0; i < S.size(); i++)
     {
         ASSERT_NEAR(pc[i], pc_model->getCapillaryPressure(S[i]), 1.e-5);
-        ASSERT_NEAR(S[i], pc_model->getSturation(pc[i]), 1.e-5);
+        ASSERT_NEAR(S[i], pc_model->getSaturation(pc[i]), 1.e-5);
         ASSERT_NEAR(dpc_dS[i], pc_model->getdPcdS(S[i]), 1.e-5);
     }
 }

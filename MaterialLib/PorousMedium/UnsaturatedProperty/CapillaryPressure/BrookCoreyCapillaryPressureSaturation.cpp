@@ -10,7 +10,7 @@
  *  Created on November 1, 2016, 9:45 AM
  */
 
-#include "BrookCoreyCapillaryPressure.h"
+#include "BrookCoreyCapillaryPressureSaturation.h"
 
 #include <cmath>
 
@@ -20,30 +20,31 @@ namespace MaterialLib
 {
 namespace PorousMedium
 {
-double BrookCoreyCapillaryPressure::getCapillaryPressure(
+double BrookCoreyCapillaryPressureSaturation::getCapillaryPressure(
     const double saturation) const
 {
     const double S = MathLib::limitValueInInterval(
-        saturation, _Sr + _perturbation, _Smax - _perturbation);
+        saturation, _Sr + _minor_offset, _Smax - _minor_offset);
     const double Se = (S - _Sr) / (_Smax - _Sr);
     const double pc = _pb * std::pow(Se, -1.0 / _mm);
-    return MathLib::limitValueInInterval(pc, _perturbation, _Pc_max);
+    return MathLib::limitValueInInterval(pc, _minor_offset, _Pc_max);
 }
 
-double BrookCoreyCapillaryPressure::getSturation(
+double BrookCoreyCapillaryPressureSaturation::getSaturation(
     const double capillary_pressure) const
 {
     const double pc = (capillary_pressure < 0.0) ? 0.0 : capillary_pressure;
     const double Se = std::pow(pc / _pb, -_mm);
     const double S = Se * (_Smax - _Sr) + _Sr;
-    return MathLib::limitValueInInterval(S, _Sr + _perturbation,
-                                         _Smax - _perturbation);
+    return MathLib::limitValueInInterval(S, _Sr + _minor_offset,
+                                         _Smax - _minor_offset);
 }
 
-double BrookCoreyCapillaryPressure::getdPcdS(const double saturation) const
+double BrookCoreyCapillaryPressureSaturation::getdPcdS(
+    const double saturation) const
 {
     const double S = MathLib::limitValueInInterval(
-        saturation, _Sr + _perturbation, _Smax - _perturbation);
+        saturation, _Sr + _minor_offset, _Smax - _minor_offset);
     const double val = std::pow(((S - _Sr) / (_Smax - _Sr)), -1.0 / _mm);
     return (_pb * val) / (_mm * (_Sr - S));
 }
