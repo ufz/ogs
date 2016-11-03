@@ -43,11 +43,11 @@ class BrookCoreyCapillaryPressure final : public CapillaryPressureSaturation
 {
 public:
     /** \param parameters An array contains the five parameters:
-     *                     [0] $f p_b $f
-     *                     [1] $f S_r $f
-     *                     [2] $f S_{\mbox{max}} $f
-     *                     [3] $f m $f
-     *                     [4] $f P_c^{\mbox{max}}$f
+     *                     [0] \f$ p_b \f$
+     *                     [1] \f$ S_r \f$
+     *                     [2] \f$ S_{\mbox{max}} \f$
+     *                     [3] \f$ m \f$
+     *                     [4] \f$ P_c^{\mbox{max}}\f$
      */
     BrookCoreyCapillaryPressure(std::array<double, 5> const& parameters)
         : _pb(parameters[0]),

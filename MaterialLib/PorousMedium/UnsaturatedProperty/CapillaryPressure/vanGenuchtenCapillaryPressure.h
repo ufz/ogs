@@ -39,7 +39,7 @@ namespace PorousMedium
  *    Note:
  *     \f[m=1/(1-n)\f].
  *
- *    If $f\alpha$f instead of $fp_b$f is available, $fp_b$f can be calculated
+ *    If \f$\alpha\f$ instead of \f$p_b\f$ is available, \f$p_b\f$ can be calculated
  * as
  *    \f[p_b=\rho g/\alpha\f]
  */
@@ -47,11 +47,11 @@ class vanGenuchtenCapillaryPressure final : public CapillaryPressureSaturation
 {
 public:
     /** \param parameters An array contains the five parameters:
-     *                     [0] $f p_b $f
-     *                     [1] $f S_r $f
-     *                     [2] $f S_{\mbox{max}} $f
-     *                     [3] $f m $f
-     *                     [4] $f P_c^{\mbox{max}}$f
+     *                     [0] \f$ p_b \f$
+     *                     [1] \f$ S_r \f$
+     *                     [2] \f$ S_{\mbox{max}} \f$
+     *                     [3] \f$ m \f$
+     *                     [4] \f$ P_c^{\mbox{max}}\f$
      */
     vanGenuchtenCapillaryPressure(std::array<double, 5> const& parameters)
         : _pb(parameters[0]),
