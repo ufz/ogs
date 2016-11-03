@@ -9,7 +9,6 @@
 # - MKL_LIBRARIES
 
 # Lookg for MKL root dir
-#SET(MKL_DIR $ENV{MKL_DIR} CACHE PATH "MKL root directory")
 if (NOT MKL_DIR)
     find_path(MKL_DIR
         include/mkl.h
@@ -18,10 +17,10 @@ if (NOT MKL_DIR)
         /opt/intel/mkl/
         )
 endif()
-MESSAGE("MKL_DIR : ${MKL_DIR}")
+message("MKL_DIR : ${MKL_DIR}")
 
 # Find MKL include dir
-FIND_PATH(MKL_INCLUDE_DIR NAMES mkl.h
+find_path(MKL_INCLUDE_DIR NAMES mkl.h
     PATHS
     ${MKL_DIR}/include
 )
@@ -58,12 +57,8 @@ endif()
 find_library(MKL_LIB_THREAD ${MKL_THREAD_LIB_NAME} PATHS ${MKL_LIB_DIR})
 
 
-SET (MKL_LIBRARIES 
-    "${MKL_LIB_INTEL}" 
-    "${MKL_LIB_THREAD}"
-    "${MKL_LIB_CORE}")
+set(MKL_LIBRARIES "${MKL_LIB_INTEL}" "${MKL_LIB_THREAD}" "${MKL_LIB_CORE}")
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MKL DEFAULT_MSG MKL_INCLUDE_DIR MKL_LIBRARIES)
 mark_as_advanced(MKL_INCLUDE_DIR MKL_LIBRARIES)
-
