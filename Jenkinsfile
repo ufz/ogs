@@ -47,6 +47,13 @@ node { step([$class: 'GitHubCommitStatusSetter']) }
 if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
     if (helper.isOriginMaster(this)) {
         build job: 'OGS-6/clang-sanitizer', wait: false
-        build job: 'OGS-6/Deploy', wait: false
+        node('master') {
+            checkout scm
+            def tag = helper.getTag()
+            if (tag != "") {
+                keepBuild()
+                currentBuild.displayName = tag
+            }
+        }
     }
 }
