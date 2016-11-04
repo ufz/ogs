@@ -13,7 +13,7 @@
 #include "HydroMechanicsLocalAssemblerMatrix.h"
 
 #include "MaterialLib/SolidModels/KelvinVector.h"
-
+#include "MeshLib/ElementStatus.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
@@ -130,8 +130,24 @@ assembleWithJacobianConcrete(
     Eigen::VectorXd& local_rhs,
     Eigen::MatrixXd& local_Jac)
 {
-    auto p = local_x.segment(pressure_index, pressure_size);
-    auto p_dot = local_x_dot.segment(pressure_index, pressure_size);
+    auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index, pressure_size);
+    auto p_dot = const_cast<Eigen::VectorXd&>(local_x_dot).segment(pressure_index, pressure_size);
+
+    if (_process_data.pv_p && !_process_data.pv_p->getElementStatus().isActive(_element.getID()))
+    {
+        SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
+        for (unsigned i=0; i<pressure_size; i++)
+        {
+            // only inactive nodes
+            if (_process_data.pv_p->getElementStatus().isActiveNode(_element.getNode(i)))
+                continue;
+            x_position.setNodeID(_element.getNodeIndex(i));
+            auto const p0 = _process_data.pv_p->getInitialCondition()(t, x_position)[0];
+            p[i] = p0;
+            p_dot[i] = 0;
+        }
+    }
 
     auto u = local_x.segment(displacement_index, displacement_size);
     auto u_dot = local_x_dot.segment(displacement_index, displacement_size);

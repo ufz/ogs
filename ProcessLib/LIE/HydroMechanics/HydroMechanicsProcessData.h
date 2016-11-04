@@ -121,6 +121,7 @@ struct HydroMechanicsProcessData
 
     double dt = 0.0;
     double t = 0.0;
+    ProcessLib::ProcessVariable const* pv_p = nullptr;
 
     // mesh properties for output
     MeshLib::PropertyVector<double>* mesh_prop_stress_xx = nullptr;

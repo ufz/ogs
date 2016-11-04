@@ -17,6 +17,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "MeshLib/ElementStatus.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
@@ -102,7 +103,13 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     // for extrapolation
     _mesh_subset_all_nodes.reset(new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
     // pressure
+#if 1
+    ProcessVariable const& pv_p = getProcessVariables()[0];
+    _process_data.pv_p = &pv_p;
+    _mesh_nodes_p = MeshLib::getBaseNodes(pv_p.getElementStatus().getActiveElements());
+#else
     _mesh_nodes_p = MeshLib::getBaseNodes(_mesh.getElements());
+#endif
     _mesh_subset_nodes_p.reset(new MeshLib::MeshSubset(_mesh, &_mesh_nodes_p));
     // regular u
     _mesh_subset_matrix_nodes.reset(new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
@@ -120,7 +127,12 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     vec_n_components.push_back(1);
     all_mesh_subsets.push_back(std::unique_ptr<MeshLib::MeshSubsets>{
         new MeshLib::MeshSubsets{_mesh_subset_nodes_p.get()}});
+#if 1
+//    vec_var_elements.push_back(&_vec_fracutre_matrix_elements);
+    vec_var_elements.push_back(&pv_p.getElementStatus().getActiveElements());
+#else
     vec_var_elements.push_back(&_mesh.getElements());
+#endif
     // regular displacement
     vec_n_components.push_back(GlobalDim);
     std::generate_n(
