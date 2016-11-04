@@ -32,6 +32,7 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("capillary_pressure");
+    sub_config.ignoreConfigAttribute("id");
     return MaterialLib::PorousMedium::createCapillaryPressureModel(sub_config);
 }
 
@@ -99,5 +100,36 @@ TEST(MaterialPorousMedium, checkVanGenuchtenCapillaryPressure)
         ASSERT_NEAR(S[i], pc_model->getSaturation(pc[i]), 1e-14);
         ASSERT_NEAR(pc[i], pc_model->getCapillaryPressure(S[i]), tol_pc);
         ASSERT_NEAR(dpc_dS[i], pc_model->getdPcdS(S[i]), tol_pc);
+    }
+}
+
+TEST(MaterialPorousMedium, checkCapillaryPressureCurve)
+{
+    const char xml[] =
+        "<capillary_pressure id=\"0\">"
+        "   <type>Curve</type>"
+        "       <curve>"
+        "           <coords> 0.     0.5   0.9  </coords>"
+        "           <values> 1.e+6  1.e+4 0.0  </values>"
+        "       </curve>"
+        "</relative_permeability>";
+    auto const pc_model = createCapillaryPressureModel(xml);
+
+    std::vector<double> S = {0.0, 0.2, 0.3, 0.52, 0.6, 1.0};
+    // The following expected data are calculated by using  OGS5.
+    std::vector<double> pc = {1.e+6, 604000.0, 406000.0, 9500.0, 7500.0, 0.};
+    std::vector<double> dpc_dS = {-1980000.0, -1980000.0, -1980000.0,
+                                  -25000.0,   -25000.0,   -25000.0};
+
+    for (std::size_t i = 0; i < S.size(); i++)
+    {
+        ASSERT_NEAR(pc[i], pc_model->getCapillaryPressure(S[i]), 1.e-5);
+        ASSERT_NEAR(dpc_dS[i], pc_model->getdPcdS(S[i]), 1.e-5);
+
+        if (i == S.size() - 1)
+            // Minimum Pc to maximum saturation
+            ASSERT_NEAR(0.9, pc_model->getSaturation(pc[i]), 1.e-5);
+        else
+            ASSERT_NEAR(S[i], pc_model->getSaturation(pc[i]), 1.e-5);
     }
 }

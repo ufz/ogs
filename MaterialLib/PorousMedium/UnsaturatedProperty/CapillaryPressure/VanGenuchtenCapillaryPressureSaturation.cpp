@@ -27,8 +27,7 @@ double VanGenuchtenCapillaryPressureSaturation::getCapillaryPressure(
         MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,
                                       _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
-    const double pc =
-        _pb * std::pow(std::pow(Se, (-1.0 / _m)) - 1.0, 1.0 - _m);
+    const double pc = _pb * std::pow(std::pow(Se, (-1.0 / _m)) - 1.0, 1.0 - _m);
     return MathLib::limitValueInInterval(pc, _minor_offset, _pc_max);
 }
 
