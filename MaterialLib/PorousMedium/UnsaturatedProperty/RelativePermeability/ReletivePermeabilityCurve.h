@@ -34,13 +34,6 @@ public:
     {
     }
 
-    ReletivePermeabilityCurve(ReletivePermeabilityCurve& orig)
-        : _Sr(orig._Sr),
-          _Smax(orig._Smax),
-          _curve_data(std::move(orig._curve_data))
-    {
-    }
-
     /// Get model name.
     std::string getName() const override
     {
@@ -51,7 +44,7 @@ public:
     double getValue(const double saturation) const override
     {
         const double S = MathLib::limitValueInInterval(
-            saturation, _Sr + _perturbation, _Smax - _perturbation);
+            saturation, _Sr + _minor_offset, _Smax - _minor_offset);
 
         return _curve_data->getValue(S);
     }
@@ -61,8 +54,6 @@ private:
     const double _Smax;  ///< Maximum saturation.
 
     std::unique_ptr<MathLib::PiecewiseLinearInterpolation> _curve_data;
-
-    const double _perturbation = std::numeric_limits<double>::epsilon();
 };
 }  // end namespace
 }  // end namespace

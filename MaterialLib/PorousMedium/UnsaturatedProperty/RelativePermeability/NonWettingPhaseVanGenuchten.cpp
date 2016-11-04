@@ -23,7 +23,7 @@ namespace PorousMedium
 double NonWettingPhaseVanGenuchten::getValue(const double saturation_w) const
 {
     const double S = MathLib::limitValueInInterval(
-        saturation_w, _Sr + _perturbation, _Smax - _perturbation);
+        saturation_w, _Sr + _minor_offset, _Smax - _minor_offset);
     const double Se = (S - _Sr) / (_Smax - _Sr);
     const double Krel = std::pow(1.0 - Se, 1.0 / 3.0) *
                         std::pow(1.0 - std::pow(Se, 1.0 / _mm), 2.0 * _mm);

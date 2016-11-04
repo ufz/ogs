@@ -142,8 +142,8 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     else
     {
         OGS_FATAL(
-            "The capillary pressure mode %s is unavailable.\n"
-            "The available types are:"
+            "The capillary pressure model %s is unavailable.\n"
+            "The available models are:"
             "\n\tWettingPhaseVanGenuchten,"
             "\n\tNonWettingPhaseVanGenuchten,"
             "\n\tWettingPhaseBrookCoreyOilGas,"

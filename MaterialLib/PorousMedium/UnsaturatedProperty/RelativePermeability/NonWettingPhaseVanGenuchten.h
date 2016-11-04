@@ -54,14 +54,6 @@ public:
     {
     }
 
-    NonWettingPhaseVanGenuchten(const NonWettingPhaseVanGenuchten& orig)
-        : _Sr(orig._Sr),
-          _Smax(orig._Smax),
-          _mm(orig._mm),
-          _Krel_min(orig._Krel_min)
-    {
-    }
-
     /// Get model name.
     std::string getName() const override
     {

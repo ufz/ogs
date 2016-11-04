@@ -55,14 +55,6 @@ public:
     {
     }
 
-    WettingPhaseVanGenuchten(const WettingPhaseVanGenuchten& orig)
-        : _Sr(orig._Sr),
-          _Smax(orig._Smax),
-          _mm(orig._mm),
-          _Krel_min(orig._Krel_min)
-    {
-    }
-
     /// Get model name.
     std::string getName() const override
     {
@@ -77,8 +69,6 @@ private:
     const double _Smax;      ///< Maximum saturation.
     const double _mm;        ///< Exponent (<=1.0), n=1/(1-mm).
     const double _Krel_min;  ///< Minimum relative permeability
-
-    const double _perturbation = std::numeric_limits<double>::epsilon();
 };
 
 }  // end namespace

@@ -23,7 +23,7 @@ namespace PorousMedium
 double WettingPhaseVanGenuchten::getValue(const double saturation) const
 {
     const double S = MathLib::limitValueInInterval(
-        saturation, _Sr + _perturbation, _Smax - _perturbation);
+        saturation, _Sr + _minor_offset, _Smax - _minor_offset);
     const double Se = (S - _Sr) / (_Smax - _Sr);
     const double Krel =
         std::sqrt(Se) *
