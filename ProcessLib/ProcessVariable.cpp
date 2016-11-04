@@ -14,6 +14,7 @@
 
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/ElementStatus.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
@@ -39,6 +40,15 @@ ProcessVariable::ProcessVariable(
 
     if (_shapefunction_order < 1 || 2 < _shapefunction_order)
         OGS_FATAL("The given shape function order %d is not supported", _shapefunction_order);
+
+    //! \ogs_file_param{prj__process_variables__process_variable__inactive_material_ids}
+    auto opt_inactivate_materialIDs = config.getConfigParameterOptional<std::vector<int>>("inactive_material_ids");
+    if (opt_inactivate_materialIDs)
+    {
+        _element_status.reset(new MeshLib::ElementStatus(&mesh, opt_inactivate_materialIDs.get()));
+    } else {
+        _element_status.reset(new MeshLib::ElementStatus(&mesh));
+    }
 
     // Boundary conditions
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions}
@@ -101,6 +111,7 @@ ProcessVariable::ProcessVariable(ProcessVariable&& other)
       _mesh(other._mesh),
       _n_components(other._n_components),
       _shapefunction_order(other._shapefunction_order),
+      _element_status(std::move(other._element_status)),
       _initial_condition(std::move(other._initial_condition)),
       _bc_configs(std::move(other._bc_configs)),
       _bc_builder(std::move(other._bc_builder))
