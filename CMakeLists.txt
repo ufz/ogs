@@ -85,7 +85,6 @@ option(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Use dynamically allocated shape matrice
 option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
 # Logging
-option(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 set(OGS_LOG_LEVEL "LOGOG_LEVEL_DEBUG" CACHE STRING "Set logging level included in compilation.")
 set_property(CACHE OGS_LOG_LEVEL PROPERTY STRINGS
     LOGOG_LEVEL_NONE
@@ -176,9 +175,6 @@ if(OGS_BUILD_TESTS)
 endif()
 
 # Logging level
-if(OGS_DISABLE_LOGGING)
-    set(OGS_LOG_LEVEL LOGOG_LEVEL_NONE)
-endif()
 add_definitions(-DLOGOG_LEVEL=${OGS_LOG_LEVEL})
 
 
