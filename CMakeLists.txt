@@ -86,6 +86,15 @@ option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
 # Logging
 option(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
+set(OGS_LOG_LEVEL "LOGOG_LEVEL_DEBUG" CACHE STRING "Set logging level included in compilation.")
+set_property(CACHE OGS_LOG_LEVEL PROPERTY STRINGS
+    LOGOG_LEVEL_NONE
+    LOGOG_LEVEL_ERROR
+    LOGOG_LEVEL_WARN
+    LOGOG_LEVEL_INFO
+    LOGOG_LEVEL_DEBUG
+    LOGOG_LEVEL_ALL
+)
 
 # Debug
 option(OGS_FATAL_ABORT "Abort in OGS_FATAL" OFF)
@@ -165,6 +174,13 @@ if(OGS_BUILD_TESTS)
     set(Data_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Tests/Data CACHE INTERNAL "")
     set(Data_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Tests/Data CACHE INTERNAL "")
 endif()
+
+# Logging level
+if(OGS_DISABLE_LOGGING)
+    set(OGS_LOG_LEVEL LOGOG_LEVEL_NONE)
+endif()
+add_definitions(-DLOGOG_LEVEL=${OGS_LOG_LEVEL})
+
 
 ######################
 ### Subdirectories ###
