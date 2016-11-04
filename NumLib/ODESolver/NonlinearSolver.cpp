@@ -218,76 +218,83 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
         INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
 
+        bool needToSolveLinearEquations = true;
         if (_convergence_criterion->hasResidualCheck())
-            _convergence_criterion->checkResidual(res);
-
-        GlobalVector* x_old = nullptr;
-        if (_convergence_criterion->hasResidualCheck() && _convergence_criterion->isSatisfied())
         {
-            minus_delta_x.setZero();
+            _convergence_criterion->checkResidual(res);
+            needToSolveLinearEquations = !_convergence_criterion->isSatisfied();
         }
-        else
+
+        bool iteration_succeeded = true;
+        GlobalVector* x_old = nullptr;
+        if (needToSolveLinearEquations)
         {
             BaseLib::RunTime time_linear_solver;
             time_linear_solver.start();
-            bool iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
+            iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
             INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
 
-            if (!iteration_succeeded)
+            if (iteration_succeeded)
             {
-                ERR("Newton: The linear solver failed.");
-                // Don't compute further error norms, but break here.
-                error_norms_met = false;
-                break;
-            }
+                // copy previous solution to x_old
+                x_old =
+                    &NumLib::GlobalVectorProvider::provider.getVector(
+                        x, _x_old_id);
+                LinAlg::copy(x, *x_old);
+                // update solution
+                LinAlg::axpy(x, -_alpha, minus_delta_x);
 
-            // copy previous solution to x_old
-            x_old =
-                &NumLib::GlobalVectorProvider::provider.getVector(
-                    x, _x_old_id);
-            LinAlg::copy(x, *x_old);
-            // update solution
-            LinAlg::axpy(x, -_alpha, minus_delta_x);
-        }
+                if (sys.isLinear()) {
+                    error_norms_met = true;
+                } else {
+                    if (_convergence_criterion->hasDeltaXCheck()) {
+                        // Note: x contains the new solution!
+                        _convergence_criterion->checkDeltaX(minus_delta_x, x);
+                    }
 
-        if (postIterationCallback)
-            postIterationCallback(iteration, x);
-
-        switch(sys.postIteration(x))
-        {
-            case IterationResult::SUCCESS:
-                break;
-            case IterationResult::FAILURE:
-                ERR("Newton: The postIteration() hook reported a "
-                    "non-recoverable error.");
-                error_norms_met = false;
-                break;
-            case IterationResult::REPEAT_ITERATION:
-                INFO(
-                    "Newton: The postIteration() hook decided that this "
-                    "iteration"
-                    " has to be repeated.");
-                // TODO introduce some onDestroy hook.
-                if (x_old)
-                {
-                    // TODO could be done via swap. Note: that also requires swapping
-                    // the ids. Same for the Picard scheme.
-                    LinAlg::copy(*x_old, x);  // restore previous solution
-                    NumLib::GlobalVectorProvider::provider
-                        .releaseVector(*x_old);
+                    error_norms_met = _convergence_criterion->isSatisfied();
                 }
-                continue;  // That throws the iteration result away.
+            }
         }
 
-        if (sys.isLinear()) {
-            error_norms_met = true;
-        } else {
-            if (_convergence_criterion->hasDeltaXCheck()) {
-                // Note: x contains the new solution!
-                _convergence_criterion->checkDeltaX(minus_delta_x, x);
-            }
+        if (iteration_succeeded)
+        {
+            if (postIterationCallback)
+                postIterationCallback(iteration, x);
 
-            error_norms_met = _convergence_criterion->isSatisfied();
+            switch(sys.postIteration(x))
+            {
+                case IterationResult::SUCCESS:
+                    break;
+                case IterationResult::FAILURE:
+                    ERR("Newton: The postIteration() hook reported a "
+                        "non-recoverable error.");
+                    iteration_succeeded = false;
+                    break;
+                case IterationResult::REPEAT_ITERATION:
+                    INFO(
+                        "Newton: The postIteration() hook decided that this "
+                        "iteration"
+                        " has to be repeated.");
+                    // TODO introduce some onDestroy hook.
+                    if (x_old)
+                    {
+                        // TODO could be done via swap. Note: that also requires swapping
+                        // the ids. Same for the Picard scheme.
+                        LinAlg::copy(*x_old, x);  // restore previous solution
+                        NumLib::GlobalVectorProvider::provider
+                            .releaseVector(*x_old);
+                    }
+                    continue;  // That throws the iteration result away.
+            }
+        }
+
+        if (!iteration_succeeded)
+        {
+            ERR("Newton: The linear solver failed.");
+            // Don't compute further error norms, but break here.
+            error_norms_met = false;
+            break;
         }
 
         INFO("[time] Iteration #%u took %g s.", iteration,
