@@ -29,6 +29,16 @@ ConvergenceCriterionResidual::ConvergenceCriterionResidual(
             "specified.");
 }
 
+void ConvergenceCriterionResidual::checkDeltaX(const GlobalVector& minus_delta_x,
+                                             GlobalVector const& x)
+{
+    auto error_dx = MathLib::LinAlg::norm(minus_delta_x, _norm_type);
+    auto norm_x = MathLib::LinAlg::norm(x, _norm_type);
+
+    INFO("Convergence criterion: |dx|=%.4e, |x|=%.4e, |dx|/|x|=%.4e", error_dx,
+         norm_x, error_dx / norm_x);
+}
+
 void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
 {
     auto norm_res = MathLib::LinAlg::norm(residual, _norm_type);
