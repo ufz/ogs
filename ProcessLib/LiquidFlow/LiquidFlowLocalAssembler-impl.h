@@ -49,7 +49,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-template <typename Calculator>
+template <typename LaplacianGravityVelocityCalculator>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     local_assemble(double const t, std::vector<double> const& local_x,
                    std::vector<double>& local_M_data,
@@ -100,7 +100,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         const double mu = _material_properties.getViscosity(p, _temperature);
 
         // Assemble Laplacian, K, and RHS by the gravitational term
-        Calculator::calculateLaplacianAndGravityTerm(
+        LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
             local_K, local_b, sm, perm, integration_factor, mu, rho_g,
             _gravitational_axis_id);
     }
@@ -132,7 +132,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-template <typename Calculator>
+template <typename LaplacianGravityVelocityCalculator>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     computeSecondaryVariableLocal(double const /*t*/,
                                   std::vector<double> const& local_x,
@@ -161,7 +161,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         // Compute viscosity:
         const double mu = _material_properties.getViscosity(p, _temperature);
 
-        Calculator::calculateVelocity(_darcy_velocities, local_p_vec, sm, perm,
+        LaplacianGravityVelocityCalculator
+                  ::calculateVelocity(_darcy_velocities, local_p_vec, sm, perm,
                                       ip, mu, rho_g, _gravitational_axis_id);
     }
 }

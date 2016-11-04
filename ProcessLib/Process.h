@@ -152,7 +152,7 @@ private:
                                              GlobalVector const& /*x*/){}
 
     virtual void computeSecondaryVariableConcrete(const double /*t*/,
-                                                  GlobalVector const& /*x*/) {};
+                                                  GlobalVector const& /*x*/) {}
 
     virtual NumLib::IterationResult postIterationConcreteProcess(
         GlobalVector const& /*x*/)

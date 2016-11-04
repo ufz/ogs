@@ -99,7 +99,7 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
 void HeatConductionProcess::computeSecondaryVariableConcrete(const double t,
                                                          GlobalVector const& x)
 {
-    DBUG("Compute the velocity for LiquidFlowProcess.");
+    DBUG("Compute heat flux for HeatConductionProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
             &HeatConductionLocalAssemblerInterface::computeSecondaryVariable,
             _local_assemblers, *_local_to_global_index_map, t, x);

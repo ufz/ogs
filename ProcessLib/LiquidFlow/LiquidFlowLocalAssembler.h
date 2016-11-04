@@ -171,7 +171,7 @@ private:
             int const gravitational_axis_id);
     };
 
-    template <typename Calculator>
+    template <typename LaplacianGravityVelocityCalculator>
     void local_assemble(double const t, std::vector<double> const& local_x,
                         std::vector<double>& local_M_data,
                         std::vector<double>& local_K_data,
@@ -179,7 +179,7 @@ private:
                         SpatialPosition const& pos,
                         Eigen::MatrixXd const& perm);
 
-    template <typename Calculator>
+    template <typename LaplacianGravityVelocityCalculator>
     void computeSecondaryVariableLocal(double const /*t*/,
                                        std::vector<double> const& local_x,
                                        SpatialPosition const& pos,
