@@ -241,8 +241,8 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
 #ifdef USE_EIGEN_UNSUPPORTED
     if (auto scaling =
             //! \ogs_file_param{linear_solver__eigen__scaling}
-            ptSolver->getConfigParameterOptional<int>("scaling")) {
-        _option.scaling = static_cast<bool>(*scaling);
+            ptSolver->getConfigParameterOptional<bool>("scaling")) {
+        _option.scaling = *scaling;
     }
 #endif
 }
