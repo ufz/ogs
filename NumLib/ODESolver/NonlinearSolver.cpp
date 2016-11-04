@@ -72,23 +72,25 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         sys.applyKnownSolutionsPicard(A, rhs, x_new);
         INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
 
-        if (!sys.isLinear() && _convergence_criterion->hasResidualCheck()) {
+        bool needToSolveLinearEquations = true;
+        if (_convergence_criterion->hasResidualCheck()) {
             GlobalVector res;
             LinAlg::matMult(A, x_new, res); // res = A * x_new
             LinAlg::axpy(res, -1.0, rhs);   // res -= rhs
             _convergence_criterion->checkResidual(res);
+            needToSolveLinearEquations = !_convergence_criterion->isSatisfied();
         }
 
-        BaseLib::RunTime time_linear_solver;
-        time_linear_solver.start();
-        bool iteration_succeeded = _linear_solver.solve(A, rhs, x_new);
-        INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
-
-        if (!iteration_succeeded)
+        bool iteration_succeeded = true;
+        if (needToSolveLinearEquations)
         {
-            ERR("Picard: The linear solver failed.");
+            BaseLib::RunTime time_linear_solver;
+            time_linear_solver.start();
+            iteration_succeeded = _linear_solver.solve(A, rhs, x_new);
+            INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
         }
-        else
+
+        if (iteration_succeeded)
         {
             if (postIterationCallback)
                 postIterationCallback(iteration, x_new);
@@ -119,6 +121,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         if (!iteration_succeeded)
         {
+            ERR("Picard: The linear solver failed.");
             // Don't compute error norms, break here.
             error_norms_met = false;
             break;
