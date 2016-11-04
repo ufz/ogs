@@ -61,7 +61,11 @@ int main(int argc, char *argv[])
         "l", "log-level",
         "the verbosity of logging messages: none, error, warn, info, debug, all",
         false,
+#ifdef NDEBUG
+        "info",
+#else
         "all",
+#endif
         "log level");
     cmd.add(log_level_arg);
 
