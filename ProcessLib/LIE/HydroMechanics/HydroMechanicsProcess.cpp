@@ -15,9 +15,11 @@
 #include <vector>
 
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "MeshLib/ElementStatus.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
 
@@ -93,7 +95,29 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
                 new BoundaryConditionBuilder(
                     *_process_data.fracture_property.get())));
     }
+
+    if (!_process_data.deactivate_matrix_in_flow)
+    {
+        _process_data.p_element_status.reset(new MeshLib::ElementStatus(&mesh));
+    }
+    else
+    {
+        auto range = MeshLib::MeshInformation::getValueBounds<int>(mesh, "MaterialIDs");
+        std::vector<int> vec_p_inactive_matIDs;
+        for (int matID = range.first; matID <= range.second; matID++)
+        {
+            if (std::find(vec_fracture_mat_IDs.begin(),
+                          vec_fracture_mat_IDs.end(),
+                          matID) == vec_fracture_mat_IDs.end())
+                vec_p_inactive_matIDs.push_back(matID);
+        }
+        _process_data.p_element_status.reset(new MeshLib::ElementStatus(&mesh, vec_p_inactive_matIDs));
+
+        ProcessVariable const& pv_p = getProcessVariables()[0];
+        _process_data.p0 = &pv_p.getInitialCondition();
+    }
 }
+
 
 template <unsigned GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::constructDofTable()
@@ -105,7 +129,8 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     _mesh_subset_all_nodes.reset(
         new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
     // pressure
-    _mesh_nodes_p = MeshLib::getBaseNodes(_mesh.getElements());
+    _mesh_nodes_p = MeshLib::getBaseNodes(
+        _process_data.p_element_status->getActiveElements());
     _mesh_subset_nodes_p.reset(new MeshLib::MeshSubset(_mesh, &_mesh_nodes_p));
     // regular u
     _mesh_subset_matrix_nodes.reset(
@@ -125,7 +150,16 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     vec_n_components.push_back(1);
     all_mesh_subsets.push_back(std::unique_ptr<MeshLib::MeshSubsets>{
         new MeshLib::MeshSubsets{_mesh_subset_nodes_p.get()}});
-    vec_var_elements.push_back(&_mesh.getElements());
+    if (!_process_data.deactivate_matrix_in_flow)
+    {
+        vec_var_elements.push_back(&_mesh.getElements());
+    }
+    else
+    {
+        // TODO set elements including active nodes for pressure.
+        // cannot use ElementStatus
+        vec_var_elements.push_back(&_vec_fracture_matrix_elements);
+    }
     // regular displacement
     vec_n_components.push_back(GlobalDim);
     std::generate_n(std::back_inserter(all_mesh_subsets), GlobalDim, [&]() {
