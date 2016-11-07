@@ -155,7 +155,12 @@ public:
     MeshLib::MeshSubsets const& getMeshSubsets(int const variable_id,
                                                int const component_id) const
     {
-        return *_mesh_subsets[getGlobalComponent(variable_id, component_id)];
+        return getMeshSubsets(getGlobalComponent(variable_id, component_id));
+    }
+
+    MeshLib::MeshSubsets const& getMeshSubsets(int const global_component_id) const
+    {
+        return *_mesh_subsets[global_component_id];
     }
 
 private:
