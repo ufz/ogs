@@ -37,7 +37,7 @@
 #include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
 #include "ProcessLib/LiquidFlow/CreateLiquidFlowProcess.h"
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
-#include "ProcessLib/SmallDeformationWithLIE/CreateSmallDeformationProcess.h"
+#include "ProcessLib/LIE/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
 
 namespace detail
@@ -343,7 +343,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:
-                    process = ProcessLib::SmallDeformationWithLIE::
+                    process = ProcessLib::LIE::SmallDeformation::
                         createSmallDeformationProcess<2>(
                             *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters, integration_order,
