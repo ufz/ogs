@@ -20,15 +20,20 @@ double norm(GlobalVector const& x, unsigned const global_component,
              LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh, CalculateNorm calculate_norm)
 {
     // TODO that also includes ghost nodes.
-    MeshLib::MeshSubset const& ms =
-        dof_table.getMeshSubsets(global_component).getMeshSubset(mesh.getID());
     double res = 0.0;
-    for (MeshLib::Node const* node : ms.getNodes())
+    MeshLib::MeshSubsets const& mss = dof_table.getMeshSubsets(global_component);
+    for (unsigned i=0; i<mss.size(); i++)
     {
-        auto const value =
-            getNodalValue(x, mesh, dof_table, node->getID(), global_component);
+        MeshLib::MeshSubset const& ms = mss.getMeshSubset(i);
+        if (ms.getMeshID() != mesh.getID())
+            continue;
+        for (MeshLib::Node const* node : ms.getNodes())
+        {
+            auto const value =
+                getNodalValue(x, mesh, dof_table, node->getID(), global_component);
 
-        res = calculate_norm(res, value);
+            res = calculate_norm(res, value);
+        }
     }
 
     // TODO for PETSc some global accumulation is necessary.
