@@ -273,12 +273,10 @@ void Mesh::checkNonlinearNodeIDs() const
             if (e->getNodeIndex(i) >= getNumberOfBaseNodes())
                 continue;
 
-            DBUG(
-                "Node %d is a non-linear node, but the ID is smaller "
-                "than the number of base nodes %d.",
+            ERR("Found a nonlinear node whose ID (%d) is smaller than the "
+                "number of base node IDs (%d)."
+                "Some functions may not work properly.",
                 e->getNodeIndex(i), getNumberOfBaseNodes());
-            ERR("Found a nonlinear node whose ID is smaller than base node IDs."
-                "Some functions may not work properly.");
             return;
         }
     }
