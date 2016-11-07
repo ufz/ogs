@@ -81,6 +81,7 @@ option(OGS_USE_MPI "Use MPI" OFF)
 
 # Eigen
 option(OGS_USE_EIGEN "Use Eigen linear solver" ON)
+option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
 option(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Use dynamically allocated shape matrices" ON)
 option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
@@ -171,6 +172,9 @@ endif()
 
 if(OGS_USE_EIGEN)
     add_definitions(-DOGS_USE_EIGEN)
+    if(OGS_USE_EIGEN_UNSUPPORTED)
+        add_definitions(-DUSE_EIGEN_UNSUPPORTED)
+    endif()
 endif()
 
 if (OGS_FATAL_ABORT)

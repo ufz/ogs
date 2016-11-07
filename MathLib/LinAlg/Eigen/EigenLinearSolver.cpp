@@ -15,6 +15,12 @@
 #include <Eigen/PardisoSupport>
 #endif
 
+#ifdef USE_EIGEN_UNSUPPORTED
+#include <Eigen/Sparse>
+#include <unsupported/Eigen/src/IterativeSolvers/GMRES.h>
+#include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
+#endif
+
 #include "BaseLib/ConfigTree.h"
 #include "EigenVector.h"
 #include "EigenMatrix.h"
@@ -148,6 +154,15 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::SolverType::CG: {
             return createIterativeSolver<EigenCGSolver>(precon_type);
         }
+        case EigenOption::SolverType::GMRES: {
+#ifdef USE_EIGEN_UNSUPPORTED
+            return createIterativeSolver<Eigen::GMRES>(precon_type);
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules. "
+                "Linear solver type GMRES is not available.");
+#endif
+        }
         default:
             OGS_FATAL("Invalid Eigen iterative linear solver type. Aborting.");
     }
@@ -175,6 +190,7 @@ EigenLinearSolver::EigenLinearSolver(
         }
         case EigenOption::SolverType::BiCGSTAB:
         case EigenOption::SolverType::CG:
+        case EigenOption::SolverType::GMRES:
             _solver = details::createIterativeSolver(_option.solver_type,
                                                      _option.precon_type);
             return;
@@ -224,6 +240,17 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
             ptSolver->getConfigParameterOptional<int>("max_iteration_step")) {
         _option.max_iterations = *max_iteration_step;
     }
+    if (auto scaling =
+            //! \ogs_file_param{linear_solver__eigen__scaling}
+            ptSolver->getConfigParameterOptional<bool>("scaling")) {
+#ifdef USE_EIGEN_UNSUPPORTED
+        _option.scaling = *scaling;
+#else
+        OGS_FATAL(
+            "The code is not compiled with the Eigen unsupported modules. "
+            "scaling is not available.");
+#endif
+    }
 }
 
 bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
@@ -231,8 +258,22 @@ bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
     INFO("------------------------------------------------------------------");
     INFO("*** Eigen solver computation");
 
+#ifdef USE_EIGEN_UNSUPPORTED
+    std::unique_ptr<Eigen::IterScaling<EigenMatrix::RawMatrixType>> scal;
+    if (_option.scaling)
+    {
+        INFO("-> scale");
+        scal.reset(new Eigen::IterScaling<EigenMatrix::RawMatrixType>());
+        scal->computeRef(A.getRawMatrix());
+        b.getRawVector() = scal->LeftScaling().cwiseProduct(b.getRawVector());
+    }
+#endif
     auto const success = _solver->solve(A.getRawMatrix(), b.getRawVector(),
                                         x.getRawVector(), _option);
+#ifdef USE_EIGEN_UNSUPPORTED
+    if (scal)
+        x.getRawVector() = scal->RightScaling().cwiseProduct(x.getRawVector());
+#endif
 
     INFO("------------------------------------------------------------------");
 

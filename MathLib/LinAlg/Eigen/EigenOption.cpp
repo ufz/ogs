@@ -19,6 +19,9 @@ EigenOption::EigenOption()
     precon_type = PreconType::NONE;
     max_iterations = static_cast<int>(1e6);
     error_tolerance = 1.e-16;
+#ifdef USE_EIGEN_UNSUPPORTED
+    scaling = false;
+#endif
 }
 
 EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_name)
@@ -31,6 +34,8 @@ EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_nam
         return SolverType::SparseLU;
     if (solver_name == "PardisoLU")
         return SolverType::PardisoLU;
+    if (solver_name == "GMRES")
+        return SolverType::GMRES;
 
     OGS_FATAL("Unknown Eigen solver type `%s'", solver_name.c_str());
 }

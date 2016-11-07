@@ -24,7 +24,8 @@ struct EigenOption final
         CG,
         BiCGSTAB,
         SparseLU,
-        PardisoLU
+        PardisoLU,
+        GMRES
     };
 
     /// Preconditioner type
@@ -43,6 +44,10 @@ struct EigenOption final
     int max_iterations;
     /// Error tolerance
     double error_tolerance;
+#ifdef USE_EIGEN_UNSUPPORTED
+    /// Scaling the coefficient matrix and the RHS bector
+    bool scaling;
+#endif
 
     /// Constructor
     ///
