@@ -11,6 +11,10 @@
 
 #include <logog/include/logog.hpp>
 
+#ifdef USE_MKL
+#include <Eigen/PardisoSupport>
+#endif
+
 #include "BaseLib/ConfigTree.h"
 #include "EigenVector.h"
 #include "EigenMatrix.h"
@@ -174,6 +178,17 @@ EigenLinearSolver::EigenLinearSolver(
             _solver = details::createIterativeSolver(_option.solver_type,
                                                      _option.precon_type);
             return;
+        case EigenOption::SolverType::PardisoLU: {
+#ifdef USE_MKL
+            using SolverType = Eigen::PardisoLU<EigenMatrix::RawMatrixType>;
+            _solver.reset(new details::EigenDirectLinearSolver<SolverType>);
+            return;
+#else
+            OGS_FATAL(
+                "The code is not compiled with Intel MKL. Linear solver type "
+                "PardisoLU is not available.");
+#endif
+        }
     }
 
     OGS_FATAL("Invalid Eigen linear solver type. Aborting.");
