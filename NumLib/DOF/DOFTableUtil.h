@@ -43,26 +43,6 @@ double norm(GlobalVector const& x, unsigned const global_component,
             MathLib::VecNormType norm_type,
             LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);
 
-//! Computes the 1-norm of the given global component of the given vector x.
-//! \remark
-//! \c x is typically the solution vector of a monolithically coupled process
-//! with several primary variables.
-double norm1(GlobalVector const& x, unsigned const global_component,
-             LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);
-
-//! Computes the 2-norm of the given global component of the given vector x.
-//! \remark
-//! \c x is typically the solution vector of a monolithically coupled process
-//! with several primary variables.
-double norm2(GlobalVector const& x, unsigned const global_component,
-             LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);
-
-//! Computes the maximum norm of the given global component of the given vector x.
-//! \remark
-//! \c x is typically the solution vector of a monolithically coupled process
-//! with several primary variables.
-double normMax(GlobalVector const& x, unsigned const global_component,
-               LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);
 }  // namespace NumLib
 
 #endif  // NUMLIB_DOF_DOFTABLEUTIL_H
