@@ -154,11 +154,15 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::SolverType::CG: {
             return createIterativeSolver<EigenCGSolver>(precon_type);
         }
-#ifdef USE_EIGEN_UNSUPPORTED
         case EigenOption::SolverType::GMRES: {
+#ifdef USE_EIGEN_UNSUPPORTED
             return createIterativeSolver<Eigen::GMRES>(precon_type);
-        }
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules. "
+                "Linear solver type GMRES is not available.");
 #endif
+        }
         default:
             OGS_FATAL("Invalid Eigen iterative linear solver type. Aborting.");
     }
@@ -186,9 +190,7 @@ EigenLinearSolver::EigenLinearSolver(
         }
         case EigenOption::SolverType::BiCGSTAB:
         case EigenOption::SolverType::CG:
-#ifdef USE_EIGEN_UNSUPPORTED
         case EigenOption::SolverType::GMRES:
-#endif
             _solver = details::createIterativeSolver(_option.solver_type,
                                                      _option.precon_type);
             return;
@@ -238,13 +240,17 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
             ptSolver->getConfigParameterOptional<int>("max_iteration_step")) {
         _option.max_iterations = *max_iteration_step;
     }
-#ifdef USE_EIGEN_UNSUPPORTED
     if (auto scaling =
             //! \ogs_file_param{linear_solver__eigen__scaling}
             ptSolver->getConfigParameterOptional<bool>("scaling")) {
+#ifdef USE_EIGEN_UNSUPPORTED
         _option.scaling = *scaling;
-    }
+#else
+        OGS_FATAL(
+            "The code is not compiled with the Eigen unsupported modules. "
+            "scaling is not available.");
 #endif
+    }
 }
 
 bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
