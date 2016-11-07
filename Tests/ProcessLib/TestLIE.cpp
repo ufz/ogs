@@ -16,7 +16,7 @@
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Mesh.h"
 
-#include "ProcessLib/SmallDeformationWithLIE/Common/Utils.h"
+#include "ProcessLib/LIE/Common/Utils.h"
 
 
 namespace
@@ -62,13 +62,13 @@ TEST(LIE, rotationMatrixX)
     auto msh(createX());
     auto e(msh->getElement(0));
     Eigen::Vector3d nv;
-    ProcessLib::SmallDeformationWithLIE::computeNormalVector(*e, nv);
+    ProcessLib::LIE::computeNormalVector(*e, nv);
     ASSERT_EQ(0., nv[0]);
     ASSERT_EQ(1., nv[1]);
     ASSERT_EQ(0., nv[2]);
 
     Eigen::MatrixXd R(2,2);
-    ProcessLib::SmallDeformationWithLIE::computeRotationMatrix(nv, 2, R);
+    ProcessLib::LIE::computeRotationMatrix(nv, 2, R);
 
     ASSERT_NEAR(1., R(0,0), eps);
     ASSERT_NEAR(0., R(0,1), eps);
@@ -81,13 +81,13 @@ TEST(LIE, rotationMatrixY)
     auto msh(createY());
     auto e(msh->getElement(0));
     Eigen::Vector3d nv;
-    ProcessLib::SmallDeformationWithLIE::computeNormalVector(*e, nv);
+    ProcessLib::LIE::computeNormalVector(*e, nv);
     ASSERT_EQ(-1., nv[0]);
     ASSERT_EQ(0., nv[1]);
     ASSERT_EQ(0., nv[2]);
 
     Eigen::MatrixXd R(2,2);
-    ProcessLib::SmallDeformationWithLIE::computeRotationMatrix(nv, 2, R);
+    ProcessLib::LIE::computeRotationMatrix(nv, 2, R);
 
     ASSERT_NEAR(0., R(0,0), eps);
     ASSERT_NEAR(1., R(0,1), eps);
@@ -100,13 +100,13 @@ TEST(LIE, rotationMatrixXY)
     auto msh(createXY());
     auto e(msh->getElement(0));
     Eigen::Vector3d nv;
-    ProcessLib::SmallDeformationWithLIE::computeNormalVector(*e, nv);
+    ProcessLib::LIE::computeNormalVector(*e, nv);
     ASSERT_NEAR(-1./sqrt(2), nv[0], eps);
     ASSERT_NEAR(1./sqrt(2), nv[1], eps);
     ASSERT_EQ(0., nv[2]);
 
     Eigen::MatrixXd R(2,2);
-    ProcessLib::SmallDeformationWithLIE::computeRotationMatrix(nv, 2, R);
+    ProcessLib::LIE::computeRotationMatrix(nv, 2, R);
 
     ASSERT_NEAR(1./sqrt(2), R(0,0), eps);
     ASSERT_NEAR(1./sqrt(2), R(0,1), eps);

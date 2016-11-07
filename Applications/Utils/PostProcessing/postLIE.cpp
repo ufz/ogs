@@ -24,8 +24,8 @@
 
 #include "MeshLib/Mesh.h"
 
-#include "ProcessLib/SmallDeformationWithLIE/Common/MeshUtils.h"
-#include "ProcessLib/SmallDeformationWithLIE/Common/PostUtils.h"
+#include "ProcessLib/LIE/Common/MeshUtils.h"
+#include "ProcessLib/LIE/Common/PostUtils.h"
 
 
 int main (int argc, char* argv[])
@@ -71,11 +71,11 @@ int main (int argc, char* argv[])
         std::vector<std::vector<MeshLib::Element*>> vec_fracture_elements;
         std::vector<std::vector<MeshLib::Element*>> vec_fracture_matrix_elements;
         std::vector<std::vector<MeshLib::Node*>> vec_fracture_nodes;
-        ProcessLib::SmallDeformationWithLIE::getFractureMatrixDataInMesh(
+        ProcessLib::LIE::getFractureMatrixDataInMesh(
             *mesh, vec_matrix_elements, vec_fracture_mat_IDs, vec_fracture_elements,
             vec_fracture_matrix_elements, vec_fracture_nodes);
 
-        ProcessLib::SmallDeformationWithLIE::PostProcessTool post(
+        ProcessLib::LIE::PostProcessTool post(
             *mesh, vec_fracture_nodes, vec_fracture_matrix_elements);
 
         // create a new VTU file and update XML
