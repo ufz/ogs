@@ -165,6 +165,9 @@ protected:
     /// Check if all the nonlinear nodes are stored at the end of the node vector
     void checkNonlinearNodeIDs() const;
 
+    /// Check if the mesh contains any nonlinear element
+    bool hasNonlinearElement() const;
+
     std::size_t const _id;
     unsigned _mesh_dimension;
     /// The minimal and maximal edge length over all elements in the mesh

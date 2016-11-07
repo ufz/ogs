@@ -36,13 +36,13 @@ Mesh::Mesh(const std::string &name,
       _edge_length(std::numeric_limits<double>::max(), 0),
       _node_distance(std::numeric_limits<double>::max(), 0),
       _name(name), _nodes(nodes), _elements(elements),
-      _n_base_nodes(n_base_nodes==0 ? nodes.size() : n_base_nodes),
+      _n_base_nodes(n_base_nodes),
       _properties(properties)
 {
     assert(n_base_nodes <= nodes.size());
     this->resetNodeIDs();
     this->resetElementIDs();
-    if (isNonlinear())
+    if ((n_base_nodes==0 && hasNonlinearElement()) || isNonlinear())
         this->checkNonlinearNodeIDs();
     this->setDimension();
     this->setElementsConnectedToNodes();
@@ -114,6 +114,15 @@ void Mesh::resetNodeIDs()
     const std::size_t nNodes (this->_nodes.size());
     for (unsigned i=0; i<nNodes; ++i)
         _nodes[i]->setID(i);
+
+    if (_n_base_nodes==0)
+    {
+        unsigned max_basenode_ID = 0;
+        for (Element const* e : _elements)
+            for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
+                max_basenode_ID = std::max(max_basenode_ID, e->getNodeIndex(i));
+        _n_base_nodes = max_basenode_ID + 1;
+    }
 }
 
 void Mesh::resetElementIDs()
@@ -259,23 +268,26 @@ void Mesh::checkNonlinearNodeIDs() const
 {
     for (MeshLib::Element const* e : _elements)
     {
-        for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
-        {
-            if (!(e->getNodeIndex(i) < getNumberOfBaseNodes()))
-                OGS_FATAL(
-                    "Node %d is a base/linear node, but the ID is not smaller "
-                    "than the number of base nodes %d. Please renumber node IDs in the mesh.",
-                    e->getNodeIndex(i), getNumberOfBaseNodes());
-        }
         for (unsigned i=e->getNumberOfBaseNodes(); i<e->getNumberOfNodes(); i++)
         {
-            if (!(e->getNodeIndex(i) >= getNumberOfBaseNodes()))
-                OGS_FATAL(
-                    "Node %d is a non-linear node, but the ID is smaller "
-                    "than the number of base nodes %d. Please renumber node IDs in the mesh.",
-                    e->getNodeIndex(i), getNumberOfBaseNodes());
+            if (e->getNodeIndex(i) >= getNumberOfBaseNodes())
+                continue;
+
+            ERR("Found a nonlinear node whose ID (%d) is smaller than the "
+                "number of base node IDs (%d)."
+                "Some functions may not work properly.",
+                e->getNodeIndex(i), getNumberOfBaseNodes());
+            return;
         }
     }
+}
+
+bool Mesh::hasNonlinearElement() const
+{
+    return std::any_of(std::begin(_elements), std::end(_elements),
+        [](Element const* const e) {
+            return e->getNumberOfNodes() != e->getNumberOfBaseNodes();
+        });
 }
 
 void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
