@@ -158,6 +158,7 @@ private:
     }
 
     SmallDeformationProcessData<DisplacementDim>& _process_data;
+    std::vector<FractureProperty*> _fracture_props;
 
     std::vector<IntegrationPointDataMatrix<BMatricesType, DisplacementDim>> _ip_data;
 

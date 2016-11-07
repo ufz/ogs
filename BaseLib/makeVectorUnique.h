@@ -27,5 +27,15 @@ void makeVectorUnique(std::vector<T>& v)
     v.erase(it, v.end());
 }
 
+/// Make the entries of the std::vector \c v unique using the given binary
+/// function. The remaining entries will be sorted.
+template <typename T, class Compare>
+void makeVectorUnique(std::vector<T>& v, Compare comp)
+{
+    std::sort(v.begin(), v.end(), comp);
+    auto it = std::unique(v.begin(), v.end());
+    v.erase(it, v.end());
+}
+
 } // end namespace BaseLib
 #endif

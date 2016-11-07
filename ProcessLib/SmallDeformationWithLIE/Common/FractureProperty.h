@@ -27,6 +27,7 @@ namespace SmallDeformationWithLIE
 
 struct FractureProperty
 {
+    int fracture_id = 0;
     int mat_id = 0;
     Eigen::Vector3d point_on_fracture;
     Eigen::Vector3d normal_vector;

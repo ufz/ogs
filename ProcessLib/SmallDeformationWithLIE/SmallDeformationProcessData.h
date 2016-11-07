@@ -34,17 +34,17 @@ struct SmallDeformationProcessData
     SmallDeformationProcessData(
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&& material,
         std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>&& fracture_model,
-        std::unique_ptr<FractureProperty>&& fracture_prop
+        std::vector<std::unique_ptr<FractureProperty>>&& vec_fracture_prop
         )
         : _material{std::move(material)}, _fracture_model{std::move(fracture_model)},
-          _fracture_property{std::move(fracture_prop)}
+          _vec_fracture_property(std::move(vec_fracture_prop))
     {
     }
 
     SmallDeformationProcessData(SmallDeformationProcessData&& other)
         : _material{std::move(other._material)},
           _fracture_model{std::move(other._fracture_model)},
-          _fracture_property{std::move(other._fracture_property)}
+          _vec_fracture_property(std::move(other._vec_fracture_property))
     {
     }
 
@@ -59,7 +59,13 @@ struct SmallDeformationProcessData
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>> _material;
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>> _fracture_model;
-    std::unique_ptr<FractureProperty> _fracture_property;
+    std::vector<std::unique_ptr<FractureProperty>> _vec_fracture_property;
+
+    MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
+    std::vector<int> _map_materialID_to_fractureID;
+
+    // a table of connected fracture IDs for each element
+    std::vector<std::vector<int>> _vec_ele_connected_fractureIDs;
 
     double dt = 0.0;
     double t = 0.0;

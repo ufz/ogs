@@ -100,6 +100,9 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction, IntegrationMetho
 
         _secondary_data.N[ip] = sm.N;
     }
+
+    for (auto fid : process_data._vec_ele_connected_fractureIDs[e.getID()])
+        _fracture_props.push_back(_process_data._vec_fracture_property[fid].get());
 }
 
 
@@ -115,21 +118,60 @@ assembleWithJacobian(
 {
     assert (_element.getDimension() == DisplacementDim);
 
-    auto const n_dof_per_var = ShapeFunction::NPOINTS * DisplacementDim;
+    auto const N_DOF_PER_VAR = ShapeFunction::NPOINTS * DisplacementDim;
+    auto const n_fractures = _fracture_props.size();
 
-    auto localRhs_ru = local_b.segment(0, n_dof_per_var);
-    auto localRhs_du = local_b.segment(n_dof_per_var, n_dof_per_var);
+    using BlockVectorType = typename Eigen::VectorXd::FixedSegmentReturnType<N_DOF_PER_VAR>::Type;
+    using BlockMatrixType = Eigen::Block<Eigen::MatrixXd,N_DOF_PER_VAR,N_DOF_PER_VAR>;
 
-    auto localA_uu = local_J.block(0, 0, n_dof_per_var, n_dof_per_var);
-    auto localA_ug = local_J.block(0, n_dof_per_var, n_dof_per_var, n_dof_per_var);
-    auto localA_gu = local_J.block(n_dof_per_var, 0, n_dof_per_var, n_dof_per_var);
-    auto localA_gg = local_J.block(n_dof_per_var, n_dof_per_var, n_dof_per_var, n_dof_per_var);
+    //--------------------------------------------------------------------------------------
+    // prepare sub vectors, matrices for regular displacement (u) and displacement jumps (g)
+    //
+    // example with two fractures:
+    //     |b(u)|
+    // b = |b(g1)|
+    //     |b(g2)|
+    //
+    //     |J(u,u)  J(u,g1)  J(u,g2) |
+    // J = |J(g1,u) J(g1,g1) J(g1,g2)|
+    //     |J(g2,u) J(g2,g1) J(g2,g2)|
+    //--------------------------------------------------------------------------------------
+    auto local_b_u = local_b.segment<N_DOF_PER_VAR>(0);
+    std::vector<BlockVectorType> vec_local_b_g;
+    for (unsigned i=0; i<n_fractures; i++)
+        vec_local_b_g.push_back(local_b.segment<N_DOF_PER_VAR>(N_DOF_PER_VAR*(i+1)));
 
-    auto const nodal_ru = local_u.segment(0, n_dof_per_var);
-    auto nodal_du = local_u.segment(n_dof_per_var, n_dof_per_var);
+    auto local_J_uu = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(0, 0);
+    std::vector<BlockMatrixType> vec_local_J_ug;
+    std::vector<BlockMatrixType> vec_local_J_gu;
+    std::vector<std::vector<BlockMatrixType>> vec_local_J_gg(n_fractures);
+    for (unsigned i=0; i<n_fractures; i++)
+    {
+        auto sub_ug = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(0, N_DOF_PER_VAR*(i+1));
+        vec_local_J_ug.push_back(sub_ug);
 
-    auto const &fracture_props = *_process_data._fracture_property;
+        auto sub_gu = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(N_DOF_PER_VAR*(i+1), 0);
+        vec_local_J_gu.push_back(sub_gu);
 
+        for (unsigned j=0; j<n_fractures; j++)
+        {
+            auto sub_gg =
+                local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(N_DOF_PER_VAR * (i + 1), N_DOF_PER_VAR * (j + 1));
+            vec_local_J_gg[i].push_back(sub_gg);
+        }
+    }
+
+    auto const nodal_u = local_u.segment<N_DOF_PER_VAR>(0);
+    std::vector<BlockVectorType> vec_nodal_g;
+    for (unsigned i=0; i<n_fractures; i++)
+    {
+        auto sub = const_cast<Eigen::VectorXd&>(local_u).segment<N_DOF_PER_VAR>(N_DOF_PER_VAR*(i+1));
+        vec_nodal_g.push_back(sub);
+    }
+
+    //------------------------------------------------
+    // integration
+    //------------------------------------------------
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -143,15 +185,19 @@ assembleWithJacobian(
         auto const& sm = _shape_matrices[ip];
         auto &ip_data = _ip_data[ip];
         auto const& wp = _integration_method.getWeightedPoint(ip);
-        auto const& detJ = ip_data._detJ;
-        auto const& integralMeasure = ip_data._integralMeasure;
+        auto const ip_factor = ip_data._detJ * wp.getWeight() * ip_data._integralMeasure;
 
         // levelset functions
         auto const ip_physical_coords = computePhysicalCoordinates(_element, sm.N);
-        double levelsets = calculateLevelSetFunction(fracture_props, ip_physical_coords.getCoords());
+        std::vector<double> levelsets(n_fractures);
+        for (unsigned i = 0; i < n_fractures; i++)
+            levelsets[i] = calculateLevelSetFunction(*_fracture_props[i],
+                                                     ip_physical_coords.getCoords());
 
-        // nodal displacement = u^hat + levelset* [u]
-        NodalDisplacementVectorType nodal_u = nodal_ru + levelsets * nodal_du;
+        // nodal displacement = u^hat + sum_i(levelset_i(x) * [u]_i)
+        NodalDisplacementVectorType nodal_total_u = nodal_u;
+        for (unsigned i=0; i<n_fractures; i++)
+            nodal_total_u += levelsets[i] * vec_nodal_g[i];
 
         // strain, stress
         auto const& B = ip_data._b_matrices;
@@ -163,30 +209,36 @@ assembleWithJacobian(
         auto& C = ip_data._C;
         auto& material_state_variables = *ip_data._material_state_variables;
 
-        eps.noalias() = B * nodal_u;
+        eps.noalias() = B * nodal_total_u;
 
         if (!ip_data._solid_material.computeConstitutiveRelation(
                 t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
                 sigma, C, material_state_variables))
             OGS_FATAL("Computation of local constitutive relation failed.");
 
-        // r_ru = B^T Stress = B^T C B (u + phi*[u])
-        localRhs_ru.noalias() -= B.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
-
-        // r_[u] = (phi*B)^T Stress = (phi*B)^T C B (u + phi*[u])
-        localRhs_du.noalias() -= levelsets * B.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
+        // r_u = B^T * Sigma = B^T * C * B * (u+phi*[u])
+        // r_[u] = (phi*B)^T * Sigma = (phi*B)^T * C * B * (u+phi*[u])
+        local_b_u.noalias() -= B.transpose() * sigma * ip_factor;
+        for (unsigned i=0; i<n_fractures; i++)
+            vec_local_b_g[i].noalias() -= levelsets[i] * B.transpose() * sigma * ip_factor;
 
         // J_uu += B^T * C * B
-        localA_uu.noalias() += B.transpose() * C * B * detJ * wp.getWeight() * integralMeasure;
+        local_J_uu.noalias() += B.transpose() * C * B * ip_factor;
 
-        // J_u[u] += B^T * C * B * levelset
-        localA_ug.noalias() += B.transpose() * C * levelsets * B * detJ * wp.getWeight() * integralMeasure;
+        for (unsigned i=0; i<n_fractures; i++)
+        {
+            // J_u[u] += B^T * C * (levelset * B)
+            vec_local_J_ug[i].noalias() += B.transpose() * C *(levelsets[i] * B) * ip_factor;
 
-        // J_[u]u += (levelset B)^T * C * B
-        localA_gu.noalias() += levelsets * B.transpose() * C * B * detJ * wp.getWeight() * integralMeasure;
+            // J_[u]u += (levelset * B)^T * C * B
+            vec_local_J_gu[i].noalias() += (levelsets[i] * B.transpose()) * C * B * ip_factor;
 
-        // J_[u][u] += (levelset B)^T * C * (levelset B)
-        localA_gg.noalias() += levelsets * B.transpose() * C * levelsets * B * detJ * wp.getWeight() * integralMeasure;
+            for (unsigned j=0; j<n_fractures; j++)
+            {
+                // J_[u][u] += (levelset * B)^T * C * (levelset * B)
+                vec_local_J_gg[i][j].noalias() += (levelsets[i] * B.transpose()) * C * (levelsets[j] * B) * ip_factor;
+            }
+        }
     }
 }
 

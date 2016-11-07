@@ -67,11 +67,12 @@ int main (int argc, char* argv[])
 
         // post-process
         std::vector<MeshLib::Element*> vec_matrix_elements;
-        std::vector<MeshLib::Element*> vec_fracture_elements;
-        std::vector<MeshLib::Element*> vec_fracture_matrix_elements;
-        std::vector<MeshLib::Node*> vec_fracture_nodes;
+        std::vector<int> vec_fracture_mat_IDs;
+        std::vector<std::vector<MeshLib::Element*>> vec_fracture_elements;
+        std::vector<std::vector<MeshLib::Element*>> vec_fracture_matrix_elements;
+        std::vector<std::vector<MeshLib::Node*>> vec_fracture_nodes;
         ProcessLib::SmallDeformationWithLIE::getFractureMatrixDataInMesh(
-            *mesh, vec_matrix_elements, vec_fracture_elements,
+            *mesh, vec_matrix_elements, vec_fracture_mat_IDs, vec_fracture_elements,
             vec_fracture_matrix_elements, vec_fracture_nodes);
 
         ProcessLib::SmallDeformationWithLIE::PostProcessTool post(

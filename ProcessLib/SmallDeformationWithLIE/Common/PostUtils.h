@@ -29,8 +29,8 @@ class PostProcessTool
 public:
     PostProcessTool(
         MeshLib::Mesh const& org_mesh,
-        std::vector<MeshLib::Node*> const& vec_fracture_nodes,
-        std::vector<MeshLib::Element*> const& vec_fracutre_matrix_elements);
+        std::vector<std::vector<MeshLib::Node*>> const& vec_vec_fracture_nodes,
+        std::vector<std::vector<MeshLib::Element*>> const& vec_vec_fracutre_matrix_elements);
 
     MeshLib::Mesh const& getOutputMesh() const { return *_output_mesh; }
 
@@ -39,7 +39,7 @@ private:
     void createProperties();
     template <typename T>
     void copyProperties();
-    void calculateTotalDisplacement();
+    void calculateTotalDisplacement(unsigned const n_fractures);
 
     MeshLib::Mesh const& _org_mesh;
     std::unique_ptr<MeshLib::Mesh> _output_mesh;
