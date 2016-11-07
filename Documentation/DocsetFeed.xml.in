@@ -1,4 +1,4 @@
 <entry>
     <version>${OGS_VERSION}</version>
-    <url>http://s3-eu-central-1.amazonaws.com/opengeosys/ogs6-docset/ogs6.tgz</url>
+    <url>$ENV{BUILD_URL}/artifact/build/docs/ogs6.tgz</url>
 </entry>

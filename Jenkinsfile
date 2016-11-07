@@ -49,12 +49,18 @@ node { step([$class: 'GitHubCommitStatusSetter']) }
 if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
     if (helper.isOriginMaster(this)) {
         build job: 'OGS-6/clang-sanitizer', wait: false
+        def tag = ""
         node('master') {
             checkout scm
-            def tag = helper.getTag()
-            if (tag != "") {
-                keepBuild()
-                currentBuild.displayName = tag
+            tag = helper.getTag()
+        }
+        if (tag != "") {
+            keepBuild()
+            currentBuild.displayName = tag
+
+            node('mac') {
+                dir('ogs') { checkout scm }
+                load 'ogs/scripts/jenkins/docset.groovy'
             }
         }
     }
