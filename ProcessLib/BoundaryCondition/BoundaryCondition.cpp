@@ -102,6 +102,9 @@ BoundaryConditionBuilder::createDirichletBoundaryCondition(
         });
     ids.erase(ids_new_end_iterator, std::end(ids));
 
+    DBUG("Found %d nodes for Dirichlet BCs for the variable %d and componet %d",
+         ids.size(), variable_id, config.component_id);
+
     return ProcessLib::createDirichletBoundaryCondition(
         config.config, std::move(ids), dof_table, mesh.getID(), variable_id,
         config.component_id, parameters);

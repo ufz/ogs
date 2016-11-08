@@ -47,6 +47,8 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
            static_cast<int>(dof_table_bulk.getNumberOfComponents()));
 
     std::vector<MeshLib::Node*> nodes = MeshLib::getUniqueNodes(_elements);
+    DBUG("Found %d nodes for Natural BCs for the varialbe %d and component %d",
+         nodes.size(), variable_id, component_id);
 
     auto const& mesh_subsets =
         dof_table_bulk.getMeshSubsets(variable_id, component_id);
