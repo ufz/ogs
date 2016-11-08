@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   vanGenuchtenCapillaryPressureSaturation.h
+ * \file   VanGenuchtenCapillaryPressureSaturation.h
  *
  *  Created on October 28, 2016, 6:05 PM
  */
@@ -13,8 +13,7 @@
 #ifndef OGS_VAN_GENUCHTEN_CAPILLARY_PRESSURE_SATURATION_H
 #define OGS_VAN_GENUCHTEN_CAPILLARY_PRESSURE_SATURATION_H
 
-#include <array>
-#include <limits>  // std::numeric_limits
+#include <limits>
 
 #include "CapillaryPressureSaturation.h"
 
@@ -44,24 +43,21 @@ namespace PorousMedium
  * as
  *    \f[p_b=\rho g/\alpha\f]
  */
-class vanGenuchtenCapillaryPressureSaturation final
+class VanGenuchtenCapillaryPressureSaturation final
     : public CapillaryPressureSaturation
 {
 public:
-    /** \param parameters An array contains the five parameters:
-     *                     [0] \f$ p_b \f$
-     *                     [1] \f$ S_r \f$
-     *                     [2] \f$ S_{\mbox{max}} \f$
-     *                     [3] \f$ m \f$
-     *                     [4] \f$ P_c^{\mbox{max}}\f$
+    /**
+     * @param pb     Entry pressure, \f$ p_b \f$
+     * @param Sr     Residual saturation, \f$ S_r \f$
+     * @param Smax   Maximum saturation, \f$ S_{\mbox{max}} \f$
+     * @param m      Exponent, \f$ m \f$
+     * @param Pc_max Maximum capillary pressure, \f$ P_c^{\mbox{max}}\f$
      */
-    vanGenuchtenCapillaryPressureSaturation(
-        std::array<double, 5> const& parameters)
-        : _pb(parameters[0]),
-          _Sr(parameters[1]),
-          _Smax(parameters[2]),
-          _mm(parameters[3]),
-          _Pc_max(parameters[4])
+    VanGenuchtenCapillaryPressureSaturation(const double pb, const double Sr,
+                                            const double Smax, const double m,
+                                            const double Pc_max)
+        : _pb(pb), _Sr(Sr), _Smax(Smax), _mm(m), _Pc_max(Pc_max)
     {
     }
 

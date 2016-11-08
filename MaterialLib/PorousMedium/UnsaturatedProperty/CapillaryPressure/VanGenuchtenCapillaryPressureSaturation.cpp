@@ -5,12 +5,12 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   vanGenuchtenCapillaryPressureSaturation.cpp
+ * \file   VanGenuchtenCapillaryPressureSaturation.cpp
  *
  *  Created on October 28, 2016, 6:05 PM
  */
 
-#include "vanGenuchtenCapillaryPressureSaturation.h"
+#include "VanGenuchtenCapillaryPressureSaturation.h"
 
 #include <cmath>
 
@@ -20,7 +20,7 @@ namespace MaterialLib
 {
 namespace PorousMedium
 {
-double vanGenuchtenCapillaryPressureSaturation::getCapillaryPressure(
+double VanGenuchtenCapillaryPressureSaturation::getCapillaryPressure(
     const double saturation) const
 {
     const double S = MathLib::limitValueInInterval(
@@ -31,10 +31,11 @@ double vanGenuchtenCapillaryPressureSaturation::getCapillaryPressure(
     return MathLib::limitValueInInterval(pc, _minor_offset, _Pc_max);
 }
 
-double vanGenuchtenCapillaryPressureSaturation::getSaturation(
+double VanGenuchtenCapillaryPressureSaturation::getSaturation(
     const double capillary_pressure) const
 {
-    const double pc = (capillary_pressure < 0.0) ? 0.0 : capillary_pressure;
+    const double pc =
+                (capillary_pressure < 0.0) ? _minor_offset : capillary_pressure;
     double Se = std::pow(pc / _pb, 1.0 / (1.0 - _mm)) + 1.0;
     Se = std::pow(Se, -_mm);
     const double S = Se * (_Smax - _Sr) + _Sr;
@@ -42,7 +43,7 @@ double vanGenuchtenCapillaryPressureSaturation::getSaturation(
                                          _Smax - _minor_offset);
 }
 
-double vanGenuchtenCapillaryPressureSaturation::getdPcdS(
+double VanGenuchtenCapillaryPressureSaturation::getdPcdS(
     const double saturation) const
 {
     const double S = MathLib::limitValueInInterval(

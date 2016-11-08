@@ -59,11 +59,12 @@ TEST(MaterialPorousMedium, checkBrookCoreyCapillaryPressure)
                                   -34156.5025531986, -26296.1594153975,
                                   -14313.8161694683};
 
+    const double tol_pc = 1.e-6;
     for (std::size_t i = 0; i < S.size(); i++)
     {
-        ASSERT_NEAR(pc[i], pc_model->getCapillaryPressure(S[i]), 1.e-5);
-        ASSERT_NEAR(S[i], pc_model->getSaturation(pc[i]), 1.e-5);
-        ASSERT_NEAR(dpc_dS[i], pc_model->getdPcdS(S[i]), 1.e-5);
+        ASSERT_NEAR(S[i], pc_model->getSaturation(pc[i]), 1e-14);
+        ASSERT_NEAR(pc[i], pc_model->getCapillaryPressure(S[i]), tol_pc);
+        ASSERT_NEAR(dpc_dS[i], pc_model->getdPcdS(S[i]), tol_pc);
     }
 }
 
@@ -92,10 +93,11 @@ TEST(MaterialPorousMedium, checkVanGenuchtenCapillaryPressure)
                                   -41013.0131889419, -37359.7105247455,
                                   -43138.4488851645};
 
+    const double tol_pc = 1.e-6;
     for (std::size_t i = 0; i < S.size(); i++)
     {
-        ASSERT_NEAR(pc[i], pc_model->getCapillaryPressure(S[i]), 1.e-5);
-        ASSERT_NEAR(S[i], pc_model->getSaturation(pc[i]), 1.e-5);
-        ASSERT_NEAR(dpc_dS[i], pc_model->getdPcdS(S[i]), 1.e-5);
+        ASSERT_NEAR(S[i], pc_model->getSaturation(pc[i]), 1e-14);
+        ASSERT_NEAR(pc[i], pc_model->getCapillaryPressure(S[i]), tol_pc);
+        ASSERT_NEAR(dpc_dS[i], pc_model->getdPcdS(S[i]), tol_pc);
     }
 }
