@@ -10,10 +10,8 @@
 #ifndef EIGENMATRIX_H_
 #define EIGENMATRIX_H_
 
-#ifndef NDEBUG
 #include <fstream>
 #include <string>
-#endif
 
 #include <Eigen/Sparse>
 
@@ -145,7 +143,6 @@ public:
     /// return always true, i.e. the matrix is always ready for use
     bool isAssembled() const { return true; }
 
-#ifndef NDEBUG
     /// printout this matrix for debugging
     void write(const std::string &filename) const
     {
@@ -153,6 +150,7 @@ public:
         if (of)
             write(of);
     }
+
     /// printout this matrix for debugging
     void write(std::ostream &os) const
     {
@@ -161,7 +159,6 @@ public:
               os << it.row() << " " << it.col() << ": " << it.value() << "\n";
         os << std::endl;
     }
-#endif
 
     RawMatrixType& getRawMatrix() { return _mat; }
     const RawMatrixType& getRawMatrix() const { return _mat; }
