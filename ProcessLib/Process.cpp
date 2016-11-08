@@ -242,6 +242,11 @@ void Process::postTimestep(GlobalVector const& x)
     postTimestepConcreteProcess(x);
 }
 
+void Process::computeSecondaryVariable( const double t, GlobalVector const& x)
+{
+    computeSecondaryVariableConcrete(t, x);
+}
+
 void Process::preIteration(const unsigned iter, const GlobalVector &x)
 {
     // In every new iteration cached values of secondary variables are expired.

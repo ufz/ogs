@@ -116,10 +116,33 @@ public:
             local_M.noalias() += sm.N.transpose() * density * heat_capacity *
                                  sm.N * sm.detJ * wp.getWeight() *
                                  sm.integralMeasure;
+        }
+    }
+
+    void computeSecondaryVariableConcrete(
+                                    const double t,
+                                    std::vector<double> const& local_x) override
+    {
+        auto const local_matrix_size = local_x.size();
+        // This assertion is valid only if all nodal d.o.f. use the same shape
+        // matrices.
+        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+        const auto local_x_vec =
+        MathLib::toVector<NodalVectorType>(local_x, local_matrix_size);
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            pos.setIntegrationPoint(ip);
+            auto const& sm = _shape_matrices[ip];
+            auto const k = _process_data.thermal_conductivity(t, pos)[0];
             // heat flux only computed for output.
-            GlobalDimVectorType const heat_flux =
-                -k * sm.dNdx * Eigen::Map<const NodalVectorType>(
-                                   local_x.data(), ShapeFunction::NPOINTS);
+            GlobalDimVectorType const heat_flux = -k * sm.dNdx * local_x_vec;
 
             for (unsigned d = 0; d < GlobalDim; ++d)
             {

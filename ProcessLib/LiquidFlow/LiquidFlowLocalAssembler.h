@@ -85,6 +85,9 @@ public:
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
 
+    void computeSecondaryVariableConcrete(
+        double const /*t*/, std::vector<double> const& local_x) override;
+
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
@@ -130,39 +133,57 @@ private:
      *  Calculator of the Laplacian and the gravity term for anisotropic
      *  permeability tensor
      */
-    struct AnisotropicLaplacianAndGravityTermCalculator
+    struct AnisotropicCalculator
     {
-        static void calculate(Eigen::Map<NodalMatrixType>& local_K,
-                              Eigen::Map<NodalVectorType>& local_b,
-                              ShapeMatrices const& sm,
-                              Eigen::MatrixXd const& perm,
-                              double const integration_factor, double const mu,
-                              double const rho_g,
-                              int const gravitational_axis_id);
+        static void calculateLaplacianAndGravityTerm(
+            Eigen::Map<NodalMatrixType>& local_K,
+            Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
+            Eigen::MatrixXd const& perm, double const integration_factor,
+            double const mu, double const rho_g,
+            int const gravitational_axis_id);
+
+        static void calculateVelocity(
+            std::vector<std::vector<double>>& darcy_velocities,
+            Eigen::Map<const NodalVectorType> const& local_p,
+            ShapeMatrices const& sm, Eigen::MatrixXd const& perm,
+            unsigned const ip, double const mu, double const rho_g,
+            int const gravitational_axis_id);
     };
 
     /**
      *  Calculator of the Laplacian and the gravity term for isotropic
      *  permeability tensor
      */
-    struct IsotropicLaplacianAndGravityTermCalculator
+    struct IsotropicCalculator
     {
-        static void calculate(Eigen::Map<NodalMatrixType>& local_K,
-                              Eigen::Map<NodalVectorType>& local_b,
-                              ShapeMatrices const& sm,
-                              Eigen::MatrixXd const& perm,
-                              double const integration_factor, double const mu,
-                              double const rho_g,
-                              int const gravitational_axis_id);
+        static void calculateLaplacianAndGravityTerm(
+            Eigen::Map<NodalMatrixType>& local_K,
+            Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
+            Eigen::MatrixXd const& perm, double const integration_factor,
+            double const mu, double const rho_g,
+            int const gravitational_axis_id);
+
+        static void calculateVelocity(
+            std::vector<std::vector<double>>& darcy_velocities,
+            Eigen::Map<const NodalVectorType> const& local_p,
+            ShapeMatrices const& sm, Eigen::MatrixXd const& perm,
+            unsigned const ip, double const mu, double const rho_g,
+            int const gravitational_axis_id);
     };
 
-    template <typename LaplacianAndGravityTermCalculator>
+    template <typename LaplacianGravityVelocityCalculator>
     void local_assemble(double const t, std::vector<double> const& local_x,
                         std::vector<double>& local_M_data,
                         std::vector<double>& local_K_data,
                         std::vector<double>& local_b_data,
                         SpatialPosition const& pos,
                         Eigen::MatrixXd const& perm);
+
+    template <typename LaplacianGravityVelocityCalculator>
+    void computeSecondaryVariableLocal(double const /*t*/,
+                                       std::vector<double> const& local_x,
+                                       SpatialPosition const& pos,
+                                       Eigen::MatrixXd const& perm);
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;

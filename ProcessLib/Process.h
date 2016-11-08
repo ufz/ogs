@@ -59,6 +59,9 @@ public:
     void preIteration(const unsigned iter,
                       GlobalVector const& x) override final;
 
+    /// compute secondary variables for the coupled equations or for output.
+    void computeSecondaryVariable(const double t, GlobalVector const& x);
+
     NumLib::IterationResult postIteration(GlobalVector const& x) override final;
 
     void initialize();
@@ -147,6 +150,9 @@ private:
 
     virtual void preIterationConcreteProcess(const unsigned /*iter*/,
                                              GlobalVector const& /*x*/){}
+
+    virtual void computeSecondaryVariableConcrete(const double /*t*/,
+                                                  GlobalVector const& /*x*/) {}
 
     virtual NumLib::IterationResult postIterationConcreteProcess(
         GlobalVector const& /*x*/)
