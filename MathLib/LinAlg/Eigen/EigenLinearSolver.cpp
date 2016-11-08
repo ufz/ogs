@@ -52,9 +52,10 @@ template <class T_SOLVER>
 class EigenDirectLinearSolver final : public EigenLinearSolverBase
 {
 public:
-    bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& /*opt*/) override
+    bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& opt) override
     {
-        INFO("-> solve");
+        INFO("-> solve with %s",
+             EigenOption::getSolverName(opt.solver_type).c_str());
         if (!A.isCompressed()) A.makeCompressed();
 
         _solver.compute(A);
@@ -83,7 +84,9 @@ class EigenIterativeLinearSolver final : public EigenLinearSolverBase
 public:
     bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& opt) override
     {
-        INFO("-> solve");
+        INFO("-> solve with %s (precon %s)",
+             EigenOption::getSolverName(opt.solver_type).c_str(),
+             EigenOption::getPreconName(opt.precon_type).c_str());
         _solver.setTolerance(opt.error_tolerance);
         _solver.setMaxIterations(opt.max_iterations);
 

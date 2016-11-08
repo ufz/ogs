@@ -71,6 +71,13 @@ struct EigenOption final
     ///      is returned.
     static PreconType getPreconType(const std::string &precon_name);
 
+
+    /// return a linear solver name from the solver type
+    static std::string getSolverName(SolverType const solver_type);
+
+    /// return a preconditioner name from the preconditioner type
+    static std::string getPreconName(PreconType const precon_type);
+
 };
 
 }
