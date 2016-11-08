@@ -41,6 +41,7 @@ function (AddTest)
     set(AddTest_BINARY_PATH "${Data_BINARY_DIR}/${AddTest_PATH}")
     file(MAKE_DIRECTORY ${AddTest_BINARY_PATH})
     file(TO_NATIVE_PATH "${AddTest_BINARY_PATH}" AddTest_BINARY_PATH_NATIVE)
+    set(AddTest_STDOUT_FILE_PATH "${AddTest_BINARY_PATH}/${AddTest_NAME}_stdout.log")
 
     # set defaults
     if(NOT AddTest_EXECUTABLE)
@@ -159,6 +160,7 @@ function (AddTest)
     endif()
 
     set(FILES_TO_DELETE "")
+    list(APPEND FILES_TO_DELETE "${AddTest_STDOUT_FILE_PATH}")
     foreach(ITEM ${AddTest_DIFF_DATA})
         if(ITEM MATCHES "^.*\.(vtu|vtk)$")
             list(APPEND FILES_TO_DELETE "${ITEM}")
@@ -180,6 +182,7 @@ function (AddTest)
         -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
         "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
         "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
+        -DSTDOUT_FILE_PATH=${AddTest_STDOUT_FILE_PATH}
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
