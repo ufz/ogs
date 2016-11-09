@@ -120,6 +120,16 @@ inline double to_radians(double degrees) {
     return degrees*boost::math::constants::pi<double>()/180.;
 }
 
+template<typename Type> Type limitValueInInterval(const Type variable,
+                                                  const Type lower_bound,
+                                                  const Type upper_bound)
+{
+    if (variable < lower_bound)
+        return lower_bound;
+    if (variable > upper_bound)
+        return upper_bound;
+    return variable;
+}
 } // namespace
 
 #endif /* MATHTOOLS_H_ */
