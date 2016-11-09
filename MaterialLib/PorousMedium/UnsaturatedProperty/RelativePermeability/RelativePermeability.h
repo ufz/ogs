@@ -13,6 +13,7 @@
 #define OGS_RELATIVE_PERMEABILITY_H
 
 #include <string>
+#include <limits>
 
 namespace MaterialLib
 {

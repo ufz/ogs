@@ -25,8 +25,8 @@ double WettingPhaseBrookCoreyOilGas::getValue(const double saturation) const
     const double S = MathLib::limitValueInInterval(
         saturation, _Sr + _minor_offset, _Smax - _minor_offset);
     const double Se = (S - _Sr) / (_Smax - _Sr);
-    const double Krel = std::pow(Se, 3.0 + 2.0 / _mm);
-    return Krel < _Krel_min ? _Krel_min : Krel;
+    const double krel = std::pow(Se, 3.0 + 2.0 / _mm);
+    return krel < _krel_min ? _krel_min : krel;
 }
 
 }  // end namespace

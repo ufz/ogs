@@ -12,9 +12,6 @@
 #ifndef OGS_NON_WETTING_PHASE_VAN_GENUCHTEN_H
 #define OGS_NON_WETTING_PHASE_VAN_GENUCHTEN_H
 
-#include <array>
-#include <limits>  // std::numeric_limits
-
 #include "RelativePermeability.h"
 
 namespace MaterialLib
@@ -26,12 +23,12 @@ namespace PorousMedium
  *
  *   \f[k{rel}= (1 - S_e)^{1/3} (1 - S_e^{1/m})^{2m}\f]
  *   with
- *   \f[S_e=\dfrac{S-S_r}{S_{\mbox{max}}-S_r}\f]
+ *   \f[S_e=\dfrac{S^w-S_r}{S^w_{\mbox{max}}-S^w_r}\f]
  *   where
  *    \f{eqnarray*}{
- *       &S_r&            \mbox{ residual saturation,}\\
- *       &S_{\mbox{max}}& \mbox{ maximum saturation,}\\
- *       &m(<=1) &        \mbox{ exponent.}\\
+ *       &S^w_r&            \mbox{residual saturation of wetting phase,}\\
+ *       &S^w_{\mbox{max}}& \mbox{maximum saturation of wetting phase,}\\
+ *       &m(<=1) &          \mbox{ exponent.}\\
  *    \f}
  *
  *    Note:
@@ -40,24 +37,25 @@ namespace PorousMedium
 class NonWettingPhaseVanGenuchten final : public RelativePermeability
 {
 public:
-    /** \param parameters An array contains the five parameters:
-     *                     [0] \f$ S_{nr} \f$
-     *                     [1] \f$ S_{n\mbox{max}} \f$
-     *                     [2] \f$ m \f$
-     *                     [3] \f$ K_{rel}^{\mbox{min}}\f$
+    /**
+     * @param Snr       Residual saturation of the non-wetting phase,
+     *                  \f$ S^n_r \f$
+     * @param Snmax     Maximum saturation  of the non-wetting phase,
+     *                  \f$ S^n_{\mbox{max}} \f$
+     * @param m         Exponent, \f$ m \in [0,1]\f$
+     * @param krel_min  Minimum relative permeability,
+     *                  \f$ k_{rel}^{\mbox{min}}\f$
      */
-    NonWettingPhaseVanGenuchten(std::array<double, 4> const& parameters)
-        : _Sr(1. - parameters[1]),
-          _Smax(1. - parameters[0]),
-          _mm(parameters[2]),
-          _Krel_min(parameters[3])
+    NonWettingPhaseVanGenuchten(const double Snr, const double Snmax,
+                                const double m, const double krel_min)
+        : _Sr(1. - Snmax), _Smax(1. - Snr), _mm(m), _krel_min(krel_min)
     {
     }
 
     /// Get model name.
     std::string getName() const override
     {
-        return "Non-wetting phase van Genuchten model.";
+        return "Non-wetting phase van Genuchten relative permeability model.";
     }
 
     /// Get relative permeability value.
@@ -65,12 +63,10 @@ public:
     double getValue(const double saturation_w) const override;
 
 private:
-    const double _Sr;        ///< Residual saturation of wetting phase, 1-Snr.
-    const double _Smax;      ///< Maximum saturation of wetting phase., 1-Sn_max
+    const double _Sr;        ///< Residual saturation of wetting phase, 1-Snmax.
+    const double _Smax;      ///< Maximum saturation of wetting phase, 1-Snr.
     const double _mm;        ///< Exponent (<=1.0), n=1/(1-mm).
-    const double _Krel_min;  ///< Minimum relative permeability
-
-    const double _perturbation = std::numeric_limits<double>::epsilon();
+    const double _krel_min;  ///< Minimum relative permeability
 };
 
 }  // end namespace

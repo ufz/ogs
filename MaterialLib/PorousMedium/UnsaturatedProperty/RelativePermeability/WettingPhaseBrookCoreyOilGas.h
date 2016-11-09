@@ -13,9 +13,6 @@
 #ifndef OGS_WETTING_PHASE_BROOK_COREY_OIL_GAS_H
 #define OGS_WETTING_PHASE_BROOK_COREY_OIL_GAS_H
 
-#include <array>
-#include <limits>  // std::numeric_limits
-
 #include "RelativePermeability.h"
 
 namespace MaterialLib
@@ -38,17 +35,15 @@ namespace PorousMedium
 class WettingPhaseBrookCoreyOilGas final : public RelativePermeability
 {
 public:
-    /** \param parameters An array contains the five parameters:
-     *                     [0] \f$ S_{r} \f$
-     *                     [1] \f$ S_{\mbox{max}} \f$
-     *                     [2] \f$ m \f$
-     *                     [3] \f$ K_{rel}^{\mbox{min}}\f$
+    /**
+     * @param Sr       Residual saturation, \f$ S_r \f$
+     * @param Smax     Maximum saturation, \f$ S_{\mbox{max}} \f$
+     * @param m        Exponent, \f$ m \f$
+     * @param krel_min Minimum relative permeability,\f$ k_{rel}^{\mbox{min}}\f$
      */
-    WettingPhaseBrookCoreyOilGas(std::array<double, 4> const& parameters)
-        : _Sr(parameters[0]),
-          _Smax(parameters[1]),
-          _mm(parameters[2]),
-          _Krel_min(parameters[3])
+    WettingPhaseBrookCoreyOilGas(const double Sr, const double Smax,
+                                 const double m, const double krel_min)
+        : _Sr(Sr), _Smax(Smax), _mm(m), _krel_min(krel_min)
     {
     }
 
@@ -65,7 +60,7 @@ private:
     const double _Sr;        ///< Residual saturation.
     const double _Smax;      ///< Maximum saturation.
     const double _mm;        ///< Exponent (>=1.0), n=1/(1-mm).
-    const double _Krel_min;  ///< Minimum relative permeability
+    const double _krel_min;  ///< Minimum relative permeability
 };
 
 }  // end namespace

@@ -52,7 +52,7 @@ TEST(MaterialPorousMedium, checkWettingPhaseVanGenuchten)
     auto const perm_model = createRelativePermeabilityModel(xml);
 
     std::vector<double> S = {0.2, 0.33, 0.45, 0.52, 0.6, 0.85};
-    std::vector<double> Krel = {1.e-9,
+    std::vector<double> krel = {1.e-9,
                                 1.9291770102827742e-006,
                                 0.00041114113180510661,
                                 0.0019569840357319015,
@@ -61,7 +61,7 @@ TEST(MaterialPorousMedium, checkWettingPhaseVanGenuchten)
 
     for (std::size_t i = 0; i < S.size(); i++)
     {
-        ASSERT_NEAR(Krel[i], perm_model->getValue(S[i]), 1.e-5);
+        ASSERT_NEAR(krel[i], perm_model->getValue(S[i]), 1.e-9);
     }
 }
 
@@ -78,13 +78,13 @@ TEST(MaterialPorousMedium, checkNonWettingPhaseVanGenuchten)
     auto const perm_model = createRelativePermeabilityModel(xml);
 
     std::vector<double> S = {0.2, 0.33, 0.45, 0.52, 0.6, 0.85};
-    std::vector<double> Krel = {0.87422700239237161, 0.74331414436457388,
+    std::vector<double> krel = {0.87422700239237161, 0.74331414436457388,
                                 0.59527539448807487, 0.49976666464188485,
                                 0.38520070797257489, 0.041219134248319585};
 
     for (std::size_t i = 0; i < S.size(); i++)
     {
-        ASSERT_NEAR(Krel[i], perm_model->getValue(S[i]), 1.e-5);
+        ASSERT_NEAR(krel[i], perm_model->getValue(S[i]), 1.e-9);
     }
 }
 
@@ -101,7 +101,7 @@ TEST(MaterialPorousMedium, checkWettingPhaseBrookCoreyOilGas)
     auto const perm_model = createRelativePermeabilityModel(xml);
 
     std::vector<double> S = {0.2, 0.33, 0.45, 0.52, 0.6, 0.85};
-    std::vector<double> Krel = {0.,
+    std::vector<double> krel = {0.,
                                 0.0022037808641975302,
                                 0.030140817901234556,
                                 0.080908641975308573,
@@ -110,7 +110,7 @@ TEST(MaterialPorousMedium, checkWettingPhaseBrookCoreyOilGas)
 
     for (std::size_t i = 0; i < S.size(); i++)
     {
-        ASSERT_NEAR(Krel[i], perm_model->getValue(S[i]), 1.e-5);
+        ASSERT_NEAR(krel[i], perm_model->getValue(S[i]), 1.e-9);
     }
 }
 
@@ -127,7 +127,7 @@ TEST(MaterialPorousMedium, checkNonWettingPhaseBrookCoreyOilGas)
     auto const perm_model = createRelativePermeabilityModel(xml);
 
     std::vector<double> S = {0.2, 0.33, 0.45, 0.52, 0.6, 0.85};
-    std::vector<double> Krel = {1.0,
+    std::vector<double> krel = {1.0,
                                 0.58480547839506147,
                                 0.28120177469135793,
                                 0.15583209876543211,
@@ -136,7 +136,7 @@ TEST(MaterialPorousMedium, checkNonWettingPhaseBrookCoreyOilGas)
 
     for (std::size_t i = 0; i < S.size(); i++)
     {
-        ASSERT_NEAR(Krel[i], perm_model->getValue(S[i]), 1.e-5);
+        ASSERT_NEAR(krel[i], perm_model->getValue(S[i]), 1.e-9);
     }
 }
 
@@ -154,10 +154,10 @@ TEST(MaterialPorousMedium, checkReletivePermeabilityCurve)
     auto const perm_model = createRelativePermeabilityModel(xml);
 
     std::vector<double> S = {0.2, 0.33, 0.45, 0.52, 0.6, 0.85};
-    std::vector<double> Krel = {0.7, 0.57, 0.451, 0.3824, 0.304, 0.059};
+    std::vector<double> krel = {0.7, 0.57, 0.451, 0.3824, 0.304, 0.059};
 
     for (std::size_t i = 0; i < S.size(); i++)
     {
-        ASSERT_NEAR(Krel[i], perm_model->getValue(S[i]), 1.e-5);
+        ASSERT_NEAR(krel[i], perm_model->getValue(S[i]), 1.e-9);
     }
 }
