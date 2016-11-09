@@ -363,7 +363,7 @@ if(NOT OGS_USE_MPI)
     )
 
     AddTest(
-        NAME LARGE_2D_RichardsFlow_h_us_quad
+         NAME LARGE_2D_RichardsFlow_h_us_quad
          PATH Parabolic/Richards
          EXECUTABLE ogs
          EXECUTABLE_ARGS RichardsFlow_2d.prj
@@ -371,6 +371,30 @@ if(NOT OGS_USE_MPI)
          ABSTOL 1e-1 RELTOL 1e-1
          DIFF_DATA
          h_us_quad_1000.vtu richards_pcs_0_ts_100_t_100.000000.vtu PRESSURE1 pressure
+    )
+     AddTest(
+         NAME 2D_TwoPhase_PP_Lia_quad
+         PATH Parabolic/TwoPhaseFlowPP/Liakopoulos
+         EXECUTABLE ogs
+         EXECUTABLE_ARGS Twophase_Lia_quad2_short.prj
+         TESTER vtkdiff
+         ABSTOL 1e-8 RELTOL 1e-12
+         DIFF_DATA
+         Lia_20.vtu twophaseflow_pcs_0_ts_119_t_20.000000.vtu capillary_pressure capillary_pressure
+         Lia_20.vtu twophaseflow_pcs_0_ts_119_t_20.000000.vtu gas_pressure gas_pressure
+         Lia_20.vtu twophaseflow_pcs_0_ts_119_t_20.000000.vtu saturation saturation
+    )
+    AddTest(
+         NAME LARGE_2D_TwoPhase_PP_Lia_quad
+         PATH Parabolic/TwoPhaseFlowPP/Liakopoulos
+         EXECUTABLE ogs
+         EXECUTABLE_ARGS Twophase_Lia_quad2_large.prj
+         TESTER vtkdiff
+         ABSTOL 1e-8 RELTOL 1e-12
+         DIFF_DATA
+         Lia_1000.vtu twophaseflow_pcs_0_ts_1180_t_1000.000000.vtu capillary_pressure capillary_pressure
+         Lia_1000.vtu twophaseflow_pcs_0_ts_1180_t_1000.000000.vtu gas_pressure gas_pressure
+         Lia_1000.vtu twophaseflow_pcs_0_ts_1180_t_1000.000000.vtu saturation saturation
     )
 
     AddTest(
