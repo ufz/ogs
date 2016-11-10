@@ -11,6 +11,13 @@ builders['gcc'] = {
     }
 }
 
+builders['gcc-dynamic'] = {
+    node('docker') {
+        dir('ogs') { checkout scm }
+        load 'ogs/scripts/jenkins/gcc-dynamic.groovy'
+    }
+}
+
 builders['msvc'] = {
     node('win && conan') {
         dir('ogs') { checkout scm }
