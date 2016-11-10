@@ -102,7 +102,7 @@ BoundaryConditionBuilder::createDirichletBoundaryCondition(
         });
     ids.erase(ids_new_end_iterator, std::end(ids));
 
-    DBUG("Found %d nodes for Dirichlet BCs for the variable %d and componet %d",
+    DBUG("Found %d nodes for Dirichlet BCs for the variable %d and component %d",
          ids.size(), variable_id, config.component_id);
 
     return ProcessLib::createDirichletBoundaryCondition(
