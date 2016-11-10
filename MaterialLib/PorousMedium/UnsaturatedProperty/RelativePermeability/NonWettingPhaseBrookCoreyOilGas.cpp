@@ -28,7 +28,19 @@ double NonWettingPhaseBrookCoreyOilGas::getValue(
     const double Se = (S - _Sr) / (_Smax - _Sr);
     const double krel =
         (1.0 - Se) * (1.0 - Se) * (1.0 - std::pow(Se, 1.0 + 2.0 / _mm));
-    return krel < _krel_min ? _krel_min : krel;
+    return std::max(_krel_min,  krel);
+}
+
+double NonWettingPhaseBrookCoreyOilGas::getdValue(
+    const double saturation_w) const
+{
+    const double S = MathLib::limitValueInInterval(
+        saturation_w, _Sr + _minor_offset, _Smax - _minor_offset);
+    const double Se = (S - _Sr) / (_Smax - _Sr);
+    return (-2. * (1.0 - Se) * (1.0 - std::pow(Se, 1.0 + 2.0 / _mm)) -
+            (1.0 + 2.0 / _mm) * (1.0 - Se) * (1.0 - Se) *
+                std::pow(Se, 2.0 / _mm)) /
+           (_Smax - _Sr);
 }
 
 }  // end namespace

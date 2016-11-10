@@ -58,9 +58,16 @@ TEST(MaterialPorousMedium, checkWettingPhaseVanGenuchten)
                                 0.0074049488610241927,
                                 0.13546615958442240};
 
+    const double purterbation = 1.e-9;
     for (std::size_t i = 0; i < S.size(); i++)
     {
         ASSERT_NEAR(krel[i], perm_model->getValue(S[i]), 1.e-9);
+
+        // Compare the derivative with numerical one.
+        ASSERT_NEAR((perm_model->getValue(S[i] + purterbation) -
+                     perm_model->getValue(S[i])) /
+                        purterbation,
+                    perm_model->getdValue(S[i]), 1.e-6);
     }
 }
 
@@ -81,9 +88,16 @@ TEST(MaterialPorousMedium, checkNonWettingPhaseVanGenuchten)
                                 0.59527539448807487, 0.49976666464188485,
                                 0.38520070797257489, 0.041219134248319585};
 
+    const double purterbation = 1.e-9;
     for (std::size_t i = 0; i < S.size(); i++)
     {
         ASSERT_NEAR(krel[i], perm_model->getValue(S[i]), 1.e-9);
+
+        // Compare the derivative with numerical one.
+        ASSERT_NEAR((perm_model->getValue(S[i] + purterbation) -
+                     perm_model->getValue(S[i])) /
+                        purterbation,
+                    perm_model->getdValue(S[i]), 1.e-6);
     }
 }
 
@@ -107,9 +121,20 @@ TEST(MaterialPorousMedium, checkWettingPhaseBrookCoreyOilGas)
                                 0.19753086419753069,
                                 1.0};
 
+    const double purterbation = 1.e-9;
     for (std::size_t i = 0; i < S.size(); i++)
     {
         ASSERT_NEAR(krel[i], perm_model->getValue(S[i]), 1.e-9);
+
+        // i ==  S.size() -1, S(=0.85) is limited to 0.8, and the numerical
+        // derivative of krel is unavailable.
+        if (i == S.size() - 1)
+            continue;
+        // Compare the derivative with numerical one.
+        ASSERT_NEAR((perm_model->getValue(S[i] + purterbation) -
+                     perm_model->getValue(S[i])) /
+                        purterbation,
+                    perm_model->getdValue(S[i]), 1.e-6);
     }
 }
 
@@ -133,9 +158,16 @@ TEST(MaterialPorousMedium, checkNonWettingPhaseBrookCoreyOilGas)
                                 0.061728395061728412,
                                 .0};
 
+    const double purterbation = 1.e-9;
     for (std::size_t i = 0; i < S.size(); i++)
     {
         ASSERT_NEAR(krel[i], perm_model->getValue(S[i]), 1.e-9);
+
+        // Compare the derivative with numerical one.
+        ASSERT_NEAR((perm_model->getValue(S[i] + purterbation) -
+                     perm_model->getValue(S[i])) /
+                        purterbation,
+                    perm_model->getdValue(S[i]), 1.e-6);
     }
 }
 
@@ -155,8 +187,15 @@ TEST(MaterialPorousMedium, checkReletivePermeabilityCurve)
     std::vector<double> S = {0.2, 0.33, 0.45, 0.52, 0.6, 0.85};
     std::vector<double> krel = {0.7, 0.57, 0.451, 0.3824, 0.304, 0.059};
 
+    const double purterbation = 1.e-9;
     for (std::size_t i = 0; i < S.size(); i++)
     {
         ASSERT_NEAR(krel[i], perm_model->getValue(S[i]), 1.e-9);
+
+        // Compare the derivative with numerical one.
+        ASSERT_NEAR((perm_model->getValue(S[i] + purterbation) -
+                     perm_model->getValue(S[i])) /
+                        purterbation,
+                    perm_model->getdValue(S[i]), 1.e-6);
     }
 }

@@ -49,6 +49,16 @@ public:
         return _curve_data->getValue(S);
     }
 
+    /// Get the derivative of relative permeability with respect to saturation.
+    /// \param saturation Wetting phase saturation
+    double getdValue(const double saturation) const override
+    {
+        const double S = MathLib::limitValueInInterval(
+            saturation, _Sr + _minor_offset, _Smax - _minor_offset);
+
+        return _curve_data->getDerivative(S);
+    }
+
 private:
     const double _Sr;    ///< Residual saturation.
     const double _Smax;  ///< Maximum saturation.

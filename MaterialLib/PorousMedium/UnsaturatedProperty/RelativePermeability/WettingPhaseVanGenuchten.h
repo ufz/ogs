@@ -59,6 +59,10 @@ public:
     /// Get relative permeability value.
     double getValue(const double saturation) const override;
 
+    /// Get the derivative of relative permeability with respect to saturation.
+    /// \param saturation Wetting phase saturation
+    double getdValue(const double saturation) const override;
+
 private:
     const double _Sr;        ///< Residual saturation.
     const double _Smax;      ///< Maximum saturation.

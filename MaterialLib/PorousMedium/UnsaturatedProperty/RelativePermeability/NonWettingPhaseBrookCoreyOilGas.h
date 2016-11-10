@@ -60,6 +60,10 @@ public:
     /// \param saturation_w Wetting phase saturation
     double getValue(const double saturation_w) const override;
 
+    /// Get the derivative of relative permeability with respect to saturation.
+    /// \param saturation_w Wetting phase saturation
+    double getdValue(const double saturation_w) const override;
+
 private:
     const double _Sr;        ///< Residual saturation of wetting phase, 1-Snmax.
     const double _Smax;      ///< Maximum saturation of wetting phase, 1-Snr.

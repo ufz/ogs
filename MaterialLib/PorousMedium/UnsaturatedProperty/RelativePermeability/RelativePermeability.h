@@ -32,6 +32,10 @@ public:
     /// \param saturation Wetting phase saturation
     virtual double getValue(const double saturation) const = 0;
 
+    /// Get the derivative of relative permeability with respect to saturation.
+    /// \param saturation Wetting phase saturation
+    virtual double getdValue(const double saturation) const = 0;
+
 protected:
     /** A small number for an offset:
      *  1. to set the bound of S, the saturation, such that
