@@ -14,6 +14,7 @@
 #include <memory>
 #include <typeindex>
 #include <typeinfo>
+#include <type_traits>
 #include <unordered_map>
 
 #include "MeshLib/Elements/Elements.h"
@@ -328,6 +329,23 @@ private:
                                  IntegrationMethod<ShapeFunction>, GlobalDim,
                                  DisplacementDim>;
 
+    /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
+    /// depending whether the global dimension is less than the shape function's
+    /// dimension or not.
+    template <typename ShapeFunction>
+    static LADataBuilder makeLocalAssemblerBuilder()
+    {
+        return makeLocalAssemblerBuilder<ShapeFunction>(
+            static_cast<std::integral_constant<
+                bool, (GlobalDim >= ShapeFunction::DIM)>*>(nullptr));
+    }
+
+
+    /// Mapping of element types to local assembler constructors.
+    std::unordered_map<std::type_index, LADataBuilder> _builder;
+
+    NumLib::LocalToGlobalIndexMap const& _dof_table;
+
     template <typename ShapeFunction>
     using LADataMatrixNearFracture =
         LocalAssemblerDataMatrixNearFracture<ShapeFunction,
@@ -340,15 +358,15 @@ private:
                                    IntegrationMethod<ShapeFunction>, GlobalDim,
                                    DisplacementDim>;
 
+    // local assembler builder implementations.
+private:
     /// Generates a function that creates a new LocalAssembler of type
-    /// LAData<ShapeFct>. Only functions with shape function's dimension less or
-    /// equal to the global dimension are instantiated, e.g. following
+    /// LAData<ShapeFunction>. Only functions with shape function's dimension
+    /// less or equal to the global dimension are instantiated, e.g.  following
     /// combinations of shape functions and global dimensions: (Line2, 1),
     /// (Line2, 2), (Line2, 3), (Hex20, 3) but not (Hex20, 2) or (Hex20, 1).
-    template <typename ShapeFct>
-    static
-        typename std::enable_if<GlobalDim >= ShapeFct::DIM, LADataBuilder>::type
-        makeLocalAssemblerBuilder()
+    template <typename ShapeFunction>
+    static LADataBuilder makeLocalAssemblerBuilder(std::true_type*)
     {
         return [](MeshLib::Element const& e,
                   std::size_t const n_variables,
@@ -359,19 +377,20 @@ private:
             {
                 if (dofIndex_to_localIndex.empty())
                 {
-                    return LADataIntfPtr{new LADataMatrix<ShapeFct>{
+                    return LADataIntfPtr{new LADataMatrix<ShapeFunction>{
                         e, local_matrix_size,
                         std::forward<ConstructorArgs>(args)...}};
                 }
                 else
                 {
-                    return LADataIntfPtr{new LADataMatrixNearFracture<ShapeFct>{
-                        e, n_variables, local_matrix_size,
-                        dofIndex_to_localIndex,
-                        std::forward<ConstructorArgs>(args)...}};
+                    return LADataIntfPtr{
+                        new LADataMatrixNearFracture<ShapeFunction>{
+                            e, n_variables, local_matrix_size,
+                            dofIndex_to_localIndex,
+                            std::forward<ConstructorArgs>(args)...}};
                 }
             }
-            return LADataIntfPtr{new LAFractureData<ShapeFct>{
+            return LADataIntfPtr{new LAFractureData<ShapeFunction>{
                 e, local_matrix_size, dofIndex_to_localIndex,
                 std::forward<ConstructorArgs>(args)...}};
         };
@@ -379,18 +398,11 @@ private:
 
     /// Returns nullptr for shape functions whose dimensions are less than the
     /// global dimension.
-    template <typename ShapeFct>
-        static
-        typename std::enable_if < GlobalDim<ShapeFct::DIM, LADataBuilder>::type
-                                  makeLocalAssemblerBuilder()
+    template <typename ShapeFunction>
+    static LADataBuilder makeLocalAssemblerBuilder(std::false_type*)
     {
         return nullptr;
     }
-
-    /// Mapping of element types to local assembler constructors.
-    std::unordered_map<std::type_index, LADataBuilder> _builder;
-
-    NumLib::LocalToGlobalIndexMap const& _dof_table;
 };
 
 }   // namespace SmallDeformationWithLIE
