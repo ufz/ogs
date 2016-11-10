@@ -5,13 +5,13 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file   ReletivePermeabilityCurve.h
+ *  \file   RelativePermeabilityCurve.h
  *
  * Created on November 2, 2016, 1:41 PM
  */
 
-#ifndef OGS_RELETIVE_PERMEABILITY_CURVE_H
-#define OGS_RELETIVE_PERMEABILITY_CURVE_H
+#ifndef OGS_RELATIVE_PERMEABILITY_CURVE_H
+#define OGS_RELATIVE_PERMEABILITY_CURVE_H
 
 #include <memory>
 #include "RelativePermeability.h"
@@ -23,10 +23,10 @@ namespace MaterialLib
 {
 namespace PorousMedium
 {
-class ReletivePermeabilityCurve final : public RelativePermeability
+class RelativePermeabilityCurve final : public RelativePermeability
 {
 public:
-    ReletivePermeabilityCurve(
+    RelativePermeabilityCurve(
         std::unique_ptr<MathLib::PiecewiseLinearInterpolation>& curve_data)
         : _Sr(curve_data->getSupportMin()),
           _Smax(curve_data->getSupportMax()),
@@ -57,4 +57,4 @@ private:
 };
 }  // end namespace
 }  // end namespace
-#endif /* OGS_RELETIVE_PERMEABILITY_CURVE_H */
+#endif /* OGS_RELATIVE_PERMEABILITY_CURVE_H */

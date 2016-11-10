@@ -29,7 +29,7 @@ public:
     virtual std::string getName() const = 0;
 
     /// Get relative permeability value.
-    /// \param saturation Non-wetting phase saturation
+    /// \param saturation Wetting phase saturation
     virtual double getValue(const double saturation) const = 0;
 
 protected:

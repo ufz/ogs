@@ -59,7 +59,7 @@ public:
     }
 
     /// Get relative permeability value.
-    /// \param saturation_w Non-wetting phase saturation
+    /// \param saturation_w Wetting phase saturation
     double getValue(const double saturation_w) const override;
 
 private:

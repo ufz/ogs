@@ -25,9 +25,8 @@ double WettingPhaseVanGenuchten::getValue(const double saturation) const
     const double S = MathLib::limitValueInInterval(
         saturation, _Sr + _minor_offset, _Smax - _minor_offset);
     const double Se = (S - _Sr) / (_Smax - _Sr);
-    const double krel =
-        std::sqrt(Se) *
-        std::pow(1.0 - std::pow(1.0 - std::pow(Se, 1.0 / _mm), _mm), 2);
+    const double val = 1.0 - std::pow(1.0 - std::pow(Se, 1.0 / _mm), _mm);
+    const double krel = std::sqrt(Se) * val * val;
     return krel < _krel_min ? _krel_min : krel;
 }
 

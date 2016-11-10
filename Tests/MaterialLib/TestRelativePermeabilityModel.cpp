@@ -32,8 +32,7 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("relative_permeability");
-    //! \ogs_file_attr{prj__material_property__porous_medium__porous_medium__id}
-    auto const id = sub_config.getConfigAttributeOptional<int>("id");
+    sub_config.ignoreConfigAttribute("id");
     return MaterialLib::PorousMedium::createRelativePermeabilityModel(
         sub_config);
 }
@@ -146,9 +145,9 @@ TEST(MaterialPorousMedium, checkReletivePermeabilityCurve)
         "<relative_permeability id=\"0\">"
         "   <type>Curve</type>"
         "       <curve>"
-        "           <data> 0. 0.9  </data>"
-        "           <data> 0.4 0.5 </data>"
-        "           <data> 0.9 0.01 </data>"
+        "           <point><data> 0. 0.9   </data></point>"
+        "           <point><data> 0.4 0.5  </data></point>"
+        "           <point><data> 0.9 0.01 </data></point>"
         "       </curve>"
         "</relative_permeability>";
     auto const perm_model = createRelativePermeabilityModel(xml);

@@ -14,7 +14,6 @@
 
 #include <array>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -24,7 +23,7 @@
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 #include "RelativePermeability.h"
-#include "ReletivePermeabilityCurve.h"
+#include "RelativePermeabilityCurve.h"
 #include "WettingPhaseVanGenuchten.h"
 #include "NonWettingPhaseVanGenuchten.h"
 #include "WettingPhaseBrookCoreyOilGas.h"
@@ -59,11 +58,11 @@ std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
             "The exponent parameter of WettingPhaseVanGenuchten relative\n"
             " permeability model, m, must be in an interval of [0, 1]");
     }
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseVanGenuchten__m}
-    const double krel_max = config.getConfigParameter<double>("krel_min");
+    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseVanGenuchten__krel_min}
+    const double krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
-        new WettingPhaseVanGenuchten(Sr, Smax, m, krel_max));
+        new WettingPhaseVanGenuchten(Sr, Smax, m, krel_min));
 }
 
 /**
@@ -91,11 +90,12 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
             "The exponent parameter of NonWettingPhaseVanGenuchten relative\n"
             " permeability model, m, must be in an interval of [0, 1]");
     }
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__m}
-    const double krel_max = config.getConfigParameter<double>("krel_min");
+
+    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__krel_min}
+    const double krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
-        new NonWettingPhaseVanGenuchten(Sr, Smax, m, krel_max));
+        new NonWettingPhaseVanGenuchten(Sr, Smax, m, krel_min));
 }
 
 /**
@@ -123,11 +123,12 @@ std::unique_ptr<RelativePermeability> createWettingPhaseBrookCoreyOilGas(
             "The exponent parameter of WettingPhaseBrookCoreyOilGas\n"
             "relative permeability model, m, must not be smaller than 1");
     }
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__m}
-    const double krel_max = config.getConfigParameter<double>("krel_min");
+
+    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__krel_min}
+    const double krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
-        new WettingPhaseBrookCoreyOilGas(Sr, Smax, m, krel_max));
+        new WettingPhaseBrookCoreyOilGas(Sr, Smax, m, krel_min));
 }
 
 /**
@@ -155,11 +156,12 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseBrookCoreyOilGas(
             "The exponent parameter of NonWettingPhaseBrookCoreyOilGas\n"
             "relative permeability model, m, must not be smaller than 1");
     }
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__m}
-    const double krel_max = config.getConfigParameter<double>("krel_min");
+
+    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__krel_min}
+    const double krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
-        new NonWettingPhaseBrookCoreyOilGas(Sr, Smax, m, krel_max));
+        new NonWettingPhaseBrookCoreyOilGas(Sr, Smax, m, krel_min));
 }
 
 std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
@@ -192,22 +194,22 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
         //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve__curve}
         auto const& curve_config = config.getConfigSubtree("curve");
         for (
-            auto const& data_string :
-            //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve_curve__data}
-            curve_config.getConfigParameterList<std::string>("data"))
+            auto const& point_config :
+            //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve_curve__point}
+            curve_config.getConfigSubtreeList("point"))
         {
-            std::stringstream ss(data_string);
-            double var, val;
-            ss >> var >> val;
-            ss.clear();
-            variables.push_back(var);
-            values.push_back(val);
+            const auto& point =
+                //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve_curve__points__data}
+                point_config.getConfigParameter<std::vector<double>>("data");
+            assert(point.size() == 2);
+            variables.push_back(point[0]);
+            values.push_back(point[1]);
         }
         auto curve = std::unique_ptr<MathLib::PiecewiseLinearInterpolation>(
             new MathLib::PiecewiseLinearInterpolation(
                 std::move(variables), std::move(values), true));
         return std::unique_ptr<RelativePermeability>(
-            new ReletivePermeabilityCurve(curve));
+            new RelativePermeabilityCurve(curve));
     }
     else
     {
