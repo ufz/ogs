@@ -34,6 +34,7 @@
 
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
+#include "ProcessLib/HydroMechanics/CreateHydroMechanicsProcess.h"
 #include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
 #include "ProcessLib/LiquidFlow/CreateLiquidFlowProcess.h"
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
@@ -312,6 +313,30 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config);
+        }
+        else if (type == "HYDRO_MECHANICS")
+        {
+            switch (process_config.getConfigParameter<int>("dimension"))
+            {
+                case 2:
+                    process =
+                        ProcessLib::HydroMechanics::createHydroMechanicsProcess<
+                            2>(*_mesh_vec[0], std::move(jacobian_assembler),
+                               _process_variables, _parameters,
+                               integration_order, process_config);
+                    break;
+                case 3:
+                    process =
+                        ProcessLib::HydroMechanics::createHydroMechanicsProcess<
+                            3>(*_mesh_vec[0], std::move(jacobian_assembler),
+                               _process_variables, _parameters,
+                               integration_order, process_config);
+                    break;
+                default:
+                    OGS_FATAL(
+                        "HYDRO_MECHANICS process does not support given "
+                        "dimension");
+            }
         }
         else if (type == "SMALL_DEFORMATION")
         {
