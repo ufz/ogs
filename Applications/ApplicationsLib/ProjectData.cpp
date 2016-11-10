@@ -41,7 +41,7 @@
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/LIE/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
-#include "ProcessLib/DensityDrivenFlow/CreateDensityDrivenFlowProcess.h"
+#include "ProcessLib/HT/CreateHTProcess.h"
 
 namespace detail
 {
@@ -352,9 +352,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                         "dimension");
             }
         }
-        else if (type == "DensityDrivenFlow")
+        else if (type == "HT")
         {
-            process = ProcessLib::DensityDrivenFlow::createDensityDrivenFlowProcess(
+            process = ProcessLib::HT::createHTProcess(
                 *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config);

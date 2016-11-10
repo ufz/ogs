@@ -7,19 +7,17 @@
  *
  */
 
-#ifndef PROCESS_LIB_CREATE_DensityDrivenFlowPROCESS_H_
-#define PROCESS_LIB_CREATE_DensityDrivenFlowPROCESS_H_
+#ifndef PROCESS_LIB_CREATE_HTPROCESS_H_
+#define PROCESS_LIB_CREATE_HTPROCESS_H_
 
 #include <memory>
 #include "ProcessLib/Process.h"
 
-
 namespace ProcessLib
 {
-namespace DensityDrivenFlow
+namespace HT
 {
-
-std::unique_ptr<Process> createDensityDrivenFlowProcess(
+std::unique_ptr<Process> createHTProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -27,7 +25,7 @@ std::unique_ptr<Process> createDensityDrivenFlowProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
-}   // namespace DensityDrivenFlow
-}   // namespace ProcessLib
+}  // namespace HT
+}  // namespace ProcessLib
 
-#endif  // PROCESS_LIB_CREATE_DensityDrivenFlowPROCESS_H_
+#endif  // PROCESS_LIB_CREATE_HTPROCESS_H_
