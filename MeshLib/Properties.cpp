@@ -83,7 +83,7 @@ Properties Properties::excludeCopyProperties(
             exclude_mesh_item_types.end())
             continue;
 
-        std::vector<std::size_t> const exclude_positions;
+        std::vector<std::size_t> const exclude_positions{};
         new_properties._properties.insert(
             std::make_pair(property_vector.first,
             property_vector.second->clone(exclude_positions))
