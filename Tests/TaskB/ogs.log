@@ -1,0 +1,1386 @@
+info: This is OpenGeoSys-6 version 6.0.7-321-g8722326.
+info: OGS started on 2016-11-10 16:17:15+0100.
+debug: Project configuration from file 'TaskB.prj' read.
+debug: Reading geometry file 'TaskB.gml'.
+debug: Project configuration from file 'TaskB.gml' read.
+debug: Reading parameters:
+info: ConstantParameter: rho_fr
+debug: Using value 1000 for constant parameter.
+info: ConstantParameter: mu
+debug: Using value 0.001 for constant parameter.
+info: ConstantParameter: rho_sr
+debug: Using value 2450 for constant parameter.
+info: ConstantParameter: phi
+debug: Using value 0 for constant parameter.
+info: ConstantParameter: k
+debug: Using value 1e-16 for constant parameter.
+info: ConstantParameter: S
+debug: Using value 1e-10 for constant parameter.
+info: ConstantParameter: biot_m
+debug: Using value 1 for constant parameter.
+info: ConstantParameter: E
+debug: Using value 6.1065e+09 for constant parameter.
+info: ConstantParameter: nu
+debug: Using value 0.3275 for constant parameter.
+info: ConstantParameter: aperture0
+debug: Using value 1e-05 for constant parameter.
+info: ConstantParameter: S_f
+debug: Using value 4.4e-10 for constant parameter.
+info: ConstantParameter: biot_f
+debug: Using value 1 for constant parameter.
+info: ConstantParameter: Kn
+debug: Using value 2e+10 for constant parameter.
+info: ConstantParameter: Ks
+debug: Using value 2e+10 for constant parameter.
+info: ConstantParameter: friction_agnle
+debug: Using value 22 for constant parameter.
+info: ConstantParameter: dilatancy_angle
+debug: Using value 0 for constant parameter.
+info: ConstantParameter: cohesion
+debug: Using value 0 for constant parameter.
+info: ConstantParameter: gravity
+debug: Using following values for the constant parameter:
+debug: 	0
+debug: 	0
+info: ConstantParameter: p0
+debug: Using following values for the constant parameter:
+debug: 	5000
+info: ConstantParameter: p_in
+debug: Using following values for the constant parameter:
+debug: 	1e+0
+info: ConstantParameter: displacement0
+debug: Using following values for the constant parameter:
+debug: 	0
+debug: 	0
+info: ConstantParameter: stress0
+debug: Using following values for the constant parameter:
+debug: 	-5.3e+06
+debug: 	-7e+
+debug: 	0
+debug: 	0
+info: ConstantParameter: fracture_stress0
+debug: Using following values for the constant parameter:
+debug: 	-651000
+debug: 	-5.603e+06
+info: ConstantParameter: zero_u
+debug: Using value 0 for constant parameter.
+debug: Parse process variables:
+debug: Found parameter `p0'.
+debug: Constructing process variable pressure
+debug: Found geometry type "POINT"
+debug: Found parameter `displacement0'.
+debug: Constructing process variable displacement
+debug: GEOObjects::getGeoObject(): Could not find POINT "PLY_TOP" in geometry.
+debug: Found geometry type "POLYLINE"
+debug: GEOObjects::getGeoObject(): Could not find POINT "PLY_BOTTOM" in geometry.
+debug: Found geometry type "POLYLINE"
+debug: GEOObjects::getGeoObject(): Could not find POINT "PLY_LEFT" in geometry.
+debug: Found geometry type "POLYLINE"
+debug: GEOObjects::getGeoObject(): Could not find POINT "PLY_RIGHT" in geometry.
+debug: Found geometry type "POLYLINE"
+debug: Found parameter `displacement0'.
+debug: Constructing process variable displacement_jump1
+debug: GEOObjects::getGeoObject(): Could not find POINT "PLY_TOP" in geometry.
+debug: Found geometry type "POLYLINE"
+debug: GEOObjects::getGeoObject(): Could not find POINT "PLY_BOTTOM" in geometry.
+debug: Found geometry type "POLYLINE"
+debug: Reading processes:
+debug: Create HydroMechanicsProcess with LIE.
+debug: Found process variable 'pressure' for config tag <process_variable>.
+debug: Found process variable 'displacement' for config tag <process_variable>.
+debug: Found process variable 'displacement_jump1' for config tag <process_variable>.
+debug: Associate displacement with process variable 'displacement_jump1'.
+debug: Create LinearElasticIsotropic material
+debug: Found parameter `E'.
+debug: Use 'E' as youngs_modulus parameter.
+debug: Found parameter `nu'.
+debug: Use 'nu' as poissons_ratio parameter.
+debug: Found parameter `k'.
+debug: Use 'k' as hydraulic conductivity parameter.
+debug: Found parameter `S'.
+debug: Use 'S' as storage coefficient parameter.
+debug: Found parameter `mu'.
+debug: Use 'mu' as fluid viscosity parameter.
+debug: Found parameter `biot_m'.
+debug: Use 'biot_m' as Biot coefficient parameter.
+debug: Found parameter `phi'.
+debug: Use 'phi' as porosity parameter.
+debug: Found parameter `rho_sr'.
+debug: Use 'rho_sr' as solid density parameter.
+debug: Found parameter `rho_fr'.
+debug: Use 'rho_fr' as fluid density parameter.
+debug: Found parameter `gravity'.
+debug: Use 'gravity' as specific body force parameter.
+debug: Found parameter `stress0'.
+debug: Use 'stress0' as reference stress parameter.
+debug: Found parameter `p0'.
+debug: Use 'p0' as reference pressure parameter.
+debug: Create LinearElasticIsotropic material
+debug: Found parameter `Kn'.
+debug: Found parameter `Ks'.
+debug: Found parameter `aperture0'.
+debug: Found parameter `S_f'.
+debug: Found parameter `biot_f'.
+debug: Found parameter `fracture_stress0'.
+debug: Use 'fracture_stress0' as reference fracture_stress parameter.
+info: [LIE/HM] looking for fracture elements in the given mesh
+debug: -> found total 1754 matrix elements and 48 fracture elements
+debug: -> found 1 fracture material groups
+debug: -> found 48 elements on the fracture 0
+debug: -> found 97 nodes on the fracture 0
+debug: Reading linear solver configuration.
+debug: Reading linear solver configuration.
+debug: Reading time loop configuration.
+debug: Parse output configuration:
+debug: adding output variable `pressure'
+debug: adding output variable `displacement'
+debug: adding output variable `displacement_jump1'
+info: Initialize processes.
+debug: Initialize process.
+debug: Construct dof mappings.
+info: [LIE/HM] creating a DoF table
+debug: created 1802 DoF
+debug: Compute sparsity pattern
+debug: Initialize the extrapolator
+info: [LIE/HM] creating local assemblers
+debug: Create local assemblers.
+debug: Create local assemblers.
+debug: Calling local assembler builder for all mesh elements.
+debug: Initialize boundary conditions.
+debug: Constructing MeshNodeSearcher obj.
+info: Calculated search length for mesh "TaskB.dx1" is 1.000000e-09.
+debug: Found 1 nodes for Dirichlet BCs for the variable 0 and componet 0
+debug: Constructing DirichletBoundaryCondition from config.
+debug: Using parameter p_in
+debug: Found parameter `p_in'.
+debug: Found 85 nodes for Dirichlet BCs for the variable 1 and componet 1
+debug: Constructing DirichletBoundaryCondition from config.
+debug: Using parameter zero_u
+debug: Found parameter `zero_u'.
+debug: Found 85 nodes for Dirichlet BCs for the variable 1 and componet 1
+debug: Constructing DirichletBoundaryCondition from config.
+debug: Using parameter zero_u
+debug: Found parameter `zero_u'.
+debug: Found 81 nodes for Dirichlet BCs for the variable 1 and componet 0
+debug: Constructing DirichletBoundaryCondition from config.
+debug: Using parameter zero_u
+debug: Found parameter `zero_u'.
+debug: Found 81 nodes for Dirichlet BCs for the variable 1 and componet 0
+debug: Constructing DirichletBoundaryCondition from config.
+debug: Using parameter zero_u
+debug: Found parameter `zero_u'.
+debug: Found 1 nodes for Dirichlet BCs for the variable 2 and componet 1
+debug: Constructing DirichletBoundaryCondition from config.
+debug: Using parameter zero_u
+debug: Found parameter `zero_u'.
+debug: Found 1 nodes for Dirichlet BCs for the variable 2 and componet 1
+debug: Constructing DirichletBoundaryCondition from config.
+debug: Using parameter zero_u
+debug: Found parameter `zero_u'.
+info: Solve processes.
+debug: Set initial conditions.
+debug: PreTimestep HydroMechanicsProcess.
+debug: output to TaskB_pcs_0_ts_0_t_0.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_0_t_0.000000.vtu'.
+info: [time] Output took 0.0310831 s.
+info: === timestep #1 (t=10s, dt=10s) ==============================
+debug: PreTimestep HydroMechanicsProcess.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=0 0
+b=1e-05
+p=500000
+sigma'_prev=   -651000 -5.603e+06
+sigma'=   -651000 -5.603e+06
+sigma=   -651000 -6.103e+06
+q=0 0
+info: [time] Assembly took 28.1674 s.
+info: [time] Applying Dirichlet BCs took 0.0227499 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 8/3000
+info: 	 residual: 3.788782e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.11992 s.
+info: Convergence criterion, component 0: |dx|=1.6016e+05, |x|=2.1461e+07, |dx|/|x|=7.4629e-03
+info: Convergence criterion, component 1: |dx|=3.6224e-05, |x|=3.6224e-05, |dx|/|x|=1.0000e+00
+info: Convergence criterion, component 2: |dx|=2.4243e-05, |x|=2.4243e-05, |dx|/|x|=1.0000e+00
+info: Convergence criterion, component 3: |dx|=2.1024e-05, |x|=2.1024e-05, |dx|/|x|=1.0000e+00
+info: Convergence criterion, component 4: |dx|=9.4836e-06, |x|=9.4836e-06, |dx|/|x|=1.0000e+00
+info: [time] Iteration #1 took 29.3138 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=2.14221e-07 1.41673e-06
+b=1.14167e-05
+p=493395
+sigma'_prev=   -651000 -5.603e+06
+sigma'=     -646716 -5.57467e+06
+sigma=     -646716 -6.06806e+06
+q=-7.89533e-05 -0.000170439
+info: [time] Assembly took 0.0998099 s.
+info: [time] Applying Dirichlet BCs took 0.0168338 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 1.336735e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.07381 s.
+info: Convergence criterion, component 0: |dx|=2.6615e+05, |x|=2.1477e+07, |dx|/|x|=1.2392e-02
+info: Convergence criterion, component 1: |dx|=2.1083e-05, |x|=5.6203e-05, |dx|/|x|=3.7512e-01
+info: Convergence criterion, component 2: |dx|=1.3759e-05, |x|=3.7337e-05, |dx|/|x|=3.6851e-01
+info: Convergence criterion, component 3: |dx|=1.0280e-05, |x|=2.7332e-05, |dx|/|x|=3.7611e-01
+info: Convergence criterion, component 4: |dx|=4.5039e-06, |x|=1.2756e-05, |dx|/|x|=3.5308e-01
+info: [time] Iteration #2 took 1.19419 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-3.26692e-08  6.89292e-06
+b=1.68929e-05
+p=645283
+sigma'_prev=   -651000 -5.603e+06
+sigma'=     -651653 -5.46514e+06
+sigma=     -651653 -6.11042e+06
+q=-0.00466076  -0.0100613
+info: [time] Assembly took 0.101036 s.
+info: [time] Applying Dirichlet BCs took 0.0180781 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 2.098423e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.08475 s.
+info: Convergence criterion, component 0: |dx|=5.2096e+04, |x|=2.1475e+07, |dx|/|x|=2.4259e-03
+info: Convergence criterion, component 1: |dx|=2.7177e-06, |x|=5.3649e-05, |dx|/|x|=5.0657e-02
+info: Convergence criterion, component 2: |dx|=1.7889e-06, |x|=3.5615e-05, |dx|/|x|=5.0230e-02
+info: Convergence criterion, component 3: |dx|=1.7585e-06, |x|=2.6124e-05, |dx|/|x|=6.7313e-02
+info: Convergence criterion, component 4: |dx|=7.3719e-07, |x|=1.2161e-05, |dx|/|x|=6.0619e-02
+info: [time] Iteration #3 took 1.20775 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=2.53797e-08 6.03405e-06
+b=1.6034e-05
+p=620085
+sigma'_prev=   -651000 -5.603e+06
+sigma'=     -650492 -5.48232e+06
+sigma=    -650492 -6.1024e+06
+q=-0.00328099 -0.00708277
+info: [time] Assembly took 0.100464 s.
+info: [time] Applying Dirichlet BCs took 0.0205431 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 1.747468e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.06586 s.
+info: Convergence criterion, component 0: |dx|=2.5412e+03, |x|=2.1475e+07, |dx|/|x|=1.1833e-04
+info: Convergence criterion, component 1: |dx|=1.4244e-07, |x|=5.3515e-05, |dx|/|x|=2.6617e-03
+info: Convergence criterion, component 2: |dx|=9.3995e-08, |x|=3.5524e-05, |dx|/|x|=2.6459e-03
+info: Convergence criterion, component 3: |dx|=8.8246e-08, |x|=2.6064e-05, |dx|/|x|=3.3858e-03
+info: Convergence criterion, component 4: |dx|=3.7469e-08, |x|=1.2131e-05, |dx|/|x|=3.0886e-03
+info: [time] Iteration #4 took 1.1911 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=2.81178e-08 5.98976e-06
+b=1.59898e-05
+p=618801
+sigma'_prev=   -651000 -5.603e+06
+sigma'=    -650438 -5.4832e+06
+sigma=     -650438 -6.10201e+06
+q=-0.00321912 -0.00694922
+info: [time] Assembly took 0.102867 s.
+info: [time] Applying Dirichlet BCs took 0.0210481 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 6.343499e-15
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.13161 s.
+info: Convergence criterion, component 0: |dx|=6.1040e+00, |x|=2.1475e+07, |dx|/|x|=2.8424e-07
+info: Convergence criterion, component 1: |dx|=3.3713e-10, |x|=5.3515e-05, |dx|/|x|=6.2998e-06
+info: Convergence criterion, component 2: |dx|=2.2241e-10, |x|=3.5524e-05, |dx|/|x|=6.2609e-06
+info: Convergence criterion, component 3: |dx|=2.1083e-10, |x|=2.6064e-05, |dx|/|x|=8.0890e-06
+info: Convergence criterion, component 4: |dx|=8.9317e-11, |x|=1.2131e-05, |dx|/|x|=7.3626e-06
+info: [time] Iteration #5 took 1.25928 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=2.81245e-08 5.98965e-06
+b=1.59897e-05
+p=618798
+sigma'_prev=   -651000 -5.603e+06
+sigma'=     -650438 -5.48321e+06
+sigma=   -650438 -6.102e+06
+q=-0.00321897  -0.0069489
+info: [time] Assembly took 0.103155 s.
+info: [time] Applying Dirichlet BCs took 0.0179009 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 13/3000
+info: 	 residual: 4.374257e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.12563 s.
+info: Convergence criterion, component 0: |dx|=3.4296e-05, |x|=2.1475e+07, |dx|/|x|=1.5970e-12
+info: Convergence criterion, component 1: |dx|=1.9072e-15, |x|=5.3515e-05, |dx|/|x|=3.5640e-11
+info: Convergence criterion, component 2: |dx|=1.3045e-15, |x|=3.5524e-05, |dx|/|x|=3.6722e-11
+info: Convergence criterion, component 3: |dx|=1.1891e-15, |x|=2.6064e-05, |dx|/|x|=4.5622e-11
+info: Convergence criterion, component 4: |dx|=5.0565e-16, |x|=1.2131e-05, |dx|/|x|=4.1682e-11
+info: [time] Iteration #6 took 1.25035 s.
+debug: PostTimestep HydroMechanicsProcess.
+info: [time] Solving process #1 took 35.4241 s in timestep #0.
+debug: output to TaskB_pcs_0_ts_1_t_10.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_1_t_10.000000.vtu'.
+info: [time] Output took 0.046298 s.
+info: [time] Timestep #1 took 35.4705 s.
+info: === timestep #2 (t=20s, dt=10s) ==============================
+debug: PreTimestep HydroMechanicsProcess.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=2.81245e-08 5.98965e-06
+b=1.59897e-05
+p=618798
+sigma'_prev=     -650438 -5.48321e+06
+sigma'=     -650438 -5.48321e+06
+sigma=   -650438 -6.102e+06
+q=-0.00321897  -0.0069489
+info: [time] Assembly took 0.118287 s.
+info: [time] Applying Dirichlet BCs took 0.0223699 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 8/3000
+info: 	 residual: 6.717638e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.08668 s.
+info: Convergence criterion, component 0: |dx|=2.6553e+05, |x|=2.1501e+07, |dx|/|x|=1.2349e-02
+info: Convergence criterion, component 1: |dx|=2.8444e-05, |x|=8.1145e-05, |dx|/|x|=3.5053e-01
+info: Convergence criterion, component 2: |dx|=1.9037e-05, |x|=5.3939e-05, |dx|/|x|=3.5294e-01
+info: Convergence criterion, component 3: |dx|=1.1466e-05, |x|=3.4682e-05, |dx|/|x|=3.3059e-01
+info: Convergence criterion, component 4: |dx|=5.1812e-06, |x|=1.6215e-05, |dx|/|x|=3.1954e-01
+info: [time] Iteration #1 took 1.23174 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.48932e-07  1.19496e-05
+b=2.19496e-05
+p=777991
+sigma'_prev=     -650438 -5.48321e+06
+sigma'=     -653979 -5.36401e+06
+sigma=   -653979 -6.142e+06
+q=-0.0114883 -0.0248001
+info: [time] Assembly took 0.105638 s.
+info: [time] Applying Dirichlet BCs took 0.017731 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 7.619295e-15
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.17421 s.
+info: Convergence criterion, component 0: |dx|=6.0931e+04, |x|=2.1498e+07, |dx|/|x|=2.8342e-03
+info: Convergence criterion, component 1: |dx|=3.1681e-06, |x|=7.8168e-05, |dx|/|x|=4.0530e-02
+info: Convergence criterion, component 2: |dx|=2.0919e-06, |x|=5.1936e-05, |dx|/|x|=4.0278e-02
+info: Convergence criterion, component 3: |dx|=2.0691e-06, |x|=3.3128e-05, |dx|/|x|=6.2457e-02
+info: Convergence criterion, component 4: |dx|=8.7074e-07, |x|=1.5484e-05, |dx|/|x|=5.6234e-02
+info: [time] Iteration #2 took 1.3023 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-8.15623e-08  1.09366e-05
+b=2.09366e-05
+p=748314
+sigma'_prev=     -650438 -5.48321e+06
+sigma'=     -652631 -5.38427e+06
+sigma=     -652631 -6.13258e+06
+q=-0.00862321  -0.0186152
+info: [time] Assembly took 0.118323 s.
+info: [time] Applying Dirichlet BCs took 0.0281212 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 1.355807e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.131 s.
+info: Convergence criterion, component 0: |dx|=3.5706e+03, |x|=2.1498e+07, |dx|/|x|=1.6609e-04
+info: Convergence criterion, component 1: |dx|=2.0731e-07, |x|=7.7971e-05, |dx|/|x|=2.6588e-03
+info: Convergence criterion, component 2: |dx|=1.3711e-07, |x|=5.1804e-05, |dx|/|x|=2.6466e-03
+info: Convergence criterion, component 3: |dx|=1.2624e-07, |x|=3.3031e-05, |dx|/|x|=3.8219e-03
+info: Convergence criterion, component 4: |dx|=5.4032e-08, |x|=1.5438e-05, |dx|/|x|=3.4999e-03
+info: [time] Iteration #3 took 1.28378 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-7.78149e-08  1.08725e-05
+b=2.08725e-05
+p=746468
+sigma'_prev=     -650438 -5.48321e+06
+sigma'=     -652556 -5.38555e+06
+sigma=     -652556 -6.13202e+06
+q=-0.00846711  -0.0182782
+info: [time] Assembly took 0.111965 s.
+info: [time] Applying Dirichlet BCs took 0.017607 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 1.990234e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.13944 s.
+info: Convergence criterion, component 0: |dx|=1.3032e+01, |x|=2.1498e+07, |dx|/|x|=6.0622e-07
+info: Convergence criterion, component 1: |dx|=7.3081e-10, |x|=7.7970e-05, |dx|/|x|=9.3729e-06
+info: Convergence criterion, component 2: |dx|=4.8299e-10, |x|=5.1804e-05, |dx|/|x|=9.3236e-06
+info: Convergence criterion, component 3: |dx|=4.5442e-10, |x|=3.3031e-05, |dx|/|x|=1.3757e-05
+info: Convergence criterion, component 4: |dx|=1.9339e-10, |x|=1.5438e-05, |dx|/|x|=1.2527e-05
+info: [time] Iteration #4 took 1.27278 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-7.78009e-08  1.08723e-05
+b=2.08723e-05
+p=746461
+sigma'_prev=     -650438 -5.48321e+06
+sigma'=     -652556 -5.38555e+06
+sigma=     -652556 -6.13202e+06
+q=-0.00846654   -0.018277
+info: [time] Assembly took 0.096338 s.
+info: [time] Applying Dirichlet BCs took 0.017756 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 13/3000
+info: 	 residual: 1.735306e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.1023 s.
+info: Convergence criterion, component 0: |dx|=1.6519e-04, |x|=2.1498e+07, |dx|/|x|=7.6840e-12
+info: Convergence criterion, component 1: |dx|=9.3712e-15, |x|=7.7970e-05, |dx|/|x|=1.2019e-10
+info: Convergence criterion, component 2: |dx|=6.1814e-15, |x|=5.1804e-05, |dx|/|x|=1.1932e-10
+info: Convergence criterion, component 3: |dx|=5.7939e-15, |x|=3.3031e-05, |dx|/|x|=1.7541e-10
+info: Convergence criterion, component 4: |dx|=2.4710e-15, |x|=1.5438e-05, |dx|/|x|=1.6006e-10
+info: [time] Iteration #5 took 1.22008 s.
+debug: PostTimestep HydroMechanicsProcess.
+info: [time] Solving process #2 took 6.31907 s in timestep #0.
+debug: output to TaskB_pcs_0_ts_2_t_20.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_2_t_20.000000.vtu'.
+info: [time] Output took 0.0501709 s.
+info: [time] Timestep #2 took 6.36932 s.
+info: === timestep #3 (t=30s, dt=10s) ==============================
+debug: PreTimestep HydroMechanicsProcess.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-7.78009e-08  1.08723e-05
+b=2.08723e-05
+p=746461
+sigma'_prev=     -652556 -5.38555e+06
+sigma'=     -652556 -5.38555e+06
+sigma=     -652556 -6.13202e+06
+q=-0.00846654   -0.018277
+info: [time] Assembly took 0.11898 s.
+info: [time] Applying Dirichlet BCs took 0.018666 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 8/3000
+info: 	 residual: 1.156774e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.06178 s.
+info: Convergence criterion, component 0: |dx|=1.5330e+05, |x|=2.1517e+07, |dx|/|x|=7.1244e-03
+info: Convergence criterion, component 1: |dx|=1.9750e-05, |x|=9.6869e-05, |dx|/|x|=2.0389e-01
+info: Convergence criterion, component 2: |dx|=1.3460e-05, |x|=6.4567e-05, |dx|/|x|=2.0847e-01
+info: Convergence criterion, component 3: |dx|=7.0861e-06, |x|=3.7650e-05, |dx|/|x|=1.8821e-01
+info: Convergence criterion, component 4: |dx|=3.2749e-06, |x|=1.7578e-05, |dx|/|x|=1.8630e-01
+info: [time] Iteration #1 took 1.20408 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-5.01031e-08  1.34369e-05
+b=2.34369e-05
+p=807000
+sigma'_prev=     -652556 -5.38555e+06
+sigma'=     -652002 -5.33426e+06
+sigma=     -652002 -6.14126e+06
+q=-0.0095129 -0.0205358
+info: [time] Assembly took 0.106741 s.
+info: [time] Applying Dirichlet BCs took 0.0204058 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 5.204337e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.13747 s.
+info: Convergence criterion, component 0: |dx|=1.0665e+04, |x|=2.1517e+07, |dx|/|x|=4.9567e-04
+info: Convergence criterion, component 1: |dx|=6.2196e-07, |x|=9.6297e-05, |dx|/|x|=6.4588e-03
+info: Convergence criterion, component 2: |dx|=4.2279e-07, |x|=6.4185e-05, |dx|/|x|=6.5870e-03
+info: Convergence criterion, component 3: |dx|=4.0637e-07, |x|=3.7391e-05, |dx|/|x|=1.0868e-02
+info: Convergence criterion, component 4: |dx|=1.8081e-07, |x|=1.7456e-05, |dx|/|x|=1.0358e-02
+info: [time] Iteration #2 took 1.26854 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-5.3515e-08 1.32896e-05
+b=2.32896e-05
+p=803475
+sigma'_prev=     -652556 -5.38555e+06
+sigma'=     -652070 -5.33721e+06
+sigma=     -652070 -6.14068e+06
+q=-0.00941952  -0.0203342
+info: [time] Assembly took 0.0989311 s.
+info: [time] Applying Dirichlet BCs took 0.0179241 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 1.093725e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.14508 s.
+info: Convergence criterion, component 0: |dx|=2.5434e+01, |x|=2.1517e+07, |dx|/|x|=1.1820e-06
+info: Convergence criterion, component 1: |dx|=2.2038e-09, |x|=9.6295e-05, |dx|/|x|=2.2887e-05
+info: Convergence criterion, component 2: |dx|=1.4606e-09, |x|=6.4183e-05, |dx|/|x|=2.2757e-05
+info: Convergence criterion, component 3: |dx|=1.0729e-09, |x|=3.7391e-05, |dx|/|x|=2.8694e-05
+info: Convergence criterion, component 4: |dx|=4.8316e-10, |x|=1.7456e-05, |dx|/|x|=2.7680e-05
+info: [time] Iteration #3 took 1.2656 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-5.34995e-08  1.32891e-05
+b=2.32891e-05
+p=803461
+sigma'_prev=     -652556 -5.38555e+06
+sigma'=     -652070 -5.33722e+06
+sigma=     -652070 -6.14068e+06
+q=-0.00941856  -0.0203321
+info: [time] Assembly took 0.105584 s.
+info: [time] Applying Dirichlet BCs took 0.017225 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 13/3000
+info: 	 residual: 1.129791e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.14067 s.
+info: Convergence criterion, component 0: |dx|=6.7893e-04, |x|=2.1517e+07, |dx|/|x|=3.1554e-11
+info: Convergence criterion, component 1: |dx|=3.7624e-14, |x|=9.6295e-05, |dx|/|x|=3.9071e-10
+info: Convergence criterion, component 2: |dx|=2.5022e-14, |x|=6.4183e-05, |dx|/|x|=3.8986e-10
+info: Convergence criterion, component 3: |dx|=2.3858e-14, |x|=3.7391e-05, |dx|/|x|=6.3807e-10
+info: Convergence criterion, component 4: |dx|=1.0229e-14, |x|=1.7456e-05, |dx|/|x|=5.8599e-10
+info: [time] Iteration #4 took 1.26727 s.
+debug: PostTimestep HydroMechanicsProcess.
+info: [time] Solving process #3 took 5.0167 s in timestep #0.
+debug: output to TaskB_pcs_0_ts_3_t_30.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_3_t_30.000000.vtu'.
+info: [time] Output took 0.055059 s.
+info: [time] Timestep #3 took 5.07184 s.
+info: === timestep #4 (t=40s, dt=10s) ==============================
+debug: PreTimestep HydroMechanicsProcess.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-5.34995e-08  1.32891e-05
+b=2.32891e-05
+p=803461
+sigma'_prev=     -652070 -5.33722e+06
+sigma'=     -652070 -5.33722e+06
+sigma=     -652070 -6.14068e+06
+q=-0.00941856  -0.0203321
+info: [time] Assembly took 0.121765 s.
+info: [time] Applying Dirichlet BCs took 0.020093 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 8/3000
+info: 	 residual: 8.712546e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.07366 s.
+info: Convergence criterion, component 0: |dx|=1.1569e+05, |x|=2.1533e+07, |dx|/|x|=5.3727e-03
+info: Convergence criterion, component 1: |dx|=1.6200e-05, |x|=1.1167e-04, |dx|/|x|=1.4507e-01
+info: Convergence criterion, component 2: |dx|=1.1201e-05, |x|=7.4738e-05, |dx|/|x|=1.4987e-01
+info: Convergence criterion, component 3: |dx|=5.3457e-06, |x|=4.0681e-05, |dx|/|x|=1.3141e-01
+info: Convergence criterion, component 4: |dx|=2.4830e-06, |x|=1.8966e-05, |dx|/|x|=1.3092e-01
+info: [time] Iteration #1 took 1.22027 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.51264e-08  1.46882e-05
+b=2.46882e-05
+p=834377
+sigma'_prev=     -652070 -5.33722e+06
+sigma'=     -651303 -5.30924e+06
+sigma=     -651303 -6.14361e+06
+q=-0.00852053  -0.0183935
+info: [time] Assembly took 0.107458 s.
+info: [time] Applying Dirichlet BCs took 0.01914 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 1.924197e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.20529 s.
+info: Convergence criterion, component 0: |dx|=9.4374e+03, |x|=2.1533e+07, |dx|/|x|=4.3827e-04
+info: Convergence criterion, component 1: |dx|=3.1625e-07, |x|=1.1144e-04, |dx|/|x|=2.8379e-03
+info: Convergence criterion, component 2: |dx|=2.1441e-07, |x|=7.4582e-05, |dx|/|x|=2.8748e-03
+info: Convergence criterion, component 3: |dx|=3.0155e-07, |x|=4.0578e-05, |dx|/|x|=7.4313e-03
+info: Convergence criterion, component 4: |dx|=1.2466e-07, |x|=1.8918e-05, |dx|/|x|=6.5895e-03
+info: [time] Iteration #2 took 1.33596 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.37074e-08  1.46546e-05
+b=2.46546e-05
+p=834046
+sigma'_prev=     -652070 -5.33722e+06
+sigma'=     -651474 -5.30991e+06
+sigma=     -651474 -6.14395e+06
+q=-0.00874314  -0.0188741
+info: [time] Assembly took 0.097868 s.
+info: [time] Applying Dirichlet BCs took 0.0232871 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 5.573388e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.09467 s.
+info: Convergence criterion, component 0: |dx|=4.6851e+01, |x|=2.1533e+07, |dx|/|x|=2.1758e-06
+info: Convergence criterion, component 1: |dx|=1.3717e-09, |x|=1.1144e-04, |dx|/|x|=1.2309e-05
+info: Convergence criterion, component 2: |dx|=9.4355e-10, |x|=7.4582e-05, |dx|/|x|=1.2651e-05
+info: Convergence criterion, component 3: |dx|=1.4966e-09, |x|=4.0578e-05, |dx|/|x|=3.6883e-05
+info: Convergence criterion, component 4: |dx|=6.2237e-10, |x|=1.8918e-05, |dx|/|x|=3.2899e-05
+info: [time] Iteration #3 took 1.22056 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.37595e-08  1.46547e-05
+b=2.46547e-05
+p=834052
+sigma'_prev=     -652070 -5.33722e+06
+sigma'=     -651475 -5.30991e+06
+sigma=     -651475 -6.14396e+06
+q=-0.00874492  -0.0188779
+info: [time] Assembly took 0.102925 s.
+info: [time] Applying Dirichlet BCs took 0.0175049 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 13/3000
+info: 	 residual: 2.842083e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.11937 s.
+info: Convergence criterion, component 0: |dx|=1.5802e-03, |x|=2.1533e+07, |dx|/|x|=7.3383e-11
+info: Convergence criterion, component 1: |dx|=4.8765e-14, |x|=1.1144e-04, |dx|/|x|=4.3761e-10
+info: Convergence criterion, component 2: |dx|=3.2769e-14, |x|=7.4582e-05, |dx|/|x|=4.3937e-10
+info: Convergence criterion, component 3: |dx|=4.9352e-14, |x|=4.0578e-05, |dx|/|x|=1.2162e-09
+info: Convergence criterion, component 4: |dx|=2.0133e-14, |x|=1.8918e-05, |dx|/|x|=1.0642e-09
+info: [time] Iteration #4 took 1.24362 s.
+debug: PostTimestep HydroMechanicsProcess.
+info: [time] Solving process #4 took 5.03073 s in timestep #0.
+debug: output to TaskB_pcs_0_ts_4_t_40.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_4_t_40.000000.vtu'.
+info: [time] Output took 0.048167 s.
+info: [time] Timestep #4 took 5.07905 s.
+info: === timestep #5 (t=50s, dt=10s) ==============================
+debug: PreTimestep HydroMechanicsProcess.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.37595e-08  1.46547e-05
+b=2.46547e-05
+p=834052
+sigma'_prev=     -651475 -5.30991e+06
+sigma'=     -651475 -5.30991e+06
+sigma=     -651475 -6.14396e+06
+q=-0.00874492  -0.0188779
+info: [time] Assembly took 0.120686 s.
+info: [time] Applying Dirichlet BCs took 0.0194921 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 8/3000
+info: 	 residual: 5.591110e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.09326 s.
+info: Convergence criterion, component 0: |dx|=9.1184e+04, |x|=2.1548e+07, |dx|/|x|=4.2316e-03
+info: Convergence criterion, component 1: |dx|=1.4020e-05, |x|=1.2468e-04, |dx|/|x|=1.1245e-01
+info: Convergence criterion, component 2: |dx|=9.8184e-06, |x|=8.3810e-05, |dx|/|x|=1.1715e-01
+info: Convergence criterion, component 3: |dx|=4.2123e-06, |x|=4.3101e-05, |dx|/|x|=9.7732e-02
+info: Convergence criterion, component 4: |dx|=1.9667e-06, |x|=2.0073e-05, |dx|/|x|=9.7976e-02
+info: [time] Iteration #1 took 1.23833 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-9.81208e-09  1.55161e-05
+b=2.55161e-05
+p=853328
+sigma'_prev=     -651475 -5.30991e+06
+sigma'=     -651196 -5.29268e+06
+sigma=     -651196 -6.14601e+06
+q=-0.00789471  -0.0170426
+info: [time] Assembly took 0.104831 s.
+info: [time] Applying Dirichlet BCs took 0.019882 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 1.561400e-15
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.16356 s.
+info: Convergence criterion, component 0: |dx|=3.5895e+03, |x|=2.1548e+07, |dx|/|x|=1.6658e-04
+info: Convergence criterion, component 1: |dx|=1.4418e-07, |x|=1.2457e-04, |dx|/|x|=1.1575e-03
+info: Convergence criterion, component 2: |dx|=9.9918e-08, |x|=8.3736e-05, |dx|/|x|=1.1932e-03
+info: Convergence criterion, component 3: |dx|=1.2481e-07, |x|=4.3054e-05, |dx|/|x|=2.8990e-03
+info: Convergence criterion, component 4: |dx|=5.4125e-08, |x|=2.0052e-05, |dx|/|x|=2.6993e-03
+info: [time] Iteration #2 took 1.29373 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.33407e-08  1.55061e-05
+b=2.55061e-05
+p=853297
+sigma'_prev=     -651475 -5.30991e+06
+sigma'=     -651267 -5.29288e+06
+sigma=     -651267 -6.14618e+06
+q=-0.00800806  -0.0172872
+info: [time] Assembly took 0.112267 s.
+info: [time] Applying Dirichlet BCs took 0.018019 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 9.259618e-15
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.09763 s.
+info: Convergence criterion, component 0: |dx|=1.0749e+01, |x|=2.1548e+07, |dx|/|x|=4.9884e-07
+info: Convergence criterion, component 1: |dx|=2.9341e-10, |x|=1.2457e-04, |dx|/|x|=2.3554e-06
+info: Convergence criterion, component 2: |dx|=1.9649e-10, |x|=8.3736e-05, |dx|/|x|=2.3466e-06
+info: Convergence criterion, component 3: |dx|=3.2910e-10, |x|=4.3054e-05, |dx|/|x|=7.6439e-06
+info: Convergence criterion, component 4: |dx|=1.3269e-10, |x|=2.0051e-05, |dx|/|x|=6.6173e-06
+info: [time] Iteration #3 took 1.23152 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.33521e-08  1.55061e-05
+b=2.55061e-05
+p=853297
+sigma'_prev=     -651475 -5.30991e+06
+sigma'=     -651267 -5.29288e+06
+sigma=     -651267 -6.14618e+06
+q=-0.00800845  -0.0172881
+info: [time] Assembly took 0.0967488 s.
+info: [time] Applying Dirichlet BCs took 0.017004 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 13/3000
+info: 	 residual: 5.087981e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.11004 s.
+info: Convergence criterion, component 0: |dx|=7.0789e-05, |x|=2.1548e+07, |dx|/|x|=3.2852e-12
+info: Convergence criterion, component 1: |dx|=2.2739e-15, |x|=1.2457e-04, |dx|/|x|=1.8254e-11
+info: Convergence criterion, component 2: |dx|=1.5680e-15, |x|=8.3736e-05, |dx|/|x|=1.8726e-11
+info: Convergence criterion, component 3: |dx|=2.2677e-15, |x|=4.3054e-05, |dx|/|x|=5.2673e-11
+info: Convergence criterion, component 4: |dx|=9.4907e-16, |x|=2.0051e-05, |dx|/|x|=4.7332e-11
+info: [time] Iteration #4 took 1.2284 s.
+debug: PostTimestep HydroMechanicsProcess.
+info: [time] Solving process #5 took 5.00632 s in timestep #0.
+debug: output to TaskB_pcs_0_ts_5_t_50.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_5_t_50.000000.vtu'.
+info: [time] Output took 0.045964 s.
+info: [time] Timestep #5 took 5.0524 s.
+info: === timestep #6 (t=60s, dt=10s) ==============================
+debug: PreTimestep HydroMechanicsProcess.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.33521e-08  1.55061e-05
+b=2.55061e-05
+p=853297
+sigma'_prev=     -651267 -5.29288e+06
+sigma'=     -651267 -5.29288e+06
+sigma=     -651267 -6.14618e+06
+q=-0.00800845  -0.0172881
+info: [time] Assembly took 0.122547 s.
+info: [time] Applying Dirichlet BCs took 0.024457 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 8/3000
+info: 	 residual: 1.466908e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.05586 s.
+info: Convergence criterion, component 0: |dx|=7.9377e+04, |x|=2.1562e+07, |dx|/|x|=3.6813e-03
+info: Convergence criterion, component 1: |dx|=1.2521e-05, |x|=1.3634e-04, |dx|/|x|=9.1836e-02
+info: Convergence criterion, component 2: |dx|=8.8727e-06, |x|=9.2050e-05, |dx|/|x|=9.6390e-02
+info: Convergence criterion, component 3: |dx|=3.5402e-06, |x|=4.5073e-05, |dx|/|x|=7.8542e-02
+info: Convergence criterion, component 4: |dx|=1.6511e-06, |x|=2.0976e-05, |dx|/|x|=7.8713e-02
+info: [time] Iteration #1 took 1.20736 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.39393e-08  1.60677e-05
+b=2.60677e-05
+p=866214
+sigma'_prev=     -651267 -5.29288e+06
+sigma'=     -651279 -5.28165e+06
+sigma=     -651279 -6.14786e+06
+q=-0.00740469  -0.0159847
+info: [time] Assembly took 0.135222 s.
+info: [time] Applying Dirichlet BCs took 0.0235701 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 5.243183e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.27419 s.
+info: Convergence criterion, component 0: |dx|=1.9814e+03, |x|=2.1562e+07, |dx|/|x|=9.1893e-05
+info: Convergence criterion, component 1: |dx|=7.9150e-08, |x|=1.3628e-04, |dx|/|x|=5.8078e-04
+info: Convergence criterion, component 2: |dx|=5.6099e-08, |x|=9.2014e-05, |dx|/|x|=6.0969e-04
+info: Convergence criterion, component 3: |dx|=7.1408e-08, |x|=4.5052e-05, |dx|/|x|=1.5850e-03
+info: Convergence criterion, component 4: |dx|=3.1591e-08, |x|=2.0966e-05, |dx|/|x|=1.5068e-03
+info: [time] Iteration #2 took 1.43768 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.45997e-08  1.60676e-05
+b=2.60676e-05
+p=866270
+sigma'_prev=     -651267 -5.29288e+06
+sigma'=     -651292 -5.28165e+06
+sigma=     -651292 -6.14792e+06
+q=-0.00744301  -0.0160675
+info: [time] Assembly took 0.123237 s.
+info: [time] Applying Dirichlet BCs took 0.0187871 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 7.447969e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.14854 s.
+info: Convergence criterion, component 0: |dx|=9.4542e-01, |x|=2.1562e+07, |dx|/|x|=4.3846e-08
+info: Convergence criterion, component 1: |dx|=2.6944e-11, |x|=1.3628e-04, |dx|/|x|=1.9771e-07
+info: Convergence criterion, component 2: |dx|=1.7003e-11, |x|=9.2014e-05, |dx|/|x|=1.8479e-07
+info: Convergence criterion, component 3: |dx|=2.7146e-11, |x|=4.5052e-05, |dx|/|x|=6.0255e-07
+info: Convergence criterion, component 4: |dx|=1.0278e-11, |x|=2.0966e-05, |dx|/|x|=4.9024e-07
+info: [time] Iteration #3 took 1.29485 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.46003e-08  1.60676e-05
+b=2.60676e-05
+p=866270
+sigma'_prev=     -651267 -5.29288e+06
+sigma'=     -651292 -5.28165e+06
+sigma=     -651292 -6.14792e+06
+q=-0.00744303  -0.0160675
+info: [time] Assembly took 0.152155 s.
+info: [time] Applying Dirichlet BCs took 0.017324 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 14/3000
+info: 	 residual: 1.782240e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.17087 s.
+info: Convergence criterion, component 0: |dx|=3.2294e-07, |x|=2.1562e+07, |dx|/|x|=1.4977e-14
+info: Convergence criterion, component 1: |dx|=8.9427e-17, |x|=1.3628e-04, |dx|/|x|=6.5619e-13
+info: Convergence criterion, component 2: |dx|=9.2658e-17, |x|=9.2014e-05, |dx|/|x|=1.0070e-12
+info: Convergence criterion, component 3: |dx|=1.2488e-17, |x|=4.5052e-05, |dx|/|x|=2.7718e-13
+info: Convergence criterion, component 4: |dx|=5.3775e-18, |x|=2.0966e-05, |dx|/|x|=2.5649e-13
+info: [time] Iteration #4 took 1.34504 s.
+debug: PostTimestep HydroMechanicsProcess.
+info: [time] Solving process #6 took 5.29434 s in timestep #0.
+debug: output to TaskB_pcs_0_ts_6_t_60.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_6_t_60.000000.vtu'.
+info: [time] Output took 0.043484 s.
+info: [time] Timestep #6 took 5.33789 s.
+info: === timestep #7 (t=70s, dt=10s) ==============================
+debug: PreTimestep HydroMechanicsProcess.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.46003e-08  1.60676e-05
+b=2.60676e-05
+p=866270
+sigma'_prev=     -651292 -5.28165e+06
+sigma'=     -651292 -5.28165e+06
+sigma=     -651292 -6.14792e+06
+q=-0.00744303  -0.0160675
+info: [time] Assembly took 0.115221 s.
+info: [time] Applying Dirichlet BCs took 0.0226729 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 8/3000
+info: 	 residual: 3.126354e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.07705 s.
+info: Convergence criterion, component 0: |dx|=6.9679e+04, |x|=2.1575e+07, |dx|/|x|=3.2295e-03
+info: Convergence criterion, component 1: |dx|=1.1418e-05, |x|=1.4699e-04, |dx|/|x|=7.7681e-02
+info: Convergence criterion, component 2: |dx|=8.1785e-06, |x|=9.9668e-05, |dx|/|x|=8.2057e-02
+info: Convergence criterion, component 3: |dx|=3.0344e-06, |x|=4.6736e-05, |dx|/|x|=6.4925e-02
+info: Convergence criterion, component 4: |dx|=1.4157e-06, |x|=2.1736e-05, |dx|/|x|=6.5134e-02
+info: [time] Iteration #1 took 1.21983 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.95637e-08    1.646e-05
+b=2.646e-05
+p=875445
+sigma'_prev=     -651292 -5.28165e+06
+sigma'=    -651391 -5.2738e+06
+sigma=     -651391 -6.14924e+06
+q=-0.00698665  -0.0150823
+info: [time] Assembly took 0.106512 s.
+info: [time] Applying Dirichlet BCs took 0.0175278 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 1.273353e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.16748 s.
+info: Convergence criterion, component 0: |dx|=1.9961e+03, |x|=2.1575e+07, |dx|/|x|=9.2518e-05
+info: Convergence criterion, component 1: |dx|=6.0163e-08, |x|=1.4695e-04, |dx|/|x|=4.0940e-04
+info: Convergence criterion, component 2: |dx|=4.2324e-08, |x|=9.9647e-05, |dx|/|x|=4.2474e-04
+info: Convergence criterion, component 3: |dx|=6.5169e-08, |x|=4.6725e-05, |dx|/|x|=1.3948e-03
+info: Convergence criterion, component 4: |dx|=2.7454e-08, |x|=2.1730e-05, |dx|/|x|=1.2634e-03
+info: [time] Iteration #2 took 1.29674 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.93702e-08   1.6463e-05
+b=2.6463e-05
+p=875527
+sigma'_prev=     -651292 -5.28165e+06
+sigma'=     -651387 -5.27374e+06
+sigma=     -651387 -6.14927e+06
+q=-0.00699845  -0.0151078
+info: [time] Assembly took 0.097713 s.
+info: [time] Applying Dirichlet BCs took 0.018153 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 7.357804e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.1113 s.
+info: Convergence criterion, component 0: |dx|=1.4248e+00, |x|=2.1575e+07, |dx|/|x|=6.6038e-08
+info: Convergence criterion, component 1: |dx|=3.9232e-11, |x|=1.4695e-04, |dx|/|x|=2.6697e-07
+info: Convergence criterion, component 2: |dx|=2.8875e-11, |x|=9.9647e-05, |dx|/|x|=2.8977e-07
+info: Convergence criterion, component 3: |dx|=4.7871e-11, |x|=4.6725e-05, |dx|/|x|=1.0245e-06
+info: Convergence criterion, component 4: |dx|=2.0545e-11, |x|=2.1730e-05, |dx|/|x|=9.4547e-07
+info: [time] Iteration #3 took 1.2311 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.93693e-08  1.64631e-05
+b=2.64631e-05
+p=875527
+sigma'_prev=     -651292 -5.28165e+06
+sigma'=     -651387 -5.27374e+06
+sigma=     -651387 -6.14927e+06
+q=-0.00699843  -0.0151077
+info: [time] Assembly took 0.0962479 s.
+info: [time] Applying Dirichlet BCs took 0.0222409 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 14/3000
+info: 	 residual: 4.149884e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.11038 s.
+info: Convergence criterion, component 0: |dx|=1.2429e-06, |x|=2.1575e+07, |dx|/|x|=5.7607e-14
+info: Convergence criterion, component 1: |dx|=1.2490e-16, |x|=1.4695e-04, |dx|/|x|=8.4993e-13
+info: Convergence criterion, component 2: |dx|=7.7797e-17, |x|=9.9647e-05, |dx|/|x|=7.8072e-13
+info: Convergence criterion, component 3: |dx|=4.0013e-17, |x|=4.6725e-05, |dx|/|x|=8.5636e-13
+info: Convergence criterion, component 4: |dx|=1.7523e-17, |x|=2.1730e-05, |dx|/|x|=8.0638e-13
+info: [time] Iteration #4 took 1.23254 s.
+debug: PostTimestep HydroMechanicsProcess.
+info: [time] Solving process #7 took 4.99104 s in timestep #0.
+debug: output to TaskB_pcs_0_ts_7_t_70.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_7_t_70.000000.vtu'.
+info: [time] Output took 0.052598 s.
+info: [time] Timestep #7 took 5.04372 s.
+info: === timestep #8 (t=80s, dt=10s) ==============================
+debug: PreTimestep HydroMechanicsProcess.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-1.93693e-08  1.64631e-05
+b=2.64631e-05
+p=875527
+sigma'_prev=     -651387 -5.27374e+06
+sigma'=     -651387 -5.27374e+06
+sigma=     -651387 -6.14927e+06
+q=-0.00699843  -0.0151077
+info: [time] Assembly took 0.126461 s.
+info: [time] Applying Dirichlet BCs took 0.018507 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 8/3000
+info: 	 residual: 6.701606e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.06337 s.
+info: Convergence criterion, component 0: |dx|=6.1654e+04, |x|=2.1588e+07, |dx|/|x|=2.8559e-03
+info: Convergence criterion, component 1: |dx|=1.0563e-05, |x|=1.5684e-04, |dx|/|x|=6.7345e-02
+info: Convergence criterion, component 2: |dx|=7.6388e-06, |x|=1.0680e-04, |dx|/|x|=7.1527e-02
+info: Convergence criterion, component 3: |dx|=2.6291e-06, |x|=4.8164e-05, |dx|/|x|=5.4585e-02
+info: Convergence criterion, component 4: |dx|=1.2284e-06, |x|=2.2388e-05, |dx|/|x|=5.4869e-02
+info: [time] Iteration #1 took 1.21315 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.43837e-08  1.67579e-05
+b=2.67579e-05
+p=882475
+sigma'_prev=     -651387 -5.27374e+06
+sigma'=     -651488 -5.26784e+06
+sigma=     -651488 -6.15032e+06
+q=-0.00662998  -0.0143123
+info: [time] Assembly took 0.126065 s.
+info: [time] Applying Dirichlet BCs took 0.0175931 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 11/3000
+info: 	 residual: 7.795194e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.25132 s.
+info: Convergence criterion, component 0: |dx|=1.3912e+03, |x|=2.1588e+07, |dx|/|x|=6.4442e-05
+info: Convergence criterion, component 1: |dx|=4.1761e-08, |x|=1.5682e-04, |dx|/|x|=2.6629e-04
+info: Convergence criterion, component 2: |dx|=2.9628e-08, |x|=1.0678e-04, |dx|/|x|=2.7746e-04
+info: Convergence criterion, component 3: |dx|=4.5833e-08, |x|=4.8157e-05, |dx|/|x|=9.5173e-04
+info: Convergence criterion, component 4: |dx|=1.9416e-08, |x|=2.2385e-05, |dx|/|x|=8.6737e-04
+info: [time] Iteration #2 took 1.39872 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.41117e-08  1.67607e-05
+b=2.67607e-05
+p=882544
+sigma'_prev=     -651387 -5.27374e+06
+sigma'=     -651482 -5.26779e+06
+sigma=     -651482 -6.15033e+06
+q=-0.00663441  -0.0143219
+info: [time] Assembly took 0.110044 s.
+info: [time] Applying Dirichlet BCs took 0.0176811 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 9.872410e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.08596 s.
+info: Convergence criterion, component 0: |dx|=1.0006e+00, |x|=2.1588e+07, |dx|/|x|=4.6351e-08
+info: Convergence criterion, component 1: |dx|=2.5410e-11, |x|=1.5682e-04, |dx|/|x|=1.6203e-07
+info: Convergence criterion, component 2: |dx|=1.8153e-11, |x|=1.0678e-04, |dx|/|x|=1.7000e-07
+info: Convergence criterion, component 3: |dx|=3.1985e-11, |x|=4.8157e-05, |dx|/|x|=6.6419e-07
+info: Convergence criterion, component 4: |dx|=1.3319e-11, |x|=2.2385e-05, |dx|/|x|=5.9499e-07
+info: [time] Iteration #3 took 1.21798 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.41112e-08  1.67607e-05
+b=2.67607e-05
+p=882545
+sigma'_prev=     -651387 -5.27374e+06
+sigma'=     -651482 -5.26779e+06
+sigma=     -651482 -6.15033e+06
+q=-0.0066344 -0.0143219
+info: [time] Assembly took 0.101339 s.
+info: [time] Applying Dirichlet BCs took 0.0172241 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 14/3000
+info: 	 residual: 5.016943e-15
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.12133 s.
+info: Convergence criterion, component 0: |dx|=5.6241e-07, |x|=2.1588e+07, |dx|/|x|=2.6052e-14
+info: Convergence criterion, component 1: |dx|=5.5373e-17, |x|=1.5682e-04, |dx|/|x|=3.5309e-13
+info: Convergence criterion, component 2: |dx|=8.1689e-17, |x|=1.0678e-04, |dx|/|x|=7.6500e-13
+info: Convergence criterion, component 3: |dx|=1.7317e-17, |x|=4.8157e-05, |dx|/|x|=3.5959e-13
+info: Convergence criterion, component 4: |dx|=7.3945e-18, |x|=2.2385e-05, |dx|/|x|=3.3034e-13
+info: [time] Iteration #4 took 1.24437 s.
+debug: PostTimestep HydroMechanicsProcess.
+info: [time] Solving process #8 took 5.08195 s in timestep #0.
+debug: output to TaskB_pcs_0_ts_8_t_80.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_8_t_80.000000.vtu'.
+info: [time] Output took 0.0475791 s.
+info: [time] Timestep #8 took 5.12961 s.
+info: === timestep #9 (t=90s, dt=10s) ==============================
+debug: PreTimestep HydroMechanicsProcess.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.41112e-08  1.67607e-05
+b=2.67607e-05
+p=882545
+sigma'_prev=     -651482 -5.26779e+06
+sigma'=     -651482 -5.26779e+06
+sigma=     -651482 -6.15033e+06
+q=-0.0066344 -0.0143219
+info: [time] Assembly took 0.121224 s.
+info: [time] Applying Dirichlet BCs took 0.0243928 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 8/3000
+info: 	 residual: 1.872411e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.0369 s.
+info: Convergence criterion, component 0: |dx|=5.5904e+04, |x|=2.1600e+07, |dx|/|x|=2.5881e-03
+info: Convergence criterion, component 1: |dx|=9.8738e-06, |x|=1.6606e-04, |dx|/|x|=5.9459e-02
+info: Convergence criterion, component 2: |dx|=7.2022e-06, |x|=1.1352e-04, |dx|/|x|=6.3442e-02
+info: Convergence criterion, component 3: |dx|=2.3190e-06, |x|=4.9407e-05, |dx|/|x|=4.6937e-02
+info: Convergence criterion, component 4: |dx|=1.0838e-06, |x|=2.2956e-05, |dx|/|x|=4.7211e-02
+info: [time] Iteration #1 took 1.18631 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.81635e-08  1.69935e-05
+b=2.69935e-05
+p=888072
+sigma'_prev=     -651482 -5.26779e+06
+sigma'=     -651563 -5.26313e+06
+sigma=    -651563 -6.1512e+06
+q=-0.00633134  -0.0136677
+info: [time] Assembly took 0.108441 s.
+info: [time] Applying Dirichlet BCs took 0.0192702 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 9.211358e-15
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.20658 s.
+info: Convergence criterion, component 0: |dx|=7.6697e+02, |x|=2.1600e+07, |dx|/|x|=3.5507e-05
+info: Convergence criterion, component 1: |dx|=2.6607e-08, |x|=1.6605e-04, |dx|/|x|=1.6024e-04
+info: Convergence criterion, component 2: |dx|=1.9339e-08, |x|=1.1352e-04, |dx|/|x|=1.7036e-04
+info: Convergence criterion, component 3: |dx|=2.7278e-08, |x|=4.9403e-05, |dx|/|x|=5.5215e-04
+info: Convergence criterion, component 4: |dx|=1.2021e-08, |x|=2.2954e-05, |dx|/|x|=5.2368e-04
+info: [time] Iteration #2 took 1.33814 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.79792e-08  1.69955e-05
+b=2.69955e-05
+p=888122
+sigma'_prev=     -651482 -5.26779e+06
+sigma'=     -651560 -5.26309e+06
+sigma=     -651560 -6.15121e+06
+q=-0.00633356  -0.0136725
+info: [time] Assembly took 0.104761 s.
+info: [time] Applying Dirichlet BCs took 0.0213871 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 13/3000
+info: 	 residual: 7.674525e-15
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.18697 s.
+info: Convergence criterion, component 0: |dx|=4.4771e-01, |x|=2.1600e+07, |dx|/|x|=2.0727e-08
+info: Convergence criterion, component 1: |dx|=1.0388e-11, |x|=1.6605e-04, |dx|/|x|=6.2560e-08
+info: Convergence criterion, component 2: |dx|=7.0598e-12, |x|=1.1352e-04, |dx|/|x|=6.2193e-08
+info: Convergence criterion, component 3: |dx|=1.3510e-11, |x|=4.9403e-05, |dx|/|x|=2.7346e-07
+info: Convergence criterion, component 4: |dx|=5.3942e-12, |x|=2.2954e-05, |dx|/|x|=2.3500e-07
+info: [time] Iteration #3 took 1.31758 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.7979e-08 1.69955e-05
+b=2.69955e-05
+p=888122
+sigma'_prev=     -651482 -5.26779e+06
+sigma'=     -651560 -5.26309e+06
+sigma=     -651560 -6.15121e+06
+q=-0.00633356  -0.0136725
+info: [time] Assembly took 0.101134 s.
+info: [time] Applying Dirichlet BCs took 0.0210931 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 14/3000
+info: 	 residual: 4.586460e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.1135 s.
+info: Convergence criterion, component 0: |dx|=1.2044e-07, |x|=2.1600e+07, |dx|/|x|=5.5760e-15
+info: Convergence criterion, component 1: |dx|=3.1241e-17, |x|=1.6605e-04, |dx|/|x|=1.8815e-13
+info: Convergence criterion, component 2: |dx|=2.7842e-17, |x|=1.1352e-04, |dx|/|x|=2.4527e-13
+info: Convergence criterion, component 3: |dx|=3.7781e-18, |x|=4.9403e-05, |dx|/|x|=7.6477e-14
+info: Convergence criterion, component 4: |dx|=2.4804e-18, |x|=2.2954e-05, |dx|/|x|=1.0806e-13
+info: [time] Iteration #4 took 1.23962 s.
+debug: PostTimestep HydroMechanicsProcess.
+info: [time] Solving process #9 took 5.0912 s in timestep #0.
+debug: output to TaskB_pcs_0_ts_9_t_90.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_9_t_90.000000.vtu'.
+info: [time] Output took 0.0470099 s.
+info: [time] Timestep #9 took 5.13831 s.
+info: === timestep #10 (t=100s, dt=10s) ==============================
+debug: PreTimestep HydroMechanicsProcess.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-2.7979e-08 1.69955e-05
+b=2.69955e-05
+p=888122
+sigma'_prev=     -651560 -5.26309e+06
+sigma'=     -651560 -5.26309e+06
+sigma=     -651560 -6.15121e+06
+q=-0.00633356  -0.0136725
+info: [time] Assembly took 0.124733 s.
+info: [time] Applying Dirichlet BCs took 0.0237081 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 8/3000
+info: 	 residual: 3.379532e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.07118 s.
+info: Convergence criterion, component 0: |dx|=5.1581e+04, |x|=2.1612e+07, |dx|/|x|=2.3867e-03
+info: Convergence criterion, component 1: |dx|=9.3032e-06, |x|=1.7474e-04, |dx|/|x|=5.3240e-02
+info: Convergence criterion, component 2: |dx|=6.8387e-06, |x|=1.1992e-04, |dx|/|x|=5.7029e-02
+info: Convergence criterion, component 3: |dx|=2.0778e-06, |x|=5.0503e-05, |dx|/|x|=4.1142e-02
+info: Convergence criterion, component 4: |dx|=9.7042e-07, |x|=2.3457e-05, |dx|/|x|=4.1370e-02
+info: [time] Iteration #1 took 1.22331 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-3.1139e-08  1.7184e-05
+b=2.7184e-05
+p=892653
+sigma'_prev=     -651560 -5.26309e+06
+sigma'=     -651623 -5.25932e+06
+sigma=     -651623 -6.15197e+06
+q=-0.00608301  -0.0131316
+info: [time] Assembly took 0.112253 s.
+info: [time] Applying Dirichlet BCs took 0.021476 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 7.460541e-14
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.20798 s.
+info: Convergence criterion, component 0: |dx|=4.7340e+02, |x|=2.1612e+07, |dx|/|x|=2.1904e-05
+info: Convergence criterion, component 1: |dx|=1.8431e-08, |x|=1.7473e-04, |dx|/|x|=1.0548e-04
+info: Convergence criterion, component 2: |dx|=1.3606e-08, |x|=1.1991e-04, |dx|/|x|=1.1347e-04
+info: Convergence criterion, component 3: |dx|=1.8073e-08, |x|=5.0500e-05, |dx|/|x|=3.5788e-04
+info: Convergence criterion, component 4: |dx|=8.2021e-09, |x|=2.3456e-05, |dx|/|x|=3.4968e-04
+info: [time] Iteration #2 took 1.34547 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-3.1031e-08 1.71853e-05
+b=2.71853e-05
+p=892688
+sigma'_prev=     -651560 -5.26309e+06
+sigma'=     -651621 -5.25929e+06
+sigma=     -651621 -6.15198e+06
+q=-0.00608419  -0.0131341
+info: [time] Assembly took 0.100957 s.
+info: [time] Applying Dirichlet BCs took 0.0178392 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 12/3000
+info: 	 residual: 8.139321e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.09456 s.
+info: Convergence criterion, component 0: |dx|=1.6113e-01, |x|=2.1612e+07, |dx|/|x|=7.4555e-09
+info: Convergence criterion, component 1: |dx|=3.3568e-12, |x|=1.7473e-04, |dx|/|x|=1.9211e-08
+info: Convergence criterion, component 2: |dx|=2.0452e-12, |x|=1.1991e-04, |dx|/|x|=1.7056e-08
+info: Convergence criterion, component 3: |dx|=4.4909e-12, |x|=5.0500e-05, |dx|/|x|=8.8930e-08
+info: Convergence criterion, component 4: |dx|=1.6625e-12, |x|=2.3456e-05, |dx|/|x|=7.0877e-08
+info: [time] Iteration #3 took 1.21797 s.
+debug: AssembleWithJacobian HydroMechanicsProcess.
+w=-3.10309e-08  1.71853e-05
+b=2.71853e-05
+p=892688
+sigma'_prev=     -651560 -5.26309e+06
+sigma'=     -651621 -5.25929e+06
+sigma=     -651621 -6.15198e+06
+q=-0.00608419  -0.0131341
+info: [time] Assembly took 0.107725 s.
+info: [time] Applying Dirichlet BCs took 0.0191448 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver computation
+info: -> scale
+info: -> solve with BiCGSTAB (precon ILUT)
+info: 	 iteration: 14/3000
+info: 	 residual: 1.633444e-13
+
+info: ------------------------------------------------------------------
+info: [time] Linear solver took 1.10653 s.
+info: Convergence criterion, component 0: |dx|=3.5481e-08, |x|=2.1612e+07, |dx|/|x|=1.6417e-15
+info: Convergence criterion, component 1: |dx|=3.0327e-17, |x|=1.7473e-04, |dx|/|x|=1.7356e-13
+info: Convergence criterion, component 2: |dx|=2.0963e-17, |x|=1.1991e-04, |dx|/|x|=1.7482e-13
+info: Convergence criterion, component 3: |dx|=1.8178e-18, |x|=5.0500e-05, |dx|/|x|=3.5996e-14
+info: Convergence criterion, component 4: |dx|=1.1684e-18, |x|=2.3456e-05, |dx|/|x|=4.9811e-14
+info: [time] Iteration #4 took 1.23719 s.
+debug: PostTimestep HydroMechanicsProcess.
+info: [time] Solving process #10 took 5.03435 s in timestep #0.
+debug: output to TaskB_pcs_0_ts_10_t_100.000000.vtu
+debug: Process output.
+debug:   process variable pressure
+debug:   process variable displacement
+debug:   process variable displacement_jump1
+debug: Writing output to 'TaskB_pcs_0_ts_10_t_100.000000.vtu'.
+info: [time] Output took 0.046509 s.
+info: [time] Timestep #10 took 5.08093 s.
+info: OGS terminated on 2016-11-10 16:18:38+010
+info: [time] Execution took 83.1388 s.
