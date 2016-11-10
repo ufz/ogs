@@ -508,7 +508,7 @@ bool UncoupledProcessesTimeLoop::loop()
             pcs.computeSecondaryVariable(t, x);
 
             INFO("[time] Solving process #%u took %g s in timestep #%u.",
-                 timestep, time_timestep.elapsed(), pcs_idx);
+                 pcs_idx, time_timestep.elapsed(), timestep);
 
             if (!nonlinear_solver_succeeded)
             {
