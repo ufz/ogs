@@ -12,6 +12,8 @@
 
 #include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
 #include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
+#include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
+#include "NumLib/Fem/ShapeFunction/ShapeLine3.h"
 #include "NumLib/Fem/ShapeFunction/ShapePrism15.h"
 #include "NumLib/Fem/ShapeFunction/ShapePrism6.h"
 #include "NumLib/Fem/ShapeFunction/ShapePyra13.h"
@@ -29,6 +31,11 @@ namespace NumLib
 template <typename SF>
 struct LowerDim;
 
+template <>
+struct LowerDim<NumLib::ShapeLine3>
+{
+    using type = NumLib::ShapeLine2;
+};
 template <>
 struct LowerDim<NumLib::ShapeQuad8>
 {
