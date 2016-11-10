@@ -35,7 +35,7 @@ foreach(TARGET ${INSTALL_DEPENDENCIES})
         if(PRE_INSTALL_RUN)
             message("")
         endif()
-        install(FILES ${DEPENDENCY_PATHS} DESTINATION bin COMPONENT ${INSTALL_COMPONENT})
+        install(FILES ${DEPENDENCY_PATHS} DESTINATION bin)
     endif()
 
 endforeach()

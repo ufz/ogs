@@ -128,4 +128,4 @@ if(APPLE)
 endif()
 
 include(packaging/InstallDependencies)
-InstallDependencies(DataExplorer ogs_gui)
+InstallDependencies(DataExplorer)
