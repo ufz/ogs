@@ -11,6 +11,7 @@ def post = new ogs.post()
 def helper = new ogs.helper()
 
 node('docker') {
+    checkout scm
     def image = docker.image('ogs6/gcc-gui:latest')
     image.pull()
     image.inside(defaultDockerArgs) {
