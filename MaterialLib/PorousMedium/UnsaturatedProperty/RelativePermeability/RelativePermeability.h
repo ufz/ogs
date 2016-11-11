@@ -23,6 +23,15 @@ namespace PorousMedium
 class RelativePermeability
 {
 public:
+    /**
+     * @param Sr       Residual saturation.
+     * @param Smax     Maximum saturation.
+     */
+    RelativePermeability(const double Sr, const double Smax)
+        : _saturation_r(Sr), _saturation_max(Smax)
+    {
+    }
+
     virtual ~RelativePermeability() = default;
 
     /// Get model name.
@@ -41,6 +50,9 @@ protected:
      *  that S in  [Sr+_minor_offset, Smax-_minor_offset].
      */
     const double _minor_offset = std::numeric_limits<double>::epsilon();
+
+    const double _saturation_r;    ///< Residual saturation.
+    const double _saturation_max;  ///< Maximum saturation.
 };
 
 }  // end namespace

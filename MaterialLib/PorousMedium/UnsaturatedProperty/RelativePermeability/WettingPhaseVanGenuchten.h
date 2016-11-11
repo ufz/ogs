@@ -46,7 +46,7 @@ public:
      */
     WettingPhaseVanGenuchten(const double Sr, const double Smax, const double m,
                              const double krel_min)
-        : _saturation_r(Sr), _saturation_max(Smax), _mm(m), _krel_min(krel_min)
+        : RelativePermeability(Sr, Smax), _mm(m), _krel_min(krel_min)
     {
     }
 
@@ -64,10 +64,8 @@ public:
     double getdValue(const double saturation) const override;
 
 private:
-    const double _saturation_r;    ///< Residual saturation.
-    const double _saturation_max;  ///< Maximum saturation.
-    const double _mm;              ///< Exponent (<=1.0), n=1/(1-mm).
-    const double _krel_min;        ///< Minimum relative permeability
+    const double _mm;        ///< Exponent (<=1.0), n=1/(1-mm).
+    const double _krel_min;  ///< Minimum relative permeability
 };
 
 }  // end namespace
