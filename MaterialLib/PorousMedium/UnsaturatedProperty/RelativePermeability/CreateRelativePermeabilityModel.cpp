@@ -199,7 +199,7 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
             curve_config.getConfigSubtreeList("point"))
         {
             const auto& point =
-                //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve_curve__points__data}
+                //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve_curve__point__data}
                 point_config.getConfigParameter<std::vector<double>>("data");
             assert(point.size() == 2);
             variables.push_back(point[0]);

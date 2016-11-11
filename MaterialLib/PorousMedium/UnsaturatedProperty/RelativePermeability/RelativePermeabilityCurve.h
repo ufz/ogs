@@ -28,8 +28,8 @@ class RelativePermeabilityCurve final : public RelativePermeability
 public:
     RelativePermeabilityCurve(
         std::unique_ptr<MathLib::PiecewiseLinearInterpolation>& curve_data)
-        : _Sr(curve_data->getSupportMin()),
-          _Smax(curve_data->getSupportMax()),
+        : _saturation_r(curve_data->getSupportMin()),
+          _saturation_max(curve_data->getSupportMax()),
           _curve_data(std::move(curve_data))
     {
     }
@@ -44,7 +44,8 @@ public:
     double getValue(const double saturation) const override
     {
         const double S = MathLib::limitValueInInterval(
-            saturation, _Sr + _minor_offset, _Smax - _minor_offset);
+            saturation, _saturation_r + _minor_offset,
+            _saturation_max - _minor_offset);
 
         return _curve_data->getValue(S);
     }
@@ -54,14 +55,15 @@ public:
     double getdValue(const double saturation) const override
     {
         const double S = MathLib::limitValueInInterval(
-            saturation, _Sr + _minor_offset, _Smax - _minor_offset);
+            saturation, _saturation_r + _minor_offset,
+            _saturation_max - _minor_offset);
 
         return _curve_data->getDerivative(S);
     }
 
 private:
-    const double _Sr;    ///< Residual saturation.
-    const double _Smax;  ///< Maximum saturation.
+    const double _saturation_r;    ///< Residual saturation.
+    const double _saturation_max;  ///< Maximum saturation.
 
     std::unique_ptr<MathLib::PiecewiseLinearInterpolation> _curve_data;
 };

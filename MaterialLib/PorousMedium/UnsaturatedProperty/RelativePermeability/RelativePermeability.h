@@ -37,11 +37,8 @@ public:
     virtual double getdValue(const double saturation) const = 0;
 
 protected:
-    /** A small number for an offset:
-     *  1. to set the bound of S, the saturation, such that
-     *     S in  [_Sr+_minor_offset, _Smax-_minor_offset]
-     *  2. to set the bound of Pc, the capillary pressure, such that
-     *     Pc in [_minor_offset, _Pc_max]
+    /** A small number for an offset to set the bound of S, the saturation, such
+     *  that S in  [Sr+_minor_offset, Smax-_minor_offset].
      */
     const double _minor_offset = std::numeric_limits<double>::epsilon();
 };
