@@ -45,8 +45,8 @@ struct SmallDeformationProcessData
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         _material;
-    double dt;
-    double t;
+    double dt = 0;
+    double t = 0;
 };
 
 }  // namespace SmallDeformation
