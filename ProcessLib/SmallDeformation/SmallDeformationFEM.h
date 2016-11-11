@@ -160,7 +160,7 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(*_process_data._material);
+            _ip_data.emplace_back(*_process_data.material);
             auto& ip_data = _ip_data[ip];
             auto const& sm = shape_matrices[ip];
             ip_data._detJ = sm.detJ;
