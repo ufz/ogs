@@ -30,7 +30,7 @@ struct SmallDeformationProcessData
     }
 
     SmallDeformationProcessData(SmallDeformationProcessData&& other)
-        : material{std::move(other.material)}
+        : material{std::move(other.material)}, dt{other.dt}, t{other.t}
     {
     }
 
