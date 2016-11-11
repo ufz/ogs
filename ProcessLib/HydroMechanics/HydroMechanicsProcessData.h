@@ -81,8 +81,8 @@ struct HydroMechanicsProcessData
     Parameter<double> const& porosity;
     Parameter<double> const& solid_density;
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    double dt;
-    double t;
+    double dt = 0.0;
+    double t = 0.0;
 };
 
 }  // namespace HydroMechanics
