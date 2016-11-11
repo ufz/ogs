@@ -25,12 +25,12 @@ struct SmallDeformationProcessData
     SmallDeformationProcessData(
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&&
             material)
-        : _material{std::move(material)}
+        : material{std::move(material)}
     {
     }
 
     SmallDeformationProcessData(SmallDeformationProcessData&& other)
-        : _material{std::move(other._material)}
+        : material{std::move(other.material)}
     {
     }
 
@@ -44,7 +44,7 @@ struct SmallDeformationProcessData
     void operator=(SmallDeformationProcessData&&) = delete;
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
-        _material;
+        material;
     double dt = 0;
     double t = 0;
 };
