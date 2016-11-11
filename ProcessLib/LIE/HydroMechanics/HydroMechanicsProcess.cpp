@@ -1,0 +1,266 @@
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#include "HydroMechanicsProcess-fwd.h"
+#include "HydroMechanicsProcess.h"
+
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+#include <vector>
+
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Utils.h"
+#include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Properties.h"
+
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
+
+#include "ProcessLib/LIE/BoundaryCondition/BoundaryConditionBuilder.h"
+#include "ProcessLib/LIE/Common/LevelSetFunction.h"
+#include "ProcessLib/LIE/Common/MeshUtils.h"
+#include "ProcessLib/LIE/Common/Utils.h"
+#include "ProcessLib/LIE/HydroMechanics/LocalAssembler/HydroMechanicsLocalAssemblerMatrix.h"
+#include "ProcessLib/LIE/HydroMechanics/LocalAssembler/HydroMechanicsLocalAssemblerMatrixNearFracture.h"
+#include "ProcessLib/LIE/HydroMechanics/LocalAssembler/HydroMechanicsLocalAssemblerFracture.h"
+
+namespace ProcessLib
+{
+namespace LIE
+{
+namespace HydroMechanics
+{
+
+template <unsigned GlobalDim>
+HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
+    MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
+        jacobian_assembler,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const integration_order,
+    std::vector<std::reference_wrapper<ProcessVariable>>&&
+        process_variables,
+    HydroMechanicsProcessData<GlobalDim>&& process_data,
+    SecondaryVariableCollection&& secondary_variables,
+    NumLib::NamedFunctionCaller&& named_function_caller)
+    : Process(mesh, std::move(jacobian_assembler), parameters,
+              integration_order,
+              std::move(process_variables),
+              std::move(secondary_variables),
+              std::move(named_function_caller)),
+      _process_data(std::move(process_data))
+{
+    INFO("[LIE/HM] looking for fracture elements in the given mesh");
+    std::vector<int> vec_fracture_mat_IDs;
+    std::vector<std::vector<MeshLib::Element*>> vec_vec_fracture_elements;
+    std::vector<std::vector<MeshLib::Element*>> vec_vec_fracture_matrix_elements;
+    std::vector<std::vector<MeshLib::Node*>> vec_vec_fracture_nodes;
+    getFractureMatrixDataInMesh(mesh,
+                                _vec_matrix_elements,
+                                vec_fracture_mat_IDs,
+                                vec_vec_fracture_elements,
+                                vec_vec_fracture_matrix_elements,
+                                vec_vec_fracture_nodes);
+    _vec_fracutre_elements.insert(_vec_fracutre_elements.begin(), vec_vec_fracture_elements[0].begin(), vec_vec_fracture_elements[0].end());
+    _vec_fracutre_matrix_elements.insert(_vec_fracutre_matrix_elements.begin(), vec_vec_fracture_matrix_elements[0].begin(), vec_vec_fracture_matrix_elements[0].end());
+    _vec_fracutre_nodes.insert(_vec_fracutre_nodes.begin(), vec_vec_fracture_nodes[0].begin(), vec_vec_fracture_nodes[0].end());
+
+    if (!_vec_fracutre_elements.empty())
+    {
+        // set fracture property assuming a fracture forms a straight line
+        setFractureProperty(GlobalDim,
+                            *_vec_fracutre_elements[0],
+                            *_process_data.fracture_property.get());
+
+    }
+
+    // need to use a custom Neumann BC assembler for displacement jumps
+    for (ProcessVariable& pv : getProcessVariables())
+    {
+        if (pv.getName().find("displacement_jump") == std::string::npos)
+            continue;
+        pv.setBoundaryConditionBuilder(
+                    std::unique_ptr<ProcessLib::BoundaryConditionBuilder>(
+                        new BoundaryConditionBuilder(*_process_data.fracture_property.get())));
+    }
+}
+
+
+template <unsigned GlobalDim>
+void HydroMechanicsProcess<GlobalDim>::constructDofTable()
+{
+    //------------------------------------------------------------
+    // prepare mesh subsets to define DoFs
+    //------------------------------------------------------------
+    // for extrapolation
+    _mesh_subset_all_nodes.reset(new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
+    // pressure
+    _mesh_nodes_p = MeshLib::getBaseNodes(_mesh.getElements());
+    _mesh_subset_nodes_p.reset(new MeshLib::MeshSubset(_mesh, &_mesh_nodes_p));
+    // regular u
+    _mesh_subset_matrix_nodes.reset(new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
+    if (!_vec_fracutre_nodes.empty())
+    {
+        // u jump
+        _mesh_subset_fracture_nodes.reset(new MeshLib::MeshSubset(_mesh, &_vec_fracutre_nodes));
+    }
+
+    // Collect the mesh subsets in a vector.
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
+    std::vector<unsigned> vec_n_components;
+    std::vector<std::vector<MeshLib::Element*>const*> vec_var_elements;
+    // pressure
+    vec_n_components.push_back(1);
+    all_mesh_subsets.push_back(std::unique_ptr<MeshLib::MeshSubsets>{
+        new MeshLib::MeshSubsets{_mesh_subset_nodes_p.get()}});
+    vec_var_elements.push_back(&_mesh.getElements());
+    // regular displacement
+    vec_n_components.push_back(GlobalDim);
+    std::generate_n(
+        std::back_inserter(all_mesh_subsets),
+        GlobalDim,
+        [&]() {
+            return std::unique_ptr<MeshLib::MeshSubsets>{
+                new MeshLib::MeshSubsets{_mesh_subset_matrix_nodes.get()}};
+        });
+    vec_var_elements.push_back(&_vec_matrix_elements);
+    if (!_vec_fracutre_nodes.empty())
+    {
+        // displacement jump
+        vec_n_components.push_back(GlobalDim);
+        std::generate_n(
+            std::back_inserter(all_mesh_subsets),
+            GlobalDim,
+            [&]() {
+                return std::unique_ptr<MeshLib::MeshSubsets>{
+                    new MeshLib::MeshSubsets{_mesh_subset_fracture_nodes.get()}};
+            });
+        vec_var_elements.push_back(&_vec_fracutre_matrix_elements);
+    }
+
+    INFO("[LIE/HM] creating a DoF table");
+    _local_to_global_index_map.reset(
+        new NumLib::LocalToGlobalIndexMap(
+            std::move(all_mesh_subsets),
+            vec_n_components,
+            vec_var_elements,
+            NumLib::ComponentOrder::BY_COMPONENT));
+
+    DBUG("created %d DoF", _local_to_global_index_map->size());
+
+    //std::cout << *_local_to_global_index_map.get() << std::endl;
+}
+
+
+template <unsigned GlobalDim>
+void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    MeshLib::Mesh const& mesh,
+    unsigned const integration_order)
+{
+    assert(mesh.getDimension() == GlobalDim);
+    INFO("[LIE/HM] creating local assemblers");
+    ProcessLib::LIE::HydroMechanics::createLocalAssemblers
+            <GlobalDim,
+             HydroMechanicsLocalAssemblerMatrix,
+             HydroMechanicsLocalAssemblerMatrixNearFracture,
+             HydroMechanicsLocalAssemblerFracture>(
+        mesh.getElements(), dof_table,
+        // use displacment process variable for shapefunction order
+        getProcessVariables()[1].get().getShapeFunctionOrder(),
+        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
+        _process_data);
+
+    auto mesh_prop_sigma_xx = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("stress_xx", MeshLib::MeshItemType::Cell);
+    mesh_prop_sigma_xx->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_stress_xx = mesh_prop_sigma_xx;
+
+    auto mesh_prop_sigma_yy = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("stress_yy", MeshLib::MeshItemType::Cell);
+    mesh_prop_sigma_yy->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_stress_yy = mesh_prop_sigma_yy;
+
+    auto mesh_prop_sigma_xy = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("stress_xy", MeshLib::MeshItemType::Cell);
+    mesh_prop_sigma_xy->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_stress_xy = mesh_prop_sigma_xy;
+
+    auto mesh_prop_epsilon_xx = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("strain_xx", MeshLib::MeshItemType::Cell);
+    mesh_prop_epsilon_xx->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_strain_xx = mesh_prop_epsilon_xx;
+
+    auto mesh_prop_epsilon_yy = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("strain_yy", MeshLib::MeshItemType::Cell);
+    mesh_prop_epsilon_yy->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_strain_yy = mesh_prop_epsilon_yy;
+
+    auto mesh_prop_epsilon_xy = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("strain_xy", MeshLib::MeshItemType::Cell);
+    mesh_prop_epsilon_xy->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_strain_xy = mesh_prop_epsilon_xy;
+
+    auto mesh_prop_velocity = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("velocity", MeshLib::MeshItemType::Cell, 3);
+    mesh_prop_velocity->resize(mesh.getNumberOfElements() * 3);
+    _process_data.mesh_prop_velocity = mesh_prop_velocity;
+
+    if (!_vec_fracutre_elements.empty())
+    {
+        auto mesh_prop_levelset =
+                const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("levelset1", MeshLib::MeshItemType::Cell);
+        mesh_prop_levelset->resize(mesh.getNumberOfElements());
+        for (MeshLib::Element const* e : _mesh.getElements())
+        {
+            if (e->getDimension() < GlobalDim)
+                continue;
+
+            double const levelsets = calculateLevelSetFunction(*_process_data.fracture_property, e->getCenterOfGravity().getCoords());
+            (*mesh_prop_levelset)[e->getID()] = levelsets;
+        }
+
+        auto mesh_prop_b = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("aperture", MeshLib::MeshItemType::Cell);
+        mesh_prop_b->resize(mesh.getNumberOfElements());
+        auto mesh_prop_matid = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+        auto frac = _process_data.fracture_property.get();
+        for (MeshLib::Element const* e : _mesh.getElements())
+        {
+            if (e->getDimension() == GlobalDim)
+                continue;
+            if ((*mesh_prop_matid)[e->getID()] != frac->mat_id)
+                continue;
+            ProcessLib::SpatialPosition x;
+            x.setElementID(e->getID());
+            (*mesh_prop_b)[e->getID()] = (*frac->aperture0)(0, x)[0];
+        }
+        _process_data.mesh_prop_b = mesh_prop_b;
+
+        auto mesh_prop_k_f = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("k_f", MeshLib::MeshItemType::Cell);
+        mesh_prop_k_f->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_k_f = mesh_prop_k_f;
+    }
+}
+
+
+template <unsigned GlobalDim>
+void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(GlobalVector const& x)
+{
+    DBUG("PostTimestep HydroMechanicsProcess.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &HydroMechanicsLocalAssemblerInterface::postTimestep,
+        _local_assemblers, *_local_to_global_index_map, x);
+
+}
+
+
+// ------------------------------------------------------------------------------------
+// template instantiation
+// ------------------------------------------------------------------------------------
+template class HydroMechanicsProcess<2>;
+
+}   // namespace HydroMechanics
+}   // namespace LIE
+}   // namespace ProcessLib
