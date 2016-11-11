@@ -23,7 +23,7 @@ namespace MathLib
  * This class implements a one dimensional piecewise linear interpolation
  * algorithm.
  */
-class PiecewiseLinearInterpolation final
+class PiecewiseLinearInterpolation
 {
 public:
     /**
@@ -58,26 +58,7 @@ public:
      * this interval are set to \f$x_{\min}\f$ or \f$x_{\max}\f$.
      * @return The interpolated value.
      */
-    double getValue(double const pnt_to_interpolate) const;
-
-    /**
-     * \brief Calculates the interpolation of the variable by a known
-     *        value of the piece wise linear curve. The curve must be
-     *        monotonically increase or decrease. The monotonicity can be
-     *        checked after create an instance of this class.
-     *
-     * @param value The variable for a point should be located within the range
-     * \f$[f(x_{\min}), f(x_{\max})]\f$, where \f$x_{\min} = \min_{1 \le j \le n}
-     * x_j\f$ and
-     * \f$x_{\max} = \max_{1 \le j \le n} x_j\f$. Points outside of this
-     * interval are
-     * set to f(x_{\min}) or f(x_{\max}).
-     * @return The interpolated value, \f$x\f$.
-     *
-     * \attention Check the monotonicity of the data beforehand if this function
-     *            is used.
-     */
-    double getInverseValue(double const value) const;
+    double getValue(double pnt_to_interpolate) const;
 
     /**
      * \brief Calculates derivative using quadratic interpolation
@@ -95,16 +76,9 @@ public:
     double getSupportMax() const;
     double getSupportMin() const;
 
-    bool isMonotonic() const;
-
-private:
+protected:
     std::vector<double> _supp_pnts;
     std::vector<double> _values_at_supp_pnts;
-
-    double interpolate(std::vector<double> const& supp_pnts,
-                       std::vector<double> const& values_at_supp_pnts,
-                       std::size_t const interval_idx,
-                       double const pnt_to_interpolate) const;
 };
 }  // end namespace MathLib
 

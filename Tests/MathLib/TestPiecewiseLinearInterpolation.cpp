@@ -156,30 +156,3 @@ TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationDerivative)
     ASSERT_NEAR(0, interpolation.getDerivative(1001),
                 std::numeric_limits<double>::epsilon());
 }
-
-TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationGetInverseValue)
-{
-    const std::size_t size = 1000;
-    std::vector<double> variables, values;
-    for (std::size_t k=0; k < size; ++k)
-    {
-        variables.push_back(static_cast<double>(k));
-        values.push_back(static_cast<double>(2*k));
-    }
-
-    std::vector<double> variables_cpy = variables;
-    std::vector<double> values_cpy = values;
-
-    MathLib::PiecewiseLinearInterpolation
-                                       interpolation{std::move(variables_cpy),
-                                                     std::move(values_cpy)};
-
-    ASSERT_EQ(true, interpolation.isMonotonic());
-
-    // Get inverse values and compare them
-    for (std::size_t k=0; k < size; ++k)
-    {
-        ASSERT_NEAR(variables[k], interpolation.getInverseValue(values[k]),
-                    std::numeric_limits<double>::epsilon());
-    }
-}
