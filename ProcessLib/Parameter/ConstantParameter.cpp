@@ -15,7 +15,7 @@
 namespace ProcessLib
 {
 std::unique_ptr<ParameterBase> createConstantParameter(
-    BaseLib::ConfigTree const& config)
+    std::string const& name, BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{parameter__type}
     config.checkConfigParameter("type", "Constant");
@@ -31,7 +31,7 @@ std::unique_ptr<ParameterBase> createConstantParameter(
         {
             DBUG("Using value %g for constant parameter.", *value);
             return std::unique_ptr<ParameterBase>(
-                new ConstantParameter<double>(*value));
+                new ConstantParameter<double>(name, *value));
         }
     }
 
@@ -51,7 +51,7 @@ std::unique_ptr<ParameterBase> createConstantParameter(
     }
 
     return std::unique_ptr<ParameterBase>(
-        new ConstantParameter<double>(values));
+        new ConstantParameter<double>(name, values));
 }
 
 }  // ProcessLib

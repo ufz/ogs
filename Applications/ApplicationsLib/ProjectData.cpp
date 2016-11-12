@@ -14,6 +14,7 @@
 #include "ProjectData.h"
 
 #include <algorithm>
+#include <set>
 
 #include <logog/include/logog.hpp>
 
@@ -227,15 +228,20 @@ void ProjectData::parseProcessVariables(
         return;
     }
 
-    // _process_variables.reserve(process_variables_config.size());
+    std::set<std::string> names;
 
     for (auto var_config
          //! \ogs_file_param{prj__process_variables__process_variable}
          : process_variables_config.getConfigSubtreeList("process_variable"))
     {
         // TODO Extend to referenced meshes.
-        _process_variables.emplace_back(var_config, *_mesh_vec[0], *_geoObjects,
-                                        _parameters);
+        auto pv = ProcessLib::ProcessVariable{var_config, *_mesh_vec[0],
+                                              *_geoObjects, _parameters};
+        if (!names.insert(pv.getName()).second)
+            OGS_FATAL("A process variable with name `%s' already exists.",
+                      pv.getName().c_str());
+
+        _process_variables.push_back(std::move(pv));
     }
 }
 
@@ -243,13 +249,20 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
 {
     using namespace ProcessLib;
 
+    std::set<std::string> names;
+
     DBUG("Reading parameters:");
     for (auto parameter_config :
          //! \ogs_file_param{prj__parameters__parameter}
          parameters_config.getConfigSubtreeList("parameter"))
     {
-        _parameters.push_back(
-            ProcessLib::createParameter(parameter_config, _mesh_vec, _curves));
+        auto p =
+            ProcessLib::createParameter(parameter_config, _mesh_vec, _curves);
+        if (!names.insert(p->name).second)
+            OGS_FATAL("A parameter with name `%s' already exists.",
+                      p->name.c_str());
+
+        _parameters.push_back(std::move(p));
     }
 
     for (auto& parameter : _parameters)

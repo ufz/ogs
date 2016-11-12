@@ -16,7 +16,8 @@
 namespace ProcessLib
 {
 std::unique_ptr<ParameterBase> createGroupBasedParameter(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
+    std::string const& name, BaseLib::ConfigTree const& config,
+    MeshLib::Mesh const& mesh)
 {
     //! \ogs_file_param{parameter__type}
     config.checkConfigParameter("type", "Group");
@@ -79,17 +80,21 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     }
 
     // create a mapping table
-    const int max_index = *std::max_element(group_id_property->begin(), group_id_property->end());
+    const int max_index =
+        *std::max_element(group_id_property->begin(), group_id_property->end());
     std::vector<Values> vec_values(max_index + 1);
     for (auto p : vec_index_values)
         vec_values[p.first] = p.second;
 
     if (group_id_property->getMeshItemType() == MeshLib::MeshItemType::Node)
         return std::unique_ptr<ParameterBase>(
-            new GroupBasedParameter<double, MeshLib::MeshItemType::Node>(*group_id_property, vec_values));
-    else if (group_id_property->getMeshItemType() == MeshLib::MeshItemType::Cell)
+            new GroupBasedParameter<double, MeshLib::MeshItemType::Node>(
+                name, *group_id_property, vec_values));
+    else if (group_id_property->getMeshItemType() ==
+             MeshLib::MeshItemType::Cell)
         return std::unique_ptr<ParameterBase>(
-            new GroupBasedParameter<double, MeshLib::MeshItemType::Cell>(*group_id_property, vec_values));
+            new GroupBasedParameter<double, MeshLib::MeshItemType::Cell>(
+                name, *group_id_property, vec_values));
 
     OGS_FATAL("Mesh item type of the specified property is not supported.");
 }

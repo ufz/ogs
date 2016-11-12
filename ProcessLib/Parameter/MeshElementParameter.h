@@ -23,9 +23,11 @@ namespace ProcessLib
 /// A parameter represented by a mesh property vector.
 template <typename T>
 struct MeshElementParameter final : public Parameter<T> {
-    MeshElementParameter(MeshLib::PropertyVector<T> const& property)
-        : _property(property)
-        , _cache(_property.getNumberOfComponents())
+    MeshElementParameter(std::string const& name_,
+                         MeshLib::PropertyVector<T> const& property)
+        : Parameter<T>(name_),
+          _property(property),
+          _cache(_property.getNumberOfComponents())
     {
     }
 
@@ -54,7 +56,8 @@ private:
 };
 
 std::unique_ptr<ParameterBase> createMeshElementParameter(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
+    std::string const& name, BaseLib::ConfigTree const& config,
+    MeshLib::Mesh const& mesh);
 
 }  // ProcessLib
 

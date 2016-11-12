@@ -13,6 +13,7 @@
 namespace ProcessLib
 {
 std::unique_ptr<ParameterBase> createCurveScaledParameter(
+    std::string const& name,
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
@@ -30,12 +31,13 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
         OGS_FATAL("Curve `%s' does not exists.", curve_name.c_str());
 
     //! \ogs_file_param{parameter__CurveScaled__parameter}
-    auto parameter_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter %s", parameter_name.c_str());
+    auto referenced_parameter_name =
+            config.getConfigParameter<std::string>("parameter");
+    DBUG("Using parameter %s", referenced_parameter_name.c_str());
 
     // TODO other data types than only double
-    return std::unique_ptr<ParameterBase>(
-        new CurveScaledParameter<double>(*curve_it->second, parameter_name));
+    return std::unique_ptr<ParameterBase>(new CurveScaledParameter<double>(
+        name, *curve_it->second, referenced_parameter_name));
 }
 
 }  // ProcessLib
