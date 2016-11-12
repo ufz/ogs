@@ -48,11 +48,11 @@ struct DOFTableData
     NumLib::LocalToGlobalIndexMap const dof_table;
 
 private:
-    static const double mesh_length;
-    static const double mesh_elements_in_each_direction;
+    static const std::size_t mesh_length;
+    static const std::size_t mesh_elements_in_each_direction;
 };
-const double DOFTableData::mesh_length = 1.0;
-const double DOFTableData::mesh_elements_in_each_direction = 5.0;
+const std::size_t DOFTableData::mesh_length = 1;
+const std::size_t DOFTableData::mesh_elements_in_each_direction = 5;
 
 template <typename AccumulateCallback, typename AccumulateFinishCallback>
 void do_test(unsigned const num_components,

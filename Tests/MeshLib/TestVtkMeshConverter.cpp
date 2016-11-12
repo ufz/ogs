@@ -102,10 +102,11 @@ TEST_F(TestVtkMeshConverter, Conversion)
     auto meshProperties = mesh->getProperties();
 
     // MaterialIDs are converted to an int property
-    auto materialIds = meshProperties.getPropertyVector<int>("MaterialIDs");
-    ASSERT_TRUE(static_cast<bool>(materialIds));
+    auto const* const materialIds =
+        meshProperties.getPropertyVector<int>("MaterialIDs");
+    ASSERT_NE(nullptr, materialIds);
     auto vtkMaterialIds = vtu->GetCellData()->GetArray("MaterialIDs");
-    ASSERT_EQ((*materialIds).size(), vtkMaterialIds->GetNumberOfTuples());
-    for(std::size_t i = 0; i < (*materialIds).size(); i++)
+    ASSERT_EQ(materialIds->size(), vtkMaterialIds->GetNumberOfTuples());
+    for(std::size_t i = 0; i < materialIds->size(); i++)
         ASSERT_EQ((*materialIds)[i], vtkMaterialIds->GetTuple1(i));
 }
