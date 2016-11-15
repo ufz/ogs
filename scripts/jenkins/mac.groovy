@@ -31,10 +31,8 @@ stage('Data Explorer (Mac)') {
     build.linux this, 'build', null, 'ninja'
 }
 
-if (helper.isRelease(this)) {
-    stage('Release (Mac)') {
-        archiveArtifacts 'build/*.tar.gz,build/*.dmg'
-    }
+stage('Archive (Mac)') {
+    archiveArtifacts 'build/*.tar.gz,build/*.dmg'
 }
 
 stage('Post (Mac)') {

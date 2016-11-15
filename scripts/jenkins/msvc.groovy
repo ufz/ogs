@@ -41,10 +41,8 @@ withEnv(helper.getEnv(this)) {
     }
 }
 
-if (helper.isRelease(this)) {
-    stage('Release (Win)') {
-        archiveArtifacts 'build/*.zip'
-    }
+stage('Archive (Win)') {
+    archiveArtifacts 'build/*.zip'
 }
 
 stage('Post (Win)') {
