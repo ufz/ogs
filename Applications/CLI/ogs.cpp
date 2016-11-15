@@ -11,6 +11,9 @@
  */
 
 #include <chrono>
+#include <cstdlib>
+#include <string>
+#include <vector>
 #include <tclap/CmdLine.h>
 
 // BaseLib
@@ -19,6 +22,7 @@
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
+#include "BaseLib/StringTools.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
@@ -30,6 +34,17 @@
 
 int main(int argc, char *argv[])
 {
+    std::vector<std::string> args;
+    args.reserve(argc);
+    for (int i=0; i<argc; i++)
+        args.emplace_back(argv[i]);
+    if (char const* env_default_arguments = std::getenv("OGS6_CLI_DEFAULT_ARGS"))
+    {
+        auto vec_str(BaseLib::splitString(env_default_arguments));
+        for (auto const& str : vec_str)
+            args.emplace_back(str);
+    }
+
     // Parse CLI arguments.
     TCLAP::CmdLine cmd("OpenGeoSys-6 software.\n"
             "Copyright (c) 2012-2016, OpenGeoSys Community "
@@ -79,7 +94,7 @@ int main(int argc, char *argv[])
         "use unbuffered standard output");
     cmd.add(unbuffered_cout_arg);
 
-    cmd.parse(argc, argv);
+    cmd.parse(args);
 
     // deactivate buffer for standard output if specified
     if (unbuffered_cout_arg.isSet())
