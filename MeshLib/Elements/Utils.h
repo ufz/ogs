@@ -33,7 +33,9 @@ inline std::vector<Node*> getBaseNodes(std::vector<Element*> const& elements)
                   std::back_inserter(base_nodes));
     }
 
-    BaseLib::makeVectorUnique(base_nodes);
+    BaseLib::makeVectorUnique(base_nodes, [](Node const* a, Node* b) {
+        return a->getID() < b->getID();
+    });
 
     return base_nodes;
 }
