@@ -33,10 +33,8 @@ image.inside(defaultDockerArgs) {
     }
 }
 
-if (helper.isRelease(this)) {
-    stage('Release (Linux-Docker)') {
-        archiveArtifacts 'build/*.tar.gz'
-    }
+stage('Archive (Linux-Docker)') {
+    archiveArtifacts 'build/*.tar.gz'
 }
 
 stage('Post (Linux-Docker)') {
