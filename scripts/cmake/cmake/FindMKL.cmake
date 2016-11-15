@@ -22,7 +22,7 @@ if (NOT MKL_DIR)
         /opt/intel/mkl/
         )
 endif()
-message(status "MKL_DIR : ${MKL_DIR}")
+message(STATUS "MKL_DIR : ${MKL_DIR}")
 
 # Find MKL include dir
 find_path(MKL_INCLUDE_DIR NAMES mkl.h
