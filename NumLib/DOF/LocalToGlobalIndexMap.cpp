@@ -10,6 +10,7 @@
 #include "LocalToGlobalIndexMap.h"
 
 #include <algorithm>
+#include <unordered_set>
 
 namespace NumLib
 {
@@ -43,8 +44,7 @@ LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
     if (max_elem_id+1 > static_cast<unsigned>(_rows.rows()))
         _rows.conservativeResize(max_elem_id + 1, _mesh_subsets.size());
 
-    std::vector<MeshLib::Node*> sorted_nodes{nodes};
-    std::sort(std::begin(sorted_nodes), std::end(sorted_nodes));
+    std::unordered_set<MeshLib::Node*> const set_nodes(nodes.begin(), nodes.end());
 
     // For each element find the global indices for node/element
     // components.
@@ -56,8 +56,7 @@ LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
              n < (*e)->getNodes()+(*e)->getNumberOfNodes(); ++n)
         {
             // Check if the element's node is in the given list of nodes.
-            if (!std::binary_search(std::begin(sorted_nodes),
-                                    std::end(sorted_nodes), *n))
+            if (set_nodes.find(*n)==set_nodes.end())
                 continue;
             MeshLib::Location l(
                 mesh_id, MeshLib::MeshItemType::Node, (*n)->getID());
@@ -77,8 +76,7 @@ void LocalToGlobalIndexMap::findGlobalIndices(
 {
     _rows.resize(std::distance(first, last), _mesh_subsets.size());
 
-    std::vector<MeshLib::Node*> sorted_nodes{nodes};
-    std::sort(std::begin(sorted_nodes), std::end(sorted_nodes));
+    std::unordered_set<MeshLib::Node*> const set_nodes(nodes.begin(), nodes.end());
 
     // For each element find the global indices for node/element
     // components.
@@ -91,8 +89,7 @@ void LocalToGlobalIndexMap::findGlobalIndices(
              n < (*e)->getNodes() + (*e)->getNumberOfNodes(); ++n)
         {
             // Check if the element's node is in the given list of nodes.
-            if (!std::binary_search(std::begin(sorted_nodes),
-                                    std::end(sorted_nodes), *n))
+            if (set_nodes.find(*n)==set_nodes.end())
                 continue;
             MeshLib::Location l(
                 mesh_id, MeshLib::MeshItemType::Node, (*n)->getID());
