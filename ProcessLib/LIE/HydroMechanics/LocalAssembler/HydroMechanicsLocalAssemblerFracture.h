@@ -105,6 +105,7 @@ private:
     HydroMechanicsProcessData<GlobalDim>& _process_data;
 
     std::vector<IntegrationPointDataType> _ip_data;
+    Eigen::VectorXd _initial_pressure;
 
     static const int pressure_index = 0;
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;

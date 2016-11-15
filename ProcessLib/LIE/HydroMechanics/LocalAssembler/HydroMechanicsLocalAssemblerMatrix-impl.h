@@ -104,6 +104,16 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
             ip_data.sigma_eff_prev[i] = initial_effective_stress[i];
         }
     }
+
+    if (_process_data.use_initial_stress_as_reference)
+    {
+        _initial_pressure.resize(pressure_size);
+        for (unsigned i=0; i<pressure_size; i++)
+        {
+            x_position.setNodeID(e.getNodeIndex(i));
+            _initial_pressure[i] = _process_data.initial_pressure(0, x_position)[0];
+        }
+    }
 }
 
 
@@ -228,7 +238,17 @@ assembleBlockMatricesWithJacobian(
 
         J_uu.noalias() += B.transpose() * C * B * ip_w;
 
-        rhs_u.noalias() -= B.transpose() * sigma_eff * ip_w;
+        if (_process_data.use_initial_stress_as_reference)
+        {
+            auto const vec_sigma_eff_ref = _process_data.initial_effective_stress(t, x_position);
+            auto const sigma_eff_ref =
+                Eigen::Map<typename BMatricesType::KelvinVectorType const>(vec_sigma_eff_ref.data(), kelvin_vector_size);
+            rhs_u.noalias() -= B.transpose() * (sigma_eff - sigma_eff_ref) * ip_w;
+        }
+        else
+        {
+            rhs_u.noalias() -= B.transpose() * sigma_eff * ip_w;
+        }
         rhs_u.noalias() -= - H_u.transpose() * rho * gravity_vec * ip_w;
 
         //
@@ -260,7 +280,10 @@ assembleBlockMatricesWithJacobian(
         laplace_p * p + storage_p * p_dot + Kup.transpose() * u_dot;
 
     // displacement equation
-    rhs_u.noalias() -= - Kup * p;
+    if (_process_data.use_initial_stress_as_reference)
+        rhs_u.noalias() -= - Kup * (p - _initial_pressure);
+    else
+        rhs_u.noalias() -= - Kup * p;
 }
 
 
