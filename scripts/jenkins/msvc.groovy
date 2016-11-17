@@ -22,7 +22,7 @@ withEnv(helper.getEnv(this)) {
     stage('Configure (Win)') {
         configure.win 'build', "${defaultCMakeOptions}", 'Ninja',
             '-u -s build_type=Release -s compiler="Visual Studio" ' +
-            '-s compiler.version=12 -s arch=x86_64'
+            '-s compiler.version=12 -s arch=x86_64 -s compiler.runtime="MT" '
     }
 
     stage('CLI (Win)') {
@@ -37,7 +37,7 @@ withEnv(helper.getEnv(this)) {
     stage('Data Explorer (Win)') {
         configure.win 'build', "${defaultCMakeOptions} ${guiCMakeOptions}",
             'Ninja', '-u -s build_type=Release -s compiler="Visual Studio" ' +
-            '-s compiler.version=12 -s arch=x86_64', true
+            '-s compiler.version=12 -s arch=x86_64 -s compiler.runtime="MT" ', true
         build.win this, 'build'
     }
 }
