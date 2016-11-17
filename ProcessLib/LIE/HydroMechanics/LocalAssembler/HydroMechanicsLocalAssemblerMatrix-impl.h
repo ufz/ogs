@@ -287,10 +287,12 @@ postTimestepConcrete(std::vector<double> const& /*local_x*/)
     {
         ele_stress[0] += ip_data.sigma_eff[0];
         ele_stress[1] += ip_data.sigma_eff[1];
-        ele_stress[2] += ip_data.sigma_eff[3];
+        // sigma_xy
+        ele_stress[2] += ip_data.sigma_eff[3]; // sigma_eff[2] stores sigma_z
 
         ele_strain[0] += ip_data.eps[0];
         ele_strain[1] += ip_data.eps[1];
+        // strain_xy
         ele_strain[2] += ip_data.eps[3];
 
         ele_velocity += ip_data.darcy_velocity;

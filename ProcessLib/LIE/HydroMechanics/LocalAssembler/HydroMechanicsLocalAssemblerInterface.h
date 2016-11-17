@@ -104,6 +104,9 @@ private:
     Eigen::VectorXd _local_udot;
     Eigen::VectorXd _local_b;
     Eigen::MatrixXd _local_J;
+    // a vector for mapping the index in the local DoF vector to the index in the
+    // complete local solution vector which also include nodes where DoF are not
+    // assigned.
     std::vector<unsigned> const _dofIndex_to_localIndex;
 };
 
