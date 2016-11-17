@@ -18,7 +18,11 @@
 #include "NumLib/NumericsConfig.h"
 
 
+#ifndef USE_PETSC
 TEST(NumLib_SparsityPattern, SingleComponentLinearMesh)
+#else
+TEST(NumLib_SparsityPattern, DISABLED_SingleComponentLinearMesh)
+#endif
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
@@ -41,7 +45,11 @@ TEST(NumLib_SparsityPattern, SingleComponentLinearMesh)
 }
 
 
+#ifndef USE_PETSC
 TEST(NumLib_SparsityPattern, SingleComponentQuadraticMesh)
+#else
+TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
+#endif
 {
     std::unique_ptr<MeshLib::Mesh> linear_mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
@@ -69,7 +77,11 @@ TEST(NumLib_SparsityPattern, SingleComponentQuadraticMesh)
 }
 
 
+#ifndef USE_PETSC
 TEST(NumLib_SparsityPattern, MultipleComponentsLinearMesh)
+#else
+TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearMesh)
+#endif
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
@@ -96,7 +108,11 @@ TEST(NumLib_SparsityPattern, MultipleComponentsLinearMesh)
 }
 
 
+#ifndef USE_PETSC
 TEST(NumLib_SparsityPattern, MultipleComponentsLinearQuadraticMesh)
+#else
+TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearQuadraticMesh)
+#endif
 {
     std::unique_ptr<MeshLib::Mesh> linear_mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
