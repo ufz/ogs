@@ -102,12 +102,16 @@ cpack_add_component(ogs_docs
 )
 
 # Clear cache variable holding all targets to install dependencies for.
-set(INSTALL_DEPENDENCIES "" CACHE INTERNAL "")
+unset(INSTALL_DEPENDENCIES CACHE)
 
-# Rerun CMake on install
-install(CODE "\
-    message(STATUS \"Rerunning CMake for getting executable dependencies.\")\n \
-    execute_process(COMMAND ${CMAKE_COMMAND} \
-                    ARGS ${CMAKE_SOURCE_DIR} -DPRE_INSTALL_RUN=ON \
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR} OUTPUT_QUIET)"
-)
+if(WIN32)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/packaging/package.cmd.in
+        ${CMAKE_CURRENT_BINARY_DIR}/package.cmd
+    )
+else()
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/packaging/package.sh.in
+        ${CMAKE_CURRENT_BINARY_DIR}/package.sh
+    )
+endif()
