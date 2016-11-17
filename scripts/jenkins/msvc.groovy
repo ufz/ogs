@@ -1,6 +1,7 @@
 
 def defaultCMakeOptions =
     '-DCMAKE_BUILD_TYPE=Release ' +
+    '-DMSVC_RUNTIME=static ' +
     '-DOGS_LIB_BOOST=System ' +
     '-DOGS_LIB_VTK=System ' +
     '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
