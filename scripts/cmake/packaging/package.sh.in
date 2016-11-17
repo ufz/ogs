@@ -1,0 +1,4 @@
+#!/bin/sh
+cmake --build . --config Release -- -j $(nproc)
+cmake -DPRE_INSTALL_RUN=ON .
+cmake --build . --target package --config Release

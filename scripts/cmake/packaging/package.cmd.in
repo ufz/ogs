@@ -1,0 +1,3 @@
+cmake --build . --config Release
+cmake -DPRE_INSTALL_RUN=ON .
+cmake --build . --target package --config Release
