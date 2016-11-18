@@ -51,8 +51,8 @@ GlobalVector const& CachedSecondaryVariable::evalField(
     std::unique_ptr<GlobalVector>& /*result_cache*/
     ) const
 {
-    // _current_solution = &x;
-    // _dof_table = &dof_table;
+    (void)t, (void)x, (void)dof_table;
+    assert(t == _t && &x == _current_solution && &dof_table == _dof_table);
     return evalFieldNoArgs();
 }
 
@@ -64,10 +64,8 @@ GlobalVector const& CachedSecondaryVariable::evalFieldNoArgs() const
         return _cached_nodal_values;
     }
     DBUG("Recomputing %s.", _internal_variable_name.c_str());
-    // TODO fix
-    const double t = 0.0;
     _extrapolator.extrapolate(
-        1, *_extrapolatables, t, *_current_solution, *_dof_table);
+        1, *_extrapolatables, _t, *_current_solution, *_dof_table);
     auto const& nodal_values = _extrapolator.getNodalValues();
     MathLib::LinAlg::copy(nodal_values, _cached_nodal_values);
     _needs_recomputation = false;
