@@ -176,9 +176,8 @@ TEST(MaterialPorousMedium, checkReletivePermeabilityCurve)
         "<relative_permeability id=\"0\">"
         "   <type>Curve</type>"
         "       <curve>"
-        "           <point><data> 0. 0.9   </data></point>"
-        "           <point><data> 0.4 0.5  </data></point>"
-        "           <point><data> 0.9 0.01 </data></point>"
+        "           <coords> 0.   0.4 0.9  </coords>"
+        "           <values> 0.9  0.5 0.01 </values>"
         "       </curve>"
         "</relative_permeability>";
     auto const perm_model = createRelativePermeabilityModel(xml);

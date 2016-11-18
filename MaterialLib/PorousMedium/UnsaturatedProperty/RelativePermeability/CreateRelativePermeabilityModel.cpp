@@ -190,20 +190,27 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     {
         config.checkConfigParameter("type", "Curve");
 
-        std::vector<double> variables, values;
+        // TODO: parsing of curve will be replaced by the function for creating
+        // curve.
         //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve__curve}
         auto const& curve_config = config.getConfigSubtree("curve");
-        for (
-            auto const& point_config :
-            //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve_curve__point}
-            curve_config.getConfigSubtreeList("point"))
+
+        auto variables =
+            //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve__curve__coords}
+            curve_config.getConfigParameter<std::vector<double>>("coords");
+        auto values =
+            //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve__curve__values}
+            curve_config.getConfigParameter<std::vector<double>>("values");
+
+        if (variables.empty() || values.empty())
         {
-            const auto& point =
-                //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve_curve__point__data}
-                point_config.getConfigParameter<std::vector<double>>("data");
-            assert(point.size() == 2);
-            variables.push_back(point[0]);
-            values.push_back(point[1]);
+            OGS_FATAL("The given coordinates or values vector is empty.");
+        }
+        if (values.size() != values.size())
+        {
+            OGS_FATAL(
+                "The given co-ordinates and values vector sizes are "
+                "different.");
         }
         auto curve = std::unique_ptr<MathLib::PiecewiseLinearInterpolation>(
             new MathLib::PiecewiseLinearInterpolation(
