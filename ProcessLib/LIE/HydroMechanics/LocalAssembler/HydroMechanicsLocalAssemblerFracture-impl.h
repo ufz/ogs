@@ -12,6 +12,8 @@
 
 #include "HydroMechanicsLocalAssemblerFracture.h"
 
+#include <iostream>
+
 #include "MaterialLib/FractureModels/FractureIdentity2.h"
 
 #include "ProcessLib/Utils/InitShapeMatrices.h"
@@ -227,14 +229,30 @@ assembleBlockMatricesWithJacobian(
 
         // aperture
         b = ip_data.aperture0 + w[index_normal];
-        if (b < 0.0)
-            OGS_FATAL("Fracture aperture is %g, but it must be non-negative.", b);
 
         // local C, local stress
         mat.computeConstitutiveRelation(
                     t, x_position,
                     w_prev, w,
                     effective_stress_prev, effective_stress, C);
+
+        if (b < 1e-6) // < 0.0
+        {
+            //OGS_FATAL("Fracture aperture is %g, but it must be non-negative.", b);
+            WARN("e %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
+            C(index_normal, index_normal) = 1e15;
+            b = 1e-6;
+        }
+
+        if (_element.getID() == 55)
+        {
+            std::cout << "# e=" << _element.getID() << ", ip=" << ip << "\n";
+            std::cout << "p=" << (N_p * nodal_p) << "\n";
+            std::cout << "p_dot=" << (N_p * nodal_p_dot) << "\n";
+            std::cout << "w=" << w.transpose() << "\n";
+            std::cout << "sigma'_prev=" << effective_stress_prev.transpose() << "\n";
+            std::cout << "sigma'=" << effective_stress.transpose() << "\n";
+        }
 
         // permeability
         double const local_k = b * b / 12;
