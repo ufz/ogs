@@ -128,8 +128,10 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     all_mesh_subsets.push_back(std::unique_ptr<MeshLib::MeshSubsets>{
         new MeshLib::MeshSubsets{_mesh_subset_nodes_p.get()}});
 #if 1
-//    vec_var_elements.push_back(&_vec_fracutre_matrix_elements);
-    vec_var_elements.push_back(&pv_p.getElementStatus().getActiveElements());
+    if (pv_p.getElementStatus().getNumberOfActiveElements() == _mesh.getNumberOfElements())
+        vec_var_elements.push_back(&pv_p.getElementStatus().getActiveElements());
+    else
+        vec_var_elements.push_back(&_vec_fracture_matrix_elements); //TODO
 #else
     vec_var_elements.push_back(&_mesh.getElements());
 #endif
