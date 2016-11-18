@@ -41,6 +41,8 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
 }
 
 void doProcessOutput(std::string const& file_name,
+                     bool const compress_output,
+                     const double t,
                      GlobalVector const& x,
                      MeshLib::Mesh& mesh,
                      NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -152,15 +154,20 @@ void doProcessOutput(std::string const& file_name,
                     property_name, type, num_components);
             result->resize(N);
         }
-        assert(result && result->size() == N);
+        if (!result)
+            OGS_FATAL("Mesh property `%s' could not be created.",
+                      property_name.c_str());
+        if (result->size() != N)
+            OGS_FATAL(
+                "Mesh property `%s' has the wrong size. Actual: %i, expected: "
+                "%i",
+                property_name.c_str(), result->size(), N);
 
         return result;
     };
 
     auto add_secondary_var = [&](SecondaryVariable const& var,
                                  std::string const& output_name) {
-        assert(var.fcts.num_components == 1);  // TODO implement other cases
-
         {
             DBUG("  secondary variable %s", output_name.c_str());
 
@@ -172,7 +179,7 @@ void doProcessOutput(std::string const& file_name,
 
             std::unique_ptr<GlobalVector> result_cache;
             auto const& nodal_values =
-                    var.fcts.eval_field(x, dof_table, result_cache);
+                var.fcts.eval_field(t, x, dof_table, result_cache);
             assert(nodal_values.size() == result.size());
 
             // Copy result
@@ -196,7 +203,7 @@ void doProcessOutput(std::string const& file_name,
 
             std::unique_ptr<GlobalVector> result_cache;
             auto const& residuals =
-                    var.fcts.eval_residuals(x, dof_table, result_cache);
+                var.fcts.eval_residuals(t, x, dof_table, result_cache);
 
             assert(residuals.size() == result.size());
 

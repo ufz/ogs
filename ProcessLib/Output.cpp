@@ -121,7 +121,7 @@ void Output::doOutputAlways(Process const& process,
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
     DBUG("output to %s", output_file_path.c_str());
-    doProcessOutput(output_file_path, _output_file_compression, x,
+    doProcessOutput(output_file_path, _output_file_compression, t, x,
                     process.getMesh(), process.getDOFTable(),
                     process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);
@@ -185,7 +185,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
     DBUG("output iteration results to %s", output_file_path.c_str());
-    doProcessOutput(output_file_path, _output_file_compression, x,
+    doProcessOutput(output_file_path, _output_file_compression, t, x,
                     process.getMesh(), process.getDOFTable(),
                     process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);

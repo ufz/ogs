@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -32,6 +32,7 @@ struct ProcessOutput final
 //! Writes output to the given \c file_name using the VTU file format.
 void doProcessOutput(std::string const& file_name,
                      bool const compress_output,
+                     const double t,
                      GlobalVector const& x,
                      MeshLib::Mesh& mesh,
                      NumLib::LocalToGlobalIndexMap const& dof_table,
