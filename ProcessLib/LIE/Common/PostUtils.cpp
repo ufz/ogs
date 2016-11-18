@@ -65,7 +65,7 @@ PostProcessTool::PostProcessTool(
     }
 
     // split elements using the new duplicated nodes
-    for (unsigned fracture_id=0; fracture_id<=vec_vec_fracture_matrix_elements.size(); fracture_id++)
+    for (unsigned fracture_id=0; fracture_id<vec_vec_fracture_matrix_elements.size(); fracture_id++)
     {
         auto const& vec_fracture_matrix_elements = vec_vec_fracture_matrix_elements[fracture_id];
         auto const& vec_fracture_nodes = vec_vec_fracture_nodes[fracture_id];
