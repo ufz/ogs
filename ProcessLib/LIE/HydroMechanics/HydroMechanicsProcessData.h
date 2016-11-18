@@ -133,6 +133,8 @@ struct HydroMechanicsProcessData
     MeshLib::PropertyVector<double>* mesh_prop_velocity = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_b = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_k_f = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_w_n = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_w_s = nullptr;
 };
 
 }  // namespace HydroMechanics

@@ -232,6 +232,13 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             (*mesh_prop_levelset)[e->getID()] = levelsets;
         }
 
+        auto mesh_prop_w_n = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("w_n", MeshLib::MeshItemType::Cell);
+        mesh_prop_w_n->resize(mesh.getNumberOfElements());
+        auto mesh_prop_w_s = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("w_s", MeshLib::MeshItemType::Cell);
+        mesh_prop_w_s->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_w_n = mesh_prop_w_n;
+        _process_data.mesh_prop_w_s = mesh_prop_w_s;
+
         auto mesh_prop_b = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("aperture", MeshLib::MeshItemType::Cell);
         mesh_prop_b->resize(mesh.getNumberOfElements());
         auto mesh_prop_matid = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
