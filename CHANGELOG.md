@@ -2,6 +2,9 @@
 # 6.0.8 (in preparation)
 
 ### Features:
+
+ - HT process implementation. #1534
+
 ### Utilities
 ### Infrastructure:
 
