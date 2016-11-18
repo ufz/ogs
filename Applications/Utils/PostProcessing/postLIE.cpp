@@ -28,38 +28,50 @@
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/LIE/Common/PostUtils.h"
 
-
-int main (int argc, char* argv[])
+namespace
 {
-    ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Postp-process results of the LIE approach",
-                       ' ', "0.1");
-    TCLAP::ValueArg<std::string> arg_out_pvd("o", "output-file",
-                                          "the name of the new PVD file", true,
-                                          "", "path");
-    cmd.add(arg_out_pvd);
-    TCLAP::ValueArg<std::string> arg_in_pvd("i", "input-file",
-                                         "the original PVD file name", true,
-                                         "", "path");
-    cmd.add(arg_in_pvd);
+void postVTU(std::string const& int_vtu_filename, std::string const& out_vtu_filename)
+{
+    // read VTU with simulation results
+    std::unique_ptr<MeshLib::Mesh const> mesh(
+        MeshLib::IO::readMeshFromFile(int_vtu_filename));
+    if (mesh->isNonlinear())
+        mesh = MeshLib::convertToLinearMesh(*mesh, mesh->getName());
 
-    cmd.parse(argc, argv);
+    // post-process
+    std::vector<MeshLib::Element*> vec_matrix_elements;
+    std::vector<int> vec_fracture_mat_IDs;
+    std::vector<std::vector<MeshLib::Element*>> vec_fracture_elements;
+    std::vector<std::vector<MeshLib::Element*>> vec_fracture_matrix_elements;
+    std::vector<std::vector<MeshLib::Node*>> vec_fracture_nodes;
+    ProcessLib::LIE::getFractureMatrixDataInMesh(
+        *mesh, vec_matrix_elements, vec_fracture_mat_IDs, vec_fracture_elements,
+        vec_fracture_matrix_elements, vec_fracture_nodes);
 
-    auto const in_pvd_filename = arg_in_pvd.getValue();
+    ProcessLib::LIE::PostProcessTool post(
+        *mesh, vec_fracture_nodes, vec_fracture_matrix_elements);
+
+    // create a new VTU file
+    INFO("create %s", out_vtu_filename.c_str());
+    MeshLib::IO::writeMeshToFile(post.getOutputMesh(), out_vtu_filename);
+}
+
+
+void postPVD(std::string const& in_pvd_filename, std::string const& out_pvd_filename)
+{
     auto const in_pvd_file_dir = BaseLib::extractPath(in_pvd_filename);
-    auto const out_pvd_filename = arg_out_pvd.getValue();
     auto const out_pvd_file_dir = BaseLib::extractPath(out_pvd_filename);
     INFO("start reading the PVD file %s", in_pvd_filename.c_str());
     boost::property_tree::ptree pt;
-    read_xml(arg_in_pvd.getValue(), pt,  boost::property_tree::xml_parser::trim_whitespace);
+    read_xml(in_pvd_filename, pt,  boost::property_tree::xml_parser::trim_whitespace);
 
     for (auto& dataset : pt.get_child("VTKFile.Collection"))
     {
         if (dataset.first != "DataSet")
             continue;
 
-        // read VTU with simulation results
+        // get VTU file name
         auto const org_vtu_filename = dataset.second.get<std::string>("<xmlattr>.file");
         auto const org_vtu_filebasename = BaseLib::extractBaseName(org_vtu_filename);
         auto org_vtu_dir = BaseLib::extractPath(org_vtu_filename);
@@ -68,37 +80,48 @@ int main (int argc, char* argv[])
         auto const org_vtu_filepath = BaseLib::joinPaths(org_vtu_dir, org_vtu_filebasename);
         INFO("processing %s...", org_vtu_filepath.c_str());
 
-        std::unique_ptr<MeshLib::Mesh const> mesh(
-            MeshLib::IO::readMeshFromFile(org_vtu_filepath));
-        if (mesh->isNonlinear())
-            mesh = MeshLib::convertToLinearMesh(*mesh, mesh->getName());
-
-        // post-process
-        std::vector<MeshLib::Element*> vec_matrix_elements;
-        std::vector<int> vec_fracture_mat_IDs;
-        std::vector<std::vector<MeshLib::Element*>> vec_fracture_elements;
-        std::vector<std::vector<MeshLib::Element*>> vec_fracture_matrix_elements;
-        std::vector<std::vector<MeshLib::Node*>> vec_fracture_nodes;
-        ProcessLib::LIE::getFractureMatrixDataInMesh(
-            *mesh, vec_matrix_elements, vec_fracture_mat_IDs, vec_fracture_elements,
-            vec_fracture_matrix_elements, vec_fracture_nodes);
-
-        ProcessLib::LIE::PostProcessTool post(
-            *mesh, vec_fracture_nodes, vec_fracture_matrix_elements);
-
-        // create a new VTU file and update XML
+        // post-process the VTU and save into the new file
         auto const dest_vtu_filename = "post_" + org_vtu_filebasename;
         auto const dest_vtu_filepath = BaseLib::joinPaths(out_pvd_file_dir, dest_vtu_filename);
-        INFO("create %s", dest_vtu_filepath.c_str());
-        MeshLib::IO::writeMeshToFile(post.getOutputMesh(), dest_vtu_filepath);
+        postVTU(org_vtu_filepath, dest_vtu_filepath);
 
+        // create a new VTU file and update XML
         dataset.second.put("<xmlattr>.file", dest_vtu_filename);
     }
 
     // save into the new PVD file
     INFO("save into the new PVD file %s", out_pvd_filename.c_str());
     boost::property_tree::xml_writer_settings<std::string> settings('\t', 1);
-    write_xml(arg_out_pvd.getValue(), pt, std::locale(), settings);
+    write_xml(out_pvd_filename, pt, std::locale(), settings);
+}
+
+} // unnamed namespace
+
+
+int main (int argc, char* argv[])
+{
+    ApplicationsLib::LogogSetup logog_setup;
+
+    TCLAP::CmdLine cmd("Postp-process results of the LIE approach",
+                       ' ', "0.1");
+    TCLAP::ValueArg<std::string> arg_out_file("o", "output-file",
+                                          "the name of the new PVD or VTU file", true,
+                                          "", "path");
+    cmd.add(arg_out_file);
+    TCLAP::ValueArg<std::string> arg_in_file("i", "input-file",
+                                         "the original PVD or VTU file name", true,
+                                         "", "path");
+    cmd.add(arg_in_file);
+
+    cmd.parse(argc, argv);
+
+    auto const in_file_ext = BaseLib::getFileExtension(arg_in_file.getValue());
+    if (in_file_ext == "pvd")
+        postPVD(arg_in_file.getValue(), arg_out_file.getValue());
+    else if (in_file_ext == "vtu")
+        postVTU(arg_in_file.getValue(), arg_out_file.getValue());
+    else
+        OGS_FATAL("The given file type (%s) is not supported.", in_file_ext.c_str());
 
     return EXIT_SUCCESS;
 }
