@@ -37,6 +37,7 @@ struct SecondaryVariableFunctions final
      * is stored somewhere else.
      */
     using Function = std::function<GlobalVector const&(
+        const double t,
         GlobalVector const& x,
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache)>;
@@ -51,19 +52,21 @@ struct SecondaryVariableFunctions final
           eval_residuals(std::forward<F2>(eval_residuals_))
     {
         // Used to detect nasty implicit conversions.
-        static_assert(std::is_same<GlobalVector const&,
-            typename std::result_of<F1(
-                GlobalVector const&, NumLib::LocalToGlobalIndexMap const&,
-                std::unique_ptr<GlobalVector>&
-                )>::type>::value,
+        static_assert(
+            std::is_same<GlobalVector const&,
+                         typename std::result_of<F1(
+                             double const, GlobalVector const&,
+                             NumLib::LocalToGlobalIndexMap const&,
+                             std::unique_ptr<GlobalVector>&)>::type>::value,
             "The function eval_field_ does not return a const reference"
             " to a GlobalVector");
 
-        static_assert(std::is_same<GlobalVector const&,
-            typename std::result_of<F2(
-                GlobalVector const&, NumLib::LocalToGlobalIndexMap const&,
-                std::unique_ptr<GlobalVector>&
-            )>::type>::value,
+        static_assert(
+            std::is_same<GlobalVector const&,
+                         typename std::result_of<F2(
+                             double const, GlobalVector const&,
+                             NumLib::LocalToGlobalIndexMap const&,
+                             std::unique_ptr<GlobalVector>&)>::type>::value,
             "The function eval_residuals_ does not return a const reference"
             " to a GlobalVector");
     }
@@ -75,11 +78,12 @@ struct SecondaryVariableFunctions final
           eval_field(std::forward<F1>(eval_field_))
     {
         // Used to detect nasty implicit conversions.
-        static_assert(std::is_same<GlobalVector const&,
-            typename std::result_of<F1(
-                GlobalVector const&, NumLib::LocalToGlobalIndexMap const&,
-                std::unique_ptr<GlobalVector>&
-                )>::type>::value,
+        static_assert(
+            std::is_same<GlobalVector const&,
+                         typename std::result_of<F1(
+                             double const, GlobalVector const&,
+                             NumLib::LocalToGlobalIndexMap const&,
+                             std::unique_ptr<GlobalVector>&)>::type>::value,
             "The function eval_field_ does not return a const reference"
             " to a GlobalVector");
     }
@@ -158,26 +162,29 @@ SecondaryVariableFunctions makeExtrapolator(
 {
     auto const eval_field = [num_components, &extrapolator, &local_assemblers,
                              integration_point_values_method](
+        const double t,
         GlobalVector const& x,
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector> & /*result_cache*/
         ) -> GlobalVector const& {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
-        extrapolator.extrapolate(num_components, extrapolatables, x, dof_table);
+        extrapolator.extrapolate(num_components, extrapolatables, t, x,
+                                 dof_table);
         return extrapolator.getNodalValues();
     };
 
     auto const eval_residuals = [num_components, &extrapolator,
                                  &local_assemblers,
                                  integration_point_values_method](
+        const double t,
         GlobalVector const& x,
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector> & /*result_cache*/
         ) -> GlobalVector const& {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
-        extrapolator.calculateResiduals(num_components, extrapolatables, x,
+        extrapolator.calculateResiduals(num_components, extrapolatables, t, x,
                                         dof_table);
         return extrapolator.getElementResiduals();
     };

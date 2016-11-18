@@ -69,6 +69,7 @@ private:
 
     //! Computes the secondary Variable.
     GlobalVector const& evalField(
+        const double t,
         GlobalVector const& x,
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& /*result_cache*/

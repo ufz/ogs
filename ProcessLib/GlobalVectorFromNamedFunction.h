@@ -42,7 +42,7 @@ public:
     //! The signature of this method matches
     //! SecondaryVariableFunctions::Function, i.e., this method can be used to
     //! compute a secondary variable.
-    GlobalVector const& call(GlobalVector const& x,
+    GlobalVector const& call(const double t, GlobalVector const& x,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
                              std::unique_ptr<GlobalVector>& result);
 
