@@ -337,6 +337,87 @@ void
 HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      GlobalDim>::
+computeSecondaryVariableConcreteWithVector(
+                                const double t,
+                                Eigen::VectorXd const& local_x)
+{
+    //auto const nodal_p = local_x.segment(pressure_index, pressure_size);
+    auto const nodal_g = local_x.segment(displacement_index, displacement_size);
+
+    FractureProperty const& frac_prop = *_process_data.fracture_property;
+    auto const& R = frac_prop.R;
+    // the index of a normal (normal to a fracture plane) component
+    // in a displacement vector
+    auto const index_normal = GlobalDim - 1;
+
+    SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    unsigned const n_integration_points = _ip_data.size();
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+
+        auto& ip_data = _ip_data[ip];
+        auto const& H_g = ip_data.H_u;
+
+        auto& mat = ip_data.fracture_material;
+        auto& effective_stress = ip_data.sigma_eff;
+        auto const& effective_stress_prev = ip_data.sigma_eff_prev;
+        auto& w = ip_data.w;
+        auto const& w_prev = ip_data.w_prev;
+        auto& C = ip_data.C;
+        auto& b = ip_data.aperture;
+
+        // displacement jumps in local coordinates
+        w.noalias() = R * H_g * nodal_g;
+
+        // aperture
+        b = ip_data.aperture0 + w[index_normal];
+
+        // local C, local stress
+        mat.computeConstitutiveRelation(
+                    t, x_position,
+                    w_prev, w,
+                    effective_stress_prev, effective_stress, C);
+
+        if (b < 1e-6) // < 0.0
+        {
+            //OGS_FATAL("Fracture aperture is %g, but it must be non-negative.", b);
+            WARN("e %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
+        }
+
+        // permeability
+        double const local_k = b * b / 12;
+        ip_data.permeability = local_k;
+    }
+
+    double ele_b = 0;
+    double ele_k = 0;
+    Eigen::Vector2d ele_w;
+    ele_w.setZero();
+    for (auto const& ip : _ip_data)
+    {
+        ele_b += ip.aperture;
+        ele_k += ip.permeability;
+        ele_w += ip.w;
+    }
+    ele_b /= _ip_data.size();
+    ele_k /= _ip_data.size();
+    ele_w /= _ip_data.size();
+    (*_process_data.mesh_prop_b)[this->_element.getID()] = ele_b;
+    (*_process_data.mesh_prop_k_f)[this->_element.getID()] = ele_k;
+    (*_process_data.mesh_prop_w_n)[this->_element.getID()] = ele_w[index_normal];
+    (*_process_data.mesh_prop_w_s)[this->_element.getID()] = ele_w[0];
+}
+
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, unsigned GlobalDim>
+void
+HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
+                                     ShapeFunctionPressure, IntegrationMethod,
+                                     GlobalDim>::
 postTimestepConcrete(std::vector<double> const& /*local_x*/)
 {
     double ele_b = 0;

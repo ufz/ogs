@@ -53,6 +53,9 @@ public:
             data.pushBackState();
     }
 
+    void computeSecondaryVariableConcreteWithVector(
+        const double t, Eigen::VectorXd const& local_x) override;
+
     void postTimestepConcrete(std::vector<double> const& local_x) override;
 
 
