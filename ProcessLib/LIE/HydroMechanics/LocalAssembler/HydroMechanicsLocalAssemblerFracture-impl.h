@@ -238,8 +238,8 @@ assembleBlockMatricesWithJacobian(
 
         if (b < 1e-6) // < 0.0
         {
-            //OGS_FATAL("Fracture aperture is %g, but it must be non-negative.", b);
-            WARN("e %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
+            OGS_FATAL("e %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
+            //WARN("e %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
             //C(index_normal, index_normal) = 1e15;
             b = 1e-6;
         }
