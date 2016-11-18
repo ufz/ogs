@@ -23,6 +23,7 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/ConvertToLinearMesh.h"
 
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/LIE/Common/PostUtils.h"
@@ -69,6 +70,8 @@ int main (int argc, char* argv[])
 
         std::unique_ptr<MeshLib::Mesh const> mesh(
             MeshLib::IO::readMeshFromFile(org_vtu_filepath));
+        if (mesh->isNonlinear())
+            mesh = MeshLib::convertToLinearMesh(*mesh, mesh->getName());
 
         // post-process
         std::vector<MeshLib::Element*> vec_matrix_elements;
