@@ -116,6 +116,30 @@ private:
                     getExtrapolator(), _local_assemblers,
                     &SmallDeformationLocalAssemblerInterface::getIntPtSigmaYZ));
         }
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_xx", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonXX));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_yy", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonYY));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_zz", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonZZ));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_xy", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonXY));
     }
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
