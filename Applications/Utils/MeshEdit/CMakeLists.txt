@@ -85,6 +85,10 @@ add_executable(createQuadraticeMesh createQuadraticeMesh.cpp )
 target_link_libraries(createQuadraticeMesh MeshLib)
 set_target_properties(createQuadraticeMesh PROPERTIES FOLDER Utilities)
 
+add_executable(convertToLinearMesh convertToLinearMesh.cpp )
+target_link_libraries(convertToLinearMesh MeshLib)
+set_target_properties(convertToLinearMesh PROPERTIES FOLDER Utilities)
+
 ####################
 ### Installation ###
 ####################
