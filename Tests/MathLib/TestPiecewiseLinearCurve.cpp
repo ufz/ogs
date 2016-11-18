@@ -35,11 +35,8 @@ TEST(MathLibCurve, PiecewiseLinearCurveParsing)
     const char xml[] =
         "<curve>"
         "   <type>PiecewiseLinear</type>"
-        "   <point><data> 0.2 20.</data></point> "
-        "   <point><data> 0.4 10.</data></point> "
-        "   <point><data> 0.5 5.</data></point> "
-        "   <point><data> 0.6 3.</data></point> "
-        "   <point><data> 0.7 2.</data></point> "
+        "   <coords> 0.2 0.4 0.5 0.6 0.7</coords>"
+        "   <values> 20  10. 5.  3.  2. </values> "
         "</curve>";
     auto const curve = createPiecewiseLinearCurve(xml);
 

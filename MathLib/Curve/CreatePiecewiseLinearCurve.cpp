@@ -24,17 +24,23 @@ std::unique_ptr<PiecewiseLinearCurve> createPiecewiseLinearCurve(
 {
     //! \ogs_file_param{curve__type}
     config.checkConfigParameter("type", "PiecewiseLinear");
-    std::vector<double> x, y;
-    for (auto const& point_config :
-         //! \ogs_file_param{curve__point}
-         config.getConfigSubtreeList("point"))
+
+    auto x =
+        //! \ogs_file_param{curve__coords}
+        config.getConfigParameter<std::vector<double>>("coords");
+    auto y =
+        //! \ogs_file_param{curve__values}
+        config.getConfigParameter<std::vector<double>>("values");
+
+    if (x.empty() || y.empty())
     {
-        const auto& point =
-            //! \ogs_file_param{curve__point__data}
-            point_config.getConfigParameter<std::vector<double>>("data");
-        assert(point.size() == 2);
-        x.push_back(point[0]);
-        y.push_back(point[1]);
+        OGS_FATAL("The given coordinates or values vector is empty.");
+    }
+    if (x.size() != y.size())
+    {
+        OGS_FATAL(
+            "The given coordinates and values vector sizes are "
+            "different.");
     }
 
     return std::unique_ptr<MathLib::PiecewiseLinearCurve>(

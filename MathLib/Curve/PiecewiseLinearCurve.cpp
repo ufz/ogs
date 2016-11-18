@@ -20,15 +20,15 @@ namespace MathLib
 {
 bool PiecewiseLinearCurve::isMonotonic() const
 {
-    const double tangent0 = getDerivative(_supp_pnts[0]);
+    const double gradient0 = getDerivative(_supp_pnts[0]);
 
-    if (std::fabs(tangent0) < std::numeric_limits<double>::min())
+    if (std::fabs(gradient0) < std::numeric_limits<double>::min())
         return false;
     else
     {
         return std::none_of(_supp_pnts.begin(), _supp_pnts.end(),
                             [&](const double p) {
-                                return this->getDerivative(p) * tangent0 <= 0.;
+                                return this->getDerivative(p) * gradient0 <= 0.;
                             });
     }
 }
@@ -67,8 +67,8 @@ double PiecewiseLinearCurve::getVariable(const double y) const
         else
         {
             // search interval in the reverse direction for the point inside
-            auto const& it(std::lower_bound(
-                _values_at_supp_pnts.rbegin(), _values_at_supp_pnts.rend(), y));
+            auto const& it(std::lower_bound(_values_at_supp_pnts.rbegin(),
+                                            _values_at_supp_pnts.rend(), y));
             interval_idx = _values_at_supp_pnts.size() -
                            (std::distance(_values_at_supp_pnts.rbegin(), it)) -
                            1;
