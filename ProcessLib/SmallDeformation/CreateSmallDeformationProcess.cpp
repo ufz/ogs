@@ -13,6 +13,7 @@
 
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/CreateLubby2.h"
+#include "MaterialLib/SolidModels/CreateEhlers.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 
 #include "SmallDeformationProcess.h"
@@ -74,7 +75,12 @@ createSmallDeformationProcess(
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         material = nullptr;
-    if (type == "LinearElasticIsotropic")
+    if (type == "Ehlers")
+    {
+        material = MaterialLib::Solids::createEhlers<DisplacementDim>(
+            parameters, constitutive_relation_config);
+    }
+    else if (type == "LinearElasticIsotropic")
     {
         material =
             MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
