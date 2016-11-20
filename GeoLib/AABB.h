@@ -108,7 +108,7 @@ public:
         // First component of the pair signals if the minimum point is changed
         // Second component signals not only if the max point is changed.
         // Furthermore it is signaled what coordinate (0,1,2) is changed.
-        std::pair<bool,std::bitset<3>> updated(0,0);
+        std::pair<bool, std::bitset<3>> updated(false, 0);
         for (std::size_t k(0); k<3; k++) {
             // if the minimum point is updated pair.first==true
             if (p[k] < _min_pnt[k]) {
