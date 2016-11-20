@@ -42,6 +42,7 @@
 #include "ProcessLib/LIE/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
 #include "ProcessLib/HT/CreateHTProcess.h"
+#include "ProcessLib/TwoPhaseFlowWithPP/CreateTwoPhaseFlowWithPPProcess.h"
 
 namespace detail
 {
@@ -311,8 +312,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         else if (type == "LIQUID_FLOW")
         {
             process = ProcessLib::LiquidFlow::createLiquidFlowProcess(
-                *_mesh_vec[0], std::move(jacobian_assembler), _process_variables,
-                _parameters, integration_order, process_config);
+                *_mesh_vec[0], std::move(jacobian_assembler),
+                _process_variables, _parameters, integration_order,
+                process_config);
         }
         else if (type == "TES")
         {
@@ -408,6 +410,16 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 _process_variables, _parameters, integration_order,
                 process_config, _curves);
         }
+
+        else if (type == "TWOPHASE_FLOW_PP")
+        {
+            process =
+                ProcessLib::TwoPhaseFlowWithPP::CreateTwoPhaseFlowWithPPProcess(
+                    *_mesh_vec[0], std::move(jacobian_assembler),
+                    _process_variables, _parameters, integration_order,
+                    process_config, _curves);
+        }
+
         else
         {
             OGS_FATAL("Unknown process type: %s", type.c_str());

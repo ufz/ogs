@@ -13,6 +13,8 @@ append_source_files(SOURCES PorousMedium/Storage)
 append_source_files(SOURCES PorousMedium/Permeability)
 append_source_files(SOURCES PorousMedium/UnsaturatedProperty/CapillaryPressure)
 
+append_source_files(SOURCES TwoPhaseModels)
+
 add_library(MaterialLib ${SOURCES} )
 target_link_libraries(MaterialLib
     BaseLib
