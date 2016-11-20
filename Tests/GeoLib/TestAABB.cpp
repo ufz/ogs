@@ -170,9 +170,9 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
      double half_box_size_x(box_size_x/2);
      double half_box_size_y(box_size_y/2);
      double half_box_size_z(box_size_z/2);
-     int minus_half_box_size_x(-half_box_size_x);
-     int minus_half_box_size_y(-half_box_size_y);
-     int minus_half_box_size_z(-half_box_size_z);
+     int minus_half_box_size_x(static_cast<int>(-half_box_size_x));
+     int minus_half_box_size_y(static_cast<int>(-half_box_size_y));
+     int minus_half_box_size_z(static_cast<int>(-half_box_size_z));
 
      // fill list with points
      std::list<GeoLib::Point> pnts;
