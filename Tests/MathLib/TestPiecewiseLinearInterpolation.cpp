@@ -139,7 +139,8 @@ TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationDerivative)
     // Interpolation
     for (std::size_t k(0); k < size - 1; ++k)
     {
-        ASSERT_NEAR(1 + 2 * k, interpolation.getDerivative(k + 0.5),
+        ASSERT_NEAR(1 + 2 * static_cast<double>(k),
+                    interpolation.getDerivative(k + 0.5),
                     std::numeric_limits<double>::epsilon());
     }
     // max and min value test
