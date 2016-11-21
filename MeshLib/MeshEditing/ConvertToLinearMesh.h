@@ -13,10 +13,13 @@
 #include <memory>
 #include <string>
 
+#include "MeshLib/Mesh.h"
+
 namespace MeshLib
 {
-class Mesh;
 
+/// Converts a non-linear mesh to a linear meash. All the mesh properties will
+/// be copied except for entries for non-linear nodes.
 std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
     const MeshLib::Mesh& mesh, const std::string& new_mesh_name);
 
