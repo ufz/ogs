@@ -12,7 +12,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 #include <vector>
 
 #include "MeshLib/Elements/Element.h"
