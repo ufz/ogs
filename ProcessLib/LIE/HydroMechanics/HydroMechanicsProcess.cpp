@@ -155,8 +155,6 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
             NumLib::ComponentOrder::BY_COMPONENT));
 
     DBUG("created %d DoF", _local_to_global_index_map->size());
-
-    //std::cout << *_local_to_global_index_map.get() << std::endl;
 }
 
 
