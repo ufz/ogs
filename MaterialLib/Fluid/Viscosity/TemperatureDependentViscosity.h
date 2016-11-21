@@ -41,16 +41,15 @@ namespace Fluid
 class TemperatureDependentViscosity final : public FluidProperty
 {
 public:
-    /** \param parameters An array contains the three parameters:
-     *                     [0] $f\mu_0$f
-     *                     [1] $fT_c$f
-     *                     [2] $fT_v$f
+    /**
+     *  @param mu0   \f$ \mu_0 \f$
+     *  @param T_c   \f$ T_c \f$
+     *  @param T_v   \f$ T_v \f$
      */
-    explicit TemperatureDependentViscosity(
-        std::array<double, 3> const& parameters)
-        : _mu0(parameters[0]),
-          _temperature_c(parameters[1]),
-          _temperature_v(parameters[2])
+    explicit TemperatureDependentViscosity(const double mu0,
+                                           const double T_c,
+                                           const double T_v)
+        : _mu0(mu0), _temperature_c(T_c), _temperature_v(T_v)
     {
     }
 
