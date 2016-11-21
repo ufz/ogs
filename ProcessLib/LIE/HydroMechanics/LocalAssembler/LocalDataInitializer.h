@@ -185,67 +185,63 @@ public:
         auto const type_idx = std::type_index(typeid(mesh_item));
         auto const it = _builder.find(type_idx);
 
-        if (it != _builder.end())
-        {
-            auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
-            auto const n_global_components = _dof_table.getNumberOfElementComponents(id);
-            const std::vector<std::size_t> varIDs(_dof_table.getElementVariableIDs(id));
-
-            std::vector<unsigned> dofIndex_to_localIndex;
-            if (mesh_item.getDimension() == GlobalDim
-                && n_global_components == GlobalDim + 1) // +1 for pressure
-            {
-                // normal matrix assembler
-                dofIndex_to_localIndex.resize(n_local_dof);
-                int count = 0;
-                std::generate(dofIndex_to_localIndex.begin(), dofIndex_to_localIndex.end(), [&](){return count++;});
-            }
-            else
-            {
-                // matrix and fracture assemblers with enrichments
-                dofIndex_to_localIndex.resize(n_local_dof);
-                unsigned dof_id = 0;
-                unsigned local_id = 0;
-                std::vector<unsigned> vec_n_element_nodes;
-                //TODO how to get the shape function order for each variable?
-                vec_n_element_nodes.push_back(mesh_item.getNumberOfBaseNodes()); // pressure
-                for (unsigned i=1; i<varIDs.size(); i++)
-                    vec_n_element_nodes.push_back(mesh_item.getNumberOfNodes()); // displacements
-
-                for (unsigned i=0; i<varIDs.size(); i++)
-                {
-                    auto const var_id = varIDs[i];
-                    auto const n_var_comp = _dof_table.getNumberOfVariableComponents(var_id);
-                    auto const n_var_element_nodes = vec_n_element_nodes[i];
-                    for (unsigned var_comp_id = 0; var_comp_id < n_var_comp; var_comp_id++)
-                    {
-                        auto& mss = _dof_table.getMeshSubsets(var_id, var_comp_id);
-                        assert(mss.size() == 1);
-                        auto mesh_id = mss.getMeshSubset(0).getMeshID();
-                        for (unsigned k=0; k<n_var_element_nodes; k++)
-                        {
-                            MeshLib::Location l(mesh_id,
-                                                MeshLib::MeshItemType::Node,
-                                                mesh_item.getNodeIndex(k));
-                            auto global_index = _dof_table.getGlobalIndex(l, var_id, var_comp_id);
-                            if (global_index != NumLib::MeshComponentMap::nop)
-                                dofIndex_to_localIndex[dof_id++] = local_id;
-                            local_id++;
-                        }
-                    }
-                }
-
-            }
-
-
-            data_ptr = it->second(
-                           mesh_item, varIDs.size(), n_local_dof, dofIndex_to_localIndex,
-                           std::forward<ConstructorArgs>(args)...);
-        } else {
+        if (it == _builder.end())
             OGS_FATAL("You are trying to build a local assembler for an unknown mesh element type (%s)."
                 " Maybe you have disabled this mesh element type in your build configuration.",
                 type_idx.name());
+
+        auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
+        auto const n_global_components = _dof_table.getNumberOfElementComponents(id);
+        const std::vector<std::size_t> varIDs(_dof_table.getElementVariableIDs(id));
+
+        std::vector<unsigned> dofIndex_to_localIndex;
+        if (mesh_item.getDimension() == GlobalDim
+            && n_global_components == GlobalDim + 1) // +1 for pressure
+        {
+            // normal matrix assembler
+            dofIndex_to_localIndex.resize(n_local_dof);
+            std::iota(dofIndex_to_localIndex.begin(), dofIndex_to_localIndex.end(), 0);
         }
+        else
+        {
+            // matrix and fracture assemblers with enrichments
+            dofIndex_to_localIndex.resize(n_local_dof);
+            unsigned dof_id = 0;
+            unsigned local_id = 0;
+            std::vector<unsigned> vec_n_element_nodes;
+            //TODO how to get the shape function order for each variable?
+            vec_n_element_nodes.push_back(mesh_item.getNumberOfBaseNodes()); // pressure
+            for (unsigned i=1; i<varIDs.size(); i++)
+                vec_n_element_nodes.push_back(mesh_item.getNumberOfNodes()); // displacements
+
+            for (unsigned i=0; i<varIDs.size(); i++)
+            {
+                auto const var_id = varIDs[i];
+                auto const n_var_comp = _dof_table.getNumberOfVariableComponents(var_id);
+                auto const n_var_element_nodes = vec_n_element_nodes[i];
+                for (unsigned var_comp_id = 0; var_comp_id < n_var_comp; var_comp_id++)
+                {
+                    auto& mss = _dof_table.getMeshSubsets(var_id, var_comp_id);
+                    assert(mss.size() == 1);
+                    auto mesh_id = mss.getMeshSubset(0).getMeshID();
+                    for (unsigned k=0; k<n_var_element_nodes; k++)
+                    {
+                        MeshLib::Location l(mesh_id,
+                                            MeshLib::MeshItemType::Node,
+                                            mesh_item.getNodeIndex(k));
+                        auto global_index = _dof_table.getGlobalIndex(l, var_id, var_comp_id);
+                        if (global_index != NumLib::MeshComponentMap::nop)
+                            dofIndex_to_localIndex[dof_id++] = local_id;
+                        local_id++;
+                    }
+                }
+            }
+
+        }
+
+        data_ptr = it->second(
+                       mesh_item, varIDs.size(), n_local_dof, dofIndex_to_localIndex,
+                       std::forward<ConstructorArgs>(args)...);
     }
 
 private:
