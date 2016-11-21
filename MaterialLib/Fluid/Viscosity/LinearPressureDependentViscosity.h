@@ -35,14 +35,15 @@ namespace Fluid
 class LinearPressureDependentViscosity final : public FluidProperty
 {
 public:
-    /** \param parameters An array contains the three parameters:
-     *                     [0] $f\mu_0$f
-     *                     [1] $fp_0$f
-     *                     [2] $f\gamma$f
+    /**
+     *  @param mu0   \f$ \mu_0 \f$
+     *  @param p0    \f$ p_0 \f$
+     *  @param gamma \f$ \gamma \f$
      */
-    explicit LinearPressureDependentViscosity(
-        std::array<double, 3> const& parameters)
-        : _mu0(parameters[0]), _p0(parameters[1]), _gamma(parameters[2])
+    explicit LinearPressureDependentViscosity(const double mu0,
+                                              const double p0,
+                                              const double gamma)
+        : _mu0(mu0), _p0(p0), _gamma(gamma)
     {
     }
 

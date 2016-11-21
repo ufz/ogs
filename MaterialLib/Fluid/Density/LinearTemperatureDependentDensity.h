@@ -28,16 +28,14 @@ namespace Fluid
 class LinearTemperatureDependentDensity final : public FluidProperty
 {
 public:
-    /** \param parameters An array contains the three parameters:
-     *                     [0] $f\rho_0$f
-     *                     [1] $fT_0$f
-     *                     [2] $f\beta$f
+    /**
+     * @param rho0  \f$ \rho_0 \f$
+     * @param T0    \f$ T_0 \f$
+     * @param beta  \f$ \beta \f$
      */
-    explicit LinearTemperatureDependentDensity(
-        std::array<double, 3> const& parameters)
-        : _rho0(parameters[0]),
-          _temperature0(parameters[1]),
-          _beta(parameters[2])
+    explicit LinearTemperatureDependentDensity(const double rho0, double T0,
+                                               const double beta)
+        : _rho0(rho0), _temperature0(T0), _beta(beta)
     {
     }
 

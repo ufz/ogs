@@ -26,64 +26,84 @@ namespace Fluid
 {
 /**
  *     \param config  ConfigTree object which contains the input data
- *                    including  <type>fluid</type> and it has
+ *                    including  <type>LinearPressure</type> and it has
  *                    a tag of <viscosity>
  */
 static std::unique_ptr<FluidProperty> createLinearPressureDependentViscosity(
     BaseLib::ConfigTree const& config)
 {
-    std::array<double, 3> parameters = {
-        {//! \ogs_file_param{material__fluid__viscosity__temperature_dependent__mu0}
-         config.getConfigParameter<double>("mu0"),
-         //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__p0}
-         config.getConfigParameter<double>("p0"),
-         //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__gamma}
-         config.getConfigParameter<double>("gamma")}};
+    //! \ogs_file_param{material__fluid__viscosity__LinearPressure}
+    config.checkConfigParameter("type", "LinearPressure");
+
+    //! \ogs_file_param{material__fluid__viscosity__LinearPressure__mu0}
+    const double mu0 = config.getConfigParameter<double>("mu0");
+
+    //! \ogs_file_param{material__fluid__viscosity__LinearPressure__p0}
+    const double p0 = config.getConfigParameter<double>("p0");
+
+    //! \ogs_file_param{material__fluid__viscosity__LinearPressure__gamma}
+    const double gamma = config.getConfigParameter<double>("gamma");
+
     return std::unique_ptr<FluidProperty>(
-        new LinearPressureDependentViscosity(parameters));
+        new LinearPressureDependentViscosity(mu0, p0, gamma));
 }
 
 /**
  *     \param config  ConfigTree object which contains the input data
- *                    including  <type>fluid</type> and it has
+ *                    including  <type>TemperatureDependent</type> and it has
  *                    a tag of <viscosity>
  */
 static std::unique_ptr<FluidProperty> createTemperatureDependentViscosity(
     BaseLib::ConfigTree const& config)
 {
-    std::array<double, 3> parameters = {
-        {//! \ogs_file_param{material__fluid__viscosity__temperature_dependent__mu0}
-         config.getConfigParameter<double>("mu0"),
-         //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__tc}
-         config.getConfigParameter<double>("tc"),
-         //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__tv}
-         config.getConfigParameter<double>("tv")}};
+    //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent}
+    config.checkConfigParameter("type", "TemperatureDependent");
+
+    //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent__mu0}
+    const double mu0 = config.getConfigParameter<double>("mu0");
+
+    //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent__tc}
+    const double Tc = config.getConfigParameter<double>("tc");
+
+    //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent__tv}
+    const double Tv = config.getConfigParameter<double>("tv");
+
     return std::unique_ptr<FluidProperty>(
-        new TemperatureDependentViscosity(parameters));
+        new TemperatureDependentViscosity(mu0, Tc, Tv));
 }
 
 std::unique_ptr<FluidProperty> createViscosityModel(
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__fluid__viscosity__type}
-    auto const type = config.getConfigParameter<std::string>("type");
+    auto const type = config.peekConfigParameter<std::string>("type");
 
     if (type == "Constant")
+    {
+        //! \ogs_file_param{material__fluid__viscosity__Constant}
+        config.checkConfigParameter("type", "Constant");
         return std::unique_ptr<FluidProperty>(new ConstantFluidProperty(
             //! \ogs_file_param{material__fluid__viscosity__Constant__value}
             config.getConfigParameter<double>("value")));
+    }
     else if (type == "LinearPressure")
         return createLinearPressureDependentViscosity(config);
     else if (type == "TemperatureDependent")
         return createTemperatureDependentViscosity(config);
     else if (type == "Vogels")
     {
+        //! \ogs_file_param{material__fluid__viscosity__Vogels}
+        config.checkConfigParameter("type", "Vogels");
+
         INFO("Using Vogels model, which gives viscosity in SI unit, Pa s");
         auto const fluid_type =
             //! \ogs_file_param{material__fluid__viscosity__Vogels__liquid_type}
-            config.getConfigParameter<std::string>("liquid_type");
+            config.peekConfigParameter<std::string>("liquid_type");
         if (fluid_type == "Water")
         {
+            //! \ogs_file_param{material__fluid__viscosity__Vogels__Water}
+            config.checkConfigParameter("liquid_type", "Water");
+
             const VogelsViscosityConstantsWater constants;
             return std::unique_ptr<FluidProperty>(
                 new VogelsLiquidDynamicViscosity<VogelsViscosityConstantsWater>(
@@ -91,6 +111,8 @@ std::unique_ptr<FluidProperty> createViscosityModel(
         }
         else if (fluid_type == "CO2")
         {
+            //! \ogs_file_param{material__fluid__viscosity__Vogels__CO2}
+            config.checkConfigParameter("liquid_type", "CO2");
             const VogelsViscosityConstantsCO2 constants;
             return std::unique_ptr<FluidProperty>(
                 new VogelsLiquidDynamicViscosity<VogelsViscosityConstantsCO2>(
@@ -98,6 +120,8 @@ std::unique_ptr<FluidProperty> createViscosityModel(
         }
         else if (fluid_type == "CH4")
         {
+            //! \ogs_file_param{material__fluid__viscosity__Vogels__CH4}
+            config.checkConfigParameter("liquid_type", "CH4");
             const VogelsViscosityConstantsCH4 constants;
             return std::unique_ptr<FluidProperty>(
                 new VogelsLiquidDynamicViscosity<VogelsViscosityConstantsCH4>(
