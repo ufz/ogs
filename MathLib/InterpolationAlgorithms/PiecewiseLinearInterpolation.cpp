@@ -15,7 +15,9 @@
 #include <limits>
 #include <utility>
 
+#include "BaseLib/Error.h"
 #include "BaseLib/quicksort.h"
+
 #include "PiecewiseLinearInterpolation.h"
 
 namespace MathLib
@@ -33,15 +35,14 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
             _supp_pnts, static_cast<std::size_t>(0), _supp_pnts.size(),
             _values_at_supp_pnts);
     }
-    for (std::size_t i=0; i<_supp_pnts.size()-1; i++)
+
+    const auto it = std::adjacent_find(_supp_pnts.begin(), _supp_pnts.end());
+    if (it != _supp_pnts.end())
     {
-        if (std::fabs(_supp_pnts[i+1] - _supp_pnts[i])
-                                   < std::numeric_limits<double>::epsilon())
-        {
-            OGS_FATAL("Variable %d and variable %d are the same. "
-                      "Piecewise linear interpolation is not possible\n",
-                      i, i+1);
-        }
+        const std::size_t i = std::distance(_supp_pnts.begin(), it);
+        OGS_FATAL("Variable %d and variable %d are the same. "
+                  "Piecewise linear interpolation is not possible\n",
+                  i, i+1);
     }
 }
 
