@@ -70,6 +70,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
                               std::vector<MeshLib::MeshItemType>(
                                   1, MeshLib::MeshItemType::Node))));
 
+    // copy property vectors for nodes
     MeshLib::Properties const& src_properties = org_mesh.getProperties();
     for (auto name : src_properties.getPropertyVectorNames())
     {
@@ -80,23 +81,16 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
             continue;
 
         auto const n_src_comp = src_prop->getNumberOfComponents();
-        // convert 2D vector to 3D. Otherwise Paraview Calculator filter does not recognize
-        // it as a vector
-        auto const n_dest_comp = (n_src_comp==2) ? 3 : n_src_comp;
-
         auto new_prop =
             new_mesh->getProperties().createNewPropertyVector<double>(
-                name, MeshLib::MeshItemType::Node, n_dest_comp);
-        new_prop->resize(new_mesh->getNumberOfNodes() * n_dest_comp);
+                name, MeshLib::MeshItemType::Node, n_src_comp);
+        new_prop->resize(new_mesh->getNumberOfNodes() * n_src_comp);
 
-        // copy existing
+        // copy only base node values
         for (unsigned i=0; i<org_mesh.getNumberOfBaseNodes(); i++)
         {
             for (unsigned j=0; j<n_src_comp; j++)
-                (*new_prop)[i*n_dest_comp+j] = (*src_prop)[i*n_src_comp+j];
-            // set zero for components not existing in the original
-            for (unsigned j=n_src_comp; j<n_dest_comp; j++)
-                (*new_prop)[i*n_dest_comp+j] = 0;
+                (*new_prop)[i*n_src_comp+j] = (*src_prop)[i*n_src_comp+j];
         }
     }
 
