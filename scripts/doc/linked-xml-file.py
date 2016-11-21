@@ -34,7 +34,6 @@ docauxdir = os.path.abspath(docauxdir)
 outdir    = os.path.join(docauxdir, "dox", "CTestProjectFiles")
 
 tag_path_expansion_table = {
-    "prj__process_variables__process_variable__boundary_conditions__boundary_condition": "boundary_condition",
     "prj__linear_solvers__linear_solver":                                                "linear_solver",
     "prj__processes__process":                                                           "process",
     "prj__parameters__parameter":                                                        "parameter"

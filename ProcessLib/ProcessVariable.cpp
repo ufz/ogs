@@ -49,10 +49,10 @@ ProcessVariable::ProcessVariable(
              bcs_config->getConfigSubtreeList("boundary_condition"))
         {
             auto const geometrical_set_name =
-                    //! \ogs_file_param{boundary_condition__geometrical_set}
+                    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometrical_set}
                     bc_config.getConfigParameter<std::string>("geometrical_set");
             auto const geometry_name =
-                    //! \ogs_file_param{boundary_condition__geometry}
+                    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometry}
                     bc_config.getConfigParameter<std::string>("geometry");
 
             GeoLib::GeoObject const* const geometry =
@@ -69,7 +69,7 @@ ProcessVariable::ProcessVariable(
                 GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
 
             auto component_id =
-                //! \ogs_file_param{boundary_condition__component}
+                //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__component}
                 bc_config.getConfigParameterOptional<int>("component");
 
             if (!component_id)
