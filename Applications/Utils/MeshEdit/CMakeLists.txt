@@ -96,6 +96,7 @@ install(TARGETS
     AddTopLayer
     appendLinesAlongPolyline
     checkMesh
+    convertToLinearMesh
     CreateBoundaryConditionsAlongPolylines
     createLayeredMeshFromRasters
     createQuadraticeMesh
