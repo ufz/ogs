@@ -69,15 +69,15 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
                                 vec_vec_fracture_elements,
                                 vec_vec_fracture_matrix_elements,
                                 vec_vec_fracture_nodes);
-    _vec_fracutre_elements.insert(_vec_fracutre_elements.begin(), vec_vec_fracture_elements[0].begin(), vec_vec_fracture_elements[0].end());
-    _vec_fracutre_matrix_elements.insert(_vec_fracutre_matrix_elements.begin(), vec_vec_fracture_matrix_elements[0].begin(), vec_vec_fracture_matrix_elements[0].end());
-    _vec_fracutre_nodes.insert(_vec_fracutre_nodes.begin(), vec_vec_fracture_nodes[0].begin(), vec_vec_fracture_nodes[0].end());
+    _vec_fracture_elements.insert(_vec_fracture_elements.begin(), vec_vec_fracture_elements[0].begin(), vec_vec_fracture_elements[0].end());
+    _vec_fracture_matrix_elements.insert(_vec_fracture_matrix_elements.begin(), vec_vec_fracture_matrix_elements[0].begin(), vec_vec_fracture_matrix_elements[0].end());
+    _vec_fracture_nodes.insert(_vec_fracture_nodes.begin(), vec_vec_fracture_nodes[0].begin(), vec_vec_fracture_nodes[0].end());
 
-    if (!_vec_fracutre_elements.empty())
+    if (!_vec_fracture_elements.empty())
     {
         // set fracture property assuming a fracture forms a straight line
         setFractureProperty(GlobalDim,
-                            *_vec_fracutre_elements[0],
+                            *_vec_fracture_elements[0],
                             *_process_data.fracture_property.get());
 
     }
@@ -107,10 +107,10 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     _mesh_subset_nodes_p.reset(new MeshLib::MeshSubset(_mesh, &_mesh_nodes_p));
     // regular u
     _mesh_subset_matrix_nodes.reset(new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
-    if (!_vec_fracutre_nodes.empty())
+    if (!_vec_fracture_nodes.empty())
     {
         // u jump
-        _mesh_subset_fracture_nodes.reset(new MeshLib::MeshSubset(_mesh, &_vec_fracutre_nodes));
+        _mesh_subset_fracture_nodes.reset(new MeshLib::MeshSubset(_mesh, &_vec_fracture_nodes));
     }
 
     // Collect the mesh subsets in a vector.
@@ -132,7 +132,7 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
                 new MeshLib::MeshSubsets{_mesh_subset_matrix_nodes.get()}};
         });
     vec_var_elements.push_back(&_vec_matrix_elements);
-    if (!_vec_fracutre_nodes.empty())
+    if (!_vec_fracture_nodes.empty())
     {
         // displacement jump
         vec_n_components.push_back(GlobalDim);
@@ -143,7 +143,7 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
                 return std::unique_ptr<MeshLib::MeshSubsets>{
                     new MeshLib::MeshSubsets{_mesh_subset_fracture_nodes.get()}};
             });
-        vec_var_elements.push_back(&_vec_fracutre_matrix_elements);
+        vec_var_elements.push_back(&_vec_fracture_matrix_elements);
     }
 
     INFO("[LIE/HM] creating a DoF table");
@@ -205,7 +205,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     mesh_prop_velocity->resize(mesh.getNumberOfElements() * 3);
     _process_data.mesh_prop_velocity = mesh_prop_velocity;
 
-    if (!_vec_fracutre_elements.empty())
+    if (!_vec_fracture_elements.empty())
     {
         auto mesh_prop_levelset =
                 const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("levelset1", MeshLib::MeshItemType::Cell);
