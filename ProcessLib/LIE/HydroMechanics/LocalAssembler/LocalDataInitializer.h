@@ -296,7 +296,6 @@ private:
 
     NumLib::LocalToGlobalIndexMap const& _dof_table;
 
-    // local assembler builder implementations.
 private:
     /// Generates a function that creates a new LocalAssembler of type
     /// LAData<ShapeFunctionDisplacement>. Only functions with shape function's
