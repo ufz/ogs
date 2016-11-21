@@ -35,7 +35,6 @@ outdir    = os.path.join(docauxdir, "dox", "CTestProjectFiles")
 
 tag_path_expansion_table = {
     "prj__processes__process":                                                           "process",
-    "prj__parameters__parameter":                                                        "parameter"
 }
 
 indent = "&nbsp;"*2

@@ -19,10 +19,10 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    //! \ogs_file_param{parameter__type}
+    //! \ogs_file_param{prj__parameters__parameter__type}
     config.checkConfigParameter("type", "CurveScaled");
 
-    //! \ogs_file_param{parameter__CurveScaled__curve}
+    //! \ogs_file_param{prj__parameters__parameter__CurveScaled__curve}
     auto curve_name = config.getConfigParameter<std::string>("curve");
     DBUG("Using curve %s", curve_name.c_str());
 
@@ -30,7 +30,7 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
     if (curve_it == curves.end())
         OGS_FATAL("Curve `%s' does not exists.", curve_name.c_str());
 
-    //! \ogs_file_param{parameter__CurveScaled__parameter}
+    //! \ogs_file_param{prj__parameters__parameter__CurveScaled__parameter}
     auto referenced_parameter_name =
             config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", referenced_parameter_name.c_str());

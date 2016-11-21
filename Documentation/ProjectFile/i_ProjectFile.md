@@ -15,8 +15,8 @@ different prefixes, namely:
    Usually one can choose one of several cases by specifying the associated
    <tt>&lt;type&gt;</tt> tag in the input file.<br>
    Example: \ref ogs_file_param__prj__linear_solvers__linear_solver
-   and \ref ogs_file_param__parameter__Constant (<tt>&lt;type&gt;Constant&lt;/type&gt;</tt>)
-   vs. \ref ogs_file_param__parameter__MeshNode (<tt>&lt;type&gt;MeshNode&lt;/type&gt;</tt>)
+   and \ref ogs_file_param__prj__parameters__parameter__Constant (<tt>&lt;type&gt;Constant&lt;/type&gt;</tt>)
+   vs. \ref ogs_file_param__prj__parameters__parameter__MeshNode (<tt>&lt;type&gt;MeshNode&lt;/type&gt;</tt>)
 
 The input file parameters are documented within a tree structure (cf. the
 navigation tree on the left). This structure resembles the XML document tree of
@@ -48,13 +48,13 @@ prefix:
     <tt>process_variables.process_variable.boundary_conditions.boundary_condition.geometry</tt>.
  2. Cases that distinguish types do not translate to XML tags either.
     They enclose a set of configuration settings that can be used at that specific point.<br>
-    Example: There is a \ref ogs_file_param__parameter__MeshNode "MeshNode"
+    Example: There is a \ref ogs_file_param__prj__parameters__parameter__MeshNode "MeshNode"
     initial condition, which has a \ref
-    ogs_file_param__parameter__MeshNode__field_name "field_name" tag.  I.e., if you
+    ogs_file_param__prj__parameters__parameter__MeshNode__field_name "field_name" tag.  I.e., if you
     configure the MeshNode parameter, you can (or must) specify the XML tag with the
     path <tt>parameters.parameter.field_name</tt> in the project file.<br> A
     MeshNode parameter can be defined by setting the \ref
-    ogs_file_param__parameter__type "parameters.parameter.type" tag to
+    ogs_file_param__prj__parameters__parameter__type "parameters.parameter.type" tag to
     <tt>MeshNode</tt>.
 
 # Further Information

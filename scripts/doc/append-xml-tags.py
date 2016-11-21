@@ -37,7 +37,6 @@ docdir    = os.path.join(docauxdir, "dox", "ProjectFile")
 # that are used in the prj file.
 tag_path_expansion_table = {
     "process":            "processes.process",
-    "parameter":          "parameters.parameter",
     "prj": "",
 }
 

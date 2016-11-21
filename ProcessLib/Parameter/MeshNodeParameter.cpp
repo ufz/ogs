@@ -18,9 +18,9 @@ std::unique_ptr<ParameterBase> createMeshNodeParameter(
     std::string const& name, BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh)
 {
-    //! \ogs_file_param{parameter__type}
+    //! \ogs_file_param{prj__parameters__parameter__type}
     config.checkConfigParameter("type", "MeshNode");
-    //! \ogs_file_param{parameter__MeshNode__field_name}
+    //! \ogs_file_param{prj__parameters__parameter__MeshNode__field_name}
     auto const field_name = config.getConfigParameter<std::string>("field_name");
     DBUG("Using field_name %s", field_name.c_str());
 

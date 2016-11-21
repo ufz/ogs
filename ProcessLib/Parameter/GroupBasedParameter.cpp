@@ -19,11 +19,11 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     std::string const& name, BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh)
 {
-    //! \ogs_file_param{parameter__type}
+    //! \ogs_file_param{prj__parameters__parameter__type}
     config.checkConfigParameter("type", "Group");
 
     // get a property vector of group IDs
-    //! \ogs_file_param{parameter__Group__group_id_property}
+    //! \ogs_file_param{prj__parameters__parameter__Group__group_id_property}
     std::string const group_id_property_name = config.getConfigParameter<std::string>("group_id_property");
     DBUG("Using group_id_property %s", group_id_property_name.c_str());
 
@@ -37,13 +37,13 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     typedef std::vector<double> Values;
     typedef std::pair<int, Values> Index_Values;
     std::vector<Index_Values> vec_index_values;
-    //! \ogs_file_param{parameter__Group__index_values}
+    //! \ogs_file_param{prj__parameters__parameter__Group__index_values}
     for (auto p : config.getConfigSubtreeList("index_values"))
     {
-        //! \ogs_file_param{parameter__Group__index_values__index}
+        //! \ogs_file_param{prj__parameters__parameter__Group__index_values__index}
         auto const index = p.getConfigParameter<int>("index");
         {
-            //! \ogs_file_param{parameter__Group__index_values__value}
+            //! \ogs_file_param{prj__parameters__parameter__Group__index_values__value}
             auto const value = p.getConfigParameterOptional<double>("value");
 
             if (value)
@@ -55,7 +55,7 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
         }
 
         // Value tag not available; continue with required values tag.
-        //! \ogs_file_param{parameter__Group__index_values__values}
+        //! \ogs_file_param{prj__parameters__parameter__Group__index_values__values}
         Values const values = p.getConfigParameter<Values>("values");
 
         if (values.empty())
