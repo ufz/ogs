@@ -244,10 +244,6 @@ assembleBlockMatricesWithJacobian(
         storage_p.noalias() += N_p.transpose() * S * N_p * ip_w;
 
         rhs_p.noalias() += dNdx_p.transpose() * rho_fr * k_over_mu * gravity_vec * ip_w;
-
-        //
-        // pressure equation, displacement part.
-        //
     }
 
     // displacement equation, pressure part
