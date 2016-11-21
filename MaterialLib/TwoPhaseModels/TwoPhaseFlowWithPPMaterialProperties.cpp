@@ -121,7 +121,7 @@ Eigen::MatrixXd const& TwoPhaseFlowWithPPMaterialProperties::getPermeability(
 
 double TwoPhaseFlowWithPPMaterialProperties::getPorosity(
     const double /*t*/, const ProcessLib::SpatialPosition& /*pos*/,
-    const double p, const double T, const double porosity_variable) const
+    const double /*p*/, const double T, const double porosity_variable) const
 {
     const double porosity =
         _porosity_models[_current_material_id]->getValue(porosity_variable, T);
