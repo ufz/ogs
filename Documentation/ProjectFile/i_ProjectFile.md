@@ -14,7 +14,7 @@ different prefixes, namely:
    file.<br>
    Usually one can choose one of several cases by specifying the associated
    <tt>&lt;type&gt;</tt> tag in the input file.<br>
-   Example: \ref ogs_file_param__linear_solver
+   Example: \ref ogs_file_param__prj__linear_solvers__linear_solver
    and \ref ogs_file_param__parameter__Constant (<tt>&lt;type&gt;Constant&lt;/type&gt;</tt>)
    vs. \ref ogs_file_param__parameter__MeshNode (<tt>&lt;type&gt;MeshNode&lt;/type&gt;</tt>)
 

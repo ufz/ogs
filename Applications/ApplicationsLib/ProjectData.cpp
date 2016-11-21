@@ -471,7 +471,7 @@ void ProjectData::parseLinearSolvers(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{prj__linear_solvers__linear_solver}
     for (auto conf : config.getConfigSubtreeList("linear_solver"))
     {
-        //! \ogs_file_param{linear_solver__name}
+        //! \ogs_file_param{prj__linear_solvers__linear_solver__name}
         auto const name = conf.getConfigParameter<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(
             _linear_solvers,
