@@ -91,9 +91,6 @@ ProcessVariable::ProcessVariable(
     } else {
         INFO("No boundary conditions found.");
     }
-
-    // Source Terms
-    config.ignoreConfigParameter("source_terms");
 }
 
 ProcessVariable::ProcessVariable(ProcessVariable&& other)
