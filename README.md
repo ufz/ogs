@@ -3,6 +3,7 @@ OpenGeoSys 6
 
 [![Tag](https://img.shields.io/github/tag/ufz/ogs.svg?style=flat-square)](https://github.com/ufz/ogs/releases)
 [![BSD License (modified)](http://img.shields.io/badge/license-BSD-blue.svg?style=flat-square)](https://github.com/ufz/ogs/blob/master/LICENSE.txt)
+[![Build Status](https://jenkins.opengeosys.org/buildStatus/icon?job=OGS-6/ufz/master)](https://jenkins.opengeosys.org/job/OGS-6/ufz/master)
 [![Travis](https://img.shields.io/travis/ufz/ogs.svg?style=flat-square)](https://travis-ci.org/ufz/ogs)
 [![DOI](https://zenodo.org/badge/4228/ufz/ogs.svg)](https://zenodo.org/badge/latestdoi/4228/ufz/ogs)
 
@@ -39,6 +40,6 @@ publications. See the [LICENSE.txt][license-source] for the license text.
 
 [ogs]: http://www.opengeosys.org
 [devguide]: http://docs.opengeosys.org/docs/devguide
-[jenkins-ci]: https://svn.ufz.de:8443/job/OGS-6/
+[jenkins-ci]: https://jenkins.opengeosys.org/job/OGS-6/job/ufz/job/master/
 [docs]: http://doxygen.opengeosys.org
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt
