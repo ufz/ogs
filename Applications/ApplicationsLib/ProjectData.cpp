@@ -368,7 +368,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     break;
                 default:
                     OGS_FATAL(
-                        "SMALL_DEFORMATION_WITH_LIE process does not support "
+                        "HYDRO_MECHANICS_WITH_LIE process does not support "
                         "given dimension");
             }
         }
