@@ -61,7 +61,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                           IntegrationMethod, GlobalDim>(
                 e, is_axially_symmetric, integration_method);
 
-    auto const* frac_prop = _process_data.fracture_property.get();
+    auto const& frac_prop = *_process_data.fracture_property.get();
 
     SpatialPosition x_position;
     x_position.setElementID(e.getID());
@@ -91,7 +91,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         ip_data.sigma_eff.resize(GlobalDim);
         ip_data.sigma_eff_prev.resize(GlobalDim);
         ip_data.C.resize(GlobalDim, GlobalDim);
-        ip_data.aperture0 = (*frac_prop->aperture0)(0, x_position)[0];
+        ip_data.aperture0 = (*frac_prop.aperture0)(0, x_position)[0];
         ip_data.aperture = ip_data.aperture0;
 
         auto const initial_effective_stress = _process_data.initial_fracture_effective_stress(0, x_position);
