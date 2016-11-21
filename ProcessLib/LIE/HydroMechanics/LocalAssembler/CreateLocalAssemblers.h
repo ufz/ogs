@@ -48,7 +48,7 @@ void createLocalAssemblers(
                              LocalAssemblerFractureImplementation,
                              GlobalDim, ExtraCtorArgs...>;
 
-    DBUG("Create local assemblers.");
+    DBUG("Create local assemblers for HydroMechanics with LIE.");
     // Populate the vector of local assemblers.
     local_assemblers.resize(mesh_elements.size());
 
@@ -88,8 +88,6 @@ void createLocalAssemblers(
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
     ExtraCtorArgs&&... extra_ctor_args)
 {
-    DBUG("Create local assemblers.");
-
     detail::createLocalAssemblers<GlobalDim,
                                   LocalAssemblerMatrixImplementation,
                                   LocalAssemblerMatrixNearFractureImplementation,
