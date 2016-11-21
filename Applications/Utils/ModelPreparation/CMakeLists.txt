@@ -19,4 +19,16 @@ target_link_libraries(createNeumannBc
     ${OGS_VTK_REQUIRED_LIBS}
 )
 
+add_executable(convertVtkDataArrayToVtkDataArray ConvertVtkDataArrayToVtkDataArray.cpp )
+target_link_libraries(convertVtkDataArrayToVtkDataArray MeshLib)
+set_target_properties(convertVtkDataArrayToVtkDataArray PROPERTIES FOLDER Utilities)
+
 add_subdirectory(PartitionMesh)
+
+####################
+### Installation ###
+####################
+install(TARGETS
+    convertVtkDataArrayToVtkDataArray
+    RUNTIME DESTINATION bin COMPONENT Utilities
+)
