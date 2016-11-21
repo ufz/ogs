@@ -18,7 +18,7 @@
 namespace MeshLib
 {
 
-/// Converts a non-linear mesh to a linear meash. All the mesh properties will
+/// Converts a non-linear mesh to a linear mesh. All the mesh properties will
 /// be copied except for entries for non-linear nodes.
 std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
     const MeshLib::Mesh& mesh, const std::string& new_mesh_name);
