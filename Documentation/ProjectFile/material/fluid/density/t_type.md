@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Type of density model

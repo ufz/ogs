@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+\copydoc MaterialLib::Fluid::IdealGasLaw::_molar_mass
