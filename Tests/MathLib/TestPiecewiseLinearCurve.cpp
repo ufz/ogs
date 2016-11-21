@@ -45,7 +45,7 @@ TEST(MathLibCurve, PiecewiseLinearCurveParsing)
         20, 10, 5., 3., 2,
     };
 
-    ASSERT_EQ(true, curve->isMonotonic());
+    ASSERT_EQ(true, curve->isStrongMonotonic());
 
     // Get inverse values and compare them
     for (std::size_t i = 0; i < x.size(); ++i)
@@ -79,7 +79,7 @@ TEST(MathLibCurve, MonotonicIncreasePiecewiseLinearCurve)
     MathLib::PiecewiseLinearCurve curve =
         MathLib::PiecewiseLinearCurve(std::move(x_cpy), std::move(y_cpy));
 
-    ASSERT_EQ(true, curve.isMonotonic());
+    ASSERT_EQ(true, curve.isStrongMonotonic());
 
     // Get inverse values and compare them
     for (std::size_t i = 0; i < size; ++i)
@@ -111,7 +111,7 @@ TEST(MathLibCurve, MonotonicDecreasePiecewiseLinearCurve)
     MathLib::PiecewiseLinearCurve curve =
         MathLib::PiecewiseLinearCurve(std::move(x_cpy), std::move(y_cpy));
 
-    ASSERT_EQ(true, curve.isMonotonic());
+    ASSERT_EQ(true, curve.isStrongMonotonic());
 
     // Get inverse values and compare them
     for (std::size_t i = 0; i < size; ++i)

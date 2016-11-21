@@ -18,7 +18,7 @@
 
 namespace MathLib
 {
-bool PiecewiseLinearCurve::isMonotonic() const
+bool PiecewiseLinearCurve::isStrongMonotonic() const
 {
     const double gradient0 = getDerivative(_supp_pnts[0]);
 
@@ -75,11 +75,13 @@ double PiecewiseLinearCurve::getVariable(const double y) const
         }
     }
 
-    // compute linear interpolation polynom: y = m * (x - support[i]) + value[i]
+    // compute gradient: m = (x_{i+1} - x_i) / (y_{i+1} - y_i)
     const double m = (_supp_pnts[interval_idx + 1] - _supp_pnts[interval_idx]) /
                      (_values_at_supp_pnts[interval_idx + 1] -
                       _values_at_supp_pnts[interval_idx]);
 
+    // compute the variable by linear interpolation:  x = m * (y - y_i) + x_i,
+    // and then return the result.
     return m * (y - _values_at_supp_pnts[interval_idx]) +
            _supp_pnts[interval_idx];
 }

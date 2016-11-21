@@ -36,10 +36,10 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
     for (std::size_t i=0; i<_supp_pnts.size()-1; i++)
     {
         if (std::fabs(_supp_pnts[i+1] - _supp_pnts[i])
-                                   < std::numeric_limits<double>::min())
+                                   < std::numeric_limits<double>::epsilon())
         {
             OGS_FATAL("Variable %d and variable %d are the same. "
-                      "Piece wise linear interpolation is not possible\n",
+                      "Piecewise linear interpolation is not possible\n",
                       i, i+1);
         }
     }

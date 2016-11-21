@@ -17,8 +17,6 @@
 
 namespace MathLib
 {
-class PiecewiseLinearInterpolation;
-
 class PiecewiseLinearCurve final : public PiecewiseLinearInterpolation
 {
 public:
@@ -33,8 +31,15 @@ public:
 
     ~PiecewiseLinearCurve() = default;
 
-    /// Check monotonicity of this curve.
-    bool isMonotonic() const;
+    /**
+     *  Check monotonicity of this curve such as
+     *  for any \f$i\f$,
+     *    \f$y(x_{i+1})>y(x_{i})\f$ if \f$x_{i+1}>x_{i}\f$
+     *  or for any \f$i\f$
+     *    \f$y(x_{i+1})<y(x_{i})\f$ if \f$x_{i+1}>x_{i}\f$
+     *  \return True if the curve exhibits strong monotonic.
+     */
+    bool isStrongMonotonic() const;
 
     /// Get variable by a given value \c y.
     //  monotonicity must be check for the curve for using this function
