@@ -88,7 +88,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
             element_index, _integration_point_values_cache);
 
     auto const& N_0 = extrapolatables.getShapeMatrix(element_index, 0);
-    const unsigned num_nodes = N_0.cols();
+    const unsigned num_nodes = static_cast<unsigned>(N_0.cols());
     const unsigned num_int_pts = integration_point_values.size();
 
     assert(num_int_pts >= num_nodes &&

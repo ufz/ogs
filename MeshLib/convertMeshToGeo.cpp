@@ -63,12 +63,11 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
     const std::vector<MeshLib::Element*> &elements = mesh.getElements();
     const std::size_t nElems (mesh.getNumberOfElements());
 
-    auto materialIds = mesh.getProperties().getPropertyVector<int>(mat_name);
-    auto const materialIdExist = bool(materialIds);
+    auto const materialIds = mesh.getProperties().getPropertyVector<int>(mat_name);
 
     for (unsigned i=0; i<nElems; ++i)
     {
-        auto surfaceId = materialIdExist ? (*materialIds)[i]-bounds.first : 0;
+        auto surfaceId = !materialIds ? 0 : ((*materialIds)[i] - bounds.first);
         MeshLib::Element* e (elements[i]);
         if (e->getGeomType() == MeshElemType::TRIANGLE)
             (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)], id_map[e->getNodeIndex(1)], id_map[e->getNodeIndex(2)]);
