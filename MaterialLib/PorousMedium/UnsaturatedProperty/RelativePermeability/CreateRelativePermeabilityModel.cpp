@@ -41,16 +41,16 @@ namespace PorousMedium
 std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__type}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten}
     config.checkConfigParameter("type", "WettingPhaseVanGenuchten");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseVanGenuchten__sr}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__sr}
     const double Sr = config.getConfigParameter<double>("sr");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseVanGenuchten__smax}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__smax}
     const double Smax = config.getConfigParameter<double>("smax");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseVanGenuchten__m}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__m}
     const double m = config.getConfigParameter<double>("m");
     if (m < 0. || m > 1.0)  // m <= 1
     {
@@ -58,7 +58,7 @@ std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
             "The exponent parameter of WettingPhaseVanGenuchten relative\n"
             " permeability model, m, must be in an interval of [0, 1]");
     }
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseVanGenuchten__krel_min}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__krel_min}
     const double krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
@@ -73,16 +73,16 @@ std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
 std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__type}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten}
     config.checkConfigParameter("type", "NonWettingPhaseVanGenuchten");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__sr}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__sr}
     const double Sr = config.getConfigParameter<double>("sr");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__smax}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__smax}
     const double Smax = config.getConfigParameter<double>("smax");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__m}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__m}
     const double m = config.getConfigParameter<double>("m");
     if (m < 0. || m > 1.0)  // m <= 1
     {
@@ -91,7 +91,7 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
             " permeability model, m, must be in an interval of [0, 1]");
     }
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__krel_min}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__krel_min}
     const double krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
@@ -106,16 +106,16 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
 std::unique_ptr<RelativePermeability> createWettingPhaseBrookCoreyOilGas(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__type}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas}
     config.checkConfigParameter("type", "WettingPhaseBrookCoreyOilGas");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__sr}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__sr}
     const double Sr = config.getConfigParameter<double>("sr");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__smax}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__smax}
     const double Smax = config.getConfigParameter<double>("smax");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__m}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__m}
     const double m = config.getConfigParameter<double>("m");
     if (m < 1.0)  // m >= 1
     {
@@ -124,7 +124,7 @@ std::unique_ptr<RelativePermeability> createWettingPhaseBrookCoreyOilGas(
             "relative permeability model, m, must not be smaller than 1");
     }
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__krel_min}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__krel_min}
     const double krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
@@ -139,16 +139,16 @@ std::unique_ptr<RelativePermeability> createWettingPhaseBrookCoreyOilGas(
 std::unique_ptr<RelativePermeability> createNonWettingPhaseBrookCoreyOilGas(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__type}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas}
     config.checkConfigParameter("type", "NonWettingPhaseBrookCoreyOilGas");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__sr}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__sr}
     const double Sr = config.getConfigParameter<double>("sr");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__smax}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__smax}
     const double Smax = config.getConfigParameter<double>("smax");
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__m}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__m}
     const double m = config.getConfigParameter<double>("m");
     if (m < 1.0)  // m >= 1
     {
@@ -157,7 +157,7 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseBrookCoreyOilGas(
             "relative permeability model, m, must not be smaller than 1");
     }
 
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__krel_min}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__krel_min}
     const double krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
@@ -167,7 +167,7 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseBrookCoreyOilGas(
 std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__type}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__type}
     auto const type = config.peekConfigParameter<std::string>("type");
 
     if (type == "WettingPhaseVanGenuchten")
@@ -188,18 +188,19 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     }
     else if (type == "Curve")
     {
+        //! \ogs_file_param{material__porous_medium__relative_permeability__Curve}
         config.checkConfigParameter("type", "Curve");
 
         // TODO: parsing of curve will be replaced by the function for creating
         // curve.
-        //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve__curve}
+        //! \ogs_file_param{material__porous_medium__relative_permeability__Curve__curve}
         auto const& curve_config = config.getConfigSubtree("curve");
 
         auto variables =
-            //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve__curve__coords}
+            //! \ogs_file_param{material__porous_medium__relative_permeability__Curve__curve__coords}
             curve_config.getConfigParameter<std::vector<double>>("coords");
         auto values =
-            //! \ogs_file_param{material_property__porous_medium__porous_medium__relative_permeability__Curve__curve__values}
+            //! \ogs_file_param{material__porous_medium__relative_permeability__Curve__curve__values}
             curve_config.getConfigParameter<std::vector<double>>("values");
 
         if (variables.empty() || values.empty())
