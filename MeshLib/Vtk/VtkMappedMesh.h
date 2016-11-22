@@ -34,7 +34,7 @@ class VtkMappedMeshImpl : public vtkObject
 public:
     static VtkMappedMeshImpl *New();
     virtual void PrintSelf(std::ostream &os, vtkIndent indent);
-    vtkTypeMacro(VtkMappedMeshImpl, vtkObject)
+    vtkTypeMacro(VtkMappedMeshImpl, vtkObject);
 
     void SetNodes(std::vector<MeshLib::Node*> const & nodes);
     void SetElements(std::vector<MeshLib::Element*> const & elements);

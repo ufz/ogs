@@ -54,7 +54,7 @@ class VtkMappedMeshSource final : public vtkUnstructuredGridAlgorithm
 {
 public:
     static VtkMappedMeshSource *New();
-    vtkTypeMacro(VtkMappedMeshSource, vtkUnstructuredGridAlgorithm)
+    vtkTypeMacro(VtkMappedMeshSource, vtkUnstructuredGridAlgorithm);
     void PrintSelf(std::ostream &os, vtkIndent indent);
 
     /// Sets the mesh. Calling is mandatory

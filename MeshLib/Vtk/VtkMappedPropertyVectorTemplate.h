@@ -30,8 +30,8 @@ class VtkMappedPropertyVectorTemplate :
                            vtkMappedDataArray<Scalar> >
 {
 public:
-    vtkMappedDataArrayNewInstanceMacro(VtkMappedPropertyVectorTemplate<Scalar>)
-    static VtkMappedPropertyVectorTemplate *New();
+    vtkMappedDataArrayNewInstanceMacro(VtkMappedPropertyVectorTemplate<Scalar>);
+    static VtkMappedPropertyVectorTemplate* New();
     virtual void PrintSelf(std::ostream &os, vtkIndent indent);
 
     // Description:
