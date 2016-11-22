@@ -40,12 +40,11 @@ if (helper.isRelease(this)) {
         }
     }
 }
-if (helper.isOriginMaster(this)) {
-    builders['docs'] = {
-        node('docker') {
-            dir('ogs') { checkout scm }
-            load 'ogs/scripts/jenkins/docs.groovy'
-        }
+
+builders['docs'] = {
+    node('docker') {
+        dir('ogs') { checkout scm }
+        load 'ogs/scripts/jenkins/docs.groovy'
     }
 }
 
