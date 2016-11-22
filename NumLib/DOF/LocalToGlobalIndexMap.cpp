@@ -37,13 +37,6 @@ LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
     std::vector<MeshLib::Node*> const& nodes, std::size_t const mesh_id,
     const unsigned comp_id, const unsigned comp_id_write)
 {
-    // _rows should be resized based on an element ID
-    std::size_t max_elem_id = 0;
-    for (ElementIterator e = first; e != last; ++e)
-        max_elem_id = std::max(max_elem_id, (*e)->getID());
-    if (max_elem_id+1 > static_cast<unsigned>(_rows.rows()))
-        _rows.conservativeResize(max_elem_id + 1, _mesh_subsets.size());
-
     std::unordered_set<MeshLib::Node*> const set_nodes(nodes.begin(), nodes.end());
 
     // For each element find the global indices for node/element
@@ -161,6 +154,14 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     // For all MeshSubsets and each of their MeshSubset's and each element
     // of that MeshSubset save a line of global indices.
 
+    // _rows should be resized based on an element ID
+    std::size_t max_elem_id = 0;
+    for (std::vector<MeshLib::Element*>const* eles : vec_var_elements)
+    {
+        for (auto e : *eles)
+            max_elem_id = std::max(max_elem_id, e->getID());
+    }
+    _rows.resize(max_elem_id + 1, _mesh_subsets.size());
 
     std::size_t offset = 0;
     for (int variable_id = 0; variable_id < static_cast<int>(vec_var_n_components.size());
