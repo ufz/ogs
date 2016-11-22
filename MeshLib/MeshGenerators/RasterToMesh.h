@@ -35,9 +35,13 @@ class RasterToMesh
 {
 public:
     /**
-     * Converts greyscale raster into a mesh
-     * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
-     * \param intensity_type defines how image intensities are interpreted
+     * Converts greyscale raster into a mesh.
+     * \param raster         input raster.
+     * \param elem_type      defines if elements of the new mesh should be
+     *                       triangles or quads (or hexes for 3D).
+     * \param intensity_type defines how image intensities are interpreted.
+     * \param array_name     mesh property name, defaults to "Colour" if not
+     *                       given.
      */
     static MeshLib::Mesh* convert(GeoLib::Raster const& raster,
                                   MeshElemType elem_type,
@@ -46,8 +50,14 @@ public:
 
     /**
      * Converts a vtkImageData into a mesh.
-     * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
-     * \param intensity_type defines how image intensities are interpreted
+     * \param img            input image.
+     * \param origin         coordinates of image's origin, lower left corner.
+     * \param scalingFactor  edge length of each pixel
+     * \param elem_type      defines if elements of the new mesh should be
+     *                       triangles or quads (or hexes for 3D).
+     * \param intensity_type defines how image intensities are interpreted.
+     * \param array_name     mesh property name, defaults to "Colour" if not
+     *                       given.
      */
     static MeshLib::Mesh* convert(vtkImageData* img,
                                   const double origin[3],
@@ -58,8 +68,13 @@ public:
 
     /**
      * Converts double array with raster values into a mesh.
-     * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
-     * \param intensity_type defines how image intensities are interpreted
+     * \param img            input image.
+     * \param header         raster header information.
+     * \param elem_type      defines if elements of the new mesh should be
+     *                       triangles or quads (or hexes for 3D).
+     * \param intensity_type defines how image intensities are interpreted.
+     * \param array_name     mesh property name, defaults to "Colour" if not
+     *                       given.
      */
     static MeshLib::Mesh* convert(const double* img,
                                   GeoLib::RasterHeader const& header,
