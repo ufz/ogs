@@ -21,13 +21,13 @@
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 
 std::unique_ptr<MathLib::PiecewiseLinearCurve> createPiecewiseLinearCurve(
-    const char xml[])
+    const char xml[], bool const check_monotonicity = false)
 {
     auto const ptree = readXml(xml);
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("curve");
-    return MathLib::createPiecewiseLinearCurve(sub_config);
+    return MathLib::createPiecewiseLinearCurve(sub_config, check_monotonicity);
 }
 
 TEST(MathLibCurve, PiecewiseLinearCurveParsing)
@@ -38,14 +38,13 @@ TEST(MathLibCurve, PiecewiseLinearCurveParsing)
         "   <coords> 0.2 0.4 0.5 0.6 0.7</coords>"
         "   <values> 20  10. 5.  3.  2. </values> "
         "</curve>";
-    auto const curve = createPiecewiseLinearCurve(xml);
+    const bool check_monotonicity = true;
+    auto const curve = createPiecewiseLinearCurve(xml, check_monotonicity);
 
     std::vector<double> x = {0.2, 0.4, 0.5, 0.6, 0.7};
     std::vector<double> y = {
         20, 10, 5., 3., 2,
     };
-
-    ASSERT_EQ(true, curve->isStrongMonotonic());
 
     // Get inverse values and compare them
     for (std::size_t i = 0; i < x.size(); ++i)
@@ -76,10 +75,10 @@ TEST(MathLibCurve, MonotonicIncreasePiecewiseLinearCurve)
     std::vector<double> x_cpy = x;
     std::vector<double> y_cpy = y;
 
-    MathLib::PiecewiseLinearCurve curve =
-        MathLib::PiecewiseLinearCurve(std::move(x_cpy), std::move(y_cpy));
+    const bool check_monotonicity = true;
 
-    ASSERT_EQ(true, curve.isStrongMonotonic());
+    MathLib::PiecewiseLinearCurve curve =
+        MathLib::PiecewiseLinearCurve(std::move(x_cpy), std::move(y_cpy), check_monotonicity);
 
     // Get inverse values and compare them
     for (std::size_t i = 0; i < size; ++i)
@@ -108,10 +107,9 @@ TEST(MathLibCurve, MonotonicDecreasePiecewiseLinearCurve)
     std::vector<double> x_cpy = x;
     std::vector<double> y_cpy = y;
 
+    const bool check_monotonicity = true;
     MathLib::PiecewiseLinearCurve curve =
-        MathLib::PiecewiseLinearCurve(std::move(x_cpy), std::move(y_cpy));
-
-    ASSERT_EQ(true, curve.isStrongMonotonic());
+        MathLib::PiecewiseLinearCurve(std::move(x_cpy), std::move(y_cpy), check_monotonicity);
 
     // Get inverse values and compare them
     for (std::size_t i = 0; i < size; ++i)

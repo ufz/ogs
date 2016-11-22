@@ -16,6 +16,8 @@
 #include <cmath>
 #include <limits>
 
+#include "BaseLib/Error.h"
+
 namespace MathLib
 {
 bool PiecewiseLinearCurve::isStrongMonotonic() const
@@ -35,6 +37,13 @@ bool PiecewiseLinearCurve::isStrongMonotonic() const
 
 double PiecewiseLinearCurve::getVariable(const double y) const
 {
+    if (!_is_monotonic)
+    {
+        OGS_FATAL(
+            "The given curve is not monotonic or its monotonicity is\n"
+            "not checked. getVariable() cannot be used.");
+    }
+
     std::size_t interval_idx = 0;
     if (_values_at_supp_pnts.front() < _values_at_supp_pnts.back())
     {
@@ -75,15 +84,17 @@ double PiecewiseLinearCurve::getVariable(const double y) const
         }
     }
 
+    const double xi_1 = _supp_pnts[interval_idx + 1];
+    const double xi = _supp_pnts[interval_idx];
+    const double yi_1 = _values_at_supp_pnts[interval_idx + 1];
+    const double yi = _values_at_supp_pnts[interval_idx];
+
     // compute gradient: m = (x_{i+1} - x_i) / (y_{i+1} - y_i)
-    const double m = (_supp_pnts[interval_idx + 1] - _supp_pnts[interval_idx]) /
-                     (_values_at_supp_pnts[interval_idx + 1] -
-                      _values_at_supp_pnts[interval_idx]);
+    const double m = (xi_1 - xi) / (yi_1 - yi);
 
     // compute the variable by linear interpolation:  x = m * (y - y_i) + x_i,
     // and then return the result.
-    return m * (y - _values_at_supp_pnts[interval_idx]) +
-           _supp_pnts[interval_idx];
+    return m * (y - yi) + xi;
 }
 
 }  // namespace

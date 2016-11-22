@@ -24,10 +24,12 @@ namespace MathLib
 {
 class PiecewiseLinearCurve;
 
-/// Create a curve
-/// \param config  ConfigTree object has a tag of <curve>
+/** Create a curve
+ *  \param config             ConfigTree object has a tag of <curve>
+ *  \param check_monotonicity A flag for checking the monotonicity of the curve.
+ */
 std::unique_ptr<PiecewiseLinearCurve> createPiecewiseLinearCurve(
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config, bool const check_monotonicity = false);
 };
 
 #endif /* OGS_CREATE_PIECEWISE_LINEAR_CURVE_H */

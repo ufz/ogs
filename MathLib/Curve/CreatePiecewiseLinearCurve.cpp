@@ -20,7 +20,7 @@
 namespace MathLib
 {
 std::unique_ptr<PiecewiseLinearCurve> createPiecewiseLinearCurve(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config, bool const check_monotonicity)
 {
     //! \ogs_file_param{curve__type}
     config.checkConfigParameter("type", "PiecewiseLinear");
@@ -44,6 +44,7 @@ std::unique_ptr<PiecewiseLinearCurve> createPiecewiseLinearCurve(
     }
 
     return std::unique_ptr<MathLib::PiecewiseLinearCurve>(
-        new MathLib::PiecewiseLinearCurve(std::move(x), std::move(y)));
+        new MathLib::PiecewiseLinearCurve(
+            std::move(x), std::move(y), check_monotonicity));
 }
 }
