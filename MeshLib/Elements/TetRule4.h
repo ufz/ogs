@@ -75,12 +75,11 @@ public:
     static const Element* getFace(const Element* e, unsigned i);
 
     /**
-     * Checks if a point is inside the element.
-     * @param pnt a 3D MathLib::Point3d object
-     * @param eps tolerance for numerical algorithm used or computing the property
-     * @return true if the point is not outside the element, false otherwise
+     * \copydoc MeshLib::Element::isPntInElement()
+     * @param nodes the nodes of the element.
      */
-    static bool isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps);
+    static bool isPntInElement(Node const* const* nodes,
+                               MathLib::Point3d const& pnt, double eps);
 
     /**
      * Tests if the element is geometrically valid.

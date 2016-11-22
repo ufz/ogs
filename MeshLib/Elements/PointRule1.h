@@ -43,16 +43,13 @@ public:
     /// Edge rule
     typedef NoEdgeReturn EdgeReturn;
 
-    /// Checks if a point is inside the element.
+    /// \copydoc MeshLib::Element::isPntInElement()
     ///
     /// Specifically this function tests if the squared euclidean distance
-    /// between the points \c _nodes and \c pnt is less then \c eps.
+    /// between the points \c nodes and \c pnt is less then \c eps.
     ///
-    /// \param pnt a 3D MathLib::Point3d object
-    /// \param eps tolerance for numerical algorithm used for computing the
-    /// property
-    /// \return true if the point is not outside the element, false otherwise
-    static bool isPntInElement(Node const* const* _nodes,
+    /// @param nodes the nodes of the element.
+    static bool isPntInElement(Node const* const* nodes,
                                MathLib::Point3d const& pnt, double eps);
 
     /// Tests if the element is geometrically valid.
