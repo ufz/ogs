@@ -56,7 +56,7 @@ public:
     virtual GEOTYPE getGeoType() const {return GEOTYPE::POINT;}
 
 protected:
-    friend GeoLib::PointVec;
+    friend PointVec;
     /// Resets the id.
     void setID(std::size_t id) { _id = id; }
 };
