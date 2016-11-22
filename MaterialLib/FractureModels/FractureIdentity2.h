@@ -27,6 +27,9 @@ struct FractureIdentity2
     static VectorType const value;
 };
 
+extern template struct FractureIdentity2<2>;
+extern template struct FractureIdentity2<3>;
+
 }  // namespace Fracture
 }  // namespace MaterialLib
 
