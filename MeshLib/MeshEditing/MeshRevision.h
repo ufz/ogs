@@ -59,15 +59,18 @@ public:
     std::vector<std::size_t> collapseNodeIndices(double eps) const;
 
     /**
-     * Create a new mesh where all nodes with a distance < eps from each other are collapsed.
-     * Elements are adjusted accordingly and elements with nonplanar faces are subdivided into
-     * geometrically correct elements.
-     * @param eps Minimum distance for nodes not to be collapsed
-     * @param min_elem_dim Minimum dimension of elements to be inserted into new mesh (i.e.
-     *                     min_elem_dim=3 will prevent the new mesh to contain 2D elements)
+     * Create a new mesh where all nodes with a distance < eps from each other
+     * are collapsed.
+     * Elements are adjusted accordingly and elements with nonplanar faces are
+     * subdivided into geometrically correct elements.
+     * @param new_mesh_name New name.
+     * @param eps           Minimum distance for nodes not to be collapsed
+     * @param min_elem_dim  Minimum dimension of elements to be inserted into
+     *                      new mesh (i.e. min_elem_dim=3 will prevent the new
+     *                      mesh to contain 2D elements)
      */
-    MeshLib::Mesh* simplifyMesh(const std::string &new_mesh_name, double eps,
-        unsigned min_elem_dim = 1);
+    MeshLib::Mesh* simplifyMesh(const std::string& new_mesh_name, double eps,
+                                unsigned min_elem_dim = 1);
 
     /**
      * Create a new mesh where all elements with nonplanar faces are subdivided into simpler
