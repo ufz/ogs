@@ -69,7 +69,6 @@ public:
         return new TemplateElement(*this);
     }
 
-    /// \copydoc MeshLib::Element::clone(Node*[], std::size_t)
     virtual Element* clone(Node** nodes, std::size_t id) const
     {
         return new TemplateElement(nodes, id);
