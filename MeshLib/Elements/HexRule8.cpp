@@ -70,14 +70,22 @@ double HexRule8::computeVolume(Node const* const* _nodes)
          + MathLib::calcTetrahedronVolume(*_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2]);
 }
 
-bool HexRule8::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
+bool HexRule8::isPntInElement(Node const* const* nodes,
+                              MathLib::Point3d const& pnt,
+                              double eps)
 {
-    return (MathLib::isPointInTetrahedron(pnt, *_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0], eps) ||
-            MathLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0], eps) ||
-            MathLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0], eps) ||
-            MathLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2], eps) ||
-            MathLib::isPointInTetrahedron(pnt, *_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2], eps) ||
-            MathLib::isPointInTetrahedron(pnt, *_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2], eps));
+    return (MathLib::isPointInTetrahedron(
+                pnt, *nodes[4], *nodes[7], *nodes[5], *nodes[0], eps) ||
+            MathLib::isPointInTetrahedron(
+                pnt, *nodes[5], *nodes[3], *nodes[1], *nodes[0], eps) ||
+            MathLib::isPointInTetrahedron(
+                pnt, *nodes[5], *nodes[7], *nodes[3], *nodes[0], eps) ||
+            MathLib::isPointInTetrahedron(
+                pnt, *nodes[5], *nodes[7], *nodes[6], *nodes[2], eps) ||
+            MathLib::isPointInTetrahedron(
+                pnt, *nodes[1], *nodes[3], *nodes[5], *nodes[2], eps) ||
+            MathLib::isPointInTetrahedron(
+                pnt, *nodes[3], *nodes[7], *nodes[5], *nodes[2], eps));
 }
 
 unsigned HexRule8::identifyFace(Node const* const* _nodes, Node* nodes[3])

@@ -66,14 +66,14 @@ double PyramidRule5::computeVolume(Node const* const* _nodes)
          + MathLib::calcTetrahedronVolume(*_nodes[2], *_nodes[3], *_nodes[0], *_nodes[4]);
 }
 
-bool PyramidRule5::isPntInElement(Node const* const* _nodes,
+bool PyramidRule5::isPntInElement(Node const* const* nodes,
                                   MathLib::Point3d const& pnt,
                                   double eps)
 {
     return (MathLib::isPointInTetrahedron(
-                pnt, *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[4], eps) ||
+                pnt, *nodes[0], *nodes[1], *nodes[2], *nodes[4], eps) ||
             MathLib::isPointInTetrahedron(
-                pnt, *_nodes[0], *_nodes[2], *_nodes[3], *_nodes[4], eps));
+                pnt, *nodes[0], *nodes[2], *nodes[3], *nodes[4], eps));
 }
 
 unsigned PyramidRule5::identifyFace(Node const* const* _nodes, Node* nodes[3])

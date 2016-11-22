@@ -25,11 +25,14 @@ double LineRule2::computeVolume(Node const* const* _nodes)
     return sqrt(MathLib::sqrDist(_nodes[0]->getCoords(), _nodes[1]->getCoords()));
 }
 
-bool LineRule2::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
+bool LineRule2::isPntInElement(Node const* const* nodes,
+                               MathLib::Point3d const& pnt, double eps)
 {
     double tmp;
     double tmp_dst(0);
-    double const dist =MathLib::calcProjPntToLineAndDists(pnt.getCoords(), _nodes[0]->getCoords(), _nodes[1]->getCoords(), tmp, tmp_dst);
+    double const dist = MathLib::calcProjPntToLineAndDists(
+        pnt.getCoords(), nodes[0]->getCoords(), nodes[1]->getCoords(), tmp,
+        tmp_dst);
     return (dist < eps);
 }
 

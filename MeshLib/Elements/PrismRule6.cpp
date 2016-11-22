@@ -68,11 +68,16 @@ double PrismRule6::computeVolume(Node const* const* _nodes)
          + MathLib::calcTetrahedronVolume(*_nodes[2], *_nodes[4], *_nodes[5], *_nodes[3]);
 }
 
-bool PrismRule6::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
+bool PrismRule6::isPntInElement(Node const* const* nodes,
+                                MathLib::Point3d const& pnt,
+                                double eps)
 {
-    return (MathLib::isPointInTetrahedron(pnt, *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3], eps) ||
-            MathLib::isPointInTetrahedron(pnt, *_nodes[1], *_nodes[4], *_nodes[2], *_nodes[3], eps) ||
-            MathLib::isPointInTetrahedron(pnt, *_nodes[2], *_nodes[4], *_nodes[5], *_nodes[3], eps));
+    return (MathLib::isPointInTetrahedron(
+                pnt, *nodes[0], *nodes[1], *nodes[2], *nodes[3], eps) ||
+            MathLib::isPointInTetrahedron(
+                pnt, *nodes[1], *nodes[4], *nodes[2], *nodes[3], eps) ||
+            MathLib::isPointInTetrahedron(
+                pnt, *nodes[2], *nodes[4], *nodes[5], *nodes[3], eps));
 }
 
 unsigned PrismRule6::identifyFace(Node const* const* _nodes, Node* nodes[3])
