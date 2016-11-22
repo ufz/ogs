@@ -270,8 +270,66 @@ void
 HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                    ShapeFunctionPressure, IntegrationMethod,
                                    GlobalDim>::
-postTimestepConcrete(std::vector<double> const& /*local_x*/)
+computeSecondaryVariableConcreteWithVector(
+    double const t,
+    Eigen::VectorXd const& local_x)
 {
+    auto const p = local_x.segment(pressure_index, pressure_size);
+    auto const u = local_x.segment(displacement_index, displacement_size);
+
+    computeSecondaryVariableConcreteWithBlockVectors(t, p, u);
+}
+
+
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, unsigned GlobalDim>
+void
+HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
+                                   ShapeFunctionPressure, IntegrationMethod,
+                                   GlobalDim>::
+computeSecondaryVariableConcreteWithBlockVectors(
+    double const t,
+    Eigen::Ref<const Eigen::VectorXd> const& p,
+    Eigen::Ref<const Eigen::VectorXd> const& u)
+{
+    SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    unsigned const n_integration_points = _ip_data.size();
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+
+        auto& ip_data = _ip_data[ip];
+
+        auto const& dNdx_p = ip_data.dNdx_p;
+        auto const& B = ip_data.b_matrices;
+        auto const& eps_prev = ip_data.eps_prev;
+        auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
+
+        auto& eps = ip_data.eps;
+        auto& sigma_eff = ip_data.sigma_eff;
+        auto& C = ip_data.C;
+        auto& material_state_variables = *ip_data.material_state_variables;
+        double const k_over_mu =
+            _process_data.intrinsic_permeability(t, x_position)[0] /
+            _process_data.fluid_viscosity(t, x_position)[0];
+        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+        auto const& gravity_vec = _process_data.specific_body_force;
+
+        auto q = ip_data.darcy_velocity.head(GlobalDim);
+
+        eps.noalias() = B * u;
+
+        if (!_ip_data[ip].solid_material.computeConstitutiveRelation(
+                t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
+                sigma_eff, C, material_state_variables))
+            OGS_FATAL("Computation of local constitutive relation failed.");
+
+        q.noalias() = - k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
+    }
+
     Eigen::Vector3d ele_stress;
     ele_stress.setZero();
     Eigen::Vector3d ele_strain;
@@ -294,9 +352,9 @@ postTimestepConcrete(std::vector<double> const& /*local_x*/)
         ele_velocity += ip_data.darcy_velocity;
     }
 
-    ele_stress /= _ip_data.size();
-    ele_strain /= _ip_data.size();
-    ele_velocity /= _ip_data.size();
+    ele_stress /= static_cast<double>(_ip_data.size());
+    ele_strain /= static_cast<double>(_ip_data.size());
+    ele_velocity /= static_cast<double>(_ip_data.size());
 
     (*_process_data.mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
     (*_process_data.mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];

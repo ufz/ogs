@@ -293,19 +293,99 @@ void
 HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      GlobalDim>::
-postTimestepConcrete(std::vector<double> const& /*local_x*/)
+computeSecondaryVariableConcreteWithVector(
+                                const double t,
+                                Eigen::VectorXd const& local_x)
 {
+    auto const nodal_p = local_x.segment(pressure_index, pressure_size);
+    auto const nodal_g = local_x.segment(displacement_index, displacement_size);
+
+    FractureProperty const& frac_prop = *_process_data.fracture_property;
+    auto const& R = frac_prop.R;
+    // the index of a normal (normal to a fracture plane) component
+    // in a displacement vector
+    auto const index_normal = GlobalDim - 1;
+
+    using GlobalDimMatrix = Eigen::Matrix<double, GlobalDim, GlobalDim>;
+    using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
+    GlobalDimMatrix local_k_tensor;
+    local_k_tensor.setZero();
+
+    SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    unsigned const n_integration_points = _ip_data.size();
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+
+        auto& ip_data = _ip_data[ip];
+        auto const& H_g = ip_data.H_u;
+        auto const& dNdx_p = ip_data.dNdx_p;
+        auto& mat = ip_data.fracture_material;
+        auto& effective_stress = ip_data.sigma_eff;
+        auto const& effective_stress_prev = ip_data.sigma_eff_prev;
+        auto& w = ip_data.w;
+        auto const& w_prev = ip_data.w_prev;
+        auto& C = ip_data.C;
+        auto& state = *ip_data.material_state_variables;
+        auto& b = ip_data.aperture;
+        auto q = ip_data.darcy_velocity.head(GlobalDim);
+        double const mu = _process_data.fluid_viscosity(t, x_position)[0];
+        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+        auto const& gravity_vec = _process_data.specific_body_force;
+
+        // displacement jumps in local coordinates
+        w.noalias() = R * H_g * nodal_g;
+
+        // aperture
+        b = ip_data.aperture0 + w[index_normal];
+        if (b < 0.0)
+            OGS_FATAL("Fracture aperture is %g, but it must be non-negative.", b);
+
+        // local C, local stress
+        mat.computeConstitutiveRelation(
+                    t, x_position,
+                    w_prev, w,
+                    effective_stress_prev, effective_stress, C, state);
+
+        // permeability
+        double const local_k = b * b / 12;
+        ip_data.permeability = local_k;
+        local_k_tensor.diagonal().head(GlobalDim-1).setConstant(local_k);
+        GlobalDimMatrix const k = R.transpose() * local_k_tensor * R;
+
+        // velocity
+        GlobalDimVector const grad_head = dNdx_p * nodal_p + rho_fr * gravity_vec;
+        q.noalias() = - k / mu * grad_head;
+    }
+
     double ele_b = 0;
     double ele_k = 0;
+    Eigen::Vector2d ele_sigma_eff;
+    ele_sigma_eff.setZero();
+    Eigen::Vector2d ele_w;
+    ele_w.setZero();
+    double ele_Fs = - std::numeric_limits<double>::max();
     for (auto const& ip : _ip_data)
     {
         ele_b += ip.aperture;
         ele_k += ip.permeability;
+        ele_w += ip.w;
+        ele_sigma_eff += ip.sigma_eff;
+        ele_Fs = std::max(ele_Fs, ip.material_state_variables->getShearYieldFucntion());
     }
-    ele_b /= _ip_data.size();
-    ele_k /= _ip_data.size();
+    ele_b /= static_cast<double>(_ip_data.size());
+    ele_k /= static_cast<double>(_ip_data.size());
+    ele_w /= static_cast<double>(_ip_data.size());
+    ele_sigma_eff /= static_cast<double>(_ip_data.size());
     (*_process_data.mesh_prop_b)[this->_element.getID()] = ele_b;
     (*_process_data.mesh_prop_k_f)[this->_element.getID()] = ele_k;
+    (*_process_data.mesh_prop_w_n)[this->_element.getID()] = ele_w[index_normal];
+    (*_process_data.mesh_prop_w_s)[this->_element.getID()] = ele_w[0];
+    (*_process_data.mesh_prop_fracture_stress_normal)[this->_element.getID()] = ele_sigma_eff[index_normal];
+    (*_process_data.mesh_prop_fracture_stress_shear)[this->_element.getID()] = ele_sigma_eff[0];
+    (*_process_data.mesh_prop_fracture_shear_failure)[this->_element.getID()] = ele_Fs;
 }
 
 }  // namespace HydroMechanics

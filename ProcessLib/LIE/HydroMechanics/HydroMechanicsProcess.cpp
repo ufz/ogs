@@ -261,14 +261,13 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 
 
 template <unsigned GlobalDim>
-void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(GlobalVector const& x)
+void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(const double t,
+                                                         GlobalVector const& x)
 {
-    DBUG("PostTimestep HydroMechanicsProcess.");
-
+    DBUG("Compute the secondary variables for HydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
-        &HydroMechanicsLocalAssemblerInterface::postTimestep,
-        _local_assemblers, *_local_to_global_index_map, x);
-
+            &HydroMechanicsLocalAssemblerInterface::computeSecondaryVariable,
+            _local_assemblers, *_local_to_global_index_map, t, x);
 }
 
 

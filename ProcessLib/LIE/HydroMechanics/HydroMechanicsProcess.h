@@ -53,6 +53,9 @@ public:
     bool isLinear() const override { return false; }
     //! @}
 
+    void computeSecondaryVariableConcrete(double const t,
+                                          GlobalVector const& x) override;
+
 private:
     using LocalAssemblerInterface = HydroMechanicsLocalAssemblerInterface;
 
@@ -101,8 +104,6 @@ private:
             &HydroMechanicsLocalAssemblerInterface::preTimestep,
             _local_assemblers, *_local_to_global_index_map, x, t, dt);
     }
-
-    void postTimestepConcreteProcess(GlobalVector const& x) override;
 
 private:
     HydroMechanicsProcessData<GlobalDim> _process_data;
