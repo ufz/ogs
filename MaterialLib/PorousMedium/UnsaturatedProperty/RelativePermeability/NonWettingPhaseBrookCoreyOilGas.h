@@ -24,7 +24,7 @@ namespace PorousMedium
  *
  *   \f[k{rel}= (1-S_e)^2  (1 - S_e^{1 + 2 /m})\f]
  *   with
- *   \f[S_e=\dfrac{S^w-S_r}{S^w_{\mbox{max}}-S_r}\f]
+ *   \f[S_e=\frac{S^w-S_r}{S^w_{\mbox{max}}-S_r}\f]
  *   where
  *    \f{eqnarray*}{
  *       &S^w_r&            \mbox{residual saturation of wetting phase,}\\

@@ -26,7 +26,7 @@ namespace PorousMedium
  *
  *   \f[p_c=p_b (S_e^{-1/m}-1)^{1-m}\f]
  *   with
- *   \f[S_e=\dfrac{S-S_r}{S_{\mbox{max}}-S_r}\f]
+ *   \f[S_e=\frac{S-S_r}{S_{\mbox{max}}-S_r}\f]
  *   where
  *    \f{eqnarray*}{
  *       &p_b&            \mbox{ entry pressure,}\\

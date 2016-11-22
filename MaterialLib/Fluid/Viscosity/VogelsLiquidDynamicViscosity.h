@@ -33,7 +33,7 @@ class VogelsLiquidDynamicViscosity final : public FluidProperty
 {
 public:
     /**
-     *  \brief Viscosity defined by \f$10^3 \, e^{A+\dfrac{B}{C+T}}\f$
+     *  \brief Viscosity defined by \f$10^3 \, e^{A+\frac{B}{C+T}}\f$
      *  \param constants Constants of the fluid.
      *
      */

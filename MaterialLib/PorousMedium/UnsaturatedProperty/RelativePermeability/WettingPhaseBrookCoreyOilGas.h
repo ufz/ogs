@@ -24,7 +24,7 @@ namespace PorousMedium
  *
  *   \f[k{rel}= S_e^{3 + 2 /m}\f]
  *   with
- *   \f[S_e=\dfrac{S-S_r}{S_{\mbox{max}}-S_r}\f]
+ *   \f[S_e=\frac{S-S_r}{S_{\mbox{max}}-S_r}\f]
  *   where
  *    \f{eqnarray*}{
  *       &S_r&            \mbox{ residual saturation,}\\
