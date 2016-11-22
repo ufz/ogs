@@ -218,6 +218,13 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             (*mesh_prop_levelset)[e->getID()] = levelsets;
         }
 
+        auto mesh_prop_w_n = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("w_n", MeshLib::MeshItemType::Cell);
+        mesh_prop_w_n->resize(mesh.getNumberOfElements());
+        auto mesh_prop_w_s = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("w_s", MeshLib::MeshItemType::Cell);
+        mesh_prop_w_s->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_w_n = mesh_prop_w_n;
+        _process_data.mesh_prop_w_s = mesh_prop_w_s;
+
         auto mesh_prop_b = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("aperture", MeshLib::MeshItemType::Cell);
         mesh_prop_b->resize(mesh.getNumberOfElements());
         auto mesh_prop_matid = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
@@ -237,6 +244,18 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         auto mesh_prop_k_f = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("k_f", MeshLib::MeshItemType::Cell);
         mesh_prop_k_f->resize(mesh.getNumberOfElements());
         _process_data.mesh_prop_k_f = mesh_prop_k_f;
+
+        auto mesh_prop_fracture_stress_shear = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("f_stress_s", MeshLib::MeshItemType::Cell);
+        mesh_prop_fracture_stress_shear->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_fracture_stress_shear = mesh_prop_fracture_stress_shear;
+
+        auto mesh_prop_fracture_stress_normal = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("f_stress_n", MeshLib::MeshItemType::Cell);
+        mesh_prop_fracture_stress_normal->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_fracture_stress_normal = mesh_prop_fracture_stress_normal;
+
+        auto mesh_prop_fracture_shear_failure = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("f_shear_failure", MeshLib::MeshItemType::Cell);
+        mesh_prop_fracture_shear_failure->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_fracture_shear_failure = mesh_prop_fracture_shear_failure;
     }
 }
 
