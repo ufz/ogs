@@ -40,7 +40,8 @@ public:
      *
      * Input data is copied into \c std::vector.
      *
-     * \param data Range of elements to create histogram from.
+     * \param first Range of elements to create histogram from.
+     * \param last Range of elements to create histogram from.
      * \param nr_bins Number of bins in histogram.
      * \param computeHistogram Compute histogram if set. If not set user must
      *        call \c update() before accessing data.
