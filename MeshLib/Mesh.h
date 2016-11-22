@@ -48,11 +48,15 @@ class Mesh : BaseLib::Counter<Mesh>
 public:
     /// Constructor using a mesh name and an array of nodes and elements
     /// @param name          Mesh name.
-    /// @param nodes         A vector of mesh nodes. In case nonlinear nodes are involved, one should
-    ///                      put them after line ones in the vector and set "n_base_nodes" argument.
+    /// @param nodes         A vector of mesh nodes. In case nonlinear nodes are
+    ///                      involved, one should put them after line ones in
+    ///                      the vector and set "n_base_nodes" argument.
     /// @param elements      An array of mesh elements.
-    /// @param n_base_nodes  The number of base nodes. This is an optional parameter for nonlinear case.
-    ///                      If the parameter is set to zero, we consider there are no nonlinear nodes.
+    /// @param properties    Mesh properties.
+    /// @param n_base_nodes  The number of base nodes. This is an optional
+    ///                      parameter for nonlinear case.  If the parameter is
+    ///                      set to zero, we consider there are no nonlinear
+    ///                      nodes.
     Mesh(const std::string &name,
          const std::vector<Node*> &nodes,
          const std::vector<Element*> &elements,
