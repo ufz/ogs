@@ -22,8 +22,12 @@ void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
         Eigen::Ref<Eigen::VectorXd const> w,
         Eigen::Ref<Eigen::VectorXd const> sigma_prev,
         Eigen::Ref<Eigen::VectorXd> sigma,
-        Eigen::Ref<Eigen::MatrixXd> C)
+        Eigen::Ref<Eigen::MatrixXd> C,
+        typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
+        material_state_variables)
 {
+    material_state_variables.reset();
+
     const int index_ns = DisplacementDim - 1;
     C.setZero();
     for (int i=0; i<index_ns; i++)
@@ -37,6 +41,7 @@ void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
     {
         C.setZero();
         sigma.setZero();
+        material_state_variables.isTensileStress(true);
     }
 }
 

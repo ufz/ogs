@@ -134,6 +134,7 @@ assembleWithJacobian(
         auto& w = ip_data._w;
         auto const& w_prev = ip_data._w_prev;
         auto& C = ip_data._C;
+        auto& state = *ip_data._material_state_variables;
 
         // displacement jumps
         w.noalias() = R * H * nodal_jump;
@@ -145,7 +146,7 @@ assembleWithJacobian(
         mat.computeConstitutiveRelation(
                     t, x_position,
                     w_prev, w,
-                    sigma_prev, sigma, C);
+                    sigma_prev, sigma, C, state);
 
         // r_[u] += H^T*Stress
         local_b.noalias() -= H.transpose() * R.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;

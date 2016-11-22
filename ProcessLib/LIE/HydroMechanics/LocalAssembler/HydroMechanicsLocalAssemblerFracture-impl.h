@@ -203,6 +203,7 @@ assembleBlockMatricesWithJacobian(
         auto& w = ip_data.w;
         auto const& w_prev = ip_data.w_prev;
         auto& C = ip_data.C;
+        auto& state = *ip_data.material_state_variables;
         auto& b = ip_data.aperture;
         auto q = ip_data.darcy_velocity.head(GlobalDim);
 
@@ -224,7 +225,7 @@ assembleBlockMatricesWithJacobian(
         mat.computeConstitutiveRelation(
                     t, x_position,
                     w_prev, w,
-                    effective_stress_prev, effective_stress, C);
+                    effective_stress_prev, effective_stress, C, state);
 
         // permeability
         double const local_k = b * b / 12;

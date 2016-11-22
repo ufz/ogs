@@ -32,13 +32,15 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
     LinearElasticIsotropic<2>::MaterialProperties const mp{kn, ks};
 
     LinearElasticIsotropic<2> fractureModel{mp};
+    std::unique_ptr<FractureModelBase<2>::MaterialStateVariables> state(
+        fractureModel.createMaterialStateVariables());
 
     Eigen::Vector2d w_prev, w, sigma_prev, sigma;
     Eigen::Matrix2d C;
 
     ProcessLib::SpatialPosition x;
     w << -1e-5, -1e-5;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C);
+    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-1e4, sigma[0], eps_sigma);
     ASSERT_NEAR(-1e6, sigma[1], eps_sigma);
@@ -49,7 +51,7 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
 
 
     w << -1e-5, 1e-5;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C);
+    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(0, sigma[0], eps_sigma);
     ASSERT_NEAR(0, sigma[1], eps_sigma);
@@ -69,6 +71,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb)
     MohrCoulomb<2>::MaterialProperties const mp{kn, ks, phi, psi, c};
 
     MohrCoulomb<2> fractureModel{mp};
+    std::unique_ptr<FractureModelBase<2>::MaterialStateVariables> state(
+        fractureModel.createMaterialStateVariables());
 
     Eigen::Vector2d w_prev, w, sigma_prev, sigma;
     Eigen::Matrix2d C;
@@ -76,7 +80,7 @@ TEST(MaterialLib_Fracture, MohrCoulomb)
     ProcessLib::SpatialPosition x;
     sigma_prev << -3.46e6, -2e6;
     w << -1.08e-5, -0.25e-5;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C);
+    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-3.50360e6, sigma[0], eps_sigma);
     ASSERT_NEAR(-2.16271e6, sigma[1], eps_sigma);

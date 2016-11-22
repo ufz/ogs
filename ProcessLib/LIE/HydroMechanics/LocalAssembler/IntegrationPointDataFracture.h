@@ -26,7 +26,9 @@ struct IntegrationPointDataFracture final
 {
     explicit IntegrationPointDataFracture(
         MaterialLib::Fracture::FractureModelBase<GlobalDim>& fracture_material_)
-        : fracture_material(fracture_material_)
+        : fracture_material(fracture_material_),
+          material_state_variables(
+              fracture_material.createMaterialStateVariables())
     {
     }
 
@@ -59,6 +61,9 @@ struct IntegrationPointDataFracture final
     double permeability = 0.0;
 
     MaterialLib::Fracture::FractureModelBase<GlobalDim>& fracture_material;
+    std::unique_ptr<typename MaterialLib::Fracture::FractureModelBase<
+        GlobalDim>::MaterialStateVariables>
+        material_state_variables;
 
     Eigen::MatrixXd C;
     double integration_weight;

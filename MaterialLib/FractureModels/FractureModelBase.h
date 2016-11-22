@@ -27,6 +27,38 @@ template <int DisplacementDim>
 class FractureModelBase
 {
 public:
+    /// The MaterialStateVariables may store material model specific state
+    /// (other than sigma and eps), which are usually material history
+    /// dependent. The objects are stored by the user (usually in assembly per
+    /// integration point) and are created via \ref
+    /// createMaterialStateVariables().
+    struct MaterialStateVariables
+    {
+        virtual ~MaterialStateVariables() = default;
+        virtual void pushBackState() = 0;
+
+        void reset()
+        {
+            _is_tensile_stress = false;
+            _shear_yield_function = 0.0;
+        }
+
+        void setShearYieldFucntion(double Fs) { _shear_yield_function = Fs; }
+        double getShearYieldFucntion() const { return _shear_yield_function; }
+
+        void isTensileStress(bool flag) { _is_tensile_stress = flag; }
+        bool isTensileStress() const { return _is_tensile_stress; }
+
+    private:
+        bool _is_tensile_stress = false;
+        double _shear_yield_function = 0.0;
+    };
+
+    /// Polymorphic creator for MaterialStateVariables objects specific for a
+    /// material model.
+    virtual std::unique_ptr<MaterialStateVariables>
+    createMaterialStateVariables() = 0;
+
     virtual ~FractureModelBase() {}
 
     /**
@@ -48,7 +80,8 @@ public:
             Eigen::Ref<Eigen::VectorXd const> w,
             Eigen::Ref<Eigen::VectorXd const> sigma_prev,
             Eigen::Ref<Eigen::VectorXd> sigma,
-            Eigen::Ref<Eigen::MatrixXd> C)  = 0;
+            Eigen::Ref<Eigen::MatrixXd> C,
+            MaterialStateVariables& material_state_variables)  = 0;
 
 };
 
