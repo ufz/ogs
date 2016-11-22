@@ -140,7 +140,9 @@ Mesh* generateRegularQuadMesh(const BaseLib::ISubdivision &div_x,
  *
  * \param length Mesh's dimensions in x- and y-directions.
  * \param subdivision Number of subdivisions.
- * \param origin Optional mesh's origin (the lower left corner) with MathLib::ORIGIN default.
+ * \param origin Optional mesh's origin (the lower left corner) with
+ *               MathLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularQuadMesh(const double length,
                               const std::size_t subdivision,
@@ -155,7 +157,9 @@ Mesh* generateRegularQuadMesh(const double length,
  * \param y_length Mesh's dimension in y-direction.
  * \param x_subdivision Number of subdivisions in x-direction.
  * \param y_subdivision Number of subdivisions in y-direction.
- * \param origin Optional mesh's origin (the lower left corner) with MathLib::ORIGIN default.
+ * \param origin Optional mesh's origin (the lower left corner) with
+ *               MathLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularQuadMesh(const double x_length,
                               const double y_length,
@@ -198,15 +202,15 @@ Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
                               MathLib::Point3d const& origin = MathLib::ORIGIN,
                               std::string   const& mesh_name = "mesh");
 
-
-
 /**
  * Generate a regular 3D Hex-Element mesh.
  *
  * \param div_x Subdivision operator in x direction
  * \param div_y Subdivision operator in y direction
  * \param div_z Subdivision operator in z direction
- * \param origin Optional mesh's origin (the bottom lower left corner) with MathLib::ORIGIN default.
+ * \param origin Optional mesh's origin (the bottom lower left corner) with
+ *               MathLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularHexMesh(const BaseLib::ISubdivision &div_x,
                              const BaseLib::ISubdivision &div_y,
@@ -292,7 +296,9 @@ Mesh* generateRegularHexMesh(const unsigned n_x_cells,
  *
  * \param div_x Subdivision operator in x direction
  * \param div_y Subdivision operator in y direction
- * \param origin Optional mesh's origin (the bottom lower left corner) with MathLib::ORIGIN default.
+ * \param origin Optional mesh's origin (the bottom lower left corner) with
+ *               MathLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularTriMesh(const BaseLib::ISubdivision &div_x,
                              const BaseLib::ISubdivision &div_y,
@@ -305,7 +311,9 @@ Mesh* generateRegularTriMesh(const BaseLib::ISubdivision &div_x,
  *
  * \param length Mesh's dimensions in x- and y-directions.
  * \param subdivision Number of subdivisions.
- * \param origin Optional mesh's origin (the lower left corner) with MathLib::ORIGIN default.
+ * \param origin Optional mesh's origin (the lower left corner) with
+ *               MathLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularTriMesh(const double length,
                               const std::size_t subdivision,
@@ -320,7 +328,9 @@ Mesh* generateRegularTriMesh(const double length,
  * \param y_length Mesh's dimension in y-direction.
  * \param x_subdivision Number of subdivisions in x-direction.
  * \param y_subdivision Number of subdivisions in y-direction.
- * \param origin Optional mesh's origin (the lower left corner) with MathLib::ORIGIN default.
+ * \param origin Optional mesh's origin (the lower left corner) with
+ *               MathLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularTriMesh(const double x_length,
                              const double y_length,
@@ -372,7 +382,9 @@ Mesh* generateRegularTriMesh(const unsigned n_x_cells,
  * \param x_subdivision Number of subdivisions in x-direction.
  * \param y_subdivision Number of subdivisions in y-direction.
  * \param z_subdivision Number of subdivisions in z-direction.
- * \param origin Optional mesh's origin (the lower left corner) with MathLib::ORIGIN default.
+ * \param origin Optional mesh's origin (the lower left corner) with
+ *               MathLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularPrismMesh(const double x_length,
                                const double y_length,
