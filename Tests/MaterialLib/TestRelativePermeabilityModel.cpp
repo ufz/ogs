@@ -39,7 +39,6 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
 TEST(MaterialPorousMedium, checkWettingPhaseVanGenuchten)
 {
     const char xml[] =
-        // Should be <relative_permeability id="0">
         "<relative_permeability id=\"0\">"
         "   <type>WettingPhaseVanGenuchten</type>"
         "   <sr>  0.2772 </sr> "

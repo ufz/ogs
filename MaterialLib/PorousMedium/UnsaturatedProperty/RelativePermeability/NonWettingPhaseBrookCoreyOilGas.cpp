@@ -29,7 +29,7 @@ double NonWettingPhaseBrookCoreyOilGas::getValue(
                                       _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
     const double krel =
-        (1.0 - Se) * (1.0 - Se) * (1.0 - std::pow(Se, 1.0 + 2.0 / _mm));
+        (1.0 - Se) * (1.0 - Se) * (1.0 - std::pow(Se, 1.0 + 2.0 / _m));
     return std::max(_krel_min, krel);
 }
 
@@ -41,9 +41,9 @@ double NonWettingPhaseBrookCoreyOilGas::getdValue(
                                       _saturation_r + _minor_offset,
                                       _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
-    return (-2. * (1.0 - Se) * (1.0 - std::pow(Se, 1.0 + 2.0 / _mm)) -
-            (1.0 + 2.0 / _mm) * (1.0 - Se) * (1.0 - Se) *
-                std::pow(Se, 2.0 / _mm)) /
+    return (-2. * (1.0 - Se) * (1.0 - std::pow(Se, 1.0 + 2.0 / _m)) -
+            (1.0 + 2.0 / _m) * (1.0 - Se) * (1.0 - Se) *
+                std::pow(Se, 2.0 / _m)) /
            (_saturation_max - _saturation_r);
 }
 

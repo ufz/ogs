@@ -27,7 +27,7 @@ double WettingPhaseVanGenuchten::getValue(const double saturation) const
                                       _saturation_r + _minor_offset,
                                       _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
-    const double val = 1.0 - std::pow(1.0 - std::pow(Se, 1.0 / _mm), _mm);
+    const double val = 1.0 - std::pow(1.0 - std::pow(Se, 1.0 / _m), _m);
     const double krel = std::sqrt(Se) * val * val;
     return std::max(_krel_min, krel);
 }
@@ -40,11 +40,11 @@ double WettingPhaseVanGenuchten::getdValue(const double saturation) const
                                       _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
     const double sqrtSe = std::sqrt(Se);
-    const double temp_val = 1.0 - std::pow(1.0 - std::pow(Se, 1.0 / _mm), _mm);
+    const double temp_val = 1.0 - std::pow(1.0 - std::pow(Se, 1.0 / _m), _m);
     return (0.5 * temp_val * temp_val / sqrtSe +
             2. * sqrtSe * temp_val *
-                std::pow(1.0 - std::pow(Se, 1.0 / _mm), _mm - 1.) *
-                std::pow(Se, (1.0 - _mm) / _mm)) /
+                std::pow(1.0 - std::pow(Se, 1.0 / _m), _m - 1.) *
+                std::pow(Se, (1.0 - _m) / _m)) /
            (_saturation_max - _saturation_r);
 }
 

@@ -28,7 +28,7 @@ double NonWettingPhaseVanGenuchten::getValue(const double saturation_w) const
                                       _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
     const double krel = std::cbrt(1.0 - Se) *
-                        std::pow(1.0 - std::pow(Se, 1.0 / _mm), 2.0 * _mm);
+                        std::pow(1.0 - std::pow(Se, 1.0 / _m), 2.0 * _m);
     return std::max(_krel_min, krel);
 }
 
@@ -40,10 +40,10 @@ double NonWettingPhaseVanGenuchten::getdValue(const double saturation_w) const
                                       _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
     const double cbrt1_Se = std::cbrt(1.0 - Se);
-    const double temp_val = 1.0 - std::pow(Se, 1.0 / _mm);
-    return (-std::pow(temp_val, 2. * _mm) / (3. * cbrt1_Se * cbrt1_Se) -
-            2. * cbrt1_Se * std::pow(temp_val, 2. * _mm - 1.) *
-                std::pow(Se, (1. - _mm) / _mm)) /
+    const double temp_val = 1.0 - std::pow(Se, 1.0 / _m);
+    return (-std::pow(temp_val, 2. * _m) / (3. * cbrt1_Se * cbrt1_Se) -
+            2. * cbrt1_Se * std::pow(temp_val, 2. * _m - 1.) *
+                std::pow(Se, (1. - _m) / _m)) /
            (_saturation_max - _saturation_r);
 }
 }  // end namespace

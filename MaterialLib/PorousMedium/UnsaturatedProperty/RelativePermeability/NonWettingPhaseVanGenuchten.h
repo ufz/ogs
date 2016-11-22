@@ -49,7 +49,7 @@ public:
     NonWettingPhaseVanGenuchten(const double Snr, const double Snmax,
                                 const double m, const double krel_min)
         : RelativePermeability(1. - Snmax, 1. - Snr),
-          _mm(m),
+          _m(m),
           _krel_min(krel_min)
     {
     }
@@ -69,7 +69,7 @@ public:
     double getdValue(const double saturation_w) const override;
 
 private:
-    const double _mm;        ///< Exponent (<=1.0), n=1/(1-mm).
+    const double _m;         ///< Exponent m, m in [0, 1], n=1/(1-m).
     const double _krel_min;  ///< Minimum relative permeability
 };
 

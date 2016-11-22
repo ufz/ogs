@@ -52,7 +52,7 @@ std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__m}
     const double m = config.getConfigParameter<double>("m");
-    if (m < 0. || m > 1.0)  // m <= 1
+    if (m < 0. || m > 1.0)
     {
         OGS_FATAL(
             "The exponent parameter of WettingPhaseVanGenuchten relative\n"
@@ -84,7 +84,7 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__m}
     const double m = config.getConfigParameter<double>("m");
-    if (m < 0. || m > 1.0)  // m <= 1
+    if (m < 0. || m > 1.0)
     {
         OGS_FATAL(
             "The exponent parameter of NonWettingPhaseVanGenuchten relative\n"
