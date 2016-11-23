@@ -50,15 +50,15 @@ public:
                                         double& y0,
                                         double& delta);
 private:
+#ifdef GEOTIFF_FOUND
     /**
      * Loads ArcGIS asc-files to a QPixmap object and automatically does a contrast stretching to adjust values to 8 bit greyscale images.
      * \param fileName Filename of the file that should be loaded.
-     * \param raster The QPixmap into which the raster data will be written.
-     * \param origin The upper left corner of the data set
+     * \param x0 X-coordinate of the upper left corner of the data set, the default value is 0.
+     * \param y0 Y-coordinate of the upper left corner of the data set, the default value is 0.
      * \param delta The size of each pixel in the image which is needed for correctly displaying the data.
      * \return A vtkImageImport-object (derived from vtkImageAlgorithm).
      */
-#ifdef GEOTIFF_FOUND
     static vtkImageImport* loadImageFromTIFF(const std::string &fileName,
                                              double& x0, double& y0, double& delta);
 #endif
