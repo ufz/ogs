@@ -220,7 +220,7 @@ assembleBlockMatricesWithJacobian(
         // aperture
         b = ip_data.aperture0 + w[index_normal];
         if (b < 0.0)
-            OGS_FATAL("Fracture aperture is %g, but it must be non-negative.", b);
+            OGS_FATAL("Element %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
 
         // local C, local stress
         mat.computeConstitutiveRelation(
@@ -343,7 +343,7 @@ computeSecondaryVariableConcreteWithVector(
         // aperture
         b = ip_data.aperture0 + w[index_normal];
         if (b < 0.0)
-            OGS_FATAL("Fracture aperture is %g, but it must be non-negative.", b);
+            OGS_FATAL("Element %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
 
         // local C, local stress
         mat.computeConstitutiveRelation(
