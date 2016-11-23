@@ -86,6 +86,7 @@ private:
     /// private constructor
     /// @param ll lower left point
     /// @param ur upper right point
+    /// @param eps the euclidean distance as a threshold to make objects unique
     OctTree(MathLib::Point3d const& ll, MathLib::Point3d const& ur, double eps);
 
     enum class Quadrant : std::int8_t {

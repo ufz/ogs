@@ -46,6 +46,7 @@ public:
      * (lower left and the upper right points).
      * @param ll lower left point of the square
      * @param ur upper right point of the square
+     * @param max_points_per_node maximum number of points per leaf
      */
     QuadTree(POINT const& ll, POINT const& ur, std::size_t max_points_per_node) :
         _father (nullptr), _ll (ll), _ur (ur), _depth (0), _is_leaf (true),
@@ -362,6 +363,7 @@ private:
      * @param ur upper right point
      * @param father father in the tree
      * @param depth depth of the node
+     * @param max_points_per_node maximum number of points per leaf
      * @return
      */
     QuadTree (POINT const& ll,
