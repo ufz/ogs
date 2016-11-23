@@ -81,9 +81,11 @@ public:
     /**
      * compute shape functions
      *
-     * @param natural_pt    position in natural coordinates
-     * @param shape         evaluated shape function matrices
-     * @param global_dim    global dimension
+     * @param natural_pt            position in natural coordinates
+     * @param shape                 evaluated shape function matrices
+     * @param global_dim            global dimension
+     * @param is_axially_symmetric  if true, the integral measure for cylinder
+     *                              coordinates is used, and 1 otherwise.
      */
     void computeShapeFunctions(const double* natural_pt, ShapeMatrices& shape,
                                const unsigned global_dim,
@@ -101,6 +103,8 @@ public:
      * @param natural_pt            position in natural coordinates
      * @param shape                 evaluated shape function matrices
      * @param global_dim            global dimension
+     * @param is_axially_symmetric  if true, the integral measure for cylinder
+     *                              coordinates is used, and 1 otherwise.
      */
     template <ShapeMatrixType T_SHAPE_MATRIX_TYPE>
     void computeShapeFunctions(const double* natural_pt, ShapeMatrices& shape,
