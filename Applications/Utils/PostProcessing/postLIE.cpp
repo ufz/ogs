@@ -60,10 +60,15 @@ int main (int argc, char* argv[])
 
         // read VTU with simulation results
         auto const org_vtu_filename = dataset.second.get<std::string>("<xmlattr>.file");
-        INFO("processing %s...", (in_pvd_file_dir + org_vtu_filename).c_str());
+        auto const org_vtu_filebasename = BaseLib::extractBaseName(org_vtu_filename);
+        auto org_vtu_dir = BaseLib::extractPath(org_vtu_filename);
+        if (org_vtu_dir.empty())
+            org_vtu_dir = in_pvd_file_dir;
+        auto const org_vtu_filepath = BaseLib::joinPaths(org_vtu_dir, org_vtu_filebasename);
+        INFO("processing %s...", org_vtu_filepath.c_str());
 
         std::unique_ptr<MeshLib::Mesh const> mesh(
-            MeshLib::IO::readMeshFromFile(in_pvd_file_dir + org_vtu_filename));
+            MeshLib::IO::readMeshFromFile(org_vtu_filepath));
 
         // post-process
         std::vector<MeshLib::Element*> vec_matrix_elements;
@@ -79,9 +84,10 @@ int main (int argc, char* argv[])
             *mesh, vec_fracture_nodes, vec_fracture_matrix_elements);
 
         // create a new VTU file and update XML
-        auto const dest_vtu_filename = "post_" + org_vtu_filename;
-        INFO("create %s", (out_pvd_file_dir + dest_vtu_filename).c_str());
-        MeshLib::IO::writeMeshToFile(post.getOutputMesh(), out_pvd_file_dir + dest_vtu_filename);
+        auto const dest_vtu_filename = "post_" + org_vtu_filebasename;
+        auto const dest_vtu_filepath = BaseLib::joinPaths(out_pvd_file_dir, dest_vtu_filename);
+        INFO("create %s", dest_vtu_filepath.c_str());
+        MeshLib::IO::writeMeshToFile(post.getOutputMesh(), dest_vtu_filepath);
 
         dataset.second.put("<xmlattr>.file", dest_vtu_filename);
     }
