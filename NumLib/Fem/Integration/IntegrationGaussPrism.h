@@ -48,27 +48,17 @@ public:
     /// return the number of sampling points
     unsigned getNumberOfPoints() const {return _n_sampl_pt;}
 
-    /**
-     * get coordinates of a integration point
-     *
-     * @param igp      The integration point index
-     * @return a weighted point
-     */
+    /// \copydoc IntegrationGaussRegular::getWeightedPoint(unsigned) const
     WeightedPoint getWeightedPoint(unsigned igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
 
-    /**
-     * get coordinates of a integration point
-     *
-     * @param order    the number of integration points
-     * @param ipg      the sampling point id
-     * @return weight
-     */
+    /// \copydoc IntegrationGaussRegular::getWeightedPoint(unsigned, unsigned)
     static WeightedPoint
-    getWeightedPoint(unsigned /*order*/, unsigned igp)
+    getWeightedPoint(unsigned order, unsigned igp)
     {
+        (void)order;
         const unsigned gp_r = igp % 3;
         const unsigned gp_t = (unsigned)(igp/3);
         std::array<double, 3> rst;
