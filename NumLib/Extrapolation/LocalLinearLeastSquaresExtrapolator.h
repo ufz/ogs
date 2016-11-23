@@ -109,12 +109,12 @@ private:
         Eigen::MatrixXd A_pinv;
     };
 
-    /*! Maps (#nodes, #int_pts) to (N_0, QR decomposition),
-     * where N_0 is the shape matrix of the first integration point.
+    /*! Maps (\#nodes, \#int_pts) to (N_0, QR decomposition), where N_0 is the
+     * shape matrix of the first integration point.
      *
-     * \note It is assumed that the pair (#nodes, #int_pts) uniquely identifies
-     * the set of all shape matrices N for a mesh element (i.e., only N, not
-     * dN/dx etc.).
+     * \note It is assumed that the pair (\#nodes, \#int_pts) uniquely
+     * identifies the set of all shape matrices N for a mesh element (i.e., only
+     * N, not dN/dx etc.).
      *
      * \todo Add the element dimension as identifying criterion, or change to
      * typeid.
