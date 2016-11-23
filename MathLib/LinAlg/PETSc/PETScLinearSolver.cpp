@@ -33,16 +33,16 @@ PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
     if (option) {
         ignoreOtherLinearSolvers(*option, "petsc");
 
-        //! \ogs_file_param{linear_solver__petsc}
+        //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc}
         if (auto const subtree = option->getConfigSubtreeOptional("petsc"))
         {
             if (auto const parameters =
-                //! \ogs_file_param{linear_solver__petsc__parameters}
+                //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc__parameters}
                 subtree->getConfigParameterOptional<std::string>("parameters")) {
                 petsc_options = *parameters;
             }
 
-            //! \ogs_file_param{linear_solver__petsc__prefix}
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc__prefix}
             if (auto const pre = subtree->getConfigParameterOptional<std::string>("prefix")) {
                 if (!pre->empty())
                     prefix = *pre + "_";

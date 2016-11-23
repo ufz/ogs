@@ -36,10 +36,7 @@ docdir    = os.path.join(docauxdir, "dox", "ProjectFile")
 # used to expand documentation entry points to full xml tag paths
 # that are used in the prj file.
 tag_path_expansion_table = {
-    "boundary_condition": "process_variables.process_variable.boundary_conditions.boundary_condition",
-    "linear_solver":      "linear_solvers.linear_solver",
     "process":            "processes.process",
-    "parameter":          "parameters.parameter",
     "prj": "",
 }
 

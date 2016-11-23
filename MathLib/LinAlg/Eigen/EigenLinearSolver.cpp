@@ -218,33 +218,33 @@ EigenLinearSolver::~EigenLinearSolver() = default;
 void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
 {
     ignoreOtherLinearSolvers(option, "eigen");
-    //! \ogs_file_param{linear_solver__eigen}
+    //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen}
     auto const ptSolver = option.getConfigSubtreeOptional("eigen");
     if (!ptSolver)
         return;
 
     if (auto solver_type =
-            //! \ogs_file_param{linear_solver__eigen__solver_type}
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__solver_type}
             ptSolver->getConfigParameterOptional<std::string>("solver_type")) {
         _option.solver_type = _option.getSolverType(*solver_type);
     }
     if (auto precon_type =
-            //! \ogs_file_param{linear_solver__eigen__precon_type}
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__precon_type}
             ptSolver->getConfigParameterOptional<std::string>("precon_type")) {
         _option.precon_type = _option.getPreconType(*precon_type);
     }
     if (auto error_tolerance =
-            //! \ogs_file_param{linear_solver__eigen__error_tolerance}
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__error_tolerance}
             ptSolver->getConfigParameterOptional<double>("error_tolerance")) {
         _option.error_tolerance = *error_tolerance;
     }
     if (auto max_iteration_step =
-            //! \ogs_file_param{linear_solver__eigen__max_iteration_step}
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__max_iteration_step}
             ptSolver->getConfigParameterOptional<int>("max_iteration_step")) {
         _option.max_iterations = *max_iteration_step;
     }
     if (auto scaling =
-            //! \ogs_file_param{linear_solver__eigen__scaling}
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__scaling}
             ptSolver->getConfigParameterOptional<bool>("scaling")) {
 #ifdef USE_EIGEN_UNSUPPORTED
         _option.scaling = *scaling;

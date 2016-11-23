@@ -68,10 +68,10 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
     DBUG("Constructing DirichletBoundaryCondition from config.");
-    //! \ogs_file_param{boundary_condition__type}
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "Dirichlet");
 
-    //! \ogs_file_param{boundary_condition__Dirichlet__parameter}
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Dirichlet__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", param_name.c_str());
 

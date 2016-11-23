@@ -44,7 +44,7 @@ struct LisOption
     {
         if (options) {
             ignoreOtherLinearSolvers(*options, "lis");
-            //! \ogs_file_param{linear_solver__lis}
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__lis}
             if (auto s = options->getConfigParameterOptional<std::string>("lis")) {
                 if (!s->empty()) {
                     _option_string += " " + *s;

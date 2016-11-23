@@ -17,14 +17,14 @@ namespace ProcessLib
 std::unique_ptr<ParameterBase> createConstantParameter(
     std::string const& name, BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{parameter__type}
+    //! \ogs_file_param{prj__parameters__parameter__type}
     config.checkConfigParameter("type", "Constant");
 
     // Optional case for single-component variables where the value can be used.
     // If the 'value' tag is found, use it and return. Otherwise continue with
     // then required tag 'values'.
     {
-        //! \ogs_file_param{parameter__Constant__value}
+        //! \ogs_file_param{prj__parameters__parameter__Constant__value}
         auto const value = config.getConfigParameterOptional<double>("value");
 
         if (value)
@@ -37,7 +37,7 @@ std::unique_ptr<ParameterBase> createConstantParameter(
 
     // Value tag not available; continue with required values tag.
     std::vector<double> const values =
-        //! \ogs_file_param{parameter__Constant__values}
+        //! \ogs_file_param{prj__parameters__parameter__Constant__values}
         config.getConfigParameter<std::vector<double>>("values");
 
     if (values.empty())

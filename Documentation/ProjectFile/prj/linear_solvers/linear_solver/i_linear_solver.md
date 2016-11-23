@@ -1,3 +1,6 @@
 Defines a single linear solver.
 
-See \ref ogs_file_param__linear_solver.
+Unlike all other options, there can be configurations for linear solvers from
+the Eigen, LIS, PETSc, etc. libraries at the same time. Which solver will be
+applied in the end is determined by the build configuration of the OGS
+executable.

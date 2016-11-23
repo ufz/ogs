@@ -27,9 +27,9 @@ std::unique_ptr<ParameterBase> createParameter(
         curves)
 {
 
-    //! \ogs_file_param{parameter__name}
+    //! \ogs_file_param{prj__parameters__parameter__name}
     auto const name = config.getConfigParameter<std::string>("name");
-    //! \ogs_file_param{parameter__type}
+    //! \ogs_file_param{prj__parameters__parameter__type}
     auto const type = config.peekConfigParameter<std::string>("type");
 
     // Create parameter based on the provided type.
