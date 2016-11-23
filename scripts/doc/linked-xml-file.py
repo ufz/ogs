@@ -216,7 +216,12 @@ for (dirpath, dirnames, filenames) in os.walk(datadir, topdown=False):
 <tt>
 """ % (pagename, fn))
 
-                xmlroot = ET.parse(filepath).getroot()
+                try:
+                    xmlroot = ET.parse(filepath).getroot()
+                except ET.ParseError as err:
+                    print("ParseError occured in file :", filepath)
+                    print(err)
+                    raise
                 print_tags(xmlroot, 0, "prj", fh, None, 0, relfilepath)
 
                 fh.write(r"""</tt>
