@@ -15,13 +15,8 @@
 #include "MshItem.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
-/**
- * Constructor.
- * \param data The data associated with each column
- * \param parent The parent item in the tree
- * \param grid The mesh associated with this item
- */
-MshItem::MshItem(const QList<QVariant> &data, TreeItem* parent, const MeshLib::Mesh* mesh)
+MshItem::MshItem(const QList<QVariant>& data, TreeItem* parent,
+                 const MeshLib::Mesh* mesh)
     : TreeItem(data, parent)
 {
     _mesh_source = MeshLib::VtkMappedMeshSource::New();
