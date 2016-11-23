@@ -46,6 +46,7 @@ public:
     /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the
     /// current map.
     ///
+    /// \param component_id  The global components id.
     /// \param components components that should remain in the created subset
     MeshComponentMap getSubset(std::size_t const component_id,
                                MeshLib::MeshSubsets const& components) const;
