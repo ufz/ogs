@@ -19,6 +19,25 @@ namespace ProcessLib
 {
 namespace HT
 {
+/**
+ * # HT process
+ *
+ * The implementation uses a monolithic approach, i.e., both processes
+ * are assembled within one global system of equations.
+ *
+ * ## Process Coupling
+ *
+ * The advective term of the heat conduction equation is given by the confined
+ * groundwater flow process, i.e., the heat conduction depends on darcy velocity
+ * of the groundwater flow process. On the other hand the temperature
+ * dependencies of the viscosity and density in the groundwater flow couples the
+ * H process to the T process.
+ *
+ * \note At the moment there is not any coupling by source or sink terms, i.e.,
+ * the coupling is implemented only by density changes due to temperature
+ * changes in the buoyance term in the groundwater flow. This coupling schema is
+ * referred to as the Boussinesq approximation.
+ * */
 class HTProcess final : public Process
 {
 public:
