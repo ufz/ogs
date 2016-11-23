@@ -56,6 +56,9 @@ public:
      * internally used search length from the given MeshLib::Mesh.
      * @param mesh Run search algorithm on this mesh. It is assumed
      * that the mesh does not change its geometry.
+     * @param search_length_algorithm Algorithm to determine the search length.
+     * @param search_all_nodes switch between searching all mesh nodes and
+     * searching the base nodes.
      */
     explicit MeshNodeSearcher(MeshLib::Mesh const& mesh,
         MeshGeoToolsLib::SearchLength const& search_length_algorithm
