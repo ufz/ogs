@@ -318,7 +318,6 @@ computeSecondaryVariableConcreteWithBlockVectors(
             _process_data.intrinsic_permeability(t, x_position)[0] /
             _process_data.fluid_viscosity(t, x_position)[0];
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
-        auto const& gravity_vec = _process_data.specific_body_force;
 
         auto q = ip_data.darcy_velocity.head(GlobalDim);
 
