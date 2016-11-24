@@ -26,7 +26,7 @@ functionality from OGS-5.
 
 ## Software development ##
 
-- To get started checkout the [developer guide][devguide]
+- Good starting point for users as well as for developers is the [documentation][documentation]
 - Check your code against our [styleguide](http://ufz.github.io/styleguide/cppguide.xml)
 - Have a look at the [source code documentation][docs]
 - For the actual build status see the [Jenkins-CI server][jenkins-ci]
@@ -39,7 +39,7 @@ attribute the work of the OpenGeoSys Community especially in scientific
 publications. See the [LICENSE.txt][license-source] for the license text.
 
 [ogs]: http://www.opengeosys.org
-[devguide]: http://docs.opengeosys.org/docs/devguide
+[documentation]: https://docs.opengeosys.org/docs/
 [jenkins-ci]: https://jenkins.opengeosys.org/job/OGS-6/job/ufz/job/master/
 [docs]: http://doxygen.opengeosys.org
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt
