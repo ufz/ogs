@@ -27,7 +27,7 @@ namespace PorousMedium
 class Porosity;
 
 /** Create a porosity model
- *  @param config  ConfigTree object has a tag of <porosity>
+ *  @param config  ConfigTree object has a tag of `<porosity>`
  */
 std::unique_ptr<Porosity> createPorosityModel(
     BaseLib::ConfigTree const& config);

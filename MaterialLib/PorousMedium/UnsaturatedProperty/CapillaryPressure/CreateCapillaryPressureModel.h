@@ -26,7 +26,7 @@ namespace PorousMedium
 {
 class CapillaryPressureSaturation;
 /// Create a capillary pressure model
-/// \param config  ConfigTree object has a tag of <capillary_pressure>
+/// \param config  ConfigTree object has a tag of `<capillary_pressure>`
 std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     BaseLib::ConfigTree const& config);
 }

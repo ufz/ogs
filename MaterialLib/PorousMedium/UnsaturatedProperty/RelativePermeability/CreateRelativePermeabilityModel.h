@@ -26,7 +26,7 @@ namespace PorousMedium
 {
 class RelativePermeability;
 /// Create a capillary pressure model
-/// \param config  ConfigTree object has a tag of <relative_permeability>
+/// \param config  ConfigTree object has a tag of `<relative_permeability>`
 std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     BaseLib::ConfigTree const& config);
 }

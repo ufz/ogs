@@ -25,7 +25,7 @@ namespace MaterialLib
 namespace PorousMedium
 {
 /** Create a porosity model
- *  @param config  ConfigTree object has a tag of <permeability>
+ *  @param config  ConfigTree object has a tag of `<permeability>`
  */
 Eigen::MatrixXd createPermeabilityModel(BaseLib::ConfigTree const& config);
 

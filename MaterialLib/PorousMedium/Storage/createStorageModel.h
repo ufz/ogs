@@ -26,7 +26,7 @@ namespace PorousMedium
 {
 class Storage;
 /** Create a storage model
- *  @param config  ConfigTree object has a tag of <storage>
+ *  @param config  ConfigTree object has a tag of `<storage>`
  */
 std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config);
 

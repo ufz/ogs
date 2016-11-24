@@ -25,8 +25,8 @@ namespace PorousMedium
 {
 /**
     \param config ConfigTree object which contains the input data
-                  including <type>BrookCorey</type>
-                  and it has a tag of <capillary_pressure>
+                  including `<type>BrookCorey</type>`
+                  and it has a tag of `<capillary_pressure>`
 */
 static std::unique_ptr<CapillaryPressureSaturation> createBrookCorey(
     BaseLib::ConfigTree const& config)
@@ -60,8 +60,8 @@ static std::unique_ptr<CapillaryPressureSaturation> createBrookCorey(
 
 /**
     \param config ConfigTree object which contains the input data
-                  including <type>vanGenuchten</type>
-                  and it has a tag of <capillary_pressure>
+                  including `<type>vanGenuchten</type>`
+                  and it has a tag of `<capillary_pressure>`
 */
 static std::unique_ptr<CapillaryPressureSaturation> createVanGenuchten(
     BaseLib::ConfigTree const& config)
