@@ -102,7 +102,7 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Postp-process results of the LIE approach",
+    TCLAP::CmdLine cmd("Post-process results of the LIE approach",
                        ' ', "0.1");
     TCLAP::ValueArg<std::string> arg_out_file("o", "output-file",
                                           "the name of the new PVD or VTU file", true,
