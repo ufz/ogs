@@ -70,7 +70,7 @@ void DiagramView::initialize()
  * It is only necessary to call this if
  *        Qt::AspectRatioMode == Qt::IgnoreAspectRatio.
  * Also, this method is kind of annoying because you have to set the
- * appropriate transform for every single QGraphicsTextItem seperately.
+ * appropriate transform for every single QGraphicsTextItem separately.
  */
 /*
    void DiagramView::keepItemAspectRatio()
