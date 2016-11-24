@@ -45,7 +45,6 @@ public:
 
 public:
     /*!
-     * \param file_name_base The prefix of the file name.
      * \param num_partitions Number of partitions,
      * \param mesh           Pointer to a mesh object.
      */
@@ -61,8 +60,9 @@ public:
     }
 
     /// Partition by node.
-    /// \param is_mixed_hl_elem Flag to indicate whether the elements of
-    /// a mesh can be used for both linear and high order interpolation
+    /// \param is_mixed_high_order_linear_elems Flag to indicate whether the
+    /// elements of a mesh can be used for both linear and high order
+    /// interpolation
     void partitionByMETIS(const bool is_mixed_high_order_linear_elems);
 
     void resetGlobalNodeIndices();
@@ -107,8 +107,9 @@ private:
     std::vector<bool> _elements_status;
 
     // Renumber the global indices of nodes,
-    /// \param is_mixed_hl_elem Flag to indicate whether the elements of
-    /// a mesh can be used for both linear and high order interpolation
+    /// \param is_mixed_high_order_linear_elems Flag to indicate whether the
+    /// elements of a mesh can be used for both linear and high order
+    /// interpolation
     void renumberNodeIndices(const bool is_mixed_high_order_linear_elems);
 
     /*!
@@ -118,7 +119,6 @@ private:
        element type, number of nodes of the element. Therefore
        the total number of the integers in an element vector is
         3 * vector size + sum (number of nodes of each element)
-     \param is_ghost Flag to indicate ghost elements or not
    */
     IntegerType getNumberOfIntegerVariablesOfElements(
         const std::vector<const MeshLib::Element*>& elements) const;
