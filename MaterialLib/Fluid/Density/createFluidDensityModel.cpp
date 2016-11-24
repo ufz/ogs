@@ -26,10 +26,8 @@ namespace Fluid
 {
 /**
  *  \param config  ConfigTree object which contains the input data
- *                 including
- *                 \verbatim <type>LiquidDensity</type> \endverbatim
- *                 and it has a tag of
- *                 \verbatim <density> \endverbatim
+ *                 including `<type>LiquidDensity</type>`
+ *                 and it has a tag of `<density>`
  */
 static std::unique_ptr<FluidProperty> createLiquidDensity(
     BaseLib::ConfigTree const& config)
@@ -53,9 +51,8 @@ static std::unique_ptr<FluidProperty> createLiquidDensity(
 
 /**
  *     \param config  ConfigTree object which contains the input data
- *                    \verbatim <type>TemperatureDependent</type> \endverbatim
- *                     and it has a tag of
- *                    \verbatim <density> \endverbatim
+ *                    `<type>TemperatureDependent</type>`
+ *                     and it has a tag of `<density>`
  */
 static std::unique_ptr<FluidProperty> createLinearTemperatureDependentDensity(
     BaseLib::ConfigTree const& config)

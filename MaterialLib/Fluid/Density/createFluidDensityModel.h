@@ -21,11 +21,8 @@ namespace MaterialLib
 {
 namespace Fluid
 {
-/**
- *  Create a density model
- *  \param config  ConfigTree object has a tag of
- *                 \verbatim <density> \endverbatim
- */
+/// Create a density model
+/// \param config  ConfigTree object has a tag of `<density>`
 std::unique_ptr<FluidProperty> createFluidDensityModel(
     BaseLib::ConfigTree const& config);
 }
