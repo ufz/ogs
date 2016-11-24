@@ -69,7 +69,6 @@ public:
         return new TemplateElement(*this);
     }
 
-    /// \copydoc MeshLib::Element::clone(Node*[], std::size_t)
     virtual Element* clone(Node** nodes, std::size_t id) const
     {
         return new TemplateElement(nodes, id);
@@ -109,10 +108,10 @@ public:
     bool isEdge(unsigned idx1, unsigned idx2) const;
 
     /**
-     * Checks if a point is inside the element.
-     * @param pnt a 3D MathLib::Point3d object
-     * @param eps tolerance for numerical algorithm used or computing the property
-     * @return true if the point is not outside the element, false otherwise
+     * \copydoc MeshLib::Element::isPntInElement()
+     *
+     * This is actually calling the correct implementation of this function
+     * passing the element's nodes.
      */
     bool isPntInElement(MathLib::Point3d const& pnt, double eps = std::numeric_limits<double>::epsilon()) const
     {

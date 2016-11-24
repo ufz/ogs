@@ -34,8 +34,7 @@ class VtkMeshNodalCoordinatesTemplate:
                            vtkMappedDataArray<Scalar> >
 {
 public:
-    vtkMappedDataArrayNewInstanceMacro(
-        VtkMeshNodalCoordinatesTemplate<Scalar>)
+    vtkMappedDataArrayNewInstanceMacro(VtkMeshNodalCoordinatesTemplate<Scalar>);
     static VtkMeshNodalCoordinatesTemplate *New();
     virtual void PrintSelf(std::ostream &os, vtkIndent indent);
 

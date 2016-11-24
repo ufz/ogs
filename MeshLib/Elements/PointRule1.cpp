@@ -24,9 +24,10 @@ double PointRule1::computeVolume(Node const* const* /*_nodes*/)
     return 0;
 }
 
-bool PointRule1::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
+bool PointRule1::isPntInElement(Node const* const* nodes,
+                                MathLib::Point3d const& pnt, double eps)
 {
-    double const dist = MathLib::sqrDist(*_nodes[0], pnt);
+    double const dist = MathLib::sqrDist(*nodes[0], pnt);
     return (dist < eps);
 }
 

@@ -29,9 +29,11 @@ double TriRule3::computeVolume(Node const* const* _nodes)
     return MathLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2]);
 }
 
-bool TriRule3::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
+bool TriRule3::isPntInElement(Node const* const* nodes,
+                              MathLib::Point3d const& pnt, double eps)
 {
-    return MathLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps);
+    return MathLib::isPointInTriangle(pnt, *nodes[0], *nodes[1], *nodes[2],
+                                      eps);
 }
 
 unsigned TriRule3::identifyFace(Node const* const* _nodes, Node* nodes[3])

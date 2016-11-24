@@ -1,5 +1,5 @@
 /*!
-   \file  IdealGasLow.h
+   \file  IdealGasLaw.h
    \brief Declaration of class IdealGasLow for fluid density by the ideal gas
           law depending on one variable linearly.
 
@@ -83,7 +83,6 @@ private:
 
     /// Get the partial differential of density with the respect to pressure
     /// \param T  Temperature in K.
-    /// \param pg Gas phase pressure in Pa.
     double dIdealGasLaw_dp(const double T, const double /* pg */) const
     {
         return _molar_mass / (PhysicalConstant::IdealGasConstant * T);

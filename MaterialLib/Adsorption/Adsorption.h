@@ -41,7 +41,7 @@ public:
     /**
      * @brief get_d_reaction_rate
      * @param p_Ads
-     * @param T_ads
+     * @param T_Ads
      * @param M_Ads
      * @param loading
      * @param dqdr array containing the differentials wrt: p, T, C
