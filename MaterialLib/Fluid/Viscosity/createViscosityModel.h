@@ -24,8 +24,8 @@ namespace MaterialLib
 {
 namespace Fluid
 {
-/// Create a viscosity model
-/// \param config  ConfigTree object has a tag of <viscosity>
+///  Create a viscosity model
+///  \param config  ConfigTree object has a tag of `<viscosity>`
 std::unique_ptr<FluidProperty> createViscosityModel(
     BaseLib::ConfigTree const& config);
 
