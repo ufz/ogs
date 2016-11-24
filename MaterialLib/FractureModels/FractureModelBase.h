@@ -40,18 +40,18 @@ public:
         void reset()
         {
             _is_tensile_stress = false;
-            _shear_yield_function = 0.0;
+            _shear_yield_function_value = 0.0;
         }
 
-        void setShearYieldFunction(double Fs) { _shear_yield_function = Fs; }
-        double getShearYieldFunction() const { return _shear_yield_function; }
+        void setShearYieldFunctionValue(double Fs) { _shear_yield_function_value = Fs; }
+        double getShearYieldFunctionValue() const { return _shear_yield_function_value; }
 
         void setTensileStress(bool flag) { _is_tensile_stress = flag; }
         bool setTensileStress() const { return _is_tensile_stress; }
 
     private:
         bool _is_tensile_stress = false;
-        double _shear_yield_function = 0.0;
+        double _shear_yield_function_value = 0.0;
     };
 
     /// Polymorphic creator for MaterialStateVariables objects specific for a

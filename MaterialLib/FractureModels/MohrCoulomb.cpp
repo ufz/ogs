@@ -88,7 +88,7 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
 
     // check shear yield function (Fs)
     double const Fs = std::abs(sigma[0]) + sigma[1] * std::tan(mat.phi) - mat.c;
-    material_state_variables.setShearYieldFunction(Fs);
+    material_state_variables.setShearYieldFunctionValue(Fs);
     if (Fs < .0)
     {
         Kep = Ke;
