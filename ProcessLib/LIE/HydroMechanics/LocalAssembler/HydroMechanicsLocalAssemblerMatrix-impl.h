@@ -354,18 +354,19 @@ computeSecondaryVariableConcreteWithBlockVectors(
         ele_velocity += ip_data.darcy_velocity;
     }
 
-    ele_stress /= static_cast<double>(_ip_data.size());
-    ele_strain /= static_cast<double>(_ip_data.size());
-    ele_velocity /= static_cast<double>(_ip_data.size());
+    ele_stress /= static_cast<double>(n_integration_points);
+    ele_strain /= static_cast<double>(n_integration_points);
+    ele_velocity /= static_cast<double>(n_integration_points);
 
-    (*_process_data.mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
-    (*_process_data.mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];
-    (*_process_data.mesh_prop_stress_xy)[_element.getID()] = ele_stress[2];
-    (*_process_data.mesh_prop_strain_xx)[_element.getID()] = ele_strain[0];
-    (*_process_data.mesh_prop_strain_yy)[_element.getID()] = ele_strain[1];
-    (*_process_data.mesh_prop_strain_xy)[_element.getID()] = ele_strain[2];
+    auto const element_id = _element.getID();
+    (*_process_data.mesh_prop_stress_xx)[element_id] = ele_stress[0];
+    (*_process_data.mesh_prop_stress_yy)[element_id] = ele_stress[1];
+    (*_process_data.mesh_prop_stress_xy)[element_id] = ele_stress[2];
+    (*_process_data.mesh_prop_strain_xx)[element_id] = ele_strain[0];
+    (*_process_data.mesh_prop_strain_yy)[element_id] = ele_strain[1];
+    (*_process_data.mesh_prop_strain_xy)[element_id] = ele_strain[2];
     for (unsigned i=0; i<3; i++)
-        (*_process_data.mesh_prop_velocity)[_element.getID()*3 + i] = ele_velocity[i];
+        (*_process_data.mesh_prop_velocity)[element_id*3 + i] = ele_velocity[i];
 }
 
 }  // namespace HydroMechanics

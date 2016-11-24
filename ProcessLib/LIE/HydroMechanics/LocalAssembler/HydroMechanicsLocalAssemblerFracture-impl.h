@@ -377,17 +377,18 @@ computeSecondaryVariableConcreteWithVector(
         ele_sigma_eff += ip.sigma_eff;
         ele_Fs = std::max(ele_Fs, ip.material_state_variables->getShearYieldFunction());
     }
-    ele_b /= static_cast<double>(_ip_data.size());
-    ele_k /= static_cast<double>(_ip_data.size());
-    ele_w /= static_cast<double>(_ip_data.size());
-    ele_sigma_eff /= static_cast<double>(_ip_data.size());
-    (*_process_data.mesh_prop_b)[this->_element.getID()] = ele_b;
-    (*_process_data.mesh_prop_k_f)[this->_element.getID()] = ele_k;
-    (*_process_data.mesh_prop_w_n)[this->_element.getID()] = ele_w[index_normal];
-    (*_process_data.mesh_prop_w_s)[this->_element.getID()] = ele_w[0];
-    (*_process_data.mesh_prop_fracture_stress_normal)[this->_element.getID()] = ele_sigma_eff[index_normal];
-    (*_process_data.mesh_prop_fracture_stress_shear)[this->_element.getID()] = ele_sigma_eff[0];
-    (*_process_data.mesh_prop_fracture_shear_failure)[this->_element.getID()] = ele_Fs;
+    ele_b /= static_cast<double>(n_integration_points);
+    ele_k /= static_cast<double>(n_integration_points);
+    ele_w /= static_cast<double>(n_integration_points);
+    ele_sigma_eff /= static_cast<double>(n_integration_points);
+    auto const element_id = _element.getID();
+    (*_process_data.mesh_prop_b)[element_id] = ele_b;
+    (*_process_data.mesh_prop_k_f)[element_id] = ele_k;
+    (*_process_data.mesh_prop_w_n)[element_id] = ele_w[index_normal];
+    (*_process_data.mesh_prop_w_s)[element_id] = ele_w[0];
+    (*_process_data.mesh_prop_fracture_stress_normal)[element_id] = ele_sigma_eff[index_normal];
+    (*_process_data.mesh_prop_fracture_stress_shear)[element_id] = ele_sigma_eff[0];
+    (*_process_data.mesh_prop_fracture_shear_failure)[element_id] = ele_Fs;
 }
 
 }  // namespace HydroMechanics
