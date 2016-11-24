@@ -23,6 +23,10 @@ namespace ProcessLib
 {
 namespace HydroMechanics
 {
+/// Linear kinematics poro-mechanical/biphasic (fluid-solid mixture) model.
+///
+/// The mixture momentum balance and the mixture mass balance are solved under
+/// fully saturated conditions.
 template <int DisplacementDim>
 class HydroMechanicsProcess final : public Process
 {

@@ -71,15 +71,28 @@ struct HydroMechanicsProcessData
     //! Assignments are not needed.
     void operator=(HydroMechanicsProcessData&&) = delete;
 
+    /// The constitutive relation for the mechanical part.
+    /// \note Linear elasticity is the only supported one in the moment.
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         material;
+    /// Permeability of the solid. A scalar quantity, Parameter<double>.
     Parameter<double> const& intrinsic_permeability;
+    /// Volumetric average specific storage of the solid and fluid phases.
+    /// A scalar quantity, Parameter<double>.
     Parameter<double> const& specific_storage;
+    /// Fluid's viscosity. A scalar quantity, Parameter<double>.
     Parameter<double> const& fluid_viscosity;
+    /// Fluid's density. A scalar quantity, Parameter<double>.
     Parameter<double> const& fluid_density;
+    /// Biot coefficient. A scalar quantity, Parameter<double>.
     Parameter<double> const& biot_coefficient;
+    /// Porosity of the solid. A scalar quantity, Parameter<double>.
     Parameter<double> const& porosity;
+    /// Solid's density. A scalar quantity, Parameter<double>.
     Parameter<double> const& solid_density;
+    /// Specific body forces applied to solid and fluid.
+    /// It is usually used to apply gravitational forces.
+    /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt = 0.0;
     double t = 0.0;
