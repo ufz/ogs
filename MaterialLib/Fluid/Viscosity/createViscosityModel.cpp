@@ -26,8 +26,10 @@ namespace Fluid
 {
 /**
  *     \param config  ConfigTree object which contains the input data
- *                    including  <type>LinearPressure</type> and it has
- *                    a tag of <viscosity>
+ *                    including
+ *                    \verbatim <type>LinearPressure</type> \endverbatim
+ *                     and it has a tag of
+ *                    \verbatim <viscosity> \endverbatim
  */
 static std::unique_ptr<FluidProperty> createLinearPressureDependentViscosity(
     BaseLib::ConfigTree const& config)
@@ -50,8 +52,9 @@ static std::unique_ptr<FluidProperty> createLinearPressureDependentViscosity(
 
 /**
  *     \param config  ConfigTree object which contains the input data
- *                    including  <type>TemperatureDependent</type> and it has
- *                    a tag of <viscosity>
+ *                    \verbatim <type>TemperatureDependent</type> \endverbatim
+ *                     and it has a tag of
+ *                    \verbatim <viscosity> \endverbatim
  */
 static std::unique_ptr<FluidProperty> createTemperatureDependentViscosity(
     BaseLib::ConfigTree const& config)
