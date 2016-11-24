@@ -181,6 +181,8 @@ assembleBlockMatricesWithJacobian(
     GlobalDimMatrix local_dk_db_tensor;
     local_dk_db_tensor.setZero();
 
+    auto const& gravity_vec = _process_data.specific_body_force;
+
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -211,7 +213,6 @@ assembleBlockMatricesWithJacobian(
         double const mu = _process_data.fluid_viscosity(t, x_position)[0];
         auto const alpha = (*frac_prop.biot_coefficient)(t, x_position)[0];
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
-        auto const& gravity_vec = _process_data.specific_body_force;
 
         // displacement jumps in local coordinates
         w.noalias() = R * H_g * nodal_g;
@@ -311,6 +312,8 @@ computeSecondaryVariableConcreteWithVector(
     GlobalDimMatrix local_k_tensor;
     local_k_tensor.setZero();
 
+    auto const& gravity_vec = _process_data.specific_body_force;
+
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -333,7 +336,6 @@ computeSecondaryVariableConcreteWithVector(
         auto q = ip_data.darcy_velocity.head(GlobalDim);
         double const mu = _process_data.fluid_viscosity(t, x_position)[0];
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
-        auto const& gravity_vec = _process_data.specific_body_force;
 
         // displacement jumps in local coordinates
         w.noalias() = R * H_g * nodal_g;

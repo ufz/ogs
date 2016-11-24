@@ -176,6 +176,7 @@ assembleBlockMatricesWithJacobian(
     Kup.setZero(displacement_size, pressure_size);
 
     double const& dt = _process_data.dt;
+    auto const& gravity_vec = _process_data.specific_body_force;
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -211,7 +212,6 @@ assembleBlockMatricesWithJacobian(
         auto const rho_sr = _process_data.solid_density(t, x_position)[0];
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
         auto const porosity = _process_data.porosity(t, x_position)[0];
-        auto const& gravity_vec = _process_data.specific_body_force;
 
         double const rho = rho_sr * (1 - porosity) + porosity * rho_fr;
         auto const& identity2 =
@@ -293,6 +293,8 @@ computeSecondaryVariableConcreteWithBlockVectors(
     Eigen::Ref<const Eigen::VectorXd> const& p,
     Eigen::Ref<const Eigen::VectorXd> const& u)
 {
+    auto const& gravity_vec = _process_data.specific_body_force;
+
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
