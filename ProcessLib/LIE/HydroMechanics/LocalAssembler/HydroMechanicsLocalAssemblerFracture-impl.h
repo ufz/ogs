@@ -12,6 +12,8 @@
 
 #include "HydroMechanicsLocalAssemblerFracture.h"
 
+#include <iostream>
+
 #include "MaterialLib/FractureModels/FractureIdentity2.h"
 
 #include "ProcessLib/Utils/InitShapeMatrices.h"
@@ -99,6 +101,16 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         {
             ip_data.sigma_eff[i] = initial_effective_stress[i];
             ip_data.sigma_eff_prev[i] = initial_effective_stress[i];
+        }
+    }
+
+    if (_process_data.use_initial_stress_as_reference)
+    {
+        _initial_pressure.resize(pressure_size);
+        for (unsigned i=0; i<pressure_size; i++)
+        {
+            x_position.setNodeID(e.getNodeIndex(i));
+            _initial_pressure[i] = _process_data.initial_pressure(0, x_position)[0];
         }
     }
 }
@@ -217,14 +229,30 @@ assembleBlockMatricesWithJacobian(
 
         // aperture
         b = ip_data.aperture0 + w[index_normal];
-        if (b < 0.0)
-            OGS_FATAL("Fracture aperture is %g, but it must be non-negative.", b);
 
         // local C, local stress
         mat.computeConstitutiveRelation(
                     t, x_position,
                     w_prev, w,
                     effective_stress_prev, effective_stress, C);
+
+        if (b < 1e-6) // < 0.0
+        {
+            OGS_FATAL("e %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
+            //WARN("e %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
+            //C(index_normal, index_normal) = 1e15;
+            b = 1e-6;
+        }
+
+        if (_element.getID() == 55)
+        {
+            std::cout << "# e=" << _element.getID() << ", ip=" << ip << "\n";
+            std::cout << "p=" << (N_p * nodal_p) << "\n";
+            std::cout << "p_dot=" << (N_p * nodal_p_dot) << "\n";
+            std::cout << "w=" << w.transpose() << "\n";
+            std::cout << "sigma'_prev=" << effective_stress_prev.transpose() << "\n";
+            std::cout << "sigma'=" << effective_stress.transpose() << "\n";
+        }
 
         // permeability
         double const local_k = b * b / 12;
@@ -244,7 +272,21 @@ assembleBlockMatricesWithJacobian(
         //
         // displacement equation, displacement jump part
         //
-        rhs_g.noalias() -= H_g.transpose() * R.transpose() * effective_stress * ip_w;
+        if (_process_data.use_initial_stress_as_reference)
+        {
+            auto const vec_sigma_eff_ref =
+                _process_data.initial_fracture_effective_stress(t, x_position);
+            auto const sigma_eff_ref =
+                Eigen::Map<typename ShapeMatricesTypeDisplacement::
+                               template VectorType<GlobalDim> const>(
+                    vec_sigma_eff_ref.data(), GlobalDim);
+            rhs_g.noalias() -= H_g.transpose() * R.transpose() *
+                               (effective_stress - sigma_eff_ref) * ip_w;
+        }
+        else
+        {
+            rhs_g.noalias() -= H_g.transpose() * R.transpose() * effective_stress * ip_w;
+        }
         J_gg.noalias() += H_g.transpose() * R.transpose() * C * R * H_g * ip_w;
 
         //
@@ -282,7 +324,91 @@ assembleBlockMatricesWithJacobian(
         laplace_p * nodal_p + storage_p * nodal_p_dot + Kgp.transpose() * nodal_g_dot;
 
     // displacement equation
-    rhs_g.noalias() -= - Kgp * nodal_p;
+    if (_process_data.use_initial_stress_as_reference)
+        rhs_g.noalias() -= - Kgp * (nodal_p - _initial_pressure);
+    else
+        rhs_g.noalias() -= - Kgp * nodal_p;
+}
+
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, unsigned GlobalDim>
+void
+HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
+                                     ShapeFunctionPressure, IntegrationMethod,
+                                     GlobalDim>::
+computeSecondaryVariableConcreteWithVector(
+                                const double t,
+                                Eigen::VectorXd const& local_x)
+{
+    //auto const nodal_p = local_x.segment(pressure_index, pressure_size);
+    auto const nodal_g = local_x.segment(displacement_index, displacement_size);
+
+    FractureProperty const& frac_prop = *_process_data.fracture_property;
+    auto const& R = frac_prop.R;
+    // the index of a normal (normal to a fracture plane) component
+    // in a displacement vector
+    auto const index_normal = GlobalDim - 1;
+
+    SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    unsigned const n_integration_points = _ip_data.size();
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+
+        auto& ip_data = _ip_data[ip];
+        auto const& H_g = ip_data.H_u;
+
+        auto& mat = ip_data.fracture_material;
+        auto& effective_stress = ip_data.sigma_eff;
+        auto const& effective_stress_prev = ip_data.sigma_eff_prev;
+        auto& w = ip_data.w;
+        auto const& w_prev = ip_data.w_prev;
+        auto& C = ip_data.C;
+        auto& b = ip_data.aperture;
+
+        // displacement jumps in local coordinates
+        w.noalias() = R * H_g * nodal_g;
+
+        // aperture
+        b = ip_data.aperture0 + w[index_normal];
+
+        // local C, local stress
+        mat.computeConstitutiveRelation(
+                    t, x_position,
+                    w_prev, w,
+                    effective_stress_prev, effective_stress, C);
+
+        if (b < 1e-6) // < 0.0
+        {
+            //OGS_FATAL("Fracture aperture is %g, but it must be non-negative.", b);
+            WARN("e %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
+        }
+
+        // permeability
+        double const local_k = b * b / 12;
+        ip_data.permeability = local_k;
+    }
+
+    double ele_b = 0;
+    double ele_k = 0;
+    Eigen::Vector2d ele_w;
+    ele_w.setZero();
+    for (auto const& ip : _ip_data)
+    {
+        ele_b += ip.aperture;
+        ele_k += ip.permeability;
+        ele_w += ip.w;
+    }
+    ele_b /= _ip_data.size();
+    ele_k /= _ip_data.size();
+    ele_w /= _ip_data.size();
+    (*_process_data.mesh_prop_b)[this->_element.getID()] = ele_b;
+    (*_process_data.mesh_prop_k_f)[this->_element.getID()] = ele_k;
+    (*_process_data.mesh_prop_w_n)[this->_element.getID()] = ele_w[index_normal];
+    (*_process_data.mesh_prop_w_s)[this->_element.getID()] = ele_w[0];
 }
 
 
