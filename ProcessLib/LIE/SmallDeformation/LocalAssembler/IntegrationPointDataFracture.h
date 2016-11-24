@@ -26,11 +26,12 @@ struct IntegrationPointDataFracture final
 {
     explicit IntegrationPointDataFracture(
         MaterialLib::Fracture::FractureModelBase<DisplacementDim>& fracture_material)
-        : _fracture_material(fracture_material)
+        : _fracture_material(fracture_material),
+          _material_state_variables(
+              _fracture_material.createMaterialStateVariables())
     {
     }
 
-#if defined(_MSC_VER) && _MSC_VER < 1900
     // The default generated move-ctor is correctly generated for other
     // compilers.
     explicit IntegrationPointDataFracture(IntegrationPointDataFracture&& other)
@@ -43,11 +44,11 @@ struct IntegrationPointDataFracture final
           _aperture_prev(std::move(other._aperture_prev)),
           _aperture0(std::move(other._aperture0)),
           _fracture_material(other._fracture_material),
+          _material_state_variables(std::move(other._material_state_variables)),
           _C(std::move(other._C)),
           _detJ(std::move(other._detJ))
     {
     }
-#endif  // _MSC_VER
 
     typename HMatricesType::HMatrixType _h_matrices;
     typename HMatricesType::ForceVectorType _sigma, _sigma_prev;
@@ -57,6 +58,9 @@ struct IntegrationPointDataFracture final
     double _aperture0 = 0.0;
 
     MaterialLib::Fracture::FractureModelBase<DisplacementDim>& _fracture_material;
+    std::unique_ptr<typename MaterialLib::Fracture::FractureModelBase<
+        DisplacementDim>::MaterialStateVariables>
+        _material_state_variables;
 
     Eigen::MatrixXd _C;
     double _detJ = 0.0;

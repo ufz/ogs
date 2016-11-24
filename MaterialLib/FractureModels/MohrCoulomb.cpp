@@ -56,13 +56,17 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
         Eigen::Ref<Eigen::VectorXd const> w,
         Eigen::Ref<Eigen::VectorXd const> sigma_prev,
         Eigen::Ref<Eigen::VectorXd> sigma,
-        Eigen::Ref<Eigen::MatrixXd> Kep)
+        Eigen::Ref<Eigen::MatrixXd> Kep,
+        typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
+        material_state_variables)
 {
     if (DisplacementDim == 3)
     {
         OGS_FATAL("MohrCoulomb fracture model does not support 3D case.");
         return;
     }
+    material_state_variables.reset();
+
     MaterialPropertyValues const mat(_mp, t, x);
     Eigen::VectorXd const dw = w - w_prev;
 
@@ -78,11 +82,13 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     {
         Kep.setZero();
         sigma.setZero();
+        material_state_variables.setTensileStress(true);
         return;
     }
 
     // check shear yield function (Fs)
     double const Fs = std::abs(sigma[0]) + sigma[1] * std::tan(mat.phi) - mat.c;
+    material_state_variables.setShearYieldFunctionValue(Fs);
     if (Fs < .0)
     {
         Kep = Ke;

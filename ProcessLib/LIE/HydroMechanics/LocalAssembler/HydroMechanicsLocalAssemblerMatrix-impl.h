@@ -176,6 +176,7 @@ assembleBlockMatricesWithJacobian(
     Kup.setZero(displacement_size, pressure_size);
 
     double const& dt = _process_data.dt;
+    auto const& gravity_vec = _process_data.specific_body_force;
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -211,7 +212,6 @@ assembleBlockMatricesWithJacobian(
         auto const rho_sr = _process_data.solid_density(t, x_position)[0];
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
         auto const porosity = _process_data.porosity(t, x_position)[0];
-        auto const& gravity_vec = _process_data.specific_body_force;
 
         double const rho = rho_sr * (1 - porosity) + porosity * rho_fr;
         auto const& identity2 =
@@ -270,8 +270,67 @@ void
 HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                    ShapeFunctionPressure, IntegrationMethod,
                                    GlobalDim>::
-postTimestepConcrete(std::vector<double> const& /*local_x*/)
+computeSecondaryVariableConcreteWithVector(
+    double const t,
+    Eigen::VectorXd const& local_x)
 {
+    auto const p = local_x.segment(pressure_index, pressure_size);
+    auto const u = local_x.segment(displacement_index, displacement_size);
+
+    computeSecondaryVariableConcreteWithBlockVectors(t, p, u);
+}
+
+
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, unsigned GlobalDim>
+void
+HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
+                                   ShapeFunctionPressure, IntegrationMethod,
+                                   GlobalDim>::
+computeSecondaryVariableConcreteWithBlockVectors(
+    double const t,
+    Eigen::Ref<const Eigen::VectorXd> const& p,
+    Eigen::Ref<const Eigen::VectorXd> const& u)
+{
+    auto const& gravity_vec = _process_data.specific_body_force;
+
+    SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    unsigned const n_integration_points = _ip_data.size();
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+
+        auto& ip_data = _ip_data[ip];
+
+        auto const& dNdx_p = ip_data.dNdx_p;
+        auto const& B = ip_data.b_matrices;
+        auto const& eps_prev = ip_data.eps_prev;
+        auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
+
+        auto& eps = ip_data.eps;
+        auto& sigma_eff = ip_data.sigma_eff;
+        auto& C = ip_data.C;
+        auto& material_state_variables = *ip_data.material_state_variables;
+        double const k_over_mu =
+            _process_data.intrinsic_permeability(t, x_position)[0] /
+            _process_data.fluid_viscosity(t, x_position)[0];
+        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+
+        auto q = ip_data.darcy_velocity.head(GlobalDim);
+
+        eps.noalias() = B * u;
+
+        if (!_ip_data[ip].solid_material.computeConstitutiveRelation(
+                t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
+                sigma_eff, C, material_state_variables))
+            OGS_FATAL("Computation of local constitutive relation failed.");
+
+        q.noalias() = - k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
+    }
+
     Eigen::Vector3d ele_stress;
     ele_stress.setZero();
     Eigen::Vector3d ele_strain;
@@ -294,18 +353,19 @@ postTimestepConcrete(std::vector<double> const& /*local_x*/)
         ele_velocity += ip_data.darcy_velocity;
     }
 
-    ele_stress /= _ip_data.size();
-    ele_strain /= _ip_data.size();
-    ele_velocity /= _ip_data.size();
+    ele_stress /= static_cast<double>(n_integration_points);
+    ele_strain /= static_cast<double>(n_integration_points);
+    ele_velocity /= static_cast<double>(n_integration_points);
 
-    (*_process_data.mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
-    (*_process_data.mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];
-    (*_process_data.mesh_prop_stress_xy)[_element.getID()] = ele_stress[2];
-    (*_process_data.mesh_prop_strain_xx)[_element.getID()] = ele_strain[0];
-    (*_process_data.mesh_prop_strain_yy)[_element.getID()] = ele_strain[1];
-    (*_process_data.mesh_prop_strain_xy)[_element.getID()] = ele_strain[2];
+    auto const element_id = _element.getID();
+    (*_process_data.mesh_prop_stress_xx)[element_id] = ele_stress[0];
+    (*_process_data.mesh_prop_stress_yy)[element_id] = ele_stress[1];
+    (*_process_data.mesh_prop_stress_xy)[element_id] = ele_stress[2];
+    (*_process_data.mesh_prop_strain_xx)[element_id] = ele_strain[0];
+    (*_process_data.mesh_prop_strain_yy)[element_id] = ele_strain[1];
+    (*_process_data.mesh_prop_strain_xy)[element_id] = ele_strain[2];
     for (unsigned i=0; i<3; i++)
-        (*_process_data.mesh_prop_velocity)[_element.getID()*3 + i] = ele_velocity[i];
+        (*_process_data.mesh_prop_velocity)[element_id*3 + i] = ele_velocity[i];
 }
 
 }  // namespace HydroMechanics

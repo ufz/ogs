@@ -53,8 +53,8 @@ public:
             data.pushBackState();
     }
 
-    void postTimestepConcrete(std::vector<double> const& local_x) override;
-
+    void computeSecondaryVariableConcreteWithVector(
+        const double t, Eigen::VectorXd const& local_x) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

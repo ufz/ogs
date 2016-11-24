@@ -54,8 +54,6 @@ public:
             data.pushBackState();
     }
 
-    void postTimestepConcrete(std::vector<double> const& local_x) override;
-
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
@@ -85,6 +83,14 @@ protected:
         Eigen::Ref<Eigen::MatrixXd> J_pu,
         Eigen::Ref<Eigen::MatrixXd> J_uu,
         Eigen::Ref<Eigen::MatrixXd> J_up);
+
+    void computeSecondaryVariableConcreteWithVector(
+        double const t, Eigen::VectorXd const& local_x) override;
+
+    void computeSecondaryVariableConcreteWithBlockVectors(
+        double const t,
+        Eigen::Ref<const Eigen::VectorXd> const& p,
+        Eigen::Ref<const Eigen::VectorXd> const& u);
 
     // Types for displacement.
     using ShapeMatricesTypeDisplacement =

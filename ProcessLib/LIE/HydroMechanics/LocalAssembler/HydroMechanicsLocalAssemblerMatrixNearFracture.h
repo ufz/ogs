@@ -57,6 +57,9 @@ private:
         Eigen::VectorXd& local_b,
         Eigen::MatrixXd& local_J) override;
 
+    void computeSecondaryVariableConcreteWithVector(
+        double const t, Eigen::VectorXd const& local_x) override;
+
     using typename Base::ShapeMatricesTypeDisplacement;
     using typename Base::BMatricesType;
     using Base::_process_data;

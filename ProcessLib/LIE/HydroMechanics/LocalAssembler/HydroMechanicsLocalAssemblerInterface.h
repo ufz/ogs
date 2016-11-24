@@ -88,6 +88,18 @@ public:
                                                                  _dofIndex_to_localIndex[j]);
     }
 
+    void computeSecondaryVariableConcrete(
+        const double t, std::vector<double> const& local_x_) override
+    {
+        auto const local_dof_size = local_x_.size();
+
+        _local_u.setZero();
+        for (unsigned i=0; i<local_dof_size; i++)
+            _local_u[_dofIndex_to_localIndex[i]] = local_x_[i];
+
+        computeSecondaryVariableConcreteWithVector(t, _local_u);
+    }
+
 protected:
     virtual void assembleWithJacobianConcrete(
         double const t,
@@ -96,6 +108,8 @@ protected:
         Eigen::VectorXd& local_b,
         Eigen::MatrixXd& local_J) = 0;
 
+    virtual void computeSecondaryVariableConcreteWithVector(
+        double const t, Eigen::VectorXd const& local_u) = 0;
 
     MeshLib::Element const& _element;
 

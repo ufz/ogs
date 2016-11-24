@@ -40,6 +40,21 @@ public:
         P const& shear_stiffness;
     };
 
+    struct MaterialStateVariables
+        : public FractureModelBase<DisplacementDim>::MaterialStateVariables
+    {
+        void pushBackState() {}
+    };
+
+    std::unique_ptr<
+        typename FractureModelBase<DisplacementDim>::MaterialStateVariables>
+    createMaterialStateVariables() override
+    {
+        return std::unique_ptr<typename FractureModelBase<
+            DisplacementDim>::MaterialStateVariables>{
+            new MaterialStateVariables};
+    }
+
 public:
     explicit LinearElasticIsotropic(
         MaterialProperties const& material_properties)
@@ -47,6 +62,18 @@ public:
     {
     }
 
+    /**
+     * Computation of the constitutive relation for the linear elastic model.
+     *
+     * @param t           current time
+     * @param x           current position in space
+     * @param w_prev      fracture displacement at previous time step
+     * @param w           fracture displacement at current time step
+     * @param sigma_prev  stress at previous time step
+     * @param sigma       stress at current time step
+     * @param C           tangent matrix for stress and fracture displacements
+     * @param material_state_variables   material state variables
+     */
     void computeConstitutiveRelation(
             double const t,
             ProcessLib::SpatialPosition const& x,
@@ -54,7 +81,9 @@ public:
             Eigen::Ref<Eigen::VectorXd const> w,
             Eigen::Ref<Eigen::VectorXd const> sigma_prev,
             Eigen::Ref<Eigen::VectorXd> sigma,
-            Eigen::Ref<Eigen::MatrixXd> C) override;
+            Eigen::Ref<Eigen::MatrixXd> C,
+            typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
+            material_state_variables) override;
 
 private:
     MaterialProperties _mp;

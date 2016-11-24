@@ -117,6 +117,44 @@ assembleWithJacobianConcrete(
 }
 
 
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, unsigned GlobalDim>
+void
+HydroMechanicsLocalAssemblerMatrixNearFracture<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    GlobalDim>::
+computeSecondaryVariableConcreteWithVector(
+    double const t,
+    Eigen::VectorXd const& local_x)
+{
+    auto const p = local_x.segment(pressure_index, pressure_size);
+    auto const u = local_x.segment(displacement_index, displacement_size);
+
+    // levelset value of the element
+    // remark: this assumes the levelset function is uniform within an element
+    auto const& fracture_props = *_process_data.fracture_property;
+    double const ele_levelset = calculateLevelSetFunction(
+        fracture_props, _element.getCenterOfGravity().getCoords());
+
+    if (ele_levelset == 0)
+    {
+        // no DoF exists for displacement jumps. do the normal assebmly
+        Base::computeSecondaryVariableConcreteWithBlockVectors(t, p, u);
+        return;
+    }
+
+    // Displacement jumps should be taken into account
+
+    // compute true displacements
+    auto const g = local_x.segment(displacement_jump_index, displacement_size);
+    Eigen::VectorXd const total_u = u + ele_levelset * g;
+
+    // evaluate residuals and Jacobians for pressure and displacements
+    Base::computeSecondaryVariableConcreteWithBlockVectors(t, p, total_u);
+}
+
+
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib

@@ -48,6 +48,22 @@ public:
         P const& cohesion;
     };
 
+
+    struct MaterialStateVariables
+        : public FractureModelBase<DisplacementDim>::MaterialStateVariables
+    {
+        void pushBackState() override {}
+    };
+
+    std::unique_ptr<
+        typename FractureModelBase<DisplacementDim>::MaterialStateVariables>
+    createMaterialStateVariables() override
+    {
+        return std::unique_ptr<typename FractureModelBase<
+            DisplacementDim>::MaterialStateVariables>{
+            new MaterialStateVariables};
+    }
+
 public:
 
     explicit MohrCoulomb(
@@ -56,6 +72,18 @@ public:
     {
     }
 
+    /**
+     * Computation of the constitutive relation for the Mohr-Coulomb model.
+     *
+     * @param t           current time
+     * @param x           current position in space
+     * @param w_prev      fracture displacement at previous time step
+     * @param w           fracture displacement at current time step
+     * @param sigma_prev  stress at previous time step
+     * @param sigma       stress at current time step
+     * @param C           tangent matrix for stress and fracture displacements
+     * @param material_state_variables   material state variables
+     */
     void computeConstitutiveRelation(
             double const t,
             ProcessLib::SpatialPosition const& x,
@@ -63,7 +91,9 @@ public:
             Eigen::Ref<Eigen::VectorXd const> w,
             Eigen::Ref<Eigen::VectorXd const> sigma_prev,
             Eigen::Ref<Eigen::VectorXd> sigma,
-            Eigen::Ref<Eigen::MatrixXd> Kep) override;
+            Eigen::Ref<Eigen::MatrixXd> Kep,
+            typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
+            material_state_variables) override;
 
 private:
 
