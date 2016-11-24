@@ -49,12 +49,16 @@ public:
     /// Precomputes the shape matrices for a given surface element.
     /// @param surface_element The surface element used for precomputing the
     /// shape matrices used later on for the integration.
+    /// @param is_axially_symmetric corrects integration measure for cylinder
+    /// coordinates.
+    /// @param bulk_element_ids The id of the corresponding element in the bulk
+    /// mesh.
+    /// @param bulk_face_ids The id of the corresponding face in the bulk
+    /// element.
     /// @param integration_order the order of the integration
-    /// @param mesh Needed for fetching the id of the bulk element and the id of
-    /// the face
     CalculateSurfaceFluxLocalAssembler(
         MeshLib::Element const& surface_element,
-        std::size_t const /*local_matrix_size*/,
+        std::size_t /*const local_matrix_size*/,
         bool const is_axially_symmetric,
         unsigned const integration_order,
         MeshLib::PropertyVector<std::size_t> const& bulk_element_ids,
