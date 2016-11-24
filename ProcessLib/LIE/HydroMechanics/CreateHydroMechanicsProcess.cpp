@@ -261,6 +261,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
          initial_fracture_effective_stress.name.c_str());
 
     // deactivation of matrix elements in flow
+    //! \ogs_file_param_special{process__HYDRO_MECHANICS_WITH_LIE__deactivate_matrix_in_flow}
     auto opt_deactivate_matrix_in_flow = config.getConfigParameterOptional<bool>("deactivate_matrix_in_flow");
     bool const deactivate_matrix_in_flow = opt_deactivate_matrix_in_flow ? opt_deactivate_matrix_in_flow.get() : false;
     if (deactivate_matrix_in_flow)
