@@ -210,6 +210,7 @@ for (dirpath, dirnames, filenames) in os.walk(datadir, topdown=False):
             with open(outdoxfile, "w") as fh:
                 fh.write(r"""/*! \page %s %s
 
+\parblock
 <tt>
 """ % (pagename, fn))
 
@@ -222,6 +223,7 @@ for (dirpath, dirnames, filenames) in os.walk(datadir, topdown=False):
                 print_tags(xmlroot, 0, "prj", fh, None, 0, relfilepath)
 
                 fh.write(r"""</tt>
+\endparblock
 */
 """)
 
