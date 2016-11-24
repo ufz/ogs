@@ -19,7 +19,7 @@ class CalculateSurfaceFlux final
 {
 public:
     /// Constructs an object that is able to compute a balance.
-    /// @param mesh This mesh represents the boundary that is integrated over.
+    /// @param boundary_mesh The integration boundary mesh.
     /// @param bulk_property_number_of_components The number of components the
     /// variable has.
     /// @param integration_order Integration order used in local assembly.

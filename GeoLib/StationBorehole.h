@@ -89,7 +89,7 @@ public:
      * Note: The given coordinates always mark THE END of the soil layer. The reason behind this is
      * that the beginning of the first layer is identical with the position of the borehole. For each
      * layer following the beginning is already given by the end of the last layer. This also saves
-     * a seperate entry in the profile vector for the end of the borehole which in the given notation
+     * a separate entry in the profile vector for the end of the borehole which in the given notation
      * is just the coordinate given for the last soil layer (i.e. the end of that layer).
      */
     void addSoilLayer ( double x, double y, double z, const std::string &soil_name);

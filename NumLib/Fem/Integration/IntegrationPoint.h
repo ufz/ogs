@@ -43,23 +43,17 @@ public:
         return 1;
     }
 
-    /// Get coordinates of a integration point.
-    ///
-    /// \param igp      The integration point index.
-    /// \return a weighted point.
+    /// \copydoc IntegrationGaussRegular::getWeightedPoint(unsigned) const
     WeightedPoint getWeightedPoint(unsigned igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
 
-    /// Get coordinates of a integration point.
-    ///
-    /// \param order    the number of integration points.
-    /// \param igp      the sampling point id.
-    /// \return weight
-    static WeightedPoint getWeightedPoint(unsigned /* order */,
-                                          unsigned /*igp*/)
+    /// \copydoc IntegrationGaussRegular::getWeightedPoint(unsigned, unsigned)
+    static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
     {
+        (void)order;
+        (void)igp;
         return WeightedPoint({{1}}, 1);
     }
 
@@ -73,8 +67,9 @@ public:
     ///
     /// \param order    the number of integration points
     /// \return the number of points.
-    static unsigned getNumberOfPoints(unsigned /* order */)
+    static unsigned getNumberOfPoints(unsigned order)
     {
+        (void)order;
         return 1;
     }
 };

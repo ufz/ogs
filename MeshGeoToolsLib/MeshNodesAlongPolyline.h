@@ -40,12 +40,15 @@ public:
      * Constructor of object, that search mesh nodes along a
      * GeoLib::Polyline polyline within a given search radius. So the polyline
      * is something like a tube.
-     * @param mesh_nodes Nodes the search will be performed on.
+     * @param mesh Mesh the search will be performed on.
      * @param ply Along the GeoLib::Polyline ply the mesh nodes are searched.
      * @param epsilon_radius Search / tube radius
+     * @param search_all_nodes switch between searching all mesh nodes and
+     * searching the base nodes.
      */
     MeshNodesAlongPolyline(MeshLib::Mesh const& mesh,
-            GeoLib::Polyline const& ply, double epsilon_radius, bool search_all_nodes = true);
+                           GeoLib::Polyline const& ply, double epsilon_radius,
+                           bool search_all_nodes = true);
 
     /// return the mesh object
     MeshLib::Mesh const& getMesh() const;

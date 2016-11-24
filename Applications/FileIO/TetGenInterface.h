@@ -106,6 +106,7 @@ private:
      * Method reads the nodes from stream and stores them in a node vector.
      * For this purpose it uses methods parseNodesFileHeader() and parseNodes().
      * @param input  the input stream
+     * @param nodes  output vector of nodes.
      * @return true, if all information is read, false if the method detects an error
      */
     bool readNodesFromStream(std::ifstream &input,

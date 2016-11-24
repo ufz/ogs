@@ -54,10 +54,8 @@ public:
      * \brief Calculates the interpolation value.
      * @param pnt_to_interpolate The point should be located within the range
      * \f$[x_{\min}, x_{\max}]\f$, where \f$x_{\min} = \min_{1 \le j \le n}
-     * x_j\f$ and
-     * \f$x_{\max} = \max_{1 \le j \le n} x_j\f$. Points outside of this
-     * interval are
-     * set to x_{\min} or x_{\max}.
+     * x_j\f$ and \f$x_{\max} = \max_{1 \le j \le n} x_j\f$. Points outside of
+     * this interval are set to \f$x_{\min}\f$ or \f$x_{\max}\f$.
      * @return The interpolated value.
      */
     double getValue(double pnt_to_interpolate) const;

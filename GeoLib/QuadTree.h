@@ -46,12 +46,13 @@ public:
      * (lower left and the upper right points).
      * @param ll lower left point of the square
      * @param ur upper right point of the square
+     * @param max_points_per_leaf maximum number of points per leaf
      */
-    QuadTree(POINT const& ll, POINT const& ur, std::size_t max_points_per_node) :
+    QuadTree(POINT const& ll, POINT const& ur, std::size_t max_points_per_leaf) :
         _father (nullptr), _ll (ll), _ur (ur), _depth (0), _is_leaf (true),
-        _max_points_per_node (max_points_per_node)
+        _max_points_per_leaf (max_points_per_leaf)
     {
-        assert (_max_points_per_node > 0);
+        assert (_max_points_per_leaf > 0);
 
         // init children
         for (std::size_t k(0); k < 4; k++)
@@ -110,7 +111,7 @@ public:
         else
             return false;
 
-        if (_pnts.size () > _max_points_per_node)
+        if (_pnts.size () > _max_points_per_leaf)
             splitNode ();
         return true;
     }
@@ -362,15 +363,16 @@ private:
      * @param ur upper right point
      * @param father father in the tree
      * @param depth depth of the node
+     * @param max_points_per_leaf maximum number of points per leaf
      * @return
      */
     QuadTree (POINT const& ll,
               POINT const& ur,
               QuadTree* father,
               std::size_t depth,
-              std::size_t max_points_per_node) :
+              std::size_t max_points_per_leaf) :
         _father (father), _ll (ll), _ur (ur), _depth (depth), _is_leaf (true),
-        _max_points_per_node (max_points_per_node)
+        _max_points_per_leaf (max_points_per_leaf)
     {
         // init children
         for (std::size_t k(0); k < 4; k++)
@@ -384,20 +386,20 @@ private:
         mid_point[0] += (_ur[0] - _ll[0]) / 2.0;
         mid_point[1] += (_ur[1] - _ll[1]) / 2.0;
         assert(_children[0] == nullptr);
-        _children[0] = new QuadTree<POINT> (mid_point, _ur, this, _depth + 1, _max_points_per_node); // north east
+        _children[0] = new QuadTree<POINT> (mid_point, _ur, this, _depth + 1, _max_points_per_leaf); // north east
         POINT h_ll(mid_point), h_ur(mid_point);
         h_ll[0] = _ll[0];
         h_ur[1] = _ur[1];
         assert(_children[1] == nullptr);
-        _children[1] = new QuadTree<POINT> (h_ll, h_ur, this, _depth + 1, _max_points_per_node); // north west
+        _children[1] = new QuadTree<POINT> (h_ll, h_ur, this, _depth + 1, _max_points_per_leaf); // north west
         assert(_children[2] == nullptr);
-        _children[2] = new QuadTree<POINT> (_ll, mid_point, this, _depth + 1, _max_points_per_node); // south west
+        _children[2] = new QuadTree<POINT> (_ll, mid_point, this, _depth + 1, _max_points_per_leaf); // south west
         h_ll = _ll;
         h_ll[0] = mid_point[0];
         h_ur = _ur;
         h_ur[1] = mid_point[1];
         assert(_children[3] == nullptr);
-        _children[3] = new QuadTree<POINT> (h_ll, h_ur, this, _depth + 1, _max_points_per_node); // south east
+        _children[3] = new QuadTree<POINT> (h_ll, h_ur, this, _depth + 1, _max_points_per_leaf); // south east
 
         // distribute points to sub quadtrees
         for (std::size_t j(0); j < _pnts.size(); j++) {
@@ -489,7 +491,7 @@ private:
     /**
      * maximum number of points per leaf
      */
-    const std::size_t _max_points_per_node;
+    const std::size_t _max_points_per_leaf;
 };
 }
 

@@ -48,7 +48,7 @@ public:
      * Collapsed all nodes with distance < eps but ignores elements
      * (i.e. elements with collapsed nodes may result)
      * This is implicitely called when calling simplifyMesh(), so it does not need to be
-     * called seperately when using simplifyMesh().
+     * called separately when using simplifyMesh().
      */
     MeshLib::Mesh* collapseNodes(const std::string &new_mesh_name, double eps);
 

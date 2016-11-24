@@ -249,11 +249,12 @@ class PETScMatrix
         PetscInt _end_rank;
 
         /*!
-          \brief Create the matrix, configure memory allocation and set the related member data.
-          \param Number of nonzeros per row in the diagonal portion of local submatrix
-                 (same value is used for all local rows),
-          \param Number of nonzeros per row in the off-diagonal portion of local submatrix
-                 (same value is used for all local rows)
+          \brief Create the matrix, configure memory allocation and set the
+          related member data.
+          \param d_nz Number of nonzeros per row in the diagonal portion of
+                      local submatrix (same value is used for all local rows),
+          \param o_nz Number of nonzeros per row in the off-diagonal portion of
+                      local submatrix (same value is used for all local rows)
         */
         void create(const PetscInt d_nz, const PetscInt o_nz);
 

@@ -48,8 +48,6 @@ public:
      * \param slot A slot on parent which is called when a recent file is clicked.
      * Use this with Qts SLOT() macro!
      * \param settingsName The setting key
-     * \param programName The name of the program. QSettings of one program
-     * should be stored with the same keys: QSettings("UFZ", programName)
      */
     RecentFiles(QObject* parent, const char* slot, QString settingsName);
     ~RecentFiles();

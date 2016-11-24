@@ -195,10 +195,8 @@ bool parallel(MathLib::Vector3 v, MathLib::Vector3 w);
 /**
  * A line segment is given by its two end-points. The function checks,
  * if the two line segments (ab) and (cd) intersects.
- * @param a first end-point of the first line segment
- * @param b second end-point of the first line segment
- * @param c first end-point of the second line segment
- * @param d second end-point of the second line segment
+ * @param s0 the first line segment.
+ * @param s1 the second line segment.
  * @param s the intersection point if the segments do intersect
  * @return true, if the line segments intersect, else false
  */

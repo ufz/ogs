@@ -51,13 +51,6 @@ namespace Fluid
 class LiquidDensity final : public FluidProperty
 {
 public:
-    /**
-     * @param beta \$f \beta \f$
-     * @param rho  \$f \rho_0 \f$
-     * @param T0   \$f T_0 \f$
-     * @param p0   \$f p_0 \f$
-     * @param E    \$f E \f$
-     */
     explicit LiquidDensity(const double beta, const double rho0,
                            const double T0, const double p0, const double E)
         : _beta(beta), _rho0(rho0), _temperature0(T0), _p0(p0), _bulk_modulus(E)

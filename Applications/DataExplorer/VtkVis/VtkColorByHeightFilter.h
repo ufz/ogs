@@ -45,7 +45,7 @@ public:
     void PrintSelf(ostream& os, vtkIndent indent);
 
     /// @brief Returns the underlying colour look up table object.
-    vtkGetObjectMacro(ColorLookupTable,VtkColorLookupTable)
+    vtkGetObjectMacro(ColorLookupTable,VtkColorLookupTable);
 
     /// @brief This filter gets updated when the color look-up table was modified.
     virtual unsigned long GetMTime();

@@ -138,7 +138,8 @@ public:
      * Reads a column of the given name from a CSV file.
      * \param fname        Name of the file to be read
      * \param delim        Deliminator, default is ','
-     * \param data_arary   A vector containing the data read from the file
+     * \param data_array   A vector containing the data read from the file
+     * \param column_name  The column's name to read
      * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
      */
     template <typename T>

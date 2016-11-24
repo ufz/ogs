@@ -282,8 +282,6 @@ class PETScVector
 
         /*!
            Get local vector, i.e. entries in the same rank
-           \param loc_vec  Pointer to array where stores the local vector,
-                           memory allocation is not needed
         */
         PetscScalar* getLocalVector() const;
 

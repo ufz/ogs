@@ -59,7 +59,7 @@ public:
         return empty_quality_vec;
     }
 
-    /// Returns a histogram of the quality vector seperated into the given number of bins.
+    /// Returns a histogram of the quality vector separated into the given number of bins.
     /// If no number of bins is specified, one will be calculated based on the Sturges criterium.
     BaseLib::Histogram<double> getHistogram(std::size_t n_bins = 0) const
     {

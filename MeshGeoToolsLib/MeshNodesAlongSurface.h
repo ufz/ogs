@@ -36,7 +36,7 @@ public:
     /**
      * Constructor of object, that search mesh nodes along a
      * GeoLib::Surface object within a given search radius.
-     * @param mesh_nodes Nodes the search will be performed on.
+     * @param mesh Mesh the search will be performed on.
      * @param sfc Along the GeoLib::Surface sfc the mesh nodes are searched.
      * @param epsilon Euclidean distance tolerance value. Is the distance
      * between a mesh node and the surface smaller than that value it is a mesh

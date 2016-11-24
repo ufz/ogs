@@ -74,8 +74,6 @@ public slots:
 
     void addSurfaceVec(std::string const& name);
 
-    /// @brief
-    /// @param surfaces The surface vector.
     void appendSurfaceVec(std::string const& name);
     void removeSurfaceVec(std::string const& name);
 
