@@ -62,6 +62,18 @@ public:
     {
     }
 
+    /**
+     * Computation of the constitutive relation for the linear elastic model.
+     *
+     * @param t           current time
+     * @param x           current position in space
+     * @param w_prev      fracture displacement at previous time step
+     * @param w           fracture displacement at current time step
+     * @param sigma_prev  stress at previous time step
+     * @param sigma       stress at current time step
+     * @param C           tangent matrix for stress and fracture displacements
+     * @param material_state_variables   material state variables
+     */
     void computeConstitutiveRelation(
             double const t,
             ProcessLib::SpatialPosition const& x,
