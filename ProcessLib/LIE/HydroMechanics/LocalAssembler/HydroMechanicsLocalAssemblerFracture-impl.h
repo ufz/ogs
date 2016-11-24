@@ -373,7 +373,7 @@ computeSecondaryVariableConcreteWithVector(
         ele_k += ip.permeability;
         ele_w += ip.w;
         ele_sigma_eff += ip.sigma_eff;
-        ele_Fs = std::max(ele_Fs, ip.material_state_variables->getShearYieldFucntion());
+        ele_Fs = std::max(ele_Fs, ip.material_state_variables->getShearYieldFunction());
     }
     ele_b /= static_cast<double>(_ip_data.size());
     ele_k /= static_cast<double>(_ip_data.size());

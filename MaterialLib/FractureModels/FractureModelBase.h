@@ -43,11 +43,11 @@ public:
             _shear_yield_function = 0.0;
         }
 
-        void setShearYieldFucntion(double Fs) { _shear_yield_function = Fs; }
-        double getShearYieldFucntion() const { return _shear_yield_function; }
+        void setShearYieldFunction(double Fs) { _shear_yield_function = Fs; }
+        double getShearYieldFunction() const { return _shear_yield_function; }
 
-        void isTensileStress(bool flag) { _is_tensile_stress = flag; }
-        bool isTensileStress() const { return _is_tensile_stress; }
+        void setTensileStress(bool flag) { _is_tensile_stress = flag; }
+        bool setTensileStress() const { return _is_tensile_stress; }
 
     private:
         bool _is_tensile_stress = false;

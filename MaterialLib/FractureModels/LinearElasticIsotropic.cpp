@@ -41,7 +41,7 @@ void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
     {
         C.setZero();
         sigma.setZero();
-        material_state_variables.isTensileStress(true);
+        material_state_variables.setTensileStress(true);
     }
 }
 
