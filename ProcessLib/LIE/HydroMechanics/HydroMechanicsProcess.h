@@ -53,6 +53,9 @@ public:
     bool isLinear() const override { return false; }
     //! @}
 
+    void computeSecondaryVariableConcrete(double const t,
+                                          GlobalVector const& x) override;
+
 private:
     using LocalAssemblerInterface = HydroMechanicsLocalAssemblerInterface;
 

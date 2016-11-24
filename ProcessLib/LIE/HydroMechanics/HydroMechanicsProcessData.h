@@ -18,6 +18,7 @@
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialLib/FractureModels/FractureModelBase.h"
 
+#include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/LIE/Common/FractureProperty.h"
 
 namespace MeshLib
@@ -48,7 +49,9 @@ struct HydroMechanicsProcessData
         std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>&& fracture_model,
         std::unique_ptr<FractureProperty>&& fracture_prop,
         Parameter<double> const& initial_effective_stress_,
-        Parameter<double> const& initial_fracture_effective_stress_
+        Parameter<double> const& initial_fracture_effective_stress_,
+        Parameter<double> const& initial_pressure_,
+        bool const use_initial_stress_as_reference_
         )
         : material{std::move(material_)},
           intrinsic_permeability(intrinsic_permeability_),
@@ -62,7 +65,9 @@ struct HydroMechanicsProcessData
           fracture_model{std::move(fracture_model)},
           fracture_property{std::move(fracture_prop)},
           initial_effective_stress(initial_effective_stress_),
-          initial_fracture_effective_stress(initial_fracture_effective_stress_)
+          initial_fracture_effective_stress(initial_fracture_effective_stress_),
+          initial_pressure(initial_pressure_),
+          use_initial_stress_as_reference(use_initial_stress_as_reference_)
     {
     }
 
@@ -80,6 +85,8 @@ struct HydroMechanicsProcessData
           fracture_property{std::move(other.fracture_property)},
           initial_effective_stress(other.initial_effective_stress),
           initial_fracture_effective_stress(other.initial_fracture_effective_stress),
+          initial_pressure(other.initial_pressure),
+          use_initial_stress_as_reference(other.use_initial_stress_as_reference),
           dt(other.dt),
           t(other.t)
     {
@@ -109,9 +116,12 @@ struct HydroMechanicsProcessData
 
     Parameter<double> const& initial_effective_stress;
     Parameter<double> const& initial_fracture_effective_stress;
+    Parameter<double> const& initial_pressure;
+    bool const use_initial_stress_as_reference;
 
     double dt = 0.0;
     double t = 0.0;
+    ProcessLib::ProcessVariable const* pv_p = nullptr;
 
     // mesh properties for output
     MeshLib::PropertyVector<double>* mesh_prop_stress_xx = nullptr;
@@ -123,6 +133,8 @@ struct HydroMechanicsProcessData
     MeshLib::PropertyVector<double>* mesh_prop_velocity = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_b = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_k_f = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_w_n = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_w_s = nullptr;
 };
 
 }  // namespace HydroMechanics

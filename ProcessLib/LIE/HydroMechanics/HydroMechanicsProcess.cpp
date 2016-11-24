@@ -17,6 +17,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "MeshLib/ElementStatus.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
@@ -102,7 +103,13 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     // for extrapolation
     _mesh_subset_all_nodes.reset(new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
     // pressure
+#if 1
+    ProcessVariable const& pv_p = getProcessVariables()[0];
+    _process_data.pv_p = &pv_p;
+    _mesh_nodes_p = MeshLib::getBaseNodes(pv_p.getElementStatus().getActiveElements());
+#else
     _mesh_nodes_p = MeshLib::getBaseNodes(_mesh.getElements());
+#endif
     _mesh_subset_nodes_p.reset(new MeshLib::MeshSubset(_mesh, &_mesh_nodes_p));
     // regular u
     _mesh_subset_matrix_nodes.reset(new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
@@ -120,7 +127,14 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     vec_n_components.push_back(1);
     all_mesh_subsets.push_back(std::unique_ptr<MeshLib::MeshSubsets>{
         new MeshLib::MeshSubsets{_mesh_subset_nodes_p.get()}});
+#if 1
+    if (pv_p.getElementStatus().getNumberOfActiveElements() == _mesh.getNumberOfElements())
+        vec_var_elements.push_back(&pv_p.getElementStatus().getActiveElements());
+    else
+        vec_var_elements.push_back(&_vec_fracture_matrix_elements); //TODO
+#else
     vec_var_elements.push_back(&_mesh.getElements());
+#endif
     // regular displacement
     vec_n_components.push_back(GlobalDim);
     std::generate_n(
@@ -218,6 +232,13 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             (*mesh_prop_levelset)[e->getID()] = levelsets;
         }
 
+        auto mesh_prop_w_n = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("w_n", MeshLib::MeshItemType::Cell);
+        mesh_prop_w_n->resize(mesh.getNumberOfElements());
+        auto mesh_prop_w_s = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("w_s", MeshLib::MeshItemType::Cell);
+        mesh_prop_w_s->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_w_n = mesh_prop_w_n;
+        _process_data.mesh_prop_w_s = mesh_prop_w_s;
+
         auto mesh_prop_b = const_cast<MeshLib::Mesh&>(mesh).getProperties().template createNewPropertyVector<double>("aperture", MeshLib::MeshItemType::Cell);
         mesh_prop_b->resize(mesh.getNumberOfElements());
         auto mesh_prop_matid = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
@@ -240,6 +261,16 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     }
 }
 
+
+template <unsigned GlobalDim>
+void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(const double t,
+                                                         GlobalVector const& x)
+{
+    DBUG("Compute the secondary variables for HydroMechanicsProcess.");
+    GlobalExecutor::executeMemberOnDereferenced(
+            &HydroMechanicsLocalAssemblerInterface::computeSecondaryVariable,
+            _local_assemblers, *_local_to_global_index_map, t, x);
+}
 
 template <unsigned GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(GlobalVector const& x)

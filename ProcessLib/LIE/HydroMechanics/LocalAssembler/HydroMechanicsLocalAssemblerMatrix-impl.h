@@ -13,7 +13,7 @@
 #include "HydroMechanicsLocalAssemblerMatrix.h"
 
 #include "MaterialLib/SolidModels/KelvinVector.h"
-
+#include "MeshLib/ElementStatus.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
@@ -104,6 +104,16 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
             ip_data.sigma_eff_prev[i] = initial_effective_stress[i];
         }
     }
+
+    if (_process_data.use_initial_stress_as_reference)
+    {
+        _initial_pressure.resize(pressure_size);
+        for (unsigned i=0; i<pressure_size; i++)
+        {
+            x_position.setNodeID(e.getNodeIndex(i));
+            _initial_pressure[i] = _process_data.initial_pressure(0, x_position)[0];
+        }
+    }
 }
 
 
@@ -120,8 +130,24 @@ assembleWithJacobianConcrete(
     Eigen::VectorXd& local_rhs,
     Eigen::MatrixXd& local_Jac)
 {
-    auto p = local_x.segment(pressure_index, pressure_size);
-    auto p_dot = local_x_dot.segment(pressure_index, pressure_size);
+    auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index, pressure_size);
+    auto p_dot = const_cast<Eigen::VectorXd&>(local_x_dot).segment(pressure_index, pressure_size);
+
+    if (_process_data.pv_p && !_process_data.pv_p->getElementStatus().isActive(_element.getID()))
+    {
+        SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
+        for (unsigned i=0; i<pressure_size; i++)
+        {
+            // only inactive nodes
+            if (_process_data.pv_p->getElementStatus().isActiveNode(_element.getNode(i)))
+                continue;
+            x_position.setNodeID(_element.getNodeIndex(i));
+            auto const p0 = _process_data.pv_p->getInitialCondition()(t, x_position)[0];
+            p[i] = p0;
+            p_dot[i] = 0;
+        }
+    }
 
     auto u = local_x.segment(displacement_index, displacement_size);
     auto u_dot = local_x_dot.segment(displacement_index, displacement_size);
@@ -228,7 +254,17 @@ assembleBlockMatricesWithJacobian(
 
         J_uu.noalias() += B.transpose() * C * B * ip_w;
 
-        rhs_u.noalias() -= B.transpose() * sigma_eff * ip_w;
+        if (_process_data.use_initial_stress_as_reference)
+        {
+            auto const vec_sigma_eff_ref = _process_data.initial_effective_stress(t, x_position);
+            auto const sigma_eff_ref =
+                Eigen::Map<typename BMatricesType::KelvinVectorType const>(vec_sigma_eff_ref.data(), kelvin_vector_size);
+            rhs_u.noalias() -= B.transpose() * (sigma_eff - sigma_eff_ref) * ip_w;
+        }
+        else
+        {
+            rhs_u.noalias() -= B.transpose() * sigma_eff * ip_w;
+        }
         rhs_u.noalias() -= - H_u.transpose() * rho * gravity_vec * ip_w;
 
         //
@@ -260,7 +296,123 @@ assembleBlockMatricesWithJacobian(
         laplace_p * p + storage_p * p_dot + Kup.transpose() * u_dot;
 
     // displacement equation
-    rhs_u.noalias() -= - Kup * p;
+    if (_process_data.use_initial_stress_as_reference)
+        rhs_u.noalias() -= - Kup * (p - _initial_pressure);
+    else
+        rhs_u.noalias() -= - Kup * p;
+}
+
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, unsigned GlobalDim>
+void
+HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
+                                   ShapeFunctionPressure, IntegrationMethod,
+                                   GlobalDim>::
+computeSecondaryVariableConcreteWithVector(
+    double const t,
+    Eigen::VectorXd const& local_x)
+{
+    auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index, pressure_size);
+
+    if (_process_data.pv_p && !_process_data.pv_p->getElementStatus().isActive(_element.getID()))
+    {
+        SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
+        for (unsigned i=0; i<pressure_size; i++)
+        {
+            // only inactive nodes
+            if (_process_data.pv_p->getElementStatus().isActiveNode(_element.getNode(i)))
+                continue;
+            x_position.setNodeID(_element.getNodeIndex(i));
+            auto const p0 = _process_data.pv_p->getInitialCondition()(t, x_position)[0];
+            p[i] = p0;
+        }
+    }
+
+    auto u = local_x.segment(displacement_index, displacement_size);
+
+    computeSecondaryVariableConcreteWithBlockVectors(t, p, u);
+}
+
+
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, unsigned GlobalDim>
+void
+HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
+                                   ShapeFunctionPressure, IntegrationMethod,
+                                   GlobalDim>::
+computeSecondaryVariableConcreteWithBlockVectors(
+    double const t,
+    Eigen::Ref<const Eigen::VectorXd> const& /*p*/,
+    Eigen::Ref<const Eigen::VectorXd> const& u)
+{
+    SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    unsigned const n_integration_points = _ip_data.size();
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+
+        auto& ip_data = _ip_data[ip];
+
+        auto const& B = ip_data.b_matrices;
+        auto const& eps_prev = ip_data.eps_prev;
+        auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
+
+        auto& eps = ip_data.eps;
+        auto& sigma_eff = ip_data.sigma_eff;
+        auto& C = ip_data.C;
+        auto& material_state_variables = *ip_data.material_state_variables;
+
+        //auto q = ip_data.darcy_velocity.head(GlobalDim);
+
+        eps.noalias() = B * u;
+
+        if (!_ip_data[ip].solid_material.computeConstitutiveRelation(
+                t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
+                sigma_eff, C, material_state_variables))
+            OGS_FATAL("Computation of local constitutive relation failed.");
+
+        //q.noalias() = - k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
+    }
+
+
+
+    Eigen::Vector3d ele_stress;
+    ele_stress.setZero();
+    Eigen::Vector3d ele_strain;
+    ele_strain.setZero();
+//    Eigen::Vector3d ele_velocity;
+//    ele_velocity.setZero();
+
+    for (auto const& ip_data : _ip_data)
+    {
+        ele_stress[0] += ip_data.sigma_eff[0];
+        ele_stress[1] += ip_data.sigma_eff[1];
+        ele_stress[2] += ip_data.sigma_eff[3];
+
+        ele_strain[0] += ip_data.eps[0];
+        ele_strain[1] += ip_data.eps[1];
+        ele_strain[2] += ip_data.eps[3];
+
+//        ele_velocity += ip_data.darcy_velocity;
+    }
+
+    ele_stress /= _ip_data.size();
+    ele_strain /= _ip_data.size();
+//    ele_velocity /= _ip_data.size();
+
+    (*_process_data.mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
+    (*_process_data.mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];
+    (*_process_data.mesh_prop_stress_xy)[_element.getID()] = ele_stress[2];
+    (*_process_data.mesh_prop_strain_xx)[_element.getID()] = ele_strain[0];
+    (*_process_data.mesh_prop_strain_yy)[_element.getID()] = ele_strain[1];
+    (*_process_data.mesh_prop_strain_xy)[_element.getID()] = ele_strain[2];
+//    for (unsigned i=0; i<3; i++)
+//        (*_process_data.mesh_prop_velocity)[_element.getID()*3 + i] = ele_velocity[i];
 }
 
 

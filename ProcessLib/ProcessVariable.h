@@ -10,6 +10,8 @@
 #ifndef PROCESS_LIB_PROCESS_VARIABLE_H_
 #define PROCESS_LIB_PROCESS_VARIABLE_H_
 
+#include "MeshLib/ElementStatus.h"
+
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 #include "ProcessLib/Parameter/Parameter.h"
@@ -66,12 +68,15 @@ public:
 
     unsigned getShapeFunctionOrder() const { return _shapefunction_order; }
 
+    MeshLib::ElementStatus const& getElementStatus() const { return *_element_status.get(); }
+
 private:
     std::string const _name;
     MeshLib::Mesh& _mesh;
     const int _n_components;
     unsigned _shapefunction_order;  ///< Order of the shapefunctions. Requires
                                     /// appropriate mesh.
+    std::unique_ptr<MeshLib::ElementStatus> _element_status;
     Parameter<double> const& _initial_condition;
 
     std::vector<BoundaryConditionConfig> _bc_configs;

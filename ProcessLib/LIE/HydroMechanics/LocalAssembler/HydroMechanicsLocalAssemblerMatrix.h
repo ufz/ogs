@@ -86,6 +86,14 @@ protected:
         Eigen::Ref<Eigen::MatrixXd> J_uu,
         Eigen::Ref<Eigen::MatrixXd> J_up);
 
+    void computeSecondaryVariableConcreteWithVector(
+        double const t, Eigen::VectorXd const& local_x) override;
+
+    void computeSecondaryVariableConcreteWithBlockVectors(
+        double const t,
+        Eigen::Ref<const Eigen::VectorXd> const& p,
+        Eigen::Ref<const Eigen::VectorXd> const& u);
+
     // Types for displacement.
     using ShapeMatricesTypeDisplacement =
         ShapeMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
@@ -106,6 +114,7 @@ protected:
     HydroMechanicsProcessData<GlobalDim>& _process_data;
 
     std::vector<IntegrationPointDataType> _ip_data;
+    Eigen::VectorXd _initial_pressure;
 
     static const int pressure_index = 0;
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;
