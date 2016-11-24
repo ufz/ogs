@@ -27,12 +27,11 @@ namespace MathLib
 /*!
    \brief apply known solutions to a system of linear equations
 
-   \param A                 Coefficient matrix
-   \param b                 RHS vector
-   \param vec_knownX_id    a vector of known solution entry IDs
-   \param vec_knownX_x     a vector of known solutions
-   \param penalty_scaling value for scaling some matrix and right hand side
-        entries to enforce some conditions
+   \param A              Coefficient matrix
+   \param b              RHS vector
+   \param x              Solution vector
+   \param vec_knownX_id  A vector of known solution entry IDs
+   \param vec_knownX_x   A vector of known solutions
 */
 void applyKnownSolution(PETScMatrix &A, PETScVector &b, PETScVector &x,
                         const std::vector<PetscInt> &vec_knownX_id,
