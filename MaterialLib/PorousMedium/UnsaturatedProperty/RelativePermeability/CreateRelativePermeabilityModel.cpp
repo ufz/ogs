@@ -35,8 +35,8 @@ namespace PorousMedium
 {
 /**
     \param config ConfigTree object which contains the input data
-                  including <type>WettingPhaseVanGenuchten</type>
-                  and it has a tag of <relative_permeability>
+                  including `<type>WettingPhaseVanGenuchten</type>`
+                  and it has a tag of `<relative_permeability>`
 */
 std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
     BaseLib::ConfigTree const& config)
@@ -67,8 +67,8 @@ std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
 
 /**
     \param config ConfigTree object which contains the input data
-                  including <type>NonWettingPhaseVanGenuchten</type>
-                  and it has a tag of <relative_permeability>
+                  including `<type>NonWettingPhaseVanGenuchten</type>`
+                  and it has a tag of `<relative_permeability>`
 */
 std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
     BaseLib::ConfigTree const& config)
@@ -100,8 +100,8 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
 
 /**
     \param config ConfigTree object which contains the input data
-                  including <type>WettingPhaseBrookCoreyOilGas</type>
-                  and it has a tag of <relative_permeability>
+                  including `<type>WettingPhaseBrookCoreyOilGas</type>`
+                  and it has a tag of `<relative_permeability>`
 */
 std::unique_ptr<RelativePermeability> createWettingPhaseBrookCoreyOilGas(
     BaseLib::ConfigTree const& config)
@@ -133,8 +133,8 @@ std::unique_ptr<RelativePermeability> createWettingPhaseBrookCoreyOilGas(
 
 /**
     \param config ConfigTree object which contains the input data
-                  including <type>NonWettingPhaseBrookCoreyOilGas</type>
-                  and it has a tag of <relative_permeability>
+                  including `<type>NonWettingPhaseBrookCoreyOilGas</type>`
+                  and it has a tag of `<relative_permeability>`
 */
 std::unique_ptr<RelativePermeability> createNonWettingPhaseBrookCoreyOilGas(
     BaseLib::ConfigTree const& config)
