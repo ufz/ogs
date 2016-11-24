@@ -34,6 +34,7 @@ struct GroupBasedParameter final
     /**
      * Constructing from a property vector of index and corresponding values
      *
+     * @param name_       the parameter's name
      * @param property    a property vector of index for mesh items
      * @param vec_values  a vector of values for each index
      */
