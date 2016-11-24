@@ -5,12 +5,12 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   PiecewiseLinearCurve.cpp
+ * \file   PiecewiseLinearMonotonicCurve.cpp
  *
  * Created on November 11, 2016, 10:49 AM
  */
 
-#include "PiecewiseLinearCurve.h"
+#include "PiecewiseLinearMonotonicCurve.h"
 
 #include <algorithm>
 #include <cmath>
@@ -20,7 +20,17 @@
 
 namespace MathLib
 {
-bool PiecewiseLinearCurve::isStrongMonotonic() const
+PiecewiseLinearMonotonicCurve::PiecewiseLinearMonotonicCurve(
+    std::vector<double>&& x, std::vector<double>&& y)
+    : PiecewiseLinearInterpolation(std::move(x), std::move(y), false)
+{
+    if (!isStrongMonotonic())
+    {
+        OGS_FATAL("The given curve is not strong monotonic.");
+    }
+}
+
+bool PiecewiseLinearMonotonicCurve::isStrongMonotonic() const
 {
     const double gradient0 = getDerivative(_supp_pnts[0]);
 
@@ -35,15 +45,8 @@ bool PiecewiseLinearCurve::isStrongMonotonic() const
     }
 }
 
-double PiecewiseLinearCurve::getVariable(const double y) const
+double PiecewiseLinearMonotonicCurve::getInversVariable(const double y) const
 {
-    if (!_is_monotonic)
-    {
-        OGS_FATAL(
-            "The given curve is not monotonic or its monotonicity is\n"
-            "not checked. getVariable() cannot be used.");
-    }
-
     std::size_t interval_idx = 0;
     if (_values_at_supp_pnts.front() < _values_at_supp_pnts.back())
     {

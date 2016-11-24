@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   CreatePiecewiseLinearCurve.cpp
+ * \file   CreatePiecewiseLinearCurve-impl.h
  *
  * Created on November 11, 2016, 10:49 AM
  */
@@ -15,16 +15,12 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/ConfigTree.h"
 
-#include "PiecewiseLinearCurve.h"
-
 namespace MathLib
 {
-std::unique_ptr<PiecewiseLinearCurve> createPiecewiseLinearCurve(
-    BaseLib::ConfigTree const& config, bool const check_monotonicity)
+template <typename CurveType>
+std::unique_ptr<CurveType> createPiecewiseLinearCurve(
+    BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{curve__type}
-    config.checkConfigParameter("type", "PiecewiseLinear");
-
     auto x =
         //! \ogs_file_param{curve__coords}
         config.getConfigParameter<std::vector<double>>("coords");
@@ -42,9 +38,7 @@ std::unique_ptr<PiecewiseLinearCurve> createPiecewiseLinearCurve(
             "The given coordinates and values vector sizes are "
             "different.");
     }
-
-    return std::unique_ptr<MathLib::PiecewiseLinearCurve>(
-        new MathLib::PiecewiseLinearCurve(
-            std::move(x), std::move(y), check_monotonicity));
+    return std::unique_ptr<CurveType>(
+        new CurveType(std::move(x), std::move(y)));
 }
 }
