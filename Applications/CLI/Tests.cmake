@@ -486,6 +486,47 @@ if(NOT OGS_USE_MPI)
         cube_1e3_expected_pcs_0_ts_101_t_1.000000.vtu cube_1e3_pcs_0_ts_101_t_1.000000.vtu displacement displacement
     )
 
+    # Mechanics; Small deformations, Ehlers (SDE)
+    AddTest(
+        NAME Mechanics_SDE_cube_1e0
+        PATH Mechanics/Ehlers
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e0.prj
+        TESTER vtkdiff
+        ABSTOL 1e-15 RELTOL 1e-13
+        DIFF_DATA
+        expected_cube_1e0_pcs_0_ts_101_t_2.550000.vtu cube_1e0_pcs_0_ts_101_t_2.550000.vtu displacement displacement
+        expected_cube_1e0_pcs_0_ts_101_t_2.550000.vtu cube_1e0_pcs_0_ts_101_t_2.550000.vtu sigma_xx sigma_xx
+        expected_cube_1e0_pcs_0_ts_203_t_5.100000.vtu cube_1e0_pcs_0_ts_203_t_5.100000.vtu displacement displacement
+        expected_cube_1e0_pcs_0_ts_203_t_5.100000.vtu cube_1e0_pcs_0_ts_203_t_5.100000.vtu sigma_xx sigma_xx
+    )
+    AddTest(
+        NAME Mechanics_SDE_cube_1e1
+        PATH Mechanics/Ehlers
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e1.prj
+        TESTER vtkdiff
+        ABSTOL 1e-15 RELTOL 1e-13
+        DIFF_DATA
+        expected_cube_1e1_pcs_0_ts_101_t_2.550000.vtu cube_1e1_pcs_0_ts_101_t_2.550000.vtu displacement displacement
+        expected_cube_1e1_pcs_0_ts_101_t_2.550000.vtu cube_1e1_pcs_0_ts_101_t_2.550000.vtu sigma_xx sigma_xx
+        expected_cube_1e1_pcs_0_ts_203_t_5.100000.vtu cube_1e1_pcs_0_ts_203_t_5.100000.vtu displacement displacement
+        expected_cube_1e1_pcs_0_ts_203_t_5.100000.vtu cube_1e1_pcs_0_ts_203_t_5.100000.vtu sigma_xx sigma_xx
+    )
+    AddTest(
+        NAME LARGE_Mechanics_SDE_cube_1e3
+        PATH Mechanics/Ehlers
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e3.prj
+        TESTER vtkdiff
+        ABSTOL 1e-15 RELTOL 1e-13
+        DIFF_DATA
+        expected_cube_1e3_pcs_0_ts_101_t_2.550000.vtu cube_1e3_pcs_0_ts_101_t_2.550000.vtu displacement displacement
+        expected_cube_1e3_pcs_0_ts_101_t_2.550000.vtu cube_1e3_pcs_0_ts_101_t_2.550000.vtu sigma_xx sigma_xx
+        expected_cube_1e3_pcs_0_ts_203_t_5.100000.vtu cube_1e3_pcs_0_ts_203_t_5.100000.vtu displacement displacement
+        expected_cube_1e3_pcs_0_ts_203_t_5.100000.vtu cube_1e3_pcs_0_ts_203_t_5.100000.vtu sigma_xx sigma_xx
+    )
+
     # SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC
     # test results are compared to 3D simulation on a wedge-shaped domain
     AddTest(
