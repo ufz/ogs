@@ -30,6 +30,7 @@ namespace Fluid
  *
  *   \f[
  *        \mu = \mu_0\, exp(-\frac{T-T_c}{T_v})
+ *   \f]
  *   where
  *    \f{eqnarray*}{
  *       &\mu_0:&  \mbox{reference viscosity at the temperature of} T_c\\

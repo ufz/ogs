@@ -24,6 +24,7 @@ namespace Fluid
  *  Class of a linear pressure dependent viscosity model.
  *   \f[
  *        \mu = \mu_0\,(1 + \gamma (p -p_0) )
+ *   \f]
  *   where
  *    \f{eqnarray*}{
  *       &\mu_0:&  \mbox{reference viscosity,}\\
