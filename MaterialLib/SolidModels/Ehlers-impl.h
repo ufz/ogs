@@ -217,8 +217,8 @@ void calculatePlasticResidual(
         yieldFunction<DisplacementDim>(s, _mp, t, x) / G;
 }
 
-/// Special product of v with itself: v \odot v
-/// v is given in Kelvin mapping.
+/// Special product of \p v with itself: \f$v \odot v\f$.
+/// v is given in \p Kelvin mapping.
 template <int DisplacementDim>
 ProcessLib::KelvinMatrixType<DisplacementDim> s_odot_s(
     ProcessLib::KelvinVectorType<DisplacementDim> const& v)
