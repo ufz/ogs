@@ -32,7 +32,6 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("capillary_pressure");
-    sub_config.ignoreConfigAttribute("id");
     return MaterialLib::PorousMedium::createCapillaryPressureModel(sub_config);
 }
 
@@ -106,7 +105,7 @@ TEST(MaterialPorousMedium, checkVanGenuchtenCapillaryPressure)
 TEST(MaterialPorousMedium, checkCapillaryPressureCurve)
 {
     const char xml[] =
-        "<capillary_pressure id=\"0\">"
+        "<capillary_pressure>"
         "   <type>Curve</type>"
         "       <curve>"
         "           <coords> 0.     0.5   0.9  </coords>"
