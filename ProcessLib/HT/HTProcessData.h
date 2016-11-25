@@ -31,6 +31,8 @@ struct HTProcessData
         ProcessLib::Parameter<double> const& viscosity_,
         ProcessLib::Parameter<double> const& density_solid_,
         ProcessLib::Parameter<double> const& density_fluid_,
+        ProcessLib::Parameter<double> const& thermal_dispersivity_longitudinal_,
+        ProcessLib::Parameter<double> const& thermal_dispersivity_transversal_,
         ProcessLib::Parameter<double> const& specific_heat_capacity_solid_,
         ProcessLib::Parameter<double> const& specific_heat_capacity_fluid_,
         ProcessLib::Parameter<double> const& thermal_conductivity_solid_,
@@ -48,6 +50,8 @@ struct HTProcessData
           density_fluid(density_fluid_),
           specific_heat_capacity_solid(specific_heat_capacity_solid_),
           specific_heat_capacity_fluid(specific_heat_capacity_fluid_),
+          thermal_dispersivity_longitudinal(thermal_dispersivity_longitudinal_),
+          thermal_dispersivity_transversal(thermal_dispersivity_transversal_),
           thermal_conductivity_solid(thermal_conductivity_solid_),
           thermal_conductivity_fluid(thermal_conductivity_fluid_),
           thermal_expansion_coefficient(thermal_expansion_coefficient_),
@@ -67,6 +71,8 @@ struct HTProcessData
           density_fluid(other.density_fluid),
           specific_heat_capacity_solid(other.specific_heat_capacity_solid),
           specific_heat_capacity_fluid(other.specific_heat_capacity_fluid),
+          thermal_dispersivity_longitudinal(other.thermal_dispersivity_longitudinal),
+          thermal_dispersivity_transversal(other.thermal_dispersivity_transversal),
           thermal_conductivity_solid(other.thermal_conductivity_solid),
           thermal_conductivity_fluid(other.thermal_conductivity_fluid),
           thermal_expansion_coefficient(other.thermal_expansion_coefficient),
@@ -94,6 +100,8 @@ struct HTProcessData
     Parameter<double> const& density_fluid;
     Parameter<double> const& specific_heat_capacity_solid;
     Parameter<double> const& specific_heat_capacity_fluid;
+    Parameter<double> const& thermal_dispersivity_longitudinal;
+    Parameter<double> const& thermal_dispersivity_transversal;
     Parameter<double> const& thermal_conductivity_solid;
     Parameter<double> const& thermal_conductivity_fluid;
     Parameter<double> const& thermal_expansion_coefficient;
