@@ -70,7 +70,7 @@ public:
     /// Get capillary pressure.
     double getCapillaryPressure(const double saturation) const override;
 
-    /// Get capillary pressure.
+    /// Get saturation.
     double getSaturation(const double capillary_pressure) const override;
 
     /// Get the derivative of the capillary pressure with respect to saturation
@@ -78,7 +78,7 @@ public:
 
 private:
     const double _pb;  ///< Entry pressure.
-    const double _m;  ///< Exponent (<=1.0), n=1/(1-mm).
+    const double _m;   ///< Exponent m, m in [0,1]. n=1/(1-m).
 };
 
 }  // end namespace
