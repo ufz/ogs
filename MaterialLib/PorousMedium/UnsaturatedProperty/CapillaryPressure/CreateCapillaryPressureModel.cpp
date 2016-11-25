@@ -123,7 +123,7 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
             MathLib::PiecewiseLinearMonotonicCurve>(curve_config);
 
         return std::unique_ptr<CapillaryPressureSaturation>(
-            new CapillaryPressureSaturationCurve(curve));
+            new CapillaryPressureSaturationCurve(std::move(curve)));
     }
     else
     {
