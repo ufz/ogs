@@ -23,7 +23,7 @@ class ConfigTree;
 namespace MathLib
 {
 ///  Create a curve
-/// \param config   ConfigTree object has a tag of '<curve>'
+/// \param config   ConfigTree object has a tag of `<curve>`
 template <typename CurveType>
 std::unique_ptr<CurveType> createPiecewiseLinearCurve(
     BaseLib::ConfigTree const& config);
