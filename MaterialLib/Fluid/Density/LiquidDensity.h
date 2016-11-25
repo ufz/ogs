@@ -31,7 +31,9 @@ namespace Fluid
  *  or pressure.
  *
  *  The formula is given on
- *  <a href="engineeringtoolbox"> http://www.engineeringtoolbox.com/fluid-density-temperature-pressure-d_309.html</a>
+ *  <a
+ * href="http://www.engineeringtoolbox.com/fluid-density-temperature-pressure-d_309.html">
+ * engineeringtoolbox</a>
  *   which reads
  *   \f[
  *        \rho_l = \rho_0/(1+\beta(T-T_0))/(1-(p-p_0)/E)

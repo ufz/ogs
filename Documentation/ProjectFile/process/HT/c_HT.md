@@ -1,1 +1,1 @@
-HT process.
+\copydoc ProcessLib::HT::HTProcess

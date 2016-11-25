@@ -26,14 +26,15 @@ namespace MaterialLib
 namespace Fluid
 {
 /** A temperature dependent viscosity model.
- * <a href="ddbst"> http://ddbonline.ddbst.de/VogelCalculation/VogelCalculationCGI.exe</a>
+ * <a
+ * href="http://ddbonline.ddbst.de/VogelCalculation/VogelCalculationCGI.exe">ddbst</a>
  */
 template <typename VogelsConstants>
 class VogelsLiquidDynamicViscosity final : public FluidProperty
 {
 public:
     /**
-     *  \brief Viscosity defined by \f$10^3 \, e^{A+\dfrac{B}{C+T}}\f$
+     *  \brief Viscosity defined by \f$10^3 \, e^{A+\frac{B}{C+T}}\f$
      *  \param constants Constants of the fluid.
      *
      */
@@ -82,7 +83,8 @@ private:
 };
 
 /**  Parameters A, B, C.
- *  <a href="ddbst"> http://ddbonline.ddbst.de/VogelCalculation/VogelCalculationCGI.exe</a>
+ *  <a
+ * href="http://ddbonline.ddbst.de/VogelCalculation/VogelCalculationCGI.exe">ddbst</a>
  * */
 struct VogelsViscosityConstantsWater
 {
