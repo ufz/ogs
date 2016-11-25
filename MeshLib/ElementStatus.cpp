@@ -125,4 +125,9 @@ void ElementStatus::setElementStatus(std::size_t i, bool status)
     }
 }
 
+bool ElementStatus::isActiveNode(MeshLib::Node const* node) const
+{
+    return _active_nodes[node->getID()]>0;
+}
+
 }

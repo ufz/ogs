@@ -92,6 +92,9 @@ protected:
         Eigen::Ref<const Eigen::VectorXd> const& p,
         Eigen::Ref<const Eigen::VectorXd> const& u);
 
+    void setPressureOfInactiveNodes(double const t, Eigen::Ref<Eigen::VectorXd> p);
+    void setPressureDotOfInactiveNodes(Eigen::Ref<Eigen::VectorXd> p_dot);
+
     // Types for displacement.
     using ShapeMatricesTypeDisplacement =
         ShapeMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;

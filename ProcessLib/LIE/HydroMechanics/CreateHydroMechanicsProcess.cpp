@@ -260,6 +260,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     DBUG("Use \'%s\' as initial fracture effective stress parameter.",
          initial_fracture_effective_stress.name.c_str());
 
+    // deactivation of matrix elements in flow
+    //! \ogs_file_param_special{process__HYDRO_MECHANICS_WITH_LIE__deactivate_matrix_in_flow}
+    auto opt_deactivate_matrix_in_flow = config.getConfigParameterOptional<bool>("deactivate_matrix_in_flow");
+    bool const deactivate_matrix_in_flow = opt_deactivate_matrix_in_flow && *opt_deactivate_matrix_in_flow;;
+    if (deactivate_matrix_in_flow)
+        INFO("Deactivate matrix elements in flow calculation.");
+
 
     HydroMechanicsProcessData<GlobalDim> process_data{
         std::move(material),
@@ -274,7 +281,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         std::move(fracture_model),
         std::move(frac_prop),
         initial_effective_stress,
-        initial_fracture_effective_stress};
+        initial_fracture_effective_stress,
+        deactivate_matrix_in_flow};
 
     SecondaryVariableCollection secondary_variables;
 

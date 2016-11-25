@@ -13,6 +13,7 @@
 #include <memory>
 #include <Eigen/Dense>
 
+#include "MeshLib/ElementStatus.h"
 #include "MeshLib/PropertyVector.h"
 
 #include "MaterialLib/SolidModels/MechanicsBase.h"
@@ -48,7 +49,8 @@ struct HydroMechanicsProcessData
         std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>&& fracture_model,
         std::unique_ptr<FractureProperty>&& fracture_prop,
         Parameter<double> const& initial_effective_stress_,
-        Parameter<double> const& initial_fracture_effective_stress_
+        Parameter<double> const& initial_fracture_effective_stress_,
+        bool const deactivate_matrix_in_flow_
         )
         : material{std::move(material_)},
           intrinsic_permeability(intrinsic_permeability_),
@@ -62,7 +64,8 @@ struct HydroMechanicsProcessData
           fracture_model{std::move(fracture_model)},
           fracture_property{std::move(fracture_prop)},
           initial_effective_stress(initial_effective_stress_),
-          initial_fracture_effective_stress(initial_fracture_effective_stress_)
+          initial_fracture_effective_stress(initial_fracture_effective_stress_),
+          deactivate_matrix_in_flow(deactivate_matrix_in_flow_)
     {
     }
 
@@ -80,6 +83,9 @@ struct HydroMechanicsProcessData
           fracture_property{std::move(other.fracture_property)},
           initial_effective_stress(other.initial_effective_stress),
           initial_fracture_effective_stress(other.initial_fracture_effective_stress),
+          deactivate_matrix_in_flow(other.deactivate_matrix_in_flow),
+          p_element_status(std::move(other.p_element_status)),
+          p0(other.p0),
           dt(other.dt),
           t(other.t)
     {
@@ -109,6 +115,11 @@ struct HydroMechanicsProcessData
 
     Parameter<double> const& initial_effective_stress;
     Parameter<double> const& initial_fracture_effective_stress;
+
+    bool const deactivate_matrix_in_flow;
+    std::unique_ptr<MeshLib::ElementStatus> p_element_status;
+    Parameter<double> const* p0 = nullptr;
+
 
     double dt = 0.0;
     double t = 0.0;
