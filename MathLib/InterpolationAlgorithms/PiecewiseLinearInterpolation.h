@@ -23,7 +23,7 @@ namespace MathLib
  * This class implements a one dimensional piecewise linear interpolation
  * algorithm.
  */
-class PiecewiseLinearInterpolation final
+class PiecewiseLinearInterpolation
 {
 public:
     /**
@@ -76,7 +76,7 @@ public:
     double getSupportMax() const;
     double getSupportMin() const;
 
-private:
+protected:
     std::vector<double> _supp_pnts;
     std::vector<double> _values_at_supp_pnts;
 };
