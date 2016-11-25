@@ -21,14 +21,12 @@ image.inside() {
 }
 
 stage('Reports (Docs)') {
-    publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false,
-        reportDir: 'build/docs', reportFiles: 'index.html', reportName: 'Doxygen'])
-    step([$class: 'WarningsPublisher', canComputeNew: false,
-        canResolveRelativePaths: false, defaultEncoding: '', excludePattern: '',
-        healthy: '', includePattern: '', messagesPattern: '',
+    publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false,
+        keepAll: false, reportDir: 'build/docs', reportFiles: 'index.html',
+        reportName: 'Doxygen'])
+    step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
         parserConfigurations: [[parserName: 'Doxygen', pattern:
-            'build/DoxygenWarnings.log']],
-        unHealthy: ''])
+        'build/DoxygenWarnings.log']], unstableNewAll: '0'])
 }
 
 if (helper.isOriginMaster(this)) {
