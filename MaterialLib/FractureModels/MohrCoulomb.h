@@ -81,7 +81,7 @@ public:
      * @param w           fracture displacement at current time step
      * @param sigma_prev  stress at previous time step
      * @param sigma       stress at current time step
-     * @param C           tangent matrix for stress and fracture displacements
+     * @param Kep         tangent matrix for stress and fracture displacements
      * @param material_state_variables   material state variables
      */
     void computeConstitutiveRelation(
