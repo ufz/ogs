@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Liquid type of CH4 of Vogel's model

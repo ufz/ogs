@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Liquid type of CO2 of Vogel's model
