@@ -71,7 +71,7 @@ public:
     double getValue(const ArrayType& var_vals) const override
     {
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
-        const double p = var_vals[static_cast<int>(PropertyVariableType::pl)];
+        const double p = var_vals[static_cast<int>(PropertyVariableType::p)];
         return _rho0 / (1. + _beta * (T - _temperature0)) /
                (1. - (p - _p0) / _bulk_modulus);
     }
@@ -85,12 +85,12 @@ public:
                      const PropertyVariableType var) const override
     {
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
-        const double p = var_vals[static_cast<int>(PropertyVariableType::pl)];
+        const double p = var_vals[static_cast<int>(PropertyVariableType::p)];
         switch (var)
         {
             case PropertyVariableType::T:
                 return dLiquidDensity_dT(T, p);
-            case PropertyVariableType::pl:
+            case PropertyVariableType::p:
                 return dLiquidDensity_dp(T, p);
             default:
                 return 0.;

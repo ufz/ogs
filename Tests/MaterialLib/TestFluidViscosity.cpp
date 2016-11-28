@@ -86,7 +86,7 @@ TEST(Material, checkLinearPressureDependentViscosity)
     ASSERT_NEAR(1.e-3 * (1. + 1.e-6 * (vars[1] - 1.e+5)), mu->getValue(vars),
                 1.e-10);
     ASSERT_NEAR(1.e-9,
-                mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::pl),
+                mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::p),
                 1.e-10);
 }
 

@@ -65,7 +65,7 @@ TEST(Material, checkIdealGasLaw)
     const double p = 1.e+5;
     const double R = PhysicalConstant::IdealGasConstant;
     const double expected_air_dens = molar_air * p / (R * T);
-    ArrayType vars = {{290, 0, 1.e+5}};
+    ArrayType vars = {{290, 1.e+5}};
     ASSERT_NEAR(expected_air_dens, rho->getValue(vars), 1.e-10);
 
     const double expected_d_air_dens_dT = -molar_air * p / (R * T * T);
@@ -74,7 +74,7 @@ TEST(Material, checkIdealGasLaw)
 
     const double expected_d_air_dens_dp = molar_air / (R * T);
     ASSERT_NEAR(expected_d_air_dens_dp,
-                rho->getdValue(vars, Fluid::PropertyVariableType::pg), 1.e-10);
+                rho->getdValue(vars, Fluid::PropertyVariableType::p), 1.e-10);
 }
 
 TEST(Material, checkLinearTemperatureDependentDensity)
@@ -110,7 +110,7 @@ TEST(Material, checkLiquidDensity)
         "</density>";
     const auto rho = createTestFluidDensityModel(xml);
 
-    const ArrayType vars = {{273.15 + 60.0, 1.e+6, 0.}};
+    const ArrayType vars = {{273.15 + 60.0, 1.e+6}};
     const double T0 = 273.15;
     const double p0 = 1.e+5;
     const double rho0 = 999.8;
@@ -130,5 +130,5 @@ TEST(Material, checkLiquidDensity)
     // Test the derivative with respect to pressure.
     const double fac_p = 1. - (p - p0) / K;
     ASSERT_NEAR(rho0 / (1. + beta * (T - T0)) / (fac_p * fac_p * K),
-                rho->getdValue(vars, Fluid::PropertyVariableType::pl), 1.e-10);
+                rho->getdValue(vars, Fluid::PropertyVariableType::p), 1.e-10);
 }
