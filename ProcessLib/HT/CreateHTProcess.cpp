@@ -135,7 +135,7 @@ std::unique_ptr<Process> createHTProcess(
     // Specific body force parameter.
     Eigen::Vector3d specific_body_force;
     std::vector<double> const b =
-        //! \ogs_file_param_special{process__HT__specific_body_force}
+        //! \ogs_file_param{process__HT__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
     assert(b.size() > 0 && b.size() < 4);
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
