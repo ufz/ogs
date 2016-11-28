@@ -54,11 +54,11 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     //! \ogs_file_param{process__LIQUID_FLOW__darcy_gravity}
     auto const& darcy_g_config = config.getConfigSubtree("darcy_gravity");
     const int gravity_axis_id_input =
-        //! \ogs_file_param_special{process__LIQUID_FLOW__darcy_gravity_axis_id}
+        //! \ogs_file_param{process__LIQUID_FLOW__darcy_gravity__axis_id}
         darcy_g_config.getConfigParameter<int>("axis_id");
     assert(gravity_axis_id_input < static_cast<int>(mesh.getDimension()));
     const double g =
-        //! \ogs_file_param_special{process__LIQUID_FLOW__darcy_gravity_g}
+        //! \ogs_file_param{process__LIQUID_FLOW__darcy_gravity__g}
         darcy_g_config.getConfigParameter<double>("g");
     assert(g >= 0.);
     const int gravity_axis_id = (g == 0.) ? -1 : gravity_axis_id_input;
