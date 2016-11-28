@@ -60,7 +60,7 @@ public:
      */
     double getValue(const ArrayType& var_vals) const override
     {
-        const double p = var_vals[static_cast<int>(PropertyVariableType::pl)];
+        const double p = var_vals[static_cast<int>(PropertyVariableType::p)];
         return _mu0 * (1 + _gamma * (p - _p0));
     }
 

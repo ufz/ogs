@@ -43,7 +43,7 @@ public:
     double getValue(const ArrayType& var_vals) const override
     {
         return _molar_mass *
-               var_vals[static_cast<int>(PropertyVariableType::pg)] /
+               var_vals[static_cast<int>(PropertyVariableType::p)] /
                (PhysicalConstant::IdealGasConstant *
                 var_vals[static_cast<int>(PropertyVariableType::T)]);
     }
@@ -57,12 +57,12 @@ public:
                      const PropertyVariableType var) const override
     {
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
-        const double p = var_vals[static_cast<int>(PropertyVariableType::pg)];
+        const double p = var_vals[static_cast<int>(PropertyVariableType::p)];
         switch (var)
         {
             case PropertyVariableType::T:
                 return dIdealGasLaw_dT(T, p);
-            case PropertyVariableType::pg:
+            case PropertyVariableType::p:
                 return dIdealGasLaw_dp(T, p);
             default:
                 return 0.;

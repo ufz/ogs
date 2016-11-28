@@ -23,10 +23,9 @@ namespace Fluid
 /// Variable that determine the property.
 enum class PropertyVariableType
 {
-    T = 0,   ///< temperature.
-    pl = 1,  ///< pressure of the liquid phase (1st phase for some cases).
-    pg = 2,  ///< pressure of the gas phase (2nd phase for some cases).
-    number_of_variables = 3  ///< Number of property variables.
+    T = 0,                   ///< temperature.
+    p = 1,                   ///< pressure.
+    number_of_variables = 2  ///< Number of property variables.
 };
 
 const unsigned PropertyVariableNumber =

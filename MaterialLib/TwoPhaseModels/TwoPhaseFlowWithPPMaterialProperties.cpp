@@ -71,7 +71,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getLiquidDensity(
 {
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pl)] = p;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
     return _liquid_density->getValue(vars);
 }
 
@@ -80,7 +80,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getGasDensity(const double p,
 {
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pg)] = p;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
     return _gas_density->getValue(vars);
 }
 
@@ -89,17 +89,17 @@ double TwoPhaseFlowWithPPMaterialProperties::getDerivGasDensity(
 {
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pg)] = p;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
 
     return _gas_density->getdValue(
-        vars, MaterialLib::Fluid::PropertyVariableType::pg);
+        vars, MaterialLib::Fluid::PropertyVariableType::p);
 }
 double TwoPhaseFlowWithPPMaterialProperties::getLiquidViscosity(
     const double p, const double T) const
 {
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pl)] = p;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
     return _viscosity->getValue(vars);
 }
 
@@ -108,7 +108,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getGasViscosity(
 {
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pg)] = p;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
     return _gas_viscosity->getValue(vars);
 }
 
