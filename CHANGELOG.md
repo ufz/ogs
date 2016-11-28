@@ -8,7 +8,10 @@
 ### Utilities
 ### Infrastructure:
 
-- ctest now works on Windows too by removing time-wrappers
+- ctest now works on Windows too by removing time-wrappers. #1480
+- Moved to public Jenkins instance at jenkins.opengeosys.org. #1505
+- Doxygen warnings parser in Jenkins will mark a build as unstable
+  if there are Doxygen warnings, #1585
 
 ### Fixes:
 
