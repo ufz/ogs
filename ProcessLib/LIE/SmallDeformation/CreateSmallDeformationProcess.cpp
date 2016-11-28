@@ -48,8 +48,11 @@ createSmallDeformationProcess(
     DBUG("Create SmallDeformationProcess with LIE.");
 
     // Process variables
+    //! \ogs_file_param{process__SMALL_DEFORMATION_WITH_LIE__process_variables}
     auto const pv_conf = config.getConfigSubtree("process_variables");
-    auto range = pv_conf.getConfigParameterList<std::string>("process_variable");
+    auto range =
+        //! \ogs_file_param{process__SMALL_DEFORMATION_WITH_LIE__process_variables__process_variable}
+        pv_conf.getConfigParameterList<std::string>("process_variable");
     std::vector<std::reference_wrapper<ProcessVariable>> process_variables;
     for (std::string const& pv_name : range)
     {
@@ -97,6 +100,7 @@ createSmallDeformationProcess(
         config.getConfigSubtree("constitutive_relation");
 
     auto const type =
+        //! \ogs_file_param{process__SMALL_DEFORMATION_WITH_LIE__constitutive_relation__type}
         constitutive_relation_config.peekConfigParameter<std::string>("type");
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>> material = nullptr;
@@ -115,10 +119,11 @@ createSmallDeformationProcess(
     // Fracture constitutive relation.
     // read type;
     auto const fracture_constitutive_relation_config =
-        //! \ogs_file_param{process__SMALL_DEFORMATION_WITH_LIE__constitutive_relation}
+        //! \ogs_file_param{process__SMALL_DEFORMATION_WITH_LIE__fracture_constitutive_relation}
         config.getConfigSubtree("fracture_constitutive_relation");
 
     auto const frac_type =
+        //! \ogs_file_param{process__SMALL_DEFORMATION_WITH_LIE__fracture_constitutive_relation__type}
         fracture_constitutive_relation_config.peekConfigParameter<std::string>("type");
 
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>> fracture_model = nullptr;
@@ -145,10 +150,13 @@ createSmallDeformationProcess(
     for (auto fracture_properties_config : config.getConfigSubtreeList("fracture_properties"))
     {
         auto& para_b0 = ProcessLib::findParameter<double>(
+            //! \ogs_file_param_special{process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__initial_aperture}
             fracture_properties_config, "initial_aperture", parameters, 1);
         auto frac_prop(new FractureProperty());
         frac_prop->fracture_id = vec_fracture_property.size();
-        frac_prop->mat_id = fracture_properties_config.getConfigParameter<int>("material_id");
+        frac_prop->mat_id =
+            //! \ogs_file_param{process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__material_id}
+            fracture_properties_config.getConfigParameter<int>("material_id");
         frac_prop->aperture0 = &para_b0;
         vec_fracture_property.emplace_back(frac_prop);
     }
