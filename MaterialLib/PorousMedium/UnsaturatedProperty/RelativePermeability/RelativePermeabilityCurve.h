@@ -27,7 +27,7 @@ class RelativePermeabilityCurve final : public RelativePermeability
 {
 public:
     RelativePermeabilityCurve(
-        std::unique_ptr<MathLib::PiecewiseLinearInterpolation>& curve_data)
+        std::unique_ptr<MathLib::PiecewiseLinearInterpolation>&& curve_data)
         : RelativePermeability(curve_data->getSupportMin(),
                                curve_data->getSupportMax()),
           _curve_data(std::move(curve_data))
