@@ -30,9 +30,9 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
     if (curve_it == curves.end())
         OGS_FATAL("Curve `%s' does not exists.", curve_name.c_str());
 
-    //! \ogs_file_param{prj__parameters__parameter__CurveScaled__parameter}
     auto referenced_parameter_name =
-            config.getConfigParameter<std::string>("parameter");
+        //! \ogs_file_param{prj__parameters__parameter__CurveScaled__parameter}
+        config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", referenced_parameter_name.c_str());
 
     // TODO other data types than only double
