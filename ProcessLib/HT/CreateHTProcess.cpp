@@ -35,7 +35,11 @@ std::unique_ptr<Process> createHTProcess(
     // Process variable.
     auto process_variables = findProcessVariables(
         variables, config,
-        {"temperature", "pressure"});  // configure two Pcs
+        {
+        //! \ogs_file_param_special{process__HT__process_variables__temperature}
+        "temperature",
+        //! \ogs_file_param_special{process__HT__process_variables__pressure}
+        "pressure"});
 
     // Porosity parameter.
     auto& porosity = findParameter<double>(
