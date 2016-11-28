@@ -85,7 +85,7 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     // Specific body force parameter.
     auto& specific_body_force = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__RICHARDS_FLOW_specific_body_force}
+        //! \ogs_file_param_special{process__RICHARDS_FLOW__specific_body_force}
         "specific_body_force", parameters, mesh.getDimension());
     DBUG("Use \'%s\' as specific body force parameter.",
          specific_body_force.name.c_str());
@@ -97,6 +97,7 @@ std::unique_ptr<Process> createRichardsFlowProcess(
         MathLib::toVector(specific_body_force(0, SpatialPosition{})).norm() > 0;
 
     // has mass lumping
+    //! \ogs_file_param{process__RICHARDS_FLOW__mass_lumping}
     auto mass_lump = config.getConfigParameter<bool>("mass_lumping");
 
     RichardsFlowProcessData process_data{intrinsic_permeability,
