@@ -43,8 +43,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Process variable.
     auto process_variables = findProcessVariables(
         variables, config,
-        {//! \ogs_file_param_special{process__HYDRO_MECHANICS_process_variables__process_variable}
-          "pressure", "displacement"});
+        {//! \ogs_file_param_special{process__HYDRO_MECHANICS__process_variables__pressure}
+         "pressure",
+         //! \ogs_file_param_special{process__HYDRO_MECHANICS__process_variables__displacement}
+         "displacement"});
 
     DBUG("Associate displacement with process variable \'%s\'.",
          process_variables[1].get().getName().c_str());
@@ -75,10 +77,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Constitutive relation.
     // read type;
     auto const constitutive_relation_config =
-        //! \ogs_file_param{process__HYDRO_MECHANICS_constitutive_relation}
+        //! \ogs_file_param{process__HYDRO_MECHANICS__constitutive_relation}
         config.getConfigSubtree("constitutive_relation");
 
     auto const type =
+        //! \ogs_file_param{process__HYDRO_MECHANICS__constitutive_relation__type}
         constitutive_relation_config.peekConfigParameter<std::string>("type");
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
@@ -99,7 +102,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Intrinsic permeability
     auto& intrinsic_permeability = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__HYDRO_MECHANICS_intrinsic_permeability}
+        //! \ogs_file_param_special{process__HYDRO_MECHANICS__intrinsic_permeability}
         "intrinsic_permeability",
         parameters, 1);
 
@@ -109,7 +112,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Storage coefficient
     auto& specific_storage = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__HYDRO_MECHANICS_specific_storage}
+        //! \ogs_file_param_special{process__HYDRO_MECHANICS__specific_storage}
         "specific_storage", parameters, 1);
 
     DBUG("Use \'%s\' as storage coefficient parameter.",
@@ -118,7 +121,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Fluid viscosity
     auto& fluid_viscosity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__HYDRO_MECHANICS_fluid_viscosity}
+        //! \ogs_file_param_special{process__HYDRO_MECHANICS__fluid_viscosity}
         "fluid_viscosity",
         parameters, 1);
     DBUG("Use \'%s\' as fluid viscosity parameter.",
@@ -127,7 +130,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Fluid density
     auto& fluid_density = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__HYDRO_MECHANICS_fluid_density}
+        //! \ogs_file_param_special{process__HYDRO_MECHANICS__fluid_density}
         "fluid_density",
         parameters, 1);
     DBUG("Use \'%s\' as fluid density parameter.",
@@ -136,7 +139,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Biot coefficient
     auto& biot_coefficient = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__HYDRO_MECHANICS_biot_coefficient}
+        //! \ogs_file_param_special{process__HYDRO_MECHANICS__biot_coefficient}
         "biot_coefficient",
         parameters, 1);
     DBUG("Use \'%s\' as Biot coefficient parameter.",
@@ -145,7 +148,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Porosity
     auto& porosity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__HYDRO_MECHANICS_porosity}
+        //! \ogs_file_param_special{process__HYDRO_MECHANICS__porosity}
         "porosity",
         parameters, 1);
     DBUG("Use \'%s\' as porosity parameter.",
@@ -154,7 +157,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Solid density
     auto& solid_density = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__HYDRO_MECHANICS_solid_density}
+        //! \ogs_file_param_special{process__HYDRO_MECHANICS__solid_density}
         "solid_density",
         parameters, 1);
     DBUG("Use \'%s\' as solid density parameter.",
@@ -164,7 +167,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
         std::vector<double> const b =
-            //! \ogs_file_param_special{process__HYDRO_MECHANICS_specific_body_force}
+            //! \ogs_file_param{process__HYDRO_MECHANICS__specific_body_force}
             config.getConfigParameter<std::vector<double>>(
                 "specific_body_force");
         if (specific_body_force.size() != DisplacementDim)
