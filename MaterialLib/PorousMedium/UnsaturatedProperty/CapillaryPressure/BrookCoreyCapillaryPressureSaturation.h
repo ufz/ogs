@@ -52,7 +52,7 @@ public:
     BrookCoreyCapillaryPressureSaturation(const double pb, const double Sr,
                                           const double Smax, const double m,
                                           const double Pc_max)
-        : _pb(pb), _Sr(Sr), _Smax(Smax), _mm(m), _Pc_max(Pc_max)
+        : CapillaryPressureSaturation(Sr, Smax, Pc_max), _pb(pb), _m(m)
     {
     }
 
@@ -65,26 +65,15 @@ public:
     /// Get capillary pressure.
     double getCapillaryPressure(const double saturation) const override;
 
-    /// Get capillary pressure.
+    /// Get saturation.
     double getSaturation(const double capillary_pressure) const override;
 
     /// Get the derivative of the capillary pressure with respect to saturation
     double getdPcdS(const double saturation) const override;
 
 private:
-    const double _pb;      ///< Entry pressure.
-    const double _Sr;      ///< Residual saturation.
-    const double _Smax;    ///< Maximum saturation.
-    const double _mm;      ///< Exponent (<=1.0), n=1/(1-mm).
-    const double _Pc_max;  ///< Maximum capillaray pressure
-
-    /** A small number for an offset:
-     *  1. to set the bound of S, the saturation, such that
-     *     S in  [_Sr+_minor_offset, _Smax-_minor_offset]
-     *  2. to set the bound of Pc, the capillary pressure, such that
-     *     Pc in [_minor_offset, _Pc_max]
-     */
-    const double _minor_offset = std::numeric_limits<double>::epsilon();
+    const double _pb;  ///< Entry pressure.
+    const double _m;   ///< Exponent m, m>1.
 };
 
 }  // end namespace
