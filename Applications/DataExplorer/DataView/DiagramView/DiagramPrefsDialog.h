@@ -64,6 +64,7 @@ public:
      * Opens a new dialog and automatically reads data from the specified file. The diagram is not associated
      * with any geometric object.
      * \param filename File containing data for the diagram(s) to be visualised.
+     * \param[out] window Returns the created DetailWindow.
      * \param parent The parent QDialog.
      */
     DiagramPrefsDialog(const QString &filename,
