@@ -15,22 +15,12 @@
 #include <array>
 #include <string>
 
+#include "PropertyVariableType.h"
+
 namespace MaterialLib
 {
 namespace Fluid
 {
-/// Variable that determine the property.
-enum class PropertyVariableType
-{
-    T = 0,                   ///< temperature.
-    p = 1,                   ///< pressure.
-    rho = p,                 ///< density. For some models, rho substitutes p
-    number_of_variables = 2  ///< Number of property variables.
-};
-
-const unsigned PropertyVariableNumber =
-    static_cast<unsigned>(PropertyVariableType::number_of_variables);
-
 /// Base class of fluid density properties
 class FluidProperty
 {
