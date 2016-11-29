@@ -27,7 +27,7 @@ class ReactionCaOH2 final : public Reaction
 {
 public:
     explicit ReactionCaOH2(BaseLib::ConfigTree const& conf) :
-        //! \ogs_file_param{materials__adsorption__reaction__CaOH2__ode_solver_config}
+        //! \ogs_file_param{material__adsorption__reaction__CaOH2__ode_solver_config}
         _ode_solver_config{conf.getConfigSubtree("ode_solver_config")}
     {}
 
