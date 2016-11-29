@@ -21,6 +21,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/uniqueInsert.h"
 
+#include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/Mesh.h"
 
@@ -506,28 +507,6 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
     }
 }
 
-static std::unique_ptr<MathLib::PiecewiseLinearInterpolation>
-createPiecewiseLinearInterpolation(BaseLib::ConfigTree const& config)
-{
-    //! \ogs_file_param{prj__curves__curve__coords}
-    auto coords = config.getConfigParameter<std::vector<double>>("coords");
-    //! \ogs_file_param{prj__curves__curve__values}
-    auto values = config.getConfigParameter<std::vector<double>>("values");
-    if (coords.empty() || values.empty())
-    {
-        OGS_FATAL("The given co-ordinates or values vector is empty.");
-    }
-    if (coords.size() != values.size())
-    {
-        OGS_FATAL(
-            "The given co-ordinates and values vector sizes are different.");
-    }
-
-    return std::unique_ptr<MathLib::PiecewiseLinearInterpolation>{
-        new MathLib::PiecewiseLinearInterpolation{std::move(coords),
-                                                  std::move(values)}};
-}
-
 void ProjectData::parseCurves(
     boost::optional<BaseLib::ConfigTree> const& config)
 {
@@ -544,7 +523,8 @@ void ProjectData::parseCurves(
         BaseLib::insertIfKeyUniqueElseError(
             _curves,
             name,
-            createPiecewiseLinearInterpolation(conf),
+            MathLib::createPiecewiseLinearCurve
+                                 <MathLib::PiecewiseLinearInterpolation>(conf),
             "The curve name is not unique.");
     }
 }
