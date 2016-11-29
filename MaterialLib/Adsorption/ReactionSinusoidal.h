@@ -23,7 +23,7 @@ class ReactionSinusoidal final : public Reaction
 {
 public:
     explicit ReactionSinusoidal(BaseLib::ConfigTree const& conf) :
-        //! \ogs_file_param{materials__adsorption__reaction__Sinusoidal__reaction_enthalpy}
+        //! \ogs_file_param{material__adsorption__reaction__Sinusoidal__reaction_enthalpy}
         _enthalpy(conf.getConfigParameter<double>("reaction_enthalpy"))
     {
     }
