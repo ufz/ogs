@@ -8,7 +8,7 @@ def build = new ogs.build()
 def post = new ogs.post()
 def helper = new ogs.helper()
 
-def image = docker.image('ogs6/gcc-base:latest')
+def image = docker.image('ogs6/gcc-latex:latest')
 image.pull()
 image.inside() {
     stage('Configure (Docs)') {
