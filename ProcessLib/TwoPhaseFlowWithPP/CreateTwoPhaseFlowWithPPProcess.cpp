@@ -33,7 +33,7 @@ std::unique_ptr<Process> CreateTwoPhaseFlowWithPPProcess(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    //! \ogs_file_param{process__type}
+    //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "TWOPHASE_FLOW_PP");
 
     DBUG("Create TwoPhaseFlowProcess with PP model.");
@@ -41,7 +41,7 @@ std::unique_ptr<Process> CreateTwoPhaseFlowWithPPProcess(
     // Process variable.
     auto process_variables = findProcessVariables(
         variables, config,
-        {//! \ogs_file_param_special{process__TWOPHASE_FLOW_PP__process_variables__process_variable}
+        {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PP__process_variables__process_variable}
          "gas_pressure", "capillary_pressure"});
 
     SecondaryVariableCollection secondary_variables;
@@ -55,7 +55,7 @@ std::unique_ptr<Process> CreateTwoPhaseFlowWithPPProcess(
     Eigen::VectorXd specific_body_force;
 
     std::vector<double> const b =
-        //! \ogs_file_param{process__TWOPHASE_FLOW_PP__specific_body_force}
+        //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
     assert(b.size() > 0 && b.size() < 4);
     specific_body_force.resize(b.size());
@@ -63,10 +63,10 @@ std::unique_ptr<Process> CreateTwoPhaseFlowWithPPProcess(
     if (has_gravity)
         std::copy_n(b.data(), b.size(), specific_body_force.data());
 
-    //! \ogs_file_param{process__TWOPHASE_FLOW_PP__mass_lumping}
+    //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__mass_lumping}
     auto mass_lump = config.getConfigParameter<bool>("mass_lumping");
 
-    //! \ogs_file_param{process__TWOPHASE_FLOW_PP__material_property}
+    //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
     auto const& mat_ids =

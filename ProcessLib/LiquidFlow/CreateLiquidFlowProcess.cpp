@@ -32,7 +32,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{process__type}
+    //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "LIQUID_FLOW");
 
     DBUG("Create LiquidFlowProcess.");
@@ -40,7 +40,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     // Process variable.
     auto process_variables = findProcessVariables(
         variables, config,
-        {//! \ogs_file_param_special{process__LIQUID_FLOW__process_variables__process_variable}
+        {//! \ogs_file_param_special{prj__processes__process__LIQUID_FLOW__process_variables__process_variable}
          "process_variable"});
 
     SecondaryVariableCollection secondary_variables;
@@ -51,19 +51,19 @@ std::unique_ptr<Process> createLiquidFlowProcess(
                                         named_function_caller);
 
     // Get the gravity vector for the Darcy velocity
-    //! \ogs_file_param{process__LIQUID_FLOW__darcy_gravity}
+    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__darcy_gravity}
     auto const& darcy_g_config = config.getConfigSubtree("darcy_gravity");
     const int gravity_axis_id_input =
-        //! \ogs_file_param{process__LIQUID_FLOW__darcy_gravity__axis_id}
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__darcy_gravity__axis_id}
         darcy_g_config.getConfigParameter<int>("axis_id");
     assert(gravity_axis_id_input < static_cast<int>(mesh.getDimension()));
     const double g =
-        //! \ogs_file_param{process__LIQUID_FLOW__darcy_gravity__g}
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__darcy_gravity__g}
         darcy_g_config.getConfigParameter<double>("g");
     assert(g >= 0.);
     const int gravity_axis_id = (g == 0.) ? -1 : gravity_axis_id_input;
 
-    //! \ogs_file_param{process__LIQUID_FLOW__material_property}
+    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
     auto const& mat_ids =
