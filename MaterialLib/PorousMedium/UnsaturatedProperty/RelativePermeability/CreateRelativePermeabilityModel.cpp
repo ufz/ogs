@@ -20,6 +20,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 
+#include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 #include "RelativePermeability.h"
@@ -191,33 +192,13 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
         //! \ogs_file_param{material__porous_medium__relative_permeability__Curve}
         config.checkConfigParameter("type", "Curve");
 
-        // TODO: parsing of curve will be replaced by the function for creating
-        // curve.
         //! \ogs_file_param{material__porous_medium__relative_permeability__Curve__curve}
         auto const& curve_config = config.getConfigSubtree("curve");
 
-        auto variables =
-            //! \ogs_file_param{material__porous_medium__relative_permeability__Curve__curve__coords}
-            curve_config.getConfigParameter<std::vector<double>>("coords");
-        auto values =
-            //! \ogs_file_param{material__porous_medium__relative_permeability__Curve__curve__values}
-            curve_config.getConfigParameter<std::vector<double>>("values");
-
-        if (variables.empty() || values.empty())
-        {
-            OGS_FATAL("The given coordinates or values vector is empty.");
-        }
-        if (values.size() != values.size())
-        {
-            OGS_FATAL(
-                "The given co-ordinates and values vector sizes are "
-                "different.");
-        }
-        auto curve = std::unique_ptr<MathLib::PiecewiseLinearInterpolation>(
-            new MathLib::PiecewiseLinearInterpolation(
-                std::move(variables), std::move(values), true));
+        auto curve = MathLib::createPiecewiseLinearCurve<MathLib
+                              ::PiecewiseLinearInterpolation>(curve_config);
         return std::unique_ptr<RelativePermeability>(
-            new RelativePermeabilityCurve(curve));
+            new RelativePermeabilityCurve(std::move(curve)));
     }
     else
     {
