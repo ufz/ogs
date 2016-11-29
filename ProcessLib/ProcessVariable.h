@@ -70,8 +70,20 @@ private:
     std::string const _name;
     MeshLib::Mesh& _mesh;
     const int _n_components;
-    unsigned _shapefunction_order;  ///< Order of the shapefunctions. Requires
-                                    /// appropriate mesh.
+    /// The polynomial order of the process variable's shape functions.
+    ///
+    /// Requires an appropriate mesh.
+    ///
+    /// The order of the shape functions can not be higher than the maximum
+    /// available order for the underlying geometric elements. For example the
+    /// second order shape functions for a hexahedron are only possible if the
+    /// geometric element is at least a 20-node hexahedron element
+    /// (MeshLib::TemplateElement<MeshLib::HexRule20>), whereas linear shape
+    /// functions are also available on the 8-node hexahedron
+    /// (MeshLib::TemplateElement<MeshLib::HexRule8>).
+    ///
+    /// \sa MeshLib::CellRule MeshLib::FaceRule MeshLib::EdgeRule.
+    unsigned _shapefunction_order;
     Parameter<double> const& _initial_condition;
 
     std::vector<BoundaryConditionConfig> _bc_configs;

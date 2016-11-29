@@ -1,1 +1,3 @@
-\ogs_missing_documentation
+Process' name. Reserved for coupled processes.
+
+\todo Extend documentation for coupled processes.

@@ -333,6 +333,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "HYDRO_MECHANICS")
         {
+            //! \ogs_file_param{process__HYDRO_MECHANICS__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:
@@ -357,6 +358,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "HYDRO_MECHANICS_WITH_LIE")
         {
+            //! \ogs_file_param{process__HYDRO_MECHANICS_WITH_LIE__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:
@@ -406,6 +408,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "SMALL_DEFORMATION_WITH_LIE")
         {
+            //! \ogs_file_param{process__SMALL_DEFORMATION_WITH_LIE__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:

@@ -189,6 +189,9 @@ protected:
 
     VectorMatrixAssembler _global_assembler;
 
+    /// Order of the integration method for element-wise integration.
+    /// The Gauss-Legendre integration method and available orders is
+    /// implemented in MathLib::GaussLegendre.
     unsigned const _integration_order;
 
 private:

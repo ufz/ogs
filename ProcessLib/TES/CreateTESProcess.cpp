@@ -31,7 +31,13 @@ std::unique_ptr<Process> createTESProcess(
 
     auto process_variables = findProcessVariables(
         variables, config,
-        {"fluid_pressure", "temperature", "vapour_mass_fraction"});
+        {
+        //! \ogs_file_param_special{process__TES__process_variables__fluid_pressure}
+        "fluid_pressure",
+        //! \ogs_file_param_special{process__TES__process_variables__temperature}
+        "temperature",
+        //! \ogs_file_param_special{process__TES__process_variables__vapour_mass_fraction}
+        "vapour_mass_fraction"});
 
     SecondaryVariableCollection secondary_variables;
 
