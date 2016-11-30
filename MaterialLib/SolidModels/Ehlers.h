@@ -164,10 +164,8 @@ public:
         {
             os << "State:\n"
                << "eps_p_D: " << m.eps_p_D << "\n"
-               << "e_p: " << m.e_p << "\n"
                << "eps_p_eff: " << m.eps_p_eff << "\n"
                << "eps_p_D_prev: " << m.eps_p_D_prev << "\n"
-               << "e_p_prev: " << m.e_p_prev << "\n"
                << "eps_p_eff_prev: " << m.eps_p_eff_prev << "\n"
                << "lambda: " << m.lambda << "\n";
             return os;

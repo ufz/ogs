@@ -90,6 +90,7 @@ set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
     --gtest_output=xml:./testrunner.xml)
 
 add_custom_target(tests-cleanup ${CMAKE_COMMAND} -E remove testrunner.xml)
+set_target_properties(tests-cleanup PROPERTIES FOLDER Testing)
 
 if(OGS_USE_PETSC)
     set(TEST_FILTER_MPI --gtest_filter=-MPITest_Math.*)
@@ -101,12 +102,15 @@ if(OGS_USE_PETSC)
         mpirun -np 3 $<TARGET_FILE:testrunner> --gtest_filter=MPITest*
         DEPENDS testrunner
     )
+    set_target_properties(tests_mpi PROPERTIES FOLDER Testing)
 else()
     add_custom_target(tests
         $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
         DEPENDS testrunner tests-cleanup
     )
 endif()
+
+set_target_properties(tests PROPERTIES FOLDER Testing)
 
 # Creates one ctest entry for every googletest
 #ADD_GOOGLE_TESTS ( ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/testrunner ${TEST_SOURCES})
