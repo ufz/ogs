@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Isotropic linear elastic material model.
