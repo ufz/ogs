@@ -36,8 +36,12 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     DBUG("Create RichardsFlowProcess.");
 
     // Process variable.
+
+    //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__process_variables}
+    auto const pv_config = config.getConfigSubtree("process_variables");
+
     auto process_variables = findProcessVariables(
-        variables, config,
+        variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__process_variables__process_variable}
          "process_variable"});
 

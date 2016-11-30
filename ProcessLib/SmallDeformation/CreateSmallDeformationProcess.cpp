@@ -44,8 +44,12 @@ createSmallDeformationProcess(
     DBUG("Create SmallDeformationProcess.");
 
     // Process variable.
+
+    //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__process_variables}
+    auto const pv_config = config.getConfigSubtree("process_variables");
+
     auto process_variables = findProcessVariables(
-        variables, config,
+        variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__process_variables__process_variable}
          "process_variable"});
 
