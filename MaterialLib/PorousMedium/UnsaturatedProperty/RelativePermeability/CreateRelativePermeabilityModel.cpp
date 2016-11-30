@@ -42,7 +42,7 @@ namespace PorousMedium
 std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__type}
     config.checkConfigParameter("type", "WettingPhaseVanGenuchten");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__sr}
@@ -74,7 +74,7 @@ std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
 std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__type}
     config.checkConfigParameter("type", "NonWettingPhaseVanGenuchten");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__sr}
@@ -107,7 +107,7 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
 std::unique_ptr<RelativePermeability> createWettingPhaseBrookCoreyOilGas(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__type}
     config.checkConfigParameter("type", "WettingPhaseBrookCoreyOilGas");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrookCoreyOilGas__sr}
@@ -140,7 +140,7 @@ std::unique_ptr<RelativePermeability> createWettingPhaseBrookCoreyOilGas(
 std::unique_ptr<RelativePermeability> createNonWettingPhaseBrookCoreyOilGas(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas}
+    //! \ogs_file_param{material__porous_medium__relative_permeability__type}
     config.checkConfigParameter("type", "NonWettingPhaseBrookCoreyOilGas");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrookCoreyOilGas__sr}
@@ -189,7 +189,7 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     }
     else if (type == "Curve")
     {
-        //! \ogs_file_param{material__porous_medium__relative_permeability__Curve}
+        //! \ogs_file_param{material__porous_medium__relative_permeability__type}
         config.checkConfigParameter("type", "Curve");
 
         //! \ogs_file_param{material__porous_medium__relative_permeability__Curve__curve}

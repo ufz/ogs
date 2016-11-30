@@ -23,13 +23,16 @@ createLinearElasticIsotropic(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
+    //! \ogs_file_param{material__solid__constitutive_relation__type}
     config.checkConfigParameter("type", "LinearElasticIsotropic");
     DBUG("Create LinearElasticIsotropic material");
 
     auto& Kn = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__normal_stiffness}
         config, "normal_stiffness", parameters, 1);
 
     auto& Ks = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__shear_stiffness}
         config, "shear_stiffness", parameters, 1);
 
     typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp{

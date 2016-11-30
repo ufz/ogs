@@ -24,12 +24,12 @@ namespace PorousMedium
 {
 std::unique_ptr<Porosity> createPorosityModel(BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__porous_medium__storage__type}
+    //! \ogs_file_param{material__porous_medium__porosity__type}
     auto const type = config.getConfigParameter<std::string>("type");
 
     if (type == "Constant")
-        //! \ogs_file_param{material__porous_medium__porosity__Constant_value}
         return std::unique_ptr<Porosity>(
+            //! \ogs_file_param{material__porous_medium__porosity__Constant__value}
             new ConstantPorosity(config.getConfigParameter<double>("value")));
     else
     {
