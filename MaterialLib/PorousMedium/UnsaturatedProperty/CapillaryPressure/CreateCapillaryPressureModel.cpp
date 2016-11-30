@@ -35,7 +35,7 @@ namespace PorousMedium
 static std::unique_ptr<CapillaryPressureSaturation> createBrookCorey(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey}
+    //! \ogs_file_param{material__porous_medium__capillary_pressure__type}
     config.checkConfigParameter("type", "BrookCorey");
 
     //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey__pd}
@@ -70,7 +70,7 @@ static std::unique_ptr<CapillaryPressureSaturation> createBrookCorey(
 static std::unique_ptr<CapillaryPressureSaturation> createVanGenuchten(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__porous_medium__capillary_pressure__vanGenuchten}
+    //! \ogs_file_param{material__porous_medium__capillary_pressure__type}
     config.checkConfigParameter("type", "vanGenuchten");
 
     //! \ogs_file_param{material__porous_medium__capillary_pressure__vanGenuchten__pd}
@@ -113,7 +113,7 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     }
     else if (type == "Curve")
     {
-        //! \ogs_file_param{material__porous_medium__capillary_pressure__Curve}
+        //! \ogs_file_param{material__porous_medium__capillary_pressure__type}
         config.checkConfigParameter("type", "Curve");
 
         //! \ogs_file_param{material__porous_medium__capillary_pressure__Curve__curve}

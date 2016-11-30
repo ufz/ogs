@@ -28,8 +28,8 @@ std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config)
     auto const type = config.getConfigParameter<std::string>("type");
 
     if (type == "Constant")
-        //! \ogs_file_param{material__porous_medium__storage__constant__value}
         return std::unique_ptr<Storage>(
+            //! \ogs_file_param{material__porous_medium__storage__Constant__value}
             new ConstantStorage(config.getConfigParameter<double>("value")));
     else
     {

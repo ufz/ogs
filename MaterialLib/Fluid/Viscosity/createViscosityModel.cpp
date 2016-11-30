@@ -32,7 +32,7 @@ namespace Fluid
 static std::unique_ptr<FluidProperty> createLinearPressureDependentViscosity(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__fluid__viscosity__LinearPressure}
+    //! \ogs_file_param{material__fluid__viscosity__type}
     config.checkConfigParameter("type", "LinearPressure");
 
     //! \ogs_file_param{material__fluid__viscosity__LinearPressure__mu0}
@@ -56,7 +56,7 @@ static std::unique_ptr<FluidProperty> createLinearPressureDependentViscosity(
 static std::unique_ptr<FluidProperty> createTemperatureDependentViscosity(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent}
+    //! \ogs_file_param{material__fluid__viscosity__type}
     config.checkConfigParameter("type", "TemperatureDependent");
 
     //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent__mu0}
@@ -80,7 +80,7 @@ std::unique_ptr<FluidProperty> createViscosityModel(
 
     if (type == "Constant")
     {
-        //! \ogs_file_param{material__fluid__viscosity__Constant}
+        //! \ogs_file_param{material__fluid__viscosity__type}
         config.checkConfigParameter("type", "Constant");
         return std::unique_ptr<FluidProperty>(new ConstantFluidProperty(
             //! \ogs_file_param{material__fluid__viscosity__Constant__value}
@@ -92,7 +92,7 @@ std::unique_ptr<FluidProperty> createViscosityModel(
         return createTemperatureDependentViscosity(config);
     else if (type == "Vogels")
     {
-        //! \ogs_file_param{material__fluid__viscosity__Vogels}
+        //! \ogs_file_param{material__fluid__viscosity__type}
         config.checkConfigParameter("type", "Vogels");
 
         INFO("Using Vogels model, which gives viscosity in SI unit, Pa s");
@@ -101,7 +101,7 @@ std::unique_ptr<FluidProperty> createViscosityModel(
             config.peekConfigParameter<std::string>("liquid_type");
         if (fluid_type == "Water")
         {
-            //! \ogs_file_param{material__fluid__viscosity__Vogels__Water}
+            //! \ogs_file_param{material__fluid__viscosity__Vogels__liquid_type}
             config.checkConfigParameter("liquid_type", "Water");
 
             const VogelsViscosityConstantsWater constants;
@@ -111,7 +111,7 @@ std::unique_ptr<FluidProperty> createViscosityModel(
         }
         else if (fluid_type == "CO2")
         {
-            //! \ogs_file_param{material__fluid__viscosity__Vogels__CO2}
+            //! \ogs_file_param{material__fluid__viscosity__Vogels__liquid_type}
             config.checkConfigParameter("liquid_type", "CO2");
             const VogelsViscosityConstantsCO2 constants;
             return std::unique_ptr<FluidProperty>(
@@ -120,7 +120,7 @@ std::unique_ptr<FluidProperty> createViscosityModel(
         }
         else if (fluid_type == "CH4")
         {
-            //! \ogs_file_param{material__fluid__viscosity__Vogels__CH4}
+            //! \ogs_file_param{material__fluid__viscosity__Vogels__liquid_type}
             config.checkConfigParameter("liquid_type", "CH4");
             const VogelsViscosityConstantsCH4 constants;
             return std::unique_ptr<FluidProperty>(

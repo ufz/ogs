@@ -25,8 +25,8 @@ namespace PorousMedium
 {
 Eigen::MatrixXd createPermeabilityModel(BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__porous_medium__permeability__values}
     auto const values =
+        //! \ogs_file_param{material__porous_medium__permeability__values}
         config.getConfigParameter<std::vector<double>>("values");
 
     auto const data_size = values.size();

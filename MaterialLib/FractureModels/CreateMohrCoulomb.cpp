@@ -23,22 +23,28 @@ createMohrCoulomb(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
+    //! \ogs_file_param{material__solid__constitutive_relation__type}
     config.checkConfigParameter("type", "MohrCoulomb");
     DBUG("Create MohrCoulomb material");
 
     auto& Kn = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__MohrCoulomb__normal_stiffness}
         config, "normal_stiffness", parameters, 1);
 
     auto& Ks = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__MohrCoulomb__shear_stiffness}
         config, "shear_stiffness", parameters, 1);
 
     auto& friction_angle = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__MohrCoulomb__friction_angle}
         config, "friction_angle", parameters, 1);
 
     auto& dilatancy_angle = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__MohrCoulomb__dilatancy_angle}
         config, "dilatancy_angle", parameters, 1);
 
     auto& cohesion = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__MohrCoulomb__cohesion}
         config, "cohesion", parameters, 1);
 
 
