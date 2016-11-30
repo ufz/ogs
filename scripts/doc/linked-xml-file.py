@@ -13,7 +13,7 @@
 
 # prevent broken pipe error
 from signal import signal, SIGPIPE, SIG_DFL
-signal(SIGPIPE,SIG_DFL)
+signal(SIGPIPE, SIG_DFL)
 
 from print23 import print_
 import os
@@ -26,29 +26,31 @@ if len(sys.argv) != 3:
     sys.stderr.write("{0} DATADIR DOCAUXDIR\n".format(sys.argv[0]))
     sys.exit(1)
 
-datadir   = sys.argv[1]
+datadir = sys.argv[1]
 docauxdir = sys.argv[2]
 
-datadir   = os.path.abspath(datadir)
+datadir = os.path.abspath(datadir)
 docauxdir = os.path.abspath(docauxdir)
-outdir    = os.path.join(docauxdir, "dox", "CTestProjectFiles")
+outdir = os.path.join(docauxdir, "dox", "CTestProjectFiles")
 
 # Expansions or shortcuts for the documenation can be added here in the
 # following format:
 # "prj__processes__process": "process",
 # See the expansion table in the append-xml-tags.py too.
-tag_path_expansion_table = {
-}
+tag_path_expansion_table = {}
 
-indent = "&nbsp;"*2
+indent = "&nbsp;" * 2
+
 
 def format_if_documented(is_doc, fmt, fullpagename, tag_attr, *args):
     if is_doc:
         tag_attr_formatted = r'\ref {0} "{1}"'.format(fullpagename, tag_attr)
     else:
-        tag_attr_formatted = r'<span style="color: red;" title="undocumented: {0}">{1}</span>'.format(fullpagename, tag_attr)
+        tag_attr_formatted = r'<span style="color: red;" title="undocumented: {0}">{1}</span>'.format(
+            fullpagename, tag_attr)
 
     return fmt.format(tag_attr_formatted, tag_attr, *args)
+
 
 def format_if_documented_nowarn(is_doc, fmt, fullpagename, tag_attr, *args):
     if is_doc:
@@ -57,6 +59,7 @@ def format_if_documented_nowarn(is_doc, fmt, fullpagename, tag_attr, *args):
         tag_attr_formatted = tag_attr
 
     return fmt.format(tag_attr_formatted, tag_attr, *args)
+
 
 def get_tagpath(pagename, typetag, typetag_levels_up):
     tagpath = pagename.replace("__", ".")
@@ -72,7 +75,9 @@ def get_tagpath(pagename, typetag, typetag_levels_up):
 
     return tagpath, pagename, is_doc
 
-def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepath):
+
+def print_tags(node, level, pagename, fh, typetag, typetag_levels_up,
+               relfilepath):
     global map_tag_to_prj_files
     tag = node.tag
     rootpagename = pagename
@@ -85,7 +90,8 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepat
         dict_of_set_add(map_tag_to_prj_files, tagpath_unexpanded, relfilepath)
         pagename = tag_path_expansion_table[pagename]
 
-    tagpath, pagename, is_doc = get_tagpath(pagename, typetag, typetag_levels_up)
+    tagpath, pagename, is_doc = get_tagpath(pagename, typetag,
+                                            typetag_levels_up)
     if is_doc:
         dict_of_set_add(map_tag_to_prj_files, tagpath, relfilepath)
 
@@ -98,7 +104,8 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepat
         attrpath = tagpath + "." + attr
         attrpagename = "ogs_file_attr__" + attrpath.replace(".", "__")
         a_is_doc = (attrpath, False) in documented_tags_attrs
-        attrs += format_if_documented(a_is_doc, ' {0}="{2}"', attrpagename, attr, value)
+        attrs += format_if_documented(a_is_doc, ' {0}="{2}"', attrpagename,
+                                      attr, value)
         if a_is_doc:
             dict_of_set_add(map_attr_to_prj_files, attrpath, relfilepath)
 
@@ -108,7 +115,7 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepat
                 indent*level + '\\<{0}{2}\\><br>\n', fullpagename, tag, attrs))
 
         if node.text and node.text.strip():
-            fh.write(indent*(level+1) + node.text.strip() + "<br>\n")
+            fh.write(indent * (level + 1) + node.text.strip() + "<br>\n")
 
         for child in node:
             if child.tag == "type" and child.text and child.text.strip():
@@ -120,9 +127,10 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepat
             typetag_children_levels_up = typetag_levels_up + 1
 
         for child in node:
-            print_tags(child, level + 1, pagename, fh, typetag_children, typetag_children_levels_up, relfilepath)
+            print_tags(child, level + 1, pagename, fh, typetag_children,
+                       typetag_children_levels_up, relfilepath)
 
-        fh.write((indent*level) + r"\</" + tag + "\\><br>\n")
+        fh.write((indent * level) + r"\</" + tag + "\\><br>\n")
     else:
         # node having no children
         if node.text and node.text.strip():
@@ -135,9 +143,11 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepat
                 else:
                     typepagename = node.text.strip()
 
-                typetagpath, typepagename, type_is_doc = get_tagpath(typepagename, None, 0)
+                typetagpath, typepagename, type_is_doc = get_tagpath(
+                    typepagename, None, 0)
                 if type_is_doc:
-                    dict_of_set_add(map_tag_to_prj_files, typetagpath, relfilepath)
+                    dict_of_set_add(map_tag_to_prj_files, typetagpath,
+                                    relfilepath)
                 typepagename = "ogs_file_param__" + typepagename
 
                 # If the content of a type tag is undocumented no red
@@ -150,6 +160,7 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepat
         else:
             fh.write(format_if_documented(is_doc, \
                     indent*level + '\\<{0}{2} /\\><br>\n', fullpagename, tag, attrs))
+
 
 # set of (str tagpath, bool is_tag)
 documented_tags_attrs = set()
@@ -179,15 +190,18 @@ def has_prj_file_in_subdirs(reldirpath):
             return True
     return False
 
+
 dirs_with_prj_files = set()
 
 # maps tags/attributes to the set of prj files they appear in
 map_tag_to_prj_files = dict()
 map_attr_to_prj_files = dict()
 
+
 def dict_of_set_add(dos, key, value):
     if key not in dos: dos[key] = set()
     dos[key].add(value)
+
 
 for (dirpath, dirnames, filenames) in os.walk(datadir, topdown=False):
     reldirpath = os.path.relpath(dirpath, datadir)
@@ -199,7 +213,8 @@ for (dirpath, dirnames, filenames) in os.walk(datadir, topdown=False):
     for fn in filenames:
         filepath = os.path.join(dirpath, fn)
         relfilepath = os.path.relpath(filepath, datadir)
-        pagename = "ogs_ctest_prj__" + relfilepath.replace("/", "__").replace(".", "__")
+        pagename = "ogs_ctest_prj__" + relfilepath.replace("/", "__").replace(
+            ".", "__")
 
         if fn.endswith(".prj"):
             outdoxfile = os.path.join(outdirpath, fn + ".dox")
@@ -234,15 +249,17 @@ for (dirpath, dirnames, filenames) in os.walk(datadir, topdown=False):
         filepath = os.path.join(dirpath, fn)
         relfilepath = os.path.relpath(filepath, datadir)
         if has_prj_file_in_subdirs(relfilepath):
-            pagename = "ogs_ctest_prj__" + relfilepath.replace("/", "__").replace(".", "__")
+            pagename = "ogs_ctest_prj__" + relfilepath.replace(
+                "/", "__").replace(".", "__")
             subpages.append(pagename)
 
     if subpages:
         if not os.path.exists(outdirpath):
             os.makedirs(outdirpath)
 
-        pagename = "ogs_ctest_prj__" + reldirpath.replace("/", "__").replace(".", "__")
-        pagetitle =os.path.split(reldirpath)[1]
+        pagename = "ogs_ctest_prj__" + reldirpath.replace("/", "__").replace(
+            ".", "__")
+        pagetitle = os.path.split(reldirpath)[1]
 
         if pagetitle == ".":
             pagetitle = "OGS CTests&mdash;Project Files"
@@ -263,7 +280,6 @@ for k, v in map_tag_to_prj_files.items():
     map_tag_to_prj_files[k] = list(v)
     documented_tags_attrs.discard((k, True))
 
-
 for k, v in map_attr_to_prj_files.items():
     map_attr_to_prj_files[k] = list(v)
     documented_tags_attrs.discard((k, False))
@@ -272,9 +288,10 @@ with open(os.path.join(docauxdir, "tested-parameters-cache.json"), "w") as fh:
     json.dump({ "tags": map_tag_to_prj_files, "attributes": map_attr_to_prj_files }, \
             fh, indent=2)
 
-untested_tags  = [ tag  for tag,  is_tag in documented_tags_attrs if is_tag ]
-untested_attrs = [ attr for attr, is_tag in documented_tags_attrs if not is_tag ]
+untested_tags = [tag for tag, is_tag in documented_tags_attrs if is_tag]
+untested_attrs = [attr for attr, is_tag in documented_tags_attrs if not is_tag]
 
-with open(os.path.join(docauxdir, "untested-parameters-cache.json"), "w") as fh:
+with open(os.path.join(docauxdir, "untested-parameters-cache.json"),
+          "w") as fh:
     json.dump({ "tags": untested_tags, "attributes": untested_attrs }, \
             fh, indent=2)
