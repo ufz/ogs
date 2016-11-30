@@ -8,6 +8,7 @@ append_source_files(SOURCES Fluid)
 append_source_files(SOURCES Fluid/Density)
 append_source_files(SOURCES Fluid/Viscosity)
 append_source_files(SOURCES Fluid/GibbsFreeEnergy)
+append_source_files(SOURCES Fluid/FluidProperties)
 
 append_source_files(SOURCES PorousMedium/Porosity)
 append_source_files(SOURCES PorousMedium/Storage)

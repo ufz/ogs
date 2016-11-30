@@ -7,7 +7,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file  TestCompositeDensityViscosityModel.cpp
+ *  \file  TestFluidProperties.cpp
  *
  */
 
@@ -16,12 +16,12 @@
 #include <memory>
 #include <cmath>
 
-#include "TestTools.h"
+#include "Tests/TestTools.h"
 
 #include "MaterialLib/Fluid/Density/createFluidDensityModel.h"
 #include "MaterialLib/Fluid/Viscosity/createViscosityModel.h"
-#include "MaterialLib/Fluid/CompositeFluidProperty.h"
-#include "MaterialLib/Fluid/CompositeFluidProperty/CompositeDensityViscosityModel.h"
+#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
+#include "MaterialLib/Fluid/FluidProperties/TemperaturePressureConcentrationDependentFluidProperties.h"
 
 using namespace MaterialLib;
 using namespace MaterialLib::Fluid;
@@ -59,28 +59,29 @@ TEST(MaterialFluidModel, checkCompositeDensityViscosityModel)
         "</viscosity>";
     auto mu = createTestModel(xml_v, createViscosityModel, "viscosity");
 
-    std::unique_ptr<CompositeFluidProperty> composite_fluid_model =
-        std::unique_ptr<CompositeFluidProperty>(
-            new CompositeDensityViscosityModel(std::move(rho), std::move(mu)));
+    std::unique_ptr<FluidProperties> fluid_model =
+        std::unique_ptr<FluidProperties>(
+            new TemperaturePressureConcentrationDependentFluidProperties(
+                std::move(rho), std::move(mu), nullptr, nullptr));
 
     ArrayType vars;
     vars[0] = 350.0;
     const double mu_expected = 1.e-3 * std::exp(-(vars[0] - 293) / 368);
     ASSERT_NEAR(mu_expected,
-                composite_fluid_model->getValue(PropertyType::Vicosity, vars),
+                fluid_model->getValue(FluidPropertyType::Vicosity, vars),
                 1.e-10);
-    ASSERT_NEAR(-mu_expected,
-                composite_fluid_model->getdValue(
-                    PropertyType::Vicosity, vars,
-                    MaterialLib::Fluid::PropertyVariableType::T),
-                1.e-10);
+    ASSERT_NEAR(
+        -mu_expected,
+        fluid_model->getdValue(FluidPropertyType::Vicosity, vars,
+                               MaterialLib::Fluid::PropertyVariableType::T),
+        1.e-10);
 
     vars[0] = 273.1;
     ASSERT_NEAR(1000.0 * (1 + 4.3e-4 * (vars[0] - 293.0)),
-                composite_fluid_model->getValue(PropertyType::Density, vars),
+                fluid_model->getValue(FluidPropertyType::Density, vars),
                 1.e-10);
-    ASSERT_NEAR(1000.0 * 4.3e-4, composite_fluid_model->getdValue(
-                                     PropertyType::Density, vars,
-                                     Fluid::PropertyVariableType::T),
+    ASSERT_NEAR(1000.0 * 4.3e-4,
+                fluid_model->getdValue(FluidPropertyType::Density, vars,
+                                       Fluid::PropertyVariableType::T),
                 1.e-10);
 }
