@@ -26,7 +26,6 @@ stage('Reports (Docs)') {
         reportName: 'Doxygen'])
     step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
         messagesPattern:
-            '.*ogs_file_.*,' +
             '.*potential recursive class relation.*',
         parserConfigurations: [[parserName: 'Doxygen', pattern:
         'build/DoxygenWarnings.log']], unstableNewAll: '0'])
