@@ -658,6 +658,31 @@ if(NOT OGS_USE_MPI)
         expected_square_1e2_pcs_0_ts_120_t_1000.000000.vtu square_1e2_pcs_0_ts_120_t_1000.000000.vtu pressure pressure
         expected_square_1e2_pcs_0_ts_420_t_4000.000000.vtu square_1e2_pcs_0_ts_420_t_4000.000000.vtu pressure pressure
     )
+    # HydroMechanics; Small deformation, linear poroelastic (unconfined compression short time)
+    AddTest(
+        NAME HydroMechanics_HML_square_1e2_unconfined_compression_short
+        PATH HydroMechanics/Linear/Unconfined_Compression_early
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_1e2.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-3 RELTOL 1e-3
+        DIFF_DATA
+        UnconfinedCompressionAnalytical_1s.vtu square_1e2_pcs_0_ts_10_t_1.000000.vtu displacement_ana displacement
+    )
+    # HydroMechanics; Small deformation, linear poroelastic (unconfined compression long time)
+    AddTest(
+        NAME HydroMechanics_HML_square_1e2_unconfined_compression_long
+        PATH HydroMechanics/Linear/Unconfined_Compression_late
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_1e2.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-3 RELTOL 1e-3
+        DIFF_DATA
+        UnconfinedCompressionAnalytical_1000s.vtu square_1e2_pcs_0_ts_100_t_1000.000000.vtu displacement_ana displacement
+    )
+
 
     # LIE; Small deformation
     AddTest(
