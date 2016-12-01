@@ -120,6 +120,25 @@ inline double to_radians(double degrees) {
     return degrees*boost::math::constants::pi<double>()/180.;
 }
 
+
+/**
+ * simple power function that takes as a second argument an integer instead of a float
+ * @param base basis of the expression
+ * @param exp exponent of the expression
+ * @return base^exp
+ */
+template <typename T>
+inline T fastpow(T base, size_t exp)
+{
+	T result(base);
+	if (exp == 0)
+		result = static_cast<T>(1);
+	for (size_t k(1); k < exp; k++)
+		result *= base;
+	return result;
+}
+
+
 template<typename Type> Type limitValueInInterval(const Type variable,
                                                   const Type lower_bound,
                                                   const Type upper_bound)
