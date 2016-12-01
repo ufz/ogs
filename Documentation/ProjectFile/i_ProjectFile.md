@@ -43,8 +43,9 @@ prefix:
     prj and gml input file, respectively.
     All other top level cases, however, belong somewhere in the project file XML tree.
     You can see where they belong in the <em>Additional Info</em> section of the [tag] and
-    [attr] pages, e.g., \ref ogs_file_param__boundary_condition__geometry of the
-    boundary condition has the full XML tag path
+    [attr] pages, e.g., \ref
+    ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometry
+    of the boundary condition has the full XML tag path
     <tt>process_variables.process_variable.boundary_conditions.boundary_condition.geometry</tt>.
  2. Cases that distinguish types do not translate to XML tags either.
     They enclose a set of configuration settings that can be used at that specific point.<br>
