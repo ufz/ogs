@@ -106,6 +106,29 @@ double sqrDist(const double* p0, const double* p1)
 }
 
 /**
+ * simple power function that takes as a second argument an integer instead of a
+ * float
+ * @param base basis of the expression
+ * @param exp exponent of the expression
+ * @return base^exp
+ */
+template <typename T>
+inline T integer_pow(const T base, const std::size_t exp)
+{
+    T result = 1.0;
+    T new_base = base;
+    std::size_t new_exp = exp;
+    while (new_exp)
+    {
+        if (new_exp & 1)
+            result *= new_base;
+        new_exp >>= 1;
+        new_base *= new_base;
+    }
+    return result;
+}
+
+/**
  * Let \f$p_0, p_1, p_2 \in R^3\f$. The function getAngle
  * computes the angle between the edges \f$(p_0,p_1)\f$ and \f$(p_1,p_2)\f$
  * @param p0 start point of edge 0
@@ -119,25 +142,6 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3]);
 inline double to_radians(double degrees) {
     return degrees*boost::math::constants::pi<double>()/180.;
 }
-
-
-/**
- * simple power function that takes as a second argument an integer instead of a float
- * @param base basis of the expression
- * @param exp exponent of the expression
- * @return base^exp
- */
-template <typename T>
-inline T fastpow(T base, size_t exp)
-{
-	T result(base);
-	if (exp == 0)
-		result = static_cast<T>(1);
-	for (size_t k(1); k < exp; k++)
-		result *= base;
-	return result;
-}
-
 
 template<typename Type> Type limitValueInInterval(const Type variable,
                                                   const Type lower_bound,
