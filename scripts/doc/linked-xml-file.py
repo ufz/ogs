@@ -37,7 +37,11 @@ outdir = os.path.join(docauxdir, "dox", "CTestProjectFiles")
 # following format:
 # "prj__processes__process": "process",
 # See the expansion table in the append-xml-tags.py too.
-tag_path_expansion_table = {}
+tag_path_expansion_table = {
+        "prj__processes__process__constitutive_relation" : "material__solid__constitutive_relation",
+        "prj__processes__process__material_property" : "material",
+        "material__porous_medium__porous_medium" : "material__porous_medium",
+        }
 
 indent = "&nbsp;" * 2
 
@@ -110,7 +114,9 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up,
             dict_of_set_add(map_attr_to_prj_files, attrpath, relfilepath)
 
     if len(node) > 0:
-        # node having child tags
+        # node having child tag
+
+        # print opening tag
         fh.write(format_if_documented(is_doc, \
                 indent*level + '\\<{0}{2}\\><br>\n', fullpagename, tag, attrs))
 
@@ -126,10 +132,12 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up,
             typetag_children = typetag
             typetag_children_levels_up = typetag_levels_up + 1
 
+        # Recursively process children tags.
         for child in node:
             print_tags(child, level + 1, pagename, fh, typetag_children,
                        typetag_children_levels_up, relfilepath)
 
+        # print closing tag
         fh.write((indent * level) + r"\</" + tag + "\\><br>\n")
     else:
         # node having no children
@@ -138,11 +146,7 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up,
                 fh.write(format_if_documented(is_doc, \
                         indent*level + '\\<{0}{2}\\>{3}\\</{1}\\><br>\n', fullpagename, tag, attrs, node.text.strip()))
             else:
-                if rootpagename:
-                    typepagename = rootpagename + "__" + node.text.strip()
-                else:
-                    typepagename = node.text.strip()
-
+                typepagename = rootpagename + "__" + node.text.strip()
                 typetagpath, typepagename, type_is_doc = get_tagpath(
                     typepagename, None, 0)
                 if type_is_doc:
