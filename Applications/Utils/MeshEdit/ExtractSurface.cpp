@@ -32,8 +32,11 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Tool extracts the surface of the given mesh.", ' ',
-                       "0.1");
+    TCLAP::CmdLine cmd(
+        "Tool extracts the surface of the given mesh. The documentation is "
+        "available at "
+        "https://docs.opengeosys.org/docs/tools/meshing/extract-surface",
+        ' ', "0.1");
     TCLAP::ValueArg<std::string> mesh_in(
         "i", "mesh-input-file",
         "the name of the file containing the input mesh", true, "",
