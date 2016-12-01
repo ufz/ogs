@@ -33,8 +33,11 @@ datadir   = os.path.abspath(datadir)
 docauxdir = os.path.abspath(docauxdir)
 outdir    = os.path.join(docauxdir, "dox", "CTestProjectFiles")
 
+# Expansions or shortcuts for the documenation can be added here in the
+# following format:
+# "prj__processes__process": "process",
+# See the expansion table in the append-xml-tags.py too.
 tag_path_expansion_table = {
-    "prj__processes__process":                                                           "process",
 }
 
 indent = "&nbsp;"*2

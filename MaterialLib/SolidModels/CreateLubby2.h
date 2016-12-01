@@ -25,13 +25,13 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{process__SMALL_DEFORMATION__constitutive_relation__type}
+    //! \ogs_file_param{material__solid__constitutive_relation__type}
     config.checkConfigParameter("type", "Lubby2");
     DBUG("Create Lubby2 material");
 
     // Kelvin shear modulus.
     auto& kelvin_shear_modulus = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{process__SMALL_DEFORMATION__constitutive_relation__Lubby2__kelvin_shear_modulus}
+        //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__kelvin_shear_modulus}
         config, "kelvin_shear_modulus", parameters, 1);
 
     DBUG("Use '%s' as kelvin shear modulus parameter.",
@@ -39,7 +39,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
 
     // Kelvin viscosity.
     auto& kelvin_viscosity = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{process__SMALL_DEFORMATION__constitutive_relation__Lubby2__kelvin_viscosity}
+        //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__kelvin_viscosity}
         config, "kelvin_viscosity", parameters, 1);
 
     DBUG("Use '%s' as kelvin viscosity parameter.",
@@ -47,7 +47,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
 
     // Maxwell shear modulus.
     auto& maxwell_shear_modulus = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{process__SMALL_DEFORMATION__constitutive_relation__Lubby2__maxwell_shear_modulus}
+        //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__maxwell_shear_modulus}
         config, "maxwell_shear_modulus", parameters, 1);
 
     DBUG("Use '%s' as maxwell shear modulus parameter.",
@@ -55,7 +55,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
 
     // Maxwell bulk modulus.
     auto& maxwell_bulk_modulus = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{process__SMALL_DEFORMATION__constitutive_relation__Lubby2__maxwell_bulk_modulus}
+        //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__maxwell_bulk_modulus}
         config, "maxwell_bulk_modulus", parameters, 1);
 
     DBUG("Use '%s' as maxwell bulk modulus parameter.",
@@ -63,7 +63,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
 
     // Maxwell viscosity.
     auto& maxwell_viscosity = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{process__SMALL_DEFORMATION__constitutive_relation__Lubby2__maxwell_viscosity}
+        //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__maxwell_viscosity}
         config, "maxwell_viscosity", parameters, 1);
 
     DBUG("Use '%s' as maxwell viscosity parameter.",
@@ -71,7 +71,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
 
     // Dependency parameter for mK.
     auto& dependency_parameter_mK = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{process__SMALL_DEFORMATION__constitutive_relation__Lubby2__dependency_parameter_mk}
+        //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__dependency_parameter_mk}
         config, "dependency_parameter_mk", parameters, 1);
 
     DBUG("Use '%s' as dependency parameter mK.",
@@ -79,7 +79,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
 
     // Dependency parameter for mvK.
     auto& dependency_parameter_mvK = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{process__SMALL_DEFORMATION__constitutive_relation__Lubby2__dependency_parameter_mvk}
+        //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__dependency_parameter_mvk}
         config, "dependency_parameter_mvk", parameters, 1);
 
     DBUG("Use '%s' as dependency parameter mvK.",
@@ -87,7 +87,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
 
     // Dependency parameter for mvM.
     auto& dependency_parameter_mvM = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{process__SMALL_DEFORMATION__constitutive_relation__Lubby2__dependency_parameter_mvm}
+        //! \ogs_file_param_special{material__solid__constitutive_relation__Lubby2__dependency_parameter_mvm}
         config, "dependency_parameter_mvm", parameters, 1);
 
     DBUG("Use '%s' as dependency parameter mvM.",

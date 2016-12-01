@@ -35,8 +35,11 @@ docdir    = os.path.join(docauxdir, "dox", "ProjectFile")
 
 # used to expand documentation entry points to full xml tag paths
 # that are used in the prj file.
+# For example process on top-level could be expanded to processes.process with
+#     "process":            "processes.process",
+#
+# See the expansion table in the linked-xml-file.py too.
 tag_path_expansion_table = {
-    "process":            "processes.process",
     "prj": "",
 }
 

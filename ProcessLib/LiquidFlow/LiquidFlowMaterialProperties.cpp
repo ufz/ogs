@@ -37,39 +37,39 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
 {
     DBUG("Reading material properties of liquid flow process.");
 
-    //! \ogs_file_param{process__LIQUID_FLOW__material_property__fluid}
+    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");
 
     // Get fluid properties
-    //! \ogs_file_param{process__LIQUID_FLOW__material_property__fluid__density}
+    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__fluid__density}
     auto const& rho_conf = fluid_config.getConfigSubtree("density");
     _liquid_density = MaterialLib::Fluid::createFluidDensityModel(rho_conf);
-    //! \ogs_file_param{process__LIQUID_FLOW__material_property__fluid__viscosity}
+    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__fluid__viscosity}
     auto const& mu_conf = fluid_config.getConfigSubtree("viscosity");
     _viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
 
     // Get porous properties
     std::vector<int> mat_ids;
-    //! \ogs_file_param{process__LIQUID_FLOW__material_property__porous_medium}
+    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium}
     auto const& poro_config = config.getConfigSubtree("porous_medium");
-    //! \ogs_file_param{process__LIQUID_FLOW__material_property__porous_medium__porous_medium}
+    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium}
     for (auto const& conf : poro_config.getConfigSubtreeList("porous_medium"))
     {
-        //! \ogs_file_attr{process__LIQUID_FLOW__material_property__porous_medium__porous_medium__id}
+        //! \ogs_file_attr{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__id}
         auto const id = conf.getConfigAttributeOptional<int>("id");
         mat_ids.push_back(*id);
 
-        //! \ogs_file_param{process__LIQUID_FLOW__material_property__porous_medium__porous_medium__permeability}
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__permeability}
         auto const& perm_conf = conf.getConfigSubtree("permeability");
         _intrinsic_permeability_models.emplace_back(
             MaterialLib::PorousMedium::createPermeabilityModel(perm_conf));
 
-        //! \ogs_file_param{process__LIQUID_FLOW__material_property__porous_medium__porous_medium__porosity}
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__porosity}
         auto const& poro_conf = conf.getConfigSubtree("porosity");
         auto n = MaterialLib::PorousMedium::createPorosityModel(poro_conf);
         _porosity_models.emplace_back(std::move(n));
 
-        //! \ogs_file_param{process__LIQUID_FLOW__material_property__porous_medium__porous_medium__storage}
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__storage}
         auto const& stora_conf = conf.getConfigSubtree("storage");
         auto beta = MaterialLib::PorousMedium::createStorageModel(stora_conf);
         _storage_models.emplace_back(std::move(beta));

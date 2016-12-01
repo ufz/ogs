@@ -282,21 +282,21 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
     for (auto process_config : processes_config.getConfigSubtreeList("process"))
     {
         auto const type =
-            //! \ogs_file_param{process__type}
+            //! \ogs_file_param{prj__processes__process__type}
             process_config.peekConfigParameter<std::string>("type");
 
         auto const name =
-            //! \ogs_file_param{process__name}
+            //! \ogs_file_param{prj__processes__process__name}
             process_config.getConfigParameter<std::string>("name");
 
         auto const integration_order =
-            //! \ogs_file_param{process__integration_order}
+            //! \ogs_file_param{prj__processes__process__integration_order}
             process_config.getConfigParameter<int>("integration_order");
 
         std::unique_ptr<ProcessLib::Process> process;
 
         auto jacobian_assembler = ProcessLib::createJacobianAssembler(
-            //! \ogs_file_param{process__jacobian_assembler}
+            //! \ogs_file_param{prj__processes__process__jacobian_assembler}
             process_config.getConfigSubtreeOptional("jacobian_assembler"));
 
         if (type == "GROUNDWATER_FLOW")
@@ -334,7 +334,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "HYDRO_MECHANICS")
         {
-            //! \ogs_file_param{process__HYDRO_MECHANICS__dimension}
+            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:
@@ -359,7 +359,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "HYDRO_MECHANICS_WITH_LIE")
         {
-            //! \ogs_file_param{process__HYDRO_MECHANICS_WITH_LIE__dimension}
+            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:
@@ -384,7 +384,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "SMALL_DEFORMATION")
         {
-            //! \ogs_file_param{process__SMALL_DEFORMATION__dimension}
+            //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:
@@ -409,7 +409,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "SMALL_DEFORMATION_WITH_LIE")
         {
-            //! \ogs_file_param{process__SMALL_DEFORMATION_WITH_LIE__dimension}
+            //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:

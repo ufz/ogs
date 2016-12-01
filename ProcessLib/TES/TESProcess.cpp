@@ -34,28 +34,28 @@ TESProcess::TESProcess(
     // physical parameters for local assembly
     {
         std::vector<std::pair<std::string, double*>> params{
-            //! \ogs_file_param_special{process__TES__fluid_specific_heat_source}
+            //! \ogs_file_param_special{prj__processes__process__TES__fluid_specific_heat_source}
             {"fluid_specific_heat_source",
              &_assembly_params.fluid_specific_heat_source},
-            //! \ogs_file_param_special{process__TES__fluid_specific_isobaric_heat_capacity}
+            //! \ogs_file_param_special{prj__processes__process__TES__fluid_specific_isobaric_heat_capacity}
             {"fluid_specific_isobaric_heat_capacity", &_assembly_params.cpG},
-            //! \ogs_file_param_special{process__TES__solid_specific_heat_source}
+            //! \ogs_file_param_special{prj__processes__process__TES__solid_specific_heat_source}
             {"solid_specific_heat_source",
              &_assembly_params.solid_specific_heat_source},
-            //! \ogs_file_param_special{process__TES__solid_heat_conductivity}
+            //! \ogs_file_param_special{prj__processes__process__TES__solid_heat_conductivity}
             {"solid_heat_conductivity", &_assembly_params.solid_heat_cond},
-            //! \ogs_file_param_special{process__TES__solid_specific_isobaric_heat_capacity}
+            //! \ogs_file_param_special{prj__processes__process__TES__solid_specific_isobaric_heat_capacity}
             {"solid_specific_isobaric_heat_capacity", &_assembly_params.cpS},
-            //! \ogs_file_param_special{process__TES__tortuosity}
+            //! \ogs_file_param_special{prj__processes__process__TES__tortuosity}
             {"tortuosity", &_assembly_params.tortuosity},
-            //! \ogs_file_param_special{process__TES__diffusion_coefficient}
+            //! \ogs_file_param_special{prj__processes__process__TES__diffusion_coefficient}
             {"diffusion_coefficient",
              &_assembly_params.diffusion_coefficient_component},
-            //! \ogs_file_param_special{process__TES__porosity}
+            //! \ogs_file_param_special{prj__processes__process__TES__porosity}
             {"porosity", &_assembly_params.poro},
-            //! \ogs_file_param_special{process__TES__solid_density_dry}
+            //! \ogs_file_param_special{prj__processes__process__TES__solid_density_dry}
             {"solid_density_dry", &_assembly_params.rho_SR_dry},
-            //! \ogs_file_param_special{process__TES__solid_density_initial}
+            //! \ogs_file_param_special{prj__processes__process__TES__solid_density_initial}
             {"solid_density_initial", &_assembly_params.initial_solid_density}};
 
         for (auto const& p : params)
@@ -74,11 +74,11 @@ TESProcess::TESProcess(
     // characteristic values of primary variables
     {
         std::vector<std::pair<std::string, Trafo*>> const params{
-            //! \ogs_file_param_special{process__TES__characteristic_pressure}
+            //! \ogs_file_param_special{prj__processes__process__TES__characteristic_pressure}
             {"characteristic_pressure", &_assembly_params.trafo_p},
-            //! \ogs_file_param_special{process__TES__characteristic_temperature}
+            //! \ogs_file_param_special{prj__processes__process__TES__characteristic_temperature}
             {"characteristic_temperature", &_assembly_params.trafo_T},
-            //! \ogs_file_param_special{process__TES__characteristic_vapour_mass_fraction}
+            //! \ogs_file_param_special{prj__processes__process__TES__characteristic_vapour_mass_fraction}
             {"characteristic_vapour_mass_fraction", &_assembly_params.trafo_x}};
 
         for (auto const& p : params)
@@ -96,7 +96,7 @@ TESProcess::TESProcess(
 
     // permeability
     if (auto par =
-            //! \ogs_file_param{process__TES__solid_hydraulic_permeability}
+            //! \ogs_file_param{prj__processes__process__TES__solid_hydraulic_permeability}
             config.getConfigParameterOptional<double>("solid_hydraulic_permeability"))
     {
         DBUG(
@@ -110,12 +110,12 @@ TESProcess::TESProcess(
 
     // reactive system
     _assembly_params.react_sys = Adsorption::AdsorptionReaction::newInstance(
-        //! \ogs_file_param{process__TES__reactive_system}
+        //! \ogs_file_param{prj__processes__process__TES__reactive_system}
         config.getConfigSubtree("reactive_system"));
 
     // debug output
     if (auto const param =
-            //! \ogs_file_param{process__TES__output_element_matrices}
+            //! \ogs_file_param{prj__processes__process__TES__output_element_matrices}
             config.getConfigParameterOptional<bool>("output_element_matrices"))
     {
         DBUG("output_element_matrices: %s", (*param) ? "true" : "false");
@@ -126,7 +126,7 @@ TESProcess::TESProcess(
     // TODO somewhere else
     /*
     if (auto const param =
-    //! \ogs_file_param{process__TES__output_global_matrix}
+    //! \ogs_file_param{prj__processes__process__TES__output_global_matrix}
     config.getConfigParameterOptional<bool>("output_global_matrix"))
     {
         DBUG("output_global_matrix: %s", (*param) ? "true" : "false");

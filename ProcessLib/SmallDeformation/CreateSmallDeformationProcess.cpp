@@ -39,14 +39,18 @@ createSmallDeformationProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{process__type}
+    //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "SMALL_DEFORMATION");
     DBUG("Create SmallDeformationProcess.");
 
     // Process variable.
+
+    //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__process_variables}
+    auto const pv_config = config.getConfigSubtree("process_variables");
+
     auto process_variables = findProcessVariables(
-        variables, config,
-        {//! \ogs_file_param_special{process__SMALL_DEFORMATION__process_variables__process_variable}
+        variables, pv_config,
+        {//! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__process_variables__process_variable}
          "process_variable"});
 
     DBUG("Associate displacement with process variable \'%s\'.",
@@ -66,11 +70,11 @@ createSmallDeformationProcess(
     // Constitutive relation.
     // read type;
     auto const constitutive_relation_config =
-        //! \ogs_file_param{process__SMALL_DEFORMATION__constitutive_relation}
+        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__constitutive_relation}
         config.getConfigSubtree("constitutive_relation");
 
     auto const type =
-        //! \ogs_file_param{process__SMALL_DEFORMATION__constitutive_relation__type}
+        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__constitutive_relation__type}
         constitutive_relation_config.peekConfigParameter<std::string>("type");
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>

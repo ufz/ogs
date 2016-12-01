@@ -26,21 +26,25 @@ std::unique_ptr<Process> createHeatConductionProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{process__type}
+    //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HEAT_CONDUCTION");
 
     DBUG("Create HeatConductionProcess.");
 
     // Process variable.
+
+    //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__process_variables}
+    auto const pv_config = config.getConfigSubtree("process_variables");
+
     auto process_variables = findProcessVariables(
-        variables, config,
-        {//! \ogs_file_param_special{process__HEAT_CONDUCTION__process_variables__process_variable}
+        variables, pv_config,
+        {//! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__process_variables__process_variable}
          "process_variable"});
 
     // thermal conductivity parameter.
     auto& thermal_conductivity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__HEAT_CONDUCTION__thermal_conductivity}
+        //! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__thermal_conductivity}
         "thermal_conductivity", parameters, 1);
 
     DBUG("Use \'%s\' as thermal conductivity parameter.",
@@ -49,7 +53,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
     // heat capacity parameter.
     auto& heat_capacity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__HEAT_CONDUCTION__heat_capacity}
+        //! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__heat_capacity}
         "heat_capacity", parameters, 1);
 
     DBUG("Use \'%s\' as heat capacity parameter.", heat_capacity.name.c_str());
@@ -57,7 +61,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
     // density parameter.
     auto& density = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__HEAT_CONDUCTION__density}
+        //! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__density}
         "density", parameters, 1);
 
     DBUG("Use \'%s\' as density parameter.", density.name.c_str());
