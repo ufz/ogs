@@ -12,9 +12,6 @@
 
 #pragma once
 
-#include <cstdio>
-#include <iostream>
-
 #include <logog/include/logog.hpp>
 
 #include "NumLib/Function/Interpolation.h"
