@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+\copydoc ProcessLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPProcessData::_has_mass_lumping

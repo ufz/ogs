@@ -63,9 +63,15 @@ struct TwoPhaseFlowWithPPProcessData
 
     //! Assignments are not needed.
     void operator=(TwoPhaseFlowWithPPProcessData&&) = delete;
+
+    //! Specific body forces applied to solid and fluid.
+    //! It is usually used to apply gravitational forces.
+    //! A vector of displacement dimension's length.
     Eigen::VectorXd const _specific_body_force;
 
     bool const _has_gravity;
+
+    //! Enables lumping of the mass matrix.
     bool const _has_mass_lumping;
     std::unique_ptr<
         MaterialLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPMaterialProperties>

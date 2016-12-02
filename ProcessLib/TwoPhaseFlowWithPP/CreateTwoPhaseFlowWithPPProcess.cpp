@@ -45,8 +45,10 @@ std::unique_ptr<Process> CreateTwoPhaseFlowWithPPProcess(
 
     auto process_variables = findProcessVariables(
         variables, pv_config,
-        {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PP__process_variables__process_variable}
-         "gas_pressure", "capillary_pressure"});
+        {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PP__process_variables__gas_pressure}
+         "gas_pressure",
+         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PP__process_variables__capillary_pressure}
+         "capillary_pressure"});
 
     SecondaryVariableCollection secondary_variables;
 
