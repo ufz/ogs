@@ -1,1 +1,1 @@
-A tag for fluid properties.
+Defines fluid properties of gas and liquid phases.
