@@ -41,7 +41,7 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
     return ProcessLib::LIE::createNeumannBoundaryCondition(
         config.config,
         getClonedElements(boundary_element_searcher, config.geometry),
-        dof_table, variable_id, config.component_id,
+        dof_table, variable_id, *config.component_id,
         mesh.isAxiallySymmetric(), integration_order, shapefunction_order, mesh.getDimension(),
         parameters, _fracture_prop);
 }

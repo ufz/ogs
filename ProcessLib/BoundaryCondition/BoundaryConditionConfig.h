@@ -19,7 +19,7 @@ struct BoundaryConditionConfig final
 {
     BoundaryConditionConfig(BaseLib::ConfigTree&& config_,
                             GeoLib::GeoObject const& geometry_,
-                            int const component_id_)
+                            boost::optional<int> const component_id_)
         : config(std::move(config_)),
           geometry(geometry_),
           component_id(component_id_)
@@ -35,7 +35,7 @@ struct BoundaryConditionConfig final
 
     BaseLib::ConfigTree config;
     GeoLib::GeoObject const& geometry;
-    int const component_id;
+    boost::optional<int> const component_id;
 };
 
 }  // ProcessLib

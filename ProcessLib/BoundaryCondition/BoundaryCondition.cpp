@@ -85,7 +85,7 @@ BoundaryConditionBuilder::createDirichletBoundaryCondition(
     std::vector<std::size_t> sorted_nodes_ids;
 
     auto const& mesh_subsets =
-        dof_table.getMeshSubsets(variable_id, config.component_id);
+        dof_table.getMeshSubsets(variable_id, *config.component_id);
     for (auto const& mesh_subset : mesh_subsets)
     {
         auto const& nodes = mesh_subset->getNodes();
@@ -106,11 +106,11 @@ BoundaryConditionBuilder::createDirichletBoundaryCondition(
     ids.erase(ids_new_end_iterator, std::end(ids));
 
     DBUG("Found %d nodes for Dirichlet BCs for the variable %d and component %d",
-         ids.size(), variable_id, config.component_id);
+         ids.size(), variable_id, *config.component_id);
 
     return ProcessLib::createDirichletBoundaryCondition(
         config.config, std::move(ids), dof_table, mesh.getID(), variable_id,
-        config.component_id, parameters);
+        *config.component_id, parameters);
 }
 
 std::unique_ptr<BoundaryCondition>
@@ -134,7 +134,7 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
     return ProcessLib::createNeumannBoundaryCondition(
         config.config,
         getClonedElements(boundary_element_searcher, config.geometry),
-        dof_table, variable_id, config.component_id,
+        dof_table, variable_id, *config.component_id,
         mesh.isAxiallySymmetric(), integration_order, shapefunction_order, mesh.getDimension(),
         parameters);
 }
@@ -160,7 +160,7 @@ BoundaryConditionBuilder::createRobinBoundaryCondition(
     return ProcessLib::createRobinBoundaryCondition(
         config.config,
         getClonedElements(boundary_element_searcher, config.geometry),
-        dof_table, variable_id, config.component_id,
+        dof_table, variable_id, *config.component_id,
         mesh.isAxiallySymmetric(), integration_order, shapefunction_order, mesh.getDimension(),
         parameters);
 }
@@ -173,7 +173,7 @@ BoundaryConditionBuilder::createNonuniformNeumannBoundaryCondition(
     const unsigned shapefunction_order)
 {
     return ProcessLib::createNonuniformNeumannBoundaryCondition(
-        config.config, dof_table, variable_id, config.component_id,
+        config.config, dof_table, variable_id, *config.component_id,
         integration_order, shapefunction_order, mesh);
 }
 
