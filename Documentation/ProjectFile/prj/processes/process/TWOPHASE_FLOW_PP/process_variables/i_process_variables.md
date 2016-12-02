@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+The process variables for gas and capillary pressure.

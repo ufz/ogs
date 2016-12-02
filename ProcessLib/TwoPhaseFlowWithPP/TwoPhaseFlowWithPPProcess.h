@@ -29,8 +29,10 @@ namespace ProcessLib
 namespace TwoPhaseFlowWithPP
 {
 /**
- * \brief A class to simulate the two-phase flow process with P-P model in
- * porous media
+ * \brief A class to simulate the isothermal two-phase flow process with P-P
+ * model in porous media.
+ *
+ * The gas and capillary pressure are used as primary variables.
  */
 class TwoPhaseFlowWithPPProcess final : public Process
 {
