@@ -74,6 +74,13 @@ const double O2 = 0.032;  ///< kg \per{mol}
  * - Source: http://www.engineeringtoolbox.com/molecular-mass-air-d_679.html
  */
 const double Air = 0.02897;  ///< kg \per{mol}
+
+/**
+ * Hydrogen.
+ *
+ * - Source: https://pubchem.ncbi.nlm.nih.gov/compound/Hydrogen
+ */
+const double H2 = 0.002016;  ///< kg \per{mol}
 }  // namespace MolarMass
 
 /**
@@ -86,5 +93,18 @@ namespace SpecificGasConstant
 /// Specific gas constant for water vapour.
 const double WaterVapour = IdealGasConstant / MolarMass::Water;  // = 461.504;
 }  // namespace SpecificGasConstant
+/**
+* Henry's law constant
+* It is defined here as the ratio of the aqueous-phase concentration of a
+* chemical to its equilibrium partial pressure in the gas phase.
+*/
+namespace HenryConstant
+{
+/**Henry constant for hydrogen, Please refer to
+* De Nevers N. Physical and chemical equilibrium for chemical engineers[M].
+* John Wiley & Sons, 2012.
+*/
+double const HenryConstantH2 = 7.65e-6;  /// mol/Pa./m3
+}  // namespace HenryConstant
 }  // namespace PhysicalConstant
 }  // namespace MaterialLib

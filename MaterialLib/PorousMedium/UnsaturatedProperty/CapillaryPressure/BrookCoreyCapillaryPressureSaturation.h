@@ -44,14 +44,15 @@ public:
     /**
      * @param pb     Entry pressure, \f$ p_b \f$
      * @param Sr     Residual saturation, \f$ S_r \f$
+     * @param Sg_r     Residual saturation of gas phase, \f$ Sg_r \f$
      * @param Smax   Maximum saturation, \f$ S_{\mbox{max}} \f$
      * @param m      Exponent, \f$ m \f$
      * @param Pc_max Maximum capillary pressure, \f$ P_c^{\mbox{max}}\f$
      */
     BrookCoreyCapillaryPressureSaturation(const double pb, const double Sr,
-                                          const double Smax, const double m,
-                                          const double Pc_max)
-        : CapillaryPressureSaturation(Sr, Smax, Pc_max), _pb(pb), _m(m)
+                                          const double Sg_r, const double Smax,
+                                          const double m, const double Pc_max)
+        : CapillaryPressureSaturation(Sr, Sg_r, Smax, Pc_max), _pb(pb), _m(m)
     {
     }
 

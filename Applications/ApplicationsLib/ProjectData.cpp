@@ -35,16 +35,17 @@
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
+#include "ProcessLib/HT/CreateHTProcess.h"
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
 #include "ProcessLib/HydroMechanics/CreateHydroMechanicsProcess.h"
 #include "ProcessLib/LIE/HydroMechanics/CreateHydroMechanicsProcess.h"
 #include "ProcessLib/LIE/SmallDeformation/CreateSmallDeformationProcess.h"
-#include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
 #include "ProcessLib/LiquidFlow/CreateLiquidFlowProcess.h"
+#include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
-#include "ProcessLib/HT/CreateHTProcess.h"
 #include "ProcessLib/TwoPhaseFlowWithPP/CreateTwoPhaseFlowWithPPProcess.h"
+#include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowWithPrhoProcess.h"
 
 namespace detail
 {
@@ -442,6 +443,15 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     process_config, _curves);
         }
 
+        else if (type == "TWOPHASE_FLOW_PRHO")
+        {
+            process = ProcessLib::TwoPhaseFlowWithPrho::
+                createTwoPhaseFlowWithPrhoProcess(
+                    *_mesh_vec[0], std::move(jacobian_assembler),
+                    _process_variables, _parameters, integration_order,
+                    process_config, _curves);
+        }
+
         else
         {
             OGS_FATAL("Unknown process type: %s", type.c_str());
@@ -526,8 +536,8 @@ void ProjectData::parseCurves(
         BaseLib::insertIfKeyUniqueElseError(
             _curves,
             name,
-            MathLib::createPiecewiseLinearCurve
-                                 <MathLib::PiecewiseLinearInterpolation>(conf),
+            MathLib::createPiecewiseLinearCurve<
+                MathLib::PiecewiseLinearInterpolation>(conf),
             "The curve name is not unique.");
     }
 }

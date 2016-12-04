@@ -12,8 +12,8 @@
 
 #pragma once
 
+#include <cmath>
 #include <limits>
-
 #include "CapillaryPressureSaturation.h"
 
 namespace MaterialLib
@@ -42,6 +42,14 @@ namespace PorousMedium
  * as
  *    \f[p_b=\rho g/\alpha\f]
  */
+/**
+*   \brief The regularized van Genuchten model, please ref to
+*   Marchand E, Mueller T, Knabner P.
+*   Fully coupled generalized hybrid-mixed finite element approximation of
+* two-phase two-component flow in porous media.
+*   Part I: formulation and properties of the mathematical model. Comput Geosci
+* 2013;17(2):431¨C42.
+*/
 class VanGenuchtenCapillaryPressureSaturation final
     : public CapillaryPressureSaturation
 {
@@ -49,14 +57,22 @@ public:
     /**
      * @param pb     Entry pressure, \f$ p_b \f$
      * @param Sr     Residual saturation, \f$ S_r \f$
+     * @param Sg_r     Residual saturation, \f$ S_g^{\mbox{r}} \f$
      * @param Smax   Maximum saturation, \f$ S_{\mbox{max}} \f$
      * @param m      Exponent, \f$ m \f$
      * @param Pc_max Maximum capillary pressure, \f$ P_c^{\mbox{max}}\f$
+     * @param has_regularized whether use the regularized van Genuchten model,
+     * \f$ m \f$
      */
     VanGenuchtenCapillaryPressureSaturation(const double pb, const double Sr,
+                                            const double Sg_r,
                                             const double Smax, const double m,
-                                            const double Pc_max)
-        : CapillaryPressureSaturation(Sr, Smax, Pc_max), _pb(pb), _m(m)
+                                            const double Pc_max,
+                                            bool has_regularized)
+        : CapillaryPressureSaturation(Sr, Sg_r, Smax, Pc_max),
+          _pb(pb),
+          _m(m),
+          _has_regularized(has_regularized)
     {
     }
 
@@ -76,8 +92,24 @@ public:
     double getdPcdS(const double saturation) const override;
 
 private:
-    const double _pb;  ///< Entry pressure.
-    const double _m;   ///< Exponent m, m in [0,1]. n=1/(1-m).
+    const double _pb;             ///< Entry pressure.
+    const double _m;              ///< Exponent m, m in [0,1]. n=1/(1-m).
+    const bool _has_regularized;  /// using regularized van Genuchten model
+    const double _xi = 1e-5;  /// parameter in regularized van Genuchten model
+
+private:
+    /// Regularized van Genuchten capillary pressure-saturation Model
+    double getPcBarvGSg(double Sg) const;
+    /// Regularized van Genuchten capillary pressure-saturation Model
+    double getSBar(double Sg) const;
+    ///  van Genuchten capillary pressure-saturation Model
+    double getPcvGSg(double Sg) const;
+    /// derivative dPCdS based on regularized van Genuchten capillary
+    /// pressure-saturation Model
+    double getdPcdSvGBar(double Sg) const;
+    /// derivative dPCdS based on standard van Genuchten capillary
+    /// pressure-saturation Model
+    double getdPcdSvG(const double Sg) const;
 };
 
 }  // end namespace
