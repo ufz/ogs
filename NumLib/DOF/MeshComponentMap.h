@@ -45,9 +45,24 @@ public:
     /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the
     /// current map.
     ///
+    /// This is single-component version.
+    ///
     /// \param component_id  The global components id.
     /// \param components components that should remain in the created subset
-    MeshComponentMap getSubset(std::size_t const component_id,
+    MeshComponentMap getSubset(std::size_t const component_ids,
+                               MeshLib::MeshSubsets const& components) const;
+
+    /// Creates a multi-component subset of the current mesh component map.
+    /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the
+    /// current map.
+    ///
+    /// This is multi-component version.
+    ///
+    /// \note For each component the same mesh subset will be used.
+    ///
+    /// \param component_ids  The vector of global components id.
+    /// \param components components that should remain in the created subset
+    MeshComponentMap getSubset(std::vector<std::size_t> const& component_ids,
                                MeshLib::MeshSubsets const& components) const;
 
     /// The number of dofs including the those located in the ghost nodes.

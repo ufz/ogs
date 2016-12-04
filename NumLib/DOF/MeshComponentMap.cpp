@@ -176,6 +176,36 @@ MeshComponentMap MeshComponentMap::getSubset(
     return MeshComponentMap(subset_dict, 1);
 }
 
+MeshComponentMap MeshComponentMap::getSubset(
+    std::vector<std::size_t> const& component_ids,
+    MeshLib::MeshSubsets const& mesh_subsets) const
+{
+    assert(component_ids.size() <= _num_components);
+    // New dictionary for the subset.
+    ComponentGlobalIndexDict subset_dict;
+
+    for (auto const& mesh_subset : mesh_subsets)
+    {
+        std::size_t const mesh_id = mesh_subset->getMeshID();
+        // Lookup the locations in the current mesh component map and
+        // insert the full lines into the subset dictionary.
+        for (std::size_t j = 0; j < mesh_subset->getNumberOfNodes(); j++)
+            for (std::size_t component_id : component_ids)
+                subset_dict.insert(
+                    getLine(Location(mesh_id, MeshLib::MeshItemType::Node,
+                                     mesh_subset->getNodeID(j)),
+                            component_id));
+        for (std::size_t j = 0; j < mesh_subset->getNumberOfElements(); j++)
+            for (std::size_t component_id : component_ids)
+                subset_dict.insert(
+                    getLine(Location(mesh_id, MeshLib::MeshItemType::Cell,
+                                     mesh_subset->getElementID(j)),
+                            component_id));
+    }
+
+    return MeshComponentMap(subset_dict, 1);
+}
+
 void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
 {
     GlobalIndexType global_index = offset;
