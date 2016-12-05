@@ -17,6 +17,7 @@
 #ifndef OGS_WATER_VISCOSITY_IAPWS_H
 #define OGS_WATER_VISCOSITY_IAPWS_H
 
+#include <array>
 #include <cmath>
 #include <string>
 
@@ -63,7 +64,7 @@ public:
      */
     double getValue(const ArrayType& var_vals) const override;
 
-    /** Get the partial differential of the density with respect to temperatur
+    /** Get the partial differential of the density with respect to temperature
      *  or liquid pressure.
      *  \param var_vals Variable values of temperature and water density in
      *                  an array. The order of its elements
@@ -91,10 +92,15 @@ private:
         {0, 0.120573, 0, 0, 0, 0, -0.000593264}};
 
     double computeBarMu0Factor(const double barT) const;
-    double computeBarMu1Factor(const double barT, const double bar_rho) const;
+    double computeBarMu1Factor() const;
 
     double computedBarMu_dbarT(const double barT, double bar_rho) const;
     double computedBarMu_dbarRho(const double barT, double bar_rho) const;
+
+    void computeSeriesFactorForMu1(const double barT,
+                                   const double bar_rho) const;
+    mutable std::array<double, 6> _series_factorT;
+    mutable std::array<double, 7> _series_factorRho;
 };
 
 }  // end namespace

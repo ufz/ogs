@@ -27,7 +27,8 @@ double WaterViscosityIAPWS::getValue(const ArrayType& var_vals) const
 
     const double mu0 = 100. * std::sqrt(bar_T) / computeBarMu0Factor(bar_T);
 
-    const double mu1 = std::exp(bar_rho * computeBarMu1Factor(bar_T, bar_rho));
+    computeSeriesFactorForMu1(bar_T, bar_rho);
+    const double mu1 = std::exp(bar_rho * computeBarMu1Factor());
 
     return mu0 * mu1 * _ref_mu;
 }
@@ -45,6 +46,7 @@ double WaterViscosityIAPWS::getdValue(const ArrayType& var_vals,
         case PropertyVariableType::T:
             return _ref_mu * computedBarMu_dbarT(bar_T, bar_rho) / _ref_T;
         case PropertyVariableType::rho:
+            computeSeriesFactorForMu1(bar_T, bar_rho);
             return _ref_mu * computedBarMu_dbarRho(bar_T, bar_rho) / _ref_rho;
         default:
             return 0.;
@@ -63,29 +65,34 @@ double WaterViscosityIAPWS::computeBarMu0Factor(const double barT) const
     return sum_val;
 }
 
-double WaterViscosityIAPWS::computeBarMu1Factor(const double barT,
-                                                const double bar_rho) const
+void WaterViscosityIAPWS::computeSeriesFactorForMu1(const double barT,
+                                                    const double bar_rho) const
 {
-    double rho_bar_minus1_j[7];
-    double rho_bar_minus1_exp = 1.;
-    for (int i = 0; i < 7; i++)
+    _series_factorT[0] = 1.;
+    const double barT_fac = 1 / barT - 1.0;
+    for (int i = 1; i < 6; i++)
     {
-        rho_bar_minus1_j[i] = rho_bar_minus1_exp;
-        rho_bar_minus1_exp *= bar_rho - 1.0;
+        _series_factorT[i] = _series_factorT[i - 1] * barT_fac;
     }
 
-    double TbarVal = 1.;
+    _series_factorRho[0] = 1.;
+    for (int i = 1; i < 7; i++)
+    {
+        _series_factorRho[i] = _series_factorRho[i - 1] * (bar_rho - 1.0);
+    }
+}
+
+double WaterViscosityIAPWS::computeBarMu1Factor() const
+{
     double sum_val = 0.;
-    const double barT_fac = 1 / barT - 1.0;
     for (int i = 0; i < 6; i++)
     {
         double sum_val_j = 0;
         for (int j = 0; j < 7; j++)
         {
-            sum_val_j += _hij[i][j] * rho_bar_minus1_j[j];
+            sum_val_j += _hij[i][j] * _series_factorRho[j];
         }
-        sum_val += TbarVal * sum_val_j;
-        TbarVal *= barT_fac;
+        sum_val += _series_factorT[i] * sum_val_j;
     }
 
     return sum_val;
@@ -109,30 +116,19 @@ double WaterViscosityIAPWS::computedBarMu_dbarT(const double barT,
         50. / (mu0_factor * sqrt_barT) -
         100. * sqrt_barT * dmu0_factor_dbarT / (mu0_factor * mu0_factor);
 
-    double rho_bar_minus1_j[7];
-    double rho_bar_minus1_exp = 1.;
-    for (int i = 0; i < 7; i++)
-    {
-        rho_bar_minus1_j[i] = rho_bar_minus1_exp;
-        rho_bar_minus1_exp *= bar_rho - 1.0;
-    }
-
-    const double barT_fac = 1 / barT - 1.0;
-    double TbarVal = 1.;
     double dmu1_factor_dbarT = 0.0;
     for (int i = 1; i < 6; i++)
     {
         double sum_val_j = 0;
         for (int j = 0; j < 7; j++)
         {
-            sum_val_j += _hij[i][j] * rho_bar_minus1_j[j];
+            sum_val_j += _hij[i][j] * _series_factorRho[j];
         }
-        dmu1_factor_dbarT -=
-            static_cast<double>(i) * TbarVal * sum_val_j / (barT * barT);
-        TbarVal *= barT_fac;
+        dmu1_factor_dbarT -= static_cast<double>(i) * _series_factorT[i - 1] *
+                             sum_val_j / (barT * barT);
     }
 
-    const double mu1_factor = computeBarMu1Factor(barT, bar_rho);
+    const double mu1_factor = computeBarMu1Factor();
     const double dbar_mu1_dbarT =
         bar_rho * std::exp(bar_rho * mu1_factor) * dmu1_factor_dbarT;
 
@@ -143,32 +139,21 @@ double WaterViscosityIAPWS::computedBarMu_dbarT(const double barT,
 double WaterViscosityIAPWS::computedBarMu_dbarRho(const double barT,
                                                   double bar_rho) const
 {
-    double rho_bar_minus1_j[7];
-    double rho_bar_minus1_exp = 1.;
-    for (int i = 0; i < 7; i++)
-    {
-        rho_bar_minus1_j[i] = rho_bar_minus1_exp;
-        rho_bar_minus1_exp *= bar_rho - 1.0;
-    }
-
-    const double barT_fac = 1 / barT - 1.0;
-    double TbarVal = 1.;
     double dmu1_factor_dbar_rho = 0.0;
-    for (int i = 1; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
         double sum_val_j = 0;
         for (int j = 1; j < 7; j++)
         {
             sum_val_j +=
-                static_cast<double>(j) * _hij[i][j] * rho_bar_minus1_j[j - 1];
+                static_cast<double>(j) * _hij[i][j] * _series_factorRho[j - 1];
         }
-        dmu1_factor_dbar_rho += TbarVal * sum_val_j;
-        TbarVal *= barT_fac;
+        dmu1_factor_dbar_rho += _series_factorT[i] * sum_val_j;
     }
 
     const double mu0 = 100. * std::sqrt(barT) / computeBarMu0Factor(barT);
 
-    const double mu1_factor = computeBarMu1Factor(barT, bar_rho);
+    const double mu1_factor = computeBarMu1Factor();
     return mu0 * std::exp(bar_rho * mu1_factor) *
            (mu1_factor + bar_rho * dmu1_factor_dbar_rho);
 }

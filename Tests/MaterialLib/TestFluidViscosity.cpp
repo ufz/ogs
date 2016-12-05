@@ -164,11 +164,10 @@ TEST(Material, checkWaterViscosityIAPWS)
 
         // Test dmu/drho
         vars[static_cast<unsigned>(PropertyVariableType::T)] = T[i];
-        vars[static_cast<unsigned>(PropertyVariableType::rho)] = rho[i] + 1.e-2;
+        vars[static_cast<unsigned>(PropertyVariableType::rho)] =
+            rho[i] + purterbation;
         mu1 = mu_w->getValue(vars);
 
-        std::cout << "rho " << mu1 * 1.e+6 << "  " << mu * 1.e+6 << " "
-                  << (mu1 - mu) / 1.e-2 << " " << dmu_drho << std::endl;
-        // ASSERT_NEAR((mu1 - mu) / purterbation, dmu_drho, 1.e-9);
+        ASSERT_NEAR((mu1 - mu) / purterbation, dmu_drho, 1.e-7);
     }
 }
