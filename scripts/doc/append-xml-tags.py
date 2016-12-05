@@ -8,7 +8,7 @@
 
 # prevent broken pipe error
 from signal import signal, SIGPIPE, SIG_DFL
-signal(SIGPIPE,SIG_DFL)
+signal(SIGPIPE, SIG_DFL)
 
 import os
 import sys
@@ -16,7 +16,7 @@ import xml.etree.cElementTree as ET
 import json
 from print23 import print_
 
-github_src_url  = "https://github.com/ufz/ogs/tree/master"
+github_src_url = "https://github.com/ufz/ogs/tree/master"
 github_data_url = "https://github.com/ufz/ogs-data/tree/master"
 
 if len(sys.argv) != 4:
@@ -24,14 +24,14 @@ if len(sys.argv) != 4:
     print_("{0} EXT DATADIR DOCAUXDIR".format(sys.argv[0]))
     sys.exit(1)
 
-ext       = sys.argv[1]
-datadir   = sys.argv[2]
+ext = sys.argv[1]
+datadir = sys.argv[2]
 docauxdir = sys.argv[3]
 
 extension = '.' + ext
-datadir   = os.path.abspath(datadir)
+datadir = os.path.abspath(datadir)
 docauxdir = os.path.abspath(docauxdir)
-docdir    = os.path.join(docauxdir, "dox", "ProjectFile")
+docdir = os.path.join(docauxdir, "dox", "ProjectFile")
 
 # used to expand documentation entry points to full xml tag paths
 # that are used in the prj file.
@@ -67,7 +67,7 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
 
 # traverse dox file hierarchy
 for (dirpath, _, filenames) in os.walk(docdir):
-    reldirpath = dirpath[len(docdir)+1:]
+    reldirpath = dirpath[len(docdir) + 1:]
     istag = True
 
     for f in filenames:
@@ -98,35 +98,44 @@ for (dirpath, _, filenames) in os.walk(docdir):
                 fh.write("\n\n# Additional info\n")
                 if tagpath in dict_tag_info:
                     for info in dict_tag_info[tagpath]:
-                        path = info[1]; line = info[2]
+                        path = info[1]
+                        line = info[2]
                         fh.write(("\n## From {0} line {1}\n\n")
-                                .format(path, line))
+                                 .format(path, line))
 
                         method = info[6]
                         if method.endswith("Optional"):
                             fh.write("- This is an optional parameter.\n")
                         elif method.endswith("List"):
-                            fh.write("- This parameter can be given arbitrarily many times.\n")
-                        elif method: # method not empty
+                            fh.write(
+                                "- This parameter can be given arbitrarily many times.\n"
+                            )
+                        elif method:  # method not empty
                             fh.write("- This is a required parameter.\n")
 
                         datatype = info[5]
-                        if datatype: fh.write("- Data type: <tt>{0}</tt>\n".format(datatype))
+                        if datatype:
+                            fh.write("- Data type: <tt>{0}</tt>\n".format(
+                                datatype))
 
-                        fh.write("- Expanded tag path: {0}\n".format(tagpath_expanded))
+                        fh.write("- Expanded tag path: {0}\n".format(
+                            tagpath_expanded))
 
-                        fh.write("- Go to source code: [&rarr; ufz/ogs/master]({2}/{0}#L{1})\n"
-                                .format(path, line, github_src_url))
+                        fh.write(
+                            "- Go to source code: [&rarr; ufz/ogs/master]({2}/{0}#L{1})\n"
+                            .format(path, line, github_src_url))
                 else:
                     fh.write("\nNo additional info.\n")
 
             if tagpath_expanded:
                 fh.write("\n\n# Used in the following test data files\n\n")
                 try:
-                    datafiles = tested_tags_attrs["tags" if istag else "attributes"][tagpath]
+                    datafiles = tested_tags_attrs["tags" if istag else
+                                                  "attributes"][tagpath]
 
                     for df in sorted(datafiles):
-                        pagename = "ogs_ctest_prj__" + df.replace("/", "__").replace(".", "__")
+                        pagename = "ogs_ctest_prj__" + df.replace(
+                            "/", "__").replace(".", "__")
                         fh.write(("- \\[[&rarr; ogs-data/master]({1}/{0}) | " \
                                 + "\\ref {2} \"&rarr; doc\"\\]&emsp;{0}\n") \
                                 .format(df, github_data_url, pagename))
