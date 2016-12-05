@@ -1,1 +1,2 @@
-Type of density model
+Type of density model. It can be Constant, LiquidDensity, TemperatureDependent,
+or IdealGasLaw.
