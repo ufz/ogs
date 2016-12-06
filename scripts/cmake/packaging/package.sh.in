@@ -1,4 +1,4 @@
 #!/bin/sh
-cmake --build . --config Release -- -j $(nproc)
+cmake --build . --config Release -- -j ${NUM_PROCESSORS}
 cmake -DPRE_INSTALL_RUN=ON .
 cmake --build . --target package --config Release
