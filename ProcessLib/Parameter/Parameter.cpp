@@ -59,7 +59,7 @@ std::unique_ptr<ParameterBase> createParameter(
     }
     else if (type == "MeshNode")
     {
-        INFO("MeshElementParameter: %s", name.c_str());
+        INFO("MeshNodeParameter: %s", name.c_str());
         auto param = createMeshNodeParameter(name, config, *meshes.front());
         return param;
     }
