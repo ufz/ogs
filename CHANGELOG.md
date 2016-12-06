@@ -8,16 +8,39 @@
  - Piece wise linear Monotonic curve and a generic cuver parser. #1529
  - Classes for capillary modesl. #1517, #1578
  - Liquid process. #1468
+ - new CMake option OGS_FATAL_ABORT for debugging. #1432
+ - Fracture constitutive models. #1434
+ - support searching boundary nodes in MeshLib::NodeSearch. #1459
+ - support specifying the shape function order in process variables. #1503
+ - support scaling, GMRES, and Pardiso in Eigen linear solvers. #1509 #1510
+ - added the command line option --unbuffered-std-out to deactivate buffer for standard output. #1514
+ - changed the default OGS_LOG_LEVEL to debug in release builds. #1522
 
 ### Utilities
+New utilities:
+ - createQuadraticMesh  #1500
+ - convertToLinearMesh #1554
+
+New features:
+ - extend NodeReordering to correct ordering of nonlinear nodes #1519
+
+
 ### Infrastructure:
 
 - ctest now works on Windows too by removing time-wrappers. #1480
 - Moved to public Jenkins instance at jenkins.opengeosys.org. #1505
 - Doxygen warnings parser in Jenkins will mark a build as unstable
   if there are Doxygen warnings, #1585
+- Benchmarking on Jenkins now saves the standard output into a file for each test. #1528
 
 ### Fixes:
+- Fix LocalToGlobalIndexMap with mutliple variables and with multiple componets. #1433 #1440
+- Fix PropertyVector<T*> for multi-component case. #1441 
+- Fix checking IDs of nonlinear nodes. #1495
+- Fix incorrect use of getNumberOfBaseNodes(). #1515
+- Fix computing sparsity pattern for mixed shape function order cases. #1548
+- Fix that iterations and residuals were not printed when Eigen linear solver fails. #1499
+
 
 # 6.0.7
 
