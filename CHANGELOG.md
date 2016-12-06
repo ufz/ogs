@@ -6,7 +6,7 @@
  - HT process implementation. #1534
  - Classes for relative permeability models. #1531 
  - Piece wise linear Monotonic curve and a generic cuver parser. #1529
- - Classes for capillary modesl. #1517 
+ - Classes for capillary modesl. #1517, #1578
  - Liquid process. #1468
 
 ### Utilities
