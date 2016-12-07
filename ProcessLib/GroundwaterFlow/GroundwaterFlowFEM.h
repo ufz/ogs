@@ -80,7 +80,7 @@ public:
     void assemble(double const t, std::vector<double> const& local_x,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& local_K_data,
-                  std::vector<double>& /*local_b_data*/) override
+                  std::vector<double>& local_b_data) override
     {
         auto const local_matrix_size = local_x.size();
         // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -90,8 +90,12 @@ public:
         auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
             local_K_data, local_matrix_size, local_matrix_size);
 
+        auto local_b = MathLib::createZeroedMatrix<NodalMatrixType>(
+            local_b_data, local_matrix_size, local_matrix_size);
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
+
 
         SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -102,9 +106,12 @@ public:
             auto const& sm = _shape_matrices[ip];
             auto const& wp = _integration_method.getWeightedPoint(ip);
             auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
+            auto const q = _process_data.source_term(t, pos)[0];
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
                                  sm.integralMeasure * wp.getWeight();
+            local_b.noalias() += sm.N * q * sm.detJ * sm.integralMeasure *
+                                   wp.getWeight();
         }
     }
 
