@@ -1,28 +1,40 @@
 ## Release notes
-# 6.0.8 (in preparation)
+# 6.0.8
+
+The highlight of the release is the implementation of the Lower-Interface
+Elements for both the small deformation process (M) and hydro-mechanics process
+(HM) allowing fractures to be incorporated in the solution domain.
+For the liquid flow and two-phase flow processes several material models for the
+fluids pressure, density, permeability, and viscosity were added.
 
 ### Features:
 
- - First version of monolitic hydro-thermal process implementation with
-   Boussinesq approximation using constant viscosity. #1534
- - Classes for relative permeability models. #1531
- - Piece wise linear Monotonic curve and a generic cuver parser. #1529
- - Classes for capillary models. #1517, #1578
- - Liquid process. #1468
- - new CMake option OGS_FATAL_ABORT for debugging. #1432
+ - Implementation of hydro-mechanics (HM) with LIE. #1537-#1541
+ - Implementation of small deformation (M) with LIE. #1452
  - Fracture constitutive models. #1434
- - support searching boundary nodes in MeshLib::NodeSearch. #1459
- - support specifying the shape function order in process variables. #1503
- - support scaling, GMRES, and Pardiso in Eigen linear solvers. #1509 #1510
- - added the command line option --unbuffered-std-out to deactivate buffer for standard output. #1514
- - changed the default OGS_LOG_LEVEL to debug in release builds. #1522
+ - Hydro-Mechanics process. #1508
+ - First version of monolithic hydro-thermal process implementation with
+   Boussinesq approximation using constant viscosity. #1534
  - Two phase flow process with pp model implementation. #1530
  - Richards flow process implementation. #1473
+ - Liquid process. #1468
+ - Classes for relative permeability models. #1531
+ - Classes for capillary models. #1517, #1578
+ - Ehlers single-surface yield function constitutive relation model. #1556 
+ - Support scaling, GMRES, and Pardiso in Eigen linear solvers. #1509 #1510
+ - Piecewise linear Monotonic curve and a generic curve parser. #1529
+ - Support searching boundary nodes in MeshLib::NodeSearch. #1459
+ - Support specifying the shape function order in process variables. #1503
+ - Command line option --unbuffered-std-out to deactivate buffer for standard output. #1514
+ - CMake option OGS_FATAL_ABORT for debugging. #1432
+ - Set the default OGS_LOG_LEVEL to debug in release builds. #1522
+ - Add integration order in input files. #1464
 
 ### Utilities
 New utilities:
- - createQuadraticMesh  #1500
+ - createQuadraticMesh #1500
  - convertToLinearMesh #1554
+ - postLIE #1555
 
 New features:
  - extend NodeReordering to correct ordering of nonlinear nodes #1519
@@ -30,19 +42,22 @@ New features:
 
 ### Infrastructure:
 
-- ctest now works on Windows too by removing time-wrappers. #1480
-- Moved to public Jenkins instance at jenkins.opengeosys.org. #1505
-- Doxygen warnings parser in Jenkins will mark a build as unstable
-  if there are Doxygen warnings, #1585
-- Benchmarking on Jenkins now saves the standard output into a file for each test. #1528
+ - Ctest now works on Windows too by removing time-wrappers. #1480
+ - Moved to public Jenkins instance at jenkins.opengeosys.org. #1505
+ - Doxygen warnings parser in Jenkins will mark a build as unstable
+   if there are Doxygen warnings. #1585
+ - Benchmarking on Jenkins now saves the standard output into a file for each
+   test. #1528
 
 ### Fixes:
-- Fix LocalToGlobalIndexMap with mutliple variables and with multiple componets. #1433 #1440
-- Fix PropertyVector<T*> for multi-component case. #1441 
-- Fix checking IDs of nonlinear nodes. #1495
-- Fix incorrect use of getNumberOfBaseNodes(). #1515
-- Fix computing sparsity pattern for mixed shape function order cases. #1548
-- Fix that iterations and residuals were not printed when Eigen linear solver fails. #1499
+ - Fix LocalToGlobalIndexMap with mutliple variables and with multiple componets. #1433 #1440
+ - Fix PropertyVector<T*> for multi-component case. #1441 
+ - Fix checking IDs of nonlinear nodes. #1495
+ - Fix incorrect use of getNumberOfBaseNodes(). #1515
+ - Fix computing sparsity pattern for mixed shape function order cases. #1548
+ - Fix that iterations and residuals were not printed when Eigen linear solver fails. #1499
+ - Fix all of the Doxygen warnings in the code. #1569 #1573
+ - Fix all of the input file/keyword documentation and its generation.
 
 
 # 6.0.7
