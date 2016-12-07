@@ -3,10 +3,11 @@
 
 ### Features:
 
- - HT process implementation. #1534
- - Classes for relative permeability models. #1531 
+ - First version of monolitic hydro-thermal process implementation with
+   Boussinesq approximation using constant viscosity. #1534
+ - Classes for relative permeability models. #1531
  - Piece wise linear Monotonic curve and a generic cuver parser. #1529
- - Classes for capillary modesl. #1517, #1578
+ - Classes for capillary models. #1517, #1578
  - Liquid process. #1468
  - new CMake option OGS_FATAL_ABORT for debugging. #1432
  - Fracture constitutive models. #1434
