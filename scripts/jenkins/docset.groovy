@@ -8,7 +8,7 @@ stage('Docset') {
 
     cd docs
     tar --exclude='.DS_Store' -cvzf ogs6.tgz ogs6.docset
-    """.stripIndend())
+    """.stripIndent())
     archiveArtifacts 'build/docs/ogs6.tgz, build/docs/ogs6.xml'
 
     post.cleanup()
