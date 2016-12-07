@@ -15,6 +15,8 @@
  - support scaling, GMRES, and Pardiso in Eigen linear solvers. #1509 #1510
  - added the command line option --unbuffered-std-out to deactivate buffer for standard output. #1514
  - changed the default OGS_LOG_LEVEL to debug in release builds. #1522
+ - Two phase flow process with pp model implementation. #1530
+ - Richards flow process implementation. #1473
 
 ### Utilities
 New utilities:
