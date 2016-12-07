@@ -57,7 +57,15 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
          hydraulic_conductivity.name.c_str());
 
-    GroundwaterFlowProcessData process_data{hydraulic_conductivity};
+    // Source term parameter.
+    auto& source_term = findParameter<double>(
+        config,
+        //! \ogs_file_param_special{prj__processes__process__GROUNDWATER_FLOW__source_term}
+        "source_term",
+        parameters, 1);
+
+    GroundwaterFlowProcessData process_data{hydraulic_conductivity,
+                                            source_term};
 
     SecondaryVariableCollection secondary_variables;
 
