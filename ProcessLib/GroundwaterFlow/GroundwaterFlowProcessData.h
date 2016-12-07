@@ -27,13 +27,15 @@ namespace GroundwaterFlow
 
 struct GroundwaterFlowProcessData
 {
-    GroundwaterFlowProcessData(
-        Parameter<double> const& hydraulic_conductivity_)
-        : hydraulic_conductivity(hydraulic_conductivity_)
+    GroundwaterFlowProcessData(Parameter<double> const& hydraulic_conductivity_,
+                               Parameter<double> const& source_term_)
+        : hydraulic_conductivity(hydraulic_conductivity_),
+          source_term(source_term_)
     {}
 
     GroundwaterFlowProcessData(GroundwaterFlowProcessData&& other)
-        : hydraulic_conductivity(other.hydraulic_conductivity)
+        : hydraulic_conductivity(other.hydraulic_conductivity),
+          source_term(other.source_term)
     {}
 
     //! Copies are forbidden.
@@ -46,6 +48,7 @@ struct GroundwaterFlowProcessData
     void operator=(GroundwaterFlowProcessData&&) = delete;
 
     Parameter<double> const& hydraulic_conductivity;
+    Parameter<double> const& source_term;
 };
 
 } // namespace GroundwaterFlow
