@@ -133,6 +133,8 @@ TEST(Material, checkWaterViscosityIAPWS)
         "<viscosity>"
         "  <type>WaterViscosityIAPWS</type>"
         "</viscosity>";
+
+    // Test data provided on http://www.iapws.org/relguide/visc.pdf
     const auto mu_w = createTestViscosityModel(xml_w);
     const double T[] = {298.15, 298.15, 373.15,  433.15,  433.15, 873.15,
                         873.15, 873.15, 1173.15, 1173.15, 1173.15};
@@ -142,7 +144,7 @@ TEST(Material, checkWaterViscosityIAPWS)
         889.735100, 1437.649467, 307.883622, 14.538324, 217.685358, 32.619287,
         35.802262,  77.430195,   44.217245,  47.640433, 64.154608};
 
-    const double purterbation = 1.e-9;
+    const double perturbation = 1.e-9;
     ArrayType vars;
     for (int i = 0; i < 11; i++)
     {
@@ -158,16 +160,16 @@ TEST(Material, checkWaterViscosityIAPWS)
 
         // Test dmu/dT
         vars[static_cast<unsigned>(PropertyVariableType::T)] =
-            T[i] + purterbation;
+            T[i] + perturbation;
         double mu1 = mu_w->getValue(vars);
-        ASSERT_NEAR((mu1 - mu) / purterbation, dmu_dT, 1.e-9);
+        ASSERT_NEAR((mu1 - mu) / perturbation, dmu_dT, 1.e-7);
 
         // Test dmu/drho
         vars[static_cast<unsigned>(PropertyVariableType::T)] = T[i];
         vars[static_cast<unsigned>(PropertyVariableType::rho)] =
-            rho[i] + purterbation;
+            rho[i] + perturbation;
         mu1 = mu_w->getValue(vars);
 
-        ASSERT_NEAR((mu1 - mu) / purterbation, dmu_drho, 1.e-7);
+        ASSERT_NEAR((mu1 - mu) / perturbation, dmu_drho, 1.e-7);
     }
 }
