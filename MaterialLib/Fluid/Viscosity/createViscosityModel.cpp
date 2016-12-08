@@ -138,7 +138,7 @@ std::unique_ptr<FluidProperty> createViscosityModel(
     }
     else if (type == "WaterViscosityIAPWS")
     {
-        //! \ogs_file_param{material__fluid__viscosity__WaterViscosityIAPWS}
+        //! \ogs_file_param{material__fluid__viscosity__type}
         config.checkConfigParameter("type", "WaterViscosityIAPWS");
         return std::unique_ptr<FluidProperty>(new WaterViscosityIAPWS());
     }
