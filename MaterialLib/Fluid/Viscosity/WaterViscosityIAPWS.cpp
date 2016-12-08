@@ -18,6 +18,16 @@ namespace MaterialLib
 {
 namespace Fluid
 {
+const double WaterViscosityIAPWS::_hi[4] = {1.67752, 2.20462, 0.6366564,
+                                            -0.241605};
+const double WaterViscosityIAPWS::_hij[6][7] = {
+    {0.520094, 0.222531, -0.281378, 0.161913, -0.0325372, 0, 0},
+    {0.0850895, 0.999115, -0.906851, 0.257399, 0, 0, 0},
+    {-1.08374, 1.88797, -0.772479, 0, 0, 0, 0},
+    {-0.289555, 1.26613, -0.489837, 0, 0.0698452, 0, -0.00435673},
+    {0, 0, -0.25704, 0, 0, 0.00872102, 0},
+    {0, 0.120573, 0, 0, 0, 0, -0.000593264}};
+
 double WaterViscosityIAPWS::getValue(const ArrayType& var_vals) const
 {
     const double bar_T =

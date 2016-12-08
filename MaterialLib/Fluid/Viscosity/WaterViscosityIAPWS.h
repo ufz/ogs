@@ -45,17 +45,7 @@ namespace Fluid
 class WaterViscosityIAPWS final : public FluidProperty
 {
 public:
-    WaterViscosityIAPWS()
-    : _hi{1.67752, 2.20462, 0.6366564, -0.241605},
-      _hij{
-        {0.520094, 0.222531, -0.281378, 0.161913, -0.0325372, 0, 0},
-        {0.0850895, 0.999115, -0.906851, 0.257399, 0, 0, 0},
-        {-1.08374, 1.88797, -0.772479, 0, 0, 0, 0},
-        {-0.289555, 1.26613, -0.489837, 0, 0.0698452, 0, -0.00435673},
-        {0, 0, -0.25704, 0, 0, 0.00872102, 0},
-        {0, 0.120573, 0, 0, 0, 0, -0.000593264}}
-    {
-    }
+    WaterViscosityIAPWS() = default;
 
     /// Get model name.
     std::string getName() const override
@@ -92,8 +82,8 @@ private:
     const double _ref_rho = 322.0;  ///< reference density in `kg/m^3`
     const double _ref_mu = 1.0e-6;  ///< reference viscosity in Pa.s
 
-    const double _hi[4];
-    const double _hij[6][7];
+    static const double _hi[4];
+    static const double _hij[6][7];
 
     double computeBarMu0Factor(const double barT) const;
     double computeBarMu1Factor() const;
