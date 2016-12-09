@@ -9,6 +9,7 @@
 
 #include "NodeSearch.h"
 
+#include <memory>
 #include <set>
 
 #include <logog/include/logog.hpp>

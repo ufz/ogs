@@ -14,6 +14,8 @@
 
 #include "Mesh.h"
 
+#include <memory>
+
 #include "BaseLib/RunTime.h"
 
 #include "Elements/Element.h"
