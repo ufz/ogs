@@ -16,8 +16,8 @@ node('docker') {
     image.pull()
     image.inside(defaultDockerArgs) {
         stage('Configure') { configure.linux 'build', "${defaultCMakeOptions}" }
-        stage('Build') { build.linux this, 'build' }
-        stage('Test') { build.linux this, 'build', 'tests ctest-large' }
+        stage('Build') { build.linux 'build' }
+        stage('Test') { build.linux 'build', 'tests ctest-large' }
     }
 
     stage('Post') {

@@ -17,11 +17,11 @@ image.inside(defaultDockerArgs) {
     }
 
     stage('CLI (Linux-Docker)') {
-        build.linux this, 'build'
+        build.linux 'build'
     }
 
     stage('Test (Linux-Docker)') {
-        build.linux this, 'build', 'tests ctest'
+        build.linux 'build', 'tests ctest'
     }
 
     stage('Data Explorer (Linux-Docker)') {
@@ -29,7 +29,7 @@ image.inside(defaultDockerArgs) {
             '-DOGS_BUILD_CLI=OFF -DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON ' +
             '-DOGS_BUILD_TESTS=OFF -DOGS_BUILD_METIS=ON',
             'Unix Makefiles', null, true
-        build.linux this, 'build'
+        build.linux 'build'
     }
 }
 

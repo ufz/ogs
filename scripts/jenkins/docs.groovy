@@ -16,7 +16,7 @@ image.inside() {
     }
 
     stage('Generate (Docs)') {
-        build.linux this, 'build', 'doc'
+        build.linux 'build', 'doc'
     }
 }
 
