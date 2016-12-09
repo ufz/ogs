@@ -16,11 +16,11 @@ stage('Configure (Mac)') {
 }
 
 stage('CLI (Mac)') {
-    build.linux this, 'build', null, 'ninja'
+    build.linux 'build', null, 'ninja'
 }
 
 stage('Test (Mac)') {
-    build.linux this, 'build', 'tests ctest', 'ninja'
+    build.linux 'build', 'tests ctest', 'ninja'
 }
 
 stage('Data Explorer (Mac)') {
@@ -28,7 +28,7 @@ stage('Data Explorer (Mac)') {
         '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF ' +
         '-DOGS_BUILD_METIS=ON',
         'Ninja', '', true
-    build.linux this, 'build', null, 'ninja'
+    build.linux 'build', null, 'ninja'
 }
 
 stage('Archive (Mac)') {

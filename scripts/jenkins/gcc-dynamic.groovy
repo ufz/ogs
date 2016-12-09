@@ -15,11 +15,11 @@ stage('Configure (Linux-Docker-Dynamic)') {
 }
 
 stage('CLI (Linux-Docker-Dynamic)') {
-    build.linuxWithEnv(this, 'envinf1/cli.sh', 'build')
+    build.linuxWithEnv('envinf1/cli.sh', 'build')
 }
 
 stage('Test (Linux-Docker-Dynamic)') {
-    build.linuxWithEnv(this, 'envinf1/cli.sh', 'build', 'tests ctest')
+    build.linuxWithEnv('envinf1/cli.sh', 'build', 'tests ctest')
 }
 
 stage('Post (Linux-Docker-Dynamic)') {
