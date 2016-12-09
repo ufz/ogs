@@ -4,6 +4,8 @@
 #   find_package(Eigen3 3.1.2)
 # to require version 3.1.2 or newer of Eigen3.
 #
+#  EIGEN3_ROOT - Set as a environment variable to hint to eigen install directory
+#
 # Once done this will define
 #
 #  EIGEN3_FOUND - system has eigen lib with correct version
@@ -33,8 +35,15 @@ macro(_eigen3_check_version)
   endif()
 endmacro()
 
+if (DEFINED ENV{EIGEN3_ROOT})
+    set(ADDITIONAL_SEARCH_PATHS "$ENV{EIGEN3_ROOT}/include")
+endif()
+if (DEFINED EIGEN3_ROOT)
+    list(APPEND ADDITIONAL_SEARCH_PATHS "${EIGEN3_ROOT}/include")
+endif()
+
 find_path(EIGEN3_INCLUDE_DIR NAMES signature_of_eigen3_matrix_library
-  PATHS /opt/eigen/*/include
+  PATHS ${ADDITIONAL_SEARCH_PATHS}
   PATH_SUFFIXES eigen3 eigen
 )
 
