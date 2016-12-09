@@ -18,6 +18,8 @@
 #include "IdealGasLaw.h"
 #include "LinearTemperatureDependentDensity.h"
 #include "LiquidDensity.h"
+#include "WaterDensityIAPWSIF97Region1.h"
+
 #include "MaterialLib/Fluid/ConstantFluidProperty.h"
 
 namespace MaterialLib
@@ -96,12 +98,18 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
             //! \ogs_file_param{material__fluid__density__IdealGasLaw__molar_mass}
             new IdealGasLaw(config.getConfigParameter<double>("molar_mass")));
     }
+    else if (type == "WaterDensityIAPWSIF97Region1")
+    {
+        return std::unique_ptr<FluidProperty>(
+            new WaterDensityIAPWSIF97Region1());
+    }
     else
     {
         OGS_FATAL(
             "The density type %s is unavailable.\n"
             "The available types are: \n\tConstant, \n\tLiquidDensity, "
-            "\n\tTemperatureDependent, \n\tIdealGasLaw.\n",
+            "\n\tTemperatureDependent, \n\tIdealGasLaw."
+            "\n\tWaterDensityIAPWSIF97Region1\n",
             type.data());
     }
 }

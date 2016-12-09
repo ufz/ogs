@@ -132,3 +132,31 @@ TEST(Material, checkLiquidDensity)
     ASSERT_NEAR(rho0 / (1. + beta * (T - T0)) / (fac_p * fac_p * K),
                 rho->getdValue(vars, Fluid::PropertyVariableType::p), 1.e-10);
 }
+
+TEST(Material, checkWaterDensityIAPWSIF97Region1)
+{
+    const char xml[] =
+        "<density>"
+        "   <type>WaterDensityIAPWSIF97Region1</type>"
+        "</density>";
+    const auto rho = createTestFluidDensityModel(xml);
+
+    ArrayType vars = {{473.15, 4.e+7}};
+    const double rho_expected = 890.943136237744;
+    ASSERT_NEAR(rho_expected, rho->getValue(vars), 1.e-10);
+
+    const double drho_dT = rho->getdValue(vars, PropertyVariableType::T);
+    const double drho_dp = rho->getdValue(vars, PropertyVariableType::p);
+
+    const double perturbation = 1.e-4;
+
+    // Test the differentiation: with respect to temperature:
+    vars[static_cast<unsigned>(PropertyVariableType::T)] += perturbation;
+    const double rho_T1 = rho->getValue(vars);
+    ASSERT_NEAR((rho_T1 - rho_expected) / perturbation, drho_dT, 1.e-6);
+
+    // Test the differentiation: with respect to pressure:
+    vars[static_cast<unsigned>(PropertyVariableType::p)] += perturbation;
+    const double rho_p1 = rho->getValue(vars);
+    ASSERT_NEAR((rho_p1 - rho_T1) / perturbation, drho_dp, 1.e-6);
+}
