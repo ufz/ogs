@@ -527,6 +527,19 @@ if(NOT OGS_USE_MPI)
         expected_cube_1e3_pcs_0_ts_203_t_5.100000.vtu cube_1e3_pcs_0_ts_203_t_5.100000.vtu sigma_xx sigma_xx
     )
 
+    # Mechanics; Small deformations, Drucker-Prager (SDE-DP)
+    AddTest(
+        NAME Mechanics_PlasticModel_SDE-DP_Ehlers_SpecialCase_DruckerPrager
+        PATH Mechanics/Ehlers
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e0_dp.prj
+        TESTER vtkdiff
+        ABSTOL 5e-15 RELTOL 1e-13
+        DIFF_DATA
+        expected_cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu displacement displacement
+        expected_cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu sigma_xx sigma_xx
+    )
+
     # SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC
     # test results are compared to 3D simulation on a wedge-shaped domain
     AddTest(
