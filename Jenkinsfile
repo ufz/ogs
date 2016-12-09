@@ -12,7 +12,7 @@ builders['gcc'] = {
 }
 
 builders['gcc-dynamic'] = {
-    node('docker') {
+    node('envinf1') {
         dir('ogs') { checkout scm }
         load 'ogs/scripts/jenkins/gcc-dynamic.groovy'
     }
