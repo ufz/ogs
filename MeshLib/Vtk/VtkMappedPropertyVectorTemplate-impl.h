@@ -210,13 +210,6 @@ template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
-template <class Scalar> Scalar VtkMappedPropertyVectorTemplate<Scalar>
-::GetValue(vtkIdType idx)
-{
-    return (*this->_propertyVector)[idx];
-}
-
-//------------------------------------------------------------------------------
 template <class Scalar> Scalar& VtkMappedPropertyVectorTemplate<Scalar>
 ::GetValueReference(vtkIdType idx)
 {
@@ -224,13 +217,6 @@ template <class Scalar> Scalar& VtkMappedPropertyVectorTemplate<Scalar>
     // that no one writes to the returned reference.
     Scalar& value = const_cast<Scalar&>((*this->_propertyVector)[idx]);
     return value;
-}
-
-//------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
-::GetTupleValue(vtkIdType tupleId, Scalar *tuple)
-{
-    *tuple = (*this->_propertyVector)[tupleId];
 }
 
 //------------------------------------------------------------------------------
@@ -394,28 +380,6 @@ template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
-::SetTupleValue(vtkIdType, const Scalar*)
-{
-    vtkErrorMacro("Read only container.")
-}
-
-//------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
-::InsertTupleValue(vtkIdType, const Scalar*)
-{
-    vtkErrorMacro("Read only container.")
-}
-
-//------------------------------------------------------------------------------
-template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
-::InsertNextTupleValue(const Scalar *)
-{
-    vtkErrorMacro("Read only container.")
-    return -1;
-}
-
-//------------------------------------------------------------------------------
-template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetValue(vtkIdType, Scalar)
 {
     vtkErrorMacro("Read only container.")
@@ -471,4 +435,78 @@ template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
     return -1;
 }
 
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+//------------------------------------------------------------------------------
+template <class Scalar>
+Scalar VtkMappedPropertyVectorTemplate<Scalar>::GetValue(vtkIdType idx) const
+{
+    return (*this->_propertyVector)[idx];
+}
+//------------------------------------------------------------------------------
+template <class Scalar>
+void VtkMappedPropertyVectorTemplate<Scalar>::GetTypedTuple(vtkIdType tupleId,
+                                                            Scalar* tuple) const
+{
+    *tuple = (*this->_propertyVector)[tupleId];
+}
+//------------------------------------------------------------------------------
+template <class Scalar>
+void VtkMappedPropertyVectorTemplate<Scalar>::SetTypedTuple(vtkIdType,
+                                                            const Scalar*)
+{
+    vtkErrorMacro("Read only container.");
+}
+//------------------------------------------------------------------------------
+template <class Scalar>
+void VtkMappedPropertyVectorTemplate<Scalar>::InsertTypedTuple(vtkIdType,
+                                                               const Scalar*)
+{
+    vtkErrorMacro("Read only container.");
+}
+//------------------------------------------------------------------------------
+template <class Scalar>
+vtkIdType VtkMappedPropertyVectorTemplate<Scalar>::InsertNextTypedTuple(
+    const Scalar*)
+{
+    vtkErrorMacro("Read only container.");
+    return -1;
+}
+#else
+//------------------------------------------------------------------------------
+template <class Scalar>
+Scalar VtkMappedPropertyVectorTemplate<Scalar>::GetValue(vtkIdType idx)
+{
+    return (*this->_propertyVector)[idx];
+}
+//------------------------------------------------------------------------------
+template <class Scalar>
+void VtkMappedPropertyVectorTemplate<Scalar>::GetTupleValue(vtkIdType tupleId,
+                                                            Scalar* tuple)
+{
+    *tuple = (*this->_propertyVector)[tupleId];
+}
+//------------------------------------------------------------------------------
+template <class Scalar>
+void VtkMappedPropertyVectorTemplate<Scalar>::SetTupleValue(vtkIdType,
+                                                            const Scalar*)
+{
+    vtkErrorMacro("Read only container.");
+}
+//------------------------------------------------------------------------------
+template <class Scalar>
+void VtkMappedPropertyVectorTemplate<Scalar>::InsertTupleValue(vtkIdType,
+                                                               const Scalar*)
+{
+    vtkErrorMacro("Read only container.");
+}
+//------------------------------------------------------------------------------
+template <class Scalar>
+vtkIdType VtkMappedPropertyVectorTemplate<Scalar>::InsertNextTupleValue(
+    const Scalar*)
+{
+    vtkErrorMacro("Read only container.");
+    return -1;
+}
+
+#endif  // vtk version
 } // end namespace MeshLib

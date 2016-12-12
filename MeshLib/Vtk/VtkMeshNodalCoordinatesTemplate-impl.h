@@ -183,26 +183,12 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
         ids->InsertNextId(index++);
 }
 
-template <class Scalar> Scalar VtkMeshNodalCoordinatesTemplate<Scalar>
-::GetValue(vtkIdType idx)
-{
-    return this->GetValueReference(idx);
-}
-
 template <class Scalar> Scalar& VtkMeshNodalCoordinatesTemplate<Scalar>
 ::GetValueReference(vtkIdType idx)
 {
     const vtkIdType tuple = idx / this->NumberOfComponents;
     const vtkIdType comp = idx % this->NumberOfComponents;
     return (*(*this->_nodes)[tuple])[comp];
-}
-
-template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
-::GetTupleValue(vtkIdType tupleId, Scalar *tuple)
-{
-    tuple[0] = (*(*this->_nodes)[tupleId])[0];
-    tuple[1] = (*(*this->_nodes)[tupleId])[1];
-    tuple[2] = (*(*this->_nodes)[tupleId])[2];
 }
 
 template <class Scalar> int VtkMeshNodalCoordinatesTemplate<Scalar>
@@ -367,27 +353,6 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
-::SetTupleValue(vtkIdType, const Scalar*)
-{
-    vtkErrorMacro("Read only container.")
-    return;
-}
-
-template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
-::InsertTupleValue(vtkIdType, const Scalar*)
-{
-    vtkErrorMacro("Read only container.")
-    return;
-}
-
-template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
-::InsertNextTupleValue(const Scalar *)
-{
-    vtkErrorMacro("Read only container.")
-    return -1;
-}
-
-template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::SetValue(vtkIdType, Scalar)
 {
     vtkErrorMacro("Read only container.")
@@ -432,4 +397,85 @@ template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
     return -1;
 }
 
+
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+template <class Scalar> Scalar& VtkMeshNodalCoordinatesTemplate<Scalar>
+::GetValueReference(vtkIdType idx) const
+{
+    const vtkIdType tuple = idx / this->NumberOfComponents;
+    const vtkIdType comp = idx % this->NumberOfComponents;
+    return (*(*this->_nodes)[tuple])[comp];
+}
+
+template <class Scalar> Scalar VtkMeshNodalCoordinatesTemplate<Scalar>
+::GetValue(vtkIdType idx) const
+{
+    return this->GetValueReference(idx);
+}
+
+template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
+::GetTypedTuple(vtkIdType tupleId, Scalar *tuple) const
+{
+    tuple[0] = (*(*this->_nodes)[tupleId])[0];
+    tuple[1] = (*(*this->_nodes)[tupleId])[1];
+    tuple[2] = (*(*this->_nodes)[tupleId])[2];
+}
+
+template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
+::SetTypedTuple(vtkIdType, const Scalar*)
+{
+    vtkErrorMacro("Read only container.");
+    return;
+}
+
+template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
+::InsertTypedTuple(vtkIdType, const Scalar*)
+{
+    vtkErrorMacro("Read only container.");
+    return;
+}
+
+template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
+::InsertNextTypedTuple(const Scalar *)
+{
+    vtkErrorMacro("Read only container.");
+    return -1;
+}
+
+#else
+template <class Scalar> Scalar VtkMeshNodalCoordinatesTemplate<Scalar>
+::GetValue(vtkIdType idx)
+{
+    return this->GetValueReference(idx);
+}
+template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
+::GetTupleValue(vtkIdType tupleId, Scalar *tuple)
+{
+    tuple[0] = (*(*this->_nodes)[tupleId])[0];
+    tuple[1] = (*(*this->_nodes)[tupleId])[1];
+    tuple[2] = (*(*this->_nodes)[tupleId])[2];
+}
+
+template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
+::SetTupleValue(vtkIdType, const Scalar*)
+{
+    vtkErrorMacro("Read only container.");
+    return;
+}
+
+template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
+::InsertTupleValue(vtkIdType, const Scalar*)
+{
+    vtkErrorMacro("Read only container.");
+    return;
+}
+
+template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
+::InsertNextTupleValue(const Scalar *)
+{
+    vtkErrorMacro("Read only container.");
+    return -1;
+}
+
+#endif  // vtk version
 } // end namespace

@@ -17,8 +17,9 @@
 #define VTKMAPPEDELEMENTDATAARRAY_H_
 
 #include <vtkMappedDataArray.h>
-#include <vtkTypeTemplate.h>  // For templated vtkObject API
-#include <vtkObjectFactory.h> // for vtkStandardNewMacro
+#include <vtkObjectFactory.h>  // for vtkStandardNewMacro
+#include <vtkTypeTemplate.h>   // For templated vtkObject API
+#include <vtkVersion.h>
 
 #include "MeshLib/Elements/Element.h"
 
@@ -53,9 +54,7 @@ public:
     void GetTuple(vtkIdType i, double *tuple) override;
     vtkIdType LookupTypedValue(Scalar value) override;
     void LookupTypedValue(Scalar value, vtkIdList *ids) override;
-    Scalar GetValue(vtkIdType idx);
     Scalar& GetValueReference(vtkIdType idx) override;
-    void GetTupleValue(vtkIdType idx, Scalar *t);
 
     // Description:
     // This container is read only -- this method does nothing but print a
@@ -86,12 +85,23 @@ public:
     void RemoveTuple(vtkIdType id) override;
     void RemoveFirstTuple() override;
     void RemoveLastTuple() override;
-    void SetTupleValue(vtkIdType i, const Scalar *t);
-    void InsertTupleValue(vtkIdType i, const Scalar *t);
-    vtkIdType InsertNextTupleValue(const Scalar *t);
     void SetValue(vtkIdType idx, Scalar value) override;
     vtkIdType InsertNextValue(Scalar v) override;
     void InsertValue(vtkIdType idx, Scalar v) override;
+
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+    Scalar GetValue(vtkIdType idx) const override;
+    void GetTypedTuple(vtkIdType idx, Scalar* t) const override;
+    void SetTypedTuple(vtkIdType i, const Scalar* t) override;
+    void InsertTypedTuple(vtkIdType i, const Scalar* t) override;
+    vtkIdType InsertNextTypedTuple(const Scalar* t) override;
+#else
+    Scalar GetValue(vtkIdType idx) override;
+    void GetTupleValue(vtkIdType idx, Scalar* t) override;
+    void SetTupleValue(vtkIdType i, const Scalar* t) override;
+    void InsertTupleValue(vtkIdType i, const Scalar* t) override;
+    vtkIdType InsertNextTupleValue(const Scalar* t) override;
+#endif  // vtk version
 
 protected:
     VtkMappedPropertyVectorTemplate();
