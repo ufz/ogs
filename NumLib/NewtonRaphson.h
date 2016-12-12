@@ -7,17 +7,15 @@
  *
  */
 
-#ifndef MATERIALLIB_SOLIDMODELS_NEWTONRAPHSON_H_
-#define MATERIALLIB_SOLIDMODELS_NEWTONRAPHSON_H_
+#ifndef NUMERICAL_NEWTONRAPHSON_H_
+#define NUMERICAL_NEWTONRAPHSON_H_
 
 #include <boost/optional.hpp>
 #include <logog/include/logog.hpp>
 
 #include <Eigen/Dense>
 
-namespace MaterialLib
-{
-namespace Solids
+namespace NumLib
 {
 /// Newton-Raphson solver for system of equations using an Eigen linear solvers
 /// library.
@@ -92,8 +90,6 @@ private:
     const int _maximum_iterations;
     const double _tolerance_squared;
 };
+}  // namespace NumLib
 
-}  // namespace Solids
-}  // namespace MaterialLib
-
-#endif  // MATERIALLIB_SOLIDMODELS_NEWTONRAPHSON_H_
+#endif  // NumLib_NEWTONRAPHSON_H_

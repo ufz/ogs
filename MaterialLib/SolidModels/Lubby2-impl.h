@@ -10,7 +10,7 @@
 #ifndef MATERIALLIB_SOLIDMODELS_LUBBY2_IMPL_H_
 #define MATERIALLIB_SOLIDMODELS_LUBBY2_IMPL_H_
 
-#include "NewtonRaphson.h"
+#include "NumLib/NewtonRaphson.h"
 
 namespace MaterialLib
 {
@@ -105,12 +105,12 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
         const int maximum_iterations(20);
         const double tolerance(1.e-10);
 
-        auto newton_solver =
-            NewtonRaphson<decltype(linear_solver), LocalJacobianMatrix,
-                          decltype(update_jacobian), LocalResidualVector,
-                          decltype(update_residual), decltype(update_solution)>(
-                linear_solver, update_jacobian, update_residual,
-                update_solution, maximum_iterations, tolerance);
+        auto newton_solver = NumLib::NewtonRaphson<
+            decltype(linear_solver), LocalJacobianMatrix,
+            decltype(update_jacobian), LocalResidualVector,
+            decltype(update_residual), decltype(update_solution)>(
+            linear_solver, update_jacobian, update_residual, update_solution,
+            maximum_iterations, tolerance);
 
         auto const success_iterations = newton_solver.solve(K_loc);
 
