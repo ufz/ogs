@@ -18,8 +18,11 @@
 
 #include <vtkMappedDataArray.h>
 #include <vtkObjectFactory.h>  // for vtkStandardNewMacro
-#include <vtkTypeTemplate.h>   // For templated vtkObject API
 #include <vtkVersion.h>
+
+#if VTK_MAJOR_VERSION < 7 || VTK_MINOR_VERSION < 1
+#include <vtkTypeTemplate.h>   // For templated vtkObject API
+#endif
 
 namespace MeshLib
 {
@@ -28,14 +31,22 @@ namespace MeshLib
 
 namespace MeshLib
 {
-
 template <class Scalar>
-class VtkMeshNodalCoordinatesTemplate:
+class VtkMeshNodalCoordinatesTemplate :
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+    public vtkMappedDataArray<Scalar>
+#else
     public vtkTypeTemplate<VtkMeshNodalCoordinatesTemplate<Scalar>,
-                           vtkMappedDataArray<Scalar> >
+                           vtkMappedDataArray<Scalar>>
+#endif // vtk version
 {
 public:
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+    vtkTemplateTypeMacro(VtkMeshNodalCoordinatesTemplate<Scalar>,
+                         vtkMappedDataArray<Scalar>);
+#else
     vtkMappedDataArrayNewInstanceMacro(VtkMeshNodalCoordinatesTemplate<Scalar>);
+#endif // vtk version
     static VtkMeshNodalCoordinatesTemplate *New();
     virtual void PrintSelf(std::ostream &os, vtkIndent indent) override;
 
