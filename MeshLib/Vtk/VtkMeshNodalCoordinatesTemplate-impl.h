@@ -194,125 +194,125 @@ template <class Scalar> Scalar& VtkMeshNodalCoordinatesTemplate<Scalar>
 template <class Scalar> int VtkMeshNodalCoordinatesTemplate<Scalar>
 ::Allocate(vtkIdType, vtkIdType)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return 0;
 }
 
 template <class Scalar> int VtkMeshNodalCoordinatesTemplate<Scalar>
 ::Resize(vtkIdType)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return 0;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::SetNumberOfTuples(vtkIdType)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::SetTuple(vtkIdType, vtkIdType, vtkAbstractArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::SetTuple(vtkIdType, const float *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::SetTuple(vtkIdType, const double *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertTuple(vtkIdType, vtkIdType, vtkAbstractArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertTuple(vtkIdType, const float *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertTuple(vtkIdType, const double *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertTuples(vtkIdList *, vtkIdList *, vtkAbstractArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertTuples(vtkIdType, vtkIdType, vtkIdType, vtkAbstractArray*)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertNextTuple(vtkIdType, vtkAbstractArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return -1;
 }
 
 template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertNextTuple(const float *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return -1;
 }
 
 template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertNextTuple(const double *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return -1;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertVariantValue(vtkIdType /*idx*/, vtkVariant /*value*/)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::DeepCopy(vtkAbstractArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::DeepCopy(vtkDataArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InterpolateTuple(vtkIdType, vtkIdList *, vtkAbstractArray *, double *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
@@ -320,56 +320,56 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InterpolateTuple(vtkIdType, vtkIdType, vtkAbstractArray*, vtkIdType,
                    vtkAbstractArray*, double)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::SetVariantValue(vtkIdType, vtkVariant)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::RemoveTuple(vtkIdType)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::RemoveFirstTuple()
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::RemoveLastTuple()
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::SetValue(vtkIdType, Scalar)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 
 template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertNextValue(Scalar)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return -1;
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertValue(vtkIdType, Scalar)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return;
 }
 

@@ -223,7 +223,7 @@ template <class Scalar> Scalar& VtkMappedPropertyVectorTemplate<Scalar>
 template <class Scalar> int VtkMappedPropertyVectorTemplate<Scalar>
 ::Allocate(vtkIdType, vtkIdType)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return 0;
 }
 
@@ -231,7 +231,7 @@ template <class Scalar> int VtkMappedPropertyVectorTemplate<Scalar>
 template <class Scalar> int VtkMappedPropertyVectorTemplate<Scalar>
 ::Resize(vtkIdType)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return 0;
 }
 
@@ -239,68 +239,69 @@ template <class Scalar> int VtkMappedPropertyVectorTemplate<Scalar>
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetNumberOfTuples(vtkIdType)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetTuple(vtkIdType, vtkIdType, vtkAbstractArray *)
 {
-    vtkErrorMacro("Read only container.")}
+    vtkErrorMacro("Read only container.");
+}
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetTuple(vtkIdType, const float *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetTuple(vtkIdType, const double *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertTuple(vtkIdType, vtkIdType, vtkAbstractArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertTuple(vtkIdType, const float *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertTuple(vtkIdType, const double *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertTuples(vtkIdList *, vtkIdList *, vtkAbstractArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertTuples(vtkIdType, vtkIdType, vtkIdType, vtkAbstractArray*)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertNextTuple(vtkIdType, vtkAbstractArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return -1;
 }
 
@@ -309,7 +310,7 @@ template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertNextTuple(const float *)
 {
 
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return -1;
 }
 
@@ -317,7 +318,7 @@ template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertNextTuple(const double *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return -1;
 }
 
@@ -325,21 +326,21 @@ template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::DeepCopy(vtkAbstractArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::DeepCopy(vtkDataArray *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InterpolateTuple(vtkIdType, vtkIdList *, vtkAbstractArray *, double *)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
@@ -347,49 +348,49 @@ template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InterpolateTuple(vtkIdType, vtkIdType, vtkAbstractArray*, vtkIdType,
                    vtkAbstractArray*, double)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetVariantValue(vtkIdType, vtkVariant)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::RemoveTuple(vtkIdType)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::RemoveFirstTuple()
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::RemoveLastTuple()
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::SetValue(vtkIdType, Scalar)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertNextValue(Scalar)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
     return -1;
 }
 
@@ -397,14 +398,14 @@ template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertValue(vtkIdType, Scalar)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
 template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 ::InsertVariantValue(vtkIdType /*idx*/, vtkVariant /*value*/)
 {
-    vtkErrorMacro("Read only container.")
+    vtkErrorMacro("Read only container.");
 }
 
 //------------------------------------------------------------------------------
