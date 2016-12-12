@@ -18,20 +18,31 @@
 
 #include <vtkMappedDataArray.h>
 #include <vtkObjectFactory.h>  // for vtkStandardNewMacro
-#include <vtkTypeTemplate.h>   // For templated vtkObject API
 #include <vtkVersion.h>
+
+#if VTK_MAJOR_VERSION < 7 || VTK_MINOR_VERSION < 1
+#include <vtkTypeTemplate.h>   // For templated vtkObject API
+#endif
 
 #include "MeshLib/Elements/Element.h"
 
 namespace MeshLib {
-
 template <class Scalar>
 class VtkMappedPropertyVectorTemplate :
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+    public vtkMappedDataArray<Scalar>
+#else
     public vtkTypeTemplate<VtkMappedPropertyVectorTemplate<Scalar>,
-                           vtkMappedDataArray<Scalar> >
+                           vtkMappedDataArray<Scalar>>
+#endif // vtk version
 {
 public:
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+    vtkTemplateTypeMacro(VtkMappedPropertyVectorTemplate<Scalar>,
+                         vtkMappedDataArray<Scalar>);
+#else
     vtkMappedDataArrayNewInstanceMacro(VtkMappedPropertyVectorTemplate<Scalar>);
+#endif // vtk version
     static VtkMappedPropertyVectorTemplate* New();
     virtual void PrintSelf(std::ostream &os, vtkIndent indent) override;
 
