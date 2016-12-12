@@ -9,9 +9,8 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-#include "MaterialLib/SolidModels/NewtonRaphson.h"
-
-TEST(MaterialLibNewtonRaphson, Sqrt3)
+#include "NumLib/NewtonRaphson.h"
+TEST(NumLibNewtonRaphson, Sqrt3)
 {
     static const int N = 1;  // Problem's size.
 
@@ -40,7 +39,7 @@ TEST(MaterialLibNewtonRaphson, Sqrt3)
     auto const update_solution = [&state](
         LocalResidualVector const& increment) { state += increment[0]; };
 
-    auto const newton_solver = MaterialLib::Solids::NewtonRaphson<
+    auto const newton_solver = NumLib::NewtonRaphson<
         decltype(linear_solver), LocalJacobianMatrix, decltype(update_jacobian),
         LocalResidualVector, decltype(update_residual),
         decltype(update_solution)>(linear_solver, update_jacobian,
