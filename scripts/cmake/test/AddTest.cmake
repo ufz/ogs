@@ -12,6 +12,9 @@
 #   WRAPPER <time|memcheck|callgrind> # optional
 #   WRAPPER_ARGS <arguments> # optional
 #   TESTER <diff|vtkdiff|memcheck> # optional
+#   REQUIREMENTS # optional simple boolean expression which has to be true to
+#                  enable the test, e.g.
+#                  OGS_USE_PETSC AND (OGS_USE_EIGEN OR OGS_USE_LIS)
 # )
 #
 # Conditional arguments:
@@ -33,7 +36,7 @@ function (AddTest)
     # parse arguments
     set(options NONE)
     set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL)
-    set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS)
+    set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS)
     cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 
@@ -53,6 +56,9 @@ function (AddTest)
     if (NOT AddTest_RELTOL)
         set (AddTest_RELTOL 1e-16)
     endif()
+    if (NOT AddTest_REQUIREMENTS)
+        set (AddTest_REQUIREMENTS TRUE)
+    endif()
 
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
         set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE} ${AddTest_EXECUTABLE_ARGS})
@@ -60,6 +66,12 @@ function (AddTest)
 
     # --- Implement wrappers ---
     # check requirements, disable if not met
+    if(${AddTest_REQUIREMENTS})
+        # message(STATUS "Enabling test ${AddTest_NAME}.")
+    else()
+        message(STATUS "Requirement ${AddTest_REQUIREMENTS} not met! Disabling test ${AddTest_NAME}.")
+        return()
+    endif()
     if(AddTest_WRAPPER STREQUAL "time" AND NOT TIME_TOOL_PATH)
         return()
     endif()
