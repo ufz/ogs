@@ -21,7 +21,7 @@ class VtkConsoleOutputWindow : public vtkOutputWindow
 {
 public:
     vtkTypeMacro(VtkConsoleOutputWindow,vtkOutputWindow);
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     static VtkConsoleOutputWindow * New();
     virtual void DisplayText(const char*);

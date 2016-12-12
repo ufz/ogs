@@ -34,7 +34,7 @@ public:
     vtkTypeMacro(VtkAppendArrayFilter, vtkUnstructuredGridAlgorithm);
 
     /// @brief Prints the mesh data to an output stream.
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     /// @brief Sets user properties.
     void SetUserProperty(QString name, QVariant value)
@@ -52,7 +52,7 @@ protected:
     /// @brief The filter logic.
     int RequestData(vtkInformation* request,
                     vtkInformationVector** inputVector,
-                    vtkInformationVector* outputVector);
+                    vtkInformationVector* outputVector) override;
 
 private:
     std::vector<double> _array;

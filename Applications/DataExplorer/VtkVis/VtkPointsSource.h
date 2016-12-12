@@ -38,7 +38,7 @@ public:
     void setPoints(const std::vector<GeoLib::Point*>* points) { _points = points; }
 
     /// Prints its data on a stream.
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     virtual void SetUserProperty(QString name, QVariant value);
 
@@ -49,11 +49,11 @@ protected:
     /// Computes the polygonal data object.
     int RequestData(vtkInformation* request,
                     vtkInformationVector** inputVector,
-                    vtkInformationVector* outputVector);
+                    vtkInformationVector* outputVector) override;
 
     int RequestInformation(vtkInformation* request,
                            vtkInformationVector** inputVector,
-                           vtkInformationVector* outputVector);
+                           vtkInformationVector* outputVector) override;
 
     /// The points to visualize
     const std::vector<GeoLib::Point*>* _points;

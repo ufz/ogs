@@ -37,7 +37,7 @@ public:
     void setSurfaces(const std::vector<GeoLib::Surface*>* surfaces) { _surfaces = surfaces; }
 
     /// Prints its data on a stream.
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     /**
      * \brief Generates random colors for each surface.
@@ -53,11 +53,11 @@ protected:
     /// Computes the polygonal data object.
     int RequestData(vtkInformation* request,
                     vtkInformationVector** inputVector,
-                    vtkInformationVector* outputVector);
+                    vtkInformationVector* outputVector) override;
 
     int RequestInformation(vtkInformation* request,
                            vtkInformationVector** inputVector,
-                           vtkInformationVector* outputVector);
+                           vtkInformationVector* outputVector) override;
 
     /// The surfaces to visualize
     const std::vector<GeoLib::Surface*>* _surfaces;

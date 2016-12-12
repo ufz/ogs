@@ -34,7 +34,7 @@ public:
     vtkTypeMacro(VtkImageDataToLinePolyDataFilter, vtkPolyDataAlgorithm);
 
     /// @brief Prints information about itself.
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     /// @brief Sets the scaling of the length of the lines.
     ogsUserPropertyMacro(LengthScaleFactor,double);
@@ -61,7 +61,7 @@ protected:
 
     /// @brief Converts the image data to lines
     virtual int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
-                            vtkInformationVector* outputVector);
+                            vtkInformationVector* outputVector) override;
 
     /// @brief The spacing of the image
     double ImageSpacing;

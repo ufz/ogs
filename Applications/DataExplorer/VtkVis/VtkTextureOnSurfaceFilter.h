@@ -44,7 +44,7 @@ public:
     vtkTypeMacro(VtkTextureOnSurfaceFilter,vtkPolyDataAlgorithm);
 
     /// Prints the object data to an output stream.
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     /// Sets the raster/image to be used as a texture map
     void SetRaster(vtkImageAlgorithm* img, double x0, double y0, double scalingFactor);
@@ -59,7 +59,7 @@ protected:
     /// been called before this method is executed.
     int RequestData(vtkInformation* request,
                     vtkInformationVector** inputVector,
-                    vtkInformationVector* outputVector);
+                    vtkInformationVector* outputVector) override;
 
 private:
     std::pair<float, float> _origin;

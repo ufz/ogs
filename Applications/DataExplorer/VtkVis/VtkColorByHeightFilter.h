@@ -42,7 +42,7 @@ public:
     vtkTypeMacro(VtkColorByHeightFilter, vtkPolyDataAlgorithm);
 
     /// @brief Prints the mesh data to an output stream.
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     /// @brief Returns the underlying colour look up table object.
     vtkGetObjectMacro(ColorLookupTable,VtkColorLookupTable);
@@ -71,7 +71,7 @@ protected:
     /// @brief The filter logic.
     int RequestData(vtkInformation* request,
                     vtkInformationVector** inputVector,
-                    vtkInformationVector* outputVector);
+                    vtkInformationVector* outputVector) override;
 
     /// @brief Calculates the color lookup table based on set parameters.
     VtkColorLookupTable* BuildColorTable();

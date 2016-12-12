@@ -30,7 +30,7 @@ public:
     vtkTypeMacro(QVtkDataSetMapper, vtkDataSetMapper);
 
     /// @brief Prints information about itself.
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
 public slots:
     /// @brief Sets the scalar visibility on this mapper.
