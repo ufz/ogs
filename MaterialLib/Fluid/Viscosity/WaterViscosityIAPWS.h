@@ -17,8 +17,6 @@
 #ifndef OGS_WATER_VISCOSITY_IAPWS_H
 #define OGS_WATER_VISCOSITY_IAPWS_H
 
-#include <array>
-#include <cmath>
 #include <string>
 
 #include "MaterialLib/Fluid/FluidProperty.h"
@@ -82,19 +80,7 @@ private:
     const double _ref_rho = 322.0;  ///< reference density in `kg/m^3`
     const double _ref_mu = 1.0e-6;  ///< reference viscosity in Pa.s
 
-    static const double _hi[4];
-    static const double _hij[6][7];
-
-    double computeBarMu0Factor(const double barT) const;
-    double computeBarMu1Factor() const;
-
-    double computedBarMu_dbarT(const double barT, double bar_rho) const;
-    double computedBarMu_dbarRho(const double barT, double bar_rho) const;
-
-    void computeSeriesFactorForMu1(const double barT,
-                                   const double bar_rho) const;
-    mutable std::array<double, 6> _series_factorT;
-    mutable std::array<double, 7> _series_factorRho;
+    // Coefficients Hi and Hij are given in two static arrays in the cpp file.
 };
 
 }  // end namespace

@@ -18,15 +18,24 @@ namespace MaterialLib
 {
 namespace Fluid
 {
-const double WaterViscosityIAPWS::_hi[4] = {1.67752, 2.20462, 0.6366564,
-                                            -0.241605};
-const double WaterViscosityIAPWS::_hij[6][7] = {
+static const double Hi[4] = {1.67752, 2.20462, 0.6366564, -0.241605};
+static const double Hij[6][7] = {
     {0.520094, 0.222531, -0.281378, 0.161913, -0.0325372, 0, 0},
     {0.0850895, 0.999115, -0.906851, 0.257399, 0, 0, 0},
     {-1.08374, 1.88797, -0.772479, 0, 0, 0, 0},
     {-0.289555, 1.26613, -0.489837, 0, 0.0698452, 0, -0.00435673},
     {0, 0, -0.25704, 0, 0, 0.00872102, 0},
     {0, 0.120573, 0, 0, 0, 0, -0.000593264}};
+
+static double computeBarMu0Factor(const double barT);
+
+static double series_factorT[6];
+static double series_factorRho[7];
+static void computeSeriesFactorForMu1(const double barT, const double bar_rho);
+static double computeBarMu1Factor();
+
+static double computedBarMu_dbarT(const double barT, double bar_rho);
+static double computedBarMu_dbarRho(const double barT, double bar_rho);
 
 double WaterViscosityIAPWS::getValue(const ArrayType& var_vals) const
 {
@@ -63,36 +72,35 @@ double WaterViscosityIAPWS::getdValue(const ArrayType& var_vals,
     }
 }
 
-double WaterViscosityIAPWS::computeBarMu0Factor(const double barT) const
+double computeBarMu0Factor(const double barT)
 {
     double sum_val = 0.;
     double barT_i = 1.;
     for (int i = 0; i < 4; i++)
     {
-        sum_val += (_hi[i] / barT_i);
+        sum_val += (Hi[i] / barT_i);
         barT_i *= barT;
     }
     return sum_val;
 }
 
-void WaterViscosityIAPWS::computeSeriesFactorForMu1(const double barT,
-                                                    const double bar_rho) const
+void computeSeriesFactorForMu1(const double barT, const double bar_rho)
 {
-    _series_factorT[0] = 1.;
+    series_factorT[0] = 1.;
     const double barT_fac = 1 / barT - 1.0;
     for (int i = 1; i < 6; i++)
     {
-        _series_factorT[i] = _series_factorT[i - 1] * barT_fac;
+        series_factorT[i] = series_factorT[i - 1] * barT_fac;
     }
 
-    _series_factorRho[0] = 1.;
+    series_factorRho[0] = 1.;
     for (int i = 1; i < 7; i++)
     {
-        _series_factorRho[i] = _series_factorRho[i - 1] * (bar_rho - 1.0);
+        series_factorRho[i] = series_factorRho[i - 1] * (bar_rho - 1.0);
     }
 }
 
-double WaterViscosityIAPWS::computeBarMu1Factor() const
+double computeBarMu1Factor()
 {
     double sum_val = 0.;
     for (int i = 0; i < 6; i++)
@@ -100,16 +108,15 @@ double WaterViscosityIAPWS::computeBarMu1Factor() const
         double sum_val_j = 0;
         for (int j = 0; j < 7; j++)
         {
-            sum_val_j += _hij[i][j] * _series_factorRho[j];
+            sum_val_j += Hij[i][j] * series_factorRho[j];
         }
-        sum_val += _series_factorT[i] * sum_val_j;
+        sum_val += series_factorT[i] * sum_val_j;
     }
 
     return sum_val;
 }
 
-double WaterViscosityIAPWS::computedBarMu_dbarT(const double barT,
-                                                double bar_rho) const
+double computedBarMu_dbarT(const double barT, double bar_rho)
 {
     const double mu0_factor = computeBarMu0Factor(barT);
     const double sqrt_barT = std::sqrt(barT);
@@ -118,7 +125,7 @@ double WaterViscosityIAPWS::computedBarMu_dbarT(const double barT,
     double barT_i = barT * barT;
     for (int i = 1; i < 4; i++)
     {
-        dmu0_factor_dbarT -= static_cast<double>(i) * (_hi[i] / barT_i);
+        dmu0_factor_dbarT -= static_cast<double>(i) * (Hi[i] / barT_i);
         barT_i *= barT;
     }
 
@@ -132,9 +139,9 @@ double WaterViscosityIAPWS::computedBarMu_dbarT(const double barT,
         double sum_val_j = 0;
         for (int j = 0; j < 7; j++)
         {
-            sum_val_j += _hij[i][j] * _series_factorRho[j];
+            sum_val_j += Hij[i][j] * series_factorRho[j];
         }
-        dmu1_factor_dbarT -= static_cast<double>(i) * _series_factorT[i - 1] *
+        dmu1_factor_dbarT -= static_cast<double>(i) * series_factorT[i - 1] *
                              sum_val_j / (barT * barT);
     }
 
@@ -146,8 +153,7 @@ double WaterViscosityIAPWS::computedBarMu_dbarT(const double barT,
            dbar_mu1_dbarT * 100. * sqrt_barT / mu0_factor;
 }
 
-double WaterViscosityIAPWS::computedBarMu_dbarRho(const double barT,
-                                                  double bar_rho) const
+double computedBarMu_dbarRho(const double barT, double bar_rho)
 {
     double dmu1_factor_dbar_rho = 0.0;
     for (int i = 0; i < 6; i++)
@@ -156,9 +162,9 @@ double WaterViscosityIAPWS::computedBarMu_dbarRho(const double barT,
         for (int j = 1; j < 7; j++)
         {
             sum_val_j +=
-                static_cast<double>(j) * _hij[i][j] * _series_factorRho[j - 1];
+                static_cast<double>(j) * Hij[i][j] * series_factorRho[j - 1];
         }
-        dmu1_factor_dbar_rho += _series_factorT[i] * sum_val_j;
+        dmu1_factor_dbar_rho += series_factorT[i] * sum_val_j;
     }
 
     const double mu0 = 100. * std::sqrt(barT) / computeBarMu0Factor(barT);
