@@ -32,7 +32,7 @@ class VtkMappedPropertyVectorTemplate :
 public:
     vtkMappedDataArrayNewInstanceMacro(VtkMappedPropertyVectorTemplate<Scalar>);
     static VtkMappedPropertyVectorTemplate* New();
-    virtual void PrintSelf(std::ostream &os, vtkIndent indent);
+    virtual void PrintSelf(std::ostream &os, vtkIndent indent) override;
 
     // Description:
     // Set the raw scalar arrays for the coordinate set.

@@ -37,7 +37,7 @@ public:
     vtkTypeMacro(VtkGeoImageSource, vtkSimpleImageToImageFilter);
 
     /// @brief Prints information about itself.
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     /// @brief Returns the ImageData object.
     vtkImageData* getImageData();
