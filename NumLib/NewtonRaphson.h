@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef NUMERICAL_NEWTONRAPHSON_H_
-#define NUMERICAL_NEWTONRAPHSON_H_
+#ifndef NUMLIB_NEWTONRAPHSON_H_
+#define NUMLIB_NEWTONRAPHSON_H_
 
 #include <boost/optional.hpp>
 #include <logog/include/logog.hpp>
@@ -92,4 +92,4 @@ private:
 };
 }  // namespace NumLib
 
-#endif  // NumLib_NEWTONRAPHSON_H_
+#endif  // NUMLIB_NEWTONRAPHSON_H_
