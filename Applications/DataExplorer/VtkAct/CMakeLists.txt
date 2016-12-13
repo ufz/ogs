@@ -9,6 +9,8 @@ set(HEADERS
 )
 
 include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../../BaseLib
     ${CMAKE_CURRENT_SOURCE_DIR}/../../GeoLib
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/FileIO

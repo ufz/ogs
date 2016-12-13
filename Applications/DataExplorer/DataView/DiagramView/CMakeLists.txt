@@ -24,6 +24,7 @@ include_directories(
     ${SOURCE_DIR_REL}/BaseLib
     ${SOURCE_DIR_REL}/GeoLib
     ${SOURCE_DIR_REL}/MathLib
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${GUI_SOURCE_DIR_REL}/Base
     ${GUI_SOURCE_DIR_REL}/DataView
     ${CMAKE_CURRENT_BINARY_DIR}/../../DataView

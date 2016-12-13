@@ -99,6 +99,8 @@ source_group("UI Files" FILES ${UIS})
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
 include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${SOURCE_DIR_REL}/Applications/FileIO
     ${SOURCE_DIR_REL}/BaseLib
     ${SOURCE_DIR_REL}/GeoLib

@@ -10,7 +10,7 @@ else ()
   add_definitions (-DGTEST_HAS_PTHREAD=0)
 endif ()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_library (GTest src/gtest-all.cc)
 
 set_target_properties(GTest PROPERTIES FOLDER Testing)
