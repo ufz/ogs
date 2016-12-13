@@ -91,6 +91,17 @@ std::string const& tostring(std::string const& value);
 //! returns printf-like formatted string
 std::string format(const char* format_string, ... );
 
+/**
+ * Remove a substring from a string.
+ * \orig_string The string to be subtracted.
+ * \sub_string The substring.
+ * \return The string subtracted the substring,
+ *         or the original string if the substring is empty or the size
+ *         of the substring is large than that of the original one.
+ */
+std::string removeSubstringFromString(const std::string& orig_string,
+                                      const std::string& sub_string);
+
 } // end namespace BaseLib
 
 #ifdef MSVC

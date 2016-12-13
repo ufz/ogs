@@ -168,4 +168,20 @@ void correctScientificNotation(std::string filename, std::size_t precision)
     remove(filename.c_str());
     rename(tmpFilename.c_str(), filename.c_str());
 }
+
+std::string removeSubstringFromString(const std::string& orig_string,
+                                      const std::string& sub_string)
+{
+	if (	(orig_string != sub_string)
+			&&(orig_string.size() > sub_string.size()
+			&&(orig_string.substr(orig_string.size() - sub_string.size())
+				== sub_string)
+		)
+	{
+		return orig_string.substr(0, orig_string.size() - sub_string.size());
+	}
+	else
+		return orig_string; 
+}
+
 #endif
