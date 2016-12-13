@@ -46,33 +46,32 @@ void HTProcess::initializeConcreteProcess(
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity_x", 1,
-        makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
-            &HTLocalAssemblerInterface::getIntPtDarcyVelocityX));
+        makeExtrapolator(getExtrapolator(), _local_assemblers,
+                         &HTLocalAssemblerInterface::getIntPtDarcyVelocityX));
 
     if (mesh.getDimension() > 1)
     {
         _secondary_variables.addSecondaryVariable(
             "darcy_velocity_y", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
-                             &HTLocalAssemblerInterface::
-                                 getIntPtDarcyVelocityY));
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HTLocalAssemblerInterface::getIntPtDarcyVelocityY));
     }
     if (mesh.getDimension() > 2)
     {
         _secondary_variables.addSecondaryVariable(
             "darcy_velocity_z", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
-                             &HTLocalAssemblerInterface::
-                                 getIntPtDarcyVelocityZ));
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HTLocalAssemblerInterface::getIntPtDarcyVelocityZ));
     }
 }
 
 void HTProcess::assembleConcreteProcess(const double t,
-                                                       GlobalVector const& x,
-                                                       GlobalMatrix& M,
-                                                       GlobalMatrix& K,
-                                                       GlobalVector& b)
+                                        GlobalVector const& x,
+                                        GlobalMatrix& M,
+                                        GlobalMatrix& K,
+                                        GlobalVector& b)
 {
     DBUG("Assemble HTProcess.");
 
