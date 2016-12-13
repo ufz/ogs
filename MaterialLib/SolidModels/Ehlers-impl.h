@@ -36,7 +36,7 @@
 #include <boost/math/special_functions/pow.hpp>
 #include <logog/include/logog.hpp>
 #include "MaterialLib/SolidModels/KelvinVector.h"
-#include "NewtonRaphson.h"
+#include "NumLib/NewtonRaphson.h"
 
 namespace MaterialLib
 {
@@ -82,7 +82,7 @@ struct OnePlusGamma_pTheta final
                         double const m_p)
         : value{1 + gamma_p * theta},
           pow_m_p{std::pow(value, m_p)},
-          pow_m_p1{pow_m_p/value}
+          pow_m_p1{pow_m_p / value}
     {
     }
 
@@ -104,16 +104,14 @@ double plasticFlowVolumetricPart(
 }
 
 template <int DisplacementDim>
-typename SolidEhlers<DisplacementDim>::KelvinVector
-plasticFlowDeviatoricPart(
+typename SolidEhlers<DisplacementDim>::KelvinVector plasticFlowDeviatoricPart(
     PhysicalStressWithInvariants<DisplacementDim> const& s,
     OnePlusGamma_pTheta const& one_gt, double const sqrtPhi,
-    typename SolidEhlers<DisplacementDim>::KelvinVector const&
-        dtheta_dsigma,
+    typename SolidEhlers<DisplacementDim>::KelvinVector const& dtheta_dsigma,
     double const gamma_p, double const m_p)
 {
-    return (one_gt.pow_m_p * (s.D +
-            s.J_2 * m_p * gamma_p * dtheta_dsigma / one_gt.value)) /
+    return (one_gt.pow_m_p *
+            (s.D + s.J_2 * m_p * gamma_p * dtheta_dsigma / one_gt.value)) /
            (2 * sqrtPhi);
 }
 template <int DisplacementDim>
@@ -194,8 +192,8 @@ void calculatePlasticResidual(
         s, one_gt, sqrtPhi, dtheta_dsigma, gamma_p, m_p);
     KelvinVector const lambda_flow_D = lambda * flow_D;
 
-    residual.template segment<KelvinVectorSize>(KelvinVectorSize)
-        .noalias() = eps_p_D_dot - lambda_flow_D;
+    residual.template segment<KelvinVectorSize>(KelvinVectorSize).noalias() =
+        eps_p_D_dot - lambda_flow_D;
 
     // plastic volume strain
     {
@@ -494,8 +492,7 @@ void SolidEhlers<DisplacementDim>::MaterialProperties::
 template <int DisplacementDim>
 typename SolidEhlers<DisplacementDim>::KelvinVector predict_sigma(
     double const G, double const K,
-    typename SolidEhlers<DisplacementDim>::KelvinVector const&
-        sigma_prev,
+    typename SolidEhlers<DisplacementDim>::KelvinVector const& sigma_prev,
     typename SolidEhlers<DisplacementDim>::KelvinVector const& eps,
     typename SolidEhlers<DisplacementDim>::KelvinVector const& eps_prev,
     double const eps_V)
@@ -512,8 +509,8 @@ typename SolidEhlers<DisplacementDim>::KelvinVector predict_sigma(
     // dimensioness hydrostatic stress increment
     double const pressure = pressure_prev - K / G * (eps_V - e_prev);
     // dimensionless deviatoric initial stress
-    typename SolidEhlers<DisplacementDim>::KelvinVector const
-        sigma_D_prev = P_dev * sigma_prev / G;
+    typename SolidEhlers<DisplacementDim>::KelvinVector const sigma_D_prev =
+        P_dev * sigma_prev / G;
     // dimensionless deviatoric stress
     typename SolidEhlers<DisplacementDim>::KelvinVector const sigma_D =
         sigma_D_prev + 2 * P_dev * (eps - eps_prev);
@@ -599,9 +596,8 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
 
             auto const update_solution = [&](
                 ResidualVectorType const& increment) {
-                sigma.noalias() +=
-                    increment.template segment<KelvinVectorSize>(
-                        KelvinVectorSize * 0);
+                sigma.noalias() += increment.template segment<KelvinVectorSize>(
+                    KelvinVectorSize * 0);
                 s = PhysicalStressWithInvariants<DisplacementDim>{G * sigma};
                 _state.eps_p_D.noalias() +=
                     increment.template segment<KelvinVectorSize>(
@@ -618,13 +614,12 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
             int const maximum_iterations(100);
             double const tolerance(1e-14);
 
-            auto newton_solver =
-                NewtonRaphson<decltype(linear_solver), JacobianMatrix,
-                              decltype(update_jacobian), ResidualVectorType,
-                              decltype(update_residual),
-                              decltype(update_solution)>(
-                    linear_solver, update_jacobian, update_residual,
-                    update_solution, maximum_iterations, tolerance);
+            auto newton_solver = NumLib::NewtonRaphson<
+                decltype(linear_solver), JacobianMatrix,
+                decltype(update_jacobian), ResidualVectorType,
+                decltype(update_residual), decltype(update_solution)>(
+                linear_solver, update_jacobian, update_residual,
+                update_solution, maximum_iterations, tolerance);
 
             auto const success_iterations = newton_solver.solve(jacobian);
 
