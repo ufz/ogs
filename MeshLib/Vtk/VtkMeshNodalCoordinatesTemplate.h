@@ -20,7 +20,7 @@
 #include <vtkObjectFactory.h>  // for vtkStandardNewMacro
 #include <vtkVersion.h>
 
-#if VTK_MAJOR_VERSION < 7 || VTK_MINOR_VERSION < 1
+#if VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1
 #include <vtkTypeTemplate.h>   // For templated vtkObject API
 #endif
 
@@ -33,7 +33,7 @@ namespace MeshLib
 {
 template <class Scalar>
 class VtkMeshNodalCoordinatesTemplate :
-#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+#if !(VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1)
     public vtkMappedDataArray<Scalar>
 #else
     public vtkTypeTemplate<VtkMeshNodalCoordinatesTemplate<Scalar>,
@@ -41,7 +41,7 @@ class VtkMeshNodalCoordinatesTemplate :
 #endif // vtk version
 {
 public:
-#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+#if !(VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1)
     vtkTemplateTypeMacro(VtkMeshNodalCoordinatesTemplate<Scalar>,
                          vtkMappedDataArray<Scalar>);
 #else
@@ -101,7 +101,7 @@ public:
     vtkIdType InsertNextValue(Scalar v) override;
     void InsertValue(vtkIdType idx, Scalar v) override;
 
-#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+#if !(VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1)
     Scalar& GetValueReference(vtkIdType idx) const;
     Scalar GetValue(vtkIdType idx) const override;
     void GetTypedTuple(vtkIdType idx, Scalar* t) const override;
