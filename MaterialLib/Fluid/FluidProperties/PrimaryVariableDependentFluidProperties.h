@@ -5,13 +5,13 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   TemperaturePressureConcentrationDependentFluidProperties.h
+ * \file   PrimaryVariableDependentFluidProperties.h
  *
  * Created on November 29, 2016, 3:19 PM
  */
 
-#ifndef OGS_TEMPERATURE_PRESSURE_CONCENTRATION_DEPENDENT_FLUID_PROPERTIES_H
-#define OGS_TEMPERATURE_PRESSURE_CONCENTRATION_DEPENDENT_FLUID_PROPERTIES_H
+#ifndef OGS_PRIMARY_VARIABLE_DEPENDENT_FLUIDPROPERTIES_H
+#define OGS_PRIMARY_VARIABLE_DEPENDENT_FLUIDPROPERTIES_H
 
 #include "FluidProperties.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
@@ -24,11 +24,10 @@ class FluidProperty;
 
 ///  A class contains density, viscosity, heat_capacity and thermal_conductivity
 ///  models, which are all functions of temperature, pressure and concentration.
-class TemperaturePressureConcentrationDependentFluidProperties final
-    : public FluidProperties
+class PrimaryVariableDependentFluidProperties final : public FluidProperties
 {
 public:
-    TemperaturePressureConcentrationDependentFluidProperties(
+    PrimaryVariableDependentFluidProperties(
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& density,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& viscosity,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& heat_capacity,
@@ -43,9 +42,10 @@ public:
     /**
      *  Get the value of a Property.
      *  \param property_type   Property type.
-     *  \param variable_values An array of variables. The order of its elements
-     *                         is temperature, pressure, concentration, which is
-     *                         defined in enum class PropertyVariableType.
+     *  \param variable_values An array of the primary variables. The order of
+     *                         its elements is temperature, pressure,
+     *                         concentration, which is defined in enum class
+     *                         PropertyVariableType.
      */
     double getValue(const FluidPropertyType property_type,
                     const ArrayType& variable_values) const override
@@ -57,9 +57,10 @@ public:
     /**
      *  Get the partial differential of a property.
      *  \param property_type   Property type.
-     *  \param variable_values An array of variables. The order of its elements
-     *                         is temperature, pressure, concentration, which is
-     *                         defined in enum class PropertyVariableType.
+     *  \param variable_values An array of the primary variables. The order of
+     *                         its elements is temperature, pressure,
+     *                         concentration, which is defined in enum class
+     *                         PropertyVariableType.
      *  \param variable_type   Variable type
      */
     double getdValue(const FluidPropertyType property_type,
@@ -73,5 +74,4 @@ public:
 
 }  // end namespace
 }  // end namespace
-#endif /* OGS_TEMPERATURE_PRESSURE_CONCENTRATION_DEPENDENT_FLUID_PROPERTIES_H \
-          */
+#endif /* OGS_PRIMARY_VARIABLE_DEPENDENT_FLUIDPROPERTIES_H */

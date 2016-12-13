@@ -53,14 +53,16 @@ public:
                             std::move(thermal_conductivity)}}
     {
     }
+
     virtual ~FluidProperties(){};
 
     /**
      *  Get the value of a Property.
      *  \param property_type   Property type.
-     *  \param variable_values An array of variables. The order of its elements
-     *                         is temperature, pressure, concentration, which is
-     *                         defined in enum class PropertyVariableType.
+     *  \param variable_values An array of the primary variables. The order of
+     *                         its elements is temperature, pressure,
+     *                         concentration, which is defined in enum class
+     *                         PropertyVariableType.
      */
     virtual double getValue(const FluidPropertyType property_type,
                             const ArrayType& variable_values) const = 0;
@@ -68,9 +70,10 @@ public:
     /**
      *  Get the partial differential of a property.
      *  \param property_type   Property type.
-     *  \param variable_values An array of variables. The order of its elements
-     *                         is temperature, pressure, concentration, which is
-     *                         defined in enum class PropertyVariableType.
+     *  \param variable_values An array of the primary variables. The order of
+     *                         its elements is temperature, pressure,
+     *                         concentration, which is defined in enum class
+     *                         PropertyVariableType.
      *  \param variable_type   Variable type
      */
     virtual double getdValue(

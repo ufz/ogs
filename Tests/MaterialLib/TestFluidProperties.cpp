@@ -21,7 +21,7 @@
 #include "MaterialLib/Fluid/Density/createFluidDensityModel.h"
 #include "MaterialLib/Fluid/Viscosity/createViscosityModel.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
-#include "MaterialLib/Fluid/FluidProperties/TemperaturePressureConcentrationDependentFluidProperties.h"
+#include "MaterialLib/Fluid/FluidProperties/PrimaryVariableDependentFluidProperties.h"
 
 using namespace MaterialLib;
 using namespace MaterialLib::Fluid;
@@ -61,7 +61,7 @@ TEST(MaterialFluidModel, checkCompositeDensityViscosityModel)
 
     std::unique_ptr<FluidProperties> fluid_model =
         std::unique_ptr<FluidProperties>(
-            new TemperaturePressureConcentrationDependentFluidProperties(
+            new PrimaryVariableDependentFluidProperties(
                 std::move(rho), std::move(mu), nullptr, nullptr));
 
     ArrayType vars;
