@@ -398,7 +398,7 @@ template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
 }
 
 
-#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+#if !(VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1)
 template <class Scalar> Scalar& VtkMeshNodalCoordinatesTemplate<Scalar>
 ::GetValueReference(vtkIdType idx) const
 {

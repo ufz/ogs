@@ -436,7 +436,7 @@ template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
     return -1;
 }
 
-#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+#if !(VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1)
 //------------------------------------------------------------------------------
 template <class Scalar>
 Scalar VtkMappedPropertyVectorTemplate<Scalar>::GetValue(vtkIdType idx) const
