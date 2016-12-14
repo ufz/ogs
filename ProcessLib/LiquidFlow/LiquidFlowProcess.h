@@ -76,6 +76,15 @@ public:
                                           GlobalVector const& x) override;
 
     bool isLinear() const override { return true; }
+
+    ProcessType getProcessType() const override
+                     {return ProcessLib::ProcessType::LiquidFlowProcess;}
+
+    MaterialLib::Fluid::FluidProperties* getFluidProperties() const
+    {
+        return _material_properties->getFluidProperties();
+    }
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
