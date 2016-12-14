@@ -24,6 +24,10 @@
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
+#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
+
+#include "MaterialLib/Fluid/FluidPropertyHeaders.h"
+#include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
 
 namespace ProcessLib
 {
@@ -39,14 +43,7 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
 
     //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");
-
-    // Get fluid properties
-    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__fluid__density}
-    auto const& rho_conf = fluid_config.getConfigSubtree("density");
-    _liquid_density = MaterialLib::Fluid::createFluidDensityModel(rho_conf);
-    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__fluid__viscosity}
-    auto const& mu_conf = fluid_config.getConfigSubtree("viscosity");
-    _viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
+    _fluid_properties = MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Get porous properties
     std::vector<int> mat_ids;
@@ -98,7 +95,8 @@ double LiquidFlowMaterialProperties::getLiquidDensity(const double p,
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _liquid_density->getValue(vars);
+    return _fluid_properties->getValue(
+        MaterialLib::Fluid::FluidPropertyType::Density, vars);
 }
 
 double LiquidFlowMaterialProperties::getViscosity(const double p,
@@ -107,7 +105,8 @@ double LiquidFlowMaterialProperties::getViscosity(const double p,
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _viscosity->getValue(vars);
+    return _fluid_properties->getValue(
+        MaterialLib::Fluid::FluidPropertyType::Vicosity, vars);
 }
 
 double LiquidFlowMaterialProperties::getMassCoefficient(
@@ -118,9 +117,11 @@ double LiquidFlowMaterialProperties::getMassCoefficient(
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    const double drho_dp = _liquid_density->getdValue(
-        vars, MaterialLib::Fluid::PropertyVariableType::p);
-    const double rho = _liquid_density->getValue(vars);
+    const double drho_dp = _fluid_properties->getdValue(
+        MaterialLib::Fluid::FluidPropertyType::Density, vars,
+        MaterialLib::Fluid::PropertyVariableType::p);
+    const double rho = _fluid_properties->getValue(
+        MaterialLib::Fluid::FluidPropertyType::Density, vars);
     assert(rho > 0.);
 
     const double porosity =

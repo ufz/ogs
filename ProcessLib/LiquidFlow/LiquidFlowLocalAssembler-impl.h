@@ -160,9 +160,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         // Compute viscosity:
         const double mu = _material_properties.getViscosity(p, _temperature);
 
-        LaplacianGravityVelocityCalculator
-                  ::calculateVelocity(_darcy_velocities, local_p_vec, sm, perm,
-                                      ip, mu, rho_g, _gravitational_axis_id);
+        LaplacianGravityVelocityCalculator::calculateVelocity(
+            _darcy_velocities, local_p_vec, sm, perm, ip, mu, rho_g,
+            _gravitational_axis_id);
     }
 }
 

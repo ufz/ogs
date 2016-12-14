@@ -13,9 +13,18 @@
 #pragma once
 
 #include <memory>
+#include <Eigen/Dense>
 
-#include "MaterialLib/Fluid/FluidPropertyHeaders.h"
-#include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
+#include "MaterialLib/Fluid/FluidProperty.h"
+#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
+
+namespace MaterialLib
+{
+namespace Fluid
+{
+class FluidProperties;
+}
+}
 
 namespace MaterialLib
 {
@@ -24,6 +33,11 @@ namespace PorousMedium
 class Porosity;
 class Storage;
 }
+}
+
+namespace BaseLib
+{
+class ConfigTree;
 }
 
 namespace MeshLib
@@ -80,8 +94,7 @@ public:
     double getViscosity(const double p, const double T) const;
 
 private:
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _liquid_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _viscosity;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperties> _fluid_properties;
 
     /// A flag to indicate whether the reference member, _material_ids,
     /// is not assigned.
