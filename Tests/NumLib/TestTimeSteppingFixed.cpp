@@ -18,7 +18,7 @@
 #include "NumLib/TimeStepping/TimeStep.h"
 #include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
 
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 #include "TimeSteppingTestingTools.h"
 
 TEST(NumLib, TimeSteppingFixed)

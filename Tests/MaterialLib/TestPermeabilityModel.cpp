@@ -13,7 +13,7 @@
 
 #include "BaseLib/ConfigTree.h"
 
-#include "TestTools.h"
+#include "Tests/TestTools.h"
 
 #include "MaterialLib/PorousMedium/Permeability/createPermeabilityModel.h"
 

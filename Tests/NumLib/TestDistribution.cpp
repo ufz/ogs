@@ -24,7 +24,7 @@
 #include "NumLib/Function/SpatialFunctionLinear.h"
 #include "NumLib/Distribution/Distribution.h"
 
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 
 class NumLibDistributionQuad : public testing::Test
 {

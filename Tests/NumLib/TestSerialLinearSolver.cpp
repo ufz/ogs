@@ -34,7 +34,7 @@
 #include "NumLib/NumericsConfig.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
 
 TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)

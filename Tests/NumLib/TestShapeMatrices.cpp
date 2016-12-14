@@ -15,7 +15,7 @@
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 
 using namespace NumLib;
 

@@ -17,7 +17,7 @@
 
 #include "BaseLib/ConfigTree.h"
 
-#include "TestTools.h"
+#include "Tests/TestTools.h"
 
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CreateCapillaryPressureModel.h"

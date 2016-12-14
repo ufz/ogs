@@ -17,7 +17,7 @@
 
 #include "NumLib/Fem/ShapeFunction/ShapeQuad4.h"
 
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 
 using namespace NumLib;
 
