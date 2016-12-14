@@ -19,7 +19,7 @@
 #include "NumLib/Function/LinearInterpolationOnSurface.h"
 #include "NumLib/Function/SpatialFunctionLinear.h"
 
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 
 TEST(NumLib, SpatialFunctionLinear)
 {

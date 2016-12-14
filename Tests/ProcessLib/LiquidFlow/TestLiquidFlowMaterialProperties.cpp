@@ -13,7 +13,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-#include "TestTools.h"
+#include "Tests/TestTools.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"

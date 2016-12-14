@@ -9,7 +9,7 @@
 
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "TestTools.h"
+#include "Tests/TestTools.h"
 
 boost::property_tree::ptree
 readXml(const char xml[])

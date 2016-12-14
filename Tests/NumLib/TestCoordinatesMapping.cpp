@@ -24,7 +24,7 @@
 #include "CoordinatesMappingTestData/TestQuad4.h"
 #include "CoordinatesMappingTestData/TestTri3.h"
 
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 
 using namespace NumLib;
 using namespace CoordinatesMappingTestData;

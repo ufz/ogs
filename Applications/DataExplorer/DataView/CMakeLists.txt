@@ -110,6 +110,7 @@ include_directories(
     ${SOURCE_DIR_REL}/GeoLib
     ${SOURCE_DIR_REL}/MeshGeoToolsLib
     ${SOURCE_DIR_REL}/MeshLib
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/DiagramView
     ${CMAKE_CURRENT_SOURCE_DIR}/StratView
     ${GUI_SOURCE_DIR_REL}/Base

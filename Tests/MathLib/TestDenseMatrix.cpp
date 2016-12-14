@@ -9,7 +9,7 @@
 #include "gtest/gtest.h"
 
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 
 using namespace MathLib;
 

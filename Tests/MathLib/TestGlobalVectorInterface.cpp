@@ -14,7 +14,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 
 #include "MathLib/LinAlg/LinAlg.h"
 
