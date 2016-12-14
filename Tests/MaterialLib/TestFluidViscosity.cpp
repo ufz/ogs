@@ -45,8 +45,8 @@ TEST(Material, checkConstantViscosity)
 
     ArrayType dummy;
     ASSERT_EQ(1.e-4, mu->getValue(dummy));
-    ASSERT_EQ(0.0,
-              mu->getdValue(dummy, MaterialLib::Fluid::PropertyVariableType::T));
+    ASSERT_EQ(
+        0.0, mu->getdValue(dummy, MaterialLib::Fluid::PropertyVariableType::T));
 }
 
 TEST(Material, checkTemperatureDependentViscosity)
@@ -64,9 +64,10 @@ TEST(Material, checkTemperatureDependentViscosity)
     vars[0] = 350.0;
     const double mu_expected = 1.e-3 * std::exp(-(vars[0] - 293) / 368);
     ASSERT_NEAR(mu_expected, mu->getValue(vars), 1.e-10);
-    ASSERT_NEAR(-mu_expected,
-                mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::T),
-                1.e-10);
+    ASSERT_NEAR(
+        -mu_expected,
+        mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::T),
+        1.e-10);
 }
 
 TEST(Material, checkLinearPressureDependentViscosity)
@@ -85,9 +86,10 @@ TEST(Material, checkLinearPressureDependentViscosity)
     vars[1] = 2.e+6;
     ASSERT_NEAR(1.e-3 * (1. + 1.e-6 * (vars[1] - 1.e+5)), mu->getValue(vars),
                 1.e-10);
-    ASSERT_NEAR(1.e-9,
-                mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::p),
-                1.e-10);
+    ASSERT_NEAR(
+        1.e-9,
+        mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::p),
+        1.e-10);
 }
 
 TEST(Material, checkVogelViscosity)
@@ -123,4 +125,51 @@ TEST(Material, checkVogelViscosity)
     vars[0] = 172.0;
     ASSERT_NEAR(0.352072e-4, mu_ch4->getValue(vars), 1.e-5);
     ASSERT_NEAR(-2.35664e-6, mu_ch4->getdValue(vars, var_type), 1.e-5);
+}
+
+TEST(Material, checkWaterViscosityIAPWS)
+{
+    const char xml_w[] =
+        "<viscosity>"
+        "  <type>WaterViscosityIAPWS</type>"
+        "</viscosity>";
+
+    // Test data provided on http://www.iapws.org/relguide/visc.pdf
+    const auto mu_w = createTestViscosityModel(xml_w);
+    const double T[] = {298.15, 298.15, 373.15,  433.15,  433.15, 873.15,
+                        873.15, 873.15, 1173.15, 1173.15, 1173.15};
+    const double rho[] = {998, 1200, 1000, 1, 1000, 1, 100, 600, 1, 100, 400};
+
+    const double expected_mumu[] = {
+        889.735100, 1437.649467, 307.883622, 14.538324, 217.685358, 32.619287,
+        35.802262,  77.430195,   44.217245,  47.640433, 64.154608};
+
+    const double perturbation = 1.e-9;
+    ArrayType vars;
+    for (int i = 0; i < 11; i++)
+    {
+        // Test mu
+        vars[static_cast<unsigned>(PropertyVariableType::T)] = T[i];
+        vars[static_cast<unsigned>(PropertyVariableType::rho)] = rho[i];
+        const double mu = mu_w->getValue(vars);
+        ASSERT_NEAR(expected_mumu[i] * 1.e-6, mu, 1.e-9);
+
+        const double dmu_dT = mu_w->getdValue(vars, PropertyVariableType::T);
+        const double dmu_drho =
+            mu_w->getdValue(vars, PropertyVariableType::rho);
+
+        // Test dmu/dT
+        vars[static_cast<unsigned>(PropertyVariableType::T)] =
+            T[i] + perturbation;
+        double mu1 = mu_w->getValue(vars);
+        ASSERT_NEAR((mu1 - mu) / perturbation, dmu_dT, 1.e-7);
+
+        // Test dmu/drho
+        vars[static_cast<unsigned>(PropertyVariableType::T)] = T[i];
+        vars[static_cast<unsigned>(PropertyVariableType::rho)] =
+            rho[i] + perturbation;
+        mu1 = mu_w->getValue(vars);
+
+        ASSERT_NEAR((mu1 - mu) / perturbation, dmu_drho, 1.e-7);
+    }
 }
