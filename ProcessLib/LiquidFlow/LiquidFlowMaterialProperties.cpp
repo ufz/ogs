@@ -33,50 +33,6 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
-LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
-    BaseLib::ConfigTree const& config,
-    bool const has_material_ids,
-    MeshLib::PropertyVector<int> const& material_ids)
-    : _has_material_ids(has_material_ids), _material_ids(material_ids)
-{
-    DBUG("Reading material properties of liquid flow process.");
-
-    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__fluid}
-    auto const& fluid_config = config.getConfigSubtree("fluid");
-    _fluid_properties = MaterialLib::Fluid::createFluidProperties(fluid_config);
-
-    // Get porous properties
-    std::vector<int> mat_ids;
-    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium}
-    auto const& poro_config = config.getConfigSubtree("porous_medium");
-    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium}
-    for (auto const& conf : poro_config.getConfigSubtreeList("porous_medium"))
-    {
-        //! \ogs_file_attr{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__id}
-        auto const id = conf.getConfigAttributeOptional<int>("id");
-        mat_ids.push_back(*id);
-
-        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__permeability}
-        auto const& perm_conf = conf.getConfigSubtree("permeability");
-        _intrinsic_permeability_models.emplace_back(
-            MaterialLib::PorousMedium::createPermeabilityModel(perm_conf));
-
-        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__porosity}
-        auto const& poro_conf = conf.getConfigSubtree("porosity");
-        auto n = MaterialLib::PorousMedium::createPorosityModel(poro_conf);
-        _porosity_models.emplace_back(std::move(n));
-
-        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__storage}
-        auto const& stora_conf = conf.getConfigSubtree("storage");
-        auto beta = MaterialLib::PorousMedium::createStorageModel(stora_conf);
-        _storage_models.emplace_back(std::move(beta));
-    }
-
-    BaseLib::reorderVector(_intrinsic_permeability_models, mat_ids);
-    BaseLib::reorderVector(_porosity_models, mat_ids);
-    BaseLib::reorderVector(_storage_models, mat_ids);
-}
-
 void LiquidFlowMaterialProperties::setMaterialID(const SpatialPosition& pos)
 {
     if (!_has_material_ids)

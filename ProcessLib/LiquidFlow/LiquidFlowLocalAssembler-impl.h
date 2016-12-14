@@ -30,10 +30,10 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     SpatialPosition pos;
     pos.setElementID(_element.getID());
-    _material_properties.setMaterialID(pos);
+    _material_properties->setMaterialID(pos);
 
     const Eigen::MatrixXd& perm =
-        _material_properties.getPermeability(t, pos, _element.getDimension());
+        _material_properties->getPermeability(t, pos, _element.getDimension());
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to perm.rows() == _element->getDimension()
     assert(perm.rows() == GlobalDim || perm.rows() == 1);
@@ -87,16 +87,16 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // Assemble mass matrix, M
         local_M.noalias() +=
-            _material_properties.getMassCoefficient(
+            _material_properties->getMassCoefficient(
                 t, pos, porosity_variable, storage_variable, p, _temperature) *
             sm.N.transpose() * sm.N * integration_factor;
 
         // Compute density:
         const double rho_g =
-            _material_properties.getLiquidDensity(p, _temperature) *
+            _material_properties->getLiquidDensity(p, _temperature) *
             _gravitational_acceleration;
         // Compute viscosity:
-        const double mu = _material_properties.getViscosity(p, _temperature);
+        const double mu = _material_properties->getViscosity(p, _temperature);
 
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
@@ -113,9 +113,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     SpatialPosition pos;
     pos.setElementID(_element.getID());
-    _material_properties.setMaterialID(pos);
+    _material_properties->setMaterialID(pos);
     const Eigen::MatrixXd& perm =
-        _material_properties.getPermeability(t, pos, _element.getDimension());
+        _material_properties->getPermeability(t, pos, _element.getDimension());
 
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to perm.rows() == _element->getDimension()
@@ -155,10 +155,10 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         // TODO : compute _temperature from the heat transport pcs
 
         const double rho_g =
-            _material_properties.getLiquidDensity(p, _temperature) *
+            _material_properties->getLiquidDensity(p, _temperature) *
             _gravitational_acceleration;
         // Compute viscosity:
-        const double mu = _material_properties.getViscosity(p, _temperature);
+        const double mu = _material_properties->getViscosity(p, _temperature);
 
         LaplacianGravityVelocityCalculator::calculateVelocity(
             _darcy_velocities, local_p_vec, sm, perm, ip, mu, rho_g,

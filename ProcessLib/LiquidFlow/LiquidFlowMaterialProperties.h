@@ -18,20 +18,14 @@
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 
+#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
+#include "MaterialLib/PorousMedium/Storage/Storage.h"
+
 namespace MaterialLib
 {
 namespace Fluid
 {
 class FluidProperties;
-}
-}
-
-namespace MaterialLib
-{
-namespace PorousMedium
-{
-class Porosity;
-class Storage;
 }
 }
 
@@ -58,9 +52,23 @@ public:
     typedef MaterialLib::Fluid::FluidProperty::ArrayType ArrayType;
 
     LiquidFlowMaterialProperties(
-        BaseLib::ConfigTree const& config,
+        std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
+        std::vector<Eigen::MatrixXd>&& intrinsic_permeability_models,
+        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
+            porosity_models,
+        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
+            storage_models,
         bool const has_material_ids,
-        MeshLib::PropertyVector<int> const& material_ids);
+        MeshLib::PropertyVector<int> const& material_ids)
+        : _has_material_ids(has_material_ids),
+          _material_ids(material_ids),
+          _fluid_properties(std::move(fluid_properties)),
+          _intrinsic_permeability_models(
+              std::move(intrinsic_permeability_models)),
+          _porosity_models(std::move(porosity_models)),
+          _storage_models(std::move(storage_models))
+    {
+    }
 
     void setMaterialID(const SpatialPosition& pos);
 
@@ -94,8 +102,6 @@ public:
     double getViscosity(const double p, const double T) const;
 
 private:
-    std::unique_ptr<MaterialLib::Fluid::FluidProperties> _fluid_properties;
-
     /// A flag to indicate whether the reference member, _material_ids,
     /// is not assigned.
     const bool _has_material_ids;
@@ -105,10 +111,14 @@ private:
     MeshLib::PropertyVector<int> const& _material_ids;
 
     int _current_material_id = 0;
-    std::vector<Eigen::MatrixXd> _intrinsic_permeability_models;
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
+
+    const std::unique_ptr<MaterialLib::Fluid::FluidProperties>
+        _fluid_properties;
+
+    const std::vector<Eigen::MatrixXd> _intrinsic_permeability_models;
+    const std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         _porosity_models;
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
+    const std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
         _storage_models;
 
     // Note: For the statistical data of porous media, they could be read from

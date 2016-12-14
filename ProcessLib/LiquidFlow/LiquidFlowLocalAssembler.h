@@ -13,6 +13,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -61,13 +62,15 @@ class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
 
 public:
-    LiquidFlowLocalAssembler(MeshLib::Element const& element,
-                             std::size_t const /*local_matrix_size*/,
-                             bool const is_axially_symmetric,
-                             unsigned const integration_order,
-                             int const gravitational_axis_id,
-                             double const gravitational_acceleration,
-                             LiquidFlowMaterialProperties& material_propertries)
+    LiquidFlowLocalAssembler(
+        MeshLib::Element const& element,
+        std::size_t const /*local_matrix_size*/,
+        bool const is_axially_symmetric,
+        unsigned const integration_order,
+        int const gravitational_axis_id,
+        double const gravitational_acceleration,
+        std::unique_ptr<LiquidFlowMaterialProperties> const&
+            material_propertries)
         : _element(element),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
@@ -186,7 +189,7 @@ private:
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
-    LiquidFlowMaterialProperties& _material_properties;
+    const std::unique_ptr<LiquidFlowMaterialProperties>& _material_properties;
     double _temperature;
 };
 

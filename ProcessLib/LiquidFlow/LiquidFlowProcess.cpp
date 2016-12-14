@@ -22,6 +22,8 @@
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 
+#include "CreateLiquidFlowMaterialProperties.h"
+
 namespace ProcessLib
 {
 namespace LiquidFlow
@@ -44,8 +46,8 @@ LiquidFlowProcess::LiquidFlowProcess(
               std::move(secondary_variables), std::move(named_function_caller)),
       _gravitational_axis_id(gravitational_axis_id),
       _gravitational_acceleration(gravitational_acceleration),
-      _material_properties(
-          LiquidFlowMaterialProperties(config, has_material_ids, material_ids))
+      _material_properties(createLiquidFlowMaterialProperties(
+          config, has_material_ids, material_ids))
 {
     DBUG("Create Liquid flow process.");
 }
