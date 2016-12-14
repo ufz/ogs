@@ -11,6 +11,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-15 RELTOL 1e-15
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
@@ -22,6 +23,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}_newton.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-15 RELTOL 1e-15
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_newton_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
@@ -33,6 +35,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-1 RELTOL 1e-1
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure
@@ -46,6 +49,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-13 RELTOL 1e-13
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
@@ -57,6 +61,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-2 RELTOL 1e-2
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure
@@ -71,6 +76,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS square_${mesh_size}.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-13 RELTOL 1e-13
             DIFF_DATA
             square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
@@ -82,6 +88,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-1 RELTOL 1e-1
             DIFF_DATA
             square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure
@@ -95,6 +102,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS square_${mesh_size}.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-12 RELTOL 1e-16
             DIFF_DATA
             square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
@@ -106,6 +114,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-02 RELTOL 1e-02
             DIFF_DATA
             square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure
@@ -120,6 +129,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-15 RELTOL 1e-15
             DIFF_DATA
             line_1_line_${mesh_size}.vtu line_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
@@ -131,6 +141,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}_neumann.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA
             line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
@@ -142,6 +153,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}_robin_right_picard.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 4e-14 RELTOL 2e-14
             DIFF_DATA
             line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_right_picard_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
@@ -153,6 +165,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}_robin_left_picard.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA
             line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_left_picard_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
@@ -164,6 +177,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}_time_dep_dirichlet.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA
             line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_pcs_0_ts_1_t_1.000000.vtu t_1s pressure
@@ -177,6 +191,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS line_${mesh_size}_time_dep_neumann.prj
             TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
             ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA
             line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_pcs_0_ts_1_t_1.000000.vtu t_1s pressure
@@ -192,6 +207,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_top_neumann.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
         cube_1e3_top_neumann.vtu cube_1e3_top_neumann_pcs_0_ts_1_t_1.000000.vtu pressure pressure
@@ -202,6 +218,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_bottom_neumann.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
         cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_pcs_0_ts_1_t_1.000000.vtu pressure pressure
@@ -213,6 +230,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_top_neumann_newton.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
         cube_1e3_top_neumann.vtu cube_1e3_top_neumann_newton_pcs_0_ts_1_t_1.000000.vtu pressure pressure
@@ -223,6 +241,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_bottom_neumann_newton.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
         cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_newton_pcs_0_ts_1_t_1.000000.vtu pressure pressure
@@ -235,6 +254,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_calculatesurfaceflux.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-15
         DIFF_DATA
         cube_1x1x1_hex_1e3_complete_surface.vtu cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_surfaceflux.vtu surfaceflux_left_right_dirichlet_reference surfaceflux
@@ -245,6 +265,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3_neumann_calculatesurfaceflux.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-15
         DIFF_DATA
         cube_1x1x1_hex_1e3_complete_surface.vtu cube_1x1x1_hex_1e3_complete_surface_neumann_surfaceflux.vtu surfaceflux_neumann_reference surfaceflux
@@ -255,6 +276,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_2e3_prism_surfaceflux_left_right.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-15
         DIFF_DATA
         cube_1x1x1_prism_2e3_complete_surface.vtu cube_1x1x1_prism_2e3_complete_surface_left_right_dirichlet_surfaceflux.vtu surfaceflux_left_right_reference surfaceflux_left_right
@@ -266,6 +288,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_2e3_prism_surfaceflux_front_back.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-15
         DIFF_DATA
         cube_1x1x1_prism_2e3_complete_surface.vtu cube_1x1x1_prism_2e3_complete_surface_front_back_dirichlet_surfaceflux.vtu surfaceflux_front_back_reference surfaceflux_front_back
@@ -277,6 +300,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_2e3_prism_surfaceflux_top_bottom.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-15
         DIFF_DATA
         cube_1x1x1_prism_2e3_complete_surface.vtu cube_1x1x1_prism_2e3_complete_surface_top_bottom_dirichlet_surfaceflux.vtu surfaceflux_top_bottom_reference surfaceflux_top_bottom
@@ -288,6 +312,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS wedge_1e3_prism_surfaceflux_diagonal.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-15
         DIFF_DATA
         wedge_1x1x1_1e3_prism_complete_surface.vtu wedge_1x1x1_1e3_prism_complete_surface_surfaceflux.vtu surfaceflux_reference surfaceflux
@@ -300,6 +325,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS tes-1D-zeolite-discharge-small.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-7 RELTOL 5e-9
         DIFF_DATA
         tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_pcs_0_ts_19_t_0.100000.vtu pressure pressure
@@ -315,6 +341,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS tes-1D-zeolite-discharge-large.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-3 RELTOL 1e-4
         DIFF_DATA
         tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1.000000.vtu pressure pressure
@@ -330,6 +357,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS tes-1D-zeolite-discharge-small-newton.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1.5e-3 RELTOL 1.5e-3
         DIFF_DATA
         tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_pcs_0_ts_32_t_0.100000.vtu pressure pressure
@@ -348,6 +376,7 @@ if(NOT OGS_USE_MPI)
          DIFF_DATA
          temperature_analytical.vtu line_60_heat_pcs_0_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature
          temperature_analytical.vtu line_60_heat_pcs_0_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature
+        REQUIREMENTS NOT OGS_USE_MPI
     )
 
     AddTest(
@@ -360,6 +389,7 @@ if(NOT OGS_USE_MPI)
          DIFF_DATA
          temperature_analytical.vtu line_60_heat_pcs_0_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature
          temperature_analytical.vtu line_60_heat_pcs_0_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature
+        REQUIREMENTS NOT OGS_USE_MPI
     )
 
     AddTest(
@@ -371,6 +401,7 @@ if(NOT OGS_USE_MPI)
          ABSTOL 1e-1 RELTOL 1e-1
          DIFF_DATA
          h_us_quad_1000.vtu richards_pcs_0_ts_100_t_100.000000.vtu PRESSURE1 pressure
+        REQUIREMENTS NOT OGS_USE_MPI
     )
      AddTest(
          NAME 2D_TwoPhase_PP_Lia_quad
@@ -383,6 +414,7 @@ if(NOT OGS_USE_MPI)
          Lia_20.vtu twophaseflow_pcs_0_ts_119_t_20.000000.vtu capillary_pressure capillary_pressure
          Lia_20.vtu twophaseflow_pcs_0_ts_119_t_20.000000.vtu gas_pressure gas_pressure
          Lia_20.vtu twophaseflow_pcs_0_ts_119_t_20.000000.vtu saturation saturation
+        REQUIREMENTS NOT OGS_USE_MPI
     )
     AddTest(
          NAME LARGE_2D_TwoPhase_PP_Lia_quad
@@ -395,18 +427,20 @@ if(NOT OGS_USE_MPI)
          Lia_1000.vtu twophaseflow_pcs_0_ts_1180_t_1000.000000.vtu capillary_pressure capillary_pressure
          Lia_1000.vtu twophaseflow_pcs_0_ts_1180_t_1000.000000.vtu gas_pressure gas_pressure
          Lia_1000.vtu twophaseflow_pcs_0_ts_1180_t_1000.000000.vtu saturation saturation
+        REQUIREMENTS NOT OGS_USE_MPI
     )
 
     AddTest(
-         NAME LARGE_2D_ThermalConvection_constviscosity
-         PATH Parabolic/HT/ConstViscosity
-         EXECUTABLE ogs
-         EXECUTABLE_ARGS square_5500x5500.prj
-         WRAPPER time
-         TESTER vtkdiff
-         ABSTOL 1e-10 RELTOL 1e-16
-         DIFF_DATA
-         ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000.000000.vtu temperature T
+        NAME LARGE_2D_ThermalConvection_constviscosity
+        PATH Parabolic/HT/ConstViscosity
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_5500x5500.prj
+        WRAPPER time
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+        ABSTOL 1e-10 RELTOL 1e-16
+        DIFF_DATA
+        ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000.000000.vtu temperature T
     )
 
     # Mechanics; Small deformations, linear (SDL)
@@ -416,6 +450,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_1e0.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
         square_1e0_expected_pcs_0_ts_4_t_1.000000.vtu square_1e0_pcs_0_ts_4_t_1.000000.vtu displacement displacement
@@ -426,6 +461,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_1e2.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
         square_1e2_expected_pcs_0_ts_4_t_1.000000.vtu square_1e2_pcs_0_ts_4_t_1.000000.vtu displacement displacement
@@ -436,6 +472,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS disc_with_hole.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
         disc_with_hole_expected_pcs_0_ts_4_t_1.000000.vtu disc_with_hole_pcs_0_ts_4_t_1.000000.vtu displacement displacement
@@ -446,6 +483,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_1e5.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
         square_1e5_expected_pcs_0_ts_4_t_1.000000.vtu square_1e5_pcs_0_ts_4_t_1.000000.vtu displacement displacement
@@ -457,6 +495,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS square_1e2_quad8_traction_top.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-14 RELTOL 1e-15
         DIFF_DATA
         expected_square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu displacement displacement
@@ -469,6 +508,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e0.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
         cube_1e0_expected_pcs_0_ts_1_t_0.000100.vtu cube_1e0_pcs_0_ts_1_t_0.000100.vtu displacement displacement
@@ -480,6 +520,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
         cube_1e3_expected_pcs_0_ts_1_t_0.000100.vtu cube_1e3_pcs_0_ts_1_t_0.000100.vtu displacement displacement
@@ -493,6 +534,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e0.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-13
         DIFF_DATA
         expected_cube_1e0_pcs_0_ts_101_t_2.550000.vtu cube_1e0_pcs_0_ts_101_t_2.550000.vtu displacement displacement
@@ -506,6 +548,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e1.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-13
         DIFF_DATA
         expected_cube_1e1_pcs_0_ts_101_t_2.550000.vtu cube_1e1_pcs_0_ts_101_t_2.550000.vtu displacement displacement
@@ -519,6 +562,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e3.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-13
         DIFF_DATA
         expected_cube_1e3_pcs_0_ts_101_t_2.550000.vtu cube_1e3_pcs_0_ts_101_t_2.550000.vtu displacement displacement
@@ -534,6 +578,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e0_dp.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 5e-15 RELTOL 1e-13
         DIFF_DATA
         expected_cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu displacement displacement
@@ -548,6 +593,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_1e2_axi.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1.6e-5 RELTOL 1e-5
         DIFF_DATA
         wedge-1e2-ang-0.02-surface.vtu square_1e2_axi_pcs_0_ts_1_t_1.000000.vtu temperature temperature
@@ -568,6 +614,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_1e4_axi.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1.6e-5 RELTOL 1e-5
         DIFF_DATA
         wedge-1e4-ang-0.02-surface.vtu square_1e4_axi_pcs_0_ts_1_t_1.000000.vtu temperature temperature
@@ -587,6 +634,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS ring_plane_strain.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 6e-4 RELTOL 1e-4
         DIFF_DATA
         ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu u displacement
@@ -606,6 +654,7 @@ if(NOT OGS_USE_MPI)
          DIFF_DATA
          wedge_1e2_axi_ang_0.02_t_2s_extracted_surface.vtu square_1e2_axi_pcs_0_ts_2_t_2.000000.vtu temperature temperature
          wedge_1e2_axi_ang_0.02_t_2s_extracted_surface.vtu square_1e2_axi_pcs_0_ts_2_t_2.000000.vtu heat_flux_x heat_flux_x
+        REQUIREMENTS NOT OGS_USE_MPI
     )
     # # WEDGE 1x1 HEATCONDUCTION TEST -- computes reference results for the above test
     # AddTest(
@@ -623,6 +672,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS tes-inert-axi.prj
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         # Note: Since the temperature and pressure only vary by a factor of ~ 1.e-6 in x-direction
         # the relative tolerance has to be much smaller than 1.e-6
         ABSTOL 1e-12 RELTOL 2e-9
@@ -647,6 +697,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS square_1e2.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-15
         DIFF_DATA
         expected_square_1e2_pcs_0_ts_1_t_5.000000.vtu square_1e2_pcs_0_ts_1_t_5.000000.vtu displacement displacement
@@ -666,6 +717,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS square_1e2_UC_early.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-3 RELTOL 1e-3
         DIFF_DATA
         UnconfinedCompressionAnalytical_1s.vtu square_1e2_UC_early_pcs_0_ts_10_t_1.000000.vtu displacement_ana displacement
@@ -678,6 +730,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS square_1e2_UC_late.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-3 RELTOL 1e-3
         DIFF_DATA
         UnconfinedCompressionAnalytical_1000s.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu displacement_ana displacement
@@ -692,6 +745,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS single_joint.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
         single_joint_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_pcs_0_ts_1_t_1.000000.vtu displacement displacement
@@ -705,6 +759,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS single_joint_inside.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
         single_joint_inside_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_inside_pcs_0_ts_1_t_1.000000.vtu displacement displacement
@@ -718,6 +773,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS two_joints.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
         two_joints_expected_pcs_0_ts_1_t_1.000000.vtu two_joints_pcs_0_ts_1_t_1.000000.vtu displacement displacement
@@ -733,6 +789,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS single_fracture.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
         ABSTOL 1e-12 RELTOL 1e-12
         DIFF_DATA
         expected_single_fracture_pcs_0_ts_10_t_100.000000.vtu single_fracture_pcs_0_ts_10_t_100.000000.vtu pressure pressure
@@ -747,6 +804,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS TaskB.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
         ABSTOL 1e-12 RELTOL 1e-12
         DIFF_DATA
         expected_TaskB_pcs_0_ts_4_t_18.000000.vtu TaskB_pcs_0_ts_4_t_18.000000.vtu pressure pressure
@@ -762,6 +820,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS line_dirichlet_neumannBC.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
@@ -774,6 +833,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS pressureBC_at_corner_of_anisotropic_square.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure
@@ -785,6 +845,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS gravity_driven.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
@@ -798,6 +859,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS axisym_theis.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure
@@ -810,6 +872,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS anisotropic_gravity_driven3D.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-6 RELTOL 1e-6
         DIFF_DATA
         hex.vtu anisotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
@@ -822,6 +885,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS isotropic_gravity_driven3D.prj
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
         ABSTOL 1e-6 RELTOL 1e-6
         DIFF_DATA
         hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
@@ -836,6 +900,7 @@ else()
         WRAPPER mpirun
         WRAPPER_ARGS -np 3
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-15 RELTOL 1e-14
         DIFF_DATA
         quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_0.vtu quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure
@@ -850,6 +915,7 @@ else()
         WRAPPER mpirun
         WRAPPER_ARGS -np 3
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-14 RELTOL 1e-6
         DIFF_DATA
         cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure
@@ -864,6 +930,7 @@ else()
         WRAPPER mpirun
         WRAPPER_ARGS -np 3
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
         cube_1e3_neumann_pcs_0_ts_1_t_1_000000_0.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure
@@ -881,6 +948,7 @@ else()
             WRAPPER mpirun
             WRAPPER_ARGS -np 1
             TESTER vtkdiff
+            REQUIREMENTS OGS_USE_MPI
             ABSTOL 1e-15 RELTOL 1e-15
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure
@@ -893,6 +961,7 @@ else()
             WRAPPER mpirun
             WRAPPER_ARGS -np 1
             TESTER vtkdiff
+            REQUIREMENTS OGS_USE_MPI
             ABSTOL 1e-1 RELTOL 1e-1
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_front_N1_right pressure
@@ -908,6 +977,7 @@ else()
             WRAPPER mpirun
             WRAPPER_ARGS -np 1
             TESTER vtkdiff
+            REQUIREMENTS OGS_USE_MPI
             ABSTOL 1e-7 RELTOL 1e-7
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure
@@ -920,6 +990,7 @@ else()
             WRAPPER mpirun
             WRAPPER_ARGS -np 1
             TESTER vtkdiff
+            REQUIREMENTS OGS_USE_MPI
             ABSTOL 1e-2 RELTOL 1e-2
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_front_N1_right pressure
@@ -935,6 +1006,7 @@ else()
             WRAPPER mpirun
             WRAPPER_ARGS -np 1
             TESTER vtkdiff
+            REQUIREMENTS OGS_USE_MPI
             ABSTOL 1e-13 RELTOL 1e-13
             DIFF_DATA
             square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure
@@ -947,6 +1019,7 @@ else()
             WRAPPER mpirun
             WRAPPER_ARGS -np 1
             TESTER vtkdiff
+            REQUIREMENTS OGS_USE_MPI
             ABSTOL 1e-1 RELTOL 1e-1
             DIFF_DATA
             square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_bottom_N1_right pressure
@@ -961,6 +1034,7 @@ else()
             WRAPPER mpirun
             WRAPPER_ARGS -np 1
             TESTER vtkdiff
+            REQUIREMENTS OGS_USE_MPI
             ABSTOL 1e-7 RELTOL 1e-7
             DIFF_DATA
             square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure
@@ -973,6 +1047,7 @@ else()
             WRAPPER mpirun
             WRAPPER_ARGS -np 1
             TESTER vtkdiff
+            REQUIREMENTS OGS_USE_MPI
             ABSTOL 1e-02 RELTOL 1e-02
             DIFF_DATA
             square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_bottom_N1_right pressure
@@ -988,6 +1063,7 @@ else()
             WRAPPER mpirun
             WRAPPER_ARGS -np 1
             TESTER vtkdiff
+            REQUIREMENTS OGS_USE_MPI
             ABSTOL 1e-15 RELTOL 1e-15
             DIFF_DATA
             line_1_line_${mesh_size}.vtu line_${mesh_size}_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure
@@ -1000,6 +1076,7 @@ else()
             WRAPPER mpirun
             WRAPPER_ARGS -np 1
             TESTER vtkdiff
+            REQUIREMENTS OGS_USE_MPI
             ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA
             line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_N1_right pressure
@@ -1013,6 +1090,7 @@ else()
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-7 RELTOL 5e-9
         DIFF_DATA
         tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_pcs_0_ts_19_t_0_100000_0.vtu pressure pressure
@@ -1028,6 +1106,7 @@ else()
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
         tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000_0.vtu pressure pressure
@@ -1044,6 +1123,7 @@ else()
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
@@ -1056,6 +1136,7 @@ else()
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
@@ -1069,6 +1150,7 @@ else()
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure
@@ -1080,6 +1162,7 @@ else()
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure
@@ -1092,6 +1175,7 @@ else()
         WRAPPER_ARGS -np 1
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-6 RELTOL 1e-6
         DIFF_DATA
         hex.vtu anisotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
@@ -1105,6 +1189,7 @@ else()
         WRAPPER_ARGS -np 1
         WRAPPER time
         TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-6 RELTOL 1e-6
         DIFF_DATA
         hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
