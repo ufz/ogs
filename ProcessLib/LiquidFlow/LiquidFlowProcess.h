@@ -13,12 +13,15 @@
 #pragma once
 
 #include <memory>
+#include <memory>
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
 
 #include "LiquidFlowMaterialProperties.h"
 #include "LiquidFlowLocalAssembler.h"
+
+#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 
 namespace MeshLib
 {
@@ -74,6 +77,14 @@ public:
                                           GlobalVector const& x) override;
 
     bool isLinear() const override { return true; }
+
+    std::vector<MaterialLib::Fluid::FluidProperties*> getFluidProperties() const
+    {
+        std::vector<MaterialLib::Fluid::FluidProperties*> material_properties =
+            {_material_properties->getFluidProperties()};
+        return material_properties;
+    }
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,

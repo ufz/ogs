@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <Eigen/Dense>
+#include <vector>
 
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
@@ -100,6 +101,11 @@ public:
     double getLiquidDensity(const double p, const double T) const;
 
     double getViscosity(const double p, const double T) const;
+
+    MaterialLib::Fluid::FluidProperties* getFluidProperties() const
+    {
+        return _fluid_properties.get();
+    }
 
 private:
     /// A flag to indicate whether the reference member, _material_ids,
