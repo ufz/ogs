@@ -49,6 +49,9 @@ public:
 
     bool isLinear() const override { return false; }
 
+    ProcessType getProcessType() const override
+                     {return ProcessLib::ProcessType::TESProcess;}
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,

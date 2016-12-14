@@ -21,6 +21,7 @@
 #include "SecondaryVariable.h"
 #include "CachedSecondaryVariable.h"
 #include "AbstractJacobianAssembler.h"
+#include "ProcessType.h"
 #include "VectorMatrixAssembler.h"
 
 namespace MeshLib
@@ -47,6 +48,8 @@ public:
                 process_variables,
             SecondaryVariableCollection&& secondary_variables,
             NumLib::NamedFunctionCaller&& named_function_caller);
+
+    virtual ProcessType getProcessType() const = 0;
 
     /// Preprocessing before starting assembly for new timestep.
     void preTimestep(GlobalVector const& x, const double t,

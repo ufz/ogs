@@ -52,6 +52,9 @@ public:
     bool isLinear() const override { return false; }
     //! @}
 
+    ProcessType getProcessType() const override
+                     {return ProcessLib::ProcessType::HydroMechanicsProcess;}
+
     void computeSecondaryVariableConcrete(double const t,
                                           GlobalVector const& x) override;
 

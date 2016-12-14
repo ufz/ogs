@@ -53,6 +53,9 @@ public:
     bool isLinear() const override { return false; }
     //! @}
 
+    ProcessType getProcessType() const override
+                     {return ProcessLib::ProcessType::SmallDeformationProcess;}
+
 private:
     using LocalAssemblerInterface = SmallDeformationLocalAssemblerInterface;
 
