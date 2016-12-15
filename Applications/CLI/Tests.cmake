@@ -2,7 +2,6 @@
 add_test(NAME ogs_no_args COMMAND ogs)
 set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE)
 
-if(NOT OGS_USE_MPI)
     # CUBE 1x1x1 GROUNDWATER FLOW TESTS
     foreach(mesh_size 1e0 1e1 1e2 1e3)
         AddTest(
@@ -891,7 +890,6 @@ if(NOT OGS_USE_MPI)
         hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
     )
 
-else()
     # MPI groundwater flow tests
     AddTest(
         NAME ParallelFEM_GroundWaterFlow2D
@@ -1194,5 +1192,3 @@ else()
         DIFF_DATA
         hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
     )
-
-endif()
