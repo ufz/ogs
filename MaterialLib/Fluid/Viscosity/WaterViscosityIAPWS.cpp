@@ -30,10 +30,8 @@ static const double Hij[6][7] = {
 
 static double computeBarMu0Factor(const double barT);
 
-static std::array<double, 6> computeSeriesFactorTForMu1(const double barT,
-                                                        const double bar_rho);
-static std::array<double, 7> computeSeriesFactorRhoForMu1(const double barT,
-                                                          const double bar_rho);
+static std::array<double, 6> computeSeriesFactorTForMu1(const double barT);
+static std::array<double, 7> computeSeriesFactorRhoForMu1(const double bar_rho);
 static double computeBarMu1Factor(
     const std::array<double, 6>& series_factorT,
     const std::array<double, 7>& series_factorRho);
@@ -50,8 +48,8 @@ double WaterViscosityIAPWS::getValue(const ArrayType& var_vals) const
 
     const double mu0 = 100. * std::sqrt(bar_T) / computeBarMu0Factor(bar_T);
 
-    const auto& series_factorT = computeSeriesFactorTForMu1(bar_T, bar_rho);
-    const auto& series_factorRho = computeSeriesFactorRhoForMu1(bar_T, bar_rho);
+    const auto& series_factorT = computeSeriesFactorTForMu1(bar_T);
+    const auto& series_factorRho = computeSeriesFactorRhoForMu1(bar_rho);
     const double mu1 = std::exp(
         bar_rho * computeBarMu1Factor(series_factorT, series_factorRho));
 
@@ -89,8 +87,7 @@ double computeBarMu0Factor(const double barT)
     return sum_val;
 }
 
-std::array<double, 6> computeSeriesFactorTForMu1(const double barT,
-                                                 const double bar_rho)
+std::array<double, 6> computeSeriesFactorTForMu1(const double barT)
 {
     std::array<double, 6> series_factorT;
     series_factorT[0] = 1.;
@@ -103,8 +100,7 @@ std::array<double, 6> computeSeriesFactorTForMu1(const double barT,
     return series_factorT;
 }
 
-std::array<double, 7> computeSeriesFactorRhoForMu1(const double barT,
-                                                   const double bar_rho)
+std::array<double, 7> computeSeriesFactorRhoForMu1(const double bar_rho)
 {
     std::array<double, 7> series_factorRho;
     series_factorRho[0] = 1.;
@@ -150,8 +146,8 @@ double computedBarMu_dbarT(const double barT, double bar_rho)
         50. / (mu0_factor * sqrt_barT) -
         100. * sqrt_barT * dmu0_factor_dbarT / (mu0_factor * mu0_factor);
 
-    const auto& series_factorT = computeSeriesFactorTForMu1(barT, bar_rho);
-    const auto& series_factorRho = computeSeriesFactorRhoForMu1(barT, bar_rho);
+    const auto& series_factorT = computeSeriesFactorTForMu1(barT);
+    const auto& series_factorRho = computeSeriesFactorRhoForMu1(bar_rho);
 
     double dmu1_factor_dbarT = 0.0;
     for (int i = 1; i < 6; i++)
@@ -176,8 +172,8 @@ double computedBarMu_dbarT(const double barT, double bar_rho)
 
 double computedBarMu_dbarRho(const double barT, double bar_rho)
 {
-    const auto& series_factorT = computeSeriesFactorTForMu1(barT, bar_rho);
-    const auto& series_factorRho = computeSeriesFactorRhoForMu1(barT, bar_rho);
+    const auto& series_factorT = computeSeriesFactorTForMu1(barT);
+    const auto& series_factorRho = computeSeriesFactorRhoForMu1(bar_rho);
 
     double dmu1_factor_dbar_rho = 0.0;
     for (int i = 0; i < 6; i++)
