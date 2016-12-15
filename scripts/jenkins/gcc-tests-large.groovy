@@ -15,9 +15,9 @@ node('docker') {
     def image = docker.image('ogs6/gcc-gui:latest')
     image.pull()
     image.inside(defaultDockerArgs) {
-        stage('Configure') { configure.linux 'build', "${defaultCMakeOptions}" }
-        stage('Build') { build.linux 'build' }
-        stage('Test') { build.linux 'build', 'tests ctest-large' }
+        stage('Configure') { configure.linux(cmakeOptions: defaultCMakeOptions, script: this) }
+        stage('Build') { build.linux(script: this) }
+        stage('Test') { build.linux(script: this, target: 'tests ctest-large') }
     }
 
     stage('Post') {

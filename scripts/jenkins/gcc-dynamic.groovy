@@ -11,15 +11,15 @@ def post = new ogs.post()
 def helper = new ogs.helper()
 
 stage('Configure (Linux-Docker-Dynamic)') {
-    configure.linuxWithEnv('envinf1/cli.sh', 'build', "${defaultCMakeOptions}")
+    configure.linux(cmakeOptions: defaultCMakeOptions, env: 'envinf1/cli.sh', script: this)
 }
 
 stage('CLI (Linux-Docker-Dynamic)') {
-    build.linuxWithEnv('envinf1/cli.sh', 'build')
+    build.linux(env: 'envinf1/cli.sh', script: this)
 }
 
 stage('Test (Linux-Docker-Dynamic)') {
-    build.linuxWithEnv('envinf1/cli.sh', 'build', 'tests ctest')
+    build.linux(env: 'envinf1/cli.sh', script: this, target: 'tests ctest')
 }
 
 stage('Post (Linux-Docker-Dynamic)') {
