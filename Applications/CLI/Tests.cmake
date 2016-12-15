@@ -1171,7 +1171,6 @@ set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE)
         EXECUTABLE_ARGS anisotropic_gravity_driven3D.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
-        WRAPPER time
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-6 RELTOL 1e-6
@@ -1185,7 +1184,6 @@ set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE)
         EXECUTABLE_ARGS isotropic_gravity_driven3D.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
-        WRAPPER time
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         ABSTOL 1e-6 RELTOL 1e-6
