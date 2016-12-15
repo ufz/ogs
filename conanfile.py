@@ -6,7 +6,7 @@ class OpenGeoSysConan(ConanFile):
     requires = \
         "Boost/[>=1.56.0]@lasote/stable", \
         "Shapelib/1.3.0@bilke/stable", \
-        "VTK/[>=6.3]@bilke/stable", \
+        "VTK/[>=6.3,<7.1]@bilke/stable", \
         "Eigen3/3.2.8@bilke/stable", \
         "libgeotiff/1.4.1@bilke/stable"
 
