@@ -12,3 +12,4 @@ module load vtk/6.3.0_openmpi-1.8.4-noqt-1
 # Tools
 module load numdiff/5.8.1-1
 module load coreutils/8.21-1
+module load ccache/3.3.3
