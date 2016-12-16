@@ -28,7 +28,7 @@ stage('Reports (Docs)') {
         messagesPattern:
             '.*potential recursive class relation.*',
         parserConfigurations: [[parserName: 'Doxygen', pattern:
-        'build/DoxygenWarnings.log']], unstableNewAll: '0'])
+        'build/DoxygenWarnings.log']], unstableTotalAll: '0'])
 }
 
 if (helper.isOriginMaster(this)) {
