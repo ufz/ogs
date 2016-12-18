@@ -215,3 +215,82 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
             cmap_subset.getGlobalIndex(l, comp1_id));
     }
 }
+
+#ifndef USE_PETSC
+TEST_F(NumLibMeshComponentMapTest, MulticomponentVariable)
+#else
+TEST_F(NumLibMeshComponentMapTest, DISABLED_MulticomponentVariable)
+#endif
+{
+    cmap =
+        new MeshComponentMap(components, NumLib::ComponentOrder::BY_LOCATION);
+
+    // Select some nodes from the full mesh.
+    std::array<std::size_t, 3> const ids = {{0, 5, 9}};
+    std::vector<MeshLib::Node*> some_nodes;
+    for (std::size_t id : ids)
+        some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
+
+    MeshLib::MeshSubset some_nodes_mesh_subset(*mesh, &some_nodes);
+
+    auto selected_component = std::unique_ptr<MeshLib::MeshSubsets>{
+        new MeshLib::MeshSubsets{&some_nodes_mesh_subset}};
+
+    // Subset the original cmap.
+    std::vector<std::size_t> const selected_component_ids = {0, 1};
+    MeshComponentMap cmap_subset =
+        cmap->getSubset(selected_component_ids, *selected_component);
+
+    // Check number of components as selected
+    ASSERT_EQ(ids.size() * selected_component_ids.size(),
+              cmap_subset.dofSizeWithGhosts());
+
+    // .. and the content of the subset.
+    for (std::size_t id : ids)
+    {
+        Location const l(mesh->getID(), MeshItemType::Node, id);
+        for (auto const& c : selected_component_ids)
+            EXPECT_EQ(cmap->getGlobalIndex(l, c),
+                      cmap_subset.getGlobalIndex(l, c));
+    }
+}
+
+#ifndef USE_PETSC
+TEST_F(NumLibMeshComponentMapTest, MulticomponentVariableSingleComponent)
+#else
+TEST_F(NumLibMeshComponentMapTest,
+       DISABLED_MulticomponentVariableSingleComponent)
+#endif
+{
+    cmap =
+        new MeshComponentMap(components, NumLib::ComponentOrder::BY_LOCATION);
+
+    // Select some nodes from the full mesh.
+    std::array<std::size_t, 3> const ids = {{0, 5, 9}};
+    std::vector<MeshLib::Node*> some_nodes;
+    for (std::size_t id : ids)
+        some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
+
+    MeshLib::MeshSubset some_nodes_mesh_subset(*mesh, &some_nodes);
+
+    auto selected_component = std::unique_ptr<MeshLib::MeshSubsets>{
+        new MeshLib::MeshSubsets{&some_nodes_mesh_subset}};
+
+    // Subset the original cmap.
+    std::vector<std::size_t> const selected_component_ids = {1};
+    MeshComponentMap cmap_subset =
+        cmap->getSubset(selected_component_ids, *selected_component);
+
+    // Check number of components as selected
+    ASSERT_EQ(ids.size() * selected_component_ids.size(),
+              cmap_subset.dofSizeWithGhosts());
+
+    // .. and the content of the subset.
+    for (std::size_t id : ids)
+    {
+        Location const l(mesh->getID(), MeshItemType::Node, id);
+        for (auto const& c : selected_component_ids)
+            EXPECT_EQ(cmap->getGlobalIndex(l, c),
+                      cmap_subset.getGlobalIndex(l, c));
+    }
+}
