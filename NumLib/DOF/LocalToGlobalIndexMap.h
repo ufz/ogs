@@ -80,12 +80,27 @@ public:
 
     /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
     /// elements. A new mesh component map will be constructed using the passed
-    /// mesh_subsets for the given variable and component ids.
+    /// mesh_subsets for the given variable and component id.
+    ///
+    /// This is single-component version.
     ///
     /// \note The elements are not necessarily those used in the mesh_subsets.
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
         int const variable_id,
         int const component_id,
+        std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
+        std::vector<MeshLib::Element*> const& elements) const;
+
+    /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
+    /// elements. A new mesh component map will be constructed using the passed
+    /// mesh_subsets for the given variable and component ids.
+    ///
+    /// This is multi-component version.
+    ///
+    /// \note The elements are not necessarily those used in the mesh_subsets.
+    LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
+        int const variable_id,
+        std::vector<int> const& component_ids,
         std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
         std::vector<MeshLib::Element*> const& elements) const;
 
@@ -171,6 +186,17 @@ private:
     explicit LocalToGlobalIndexMap(
         std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
         int const component_id,
+        std::vector<MeshLib::Element*> const& elements,
+        NumLib::MeshComponentMap&& mesh_component_map);
+
+    /// Private constructor used by internally created local-to-global index
+    /// maps. The mesh_component_map is passed as argument instead of being
+    /// created by the constructor.
+    /// \attention The passed mesh_component_map is in undefined state after
+    /// this construtor.
+    explicit LocalToGlobalIndexMap(
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
+        std::vector<std::size_t> const& global_component_ids,
         std::vector<MeshLib::Element*> const& elements,
         NumLib::MeshComponentMap&& mesh_component_map);
 
