@@ -11,6 +11,8 @@
 
 #include <memory>
 
+#include "ProcessLib/StaggeredCouplingTerm.h"
+
 #include "MatrixTranslator.h"
 #include "NonlinearSystem.h"
 #include "ODESystem.h"
@@ -80,7 +82,9 @@ public:
 
     ~TimeDiscretizedODESystem();
 
-    void assemble(const GlobalVector& x_new_timestep) override;
+    void assemble(const GlobalVector& x_new_timestep,
+                  ProcessLib::StaggeredCouplingTerm const& coupled_term)
+                  override;
 
     void getResidual(GlobalVector const& x_new_timestep,
                      GlobalVector& res) const override;
@@ -172,7 +176,9 @@ public:
 
     ~TimeDiscretizedODESystem();
 
-    void assemble(const GlobalVector& x_new_timestep) override;
+    void assemble(const GlobalVector& x_new_timestep,
+                  ProcessLib::StaggeredCouplingTerm const& coupled_term)
+                  override;
 
     void getA(GlobalMatrix& A) const override
     {
