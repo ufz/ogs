@@ -13,6 +13,8 @@
 #ifndef OGS_FLUID_PROPERTIES_WITH_DENSITY_DEPENDENT_MODELS_H
 #define OGS_FLUID_PROPERTIES_WITH_DENSITY_DEPENDENT_MODELS_H
 
+#include <atomic>
+
 #include "FluidProperties.h"
 
 namespace MaterialLib
@@ -68,8 +70,6 @@ public:
                      const PropertyVariableType variable_type) const override;
 
 private:
-    mutable double _density_value = 0.;
-
     /// Compute df/dT for f(T, rho) with rho(T, p)
     double compute_df_drho_drho_dT(const double density_value,
                                    const FluidPropertyType property_type,

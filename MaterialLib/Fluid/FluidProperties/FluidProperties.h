@@ -48,13 +48,25 @@ public:
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& heat_capacity,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
             thermal_conductivity)
-        : _property_models{{std::move(density), std::move(viscosity),
-                            std::move(heat_capacity),
-                            std::move(thermal_conductivity)}}
+    /* Will use this if MS visual studio compiler supports
+    : _property_models{{std::move(density), std::move(viscosity),
+                        std::move(heat_capacity),
+                        std::move(thermal_conductivity)}}
+    */
     {
+        // Move to the initialization list if MS visual studio compiler supports
+        _property_models[static_cast<unsigned>(FluidPropertyType::Density)] =
+            std::move(density);
+        _property_models[static_cast<unsigned>(FluidPropertyType::Vicosity)] =
+            std::move(viscosity);
+        _property_models[static_cast<unsigned>(
+            FluidPropertyType::HeatCapacity)] = std::move(heat_capacity);
+        _property_models[static_cast<unsigned>(
+            FluidPropertyType::ThermalConductivity)] =
+            std::move(thermal_conductivity);
     }
 
-    virtual ~FluidProperties(){};
+    virtual ~FluidProperties() = default;
 
     /**
      *  Get the value of a Property.

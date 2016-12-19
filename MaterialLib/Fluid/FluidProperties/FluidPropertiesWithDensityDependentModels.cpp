@@ -47,17 +47,18 @@ double FluidPropertiesWithDensityDependentModels::getValue(
     switch (property_type)
     {
         case FluidPropertyType::Density:
-            _density_value =
-                _property_models[static_cast<unsigned>(property_type)]
-                    ->getValue(variable_values);
-            return _density_value;
+            return _property_models[static_cast<unsigned>(property_type)]
+                ->getValue(variable_values);
         default:
         {
             ArrayType var_vals = variable_values;
             if (_is_density_depedent[static_cast<unsigned>(property_type)])
             {
                 var_vals[static_cast<unsigned>(PropertyVariableType::rho)] =
-                    _density_value;
+                    _property_models[static_cast<unsigned>(
+                                         FluidPropertyType::Density)]
+                        ->getValue(variable_values);
+                ;
             }
             return _property_models[static_cast<unsigned>(property_type)]
                 ->getValue(var_vals);
@@ -79,14 +80,19 @@ double FluidPropertiesWithDensityDependentModels::getdValue(
         {
             if (_is_density_depedent[static_cast<unsigned>(property_type)])
             {
+                const double density_value =
+                    _property_models[static_cast<unsigned>(
+                                         FluidPropertyType::Density)]
+                        ->getValue(variable_values);
+                ;
                 if (variable_type == PropertyVariableType::T)
                 {
-                    compute_df_drho_drho_dT(_density_value, property_type,
+                    compute_df_drho_drho_dT(density_value, property_type,
                                             variable_values);
                 }
                 else if (variable_type == PropertyVariableType::p)
                 {
-                    compute_df_drho_drho_dp(_density_value, property_type,
+                    compute_df_drho_drho_dp(density_value, property_type,
                                             variable_values);
                 }
             }
@@ -111,10 +117,11 @@ double FluidPropertiesWithDensityDependentModels::compute_df_drho_drho_dT(
         variable_values, PropertyVariableType::T);
     ArrayType var_vals = variable_values;
     var_vals[static_cast<unsigned>(PropertyVariableType::rho)] = density_value;
-    // return d()/dT + d ()/drho * drho/dT
 
     const auto& fluid_property_model =
         _property_models[static_cast<unsigned>(property_type)];
+
+    // return d()/dT + d ()/drho * drho/dT
     return fluid_property_model->getdValue(var_vals, PropertyVariableType::T) +
            fluid_property_model->getdValue(var_vals,
                                            PropertyVariableType::rho) *

@@ -16,13 +16,13 @@
 
 #include "BaseLib/ConfigTree.h"
 
-#include "FluidProperties.h"
-#include "PrimaryVariableDependentFluidProperties.h"
-#include "FluidPropertiesWithDensityDependentModels.h"
-
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/Fluid/SpecificHeatCapacity/CreateSpecificFluidHeatCapacityModel.h"
 #include "MaterialLib/Fluid/ThermalConductivity/CreateFluidThermalConductivityModel.h"
+
+#include "FluidProperties.h"
+#include "PrimaryVariableDependentFluidProperties.h"
+#include "FluidPropertiesWithDensityDependentModels.h"
 
 namespace MaterialLib
 {
@@ -39,9 +39,7 @@ std::unique_ptr<FluidProperties> createFluidProperties(
     auto const& mu_conf = config.getConfigSubtree("viscosity");
     auto viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
     const bool is_mu_density_dependent =
-        (viscosity->getName().find("density dependent") != std::string::npos)
-            ? true
-            : false;
+        (viscosity->getName().find("density dependent") != std::string::npos);
 
     bool is_cp_density_dependent = false;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> specific_heat_capacity =
@@ -56,9 +54,7 @@ std::unique_ptr<FluidProperties> createFluidProperties(
             createSpecificFluidHeatCapacityModel(heat_capacity_conf);
         is_cp_density_dependent =
             (specific_heat_capacity->getName().find("density dependent") !=
-             std::string::npos)
-                ? true
-                : false;
+             std::string::npos);
     }
 
     bool is_KT_density_dependent = false;
@@ -69,15 +65,13 @@ std::unique_ptr<FluidProperties> createFluidProperties(
         config.getConfigSubtreeOptional("thermal_conductivity");
     if (thermal_conductivity_opt_conf)
     {
-        auto& thermal_conductivity_conf = *thermal_conductivity_opt_conf;
+        auto const& thermal_conductivity_conf = *thermal_conductivity_opt_conf;
         thermal_conductivity =
             MaterialLib::Fluid::createFluidThermalConductivityModel(
                 thermal_conductivity_conf);
         is_KT_density_dependent =
             (specific_heat_capacity->getName().find("density dependent") !=
-             std::string::npos)
-                ? true
-                : false;
+             std::string::npos);
     }
 
     if (is_mu_density_dependent || is_cp_density_dependent ||
