@@ -21,9 +21,9 @@ target_link_libraries(GeoLib
 )
 
 if(QT4_FOUND)
-    target_link_libraries(GeoLib Qt4::QtXml Qt4::QtXmlPatterns)
+    target_link_libraries(GeoLib Qt5::Xml Qt5::XmlPatterns)
     if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
-        target_link_libraries(GeoLib Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
+        target_link_libraries(GeoLib Qt5::Network ${OPENSSL_LIBRARIES} ws2_32)
     endif()
 endif()
 

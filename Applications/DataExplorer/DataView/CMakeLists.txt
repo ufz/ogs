@@ -127,7 +127,7 @@ add_library(QtDataView
     ${UIS}
 )
 
-target_link_libraries(QtDataView Qt4::QtCore Qt4::QtGui)
+target_link_libraries(QtDataView Qt5::Core Qt5::Gui)
 target_link_libraries(QtDataView
     ApplicationsFileIO
     DataHolderLib

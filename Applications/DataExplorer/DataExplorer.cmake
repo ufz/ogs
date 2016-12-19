@@ -49,10 +49,10 @@ add_executable(DataExplorer MACOSX_BUNDLE
 )
 
 target_link_libraries(DataExplorer
-    Qt4::QtCore
-    Qt4::QtGui
-    Qt4::QtXml
-    Qt4::QtNetwork
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Xml
+    Qt5::Network
     ApplicationsLib
     ApplicationsFileIO
     DataHolderLib

@@ -23,9 +23,9 @@ add_library(ApplicationsFileIO ${SOURCES})
 target_link_libraries(ApplicationsFileIO DataHolderLib)
 
 if(QT4_FOUND)
-    target_link_libraries(ApplicationsFileIO Qt4::QtXml Qt4::QtXmlPatterns)
+    target_link_libraries(ApplicationsFileIO Qt5::Xml Qt5::XmlPatterns)
     if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
-        target_link_libraries(ApplicationsFileIO Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
+        target_link_libraries(ApplicationsFileIO Qt5::Network ${OPENSSL_LIBRARIES} ws2_32)
     endif()
 endif()
 

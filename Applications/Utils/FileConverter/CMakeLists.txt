@@ -2,7 +2,7 @@
 if (QT4_FOUND AND Shapelib_FOUND)
     add_executable(ConvertSHPToGLI ConvertSHPToGLI.cpp)
     set_target_properties(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
-    target_link_libraries(ConvertSHPToGLI GeoLib Qt4::QtXml ${Shapelib_LIBRARIES})
+    target_link_libraries(ConvertSHPToGLI GeoLib Qt5::Xml ${Shapelib_LIBRARIES})
 endif ()
 
 if (QT4_FOUND)

@@ -94,18 +94,18 @@ endif()
 
 find_package(Metis QUIET)
 
-## Qt4 library ##
+## Qt5 library ##
 if(OGS_BUILD_GUI)
-    find_package( Qt4 4.7 REQUIRED QtGui QtXml QtXmlPatterns)
+    find_package( Qt5 5.5 REQUIRED Gui Widgets Xml XmlPatterns)
     cmake_policy(SET CMP0020 NEW)
     if(CMAKE_CROSSCOMPILING)
         find_package(PkgConfig REQUIRED)
-        pkg_check_modules(QT_XML_DEPS REQUIRED QtXml)
-        list(REMOVE_ITEM QT_XML_DEPS_LIBRARIES QtXml QtCore)
-        pkg_check_modules(QT_GUI_DEPS REQUIRED QtGui)
-        list(REMOVE_ITEM QT_GUI_DEPS_LIBRARIES QtGui QtCore)
-        pkg_check_modules(QT_NETWORK_DEPS REQUIRED QtNetwork)
-        list(REMOVE_ITEM QT_NETWORK_DEPS_LIBRARIES QtNetwork QtCore)
+        pkg_check_modules(QT_XML_DEPS REQUIRED Xml)
+        list(REMOVE_ITEM QT_XML_DEPS_LIBRARIES Xml Core)
+        pkg_check_modules(QT_GUI_DEPS REQUIRED Gui)
+        list(REMOVE_ITEM QT_GUI_DEPS_LIBRARIES Gui Core)
+        pkg_check_modules(QT_NETWORK_DEPS REQUIRED Network)
+        list(REMOVE_ITEM QT_NETWORK_DEPS_LIBRARIES Network Core)
     endif()
 endif()
 
