@@ -22,6 +22,7 @@
 #include "CachedSecondaryVariable.h"
 #include "AbstractJacobianAssembler.h"
 #include "ProcessType.h"
+#include "StaggeredCouplingTerm.h"
 #include "VectorMatrixAssembler.h"
 
 namespace MeshLib
@@ -74,13 +75,17 @@ public:
         const override final;
 
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
-                  GlobalMatrix& K, GlobalVector& b) override final;
+                  GlobalMatrix& K, GlobalVector& b,
+                  StaggeredCouplingTerm const& coupled_term)
+                  override final;
 
     void assembleWithJacobian(const double t, GlobalVector const& x,
                               GlobalVector const& xdot, const double dxdot_dx,
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
-                              GlobalMatrix& Jac) override final;
+                              GlobalMatrix& Jac,
+                              StaggeredCouplingTerm const& coupled_term)
+                              override final;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const t) const override final
