@@ -123,6 +123,8 @@ void StationTreeModel::setNameForItem(const std::string& stn_vec_name,
  */
 void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib::Point*>* stations)
 {
+    beginResetModel();
+
     QList<QVariant> grpName;
     if (listName.compare("") == 0) // if no name is given a default name is assigned
     {
@@ -150,7 +152,7 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib
 
     qDebug() << "List" << listName << "loaded, " << stations->size() << "items added.";
 
-    reset();
+    endResetModel();
 }
 
 /**
@@ -181,4 +183,3 @@ void StationTreeModel::removeStationList(const std::string &name)
         if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
             removeStationList(createIndex(_lists[i]->row(), 0, _lists[i]));
 }
-
