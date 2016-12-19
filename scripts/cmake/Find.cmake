@@ -96,6 +96,9 @@ find_package(Metis QUIET)
 
 ## Qt5 library ##
 if(OGS_BUILD_GUI)
+    if(USE_CONAN)
+      set(Qt5_DIR ${CONAN_QT_ROOT}/lib/cmake/Qt5)
+    endif()
     find_package( Qt5 5.5 REQUIRED Gui Widgets Xml XmlPatterns)
     cmake_policy(SET CMP0020 NEW)
     if(CMAKE_CROSSCOMPILING)

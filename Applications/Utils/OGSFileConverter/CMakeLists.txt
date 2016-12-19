@@ -13,7 +13,7 @@ set(SOURCES
     OGSFileConverter.cpp
 )
 
-find_package(Qt4 QUIET REQUIRED)
+find_package(Qt5 QUIET REQUIRED Gui Widgets Xml XmlPatterns)
 
 include_directories(
     ${CMAKE_BINARY_DIR}/Applications/Utils/OGSFileConverter
@@ -46,8 +46,6 @@ target_link_libraries(OGSFileConverter
     QtBase
     GeoLib)
 ADD_VTK_DEPENDENCY(OGSFileConverter)
-
-include(${QT_USE_FILE})
 
 set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE TYPE INTERNAL FORCE)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
