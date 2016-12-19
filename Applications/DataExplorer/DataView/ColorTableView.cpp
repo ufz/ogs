@@ -32,9 +32,9 @@ void ColorTableViewDelegate::paint(QPainter* painter,
     QColor val;
     if (index.column() == 1)
     {
-        if (qVariantCanConvert<QColor>(index.data()))
+        if (index.data().canConvert(QMetaType::QColor))
         {
-            val = qVariantValue<QColor>(index.data());
+            val = index.data().value<QColor>();
             QBrush brush(val);
             painter->fillRect(option.rect, brush);
         }
@@ -51,4 +51,3 @@ QSize ColorTableViewDelegate::sizeHint( const QStyleOptionViewItem &option,
         s.setHeight((int)(0.5 * s.height()));
     return s;
 }
-
