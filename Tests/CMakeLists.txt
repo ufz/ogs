@@ -20,7 +20,7 @@ APPEND_SOURCE_FILES(TEST_SOURCES NumLib)
 APPEND_SOURCE_FILES(TEST_SOURCES ProcessLib)
 APPEND_SOURCE_FILES(TEST_SOURCES ProcessLib/LiquidFlow)
 
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
     APPEND_SOURCE_FILES(TEST_SOURCES FileIO_Qt)
 endif()
 
@@ -68,7 +68,7 @@ if(OGS_BUILD_SWMM)
     target_link_libraries(testrunner SwmmInterface)
 endif()
 
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
     target_link_libraries(testrunner Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network)
     if(CMAKE_CROSSCOMPILING)
         target_link_libraries(testrunner

@@ -7,7 +7,7 @@ APPEND_SOURCE_FILES(SOURCES IO/Legacy)
 APPEND_SOURCE_FILES(SOURCES IO/XmlIO/Rapid)
 APPEND_SOURCE_FILES(SOURCES IO/XmlIO/Boost)
 
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
     APPEND_SOURCE_FILES(SOURCES IO/XmlIO/Qt)
 endif()
 
@@ -20,7 +20,7 @@ target_link_libraries(GeoLib
     MathLib
 )
 
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
     target_link_libraries(GeoLib Qt5::Xml Qt5::XmlPatterns)
     if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
         target_link_libraries(GeoLib Qt5::Network ${OPENSSL_LIBRARIES} ws2_32)
