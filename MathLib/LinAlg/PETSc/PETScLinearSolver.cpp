@@ -102,7 +102,7 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector &b, PETScVector &x)
 
         PetscInt its;
         KSPGetIterationNumber(_solver, &its);
-        PetscPrintf(PETSC_COMM_WORLD,"\nConvergence in %d iterations.\n", its);
+        PetscPrintf(PETSC_COMM_WORLD,"\nconverged in %d iterations.", its);
         PetscPrintf(PETSC_COMM_WORLD,"\n================================================\n");
     }
     else if(reason == KSP_DIVERGED_ITS)
