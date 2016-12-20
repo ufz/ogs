@@ -140,7 +140,7 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector &b, PETScVector &x)
 
 #ifdef TEST_MEM_PETSC
     PetscMemoryGetCurrentUsage(&mem2);
-    PetscPrintf(PETSC_COMM_WORLD, "###Memory usage by solver. Before :%f After:%f Increase:%d\n", mem1, mem2, (int)(mem2 - mem1));
+    PetscPrintf(PETSC_COMM_WORLD, "###Memory usage by solver. Before: %f After: %f Increase: %d\n", mem1, mem2, (int)(mem2 - mem1));
 #endif
 
     _elapsed_ctime += wtimer.elapsed();
