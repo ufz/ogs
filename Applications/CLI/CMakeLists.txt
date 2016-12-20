@@ -16,7 +16,11 @@ if(OGS_USE_PETSC)
     target_link_libraries(ogs ${PETSC_LIBRARIES})
 endif()
 
-include(Tests.cmake)
+####################
+### Tests ##########
+####################
+add_test(NAME ogs_no_args COMMAND ogs)
+set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE)
 
 ####################
 ### Installation ###
