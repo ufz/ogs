@@ -79,18 +79,18 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
 
     if(!BaseLib::IsFileExisting(fname_new)) // doesn't exist binary file.
     {
-        INFO("-->Reading ASCII mesh file ...");
+        INFO("Reading ASCII mesh file ...");
 
         mesh = readASCII(file_name_base);
     }
     else
     {
-        INFO("-->Reading binary mesh file ...");
+        INFO("Reading binary mesh file ...");
 
         mesh = readBinary(file_name_base);
     }
 
-    INFO("\t\n>>Total elapsed time in reading mesh:%f s\n", timer.elapsed());
+    INFO("[time] Reading the mesh took %f s.", timer.elapsed());
 
     MPI_Barrier(_mpi_comm);
 
@@ -352,8 +352,6 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
     std::vector<MeshLib::Node*> mesh_nodes;
     std::vector<unsigned long> glb_node_ids;
     std::vector<MeshLib::Element*> mesh_elems;
-
-    INFO("-->Reading partitioned mesh.");
 
     for(int i = 0; i < _mpi_comm_size; i++)
     {
