@@ -60,6 +60,10 @@ public:
     //! (while solving a specific nonlinear system).
     virtual void preFirstIteration() {}
 
+    //! Tell the ConvergenceCriterion that it is not called for the first time
+    //! (while solving a coupling system).
+    virtual void setNoFirstIteration() {}
+
     //! Indicate that a new iteration now starts.
     //!
     //! A concrete implementation of ConvergenceCriterion might want to check

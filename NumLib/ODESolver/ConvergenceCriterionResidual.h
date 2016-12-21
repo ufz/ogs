@@ -39,6 +39,7 @@ public:
     void checkResidual(const GlobalVector& residual) override;
 
     void preFirstIteration() override { _is_first_iteration = true; }
+    void setNoFirstIteration() override { _is_first_iteration = false; }
     void reset() override { _satisfied = true; _is_first_iteration = false; }
     bool isSatisfied() const override { return _satisfied; }
 private:
