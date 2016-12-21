@@ -41,8 +41,7 @@ void VectorMatrixAssembler::assemble(
     if (coupled_term.coupled_processes.empty())
     {
         local_assembler.assemble(t, local_x, _local_M_data, _local_K_data,
-                                 _local_b_data,
-                                 ProcessLib::createVoidLocalCouplingTerm());
+                                 _local_b_data);
     }
     else
     {
@@ -62,8 +61,9 @@ void VectorMatrixAssembler::assemble(
         ProcessLib::LocalCouplingTerm local_coupling_term(
             coupled_term.coupled_processes, std::move(local_coupled_xs));
 
-        local_assembler.assemble(t, local_x, _local_M_data, _local_K_data,
-                                 _local_b_data, local_coupling_term);
+        local_assembler.coupling_assemble(t, local_x, _local_M_data,
+                                          _local_K_data, _local_b_data,
+                                          local_coupling_term);
     }
 
     auto const num_r_c = indices.size();
@@ -107,8 +107,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     {
         _jacobian_assembler->assembleWithJacobian(
             local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
-            _local_M_data, _local_K_data, _local_b_data, _local_Jac_data,
-            ProcessLib::createVoidLocalCouplingTerm());
+            _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
     }
     else
     {
@@ -128,7 +127,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
         ProcessLib::LocalCouplingTerm local_coupling_term(
             coupled_term.coupled_processes, std::move(local_coupled_xs));
 
-        _jacobian_assembler->assembleWithJacobian(
+        _jacobian_assembler->coupling_assembleWithJacobian(
             local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
             _local_M_data, _local_K_data, _local_b_data, _local_Jac_data,
             local_coupling_term);

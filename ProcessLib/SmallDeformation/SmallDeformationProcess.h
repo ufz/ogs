@@ -148,14 +148,15 @@ private:
                                  GlobalMatrix& M, GlobalMatrix& K,
                                  GlobalVector& b,
                                  StaggeredCouplingTerm const&
-                                 /*coupled_term*/) override
+                                 coupled_term) override
     {
         DBUG("Assemble SmallDeformationProcess.");
 
         // Call global assembler for each local assembly item.
         GlobalExecutor::executeMemberDereferenced(
             _global_assembler, &VectorMatrixAssembler::assemble,
-            _local_assemblers, *_local_to_global_index_map, t, x, M, K, b);
+            _local_assemblers, *_local_to_global_index_map, t, x, M, K, b,
+            coupled_term);
     }
 
     void assembleWithJacobianConcreteProcess(
