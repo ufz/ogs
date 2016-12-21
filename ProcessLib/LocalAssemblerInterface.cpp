@@ -13,6 +13,19 @@
 
 namespace ProcessLib
 {
+
+void LocalAssemblerInterface::coupling_assemble(
+    double const /*t*/, std::vector<double> const& /*local_x*/,
+    std::vector<double>& /*local_M_data*/,
+    std::vector<double>& /*local_K_data*/,
+    std::vector<double>& /*local_b_data*/,
+    LocalCouplingTerm const& /*coupled_term*/)
+{
+    OGS_FATAL(
+        "The coupling_assemble() function is not implemented in the local "
+        "assembler.");
+}
+
 void LocalAssemblerInterface::assembleWithJacobian(
     double const /*t*/, std::vector<double> const& /*local_x*/,
     std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
@@ -24,6 +37,20 @@ void LocalAssemblerInterface::assembleWithJacobian(
     OGS_FATAL(
         "The assembleWithJacobian() function is not implemented in the local "
         "assembler.");
+}
+
+void LocalAssemblerInterface::coupling_assembleWithJacobian(
+    double const /*t*/, std::vector<double> const& /*local_x*/,
+    std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
+    const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
+    std::vector<double>& /*local_K_data*/,
+    std::vector<double>& /*local_b_data*/,
+    std::vector<double>& /*local_Jac_data*/,
+    LocalCouplingTerm const& /*coupled_term*/)
+{
+    OGS_FATAL(
+        "The coupling_assembleWithJacobian() function is not implemented in"
+        " the local.");
 }
 
 void LocalAssemblerInterface::computeSecondaryVariable(
