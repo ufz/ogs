@@ -22,5 +22,12 @@ const StaggeredCouplingTerm createVoidStaggeredCouplingTerm()
     return StaggeredCouplingTerm(coupled_pcsss, coupled_xs);
 }
 
+const LocalCouplingTerm createVoidLocalCouplingTerm()
+{
+    std::map<ProcessType, Process const&> coupled_pcsss;
+    std::map<ProcessType, const std::vector<double>> local_coupled_xs;
+    return LocalCouplingTerm(coupled_pcsss, std::move(local_coupled_xs));
+}
+
 } // end of ProcessLib
 

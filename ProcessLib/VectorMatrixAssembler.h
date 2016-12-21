@@ -12,6 +12,7 @@
 #include <vector>
 #include "NumLib/NumericsConfig.h"
 #include "AbstractJacobianAssembler.h"
+#include "StaggeredCouplingTerm.h"
 
 namespace NumLib
 {
@@ -38,7 +39,8 @@ public:
                   LocalAssemblerInterface& local_assembler,
                   NumLib::LocalToGlobalIndexMap const& dof_table,
                   double const t, GlobalVector const& x, GlobalMatrix& M,
-                  GlobalMatrix& K, GlobalVector& b);
+                  GlobalMatrix& K, GlobalVector& b,
+                  const StaggeredCouplingTerm& coupled_term);
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
     //! \note The Jacobian must be assembled.
@@ -49,7 +51,8 @@ public:
                               GlobalVector const& xdot, const double dxdot_dx,
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
-                              GlobalMatrix& Jac);
+                              GlobalMatrix& Jac,
+                              const StaggeredCouplingTerm& coupled_term);
 
 private:
     // temporary data only stored here in order to avoid frequent memory

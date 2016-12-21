@@ -139,13 +139,16 @@ private:
 
     virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
                                          GlobalMatrix& M, GlobalMatrix& K,
-                                         GlobalVector& b) = 0;
+                                         GlobalVector& b,
+                                         StaggeredCouplingTerm const&
+                                         coupled_term) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x,
         GlobalVector const& xdot, const double dxdot_dx,
         const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b, GlobalMatrix& Jac) = 0;
+        GlobalVector& b, GlobalMatrix& Jac,
+        StaggeredCouplingTerm const& coupled_term) = 0;
 
     virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
                                             const double /*t*/,
