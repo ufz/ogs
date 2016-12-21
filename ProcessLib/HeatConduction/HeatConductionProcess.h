@@ -52,12 +52,15 @@ private:
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b) override;
+                                 GlobalVector& b,
+                                 StaggeredCouplingTerm const& coupled_term
+                                ) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
+        StaggeredCouplingTerm const& coupled_term) override;
 
     HeatConductionProcessData _process_data;
 

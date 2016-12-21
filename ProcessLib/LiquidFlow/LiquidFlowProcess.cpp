@@ -92,7 +92,9 @@ void LiquidFlowProcess::assembleConcreteProcess(const double t,
                                                 GlobalVector const& x,
                                                 GlobalMatrix& M,
                                                 GlobalMatrix& K,
-                                                GlobalVector& b)
+                                                GlobalVector& b,
+                                                StaggeredCouplingTerm const&
+                                                /*coupled_term*/)
 {
     DBUG("Assemble LiquidFlowProcess.");
     // Call global assembler for each local assembly item.
@@ -104,7 +106,8 @@ void LiquidFlowProcess::assembleConcreteProcess(const double t,
 void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
     const double t, GlobalVector const& x, GlobalVector const& xdot,
     const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, GlobalMatrix& Jac)
+    GlobalVector& b, GlobalMatrix& Jac,
+    StaggeredCouplingTerm const& coupled_term)
 {
     DBUG("AssembleWithJacobian LiquidFlowProcess.");
 
@@ -112,7 +115,7 @@ void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac);
+        dx_dx, M, K, b, Jac, coupled_term);
 }
 
 void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,

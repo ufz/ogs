@@ -109,7 +109,9 @@ private:
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b) override
+                                 GlobalVector& b,
+                                 StaggeredCouplingTerm const&
+                                 /*coupled_term*/) override
     {
         DBUG("Assemble HydroMechanicsProcess.");
 
@@ -122,7 +124,8 @@ private:
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
+        StaggeredCouplingTerm const& coupled_term) override
     {
         DBUG("AssembleJacobian HydroMechanicsProcess.");
 
@@ -130,7 +133,7 @@ private:
         GlobalExecutor::executeMemberDereferenced(
             _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
             _local_assemblers, *_local_to_global_index_map, t, x, xdot,
-            dxdot_dx, dx_dx, M, K, b, Jac);
+            dxdot_dx, dx_dx, M, K, b, Jac, coupled_term);
     }
 
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,

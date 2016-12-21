@@ -200,7 +200,9 @@ public:
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
-                              std::vector<double>& local_Jac_data) override
+                              std::vector<double>& local_Jac_data,
+                              LocalCouplingTerm const& /*coupled_term*/
+                             ) override
     {
         assert(local_x.size() == pressure_size + displacement_size);
 

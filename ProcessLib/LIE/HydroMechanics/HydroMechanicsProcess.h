@@ -70,7 +70,9 @@ private:
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b) override
+                                 GlobalVector& b,
+                                 StaggeredCouplingTerm const&
+                                 /*coupled_term*/) override
     {
         DBUG("Assemble HydroMechanicsProcess.");
 
