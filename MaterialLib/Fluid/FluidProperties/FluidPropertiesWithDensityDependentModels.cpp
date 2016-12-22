@@ -34,7 +34,7 @@ FluidPropertiesWithDensityDependentModels::
     : FluidProperties(std::move(density), std::move(viscosity),
                       std::move(heat_capacity),
                       std::move(thermal_conductivity)),
-      _is_density_depedent{{true, is_viscosity_density_dependent,
+      _is_density_dependent{{false, is_viscosity_density_dependent,
                             is_heat_capacity_dependent,
                             is_thermal_conductivity}}
 {
@@ -44,26 +44,15 @@ double FluidPropertiesWithDensityDependentModels::getValue(
     const FluidPropertyType property_type,
     const ArrayType& variable_values) const
 {
-    switch (property_type)
+    ArrayType var_vals = variable_values;
+    if (_is_density_dependent[static_cast<unsigned>(property_type)])
     {
-        case FluidPropertyType::Density:
-            return _property_models[static_cast<unsigned>(property_type)]
+        var_vals[static_cast<unsigned>(PropertyVariableType::rho)] =
+            _property_models[static_cast<unsigned>(FluidPropertyType::Density)]
                 ->getValue(variable_values);
-        default:
-        {
-            ArrayType var_vals = variable_values;
-            if (_is_density_depedent[static_cast<unsigned>(property_type)])
-            {
-                var_vals[static_cast<unsigned>(PropertyVariableType::rho)] =
-                    _property_models[static_cast<unsigned>(
-                                         FluidPropertyType::Density)]
-                        ->getValue(variable_values);
-                ;
-            }
-            return _property_models[static_cast<unsigned>(property_type)]
-                ->getValue(var_vals);
-        }
     }
+    return _property_models[static_cast<unsigned>(property_type)]->getValue(
+        var_vals);
 }
 
 double FluidPropertiesWithDensityDependentModels::getdValue(
@@ -71,53 +60,39 @@ double FluidPropertiesWithDensityDependentModels::getdValue(
     const ArrayType& variable_values,
     const PropertyVariableType variable_type) const
 {
-    switch (property_type)
+    if (_is_density_dependent[static_cast<unsigned>(property_type)])
     {
-        case FluidPropertyType::Density:
-            return _property_models[static_cast<unsigned>(property_type)]
-                ->getdValue(variable_values, variable_type);
-        default:
+        if (variable_type == PropertyVariableType::T)
         {
-            if (_is_density_depedent[static_cast<unsigned>(property_type)])
-            {
-                const double density_value =
-                    _property_models[static_cast<unsigned>(
-                                         FluidPropertyType::Density)]
-                        ->getValue(variable_values);
-                ;
-                if (variable_type == PropertyVariableType::T)
-                {
-                    compute_df_drho_drho_dT(density_value, property_type,
-                                            variable_values);
-                }
-                else if (variable_type == PropertyVariableType::p)
-                {
-                    compute_df_drho_drho_dp(density_value, property_type,
-                                            variable_values);
-                }
-            }
-            else
-            {
-                _property_models[static_cast<unsigned>(property_type)]
-                    ->getdValue(variable_values, variable_type);
-            }
+            return compute_df_drho_drho_dT(property_type, variable_values);
         }
+        else if (variable_type == PropertyVariableType::p)
+        {
+            return compute_df_drho_drho_dp(property_type, variable_values);
+        }
+    }
+    else
+    {
+        return _property_models[static_cast<unsigned>(property_type)]
+            ->getdValue(variable_values, variable_type);
     }
 
     return 0.;
 }
 
 double FluidPropertiesWithDensityDependentModels::compute_df_drho_drho_dT(
-    const double density_value, const FluidPropertyType property_type,
+    const FluidPropertyType property_type,
     const ArrayType& variable_values) const
 {
     const auto& fluid_density_model =
         _property_models[static_cast<unsigned>(FluidPropertyType::Density)];
     const double drho_dT = fluid_density_model->getdValue(
         variable_values, PropertyVariableType::T);
+
+    const double density_value = fluid_density_model->getValue(variable_values);
+
     ArrayType var_vals = variable_values;
     var_vals[static_cast<unsigned>(PropertyVariableType::rho)] = density_value;
-
     const auto& fluid_property_model =
         _property_models[static_cast<unsigned>(property_type)];
 
@@ -129,7 +104,7 @@ double FluidPropertiesWithDensityDependentModels::compute_df_drho_drho_dT(
 }
 
 double FluidPropertiesWithDensityDependentModels::compute_df_drho_drho_dp(
-    const double density_value, const FluidPropertyType property_type,
+    const FluidPropertyType property_type,
     const ArrayType& variable_values) const
 {
     const auto& fluid_density_model =
@@ -137,8 +112,11 @@ double FluidPropertiesWithDensityDependentModels::compute_df_drho_drho_dp(
 
     const double drho_dp = fluid_density_model->getdValue(
         variable_values, PropertyVariableType::p);
+
+    const double density_value = fluid_density_model->getValue(variable_values);
     ArrayType var_vals = variable_values;
     var_vals[static_cast<unsigned>(PropertyVariableType::rho)] = density_value;
+
     // return  d ()/drho * drho/dp
     return _property_models[static_cast<unsigned>(property_type)]->getdValue(
                var_vals, PropertyVariableType::rho) *

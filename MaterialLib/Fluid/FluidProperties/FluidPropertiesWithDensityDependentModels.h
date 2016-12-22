@@ -13,8 +13,6 @@
 #ifndef OGS_FLUID_PROPERTIES_WITH_DENSITY_DEPENDENT_MODELS_H
 #define OGS_FLUID_PROPERTIES_WITH_DENSITY_DEPENDENT_MODELS_H
 
-#include <atomic>
-
 #include "FluidProperties.h"
 
 namespace MaterialLib
@@ -71,15 +69,13 @@ public:
 
 private:
     /// Compute df/dT for f(T, rho) with rho(T, p)
-    double compute_df_drho_drho_dT(const double density_value,
-                                   const FluidPropertyType property_type,
+    double compute_df_drho_drho_dT(const FluidPropertyType property_type,
                                    const ArrayType& variable_values) const;
     /// Compute df/dp for f(T, rho) with rho(T, p)
-    double compute_df_drho_drho_dp(const double density_value,
-                                   const FluidPropertyType property_type,
+    double compute_df_drho_drho_dp(const FluidPropertyType property_type,
                                    const ArrayType& variable_values) const;
 
-    std::array<bool, FluidPropertyTypeNumber> _is_density_depedent;
+    std::array<bool, FluidPropertyTypeNumber> _is_density_dependent;
 };
 
 }  // end namespace
