@@ -78,3 +78,87 @@ TEST(MaterialFluidProperties, checkPrimaryVariableDependentFluidProperties)
                                        Fluid::PropertyVariableType::T),
                 1.e-10);
 }
+
+TEST(MaterialFluidProperties, checkFluidPropertiesWithDensityDependentModels_T)
+{
+    const char xml[] =
+        "<fluid>"
+        "    <density>"
+        "        <type>TemperatureDependent</type>"
+        "        <temperature0> 293.0 </temperature0> "
+        "        <beta> 2.5003219164466073e-05 </beta> "
+        "        <rho0> 998.</rho0>"
+        "    </density>"
+        "    <viscosity>"
+        "       <type>WaterViscosityIAPWS</type>"
+        "    </viscosity>"
+        "</fluid>";
+
+    auto const fluid_model = createTestFluidProperties(xml);
+
+    ArrayType vars;
+    vars[0] = 373.15;
+
+    const double rho = fluid_model->getValue(FluidPropertyType::Density, vars);
+    ASSERT_NEAR(1000.0, rho, 1.e-10);
+
+    const double mu = fluid_model->getValue(FluidPropertyType::Vicosity, vars);
+    ASSERT_NEAR(0.307883622e-3, mu, 1.e-10);
+
+    const double drho_dT =
+        fluid_model->getdValue(FluidPropertyType::Density, vars,
+                               MaterialLib::Fluid::PropertyVariableType::T);
+    const double dmu_dT =
+        fluid_model->getdValue(FluidPropertyType::Vicosity, vars,
+                               MaterialLib::Fluid::PropertyVariableType::T);
+
+    const double perturbation = 1.e-6;
+    vars[0] += perturbation;
+    const double rho1 = fluid_model->getValue(FluidPropertyType::Density, vars);
+    const double mu1 = fluid_model->getValue(FluidPropertyType::Vicosity, vars);
+
+    ASSERT_NEAR((rho1 - rho) / perturbation, drho_dT, 1.e-7);
+    ASSERT_NEAR((mu1 - mu) / perturbation, dmu_dT, 1.e-10);
+}
+
+TEST(MaterialFluidProperties, checkFluidPropertiesWithDensityDependentModels_dp)
+{
+    const char xml[] =
+        "<fluid>"
+        "   <density>"
+        "       <type>LiquidDensity</type>"
+        "       <temperature0> 273.15 </temperature0> "
+        "       <p0> 1.e+5 </p0> "
+        "       <bulk_modulus> 2.15e+9 </bulk_modulus> "
+        "       <beta> 2.0e-4 </beta> "
+        "       <rho0>999.8</rho0>"
+        "    </density>"
+        "    <viscosity>"
+        "       <type>WaterViscosityIAPWS</type>"
+        "    </viscosity>"
+        "</fluid>";
+
+    auto const fluid_model = createTestFluidProperties(xml);
+
+    ArrayType vars = {{273.15 + 60.0, 1.e+6}};
+
+    const double rho = fluid_model->getValue(FluidPropertyType::Density, vars);
+    const double mu = fluid_model->getValue(FluidPropertyType::Vicosity, vars);
+    const double drho_dp =
+        fluid_model->getdValue(FluidPropertyType::Density, vars,
+                               MaterialLib::Fluid::PropertyVariableType::p);
+    const double dmu_dp =
+        fluid_model->getdValue(FluidPropertyType::Vicosity, vars,
+                               MaterialLib::Fluid::PropertyVariableType::p);
+
+    const double perturbation = 1.e-6;
+    vars[1] += perturbation;
+    const double rho1 = fluid_model->getValue(FluidPropertyType::Density, vars);
+    const double mu1 = fluid_model->getValue(FluidPropertyType::Vicosity, vars);
+
+    // Only check d()/drho * drho/dp (FluidPropertiesWithDensityDependentModels)
+    // The other functionalities of fluid property models are checked in other
+    // tests in TestFluid*.cpp files.
+    ASSERT_NEAR((rho1 - rho) / perturbation, drho_dp, 1.e-7);
+    ASSERT_NEAR((mu1 - mu) / perturbation, dmu_dp, 1.e-10);
+}
