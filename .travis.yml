@@ -9,7 +9,8 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-      - qt4-dev-tools
+      - qtbase5-dev
+      - libqt5xmlpatterns5-dev
       - libxt-dev
       - libshp-dev
 
