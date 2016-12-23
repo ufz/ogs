@@ -56,14 +56,6 @@ if(OGS_USE_MPI)
     target_link_libraries(testrunner ${MPI_CXX_LIBRARIES})
 endif()
 
-if(OGS_BUILD_GUI)
-    target_link_libraries(testrunner
-        QtDataView
-        QtStratView
-        VtkVis
-    )
-endif()
-
 if(OGS_BUILD_SWMM)
     target_link_libraries(testrunner SwmmInterface)
 endif()
