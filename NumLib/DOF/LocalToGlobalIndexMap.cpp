@@ -204,7 +204,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
       _mesh_component_map(std::move(mesh_component_map)),
       _variable_component_offsets(to_cumulative(std::vector<unsigned>(1,1))) // Single variable only.
 {
-    // There is only on mesh_subsets in the vector _mesh_subsets.
+    // There is only one mesh_subsets in the vector _mesh_subsets.
     assert(_mesh_subsets.size() == 1);
     auto const mss = *_mesh_subsets.front();
 
