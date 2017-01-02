@@ -40,7 +40,7 @@ withEnv(helper.getEnv(this)) {
 }
 
 stage('Archive (Win)') {
-    archiveArtifacts 'build/*.zip'
+    archiveArtifacts 'build/*.zip,build/conaninfo.txt'
 }
 
 stage('Post (Win)') {

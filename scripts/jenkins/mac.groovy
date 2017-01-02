@@ -45,7 +45,7 @@ stage('Data Explorer (Mac)') {
 }
 
 stage('Archive (Mac)') {
-    archiveArtifacts 'build/*.tar.gz,build/*.dmg'
+    archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
 }
 
 stage('Post (Mac)') {
