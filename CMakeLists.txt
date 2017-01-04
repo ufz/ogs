@@ -244,4 +244,3 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/BaseLib/BuildInfo.cpp.in"
     "${CMAKE_CURRENT_BINARY_DIR}/BaseLib/BuildInfo.cpp" @ONLY)
 
 include(scripts/cmake/MarkVariablesAdvanced.cmake)
-include(scripts/cmake/packaging/GetDependencies.cmake)

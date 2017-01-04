@@ -28,11 +28,7 @@ endif()
 # tetgen
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tetgen/CMakeLists.txt)
     add_subdirectory(tetgen)
-    if(APPLE AND OGS_BUILD_GUI)
-        install (PROGRAMS $<TARGET_FILE:tetgen> DESTINATION DataExplorer.app/Contents/MacOS COMPONENT ogs_extras)
-    else()
-        install (PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin COMPONENT ogs_extras)
-    endif()
+    install (PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin COMPONENT ogs_extras)
 endif()
 
 # vtkdiff
