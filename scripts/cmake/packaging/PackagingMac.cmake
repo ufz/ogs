@@ -1,3 +1,5 @@
+set(CPACK_GENERATOR TGZ)
+
 option(OGS_PACK_DMG "package targets creates a .dmg disk image instead of .tar.gz" FALSE)
 if(OGS_PACK_DMG)
     if(NOT OGS_BUILD_GUI)

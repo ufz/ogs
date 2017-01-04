@@ -40,10 +40,11 @@ if (WIN32)
     include (packaging/PackagingWin)
 endif()
 if(UNIX)
-    include (packaging/PackagingLinux)
-endif()
-if(APPLE)
-    include (packaging/PackagingMac)
+    if(APPLE)
+        include (packaging/PackagingMac)
+    else()
+        include (packaging/PackagingLinux)
+    endif()
 endif()
 
 # Download additional content
@@ -115,3 +116,15 @@ else()
         ${CMAKE_CURRENT_BINARY_DIR}/package.sh
     )
 endif()
+
+# Install shared libraries, copied to bin-dir from e.g Conan
+foreach(PATTERN "*.dll" "*.dylib")
+    file(GLOB MATCHED_FILES ${EXECUTABLE_OUTPUT_PATH}/${PATTERN})
+    # message(STATUS ${MATCHED_FILES})
+    install(FILES ${MATCHED_FILES} DESTINATION bin)
+endforeach()
+
+# macOS frameworks are directories, exclude header files
+file(GLOB MATCHED_DIRECTORIES "${EXECUTABLE_OUTPUT_PATH}/*.framework")
+install(DIRECTORY ${MATCHED_DIRECTORIES} DESTINATION bin
+    PATTERN "Headers" EXCLUDE)
