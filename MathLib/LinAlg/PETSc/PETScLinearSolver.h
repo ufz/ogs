@@ -55,9 +55,6 @@ class PETScLinearSolver
 
         ~PETScLinearSolver()
         {
-            INFO("Time elapsed in PETSc ksp solver for equation: %g s.\n",
-                 _elapsed_ctime);
-
             KSPDestroy(&_solver);
         }
 

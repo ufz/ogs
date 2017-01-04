@@ -122,7 +122,8 @@ void Output::doOutputAlways(Process const& process,
                     process.getSecondaryVariables(), process_output);
     spd.pvd_file.addVTUFile(output_file_name, t);
 
-    INFO("[time] Output took %g s.", time_output.elapsed());
+    INFO("[time] Output of timestep %d took %g s.", timestep,
+         time_output.elapsed());
 }
 
 void Output::doOutput(Process const& process,

@@ -111,8 +111,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                 case IterationResult::REPEAT_ITERATION:
                     INFO(
                         "Picard: The postIteration() hook decided that this "
-                        "iteration"
-                        " has to be repeated.");
+                        "iteration has to be repeated.");
                     continue;  // That throws the iteration result away.
             }
         }
