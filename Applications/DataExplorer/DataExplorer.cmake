@@ -67,6 +67,12 @@ target_link_libraries(DataExplorer
     logog
 )
 
+# Workaround for Windows conan tiff-package
+if(USE_CONAN AND WIN32)
+    find_package(ZLIB REQUIRED)
+    target_link_libraries(DataExplorer ${ZLIB_LIBRARIES})
+endif()
+
 if(CMAKE_CROSSCOMPILING)
     target_link_libraries(DataExplorer
         ${QT_XML_DEPS_LIBRARIES}
