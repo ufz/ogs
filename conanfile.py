@@ -8,7 +8,7 @@ class OpenGeoSysConan(ConanFile):
         "Shapelib/1.3.0@bilke/stable", \
         "VTK/[>=6.3,<7.1]@bilke/stable", \
         "Eigen3/3.2.8@bilke/stable", \
-        "libgeotiff/1.4.1@bilke/stable", \
+        "libgeotiff/1.4.2@bilke/stable", \
         "Qt/5.6.2@bilke/testing"
 
     generators = "cmake"
