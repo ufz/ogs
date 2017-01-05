@@ -102,20 +102,6 @@ cpack_add_component(ogs_docs
     GROUP Utilities
 )
 
-# Clear cache variable holding all targets to install dependencies for.
-unset(INSTALL_DEPENDENCIES CACHE)
-
-if(WIN32)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/packaging/package.cmd.in
-        ${CMAKE_CURRENT_BINARY_DIR}/package.cmd
-    )
-else()
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/packaging/package.sh.in
-        ${CMAKE_CURRENT_BINARY_DIR}/package.sh
-    )
-endif()
 
 # Install shared libraries, copied to bin-dir from e.g Conan
 foreach(PATTERN "*.dll" "*.dylib")
