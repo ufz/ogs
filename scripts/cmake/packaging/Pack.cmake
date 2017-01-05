@@ -102,15 +102,18 @@ cpack_add_component(ogs_docs
     GROUP Utilities
 )
 
+if(USE_CONAN)
+    # Install shared libraries, copied to bin-dir
+    foreach(PATTERN "*.dll" "*.dylib")
+        file(GLOB MATCHED_FILES ${EXECUTABLE_OUTPUT_PATH}/${PATTERN})
+        install(FILES ${MATCHED_FILES} DESTINATION bin)
+    endforeach()
 
-# Install shared libraries, copied to bin-dir from e.g Conan
-foreach(PATTERN "*.dll" "*.dylib")
-    file(GLOB MATCHED_FILES ${EXECUTABLE_OUTPUT_PATH}/${PATTERN})
-    # message(STATUS ${MATCHED_FILES})
-    install(FILES ${MATCHED_FILES} DESTINATION bin)
-endforeach()
+    # macOS frameworks are directories, exclude header files
+    file(GLOB MATCHED_DIRECTORIES "${EXECUTABLE_OUTPUT_PATH}/*.framework")
+    install(DIRECTORY ${MATCHED_DIRECTORIES} DESTINATION bin
+        PATTERN "Headers" EXCLUDE)
 
-# macOS frameworks are directories, exclude header files
-file(GLOB MATCHED_DIRECTORIES "${EXECUTABLE_OUTPUT_PATH}/*.framework")
-install(DIRECTORY ${MATCHED_DIRECTORIES} DESTINATION bin
-    PATTERN "Headers" EXCLUDE)
+    # Install Qt platform shared libraries
+    install(DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/platforms DESTINATION bin OPTIONAL)
+endif()

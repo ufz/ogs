@@ -22,6 +22,8 @@ class OpenGeoSysConan(ConanFile):
         self.copy(pattern="*.dll", dst="bin", src="bin")
         self.copy(pattern="*.dylib*", dst="bin", src="lib")
         self.copy(pattern="*.framework*", dst="bin", src="lib")
+        self.copy(pattern="*.dll", dst="bin/platforms", src="plugins/platforms")
+        self.copy(pattern="*.dylib*", dst="bin/platforms", src="plugins/platforms")
 
     def build(self):
         cmake = CMake(self.settings)
