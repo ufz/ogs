@@ -13,6 +13,13 @@ builders['gcc'] = {
     }
 }
 
+builders['gcc-conan'] = {
+    node('docker') {
+        dir('ogs') { checkout scm }
+        load 'ogs/scripts/jenkins/gcc-conan.groovy'
+    }
+}
+
 builders['gcc-dynamic'] = {
     node('envinf1') {
         dir('ogs') { checkout scm }

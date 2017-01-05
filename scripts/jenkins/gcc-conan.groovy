@@ -1,4 +1,6 @@
-def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
+def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache ' +
+    '-v /home/jenkins/conan-data:/root/.conan/data'
+
 def defaultCMakeOptions =
     '-DCMAKE_BUILD_TYPE=Release ' +
     '-DOGS_LIB_BOOST=System ' +
@@ -16,11 +18,15 @@ def build = new ogs.build()
 def post = new ogs.post()
 def helper = new ogs.helper()
 
-def image = docker.image('ogs6/gcc-gui:latest')
+def image = docker.image('ogs6/gcc-conan')
 image.pull()
 image.inside(defaultDockerArgs) {
     stage('Configure (Linux-Docker)') {
-        configure.linux(cmakeOptions: defaultCMakeOptions, script: this)
+        configure.linux(
+            cmakeOptions: defaultCMakeOptions,
+            script: this,
+            useConan: true
+        )
     }
 
     stage('CLI (Linux-Docker)') {
@@ -35,10 +41,15 @@ image.inside(defaultDockerArgs) {
         configure.linux(
             cmakeOptions: defaultCMakeOptions + guiCMakeOptions,
             keepDir: true,
-            script: this
+            script: this,
+            useConan: true
         )
         build.linux(script: this)
     }
+}
+
+stage('Archive (Linux-Docker)') {
+    archiveArtifacts 'build/*.tar.gz'
 }
 
 stage('Post (Linux-Docker)') {
