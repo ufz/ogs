@@ -277,6 +277,8 @@ void VtkVisPipeline::addPipelineItem(MshModel* model, const QModelIndex &idx)
 
 QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent)
 {
+    beginResetModel();
+
     item->Initialize(_renderer);
     TreeItem* parentItem = item->parentItem();
     parentItem->appendChild(item);
@@ -299,7 +301,7 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
     if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()))
         static_cast<vtkImageActor*>(item->actor())->InterpolateOff();
 
-    reset();
+    endResetModel();
     emit vtkVisPipelineChanged();
     emit itemSelected(newIndex);
 

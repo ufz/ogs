@@ -33,6 +33,3 @@ cpack_add_component(ogs_cli
     DESCRIPTION "The command line interface for OpenGeoSys."
     GROUP Applications
 )
-
-include(packaging/InstallDependencies)
-InstallDependencies(ogs)

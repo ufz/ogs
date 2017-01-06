@@ -40,7 +40,7 @@ source_group("UI Files" FILES ${UIS})
 set(APP_ICON ${SOURCE_DIR_REL}/scripts/packaging/ogs-de-icon.icns)
 
 # Create the executable
-add_executable(DataExplorer MACOSX_BUNDLE
+add_executable(DataExplorer
     main.cpp
     ${SOURCES}
     ${UIS}
@@ -49,10 +49,10 @@ add_executable(DataExplorer MACOSX_BUNDLE
 )
 
 target_link_libraries(DataExplorer
-    Qt4::QtCore
-    Qt4::QtGui
-    Qt4::QtXml
-    Qt4::QtNetwork
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Xml
+    Qt5::Network
     ApplicationsLib
     ApplicationsFileIO
     DataHolderLib
@@ -66,6 +66,12 @@ target_link_libraries(DataExplorer
     vtkGUISupportQt
     logog
 )
+
+# Workaround for Windows conan tiff-package
+if(USE_CONAN AND WIN32)
+    find_package(ZLIB REQUIRED)
+    target_link_libraries(DataExplorer ${ZLIB_LIBRARIES})
+endif()
 
 if(CMAKE_CROSSCOMPILING)
     target_link_libraries(DataExplorer
@@ -103,18 +109,7 @@ set_property(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 ####################
 ### Installation ###
 ####################
-if(APPLE)
-    include(packaging/PackagingMacros)
-    ConfigureMacOSXBundle(DataExplorer ${APP_ICON})
-
-    install(TARGETS DataExplorer DESTINATION .)
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
-    include(InstallRequiredSystemLibraries)
-    include(DeployQt4)
-    INSTALL_QT4_EXECUTABLE(DataExplorer.app "" "" "${CONAN_LIB_DIRS}" "" "" ogs_gui)
-else()
-    install(TARGETS DataExplorer RUNTIME DESTINATION bin COMPONENT ogs_gui)
-endif()
+install(TARGETS DataExplorer RUNTIME DESTINATION bin COMPONENT ogs_gui)
 
 cpack_add_component(ogs_gui
     DISPLAY_NAME "OGS Data Explorer"
@@ -123,9 +118,3 @@ cpack_add_component(ogs_gui
 )
 set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "DataExplorer" "OGS Data Explorer" PARENT_SCOPE)
 set(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "bin/DataExplorer.exe" "Data Explorer" PARENT_SCOPE)
-if(APPLE)
-    return()
-endif()
-
-include(packaging/InstallDependencies)
-InstallDependencies(DataExplorer)

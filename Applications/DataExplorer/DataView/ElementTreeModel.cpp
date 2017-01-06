@@ -43,6 +43,8 @@ ElementTreeModel::~ElementTreeModel()
 
 void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index)
 {
+    beginResetModel();
+
     _mesh_source = grid;
     this->clearView();
 
@@ -95,17 +97,20 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
         TreeItem* nodeItem = new TreeItem(nodeData, nodeListItem);
         nodeListItem->appendChild(nodeItem);
     }
-    reset();
+    endResetModel();
 }
 
 void ElementTreeModel::clearView()
 {
+    beginResetModel();
     _rootItem->removeChildren(0, _rootItem->childCount());
-    reset();
+    endResetModel();
 }
 
 void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
 {
+    beginResetModel();
+
     this->clearView();
 
     QList<QVariant> mesh_name;
@@ -180,7 +185,5 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
         _rootItem->appendChild(vec_item);
     }
 
-    reset();
-
+    endResetModel();
 }
-

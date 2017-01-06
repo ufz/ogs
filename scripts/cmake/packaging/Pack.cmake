@@ -40,10 +40,11 @@ if (WIN32)
     include (packaging/PackagingWin)
 endif()
 if(UNIX)
-    include (packaging/PackagingLinux)
-endif()
-if(APPLE)
-    include (packaging/PackagingMac)
+    if(APPLE)
+        include (packaging/PackagingMac)
+    else()
+        include (packaging/PackagingLinux)
+    endif()
 endif()
 
 # Download additional content
@@ -101,17 +102,18 @@ cpack_add_component(ogs_docs
     GROUP Utilities
 )
 
-# Clear cache variable holding all targets to install dependencies for.
-unset(INSTALL_DEPENDENCIES CACHE)
+if(USE_CONAN)
+    # Install shared libraries, copied to bin-dir
+    foreach(PATTERN "*.dll" "*.dylib")
+        file(GLOB MATCHED_FILES ${EXECUTABLE_OUTPUT_PATH}/${PATTERN})
+        install(FILES ${MATCHED_FILES} DESTINATION bin)
+    endforeach()
 
-if(WIN32)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/packaging/package.cmd.in
-        ${CMAKE_CURRENT_BINARY_DIR}/package.cmd
-    )
-else()
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/packaging/package.sh.in
-        ${CMAKE_CURRENT_BINARY_DIR}/package.sh
-    )
+    # macOS frameworks are directories, exclude header files
+    file(GLOB MATCHED_DIRECTORIES "${EXECUTABLE_OUTPUT_PATH}/*.framework")
+    install(DIRECTORY ${MATCHED_DIRECTORIES} DESTINATION bin
+        PATTERN "Headers" EXCLUDE)
+
+    # Install Qt platform shared libraries
+    install(DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/platforms DESTINATION bin OPTIONAL)
 endif()

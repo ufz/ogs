@@ -28,7 +28,7 @@ add_library( VtkAct
 ADD_VTK_DEPENDENCY(VtkAct)
 
 target_link_libraries( VtkAct
-    Qt4::QtCore
+    Qt5::Core
     ${VTK_LIBRARIES}
     logog
     )

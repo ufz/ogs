@@ -128,5 +128,5 @@ if(GEOTIFF_FOUND)
     target_link_libraries(VtkVis ${GEOTIFF_LIBRARIES})
 endif() # GEOTIFF_FOUND
 
-target_link_libraries(VtkVis Qt4::QtGui QtDataView VtkAct)
+target_link_libraries(VtkVis Qt5::Gui QtDataView VtkAct)
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")

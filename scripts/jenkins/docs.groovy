@@ -12,11 +12,11 @@ def image = docker.image('ogs6/gcc-latex:latest')
 image.pull()
 image.inside() {
     stage('Configure (Docs)') {
-        configure.linux 'build', "${defaultCMakeOptions}"
+        configure.linux(cmakeOptions: defaultCMakeOptions, script: this)
     }
 
     stage('Generate (Docs)') {
-        build.linux 'build', 'doc'
+        build.linux(script: this, target: 'doc')
     }
 }
 

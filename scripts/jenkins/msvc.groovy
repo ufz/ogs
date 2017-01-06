@@ -1,6 +1,5 @@
 
 def defaultCMakeOptions =
-    '-DCMAKE_BUILD_TYPE=Release ' +
     '-DOGS_LIB_BOOST=System ' +
     '-DOGS_LIB_VTK=System ' +
     '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
@@ -19,30 +18,29 @@ def helper = new ogs.helper()
 
 withEnv(helper.getEnv(this)) {
     stage('Configure (Win)') {
-        configure.win 'build', "${defaultCMakeOptions}", 'Ninja',
-            '-u -s build_type=Release -s compiler="Visual Studio" ' +
-            '-s compiler.version=12 -s arch=x86_64'
+        configure.win(cmakeOptions: defaultCMakeOptions, script: this)
     }
 
     stage('CLI (Win)') {
-        build.win this, 'build'
+        build.win(script: this)
     }
 
     stage('Test (Win)') {
-        build.win this, 'build', 'tests'
-        build.win this, 'build', 'ctest'
+        build.win(script: this, target: 'tests')
+        build.win(script: this, target: 'ctest')
     }
 
     stage('Data Explorer (Win)') {
-        configure.win 'build', "${defaultCMakeOptions} ${guiCMakeOptions}",
-            'Ninja', '-u -s build_type=Release -s compiler="Visual Studio" ' +
-            '-s compiler.version=12 -s arch=x86_64', true
-        build.win this, 'build'
+        configure.win(
+            cmakeOptions: defaultCMakeOptions + ' ' + guiCMakeOptions, keepDir: true,
+            script: this
+        )
+        build.win(script: this)
     }
 }
 
 stage('Archive (Win)') {
-    archiveArtifacts 'build/*.zip'
+    archiveArtifacts 'build/*.zip,build/conaninfo.txt'
 }
 
 stage('Post (Win)') {

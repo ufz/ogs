@@ -41,7 +41,7 @@ add_library(QtDiagramView
 )
 
 target_link_libraries(QtDiagramView
-    Qt4::QtGui
+    Qt5::Gui
     GeoLib
     QtBase
     )

@@ -288,7 +288,7 @@ void DiagramScene::initialize()
     setYAxis(addArrow(_bounds.height(), -90, pen));
     _xLabel = addNonScalableText(" ");
     _yLabel = addNonScalableText(" ");
-    _yLabel->rotate(-90);
+    _yLabel->setRotation(-90);
 
     _xUnit = addNonScalableText(" ");
     _yUnit = addNonScalableText(" ");

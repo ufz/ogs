@@ -1,4 +1,4 @@
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
     add_executable(TriangulatePolyline TriangulatePolyline.cpp)
     target_link_libraries(TriangulatePolyline GeoLib)
     set_target_properties(TriangulatePolyline PROPERTIES FOLDER Utilities)
@@ -16,4 +16,4 @@ if(QT4_FOUND)
         RUNTIME DESTINATION bin
         COMPONENT Utilities
     )
-endif() # QT4_FOUND
+endif()

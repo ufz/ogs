@@ -24,7 +24,7 @@
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 
 #ifdef OGS_BUILD_GUI
-#include <QApplication>
+#include <QCoreApplication>
 #endif
 
 /// Implementation of the googletest testrunner
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
     setlocale(LC_ALL, "C");
 #ifdef OGS_BUILD_GUI
-    QApplication app(argc, argv, false);
+    QCoreApplication app(argc, argv, false);
 #endif
 
     // Attention: Order matters!

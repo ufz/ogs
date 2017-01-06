@@ -65,6 +65,8 @@ void MshModel::addMesh(MeshLib::Mesh* mesh)
 
 void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 {
+    beginResetModel();
+
     INFO("name: %s", mesh->getName().c_str());
     QVariant const display_name (QString::fromStdString(mesh->getName()));
     QList<QVariant> meshData;
@@ -84,7 +86,7 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
         newMesh->appendChild(new TreeItem(elemData, newMesh));
     }
 
-    reset();
+    endResetModel();
     emit meshAdded(this, this->index(_rootItem->childCount() - 1, 0, QModelIndex()));
 }
 
@@ -134,9 +136,10 @@ bool MshModel::removeMesh(const std::string &name)
         TreeItem* item = _rootItem->child(i);
         if (item->data(0).toString().toStdString().compare(name) == 0)
         {
+            beginResetModel();
             emit meshRemoved(this, this->index(i, 0, QModelIndex()));
             _rootItem->removeChildren(i,1);
-            reset();
+            endResetModel();
             return _project.removeMesh(name);
         }
     }
@@ -201,4 +204,3 @@ vtkUnstructuredGridAlgorithm* MshModel::vtkSource(const std::string &name) const
     INFO("MshModel::vtkSource(): No entry found with name \"%s\".", name.c_str());
     return nullptr;
 }
-

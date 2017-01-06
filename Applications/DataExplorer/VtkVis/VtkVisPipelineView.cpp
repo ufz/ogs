@@ -57,7 +57,7 @@ VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
     CheckboxDelegate* checkboxDelegate = new CheckboxDelegate(this);
     this->setItemDelegateForColumn(1, checkboxDelegate);
     this->header()->setStretchLastSection(false);
-    this->header()->setResizeMode(QHeaderView::ResizeToContents);
+    this->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 }
 
 void VtkVisPipelineView::setModel(QAbstractItemModel* model)

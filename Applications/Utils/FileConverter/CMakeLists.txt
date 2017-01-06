@@ -1,15 +1,18 @@
+if (Qt5XmlPatterns_FOUND)
+    if (Shapelib_FOUND)
+        add_executable(ConvertSHPToGLI ConvertSHPToGLI.cpp)
+        set_target_properties(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
+        target_link_libraries(ConvertSHPToGLI GeoLib Qt5::Xml ${Shapelib_LIBRARIES})
+    endif()
 
-if (QT4_FOUND AND Shapelib_FOUND)
-    add_executable(ConvertSHPToGLI ConvertSHPToGLI.cpp)
-    set_target_properties(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
-    target_link_libraries(ConvertSHPToGLI GeoLib Qt4::QtXml ${Shapelib_LIBRARIES})
-endif ()
-
-if (QT4_FOUND)
     add_executable(FEFLOW2OGS FEFLOW2OGS.cpp)
     set_target_properties(FEFLOW2OGS PROPERTIES FOLDER Utilities)
     target_link_libraries(FEFLOW2OGS ApplicationsFileIO)
     ADD_VTK_DEPENDENCY(FEFLOW2OGS)
+
+    add_executable(convertGEO convertGEO.cpp)
+    set_target_properties(convertGEO PROPERTIES FOLDER Utilities)
+    target_link_libraries(convertGEO GeoLib)
 endif ()
 
 add_executable(generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
@@ -43,20 +46,18 @@ set_target_properties(TIN2VTK PROPERTIES FOLDER Utilities)
 target_link_libraries(TIN2VTK MeshLib)
 ADD_VTK_DEPENDENCY(TIN2VTK)
 
-if (QT4_FOUND)
-    add_executable(convertGEO convertGEO.cpp)
-    set_target_properties(convertGEO PROPERTIES FOLDER Utilities)
-    target_link_libraries(convertGEO GeoLib)
-endif()
-
 ####################
 ### Installation ###
 ####################
 install(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
     RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
-if(QT4_FOUND)
-    install(TARGETS ConvertSHPToGLI FEFLOW2OGS convertGEO
+if(Qt5XmlPatterns_FOUND)
+    if(Shapelib_FOUND)
+        install(TARGETS ConvertSHPToGLI
+            RUNTIME DESTINATION bin COMPONENT ogs_converter)
+    endif()
+    install(TARGETS  FEFLOW2OGS convertGEO
         RUNTIME DESTINATION bin COMPONENT ogs_converter)
 endif()
 

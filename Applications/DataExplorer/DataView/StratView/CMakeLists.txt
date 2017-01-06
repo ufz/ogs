@@ -32,6 +32,6 @@ add_library(QtStratView
     ${UIS}
 )
 
-target_link_libraries(QtStratView Qt4::QtGui QtBase)
+target_link_libraries(QtStratView Qt5::Gui QtBase)
 
 set_property(TARGET QtStratView PROPERTY FOLDER "DataExplorer")
