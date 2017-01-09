@@ -14,13 +14,19 @@ APPEND_SOURCE_FILES(SOURCES Parameter)
 add_subdirectory(GroundwaterFlow)
 APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 
+add_subdirectory(LiquidFlow)
 APPEND_SOURCE_FILES(SOURCES LiquidFlow)
+add_subdirectory(HydroMechanics)
 APPEND_SOURCE_FILES(SOURCES HydroMechanics)
 
+add_subdirectory(TwoPhaseFlowWithPP)
 APPEND_SOURCE_FILES(SOURCES TwoPhaseFlowWithPP)
 
+add_subdirectory(SmallDeformation)
 APPEND_SOURCE_FILES(SOURCES SmallDeformation)
 
+add_subdirectory(LIE/SmallDeformation)
+add_subdirectory(LIE/HydroMechanics)
 APPEND_SOURCE_FILES(SOURCES LIE/BoundaryCondition)
 APPEND_SOURCE_FILES(SOURCES LIE/Common)
 APPEND_SOURCE_FILES(SOURCES LIE/HydroMechanics)
@@ -28,13 +34,16 @@ APPEND_SOURCE_FILES(SOURCES LIE/HydroMechanics/LocalAssembler)
 APPEND_SOURCE_FILES(SOURCES LIE/SmallDeformation)
 APPEND_SOURCE_FILES(SOURCES LIE/SmallDeformation/LocalAssembler)
 
+add_subdirectory(TES)
 APPEND_SOURCE_FILES(SOURCES TES)
 
 add_subdirectory(HeatConduction)
 APPEND_SOURCE_FILES(SOURCES HeatConduction)
 
+add_subdirectory(RichardsFlow)
 APPEND_SOURCE_FILES(SOURCES RichardsFlow)
 
+add_subdirectory(HT)
 APPEND_SOURCE_FILES(SOURCES HT)
 
 add_subdirectory(CalculateSurfaceFlux)
