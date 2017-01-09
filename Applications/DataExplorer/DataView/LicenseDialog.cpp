@@ -5,7 +5,7 @@
  * \brief  Implementation of the LicenseDialog class.
  *
  * \copyright
- * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -26,7 +26,7 @@ void LicenseDialog::setText()
 {
     QString text;
     QTextStream stream(&text);
-    stream << "<p>Copyright (c) 2012-2016, OpenGeoSys Community "
+    stream << "<p>Copyright (c) 2012-2017, OpenGeoSys Community "
            << "(<a href='http://www.opengeosys.org'>http://www.opengeosys.org</a>)<br />"
            << "All rights reserved.</p>"
            << "<p>Redistribution and use in source and binary forms, with or without"
