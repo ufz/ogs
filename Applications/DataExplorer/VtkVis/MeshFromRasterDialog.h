@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MSHFROMRASTERDIALOG_H
-#define MSHFROMRASTERDIALOG_H
+#pragma once
 
 #include "ui_MeshFromRaster.h"
 
@@ -57,5 +56,3 @@ private:
     MeshLib::UseIntensityAs _intensity_selection;
 
 };
-
-#endif //MSHFROMRASTERDIALOG_H

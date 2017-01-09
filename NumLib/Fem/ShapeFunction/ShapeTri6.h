@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef SHAPETRI6_H_
-#define SHAPETRI6_H_
+#pragma once
 
 #include "MeshLib/Elements/Tri.h"
 
@@ -49,5 +48,3 @@ public:
 }
 
 #include "ShapeTri6-impl.h"
-
-#endif //SHAPETRI6_H_

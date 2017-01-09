@@ -10,8 +10,7 @@
  *  Created on November 1, 2016, 9:45 AM
  */
 
-#ifndef OGS_BROOK_COREY_CAPILLARY_PRESSURE_SATURATION_H
-#define OGS_BROOK_COREY_CAPILLARY_PRESSURE_SATURATION_H
+#pragma once
 
 #include <limits>  // std::numeric_limits
 
@@ -78,4 +77,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-#endif /* OGS_BROOK_COREY_CAPILLARY_PRESSURE_SATURATION_H */

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LINE_H_
-#define LINE_H_
+#pragma once
 
 #include "TemplateElement.h"
 #include "LineRule2.h"
@@ -28,6 +27,3 @@ typedef TemplateElement<LineRule2> Line;
 typedef TemplateElement<LineRule3> Line3;
 
 }
-
-
-#endif /* LINE_H_ */

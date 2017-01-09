@@ -9,8 +9,7 @@
  *
  *   \file  LinearPressureDependentViscosity.h
  */
-#ifndef LINEAR_PRESSURE_DEPENDENT_VISCOSITY_H_
-#define LINEAR_PRESSURE_DEPENDENT_VISCOSITY_H_
+#pragma once
 
 #include <string>
 
@@ -85,4 +84,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-#endif

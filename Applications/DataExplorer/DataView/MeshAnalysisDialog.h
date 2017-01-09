@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHANALYSISDIALOG_H
-#define MESHANALYSISDIALOG_H
+#pragma once
 
 #include <memory>
 
@@ -55,5 +54,3 @@ private slots:
     /// Closes the dialog
     void on_closeButton_pressed() { this->close(); }
 };
-
-#endif //MESHANALYSISDIALOG_H

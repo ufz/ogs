@@ -10,8 +10,7 @@
  * Created on August 16, 2016, 1:03 PM
  */
 
-#ifndef OGS_CONSTANTPOROSITY_H
-#define OGS_CONSTANTPOROSITY_H
+#pragma once
 
 #include "Porosity.h"
 
@@ -45,5 +44,3 @@ private:
 
 }  // end of namespace
 }  // end of namespace
-
-#endif /* CONSTANTPOROSITY_H */

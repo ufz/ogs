@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_ABSTRACTJACOBIANASSEMBLER_H
-#define PROCESSLIB_ABSTRACTJACOBIANASSEMBLER_H
+#pragma once
 
 #include <vector>
 
@@ -34,5 +33,3 @@ public:
 };
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_ABSTRACTJACOBIANASSEMBLER_H

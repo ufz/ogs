@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef LINEARFUNCTION_H_
-#define LINEARFUNCTION_H_
+#pragma once
 
 #include <array>
 #include <numeric>
@@ -56,5 +55,3 @@ private:
 };
 
 } // MathLib
-
-#endif /* LINEARFUNCTION_H_ */

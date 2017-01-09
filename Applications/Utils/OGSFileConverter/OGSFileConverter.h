@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef OGSFILECONVERTER_H
-#define OGSFILECONVERTER_H
+#pragma once
 
 #include "ui_OGSFileConverter.h"
 #include <QDialog>
@@ -48,5 +47,3 @@ private slots:
     void on_msh2vtuButton_pressed() const;
     void on_closeDialogButton_pressed();
 };
-
-#endif //OGSFILECONVERTER_H

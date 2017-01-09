@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef CPUTIME_H
-#define CPUTIME_H
+#pragma once
 
 #include <ctime>
 
@@ -41,6 +40,3 @@ class CPUTime
 };
 
 } // end namespace BaseLib
-
-#endif
-

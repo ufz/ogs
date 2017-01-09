@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_TESPROCESS_H_
-#define PROCESS_LIB_TESPROCESS_H_
+#pragma once
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
@@ -92,5 +91,3 @@ private:
 }  // namespace TES
 
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_TESPROCESS_H_

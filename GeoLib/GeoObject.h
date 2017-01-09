@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef GEOOBJECT_H_
-#define GEOOBJECT_H_
+#pragma once
 
 #include "GeoType.h"
 
@@ -31,5 +30,3 @@ public:
     virtual GEOTYPE getGeoType() const = 0;
 };
 } // end namespace GeoLib
-
-#endif /* GEOOBJECT_H_ */

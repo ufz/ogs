@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_EXTRAPOLATOR_H
-#define NUMLIB_EXTRAPOLATOR_H
+#pragma once
 
 #include <vector>
 
@@ -49,5 +48,3 @@ public:
 };
 
 } // namespace ProcessLib
-
-#endif // NUMLIB_EXTRAPOLATOR_H

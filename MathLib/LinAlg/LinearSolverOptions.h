@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_LINEAR_SOLVER_OPTIONS_H
-#define MATHLIB_LINEAR_SOLVER_OPTIONS_H
+#pragma once
 
 #include "BaseLib/ConfigTree.h"
 
@@ -37,5 +36,3 @@ void ignoreOtherLinearSolvers(BaseLib::ConfigTree const& config,
                               std::string const& solver_name);
 
 }
-
-#endif

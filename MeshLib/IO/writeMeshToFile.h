@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef WRITEMESHTOFILE_H_
-#define WRITEMESHTOFILE_H_
+#pragma once
 
 #include <string>
 
@@ -19,5 +18,3 @@ namespace IO
 int writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name);
 }
 }
-
-#endif // WRITEMESHTOFILE_H_

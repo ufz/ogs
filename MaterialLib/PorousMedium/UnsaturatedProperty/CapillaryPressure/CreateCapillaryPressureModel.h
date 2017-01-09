@@ -10,8 +10,7 @@
  * Created on November 1, 2016, 10:06 AM
  */
 
-#ifndef OGS_CREATE_CAPILLARY_PRESSURE_MODEL_H
-#define OGS_CREATE_CAPILLARY_PRESSURE_MODEL_H
+#pragma once
 
 #include <memory>
 
@@ -31,5 +30,3 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     BaseLib::ConfigTree const& config);
 }
 }  // end namespace
-
-#endif /* OGS_CREATE_CAPILLARY_PRESSURE_MODEL_H */

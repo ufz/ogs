@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef WRITEGEOMETRYTOFILE_H
-#define WRITEGEOMETRYTOFILE_H
+#pragma once
 
 #include <string>
 
@@ -28,5 +27,3 @@ void writeGeometryToFile(std::string const& geo_name,
     GeoLib::GEOObjects& geo_objs, std::string const& fname);
 }
 }
-
-#endif // WRITEGEOMETRYTOFILE_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef ADSORPTION_H
-#define ADSORPTION_H
+#pragma once
 
 #include <array>
 #include <cmath>
@@ -82,5 +81,3 @@ inline double dCurvePolyfrac(const double* coeffs, const double x)
 }
 
 }
-
-#endif // ADSORPTION_H

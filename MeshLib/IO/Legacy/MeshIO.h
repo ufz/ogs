@@ -12,9 +12,7 @@
  *
  */
 
-
-#ifndef MESHIO_H_
-#define MESHIO_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -68,5 +66,3 @@ private:
 } // end namespace Legacy
 } // end namespace IO
 } // end namespace MeshLib
-
-#endif /* MESHIO_H_ */

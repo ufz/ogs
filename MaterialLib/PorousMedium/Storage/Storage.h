@@ -10,8 +10,7 @@
  * Created on August 16, 2016, 12:53 PM
  */
 
-#ifndef OGS_STORAGE_H
-#define OGS_STORAGE_H
+#pragma once
 
 #include <string>
 
@@ -35,5 +34,3 @@ public:
 
 }  // end of namespace
 }  // end of namespace
-
-#endif /* STORAGE_H */

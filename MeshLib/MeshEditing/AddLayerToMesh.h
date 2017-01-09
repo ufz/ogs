@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ADDLAYERTOMESH_H
-#define ADDLAYERTOMESH_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -43,5 +42,3 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh,
     bool on_top);
 
 } // end namespace MeshLib
-
-#endif //ADDLAYERTOMESH_H

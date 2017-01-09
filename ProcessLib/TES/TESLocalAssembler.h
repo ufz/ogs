@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_TES_FEM_H_
-#define PROCESS_LIB_TES_FEM_H_
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -133,5 +132,3 @@ private:
 }  // namespace ProcessLib
 
 #include "TESLocalAssembler-impl.h"
-
-#endif  // PROCESS_LIB_TES_FEM_H_

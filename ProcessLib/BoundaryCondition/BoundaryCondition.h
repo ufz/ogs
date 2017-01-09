@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_BOUNDARYCONDITION_H
-#define PROCESSLIB_BOUNDARYCONDITION_H
+#pragma once
 
 #include "NumLib/NumericsConfig.h"
 
@@ -119,5 +118,3 @@ protected:
 };
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_BOUNDARYCONDITION_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_BOUNDARYCONDITIONCOLLECTION_H
-#define PROCESSLIB_BOUNDARYCONDITIONCOLLECTION_H
+#pragma once
 
 #include "NumLib/IndexValueVector.h"
 #include "ProcessLib/ProcessVariable.h"
@@ -54,5 +53,3 @@ private:
 
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_BOUNDARYCONDITIONCOLLECTION_H

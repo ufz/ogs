@@ -9,8 +9,7 @@
  *
  */
 
-#ifndef LINALGENUMS_H_
-#define LINALGENUMS_H_
+#pragma once
 
 #include <string>
 
@@ -33,5 +32,3 @@ std::string convertVecNormTypeToString(VecNormType normType);
 VecNormType convertStringToVecNormType(const std::string &str);
 
 } // end namespace MathLib
-
-#endif /* LINALGENUMS_H_ */

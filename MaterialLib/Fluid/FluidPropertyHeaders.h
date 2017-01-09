@@ -11,10 +11,7 @@
  * Created on August 18, 2016, 11:10 AM
  */
 
-#ifndef FLUIDPROPERTYHEADERS_H
-#define FLUIDPROPERTYHEADERS_H
+#pragma once
 
 #include "Density/createFluidDensityModel.h"
 #include "Viscosity/createViscosityModel.h"
-
-#endif /* FLUIDPROPERTYHEADERS_H */

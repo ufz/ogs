@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef SAVEMESHDIALOG_H
-#define SAVEMESHDIALOG_H
+#pragma once
 
 #include "ui_SaveMesh.h"
 #include <QDialog>
@@ -49,5 +48,3 @@ private:
     MeshLib::Mesh const& _mesh;
 
 };
-
-#endif //SAVEMESHDIALOG_H

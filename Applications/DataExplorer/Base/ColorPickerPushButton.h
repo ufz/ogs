@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef COLORPICKERPUSHBUTTON_H
-#define COLORPICKERPUSHBUTTON_H
+#pragma once
 
 // ** INCLUDES **
 #include <QPushButton>
@@ -51,5 +50,3 @@ signals:
     /// Is emitted when a color was picked from the dialog.
     void colorPicked(QColor);
 };
-
-#endif // COLORPICKERPUSHBUTTON_H

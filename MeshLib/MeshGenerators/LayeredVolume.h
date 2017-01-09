@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LAYEREDVOLUME_H
-#define LAYEREDVOLUME_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -63,5 +62,3 @@ private:
 
     std::vector<MeshLib::Node> _attribute_points;
 };
-
-#endif //LAYEREDVOLUME_H

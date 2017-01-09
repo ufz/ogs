@@ -9,8 +9,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef HEURISTICSEARCHLENGTH_H_
-#define HEURISTICSEARCHLENGTH_H_
+#pragma once
 
 #include "MeshGeoToolsLib/SearchLength.h"
 
@@ -50,6 +49,3 @@ private:
 };
 
 } // end namespace MeshGeoToolsLib
-
-#endif
-

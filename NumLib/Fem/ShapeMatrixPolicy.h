@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef SHAPE_MATRIX_POLICY_H_
-#define SHAPE_MATRIX_POLICY_H_
+#pragma once
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 
@@ -132,5 +131,3 @@ const unsigned OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG = 0;
 
 //static_assert(std::is_class<ShapeMatrixPolicyType<>::value,
         //"ShapeMatrixPolicyType was not defined.");
-
-#endif  // SHAPE_MATRIX_POLICY_H_

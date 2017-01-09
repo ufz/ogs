@@ -9,8 +9,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef ITIMESTEPALGORITHM_H_
-#define ITIMESTEPALGORITHM_H_
+#pragma once
 
 #include <vector>
 
@@ -49,5 +48,3 @@ public:
 };
 
 } //NumLib
-
-#endif //ITIMESTEPALGORITHM_H_

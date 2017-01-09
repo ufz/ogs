@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_GROUNDWATERFLOW_FEM_H_
-#define PROCESS_LIB_GROUNDWATERFLOW_FEM_H_
+#pragma once
 
 #include <vector>
 
@@ -221,5 +220,3 @@ private:
 
 }  // namespace GroundwaterFlow
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_GROUNDWATERFLOW_FEM_H_

@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef TEMPLATESPATIALFUNCTION_H_
-#define TEMPLATESPATIALFUNCTION_H_
+#pragma once
 
 #include "ISpatialFunction.h"
 
@@ -50,5 +49,3 @@ private:
 };
 
 }
-
-#endif /* TEMPLATESPATIALFUNCTION_H_ */

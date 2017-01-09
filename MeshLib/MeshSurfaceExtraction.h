@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHSURFACEEXTRACTION_H
-#define MESHSURFACEEXTRACTION_H
+#pragma once
 
 #include <cstddef>
 #include <vector>
@@ -95,5 +94,3 @@ private:
 };
 
 } // end namespace MeshLib
-
-#endif //MESHSURFACEEXTRACTION_H

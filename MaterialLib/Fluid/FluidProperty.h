@@ -10,8 +10,7 @@
  * Created on August 12, 2016, 3:34 PM
  */
 
-#ifndef FLUIDPROPERTY_H
-#define FLUIDPROPERTY_H
+#pragma once
 
 #include <array>
 #include <string>
@@ -58,5 +57,3 @@ public:
 
 }  // end namespace
 }  // end namespace
-
-#endif /* FLUIDPROPERTY_H */

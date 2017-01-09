@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef BASEITEM_H
-#define BASEITEM_H
+#pragma once
 
 #include "Point.h"
 
@@ -61,5 +60,3 @@ private:
     /// visualization pipeline.
     vtkPolyDataAlgorithm* _vtkSource;
 };
-
-#endif //BASEITEM_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef HEX_H_
-#define HEX_H_
+#pragma once
 
 #include "TemplateElement.h"
 #include "HexRule8.h"
@@ -26,5 +25,3 @@ namespace MeshLib {
 typedef TemplateElement<HexRule8> Hex;
 typedef TemplateElement<HexRule20> Hex20;
 }
-
-#endif /* HEX_H_ */

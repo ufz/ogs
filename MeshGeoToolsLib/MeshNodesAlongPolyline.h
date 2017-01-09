@@ -10,8 +10,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef MESHNODESALONGPOLYLINE_H_
-#define MESHNODESALONGPOLYLINE_H_
+#pragma once
 
 #include <vector>
 
@@ -77,5 +76,3 @@ private:
     std::vector<double> _dist_of_proj_node_from_ply_start;
 };
 } // end namespace MeshGeoToolsLib
-
-#endif /* MESHNODESALONGPOLYLINE_H_ */

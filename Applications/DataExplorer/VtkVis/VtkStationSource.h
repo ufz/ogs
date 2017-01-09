@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKSTATIONSOURCE_H
-#define VTKSTATIONSOURCE_H
+#pragma once
 
 #include <vtkPolyDataAlgorithm.h>
 
@@ -77,5 +76,3 @@ private:
 
     std::map<std::string, vtkIdType> _id_map;
 };
-
-#endif // VTKSTATIONSOURCE_H

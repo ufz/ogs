@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHLAYEREDITDIALOG_H
-#define MESHLAYEREDITDIALOG_H
+#pragma once
 
 #include "ui_MeshLayerEdit.h"
 #include <QDialog>
@@ -81,5 +80,3 @@ private slots:
 signals:
     void mshEditFinished(MeshLib::Mesh*);
 };
-
-#endif //MESHLAYEREDITDIALOG_H

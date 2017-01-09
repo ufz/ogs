@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_CREATE_HEATCONDUCTIONPROCESS_H_
-#define PROCESS_LIB_CREATE_HEATCONDUCTIONPROCESS_H_
+#pragma once
 
 #include <memory>
 #include "ProcessLib/Process.h"
@@ -27,5 +26,3 @@ std::unique_ptr<Process> createHeatConductionProcess(
 
 }  // namespace HeatConduction
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_CREATE_HEATCONDUCTIONPROCESS_H_

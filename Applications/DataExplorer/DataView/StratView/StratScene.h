@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef STRATSCENE_H
-#define STRATSCENE_H
+#pragma once
 
 #include <QGraphicsScene>
 
@@ -55,5 +54,3 @@ private:
     StratBar* addStratBar(GeoLib::StationBorehole* station,
                           std::map<std::string, DataHolderLib::Color>* stratColors = nullptr);
 };
-
-#endif //STRATSCENE_H

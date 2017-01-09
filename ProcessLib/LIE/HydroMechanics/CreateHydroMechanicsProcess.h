@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_LIE_CREATEHYDROMECHANICSPROCESS_H_
-#define PROCESS_LIB_LIE_CREATEHYDROMECHANICSPROCESS_H_
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -33,5 +32,3 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_LIE_CREATEHYDROMECHANICSPROCESS_H_

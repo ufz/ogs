@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef NUMLIB_SERIALEXECUTOR_H_H
-#define NUMLIB_SERIALEXECUTOR_H_H
+#pragma once
 
 namespace NumLib
 {
@@ -128,5 +127,3 @@ struct SerialExecutor
 };
 
 }   // namespace NumLib
-
-#endif  // NUMLIB_SERIALEXECUTOR_H_H

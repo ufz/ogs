@@ -14,8 +14,7 @@
  *
  */
 
-#ifndef VTKMAPPEDMESH_H_
-#define VTKMAPPEDMESH_H_
+#pragma once
 
 #include <vtkObject.h>
 #include <vtkMappedUnstructuredGrid.h>
@@ -73,5 +72,3 @@ private:
 vtkMakeMappedUnstructuredGrid(VtkMappedMesh, VtkMappedMeshImpl)
 
 } // end namespace
-
-#endif // VTKMAPPEDMESH_H_

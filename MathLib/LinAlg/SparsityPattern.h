@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_LINALG_SPARSITYPATTERN_H
-#define MATHLIB_LINALG_SPARSITYPATTERN_H
+#pragma once
 
 #include <vector>
 
@@ -18,5 +17,3 @@ namespace MathLib
 template <typename IndexType>
 using SparsityPattern = std::vector<IndexType>;
 }
-
-#endif // MATHLIB_LINALG_SPARSITYPATTERN_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NETCDFCONFIGUREDIALOG_H
-#define NETCDFCONFIGUREDIALOG_H
+#pragma once
 
 #include <netcdfcpp.h>
 
@@ -73,6 +72,3 @@ private:
     std::string _currentPath;
     std::vector<int> _id_map;
 };
-
-#endif //NETCDFCONFIGUREDIALOG_H
-

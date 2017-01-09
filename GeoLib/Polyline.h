@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef POLYLINE_H_
-#define POLYLINE_H_
+#pragma once
 
 #include <cmath>
 #include <vector>
@@ -264,5 +263,3 @@ bool operator==(Polyline const& lhs, Polyline const& rhs);
 bool pointsAreIdentical(const std::vector<Point*> &pnt_vec, std::size_t i, std::size_t j,
                         double prox);
 } // end namespace
-
-#endif /* POLYLINE_H_ */

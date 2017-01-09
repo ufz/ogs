@@ -9,8 +9,7 @@
  *
  */
 
-#ifndef OGS_RELATIVE_PERMEABILITY_H
-#define OGS_RELATIVE_PERMEABILITY_H
+#pragma once
 
 #include <string>
 #include <limits>
@@ -54,5 +53,3 @@ protected:
 
 }  // end namespace
 }  // end namespace
-
-#endif /* OGS_RELATIVE_PERMEABILITY_H */

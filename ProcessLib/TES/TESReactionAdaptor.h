@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_TES_TESREACTIONADAPTOR_H
-#define PROCESSLIB_TES_TESREACTIONADAPTOR_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -130,4 +129,3 @@ private:
 
 }  // namespace TES
 }  // namespace ProcessLib
-#endif  // PROCESSLIB_TES_TESREACTIONADAPTOR_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GEOMAPPER_H
-#define GEOMAPPER_H
+#pragma once
 
 #include <cstddef>
 #include <vector>
@@ -95,5 +94,3 @@ private:
 };
 
 } // end namespace MeshGeoToolsLib
-
-#endif //GEOMAPPER_H

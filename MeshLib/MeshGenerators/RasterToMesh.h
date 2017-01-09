@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef RASTERTOMESH_H
-#define RASTERTOMESH_H
+#pragma once
 
 #include <logog/include/logog.hpp>
 
@@ -134,5 +133,3 @@ private:
 };
 
 } // end namespace MeshLib
-
-#endif // RASTERTOMESH_H

@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef QVALUETOOLTIPSLIDER_H
-#define QVALUETOOLTIPSLIDER_H
+#pragma once
 
 #include <QSlider>
 
@@ -31,5 +30,3 @@ public slots:
 
 protected:
 };
-
-#endif // QVALUETOOLTIPSLIDER_H

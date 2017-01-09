@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef CSVINTERFACE_H_
-#define CSVINTERFACE_H_
+#pragma once
 
 #include <logog/include/logog.hpp>
 #include <boost/any.hpp>
@@ -240,5 +239,3 @@ private:
 };
 
 } // FileIO
-
-#endif /* CSVINTERFACE_H_ */

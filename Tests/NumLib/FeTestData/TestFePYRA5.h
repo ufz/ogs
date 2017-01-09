@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TESTFEPYRA5_H_
-#define TESTFEPYRA5_H_
+#pragma once
 
 #include "MeshLib/Elements/Pyramid.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
@@ -78,6 +77,3 @@ public:
 };
 
 } // namespace
-
-#endif
-

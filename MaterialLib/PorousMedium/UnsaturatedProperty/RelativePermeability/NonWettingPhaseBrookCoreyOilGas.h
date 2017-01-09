@@ -10,8 +10,7 @@
  * Created on November 2, 2016, 10:47 AM
  */
 
-#ifndef OGS_NON_WETTING_PHASE_BROOK_COREY_OIL_GAS_H
-#define OGS_NON_WETTING_PHASE_BROOK_COREY_OIL_GAS_H
+#pragma once
 
 #include "RelativePermeability.h"
 
@@ -73,5 +72,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-
-#endif /* OGS_NON_WETTING_PHASE_BROOK_COREY_OIL_GAS_H */

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_ODE_ODESOLVERBUILDER_H
-#define MATHLIB_ODE_ODESOLVERBUILDER_H
+#pragma once
 
 #include <logog/include/logog.hpp>
 
@@ -55,5 +54,3 @@ std::unique_ptr<ODESolver<NumEquations>> createODESolver(
 
 }  // namespace ODE
 }  // namespace MathLib
-
-#endif  // MATHLIB_ODE_ODESOLVERBUILDER_H

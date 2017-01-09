@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef EIGENVECTOR_H_
-#define EIGENVECTOR_H_
+#pragma once
 
 #include <vector>
 #ifndef NDEBUG
@@ -122,6 +121,3 @@ private:
 };
 
 } // MathLib
-
-#endif //EIGENVECTOR_H_
-

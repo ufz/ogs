@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef MATERIALSLIB_PHYSICALCONSTANT_H
-#define MATERIALSLIB_PHYSICALCONSTANT_H
+#pragma once
 
 namespace MaterialLib
 {
@@ -89,4 +88,3 @@ const double WaterVapour = IdealGasConstant / MolarMass::Water;  // = 461.504;
 }  // namespace SpecificGasConstant
 }  // namespace PhysicalConstant
 }  // namespace MaterialLib
-#endif  // MATERIALSLIB_PHYSICALCONSTANT_H

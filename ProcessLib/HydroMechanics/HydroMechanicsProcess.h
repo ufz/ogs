@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_HYDROMECHANICSPROCESS_H_
-#define PROCESS_LIB_HYDROMECHANICSPROCESS_H_
+#pragma once
 
 #include <cassert>
 
@@ -163,5 +162,3 @@ private:
 
 }  // namespace HydroMechanics
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_HYDROMECHANICSPROCESS_H_

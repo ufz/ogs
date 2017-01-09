@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef DATAEXPLORERSETTINGSDIALOG_H
-#define DATAEXPLORERSETTINGSDIALOG_H
+#pragma once
 
 #include "ui_DataExplorerSettings.h"
 #include <QDialog>
@@ -40,5 +39,3 @@ private slots:
     void reject() { this->done(QDialog::Rejected); };
 
 };
-
-#endif //DATAEXPLORERSETTINGSDIALOG_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef EIGENOPTION_H_
-#define EIGENOPTION_H_
+#pragma once
 
 #include <string>
 
@@ -81,4 +80,3 @@ struct EigenOption final
 };
 
 }
-#endif // EIGENOPTION_H_

@@ -14,8 +14,7 @@
                http://www.opengeosys.org/project/license
 */
 
-#ifndef PETSCLINEARSOLVER_H_
-#define PETSCLINEARSOLVER_H_
+#pragma once
 
 #include<string>
 
@@ -83,5 +82,3 @@ class PETScLinearSolver
 };
 
 } // end namespace
-#endif
-

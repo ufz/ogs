@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_CONVERGENCECRITERIONPERCOMPONENT_H
-#define NUMLIB_CONVERGENCECRITERIONPERCOMPONENT_H
+#pragma once
 
 #include "ConvergenceCriterion.h"
 
@@ -33,5 +32,3 @@ public:
 };
 
 }  // namespace NumLib
-
-#endif  // NUMLIB_CONVERGENCECRITERIONPERCOMPONENT_H

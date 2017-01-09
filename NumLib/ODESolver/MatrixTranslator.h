@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_MATRIXTRANSLATOR_H
-#define NUMLIB_MATRIXTRANSLATOR_H
+#pragma once
 
 #include <memory>
 
@@ -313,5 +312,3 @@ std::unique_ptr<MatrixTranslator<ODETag>> createMatrixTranslator(
 
 //! @}
 }
-
-#endif  // NUMLIB_MATRIXTRANSLATOR_H

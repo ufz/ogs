@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MATERIALLIB_SOLIDMODELS_KELVINVECTOR_H
-#define MATERIALLIB_SOLIDMODELS_KELVINVECTOR_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -80,5 +79,3 @@ inverse(Eigen::Matrix<double,
 }  // namespace MaterialLib
 
 #include "KelvinVector-impl.h"
-
-#endif  // MATERIALLIB_SOLIDMODELS_KELVINVECTOR_H

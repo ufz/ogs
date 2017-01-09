@@ -15,8 +15,7 @@
 #include <gtest/gtest.h>
 #include <boost/property_tree/ptree_fwd.hpp>
 
-#ifndef TESTTOOLS_H_
-#define TESTTOOLS_H_
+#pragma once
 
 #define ASSERT_ARRAY_NEAR(E,A,N,eps)\
     for (std::size_t i=0; i<(unsigned)(N); i++) \
@@ -28,5 +27,3 @@
 
 boost::property_tree::ptree
 readXml(const char xml[]);
-
-#endif // TESTTOOLS_H_

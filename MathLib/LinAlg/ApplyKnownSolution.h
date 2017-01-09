@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef MATHLIB_APPLYKNOWNSOLUTION_H_
-#define MATHLIB_APPLYKNOWNSOLUTION_H_
+#pragma once
 
 #include <vector>
 
@@ -18,5 +17,3 @@
 #ifdef USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScTools.h"
 #endif // USE_PETSC
-
-#endif  // MATHLIB_APPLYKNOWNSOLUTION_H_

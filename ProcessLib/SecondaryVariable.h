@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_SECONDARY_VARIABLE_H
-#define PROCESSLIB_SECONDARY_VARIABLE_H
+#pragma once
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/uniqueInsert.h"
@@ -181,5 +180,3 @@ SecondaryVariableFunctions makeExtrapolator(
 }
 
 }  // namespace ProcessLib
-
-#endif // PROCESSLIB_SECONDARY_VARIABLE_H

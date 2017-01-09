@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHINFORMATION_H
-#define MESHINFORMATION_H
+#pragma once
 
 #include <array>
 #include <string>
@@ -71,5 +70,3 @@ public:
 };
 
 }
-
-#endif //MESHINFORMATION_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_LINALG_GLOBALMATRIXVECTORTYPES_H
-#define MATHLIB_LINALG_GLOBALMATRIXVECTORTYPES_H
+#pragma once
 
 #include "SparsityPattern.h"
 
@@ -62,5 +61,3 @@ static_assert(std::is_same<GlobalMatrix::IndexType,
 using GlobalIndexType = GlobalMatrix::IndexType;
 
 using GlobalSparsityPattern = MathLib::SparsityPattern<GlobalIndexType>;
-
-#endif // MATHLIB_LINALG_GLOBALMATRIXVECTORTYPES_H

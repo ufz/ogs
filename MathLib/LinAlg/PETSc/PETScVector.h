@@ -14,8 +14,7 @@
  *
  */
 
-#ifndef PETSCVECTOR_H_
-#define PETSCVECTOR_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -301,4 +300,3 @@ class PETScVector
 void finalizeVectorAssembly(PETScVector &vec);
 
 } // end namespace
-#endif

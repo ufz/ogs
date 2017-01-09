@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_CALCULATESURFACEFLUX_H_
-#define PROCESS_LIB_CALCULATESURFACEFLUX_H_
+#pragma once
 
 #include "ProcessLib/Process.h"
 #include "CalculateSurfaceFluxLocalAssembler.h"
@@ -43,5 +42,3 @@ private:
 };
 
 }   // namespace ProcessLib
-
-#endif  // PROCESS_LIB_CALCULATESURFACEFLUX_H_

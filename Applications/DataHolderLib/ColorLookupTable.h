@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef COLORLOOKUPTABLE_H
-#define COLORLOOKUPTABLE_H
+#pragma once
 
 #include <cassert>
 #include <tuple>
@@ -67,5 +66,3 @@ private:
 };
 
 } // namespace
-
-#endif //COLORLOOKUPTABLE_H

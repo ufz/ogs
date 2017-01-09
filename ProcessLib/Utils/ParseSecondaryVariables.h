@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_UTILS_PARSESECONDARYVARIABLES_H
-#define PROCESSLIB_UTILS_PARSESECONDARYVARIABLES_H
+#pragma once
 
 namespace BaseLib { class ConfigTree; }
 namespace ProcessLib { class SecondaryVariableCollection; }
@@ -22,5 +21,3 @@ void parseSecondaryVariables(
     NumLib::NamedFunctionCaller& named_function_caller);
 
 } // namespace ProcessLib
-
-#endif // PROCESSLIB_UTILS_PARSESECONDARYVARIABLES_H

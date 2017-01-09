@@ -9,8 +9,7 @@
  *
  */
 
-#ifndef BASE_LIB_BUILD_INFO_H_
-#define BASE_LIB_BUILD_INFO_H_
+#pragma once
 
 #include <string>
 
@@ -40,5 +39,3 @@ namespace BuildInfo
     extern const std::string tests_tmp_path;
 }
 }
-
-#endif  // BASE_LIB_BUILD_INFO_H_

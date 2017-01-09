@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_ODESOLVER_H
-#define MATHLIB_ODESOLVER_H
+#pragma once
 
 #include <array>
 
@@ -136,5 +135,3 @@ public:
 
 }  // namespace ODE
 }  // namespace MathLib
-
-#endif  // MATHLIB_ODESOLVER_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef AABB_H_
-#define AABB_H_
+#pragma once
 
 #include <bitset>
 #include <cassert>
@@ -246,5 +245,3 @@ private:
     }
 };
 } // end namespace
-
-#endif /* AABB_H_ */

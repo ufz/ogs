@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef QUAD_H_
-#define QUAD_H_
+#pragma once
 
 #include "TemplateElement.h"
 #include "QuadRule4.h"
@@ -32,5 +31,3 @@ typedef TemplateElement<QuadRule8> Quad8;
 typedef TemplateElement<QuadRule9> Quad9;
 
 }
-
-#endif /* QUAD_H_ */

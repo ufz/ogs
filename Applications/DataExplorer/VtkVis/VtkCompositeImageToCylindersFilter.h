@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITEIMAGETOCYLINDERSFILTER_H
-#define VTKCOMPOSITEIMAGETOCYLINDERSFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 
@@ -37,5 +36,3 @@ public:
 private:
     VtkImageDataToLinePolyDataFilter* _lineFilter;
 };
-
-#endif // VTKCOMPOSITEIMAGETOCYLINDERSFILTER_H

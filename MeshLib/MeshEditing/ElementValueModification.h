@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHVALUEMODIFICATION_H
-#define MESHVALUEMODIFICATION_H
+#pragma once
 
 #include <vector>
 
@@ -77,5 +76,3 @@ private:
 };
 
 } // end namespace MeshLib
-
-#endif //MESHVALUEMODIFICATION_H

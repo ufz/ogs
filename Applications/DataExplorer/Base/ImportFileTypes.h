@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef IMPORTFILETYPES_H
-#define IMPORTFILETYPES_H
+#pragma once
 
 #include <string>
 
@@ -91,5 +90,3 @@ public:
 }
 
 };
-
-#endif //IMPORTFILETYPES_H

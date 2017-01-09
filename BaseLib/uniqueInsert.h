@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef UNIQUELISTINSERT_H_
-#define UNIQUELISTINSERT_H_
+#pragma once
 
 #include <algorithm>
 
@@ -99,5 +98,3 @@ getOrError(
 }
 
 } // end namespace BaseLib
-
-#endif /* UNIQUELISTINSERT_H_ */

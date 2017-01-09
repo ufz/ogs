@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_MATRIX_H_
-#define PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_MATRIX_H_
+#pragma once
 
 #include <vector>
 
@@ -130,5 +129,3 @@ protected:
 }  // namespace ProcessLib
 
 #include "HydroMechanicsLocalAssemblerMatrix-impl.h"
-
-#endif  // PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_MATRIX_H_

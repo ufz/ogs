@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_MATRIX_IMPL_H_
-#define PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_MATRIX_IMPL_H_
+#pragma once
 
 #include "HydroMechanicsLocalAssemblerMatrix.h"
 
@@ -420,5 +419,3 @@ setPressureDotOfInactiveNodes(Eigen::Ref<Eigen::VectorXd> p_dot)
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_MATRIX_IMPL_H_

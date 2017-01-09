@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GMSHPREFSDIALOG_H
-#define GMSHPREFSDIALOG_H
+#pragma once
 
 #include "ui_GMSHPrefs.h"
 #include <QDialog>
@@ -56,5 +55,3 @@ private slots:
 signals:
     void requestMeshing(std::vector<std::string> &, unsigned, double, double, double, bool);
 };
-
-#endif //GMSHPREFSDIALOG_H

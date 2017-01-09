@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MESHLIB_VERTEX_RULE_H
-#define MESHLIB_VERTEX_RULE_H
+#pragma once
 
 namespace MeshLib
 {
@@ -40,6 +39,3 @@ public:
 };
 
 }
-
-#endif // MESHLIB_VERTEX_RULE_H
-

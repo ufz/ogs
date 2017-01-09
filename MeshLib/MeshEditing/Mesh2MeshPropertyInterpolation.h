@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESH2MESHPROPERTYINTERPOLATION_H_
-#define MESH2MESHPROPERTYINTERPOLATION_H_
+#pragma once
 
 #include "MeshLib/PropertyVector.h"
 
@@ -70,5 +69,3 @@ private:
 };
 
 } // end namespace MeshLib
-
-#endif /* MESH2MESHPROPERTYINTERPOLATION_H_ */

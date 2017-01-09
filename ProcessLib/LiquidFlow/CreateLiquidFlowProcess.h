@@ -10,8 +10,7 @@
  * Created on August 19, 2016, 1:30 PM
  */
 
-#ifndef OGS_CREATELIQUIDFLOWPROCESS_H
-#define OGS_CREATELIQUIDFLOWPROCESS_H
+#pragma once
 
 #include <memory>
 #include "ProcessLib/Process.h"
@@ -29,5 +28,3 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     BaseLib::ConfigTree const& config);
 }  // end of namespace
 }  // end of namespace
-
-#endif /* CREATELIQUIDFLOWPROCESS_H */

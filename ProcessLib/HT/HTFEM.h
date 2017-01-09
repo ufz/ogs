@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_HTPROCESS_FEM_H_
-#define PROCESS_LIB_HTPROCESS_FEM_H_
+#pragma once
 
 #include <iostream>
 #include <Eigen/Dense>
@@ -261,5 +260,3 @@ private:
 
 }  // namespace HT
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_HT_FEM_H_

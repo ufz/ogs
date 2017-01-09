@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef OGS_TWOPHASEFLOWWITHPPLOCALASSEMBLER_IMPL_H
-#define OGS_TWOPHASEFLOWWITHPPLOCALASSEMBLER_IMPL_H
+#pragma once
 
 #include "TwoPhaseFlowWithPPLocalAssembler.h"
 
@@ -204,5 +203,3 @@ void TwoPhaseFlowWithPPLocalAssembler<
 
 }  // end of namespace
 }  // end of namespace
-
-#endif

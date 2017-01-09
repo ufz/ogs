@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALLIB_SOLIDMODELS_LUBBY2_H_
-#define MATERIALLIB_SOLIDMODELS_LUBBY2_H_
+#pragma once
 
 #include <logog/include/logog.hpp>
 
@@ -201,5 +200,3 @@ extern template class Lubby2<3>;
 }  // namespace MaterialLib
 
 #include "Lubby2-impl.h"
-
-#endif  // MATERIALLIB_SOLIDMODELS_LUBBY2_H_

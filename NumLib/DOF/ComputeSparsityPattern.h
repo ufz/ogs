@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_COMPUTESPARSITYPATTERN_H
-#define NUMLIB_COMPUTESPARSITYPATTERN_H
+#pragma once
 
 #include <vector>
 
@@ -34,6 +33,3 @@ class LocalToGlobalIndexMap;
 GlobalSparsityPattern computeSparsityPattern(
     LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);
 }
-
-#endif // NUMLIB_COMPUTESPARSITYPATTERN_H
-

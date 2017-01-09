@@ -7,12 +7,9 @@
  *
  */
 
-#ifndef PROCESS_LIB_SMALLDEFORMATIONPROCESS_FWD_H_
-#define PROCESS_LIB_SMALLDEFORMATIONPROCESS_FWD_H_
+#pragma once
 
 #include "SmallDeformationProcess.h"
 
 extern template class ProcessLib::SmallDeformation::SmallDeformationProcess<2>;
 extern template class ProcessLib::SmallDeformation::SmallDeformationProcess<3>;
-
-#endif  // PROCESS_LIB_SMALLDEFORMATIONPROCESS_FWD_H_

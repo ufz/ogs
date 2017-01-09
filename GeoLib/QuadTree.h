@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef QUADTREE_H_
-#define QUADTREE_H_
+#pragma once
 
 #include <limits>
 
@@ -494,5 +493,3 @@ private:
     const std::size_t _max_points_per_leaf;
 };
 }
-
-#endif /* QUADTREE_H_ */

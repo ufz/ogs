@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESSLIB_LIE_COMMON_POSTUTILS_H_
-#define PROCESSLIB_LIE_COMMON_POSTUTILS_H_
+#pragma once
 
 #include <map>
 #include <memory>
@@ -48,5 +47,3 @@ private:
 
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif // PROCESSLIB_LIE_COMMON_POSTUTILS_H_

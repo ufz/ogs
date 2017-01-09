@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef CREATESTRUCTUREDGRIDDIALOG_H
-#define CREATESTRUCTUREDGRIDDIALOG_H
+#pragma once
 
 #include "ui_CreateStructuredGrid.h"
 #include <QDialog>
@@ -56,5 +55,3 @@ private:
 signals:
     void meshAdded(MeshLib::Mesh* mesh);
 };
-
-#endif // CREATESTRUCTUREDGRIDDIALOG_H

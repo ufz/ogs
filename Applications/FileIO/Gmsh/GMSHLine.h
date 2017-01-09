@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef GMSHLINE_H_
-#define GMSHLINE_H_
+#pragma once
 
 #include <iosfwd>
 
@@ -31,5 +30,3 @@ private:
 
 } // end namespace GMSH
 } // end namespace FileIO
-
-#endif /* GMSHLINE_H_ */

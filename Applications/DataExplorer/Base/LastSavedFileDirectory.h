@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LASTUSEDSAVEDFILEDIRECTORY_H
-#define LASTUSEDSAVEDFILEDIRECTORY_H
+#pragma once
 
 #include <QDir>
 #include <QFileInfo>
@@ -40,6 +39,3 @@ public:
     }
 
 };
-
-#endif //LASTUSEDSAVEDFILEDIRECTORY_H
-

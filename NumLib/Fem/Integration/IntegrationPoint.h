@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_INTEGRATIONPOINT_H_
-#define NUMLIB_INTEGRATIONPOINT_H_
+#pragma once
 
 namespace NumLib
 {
@@ -74,5 +73,3 @@ public:
     }
 };
 }
-
-#endif  // NUMLIB_INTEGRATIONPOINT_H_

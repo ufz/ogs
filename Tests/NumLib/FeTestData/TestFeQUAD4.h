@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TESTFEQUAD4_H_
-#define TESTFEQUAD4_H_
+#pragma once
 
 #include "MeshLib/Elements/Quad.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
@@ -77,6 +76,3 @@ public:
 };
 
 } // namespace
-
-#endif
-

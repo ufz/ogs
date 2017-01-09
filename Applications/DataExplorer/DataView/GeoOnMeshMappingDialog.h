@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GEOTOMESHMAPPINGDIALOG_H
-#define GEOTOMESHMAPPINGDIALOG_H
+#pragma once
 
 #include "ui_GeoOnMeshMapping.h"
 #include <QDialog>
@@ -55,5 +54,3 @@ private slots:
     void reject() { this->done(QDialog::Rejected); };
 
 };
-
-#endif //GEOTOMESHMAPPINGDIALOG_H

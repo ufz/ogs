@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef EIGENLISLINEARSOLVER_H_
-#define EIGENLISLINEARSOLVER_H_
+#pragma once
 
 #include <vector>
 
@@ -52,6 +51,3 @@ private:
 };
 
 } // MathLib
-
-#endif //EIGENLISLINEARSOLVER_H_
-

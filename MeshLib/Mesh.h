@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESH_H_
-#define MESH_H_
+#pragma once
 
 #include <cstdlib>
 #include <string>
@@ -236,6 +235,3 @@ void addPropertyToMesh(MeshLib::Mesh& mesh, std::string const& name,
 }
 
 } /* namespace */
-
-#endif /* MESH_H_ */
-

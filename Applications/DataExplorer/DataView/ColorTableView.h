@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef COLORTABLEVIEW_H
-#define COLORTABLEVIEW_H
+#pragma once
 
 #include <QItemDelegate>
 #include <QTableView>
@@ -46,6 +45,3 @@ public:
 
     QSize sizeHint( const QStyleOptionViewItem &option, const QModelIndex &index ) const;
 };
-
-#endif // COLORTABLEVIEW_H
-

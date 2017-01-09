@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKSURFACESSOURCE_H
-#define VTKSURFACESSOURCE_H
+#pragma once
 
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
@@ -64,5 +63,3 @@ protected:
 
 private:
 };
-
-#endif // VTKSURFACESSOURCE_H

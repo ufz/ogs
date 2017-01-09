@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_HT_HTPROCESSDATA_H
-#define PROCESSLIB_HT_HTPROCESSDATA_H
+#pragma once
 
 namespace MeshLib
 {
@@ -112,5 +111,3 @@ struct HTProcessData
 
 }  // namespace HT
 }  // namespace ProcessLib
-
-#endif // PROCESSLIB_HT_HTPROCESSDATA_H

@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESSLIB_LIE_COMMON_UTILS_H_
-#define PROCESSLIB_LIE_COMMON_UTILS_H_
+#pragma once
 
 #include <Eigen/Eigen>
 
@@ -41,5 +40,3 @@ MathLib::Point3d computePhysicalCoordinates(MeshLib::Element const&e, Eigen::Mat
 
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif

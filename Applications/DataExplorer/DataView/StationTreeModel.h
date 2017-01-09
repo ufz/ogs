@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef QSTATIONTREEMODEL_H
-#define QSTATIONTREEMODEL_H
+#pragma once
 
 #include <vector>
 
@@ -61,5 +60,3 @@ public:
 private:
     std::vector<ModelTreeItem*> _lists;
 };
-
-#endif //QSTATIONTREEMODEL_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_COMMON_FRACTUREPROPERTY_H_
-#define PROCESSLIB_LIE_COMMON_FRACTUREPROPERTY_H_
+#pragma once
 
 #include <Eigen/Eigen>
 
@@ -55,5 +54,3 @@ inline void setFractureProperty(unsigned dim, MeshLib::Element const& e,
 
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif // PROCESSLIB_LIE_COMMON_FRACTUREPROPERTY_H_

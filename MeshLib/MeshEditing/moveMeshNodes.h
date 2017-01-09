@@ -10,8 +10,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  */
-#ifndef MOVEMESHNODES_H_
-#define MOVEMESHNODES_H_
+#pragma once
 
 #include "MeshLib/Node.h"
 
@@ -44,5 +43,3 @@ void moveMeshNodes(
 };
 
 } // end namespace MeshLib
-
-#endif /* MOVEMESHNODES_H_ */

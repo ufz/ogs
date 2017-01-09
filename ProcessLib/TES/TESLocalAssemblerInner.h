@@ -10,8 +10,7 @@
  * not all of OGS6 has to be recompiled every time a small change is done.
  */
 
-#ifndef PROCESS_LIB_TES_FEM_NOTPL_H_
-#define PROCESS_LIB_TES_FEM_NOTPL_H_
+#pragma once
 
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
@@ -73,5 +72,3 @@ private:
 }  // namespace ProcessLib
 
 #include "TESLocalAssemblerInner-impl.h"
-
-#endif  // PROCESS_LIB_TES_FEM_NOTPL_H_

@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef FEFLOWMESHINTERFACE_H_
-#define FEFLOWMESHINTERFACE_H_
+#pragma once
 
 #include <iosfwd>
 #include <string>
@@ -125,5 +124,3 @@ private:
         std::vector<int>& material_ids);
 };
 }  // FileIO
-
-#endif /* FEFLOWMESHINTERFACE_H_ */

@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef GMSHPOINT_H_
-#define GMSHPOINT_H_
+#pragma once
 
 // GeoLib
 #include "GeoLib/Point.h"
@@ -32,5 +31,3 @@ std::ostream& operator<< (std::ostream &os, GMSHPoint const& p);
 
 }  // end namespace GMSH
 }  // end namespace FileIO
-
-#endif /* GMSHPOINT_H_ */

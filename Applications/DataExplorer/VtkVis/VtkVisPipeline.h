@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKVISPIPELINE_H
-#define VTKVISPIPELINE_H
+#pragma once
 
 #include <QMap>
 #include <QVector>
@@ -149,5 +148,3 @@ signals:
     void vtkVisPipelineChanged() const;
     void itemSelected(const QModelIndex&) const;
 };
-
-#endif // VTKVISPIPELINE_H

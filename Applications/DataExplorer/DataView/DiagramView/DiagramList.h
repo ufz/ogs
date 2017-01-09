@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef DIAGRAMLIST_H
-#define DIAGRAMLIST_H
+#pragma once
 
 #include <QColor>
 #include <QDateTime>
@@ -184,5 +183,3 @@ private:
     QColor _colour;
     QDateTime _startDate;
 };
-
-#endif //DIAGRAMLIST_H

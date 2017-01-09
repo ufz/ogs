@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_GENERICNATURALBOUNDARYCONDITIONLOCALASSEMBLER_H
-#define PROCESSLIB_GENERICNATURALBOUNDARYCONDITIONLOCALASSEMBLER_H
+#pragma once
 
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
@@ -53,5 +52,3 @@ protected:
 };
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_GENERICNATURALBOUNDARYCONDITIONLOCALASSEMBLER_H

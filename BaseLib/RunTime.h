@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef RUNTIME_H
-#define RUNTIME_H
+#pragma once
 
 #if defined(USE_MPI)
 #include <mpi.h>
@@ -70,5 +69,3 @@ class RunTime
 };
 
 } // end namespace BaseLib
-
-#endif

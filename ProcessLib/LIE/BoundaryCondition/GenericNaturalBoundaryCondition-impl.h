@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_GENERICNATURALBOUNDARYCONDITION_IMPL_H_
-#define PROCESSLIB_LIE_GENERICNATURALBOUNDARYCONDITION_IMPL_H_
+#pragma once
 
 #include "GenericNaturalBoundaryCondition.h"
 
@@ -98,5 +97,3 @@ void GenericNaturalBoundaryCondition<
 
 }  // LIE
 }  // ProcessLib
-
-#endif // PROCESSLIB_LIE_GENERICNATURALBOUNDARYCONDITION_IMPL_H_

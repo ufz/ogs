@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_HYDROMECHANICS_INTEGRATIONPOINTDATAFRACTURE_H_
-#define PROCESSLIB_LIE_HYDROMECHANICS_INTEGRATIONPOINTDATAFRACTURE_H_
+#pragma once
 
 #include <Eigen/Eigen>
 
@@ -80,5 +79,3 @@ struct IntegrationPointDataFracture final
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif // PROCESSLIB_LIE_HYDROMECHANICS_INTEGRATIONPOINTDATAFRACTURE_H_

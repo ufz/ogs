@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef VOGELS_LIQUID_DYNAMIC_VISCOSITY_H_
-#define VOGELS_LIQUID_DYNAMIC_VISCOSITY_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -112,4 +111,3 @@ struct VogelsViscosityConstantsCH4
 
 }  // end namespace
 }  // end namespace
-#endif

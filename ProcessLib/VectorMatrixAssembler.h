@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_VECTORMATRIXASSEMBLER_H_
-#define PROCESSLIB_VECTORMATRIXASSEMBLER_H_
+#pragma once
 
 #include <vector>
 #include "NumLib/NumericsConfig.h"
@@ -65,5 +64,3 @@ private:
 };
 
 }   // namespace ProcessLib
-
-#endif  // PROCESSLIB_VECTORMATRIXASSEMBLER_H_

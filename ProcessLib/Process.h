@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_PROCESS_H_
-#define PROCESS_LIB_PROCESS_H_
+#pragma once
 
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
@@ -206,5 +205,3 @@ private:
 };
 
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_PROCESS_H_

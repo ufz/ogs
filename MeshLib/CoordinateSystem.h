@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef COORDINATESYSTEMTYPE_H_
-#define COORDINATESYSTEMTYPE_H_
+#pragma once
 
 #include <cmath>
 
@@ -78,5 +77,3 @@ private:
 };
 
 } // MeshLib
-
-#endif // COORDINATESYSTEMTYPE_H_

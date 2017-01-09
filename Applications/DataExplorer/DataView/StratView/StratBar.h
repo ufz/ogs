@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef STRATBAR_H
-#define STRATBAR_H
+#pragma once
 
 #include <cmath>
 
@@ -63,5 +62,3 @@ private:
     GeoLib::StationBorehole* _station;
     std::map<std::string, DataHolderLib::Color> _stratColors;
 };
-
-#endif //STRATBAR_H

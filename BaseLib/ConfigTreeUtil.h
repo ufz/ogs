@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef BASELIB_CONFIGTREEUTIL
-#define BASELIB_CONFIGTREEUTIL
+#pragma once
 
 #include "ConfigTree.h"
 
@@ -89,5 +88,3 @@ makeConfigTree(std::string const& filepath, bool const be_ruthless,
                std::string const& toplevel_tag);
 
 }
-
-#endif

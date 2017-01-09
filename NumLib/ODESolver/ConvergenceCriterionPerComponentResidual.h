@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_CONVERGENCECRITERIONPERCOMPONENTRESIDUAL_H
-#define NUMLIB_CONVERGENCECRITERIONPERCOMPONENTRESIDUAL_H
+#pragma once
 
 #include <vector>
 #include "MathLib/LinAlg/LinAlgEnums.h"
@@ -65,5 +64,3 @@ createConvergenceCriterionPerComponentResidual(
     BaseLib::ConfigTree const& config);
 
 }  // namespace NumLib
-
-#endif  // NUMLIB_CONVERGENCECRITERIONPERCOMPONENTRESIDUAL_H

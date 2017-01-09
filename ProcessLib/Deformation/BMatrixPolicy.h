@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_FEM_BMATRIXPOLICY_H_
-#define PROCESSLIB_FEM_BMATRIXPOLICY_H_
+#pragma once
 
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
@@ -94,5 +93,3 @@ public:
     using BMatrixType = MatrixType<_kelvin_vector_size, _number_of_dof>;
 };
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_FEM_BMATRIXPOLICY_H_

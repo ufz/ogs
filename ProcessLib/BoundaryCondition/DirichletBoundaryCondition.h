@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_DIRICHLETBOUNDARYCONDITION_H
-#define PROCESSLIB_DIRICHLETBOUNDARYCONDITION_H
+#pragma once
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/IndexValueVector.h"
@@ -63,5 +62,3 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters);
 
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_DIRICHLETBOUNDARYCONDITION_H

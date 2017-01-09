@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKOGSPOLYDATAALGORITHM_H
-#define VTKOGSPOLYDATAALGORITHM_H
+#pragma once
 
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
@@ -65,5 +64,3 @@ private:
     std::pair<float, float> _origin;
     double _scalingFactor;
 };
-
-#endif // VTKOGSPOLYDATAALGORITHM_H

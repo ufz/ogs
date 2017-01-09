@@ -5,8 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  */
-#ifndef BOUNDARYELEMENTSONSURFACE_H_
-#define BOUNDARYELEMENTSONSURFACE_H_
+#pragma once
 
 #include <vector>
 
@@ -65,5 +64,3 @@ private:
 };
 
 } // end namespace MeshGeoToolsLib
-
-#endif /* BOUNDARYELEMENTSONSURFACE_H_ */

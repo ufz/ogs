@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef FINALIZEMATRIXASSEMBLY_H_
-#define FINALIZEMATRIXASSEMBLY_H_
+#pragma once
 
 namespace MathLib
 {
@@ -24,5 +23,3 @@ bool finalizeMatrixAssembly(MAT_T &)
 }
 
 } // MathLib
-
-#endif /* FINALIZEMATRIXASSEMBLY_H_ */

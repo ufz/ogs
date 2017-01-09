@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef PIECEWISELINEARINTERPOLATION_H_
-#define PIECEWISELINEARINTERPOLATION_H_
+#pragma once
 
 #include <vector>
 
@@ -81,5 +80,3 @@ protected:
     std::vector<double> _values_at_supp_pnts;
 };
 }  // end namespace MathLib
-
-#endif /* PIECEWISELINEARINTERPOLATION_H_ */

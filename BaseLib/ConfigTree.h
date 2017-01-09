@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef BASELIB_CONFIGTREE_H_
-#define BASELIB_CONFIGTREE_H_
+#pragma once
 
 #include <typeindex>
 #include <map>
@@ -645,7 +644,3 @@ private:
 }
 
 #include "ConfigTree-impl.h"
-
-
-#endif // BASELIB_CONFIGTREE_H_
-

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITETHRESHOLDFILTER_H
-#define VTKCOMPOSITETHRESHOLDFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 
@@ -34,5 +33,3 @@ public:
 
 private:
 };
-
-#endif // VTKCOMPOSITETHRESHOLDFILTER_H

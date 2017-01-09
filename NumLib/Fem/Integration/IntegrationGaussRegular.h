@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef INTEGRATIONGAUSSREGULAR_H_
-#define INTEGRATIONGAUSSREGULAR_H_
+#pragma once
 
 #include <cmath>
 #include <array>
@@ -98,5 +97,3 @@ private:
 } // NumLib
 
 #include "IntegrationGaussRegular-impl.h"
-
-#endif //INTEGRATIONGAUSSREGULAR_H_

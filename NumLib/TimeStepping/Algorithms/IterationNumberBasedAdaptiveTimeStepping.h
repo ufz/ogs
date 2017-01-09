@@ -9,8 +9,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef ITERATIONNUMBERBASEDADAPTIVETIMESTEPPING_H_
-#define ITERATIONNUMBERBASEDADAPTIVETIMESTEPPING_H_
+#pragma once
 
 #include <vector>
 
@@ -142,5 +141,3 @@ private:
 };
 
 } // NumLib
-
-#endif // NEWTONADAPTIVETIMESTEPPING_H_

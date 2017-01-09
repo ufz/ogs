@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_ODE_CONCRETEODESOLVER_H
-#define MATHLIB_ODE_CONCRETEODESOLVER_H
+#pragma once
 
 #include <memory>
 
@@ -119,5 +118,3 @@ private:
 
 }  // namespace ODE
 }  // namespace MathLib
-
-#endif  // MATHLIB_ODE_CONCRETEODESOLVER_H

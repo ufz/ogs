@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_TWOPHASEFLOWWITHPP_TWOPHASEFLOWWITHPPPROCESSDATA_H
-#define PROCESSLIB_TWOPHASEFLOWWITHPP_TWOPHASEFLOWWITHPPPROCESSDATA_H
+#pragma once
 
 namespace MeshLib
 {
@@ -83,5 +82,3 @@ struct TwoPhaseFlowWithPPProcessData
 
 }  // namespace TwoPhaseFlowWithPP
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_TwoPhaseFlowWithPP_TwoPhaseFlowWithPPPROCESSDATA_H

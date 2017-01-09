@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef SPATIALFUNCTIONLINEAR_H_
-#define SPATIALFUNCTIONLINEAR_H_
+#pragma once
 
 #include "MathLib/LinearFunction.h"
 #include "TemplateSpatialFunction.h"
@@ -23,5 +22,3 @@ namespace NumLib
 typedef TemplateSpatialFunction<MathLib::LinearFunction<double, 3> > SpatialFunctionLinear;
 
 }
-
-#endif /* SPATIALFUNCTIONLINEAR_H_ */

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef STRATWINDOW_H
-#define STRATWINDOW_H
+#pragma once
 
 #include "ui_StratWindow.h"
 #include <QWidget>
@@ -49,5 +48,3 @@ private:
 private slots:
     void on_closeButton_clicked();
 };
-
-#endif //STRATWINDOW_H

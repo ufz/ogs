@@ -10,8 +10,7 @@
  * Created on November 11, 2016, 10:49 AM
  */
 
-#ifndef OGS_PIECE_WISE_LINEAR_MONOTONIC_CURVE_H
-#define OGS_PIECE_WISE_LINEAR_MONOTONIC_CURVE_H
+#pragma once
 
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
@@ -46,4 +45,3 @@ private:
     bool isStrongMonotonic() const;
 };
 }  // namespace
-#endif /* OGS_PIECE_WISE_LINEAR_MONOTONIC_CURVE_H */

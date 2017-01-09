@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MESHLIB_VTKIO_PVDFILE_H
-#define MESHLIB_VTKIO_PVDFILE_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -37,5 +36,3 @@ private:
 
 } // namespace IO
 } // namespace MeshLib
-
-#endif // MESHLIB_VTKIO_PVDFILE_H

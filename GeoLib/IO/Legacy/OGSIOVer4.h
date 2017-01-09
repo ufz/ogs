@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef OGSIOVER4_H_
-#define OGSIOVER4_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -45,5 +44,3 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 }
 } // end namespace IO
 } // end namespace GeoLib
-
-#endif /* OGSIOVER4_H_ */

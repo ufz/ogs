@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef EDGERATIOMETRIC_H_
-#define EDGERATIOMETRIC_H_
+#pragma once
 
 #include "ElementQualityMetric.h"
 #include "MathLib/Point3d.h"
@@ -49,5 +48,3 @@ private:
     double checkHexahedron (std::vector<const MathLib::Point3d*> const& pnts) const;
 };
 }
-
-#endif /* EDGERATIOMETRIC_H_ */

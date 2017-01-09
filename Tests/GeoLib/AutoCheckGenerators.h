@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef TESTS_GEOLIB_AUTOCHECKGENERATORS_H_
-#define TESTS_GEOLIB_AUTOCHECKGENERATORS_H_
+#pragma once
 
 #include <cmath>
 #include <memory>
@@ -101,5 +100,3 @@ struct PairSegmentGeneratorXY
 };
 
 }  // namespace autocheck
-
-#endif  // TESTS_GEOLIB_AUTOCHECKGENERATORS_H_

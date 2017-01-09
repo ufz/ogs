@@ -22,8 +22,7 @@
 #include <string>
 #include <vector>
 
-#ifndef POINTVEC_H_
-#define POINTVEC_H_
+#pragma once
 
 #include "TemplateVec.h"
 #include "OctTree.h"
@@ -146,5 +145,3 @@ private:
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 16>> _oct_tree;
 };
 } // end namespace
-
-#endif /* POINTVEC_H_ */

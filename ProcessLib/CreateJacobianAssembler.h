@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_CREATEJACOBIANASSEMBLER_H
-#define PROCESSLIB_CREATEJACOBIANASSEMBLER_H
+#pragma once
 
 #include "BaseLib/ConfigTree.h"
 
@@ -19,5 +18,3 @@ class AbstractJacobianAssembler;
 std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
     boost::optional<BaseLib::ConfigTree> const& config);
 }  // ProcessLib
-
-#endif  // PROCESSLIB_CREATEJACOBIANASSEMBLER_H

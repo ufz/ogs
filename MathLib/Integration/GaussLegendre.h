@@ -10,9 +10,7 @@
  *
  */
 
-
-#ifndef GAUSSLEGENDRE_H_
-#define GAUSSLEGENDRE_H_
+#pragma once
 
 #include "WeightedSum.h"
 
@@ -50,6 +48,3 @@ double const GaussLegendre<4>::W[4];
 #endif
 
 }  // namespace MathLib
-
-#endif // GAUSSLEGENDRE_H_
-

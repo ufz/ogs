@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef QGRAPHICSGRID_H
-#define QGRAPHICSGRID_H
+#pragma once
 
 #include <QGraphicsItem>
 #include <QPen>
@@ -68,5 +67,3 @@ private:
     int _numberOfYCells;
     bool _showTicks;
 };
-
-#endif //QGRAPHICSGRID_H

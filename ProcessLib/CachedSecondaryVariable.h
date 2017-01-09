@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_CACHEDSECONDARYVARIABLE_H
-#define PROCESSLIB_CACHEDSECONDARYVARIABLE_H
+#pragma once
 
 #include "NumLib/Extrapolation/ExtrapolatableElementCollection.h"
 #include "NumLib/NamedFunctionProvider.h"
@@ -87,5 +86,3 @@ private:
 };
 
 }  // namespace ProcessLib
-
-#endif // PROCESSLIB_CACHEDSECONDARYVARIABLE_H

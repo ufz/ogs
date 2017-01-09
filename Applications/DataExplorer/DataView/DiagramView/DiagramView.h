@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef DIAGRAMVIEW_H
-#define DIAGRAMVIEW_H
+#pragma once
 
 #include "DiagramScene.h"
 #include <QGraphicsView>
@@ -61,5 +60,3 @@ private:
 
     DiagramScene* _scene;
 };
-
-#endif //DIAGRAMVIEW_H

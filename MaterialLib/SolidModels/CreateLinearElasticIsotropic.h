@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALLIB_SOLIDMODELS_CREATELINEARELASTICISOTROPIC_H_
-#define MATERIALLIB_SOLIDMODELS_CREATELINEARELASTICISOTROPIC_H_
+#pragma once
 
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 #include "LinearElasticIsotropic.h"
@@ -51,5 +50,3 @@ createLinearElasticIsotropic(
 
 }  // namespace Solids
 }  // namespace MaterialLib
-
-#endif  // MATERIALLIB_SOLIDMODELS_CREATELINEARELASTICISOTROPIC_H_

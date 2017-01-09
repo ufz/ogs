@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_UTILS_PROCESSUTILS_H
-#define PROCESSLIB_UTILS_PROCESSUTILS_H
+#pragma once
 
 #include <vector>
 #include "BaseLib/ConfigTree.h"
@@ -121,5 +120,3 @@ Parameter<ParameterDataType>& findParameter(
     return findParameter<ParameterDataType>(name, parameters, num_components);
 }
 }  // ProcessLib
-
-#endif  // PROCESSLIB_UTILS_PROCESSUTILS_H

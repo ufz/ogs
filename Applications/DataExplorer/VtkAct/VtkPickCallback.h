@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef VTKPICKCALLBACK_H
-#define VTKPICKCALLBACK_H
+#pragma once
 
 // ** INCLUDES **
 #include <QObject>
@@ -42,5 +41,3 @@ signals:
     /// Is emitted when an vtkActor was picked.
     void actorPicked (vtkProp3D* actor);
 };
-
-#endif // VTKPICKCALLBACK_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ELEMENT_H_
-#define ELEMENT_H_
+#pragma once
 
 #include <limits>
 #include <boost/optional.hpp>
@@ -232,6 +231,3 @@ protected:
 bool isPointInElementXY(MathLib::Point3d const& p, Element const& e);
 
 } /* namespace */
-
-#endif /* ELEMENT_H_ */
-

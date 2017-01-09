@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef EDGERETURN_H_
-#define EDGERETURN_H_
+#pragma once
 
 namespace MeshLib
 {
@@ -43,7 +42,3 @@ public:
 };
 
 } // end MeshLib
-
-
-#endif /* EDGERETURN_H_ */
-

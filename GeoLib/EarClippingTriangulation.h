@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef EARCLIPPINGTRIANGULATION_H_
-#define EARCLIPPINGTRIANGULATION_H_
+#pragma once
 
 #include <list>
 #include <vector>
@@ -62,5 +61,3 @@ private:
     GeoLib::Orientation _original_orient;
 };
 } // end namespace GeoLib
-
-#endif /* EARCLIPPINGTRIANGULATION_H_ */

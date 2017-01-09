@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESSLIB_LIE_HYDROMECHANICS_CREATE_LOCAL_ASSEMBLERS_H_
-#define PROCESSLIB_LIE_HYDROMECHANICS_CREATE_LOCAL_ASSEMBLERS_H_
+#pragma once
 
 #include <vector>
 
@@ -99,5 +98,3 @@ void createLocalAssemblers(
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_LIE_HYDROMECHANICS_CREATE_LOCAL_ASSEMBLERS_H_

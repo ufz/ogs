@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_NONLINEARSYSTEM_H
-#define NUMLIB_NONLINEARSYSTEM_H
+#pragma once
 
 #include "EquationSystem.h"
 #include "Types.h"
@@ -97,5 +96,3 @@ public:
 
 //! @}
 }
-
-#endif  // NUMLIB_NONLINEARSYSTEM_H

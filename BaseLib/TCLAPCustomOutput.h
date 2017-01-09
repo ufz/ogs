@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef TCLAPCUSTOMOUTPUT_H_
-#define TCLAPCUSTOMOUTPUT_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -179,6 +178,3 @@ TCLAPCustomOutput::_longUsage( TCLAP::CmdLineInterface& _cmd,
 }
 
 } //namespace BaseLib
-
-#endif /* TCLAPCUSTOMOUTPUT_H_ */
-

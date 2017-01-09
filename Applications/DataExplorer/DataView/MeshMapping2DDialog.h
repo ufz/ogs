@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MESHMAPPING2DDIALOG_H
-#define MESHMAPPING2DDIALOG_H
+#pragma once
 
 #include "ui_MeshMapping2D.h"
 
@@ -43,5 +42,3 @@ private slots:
     /// Instructions if the Cancel-Button has been pressed.
     void reject() { this->done(QDialog::Rejected); }
 };
-
-#endif //MESHMAPPING2DDIALOG_H

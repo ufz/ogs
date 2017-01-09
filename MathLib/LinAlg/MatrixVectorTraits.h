@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_MATRIX_VECTOR_TRAITS_H
-#define MATHLIB_MATRIX_VECTOR_TRAITS_H
+#pragma once
 
 #include <memory>
 #include "MatrixSpecifications.h"
@@ -54,5 +53,3 @@ SPECIALIZE_MATRIX_VECTOR_TRAITS(EigenVector, EigenVector::IndexType)
 #endif
 
 #undef SPECIALIZE_MATRIX_VECTOR_TRAITS
-
-#endif // MATHLIB_MATRIX_VECTOR_TRAITS_H

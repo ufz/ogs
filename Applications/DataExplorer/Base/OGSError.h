@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef OGSERROR_H
-#define OGSERROR_H
+#pragma once
 
 class QString;
 
@@ -53,5 +52,3 @@ protected:
     OGSError();
     ~OGSError();
 };
-
-#endif //OGSERROR_H

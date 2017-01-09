@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_GENERICNATURALBOUNDARYCONDITION_H
-#define PROCESSLIB_GENERICNATURALBOUNDARYCONDITION_H
+#pragma once
 
 #include "MeshLib/MeshSubset.h"
 #include "BoundaryCondition.h"
@@ -74,5 +73,3 @@ private:
 }  // ProcessLib
 
 #include "GenericNaturalBoundaryCondition-impl.h"
-
-#endif  // PROCESSLIB_GENERICNATURALBOUNDARYCONDITION_H

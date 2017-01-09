@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef COORDINATESMAPPINGTESTDATA_TESTLINE2_H_
-#define COORDINATESMAPPINGTESTDATA_TESTLINE2_H_
+#pragma once
 
 #include "MeshLib/Elements/Line.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
@@ -99,5 +98,3 @@ const double TestLine2::cl_exp_detJ = -1;
 const double TestLine2::ze_exp_J[dim*dim] = {0.0};
 
 }
-
-#endif

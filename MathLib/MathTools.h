@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef MATHTOOLS_H_
-#define MATHTOOLS_H_
+#pragma once
 
 #include <cstddef>
 
@@ -131,5 +130,3 @@ template<typename Type> Type limitValueInInterval(const Type variable,
     return variable;
 }
 } // namespace
-
-#endif /* MATHTOOLS_H_ */

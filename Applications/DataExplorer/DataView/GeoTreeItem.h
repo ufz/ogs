@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GEOTREEITEM_H
-#define GEOTREEITEM_H
+#pragma once
 
 #include "TreeItem.h"
 
@@ -44,5 +43,3 @@ public:
 private:
     const GeoLib::GeoObject* _item;
 };
-
-#endif //GEOTREEITEM_H

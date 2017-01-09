@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GEOTYPE_H_
-#define GEOTYPE_H_
+#pragma once
 
 #include <string>
 
@@ -32,5 +31,3 @@ enum class GEOTYPE {
 std::string convertGeoTypeToString (GEOTYPE geo_type);
 
 } // end namespace GeoLib
-
-#endif /* GEOTYPE_H_ */

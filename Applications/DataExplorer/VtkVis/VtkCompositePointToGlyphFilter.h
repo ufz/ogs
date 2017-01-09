@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITEPOINTTOGLYPHFILTER_H
-#define VTKCOMPOSITEPOINTTOGLYPHFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 
@@ -33,5 +32,3 @@ public:
 private:
     vtkSphereSource* _glyphSource;
 };
-
-#endif // VTKCOMPOSITEPOINTTOGLYPHFILTER_H

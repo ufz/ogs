@@ -14,8 +14,7 @@
  *
  */
 
-#ifndef VECTOR3_H
-#define VECTOR3_H
+#pragma once
 
 #include <cmath>
 
@@ -193,5 +192,3 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v,
                     MathLib::Vector3 const& w);
 
 }
-
-#endif // VECTOR3_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_CALCULATESURFACEFLUX_MAPBULKELEMENT_H
-#define PROCESSLIB_CALCULATESURFACEFLUX_MAPBULKELEMENT_H
+#pragma once
 
 #include <array>
 
@@ -67,4 +66,3 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
                                      std::size_t bulk_face_id,
                                      MathLib::WeightedPoint3D const& wp);
 }  // end namespace ProcessLib
-#endif

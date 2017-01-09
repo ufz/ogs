@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_NUMERICSCONFIG_H_
-#define NUMLIB_NUMERICSCONFIG_H_
+#pragma once
 
 /**
  * This file provides a configuration of the global matrix/vector and
@@ -22,7 +21,3 @@
 //
 #include "NumLib/Assembler/SerialExecutor.h"
 using GlobalExecutor = NumLib::SerialExecutor;
-
-
-
-#endif  // NUMLIB_NUMERICSCONFIG_H_

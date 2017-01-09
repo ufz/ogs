@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef INTEGRATIONGAUSSTET_H_
-#define INTEGRATIONGAUSSTET_H_
+#pragma once
 
 #include "MathLib/Integration/GaussLegendreTet.h"
 
@@ -109,5 +108,3 @@ private:
 };
 
 }
-
-#endif //INTEGRATIONGAUSSTET_H_

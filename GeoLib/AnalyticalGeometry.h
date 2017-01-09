@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ANALYTICAL_GEOMETRY_H_
-#define ANALYTICAL_GEOMETRY_H_
+#pragma once
 
 #include <memory>
 
@@ -260,5 +259,3 @@ void sortSegments(MathLib::Point3d const& seg_beg_pnt,
 } // end namespace GeoLib
 
 #include "AnalyticalGeometry-impl.h"
-
-#endif /* ANALYTICAL_GEOMETRY_H_ */

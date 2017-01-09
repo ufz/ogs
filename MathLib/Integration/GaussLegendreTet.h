@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef GAUSSLEGENDRETET_H_
-#define GAUSSLEGENDRETET_H_
+#pragma once
 
 #include <array>
 
@@ -51,5 +50,3 @@ template <>
 double const GaussLegendreTet<1>::W[1];
 #endif
 }
-
-#endif //GAUSSLEGENDRETET_H_

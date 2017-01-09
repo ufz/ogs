@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef GMSHINTERFACE_H_
-#define GMSHINTERFACE_H_
+#pragma once
 
 #include <iosfwd>
 
@@ -116,5 +115,3 @@ private:
 };
 } // end namespace GMSH
 } // end namespace FileIO
-
-#endif /* GMSHINTERFACE_H_ */

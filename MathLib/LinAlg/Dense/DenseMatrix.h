@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MATRIX_H
-#define MATRIX_H
+#pragma once
 
 #include "MathLib/Vector3.h"
 
@@ -189,5 +188,3 @@ std::ostream& operator<< (std::ostream &os, const DenseMatrix<FP_TYPE, IDX_TYPE>
 } // end namespace MathLib
 
 #include "DenseMatrix-impl.h"
-
-#endif

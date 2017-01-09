@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef APPLICATIONSLIB_LINEARSOLVERLIBRARYSETUP_H_
-#define APPLICATIONSLIB_LINEARSOLVERLIBRARYSETUP_H_
+#pragma once
 
 /// The LinearSolverLibrarySetup takes care of proper initialization and
 /// shutting down of an external linear solver library. The concrete
@@ -74,6 +73,3 @@ struct LinearSolverLibrarySetup final
 };
 }    // ApplicationsLib
 #endif
-
-
-#endif  // APPLICATIONSLIB_LINEARSOLVERLIBRARYSETUP_H_

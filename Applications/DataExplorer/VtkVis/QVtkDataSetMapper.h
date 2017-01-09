@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef QVTKDATASETMAPPER_H
-#define QVTKDATASETMAPPER_H
+#pragma once
 
 #include <QObject>
 #include <vtkDataSetMapper.h>
@@ -48,5 +47,3 @@ private:
     QVtkDataSetMapper(const QVtkDataSetMapper&); // Not implemented.
     void operator=(const QVtkDataSetMapper&); // Not implemented
 };
-
-#endif // QVTKDATASETMAPPER_H

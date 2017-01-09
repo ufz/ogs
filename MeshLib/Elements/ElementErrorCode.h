@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ELEMENTERRORCODES_H
-#define ELEMENTERRORCODES_H
+#pragma once
 
 #include <bitset>
 #include <string>
@@ -61,6 +60,3 @@ public:
 private:
 
 };
-
-
-#endif //ELEMENTERRORCODES_H

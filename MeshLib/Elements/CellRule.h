@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef CELLRULE_H_
-#define CELLRULE_H_
+#pragma once
 
 namespace MeshLib
 {
@@ -33,6 +32,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* CELLRULE_H_ */
-

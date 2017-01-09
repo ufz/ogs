@@ -12,8 +12,7 @@
 
 */
 
-#ifndef NODE_WISE_MESH_PARTITIONER_H_
-#define NODE_WISE_MESH_PARTITIONER_H_
+#pragma once
 
 #include <memory>
 #include <tuple>
@@ -192,5 +191,3 @@ private:
 };
 
 }  // namespace MeshLib
-
-#endif  // NODE_WISE_MESH_PARTITIONER_H_

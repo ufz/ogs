@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHVALUEEDITDIALOG_H
-#define MESHVALUEEDITDIALOG_H
+#pragma once
 
 #include "ui_MeshValueEdit.h"
 
@@ -51,5 +50,3 @@ private slots:
 signals:
     void valueEditFinished(MeshLib::Mesh*);
 };
-
-#endif //MESHVALUEEDITDIALOG_H

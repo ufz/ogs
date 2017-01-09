@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITETEXTUREONSURFACEFILTER_H
-#define VTKCOMPOSITETEXTUREONSURFACEFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 
@@ -32,5 +31,3 @@ public:
 
 private:
 };
-
-#endif // VTKCOMPOSITETEXTUREONSURFACEFILTER_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOLORLOOKUPTABLE_H
-#define VTKCOLORLOOKUPTABLE_H
+#pragma once
 
 // ** INCLUDES **
 #include <cassert>
@@ -95,5 +94,3 @@ private:
     std::map<double, unsigned char*> _dict;
     DataHolderLib::LUTType _type;
 };
-
-#endif // VTKCOLORLOOKUPTABLE_H

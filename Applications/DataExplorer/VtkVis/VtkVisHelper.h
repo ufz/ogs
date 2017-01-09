@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKVISHELPER_H
-#define VTKVISHELPER_H
+#pragma once
 
 class QImage;
 class vtkTexture;
@@ -31,5 +30,3 @@ public:
     /// @brief Converts a QImage-object into a vtkTexture-object
     static vtkTexture* QImageToVtkTexture(QImage &img);
 };
-
-#endif // VTKVISHELPER_H

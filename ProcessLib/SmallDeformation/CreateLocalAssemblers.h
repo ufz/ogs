@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESSLIB_SMALLDEFORMATION_CREATE_LOCAL_ASSEMBLERS_H_
-#define PROCESSLIB_SMALLDEFORMATION_CREATE_LOCAL_ASSEMBLERS_H_
+#pragma once
 
 #include <vector>
 
@@ -102,5 +101,3 @@ void createLocalAssemblers(
 }  // SmallDeformation
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_SMALLDEFORMATION_CREATE_LOCAL_ASSEMBLERS_H_

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKALGORITHMPROPERTIES_H
-#define VTKALGORITHMPROPERTIES_H
+#pragma once
 
 // ** INCLUDES **
 #include <QList>
@@ -235,5 +234,3 @@ protected:
 signals:
     void ScalarVisibilityChanged(bool on);
 };
-
-#endif // VTKALGORITHMPROPERTIES_H

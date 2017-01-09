@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TESTFEHEX8_H_
-#define TESTFEHEX8_H_
+#pragma once
 
 #include "MeshLib/Elements/Hex.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
@@ -89,6 +88,3 @@ public:
 };
 
 } // namespace
-
-#endif
-

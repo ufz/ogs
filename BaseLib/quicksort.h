@@ -9,8 +9,7 @@
  *
  */
 
-#ifndef QUICKSORT_H_
-#define QUICKSORT_H_
+#pragma once
 
 #include <algorithm>
 #include <cassert>
@@ -95,5 +94,3 @@ void quicksort(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::v
 }
 
 } // end namespace BaseLib
-
-#endif /* QUICKSORT_H_ */

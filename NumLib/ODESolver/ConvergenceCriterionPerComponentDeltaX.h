@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_CONVERGENCECRITERIONPERCOMPONENTDELTAX_H
-#define NUMLIB_CONVERGENCECRITERIONPERCOMPONENTDELTAX_H
+#pragma once
 
 #include "MathLib/LinAlg/LinAlgEnums.h"
 #include "ConvergenceCriterionPerComponent.h"
@@ -58,5 +57,3 @@ std::unique_ptr<ConvergenceCriterionPerComponentDeltaX>
 createConvergenceCriterionPerComponentDeltaX(BaseLib::ConfigTree const& config);
 
 }  // namespace NumLib
-
-#endif  // NUMLIB_CONVERGENCECRITERIONPERCOMPONENTDELTAX_H

@@ -12,8 +12,7 @@
 
  */
 
-#ifndef STRICTINTVALIDATOR_H_
-#define STRICTINTVALIDATOR_H_
+#pragma once
 
 #include <QIntValidator>
 
@@ -37,5 +36,3 @@ public:
         return Acceptable;
     }
 };
-
-#endif /* STRICTINTVALIDATOR_H_ */

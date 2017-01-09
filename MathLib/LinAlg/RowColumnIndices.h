@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef ROWCOLUMNINDICES_H_
-#define ROWCOLUMNINDICES_H_
+#pragma once
 
 #include <vector>
 
@@ -28,5 +27,3 @@ struct RowColumnIndices
 };
 
 } // MathLib
-
-#endif  // ROWCOLUMNINDICES_H_

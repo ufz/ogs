@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHQUALITYSELECTIONDIALOG_H
-#define MESHQUALITYSELECTIONDIALOG_H
+#pragma once
 
 #include "MeshEnums.h"
 #include "ui_MeshQualitySelection.h"
@@ -52,5 +51,3 @@ private slots:
     void accept();
     void reject();
 };
-
-#endif //MESHQUALITYSELECTIONDIALOG_H

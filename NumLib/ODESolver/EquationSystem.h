@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_EQUATIONSYSTEM_H
-#define NUMLIB_EQUATIONSYSTEM_H
+#pragma once
 
 #include "NumLib/DOF/MatrixProviderUser.h"
 
@@ -66,5 +65,3 @@ public:
 
 //! @}
 }
-
-#endif

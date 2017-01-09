@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_HEATCONDUCTION_HEATCONDUCTIONPROCESSDATA_H
-#define PROCESSLIB_HEATCONDUCTION_HEATCONDUCTIONPROCESSDATA_H
+#pragma once
 
 namespace MeshLib
 {
@@ -57,5 +56,3 @@ struct HeatConductionProcessData
 
 }  // namespace HeatConduction
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_HEATCONDUCTION_HEATCONDUCTIONPROCESSDATA_H

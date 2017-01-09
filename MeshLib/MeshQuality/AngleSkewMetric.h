@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ANGLESKEWMETRIC_H_
-#define ANGLESKEWMETRIC_H_
+#pragma once
 
 #include "ElementQualityMetric.h"
 
@@ -45,5 +44,3 @@ private:
                                     double &min_angle, double &max_angle) const;
 };
 }
-
-#endif /* ANGLESKEWMETRIC_H_ */

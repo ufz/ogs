@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef MESHLIB_ELEMENTS_ELEMENTS_H_
-#define MESHLIB_ELEMENTS_ELEMENTS_H_
+#pragma once
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
@@ -22,5 +21,3 @@
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
-
-#endif  // MESHLIB_ELEMENTS_ELEMENTS_H_

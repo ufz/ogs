@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESS_LIB_TES_FEM_IMPL_H_
-#define PROCESS_LIB_TES_FEM_IMPL_H_
+#pragma once
 
 #include "MaterialLib/Adsorption/Adsorption.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -276,5 +275,3 @@ bool TESLocalAssembler<
 
 }  // namespace TES
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_TES_FEM_IMPL_H_

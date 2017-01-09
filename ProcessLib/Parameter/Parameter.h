@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_PARAMETER_H_
-#define PROCESS_LIB_PARAMETER_H_
+#pragma once
 
 #include <map>
 #include <memory>
@@ -87,5 +86,3 @@ std::unique_ptr<ParameterBase> createParameter(
         curves);
 
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_PARAMETER_H_

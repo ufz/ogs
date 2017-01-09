@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef MAKEVECTORUNIQUE_H
-#define MAKEVECTORUNIQUE_H
+#pragma once
 
 #include <algorithm>
 #include <vector>
@@ -38,4 +37,3 @@ void makeVectorUnique(std::vector<T>& v, Compare comp)
 }
 
 } // end namespace BaseLib
-#endif

@@ -10,11 +10,8 @@
  * Created on August 18, 2016, 11:12 AM
  */
 
-#ifndef OGS_POROUSPROPERTYHEADERS_H
-#define OGS_POROUSPROPERTYHEADERS_H
+#pragma once
 
 #include "Permeability/createPermeabilityModel.h"
 #include "Porosity/createPorosityModel.h"
 #include "Storage/createStorageModel.h"
-
-#endif /* POROUSPROPERTYHEADERS_H */

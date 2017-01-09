@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_SMALLDEFORMATION_LOCALASSEMBLERDATA_FRACTURE_H_
-#define PROCESSLIB_LIE_SMALLDEFORMATION_LOCALASSEMBLERDATA_FRACTURE_H_
+#pragma once
 
 #include "SmallDeformationLocalAssemblerFracture.h"
 
@@ -47,5 +46,3 @@ public:
 }  // namespace SmallDeformation
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_LIE_SMALLDEFORMATION_LOCALASSEMBLERDATA_FRACTURE_H_

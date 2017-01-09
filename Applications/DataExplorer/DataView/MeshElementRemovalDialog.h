@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHELEMENTREMOVALDIALOG_H
-#define MESHELEMENTREMOVALDIALOG_H
+#pragma once
 
 #include "ui_MeshElementRemoval.h"
 #include <QDialog>
@@ -57,5 +56,3 @@ private:
 signals:
     void meshAdded(MeshLib::Mesh* mesh);
 };
-
-#endif //MESHELEMENTREMOVALDIALOG_H

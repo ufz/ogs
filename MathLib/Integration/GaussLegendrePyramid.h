@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef GAUSSLEGENDREPYRAMID_H_
-#define GAUSSLEGENDREPYRAMID_H_
+#pragma once
 
 #include <array>
 
@@ -51,5 +50,3 @@ template <>
 double const GaussLegendrePyramid<1>::W[1];
 #endif
 }
-
-#endif //GAUSSLEGENDREPYRAMID_H_

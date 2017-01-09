@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITELINETOTUBEFILTER_H
-#define VTKCOMPOSITELINETOTUBEFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 
@@ -31,5 +30,3 @@ public:
 private:
 
 };
-
-#endif // VTKCOMPOSITELINETOTUBEFILTER_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LISLINEARSOLVER_H_
-#define LISLINEARSOLVER_H_
+#pragma once
 
 #include <vector>
 #include <string>
@@ -61,6 +60,3 @@ private:
 };
 
 } // MathLib
-
-#endif //LISLINEARSOLVER_H_
-

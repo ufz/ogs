@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_SMALLDEFORMATION_LOCALASSEMBLERDATAMATRIXNEARFRACTURE_H_
-#define PROCESSLIB_LIE_SMALLDEFORMATION_LOCALASSEMBLERDATAMATRIXNEARFRACTURE_H_
+#pragma once
 
 #include "SmallDeformationLocalAssemblerMatrixNearFracture.h"
 
@@ -48,5 +47,3 @@ public:
 }  // namespace SmallDeformation
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif // PROCESSLIB_LIE_SMALLDEFORMATION_LOCALASSEMBLERDATAMATRIXNEARFRACTURE_H_

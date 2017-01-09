@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef TET_H_
-#define TET_H_
+#pragma once
 
 #include "TemplateElement.h"
 #include "TetRule4.h"
@@ -28,5 +27,3 @@ typedef TemplateElement<TetRule4> Tet;
 typedef TemplateElement<TetRule10> Tet10;
 
 }
-
-#endif /* TET_H_ */

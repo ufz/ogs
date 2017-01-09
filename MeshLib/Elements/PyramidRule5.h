@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PYRAMIDRULE5_H_
-#define PYRAMIDRULE5_H_
+#pragma once
 
 #include "MeshLib/MeshEnums.h"
 #include "Element.h"
@@ -100,6 +99,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* PYRAMIDRULE5_H_ */
-

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_ODE_HANDLES_H
-#define MATHLIB_ODE_HANDLES_H
+#pragma once
 
 #include "ODESolverTypes.h"
 
@@ -111,5 +110,3 @@ struct FunctionHandlesImpl final : public FunctionHandles
 }  // namespace detail
 }  // namespace ODE
 }  // namespace MathLib
-
-#endif  // MATHLIB_ODE_HANDLES_H

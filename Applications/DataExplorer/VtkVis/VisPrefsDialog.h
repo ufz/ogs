@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VISPREFSDIALOG_H
-#define VISPREFSDIALOG_H
+#pragma once
 
 #include "Point.h"
 #include "ui_VisPrefs.h"
@@ -59,5 +58,3 @@ private:
     GeoLib::Point _above;
     GeoLib::Point _below;
 };
-
-#endif //VISPREFSDIALOG_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_NEUMANNBOUNDARYCONDITION_LOCALASSEMBLER_H_
-#define PROCESSLIB_LIE_NEUMANNBOUNDARYCONDITION_LOCALASSEMBLER_H_
+#pragma once
 
 #include "NumLib/DOF/DOFTableUtil.h"
 
@@ -94,5 +93,3 @@ private:
 
 }   // namespace LIE
 }   // namespace ProcessLib
-
-#endif // PROCESSLIB_LIE_NEUMANNBOUNDARYCONDITION_LOCALASSEMBLER_H_

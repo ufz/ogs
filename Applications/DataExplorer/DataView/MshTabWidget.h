@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MSHTABWIDGET_H
-#define MSHTABWIDGET_H
+#pragma once
 
 // ** INCLUDES **
 #include "ui_MshTabWidgetBase.h"
@@ -32,5 +31,3 @@ private slots:
     void enableSaveButton(bool enable) { this->saveMeshPushButton->setEnabled(enable); };
     void enableRemoveButton(bool enable) { this->removeMeshPushButton->setEnabled(enable); };
 };
-
-#endif // MSHTABWIDGET_H

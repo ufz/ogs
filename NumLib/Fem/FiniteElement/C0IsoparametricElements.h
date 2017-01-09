@@ -10,9 +10,7 @@
  *
  */
 
-
-#ifndef C0ISOPARAMETRICELEMENTS_H_
-#define C0ISOPARAMETRICELEMENTS_H_
+#pragma once
 
 #include "NumLib/Fem/ShapeFunction/ShapePoint1.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
@@ -133,5 +131,3 @@ struct FePYRA13
 };
 
 } // NumLib
-
-#endif //C0ISOPARAMETRICELEMENTS_H_

@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef ELEMENTCOORDINATESMAPPINGLOCAL_H_
-#define ELEMENTCOORDINATESMAPPINGLOCAL_H_
+#pragma once
 
 #include <vector>
 #include <Eigen/Eigen>
@@ -54,5 +53,3 @@ private:
 };
 
 }
-
-#endif // ELEMENTCOORDINATESMAPPINGLOCAL_H_

@@ -11,8 +11,7 @@
  * Created on October 13, 2016, 5:37 PM
  */
 
-#ifndef OGS_BASELIB_REORDERVECTOR_H
-#define OGS_BASELIB_REORDERVECTOR_H
+#pragma once
 
 namespace BaseLib
 {
@@ -35,5 +34,3 @@ void reorderVector(std::vector<ValueType>& v,
 }
 
 } // end of namespace
-#endif /* OGS_BASELIB_REORDERVECTOR_H */
-

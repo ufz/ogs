@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_NONLINEAR_ROOT1D_H
-#define MATHLIB_NONLINEAR_ROOT1D_H
+#pragma once
 
 #include <cassert>
 #include <cmath>
@@ -161,5 +160,3 @@ struct AndersonBjorck
 }
 
 } // namespace MathLib
-
-#endif // MATHLIB_NONLINEAR_ROOT1D_H

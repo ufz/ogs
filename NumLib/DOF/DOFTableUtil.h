@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_DOF_DOFTABLEUTIL_H
-#define NUMLIB_DOF_DOFTABLEUTIL_H
+#pragma once
 
 #include "MathLib/LinAlg/LinAlgEnums.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -44,5 +43,3 @@ double norm(GlobalVector const& x, unsigned const global_component,
             LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);
 
 }  // namespace NumLib
-
-#endif  // NUMLIB_DOF_DOFTABLEUTIL_H

@@ -5,8 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  */
-#ifndef BOUNDARYELEMENTSSEARCHER_H_
-#define BOUNDARYELEMENTSSEARCHER_H_
+#pragma once
 
 #include <vector>
 
@@ -87,5 +86,3 @@ private:
 };
 
 } // end namespace MeshGeoToolsLib
-
-#endif /* BOUNDARYELEMENTSSEARCHER_H_ */

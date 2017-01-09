@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LOGOGSIMPLEFORMATTER_H
-#define LOGOGSIMPLEFORMATTER_H
+#pragma once
 
 #include <logog/include/logog.hpp>
 
@@ -34,5 +33,3 @@ class LogogSimpleFormatter : public logog::FormatterMSVC
 };
 
 }  // namespace BaseLib
-
-#endif  // LOGOGSIMPLEFORMATTER_H

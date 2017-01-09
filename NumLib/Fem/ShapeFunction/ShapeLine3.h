@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef SHAPELINE3_H_
-#define SHAPELINE3_H_
+#pragma once
 
 #include "MeshLib/Elements/Line.h"
 
@@ -47,5 +46,3 @@ public:
 }
 
 #include "ShapeLine3-impl.h"
-
-#endif //SHAPELINE3_H_

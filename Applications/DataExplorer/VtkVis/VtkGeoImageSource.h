@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKGEOIMAGESOURCE_H
-#define VTKGEOIMAGESOURCE_H
+#pragma once
 
 #include "VtkAlgorithmProperties.h"
 #include <vtkSimpleImageToImageFilter.h>
@@ -77,5 +76,3 @@ private:
 
     double _x0, _y0, _z0, _spacing;
 };
-
-#endif // VTKGEOIMAGESOURCE_H

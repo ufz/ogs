@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef LINERULE2_H_
-#define LINERULE2_H_
+#pragma once
 
 #include "MeshLib/MeshEnums.h"
 #include "Element.h"
@@ -69,6 +68,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* LINERULE2_H_ */
-

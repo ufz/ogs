@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALSLIB_ADSORPTION_REACTIONINERT_H
-#define MATERIALSLIB_ADSORPTION_REACTIONINERT_H
+#pragma once
 
 #include "BaseLib/Error.h"
 
@@ -34,4 +33,3 @@ public:
 };
 
 }
-#endif // MATERIALSLIB_ADSORPTION_REACTIONINERT_H

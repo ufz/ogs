@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef PROJECTDATA_H_
-#define PROJECTDATA_H_
+#pragma once
 
 #include <boost/optional/optional.hpp>
 #include <map>
@@ -171,5 +170,3 @@ private:
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         _curves;
 };
-
-#endif  // PROJECTDATA_H_

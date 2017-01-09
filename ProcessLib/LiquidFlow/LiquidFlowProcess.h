@@ -10,8 +10,7 @@
  * Created on August 19, 2016, 1:38 PM
  */
 
-#ifndef OGS_LIQUIDFLOWPROCESS_H
-#define OGS_LIQUIDFLOWPROCESS_H
+#pragma once
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
@@ -97,5 +96,3 @@ private:
 
 }  // end of namespace
 }  // end of namespace
-
-#endif /* LIQUIDFLOWPROCESS_H */

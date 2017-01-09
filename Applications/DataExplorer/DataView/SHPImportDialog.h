@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef SHPIMPORTDIALOG_H
-#define SHPIMPORTDIALOG_H
+#pragma once
 
 #include <QDialog>
 
@@ -71,5 +70,3 @@ private slots:
 signals:
     void shpLoaded(QString);
 };
-
-#endif //SHPIMPORTDIALOG_H

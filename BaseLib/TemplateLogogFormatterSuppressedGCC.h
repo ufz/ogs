@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef TEMPLATELOGOGFORMATTERSUPPRESSEDGCC_H_
-#define TEMPLATELOGOGFORMATTERSUPPRESSEDGCC_H_
+#pragma once
 
 #include <string>
 
@@ -56,5 +55,3 @@ private:
 } // namespace BaseLib
 
 #include "TemplateLogogFormatterSuppressedGCC-impl.h"
-
-#endif // TEMPLATELOGOGFORMATTERSUPPRESSEDGCC_H_

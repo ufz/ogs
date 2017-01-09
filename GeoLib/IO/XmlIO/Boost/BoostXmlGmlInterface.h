@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef BOOSTXMLGMLINTERFACE_H_
-#define BOOSTXMLGMLINTERFACE_H_
+#pragma once
 
 #include <map>
 #include <string>
@@ -75,5 +74,3 @@ private:
 
 } // end namespace IO
 } // end namespace GeoLib
-
-#endif /* BOOSTXMLGMLINTERFACE_H_ */

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_CENTRALDIFFERENCESJACOBIANASSEMBLER_H
-#define PROCESSLIB_CENTRALDIFFERENCESJACOBIANASSEMBLER_H
+#pragma once
 
 #include <memory>
 #include "AbstractJacobianAssembler.h"
@@ -72,5 +71,3 @@ std::unique_ptr<CentralDifferencesJacobianAssembler>
 createCentralDifferencesJacobianAssembler(BaseLib::ConfigTree const& config);
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_CENTRALDIFFERENCESJACOBIANASSEMBLER_H

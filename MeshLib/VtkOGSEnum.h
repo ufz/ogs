@@ -7,13 +7,10 @@
  *
  */
 
-#ifndef VTKOGSENUM_H_
-#define VTKOGSENUM_H_
+#pragma once
 
 #include "MeshEnums.h"
 
 MeshLib::CellType VtkCellTypeToOGS(int type);
 
 int OGSToVtkCellType(MeshLib::CellType ogs);
-
-#endif // VTKOGSENUM_H_

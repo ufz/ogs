@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef POLYLINEWITHSEGMENTMARKER_H_
-#define POLYLINEWITHSEGMENTMARKER_H_
+#pragma once
 
 #include "Polyline.h"
 
@@ -59,5 +58,3 @@ private:
 };
 
 }
-
-#endif /* POLYLINEWITHSEGMENTMARKER_H_ */

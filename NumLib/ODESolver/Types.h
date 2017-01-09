@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_TYPES_H
-#define NUMLIB_TYPES_H
+#pragma once
 
 namespace NumLib
 {
@@ -38,5 +37,3 @@ enum class ODESystemTag : char
 //! @}
 
 } // namespace NumLib
-
-#endif // NUMLIB_TYPES_H

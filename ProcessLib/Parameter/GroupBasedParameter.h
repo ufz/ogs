@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_GROUPBASEDPARAMETER_H_
-#define PROCESSLIB_GROUPBASEDPARAMETER_H_
+#pragma once
 
 #include "BaseLib/Error.h"
 #include "MeshLib/PropertyVector.h"
@@ -91,5 +90,3 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
     MeshLib::Mesh const& mesh);
 
 }  // ProcessLib
-
-#endif // PROCESSLIB_GROUPBASEDPARAMETER_H_

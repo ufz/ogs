@@ -30,8 +30,7 @@
  * lambda_flow_D    - deviatoric increment of plastic strain
  *
  */
-#ifndef MATERIALLIB_SOLIDMODELS_EHLERS_IMPL_H_
-#define MATERIALLIB_SOLIDMODELS_EHLERS_IMPL_H_
+#pragma once
 
 #include <boost/math/special_functions/pow.hpp>
 #include <logog/include/logog.hpp>
@@ -657,5 +656,3 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
 
 }  // namespace Solids
 }  // namespace MaterialLib
-
-#endif  // MATERIALLIB_SOLIDMODELS_EHLERS_IMPL_H_

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_CONVERGENCECRITERIONRESIDUAL_H
-#define NUMLIB_CONVERGENCECRITERIONRESIDUAL_H
+#pragma once
 
 #include <boost/optional.hpp>
 #include "ConvergenceCriterion.h"
@@ -55,5 +54,3 @@ std::unique_ptr<ConvergenceCriterionResidual> createConvergenceCriterionResidual
     BaseLib::ConfigTree const& config);
 
 }  // NumLib
-
-#endif  // NUMLIB_CONVERGENCECRITERIONRESIDUAL_H

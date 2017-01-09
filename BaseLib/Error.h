@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef BASELIB_ERROR_H
-#define BASELIB_ERROR_H
+#pragma once
 
 #ifdef OGS_FATAL_ABORT
 
@@ -36,5 +35,3 @@
     throw std::runtime_error(BaseLib::format(fmt, ##__VA_ARGS__) + OGS_LOCATION);
 
 #endif // OGS_FATAL_ABORT
-
-#endif //BASELIB_ERROR_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKPOINTSSOURCE_H
-#define VTKPOINTSSOURCE_H
+#pragma once
 
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
@@ -60,5 +59,3 @@ protected:
 
 private:
 };
-
-#endif // VTKPOINTSSOURCE_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef REMOVEMESHCOMPONENTS_H_
-#define REMOVEMESHCOMPONENTS_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -38,5 +37,3 @@ MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh,
 MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::size_t> &removed_node_ids, const std::string &new_mesh_name);
 
 } // end namespace MeshLib
-
-#endif //REMOVEMESHCOMPONENTS_H_

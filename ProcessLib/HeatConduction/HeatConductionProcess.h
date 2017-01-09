@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_HEATCONDUCTIONPROCESS_H_
-#define PROCESS_LIB_HEATCONDUCTIONPROCESS_H_
+#pragma once
 
 #include "ProcessLib/Process.h"
 #include "HeatConductionFEM.h"
@@ -65,5 +64,3 @@ private:
 
 }  // namespace HeatConduction
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_HEATCONDUCTIONPROCESS_H_

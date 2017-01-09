@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MSHITEM_H
-#define MSHITEM_H
+#pragma once
 
 #include "TreeItem.h"
 
@@ -47,5 +46,3 @@ public:
 private:
     MeshLib::VtkMappedMeshSource * _mesh_source;
 };
-
-#endif //MSHITEM_H

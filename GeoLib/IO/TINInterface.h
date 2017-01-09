@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef TININTERFACE_H_
-#define TININTERFACE_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -49,5 +48,3 @@ public:
 
 } // end namespace IO
 } // end namespace GeoLib
-
-#endif /* TININTERFACE_H_ */

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_NEWTONRAPHSON_H_
-#define NUMLIB_NEWTONRAPHSON_H_
+#pragma once
 
 #include <boost/optional.hpp>
 #include <logog/include/logog.hpp>
@@ -91,5 +90,3 @@ private:
     const double _tolerance_squared;
 };
 }  // namespace NumLib
-
-#endif  // NUMLIB_NEWTONRAPHSON_H_

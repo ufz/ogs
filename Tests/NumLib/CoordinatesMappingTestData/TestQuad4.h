@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef COORDINATESMAPPINGTESTDATA_TESTQUAD4_H_
-#define COORDINATESMAPPINGTESTDATA_TESTQUAD4_H_
+#pragma once
 
 #include "MeshLib/Elements/Quad.h"
 #include "NumLib/Fem/ShapeFunction/ShapeQuad4.h"
@@ -101,6 +100,3 @@ const double TestQuad4::cl_exp_detJ = -1.;
 const double TestQuad4::ze_exp_J[dim*dim] = {1.0, 0.0, 0.0, 0.0};
 
 }
-
-#endif
-

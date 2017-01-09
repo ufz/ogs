@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MESHLIB_POINT_H_
-#define MESHLIB_POINT_H_
+#pragma once
 
 #include "TemplateElement.h"
 #include "PointRule1.h"
@@ -19,5 +18,3 @@ namespace MeshLib
 {
     using Point = TemplateElement<PointRule1>;
 }
-
-#endif  // MESHLIB_POINT_H_

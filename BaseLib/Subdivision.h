@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef SUBDIVISION_H_
-#define SUBDIVISION_H_
+#pragma once
 
 #include <cmath>
 
@@ -108,5 +107,3 @@ private:
 };
 
 } // BaseLib
-
-#endif /* SUBDIVISION_H_ */

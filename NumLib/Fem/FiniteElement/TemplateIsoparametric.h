@@ -10,10 +10,7 @@
  *
  */
 
-
-#ifndef TEMPLATEISOPARAMETRIC_H_
-#define TEMPLATEISOPARAMETRIC_H_
-
+#pragma once
 
 #include <cassert>
 #include <boost/math/constants/constants.hpp>
@@ -152,5 +149,3 @@ private:
 };
 
 } // NumLib
-
-#endif //TEMPLATEISOPARAMETRIC_H_

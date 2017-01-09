@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef SHAPETET4_H_
-#define SHAPETET4_H_
+#pragma once
 
 #include "MeshLib/Elements/Tet.h"
 
@@ -48,5 +47,3 @@ public:
 }
 
 #include "ShapeTet4-impl.h"
-
-#endif //SHAPETET4_H_

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKVISPIPELINEITEM_H
-#define VTKVISPIPELINEITEM_H
+#pragma once
 
 // ** INCLUDES **
 #include "BuildInfo.h"
@@ -147,5 +146,3 @@ protected:
 
 private:
 };
-
-#endif // VTKVISPIPELINEITEM_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_SMALLDEFORMATIONPROCESS_H_
-#define PROCESS_LIB_SMALLDEFORMATIONPROCESS_H_
+#pragma once
 
 #include <cassert>
 
@@ -201,5 +200,3 @@ private:
 
 }  // namespace SmallDeformation
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_SMALLDEFORMATIONPROCESS_H_

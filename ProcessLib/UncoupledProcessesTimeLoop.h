@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_UNCOUPLED_PROCESSES_TIMELOOP
-#define PROCESSLIB_UNCOUPLED_PROCESSES_TIMELOOP
+#pragma once
 
 #include <memory>
 #include <logog/include/logog.hpp>
@@ -52,5 +51,3 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
         nonlinear_solvers);
 
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_UNCOUPLED_PROCESSES_TIMELOOP

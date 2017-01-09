@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MESHGENERATOR_H_
-#define MESHGENERATOR_H_
+#pragma once
 
 #include <array>
 #include <functional>
@@ -508,5 +507,3 @@ createSurfaceMesh(std::string const& mesh_name,
 
 }  //MeshGenerator
 } //MeshLib
-
-#endif //MESHGENERATOR_H_

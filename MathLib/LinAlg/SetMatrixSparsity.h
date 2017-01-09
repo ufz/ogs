@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef MATHLIB_SETMATRIXSPARSITY_H_
-#define MATHLIB_SETMATRIXSPARSITY_H_
+#pragma once
 
 namespace MathLib
 {
@@ -41,5 +40,3 @@ void setMatrixSparsity(MATRIX& matrix, SPARSITY_PATTERN const& sparsity_pattern)
 #ifdef OGS_USE_EIGEN
 #include "Eigen/EigenMatrix.h"
 #endif  // OGS_USE_EIGEN
-
-#endif  // MATHLIB_SETMATRIXSPARSITY_H_

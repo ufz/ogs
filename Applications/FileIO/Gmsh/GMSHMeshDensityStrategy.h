@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef GMSHMESHDENSITYSTRATEGY_H_
-#define GMSHMESHDENSITYSTRATEGY_H_
+#pragma once
 
 #include <vector>
 
@@ -37,5 +36,3 @@ public:
 
 }  // end namespace GMSH
 }  // end namespace FileIO
-
-#endif /* GMSHMESHDENSITYSTRATEGY_H_ */

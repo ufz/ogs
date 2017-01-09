@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef PROPERTYVECTOR_H_
-#define PROPERTYVECTOR_H_
+#pragma once
 
 #include <cassert>
 #include <iterator>
@@ -272,5 +271,3 @@ private:
 };
 
 } // end namespace MeshLib
-
-#endif

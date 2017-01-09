@@ -10,8 +10,7 @@
  * Created on August 17, 2016, 2:36 PM
  */
 
-#ifndef OGS_CREATEPERMEABILITYMODEL_H
-#define OGS_CREATEPERMEABILITYMODEL_H
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -31,5 +30,3 @@ Eigen::MatrixXd createPermeabilityModel(BaseLib::ConfigTree const& config);
 
 }  // end of namespace
 }  // end of namespace
-
-#endif /* CREATEPERMEABILITYMODEL_H */

@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MSHVIEW_H
-#define MSHVIEW_H
+#pragma once
 
 #include "Point.h"
 #include "GeoType.h"
@@ -110,4 +109,3 @@ signals:
     void saveMeshAction();
 
 };
-#endif // MSHVIEW_H

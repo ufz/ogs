@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef RADIUSEDGERATIOMETRIC_H_
-#define RADIUSEDGERATIOMETRIC_H_
+#pragma once
 
 #include "ElementQualityMetric.h"
 
@@ -33,5 +32,3 @@ public:
     virtual void calculateQuality ();
 };
 }
-
-#endif /* RADIUSEDGERATIOMETRIC_H_ */

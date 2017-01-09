@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MSHMODEL_H
-#define MSHMODEL_H
+#pragma once
 
 // ** INCLUDES **
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
@@ -84,5 +83,3 @@ signals:
     void meshAdded(MshModel*, const QModelIndex&);
     void meshRemoved(MshModel*, const QModelIndex&);
 };
-
-#endif // MSHMODEL_H

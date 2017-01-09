@@ -12,9 +12,7 @@
  *
  */
 
-
-#ifndef GEO_STATIONBOREHOLE_H
-#define GEO_STATIONBOREHOLE_H
+#pragma once
 
 #include "Station.h"
 
@@ -120,5 +118,3 @@ private:
 bool isBorehole(GeoLib::Point const* pnt);
 
 } // namespace
-
-#endif // GEO_STATIONBOREHOLE_H

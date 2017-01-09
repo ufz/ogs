@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef CONDITEM_H
-#define CONDITEM_H
+#pragma once
 
 #include "FEMCondition.h"
 #include "TreeItem.h"
@@ -43,5 +42,3 @@ public:
 private:
     const FEMCondition* _item;
 };
-
-#endif //CONDITEM_H

@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef POINT3DWITHID_H_
-#define POINT3DWITHID_H_
+#pragma once
 
 #include <limits>
 
@@ -68,6 +67,3 @@ protected:
 };
 
 }
-
-#endif /* POINT3DWITHID_H_ */
-

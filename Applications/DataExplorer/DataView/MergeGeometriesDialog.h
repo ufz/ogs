@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MERGEGEOMETRIESDIALOG_H
-#define MERGEGEOMETRIESDIALOG_H
+#pragma once
 
 #include "ui_MergeGeometries.h"
 #include <QDialog>
@@ -57,5 +56,3 @@ private slots:
     /// Instructions if the Cancel-Button has been pressed.
     void reject();
 };
-
-#endif //MERGEGEOMETRIESDIALOG_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALLIB_FRACTURE_IDENTITY2_H_
-#define MATERIALLIB_FRACTURE_IDENTITY2_H_
+#pragma once
 
 #include <Eigen/Eigen>
 
@@ -32,5 +31,3 @@ extern template struct FractureIdentity2<3>;
 
 }  // namespace Fracture
 }  // namespace MaterialLib
-
-#endif // MATERIALLIB_FRACTURE_IDENTITY2_H_

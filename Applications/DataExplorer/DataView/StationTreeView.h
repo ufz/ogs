@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef QSTATIONTREEVIEW_H
-#define QSTATIONTREEVIEW_H
+#pragma once
 
 #include "Station.h"
 
@@ -81,5 +80,3 @@ signals:
     void stationListSaved(QString listName, QString fileName);
     void diagramRequested(QModelIndex&);
 };
-
-#endif //QSTATIONTREEVIEW_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKVISPOINTSETITEM_H
-#define VTKVISPOINTSETITEM_H
+#pragma once
 
 // ** INCLUDES **
 #include "VtkVisPipelineItem.h"
@@ -95,5 +94,3 @@ private:
     bool activeAttributeExists(vtkDataSetAttributes* data, std::string& name);
 
 };
-
-#endif // VTKVISPOINTSETITEM_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef TETGENINTERFACE_H_
-#define TETGENINTERFACE_H_
+#pragma once
 
 #include <vector>
 
@@ -216,5 +215,3 @@ private:
     bool _boundary_markers;
 };
 }
-
-#endif /* TETGENINTERFACE_H_ */

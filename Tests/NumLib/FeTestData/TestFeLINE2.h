@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TESTFELINE2_H_
-#define TESTFELINE2_H_
+#pragma once
 
 #include "MeshLib/Elements/Line.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
@@ -69,6 +68,3 @@ public:
 };
 
 } // namespace
-
-#endif
-

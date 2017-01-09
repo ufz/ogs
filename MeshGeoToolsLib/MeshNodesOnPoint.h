@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef MESHNODESONPOINT_H_
-#define MESHNODESONPOINT_H_
+#pragma once
 
 #include <vector>
 
@@ -63,5 +62,3 @@ private:
     std::vector<std::size_t> _msh_node_ids;
 };
 } // end namespace MeshGeoToolsLib
-
-#endif /* MESHNODESONPOINT_H_ */

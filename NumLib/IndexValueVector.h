@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUM_LIB_INDEXVALUEVECTOR_H
-#define NUM_LIB_INDEXVALUEVECTOR_H
+#pragma once
 
 #include <vector>
 
@@ -23,5 +22,3 @@ struct IndexValueVector final
 };
 
 }
-
-#endif  // NUM_LIB_INDEXVALUEVECTOR_H

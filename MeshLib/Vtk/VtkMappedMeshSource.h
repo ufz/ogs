@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef _VTKMAPPEDMESHSOURCE
-#define _VTKMAPPEDMESHSOURCE
+#pragma once
 
 #include <string>
 #include <vector>
@@ -113,5 +112,3 @@ private:
 };
 
 } // Namespace MeshLib
-
-#endif //_VTKMAPPEDMESHSOURCE

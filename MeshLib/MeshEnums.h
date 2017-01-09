@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHENUMS_H
-#define MESHENUMS_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -108,5 +107,3 @@ const std::string CellType2String(const CellType t);
 const std::string MeshQualityType2String(const MeshQualityType t);
 
 }
-
-#endif //MESHENUMS_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_MATRIX_NEAR_FRACTUER_IMPL_H_
-#define PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_MATRIX_NEAR_FRACTUER_IMPL_H_
+#pragma once
 
 #include "HydroMechanicsLocalAssemblerMatrixNearFracture.h"
 
@@ -165,5 +164,3 @@ computeSecondaryVariableConcreteWithVector(
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif // PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_MATRIX_NEAR_FRACTUER_IMPL_H_

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LICENSEDIALOG_H
-#define LICENSEDIALOG_H
+#pragma once
 
 #include "ui_License.h"
 #include <QDialog>
@@ -36,5 +35,3 @@ private slots:
     void on_okPushButton_pressed();
 
 };
-
-#endif //LICENSEDIALOG_H

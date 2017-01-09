@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef SHAPEMATRICES_H_
-#define SHAPEMATRICES_H_
+#pragma once
 
 #include <ostream>
 
@@ -110,5 +109,3 @@ struct ShapeMatrices
 } // NumLib
 
 #include "ShapeMatrices-impl.h"
-
-#endif //SHAPEMATRICES_H_

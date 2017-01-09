@@ -15,8 +15,7 @@
  * @author Karsten Rink
  */
 
-#ifndef SHPINTERFACE_H
-#define SHPINTERFACE_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -85,5 +84,3 @@ private:
 };
 
 }
-
-#endif //SHPINTERFACE_H

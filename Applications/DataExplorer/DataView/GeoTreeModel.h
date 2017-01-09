@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GEOTREEMODEL_H
-#define GEOTREEMODEL_H
+#pragma once
 
 #include <vector>
 
@@ -96,5 +95,3 @@ private:
 
     std::vector<GeoTreeItem*> _lists;
 };
-
-#endif //GEOTREEMODEL_H

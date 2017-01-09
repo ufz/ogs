@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef OGS_TWOPHASEFLOWWITHPPPROCESS_H
-#define OGS_TWOPHASEFLOWWITHPPPROCESS_H
+#pragma once
 
 #include "MaterialLib/TwoPhaseModels/TwoPhaseFlowWithPPMaterialProperties.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
@@ -75,5 +74,3 @@ private:
 
 }  // end of namespace
 }  // end of namespace
-
-#endif /* TWOPHASEFLOWWITHPPPROCESS_H */

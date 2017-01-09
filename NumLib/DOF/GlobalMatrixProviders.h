@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_GLOBAL_MATRIX_PROVIDERS
-#define NUMLIB_GLOBAL_MATRIX_PROVIDERS
+#pragma once
 
 #include "MatrixProviderUser.h"
 
@@ -27,5 +26,3 @@ struct GlobalMatrixProvider
 void cleanupGlobalMatrixProviders();
 
 } // MathLib
-
-#endif // NUMLIB_GLOBAL_MATRIX_PROVIDERS

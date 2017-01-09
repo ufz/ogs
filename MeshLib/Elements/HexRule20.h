@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef HEXRULE20_H_
-#define HEXRULE20_H_
+#pragma once
 
 #include "MeshLib/MeshEnums.h"
 #include "Element.h"
@@ -67,6 +66,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* HEXRULE20_H_ */
-

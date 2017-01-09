@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef VTKMESHCONVERTER_H
-#define VTKMESHCONVERTER_H
+#pragma once
 
 #include <vtkDataArray.h>
 #include <vtkType.h>
@@ -119,5 +118,3 @@ private:
 };
 
 } // end namespace MeshLib
-
-#endif // VTKMESHCONVERTER_H

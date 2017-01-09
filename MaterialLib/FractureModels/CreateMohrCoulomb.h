@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALLIB_FRACTURE_CREATEMOHRCOULOMB_H_
-#define MATERIALLIB_FRACTURE_CREATEMOHRCOULOMB_H_
+#pragma once
 
 #include "FractureModelBase.h"
 
@@ -25,5 +24,3 @@ createMohrCoulomb(
 
 }  // namespace Fracture
 }  // namespace MaterialLib
-
-#endif

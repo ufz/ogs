@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef ASCIIRASTERINTERFACE_H_
-#define ASCIIRASTERINTERFACE_H_
+#pragma once
 
 #include <fstream>
 #include <vector>
@@ -57,5 +56,3 @@ private:
 boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
     std::vector<std::string> const& raster_paths);
 } // end namespace FileIO
-
-#endif /* ASCIIRASTERINTERFACE_H_ */

@@ -9,8 +9,7 @@
 
 // TODO merge that with MatrixVectorTraits?
 
-#ifndef MATHLIB_UNIFIED_MATRIX_SETTERS_H
-#define MATHLIB_UNIFIED_MATRIX_SETTERS_H
+#pragma once
 
 #include <initializer_list>
 #include <Eigen/Core>
@@ -69,5 +68,3 @@ void addToMatrix(EigenMatrix& m,
 } // namespace MathLib
 
 #endif // OGS_USE_EIGEN
-
-#endif // MATHLIB_UNIFIED_MATRIX_SETTERS_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKADDFILTERDIALOG_H
-#define VTKADDFILTERDIALOG_H
+#pragma once
 
 // ** INCLUDES **
 #include "ui_VtkAddFilterDialogBase.h"
@@ -45,5 +44,3 @@ private:
     VtkVisPipeline& _pipeline;
     QModelIndex _parentIndex;
 };
-
-#endif // VTKADDFILTERDIALOG_H

@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef LINEARINTERPOLATIONSURFACE_H_
-#define LINEARINTERPOLATIONSURFACE_H_
+#pragma once
 
 #include <vector>
 
@@ -96,6 +95,3 @@ private:
 };
 
 } // NumLib
-
-#endif //LINEARINTERPOLATIONSURFACE_H_
-

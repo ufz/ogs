@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef MESHSUBSETS_H_
-#define MESHSUBSETS_H_
+#pragma once
 
 #include <algorithm>
 #include <cstdlib>
@@ -108,5 +107,3 @@ private:
 };
 
 }   // namespace MeshLib
-
-#endif    // MESHSUBSETS_H_

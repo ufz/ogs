@@ -7,9 +7,7 @@
  *
  */
 
-
-#ifndef DISTRIBUTION_H_
-#define DISTRIBUTION_H_
+#pragma once
 
 #include <vector>
 
@@ -36,5 +34,3 @@ std::vector<double> generateNodeValueDistribution(
     const std::vector<std::size_t> &vec_node_ids);
 
 } // NumLib
-
-#endif // DISTRIBUTION_H_

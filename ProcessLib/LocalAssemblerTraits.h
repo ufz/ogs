@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LOCALASSEMBLERTRAITS_H
-#define PROCESSLIB_LOCALASSEMBLERTRAITS_H
+#pragma once
 
 namespace ProcessLib
 {
@@ -230,5 +229,3 @@ static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 1,
 #endif
 
 }
-
-#endif // PROCESSLIB_LOCALASSEMBLERTRAITS_H

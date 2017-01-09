@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MODELLINGTABWIDGET_H
-#define MODELLINGTABWIDGET_H
+#pragma once
 
 // ** INCLUDES **
 #include "ui_ModellingTabWidgetBase.h"
@@ -32,5 +31,3 @@ private slots:
 
 signals:
 };
-
-#endif // MODELLINGTABWIDGET_H

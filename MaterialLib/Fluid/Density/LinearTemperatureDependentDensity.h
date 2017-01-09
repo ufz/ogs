@@ -11,8 +11,7 @@
  * Created on August 10, 2016, 11:34 AM
  */
 
-#ifndef LINEARTEMPERATUREDEPENDENTDENSITY_H
-#define LINEARTEMPERATUREDEPENDENTDENSITY_H
+#pragma once
 
 #include <string>
 
@@ -74,5 +73,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-
-#endif /* LINEARTEMPERATUREDEPENDENTDENSITY_H */

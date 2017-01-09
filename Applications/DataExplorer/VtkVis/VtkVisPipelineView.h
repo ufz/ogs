@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKVISPIPELINEVIEW_H
-#define VTKVISPIPELINEVIEW_H
+#pragma once
 
 // ** INCLUDES **
 #include <QTreeView>
@@ -88,5 +87,3 @@ signals:
     void dataObjectSelected(vtkDataObject*);
     void meshAdded(MeshLib::Mesh*);
 };
-
-#endif // VTKVISPIPELINEVIEW_H

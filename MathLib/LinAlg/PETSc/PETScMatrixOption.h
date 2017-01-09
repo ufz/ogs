@@ -11,8 +11,7 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 */
-#ifndef PETSCMATRIXOPTION_H_
-#define PETSCMATRIXOPTION_H_
+#pragma once
 
 #include <petscmat.h>
 
@@ -53,5 +52,3 @@ struct PETScMatrixOption
 };
 
 } // end namespace
-#endif
-

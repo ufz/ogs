@@ -10,8 +10,7 @@
  * Created on August 19, 2016, 2:28 PM
  */
 
-#ifndef OGS_LIQUIDFLOWLOCALASSEMBLER_H
-#define OGS_LIQUIDFLOWLOCALASSEMBLER_H
+#pragma once
 
 #include <vector>
 
@@ -195,5 +194,3 @@ private:
 }  // end of namespace
 
 #include "LiquidFlowLocalAssembler-impl.h"
-
-#endif /* LIQUIDFLOWLOCALASSEMBLER_H */

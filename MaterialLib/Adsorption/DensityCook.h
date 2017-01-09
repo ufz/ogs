@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALSLIB_ADSORPTION_DENSITYCOOK_H
-#define MATERIALSLIB_ADSORPTION_DENSITYCOOK_H
+#pragma once
 
 #include "Adsorption.h"
 
@@ -54,4 +53,3 @@ inline double alphaTWaterDean(const double T_Ads)
 }
 
 }
-#endif // MATERIALSLIB_ADSORPTION_DENSITYCOOK_H

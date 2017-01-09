@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITENODESELECTIONFILTER_H
-#define VTKCOMPOSITENODESELECTIONFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 #include "Point.h"
@@ -35,5 +34,3 @@ public:
 private:
     std::vector<GeoLib::Point*> _selection;
 };
-
-#endif // VTKCOMPOSITENODESELECTIONFILTER_H

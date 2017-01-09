@@ -12,8 +12,7 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 */
-#ifndef PETSCMATRIX_H_
-#define PETSCMATRIX_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -287,5 +286,3 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
 bool finalizeMatrixAssembly(PETScMatrix &mat, const MatAssemblyType asm_type = MAT_FINAL_ASSEMBLY);
 
 } // end namespace
-#endif
-

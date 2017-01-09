@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ELEMENTSTATUS_H_
-#define ELEMENTSTATUS_H_
+#pragma once
 
 #include <vector>
 
@@ -73,5 +72,3 @@ protected:
 }; /* class */
 
 } /* namespace */
-
-#endif /* ELEMENTSTATUS_H_ */

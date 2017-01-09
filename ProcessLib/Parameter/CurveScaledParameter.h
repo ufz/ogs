@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_CURVESCALEDPARAMETER_H
-#define PROCESSLIB_CURVESCALEDPARAMETER_H
+#pragma once
 
 #include <map>
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
@@ -71,5 +70,3 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
         curves);
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_CURVESCALEDPARAMETER_H

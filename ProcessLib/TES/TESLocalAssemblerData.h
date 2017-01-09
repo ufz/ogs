@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_TES_TESLOCALASSEMBLERDATA_H
-#define PROCESSLIB_TES_TESLOCALASSEMBLERDATA_H
+#pragma once
 
 #include "TESAssemblyParams.h"
 
@@ -56,4 +55,3 @@ struct TESLocalAssemblerData
 };
 }
 }  // namespaces
-#endif  // PROCESSLIB_TES_TESLOCALASSEMBLERDATA_H

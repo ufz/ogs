@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_BOUNDARYCONDITIONBUILDER_H_
-#define PROCESSLIB_LIE_BOUNDARYCONDITIONBUILDER_H_
+#pragma once
 
 #include "NumLib/NumericsConfig.h"
 
@@ -56,5 +55,3 @@ private:
 
 }  // LIE
 }  // ProcessLib
-
-#endif // PROCESSLIB_LIE_BOUNDARYCONDITIONBUILDER_H_

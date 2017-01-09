@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef SIMPLEPOLYGONTREE_H_
-#define SIMPLEPOLYGONTREE_H_
+#pragma once
 
 #include <list>
 
@@ -110,5 +109,3 @@ void createPolygonTrees (std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hie
 
 
 } // end namespace GeoLib
-
-#endif /* SIMPLEPOLYGONTREE_H_ */

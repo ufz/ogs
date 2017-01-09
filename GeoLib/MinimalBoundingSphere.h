@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef MINIMALBOUNDINGSPHERE_H_
-#define MINIMALBOUNDINGSPHERE_H_
+#pragma once
 
 #include <vector>
 
@@ -86,5 +85,3 @@ private:
 };
 
 } // namespace
-
-#endif /* MINIMALBOUNDINGSPHERE_H_ */

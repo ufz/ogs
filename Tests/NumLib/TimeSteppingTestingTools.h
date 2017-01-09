@@ -9,8 +9,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef TIMESTEPPINGTESTINGTOOLS_H_
-#define TIMESTEPPINGTESTINGTOOLS_H_
+#pragma once
 
 #include <logog/include/logog.hpp>
 
@@ -47,5 +46,3 @@ std::vector<double> timeStepping(T_TIME_STEPPING &algorithm, T* obj=nullptr)
     return vec_t;
 }
 } // namespace
-
-#endif // TIMESTEPPINGTESTINGTOOLS_H_

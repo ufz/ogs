@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESSLIB_LIE_COMMON_MESHUTILS_H_
-#define PROCESSLIB_LIE_COMMON_MESHUTILS_H_
+#pragma once
 
 #include <vector>
 
@@ -43,5 +42,3 @@ void getFractureMatrixDataInMesh(
 
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif // PROCESSLIB_LIE_COMMON_MESHUTILS_H_

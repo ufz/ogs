@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MESHLIB_POINTRULE1_H_
-#define MESHLIB_POINTRULE1_H_
+#pragma once
 
 #include "MeshLib/MeshEnums.h"
 #include "Element.h"
@@ -62,6 +61,3 @@ public:
     static double computeVolume(Node const* const* _nodes);
 };
 }
-
-#endif  // MESHLIB_POINTRULE1_H_
-

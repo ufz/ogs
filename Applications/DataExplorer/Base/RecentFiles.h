@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef RECENTFILES_H
-#define RECENTFILES_H
+#pragma once
 
 // ** INCLUDES **
 #include <QAction>
@@ -72,5 +71,3 @@ private:
     enum { _maxFiles = 5 };
     QAction* _fileActions[_maxFiles];
 };
-
-#endif // RECENTFILES_H

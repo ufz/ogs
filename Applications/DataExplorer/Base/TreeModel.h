@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef QTREEMODEL_H
-#define QTREEMODEL_H
+#pragma once
 
 #include <QAbstractItemModel>
 
@@ -58,5 +57,3 @@ protected:
 private:
     void setupModelData(const QStringList &lines, TreeItem* parent);
 };
-
-#endif //QTREEMODEL_H

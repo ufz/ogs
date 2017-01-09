@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITEGEOOBJECTFILTER_H
-#define VTKCOMPOSITEGEOOBJECTFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 #include "GeoType.h"
@@ -42,5 +41,3 @@ private:
     GeoLib::GEOTYPE _type;
     vtkThreshold* _threshold;
 };
-
-#endif // VTKCOMPOSITEGEOOBJECTFILTER_H

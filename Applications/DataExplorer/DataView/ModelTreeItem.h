@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef QMODELTREEITEM_H
-#define QMODELTREEITEM_H
+#pragma once
 
 #include "BaseItem.h"
 #include "Station.h"
@@ -52,5 +51,3 @@ private:
     BaseItem* _item;
     GeoLib::Station* _stn;
 };
-
-#endif //QMODELTREEITEM_H

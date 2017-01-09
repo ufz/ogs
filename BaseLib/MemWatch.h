@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MEMWATCH_H_
-#define MEMWATCH_H_
+#pragma once
 
 namespace BaseLib {
 
@@ -34,5 +33,3 @@ private:
 };
 
 }
-
-#endif /* MEMWATCH_H_ */

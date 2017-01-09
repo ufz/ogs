@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENTCOLLECTION_H
-#define NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENTCOLLECTION_H
+#pragma once
 
 #include <vector>
 #include "ExtrapolatableElement.h"
@@ -131,5 +130,3 @@ makeExtrapolatable(LocalAssemblerCollection const& local_assemblers,
         local_assemblers, integration_point_values_method};
 }
 }  // namespace NumLib
-
-#endif  // NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENTCOLLECTION_H

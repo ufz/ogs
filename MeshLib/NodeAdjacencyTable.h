@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MESHLIB_NODE_ADJACENCE_TABLE_H_
-#define MESHLIB_NODE_ADJACENCE_TABLE_H_
+#pragma once
 
 #include <algorithm>
 #include <vector>
@@ -81,5 +80,3 @@ private:
 };
 
 }   // namespace MeshLib
-
-#endif  //MESHLIB_NODE_ADJACENCE_TABLE_H_

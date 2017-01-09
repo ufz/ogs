@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_OUTPUT_H
-#define PROCESSLIB_OUTPUT_H
+#pragma once
 
 #include "BaseLib/ConfigTree.h"
 #include "MeshLib/IO/VtkIO/PVDFile.h"
@@ -99,5 +98,3 @@ private:
 };
 
 }
-
-#endif // PROCESSLIB_OUTPUT_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef POLYLINEVEC_H_
-#define POLYLINEVEC_H_
+#pragma once
 
 #include "TemplateVec.h"
 #include "Polyline.h"
@@ -30,5 +29,3 @@ namespace GeoLib {
 typedef TemplateVec<Polyline> PolylineVec;
 
 } // end namespace
-
-#endif /* POLYLINEVEC_H_ */

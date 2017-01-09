@@ -10,8 +10,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef TEMPLATEWEIGHTEDPOINT_H_
-#define TEMPLATEWEIGHTEDPOINT_H_
+#pragma once
 
 #include "TemplatePoint.h"
 
@@ -40,6 +39,3 @@ typedef TemplateWeightedPoint<double, double, 2> WeightedPoint2D;
 typedef TemplateWeightedPoint<double, double, 3> WeightedPoint3D;
 
 } // end namespace MathLib
-
-
-#endif /* TEMPLATEWEIGHTEDPOINT_H_ */

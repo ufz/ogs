@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_SMALLDEFORMATION_SMALLDEFORMATIONLOCALASSEMBLER_MATRIX_NEAR_FRACTUER_IMPL_H_
-#define PROCESSLIB_LIE_SMALLDEFORMATION_SMALLDEFORMATIONLOCALASSEMBLER_MATRIX_NEAR_FRACTUER_IMPL_H_
+#pragma once
 
 #include "SmallDeformationLocalAssemblerMatrixNearFracture.h"
 
@@ -282,5 +281,3 @@ postTimestepConcrete(std::vector<double> const& /*local_x*/)
 }  // namespace SmallDeformation
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif // PROCESSLIB_LIE_SMALLDEFORMATION_SMALLDEFORMATIONLOCALASSEMBLER_MATRIX_NEAR_FRACTUER_IMPL_H_

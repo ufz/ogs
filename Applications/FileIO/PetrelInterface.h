@@ -15,8 +15,7 @@
  * @author Thomas Fischer
  */
 
-#ifndef PETRELIO_H_
-#define PETRELIO_H_
+#pragma once
 
 #include <iosfwd>
 #include <list>
@@ -51,5 +50,3 @@ private:
     static const std::size_t MAX_COLS_PER_ROW = 256;
 };
 } // end namespace FileIO
-
-#endif /* PETRELIO_H_ */

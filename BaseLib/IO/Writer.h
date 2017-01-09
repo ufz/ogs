@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef WRITER_H
-#define WRITER_H
+#pragma once
 
 #include <string>
 #include <sstream>
@@ -62,5 +61,3 @@ private:
 
 } // namespace IO
 } // namespace BaseLib
-
-#endif // WRITER_H

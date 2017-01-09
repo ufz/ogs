@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESSLIB_LIE_COMMON_LEVELSETFUNCTION_H_
-#define PROCESSLIB_LIE_COMMON_LEVELSETFUNCTION_H_
+#pragma once
 
 namespace ProcessLib
 {
@@ -25,5 +24,3 @@ double calculateLevelSetFunction(
 
 } // LIE
 } // ProcessLib
-
-#endif // PROCESSLIB_LIE_COMMON_LEVELSETFUNCTION_H_
