@@ -51,6 +51,7 @@ add_executable(DataExplorer
 target_link_libraries(DataExplorer
     Qt5::Core
     Qt5::Gui
+    Qt5::Widgets
     Qt5::Xml
     Qt5::Network
     ApplicationsLib
