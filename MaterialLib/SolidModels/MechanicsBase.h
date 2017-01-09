@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALLIB_SOLIDMODELS_MECHANICSBASE_H_
-#define MATERIALLIB_SOLIDMODELS_MECHANICSBASE_H_
+#pragma once
 
 #include <memory>
 
@@ -116,5 +115,3 @@ struct MechanicsBase
 
 }  // namespace Solids
 }  // namespace MaterialLib
-
-#endif  // MATERIALLIB_SOLIDMODELS_MECHANICSBASE_H_

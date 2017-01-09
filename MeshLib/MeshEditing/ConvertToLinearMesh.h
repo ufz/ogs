@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MESHLIB_CONVERRTTOLINEARMESH_H_
-#define MESHLIB_CONVERRTTOLINEARMESH_H_
+#pragma once
 
 #include <memory>
 #include <string>
@@ -24,5 +23,3 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
     const MeshLib::Mesh& mesh, const std::string& new_mesh_name);
 
 } // end namespace MeshLib
-
-#endif //MESHLIB_CONVERRTTOLINEARMESH_H_

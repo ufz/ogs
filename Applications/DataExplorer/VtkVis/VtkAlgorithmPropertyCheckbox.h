@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKALGORITHMPROPERTIESCHECKBOX_H
-#define VTKALGORITHMPROPERTIESCHECKBOX_H
+#pragma once
 
 #include <QCheckBox>
 
@@ -45,5 +44,3 @@ private slots:
     /// @brief This slots is automatically called when the checkbox state changed.
     void setNewValue(int state);
 };
-
-#endif // VTKALGORITHMPROPERTIESCHECKBOX_H

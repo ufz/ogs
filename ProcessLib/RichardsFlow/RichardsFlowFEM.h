@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_RICHARDSFLOW_FEM_H_
-#define PROCESS_LIB_RICHARDSFLOW_FEM_H_
+#pragma once
 
 #include <vector>
 
@@ -188,5 +187,3 @@ private:
 
 }  // namespace RichardsFlow
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_RichardsFlow_FEM_H_

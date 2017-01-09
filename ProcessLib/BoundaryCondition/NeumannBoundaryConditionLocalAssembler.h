@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_NEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
-#define PROCESSLIB_NEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
+#pragma once
 
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Parameter/Parameter.h"
@@ -73,5 +72,3 @@ private:
 };
 
 }   // namespace ProcessLib
-
-#endif  // PROCESSLIB_NEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H

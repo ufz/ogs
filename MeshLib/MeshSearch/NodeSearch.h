@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NODESEARCH_H_
-#define NODESEARCH_H_
+#pragma once
 
 #include <vector>
 
@@ -53,5 +52,3 @@ private:
 std::vector<Node*> getUniqueNodes(std::vector<Element*> const& elements);
 
 } // end namespace MeshLib
-
-#endif //NODESEARCH_H_

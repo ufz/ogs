@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TESTS_INSTANCECOUNTER_H
-#define TESTS_INSTANCECOUNTER_H
+#pragma once
 
 template <class T>
 class InstanceCounter
@@ -71,5 +70,3 @@ int InstanceCounter<T>::_num_destroyed = 0;
     (num_move) = InstanceCounter<type>::getNumberOfMoves();             \
     (num_copy) = InstanceCounter<type>::getNumberOfCopies();            \
     (num_inst) = InstanceCounter<type>::getNumberOfInstances()
-
-#endif // TESTS_INSTANCECOUNTER_H

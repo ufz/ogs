@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKPOLYLINESSOURCE_H
-#define VTKPOLYLINESSOURCE_H
+#pragma once
 
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
@@ -63,5 +62,3 @@ protected:
 
 private:
 };
-
-#endif // VTKPOLYLINESSOURCE_H

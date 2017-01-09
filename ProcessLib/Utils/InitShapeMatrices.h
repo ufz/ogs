@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESSLIB_UTILS_INIT_SHAPE_MATRICES_H_
-#define PROCESSLIB_UTILS_INIT_SHAPE_MATRICES_H_
+#pragma once
 
 #include <vector>
 
@@ -58,6 +57,3 @@ double interpolateXCoordinate(
 }
 
 } // ProcessLib
-
-
-#endif // PROCESSLIB_UTILS_INIT_SHAPE_MATRICES_H_

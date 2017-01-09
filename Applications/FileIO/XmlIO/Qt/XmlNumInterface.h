@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef XMLNUMINTERFACE_H
-#define XMLNUMINTERFACE_H
+#pragma once
 
 #include "BaseLib/IO/XmlIO/XMLInterface.h"
 #include "BaseLib/IO/XmlIO/Qt/XMLQtInterface.h"
@@ -41,5 +40,3 @@ protected:
 };
 
 }
-
-#endif // XMLNUMINTERFACE_H

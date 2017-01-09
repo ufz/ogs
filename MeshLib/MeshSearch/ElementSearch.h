@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef ELEMENTSEARCH_H_
-#define ELEMENTSEARCH_H_
+#pragma once
 
 #include <limits>
 #include <vector>
@@ -97,5 +96,3 @@ private:
 };
 
 } // end namespace MeshLib
-
-#endif //ELEMENTEXTRACTION_H

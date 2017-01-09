@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef SURFACEEXTRACTIONDIALOG_H
-#define SURFACEEXTRACTIONDIALOG_H
+#pragma once
 
 #include "ui_SurfaceExtraction.h"
 #include <QDialog>
@@ -49,5 +48,3 @@ private:
     int _tolerance;
     MathLib::Vector3 _dir;
 };
-
-#endif //SURFACEEXTRACTIONDIALOG_H

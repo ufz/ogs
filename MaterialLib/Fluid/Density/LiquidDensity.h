@@ -11,8 +11,7 @@
  * Created on August 4, 2016, 10:15 AM
  */
 
-#ifndef LIQUIDDENSITY_H
-#define LIQUIDDENSITY_H
+#pragma once
 
 #include <vector>
 
@@ -141,5 +140,3 @@ private:
 
 }  // end of namespace
 }  // end of namespace
-
-#endif /* LIQUIDDENSITY_H */

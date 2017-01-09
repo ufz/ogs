@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
-#define NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
+#pragma once
 
 #include <map>
 
@@ -123,5 +122,3 @@ private:
 };
 
 }  // namespace NumLib
-
-#endif  // NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H

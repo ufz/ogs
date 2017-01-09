@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef STRICTDOUBLEVALIDATOR_H_
-#define STRICTDOUBLEVALIDATOR_H_
+#pragma once
 
 #include <QDoubleValidator>
 
@@ -40,5 +39,3 @@ public:
         return Acceptable;
     }
 };
-
-#endif /* STRICTDOUBLEVALIDATOR_H_ */

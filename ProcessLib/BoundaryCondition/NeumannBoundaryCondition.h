@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_NEUMANNBOUNDARYCONDITION_H
-#define PROCESSLIB_NEUMANNBOUNDARYCONDITION_H
+#pragma once
 
 #include "ProcessLib/Parameter/Parameter.h"
 #include "GenericNaturalBoundaryCondition.h"
@@ -30,5 +29,3 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_NEUMANNBOUNDARYCONDITION_H

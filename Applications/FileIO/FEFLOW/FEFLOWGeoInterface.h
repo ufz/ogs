@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef FEFLOWGEOINTERFACE_H_
-#define FEFLOWGEOINTERFACE_H_
+#pragma once
 
 #include <iosfwd>
 #include <string>
@@ -57,5 +56,3 @@ private:
                            int dim, std::vector<GeoLib::Point*>& points);
 };
 }  // FileIO
-
-#endif /* FEFLOWGEOINTERFACE_H_ */

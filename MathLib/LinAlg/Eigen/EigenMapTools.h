@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_EIGENMAPTOOLS_H
-#define MATHLIB_EIGENMAPTOOLS_H
+#pragma once
 
 #include <cassert>
 #include <vector>
@@ -211,5 +210,3 @@ inline Eigen::Map<Eigen::VectorXd> toVector(
 }
 
 }  // MathLib
-
-#endif  // MATHLIB_EIGENMAPTOOLS_H

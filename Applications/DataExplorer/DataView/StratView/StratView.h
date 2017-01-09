@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef STRATVIEW_H
-#define STRATVIEW_H
+#pragma once
 
 #include "StratScene.h"
 #include <QGraphicsView>
@@ -69,5 +68,3 @@ private:
 
     StratScene* _scene;
 };
-
-#endif //STRATVIEW_H

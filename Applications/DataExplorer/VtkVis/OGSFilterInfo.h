@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef OGSFILTERINFO_H
-#define OGSFILTERINFO_H
+#pragma once
 
 #include "VtkOGSFilter.h"
 #include <string>
@@ -41,5 +40,3 @@ private:
     VtkOGSFilter::OGSVisFilter _filter;
     VtkTargetObject _target;
 };
-
-#endif // OGSFILTERINFO_H

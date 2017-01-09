@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_NAMEDFUNCTIONCALLER_H
-#define NUMLIB_NAMEDFUNCTIONCALLER_H
+#pragma once
 
 #include <map>
 #include <vector>
@@ -124,7 +123,3 @@ private:
 };
 
 } // namespace NumLib
-
-
-
-#endif // NUMLIB_NAMEDFUNCTIONCALLER_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_SMALLDEFORMATION_SMALLDEFORMATIONLOCALASSEMBLER_FRACTURE_IMPL_H_
-#define PROCESSLIB_LIE_SMALLDEFORMATION_SMALLDEFORMATIONLOCALASSEMBLER_FRACTURE_IMPL_H_
+#pragma once
 
 #include "SmallDeformationLocalAssemblerFracture.h"
 
@@ -178,5 +177,3 @@ postTimestepConcrete(std::vector<double> const& /*local_x*/)
 }  // namespace SmallDeformation
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_LIE_SMALLDEFORMATION_SMALLDEFORMATIONLOCALASSEMBLER_FRACTURE_IMPL_H_

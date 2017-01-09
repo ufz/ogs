@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef FILETOOLS_H
-#define FILETOOLS_H
+#pragma once
 
 #include <fstream>
 #include <string>
@@ -163,5 +162,3 @@ std::string appendPathSeparator(std::string const& path);
 std::string joinPaths(std::string const& pathA, std::string const& pathB);
 
 } // end namespace BaseLib
-
-#endif // FILETOOLS_H

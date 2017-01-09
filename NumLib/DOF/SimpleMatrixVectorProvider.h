@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_SIMPLE_MATRIX_PROVIDER_H
-#define NUMLIB_SIMPLE_MATRIX_PROVIDER_H
+#pragma once
 
 #include <map>
 #include <memory>
@@ -88,5 +87,3 @@ private:
 
 
 } // namespace NumLib
-
-#endif // NUMLIB_SIMPLE_MATRIX_PROVIDER_H

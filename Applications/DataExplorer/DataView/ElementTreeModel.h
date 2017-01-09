@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ELEMENTTREEMODEL_H
-#define ELEMENTTREEMODEL_H
+#pragma once
 
 #include <array>
 #include "TreeModel.h"
@@ -52,5 +51,3 @@ private:
     vtkUnstructuredGridAlgorithm const* _mesh_source;
 
 };
-
-#endif //ELEMENTTREEMODEL_H

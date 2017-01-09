@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef VTKMESHNODALCOORDINATES_H_
-#define VTKMESHNODALCOORDINATES_H_
+#pragma once
 
 #include <vtkMappedDataArray.h>
 #include <vtkObjectFactory.h>  // for vtkStandardNewMacro
@@ -134,5 +133,3 @@ private:
 } // end namespace
 
 #include "VtkMeshNodalCoordinatesTemplate-impl.h"
-
-#endif // VTKMESHNODALCOORDINATES_H_

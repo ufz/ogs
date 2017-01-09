@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef DIRECTCONDITIONGENERATOR_H
-#define DIRECTCONDITIONGENERATOR_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -38,6 +37,3 @@ private:
     std::vector< std::pair<std::size_t,double> > _direct_values;
 
 };
-
-#endif // DIRECTCONDITIONGENERATOR_H
-

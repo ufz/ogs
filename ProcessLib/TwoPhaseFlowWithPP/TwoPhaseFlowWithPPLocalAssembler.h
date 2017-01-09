@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef OGS_TWOPHASEFLOWWITHPPLOCALASSEMBLER_H
-#define OGS_TWOPHASEFLOWWITHPPLOCALASSEMBLER_H
+#pragma once
 
 #include <vector>
 
@@ -136,5 +135,3 @@ private:
 }  // end of namespace
 
 #include "TwoPhaseFlowWithPPLocalAssembler-impl.h"
-
-#endif /* TWOPHASEFLOWWITHPPLOCALASSEMBLER_H */

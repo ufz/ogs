@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef OGS_TWOPHASEFLOWWITHPPMATERIALPROPERTIES_H
-#define OGS_TWOPHASEFLOWWITHPPMATERIALPROPERTIES_H
+#pragma once
 
 #include <iostream>
 #include <memory>
@@ -102,4 +101,3 @@ protected:
 
 }  // end of namespace
 }  // end of namespace
-#endif /* TWOPHASEFLOWWITHPPMATERIALPROPERTIES_H */

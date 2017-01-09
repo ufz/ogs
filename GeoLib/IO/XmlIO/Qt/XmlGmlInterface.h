@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef XMLGMLINTERFACE_H
-#define XMLGMLINTERFACE_H
+#pragma once
 
 #include <QString>
 
@@ -90,5 +89,3 @@ private:
 
 } // end namespace IO
 } // end namespace BaseLib
-
-#endif // XMLGMLINTERFACE_H

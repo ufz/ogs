@@ -9,8 +9,7 @@
  *
  */
 
-#ifndef OGS_CAPILLARY_PRESSURE_SATURATION_H
-#define OGS_CAPILLARY_PRESSURE_SATURATION_H
+#pragma once
 
 #include <string>
 
@@ -62,5 +61,3 @@ protected:
 
 }  // end namespace
 }  // end namespace
-
-#endif /* OGS_CAPILLARY_PRESSURE_SATURATION_H */

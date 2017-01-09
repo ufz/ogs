@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef CONVERTMESHTOGEO_H_
-#define CONVERTMESHTOGEO_H_
+#pragma once
 
 #include <limits>
 #include <string>
@@ -48,5 +47,3 @@ namespace MeshLib
     MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface &sfc, const std::string &mesh_name, double eps = std::numeric_limits<double>::epsilon());
 
 } // namespace
-
-#endif /* CONVERTMESHTOGEO_H_ */

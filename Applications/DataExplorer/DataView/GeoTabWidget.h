@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GEOTABWIDGET_H
-#define GEOTABWIDGET_H
+#pragma once
 
 // ** INCLUDES **
 #include "ui_GeoTabWidgetBase.h"
@@ -35,5 +34,3 @@ private slots:
     void enableRemoveButton(bool enable) { this->removeGeoPushButton->setEnabled(enable); };
 
 };
-
-#endif // GEOTABWIDGET_H

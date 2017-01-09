@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef SHAPEPYRA13_H_
-#define SHAPEPYRA13_H_
+#pragma once
 
 #include "MeshLib/Elements/Pyramid.h"
 
@@ -48,5 +47,3 @@ public:
 }
 
 #include "ShapePyra13-impl.h"
-
-#endif //SHAPEPYRA13_H_

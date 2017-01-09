@@ -12,9 +12,7 @@
  *
  */
 
-
-#ifndef SURFACEVEC_H_
-#define SURFACEVEC_H_
+#pragma once
 
 #include "TemplateVec.h"
 #include "Surface.h"
@@ -29,5 +27,3 @@ namespace GeoLib {
 typedef TemplateVec<Surface> SurfaceVec;
 
 } // end namespace
-
-#endif /* SURFACEVEC_H_ */

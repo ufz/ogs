@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LISMATRIX_H_
-#define LISMATRIX_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -207,5 +206,3 @@ void operator()(LisMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
 
 
 } // MathLib
-
-#endif //LISMATRIX_H_

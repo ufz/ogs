@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef XMLGSPINTERFACE_H
-#define XMLGSPINTERFACE_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -56,5 +55,3 @@ private:
 };
 
 } // end namespace FileIO
-
-#endif // XMLGSPINTERFACE_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef DETAILWINDOW_H
-#define DETAILWINDOW_H
+#pragma once
 
 #include "ui_DetailWindow.h"
 #include <QWidget>
@@ -65,5 +64,3 @@ private slots:
     void on_addDataButton_clicked();
     void on_closeButton_clicked();
 };
-
-#endif //DETAILWINDOW_H

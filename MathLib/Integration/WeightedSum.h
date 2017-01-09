@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_WEIGHTEDSUM_H_
-#define MATHLIB_WEIGHTEDSUM_H_
+#pragma once
 
 namespace MathLib
 {
@@ -63,5 +62,3 @@ struct WeightedSum
 };
 
 }   // namespace MathLib
-
-#endif  // MATHLIB_WEIGHTEDSUM_H_

@@ -9,8 +9,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef FIXEDTIMESTEPPING_H_
-#define FIXEDTIMESTEPPING_H_
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -99,5 +98,3 @@ private:
 };
 
 } //NumLib
-
-#endif // FIXEDTIMESTEPPING_H_

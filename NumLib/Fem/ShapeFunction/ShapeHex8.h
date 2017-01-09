@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef SHAPEHEX8_H_
-#define SHAPEHEX8_H_
+#pragma once
 
 #include "MeshLib/Elements/Hex.h"
 
@@ -66,5 +65,3 @@ public:
 }
 
 #include "ShapeHex8-impl.h"
-
-#endif //SHAPEHEX8_H_

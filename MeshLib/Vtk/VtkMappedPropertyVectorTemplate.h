@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef VTKMAPPEDELEMENTDATAARRAY_H_
-#define VTKMAPPEDELEMENTDATAARRAY_H_
+#pragma once
 
 #include <vtkMappedDataArray.h>
 #include <vtkObjectFactory.h>  // for vtkStandardNewMacro
@@ -136,5 +135,3 @@ private:
 } // end namespace MeshLib
 
 #include "VtkMappedPropertyVectorTemplate-impl.h"
-
-#endif // VTKMAPPEDELEMENTDATAARRAY_H_

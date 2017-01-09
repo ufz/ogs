@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef NODE_H_
-#define NODE_H_
+#pragma once
 
 #include <cstdlib>
 #include <limits>
@@ -104,6 +103,3 @@ protected:
 }; /* class */
 
 } /* namespace */
-
-#endif /* NODE_H_ */
-

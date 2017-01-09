@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef CLOSESTPAIR_H_
-#define CLOSESTPAIR_H_
+#pragma once
 
 // STL
 #include <vector>
@@ -37,5 +36,3 @@ protected:
 };
 
 } // end namespace GeoLib
-
-#endif /* CLOSESTPAIR_H_ */

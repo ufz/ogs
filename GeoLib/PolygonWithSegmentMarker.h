@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef POLYGONWITHSEGMENTMARKER_H_
-#define POLYGONWITHSEGMENTMARKER_H_
+#pragma once
 
 #include "Polygon.h"
 
@@ -53,5 +52,3 @@ private:
 };
 
 } // end namespace GeoLib
-
-#endif /* POLYGONWITHSEGMENTMARKER_H_ */

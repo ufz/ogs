@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef RAPIDXMLINTERFACE_H
-#define RAPIDXMLINTERFACE_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -51,5 +50,3 @@ private:
 
 } // IO
 } // GeoLib
-
-#endif // RAPIDXMLINTERFACE_H

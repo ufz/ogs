@@ -12,11 +12,8 @@
  *
  */
 
-#ifndef CODINGTOOLS_H
-#define CODINGTOOLS_H
+#pragma once
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
     TypeName(const TypeName&);   \
     TypeName &operator=(const TypeName&)
-
-#endif

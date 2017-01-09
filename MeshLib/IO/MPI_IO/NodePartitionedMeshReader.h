@@ -11,8 +11,7 @@
                http://www.opengeosys.org/project/license
  */
 
-#ifndef NODE_PARTITIONED_MESH_READER_H
-#define NODE_PARTITIONED_MESH_READER_H
+#pragma once
 
 #include <iosfwd>
 #include <string>
@@ -252,5 +251,3 @@ private:
 };
 }   // end namespace IO
 }   // end namespace MeshLib
-
-#endif  // READ_NODE_PARTITIONED_MESH_H

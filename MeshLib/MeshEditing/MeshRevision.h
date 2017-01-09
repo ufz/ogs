@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHREVISION_H_
-#define MESHREVISION_H_
+#pragma once
 
 #include <array>
 #include <limits>
@@ -192,5 +191,3 @@ private:
 };
 
 }
-
-#endif /* MESHREVISION_H_ */

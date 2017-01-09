@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef DIAGRAMSCENE_H
-#define DIAGRAMSCENE_H
+#pragma once
 
 #include "DiagramList.h"
 #include "QArrow.h"
@@ -79,5 +78,3 @@ private:
     QVector<QNonScalableGraphicsTextItem*> _xTicksText;
     QVector<QNonScalableGraphicsTextItem*> _yTicksText;
 };
-
-#endif //DIAGRAMSCENE_H

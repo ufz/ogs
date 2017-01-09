@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GRID_H_
-#define GRID_H_
+#pragma once
 
 #include <bitset>
 #include <vector>
@@ -603,5 +602,3 @@ Grid<POINT>::getPointsInEpsilonEnvironment(P const& pnt, double eps) const
 }
 
 } // end namespace GeoLib
-
-#endif /* MESHGRID_H_ */

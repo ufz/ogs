@@ -9,8 +9,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef SURFACEGRID_H_
-#define SURFACEGRID_H_
+#pragma once
 
 #include <array>
 #include <limits>
@@ -45,5 +44,3 @@ private:
 };
 
 } // end namespace GeoLib
-
-#endif /* SURFACEGRID_H_ */

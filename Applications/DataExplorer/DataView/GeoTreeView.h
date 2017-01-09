@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GEOTREEVIEW_H
-#define GEOTREEVIEW_H
+#pragma once
 
 #include "GeoType.h"
 
@@ -86,5 +85,3 @@ signals:
     void requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t);
     //void saveFEMConditionsRequested(QString, QString);
 };
-
-#endif //GEOTREEVIEW_H

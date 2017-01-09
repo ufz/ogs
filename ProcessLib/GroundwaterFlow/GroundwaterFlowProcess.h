@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
-#define PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
+#pragma once
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
@@ -118,5 +117,3 @@ private:
 
 }   // namespace GroundwaterFlow
 }   // namespace ProcessLib
-
-#endif  // PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_

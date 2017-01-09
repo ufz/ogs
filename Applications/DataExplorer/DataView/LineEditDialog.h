@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LINEEDITDIALOG_H
-#define LINEEDITDIALOG_H
+#pragma once
 
 #include "ui_LineEdit.h"
 #include <QDialog>
@@ -64,5 +63,3 @@ signals:
                           bool);
     void triangulateSurface(const GeoLib::Polyline);
 };
-
-#endif //LINEEDITDIALOG_H

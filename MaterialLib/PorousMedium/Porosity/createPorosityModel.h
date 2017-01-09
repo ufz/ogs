@@ -10,8 +10,7 @@
  * Created on August 16, 2016, 1:16 PM
  */
 
-#ifndef OGS_CREATEPOROSITYMODEL_H
-#define OGS_CREATEPOROSITYMODEL_H
+#pragma once
 
 #include <memory>
 
@@ -34,5 +33,3 @@ std::unique_ptr<Porosity> createPorosityModel(
 
 }  // end namespace
 }  // end namespace
-
-#endif /* CREATEPOROSITYMODEL_H */

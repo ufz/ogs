@@ -5,8 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  */
-#ifndef BOUNDARYELEMENTSALONGPOLYLINE_H_
-#define BOUNDARYELEMENTSALONGPOLYLINE_H_
+#pragma once
 
 #include <vector>
 
@@ -85,5 +84,3 @@ private:
 };
 
 } // end namespace MeshGeoToolsLib
-
-#endif /* BOUNDARYELEMENTSALONGPOLYLINE_H_ */

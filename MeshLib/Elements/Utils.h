@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MESHLIB_ELEMENTS_UTILS_H_
-#define MESHLIB_ELEMENTS_UTILS_H_
+#pragma once
 
 #include <algorithm>
 #include <vector>
@@ -41,5 +40,3 @@ inline std::vector<Node*> getBaseNodes(std::vector<Element*> const& elements)
 }
 
 }  // namespace MeshLib
-
-#endif  // MESHLIB_ELEMENTS_UTILS_H_

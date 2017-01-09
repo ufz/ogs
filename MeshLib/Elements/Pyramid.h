@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef PYRAMID_H_
-#define PYRAMID_H_
+#pragma once
 
 #include "TemplateElement.h"
 #include "PyramidRule5.h"
@@ -28,5 +27,3 @@ typedef TemplateElement<PyramidRule5> Pyramid;
 typedef TemplateElement<PyramidRule13> Pyramid13;
 
 }
-
-#endif /* PYRAMID_H_ */

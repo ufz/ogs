@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_GROUNDWATERFLOW_GROUNDWATERFLOWPROCESSDATA_H
-#define PROCESSLIB_GROUNDWATERFLOW_GROUNDWATERFLOWPROCESSDATA_H
+#pragma once
 
 namespace MeshLib
 {
@@ -50,5 +49,3 @@ struct GroundwaterFlowProcessData
 
 } // namespace GroundwaterFlow
 } // namespace ProcessLib
-
-#endif // PROCESSLIB_GROUNDWATERFLOW_GROUNDWATERFLOWPROCESSDATA_H

@@ -7,8 +7,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  */
-#ifndef MESHNODESEARCHER_H_
-#define MESHNODESEARCHER_H_
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -151,5 +150,3 @@ private:
 };
 
 } // end namespace MeshGeoToolsLib
-
-#endif /* MESHNODESEARCHER_H_ */

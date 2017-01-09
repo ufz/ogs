@@ -10,8 +10,7 @@
  * Created on August 19, 2016, 2:28 PM
  */
 
-#ifndef OGS_LIQUIDFLOWLOCALASSEMBLER_IMPL_H
-#define OGS_LIQUIDFLOWLOCALASSEMBLER_IMPL_H
+#pragma once
 
 #include "LiquidFlowLocalAssembler.h"
 
@@ -257,5 +256,3 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
 }  // end of namespace
 }  // end of namespace
-
-#endif /* OGS_LIQUIDFLOWLOCALASSEMBLER_IMPL_H */

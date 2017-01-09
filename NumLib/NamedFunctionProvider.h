@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_NAMEDFUNCTIONPROVIDER_H
-#define NUMLIB_NAMEDFUNCTIONPROVIDER_H
+#pragma once
 
 #include "NamedFunction.h"
 
@@ -28,5 +27,3 @@ public:
 };
 
 } // namespace NumLib
-
-#endif // NUMLIB_NAMEDFUNCTIONPROVIDER_H

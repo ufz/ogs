@@ -13,8 +13,7 @@
 
 */
 
-#ifndef NODE_PARTITIONED_MESH_H_
-#define NODE_PARTITIONED_MESH_H_
+#pragma once
 
 #include <algorithm>
 #include <string>
@@ -175,5 +174,3 @@ class NodePartitionedMesh : public Mesh
 };
 
 }   // namespace MeshLib
-
-#endif // NODE_PARTITIONED_MESH_H_

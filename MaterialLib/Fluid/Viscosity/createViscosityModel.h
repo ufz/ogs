@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef CREATE_VISCOSITY_MODEL_H_
-#define CREATE_VISCOSITY_MODEL_H_
+#pragma once
 
 #include <memory>
 
@@ -31,4 +30,3 @@ std::unique_ptr<FluidProperty> createViscosityModel(
 
 }  // end namespace
 }  // end namespace
-#endif

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef INTEGRATIONGAUSSPYRAMID_H_
-#define INTEGRATIONGAUSSPYRAMID_H_
+#pragma once
 
 #include "MathLib/Integration/GaussLegendrePyramid.h"
 
@@ -109,5 +108,3 @@ private:
 };
 
 }
-
-#endif //INTEGRATIONGAUSSPYRAMID_H_

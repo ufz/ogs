@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_HYDROMECHANICS_FEM_H_
-#define PROCESS_LIB_HYDROMECHANICS_FEM_H_
+#pragma once
 
 #include <iostream>
 #include <memory>
@@ -402,5 +401,3 @@ public:
 
 }  // namespace HydroMechanics
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_HYDROMECHANICS_FEM_H_

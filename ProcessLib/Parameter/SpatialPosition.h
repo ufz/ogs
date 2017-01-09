@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_SPATIALPOSITION_H
-#define PROCESSLIB_SPATIALPOSITION_H
+#pragma once
 
 #include <boost/optional.hpp>
 #include "MathLib/TemplatePoint.h"
@@ -89,5 +88,3 @@ private:
 };
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_SPATIALPOSITION_H

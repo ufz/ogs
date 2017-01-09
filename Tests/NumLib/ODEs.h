@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TESTS_NUMLIB_ODES_H
-#define TESTS_NUMLIB_ODES_H
+#pragma once
 
 #include <boost/math/constants/constants.hpp>
 #include "MathLib/LinAlg/LinAlg.h"
@@ -300,5 +299,3 @@ const double ODETraits<ODE3>::t0 = 0.0;
 const double ODETraits<ODE3>::t_end =
     0.5 * boost::math::constants::pi<double>();
 // ODE 3 end //////////////////////////////////////////////////////
-
-#endif // TESTS_NUMLIB_ODES_H

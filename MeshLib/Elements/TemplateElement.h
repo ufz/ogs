@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TEMPLATEELEMENT_H_
-#define TEMPLATEELEMENT_H_
+#pragma once
 
 #include <array>
 #include <limits>
@@ -158,6 +157,3 @@ public:
 } // MeshLib
 
 #include "TemplateElement-impl.h"
-
-#endif /* TEMPLATEELEMENT_H_ */
-

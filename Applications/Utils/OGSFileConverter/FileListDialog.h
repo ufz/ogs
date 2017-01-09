@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef FILELISTDIALOG_H
-#define FILELISTDIALOG_H
+#pragma once
 
 #include "ui_FileList.h"
 #include <QDialog>
@@ -68,5 +67,3 @@ private slots:
     void reject();
 
 };
-
-#endif //FILELISTDIALOG_H

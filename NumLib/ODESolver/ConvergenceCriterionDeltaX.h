@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_CONVERGENCECRITERIONDELTAX_H
-#define NUMLIB_CONVERGENCECRITERIONDELTAX_H
+#pragma once
 
 #include <boost/optional.hpp>
 #include "ConvergenceCriterion.h"
@@ -50,5 +49,3 @@ std::unique_ptr<ConvergenceCriterionDeltaX> createConvergenceCriterionDeltaX(
     BaseLib::ConfigTree const& config);
 
 }  // NumLib
-
-#endif  // NUMLIB_CONVERGENCECRITERIONDELTAX_H

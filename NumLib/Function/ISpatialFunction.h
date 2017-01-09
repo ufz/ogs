@@ -10,9 +10,7 @@
  *
  */
 
-
-#ifndef ISPATIALFUNCTION_H_
-#define ISPATIALFUNCTION_H_
+#pragma once
 
 #include <vector>
 
@@ -38,5 +36,3 @@ public:
 };
 
 } // NumLib
-
-#endif //ISPATIALFUNCTION_H_

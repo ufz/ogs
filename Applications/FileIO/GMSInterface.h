@@ -15,8 +15,7 @@
  * @author Lars Bilke
  */
 
-#ifndef GMSINTERFACE_H_
-#define GMSINTERFACE_H_
+#pragma once
 
 #include <list>
 #include <string>
@@ -80,5 +79,3 @@ private:
 };
 
 }
-
-#endif /* GMSINTERFACE_H_ */

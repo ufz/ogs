@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOLORBYHEIGHTFILTER_H
-#define VTKCOLORBYHEIGHTFILTER_H
+#pragma once
 
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
@@ -81,5 +80,3 @@ protected:
     double _tableRange[2];
     double _tableRangeScaling;
 };
-
-#endif // VTKCOLORBYHEIGHTFILTER_H

@@ -10,8 +10,7 @@
  * Created on November 2, 2016, 1:41 PM
  */
 
-#ifndef OGS_RELATIVE_PERMEABILITY_CURVE_H
-#define OGS_RELATIVE_PERMEABILITY_CURVE_H
+#pragma once
 
 #include <memory>
 #include "RelativePermeability.h"
@@ -66,4 +65,3 @@ private:
 };
 }  // end namespace
 }  // end namespace
-#endif /* OGS_RELATIVE_PERMEABILITY_CURVE_H */

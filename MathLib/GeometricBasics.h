@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef GEOMETRIC_BASICS_H_
-#define GEOMETRIC_BASICS_H_
+#pragma once
 
 #include <cstddef>
 #include <limits>
@@ -179,5 +178,3 @@ bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
                 const MathLib::Point3d& c, const MathLib::Point3d& d);
 
 }  // end namespace MathLib
-
-#endif

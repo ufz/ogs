@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef SURFACE_H_
-#define SURFACE_H_
+#pragma once
 
 #include <vector>
 #include <memory>
@@ -104,5 +103,3 @@ protected:
     mutable std::unique_ptr<SurfaceGrid> _surface_grid;
 };
 }
-
-#endif /* SURFACE_H_ */

@@ -12,9 +12,7 @@
  *
  */
 
-#ifndef STRINGTOOLS_H
-#define STRINGTOOLS_H
-
+#pragma once
 
 #include <string>
 #include <list>
@@ -96,5 +94,3 @@ std::string format(const char* format_string, ... );
 #ifdef MSVC
 void correctScientificNotation(std::string filename, std::size_t precision = 0);
 #endif
-
-#endif //STRINGTOOLS_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef SHAPEPOINT1_H_
-#define SHAPEPOINT1_H_
+#pragma once
 
 #include "MeshLib/Elements/Point.h"
 
@@ -32,5 +31,3 @@ public:
 }
 
 #include "ShapePoint1-impl.h"
-
-#endif  // SHAPEPOINT1_H_

@@ -10,8 +10,7 @@
  * Created on December 8, 2016, 4:19 PM
  */
 
-#ifndef OGS_WATER_DENSITY_IAPWSIF97_REGION1_H
-#define OGS_WATER_DENSITY_IAPWSIF97_REGION1_H
+#pragma once
 
 #include <string>
 
@@ -93,4 +92,3 @@ private:
 
 }  // end of namespace
 }  // end of namespace
-#endif /* OGS_WATER_DENSITY_IAPWSIF97_REGION1_H */

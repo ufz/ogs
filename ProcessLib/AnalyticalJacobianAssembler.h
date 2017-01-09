@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_ANALYTICALJACOBIANASSEMBLER_H
-#define PROCESSLIB_ANALYTICALJACOBIANASSEMBLER_H
+#pragma once
 
 #include "AbstractJacobianAssembler.h"
 
@@ -38,5 +37,3 @@ public:
 };
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_ANALYTICALJACOBIANASSEMBLER_H

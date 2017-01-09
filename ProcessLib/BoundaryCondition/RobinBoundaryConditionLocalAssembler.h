@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_ROBINBOUNDARYCONDITIONLOCALASSEMBLER_H
-#define PROCESSLIB_ROBINBOUNDARYCONDITIONLOCALASSEMBLER_H
+#pragma once
 
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Parameter/Parameter.h"
@@ -90,5 +89,3 @@ private:
 };
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_ROBINBOUNDARYCONDITIONLOCALASSEMBLER_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PYRAMIDRULE13_H_
-#define PYRAMIDRULE13_H_
+#pragma once
 
 #include "MeshLib/MeshEnums.h"
 #include "Element.h"
@@ -67,6 +66,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* PYRAMIDRULE13_H_ */
-

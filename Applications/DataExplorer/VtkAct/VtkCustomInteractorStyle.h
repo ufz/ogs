@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCUSTOMINTERACTORSTYLE_H
-#define VTKCUSTOMINTERACTORSTYLE_H
+#pragma once
 
 // ** INCLUDES **
 #include <QObject>
@@ -99,6 +98,3 @@ signals:
     void clearElementView();
 
 };
-
-
-#endif // VTKINTERACTORSTYLE_H

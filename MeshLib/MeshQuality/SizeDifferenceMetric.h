@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef SIZEDIFFERENCEMETRIC_H_
-#define SIZEDIFFERENCEMETRIC_H_
+#pragma once
 
 #include "ElementQualityMetric.h"
 
@@ -33,5 +32,3 @@ public:
     virtual void calculateQuality ();
 };
 }
-
-#endif /* SIZEDIFFERENCEMETRIC_H_ */

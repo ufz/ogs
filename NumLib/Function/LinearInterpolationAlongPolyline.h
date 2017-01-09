@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef LINEARINTERPOLATIONALONGPOLYLINE_H_
-#define LINEARINTERPOLATIONALONGPOLYLINE_H_
+#pragma once
 
 #include <vector>
 
@@ -77,6 +76,3 @@ private:
 };
 
 } // NumLib
-
-#endif //LINEARINTERPOLATIONALONGPOLYLINE_H_
-

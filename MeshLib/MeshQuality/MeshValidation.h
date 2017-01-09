@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHVALIDATION_H
-#define MESHVALIDATION_H
+#pragma once
 
 #include <array>
 #include <vector>
@@ -77,5 +76,3 @@ private:
 };
 
 } // end namespace MeshLib
-
-#endif //MESHVALIDATION_H

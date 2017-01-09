@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef POINT_H_
-#define POINT_H_
+#pragma once
 
 // GeoLib
 #include "GeoObject.h"
@@ -62,6 +61,3 @@ protected:
 };
 
 }
-
-#endif /* POINT_H_ */
-

@@ -10,8 +10,7 @@
  * not all of OGS6 has to be recompiled every time a small change is done.
  */
 
-#ifndef PROCESS_LIB_TESFEM_DATA_IMPL_H_
-#define PROCESS_LIB_TESFEM_DATA_IMPL_H_
+#pragma once
 
 #include <cstdio>
 #include <iostream>
@@ -313,5 +312,3 @@ void TESLocalAssemblerInner<Traits>::preEachAssemble()
 }  // namespace TES
 
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_TESFEM_DATA_IMPL_H_

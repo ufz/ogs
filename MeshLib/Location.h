@@ -13,8 +13,7 @@
 #include <cstddef>
 #include <iosfwd>
 
-#ifndef LOCATION_H_
-#define LOCATION_H_
+#pragma once
 
 namespace MeshLib
 {
@@ -50,5 +49,3 @@ bool operator<(const Location& left, const Location& right)
 std::ostream& operator<<(std::ostream& os, Location const& l);
 
 }   // namespace MeshLib
-
-#endif  // LOCATION_H_

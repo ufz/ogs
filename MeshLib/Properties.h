@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef PROPERTIES_H_
-#define PROPERTIES_H_
+#pragma once
 
 #include <cstdlib>
 #include <string>
@@ -128,6 +127,3 @@ private:
 #include "Properties-impl.h"
 
 } // end namespace MeshLib
-
-#endif
-

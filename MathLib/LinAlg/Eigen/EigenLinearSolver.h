@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef EIGENLINEARSOLVER_H_
-#define EIGENLINEARSOLVER_H_
+#pragma once
 
 #include <vector>
 
@@ -62,6 +61,3 @@ protected:
 };
 
 } // MathLib
-
-#endif //EIGENLINEARSOLVER_H_
-

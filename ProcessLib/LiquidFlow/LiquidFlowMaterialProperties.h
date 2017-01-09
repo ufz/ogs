@@ -10,8 +10,7 @@
  * Created on August 18, 2016, 11:03 AM
  */
 
-#ifndef OGS_LIQUIDFLOWMATERIALPROPERTIES_H
-#define OGS_LIQUIDFLOWMATERIALPROPERTIES_H
+#pragma once
 
 #include <memory>
 
@@ -106,4 +105,3 @@ private:
 
 }  // end of namespace
 }  // end of namespace
-#endif /* LIQUIDFLOWMATERIALPROPERTIES_H */

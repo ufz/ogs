@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GAUSSLEGENDRETRI_H_
-#define GAUSSLEGENDRETRI_H_
+#pragma once
 
 #include <array>
 
@@ -56,5 +55,3 @@ template <>
 double const GaussLegendreTri<1>::W[1];
 #endif
 }
-
-#endif //GAUSSLEGENDRETRI_H_

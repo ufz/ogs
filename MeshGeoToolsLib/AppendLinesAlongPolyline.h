@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef APPENDLINESALONGPOLYLINES_H_
-#define APPENDLINESALONGPOLYLINES_H_
+#pragma once
 
 #include <memory>
 
@@ -42,5 +41,3 @@ namespace MeshGeoToolsLib
 std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
     const MeshLib::Mesh& mesh, const GeoLib::PolylineVec& ply_vec);
 }
-
-#endif

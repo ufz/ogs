@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef MESHNODESALONGSURFACE_H_
-#define MESHNODESALONGSURFACE_H_
+#pragma once
 
 #include <vector>
 
@@ -69,5 +68,3 @@ private:
     std::vector<std::size_t> _msh_node_ids;
 };
 } // end namespace MeshGeoToolsLib
-
-#endif /* MESHNODESALONGSURFACE_H_ */

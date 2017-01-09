@@ -10,8 +10,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
  */
-#ifndef XMLQTINTERFACE_H_
-#define XMLQTINTERFACE_H_
+#pragma once
 
 #include <string>
 
@@ -64,5 +63,3 @@ protected:
 
 } // end namespace IO
 } // end namespace BaseLib
-
-#endif /* XMLQTINTERFACE_H_ */

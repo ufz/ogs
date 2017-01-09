@@ -7,12 +7,9 @@
  *
  */
 
-#ifndef PROCESS_LIB_HYDROMECHANICSPROCESS_FWD_H_
-#define PROCESS_LIB_HYDROMECHANICSPROCESS_FWD_H_
+#pragma once
 
 #include "HydroMechanicsProcess.h"
 
 extern template class ProcessLib::HydroMechanics::HydroMechanicsProcess<2>;
 extern template class ProcessLib::HydroMechanics::HydroMechanicsProcess<3>;
-
-#endif  // PROCESS_LIB_HYDROMECHANICSPROCESS_FWD_H_

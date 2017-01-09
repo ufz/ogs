@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef PRISM_H_
-#define PRISM_H_
+#pragma once
 
 #include "TemplateElement.h"
 #include "PrismRule6.h"
@@ -28,5 +27,3 @@ typedef TemplateElement<PrismRule6> Prism;
 typedef TemplateElement<PrismRule15> Prism15;
 
 }
-
-#endif /* PRISM_H_ */

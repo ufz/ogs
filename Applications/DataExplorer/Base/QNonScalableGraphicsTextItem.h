@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef QNONSCALABLETEXTITEM_H
-#define QNONSCALABLETEXTITEM_H
+#pragma once
 
 #include <QGraphicsTextItem>
 
@@ -32,5 +31,3 @@ public:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
     virtual QRectF boundingRect() const;
 };
-
-#endif //QNONSCALABLETEXTITEM_H

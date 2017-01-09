@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALLIB_FRACTURE_MOHRCOULOMB_H_
-#define MATERIALLIB_FRACTURE_MOHRCOULOMB_H_
+#pragma once
 
 #include <Eigen/Eigen>
 
@@ -111,5 +110,3 @@ extern template class MohrCoulomb<2>;
 extern template class MohrCoulomb<3>;
 }  // namespace Fractrue
 }  // namespace MaterialLib
-
-#endif

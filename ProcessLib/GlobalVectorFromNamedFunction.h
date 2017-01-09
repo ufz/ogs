@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_GLOBALVECTORFROMNAMEDFUNCTION_H
-#define PROCESSLIB_GLOBALVECTORFROMNAMEDFUNCTION_H
+#pragma once
 
 #include "MeshLib/Mesh.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -54,5 +53,3 @@ private:
     SecondaryVariableContext& _context;
 };
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_GLOBALVECTORFROMNAMEDFUNCTION_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_FEM_DEFORMATION_LINEARBMATRIX_H_
-#define PROCESSLIB_FEM_DEFORMATION_LINEARBMATRIX_H_
+#pragma once
 
 #include <cmath>
 
@@ -78,5 +77,3 @@ void computeBMatrix(DNDX_Type const& dNdx,
 
 }  // namespace LinearBMatrix
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_FEM_DEFORMATION_LINEARBMATRIX_H_

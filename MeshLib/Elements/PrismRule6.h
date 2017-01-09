@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PRISMRULE6_H_
-#define PRISMRULE6_H_
+#pragma once
 
 #include "MeshLib/MeshEnums.h"
 #include "Element.h"
@@ -101,6 +100,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* PRISMRULE6_H_ */
-

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_SECONDARYVARIABLECONTEXT_H
-#define PROCESSLIB_SECONDARYVARIABLECONTEXT_H
+#pragma once
 
 namespace ProcessLib
 {
@@ -27,5 +26,3 @@ public:
 };
 
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_SECONDARYVARIABLECONTEXT_H

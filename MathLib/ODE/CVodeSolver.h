@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_CVODESOLVER_H
-#define MATHLIB_CVODESOLVER_H
+#pragma once
 
 #include <memory>
 
@@ -77,5 +76,3 @@ private:
 
 }  // namespace ODE
 }  // namespace MathLib
-
-#endif  // MATHLIB_CVODESOLVER_H

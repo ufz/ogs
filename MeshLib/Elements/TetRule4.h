@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TETRULE4_H_
-#define TETRULE4_H_
+#pragma once
 
 #include "MeshLib/MeshEnums.h"
 #include "Element.h"
@@ -95,6 +94,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* TETRULE4_H_ */
-

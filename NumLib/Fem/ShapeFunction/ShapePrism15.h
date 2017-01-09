@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef SHAPEPRISM15_H_
-#define SHAPEPRISM15_H_
+#pragma once
 
 #include "MeshLib/Elements/Prism.h"
 
@@ -48,5 +47,3 @@ public:
 }
 
 #include "ShapePrism15-impl.h"
-
-#endif //SHAPEPRISM15_H_

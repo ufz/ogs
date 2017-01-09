@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_NEUMANNBOUNDARYCONDITION_H_
-#define PROCESSLIB_LIE_NEUMANNBOUNDARYCONDITION_H_
+#pragma once
 
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
@@ -40,5 +39,3 @@ createNeumannBoundaryCondition(
 
 }  // LIE
 }  // ProcessLib
-
-#endif // PROCESSLIB_LIE_NEUMANNBOUNDARYCONDITION_H_

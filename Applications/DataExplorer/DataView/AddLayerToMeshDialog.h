@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ADDLAYERTOMESHDIALOG_H
-#define ADDLAYERTOMESHDIALOG_H
+#pragma once
 
 #include "ui_AddLayerToMesh.h"
 
@@ -46,5 +45,3 @@ private slots:
     /// Instructions if the Cancel-Button has been pressed.
     void reject();
 };
-
-#endif //ADDLAYERTOMESHDIALOG_H

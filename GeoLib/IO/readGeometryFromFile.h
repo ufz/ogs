@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef READGEOMETRYFROMFILE_H
-#define READGEOMETRYFROMFILE_H
+#pragma once
 
 #include <string>
 
@@ -26,5 +25,3 @@ namespace IO
     readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs);
 }
 }
-
-#endif // READGEOMETRYFROMFILE_H

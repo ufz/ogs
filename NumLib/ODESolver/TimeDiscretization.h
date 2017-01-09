@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_TIMEDISCRETIZATION_H
-#define NUMLIB_TIMEDISCRETIZATION_H
+#pragma once
 
 #include <vector>
 
@@ -501,5 +500,3 @@ private:
 
 //! @}
 }
-
-#endif  // NUMLIB_TIMEDISCRETIZATION_H

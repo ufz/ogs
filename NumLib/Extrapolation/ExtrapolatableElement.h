@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENT_H
-#define NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENT_H
+#pragma once
 
 #include <Eigen/Core>
 
@@ -31,5 +30,3 @@ public:
 };
 
 }  // namespace NumLib
-
-#endif  // NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENT_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TESTFETRI3_H_
-#define TESTFETRI3_H_
+#pragma once
 
 #include "MeshLib/Elements/Tri.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
@@ -73,6 +72,3 @@ public:
 };
 
 } // namespace
-
-#endif
-

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LISCHECK_H_
-#define LISCHECK_H_
+#pragma once
 
 #include <vector>
 #include "lis.h"
@@ -38,6 +37,3 @@ inline bool checkLisError(int err)
 }
 
 } // MathLib
-
-#endif //LISCHECK_H_
-

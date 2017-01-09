@@ -10,8 +10,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef BASELIB_HISTOGRAM_H
-#define BASELIB_HISTOGRAM_H
+#pragma once
 
 #include <algorithm>
 #include <cmath>
@@ -196,5 +195,3 @@ operator<<(std::ostream& os, const Histogram<T>& h)
     return os << std::endl;
 }
 }   // namespace BaseLib
-
-#endif  // BASELIB_HISTOGRAM_H

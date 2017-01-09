@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_NAMED_FUNCTION
-#define NUMLIB_NAMED_FUNCTION
+#pragma once
 
 #include <cassert>
 #include <functional>
@@ -112,5 +111,3 @@ NamedFunction::NamedFunction(std::string const& name,
 }
 
 }  // namespace NumLib
-
-#endif // NUMLIB_NAMED_FUNCTION

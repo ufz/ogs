@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LINEAREDITDIALOG_H
-#define LINEAREDITDIALOG_H
+#pragma once
 
 #include "ui_LinearEdit.h"
 #include <QDialog>
@@ -48,5 +47,3 @@ private slots:
 signals:
     void transmitDisValues(std::vector< std::pair<std::size_t,double> >);
 };
-
-#endif //LINEAREDITDIALOG_H

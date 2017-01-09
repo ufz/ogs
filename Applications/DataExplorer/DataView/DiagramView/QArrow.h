@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef QARROW_H
-#define QARROW_H
+#pragma once
 
 #include <QGraphicsItem>
 #include <QPen>
@@ -47,5 +46,3 @@ private:
     float _headWidth;
     QPen _arrowPen;
 };
-
-#endif //QARROW_H

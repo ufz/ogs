@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_MESHELEMENTPARAMETER_H
-#define PROCESSLIB_MESHELEMENTPARAMETER_H
+#pragma once
 
 #include "Parameter.h"
 
@@ -60,5 +59,3 @@ std::unique_ptr<ParameterBase> createMeshElementParameter(
     MeshLib::Mesh const& mesh);
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_MESHELEMENTPARAMETER_H

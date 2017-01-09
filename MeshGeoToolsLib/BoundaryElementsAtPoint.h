@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef BOUNDARYELEMENTSATPOINT_H_
-#define BOUNDARYELEMENTSATPOINT_H_
+#pragma once
 
 #include <vector>
 
@@ -64,5 +63,3 @@ private:
 };
 
 }  // end namespace MeshGeoToolsLib
-
-#endif  // BOUNDARYELEMENTSATPOINT_H_

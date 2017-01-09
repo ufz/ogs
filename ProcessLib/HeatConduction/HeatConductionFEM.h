@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_HEATCONDUCTION_FEM_H_
-#define PROCESS_LIB_HEATCONDUCTION_FEM_H_
+#pragma once
 
 #include <vector>
 
@@ -193,5 +192,3 @@ private:
 
 }  // namespace HeatConduction
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_HEATCONDUCTION_FEM_H_

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef DATAEXPLORERPROJECT_H_
-#define DATAEXPLORERPROJECT_H_
+#pragma once
 
 #include <memory>
 
@@ -81,5 +80,3 @@ private:
 };
 
 } // namespace
-
-#endif //DATAEXPLORERPROJECT_H_

@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef POINT3D_H_
-#define POINT3D_H_
+#pragma once
 
 #include <limits>
 
@@ -60,6 +59,3 @@ double sqrDist2d(MathLib::Point3d const& p0, MathLib::Point3d const& p1)
 }
 
 } // end namespace MathLib
-
-#endif /* POINT3D_H_ */
-

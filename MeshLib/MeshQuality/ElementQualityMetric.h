@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ELEMENTQUALITYMETRIC_H_
-#define ELEMENTQUALITYMETRIC_H_
+#pragma once
 
 #include <vector>
 
@@ -62,5 +61,3 @@ protected:
     std::vector<double> _element_quality_metric;
 };
 }
-
-#endif /* ELEMENTQUALITYMETRIC_H_ */

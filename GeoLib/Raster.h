@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef RASTER_H_
-#define RASTER_H_
+#pragma once
 
 #include "Surface.h"
 
@@ -105,5 +104,3 @@ private:
 };
 
 }
-
-#endif /* RASTER_H_ */

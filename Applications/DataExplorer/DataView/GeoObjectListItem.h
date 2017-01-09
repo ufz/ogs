@@ -12,8 +12,7 @@
  *
  *
  */
-#ifndef GEOOBJECTLISTITEM_H
-#define GEOOBJECTLISTITEM_H
+#pragma once
 
 #include "TreeItem.h"
 
@@ -88,5 +87,3 @@ private:
 
     GeoLib::GEOTYPE _type;
 };
-
-#endif //GEOOBJECTLISTITEM_H

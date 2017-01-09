@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKVISIMAGEITEM_H
-#define VTKVISIMAGEITEM_H
+#pragma once
 
 // ** INCLUDES **
 #include "VtkVisPipelineItem.h"
@@ -64,5 +63,3 @@ protected:
 private:
     vtkImageChangeInformation* _transformFilter;
 };
-
-#endif // VTKVISIMAGEITEM_H

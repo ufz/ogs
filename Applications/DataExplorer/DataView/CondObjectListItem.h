@@ -12,8 +12,7 @@
  *
  *
  */
-#ifndef CONDOBJECTLISTITEM_H
-#define CONDOBJECTLISTITEM_H
+#pragma once
 
 #include "FEMCondition.h"
 #include "TreeItem.h"
@@ -74,5 +73,3 @@ private:
     FEMCondition::CondType _type;
     std::vector<FEMCondition*>* _cond_vec;
 };
-
-#endif //CONDOBJECTLISTITEM_H

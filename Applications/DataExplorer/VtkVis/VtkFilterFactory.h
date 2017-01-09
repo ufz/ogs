@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKFILTERFACTORY_H
-#define VTKFILTERFACTORY_H
+#pragma once
 
 #include <QString>
 #include <QVector>
@@ -93,5 +92,3 @@ struct VtkFilterInfo
     int inputDataObjectType;
     int outputDataObjectType;
 };
-
-#endif // VTKFILTERFACTORY_H

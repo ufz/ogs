@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESSLIB_TES_OGS5MATERIALMODELS
-#define PROCESSLIB_TES_OGS5MATERIALMODELS
+#pragma once
 
 #include "MaterialLib/PhysicalConstant.h"
 #include "TESAssemblyParams.h"
@@ -404,5 +403,3 @@ inline double fluid_heat_conductivity(const double p,
 
 }  // TES
 }  // ProcessLib
-
-#endif  // PROCESSLIB_TES_OGS5MATERIALMODELS

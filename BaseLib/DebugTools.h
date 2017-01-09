@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef DEBUGTOOLS_H
-#define DEBUGTOOLS_H
+#pragma once
 
 #include <ostream>
 #include <algorithm>
@@ -24,6 +23,3 @@ std::ostream &operator <<(std::ostream &os, const std::vector<T> &v) {
     os << "\n";
     return os;
 }
-
-#endif //DEBUGTOOLS_H
-

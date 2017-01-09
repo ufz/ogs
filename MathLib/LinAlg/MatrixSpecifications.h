@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_LINALG_MATRIXSPECIFICATIONS_H
-#define MATHLIB_LINALG_MATRIXSPECIFICATIONS_H
+#pragma once
 
 #include "GlobalMatrixVectorTypes.h"
 
@@ -32,6 +31,3 @@ struct MatrixSpecifications
 };
 
 } // namespace MathLib
-
-
-#endif // MATHLIB_LINALG_MATRIXSPECIFICATIONS_H

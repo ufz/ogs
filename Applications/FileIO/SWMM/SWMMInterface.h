@@ -5,8 +5,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef SWMMINTERFACE_H_
-#define SWMMINTERFACE_H_
+#pragma once
 
 #include <map>
 #include <memory>
@@ -214,5 +213,3 @@ private:
 };
 
 } // namespace FileIO
-
-#endif // SWMMINTERFACE_H_

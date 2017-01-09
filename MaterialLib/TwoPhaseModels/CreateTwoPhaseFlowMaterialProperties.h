@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef OGS_CREATETWOPHASEFLOWMATERIALPROPERTIES_H
-#define OGS_CREATETWOPHASEFLOWMATERIALPROPERTIES_H
+#pragma once
 
 #include <memory>
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
@@ -33,5 +32,3 @@ CreateTwoPhaseFlowMaterialProperties(
 
 }  // end namespace
 }  // end namespace
-
-#endif /* CREATETWOPHASEFLOWMATERIALPROPERTIES_H */

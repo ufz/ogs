@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef SHAPEQUAD9_H_
-#define SHAPEQUAD9_H_
+#pragma once
 
 #include "MeshLib/Elements/Quad.h"
 
@@ -47,5 +46,3 @@ public:
 }
 
 #include "ShapeQuad9-impl.h"
-
-#endif //SHAPEQUAD9_H_

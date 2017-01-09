@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALLIB_SOLIDMODELS_LUBBY2_IMPL_H_
-#define MATERIALLIB_SOLIDMODELS_LUBBY2_IMPL_H_
+#pragma once
 
 #include "NumLib/NewtonRaphson.h"
 
@@ -267,5 +266,3 @@ void Lubby2<DisplacementDim>::calculateJacobianBurgers(
 
 }  // namespace Solids
 }  // namespace MaterialLib
-
-#endif  // MATERIALLIB_SOLIDMODELS_LUBBY2_IMPL_H_

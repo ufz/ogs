@@ -12,8 +12,7 @@
  * Created on December 8, 2016, 12:31 PM
  */
 
-#ifndef OGS_DIMENSION_LESS_GIBBS_FREE_ENERGY_REGION1_H
-#define OGS_DIMENSION_LESS_GIBBS_FREE_ENERGY_REGION1_H
+#pragma once
 
 namespace MaterialLib
 {
@@ -97,4 +96,3 @@ public:
 
 }  // end namespace
 }  // end namespace
-#endif /* OGS_DIMENSION_LESS_GIBBS_FREE_ENERGY_REGION1_H */

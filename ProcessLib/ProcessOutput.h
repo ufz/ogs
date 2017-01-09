@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_PROCESSOUTPUT_H
-#define PROCESSLIB_PROCESSOUTPUT_H
+#pragma once
 
 #include "ProcessVariable.h"
 #include "SecondaryVariable.h"
@@ -42,6 +41,3 @@ void doProcessOutput(
         ProcessOutput const& process_output);
 
 } // ProcessLib
-
-
-#endif // PROCESSLIB_PROCESSOUTPUT_H

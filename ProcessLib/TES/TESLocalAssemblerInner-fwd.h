@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_TESFEM_DATA_FWD_H_
-#define PROCESS_LIB_TESFEM_DATA_FWD_H_
+#pragma once
 
 #include "TESLocalAssemblerInner.h"
 
@@ -29,5 +28,3 @@ static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 0,
 #endif
 }
 }
-
-#endif  // PROCESS_LIB_TESFEM_DATA_FWD_H_

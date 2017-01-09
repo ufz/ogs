@@ -10,8 +10,7 @@
  * Created on November 2, 2016, 11:43 AM
  */
 
-#ifndef OGS_CREATE_RELATIVE_PERMEABILITY_MODEL_H
-#define OGS_CREATE_RELATIVE_PERMEABILITY_MODEL_H
+#pragma once
 
 #include <memory>
 
@@ -31,5 +30,3 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     BaseLib::ConfigTree const& config);
 }
 }  // end namespace
-
-#endif /* OGS_CREATE_RELATIVE_PERMEABILITY_MODEL_H */

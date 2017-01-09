@@ -10,8 +10,7 @@
  *  Created on October 28, 2016, 6:05 PM
  */
 
-#ifndef OGS_VAN_GENUCHTEN_CAPILLARY_PRESSURE_SATURATION_H
-#define OGS_VAN_GENUCHTEN_CAPILLARY_PRESSURE_SATURATION_H
+#pragma once
 
 #include <limits>
 
@@ -83,4 +82,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-#endif /* OGS_VAN_GENUCHTEN_CAPILLARY_PRESSURE_SATURATION_H */

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LOCALASSEMBLERINTERFACE_H
-#define PROCESSLIB_LOCALASSEMBLERINTERFACE_H
+#pragma once
 
 #include "NumLib/NumericsConfig.h"
 #include "MathLib/Point3d.h"
@@ -80,5 +79,3 @@ private:
 };
 
 } // namespace ProcessLib
-
-#endif // PROCESSLIB_LOCALASSEMBLERINTERFACE_H

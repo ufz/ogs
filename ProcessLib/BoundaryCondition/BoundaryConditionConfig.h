@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_BOUNDARYCONDITIONCONFIG_H
-#define PROCESSLIB_BOUNDARYCONDITIONCONFIG_H
+#pragma once
 
 #include "BaseLib/ConfigTree.h"
 #include "GeoLib/GEOObjects.h"
@@ -40,5 +39,3 @@ struct BoundaryConditionConfig final
 };
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_BOUNDARYCONDITIONCONFIG_H

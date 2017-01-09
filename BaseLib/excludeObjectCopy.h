@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef EXCLUDEOBJECTCOPIER_H_
-#define EXCLUDEOBJECTCOPIER_H_
+#pragma once
 
 #include <vector>
 #include <algorithm>
@@ -61,6 +60,3 @@ void excludeObjectCopy(std::vector<T> const& src_vec,
 
 
 } // end namespace BaseLib
-
-#endif
-

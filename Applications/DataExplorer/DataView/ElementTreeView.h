@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef ELEMENTTREEVIEW_H
-#define ELEMENTTREEVIEW_H
+#pragma once
 
 #include <QTreeView>
 
@@ -40,7 +39,3 @@ signals:
     void nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool);
     void removeSelectedMeshComponent();
 };
-
-
-#endif // ELEMENTTREEVIEW_H
-

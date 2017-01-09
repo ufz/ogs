@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef GMSHLINELOOP_H_
-#define GMSHLINELOOP_H_
+#pragma once
 
 #include <vector>
 #include <iosfwd>
@@ -37,5 +36,3 @@ private:
 
 }  // end namespace GMSH
 }  // end namespace FileIO
-
-#endif /* GMSHLINELOOP_H_ */

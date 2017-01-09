@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef INTEGRATIONGAUSSPRISM_H_
-#define INTEGRATIONGAUSSPRISM_H_
+#pragma once
 
 #include "MathLib/Integration/GaussLegendre.h"
 #include "MathLib/Integration/GaussLegendreTri.h"
@@ -96,5 +95,3 @@ private:
 };
 
 }
-
-#endif //INTEGRATIONGAUSSPRISM_H_

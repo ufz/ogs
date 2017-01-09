@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef CONDFROMRASTERDIALOG_H
-#define CONDFROMRASTERDIALOG_H
+#pragma once
 
 #include "ui_CondFromRaster.h"
 #include <QDialog>
@@ -53,5 +52,3 @@ signals:
     void directNodesWritten(std::string);
     void transmitDisValues(std::vector< std::pair<std::size_t,double> >);
 };
-
-#endif //CONDFROMRASTERDIALOG_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_SMALLDEFORMATION_FEM_H_
-#define PROCESS_LIB_SMALLDEFORMATION_FEM_H_
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -440,5 +439,3 @@ public:
 
 }  // namespace SmallDeformation
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_SMALLDEFORMATION_FEM_H_

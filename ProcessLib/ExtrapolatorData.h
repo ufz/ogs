@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_EXTRAPOLATORDATA_H
-#define PROCESSLIB_EXTRAPOLATORDATA_H
+#pragma once
 
 #include <memory>
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -97,6 +96,3 @@ private:
 };
 
 } // namespace ProcessLib
-
-
-#endif // PROCESSLIB_EXTRAPOLATORDATA_H

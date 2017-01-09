@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef COLORTABLEMODEL_H
-#define COLORTABLEMODEL_H
+#pragma once
 
 #include <QAbstractTableModel>
 #include <QColor>
@@ -50,4 +49,3 @@ private:
 
     QList< QPair<QString, QColor> > _listOfPairs;
 };
-#endif // COLORTABLEMODEL_H

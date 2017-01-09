@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_CALCULATESURFACEFLUXLOCALASSEMBLER_H
-#define PROCESSLIB_CALCULATESURFACEFLUXLOCALASSEMBLER_H
+#pragma once
 
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
@@ -156,5 +155,3 @@ private:
 };
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_CALCULATESURFACEFLUXLOCALASSEMBLER_H

@@ -10,8 +10,7 @@
  * Created on November 2, 2016, 11:24 AM
  */
 
-#ifndef OGS_WETTING_PHASE_VAN_GENUCHTEN_H
-#define OGS_WETTING_PHASE_VAN_GENUCHTEN_H
+#pragma once
 
 #include "RelativePermeability.h"
 
@@ -70,4 +69,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-#endif /* OGS_WETTING_PHASE_VAN_GENUCHTEN_H */

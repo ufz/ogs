@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TESTFEPRISM6_H_
-#define TESTFEPRISM6_H_
+#pragma once
 
 #include "MeshLib/Elements/Prism.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
@@ -82,6 +81,3 @@ public:
 };
 
 } // namespace
-
-#endif
-

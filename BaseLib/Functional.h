@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef BASELIB_FUNCTIONAL_H
-#define BASELIB_FUNCTIONAL_H
+#pragma once
 
 #include <functional>
 #include "BaseLib/TMPUtil.h"
@@ -212,5 +211,3 @@ typename detail::FunctionTraits<Object>::FunctionType easyBind(Object&& obj)
 }
 
 }  // namespace BaseLib
-
-#endif  // BASELIB_FUNCTIONAL_H

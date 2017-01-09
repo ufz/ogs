@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALSLIB_ADSORPTION_DENSITY100MPA_H
-#define MATERIALSLIB_ADSORPTION_DENSITY100MPA_H
+#pragma once
 
 #include "Adsorption.h"
 
@@ -25,4 +24,3 @@ public:
 };
 
 }
-#endif // MATERIALSLIB_ADSORPTION_DENSITY100MPA_H

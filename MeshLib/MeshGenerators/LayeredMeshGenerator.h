@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LAYEREDMESHGENERATOR_H
-#define LAYEREDMESHGENERATOR_H
+#pragma once
 
 #include <memory>
 #include <limits>
@@ -99,5 +98,3 @@ protected:
     std::vector<MeshLib::Node*> _nodes;
     std::vector<MeshLib::Element*> _elements;
 };
-
-#endif //LAYEREDMESHGENERATOR_H

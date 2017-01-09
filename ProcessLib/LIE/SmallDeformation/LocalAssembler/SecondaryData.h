@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_SMALLDEFORMATION_SECONDARY_DATA_H_
-#define PROCESSLIB_LIE_SMALLDEFORMATION_SECONDARY_DATA_H_
+#pragma once
 
 namespace ProcessLib
 {
@@ -28,5 +27,3 @@ struct SecondaryData
 }  // namespace SmallDeformation
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_LIE_SMALLDEFORMATION_SECONDARY_DATA_H_

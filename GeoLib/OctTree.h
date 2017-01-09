@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef OCTTREE_H_
-#define OCTTREE_H_
+#pragma once
 
 #include <cstdint>
 
@@ -149,5 +148,3 @@ private:
 } // end namespace GeoLib
 
 #include "OctTree-impl.h"
-
-#endif /* OCTTREE_H_ */

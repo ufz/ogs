@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef QUADRULE8_H_
-#define QUADRULE8_H_
+#pragma once
 
 #include "MeshLib/MeshEnums.h"
 #include "QuadRule4.h"
@@ -51,6 +50,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* QUADRULE8_H_ */
-

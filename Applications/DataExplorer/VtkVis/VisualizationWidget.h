@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VISUALIZATIONWIDGET_H
-#define VISUALIZATIONWIDGET_H
+#pragma once
 
 // ** INCLUDES **
 #include "ui_VisualizationWidgetBase.h"
@@ -110,5 +109,3 @@ private:
     VtkPickCallback* _vtkPickCallback;
     bool _isShowAllOnLoad;
 };
-
-#endif // VISUALIZATIONWIDGET_H

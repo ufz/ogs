@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LISVECTOR_H_
-#define LISVECTOR_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -112,5 +111,3 @@ private:
 };
 
 }  // MathLib
-
-#endif  // LISVECTOR_H_

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef XMLLUTREADER_H
-#define XMLLUTREADER_H
+#pragma once
 
 #include <QFile>
 #include <QtXml/QDomDocument>
@@ -101,5 +100,3 @@ public:
 };
 
  }
-
-#endif // XMLLUTREADER_H

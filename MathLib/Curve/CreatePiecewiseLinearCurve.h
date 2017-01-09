@@ -10,8 +10,7 @@
  * Created on November 11, 2016, 10:49 AM
  */
 
-#ifndef OGS_CREATE_PIECEWISE_LINEAR_CURVE_H
-#define OGS_CREATE_PIECEWISE_LINEAR_CURVE_H
+#pragma once
 
 #include <memory>
 
@@ -30,5 +29,3 @@ std::unique_ptr<CurveType> createPiecewiseLinearCurve(
 };
 
 #include "CreatePiecewiseLinearCurve-impl.h"
-
-#endif /* OGS_CREATE_PIECEWISE_LINEAR_CURVE_H */

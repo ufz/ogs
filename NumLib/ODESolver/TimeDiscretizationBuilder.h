@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_TIMEDISCRETIZATION_BUILDER_H
-#define NUMLIB_TIMEDISCRETIZATION_BUILDER_H
+#pragma once
 
 #include <memory>
 
@@ -21,5 +20,3 @@ namespace NumLib
 std::unique_ptr<TimeDiscretization> createTimeDiscretization(
     BaseLib::ConfigTree const& config);
 }
-
-#endif  // NUMLIB_TIMEDISCRETIZATION_BUILDER_H

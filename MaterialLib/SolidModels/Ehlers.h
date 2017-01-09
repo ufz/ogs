@@ -17,8 +17,7 @@
  * for more details for the tests.
  */
 
-#ifndef MATERIALLIB_SOLIDMODELS_EHLERS_H_
-#define MATERIALLIB_SOLIDMODELS_EHLERS_H_
+#pragma once
 
 #include <cfloat>
 #include <memory>
@@ -211,5 +210,3 @@ private:
 }  // namespace Solids
 }  // namespace MaterialLib
 #include "Ehlers-impl.h"
-
-#endif  // MATERIALLIB_SOLIDMODELS_EHLERS_H_

@@ -10,8 +10,7 @@
  * Created on August 16, 2016, 1:16 PM
  */
 
-#ifndef OGS_CREATESTORAGEMODEL_H
-#define OGS_CREATESTORAGEMODEL_H
+#pragma once
 
 #include <memory>
 
@@ -32,5 +31,3 @@ std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config);
 
 }  // end namespace
 }  // end namespace
-
-#endif /* CREATESTORAGEMODEL_H */

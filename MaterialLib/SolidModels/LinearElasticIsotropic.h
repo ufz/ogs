@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALLIB_SOLIDMODELS_LINEARELASTICISOTROPIC_H_
-#define MATERIALLIB_SOLIDMODELS_LINEARELASTICISOTROPIC_H_
+#pragma once
 
 #include "MechanicsBase.h"
 
@@ -109,5 +108,3 @@ extern template class LinearElasticIsotropic<3>;
 
 }  // namespace Solids
 }  // namespace MaterialLib
-
-#endif  // MATERIALLIB_SOLIDMODELS_LINEARELASTICISOTROPIC_H_

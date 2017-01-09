@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef MESHSUBSET_H_
-#define MESHSUBSET_H_
+#pragma once
 
 #include <cassert>
 #include <vector>
@@ -170,5 +169,3 @@ private:
 };
 
 }   // namespace MeshLib
-
-#endif  // MESHSUBSET_H_

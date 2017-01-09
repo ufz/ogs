@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKIMAGEDATATOLINEPOLYDATAFILTER_H
-#define VTKIMAGEDATATOLINEPOLYDATAFILTER_H
+#pragma once
 
 #include "VtkAlgorithmProperties.h"
 #include <vtkPolyDataAlgorithm.h>
@@ -70,5 +69,3 @@ private:
     VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&); // Not implemented.
     void operator=(const VtkImageDataToLinePolyDataFilter&); // Not implemented
 };
-
-#endif // VTKIMAGEDATATOLINEPOLYDATAFILTER_H

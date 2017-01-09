@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITECONTOURFILTER_H
-#define VTKCOMPOSITECONTOURFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 
@@ -34,5 +33,3 @@ public:
 
 private:
 };
-
-#endif // VTKCOMPOSITECONTOURFILTER_H

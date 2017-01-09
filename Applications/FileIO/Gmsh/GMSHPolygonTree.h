@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef GMSHPOLYGONTREE_H_
-#define GMSHPOLYGONTREE_H_
+#pragma once
 
 #include <vector>
 #include <string>
@@ -102,5 +101,3 @@ private:
 
 }  // end namespace GMSH
 }  // end namespace FileIO
-
-#endif /* GMSHPOLYGONTREE_H_ */

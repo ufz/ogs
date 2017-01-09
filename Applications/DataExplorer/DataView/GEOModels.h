@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GEOMODELS_H
-#define GEOMODELS_H
+#pragma once
 
 #include <QObject>
 
@@ -170,6 +169,3 @@ public:
 private:
     GEOModels& _geo_models;
 };
-
-
-#endif // GEOMODELS_H

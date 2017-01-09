@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKAPPENDARRAYFILTER_H
-#define VTKAPPENDARRAYFILTER_H
+#pragma once
 
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
@@ -58,5 +57,3 @@ private:
     std::vector<double> _array;
     std::string _array_name;
 };
-
-#endif // VTKAPPENDARRAYFILTER_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALSLIB_ADSORPTION_REACTIONCAOH2_H
-#define MATERIALSLIB_ADSORPTION_REACTIONCAOH2_H
+#pragma once
 
 #include "BaseLib/ConfigTree.h"
 #include "Reaction.h"
@@ -84,4 +83,3 @@ public:
 };
 
 }
-#endif // MATERIALSLIB_ADSORPTION_REACTIONCAOH2_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef XMLINTERFACE_H
-#define XMLINTERFACE_H
+#pragma once
 
 #include <string>
 
@@ -41,5 +40,3 @@ protected:
 
 }
 }
-
-#endif // XMLINTERFACE_H

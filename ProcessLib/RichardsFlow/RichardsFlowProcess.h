@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_RICHARDSFLOWPROCESS_H_
-#define PROCESS_LIB_RICHARDSFLOWPROCESS_H_
+#pragma once
 
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
@@ -65,5 +64,3 @@ private:
 
 }  // namespace RichardsFlow
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_RICHARDSFLOWPROCESS_H_

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_PROCESS_VARIABLE_H_
-#define PROCESS_LIB_PROCESS_VARIABLE_H_
+#pragma once
 
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
@@ -91,5 +90,3 @@ private:
 };
 
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_PROCESS_VARIABLE_H_

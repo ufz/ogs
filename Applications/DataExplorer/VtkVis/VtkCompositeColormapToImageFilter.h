@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITECOLORMAPTOIMAGEFILTER_H
-#define VTKCOMPOSITECOLORMAPTOIMAGEFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 
@@ -32,5 +31,3 @@ public:
 
 private:
 };
-
-#endif // VTKCOMPOSITECOLORMAPTOIMAGEFILTER_H

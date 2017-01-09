@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef FILEFINDER_H
-#define FILEFINDER_H
+#pragma once
 
 #include <initializer_list>
 #include <string>
@@ -57,5 +56,3 @@ private:
     std::vector<std::string> _directories;
 };
 } // end namespace BaseLib
-
-#endif // FILEFINDER_H

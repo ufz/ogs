@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef XMLSTNINTERFACE_H
-#define XMLSTNINTERFACE_H
+#pragma once
 
 #include <vector>
 
@@ -73,5 +72,3 @@ private:
 
 } // end namespace IO
 } // end namespace GeoLib
-
-#endif // XMLSTNINTERFACE_H

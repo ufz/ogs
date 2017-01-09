@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef APPLICATIONSLIB_LOGOGSETUP_H_
-#define APPLICATIONSLIB_LOGOGSETUP_H_
+#pragma once
 
 #include <map>
 #include <memory>
@@ -83,5 +82,3 @@ private:
 };
 
 }    // ApplicationsLib
-
-#endif  // APPLICATIONSLIB_LOGOGSETUP_H_

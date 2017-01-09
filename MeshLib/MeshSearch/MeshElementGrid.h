@@ -8,8 +8,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef MESHELEMENTGRID_H_
-#define MESHELEMENTGRID_H_
+#pragma once
 
 #include <array>
 #include <limits>
@@ -105,5 +104,3 @@ void getGridGeometry(MeshLib::MeshElementGrid const& grid,
 #endif
 
 } // end namespace MeshLib
-
-#endif /* MESHELEMENTGRID_H_ */

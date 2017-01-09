@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef DIAGRAMPREFSDIALOG_H
-#define DIAGRAMPREFSDIALOG_H
+#pragma once
 
 #include "ui_DiagramPrefs.h"
 #include <QMainWindow>
@@ -115,5 +114,3 @@ private slots:
 
 signals:
 };
-
-#endif //DIAGRAMPREFSDIALOG_H

@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef COLOR_H_
-#define COLOR_H_
+#pragma once
 
 #include <array>
 #include <map>
@@ -38,5 +37,3 @@ Color const getColor(const std::string &id, std::map<std::string, DataHolderLib:
 /// Convenience function to use the getColor method with numbers as identifiers.
 Color const getColor(double id, std::map<std::string, DataHolderLib::Color> &colors);
 } // namespace
-
-#endif /* COLOR_H_ */

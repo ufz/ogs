@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef CHECKBOXDELEGATE_H
-#define CHECKBOXDELEGATE_H
+#pragma once
 
 #include <QItemDelegate>
 
@@ -47,5 +46,3 @@ public:
 private:
     QRect checkboxRect(const QStyleOptionViewItem& viewItemStyleOptions) const;
 };
-
-#endif // CHECKBOXDELEGATE_H

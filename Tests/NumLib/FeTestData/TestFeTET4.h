@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TESTFETET4_H_
-#define TESTFETET4_H_
+#pragma once
 
 #include "MeshLib/Elements/Tet.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
@@ -75,6 +74,3 @@ public:
 };
 
 } // namespace
-
-#endif
-

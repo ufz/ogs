@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_HYDROMECHANICS_HYDROMECHANICSPROCESSDATA_H_
-#define PROCESSLIB_HYDROMECHANICS_HYDROMECHANICSPROCESSDATA_H_
+#pragma once
 
 #include <Eigen/Dense>
 
@@ -100,5 +99,3 @@ struct HydroMechanicsProcessData
 
 }  // namespace HydroMechanics
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_HYDROMECHANICS_HYDROMECHANICSPROCESSDATA_H_

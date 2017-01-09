@@ -10,8 +10,7 @@
  * Created on November 3, 2016, 9:50 AM
  */
 
-#ifndef OGS_CAPILLARY_PRESSURE_SATURATION_CURVE_H
-#define OGS_CAPILLARY_PRESSURE_SATURATION_CURVE_H
+#pragma once
 
 #include <memory>
 
@@ -78,5 +77,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-
-#endif /* OGS_CAPILLARY_PRESSURE_SATURATION_CURVE_H */

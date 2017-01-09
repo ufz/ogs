@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef NUMLIB_MESHCOMPONENTMAP_H_
-#define NUMLIB_MESHCOMPONENTMAP_H_
+#pragma once
 
 #include "ComponentGlobalIndexDict.h"
 
@@ -192,5 +191,3 @@ private:
 };
 
 }   // namespace NumLib
-
-#endif  // NUMLIB_MESHCOMPONENTMAP_H_

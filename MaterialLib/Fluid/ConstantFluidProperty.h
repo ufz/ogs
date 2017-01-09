@@ -10,8 +10,7 @@
  * Created on August 15, 2016, 12:11 PM
  */
 
-#ifndef CONSTANTFLUIDPROPERTY_H
-#define CONSTANTFLUIDPROPERTY_H
+#pragma once
 
 #include "FluidProperty.h"
 
@@ -57,4 +56,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-#endif /* CONSTANTFLUIDPROPERTY_H */

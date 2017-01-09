@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITESELECTIONFILTER_H
-#define VTKCOMPOSITESELECTIONFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 
@@ -47,5 +46,3 @@ private:
     std::string _selection_name;
     std::vector<double> _selection;
 };
-
-#endif // VTKCOMPOSITESELECTIONFILTER_H

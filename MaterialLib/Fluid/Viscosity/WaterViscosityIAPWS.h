@@ -14,8 +14,7 @@
  * Created on December 1, 2016, 1:41 PM
  */
 
-#ifndef OGS_WATER_VISCOSITY_IAPWS_H
-#define OGS_WATER_VISCOSITY_IAPWS_H
+#pragma once
 
 #include <string>
 
@@ -85,5 +84,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-
-#endif /* OGS_WATER_VISCOSITY_IAPWS_H */

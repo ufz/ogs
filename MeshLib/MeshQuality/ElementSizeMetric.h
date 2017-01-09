@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ELEMENTSIZEMETRIC_H_
-#define ELEMENTSIZEMETRIC_H_
+#pragma once
 
 #include "ElementQualityMetric.h"
 
@@ -37,5 +36,3 @@ private:
     std::size_t calc3dQuality();
 };
 }
-
-#endif /* ELEMENTSIZEMETRIC_H_ */

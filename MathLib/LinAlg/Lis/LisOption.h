@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LIS_OPTION_H_
-#define LIS_OPTION_H_
+#pragma once
 
 #include <string>
 #include <map>
@@ -58,4 +57,3 @@ struct LisOption
 
 };
 }
-#endif  // LIS_OPTION_H_

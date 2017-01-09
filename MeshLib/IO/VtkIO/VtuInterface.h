@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTUINTERFACE_H_
-#define VTUINTERFACE_H_
+#pragma once
 
 #include <string>
 #include <vtkXMLWriter.h>
@@ -59,5 +58,3 @@ private:
 } // end namespace MeshLib
 
 #include "VtuInterface-impl.h"
-
-#endif /* VTUINTERFACE_H_ */

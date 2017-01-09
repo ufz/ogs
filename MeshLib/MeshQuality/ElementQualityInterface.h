@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef ELEMENTQUALITYINTERFACE_H_
-#define ELEMENTQUALITYINTERFACE_H_
+#pragma once
 
 #include <vector>
 
@@ -109,5 +108,3 @@ private:
 };
 
 }
-
-#endif /* ELEMENTQUALITYINTERFACE_H_ */

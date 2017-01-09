@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef FACERULE_H_
-#define FACERULE_H_
+#pragma once
 
 #include "MathLib/Vector3.h"
 #include "Element.h"
@@ -40,6 +39,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* FACERULE_H_ */
-

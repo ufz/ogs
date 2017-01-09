@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_SMALLDEFORMATION_SMALLDEFORMATIONPROCESSDATA_H_
-#define PROCESSLIB_SMALLDEFORMATION_SMALLDEFORMATIONPROCESSDATA_H_
+#pragma once
 
 namespace MeshLib
 {
@@ -51,5 +50,3 @@ struct SmallDeformationProcessData
 
 }  // namespace SmallDeformation
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_SMALLDEFORMATION_SMALLDEFORMATIONPROCESSDATA_H_

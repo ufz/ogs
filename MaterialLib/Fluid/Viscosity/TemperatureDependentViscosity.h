@@ -12,8 +12,7 @@
  *  Created on August 10, 2016, 10:45 AM
  */
 
-#ifndef TEMPERATUREDEPENDENTVISCOSITY_H
-#define TEMPERATUREDEPENDENTVISCOSITY_H
+#pragma once
 
 #include <string>
 #include <cmath>
@@ -93,5 +92,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-
-#endif /* TEMPERATUREDEPENDENTVISCOSITY_H */

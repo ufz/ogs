@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITEFILTER_H
-#define VTKCOMPOSITEFILTER_H
+#pragma once
 
 #include "VtkAlgorithmProperties.h"
 
@@ -80,5 +79,3 @@ protected:
 
     virtual void init() = 0;
 };
-
-#endif // VTKCOMPOSITEFILTER_H

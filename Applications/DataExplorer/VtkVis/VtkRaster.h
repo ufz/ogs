@@ -11,8 +11,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef VTKRASTER_H
-#define VTKRASTER_H
+#pragma once
 
 #include <string>
 #include "GeoLib/Raster.h"
@@ -73,5 +72,3 @@ private:
     /// Converts an uint32-number into a quadruple representing RGBA-colours for a pixel.
     static void uint32toRGBA(const unsigned int s, int* p);
 };
-
-#endif //VTKRASTER_H

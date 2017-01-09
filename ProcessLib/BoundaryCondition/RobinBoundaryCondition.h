@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_ROBINBOUNDARYCONDITION_H
-#define PROCESSLIB_ROBINBOUNDARYCONDITION_H
+#pragma once
 
 #include "GenericNaturalBoundaryCondition.h"
 #include "RobinBoundaryConditionLocalAssembler.h"
@@ -46,5 +45,3 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_ROBINBOUNDARYCONDITION_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_CONSTANTPARAMETER_H
-#define PROCESSLIB_CONSTANTPARAMETER_H
+#pragma once
 
 #include "Parameter.h"
 
@@ -54,5 +53,3 @@ std::unique_ptr<ParameterBase> createConstantParameter(
     std::string const& name, BaseLib::ConfigTree const& config);
 
 }  // ProcessLib
-
-#endif  // PROCESSLIB_CONSTANTPARAMETER_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_CREATESMALLDEFORMATIONPROCESS_H_
-#define PROCESS_LIB_CREATESMALLDEFORMATIONPROCESS_H_
+#pragma once
 
 #include "MaterialLib/SolidModels/CreateLubby2.h"
 #include "ProcessLib/Process.h"
@@ -28,5 +27,3 @@ std::unique_ptr<Process> createSmallDeformationProcess(
 
 }  // namespace SmallDeformation
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_CREATESMALLDEFORMATIONPROCESS_H_

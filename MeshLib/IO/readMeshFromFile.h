@@ -16,8 +16,7 @@
  * @author Karsten Rink
  */
 
-#ifndef READMESHFROMFILE_H
-#define READMESHFROMFILE_H
+#pragma once
 
 #include <string>
 
@@ -31,4 +30,3 @@ MeshLib::Mesh* readMeshFromFileSerial(const std::string &file_name);
 MeshLib::Mesh* readMeshFromFile(const std::string &file_name);
 }
 }
-#endif // READMESHFROMFILE_H

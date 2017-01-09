@@ -21,8 +21,7 @@
 **
 ****************************************************************************/
 
-#ifndef MODELTEST_H
-#define MODELTEST_H
+#pragma once
 
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QObject>
@@ -72,5 +71,3 @@ private:
 
     QList<QPersistentModelIndex> changing;
 };
-
-#endif

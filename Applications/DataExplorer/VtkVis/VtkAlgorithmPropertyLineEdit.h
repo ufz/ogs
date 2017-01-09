@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKALGORITHMPROPERTYLINEEDIT_H
-#define VTKALGORITHMPROPERTYLINEEDIT_H
+#pragma once
 
 #include <QLineEdit>
 #include <QVariant>
@@ -50,5 +49,3 @@ private slots:
     /// @brief This slots is automatically called when the text changed.
     void setNewValue();
 };
-
-#endif // VTKALGORITHMPROPERTYLINEEDIT_H

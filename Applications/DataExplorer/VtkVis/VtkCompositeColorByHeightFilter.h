@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKCOMPOSITECOLORBYHEIGHTFILTER_H
-#define VTKCOMPOSITECOLORBYHEIGHTFILTER_H
+#pragma once
 
 #include "VtkCompositeFilter.h"
 
@@ -32,5 +31,3 @@ public:
 
 protected:
 };
-
-#endif // VTKCOMPOSITECOLORBYHEIGHTFILTER_H

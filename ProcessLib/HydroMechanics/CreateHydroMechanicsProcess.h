@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_CREATEHYDROMECHANICSPROCESS_H_
-#define PROCESS_LIB_CREATEHYDROMECHANICSPROCESS_H_
+#pragma once
 
 #include "ProcessLib/Process.h"
 
@@ -27,5 +26,3 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
 }  // namespace HydroMechanics
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_CREATEHYDROMECHANICSPROCESS_H_

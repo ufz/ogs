@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef TRI_H_
-#define TRI_H_
+#pragma once
 
 #include "TemplateElement.h"
 #include "TriRule3.h"
@@ -29,5 +28,3 @@ typedef TemplateElement<TriRule3> Tri;
 typedef TemplateElement<TriRule6> Tri6;
 
 }
-
-#endif /* TRI_H_ */

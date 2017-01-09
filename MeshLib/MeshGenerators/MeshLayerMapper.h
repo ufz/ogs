@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MESHLAYERMAPPER_H
-#define MESHLAYERMAPPER_H
+#pragma once
 
 #include "LayeredMeshGenerator.h"
 
@@ -71,5 +70,3 @@ private:
 };
 
 } // end namespace MeshLib
-
-#endif //MESHLAYERMAPPER_H

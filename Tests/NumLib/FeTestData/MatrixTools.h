@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TEST_MATRIXTOOLS_H_
-#define TEST_MATRIXTOOLS_H_
+#pragma once
 
 namespace FeTestData
 {
@@ -34,6 +33,3 @@ inline void setIdentityMatrix(unsigned dim, T_MATRIX &m)
 }
 
 } // namespace
-
-#endif
-

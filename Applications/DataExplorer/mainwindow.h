@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <memory>
 
@@ -156,5 +155,3 @@ public:
         qapp->exec();
     }
 };
-
-#endif // MAINWINDOW_H

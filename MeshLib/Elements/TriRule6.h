@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef TRIRULE6_H_
-#define TRIRULE6_H_
+#pragma once
 
 #include "MeshLib/MeshEnums.h"
 #include "TriRule3.h"
@@ -54,6 +53,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* TRIRULE6_H_ */
-

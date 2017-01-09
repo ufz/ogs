@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_NONLINEARSOLVER_H
-#define NUMLIB_NONLINEARSOLVER_H
+#pragma once
 
 #include <memory>
 #include <utility>
@@ -195,5 +194,3 @@ createNonlinearSolver(
 //! @}
 
 }  // namespace NumLib
-
-#endif  // NUMLIB_NONLINEARSOLVER_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_GAUSSINTEGRATIONPOLICY_H_
-#define NUMLIB_GAUSSINTEGRATIONPOLICY_H_
+#pragma once
 
 #include "MeshLib/Elements/Point.h"
 #include "MeshLib/Elements/Tri.h"
@@ -106,5 +105,3 @@ struct GaussIntegrationPolicy<MeshLib::Pyramid13>
 };
 
 }   // namespace NumLib
-
-#endif  // NUMLIB_GAUSSINTEGRATIONPOLICY_H_

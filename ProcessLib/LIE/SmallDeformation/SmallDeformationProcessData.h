@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_SMALLDEFORMATION_SMALLDEFORMATIONPROCESSDATA_H_
-#define PROCESSLIB_LIE_SMALLDEFORMATION_SMALLDEFORMATIONPROCESSDATA_H_
+#pragma once
 
 #include <memory>
 
@@ -87,5 +86,3 @@ struct SmallDeformationProcessData
 }  // namespace SmallDeformation
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_LIE_SMALLDEFORMATION_SMALLDEFORMATIONPROCESSDATA_H_

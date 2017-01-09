@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef DATETOOLS_H
-#define DATETOOLS_H
+#pragma once
 
 #include <chrono>
 #include <string>
@@ -67,5 +66,3 @@ std::string formatDate(
     std::chrono::time_point<std::chrono::system_clock> const& time);
 
 } // namespace BaseLib
-
-#endif //DATETOOLS_H

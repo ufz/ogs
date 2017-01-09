@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef STATIONTABWIDGET_H
-#define STATIONTABWIDGET_H
+#pragma once
 
 // ** INCLUDES **
 #include "ui_StationTabWidgetBase.h"
@@ -34,5 +33,3 @@ private slots:
     void enableSaveButton(bool enable) { this->saveStnPushButton->setEnabled(enable); };
     void enableRemoveButton(bool enable) { this->removeStnPushButton->setEnabled(enable); };
 };
-
-#endif // STATIONTABWIDGET_H

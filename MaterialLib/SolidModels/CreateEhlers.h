@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALLIB_SOLIDMODELS_CREATEEHLERS_H_
-#define MATERIALLIB_SOLIDMODELS_CREATEEHLERS_H_
+#pragma once
 
 #include <logog/include/logog.hpp>
 
@@ -151,5 +150,3 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
 
 }  // namespace Solids
 }  // namespace MaterialLib
-
-#endif  // MATERIALLIB_SOLIDMODELS_CREATEEHLERS_H_

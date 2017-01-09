@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_TESPROCESS_NOTPL_H_
-#define PROCESS_LIB_TESPROCESS_NOTPL_H_
+#pragma once
 
 #include <Eigen/Eigen>
 #include <Eigen/Sparse>
@@ -81,5 +80,3 @@ struct AssemblyParams
 }  // namespace TES
 
 }  // namespace ProcessLib
-
-#endif  // PROCESS_LIB_TESPROCESS_NOTPL_H_

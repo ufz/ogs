@@ -14,8 +14,7 @@
                http://www.opengeosys.org/project/license
 */
 
-#ifndef PETSCTOOLS_H_
-#define PETSCTOOLS_H_
+#pragma once
 
 #include <vector>
 
@@ -37,6 +36,3 @@ void applyKnownSolution(PETScMatrix &A, PETScVector &b, PETScVector &x,
                         const std::vector<PetscInt> &vec_knownX_id,
                         const std::vector<PetscScalar> &vec_knownX_x);
 } // end of namespace MathLib
-
-#endif //end  of PETSCTOOLS_H_
-

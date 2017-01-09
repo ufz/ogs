@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef BASELIB_GLOBALCOUNTER_H
-#define BASELIB_GLOBALCOUNTER_H
+#pragma once
 
 #include <cstddef>
 
@@ -27,5 +26,3 @@ struct Counter
 template <typename X> std::size_t Counter<X>::_counter_value(0);
 
 } // end namespace BaseLib
-
-#endif  // BASELIB_GLOBALCOUNTER_H

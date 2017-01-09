@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_INTERPOLATION_H
-#define NUMLIB_INTERPOLATION_H
+#pragma once
 
 #include<array>
 #include<cassert>
@@ -86,5 +85,3 @@ void shapeFunctionInterpolate(
 }
 
 } // namespace NumLib
-
-#endif // NUMLIB_INTERPOLATION_H

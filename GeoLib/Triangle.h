@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef TRIANGLE_H_
-#define TRIANGLE_H_
+#pragma once
 
 #include <vector>
 
@@ -87,5 +86,3 @@ private:
 void getPlaneCoefficients(Triangle const& tri, double c[3]);
 
 } // end namespace GeoLib
-
-#endif /* TRIANGLE_H_ */

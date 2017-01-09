@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef TESTS_MATHLIB_AUTOCHECKTOOLS_H_
-#define TESTS_MATHLIB_AUTOCHECKTOOLS_H_
+#pragma once
 
 #include <Eigen/Dense>
 #include <autocheck/autocheck.hpp>
@@ -139,4 +138,3 @@ struct progressivelySmallerGenerator
 };
 
 }  // namespace autocheck
-#endif  // TESTS_MATHLIB_AUTOCHECKTOOLS_H_

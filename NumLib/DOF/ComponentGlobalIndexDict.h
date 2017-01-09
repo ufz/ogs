@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef NUMLIB_COMPONENTGLOBALINDEXDICT_H_
-#define NUMLIB_COMPONENTGLOBALINDEXDICT_H_
+#pragma once
 
 #include <limits>
 
@@ -119,5 +118,3 @@ typedef boost::multi_index::multi_index_container<
 
 }    // namespace detail
 }    // namespace NumLib
-
-#endif  // NUMLIB_COMPONENTGLOBALINDEXDICT_H_

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_FRACTURE_IMPL_H_
-#define PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_FRACTURE_IMPL_H_
+#pragma once
 
 #include "HydroMechanicsLocalAssemblerFracture.h"
 
@@ -394,5 +393,3 @@ computeSecondaryVariableConcreteWithVector(
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_LIE_HYDROMECHANICS_HYDROMECHANICSLOCALASSEMBLER_FRACTURE_IMPL_H_

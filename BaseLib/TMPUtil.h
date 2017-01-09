@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef BASELIB_TMPUTIL_H
-#define BASELIB_TMPUTIL_H
+#pragma once
 
 namespace BaseLib
 {
@@ -42,5 +41,3 @@ struct GenerateIntegerSequence<0, S...> {
  */
 
 }  // namespace BaseLib
-
-#endif  // BASELIB_TMPUTIL_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef INTEGRATIONGAUSSTRI_H_
-#define INTEGRATIONGAUSSTRI_H_
+#pragma once
 
 #include "MathLib/Integration/GaussLegendreTri.h"
 
@@ -125,5 +124,3 @@ private:
 };
 
 }
-
-#endif //INTEGRATIONGAUSSTRI_H_

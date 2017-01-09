@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_MATRIX_PROVIDER_USER_H
-#define NUMLIB_MATRIX_PROVIDER_USER_H
+#pragma once
 
 #include <cstddef>
 
@@ -117,5 +116,3 @@ public:
 };
 
 } // namespace NumLib
-
-#endif // NUMLIB_MATRIX_PROVIDER_USER_H

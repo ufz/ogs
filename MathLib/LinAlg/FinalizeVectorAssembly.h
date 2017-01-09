@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef FINALIZEVECTORASSEMBLY_H_
-#define FINALIZEVECTORASSEMBLY_H_
+#pragma once
 
 namespace MathLib
 {
@@ -23,5 +22,3 @@ void finalizeVectorAssembly(VEC_T &)
 }
 
 } // MathLib
-
-#endif

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_ODESYSTEM_H
-#define NUMLIB_ODESYSTEM_H
+#pragma once
 
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/IndexValueVector.h"
@@ -121,5 +120,3 @@ public:
 
 //! @}
 }
-
-#endif  // NUMLIB_ODESYSTEM_H

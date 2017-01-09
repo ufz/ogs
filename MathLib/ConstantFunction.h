@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef MATHLIB_CONSTANTFUNCTION_H_
-#define MATHLIB_CONSTANTFUNCTION_H_
+#pragma once
 
 #include <array>
 #include <numeric>
@@ -42,5 +41,3 @@ private:
 };
 
 }
-
-#endif  // MATHLIB_CONSTANTFUNCTION_H_

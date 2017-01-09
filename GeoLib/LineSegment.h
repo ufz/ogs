@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef LINESEGMENT_H_
-#define LINESEGMENT_H_
+#pragma once
 
 #include "Point.h"
 
@@ -60,4 +59,3 @@ std::ostream& operator<<(std::ostream& os,
 bool operator==(LineSegment const& s0, LineSegment const& s1);
 
 }
-#endif

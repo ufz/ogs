@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_LOCALTOGLOBALINDEXMAP_H_
-#define NUMLIB_LOCALTOGLOBALINDEXMAP_H_
+#pragma once
 
 #ifndef NDEBUG
 #include <iosfwd>
@@ -220,5 +219,3 @@ private:
 };
 
 }   // namespace NumLib
-
-#endif  // NUMLIB_LOCALTOGLOBALINDEXMAP_H_

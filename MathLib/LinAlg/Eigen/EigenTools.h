@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef EIGENTOOLS_H_
-#define EIGENTOOLS_H_
+#pragma once
 
 #include <vector>
 #include <logog/include/logog.hpp>
@@ -46,6 +45,3 @@ void applyKnownSolution(Eigen::MatrixXd &A, Eigen::VectorXd &b, Eigen::VectorXd 
 }
 
 } // MathLib
-
-#endif //EIGENTOOLS_H_
-

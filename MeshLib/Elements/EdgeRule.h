@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef EDGERULE_H_
-#define EDGERULE_H_
+#pragma once
 
 namespace MeshLib
 {
@@ -39,6 +38,3 @@ public:
 }; /* class */
 
 } /* namespace */
-
-#endif /* EDGERULE_H_ */
-

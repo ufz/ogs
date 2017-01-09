@@ -12,9 +12,7 @@
  *
  */
 
-
-#ifndef SENSORDATA_H
-#define SENSORDATA_H
+#pragma once
 
 #include <cstddef>
 #include <string>
@@ -130,6 +128,3 @@ private:
     std::vector< std::vector<float>* > _data_vecs;
 
 };
-
-#endif //SENSORDATA_H
-

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef POLYGON_H_
-#define POLYGON_H_
+#pragma once
 
 #include <list>
 #include <vector>
@@ -167,5 +166,3 @@ GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt,
 bool operator==(Polygon const& lhs, Polygon const& rhs);
 
 } // end namespace GeoLib
-
-#endif /* POLYGON_H_ */

@@ -12,9 +12,7 @@
  *
  */
 
-
-#ifndef GEO_STATION_H
-#define GEO_STATION_H
+#pragma once
 
 #include <string>
 
@@ -107,5 +105,3 @@ private:
 
 bool isStation(GeoLib::Point const* pnt);
 } // namespace
-
-#endif // GEO_STATION_H

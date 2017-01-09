@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_CONVERGENCECRITERION_H
-#define NUMLIB_CONVERGENCECRITERION_H
+#pragma once
 
 #include <memory>
 #include "NumLib/NumericsConfig.h"
@@ -88,5 +87,3 @@ bool checkRelativeTolerance(double const reltol,
                             double const denominator);
 
 } // namespace NumLib
-
-#endif  // NUMLIB_CONVERGENCECRITERION_H

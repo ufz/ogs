@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKALGORITHMPROPERTYVECTOREDIT_H
-#define VTKALGORITHMPROPERTYVECTOREDIT_H
+#pragma once
 
 #include <QList>
 #include <QVariant>
@@ -54,5 +53,3 @@ signals:
     /// @brief Is emitted when text of one the line edits changed.
     void editingFinished();
 };
-
-#endif // VTKALGORITHMPROPERTYVECTOREDIT_H

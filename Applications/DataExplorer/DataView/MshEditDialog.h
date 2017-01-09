@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef MSHEDITDIALOG_H
-#define MSHEDITDIALOG_H
+#pragma once
 
 #include "ui_MshEdit.h"
 #include <QDialog>
@@ -82,5 +81,3 @@ private slots:
 signals:
     void mshEditFinished(MeshLib::Mesh*);
 };
-
-#endif //MSHEDITDIALOG_H

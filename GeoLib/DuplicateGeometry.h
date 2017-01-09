@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef DUPLICATEGEOMETRY_H_
-#define DUPLICATEGEOMETRY_H_
+#pragma once
 
 #include <memory>
 #include <string>
@@ -65,5 +64,3 @@ private:
 }; // class
 
 } // namespace
-
-#endif /* DUPLICATEGEOMETRY_H_ */

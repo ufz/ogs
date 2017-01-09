@@ -9,8 +9,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef SEARCHLENGTH_H_
-#define SEARCHLENGTH_H_
+#pragma once
 
 namespace MeshGeoToolsLib
 {
@@ -42,6 +41,3 @@ protected:
 };
 
 } // end namespace MeshGeoToolsLib
-
-#endif
-

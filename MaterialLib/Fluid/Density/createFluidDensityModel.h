@@ -8,8 +8,7 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 */
-#ifndef CREATE_FLUID_DENSITY_MODEL_H_
-#define CREATE_FLUID_DENSITY_MODEL_H_
+#pragma once
 
 #include <memory>
 
@@ -27,4 +26,3 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
     BaseLib::ConfigTree const& config);
 }
 }  // end namespace
-#endif

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef DUPLICATEMESHCOMPONENTS_H
-#define DUPLICATEMESHCOMPONENTS_H
+#pragma once
 
 #include <vector>
 
@@ -43,5 +42,3 @@ namespace MeshLib
     MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes);
 
 } // end namespace MeshLib
-
-#endif //DUPLICATEMESHCOMPONENTS_H

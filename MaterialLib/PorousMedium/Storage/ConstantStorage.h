@@ -10,8 +10,7 @@
  * Created on August 16, 2016, 1:03 PM
  */
 
-#ifndef OGS_CONSTANTSTORAGE_H
-#define OGS_CONSTANTSTORAGE_H
+#pragma once
 
 #include "Storage.h"
 
@@ -43,5 +42,3 @@ private:
 
 }  // end of namespace
 }  // end of namespace
-
-#endif /* CONSTANTSTORAGE_H */

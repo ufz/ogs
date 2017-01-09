@@ -12,8 +12,7 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
  */
-#ifndef IDEAL_GAS_LAW_H_
-#define IDEAL_GAS_LAW_H_
+#pragma once
 
 #include <cassert>
 #include <string>
@@ -90,4 +89,3 @@ private:
 };
 }  // end namespace
 }  // end namespace
-#endif

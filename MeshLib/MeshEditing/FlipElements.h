@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef FLIPELEMENTS_H_
-#define FLIPELEMENTS_H_
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -39,5 +38,3 @@ std::unique_ptr<MeshLib::Element> createFlippedElement(MeshLib::Element const& e
 std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh);
 
 }
-
-#endif //FLIPELEMENTS_H_

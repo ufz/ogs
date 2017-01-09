@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATHLIB_LINALG_H
-#define MATHLIB_LINALG_H
+#pragma once
 
 #include <cassert>
 #include "BaseLib/Error.h"
@@ -253,5 +252,3 @@ void finalizeAssembly(EigenMatrix& A);
 } // namespace MathLib
 
 #endif
-
-#endif // MATHLIB_LINALG_H

@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESSLIB_RICHARDSFLOW_RICHARDSFLOWPROCESSDATA_H
-#define PROCESSLIB_RICHARDSFLOW_RICHARDSFLOWPROCESSDATA_H
+#pragma once
 
 namespace MeshLib
 {
@@ -85,5 +84,3 @@ struct RichardsFlowProcessData
 
 }  // namespace RichardsFlow
 }  // namespace ProcessLib
-
-#endif  // PROCESSLIB_RichardsFlow_RichardsFlowPROCESSDATA_H

@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef PROJECTMESHONTOPLANE_H
-#define PROJECTMESHONTOPLANE_H
+#pragma once
 
 #include <vector>
 
@@ -57,5 +56,3 @@ MeshLib::Mesh* projectMeshOntoPlane(MeshLib::Mesh const& mesh,
 }
 
 } // end namespace MeshLib
-
-#endif //PROJECTMESHONTOPLANE_H

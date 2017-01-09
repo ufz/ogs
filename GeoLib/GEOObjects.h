@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef GEOOBJECTS_H_
-#define GEOOBJECTS_H_
+#pragma once
 
 #include <map>
 #include <functional>
@@ -352,5 +351,3 @@ private:
             std::string & merged_geo_name, std::vector<std::size_t> const& pnt_offsets);
 };
 } // end namespace
-
-#endif /* GEOOBJECTS_H_ */

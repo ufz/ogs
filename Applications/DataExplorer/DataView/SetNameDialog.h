@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef SETNAMEDIALOG_H
-#define SETNAMEDIALOG_H
+#pragma once
 
 #include "GeoType.h"
 
@@ -54,5 +53,3 @@ private slots:
     /// Instructions if the Cancel-Button has been pressed.
     void reject();
 };
-
-#endif //SETNAMEDIALOG_H

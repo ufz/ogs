@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_HTPROCESS_H_
-#define PROCESS_LIB_HTPROCESS_H_
+#pragma once
 
 #include "HTFEM.h"
 #include "HTProcessData.h"
@@ -80,5 +79,3 @@ private:
 
 }  // namespace HT
 }  // namespace ProcessLib
-
-#endif // PROCESS_LIB_HTPROCESS_H_

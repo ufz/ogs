@@ -9,8 +9,7 @@
  * not all of OGS6 has to be recompiled every time a small change is done.
  */
 
-#ifndef PROCESSLIB_VARIABLETRANSFORMATION_H
-#define PROCESSLIB_VARIABLETRANSFORMATION_H
+#pragma once
 
 namespace ProcessLib
 {
@@ -84,4 +83,3 @@ private:
 typedef TrafoScale Trafo;
 
 }
-#endif // PROCESSLIB_VARIABLETRANSFORMATION_H

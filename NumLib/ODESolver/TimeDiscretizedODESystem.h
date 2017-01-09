@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_TIMEDISCRETIZEDODESYSTEM_H
-#define NUMLIB_TIMEDISCRETIZEDODESYSTEM_H
+#pragma once
 
 #include <memory>
 
@@ -234,5 +233,3 @@ private:
 
 //! @}
 }
-
-#endif  // NUMLIB_TIMEDISCRETIZEDODESYSTEM_H

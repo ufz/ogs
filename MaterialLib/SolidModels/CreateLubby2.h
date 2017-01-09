@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef MATERIALLIB_SOLIDMODELS_CREATELUBBY2_H_
-#define MATERIALLIB_SOLIDMODELS_CREATELUBBY2_H_
+#pragma once
 
 #include <logog/include/logog.hpp>
 
@@ -106,5 +105,3 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
 
 }  // namespace Solids
 }  // namespace MaterialLib
-
-#endif  // MATERIALLIB_SOLIDMODELS_CREATELUBBY2_H_

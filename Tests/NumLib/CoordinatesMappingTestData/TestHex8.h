@@ -6,8 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#ifndef COORDINATESMAPPINGTESTDATA_TESTHEX8_H_
-#define COORDINATESMAPPINGTESTDATA_TESTHEX8_H_
+#pragma once
 
 #include "MeshLib/Elements/Hex.h"
 #include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
@@ -121,7 +120,3 @@ const double TestHex8::cl_exp_detJ = -1.;
 const double TestHex8::ze_exp_J[dim*dim] = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0};
 
 }
-
-#endif //OGS_USE_EIGEN
-
-

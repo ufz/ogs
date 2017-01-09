@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUMLIB_TIMELOOP_H
-#define NUMLIB_TIMELOOP_H
+#pragma once
 
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "TimeDiscretizedODESystem.h"
@@ -134,5 +133,3 @@ bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
     return nl_slv_succeeded;
 }
 }
-
-#endif  // NUMLIB_TIMELOOP_H

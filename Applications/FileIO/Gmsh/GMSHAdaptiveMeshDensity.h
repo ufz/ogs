@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef GMSHADAPTIVEMESHDENSITY_H_
-#define GMSHADAPTIVEMESHDENSITY_H_
+#pragma once
 
 #include "GMSHMeshDensityStrategy.h"
 
@@ -55,5 +54,3 @@ private:
 
 }
 } // end namespace FileIO
-
-#endif /* GMSHADAPTIVEMESHDENSITY_H_ */

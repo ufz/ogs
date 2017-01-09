@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef LOGOGCUSTOMCOUT_H_
-#define LOGOGCUSTOMCOUT_H_
+#pragma once
 
 #include <ostream>
 
@@ -65,7 +64,5 @@ private:
     const bool _is_rank0;
 #endif
 };
-
-#endif // LOGOGCUSTOMCOUT_H_
 
 } // namespace BaseLib

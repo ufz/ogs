@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef VTKBGIMAGESOURCE_H
-#define VTKBGIMAGESOURCE_H
+#pragma once
 
 // ** INCLUDES **
 #include <vtkTextureMapToPlane.h>
@@ -48,5 +47,3 @@ private:
     std::pair<double, double> _origin;
     double _cellsize;
 };
-
-#endif // VTKBGIMAGESOURCE_H

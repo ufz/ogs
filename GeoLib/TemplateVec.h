@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef TEMPLATEVEC_H_
-#define TEMPLATEVEC_H_
+#pragma once
 
 #include <algorithm>
 #include <cstdlib>
@@ -238,5 +237,3 @@ protected:
     NameIdMap* _name_id_map;
 };
 } // end namespace GeoLib
-
-#endif /* TEMPLATEVEC_H_ */

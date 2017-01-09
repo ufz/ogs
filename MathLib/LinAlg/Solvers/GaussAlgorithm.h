@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef GAUSSALGORITHM_H_
-#define GAUSSALGORITHM_H_
+#pragma once
 
 #include <vector>
 
@@ -100,5 +99,3 @@ private:
 } // end namespace MathLib
 
 #include "GaussAlgorithm-impl.h"
-
-#endif /* GAUSSALGORITHM_H_ */

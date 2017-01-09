@@ -13,8 +13,7 @@
  *
  */
 
-#ifndef VTKVISTABWIDGET_H
-#define VTKVISTABWIDGET_H
+#pragma once
 
 // ** INCLUDES **
 #include "ui_VtkVisTabWidgetBase.h"
@@ -76,5 +75,3 @@ signals:
     /// Is emitted when a property was changed.
     void requestViewUpdate();
 };
-
-#endif // VTKVISTABWIDGET_H

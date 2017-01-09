@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef NUM_LIB_FEM_FINITE_ELEMENT_LOWERSHAPETABLE_H_
-#define NUM_LIB_FEM_FINITE_ELEMENT_LOWERSHAPETABLE_H_
+#pragma once
 
 #include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
 #include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
@@ -73,5 +72,3 @@ struct LowerDim<NumLib::ShapePyra13>
 };
 
 }  // namespace NumLib
-
-#endif  // NUM_LIB_FEM_FINITE_ELEMENT_LOWERSHAPETABLE_H_

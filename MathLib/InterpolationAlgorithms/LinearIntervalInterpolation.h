@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef LINEARINTERVALINTERPOLATION_H_
-#define LINEARINTERVALINTERPOLATION_H_
+#pragma once
 
 #include "BaseLib/Error.h"
 
@@ -79,5 +78,3 @@ inline NUMERIC_TYPE LinearIntervalInterpolation<NUMERIC_TYPE>::operator() (NUMER
 }
 
 } // end namespace MathLib
-
-#endif /* LINEARINTERPOLATION_H_ */

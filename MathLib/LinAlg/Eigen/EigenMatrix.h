@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef EIGENMATRIX_H_
-#define EIGENMATRIX_H_
+#pragma once
 
 #include <fstream>
 #include <string>
@@ -203,5 +202,3 @@ void operator()(EigenMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
 };
 
 } // end namespace MathLib
-
-#endif

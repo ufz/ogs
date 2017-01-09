@@ -10,8 +10,7 @@
  *
  */
 
-#ifndef STEADYDIFFUSION2DEXAMPLE1_H_
-#define STEADYDIFFUSION2DEXAMPLE1_H_
+#pragma once
 
 #include <cmath>
 #include <vector>
@@ -149,6 +148,3 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
     LocalMatrixType _localA;
     LocalVectorType _localRhs;
 };
-
-
-#endif //STEADYDIFFUSION2DEXAMPLE1_H_

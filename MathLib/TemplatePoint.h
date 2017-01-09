@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef TEMPLATEPOINT_H_
-#define TEMPLATEPOINT_H_
+#pragma once
 
 // STL
 #include <array>
@@ -199,5 +198,3 @@ std::istream& operator>> (std::istream &is, TemplatePoint<T,DIM> &p)
     return is;
 }
 } // end namespace MathLib
-
-#endif /* TEMPLATEPOINT_H_ */

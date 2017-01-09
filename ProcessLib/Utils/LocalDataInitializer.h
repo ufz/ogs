@@ -7,8 +7,7 @@
  *
  */
 
-#ifndef PROCESS_LIB_LOCALDATAINITIALIVER_H_
-#define PROCESS_LIB_LOCALDATAINITIALIVER_H_
+#pragma once
 
 #include <functional>
 #include <memory>
@@ -396,5 +395,3 @@ private:
 #undef ENABLED_ELEMENT_TYPE_TRI
 #undef ENABLED_ELEMENT_TYPE_QUAD
 #undef OGS_ENABLED_ELEMENTS
-
-#endif  // PROCESS_LIB_LOCALDATAINITIALIVER_H_

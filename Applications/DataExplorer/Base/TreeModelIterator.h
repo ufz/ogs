@@ -12,8 +12,7 @@
 
  */
 
-#ifndef TREEMODELITERATOR_H
-#define TREEMODELITERATOR_H
+#pragma once
 
 // ** INCLUDES **
 #include <QStack>
@@ -61,5 +60,3 @@ private:
     /// \brief The traversal implementation.
     TreeItem* next(const TreeItem* current);
 };
-
-#endif // TREEMODELITERATOR_H

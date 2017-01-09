@@ -9,8 +9,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef TIMESTEP_H_
-#define TIMESTEP_H_
+#pragma once
 
 #include <cstddef>
 
@@ -116,5 +115,3 @@ private:
 };
 
 } //NumLib
-
-#endif // TIMESTEP_H_

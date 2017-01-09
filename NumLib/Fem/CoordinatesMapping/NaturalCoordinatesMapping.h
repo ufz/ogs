@@ -10,10 +10,7 @@
  *
  */
 
-
-#ifndef NATURALCOORDINATESMAPPING_H_
-#define NATURALCOORDINATESMAPPING_H_
-
+#pragma once
 
 #include "ShapeMatrices.h"
 
@@ -88,5 +85,3 @@ struct NaturalCoordinatesMapping
 };
 
 } // NumLib
-
-#endif //NATURALCOORDINATESMAPPING_H_

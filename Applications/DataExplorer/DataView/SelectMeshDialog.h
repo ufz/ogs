@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef SELECTMESHDIALOG_H
-#define SELECTMESHDIALOG_H
+#pragma once
 
 #include <QDialog>
 
@@ -62,5 +61,3 @@ private slots:
 signals:
     //void requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string);
 };
-
-#endif //SELECTMESHDIALOG_H
