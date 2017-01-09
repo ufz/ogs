@@ -86,6 +86,12 @@ public:
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
 
+    void coupling_assemble(double const t, std::vector<double> const& local_x,
+                           std::vector<double>& local_M_data,
+                           std::vector<double>& local_K_data,
+                           std::vector<double>& local_b_data,
+                           LocalCouplingTerm const& coupled_term) override;
+
     void computeSecondaryVariableConcrete(
         double const /*t*/, std::vector<double> const& local_x) override;
 
@@ -183,15 +189,34 @@ private:
                         Eigen::MatrixXd const& perm);
 
     template <typename LaplacianGravityVelocityCalculator>
+    void local_assembleCoupledWithHeatTransport(
+        double const t,
+        std::vector<double> const& local_x,
+        std::vector<double> const& local_T,
+        std::vector<double>& local_M_data,
+        std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data,
+        SpatialPosition const& pos,
+        Eigen::MatrixXd const& perm);
+
+    template <typename LaplacianGravityVelocityCalculator>
     void computeSecondaryVariableLocal(double const /*t*/,
                                        std::vector<double> const& local_x,
                                        SpatialPosition const& pos,
                                        Eigen::MatrixXd const& perm);
 
+    template <typename LaplacianGravityVelocityCalculator>
+    void computeSecondaryVariableCoupledWithHeatTransportLocal(
+        double const /*t*/,
+        std::vector<double> const& local_x,
+        std::vector<double> const& local_T,
+        SpatialPosition const& pos,
+        Eigen::MatrixXd const& perm);
+
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
     const LiquidFlowMaterialProperties& _material_properties;
-    double _temperature;
+
 };
 
 }  // end of namespace

@@ -21,6 +21,7 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 #include "ProcessLib/Parameter/SpatialPosition.h"
+#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/LiquidFlow/LiquidFlowMaterialProperties.h"
 #include "ProcessLib/LiquidFlow/CreateLiquidFlowMaterialProperties.h"
 
@@ -79,8 +80,10 @@ TEST(MaterialProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
             "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
 
     const bool has_material_ids = false;
+
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> parameters;
     const auto lprop = createLiquidFlowMaterialProperties(
-        sub_config, has_material_ids, *dummy_property_vector);
+        sub_config, parameters, has_material_ids, *dummy_property_vector);
 
     ProcessLib::SpatialPosition pos;
     pos.setElementID(0);

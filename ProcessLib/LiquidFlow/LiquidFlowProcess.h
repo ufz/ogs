@@ -82,11 +82,9 @@ private:
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh, unsigned const integration_order) override;
 
-    void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                 GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b,
-                                 StaggeredCouplingTerm const& coupling_term
-                                ) override;
+    void assembleConcreteProcess(
+        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+        GlobalVector& b, StaggeredCouplingTerm const& coupling_term) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
