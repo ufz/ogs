@@ -3,7 +3,7 @@
  * \brief  Implementation of OpenGeoSys simulation application
  *
  * \copyright
- * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 {
     // Parse CLI arguments.
     TCLAP::CmdLine cmd("OpenGeoSys-6 software.\n"
-            "Copyright (c) 2012-2016, OpenGeoSys Community "
+            "Copyright (c) 2012-2017, OpenGeoSys Community "
             "(http://www.opengeosys.org) "
             "Distributed under a Modified BSD License. "
             "See accompanying file LICENSE.txt or "

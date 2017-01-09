@@ -11,7 +11,7 @@ macro(ConfigureMacOSXBundle TARGET_NAME ICON_FILE_PATH)
         MACOSX_BUNDLE_SHORT_VERSION_STRING ${OGS_VERSION}
         MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_NAME} ${OGS_VERSION}"
         MACOSX_BUNDLE_BUNDLE_VERSION ${OGS_VERSION}
-        MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2012-2016, OpenGeoSys Community. All Rights Reserved."
+        MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2012-2017, OpenGeoSys Community. All Rights Reserved."
     )
 
     set_source_files_properties(${ICON_FILE_PATH} PROPERTIES
