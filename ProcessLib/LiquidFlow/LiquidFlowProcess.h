@@ -76,20 +76,19 @@ public:
                                           GlobalVector const& x) override;
 
     bool isLinear() const override { return true; }
-
     ProcessType getProcessType() const override
-                     {return ProcessLib::ProcessType::LiquidFlowProcess;}
+    {
+        return ProcessLib::ProcessType::LiquidFlowProcess;
+    }
 
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh, unsigned const integration_order) override;
 
-    void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                 GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b,
-                                 StaggeredCouplingTerm const& coupled_term
-                                ) override;
+    void assembleConcreteProcess(
+        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+        GlobalVector& b, StaggeredCouplingTerm const& coupled_term) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,

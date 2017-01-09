@@ -47,7 +47,7 @@ LiquidFlowProcess::LiquidFlowProcess(
       _gravitational_axis_id(gravitational_axis_id),
       _gravitational_acceleration(gravitational_acceleration),
       _material_properties(createLiquidFlowMaterialProperties(
-          config, has_material_ids, material_ids))
+          config, parameters, has_material_ids, material_ids))
 {
     DBUG("Create Liquid flow process.");
 }
@@ -88,13 +88,13 @@ void LiquidFlowProcess::initializeConcreteProcess(
     }
 }
 
-void LiquidFlowProcess::assembleConcreteProcess(const double t,
-                                                GlobalVector const& x,
-                                                GlobalMatrix& M,
-                                                GlobalMatrix& K,
-                                                GlobalVector& b,
-                                                StaggeredCouplingTerm const&
-                                                coupled_term)
+void LiquidFlowProcess::assembleConcreteProcess(
+    const double t,
+    GlobalVector const& x,
+    GlobalMatrix& M,
+    GlobalMatrix& K,
+    GlobalVector& b,
+    StaggeredCouplingTerm const& coupled_term)
 {
     DBUG("Assemble LiquidFlowProcess.");
     // Call global assembler for each local assembly item.
