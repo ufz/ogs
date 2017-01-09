@@ -105,15 +105,15 @@ cpack_add_component(ogs_docs
 if(USE_CONAN)
     # Install shared libraries, copied to bin-dir
     foreach(PATTERN "*.dll" "*.dylib")
-        file(GLOB MATCHED_FILES ${EXECUTABLE_OUTPUT_PATH}/${PATTERN})
+        file(GLOB MATCHED_FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PATTERN})
         install(FILES ${MATCHED_FILES} DESTINATION bin)
     endforeach()
 
     # macOS frameworks are directories, exclude header files
-    file(GLOB MATCHED_DIRECTORIES "${EXECUTABLE_OUTPUT_PATH}/*.framework")
+    file(GLOB MATCHED_DIRECTORIES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.framework")
     install(DIRECTORY ${MATCHED_DIRECTORIES} DESTINATION bin
         PATTERN "Headers" EXCLUDE)
 
     # Install Qt platform shared libraries
-    install(DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/platforms DESTINATION bin OPTIONAL)
+    install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/platforms DESTINATION bin OPTIONAL)
 endif()
