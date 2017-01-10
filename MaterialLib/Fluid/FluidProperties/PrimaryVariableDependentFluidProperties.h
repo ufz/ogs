@@ -10,8 +10,7 @@
  * Created on November 29, 2016, 3:19 PM
  */
 
-#ifndef OGS_PRIMARY_VARIABLE_DEPENDENT_FLUIDPROPERTIES_H
-#define OGS_PRIMARY_VARIABLE_DEPENDENT_FLUIDPROPERTIES_H
+#pragma once
 
 #include "FluidProperties.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
@@ -74,4 +73,3 @@ public:
 
 }  // end namespace
 }  // end namespace
-#endif /* OGS_PRIMARY_VARIABLE_DEPENDENT_FLUIDPROPERTIES_H */

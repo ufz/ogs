@@ -10,8 +10,7 @@
  * Created on November 29, 2016, 4:18 PM
  */
 
-#ifndef OGS_FLUID_PROPERTIES_WITH_DENSITY_DEPENDENT_MODELS_H
-#define OGS_FLUID_PROPERTIES_WITH_DENSITY_DEPENDENT_MODELS_H
+#pragma once
 
 #include "FluidProperties.h"
 
@@ -80,4 +79,3 @@ private:
 
 }  // end namespace
 }  // end namespace
-#endif /* OGS_FLUID_PROPERTIES_WITH_DENSITY_DEPENDENT_MODELS_H */

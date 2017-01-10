@@ -10,8 +10,7 @@
  * Created on December 13, 2016, 3:32 PM
  */
 
-#ifndef OGS_CREATE_FLUID_PROPERTIES_H
-#define OGS_CREATE_FLUID_PROPERTIES_H
+#pragma once
 
 #include <memory>
 
@@ -31,5 +30,3 @@ std::unique_ptr<FluidProperties> createFluidProperties(
     BaseLib::ConfigTree const& config);
 }  // end namespace
 }  // end namespace
-
-#endif /* OGS_CREATE_FLUID_PROPERTIES_H */

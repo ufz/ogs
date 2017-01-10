@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef OGS_CREATESPECIFICFLUIDHEATCAPACITYMODEL_H
-#define OGS_CREATESPECIFICFLUIDHEATCAPACITYMODEL_H
+#pragma once
 
 #include <memory>
 
@@ -36,5 +35,3 @@ std::unique_ptr<FluidProperty> createSpecificFluidHeatCapacityModel(
 
 }  // end namespace
 }  // end namespace
-
-#endif /* OGS_CREATESPECIFICFLUIDHEATCAPACITY_H */

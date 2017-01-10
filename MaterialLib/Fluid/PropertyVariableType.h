@@ -10,8 +10,7 @@
  * Created on November 29, 2016, 2:28 PM
  */
 
-#ifndef OGS_PROPERTY_VARIABLE_TYPE_H
-#define OGS_PROPERTY_VARIABLE_TYPE_H
+#pragma once
 
 namespace MaterialLib
 {
@@ -31,4 +30,3 @@ const unsigned PropertyVariableNumber =
 
 }  // end namespace
 }  // end namespace
-#endif /* OGS_PROPERTY_VARIABLE_TYPE_H */

@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef OGS_CREATE_FLUID_THERMAL_CONDUCTIVITY_MODEL_H
-#define OGS_CREATE_FLUID_THERMAL_CONDUCTIVITY_MODEL_H
+#pragma once
 
 #include <memory>
 
@@ -36,5 +35,3 @@ std::unique_ptr<FluidProperty> createFluidThermalConductivityModel(
 
 }  // end namespace
 }  // end namespace
-
-#endif  // OGS_CREATE_FLUID_THERMAL_CONDUCTIVITY_MODEL_H

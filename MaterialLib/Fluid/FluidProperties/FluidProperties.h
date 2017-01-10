@@ -10,8 +10,7 @@
  * Created on November 29, 2016, 2:23 PM
  */
 
-#ifndef OGS_FLUID_PROPERTIES_H
-#define OGS_FLUID_PROPERTIES_H
+#pragma once
 
 #include <array>
 #include <memory>
@@ -120,4 +119,3 @@ protected:
 
 }  // end namespace
 }  // end namespace
-#endif /* OGS_FLUID_PROPERTIES_H */
