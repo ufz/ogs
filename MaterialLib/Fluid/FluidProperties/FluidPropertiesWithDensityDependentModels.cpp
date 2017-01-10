@@ -35,8 +35,8 @@ FluidPropertiesWithDensityDependentModels::
                       std::move(heat_capacity),
                       std::move(thermal_conductivity)),
       _is_density_dependent{{false, is_viscosity_density_dependent,
-                            is_heat_capacity_dependent,
-                            is_thermal_conductivity}}
+                             is_heat_capacity_dependent,
+                             is_thermal_conductivity}}
 {
 }
 
@@ -77,7 +77,7 @@ double FluidPropertiesWithDensityDependentModels::getdValue(
             ->getdValue(variable_values, variable_type);
     }
 
-    return 0.;
+    return 0.0;
 }
 
 double FluidPropertiesWithDensityDependentModels::compute_df_drho_drho_dT(

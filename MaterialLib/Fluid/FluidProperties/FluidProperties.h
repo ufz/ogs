@@ -48,11 +48,17 @@ public:
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& heat_capacity,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
             thermal_conductivity)
-    /* Will use this if MS visual studio compiler supports
-    : _property_models{{std::move(density), std::move(viscosity),
-                        std::move(heat_capacity),
-                        std::move(thermal_conductivity)}}
-    */
+#ifndef MSVC
+        // Up to the latest Visual Studio compiler, Visual Studio 2015
+        // list initialization inside member initializer list or non-static data
+        // member initializer is not implemented.
+        // See: https://msdn.microsoft.com/en-us/library/dn793970.aspx
+        : _property_models{{std::move(density), std::move(viscosity),
+                            std::move(heat_capacity),
+                            std::move(thermal_conductivity)}}
+    {
+    }
+#else
     {
         // Move to the initialization list if MS visual studio compiler supports
         _property_models[static_cast<unsigned>(FluidPropertyType::Density)] =
@@ -65,6 +71,7 @@ public:
             FluidPropertyType::ThermalConductivity)] =
             std::move(thermal_conductivity);
     }
+#endif
 
     virtual ~FluidProperties() = default;
 
@@ -94,6 +101,10 @@ public:
         const PropertyVariableType variable_type) const = 0;
 
 protected:
+#ifdef MSVC
+    std::array<std::unique_ptr<FluidProperty>, FluidPropertyTypeNumber>
+        _property_models;
+#else
     /** Fluid property models.
      *  0: density;
      *  1: viscosity;
@@ -102,8 +113,9 @@ protected:
      *
      *  The index is specified via enum class PropertyType.
      */
-    std::array<std::unique_ptr<FluidProperty>, FluidPropertyTypeNumber>
+    const std::array<std::unique_ptr<FluidProperty>, FluidPropertyTypeNumber>
         _property_models;
+#endif
 };
 
 }  // end namespace
