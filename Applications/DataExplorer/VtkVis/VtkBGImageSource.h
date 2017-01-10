@@ -36,7 +36,7 @@ public:
     /// Sets the raster/image to be used as a texture map
     void SetRaster(vtkImageAlgorithm *img, double x0, double y0, double scalingFactor);
 
-    virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value) override;
 
 protected:
     VtkBGImageSource();

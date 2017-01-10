@@ -27,7 +27,7 @@ public:
 
     virtual void init();
 
-    virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value) override;
 
 private:
     vtkSphereSource* _glyphSource;

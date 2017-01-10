@@ -36,7 +36,7 @@ public:
     void PrintSelf(ostream& os, vtkIndent indent) override;
 
     /// @brief Sets user properties.
-    void SetUserProperty(QString name, QVariant value)
+    void SetUserProperty(QString name, QVariant value) override
     {
         Q_UNUSED(name);
         Q_UNUSED(value);

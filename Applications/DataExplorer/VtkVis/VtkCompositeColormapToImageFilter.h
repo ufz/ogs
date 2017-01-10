@@ -25,7 +25,7 @@ public:
 
     virtual void init();
 
-    virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value) override;
 
     virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
 

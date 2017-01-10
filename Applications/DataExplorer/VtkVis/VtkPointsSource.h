@@ -39,7 +39,7 @@ public:
     /// Prints its data on a stream.
     void PrintSelf(ostream& os, vtkIndent indent) override;
 
-    virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value) override;
 
 protected:
     VtkPointsSource();

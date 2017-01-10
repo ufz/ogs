@@ -39,7 +39,7 @@ public:
     ogsUserPropertyMacro(LengthScaleFactor,double);
 
     /// @brief Sets a user property.
-    virtual void SetUserProperty(QString name, QVariant value)
+    virtual void SetUserProperty(QString name, QVariant value) override
     {
         if (name.compare("LengthScaleFactor") == 0)
             SetLengthScaleFactor(value.toDouble());
