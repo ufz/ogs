@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.1') _
+@Library('jenkins-pipeline@1.0.2') _
 
 def builders = [:]
 def helper = new ogs.helper()
@@ -8,35 +8,35 @@ timestamps {
 
 builders['gcc'] = {
     node('docker') {
-        dir('ogs') { checkout scm }
+        dir('ogs') { checkoutWithTags() }
         load 'ogs/scripts/jenkins/gcc.groovy'
     }
 }
 
 builders['gcc-conan'] = {
     node('docker') {
-        dir('ogs') { checkout scm }
+        dir('ogs') { checkoutWithTags() }
         load 'ogs/scripts/jenkins/gcc-conan.groovy'
     }
 }
 
 builders['gcc-dynamic'] = {
     node('envinf1') {
-        dir('ogs') { checkout scm }
+        dir('ogs') { checkoutWithTags() }
         load 'ogs/scripts/jenkins/gcc-dynamic.groovy'
     }
 }
 
 builders['msvc'] = {
     node('win && conan') {
-        dir('ogs') { checkout scm }
+        dir('ogs') { checkoutWithTags() }
         load 'ogs/scripts/jenkins/msvc.groovy'
     }
 }
 
 builders['mac'] = {
     node('mac') {
-        dir('ogs') { checkout scm }
+        dir('ogs') { checkoutWithTags() }
         load 'ogs/scripts/jenkins/mac.groovy'
     }
 }
@@ -44,7 +44,7 @@ builders['mac'] = {
 if (helper.isRelease(this)) {
     builders['msvc32'] = {
         node('win && conan') {
-            dir('ogs') { checkout scm }
+            dir('ogs') { checkoutWithTags() }
             load 'ogs/scripts/jenkins/msvc32.groovy'
         }
     }
@@ -52,7 +52,7 @@ if (helper.isRelease(this)) {
 
 builders['docs'] = {
     node('docker') {
-        dir('ogs') { checkout scm }
+        dir('ogs') { checkoutWithTags() }
         load 'ogs/scripts/jenkins/docs.groovy'
     }
 }
@@ -66,7 +66,7 @@ if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
         build job: 'OGS-6/clang-sanitizer', wait: false
         def tag = ""
         node('master') {
-            checkout scm
+            checkoutWithTags()
             tag = helper.getTag()
         }
         if (tag != "") {
@@ -74,7 +74,7 @@ if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
             currentBuild.displayName = tag
 
             node('mac') {
-                dir('ogs') { checkout scm }
+                dir('ogs') { checkoutWithTags() }
                 load 'ogs/scripts/jenkins/docset.groovy'
             }
         }
