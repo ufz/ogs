@@ -25,7 +25,7 @@ public:
     VtkCompositeContourFilter(vtkAlgorithm* inputAlgorithm);
     virtual ~VtkCompositeContourFilter();
 
-    virtual void init();
+    virtual void init() override;
 
     virtual void SetUserProperty(QString name, QVariant value) override;
 

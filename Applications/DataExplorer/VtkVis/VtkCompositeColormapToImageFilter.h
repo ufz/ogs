@@ -23,7 +23,7 @@ public:
     VtkCompositeColormapToImageFilter(vtkAlgorithm* inputAlgorithm);
     virtual ~VtkCompositeColormapToImageFilter();
 
-    virtual void init();
+    virtual void init() override;
 
     virtual void SetUserProperty(QString name, QVariant value) override;
 

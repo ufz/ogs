@@ -23,7 +23,7 @@ public:
     VtkCompositeLineToTubeFilter(vtkAlgorithm* inputAlgorithm);
     virtual ~VtkCompositeLineToTubeFilter();
 
-    virtual void init();
+    virtual void init() override;
 
     virtual void SetUserProperty(QString name, QVariant value) override;
 
