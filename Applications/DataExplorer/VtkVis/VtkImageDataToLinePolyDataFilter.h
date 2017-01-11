@@ -56,7 +56,8 @@ protected:
     virtual ~VtkImageDataToLinePolyDataFilter();
 
     /// @brief Sets input port to vtkImageData.
-    virtual int FillInputPortInformation(int port, vtkInformation* info);
+    virtual int FillInputPortInformation(int port,
+                                         vtkInformation* info) override;
 
     /// @brief Converts the image data to lines
     virtual int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
