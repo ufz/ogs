@@ -25,9 +25,9 @@ public:
     VtkCompositeColorByHeightFilter(vtkAlgorithm* inputAlgorithm);
     virtual ~VtkCompositeColorByHeightFilter() {}
 
-    virtual void init();
+    virtual void init() override;
 
-    virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value) override;
 
 protected:
 };

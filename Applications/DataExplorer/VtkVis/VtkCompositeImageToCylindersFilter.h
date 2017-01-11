@@ -27,11 +27,11 @@ public:
     VtkCompositeImageToCylindersFilter(vtkAlgorithm* inputAlgorithm);
     virtual ~VtkCompositeImageToCylindersFilter();
 
-    virtual void init();
+    virtual void init() override;
 
-    virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value) override;
 
-    void SetUserVectorProperty( QString name, QList<QVariant> values );
+    void SetUserVectorProperty(QString name, QList<QVariant> values) override;
 
 private:
     VtkImageDataToLinePolyDataFilter* _lineFilter;

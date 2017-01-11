@@ -43,7 +43,7 @@ public:
      */
     //ogsUserPropertyMacro(ColorBySurface,bool);
 
-    virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value) override;
 
 protected:
     VtkSurfacesSource();

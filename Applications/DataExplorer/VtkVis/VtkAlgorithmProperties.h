@@ -191,7 +191,8 @@ public:
     }
 
     /// @brief Sets a user property. This should be implemented by subclasses.
-    virtual void SetUserProperty(QString name, QVariant value) {
+    virtual void SetUserProperty(QString name, QVariant value)
+    {
         (*_algorithmUserProperties)[name] = value;
     }
 
@@ -199,7 +200,8 @@ public:
     QVariant GetUserProperty(QString name) const;
 
     /// @brief Sets a vector user property. This should be implemented by subclasses.
-    virtual void SetUserVectorProperty(QString name, QList<QVariant> values) {
+    virtual void SetUserVectorProperty(QString name, QList<QVariant> values)
+    {
         (*_algorithmUserVectorProperties)[name] = values;
     }
 

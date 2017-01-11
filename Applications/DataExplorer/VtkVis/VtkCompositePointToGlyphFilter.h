@@ -25,9 +25,9 @@ public:
     VtkCompositePointToGlyphFilter(vtkAlgorithm* inputAlgorithm);
     virtual ~VtkCompositePointToGlyphFilter();
 
-    virtual void init();
+    virtual void init() override;
 
-    virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value) override;
 
 private:
     vtkSphereSource* _glyphSource;

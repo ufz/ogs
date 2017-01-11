@@ -47,10 +47,10 @@ public:
     vtkGetObjectMacro(ColorLookupTable,VtkColorLookupTable);
 
     /// @brief This filter gets updated when the color look-up table was modified.
-    virtual unsigned long GetMTime();
+    virtual unsigned long GetMTime() override;
 
     /// @brief Sets user properties.
-    void SetUserProperty(QString name, QVariant value)
+    void SetUserProperty(QString name, QVariant value) override
     {
         Q_UNUSED(name);
         Q_UNUSED(value);

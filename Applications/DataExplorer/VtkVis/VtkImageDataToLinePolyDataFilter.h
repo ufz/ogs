@@ -39,7 +39,7 @@ public:
     ogsUserPropertyMacro(LengthScaleFactor,double);
 
     /// @brief Sets a user property.
-    virtual void SetUserProperty(QString name, QVariant value)
+    virtual void SetUserProperty(QString name, QVariant value) override
     {
         if (name.compare("LengthScaleFactor") == 0)
             SetLengthScaleFactor(value.toDouble());
@@ -56,7 +56,8 @@ protected:
     virtual ~VtkImageDataToLinePolyDataFilter();
 
     /// @brief Sets input port to vtkImageData.
-    virtual int FillInputPortInformation(int port, vtkInformation* info);
+    virtual int FillInputPortInformation(int port,
+                                         vtkInformation* info) override;
 
     /// @brief Converts the image data to lines
     virtual int RequestData(vtkInformation* request, vtkInformationVector** inputVector,

@@ -23,11 +23,12 @@ public:
     VtkCompositeColormapToImageFilter(vtkAlgorithm* inputAlgorithm);
     virtual ~VtkCompositeColormapToImageFilter();
 
-    virtual void init();
+    virtual void init() override;
 
-    virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value) override;
 
-    virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
+    virtual void SetUserVectorProperty(QString name,
+                                       QList<QVariant> values) override;
 
 private:
 };
