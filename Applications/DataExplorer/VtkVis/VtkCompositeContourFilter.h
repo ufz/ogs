@@ -29,7 +29,7 @@ public:
 
     virtual void SetUserProperty(QString name, QVariant value) override;
 
-    void SetUserVectorProperty( QString name, QList<QVariant> values );
+    void SetUserVectorProperty(QString name, QList<QVariant> values) override;
 
 private:
 };
