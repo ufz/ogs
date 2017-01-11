@@ -66,7 +66,8 @@ protected:
     virtual ~VtkGeoImageSource();
 
     /// @brief Filter execution.
-    virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+    virtual void SimpleExecute(vtkImageData* input,
+                               vtkImageData* output) override;
 
 private:
     VtkGeoImageSource(const VtkGeoImageSource&); // Not implemented.
