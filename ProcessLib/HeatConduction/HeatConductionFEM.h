@@ -80,10 +80,10 @@ public:
         (void)local_matrix_size;
     }
 
-    void assemble(double const t, std::vector<double> const& local_x,
+    void assemble_HeatConduction(double const t, std::vector<double> const& local_x,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
-                  std::vector<double>& /*local_b_data*/) override
+                  std::vector<double>& /*local_b_data*/)
     {
         auto const local_matrix_size = local_x.size();
         // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -116,6 +116,25 @@ public:
                                  sm.N * sm.detJ * wp.getWeight() *
                                  sm.integralMeasure;
         }
+    }
+
+    void assemble(double const t, std::vector<double> const& local_x,
+                  std::vector<double>& local_M_data,
+                  std::vector<double>& local_K_data,
+                  std::vector<double>& local_b_data) override
+    {
+        assemble_HeatConduction(t, local_x, local_M_data, local_K_data,
+                                local_b_data);
+    }
+
+    void coupling_assemble(double const t, std::vector<double> const& local_x,
+                           std::vector<double>& local_M_data,
+                           std::vector<double>& local_K_data,
+                           std::vector<double>& local_b_data,
+                           LocalCouplingTerm const& coupled_term) override
+    {
+        assemble_HeatConduction(t, local_x, local_M_data, local_K_data,
+                                local_b_data);
     }
 
     void computeSecondaryVariableConcrete(
