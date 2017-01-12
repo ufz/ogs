@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -10,8 +10,7 @@
  * Created on November 7, 2016, 12:14 PM
  */
 
-#ifndef OGS_STAGGERED_COUPLING_TERM_H
-#define OGS_STAGGERED_COUPLING_TERM_H
+#pragma once
 
 #include <map>
 
@@ -26,13 +25,16 @@ struct StaggeredCouplingTerm
 {
     StaggeredCouplingTerm(
         std::map<ProcessType, Process const&> const& coupled_processes_,
-        std::map<ProcessType, GlobalVector const*> const& coupled_xs_)
-    : coupled_processes(coupled_processes_), coupled_xs(coupled_xs_)
+        std::map<ProcessType, GlobalVector const*> const& coupled_xs_,
+        const bool empty_ = false)
+    : coupled_processes(coupled_processes_), coupled_xs(coupled_xs_),
+      empty(empty_)
     {
     }
 
     std::map<ProcessType, Process const&> const& coupled_processes;
     std::map<ProcessType, GlobalVector const*> const& coupled_xs;
+    const bool empty;
 };
 
 struct LocalCouplingTerm
@@ -50,8 +52,6 @@ struct LocalCouplingTerm
 };
 
 const StaggeredCouplingTerm createVoidStaggeredCouplingTerm();
-const LocalCouplingTerm createVoidLocalCouplingTerm();
 
 } // end of ProcessLib
-#endif /* OGS_STAGGERED_COUPLING_TERM_H */
 

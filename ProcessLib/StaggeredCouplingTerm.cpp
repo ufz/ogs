@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -19,14 +19,8 @@ const StaggeredCouplingTerm createVoidStaggeredCouplingTerm()
 {
     std::map<ProcessType, Process const&> coupled_pcsss;
     std::map<ProcessType, GlobalVector const*> coupled_xs;
-    return StaggeredCouplingTerm(coupled_pcsss, coupled_xs);
-}
-
-const LocalCouplingTerm createVoidLocalCouplingTerm()
-{
-    std::map<ProcessType, Process const&> coupled_pcsss;
-    std::map<ProcessType, const std::vector<double>> local_coupled_xs;
-    return LocalCouplingTerm(coupled_pcsss, std::move(local_coupled_xs));
+    const bool empty = true;
+    return StaggeredCouplingTerm(coupled_pcsss, coupled_xs, empty);
 }
 
 } // end of ProcessLib

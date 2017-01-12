@@ -38,7 +38,7 @@ void VectorMatrixAssembler::assemble(
     _local_K_data.clear();
     _local_b_data.clear();
 
-    if (coupled_term.coupled_processes.empty())
+    if (coupled_term.empty)
     {
         local_assembler.assemble(t, local_x, _local_M_data, _local_K_data,
                                  _local_b_data);
@@ -103,7 +103,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     _local_b_data.clear();
     _local_Jac_data.clear();
 
-    if (coupled_term.coupled_processes.empty())
+    if (coupled_term.empty)
     {
         _jacobian_assembler->assembleWithJacobian(
             local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
