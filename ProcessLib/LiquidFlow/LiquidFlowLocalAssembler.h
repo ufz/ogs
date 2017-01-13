@@ -190,14 +190,11 @@ private:
 
     template <typename LaplacianGravityVelocityCalculator>
     void local_assembleCoupledWithHeatTransport(
-        double const t,
-        std::vector<double> const& local_x,
-        std::vector<double> const& local_T,
-        std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data,
-        SpatialPosition const& pos,
-        Eigen::MatrixXd const& perm);
+        const int material_id, double const t, double const dt,
+        std::vector<double> const& local_x, std::vector<double> const& local_T0,
+        std::vector<double> const& local_T1, std::vector<double>& local_M_data,
+        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
+        SpatialPosition const& pos, Eigen::MatrixXd const& perm);
 
     template <typename LaplacianGravityVelocityCalculator>
     void computeSecondaryVariableLocal(double const /*t*/,
