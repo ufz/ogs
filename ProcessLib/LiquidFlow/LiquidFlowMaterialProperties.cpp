@@ -55,6 +55,17 @@ double LiquidFlowMaterialProperties::getLiquidDensity(const double p,
         MaterialLib::Fluid::FluidPropertyType::Density, vars);
 }
 
+double LiquidFlowMaterialProperties::getdLiquidDensity_dT(const double p,
+                                                          const double T) const
+{
+    ArrayType vars;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
+    return _fluid_properties->getdValue(
+        MaterialLib::Fluid::FluidPropertyType::Density, vars,
+        MaterialLib::Fluid::PropertyVariableType::T);
+}
+
 double LiquidFlowMaterialProperties::getViscosity(const double p,
                                                   const double T) const
 {
@@ -63,6 +74,26 @@ double LiquidFlowMaterialProperties::getViscosity(const double p,
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
     return _fluid_properties->getValue(
         MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+}
+
+double LiquidFlowMaterialProperties::getHeatCapacity(const double p,
+                                                     const double T) const
+{
+    ArrayType vars;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
+    return _fluid_properties->getValue(
+        MaterialLib::Fluid::FluidPropertyType::HeatCapacity, vars);
+}
+
+double LiquidFlowMaterialProperties::getThermalConductivity(
+    const double p, const double T) const
+{
+    ArrayType vars;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
+    return _fluid_properties->getValue(
+        MaterialLib::Fluid::FluidPropertyType::ThermalConductivity, vars);
 }
 
 double LiquidFlowMaterialProperties::getMassCoefficient(
@@ -92,6 +123,18 @@ Eigen::MatrixXd const& LiquidFlowMaterialProperties::getPermeability(
     const int /*dim*/) const
 {
     return _intrinsic_permeability_models[material_id];
+}
+
+double LiquidFlowMaterialProperties::getSolidThermalExpansion(
+    const double t, const SpatialPosition& pos) const
+{
+    return _solid_thermal_expansion(t, pos)[0];
+}
+
+double LiquidFlowMaterialProperties::getBiotConstant(
+    const double t, const SpatialPosition& pos) const
+{
+    return _biot_constant(t, pos)[0];
 }
 
 }  // end of namespace
