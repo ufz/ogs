@@ -1,0 +1,6 @@
+baseurl = "http://test.opengeosys.org/"
+languageCode = "en-us"
+title = "OpenGeoSys-6"
+
+[params.sharingicons]
+   hide = true
