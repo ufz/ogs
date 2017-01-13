@@ -62,7 +62,7 @@ double LiquidFlowMaterialProperties::getViscosity(const double p,
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
     return _fluid_properties->getValue(
-        MaterialLib::Fluid::FluidPropertyType::Vicosity, vars);
+        MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
 }
 
 double LiquidFlowMaterialProperties::getMassCoefficient(

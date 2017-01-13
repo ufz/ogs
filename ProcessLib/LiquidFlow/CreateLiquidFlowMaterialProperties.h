@@ -32,7 +32,13 @@ namespace LiquidFlow
 {
 class LiquidFlowMaterialProperties;
 
-/// Create an instance of class LiquidFlowMaterialProperties
+/**
+ *  Parse the XML input for fluid properties of a single phase and create an
+ *  instance of class LiquidFlowMaterialProperties.
+ *
+ *  The XML syntax example is given in an unit test in
+ *  Tests/Process/LiquidFlow/TestLiquidFlowMaterialProperties.cpp
+ */
 std::unique_ptr<LiquidFlowMaterialProperties>
 createLiquidFlowMaterialProperties(
     BaseLib::ConfigTree const& config, bool const has_material_ids,

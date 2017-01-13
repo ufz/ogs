@@ -47,6 +47,10 @@ class SpatialPosition;
 
 namespace LiquidFlow
 {
+/** This class has a collection of material properties of liquid flow process
+ *  and it provides the computation of the coefficients of the PDE of liquid
+ *  flow process.
+ */
 class LiquidFlowMaterialProperties
 {
 public:

@@ -59,8 +59,8 @@ createLiquidFlowMaterialProperties(
     for (auto const& conf : poro_config.getConfigSubtreeList("porous_medium"))
     {
         //! \ogs_file_attr{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__id}
-        auto const id = conf.getConfigAttributeOptional<int>("id");
-        mat_ids.push_back(*id);
+        auto const id = conf.getConfigAttribute<int>("id");
+        mat_ids.push_back(id);
 
         //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__permeability}
         auto const& perm_conf = conf.getConfigSubtree("permeability");

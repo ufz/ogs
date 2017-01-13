@@ -13,7 +13,6 @@
 #pragma once
 
 #include <memory>
-#include <memory>
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
@@ -78,11 +77,9 @@ public:
 
     bool isLinear() const override { return true; }
 
-    std::vector<MaterialLib::Fluid::FluidProperties*> getFluidProperties() const
+    MaterialLib::Fluid::FluidProperties* getFluidProperties() const
     {
-        std::vector<MaterialLib::Fluid::FluidProperties*> material_properties =
-            {_material_properties->getFluidProperties()};
-        return material_properties;
+        return _material_properties->getFluidProperties();
     }
 
 private:
