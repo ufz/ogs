@@ -112,16 +112,15 @@ public:
         Eigen::MatrixXd unit_mat(
             Eigen::MatrixXd::Identity(GlobalDim, GlobalDim));
 
+        MaterialLib::Fluid::FluidProperty::ArrayType vars;
+
         for (std::size_t ip(0); ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
-            auto const temperature0 =
-                _process_data.reference_temperature_fluid_density_model(t,
-                                                                        pos)[0];
-            auto const beta =
-                _process_data.thermal_expansion_coefficient(t, pos)[0];
 
-            auto const density_fluid = _process_data.density_fluid(t, pos)[0];
+            auto const fluid_reference_density =
+                _process_data.fluid_reference_density(t, pos)[0];
+
             auto const density_solid = _process_data.density_solid(t, pos)[0];
             auto const specific_storage =
                 _process_data.specific_storage(t, pos)[0];
@@ -137,7 +136,7 @@ public:
                 _process_data.specific_heat_capacity_fluid(t, pos)[0];
             double const heat_capacity =
                 density_solid * specific_heat_capacity_solid * (1 - porosity) +
-                density_fluid * specific_heat_capacity_fluid * porosity;
+                fluid_reference_density * specific_heat_capacity_fluid * porosity;
 
             auto const thermal_conductivity_solid =
                 _process_data.thermal_conductivity_solid(t, pos)[0];
@@ -168,13 +167,18 @@ public:
             // Order matters: First T, then P!
             NumLib::shapeFunctionInterpolate(local_x, sm.N, T_int_pt, p_int_pt);
 
-            double const delta_T(T_int_pt - temperature0);
-            // TODO include this via material lib
-            double density_water_T = density_fluid * (1 - beta * delta_T);
+            // Use the fluid density model to compute the density
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::T)] = T_int_pt;
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
+            auto const density_water_T =
+                _process_data.fluid_density->getValue(vars);
+
             // TODO include viscosity computations via material lib
-            // double const viscosity = viscosity0 * std::exp(- delta_T/75.0);
-            double const perm_visc =
-                intrinsic_permeability / viscosity0;
+            // double const viscosity = viscosity0 * std::exp(-
+            // delta_T/75.0);
+            double const perm_visc = intrinsic_permeability / viscosity0;
 
             Eigen::Matrix<double, -1, 1, 0, -1, 1> const velocity =
                 -perm_visc * (sm.dNdx * p_nodal_values - density_water_T * b);
@@ -182,7 +186,7 @@ public:
             double const velocity_magnitude =
                 std::sqrt(velocity.transpose() * velocity);
             Eigen::MatrixXd thermal_dispersivity =
-                density_fluid * specific_heat_capacity_fluid *
+                fluid_reference_density * specific_heat_capacity_fluid *
                 (thermal_dispersivity_transversal * velocity_magnitude *
                      unit_mat +
                  (thermal_dispersivity_longitudinal -
@@ -199,7 +203,7 @@ public:
                 integral_term *
                 (sm.dNdx.transpose() * hydrodynamic_thermodispersion * sm.dNdx +
                  sm.N.transpose() * velocity.transpose() * sm.dNdx *
-                     density_fluid * specific_heat_capacity_fluid);
+                     fluid_reference_density * specific_heat_capacity_fluid);
             Kpp.noalias() +=
                 integral_term * sm.dNdx.transpose() * perm_visc * sm.dNdx;
             Mtt.noalias() +=
