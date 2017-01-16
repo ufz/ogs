@@ -21,6 +21,10 @@
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
+// For coupling
+#include "ProcessLib/LiquidFlow/LiquidFlowProcess.h"
+#include "ProcessLib/LiquidFlow/LiquidFlowMaterialProperties.h"
+
 namespace ProcessLib
 {
 namespace HeatConduction
@@ -80,10 +84,10 @@ public:
         (void)local_matrix_size;
     }
 
-    void assemble_HeatConduction(double const t, std::vector<double> const& local_x,
+    void assemble(double const t, std::vector<double> const& local_x,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
-                  std::vector<double>& /*local_b_data*/)
+                  std::vector<double>& local_b_data) override
     {
         auto const local_matrix_size = local_x.size();
         // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -118,13 +122,71 @@ public:
         }
     }
 
-    void assemble(double const t, std::vector<double> const& local_x,
-                  std::vector<double>& local_M_data,
-                  std::vector<double>& local_K_data,
-                  std::vector<double>& local_b_data) override
+    void assembleHeatTransportLiquidFlow(
+        double const t, int const gravitational_axis_id,
+        ProcessLib::LiquidFlow::LiquidFlowMaterialProperties const&
+            liquid_flow_prop,
+        std::vector<double> const& local_x, std::vector<double> const& local_p,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data)
     {
-        assemble_HeatConduction(t, local_x, local_M_data, local_K_data,
-                                local_b_data);
+        auto const local_matrix_size = local_x.size();
+        // This assertion is valid only if all nodal d.o.f. use the same shape
+        // matrices.
+        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+
+        auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
+            local_M_data, local_matrix_size, local_matrix_size);
+        auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
+            local_K_data, local_matrix_size, local_matrix_size);
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+        const int material_id = liquid_flow_prop.getMaterialID(pos);
+
+        const Eigen::MatrixXd& perm = liquid_flow_prop.getPermeability(
+            material_id, t, pos, _element.getDimension());
+
+        const double porosity_variable = 0.;
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            pos.setIntegrationPoint(ip);
+            auto const& sm = _shape_matrices[ip];
+            auto const& wp = _integration_method.getWeightedPoint(ip);
+            double p = 0.;
+            NumLib::shapeFunctionInterpolate(local_p, sm.N, p);
+            double T = 0.;
+            NumLib::shapeFunctionInterpolate(local_x, sm.N, T);
+
+            // Material parameters of solid phase
+            auto const k_s = _process_data.thermal_conductivity(t, pos)[0];
+            auto const cp_s = _process_data.heat_capacity(t, pos)[0];
+            auto const rho_s = _process_data.density(t, pos)[0];
+
+            // Material parameters of fluid phase
+            double const cp_f = liquid_flow_prop.getHeatCapacity(p, T);
+            double const k_f = liquid_flow_prop.getThermalConductivity(p, T);
+            double rho_f = liquid_flow_prop.getLiquidDensity(p, T);
+
+            // Material parameter of porosity
+            double const poro =
+                liquid_flow_prop.getPorosity(material_id, porosity_variable, T);
+
+            double const effective_cp =
+                (1.0 - poro) * cp_s * rho_s + poro * cp_f * rho_f;
+            double const effective_K = (1.0 - poro) * k_s + poro * k_f;
+
+            double const integration_factor =
+                sm.detJ * wp.getWeight() * sm.integralMeasure;
+
+            local_M.noalias() +=
+                effective_cp * sm.N.transpose() * sm.N * integration_factor;
+            local_K.noalias() += sm.dNdx.transpose() * effective_K * sm.dNdx *
+                                 integration_factor;
+        }
     }
 
     void coupling_assemble(double const t, std::vector<double> const& local_x,
@@ -133,13 +195,42 @@ public:
                            std::vector<double>& local_b_data,
                            LocalCouplingTerm const& coupled_term) override
     {
-        assemble_HeatConduction(t, local_x, local_M_data, local_K_data,
-                                local_b_data);
+        auto it = coupled_term.coupled_processes.begin();
+        while (it != coupled_term.coupled_processes.end())
+        {
+            switch (it->first)
+            {
+                case ProcessLib::ProcessType::LiquidFlowProcess:
+                {
+                    ProcessLib::LiquidFlow::LiquidFlowProcess const& pcs =
+                        static_cast<
+                            ProcessLib::LiquidFlow::LiquidFlowProcess const&>(
+                            it->second);
+                    const auto liquid_flow_prop =
+                        pcs.getLiquidFlowMaterialProperties();
+
+                    const auto local_p = coupled_term.local_coupled_xs.at(
+                        ProcessLib::ProcessType::LiquidFlowProcess);
+
+                    int const gravitational_axis_id =
+                        pcs.getGravitationalAxisID();
+
+                    assembleHeatTransportLiquidFlow(
+                        t, gravitational_axis_id, *liquid_flow_prop, local_x,
+                        local_p, local_M_data, local_K_data, local_b_data);
+                }
+                break;
+                default:
+                    OGS_FATAL(
+                        "This coupled process is not presented for "
+                        "HeatConduction process");
+            }
+            it++;
+        }
     }
 
     void computeSecondaryVariableConcrete(
-                                    const double t,
-                                    std::vector<double> const& local_x) override
+        const double t, std::vector<double> const& local_x) override
     {
         auto const local_matrix_size = local_x.size();
         // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -152,7 +243,7 @@ public:
         SpatialPosition pos;
         pos.setElementID(_element.getID());
         const auto local_x_vec =
-        MathLib::toVector<NodalVectorType>(local_x, local_matrix_size);
+            MathLib::toVector<NodalVectorType>(local_x, local_matrix_size);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
