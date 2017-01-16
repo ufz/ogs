@@ -81,6 +81,16 @@ public:
         return ProcessLib::ProcessType::LiquidFlowProcess;
     }
 
+    int getGravitationalAxisID() const
+    {
+        return _gravitational_axis_id;
+    }
+
+    LiquidFlowMaterialProperties* getLiquidFlowMaterialProperties() const
+    {
+        return _material_properties.get();
+    }
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
