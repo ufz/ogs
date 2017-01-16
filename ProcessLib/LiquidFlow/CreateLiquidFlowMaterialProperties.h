@@ -10,7 +10,6 @@
  *   Created on December 14, 2016, 1:20 PM
  */
 
-
 #pragma once
 
 #include <memory>

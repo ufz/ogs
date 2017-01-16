@@ -69,8 +69,7 @@ public:
         unsigned const integration_order,
         int const gravitational_axis_id,
         double const gravitational_acceleration,
-        std::unique_ptr<LiquidFlowMaterialProperties> const&
-            material_propertries)
+        LiquidFlowMaterialProperties const& material_propertries)
         : _element(element),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
@@ -174,7 +173,8 @@ private:
     };
 
     template <typename LaplacianGravityVelocityCalculator>
-    void local_assemble(double const t, std::vector<double> const& local_x,
+    void local_assemble(const int material_id, double const t,
+                        std::vector<double> const& local_x,
                         std::vector<double>& local_M_data,
                         std::vector<double>& local_K_data,
                         std::vector<double>& local_b_data,
@@ -189,7 +189,7 @@ private:
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
-    const std::unique_ptr<LiquidFlowMaterialProperties>& _material_properties;
+    const LiquidFlowMaterialProperties& _material_properties;
     double _temperature;
 };
 

@@ -43,6 +43,9 @@ class PropertyVector;
 
 namespace ProcessLib
 {
+template <typename T>
+struct Parameter;
+
 class SpatialPosition;
 
 namespace LiquidFlow
@@ -75,7 +78,7 @@ public:
     {
     }
 
-    void setMaterialID(const SpatialPosition& pos);
+    int getMaterialID(const SpatialPosition& pos) const;
 
     /**
      * \brief Compute the coefficient of the mass term by
@@ -84,6 +87,7 @@ public:
      *      \f]
      *     where \f$n\f$ is the porosity, \f$rho_l\f$ is the liquid density,
      *     \f$bata_s\f$ is the storage.
+     * \param material_id        Material index.
      * \param t                  Time.
      * \param pos                Position of element.
      * \param p                  Pressure value.
@@ -93,23 +97,19 @@ public:
      *                           saturation, and invariant of stress or strain.
      * \param storage_variable   Variable for storage model.
      */
-    double getMassCoefficient(const double t, const SpatialPosition& pos,
-                              const double p, const double T,
-                              const double porosity_variable,
+    double getMassCoefficient(const int material_id, const double t,
+                              const SpatialPosition& pos, const double p,
+                              const double T, const double porosity_variable,
                               const double storage_variable) const;
 
-    Eigen::MatrixXd const& getPermeability(const double t,
+    Eigen::MatrixXd const& getPermeability(const int material_id,
+                                           const double t,
                                            const SpatialPosition& pos,
                                            const int dim) const;
 
     double getLiquidDensity(const double p, const double T) const;
 
     double getViscosity(const double p, const double T) const;
-
-    MaterialLib::Fluid::FluidProperties* getFluidProperties() const
-    {
-        return _fluid_properties.get();
-    }
 
 private:
     /// A flag to indicate whether the reference member, _material_ids,
@@ -119,8 +119,6 @@ private:
      *  Material IDs must be given as mesh element properties.
      */
     MeshLib::PropertyVector<int> const& _material_ids;
-
-    int _current_material_id = 0;
 
     const std::unique_ptr<MaterialLib::Fluid::FluidProperties>
         _fluid_properties;

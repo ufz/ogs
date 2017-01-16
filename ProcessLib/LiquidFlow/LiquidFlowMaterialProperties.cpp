@@ -33,16 +33,16 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
-void LiquidFlowMaterialProperties::setMaterialID(const SpatialPosition& pos)
+int LiquidFlowMaterialProperties::getMaterialID(
+    const SpatialPosition& pos) const
 {
     if (!_has_material_ids)
     {
-        _current_material_id = 0;
-        return;
+        return 0;
     }
 
     assert(pos.getElementID().get() < _material_ids.size());
-    _current_material_id = _material_ids[pos.getElementID().get()];
+    return _material_ids[pos.getElementID().get()];
 }
 
 double LiquidFlowMaterialProperties::getLiquidDensity(const double p,
@@ -66,8 +66,8 @@ double LiquidFlowMaterialProperties::getViscosity(const double p,
 }
 
 double LiquidFlowMaterialProperties::getMassCoefficient(
-    const double /*t*/, const SpatialPosition& /*pos*/, const double p,
-    const double T, const double porosity_variable,
+    const int material_id, const double /*t*/, const SpatialPosition& /*pos*/,
+    const double p, const double T, const double porosity_variable,
     const double storage_variable) const
 {
     ArrayType vars;
@@ -81,16 +81,17 @@ double LiquidFlowMaterialProperties::getMassCoefficient(
     assert(rho > 0.);
 
     const double porosity =
-        _porosity_models[_current_material_id]->getValue(porosity_variable, T);
+        _porosity_models[material_id]->getValue(porosity_variable, T);
     const double storage =
-        _storage_models[_current_material_id]->getValue(storage_variable);
+        _storage_models[material_id]->getValue(storage_variable);
     return porosity * drho_dp / rho + storage;
 }
 
 Eigen::MatrixXd const& LiquidFlowMaterialProperties::getPermeability(
-    const double /*t*/, const SpatialPosition& /*pos*/, const int /*dim*/) const
+    const int material_id, const double /*t*/, const SpatialPosition& /*pos*/,
+    const int /*dim*/) const
 {
-    return _intrinsic_permeability_models[_current_material_id];
+    return _intrinsic_permeability_models[material_id];
 }
 
 }  // end of namespace

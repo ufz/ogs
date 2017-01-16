@@ -86,7 +86,7 @@ TEST(MaterialProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
     pos.setElementID(0);
 
     // Check permeability
-    const Eigen::MatrixXd& perm = lprop->getPermeability(0., pos, 1);
+    const Eigen::MatrixXd& perm = lprop->getPermeability(0, 0., pos, 1);
     ASSERT_EQ(2.e-10, perm(0, 0));
     ASSERT_EQ(0., perm(0, 1));
     ASSERT_EQ(0., perm(0, 2));
@@ -99,6 +99,7 @@ TEST(MaterialProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
 
     const double T = 273.15 + 60.0;
     const double p = 1.e+6;
-    const double mass_coef = lprop->getMassCoefficient(0., pos, p, T, 0., 0.);
+    const double mass_coef =
+        lprop->getMassCoefficient(0, 0., pos, p, T, 0., 0.);
     ASSERT_NEAR(0.000100000093, mass_coef, 1.e-10);
 }

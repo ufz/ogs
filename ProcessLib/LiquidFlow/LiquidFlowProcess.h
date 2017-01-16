@@ -76,12 +76,6 @@ public:
                                           GlobalVector const& x) override;
 
     bool isLinear() const override { return true; }
-
-    MaterialLib::Fluid::FluidProperties* getFluidProperties() const
-    {
-        return _material_properties->getFluidProperties();
-    }
-
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,

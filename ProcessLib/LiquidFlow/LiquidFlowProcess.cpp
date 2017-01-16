@@ -62,7 +62,7 @@ void LiquidFlowProcess::initializeConcreteProcess(
         mesh.getDimension(), mesh.getElements(), dof_table,
         pv.getShapeFunctionOrder(), _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _gravitational_axis_id,
-        _gravitational_acceleration, _material_properties);
+        _gravitational_acceleration, *_material_properties);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity_x", 1,
