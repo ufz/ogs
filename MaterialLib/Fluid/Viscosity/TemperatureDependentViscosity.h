@@ -25,10 +25,10 @@ namespace Fluid
 {
 /**
  *  Class of a temperature dependent viscosity model, which provides a good fit
- *  over temperature variations of 150 °C.
+ *  over temperature variations of 150 K.
  *
  *   \f[
- *        \mu = \mu_0\, exp(-\frac{T-T_c}{T_v})
+ *        \mu = \mu_0\, \exp(-\frac{T-T_c}{T_v})
  *   \f]
  *   where
  *    \f{eqnarray*}{
