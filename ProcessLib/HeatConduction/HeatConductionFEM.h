@@ -87,7 +87,7 @@ public:
     void assemble(double const t, std::vector<double> const& local_x,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
-                  std::vector<double>& local_b_data) override
+                  std::vector<double>& /*local_b_data*/) override
     {
         auto const local_matrix_size = local_x.size();
         // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -122,112 +122,11 @@ public:
         }
     }
 
-    void assembleHeatTransportLiquidFlow(
-        double const t, int const gravitational_axis_id,
-        ProcessLib::LiquidFlow::LiquidFlowMaterialProperties const&
-            liquid_flow_prop,
-        std::vector<double> const& local_x, std::vector<double> const& local_p,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data)
-    {
-        auto const local_matrix_size = local_x.size();
-        // This assertion is valid only if all nodal d.o.f. use the same shape
-        // matrices.
-        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
-
-        auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
-            local_M_data, local_matrix_size, local_matrix_size);
-        auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
-            local_K_data, local_matrix_size, local_matrix_size);
-
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        SpatialPosition pos;
-        pos.setElementID(_element.getID());
-        const int material_id = liquid_flow_prop.getMaterialID(pos);
-
-        const Eigen::MatrixXd& perm = liquid_flow_prop.getPermeability(
-            material_id, t, pos, _element.getDimension());
-
-        const double porosity_variable = 0.;
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            pos.setIntegrationPoint(ip);
-            auto const& sm = _shape_matrices[ip];
-            auto const& wp = _integration_method.getWeightedPoint(ip);
-            double p = 0.;
-            NumLib::shapeFunctionInterpolate(local_p, sm.N, p);
-            double T = 0.;
-            NumLib::shapeFunctionInterpolate(local_x, sm.N, T);
-
-            // Material parameters of solid phase
-            auto const k_s = _process_data.thermal_conductivity(t, pos)[0];
-            auto const cp_s = _process_data.heat_capacity(t, pos)[0];
-            auto const rho_s = _process_data.density(t, pos)[0];
-
-            // Material parameters of fluid phase
-            double const cp_f = liquid_flow_prop.getHeatCapacity(p, T);
-            double const k_f = liquid_flow_prop.getThermalConductivity(p, T);
-            double rho_f = liquid_flow_prop.getLiquidDensity(p, T);
-
-            // Material parameter of porosity
-            double const poro =
-                liquid_flow_prop.getPorosity(material_id, porosity_variable, T);
-
-            double const effective_cp =
-                (1.0 - poro) * cp_s * rho_s + poro * cp_f * rho_f;
-            double const effective_K = (1.0 - poro) * k_s + poro * k_f;
-
-            double const integration_factor =
-                sm.detJ * wp.getWeight() * sm.integralMeasure;
-
-            local_M.noalias() +=
-                effective_cp * sm.N.transpose() * sm.N * integration_factor;
-            local_K.noalias() += sm.dNdx.transpose() * effective_K * sm.dNdx *
-                                 integration_factor;
-        }
-    }
-
     void coupling_assemble(double const t, std::vector<double> const& local_x,
                            std::vector<double>& local_M_data,
                            std::vector<double>& local_K_data,
-                           std::vector<double>& local_b_data,
-                           LocalCouplingTerm const& coupled_term) override
-    {
-        auto it = coupled_term.coupled_processes.begin();
-        while (it != coupled_term.coupled_processes.end())
-        {
-            switch (it->first)
-            {
-                case ProcessLib::ProcessType::LiquidFlowProcess:
-                {
-                    ProcessLib::LiquidFlow::LiquidFlowProcess const& pcs =
-                        static_cast<
-                            ProcessLib::LiquidFlow::LiquidFlowProcess const&>(
-                            it->second);
-                    const auto liquid_flow_prop =
-                        pcs.getLiquidFlowMaterialProperties();
-
-                    const auto local_p = coupled_term.local_coupled_xs.at(
-                        ProcessLib::ProcessType::LiquidFlowProcess);
-
-                    int const gravitational_axis_id =
-                        pcs.getGravitationalAxisID();
-
-                    assembleHeatTransportLiquidFlow(
-                        t, gravitational_axis_id, *liquid_flow_prop, local_x,
-                        local_p, local_M_data, local_K_data, local_b_data);
-                }
-                break;
-                default:
-                    OGS_FATAL(
-                        "This coupled process is not presented for "
-                        "HeatConduction process");
-            }
-            it++;
-        }
-    }
+                           std::vector<double>& /*local_b_data*/,
+                           LocalCouplingTerm const& coupled_term) override;
 
     void computeSecondaryVariableConcrete(
         const double t, std::vector<double> const& local_x) override
@@ -299,7 +198,59 @@ private:
         _shape_matrices;
 
     std::vector<std::vector<double>> _heat_fluxes;
+
+    template <typename LiquidFlowVelocityCalculator>
+    void assembleHeatTransportLiquidFlow( double const t,
+        int const material_id, SpatialPosition& pos,
+        int const gravitational_axis_id,
+        double const gravitational_acceleration, Eigen::MatrixXd const& perm,
+        ProcessLib::LiquidFlow::LiquidFlowMaterialProperties const&
+            liquid_flow_prop,
+        std::vector<double> const& local_x, std::vector<double> const& local_p,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data);
+
+    /// Calculator of liquid fluid flow velocity for anisotropic permeability
+    /// tensor
+    struct IsotropicLiquidFlowVelocityCalculator
+    {
+        static GlobalDimVectorType calculateVelocity(
+            Eigen::Map<const NodalVectorType> const& local_p,
+            ShapeMatrices const& sm, Eigen::MatrixXd const& perm,
+            double const mu, double const rho_g,
+            int const gravitational_axis_id)
+        {
+            const double K = perm(0, 0) / mu;
+            // Compute the velocity
+            GlobalDimVectorType darcy_velocity = -K * sm.dNdx * local_p;
+            // gravity term
+            if (gravitational_axis_id >= 0)
+                darcy_velocity[gravitational_axis_id] -= K * rho_g;
+            return darcy_velocity;
+        }
+    };
+
+    /// Calculator of liquid fluid flow velocity for isotropic permeability
+    /// tensor
+    struct AnisotropicLiquidFlowVelocityCalculator
+    {
+        static GlobalDimVectorType calculateVelocity(
+            Eigen::Map<const NodalVectorType> const& local_p,
+            ShapeMatrices const& sm, Eigen::MatrixXd const& perm,
+            double const mu, double const rho_g,
+            int const gravitational_axis_id)
+        {
+            GlobalDimVectorType darcy_velocity = -perm * sm.dNdx * local_p / mu;
+            if (gravitational_axis_id >= 0)
+            {
+                darcy_velocity.noalias() -=
+                    rho_g * perm.col(gravitational_axis_id) / mu;
+            }
+            return darcy_velocity;
+        }
+    };
 };
 
 }  // namespace HeatConduction
 }  // namespace ProcessLib
+
+#include "HeatConductionFEM-impl.h"

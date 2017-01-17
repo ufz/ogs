@@ -82,6 +82,11 @@ public:
         return _gravitational_axis_id;
     }
 
+    double getGravitationalacceleration() const
+    {
+        return _gravitational_acceleration;
+    }
+
     LiquidFlowMaterialProperties* getLiquidFlowMaterialProperties() const
     {
         return _material_properties.get();
