@@ -1612,6 +1612,10 @@ punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
+pygments-css@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/pygments-css/-/pygments-css-1.0.0.tgz#d93aabca51fa71eff6b22b7b903a09f48810b00d"
+
 qs@~6.3.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.3.0.tgz#f403b264f23bc01228c74131b407f18d5ea5d442"
