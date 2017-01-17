@@ -21,7 +21,7 @@ namespace MaterialLib
 {
 namespace Fluid
 {
-/// Base class of fluid density properties
+/// Base class of fluid properties
 class FluidProperty
 {
 public:
