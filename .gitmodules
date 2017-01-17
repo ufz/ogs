@@ -28,6 +28,3 @@
 [submodule "ThirdParty/SwmmInterface"]
 	path = ThirdParty/SwmmInterface
 	url = https://github.com/ufz/SwmmInterface.git
-[submodule "web/themes/hugo-theme-bootstrap4-blog"]
-	path = web/themes/hugo-theme-bootstrap4-blog
-	url = https://github.com/alanorth/hugo-theme-bootstrap4-blog
