@@ -1,6 +1,9 @@
 baseurl = "http://test.opengeosys.org/"
 languageCode = "en-us"
 title = "OpenGeoSys-6"
+theme = "ogs"
+buildDrafts = true
+pygmentsstyle = 'friendly'
 
 [params.sharingicons]
    hide = true

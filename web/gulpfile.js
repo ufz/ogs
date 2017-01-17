@@ -13,7 +13,7 @@ const pkg = require('./package.json');
 
 // scss - build the scss to the build folder, including the required paths, and writing out a sourcemap
 gulp.task('scss', () => {
-    $.fancyLog("-> Compiling scss: " + pkg.paths.build.css + pkg.vars.scssName);
+    $.fancyLog("-> Compiling scss: " + pkg.paths.dist.css + pkg.vars.scssName);
     return gulp.src(pkg.paths.src.scss + pkg.vars.scssName)
         // .pipe($.plumber({ errorHandler: onError }))
         .pipe($.add_src(pkg.globs.distCss))
@@ -26,5 +26,13 @@ gulp.task('scss', () => {
         .pipe($.autoprefixer())
         // .pipe($.sourcemaps.write('./'))
         .pipe($.size({ gzip: true, showFiles: true }))
-        .pipe(gulp.dest(pkg.paths.build.css));
+        .pipe(gulp.dest(pkg.paths.dist.css));
 });
+
+gulp.task('watch', function() {
+  // gulp.watch(kubedir + 'src/_js/*.js', ['scripts']);
+  gulp.watch(pkg.paths.src.scss + pkg.vars.scssName, ['scss']);
+  gulp.watch('./package.json', ['scss']);
+});
+
+gulp.task('default', ['scss', 'watch'])
