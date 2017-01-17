@@ -12,11 +12,15 @@
 
 #pragma once
 
+#include <memory>
+
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
 
 #include "LiquidFlowMaterialProperties.h"
 #include "LiquidFlowLocalAssembler.h"
+
+#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 
 namespace MeshLib
 {
@@ -88,7 +92,7 @@ private:
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
-    LiquidFlowMaterialProperties _material_properties;
+    const std::unique_ptr<LiquidFlowMaterialProperties> _material_properties;
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>
         _local_assemblers;

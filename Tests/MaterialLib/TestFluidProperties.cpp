@@ -61,11 +61,11 @@ TEST(MaterialFluidProperties, checkPrimaryVariableDependentFluidProperties)
     vars[0] = 350.0;
     const double mu_expected = 1.e-3 * std::exp(-(vars[0] - 293) / 368);
     ASSERT_NEAR(mu_expected,
-                fluid_model->getValue(FluidPropertyType::Vicosity, vars),
+                fluid_model->getValue(FluidPropertyType::Viscosity, vars),
                 1.e-10);
     ASSERT_NEAR(
         -mu_expected,
-        fluid_model->getdValue(FluidPropertyType::Vicosity, vars,
+        fluid_model->getdValue(FluidPropertyType::Viscosity, vars,
                                MaterialLib::Fluid::PropertyVariableType::T),
         1.e-10);
 
@@ -102,20 +102,20 @@ TEST(MaterialFluidProperties, checkFluidPropertiesWithDensityDependentModels_T)
     const double rho = fluid_model->getValue(FluidPropertyType::Density, vars);
     ASSERT_NEAR(1000.0, rho, 1.e-10);
 
-    const double mu = fluid_model->getValue(FluidPropertyType::Vicosity, vars);
+    const double mu = fluid_model->getValue(FluidPropertyType::Viscosity, vars);
     ASSERT_NEAR(0.307883622e-3, mu, 1.e-10);
 
     const double drho_dT =
         fluid_model->getdValue(FluidPropertyType::Density, vars,
                                MaterialLib::Fluid::PropertyVariableType::T);
     const double dmu_dT =
-        fluid_model->getdValue(FluidPropertyType::Vicosity, vars,
+        fluid_model->getdValue(FluidPropertyType::Viscosity, vars,
                                MaterialLib::Fluid::PropertyVariableType::T);
 
     const double perturbation = 1.e-6;
     vars[0] += perturbation;
     const double rho1 = fluid_model->getValue(FluidPropertyType::Density, vars);
-    const double mu1 = fluid_model->getValue(FluidPropertyType::Vicosity, vars);
+    const double mu1 = fluid_model->getValue(FluidPropertyType::Viscosity, vars);
 
     ASSERT_NEAR((rho1 - rho) / perturbation, drho_dT, 1.e-7);
     ASSERT_NEAR((mu1 - mu) / perturbation, dmu_dT, 1.e-10);
@@ -143,18 +143,18 @@ TEST(MaterialFluidProperties, checkFluidPropertiesWithDensityDependentModels_dp)
     ArrayType vars = {{273.15 + 60.0, 1.e+6}};
 
     const double rho = fluid_model->getValue(FluidPropertyType::Density, vars);
-    const double mu = fluid_model->getValue(FluidPropertyType::Vicosity, vars);
+    const double mu = fluid_model->getValue(FluidPropertyType::Viscosity, vars);
     const double drho_dp =
         fluid_model->getdValue(FluidPropertyType::Density, vars,
                                MaterialLib::Fluid::PropertyVariableType::p);
     const double dmu_dp =
-        fluid_model->getdValue(FluidPropertyType::Vicosity, vars,
+        fluid_model->getdValue(FluidPropertyType::Viscosity, vars,
                                MaterialLib::Fluid::PropertyVariableType::p);
 
     const double perturbation = 1.e-6;
     vars[1] += perturbation;
     const double rho1 = fluid_model->getValue(FluidPropertyType::Density, vars);
-    const double mu1 = fluid_model->getValue(FluidPropertyType::Vicosity, vars);
+    const double mu1 = fluid_model->getValue(FluidPropertyType::Viscosity, vars);
 
     // Only check d()/drho * drho/dp (FluidPropertiesWithDensityDependentModels)
     // The other functionalities of fluid property models are checked in other
