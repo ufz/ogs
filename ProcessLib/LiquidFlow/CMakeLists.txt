@@ -77,7 +77,23 @@ AddTest(
     hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
 )
 
-# Liquid flow
+# Coupling
+AddTest(
+    NAME StaggeredTH_ThermalDensityDrivenFlow2D
+    PATH StaggeredCoupledProcesses/TH/ThermalDensityDrivenFlow2D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS thermal_gravity_driven_flow2d.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-6 RELTOL 1e-6
+    DIFF_DATA
+    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu pressure_ref pressure
+    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu temperature_ref temperature
+)
+
+###############################################################################
+# MPI
 AddTest(
     NAME LiquidFlow_LineDirichletNeumannBC
     PATH Parabolic/LiquidFlow/LineDirichletNeumannBC
@@ -153,4 +169,19 @@ AddTest(
     ABSTOL 1e-6 RELTOL 1e-6
     DIFF_DATA
     hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
+)
+
+# Coupling
+AddTest(
+    NAME StaggeredTH_ThermalDensityDrivenFlow2D
+    PATH StaggeredCoupledProcesses/TH/ThermalDensityDrivenFlow2D
+    EXECUTABLE_ARGS thermal_gravity_driven_flow2d.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    ABSTOL 1e-6 RELTOL 1e-6
+    DIFF_DATA
+    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu pressure_ref pressure
+    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu temperature_ref temperature
 )
