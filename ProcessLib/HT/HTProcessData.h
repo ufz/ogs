@@ -13,6 +13,7 @@
 
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
+#include "MaterialLib/PorousMedium/Storage/Storage.h"
 
 namespace MeshLib
 {
@@ -31,7 +32,8 @@ struct HTProcessData
     HTProcessData(
         std::unique_ptr<MaterialLib::PorousMedium::Porosity>&& porosity_model_,
         ProcessLib::Parameter<double> const& intrinsic_permeability_,
-        ProcessLib::Parameter<double> const& specific_storage_,
+        std::unique_ptr<MaterialLib::PorousMedium::Storage>&&
+            specific_storage_model_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& viscosity_model_,
         ProcessLib::Parameter<double> const& density_solid_,
         ProcessLib::Parameter<double> const& fluid_reference_density_,
@@ -46,7 +48,7 @@ struct HTProcessData
         bool const has_gravity_)
         : porosity_model(std::move(porosity_model_)),
           intrinsic_permeability(intrinsic_permeability_),
-          specific_storage(specific_storage_),
+          specific_storage_model(std::move(specific_storage_model_)),
           viscosity_model(std::move(viscosity_model_)),
           density_solid(density_solid_),
           fluid_reference_density(fluid_reference_density_),
@@ -65,7 +67,7 @@ struct HTProcessData
     HTProcessData(HTProcessData&& other)
         : porosity_model(other.porosity_model.release()),
           intrinsic_permeability(other.intrinsic_permeability),
-          specific_storage(other.specific_storage),
+          specific_storage_model(other.specific_storage_model.release()),
           viscosity_model(other.viscosity_model.release()),
           density_solid(other.density_solid),
           fluid_reference_density(other.fluid_reference_density),
@@ -94,7 +96,7 @@ struct HTProcessData
 
     std::unique_ptr<MaterialLib::PorousMedium::Porosity> porosity_model;
     Parameter<double> const& intrinsic_permeability;
-    Parameter<double> const& specific_storage;
+    std::unique_ptr<MaterialLib::PorousMedium::Storage> specific_storage_model;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity_model;
     Parameter<double> const& density_solid;
     Parameter<double> const& fluid_reference_density;

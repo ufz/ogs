@@ -122,8 +122,10 @@ public:
                 _process_data.fluid_reference_density(t, pos)[0];
 
             auto const density_solid = _process_data.density_solid(t, pos)[0];
+            // TODO the argument to getValue() has to be changed for non
+            // constant storage model
             auto const specific_storage =
-                _process_data.specific_storage(t, pos)[0];
+                _process_data.specific_storage_model->getValue(0.0);
             auto const intrinsic_permeability =
                 _process_data.intrinsic_permeability(t, pos)[0];
 
