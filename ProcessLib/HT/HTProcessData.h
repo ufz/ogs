@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "MaterialLib/Fluid/FluidProperty.h"
+#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 
 namespace MeshLib
 {
@@ -28,7 +29,7 @@ namespace HT
 struct HTProcessData
 {
     HTProcessData(
-        ProcessLib::Parameter<double> const& porosity_,
+        std::unique_ptr<MaterialLib::PorousMedium::Porosity>&& porosity_model_,
         ProcessLib::Parameter<double> const& intrinsic_permeability_,
         ProcessLib::Parameter<double> const& specific_storage_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& viscosity_model_,
@@ -43,7 +44,7 @@ struct HTProcessData
         ProcessLib::Parameter<double> const& thermal_conductivity_fluid_,
         Eigen::Vector3d const& specific_body_force_,
         bool const has_gravity_)
-        : porosity(porosity_),
+        : porosity_model(std::move(porosity_model_)),
           intrinsic_permeability(intrinsic_permeability_),
           specific_storage(specific_storage_),
           viscosity_model(std::move(viscosity_model_)),
@@ -62,7 +63,7 @@ struct HTProcessData
     }
 
     HTProcessData(HTProcessData&& other)
-        : porosity(other.porosity),
+        : porosity_model(other.porosity_model.release()),
           intrinsic_permeability(other.intrinsic_permeability),
           specific_storage(other.specific_storage),
           viscosity_model(other.viscosity_model.release()),
@@ -91,7 +92,7 @@ struct HTProcessData
     //! Assignments are not needed.
     void operator=(HTProcessData&&) = delete;
 
-    Parameter<double> const& porosity;
+    std::unique_ptr<MaterialLib::PorousMedium::Porosity> porosity_model;
     Parameter<double> const& intrinsic_permeability;
     Parameter<double> const& specific_storage;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity_model;

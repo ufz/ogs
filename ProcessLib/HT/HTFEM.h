@@ -127,31 +127,36 @@ public:
             auto const intrinsic_permeability =
                 _process_data.intrinsic_permeability(t, pos)[0];
 
-            auto const porosity = _process_data.porosity(t, pos)[0];
-
-            auto const specific_heat_capacity_solid =
-                _process_data.specific_heat_capacity_solid(t, pos)[0];
-            auto const specific_heat_capacity_fluid =
-                _process_data.specific_heat_capacity_fluid(t, pos)[0];
-            double const heat_capacity =
-                density_solid * specific_heat_capacity_solid * (1 - porosity) +
-                fluid_reference_density * specific_heat_capacity_fluid * porosity;
-
             auto const thermal_conductivity_solid =
                 _process_data.thermal_conductivity_solid(t, pos)[0];
             auto const thermal_conductivity_fluid =
                 _process_data.thermal_conductivity_fluid(t, pos)[0];
 
+            auto const& sm = _shape_matrices[ip];
+            double T_int_pt = 0.0;
+            double p_int_pt = 0.0;
+            // Order matters: First T, then P!
+            NumLib::shapeFunctionInterpolate(local_x, sm.N, T_int_pt, p_int_pt);
+
+            // TODO the first argument has to be changed for non constant
+            // porosity model
+            auto const porosity =
+                _process_data.porosity_model->getValue(0.0, T_int_pt);
+
             Eigen::MatrixXd const thermal_conductivity =
                 (thermal_conductivity_solid * (1 - porosity) +
                 thermal_conductivity_fluid * porosity) * unit_mat;
+
+            auto const specific_heat_capacity_solid =
+                _process_data.specific_heat_capacity_solid(t, pos)[0];
+            auto const specific_heat_capacity_fluid =
+                _process_data.specific_heat_capacity_fluid(t, pos)[0];
 
             auto const thermal_dispersivity_longitudinal =
                 _process_data.thermal_dispersivity_longitudinal(t, pos)[0];
             auto const thermal_dispersivity_transversal =
                 _process_data.thermal_dispersivity_transversal(t, pos)[0];
 
-            auto const& sm = _shape_matrices[ip];
             auto const& wp = _integration_method.getWeightedPoint(ip);
             auto Ktt = local_K.template block<num_nodes, num_nodes>(0, 0);
             auto Mtt = local_M.template block<num_nodes, num_nodes>(0, 0);
@@ -160,11 +165,6 @@ public:
             auto Mpp = local_M.template block<num_nodes, num_nodes>(num_nodes,
                                                                     num_nodes);
             auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
-
-            double T_int_pt = 0.0;
-            double p_int_pt = 0.0;
-            // Order matters: First T, then P!
-            NumLib::shapeFunctionInterpolate(local_x, sm.N, T_int_pt, p_int_pt);
 
             // Use the fluid density model to compute the density
             vars[static_cast<int>(
@@ -193,6 +193,10 @@ public:
 
             auto const hydrodynamic_thermodispersion =
                 thermal_conductivity + thermal_dispersivity;
+
+            double const heat_capacity =
+                density_solid * specific_heat_capacity_solid * (1 - porosity) +
+                fluid_reference_density * specific_heat_capacity_fluid * porosity;
 
             auto const integral_term =
                 sm.integralMeasure * sm.detJ * wp.getWeight();
