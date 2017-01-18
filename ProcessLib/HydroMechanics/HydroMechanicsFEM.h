@@ -144,8 +144,9 @@ public:
             // displacement (subscript u)
             _ip_data.emplace_back(*_process_data.material);
             auto& ip_data = _ip_data[ip];
+            auto const& sm = shape_matrices_u[ip];
             _ip_data[ip].integration_weight =
-                _integration_method.getWeightedPoint(ip).getWeight() *
+                _integration_method.getWeightedPoint(ip).getWeight() * sm.integralMeasure *
                 shape_matrices_u[ip].detJ;
             ip_data.b_matrices.resize(
                 kelvin_vector_size,
