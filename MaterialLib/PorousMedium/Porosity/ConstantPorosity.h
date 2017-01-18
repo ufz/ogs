@@ -31,7 +31,7 @@ public:
      *  @param variable    A variable with any double type value.
      *  @param temperature Temperature with any double type value.
      */
-    double getValue(const double variable, double temperature) const override
+    double getValue(const double variable, const double temperature) const override
     {
         (void)variable;
         (void)temperature;

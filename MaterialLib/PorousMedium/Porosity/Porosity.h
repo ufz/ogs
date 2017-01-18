@@ -33,7 +33,7 @@ public:
      *  @param temperature Temperature.
      */
     virtual double getValue(const double variable,
-                            double temperature) const = 0;
+                            const double temperature) const = 0;
 };
 
 }  // end of namespace
