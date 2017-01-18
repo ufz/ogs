@@ -146,6 +146,10 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) = 0;
 
+    virtual void setInitialConditionsConcreteProcess(const double /*t*/,
+                                                     GlobalVector const& /*x*/)
+    {
+    }
     virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
                                          GlobalMatrix& M, GlobalMatrix& K,
                                          GlobalVector& b,
