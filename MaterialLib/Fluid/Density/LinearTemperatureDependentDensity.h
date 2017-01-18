@@ -50,7 +50,7 @@ public:
     double getValue(const ArrayType& var_vals) const override
     {
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
-        return _rho0 * (1 + _beta * (T - _temperature0));
+        return _rho0 * (1 - _beta * (T - _temperature0));
     }
 
     /// Get the partial differential of the density with respect to temperature.
@@ -62,7 +62,7 @@ public:
     {
         (void)var_vals;
         (void)var;
-        return _rho0 * _beta;
+        return - _rho0 * _beta;
     }
 
 private:

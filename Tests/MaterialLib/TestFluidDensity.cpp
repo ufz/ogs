@@ -91,9 +91,9 @@ TEST(Material, checkLinearTemperatureDependentDensity)
 
     ArrayType vars;
     vars[0] = 273.1;
-    ASSERT_NEAR(1000.0 * (1 + 4.3e-4 * (vars[0] - 293.0)), rho->getValue(vars),
+    ASSERT_NEAR(1000.0 * (1 - 4.3e-4 * (vars[0] - 293.0)), rho->getValue(vars),
                 1.e-10);
-    ASSERT_NEAR(1000.0 * 4.3e-4,
+    ASSERT_NEAR(-1000.0 * 4.3e-4,
                 rho->getdValue(vars, Fluid::PropertyVariableType::T), 1.e-10);
 }
 
