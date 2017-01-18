@@ -31,7 +31,7 @@ struct HTProcessData
         ProcessLib::Parameter<double> const& porosity_,
         ProcessLib::Parameter<double> const& intrinsic_permeability_,
         ProcessLib::Parameter<double> const& specific_storage_,
-        ProcessLib::Parameter<double> const& viscosity_,
+        std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& viscosity_model_,
         ProcessLib::Parameter<double> const& density_solid_,
         ProcessLib::Parameter<double> const& fluid_reference_density_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_density_,
@@ -46,7 +46,7 @@ struct HTProcessData
         : porosity(porosity_),
           intrinsic_permeability(intrinsic_permeability_),
           specific_storage(specific_storage_),
-          viscosity(viscosity_),
+          viscosity_model(std::move(viscosity_model_)),
           density_solid(density_solid_),
           fluid_reference_density(fluid_reference_density_),
           fluid_density(std::move(fluid_density_)),
@@ -65,7 +65,7 @@ struct HTProcessData
         : porosity(other.porosity),
           intrinsic_permeability(other.intrinsic_permeability),
           specific_storage(other.specific_storage),
-          viscosity(other.viscosity),
+          viscosity_model(other.viscosity_model.release()),
           density_solid(other.density_solid),
           fluid_reference_density(other.fluid_reference_density),
           fluid_density(other.fluid_density.release()),
@@ -94,7 +94,7 @@ struct HTProcessData
     Parameter<double> const& porosity;
     Parameter<double> const& intrinsic_permeability;
     Parameter<double> const& specific_storage;
-    Parameter<double> const& viscosity;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity_model;
     Parameter<double> const& density_solid;
     Parameter<double> const& fluid_reference_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> fluid_density;

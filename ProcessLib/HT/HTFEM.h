@@ -126,7 +126,6 @@ public:
                 _process_data.specific_storage(t, pos)[0];
             auto const intrinsic_permeability =
                 _process_data.intrinsic_permeability(t, pos)[0];
-            auto const viscosity0 = _process_data.viscosity(t, pos)[0];
 
             auto const porosity = _process_data.porosity(t, pos)[0];
 
@@ -175,10 +174,9 @@ public:
             auto const density_water_T =
                 _process_data.fluid_density->getValue(vars);
 
-            // TODO include viscosity computations via material lib
-            // double const viscosity = viscosity0 * std::exp(-
-            // delta_T/75.0);
-            double const perm_visc = intrinsic_permeability / viscosity0;
+            // Use the viscosity model to compute the viscosity
+            auto const viscosity = _process_data.viscosity_model->getValue(vars);
+            double const perm_visc = intrinsic_permeability / viscosity;
 
             Eigen::Matrix<double, -1, 1, 0, -1, 1> const velocity =
                 -perm_visc * (sm.dNdx * p_nodal_values - density_water_T * b);
