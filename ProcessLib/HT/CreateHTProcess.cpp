@@ -18,6 +18,7 @@
 #include "MaterialLib/Fluid/Density/createFluidDensityModel.h"
 #include "MaterialLib/Fluid/Viscosity/createViscosityModel.h"
 #include "MaterialLib/PorousMedium/Porosity/createPorosityModel.h"
+#include "MaterialLib/PorousMedium/Permeability/createPermeabilityModel.h"
 #include "MaterialLib/PorousMedium/Storage/createStorageModel.h"
 
 namespace ProcessLib
@@ -58,12 +59,10 @@ std::unique_ptr<Process> createHTProcess(
 
     // Parameter for the intrinsic permeability (only one scalar per element,
     // i.e., the isotropic case is handled at the moment)
-    auto& intrinsic_permeability = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__intrinsic_permeability}
-        "intrinsic_permeability", parameters, 1);
-    DBUG("Use \'%s\' as intrinsic_permeability parameter.",
-         intrinsic_permeability.name.c_str());
+    auto const& permeability_conf =
+        porous_medium_config.getConfigSubtree("permeability");
+    auto permeability_model =
+        MaterialLib::PorousMedium::createPermeabilityModel(permeability_conf);
 
     // Parameter for the specific storage.
     auto const& storage_conf =
@@ -158,7 +157,7 @@ std::unique_ptr<Process> createHTProcess(
 
     HTProcessData process_data{
         std::move(porosity_model),
-        intrinsic_permeability,
+        std::move(permeability_model),
         std::move(specific_storage_model),
         std::move(viscosity_model),
         density_solid,

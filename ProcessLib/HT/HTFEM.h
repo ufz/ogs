@@ -126,8 +126,8 @@ public:
             // constant storage model
             auto const specific_storage =
                 _process_data.specific_storage_model->getValue(0.0);
-            auto const intrinsic_permeability =
-                _process_data.intrinsic_permeability(t, pos)[0];
+            auto const& intrinsic_permeability =
+                _process_data.permeability_model;
 
             auto const thermal_conductivity_solid =
                 _process_data.thermal_conductivity_solid(t, pos)[0];
@@ -177,8 +177,10 @@ public:
                 _process_data.fluid_density->getValue(vars);
 
             // Use the viscosity model to compute the viscosity
-            auto const viscosity = _process_data.viscosity_model->getValue(vars);
-            double const perm_visc = intrinsic_permeability / viscosity;
+            auto const viscosity =
+                _process_data.viscosity_model->getValue(vars);
+            Eigen::MatrixXd perm_visc =
+                intrinsic_permeability / viscosity;
 
             Eigen::Matrix<double, -1, 1, 0, -1, 1> const velocity =
                 -perm_visc * (sm.dNdx * p_nodal_values - density_water_T * b);
@@ -214,8 +216,8 @@ public:
                 integral_term * sm.N.transpose() * heat_capacity * sm.N;
             Mpp.noalias() +=
                 integral_term * sm.N.transpose() * specific_storage * sm.N;
-            Bp += perm_visc * integral_term * sm.dNdx.transpose() * b *
-                  density_water_T;
+            Bp += integral_term * density_water_T * sm.dNdx.transpose() *
+                  perm_visc * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
 

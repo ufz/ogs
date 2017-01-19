@@ -31,7 +31,7 @@ struct HTProcessData
 {
     HTProcessData(
         std::unique_ptr<MaterialLib::PorousMedium::Porosity>&& porosity_model_,
-        ProcessLib::Parameter<double> const& intrinsic_permeability_,
+        Eigen::MatrixXd&& permeability_model_,
         std::unique_ptr<MaterialLib::PorousMedium::Storage>&&
             specific_storage_model_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& viscosity_model_,
@@ -47,7 +47,7 @@ struct HTProcessData
         Eigen::Vector3d const& specific_body_force_,
         bool const has_gravity_)
         : porosity_model(std::move(porosity_model_)),
-          intrinsic_permeability(intrinsic_permeability_),
+          permeability_model(std::move(permeability_model_)),
           specific_storage_model(std::move(specific_storage_model_)),
           viscosity_model(std::move(viscosity_model_)),
           density_solid(density_solid_),
@@ -66,7 +66,7 @@ struct HTProcessData
 
     HTProcessData(HTProcessData&& other)
         : porosity_model(other.porosity_model.release()),
-          intrinsic_permeability(other.intrinsic_permeability),
+          permeability_model(other.permeability_model),
           specific_storage_model(other.specific_storage_model.release()),
           viscosity_model(other.viscosity_model.release()),
           density_solid(other.density_solid),
@@ -95,7 +95,7 @@ struct HTProcessData
     void operator=(HTProcessData&&) = delete;
 
     std::unique_ptr<MaterialLib::PorousMedium::Porosity> porosity_model;
-    Parameter<double> const& intrinsic_permeability;
+    Eigen::MatrixXd const permeability_model;
     std::unique_ptr<MaterialLib::PorousMedium::Storage> specific_storage_model;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity_model;
     Parameter<double> const& density_solid;
