@@ -33,7 +33,10 @@ stage('Reports (Docs)') {
 
 if (helper.isOriginMaster(this)) {
     stage('Deploy (Docs)') {
-        sh 'rsync -a --delete --stats build/docs/ ' +
-            'web@doxygen.opengeosys.org:/www/doxygenogs'
+        sshagent(credentials: ['www-data_jenkins']) {
+            sh 'rsync -a --delete --stats -e "ssh -o StrictHostKeyChecking=no"' +
+                ' build/docs/ www-data@jenkins.opengeosys.org:'+
+                '/var/www/doxygen.opengeosys.org'
+        }
     }
 }
