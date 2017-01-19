@@ -26,28 +26,36 @@ struct StaggeredCouplingTerm
     StaggeredCouplingTerm(
         std::map<ProcessType, Process const&> const& coupled_processes_,
         std::map<ProcessType, GlobalVector const*> const& coupled_xs_,
-        const bool empty_ = false)
+        const double dt_, const bool empty_ = false)
     : coupled_processes(coupled_processes_), coupled_xs(coupled_xs_),
-      empty(empty_)
+      dt(dt_), empty(empty_)
     {
     }
 
     std::map<ProcessType, Process const&> const& coupled_processes;
     std::map<ProcessType, GlobalVector const*> const& coupled_xs;
+    const double dt; ///< Time step size.
     const bool empty;
 };
 
 struct LocalCouplingTerm
 {
-    LocalCouplingTerm(
+    LocalCouplingTerm(const double dt_,
         std::map<ProcessType, Process const&> const& coupled_processes_,
+        std::map<ProcessType, const std::vector<double>>&& local_coupled_xs0_,
         std::map<ProcessType, const std::vector<double>>&& local_coupled_xs_)
-    : coupled_processes(coupled_processes_),
+    : dt(dt_), coupled_processes(coupled_processes_),
+      local_coupled_xs0(std::move(local_coupled_xs0_)),
       local_coupled_xs(std::move(local_coupled_xs_))
     {
     }
 
+    const double dt; ///< Time step size.
+
     std::map<ProcessType, Process const&> const& coupled_processes;
+    /// Local solutions of the previous time step.
+    std::map<ProcessType, const std::vector<double>> const local_coupled_xs0;
+    /// Local solutions of the current time step.
     std::map<ProcessType, const std::vector<double>> const local_coupled_xs;
 };
 

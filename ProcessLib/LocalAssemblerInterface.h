@@ -36,11 +36,12 @@ public:
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data) = 0;
 
-    virtual void coupling_assemble(
-        double const t, std::vector<double> const& local_x,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data,
-        LocalCouplingTerm const& coupled_term);
+    virtual void coupling_assemble(double const t,
+                                   std::vector<double> const& local_x,
+                                   std::vector<double>& local_M_data,
+                                   std::vector<double>& local_K_data,
+                                   std::vector<double>& local_b_data,
+                                   LocalCouplingTerm const& coupled_term);
 
     virtual void assembleWithJacobian(double const t,
                                       std::vector<double> const& local_x,

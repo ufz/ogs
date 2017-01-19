@@ -66,4 +66,4 @@ private:
     std::unique_ptr<AbstractJacobianAssembler> _jacobian_assembler;
 };
 
-}   // namespace ProcessLib
+}  // namespace ProcessLib
