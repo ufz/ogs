@@ -28,6 +28,20 @@ namespace ProcessLib
 {
 namespace HT
 {
+template < typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
+struct IntegrationPointData final
+{
+    IntegrationPointData(NodalRowVectorType const& N_,
+                         GlobalDimNodalMatrixType const& dNdx_,
+                         double const& integration_weight_)
+        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+    {}
+
+    NodalRowVectorType const N;
+    GlobalDimNodalMatrixType const dNdx;
+    double const integration_weight;
+};
+
 const unsigned NUM_NODAL_DOF = 2;
 
 class HTLocalAssemblerInterface
@@ -52,10 +66,19 @@ class LocalAssemblerData : public HTLocalAssemblerInterface
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
-    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
+    using LocalMatrixType = typename ShapeMatricesType::template MatrixType<
+        NUM_NODAL_DOF * ShapeFunction::NPOINTS,
+        NUM_NODAL_DOF * ShapeFunction::NPOINTS>;
+    using LocalVectorType =
+        typename ShapeMatricesType::template VectorType<NUM_NODAL_DOF *
+                                                        ShapeFunction::NPOINTS>;
+
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
-        using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
+    using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
+
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
+    using GlobalDimNodalMatrixType =
+        typename ShapeMatricesType::GlobalDimNodalMatrixType;
     using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
 
 public:
@@ -67,9 +90,6 @@ public:
         : _element(element),
           _process_data(process_data),
           _integration_method(integration_order),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                            IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method)),
           _darcy_velocities(
               GlobalDim,
               std::vector<double>(_integration_method.getNumberOfPoints()))
@@ -78,6 +98,24 @@ public:
         // matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
         (void)local_matrix_size;
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        _ip_data.reserve(n_integration_points);
+
+        auto const shape_matrices =
+            initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                              IntegrationMethod, GlobalDim>(
+                element, is_axially_symmetric, _integration_method);
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data.emplace_back(
+                shape_matrices[ip].N, shape_matrices[ip].dNdx,
+                _integration_method.getWeightedPoint(ip).getWeight() *
+                    shape_matrices[ip].integralMeasure *
+                    shape_matrices[ip].detJ);
+        }
     }
 
     void assemble(double const t, std::vector<double> const& local_x,
@@ -90,11 +128,11 @@ public:
         // matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
 
-        auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
+        auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
             local_M_data, local_matrix_size, local_matrix_size);
-        auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
+        auto local_K = MathLib::createZeroedMatrix<LocalMatrixType>(
             local_K_data, local_matrix_size, local_matrix_size);
-        auto local_b = MathLib::createZeroedVector<NodalVectorType>(
+        auto local_b = MathLib::createZeroedVector<LocalVectorType>(
             local_b_data, local_matrix_size);
 
         unsigned const n_integration_points =
@@ -131,11 +169,15 @@ public:
             auto const thermal_conductivity_fluid =
                 _process_data.thermal_conductivity_fluid(t, pos)[0];
 
-            auto const& sm = _shape_matrices[ip];
+            auto const& ip_data = _ip_data[ip];
+            auto const& N = ip_data.N;
+            auto const& dNdx = ip_data.dNdx;
+            auto const& w = ip_data.integration_weight;
+
             double T_int_pt = 0.0;
             double p_int_pt = 0.0;
             // Order matters: First T, then P!
-            NumLib::shapeFunctionInterpolate(local_x, sm.N, T_int_pt, p_int_pt);
+            NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
 
             // TODO the first argument has to be changed for non constant
             // porosity model
@@ -156,7 +198,6 @@ public:
             auto const thermal_dispersivity_transversal =
                 _process_data.thermal_dispersivity_transversal(t, pos)[0];
 
-            auto const& wp = _integration_method.getWeightedPoint(ip);
             auto Ktt = local_K.template block<num_nodes, num_nodes>(0, 0);
             auto Mtt = local_M.template block<num_nodes, num_nodes>(0, 0);
             auto Kpp = local_K.template block<num_nodes, num_nodes>(num_nodes,
@@ -180,8 +221,7 @@ public:
                 intrinsic_permeability / viscosity;
 
             GlobalDimVectorType const velocity =
-                -perm_over_visc *
-                (sm.dNdx * p_nodal_values - density_water_T * b);
+                -perm_over_visc * (dNdx * p_nodal_values - density_water_T * b);
 
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const& I(
@@ -201,22 +241,16 @@ public:
                 density_solid * specific_heat_capacity_solid * (1 - porosity) +
                 fluid_reference_density * specific_heat_capacity_fluid * porosity;
 
-            auto const integral_term =
-                sm.integralMeasure * sm.detJ * wp.getWeight();
             // matrix assembly
             Ktt.noalias() +=
-                integral_term *
-                (sm.dNdx.transpose() * hydrodynamic_thermodispersion * sm.dNdx +
-                 sm.N.transpose() * velocity.transpose() * sm.dNdx *
-                     fluid_reference_density * specific_heat_capacity_fluid);
-            Kpp.noalias() +=
-                integral_term * sm.dNdx.transpose() * perm_over_visc * sm.dNdx;
-            Mtt.noalias() +=
-                integral_term * sm.N.transpose() * heat_capacity * sm.N;
-            Mpp.noalias() +=
-                integral_term * sm.N.transpose() * specific_storage * sm.N;
-            Bp += integral_term * density_water_T * sm.dNdx.transpose() *
-                  perm_over_visc * b;
+                (dNdx.transpose() * hydrodynamic_thermodispersion * dNdx +
+                 N.transpose() * velocity.transpose() * dNdx *
+                     fluid_reference_density * specific_heat_capacity_fluid) *
+                w;
+            Kpp.noalias() += w * dNdx.transpose() * perm_over_visc * dNdx;
+            Mtt.noalias() += w * N.transpose() * heat_capacity * N;
+            Mpp.noalias() += w * N.transpose() * specific_storage * N;
+            Bp += w * density_water_T * dNdx.transpose() * perm_over_visc * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
 
@@ -231,7 +265,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _shape_matrices[integration_point].N;
+        auto const& N = _ip_data[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -263,7 +297,9 @@ private:
     HTProcessData const& _process_data;
 
     IntegrationMethod const _integration_method;
-    std::vector<ShapeMatrices> _shape_matrices;
+    std::vector<
+        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>
+        _ip_data;
     std::vector<std::vector<double>> _darcy_velocities;
 };
 
