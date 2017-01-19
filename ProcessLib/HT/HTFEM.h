@@ -145,9 +145,9 @@ public:
             auto const porosity =
                 _process_data.porosity_model->getValue(0.0, T_int_pt);
 
-            Eigen::MatrixXd const thermal_conductivity =
-                (thermal_conductivity_solid * (1 - porosity) +
-                thermal_conductivity_fluid * porosity) * unit_mat;
+            double const thermal_conductivity =
+                thermal_conductivity_solid * (1 - porosity) +
+                 thermal_conductivity_fluid * porosity;
 
             auto const specific_heat_capacity_solid =
                 _process_data.specific_heat_capacity_solid(t, pos)[0];
