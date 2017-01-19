@@ -150,6 +150,7 @@ struct SingleProcessData
     NumLib::InternalMatrixStorage* mat_strg = nullptr;
 
     Process& process;
+    /// Coupled processes.
     std::map<ProcessType, Process const&> const coupled_processes;
     ProcessOutput process_output;
 };
@@ -487,20 +488,29 @@ UncoupledProcessesTimeLoop::UncoupledProcessesTimeLoop(
 {
 }
 
+/**
+ *  This function fills the vector of solutions of coupled processes of
+ *  processes, _solutions_of_coupled_processes, and initializes the vector of
+ *  solutions of the previous coupling iteration,
+ *  _solutions_of_last_cpl_iteration.
+ *
+ *  \return a boolean value as a flag to indicate there should be a coupling
+ *          among process or not.
+ */
 bool UncoupledProcessesTimeLoop::setCoupledSolutions()
 {
     if (!_global_coupling_conv_crit && _global_coupling_max_iterations == 1)
         return false;
 
     unsigned pcs_idx = 0;
-    _solutions_of_coupled_processes.resize(_per_process_data.size());
+    _solutions_of_coupled_processes.reserve(_per_process_data.size());
     for (auto& spd : _per_process_data)
     {
         BaseLib::RunTime time_timestep_process;
         time_timestep_process.start();
 
         auto const& coupled_processes = spd->coupled_processes;
-        std::map<ProcessType, GlobalVector const*> coupled_xs;
+        std::map<ProcessType, GlobalVector const&> coupled_xs;
         auto it = coupled_processes.begin();
         while (it != coupled_processes.end())
         {
@@ -517,16 +527,15 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
             if (found_item != _per_process_data.end())
             {
                 // Id of the coupled process:
-                const std::size_t c_id =
-                    found_item - _per_process_data.begin();
+                const std::size_t c_id = found_item - _per_process_data.begin();
 
-                BaseLib::insertMapIfKeyUniqueElseError(coupled_xs, it->first,
-                                                       _process_solutions[c_id],
-                                                       "global_coupled_x");
+                BaseLib::insertMapIfKeyUniqueElseError(
+                    coupled_xs, it->first, *_process_solutions[c_id],
+                    "global_coupled_x");
             }
             it++;
         }
-        _solutions_of_coupled_processes[pcs_idx] = coupled_xs;
+        _solutions_of_coupled_processes.emplace_back(coupled_xs);
 
         const auto x = _process_solutions[pcs_idx];
 
@@ -604,6 +613,7 @@ bool UncoupledProcessesTimeLoop::loop()
              timestep, t, delta_t);
 
         bool coupling_iteration_converged = true;
+        // Coupling iteration
         for (unsigned i = 0; i < _global_coupling_max_iterations; i++)
         {
             // TODO use process name
@@ -615,11 +625,12 @@ bool UncoupledProcessesTimeLoop::loop()
                 time_timestep_process.start();
 
                 auto& x = *_process_solutions[pcs_idx];
-                if (i==0)
+                if (i == 0)
                     pcs.preTimestep(x, t, delta_t);
 
                 if (is_staggered_coupling)
                 {
+                    // Create a coupling term
                     if (i == 0)
                         _global_coupling_conv_crit->preFirstIteration();
                     else
