@@ -179,11 +179,11 @@ public:
             // Use the viscosity model to compute the viscosity
             auto const viscosity =
                 _process_data.viscosity_model->getValue(vars);
-            Eigen::MatrixXd perm_visc =
+            Eigen::Matrix<double, GlobalDim, GlobalDim> perm_over_visc =
                 intrinsic_permeability / viscosity;
 
             Eigen::Matrix<double, -1, 1, 0, -1, 1> const velocity =
-                -perm_visc * (sm.dNdx * p_nodal_values - density_water_T * b);
+                -perm_over_visc * (sm.dNdx * p_nodal_values - density_water_T * b);
 
             double const velocity_magnitude =
                 std::sqrt(velocity.transpose() * velocity);
@@ -211,13 +211,13 @@ public:
                  sm.N.transpose() * velocity.transpose() * sm.dNdx *
                      fluid_reference_density * specific_heat_capacity_fluid);
             Kpp.noalias() +=
-                integral_term * sm.dNdx.transpose() * perm_visc * sm.dNdx;
+                integral_term * sm.dNdx.transpose() * perm_over_visc * sm.dNdx;
             Mtt.noalias() +=
                 integral_term * sm.N.transpose() * heat_capacity * sm.N;
             Mpp.noalias() +=
                 integral_term * sm.N.transpose() * specific_storage * sm.N;
             Bp += integral_term * density_water_T * sm.dNdx.transpose() *
-                  perm_visc * b;
+                  perm_over_visc * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
 
