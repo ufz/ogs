@@ -54,17 +54,24 @@ private:
     const unsigned _global_coupling_max_iterations;
     /// Convergence criteria of the global coupling iterations.
     std::unique_ptr<NumLib::ConvergenceCriterion> _global_coupling_conv_crit;
-    std::vector<std::map<ProcessType, GlobalVector const*>>
-            _solutions_of_coupled_processes;
-    /// Solutions of the previous coupling iteration.
+
+    /**
+     *  Vector of solutions of coupled processes of processes.
+     *  Each vector element stores the references of the solution vectors
+     *  (stored in _process_solutions) of the coupled processes of a process.
+     */
+    std::vector<std::map<ProcessType, GlobalVector const&>>
+        _solutions_of_coupled_processes;
+
+    /// Solutions of the previous coupling iteration for the convergence
+    /// criteria of the coupling iteration.
     std::vector<GlobalVector*> _solutions_of_last_cpl_iteration;
 };
 
 //! Builds an UncoupledProcessesTimeLoop from the given configuration.
 std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
     BaseLib::ConfigTree const& config, std::string const& output_directory,
-    std::map<std::string, std::unique_ptr<Process>> const&
-        processes,
+    std::map<std::string, std::unique_ptr<Process>> const& processes,
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
         nonlinear_solvers);
 
