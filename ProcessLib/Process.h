@@ -111,6 +111,12 @@ public:
         return _secondary_variables;
     }
 
+    // Get the solution of the previous time step.
+    virtual GlobalVector* getPreviousTimeStepSolution() const
+    {
+       return nullptr;
+    }
+
     // Used as a call back for CalculateSurfaceFlux process.
     virtual std::vector<double> getFlux(std::size_t /*element_id*/,
                                         MathLib::Point3d const& /*p*/,

@@ -626,7 +626,7 @@ bool UncoupledProcessesTimeLoop::loop()
                         _global_coupling_conv_crit->setNoFirstIteration();
                     StaggeredCouplingTerm coupled_term(
                         spd->coupled_processes,
-                        _solutions_of_coupled_processes[pcs_idx]);
+                        _solutions_of_coupled_processes[pcs_idx], delta_t);
 
                     nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
                         x, timestep, t, delta_t, *spd, coupled_term, *_output);

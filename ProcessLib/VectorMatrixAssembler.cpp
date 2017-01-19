@@ -19,6 +19,56 @@
 
 namespace ProcessLib
 {
+static std::map<ProcessLib::ProcessType, const std::vector<double>>
+getPreviousLocalSolutionsOfCoupledProcesses(
+    const StaggeredCouplingTerm& coupled_term,
+    const std::vector<GlobalIndexType>& indices)
+{
+    std::map<ProcessLib::ProcessType, const std::vector<double>>
+        local_coupled_xs0;
+    auto it = coupled_term.coupled_processes.begin();
+    while (it != coupled_term.coupled_processes.end())
+    {
+        auto const& coupled_pcs = it->second;
+        auto const prevous_time_x = coupled_pcs.getPreviousTimeStepSolution();
+        if (prevous_time_x)
+        {
+            auto const local_coupled_x0 = prevous_time_x->get(indices);
+            BaseLib::insertMapIfKeyUniqueElseError(local_coupled_xs0, it->first,
+                                                   local_coupled_x0,
+                                                   "local_coupled_x0");
+        }
+        else
+        {
+            const std::vector<double> local_coupled_x0;
+            BaseLib::insertMapIfKeyUniqueElseError(local_coupled_xs0, it->first,
+                                                   local_coupled_x0,
+                                                   "local_coupled_x0");
+        }
+        it++;
+    }
+    return local_coupled_xs0;
+}
+
+static std::map<ProcessLib::ProcessType, const std::vector<double>>
+getCurrentLocalSolutionsOfCoupledProcesses(
+    const std::map<ProcessType, GlobalVector const*>& global_coupled_xs,
+    const std::vector<GlobalIndexType>& indices)
+{
+    std::map<ProcessLib::ProcessType, const std::vector<double>>
+        local_coupled_xs;
+    auto it = global_coupled_xs.begin();
+    while (it != global_coupled_xs.end())
+    {
+        GlobalVector const* coupled_x = it->second;
+        auto const local_coupled_x = coupled_x->get(indices);
+        BaseLib::insertMapIfKeyUniqueElseError(
+            local_coupled_xs, it->first, local_coupled_x, "local_coupled_x");
+        it++;
+    }
+    return local_coupled_xs;
+}
+
 VectorMatrixAssembler::VectorMatrixAssembler(
     std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler)
     : _jacobian_assembler(std::move(jacobian_assembler))
@@ -45,21 +95,13 @@ void VectorMatrixAssembler::assemble(
     }
     else
     {
-        std::map<ProcessLib::ProcessType, const std::vector<double>>
-            local_coupled_xs;
-        auto it = coupled_term.coupled_xs.begin();
-        while (it != coupled_term.coupled_xs.end())
-        {
-            GlobalVector const* coupled_x = it->second;
-            auto const local_coupled_x = coupled_x->get(indices);
-            BaseLib::insertMapIfKeyUniqueElseError(local_coupled_xs, it->first,
-                                                   local_coupled_x,
-                                                   "local_coupled_x");
-            it++;
-        }
-
+        auto local_coupled_xs0 =
+            getPreviousLocalSolutionsOfCoupledProcesses(coupled_term, indices);
+        auto local_coupled_xs = getCurrentLocalSolutionsOfCoupledProcesses(
+            coupled_term.coupled_xs, indices);
         ProcessLib::LocalCouplingTerm local_coupling_term(
-            coupled_term.coupled_processes, std::move(local_coupled_xs));
+            coupled_term.dt, coupled_term.coupled_processes,
+            std::move(local_coupled_xs0), std::move(local_coupled_xs));
 
         local_assembler.coupling_assemble(t, local_x, _local_M_data,
                                           _local_K_data, _local_b_data,
@@ -111,21 +153,13 @@ void VectorMatrixAssembler::assembleWithJacobian(
     }
     else
     {
-        std::map<ProcessLib::ProcessType, const std::vector<double>>
-            local_coupled_xs;
-        auto it = coupled_term.coupled_xs.begin();
-        while (it != coupled_term.coupled_xs.end())
-        {
-            GlobalVector const* coupled_x = it->second;
-            auto const local_coupled_x = coupled_x->get(indices);
-            BaseLib::insertMapIfKeyUniqueElseError(local_coupled_xs, it->first,
-                                                   local_coupled_x,
-                                                   "local_coupled_x");
-            it++;
-        }
-
+        auto local_coupled_xs0 =
+            getPreviousLocalSolutionsOfCoupledProcesses(coupled_term, indices);
+        auto local_coupled_xs = getCurrentLocalSolutionsOfCoupledProcesses(
+            coupled_term.coupled_xs, indices);
         ProcessLib::LocalCouplingTerm local_coupling_term(
-            coupled_term.coupled_processes, std::move(local_coupled_xs));
+            coupled_term.dt, coupled_term.coupled_processes,
+            std::move(local_coupled_xs0), std::move(local_coupled_xs));
 
         _jacobian_assembler->coupling_assembleWithJacobian(
             local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
