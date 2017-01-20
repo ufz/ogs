@@ -1,0 +1,5 @@
+# Netlify settings
+[build]
+  base    = "web"
+  publish = "web/public"
+  command = "hugo"
