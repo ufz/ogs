@@ -1,0 +1,33 @@
+{{ partial "header.html" . }}
+  <div class="col-xs-3">
+    <ul>
+    {{ range .Site.Pages.ByWeight }}
+      <!-- {{ if eq .Type "docs"}} -->
+        <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+      <!-- {{ end }} -->
+    {{ end }}
+    <ul>
+  </div>
+  <div class="col-xs-9">
+    <h1>{{ .Title }}</h1>
+    <h2>{{ .Date.Format "Mon, Jan 2, 2006" }}</h2>
+    {{ .Content }}
+
+    <hr>
+    <div class="row between-xs">
+      <div class="col-xs-4">
+      {{ if isset .Params "back" }}
+        <a href='{{ relref . .Params.back }}'>Back: {{ .Params.back }}</a>
+      {{ end }}
+      </div>
+
+      <div class="col-xs-4" style="text-align: right">
+      {{ if isset .Params "next" }}
+        <a href='{{ relref . .Params.next }}'>Next: {{ .Params.next }}</a>
+      {{ end }}
+      </div>
+    </div>
+  </div>
+
+
+{{ partial "footer.html" . }}
