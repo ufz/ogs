@@ -42,7 +42,11 @@ public:
      * scheme. It is not used for the general solver steps; in those only the
      * solve() method is needed.
      *
-     * \param x   the state at which the equation system will be assembled.
+     * \param x             the state at which the equation system will be
+     *                      assembled.
+     * \param coupled_term  the coupled term including the reference of the
+     *                      coupled processes and solutions of the equations of
+     *                      the coupled processes.
      */
     virtual void assemble(GlobalVector const& x,
                           ProcessLib::StaggeredCouplingTerm const& coupled_term
@@ -51,6 +55,9 @@ public:
     /*! Assemble and solve the equation system.
      *
      * \param x   in: the initial guess, out: the solution.
+     * \param coupled_term  the coupled term including the reference of the
+     *                      coupled processes and solutions of the equations of
+     *                      the coupled processes.
      * \param postIterationCallback called after each iteration if set.
      *
      * \retval true if the equation system could be solved
@@ -106,6 +113,7 @@ public:
         _equation_system = &eq;
         _convergence_criterion = &conv_crit;
     }
+
     void assemble(GlobalVector const& x,
                   ProcessLib::StaggeredCouplingTerm const& coupled_term
                  ) const override;
@@ -164,6 +172,7 @@ public:
         _equation_system = &eq;
         _convergence_criterion = &conv_crit;
     }
+
     void assemble(GlobalVector const& x,
                   ProcessLib::StaggeredCouplingTerm const& coupled_term
                  ) const override;
