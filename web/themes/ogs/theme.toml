@@ -8,7 +8,7 @@ description = ""
 homepage = "http://opengeosys.org/"
 tags = ["", ""]
 features = ["", ""]
-min_version = 0.18
+min_version = 0.17
 
 [author]
   name = "Lars Bilke"
