@@ -8,6 +8,9 @@
 
 ### Infrastructure
 
+- CMake option OGS_EIGEN_DYNAMIC_SHAPE_MATRICES defaults to OFF on Release
+  config, ON otherwise. Can be overridden by explicitly setting the option. #1673
+
 ### Fixes
 
 # 6.0.8
