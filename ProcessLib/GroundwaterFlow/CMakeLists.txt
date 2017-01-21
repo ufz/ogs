@@ -92,18 +92,6 @@ endforeach()
 
 foreach(mesh_size 1e5 1e6)
     AddTest(
-        NAME LARGE_GroundWaterFlowProcess_square_1x1_${mesh_size}
-        PATH Elliptic/square_1x1_GroundWaterFlow
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS square_${mesh_size}.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
-        ABSTOL 1e-12 RELTOL 1e-16
-        DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
-    )
-
-    AddTest(
         NAME LARGE_GroundWaterFlowProcess_square_1x1_Neumann_${mesh_size}
         PATH Elliptic/square_1x1_GroundWaterFlow
         EXECUTABLE ogs
@@ -115,6 +103,31 @@ foreach(mesh_size 1e5 1e6)
         square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure
     )
 endforeach()
+
+AddTest(
+    NAME LARGE_GroundWaterFlowProcess_square_1x1_1e5
+    PATH Elliptic/square_1x1_GroundWaterFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e5.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-13 RELTOL 1e-16
+    DIFF_DATA
+    square_1x1_quad_1e5.vtu square_1e5_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
+)
+
+# The largest test is less accurate
+AddTest(
+    NAME LARGE_GroundWaterFlowProcess_square_1x1_1e6
+    PATH Elliptic/square_1x1_GroundWaterFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e6.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 3e-12 RELTOL 1e-16
+    DIFF_DATA
+    square_1x1_quad_1e6.vtu square_1e6_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
+)
 
 # LINE 1 GROUNDWATER FLOW TESTS
 foreach(mesh_size 1e1)
