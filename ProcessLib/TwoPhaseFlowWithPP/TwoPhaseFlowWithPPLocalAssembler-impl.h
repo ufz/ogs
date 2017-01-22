@@ -7,6 +7,27 @@
  *
  */
 
+/**
+* common nomenclature
+* --------------primary variable----------------------
+* pn_int_pt    pressure for nonwetting phase at each integration point
+* pc_int_pt    capillary pressure at each integration point
+* --------------secondary variable--------------------
+* temperature              capillary pressure
+* Sw wetting               phase saturation
+* dSw_dpc                  derivative of wetting phase saturation with respect
+* to capillary pressure
+* rho_nonwet               density of nonwetting phase
+* drhononwet_dpn           derivative of nonwetting phase density with respect
+*to nonwetting phase pressure
+* rho_wet                  density of wetting phase
+* k_rel_nonwet             relative permeability of nonwetting phase
+* mu_nonwet                viscosity of nonwetting phase
+* lambda_nonwet            mobility of nonwetting phase
+* k_rel_wet                relative permeability of wetting phase
+* mu_wet                   viscosity of wetting phase
+* lambda_wet               mobility of wetting phase
+*/
 #pragma once
 
 #include "TwoPhaseFlowWithPPLocalAssembler.h"
@@ -39,17 +60,11 @@ void TwoPhaseFlowWithPPLocalAssembler<
     auto local_b = MathLib::createZeroedVector<LocalVectorType>(
         local_b_data, local_matrix_size);
 
-    NodalMatrixType mass_operator;
-    mass_operator.setZero(ShapeFunction::NPOINTS, ShapeFunction::NPOINTS);
-
     auto Mgp =
         local_M.template block<nonwet_pressure_size, nonwet_pressure_size>(
             nonwet_pressure_matrix_index, nonwet_pressure_matrix_index);
     auto Mgpc = local_M.template block<nonwet_pressure_size, cap_pressure_size>(
         nonwet_pressure_matrix_index, cap_pressure_matrix_index);
-
-    auto Mlp = local_M.template block<cap_pressure_size, nonwet_pressure_size>(
-        cap_pressure_matrix_index, nonwet_pressure_matrix_index);
 
     auto Mlpc = local_M.template block<cap_pressure_size, cap_pressure_size>(
         cap_pressure_matrix_index, cap_pressure_matrix_index);
@@ -60,9 +75,6 @@ void TwoPhaseFlowWithPPLocalAssembler<
     auto Kgp =
         local_K.template block<nonwet_pressure_size, nonwet_pressure_size>(
             nonwet_pressure_matrix_index, nonwet_pressure_matrix_index);
-
-    auto Kgpc = local_K.template block<nonwet_pressure_size, cap_pressure_size>(
-        nonwet_pressure_matrix_index, cap_pressure_matrix_index);
 
     auto Klp = local_K.template block<cap_pressure_size, nonwet_pressure_size>(
         cap_pressure_matrix_index, nonwet_pressure_matrix_index);
@@ -81,105 +93,97 @@ void TwoPhaseFlowWithPPLocalAssembler<
 
     SpatialPosition pos;
     pos.setElementID(_element.getID());
-    _process_data._material->setMaterialID(pos);
+    const int material_id =
+        _process_data.material->getMaterialID(pos.getElementID().get());
 
-    const Eigen::MatrixXd& perm = _process_data._material->getPermeability(
-        t, pos, _element.getDimension());
-    assert(perm.rows() == GlobalDim || perm.rows() == 1);
-    GlobalDimMatrixType permeability =
-        GlobalDimMatrixType::Zero(GlobalDim, GlobalDim);
-    if (perm.rows() == GlobalDim)
+    const Eigen::MatrixXd& perm = _process_data.material->getPermeability(
+        material_id, t, pos, _element.getDimension());
+    assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
+    GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
+        _element.getDimension(), _element.getDimension());
+    if (perm.rows() == _element.getDimension())
         permeability = perm;
     else if (perm.rows() == 1)
         permeability.diagonal().setConstant(perm(0, 0));
-    MathLib::PiecewiseLinearInterpolation const& interpolated_Pc =
-        _process_data._interpolated_Pc;
-    MathLib::PiecewiseLinearInterpolation const& interpolated_Kr_wet =
-        _process_data._interpolated_Kr_wet;
-    MathLib::PiecewiseLinearInterpolation const& interpolated_Kr_nonwet =
-        _process_data._interpolated_Kr_nonwet;
 
-    // Note: currently only isothermal case is considered, so the temperature is
-    // assumed to be const
-    // the variation of temperature will be taken into account in future
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& sm = _shape_matrices[ip];
-
         double pc_int_pt = 0.;
-        double pg_int_pt = 0.;
-        NumLib::shapeFunctionInterpolate(local_x, sm.N, pg_int_pt, pc_int_pt);
+        double pn_int_pt = 0.;
+        NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, pn_int_pt,
+                                         pc_int_pt);
 
-        _pressure_wetting[ip] = pg_int_pt - pc_int_pt;
+        _pressure_wet[ip] = pn_int_pt - pc_int_pt;
 
-        auto const& wp = _integration_method.getWeightedPoint(ip);
-        const double integration_factor =
-            sm.integralMeasure * sm.detJ * wp.getWeight();
+        const double temperature = _process_data.temperature(t, pos)[0];
+        double const rho_nonwet =
+            _process_data.material->getGasDensity(pn_int_pt, temperature);
+        double const rho_wet = _process_data.material->getLiquidDensity(
+            _pressure_wet[ip], temperature);
 
-        double const rho_gas =
-            _process_data._material->getGasDensity(pg_int_pt, _temperature);
-        double const rho_w = _process_data._material->getLiquidDensity(
-            _pressure_wetting[ip], _temperature);
-
-        double const Sw =
-            (pc_int_pt < 0) ? 1.0 : interpolated_Pc.getValue(pc_int_pt);
+        double const Sw = _process_data.material->getSaturation(
+            material_id, t, pos, pn_int_pt, temperature, pc_int_pt);
 
         _saturation[ip] = Sw;
-        double dSwdPc = interpolated_Pc.getDerivative(pc_int_pt);
-        if (pc_int_pt > interpolated_Pc.getSupportMax())
-            dSwdPc =
-                interpolated_Pc.getDerivative(interpolated_Pc.getSupportMax());
-        else if (pc_int_pt < interpolated_Pc.getSupportMin())
-            dSwdPc =
-                interpolated_Pc.getDerivative(interpolated_Pc.getSupportMin());
 
-        double const porosity = _process_data._material->getPorosity(
-            t, pos, pg_int_pt, _temperature, 0);
+        double dSw_dpc = _process_data.material->getSaturationDerivative(
+            material_id, t, pos, pn_int_pt, temperature, Sw);
+
+        double const porosity = _process_data.material->getPorosity(
+            material_id, t, pos, pn_int_pt, temperature, 0);
 
         // Assemble M matrix
         // nonwetting
-        double const drhogas_dpg = _process_data._material->getDerivGasDensity(
-            pg_int_pt, _temperature);
+        double const drhononwet_dpn =
+            _process_data.material->getGasDensityDerivative(pn_int_pt,
+                                                            temperature);
 
-        mass_operator.noalias() = sm.N.transpose() * sm.N * integration_factor;
+        Mgp.noalias() +=
+            porosity * (1 - Sw) * drhononwet_dpn * _ip_data[ip].massOperator;
+        Mgpc.noalias() +=
+            -porosity * rho_nonwet * dSw_dpc * _ip_data[ip].massOperator;
 
-        Mgp.noalias() += porosity * (1 - Sw) * drhogas_dpg * mass_operator;
-        Mgpc.noalias() += -porosity * rho_gas * dSwdPc * mass_operator;
-        Mlp.noalias() += 0.0 * mass_operator;
-        Mlpc.noalias() += porosity * dSwdPc * rho_w * mass_operator;
+        Mlpc.noalias() +=
+            porosity * dSw_dpc * rho_wet * _ip_data[ip].massOperator;
 
-        // Assemble M matrix
         // nonwet
-        double const k_rel_G = interpolated_Kr_nonwet.getValue(Sw);
-        double const mu_gas =
-            _process_data._material->getGasViscosity(pg_int_pt, _temperature);
-        double const lambda_G = k_rel_G / mu_gas;
+        double const k_rel_nonwet =
+            _process_data.material->getNonwetRelativePermeability(
+                t, pos, pn_int_pt, temperature, Sw);
+        double const mu_nonwet =
+            _process_data.material->getGasViscosity(pn_int_pt, temperature);
+        double const lambda_nonwet = k_rel_nonwet / mu_nonwet;
 
         // wet
-        double const k_rel_L = interpolated_Kr_wet.getValue(Sw);
-        double const mu_liquid = _process_data._material->getLiquidViscosity(
-            _pressure_wetting[ip], _temperature);
-        double const lambda_L = k_rel_L / mu_liquid;
+        double const k_rel_wet =
+            _process_data.material->getWetRelativePermeability(
+                t, pos, _pressure_wet[ip], temperature, Sw);
+        double const mu_wet = _process_data.material->getLiquidViscosity(
+            _pressure_wet[ip], temperature);
+        double const lambda_wet = k_rel_wet / mu_wet;
 
-        laplace_operator.noalias() =
-            sm.dNdx.transpose() * permeability * sm.dNdx * integration_factor;
+        laplace_operator.noalias() = _ip_data[ip].dNdx.transpose() *
+                                     permeability * _ip_data[ip].dNdx *
+                                     _ip_data[ip].integration_weight;
 
-        Kgp.noalias() += rho_gas * lambda_G * laplace_operator;
-        Kgpc.noalias() += 0.0 * laplace_operator;
-        Klp.noalias() += rho_w * lambda_L * laplace_operator;
-        Klpc.noalias() += -rho_w * lambda_L * laplace_operator;
+        Kgp.noalias() += rho_nonwet * lambda_nonwet * laplace_operator;
 
-        if (_process_data._has_gravity)
+        Klp.noalias() += rho_wet * lambda_wet * laplace_operator;
+        Klpc.noalias() += -rho_wet * lambda_wet * laplace_operator;
+
+        if (_process_data.has_gravity)
         {
-            auto const& b = _process_data._specific_body_force;
-            Bg.noalias() += rho_gas * rho_gas * lambda_G * sm.dNdx.transpose() *
-                            permeability * b * integration_factor;
-            Bl.noalias() += rho_w * rho_w * lambda_L * sm.dNdx.transpose() *
-                            permeability * b * integration_factor;
+            auto const& b = _process_data.specific_body_force;
 
+            NodalVectorType gravity_operator = _ip_data[ip].dNdx.transpose() *
+                                               permeability * b *
+                                               _ip_data[ip].integration_weight;
+            Bg.noalias() +=
+                rho_nonwet * rho_nonwet * lambda_nonwet * gravity_operator;
+            Bl.noalias() += rho_wet * rho_wet * lambda_wet * gravity_operator;
         }  // end of has gravity
-    }      // end of GP
-    if (_process_data._has_mass_lumping)
+    }
+    if (_process_data.has_mass_lumping)
     {
         for (unsigned row = 0; row < Mgpc.cols(); row++)
         {
@@ -193,8 +197,6 @@ void TwoPhaseFlowWithPPLocalAssembler<
                     Mgp(row, column) = 0.0;
                     Mlpc(row, row) += Mlpc(row, column);
                     Mlpc(row, column) = 0.0;
-                    Mlp(row, row) += Mlp(row, column);
-                    Mlp(row, column) = 0.0;
                 }
             }
         }

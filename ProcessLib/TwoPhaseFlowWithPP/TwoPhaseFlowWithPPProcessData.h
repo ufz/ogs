@@ -8,7 +8,7 @@
  */
 
 #pragma once
-
+#include "TwoPhaseFlowWithPPMaterialProperties.h"
 namespace MeshLib
 {
 class Element;
@@ -27,29 +27,23 @@ struct TwoPhaseFlowWithPPProcessData
         Eigen::VectorXd const specific_body_force_,
         bool const has_gravity_,
         bool const has_mass_lumping_,
-        std::unique_ptr<MaterialLib::TwoPhaseFlowWithPP::
-                            TwoPhaseFlowWithPPMaterialProperties>&& material_,
-        MathLib::PiecewiseLinearInterpolation const& interpolated_Pc_,
-        MathLib::PiecewiseLinearInterpolation const& interpolated_Kr_wet_,
-        MathLib::PiecewiseLinearInterpolation const& interpolated_Kr_nonwet_)
-        : _specific_body_force(specific_body_force_),
-          _has_gravity(has_gravity_),
-          _has_mass_lumping(has_mass_lumping_),
-          _material(std::move(material_)),
-          _interpolated_Pc(interpolated_Pc_),
-          _interpolated_Kr_wet(interpolated_Kr_wet_),
-          _interpolated_Kr_nonwet(interpolated_Kr_nonwet_)
+        Parameter<double> const& temperature_,
+        std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties>&& material_)
+        : specific_body_force(specific_body_force_),
+          has_gravity(has_gravity_),
+          has_mass_lumping(has_mass_lumping_),
+          temperature(temperature_),
+          material(std::move(material_))
+
     {
     }
 
     TwoPhaseFlowWithPPProcessData(TwoPhaseFlowWithPPProcessData&& other)
-        : _specific_body_force(other._specific_body_force),
-          _has_gravity(other._has_gravity),
-          _has_mass_lumping(other._has_mass_lumping),
-          _material(std::move(other._material)),
-          _interpolated_Pc(other._interpolated_Pc),
-          _interpolated_Kr_wet(other._interpolated_Kr_wet),
-          _interpolated_Kr_nonwet(other._interpolated_Kr_nonwet)
+        : specific_body_force(other.specific_body_force),
+          has_gravity(other.has_gravity),
+          has_mass_lumping(other.has_mass_lumping),
+          temperature(other.temperature),
+          material(std::move(other.material))
     {
     }
 
@@ -66,18 +60,14 @@ struct TwoPhaseFlowWithPPProcessData
     //! Specific body forces applied to solid and fluid.
     //! It is usually used to apply gravitational forces.
     //! A vector of displacement dimension's length.
-    Eigen::VectorXd const _specific_body_force;
+    Eigen::VectorXd const specific_body_force;
 
-    bool const _has_gravity;
+    bool const has_gravity;
 
     //! Enables lumping of the mass matrix.
-    bool const _has_mass_lumping;
-    std::unique_ptr<
-        MaterialLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPMaterialProperties>
-        _material;
-    MathLib::PiecewiseLinearInterpolation const& _interpolated_Pc;
-    MathLib::PiecewiseLinearInterpolation const& _interpolated_Kr_wet;
-    MathLib::PiecewiseLinearInterpolation const& _interpolated_Kr_nonwet;
+    bool const has_mass_lumping;
+    Parameter<double> const& temperature;
+    std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties> material;
 };
 
 }  // namespace TwoPhaseFlowWithPP
