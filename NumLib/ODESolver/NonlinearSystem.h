@@ -9,10 +9,13 @@
 
 #pragma once
 
-#include "ProcessLib/StaggeredCouplingTerm.h"
-
 #include "EquationSystem.h"
 #include "Types.h"
+
+namespace ProcessLib
+{
+    struct StaggeredCouplingTerm;
+}
 
 namespace NumLib
 {

@@ -12,10 +12,13 @@
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/IndexValueVector.h"
 
-#include "ProcessLib/StaggeredCouplingTerm.h"
-
 #include "EquationSystem.h"
 #include "Types.h"
+
+namespace ProcessLib
+{
+    struct StaggeredCouplingTerm;
+}
 
 namespace NumLib
 {

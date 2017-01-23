@@ -11,12 +11,16 @@
 
 #include <memory>
 
-#include "ProcessLib/StaggeredCouplingTerm.h"
-
 #include "MatrixTranslator.h"
 #include "NonlinearSystem.h"
 #include "ODESystem.h"
 #include "TimeDiscretization.h"
+
+
+namespace ProcessLib
+{
+    struct StaggeredCouplingTerm;
+}
 
 namespace NumLib
 {

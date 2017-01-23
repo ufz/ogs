@@ -13,8 +13,6 @@
 #include <utility>
 #include <logog/include/logog.hpp>
 
-#include "ProcessLib/StaggeredCouplingTerm.h"
-
 #include "ConvergenceCriterion.h"
 #include "NonlinearSystem.h"
 #include "Types.h"
@@ -22,6 +20,11 @@
 namespace BaseLib
 {
 class ConfigTree;
+}
+
+namespace ProcessLib
+{
+    struct StaggeredCouplingTerm;
 }
 
 // TODO Document in the ODE solver lib, which matrices and vectors that are
