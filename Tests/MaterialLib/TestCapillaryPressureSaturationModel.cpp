@@ -111,7 +111,7 @@ TEST(MaterialPorousMedium, checkCapillaryPressureCurve)
         "           <coords> 0.     0.5   0.9  </coords>"
         "           <values> 1.e+6  1.e+4 0.0  </values>"
         "       </curve>"
-        "</relative_permeability>";
+        "</capillary_pressure>";
     auto const pc_model = createCapillaryPressureModel(xml);
 
     std::vector<double> S = {0.0, 0.2, 0.3, 0.52, 0.6, 1.0};
