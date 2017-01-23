@@ -1,4 +1,18 @@
 ## Release notes
+
+# 6.0.9 (In preparation)
+
+### Features
+
+### Utilities
+
+### Infrastructure
+
+- CMake option OGS_EIGEN_DYNAMIC_SHAPE_MATRICES defaults to OFF on Release
+  config, ON otherwise. Can be overridden by explicitly setting the option. #1673
+
+### Fixes
+
 # 6.0.8
 
 The highlight of the release is the implementation of the Lower-Interface
@@ -20,7 +34,7 @@ fluids pressure, density, permeability, and viscosity were added.
  - Liquid process. #1468
  - Classes for relative permeability models. #1531
  - Classes for capillary models. #1517, #1578
- - Ehlers single-surface yield function constitutive relation model. #1556 
+ - Ehlers single-surface yield function constitutive relation model. #1556
  - Support scaling, GMRES, and Pardiso in Eigen linear solvers. #1509 #1510
  - Piecewise linear Monotonic curve and a generic curve parser. #1529
  - Support searching boundary nodes in MeshLib::NodeSearch. #1459
@@ -51,7 +65,7 @@ New features:
 
 ### Fixes:
  - Fix LocalToGlobalIndexMap with mutliple variables and with multiple componets. #1433 #1440
- - Fix PropertyVector<T*> for multi-component case. #1441 
+ - Fix PropertyVector<T*> for multi-component case. #1441
  - Fix checking IDs of nonlinear nodes. #1495
  - Fix incorrect use of getNumberOfBaseNodes(). #1515
  - Fix computing sparsity pattern for mixed shape function order cases. #1548

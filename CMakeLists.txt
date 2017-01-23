@@ -82,8 +82,22 @@ option(OGS_USE_MPI "Use MPI" OFF)
 # Eigen
 option(OGS_USE_EIGEN "Use Eigen linear solver" ON)
 option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
-option(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Use dynamically allocated shape matrices" ON)
 option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
+
+set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Default" CACHE STRING "Use dynamically allocated shape matrices")
+set_property(CACHE OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
+             PROPERTY STRINGS "Default" "ON" "OFF")
+
+if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES STREQUAL "Default")
+    if(CMAKE_BUILD_TYPE STREQUAL "Release" OR
+        CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL OFF)
+    else()
+        set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL ON)
+    endif()
+else()
+    set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL ${OGS_EIGEN_DYNAMIC_SHAPE_MATRICES})
+endif()
 
 # MKL
 option(OGS_USE_MKL "Use Intel MKL" OFF)
@@ -166,7 +180,7 @@ add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO) # TODO check if needed
 if (EIGEN_NO_DEBUG)
     add_definitions(-DEIGEN_NO_DEBUG)
 endif()
-if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
+if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL)
     add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
 endif()
 
