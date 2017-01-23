@@ -612,112 +612,13 @@ bool UncoupledProcessesTimeLoop::loop()
         INFO("=== timestep #%u (t=%gs, dt=%gs) ==============================",
              timestep, t, delta_t);
 
-        bool coupling_iteration_converged = true;
-        // Coupling iteration
-        for (unsigned i = 0; i < _global_coupling_max_iterations; i++)
-        {
-            // TODO use process name
-            unsigned pcs_idx = 0;
-            for (auto& spd : _per_process_data)
-            {
-                auto& pcs = spd->process;
-                BaseLib::RunTime time_timestep_process;
-                time_timestep_process.start();
-
-                auto& x = *_process_solutions[pcs_idx];
-                if (i == 0)
-                    pcs.preTimestep(x, t, delta_t);
-
-                if (is_staggered_coupling)
-                {
-                    // Create a coupling term
-                    if (i == 0)
-                        _global_coupling_conv_crit->preFirstIteration();
-                    else
-                        _global_coupling_conv_crit->setNoFirstIteration();
-                    StaggeredCouplingTerm coupled_term(
-                        spd->coupled_processes,
-                        _solutions_of_coupled_processes[pcs_idx], delta_t);
-
-                    nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
-                        x, timestep, t, delta_t, *spd, coupled_term, *_output);
-                }
-                else
-                {
-                    nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
-                        x, timestep, t, delta_t, *spd,
-                        ProcessLib::createVoidStaggeredCouplingTerm(),
-                        *_output);
-                    pcs.postTimestep(x);
-                }
-
-                pcs.computeSecondaryVariable(t, x);
-
-                INFO(
-                    "[time] Solving process #%u took %g s in timestep #%u "
-                    "uncouling iteration #%u",
-                    pcs_idx, time_timestep.elapsed(), timestep, i);
-
-                if (!nonlinear_solver_succeeded)
-                {
-                    ERR("The nonlinear solver failed in timestep #%u at t = %g "
-                        "s"
-                        " for process #%u.",
-                        timestep, t, pcs_idx);
-
-                    // save unsuccessful solution
-                    _output->doOutputAlways(pcs, spd->process_output, timestep,
-                                            t, x);
-
-                    break;
-                }
-                else
-                {
-                    if (!is_staggered_coupling)
-                        _output->doOutput(pcs, spd->process_output, timestep, t,
-                                          x);
-                }
-
-                // Check the convergence of the coupling iteration
-                if (is_staggered_coupling)
-                {
-                    auto& x_old = *_solutions_of_last_cpl_iteration[pcs_idx];
-                    MathLib::LinAlg::axpy(x_old, -1.0, x);
-                    _global_coupling_conv_crit->checkResidual(x_old);
-                    coupling_iteration_converged =
-                        coupling_iteration_converged &&
-                        _global_coupling_conv_crit->isSatisfied();
-
-                    if (coupling_iteration_converged)
-                        break;
-                    MathLib::LinAlg::copy(x, x_old);
-                }
-
-                ++pcs_idx;
-            }
-
-            if (is_staggered_coupling && coupling_iteration_converged)
-                break;
-
-            if (!nonlinear_solver_succeeded)
-            {
-                break;
-            }
-        }
-
-        if (is_staggered_coupling && coupling_iteration_converged)
-        {
-            unsigned pcs_idx = 0;
-            for (auto& spd : _per_process_data)
-            {
-                auto& pcs = spd->process;
-                auto& x = *_process_solutions[pcs_idx];
-                pcs.postTimestep(x);
-
-                _output->doOutput(pcs, spd->process_output, timestep, t, x);
-                ++pcs_idx;
-            }
-        }
+        if (is_staggered_coupling)
+            nonlinear_solver_succeeded =
+                solveCoupledEquationSystemsByStaggeredScheme(t, delta_t,
+                                                             timestep);
+        else
+            nonlinear_solver_succeeded =
+                solveUncoupledEquationSystems(t, delta_t, timestep);
 
         INFO("[time] Timestep #%u took %g s.", timestep,
              time_timestep.elapsed());
@@ -742,6 +643,154 @@ bool UncoupledProcessesTimeLoop::loop()
     }
 
     return nonlinear_solver_succeeded;
+}
+
+bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
+    const double t, const double dt, const std::size_t timestep_id)
+{
+    // TODO use process name
+    unsigned pcs_idx = 0;
+    for (auto& spd : _per_process_data)
+    {
+        auto& pcs = spd->process;
+        BaseLib::RunTime time_timestep_process;
+        time_timestep_process.start();
+
+        auto& x = *_process_solutions[pcs_idx];
+        pcs.preTimestep(x, t, dt);
+
+        const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
+            x, timestep_id, t, dt, *spd,
+            ProcessLib::createVoidStaggeredCouplingTerm(), *_output);
+        pcs.postTimestep(x);
+        pcs.computeSecondaryVariable(t, x);
+
+        INFO("[time] Solving process #%u took %g s in time step #%u ", pcs_idx,
+             time_timestep_process.elapsed(), timestep_id);
+
+        if (!nonlinear_solver_succeeded)
+        {
+            ERR("The nonlinear solver failed in time step #%u at t = %g "
+                "s"
+                " for process #%u.",
+                timestep_id, t, pcs_idx);
+
+            // save unsuccessful solution
+            _output->doOutputAlways(pcs, spd->process_output, timestep_id, t,
+                                    x);
+
+            return false;
+        }
+        else
+        {
+            _output->doOutput(pcs, spd->process_output, timestep_id, t, x);
+        }
+
+        ++pcs_idx;
+    }
+
+    return true;
+}
+
+bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
+    const double t, const double dt, const std::size_t timestep_id)
+{
+    // Coupling iteration
+    bool coupling_iteration_converged = true;
+    for (unsigned i = 0; i < _global_coupling_max_iterations; i++)
+    {
+        // TODO use process name
+        bool nonlinear_solver_succeeded = true;
+        unsigned pcs_idx = 0;
+        for (auto& spd : _per_process_data)
+        {
+            auto& pcs = spd->process;
+            BaseLib::RunTime time_timestep_process;
+            time_timestep_process.start();
+
+            auto& x = *_process_solutions[pcs_idx];
+            if (i == 0)
+            {
+                pcs.preTimestep(x, t, dt);
+
+                // Create a coupling term
+                _global_coupling_conv_crit->preFirstIteration();
+            }
+            else
+            {
+                _global_coupling_conv_crit->setNoFirstIteration();
+            }
+            StaggeredCouplingTerm coupled_term(
+                spd->coupled_processes,
+                _solutions_of_coupled_processes[pcs_idx], dt);
+
+            const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
+                x, timestep_id, t, dt, *spd, coupled_term, *_output);
+
+            INFO(
+                "[time] Solving process #%u took %g s in time step #%u "
+                " coupling iteration #%u",
+                pcs_idx, time_timestep_process.elapsed(), timestep_id, i);
+
+            if (!nonlinear_solver_succeeded)
+            {
+                ERR("The nonlinear solver failed in time step #%u at t = %g "
+                    "s"
+                    " for process #%u.",
+                    timestep_id, t, pcs_idx);
+
+                // save unsuccessful solution
+                _output->doOutputAlways(pcs, spd->process_output, timestep_id,
+                                        t, x);
+
+                break;
+            }
+
+            // Check the convergence of the coupling iteration
+            auto& x_old = *_solutions_of_last_cpl_iteration[pcs_idx];
+            MathLib::LinAlg::axpy(x_old, -1.0, x);
+            _global_coupling_conv_crit->checkResidual(x_old);
+            coupling_iteration_converged =
+                coupling_iteration_converged &&
+                _global_coupling_conv_crit->isSatisfied();
+
+            if (coupling_iteration_converged)
+                break;
+            MathLib::LinAlg::copy(x, x_old);
+
+            ++pcs_idx;
+        }
+
+        if (coupling_iteration_converged)
+            break;
+
+        if (!nonlinear_solver_succeeded)
+        {
+            return false;
+        }
+    }
+
+    if (!coupling_iteration_converged)
+    {
+        WARN(
+            "The coupling iterations reaches its maximum number in time step"
+            "#%u at t = %g s",
+            timestep_id, t);
+    }
+
+    unsigned pcs_idx = 0;
+    for (auto& spd : _per_process_data)
+    {
+        auto& pcs = spd->process;
+        auto& x = *_process_solutions[pcs_idx];
+        pcs.postTimestep(x);
+        pcs.computeSecondaryVariable(t, x);
+
+        _output->doOutput(pcs, spd->process_output, timestep_id, t, x);
+        ++pcs_idx;
+    }
+
+    return true;
 }
 
 UncoupledProcessesTimeLoop::~UncoupledProcessesTimeLoop()

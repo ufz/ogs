@@ -1,1 +1,1 @@
-Defines the maximum number of the iterations of the un-coupling loop.
+Defines the maximum iteration number of the coupling loop of the staggered scheme.

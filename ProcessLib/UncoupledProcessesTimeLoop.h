@@ -66,6 +66,33 @@ private:
     /// Solutions of the previous coupling iteration for the convergence
     /// criteria of the coupling iteration.
     std::vector<GlobalVector*> _solutions_of_last_cpl_iteration;
+
+    /**
+     * \brief Member to solver uncoupled systems of equations, which can be
+     *        a single system of equations, or several systems of equations
+     *        without any dependency among the different systems.
+     *
+     * @param t           Current time
+     * @param dt          Time step size
+     * @param timestep_id Index of the time step
+     * @return            true:  if all nonlinear solvers convergence.
+     *                    false: if any of nonlinear solvers divergences.
+     */
+    bool solveUncoupledEquationSystems(const double t, const double dt,
+                                       const std::size_t timestep_id);
+
+    /**
+     * \brief Member to solver coupled systems of equations by the staggered
+     *        scheme.
+     *
+     * @param t           Current time
+     * @param dt          Time step size
+     * @param timestep_id Index of the time step
+     * @return            true:   if all nonlinear solvers convergence.
+     *                    false:  if any of nonlinear solvers divergences.
+     */
+    bool solveCoupledEquationSystemsByStaggeredScheme(
+        const double t, const double dt, const std::size_t timestep_id);
 };
 
 //! Builds an UncoupledProcessesTimeLoop from the given configuration.
