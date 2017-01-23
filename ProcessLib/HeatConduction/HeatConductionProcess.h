@@ -36,10 +36,22 @@ public:
     //! \name ODESystem interface
     //! @{
 
+    ProcessType getProcessType() const override
+                     {return ProcessLib::ProcessType::HeatConductionProcess;}
+
     bool isLinear() const override { return true; }
 
     void computeSecondaryVariableConcrete(double const t,
                                           GlobalVector const& x) override;
+
+    void preTimestepConcreteProcess(GlobalVector const& x, const double t,
+                                    const double delta_t) override;
+
+    // Get the solution of the previous time step.
+    virtual GlobalVector* getPreviousTimeStepSolution() const override
+    {
+        return _x_previous_timestep.get();
+    }
 
 private:
     void initializeConcreteProcess(
@@ -49,17 +61,23 @@ private:
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b) override;
+                                 GlobalVector& b,
+                                 StaggeredCouplingTerm const& coupled_term
+                                ) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
+        StaggeredCouplingTerm const& coupled_term) override;
 
     HeatConductionProcessData _process_data;
 
     std::vector<std::unique_ptr<HeatConductionLocalAssemblerInterface>>
         _local_assemblers;
+
+    /// Solution of the previous time step
+    std::unique_ptr<GlobalVector> _x_previous_timestep = nullptr;
 };
 
 }  // namespace HeatConduction

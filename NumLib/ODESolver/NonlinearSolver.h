@@ -13,6 +13,8 @@
 #include <utility>
 #include <logog/include/logog.hpp>
 
+#include "ProcessLib/StaggeredCouplingTerm.h"
+
 #include "ConvergenceCriterion.h"
 #include "NonlinearSystem.h"
 #include "Types.h"
@@ -42,7 +44,9 @@ public:
      *
      * \param x   the state at which the equation system will be assembled.
      */
-    virtual void assemble(GlobalVector const& x) const = 0;
+    virtual void assemble(GlobalVector const& x,
+                          ProcessLib::StaggeredCouplingTerm const& coupled_term
+                         ) const = 0;
 
     /*! Assemble and solve the equation system.
      *
@@ -53,6 +57,7 @@ public:
      * \retval false otherwise
      */
     virtual bool solve(GlobalVector& x,
+                       ProcessLib::StaggeredCouplingTerm const& coupled_term,
                        std::function<void(unsigned, GlobalVector const&)> const&
                            postIterationCallback) = 0;
 
@@ -101,9 +106,12 @@ public:
         _equation_system = &eq;
         _convergence_criterion = &conv_crit;
     }
-    void assemble(GlobalVector const& x) const override;
+    void assemble(GlobalVector const& x,
+                  ProcessLib::StaggeredCouplingTerm const& coupled_term
+                 ) const override;
 
     bool solve(GlobalVector& x,
+               ProcessLib::StaggeredCouplingTerm const& coupled_term,
                std::function<void(unsigned, GlobalVector const&)> const&
                    postIterationCallback) override;
 
@@ -156,9 +164,12 @@ public:
         _equation_system = &eq;
         _convergence_criterion = &conv_crit;
     }
-    void assemble(GlobalVector const& x) const override;
+    void assemble(GlobalVector const& x,
+                  ProcessLib::StaggeredCouplingTerm const& coupled_term
+                 ) const override;
 
     bool solve(GlobalVector& x,
+               ProcessLib::StaggeredCouplingTerm const& coupled_term,
                std::function<void(unsigned, GlobalVector const&)> const&
                    postIterationCallback) override;
 

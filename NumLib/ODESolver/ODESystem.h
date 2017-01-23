@@ -12,6 +12,8 @@
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/IndexValueVector.h"
 
+#include "ProcessLib/StaggeredCouplingTerm.h"
+
 #include "EquationSystem.h"
 #include "Types.h"
 
@@ -47,7 +49,9 @@ public:
     //! Assemble \c M, \c K and \c b at the provided state (\c t, \c x).
     virtual void assemble(const double t, GlobalVector const& x,
                           GlobalMatrix& M, GlobalMatrix& K,
-                          GlobalVector& b) = 0;
+                          GlobalVector& b,
+                          ProcessLib::StaggeredCouplingTerm const& coupled_term)
+                = 0;
 
     using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
 
@@ -115,7 +119,9 @@ public:
                                       GlobalVector const& xdot,
                                       const double dxdot_dx, const double dx_dx,
                                       GlobalMatrix& M, GlobalMatrix& K,
-                                      GlobalVector& b, GlobalMatrix& Jac) = 0;
+                                      GlobalVector& b, GlobalMatrix& Jac,
+                                      ProcessLib::StaggeredCouplingTerm
+                                                       const& coupled_term) = 0;
 };
 
 //! @}

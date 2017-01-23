@@ -21,6 +21,8 @@
 #include "SecondaryVariable.h"
 #include "CachedSecondaryVariable.h"
 #include "AbstractJacobianAssembler.h"
+#include "ProcessType.h"
+#include "StaggeredCouplingTerm.h"
 #include "VectorMatrixAssembler.h"
 
 namespace MeshLib
@@ -48,6 +50,8 @@ public:
             SecondaryVariableCollection&& secondary_variables,
             NumLib::NamedFunctionCaller&& named_function_caller);
 
+    virtual ProcessType getProcessType() const = 0;
+
     /// Preprocessing before starting assembly for new timestep.
     void preTimestep(GlobalVector const& x, const double t,
                      const double delta_t);
@@ -71,13 +75,17 @@ public:
         const override final;
 
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
-                  GlobalMatrix& K, GlobalVector& b) override final;
+                  GlobalMatrix& K, GlobalVector& b,
+                  StaggeredCouplingTerm const& coupled_term)
+                  override final;
 
     void assembleWithJacobian(const double t, GlobalVector const& x,
                               GlobalVector const& xdot, const double dxdot_dx,
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
-                              GlobalMatrix& Jac) override final;
+                              GlobalMatrix& Jac,
+                              StaggeredCouplingTerm const& coupled_term)
+                              override final;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const t) const override final
@@ -101,6 +109,12 @@ public:
     SecondaryVariableCollection const& getSecondaryVariables() const
     {
         return _secondary_variables;
+    }
+
+    // Get the solution of the previous time step.
+    virtual GlobalVector* getPreviousTimeStepSolution() const
+    {
+       return nullptr;
     }
 
     // Used as a call back for CalculateSurfaceFlux process.
@@ -131,13 +145,16 @@ private:
 
     virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
                                          GlobalMatrix& M, GlobalMatrix& K,
-                                         GlobalVector& b) = 0;
+                                         GlobalVector& b,
+                                         StaggeredCouplingTerm const&
+                                         coupled_term) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x,
         GlobalVector const& xdot, const double dxdot_dx,
         const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b, GlobalMatrix& Jac) = 0;
+        GlobalVector& b, GlobalMatrix& Jac,
+        StaggeredCouplingTerm const& coupled_term) = 0;
 
     virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
                                             const double /*t*/,

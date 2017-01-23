@@ -1,0 +1,1 @@
+Defines the maximum number of the iterations of the un-coupling loop.

@@ -47,6 +47,9 @@ public:
     bool isLinear() const override { return true; }
     //! @}
 
+    ProcessType getProcessType() const override
+                     {return ProcessLib::ProcessType::GroundwaterFlowProcess;}
+
     std::vector<double> getFlux(std::size_t element_id,
                                 MathLib::Point3d const& p,
                                 GlobalVector const& x) const override
@@ -98,12 +101,15 @@ private:
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b) override;
+                                 GlobalVector& b,
+                                 StaggeredCouplingTerm const& coupled_term
+                                ) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
+        StaggeredCouplingTerm const& coupled_term) override;
 
     GroundwaterFlowProcessData _process_data;
 
