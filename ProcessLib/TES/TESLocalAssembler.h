@@ -109,7 +109,8 @@ public:
 private:
     IntegrationMethod_ const _integration_method;
 
-    std::vector<ShapeMatrices> _shape_matrices;
+    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
+        _shape_matrices;
 
     using LAT = LocalAssemblerTraits<ShapeMatricesType, ShapeFunction::NPOINTS,
                                      NODAL_DOF, GlobalDim>;

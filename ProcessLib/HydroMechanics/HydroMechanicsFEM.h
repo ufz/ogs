@@ -358,10 +358,11 @@ private:
 
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
-    std::vector<IntegrationPointData<
-        BMatricesType, ShapeMatricesTypeDisplacement, ShapeMatricesTypePressure,
-        DisplacementDim, ShapeFunctionDisplacement::NPOINTS>>
-        _ip_data;
+    using IpData =
+        IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
+                             ShapeMatricesTypePressure, DisplacementDim,
+                             ShapeFunctionDisplacement::NPOINTS>;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;

@@ -111,7 +111,8 @@ private:
     MeshLib::Element const& _element;
 
     IntegrationMethod const _integration_method;
-    std::vector<ShapeMatrices> _shape_matrices;
+    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
+        _shape_matrices;
 
     TwoPhaseFlowWithPPProcessData const& _process_data;
 

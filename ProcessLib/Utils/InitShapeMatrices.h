@@ -18,11 +18,15 @@ namespace ProcessLib
 {
 template <typename ShapeFunction, typename ShapeMatricesType,
           typename IntegrationMethod, unsigned GlobalDim>
-std::vector<typename ShapeMatricesType::ShapeMatrices> initShapeMatrices(
-    MeshLib::Element const& e, bool is_axially_symmetric,
-    IntegrationMethod const& integration_method)
+std::vector<typename ShapeMatricesType::ShapeMatrices,
+            Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
+initShapeMatrices(MeshLib::Element const& e, bool is_axially_symmetric,
+                  IntegrationMethod const& integration_method)
 {
-    std::vector<typename ShapeMatricesType::ShapeMatrices> shape_matrices;
+    std::vector<
+        typename ShapeMatricesType::ShapeMatrices,
+        Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
+        shape_matrices;
 
     using FemType = NumLib::TemplateIsoparametric<
         ShapeFunction, ShapeMatricesType>;

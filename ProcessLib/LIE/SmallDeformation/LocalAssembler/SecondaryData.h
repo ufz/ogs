@@ -21,7 +21,7 @@ namespace SmallDeformation
 template <typename ShapeMatrixType>
 struct SecondaryData
 {
-    std::vector<ShapeMatrixType> N;
+    std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N;
 };
 
 }  // namespace SmallDeformation

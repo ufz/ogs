@@ -76,7 +76,10 @@ public:
         std::size_t const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        std::vector<typename ShapeMatricesType::ShapeMatrices> shape_matrices;
+        std::vector<
+            typename ShapeMatricesType::ShapeMatrices,
+            Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
+            shape_matrices;
         shape_matrices.reserve(n_integration_points);
         _detJ_times_integralMeasure.reserve(n_integration_points);
         for (std::size_t ip = 0; ip < n_integration_points; ++ip)
