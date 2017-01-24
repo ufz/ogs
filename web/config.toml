@@ -7,3 +7,6 @@ pygmentsstyle = 'friendly'
 
 [params.sharingicons]
    hide = true
+
+[taxonomies]
+news = "news"

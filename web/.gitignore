@@ -3,3 +3,9 @@ node_modules/
 bin/
 public/
 themes/ogs/static
+import/secret.py
+
+# Generated from Contentful
+content/internal
+data/news.json
+import/c
