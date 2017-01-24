@@ -27,20 +27,6 @@ void uniquePushBack(Container& container, typename Container::value_type const& 
         container.push_back(element);
 }
 
-//! Inserts the given \c key with the given \c value into the \c map if an entry with the
-//! given \c key does not yet exist; otherwise an \c error_message is printed and the
-//! program is aborted.
-template<typename Map, typename Key, typename Value>
-void insertMapIfKeyUniqueElseError(
-    Map& map, Key const& key, Value&& value,
-    std::string const& error_message)
-{
-    auto const inserted = map.emplace(key, std::forward<Value>(value));
-    if (!inserted.second) { // insertion failed, i.e., key already exists
-        OGS_FATAL("Failed insert %s. Key already exists.",
-                  error_message.c_str());
-    }
-}
 
 //! Inserts the given \c key with the given \c value into the \c map if an entry with the
 //! given \c key does not yet exist; otherwise an \c error_message is printed and the

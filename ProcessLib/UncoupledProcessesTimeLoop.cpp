@@ -529,7 +529,7 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
                 // Id of the coupled process:
                 const std::size_t c_id = found_item - _per_process_data.begin();
 
-                BaseLib::insertMapIfKeyUniqueElseError(
+                BaseLib::insertIfKeyUniqueElseError(
                     coupled_xs, it->first, *_process_solutions[c_id],
                     "global_coupled_x");
             }

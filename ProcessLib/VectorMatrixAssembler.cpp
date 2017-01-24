@@ -34,16 +34,16 @@ getPreviousLocalSolutionsOfCoupledProcesses(
         if (prevous_time_x)
         {
             auto const local_coupled_x0 = prevous_time_x->get(indices);
-            BaseLib::insertMapIfKeyUniqueElseError(local_coupled_xs0, it->first,
-                                                   local_coupled_x0,
-                                                   "local_coupled_x0");
+            BaseLib::insertIfKeyUniqueElseError(local_coupled_xs0, it->first,
+                                                local_coupled_x0,
+                                                "local_coupled_x0");
         }
         else
         {
             const std::vector<double> local_coupled_x0;
-            BaseLib::insertMapIfKeyUniqueElseError(local_coupled_xs0, it->first,
-                                                   local_coupled_x0,
-                                                   "local_coupled_x0");
+            BaseLib::insertIfKeyUniqueElseError(local_coupled_xs0, it->first,
+                                                local_coupled_x0,
+                                                "local_coupled_x0");
         }
         it++;
     }
@@ -62,7 +62,7 @@ getCurrentLocalSolutionsOfCoupledProcesses(
     {
         auto const coupled_x = it->second;
         auto const local_coupled_x = coupled_x.get(indices);
-        BaseLib::insertMapIfKeyUniqueElseError(
+        BaseLib::insertIfKeyUniqueElseError(
             local_coupled_xs, it->first, local_coupled_x, "local_coupled_x");
         it++;
     }
