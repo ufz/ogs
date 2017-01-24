@@ -1,0 +1,23 @@
+{{ $entry := "" }}
+{{ $data := $.Site.Data.news.items }}
+{{ $slug := lower .Title }}
+{{ $slug := replace $slug " " "-" }}
+{{ range where $data "fields.slug" $slug }}
+
+  {{ $entry := . }}
+
+  {{ partial "header.html" . }}
+
+    {{/* comment
+    <div class="col-xs-12">
+      <p>ID = {{ $entry.sys.id }}</p>
+    </div>
+    */}}
+
+    <div class="col-xs-12">
+    <h1>{{ $entry.fields.title }}</h1>
+    {{ $entry.fields.body | markdownify}}
+    </div>
+
+  {{ partial "footer.html" . }}
+{{ end }}
