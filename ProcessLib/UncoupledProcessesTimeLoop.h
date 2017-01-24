@@ -42,6 +42,16 @@ public:
 
     ~UncoupledProcessesTimeLoop();
 
+    /**
+     *  This function fills the vector of solutions of coupled processes of
+     *  processes, _solutions_of_coupled_processes, and initializes the vector
+     * of
+     *  solutions of the previous coupling iteration,
+     *  _solutions_of_last_cpl_iteration.
+     *
+     *  \return a boolean value as a flag to indicate there should be a coupling
+     *          among processes or not.
+     */
     bool setCoupledSolutions();
 
 private:
@@ -68,7 +78,7 @@ private:
     std::vector<GlobalVector*> _solutions_of_last_cpl_iteration;
 
     /**
-     * \brief Member to solver uncoupled systems of equations, which can be
+     * \brief Member to solver non coupled systems of equations, which can be
      *        a single system of equations, or several systems of equations
      *        without any dependency among the different systems.
      *

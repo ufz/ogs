@@ -35,8 +35,10 @@ struct StaggeredCouplingTerm
         std::map<ProcessType, Process const&> const& coupled_processes_,
         std::map<ProcessType, GlobalVector const&> const& coupled_xs_,
         const double dt_, const bool empty_ = false)
-    : coupled_processes(coupled_processes_), coupled_xs(coupled_xs_),
-      dt(dt_), empty(empty_)
+        : coupled_processes(coupled_processes_),
+          coupled_xs(coupled_xs_),
+          dt(dt_),
+          empty(empty_)
     {
     }
 
@@ -48,8 +50,8 @@ struct StaggeredCouplingTerm
     /// The coupled solutions are distinguished by the keys of process types.
     std::map<ProcessType, GlobalVector const&> const& coupled_xs;
 
-    const double dt;  ///< Time step size.
-    const bool empty; ///< Flag to indicate whether the couping term is empty.
+    const double dt;   ///< Time step size.
+    const bool empty;  ///< Flag to indicate whether the couping term is empty.
 };
 
 /**
@@ -62,17 +64,19 @@ struct StaggeredCouplingTerm
  */
 struct LocalCouplingTerm
 {
-    LocalCouplingTerm(const double dt_,
+    LocalCouplingTerm(
+        const double dt_,
         std::map<ProcessType, Process const&> const& coupled_processes_,
         std::map<ProcessType, const std::vector<double>>&& local_coupled_xs0_,
         std::map<ProcessType, const std::vector<double>>&& local_coupled_xs_)
-    : dt(dt_), coupled_processes(coupled_processes_),
-      local_coupled_xs0(std::move(local_coupled_xs0_)),
-      local_coupled_xs(std::move(local_coupled_xs_))
+        : dt(dt_),
+          coupled_processes(coupled_processes_),
+          local_coupled_xs0(std::move(local_coupled_xs0_)),
+          local_coupled_xs(std::move(local_coupled_xs_))
     {
     }
 
-    const double dt; ///< Time step size.
+    const double dt;  ///< Time step size.
 
     /// References to the coupled processes are distinguished by the keys of
     /// process types.
@@ -84,8 +88,11 @@ struct LocalCouplingTerm
     std::map<ProcessType, const std::vector<double>> const local_coupled_xs;
 };
 
-/// A function to create a void instance of StaggeredCouplingTerm;
+/**
+ *  A function to create a void instance of StaggeredCouplingTerm. The void
+ *  instance is for the StaggeredCouplingTerm reference type of argument
+ *  function or class member to indicate no coupling.
+ */
 const StaggeredCouplingTerm createVoidStaggeredCouplingTerm();
 
-} // end of ProcessLib
-
+}  // end of ProcessLib

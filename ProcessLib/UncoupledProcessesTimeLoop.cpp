@@ -306,16 +306,16 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
             //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion}
             pcs_config.getConfigSubtree("convergence_criterion"));
 
-        auto const& cpl_pcses
+        auto const& coupled_process_tree
             //! \ogs_file_param{prj__time_loop__processes__process__coupled_processes}
             = pcs_config.getConfigSubtreeOptional("coupled_processes");
         std::map<ProcessType, Process const&> coupled_processes;
-        if (cpl_pcses)
+        if (coupled_process_tree)
         {
             for (
                 auto const cpl_pcs_name :
                 //! \ogs_file_param{prj__time_loop__processes__process__coupled_processes__coupled_process}
-                cpl_pcses->getConfigParameterList<std::string>(
+                coupled_process_tree->getConfigParameterList<std::string>(
                     "coupled_process"))
             {
                 auto& cpl_pcs_ptr = BaseLib::getOrError(
@@ -488,15 +488,6 @@ UncoupledProcessesTimeLoop::UncoupledProcessesTimeLoop(
 {
 }
 
-/**
- *  This function fills the vector of solutions of coupled processes of
- *  processes, _solutions_of_coupled_processes, and initializes the vector of
- *  solutions of the previous coupling iteration,
- *  _solutions_of_last_cpl_iteration.
- *
- *  \return a boolean value as a flag to indicate there should be a coupling
- *          among process or not.
- */
 bool UncoupledProcessesTimeLoop::setCoupledSolutions()
 {
     if (!_global_coupling_conv_crit && _global_coupling_max_iterations == 1)
@@ -511,10 +502,10 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
 
         auto const& coupled_processes = spd->coupled_processes;
         std::map<ProcessType, GlobalVector const&> coupled_xs;
-        auto it = coupled_processes.begin();
-        while (it != coupled_processes.end())
+        for (auto const& coupled_process_map : coupled_processes)
         {
-            ProcessLib::Process const& coupled_process = it->second;
+            ProcessLib::Process const& coupled_process =
+                coupled_process_map.second;
             auto const found_item = std::find_if(
                 _per_process_data.begin(),
                 _per_process_data.end(),
@@ -530,20 +521,21 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
                 const std::size_t c_id = found_item - _per_process_data.begin();
 
                 BaseLib::insertIfKeyUniqueElseError(
-                    coupled_xs, it->first, *_process_solutions[c_id],
-                    "global_coupled_x");
+                    coupled_xs, coupled_process_map.first,
+                    *_process_solutions[c_id], "global_coupled_x");
             }
-            it++;
         }
         _solutions_of_coupled_processes.emplace_back(coupled_xs);
 
         const auto x = _process_solutions[pcs_idx];
 
-        auto x1 = &NumLib::GlobalVectorProvider::provider.getVector(*x);
-        MathLib::LinAlg::copy(*x, *x1);
+        // Create a vector to store the solution of the last coupling iteration
+        auto x_coupling0 =
+            &NumLib::GlobalVectorProvider::provider.getVector(*x);
+        MathLib::LinAlg::copy(*x, *x_coupling0);
 
         // append a solution vector of suitable size
-        _solutions_of_last_cpl_iteration.emplace_back(x1);
+        _solutions_of_last_cpl_iteration.emplace_back(x_coupling0);
 
         ++pcs_idx;
     }
@@ -620,14 +612,14 @@ bool UncoupledProcessesTimeLoop::loop()
             nonlinear_solver_succeeded =
                 solveUncoupledEquationSystems(t, delta_t, timestep);
 
-        INFO("[time] Timestep #%u took %g s.", timestep,
+        INFO("[time] Time step #%u took %g s.", timestep,
              time_timestep.elapsed());
 
         if (!nonlinear_solver_succeeded)
             break;
     }
 
-    // output last timestep
+    // output last time step
     if (nonlinear_solver_succeeded)
     {
         unsigned pcs_idx = 0;
@@ -671,8 +663,7 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
         if (!nonlinear_solver_succeeded)
         {
             ERR("The nonlinear solver failed in time step #%u at t = %g "
-                "s"
-                " for process #%u.",
+                "s for process #%u.",
                 timestep_id, t, pcs_idx);
 
             // save unsuccessful solution
@@ -711,13 +702,18 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             auto& x = *_process_solutions[pcs_idx];
             if (i == 0)
             {
+                // Copy the solution of the previous time step to a vector that
+                // belongs to process. For some problems, both of the current
+                // solution and the solution of the previous time step are
+                // required for the coupling computation.
                 pcs.preTimestep(x, t, dt);
 
-                // Create a coupling term
+                // Set the flag of the first iteration be true.
                 _global_coupling_conv_crit->preFirstIteration();
             }
             else
             {
+                // Set the flag of the first iteration be false.
                 _global_coupling_conv_crit->setNoFirstIteration();
             }
             StaggeredCouplingTerm coupled_term(

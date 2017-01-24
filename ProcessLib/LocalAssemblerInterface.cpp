@@ -50,7 +50,7 @@ void LocalAssemblerInterface::coupling_assembleWithJacobian(
 {
     OGS_FATAL(
         "The coupling_assembleWithJacobian() function is not implemented in"
-        " the local.");
+        " the local assembler.");
 }
 
 void LocalAssemblerInterface::computeSecondaryVariable(

@@ -26,26 +26,25 @@ getPreviousLocalSolutionsOfCoupledProcesses(
 {
     std::map<ProcessLib::ProcessType, const std::vector<double>>
         local_coupled_xs0;
-    auto it = coupled_term.coupled_processes.begin();
-    while (it != coupled_term.coupled_processes.end())
+
+    for (auto const& coupled_process_map : coupled_term.coupled_processes)
     {
-        auto const& coupled_pcs = it->second;
+        auto const& coupled_pcs = coupled_process_map.second;
         auto const prevous_time_x = coupled_pcs.getPreviousTimeStepSolution();
         if (prevous_time_x)
         {
             auto const local_coupled_x0 = prevous_time_x->get(indices);
-            BaseLib::insertIfKeyUniqueElseError(local_coupled_xs0, it->first,
-                                                local_coupled_x0,
-                                                "local_coupled_x0");
+            BaseLib::insertIfKeyUniqueElseError(
+                local_coupled_xs0, coupled_process_map.first, local_coupled_x0,
+                "local_coupled_x0");
         }
         else
         {
             const std::vector<double> local_coupled_x0;
-            BaseLib::insertIfKeyUniqueElseError(local_coupled_xs0, it->first,
-                                                local_coupled_x0,
-                                                "local_coupled_x0");
+            BaseLib::insertIfKeyUniqueElseError(
+                local_coupled_xs0, coupled_process_map.first, local_coupled_x0,
+                "local_coupled_x0");
         }
-        it++;
     }
     return local_coupled_xs0;
 }
@@ -57,14 +56,14 @@ getCurrentLocalSolutionsOfCoupledProcesses(
 {
     std::map<ProcessLib::ProcessType, const std::vector<double>>
         local_coupled_xs;
-    auto it = global_coupled_xs.begin();
-    while (it != global_coupled_xs.end())
+
+    for (auto const& global_coupled_x_map : global_coupled_xs)
     {
-        auto const coupled_x = it->second;
+        auto const coupled_x = global_coupled_x_map.second;
         auto const local_coupled_x = coupled_x.get(indices);
-        BaseLib::insertIfKeyUniqueElseError(
-            local_coupled_xs, it->first, local_coupled_x, "local_coupled_x");
-        it++;
+        BaseLib::insertIfKeyUniqueElseError(local_coupled_xs,
+                                            global_coupled_x_map.first,
+                                            local_coupled_x, "local_coupled_x");
     }
     return local_coupled_xs;
 }
