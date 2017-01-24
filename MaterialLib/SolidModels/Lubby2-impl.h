@@ -142,8 +142,9 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
     // Consistent tangent from local Newton iteration of material
     // functionals.
     // Only the upper left block is relevant for the global tangent.
-    auto dzdE = linear_solver.solve(-dGdE)
-                    .template block<KelvinVectorSize, KelvinVectorSize>(0, 0);
+    KelvinMatrix const dzdE =
+        linear_solver.solve(-dGdE)
+            .template block<KelvinVectorSize, KelvinVectorSize>(0, 0);
 
     auto const& P_sph = Invariants::spherical_projection;
     C.noalias() = local_lubby2_properties.GM0 * dzdE * P_dev +
