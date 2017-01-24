@@ -15,6 +15,8 @@
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 
+#include "PorousMediaProperties.h"
+
 namespace MeshLib
 {
 class Element;
@@ -30,10 +32,7 @@ namespace HT
 struct HTProcessData
 {
     HTProcessData(
-        std::unique_ptr<MaterialLib::PorousMedium::Porosity>&& porosity_model_,
-        Eigen::MatrixXd&& permeability_model_,
-        std::unique_ptr<MaterialLib::PorousMedium::Storage>&&
-            specific_storage_model_,
+        PorousMediaProperties&& porous_media_properties_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& viscosity_model_,
         ProcessLib::Parameter<double> const& density_solid_,
         ProcessLib::Parameter<double> const& fluid_reference_density_,
@@ -46,9 +45,7 @@ struct HTProcessData
         ProcessLib::Parameter<double> const& thermal_conductivity_fluid_,
         Eigen::Vector3d const& specific_body_force_,
         bool const has_gravity_)
-        : porosity_model(std::move(porosity_model_)),
-          permeability_model(std::move(permeability_model_)),
-          specific_storage_model(std::move(specific_storage_model_)),
+        : porous_media_properties(std::move(porous_media_properties_)),
           viscosity_model(std::move(viscosity_model_)),
           density_solid(density_solid_),
           fluid_reference_density(fluid_reference_density_),
@@ -65,9 +62,7 @@ struct HTProcessData
     }
 
     HTProcessData(HTProcessData&& other)
-        : porosity_model(other.porosity_model.release()),
-          permeability_model(other.permeability_model),
-          specific_storage_model(other.specific_storage_model.release()),
+        : porous_media_properties(std::move(other.porous_media_properties)),
           viscosity_model(other.viscosity_model.release()),
           density_solid(other.density_solid),
           fluid_reference_density(other.fluid_reference_density),
@@ -94,9 +89,7 @@ struct HTProcessData
     //! Assignments are not needed.
     void operator=(HTProcessData&&) = delete;
 
-    std::unique_ptr<MaterialLib::PorousMedium::Porosity> porosity_model;
-    Eigen::MatrixXd const permeability_model;
-    std::unique_ptr<MaterialLib::PorousMedium::Storage> specific_storage_model;
+    PorousMediaProperties porous_media_properties;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity_model;
     Parameter<double> const& density_solid;
     Parameter<double> const& fluid_reference_density;

@@ -157,12 +157,14 @@ public:
                 _process_data.fluid_reference_density(t, pos)[0];
 
             auto const density_solid = _process_data.density_solid(t, pos)[0];
-            // TODO the argument to getValue() has to be changed for non
+            // \todo the argument to getValue() has to be changed for non
             // constant storage model
             auto const specific_storage =
-                _process_data.specific_storage_model->getValue(0.0);
+                _process_data.porous_media_properties.getSpecificStorage(t, pos)
+                    .getValue(0.0);
             auto const& intrinsic_permeability =
-                _process_data.permeability_model;
+                _process_data.porous_media_properties.getIntrinsicPermeability(
+                    t, pos);
 
             auto const thermal_conductivity_solid =
                 _process_data.thermal_conductivity_solid(t, pos)[0];
@@ -179,10 +181,11 @@ public:
             // Order matters: First T, then P!
             NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
 
-            // TODO the first argument has to be changed for non constant
+            // \todo the first argument has to be changed for non constant
             // porosity model
             auto const porosity =
-                _process_data.porosity_model->getValue(0.0, T_int_pt);
+                _process_data.porous_media_properties.getPorosity(t, pos)
+                    .getValue(0.0, T_int_pt);
 
             double const thermal_conductivity =
                 thermal_conductivity_solid * (1 - porosity) +

@@ -11,15 +11,14 @@
 
 #include "HTProcess.h"
 #include "HTProcessData.h"
+
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
+#include "CreatePorousMediaProperties.h"
 #include "MaterialLib/Fluid/Density/createFluidDensityModel.h"
 #include "MaterialLib/Fluid/Viscosity/createViscosityModel.h"
-#include "MaterialLib/PorousMedium/Porosity/createPorosityModel.h"
-#include "MaterialLib/PorousMedium/Permeability/createPermeabilityModel.h"
-#include "MaterialLib/PorousMedium/Storage/createStorageModel.h"
 
 namespace ProcessLib
 {
@@ -51,26 +50,15 @@ std::unique_ptr<Process> createHTProcess(
         //! \ogs_file_param_special{prj__processes__process__HT__process_variables__pressure}
         "pressure"});
 
-    auto const& porous_medium_config = config.getConfigSubtree("porous_medium");
-    auto const& porosity_conf =
-        porous_medium_config.getConfigSubtree("porosity");
-    auto porosity_model =
-        MaterialLib::PorousMedium::createPorosityModel(porosity_conf);
+    auto const& porous_medium_configs =
+        //! \ogs_file_param_special{prj__processes__process__HT__porous_medium}
+        config.getConfigSubtree("porous_medium");
+    PorousMediaProperties porous_media_properties{
+        createPorousMediaProperties(mesh, porous_medium_configs)};
 
-    // Parameter for the intrinsic permeability (only one scalar per element,
-    // i.e., the isotropic case is handled at the moment)
-    auto const& permeability_conf =
-        porous_medium_config.getConfigSubtree("permeability");
-    auto permeability_model =
-        MaterialLib::PorousMedium::createPermeabilityModel(permeability_conf);
-
-    // Parameter for the specific storage.
-    auto const& storage_conf =
-        porous_medium_config.getConfigSubtree("storage");
-    auto specific_storage_model =
-        MaterialLib::PorousMedium::createStorageModel(storage_conf);
-
+    //! \ogs_file_param_special{prj__processes__process__HT__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");
+    //! \ogs_file_param_special{prj__processes__process__HT__fluid__viscosity}
     auto const& viscosity_conf = fluid_config.getConfigSubtree("viscosity");
     auto viscosity_model =
         MaterialLib::Fluid::createViscosityModel(viscosity_conf);
@@ -82,6 +70,7 @@ std::unique_ptr<Process> createHTProcess(
         "density_solid", parameters, 1);
     DBUG("Use \'%s\' as density_solid parameter.", density_solid.name.c_str());
 
+    //! \ogs_file_param_special{prj__processes__process__HT__fluid__density}
     auto const& fluid_density_conf = fluid_config.getConfigSubtree("density");
     auto fluid_density =
         MaterialLib::Fluid::createFluidDensityModel(fluid_density_conf);
@@ -156,9 +145,7 @@ std::unique_ptr<Process> createHTProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
 
     HTProcessData process_data{
-        std::move(porosity_model),
-        std::move(permeability_model),
-        std::move(specific_storage_model),
+        std::move(porous_media_properties),
         std::move(viscosity_model),
         density_solid,
         fluid_reference_density,
