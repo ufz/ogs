@@ -20,6 +20,42 @@ namespace MaterialLib
 {
 namespace Solids
 {
+//
+// Variables specific to the material model.
+//
+struct Lubby2MaterialProperties
+{
+    using P = ProcessLib::Parameter<double>;
+    Lubby2MaterialProperties(P const& GK0_,
+                             P const& GM0_,
+                             P const& KM0_,
+                             P const& etaK0_,
+                             P const& etaM0_,
+                             P const& mK_,
+                             P const& mvK_,
+                             P const& mvM_)
+        : GK0(GK0_),
+          GM0(GM0_),
+          KM0(KM0_),
+          etaK0(etaK0_),
+          etaM0(etaM0_),
+          mK(mK_),
+          mvK(mvK_),
+          mvM(mvM_)
+    {
+    }
+
+    // basic material parameters
+    P const& GK0;
+    P const& GM0;
+    P const& KM0;
+    P const& etaK0;
+    P const& etaM0;
+    P const& mK;
+    P const& mvK;
+    P const& mvM;
+};
+
 template <int DisplacementDim>
 class Lubby2 final : public MechanicsBase<DisplacementDim>
 {
@@ -121,7 +157,7 @@ public:
                                          Eigen::RowMajor>;
 
 public:
-    explicit Lubby2(MaterialProperties& material_properties)
+    explicit Lubby2(Lubby2MaterialProperties& material_properties)
         : _mp(material_properties)
     {
     }
@@ -190,7 +226,7 @@ private:
     }
 
 private:
-    MaterialProperties _mp;
+    Lubby2MaterialProperties _mp;
 };
 
 extern template class Lubby2<2>;
