@@ -34,6 +34,11 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
            nullptr);
     MaterialStateVariables& state =
         static_cast<MaterialStateVariables&>(material_state_variables);
+    state.loadState();
+
+    auto local_lubby2_properties =
+        detail::LocalLubby2Properties<DisplacementDim>{t, x, _mp};
+
     // calculation of deviatoric parts
     auto const& P_dev = Invariants::deviatoric_projection;
     KelvinVector const epsd_i = P_dev * eps;
@@ -43,7 +48,7 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
 
     // Calculate effective stress and update material properties
     double sig_eff = Invariants::equivalentStress(sigd_j);
-    updateBurgersProperties(t, x, sig_eff * state.GM, state);
+    local_lubby2_properties.update(sig_eff);
 
     using LocalJacobianMatrix =
         Eigen::Matrix<double, KelvinVectorSize * 3, KelvinVectorSize * 3,
@@ -71,15 +76,15 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
 
         LocalJacobianMatrix K_loc;
         auto const update_residual = [&](LocalResidualVector& residual) {
-            calculateResidualBurgers(dt, epsd_i, sigd_j, state.eps_K_j,
-                                     state.eps_K_t, state.eps_M_j,
-                                     state.eps_M_t, residual, state);
+            calculateResidualBurgers(
+                dt, epsd_i, sigd_j, state.eps_K_j, state.eps_K_t, state.eps_M_j,
+                state.eps_M_t, residual, local_lubby2_properties);
         };
 
         auto const update_jacobian = [&](LocalJacobianMatrix& jacobian) {
             calculateJacobianBurgers(
                 t, x, dt, jacobian, sig_eff, sigd_j, state.eps_K_j,
-                state);  // for solution dependent Jacobians
+                local_lubby2_properties);  // for solution dependent Jacobians
         };
 
         auto const update_solution = [&](LocalResidualVector const& increment) {
@@ -96,7 +101,7 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
             // Calculate effective stress and update material properties
             sig_eff = MaterialLib::SolidModels::Invariants<
                 KelvinVectorSize>::equivalentStress(sigd_j);
-            updateBurgersProperties(t, x, sig_eff * state.GM, state);
+            local_lubby2_properties.update(sig_eff);
         };
 
         // TODO Make the following choice of maximum iterations and convergence
@@ -127,7 +132,8 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
     double const eps_i_trace = Invariants::trace(eps);
 
     sigma.noalias() =
-        state.GM * sigd_j + state.KM * eps_i_trace * Invariants::identity2;
+        local_lubby2_properties.GM0 * sigd_j +
+        local_lubby2_properties.KM0 * eps_i_trace * Invariants::identity2;
 
     // Calculate dGdE for time step
     Eigen::Matrix<double, KelvinVectorSize * 3, KelvinVectorSize,
@@ -140,23 +146,10 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
                     .template block<KelvinVectorSize, KelvinVectorSize>(0, 0);
 
     auto const& P_sph = Invariants::spherical_projection;
-    C.noalias() = state.GM * dzdE * P_dev + 3. * state.KM * P_sph;
+    C.noalias() = local_lubby2_properties.GM0 * dzdE * P_dev +
+                  3. * local_lubby2_properties.KM0 * P_sph;
 
     return true;
-}
-
-template <int DisplacementDim>
-void Lubby2<DisplacementDim>::updateBurgersProperties(
-    double const t,
-    ProcessLib::SpatialPosition const& x,
-    double s_eff,
-    MaterialStateVariables& state)
-{
-    state.GM = _mp.GM0(t, x)[0];
-    state.KM = _mp.KM0(t, x)[0];
-    state.GK = _mp.GK0(t, x)[0] * std::exp(_mp.mK(t, x)[0] * s_eff);
-    state.etaK = _mp.etaK0(t, x)[0] * std::exp(_mp.mvK(t, x)[0] * s_eff);
-    state.etaM = _mp.etaM0(t, x)[0] * std::exp(_mp.mvM(t, x)[0] * s_eff);
 }
 
 template <int DisplacementDim>
@@ -169,7 +162,7 @@ void Lubby2<DisplacementDim>::calculateResidualBurgers(
     KelvinVector& strain_Max_curr,
     const KelvinVector& strain_Max_t,
     ResidualVector& res,
-    MaterialStateVariables const& state)
+    detail::LocalLubby2Properties<DisplacementDim> const& properties)
 {
     // calculate stress residual
     res.template block<KelvinVectorSize, 1>(0, 0).noalias() =
@@ -178,13 +171,13 @@ void Lubby2<DisplacementDim>::calculateResidualBurgers(
     // calculate Kelvin strain residual
     res.template block<KelvinVectorSize, 1>(KelvinVectorSize, 0).noalias() =
         1. / dt * (strain_Kel_curr - strain_Kel_t) -
-        1. / (2. * state.etaK) *
-            (state.GM * stress_curr - 2. * state.GK * strain_Kel_curr);
+        1. / (2. * properties.etaK) * (properties.GM0 * stress_curr -
+                                       2. * properties.GK * strain_Kel_curr);
 
     // calculate Maxwell strain residual
     res.template block<KelvinVectorSize, 1>(2 * KelvinVectorSize, 0).noalias() =
         1. / dt * (strain_Max_curr - strain_Max_t) -
-        0.5 * state.GM / state.etaM * stress_curr;
+        0.5 * properties.GM0 / properties.etaM * stress_curr;
 }
 
 template <int DisplacementDim>
@@ -196,7 +189,7 @@ void Lubby2<DisplacementDim>::calculateJacobianBurgers(
     double s_eff,
     const KelvinVector& sig_i,
     const KelvinVector& eps_K_i,
-    MaterialStateVariables const& state)
+    detail::LocalLubby2Properties<DisplacementDim> const& properties)
 {
     Jac.setZero();
 
@@ -216,42 +209,45 @@ void Lubby2<DisplacementDim>::calculateJacobianBurgers(
 
     // build G_21
     Jac.template block<KelvinVectorSize, KelvinVectorSize>(KelvinVectorSize, 0)
-        .noalias() = -0.5 * state.GM / state.etaK * KelvinMatrix::Identity();
+        .noalias() =
+        -0.5 * properties.GM0 / properties.etaK * KelvinMatrix::Identity();
     if (s_eff > 0.)
     {
         KelvinVector const eps_K_aid =
-            1. / (state.etaK * state.etaK) *
-            (state.GM * sig_i - 2. * state.GK * eps_K_i);
+            1. / (properties.etaK * properties.etaK) *
+            (properties.GM0 * sig_i - 2. * properties.GK * eps_K_i);
 
-        KelvinVector const dG_K =
-            1.5 * _mp.mK(t, x)[0] * state.GK * state.GM / s_eff * sig_i;
-        KelvinVector const dmu_vK =
-            1.5 * _mp.mvK(t, x)[0] * state.GM * state.etaK / s_eff * sig_i;
+        KelvinVector const dG_K = 1.5 * _mp.mK(t, x)[0] * properties.GK *
+                                  properties.GM0 / s_eff * sig_i;
+        KelvinVector const dmu_vK = 1.5 * _mp.mvK(t, x)[0] * properties.GM0 *
+                                    properties.etaK / s_eff * sig_i;
         Jac.template block<KelvinVectorSize, KelvinVectorSize>(KelvinVectorSize,
                                                                0)
             .noalias() += 0.5 * eps_K_aid * dmu_vK.transpose() +
-                          1. / state.etaK * eps_K_i * dG_K.transpose();
+                          1. / properties.etaK * eps_K_i * dG_K.transpose();
     }
 
     // build G_22
     Jac.template block<KelvinVectorSize, KelvinVectorSize>(KelvinVectorSize,
                                                            KelvinVectorSize)
         .diagonal()
-        .setConstant(1. / dt + state.GK / state.etaK);
+        .setConstant(1. / dt + properties.GK / properties.etaK);
 
     // nothing to do for G_23
 
     // build G_31
     Jac.template block<KelvinVectorSize, KelvinVectorSize>(2 * KelvinVectorSize,
                                                            0)
-        .noalias() = -0.5 * state.GM / state.etaM * KelvinMatrix::Identity();
+        .noalias() =
+        -0.5 * properties.GM0 / properties.etaM * KelvinMatrix::Identity();
     if (s_eff > 0.)
     {
-        KelvinVector const dmu_vM =
-            1.5 * _mp.mvM(t, x)[0] * state.GM * state.etaM / s_eff * sig_i;
+        KelvinVector const dmu_vM = 1.5 * _mp.mvM(t, x)[0] * properties.GM0 *
+                                    properties.etaM / s_eff * sig_i;
         Jac.template block<KelvinVectorSize, KelvinVectorSize>(
                2 * KelvinVectorSize, 0)
-            .noalias() += 0.5 * state.GM / (state.etaM * state.etaM) * sig_i *
+            .noalias() += 0.5 * properties.GM0 /
+                          (properties.etaM * properties.etaM) * sig_i *
                           dmu_vM.transpose();
     }
 
