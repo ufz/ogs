@@ -77,9 +77,6 @@ public:
 
     bool isLinear() const override { return true; }
 
-    ProcessType getProcessType() const override
-                     {return ProcessLib::ProcessType::LiquidFlowProcess;}
-
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,

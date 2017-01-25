@@ -36,9 +36,6 @@ public:
     //! \name ODESystem interface
     //! @{
 
-    ProcessType getProcessType() const override
-                     {return ProcessLib::ProcessType::HeatConductionProcess;}
-
     bool isLinear() const override { return true; }
 
     void computeSecondaryVariableConcrete(double const t,

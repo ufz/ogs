@@ -57,9 +57,6 @@ public:
     bool isLinear() const override { return false; }
     //! @}
 
-    ProcessType getProcessType() const override
-                     {return ProcessLib::ProcessType::HydroMechanicsProcess;}
-
 private:
     void constructDofTable() override
     {
