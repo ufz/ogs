@@ -12,11 +12,10 @@
 
 #pragma once
 
-#include <map>
+#include <unordered_map>
+#include <typeindex>
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-
-#include "ProcessType.h"
 
 namespace ProcessLib
 {
@@ -32,8 +31,10 @@ class Process;
 struct StaggeredCouplingTerm
 {
     StaggeredCouplingTerm(
-        std::map<ProcessType, Process const&> const& coupled_processes_,
-        std::map<ProcessType, GlobalVector const&> const& coupled_xs_,
+        std::unordered_map<std::type_index, Process const&> const&
+            coupled_processes_,
+        std::unordered_map<std::type_index, GlobalVector const&> const&
+            coupled_xs_,
         const double dt_, const bool empty_ = false)
         : coupled_processes(coupled_processes_),
           coupled_xs(coupled_xs_),
@@ -44,11 +45,12 @@ struct StaggeredCouplingTerm
 
     /// References to the coupled processes are distinguished by the keys of
     /// process types.
-    std::map<ProcessType, Process const&> const& coupled_processes;
+    std::unordered_map<std::type_index, Process const&> const&
+        coupled_processes;
 
     /// References to the current solutions of the coupled processes.
     /// The coupled solutions are distinguished by the keys of process types.
-    std::map<ProcessType, GlobalVector const&> const& coupled_xs;
+    std::unordered_map<std::type_index, GlobalVector const&> const& coupled_xs;
 
     const double dt;   ///< Time step size.
     const bool empty;  ///< Flag to indicate whether the couping term is empty.
@@ -66,9 +68,12 @@ struct LocalCouplingTerm
 {
     LocalCouplingTerm(
         const double dt_,
-        std::map<ProcessType, Process const&> const& coupled_processes_,
-        std::map<ProcessType, const std::vector<double>>&& local_coupled_xs0_,
-        std::map<ProcessType, const std::vector<double>>&& local_coupled_xs_)
+        std::unordered_map<std::type_index, Process const&> const&
+            coupled_processes_,
+        std::unordered_map<std::type_index, const std::vector<double>>&&
+            local_coupled_xs0_,
+        std::unordered_map<std::type_index, const std::vector<double>>&&
+            local_coupled_xs_)
         : dt(dt_),
           coupled_processes(coupled_processes_),
           local_coupled_xs0(std::move(local_coupled_xs0_)),
@@ -80,12 +85,15 @@ struct LocalCouplingTerm
 
     /// References to the coupled processes are distinguished by the keys of
     /// process types.
-    std::map<ProcessType, Process const&> const& coupled_processes;
+    std::unordered_map<std::type_index, Process const&> const&
+        coupled_processes;
 
     /// Local solutions of the previous time step.
-    std::map<ProcessType, const std::vector<double>> const local_coupled_xs0;
+    std::unordered_map<std::type_index, const std::vector<double>> const
+        local_coupled_xs0;
     /// Local solutions of the current time step.
-    std::map<ProcessType, const std::vector<double>> const local_coupled_xs;
+    std::unordered_map<std::type_index, const std::vector<double>> const
+        local_coupled_xs;
 };
 
 /**

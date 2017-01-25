@@ -132,7 +132,8 @@ struct SingleProcessData
         std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
         std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
         Process& process_,
-        std::map<ProcessType, Process const&>&& coupled_processes_,
+        std::unordered_map<std::type_index, Process const&>&&
+            coupled_processes_,
         ProcessOutput&& process_output_);
 
     SingleProcessData(SingleProcessData&& spd);
@@ -151,7 +152,7 @@ struct SingleProcessData
 
     Process& process;
     /// Coupled processes.
-    std::map<ProcessType, Process const&> const coupled_processes;
+    std::unordered_map<std::type_index, Process const&> const coupled_processes;
     ProcessOutput process_output;
 };
 
@@ -161,7 +162,7 @@ SingleProcessData::SingleProcessData(
     std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
     std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
     Process& process_,
-    std::map<ProcessType, Process const&>&& coupled_processes_,
+    std::unordered_map<std::type_index, Process const&>&& coupled_processes_,
     ProcessOutput&& process_output_)
     : nonlinear_solver_tag(NLTag),
       nonlinear_solver(nonlinear_solver),
@@ -245,7 +246,7 @@ std::unique_ptr<SingleProcessData> makeSingleProcessData(
     Process& process,
     std::unique_ptr<NumLib::TimeDiscretization>&& time_disc,
     std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit,
-    std::map<ProcessType, Process const&>&& coupled_processes,
+    std::unordered_map<std::type_index, Process const&>&& coupled_processes,
     ProcessOutput&& process_output)
 {
     using Tag = NumLib::NonlinearSolverTag;
@@ -309,7 +310,7 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
         auto const& coupled_process_tree
             //! \ogs_file_param{prj__time_loop__processes__process__coupled_processes}
             = pcs_config.getConfigSubtreeOptional("coupled_processes");
-        std::map<ProcessType, Process const&> coupled_processes;
+        std::unordered_map<std::type_index, Process const&> coupled_processes;
         if (coupled_process_tree)
         {
             for (
@@ -318,13 +319,12 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
                 coupled_process_tree->getConfigParameterList<std::string>(
                     "coupled_process"))
             {
-                auto& cpl_pcs_ptr = BaseLib::getOrError(
+                auto const& cpl_pcs_ptr = BaseLib::getOrError(
                     processes, cpl_pcs_name,
                     "A process with the given name has not been defined.");
 
-                auto const cpl_pcs = cpl_pcs_ptr.get();
                 auto const inserted = coupled_processes.emplace(
-                    cpl_pcs_ptr->getProcessType(), *cpl_pcs);
+                    std::type_index(typeid(*cpl_pcs_ptr)), *cpl_pcs_ptr);
                 if (!inserted.second)
                 {  // insertion failed, i.e., key already exists
                     OGS_FATAL("Coupled process `%s' already exists.",
@@ -501,7 +501,7 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
         time_timestep_process.start();
 
         auto const& coupled_processes = spd->coupled_processes;
-        std::map<ProcessType, GlobalVector const&> coupled_xs;
+        std::unordered_map<std::type_index, GlobalVector const&> coupled_xs;
         for (auto const& coupled_process_map : coupled_processes)
         {
             ProcessLib::Process const& coupled_process =
@@ -511,8 +511,8 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
                 _per_process_data.end(),
                 [&coupled_process](
                     std::unique_ptr<SingleProcessData> const& item) {
-                    return coupled_process.getProcessType() ==
-                           item->process.getProcessType();
+                    return std::type_index(typeid(coupled_process)) ==
+                           std::type_index(typeid(item->process));
                 });
 
             if (found_item != _per_process_data.end())
@@ -520,7 +520,7 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
                 // Id of the coupled process:
                 const std::size_t c_id = found_item - _per_process_data.begin();
 
-                BaseLib::insertIfKeyUniqueElseError(
+                BaseLib::insertIfTypeIndexKeyUniqueElseError(
                     coupled_xs, coupled_process_map.first,
                     *_process_solutions[c_id], "global_coupled_x");
             }

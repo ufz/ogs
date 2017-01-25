@@ -17,11 +17,10 @@ namespace ProcessLib
 {
 const StaggeredCouplingTerm createVoidStaggeredCouplingTerm()
 {
-    std::map<ProcessType, Process const&> coupled_processes;
-    std::map<ProcessType, GlobalVector const&> coupled_xs;
+    std::unordered_map<std::type_index, Process const&> coupled_processes;
+    std::unordered_map<std::type_index, GlobalVector const&> coupled_xs;
     const bool empty = true;
     return StaggeredCouplingTerm(coupled_processes, coupled_xs, 0.0, empty);
 }
 
-} // end of ProcessLib
-
+}  // end of ProcessLib

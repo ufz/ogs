@@ -10,6 +10,10 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
+#include <typeinfo>
+#include <typeindex>
+
 #include <logog/include/logog.hpp>
 
 #include "NumLib/ODESolver/NonlinearSolver.h"
@@ -70,7 +74,7 @@ private:
      *  Each vector element stores the references of the solution vectors
      *  (stored in _process_solutions) of the coupled processes of a process.
      */
-    std::vector<std::map<ProcessType, GlobalVector const&>>
+    std::vector<std::unordered_map<std::type_index, GlobalVector const&>>
         _solutions_of_coupled_processes;
 
     /// Solutions of the previous coupling iteration for the convergence
