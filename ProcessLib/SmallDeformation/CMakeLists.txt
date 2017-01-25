@@ -118,7 +118,7 @@ AddTest(
     EXECUTABLE_ARGS cube_1e3.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-15 RELTOL 1e-13
+    ABSTOL 3e-13 RELTOL 1e-16
     DIFF_DATA
     expected_cube_1e3_pcs_0_ts_101_t_2.550000.vtu cube_1e3_pcs_0_ts_101_t_2.550000.vtu displacement displacement
     expected_cube_1e3_pcs_0_ts_101_t_2.550000.vtu cube_1e3_pcs_0_ts_101_t_2.550000.vtu sigma_xx sigma_xx
