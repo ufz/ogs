@@ -15,8 +15,14 @@
     */}}
 
     <div class="col-xs-12">
-    <h1>{{ $entry.fields.title }}</h1>
-    {{ $entry.fields.body | markdownify}}
+      <h1>{{ $entry.fields.title }}</h1>
+      {{ $authorLink := index $entry.fields.authors 0 }}
+      {{ range where $.Site.Data.news.includes.Entry "sys.id" $authorLink.sys.id }}
+        {{ $author := . }}
+        <h4>By {{ $author.fields.name }}</h4>
+      {{ end }}
+
+      {{ $entry.fields.body | markdownify}}
     </div>
 
   {{ partial "footer.html" . }}
