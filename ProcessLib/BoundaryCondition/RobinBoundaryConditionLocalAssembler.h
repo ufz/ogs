@@ -86,6 +86,9 @@ private:
 
     typename Base::NodalMatrixType _local_K;
     typename Base::NodalVectorType _local_rhs;
+
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 }  // ProcessLib

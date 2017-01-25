@@ -69,6 +69,9 @@ public:
 private:
     Parameter<double> const& _neumann_bc_parameter;
     typename Base::NodalVectorType _local_rhs;
+
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 }   // namespace ProcessLib
