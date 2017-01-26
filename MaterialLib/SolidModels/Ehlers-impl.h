@@ -533,7 +533,7 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
            nullptr);
     MaterialStateVariables& _state =
         static_cast<MaterialStateVariables&>(material_state_variables);
-    _state.loadState();
+    _state.setInitialConditions();
 
     using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
     C.setZero();

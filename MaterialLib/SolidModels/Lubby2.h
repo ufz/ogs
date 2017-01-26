@@ -114,7 +114,7 @@ public:
             eps_M_j.resize(KelvinVectorSize);
         }
 
-        void loadState()
+        void setInitialConditions()
         {
             eps_K_j = eps_K_t;
             eps_M_j = eps_M_t;

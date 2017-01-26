@@ -34,7 +34,7 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
            nullptr);
     MaterialStateVariables& state =
         static_cast<MaterialStateVariables&>(material_state_variables);
-    state.loadState();
+    state.setInitialConditions();
 
     auto local_lubby2_properties =
         detail::LocalLubby2Properties<DisplacementDim>{t, x, _mp};
