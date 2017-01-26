@@ -128,7 +128,7 @@ public:
         {
         }
 
-        void loadState()
+        void setInitialConditions()
         {
             eps_p_D = eps_p_D_prev;
             eps_p_V = eps_p_V_prev;

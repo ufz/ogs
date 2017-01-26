@@ -92,8 +92,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
     DBUG("Use '%s' as dependency parameter mvM.",
          dependency_parameter_mvM.name.c_str());
 
-
-    typename Lubby2<DisplacementDim>::MaterialProperties mp{
+    Lubby2MaterialProperties mp{
         kelvin_shear_modulus,     maxwell_shear_modulus,
         maxwell_bulk_modulus,     kelvin_viscosity,
         maxwell_viscosity,        dependency_parameter_mK,
