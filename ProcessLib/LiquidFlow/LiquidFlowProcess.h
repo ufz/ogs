@@ -17,9 +17,6 @@
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
 
-#include "LiquidFlowMaterialProperties.h"
-#include "LiquidFlowLocalAssembler.h"
-
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 
 namespace MeshLib
@@ -34,6 +31,9 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
+class LiquidFlowLocalAssemblerInterface;
+class LiquidFlowMaterialProperties;
+
 /**
  * \brief A class to simulate the liquid flow process in porous media described
  * by
@@ -76,12 +76,7 @@ public:
                                           GlobalVector const& x) override;
 
     bool isLinear() const override { return true; }
-
-    int getGravitationalAxisID() const
-    {
-        return _gravitational_axis_id;
-    }
-
+    int getGravitationalAxisID() const { return _gravitational_axis_id; }
     double getGravitationalacceleration() const
     {
         return _gravitational_acceleration;

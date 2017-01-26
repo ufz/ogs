@@ -213,7 +213,6 @@ private:
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
     const LiquidFlowMaterialProperties& _material_properties;
-
 };
 
 }  // end of namespace

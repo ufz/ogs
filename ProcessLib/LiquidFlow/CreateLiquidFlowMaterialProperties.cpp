@@ -61,9 +61,10 @@ createLiquidFlowMaterialProperties(
     auto const& porous_medium_configs =
         //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium}
         config.getConfigSubtree("porous_medium");
-    for (auto const& porous_medium_config :
-         //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium}
-         porous_medium_configs.getConfigSubtreeList("porous_medium"))
+    for (
+        auto const& porous_medium_config :
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium}
+        porous_medium_configs.getConfigSubtreeList("porous_medium"))
     {
         //! \ogs_file_attr{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__id}
         auto const id = porous_medium_config.getConfigAttribute<int>("id");

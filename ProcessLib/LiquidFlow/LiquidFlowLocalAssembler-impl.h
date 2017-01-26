@@ -17,6 +17,8 @@
 #include "MaterialLib/PhysicalConstant.h"
 #include "NumLib/Function/Interpolation.h"
 
+#include "ProcessLib/HeatConduction/HeatConductionProcess.h"
+
 namespace ProcessLib
 {
 namespace LiquidFlow
@@ -69,35 +71,32 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     assert(perm.rows() == GlobalDim || perm.rows() == 1);
 
     const double dt = coupled_term.dt;
-    auto it = coupled_term.coupled_processes.begin();
-    while (it != coupled_term.coupled_processes.end())
+    for (auto const& coupled_process_map : coupled_term.coupled_processes)
     {
-        switch (it->first)
+        if (coupled_process_map.first ==
+            std::type_index(
+                typeid(ProcessLib::HeatConduction::HeatConductionProcess)))
         {
-            case ProcessLib::ProcessType::HeatConductionProcess:
-            {
-                const auto local_T0 = coupled_term.local_coupled_xs0.at(
-                    ProcessLib::ProcessType::HeatConductionProcess);
-                const auto local_T1 = coupled_term.local_coupled_xs.at(
-                    ProcessLib::ProcessType::HeatConductionProcess);
+            const auto local_T0 =
+                coupled_term.local_coupled_xs0.at(coupled_process_map.first);
+            const auto local_T1 =
+                coupled_term.local_coupled_xs.at(coupled_process_map.first);
 
-                if (perm.size() == 1)  // isotropic or 1D problem.
-                    local_assembleCoupledWithHeatTransport<IsotropicCalculator>(
-                        material_id, t, dt, local_x, local_T0, local_T1,
-                        local_M_data, local_K_data, local_b_data, pos, perm);
-                else
-                    local_assembleCoupledWithHeatTransport<
-                        AnisotropicCalculator>(
-                        material_id, t, dt, local_x, local_T0, local_T1,
-                        local_M_data, local_K_data, local_b_data, pos, perm);
-            }
-            break;
-            default:
-                OGS_FATAL(
-                    "This coupled process is not presented for "
-                    "LiquidFlow process");
+            if (perm.size() == 1)  // isotropic or 1D problem.
+                local_assembleCoupledWithHeatTransport<IsotropicCalculator>(
+                    material_id, t, dt, local_x, local_T0, local_T1,
+                    local_M_data, local_K_data, local_b_data, pos, perm);
+            else
+                local_assembleCoupledWithHeatTransport<AnisotropicCalculator>(
+                    material_id, t, dt, local_x, local_T0, local_T1,
+                    local_M_data, local_K_data, local_b_data, pos, perm);
         }
-        it++;
+        else
+        {
+            OGS_FATAL(
+                "This coupled process is not presented for "
+                "LiquidFlow process");
+        }
     }
 }
 
@@ -226,12 +225,11 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         // Add the thermal expansion term
         auto const solid_thermal_expansion =
             _material_properties.getSolidThermalExpansion(t, pos);
-        auto const biot_constant =
-            _material_properties.getBiotConstant(t, pos);
-        auto const porosity = _material_properties.getPorosity(
-            material_id, porosity_variable, T);
+        auto const biot_constant = _material_properties.getBiotConstant(t, pos);
+        auto const porosity =
+            _material_properties.getPorosity(material_id, porosity_variable, T);
         const double eff_thermal_expansion =
-            3.0 * (biot_constant - porosity) * solid_thermal_expansion +
+            3.0 * (biot_constant - porosity) * solid_thermal_expansion -
             porosity * _material_properties.getdLiquidDensity_dT(p, T) / rho;
         local_b.noalias() +=
             eff_thermal_expansion * (T - T0) * integration_factor * sm.N / dt;

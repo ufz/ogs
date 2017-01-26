@@ -18,6 +18,7 @@
 
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "LiquidFlowLocalAssembler.h"
+#include "LiquidFlowMaterialProperties.h"
 
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"

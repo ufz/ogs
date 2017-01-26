@@ -12,6 +12,7 @@
 #pragma once
 
 #include "HeatConductionFEM.h"
+#include "NumLib/Function/Interpolation.h"
 
 namespace ProcessLib
 {
@@ -104,56 +105,49 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
                       std::vector<double>& /*local_b_data*/,
                       LocalCouplingTerm const& coupled_term)
 {
-    auto it = coupled_term.coupled_processes.begin();
-    while (it != coupled_term.coupled_processes.end())
+    for (auto const& coupled_process_map : coupled_term.coupled_processes)
     {
-        switch (it->first)
+        if (coupled_process_map.first ==
+            std::type_index(typeid(ProcessLib::LiquidFlow::LiquidFlowProcess)))
         {
-            case ProcessLib::ProcessType::LiquidFlowProcess:
+            ProcessLib::LiquidFlow::LiquidFlowProcess const& pcs =
+                static_cast<ProcessLib::LiquidFlow::LiquidFlowProcess const&>(
+                    coupled_process_map.second);
+            const auto liquid_flow_prop = pcs.getLiquidFlowMaterialProperties();
+
+            const auto local_p =
+                coupled_term.local_coupled_xs.at(coupled_process_map.first);
+
+            SpatialPosition pos;
+            pos.setElementID(_element.getID());
+            const int material_id = liquid_flow_prop->getMaterialID(pos);
+
+            const Eigen::MatrixXd& perm = liquid_flow_prop->getPermeability(
+                material_id, t, pos, _element.getDimension());
+
+            if (perm.size() == 1)
             {
-                ProcessLib::LiquidFlow::LiquidFlowProcess const& pcs =
-                    static_cast<
-                        ProcessLib::LiquidFlow::LiquidFlowProcess const&>(
-                        it->second);
-                const auto liquid_flow_prop =
-                    pcs.getLiquidFlowMaterialProperties();
-
-                const auto local_p = coupled_term.local_coupled_xs.at(
-                    ProcessLib::ProcessType::LiquidFlowProcess);
-
-                SpatialPosition pos;
-                pos.setElementID(_element.getID());
-                const int material_id = liquid_flow_prop->getMaterialID(pos);
-
-                const Eigen::MatrixXd& perm = liquid_flow_prop->getPermeability(
-                    material_id, t, pos, _element.getDimension());
-
-                if (perm.size() == 1)
-                {
-                    assembleHeatTransportLiquidFlow<
-                        IsotropicLiquidFlowVelocityCalculator>(
-                        t, material_id, pos, pcs.getGravitationalAxisID(),
-                        pcs.getGravitationalacceleration(), perm,
-                        *liquid_flow_prop, local_x, local_p, local_M_data,
-                        local_K_data);
-                }
-                else
-                {
-                    assembleHeatTransportLiquidFlow<
-                        AnisotropicLiquidFlowVelocityCalculator>(
-                        t, material_id, pos, pcs.getGravitationalAxisID(),
-                        pcs.getGravitationalacceleration(), perm,
-                        *liquid_flow_prop, local_x, local_p, local_M_data,
-                        local_K_data);
-                }
+                assembleHeatTransportLiquidFlow<
+                    IsotropicLiquidFlowVelocityCalculator>(
+                    t, material_id, pos, pcs.getGravitationalAxisID(),
+                    pcs.getGravitationalacceleration(), perm, *liquid_flow_prop,
+                    local_x, local_p, local_M_data, local_K_data);
             }
-            break;
-            default:
-                OGS_FATAL(
-                    "This coupled process is not presented for "
-                    "HeatConduction process");
+            else
+            {
+                assembleHeatTransportLiquidFlow<
+                    AnisotropicLiquidFlowVelocityCalculator>(
+                    t, material_id, pos, pcs.getGravitationalAxisID(),
+                    pcs.getGravitationalacceleration(), perm, *liquid_flow_prop,
+                    local_x, local_p, local_M_data, local_K_data);
+            }
         }
-        it++;
+        else
+        {
+            OGS_FATAL(
+                "This coupled process is not presented for "
+                "HeatConduction process");
+        }
     }
 }
 
