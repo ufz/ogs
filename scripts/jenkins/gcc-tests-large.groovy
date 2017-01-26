@@ -2,6 +2,7 @@ def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
 def defaultCMakeOptions =
     '-DCMAKE_BUILD_TYPE=Release ' +
     '-DOGS_LIB_BOOST=System ' +
+    '-DOGS_LIB_EIGEN=System ' +
     '-DOGS_LIB_VTK=System ' +
     '-DOGS_USE_LIS=ON'
 
@@ -10,7 +11,7 @@ def build = new ogs.build()
 def post = new ogs.post()
 def helper = new ogs.helper()
 
-node('docker') {
+node('envinf11w') {
     checkout scm
     def image = docker.image('ogs6/gcc-gui:latest')
     image.pull()
