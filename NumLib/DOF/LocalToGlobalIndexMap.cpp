@@ -44,6 +44,7 @@ LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
     for (ElementIterator e = first; e != last; ++e)
     {
         LineIndex indices;
+        indices.reserve((*e)->getNumberOfNodes());
 
         for (auto* n = (*e)->getNodes();
              n < (*e)->getNodes()+(*e)->getNumberOfNodes(); ++n)
@@ -56,6 +57,7 @@ LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
             indices.push_back(_mesh_component_map.getGlobalIndex(l, comp_id));
         }
 
+        indices.shrink_to_fit();
         _rows((*e)->getID(), comp_id_write) = std::move(indices);
     }
 }
@@ -77,6 +79,7 @@ void LocalToGlobalIndexMap::findGlobalIndices(
     for (ElementIterator e = first; e != last; ++e, ++elem_id)
     {
         LineIndex indices;
+        indices.reserve((*e)->getNumberOfNodes());
 
         for (auto* n = (*e)->getNodes();
              n < (*e)->getNodes() + (*e)->getNumberOfNodes(); ++n)
@@ -89,6 +92,7 @@ void LocalToGlobalIndexMap::findGlobalIndices(
             indices.push_back(_mesh_component_map.getGlobalIndex(l, comp_id));
         }
 
+        indices.shrink_to_fit();
         _rows(elem_id, comp_id_write) = std::move(indices);
     }
 }
