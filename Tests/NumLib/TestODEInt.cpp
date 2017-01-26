@@ -18,10 +18,11 @@
 
 #include "BaseLib/BuildInfo.h"
 #include "NumLib/NumericsConfig.h"
-#include "NumLib/ODESolver/TimeLoopSingleODE.h"
 #include "NumLib/ODESolver/ConvergenceCriterionDeltaX.h"
 #include "Tests/TestTools.h"
 #include "ODEs.h"
+
+#include "TimeLoopSingleODE.h"
 
 #ifndef USE_PETSC
 std::unique_ptr<GlobalLinearSolver>

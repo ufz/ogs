@@ -10,8 +10,8 @@
 #pragma once
 
 #include "NumLib/DOF/GlobalMatrixProviders.h"
-#include "TimeDiscretizedODESystem.h"
-#include "NonlinearSolver.h"
+#include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
+#include "NumLib/ODESolver/NonlinearSolver.h"
 
 
 namespace NumLib
