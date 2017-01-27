@@ -21,7 +21,6 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
-#include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
@@ -53,11 +52,11 @@ class LocalAssemblerData : public HTLocalAssemblerInterface
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
-    using LocalAssemblerTraits = ProcessLib::LocalAssemblerTraits<
-        ShapeMatricesType, ShapeFunction::NPOINTS, NUM_NODAL_DOF, GlobalDim>;
-    using NodalMatrixType = typename LocalAssemblerTraits::LocalMatrix;
-    using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
+    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
+    using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
+        using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
+    using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
 
 public:
     LocalAssemblerData(MeshLib::Element const& element,
@@ -106,11 +105,9 @@ public:
 
         auto const num_nodes = ShapeFunction::NPOINTS;
         auto p_nodal_values =
-            Eigen::Map<const Eigen::VectorXd>(&local_x[num_nodes], num_nodes);
+            Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
 
         auto const & b = _process_data.specific_body_force.head(GlobalDim);
-        Eigen::MatrixXd unit_mat(
-            Eigen::MatrixXd::Identity(GlobalDim, GlobalDim));
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
 
@@ -179,24 +176,27 @@ public:
             // Use the viscosity model to compute the viscosity
             auto const viscosity =
                 _process_data.viscosity_model->getValue(vars);
-            Eigen::Matrix<double, GlobalDim, GlobalDim> perm_over_visc =
+            GlobalDimMatrixType perm_over_visc =
                 intrinsic_permeability / viscosity;
 
-            Eigen::Matrix<double, -1, 1, 0, -1, 1> const velocity =
-                -perm_over_visc * (sm.dNdx * p_nodal_values - density_water_T * b);
+            GlobalDimVectorType const velocity =
+                -perm_over_visc *
+                (sm.dNdx * p_nodal_values - density_water_T * b);
 
             double const velocity_magnitude =
                 std::sqrt(velocity.transpose() * velocity);
-            Eigen::MatrixXd thermal_dispersivity =
+            GlobalDimMatrixType const& I(
+                GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
+            GlobalDimMatrixType thermal_dispersivity =
                 fluid_reference_density * specific_heat_capacity_fluid *
                 (thermal_dispersivity_transversal * velocity_magnitude *
-                     unit_mat +
+                     I +
                  (thermal_dispersivity_longitudinal -
                   thermal_dispersivity_transversal) /
                      velocity_magnitude * velocity * velocity.transpose());
 
             auto const hydrodynamic_thermodispersion =
-                thermal_conductivity + thermal_dispersivity;
+                thermal_conductivity * I + thermal_dispersivity;
 
             double const heat_capacity =
                 density_solid * specific_heat_capacity_solid * (1 - porosity) +
