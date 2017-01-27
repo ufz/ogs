@@ -96,6 +96,8 @@ struct IntegrationPointData final
             t, x_position, dt, eps_prev, eps, sigma_eff_prev, sigma_eff, C,
             *material_state_variables);
     }
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
