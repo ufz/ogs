@@ -183,8 +183,7 @@ public:
                 -perm_over_visc *
                 (sm.dNdx * p_nodal_values - density_water_T * b);
 
-            double const velocity_magnitude =
-                std::sqrt(velocity.transpose() * velocity);
+            double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const& I(
                 GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
             GlobalDimMatrixType thermal_dispersivity =
