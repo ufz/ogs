@@ -124,15 +124,19 @@ class NodePartitionedMesh : public Mesh
             return _n_active_nodes;
         }
 
-        /// Check whether a node with ID of node_id is a ghost node
-        bool isGhostNode(const std::size_t node_id) const
+        /*! Check whether a node with ID of node_id is a ghost node.
+           \param node_id Node index.
+           \return     1: if the node is non-ghost,
+                      -1: if the node is ghost. 
+        */ 
+        int checkGhostNode(const std::size_t node_id) const
         {
             if(node_id < _n_active_base_nodes)
-                return false;
+                return 1;
             else if(node_id >= _n_base_nodes && node_id < getLargestActiveNodeID() )
-                return false;
+                return 1;
             else
-                return true;
+                return -1;
         }
 
         /// Get the largest ID of active nodes for higher order elements in a partition.
