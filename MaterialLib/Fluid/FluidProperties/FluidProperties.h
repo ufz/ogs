@@ -47,7 +47,7 @@ public:
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& heat_capacity,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
             thermal_conductivity)
-#ifndef MSVC
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
         // Up to the latest Visual Studio compiler, Visual Studio 2015
         // list initialization inside member initializer list or non-static data
         // member initializer is not implemented.
@@ -100,7 +100,7 @@ public:
         const PropertyVariableType variable_type) const = 0;
 
 protected:
-#ifdef MSVC
+#if defined(_MSC_VER) && _MSC_VER < 1900
     std::array<std::unique_ptr<FluidProperty>, FluidPropertyTypeNumber>
         _property_models;
 #else
