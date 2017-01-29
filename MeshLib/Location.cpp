@@ -21,6 +21,7 @@ std::ostream& operator<<(std::ostream& os, MeshItemType const& t)
     case MeshItemType::Edge: return os << "E";
     case MeshItemType::Face: return os << "F";
     case MeshItemType::Cell: return os << "C";
+    case MeshItemType::IntegrationPoint: return os << "I";
     };
     return os;
 }
