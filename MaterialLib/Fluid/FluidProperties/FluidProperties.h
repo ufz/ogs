@@ -62,7 +62,7 @@ public:
         // Move to the initialization list if MS visual studio compiler supports
         _property_models[static_cast<unsigned>(FluidPropertyType::Density)] =
             std::move(density);
-        _property_models[static_cast<unsigned>(FluidPropertyType::Vicosity)] =
+        _property_models[static_cast<unsigned>(FluidPropertyType::Viscosity)] =
             std::move(viscosity);
         _property_models[static_cast<unsigned>(
             FluidPropertyType::HeatCapacity)] = std::move(heat_capacity);
