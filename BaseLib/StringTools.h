@@ -90,7 +90,3 @@ std::string const& tostring(std::string const& value);
 std::string format(const char* format_string, ... );
 
 } // end namespace BaseLib
-
-#ifdef MSVC
-void correctScientificNotation(std::string filename, std::size_t precision = 0);
-#endif
