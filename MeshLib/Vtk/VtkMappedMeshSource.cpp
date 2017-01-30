@@ -99,6 +99,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 
     output->GetPointData()->ShallowCopy(this->PointData.GetPointer());
     output->GetCellData()->ShallowCopy(this->CellData.GetPointer());
+    output->GetFieldData()->ShallowCopy(this->FieldData.GetPointer());
     return 1;
 }
 
