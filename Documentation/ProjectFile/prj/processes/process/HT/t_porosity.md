@@ -1,1 +1,0 @@
-Porosity of the solid

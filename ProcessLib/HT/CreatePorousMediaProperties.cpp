@@ -36,15 +36,15 @@ PorousMediaProperties createPorousMediaProperties(
 
     std::vector<int> mat_ids;
     for (auto const& porous_medium_config :
-         //! \ogs_file_param_special{prj__processes__process__HT__porous_medium__porous_medium}
+         //! \ogs_file_param{prj__processes__process__HT__porous_medium__porous_medium}
          porous_medium_configs.getConfigSubtreeList("porous_medium"))
     {
-         //! \ogs_file_param_special{prj__processes__process__HT__porous_medium__porous_medium__id}
+         //! \ogs_file_attr{prj__processes__process__HT__porous_medium__porous_medium__id}
         auto const id = porous_medium_config.getConfigAttribute<int>("id");
         mat_ids.push_back(id);
 
         auto const& porosity_conf =
-            //! \ogs_file_param_special{prj__processes__process__HT__porous_medium__porous_medium__porosity}
+            //! \ogs_file_param{prj__processes__process__HT__porous_medium__porous_medium__porosity}
             porous_medium_config.getConfigSubtree("porosity");
         porosity_models.emplace_back(
             MaterialLib::PorousMedium::createPorosityModel(porosity_conf));
@@ -53,7 +53,7 @@ PorousMediaProperties createPorousMediaProperties(
         // element,
         // i.e., the isotropic case is handled at the moment)
         auto const& permeability_conf =
-            //! \ogs_file_param_special{prj__processes__process__HT__porous_medium__porous_medium__permeability}
+            //! \ogs_file_param{prj__processes__process__HT__porous_medium__porous_medium__permeability}
             porous_medium_config.getConfigSubtree("permeability");
         intrinsic_permeability_models.emplace_back(
             MaterialLib::PorousMedium::createPermeabilityModel(
@@ -61,7 +61,7 @@ PorousMediaProperties createPorousMediaProperties(
 
         // Parameter for the specific storage.
         auto const& storage_conf =
-            //! \ogs_file_param_special{prj__processes__process__HT__porous_medium__porous_medium__storage}
+            //! \ogs_file_param{prj__processes__process__HT__porous_medium__porous_medium__storage}
             porous_medium_config.getConfigSubtree("storage");
         storage_models.emplace_back(
             MaterialLib::PorousMedium::createStorageModel(storage_conf));

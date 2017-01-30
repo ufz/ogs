@@ -51,14 +51,14 @@ std::unique_ptr<Process> createHTProcess(
         "pressure"});
 
     auto const& porous_medium_configs =
-        //! \ogs_file_param_special{prj__processes__process__HT__porous_medium}
+        //! \ogs_file_param{prj__processes__process__HT__porous_medium}
         config.getConfigSubtree("porous_medium");
     PorousMediaProperties porous_media_properties{
         createPorousMediaProperties(mesh, porous_medium_configs)};
 
-    //! \ogs_file_param_special{prj__processes__process__HT__fluid}
+    //! \ogs_file_param{prj__processes__process__HT__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");
-    //! \ogs_file_param_special{prj__processes__process__HT__fluid__viscosity}
+    //! \ogs_file_param{prj__processes__process__HT__fluid__viscosity}
     auto const& viscosity_conf = fluid_config.getConfigSubtree("viscosity");
     auto viscosity_model =
         MaterialLib::Fluid::createViscosityModel(viscosity_conf);
@@ -70,7 +70,7 @@ std::unique_ptr<Process> createHTProcess(
         "density_solid", parameters, 1);
     DBUG("Use \'%s\' as density_solid parameter.", density_solid.name.c_str());
 
-    //! \ogs_file_param_special{prj__processes__process__HT__fluid__density}
+    //! \ogs_file_param{prj__processes__process__HT__fluid__density}
     auto const& fluid_density_conf = fluid_config.getConfigSubtree("density");
     auto fluid_density =
         MaterialLib::Fluid::createFluidDensityModel(fluid_density_conf);
@@ -78,7 +78,7 @@ std::unique_ptr<Process> createHTProcess(
     // Parameter for the density of the fluid.
     auto& fluid_reference_density= findParameter<double>(
         config,
-        //! \ogs_file_param{prj__processes__process__HT__fluid_reference_density}
+        //! \ogs_file_param_special{prj__processes__process__HT__fluid_reference_density}
         "fluid_reference_density", parameters, 1);
     DBUG("Use \'%s\' as fluid_reference_density parameter.",
          fluid_reference_density.name.c_str());
