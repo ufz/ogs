@@ -23,7 +23,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 #include <vtkCellData.h>
 #include <vtkFieldData.h>
@@ -36,15 +35,6 @@
 #include "MeshLib/PropertyVector.h"
 
 #include "VtkMappedPropertyVectorTemplate.h"
-
-class vtkCellData;
-class vtkDataArrayCollection;
-class vtkPointData;
-class vtkPoints;
-namespace MeshLib {
-    class Mesh;
-    class Properties;
-}
 
 namespace MeshLib {
 

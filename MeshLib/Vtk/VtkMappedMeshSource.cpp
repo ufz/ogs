@@ -12,6 +12,8 @@
  *
  */
 
+#include <vector>
+
 #include "VtkMappedMeshSource.h"
 
 #include <vtkDemandDrivenPipeline.h>
