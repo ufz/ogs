@@ -186,8 +186,8 @@ void NodeWiseMeshPartitioner
     renumberNodeIndices(is_mixed_high_order_linear_elems);
 }
 
-void NodeWiseMeshPartitioner::renumberNodeIndices
-                           (const bool is_mixed_high_order_linear_elems)
+void NodeWiseMeshPartitioner::renumberNodeIndices(
+    const bool is_mixed_high_order_linear_elems)
 {
     std::size_t node_global_id_offset = 0;
     // Renumber the global indices.
