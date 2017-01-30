@@ -9,16 +9,16 @@
 
 #include "CreateHTProcess.h"
 
-#include "HTProcess.h"
-#include "HTProcessData.h"
+#include "MaterialLib/Fluid/Density/createFluidDensityModel.h"
+#include "MaterialLib/Fluid/Viscosity/createViscosityModel.h"
 
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "CreatePorousMediaProperties.h"
-#include "MaterialLib/Fluid/Density/createFluidDensityModel.h"
-#include "MaterialLib/Fluid/Viscosity/createViscosityModel.h"
+#include "HTProcess.h"
+#include "HTProcessData.h"
 
 namespace ProcessLib
 {
