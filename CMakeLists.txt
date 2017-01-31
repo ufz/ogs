@@ -20,6 +20,7 @@ list(APPEND CMAKE_PREFIX_PATH
 ###########################
 ### Preliminary Options ###
 ###########################
+option(BUILD_SHARED_LIBS "Create shared libraries?" OFF)
 set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
     "Additional library installation path, e.g. /opt/local or C:/libs")
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults to native.")
