@@ -205,6 +205,15 @@ void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::M
     unsigned const n_cell_arrays = static_cast<unsigned>(cell_data->GetNumberOfArrays());
     for (unsigned i=0; i<n_cell_arrays; ++i)
         convertArray(*cell_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Cell);
+
+    vtkFieldData* field_data = grid.GetFieldData();
+    unsigned const n_field_arrays =
+        static_cast<unsigned>(field_data->GetNumberOfArrays());
+    for (unsigned i = 0; i < n_field_arrays; ++i)
+        convertArray(
+            *vtkDataArray::SafeDownCast(field_data->GetAbstractArray(i)),
+            mesh.getProperties(),
+            MeshLib::MeshItemType::IntegrationPoint);
 }
 
 void VtkMeshConverter::convertArray(vtkDataArray &array, MeshLib::Properties &properties, MeshLib::MeshItemType type)
