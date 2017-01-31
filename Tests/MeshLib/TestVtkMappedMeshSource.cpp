@@ -292,6 +292,22 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
             ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellUnsignedProperty")->GetNumberOfTuples(),
                       cellUnsignedArray->GetNumberOfTuples());
 
+            auto get_field_data =
+                [&vtkMesh](std::string const array_name) -> vtkDataArray* {
+                return vtkDataArray::SafeDownCast(
+                    vtkMesh->GetFieldData()->GetAbstractArray(
+                        array_name.c_str()));
+            };
+
+            ASSERT_EQ(
+                get_field_data("FieldDoubleProperty")->GetNumberOfTuples(),
+                fieldDoubleArray->GetNumberOfTuples());
+            ASSERT_EQ(get_field_data("FieldIntProperty")->GetNumberOfTuples(),
+                      fieldIntArray->GetNumberOfTuples());
+            ASSERT_EQ(
+                get_field_data("FieldUnsignedProperty")->GetNumberOfTuples(),
+                fieldUnsignedArray->GetNumberOfTuples());
+
             // Both OGS meshes should be identical
             auto newMesh = std::unique_ptr<MeshLib::Mesh>{MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh)};
             ASSERT_EQ(mesh->getNumberOfNodes(), newMesh->getNumberOfNodes());
@@ -312,6 +328,14 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
                 meshProperties.hasPropertyVector("CellIntProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("CellUnsignedProperty"),
                 meshProperties.hasPropertyVector("CellUnsignedProperty"));
+
+            ASSERT_EQ(newMeshProperties.hasPropertyVector("FieldDoubleProperty"),
+                meshProperties.hasPropertyVector("FieldDoubleProperty"));
+            ASSERT_EQ(newMeshProperties.hasPropertyVector("FieldIntProperty"),
+                meshProperties.hasPropertyVector("FieldIntProperty"));
+            ASSERT_EQ(newMeshProperties.hasPropertyVector("FieldUnsignedProperty"),
+                meshProperties.hasPropertyVector("FieldUnsignedProperty"));
+
             ASSERT_EQ(newMeshProperties.hasPropertyVector("MaterialIDs"),
                 meshProperties.hasPropertyVector("MaterialIDs"));
 
@@ -341,6 +365,20 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
             ASSERT_EQ(newUnsignedIds->size(), unsignedProps->size());
             for (std::size_t i = 0; i < unsignedProps->size(); i++)
                 ASSERT_EQ((*newUnsignedIds)[i], (*unsignedProps)[i]);
+
+            {   // Field data
+                auto p =
+                    meshProperties.getPropertyVector<int>("FieldIntProperty");
+                auto new_p = newMeshProperties.getPropertyVector<int>(
+                    "FieldIntProperty");
+
+                ASSERT_EQ(new_p->getNumberOfComponents(),
+                          p->getNumberOfComponents());
+                ASSERT_EQ(new_p->getNumberOfTuples(), p->getNumberOfTuples());
+                ASSERT_EQ(new_p->size(), p->size());
+                for (std::size_t i = 0; i < unsignedProps->size(); i++)
+                    ASSERT_EQ((*newUnsignedIds)[i], (*unsignedProps)[i]);
+            }
 
             auto const* const materialIds =
                 meshProperties.getPropertyVector<int>("MaterialIDs");
