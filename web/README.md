@@ -5,6 +5,16 @@
 If you want to modify css or javascript run `gulp` in another terminal:
 
     gulp
+    
+## Build site
+
+    (cd import; python import.py)
+    gulp build
+    hugo
+
+Test by locally serving via [Caddy](https://caddyserver.com):
+
+    caddy
 
 ## Used components
 
