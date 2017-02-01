@@ -113,6 +113,7 @@ void doProcessOutput(std::string const& file_name,
 
     auto const& output_variables = process_output.output_variables;
     std::set<std::string> already_output;
+    already_output.insert("integration_point");
 
     int global_component_offset = 0;
     int global_component_offset_next = 0;
@@ -228,6 +229,15 @@ void doProcessOutput(std::string const& file_name,
 #else
     (void) secondary_variables;
 #endif // USE_PETSC
+
+    // Integration point data
+    if (std::find(std::begin(output_variables), std::end(output_variables),
+                  "integration_point") != std::end(output_variables))
+    {
+        auto result = getOrCreateMeshProperty<char>(
+            mesh, "integration_point_data",
+            MeshLib::MeshItemType::IntegrationPoint);
+    }
 
     // Write output file
     DBUG("Writing output to \'%s\'.", file_name.c_str());
