@@ -23,6 +23,8 @@ std::size_t countMeshItems(MeshLib::Mesh const& mesh,
             return mesh.getNumberOfElements();
         case MeshLib::MeshItemType::Node:
             return mesh.getNumberOfNodes();
+        case MeshLib::MeshItemType::IntegrationPoint:
+            return 0;
         default:
             break;  // avoid compiler warning
     }
@@ -50,7 +52,8 @@ MeshLib::PropertyVector<T>* getOrCreateMeshProperty(
             property_name, type);
         result->resize(N);
     }
-    assert(result && result->size() == N);
+    assert(type == MeshLib::MeshItemType::IntegrationPoint ||
+           result && result->size() == N);
 
     return result;
 };
