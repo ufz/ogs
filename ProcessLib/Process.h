@@ -123,6 +123,9 @@ public:
         return std::vector<double>{};
     }
 
+    /// Fills given property vector with raw integration point data.
+    std::function<std::size_t (MeshLib::PropertyVector<char>&)> ip_writer;
+
 protected:
     NumLib::Extrapolator& getExtrapolator() const
     {
