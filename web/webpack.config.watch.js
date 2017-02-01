@@ -14,6 +14,7 @@ if(process.env.NODE_ENV === 'production') {
 }
 
 module.exports = {
+  watch: true,
   plugins: plugins,
   entry: pkg.paths.src.js + '/app.js',
   output: {
