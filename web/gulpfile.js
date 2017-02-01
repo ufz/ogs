@@ -1,8 +1,10 @@
 // load all plugins in 'devDependencies' into the variable $
 var gulp = require('gulp');
+
 const $ = require('gulp-load-plugins')({
         rename: {
-            'gulp-add-src': 'add_src'
+            'gulp-add-src': 'add_src',
+            'webpack-stream': 'webpack_stream',
         },
         pattern: ['*'],
         scope: ['devDependencies']
@@ -29,10 +31,17 @@ gulp.task('scss', () => {
         .pipe(gulp.dest(pkg.paths.dist.css));
 });
 
+gulp.task('webpack', () => {
+    return gulp.src(pkg.main)
+        .pipe($.webpack_stream())
+        .pipe(gulp.dest(pkg.paths.dist.js));
+});
+
 gulp.task('watch', function() {
   // gulp.watch(kubedir + 'src/_js/*.js', ['scripts']);
   gulp.watch(pkg.paths.src.scss + pkg.vars.scssName, ['scss']);
   gulp.watch('./package.json', ['scss']);
+  gulp.watch(pkg.paths.src.js, ['webpack']);
 });
 
-gulp.task('default', ['scss', 'watch'])
+gulp.task('default', ['scss', 'webpack', 'watch'])
