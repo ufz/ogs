@@ -3,8 +3,8 @@ string(REPLACE "." "_" OGS_BOOST_VERSION_UNDERLINE ${OGS_BOOST_VERSION})
 set(OGS_BOOST_URL "http://opengeosys.s3.amazonaws.com/ogs6-lib-sources/boost_${OGS_BOOST_VERSION_UNDERLINE}.tar.bz2")
 set(OGS_BOOST_MD5 "a744cf167b05d72335f27c88115f211d")
 
-set(OGS_EIGEN_URL "http://opengeosys.s3.amazonaws.com/ogs6-lib-sources/eigen-3.2.8.tar.gz")
-set(OGS_EIGEN_MD5 "135d8d43aaee5fb54cf5f3e981b1a6db")
+set(OGS_EIGEN_URL "http://bitbucket.org/eigen/eigen/get/3.2.9.tar.gz")
+set(OGS_EIGEN_MD5 "6a578dba42d1c578d531ab5b6fa3f741")
 
 set(OGS_VTK_VERSION 6.3.0)
 set(OGS_VTK_URL "http://www.vtk.org/files/release/6.3/VTK-6.3.0.tar.gz")
