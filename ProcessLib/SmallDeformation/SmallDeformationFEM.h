@@ -25,7 +25,11 @@
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
+#include "ProcessLib/IntegrationPointSerialization.h"
+
 #include "SmallDeformationProcessData.h"
+
+#include "integration_point.pb.h"
 
 namespace ProcessLib
 {
@@ -92,7 +96,8 @@ struct SecondaryData
 
 struct SmallDeformationLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
-      public NumLib::ExtrapolatableElement
+      public NumLib::ExtrapolatableElement,
+      public ProcessLib::IntegrationPointSerialization
 {
     virtual std::vector<double> const& getIntPtSigmaXX(
         std::vector<double>& cache) const = 0;
@@ -287,6 +292,84 @@ public:
             _ip_data[ip].pushBackState();
         }
     }
+
+    void readIntegrationPointData(std::vector<char> const& data) override
+    {
+        SmallDeformationFEM::ElementData element_data;
+        if (!element_data.ParseFromArray(data.data(), data.size()))
+            OGS_FATAL("Parsing ElementData protobuf failed.");
+
+        // check element number
+        if (_element.getID() != element_data.id())
+            OGS_FATAL(
+                "Reading input failed somewhat. Mesh item id does not match");
+
+        // check number of integration points
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        if (n_integration_points != element_data.n_integration_points())
+            OGS_FATAL(
+                "Reading input failed somewhat. The value of "
+                "n_integration_points does not match");
+
+        // sigma
+        assert(n_integration_points == element_data.sigma_size());
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto sigma = element_data.sigma(ip);
+            if (DisplacementDim != sigma.dimension())
+                OGS_FATAL("Dimension of a Kelvin vector do not match.");
+            assert(_ip_data[ip]._sigma.size() == sigma.value_size());
+
+            for (int i = 0; i < _ip_data[ip]._sigma.size(); ++i)
+                _ip_data[ip]._sigma[i] = sigma.value(i);
+        }
+
+        // epsilon
+        assert(n_integration_points == element_data.eps_size());
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto eps = element_data.eps(ip);
+            if (DisplacementDim != eps.dimension())
+                OGS_FATAL("Dimension of a Kelvin vector do not match.");
+            assert(_ip_data[ip]._eps.size() == eps.value_size());
+
+            for (int i = 0; i < _ip_data[ip]._eps.size(); ++i)
+                _ip_data[ip]._eps[i] = eps.value(i);
+        }
+    }
+
+    std::size_t writeIntegrationPointData(std::vector<char>& data) override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        SmallDeformationFEM::ElementData element_data;
+        element_data.set_id(_element.getID());
+        element_data.set_n_integration_points(n_integration_points);
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto sigma = element_data.add_sigma();
+            sigma->set_dimension(
+                SmallDeformationFEM::Dimension(DisplacementDim));
+            for (int i = 0; i < _ip_data[ip]._sigma.size(); ++i)
+                sigma->add_value(_ip_data[ip]._sigma[i]);
+        }
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto eps = element_data.add_eps();
+            eps->set_dimension(SmallDeformationFEM::Dimension(DisplacementDim));
+            for (int i = 0; i < _ip_data[ip]._eps.size(); ++i)
+                eps->add_value(_ip_data[ip]._eps[i]);
+        }
+
+        data.resize(element_data.ByteSize());
+        element_data.SerializeToArray(data.data(), element_data.ByteSize());
+
+        return element_data.ByteSize();
+    };
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

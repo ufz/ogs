@@ -139,6 +139,31 @@ private:
             makeExtrapolator(
                 getExtrapolator(), _local_assemblers,
                 &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonXY));
+
+        Base::integration_point_writer = [this](
+            MeshLib::PropertyVector<char>& output,
+            MeshLib::PropertyVector<std::size_t>& offsets) {
+            return writeIntegrationPointData(output, offsets);
+        };
+    }
+
+    std::size_t writeIntegrationPointData(MeshLib::PropertyVector<char>& output,
+            MeshLib::PropertyVector<std::size_t>& offsets)
+    {
+        output.clear();
+        offsets.clear();
+        std::vector<char> local_data;
+        std::size_t offset = 0;
+        for (auto& la : _local_assemblers)
+        {
+            offsets.push_back(offset);
+            std::size_t const local_offset =
+                la->writeIntegrationPointData(local_data);
+            std::copy_n(std::begin(local_data), local_offset,
+                        std::back_inserter(output));
+            offset += local_offset;
+        }
+        return offset;
     }
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
@@ -169,6 +194,48 @@ private:
             _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
             _local_assemblers, *_local_to_global_index_map, t, x, xdot,
             dxdot_dx, dx_dx, M, K, b, Jac, coupling_term);
+    }
+
+    void setInitialConditionsConcreteProcess(double const t,
+                                             GlobalVector const& x) override
+    {
+        DBUG("SetInitialConditions SmallDeformationProcess.");
+
+        if (!_mesh.getProperties().hasPropertyVector("integration_point_data"))
+            return;
+        if (!_mesh.getProperties().hasPropertyVector("integration_point_offsets"))
+            OGS_FATAL(
+                "integration_point_data field exists in the input but there is "
+                "no integration_point_offsets cell data.");
+
+        auto const& data =
+            *_mesh.getProperties().template getPropertyVector<char>(
+                "integration_point_data");
+        assert(data.getMeshItemType() ==
+               MeshLib::MeshItemType::IntegrationPoint);
+
+        auto const& offsets =
+            *_mesh.getProperties().template getPropertyVector<std::size_t>(
+                "integration_point_offsets");
+        assert(offsets.getMeshItemType() == MeshLib::MeshItemType::Cell);
+
+        std::vector<char> local_data;
+        assert(_local_assemblers.size() == offsets.size());
+        // Starting counting from one; the last cell is handled after the loop.
+        std::size_t i = 0;
+        for (; i < _local_assemblers.size() - 1; ++i)
+        {
+            std::size_t const size = offsets[i + 1] - offsets[i];
+            local_data.resize(size);
+            std::memcpy(local_data.data(), &data[offsets[i]], size);
+            _local_assemblers[i]->readIntegrationPointData(local_data);
+        }
+        {   // last cell
+            std::size_t const size = data.size() - offsets[i];
+            local_data.resize(size);
+            std::memcpy(local_data.data(), &data[offsets[i]], size);
+            _local_assemblers[i]->readIntegrationPointData(local_data);
+        }
     }
 
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,
