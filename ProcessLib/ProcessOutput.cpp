@@ -231,12 +231,12 @@ void doProcessOutput(std::string const& file_name,
 #endif // USE_PETSC
 
     // Integration point data
-    if (std::find(std::begin(output_variables), std::end(output_variables),
-                  "integration_point") != std::end(output_variables))
+    if (ip_writer)
     {
         auto result = getOrCreateMeshProperty<char>(
             mesh, "integration_point_data",
             MeshLib::MeshItemType::IntegrationPoint);
+        ip_writer(*result);
     }
 
     // Write output file
