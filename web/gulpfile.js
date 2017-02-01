@@ -38,10 +38,8 @@ gulp.task('webpack', () => {
 });
 
 gulp.task('watch', function() {
-  // gulp.watch(kubedir + 'src/_js/*.js', ['scripts']);
   gulp.watch(pkg.paths.src.scss + pkg.vars.scssName, ['scss']);
   gulp.watch('./package.json', ['scss']);
-  gulp.watch(pkg.paths.src.js, ['webpack']);
 });
 
 gulp.task('default', ['scss', 'webpack', 'watch'])

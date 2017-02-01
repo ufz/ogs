@@ -6,7 +6,7 @@
   "author": "Lars Bilke",
   "license": "BSD",
   "scripts": {
-    "hugo": "hugo -w --disableRSS",
+    "hugo": "hugo server --disableRSS",
     "build": "webpack",
     "build:release": "export NODE_ENV=production && webpack -p",
     "start": "webpack-dev-server --content-base ./public"
@@ -23,11 +23,11 @@
       "scss": "./src/scss/"
     },
     "dist": {
-      "base": "./themes/ogs/static/",
-      "css": "./themes/ogs/static/css/",
-      "js": "./themes/ogs/static/js/",
-      "fonts": "./themes/ogs/static/fonts/",
-      "img": "./themes/ogs/static/img/"
+      "base": "./static/",
+      "css": "./static/css/",
+      "js": "./static/js/",
+      "fonts": "./static/fonts/",
+      "img": "./static/img/"
     },
     "build": {
       "base": "./build/",
