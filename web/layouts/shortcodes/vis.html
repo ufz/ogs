@@ -1,5 +1,5 @@
 <iframe
-	src="./../../vis/index.html?fileURL=http://s3-eu-central-1.amazonaws.com/jenkins-dump/{{ .Get "url" }}"
+	src="/internal/vis/index.html?fileURL=http://s3-eu-central-1.amazonaws.com/jenkins-dump/{{ .Get "url" }}"
 	width="100%"
 	{{ with .Get "height"}} height="{{.}}px"{{ else }} height="500px"{{ end }}
 >
