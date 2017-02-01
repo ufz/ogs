@@ -29,23 +29,24 @@ std::size_t countMeshItems(MeshLib::Mesh const& mesh,
     return 0;
 };
 
-MeshLib::PropertyVector<double>* getOrCreateMeshProperty(
+template <typename T>
+MeshLib::PropertyVector<T>* getOrCreateMeshProperty(
     MeshLib::Mesh& mesh, std::string const& property_name,
     MeshLib::MeshItemType type)
 {
     // Get or create a property vector for results.
-    MeshLib::PropertyVector<double>* result = nullptr;
+    MeshLib::PropertyVector<T>* result = nullptr;
 
     auto const N = countMeshItems(mesh, type);
 
     if (mesh.getProperties().existsPropertyVector<double>(property_name))
     {
-        result = mesh.getProperties().template getPropertyVector<double>(
+        result = mesh.getProperties().template getPropertyVector<T>(
             property_name);
     }
     else
     {
-        result = mesh.getProperties().template createNewPropertyVector<double>(
+        result = mesh.getProperties().template createNewPropertyVector<T>(
             property_name, type);
         result->resize(N);
     }
@@ -171,7 +172,7 @@ void doProcessOutput(
         {
             DBUG("  secondary variable %s", output_name.c_str());
 
-            auto result = getOrCreateMeshProperty(
+            auto result = getOrCreateMeshProperty<double>(
                 mesh, output_name, MeshLib::MeshItemType::Node);
             assert(result->size() == mesh.getNumberOfNodes());
 
@@ -192,7 +193,7 @@ void doProcessOutput(
             DBUG("  secondary variable %s residual", output_name.c_str());
             auto const& property_name_res = output_name + "_residual";
 
-            auto result = getOrCreateMeshProperty(
+            auto result = getOrCreateMeshProperty<double>(
                 mesh, property_name_res, MeshLib::MeshItemType::Cell);
             assert(result->size() == mesh.getNumberOfElements());
 
