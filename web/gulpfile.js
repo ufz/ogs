@@ -31,10 +31,16 @@ gulp.task('scss', () => {
         .pipe(gulp.dest(pkg.paths.dist.css));
 });
 
-gulp.task('webpack', () => {
+gulp.task('webpack-watch', () => {
     return gulp.src(pkg.main)
-        .pipe($.webpack_stream( require('./webpack.config.js') ))
+        .pipe($.webpack_stream( require('./webpack.config.watch.js') ))
         .pipe(gulp.dest(pkg.paths.dist.js));
+});
+
+gulp.task('webpack', () => {
+  return gulp.src(pkg.main)
+    .pipe($.webpack_stream( require('./webpack.config.js') ))
+    .pipe(gulp.dest(pkg.paths.dist.js));
 });
 
 gulp.task('watch', function() {
@@ -42,4 +48,6 @@ gulp.task('watch', function() {
   gulp.watch('./package.json', ['scss']);
 });
 
-gulp.task('default', ['scss', 'webpack', 'watch'])
+gulp.task('build', ['scss', 'webpack'])
+
+gulp.task('default', ['scss', 'webpack-watch', 'watch'])
