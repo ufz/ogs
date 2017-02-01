@@ -9,11 +9,16 @@
 
 #include "CreateHTProcess.h"
 
-#include "HTProcess.h"
-#include "HTProcessData.h"
+#include "MaterialLib/Fluid/Density/createFluidDensityModel.h"
+#include "MaterialLib/Fluid/Viscosity/createViscosityModel.h"
+
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
+
+#include "CreatePorousMediaProperties.h"
+#include "HTProcess.h"
+#include "HTProcessData.h"
 
 namespace ProcessLib
 {
@@ -45,45 +50,18 @@ std::unique_ptr<Process> createHTProcess(
         //! \ogs_file_param_special{prj__processes__process__HT__process_variables__pressure}
         "pressure"});
 
-    // Porosity parameter.
-    auto& porosity = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__porosity}
-        "porosity", parameters, 1);
-    DBUG("Use \'%s\' as porosity parameter.", porosity.name.c_str());
+    auto const& porous_medium_configs =
+        //! \ogs_file_param{prj__processes__process__HT__porous_medium}
+        config.getConfigSubtree("porous_medium");
+    PorousMediaProperties porous_media_properties{
+        createPorousMediaProperties(mesh, porous_medium_configs)};
 
-    // Parameter for the intrinsic permeability (only one scalar per element,
-    // i.e., the isotropic case is handled at the moment)
-    auto& intrinsic_permeability = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__intrinsic_permeability}
-        "intrinsic_permeability", parameters, 1);
-    DBUG("Use \'%s\' as intrinsic_permeability parameter.",
-         intrinsic_permeability.name.c_str());
-
-    // Parameter for the specific storage.
-    auto& specific_storage = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__specific_storage}
-        "specific_storage", parameters, 1);
-    DBUG("Use \'%s\' as specific storage parameter.", specific_storage.name.c_str());
-
-    // Parameter for the reference_temperature.
-    auto& reference_temperature_fluid_density_model = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__reference_temperature}
-        "reference_temperature_fluid_density_model", parameters, 1);
-    DBUG(
-        "Use \'%s\' as reference temperature for the fluid density model "
-        "parameter.",
-        reference_temperature_fluid_density_model.name.c_str());
-
-    // Parameter for the viscosity.
-    auto& viscosity = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__viscosity}
-        "viscosity", parameters, 1);
-    DBUG("Use \'%s\' as viscosity parameter.", viscosity.name.c_str());
+    //! \ogs_file_param{prj__processes__process__HT__fluid}
+    auto const& fluid_config = config.getConfigSubtree("fluid");
+    //! \ogs_file_param{prj__processes__process__HT__fluid__viscosity}
+    auto const& viscosity_conf = fluid_config.getConfigSubtree("viscosity");
+    auto viscosity_model =
+        MaterialLib::Fluid::createViscosityModel(viscosity_conf);
 
     // Parameter for the density of the solid.
     auto& density_solid = findParameter<double>(
@@ -92,12 +70,18 @@ std::unique_ptr<Process> createHTProcess(
         "density_solid", parameters, 1);
     DBUG("Use \'%s\' as density_solid parameter.", density_solid.name.c_str());
 
+    //! \ogs_file_param{prj__processes__process__HT__fluid__density}
+    auto const& fluid_density_conf = fluid_config.getConfigSubtree("density");
+    auto fluid_density =
+        MaterialLib::Fluid::createFluidDensityModel(fluid_density_conf);
+
     // Parameter for the density of the fluid.
-    auto& density_fluid = findParameter<double>(
+    auto& fluid_reference_density= findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__HT__density_fluid}
-        "density_fluid", parameters, 1);
-    DBUG("Use \'%s\' as density_fluid parameter.", density_fluid.name.c_str());
+        //! \ogs_file_param_special{prj__processes__process__HT__fluid_reference_density}
+        "fluid_reference_density", parameters, 1);
+    DBUG("Use \'%s\' as fluid_reference_density parameter.",
+         fluid_reference_density.name.c_str());
 
     // Parameter for the specific heat capacity of the solid.
     auto& specific_heat_capacity_solid = findParameter<double>(
@@ -114,7 +98,6 @@ std::unique_ptr<Process> createHTProcess(
         "specific_heat_capacity_fluid", parameters, 1);
     DBUG("Use \'%s\' as specific_heat_capacity_fluid parameter.",
          specific_heat_capacity_fluid.name.c_str());
-
 
     // Parameter for the thermal conductivity of the solid (only one scalar per
     // element, i.e., the isotropic case is handled at the moment)
@@ -151,14 +134,6 @@ std::unique_ptr<Process> createHTProcess(
     DBUG("Use \'%s\' as thermal_conductivity_fluid parameter.",
          thermal_conductivity_fluid.name.c_str());
 
-    // Parameter for the thermal expansion coefficient.
-    auto& thermal_expansion_coefficient_fluid = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__thermal_expansion_coefficient_fluid}
-        "thermal_expansion_coefficient_fluid", parameters, 1);
-    DBUG("Use \'%s\' as thermal expansion coefficient of the fluid parameter.",
-         thermal_expansion_coefficient_fluid.name.c_str());
-
     // Specific body force parameter.
     Eigen::Vector3d specific_body_force;
     std::vector<double> const b =
@@ -170,20 +145,17 @@ std::unique_ptr<Process> createHTProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
 
     HTProcessData process_data{
-        porosity,
-        intrinsic_permeability,
-        specific_storage,
-        viscosity,
+        std::move(porous_media_properties),
+        std::move(viscosity_model),
         density_solid,
-        density_fluid,
+        fluid_reference_density,
+        std::move(fluid_density),
         thermal_dispersivity_longitudinal,
         thermal_dispersivity_transversal,
         specific_heat_capacity_solid,
         specific_heat_capacity_fluid,
         thermal_conductivity_solid,
         thermal_conductivity_fluid,
-        thermal_expansion_coefficient_fluid,
-        reference_temperature_fluid_density_model,
         specific_body_force,
         has_gravity};
 
