@@ -9,6 +9,8 @@ before_script:
 pages:
   script:
   - cd web
+  - (cd import; python import.py)
+  - gulp build
   - hugo
   artifacts:
     paths:
