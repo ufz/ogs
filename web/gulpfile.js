@@ -33,7 +33,7 @@ gulp.task('scss', () => {
 
 gulp.task('webpack', () => {
     return gulp.src(pkg.main)
-        .pipe($.webpack_stream())
+        .pipe($.webpack_stream( require('./webpack.config.js') ))
         .pipe(gulp.dest(pkg.paths.dist.js));
 });
 

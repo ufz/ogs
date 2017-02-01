@@ -6,6 +6,7 @@
   "author": "Lars Bilke",
   "license": "BSD",
   "scripts": {
+    "hugo": "hugo -w --disableRSS",
     "build": "webpack",
     "build:release": "export NODE_ENV=production && webpack -p",
     "start": "webpack-dev-server --content-base ./public"

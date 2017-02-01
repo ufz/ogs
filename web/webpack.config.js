@@ -17,7 +17,7 @@ module.exports = {
   plugins: plugins,
   entry: pkg.paths.src.js + '/app.js',
   output: {
-    path: pkg.paths.dist.js,
+    // path: pkg.paths.dist.js, // does not work with webpack-stream
     filename: 'bundle.js',
   },
   module: {
