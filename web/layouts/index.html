@@ -1,18 +1,27 @@
 {{ partial "header.html" . }}
   <div class="col-xs-12">
-    <h1>docs</h1>
+    <h2>docs</h1>
+    <ul>
     {{ range first 10 .Data.Pages }}
       {{ if eq .Type "docs"}}
-        <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+        <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
       {{ end }}
     {{ end }}
+  </ul>
 
-    <h1>pages</h1>
+    <h2>pages</h1>
+    <ul>
     {{ range .Data.Pages }}
       {{ if eq .Type "page" }}
-        <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+        <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
       {{ end }}
     {{ end }}
+    </ul>
+
+    <h2>Contentful</h2>
+    <ul>
+      <li><a href="/news">News</a></li>
+    </ul>
   </div>
 
 {{ partial "footer.html" . }}
