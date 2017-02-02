@@ -482,7 +482,7 @@ MeshLib::Element* FEFLOWMeshInterface::readElement(
     switch (elem_type)
     {
         default:
-            for (unsigned k(0); k < n_nodes_of_element; ++k)
+            for (std::size_t k(0); k < n_nodes_of_element; ++k)
                 ele_nodes[k] = nodes[idx[k] - 1];
             break;
         case MeshLib::MeshElemType::HEXAHEDRON:
