@@ -380,7 +380,7 @@ void FEFLOWMeshInterface::readElevation(std::ifstream& in,
     std::size_t l = 0;
     unsigned mode = 0;  // 0: exit, 1: slice no, 2: elevation value, 3:
                         // continued line of mode 2
-    int pos_prev_line = 0;
+    std::streamoff pos_prev_line = 0;
     while (true)
     {
         pos_prev_line = in.tellg();
