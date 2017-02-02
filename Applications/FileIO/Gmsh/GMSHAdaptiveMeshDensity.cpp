@@ -115,7 +115,8 @@ void GMSHAdaptiveMeshDensity::getSteinerPoints (std::vector<GeoLib::Point*> & pn
             if ((*it)->getDepth() + additional_levels > max_depth) {
                 additional_levels = max_depth - (*it)->getDepth();
             }
-            const std::size_t n_pnts_per_quad_dim = 1 << additional_levels;
+            const std::size_t n_pnts_per_quad_dim = static_cast<std::size_t>(1)
+                                                    << additional_levels;
             const double delta ((ur[0] - ll[0]) / (2 * n_pnts_per_quad_dim));
             for (std::size_t i(0); i<n_pnts_per_quad_dim; i++) {
                 for (std::size_t j(0); j<n_pnts_per_quad_dim; j++) {
