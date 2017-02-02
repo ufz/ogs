@@ -1,14 +1,20 @@
-## Start servers
+## Getting started
+
+- Download [Hugo](https://gohugo.io/#action) and put it in your `PATH`
+- Install Node packages with `npm install`, *OPTIONAL* for SCSS and Javascript
+- Install Python packages with `pip install -r requirements.txt`, *OPTIONAL* for getting content from [Contentful](https://app.contentful.com/spaces/4nuqzxntzxks)
+
+## Start servers and watchers
 
     hugo server
 
 If you want to modify css or javascript run `gulp` in another terminal:
 
     gulp
-    
+
 ## Build site
 
-    (cd import; python import.py)
+    (cd import; python import.py) # Optional for fetching content from Contentful
     gulp build
     hugo
 
@@ -18,9 +24,12 @@ Test by locally serving via [Caddy](https://caddyserver.com):
 
 ## Used components
 
-- [Hugo](https://gothugo.com)
-- [flexboxgrid](http://flexboxgrid.com/)
-
+- [Hugo](https://gothugo.com) - Static site generator for technical documentation
+- [Contenful](https://www.contentful.com/) -  API-based CMS for news, articles, ..
+- [flexboxgrid](http://flexboxgrid.com/) - CSS grid
+- [vtk-js](https://kitware.github.io/vtk-js/) - 3D Visualizations
+- [webpack](https://webpack.github.io/) - Packaging JavaScript
+- [gulp](http://gulpjs.com/) - Automation toolkit
 
 ## Dump
 
