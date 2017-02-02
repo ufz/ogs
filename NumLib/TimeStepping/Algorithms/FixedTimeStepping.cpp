@@ -80,7 +80,8 @@ FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
     // append last delta_t until t_end is reached
     if (t_curr <= t_end)
     {
-        auto const repeat = std::ceil((t_end - t_curr) / delta_t);
+        auto const repeat =
+            static_cast<std::size_t>(std::ceil((t_end - t_curr) / delta_t));
         timesteps.resize(timesteps.size() + repeat, delta_t);
     }
 
