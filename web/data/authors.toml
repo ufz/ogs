@@ -1,8 +1,11 @@
-[bilke]
-name = "Lars Bilke"
+[Lars-Bilke]
 email = "lars.bilke@ufz.de"
 web = "https://github.com/bilke"
 
-[sachse]
+[Agnes-Sachse]
 email = "agnes.sachse@ufz.de"
+web = ""
+
+[Thomas-Kalbacher]
+email = "thomas.kalbacher@ufz.de"
 web = ""
