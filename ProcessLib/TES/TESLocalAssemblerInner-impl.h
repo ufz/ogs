@@ -226,8 +226,10 @@ void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
 {
     preEachAssembleIntegrationPoint(integration_point, localX, sm);
 
-    auto const N = sm.dNdx.cols();  // number of integration points
-    auto const D = sm.dNdx.rows();  // global dimension: 1, 2 or 3
+    auto const N =
+        static_cast<unsigned>(sm.dNdx.cols());  // number of integration points
+    auto const D =
+        static_cast<unsigned>(sm.dNdx.rows());  // global dimension: 1, 2 or 3
 
     assert(N * NODAL_DOF == local_M.cols());
 
