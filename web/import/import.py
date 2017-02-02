@@ -1,10 +1,15 @@
 import requests
 import imp
 import json
+import os
 
 # Load variables
-with open('./secret.py') as secretfile:
-    vars = imp.load_source('vars', '', secretfile)
+if os.path.exists('./secret.py'):
+    with open('./secret.py') as secretfile:
+        vars = imp.load_source('vars', '', secretfile)
+else:
+    with open('./secret-from-env.py') as secretfile:
+        vars = imp.load_source('vars', '', secretfile)
 
 
 def send_request():
