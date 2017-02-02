@@ -2,4 +2,4 @@
 [build]
   base    = "web"
   publish = "web/public"
-  command = "gulp scss; hugo"
+  command = "(cd import; python import.py); gulp build; hugo"
