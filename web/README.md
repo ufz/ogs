@@ -32,6 +32,24 @@ Test by locally serving via [Caddy](https://caddyserver.com):
 - [webpack](https://webpack.github.io/) - Packaging JavaScript
 - [gulp](http://gulpjs.com/) - Automation toolkit
 
+## How-Tos
+
+### Images
+
+Use shortcode `img`:
+
+```
+{{< img src="../square_1e2_neumann_gradients.png" >}}
+```
+
+`src` can be absolute (by preceding with `/`) or relative. The relative path starts at your current URL. If your image is in the same directory as your `.md`-file you have to prefix your path with `../` as in the example above.
+
+Optional parameters:
+
+- `title` - Image caption
+- `class` - CSS class
+- `alt` - Alt text
+
 ## Dump
 
 ### Serve converted meshes with S3

@@ -6,8 +6,6 @@ title = "Groundwater flow (Neumann)"
 
 ## Equations
 
-{{< vis url="square_1e4_pcs_0_ts_1_t_1.000000.vtu" >}}
-
 We start with simple linear homogeneous elliptic problem:
 $$
 \begin{equation}
@@ -22,8 +20,6 @@ k{\partial h(x) \over \partial n} = g_N(x) &\quad \text{on }\Gamma_N,
 where $h$ could be hydraulic head, the subscripts $D$ and $N$ denote the Dirichlet- and Neumann-type boundary conditions, $n$ is the normal vector pointing outside of $\Omega$, and $\Gamma = \Gamma_D \cup \Gamma_N$ and $\Gamma_D \cap \Gamma_N = \emptyset$.
 
 ## Problem specification and analytical solution
-
-{{< vis url="cow.vtp" height="300" >}}
 
 We solve the Laplace equation on a square domain $[0\times 1]^2$ with $k = 1$ w.r.t. the specific boundary conditions:
 
@@ -112,13 +108,17 @@ A last major part of the output was produced by the linear equation solver (LIS 
 The result, written in the `square_1e2_neumann.vtu`, can be visualized with Paraview, for example.
 
 Loading the `.vtu` file in Paraview will show following image:
-{asset:373:img}
+
+{{< vis url="square_1e4_pcs_0_ts_1_t_1.000000.vtu" >}}
 
 Compared to the analytical solution presented above the results are very good but in a single point:
-{asset:374:img}
+
+{{< vis url="cow.vtp" height="300" >}}
 
 Both Dirichlet boundary conditions are satisfied.
 The values of gradients in x direction along the right side and y directions along the top sides of the domain a shown below:
-{asset:375:img}
+
+{{< img src="../square_1e2_neumann_gradients.png" >}}
+
 The homogeneous Neumann boundary condition on the top side is satisfied (ScalarGradient_Y is close to zero).
 The inhomogeneous Neumann boundary condition on the bottom is satisfied only for $y > 0.3$ (where the ScalarGradient_X is close to one) because of incompatible boundary conditions imposed on the bottom right corner of the domain.
