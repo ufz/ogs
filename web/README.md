@@ -1,6 +1,7 @@
 ## Getting started
 
 - Download [Hugo](https://gohugo.io/#action) and put it in your `PATH`
+- Install gulp-cli globally with `npm install --global gulp-cli`, *OPTIONAL* for SCSS and Javascript
 - Install Node packages with `npm install`, *OPTIONAL* for SCSS and Javascript
 - Install Python packages with `pip install -r requirements.txt`, *OPTIONAL* for getting content from [Contentful](https://app.contentful.com/spaces/4nuqzxntzxks)
 
