@@ -7,9 +7,10 @@
   "license": "BSD",
   "scripts": {
     "hugo": "hugo server --disableRSS",
-    "build": "webpack",
-    "build:release": "export NODE_ENV=production && webpack -p",
-    "start": "webpack-dev-server --content-base ./public"
+    "build": "gulp build && hugo",
+    "build:release": "export NODE_ENV=production && gulp build && hugo",
+    "import": "cd import && python import.py",
+    "convert": "vtkDataConverter"
   },
   "paths": {
     "src": {
