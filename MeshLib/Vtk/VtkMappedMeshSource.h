@@ -23,11 +23,11 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 #include <vtkCellData.h>
-#include <vtkPointData.h>
+#include <vtkFieldData.h>
 #include <vtkNew.h>
+#include <vtkPointData.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkUnstructuredGridAlgorithm.h>
 
@@ -35,15 +35,6 @@
 #include "MeshLib/PropertyVector.h"
 
 #include "VtkMappedPropertyVectorTemplate.h"
-
-class vtkCellData;
-class vtkDataArrayCollection;
-class vtkPointData;
-class vtkPoints;
-namespace MeshLib {
-    class Mesh;
-    class Properties;
-}
 
 namespace MeshLib {
 
@@ -97,6 +88,8 @@ private:
             this->PointData->AddArray(dataArray.GetPointer());
         else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
             this->CellData->AddArray(dataArray.GetPointer());
+        else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::IntegrationPoint)
+            this->FieldData->AddArray(dataArray.GetPointer());
 
         return true;
     }
@@ -109,6 +102,7 @@ private:
     vtkNew<vtkPoints> Points;
     vtkNew<vtkPointData> PointData;
     vtkNew<vtkCellData> CellData;
+    vtkNew<vtkFieldData> FieldData;
 };
 
 } // Namespace MeshLib

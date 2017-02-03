@@ -14,6 +14,7 @@
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/PropertyVector.h"
 
 class MeshLibProperties : public ::testing::Test
@@ -47,6 +48,59 @@ TEST_F(MeshLibProperties, PropertyVectorTestMetaData)
     ASSERT_EQ(MeshLib::MeshItemType::Cell, p->getMeshItemType());
     ASSERT_EQ(1u, p->getNumberOfComponents());
     ASSERT_EQ(0u, p->size());
+}
+
+TEST_F(MeshLibProperties, PropertyVectorTestIntegrationPoint)
+{
+    ASSERT_TRUE(mesh != nullptr);
+
+    int const n_integration_points = 4;
+    int const vector_length = 6;
+    std::string const prop_name("ip_field");
+
+    auto* const p_ptr = mesh->getProperties().createNewPropertyVector<double>(
+        prop_name, MeshLib::MeshItemType::IntegrationPoint, vector_length);
+    ASSERT_TRUE(p_ptr != nullptr);
+
+    auto& p = *p_ptr;
+    ASSERT_EQ(p.getPropertyName(), prop_name);
+    ASSERT_EQ(MeshLib::MeshItemType::IntegrationPoint, p.getMeshItemType());
+    ASSERT_EQ(vector_length, p.getNumberOfComponents());
+    ASSERT_EQ(0u, p.size());
+
+    // Fill the property vector with double data in following pattern:
+    // for element's id xx and integration point number yy the value is xx.yy.
+    p.resize(mesh->getNumberOfElements() * n_integration_points);
+
+    std::vector<std::size_t> offsets(mesh->getNumberOfElements());
+    std::size_t offset = 0; // last position in the property vector
+    for (auto const& e : mesh->getElements())
+    {
+        offsets[e->getID()] = offset;
+        for (int ip = 0; ip < n_integration_points; ++ip)
+        {
+            p[offset + ip] = e->getID() + ip * 0.01;
+        }
+        offset += n_integration_points;
+    }
+
+    // Check the values at each offset.
+
+    // Last element is checked after the for-loop.
+    std::size_t i = 0;
+    for (; i < offsets.size() - 1; ++i)
+    {
+        std::size_t const size = offsets[i + 1] - offsets[i];
+        ASSERT_EQ(n_integration_points, size);
+        for (int ip = 0; ip < n_integration_points; ++ip)
+            ASSERT_EQ(i + ip * 0.01, p[offsets[i] + ip]);
+    }
+    {  // Last element
+        std::size_t const size = p.size() - offsets[i];
+        ASSERT_EQ(n_integration_points, size);
+        for (int ip = 0; ip < n_integration_points; ++ip)
+            ASSERT_EQ(i + ip * 0.01, p[offsets[i] + ip]);
+    }
 }
 
 TEST_F(MeshLibProperties, AddDoubleProperties)

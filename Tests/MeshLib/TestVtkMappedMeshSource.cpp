@@ -35,7 +35,8 @@
 #include <vtkCellData.h>
 #include <vtkPointData.h>
 
-// Creates a mesh with double and int point and cell properties
+// Creates a mesh with different types of data (double, int, etc.) and point,
+// cell, or integration point properties.
 class InSituMesh : public ::testing::Test
 {
     public:
@@ -62,6 +63,14 @@ class InSituMesh : public ::testing::Test
         std::iota(
             cell_double_properties->begin(), cell_double_properties->end(), 1);
 
+        std::string const field_prop_name("FieldDoubleProperty");
+        auto* const field_double_properties =
+            mesh->getProperties().createNewPropertyVector<double>(
+                field_prop_name, MeshLib::MeshItemType::IntegrationPoint);
+        field_double_properties->resize(mesh->getNumberOfElements() * 2);
+        std::iota(
+            field_double_properties->begin(), field_double_properties->end(), 1);
+
         std::string const point_int_prop_name("PointIntProperty");
         auto* const point_int_properties =
             mesh->getProperties().createNewPropertyVector<int>(
@@ -76,6 +85,13 @@ class InSituMesh : public ::testing::Test
                 cell_int_prop_name, MeshLib::MeshItemType::Cell);
         cell_int_properties->resize(mesh->getNumberOfElements());
         std::iota(cell_int_properties->begin(), cell_int_properties->end(), 1);
+
+        std::string const field_int_prop_name("FieldIntProperty");
+        auto* const field_int_properties =
+            mesh->getProperties().createNewPropertyVector<int>(
+                field_int_prop_name, MeshLib::MeshItemType::IntegrationPoint);
+        field_int_properties->resize(mesh->getNumberOfElements() * 2);
+        std::iota(field_int_properties->begin(), field_int_properties->end(), 1);
 
         std::string const point_unsigned_prop_name("PointUnsignedProperty");
         auto point_unsigned_properties =
@@ -93,6 +109,15 @@ class InSituMesh : public ::testing::Test
         cell_unsigned_properties->resize(mesh->getNumberOfElements());
         std::iota(cell_unsigned_properties->begin(),
                   cell_unsigned_properties->end(),
+                  1);
+
+        std::string const field_unsigned_prop_name("FieldUnsignedProperty");
+        auto field_unsigned_properties =
+            mesh->getProperties().createNewPropertyVector<unsigned>(
+                field_unsigned_prop_name, MeshLib::MeshItemType::IntegrationPoint);
+        field_unsigned_properties->resize(mesh->getNumberOfElements() * 2);
+        std::iota(field_unsigned_properties->begin(),
+                  field_unsigned_properties->end(),
                   1);
 
         std::string const material_ids_name("MaterialIDs");
@@ -207,6 +232,31 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     ASSERT_EQ(range[0], 1.0);
     ASSERT_EQ(range[1], 1 + mesh->getNumberOfElements() - 1);
 
+    // Field data arrays
+    vtkDataArray* fieldDoubleArray = vtkDataArray::SafeDownCast(
+        output->GetFieldData()->GetAbstractArray("FieldDoubleProperty"));
+    ASSERT_EQ(fieldDoubleArray->GetSize(), mesh->getNumberOfElements() * 2);
+    ASSERT_EQ(fieldDoubleArray->GetComponent(0, 0), 1.0);
+    range = fieldDoubleArray->GetRange(0);
+    ASSERT_EQ(range[0], 1.0);
+    ASSERT_EQ(range[1],  mesh->getNumberOfElements() * 2);
+
+    vtkDataArray* fieldIntArray = vtkDataArray::SafeDownCast(
+        output->GetFieldData()->GetAbstractArray("FieldIntProperty"));
+    ASSERT_EQ(fieldIntArray->GetSize(), mesh->getNumberOfElements() * 2);
+    ASSERT_EQ(fieldIntArray->GetComponent(0, 0), 1.0);
+    range = fieldIntArray->GetRange(0);
+    ASSERT_EQ(range[0], 1.0);
+    ASSERT_EQ(range[1], mesh->getNumberOfElements() * 2);
+
+    vtkDataArray* fieldUnsignedArray = vtkDataArray::SafeDownCast(
+        output->GetFieldData()->GetAbstractArray("FieldUnsignedProperty"));
+    ASSERT_EQ(fieldUnsignedArray->GetSize(), mesh->getNumberOfElements() * 2);
+    ASSERT_EQ(fieldUnsignedArray->GetComponent(0, 0), 1.0);
+    range = fieldUnsignedArray->GetRange(0);
+    ASSERT_EQ(range[0], 1.0);
+    ASSERT_EQ(range[1], mesh->getNumberOfElements() * 2);
+
     // -- Write VTK mesh to file (in all combinations of binary, appended and compressed)
     // atm vtkXMLWriter::Appended does not work, see http://www.paraview.org/Bug/view.php?id=13382
     for(int dataMode : { vtkXMLWriter::Ascii, vtkXMLWriter::Binary })
@@ -228,6 +278,7 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
             // Both VTK meshes should be identical
             ASSERT_EQ(vtkMesh->GetNumberOfPoints(), output->GetNumberOfPoints());
             ASSERT_EQ(vtkMesh->GetNumberOfCells(), output->GetNumberOfCells());
+            ASSERT_EQ(vtkMesh->GetFieldData()->GetNumberOfArrays(), output->GetFieldData()->GetNumberOfArrays());
             ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointDoubleProperty")->GetNumberOfTuples(),
                 pointDoubleArray->GetNumberOfTuples());
             ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointIntProperty")->GetNumberOfTuples(),
@@ -240,6 +291,22 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
                 cellIntArray->GetNumberOfTuples());
             ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellUnsignedProperty")->GetNumberOfTuples(),
                       cellUnsignedArray->GetNumberOfTuples());
+
+            auto get_field_data =
+                [&vtkMesh](std::string const array_name) -> vtkDataArray* {
+                return vtkDataArray::SafeDownCast(
+                    vtkMesh->GetFieldData()->GetAbstractArray(
+                        array_name.c_str()));
+            };
+
+            ASSERT_EQ(
+                get_field_data("FieldDoubleProperty")->GetNumberOfTuples(),
+                fieldDoubleArray->GetNumberOfTuples());
+            ASSERT_EQ(get_field_data("FieldIntProperty")->GetNumberOfTuples(),
+                      fieldIntArray->GetNumberOfTuples());
+            ASSERT_EQ(
+                get_field_data("FieldUnsignedProperty")->GetNumberOfTuples(),
+                fieldUnsignedArray->GetNumberOfTuples());
 
             // Both OGS meshes should be identical
             auto newMesh = std::unique_ptr<MeshLib::Mesh>{MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh)};
@@ -261,6 +328,14 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
                 meshProperties.hasPropertyVector("CellIntProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("CellUnsignedProperty"),
                 meshProperties.hasPropertyVector("CellUnsignedProperty"));
+
+            ASSERT_EQ(newMeshProperties.hasPropertyVector("FieldDoubleProperty"),
+                meshProperties.hasPropertyVector("FieldDoubleProperty"));
+            ASSERT_EQ(newMeshProperties.hasPropertyVector("FieldIntProperty"),
+                meshProperties.hasPropertyVector("FieldIntProperty"));
+            ASSERT_EQ(newMeshProperties.hasPropertyVector("FieldUnsignedProperty"),
+                meshProperties.hasPropertyVector("FieldUnsignedProperty"));
+
             ASSERT_EQ(newMeshProperties.hasPropertyVector("MaterialIDs"),
                 meshProperties.hasPropertyVector("MaterialIDs"));
 
@@ -290,6 +365,20 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
             ASSERT_EQ(newUnsignedIds->size(), unsignedProps->size());
             for (std::size_t i = 0; i < unsignedProps->size(); i++)
                 ASSERT_EQ((*newUnsignedIds)[i], (*unsignedProps)[i]);
+
+            {   // Field data
+                auto p =
+                    meshProperties.getPropertyVector<int>("FieldIntProperty");
+                auto new_p = newMeshProperties.getPropertyVector<int>(
+                    "FieldIntProperty");
+
+                ASSERT_EQ(new_p->getNumberOfComponents(),
+                          p->getNumberOfComponents());
+                ASSERT_EQ(new_p->getNumberOfTuples(), p->getNumberOfTuples());
+                ASSERT_EQ(new_p->size(), p->size());
+                for (std::size_t i = 0; i < unsignedProps->size(); i++)
+                    ASSERT_EQ((*newUnsignedIds)[i], (*unsignedProps)[i]);
+            }
 
             auto const* const materialIds =
                 meshProperties.getPropertyVector<int>("MaterialIDs");

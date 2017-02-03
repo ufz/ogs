@@ -18,7 +18,7 @@
 namespace MeshLib
 {
 
-enum class MeshItemType { Node, Edge, Face, Cell };
+enum class MeshItemType { Node, Edge, Face, Cell, IntegrationPoint };
 
 std::ostream& operator<<(std::ostream& os, MeshItemType const& t);
 
