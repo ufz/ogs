@@ -24,6 +24,10 @@ APPEND_SOURCE_FILES(SOURCES TwoPhaseFlowWithPP)
 add_subdirectory(TwoPhaseFlowWithPrho)
 APPEND_SOURCE_FILES(SOURCES TwoPhaseFlowWithPrho)
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS SmallDeformation/integration_point.proto)
+list(APPEND SOURCES ${PROTO_SRCS} ${PROTO_HDRS})
+
 add_subdirectory(SmallDeformation)
 APPEND_SOURCE_FILES(SOURCES SmallDeformation)
 
