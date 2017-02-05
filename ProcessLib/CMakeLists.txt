@@ -60,6 +60,7 @@ target_link_libraries(ProcessLib
     MeshGeoToolsLib
     NumLib # for shape matrices
     ${VTK_LIBRARIES}
+    ${PROTOBUF_LIBRARIES}
 )
 
 ADD_VTK_DEPENDENCY(ProcessLib)
