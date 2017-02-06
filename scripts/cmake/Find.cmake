@@ -64,6 +64,8 @@ if(CCACHE_FOUND)
     endif()
 endif(CCACHE_FOUND)
 
+find_program(VTKJS_CONVERTER vtkDataConverter)
+
 ######################
 ### Find libraries ###
 ######################
