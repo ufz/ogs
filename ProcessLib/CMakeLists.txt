@@ -21,6 +21,8 @@ APPEND_SOURCE_FILES(SOURCES HydroMechanics)
 
 add_subdirectory(TwoPhaseFlowWithPP)
 APPEND_SOURCE_FILES(SOURCES TwoPhaseFlowWithPP)
+add_subdirectory(TwoPhaseFlowWithPrho)
+APPEND_SOURCE_FILES(SOURCES TwoPhaseFlowWithPrho)
 
 add_subdirectory(SmallDeformation)
 APPEND_SOURCE_FILES(SOURCES SmallDeformation)

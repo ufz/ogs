@@ -23,12 +23,16 @@ class CapillaryPressureSaturation
 public:
     /**
      * @param Sr     Residual saturation, \f$ S_r \f$
+     * @param Sg_r     Residual saturation of gas phase, \f$ Sg_r \f$
      * @param Smax   Maximum saturation, \f$ S_{\mbox{max}} \f$
      * @param Pc_max Maximum capillary pressure, \f$ P_c^{\mbox{max}}\f$
      */
-    CapillaryPressureSaturation(const double Sr, const double Smax,
-                                const double Pc_max)
-        : _saturation_r(Sr), _saturation_max(Smax), _pc_max(Pc_max)
+    CapillaryPressureSaturation(const double Sr, const double Sg_r,
+                                const double Smax, const double Pc_max)
+        : _saturation_r(Sr),
+          _saturation_nonwet_r(Sg_r),
+          _saturation_max(Smax),
+          _pc_max(Pc_max)
     {
     }
     virtual ~CapillaryPressureSaturation() = default;
@@ -38,7 +42,6 @@ public:
 
     /// Get capillary pressure.
     virtual double getCapillaryPressure(const double saturation) const = 0;
-
     /// Get saturation.
     virtual double getSaturation(const double capillary_ressure) const = 0;
 
@@ -46,9 +49,11 @@ public:
     virtual double getdPcdS(const double saturation) const = 0;
 
 protected:
-    const double _saturation_r;    ///< Residual saturation.
-    const double _saturation_max;  ///< Maximum saturation.
-    const double _pc_max;          ///< Maximum capillaray pressure
+    const double _saturation_r;         ///< Residual saturation.
+    const double _saturation_nonwet_r;  ///< Residual saturation of nonwetting
+                                        ///phase (optional).
+    const double _saturation_max;       ///< Maximum saturation.
+    const double _pc_max;               ///< Maximum capillaray pressure
 
     /** A small number for an offset:
      *  1. to set the bound of S, the saturation, such that

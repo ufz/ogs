@@ -31,6 +31,7 @@ public:
         std::unique_ptr<MathLib::PiecewiseLinearMonotonicCurve>&& curve_data)
         : CapillaryPressureSaturation(
               curve_data->getSupportMin(),
+              1.0 - curve_data->getSupportMax(),
               curve_data->getSupportMax(),
               curve_data->getValue(curve_data->getSupportMin())),
           _curve_data(std::move(curve_data))

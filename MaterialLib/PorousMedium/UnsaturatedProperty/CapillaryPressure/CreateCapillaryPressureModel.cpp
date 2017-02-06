@@ -44,6 +44,16 @@ static std::unique_ptr<CapillaryPressureSaturation> createBrookCorey(
     //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey__sr}
     const double Sr = config.getConfigParameter<double>("sr");
 
+    double Sg_r = 0.0;
+    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey__sg_r}
+    if (auto const Sg_r_ptr = config.getConfigParameterOptional<double>("sg_r"))
+    {
+        DBUG(
+            "Using value %g for nonwetting phase residual saturation in "
+            "capillary pressure model.",
+            (*Sg_r_ptr));
+        Sg_r = *Sg_r_ptr;
+    }
     //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey__smax}
     const double Smax = config.getConfigParameter<double>("smax");
 
@@ -59,7 +69,8 @@ static std::unique_ptr<CapillaryPressureSaturation> createBrookCorey(
     const double Pc_max = config.getConfigParameter<double>("pc_max");
 
     return std::unique_ptr<CapillaryPressureSaturation>(
-        new BrookCoreyCapillaryPressureSaturation(pd, Sr, Smax, m, Pc_max));
+        new BrookCoreyCapillaryPressureSaturation(
+            pd, Sr, Sg_r, Smax, m, Pc_max));
 }
 
 /**
@@ -79,6 +90,17 @@ static std::unique_ptr<CapillaryPressureSaturation> createVanGenuchten(
     //! \ogs_file_param{material__porous_medium__capillary_pressure__vanGenuchten__sr}
     const double Sr = config.getConfigParameter<double>("sr");
 
+    double Sg_r = 0.0;
+    //! \ogs_file_param{material__porous_medium__capillary_pressure__vanGenuchten__sg_r}
+    if (auto const Sg_r_ptr = config.getConfigParameterOptional<double>("sg_r"))
+    {
+        DBUG(
+            "Using value %g for nonwetting phase residual saturation in "
+            "capillary pressure model.",
+            (*Sg_r_ptr));
+        Sg_r = *Sg_r_ptr;
+    }
+
     //! \ogs_file_param{material__porous_medium__capillary_pressure__vanGenuchten__smax}
     const double Smax = config.getConfigParameter<double>("smax");
 
@@ -93,8 +115,18 @@ static std::unique_ptr<CapillaryPressureSaturation> createVanGenuchten(
     //! \ogs_file_param{material__porous_medium__capillary_pressure__vanGenuchten__pc_max}
     const double Pc_max = config.getConfigParameter<double>("pc_max");
 
+    bool has_regularized = false;
+    if (auto const has_regularized_conf =
+            //! \ogs_file_param{material__porous_medium__capillary_pressure__vanGenuchten__has_regularized}
+        config.getConfigParameterOptional<bool>("has_regularized"))
+    {
+        DBUG("capillary pressure model: %s",
+             (*has_regularized_conf) ? "true" : "false");
+        has_regularized = *has_regularized_conf;
+    }
     return std::unique_ptr<CapillaryPressureSaturation>(
-        new VanGenuchtenCapillaryPressureSaturation(pd, Sr, Smax, m, Pc_max));
+        new VanGenuchtenCapillaryPressureSaturation(
+            pd, Sr, Sg_r, Smax, m, Pc_max, has_regularized));
 }
 
 std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
