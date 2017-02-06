@@ -15,6 +15,7 @@
 #   REQUIREMENTS # optional simple boolean expression which has to be true to
 #                  enable the test, e.g.
 #                  OGS_USE_PETSC AND (OGS_USE_EIGEN OR OGS_USE_LIS)
+#   VIS <vtu output file(s)> # optional for documentation
 # )
 #
 # Conditional arguments:
@@ -36,7 +37,7 @@ function (AddTest)
     # parse arguments
     set(options NONE)
     set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL)
-    set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS)
+    set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS VIS)
     cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 
@@ -214,6 +215,9 @@ function (AddTest)
         COMMAND ${CMAKE_COMMAND}
         -Dcase_path=${AddTest_SOURCE_PATH}
         -DTESTER_COMMAND=${TESTER_COMMAND}
+        -DVTKJS_CONVERTER=${VTKJS_CONVERTER}
+        -DBINARY_PATH=${AddTest_BINARY_PATH}
+        "-DVIS_FILES=${AddTest_VIS}"
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
     )
     set_tests_properties(${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME})
