@@ -1,6 +1,13 @@
 <table>
   <tr>
     <td>
+      <select id='arraySelect' style="width: 100%">
+
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td>
       <select class='representations' style="width: 100%">
         <option value='0'>Points</option>
         <option value='1'>Wireframe</option>
@@ -10,7 +17,11 @@
   </tr>
   <tr>
     <td>
-      <input class='resolution' type='range' min='0' max='100' value='100' />
+      Opacity: <input class='resolution' type='range' min='0' max='100' value='100' />
     </td>
   </tr>
 </table>
+<hr>
+<ul>
+  <li>Range: <span id='range'></span></li>
+</ul>
