@@ -19,8 +19,11 @@ if(NOT EXIT_CODE STREQUAL "0")
 endif()
 
 # Run vtk.js converter
+if(VIS_FILES)
+    execute_process(COMMAND cmake -E make_directory ${VTKJS_OUTPUT_PATH})
+endif()
 foreach(FILE ${VIS_FILES})
     execute_process(
-        COMMAND ${VTKJS_CONVERTER} -e -i ${BINARY_PATH}/${FILE} -o ${BINARY_PATH}/vtk-js
+        COMMAND ${VTKJS_CONVERTER} -e -i ${BINARY_PATH}/${FILE} -o ${VTKJS_OUTPUT_PATH}
     )
 endforeach()

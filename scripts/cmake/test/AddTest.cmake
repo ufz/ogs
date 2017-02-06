@@ -217,6 +217,7 @@ function (AddTest)
         -DTESTER_COMMAND=${TESTER_COMMAND}
         -DVTKJS_CONVERTER=${VTKJS_CONVERTER}
         -DBINARY_PATH=${AddTest_BINARY_PATH}
+        -DVTKJS_OUTPUT_PATH=${CMAKE_SOURCE_DIR}/web/static/vis/${AddTest_PATH}
         "-DVIS_FILES=${AddTest_VIS}"
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
     )

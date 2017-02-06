@@ -4,6 +4,9 @@ bin/
 public/
 themes/ogs/static
 import/secret.py
+static/
+test.md
+test.jpg
 
 # Generated from Contentful
 content/internal
