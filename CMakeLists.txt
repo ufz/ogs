@@ -40,6 +40,7 @@ include(scripts/cmake/test/Test.cmake)
 if(OGS_COVERAGE AND NOT IS_SUBPROJECT)
     include(scripts/cmake/Coverage.cmake)
 endif()
+include(scripts/cmake/Web.cmake)
 
 ####################
 ### More Options ###

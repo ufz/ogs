@@ -4,6 +4,8 @@
 - Install Node packages with `npm install` (or via `yarn`), *OPTIONAL* for SCSS and Javascript
 - Install Python packages with `pip install -r requirements.txt`, *OPTIONAL* for getting content from [Contentful](https://app.contentful.com/spaces/4nuqzxntzxks)
 
+Alternatively you can simply run `make web` inside your build directory to install everything and build the site (this requires that `python`, `pip` and `npm` was found by CMake).
+
 ## Start servers and watchers
 
     hugo server
@@ -14,7 +16,7 @@ If you want to modify css or javascript run `gulp` in another terminal:
 
 ## Build site
 
-    (cd import; python import.py) # Optional for fetching content from Contentful
+    (cd import; python import.py) # Optional for fetching content from Contentful, needs credentials setup, rename `secret_example.py` to `secret.py`
     npm run build
 
 Test by locally serving via [Caddy](https://caddyserver.com):
