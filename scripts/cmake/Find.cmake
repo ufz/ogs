@@ -64,8 +64,14 @@ if(CCACHE_FOUND)
     endif()
 endif(CCACHE_FOUND)
 
+# Tools for web
 find_program(VTKJS_CONVERTER vtkDataConverter
-PATHS ${CMAKE_SOURCE_DIR}/web/node_modules/.bin)
+    PATHS ${CMAKE_SOURCE_DIR}/web/node_modules/.bin)
+find_program(HUGO hugo)
+find_program(NPM npm)
+find_program(YARN yarn)
+find_program(PIP pip)
+find_package(PythonInterp)
 
 ######################
 ### Find libraries ###
