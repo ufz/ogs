@@ -36,7 +36,13 @@ image.inside(defaultDockerArgs) {
     }
 
     stage('Web (Linux-Docker)') {
-        build.linux(script: this, target: 'web')
+        withCredentials([string(
+            credentialsId: 'CONTENTFUL_ACCESS_TOKEN',
+            variable: 'CONTENTFUL_ACCESS_TOKEN'), string(
+            credentialsId: 'CONTENTFUL_OGS_SPACE_ID',
+            variable: 'CONTENTFUL_OGS_SPACE_ID')]) {
+            build.linux(script: this, target: 'web')
+        }
     }
 
     stage('Data Explorer (Linux-Docker)') {
