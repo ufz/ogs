@@ -64,7 +64,8 @@ if(CCACHE_FOUND)
     endif()
 endif(CCACHE_FOUND)
 
-find_program(VTKJS_CONVERTER vtkDataConverter)
+find_program(VTKJS_CONVERTER vtkDataConverter
+PATHS ${CMAKE_SOURCE_DIR}/web/node_modules/.bin)
 
 ######################
 ### Find libraries ###
