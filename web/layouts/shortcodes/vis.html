@@ -1,6 +1,7 @@
 <iframe
-	src="/internal/vis/index.html?fileURL=http://s3-eu-central-1.amazonaws.com/jenkins-dump/{{ .Get "url" }}"
+	src="/internal/vis/index.html?fileURL=/vis/{{ .Get "path" }}"
 	width="100%"
 	{{ with .Get "height"}} height="{{.}}px"{{ else }} height="500px"{{ end }}
 >
 </iframe>
+<p>File: <code>{{ .Get "path" }}</code></p>
