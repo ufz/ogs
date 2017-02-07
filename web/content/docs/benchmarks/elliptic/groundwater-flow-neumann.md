@@ -105,15 +105,11 @@ A last major part of the output was produced by the linear equation solver (LIS 
 
 ## Results and evaluation
 
-The result, written in the `square_1e2_neumann.vtu`, can be visualized with Paraview, for example.
-
-Loading the `.vtu` file in Paraview will show following image:
-
-{{< vis url="square_1e4_pcs_0_ts_1_t_1.000000.vtu" >}}
+{{< vis path="Elliptic/square_1x1_GroundWaterFlow/square_1e2_pcs_0_ts_1_t_1.000000.vtu" >}}
 
 Compared to the analytical solution presented above the results are very good but in a single point:
 
-{{< vis url="cow.vtp" height="300" >}}
+{{< img src="../square_1e2_neumann_abs_err.png" >}}
 
 Both Dirichlet boundary conditions are satisfied.
 The values of gradients in x direction along the right side and y directions along the top sides of the domain a shown below:

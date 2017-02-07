@@ -77,6 +77,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         ABSTOL 1e-13 RELTOL 1e-13
         DIFF_DATA
         square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
+        VIS square_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu
     )
 
     AddTest(
