@@ -305,10 +305,10 @@ NodeWiseMeshPartitioner::writeConfigDataBinary(const std::string& file_name_base
         // Update offsets
         num_elem_integers[loop_id] =
             partition.regular_elements.size() + config_data[8];
-        // Offset the ending enrtry of the element integer variales of
+        // Offset the ending entry of the element integer variales of
         // the non-ghost elements of this partition in the vector of elem_info.
         config_data[11] += num_elem_integers[loop_id] * sizeof(IntegerType);
-        // Offset the ending enrtry of the element integer variales of
+        // Offset the ending entry of the element integer variales of
         // the ghost elements of this partition in the vector of elem_info.
         num_g_elem_integers[loop_id] =
             partition.ghost_elements.size() + config_data[9];
