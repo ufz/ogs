@@ -20,6 +20,9 @@ def helper = new ogs.helper()
 def image = docker.image('ogs6/gcc-gui:latest')
 image.pull()
 image.inside(defaultDockerArgs) {
+    stage('Install prerequisites Web') {
+        sh 'cd ogs/web && yarn && sudo -H pip install -r requirements.txt'
+    }
     stage('Configure (Linux-Docker)') {
         configure.linux(cmakeOptions: defaultCMakeOptions, script: this)
     }
@@ -30,6 +33,10 @@ image.inside(defaultDockerArgs) {
 
     stage('Test (Linux-Docker)') {
         build.linux(script: this, target: 'tests ctest')
+    }
+
+    stage('Web (Linux-Docker)') {
+        build.linux(script: this, target: 'web')
     }
 
     stage('Data Explorer (Linux-Docker)') {
@@ -45,5 +52,8 @@ image.inside(defaultDockerArgs) {
 stage('Post (Linux-Docker)') {
     post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
         'ogs/scripts/jenkins/clang-log-parser.rules'
+    publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false,
+        keepAll: false, reportDir: 'ogs/web/public', reportFiles: 'index.html',
+        reportName: 'Web'])
     post.cleanup()
 }
