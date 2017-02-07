@@ -252,7 +252,7 @@ NodeWiseMeshPartitioner::IntegerType
 NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
     const std::vector<const MeshLib::Element*>& elements) const
 {
-    // Number of material ID, element type, and number of the nodes of
+    // Element ID, element type, and number of the nodes of
     // an element of all elements in the current partition.
     IntegerType nmb_element_idxs = 3 * elements.size();
     for (const auto* elem : elements)

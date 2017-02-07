@@ -107,12 +107,11 @@ private:
 
     /*!
        Calculate the total number of integer variables of an element
-       vector.
-           Each element has three integer variables for material ID,
+       vector. Each element has three integer variables for element ID,
        element type, number of nodes of the element. Therefore
        the total number of the integers in an element vector is
         3 * vector size + sum (number of nodes of each element)
-   */
+    */
     IntegerType getNumberOfIntegerVariablesOfElements(
         const std::vector<const MeshLib::Element*>& elements) const;
 
