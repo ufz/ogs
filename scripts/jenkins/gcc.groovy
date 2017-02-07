@@ -21,7 +21,7 @@ def image = docker.image('ogs6/gcc-gui:latest')
 image.pull()
 image.inside(defaultDockerArgs) {
     stage('Install prerequisites Web') {
-        sh 'cd ogs/web && yarn && sudo -H pip install -r requirements.txt'
+        sh 'cd ogs/web && rm -rf node_modules && npm install && sudo -H pip install -r requirements.txt'
     }
     stage('Configure (Linux-Docker)') {
         configure.linux(cmakeOptions: defaultCMakeOptions, script: this)
