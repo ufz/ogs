@@ -26,3 +26,8 @@ add_custom_target(web
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/web
     DEPENDS web-install web-import
 )
+
+add_custom_target(web-clean
+    COMMAND ${NPM} run clean
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/web
+)

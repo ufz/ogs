@@ -6,6 +6,7 @@
   "author": "Lars Bilke",
   "license": "BSD",
   "scripts": {
+    "clean": "gulp clean",
     "gulp": "gulp",
     "hugo": "hugo server --disableRSS",
     "build": "gulp build && hugo",
@@ -145,6 +146,7 @@
     "siteIcon": "./public/img/site/favicon.*"
   },
   "devDependencies": {
+    "del": "^2.2.2",
     "fancy-log": "^1.3.0",
     "flexboxgrid": "^6.3.1",
     "gulp": "^3.9.1",

@@ -48,6 +48,25 @@ gulp.task('watch', function() {
   gulp.watch('./package.json', ['scss']);
 });
 
+gulp.task('clean', function() {
+    return $.del([
+        'static',
+        'public',
+        'content/internal/news.md',
+        'data/news.json'
+    ]);
+});
+
+gulp.task('clean-all', function() {
+    return $.del([
+        'static',
+        'public',
+        'node_modules',
+        'content/internal/news.md',
+        'data/news.json'
+    ]);
+});
+
 gulp.task('build', ['scss', 'webpack'])
 
 gulp.task('default', ['scss', 'webpack-watch', 'watch'])
