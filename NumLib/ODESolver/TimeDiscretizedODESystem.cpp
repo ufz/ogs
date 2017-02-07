@@ -68,7 +68,7 @@ TimeDiscretizedODESystem<
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Newton>::
     assemble(const GlobalVector& x_new_timestep,
-             ProcessLib::StaggeredCouplingTerm const& coupled_term)
+             ProcessLib::StaggeredCouplingTerm const& coupling_term)
 {
     namespace LinAlg = MathLib::LinAlg;
 
@@ -86,7 +86,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     _Jac->setZero();
 
     _ode.assembleWithJacobian(t, x_curr, xdot, dxdot_dx, dx_dx, *_M, *_K, *_b,
-                              *_Jac, coupled_term);
+                              *_Jac, coupling_term);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);
@@ -177,7 +177,7 @@ TimeDiscretizedODESystem<
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Picard>::
     assemble(const GlobalVector& x_new_timestep,
-             ProcessLib::StaggeredCouplingTerm const& coupled_term)
+             ProcessLib::StaggeredCouplingTerm const& coupling_term)
 {
     namespace LinAlg = MathLib::LinAlg;
 
@@ -188,7 +188,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     _K->setZero();
     _b->setZero();
 
-    _ode.assemble(t, x_curr, *_M, *_K, *_b, coupled_term);
+    _ode.assemble(t, x_curr, *_M, *_K, *_b, coupling_term);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);

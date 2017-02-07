@@ -40,7 +40,7 @@ public:
                   NumLib::LocalToGlobalIndexMap const& dof_table,
                   double const t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b,
-                  const StaggeredCouplingTerm& coupled_term);
+                  const StaggeredCouplingTerm& coupling_term);
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
     //! \note The Jacobian must be assembled.
@@ -52,7 +52,7 @@ public:
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac,
-                              const StaggeredCouplingTerm& coupled_term);
+                              const StaggeredCouplingTerm& coupling_term);
 
 private:
     // temporary data only stored here in order to avoid frequent memory

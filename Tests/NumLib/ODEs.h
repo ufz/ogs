@@ -29,7 +29,7 @@ class ODE1 final : public NumLib::ODESystem<
 public:
     void assemble(const double /*t*/, GlobalVector const& /*x*/,
                   GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-                  ProcessLib::StaggeredCouplingTerm const& /*coupled_term*/
+                  ProcessLib::StaggeredCouplingTerm const& /*coupling_term*/
                  ) override
     {
         MathLib::setMatrix(M, { 1.0, 0.0,  0.0, 1.0 });
@@ -44,11 +44,11 @@ public:
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac,
                               ProcessLib::StaggeredCouplingTerm
-                              const& coupled_term) override
+                              const& coupling_term) override
     {
         namespace LinAlg = MathLib::LinAlg;
 
-        assemble(t, x_curr, M, K, b, coupled_term);
+        assemble(t, x_curr, M, K, b, coupling_term);
 
         // compute Jac = M*dxdot_dx + dx_dx*K
         LinAlg::finalizeAssembly(M);
@@ -109,7 +109,7 @@ class ODE2 final : public NumLib::ODESystem<
 public:
     void assemble(const double /*t*/, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b,
-                  ProcessLib::StaggeredCouplingTerm const& /*coupled_term*/
+                  ProcessLib::StaggeredCouplingTerm const& /*coupling_term*/
                  ) override
     {
         MathLib::setMatrix(M, {1.0});
@@ -123,9 +123,9 @@ public:
                               GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac,
                               ProcessLib::StaggeredCouplingTerm const&
-                              coupled_term) override
+                              coupling_term) override
     {
-        assemble(t, x, M, K, b, coupled_term);
+        assemble(t, x, M, K, b, coupling_term);
 
         namespace LinAlg = MathLib::LinAlg;
 
@@ -197,7 +197,7 @@ class ODE3 final : public NumLib::ODESystem<
 public:
     void assemble(const double /*t*/, GlobalVector const& x_curr, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b,
-                  ProcessLib::StaggeredCouplingTerm const& /*coupled_term*/
+                  ProcessLib::StaggeredCouplingTerm const& /*coupling_term*/
                  ) override
     {
         auto const u = x_curr[0];
@@ -215,9 +215,9 @@ public:
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac,
                               ProcessLib::StaggeredCouplingTerm const&
-                              coupled_term) override
+                              coupling_term) override
     {
-        assemble(t, x_curr, M, K, b, coupled_term);
+        assemble(t, x_curr, M, K, b, coupling_term);
 
         auto const u = x_curr[0];
         auto const v = x_curr[1];

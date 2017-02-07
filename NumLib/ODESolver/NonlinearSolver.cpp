@@ -25,13 +25,13 @@ namespace NumLib
 {
 void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
     GlobalVector const& x,
-    ProcessLib::StaggeredCouplingTerm const& coupled_term) const
+    ProcessLib::StaggeredCouplingTerm const& coupling_term) const
 {
-    _equation_system->assemble(x, coupled_term);
+    _equation_system->assemble(x, coupling_term);
 }
 
 bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
-    GlobalVector& x, ProcessLib::StaggeredCouplingTerm const& coupled_term,
+    GlobalVector& x, ProcessLib::StaggeredCouplingTerm const& coupling_term,
     std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
 {
     namespace LinAlg = MathLib::LinAlg;
@@ -62,7 +62,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assemble(x, coupled_term);
+        sys.assemble(x, coupling_term);
         sys.getA(A);
         sys.getRhs(rhs);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
@@ -163,16 +163,16 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
 void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
     GlobalVector const& x,
-    ProcessLib::StaggeredCouplingTerm const& coupled_term) const
+    ProcessLib::StaggeredCouplingTerm const& coupling_term) const
 {
-    _equation_system->assemble(x, coupled_term);
+    _equation_system->assemble(x, coupling_term);
     // TODO if the equation system would be reset to nullptr after each
     //      assemble() or solve() call, the user would be forced to set the
     //      equation every time and could not forget it.
 }
 
 bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
-    GlobalVector& x, ProcessLib::StaggeredCouplingTerm const& coupled_term,
+    GlobalVector& x, ProcessLib::StaggeredCouplingTerm const& coupling_term,
     std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
 {
     namespace LinAlg = MathLib::LinAlg;
@@ -206,7 +206,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assemble(x, coupled_term);
+        sys.assemble(x, coupling_term);
         sys.getResidual(x, res);
         sys.getJacobian(J);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());

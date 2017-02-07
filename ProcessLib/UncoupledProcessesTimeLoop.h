@@ -40,7 +40,8 @@ public:
         std::unique_ptr<Output>&& output,
         std::vector<std::unique_ptr<SingleProcessData>>&& per_process_data,
         const unsigned global_coupling_max_iterations,
-        std::unique_ptr<NumLib::ConvergenceCriterion>&& glb_coupling_conv_crit);
+        std::unique_ptr<NumLib::ConvergenceCriterion>&&
+            global_coupling_conv_crit);
 
     bool loop();
 

@@ -32,7 +32,7 @@ public:
 
     //! Assembles the Jacobian, the matrices \f$M\f$ and \f$K\f$, and the vector
     //! \f$b\f$ with coupling.
-    virtual void coupling_assembleWithJacobian(
+    virtual void assembleWithJacobianAndCouping(
         LocalAssemblerInterface& /*local_assembler*/, double const /*t*/,
         std::vector<double> const& /*local_x*/,
         std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
@@ -40,7 +40,7 @@ public:
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
         std::vector<double>& /*local_Jac_data*/,
-        LocalCouplingTerm const& /*coupled_term*/) {}
+        LocalCouplingTerm const& /*coupling_term*/) {}
 
     virtual ~AbstractJacobianAssembler() = default;
 };

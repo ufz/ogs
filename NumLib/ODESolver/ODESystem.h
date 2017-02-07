@@ -17,7 +17,7 @@
 
 namespace ProcessLib
 {
-    struct StaggeredCouplingTerm;
+struct StaggeredCouplingTerm;
 }
 
 namespace NumLib
@@ -50,11 +50,10 @@ public:
         ODESystemTag::FirstOrderImplicitQuasilinear;
 
     //! Assemble \c M, \c K and \c b at the provided state (\c t, \c x).
-    virtual void assemble(const double t, GlobalVector const& x,
-                          GlobalMatrix& M, GlobalMatrix& K,
-                          GlobalVector& b,
-                          ProcessLib::StaggeredCouplingTerm const& coupled_term)
-                = 0;
+    virtual void assemble(
+        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+        GlobalVector& b,
+        ProcessLib::StaggeredCouplingTerm const& coupling_term) = 0;
 
     using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
 
@@ -84,7 +83,8 @@ public:
      * \f$ \mathtt{Jac} := \partial r/\partial x_N \f$
      * at the provided state (\c t, \c x).
      *
-     * For the meaning of the other parameters refer to the the introductory remarks on
+     * For the meaning of the other parameters refer to the the introductory
+     * remarks on
      * \ref concept_time_discretization "time discretization".
      *
      * \remark
@@ -97,34 +97,37 @@ public:
      *  + \frac{\partial K}{\partial x_N} \cdot x_N
      *  + \frac{\partial b}{\partial x_N},
      *  \f]
-     * where \f$ M \f$, \f$ K \f$ and \f$ b \f$ are matrix-valued (vector-valued, respectively)
+     * where \f$ M \f$, \f$ K \f$ and \f$ b \f$ are matrix-valued
+     * (vector-valued, respectively)
      * functions that depend on \f$ x_C \f$ and \f$ t_C \f$.
      *
-     * Due to the arguments provided to this method its implementation only has to
+     * Due to the arguments provided to this method its implementation only has
+     * to
      * compute the derivatives
      * \f$ \frac{\partial M}{\partial x_N} \cdot \hat x \f$,
      * \f$ \frac{\partial K}{\partial x_N} \cdot x_N    \f$ and
      * \f$ \frac{\partial b}{\partial x_N} \f$.
      * The other terms can be readily taken from the method parameters.
      *
-     * In particular for the ForwardEuler time discretization scheme the equation will
+     * In particular for the ForwardEuler time discretization scheme the
+     * equation will
      * collapse to
      * \f$ \mathtt{Jac} =
      *  M \cdot \frac{\partial \hat x}{\partial x_N}
      *  \f$
      * since in that scheme \f$ x_N \neq x_C \f$.
      *
-     * Of course, the implementation of this method is allowed to compute the Jacobian in a
-     * different way, as long as that is consistent with the definition of \f$ \mathtt{Jac} \f$.
+     * Of course, the implementation of this method is allowed to compute the
+     * Jacobian in a
+     * different way, as long as that is consistent with the definition of \f$
+     * \mathtt{Jac} \f$.
      * \endparblock
      */
-    virtual void assembleWithJacobian(const double t, GlobalVector const& x,
-                                      GlobalVector const& xdot,
-                                      const double dxdot_dx, const double dx_dx,
-                                      GlobalMatrix& M, GlobalMatrix& K,
-                                      GlobalVector& b, GlobalMatrix& Jac,
-                                      ProcessLib::StaggeredCouplingTerm
-                                                       const& coupled_term) = 0;
+    virtual void assembleWithJacobian(
+        const double t, GlobalVector const& x, GlobalVector const& xdot,
+        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
+        ProcessLib::StaggeredCouplingTerm const& coupling_term) = 0;
 };
 
 //! @}

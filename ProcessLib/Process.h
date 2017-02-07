@@ -73,7 +73,7 @@ public:
 
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b,
-                  StaggeredCouplingTerm const& coupled_term)
+                  StaggeredCouplingTerm const& coupling_term)
                   override final;
 
     void assembleWithJacobian(const double t, GlobalVector const& x,
@@ -81,7 +81,7 @@ public:
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac,
-                              StaggeredCouplingTerm const& coupled_term)
+                              StaggeredCouplingTerm const& coupling_term)
                               override final;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
@@ -144,14 +144,14 @@ private:
                                          GlobalMatrix& M, GlobalMatrix& K,
                                          GlobalVector& b,
                                          StaggeredCouplingTerm const&
-                                         coupled_term) = 0;
+                                         coupling_term) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x,
         GlobalVector const& xdot, const double dxdot_dx,
         const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
         GlobalVector& b, GlobalMatrix& Jac,
-        StaggeredCouplingTerm const& coupled_term) = 0;
+        StaggeredCouplingTerm const& coupling_term) = 0;
 
     virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
                                             const double /*t*/,

@@ -41,7 +41,7 @@ public:
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
                                    std::vector<double>& local_b_data,
-                                   LocalCouplingTerm const& coupled_term);
+                                   LocalCouplingTerm const& coupling_term);
 
     virtual void assembleWithJacobian(double const t,
                                       std::vector<double> const& local_x,
@@ -52,7 +52,7 @@ public:
                                       std::vector<double>& local_b_data,
                                       std::vector<double>& local_Jac_data);
 
-    virtual void coupling_assembleWithJacobian(double const t,
+    virtual void assembleWithJacobianAndCouping(double const t,
                                       std::vector<double> const& local_x,
                                       std::vector<double> const& local_xdot,
                                       const double dxdot_dx, const double dx_dx,
@@ -60,7 +60,7 @@ public:
                                       std::vector<double>& local_K_data,
                                       std::vector<double>& local_b_data,
                                       std::vector<double>& local_Jac_data,
-                                      LocalCouplingTerm const& coupled_term);
+                                      LocalCouplingTerm const& coupling_term);
 
     virtual void computeSecondaryVariable(std::size_t const mesh_item_id,
                               NumLib::LocalToGlobalIndexMap const& dof_table,

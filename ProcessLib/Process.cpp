@@ -120,9 +120,9 @@ MathLib::MatrixSpecifications Process::getMatrixSpecifications() const
 
 void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                        GlobalMatrix& K, GlobalVector& b,
-                       StaggeredCouplingTerm const& coupled_term)
+                       StaggeredCouplingTerm const& coupling_term)
 {
-    assembleConcreteProcess(t, x, M, K, b, coupled_term);
+    assembleConcreteProcess(t, x, M, K, b, coupling_term);
 
     _boundary_conditions.applyNaturalBC(t, x, K, b);
 }
@@ -132,10 +132,10 @@ void Process::assembleWithJacobian(const double t, GlobalVector const& x,
                                    const double dxdot_dx, const double dx_dx,
                                    GlobalMatrix& M, GlobalMatrix& K,
                                    GlobalVector& b, GlobalMatrix& Jac,
-                                   StaggeredCouplingTerm const& coupled_term)
+                                   StaggeredCouplingTerm const& coupling_term)
 {
     assembleWithJacobianConcreteProcess(t, x, xdot, dxdot_dx, dx_dx, M, K, b,
-                                        Jac, coupled_term);
+                                        Jac, coupling_term);
 
     // TODO apply BCs to Jacobian.
     _boundary_conditions.applyNaturalBC(t, x, K, b);

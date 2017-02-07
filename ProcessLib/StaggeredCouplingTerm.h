@@ -25,8 +25,9 @@ class Process;
  *  A struct to keep the references of the coupled processes and the references
  *  of the current solutions of the equations of the coupled processes.
  *
- *  During un-coupling iteration, an instance of this struct is created and
- *  passed through interfaces to global and local assemblers for each process.
+ *  During staggered coupling iteration, an instance of this struct is created
+ *  and passed through interfaces to global and local assemblers for each
+ *  process.
  */
 struct StaggeredCouplingTerm
 {

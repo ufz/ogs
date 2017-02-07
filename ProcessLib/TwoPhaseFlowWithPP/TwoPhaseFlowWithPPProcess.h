@@ -61,14 +61,14 @@ private:
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
                                  GlobalVector& b,
-                                 StaggeredCouplingTerm const& coupled_term
+                                 StaggeredCouplingTerm const& coupling_term
                                 ) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
-        StaggeredCouplingTerm const& coupled_term) override;
+        StaggeredCouplingTerm const& coupling_term) override;
 
     TwoPhaseFlowWithPPProcessData _process_data;
 

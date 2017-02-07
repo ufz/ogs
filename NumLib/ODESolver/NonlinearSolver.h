@@ -47,18 +47,18 @@ public:
      *
      * \param x             the state at which the equation system will be
      *                      assembled.
-     * \param coupled_term  the coupled term including the reference of the
+     * \param coupling_term  the coupled term including the reference of the
      *                      coupled processes and solutions of the equations of
      *                      the coupled processes.
      */
     virtual void assemble(GlobalVector const& x,
-                          ProcessLib::StaggeredCouplingTerm const& coupled_term
+                          ProcessLib::StaggeredCouplingTerm const& coupling_term
                          ) const = 0;
 
     /*! Assemble and solve the equation system.
      *
      * \param x   in: the initial guess, out: the solution.
-     * \param coupled_term  the coupled term including the reference of the
+     * \param coupling_term  the coupled term including the reference of the
      *                      coupled processes and solutions of the equations of
      *                      the coupled processes.
      * \param postIterationCallback called after each iteration if set.
@@ -67,7 +67,7 @@ public:
      * \retval false otherwise
      */
     virtual bool solve(GlobalVector& x,
-                       ProcessLib::StaggeredCouplingTerm const& coupled_term,
+                       ProcessLib::StaggeredCouplingTerm const& coupling_term,
                        std::function<void(unsigned, GlobalVector const&)> const&
                            postIterationCallback) = 0;
 
@@ -118,11 +118,11 @@ public:
     }
 
     void assemble(GlobalVector const& x,
-                  ProcessLib::StaggeredCouplingTerm const& coupled_term
+                  ProcessLib::StaggeredCouplingTerm const& coupling_term
                  ) const override;
 
     bool solve(GlobalVector& x,
-               ProcessLib::StaggeredCouplingTerm const& coupled_term,
+               ProcessLib::StaggeredCouplingTerm const& coupling_term,
                std::function<void(unsigned, GlobalVector const&)> const&
                    postIterationCallback) override;
 
@@ -177,11 +177,11 @@ public:
     }
 
     void assemble(GlobalVector const& x,
-                  ProcessLib::StaggeredCouplingTerm const& coupled_term
+                  ProcessLib::StaggeredCouplingTerm const& coupling_term
                  ) const override;
 
     bool solve(GlobalVector& x,
-               ProcessLib::StaggeredCouplingTerm const& coupled_term,
+               ProcessLib::StaggeredCouplingTerm const& coupling_term,
                std::function<void(unsigned, GlobalVector const&)> const&
                    postIterationCallback) override;
 
