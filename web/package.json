@@ -6,6 +6,7 @@
   "author": "Lars Bilke",
   "license": "BSD",
   "scripts": {
+    "gulp": "gulp",
     "hugo": "hugo server --disableRSS",
     "build": "gulp build && hugo",
     "build:release": "export NODE_ENV=production && gulp build && hugo",
