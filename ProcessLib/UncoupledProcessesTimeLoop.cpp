@@ -364,10 +364,10 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
     if (coupling_config)
     {
         max_coupling_iterations
-            //! \ogs_file_param{prj__time_loop__global_process_coupling__max_iteration}
-            = coupling_config->getConfigParameter<unsigned>("max_iteration");
+            //! \ogs_file_param{prj__time_loop__global_process_coupling__max_iter}
+            = coupling_config->getConfigParameter<unsigned>("max_iter");
         coupling_conv_crit = NumLib::createConvergenceCriterion(
-            //! \ogs_file_param{prj__time_loop__global_process_coupling__max_iteration__convergence_criterion}
+            //! \ogs_file_param{prj__time_loop__global_process_coupling__convergence_criterion}
             coupling_config->getConfigSubtree("convergence_criterion"));
     }
 
@@ -500,10 +500,10 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
     {
         auto const& coupled_processes = spd->coupled_processes;
         std::unordered_map<std::type_index, GlobalVector const&> coupled_xs;
-        for (auto const& coupled_process_map : coupled_processes)
+        for (auto const& coupled_process_pair : coupled_processes)
         {
             ProcessLib::Process const& coupled_process =
-                coupled_process_map.second;
+                coupled_process_pair.second;
             auto const found_item = std::find_if(
                 _per_process_data.begin(),
                 _per_process_data.end(),
@@ -516,24 +516,24 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
             if (found_item != _per_process_data.end())
             {
                 // Id of the coupled process:
-                const std::size_t c_id = found_item - _per_process_data.begin();
+                const std::size_t c_id =
+                    std::distance(_per_process_data.begin(), found_item);
 
                 BaseLib::insertIfTypeIndexKeyUniqueElseError(
-                    coupled_xs, coupled_process_map.first,
+                    coupled_xs, coupled_process_pair.first,
                     *_process_solutions[c_id], "global_coupled_x");
             }
         }
         _solutions_of_coupled_processes.emplace_back(coupled_xs);
 
-        const auto x = _process_solutions[pcs_idx];
+        auto const x = *_process_solutions[pcs_idx];
 
         // Create a vector to store the solution of the last coupling iteration
-        auto x_coupling0 =
-            &NumLib::GlobalVectorProvider::provider.getVector(*x);
-        MathLib::LinAlg::copy(*x, *x_coupling0);
+        auto& x_coupling0 = NumLib::GlobalVectorProvider::provider.getVector(x);
+        MathLib::LinAlg::copy(x, x_coupling0);
 
         // append a solution vector of suitable size
-        _solutions_of_last_cpl_iteration.emplace_back(x_coupling0);
+        _solutions_of_last_cpl_iteration.emplace_back(&x_coupling0);
 
         ++pcs_idx;
     }  // end of for (auto& spd : _per_process_data)
@@ -541,6 +541,15 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
     return true;
 }
 
+/*
+ * TODO:
+ * Now we have a structure inside the time loop which is very similar to the
+ * nonlinear solver. And admittedly, the control flow inside the nonlinear
+ * solver is rather complicated. Maybe in the future con can introduce an
+ * abstraction that can do both the convergence checks of the coupling loop and
+ * of the nonlinear solver.
+ *
+ */
 bool UncoupledProcessesTimeLoop::loop()
 {
     // initialize output, convergence criterion, etc.

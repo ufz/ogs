@@ -27,22 +27,22 @@ getPreviousLocalSolutionsOfCoupledProcesses(
     std::unordered_map<std::type_index, const std::vector<double>>
         local_coupled_xs0;
 
-    for (auto const& coupled_process_map : coupling_term.coupled_processes)
+    for (auto const& coupled_process_pair : coupling_term.coupled_processes)
     {
-        auto const& coupled_pcs = coupled_process_map.second;
+        auto const& coupled_pcs = coupled_process_pair.second;
         auto const prevous_time_x = coupled_pcs.getPreviousTimeStepSolution();
         if (prevous_time_x)
         {
             auto const local_coupled_x0 = prevous_time_x->get(indices);
             BaseLib::insertIfTypeIndexKeyUniqueElseError(
-                local_coupled_xs0, coupled_process_map.first, local_coupled_x0,
+                local_coupled_xs0, coupled_process_pair.first, local_coupled_x0,
                 "local_coupled_x0");
         }
         else
         {
             const std::vector<double> local_coupled_x0;
             BaseLib::insertIfTypeIndexKeyUniqueElseError(
-                local_coupled_xs0, coupled_process_map.first, local_coupled_x0,
+                local_coupled_xs0, coupled_process_pair.first, local_coupled_x0,
                 "local_coupled_x0");
         }
     }
@@ -58,12 +58,13 @@ getCurrentLocalSolutionsOfCoupledProcesses(
     std::unordered_map<std::type_index, const std::vector<double>>
         local_coupled_xs;
 
-    for (auto const& global_coupled_x_map : global_coupled_xs)
+    // Get local nodal solutions of the coupled equations.
+    for (auto const& global_coupled_x_pair : global_coupled_xs)
     {
-        auto const coupled_x = global_coupled_x_map.second;
+        auto const& coupled_x = global_coupled_x_pair.second;
         auto const local_coupled_x = coupled_x.get(indices);
         BaseLib::insertIfTypeIndexKeyUniqueElseError(
-            local_coupled_xs, global_coupled_x_map.first, local_coupled_x,
+            local_coupled_xs, global_coupled_x_pair.first, local_coupled_x,
             "local_coupled_x");
     }
     return local_coupled_xs;

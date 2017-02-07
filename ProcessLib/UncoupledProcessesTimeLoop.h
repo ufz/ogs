@@ -31,7 +31,9 @@ namespace ProcessLib
 {
 struct SingleProcessData;
 
-//! Time loop capable of time-integrating several uncoupled processes at once.
+/// Time loop capable of time-integrating several processes at once.
+/// TODO: Rename to, e.g., TimeLoop, since it is not for purely uncoupled stuff
+/// anymore.
 class UncoupledProcessesTimeLoop
 {
 public:
