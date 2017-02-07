@@ -21,39 +21,40 @@
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "TwoPhaseFlowWithPrhoProcessData.h"
-template <typename NodalMatrixType>
-struct IntegrationPointData final
-{
-    explicit IntegrationPointData(
-        ProcessLib::TwoPhaseFlowWithPrho::
-            TwoPhaseFlowWithPrhoMaterialProperties& material_property_)
-        : mat_property(material_property_),
-          sw(1.0),
-          rho_m(0.0),
-          dsw_dpg(0.0),
-          dsw_drho(0.0),
-          drhom_dpg(0.0),
-          drhom_drho(0.0)
-    {
-    }
-    ProcessLib::TwoPhaseFlowWithPrho::TwoPhaseFlowWithPrhoMaterialProperties&
-        mat_property;
-    double sw;
-    double rho_m;
-    double dsw_dpg;
-    double dsw_drho;
-    double drhom_dpg;
-    double drhom_drho;
-    double pressure_nonwetting;
 
-    double integration_weight;
-    NodalMatrixType massOperator;
-    NodalMatrixType diffusionOperator;
-};
 namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPrho
 {
+    template <typename NodalMatrixType>
+    struct IntegrationPointData final
+    {
+        explicit IntegrationPointData(
+            ProcessLib::TwoPhaseFlowWithPrho::
+            TwoPhaseFlowWithPrhoMaterialProperties& material_property_)
+            : mat_property(material_property_),
+            sw(1.0),
+            rho_m(0.0),
+            dsw_dpg(0.0),
+            dsw_drho(0.0),
+            drhom_dpg(0.0),
+            drhom_drho(0.0)
+        {
+        }
+        ProcessLib::TwoPhaseFlowWithPrho::TwoPhaseFlowWithPrhoMaterialProperties&
+            mat_property;
+        double sw;
+        double rho_m;
+        double dsw_dpg;
+        double dsw_drho;
+        double drhom_dpg;
+        double drhom_drho;
+        double pressure_nonwetting;
+
+        double integration_weight;
+        NodalMatrixType massOperator;
+        NodalMatrixType diffusionOperator;
+    };
 const unsigned NUM_NODAL_DOF = 2;
 
 class TwoPhaseFlowWithPrhoLocalAssemblerInterface

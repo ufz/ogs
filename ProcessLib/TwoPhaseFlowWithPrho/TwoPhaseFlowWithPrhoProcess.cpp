@@ -97,7 +97,7 @@ void TwoPhaseFlowWithPrhoProcess::assembleWithJacobianConcreteProcess(
 void TwoPhaseFlowWithPrhoProcess::preTimestepConcreteProcess(
     GlobalVector const& x, double const t, double const dt)
 {
-    DBUG("PreTimestep HydroMechanicsProcess.");
+    DBUG("PreTimestep TwoPhaseFlowWithPrhoProcess.");
 
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
