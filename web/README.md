@@ -19,10 +19,6 @@ If you want to modify css or javascript run `gulp` in another terminal:
     (cd import; python import.py) # Optional for fetching content from Contentful, needs credentials setup, rename `secret_example.py` to `secret.py`
     npm run build
 
-Test by locally serving via [Caddy](https://caddyserver.com):
-
-    caddy
-
 ## Used components
 
 - [Hugo](https://gothugo.com) - Static site generator for technical documentation
