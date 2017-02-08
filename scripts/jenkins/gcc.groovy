@@ -3,7 +3,8 @@ def defaultCMakeOptions =
     '-DCMAKE_BUILD_TYPE=Release ' +
     '-DOGS_LIB_BOOST=System ' +
     '-DOGS_LIB_EIGEN=Local ' +
-    '-DOGS_LIB_VTK=System '
+    '-DOGS_LIB_VTK=System ' +
+    '-DOGS_WEB_BASE_URL=$JOB_URL"Web/" '
 
 def guiCMakeOptions =
     '-DOGS_BUILD_CLI=OFF ' +
@@ -21,7 +22,7 @@ def image = docker.image('ogs6/gcc-gui:latest')
 image.pull()
 image.inside(defaultDockerArgs) {
     stage('Install prerequisites Web') {
-        sh 'cd ogs/web && rm -rf node_modules && npm install && sudo -H pip install -r requirements.txt'
+        sh 'cd ogs/web && npm install && sudo -H pip install -r requirements.txt'
     }
     stage('Configure (Linux-Docker)') {
         configure.linux(cmakeOptions: defaultCMakeOptions, script: this)

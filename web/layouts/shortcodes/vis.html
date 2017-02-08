@@ -1,5 +1,5 @@
 <iframe
-	src="/internal/vis/index.html?fileURL=/vis/{{ .Get "path" }}"
+	src="{{ .Site.BaseURL }}/internal/vis/index.html?fileURL={{ .Site.BaseURL }}/vis/{{ .Get "path" }}"
 	width="100%"
 	{{ with .Get "height"}} height="{{.}}px"{{ else }} height="500px"{{ end }}
 >

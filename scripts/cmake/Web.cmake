@@ -21,8 +21,12 @@ add_custom_target(web-import
     DEPENDS web-install
 )
 
+if(DEFINED OGS_WEB_BASE_URL)
+    set(HUGO_ARGS --baseURL ${OGS_WEB_BASE_URL})
+endif()
+
 add_custom_target(web
-    COMMAND ${NPM} run build
+    COMMAND ${NPM} run build -- ${HUGO_ARGS}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/web
     DEPENDS web-install web-import
 )
