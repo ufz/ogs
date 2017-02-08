@@ -3,8 +3,7 @@ def defaultCMakeOptions =
     '-DCMAKE_BUILD_TYPE=Release ' +
     '-DOGS_LIB_BOOST=System ' +
     '-DOGS_LIB_EIGEN=Local ' +
-    '-DOGS_LIB_VTK=System ' +
-    '-DOGS_WEB_BASE_URL=$JOB_URL"Web/" '
+    '-DOGS_LIB_VTK=System '
 
 def guiCMakeOptions =
     '-DOGS_BUILD_CLI=OFF ' +
@@ -18,6 +17,10 @@ def build = new ogs.build()
 def post = new ogs.post()
 def helper = new ogs.helper()
 
+def webCMakeOptions = '-DOGS_WEB_BASE_URL=$JOB_URL"Web/" '
+if (helper.isOriginMaster(this))
+    webCMakeOptions = '-DOGS_WEB_BASE_URL=https://dev.opengeosys.org'
+
 def image = docker.image('ogs6/gcc-gui:latest')
 image.pull()
 image.inside(defaultDockerArgs) {
@@ -26,7 +29,7 @@ image.inside(defaultDockerArgs) {
         sh 'cd ogs/web && npm install && sudo -H pip install -r requirements.txt'
     }
     stage('Configure (Linux-Docker)') {
-        configure.linux(cmakeOptions: defaultCMakeOptions, script: this)
+        configure.linux(cmakeOptions: defaultCMakeOptions + webCMakeOptions, script: this)
     }
 
     stage('CLI (Linux-Docker)') {
@@ -46,19 +49,16 @@ image.inside(defaultDockerArgs) {
 
             build.linux(script: this, target: 'web')
 
-            publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false,
-                keepAll: false, reportDir: 'ogs/web/public', reportFiles: 'index.html',
-                reportName: 'Web'])
-
-            configure.linux(
-                cmakeOptions: "-DOGS_WEB_BASE_URL=https://dev.opengeosys.org",
-                script: this)
-            build.linux(script: this, target: 'web')
-
-            sshagent(credentials: ['www-data_jenkins']) {
-                sh 'rsync -a --delete --stats -e "ssh -o StrictHostKeyChecking=no"' +
-                    ' ogs/web/public/ www-data@jenkins.opengeosys.org:'+
-                    '/var/www/dev.opengeosys.org'
+            if (helper.isOriginMaster(this)) {
+                sshagent(credentials: ['www-data_jenkins']) {
+                    sh 'rsync -a --delete --stats -e "ssh -o StrictHostKeyChecking=no"' +
+                        ' ogs/web/public/ www-data@jenkins.opengeosys.org:'+
+                        '/var/www/dev.opengeosys.org'
+                }
+            } else {
+                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false,
+                    keepAll: false, reportDir: 'ogs/web/public', reportFiles: 'index.html',
+                    reportName: 'Web'])
             }
         }
     }
