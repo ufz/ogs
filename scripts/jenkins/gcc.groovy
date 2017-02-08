@@ -21,6 +21,7 @@ def helper = new ogs.helper()
 def image = docker.image('ogs6/gcc-gui:latest')
 image.pull()
 image.inside(defaultDockerArgs) {
+    sh 'cd ogs && git lfs pull'
     stage('Install prerequisites Web') {
         sh 'cd ogs/web && npm install && sudo -H pip install -r requirements.txt'
     }
