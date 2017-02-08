@@ -155,10 +155,13 @@ private:
     MeshLib::Element const& _element;
 
     IntegrationMethod const _integration_method;
-    std::vector<ShapeMatrices> _shape_matrices;
+    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
+        _shape_matrices;
 
     TwoPhaseFlowWithPrhoProcessData const& _process_data;
-    std::vector<IntegrationPointData<NodalMatrixType>> _ip_data;
+    std::vector<IntegrationPointData<NodalMatrixType>,
+                Eigen::aligned_allocator<IntegrationPointData<NodalMatrixType>>>
+        _ip_data;
 
     std::vector<double> _saturation;  /// used for secondary variable output
     std::vector<double> _pressure_nonwetting;
