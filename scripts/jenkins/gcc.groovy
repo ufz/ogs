@@ -42,7 +42,23 @@ image.inside(defaultDockerArgs) {
             variable: 'CONTENTFUL_ACCESS_TOKEN'), string(
             credentialsId: 'CONTENTFUL_OGS_SPACE_ID',
             variable: 'CONTENTFUL_OGS_SPACE_ID')]) {
+
             build.linux(script: this, target: 'web')
+
+            publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false,
+                keepAll: false, reportDir: 'ogs/web/public', reportFiles: 'index.html',
+                reportName: 'Web'])
+
+            configure.linux(
+                cmakeOptions: "-DOGS_WEB_BASE_URL=https://dev.opengeosys.org",
+                script: this)
+            build.linux(script: this, target: 'web')
+
+            sshagent(credentials: ['www-data_jenkins']) {
+                sh 'rsync -a --delete --stats -e "ssh -o StrictHostKeyChecking=no"' +
+                    ' ogs/web/public/ www-data@jenkins.opengeosys.org:'+
+                    '/var/www/dev.opengeosys.org'
+            }
         }
     }
 
@@ -59,8 +75,5 @@ image.inside(defaultDockerArgs) {
 stage('Post (Linux-Docker)') {
     post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
         'ogs/scripts/jenkins/clang-log-parser.rules'
-    publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false,
-        keepAll: false, reportDir: 'ogs/web/public', reportFiles: 'index.html',
-        reportName: 'Web'])
     post.cleanup()
 }
