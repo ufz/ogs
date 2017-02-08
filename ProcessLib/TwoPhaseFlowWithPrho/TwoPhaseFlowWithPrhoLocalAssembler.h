@@ -21,12 +21,16 @@
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "TwoPhaseFlowWithPrhoProcessData.h"
+
+namespace ProcessLib
+{
+namespace TwoPhaseFlowWithPrho
+{
 template <typename NodalMatrixType>
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
-        ProcessLib::TwoPhaseFlowWithPrho::
-            TwoPhaseFlowWithPrhoMaterialProperties& material_property_)
+        TwoPhaseFlowWithPrhoMaterialProperties& material_property_)
         : mat_property(material_property_),
           sw(1.0),
           rho_m(0.0),
@@ -36,8 +40,7 @@ struct IntegrationPointData final
           drhom_drho(0.0)
     {
     }
-    ProcessLib::TwoPhaseFlowWithPrho::TwoPhaseFlowWithPrhoMaterialProperties&
-        mat_property;
+    TwoPhaseFlowWithPrhoMaterialProperties& mat_property;
     double sw;
     double rho_m;
     double dsw_dpg;
@@ -50,10 +53,6 @@ struct IntegrationPointData final
     NodalMatrixType massOperator;
     NodalMatrixType diffusionOperator;
 };
-namespace ProcessLib
-{
-namespace TwoPhaseFlowWithPrho
-{
 const unsigned NUM_NODAL_DOF = 2;
 
 class TwoPhaseFlowWithPrhoLocalAssemblerInterface
