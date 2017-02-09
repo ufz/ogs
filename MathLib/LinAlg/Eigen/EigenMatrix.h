@@ -71,7 +71,7 @@ public:
     int setValue(IndexType row, IndexType col, double val)
     {
         assert(row < (IndexType) getNumberOfRows() && col < (IndexType) getNumberOfColumns());
-        if (val != 0.0) _mat.coeffRef(row, col) = val;
+        _mat.coeffRef(row, col) = val;
         return 0;
     }
 
@@ -79,7 +79,7 @@ public:
     /// inserted.
     int add(IndexType row, IndexType col, double val)
     {
-        if (val != 0.0) _mat.coeffRef(row, col) += val;
+        _mat.coeffRef(row, col) += val;
         return 0;
     }
 
