@@ -1,12 +1,8 @@
 +++
-categories = ["category"]
-description = ""
-images = ["/2016/10/image.jpg"]
 date = "2017-01-14T22:51:41+01:00"
 title = "Welcome!"
+author = "Lars Bilke"
 weight = 1
-draft = true
-tags = ["tag1","tag2"]
 # next = "prerequisites.md"
 
 +++

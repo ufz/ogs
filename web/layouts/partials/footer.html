@@ -1,4 +1,5 @@
 <!-- <script src="js/scripts.js"></script> -->
+    <p>Last revision: {{ .Lastmod.Format "January 2, 2006" }}{{ if .IsPage }}<em>{{ with .GitInfo }}| {{ .Subject }} | <a href="https://github.com/ufz/ogs/commit/{{ .AbbreviatedHash }}">{{ .AbbreviatedHash }}</a>{{end }}</em>{{ end }}
     </div> <!-- row -->
   </div> <!-- container -->
 </body>
