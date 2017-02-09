@@ -1,13 +1,8 @@
 +++
-tags = ["tag1","tag2"]
-categories = ["category"]
-description = ""
-images = ["/2016/10/image.jpg"]
 date = "2017-01-14T22:56:13+01:00"
 title = "Set Up Prerequisites"
 author = "Lars Bilke"
 weight = 2
-draft = true
 
 # back = "introduction.md"
 

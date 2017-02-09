@@ -3,6 +3,7 @@ title = "OpenGeoSys-6"
 theme = "ogs"
 buildDrafts = true
 pygmentsstyle = 'friendly'
+enableGitInfo = true
 
 [params.sharingicons]
    hide = true

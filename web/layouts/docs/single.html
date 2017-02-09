@@ -10,7 +10,7 @@
   </div>
   <div class="col-xs-9">
     <h1>{{ .Title }}</h1>
-    <h2>{{ .Date.Format "Mon, Jan 2, 2006" }}</h2>
+
     {{ .Content }}
 
     <hr>
@@ -27,6 +27,8 @@
       {{ end }}
       </div>
     </div>
+
+    <p>This article was written by {{ .Params.Author }}. If you are missing something or you find an error please <a href="mailto:ogs-devs@googlegroups.com">let us know</a>.</p>
   </div>
 
 
