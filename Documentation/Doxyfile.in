@@ -829,6 +829,7 @@ EXCLUDE                = ${CMAKE_SOURCE_DIR}/ThirdParty \
                          ${CMAKE_SOURCE_DIR}/scripts \
                          ${CMAKE_SOURCE_DIR}/Tests \
                          ${CMAKE_SOURCE_DIR}/Documentation/ProjectFile \
+                         ${CMAKE_SOURCE_DIR}/web \
                          ${CMAKE_BINARY_DIR}/External
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
