@@ -156,3 +156,51 @@ AddTest(
     ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma_rr sigma_rr
     ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma_ff sigma_ff
 )
+
+# Mechanics; Small deformations, Ehlers-damage Uniaxial Tension (SDED)
+AddTest(
+    NAME Mechanics_PlasticModel_SDED_Ehlers_Damage_UniaxialTension
+    PATH Mechanics/EhlersDamage/UniaxialTension
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS data.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 5e-15 RELTOL 1e-13
+    DIFF_DATA
+    uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu displacement displacement
+    uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu sigma_yy sigma_yy
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu displacement displacement
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma_yy sigma_yy
+)
+
+# Mechanics; Small deformations, Ehlers-damage Uniaxial Compression (SDED)
+AddTest(
+    NAME Mechanics_PlasticModel_SDED_Ehlers_Damage_UniaxialCompression
+    PATH Mechanics/EhlersDamage/UniaxialCompression
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS data.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 5e-15 RELTOL 1e-13
+    DIFF_DATA
+    uc_01_pcs_0_ts_3543_t_3.543000.vtu uc_01_pcs_0_ts_3543_t_3.543000.vtu displacement displacement
+    uc_01_pcs_0_ts_3543_t_3.543000.vtu uc_01_pcs_0_ts_3543_t_3.543000.vtu sigma_yy sigma_yy
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu displacement displacement
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma_yy sigma_yy
+)
+
+# Mechanics; Small deformations, Ehlers-damage Triaxial Compression (SDED)
+AddTest(
+    NAME Mechanics_PlasticModel_SDED_Ehlers_Damage_TriaxialCompression
+    PATH Mechanics/EhlersDamage/TriaxialCompression
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS data.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 5e-15 RELTOL 1e-13
+    DIFF_DATA
+    uc_01_pcs_0_ts_2823_t_2.823000.vtu uc_01_pcs_0_ts_2823_t_2.823000.vtu displacement displacement
+    uc_01_pcs_0_ts_2823_t_2.823000.vtu uc_01_pcs_0_ts_2823_t_2.823000.vtu sigma_yy sigma_yy
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu displacement displacement
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma_yy sigma_yy
+)
