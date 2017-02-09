@@ -81,7 +81,7 @@ createSmallDeformationProcess(
         material = nullptr;
     if (type == "Ehlers")
     {
-        material = MaterialLib::Solids::createEhlers<DisplacementDim>(
+        material = MaterialLib::Solids::Ehlers::createEhlers<DisplacementDim>(
             parameters, constitutive_relation_config);
     }
     else if (type == "LinearElasticIsotropic")

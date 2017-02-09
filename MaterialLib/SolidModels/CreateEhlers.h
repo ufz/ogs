@@ -11,13 +11,16 @@
 
 #include <logog/include/logog.hpp>
 
-#include "MechanicsBase.h"
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
+
 #include "Ehlers.h"
+#include "MechanicsBase.h"
 
 namespace MaterialLib
 {
 namespace Solids
+{
+namespace Ehlers
 {
 template <int DisplacementDim>
 std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
@@ -148,5 +151,6 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
         new SolidEhlers<DisplacementDim>{mp}};
 }
 
+}  // namespace Ehlers
 }  // namespace Solids
 }  // namespace MaterialLib
