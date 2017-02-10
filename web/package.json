@@ -162,7 +162,7 @@
     "kw-web-suite": "^2.2.1",
     "normalize.css": "^5.0.0",
     "pygments-css": "^1.0.0",
-    "vtk.js": "^2.10.3",
+    "vtk.js": "^2.10.8",
     "webpack": "^1.14.0",
     "webpack-stream": "^3.2.0"
   }
