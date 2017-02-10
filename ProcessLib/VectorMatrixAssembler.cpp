@@ -55,6 +55,17 @@ VectorMatrixAssembler::VectorMatrixAssembler(
 {
 }
 
+void VectorMatrixAssembler::preAssemble(
+    const std::size_t mesh_item_id, LocalAssemblerInterface& local_assembler,
+    const NumLib::LocalToGlobalIndexMap& dof_table, const double t,
+    const GlobalVector& x)
+{
+    auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
+    auto const local_x = x.get(indices);
+
+    local_assembler.preAssemble(t, local_x);
+}
+
 void VectorMatrixAssembler::assemble(
     const std::size_t mesh_item_id, LocalAssemblerInterface& local_assembler,
     const NumLib::LocalToGlobalIndexMap& dof_table, const double t,
