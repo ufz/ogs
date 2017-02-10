@@ -76,17 +76,24 @@ private:
     /// A collection of integers that configure the partitioned mesh data.
     struct PartitionedMeshInfo
     {
-        unsigned long nodes;                   ///< 0:    Number of all nodes of a partition,
-        unsigned long base_nodes;              ///< 1:    Number of nodes for linear elements of a parition,
-        unsigned long regular_elements;        ///< 2:    Number of non-ghost elements of a partition,
-        unsigned long ghost_elements;          ///< 3:    Number of ghost element of a partition,
-        unsigned long active_base_nodes;       ///< 4:    Number of active nodes for linear element of a parition,
-        unsigned long active_nodes;            ///< 5:    Number of all active nodes a parition,
-        unsigned long global_base_nodes;       ///< 6:    Number of nodes for linear element of global mesh,
-        unsigned long global_nodes;            ///< 7:    Number of all nodes of global mesh,
-        unsigned long offset[5];               ///< 8~12: Offsets of positions of partitions in the data arrays
-                                               ///        (only 8 and 9 are used for ascii input)
-        unsigned long extra_flag;              ///< 13:   Reserved for extra flag.
+        unsigned long nodes;  ///< 0: Number of all nodes of a partition,
+        unsigned long base_nodes;        ///< 1: Number of nodes for linear
+                                         ///elements of a parition,
+        unsigned long regular_elements;  ///< 2: Number of non-ghost elements
+                                         ///of a partition,
+        unsigned long
+            ghost_elements;  ///< 3: Number of ghost element of a partition,
+        unsigned long active_base_nodes;  ///< 4: Number of active nodes for
+                                          /// linear element of a parition,
+        unsigned long
+            active_nodes;  ///< 5: Number of all active nodes a parition,
+        unsigned long global_base_nodes;  ///< 6: Number of nodes for linear
+                                          /// element of global mesh,
+        unsigned long global_nodes;  ///< 7: Number of all nodes of global mesh,
+        unsigned long offset[5];   ///< 8~12: Offsets of positions of partitions
+                                   /// in the data arrays (only 8 and 9 are used
+                                   /// for ascii input)
+        unsigned long extra_flag;  ///< 13: Reserved for extra flag.
 
         std::size_t size() const { return 14; }
         unsigned long* data() { return &nodes; }
