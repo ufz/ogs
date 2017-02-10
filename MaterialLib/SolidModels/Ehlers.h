@@ -39,6 +39,14 @@ namespace Solids
 namespace Ehlers
 {
 
+struct EhlersDamageProperties
+{
+    using P = ProcessLib::Parameter<double>;
+    P const& alpha_d;
+    P const& beta_d;
+    P const& h_d;
+};
+
 template <int DisplacementDim>
 class SolidEhlers final : public MechanicsBase<DisplacementDim>
 {
@@ -188,8 +196,11 @@ public:
     using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
 
 public:
-    explicit SolidEhlers(MaterialProperties const& material_properties)
-        : _mp(material_properties)
+    explicit SolidEhlers(
+        MaterialProperties const& material_properties,
+        std::unique_ptr<EhlersDamageProperties>&& damage_properties)
+        : _mp(material_properties),
+          _damage_properties(std::move(damage_properties))
     {
     }
 
@@ -207,6 +218,7 @@ public:
 
 private:
     MaterialProperties _mp;
+    std::unique_ptr<EhlersDamageProperties> _damage_properties;
 };
 
 }  // namespace Ehlers
