@@ -6203,9 +6203,9 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vtk.js@^2.10.3:
-  version "2.10.3"
-  resolved "https://registry.yarnpkg.com/vtk.js/-/vtk.js-2.10.3.tgz#88844c5b2df205be5ab56ae6dd727ef37d918e6b"
+vtk.js@^2.10.8:
+  version "2.10.8"
+  resolved "https://registry.yarnpkg.com/vtk.js/-/vtk.js-2.10.8.tgz#f950100e9b1404317748029e8a329d124e8a2cf2"
   dependencies:
     blueimp-md5 "2.3.0"
     commander "2.9.0"
