@@ -1,0 +1,14 @@
+{{ partial "header.html" . }}
+  <div class="col-xs-12">
+    <h1>OpenGeoSys Documentation</h1>
+    <div class="row">
+      {{ range .Params.sections }}
+        <div class="col-xs-4">
+          <h3><a href="/docs/{{ .slug }}">{{ .name }}</a></h3>
+          <p>{{ .text }}</p>
+        </div>
+
+      {{ end }}
+    </div>
+  </div>
+{{ partial "footer.html" . }}
