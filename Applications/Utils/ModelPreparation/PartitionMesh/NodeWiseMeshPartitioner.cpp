@@ -84,8 +84,8 @@ void NodeWiseMeshPartitioner::readMetisData(const std::string& file_name_base)
     std::remove(fname_eparts.c_str());
 }
 
-void NodeWiseMeshPartitioner
-         ::partitionByMETIS(const bool is_mixed_high_order_linear_elems)
+void NodeWiseMeshPartitioner::partitionByMETIS(
+    const bool is_mixed_high_order_linear_elems)
 {
     std::vector<MeshLib::Node*> const& nodes = _mesh->getNodes();
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
