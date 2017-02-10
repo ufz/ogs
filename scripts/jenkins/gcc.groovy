@@ -26,7 +26,7 @@ image.pull()
 image.inside(defaultDockerArgs) {
     sh 'cd ogs && git lfs pull'
     stage('Install prerequisites Web') {
-        sh 'cd ogs/web && npm install && sudo -H pip install -r requirements.txt'
+        sh 'cd ogs/web && rm -rf node_modules && yarn && sudo -H pip install -r requirements.txt'
     }
     stage('Configure (Linux-Docker)') {
         configure.linux(cmakeOptions: defaultCMakeOptions + webCMakeOptions, script: this)
