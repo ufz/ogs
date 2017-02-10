@@ -9,6 +9,10 @@
 
 #pragma once
 
+
+#include <unordered_map>
+#include <typeindex>
+
 #include "NumLib/NumericsConfig.h"
 #include "MathLib/Point3d.h"
 #include "StaggeredCouplingTerm.h"
@@ -64,7 +68,8 @@ public:
 
     virtual void computeSecondaryVariable(std::size_t const mesh_item_id,
                               NumLib::LocalToGlobalIndexMap const& dof_table,
-                              const double t, GlobalVector const& x);
+                              const double t, GlobalVector const& x,
+                              StaggeredCouplingTerm const& coupled_term);
 
     virtual void preTimestep(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -94,6 +99,12 @@ private:
 
     virtual void computeSecondaryVariableConcrete
                 (double const /*t*/, std::vector<double> const& /*local_x*/) {}
+
+    virtual void computeSecondaryVariableWithCoupledProcessConcrete
+            (double const /*t*/, std::vector<double> const& /*local_x*/,
+             std::unordered_map<std::type_index,
+             const std::vector<double>> const&
+             /*coupled_local_solutions*/) {}
 };
 
 } // namespace ProcessLib

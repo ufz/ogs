@@ -115,13 +115,14 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac, coupling_term);
 }
 
-void HeatConductionProcess::computeSecondaryVariableConcrete(const double t,
-                                                         GlobalVector const& x)
+void HeatConductionProcess::computeSecondaryVariableConcrete(
+    const double t, GlobalVector const& x,
+    StaggeredCouplingTerm const& coupled_term)
 {
     DBUG("Compute heat flux for HeatConductionProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
             &HeatConductionLocalAssemblerInterface::computeSecondaryVariable,
-            _local_assemblers, *_local_to_global_index_map, t, x);
+            _local_assemblers, *_local_to_global_index_map, t, x, coupled_term);
 }
 
 }  // namespace HeatConduction

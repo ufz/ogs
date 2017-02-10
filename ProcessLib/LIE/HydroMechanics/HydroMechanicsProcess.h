@@ -53,7 +53,9 @@ public:
     //! @}
 
     void computeSecondaryVariableConcrete(double const t,
-                                          GlobalVector const& x) override;
+                                          GlobalVector const& x,
+                                          StaggeredCouplingTerm const&
+                                          coupled_term) override;
 
 private:
     using LocalAssemblerInterface = HydroMechanicsLocalAssemblerInterface;

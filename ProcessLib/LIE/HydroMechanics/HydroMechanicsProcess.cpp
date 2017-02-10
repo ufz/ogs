@@ -349,12 +349,13 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 
 template <unsigned GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
-    const double t, GlobalVector const& x)
+    const double t, GlobalVector const& x,
+    StaggeredCouplingTerm const& coupled_term)
 {
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &HydroMechanicsLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, *_local_to_global_index_map, t, x);
+        _local_assemblers, *_local_to_global_index_map, t, x, coupled_term);
 }
 
 // ------------------------------------------------------------------------------------

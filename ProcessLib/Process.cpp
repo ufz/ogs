@@ -246,9 +246,11 @@ void Process::postTimestep(GlobalVector const& x)
     postTimestepConcreteProcess(x);
 }
 
-void Process::computeSecondaryVariable( const double t, GlobalVector const& x)
+void Process::computeSecondaryVariable(const double t, GlobalVector const& x,
+                                       StaggeredCouplingTerm const&
+                                       coupled_term)
 {
-    computeSecondaryVariableConcrete(t, x);
+    computeSecondaryVariableConcrete(t, x, coupled_term);
 }
 
 void Process::preIteration(const unsigned iter, const GlobalVector &x)

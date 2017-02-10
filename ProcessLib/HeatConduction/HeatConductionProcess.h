@@ -38,8 +38,9 @@ public:
 
     bool isLinear() const override { return true; }
 
-    void computeSecondaryVariableConcrete(double const t,
-                                          GlobalVector const& x) override;
+    void computeSecondaryVariableConcrete(
+        double const t, GlobalVector const& x,
+        StaggeredCouplingTerm const& coupled_term) override;
 
     void preTimestepConcreteProcess(GlobalVector const& x, const double t,
                                     const double delta_t) override;
