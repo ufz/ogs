@@ -1,10 +1,16 @@
 {{ partial "header.html" . }}
   <div class="col-xs-3">
+    {{ $segments := split .RelPermalink "/" }}
+    {{ $subsection := index $segments 2 }}
     <ul>
     {{ range .Site.Pages.ByWeight }}
-      <!-- {{ if eq .Type "docs"}} -->
-        <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
-      <!-- {{ end }} -->
+      {{ if eq .Type "docs"}}
+        {{ $localSegments := split .RelPermalink "/" }}
+        {{ $localSubsection := index $localSegments 2 }}
+        {{ if eq $localSubsection $subsection  }}
+          <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+        {{ end }}
+      {{ end }}
     {{ end }}
     <ul>
   </div>
