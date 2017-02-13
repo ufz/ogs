@@ -159,7 +159,10 @@ private:
 
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
-    std::vector<IntegrationPointDataMatrix<BMatricesType, DisplacementDim>> _ip_data;
+    std::vector<IntegrationPointDataMatrix<BMatricesType, DisplacementDim>,
+                Eigen::aligned_allocator<
+                    IntegrationPointDataMatrix<BMatricesType, DisplacementDim>>>
+        _ip_data;
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;

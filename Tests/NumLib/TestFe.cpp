@@ -155,6 +155,9 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
     std::vector<const MeshLib::Node*> vec_nodes;
     std::vector<const MeshElementType*> vec_eles;
     MeshElementType* mesh_element;
+
+ public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 }; // NumLibFemIsoTest
 
 template <class T>

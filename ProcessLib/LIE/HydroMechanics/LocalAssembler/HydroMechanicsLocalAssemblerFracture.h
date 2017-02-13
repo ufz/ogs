@@ -103,7 +103,8 @@ private:
 
     HydroMechanicsProcessData<GlobalDim>& _process_data;
 
-    std::vector<IntegrationPointDataType> _ip_data;
+    std::vector<IntegrationPointDataType,
+        Eigen::aligned_allocator<IntegrationPointDataType>> _ip_data;
 
     static const int pressure_index = 0;
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;

@@ -7,14 +7,13 @@ class OpenGeoSysConan(ConanFile):
         "Boost/[>=1.56.0]@lasote/stable", \
         "Shapelib/1.3.0@bilke/stable", \
         "VTK/[>=6.3,<7.1]@bilke/stable", \
-        "Eigen3/3.2.8@bilke/stable", \
+        "Eigen3/3.2.9@bilke/stable", \
         "libgeotiff/1.4.2@bilke/stable", \
         "Qt/5.6.2@bilke/testing"
 
     generators = "cmake"
 
     default_options = \
-        "Boost:shared=False", \
         "Boost:header_only=True", \
         "Qt:xmlpatterns=True"
 

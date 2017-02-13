@@ -152,10 +152,15 @@ private:
     SmallDeformationProcessData<DisplacementDim>& _process_data;
     FractureProperty const* _fracture_property = nullptr;
 
-    std::vector<IntegrationPointDataFracture<HMatricesType, DisplacementDim>> _ip_data;
+    std::vector<IntegrationPointDataFracture<HMatricesType, DisplacementDim>,
+                Eigen::aligned_allocator<IntegrationPointDataFracture<
+                    HMatricesType, DisplacementDim>>>
+        _ip_data;
 
     IntegrationMethod _integration_method;
-    std::vector<ShapeMatrices> _shape_matrices;
+    std::vector<ShapeMatrices, Eigen::aligned_allocator<
+                                   typename ShapeMatricesType::ShapeMatrices>>
+        _shape_matrices;
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 };

@@ -301,7 +301,9 @@ private:
 
     IntegrationMethod const _integration_method;
     std::vector<
-        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>
+        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
+        Eigen::aligned_allocator<
+            IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
     std::vector<std::vector<double>> _darcy_velocities;
 };
