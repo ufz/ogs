@@ -13,6 +13,7 @@
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 
+#include "ProcessLib/StaggeredCouplingTerm.h"
 
 namespace NumLib
 {
@@ -96,7 +97,8 @@ bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
 
     if (time_disc.needsPreload())
     {
-        _nonlinear_solver->assemble(x);
+        _nonlinear_solver->assemble(x,
+                                 ProcessLib::createVoidStaggeredCouplingTerm());
         time_disc.pushState(t0, x0,
                             _ode_sys);  // TODO: that might do duplicate work
     }
@@ -112,7 +114,9 @@ bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
         // INFO("time: %e, delta_t: %e", t, delta_t);
         time_disc.nextTimestep(t, delta_t);
 
-        nl_slv_succeeded = _nonlinear_solver->solve(x, nullptr);
+        nl_slv_succeeded = _nonlinear_solver->solve(x,
+                                ProcessLib::createVoidStaggeredCouplingTerm(),
+                                nullptr);
         if (!nl_slv_succeeded)
             break;
 

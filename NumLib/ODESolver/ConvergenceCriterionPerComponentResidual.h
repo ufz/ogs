@@ -41,10 +41,6 @@ public:
                      GlobalVector const& x) override;
     void checkResidual(const GlobalVector& residual) override;
 
-    void preFirstIteration() override { _is_first_iteration = true; }
-    void reset() override { _satisfied = true; _is_first_iteration = false; }
-    bool isSatisfied() const override { return _satisfied; }
-
     void setDOFTable(const LocalToGlobalIndexMap& dof_table,
                      MeshLib::Mesh const& mesh) override;
 
@@ -52,10 +48,8 @@ private:
     const std::vector<double> _abstols;
     const std::vector<double> _reltols;
     const MathLib::VecNormType _norm_type;
-    bool _satisfied = true;
     LocalToGlobalIndexMap const* _dof_table = nullptr;
     MeshLib::Mesh const* _mesh = nullptr;
-    bool _is_first_iteration = true;
     std::vector<double> _residual_norms_0;
 };
 

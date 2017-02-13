@@ -58,7 +58,11 @@ public:
 
     //! Tell the ConvergenceCriterion that it is called for the first time now
     //! (while solving a specific nonlinear system).
-    virtual void preFirstIteration() {}
+    virtual void preFirstIteration() { _is_first_iteration = true; }
+
+    //! Tell the ConvergenceCriterion that it is not called for the first time
+    //! (while solving a coupling system).
+    virtual void setNoFirstIteration() { _is_first_iteration = false; }
 
     //! Indicate that a new iteration now starts.
     //!
@@ -67,12 +71,16 @@ public:
     //! to be done anew. This method will make the ConvergenceCriterion forget
     //! the result of all checks already done, s.t. all necessary checks will
     //! have to be repeated in order to satisfy the ConvergenceCriterion.
-    virtual void reset() = 0;
+    virtual void reset() { _satisfied = true; _is_first_iteration = false; };
 
     //! Tell if the convergence criterion is satisfied.
-    virtual bool isSatisfied() const = 0;
+    virtual bool isSatisfied() const { return _satisfied; };
 
     virtual ~ConvergenceCriterion() = default;
+
+protected:
+    bool _satisfied = true;
+    bool _is_first_iteration = true;
 };
 
 //! Creates a convergence criterion from the given configuration.

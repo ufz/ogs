@@ -36,13 +36,11 @@ public:
                      GlobalVector const& x) override;
     void checkResidual(const GlobalVector& /*residual*/) override {}
 
-    void reset() override { _satisfied = true; }
-    bool isSatisfied() const override { return _satisfied; }
+    void reset() override { this->_satisfied = true; }
 private:
     const boost::optional<double> _abstol;
     const boost::optional<double> _reltol;
     const MathLib::VecNormType _norm_type;
-    bool _satisfied = true;
 };
 
 std::unique_ptr<ConvergenceCriterionDeltaX> createConvergenceCriterionDeltaX(

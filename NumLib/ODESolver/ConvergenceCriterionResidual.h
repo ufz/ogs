@@ -38,15 +38,10 @@ public:
                      GlobalVector const& x) override;
     void checkResidual(const GlobalVector& residual) override;
 
-    void preFirstIteration() override { _is_first_iteration = true; }
-    void reset() override { _satisfied = true; _is_first_iteration = false; }
-    bool isSatisfied() const override { return _satisfied; }
 private:
     const boost::optional<double> _abstol;
     const boost::optional<double> _reltol;
     const MathLib::VecNormType _norm_type;
-    bool _satisfied = true;
-    bool _is_first_iteration = true;
     double _residual_norm_0;
 };
 
