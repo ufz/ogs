@@ -27,6 +27,11 @@
 
 #include "SmallDeformationProcessData.h"
 
+namespace ProcessLib
+{
+namespace SmallDeformation
+{
+
 template <typename BMatricesType, int DisplacementDim>
 struct IntegrationPointData final
 {
@@ -76,11 +81,6 @@ struct IntegrationPointData final
         _material_state_variables->pushBackState();
     }
 };
-
-namespace ProcessLib
-{
-namespace SmallDeformation
-{
 
 /// Used by for extrapolation of the integration point values. It is ordered
 /// (and stored) by integration points.
