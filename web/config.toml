@@ -6,8 +6,8 @@ buildDrafts = true
 pygmentsstyle = 'friendly'
 enableGitInfo = true
 
-[params.sharingicons]
-  hide = true
+[params]
+  alert = "Preliminary test page! Current documentation is at <a href='https://docs.opengeosys.org'>docs.opengeosys.org</a>."
 
 [taxonomies]
 news = "news"
