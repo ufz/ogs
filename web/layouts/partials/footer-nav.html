@@ -1,0 +1,28 @@
+{{ if .Prev | or .Next }}
+<div class="footer-nav">
+  <div class="row between-xs">
+    <div class="col-xs-6">
+      {{ if .Prev }}
+      <a href="{{ .Prev.Permalink }}" title="{{ .Prev.Permalink }}">
+        <span>Previous</span>
+        <div class="nav-title">
+          {{ .Prev.Title }}
+        </div>
+      </a>
+      {{ end }}
+    </div>
+    <div class="col-xs-6">
+      {{ if .Next }}
+      <span class="tr">
+        <a href="{{ .Next.Permalink }}" title="{{ .Next.Permalink }}">
+          <div>Next</div>
+          <div class="nav-title">
+            {{ .Next.Title }}
+          </div>
+        </a>
+      </span>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}

@@ -3,10 +3,13 @@
     <h1>OpenGeoSys Documentation</h1>
     <div class="row">
       {{ range .Params.sections }}
-        <div class="col-xs-4">
-          <h3><a href="/docs/{{ .slug }}">{{ .name }}</a></h3>
-          <p>{{ .text }}</p>
-        </div>
+        <article class="fl w-33 ma2 bg-white br3 pa4 pa4-ns mv3 ba b--black-10">
+          <div class="tc">
+            <h1 class="f4"><a href="/docs/{{ .slug }}">{{ .name }}</a></h1>
+            <hr class="mw3 bb bw1 b--black-10">
+          </div>
+          <p class="1h-copy measure center f6 black-70">{{ .text }}</p>
+        </article>
 
       {{ end }}
     </div>
