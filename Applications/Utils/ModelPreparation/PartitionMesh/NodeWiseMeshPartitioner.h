@@ -130,6 +130,9 @@ private:
 
     void writePropertiesBinary(std::string const& file_name_base) const;
 
+    void readPropertiesConfigDataBinary(
+        std::string const& file_name_base) const;
+
     /*!
          \brief Write the configuration data of the partition data in
                 binary files.

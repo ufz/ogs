@@ -324,6 +324,26 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
         MeshLib::IO::writePropertyVectorMetaDataBinary(out, pvmd);
     }
     out.close();
+}
+
+void NodeWiseMeshPartitioner::readPropertiesConfigDataBinary(
+    const std::string& file_name_base) const
+{
+    const std::string fname = file_name_base + "_partitioned_properties_cfg"
+                              + std::to_string(_npartitions) + ".bin";
+    std::ifstream is(fname.c_str(), std::ios::binary | std::ios::in);
+    if (!is)
+    {
+        ERR("Could not open file '%s' in binary mode.", fname.c_str());
+    }
+    while (is)
+    {
+        boost::optional<MeshLib::IO::PropertyVectorMetaData> pvmd(
+            MeshLib::IO::readPropertyVectorMetaData(is));
+        if (pvmd) {
+            INFO("readPropertiesConfigMetaDataBinary:");
+            MeshLib::IO::writePropertyVectorMetaData(*pvmd);
+        }
     }
 }
 
