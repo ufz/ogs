@@ -4,6 +4,11 @@ author = "Dmitri Naumov"
 title = "Groundwater flow (Neumann)"
 
 aliases = [ "/docs/benchmarks/" ] # First benchmark page
+
+[menu]
+  [menu.benchmarks]
+    parent = "elliptic"
+    weight = 0
 +++
 
 ## Equations

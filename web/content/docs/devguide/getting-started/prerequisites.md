@@ -4,8 +4,10 @@ title = "Set Up Prerequisites"
 author = "Lars Bilke"
 weight = 2
 
-# back = "introduction.md"
-
+[menu]
+  [menu.devguide]
+    parent = "getting-started"
+    weight = 1
 +++
 
 ## Minimum requirements

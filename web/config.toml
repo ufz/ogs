@@ -7,7 +7,29 @@ pygmentsstyle = 'friendly'
 enableGitInfo = true
 
 [params.sharingicons]
-   hide = true
+  hide = true
 
 [taxonomies]
 news = "news"
+
+# Main menu
+[[menu.main]]
+  name = "News"
+  url = "/news/"
+  weight = 1
+# Menu entry defined in about.md
+[[menu.main]]
+  name = "Docs"
+  url = "/docs/"
+  identifier = "docs"
+  weight = 3
+
+# Devguide sidebar menu top-level categories
+[[menu.devguide]]
+  name = "Getting Started"
+  identifier = "getting-started"
+
+# Benchmarks sidebar top-level categories
+[[menu.benchmarks]]
+  name = "Elliptic"
+  identifier = "elliptic"
