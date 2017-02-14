@@ -1,4 +1,4 @@
-{{ partial "header.html" . }}
+{{ define "main" }}
 
 {{ $entry := "" }}
 {{ $data := $.Site.Data.news.items }}
@@ -32,4 +32,4 @@
 
 {{ end }}
 
-{{ partial "footer.html" . }}
+{{ end }}
