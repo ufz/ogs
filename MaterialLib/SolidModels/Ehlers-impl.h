@@ -41,6 +41,8 @@ namespace MaterialLib
 {
 namespace Solids
 {
+namespace Ehlers
+{
 template <int DisplacementDim>
 struct PhysicalStressWithInvariants final
 {
@@ -654,5 +656,6 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
     return true;
 }
 
+}  // namespace Ehlers
 }  // namespace Solids
 }  // namespace MaterialLib

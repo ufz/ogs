@@ -13,8 +13,11 @@ namespace MaterialLib
 {
 namespace Solids
 {
+namespace Ehlers
+{
 template class SolidEhlers<2>;
 template class SolidEhlers<3>;
 
+}  // namespace Ehlers
 }  // namespace Solids
 }  // namespace MaterialLib

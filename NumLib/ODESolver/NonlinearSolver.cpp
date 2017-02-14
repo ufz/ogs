@@ -9,9 +9,6 @@
 
 #include "NonlinearSolver.h"
 
-// for debugging
-// #include <iostream>
-
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/ConfigTree.h"

@@ -319,12 +319,12 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
                 coupled_process_tree->getConfigParameterList<std::string>(
                     "coupled_process"))
             {
-                auto const& cpl_pcs_ptr = BaseLib::getOrError(
+                auto const& coupled_process = *BaseLib::getOrError(
                     processes, cpl_pcs_name,
                     "A process with the given name has not been defined.");
 
                 auto const inserted = coupled_processes.emplace(
-                    std::type_index(typeid(*cpl_pcs_ptr)), *cpl_pcs_ptr);
+                    std::type_index(typeid(coupled_process)), coupled_process);
                 if (!inserted.second)
                 {  // insertion failed, i.e., key already exists
                     OGS_FATAL("Coupled process `%s' already exists.",
@@ -509,8 +509,9 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
                 _per_process_data.end(),
                 [&coupled_process](
                     std::unique_ptr<SingleProcessData> const& item) {
+                    auto const& item_process = item->process;
                     return std::type_index(typeid(coupled_process)) ==
-                           std::type_index(typeid(item->process));
+                           std::type_index(typeid(item_process));
                 });
 
             if (found_item != _per_process_data.end())
