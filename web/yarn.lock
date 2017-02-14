@@ -5827,6 +5827,16 @@ table@^3.7.8:
     slice-ansi "0.0.4"
     string-width "^2.0.0"
 
+tachyons-sass@^4.7.1:
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/tachyons-sass/-/tachyons-sass-4.7.1.tgz#b039eaf8c633189a32f546e8e28a764cb3ee4cfb"
+  dependencies:
+    tachyons "^4.6.1"
+
+tachyons@^4.6.1:
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/tachyons/-/tachyons-4.6.2.tgz#cf006fd516763e735b33565fc21b8b3616a012c8"
+
 tapable@^0.1.8, tapable@~0.1.8:
   version "0.1.10"
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-0.1.10.tgz#29c35707c2b70e50d07482b5d202e8ed446dafd4"
@@ -6203,9 +6213,9 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vtk.js@^2.10.8:
-  version "2.10.8"
-  resolved "https://registry.yarnpkg.com/vtk.js/-/vtk.js-2.10.8.tgz#f950100e9b1404317748029e8a329d124e8a2cf2"
+vtk.js@^2.11.1:
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/vtk.js/-/vtk.js-2.11.1.tgz#78cd933dce5502a6b0e5703b25445054e117dba7"
   dependencies:
     blueimp-md5 "2.3.0"
     commander "2.9.0"
