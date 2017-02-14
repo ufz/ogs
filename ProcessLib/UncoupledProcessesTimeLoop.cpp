@@ -527,7 +527,7 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
         }
         _solutions_of_coupled_processes.emplace_back(coupled_xs);
 
-        auto const x = *_process_solutions[pcs_idx];
+        auto const& x = *_process_solutions[pcs_idx];
 
         // Create a vector to store the solution of the last coupling iteration
         auto& x_coupling0 = NumLib::GlobalVectorProvider::provider.getVector(x);
