@@ -26,7 +26,6 @@ stage('CLI (envinf1)') {
     }, petsc: {
         build.linux(dir: 'build-petsc', env: 'envinf1/petsc.sh', script: this)
     }
-
 }
 
 stage('Test (envinf1)') {
