@@ -262,9 +262,10 @@ NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
     return nmb_element_idxs;
 }
 
-std::tuple< std::vector<NodeWiseMeshPartitioner::IntegerType>,
-            std::vector<NodeWiseMeshPartitioner::IntegerType>>
-NodeWiseMeshPartitioner::writeConfigDataBinary(const std::string& file_name_base)
+std::tuple<std::vector<NodeWiseMeshPartitioner::IntegerType>,
+           std::vector<NodeWiseMeshPartitioner::IntegerType>>
+NodeWiseMeshPartitioner::writeConfigDataBinary(
+    const std::string& file_name_base)
 {
     const std::string fname = file_name_base + "_partitioned_msh_cfg"
                               + std::to_string(_npartitions) + ".bin";
