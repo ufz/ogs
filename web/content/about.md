@@ -3,6 +3,11 @@ title = "About"
 author = "Lars Bilke"
 date = "2017-01-13T14:24:23+01:00"
 
+[menu]
+    [menu.main]
+        name = "About"
+        url = "/about/"
+        weight = 2
 +++
 
 See [web/README.md](https://github.com/ufz/ogs/blob/master/web/README.md) for getting started on developing this site!
