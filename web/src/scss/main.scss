@@ -3,3 +3,91 @@
   max-width: 100%;
   height: auto;
 }
+
+@import "node_modules/tachyons-sass/tachyons.scss";
+
+// Fonts
+h1, h2, h3, h4, h5, h6 { @extend .athelas; }
+p, li { @extend .avenir; }
+code, pre { @extend .code }
+
+// Header
+h1 { @extend .f2; }
+h2 { @extend .f3; }
+h3 { @extend .f4; }
+
+// Text
+a {
+  @extend .link;
+  @extend .hover-orange;
+}
+
+p, li {
+  @extend .measure-wide;
+  @extend .lh-copy;
+  @extend .f5;
+}
+
+// Code
+code, pre {
+  @extend .lh-solid;
+}
+
+// Nav
+.nav-a-style {
+    @extend .gray;
+    @extend .dim;
+    @extend .dib;
+}
+nav {
+    @extend .pa3;
+    @extend .pa4-ns;
+
+    a {
+        @extend .nav-a-style;
+        @extend .f6;
+        @extend .f5-ns;
+        @extend .mr3;
+
+
+    }
+    a.active {
+        @extend .orange;
+    }
+}
+
+// Docs
+
+// Side nav
+ul.sidenav {
+    @extend .list;
+    @extend .pl0;
+    li {
+        @extend .f5;
+    }
+    li.category {
+        @extend .athelas;
+        @extend .small-caps;
+    }
+    a {
+        @extend .nav-a-style;
+        @extend .f6;
+    }
+    a.active {
+        @extend .orange;
+    }
+}
+
+// Footer nav-a-style
+.footer-nav {
+    a {
+        @extend .f6;
+    }
+}
+
+.page-info {
+    p {
+        @extend .f6;
+        max-width: 100%;
+    }
+}

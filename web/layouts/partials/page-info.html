@@ -1,0 +1,4 @@
+<div class="page-info">
+  <p>This article was written by {{ .Params.Author }}. If you are missing something or you find an error please <a href="mailto:ogs-devs@googlegroups.com">let us know</a>. <br>
+  Last revision: {{ .Lastmod.Format "January 2, 2006" }}{{ if .IsPage }}<em>{{ with .GitInfo }}| {{ .Subject }} | <a href="https://github.com/ufz/ogs/commit/{{ .AbbreviatedHash }}">{{ .AbbreviatedHash }}</a>{{end }}</em>{{ end }}</p>
+</div>
