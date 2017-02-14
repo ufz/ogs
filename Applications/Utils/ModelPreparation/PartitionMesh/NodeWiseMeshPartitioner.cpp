@@ -23,6 +23,7 @@
 #include "BaseLib/Error.h"
 
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
@@ -262,6 +263,70 @@ NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
     return nmb_element_idxs;
 }
 
+void NodeWiseMeshPartitioner::writePropertiesBinary(
+    const std::string& file_name_base) const
+{
+    const std::string fname = file_name_base + "_partitioned_properties_cfg"
+                              + std::to_string(_npartitions) + ".bin";
+    std::ofstream out(fname.c_str(), std::ios::binary | std::ios::out);
+
+    auto const& properties(_mesh->getProperties());
+    auto const& property_names(properties.getPropertyVectorNames());
+    for (auto const& name : property_names)
+    {
+        MeshLib::IO::PropertyVectorMetaData pvmd;
+        pvmd.property_name = name;
+        pvmd.is_int_type = false;
+        {
+            auto *pv = properties.getPropertyVector<double>(name);
+            if (pv)
+            {
+                pvmd.is_int_type = false;
+                pvmd.is_data_type_signed = false;
+                pvmd.data_type_size_in_bytes = sizeof(double);
+                pvmd.number_of_components = pv->getNumberOfComponents();
+                pvmd.number_of_tuples = pv->getNumberOfTuples();
+            }
+        }
+        {
+            auto *pv = properties.getPropertyVector<float>(name);
+            if (pv)
+            {
+                pvmd.is_int_type = false;
+                pvmd.is_data_type_signed = false;
+                pvmd.data_type_size_in_bytes = sizeof(float);
+                pvmd.number_of_components = pv->getNumberOfComponents();
+                pvmd.number_of_tuples = pv->getNumberOfTuples();
+            }
+        }
+        {
+            auto* pv = properties.getPropertyVector<int>(name);
+            if (pv)
+            {
+                pvmd.is_int_type = true;
+                pvmd.is_data_type_signed = true;
+                pvmd.data_type_size_in_bytes = sizeof(int);
+                pvmd.number_of_components = pv->getNumberOfComponents();
+                pvmd.number_of_tuples = pv->getNumberOfTuples();
+            }
+        }
+        {
+            auto* pv = properties.getPropertyVector<unsigned>(name);
+            if (pv)
+            {
+                pvmd.is_int_type = true;
+                pvmd.is_data_type_signed = false;
+                pvmd.data_type_size_in_bytes = sizeof(unsigned);
+                pvmd.number_of_components = pv->getNumberOfComponents();
+                pvmd.number_of_tuples = pv->getNumberOfTuples();
+            }
+        }
+        MeshLib::IO::writePropertyVectorMetaDataBinary(out, pvmd);
+    }
+    out.close();
+    }
+}
+
 std::tuple<std::vector<NodeWiseMeshPartitioner::IntegerType>,
            std::vector<NodeWiseMeshPartitioner::IntegerType>>
 NodeWiseMeshPartitioner::writeConfigDataBinary(
@@ -415,6 +480,8 @@ void NodeWiseMeshPartitioner::writeNodesBinary(const std::string& file_name_base
 
 void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 {
+    writePropertiesBinary(file_name_base);
+    readPropertiesConfigDataBinary(file_name_base);
     const auto elem_integers = writeConfigDataBinary(file_name_base);
 
     const std::vector<IntegerType>& num_elem_integers

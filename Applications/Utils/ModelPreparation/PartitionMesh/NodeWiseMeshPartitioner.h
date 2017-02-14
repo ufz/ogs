@@ -128,6 +128,8 @@ private:
                                     std::vector<IntegerType>& elem_info,
                                     IntegerType& counter);
 
+    void writePropertiesBinary(std::string const& file_name_base) const;
+
     /*!
          \brief Write the configuration data of the partition data in
                 binary files.
@@ -137,8 +139,8 @@ private:
                  element 2: The numbers of all ghost element integer
                             variables of each partitions.
     */
-    std::tuple< std::vector<IntegerType>, std::vector<IntegerType>>
-         writeConfigDataBinary(const std::string& file_name_base);
+    std::tuple<std::vector<IntegerType>, std::vector<IntegerType>>
+    writeConfigDataBinary(const std::string& file_name_base);
 
     /*!
          \brief Write the element integer variables of all partitions
