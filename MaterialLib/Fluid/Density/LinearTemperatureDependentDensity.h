@@ -61,8 +61,9 @@ public:
                      const PropertyVariableType var) const override
     {
         (void)var_vals;
-        (void)var;
-        return - _rho0 * _beta;
+        if (var != PropertyVariableType::T)
+            return 0.0;
+        return -_rho0 * _beta;
     }
 
 private:
