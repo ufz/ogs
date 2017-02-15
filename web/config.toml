@@ -33,3 +33,6 @@ news = "news"
 [[menu.benchmarks]]
   name = "Elliptic"
   identifier = "elliptic"
+[[menu.benchmarks]]
+  name = "Small Deformations"
+  identifier = "small-deformations"
