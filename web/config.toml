@@ -33,6 +33,12 @@ news = "news"
 [[menu.benchmarks]]
   name = "Elliptic"
   identifier = "elliptic"
+  weight = 1
 [[menu.benchmarks]]
   name = "Small Deformations"
   identifier = "small-deformations"
+  weight = 2
+[[menu.benchmarks]]
+  name = "Heatconduction"
+  identifier = "heatconduction"
+  weight = 3
