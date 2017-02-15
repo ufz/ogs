@@ -21,6 +21,7 @@
 
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 
 // Check if the value can by converted to given type without overflow.
 template <typename VALUE, typename TYPE>
@@ -184,8 +185,45 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
     setElements(mesh_nodes, ghost_elem_data, mesh_elems, process_ghost);
 
     //----------------------------------------------------------------------------------
-    return newMesh(BaseLib::extractBaseName(file_name_base),
-               mesh_nodes, glb_node_ids, mesh_elems);
+    // read the properties
+    readPropertiesConfigDataBinary(file_name_base);
+
+    MeshLib::Properties p;
+
+    return newMesh(BaseLib::extractBaseName(file_name_base), mesh_nodes,
+                   glb_node_ids, mesh_elems, p);
+}
+
+void NodePartitionedMeshReader::readPropertiesConfigDataBinary(
+    const std::string& file_name_base) const
+{
+    const std::string fname = file_name_base + "_partitioned_properties_cfg"
+                              + std::to_string(_mpi_comm_size) + ".bin";
+    std::ifstream is(fname.c_str(), std::ios::binary | std::ios::in);
+    if (!is)
+    {
+        ERR("Could not open file '%s' in binary mode.", fname.c_str());
+    }
+    std::size_t number_of_properties = 0;
+    is.read(reinterpret_cast<char*>(&number_of_properties), sizeof(std::size_t));
+    for (std::size_t i(0); i < number_of_properties; ++i)
+    {
+        boost::optional<MeshLib::IO::PropertyVectorMetaData> pvmd(
+            MeshLib::IO::readPropertyVectorMetaData(is));
+        if (pvmd) {
+            INFO("readPropertiesConfigMetaDataBinary:");
+            MeshLib::IO::writePropertyVectorMetaData(std::cout, *pvmd);
+        }
+    }
+    auto pos = is.tellg();
+    auto offset =
+        pos +
+        static_cast<long>(_mpi_rank *
+                          sizeof(MeshLib::IO::PropertyVectorPartitionMetaData));
+    is.seekg(offset);
+    unsigned long number_of_tuples = 0;
+    is.read(reinterpret_cast<char*>(&number_of_tuples), sizeof(unsigned long));
+    INFO("%u tuples in partition %u.", number_of_tuples, _mpi_rank);
 }
 
 bool NodePartitionedMeshReader::openASCIIFiles(std::string const& file_name_base,
@@ -369,28 +407,31 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
         MPI_Bcast(_mesh_info.data(), static_cast<int>(_mesh_info.size()),
             MPI_LONG, 0, _mpi_comm);
 
-        //----------------------------------------------------------------------------------
+        //---------------------------------------------------------------------
         // Read Nodes
         if (!readCastNodesASCII(is_node, i, mesh_nodes, glb_node_ids))
             break;
 
-        //----------------------------------------------------------------------------------
+        //---------------------------------------------------------------------
         // Read elements
         if (!readCastElemsASCII(is_elem, i,
             _mesh_info.regular_elements + _mesh_info.offset[0],
             false, mesh_nodes, mesh_elems))
             break;
 
-        //-------------------------------------------------------------------------
+        //---------------------------------------------------------------------
         // Ghost elements
         if (!readCastElemsASCII(is_elem, i,
             _mesh_info.ghost_elements + _mesh_info.offset[1],
             true, mesh_nodes, mesh_elems))
             break;
 
-        if(_mpi_rank == i)
+        if(_mpi_rank == i) {
+            // reading ascii properties is not implemented
+            MeshLib::Properties properties;
             np_mesh = newMesh(BaseLib::extractBaseName(file_name_base),
-                    mesh_nodes, glb_node_ids, mesh_elems);
+                    mesh_nodes, glb_node_ids, mesh_elems, properties);
+        }
     }
 
     if(_mpi_rank == 0)
@@ -405,17 +446,17 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
     return np_mesh;
 }
 
-MeshLib::NodePartitionedMesh*
-NodePartitionedMeshReader::newMesh(
+MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
     std::string const& mesh_name,
     std::vector<MeshLib::Node*> const& mesh_nodes,
     std::vector<unsigned long> const& glb_node_ids,
-    std::vector<MeshLib::Element*> const& mesh_elems) const
+    std::vector<MeshLib::Element*> const& mesh_elems,
+    MeshLib::Properties const& properties) const
 {
     return new MeshLib::NodePartitionedMesh(
         mesh_name + std::to_string(_mpi_comm_size),
         mesh_nodes, glb_node_ids, mesh_elems,
-        MeshLib::Properties(),
+        properties,
         _mesh_info.global_base_nodes,
         _mesh_info.global_nodes,
         _mesh_info.base_nodes,

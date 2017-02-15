@@ -100,17 +100,21 @@ private:
     } _mesh_info;
 
     /*!
-        \brief Create a new mesh of NodePartitionedMesh after reading and processing the data.
+        \brief Create a new mesh of NodePartitionedMesh after reading and
+       processing the data.
         \param mesh_name    Name assigned to the new mesh.
         \param mesh_nodes   Node data.
         \param glb_node_ids Global IDs of nodes.
         \param mesh_elems   Element data.
-        \return             True on success and false otherwise.
+        \param properties Collection of PropertyVector's assigned to the mesh.
+        \return Returns a pointer to a NodePartitionedMesh
      */
-    MeshLib::NodePartitionedMesh* newMesh(std::string const& mesh_name,
+    MeshLib::NodePartitionedMesh* newMesh(
+        std::string const& mesh_name,
         std::vector<MeshLib::Node*> const& mesh_nodes,
         std::vector<unsigned long> const& glb_node_ids,
-        std::vector<MeshLib::Element*> const& mesh_elems) const;
+        std::vector<MeshLib::Element*> const& mesh_elems,
+        MeshLib::Properties const& properties) const;
 
     /*!
         \brief Parallel reading of a binary file via MPI_File_read, and it is called by readBinary
@@ -158,18 +162,24 @@ private:
      */
     MeshLib::NodePartitionedMesh* readBinary(const std::string &file_name_base);
 
+    void readPropertiesConfigDataBinary(const std::string& file_name_base) const;
+
     /*!
         \brief Open ASCII files of node partitioned mesh data.
 
-        \param file_name_base  Name of file to be read, which must be a name with the
+        \param file_name_base  Name of file to be read, which must be a name
+       with the
                                path to the file and without file extension.
-        \param is_cfg          Input stream for the file contains configuration data.
+        \param is_cfg          Input stream for the file contains
+       configuration data.
         \param is_node         Input stream for the file contains node data.
-        \param is_elem         Input stream for the file contains element data.
+        \param is_elem         Input stream for the file contains element
+       data.
         \return                Return true if all files are good.
      */
-    bool openASCIIFiles(std::string const& file_name_base,std::ifstream& is_cfg,
-        std::ifstream& is_node, std::ifstream& is_elem) const;
+    bool openASCIIFiles(std::string const& file_name_base,
+                        std::ifstream& is_cfg, std::ifstream& is_node,
+                        std::ifstream& is_elem) const;
 
     /*!
         \brief Read mesh nodes from an ASCII file and cast to the corresponding rank.
