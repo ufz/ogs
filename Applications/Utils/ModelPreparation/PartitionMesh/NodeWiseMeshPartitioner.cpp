@@ -326,6 +326,12 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
         }
         MeshLib::IO::writePropertyVectorMetaDataBinary(out, pvmd);
     }
+    for (const auto& partition : _partitions)
+    {
+        MeshLib::IO::PropertyVectorPartitionMetaData pvpmd;
+        pvpmd.number_of_tuples = partition.number_of_non_ghost_nodes;
+        MeshLib::IO::writePropertyVectorPartitionMetaData(out, pvpmd);
+    }
     out.close();
 }
 
@@ -349,6 +355,17 @@ void NodeWiseMeshPartitioner::readPropertiesConfigDataBinary(
             INFO("readPropertiesConfigMetaDataBinary:");
             MeshLib::IO::writePropertyVectorMetaData(*pvmd);
         }
+    }
+    auto pos = is.tellg();
+    for (std::size_t i(0); i < _npartitions; ++i) {
+        auto offset =
+            pos + static_cast<std::streampos>(
+                      i * sizeof(MeshLib::IO::PropertyVectorPartitionMetaData));
+        is.seekg(offset);
+        unsigned long number_of_tuples = 0;
+        is.read(reinterpret_cast<char*>(&number_of_tuples),
+                sizeof(unsigned long));
+        INFO("%u tuples in partition %u.", number_of_tuples, i);
     }
 }
 
