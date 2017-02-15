@@ -28,7 +28,7 @@ if(OGS_BUILD_SWMM)
     APPEND_SOURCE_FILES(TEST_SOURCES FileIO_SWMM)
 endif()
 
-if(OGS_USE_PETSC OR OGS_USE_MPI)
+if(OGS_USE_PETSC)
     list(REMOVE_ITEM TEST_SOURCES NumLib/TestSerialLinearSolver.cpp)
 endif()
 
