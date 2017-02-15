@@ -95,3 +95,10 @@ ul.sidenav {
         max-width: 100%;
     }
 }
+
+// Vis
+.vis {
+    figcaption {
+        @extend .f6;
+    }
+}
