@@ -1,11 +1,11 @@
 +++
 author = "[TODO]"
 project = "[TODO].prl"
+weight = 101
 
 [menu]
   [menu.benchmarks]
     parent = "[TODO]"
-    weight = 1
 +++
 
 {{< project-link >}}

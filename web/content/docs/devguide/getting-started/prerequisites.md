@@ -2,12 +2,11 @@
 date = "2017-01-14T22:56:13+01:00"
 title = "Set Up Prerequisites"
 author = "Lars Bilke"
-weight = 2
+weight = 1002
 
 [menu]
   [menu.devguide]
     parent = "getting-started"
-    weight = 1
 +++
 
 ## Minimum requirements

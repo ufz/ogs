@@ -1,26 +1,36 @@
-{{ if .Prev | or .Next }}
+{{ if .PrevInSection | or .NextInSection }}
+
+{{ $segments := split .RelPermalink "/" }}
+{{ $subsection := index $segments 2 }}
+
 <div class="footer-nav">
   <div class="row between-xs">
     <div class="col-xs-6">
-      {{ if .Prev }}
-      <a href="{{ .Prev.Permalink }}" title="{{ .Prev.Permalink }}">
-        <span>Previous</span>
-        <div class="nav-title">
-          {{ .Prev.Title }}
-        </div>
-      </a>
+      {{ if .NextInSection }}
+        {{ $nextSubsection := index (split .NextInSection.RelPermalink "/") 2 }}
+        {{ if eq $nextSubsection $subsection }}
+          <a href="{{ .NextInSection.Permalink }}" title="{{ .NextInSection.Permalink }}">
+            <span>Previous</span>
+            <div class="nav-title">
+              {{ .NextInSection.Title }}
+            </div>
+          </a>
+        {{ end }}
       {{ end }}
     </div>
     <div class="col-xs-6">
-      {{ if .Next }}
-      <span class="tr">
-        <a href="{{ .Next.Permalink }}" title="{{ .Next.Permalink }}">
-          <div>Next</div>
-          <div class="nav-title">
-            {{ .Next.Title }}
-          </div>
-        </a>
-      </span>
+      {{ if .PrevInSection }}
+        {{ $prevSubsection := index (split .PrevInSection.RelPermalink "/") 2 }}
+        {{ if eq $prevSubsection $subsection }}
+          <span class="tr">
+            <a href="{{ .PrevInSection.Permalink }}" title="{{ .PrevInSection.Permalink }}">
+              <div>Next</div>
+              <div class="nav-titl  e">
+              {{ .PrevInSection.Title   }}
+            </div>
+            </a>
+          </span>
+          {{ end }}
       {{ end }}
     </div>
   </div>

@@ -3,10 +3,10 @@ date = "2017-02-15T12:12:18+01:00"
 title = "Linear; Disc with hole"
 project = "Mechanics/Linear/disc_with_hole.prj"
 author = "Dmitri Naumov"
+weight = 111
 
 [menu]
   [menu.benchmarks]
-    weight = 1
     parent = "small-deformations"
 
 +++
