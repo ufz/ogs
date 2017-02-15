@@ -2,13 +2,14 @@
 date = "2017-01-31T14:27:10+01:00"
 author = "Dmitri Naumov"
 title = "Groundwater flow (Neumann)"
+project = "Elliptic/square_1x1_GroundWaterFlow/square_1e2_neumann.prj"
 
 aliases = [ "/docs/benchmarks/" ] # First benchmark page
 
 [menu]
   [menu.benchmarks]
     parent = "elliptic"
-    weight = 0
+    weight = 2
 +++
 
 ## Equations
@@ -112,7 +113,7 @@ A last major part of the output was produced by the linear equation solver (LIS 
 
 ## Results and evaluation
 
-{{< vis path="Elliptic/square_1x1_GroundWaterFlow/square_1e2_pcs_0_ts_1_t_1.000000.vtu" >}}
+{{< vis path="Elliptic/square_1x1_GroundWaterFlow/square_1e2_neumann_pcs_0_ts_1_t_1.000000.vtu" >}}
 
 Compared to the analytical solution presented above the results are very good but in a single point:
 
