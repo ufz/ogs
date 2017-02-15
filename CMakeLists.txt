@@ -78,9 +78,6 @@ option(OGS_USE_LIS "Use Lis" OFF)
 # Parallel computing: vector and matrix algebraic caculation, solvers
 option(OGS_USE_PETSC "Use PETSc routines" OFF)
 
-# Paralleization
-option(OGS_USE_MPI "Use MPI" OFF)
-
 # Eigen
 option(OGS_USE_EIGEN "Use Eigen linear solver" ON)
 option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
