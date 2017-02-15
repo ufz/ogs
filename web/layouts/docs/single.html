@@ -3,7 +3,10 @@
   <div class="col-xs-3">
     {{ $segments := split .RelPermalink "/" }}
     {{ $subsection := index $segments 2 }}
-    <h3>Developer Guide</h3>
+    <h3>
+      {{ if eq $subsection "devguide"}}Developer Guide{{ end }}
+      {{ if eq $subsection "benchmarks"}}Benchmarks{{ end }}
+    </h3>
     <hr>
     <ul class="sidenav">
       {{ $currentPage := . }}

@@ -3,10 +3,13 @@ date = "2017-02-15T11:17:39+01:00"
 title = "Groundwater Flow (Dirichlet)"
 project = "Elliptic/square_1x1_GroundWaterFlow/square_1e2.prj"
 author = "Dmitri Naumov"
+weight = 101
+
+aliases = [ "/docs/benchmarks/" ] # First benchmark page
 
 [menu]
   [menu.benchmarks]
-    weight = 1
+    # weight = 101
     parent = "elliptic"
 
 +++
