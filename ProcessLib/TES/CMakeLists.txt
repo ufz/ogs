@@ -72,6 +72,7 @@ AddTest(
 #     EXECUTABLE_ARGS tes-inert-wedge.prj
 # )
 
+# For PETSc/MPI
 AddTest(
     NAME TES_zeolite_discharge_small
     PATH Parabolic/TES/1D
@@ -96,11 +97,11 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-16 RELTOL 1e-16
+    ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000_0.vtu pressure pressure
-    tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000_0.vtu temperature temperature
-    tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000_0.vtu v_mass_frac v_mass_frac
+    tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000_0.vtu pressure pressure
+    tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000_0.vtu temperature temperature
+    tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000_0.vtu v_mass_frac v_mass_frac
 #        tes_zeolite_discharge_large_ts_28_t_1_0.vtu solid_density solid_density
 )
 

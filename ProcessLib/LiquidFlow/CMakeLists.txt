@@ -77,7 +77,7 @@ AddTest(
     hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
 )
 
-# Liquid flow
+# PETSc/MPI
 AddTest(
     NAME LiquidFlow_LineDirichletNeumannBC
     PATH Parabolic/LiquidFlow/LineDirichletNeumannBC
@@ -88,8 +88,8 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
-    sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticVec v_x
+    sat1D.vtu sat_1D_pcs_0_ts_1_t_1_000000_0.vtu AnalyticPressure pressure
+#    sat1D.vtu sat_1D_pcs_0_ts_1_t_1_000000_0.vtu AnalyticVec v_x
 )
 AddTest(
     NAME LiquidFlow_GravityDriven
@@ -101,9 +101,9 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
-    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticVx v_x
-    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticVy v_y
+    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu AnalyticPressure pressure
+#    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu AnalyticVx v_x
+#    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu AnalyticVy v_y
 )
 AddTest(
     NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
@@ -115,7 +115,7 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure
+    mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1_000000_0.vtu OGS5_Results pressure
 )
 AddTest(
     NAME LiquidFlow_AxisymTheis
@@ -127,7 +127,7 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure
+    axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728_000000_0.vtu OGS5_pressure pressure
 )
 AddTest(
     NAME LARGE_LiquidFlow_Anisotropic_GravityDriven3D
@@ -139,7 +139,7 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     ABSTOL 1e-6 RELTOL 1e-6
     DIFF_DATA
-    hex.vtu anisotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
+    hex.vtu anisotropic_gravity_driven3D_pcs_0_ts_1_t_1_000000_0.vtu analytic_pressure pressure
 )
 
 AddTest(
@@ -152,5 +152,5 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     ABSTOL 1e-6 RELTOL 1e-6
     DIFF_DATA
-    hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
+    hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1_000000_0.vtu analytic_pressure pressure
 )
