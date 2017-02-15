@@ -272,6 +272,9 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
 
     auto const& properties(_mesh->getProperties());
     auto const& property_names(properties.getPropertyVectorNames());
+    std::size_t number_of_properties(property_names.size());
+    out.write(reinterpret_cast<char*>(&number_of_properties),
+              sizeof(number_of_properties));
     for (auto const& name : property_names)
     {
         MeshLib::IO::PropertyVectorMetaData pvmd;
@@ -336,7 +339,9 @@ void NodeWiseMeshPartitioner::readPropertiesConfigDataBinary(
     {
         ERR("Could not open file '%s' in binary mode.", fname.c_str());
     }
-    while (is)
+    std::size_t number_of_properties = 0;
+    is.read(reinterpret_cast<char*>(&number_of_properties), sizeof(std::size_t));
+    for (std::size_t i(0); i < number_of_properties; ++i)
     {
         boost::optional<MeshLib::IO::PropertyVectorMetaData> pvmd(
             MeshLib::IO::readPropertyVectorMetaData(is));
