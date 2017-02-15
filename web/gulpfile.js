@@ -21,7 +21,10 @@ gulp.task('scss', () => {
         .pipe($.add_src(pkg.globs.distCss))
         // .pipe($.sourcemaps.init())
         .pipe($.sass({
-                includePaths: pkg.paths.scss
+                includePaths: [
+                  pkg.paths.scss,
+                  "./node_modules"
+                ]
             })
             .on('error', $.sass.logError))
         .pipe($.cached('sass_compile'))
