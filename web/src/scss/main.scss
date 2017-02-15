@@ -1,15 +1,13 @@
-.img-responsive > img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
+$header-font-family: athelas;
+$text-font-family: avenir;
+$code-font-family: code;
 
 @import 'tachyons-sass/tachyons';
 
 // Fonts
-h1, h2, h3, h4, h5, h6 { @extend .athelas; }
-p, li { @extend .avenir; }
-code, pre { @extend .code }
+h1, h2, h3, h4, h5, h6 { @extend .#{$header-font-family}; }
+p, li { @extend .#{$text-font-family}; }
+code, pre { @extend .#{$code-font-family}; }
 
 // Header
 h1 { @extend .f2; }
@@ -56,6 +54,11 @@ nav {
     }
 }
 
+// Image
+img {
+    @extend .mw-100;
+}
+
 // Docs
 
 // Side nav
@@ -66,8 +69,9 @@ ul.sidenav {
         @extend .f5;
     }
     li.category {
-        @extend .athelas;
+        @extend .#{$header-font-family};
         @extend .small-caps;
+        @extend .mt1;
     }
     a {
         @extend .nav-a-style;
