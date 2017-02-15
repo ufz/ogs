@@ -34,8 +34,6 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         ABSTOL 1e-1 RELTOL 1e-1
         DIFF_DATA
         cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure
-        VIS
-        cube_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu
     )
 endforeach()
 
@@ -90,6 +88,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         ABSTOL 1e-1 RELTOL 1e-1
         DIFF_DATA
         square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure
+        VIS square_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu
     )
 endforeach()
 
