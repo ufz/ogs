@@ -130,6 +130,32 @@ private:
 
     void writePropertiesBinary(std::string const& file_name_base) const;
 
+    template <typename T>
+    void writePropertyVectorValuesBinary(
+        std::ostream& os, MeshLib::PropertyVector<T> const& pv) const
+    {
+        std::size_t number_of_components(pv.getNumberOfComponents());
+        std::size_t number_of_tuples(pv.getNumberOfTuples());
+        std::vector<T> property_vector_buffer;
+        property_vector_buffer.resize(number_of_tuples * number_of_components);
+        std::size_t cnt(0);
+        for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
+        {
+            for (std::size_t i = 0; i < pv.getNumberOfTuples(); ++i)
+            {
+                if (_nodes_partition_ids[i] == part_id)
+                {
+                    for (std::size_t c(0); c < number_of_components; ++c)
+                        property_vector_buffer[cnt * number_of_components + c] =
+                            pv.getComponent(i, c);
+                    cnt++;
+                }
+            }
+        }
+        os.write(reinterpret_cast<char*>(property_vector_buffer.data()),
+                 number_of_components * number_of_tuples * sizeof(T));
+    }
+
     void readPropertiesConfigDataBinary(
         std::string const& file_name_base) const;
 

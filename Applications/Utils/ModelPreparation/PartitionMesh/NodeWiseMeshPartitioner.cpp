@@ -266,9 +266,15 @@ NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
 void NodeWiseMeshPartitioner::writePropertiesBinary(
     const std::string& file_name_base) const
 {
-    const std::string fname = file_name_base + "_partitioned_properties_cfg"
-                              + std::to_string(_npartitions) + ".bin";
-    std::ofstream out(fname.c_str(), std::ios::binary | std::ios::out);
+    const std::string fname_cfg = file_name_base +
+                                  "_partitioned_properties_cfg" +
+                                  std::to_string(_npartitions) + ".bin";
+    std::ofstream out(fname_cfg.c_str(), std::ios::binary | std::ios::out);
+
+    const std::string fname_val = file_name_base +
+                                  "_partitioned_properties_val" +
+                                  std::to_string(_npartitions) + ".bin";
+    std::ofstream out_val(fname_val.c_str(), std::ios::binary | std::ios::out);
 
     auto const& properties(_mesh->getProperties());
     auto const& property_names(properties.getPropertyVectorNames());
@@ -289,6 +295,7 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
                 pvmd.data_type_size_in_bytes = sizeof(double);
                 pvmd.number_of_components = pv->getNumberOfComponents();
                 pvmd.number_of_tuples = pv->getNumberOfTuples();
+                writePropertyVectorValuesBinary(out_val, *pv);
             }
         }
         {
@@ -300,6 +307,7 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
                 pvmd.data_type_size_in_bytes = sizeof(float);
                 pvmd.number_of_components = pv->getNumberOfComponents();
                 pvmd.number_of_tuples = pv->getNumberOfTuples();
+                writePropertyVectorValuesBinary(out_val, *pv);
             }
         }
         {
@@ -311,6 +319,7 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
                 pvmd.data_type_size_in_bytes = sizeof(int);
                 pvmd.number_of_components = pv->getNumberOfComponents();
                 pvmd.number_of_tuples = pv->getNumberOfTuples();
+                writePropertyVectorValuesBinary(out_val, *pv);
             }
         }
         {
@@ -322,6 +331,7 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
                 pvmd.data_type_size_in_bytes = sizeof(unsigned);
                 pvmd.number_of_components = pv->getNumberOfComponents();
                 pvmd.number_of_tuples = pv->getNumberOfTuples();
+                writePropertyVectorValuesBinary(out_val, *pv);
             }
         }
         MeshLib::IO::writePropertyVectorMetaDataBinary(out, pvmd);
@@ -333,6 +343,7 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
         MeshLib::IO::writePropertyVectorPartitionMetaData(out, pvpmd);
     }
     out.close();
+    out_val.close();
 }
 
 void NodeWiseMeshPartitioner::readPropertiesConfigDataBinary(
