@@ -1,7 +1,9 @@
-<iframe
-	src="{{ .Site.BaseURL }}/internal/vis/index.html?fileURL={{ .Site.BaseURL }}/vis/{{ .Get "path" }}"
-	width="100%"
-	{{ with .Get "height"}} height="{{.}}px"{{ else }} height="500px"{{ end }}
->
-</iframe>
-<p>File: <code>{{ .Get "path" }}</code></p>
+<div class="vis">
+  <iframe
+    src="{{ .Site.BaseURL }}/internal/vis/index.html?fileURL={{ .Site.BaseURL }}/vis/{{ .Get "path" }}"
+    width="100%"
+    {{ with .Get "height"}} height="{{.}}px"{{ else }} height="500px"{{ end }}
+  >
+  </iframe>
+  <figcaption>Visualization of <code>{{ .Get "path" }}</code></figcaption>
+</div>
