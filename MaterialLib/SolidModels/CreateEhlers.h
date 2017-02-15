@@ -22,8 +22,7 @@ namespace Solids
 {
 namespace Ehlers
 {
-
-std::unique_ptr<EhlersDamageProperties> createDamageProperties(
+inline std::unique_ptr<EhlersDamageProperties> createDamageProperties(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
