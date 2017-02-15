@@ -12,8 +12,6 @@ def helper = new ogs.helper()
 
 stage('Configure (envinf1)') {
     configure.linux(cmakeOptions: defaultCMakeOptions, env: 'envinf1/cli.sh', script: this)
-    configure.linux(cmakeOptions: defaultCMakeOptions + '-DOGS_USE_MPI=ON',
-        dir: 'build-mpi', env: 'envinf1/mpi.sh', script: this)
     configure.linux(cmakeOptions: defaultCMakeOptions + '-DOGS_USE_PETSC=ON',
         dir: 'build-petsc', env: 'envinf1/petsc.sh', script: this)
 }
@@ -21,8 +19,6 @@ stage('Configure (envinf1)') {
 stage('CLI (envinf1)') {
     parallel serial: {
         build.linux(env: 'envinf1/cli.sh', script: this)
-    }, mpi: {
-        build.linux(dir: 'build-mpi', env: 'envinf1/mpi.sh', script: this)
     }, petsc: {
         build.linux(dir: 'build-petsc', env: 'envinf1/petsc.sh', script: this)
     }
@@ -31,9 +27,6 @@ stage('CLI (envinf1)') {
 stage('Test (envinf1)') {
     parallel serial: {
         build.linux(env: 'envinf1/cli.sh', script: this, target: 'tests ctest')
-    }, mpi: {
-        build.linux(dir: 'build-mpi', env: 'envinf1/mpi.sh', script: this,
-            target: 'tests ctest')
     }, petsc: {
         build.linux(dir: 'build-petsc', env: 'envinf1/petsc.sh', script: this,
             target: 'tests ctest')
