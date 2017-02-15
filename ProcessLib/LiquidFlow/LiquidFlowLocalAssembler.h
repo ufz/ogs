@@ -146,14 +146,14 @@ private:
         static void calculateLaplacianAndGravityTerm(
             Eigen::Map<NodalMatrixType>& local_K,
             Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
-            Eigen::MatrixXd const& perm, double const integration_factor,
-            double const mu, double const rho_g,
-            int const gravitational_axis_id);
+            Eigen::MatrixXd const& permeability,
+            double const integration_factor, double const mu,
+            double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
             std::vector<std::vector<double>>& darcy_velocities,
             Eigen::Map<const NodalVectorType> const& local_p,
-            ShapeMatrices const& sm, Eigen::MatrixXd const& perm,
+            ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
             unsigned const ip, double const mu, double const rho_g,
             int const gravitational_axis_id);
     };
@@ -167,40 +167,40 @@ private:
         static void calculateLaplacianAndGravityTerm(
             Eigen::Map<NodalMatrixType>& local_K,
             Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
-            Eigen::MatrixXd const& perm, double const integration_factor,
-            double const mu, double const rho_g,
-            int const gravitational_axis_id);
+            Eigen::MatrixXd const& permeability,
+            double const integration_factor, double const mu,
+            double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
             std::vector<std::vector<double>>& darcy_velocities,
             Eigen::Map<const NodalVectorType> const& local_p,
-            ShapeMatrices const& sm, Eigen::MatrixXd const& perm,
+            ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
             unsigned const ip, double const mu, double const rho_g,
             int const gravitational_axis_id);
     };
 
     template <typename LaplacianGravityVelocityCalculator>
-    void local_assemble(const int material_id, double const t,
-                        std::vector<double> const& local_x,
-                        std::vector<double>& local_M_data,
-                        std::vector<double>& local_K_data,
-                        std::vector<double>& local_b_data,
-                        SpatialPosition const& pos,
-                        Eigen::MatrixXd const& perm);
+    void assembleMatrixAndVector(const int material_id, double const t,
+                                 std::vector<double> const& local_x,
+                                 std::vector<double>& local_M_data,
+                                 std::vector<double>& local_K_data,
+                                 std::vector<double>& local_b_data,
+                                 SpatialPosition const& pos,
+                                 Eigen::MatrixXd const& permeability);
 
     template <typename LaplacianGravityVelocityCalculator>
-    void local_assembleCoupledWithHeatTransport(
+    void assembleWithCoupledWithHeatTransport(
         const int material_id, double const t, double const dt,
         std::vector<double> const& local_x, std::vector<double> const& local_T0,
         std::vector<double> const& local_T1, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        SpatialPosition const& pos, Eigen::MatrixXd const& perm);
+        SpatialPosition const& pos, Eigen::MatrixXd const& permeability);
 
     template <typename LaplacianGravityVelocityCalculator>
     void computeSecondaryVariableLocal(double const /*t*/,
                                        std::vector<double> const& local_x,
                                        SpatialPosition const& pos,
-                                       Eigen::MatrixXd const& perm);
+                                       Eigen::MatrixXd const& permeability);
 
     template <typename LaplacianGravityVelocityCalculator>
     void computeSecondaryVariableCoupledWithHeatTransportLocal(
@@ -208,7 +208,7 @@ private:
         std::vector<double> const& local_x,
         std::vector<double> const& local_T,
         SpatialPosition const& pos,
-        Eigen::MatrixXd const& perm);
+        Eigen::MatrixXd const& permeability);
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;

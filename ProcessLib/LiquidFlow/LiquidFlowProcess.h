@@ -77,7 +77,7 @@ public:
 
     bool isLinear() const override { return true; }
     int getGravitationalAxisID() const { return _gravitational_axis_id; }
-    double getGravitationalacceleration() const
+    double getGravitationalAcceleration() const
     {
         return _gravitational_acceleration;
     }

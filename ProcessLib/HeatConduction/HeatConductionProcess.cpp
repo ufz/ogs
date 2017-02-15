@@ -44,8 +44,8 @@ void HeatConductionProcess::preTimestepConcreteProcess(GlobalVector const& x,
     }
     else
     {
-        auto x0 = _x_previous_timestep.get();
-        MathLib::LinAlg::copy(x, *x0);
+        auto& x0 = *_x_previous_timestep;
+        MathLib::LinAlg::copy(x, x0);
     }
 }
 

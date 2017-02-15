@@ -25,9 +25,10 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleHeatTransportLiquidFlow(
         double const t, int const material_id, SpatialPosition& pos,
         int const gravitational_axis_id,
-        double const gravitational_acceleration, Eigen::MatrixXd const& perm,
+        double const gravitational_acceleration,
+        Eigen::MatrixXd const& permeability,
         ProcessLib::LiquidFlow::LiquidFlowMaterialProperties const&
-            liquid_flow_prop,
+            liquid_flow_properties,
         std::vector<double> const& local_x, std::vector<double> const& local_p,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data)
 {
@@ -57,23 +58,28 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
         double T = 0.;
         NumLib::shapeFunctionInterpolate(local_x, sm.N, T);
 
-        // Material parameters of solid phase
+        // Thermal conductivity of solid phase.
         auto const k_s = _process_data.thermal_conductivity(t, pos)[0];
+        // Specific heat capacity of solid phase.
         auto const cp_s = _process_data.heat_capacity(t, pos)[0];
+        // Density of solid phase.
         auto const rho_s = _process_data.density(t, pos)[0];
 
-        // Material parameters of fluid phase
-        double const cp_f = liquid_flow_prop.getHeatCapacity(p, T);
-        double const k_f = liquid_flow_prop.getThermalConductivity(p, T);
-        double const rho_f = liquid_flow_prop.getLiquidDensity(p, T);
+        // Thermal conductivity of liquid.
+        double const k_f = liquid_flow_properties.getThermalConductivity(p, T);
+        // Specific heat capacity of liquid.
+        double const cp_f = liquid_flow_properties.getHeatCapacity(p, T);
+        // Density of liquid.
+        double const rho_f = liquid_flow_properties.getLiquidDensity(p, T);
 
-        // Material parameter of porosity
-        double const poro =
-            liquid_flow_prop.getPorosity(material_id, porosity_variable, T);
+        // Porosity of porous media.
+        double const n = liquid_flow_properties.getPorosity(
+            material_id, porosity_variable, T);
 
-        double const effective_cp =
-            (1.0 - poro) * cp_s * rho_s + poro * cp_f * rho_f;
-        double const effective_K = (1.0 - poro) * k_s + poro * k_f;
+        // Effective specific heat capacity.
+        double const effective_cp = (1.0 - n) * cp_s * rho_s + n * cp_f * rho_f;
+        // Effective thermal conductivity.
+        double const effective_K = (1.0 - n) * k_s + n * k_f;
 
         double const integration_factor =
             sm.detJ * wp.getWeight() * sm.integralMeasure;
@@ -83,12 +89,13 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
         local_K.noalias() +=
             sm.dNdx.transpose() * effective_K * sm.dNdx * integration_factor;
 
-        // Compute fluid flow velocity
-        double const mu = liquid_flow_prop.getViscosity(p, T);  // Viscosity
+        // Compute fluid flow velocity:
+        double const mu =
+            liquid_flow_properties.getViscosity(p, T);  // Viscosity
         GlobalDimVectorType const& darcy_velocity =
             LiquidFlowVelocityCalculator::calculateVelocity(
-                local_p_vec, sm, perm, mu, rho_f * gravitational_acceleration,
-                gravitational_axis_id);
+                local_p_vec, sm, permeability, mu,
+                rho_f * gravitational_acceleration, gravitational_axis_id);
         // Add the advection term
         local_K.noalias() += cp_f * rho_f * sm.N.transpose() *
                              (darcy_velocity.transpose() * sm.dNdx) *
@@ -105,32 +112,36 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
                       std::vector<double>& /*local_b_data*/,
                       LocalCouplingTerm const& coupled_term)
 {
-    for (auto const& coupled_process_map : coupled_term.coupled_processes)
+    for (auto const& coupled_process_pair : coupled_term.coupled_processes)
     {
-        if (coupled_process_map.first ==
+        if (coupled_process_pair.first ==
             std::type_index(typeid(ProcessLib::LiquidFlow::LiquidFlowProcess)))
         {
+            assert(
+                dynamic_cast<const ProcessLib::LiquidFlow::LiquidFlowProcess*>(
+                    &(coupled_process_pair.second)) != nullptr);
+
             ProcessLib::LiquidFlow::LiquidFlowProcess const& pcs =
                 static_cast<ProcessLib::LiquidFlow::LiquidFlowProcess const&>(
-                    coupled_process_map.second);
+                    coupled_process_pair.second);
             const auto liquid_flow_prop = pcs.getLiquidFlowMaterialProperties();
 
             const auto local_p =
-                coupled_term.local_coupled_xs.at(coupled_process_map.first);
+                coupled_term.local_coupled_xs.at(coupled_process_pair.first);
 
             SpatialPosition pos;
             pos.setElementID(_element.getID());
             const int material_id = liquid_flow_prop->getMaterialID(pos);
 
-            const Eigen::MatrixXd& perm = liquid_flow_prop->getPermeability(
+            const Eigen::MatrixXd& K = liquid_flow_prop->getPermeability(
                 material_id, t, pos, _element.getDimension());
 
-            if (perm.size() == 1)
+            if (K.size() == 1)
             {
                 assembleHeatTransportLiquidFlow<
                     IsotropicLiquidFlowVelocityCalculator>(
                     t, material_id, pos, pcs.getGravitationalAxisID(),
-                    pcs.getGravitationalacceleration(), perm, *liquid_flow_prop,
+                    pcs.getGravitationalAcceleration(), K, *liquid_flow_prop,
                     local_x, local_p, local_M_data, local_K_data);
             }
             else
@@ -138,7 +149,7 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
                 assembleHeatTransportLiquidFlow<
                     AnisotropicLiquidFlowVelocityCalculator>(
                     t, material_id, pos, pcs.getGravitationalAxisID(),
-                    pcs.getGravitationalacceleration(), perm, *liquid_flow_prop,
+                    pcs.getGravitationalAcceleration(), K, *liquid_flow_prop,
                     local_x, local_p, local_M_data, local_K_data);
             }
         }

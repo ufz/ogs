@@ -90,9 +90,8 @@ void LiquidFlowProcess::initializeConcreteProcess(
 }
 
 void LiquidFlowProcess::assembleConcreteProcess(
-    const double t, GlobalVector const& x,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    StaggeredCouplingTerm const& coupling_term)
+    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b, StaggeredCouplingTerm const& coupling_term)
 {
     DBUG("Assemble LiquidFlowProcess.");
     // Call global assembler for each local assembly item.
