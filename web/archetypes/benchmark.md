@@ -10,7 +10,7 @@ project = "[TODO].prl"
 
 {{< project-link >}}
 
-## Equations
+## Problem description
 
 ## Input files
 
