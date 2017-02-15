@@ -31,6 +31,7 @@ AddTest(
     ABSTOL 1e-16 RELTOL 1e-16
     DIFF_DATA
     disc_with_hole_expected_pcs_0_ts_4_t_1.000000.vtu disc_with_hole_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    VIS disc_with_hole_pcs_0_ts_4_t_1.000000.vtu
 )
 AddTest(
     NAME LARGE_Mechanics_SDL_square_1e5_tractionBC
@@ -155,5 +156,3 @@ AddTest(
     ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma_rr sigma_rr
     ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma_ff sigma_ff
 )
-
-
