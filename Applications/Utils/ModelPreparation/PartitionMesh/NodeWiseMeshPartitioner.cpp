@@ -468,6 +468,11 @@ void NodeWiseMeshPartitioner::readPropertiesConfigDataBinary(
         is.seekg(offset);
         boost::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
             MeshLib::IO::readPropertyVectorPartitionMetaData(is));
+        if (pvpmd)
+        {
+            DBUG("[%u] offset: %u", i, pvpmd->offset);
+            DBUG("%u tuples in partition %u.", pvpmd->number_of_tuples, i);
+        }
     }
 }
 
