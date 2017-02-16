@@ -9,7 +9,6 @@ aliases = [ "/docs/benchmarks/" ] # First benchmark page
 
 [menu]
   [menu.benchmarks]
-    # weight = 101
     parent = "elliptic"
 
 +++
