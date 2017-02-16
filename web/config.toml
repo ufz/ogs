@@ -42,3 +42,7 @@ news = "news"
   name = "Heatconduction"
   identifier = "heatconduction"
   weight = 3
+  [[menu.benchmarks]]
+    name = "Richards Flow"
+    identifier = "richards-flow"
+    weight = 4
