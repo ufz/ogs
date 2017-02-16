@@ -221,8 +221,8 @@ void NodePartitionedMeshReader::readPropertiesConfigDataBinary(
         static_cast<long>(_mpi_rank *
                           sizeof(MeshLib::IO::PropertyVectorPartitionMetaData));
     is.seekg(offset);
-    unsigned long number_of_tuples = 0;
-    is.read(reinterpret_cast<char*>(&number_of_tuples), sizeof(unsigned long));
+    boost::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
+        MeshLib::IO::readPropertyVectorPartitionMetaData(is));
     INFO("%u tuples in partition %u.", number_of_tuples, _mpi_rank);
 }
 
