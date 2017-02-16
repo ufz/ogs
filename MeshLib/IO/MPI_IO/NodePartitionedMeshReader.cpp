@@ -21,7 +21,6 @@
 
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Properties.h"
-#include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 
 // Check if the value can by converted to given type without overflow.
 template <typename VALUE, typename TYPE>
@@ -186,33 +185,37 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
 
     //----------------------------------------------------------------------------------
     // read the properties
-    readPropertiesConfigDataBinary(file_name_base);
-
-    MeshLib::Properties p;
+    MeshLib::Properties p(readPropertiesBinary(file_name_base));
 
     return newMesh(BaseLib::extractBaseName(file_name_base), mesh_nodes,
                    glb_node_ids, mesh_elems, p);
 }
 
-void NodePartitionedMeshReader::readPropertiesConfigDataBinary(
+MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
     const std::string& file_name_base) const
 {
-    const std::string fname = file_name_base + "_partitioned_properties_cfg"
-                              + std::to_string(_mpi_comm_size) + ".bin";
-    std::ifstream is(fname.c_str(), std::ios::binary | std::ios::in);
+    const std::string fname_cfg = file_name_base +
+                                  "_partitioned_properties_cfg" +
+                                  std::to_string(_mpi_comm_size) + ".bin";
+    std::ifstream is(fname_cfg.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
-        ERR("Could not open file '%s' in binary mode.", fname.c_str());
+        WARN("Could not open file '%s' in binary mode.", fname_cfg.c_str());
+        return MeshLib::Properties();
     }
     std::size_t number_of_properties = 0;
     is.read(reinterpret_cast<char*>(&number_of_properties), sizeof(std::size_t));
+    std::vector<boost::optional<MeshLib::IO::PropertyVectorMetaData>> vec_pvmd(
+        number_of_properties);
     for (std::size_t i(0); i < number_of_properties; ++i)
     {
-        boost::optional<MeshLib::IO::PropertyVectorMetaData> pvmd(
-            MeshLib::IO::readPropertyVectorMetaData(is));
-        if (pvmd) {
-            INFO("readPropertiesConfigMetaDataBinary:");
-            MeshLib::IO::writePropertyVectorMetaData(std::cout, *pvmd);
+        vec_pvmd[i] = MeshLib::IO::readPropertyVectorMetaData(is);
+        if (!vec_pvmd[i])
+        {
+            OGS_FATAL(
+                "Error in NodePartitionedMeshReader::readPropertiesBinary: "
+                "Could not read the meta data for the PropertyVector %d",
+                i);
         }
     }
     auto pos = is.tellg();
@@ -223,7 +226,69 @@ void NodePartitionedMeshReader::readPropertiesConfigDataBinary(
     is.seekg(offset);
     boost::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
         MeshLib::IO::readPropertyVectorPartitionMetaData(is));
-    INFO("%u tuples in partition %u.", number_of_tuples, _mpi_rank);
+    if (!pvpmd)
+    {
+        OGS_FATAL(
+            "Error in NodePartitionedMeshReader::readPropertiesBinary: "
+            "Could not read the partition meta data for the mpi process %d",
+            _mpi_rank);
+    }
+    DBUG("[%u] offset: %u", _mpi_rank, pvpmd->offset);
+    DBUG("%u tuples in partition %u.", pvpmd->number_of_tuples, _mpi_rank);
+    is.close();
+
+    const std::string fname_val = file_name_base + "_partitioned_properties_val"
+                              + std::to_string(_mpi_comm_size) + ".bin";
+    is.open(fname_val.c_str(), std::ios::binary | std::ios::in);
+    if (!is)
+    {
+        ERR("Could not open file '%s' in binary mode.", fname_val.c_str());
+    }
+
+    MeshLib::Properties p;
+
+    // Read the specific parts of the PropertyVector values for this process.
+    unsigned long global_offset = 0;
+    for (std::size_t i(0); i < number_of_properties; ++i)
+    {
+        if (vec_pvmd[i]->is_int_type)
+        {
+            if (vec_pvmd[i]->is_data_type_signed)
+            {
+                if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(int))
+                    createPropertyVectorPart<int>(is, *vec_pvmd[i], *pvpmd,
+                                                  global_offset, p);
+                if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(long))
+                    createPropertyVectorPart<long>(is, *vec_pvmd[i], *pvpmd,
+                                                   global_offset, p);
+            }
+            else
+            {
+                if (vec_pvmd[i]->data_type_size_in_bytes ==
+                    sizeof(unsigned int))
+                    createPropertyVectorPart<unsigned int>(
+                        is, *vec_pvmd[i], *pvpmd, global_offset, p);
+                if (vec_pvmd[i]->data_type_size_in_bytes ==
+                    sizeof(unsigned long))
+                    createPropertyVectorPart<unsigned long>(
+                        is, *vec_pvmd[i], *pvpmd, global_offset, p);
+            }
+        }
+        else
+        {
+            if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(float))
+                createPropertyVectorPart<float>(is, *vec_pvmd[i], *pvpmd,
+                                                global_offset, p);
+            if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(double))
+                createPropertyVectorPart<double>(is, *vec_pvmd[i], *pvpmd,
+                                                 global_offset, p);
+        }
+        global_offset += vec_pvmd[i]->data_type_size_in_bytes *
+                         vec_pvmd[i]->number_of_tuples *
+                         vec_pvmd[i]->number_of_components;
+    }
+
+    return p;
 }
 
 bool NodePartitionedMeshReader::openASCIIFiles(std::string const& file_name_base,
