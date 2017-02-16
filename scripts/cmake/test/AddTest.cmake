@@ -34,6 +34,9 @@
 #
 
 function (AddTest)
+    if(NOT OGS_BUILD_TESTS)
+        return()
+    endif()
     # parse arguments
     set(options NONE)
     set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL)
