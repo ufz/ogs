@@ -106,11 +106,11 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
-    coupling_assemble(double const t, std::vector<double> const& local_x,
-                      std::vector<double>& local_M_data,
-                      std::vector<double>& local_K_data,
-                      std::vector<double>& /*local_b_data*/,
-                      LocalCouplingTerm const& coupled_term)
+    assembleWithCoupledTerm(double const t, std::vector<double> const& local_x,
+                            std::vector<double>& local_M_data,
+                            std::vector<double>& local_K_data,
+                            std::vector<double>& /*local_b_data*/,
+                            LocalCouplingTerm const& coupled_term)
 {
     for (auto const& coupled_process_pair : coupled_term.coupled_processes)
     {

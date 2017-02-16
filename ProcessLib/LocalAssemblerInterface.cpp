@@ -14,7 +14,7 @@
 namespace ProcessLib
 {
 
-void LocalAssemblerInterface::coupling_assemble(
+void LocalAssemblerInterface::assembleWithCoupledTerm(
     double const /*t*/, std::vector<double> const& /*local_x*/,
     std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
@@ -22,7 +22,7 @@ void LocalAssemblerInterface::coupling_assemble(
     LocalCouplingTerm const& /*coupling_term*/)
 {
     OGS_FATAL(
-        "The coupling_assemble() function is not implemented in the local "
+        "The assembleWithCoupledTerm() function is not implemented in the local "
         "assembler.");
 }
 

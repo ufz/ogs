@@ -83,7 +83,7 @@ void VectorMatrixAssembler::assemble(
             coupling_term.dt, coupling_term.coupled_processes,
             std::move(local_coupled_xs0), std::move(local_coupled_xs));
 
-        local_assembler.coupling_assemble(t, local_x, _local_M_data,
+        local_assembler.assembleWithCoupledTerm(t, local_x, _local_M_data,
                                           _local_K_data, _local_b_data,
                                           local_coupling_term);
     }
