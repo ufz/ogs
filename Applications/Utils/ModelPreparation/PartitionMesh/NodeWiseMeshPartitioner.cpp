@@ -336,11 +336,14 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
         }
         MeshLib::IO::writePropertyVectorMetaDataBinary(out, pvmd);
     }
+    unsigned long offset = 0;
     for (const auto& partition : _partitions)
     {
         MeshLib::IO::PropertyVectorPartitionMetaData pvpmd;
+        pvpmd.offset = offset;
         pvpmd.number_of_tuples = partition.number_of_non_ghost_nodes;
         MeshLib::IO::writePropertyVectorPartitionMetaData(out, pvpmd);
+        offset += pvpmd.number_of_tuples;
     }
     out.close();
     out_val.close();
