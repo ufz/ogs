@@ -1,7 +1,7 @@
 +++
 date = "2017-01-31T14:27:10+01:00"
 author = "Dmitri Naumov"
-title = "Groundwater flow (Neumann)"
+title = "Groundwater Flow (Neumann)"
 project = "Elliptic/square_1x1_GroundWaterFlow/square_1e2_neumann.prj"
 weight = 102
 
