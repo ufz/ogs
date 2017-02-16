@@ -59,6 +59,29 @@ hugo new --kind benchmark docs/benchmarks/elliptic/groundwater-flow-dirichlet.md
 - `--kind` is one the `archetypes/*`
 - path is relative to `content/` and determines the URL of the page
 
+### Setup navigation for a page
+
+The are submenus (shown in the left sidebar) for specific sections such as for benchmarks. The submenus consist of groups (e.g. *Elliptic*) and page entries. Groups are defined in `config.toml`:
+
+```toml
+[[menu.benchmarks]]
+  name = "Elliptic"
+  identifier = "elliptic"
+  weight = 1
+```
+
+To add your page to a group as an entry add the following frontmatter:
+
+```toml
+weight = 101
+
+[menu]
+  [menu.benchmarks]
+    parent = "elliptic"
+```
+
+`weight` specifies the order of groups and pages in ascending order (top -> down).
+
 ### Images
 
 Use shortcode `img`:
