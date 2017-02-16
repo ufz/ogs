@@ -376,10 +376,8 @@ void NodeWiseMeshPartitioner::readPropertiesConfigDataBinary(
             pos + static_cast<std::streampos>(
                       i * sizeof(MeshLib::IO::PropertyVectorPartitionMetaData));
         is.seekg(offset);
-        unsigned long number_of_tuples = 0;
-        is.read(reinterpret_cast<char*>(&number_of_tuples),
-                sizeof(unsigned long));
-        INFO("%u tuples in partition %u.", number_of_tuples, i);
+        boost::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
+            MeshLib::IO::readPropertyVectorPartitionMetaData(is));
     }
 }
 
