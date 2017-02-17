@@ -17,7 +17,7 @@ weight = 111
 
 We solve a linear elastic small deformation problem on a quarter of a plate with hole put under tension on the top boundary.
 
-See the TODO: {asset:797:link}-PDF for detailed problem description.
+See the [Circular_hole.pdf](https://docs.opengeosys.org/assets/files/Documentation/Selected-Benchmarks/Circular_hole.pdf) for detailed problem description.
 
 
 ## Results and evaluation

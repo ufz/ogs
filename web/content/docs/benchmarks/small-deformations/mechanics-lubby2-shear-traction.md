@@ -17,7 +17,7 @@ weight = 112
 
 We solve a non-linear small deformation problem on a cube with shear traction on the top boundary face. The 3D problem is setup identical to the corresponding 2D problem.
 
-See the TODO: {asset:795:link}-PDF for detailed problem description.
+See the [lubby2.pdf](https://docs.opengeosys.org/assets/files/Documentation/Selected-Benchmarks/lubby2.pdf) for detailed problem description.
 
 ## Results and evaluation
 

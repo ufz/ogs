@@ -47,8 +47,6 @@ $$
 
 ## Input files
 
-TODO: {asset:247:link}
-
 The main project file is `square_1e2.prj`. It describes the processes to be solved and the related process variables together with their initial and boundary conditions. It also references the mesh and geometrical objects defined on the mesh.
 
 As of now a small portion of possible inputs is implemented; one can change:

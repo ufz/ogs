@@ -15,7 +15,7 @@ weight = 161
 
 ## Equations
 
-TODO: `/assets/files/SelectedBenchmarks/HT/HT-Process.pdf`
+See [HT-Process.pdf](https://docs.opengeosys.org/assets/files/SelectedBenchmarks/HT/HT-Process.pdf).
 
 ## Problem description
 
