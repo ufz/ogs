@@ -50,3 +50,7 @@ news = "news"
   name = "Hydro-Mechanics"
   identifier = "hydro-mechanics"
   weight = 5
+[[menu.benchmarks]]
+  name = "Hydro-Thermal"
+  identifier = "hydro-thermal"
+  weight = 6
