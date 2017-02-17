@@ -121,3 +121,7 @@ npm run convert -- -e -i vtk-file.vtu -o output/path
 ```
 
 Run `npm run convert` to get a list of possible arguments.
+
+### Equations
+
+Equations can be set with typical LaTeX syntax by using [MathJax](https://www.mathjax.org/). Blocks are defined by `$$` at the beginning and `$$` at the end of the block. Inline math uses one `$` as the delimiter. For more usage instructions see the [MathJax LaTeX help](http://docs.mathjax.org/en/latest/tex.html).
