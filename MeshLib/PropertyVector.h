@@ -22,9 +22,6 @@
 
 namespace MeshLib
 {
-
-//template <typename T> class PropertyVector;
-
 class PropertyVectorBase
 {
 public:
