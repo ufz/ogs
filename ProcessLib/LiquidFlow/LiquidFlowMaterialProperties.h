@@ -67,14 +67,18 @@ public:
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
             storage_models,
         bool const has_material_ids,
-        MeshLib::PropertyVector<int> const& material_ids)
+        MeshLib::PropertyVector<int> const& material_ids,
+        Parameter<double> const& solid_thermal_expansion,
+        Parameter<double> const& biot_constant)
         : _has_material_ids(has_material_ids),
           _material_ids(material_ids),
           _fluid_properties(std::move(fluid_properties)),
           _intrinsic_permeability_models(
               std::move(intrinsic_permeability_models)),
           _porosity_models(std::move(porosity_models)),
-          _storage_models(std::move(storage_models))
+          _storage_models(std::move(storage_models)),
+          _solid_thermal_expansion(solid_thermal_expansion),
+          _biot_constant(biot_constant)
     {
     }
 
@@ -109,7 +113,24 @@ public:
 
     double getLiquidDensity(const double p, const double T) const;
 
+    double getdLiquidDensity_dT(const double p, const double T) const;
+
     double getViscosity(const double p, const double T) const;
+
+    double getHeatCapacity(const double p, const double T) const;
+
+    double getThermalConductivity(const double p, const double T) const;
+
+    double getPorosity(const int material_id, const double porosity_variable,
+                       const double T) const
+    {
+        return _porosity_models[material_id]->getValue(porosity_variable, T);
+    }
+
+    double getSolidThermalExpansion(const double t,
+                                    const SpatialPosition& pos) const;
+
+    double getBiotConstant(const double t, const SpatialPosition& pos) const;
 
 private:
     /// A flag to indicate whether the reference member, _material_ids,
@@ -129,6 +150,8 @@ private:
     const std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
         _storage_models;
 
+    Parameter<double> const& _solid_thermal_expansion;
+    Parameter<double> const& _biot_constant;
     // Note: For the statistical data of porous media, they could be read from
     // vtu files directly. This can be done by using property vectors directly.
     // Such property vectors will be added here if they are needed.

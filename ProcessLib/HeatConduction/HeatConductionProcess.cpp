@@ -33,6 +33,22 @@ HeatConductionProcess::HeatConductionProcess(
 {
 }
 
+void HeatConductionProcess::preTimestepConcreteProcess(GlobalVector const& x,
+                                            const double /*t*/,
+                                            const double /*delta_t*/)
+{
+    if (!_x_previous_timestep)
+    {
+        _x_previous_timestep =
+            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+    }
+    else
+    {
+        auto& x0 = *_x_previous_timestep;
+        MathLib::LinAlg::copy(x, x0);
+    }
+}
+
 void HeatConductionProcess::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,

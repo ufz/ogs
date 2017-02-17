@@ -25,6 +25,9 @@
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
 
+#include "ProcessLib/Utils/ProcessUtils.h"
+#include "ProcessLib/Parameter/ConstantParameter.h"
+
 #include "LiquidFlowMaterialProperties.h"
 
 namespace ProcessLib
@@ -35,7 +38,9 @@ class LiquidFlowMaterialProperties;
 
 std::unique_ptr<LiquidFlowMaterialProperties>
 createLiquidFlowMaterialProperties(
-    BaseLib::ConfigTree const& config, bool const has_material_ids,
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    bool const has_material_ids,
     MeshLib::PropertyVector<int> const& material_ids)
 {
     DBUG("Reading material properties of liquid flow process.");
@@ -56,9 +61,10 @@ createLiquidFlowMaterialProperties(
     auto const& porous_medium_configs =
         //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium}
         config.getConfigSubtree("porous_medium");
-    for (auto const& porous_medium_config :
-         //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium}
-         porous_medium_configs.getConfigSubtreeList("porous_medium"))
+    for (
+        auto const& porous_medium_config :
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium}
+        porous_medium_configs.getConfigSubtreeList("porous_medium"))
     {
         //! \ogs_file_attr{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__id}
         auto const id = porous_medium_config.getConfigAttribute<int>("id");
@@ -90,12 +96,40 @@ createLiquidFlowMaterialProperties(
     BaseLib::reorderVector(porosity_models, mat_ids);
     BaseLib::reorderVector(storage_models, mat_ids);
 
-    return std::unique_ptr<LiquidFlowMaterialProperties>(
-        new LiquidFlowMaterialProperties(
-            std::move(fluid_properties),
-            std::move(intrinsic_permeability_models),
-            std::move(porosity_models), std::move(storage_models),
-            has_material_ids, material_ids));
+    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__solid}
+    auto const solid_config = config.getConfigSubtreeOptional("solid");
+    if (solid_config)
+    {
+        auto& solid_thermal_expansion = findParameter<double>(
+            *solid_config,
+            //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__solid__thermal_expansion}
+            "thermal_expansion", parameters, 1);
+        DBUG("Use \'%s\' as solid thermal expansion.",
+             solid_thermal_expansion.name.c_str());
+        auto& biot_constant = findParameter<double>(
+            *solid_config,
+            //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__solid__biot_constant}
+            "biot_constant", parameters, 1);
+        return std::unique_ptr<LiquidFlowMaterialProperties>(
+            new LiquidFlowMaterialProperties(
+                std::move(fluid_properties),
+                std::move(intrinsic_permeability_models),
+                std::move(porosity_models), std::move(storage_models),
+                has_material_ids, material_ids, solid_thermal_expansion,
+                biot_constant));
+    }
+    else
+    {
+        ConstantParameter<double> void_parameter("void_solid_thermal_expansion",
+                                                 0.);
+        return std::unique_ptr<LiquidFlowMaterialProperties>(
+            new LiquidFlowMaterialProperties(
+                std::move(fluid_properties),
+                std::move(intrinsic_permeability_models),
+                std::move(porosity_models), std::move(storage_models),
+                has_material_ids, material_ids, void_parameter,
+                void_parameter));
+    }
 }
 
 }  // end of namespace

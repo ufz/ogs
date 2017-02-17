@@ -13,6 +13,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 namespace BaseLib
 {
@@ -27,6 +28,8 @@ class PropertyVector;
 
 namespace ProcessLib
 {
+struct ParameterBase;
+
 namespace LiquidFlow
 {
 class LiquidFlowMaterialProperties;
@@ -40,7 +43,9 @@ class LiquidFlowMaterialProperties;
  */
 std::unique_ptr<LiquidFlowMaterialProperties>
 createLiquidFlowMaterialProperties(
-    BaseLib::ConfigTree const& config, bool const has_material_ids,
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    bool const has_material_ids,
     MeshLib::PropertyVector<int> const& material_ids);
 
 }  // end of namespace
