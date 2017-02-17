@@ -54,3 +54,11 @@ news = "news"
   name = "Hydro-Thermal"
   identifier = "hydro-thermal"
   weight = 6
+[[menu.benchmarks]]
+  name = "Liquid Flow"
+  identifier = "liquid-flow"
+  weight = 7
+[[menu.benchmarks]]
+  name = "Two-phase Flow"
+  identifier = "two-phase-flow"
+  weight = 8
