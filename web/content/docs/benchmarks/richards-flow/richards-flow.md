@@ -19,4 +19,4 @@ The Richards equation is often used to mathematically describe water movement in
 
 ## Problem setting
 
-TODO `assets/files/Documentation/Selected-Benchmarks/Richards/richards-2.pdf`
+See [this PDF](../richards-2.pdf) for the problem setting.

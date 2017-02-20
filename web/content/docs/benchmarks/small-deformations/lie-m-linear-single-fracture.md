@@ -17,7 +17,7 @@ title = "Linear; Single fracture"
 
 We solve a linear elastic small deformation problem with a pre-existing fracture using the lower-dimensional interface element (LIE) approach.
 
-See the [LIE_small_deformation.pdf](https://docs.opengeosys.org/assets/files/Documentation/Selected-Benchmarks/LIE_small_deformation.pdf) for detailed problem description.
+See [this PDF](../LIE_small_deformation.pdf) for detailed problem description.
 
 ## Results and evaluation
 
