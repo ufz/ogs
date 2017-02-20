@@ -4,7 +4,7 @@
   "main": "src/js/app.js",
   "repository": "https://github.com/ufz/ogs",
   "author": "Lars Bilke",
-  "license": "BSD",
+  "license": "BSD-4-Clause",
   "scripts": {
     "clean": "gulp clean",
     "gulp": "gulp",
