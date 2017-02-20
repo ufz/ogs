@@ -19,4 +19,4 @@ This benchmark is dedicated to simulate the two-phase two-component flow in poro
 
 ## Results and evaluation
 
-See [MoMaS.pdf](https://docs.opengeosys.org/assets/files/SelectedBenchmarks/Twophase/MoMaS.pdf)
+See [this PDF](../MoMaS.pdf).
