@@ -1,12 +1,12 @@
 # Run vtk.js converter
-if(VIS_FILES)
+if(VIS_FILES AND VTKJS_CONVERTER)
     execute_process(COMMAND cmake -E make_directory ${VTKJS_OUTPUT_PATH})
+    foreach(FILE ${VIS_FILES})
+        execute_process(
+            COMMAND ${VTKJS_CONVERTER} -e -i ${BINARY_PATH}/${FILE} -o ${VTKJS_OUTPUT_PATH}
+        )
+    endforeach()
 endif()
-foreach(FILE ${VIS_FILES})
-    execute_process(
-        COMMAND ${VTKJS_CONVERTER} -e -i ${BINARY_PATH}/${FILE} -o ${VTKJS_OUTPUT_PATH}
-    )
-endforeach()
 
 if(WIN32)
     execute_process(
