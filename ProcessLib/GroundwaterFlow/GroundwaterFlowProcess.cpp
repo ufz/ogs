@@ -104,13 +104,14 @@ void GroundwaterFlowProcess::assembleWithJacobianConcreteProcess(
 }
 
 
-void GroundwaterFlowProcess::computeSecondaryVariableConcrete(const double t,
-                                                         GlobalVector const& x)
+void GroundwaterFlowProcess::computeSecondaryVariableConcrete(
+     const double t, GlobalVector const& x,
+     StaggeredCouplingTerm const& coupled_term)
 {
     DBUG("Compute the velocity for GroundwaterFlowProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
             &GroundwaterFlowLocalAssemblerInterface::computeSecondaryVariable,
-            _local_assemblers, *_local_to_global_index_map, t, x);
+            _local_assemblers, *_local_to_global_index_map, t, x, coupled_term);
 }
 
 }   // namespace GroundwaterFlow

@@ -14,7 +14,7 @@
 namespace ProcessLib
 {
 
-void LocalAssemblerInterface::coupling_assemble(
+void LocalAssemblerInterface::assembleWithCoupledTerm(
     double const /*t*/, std::vector<double> const& /*local_x*/,
     std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
@@ -22,7 +22,7 @@ void LocalAssemblerInterface::coupling_assemble(
     LocalCouplingTerm const& /*coupling_term*/)
 {
     OGS_FATAL(
-        "The coupling_assemble() function is not implemented in the local "
+        "The assembleWithCoupledTerm() function is not implemented in the local "
         "assembler.");
 }
 
@@ -56,11 +56,24 @@ void LocalAssemblerInterface::assembleWithJacobianAndCouping(
 void LocalAssemblerInterface::computeSecondaryVariable(
                               std::size_t const mesh_item_id,
                               NumLib::LocalToGlobalIndexMap const& dof_table,
-                              double const t, GlobalVector const& x)
+                              double const t, GlobalVector const& x,
+                              StaggeredCouplingTerm const& coupled_term)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
-    computeSecondaryVariableConcrete(t, local_x);
+
+    if (coupled_term.empty)
+    {
+        computeSecondaryVariableConcrete(t, local_x);
+    }
+    else
+    {
+        auto const local_coupled_xs
+            = getCurrentLocalSolutionsOfCoupledProcesses(
+                    coupled_term.coupled_xs, indices);
+        computeSecondaryVariableWithCoupledProcessConcrete(t, local_x,
+                                                           local_coupled_xs);
+    }
 }
 
 void LocalAssemblerInterface::preTimestep(

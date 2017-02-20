@@ -12,8 +12,10 @@
 
 #pragma once
 
+#include <map>
+#include <unordered_map>
 #include <vector>
-#include <memory>
+#include <typeindex>
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -86,14 +88,19 @@ public:
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
 
-    void coupling_assemble(double const t, std::vector<double> const& local_x,
-                           std::vector<double>& local_M_data,
-                           std::vector<double>& local_K_data,
-                           std::vector<double>& local_b_data,
-                           LocalCouplingTerm const& coupled_term) override;
+    void assembleWithCoupledTerm(
+        double const t, std::vector<double> const& local_x,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data,
+        LocalCouplingTerm const& coupled_term) override;
 
     void computeSecondaryVariableConcrete(
         double const /*t*/, std::vector<double> const& local_x) override;
+
+    void computeSecondaryVariableWithCoupledProcessConcrete(
+        double const t, std::vector<double> const& local_x,
+        std::unordered_map<std::type_index, const std::vector<double>> const&
+            coupled_local_solutions) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

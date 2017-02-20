@@ -86,10 +86,12 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-20 RELTOL 1e-10
+    ABSTOL 1e-16 RELTOL 1e-10
     DIFF_DATA
     mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu pressure_ref pressure
     mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu temperature_ref temperature
+    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu v_x_ref v_x
+    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu v_y_ref v_y
 )
 
 # PETSc/MPI
@@ -183,4 +185,8 @@ AddTest(
     DIFF_DATA
     mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu pressure_ref pressure
     mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu temperature_ref temperature
+# To be activated when the output of velocity is correct under PETSc version.
+#    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_x_ref v_x
+#    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_y_ref v_y
+
 )

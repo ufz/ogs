@@ -49,27 +49,6 @@ getPreviousLocalSolutionsOfCoupledProcesses(
     return local_coupled_xs0;
 }
 
-static std::unordered_map<std::type_index, const std::vector<double>>
-getCurrentLocalSolutionsOfCoupledProcesses(
-    const std::unordered_map<std::type_index, GlobalVector const&>&
-        global_coupled_xs,
-    const std::vector<GlobalIndexType>& indices)
-{
-    std::unordered_map<std::type_index, const std::vector<double>>
-        local_coupled_xs;
-
-    // Get local nodal solutions of the coupled equations.
-    for (auto const& global_coupled_x_pair : global_coupled_xs)
-    {
-        auto const& coupled_x = global_coupled_x_pair.second;
-        auto const local_coupled_x = coupled_x.get(indices);
-        BaseLib::insertIfTypeIndexKeyUniqueElseError(
-            local_coupled_xs, global_coupled_x_pair.first, local_coupled_x,
-            "local_coupled_x");
-    }
-    return local_coupled_xs;
-}
-
 VectorMatrixAssembler::VectorMatrixAssembler(
     std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler)
     : _jacobian_assembler(std::move(jacobian_assembler))
@@ -104,7 +83,7 @@ void VectorMatrixAssembler::assemble(
             coupling_term.dt, coupling_term.coupled_processes,
             std::move(local_coupled_xs0), std::move(local_coupled_xs));
 
-        local_assembler.coupling_assemble(t, local_x, _local_M_data,
+        local_assembler.assembleWithCoupledTerm(t, local_x, _local_M_data,
                                           _local_K_data, _local_b_data,
                                           local_coupling_term);
     }

@@ -104,4 +104,10 @@ struct LocalCouplingTerm
  */
 const StaggeredCouplingTerm createVoidStaggeredCouplingTerm();
 
+std::unordered_map<std::type_index, const std::vector<double>>
+getCurrentLocalSolutionsOfCoupledProcesses(
+    const std::unordered_map<std::type_index, GlobalVector const&>&
+        global_coupled_xs,
+    const std::vector<GlobalIndexType>& indices);
+
 }  // end of ProcessLib

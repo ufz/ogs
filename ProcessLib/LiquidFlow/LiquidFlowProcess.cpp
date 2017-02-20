@@ -115,13 +115,15 @@ void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac, coupling_term);
 }
 
-void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
-                                                         GlobalVector const& x)
+void LiquidFlowProcess::computeSecondaryVariableConcrete(
+    const double t,
+    GlobalVector const& x,
+    StaggeredCouplingTerm const& coupled_term)
 {
     DBUG("Compute the velocity for LiquidFlowProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, *_local_to_global_index_map, t, x);
+        _local_assemblers, *_local_to_global_index_map, t, x, coupled_term);
 }
 
 }  // end of namespace

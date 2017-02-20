@@ -659,11 +659,14 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
         auto& x = *_process_solutions[pcs_idx];
         pcs.preTimestep(x, t, dt);
 
-        const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
-            x, timestep_id, t, dt, *spd,
-            ProcessLib::createVoidStaggeredCouplingTerm(), *_output);
+        const auto void_staggered_coupling_term =
+            ProcessLib::createVoidStaggeredCouplingTerm();
+
+        const auto nonlinear_solver_succeeded =
+            solveOneTimeStepOneProcess(x, timestep_id, t, dt, *spd,
+                                       void_staggered_coupling_term, *_output);
         pcs.postTimestep(x);
-        pcs.computeSecondaryVariable(t, x);
+        pcs.computeSecondaryVariable(t, x, void_staggered_coupling_term);
 
         INFO("[time] Solving process #%u took %g s in time step #%u ", pcs_idx,
              time_timestep_process.elapsed(), timestep_id);
@@ -791,7 +794,11 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         auto& pcs = spd->process;
         auto& x = *_process_solutions[pcs_idx];
         pcs.postTimestep(x);
-        pcs.computeSecondaryVariable(t, x);
+
+        StaggeredCouplingTerm coupled_term(
+            spd->coupled_processes, _solutions_of_coupled_processes[pcs_idx],
+            0.0);
+        pcs.computeSecondaryVariable(t, x, coupled_term);
 
         _output->doOutput(pcs, spd->process_output, timestep_id, t, x);
         ++pcs_idx;

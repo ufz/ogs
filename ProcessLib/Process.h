@@ -60,7 +60,8 @@ public:
                       GlobalVector const& x) override final;
 
     /// compute secondary variables for the coupled equations or for output.
-    void computeSecondaryVariable(const double t, GlobalVector const& x);
+    void computeSecondaryVariable(const double t, GlobalVector const& x,
+                                  StaggeredCouplingTerm const& coupled_term);
 
     NumLib::IterationResult postIteration(GlobalVector const& x) override final;
 
@@ -165,7 +166,9 @@ private:
                                              GlobalVector const& /*x*/){}
 
     virtual void computeSecondaryVariableConcrete(const double /*t*/,
-                                                  GlobalVector const& /*x*/) {}
+                                                  GlobalVector const& /*x*/,
+                                                  StaggeredCouplingTerm
+                                                  const& /*coupled_term*/) {}
 
     virtual NumLib::IterationResult postIterationConcreteProcess(
         GlobalVector const& /*x*/)

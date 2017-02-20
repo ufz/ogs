@@ -55,11 +55,11 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    coupling_assemble(double const t, std::vector<double> const& local_x,
-                      std::vector<double>& local_M_data,
-                      std::vector<double>& local_K_data,
-                      std::vector<double>& local_b_data,
-                      LocalCouplingTerm const& coupled_term)
+    assembleWithCoupledTerm(double const t, std::vector<double> const& local_x,
+                            std::vector<double>& local_M_data,
+                            std::vector<double>& local_K_data,
+                            std::vector<double>& local_b_data,
+                            LocalCouplingTerm const& coupled_term)
 {
     SpatialPosition pos;
     pos.setElementID(_element.getID());
@@ -304,6 +304,35 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             _darcy_velocities, local_p_vec, sm, permeability, ip, mu, rho_g,
             _gravitational_axis_id);
     }
+}
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+    computeSecondaryVariableWithCoupledProcessConcrete(
+        double const t, std::vector<double> const& local_x,
+        std::unordered_map<std::type_index, const std::vector<double>> const&
+            coupled_local_solutions)
+{
+    SpatialPosition pos;
+    pos.setElementID(_element.getID());
+    const int material_id = _material_properties.getMaterialID(pos);
+    const Eigen::MatrixXd& perm = _material_properties.getPermeability(
+        material_id, t, pos, _element.getDimension());
+
+    const auto local_T = coupled_local_solutions.at(std::type_index(
+        typeid(ProcessLib::HeatConduction::HeatConductionProcess)));
+
+    // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
+    //  the assert must be changed to perm.rows() == _element->getDimension()
+    assert(perm.rows() == GlobalDim || perm.rows() == 1);
+
+    if (perm.size() == 1)  // isotropic or 1D problem.
+        computeSecondaryVariableCoupledWithHeatTransportLocal<
+            IsotropicCalculator>(t, local_x, local_T, pos, perm);
+    else
+        computeSecondaryVariableCoupledWithHeatTransportLocal<
+            AnisotropicCalculator>(t, local_x, local_T, pos, perm);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
