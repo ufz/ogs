@@ -18,7 +18,7 @@ author = "Norihiro Watanabe"
 
 We solve a hydromechanics problem (small deformation, linear elastic, Darcy flow) with a pre-existing fracture using the lower-dimensional interface element (LIE) approach.
 
-See the [LIE_HM.pdf](https://docs.opengeosys.org/assets/files/Documentation/Selected-Benchmarks/LIE_HM.pdf) for detailed problem description.
+See [this PDF](../LIE_HM.pdf) for detailed problem description.
 
 
 ## Results and evaluation
