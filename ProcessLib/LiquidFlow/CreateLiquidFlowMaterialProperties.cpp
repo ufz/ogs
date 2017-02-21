@@ -101,15 +101,13 @@ createLiquidFlowMaterialProperties(
     if (solid_config)
     {
         auto& solid_thermal_expansion = findParameter<double>(
-            *solid_config,
-            //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__solid__thermal_expansion}
-            "thermal_expansion", parameters, 1);
+            //! \ogs_file_param_special{prj__processes__process__LIQUID_FLOW__material_property__solid__thermal_expansion}
+            *solid_config, "thermal_expansion", parameters, 1);
         DBUG("Use \'%s\' as solid thermal expansion.",
              solid_thermal_expansion.name.c_str());
         auto& biot_constant = findParameter<double>(
-            *solid_config,
-            //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__solid__biot_constant}
-            "biot_constant", parameters, 1);
+            //! \ogs_file_param_special{prj__processes__process__LIQUID_FLOW__material_property__solid__biot_constant}
+            *solid_config, "biot_constant", parameters, 1);
         return std::unique_ptr<LiquidFlowMaterialProperties>(
             new LiquidFlowMaterialProperties(
                 std::move(fluid_properties),
