@@ -11,9 +11,10 @@
 - Inside the source-directory `ogs/web`:
   - Install Node packages with `npm install` (or via `yarn`)
   - Install Python packages with `pip install -r requirements.txt`, *OPTIONAL* for getting content from [Contentful](https://contentful.com)
+  - Re-run CMake and build the `ctest`-target, *OPTIONAL* for benchmark visualizations
   - Run `npm run build` to build the site which is created in `public/`
 
-Alternatively you can simply run `make web` inside your build directory to install everything and build the site (this requires that `python`, `pip` and `npm` or `yarn` was found by CMake).
+Alternatively you can simply run `make web` inside your build directory to install everything and build the site (this requires that `npm` or `yarn` was found by CMake). The `web`-target will not create the benchmark visualizations automatically.
 
 ## Develop site with live-preview
 
