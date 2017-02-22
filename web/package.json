@@ -10,9 +10,12 @@
     "gulp": "gulp",
     "hugo": "hugo server --disableRSS",
     "build": "gulp build && hugo",
-    "build:release": "export NODE_ENV=production && gulp build && hugo",
+    "build:release": "export NODE_ENV=production && webpack --env=production && gulp build && hugo",
     "import": "cd import && python import.py",
-    "convert": "vtkDataConverter"
+    "convert": "vtkDataConverter",
+    "webpack": "webpack",
+    "webpack-watch": "webpack --watch",
+    "webpack-production": "webpack --env=production"
   },
   "paths": {
     "src": {
@@ -62,11 +65,7 @@
   "globs": {
     "distCss": [
       "./node_modules/normalize.css/normalize.css",
-      "./node_modules/flexboxgrid/dist/flexboxgrid.min.css",
-      "./src/css/prism-theme.css",
-      "./build/fonts/fontello/css/fontello-codes.css",
-      "./build/css/*.css",
-      "./src/css/*.css"
+      "./node_modules/flexboxgrid/dist/flexboxgrid.min.css"
     ],
     "img": [
       "./public/img/"
@@ -153,6 +152,7 @@
     "gulp-add-src": "^0.2.0",
     "gulp-autoprefixer": "^3.1.1",
     "gulp-cached": "^1.1.1",
+    "gulp-clean-css": "^3.0.3",
     "gulp-concat": "^2.6.1",
     "gulp-load-plugins": "^1.4.0",
     "gulp-plumber": "^1.1.0",
@@ -160,11 +160,12 @@
     "gulp-sass": "^3.1.0",
     "gulp-size": "^2.1.0",
     "kw-web-suite": "^2.2.1",
+    "merge-stream": "^1.0.1",
     "normalize.css": "^5.0.0",
     "pygments-css": "^1.0.0",
     "tachyons-sass": "^4.7.1",
     "vtk.js": "^2.11.1",
-    "webpack": "^1.14.0",
-    "webpack-stream": "^3.2.0"
+    "webpack": "^2.2.1",
+    "webpack-merge": "^3.0.0"
   }
 }
