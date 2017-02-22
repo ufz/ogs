@@ -164,7 +164,7 @@
     "normalize.css": "^5.0.0",
     "pygments-css": "^1.0.0",
     "tachyons-sass": "^4.7.1",
-    "vtk.js": "^2.11.1",
+    "vtk.js": "^2.11.4",
     "webpack": "^2.2.1",
     "webpack-merge": "^3.0.0"
   }
