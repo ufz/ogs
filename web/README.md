@@ -24,9 +24,13 @@ In `ogs/web` run
 
 In your browser go to http://localhost:1313. As you make modifications to the site it will be rebuild and the page in the browser gets reloaded.
 
-If you want to modify css or javascript run `gulp` in another terminal:
+If you want to modify css run `gulp` in another terminal:
 
     npm run gulp
+
+If you want to modify javascript run `webpack` in another terminal:
+
+    npm run webpack-watch
 
 ## Importing CMS content (Optional)
 
@@ -126,3 +130,11 @@ Run `npm run convert` to get a list of possible arguments.
 ### Equations
 
 Equations can be set with typical LaTeX syntax by using [MathJax](https://www.mathjax.org/). Blocks are defined by `$$` at the beginning and `$$` at the end of the block. Inline math uses one `$` as the delimiter. For more usage instructions see the [MathJax LaTeX help](http://docs.mathjax.org/en/latest/tex.html).
+
+## Developer notes
+
+When adding a new module with `yarn add` you have to manually rebuild node-sass:
+
+```
+node node_modules/node-sass/scripts/install.js && npm rebuild node-sass
+```

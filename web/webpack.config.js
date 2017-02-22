@@ -1,31 +1,50 @@
+const path = require('path');
+const webpack = require('webpack');
+const merge = require('webpack-merge');
+const parts = require('./webpack.parts');
 const pkg = require('./package.json');
 
-var path = require('path'),
-    webpack = require('webpack'),
-    loaders = require('./node_modules/vtk.js/Utilities/config/webpack.loaders.js'),
-    plugins = [];
-if(process.env.NODE_ENV === 'production') {
-    console.log('==> Production build');
-    plugins.push(new webpack.DefinePlugin({
-        "process.env": {
-            NODE_ENV: JSON.stringify("production"),
-        },
-    }));
-}
-
-module.exports = {
-  plugins: plugins,
-  entry: pkg.paths.src.js + '/app.js',
-  output: {
-    // path: pkg.paths.dist.js, // does not work with webpack-stream
-    filename: 'bundle.js',
-  },
-  module: {
-      loaders: [
-          { test: require.resolve("./src/js/app.js"), loader: "expose-loader?MyWebApp" },
-      ].concat(loaders),
+const commonConfig = merge([
+  {
+    entry: {
+      app: pkg.paths.src.js + 'app.js', // PATHS.app,
     },
-    postcss: [
-      require('autoprefixer')({ browsers: ['last 2 versions'] }),
-    ],
+    output: {
+      path: pkg.paths.dist.js,
+      filename: 'bundle.js'
+    },
+    module: {
+        rules: [
+            {
+              test: require.resolve("./src/js/app.js"),
+              loader: "expose-loader?MyWebApp"
+            }
+        ].concat(module.exports = parts.loaders()),
+      },
+    // postcss: [
+      // require('autoprefixer')({ browsers: ['last 2 versions'] }),
+    // ],
+  },
+  // parts.lintJavaScript({ include: pkg.paths.src.js + '/app.js' }),
+]);
+
+const productionConfig = merge([
+  parts.productionEnv(),
+  parts.minifyJavaScript({ useSourceMap: true })
+]);
+
+const developmentConfig = merge([
+  {
+    // plugins: [
+      // new webpack.NamedModulesPlugin(),
+    // ],
+  }
+]);
+
+module.exports = function(env) {
+  if (env === 'production') {
+    return merge(commonConfig, productionConfig);
+  }
+
+  return merge(commonConfig, developmentConfig);
 };
