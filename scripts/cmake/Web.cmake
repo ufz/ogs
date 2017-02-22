@@ -39,7 +39,7 @@ if(DEFINED ENV{JENKINS_URL})
 endif()
 
 add_custom_target(web
-    COMMAND ${NPM} run build -- ${HUGO_ARGS}
+    COMMAND ${NPM} run build:release -- ${HUGO_ARGS}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/web
     DEPENDS web-install ${IMPORT_TARGET}
 )
