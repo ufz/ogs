@@ -20,9 +20,10 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
+#include <vtkCellType.h>
 
-#include "VtkMappedMesh.h"
 #include "VtkMeshNodalCoordinatesTemplate.h"
+#include "MeshLib/VtkOGSEnum.h"
 
 namespace MeshLib {
 
@@ -71,18 +72,54 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
     vtkNew<VtkMeshNodalCoordinatesTemplate<double> > nodeCoords;
     nodeCoords->SetNodes(_mesh->getNodes());
     this->Points->SetData(nodeCoords.GetPointer());
-    // output->SetPoints(this->Points.GetPointer()); // TODO: not necessary?
+    output->SetPoints(this->Points.GetPointer());
 
-    // Elements
-    vtkNew<VtkMappedMesh> elems;
-    elems->GetImplementation()->SetNodes(_mesh->getNodes());
-    elems->GetImplementation()->SetElements(_mesh->getElements());
+    // Cells
+    auto elems = _mesh->getElements();
+    output->Allocate(elems.size());
+    for (std::size_t cell = 0; cell < elems.size(); cell++) {
+        auto cellType = OGSToVtkCellType(elems[cell]->getCellType());
 
-     // Use the mapped point container for the block points
-    elems->SetPoints(this->Points.GetPointer());
+        const MeshLib::Element* const elem = (elems)[cell];
+        const unsigned numNodes(elem->getNumberOfNodes());
+        const MeshLib::Node* const* nodes = elems[cell]->getNodes();
+		vtkSmartPointer<vtkIdList> ptIds =
+			vtkSmartPointer<vtkIdList>::New();
+        ptIds->SetNumberOfIds(numNodes);
 
-    output->Allocate(elems->GetNumberOfCells());
-    output->ShallowCopy(elems.GetPointer());
+        for (unsigned i = 0; i < numNodes; ++i)
+            ptIds->SetId(i, nodes[i]->getID());
+
+        if(cellType == VTK_WEDGE)
+        {
+            for (unsigned i=0; i<3; ++i)
+            {
+                const unsigned prism_swap_id = ptIds->GetId(i);
+                ptIds->SetId(i, ptIds->GetId(i+3));
+                ptIds->SetId(i+3, prism_swap_id);
+            }
+        }
+        else if(cellType == VTK_QUADRATIC_WEDGE)
+        {
+            std::array<vtkIdType, 15> ogs_nodeIds;
+            for (unsigned i=0; i<15; ++i)
+                ogs_nodeIds[i] = ptIds->GetId(i);
+            for (unsigned i=0; i<3; ++i)
+            {
+                ptIds->SetId(i, ogs_nodeIds[i+3]);
+                ptIds->SetId(i+3, ogs_nodeIds[i]);
+            }
+            for (unsigned i=0; i<3; ++i)
+                ptIds->SetId(6+i, ogs_nodeIds[8-i]);
+            for (unsigned i=0; i<3; ++i)
+                ptIds->SetId(9+i, ogs_nodeIds[14-i]);
+            ptIds->SetId(12, ogs_nodeIds[9]);
+            ptIds->SetId(13, ogs_nodeIds[11]);
+            ptIds->SetId(14, ogs_nodeIds[10]);
+        }
+
+        output->InsertNextCell(cellType, ptIds);
+    }
 
     // Arrays
     MeshLib::Properties const & properties = _mesh->getProperties();
