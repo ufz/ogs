@@ -69,15 +69,15 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     // diffusion coeff
     auto& diff_coeff_b = findParameter<double>(
         config,
-        //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__diffusion_coeff_component_b}
+        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__diffusion_coeff_component_b}
         "diffusion_coeff_component_b", parameters, 1);
     auto& diff_coeff_a = findParameter<double>(
         config,
-        //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__diffusion_coeff_component_a}
+        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__diffusion_coeff_component_a}
         "diffusion_coeff_component_a", parameters, 1);
     auto& temperature = findParameter<double>(
         config,
-        //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__temperature}
+        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__temperature}
         "temperature", parameters, 1);
 
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__material_property}
