@@ -71,6 +71,7 @@ public:
         unsigned const integration_order,
         int const gravitational_axis_id,
         double const gravitational_acceleration,
+        double const reference_temperature,
         LiquidFlowMaterialProperties const& material_propertries)
         : _element(element),
           _integration_method(integration_order),
@@ -79,6 +80,7 @@ public:
               element, is_axially_symmetric, _integration_method)),
           _gravitational_axis_id(gravitational_axis_id),
           _gravitational_acceleration(gravitational_acceleration),
+          _reference_temperature(reference_temperature),
           _material_properties(material_propertries)
     {
     }
@@ -219,6 +221,7 @@ private:
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
+    const double _reference_temperature;
     const LiquidFlowMaterialProperties& _material_properties;
 };
 

@@ -41,12 +41,14 @@ LiquidFlowProcess::LiquidFlowProcess(
     bool const has_material_ids,
     int const gravitational_axis_id,
     double const gravitational_acceleration,
+    double const reference_temperature,
     BaseLib::ConfigTree const& config)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller)),
       _gravitational_axis_id(gravitational_axis_id),
       _gravitational_acceleration(gravitational_acceleration),
+      _reference_temperature(reference_temperature),
       _material_properties(createLiquidFlowMaterialProperties(
           config, parameters, has_material_ids, material_ids))
 {
@@ -63,7 +65,8 @@ void LiquidFlowProcess::initializeConcreteProcess(
         mesh.getDimension(), mesh.getElements(), dof_table,
         pv.getShapeFunctionOrder(), _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _gravitational_axis_id,
-        _gravitational_acceleration, *_material_properties);
+        _gravitational_acceleration, _reference_temperature,
+        *_material_properties);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity_x", 1,
