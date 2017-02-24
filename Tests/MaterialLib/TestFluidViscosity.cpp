@@ -18,7 +18,7 @@
 
 #include "Tests/TestTools.h"
 
-#include "MaterialLib/Fluid/Viscosity/createViscosityModel.h"
+#include "MaterialLib/Fluid/Viscosity/CreateViscosityModel.h"
 #include "MaterialLib/PhysicalConstant.h"
 
 using namespace MaterialLib;

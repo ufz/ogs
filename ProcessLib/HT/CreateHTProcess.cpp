@@ -9,8 +9,8 @@
 
 #include "CreateHTProcess.h"
 
-#include "MaterialLib/Fluid/Density/createFluidDensityModel.h"
-#include "MaterialLib/Fluid/Viscosity/createViscosityModel.h"
+#include "MaterialLib/Fluid/Density/CreateFluidDensityModel.h"
+#include "MaterialLib/Fluid/Viscosity/CreateViscosityModel.h"
 
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
