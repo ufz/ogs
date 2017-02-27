@@ -40,10 +40,6 @@ bool VtuInterface::writeVTU(std::string const &file_name, const int num_partitio
         return false;
     }
 
-    // See http://www.paraview.org/Bug/view.php?id=13382
-    if(_data_mode == vtkXMLWriter::Appended)
-        WARN("Appended data mode is currently not supported, written file is not valid!");
-
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
     vtkSource->SetMesh(_mesh);
 
@@ -64,6 +60,9 @@ bool VtuInterface::writeVTU(std::string const &file_name, const int num_partitio
         // implemented and doing so is not trivial. Therefore for ascii output
         // the mapped unstructured grid is copied to a regular VTK grid.
         // See http://www.vtk.org/pipermail/vtkusers/2014-October/089400.html
+        WARN(
+            "Ascii data mode is currently not supported and the program may "
+            "crash!");
         vtkSource->Update();
         vtkSmartPointer<vtkUnstructuredGrid> tempGrid =
             vtkSmartPointer<vtkUnstructuredGrid>::New();
