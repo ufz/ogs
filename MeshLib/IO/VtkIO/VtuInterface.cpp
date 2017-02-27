@@ -43,8 +43,6 @@ namespace IO
 VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode, bool compress) :
     _mesh(mesh), _data_mode(dataMode), _use_compressor(compress)
 {
-    if(_data_mode == vtkXMLWriter::Appended)
-        ERR("Appended data mode is currently not supported!");
     if(_data_mode == vtkXMLWriter::Ascii && compress)
         WARN("Ascii data cannot be compressed, ignoring compression flag.")
 }

@@ -258,8 +258,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     ASSERT_EQ(range[1], mesh->getNumberOfElements() * 2);
 
     // -- Write VTK mesh to file (in all combinations of binary, appended and compressed)
-    // atm vtkXMLWriter::Appended does not work, see http://www.paraview.org/Bug/view.php?id=13382
-    for(int dataMode : { vtkXMLWriter::Ascii, vtkXMLWriter::Binary })
+    // TODO: atm vtkXMLWriter::Ascii fails
+    for(int dataMode : { vtkXMLWriter::Appended, vtkXMLWriter::Binary })
     {
         for(bool compressed : { true, false })
         {
