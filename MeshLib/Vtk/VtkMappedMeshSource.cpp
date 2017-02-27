@@ -11,25 +11,25 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+#include "VtkMappedMeshSource.h"
 
 #include <vector>
 
-#include "VtkMappedMeshSource.h"
-
+#include <vtkCellType.h>
 #include <vtkDemandDrivenPipeline.h>
-#include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
-#include <vtkCellType.h>
+#include <vtkSmartPointer.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
-#include "VtkMeshNodalCoordinatesTemplate.h"
 #include "MeshLib/VtkOGSEnum.h"
+#include "VtkMeshNodalCoordinatesTemplate.h"
 
 namespace MeshLib {
 
 vtkStandardNewMacro(VtkMappedMeshSource)
 
-void VtkMappedMeshSource::PrintSelf(ostream &os, vtkIndent indent)
+void VtkMappedMeshSource::PrintSelf(std::ostream &os, vtkIndent indent)
 {
     this->Superclass::PrintSelf(os, indent);
     os << indent << "Mesh: " << (_mesh ? _mesh->getName() : "(none)") << endl;
