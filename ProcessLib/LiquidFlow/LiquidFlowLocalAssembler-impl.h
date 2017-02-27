@@ -14,7 +14,6 @@
 
 #include "LiquidFlowLocalAssembler.h"
 
-#include "MaterialLib/PhysicalConstant.h"
 #include "NumLib/Function/Interpolation.h"
 
 #include "ProcessLib/HeatConduction/HeatConductionProcess.h"
@@ -133,10 +132,6 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     //       the integration loop for non-constant porosity and storage models.
     double porosity_variable = 0.;
     double storage_variable = 0.;
-    // Reference temperature for fluid property models because of no coupled
-    // heat transport process. TODO: Add an optional input for this.
-    const double temperature =
-        MaterialLib::PhysicalConstant::CelsiusZeroInKelvin + 18.0;
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sm = _shape_matrices[ip];
@@ -151,15 +146,16 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         // Assemble mass matrix, M
         local_M.noalias() += _material_properties.getMassCoefficient(
                                  material_id, t, pos, porosity_variable,
-                                 storage_variable, p, temperature) *
+                                 storage_variable, p, _reference_temperature) *
                              sm.N.transpose() * sm.N * integration_factor;
 
         // Compute density:
         const double rho_g =
-            _material_properties.getLiquidDensity(p, temperature) *
+            _material_properties.getLiquidDensity(p, _reference_temperature) *
             _gravitational_acceleration;
         // Compute viscosity:
-        const double mu = _material_properties.getViscosity(p, temperature);
+        const double mu =
+            _material_properties.getViscosity(p, _reference_temperature);
 
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
@@ -286,8 +282,6 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    const double temperature =
-        MaterialLib::PhysicalConstant::CelsiusZeroInKelvin + 18.0;
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sm = _shape_matrices[ip];
@@ -295,10 +289,11 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         NumLib::shapeFunctionInterpolate(local_x, sm.N, p);
 
         const double rho_g =
-            _material_properties.getLiquidDensity(p, temperature) *
+            _material_properties.getLiquidDensity(p, _reference_temperature) *
             _gravitational_acceleration;
         // Compute viscosity:
-        const double mu = _material_properties.getViscosity(p, temperature);
+        const double mu =
+            _material_properties.getViscosity(p, _reference_temperature);
 
         LaplacianGravityVelocityCalculator::calculateVelocity(
             _darcy_velocities, local_p_vec, sm, permeability, ip, mu, rho_g,

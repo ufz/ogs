@@ -1,5 +1,5 @@
 /*!
-   \file  createFluidDensityModel.cpp
+   \file  CreateFluidDensityModel.cpp
    \brief create an instance of a fluid density class.
 
    \copyright
@@ -11,7 +11,7 @@
 
 #include <array>
 
-#include "createFluidDensityModel.h"
+#include "CreateFluidDensityModel.h"
 
 #include "BaseLib/Error.h"
 

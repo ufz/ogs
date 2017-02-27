@@ -15,6 +15,7 @@
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
+#include "MaterialLib/PhysicalConstant.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -67,6 +68,13 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     assert(g >= 0.);
     const int gravity_axis_id = (g == 0.) ? -1 : gravity_axis_id_input;
 
+    auto const& refT =
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__reference_temperature}
+        config.getConfigParameterOptional<double>("reference_temperature");
+    const double reference_temperature =
+        refT ? *refT
+             : MaterialLib::PhysicalConstant::CelsiusZeroInKelvin + 18.0;
+
     //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
@@ -80,7 +88,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
             mesh, std::move(jacobian_assembler), parameters, integration_order,
             std::move(process_variables), std::move(secondary_variables),
             std::move(named_function_caller), *mat_ids, has_material_ids,
-            gravity_axis_id, g, mat_config}};
+            gravity_axis_id, g, reference_temperature, mat_config}};
     }
     else
     {
@@ -101,7 +109,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
             mesh, std::move(jacobian_assembler), parameters, integration_order,
             std::move(process_variables), std::move(secondary_variables),
             std::move(named_function_caller), *dummy_property_vector,
-            has_material_ids, gravity_axis_id, g, mat_config}};
+            has_material_ids, gravity_axis_id, g, reference_temperature,
+            mat_config}};
     }
 }
 

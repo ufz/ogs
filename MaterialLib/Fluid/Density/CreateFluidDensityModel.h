@@ -1,5 +1,5 @@
 /*!
-   \file  createFluidDensityModel.h
+   \file  CreateFluidDensityModel.h
    \brief create an instance of a fluid density class.
 
    \copyright

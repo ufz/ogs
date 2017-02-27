@@ -70,6 +70,7 @@ public:
         bool const has_material_ids,
         int const gravitational_axis_id,
         double const gravitational_acceleration,
+        double const reference_temperature,
         BaseLib::ConfigTree const& config);
 
     void computeSecondaryVariableConcrete(
@@ -106,6 +107,7 @@ private:
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
+    const double _reference_temperature;
     const std::unique_ptr<LiquidFlowMaterialProperties> _material_properties;
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>
