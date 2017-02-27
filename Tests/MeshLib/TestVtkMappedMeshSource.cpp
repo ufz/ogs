@@ -22,7 +22,6 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
-#include "MeshLib/Vtk/VtkMappedMesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
 #include "gtest/gtest.h"
@@ -144,25 +143,6 @@ TEST_F(InSituMesh, Construction)
 {
     ASSERT_TRUE(mesh != nullptr);
     ASSERT_EQ((subdivisions+1)*(subdivisions+1)*(subdivisions+1), mesh->getNumberOfNodes());
-}
-
-// Maps the mesh into a vtkUnstructuredGrid-equivalent
-TEST_F(InSituMesh, MappedMesh)
-{
-    ASSERT_TRUE(mesh != nullptr);
-
-    vtkNew<MeshLib::VtkMappedMesh> vtkMesh;
-    vtkMesh->GetImplementation()->SetNodes(mesh->getNodes());
-    vtkMesh->GetImplementation()->SetElements(mesh->getElements());
-
-    ASSERT_EQ(subdivisions*subdivisions*subdivisions, vtkMesh->GetNumberOfCells());
-    ASSERT_EQ(VTK_HEXAHEDRON, vtkMesh->GetCellType(0));
-    ASSERT_EQ(VTK_HEXAHEDRON, vtkMesh->GetCellType(vtkMesh->GetNumberOfCells()-1));
-    ASSERT_EQ(1, vtkMesh->IsHomogeneous());
-    ASSERT_EQ(8, vtkMesh->GetMaxCellSize());
-
-
-    ASSERT_EQ(0, vtkMesh->GetNumberOfPoints()); // No points are defined
 }
 
 // Writes the mesh into a vtk file, reads the file back and converts it into a
