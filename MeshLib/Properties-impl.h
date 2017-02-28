@@ -96,11 +96,17 @@ PropertyVector<T> const* Properties::getPropertyVector(
         _properties.find(name));
     if (it == _properties.end())
     {
-        ERR("A property with the specified name \"%s\" is not available.",
+        OGS_FATAL(
+            "The PropertyVector '%s' is not available in the mesh.",
             name.c_str());
-        return nullptr;
     }
-
+    if (!dynamic_cast<PropertyVector<T> const*>(it->second))
+    {
+        OGS_FATAL(
+            "The PropertyVector '%s' has a different type than the requested "
+            "PropertyVector.",
+            name.c_str());
+    }
     return dynamic_cast<PropertyVector<T> const*>(it->second);
 }
 
@@ -111,11 +117,17 @@ PropertyVector<T>* Properties::getPropertyVector(std::string const& name)
         _properties.find(name));
     if (it == _properties.end())
     {
-        ERR("A property with the specified name \"%s\" is not available.",
+        OGS_FATAL(
+            "A PropertyVector with the specified name '%s' is not available.",
             name.c_str());
-        return nullptr;
     }
-
+    if (!dynamic_cast<PropertyVector<T>*>(it->second))
+    {
+        OGS_FATAL(
+            "The PropertyVector '%s' has a different type than the requested "
+            "PropertyVector.",
+            name.c_str());
+    }
     return dynamic_cast<PropertyVector<T>*>(it->second);
 }
 
