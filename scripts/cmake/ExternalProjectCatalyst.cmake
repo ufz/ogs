@@ -14,10 +14,9 @@ if(OGS_BUILD_GUI)
     list(APPEND VTK_LIBRARIES vtkNetCDF vtkNetCDF_cxx)
 endif()
 
-find_package(ParaView 4.2 COMPONENTS ${VTK_MODULES} NO_MODULE QUIET)
+find_package(ParaView 4.2 REQUIRED COMPONENTS ${VTK_MODULES})
 
-find_library(VTKIO_LIB_FOUND vtkIOXML-pv4.2 HINTS ${ParaView_DIR}/lib PATH_SUFFIXES Release Debug)
-if(ParaView_FOUND AND VTKIO_LIB_FOUND)
+if(ParaView_FOUND)
     foreach(DIR ${PARAVIEW_INCLUDE_DIRS})
         if("${DIR}" MATCHES ".*vtknetcdf.*")
             include_directories(SYSTEM ${DIR}/../cxx ${DIR}/include)
@@ -25,7 +24,7 @@ if(ParaView_FOUND AND VTKIO_LIB_FOUND)
     endforeach()
     message(STATUS "Using ParaView in ${ParaView_DIR}")
     return()
-elseif(NOT ParaView_DIR)
+elseif()
         # If nothing was found build ParaView as an external project
         set(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
     endif()
@@ -70,4 +69,3 @@ if(NOT ParaView_FOUND)
 else()
     add_custom_target(VtkRescan) # dummy target for caching
 endif()
-
