@@ -23,6 +23,7 @@
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
+#include "Applications/InSituLib/Adaptor.h"
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
 #include "NumLib/NumericsConfig.h"
@@ -117,11 +118,11 @@ int main(int argc, char *argv[])
                                 BaseLib::extractPath(project_arg.getValue()),
                                 outdir_arg.getValue());
 
-            // Check intermediately that config parsing went fine.
-            project_config.checkAndInvalidate();
-            BaseLib::ConfigTree::assertNoSwallowedErrors();
-
-            BaseLib::ConfigTree::assertNoSwallowedErrors();
+#ifdef USE_INSITU
+            INFO("Initialize insitu scripts.");
+            if (auto t = project_config->getConfigSubtreeOptional("insitu"))
+                InSituLib::Initialize(t->getConfigSubtree("scripts"), BaseLib::extractPath(project_arg.getValue()));
+#endif
 
             INFO("Initialize processes.");
             for (auto& p : project.getProcesses())
@@ -129,12 +130,23 @@ int main(int argc, char *argv[])
                 p.second->initialize();
             }
 
+            // Check intermediately that config parsing went fine.
+            project_config.checkAndInvalidate();
+            BaseLib::ConfigTree::assertNoSwallowedErrors();
+
+            BaseLib::ConfigTree::assertNoSwallowedErrors();
+
             BaseLib::ConfigTree::assertNoSwallowedErrors();
 
             INFO("Solve processes.");
 
             auto& time_loop = project.getTimeLoop();
             solver_succeeded = time_loop.loop();
+
+#ifdef USE_INSITU
+            if (project_config->getConfigSubtreeOptional("insitu"))
+                InSituLib::Finalize();
+ #endif
         }  // This nested scope ensures that everything that could possibly
            // possess a ConfigTree is destructed before the final check below is
            // done.

@@ -17,3 +17,7 @@ endif() # OGS_BUILD_GUI
 if(OGS_BUILD_CLI)
     add_subdirectory(CLI)
 endif() # OGS_BUILD_CLI
+
+if(OGS_INSITU)
+    add_subdirectory(InSituLib)
+endif()
