@@ -27,3 +27,7 @@ if(OGS_BUILD_GUI)
         vtkRenderingFreeType
     )
 endif()
+
+if(OGS_INSITU)
+    set(VTK_MODULES ${VTK_MODULES} vtkPVPythonCatalyst)
+endif()
