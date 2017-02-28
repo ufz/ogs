@@ -1,0 +1,32 @@
+{
+  "edition": "ogs",
+  "requires": [
+    "Extras"
+  ],
+  "after": [
+    "Enable-Python",
+    "Extras"
+  ],
+  "cmake":{
+    "cache":[
+      { "name":"Module_vtkIOXML",
+        "type":"BOOL",
+        "value":"ON"
+      }
+    ]
+  },
+  "modules":[
+    { "name": "vtkIOXML",
+      "path": "VTK/IO/XML",
+      "include": [
+        { "class": "vtkXMLUnstructuredGridReader" },
+        { "class": "vtkXMLReader" },
+        { "class": "vtkXMLUnstructuredDataReader" },
+        { "class": "vtkXMLFileReadTester" },
+        { "class": "vtkXMLDataReader" }
+      ],
+      "cswrap": true,
+      "pythonwrap": true
+    }
+  ]
+}
