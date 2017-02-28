@@ -76,9 +76,9 @@ private:
     bool addProperty(MeshLib::Properties const& properties,
                      std::string const& prop_name) const
     {
-        auto* const propertyVector = properties.getPropertyVector<T>(prop_name);
-        if(!propertyVector)
+        if (!properties.existsPropertyVector<T>(prop_name))
             return false;
+        auto* const propertyVector = properties.getPropertyVector<T>(prop_name);
 
         vtkNew<VtkMappedPropertyVectorTemplate<T> > dataArray;
         dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<T> &>(*propertyVector));

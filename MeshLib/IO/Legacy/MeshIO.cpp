@@ -281,10 +281,16 @@ bool MeshIO::write()
     _out << "$ELEMENTS\n"
         << "  ";
 
-    auto const* const materials =
-        _mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-    writeElements(_mesh->getElements(), materials, _out);
-
+    if (!_mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
+    {
+        writeElements(_mesh->getElements(), nullptr, _out);
+    }
+    else
+    {
+        writeElements(
+            _mesh->getElements(),
+            _mesh->getProperties().getPropertyVector<int>("MaterialIDs"), _out);
+    }
     _out << "#STOP\n";
 
     return true;

@@ -51,12 +51,12 @@ int main (int argc, char* argv[])
         INFO("Could not read mesh from file \"%s\".", mesh_arg.getValue().c_str());
         return EXIT_FAILURE;
     }
-    auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-    if (!materialIds)
+    if (!mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
     {
         ERR("Mesh contains no int-property vector named \"MaterialIds\".");
         return EXIT_FAILURE;
     }
+    auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 
     std::size_t const n_properties(materialIds->size());
     if (n_properties != mesh->getNumberOfElements()) {

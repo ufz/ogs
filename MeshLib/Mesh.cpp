@@ -323,6 +323,12 @@ void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
                              std::string const& property_name,
                              double factor)
 {
+    if (!mesh.getProperties().existsPropertyVector<double>(property_name))
+    {
+        WARN("Did not find PropertyVector '%s' for scaling.",
+             property_name.c_str());
+        return;
+    }
     for (auto& v :
          *mesh.getProperties().getPropertyVector<double>(property_name))
         v *= factor;

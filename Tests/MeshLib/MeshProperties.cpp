@@ -122,19 +122,15 @@ TEST_F(MeshLibProperties, AddDoubleProperties)
         ASSERT_EQ(static_cast<double>(k+1), (*double_properties)[k]);
     }
 
+    ASSERT_TRUE(mesh->getProperties().existsPropertyVector<double>(prop_name));
     auto* const double_properties_cpy =
         mesh->getProperties().getPropertyVector<double>(prop_name);
-    ASSERT_FALSE(!double_properties_cpy);
-
     for (std::size_t k(0); k<size; k++) {
         ASSERT_EQ((*double_properties)[k], (*double_properties_cpy)[k]);
     }
 
     mesh->getProperties().removePropertyVector(prop_name);
-    auto* const removed_double_properties =
-        mesh->getProperties().getPropertyVector<double>(prop_name);
-
-    ASSERT_TRUE(!removed_double_properties);
+    ASSERT_FALSE(mesh->getProperties().existsPropertyVector<double>(prop_name));
 }
 
 TEST_F(MeshLibProperties, AddDoublePointerProperties)
@@ -204,10 +200,8 @@ TEST_F(MeshLibProperties, AddDoublePointerProperties)
     }
 
     mesh->getProperties().removePropertyVector(prop_name);
-    auto const* const removed_group_properties =
-        mesh->getProperties().getPropertyVector<double*>(prop_name);
-
-    ASSERT_TRUE(!removed_group_properties);
+    ASSERT_FALSE(
+        mesh->getProperties().existsPropertyVector<double*>(prop_name));
 }
 
 TEST_F(MeshLibProperties, AddArrayPointerProperties)
@@ -285,11 +279,10 @@ TEST_F(MeshLibProperties, AddArrayPointerProperties)
     }
 
     mesh->getProperties().removePropertyVector(prop_name);
-    auto const* const removed_group_properties =
-        mesh->getProperties().getPropertyVector<std::array<double, 3>*>(
+    auto exists =
+        mesh->getProperties().existsPropertyVector<std::array<double, 3>*>(
             prop_name);
-
-    ASSERT_TRUE(!removed_group_properties);
+    ASSERT_FALSE(exists);
 }
 
 TEST_F(MeshLibProperties, AddVariousDifferentProperties)

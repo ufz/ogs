@@ -28,13 +28,12 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
     std::string const& property_name, int const old_value, int const new_value,
     bool replace_if_exists)
 {
-    auto* const property_value_vec =
-        mesh.getProperties().getPropertyVector<int>(property_name);
-
-    if (!property_value_vec)
+    if (!mesh.getProperties().existsPropertyVector<int>(property_name))
     {
         return false;
     }
+    auto* const property_value_vec =
+        mesh.getProperties().getPropertyVector<int>(property_name);
 
     const std::size_t n_property_tuples(
         property_value_vec->getNumberOfTuples());

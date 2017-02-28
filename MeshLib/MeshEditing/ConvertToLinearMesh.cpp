@@ -74,9 +74,9 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
     MeshLib::Properties const& src_properties = org_mesh.getProperties();
     for (auto name : src_properties.getPropertyVectorNames())
     {
-        auto const* src_prop = src_properties.getPropertyVector<double>(name);
-        if (!src_prop)
+        if (!src_properties.existsPropertyVector<double>(name))
             continue;
+        auto const* src_prop = src_properties.getPropertyVector<double>(name);
         if (src_prop->getMeshItemType() != MeshLib::MeshItemType::Node)
             continue;
 

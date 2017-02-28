@@ -63,7 +63,10 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
     const std::vector<MeshLib::Element*> &elements = mesh.getElements();
     const std::size_t nElems (mesh.getNumberOfElements());
 
-    auto const materialIds = mesh.getProperties().getPropertyVector<int>(mat_name);
+    MeshLib::PropertyVector<int> const*const materialIds =
+        mesh.getProperties().existsPropertyVector<int>("MaterialIDs")
+            ? mesh.getProperties().getPropertyVector<int>("MaterialIDs")
+            : nullptr;
 
     for (unsigned i=0; i<nElems; ++i)
     {

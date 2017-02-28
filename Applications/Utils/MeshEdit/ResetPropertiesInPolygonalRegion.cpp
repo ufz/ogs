@@ -79,12 +79,13 @@ template <typename PT>
 void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
     std::string const& property_name, PT new_property_value)
 {
-    auto* const pv = mesh.getProperties().getPropertyVector<PT>(property_name);
-    if (!pv) {
+    if (!mesh.getProperties().existsPropertyVector<PT>(property_name))
+    {
         WARN("Did not find a PropertyVector with name \"%s\".",
             property_name.c_str());
         return;
     }
+    auto* const pv = mesh.getProperties().getPropertyVector<PT>(property_name);
 
     if (pv->getMeshItemType() != MeshLib::MeshItemType::Cell)
     {
@@ -204,8 +205,12 @@ int main (int argc, char* argv[])
         char new_property_val(char_property_arg.getValue());
 
         // check if PropertyVector exists
-        auto* pv = mesh->getProperties().getPropertyVector<char>(property_name);
-        if (!pv)
+        MeshLib::PropertyVector<char>* pv(nullptr);
+        if (mesh->getProperties().existsPropertyVector<char>(property_name))
+        {
+            pv = mesh->getProperties().getPropertyVector<char>(property_name);
+        }
+        else
         {
             pv = mesh->getProperties().createNewPropertyVector<char>(
                 property_name, MeshLib::MeshItemType::Cell, 1);
