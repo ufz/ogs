@@ -17,6 +17,7 @@
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
+#include "Applications/InSituLib/Adaptor.h"
 
 namespace
 {
@@ -124,6 +125,11 @@ void Output::doOutputAlways(Process const& process,
 
     INFO("[time] Output of timestep %d took %g s.", timestep,
          time_output.elapsed());
+
+#ifdef USE_INSITU
+    // TODO: get number of timesteps
+    InSituLib::CoProcess(process.getMesh(), t, timestep, false);
+#endif
 }
 
 void Output::doOutput(Process const& process,
