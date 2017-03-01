@@ -29,9 +29,6 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
 
     auto const& group_id_property =
         mesh.getProperties().getPropertyVector<int>(group_id_property_name);
-    if (!group_id_property) {
-        OGS_FATAL("The required property %s does not exist in the given mesh", group_id_property_name.c_str());
-    }
 
     // parse mapping data
     typedef std::vector<double> Values;
