@@ -181,4 +181,7 @@ endif() # CVODE_FOUND
 
 ## Google's protobuf library
 find_package(Protobuf)
-include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIRS})
+if(Protobuf_FOUND)
+    include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIRS})
+    add_definitions(-DPROTOBUF_FOUND)
+endif() # Protobuf_FOUND

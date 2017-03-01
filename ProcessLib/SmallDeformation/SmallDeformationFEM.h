@@ -29,7 +29,9 @@
 
 #include "SmallDeformationProcessData.h"
 
+#ifdef PROTOBUF_FOUND
 #include "integration_point.pb.h"
+#endif  // PROTOBUF_FOUND
 
 namespace ProcessLib
 {
@@ -295,6 +297,7 @@ public:
 
     void readIntegrationPointData(std::vector<char> const& data) override
     {
+#ifdef PROTOBUF_FOUND
         SmallDeformationFEM::ElementData element_data;
         if (!element_data.ParseFromArray(data.data(), data.size()))
             OGS_FATAL("Parsing ElementData protobuf failed.");
@@ -337,10 +340,14 @@ public:
             for (int i = 0; i < _ip_data[ip]._eps.size(); ++i)
                 _ip_data[ip]._eps[i] = eps.value(i);
         }
+#else   // PROTOBUF_FOUND
+        (void)data; // Unused argument
+#endif  // PROTOBUF_FOUND
     }
 
     std::size_t writeIntegrationPointData(std::vector<char>& data) override
     {
+#ifdef PROTOBUF_FOUND
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
@@ -369,6 +376,12 @@ public:
         element_data.SerializeToArray(data.data(), element_data.ByteSize());
 
         return element_data.ByteSize();
+#else   // PROTOBUF_FOUND
+        (void)data; // Unused argument
+        return 0;   // Dummy value needed for compilation. Code is not executed
+                    // because the integration_point_writer is not created in
+                    // absence of protobuffer.
+#endif  // PROTOBUF_FOUND
     };
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(

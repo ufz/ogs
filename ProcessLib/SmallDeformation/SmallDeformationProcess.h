@@ -140,11 +140,13 @@ private:
                 getExtrapolator(), _local_assemblers,
                 &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonXY));
 
+#ifdef PROTOBUF_FOUND
         Base::integration_point_writer = [this](
             MeshLib::PropertyVector<char>& output,
             MeshLib::PropertyVector<std::size_t>& offsets) {
             return writeIntegrationPointData(output, offsets);
         };
+#endif  // PROTOBUF_FOUND
     }
 
     std::size_t writeIntegrationPointData(MeshLib::PropertyVector<char>& output,
