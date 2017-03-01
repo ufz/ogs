@@ -26,6 +26,10 @@ struct ProcessOutput final
 
     //! Tells if also to output extrapolation residuals.
     bool output_residuals = false;
+
+    //! Checks if an integration point writer is available and calls it for
+    //! output of process specific integration point data.
+    bool output_integration_point_data = false;
 };
 
 

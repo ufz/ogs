@@ -85,6 +85,10 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
     {
         output_residuals = *out_resid;
     }
+
+    output_integration_point_data =
+        //! \ogs_file_param{prj__time_loop__processes__process__output__integration_point_data}
+        output_config.getConfigParameter("integration_point_data", false);
 }
 
 void doProcessOutput(
