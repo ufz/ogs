@@ -15,7 +15,7 @@ elseif(EXISTS ${CMAKE_SOURCE_DIR}/conanbuildinfo.cmake)
 endif()
 if(USE_CONAN)
     cmake_minimum_required(VERSION 3.4) # Conan Boost package requires this
-    set(CMAKE_MODULE_PATH ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
+    set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/scripts/cmake/conan ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
     message(STATUS "Using conan package manager")
     set(OGS_LIB_VTK System CACHE INTERNAL "")
     set(OGS_LIB_BOOST System CACHE INTERNAL "")
