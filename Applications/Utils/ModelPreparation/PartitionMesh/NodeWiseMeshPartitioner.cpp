@@ -432,6 +432,10 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
         MeshLib::IO::PropertyVectorPartitionMetaData pvpmd;
         pvpmd.offset = offset;
         pvpmd.number_of_tuples = partition.nodes.size();
+        INFO(
+            "Write meta data for PropertyVector: global offset %d, number "
+            "of tuples %d",
+            pvpmd.offset, pvpmd.number_of_tuples);
         MeshLib::IO::writePropertyVectorPartitionMetaData(out, pvpmd);
         offset += pvpmd.number_of_tuples;
     }
@@ -606,6 +610,7 @@ void NodeWiseMeshPartitioner::writeNodesBinary(const std::string& file_name_base
     const std::string fname = file_name_base + "_partitioned_msh_nod"
                               + std::to_string(_npartitions) + ".bin";
     FILE* of_bin_nod = fopen(fname.c_str(), "wb");
+
     for (const auto& partition : _partitions)
     {
         std::vector<NodeStruct> nodes_buffer;
