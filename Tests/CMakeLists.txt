@@ -39,6 +39,7 @@ target_link_libraries(testrunner
     ApplicationsLib
     ApplicationsFileIO
     GTest
+    InSituLib
     MeshGeoToolsLib
     MaterialLib
     MeshLib

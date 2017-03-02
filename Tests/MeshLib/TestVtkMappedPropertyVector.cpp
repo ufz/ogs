@@ -13,8 +13,11 @@
 */
 #include <numeric>
 
+#include <vtkDoubleArray.h>
+#include <vtkIntArray.h>
 #include <vtkNew.h>
 #include <vtkUnstructuredGrid.h>
+#include <vtkUnsignedIntArray.h>
 
 #include "gtest/gtest.h"
 
@@ -40,13 +43,15 @@ TEST(MeshLibMappedPropertyVector, Double)
     double_properties->resize(number_of_tuples);
     std::iota(double_properties->begin(), double_properties->end(), 1);
 
-    vtkNew<MeshLib::VtkMappedPropertyVectorTemplate<double> > dataArray;
-    dataArray->SetPropertyVector(*double_properties);
+    vtkNew<vtkDoubleArray> dataArray;
+    dataArray->SetNumberOfComponents(1);
+    dataArray->SetArray(double_properties->data(),
+        static_cast<vtkIdType>(double_properties->size()), 1);
 
     ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
     ASSERT_EQ(dataArray->GetNumberOfTuples(), number_of_tuples);
 
-    ASSERT_EQ(dataArray->GetValueReference(0), 1.0);
+    ASSERT_EQ(dataArray->GetValue(0), 1.0);
     double* range = dataArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
     ASSERT_EQ(range[1], 1.0 + mesh->getNumberOfElements() - 1.0);
@@ -71,13 +76,15 @@ TEST(MeshLibMappedPropertyVector, Int)
     properties->resize(number_of_tuples);
     std::iota(properties->begin(), properties->end(), -5);
 
-    vtkNew<MeshLib::VtkMappedPropertyVectorTemplate<int> > dataArray;
-    dataArray->SetPropertyVector(*properties);
+    vtkNew<vtkIntArray> dataArray;
+    dataArray->SetNumberOfComponents(1);
+    dataArray->SetArray(properties->data(),
+        static_cast<vtkIdType>(properties->size()), 1);
 
     ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
     ASSERT_EQ(dataArray->GetNumberOfTuples(), number_of_tuples);
 
-    ASSERT_EQ(dataArray->GetValueReference(0), -5);
+    ASSERT_EQ(dataArray->GetValue(0), -5);
     double* range = dataArray->GetRange(0);
     ASSERT_EQ(-5.0, range[0]);
     ASSERT_EQ(-5.0 + static_cast<double>(mesh->getNumberOfElements()) - 1.0, range[1]);
@@ -103,13 +110,15 @@ TEST(MeshLibMappedPropertyVector, Unsigned)
     properties->resize(number_of_tuples);
     std::iota(properties->begin(), properties->end(), 0);
 
-    vtkNew<MeshLib::VtkMappedPropertyVectorTemplate<unsigned> > dataArray;
-    dataArray->SetPropertyVector(*properties);
+    vtkNew<vtkUnsignedIntArray> dataArray;
+    dataArray->SetNumberOfComponents(1);
+    dataArray->SetArray(properties->data(),
+        static_cast<vtkIdType>(properties->size()), 1);
 
     ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
     ASSERT_EQ(dataArray->GetNumberOfTuples(), number_of_tuples);
 
-    ASSERT_EQ(dataArray->GetValueReference(0), 0);
+    ASSERT_EQ(dataArray->GetValue(0), 0);
     double* range = dataArray->GetRange(0);
     ASSERT_EQ(range[0], 0);
     ASSERT_EQ(range[1], 0 + mesh->getNumberOfElements() - 1);
