@@ -56,6 +56,9 @@ void Finalize()
 void CoProcess(MeshLib::Mesh const& mesh, double const time,
                unsigned int const timeStep, bool const lastTimeStep)
 {
+    if (Processor == NULL)
+        return;
+
     vtkNew<vtkCPDataDescription> dataDescription;
     dataDescription->AddInput("input");
     dataDescription->SetTimeData(time, timeStep);
