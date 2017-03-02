@@ -8,9 +8,9 @@ set(OGS_BOOST_MD5 "a744cf167b05d72335f27c88115f211d")
 set(OGS_EIGEN_URL "${BASE_URL}/eigen-3.2.9.tar.gz")
 set(OGS_EIGEN_MD5 "6a578dba42d1c578d531ab5b6fa3f741")
 
-set(OGS_VTK_VERSION 6.3.0)
-set(OGS_VTK_URL "${BASE_URL}/vtk-6.3.0.tar.gz")
-set(OGS_VTK_MD5 "0231ca4840408e9dd60af48b314c5b6d")
+set(OGS_VTK_VERSION 7.1.0)
+set(OGS_VTK_URL "${BASE_URL}/vtk-${OGS_VTK_VERSION}.tar.gz")
+set(OGS_VTK_MD5 "a7e814c1db503d896af72458c2d0228f")
 
 set(OGS_TIFF_URL "${BASE_URL}/tiff-4.0.1.zip")
 set(OGS_TIFF_MD5 "d4dc85296f790c159fc8fab443dd697c")
