@@ -85,103 +85,131 @@ void NodeWiseMeshPartitioner::readMetisData(const std::string& file_name_base)
     std::remove(fname_eparts.c_str());
 }
 
-void NodeWiseMeshPartitioner::partitionByMETIS(
-    const bool is_mixed_high_order_linear_elems)
+void NodeWiseMeshPartitioner::findNonGhostNodesInPartition(
+    std::size_t const part_id,
+    const bool is_mixed_high_order_linear_elems,
+    std::vector<MeshLib::Node*>& extra_nodes)
 {
     std::vector<MeshLib::Node*> const& nodes = _mesh->getNodes();
-    for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
+    auto& partition = _partitions[part_id];
+    // -- Extra nodes for high order elements
+    for (std::size_t i = 0; i < _mesh->getNumberOfNodes(); i++)
     {
-        auto& partition = _partitions[part_id];
-
-        INFO("Processing partition: %d", part_id);
-
-        // Find non-ghost nodes in this partition
-        // -- Extra nodes for high order elements
-        std::vector<MeshLib::Node*> extra_nodes;
-        for (std::size_t i = 0; i < _mesh->getNumberOfNodes(); i++)
+        if (_nodes_partition_ids[i] == part_id)
         {
-            if (_nodes_partition_ids[i] == part_id)
-            {
-                if (is_mixed_high_order_linear_elems)
-                { // TODO: Test it once there is a case
-                    if (i < _mesh->getNumberOfBaseNodes())
-                        partition.nodes.push_back(nodes[i]);
-                    else
-                        extra_nodes.push_back(nodes[i]);
-                }
-                else
-                {
+            if (is_mixed_high_order_linear_elems)
+            {  // TODO: Test it once there is a case
+                if (i < _mesh->getNumberOfBaseNodes())
                     partition.nodes.push_back(nodes[i]);
-                }
-            }
-        }
-        partition.number_of_non_ghost_base_nodes = partition.nodes.size();
-        partition.number_of_non_ghost_nodes =
-            partition.number_of_non_ghost_base_nodes + extra_nodes.size();
-
-        // Find elements that belong to this partition
-        std::vector<MeshLib::Element*> const& elements = _mesh->getElements();
-        for (std::size_t elem_id = 0; elem_id < elements.size(); elem_id++)
-        {
-            const auto* elem = elements[elem_id];
-            if (_elements_status[elem_id])
-                continue;
-
-            std::size_t non_ghost_node_number = 0;
-            for (unsigned i = 0; i < elem->getNumberOfNodes(); i++)
-            {
-                if (_nodes_partition_ids[elem->getNodeIndex(i)] == part_id)
-                {
-                    non_ghost_node_number++;
-                }
-            }
-
-            if (non_ghost_node_number == 0)
-                continue;
-
-            if (non_ghost_node_number == elem->getNumberOfNodes())
-            {
-                partition.regular_elements.push_back(elem);
-                _elements_status[elem_id] = true;
+                else
+                    extra_nodes.push_back(nodes[i]);
             }
             else
             {
-                partition.ghost_elements.push_back(elem);
+                partition.nodes.push_back(nodes[i]);
             }
         }
+    }
+    partition.number_of_non_ghost_base_nodes = partition.nodes.size();
+    partition.number_of_non_ghost_nodes =
+        partition.number_of_non_ghost_base_nodes + extra_nodes.size();
+}
 
-        // Find the ghost nodes of this partition
-        std::vector<bool> nodes_reserved(_mesh->getNumberOfNodes(), false);
-        for (const auto* ghost_elem : partition.ghost_elements)
+void NodeWiseMeshPartitioner::findElementsInPartition(
+    std::size_t const part_id, const bool is_mixed_high_order_linear_elems)
+{
+    auto& partition = _partitions[part_id];
+    std::vector<MeshLib::Element*> const& elements = _mesh->getElements();
+    for (std::size_t elem_id = 0; elem_id < elements.size(); elem_id++)
+    {
+        const auto* elem = elements[elem_id];
+        if (_elements_status[elem_id])
+            continue;
+
+        std::size_t non_ghost_node_number = 0;
+        for (unsigned i = 0; i < elem->getNumberOfNodes(); i++)
         {
-            for (unsigned i = 0; i < ghost_elem->getNumberOfNodes(); i++)
+            if (_nodes_partition_ids[elem->getNodeIndex(i)] == part_id)
             {
-                const unsigned node_id = ghost_elem->getNodeIndex(i);
-                if (nodes_reserved[node_id])
-                    continue;
-
-                if (_nodes_partition_ids[node_id] != part_id)
-                {
-                    if (is_mixed_high_order_linear_elems)
-                    {
-                        if (node_id < _mesh->getNumberOfBaseNodes())
-                            partition.nodes.push_back(nodes[node_id]);
-                        else
-                            extra_nodes.push_back(nodes[node_id]);
-                    }
-                    else
-                    {
-                        partition.nodes.push_back(nodes[node_id]);
-                    }
-                    nodes_reserved[node_id] = true;
-                }
+                non_ghost_node_number++;
             }
         }
-        partition.number_of_base_nodes = partition.nodes.size();
 
-        if (is_mixed_high_order_linear_elems)
-            partition.nodes.insert(partition.nodes.end(), extra_nodes.begin(),
-                                   extra_nodes.end());
+        if (non_ghost_node_number == 0)
+            continue;
+
+        if (non_ghost_node_number == elem->getNumberOfNodes())
+        {
+            partition.regular_elements.push_back(elem);
+            _elements_status[elem_id] = true;
+        }
+        else
+        {
+            partition.ghost_elements.push_back(elem);
+        }
+    }
+}
+
+void NodeWiseMeshPartitioner::findGhostNodesInPartition(
+    std::size_t const part_id,
+    const bool is_mixed_high_order_linear_elems,
+    std::vector<MeshLib::Node*>& extra_nodes)
+{
+    auto& partition = _partitions[part_id];
+    std::vector<MeshLib::Node*> const& nodes = _mesh->getNodes();
+    std::vector<bool> nodes_reserved(_mesh->getNumberOfNodes(), false);
+    for (const auto* ghost_elem : partition.ghost_elements)
+    {
+        for (unsigned i = 0; i < ghost_elem->getNumberOfNodes(); i++)
+        {
+            const unsigned node_id = ghost_elem->getNodeIndex(i);
+            if (nodes_reserved[node_id])
+                continue;
+
+            if (_nodes_partition_ids[node_id] != part_id)
+            {
+                if (is_mixed_high_order_linear_elems)
+                {
+                    if (node_id < _mesh->getNumberOfBaseNodes())
+                        partition.nodes.push_back(nodes[node_id]);
+                    else
+                        extra_nodes.push_back(nodes[node_id]);
+                }
+                else
+                {
+                    partition.nodes.push_back(nodes[node_id]);
+                }
+                nodes_reserved[node_id] = true;
+            }
+        }
+    }
+}
+
+void NodeWiseMeshPartitioner::processPartition(std::size_t const part_id,
+    const bool is_mixed_high_order_linear_elems)
+{
+    std::vector<MeshLib::Node*> extra_nodes;
+    findNonGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
+                                 extra_nodes);
+
+    findElementsInPartition(part_id, is_mixed_high_order_linear_elems);
+    findGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
+                              extra_nodes);
+    auto& partition = _partitions[part_id];
+    partition.number_of_base_nodes = partition.nodes.size();
+
+    if (is_mixed_high_order_linear_elems)
+        partition.nodes.insert(partition.nodes.end(), extra_nodes.begin(),
+                               extra_nodes.end());
+}
+
+void NodeWiseMeshPartitioner::partitionByMETIS(
+    const bool is_mixed_high_order_linear_elems)
+{
+    for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
+    {
+        INFO("Processing partition: %d", part_id);
+        processPartition(part_id, is_mixed_high_order_linear_elems);
     }
 
     renumberNodeIndices(is_mixed_high_order_linear_elems);

@@ -130,6 +130,32 @@ private:
 
     void writePropertiesBinary(std::string const& file_name_base) const;
 
+    /// 1 copy pointers to nodes belonging to the partition part_id
+    /// 2 collect non-linear element nodes belonging to the partition part_id in
+    /// extra_nodes
+    void findNonGhostNodesInPartition(
+        std::size_t const part_id,
+        const bool is_mixed_high_order_linear_elems,
+        std::vector<MeshLib::Node*>& extra_nodes);
+
+    /// 1 find elements belonging to the partition part_id:
+    /// fills vector partition.regular_elements
+    /// 2 find ghost elements belonging to the partition part_id
+    /// fills vector partition.ghost_elements
+    void findElementsInPartition(std::size_t const part_id,
+                                 const bool is_mixed_high_order_linear_elems);
+
+    /// Prerequisite: the ghost elements has to be found (using
+    /// findElementsInPartition).
+    /// Finds ghost nodes and non-linear element ghost nodes by walking over
+    /// ghost elements.
+    void findGhostNodesInPartition(std::size_t const part_id,
+                                   const bool is_mixed_high_order_linear_elems,
+                                   std::vector<MeshLib::Node*>& extra_nodes);
+
+    void processPartition(std::size_t const part_id,
+                          const bool is_mixed_high_order_linear_elems);
+
     template <typename T>
     void writePropertyVectorValuesBinary(
         std::ostream& os, MeshLib::PropertyVector<T> const& pv) const
