@@ -36,8 +36,10 @@ void Initialize(BaseLib::ConfigTree const & scripts_config, std::string const & 
     }
     for (auto script_config : scripts_config.getConfigSubtreeList("script"))
     {
+        auto scriptName = script_config.getConfigParameter<std::string>("name");
+        INFO("Initializing in-situ script: %s", scriptName.c_str());
         std::stringstream ss;
-        ss << path << script_config.getConfigParameter<std::string>("name");
+        ss << path << scriptName;
         vtkNew<vtkCPPythonScriptPipeline> pipeline;
         pipeline->Initialize(ss.str().c_str());
         Processor->AddPipeline(pipeline.GetPointer());
