@@ -51,6 +51,7 @@ public:
                             std::unique_ptr<MeshLib::Mesh>&& mesh)
         : _npartitions(num_partitions),
           _partitions(num_partitions),
+          _partitioned_properties(),
           _mesh(std::move(mesh)),
           _nodes_global_ids(_mesh->getNumberOfNodes()),
           _nodes_partition_ids(_mesh->getNumberOfNodes()),
@@ -86,6 +87,9 @@ private:
 
     /// Data for all  partitions.
     std::vector<Partition> _partitions;
+
+    /// Properties where values at ghost nodes and extra nodes are inserted.
+    MeshLib::Properties _partitioned_properties;
 
     /// Pointer to a mesh object.
     std::unique_ptr<MeshLib::Mesh> _mesh;
@@ -156,6 +160,8 @@ private:
     void processPartition(std::size_t const part_id,
                           const bool is_mixed_high_order_linear_elems);
 
+    void processProperties();
+
     template <typename T>
     void writePropertyVectorValuesBinary(
         std::ostream& os, MeshLib::PropertyVector<T> const& pv) const
@@ -164,19 +170,11 @@ private:
         std::size_t number_of_tuples(pv.getNumberOfTuples());
         std::vector<T> property_vector_buffer;
         property_vector_buffer.resize(number_of_tuples * number_of_components);
-        std::size_t cnt(0);
-        for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
+        for (std::size_t i = 0; i < pv.getNumberOfTuples(); ++i)
         {
-            for (std::size_t i = 0; i < pv.getNumberOfTuples(); ++i)
-            {
-                if (_nodes_partition_ids[i] == part_id)
-                {
-                    for (std::size_t c(0); c < number_of_components; ++c)
-                        property_vector_buffer[cnt * number_of_components + c] =
-                            pv.getComponent(i, c);
-                    cnt++;
-                }
-            }
+            for (std::size_t c(0); c < number_of_components; ++c)
+                property_vector_buffer[i * number_of_components + c] =
+                    pv.getComponent(i, c);
         }
         os.write(reinterpret_cast<char*>(property_vector_buffer.data()),
                  number_of_components * number_of_tuples * sizeof(T));

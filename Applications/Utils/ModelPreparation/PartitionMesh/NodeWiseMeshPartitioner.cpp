@@ -17,6 +17,7 @@
 #include <limits>
 #include <iomanip>
 #include <cstdio>  // for binary output
+#include <numeric>
 
 #include <logog/include/logog.hpp>
 
@@ -203,6 +204,65 @@ void NodeWiseMeshPartitioner::processPartition(std::size_t const part_id,
                                extra_nodes.end());
 }
 
+void NodeWiseMeshPartitioner::processProperties()
+{
+    std::size_t const total_number_of_tuples =
+        std::accumulate(std::begin(_partitions), std::end(_partitions), 0,
+                        [](std::size_t const sum, Partition const& p) {
+                            return sum + p.nodes.size();
+                        });
+
+    INFO("*** total number of tuples after partitioning: %d ***",
+         total_number_of_tuples);
+    // 1 create new PV
+    // 2 resize the PV with total_number_of_tuples
+    // 3 copy the values according to the partition info
+    auto const& original_properties(_mesh->getProperties());
+    auto property_names = original_properties.getPropertyVectorNames();
+    for (auto const& name : property_names)
+    {
+        if (original_properties.existsPropertyVector<double>(name))
+        {
+            auto const& pv(original_properties.getPropertyVector<double>(name));
+            auto partitioned_pv =
+                _partitioned_properties.createNewPropertyVector<double>(
+                    name, pv->getMeshItemType(), pv->getNumberOfComponents());
+            partitioned_pv->resize(total_number_of_tuples *
+                                   pv->getNumberOfComponents());
+            std::size_t cnt(0);
+            for (auto p : _partitions)
+            {
+                for (std::size_t i = 0; i < p.nodes.size(); ++i)
+                {
+                    const auto global_id = p.nodes[i]->getID();
+                    (*partitioned_pv)[cnt+i] = (*pv)[global_id];
+                }
+                cnt += p.nodes.size();
+            }
+        }
+        if (original_properties.existsPropertyVector<int>(name))
+        {
+            auto const& pv(original_properties.getPropertyVector<int>(name));
+            auto partitioned_pv =
+                _partitioned_properties.createNewPropertyVector<int>(
+                    name, pv->getMeshItemType(), pv->getNumberOfComponents());
+            partitioned_pv->resize(total_number_of_tuples *
+                                   pv->getNumberOfComponents());
+            std::size_t cnt(0);
+            for (auto p : _partitions)
+            {
+                for (std::size_t i = 0; i < p.nodes.size(); ++i)
+                {
+                    const auto global_id = p.nodes[i]->getID();
+                    (*partitioned_pv)[cnt+i] = (*pv)[global_id];
+                }
+                cnt += p.nodes.size();
+            }
+
+        }
+    }
+}
+
 void NodeWiseMeshPartitioner::partitionByMETIS(
     const bool is_mixed_high_order_linear_elems)
 {
@@ -213,6 +273,8 @@ void NodeWiseMeshPartitioner::partitionByMETIS(
     }
 
     renumberNodeIndices(is_mixed_high_order_linear_elems);
+
+    processProperties();
 }
 
 void NodeWiseMeshPartitioner::renumberNodeIndices(
@@ -304,7 +366,7 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
                                   std::to_string(_npartitions) + ".bin";
     std::ofstream out_val(fname_val.c_str(), std::ios::binary | std::ios::out);
 
-    auto const& properties(_mesh->getProperties());
+    auto const& properties(_partitioned_properties);
     auto const& property_names(properties.getPropertyVectorNames());
     std::size_t number_of_properties(property_names.size());
     out.write(reinterpret_cast<char*>(&number_of_properties),
@@ -315,9 +377,9 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
         pvmd.property_name = name;
         pvmd.is_int_type = false;
         {
-            auto *pv = properties.getPropertyVector<double>(name);
-            if (pv)
+            if (properties.existsPropertyVector<double>(name))
             {
+                auto* pv = properties.getPropertyVector<double>(name);
                 pvmd.is_int_type = false;
                 pvmd.is_data_type_signed = false;
                 pvmd.data_type_size_in_bytes = sizeof(double);
@@ -327,9 +389,9 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
             }
         }
         {
-            auto *pv = properties.getPropertyVector<float>(name);
-            if (pv)
+            if (properties.existsPropertyVector<float>(name))
             {
+                auto* pv = properties.getPropertyVector<float>(name);
                 pvmd.is_int_type = false;
                 pvmd.is_data_type_signed = false;
                 pvmd.data_type_size_in_bytes = sizeof(float);
@@ -339,9 +401,9 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
             }
         }
         {
-            auto* pv = properties.getPropertyVector<int>(name);
-            if (pv)
+            if (properties.existsPropertyVector<int>(name))
             {
+                auto* pv = properties.getPropertyVector<int>(name);
                 pvmd.is_int_type = true;
                 pvmd.is_data_type_signed = true;
                 pvmd.data_type_size_in_bytes = sizeof(int);
@@ -351,9 +413,9 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
             }
         }
         {
-            auto* pv = properties.getPropertyVector<unsigned>(name);
-            if (pv)
+            if (properties.existsPropertyVector<unsigned>(name))
             {
+                auto* pv = properties.getPropertyVector<unsigned>(name);
                 pvmd.is_int_type = true;
                 pvmd.is_data_type_signed = false;
                 pvmd.data_type_size_in_bytes = sizeof(unsigned);
