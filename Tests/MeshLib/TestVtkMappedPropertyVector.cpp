@@ -23,7 +23,6 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/Vtk/VtkMappedPropertyVectorTemplate.h"
 
 // Creates a PropertyVector<double> and maps it into a vtkDataArray-equivalent
 TEST(MeshLibMappedPropertyVector, Double)

@@ -24,6 +24,7 @@
 
 #include <string>
 
+#include <vtkAOSDataArrayTemplate.h>
 #include <vtkCellData.h>
 #include <vtkFieldData.h>
 #include <vtkNew.h>
@@ -34,9 +35,11 @@
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
 
-#include "VtkMappedPropertyVectorTemplate.h"
+
 
 namespace MeshLib {
+
+class Mesh;
 
 /// Adapter which maps a MeshLib::Mesh to a vtkUnstructuredGridAlgorithm.
 /// Allows for zero-copy access of the mesh from the visualization side.
@@ -67,21 +70,24 @@ private:
     VtkMappedMeshSource(const VtkMappedMeshSource &); // Not implemented.
     void operator=(const VtkMappedMeshSource &);      // Not implemented.
 
-    /// Adds a zero-copy array (MeshLib::VtkMappedPropertyVectorTemplate) as
-    /// either point or cell data to the mesh.
+    /// Adds a zero-copy vtk array wrapper.
     /// \param properties MeshLib::Properties object
-    /// \param prop_name The name of the property vector to be mapped from
-    /// vtk-mesh to ogs-mesh
+    /// \param prop_name The name of the property vector to be mapped
     template <typename T>
     bool addProperty(MeshLib::Properties const& properties,
                      std::string const& prop_name) const
     {
         if (!properties.existsPropertyVector<T>(prop_name))
             return false;
-        auto* const propertyVector = properties.getPropertyVector<T>(prop_name);
+        // TODO: Hack removing const
+        auto* propertyVector = const_cast<MeshLib::PropertyVector<T> *>(
+            properties.getPropertyVector<T>(prop_name));
+        if(!propertyVector)
+            return false;
 
-        vtkNew<VtkMappedPropertyVectorTemplate<T> > dataArray;
-        dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<T> &>(*propertyVector));
+        vtkNew<vtkAOSDataArrayTemplate<T> > dataArray;
+        dataArray->SetArray(propertyVector->data(),
+            static_cast<vtkIdType>(propertyVector->size()), 1);
         dataArray->SetName(prop_name.c_str());
 
         if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
