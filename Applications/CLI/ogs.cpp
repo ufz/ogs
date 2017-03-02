@@ -119,9 +119,14 @@ int main(int argc, char *argv[])
                                 outdir_arg.getValue());
 
 #ifdef USE_INSITU
-            INFO("Initialize insitu scripts.");
+            auto isInsituConfigured = false;
             if (auto t = project_config->getConfigSubtreeOptional("insitu"))
+            {
                 InSituLib::Initialize(t->getConfigSubtree("scripts"), BaseLib::extractPath(project_arg.getValue()));
+                isInsituConfigured = true;
+            }
+#else
+            project_config->ignoreConfigParameter("insitu");
 #endif
 
             INFO("Initialize processes.");
@@ -144,7 +149,7 @@ int main(int argc, char *argv[])
             solver_succeeded = time_loop.loop();
 
 #ifdef USE_INSITU
-            if (project_config->getConfigSubtreeOptional("insitu"))
+            if (isInsituConfigured)
                 InSituLib::Finalize();
  #endif
         }  // This nested scope ensures that everything that could possibly
