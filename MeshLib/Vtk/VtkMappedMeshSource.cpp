@@ -22,6 +22,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/VtkOGSEnum.h"
 #include "VtkMeshNodalCoordinatesTemplate.h"
 
