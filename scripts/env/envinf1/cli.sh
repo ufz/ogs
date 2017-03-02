@@ -7,7 +7,7 @@ module load gcc/4.8.1-3
 # Libraries
 module load boost/1.62.0-1
 module load eigen/3.2.9-1-cmake
-module load vtk/6.3.0_openmpi-1.8.4-noqt-1
+module load vtk/7.1.0_openmpi-1.8.4-1
 
 # Tools
 module load numdiff/5.8.1-1
