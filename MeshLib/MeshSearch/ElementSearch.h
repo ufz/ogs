@@ -47,14 +47,15 @@ public:
         PROPERTY_TYPE const property_value,
         std::string const& property_name = "MaterialIDs")
     {
-        auto const* const pv =
-            _mesh.getProperties().getPropertyVector<PROPERTY_TYPE>(
-                property_name);
-        if (!pv)
+        if (!_mesh.getProperties().existsPropertyVector<PROPERTY_TYPE>(
+                property_name))
         {
             WARN("Property \"%s\" not found in mesh.", property_name.c_str());
             return 0;
         }
+        auto const* const pv =
+            _mesh.getProperties().getPropertyVector<PROPERTY_TYPE>(
+                property_name);
 
         if (pv->getMeshItemType() != MeshLib::MeshItemType::Cell)
         {

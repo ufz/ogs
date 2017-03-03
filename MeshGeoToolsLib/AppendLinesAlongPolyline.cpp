@@ -34,11 +34,12 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
 
     std::vector<int> new_mat_ids;
     {
-        auto mat_ids = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-        if (mat_ids) {
-            new_mat_ids.reserve((*mat_ids).size());
-            std::copy((*mat_ids).cbegin(), (*mat_ids).cend(),
-                std::back_inserter(new_mat_ids));
+        if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs")) {
+            auto ids =
+                mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+            new_mat_ids.reserve(ids->size());
+            std::copy(ids->cbegin(), ids->cend(),
+                      std::back_inserter(new_mat_ids));
         }
     }
     int max_matID(0);

@@ -38,16 +38,15 @@ std::vector<double> getSurfaceIntegratedValuesForNodes(
         return std::vector<double>();
     }
 
-    auto const* const elem_pv =
-        mesh.getProperties().getPropertyVector<double>(prop_name);
-    if (!elem_pv)
+    if (!mesh.getProperties().existsPropertyVector<double>(prop_name))
     {
         ERR("Need element property, but the property \"%s\" is not "
             "available.",
             prop_name.c_str());
         return std::vector<double>();
     }
-
+    auto const* const elem_pv =
+        mesh.getProperties().getPropertyVector<double>(prop_name);
 
     std::vector<double> integrated_node_area_vec;
     double total_area(0);

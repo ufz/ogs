@@ -63,15 +63,16 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
     // original data
     std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
     MeshLib::Properties const& properties(_mesh.getProperties());
-    auto const* const material_vec =
-        properties.getPropertyVector<int>("MaterialIDs");
 
     // data structures for the new mesh
     std::vector<MeshLib::Node*> new_nodes = this->constructNewNodesArray(this->collapseNodeIndices(eps));
     std::vector<MeshLib::Element*> new_elements;
     MeshLib::Properties new_properties;
     PropertyVector<int>* new_material_vec = nullptr;
-    if (material_vec) {
+    PropertyVector<int> const* material_vec = nullptr;
+    if (properties.existsPropertyVector<int>("MaterialIDs"))
+    {
+        material_vec = properties.getPropertyVector<int>("MaterialIDs");
         new_material_vec = new_properties.createNewPropertyVector<int>(
             "MaterialIDs", MeshItemType::Cell, 1);
     }
@@ -94,10 +95,10 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
                     this->cleanUp(new_nodes, new_elements);
                     return nullptr;
                 }
-                if (!material_vec)
-                    continue;
-                new_material_vec->insert(new_material_vec->end(),
-                    n_new_elements, (*material_vec)[k]);
+                if (material_vec)
+                    new_material_vec->insert(new_material_vec->end(),
+                                             n_new_elements,
+                                             (*material_vec)[k]);
             } else {
                 new_elements.push_back(MeshLib::copyElement(elem, new_nodes));
                 // copy material values

@@ -48,8 +48,6 @@ int main(int argc, char *argv[])
     if (!mesh)
         return EXIT_FAILURE;
 
-    auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-
     std::vector<std::size_t> selected_node_ids;
     if  (showNodeWithMaxEle_arg.getValue())
     {
@@ -63,6 +61,10 @@ int main(int argc, char *argv[])
     }
     selected_node_ids.insert(selected_node_ids.end(), nodeId_arg.getValue().begin(), nodeId_arg.getValue().end());
 
+    MeshLib::PropertyVector<int> const*const materialIds =
+        mesh->getProperties().existsPropertyVector<int>("MaterialIDs")
+            ? mesh->getProperties().getPropertyVector<int>("MaterialIDs")
+            : nullptr;
     for (auto ele_id : eleId_arg.getValue())
     {
         std::stringstream out;

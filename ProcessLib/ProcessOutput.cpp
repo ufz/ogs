@@ -139,7 +139,7 @@ void doProcessOutput(
 
         auto const N = count_mesh_items(mesh, type);
 
-        if (mesh.getProperties().hasPropertyVector(property_name))
+        if (mesh.getProperties().existsPropertyVector<double>(property_name))
         {
             result = mesh.getProperties().template
                      getPropertyVector<double>(property_name);

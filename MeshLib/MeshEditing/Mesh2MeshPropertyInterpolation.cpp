@@ -51,9 +51,13 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
         return false;
     }
 
-    auto* dest_properties =
-        dest_mesh.getProperties().getPropertyVector<double>(_property_name);
-    if (!dest_properties)
+    MeshLib::PropertyVector<double>* dest_properties;
+    if (dest_mesh.getProperties().existsPropertyVector<double>(_property_name))
+    {
+        dest_properties =
+            dest_mesh.getProperties().getPropertyVector<double>(_property_name);
+    }
+    else
     {
         INFO("Create new PropertyVector \"%s\" of type double.",
              _property_name.c_str());
@@ -140,14 +144,14 @@ void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodePropertie
     std::vector<double> &interpolated_properties) const
 {
     // fetch the source of property values
-    auto const* elem_props =
-        _src_mesh.getProperties().getPropertyVector<double>(_property_name);
-    if (!elem_props)
+    if (!_src_mesh.getProperties().existsPropertyVector<double>(_property_name))
     {
         WARN("Did not find PropertyVector<double> \"%s\".",
              _property_name.c_str());
         return;
     }
+    auto const* elem_props =
+        _src_mesh.getProperties().getPropertyVector<double>(_property_name);
 
     std::vector<MeshLib::Node*> const& src_nodes(_src_mesh.getNodes());
     const std::size_t n_src_nodes(src_nodes.size());

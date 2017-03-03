@@ -72,10 +72,10 @@ PorousMediaProperties createPorousMediaProperties(
     BaseLib::reorderVector(storage_models, mat_ids);
 
     std::vector<int> material_ids(mesh.getNumberOfElements());
-    auto const& mesh_material_ids =
-        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-    if (mesh_material_ids)
+    if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
     {
+        auto const& mesh_material_ids =
+            mesh.getProperties().getPropertyVector<int>("MaterialIDs");
         material_ids.reserve(mesh_material_ids->size());
         std::copy(mesh_material_ids->cbegin(), mesh_material_ids->cend(),
                   material_ids.begin());

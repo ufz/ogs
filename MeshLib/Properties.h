@@ -79,6 +79,12 @@ public:
         MeshItemType mesh_item_type,
         std::size_t n_components = 1);
 
+    /// Checks if a property vector with given \c name and the given type
+    /// exists.
+    /// @param name name if the requested property vector
+    template <typename T>
+    bool existsPropertyVector(std::string const& name) const;
+
     /// Returns a property vector with given \c name or nullptr if no such
     /// property vector exists.
     template <typename T>

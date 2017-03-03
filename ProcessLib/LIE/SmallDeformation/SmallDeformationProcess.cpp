@@ -106,8 +106,6 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
 
     MeshLib::PropertyVector<int> const* material_ids(
         mesh.getProperties().getPropertyVector<int>("MaterialIDs"));
-    if (!material_ids)
-        OGS_FATAL("MaterialIDs property not found in a mesh");
     _process_data._mesh_prop_materialIDs = material_ids;
 }
 

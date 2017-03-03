@@ -171,14 +171,14 @@ void MeshElementRemovalDialog::on_materialIDCheckBox_toggled(bool is_checked)
         materialListWidget->clear();
         _matIDIndex = _currentIndex;
         auto mesh = _project.getMesh(meshNameComboBox->currentText().toStdString());
-        auto const* const mat_ids =
-            mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-        if (!mat_ids)
+        if (!mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
         {
             INFO("Properties \"MaterialIDs\" not found in the mesh \"%s\".",
                 mesh->getName().c_str());
             return;
         }
+        auto const* const mat_ids =
+            mesh->getProperties().getPropertyVector<int>("MaterialIDs");
         if (mat_ids->size() != mesh->getNumberOfElements())
         {
             INFO(
@@ -205,10 +205,10 @@ void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
     this->materialListWidget->clearSelection();
     if (this->boundingBoxCheckBox->isChecked()) this->on_boundingBoxCheckBox_toggled(true);
     auto mesh = _project.getMesh(meshNameComboBox->currentText().toStdString());
-    auto const* const materialIds =
-        mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-    if (materialIds)
+    if (mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
     {
+        auto const* const materialIds =
+            mesh->getProperties().getPropertyVector<int>("MaterialIDs");
         if (materialIds->size() != mesh->getNumberOfElements())
         {
             ERR ("Incorrect mesh structure: Number of Material IDs does not match number of mesh elements.");

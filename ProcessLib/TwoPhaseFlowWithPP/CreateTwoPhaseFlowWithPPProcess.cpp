@@ -75,17 +75,16 @@ std::unique_ptr<Process> CreateTwoPhaseFlowWithPPProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
-    auto const& mat_ids =
-        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-
     std::unique_ptr<
         MaterialLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPMaterialProperties>
         material = nullptr;
 
-    if (mat_ids)
+    if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
     {
         INFO("The twophase flow is in heterogeneous porous media.");
         const bool has_material_ids = true;
+        auto const& mat_ids =
+            mesh.getProperties().getPropertyVector<int>("MaterialIDs");
         material = MaterialLib::TwoPhaseFlowWithPP::
             CreateTwoPhaseFlowMaterialProperties(mat_config, has_material_ids,
                                                  *mat_ids);

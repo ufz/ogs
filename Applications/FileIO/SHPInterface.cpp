@@ -237,10 +237,12 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
         {
             // write element ID and material group to DBF-file
             DBFWriteIntegerAttribute(hDBF, polygon_id, elem_id_field, i);
-            auto materialIds = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-            if (materialIds)
+            if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
+            {
+                auto const* const materialIds =
+                    mesh.getProperties().getPropertyVector<int>("MaterialIDs");
                 DBFWriteIntegerAttribute(hDBF, polygon_id, mat_field, (*materialIds)[i]);
-
+            }
             unsigned nNodes (e->getNumberOfBaseNodes());
             padfX = new double[nNodes+1];
             padfY = new double[nNodes+1];

@@ -131,16 +131,17 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     std::vector<MeshLib::Node*> const& sfc_nodes(sfc_mesh->getNodes());
     std::size_t const n_sfc_nodes(sfc_nodes.size());
 
-    // fetch subsurface node ids PropertyVector
-    auto const* const node_id_pv =
-        sfc_mesh->getProperties().getPropertyVector<std::size_t>(prop_name);
-    if (!node_id_pv) {
+    if (!sfc_mesh->getProperties().existsPropertyVector<std::size_t>(prop_name))
+    {
         ERR(
             "Need subsurface node ids, but the property \"%s\" is not "
             "available.",
             prop_name.c_str());
         return nullptr;
     }
+    // fetch subsurface node ids PropertyVector
+    auto const* const node_id_pv =
+        sfc_mesh->getProperties().getPropertyVector<std::size_t>(prop_name);
 
     // *** copy sfc nodes to subsfc mesh node
     std::map<std::size_t, std::size_t> subsfc_sfc_id_map;
@@ -162,14 +163,14 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 
     auto new_mesh = new MeshLib::Mesh(name, subsfc_nodes, subsfc_elements);
 
-    auto const* const opt_materials =
-        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-    if (!opt_materials)
+    if (!mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
     {
         ERR("Could not copy the property \"MaterialIDs\" since the original "
             "mesh does not contain such a property.");
         return new_mesh;
     }
+    auto const* const materials =
+        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
 
     auto* const new_materials =
         new_mesh->getProperties().createNewPropertyVector<int>(
@@ -182,9 +183,8 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 
     new_materials->reserve(subsfc_elements.size());
     int new_layer_id(
-        *(std::max_element(opt_materials->cbegin(), opt_materials->cend())) +
-        1);
-    std::copy(opt_materials->cbegin(), opt_materials->cend(),
+        *(std::max_element(materials->cbegin(), materials->cend())) + 1);
+    std::copy(materials->cbegin(), materials->cend(),
               std::back_inserter(*new_materials));
     auto const n_new_props(subsfc_elements.size() - mesh.getNumberOfElements());
     std::fill_n(std::back_inserter(*new_materials), n_new_props, new_layer_id);

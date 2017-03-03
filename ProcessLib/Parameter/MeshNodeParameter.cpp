@@ -24,18 +24,9 @@ std::unique_ptr<ParameterBase> createMeshNodeParameter(
     auto const field_name = config.getConfigParameter<std::string>("field_name");
     DBUG("Using field_name %s", field_name.c_str());
 
-    if (!mesh.getProperties().hasPropertyVector(field_name)) {
-        OGS_FATAL("The required property %s does not exists in the mesh.",
-                  field_name.c_str());
-    }
-
     // TODO other data types than only double
     auto const& property =
         mesh.getProperties().getPropertyVector<double>(field_name);
-    if (!property) {
-        OGS_FATAL("The mesh property `%s' is not of the requested type.",
-                  field_name.c_str());
-    }
 
     if (property->getMeshItemType() != MeshLib::MeshItemType::Node) {
         OGS_FATAL("The mesh property `%s' is not a nodal property.",

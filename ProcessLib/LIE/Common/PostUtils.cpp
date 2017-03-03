@@ -121,9 +121,10 @@ void PostProcessTool::createProperties()
     MeshLib::Properties const& src_properties = _org_mesh.getProperties();
     for (auto name : src_properties.getPropertyVectorNames())
     {
-        auto const* src_prop = src_properties.getPropertyVector<T>(name);
-        if (!src_prop)
+        if (!src_properties.existsPropertyVector<T>(name))
             continue;
+        auto const* src_prop = src_properties.getPropertyVector<T>(name);
+
         auto const n_src_comp = src_prop->getNumberOfComponents();
         // convert 2D vector to 3D. Otherwise Paraview Calculator filter does not recognize
         // it as a vector
@@ -159,11 +160,10 @@ void PostProcessTool::copyProperties()
     MeshLib::Properties const& src_properties = _org_mesh.getProperties();
     for (auto name : src_properties.getPropertyVectorNames())
     {
-        auto const* src_prop = src_properties.getPropertyVector<T>(name);
-        if (!src_prop)
+        if (!src_properties.existsPropertyVector<T>(name))
             continue;
+        auto const* src_prop = src_properties.getPropertyVector<T>(name);
         auto* dest_prop = _output_mesh->getProperties().getPropertyVector<T>(name);
-        assert(dest_prop);
 
         if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Node)
         {

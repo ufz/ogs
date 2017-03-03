@@ -75,6 +75,20 @@ PropertyVector<T>* Properties::createNewPropertyVector(
 }
 
 template <typename T>
+bool Properties::existsPropertyVector(std::string const& name) const
+{
+    std::map<std::string, PropertyVectorBase*>::const_iterator it(
+        _properties.find(name));
+    // Check that a PropertyVector with the approriate name exists.
+    if (it == _properties.end())
+    {
+        return false;
+    }
+    // Check that the PropertyVector has the correct data type.
+    return dynamic_cast<PropertyVector<T> const*>(it->second) != nullptr;
+}
+
+template <typename T>
 PropertyVector<T> const* Properties::getPropertyVector(
     std::string const& name) const
 {
@@ -82,11 +96,17 @@ PropertyVector<T> const* Properties::getPropertyVector(
         _properties.find(name));
     if (it == _properties.end())
     {
-        ERR("A property with the specified name \"%s\" is not available.",
+        OGS_FATAL(
+            "The PropertyVector '%s' is not available in the mesh.",
             name.c_str());
-        return nullptr;
     }
-
+    if (!dynamic_cast<PropertyVector<T> const*>(it->second))
+    {
+        OGS_FATAL(
+            "The PropertyVector '%s' has a different type than the requested "
+            "PropertyVector.",
+            name.c_str());
+    }
     return dynamic_cast<PropertyVector<T> const*>(it->second);
 }
 
@@ -97,11 +117,17 @@ PropertyVector<T>* Properties::getPropertyVector(std::string const& name)
         _properties.find(name));
     if (it == _properties.end())
     {
-        ERR("A property with the specified name \"%s\" is not available.",
+        OGS_FATAL(
+            "A PropertyVector with the specified name '%s' is not available.",
             name.c_str());
-        return nullptr;
     }
-
+    if (!dynamic_cast<PropertyVector<T>*>(it->second))
+    {
+        OGS_FATAL(
+            "The PropertyVector '%s' has a different type than the requested "
+            "PropertyVector.",
+            name.c_str());
+    }
     return dynamic_cast<PropertyVector<T>*>(it->second);
 }
 

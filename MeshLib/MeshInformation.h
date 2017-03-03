@@ -37,10 +37,10 @@ public:
     static std::pair<T, T> const
         getValueBounds(MeshLib::Mesh const& mesh, std::string const& name)
     {
+        if (!mesh.getProperties().existsPropertyVector<T>(name))
+            return {std::numeric_limits<T>::max(), std::numeric_limits<T>::max()};
         auto const* const data_vec =
             mesh.getProperties().getPropertyVector<T>(name);
-        if (!data_vec)
-            return {std::numeric_limits<T>::max(), std::numeric_limits<T>::max()};
         if (data_vec->empty()) {
             INFO("Mesh does not contain values for the property \"%s\".", name.c_str());
             return {std::numeric_limits<T>::max(), std::numeric_limits<T>::max()};

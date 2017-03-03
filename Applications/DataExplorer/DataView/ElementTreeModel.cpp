@@ -67,9 +67,12 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
     TreeItem* typeItem = new TreeItem(typeData, elemItem);
     elemItem->appendChild(typeItem);
 
+    MeshLib::PropertyVector<int> const*const mat_ids =
+        mesh->getProperties().existsPropertyVector<int>("MaterialIDs")
+            ? mesh->getProperties().getPropertyVector<int>("MaterialIDs")
+            : nullptr;
+    QString matIdString = !mat_ids ? QString("not defined") : QString::number((*mat_ids)[elem->getID()]);
     QList<QVariant> materialData;
-    auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-    QString matIdString = !materialIds ? QString("not defined") : QString::number((*materialIds)[elem->getID()]);
     materialData << "MaterialID: " << matIdString;
     TreeItem* matItem = new TreeItem(materialData, elemItem);
     elemItem->appendChild(matItem);

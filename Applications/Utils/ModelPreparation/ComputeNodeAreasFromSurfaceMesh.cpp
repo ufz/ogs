@@ -82,12 +82,11 @@ int main (int argc, char* argv[])
          surface_mesh->getNumberOfElements());
     // ToDo check if mesh is read correct and if the mesh is a surface mesh
 
+    MeshLib::PropertyVector<std::size_t>* orig_node_ids(nullptr);
     // check if a node property containing the subsurface ids is available
-    auto* orig_node_ids =
-        surface_mesh->getProperties().getPropertyVector<std::size_t>(
-            id_prop_name.getValue());
     // if the node property is not available generate it
-    if (!orig_node_ids)
+    if (!surface_mesh->getProperties().existsPropertyVector<std::size_t>(
+            id_prop_name.getValue()))
     {
         orig_node_ids =
             surface_mesh->getProperties().createNewPropertyVector<std::size_t>(
@@ -99,6 +98,12 @@ int main (int argc, char* argv[])
         }
         orig_node_ids->resize(surface_mesh->getNumberOfNodes());
         std::iota(orig_node_ids->begin(), orig_node_ids->end(), 0);
+    }
+    else
+    {
+        orig_node_ids =
+            surface_mesh->getProperties().getPropertyVector<std::size_t>(
+                id_prop_name.getValue());
     }
 
     std::vector<double> areas(
