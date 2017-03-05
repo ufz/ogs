@@ -1,0 +1,1 @@
+\copydoc ProcessLib::ThermalTwoPhaseFlowWithPP::ThermalTwoPhaseFlowWithPPProcessData::has_mass_lumping
