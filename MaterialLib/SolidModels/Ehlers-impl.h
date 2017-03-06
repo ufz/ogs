@@ -480,12 +480,12 @@ void SolidEhlers<DisplacementDim>::updateDamage(
     state.kappa_d = state.kappa_d_prev;
 
     // Compute damage current step
-    double const eps_p_V_dot = state.eps_p_V - state.eps_p_V_prev;
-    if (eps_p_V_dot > 0)
+    double const del_eps_p_V = state.eps_p_V - state.eps_p_V_prev;
+    if (del_eps_p_V > 0)
     {
         double const h_d = _damage_properties->h_d(t, x)[0];
-        double const eps_p_eff_dot = state.eps_p_eff - state.eps_p_eff_prev;
-        double const r_s = eps_p_eff_dot / eps_p_V_dot;
+        double const del_eps_p_eff = state.eps_p_eff - state.eps_p_eff_prev;
+        double const r_s = del_eps_p_eff / del_eps_p_V;
 
         // Brittleness decrease with confinement for the nonlinear flow rule.
         // ATTENTION: For linear flow rule -> constant brittleness.
@@ -498,7 +498,7 @@ void SolidEhlers<DisplacementDim>::updateDamage(
         {
             x_s = 1 - 3 * h_d + 4 * h_d * std::sqrt(r_s);
         }
-        state.kappa_d += eps_p_eff_dot / x_s;
+        state.kappa_d += del_eps_p_eff / x_s;
     }
 
     double const alpha_d = _damage_properties->alpha_d(t, x)[0];
