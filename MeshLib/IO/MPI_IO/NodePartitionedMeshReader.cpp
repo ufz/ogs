@@ -218,6 +218,12 @@ MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
                 i);
         }
     }
+    for (std::size_t i(0); i < number_of_properties; ++i)
+    {
+        DBUG("[%d] +++++++++++++", _mpi_rank);
+        MeshLib::IO::writePropertyVectorMetaData(*(vec_pvmd[i]));
+        DBUG("[%d] +++++++++++++", _mpi_rank);
+    }
     auto pos = is.tellg();
     auto offset =
         pos +
@@ -233,8 +239,8 @@ MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
             "Could not read the partition meta data for the mpi process %d",
             _mpi_rank);
     }
-    DBUG("[%u] offset: %u", _mpi_rank, pvpmd->offset);
-    DBUG("%u tuples in partition %u.", pvpmd->number_of_tuples, _mpi_rank);
+    DBUG("[%d] offset in the PropertyVector: %d", _mpi_rank, pvpmd->offset);
+    DBUG("[%d] %d tuples in partition.", _mpi_rank, pvpmd->number_of_tuples);
     is.close();
 
     const std::string fname_val = file_name_base + "_partitioned_properties_val"
@@ -251,6 +257,10 @@ MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
     unsigned long global_offset = 0;
     for (std::size_t i(0); i < number_of_properties; ++i)
     {
+        INFO("[%d] global offset: %d, offset within the PropertyVector: %d.",
+             _mpi_rank, global_offset,
+             global_offset +
+                 pvpmd->offset * vec_pvmd[i]->data_type_size_in_bytes);
         if (vec_pvmd[i]->is_int_type)
         {
             if (vec_pvmd[i]->is_data_type_signed)
