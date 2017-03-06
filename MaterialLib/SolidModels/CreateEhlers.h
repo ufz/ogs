@@ -22,6 +22,31 @@ namespace Solids
 {
 namespace Ehlers
 {
+inline std::unique_ptr<EhlersDamageProperties> createDamageProperties(
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    BaseLib::ConfigTree const& config)
+{
+    //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__damage_properties__alpha_d}
+    auto& alpha_d =
+        ProcessLib::findParameter<double>(config, "alpha_d", parameters, 1);
+
+    DBUG("Use \'%s\' as alpha_d.", alpha_d.name.c_str());
+
+    //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__damage_properties__beta_d}
+    auto& beta_d =
+        ProcessLib::findParameter<double>(config, "beta_d", parameters, 1);
+
+    DBUG("Use \'%s\' as beta_d.", beta_d.name.c_str());
+
+    //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__damage_properties__h_d}
+    auto& h_d = ProcessLib::findParameter<double>(config, "h_d", parameters, 1);
+
+    DBUG("Use \'%s\' as h_d.", h_d.name.c_str());
+
+    return std::unique_ptr<EhlersDamageProperties>{
+        new EhlersDamageProperties{alpha_d, beta_d, h_d}};
+}
+
 template <int DisplacementDim>
 std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
@@ -132,8 +157,21 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
         alphap,        betap,        gammap, deltap,
         epsp,          paremeter_mp, kappa,  hardening_modulus};
 
+    // Damage properties.
+    std::unique_ptr<EhlersDamageProperties> ehlers_damage_properties;
+
+    auto const& ehlers_damage_config =
+        //! \ogs_file_param{material__solid__constitutive_relation__Ehlers__damage_properties}
+        config.getConfigSubtreeOptional("damage_properties");
+    if (ehlers_damage_config)
+    {
+        ehlers_damage_properties =
+            createDamageProperties(parameters, *ehlers_damage_config);
+    }
+
     return std::unique_ptr<MechanicsBase<DisplacementDim>>{
-        new SolidEhlers<DisplacementDim>{mp}};
+        new SolidEhlers<DisplacementDim>{mp,
+                                         std::move(ehlers_damage_properties)}};
 }
 
 }  // namespace Ehlers

@@ -464,6 +464,50 @@ void calculatePlasticJacobian(
     // G_52, G_53, G_55 are zero
 }
 
+template <int DisplacementDim>
+void SolidEhlers<DisplacementDim>::updateDamage(
+    double const t, ProcessLib::SpatialPosition const& x,
+    typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+        material_state_variables)
+{
+    assert(dynamic_cast<MaterialStateVariables*>(&material_state_variables) !=
+           nullptr);
+    MaterialStateVariables& state =
+        static_cast<MaterialStateVariables&>(material_state_variables);
+
+    // Default case of the rate problem. Updated below if volumetric plastic
+    // strain rate is positive (dilatancy).
+    state.kappa_d = state.kappa_d_prev;
+
+    // Compute damage current step
+    double const del_eps_p_V = state.eps_p_V - state.eps_p_V_prev;
+    if (del_eps_p_V > 0)
+    {
+        double const h_d = _damage_properties->h_d(t, x)[0];
+        double const del_eps_p_eff = state.eps_p_eff - state.eps_p_eff_prev;
+        double const r_s = del_eps_p_eff / del_eps_p_V;
+
+        // Brittleness decrease with confinement for the nonlinear flow rule.
+        // ATTENTION: For linear flow rule -> constant brittleness.
+        double x_s = 0;
+        if (r_s < 1)
+        {
+            x_s = 1 + h_d * r_s * r_s;
+        }
+        else
+        {
+            x_s = 1 - 3 * h_d + 4 * h_d * std::sqrt(r_s);
+        }
+        state.kappa_d += del_eps_p_eff / x_s;
+    }
+
+    double const alpha_d = _damage_properties->alpha_d(t, x)[0];
+    double const beta_d = _damage_properties->beta_d(t, x)[0];
+
+    // Update internal damage variable.
+    state.damage = (1 - beta_d) * (1 - std::exp(-state.kappa_d / alpha_d));
+}
+
 /// Calculates the derivative of the residuals with respect to total
 /// strain. Implementation fully implicit only.
 template <int DisplacementDim>
@@ -551,8 +595,17 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
     double const G = _mp.G(t, x)[0];
     double const K = _mp.K(t, x)[0];
 
+    KelvinVector sigma_eff_prev = sigma_prev;  // In case without damage the
+                                               // effective value is same as the
+                                               // previous one.
+    if (_damage_properties)
+    {
+        // Compute sigma_eff from damage total stress sigma, which is given by
+        // sigma_eff=sigma_prev / (1-damage)
+        sigma_eff_prev = sigma_prev / (1 - _state.damage_prev);
+    }
     KelvinVector sigma =
-        predict_sigma<DisplacementDim>(G, K, sigma_prev, eps, eps_prev, eps_V);
+        predict_sigma<DisplacementDim>(G, K, sigma_eff_prev, eps, eps_prev, eps_V);
 
     // update parameter
     _mp.calculateIsotropicHardening(t, x, _state.eps_p_eff);
@@ -644,6 +697,9 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
         dresidual_deps.template block<KelvinVectorSize, KelvinVectorSize>(0, 0)
             .noalias() = calculateDResidualDEps<DisplacementDim>(K, G);
 
+        if (_damage_properties)
+            updateDamage(t, x, _state);
+
         // Extract consistent tangent.
         C.noalias() =
             _mp.G(t, x)[0] *
@@ -652,7 +708,11 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
     }
 
     // Update sigma.
-    sigma_final.noalias() = G * sigma;
+    if (_damage_properties)
+        sigma_final = G * sigma * (1 - _state.damage);
+    else
+        sigma_final.noalias() = G * sigma;
+
     return true;
 }
 
