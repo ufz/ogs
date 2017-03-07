@@ -39,7 +39,6 @@ target_link_libraries(testrunner
     ApplicationsLib
     ApplicationsFileIO
     GTest
-    InSituLib
     MeshGeoToolsLib
     MaterialLib
     MeshLib
@@ -59,6 +58,10 @@ endif()
 
 if(OGS_BUILD_SWMM)
     target_link_libraries(testrunner SwmmInterface)
+endif()
+
+if(OGS_INSITU)
+    target_link_libraries(testrunner InSituLib)
 endif()
 
 if(Qt5XmlPatterns_FOUND)
