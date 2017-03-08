@@ -51,7 +51,7 @@ std::unique_ptr<MeshLib::Mesh> createY()
 std::unique_ptr<MeshLib::Mesh> createXY()
 {
     // 45degree inclined
-    return createLine({{0.0, 0.0, 0.0}}, {{2./sqrt(2), 2./sqrt(2), 0.0}});
+    return createLine({{0.0, 0.0, 0.0}}, {{2./std::sqrt(2), 2./std::sqrt(2), 0.0}});
 }
 
 const double eps = std::numeric_limits<double>::epsilon();
@@ -102,15 +102,15 @@ TEST(LIE, rotationMatrixXY)
     auto e(msh->getElement(0));
     Eigen::Vector3d nv;
     ProcessLib::LIE::computeNormalVector(*e, 2, nv);
-    ASSERT_NEAR(-1./sqrt(2), nv[0], eps);
-    ASSERT_NEAR(1./sqrt(2), nv[1], eps);
+    ASSERT_NEAR(-1./std::sqrt(2), nv[0], eps);
+    ASSERT_NEAR(1./std::sqrt(2), nv[1], eps);
     ASSERT_EQ(0., nv[2]);
 
     Eigen::MatrixXd R(2,2);
     ProcessLib::LIE::computeRotationMatrix(*e, nv, 2, R);
 
-    ASSERT_NEAR(1./sqrt(2), R(0,0), eps);
-    ASSERT_NEAR(1./sqrt(2), R(0,1), eps);
-    ASSERT_NEAR(-1./sqrt(2), R(1,0), eps);
-    ASSERT_NEAR(1./sqrt(2), R(1,1), eps);
+    ASSERT_NEAR(1./std::sqrt(2), R(0,0), eps);
+    ASSERT_NEAR(1./std::sqrt(2), R(0,1), eps);
+    ASSERT_NEAR(-1./std::sqrt(2), R(1,0), eps);
+    ASSERT_NEAR(1./std::sqrt(2), R(1,1), eps);
 }
