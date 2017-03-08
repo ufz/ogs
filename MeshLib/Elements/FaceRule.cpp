@@ -15,11 +15,10 @@
 
 namespace MeshLib
 {
-
 bool FaceRule::testElementNodeOrder(const Element* e)
 {
-    MathLib::Vector3 up_vec (0,0,1);
-    return (MathLib::scalarProduct(getSurfaceNormal(e), up_vec) < 0) ? true : false;
+    return getSurfaceNormal(e)[2] < 0;
+}
 
 MathLib::Vector3 FaceRule::getFirstSurfaceVector(Element const* const e)
 {
