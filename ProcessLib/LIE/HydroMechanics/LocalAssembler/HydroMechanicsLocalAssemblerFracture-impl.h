@@ -369,8 +369,10 @@ computeSecondaryVariableConcreteWithVector(
 
     double ele_b = 0;
     double ele_k = 0;
-    Eigen::Vector2d ele_sigma_eff = Eigen::Vector2d::Zero();
-    Eigen::Vector2d ele_w = Eigen::Vector2d::Zero();
+    typename HMatricesType::ForceVectorType ele_sigma_eff =
+        HMatricesType::ForceVectorType::Zero(GlobalDim);
+    typename HMatricesType::ForceVectorType ele_w =
+        HMatricesType::ForceVectorType::Zero(GlobalDim);
     double ele_Fs = - std::numeric_limits<double>::max();
     for (auto const& ip : _ip_data)
     {

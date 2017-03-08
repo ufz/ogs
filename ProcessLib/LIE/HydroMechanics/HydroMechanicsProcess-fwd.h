@@ -12,3 +12,4 @@
 #include "HydroMechanicsProcess.h"
 
 extern template class ProcessLib::LIE::HydroMechanics::HydroMechanicsProcess<2>;
+extern template class ProcessLib::LIE::HydroMechanics::HydroMechanicsProcess<3>;

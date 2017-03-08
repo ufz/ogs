@@ -32,6 +32,7 @@ template <unsigned GlobalDim>
 class HydroMechanicsProcess;
 
 extern template class HydroMechanicsProcess<2>;
+extern template class HydroMechanicsProcess<3>;
 
 template <unsigned GlobalDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
@@ -306,6 +307,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 }
 
 template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
+    MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
+    std::vector<ProcessVariable> const& variables,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const integration_order,
+    BaseLib::ConfigTree const& config);
+template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

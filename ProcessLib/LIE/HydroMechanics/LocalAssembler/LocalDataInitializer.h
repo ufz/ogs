@@ -71,7 +71,6 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
     ((ENABLED_ELEMENT_TYPE_SIMPLEX) | (ENABLED_ELEMENT_TYPE_CUBOID) | \
      (ENABLED_ELEMENT_TYPE_PYRAMID) | (ENABLED_ELEMENT_TYPE_PRISM))
 
-
 // Include only what is needed (Well, the conditions are not sharp).
 #if OGS_ENABLED_ELEMENTS != 0
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
@@ -115,7 +114,6 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-
 /// The LocalDataInitializer is a functor creating a local assembler data with
 /// corresponding to the mesh element type shape functions and calling
 /// initialization of the new local assembler data.
@@ -125,12 +123,14 @@ namespace HydroMechanics
 /// \attention This is modified version of the ProcessLib::LocalDataInitializer
 /// class which does not include line elements, allows only shapefunction of
 /// order 2, and provides additional template argument GlobalDim.
-template <
-    typename LocalAssemblerInterface,
-    template <typename, typename, typename, unsigned> class LocalAssemblerDataMatrix,
-    template <typename, typename, typename, unsigned> class LocalAssemblerDataMatrixNearFracture,
-    template <typename, typename, typename, unsigned> class LocalAssemblerDataFracture,
-    unsigned GlobalDim, typename... ConstructorArgs>
+template <typename LocalAssemblerInterface,
+          template <typename, typename, typename, unsigned>
+          class LocalAssemblerDataMatrix,
+          template <typename, typename, typename, unsigned>
+          class LocalAssemblerDataMatrixNearFracture,
+          template <typename, typename, typename, unsigned>
+          class LocalAssemblerDataFracture,
+          unsigned GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:
@@ -145,7 +145,7 @@ public:
                 "The given shape function order %d is not supported.\nOnly "
                 "shape functions of order 2 are supported.",
                 shapefunction_order);
-        // /// Quads and Hexahedra ///////////////////////////////////
+// /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -155,7 +155,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeQuad9>();
 #endif
 
-        // /// Simplices ////////////////////////////////////////////////
+// /// Simplices ////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -163,7 +163,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeTri6>();
 #endif
 
-        // /// Lines ///////////////////////////////////
+// /// Lines ///////////////////////////////////
 #if OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Line3))] =
             makeLocalAssemblerBuilder<NumLib::ShapeLine3>();

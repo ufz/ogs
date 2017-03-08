@@ -219,11 +219,30 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     mesh_prop_sigma_yy->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_stress_yy = mesh_prop_sigma_yy;
 
+    auto mesh_prop_sigma_zz = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "stress_zz", MeshLib::MeshItemType::Cell, 1);
+    mesh_prop_sigma_zz->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_stress_zz = mesh_prop_sigma_zz;
+
     auto mesh_prop_sigma_xy = MeshLib::getOrCreateMeshProperty<double>(
                                 const_cast<MeshLib::Mesh&>(mesh),
                                 "stress_xy", MeshLib::MeshItemType::Cell, 1);
     mesh_prop_sigma_xy->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_stress_xy = mesh_prop_sigma_xy;
+
+
+    auto mesh_prop_sigma_yz = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "stress_yz", MeshLib::MeshItemType::Cell, 1);
+    mesh_prop_sigma_yz->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_stress_yz = mesh_prop_sigma_yz;
+
+    auto mesh_prop_sigma_xz = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "stress_xz", MeshLib::MeshItemType::Cell, 1);
+    mesh_prop_sigma_xz->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_stress_xz = mesh_prop_sigma_xz;
 
     auto mesh_prop_epsilon_xx = MeshLib::getOrCreateMeshProperty<double>(
                                 const_cast<MeshLib::Mesh&>(mesh),
@@ -237,11 +256,29 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     mesh_prop_epsilon_yy->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_strain_yy = mesh_prop_epsilon_yy;
 
+    auto mesh_prop_epsilon_zz = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "strain_zz", MeshLib::MeshItemType::Cell, 1);
+    mesh_prop_epsilon_zz->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_strain_zz = mesh_prop_epsilon_zz;
+
     auto mesh_prop_epsilon_xy = MeshLib::getOrCreateMeshProperty<double>(
                                 const_cast<MeshLib::Mesh&>(mesh),
                                 "strain_xy", MeshLib::MeshItemType::Cell, 1);
     mesh_prop_epsilon_xy->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_strain_xy = mesh_prop_epsilon_xy;
+
+    auto mesh_prop_epsilon_yz = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "strain_yz", MeshLib::MeshItemType::Cell, 1);
+    mesh_prop_epsilon_yz->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_strain_yz = mesh_prop_epsilon_yz;
+
+    auto mesh_prop_epsilon_xz = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "strain_xz", MeshLib::MeshItemType::Cell, 1);
+    mesh_prop_epsilon_xz->resize(mesh.getNumberOfElements());
+    _process_data.mesh_prop_strain_xz = mesh_prop_epsilon_xz;
 
     auto mesh_prop_velocity = MeshLib::getOrCreateMeshProperty<double>(
                                 const_cast<MeshLib::Mesh&>(mesh),
@@ -425,6 +462,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
 // template instantiation
 // ------------------------------------------------------------------------------------
 template class HydroMechanicsProcess<2>;
+template class HydroMechanicsProcess<3>;
 
 }  // namespace HydroMechanics
 }  // namespace LIE

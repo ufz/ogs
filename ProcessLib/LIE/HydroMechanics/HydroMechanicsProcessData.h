@@ -128,10 +128,16 @@ struct HydroMechanicsProcessData
     // mesh properties for output
     MeshLib::PropertyVector<double>* mesh_prop_stress_xx = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_stress_yy = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_stress_zz = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_stress_xy = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_stress_yz = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_stress_xz = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_strain_xx = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_strain_yy = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_strain_zz = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_strain_xy = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_strain_yz = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_strain_xz = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_velocity = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_b = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_k_f = nullptr;
