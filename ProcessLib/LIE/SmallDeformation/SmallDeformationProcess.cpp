@@ -224,6 +224,45 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                 &SmallDeformationLocalAssemblerInterface::getIntPtSigmaYZ));
     }
 
+    Base::_secondary_variables.addSecondaryVariable(
+        "epsilon_xx", 1,
+        makeExtrapolator(
+            getExtrapolator(), _local_assemblers,
+            &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonXX));
+
+    Base::_secondary_variables.addSecondaryVariable(
+        "epsilon_yy", 1,
+        makeExtrapolator(
+            getExtrapolator(), _local_assemblers,
+            &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonYY));
+
+    Base::_secondary_variables.addSecondaryVariable(
+        "epsilon_zz", 1,
+        makeExtrapolator(
+            getExtrapolator(), _local_assemblers,
+            &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonZZ));
+
+    Base::_secondary_variables.addSecondaryVariable(
+        "epsilon_xy", 1,
+        makeExtrapolator(
+            getExtrapolator(), _local_assemblers,
+            &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonXY));
+
+    if (DisplacementDim == 3)
+    {
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_xz", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonXZ));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_yz", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonYZ));
+    }
+
     auto mesh_prop_sigma_xx = const_cast<MeshLib::Mesh&>(mesh)
                                   .getProperties()
                                   .template createNewPropertyVector<double>(
@@ -286,6 +325,14 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                 "strain_yy", MeshLib::MeshItemType::Cell);
     mesh_prop_epsilon_yy->resize(mesh.getNumberOfElements());
     _process_data._mesh_prop_strain_yy = mesh_prop_epsilon_yy;
+
+    auto mesh_prop_epsilon_zz =
+        const_cast<MeshLib::Mesh&>(mesh)
+            .getProperties()
+            .template createNewPropertyVector<double>(
+                "strain_zz", MeshLib::MeshItemType::Cell);
+    mesh_prop_epsilon_zz->resize(mesh.getNumberOfElements());
+    _process_data._mesh_prop_strain_zz = mesh_prop_epsilon_zz;
 
     auto mesh_prop_epsilon_xy =
         const_cast<MeshLib::Mesh&>(mesh)

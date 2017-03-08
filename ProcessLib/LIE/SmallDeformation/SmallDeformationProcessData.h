@@ -83,6 +83,7 @@ struct SmallDeformationProcessData
     // mesh properties to output element's strain
     MeshLib::PropertyVector<double>* _mesh_prop_strain_xx = nullptr;
     MeshLib::PropertyVector<double>* _mesh_prop_strain_yy = nullptr;
+    MeshLib::PropertyVector<double>* _mesh_prop_strain_zz = nullptr;
     MeshLib::PropertyVector<double>* _mesh_prop_strain_xy = nullptr;
     MeshLib::PropertyVector<double>* _mesh_prop_strain_xz = nullptr;
     MeshLib::PropertyVector<double>* _mesh_prop_strain_yz = nullptr;

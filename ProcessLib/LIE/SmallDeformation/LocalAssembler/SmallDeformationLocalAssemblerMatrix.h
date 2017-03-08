@@ -139,6 +139,44 @@ public:
         return getIntPtSigma(cache, 5);
     }
 
+    std::vector<double> const& getIntPtEpsilonXX(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 0);
+    }
+
+    std::vector<double> const& getIntPtEpsilonYY(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 1);
+    }
+
+    std::vector<double> const& getIntPtEpsilonZZ(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 2);
+    }
+
+    std::vector<double> const& getIntPtEpsilonXY(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 3);
+    }
+
+    std::vector<double> const& getIntPtEpsilonXZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtEpsilon(cache, 4);
+    }
+
+    std::vector<double> const& getIntPtEpsilonYZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtEpsilon(cache, 5);
+    }
+
 private:
     std::vector<double> const& getIntPtSigma(std::vector<double>& cache,
                                              std::size_t const component) const
@@ -151,6 +189,23 @@ private:
                 cache.push_back(ip_data._sigma[component]);
             else    // mixed xy, yz, xz components
                 cache.push_back(ip_data._sigma[component] / std::sqrt(2));
+        }
+
+        return cache;
+    }
+
+    std::vector<double> const& getIntPtEpsilon(
+        std::vector<double>& cache, std::size_t const component) const
+    {
+        cache.clear();
+        cache.reserve(_ip_data.size());
+
+        for (auto const& ip_data : _ip_data)
+        {
+            if (component < 3)  // xx, yy, zz components
+                cache.push_back(ip_data._eps[component]);
+            else  // mixed xy, yz, xz components
+                cache.push_back(ip_data._eps[component] / std::sqrt(2));
         }
 
         return cache;
