@@ -12,3 +12,5 @@
 #include "SmallDeformationProcess.h"
 
 extern template class ProcessLib::LIE::SmallDeformation::SmallDeformationProcess<2>;
+extern template class ProcessLib::LIE::SmallDeformation::
+    SmallDeformationProcess<3>;

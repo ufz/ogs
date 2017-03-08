@@ -428,6 +428,13 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                             _process_variables, _parameters, integration_order,
                             process_config);
                     break;
+                case 3:
+                    process = ProcessLib::LIE::SmallDeformation::
+                        createSmallDeformationProcess<3>(
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, integration_order,
+                            process_config);
+                    break;
                 default:
                     OGS_FATAL(
                         "SMALL_DEFORMATION_WITH_LIE process does not support "

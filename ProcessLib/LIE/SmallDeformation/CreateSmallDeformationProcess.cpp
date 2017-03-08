@@ -32,6 +32,7 @@ template <int DisplacementDim>
 class SmallDeformationProcess;
 
 extern template class SmallDeformationProcess<2>;
+extern template class SmallDeformationProcess<3>;
 
 template <int DisplacementDim>
 std::unique_ptr<Process>
@@ -186,6 +187,14 @@ createSmallDeformationProcess(
 template
 std::unique_ptr<Process>
 createSmallDeformationProcess<2>(
+    MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
+    std::vector<ProcessVariable> const& variables,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const integration_order,
+    BaseLib::ConfigTree const& config);
+
+template std::unique_ptr<Process> createSmallDeformationProcess<3>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

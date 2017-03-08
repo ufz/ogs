@@ -102,6 +102,14 @@ void createLocalAssemblers(
                 dof_table, mesh_elements, local_assemblers,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
+        case 3:
+            detail::createLocalAssemblers<
+                3, DisplacementDim, LocalAssemblerMatrixImplementation,
+                LocalAssemblerMatrixNearFractureImplementation,
+                LocalAssemblerFractureImplementation>(
+                dof_table, mesh_elements, local_assemblers,
+                std::forward<ExtraCtorArgs>(extra_ctor_args)...);
+            break;
         default:
             OGS_FATAL(
                 "Meshes with dimension different than two and three are not "

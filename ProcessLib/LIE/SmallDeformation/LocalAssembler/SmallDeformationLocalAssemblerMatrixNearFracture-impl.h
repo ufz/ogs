@@ -270,31 +270,42 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction, Integration
                                     DisplacementDim>::
 postTimestepConcrete(std::vector<double> const& /*local_x*/)
 {
-    const int n = 3;
-    std::valarray<double> ele_stress(0.0, n);
-    std::valarray<double> ele_strain(0.0, n);
+    // Compute average value per element
+    const int n = DisplacementDim == 2 ? 4 : 6;
+    Eigen::VectorXd ele_stress = Eigen::VectorXd::Zero(n);
+    Eigen::VectorXd ele_strain = Eigen::VectorXd::Zero(n);
+
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto& ip_data = _ip_data[ip];
 
-        ele_stress[0] += ip_data._sigma[0];
-        ele_stress[1] += ip_data._sigma[1];
-        ele_stress[2] += ip_data._sigma[3];
-
-        ele_strain[0] += ip_data._eps[0];
-        ele_strain[1] += ip_data._eps[1];
-        ele_strain[2] += ip_data._eps[3];
+        ele_stress += ip_data._sigma;
+        ele_strain += ip_data._eps;
     }
     ele_stress /= n_integration_points;
     ele_strain /= n_integration_points;
+
     (*_process_data._mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
     (*_process_data._mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];
-    (*_process_data._mesh_prop_stress_xy)[_element.getID()] = ele_stress[2];
+    (*_process_data._mesh_prop_stress_zz)[_element.getID()] = ele_stress[2];
+    (*_process_data._mesh_prop_stress_xy)[_element.getID()] = ele_stress[3];
+    if (DisplacementDim == 3)
+    {
+        (*_process_data._mesh_prop_stress_yz)[_element.getID()] = ele_stress[4];
+        (*_process_data._mesh_prop_stress_xz)[_element.getID()] = ele_stress[5];
+    }
+
     (*_process_data._mesh_prop_strain_xx)[_element.getID()] = ele_strain[0];
     (*_process_data._mesh_prop_strain_yy)[_element.getID()] = ele_strain[1];
-    (*_process_data._mesh_prop_strain_xy)[_element.getID()] = ele_strain[2];
+    (*_process_data._mesh_prop_strain_zz)[_element.getID()] = ele_strain[2];
+    (*_process_data._mesh_prop_strain_xy)[_element.getID()] = ele_strain[3];
+    if (DisplacementDim == 3)
+    {
+        (*_process_data._mesh_prop_strain_yz)[_element.getID()] = ele_strain[4];
+        (*_process_data._mesh_prop_strain_xz)[_element.getID()] = ele_strain[5];
+    }
 }
 
 }  // namespace SmallDeformation

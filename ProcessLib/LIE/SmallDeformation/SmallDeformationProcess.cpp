@@ -209,6 +209,21 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXY));
 
+    if (DisplacementDim == 3)
+    {
+        Base::_secondary_variables.addSecondaryVariable(
+            "sigma_xz", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXZ));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "sigma_yz", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &SmallDeformationLocalAssemblerInterface::getIntPtSigmaYZ));
+    }
+
     auto mesh_prop_sigma_xx = const_cast<MeshLib::Mesh&>(mesh)
                                   .getProperties()
                                   .template createNewPropertyVector<double>(
@@ -223,12 +238,38 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     mesh_prop_sigma_yy->resize(mesh.getNumberOfElements());
     _process_data._mesh_prop_stress_yy = mesh_prop_sigma_yy;
 
+    auto mesh_prop_sigma_zz = const_cast<MeshLib::Mesh&>(mesh)
+                                  .getProperties()
+                                  .template createNewPropertyVector<double>(
+                                      "stress_zz", MeshLib::MeshItemType::Cell);
+    mesh_prop_sigma_zz->resize(mesh.getNumberOfElements());
+    _process_data._mesh_prop_stress_zz = mesh_prop_sigma_zz;
+
     auto mesh_prop_sigma_xy = const_cast<MeshLib::Mesh&>(mesh)
                                   .getProperties()
                                   .template createNewPropertyVector<double>(
                                       "stress_xy", MeshLib::MeshItemType::Cell);
     mesh_prop_sigma_xy->resize(mesh.getNumberOfElements());
     _process_data._mesh_prop_stress_xy = mesh_prop_sigma_xy;
+
+    if (DisplacementDim == 3)
+    {
+        auto mesh_prop_sigma_xz =
+            const_cast<MeshLib::Mesh&>(mesh)
+                .getProperties()
+                .template createNewPropertyVector<double>(
+                    "stress_xz", MeshLib::MeshItemType::Cell);
+        mesh_prop_sigma_xz->resize(mesh.getNumberOfElements());
+        _process_data._mesh_prop_stress_xz = mesh_prop_sigma_xz;
+
+        auto mesh_prop_sigma_yz =
+            const_cast<MeshLib::Mesh&>(mesh)
+                .getProperties()
+                .template createNewPropertyVector<double>(
+                    "stress_yz", MeshLib::MeshItemType::Cell);
+        mesh_prop_sigma_yz->resize(mesh.getNumberOfElements());
+        _process_data._mesh_prop_stress_yz = mesh_prop_sigma_yz;
+    }
 
     auto mesh_prop_epsilon_xx =
         const_cast<MeshLib::Mesh&>(mesh)
@@ -253,6 +294,25 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                 "strain_xy", MeshLib::MeshItemType::Cell);
     mesh_prop_epsilon_xy->resize(mesh.getNumberOfElements());
     _process_data._mesh_prop_strain_xy = mesh_prop_epsilon_xy;
+
+    if (DisplacementDim == 3)
+    {
+        auto mesh_prop_epsilon_xz =
+            const_cast<MeshLib::Mesh&>(mesh)
+                .getProperties()
+                .template createNewPropertyVector<double>(
+                    "strain_xz", MeshLib::MeshItemType::Cell);
+        mesh_prop_epsilon_xz->resize(mesh.getNumberOfElements());
+        _process_data._mesh_prop_strain_xz = mesh_prop_epsilon_xz;
+
+        auto mesh_prop_epsilon_yz =
+            const_cast<MeshLib::Mesh&>(mesh)
+                .getProperties()
+                .template createNewPropertyVector<double>(
+                    "strain_yz", MeshLib::MeshItemType::Cell);
+        mesh_prop_epsilon_yz->resize(mesh.getNumberOfElements());
+        _process_data._mesh_prop_strain_yz = mesh_prop_epsilon_yz;
+    }
 
     for (auto const& fracture_prop : _process_data._vec_fracture_property)
     {
@@ -313,6 +373,7 @@ void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(Globa
 // template instantiation
 // ------------------------------------------------------------------------------------
 template class SmallDeformationProcess<2>;
+template class SmallDeformationProcess<3>;
 
 }   // namespace SmallDeformation
 }   // namespace LIE
