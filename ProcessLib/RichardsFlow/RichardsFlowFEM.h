@@ -37,6 +37,15 @@ class RichardsFlowLocalAssemblerInterface
 public:
     virtual std::vector<double> const& getIntPtSaturation(
         std::vector<double>& /*cache*/) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityX(
+        std::vector<double>& /*cache*/) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityY(
+        std::vector<double>& /*cache*/) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
+        std::vector<double>& /*cache*/) const = 0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -66,6 +75,9 @@ public:
                                             IntegrationMethod, GlobalDim>(
               element, is_axially_symmetric, _integration_method)),
           _saturation(
+              std::vector<double>(_integration_method.getNumberOfPoints())),
+          _darcy_velocities(
+              GlobalDim,
               std::vector<double>(_integration_method.getNumberOfPoints()))
     {
     }
@@ -96,6 +108,7 @@ public:
             _integration_method.getNumberOfPoints();
         SpatialPosition pos;
         pos.setElementID(_element.getID());
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
@@ -175,6 +188,27 @@ public:
         return _saturation;
     }
 
+    std::vector<double> const& getIntPtDarcyVelocityX(
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(_darcy_velocities.size() > 0);
+        return _darcy_velocities[0];
+    }
+
+    std::vector<double> const& getIntPtDarcyVelocityY(
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(_darcy_velocities.size() > 1);
+        return _darcy_velocities[1];
+    }
+
+    std::vector<double> const& getIntPtDarcyVelocityZ(
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(_darcy_velocities.size() > 2);
+        return _darcy_velocities[2];
+    }
+
 private:
     MeshLib::Element const& _element;
     RichardsFlowProcessData const& _process_data;
@@ -184,6 +218,7 @@ private:
         _shape_matrices;
 
     std::vector<double> _saturation;
+    std::vector<std::vector<double>> _darcy_velocities;
 };
 
 }  // namespace RichardsFlow

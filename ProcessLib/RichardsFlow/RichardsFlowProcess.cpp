@@ -49,6 +49,29 @@ void RichardsFlowProcess::initializeConcreteProcess(
         makeExtrapolator(
             getExtrapolator(), _local_assemblers,
             &RichardsFlowLocalAssemblerInterface::getIntPtSaturation));
+
+    _secondary_variables.addSecondaryVariable(
+        "darcy_velocity_x", 1,
+        makeExtrapolator(
+            getExtrapolator(), _local_assemblers,
+            &RichardsFlowLocalAssemblerInterface::getIntPtDarcyVelocityX));
+
+    if (mesh.getDimension() > 1)
+    {
+        _secondary_variables.addSecondaryVariable(
+            "darcy_velocity_y", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &RichardsFlowLocalAssemblerInterface::getIntPtDarcyVelocityY));
+    }
+    if (mesh.getDimension() > 2)
+    {
+        _secondary_variables.addSecondaryVariable(
+            "darcy_velocity_z", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &RichardsFlowLocalAssemblerInterface::getIntPtDarcyVelocityZ));
+    }
 }
 
 void RichardsFlowProcess::assembleConcreteProcess(const double t,
