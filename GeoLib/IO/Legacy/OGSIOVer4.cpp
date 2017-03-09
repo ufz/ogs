@@ -310,8 +310,8 @@ std::string readSurface(std::istream &in,
         if (line.find("$TIN") != std::string::npos) // subkeyword found
         {
             in >> line; // read value (file name)
-            line = path + line;
-            sfc = GeoLib::IO::TINInterface::readTIN(line, pnt_vec, &errors);
+            std::string const file_name (path + line);
+            sfc = GeoLib::IO::TINInterface::readTIN(file_name, pnt_vec, &errors);
         }
         //....................................................................
         if (line.find("$MAT_GROUP") != std::string::npos) // subkeyword found
@@ -325,8 +325,7 @@ std::string readSurface(std::istream &in,
                    && (line.find('$') == std::string::npos))
             {
                 // we did read the name of a polyline -> search the id for polyline
-                std::map<std::string,std::size_t>::const_iterator it (ply_vec_names.find (
-                                                                         line));
+                std::map<std::string,std::size_t>::const_iterator it (ply_vec_names.find (line));
                 if (it != ply_vec_names.end())
                     ply_id = it->second;
                 else
