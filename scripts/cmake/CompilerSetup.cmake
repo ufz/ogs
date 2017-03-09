@@ -101,7 +101,7 @@ if (WIN32)
             -DNOMINMAX # This fixes compile errors with std::numeric_limits<T>::min() / max()
         )
         # Sets warning level 3 and ignores some warnings
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /wd4290 /wd4267 /wd4996 /bigobj")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /wd4290 /wd4267 /wd4996")
         # Allow big object files generated for template heavy code
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
         set(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /ZI /Od /Ob0")
