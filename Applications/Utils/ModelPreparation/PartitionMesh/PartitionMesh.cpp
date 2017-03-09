@@ -134,9 +134,6 @@ int main(int argc, char* argv[])
             INFO("Write the data of partitions into binary files ...");
             mesh_partitioner.writeBinary(file_name_base);
         }
-
-        INFO("Write the mesh with renumbered node indices into VTU ...");
-        mesh_partitioner.writeGlobalMeshVTU(file_name_base);
     }
 
     INFO("Total runtime: %g s.", run_timer.elapsed());

@@ -22,9 +22,6 @@
 
 namespace MeshLib
 {
-
-//template <typename T> class PropertyVector;
-
 class PropertyVectorBase
 {
 public:
@@ -86,10 +83,11 @@ public:
                                 component);
     }
 
-    PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
+    PropertyVectorBase* clone(
+        std::vector<std::size_t> const& exclude_positions) const
     {
-        PropertyVector<PROP_VAL_TYPE> *t(new PropertyVector<PROP_VAL_TYPE>(_property_name,
-            _mesh_item_type, _n_components));
+        PropertyVector<PROP_VAL_TYPE>* t(new PropertyVector<PROP_VAL_TYPE>(
+            _property_name, _mesh_item_type, _n_components));
         BaseLib::excludeObjectCopy(*this, exclude_positions, *t);
         return t;
     }
@@ -220,7 +218,7 @@ public:
         assert(component < _n_components);
         assert(tuple_index < getNumberOfTuples());
         const double* p = this->operator[](tuple_index);
-        if (p==nullptr)
+        if (p == nullptr)
             OGS_FATAL("No data found in the property vector %s "
                       "for the tuple index %d and component %d",
                       getPropertyName().c_str(), tuple_index, component);
@@ -235,7 +233,8 @@ public:
         std::copy(this->cbegin(), this->cend(),
             std::ostream_iterator<std::size_t>(os, " "));
         os << "\n\tvalues (" << _values.size() << "):\n";
-        for (std::size_t k(0); k<_values.size(); k++) {
+        for (std::size_t k(0); k < _values.size(); k++)
+        {
             os << "val: " << *(_values[k]) << ", address: " << _values[k] << "\n";
         }
         return os;

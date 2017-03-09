@@ -84,8 +84,8 @@ void NodeWiseMeshPartitioner::readMetisData(const std::string& file_name_base)
     std::remove(fname_eparts.c_str());
 }
 
-void NodeWiseMeshPartitioner
-         ::partitionByMETIS(const bool is_mixed_high_order_linear_elems)
+void NodeWiseMeshPartitioner::partitionByMETIS(
+    const bool is_mixed_high_order_linear_elems)
 {
     std::vector<MeshLib::Node*> const& nodes = _mesh->getNodes();
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
@@ -186,8 +186,8 @@ void NodeWiseMeshPartitioner
     renumberNodeIndices(is_mixed_high_order_linear_elems);
 }
 
-void NodeWiseMeshPartitioner::renumberNodeIndices
-                           (const bool is_mixed_high_order_linear_elems)
+void NodeWiseMeshPartitioner::renumberNodeIndices(
+    const bool is_mixed_high_order_linear_elems)
 {
     std::size_t node_global_id_offset = 0;
     // Renumber the global indices.
@@ -252,7 +252,7 @@ NodeWiseMeshPartitioner::IntegerType
 NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
     const std::vector<const MeshLib::Element*>& elements) const
 {
-    // Number of material ID, element type, and number of the nodes of
+    // Element ID, element type, and number of the nodes of
     // an element of all elements in the current partition.
     IntegerType nmb_element_idxs = 3 * elements.size();
     for (const auto* elem : elements)
@@ -262,9 +262,10 @@ NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
     return nmb_element_idxs;
 }
 
-std::tuple< std::vector<NodeWiseMeshPartitioner::IntegerType>,
-            std::vector<NodeWiseMeshPartitioner::IntegerType>>
-NodeWiseMeshPartitioner::writeConfigDataBinary(const std::string& file_name_base)
+std::tuple<std::vector<NodeWiseMeshPartitioner::IntegerType>,
+           std::vector<NodeWiseMeshPartitioner::IntegerType>>
+NodeWiseMeshPartitioner::writeConfigDataBinary(
+    const std::string& file_name_base)
 {
     const std::string fname = file_name_base + "_partitioned_msh_cfg"
                               + std::to_string(_npartitions) + ".bin";
@@ -305,10 +306,10 @@ NodeWiseMeshPartitioner::writeConfigDataBinary(const std::string& file_name_base
         // Update offsets
         num_elem_integers[loop_id] =
             partition.regular_elements.size() + config_data[8];
-        // Offset the ending enrtry of the element integer variales of
+        // Offset the ending entry of the element integer variales of
         // the non-ghost elements of this partition in the vector of elem_info.
         config_data[11] += num_elem_integers[loop_id] * sizeof(IntegerType);
-        // Offset the ending enrtry of the element integer variales of
+        // Offset the ending entry of the element integer variales of
         // the ghost elements of this partition in the vector of elem_info.
         num_g_elem_integers[loop_id] =
             partition.ghost_elements.size() + config_data[9];
@@ -516,29 +517,6 @@ void NodeWiseMeshPartitioner::writeASCII(const std::string& file_name_base)
     writeConfigDataASCII(file_name_base);
     writeElementsASCII(file_name_base);
     writeNodesASCII(file_name_base);
-}
-
-void NodeWiseMeshPartitioner::resetGlobalNodeIndices()
-{
-    for (std::size_t i = 0; i < _mesh->_nodes.size(); i++)
-    {
-        _mesh->_nodes[i]->setID(_nodes_global_ids[i]);
-    }
-    // sort
-    std::sort(_mesh->_nodes.begin(), _mesh->_nodes.end(),
-              [](const MeshLib::Node* a, const MeshLib::Node* b) {
-                  return a->getID() < b->getID();
-              });
-}
-
-void NodeWiseMeshPartitioner::writeGlobalMeshVTU(
-    const std::string& file_name_base)
-{
-    resetGlobalNodeIndices();
-    MeshLib::IO::VtuInterface writer(_mesh.get());
-    const std::string npartitions_str = std::to_string(_npartitions);
-    writer.writeToFile(file_name_base + "_node_id_renumbered_partitions_" +
-                       npartitions_str + ".vtu");
 }
 
 void NodeWiseMeshPartitioner::getElementIntegerVariables(
