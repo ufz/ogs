@@ -206,7 +206,7 @@ public:
                 "You are trying to build a local assembler for an unknown mesh "
                 "element type (%s)."
                 " Maybe you have disabled this mesh element type in your build "
-                "configuration.",
+                "configuration or this process requires higher order elements.",
                 type_idx.name());
         }
     }

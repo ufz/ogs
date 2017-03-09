@@ -185,8 +185,11 @@ public:
         auto const it = _builder.find(type_idx);
 
         if (it == _builder.end())
-            OGS_FATAL("You are trying to build a local assembler for an unknown mesh element type (%s)."
-                " Maybe you have disabled this mesh element type in your build configuration.",
+            OGS_FATAL(
+                "You are trying to build a local assembler for an unknown mesh "
+                "element type (%s)."
+                " Maybe you have disabled this mesh element type in your build "
+                "configuration or this process requires higher order elements.",
                 type_idx.name());
 
         auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
