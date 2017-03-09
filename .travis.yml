@@ -18,13 +18,13 @@ cache:
   ccache: true
   directories:
     - $HOME/cmake-3.1.1-Linux-x86_64
-    - $HOME/VTK-Install
+    - $HOME/VTK-Install-7.1
     - $HOME/boost_1_56_0
     - $HOME/.conan
 
 env:
   global:
-    - VTK_DIR=$HOME/VTK-Install/lib/cmake/vtk-7.1
+    - VTK_DIR=$HOME/VTK-Install-7.1/lib/cmake/vtk-7.1
     - BOOST_ROOT=$HOME/boost_1_56_0
 matrix:
   include:
@@ -55,7 +55,7 @@ script:
   - if [ "$CASE" == "CHECK" ]; then git config core.whitespace -blank-at-eof; git diff --check `git merge-base origin/master HEAD` HEAD; fi
   - if [ "$CASE" != "CHECK" ]; then mkdir build; fi
   - if [ "$CASE" != "CHECK" ]; then cd build; fi
-  - if [ "$CASE" != "CHECK" ]; then cmake $CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug ..; fi
+  - if [ "$CASE" != "CHECK" ]; then cmake $CMAKE_ARGS -DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System -DCMAKE_BUILD_TYPE=Debug ..; fi
   - if [ "$CASE" != "CHECK" ]; then make -j 2; fi
   - if [ "$CASE" != "CHECK" ]; then make tests; fi
 
