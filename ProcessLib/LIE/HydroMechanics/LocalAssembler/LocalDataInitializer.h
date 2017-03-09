@@ -155,6 +155,12 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeQuad9>();
 #endif
 
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
+        _builder[std::type_index(typeid(MeshLib::Hex20))] =
+            makeLocalAssemblerBuilder<NumLib::ShapeHex20>();
+#endif
+
 // /// Simplices ////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
