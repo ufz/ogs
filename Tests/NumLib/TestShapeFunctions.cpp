@@ -11,15 +11,154 @@
 
 #include <gtest/gtest.h>
 
-#include <limits>
-#include <valarray>
 #include <algorithm>
+#include <type_traits>
+#include <limits>
+#include <numeric>
+#include <valarray>
 
+namespace autocheck{
+
+template <typename T, std::size_t N>
+std::ostream& operator<<(std::ostream& os, std::array<T, N> const& array)
+{
+    os << "[";
+    std::copy(std::begin(array), std::end(array),
+              std::ostream_iterator<double>(os, ","));
+    os << "]";
+    return os;
+}
+}
+#include <autocheck/autocheck.hpp>
+
+#include "MeshLib/Elements/Elements.h"
+#include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
+#include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
+#include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
+#include "NumLib/Fem/ShapeFunction/ShapeLine3.h"
 #include "NumLib/Fem/ShapeFunction/ShapeQuad4.h"
+#include "NumLib/Fem/ShapeFunction/ShapeQuad8.h"
+#include "NumLib/Fem/ShapeFunction/ShapeQuad9.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTet10.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTet4.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTri6.h"
 
 #include "Tests/TestTools.h"
 
+#include "../MathLib/AutoCheckTools.h"
+
+namespace autocheck
+{
+
+template <typename ShapeFunction,
+          typename Gen = randomTupleGenerator<double, ShapeFunction::DIM>>
+struct NaturalPointGenerator
+{
+    Gen generator;  // The default interval is fixed to [-1, 1].
+
+    using result_type = std::array<double, ShapeFunction::DIM>;
+
+    result_type intervalMap(result_type const& tuple) const
+    {
+        if (std::is_same<ShapeFunction, NumLib::ShapeLine2>::value ||
+            std::is_same<ShapeFunction, NumLib::ShapeLine3>::value ||
+            std::is_same<ShapeFunction, NumLib::ShapeQuad4>::value ||
+            std::is_same<ShapeFunction, NumLib::ShapeQuad8>::value ||
+            std::is_same<ShapeFunction, NumLib::ShapeQuad9>::value ||
+            std::is_same<ShapeFunction, NumLib::ShapeHex8>::value ||
+            std::is_same<ShapeFunction, NumLib::ShapeHex20>::value)
+            return tuple;
+        if (std::is_same<ShapeFunction, NumLib::ShapeTri3>::value ||
+            std::is_same<ShapeFunction, NumLib::ShapeTri6>::value ||
+            std::is_same<ShapeFunction, NumLib::ShapeTet4>::value ||
+            std::is_same<ShapeFunction, NumLib::ShapeTet10>::value)
+        {
+            // Map square (x, y) \in [-1, 1]^2 to a triangle such that x,y
+            // \in [0, 1], and x+y \in [0, 2/2].
+            // Same for three-d case with x + y + z \in [0, 3/2].
+            result_type mapped_tuple;
+            std::transform(std::begin(tuple), std::end(tuple),
+                           std::begin(mapped_tuple),
+                           [](double const& v) { return (v + 1.) / 2.; });
+
+            if (std::accumulate(std::begin(mapped_tuple),
+                                std::end(mapped_tuple),
+                                0.) > ShapeFunction::DIM / 2.)
+                std::transform(std::begin(mapped_tuple), std::end(mapped_tuple),
+                               std::begin(mapped_tuple),
+                               [](double const& v) { return 1. - v; });
+            return mapped_tuple;
+        }
+    }
+
+    result_type operator()(std::size_t /*size*/ = 0)
+    {
+        return intervalMap(fix(1, generator)());
+    }
+};
+
+}
+
+namespace ac = autocheck;
 using namespace NumLib;
+
+template <typename ShapeFunction>
+struct ShapeFunctionTest : public ::testing::Test
+{
+    ac::NaturalPointGenerator<ShapeFunction> natural_point_generator;
+    ac::gtest_reporter gtest_reporter;
+};
+
+using ShapeFunctionTestTypes =
+    ::testing::Types<ShapeLine2, ShapeLine3, ShapeTri3, ShapeTri6, ShapeTet4,
+                     ShapeTet10, ShapeQuad4, ShapeQuad8, ShapeQuad9, ShapeHex8,
+                     ShapeHex20>;
+
+TYPED_TEST_CASE(ShapeFunctionTest, ShapeFunctionTestTypes);
+
+// TypeParam is the type of the ShapeFunction.
+// Access private members via this pointer or TestFixture:: for types
+TYPED_TEST(ShapeFunctionTest, PartitionOfUnity)
+{
+    auto isPartitionOfUnity = [this](
+        std::array<double, TypeParam::DIM>& natural_coordinates_point) -> bool {
+
+        // compute shape functions
+        std::array<double, TypeParam::NPOINTS> N;
+        TypeParam::computeShapeFunction(natural_coordinates_point, N);
+        double const sum = std::accumulate(std::begin(N), std::end(N), 0.);
+
+        return std::abs(1. - sum) < 1e-15;
+    };
+
+    ac::check<std::array<double, TypeParam::DIM>>(
+        isPartitionOfUnity,
+        1000,
+        ac::make_arbitrary(this->natural_point_generator),
+        this->gtest_reporter);
+}
+
+TYPED_TEST(ShapeFunctionTest, SumOfGradientsIsZero)
+{
+    auto isSumOfGradientsZero = [this](
+        std::array<double, TypeParam::DIM>& natural_coordinates_point) -> bool {
+
+        // compute shape functions
+        std::array<double, TypeParam::DIM * TypeParam::NPOINTS> dNdr;
+        TypeParam::computeGradShapeFunction(natural_coordinates_point, dNdr);
+        double const sum =
+            std::accumulate(std::begin(dNdr), std::end(dNdr), 0.);
+
+        return std::abs(sum) <= 5e-15;
+    };
+
+    ac::check<std::array<double, TypeParam::DIM>>(
+        isSumOfGradientsZero,
+        1000,
+        ac::make_arbitrary(this->natural_point_generator),
+        this->gtest_reporter);
+}
 
 TEST(NumLib, FemShapeQuad4)
 {
