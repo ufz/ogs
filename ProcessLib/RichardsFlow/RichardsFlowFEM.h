@@ -172,6 +172,57 @@ public:
         }  // end of mass lumping
     }
 
+    void computeSecondaryVariableConcrete(
+        double const t, std::vector<double> const& local_x) override
+    {
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        auto const K = _process_data.intrinsic_permeability(t, pos)[0];
+        MathLib::PiecewiseLinearInterpolation const& interpolated_Pc =
+            _process_data.interpolated_Pc;
+        MathLib::PiecewiseLinearInterpolation const& interpolated_Kr =
+            _process_data.interpolated_Kr;
+        auto const mu = _process_data.viscosity(t, pos)[0];
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[0], ShapeFunction::NPOINTS);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& sm = _shape_matrices[ip];
+
+            double P_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_x, sm.N, P_int_pt);
+            double const Pc = -P_int_pt;
+            double const Sw = interpolated_Pc.getValue(Pc);
+            double const k_rel = interpolated_Kr.getValue(Sw);
+            double const K_mat_coeff = K * k_rel / mu;
+
+            GlobalDimVectorType velocity =
+                -K_mat_coeff * sm.dNdx * p_nodal_values;
+            if (_process_data.has_gravity)
+            {
+                auto const rho_w = _process_data.water_density(t, pos)[0];
+                auto const body_force =
+                    _process_data.specific_body_force(t, pos);
+                assert(body_force.size() == GlobalDim);
+                auto const b = MathLib::toVector<GlobalDimVectorType>(
+                    body_force, GlobalDim);
+                // here it is assumed that the vector b is directed 'downwards'
+                velocity += K_mat_coeff * rho_w * b;
+            }
+
+            for (unsigned d = 0; d < GlobalDim; ++d)
+            {
+                _darcy_velocities[d][ip] = velocity[d];
+            }
+        }
+    }
+
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
