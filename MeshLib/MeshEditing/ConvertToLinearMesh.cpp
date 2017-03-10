@@ -12,6 +12,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
@@ -56,6 +57,11 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
         else if (e->getCellType() == MeshLib::CellType::QUAD8)
         {
             vec_new_eles.push_back(createLinearElement<MeshLib::Quad>(
+                e, vec_new_nodes));
+        }
+        else if (e->getCellType() == MeshLib::CellType::HEX20)
+        {
+            vec_new_eles.push_back(createLinearElement<MeshLib::Hex>(
                 e, vec_new_nodes));
         }
         else
