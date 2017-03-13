@@ -21,11 +21,11 @@
 
 namespace InSituLib
 {
-vtkCPProcessor* Processor = NULL;
+vtkCPProcessor* Processor = nullptr;
 
 void Initialize(BaseLib::ConfigTree const & scripts_config, std::string const & path)
 {
-    if (Processor == NULL)
+    if (Processor == nullptr)
     {
         Processor = vtkCPProcessor::New();
         Processor->Initialize();
@@ -50,13 +50,13 @@ void Finalize()
     if (Processor)
     {
         Processor->Delete();
-        Processor = NULL;
+        Processor = nullptr;
     }
 }
 void CoProcess(MeshLib::Mesh const& mesh, double const time,
                unsigned int const timeStep, bool const lastTimeStep)
 {
-    if (Processor == NULL)
+    if (Processor == nullptr)
         return;
 
     vtkNew<vtkCPDataDescription> dataDescription;
