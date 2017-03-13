@@ -158,6 +158,12 @@ private:
                                    const bool is_mixed_high_order_linear_elems,
                                    std::vector<MeshLib::Node*>& extra_nodes);
 
+    void splitOfHigherOrderNode(std::vector<MeshLib::Node*> const& nodes,
+                                bool const is_mixed_high_order_linear_elems,
+                                unsigned const node_id,
+                                std::vector<MeshLib::Node*>& base_nodes,
+                                std::vector<MeshLib::Node*>& extra_nodes);
+
     void processPartition(std::size_t const part_id,
                           const bool is_mixed_high_order_linear_elems);
 
