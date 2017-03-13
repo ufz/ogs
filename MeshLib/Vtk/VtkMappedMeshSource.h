@@ -86,8 +86,11 @@ private:
             return false;
 
         vtkNew<vtkAOSDataArrayTemplate<T> > dataArray;
+        const bool hasArrayOwnership = false;
         dataArray->SetArray(propertyVector->data(),
-            static_cast<vtkIdType>(propertyVector->size()), 1);
+            static_cast<vtkIdType>(propertyVector->size()),
+            static_cast<int>(!hasArrayOwnership));
+        dataArray->SetNumberOfComponents(propertyVector->getNumberOfComponents());
         dataArray->SetName(prop_name.c_str());
 
         if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
