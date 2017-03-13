@@ -26,7 +26,6 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 
 namespace ApplicationUtils
@@ -212,7 +211,7 @@ void NodeWiseMeshPartitioner::processProperties()
                             return sum + p.nodes.size();
                         });
 
-    INFO("*** total number of tuples after partitioning: %d ***",
+    INFO("total number of tuples after partitioning: %d ",
          total_number_of_tuples);
     // 1 create new PV
     // 2 resize the PV with total_number_of_tuples
@@ -223,42 +222,23 @@ void NodeWiseMeshPartitioner::processProperties()
     {
         if (original_properties.existsPropertyVector<double>(name))
         {
-            auto const& pv(original_properties.getPropertyVector<double>(name));
-            auto partitioned_pv =
-                _partitioned_properties.createNewPropertyVector<double>(
-                    name, pv->getMeshItemType(), pv->getNumberOfComponents());
-            partitioned_pv->resize(total_number_of_tuples *
-                                   pv->getNumberOfComponents());
-            std::size_t cnt(0);
-            for (auto p : _partitions)
-            {
-                for (std::size_t i = 0; i < p.nodes.size(); ++i)
-                {
-                    const auto global_id = p.nodes[i]->getID();
-                    (*partitioned_pv)[cnt+i] = (*pv)[global_id];
-                }
-                cnt += p.nodes.size();
-            }
+            copyPropertyVector<double>(name, total_number_of_tuples);
         }
-        if (original_properties.existsPropertyVector<int>(name))
+        else if (original_properties.existsPropertyVector<float>(name))
         {
-            auto const& pv(original_properties.getPropertyVector<int>(name));
-            auto partitioned_pv =
-                _partitioned_properties.createNewPropertyVector<int>(
-                    name, pv->getMeshItemType(), pv->getNumberOfComponents());
-            partitioned_pv->resize(total_number_of_tuples *
-                                   pv->getNumberOfComponents());
-            std::size_t cnt(0);
-            for (auto p : _partitions)
-            {
-                for (std::size_t i = 0; i < p.nodes.size(); ++i)
-                {
-                    const auto global_id = p.nodes[i]->getID();
-                    (*partitioned_pv)[cnt+i] = (*pv)[global_id];
-                }
-                cnt += p.nodes.size();
-            }
-
+            copyPropertyVector<float>(name, total_number_of_tuples);
+        }
+        else if (original_properties.existsPropertyVector<int>(name))
+        {
+            copyPropertyVector<int>(name, total_number_of_tuples);
+        }
+        else if (original_properties.existsPropertyVector<long>(name))
+        {
+            copyPropertyVector<long>(name, total_number_of_tuples);
+        }
+        else if (original_properties.existsPropertyVector<std::size_t>(name))
+        {
+            copyPropertyVector<std::size_t>(name, total_number_of_tuples);
         }
     }
 }

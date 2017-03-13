@@ -21,6 +21,7 @@
 #include <fstream>
 
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 namespace ApplicationUtils
 {
@@ -161,6 +162,29 @@ private:
                           const bool is_mixed_high_order_linear_elems);
 
     void processProperties();
+
+    template <typename T>
+    void copyPropertyVector(std::string const& name,
+                            std::size_t const total_number_of_tuples)
+    {
+        auto const& original_properties(_mesh->getProperties());
+        auto const& pv(original_properties.getPropertyVector<T>(name));
+        auto partitioned_pv =
+            _partitioned_properties.createNewPropertyVector<T>(
+                name, pv->getMeshItemType(), pv->getNumberOfComponents());
+        partitioned_pv->resize(total_number_of_tuples *
+                               pv->getNumberOfComponents());
+        std::size_t position_offset(0);
+        for (auto p : _partitions)
+        {
+            for (std::size_t i = 0; i < p.nodes.size(); ++i)
+            {
+                const auto global_id = p.nodes[i]->getID();
+                (*partitioned_pv)[position_offset + i] = (*pv)[global_id];
+            }
+            position_offset += p.nodes.size();
+        }
+    }
 
     template <typename T>
     void writePropertyVectorValuesBinary(
