@@ -16,7 +16,9 @@
 
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
+
 #include <vtkPolyDataAlgorithm.h>
+#include <vtkType.h>
 
 class VtkColorLookupTable;
 
@@ -47,7 +49,7 @@ public:
     vtkGetObjectMacro(ColorLookupTable,VtkColorLookupTable);
 
     /// @brief This filter gets updated when the color look-up table was modified.
-    virtual unsigned long GetMTime() override;
+    virtual vtkMTimeType GetMTime() override;
 
     /// @brief Sets user properties.
     void SetUserProperty(QString name, QVariant value) override
