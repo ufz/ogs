@@ -204,9 +204,6 @@ private:
                  number_of_components * number_of_tuples * sizeof(T));
     }
 
-    void readPropertiesConfigDataBinary(
-        std::string const& file_name_base) const;
-
     /*!
          \brief Write the configuration data of the partition data in
                 binary files.

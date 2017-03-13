@@ -425,43 +425,6 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
     out_val.close();
 }
 
-void NodeWiseMeshPartitioner::readPropertiesConfigDataBinary(
-    const std::string& file_name_base) const
-{
-    const std::string fname = file_name_base + "_partitioned_properties_cfg"
-                              + std::to_string(_npartitions) + ".bin";
-    std::ifstream is(fname.c_str(), std::ios::binary | std::ios::in);
-    if (!is)
-    {
-        ERR("Could not open file '%s' in binary mode.", fname.c_str());
-    }
-    std::size_t number_of_properties = 0;
-    is.read(reinterpret_cast<char*>(&number_of_properties), sizeof(std::size_t));
-    for (std::size_t i(0); i < number_of_properties; ++i)
-    {
-        boost::optional<MeshLib::IO::PropertyVectorMetaData> pvmd(
-            MeshLib::IO::readPropertyVectorMetaData(is));
-        if (pvmd) {
-            INFO("readPropertiesConfigMetaDataBinary:");
-            MeshLib::IO::writePropertyVectorMetaData(*pvmd);
-        }
-    }
-    auto pos = is.tellg();
-    for (std::size_t i(0); i < _npartitions; ++i) {
-        auto offset =
-            pos + static_cast<std::streampos>(
-                      i * sizeof(MeshLib::IO::PropertyVectorPartitionMetaData));
-        is.seekg(offset);
-        boost::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
-            MeshLib::IO::readPropertyVectorPartitionMetaData(is));
-        if (pvpmd)
-        {
-            DBUG("[%u] offset: %u", i, pvpmd->offset);
-            DBUG("%u tuples in partition %u.", pvpmd->number_of_tuples, i);
-        }
-    }
-}
-
 std::tuple<std::vector<NodeWiseMeshPartitioner::IntegerType>,
            std::vector<NodeWiseMeshPartitioner::IntegerType>>
 NodeWiseMeshPartitioner::writeConfigDataBinary(
@@ -617,7 +580,6 @@ void NodeWiseMeshPartitioner::writeNodesBinary(const std::string& file_name_base
 void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 {
     writePropertiesBinary(file_name_base);
-    readPropertiesConfigDataBinary(file_name_base);
     const auto elem_integers = writeConfigDataBinary(file_name_base);
 
     const std::vector<IntegerType>& num_elem_integers
