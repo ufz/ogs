@@ -20,6 +20,7 @@
 #include "VtkColorLookupTable.h"
 
 #include <vtkCellData.h>
+#include <vtkFloatArray.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkLookupTable.h>
@@ -28,7 +29,6 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
-#include <vtkFloatArray.h>
 
 vtkStandardNewMacro(VtkColorByHeightFilter);
 
@@ -52,7 +52,7 @@ void VtkColorByHeightFilter::PrintSelf( ostream& os, vtkIndent indent )
     os << indent << "Interpolation Type:" << static_cast<int>(ColorLookupTable->getInterpolationType()) << endl;
 }
 
-unsigned long VtkColorByHeightFilter::GetMTime()
+vtkMTimeType VtkColorByHeightFilter::GetMTime()
 {
     unsigned long t1, t2;
 
@@ -115,4 +115,3 @@ void VtkColorByHeightFilter::SetTableRangeScaling( double scale )
     this->ColorLookupTable->SetTableRange(
             this->_tableRange[0] * scale, this->_tableRange[1] * scale);
 }
-
