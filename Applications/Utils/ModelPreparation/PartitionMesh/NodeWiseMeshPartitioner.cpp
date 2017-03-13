@@ -336,6 +336,10 @@ NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
 void NodeWiseMeshPartitioner::writePropertiesBinary(
     const std::string& file_name_base) const
 {
+    auto const& properties(_partitioned_properties);
+    auto const& property_names(properties.getPropertyVectorNames());
+    if (property_names.empty())
+        return;
     const std::string fname_cfg = file_name_base +
                                   "_partitioned_properties_cfg" +
                                   std::to_string(_npartitions) + ".bin";
@@ -346,8 +350,6 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
                                   std::to_string(_npartitions) + ".bin";
     std::ofstream out_val(fname_val.c_str(), std::ios::binary | std::ios::out);
 
-    auto const& properties(_partitioned_properties);
-    auto const& property_names(properties.getPropertyVectorNames());
     std::size_t number_of_properties(property_names.size());
     out.write(reinterpret_cast<char*>(&number_of_properties),
               sizeof(number_of_properties));
