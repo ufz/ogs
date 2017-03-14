@@ -30,6 +30,14 @@ struct PropertyVectorMetaData
     unsigned long data_type_size_in_bytes;
     unsigned long number_of_components;
     unsigned long number_of_tuples;
+
+    template <typename T>
+    void fillPropertyVectorMetaDataTypeInfo()
+    {
+        is_int_type = std::numeric_limits<T>::is_integer;
+        is_data_type_signed = std::numeric_limits<T>::is_signed;
+        data_type_size_in_bytes = sizeof(T);
+    }
 };
 
 inline void writePropertyVectorMetaDataBinary(
