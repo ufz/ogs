@@ -37,7 +37,7 @@ builders['msvc'] = {
 builders['mac'] = {
     node('mac') {
         dir('ogs') { checkoutWithTags() }
-        load 'ogs/scripts/jenkins/mac.groovy'
+        // load 'ogs/scripts/jenkins/mac.groovy'
     }
 }
 
