@@ -171,10 +171,13 @@ private:
     void processProperties();
 
     template <typename T>
-    void copyPropertyVector(std::string const& name,
+    bool copyPropertyVector(std::string const& name,
                             std::size_t const total_number_of_tuples)
     {
         auto const& original_properties(_mesh->getProperties());
+        if (!original_properties.existsPropertyVector<T>(name))
+            return false;
+
         auto const& pv(original_properties.getPropertyVector<T>(name));
         auto partitioned_pv =
             _partitioned_properties.createNewPropertyVector<T>(
@@ -191,6 +194,7 @@ private:
             }
             position_offset += p.nodes.size();
         }
+        return true;
     }
 
     template <typename T>

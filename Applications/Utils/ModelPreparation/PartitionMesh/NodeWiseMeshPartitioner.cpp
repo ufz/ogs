@@ -221,26 +221,19 @@ void NodeWiseMeshPartitioner::processProperties()
     auto property_names = original_properties.getPropertyVectorNames();
     for (auto const& name : property_names)
     {
-        if (original_properties.existsPropertyVector<double>(name))
-        {
-            copyPropertyVector<double>(name, total_number_of_tuples);
-        }
-        else if (original_properties.existsPropertyVector<float>(name))
-        {
-            copyPropertyVector<float>(name, total_number_of_tuples);
-        }
-        else if (original_properties.existsPropertyVector<int>(name))
-        {
-            copyPropertyVector<int>(name, total_number_of_tuples);
-        }
-        else if (original_properties.existsPropertyVector<long>(name))
-        {
-            copyPropertyVector<long>(name, total_number_of_tuples);
-        }
-        else if (original_properties.existsPropertyVector<std::size_t>(name))
-        {
+        bool success =
+            copyPropertyVector<double>(name, total_number_of_tuples) ||
+            copyPropertyVector<float>(name, total_number_of_tuples) ||
+            copyPropertyVector<int>(name, total_number_of_tuples) ||
+            copyPropertyVector<long>(name, total_number_of_tuples) ||
+            copyPropertyVector<unsigned>(name, total_number_of_tuples) ||
+            copyPropertyVector<unsigned long>(name, total_number_of_tuples) ||
             copyPropertyVector<std::size_t>(name, total_number_of_tuples);
-        }
+        if (!success)
+            WARN(
+                "processProperties: Could not create partitioned "
+                "PropertyVector '%s'.",
+                name.c_str());
     }
 }
 
