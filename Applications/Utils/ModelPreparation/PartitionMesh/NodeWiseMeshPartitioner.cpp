@@ -24,7 +24,6 @@
 #include "BaseLib/Error.h"
 
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 
 #include "MeshLib/Elements/Element.h"
 
@@ -338,8 +337,7 @@ NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
 void NodeWiseMeshPartitioner::writePropertiesBinary(
     const std::string& file_name_base) const
 {
-    auto const& properties(_partitioned_properties);
-    auto const& property_names(properties.getPropertyVectorNames());
+    auto const& property_names(_partitioned_properties.getPropertyVectorNames());
     if (property_names.empty())
         return;
     const std::string fname_cfg = file_name_base +
@@ -357,49 +355,18 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
               sizeof(number_of_properties));
     for (auto const& name : property_names)
     {
-        MeshLib::IO::PropertyVectorMetaData pvmd;
-        pvmd.property_name = name;
-        {
-            if (properties.existsPropertyVector<double>(name))
-            {
-                auto* pv = properties.getPropertyVector<double>(name);
-                MeshLib::IO::fillPropertyVectorMetaDataTypeInfo<double>(pvmd);
-                pvmd.number_of_components = pv->getNumberOfComponents();
-                pvmd.number_of_tuples = pv->getNumberOfTuples();
-                writePropertyVectorValuesBinary(out_val, *pv);
-            }
-        }
-        {
-            if (properties.existsPropertyVector<float>(name))
-            {
-                auto* pv = properties.getPropertyVector<float>(name);
-                MeshLib::IO::fillPropertyVectorMetaDataTypeInfo<float>(pvmd);
-                pvmd.number_of_components = pv->getNumberOfComponents();
-                pvmd.number_of_tuples = pv->getNumberOfTuples();
-                writePropertyVectorValuesBinary(out_val, *pv);
-            }
-        }
-        {
-            if (properties.existsPropertyVector<int>(name))
-            {
-                auto* pv = properties.getPropertyVector<int>(name);
-                MeshLib::IO::fillPropertyVectorMetaDataTypeInfo<int>(pvmd);
-                pvmd.number_of_components = pv->getNumberOfComponents();
-                pvmd.number_of_tuples = pv->getNumberOfTuples();
-                writePropertyVectorValuesBinary(out_val, *pv);
-            }
-        }
-        {
-            if (properties.existsPropertyVector<unsigned>(name))
-            {
-                auto* pv = properties.getPropertyVector<unsigned>(name);
-                MeshLib::IO::fillPropertyVectorMetaDataTypeInfo<unsigned>(pvmd);
-                pvmd.number_of_components = pv->getNumberOfComponents();
-                pvmd.number_of_tuples = pv->getNumberOfTuples();
-                writePropertyVectorValuesBinary(out_val, *pv);
-            }
-        }
-        MeshLib::IO::writePropertyVectorMetaDataBinary(out, pvmd);
+        bool success =
+            writePropertyVectorBinary<double>(name, out_val, out) ||
+            writePropertyVectorBinary<float>(name, out_val, out) ||
+            writePropertyVectorBinary<int>(name, out_val, out) ||
+            writePropertyVectorBinary<long>(name, out_val, out) ||
+            writePropertyVectorBinary<unsigned>(name, out_val, out) ||
+            writePropertyVectorBinary<unsigned long>(name, out_val, out) ||
+            writePropertyVectorBinary<std::size_t>(name, out_val, out);
+        if (!success)
+            OGS_FATAL(
+                "writePropertiesBinary: Could not write PropertyVector '%s'.",
+                name.c_str());
     }
     unsigned long offset = 0;
     for (const auto& partition : _partitions)

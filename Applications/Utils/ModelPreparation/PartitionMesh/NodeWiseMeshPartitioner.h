@@ -22,6 +22,7 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 
 namespace ApplicationUtils
 {
@@ -209,6 +210,25 @@ private:
         os.write(reinterpret_cast<char*>(property_vector_buffer.data()),
                  number_of_components * number_of_tuples * sizeof(T));
     }
+
+    template <typename T>
+    bool writePropertyVectorBinary(std::string const& name,
+                                   std::ostream& out_val,
+                                   std::ostream& out_meta) const
+    {
+        if (!_partitioned_properties.existsPropertyVector<T>(name))
+            return false;
+
+        MeshLib::IO::PropertyVectorMetaData pvmd;
+        pvmd.property_name = name;
+        auto* pv = _partitioned_properties.getPropertyVector<T>(name);
+        pvmd.fillPropertyVectorMetaDataTypeInfo<T>();
+        pvmd.number_of_components = pv->getNumberOfComponents();
+        pvmd.number_of_tuples = pv->getNumberOfTuples();
+        writePropertyVectorValuesBinary(out_val, *pv);
+        MeshLib::IO::writePropertyVectorMetaDataBinary(out_meta, pvmd);
+        return true;
+     }
 
     /*!
          \brief Write the configuration data of the partition data in
