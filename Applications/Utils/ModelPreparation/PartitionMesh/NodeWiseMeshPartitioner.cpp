@@ -359,14 +359,11 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
     {
         MeshLib::IO::PropertyVectorMetaData pvmd;
         pvmd.property_name = name;
-        pvmd.is_int_type = false;
         {
             if (properties.existsPropertyVector<double>(name))
             {
                 auto* pv = properties.getPropertyVector<double>(name);
-                pvmd.is_int_type = false;
-                pvmd.is_data_type_signed = false;
-                pvmd.data_type_size_in_bytes = sizeof(double);
+                MeshLib::IO::fillPropertyVectorMetaDataTypeInfo<double>(pvmd);
                 pvmd.number_of_components = pv->getNumberOfComponents();
                 pvmd.number_of_tuples = pv->getNumberOfTuples();
                 writePropertyVectorValuesBinary(out_val, *pv);
@@ -376,9 +373,7 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
             if (properties.existsPropertyVector<float>(name))
             {
                 auto* pv = properties.getPropertyVector<float>(name);
-                pvmd.is_int_type = false;
-                pvmd.is_data_type_signed = false;
-                pvmd.data_type_size_in_bytes = sizeof(float);
+                MeshLib::IO::fillPropertyVectorMetaDataTypeInfo<float>(pvmd);
                 pvmd.number_of_components = pv->getNumberOfComponents();
                 pvmd.number_of_tuples = pv->getNumberOfTuples();
                 writePropertyVectorValuesBinary(out_val, *pv);
@@ -388,9 +383,7 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
             if (properties.existsPropertyVector<int>(name))
             {
                 auto* pv = properties.getPropertyVector<int>(name);
-                pvmd.is_int_type = true;
-                pvmd.is_data_type_signed = true;
-                pvmd.data_type_size_in_bytes = sizeof(int);
+                MeshLib::IO::fillPropertyVectorMetaDataTypeInfo<int>(pvmd);
                 pvmd.number_of_components = pv->getNumberOfComponents();
                 pvmd.number_of_tuples = pv->getNumberOfTuples();
                 writePropertyVectorValuesBinary(out_val, *pv);
@@ -400,9 +393,7 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
             if (properties.existsPropertyVector<unsigned>(name))
             {
                 auto* pv = properties.getPropertyVector<unsigned>(name);
-                pvmd.is_int_type = true;
-                pvmd.is_data_type_signed = false;
-                pvmd.data_type_size_in_bytes = sizeof(unsigned);
+                MeshLib::IO::fillPropertyVectorMetaDataTypeInfo<unsigned>(pvmd);
                 pvmd.number_of_components = pv->getNumberOfComponents();
                 pvmd.number_of_tuples = pv->getNumberOfTuples();
                 writePropertyVectorValuesBinary(out_val, *pv);
