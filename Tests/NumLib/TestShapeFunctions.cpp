@@ -17,20 +17,6 @@
 #include <numeric>
 #include <valarray>
 
-namespace autocheck{
-
-template <typename T, std::size_t N>
-std::ostream& operator<<(std::ostream& os, std::array<T, N> const& array)
-{
-    os << "[";
-    std::copy(std::begin(array), std::end(array),
-              std::ostream_iterator<double>(os, ","));
-    os << "]";
-    return os;
-}
-}
-#include <autocheck/autocheck.hpp>
-
 #include "MeshLib/Elements/Elements.h"
 #include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
 #include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
