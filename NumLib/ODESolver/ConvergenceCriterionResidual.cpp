@@ -29,8 +29,8 @@ ConvergenceCriterionResidual::ConvergenceCriterionResidual(
             "specified.");
 }
 
-void ConvergenceCriterionResidual::checkDeltaX(const GlobalVector& minus_delta_x,
-                                             GlobalVector const& x)
+void ConvergenceCriterionResidual::checkDeltaX(
+    const GlobalVector& minus_delta_x, GlobalVector const& x)
 {
     auto error_dx = MathLib::LinAlg::norm(minus_delta_x, _norm_type);
     auto norm_x = MathLib::LinAlg::norm(x, _norm_type);
@@ -43,10 +43,18 @@ void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
 {
     auto norm_res = MathLib::LinAlg::norm(residual, _norm_type);
 
-    if (_is_first_iteration) {
+    if (_is_first_iteration)
+    {
         INFO("Convergence criterion: |r0|=%.4e", norm_res);
-        _residual_norm_0 = norm_res;
-    } else {
+        _residual_norm_0 =
+            (norm_res < std::numeric_limits<double>::min()) ? 1.0 : norm_res;
+    }
+    else
+    {
+        _residual_norm_0 = (_residual_norm_0 == 1 &&
+                            norm_res > std::numeric_limits<double>::min())
+                               ? norm_res
+                               : 1.0;
         INFO("Convergence criterion: |r|=%.4e |r0|=%.4e |r|/|r0|=%.4e",
              norm_res, _residual_norm_0, norm_res / _residual_norm_0);
     }
@@ -54,10 +62,12 @@ void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
     bool satisfied_abs = false;
     bool satisfied_rel = false;
 
-    if (_abstol) {
+    if (_abstol)
+    {
         satisfied_abs = norm_res < *_abstol;
     }
-    if (_reltol && !_is_first_iteration) {
+    if (_reltol && !_is_first_iteration)
+    {
         satisfied_rel =
             checkRelativeTolerance(*_reltol, norm_res, _residual_norm_0);
     }
