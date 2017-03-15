@@ -491,7 +491,7 @@ UncoupledProcessesTimeLoop::UncoupledProcessesTimeLoop(
 bool UncoupledProcessesTimeLoop::setCoupledSolutions()
 {
     // Do nothing if process are not coupled
-    if (!_global_coupling_conv_crit && _global_coupling_max_iterations == 1)
+    if ((!_global_coupling_conv_crit) || _global_coupling_max_iterations == 1)
         return false;
 
     unsigned pcs_idx = 0;
