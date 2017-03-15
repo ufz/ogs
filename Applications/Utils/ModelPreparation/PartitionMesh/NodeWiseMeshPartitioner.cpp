@@ -110,10 +110,12 @@ void NodeWiseMeshPartitioner::findElementsInPartition(
 {
     auto& partition = _partitions[part_id];
     std::vector<MeshLib::Element*> const& elements = _mesh->getElements();
+    std::vector<bool> _is_regular_element(elements.size(), false);
+
     for (std::size_t elem_id = 0; elem_id < elements.size(); elem_id++)
     {
         const auto* elem = elements[elem_id];
-        if (_elements_status[elem_id])
+        if (_is_regular_element[elem_id])
             continue;
 
         std::size_t non_ghost_node_number = 0;
@@ -131,7 +133,7 @@ void NodeWiseMeshPartitioner::findElementsInPartition(
         if (non_ghost_node_number == elem->getNumberOfNodes())
         {
             partition.regular_elements.push_back(elem);
-            _elements_status[elem_id] = true;
+            _is_regular_element[elem_id] = true;
         }
         else
         {

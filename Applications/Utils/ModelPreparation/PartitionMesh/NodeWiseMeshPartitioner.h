@@ -56,8 +56,7 @@ public:
           _partitioned_properties(),
           _mesh(std::move(mesh)),
           _nodes_global_ids(_mesh->getNumberOfNodes()),
-          _nodes_partition_ids(_mesh->getNumberOfNodes()),
-          _elements_status(_mesh->getNumberOfElements(), false)
+          _nodes_partition_ids(_mesh->getNumberOfNodes())
     {
     }
 
@@ -101,9 +100,6 @@ private:
 
     /// Partition IDs of each nodes.
     std::vector<std::size_t> _nodes_partition_ids;
-
-    /// Flags to indicate that whether elements are processed or not.
-    std::vector<bool> _elements_status;
 
     // Renumber the global indices of nodes,
     /// \param is_mixed_high_order_linear_elems Flag to indicate whether the
