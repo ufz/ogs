@@ -43,10 +43,12 @@ namespace Solids
 {
 namespace Ehlers
 {
-
-/// Special product of \p v with itself: \f$v \odot v\f$.
-/// v is given in \p Kelvin mapping.
+/// Special product of \c v with itself: \f$v \odot v\f$.
+/// The tensor \c v is given in Kelvin mapping.
 /// \note Implementation only for 2 and 3 dimensions.
+/// \attention Pay attention to the sign of the result, which normally would be
+/// negative, but the returned value is not negated. This has to do with \f$
+/// d(A^{-1})/dA = -A^{-1} \odot A^{-1} \f$.
 template <int DisplacementDim>
 ProcessLib::KelvinMatrixType<DisplacementDim> sOdotS(
     ProcessLib::KelvinVectorType<DisplacementDim> const& v);
