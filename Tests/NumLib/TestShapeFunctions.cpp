@@ -43,10 +43,8 @@ std::ostream& operator<<(std::ostream& os, std::array<T, N> const& array)
 #include "NumLib/Fem/ShapeFunction/ShapeTet4.h"
 #include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
 #include "NumLib/Fem/ShapeFunction/ShapeTri6.h"
-
+#include "Tests/AutoCheckTools.h"
 #include "Tests/TestTools.h"
-
-#include "../MathLib/AutoCheckTools.h"
 
 namespace autocheck
 {

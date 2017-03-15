@@ -9,14 +9,13 @@
 #include <ctime>
 #include <memory>
 #include <gtest/gtest.h>
-#include <autocheck/autocheck.hpp>
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshGeoToolsLib/GeoMapper.h"
-#include "../MathLib/AutoCheckTools.h"
+#include "Tests/AutoCheckTools.h"
 
 namespace ac = autocheck;
 
