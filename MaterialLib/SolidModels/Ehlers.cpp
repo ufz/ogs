@@ -19,7 +19,7 @@ template class SolidEhlers<2>;
 template class SolidEhlers<3>;
 
 template <>
-ProcessLib::KelvinMatrixType<3> s_odot_s<3>(
+ProcessLib::KelvinMatrixType<3> sOdotS<3>(
     ProcessLib::KelvinVectorType<3> const& v)
 {
     ProcessLib::KelvinMatrixType<3> result;
@@ -57,7 +57,7 @@ ProcessLib::KelvinMatrixType<3> s_odot_s<3>(
 }
 
 template <>
-ProcessLib::KelvinMatrixType<2> s_odot_s<2>(
+ProcessLib::KelvinMatrixType<2> sOdotS<2>(
     ProcessLib::KelvinVectorType<2> const& v)
 {
     ProcessLib::KelvinMatrixType<2> result;

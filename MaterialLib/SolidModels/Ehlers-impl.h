@@ -48,7 +48,7 @@ namespace Ehlers
 /// v is given in \p Kelvin mapping.
 /// \note Implementation only for 2 and 3 dimensions.
 template <int DisplacementDim>
-ProcessLib::KelvinMatrixType<DisplacementDim> s_odot_s(
+ProcessLib::KelvinMatrixType<DisplacementDim> sOdotS(
     ProcessLib::KelvinVectorType<DisplacementDim> const& v);
 
 template <int DisplacementDim>
@@ -319,7 +319,7 @@ void calculatePlasticJacobian(
         one_gt.pow_m_p * (P_dev + s.D * gm_p * M0.transpose());
     // second derivative of theta
     KelvinMatrix const d2theta_dsigma2 =
-        theta * P_dev * s_odot_s<DisplacementDim>(sigma_D_inverse) * P_dev +
+        theta * P_dev * sOdotS<DisplacementDim>(sigma_D_inverse) * P_dev +
         sigma_D_inverse_D * dtheta_dsigma.transpose() -
         3. / 2. * theta / s.J_2 * P_dev -
         3. / 2. * dtheta_dsigma / s.J_2 * s.D.transpose() +
