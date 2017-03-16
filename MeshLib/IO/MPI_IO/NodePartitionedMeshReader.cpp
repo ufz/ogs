@@ -16,6 +16,10 @@
 
 #include <logog/include/logog.hpp>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 
@@ -232,7 +236,11 @@ MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
     is.seekg(offset);
     boost::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
         MeshLib::IO::readPropertyVectorPartitionMetaData(is));
-    if (!pvpmd)
+    bool pvpmd_read_ok = static_cast<bool>(pvpmd);
+    bool all_pvpmd_read_ok;
+    MPI_Allreduce(&pvpmd_read_ok, &all_pvpmd_read_ok, 1, MPI_C_BOOL, MPI_LOR,
+                  _mpi_comm);
+    if (!all_pvpmd_read_ok)
     {
         OGS_FATAL(
             "Error in NodePartitionedMeshReader::readPropertiesBinary: "
