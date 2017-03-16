@@ -49,6 +49,29 @@ void RichardsFlowProcess::initializeConcreteProcess(
         makeExtrapolator(
             getExtrapolator(), _local_assemblers,
             &RichardsFlowLocalAssemblerInterface::getIntPtSaturation));
+
+    _secondary_variables.addSecondaryVariable(
+        "darcy_velocity_x", 1,
+        makeExtrapolator(
+            getExtrapolator(), _local_assemblers,
+            &RichardsFlowLocalAssemblerInterface::getIntPtDarcyVelocityX));
+
+    if (mesh.getDimension() > 1)
+    {
+        _secondary_variables.addSecondaryVariable(
+            "darcy_velocity_y", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &RichardsFlowLocalAssemblerInterface::getIntPtDarcyVelocityY));
+    }
+    if (mesh.getDimension() > 2)
+    {
+        _secondary_variables.addSecondaryVariable(
+            "darcy_velocity_z", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &RichardsFlowLocalAssemblerInterface::getIntPtDarcyVelocityZ));
+    }
 }
 
 void RichardsFlowProcess::assembleConcreteProcess(const double t,
@@ -80,6 +103,16 @@ void RichardsFlowProcess::assembleWithJacobianConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
         dx_dx, M, K, b, Jac, coupling_term);
+}
+
+void RichardsFlowProcess::computeSecondaryVariableConcrete(
+    double const t, GlobalVector const& x,
+    StaggeredCouplingTerm const& coupling_term)
+{
+    DBUG("Compute the Darcy velocity for RichardsFlowProcess");
+    GlobalExecutor::executeMemberOnDereferenced(
+        &RichardsFlowLocalAssemblerInterface::computeSecondaryVariable,
+        _local_assemblers, *_local_to_global_index_map, t, x, coupling_term);
 }
 
 }  // namespace RichardsFlow
