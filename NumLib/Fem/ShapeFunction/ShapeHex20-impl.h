@@ -12,12 +12,12 @@ namespace
 
 inline double ShapeFunctionHexHQ_Corner(const double r, const double s, const double t)
 {
-    return 0.125 * (1 + r) * (1 + s) * (1 + t) * ( r + s + t - 2.0);
+    return 0.125 * (r - 1) * (s - 1) * (t - 1) * (r + s + t + 2.0);
 }
 
 inline double ShapeFunctionHexHQ_Middle(const double r, const double s, const double t)
 {
-    return 0.25 * (1 - r * r) * (1 + s) * (1 + t);
+    return 0.25 * (1 - r * r) * (s - 1) * (t - 1);
 }
 
 inline double dShapeFunctionHexHQ_Corner(const double r, const double s, const double t, const int ty)
@@ -25,11 +25,11 @@ inline double dShapeFunctionHexHQ_Corner(const double r, const double s, const d
     switch(ty)
     {
     case 0:
-        return 0.125 * (1 + s) * (1 + t) * (2.0 * r + s + t - 1.0);
+        return 0.125 * (s - 1) * (t - 1) * (2.0 * r + s + t + 1.0);
     case 1:
-        return 0.125 * (1 + t) * (1 + r) * (2.0 * s + r + t - 1.0);
+        return 0.125 * (t - 1) * (r - 1) * (2.0 * s + r + t + 1.0);
     case 2:
-        return 0.125 * (1 + r) * (1 + s) * (2.0 * t + s + r - 1.0);
+        return 0.125 * (r - 1) * (s - 1) * (2.0 * t + s + r + 1.0);
     }
     return 0.0;
 }
@@ -39,11 +39,11 @@ inline double dShapeFunctionHexHQ_Middle(const double r, const double s, const d
     switch(ty)
     {
     case 0:
-        return -0.5 * r * (1 + s) * (1 + t);
+        return -0.5 * r * (s - 1) * (t - 1);
     case 1:
-        return 0.25 * (1 - r * r) * (1 + t);
+        return 0.25 * (1 - r * r) * (t - 1);
     case 2:
-        return 0.25 * (1 - r * r) * (1 + s);
+        return 0.25 * (1 - r * r) * (s - 1);
     }
     return 0.0;
 }

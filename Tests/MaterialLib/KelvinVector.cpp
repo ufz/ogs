@@ -10,7 +10,7 @@
 
 #include "MaterialLib/SolidModels/KelvinVector.h"
 
-#include "Tests/MathLib/AutoCheckTools.h"
+#include "Tests/AutoCheckTools.h"
 
 using namespace MaterialLib::SolidModels;
 namespace ac = autocheck;

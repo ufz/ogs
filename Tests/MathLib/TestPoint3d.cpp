@@ -16,7 +16,7 @@
 
 #include "MathLib/Point3d.h"
 
-#include "AutoCheckTools.h"
+#include "Tests/AutoCheckTools.h"
 
 using namespace MathLib;
 namespace ac = autocheck;

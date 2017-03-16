@@ -63,6 +63,19 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
     )
 endforeach()
 
+# Quadratic hex element.
+AddTest(
+    NAME GroundWaterFlowProcess_cube_1x1x1_1e0_QuadraticHex
+    PATH Elliptic/cube_1x1x1_GroundWaterFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e0_quadratic_hex.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-15 RELTOL 1e-15
+    DIFF_DATA
+    cube_1x1x1_hex20_1e0.vtu cube_1e0_quadratic_hex_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
+)
+
 # SQUARE 1x1 GROUNDWATER FLOW TESTS
 foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
     AddTest(

@@ -13,6 +13,22 @@
 
 #include "MathLib/Point3d.h"
 
+
+namespace std{
+
+/// Output of array enclosed in brackets. Required for autocheck for output of
+/// std::arrays in case of failing test.
+template <typename T, std::size_t N>
+std::ostream& operator<<(std::ostream& os, std::array<T, N> const& array)
+{
+    os << "[";
+    std::copy(std::begin(array), std::end(array),
+              std::ostream_iterator<double>(os, ","));
+    os << "]";
+    return os;
+}
+}
+
 namespace autocheck
 {
 
