@@ -38,12 +38,12 @@ class UncoupledProcessesTimeLoop
 {
 public:
     explicit UncoupledProcessesTimeLoop(
-        std::unique_ptr<NumLib::ITimeStepAlgorithm>&& timestepper,
         std::unique_ptr<Output>&& output,
         std::vector<std::unique_ptr<SingleProcessData>>&& per_process_data,
         const unsigned global_coupling_max_iterations,
         std::unique_ptr<NumLib::ConvergenceCriterion>&&
-            global_coupling_conv_crit);
+            global_coupling_conv_crit,
+        const double start_time, const double end_time);
 
     bool loop();
 
@@ -63,9 +63,11 @@ public:
 
 private:
     std::vector<GlobalVector*> _process_solutions;
-    std::unique_ptr<NumLib::ITimeStepAlgorithm> _timestepper;
     std::unique_ptr<Output> _output;
     std::vector<std::unique_ptr<SingleProcessData>> _per_process_data;
+
+    const double _start_time;
+    const double _end_time;
 
     /// Maximum iterations of the global coupling.
     const unsigned _global_coupling_max_iterations;
