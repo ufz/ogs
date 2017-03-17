@@ -16,6 +16,10 @@
 
 #include <logog/include/logog.hpp>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 
@@ -184,8 +188,125 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
     setElements(mesh_nodes, ghost_elem_data, mesh_elems, process_ghost);
 
     //----------------------------------------------------------------------------------
-    return newMesh(BaseLib::extractBaseName(file_name_base),
-               mesh_nodes, glb_node_ids, mesh_elems);
+    // read the properties
+    MeshLib::Properties p(readPropertiesBinary(file_name_base));
+
+    return newMesh(BaseLib::extractBaseName(file_name_base), mesh_nodes,
+                   glb_node_ids, mesh_elems, p);
+}
+
+MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
+    const std::string& file_name_base) const
+{
+    const std::string fname_cfg = file_name_base +
+                                  "_partitioned_properties_cfg" +
+                                  std::to_string(_mpi_comm_size) + ".bin";
+    std::ifstream is(fname_cfg.c_str(), std::ios::binary | std::ios::in);
+    if (!is)
+    {
+        WARN("Could not open file '%s' in binary mode.", fname_cfg.c_str());
+        return MeshLib::Properties();
+    }
+    std::size_t number_of_properties = 0;
+    is.read(reinterpret_cast<char*>(&number_of_properties), sizeof(std::size_t));
+    std::vector<boost::optional<MeshLib::IO::PropertyVectorMetaData>> vec_pvmd(
+        number_of_properties);
+    for (std::size_t i(0); i < number_of_properties; ++i)
+    {
+        vec_pvmd[i] = MeshLib::IO::readPropertyVectorMetaData(is);
+        if (!vec_pvmd[i])
+        {
+            OGS_FATAL(
+                "Error in NodePartitionedMeshReader::readPropertiesBinary: "
+                "Could not read the meta data for the PropertyVector %d",
+                i);
+        }
+    }
+    for (std::size_t i(0); i < number_of_properties; ++i)
+    {
+        DBUG("[%d] +++++++++++++", _mpi_rank);
+        MeshLib::IO::writePropertyVectorMetaData(*(vec_pvmd[i]));
+        DBUG("[%d] +++++++++++++", _mpi_rank);
+    }
+    auto pos = is.tellg();
+    auto offset =
+        pos +
+        static_cast<long>(_mpi_rank *
+                          sizeof(MeshLib::IO::PropertyVectorPartitionMetaData));
+    is.seekg(offset);
+    boost::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
+        MeshLib::IO::readPropertyVectorPartitionMetaData(is));
+    bool pvpmd_read_ok = static_cast<bool>(pvpmd);
+    bool all_pvpmd_read_ok;
+    MPI_Allreduce(&pvpmd_read_ok, &all_pvpmd_read_ok, 1, MPI_C_BOOL, MPI_LOR,
+                  _mpi_comm);
+    if (!all_pvpmd_read_ok)
+    {
+        OGS_FATAL(
+            "Error in NodePartitionedMeshReader::readPropertiesBinary: "
+            "Could not read the partition meta data for the mpi process %d",
+            _mpi_rank);
+    }
+    DBUG("[%d] offset in the PropertyVector: %d", _mpi_rank, pvpmd->offset);
+    DBUG("[%d] %d tuples in partition.", _mpi_rank, pvpmd->number_of_tuples);
+    is.close();
+
+    const std::string fname_val = file_name_base + "_partitioned_properties_val"
+                              + std::to_string(_mpi_comm_size) + ".bin";
+    is.open(fname_val.c_str(), std::ios::binary | std::ios::in);
+    if (!is)
+    {
+        ERR("Could not open file '%s' in binary mode.", fname_val.c_str());
+    }
+
+    MeshLib::Properties p;
+
+    // Read the specific parts of the PropertyVector values for this process.
+    unsigned long global_offset = 0;
+    for (std::size_t i(0); i < number_of_properties; ++i)
+    {
+        INFO("[%d] global offset: %d, offset within the PropertyVector: %d.",
+             _mpi_rank, global_offset,
+             global_offset +
+                 pvpmd->offset * vec_pvmd[i]->data_type_size_in_bytes);
+        if (vec_pvmd[i]->is_int_type)
+        {
+            if (vec_pvmd[i]->is_data_type_signed)
+            {
+                if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(int))
+                    createPropertyVectorPart<int>(is, *vec_pvmd[i], *pvpmd,
+                                                  global_offset, p);
+                if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(long))
+                    createPropertyVectorPart<long>(is, *vec_pvmd[i], *pvpmd,
+                                                   global_offset, p);
+            }
+            else
+            {
+                if (vec_pvmd[i]->data_type_size_in_bytes ==
+                    sizeof(unsigned int))
+                    createPropertyVectorPart<unsigned int>(
+                        is, *vec_pvmd[i], *pvpmd, global_offset, p);
+                if (vec_pvmd[i]->data_type_size_in_bytes ==
+                    sizeof(unsigned long))
+                    createPropertyVectorPart<unsigned long>(
+                        is, *vec_pvmd[i], *pvpmd, global_offset, p);
+            }
+        }
+        else
+        {
+            if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(float))
+                createPropertyVectorPart<float>(is, *vec_pvmd[i], *pvpmd,
+                                                global_offset, p);
+            if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(double))
+                createPropertyVectorPart<double>(is, *vec_pvmd[i], *pvpmd,
+                                                 global_offset, p);
+        }
+        global_offset += vec_pvmd[i]->data_type_size_in_bytes *
+                         vec_pvmd[i]->number_of_tuples *
+                         vec_pvmd[i]->number_of_components;
+    }
+
+    return p;
 }
 
 bool NodePartitionedMeshReader::openASCIIFiles(std::string const& file_name_base,
@@ -369,28 +490,31 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
         MPI_Bcast(_mesh_info.data(), static_cast<int>(_mesh_info.size()),
             MPI_LONG, 0, _mpi_comm);
 
-        //----------------------------------------------------------------------------------
+        //---------------------------------------------------------------------
         // Read Nodes
         if (!readCastNodesASCII(is_node, i, mesh_nodes, glb_node_ids))
             break;
 
-        //----------------------------------------------------------------------------------
+        //---------------------------------------------------------------------
         // Read elements
         if (!readCastElemsASCII(is_elem, i,
             _mesh_info.regular_elements + _mesh_info.offset[0],
             false, mesh_nodes, mesh_elems))
             break;
 
-        //-------------------------------------------------------------------------
+        //---------------------------------------------------------------------
         // Ghost elements
         if (!readCastElemsASCII(is_elem, i,
             _mesh_info.ghost_elements + _mesh_info.offset[1],
             true, mesh_nodes, mesh_elems))
             break;
 
-        if(_mpi_rank == i)
+        if(_mpi_rank == i) {
+            // reading ascii properties is not implemented
+            MeshLib::Properties properties;
             np_mesh = newMesh(BaseLib::extractBaseName(file_name_base),
-                    mesh_nodes, glb_node_ids, mesh_elems);
+                    mesh_nodes, glb_node_ids, mesh_elems, properties);
+        }
     }
 
     if(_mpi_rank == 0)
@@ -405,17 +529,17 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readASCII(
     return np_mesh;
 }
 
-MeshLib::NodePartitionedMesh*
-NodePartitionedMeshReader::newMesh(
+MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
     std::string const& mesh_name,
     std::vector<MeshLib::Node*> const& mesh_nodes,
     std::vector<unsigned long> const& glb_node_ids,
-    std::vector<MeshLib::Element*> const& mesh_elems) const
+    std::vector<MeshLib::Element*> const& mesh_elems,
+    MeshLib::Properties const& properties) const
 {
     return new MeshLib::NodePartitionedMesh(
         mesh_name + std::to_string(_mpi_comm_size),
         mesh_nodes, glb_node_ids, mesh_elems,
-        MeshLib::Properties(),
+        properties,
         _mesh_info.global_base_nodes,
         _mesh_info.global_nodes,
         _mesh_info.base_nodes,

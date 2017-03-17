@@ -20,11 +20,14 @@
 #include <mpi.h>
 
 #include "MeshLib/NodePartitionedMesh.h"
+#include "MeshLib/Properties.h"
+#include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 
 namespace MeshLib
 {
 class Node;
 class Element;
+class Properties;
 
 namespace IO
 {
@@ -100,17 +103,21 @@ private:
     } _mesh_info;
 
     /*!
-        \brief Create a new mesh of NodePartitionedMesh after reading and processing the data.
+        \brief Create a new mesh of NodePartitionedMesh after reading and
+       processing the data.
         \param mesh_name    Name assigned to the new mesh.
         \param mesh_nodes   Node data.
         \param glb_node_ids Global IDs of nodes.
         \param mesh_elems   Element data.
-        \return             True on success and false otherwise.
+        \param properties Collection of PropertyVector's assigned to the mesh.
+        \return Returns a pointer to a NodePartitionedMesh
      */
-    MeshLib::NodePartitionedMesh* newMesh(std::string const& mesh_name,
+    MeshLib::NodePartitionedMesh* newMesh(
+        std::string const& mesh_name,
         std::vector<MeshLib::Node*> const& mesh_nodes,
         std::vector<unsigned long> const& glb_node_ids,
-        std::vector<MeshLib::Element*> const& mesh_elems) const;
+        std::vector<MeshLib::Element*> const& mesh_elems,
+        MeshLib::Properties const& properties) const;
 
     /*!
         \brief Parallel reading of a binary file via MPI_File_read, and it is called by readBinary
@@ -158,18 +165,49 @@ private:
      */
     MeshLib::NodePartitionedMesh* readBinary(const std::string &file_name_base);
 
+    MeshLib::Properties readPropertiesBinary(const std::string& file_name_base) const;
+
+    template <typename T>
+    void createPropertyVectorPart(
+        std::istream& is, MeshLib::IO::PropertyVectorMetaData const& pvmd,
+        MeshLib::IO::PropertyVectorPartitionMetaData const& pvpmd,
+        unsigned long global_offset, MeshLib::Properties& p) const
+    {
+        MeshLib::PropertyVector<T>* pv =
+            p.createNewPropertyVector<T>(pvmd.property_name,
+                                         MeshLib::MeshItemType::Node,
+                                         pvmd.number_of_components);
+        pv->resize(pvpmd.number_of_tuples * pvmd.number_of_components);
+        // jump to the place for reading the specific part of the
+        // PropertyVector
+        is.seekg(global_offset + pvpmd.offset * sizeof(T));
+        // read the values
+        unsigned long const number_of_bytes = pvmd.data_type_size_in_bytes *
+                                              pvpmd.number_of_tuples *
+                                              pvmd.number_of_components;
+        if (!is.read(reinterpret_cast<char*>(pv->data()), number_of_bytes))
+            OGS_FATAL(
+                "Error in NodePartitionedMeshReader::readPropertiesBinary: "
+                "Could not read part %d of the PropertyVector.",
+                _mpi_rank);
+    }
+
     /*!
         \brief Open ASCII files of node partitioned mesh data.
 
-        \param file_name_base  Name of file to be read, which must be a name with the
+        \param file_name_base  Name of file to be read, which must be a name
+       with the
                                path to the file and without file extension.
-        \param is_cfg          Input stream for the file contains configuration data.
+        \param is_cfg          Input stream for the file contains
+       configuration data.
         \param is_node         Input stream for the file contains node data.
-        \param is_elem         Input stream for the file contains element data.
+        \param is_elem         Input stream for the file contains element
+       data.
         \return                Return true if all files are good.
      */
-    bool openASCIIFiles(std::string const& file_name_base,std::ifstream& is_cfg,
-        std::ifstream& is_node, std::ifstream& is_elem) const;
+    bool openASCIIFiles(std::string const& file_name_base,
+                        std::ifstream& is_cfg, std::ifstream& is_node,
+                        std::ifstream& is_elem) const;
 
     /*!
         \brief Read mesh nodes from an ASCII file and cast to the corresponding rank.
