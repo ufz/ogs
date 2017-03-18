@@ -14,6 +14,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
@@ -111,6 +112,11 @@ std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& org_mesh)
         if (e->getCellType() == MeshLib::CellType::LINE2)
         {
             vec_new_eles.push_back(createQuadraticElement<MeshLib::Line3>(
+                e, vec_edges, vec_new_nodes, org_mesh.getNumberOfNodes()));
+        }
+        else if (e->getCellType() == MeshLib::CellType::TRI3)
+        {
+            vec_new_eles.push_back(createQuadraticElement<MeshLib::Tri6>(
                 e, vec_edges, vec_new_nodes, org_mesh.getNumberOfNodes()));
         }
         else if (e->getCellType() == MeshLib::CellType::QUAD4)
