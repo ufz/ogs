@@ -11,6 +11,10 @@ def post = new ogs.post()
 def helper = new ogs.helper()
 
 stage('Configure (envinf1)') {
+    if (helper.isOriginMaster(this)) {
+        defaultCMakeOptions +=
+            ' -DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/default'
+    }
     configure.linux(cmakeOptions: defaultCMakeOptions, env: 'envinf1/cli.sh', script: this)
     configure.linux(cmakeOptions: defaultCMakeOptions + '-DOGS_USE_PETSC=ON',
         dir: 'build-petsc', env: 'envinf1/petsc.sh', script: this)
@@ -31,6 +35,10 @@ stage('Test (envinf1)') {
         build.linux(dir: 'build-petsc', env: 'envinf1/petsc.sh', script: this,
             target: 'tests ctest')
     }
+}
+
+stage('Deploy (envinf1)') {
+    build.linux(env: 'envinf1/cli.sh', script: this, target: 'install')
 }
 
 stage('Post (envinf1)') {

@@ -73,6 +73,9 @@ find_program(YARN yarn)
 find_program(PIP pip)
 find_package(PythonInterp)
 
+find_program(MODULE_CMD modulecmd
+    PATHS /usr/local/modules/3.2.10-1/Modules/3.2.10/bin)
+
 ######################
 ### Find libraries ###
 ######################
