@@ -23,7 +23,8 @@ namespace InSituLib
 {
 vtkCPProcessor* Processor = nullptr;
 
-void Initialize(BaseLib::ConfigTree const & scripts_config, std::string const & path)
+void Initialize(BaseLib::ConfigTree const& scripts_config,
+                std::string const& path)
 {
     if (Processor == nullptr)
     {
@@ -74,7 +75,8 @@ void CoProcess(MeshLib::Mesh const& mesh, double const time,
         vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
         vtkSource->SetMesh(&mesh);
         vtkSource->Update();
-        dataDescription->GetInputDescriptionByName("input")->SetGrid(vtkSource->GetOutput());
+        dataDescription->GetInputDescriptionByName("input")->SetGrid(
+            vtkSource->GetOutput());
         Processor->CoProcess(dataDescription.GetPointer());
         INFO("End InSitu process.");
     }

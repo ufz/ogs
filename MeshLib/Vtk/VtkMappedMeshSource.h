@@ -46,12 +46,16 @@ class Mesh;
 class VtkMappedMeshSource final : public vtkUnstructuredGridAlgorithm
 {
 public:
-    static VtkMappedMeshSource *New();
+    static VtkMappedMeshSource* New();
     vtkTypeMacro(VtkMappedMeshSource, vtkUnstructuredGridAlgorithm);
-    void PrintSelf(std::ostream &os, vtkIndent indent) override;
+    void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
     /// Sets the mesh. Calling is mandatory
-    void SetMesh(const MeshLib::Mesh* mesh) { this->_mesh = mesh; this->Modified(); }
+    void SetMesh(const MeshLib::Mesh* mesh)
+    {
+        this->_mesh = mesh;
+        this->Modified();
+    }
 
     /// Returns the mesh.
     const MeshLib::Mesh* GetMesh() const { return _mesh; }
@@ -59,16 +63,17 @@ public:
 protected:
     VtkMappedMeshSource();
 
-    int ProcessRequest(vtkInformation *request, vtkInformationVector **inputVector,
-                       vtkInformationVector *outputVector) override;
-    int RequestData(vtkInformation *, vtkInformationVector **,
-                    vtkInformationVector *) override;
-    int RequestInformation(vtkInformation *, vtkInformationVector **,
-                           vtkInformationVector *) override;
+    int ProcessRequest(vtkInformation* request,
+                       vtkInformationVector** inputVector,
+                       vtkInformationVector* outputVector) override;
+    int RequestData(vtkInformation*, vtkInformationVector**,
+                    vtkInformationVector*) override;
+    int RequestInformation(vtkInformation*, vtkInformationVector**,
+                           vtkInformationVector*) override;
 
 private:
-    VtkMappedMeshSource(const VtkMappedMeshSource &); // Not implemented.
-    void operator=(const VtkMappedMeshSource &);      // Not implemented.
+    VtkMappedMeshSource(const VtkMappedMeshSource&);  // Not implemented.
+    void operator=(const VtkMappedMeshSource&);       // Not implemented.
 
     /// Adds a zero-copy vtk array wrapper.
     /// \param properties MeshLib::Properties object
@@ -80,24 +85,27 @@ private:
         if (!properties.existsPropertyVector<T>(prop_name))
             return false;
         // TODO: Hack removing const
-        auto* propertyVector = const_cast<MeshLib::PropertyVector<T> *>(
+        auto* propertyVector = const_cast<MeshLib::PropertyVector<T>*>(
             properties.getPropertyVector<T>(prop_name));
-        if(!propertyVector)
+        if (!propertyVector)
             return false;
 
-        vtkNew<vtkAOSDataArrayTemplate<T> > dataArray;
+        vtkNew<vtkAOSDataArrayTemplate<T>> dataArray;
         const bool hasArrayOwnership = false;
         dataArray->SetArray(propertyVector->data(),
-            static_cast<vtkIdType>(propertyVector->size()),
-            static_cast<int>(!hasArrayOwnership));
-        dataArray->SetNumberOfComponents(propertyVector->getNumberOfComponents());
+                            static_cast<vtkIdType>(propertyVector->size()),
+                            static_cast<int>(!hasArrayOwnership));
+        dataArray->SetNumberOfComponents(
+            propertyVector->getNumberOfComponents());
         dataArray->SetName(prop_name.c_str());
 
-        if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
+        if (propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
             this->PointData->AddArray(dataArray.GetPointer());
-        else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+        else if (propertyVector->getMeshItemType() ==
+                 MeshLib::MeshItemType::Cell)
             this->CellData->AddArray(dataArray.GetPointer());
-        else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::IntegrationPoint)
+        else if (propertyVector->getMeshItemType() ==
+                 MeshLib::MeshItemType::IntegrationPoint)
             this->FieldData->AddArray(dataArray.GetPointer());
 
         return true;
