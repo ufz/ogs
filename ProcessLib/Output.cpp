@@ -125,11 +125,6 @@ void Output::doOutputAlways(Process const& process,
 
     INFO("[time] Output of timestep %d took %g s.", timestep,
          time_output.elapsed());
-
-#ifdef USE_INSITU
-    // TODO: get number of timesteps
-    InSituLib::CoProcess(process.getMesh(), t, timestep, false);
-#endif
 }
 
 void Output::doOutput(Process const& process,
@@ -140,6 +135,11 @@ void Output::doOutput(Process const& process,
 {
     if (shallDoOutput(timestep, _repeats_each_steps))
         doOutputAlways(process, process_output, timestep, t, x);
+#ifdef USE_INSITU
+    // Note: last time step may be output twice: here and in
+    // doOutputLastTimestep() which throws a warning.
+    InSituLib::CoProcess(process.getMesh(), t, timestep, false);
+#endif
 }
 
 void Output::doOutputLastTimestep(Process const& process,
@@ -150,6 +150,9 @@ void Output::doOutputLastTimestep(Process const& process,
 {
     if (!shallDoOutput(timestep, _repeats_each_steps))
         doOutputAlways(process, process_output, timestep, t, x);
+#ifdef USE_INSITU
+    InSituLib::CoProcess(process.getMesh(), t, timestep, true);
+#endif
 }
 
 void Output::doOutputNonlinearIteration(Process const& process,
