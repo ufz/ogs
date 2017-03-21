@@ -72,6 +72,8 @@ option(OGS_BUILD_METIS "Should metis and the partmesh util be built?" OFF)
 
 option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
+option(OGS_INSITU "Builds OGS with insitu visualization capabilities." OFF)
+
 # Linear solvers
 option(OGS_USE_LIS "Use Lis" OFF)
 
