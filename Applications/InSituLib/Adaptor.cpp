@@ -71,7 +71,8 @@ void CoProcess(MeshLib::Mesh const& mesh, double const time,
     }
     if (Processor->RequestDataDescription(dataDescription.GetPointer()) != 0)
     {
-        INFO("Start InSitu process.");
+        INFO("Start InSitu process: timestep #%d (t=%g, last=%d)", timeStep,
+             time, lastTimeStep);
         vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
         vtkSource->SetMesh(&mesh);
         vtkSource->Update();
