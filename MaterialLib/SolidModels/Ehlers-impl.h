@@ -35,7 +35,6 @@
 #include <boost/math/special_functions/pow.hpp>
 #include <logog/include/logog.hpp>
 #include "MaterialLib/SolidModels/KelvinVector.h"
-#include "NumLib/NewtonRaphson.h"
 
 namespace MaterialLib
 {
@@ -633,17 +632,12 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
                 _mp.calculateIsotropicHardening(t, x, _state.eps_p_eff);
             };
 
-            // TODO Make the following choice of maximum iterations and
-            // convergence criteria available from the input file configuration:
-            int const maximum_iterations(100);
-            double const tolerance(1e-14);
-
             auto newton_solver = NumLib::NewtonRaphson<
                 decltype(linear_solver), JacobianMatrix,
                 decltype(update_jacobian), ResidualVectorType,
                 decltype(update_residual), decltype(update_solution)>(
                 linear_solver, update_jacobian, update_residual,
-                update_solution, maximum_iterations, tolerance);
+                update_solution, _nonlinear_solver_parameters);
 
             auto const success_iterations = newton_solver.solve(jacobian);
 

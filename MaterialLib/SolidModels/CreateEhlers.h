@@ -22,6 +22,25 @@ namespace Solids
 {
 namespace Ehlers
 {
+inline NumLib::NewtonRaphsonSolverParameters
+createNewtonRaphsonSolverParameters(BaseLib::ConfigTree const& config)
+{
+    DBUG("Create local nonlinear solver parameters.");
+    int const maximum_iterations =
+        //! \ogs_file_param{material__solid__constitutive_relation__Ehlers__nonlinear_solver__maximum_iterations}
+        config.getConfigParameter<int>("maximum_iterations");
+
+    DBUG("\tmaximum_iterations: %d.", maximum_iterations);
+
+    double const error_tolerance =
+        //! \ogs_file_param{material__solid__constitutive_relation__Ehlers__nonlinear_solver__error_tolerance}
+        config.getConfigParameter<double>("error_tolerance");
+
+    DBUG("\terror_tolerance: %g.", error_tolerance);
+
+    return {maximum_iterations, error_tolerance};
+}
+
 inline std::unique_ptr<EhlersDamageProperties> createDamageProperties(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
@@ -169,8 +188,16 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
             createDamageProperties(parameters, *ehlers_damage_config);
     }
 
+    auto const& nonlinear_solver_config =
+        //! \ogs_file_param{material__solid__constitutive_relation__Ehlers__nonlinear_solver}
+        config.getConfigSubtreeOptional("nonlinear_solver");
+    auto const nonlinear_solver_parameters =
+        nonlinear_solver_config
+            ? createNewtonRaphsonSolverParameters(*nonlinear_solver_config)
+            : typename NumLib::NewtonRaphsonSolverParameters{100, 1e-14};
+
     return std::unique_ptr<MechanicsBase<DisplacementDim>>{
-        new SolidEhlers<DisplacementDim>{mp,
+        new SolidEhlers<DisplacementDim>{nonlinear_solver_parameters, mp,
                                          std::move(ehlers_damage_properties)}};
 }
 
