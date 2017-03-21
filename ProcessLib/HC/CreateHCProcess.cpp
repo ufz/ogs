@@ -63,13 +63,6 @@ std::unique_ptr<Process> createHCProcess(
     auto viscosity_model =
         MaterialLib::Fluid::createViscosityModel(viscosity_conf);
 
-    // Parameter for the density of the solid.
-    auto& density_solid = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HC__density_solid}
-        "density_solid", parameters, 1);
-    DBUG("Use \'%s\' as density_solid parameter.", density_solid.name.c_str());
-
     //! \ogs_file_param{prj__processes__process__HC__fluid__density}
     auto const& fluid_density_conf = fluid_config.getConfigSubtree("density");
     auto fluid_density =
@@ -83,56 +76,44 @@ std::unique_ptr<Process> createHCProcess(
     DBUG("Use \'%s\' as fluid_reference_density parameter.",
          fluid_reference_density.name.c_str());
 
-    // Parameter for the specific heat capacity of the solid.
-    auto& specific_heat_capacity_solid = findParameter<double>(
+    // Parameter for the longitudinal solute dispersivity.
+    auto const& molecular_diffusion_coefficient = findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__HC__specific_heat_capacity_solid}
-        "specific_heat_capacity_solid", parameters, 1);
-    DBUG("Use \'%s\' as specific_heat_capacity_solid parameter.",
-         specific_heat_capacity_solid.name.c_str());
+        //!
+        //\ogs_file_param_special{prj__processes__process__HC__molecular_diffusion_coefficient
+        "molecular_diffusion_coefficient", parameters, 1);
+    DBUG("Use \'%s\' as molecular diffusion coefficient parameter.",
+         molecular_diffusion_coefficient.name.c_str());
 
-    // Parameter for the specific heat capacity of the fluid.
-    auto& specific_heat_capacity_fluid = findParameter<double>(
+    // Parameter for the longitudinal solute dispersivity.
+    auto const& solute_dispersivity_longitudinal = findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__HC__specific_heat_capacity_fluid}
-        "specific_heat_capacity_fluid", parameters, 1);
-    DBUG("Use \'%s\' as specific_heat_capacity_fluid parameter.",
-         specific_heat_capacity_fluid.name.c_str());
+        //!
+        //\ogs_file_param_special{prj__processes__process__HC__solute_dispersivity_longitudinal
+        "solute_dispersivity_longitudinal", parameters, 1);
+    DBUG("Use \'%s\' as longitudinal solute dispersivity parameter.",
+         solute_dispersivity_longitudinal.name.c_str());
 
-    // Parameter for the thermal conductivity of the solid (only one scalar per
-    // element, i.e., the isotropic case is handled at the moment)
-    auto& thermal_dispersivity_longitudinal = findParameter<double>(
+    // Parameter for the transverse solute dispersivity.
+    auto const& solute_dispersivity_transverse = findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__HC__thermal_dispersivity_longitudinal}
-        "thermal_dispersivity_longitudinal", parameters, 1);
-    DBUG("Use \'%s\' as thermal_dispersivity_longitudinal parameter.",
-         thermal_dispersivity_longitudinal.name.c_str());
+        //!
+        //\ogs_file_param_special{prj__processes__process__HC__solute_dispersivity_transverse
+        "solute_dispersivity_transverse", parameters, 1);
+    DBUG("Use \'%s\' as transverse solute dispersivity parameter.",
+         solute_dispersivity_transverse.name.c_str());
 
-    // Parameter for the thermal conductivity of the solid (only one scalar per
-    // element, i.e., the isotropic case is handled at the moment)
-    auto& thermal_dispersivity_transversal = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HC__thermal_dispersivity_transversal}
-        "thermal_dispersivity_transversal", parameters, 1);
-    DBUG("Use \'%s\' as thermal_dispersivity_transversal parameter.",
-         thermal_dispersivity_transversal.name.c_str());
+    // Parameter for the retardation factor.
+    auto const& retardation_factor =
+        findParameter<double>(config,
+        //! \ogs_file_param_special{prj__processes__process__HC__retardation_factor}
+        "retardation_factor", parameters, 1);
 
-    // Parameter for the thermal conductivity of the solid (only one scalar per
-    // element, i.e., the isotropic case is handled at the moment)
-    auto& thermal_conductivity_solid = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HC__thermal_conductivity_solid}
-        "thermal_conductivity_solid", parameters, 1);
-    DBUG("Use \'%s\' as thermal_conductivity_solid parameter.",
-         thermal_conductivity_solid.name.c_str());
-
-    // Parameter for the thermal conductivity of the fluid.
-    auto& thermal_conductivity_fluid = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HC__thermal_conductivity_fluid}
-        "thermal_conductivity_fluid", parameters, 1);
-    DBUG("Use \'%s\' as thermal_conductivity_fluid parameter.",
-         thermal_conductivity_fluid.name.c_str());
+    // Parameter for the decay rate.
+    auto const& decay_rate =
+        findParameter<double>(config,
+        //! \ogs_file_param_special{prj__processes__process__HC__decay_rate}
+        "decay_rate", parameters, 1);
 
     // Specific body force parameter.
     Eigen::Vector3d specific_body_force;
@@ -147,22 +128,20 @@ std::unique_ptr<Process> createHCProcess(
     HCProcessData process_data{
         std::move(porous_media_properties),
         std::move(viscosity_model),
-        density_solid,
         fluid_reference_density,
         std::move(fluid_density),
-        thermal_dispersivity_longitudinal,
-        thermal_dispersivity_transversal,
-        specific_heat_capacity_solid,
-        specific_heat_capacity_fluid,
-        thermal_conductivity_solid,
-        thermal_conductivity_fluid,
+        molecular_diffusion_coefficient,
+        solute_dispersivity_longitudinal,
+        solute_dispersivity_transverse,
+        retardation_factor,
+        decay_rate,
         specific_body_force,
         has_gravity};
 
     SecondaryVariableCollection secondary_variables;
 
     NumLib::NamedFunctionCaller named_function_caller(
-        {"HC_temperature_pressure"});
+        {"HC_concentration_pressure"});
 
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);

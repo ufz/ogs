@@ -67,13 +67,13 @@ void HCProcess::initializeConcreteProcess(
     }
 }
 
-void HCProcess::assembleConcreteProcess(const double t,
-                                        GlobalVector const& x,
-                                        GlobalMatrix& M,
-                                        GlobalMatrix& K,
-                                        GlobalVector& b,
-                                        StaggeredCouplingTerm const&
-                                        coupling_term)
+void HCProcess::assembleConcreteProcess(
+    const double t,
+    GlobalVector const& x,
+    GlobalMatrix& M,
+    GlobalMatrix& K,
+    GlobalVector& b,
+    StaggeredCouplingTerm const& coupling_term)
 {
     DBUG("Assemble HCProcess.");
 

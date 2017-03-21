@@ -34,28 +34,24 @@ struct HCProcessData
     HCProcessData(
         PorousMediaProperties&& porous_media_properties_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& viscosity_model_,
-        ProcessLib::Parameter<double> const& density_solid_,
         ProcessLib::Parameter<double> const& fluid_reference_density_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_density_,
-        ProcessLib::Parameter<double> const& thermal_dispersivity_longitudinal_,
-        ProcessLib::Parameter<double> const& thermal_dispersivity_transversal_,
-        ProcessLib::Parameter<double> const& specific_heat_capacity_solid_,
-        ProcessLib::Parameter<double> const& specific_heat_capacity_fluid_,
-        ProcessLib::Parameter<double> const& thermal_conductivity_solid_,
-        ProcessLib::Parameter<double> const& thermal_conductivity_fluid_,
+        ProcessLib::Parameter<double> const& molecular_diffusion_coefficient_,
+        ProcessLib::Parameter<double> const& solute_dispersivity_longitudinal_,
+        ProcessLib::Parameter<double> const& solute_dispersivity_transverse_,
+        ProcessLib::Parameter<double> const& retardation_factor_,
+        ProcessLib::Parameter<double> const& decay_rate_,
         Eigen::Vector3d const& specific_body_force_,
         bool const has_gravity_)
         : porous_media_properties(std::move(porous_media_properties_)),
           viscosity_model(std::move(viscosity_model_)),
-          density_solid(density_solid_),
           fluid_reference_density(fluid_reference_density_),
           fluid_density(std::move(fluid_density_)),
-          specific_heat_capacity_solid(specific_heat_capacity_solid_),
-          specific_heat_capacity_fluid(specific_heat_capacity_fluid_),
-          thermal_dispersivity_longitudinal(thermal_dispersivity_longitudinal_),
-          thermal_dispersivity_transversal(thermal_dispersivity_transversal_),
-          thermal_conductivity_solid(thermal_conductivity_solid_),
-          thermal_conductivity_fluid(thermal_conductivity_fluid_),
+          molecular_diffusion_coefficient(molecular_diffusion_coefficient_),
+          solute_dispersivity_longitudinal(solute_dispersivity_longitudinal_),
+          solute_dispersivity_transverse(solute_dispersivity_transverse_),
+          retardation_factor(retardation_factor_),
+          decay_rate(decay_rate_),
           specific_body_force(specific_body_force_),
           has_gravity(has_gravity_)
     {
@@ -64,17 +60,15 @@ struct HCProcessData
     HCProcessData(HCProcessData&& other)
         : porous_media_properties(std::move(other.porous_media_properties)),
           viscosity_model(other.viscosity_model.release()),
-          density_solid(other.density_solid),
           fluid_reference_density(other.fluid_reference_density),
           fluid_density(other.fluid_density.release()),
-          specific_heat_capacity_solid(other.specific_heat_capacity_solid),
-          specific_heat_capacity_fluid(other.specific_heat_capacity_fluid),
-          thermal_dispersivity_longitudinal(
-              other.thermal_dispersivity_longitudinal),
-          thermal_dispersivity_transversal(
-              other.thermal_dispersivity_transversal),
-          thermal_conductivity_solid(other.thermal_conductivity_solid),
-          thermal_conductivity_fluid(other.thermal_conductivity_fluid),
+          molecular_diffusion_coefficient(
+              other.molecular_diffusion_coefficient),
+          solute_dispersivity_longitudinal(
+              other.solute_dispersivity_longitudinal),
+          solute_dispersivity_transverse(other.solute_dispersivity_transverse),
+          retardation_factor(other.retardation_factor),
+          decay_rate(other.decay_rate),
           specific_body_force(other.specific_body_force),
           has_gravity(other.has_gravity)
     {
@@ -91,15 +85,13 @@ struct HCProcessData
 
     PorousMediaProperties porous_media_properties;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity_model;
-    Parameter<double> const& density_solid;
     Parameter<double> const& fluid_reference_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> fluid_density;
-    Parameter<double> const& specific_heat_capacity_solid;
-    Parameter<double> const& specific_heat_capacity_fluid;
-    Parameter<double> const& thermal_dispersivity_longitudinal;
-    Parameter<double> const& thermal_dispersivity_transversal;
-    Parameter<double> const& thermal_conductivity_solid;
-    Parameter<double> const& thermal_conductivity_fluid;
+    Parameter<double> const& molecular_diffusion_coefficient;
+    Parameter<double> const& solute_dispersivity_longitudinal;
+    Parameter<double> const& solute_dispersivity_transverse;
+    Parameter<double> const& retardation_factor;
+    Parameter<double> const& decay_rate;
     Eigen::Vector3d const specific_body_force;
     bool const has_gravity;
 };
