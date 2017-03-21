@@ -16,9 +16,9 @@ namespace MeshLib {
 }
 
 namespace InSituLib {
-
-void Initialize(BaseLib::ConfigTree const & scripts_config, std::string const & path);
+void Initialize(BaseLib::ConfigTree const& scripts_config,
+                std::string const& path);
 void Finalize();
-void CoProcess( MeshLib::Mesh const & mesh, double const time, unsigned int const timeStep, bool const lastTimeStep);
-
+void CoProcess(MeshLib::Mesh const& mesh, double const time,
+               unsigned int const timeStep, bool const lastTimeStep);
 }
