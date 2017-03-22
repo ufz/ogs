@@ -22,10 +22,9 @@ namespace NumLib
 IterationNumberBasedAdaptiveTimeStepping::
     IterationNumberBasedAdaptiveTimeStepping(
         double t0, double tn, double min_ts, double max_ts, double initial_ts,
-        std::vector<std::size_t> iter_times_vector,
-        std::vector<double> multiplier_vector)
-    : _t_initial(t0),
-      _t_end(tn),
+        std::vector<std::size_t>& iter_times_vector,
+        std::vector<double>& multiplier_vector)
+    : ITimeStepAlgorithm(t0, tn),
       _iter_times_vector(std::move(iter_times_vector)),
       _multiplier_vector(std::move(multiplier_vector)),
       _min_ts(min_ts),
@@ -33,8 +32,6 @@ IterationNumberBasedAdaptiveTimeStepping::
       _initial_ts(initial_ts),
       _max_iter(_iter_times_vector.empty() ? 0 : _iter_times_vector.back()),
       _iter_times(0),
-      _ts_pre(t0),
-      _ts_current(t0),
       _n_rejected_steps(0)
 {
     assert(iter_times_vector.size() == multiplier_vector.size());
@@ -50,7 +47,7 @@ bool IterationNumberBasedAdaptiveTimeStepping::next()
     // confirm current time and move to the next if accepted
     if (accepted())
     {
-        _ts_pre = _ts_current;
+        _ts_prev = _ts_current;
         _dt_vector.push_back(_ts_current.dt());
     }
     else
@@ -59,15 +56,10 @@ bool IterationNumberBasedAdaptiveTimeStepping::next()
     }
 
     // prepare the next time step info
-    _ts_current = _ts_pre;
+    _ts_current = _ts_prev;
     _ts_current += getNextTimeStepSize();
 
     return true;
-}
-
-const TimeStep IterationNumberBasedAdaptiveTimeStepping::getTimeStep() const
-{
-    return _ts_current;
 }
 
 double IterationNumberBasedAdaptiveTimeStepping::getNextTimeStepSize() const
@@ -76,7 +68,7 @@ double IterationNumberBasedAdaptiveTimeStepping::getNextTimeStepSize() const
 
     // if this is the first time step
     // then we use initial guess provided by a user
-    if (_ts_pre.steps() == 0)
+    if (_ts_prev.steps() == 0)
     {
         dt = _initial_ts;
     }
@@ -91,7 +83,7 @@ double IterationNumberBasedAdaptiveTimeStepping::getNextTimeStepSize() const
             if (this->_iter_times > _iter_times_vector[i])
                 tmp_multiplier = _multiplier_vector[i];
         // multiply the the multiplier
-        dt = _ts_pre.dt() * tmp_multiplier;
+        dt = _ts_prev.dt() * tmp_multiplier;
     }
 
     // check whether out of the boundary
@@ -100,9 +92,9 @@ double IterationNumberBasedAdaptiveTimeStepping::getNextTimeStepSize() const
     else if (dt > _max_ts)
         dt = _max_ts;
 
-    double t_next = dt + _ts_pre.current();
+    double t_next = dt + _ts_prev.current();
     if (t_next > end())
-        dt = end() - _ts_pre.current();
+        dt = end() - _ts_prev.current();
 
     return dt;
 }

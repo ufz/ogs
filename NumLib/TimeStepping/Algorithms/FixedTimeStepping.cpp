@@ -12,7 +12,6 @@
 #include "FixedTimeStepping.h"
 
 #include <algorithm>
-#include <cmath>
 #include <numeric>
 #include <limits>
 #include <cassert>
@@ -27,20 +26,12 @@ namespace NumLib
 FixedTimeStepping::FixedTimeStepping(double t0,
                                      double tn,
                                      const std::vector<double>& vec_all_dt)
-    : _t_initial(t0),
-      _t_end(computeEnd(t0, tn, vec_all_dt)),
-      _dt_vector(vec_all_dt),
-      _ts_prev(t0),
-      _ts_current(t0)
+    : ITimeStepAlgorithm(t0, computeEnd(t0, tn, vec_all_dt), vec_all_dt)
 {
 }
 
 FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
-    : _t_initial(t0),
-      _t_end(tn),
-      _dt_vector(static_cast<std::size_t>(std::ceil((tn - t0) / dt)), dt),
-      _ts_prev(t0),
-      _ts_current(t0)
+    : ITimeStepAlgorithm(t0, tn, dt)
 {
 }
 
@@ -101,11 +92,6 @@ std::unique_ptr<ITimeStepAlgorithm> FixedTimeStepping::newInstance(
     }
 
     return std::make_unique<FixedTimeStepping>(t_initial, t_end, timesteps);
-}
-
-const TimeStep FixedTimeStepping::getTimeStep() const
-{
-    return _ts_current;
 }
 
 bool FixedTimeStepping::next()
