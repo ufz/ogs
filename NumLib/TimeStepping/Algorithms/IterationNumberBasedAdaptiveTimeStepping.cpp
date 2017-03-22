@@ -43,14 +43,18 @@ IterationNumberBasedAdaptiveTimeStepping::
 bool IterationNumberBasedAdaptiveTimeStepping::next()
 {
     // check current time step
-    if (std::abs(_ts_current.current()-_t_end) < std::numeric_limits<double>::epsilon())
+    if (std::abs(_ts_current.current() - _t_end) <
+        std::numeric_limits<double>::epsilon())
         return false;
 
     // confirm current time and move to the next if accepted
-    if (accepted()) {
+    if (accepted())
+    {
         _ts_pre = _ts_current;
         _dt_vector.push_back(_ts_current.dt());
-    } else {
+    }
+    else
+    {
         ++_n_rejected_steps;
     }
 
@@ -72,7 +76,7 @@ double IterationNumberBasedAdaptiveTimeStepping::getNextTimeStepSize() const
 
     // if this is the first time step
     // then we use initial guess provided by a user
-    if ( _ts_pre.steps() == 0 )
+    if (_ts_pre.steps() == 0)
     {
         dt = _initial_ts;
     }
@@ -83,17 +87,17 @@ double IterationNumberBasedAdaptiveTimeStepping::getNextTimeStepSize() const
         if (!_multiplier_vector.empty())
             tmp_multiplier = _multiplier_vector[0];
         // finding the right multiplier
-        for (std::size_t i=0; i<_iter_times_vector.size(); i++ )
-            if ( this->_iter_times > _iter_times_vector[i] )
+        for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
+            if (this->_iter_times > _iter_times_vector[i])
                 tmp_multiplier = _multiplier_vector[i];
         // multiply the the multiplier
         dt = _ts_pre.dt() * tmp_multiplier;
     }
 
     // check whether out of the boundary
-    if ( dt < _min_ts )
+    if (dt < _min_ts)
         dt = _min_ts;
-    else if ( dt > _max_ts )
+    else if (dt > _max_ts)
         dt = _max_ts;
 
     double t_next = dt + _ts_pre.current();
@@ -105,7 +109,7 @@ double IterationNumberBasedAdaptiveTimeStepping::getNextTimeStepSize() const
 
 bool IterationNumberBasedAdaptiveTimeStepping::accepted() const
 {
-    return ( this->_iter_times <= this->_max_iter );
+    return (this->_iter_times <= this->_max_iter);
 }
 
-} // NumLib
+}  // NumLib

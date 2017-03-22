@@ -17,7 +17,6 @@
 
 namespace NumLib
 {
-
 /**
  * \brief Interface of time stepping algorithms
  *
@@ -47,4 +46,4 @@ public:
     virtual ~ITimeStepAlgorithm() = default;
 };
 
-} //NumLib
+}  // NumLib
