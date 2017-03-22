@@ -619,7 +619,7 @@ bool UncoupledProcessesTimeLoop::loop()
     std::size_t timestep = 1;  // the first timestep really is number one
     bool nonlinear_solver_succeeded = true;
 
-    while (t <= _end_time)
+    while (t < _end_time)
     {
         BaseLib::RunTime time_timestep;
         time_timestep.start();
@@ -627,22 +627,31 @@ bool UncoupledProcessesTimeLoop::loop()
         // Find the minimum time step size among the predicted step sizes of
         // processes and step it as common time step size.
         double dt = std::numeric_limits<double>::max();
-        std::size_t min_step_id = 0;
         for (std::size_t i = 0; i < _per_process_data.size(); i++)
         {
             const auto& timestepper = _per_process_data[i]->timestepper;
             if (t > timestepper->end())  // skip the process that already stops
                 continue;
+
+            timestepper->next();
             if (timestepper->getTimeStep().dt() < dt)
             {
                 dt = timestepper->getTimeStep().dt();
-                min_step_id = i;
             }
         }
+        // Adjust step size if t < _end_time, while t+dt exceeds the end time
+        if (t < _end_time && t + dt > _end_time)
+        {
+            dt = _end_time - t;
+            if (dt < std::numeric_limits<double>::epsilon())
+                break;  // break the time stepping loop
+        }
+
+        t += dt;
+
         for (auto& spd : _per_process_data)
         {
-            *(spd->timestepper) =
-                *(_per_process_data[min_step_id]->timestepper);
+            spd->timestepper->resetCurrentTimeStep(dt);
         }
 
         INFO("=== timestep #%u (t=%gs, dt=%gs) ==============================",
@@ -657,6 +666,8 @@ bool UncoupledProcessesTimeLoop::loop()
 
         INFO("[time] Time step #%u took %g s.", timestep,
              time_timestep.elapsed());
+
+        timestep++;
 
         if (!nonlinear_solver_succeeded)
             break;
