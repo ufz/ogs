@@ -1,6 +1,7 @@
 #%Module1.0
 
 module-whatis OpenGeoSys @OGS_VERSION@
+conflict ogs
 
 append-path MODULEPATH /global/apps/modulefiles/
 
