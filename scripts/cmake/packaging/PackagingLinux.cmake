@@ -16,5 +16,10 @@ if(MODULE_CMD)
     configure_file(${CMAKE_SOURCE_DIR}/scripts/cmake/packaging/module.in
         ${CMAKE_BINARY_DIR}/module
     )
-    install(FILES ${CMAKE_BINARY_DIR}/module DESTINATION .)
+    if(OGS_MODULEFILE)
+        get_filename_component(MODULE_DIR ${OGS_MODULEFILE} DIRECTORY)
+        get_filename_component(MODULE_NAME ${OGS_MODULEFILE} NAME)
+        install(FILES ${CMAKE_BINARY_DIR}/module DESTINATION ${MODULE_DIR}
+            RENAME ${MODULE_NAME})
+    endif()
 endif()

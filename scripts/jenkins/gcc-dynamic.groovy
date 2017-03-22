@@ -13,7 +13,8 @@ def helper = new ogs.helper()
 stage('Configure (envinf1)') {
     if (helper.isOriginMaster(this)) {
         defaultCMakeOptions +=
-            ' -DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/default'
+            ' -DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/default' +
+            ' -DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/default'
     }
     configure.linux(cmakeOptions: defaultCMakeOptions, env: 'envinf1/cli.sh', script: this)
     configure.linux(cmakeOptions: defaultCMakeOptions + '-DOGS_USE_PETSC=ON',
