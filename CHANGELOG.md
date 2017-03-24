@@ -4,12 +4,23 @@
 
 ### Features
 
+- Insitu visualization with ParaView Catalyst. [Presentation](https://github.com/ufz/ogs/files/867280/Insitu-Department.pdf). #1744
+  - VTK 7.1 now required.
+- Bennchmark docs are now part of the code (in `web/content`) and can contain
+  [interactive 3D visualizations](https://dev.opengeosys.org/docs/benchmarks/elliptic/groundwater-flow-neumann/#results-and-evaluation)
+  via [vtk.js](https://kitware.github.io/vtk-js/). #1706, #1714, #1723, #1729
+  - [git-lfs](https://git-lfs.github.com/) is now required. Check the
+    [docs](https://docs.opengeosys.org/docs/devguide/getting-started/prerequisites)
+    for installation instructions.
+
 ### Utilities
 
 ### Infrastructure
 
 - CMake option OGS_EIGEN_DYNAMIC_SHAPE_MATRICES defaults to OFF on Release
   config, ON otherwise. Can be overridden by explicitly setting the option. #1673
+- PetSc config is tested on Jenkins (envinf1)
+- OGS binaries are provided as eve / envinf1 modules. See [docs](https://docs.opengeosys.org/docs/quickstart/basics/envinf1) for details. #1753
 
 ### Fixes
 
@@ -43,6 +54,9 @@ fluids pressure, density, permeability, and viscosity were added.
  - CMake option OGS_FATAL_ABORT for debugging. #1432
  - Set the default OGS_LOG_LEVEL to debug in release builds. #1522
  - Add integration order in input files. #1464
+ - Migrated Data Explorer to Qt5. #1622, #1625
+ - Benchmarks can be run on specific configurations only by using the new parameter
+   `REQUIREMENTS` in `AddTest()` (in CMake). #1610
 
 ### Utilities
 New utilities:
