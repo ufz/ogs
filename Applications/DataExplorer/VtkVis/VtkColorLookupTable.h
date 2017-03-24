@@ -44,7 +44,7 @@ public:
 
     /// \brief Builds the colour table based on the previously set parameters.
     /// This method should only be called after all options have been set.
-    void Build();
+    void Build() override;
 
     /* \brief Sets the given colour as a constant in the colour lookup table.
      * The colour will subsequently be considered in the interpolation process when the lookup table is built. Note that pos is only a

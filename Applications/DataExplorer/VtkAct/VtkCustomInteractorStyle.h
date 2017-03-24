@@ -41,19 +41,19 @@ public:
     vtkTypeMacro (VtkCustomInteractorStyle, vtkInteractorStyleTrackballCamera);
 
     /// @brief Handles key press events.
-    virtual void OnChar();
+    virtual void OnChar() override;
 
     /// @brief Handles key down events.
-    virtual void OnKeyDown();
+    virtual void OnKeyDown() override;
 
     /// @brief Handles key up events.
-    virtual void OnKeyUp();
+    virtual void OnKeyUp() override;
 
     /// @brief Handles left mouse button events (picking).
-    virtual void OnLeftButtonDown();
+    virtual void OnLeftButtonDown() override;
 
     /// @brief Handles middle mouse button events (rotation point picking).
-    virtual void OnRightButtonDown();
+    virtual void OnRightButtonDown() override;
 
 public slots:
     void highlightActor(vtkProp3D* prop);
