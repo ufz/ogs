@@ -43,8 +43,8 @@ if (helper.isOriginMaster(this)) {
     stage('Deploy (envinf1)') {
         parallel serial: {
             configure.linux(cmakeOptions: defaultCMakeOptions +
-                "-DCMAKE_INSTALL_PREFIX=${installPrefix}/default " +
-                "-DOGS_MODULEFILE=${modulePrefix}/default " +
+                "-DCMAKE_INSTALL_PREFIX=${installPrefix}/standard " +
+                "-DOGS_MODULEFILE=${modulePrefix}/standard " +
                 "-DOGS_CPU_ARCHITECTURE=core-avx-i ",
                 dir: 'build-static', env: 'envinf1/cli.sh', script: this)
             build.linux(dir: 'build-static', env: 'envinf1/cli.sh',
