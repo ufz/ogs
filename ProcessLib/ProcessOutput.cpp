@@ -12,6 +12,53 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
+namespace
+{
+std::size_t countMeshItems(MeshLib::Mesh const& mesh,
+                           MeshLib::MeshItemType type)
+{
+    switch (type)
+    {
+        case MeshLib::MeshItemType::Cell:
+            return mesh.getNumberOfElements();
+        case MeshLib::MeshItemType::Node:
+            return mesh.getNumberOfNodes();
+        case MeshLib::MeshItemType::IntegrationPoint:
+            return 0;
+        default:
+            break;  // avoid compiler warning
+    }
+    return 0;
+};
+
+template <typename T>
+MeshLib::PropertyVector<T>* getOrCreateMeshProperty(
+    MeshLib::Mesh& mesh, std::string const& property_name,
+    MeshLib::MeshItemType type)
+{
+    // Get or create a property vector for results.
+    MeshLib::PropertyVector<T>* result = nullptr;
+
+    auto const N = countMeshItems(mesh, type);
+
+    if (mesh.getProperties().existsPropertyVector<T>(property_name))
+    {
+        result = mesh.getProperties().template getPropertyVector<T>(
+            property_name);
+    }
+    else
+    {
+        result = mesh.getProperties().template createNewPropertyVector<T>(
+            property_name, type);
+        result->resize(N);
+    }
+    assert(type == MeshLib::MeshItemType::IntegrationPoint ||
+           result && result->size() == N);
+
+    return result;
+};
+}
+
 namespace ProcessLib
 {
 
@@ -38,18 +85,24 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
     {
         output_residuals = *out_resid;
     }
+
+    output_integration_point_data =
+        //! \ogs_file_param{prj__time_loop__processes__process__output__integration_point_data}
+        output_config.getConfigParameter("integration_point_data", false);
 }
 
-
 void doProcessOutput(
-        std::string const& file_name,
-        GlobalVector const& x,
-        MeshLib::Mesh& mesh,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
-        std::vector<std::reference_wrapper<ProcessVariable>> const&
+    std::string const& file_name,
+    GlobalVector const& x,
+    MeshLib::Mesh& mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
-        SecondaryVariableCollection secondary_variables,
-        ProcessOutput const& process_output)
+    SecondaryVariableCollection secondary_variables,
+    std::function<std::size_t(MeshLib::PropertyVector<char>&,
+                              MeshLib::PropertyVector<std::size_t>&)>
+        integration_point_writer,
+    ProcessOutput const& process_output)
 {
     DBUG("Process output.");
 
@@ -66,6 +119,7 @@ void doProcessOutput(
 
     auto const& output_variables = process_output.output_variables;
     std::set<std::string> already_output;
+    already_output.insert("integration_point");
 
     int global_component_offset = 0;
     int global_component_offset_next = 0;
@@ -120,41 +174,6 @@ void doProcessOutput(
 #ifndef USE_PETSC
     // the following section is for the output of secondary variables
 
-    auto count_mesh_items = [](
-        MeshLib::Mesh const& mesh, MeshLib::MeshItemType type) -> std::size_t
-    {
-        switch (type) {
-        case MeshLib::MeshItemType::Cell: return mesh.getNumberOfElements();
-        case MeshLib::MeshItemType::Node: return mesh.getNumberOfNodes();
-        default: break; // avoid compiler warning
-        }
-        return 0;
-    };
-
-    auto get_or_create_mesh_property = [&mesh, &count_mesh_items](
-        std::string const& property_name, MeshLib::MeshItemType type)
-    {
-        // Get or create a property vector for results.
-        MeshLib::PropertyVector<double>* result = nullptr;
-
-        auto const N = count_mesh_items(mesh, type);
-
-        if (mesh.getProperties().existsPropertyVector<double>(property_name))
-        {
-            result = mesh.getProperties().template
-                     getPropertyVector<double>(property_name);
-        }
-        else
-        {
-            result = mesh.getProperties().template
-                     createNewPropertyVector<double>(property_name, type);
-            result->resize(N);
-        }
-        assert(result && result->size() == N);
-
-        return result;
-    };
-
     auto add_secondary_var = [&](SecondaryVariable const& var,
                              std::string const& output_name)
     {
@@ -163,8 +182,8 @@ void doProcessOutput(
         {
             DBUG("  secondary variable %s", output_name.c_str());
 
-            auto result = get_or_create_mesh_property(
-                              output_name, MeshLib::MeshItemType::Node);
+            auto result = getOrCreateMeshProperty<double>(
+                mesh, output_name, MeshLib::MeshItemType::Node);
             assert(result->size() == mesh.getNumberOfNodes());
 
             std::unique_ptr<GlobalVector> result_cache;
@@ -184,8 +203,8 @@ void doProcessOutput(
             DBUG("  secondary variable %s residual", output_name.c_str());
             auto const& property_name_res = output_name + "_residual";
 
-            auto result = get_or_create_mesh_property(
-                              property_name_res, MeshLib::MeshItemType::Cell);
+            auto result = getOrCreateMeshProperty<double>(
+                mesh, property_name_res, MeshLib::MeshItemType::Cell);
             assert(result->size() == mesh.getNumberOfElements());
 
             std::unique_ptr<GlobalVector> result_cache;
@@ -216,6 +235,19 @@ void doProcessOutput(
 #else
     (void) secondary_variables;
 #endif // USE_PETSC
+
+    // Integration point data
+    if (process_output.output_integration_point_data &&
+        integration_point_writer)
+    {
+        auto result = getOrCreateMeshProperty<char>(
+            mesh, "integration_point_data",
+            MeshLib::MeshItemType::IntegrationPoint);
+        auto offsets = getOrCreateMeshProperty<std::size_t>(
+            mesh, "integration_point_offsets",
+            MeshLib::MeshItemType::Cell);
+        integration_point_writer(*result, *offsets);
+    }
 
     // Write output file
     DBUG("Writing output to \'%s\'.", file_name.c_str());

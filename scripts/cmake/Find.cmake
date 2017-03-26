@@ -181,3 +181,10 @@ find_package(CVODE)
 if(CVODE_FOUND)
     add_definitions(-DCVODE_FOUND)
 endif() # CVODE_FOUND
+
+## Google's protobuf library
+find_package(Protobuf)
+if(Protobuf_FOUND)
+    include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIRS})
+    add_definitions(-DPROTOBUF_FOUND)
+endif() # Protobuf_FOUND

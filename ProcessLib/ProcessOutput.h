@@ -26,18 +26,25 @@ struct ProcessOutput final
 
     //! Tells if also to output extrapolation residuals.
     bool output_residuals = false;
+
+    //! Checks if an integration point writer is available and calls it for
+    //! output of process specific integration point data.
+    bool output_integration_point_data = false;
 };
 
 
 //! Writes output to the given \c file_name using the VTU file format.
 void doProcessOutput(
-        std::string const& file_name,
-        GlobalVector const& x,
-        MeshLib::Mesh& mesh,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
-        std::vector<std::reference_wrapper<ProcessVariable>> const&
+    std::string const& file_name,
+    GlobalVector const& x,
+    MeshLib::Mesh& mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
-        SecondaryVariableCollection secondary_variables,
-        ProcessOutput const& process_output);
+    SecondaryVariableCollection secondary_variables,
+    std::function<std::size_t(MeshLib::PropertyVector<char>&,
+                              MeshLib::PropertyVector<std::size_t>&)>
+        integration_point_writer,
+    ProcessOutput const& process_output);
 
 } // ProcessLib

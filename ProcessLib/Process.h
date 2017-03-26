@@ -123,6 +123,11 @@ public:
         return std::vector<double>{};
     }
 
+    /// Fills given property vector with raw integration point data.
+    std::function<std::size_t(MeshLib::PropertyVector<char>&,
+                              MeshLib::PropertyVector<std::size_t>& offsets)>
+        integration_point_writer;
+
 protected:
     NumLib::Extrapolator& getExtrapolator() const
     {
@@ -141,6 +146,10 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) = 0;
 
+    virtual void setInitialConditionsConcreteProcess(const double /*t*/,
+                                                     GlobalVector const& /*x*/)
+    {
+    }
     virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
                                          GlobalMatrix& M, GlobalMatrix& K,
                                          GlobalVector& b,

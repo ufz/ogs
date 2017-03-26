@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package SmallDeformationFEM;
+
+enum Dimension {
+    UNDEFINED = 0;
+    ONE = 1;
+    TWO = 2;
+    THREE = 3;
+}
+
+// Kelvin vector for 1D, 2D, or 3D problems allowing a size check of the stored
+// 'value' array.
+message KelvinVector {
+    Dimension dimension = 1;
+    repeated double value = 2;
+}
+
+// Storing arrays of data (sigma, eps, damage, etc.) for all integration points.
+message ElementData {
+    uint64 id = 1;  // For sanity checks.
+    uint32 n_integration_points = 2;    // Length of the following arrays.
+    repeated KelvinVector sigma = 3;
+    repeated KelvinVector eps = 4;
+}
