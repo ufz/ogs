@@ -41,7 +41,7 @@ MeshLib::PropertyVector<T>* getOrCreateMeshProperty(
 
     auto const N = countMeshItems(mesh, type);
 
-    if (mesh.getProperties().existsPropertyVector<double>(property_name))
+    if (mesh.getProperties().existsPropertyVector<T>(property_name))
     {
         result = mesh.getProperties().template getPropertyVector<T>(
             property_name);
