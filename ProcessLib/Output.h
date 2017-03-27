@@ -82,13 +82,18 @@ private:
         MeshLib::IO::PVDFile pvd_file;
     };
 
-    Output(std::string const& prefix, bool output_nonlinear_iteration_results)
+    Output(std::string const& prefix, bool const compress_output,
+           bool const output_nonlinear_iteration_results)
         : _output_file_prefix(prefix),
+          _output_file_compression(compress_output),
           _output_nonlinear_iteration_results(
               output_nonlinear_iteration_results)
     {}
 
     std::string const _output_file_prefix;
+
+    //! Enables or disables zlib-compression of the output files.
+    bool const _output_file_compression;
     bool const _output_nonlinear_iteration_results;
 
     //! Describes after which timesteps to write output.

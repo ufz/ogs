@@ -40,16 +40,15 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
     }
 }
 
-
-void doProcessOutput(
-        std::string const& file_name,
-        GlobalVector const& x,
-        MeshLib::Mesh& mesh,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
-        std::vector<std::reference_wrapper<ProcessVariable>> const&
-        process_variables,
-        SecondaryVariableCollection secondary_variables,
-        ProcessOutput const& process_output)
+void doProcessOutput(std::string const& file_name,
+                     bool const compress_output,
+                     GlobalVector const& x,
+                     MeshLib::Mesh& mesh,
+                     NumLib::LocalToGlobalIndexMap const& dof_table,
+                     std::vector<std::reference_wrapper<ProcessVariable>> const&
+                         process_variables,
+                     SecondaryVariableCollection secondary_variables,
+                     ProcessOutput const& process_output)
 {
     DBUG("Process output.");
 
@@ -219,7 +218,8 @@ void doProcessOutput(
 
     // Write output file
     DBUG("Writing output to \'%s\'.", file_name.c_str());
-    MeshLib::IO::VtuInterface vtu_interface(&mesh, vtkXMLWriter::Binary, true);
+    MeshLib::IO::VtuInterface vtu_interface(&mesh, vtkXMLWriter::Binary,
+                                            compress_output);
     vtu_interface.writeToFile(file_name);
 }
 
