@@ -44,7 +44,7 @@ TEST(NumLibNewtonRaphson, Sqrt3)
         LocalResidualVector, decltype(update_residual),
         decltype(update_solution)>(linear_solver, update_jacobian,
                                    update_residual, update_solution,
-                                   maximum_iterations, tolerance);
+                                   {maximum_iterations, tolerance});
     auto const success_iterations = newton_solver.solve(jacobian);
 
     EXPECT_TRUE(static_cast<bool>(success_iterations));

@@ -209,7 +209,8 @@ bool TwoPhaseFlowWithPrhoMaterialProperties::computeConstitutiveRelation(
         };
 
         // TODO Make the following choice of maximum iterations and convergence
-        // criteria available from the input file configuration:
+        // criteria available from the input file configuration. See Ehlers
+        // material model implementation for the example.
         const int maximum_iterations(20);
         const double tolerance(1.e-14);
 
@@ -218,7 +219,7 @@ bool TwoPhaseFlowWithPrhoMaterialProperties::computeConstitutiveRelation(
             decltype(update_jacobian), LocalResidualVector,
             decltype(update_residual), decltype(update_solution)>(
             linear_solver, update_jacobian, update_residual, update_solution,
-            maximum_iterations, tolerance);
+            {maximum_iterations, tolerance});
 
         auto const success_iterations = newton_solver.solve(J_loc);
 
