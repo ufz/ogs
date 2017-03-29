@@ -57,6 +57,8 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
         BaseLib::joinPaths(output_directory,
                            //! \ogs_file_param{prj__time_loop__output__prefix}
                            config.getConfigParameter<std::string>("prefix")),
+        //! \ogs_file_param{prj__time_loop__output__compress_output}
+        config.getConfigParameter("compress_output", true),
         output_iteration_results ? *output_iteration_results : false}};
 
     //! \ogs_file_param{prj__time_loop__output__timesteps}
@@ -118,8 +120,9 @@ void Output::doOutputAlways(Process const& process,
             + "_t_"  + std::to_string(t)
             + ".vtu";
     DBUG("output to %s", output_file_name.c_str());
-    doProcessOutput(output_file_name, x, process.getMesh(),
-                    process.getDOFTable(), process.getProcessVariables(),
+    doProcessOutput(output_file_name, _output_file_compression, x,
+                    process.getMesh(), process.getDOFTable(),
+                    process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);
     spd.pvd_file.addVTUFile(output_file_name, t);
 
@@ -180,8 +183,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
             + "_nliter_" + std::to_string(iteration)
             + ".vtu";
     DBUG("output iteration results to %s", output_file_name.c_str());
-    doProcessOutput(output_file_name, x, process.getMesh(),
-                    process.getDOFTable(), process.getProcessVariables(),
+    doProcessOutput(output_file_name, _output_file_compression, x,
+                    process.getMesh(), process.getDOFTable(),
+                    process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);
 
     INFO("[time] Output took %g s.", time_output.elapsed());

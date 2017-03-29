@@ -48,8 +48,10 @@ bool VtuInterface::writeVTU(std::string const &file_name, const int num_partitio
 
     vtuWriter->SetInputConnection(vtkSource->GetOutputPort());
 
-    if(_use_compressor && num_partitions == 0)
+    if(_use_compressor)
         vtuWriter->SetCompressorTypeToZLib();
+    else
+        vtuWriter->SetCompressorTypeToNone();
 
     vtuWriter->SetDataMode(_data_mode);
     if (_data_mode == vtkXMLWriter::Appended)

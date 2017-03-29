@@ -30,14 +30,14 @@ struct ProcessOutput final
 
 
 //! Writes output to the given \c file_name using the VTU file format.
-void doProcessOutput(
-        std::string const& file_name,
-        GlobalVector const& x,
-        MeshLib::Mesh& mesh,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
-        std::vector<std::reference_wrapper<ProcessVariable>> const&
-        process_variables,
-        SecondaryVariableCollection secondary_variables,
-        ProcessOutput const& process_output);
+void doProcessOutput(std::string const& file_name,
+                     bool const compress_output,
+                     GlobalVector const& x,
+                     MeshLib::Mesh& mesh,
+                     NumLib::LocalToGlobalIndexMap const& dof_table,
+                     std::vector<std::reference_wrapper<ProcessVariable>> const&
+                         process_variables,
+                     SecondaryVariableCollection secondary_variables,
+                     ProcessOutput const& process_output);
 
 } // ProcessLib
