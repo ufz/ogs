@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "NumLib/NewtonRaphson.h"
-
 namespace MaterialLib
 {
 namespace Solids
@@ -104,17 +102,12 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
             local_lubby2_properties.update(sig_eff);
         };
 
-        // TODO Make the following choice of maximum iterations and convergence
-        // criteria available from the input file configuration:
-        const int maximum_iterations(20);
-        const double tolerance(1.e-10);
-
         auto newton_solver = NumLib::NewtonRaphson<
             decltype(linear_solver), LocalJacobianMatrix,
             decltype(update_jacobian), LocalResidualVector,
             decltype(update_residual), decltype(update_solution)>(
             linear_solver, update_jacobian, update_residual, update_solution,
-            maximum_iterations, tolerance);
+            _nonlinear_solver_parameters);
 
         auto const success_iterations = newton_solver.solve(K_loc);
 
