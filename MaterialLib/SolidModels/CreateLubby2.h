@@ -122,11 +122,10 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
 
     auto const& nonlinear_solver_config =
         //! \ogs_file_param{material__solid__constitutive_relation__Lubby2__nonlinear_solver}
-        config.getConfigSubtreeOptional("nonlinear_solver");
+        config.getConfigSubtree("nonlinear_solver");
     auto const nonlinear_solver_parameters =
-        nonlinear_solver_config
-            ? createNewtonRaphsonSolverParameters(*nonlinear_solver_config)
-            : typename NumLib::NewtonRaphsonSolverParameters{100, 1e-14};
+        createNewtonRaphsonSolverParameters(nonlinear_solver_config);
+
     return std::unique_ptr<MechanicsBase<DisplacementDim>>{
         new Lubby2<DisplacementDim>{nonlinear_solver_parameters, mp}};
 }

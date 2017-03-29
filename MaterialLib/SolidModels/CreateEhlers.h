@@ -190,11 +190,9 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
 
     auto const& nonlinear_solver_config =
         //! \ogs_file_param{material__solid__constitutive_relation__Ehlers__nonlinear_solver}
-        config.getConfigSubtreeOptional("nonlinear_solver");
+        config.getConfigSubtree("nonlinear_solver");
     auto const nonlinear_solver_parameters =
-        nonlinear_solver_config
-            ? createNewtonRaphsonSolverParameters(*nonlinear_solver_config)
-            : typename NumLib::NewtonRaphsonSolverParameters{100, 1e-14};
+        createNewtonRaphsonSolverParameters(nonlinear_solver_config);
 
     return std::unique_ptr<MechanicsBase<DisplacementDim>>{
         new SolidEhlers<DisplacementDim>{nonlinear_solver_parameters, mp,
