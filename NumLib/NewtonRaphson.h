@@ -94,7 +94,7 @@ private:
     JacobianMatrixUpdate _jacobian_update;
     ResidualUpdate _residual_update;
     SolutionUpdate _solution_update;
-    const int _maximum_iterations;
-    const double _tolerance_squared;
+    const int _maximum_iterations;  ///< Maximum number of iterations.
+    const double _tolerance_squared;    ///< Error tolerance for the residual.
 };
 }  // namespace NumLib
