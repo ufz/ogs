@@ -13,8 +13,11 @@ namespace MaterialLib
 {
 namespace Solids
 {
+namespace Lubby2
+{
 template class Lubby2<2>;
 template class Lubby2<3>;
 
+}  // namespace Lubby2
 }  // namespace Solids
 }  // namespace MaterialLib

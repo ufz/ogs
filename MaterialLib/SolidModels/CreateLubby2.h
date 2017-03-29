@@ -20,6 +20,8 @@ namespace MaterialLib
 {
 namespace Solids
 {
+namespace Lubby2
+{
 inline NumLib::NewtonRaphsonSolverParameters
 createNewtonRaphsonSolverParameters(BaseLib::ConfigTree const& config)
 {
@@ -129,5 +131,6 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
         new Lubby2<DisplacementDim>{nonlinear_solver_parameters, mp}};
 }
 
+}  // namespace Lubby2
 }  // namespace Solids
 }  // namespace MaterialLib

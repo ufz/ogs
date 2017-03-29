@@ -13,6 +13,8 @@ namespace MaterialLib
 {
 namespace Solids
 {
+namespace Lubby2
+{
 template <int DisplacementDim>
 bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
     double const t,
@@ -254,5 +256,6 @@ void Lubby2<DisplacementDim>::calculateJacobianBurgers(
         .setConstant(1. / dt);
 }
 
+}  // namespace Lubby2
 }  // namespace Solids
 }  // namespace MaterialLib

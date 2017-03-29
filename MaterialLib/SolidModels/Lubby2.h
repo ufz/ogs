@@ -21,6 +21,8 @@ namespace MaterialLib
 {
 namespace Solids
 {
+namespace Lubby2
+{
 //
 // Variables specific to the material model.
 //
@@ -239,6 +241,7 @@ private:
 extern template class Lubby2<2>;
 extern template class Lubby2<3>;
 
+}  // namespace Lubby2
 }  // namespace Solids
 }  // namespace MaterialLib
 
