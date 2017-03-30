@@ -41,7 +41,7 @@ struct HCProcessData
         ProcessLib::Parameter<double> const& solute_dispersivity_transverse_,
         ProcessLib::Parameter<double> const& retardation_factor_,
         ProcessLib::Parameter<double> const& decay_rate_,
-        Eigen::Vector3d const& specific_body_force_,
+        Eigen::VectorXd const& specific_body_force_,
         bool const has_gravity_)
         : porous_media_properties(std::move(porous_media_properties_)),
           viscosity_model(std::move(viscosity_model_)),
@@ -92,7 +92,7 @@ struct HCProcessData
     Parameter<double> const& solute_dispersivity_transverse;
     Parameter<double> const& retardation_factor;
     Parameter<double> const& decay_rate;
-    Eigen::Vector3d const specific_body_force;
+    Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
 };
 

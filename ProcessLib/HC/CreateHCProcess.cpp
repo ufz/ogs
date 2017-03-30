@@ -116,14 +116,22 @@ std::unique_ptr<Process> createHCProcess(
         "decay_rate", parameters, 1);
 
     // Specific body force parameter.
-    Eigen::Vector3d specific_body_force;
+    Eigen::VectorXd specific_body_force;
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__HC__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
     assert(b.size() > 0 && b.size() < 4);
+    if (b.size() < mesh.getDimension())
+        OGS_FATAL(
+            "specific body force (gravity vector) has %d components, mesh "
+            "dimension is %d",
+            b.size(), mesh.getDimension());
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
     if (has_gravity)
+    {
+        specific_body_force.resize(b.size());
         std::copy_n(b.data(), b.size(), specific_body_force.data());
+    }
 
     HCProcessData process_data{
         std::move(porous_media_properties),

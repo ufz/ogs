@@ -144,7 +144,7 @@ public:
         auto p_nodal_values =
             Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
 
-        auto const & b = _process_data.specific_body_force.head(GlobalDim);
+        auto const& b = _process_data.specific_body_force;
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
 
@@ -212,7 +212,12 @@ public:
             GlobalDimMatrixType const K_over_mu = K / mu;
 
             GlobalDimVectorType const velocity =
-                -perm_over_visc * (dNdx * p_nodal_values - density_water * b);
+                _process_data.has_gravity
+                    ? GlobalDimVectorType(
+                          -perm_over_visc *
+                          (dNdx * p_nodal_values - density_water * b))
+                    : GlobalDimVectorType(-perm_over_visc * dNdx *
+                                          p_nodal_values);
 
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const& I(
@@ -245,7 +250,8 @@ public:
                 w * N.transpose() * porosity * retardation_factor * N;
             Kpp.noalias() += w * dNdx.transpose() * perm_over_visc * dNdx;
             Mpp.noalias() += w * N.transpose() * specific_storage * N;
-            Bp += w * density_water * dNdx.transpose() * perm_over_visc * b;
+            if (_process_data.has_gravity)
+                Bp += w * density_water * dNdx.transpose() * perm_over_visc * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
         }
