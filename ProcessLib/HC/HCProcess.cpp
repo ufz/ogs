@@ -98,6 +98,16 @@ void HCProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac, coupling_term);
 }
 
+void HCProcess::computeSecondaryVariableConcrete(
+    double const t, GlobalVector const& x,
+    StaggeredCouplingTerm const& coupling_term)
+{
+    DBUG("Compute the Darcy velocity for HCProcess.");
+    GlobalExecutor::executeMemberOnDereferenced(
+        &HCLocalAssemblerInterface::computeSecondaryVariable,
+        _local_assemblers, *_local_to_global_index_map, t, x, coupling_term);
+}
+
 }  // namespace HC
 }  // namespace ProcessLib
 
