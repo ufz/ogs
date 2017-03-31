@@ -126,6 +126,9 @@ struct SmallDeformationLocalAssemblerInterface
 
     virtual std::vector<double> const& getIntPtEpsilonYZ(
         std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getNodalValues(
+        std::vector<double>& nodal_values) const = 0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -280,6 +283,36 @@ public:
         {
             _ip_data[ip].pushBackState();
         }
+    }
+
+    std::vector<double> const& getNodalValues(
+        std::vector<double>& nodal_values) const override
+    {
+        nodal_values.clear();
+        auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
+            nodal_values, ShapeFunction::NPOINTS * DisplacementDim);
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            x_position.setIntegrationPoint(ip);
+            auto const& wp = _integration_method.getWeightedPoint(ip);
+            auto const& detJ = _ip_data[ip]._detJ;
+            auto const& integralMeasure = _ip_data[ip]._integralMeasure;
+
+            auto const& B = _ip_data[ip]._b_matrices;
+            auto& sigma = _ip_data[ip]._sigma;
+
+            local_b.noalias() +=
+                B.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
+        }
+
+        return nodal_values;
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(

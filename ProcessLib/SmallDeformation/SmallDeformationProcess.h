@@ -13,6 +13,7 @@
 
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
+#include "ProcessLib/SmallDeformationCommon/Common.h"
 
 #include "SmallDeformationFEM.h"
 #include "SmallDeformationProcessData.h"
@@ -44,6 +45,8 @@ public:
                   std::move(named_function_caller)),
           _process_data(std::move(process_data))
     {
+        _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
+            mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
     }
 
     //! \name ODESystem interface
@@ -77,6 +80,7 @@ private:
                 std::move(all_mesh_subsets_single_component),
                 // by location order is needed for output
                 NumLib::ComponentOrder::BY_LOCATION));
+        _nodal_forces->resize(DisplacementDim * mesh.getNumberOfNodes());
 
         Base::_secondary_variables.addSecondaryVariable(
             "sigma_xx", 1,
@@ -202,9 +206,8 @@ private:
     {
         DBUG("PostTimestep SmallDeformationProcess.");
 
-        GlobalExecutor::executeMemberOnDereferenced(
-            &SmallDeformationLocalAssemblerInterface::postTimestep,
-            _local_assemblers, *_local_to_global_index_map, x);
+        ProcessLib::SmallDeformation::writeNodalForces(
+            *_nodal_forces, _local_assemblers, *_local_to_global_index_map);
     }
 
 private:
@@ -214,6 +217,7 @@ private:
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
+    MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
 };
 
 }  // namespace SmallDeformation
