@@ -56,6 +56,10 @@ public:
         _ts_current += dt;
     }
 
+    /// Assign solution error to the corresponding member, if it exists.
+    /// \param solution_error Solution error between two successive time steps.
+    virtual void setSolutionError(const double solution_error) = 0;
+
     /// move to the next time step
     /// \return true if the next step exists
     virtual bool next() = 0;
