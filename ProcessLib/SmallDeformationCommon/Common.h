@@ -14,12 +14,53 @@
 #include <cassert>
 #include <vector>
 
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 
 namespace ProcessLib
 {
 namespace SmallDeformation
 {
+struct NodalForceCalculationInterface
+{
+    virtual std::vector<double> const& getNodalForces(
+        std::vector<double>& nodal_values) const = 0;
+
+    virtual ~NodalForceCalculationInterface() = default;
+};
+
+template <int DisplacementDim, int NPoints,
+          typename NodalDisplacementVectorType, typename IPData,
+          typename IntegrationMethod>
+std::vector<double> const& getNodalForces(
+    std::vector<double>& nodal_values,
+    IntegrationMethod const& _integration_method, IPData const& _ip_data,
+    int element_id)
+{
+    nodal_values.clear();
+    auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
+        nodal_values, NPoints * DisplacementDim);
+
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    SpatialPosition x_position;
+    x_position.setElementID(element_id);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+        auto const& w = _ip_data[ip].integration_weight;
+
+        auto const& B = _ip_data[ip].b_matrices;
+        auto& sigma = _ip_data[ip].sigma;
+
+        local_b.noalias() += B.transpose() * sigma * w;
+    }
+
+    return nodal_values;
+}
+
 template <typename LocalAssemblerInterface>
 void writeNodalForces(
     MeshLib::PropertyVector<double>& nodal_forces,
