@@ -56,13 +56,10 @@ public:
         _ts_current += dt;
     }
 
-    /// Assign solution error to the corresponding member, if it exists.
-    /// \param solution_error Solution error between two successive time steps.
-    virtual void setSolutionError(const double solution_error) = 0;
-
     /// move to the next time step
+    /// \param solution_error Solution error between two successive time steps.
     /// \return true if the next step exists
-    virtual bool next() = 0;
+    virtual bool next(const double solution_error) = 0;
 
     /// return if current time step is accepted or not
     virtual bool accepted() const = 0;

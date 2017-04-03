@@ -14,6 +14,7 @@
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
+#include "NumLib/TimeStepping/Algorithms/EvolutionaryPIDcontroller.h"
 
 #include "MathLib/LinAlg/LinAlg.h"
 
@@ -35,6 +36,10 @@ std::unique_ptr<NumLib::ITimeStepAlgorithm> createTimeStepper(
     else if (type == "FixedTimeStepping")
     {
         timestepper = NumLib::FixedTimeStepping::newInstance(config);
+    }
+    else if (type == "EvolutionaryPIDcontroller")
+    {
+        timestepper = NumLib::createEvolutionaryPIDcontroller(config);
     }
     else
     {
@@ -633,7 +638,7 @@ bool UncoupledProcessesTimeLoop::loop()
             if (t > timestepper->end())  // skip the process that already stops
                 continue;
 
-            timestepper->next();
+            // TODO SOON          timestepper->next();
             if (timestepper->getTimeStep().dt() < dt)
             {
                 dt = timestepper->getTimeStep().dt();

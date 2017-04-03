@@ -67,7 +67,7 @@ public:
         BaseLib::ConfigTree const& config);
 
     /// move to the next time step
-    bool next() override;
+    bool next(const double solution_error) override;
 
     /// return if current time step is accepted
     bool accepted() const override { return true; }

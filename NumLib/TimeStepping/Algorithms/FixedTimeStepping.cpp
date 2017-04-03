@@ -94,7 +94,7 @@ std::unique_ptr<ITimeStepAlgorithm> FixedTimeStepping::newInstance(
     return std::make_unique<FixedTimeStepping>(t_initial, t_end, timesteps);
 }
 
-bool FixedTimeStepping::next()
+bool FixedTimeStepping::next(const double /*solution_error*/)
 {
     // check if last time step
     if (_ts_current.steps() == _dt_vector.size() ||

@@ -37,7 +37,8 @@ IterationNumberBasedAdaptiveTimeStepping::
     assert(iter_times_vector.size() == multiplier_vector.size());
 }
 
-bool IterationNumberBasedAdaptiveTimeStepping::next()
+bool IterationNumberBasedAdaptiveTimeStepping::next(
+    const double /*solution_error*/)
 {
     // check current time step
     if (std::abs(_ts_current.current() - _t_end) <

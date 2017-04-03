@@ -125,7 +125,8 @@ public:
      *          before pushState(...), in which the value of _x_old is updated.
      * \param x    The solution at the current timestep.
      */
-    virtual double getRelativeError(GlobalVector const& x) = 0;
+    virtual double getRelativeError(GlobalVector const& x,
+                                    MathLib::VecNormType norm_type) = 0;
 
     /*! Indicate that the current timestep is done and that you will proceed to
      * the next one.
@@ -232,7 +233,8 @@ public:
         MathLib::LinAlg::copy(x0, _x_old);
     }
 
-    double getRelativeError(GlobalVector const& x) override;
+    double getRelativeError(GlobalVector const& x,
+                            MathLib::VecNormType norm_type) override;
 
     void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const&) override
@@ -284,7 +286,8 @@ public:
         MathLib::LinAlg::copy(x0, _x_old);
     }
 
-    double getRelativeError(GlobalVector const& x) override;
+    double getRelativeError(GlobalVector const& x,
+                            MathLib::VecNormType norm_type) override;
 
     void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const&) override
@@ -360,7 +363,8 @@ public:
         MathLib::LinAlg::copy(x0, _x_old);
     }
 
-    double getRelativeError(GlobalVector const& x) override;
+    double getRelativeError(GlobalVector const& x,
+                            MathLib::VecNormType norm_type) override;
 
     void pushState(const double, GlobalVector const& x,
                    InternalMatrixStorage const& strg) override
@@ -434,7 +438,8 @@ public:
             &NumLib::GlobalVectorProvider::provider.getVector(x0));
     }
 
-    double getRelativeError(GlobalVector const& x) override;
+    double getRelativeError(GlobalVector const& x,
+                            MathLib::VecNormType norm_type) override;
 
     void pushState(const double, GlobalVector const& x,
                    InternalMatrixStorage const&) override;
