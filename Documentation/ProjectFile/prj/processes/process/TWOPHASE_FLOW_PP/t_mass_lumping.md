@@ -1,1 +1,1 @@
-\copydoc ProcessLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPProcessData::_has_mass_lumping
+\copydoc ProcessLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPProcessData::has_mass_lumping

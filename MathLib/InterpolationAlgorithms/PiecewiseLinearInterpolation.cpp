@@ -95,7 +95,7 @@ double PiecewiseLinearInterpolation::getDerivative(
         interval_idx = 1;
     }
 
-    if (interval_idx > 2 && interval_idx < _supp_pnts.size() - 1)
+    if (interval_idx > 1 && interval_idx < _supp_pnts.size() - 2)
     {
         // left and right support points.
         double const x_ll = _supp_pnts[interval_idx - 2];

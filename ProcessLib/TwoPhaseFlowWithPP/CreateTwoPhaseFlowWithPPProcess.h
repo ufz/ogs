@@ -16,7 +16,7 @@ namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPP
 {
-std::unique_ptr<Process> CreateTwoPhaseFlowWithPPProcess(
+std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

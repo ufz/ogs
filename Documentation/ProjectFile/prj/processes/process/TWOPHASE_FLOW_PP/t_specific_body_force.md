@@ -1,1 +1,1 @@
-\copydoc ProcessLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPProcessData::_specific_body_force
+\copydoc ProcessLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPProcessData::specific_body_force

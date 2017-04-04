@@ -9,20 +9,20 @@
 #include "CreateTwoPhaseFlowWithPPProcess.h"
 #include <cassert>
 
-#include "MaterialLib/TwoPhaseModels/CreateTwoPhaseFlowMaterialProperties.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
+#include "CreateTwoPhaseFlowWithPPMaterialProperties.h"
+#include "TwoPhaseFlowWithPPMaterialProperties.h"
 #include "TwoPhaseFlowWithPPProcess.h"
 #include "TwoPhaseFlowWithPPProcessData.h"
-
 namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPP
 {
-std::unique_ptr<Process> CreateTwoPhaseFlowWithPPProcess(
+std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -37,9 +37,6 @@ std::unique_ptr<Process> CreateTwoPhaseFlowWithPPProcess(
     config.checkConfigParameter("type", "TWOPHASE_FLOW_PP");
 
     DBUG("Create TwoPhaseFlowProcess with PP model.");
-
-    // Process variable.
-
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
@@ -58,81 +55,48 @@ std::unique_ptr<Process> CreateTwoPhaseFlowWithPPProcess(
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
     // Specific body force
-    Eigen::VectorXd specific_body_force;
-
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
     assert(b.size() > 0 && b.size() < 4);
-    specific_body_force.resize(b.size());
+    Eigen::VectorXd specific_body_force(b.size());
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
     if (has_gravity)
         std::copy_n(b.data(), b.size(), specific_body_force.data());
 
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__mass_lumping}
-    auto mass_lump = config.getConfigParameter<bool>("mass_lumping");
+    auto const mass_lumping = config.getConfigParameter<bool>("mass_lumping");
+
+    auto& temperature = findParameter<double>(
+        config,
+        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PP__temperature}
+        "temperature", parameters, 1);
 
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
-    std::unique_ptr<
-        MaterialLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPMaterialProperties>
-        material = nullptr;
-
+    boost::optional<MeshLib::PropertyVector<int> const&> material_ids;
     if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
     {
         INFO("The twophase flow is in heterogeneous porous media.");
-        const bool has_material_ids = true;
-        auto const& mat_ids =
-            mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-        material = MaterialLib::TwoPhaseFlowWithPP::
-            CreateTwoPhaseFlowMaterialProperties(mat_config, has_material_ids,
-                                                 *mat_ids);
-        TwoPhaseFlowWithPPProcessData process_data{
-            specific_body_force,
-            has_gravity,
-            mass_lump,
-            std::move(material),
-            *curves.at("curve_PC_S"),
-            *curves.at("curve_S_Krel_wet"),
-            *curves.at("curve_S_Krel_nonwet")};
-        return std::unique_ptr<Process>{new TwoPhaseFlowWithPPProcess{
-            mesh, std::move(jacobian_assembler), parameters, integration_order,
-            std::move(process_variables), std::move(process_data),
-            std::move(secondary_variables), std::move(named_function_caller),
-            mat_config, curves}};
+        material_ids =
+            *mesh.getProperties().getPropertyVector<int>("MaterialIDs");
     }
     else
     {
         INFO("The twophase flow is in homogeneous porous media.");
-
-        MeshLib::Properties dummy_property;
-
-        auto const& dummy_property_vector =
-            dummy_property.createNewPropertyVector<int>(
-                "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-
-        // Since dummy_property_vector is only visible in this function,
-        // the following constant, has_material_ids, is employed to indicate
-        // that material_ids does not exist.
-        const bool has_material_ids = false;
-        material = MaterialLib::TwoPhaseFlowWithPP::
-            CreateTwoPhaseFlowMaterialProperties(mat_config, has_material_ids,
-                                                 *dummy_property_vector);
-        TwoPhaseFlowWithPPProcessData process_data{
-            specific_body_force,
-            has_gravity,
-            mass_lump,
-            std::move(material),
-            *curves.at("curve_PC_S"),
-            *curves.at("curve_S_Krel_wet"),
-            *curves.at("curve_S_Krel_nonwet")};
-        return std::unique_ptr<Process>{new TwoPhaseFlowWithPPProcess{
-            mesh, std::move(jacobian_assembler), parameters, integration_order,
-            std::move(process_variables), std::move(process_data),
-            std::move(secondary_variables), std::move(named_function_caller),
-            mat_config, curves}};
     }
+    std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties>
+    material = createTwoPhaseFlowWithPPMaterialProperties(mat_config, material_ids);
+
+    TwoPhaseFlowWithPPProcessData process_data{
+        specific_body_force, has_gravity, mass_lumping, temperature, std::move(material)};
+
+    return std::unique_ptr<Process>{new TwoPhaseFlowWithPPProcess{
+        mesh, std::move(jacobian_assembler), parameters, integration_order,
+        std::move(process_variables), std::move(process_data),
+        std::move(secondary_variables), std::move(named_function_caller),
+        mat_config, curves}};
 }
 
 }  // end of namespace
