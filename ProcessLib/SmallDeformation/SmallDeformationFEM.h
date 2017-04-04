@@ -56,7 +56,7 @@ struct IntegrationPointData final
           _material_state_variables(std::move(other._material_state_variables)),
           _C(std::move(other._C)),
           _detJ(std::move(other._detJ)),
-          _integralMeasure(other._integralMeasure)
+          integration_weight(std::move(other.integration_weight))
     {
     }
 #endif  // _MSC_VER
@@ -71,8 +71,7 @@ struct IntegrationPointData final
         _material_state_variables;
 
     typename BMatricesType::KelvinMatrixType _C;
-    double _detJ;
-    double _integralMeasure;
+    double integration_weight;
 
     void pushBackState()
     {
@@ -180,9 +179,9 @@ public:
             _ip_data.emplace_back(*_process_data.material);
             auto& ip_data = _ip_data[ip];
             auto const& sm = shape_matrices[ip];
-            ip_data._detJ = sm.detJ;
-            ip_data._integralMeasure = sm.integralMeasure;
-            ip_data._b_matrices.resize(
+            _ip_data[ip].integration_weight =
+                _integration_method.getWeightedPoint(ip).getWeight() *
+                sm.integralMeasure * sm.detJ;
                 KelvinVectorDimensions<DisplacementDim>::value,
                 ShapeFunction::NPOINTS * DisplacementDim);
 
@@ -244,9 +243,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
-            auto const& wp = _integration_method.getWeightedPoint(ip);
-            auto const& detJ = _ip_data[ip]._detJ;
-            auto const& integralMeasure = _ip_data[ip]._integralMeasure;
+            auto const& w = _ip_data[ip].integration_weight;
 
             auto const& B = _ip_data[ip]._b_matrices;
             auto const& eps_prev = _ip_data[ip]._eps_prev;
@@ -268,10 +265,8 @@ public:
                     sigma, C, material_state_variables))
                 OGS_FATAL("Computation of local constitutive relation failed.");
 
-            local_b.noalias() -=
-                B.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
-            local_Jac.noalias() +=
-                B.transpose() * C * B * detJ * wp.getWeight() * integralMeasure;
+            local_b.noalias() -= B.transpose() * sigma * w;
+            local_Jac.noalias() += B.transpose() * C * B * w;
         }
     }
 
