@@ -315,14 +315,14 @@ public:
         return getIntPtSigma(cache, 3);
     }
 
-    std::vector<double> const& getIntPtSigmaXZ(
+    std::vector<double> const& getIntPtSigmaYZ(
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
         return getIntPtSigma(cache, 4);
     }
 
-    std::vector<double> const& getIntPtSigmaYZ(
+    std::vector<double> const& getIntPtSigmaXZ(
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
@@ -353,14 +353,14 @@ public:
         return getIntPtEpsilon(cache, 3);
     }
 
-    std::vector<double> const& getIntPtEpsilonXZ(
+    std::vector<double> const& getIntPtEpsilonYZ(
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
         return getIntPtEpsilon(cache, 4);
     }
 
-    std::vector<double> const& getIntPtEpsilonYZ(
+    std::vector<double> const& getIntPtEpsilonXZ(
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
