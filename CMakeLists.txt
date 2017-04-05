@@ -177,6 +177,7 @@ if(OGS_USE_MPI)
     add_definitions(-DUSE_MPI)
 endif()
 
+# Eigen
 add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO) # TODO check if needed
 if (EIGEN_NO_DEBUG)
     add_definitions(-DEIGEN_NO_DEBUG)
@@ -191,6 +192,11 @@ if(OGS_USE_EIGEN)
         add_definitions(-DUSE_EIGEN_UNSUPPORTED)
     endif()
 endif()
+
+if(MSVC AND OGS_32_BIT)
+    add_definitions(-DEIGEN_MAX_ALIGN_BYTES=0 -DEIGEN_DONT_ALIGN)
+endif()
+# End Eigen
 
 if (OGS_FATAL_ABORT)
     add_definitions(-DOGS_FATAL_ABORT)
