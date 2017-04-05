@@ -94,6 +94,16 @@ public:
     {
     }
 
+    double computeFreeEnergyDensity(
+        KelvinVector const& eps,
+        KelvinVector const& sigma,
+        typename MechanicsBase<DisplacementDim>::
+            MaterialStateVariables const& /* material_state_variables */)
+        const override
+    {
+        return eps.dot(sigma) / 2;
+    }
+
     boost::optional<std::tuple<KelvinVector,
                                std::unique_ptr<typename MechanicsBase<
                                    DisplacementDim>::MaterialStateVariables>,

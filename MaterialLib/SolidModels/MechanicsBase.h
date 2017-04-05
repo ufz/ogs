@@ -15,6 +15,7 @@
 #include <tuple>
 #include <vector>
 
+#include "BaseLib/Error.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 
 namespace ProcessLib
@@ -127,6 +128,16 @@ struct MechanicsBase
     virtual std::vector<InternalVariable> getInternalVariables() const
     {
         return {};
+    }
+
+    virtual double computeFreeEnergyDensity(
+        KelvinVector const& eps,
+        KelvinVector const& sigma,
+        MaterialStateVariables const& material_state_variables) const
+    {
+        OGS_FATAL(
+            "computeFreeEnergyDensity not implemented for the chosen material "
+            "model.");
     }
 
     virtual ~MechanicsBase() = default;
