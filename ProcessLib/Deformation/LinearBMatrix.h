@@ -78,6 +78,5 @@ BMatrixType computeBMatrix(DNDX_Type const& dNdx,
 
     return B;
 }
-
 }  // namespace LinearBMatrix
 }  // namespace ProcessLib
