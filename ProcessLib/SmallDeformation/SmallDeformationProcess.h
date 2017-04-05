@@ -139,6 +139,20 @@ private:
             makeExtrapolator(
                 getExtrapolator(), _local_assemblers,
                 &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonXY));
+        if (DisplacementDim == 3)
+        {
+            Base::_secondary_variables.addSecondaryVariable(
+                "epsilon_yz", 1,
+                makeExtrapolator(getExtrapolator(), _local_assemblers,
+                                 &SmallDeformationLocalAssemblerInterface::
+                                     getIntPtEpsilonYZ));
+
+            Base::_secondary_variables.addSecondaryVariable(
+                "epsilon_xz", 1,
+                makeExtrapolator(getExtrapolator(), _local_assemblers,
+                                 &SmallDeformationLocalAssemblerInterface::
+                                     getIntPtEpsilonXZ));
+        }
     }
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
