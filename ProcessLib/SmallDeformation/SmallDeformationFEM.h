@@ -18,6 +18,7 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
+#include "ProcessLib/Deformation/GMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
@@ -92,6 +93,10 @@ public:
     using NodalForceVectorType = typename BMatricesType::NodalForceVectorType;
     using NodalDisplacementVectorType =
         typename BMatricesType::NodalForceVectorType;
+
+    using GMatricesType = GMatrixPolicyType<ShapeFunction, DisplacementDim>;
+    using GradientVectorType = typename GMatricesType::GradientVectorType;
+    using GradientMatrixType = typename GMatricesType::GradientMatrixType;
 
     SmallDeformationLocalAssembler(SmallDeformationLocalAssembler const&) =
         delete;
@@ -249,6 +254,35 @@ public:
         }
     }
 
+    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto& ip_data = _ip_data[ip];
+
+            // Update free energy density needed for material forces.
+            ip_data.free_energy_density =
+                ip_data.solid_material.computeFreeEnergyDensity(
+                    ip_data.eps, ip_data.sigma,
+                    *ip_data.material_state_variables);
+        }
+    }
+
+    std::vector<double> const& getMaterialForces(
+        std::vector<double> const& local_x,
+        std::vector<double>& nodal_values) override
+    {
+        return ProcessLib::SmallDeformation::getMaterialForces<
+            DisplacementDim, ShapeFunction, ShapeMatricesType,
+            typename BMatricesType::NodalForceVectorType,
+            NodalDisplacementVectorType, GradientVectorType,
+            GradientMatrixType>(local_x, nodal_values, _integration_method,
+                                _ip_data, _element, _is_axially_symmetric);
+    }
+
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
@@ -259,6 +293,9 @@ public:
     }
 
     std::vector<double> const& getIntPtFreeEnergyDensity(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         cache.clear();

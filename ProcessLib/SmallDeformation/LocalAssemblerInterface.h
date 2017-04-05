@@ -13,6 +13,7 @@
 
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
+#include "ProcessLib/Deformation/MaterialForces.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 
 namespace ProcessLib
@@ -22,6 +23,7 @@ namespace SmallDeformation
 template <int DisplacementDim>
 struct SmallDeformationLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
+      public MaterialForcesInterface,
       public NumLib::ExtrapolatableElement
 {
     virtual std::vector<double> const& getIntPtFreeEnergyDensity(
