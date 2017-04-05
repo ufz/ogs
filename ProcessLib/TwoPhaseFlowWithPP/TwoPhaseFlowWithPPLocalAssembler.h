@@ -48,6 +48,8 @@ struct IntegrationPointData final
     TwoPhaseFlowWithPPMaterialProperties const& mat_property;
     const double integration_weight;
     NodalMatrixType const massOperator;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 const unsigned NUM_NODAL_DOF = 2;
 
