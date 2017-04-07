@@ -329,7 +329,7 @@ NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
     return nmb_element_idxs;
 }
 
-void NodeWiseMeshPartitioner::writePropertiesBinary(
+void NodeWiseMeshPartitioner::writeNodePropertiesBinary(
     const std::string& file_name_base) const
 {
     auto const& property_names(_partitioned_properties.getPropertyVectorNames());
@@ -360,7 +360,8 @@ void NodeWiseMeshPartitioner::writePropertiesBinary(
             writePropertyVectorBinary<std::size_t>(name, out_val, out);
         if (!success)
             OGS_FATAL(
-                "writePropertiesBinary: Could not write PropertyVector '%s'.",
+                "writeNodePropertiesBinary: Could not write PropertyVector "
+                "'%s'.",
                 name.c_str());
     }
     unsigned long offset = 0;
@@ -534,7 +535,7 @@ void NodeWiseMeshPartitioner::writeNodesBinary(const std::string& file_name_base
 
 void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 {
-    writePropertiesBinary(file_name_base);
+    writeNodePropertiesBinary(file_name_base);
     const auto elem_integers = writeConfigDataBinary(file_name_base);
 
     const std::vector<IntegerType>& num_elem_integers

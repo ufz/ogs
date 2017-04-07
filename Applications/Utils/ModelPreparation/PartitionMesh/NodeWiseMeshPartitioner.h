@@ -130,7 +130,7 @@ private:
                                     std::vector<IntegerType>& elem_info,
                                     IntegerType& counter);
 
-    void writePropertiesBinary(std::string const& file_name_base) const;
+    void writeNodePropertiesBinary(std::string const& file_name_base) const;
 
     /// 1 copy pointers to nodes belonging to the partition part_id
     /// 2 collect non-linear element nodes belonging to the partition part_id in
