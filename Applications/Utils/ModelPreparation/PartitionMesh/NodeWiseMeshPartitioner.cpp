@@ -25,8 +25,6 @@
 
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
-#include "MeshLib/Elements/Element.h"
-
 namespace ApplicationUtils
 {
 struct NodeStruct
@@ -240,9 +238,37 @@ void NodeWiseMeshPartitioner::processNodeProperties()
                 name.c_str());
     }
 }
+
+void NodeWiseMeshPartitioner::processCellProperties()
+{
+    std::size_t const total_number_of_tuples = std::accumulate(
+        std::begin(_partitions), std::end(_partitions), 0,
+        [](std::size_t const sum, Partition const& p) {
+            return sum + p.regular_elements.size() + p.ghost_elements.size();
+        });
+
+    DBUG("total number of cell-based tuples after partitioning: %d ",
+         total_number_of_tuples);
+    // 1 create new PV
+    // 2 resize the PV with total_number_of_tuples
+    // 3 copy the values according to the partition info
+    auto const& original_properties(_mesh->getProperties());
+    auto const property_names =
+        original_properties.getPropertyVectorNames(MeshLib::MeshItemType::Cell);
+    for (auto const& name : property_names)
+    {
+        bool success =
+            copyCellPropertyVector<double>(name, total_number_of_tuples) ||
+            copyCellPropertyVector<float>(name, total_number_of_tuples) ||
+            copyCellPropertyVector<int>(name, total_number_of_tuples) ||
+            copyCellPropertyVector<long>(name, total_number_of_tuples) ||
+            copyCellPropertyVector<unsigned>(name, total_number_of_tuples) ||
+            copyCellPropertyVector<unsigned long>(name,
+                                                  total_number_of_tuples) ||
+            copyCellPropertyVector<std::size_t>(name, total_number_of_tuples);
         if (!success)
             WARN(
-                "processProperties: Could not create partitioned "
+                "processCellProperties: Could not create partitioned "
                 "PropertyVector '%s'.",
                 name.c_str());
     }
@@ -260,6 +286,7 @@ void NodeWiseMeshPartitioner::partitionByMETIS(
     renumberNodeIndices(is_mixed_high_order_linear_elems);
 
     processNodeProperties();
+    processCellProperties();
 }
 
 void NodeWiseMeshPartitioner::renumberNodeIndices(
