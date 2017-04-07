@@ -49,6 +49,18 @@ std::vector<std::string> Properties::getPropertyVectorNames() const
     return names;
 }
 
+std::vector<std::string> Properties::getPropertyVectorNames(
+    MeshLib::MeshItemType t) const
+{
+    std::vector<std::string> names;
+    for (auto p : _properties)
+    {
+        if (p.second->getMeshItemType() == t)
+            names.push_back(p.first);
+    }
+    return names;
+}
+
 Properties Properties::excludeCopyProperties(
     std::vector<std::size_t> const& exclude_elem_ids,
     std::vector<std::size_t> const& exclude_node_ids) const
