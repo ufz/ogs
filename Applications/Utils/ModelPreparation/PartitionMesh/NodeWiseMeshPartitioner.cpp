@@ -336,12 +336,12 @@ void NodeWiseMeshPartitioner::writeNodePropertiesBinary(
     if (property_names.empty())
         return;
     const std::string fname_cfg = file_name_base +
-                                  "_partitioned_properties_cfg" +
+                                  "_partitioned_node_properties_cfg" +
                                   std::to_string(_npartitions) + ".bin";
     std::ofstream out(fname_cfg.c_str(), std::ios::binary | std::ios::out);
 
     const std::string fname_val = file_name_base +
-                                  "_partitioned_properties_val" +
+                                  "_partitioned_node_properties_val" +
                                   std::to_string(_npartitions) + ".bin";
     std::ofstream out_val(fname_val.c_str(), std::ios::binary | std::ios::out);
 

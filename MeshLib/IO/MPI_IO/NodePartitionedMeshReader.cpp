@@ -205,7 +205,7 @@ MeshLib::Properties NodePartitionedMeshReader::readNodePropertiesBinary(
     const std::string& file_name_base) const
 {
     const std::string fname_cfg = file_name_base +
-                                  "_partitioned_properties_cfg" +
+                                  "_partitioned_node_properties_cfg" +
                                   std::to_string(_mpi_comm_size) + ".bin";
     std::ifstream is(fname_cfg.c_str(), std::ios::binary | std::ios::in);
     if (!is)
@@ -257,8 +257,9 @@ MeshLib::Properties NodePartitionedMeshReader::readNodePropertiesBinary(
     DBUG("[%d] %d tuples in partition.", _mpi_rank, pvpmd->number_of_tuples);
     is.close();
 
-    const std::string fname_val = file_name_base + "_partitioned_properties_val"
-                              + std::to_string(_mpi_comm_size) + ".bin";
+    const std::string fname_val = file_name_base +
+                                  "_partitioned_node_properties_val" +
+                                  std::to_string(_mpi_comm_size) + ".bin";
     is.open(fname_val.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
