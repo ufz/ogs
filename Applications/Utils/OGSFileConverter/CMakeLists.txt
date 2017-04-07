@@ -16,7 +16,6 @@ set(SOURCES
 find_package(Qt5 QUIET REQUIRED Gui Widgets Xml XmlPatterns)
 
 include_directories(
-    ${CMAKE_BINARY_DIR}/Applications/Utils/OGSFileConverter
     ${CMAKE_SOURCE_DIR}/BaseLib
     ${CMAKE_SOURCE_DIR}/FileIO
     ${CMAKE_SOURCE_DIR}/GeoLib
@@ -24,6 +23,12 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/Applications/DataExplorer/Base
     ${CMAKE_SOURCE_DIR}/Applications/DataExplorer/DataView
     ${CMAKE_SOURCE_DIR}/Applications/DataExplorer/VtkVis
+
+    # Qt generated file includes
+    ${CMAKE_BINARY_DIR}/Applications/Utils/OGSFileConverter
+
+    # Workaround for CMake 3.8
+    ${CMAKE_CURRENT_BINARY_DIR}/OGSFileConverterLib_autogen/include
 )
 
 file(GLOB_RECURSE UIS *.ui)
