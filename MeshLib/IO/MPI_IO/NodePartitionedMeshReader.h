@@ -165,7 +165,11 @@ private:
      */
     MeshLib::NodePartitionedMesh* readBinary(const std::string &file_name_base);
 
-    MeshLib::Properties readPropertiesBinary(const std::string& file_name_base) const;
+    MeshLib::Properties readPropertiesBinary(
+        const std::string& file_name_base) const;
+
+    MeshLib::Properties readNodePropertiesBinary(
+        const std::string& file_name_base) const;
 
     template <typename T>
     void createPropertyVectorPart(

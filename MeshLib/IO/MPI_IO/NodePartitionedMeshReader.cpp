@@ -198,6 +198,12 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
 MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
     const std::string& file_name_base) const
 {
+    return readNodePropertiesBinary(file_name_base);
+}
+
+MeshLib::Properties NodePartitionedMeshReader::readNodePropertiesBinary(
+    const std::string& file_name_base) const
+{
     const std::string fname_cfg = file_name_base +
                                   "_partitioned_properties_cfg" +
                                   std::to_string(_mpi_comm_size) + ".bin";
