@@ -15,20 +15,26 @@ include_directories(
     ${SOURCE_DIR_REL}/FileIO
     ${SOURCE_DIR_REL}/MeshLib
     ${SOURCE_DIR_REL}/MeshLibGEOTOOLS
-    ${CMAKE_CURRENT_BINARY_DIR}/../Utils/OGSFileConverter
-    ${CMAKE_CURRENT_BINARY_DIR}/Base
-    ${CMAKE_CURRENT_BINARY_DIR}/DataView
-    ${CMAKE_CURRENT_BINARY_DIR}/DataView/StratView
-    ${CMAKE_CURRENT_BINARY_DIR}/DataView/DiagramView
-    ${CMAKE_CURRENT_BINARY_DIR}/VtkVis
-    ${CMAKE_CURRENT_BINARY_DIR}/VtkAct
-    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Base
     ${CMAKE_CURRENT_SOURCE_DIR}/DataView
     ${CMAKE_CURRENT_SOURCE_DIR}/DataView/StratView
     ${CMAKE_CURRENT_SOURCE_DIR}/DataView/DiagramView
     ${CMAKE_CURRENT_SOURCE_DIR}/VtkVis
     ${CMAKE_CURRENT_SOURCE_DIR}/VtkAct
+
+    # Qt generated file includes
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/../Utils/OGSFileConverter
+    ${CMAKE_CURRENT_BINARY_DIR}/DataView
+    ${CMAKE_CURRENT_BINARY_DIR}/DataView/DiagramView
+    ${CMAKE_CURRENT_BINARY_DIR}/VtkVis
+
+    # Workaround for CMake 3.8
+    ${CMAKE_CURRENT_BINARY_DIR}/../Utils/OGSFileConverter/OGSFileConverterLib_autogen/include
+    ${CMAKE_CURRENT_BINARY_DIR}/DataView/DiagramView/QtDiagramView_autogen/include
+    ${CMAKE_CURRENT_BINARY_DIR}/DataView/QtDataView_autogen/include
+    ${CMAKE_CURRENT_BINARY_DIR}/VtkVis/VtkVis_autogen/include
 )
 
 # Put moc files in a project folder

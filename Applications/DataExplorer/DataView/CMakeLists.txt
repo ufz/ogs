@@ -100,21 +100,27 @@ source_group("UI Files" FILES ${UIS})
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
 include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/../Base
-    ${CMAKE_CURRENT_BINARY_DIR}/DiagramView
-    ${CMAKE_CURRENT_BINARY_DIR}/StratView
     ${SOURCE_DIR_REL}/Applications/FileIO
     ${SOURCE_DIR_REL}/BaseLib
     ${SOURCE_DIR_REL}/MathLib
     ${SOURCE_DIR_REL}/GeoLib
     ${SOURCE_DIR_REL}/MeshGeoToolsLib
     ${SOURCE_DIR_REL}/MeshLib
+    ${GUI_SOURCE_DIR_REL}/Base
+    ${GUI_SOURCE_DIR_REL}/VtkVis
+
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/DiagramView
     ${CMAKE_CURRENT_SOURCE_DIR}/StratView
-    ${GUI_SOURCE_DIR_REL}/Base
-    ${GUI_SOURCE_DIR_REL}/VtkVis
+
+    # Qt generated file includes
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/DiagramView
+    ${CMAKE_CURRENT_BINARY_DIR}/StratView
+
+    # Workaround for CMake 3.8
+    ${CMAKE_CURRENT_BINARY_DIR}/DiagramView/QtDiagramView_autogen/include
+    ${CMAKE_CURRENT_BINARY_DIR}/StratView/QtStratView_autogen/include
 )
 
 if(GEOTIFF_FOUND)
@@ -127,14 +133,15 @@ add_library(QtDataView
     ${UIS}
 )
 
-target_link_libraries(QtDataView Qt5::Core Qt5::Gui)
 target_link_libraries(QtDataView
+    Qt5::Core
+    Qt5::Gui
     ApplicationsFileIO
     DataHolderLib
     QtBase
+    QtDiagramView
     QtStratView
 )
-add_dependencies(QtDataView QtDiagramView QtStratView)
 
 ADD_VTK_DEPENDENCY(QtDataView)
 

@@ -111,8 +111,12 @@ include_directories(
     ${GUI_SOURCE_DIR_REL}/DataView
     ${GUI_SOURCE_DIR_REL}/VtkModules/Qt
 
+    # Qt generated file includes
     ${CMAKE_CURRENT_BINARY_DIR}/../../BaseLib
     ${CMAKE_CURRENT_BINARY_DIR}/../DataView
+
+    # Workaround for CMake 3.8
+    ${CMAKE_CURRENT_BINARY_DIR}/../DataView/QtDataView_autogen/include
 )
 
 add_library(VtkVis
