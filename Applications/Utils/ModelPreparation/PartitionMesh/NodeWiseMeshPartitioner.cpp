@@ -206,7 +206,7 @@ void NodeWiseMeshPartitioner::processPartition(std::size_t const part_id,
                                extra_nodes.end());
 }
 
-void NodeWiseMeshPartitioner::processProperties()
+void NodeWiseMeshPartitioner::processNodeProperties()
 {
     std::size_t const total_number_of_tuples =
         std::accumulate(std::begin(_partitions), std::end(_partitions), 0,
@@ -214,7 +214,7 @@ void NodeWiseMeshPartitioner::processProperties()
                             return sum + p.nodes.size();
                         });
 
-    INFO("total number of tuples after partitioning: %d ",
+    DBUG("total number of node-based tuples after partitioning: %d ",
          total_number_of_tuples);
     // 1 create new PV
     // 2 resize the PV with total_number_of_tuples
@@ -225,13 +225,21 @@ void NodeWiseMeshPartitioner::processProperties()
     for (auto const& name : property_names)
     {
         bool success =
-            copyPropertyVector<double>(name, total_number_of_tuples) ||
-            copyPropertyVector<float>(name, total_number_of_tuples) ||
-            copyPropertyVector<int>(name, total_number_of_tuples) ||
-            copyPropertyVector<long>(name, total_number_of_tuples) ||
-            copyPropertyVector<unsigned>(name, total_number_of_tuples) ||
-            copyPropertyVector<unsigned long>(name, total_number_of_tuples) ||
-            copyPropertyVector<std::size_t>(name, total_number_of_tuples);
+            copyNodePropertyVector<double>(name, total_number_of_tuples) ||
+            copyNodePropertyVector<float>(name, total_number_of_tuples) ||
+            copyNodePropertyVector<int>(name, total_number_of_tuples) ||
+            copyNodePropertyVector<long>(name, total_number_of_tuples) ||
+            copyNodePropertyVector<unsigned>(name, total_number_of_tuples) ||
+            copyNodePropertyVector<unsigned long>(name,
+                                                  total_number_of_tuples) ||
+            copyNodePropertyVector<std::size_t>(name, total_number_of_tuples);
+        if (!success)
+            WARN(
+                "processNodeProperties: Could not create partitioned "
+                "PropertyVector '%s'.",
+                name.c_str());
+    }
+}
         if (!success)
             WARN(
                 "processProperties: Could not create partitioned "
@@ -251,7 +259,7 @@ void NodeWiseMeshPartitioner::partitionByMETIS(
 
     renumberNodeIndices(is_mixed_high_order_linear_elems);
 
-    processProperties();
+    processNodeProperties();
 }
 
 void NodeWiseMeshPartitioner::renumberNodeIndices(

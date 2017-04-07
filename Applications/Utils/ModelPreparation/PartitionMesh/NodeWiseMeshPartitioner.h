@@ -164,10 +164,10 @@ private:
     void processPartition(std::size_t const part_id,
                           const bool is_mixed_high_order_linear_elems);
 
-    void processProperties();
+    void processNodeProperties();
 
     template <typename T>
-    bool copyPropertyVector(std::string const& name,
+    bool copyNodePropertyVector(std::string const& name,
                             std::size_t const total_number_of_tuples)
     {
         auto const& original_properties(_mesh->getProperties());
