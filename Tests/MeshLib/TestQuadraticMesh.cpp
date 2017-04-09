@@ -17,7 +17,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshGenerators/QuadraticeMeshGenerator.h"
+#include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "MeshLib/Node.h"
 #include "MeshGeoToolsLib/AppendLinesAlongPolyline.h"
 

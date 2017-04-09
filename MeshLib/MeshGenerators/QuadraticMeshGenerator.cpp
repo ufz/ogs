@@ -7,7 +7,7 @@
  *
  */
 
-#include "QuadraticeMeshGenerator.h"
+#include "QuadraticMeshGenerator.h"
 
 #include "BaseLib/makeVectorUnique.h"
 
