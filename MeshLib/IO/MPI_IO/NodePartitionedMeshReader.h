@@ -168,9 +168,9 @@ private:
     MeshLib::Properties readPropertiesBinary(
         const std::string& file_name_base) const;
 
-    void readNodePropertiesBinary(const std::string& file_name_base,
-                                  MeshLib::MeshItemType t,
-                                  MeshLib::Properties& p) const;
+    void readPropertiesBinary(const std::string& file_name_base,
+                              MeshLib::MeshItemType t,
+                              MeshLib::Properties& p) const;
 
     void readDomainSpecificPartOfPropertyVectors(
         std::vector<boost::optional<MeshLib::IO::PropertyVectorMetaData>> const&

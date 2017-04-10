@@ -199,11 +199,12 @@ MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
     const std::string& file_name_base) const
 {
     MeshLib::Properties p;
-    readNodePropertiesBinary(file_name_base, MeshLib::MeshItemType::Node, p);
+    readPropertiesBinary(file_name_base, MeshLib::MeshItemType::Node, p);
+    readPropertiesBinary(file_name_base, MeshLib::MeshItemType::Cell, p);
     return p;
 }
 
-void NodePartitionedMeshReader::readNodePropertiesBinary(
+void NodePartitionedMeshReader::readPropertiesBinary(
     const std::string& file_name_base, MeshLib::MeshItemType t,
     MeshLib::Properties& p) const
 {
