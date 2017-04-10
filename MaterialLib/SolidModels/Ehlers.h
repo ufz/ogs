@@ -29,6 +29,8 @@
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/Error.h"
+#include "NumLib/NewtonRaphson.h"
+
 #include "KelvinVector.h"
 #include "MechanicsBase.h"
 
@@ -208,9 +210,12 @@ public:
 
 public:
     explicit SolidEhlers(
+        NumLib::NewtonRaphsonSolverParameters const&
+            nonlinear_solver_parameters,
         MaterialProperties const& material_properties,
         std::unique_ptr<EhlersDamageProperties>&& damage_properties)
-        : _mp(material_properties),
+        : _nonlinear_solver_parameters(nonlinear_solver_parameters),
+          _mp(material_properties),
           _damage_properties(std::move(damage_properties))
     {
     }
@@ -236,6 +241,8 @@ private:
             material_state_variables);
 
 private:
+    NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
+
     MaterialProperties _mp;
     std::unique_ptr<EhlersDamageProperties> _damage_properties;
 };

@@ -92,7 +92,7 @@ createSmallDeformationProcess(
     }
     else if (type == "Lubby2")
     {
-        material = MaterialLib::Solids::createLubby2<DisplacementDim>(
+        material = MaterialLib::Solids::Lubby2::createLubby2<DisplacementDim>(
             parameters, constitutive_relation_config);
     }
     else

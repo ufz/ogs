@@ -16,6 +16,13 @@
 
 namespace NumLib
 {
+
+struct NewtonRaphsonSolverParameters
+{
+    int const maximum_iterations;
+    double const error_tolerance;
+};
+
 /// Newton-Raphson solver for system of equations using an Eigen linear solvers
 /// library.
 /// The current implementation does not update the solution itself, but calls a
@@ -29,14 +36,15 @@ public:
     NewtonRaphson(LinearSolver& linear_solver,
                   JacobianMatrixUpdate jacobian_update,
                   ResidualUpdate residual_update,
-                  SolutionUpdate solution_update, int const maximum_iterations,
-                  double const tolerance)
+                  SolutionUpdate solution_update,
+                  NewtonRaphsonSolverParameters const& solver_parameters)
         : _linear_solver(linear_solver),
           _jacobian_update(jacobian_update),
           _residual_update(residual_update),
           _solution_update(solution_update),
-          _maximum_iterations(maximum_iterations),
-          _tolerance_squared(tolerance * tolerance)
+          _maximum_iterations(solver_parameters.maximum_iterations),
+          _tolerance_squared(solver_parameters.error_tolerance *
+                             solver_parameters.error_tolerance)
     {
     }
 
@@ -86,7 +94,7 @@ private:
     JacobianMatrixUpdate _jacobian_update;
     ResidualUpdate _residual_update;
     SolutionUpdate _solution_update;
-    const int _maximum_iterations;
-    const double _tolerance_squared;
+    const int _maximum_iterations;  ///< Maximum number of iterations.
+    const double _tolerance_squared;    ///< Error tolerance for the residual.
 };
 }  // namespace NumLib

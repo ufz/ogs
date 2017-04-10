@@ -12,6 +12,7 @@
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/Error.h"
+#include "NumLib/NewtonRaphson.h"
 
 #include "KelvinVector.h"
 #include "MechanicsBase.h"
@@ -19,6 +20,8 @@
 namespace MaterialLib
 {
 namespace Solids
+{
+namespace Lubby2
 {
 //
 // Variables specific to the material model.
@@ -163,8 +166,11 @@ public:
                                          Eigen::RowMajor>;
 
 public:
-    explicit Lubby2(Lubby2MaterialProperties& material_properties)
-        : _mp(material_properties)
+    explicit Lubby2(NumLib::NewtonRaphsonSolverParameters const&
+                        nonlinear_solver_parameters,
+                    Lubby2MaterialProperties& material_properties)
+        : _nonlinear_solver_parameters(nonlinear_solver_parameters),
+          _mp(material_properties)
     {
     }
 
@@ -228,12 +234,14 @@ private:
     }
 
 private:
+    NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
     Lubby2MaterialProperties _mp;
 };
 
 extern template class Lubby2<2>;
 extern template class Lubby2<3>;
 
+}  // namespace Lubby2
 }  // namespace Solids
 }  // namespace MaterialLib
 

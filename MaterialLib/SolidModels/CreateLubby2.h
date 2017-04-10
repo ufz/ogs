@@ -11,14 +11,36 @@
 
 #include <logog/include/logog.hpp>
 
+#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
+
 #include "Lubby2.h"
 #include "MechanicsBase.h"
-#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 
 namespace MaterialLib
 {
 namespace Solids
 {
+namespace Lubby2
+{
+inline NumLib::NewtonRaphsonSolverParameters
+createNewtonRaphsonSolverParameters(BaseLib::ConfigTree const& config)
+{
+    DBUG("Create local nonlinear solver parameters.");
+    int const maximum_iterations =
+        //! \ogs_file_param{material__solid__constitutive_relation__Lubby2__nonlinear_solver__maximum_iterations}
+        config.getConfigParameter<int>("maximum_iterations");
+
+    DBUG("\tmaximum_iterations: %d.", maximum_iterations);
+
+    double const error_tolerance =
+        //! \ogs_file_param{material__solid__constitutive_relation__Lubby2__nonlinear_solver__error_tolerance}
+        config.getConfigParameter<double>("error_tolerance");
+
+    DBUG("\terror_tolerance: %g.", error_tolerance);
+
+    return {maximum_iterations, error_tolerance};
+}
+
 template <int DisplacementDim>
 std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
@@ -98,9 +120,16 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
         maxwell_viscosity,        dependency_parameter_mK,
         dependency_parameter_mvK, dependency_parameter_mvM};
 
+    auto const& nonlinear_solver_config =
+        //! \ogs_file_param{material__solid__constitutive_relation__Lubby2__nonlinear_solver}
+        config.getConfigSubtree("nonlinear_solver");
+    auto const nonlinear_solver_parameters =
+        createNewtonRaphsonSolverParameters(nonlinear_solver_config);
+
     return std::unique_ptr<MechanicsBase<DisplacementDim>>{
-        new Lubby2<DisplacementDim>{mp}};
+        new Lubby2<DisplacementDim>{nonlinear_solver_parameters, mp}};
 }
 
+}  // namespace Lubby2
 }  // namespace Solids
 }  // namespace MaterialLib
