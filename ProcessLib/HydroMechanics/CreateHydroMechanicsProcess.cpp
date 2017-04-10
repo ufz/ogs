@@ -55,8 +55,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     DBUG("Associate displacement with process variable \'%s\'.",
          process_variables[1].get().getName().c_str());
 
-    if (process_variables[1].get().getNumberOfComponents() !=
-        DisplacementDim)
+    if (process_variables[1].get().getNumberOfComponents() != DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '%s' is different "
@@ -76,7 +75,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             process_variables[0].get().getName().c_str(),
             process_variables[0].get().getNumberOfComponents());
     }
-
 
     // Constitutive relation.
     // read type;
@@ -107,8 +105,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& intrinsic_permeability = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__intrinsic_permeability}
-        "intrinsic_permeability",
-        parameters, 1);
+        "intrinsic_permeability", parameters, 1);
 
     DBUG("Use \'%s\' as intrinsic conductivity parameter.",
          intrinsic_permeability.name.c_str());
@@ -126,8 +123,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& fluid_viscosity = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__fluid_viscosity}
-        "fluid_viscosity",
-        parameters, 1);
+        "fluid_viscosity", parameters, 1);
     DBUG("Use \'%s\' as fluid viscosity parameter.",
          fluid_viscosity.name.c_str());
 
@@ -135,17 +131,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& fluid_density = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__fluid_density}
-        "fluid_density",
-        parameters, 1);
-    DBUG("Use \'%s\' as fluid density parameter.",
-         fluid_density.name.c_str());
+        "fluid_density", parameters, 1);
+    DBUG("Use \'%s\' as fluid density parameter.", fluid_density.name.c_str());
 
     // Biot coefficient
     auto& biot_coefficient = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__biot_coefficient}
-        "biot_coefficient",
-        parameters, 1);
+        "biot_coefficient", parameters, 1);
     DBUG("Use \'%s\' as Biot coefficient parameter.",
          biot_coefficient.name.c_str());
 
@@ -153,19 +146,15 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& porosity = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__porosity}
-        "porosity",
-        parameters, 1);
-    DBUG("Use \'%s\' as porosity parameter.",
-         porosity.name.c_str());
+        "porosity", parameters, 1);
+    DBUG("Use \'%s\' as porosity parameter.", porosity.name.c_str());
 
     // Solid density
     auto& solid_density = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__solid_density}
-        "solid_density",
-        parameters, 1);
-    DBUG("Use \'%s\' as solid density parameter.",
-         solid_density.name.c_str());
+        "solid_density", parameters, 1);
+    DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;

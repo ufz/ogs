@@ -61,7 +61,7 @@ struct IntegrationPointData final
     typename ShapeMatrixTypeDisplacement::template MatrixType<
         DisplacementDim, NPoints * DisplacementDim>
         N_u;
-    //typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
+    // typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename BMatricesType::BMatrixType b_matrices;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
@@ -207,8 +207,8 @@ public:
             auto& ip_data = _ip_data[ip];
             auto const& sm = shape_matrices_u[ip];
             _ip_data[ip].integration_weight =
-                _integration_method.getWeightedPoint(ip).getWeight() * sm.integralMeasure *
-                shape_matrices_u[ip].detJ;
+                _integration_method.getWeightedPoint(ip).getWeight() *
+                sm.integralMeasure * shape_matrices_u[ip].detJ;
             ip_data.b_matrices.resize(
                 kelvin_vector_size,
                 ShapeFunctionDisplacement::NPOINTS * DisplacementDim);
@@ -327,8 +327,7 @@ public:
 
             auto const& C = _ip_data[ip].C;
 
-            double const S =
-                _process_data.specific_storage(t, x_position)[0];
+            double const S = _process_data.specific_storage(t, x_position)[0];
             double const K_over_mu =
                 _process_data.intrinsic_permeability(t, x_position)[0] /
                 _process_data.fluid_viscosity(t, x_position)[0];
@@ -394,8 +393,7 @@ public:
             .noalias() += Kup.transpose() / dt;
 
         // pressure equation
-        local_rhs.template segment<pressure_size>(pressure_index)
-            .noalias() -=
+        local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
             laplace_p * p + storage_p * p_dot + Kup.transpose() * u_dot;
 
         // displacement equation
@@ -604,14 +602,14 @@ private:
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
-    SecondaryData<typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
+    SecondaryData<
+        typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         _secondary_data;
 
     std::vector<std::vector<double>> _darcy_velocities =
         std::vector<std::vector<double>>(
             DisplacementDim,
             std::vector<double>(_integration_method.getNumberOfPoints()));
-
 
     static const int pressure_index = 0;
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;

@@ -139,7 +139,8 @@ private:
                 getExtrapolator(), _local_assemblers,
                 &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaXY));
 
-        if (DisplacementDim == 3) {
+        if (DisplacementDim == 3)
+        {
             Base::_secondary_variables.addSecondaryVariable(
                 "sigma_xz", 1,
                 makeExtrapolator(
@@ -196,11 +197,9 @@ private:
                                  getIntPtDarcyVelocityZ));
     }
 
-    void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                 GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b,
-                                 StaggeredCouplingTerm const&
-                                 coupling_term) override
+    void assembleConcreteProcess(
+        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+        GlobalVector& b, StaggeredCouplingTerm const& coupling_term) override
     {
         DBUG("Assemble HydroMechanicsProcess.");
 

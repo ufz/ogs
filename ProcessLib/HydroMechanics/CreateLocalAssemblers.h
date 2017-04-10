@@ -64,8 +64,9 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template <int DisplacementDim, template <typename, typename, typename, unsigned, int>
-                               class LocalAssemblerImplementation,
+template <int DisplacementDim,
+          template <typename, typename, typename, unsigned, int>
+          class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     const unsigned dimension,

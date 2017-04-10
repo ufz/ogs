@@ -11,9 +11,9 @@
 
 #include <functional>
 #include <memory>
+#include <type_traits>
 #include <typeindex>
 #include <typeinfo>
-#include <type_traits>
 #include <unordered_map>
 
 #include "MeshLib/Elements/Elements.h"
