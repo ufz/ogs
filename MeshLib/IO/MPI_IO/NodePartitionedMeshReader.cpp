@@ -295,10 +295,10 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
             if (vec_pvmd[i]->is_data_type_signed)
             {
                 if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(int))
-                    createPropertyVectorPart<int>(is, *vec_pvmd[i], pvpmd,
+                    createPropertyVectorPart<int>(is, *vec_pvmd[i], pvpmd, t,
                                                   global_offset, p);
                 if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(long))
-                    createPropertyVectorPart<long>(is, *vec_pvmd[i], pvpmd,
+                    createPropertyVectorPart<long>(is, *vec_pvmd[i], pvpmd, t,
                                                    global_offset, p);
             }
             else
@@ -306,20 +306,20 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
                 if (vec_pvmd[i]->data_type_size_in_bytes ==
                     sizeof(unsigned int))
                     createPropertyVectorPart<unsigned int>(
-                        is, *vec_pvmd[i], pvpmd, global_offset, p);
+                        is, *vec_pvmd[i], pvpmd, t, global_offset, p);
                 if (vec_pvmd[i]->data_type_size_in_bytes ==
                     sizeof(unsigned long))
                     createPropertyVectorPart<unsigned long>(
-                        is, *vec_pvmd[i], pvpmd, global_offset, p);
+                        is, *vec_pvmd[i], pvpmd, t, global_offset, p);
             }
         }
         else
         {
             if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(float))
-                createPropertyVectorPart<float>(is, *vec_pvmd[i], pvpmd,
+                createPropertyVectorPart<float>(is, *vec_pvmd[i], pvpmd, t,
                                                 global_offset, p);
             if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(double))
-                createPropertyVectorPart<double>(is, *vec_pvmd[i], pvpmd,
+                createPropertyVectorPart<double>(is, *vec_pvmd[i], pvpmd, t,
                                                  global_offset, p);
         }
         global_offset += vec_pvmd[i]->data_type_size_in_bytes *
