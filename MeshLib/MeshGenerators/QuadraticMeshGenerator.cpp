@@ -7,14 +7,16 @@
  *
  */
 
-#include "QuadraticeMeshGenerator.h"
+#include "QuadraticMeshGenerator.h"
 
 #include "BaseLib/makeVectorUnique.h"
 
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Hex.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
@@ -47,19 +49,22 @@ bool operator< (Edge const& l, Edge const& r)
 }
 
 template <typename T_ELEMENT>
-T_ELEMENT* createQuadraticElement(MeshLib::Element const* e, std::vector<Edge> const& vec_edges,
-                  std::vector<MeshLib::Node*> const& vec_new_nodes, const std::size_t n_mesh_base_nodes)
+T_ELEMENT* createQuadraticElement(
+    MeshLib::Element const* e, std::vector<Edge> const& vec_edges,
+    std::vector<MeshLib::Node*> const& vec_new_nodes,
+    const std::size_t n_mesh_base_nodes)
 {
     auto const n_all_nodes = T_ELEMENT::n_all_nodes;
     auto const n_base_nodes = T_ELEMENT::n_base_nodes;
     MeshLib::Node** nodes = new MeshLib::Node*[n_all_nodes];
-    for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
-        nodes[i] = const_cast<MeshLib::Node*>(vec_new_nodes[e->getNode(i)->getID()]);
-    for (unsigned i=0; i<e->getNumberOfEdges(); i++)
+    for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
+        nodes[i] =
+            const_cast<MeshLib::Node*>(vec_new_nodes[e->getNode(i)->getID()]);
+    for (unsigned i = 0; i < e->getNumberOfEdges(); i++)
     {
-        auto itr = std::find(vec_edges.begin(), vec_edges.end(),
-                             Edge(e->getEdgeNode(i, 0)->getID(),
-                                  e->getEdgeNode(i, 1)->getID()));
+        auto itr = std::find(
+            vec_edges.begin(), vec_edges.end(),
+            Edge(e->getEdgeNode(i, 0)->getID(), e->getEdgeNode(i, 1)->getID()));
         assert(itr != vec_edges.end());
         nodes[n_base_nodes + i] =
             vec_new_nodes[n_mesh_base_nodes + itr->_edge_id];
@@ -109,9 +114,19 @@ std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& org_mesh)
             vec_new_eles.push_back(createQuadraticElement<MeshLib::Line3>(
                 e, vec_edges, vec_new_nodes, org_mesh.getNumberOfNodes()));
         }
+        else if (e->getCellType() == MeshLib::CellType::TRI3)
+        {
+            vec_new_eles.push_back(createQuadraticElement<MeshLib::Tri6>(
+                e, vec_edges, vec_new_nodes, org_mesh.getNumberOfNodes()));
+        }
         else if (e->getCellType() == MeshLib::CellType::QUAD4)
         {
             vec_new_eles.push_back(createQuadraticElement<MeshLib::Quad8>(
+                e, vec_edges, vec_new_nodes, org_mesh.getNumberOfNodes()));
+        }
+        else if (e->getCellType() == MeshLib::CellType::HEX8)
+        {
+            vec_new_eles.push_back(createQuadraticElement<MeshLib::Hex20>(
                 e, vec_edges, vec_new_nodes, org_mesh.getNumberOfNodes()));
         }
         else

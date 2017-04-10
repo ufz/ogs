@@ -17,7 +17,7 @@
 #include "BaseLib/BuildInfo.h"
 
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/QuadraticeMeshGenerator.h"
+#include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
