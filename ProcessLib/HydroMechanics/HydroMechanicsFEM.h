@@ -104,7 +104,7 @@ struct IntegrationPointData final
 template <typename ShapeMatrixType>
 struct SecondaryData
 {
-    std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N;
+    std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N_u;
 };
 
 struct HydroMechanicsLocalAssemblerInterface
@@ -187,7 +187,7 @@ public:
             _integration_method.getNumberOfPoints();
 
         _ip_data.reserve(n_integration_points);
-        _secondary_data.N.resize(n_integration_points);
+        _secondary_data.N_u.resize(n_integration_points);
 
         auto const shape_matrices_u =
             initShapeMatrices<ShapeFunctionDisplacement,
@@ -240,7 +240,7 @@ public:
             ip_data.N_p = shape_matrices_p[ip].N;
             ip_data.dNdx_p = shape_matrices_p[ip].dNdx;
 
-            _secondary_data.N[ip] = shape_matrices_u[ip].N;
+            _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
         }
     }
 
@@ -454,10 +454,10 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N_u = _secondary_data.N_u[integration_point];
 
         // assumes N is stored contiguously in memory
-        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
+        return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
 
     std::vector<double> const& getIntPtSigmaXX(
