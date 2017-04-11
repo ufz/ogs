@@ -61,7 +61,7 @@ struct IntegrationPointData final
     typename ShapeMatrixTypeDisplacement::template MatrixType<
         DisplacementDim, NPoints * DisplacementDim>
         N_u;
-    //typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
+    // typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename BMatricesType::BMatrixType b_matrices;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
@@ -99,9 +99,68 @@ struct IntegrationPointData final
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
+/// Used by for extrapolation of the integration point values. It is ordered
+/// (and stored) by integration points.
+template <typename ShapeMatrixType>
+struct SecondaryData
+{
+    std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N_u;
+};
+
+struct HydroMechanicsLocalAssemblerInterface
+    : public ProcessLib::LocalAssemblerInterface,
+      public NumLib::ExtrapolatableElement
+{
+    virtual std::vector<double> const& getIntPtSigmaXX(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaYY(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaZZ(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaXY(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaXZ(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaYZ(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonXX(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonYY(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonZZ(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonXY(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonXZ(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonYZ(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityX(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityY(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
+        std::vector<double>& cache) const = 0;
+};
+
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
-class HydroMechanicsLocalAssembler : public ProcessLib::LocalAssemblerInterface
+class HydroMechanicsLocalAssembler
+    : public HydroMechanicsLocalAssemblerInterface
 {
 public:
     using ShapeMatricesTypeDisplacement =
@@ -128,6 +187,7 @@ public:
             _integration_method.getNumberOfPoints();
 
         _ip_data.reserve(n_integration_points);
+        _secondary_data.N_u.resize(n_integration_points);
 
         auto const shape_matrices_u =
             initShapeMatrices<ShapeFunctionDisplacement,
@@ -147,8 +207,8 @@ public:
             auto& ip_data = _ip_data[ip];
             auto const& sm = shape_matrices_u[ip];
             _ip_data[ip].integration_weight =
-                _integration_method.getWeightedPoint(ip).getWeight() * sm.integralMeasure *
-                shape_matrices_u[ip].detJ;
+                _integration_method.getWeightedPoint(ip).getWeight() *
+                sm.integralMeasure * shape_matrices_u[ip].detJ;
             ip_data.b_matrices.resize(
                 kelvin_vector_size,
                 ShapeFunctionDisplacement::NPOINTS * DisplacementDim);
@@ -179,6 +239,8 @@ public:
 
             ip_data.N_p = shape_matrices_p[ip].N;
             ip_data.dNdx_p = shape_matrices_p[ip].dNdx;
+
+            _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
         }
     }
 
@@ -265,8 +327,7 @@ public:
 
             auto const& C = _ip_data[ip].C;
 
-            double const S =
-                _process_data.specific_storage(t, x_position)[0];
+            double const S = _process_data.specific_storage(t, x_position)[0];
             double const K_over_mu =
                 _process_data.intrinsic_permeability(t, x_position)[0] /
                 _process_data.fluid_viscosity(t, x_position)[0];
@@ -332,8 +393,7 @@ public:
             .noalias() += Kup.transpose() / dt;
 
         // pressure equation
-        local_rhs.template segment<pressure_size>(pressure_index)
-            .noalias() -=
+        local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
             laplace_p * p + storage_p * p_dot + Kup.transpose() * u_dot;
 
         // displacement equation
@@ -354,6 +414,181 @@ public:
         }
     }
 
+    void postTimestepConcrete(std::vector<double> const& local_x) override
+    {
+        double const& t = _process_data.t;
+
+        auto p =
+            Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+                pressure_size> const>(local_x.data() + pressure_index,
+                                      pressure_size);
+        using GlobalDimVectorType =
+            typename ShapeMatricesTypePressure::GlobalDimVectorType;
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            x_position.setIntegrationPoint(ip);
+            double const K_over_mu =
+                _process_data.intrinsic_permeability(t, x_position)[0] /
+                _process_data.fluid_viscosity(t, x_position)[0];
+
+            auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+            auto const& b = _process_data.specific_body_force;
+
+            // Compute the velocity
+            auto const& dNdx_p = _ip_data[ip].dNdx_p;
+            GlobalDimVectorType const darcy_velocity =
+                -K_over_mu * dNdx_p * p - K_over_mu * rho_fr * b;
+            for (unsigned d = 0; d < DisplacementDim; ++d)
+            {
+                _darcy_velocities[d][ip] = darcy_velocity[d];
+            }
+        }
+    }
+
+    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
+        const unsigned integration_point) const override
+    {
+        auto const& N_u = _secondary_data.N_u[integration_point];
+
+        // assumes N is stored contiguously in memory
+        return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
+    }
+
+    std::vector<double> const& getIntPtSigmaXX(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtSigma(cache, 0);
+    }
+
+    std::vector<double> const& getIntPtSigmaYY(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtSigma(cache, 1);
+    }
+
+    std::vector<double> const& getIntPtSigmaZZ(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtSigma(cache, 2);
+    }
+
+    std::vector<double> const& getIntPtSigmaXY(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtSigma(cache, 3);
+    }
+
+    std::vector<double> const& getIntPtSigmaXZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtSigma(cache, 4);
+    }
+
+    std::vector<double> const& getIntPtSigmaYZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtSigma(cache, 5);
+    }
+
+    std::vector<double> const& getIntPtEpsilonXX(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 0);
+    }
+
+    std::vector<double> const& getIntPtEpsilonYY(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 1);
+    }
+
+    std::vector<double> const& getIntPtEpsilonZZ(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 2);
+    }
+
+    std::vector<double> const& getIntPtEpsilonXY(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 3);
+    }
+
+    std::vector<double> const& getIntPtEpsilonXZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtEpsilon(cache, 4);
+    }
+
+    std::vector<double> const& getIntPtEpsilonYZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtEpsilon(cache, 5);
+    }
+
+    std::vector<double> const& getIntPtDarcyVelocityX(
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(_darcy_velocities.size() > 0);
+        return _darcy_velocities[0];
+    }
+
+    std::vector<double> const& getIntPtDarcyVelocityY(
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(_darcy_velocities.size() > 1);
+        return _darcy_velocities[1];
+    }
+
+    std::vector<double> const& getIntPtDarcyVelocityZ(
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(_darcy_velocities.size() > 2);
+        return _darcy_velocities[2];
+    }
+
+private:
+    std::vector<double> const& getIntPtSigma(std::vector<double>& cache,
+                                             std::size_t const component) const
+    {
+        cache.clear();
+        cache.reserve(_ip_data.size());
+
+        for (auto const& ip_data : _ip_data)
+        {
+            if (component < 3)  // xx, yy, zz components
+                cache.push_back(ip_data.sigma_eff[component]);
+            else  // mixed xy, yz, xz components
+                cache.push_back(ip_data.sigma_eff[component] / std::sqrt(2));
+        }
+
+        return cache;
+    }
+
+    std::vector<double> const& getIntPtEpsilon(
+        std::vector<double>& cache, std::size_t const component) const
+    {
+        cache.clear();
+        cache.reserve(_ip_data.size());
+
+        for (auto const& ip_data : _ip_data)
+        {
+            cache.push_back(ip_data.eps[component]);
+        }
+
+        return cache;
+    }
+
 private:
     HydroMechanicsProcessData<DisplacementDim>& _process_data;
 
@@ -367,6 +602,14 @@ private:
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
+    SecondaryData<
+        typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
+        _secondary_data;
+
+    std::vector<std::vector<double>> _darcy_velocities =
+        std::vector<std::vector<double>>(
+            DisplacementDim,
+            std::vector<double>(_integration_method.getNumberOfPoints()));
 
     static const int pressure_index = 0;
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;

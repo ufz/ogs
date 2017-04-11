@@ -102,13 +102,104 @@ private:
             getProcessVariables()[1].get().getShapeFunctionOrder(),
             _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
             _process_data);
+
+        // TODO move the two data members somewhere else.
+        // for extrapolation of secondary variables
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>
+            all_mesh_subsets_single_component;
+        all_mesh_subsets_single_component.emplace_back(
+            new MeshLib::MeshSubsets(_mesh_subset_all_nodes.get()));
+        _local_to_global_index_map_single_component.reset(
+            new NumLib::LocalToGlobalIndexMap(
+                std::move(all_mesh_subsets_single_component),
+                // by location order is needed for output
+                NumLib::ComponentOrder::BY_LOCATION));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "sigma_xx", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaXX));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "sigma_yy", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaYY));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "sigma_zz", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaZZ));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "sigma_xy", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaXY));
+
+        if (DisplacementDim == 3)
+        {
+            Base::_secondary_variables.addSecondaryVariable(
+                "sigma_xz", 1,
+                makeExtrapolator(
+                    getExtrapolator(), _local_assemblers,
+                    &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaXZ));
+
+            Base::_secondary_variables.addSecondaryVariable(
+                "sigma_yz", 1,
+                makeExtrapolator(
+                    getExtrapolator(), _local_assemblers,
+                    &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaYZ));
+        }
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_xx", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HydroMechanicsLocalAssemblerInterface::getIntPtEpsilonXX));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_yy", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HydroMechanicsLocalAssemblerInterface::getIntPtEpsilonYY));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_zz", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HydroMechanicsLocalAssemblerInterface::getIntPtEpsilonZZ));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_xy", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HydroMechanicsLocalAssemblerInterface::getIntPtEpsilonXY));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "velocity_x", 1,
+            makeExtrapolator(getExtrapolator(), _local_assemblers,
+                             &HydroMechanicsLocalAssemblerInterface::
+                                 getIntPtDarcyVelocityX));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "velocity_y", 1,
+            makeExtrapolator(getExtrapolator(), _local_assemblers,
+                             &HydroMechanicsLocalAssemblerInterface::
+                                 getIntPtDarcyVelocityY));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "velocity_z", 1,
+            makeExtrapolator(getExtrapolator(), _local_assemblers,
+                             &HydroMechanicsLocalAssemblerInterface::
+                                 getIntPtDarcyVelocityZ));
     }
 
-    void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                 GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b,
-                                 StaggeredCouplingTerm const&
-                                 coupling_term) override
+    void assembleConcreteProcess(
+        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+        GlobalVector& b, StaggeredCouplingTerm const& coupling_term) override
     {
         DBUG("Assemble HydroMechanicsProcess.");
 
@@ -161,7 +252,11 @@ private:
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
     HydroMechanicsProcessData<DisplacementDim> _process_data;
 
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<HydroMechanicsLocalAssemblerInterface>>
+        _local_assemblers;
+
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap>
+        _local_to_global_index_map_single_component;
 };
 
 }  // namespace HydroMechanics

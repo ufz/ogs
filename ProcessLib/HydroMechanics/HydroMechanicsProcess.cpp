@@ -7,16 +7,15 @@
  *
  */
 
-#include "HydroMechanicsProcess-fwd.h"
 #include "HydroMechanicsProcess.h"
+#include "HydroMechanicsProcess-fwd.h"
 
 namespace ProcessLib
 {
 namespace HydroMechanics
 {
-
 template class HydroMechanicsProcess<2>;
 template class HydroMechanicsProcess<3>;
 
-}   // namespace HydroMechanics
-}   // namespace ProcessLib
+}  // namespace HydroMechanics
+}  // namespace ProcessLib
