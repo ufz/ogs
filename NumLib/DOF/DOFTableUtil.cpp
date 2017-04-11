@@ -50,8 +50,7 @@ double getNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
     MeshLib::Location const l{mesh.getID(), MeshLib::MeshItemType::Node,
                               node_id};
 
-    auto const index = dof_table.getLocalIndex(
-        l, global_component_id, x.getRangeBegin(), x.getRangeEnd());
+    auto const index = dof_table.getGlobalIndex(l, global_component_id);
     assert (index != NumLib::MeshComponentMap::nop);
 
     return x.get(index);
