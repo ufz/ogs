@@ -116,22 +116,8 @@ MeshLib::Mesh const& ProcessVariable::getMesh() const
 
 MeshLib::PropertyVector<double>& ProcessVariable::getOrCreateMeshProperty()
 {
-    if (_mesh.getProperties().hasPropertyVector(_name))
-    {
-        auto result =
-            _mesh.getProperties().template getPropertyVector<double>(_name);
-        assert(result);
-        assert(result->size() == _mesh.getNumberOfNodes() * _n_components);
-        return *result;
-    }
-    else
-    {
-        auto result = _mesh.getProperties().template createNewPropertyVector<double>(
-            _name, MeshLib::MeshItemType::Node, _n_components);
-        assert(result);
-        result->resize(_mesh.getNumberOfNodes() * _n_components);
-        return *result;
-    }
+    return *MeshLib::getOrCreateMeshProperty<double>(
+        _mesh, _name, MeshLib::MeshItemType::Node, _n_components);
 }
 
 std::vector<std::unique_ptr<BoundaryCondition>>

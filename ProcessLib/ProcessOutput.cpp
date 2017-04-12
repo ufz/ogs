@@ -119,41 +119,6 @@ void doProcessOutput(std::string const& file_name,
 #ifndef USE_PETSC
     // the following section is for the output of secondary variables
 
-    auto count_mesh_items = [](
-        MeshLib::Mesh const& mesh, MeshLib::MeshItemType type) -> std::size_t
-    {
-        switch (type) {
-        case MeshLib::MeshItemType::Cell: return mesh.getNumberOfElements();
-        case MeshLib::MeshItemType::Node: return mesh.getNumberOfNodes();
-        default: break; // avoid compiler warning
-        }
-        return 0;
-    };
-
-    auto get_or_create_mesh_property = [&mesh, &count_mesh_items](
-        std::string const& property_name, MeshLib::MeshItemType type)
-    {
-        // Get or create a property vector for results.
-        MeshLib::PropertyVector<double>* result = nullptr;
-
-        auto const N = count_mesh_items(mesh, type);
-
-        if (mesh.getProperties().existsPropertyVector<double>(property_name))
-        {
-            result = mesh.getProperties().template
-                     getPropertyVector<double>(property_name);
-        }
-        else
-        {
-            result = mesh.getProperties().template
-                     createNewPropertyVector<double>(property_name, type);
-            result->resize(N);
-        }
-        assert(result && result->size() == N);
-
-        return result;
-    };
-
     auto add_secondary_var = [&](SecondaryVariable const& var,
                              std::string const& output_name)
     {
@@ -162,9 +127,8 @@ void doProcessOutput(std::string const& file_name,
         {
             DBUG("  secondary variable %s", output_name.c_str());
 
-            auto result = get_or_create_mesh_property(
-                              output_name, MeshLib::MeshItemType::Node);
-            assert(result->size() == mesh.getNumberOfNodes());
+            auto result = MeshLib::getOrCreateMeshProperty<double>(
+                mesh, output_name, MeshLib::MeshItemType::Node, 1);
 
             std::unique_ptr<GlobalVector> result_cache;
             auto const& nodal_values =
@@ -183,9 +147,8 @@ void doProcessOutput(std::string const& file_name,
             DBUG("  secondary variable %s residual", output_name.c_str());
             auto const& property_name_res = output_name + "_residual";
 
-            auto result = get_or_create_mesh_property(
-                              property_name_res, MeshLib::MeshItemType::Cell);
-            assert(result->size() == mesh.getNumberOfElements());
+            auto result = MeshLib::getOrCreateMeshProperty<double>(
+                mesh, property_name_res, MeshLib::MeshItemType::Cell, 1);
 
             std::unique_ptr<GlobalVector> result_cache;
             auto const& residuals =
