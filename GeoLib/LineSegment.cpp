@@ -44,7 +44,7 @@ LineSegment::~LineSegment()
     }
 }
 
-LineSegment& LineSegment::operator=(LineSegment const& other) = default;
+LineSegment& LineSegment::operator=(LineSegment const&) = default;
 
 LineSegment& LineSegment::operator=(LineSegment&& line_segment)
 {
