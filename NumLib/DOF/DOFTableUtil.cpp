@@ -36,7 +36,12 @@ double norm(GlobalVector const& x, unsigned const global_component,
         }
     }
 
-    // TODO for PETSc some global accumulation is necessary.
+#ifdef USE_PETSC
+    double global_result = 0.0;
+    MPI_Allreduce(&res, &global_result, 1, MPI_DOUBLE, MPI_SUM,
+                  PETSC_COMM_WORLD);
+    res = global_result;
+#endif
     return res;
 }
 
