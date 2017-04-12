@@ -11,6 +11,5 @@ module load eigen/3.2.9-1-cmake
 module load vtk/7.1.0_openmpi-1.8.4-1
 
 # Tools
-module load numdiff/5.8.1-1
 module load coreutils/8.21-1
 module load ccache/3.3.3
