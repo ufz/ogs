@@ -228,7 +228,7 @@ public:
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const& I(
                 GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
-            GlobalDimMatrixType thermal_dispersivity =
+            GlobalDimMatrixType const thermal_dispersivity =
                 fluid_reference_density * specific_heat_capacity_fluid *
                 (thermal_dispersivity_transversal * velocity_magnitude *
                      I +
@@ -236,7 +236,7 @@ public:
                   thermal_dispersivity_transversal) /
                      velocity_magnitude * velocity * velocity.transpose());
 
-            auto const hydrodynamic_thermodispersion =
+            GlobalDimMatrixType const hydrodynamic_thermodispersion =
                 thermal_conductivity * I + thermal_dispersivity;
 
             double const heat_capacity =
