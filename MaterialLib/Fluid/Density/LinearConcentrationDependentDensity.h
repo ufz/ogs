@@ -20,6 +20,12 @@ namespace MaterialLib
 namespace Fluid
 {
 /// Linear concentration dependent density model.
+/// \f[ \varrho = \varrho_{\text{ref}}
+/// (1 + \bar \alpha (C - C_{\text{ref}})) \f]
+/// where
+/// - \f$ \varrho_{\text{ref}}\f$ is the reference density
+/// - \f$ \bar \alpha\f$ is the fluid density difference ratio
+/// - \f$ C_{\text{ref}}\f$ is the reference concentration
 class LinearConcentrationDependentDensity final : public FluidProperty
 {
 public:
