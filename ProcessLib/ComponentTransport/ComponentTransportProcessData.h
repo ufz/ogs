@@ -27,11 +27,11 @@ namespace ProcessLib
 template <typename ReturnType>
 struct Parameter;
 
-namespace HC
+namespace ComponentTransport
 {
-struct HCProcessData
+struct ComponentTransportProcessData
 {
-    HCProcessData(
+    ComponentTransportProcessData(
         PorousMediaProperties&& porous_media_properties_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& viscosity_model_,
         ProcessLib::Parameter<double> const& fluid_reference_density_,
@@ -57,7 +57,7 @@ struct HCProcessData
     {
     }
 
-    HCProcessData(HCProcessData&& other)
+    ComponentTransportProcessData(ComponentTransportProcessData&& other)
         : porous_media_properties(std::move(other.porous_media_properties)),
           viscosity_model(other.viscosity_model.release()),
           fluid_reference_density(other.fluid_reference_density),
@@ -75,13 +75,14 @@ struct HCProcessData
     }
 
     //! Copies are forbidden.
-    HCProcessData(HCProcessData const&) = delete;
+    ComponentTransportProcessData(ComponentTransportProcessData const&) =
+        delete;
 
     //! Assignments are not needed.
-    void operator=(HCProcessData const&) = delete;
+    void operator=(ComponentTransportProcessData const&) = delete;
 
     //! Assignments are not needed.
-    void operator=(HCProcessData&&) = delete;
+    void operator=(ComponentTransportProcessData&&) = delete;
 
     PorousMediaProperties porous_media_properties;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity_model;
@@ -96,5 +97,5 @@ struct HCProcessData
     bool const has_gravity;
 };
 
-}  // namespace HC
+}  // namespace ComponentTransport
 }  // namespace ProcessLib

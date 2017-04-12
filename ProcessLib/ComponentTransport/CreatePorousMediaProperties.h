@@ -21,7 +21,7 @@ class Mesh;
 
 namespace ProcessLib
 {
-namespace HC
+namespace ComponentTransport
 {
 PorousMediaProperties createPorousMediaProperties(
     MeshLib::Mesh& mesh, BaseLib::ConfigTree const& porous_media_config);

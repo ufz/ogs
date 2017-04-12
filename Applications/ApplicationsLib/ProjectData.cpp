@@ -35,7 +35,7 @@
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
-#include "ProcessLib/HC/CreateHCProcess.h"
+#include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
 #include "ProcessLib/HT/CreateHTProcess.h"
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
 #include "ProcessLib/HydroMechanics/CreateHydroMechanicsProcess.h"
@@ -384,12 +384,13 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 _process_variables, _parameters, integration_order,
                 process_config);
         }
-        else if (type == "HC")
+        else if (type == "ComponentTransport")
         {
-            process = ProcessLib::HC::createHCProcess(
-                *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, integration_order,
-                process_config);
+            process =
+                ProcessLib::ComponentTransport::createComponentTransportProcess(
+                    *_mesh_vec[0], std::move(jacobian_assembler),
+                    _process_variables, _parameters, integration_order,
+                    process_config);
         }
         else if (type == "SMALL_DEFORMATION")
         {

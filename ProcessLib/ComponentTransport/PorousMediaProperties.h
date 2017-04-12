@@ -24,7 +24,7 @@
 
 namespace ProcessLib
 {
-namespace HC
+namespace ComponentTransport
 {
 
 class PorousMediaProperties

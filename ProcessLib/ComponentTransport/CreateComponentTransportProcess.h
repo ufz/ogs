@@ -14,9 +14,9 @@
 
 namespace ProcessLib
 {
-namespace HC
+namespace ComponentTransport
 {
-std::unique_ptr<Process> createHCProcess(
+std::unique_ptr<Process> createComponentTransportProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -24,5 +24,5 @@ std::unique_ptr<Process> createHCProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
-}  // namespace HC
+}  // namespace ComponentTransport
 }  // namespace ProcessLib

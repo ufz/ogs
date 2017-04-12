@@ -9,47 +9,48 @@
 
 #pragma once
 
-#include "HCFEM.h"
-#include "HCProcessData.h"
+#include "ComponentTransportFEM.h"
+#include "ComponentTransportProcessData.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
-namespace HC
+namespace ComponentTransport
 {
 /**
- * # HC process
+ * # ComponentTransport process
  *
  * The implementation uses a monolithic approach, i.e., both processes
  * are assembled within one global system of equations.
  *
  * ## Process Coupling
  *
- * The advective term of the heat conduction equation is given by the confined
- * groundwater flow process, i.e., the heat conduction depends on darcy velocity
- * of the groundwater flow process. On the other hand the temperature
- * dependencies of the viscosity and density in the groundwater flow couples the
- * H process to the T process.
+ * The advective term of the concentration equation is given by the confined
+ * groundwater flow process, i.e., the concentration distribution depends on
+ * darcy velocity of the groundwater flow process. On the other hand the
+ * concentration dependencies of the viscosity and density in the groundwater
+ * flow couples the H process to the C process.
  *
  * \note At the moment there is not any coupling by source or sink terms, i.e.,
- * the coupling is implemented only by density changes due to temperature
+ * the coupling is implemented only by density changes due to concentration
  * changes in the buoyance term in the groundwater flow. This coupling schema is
  * referred to as the Boussinesq approximation.
  * */
-class HCProcess final : public Process
+class ComponentTransportProcess final : public Process
 {
 public:
-    HCProcess(MeshLib::Mesh& mesh,
-              std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
-                  jacobian_assembler,
-              std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-              unsigned const integration_order,
-              std::vector<std::reference_wrapper<ProcessVariable>>&&
-                  process_variables,
-              HCProcessData&& process_data,
-              SecondaryVariableCollection&& secondary_variables,
-              NumLib::NamedFunctionCaller&& named_function_caller);
+    ComponentTransportProcess(
+        MeshLib::Mesh& mesh,
+        std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
+            jacobian_assembler,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+        unsigned const integration_order,
+        std::vector<std::reference_wrapper<ProcessVariable>>&&
+            process_variables,
+        ComponentTransportProcessData&& process_data,
+        SecondaryVariableCollection&& secondary_variables,
+        NumLib::NamedFunctionCaller&& named_function_caller);
 
     //! \name ODESystem interface
     //! @{
@@ -77,10 +78,11 @@ private:
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
         StaggeredCouplingTerm const& coupling_term) override;
 
-    HCProcessData _process_data;
+    ComponentTransportProcessData _process_data;
 
-    std::vector<std::unique_ptr<HCLocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<ComponentTransportLocalAssemblerInterface>>
+        _local_assemblers;
 };
 
-}  // namespace HC
+}  // namespace ComponentTransport
 }  // namespace ProcessLib

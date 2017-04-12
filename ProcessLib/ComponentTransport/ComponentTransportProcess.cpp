@@ -7,7 +7,7 @@
  *
  */
 
-#include "HCProcess.h"
+#include "ComponentTransportProcess.h"
 
 #include <cassert>
 
@@ -15,15 +15,15 @@
 
 namespace ProcessLib
 {
-namespace HC
+namespace ComponentTransport
 {
-HCProcess::HCProcess(
+ComponentTransportProcess::ComponentTransportProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
-    HCProcessData&& process_data,
+    ComponentTransportProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller)
     : Process(mesh, std::move(jacobian_assembler), parameters,
@@ -33,7 +33,7 @@ HCProcess::HCProcess(
 {
 }
 
-void HCProcess::initializeConcreteProcess(
+void ComponentTransportProcess::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
@@ -47,27 +47,28 @@ void HCProcess::initializeConcreteProcess(
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity_x", 1,
         makeExtrapolator(getExtrapolator(), _local_assemblers,
-                         &HCLocalAssemblerInterface::getIntPtDarcyVelocityX));
+                         &ComponentTransportLocalAssemblerInterface::
+                             getIntPtDarcyVelocityX));
 
     if (mesh.getDimension() > 1)
     {
         _secondary_variables.addSecondaryVariable(
             "darcy_velocity_y", 1,
-            makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
-                &HCLocalAssemblerInterface::getIntPtDarcyVelocityY));
+            makeExtrapolator(getExtrapolator(), _local_assemblers,
+                             &ComponentTransportLocalAssemblerInterface::
+                                 getIntPtDarcyVelocityY));
     }
     if (mesh.getDimension() > 2)
     {
         _secondary_variables.addSecondaryVariable(
             "darcy_velocity_z", 1,
-            makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
-                &HCLocalAssemblerInterface::getIntPtDarcyVelocityZ));
+            makeExtrapolator(getExtrapolator(), _local_assemblers,
+                             &ComponentTransportLocalAssemblerInterface::
+                                 getIntPtDarcyVelocityZ));
     }
 }
 
-void HCProcess::assembleConcreteProcess(
+void ComponentTransportProcess::assembleConcreteProcess(
     const double t,
     GlobalVector const& x,
     GlobalMatrix& M,
@@ -75,7 +76,7 @@ void HCProcess::assembleConcreteProcess(
     GlobalVector& b,
     StaggeredCouplingTerm const& coupling_term)
 {
-    DBUG("Assemble HCProcess.");
+    DBUG("Assemble ComponentTransportProcess.");
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
@@ -83,13 +84,13 @@ void HCProcess::assembleConcreteProcess(
         *_local_to_global_index_map, t, x, M, K, b, coupling_term);
 }
 
-void HCProcess::assembleWithJacobianConcreteProcess(
+void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
     const double t, GlobalVector const& x, GlobalVector const& xdot,
     const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
     GlobalVector& b, GlobalMatrix& Jac,
     StaggeredCouplingTerm const& coupling_term)
 {
-    DBUG("AssembleWithJacobian HCProcess.");
+    DBUG("AssembleWithJacobian ComponentTransportProcess.");
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
@@ -98,16 +99,16 @@ void HCProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac, coupling_term);
 }
 
-void HCProcess::computeSecondaryVariableConcrete(
+void ComponentTransportProcess::computeSecondaryVariableConcrete(
     double const t, GlobalVector const& x,
     StaggeredCouplingTerm const& coupling_term)
 {
-    DBUG("Compute the Darcy velocity for HCProcess.");
+    DBUG("Compute the Darcy velocity for ComponentTransportProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
-        &HCLocalAssemblerInterface::computeSecondaryVariable,
+        &ComponentTransportLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, *_local_to_global_index_map, t, x, coupling_term);
 }
 
-}  // namespace HC
+}  // namespace ComponentTransport
 }  // namespace ProcessLib
 

@@ -13,7 +13,7 @@
 
 namespace ProcessLib
 {
-namespace HC
+namespace ComponentTransport
 {
 int PorousMediaProperties::getMaterialID(SpatialPosition const& pos) const
 {

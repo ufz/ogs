@@ -13,7 +13,7 @@
 #include <vector>
 
 
-#include "HCProcessData.h"
+#include "ComponentTransportProcessData.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -25,7 +25,7 @@
 
 namespace ProcessLib
 {
-namespace HC
+namespace ComponentTransport
 {
 template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
@@ -43,7 +43,7 @@ struct IntegrationPointData final
 
 const unsigned NUM_NODAL_DOF = 2;
 
-class HCLocalAssemblerInterface
+class ComponentTransportLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
       public NumLib::ExtrapolatableElement
 {
@@ -60,7 +60,7 @@ public:
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-class LocalAssemblerData : public HCLocalAssemblerInterface
+class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -85,7 +85,7 @@ public:
                        std::size_t const local_matrix_size,
                        bool is_axially_symmetric,
                        unsigned const integration_order,
-                       HCProcessData const& process_data)
+                       ComponentTransportProcessData const& process_data)
         : _element(element),
           _process_data(process_data),
           _integration_method(integration_order),
@@ -341,7 +341,7 @@ public:
 
 private:
     MeshLib::Element const& _element;
-    HCProcessData const& _process_data;
+    ComponentTransportProcessData const& _process_data;
 
     IntegrationMethod const _integration_method;
     std::vector<
@@ -352,5 +352,5 @@ private:
     std::vector<std::vector<double>> _darcy_velocities;
 };
 
-}  // namespace HC
+}  // namespace ComponentTransport
 }  // namespace ProcessLib

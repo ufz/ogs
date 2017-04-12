@@ -21,7 +21,7 @@
 
 namespace ProcessLib
 {
-namespace HC
+namespace ComponentTransport
 {
 PorousMediaProperties createPorousMediaProperties(
     MeshLib::Mesh& mesh, BaseLib::ConfigTree const& porous_medium_configs)
@@ -36,10 +36,10 @@ PorousMediaProperties createPorousMediaProperties(
 
     std::vector<int> mat_ids;
     for (auto const& porous_medium_config :
-         //! \ogs_file_param{prj__processes__process__HC__porous_medium__porous_medium}
+         //! \ogs_file_param{prj__processes__process__ComponentTransport__porous_medium__porous_medium}
          porous_medium_configs.getConfigSubtreeList("porous_medium"))
     {
-         //! \ogs_file_attr{prj__processes__process__HC__porous_medium__porous_medium__id}
+         //! \ogs_file_attr{prj__processes__process__ComponentTransport__porous_medium__porous_medium__id}
         auto const id = porous_medium_config.getConfigAttribute<int>("id");
         mat_ids.push_back(id);
 
@@ -86,5 +86,5 @@ PorousMediaProperties createPorousMediaProperties(
                                  std::move(material_ids)};
 }
 
-}  // namespace HC
+}  // namespace ComponentTransport
 }  // namespace ProcessLib

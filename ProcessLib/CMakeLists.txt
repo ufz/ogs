@@ -45,8 +45,8 @@ APPEND_SOURCE_FILES(SOURCES HeatConduction)
 add_subdirectory(RichardsFlow)
 APPEND_SOURCE_FILES(SOURCES RichardsFlow)
 
-add_subdirectory(HC)
-APPEND_SOURCE_FILES(SOURCES HC)
+add_subdirectory(ComponentTransport)
+APPEND_SOURCE_FILES(SOURCES ComponentTransport)
 
 add_subdirectory(HT)
 APPEND_SOURCE_FILES(SOURCES HT)
