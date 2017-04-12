@@ -24,10 +24,6 @@
 #     - DIFF_DATA <list of files to diff>
 #       # the given file is compared to a file with the same name from Tests/Data
 #
-#   numdiff-tester
-#     - DIFF_DATA <list of files to numdiff>
-#       # the given file is compared to a file with the same name from Tests/Data
-#
 #   vtkdiff-tester
 #     - DIFF_DATA <vtk file> <data array a name> <data array b name>
 #       # the given data arrays in the vtk file are compared
@@ -106,9 +102,6 @@ function (AddTest)
     if(AddTest_TESTER STREQUAL "diff" AND NOT DIFF_TOOL_PATH)
         return()
     endif()
-    if(AddTest_TESTER STREQUAL "numdiff" AND NOT NUMDIFF_TOOL_PATH)
-        return()
-    endif()
     if(AddTest_TESTER STREQUAL "vtkdiff" AND NOT TARGET vtkdiff)
         return()
     endif()
@@ -116,22 +109,19 @@ function (AddTest)
         return()
     endif()
 
-    if((AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff" OR AddTest_TESTER STREQUAL "vtkdiff") AND NOT AddTest_DIFF_DATA)
+    if((AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "vtkdiff") AND NOT AddTest_DIFF_DATA)
         message(FATAL_ERROR "AddTest(): ${AddTest_NAME} - no DIFF_DATA given!")
     endif()
 
     if(AddTest_TESTER STREQUAL "diff")
         set(SELECTED_DIFF_TOOL_PATH ${DIFF_TOOL_PATH})
         set(TESTER_ARGS "-sbB")
-    elseif(AddTest_TESTER STREQUAL "numdiff")
-        set(SELECTED_DIFF_TOOL_PATH ${NUMDIFF_TOOL_PATH})
-        set(TESTER_ARGS "--statistics --absolute-tolerance=${AddTest_ABSTOL} --relative-tolerance=${AddTest_RELTOL}")
     elseif(AddTest_TESTER STREQUAL "vtkdiff")
         set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:vtkdiff>)
         set(TESTER_ARGS "--abs ${AddTest_ABSTOL} --rel ${AddTest_RELTOL}")
     endif()
 
-    if(AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff")
+    if(AddTest_TESTER STREQUAL "diff")
         foreach(FILE ${AddTest_DIFF_DATA})
             get_filename_component(FILE_EXPECTED ${FILE} NAME)
             list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \

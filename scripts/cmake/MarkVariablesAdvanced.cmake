@@ -23,7 +23,6 @@ mark_as_advanced(
     METIS_LIBRARY
     MPIRUN_TOOL_PATH
     NUM_PROCESSORS
-    NUMDIFF_TOOL_PATH
     ParaView_DIR
     ProcessorCount_cmd_sysctl
     REALPATH_TOOL_PATH
