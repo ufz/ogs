@@ -56,6 +56,34 @@ AddTest(
     DIFF_DATA
     expected_square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu displacement displacement
 )
+# Mechanics; Small deformations, linear (SDL); Nodal forces
+AddTest(
+    NAME Mechanics_SDL_cube_1e0_nodal_forces
+    PATH Mechanics/Linear
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e0.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-14 RELTOL 1e-15
+    DIFF_DATA
+    expected_cube_1e0_pcs_0_ts_4_t_1.000000.vtu cube_1e0_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    expected_cube_1e0_pcs_0_ts_4_t_1.000000.vtu cube_1e0_pcs_0_ts_4_t_1.000000.vtu NodalForces NodalForces
+)
+AddTest(
+    NAME Mechanics_SDL_cube_1e0_simple_shear_nodal_forces
+    PATH Mechanics/Linear
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e0_simple_shear.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-14 RELTOL 1e-15
+    DIFF_DATA
+    expected_cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    expected_cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu NodalForces NodalForces
+)
+
 
 # Mechanics; Small deformations, Burgers (SDB)
 AddTest(
