@@ -16,9 +16,7 @@
 
 #include <memory>
 
-#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 #include "Applications/DataHolderLib/Project.h"
-#endif
 
 #include "ImportFileTypes.h"
 #include "ui_mainwindow.h"
