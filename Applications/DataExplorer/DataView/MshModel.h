@@ -14,17 +14,19 @@
 
 #pragma once
 
-// ** INCLUDES **
-#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-#include "Applications/DataHolderLib/Project.h"
-#endif
+#include <memory>
 
 #include "MeshLib/MeshEnums.h"
 
 #include "TreeModel.h"
 
+namespace DataHolderLib
+{
+class Project;
+}
+
 namespace MeshLib {
-    class Mesh;
+class Mesh;
 }
 
 class vtkUnstructuredGridAlgorithm;

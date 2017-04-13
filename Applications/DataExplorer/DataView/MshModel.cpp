@@ -14,21 +14,19 @@
 
 #include "MshModel.h"
 
-// Qt
 #include <QFileInfo>
 #include <QString>
-
 #include <vtkUnstructuredGridAlgorithm.h>
-
 #include <logog/include/logog.hpp>
 
+#include "Applications/DataHolderLib/Project.h"
+#include "BaseLib/StringTools.h"
+#include "Elements/Element.h"
+#include "MeshLib/Node.h"
+
 #include "MshItem.h"
-#include "StringTools.h"
 #include "TreeItem.h"
 
-// MeshLib
-#include "MeshLib/Node.h"
-#include "Elements/Element.h"
 
 const QVariant MshModel::element_str = "Element";
 const std::map<MeshLib::MeshElemType, QVariant> MshModel::elem_type_map = MshModel::createMeshElemTypeMap();

@@ -15,13 +15,18 @@
 #pragma once
 
 #include "ui_MeshElementRemoval.h"
+
 #include <QDialog>
+#include <array>
 
-#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-#include "Applications/DataHolderLib/Project.h"
-#endif
+namespace DataHolderLib
+{
+class Project;
+}
 
-class Node;
+namespace MeshLib {
+class Mesh;
+}
 
 /**
  * \brief A dialog window for settung up a database connection

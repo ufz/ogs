@@ -14,16 +14,17 @@
 
 #include "MeshElementRemovalDialog.h"
 
-#include "Mesh.h"
-#include "Elements/Element.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
-#include "AABB.h"
-#include "OGSError.h"
-
 #include <QList>
 #include <QListWidgetItem>
+
+#include "Applications/DataExplorer/Base/OGSError.h"
+#include "Applications/DataHolderLib/Project.h"
+#include "Elements/Element.h"
+#include "GeoLib/AABB.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshLib/Node.h"
 
 /// Constructor
 MeshElementRemovalDialog::MeshElementRemovalDialog(DataHolderLib::Project const& project, QDialog* parent)

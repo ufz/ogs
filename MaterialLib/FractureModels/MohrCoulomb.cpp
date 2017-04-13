@@ -12,10 +12,6 @@
 #include "BaseLib/Error.h"
 #include "MathLib/MathTools.h"
 
-#ifndef Q_MOC_RUN // to avoid Qt4 bug, https://bugreports.qt.io/browse/QTBUG-22829
-#include <boost/math/special_functions/sign.hpp>
-#endif
-
 namespace MaterialLib
 {
 namespace Fracture

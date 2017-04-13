@@ -15,28 +15,6 @@
 // ** INCLUDES **
 #include "VtkVisPipeline.h"
 
-#include <logog/include/logog.hpp>
-
-// MathLib
-#include "InterpolationAlgorithms/LinearIntervalInterpolation.h"
-
-//#include "Model.h"
-#include "GeoTreeModel.h"
-#include "MshItem.h"
-#include "MshModel.h"
-#include "StationTreeModel.h"
-#include "TreeModel.h"
-#include "VtkAlgorithmProperties.h"
-#include "VtkCompositeNodeSelectionFilter.h"
-#include "VtkCompositeElementSelectionFilter.h"
-#include "VtkCompositeGeoObjectFilter.h"
-#include "VtkFilterFactory.h"
-#include "VtkVisImageItem.h"
-#include "VtkVisPipelineItem.h"
-#include "VtkVisPointSetItem.h"
-
-#include "MeshLib/Vtk/VtkMappedMeshSource.h"
-
 #include <vtkAlgorithm.h>
 #include <vtkCamera.h>
 #include <vtkGenericDataObjectReader.h>
@@ -63,6 +41,28 @@
 #include <QSettings>
 #include <QString>
 #include <QTime>
+
+
+#include <logog/include/logog.hpp>
+
+#include "MathLib/InterpolationAlgorithms/LinearIntervalInterpolation.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Vtk/VtkMappedMeshSource.h"
+
+#include "GeoTreeModel.h"
+#include "MshItem.h"
+#include "MshModel.h"
+#include "StationTreeModel.h"
+#include "TreeModel.h"
+#include "VtkAlgorithmProperties.h"
+#include "VtkCompositeElementSelectionFilter.h"
+#include "VtkCompositeGeoObjectFilter.h"
+#include "VtkCompositeNodeSelectionFilter.h"
+#include "VtkFilterFactory.h"
+#include "VtkVisImageItem.h"
+#include "VtkVisPipelineItem.h"
+#include "VtkVisPointSetItem.h"
+
 
 VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
     : TreeModel(parent), _renderer(renderer), _highlighted_geo_index(QModelIndex()), _highlighted_mesh_component(QModelIndex())

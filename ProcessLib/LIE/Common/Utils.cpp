@@ -10,10 +10,6 @@
 
 #include <cmath>
 
-#ifndef Q_MOC_RUN // to avoid Qt4 bug, https://bugreports.qt.io/browse/QTBUG-22829
-#include <boost/math/constants/constants.hpp>
-#endif
-
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 
