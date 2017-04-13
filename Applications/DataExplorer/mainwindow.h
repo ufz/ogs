@@ -144,14 +144,3 @@ signals:
     void fileUsed( QString filename );
     void fileOpenRequested( int );
 };
-
-class StartQt4
-{
-public:
-    StartQt4()
-    {
-        int i = 0;
-        QApplication* qapp = new QApplication(i, NULL);
-        qapp->exec();
-    }
-};
