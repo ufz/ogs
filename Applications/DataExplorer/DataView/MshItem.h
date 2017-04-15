@@ -36,7 +36,7 @@ public:
     /// \param mesh The mesh associated with this item
     MshItem(const QList<QVariant>& data, TreeItem* parent,
             const MeshLib::Mesh* mesh);
-    ~MshItem();
+    ~MshItem() override;
 
     /// Returns the mesh.
     MeshLib::Mesh const* getMesh() const { return _mesh_source->GetMesh(); }

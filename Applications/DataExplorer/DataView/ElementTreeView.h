@@ -33,7 +33,8 @@ public slots:
 
 protected slots:
     /// Is called when the selection of this view changes.
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void selectionChanged(const QItemSelection& selected,
+                          const QItemSelection& deselected) override;
 
 signals:
     void nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool);

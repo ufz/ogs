@@ -35,13 +35,15 @@ public:
 
     /// \brief Paints a checkbox. This overrides the default painting of a combo box.
     void paint(QPainter* painter, const QStyleOptionViewItem& option,
-               const QModelIndex& index) const;
+               const QModelIndex& index) const override;
 
     /// \brief Handles the click events and sets the model data.
     bool editorEvent(QEvent* event, QAbstractItemModel* model,
-                     const QStyleOptionViewItem &option, const QModelIndex &index);
+                     const QStyleOptionViewItem& option,
+                     const QModelIndex& index) override;
 
-    QSize sizeHint (const QStyleOptionViewItem & option, const QModelIndex & index) const;
+    QSize sizeHint(const QStyleOptionViewItem& option,
+                   const QModelIndex& index) const override;
 
 private:
     QRect checkboxRect(const QStyleOptionViewItem& viewItemStyleOptions) const;

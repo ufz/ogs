@@ -34,7 +34,7 @@ class MergeGeometriesDialog : public QDialog, private Ui_MergeGeometries
 public:
     MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects,
                           QDialog* parent = nullptr);
-    ~MergeGeometriesDialog(void);
+    ~MergeGeometriesDialog(void) override;
 
     /// Returns a vector of selected geometries
     std::vector<std::string> const getSelectedGeometries() const;
@@ -52,8 +52,8 @@ private slots:
     void on_deselectGeoButton_pressed();
 
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 };

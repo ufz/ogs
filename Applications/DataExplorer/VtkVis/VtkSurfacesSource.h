@@ -43,11 +43,11 @@ public:
      */
     //ogsUserPropertyMacro(ColorBySurface,bool);
 
-    virtual void SetUserProperty(QString name, QVariant value) override;
+    void SetUserProperty(QString name, QVariant value) override;
 
 protected:
     VtkSurfacesSource();
-    ~VtkSurfacesSource() = default;
+    ~VtkSurfacesSource() override = default;
 
     /// Computes the polygonal data object.
     int RequestData(vtkInformation* request,

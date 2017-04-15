@@ -34,7 +34,7 @@ public:
 public slots:
     /// @brief Sets the scalar visibility on this mapper.
     virtual void SetScalarVisibility(bool on);
-    virtual void SetScalarVisibility(int on) override
+    void SetScalarVisibility(int on) override
     {
         SetScalarVisibility(static_cast<bool>(on));
     }
@@ -44,7 +44,7 @@ protected:
     QVtkDataSetMapper();
 
     /// @brief Destructor.
-    virtual ~QVtkDataSetMapper();
+    ~QVtkDataSetMapper() override;
 
 private:
     QVtkDataSetMapper(const QVtkDataSetMapper&); // Not implemented.

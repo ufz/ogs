@@ -51,10 +51,12 @@ public:
                   bool ticks,
                   QPen pen,
                   QGraphicsItem* parent = nullptr);
-    ~QGraphicsGrid();
+    ~QGraphicsGrid() override;
 
-    QRectF boundingRect() const;
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+    QRectF boundingRect() const override;
+    void paint(QPainter* painter,
+               const QStyleOptionGraphicsItem* option,
+               QWidget* widget) override;
     void setNumberOfXCells(int xCells);
     void setNumberOfYCells(int yCells);
     void setRect(QRectF rect);

@@ -34,10 +34,7 @@ public:
         _quad_mesh(MeshGenerator::generateRegularQuadMesh(_geometric_size, _number_of_subdivisions_per_direction))
     {}
 
-    ~MeshLibMeshNodeSearchInSimpleQuadMesh()
-    {
-        delete _quad_mesh;
-    }
+    ~MeshLibMeshNodeSearchInSimpleQuadMesh() override { delete _quad_mesh; }
 
 protected:
     const double _geometric_size;
@@ -53,10 +50,7 @@ public:
         _hex_mesh(MeshGenerator::generateRegularHexMesh(_geometric_size, _number_of_subdivisions_per_direction))
     {}
 
-    ~MeshLibMeshNodeSearchInSimpleHexMesh()
-    {
-        delete _hex_mesh;
-    }
+    ~MeshLibMeshNodeSearchInSimpleHexMesh() override { delete _hex_mesh; }
 
 protected:
     const double _geometric_size;

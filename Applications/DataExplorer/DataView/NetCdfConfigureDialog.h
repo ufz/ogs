@@ -35,14 +35,14 @@ class NetCdfConfigureDialog : public QDialog, private Ui_NetCdfConfigure
 public:
     NetCdfConfigureDialog(const std::string& fileName,
                           QDialog* parent = nullptr);
-    ~NetCdfConfigureDialog(void);
+    ~NetCdfConfigureDialog(void) override;
     MeshLib::Mesh* getMesh() { return _currentMesh; };
     std::string getName();
     VtkGeoImageSource* getRaster() { return _currentRaster; };
 
 private slots:
-    void accept();
-    void reject();
+    void accept() override;
+    void reject() override;
     void on_comboBoxVariable_currentIndexChanged(int id);
     void on_comboBoxDim1_currentIndexChanged(int id);
     void on_comboBoxDim2_currentIndexChanged(int id);

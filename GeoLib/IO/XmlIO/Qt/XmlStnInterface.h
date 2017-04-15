@@ -39,15 +39,18 @@ public:
     XmlStnInterface(GeoLib::GEOObjects& geo_objs);
 
     /// Reads an xml-file containing station object definitions into the GEOObjects used in the contructor (requires Qt)
-    int readFile(const QString &fileName);
+    int readFile(const QString& fileName) override;
 
-    bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+    bool readFile(std::string const& fname) override
+    {
+        return readFile(QString(fname.c_str())) != 0;
+    }
 
     /// Reads an xml-file using the RapidXML parser integrated in the source code (i.e. this function is usable without Qt)
     int rapidReadFile(const std::string &fileName);
 
 protected:
-    bool write();
+    bool write() override;
 
 private:
     /// Reads GeoLib::Station- or StationBorehole-objects from an xml-file

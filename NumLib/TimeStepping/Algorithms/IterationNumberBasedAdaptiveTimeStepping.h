@@ -84,25 +84,26 @@ public:
                                              std::vector<double>
                                                  multiplier_vector);
 
-    virtual ~IterationNumberBasedAdaptiveTimeStepping() = default;
+    ~IterationNumberBasedAdaptiveTimeStepping() override = default;
 
     /// return the beginning of time steps
-    virtual double begin() const {return _t_initial;}
-
+    double begin() const override { return _t_initial; }
     /// return the end of time steps
-    virtual double end() const {return _t_end;}
-
+    double end() const override { return _t_end; }
     /// return current time step
-    virtual const TimeStep getTimeStep() const;
+    const TimeStep getTimeStep() const override;
 
     /// move to the next time step
-    virtual bool next();
+    bool next() override;
 
     /// return if the current step is accepted
-    virtual bool accepted() const;
+    bool accepted() const override;
 
     /// return a history of time step sizes
-    virtual const std::vector<double>& getTimeStepSizeHistory() const {return this->_dt_vector;}
+    const std::vector<double>& getTimeStepSizeHistory() const override
+    {
+        return this->_dt_vector;
+    }
 
     /// set the number of iterations
     void setNIterations(std::size_t n_itr) {this->_iter_times = n_itr;}

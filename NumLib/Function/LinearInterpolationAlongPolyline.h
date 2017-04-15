@@ -56,7 +56,7 @@ public:
      * @return interpolated value. A default value is returned if the given point
      * is not located on a polyline
      */
-    double operator()(const MathLib::Point3d& pnt) const;
+    double operator()(const MathLib::Point3d& pnt) const override;
 
 private:
     /// construct an interpolation algorithm

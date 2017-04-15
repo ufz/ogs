@@ -21,7 +21,7 @@ public:
     using VectorOfPoints = std::vector<GeoLib::Point*>;
 
     GeoLibOctTree() = default;
-    ~GeoLibOctTree()
+    ~GeoLibOctTree() override
     {
         for (auto p : ps_ptr) {
             delete p;

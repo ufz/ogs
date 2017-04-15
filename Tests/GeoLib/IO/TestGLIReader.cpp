@@ -37,10 +37,7 @@ public:
         gli_out.close();
     }
 
-    ~OGSIOVer4InterfaceTest()
-    {
-        std::remove(_gli_fname.c_str());
-    }
+    ~OGSIOVer4InterfaceTest() override { std::remove(_gli_fname.c_str()); }
 
 protected:
     std::string _gli_fname;

@@ -47,7 +47,7 @@ public:
     vtkMappedDataArrayNewInstanceMacro(VtkMeshNodalCoordinatesTemplate<Scalar>);
 #endif // vtk version
     static VtkMeshNodalCoordinatesTemplate *New();
-    virtual void PrintSelf(std::ostream &os, vtkIndent indent) override;
+    void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
     /// Pass the nodes from OGS mesh
     void SetNodes(std::vector<MeshLib::Node*> const & nodes);
@@ -117,7 +117,7 @@ public:
 
 protected:
     VtkMeshNodalCoordinatesTemplate();
-    ~VtkMeshNodalCoordinatesTemplate();
+    ~VtkMeshNodalCoordinatesTemplate() override;
 
     const std::vector<MeshLib::Node*>* _nodes;
 

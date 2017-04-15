@@ -34,8 +34,7 @@ public:
      */
     ModelTreeItem(const QList<QVariant>& data, TreeItem* parent,
                   BaseItem* item = nullptr);
-    ~ModelTreeItem() { delete _item; }
-
+    ~ModelTreeItem() override { delete _item; }
     /// Returns the station object from which this item has been constructed
     GeoLib::Station* getStation() { return _stn; }
 

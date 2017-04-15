@@ -27,8 +27,8 @@ class RadiusEdgeRatioMetric : public ElementQualityMetric
 {
 public:
     RadiusEdgeRatioMetric(Mesh const& mesh);
-    virtual ~RadiusEdgeRatioMetric() = default;
+    ~RadiusEdgeRatioMetric() override = default;
 
-    virtual void calculateQuality ();
+    void calculateQuality() override;
 };
 }

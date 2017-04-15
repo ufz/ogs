@@ -24,9 +24,9 @@ class VtkCompositeGeoObjectFilter : public VtkCompositeFilter
 {
 public:
     VtkCompositeGeoObjectFilter(vtkAlgorithm* inputAlgorithm);
-    virtual ~VtkCompositeGeoObjectFilter();
+    ~VtkCompositeGeoObjectFilter() override;
 
-    virtual void init() override;
+    void init() override;
 
     /// @brief Sets user properties.
     void SetUserProperty(QString name, QVariant value) override

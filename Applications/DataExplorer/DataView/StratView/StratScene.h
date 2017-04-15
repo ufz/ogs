@@ -33,7 +33,7 @@ public:
         GeoLib::StationBorehole* station,
         std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
         QObject* parent = nullptr);
-    ~StratScene();
+    ~StratScene() override;
 
     /// The margin between the boundary of the scene and the bounding box of all items within the scene
     static const int MARGIN = 50;

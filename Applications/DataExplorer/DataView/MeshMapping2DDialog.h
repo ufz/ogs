@@ -37,8 +37,8 @@ private slots:
     void on_rasterSelectButton_pressed();
 
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject() { this->done(QDialog::Rejected); }
+    void reject() override { this->done(QDialog::Rejected); }
 };

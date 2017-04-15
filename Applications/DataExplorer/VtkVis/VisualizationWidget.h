@@ -35,7 +35,7 @@ public:
     VisualizationWidget(QWidget* parent = nullptr);
 
     /// @brief Destructor.
-    ~VisualizationWidget();
+    ~VisualizationWidget() override;
 
     /// @brief Returns the VtkCustomInteractorStyle.
     VtkCustomInteractorStyle* interactorStyle() const;

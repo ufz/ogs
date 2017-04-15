@@ -45,19 +45,20 @@ public:
     VtkVisImageItem(VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
                     const QList<QVariant> data = QList<QVariant>());
 
-    ~VtkVisImageItem();
+    ~VtkVisImageItem() override;
 
     /// @brief Initializes vtkMapper and vtkActor necessary for visualization of
     /// the item and sets the item's properties.
-    void Initialize(vtkRenderer* renderer);
+    void Initialize(vtkRenderer* renderer) override;
 
-    void setTranslation(double x, double y, double z) const;
+    void setTranslation(double x, double y, double z) const override;
 
-    vtkAlgorithm* transformFilter() const;
+    vtkAlgorithm* transformFilter() const override;
 
 protected:
     /// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
-    virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
+    int callVTKWriter(vtkAlgorithm* algorithm,
+                      const std::string& filename) const override;
     void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
 private:

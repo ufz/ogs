@@ -135,11 +135,11 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
                  vec_nodes.push_back(e->getNode(i));
     }
 
-    virtual ~NumLibFemIsoTest()
+    ~NumLibFemIsoTest() override
     {
-        for (auto itr = vec_nodes.begin(); itr!=vec_nodes.end(); ++itr )
+        for (auto itr = vec_nodes.begin(); itr != vec_nodes.end(); ++itr)
             delete *itr;
-        for (auto itr = vec_eles.begin(); itr!=vec_eles.end(); ++itr )
+        for (auto itr = vec_eles.begin(); itr != vec_eles.end(); ++itr)
             delete *itr;
     }
 

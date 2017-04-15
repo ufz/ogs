@@ -39,7 +39,7 @@ public:
     /// Constructor.
     MeshIO();
 
-    virtual ~MeshIO() = default;
+    ~MeshIO() override = default;
 
     /// Read mesh from file.
     MeshLib::Mesh* loadMeshFromFile(const std::string& fileName);
@@ -49,7 +49,7 @@ public:
 
 protected:
     /// Write mesh to stream.
-    bool write();
+    bool write() override;
 
 private:
     void writeElements(std::vector<MeshLib::Element*> const& ele_vec,

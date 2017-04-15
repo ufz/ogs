@@ -24,9 +24,9 @@ class VtkCompositeNodeSelectionFilter : public VtkCompositeFilter
 {
 public:
     VtkCompositeNodeSelectionFilter(vtkAlgorithm* inputAlgorithm);
-    virtual ~VtkCompositeNodeSelectionFilter();
+    ~VtkCompositeNodeSelectionFilter() override;
 
-    virtual void init();
+    void init() override;
 
     /// Sets the point indeces to be highlighted
     void setSelectionArray(const std::vector<unsigned> &point_indeces);

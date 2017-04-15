@@ -22,11 +22,7 @@ class MeshLibLineMesh : public ::testing::Test
         mesh = MeshLib::MeshGenerator::generateLineMesh(extent, mesh_size);
     }
 
-    ~MeshLibLineMesh()
-    {
-        delete mesh;
-    }
-
+    ~MeshLibLineMesh() override { delete mesh; }
     static std::size_t const mesh_size = 9;
     double extent = 1.0;
     MeshLib::Mesh const* mesh;

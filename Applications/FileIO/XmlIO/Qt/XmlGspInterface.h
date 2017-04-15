@@ -36,18 +36,21 @@ class XmlGspInterface : public BaseLib::IO::XMLInterface,
 public:
     XmlGspInterface(DataHolderLib::Project &project);
 
-    virtual ~XmlGspInterface() = default;
+    ~XmlGspInterface() override = default;
 
     /// Reads an xml-file containing a GeoSys project.
     /// Project files currently cover only geo-, msh- and station-data. This will be expanded in the future.
-    int readFile(const QString &fileName);
+    int readFile(const QString& fileName) override;
 
-    bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+    bool readFile(std::string const& fname) override
+    {
+        return readFile(QString(fname.c_str())) != 0;
+    }
 
     int writeToFile(const std::string& filename);
 
 protected:
-    bool write();
+    bool write() override;
 
 private:
     std::string _filename;

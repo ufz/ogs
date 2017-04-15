@@ -65,7 +65,7 @@ public:
      */
     Station(Station const& src);
 
-    virtual ~Station();
+    ~Station() override;
 
     /// Returns the name of the station.
     std::string const& getName() const { return _name; }

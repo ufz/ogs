@@ -25,18 +25,20 @@ class XmlNumInterface : public BaseLib::IO::XMLInterface, public BaseLib::IO::XM
 public:
     XmlNumInterface();
 
-    virtual ~XmlNumInterface() = default;
+    ~XmlNumInterface() override = default;
 
-    int readFile(QString const& fileName);
+    int readFile(QString const& fileName) override;
 
-    bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+    bool readFile(std::string const& fname) override
+    {
+        return readFile(QString(fname.c_str())) != 0;
+    }
 
 protected:
     void readLinearSolverConfiguration(QDomElement const& lin_root);
     void readIterationScheme(QDomElement const& iteration_root);
     void readConvergenceCriteria(QDomElement const& convergence_root);
-    bool write();
-
+    bool write() override;
 };
 
 }

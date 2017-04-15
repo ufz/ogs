@@ -30,7 +30,7 @@ class SaveMeshDialog : public QDialog, private Ui_SaveMesh
 
 public:
     SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent = nullptr);
-    ~SaveMeshDialog() = default;
+    ~SaveMeshDialog() override = default;
 
 private slots:
     /// Selection of path to save file
@@ -39,10 +39,10 @@ private slots:
     void on_dataModeBox_currentIndexChanged(int index);
 
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject() { this->done(QDialog::Rejected); };
+    void reject() override { this->done(QDialog::Rejected); };
 
 private:
     MeshLib::Mesh const& _mesh;

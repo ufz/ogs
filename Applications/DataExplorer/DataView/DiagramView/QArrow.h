@@ -28,12 +28,13 @@ public:
     QArrow(float l, float a, float hl, float hw, QPen& pen,
            QGraphicsItem* parent = nullptr);
     QArrow(float l, float a, QPen& pen, QGraphicsItem* parent = nullptr);
-    ~QArrow();
+    ~QArrow() override;
 
     double getLength();
     double getAngle();
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
-    QRectF boundingRect() const;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+               QWidget* widget) override;
+    QRectF boundingRect() const override;
     void setAngle(double a);
     void setLength(double l);
 

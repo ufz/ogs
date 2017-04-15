@@ -33,11 +33,11 @@ public:
     GMSHAdaptiveMeshDensity(double pnt_density,
                             double station_density,
                             std::size_t max_pnts_per_leaf);
-    virtual ~GMSHAdaptiveMeshDensity();
-    void initialize(std::vector<GeoLib::Point const*> const& pnts);
-    double getMeshDensityAtPoint(GeoLib::Point const* const pnt) const;
+    ~GMSHAdaptiveMeshDensity() override;
+    void initialize(std::vector<GeoLib::Point const*> const& pnts) override;
+    double getMeshDensityAtPoint(GeoLib::Point const* const pnt) const override;
     void addPoints(std::vector<GeoLib::Point const*> const& pnts);
-    double getMeshDensityAtStation(GeoLib::Point const* const) const;
+    double getMeshDensityAtStation(GeoLib::Point const* const) const override;
     void getSteinerPoints (std::vector<GeoLib::Point*> & pnts,
                            std::size_t additional_levels = 0) const;
 #ifndef NDEBUG

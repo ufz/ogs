@@ -38,7 +38,7 @@ public:
      * @param pnt  a point object
      * @return evaluated value
      */
-    virtual double operator()(const MathLib::Point3d& pnt) const
+    double operator()(const MathLib::Point3d& pnt) const override
     {
         return _f(pnt.getCoords());
     }

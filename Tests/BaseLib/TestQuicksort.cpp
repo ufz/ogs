@@ -29,7 +29,7 @@ namespace ac = autocheck;
 
 struct BaseLibQuicksort : public ::testing::Test
 {
-    virtual void SetUp()
+    void SetUp() override
     {
         cls.trivial([](const std::vector<int>& xs)
                     {

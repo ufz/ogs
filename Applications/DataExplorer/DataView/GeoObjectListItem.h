@@ -75,11 +75,7 @@ public:
         static_cast<VtkSurfacesSource*>(_vtkSource)->SetName(geo_name + " - Surfaces");
     }
 
-    ~GeoObjectListItem()
-    {
-        _vtkSource->Delete();
-    }
-
+    ~GeoObjectListItem() override { _vtkSource->Delete(); }
     /// Returns the type of geo-objects contained in the subtree of this item.
     GeoLib::GEOTYPE getType() { return _type; }
 

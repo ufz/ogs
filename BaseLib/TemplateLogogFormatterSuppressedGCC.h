@@ -38,13 +38,14 @@ public:
     TemplateLogogFormatterSuppressedGCC(MPI_Comm mpi_comm = MPI_COMM_WORLD);
 #endif
 
-    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
+    TOPIC_FLAGS GetTopicFlags(const logog::Topic& topic) override
     {
     return ( logog::Formatter::GetTopicFlags( topic ) &
         ~( T_SUPPPRESS_TOPIC_FLAG ));
     }
 
-    virtual LOGOG_STRING &Format( const logog::Topic &topic, const logog::Target &target );
+    LOGOG_STRING& Format(const logog::Topic& topic,
+                         const logog::Target& target) override;
 
 private:
 #ifdef USE_MPI

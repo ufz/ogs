@@ -34,7 +34,7 @@ public:
 
 public slots:
     /// Calls the QColorDialog
-    void mouseReleaseEvent(QMouseEvent* e);
+    void mouseReleaseEvent(QMouseEvent* e) override;
 
     /// Sets the color.
     void setColor(QColor color);

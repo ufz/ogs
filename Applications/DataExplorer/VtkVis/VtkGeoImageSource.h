@@ -56,18 +56,17 @@ public:
     /// @brief Returns the spacing between two pixels.
     double getSpacing() const;
 
-    virtual void SetUserProperty(QString name, QVariant value) override;
+    void SetUserProperty(QString name, QVariant value) override;
 
 protected:
     /// @brief Constructor.
     VtkGeoImageSource();
 
     /// @brief Destructor.
-    virtual ~VtkGeoImageSource();
+    ~VtkGeoImageSource() override;
 
     /// @brief Filter execution.
-    virtual void SimpleExecute(vtkImageData* input,
-                               vtkImageData* output) override;
+    void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
     VtkGeoImageSource(const VtkGeoImageSource&); // Not implemented.

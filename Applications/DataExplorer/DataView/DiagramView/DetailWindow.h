@@ -44,7 +44,7 @@ public:
 
     DetailWindow(std::vector<std::size_t> data, QWidget* parent = nullptr);
 
-    ~DetailWindow(void);
+    ~DetailWindow(void) override;
 
     /**
      * Adds another plot to window. Axes are automatically resized, a random color is used.

@@ -18,10 +18,10 @@ namespace Adsorption
 class DensityHauer : public AdsorptionReaction
 {
 public:
-    double getAdsorbateDensity(const double T_Ads) const;
-    double getAlphaT(const double T_Ads) const;
-    double characteristicCurve(const double A) const;
-    double dCharacteristicCurve(const double A) const;
+    double getAdsorbateDensity(const double T_Ads) const override;
+    double getAlphaT(const double T_Ads) const override;
+    double characteristicCurve(const double A) const override;
+    double dCharacteristicCurve(const double A) const override;
 };
 
 inline double rhoWaterHauer(const double T_Ads)

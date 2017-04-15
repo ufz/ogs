@@ -26,7 +26,7 @@ class TESLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    virtual ~TESLocalAssemblerInterface() = default;
+    ~TESLocalAssemblerInterface() override = default;
 
     virtual bool checkBounds(std::vector<double> const& local_x,
                              std::vector<double> const& local_x_prev_ts) = 0;

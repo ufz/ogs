@@ -38,7 +38,7 @@ class NumLibMeshComponentMapTest : public ::testing::Test
         components.emplace_back(new MeshLib::MeshSubsets{nodesSubset});
     }
 
-    ~NumLibMeshComponentMapTest()
+    ~NumLibMeshComponentMapTest() override
     {
         delete cmap;
         delete nodesSubset;

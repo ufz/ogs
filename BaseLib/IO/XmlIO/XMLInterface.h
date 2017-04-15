@@ -29,7 +29,7 @@ class XMLInterface : public BaseLib::IO::Writer
 {
 public:
     XMLInterface();
-    virtual ~XMLInterface() = default;
+    ~XMLInterface() override = default;
 
     void setNameForExport(std::string const& name) { _exportName = name; }
     virtual bool readFile(std::string const& fname) = 0;

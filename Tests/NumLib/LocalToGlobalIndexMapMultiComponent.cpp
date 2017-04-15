@@ -71,7 +71,7 @@ public:
             mesh_items_all_nodes->getIntersectionByNodes(nodes));
     }
 
-    ~NumLibLocalToGlobalIndexMapMultiDOFTest()
+    ~NumLibLocalToGlobalIndexMapMultiDOFTest() override
     {
         for (auto e : boundary_elements)
             delete e;

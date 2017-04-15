@@ -56,7 +56,7 @@ public:
     VtkVisPipelineItem(VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
                        const QList<QVariant> data = QList<QVariant>());
 
-    ~VtkVisPipelineItem();
+    ~VtkVisPipelineItem() override;
 
     /// @brief Returns a VtkVisPipelineItem.
     VtkVisPipelineItem* child(int row) const;
@@ -65,8 +65,8 @@ public:
     /// the item and sets the item's properties.
     virtual void Initialize(vtkRenderer* renderer) = 0;
 
-    QVariant data(int column) const;
-    bool setData(int column, const QVariant &value);
+    QVariant data(int column) const override;
+    bool setData(int column, const QVariant& value) override;
 
     /// @brief Returns the algorithm object
     vtkAlgorithm* algorithm() const { return _algorithm; }

@@ -60,7 +60,8 @@ public:
     VtkVisPipeline(vtkRenderer* renderer, QObject* parent = nullptr);
 
     /// \brief Emits vtkVisPipelineChanged() and calls base class method.
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    bool setData(const QModelIndex& index, const QVariant& value,
+                 int role = Qt::EditRole) override;
 
     /// \brief Adds a light to the scene at the given coordinates.
     void addLight(const GeoLib::Point &pos);
@@ -81,7 +82,7 @@ public:
     /// is the given one.
     QModelIndex getIndex(vtkProp3D* actor);
 
-    Qt::ItemFlags flags( const QModelIndex &index ) const;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
     /// \brief Loads a vtk object from the given file and adds it to the pipeline.
     void loadFromFile(QString filename);

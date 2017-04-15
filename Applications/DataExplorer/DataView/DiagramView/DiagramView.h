@@ -38,7 +38,7 @@ public:
      * \param parent The parent QWidget.
      */
     DiagramView(DiagramList* list, QWidget* parent = nullptr);
-    ~DiagramView();
+    ~DiagramView() override;
 
     /// Adds a new graph to the scene.
     void addGraph(DiagramList* list);
@@ -49,13 +49,13 @@ public:
 
 protected:
     /// Resizes the scene.
-    void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     void initialize();
     void keepItemAspectRatio();
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
+    QSize minimumSizeHint() const override;
+    QSize sizeHint() const override;
     void update();
 
     DiagramScene* _scene;

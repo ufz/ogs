@@ -37,7 +37,7 @@ public:
     GMSHPolygonTree(GeoLib::PolygonWithSegmentMarker* polygon, GMSHPolygonTree * parent,
                     GeoLib::GEOObjects &geo_objs, std::string const& geo_name,
                     GMSHMeshDensityStrategy * mesh_density_strategy);
-    virtual ~GMSHPolygonTree();
+    ~GMSHPolygonTree() override;
 
     /** Mark the segments shared by several polygons. */
     void markSharedSegments();

@@ -32,7 +32,7 @@ class LayeredVolume : public LayeredMeshGenerator
 {
 public:
     LayeredVolume() = default;
-    ~LayeredVolume() = default;
+    ~LayeredVolume() override = default;
 
     /**
      * Constructs a subsurface representation of a mesh using only 2D elements
@@ -53,10 +53,10 @@ public:
      * @result true if the subsurface representation has been created, false if
      * there was an error
      */
-    bool createRasterLayers(const MeshLib::Mesh &mesh,
-                            const std::vector<GeoLib::Raster const*> &rasters,
+    bool createRasterLayers(const MeshLib::Mesh& mesh,
+                            const std::vector<GeoLib::Raster const*>& rasters,
                             double minimum_thickness,
-                            double noDataReplacementValue = 0.0);
+                            double noDataReplacementValue = 0.0) override;
 
     /// Returns the region attribute vector necessary for assigning region
     /// attributes via TetGen
@@ -67,7 +67,9 @@ public:
 
 private:
     /// Adds another layer to the subsurface mesh
-    void addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id, GeoLib::Raster const& raster);
+    void addLayerToMesh(const MeshLib::Mesh& mesh_layer,
+                        unsigned layer_id,
+                        GeoLib::Raster const& raster) override;
 
     /// Creates boundary surfaces between the mapped layers to make the volumes watertight
     void addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t nLayers);

@@ -71,7 +71,7 @@ public:
                        DetailWindow* window = nullptr,
                        QDialog* parent = nullptr);
 
-    ~DiagramPrefsDialog(void);
+    ~DiagramPrefsDialog(void) override;
 
 private:
     /**
@@ -104,10 +104,10 @@ private:
 private slots:
     /// Instructions if the OK-Button has been pressed.
     /// Note: Clicking the "Load from file"-button overrides the database input!
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 
     /// Instructions if the "Load File"-Button has been pressed.
     void on_loadFileButton_clicked();

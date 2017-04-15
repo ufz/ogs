@@ -36,7 +36,7 @@ public:
     MeshAnalysisDialog(
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
         QDialog* parent = nullptr);
-    ~MeshAnalysisDialog(void);
+    ~MeshAnalysisDialog(void) override;
 
 private:
     /// Prepares the output for the node message window

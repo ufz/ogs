@@ -52,7 +52,7 @@ public:
     {}
 
     /// return a geometry type
-    virtual GEOTYPE getGeoType() const {return GEOTYPE::POINT;}
+    GEOTYPE getGeoType() const override { return GEOTYPE::POINT; }
 
 protected:
     friend PointVec;

@@ -71,7 +71,7 @@ public:
         return _residuals;
     }
 
-    ~LocalLinearLeastSquaresExtrapolator()
+    ~LocalLinearLeastSquaresExtrapolator() override
     {
         NumLib::GlobalVectorProvider::provider.releaseVector(
             _nodal_values);

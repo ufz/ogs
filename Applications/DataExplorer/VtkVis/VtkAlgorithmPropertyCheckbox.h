@@ -35,7 +35,7 @@ public:
                                  QWidget* parent = nullptr);
 
     /// @brief Destructor.
-    virtual ~VtkAlgorithmPropertyCheckbox();
+    ~VtkAlgorithmPropertyCheckbox() override;
 
 private:
     const QString _name;

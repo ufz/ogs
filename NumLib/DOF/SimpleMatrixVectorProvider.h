@@ -57,7 +57,7 @@ public:
 
     void releaseMatrix(GlobalMatrix const& A) override;
 
-    ~SimpleMatrixVectorProvider();
+    ~SimpleMatrixVectorProvider() override;
 
 private:
     template<bool do_search, typename... Args>

@@ -55,7 +55,7 @@ public:
      * @return interpolated value. A default value is returned if the given point
      * is not located on a surface
      */
-    double operator()(const MathLib::Point3d& pnt) const;
+    double operator()(const MathLib::Point3d& pnt) const override;
 
 private:
     /// rotate a triangle to XY plane

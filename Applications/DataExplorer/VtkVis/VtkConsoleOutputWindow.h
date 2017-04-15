@@ -23,11 +23,11 @@ public:
     void PrintSelf(ostream& os, vtkIndent indent) override;
 
     static VtkConsoleOutputWindow * New();
-    virtual void DisplayText(const char*) override;
+    void DisplayText(const char*) override;
 
 protected:
     VtkConsoleOutputWindow();
-    virtual ~VtkConsoleOutputWindow();
+    ~VtkConsoleOutputWindow() override;
 
 private:
     VtkConsoleOutputWindow(const VtkConsoleOutputWindow &);  // Not implemented.

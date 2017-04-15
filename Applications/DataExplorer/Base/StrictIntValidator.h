@@ -27,7 +27,7 @@ public:
         : QIntValidator(min, max, parent)
     {}
 
-    QValidator::State validate(QString & input, int &pos) const
+    QValidator::State validate(QString& input, int& pos) const override
     {
         if (input.isEmpty()) return Intermediate;
 

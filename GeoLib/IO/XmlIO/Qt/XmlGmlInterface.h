@@ -35,15 +35,18 @@ class XmlGmlInterface : public BaseLib::IO::XMLInterface,
 public:
     XmlGmlInterface(GeoLib::GEOObjects& geo_objs);
 
-    virtual ~XmlGmlInterface() = default;
+    ~XmlGmlInterface() override = default;
 
     /// Reads an xml-file containing geometric object definitions into the GEOObjects used in the contructor
-    int readFile(const QString &fileName);
+    int readFile(const QString& fileName) override;
 
-    bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+    bool readFile(std::string const& fname) override
+    {
+        return readFile(QString(fname.c_str())) != 0;
+    }
 
 protected:
-    bool write();
+    bool write() override;
 
 private:
     /// Reads GeoLib::Point-objects from an xml-file

@@ -81,7 +81,7 @@ public:
                 vec_nodes.push_back(e->getNode(i));
     }
 
-    virtual ~NumLibFemNaturalCoordinatesMappingTest()
+    ~NumLibFemNaturalCoordinatesMappingTest() override
     {
         for (auto itr = vec_nodes.begin(); itr != vec_nodes.end(); ++itr)
             delete *itr;

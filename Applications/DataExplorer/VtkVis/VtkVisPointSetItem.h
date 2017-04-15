@@ -49,31 +49,31 @@ public:
     VtkVisPointSetItem(VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
                        const QList<QVariant> data = QList<QVariant>());
 
-    ~VtkVisPointSetItem();
+    ~VtkVisPointSetItem() override;
 
     /// @brief Gets the last selected attribute.
-    const QString GetActiveAttribute() const;
+    const QString GetActiveAttribute() const override;
 
     /// @brief Get the scalar range for the active attribute
     void GetRangeForActiveAttribute(double range[2]) const;
 
     /// @brief Initializes vtkMapper and vtkActor necessary for visualization of
     /// the item and sets the item's properties.
-    void Initialize(vtkRenderer* renderer);
+    void Initialize(vtkRenderer* renderer) override;
 
-    vtkAlgorithm* transformFilter() const;
+    vtkAlgorithm* transformFilter() const override;
 
     /// @brief Sets the selected attribute array for the visualisation of the data set.
-    void SetActiveAttribute(const QString& name);
+    void SetActiveAttribute(const QString& name) override;
 
     /// @brief Scales the data in visualisation-space.
-    void setScale(double x, double y, double z) const;
+    void setScale(double x, double y, double z) const override;
 
     /// @brief Translates the item in visualisation-space.
-    void setTranslation(double x, double y, double z) const;
+    void setTranslation(double x, double y, double z) const override;
 
     /// @brief Enables / disables backface culling.
-    void setBackfaceCulling(bool enable) const;
+    void setBackfaceCulling(bool enable) const override;
 
 protected:
     QVtkDataSetMapper* _mapper;
@@ -82,7 +82,8 @@ protected:
     std::string _activeArrayName;
 
     /// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
-    virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
+    int callVTKWriter(vtkAlgorithm* algorithm,
+                      const std::string& filename) const override;
 
     void SetScalarVisibility(bool on);
 

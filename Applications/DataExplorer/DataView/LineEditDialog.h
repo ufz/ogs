@@ -33,7 +33,7 @@ class LineEditDialog : public QDialog, private Ui_LineEdit
 public:
     LineEditDialog(const GeoLib::PolylineVec& ply_vec,
                    QDialog* parent = nullptr);
-    ~LineEditDialog(void);
+    ~LineEditDialog(void) override;
 
 private:
     std::vector<std::size_t> getSelectedIndeces(QStringList list);
@@ -50,10 +50,10 @@ private slots:
     void on_deselectPlyButton_pressed();
 
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 
 signals:
     void connectPolylines(const std::string&,

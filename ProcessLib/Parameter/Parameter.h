@@ -63,8 +63,7 @@ template <typename T>
 struct Parameter : public ParameterBase
 {
     Parameter(std::string const& name_) : ParameterBase(name_) {}
-
-    virtual ~Parameter() = default;
+    ~Parameter() override = default;
 
     //! Returns the number of components this Parameter has at every position and
     //! point in time.

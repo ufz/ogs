@@ -45,7 +45,7 @@ public:
     void addMesh(std::unique_ptr<MeshLib::Mesh> mesh);
 
     /// Returns the number of columns used for the data list
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
 public slots:
     /// Adds a new mesh (using no unique_ptr as this interferes with Qt's signal/slot policy)

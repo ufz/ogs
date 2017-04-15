@@ -35,7 +35,7 @@ public:
      * Creates an empty view.
      */
     StratView(QWidget* parent = nullptr) : _scene(nullptr) { Q_UNUSED(parent); }
-    ~StratView();
+    ~StratView() override;
 
     /// Sets the Borehole whose data should be visualised.
     void setStation(GeoLib::StationBorehole* station,
@@ -51,17 +51,23 @@ public:
 
 protected:
     /// Resizes the scene.
-    void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     /// Initialises the view.
     void initialize();
 
     /// The minimum size of the window.
-    QSize minimumSizeHint() const { return QSize(3 * _scene->MARGIN,2 * _scene->MARGIN); }
+    QSize minimumSizeHint() const override
+    {
+        return QSize(3 * _scene->MARGIN, 2 * _scene->MARGIN);
+    }
 
     /// The default size of the window.
-    QSize sizeHint() const { return QSize(6 * _scene->MARGIN, 4 * _scene->MARGIN); }
+    QSize sizeHint() const override
+    {
+        return QSize(6 * _scene->MARGIN, 4 * _scene->MARGIN);
+    }
 
     /// Updates the view automatically when a Borehole is added or when the window containing the view changes its state.
     void update();

@@ -30,20 +30,20 @@ public:
     ColorTableModel(
         const std::map<std::string, DataHolderLib::Color*>& colorLookupTable,
         QObject* parent = nullptr);
-    ~ColorTableModel();
+    ~ColorTableModel() override;
 
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
-    QVariant data( const QModelIndex& index, int role ) const;
+    QVariant data(const QModelIndex& index, int role) const override;
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override
     {
         Q_UNUSED (parent);
         return _listOfPairs.size();
     }
 
-    QVariant headerData( int section, Qt::Orientation orientation,
-                         int role /*= Qt::DisplayRole*/ ) const;
+    QVariant headerData(int section, Qt::Orientation orientation,
+                        int role /*= Qt::DisplayRole*/) const override;
 
 private:
     bool buildTable( const std::map<std::string, DataHolderLib::Color*> &colorLookupTable );

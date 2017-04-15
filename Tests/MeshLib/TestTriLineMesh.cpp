@@ -45,7 +45,7 @@ class MeshLibTriLineMesh : public ::testing::Test
         mesh = new MeshLib::Mesh("M", nodes, elements);
     }
 
-    ~MeshLibTriLineMesh()
+    ~MeshLibTriLineMesh() override
     {
         /*std::remove_if(elements.begin(), elements.end(),
                 [](MeshLib::Element* e) { delete e; return true; });

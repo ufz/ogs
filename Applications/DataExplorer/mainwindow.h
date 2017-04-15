@@ -52,7 +52,7 @@ public:
     void loadFileOnStartUp(const QString &fileName);
 
 protected:
-    void closeEvent( QCloseEvent* event );
+    void closeEvent(QCloseEvent* event) override;
 
 protected slots:
     void showGeoDockWidget( bool show );

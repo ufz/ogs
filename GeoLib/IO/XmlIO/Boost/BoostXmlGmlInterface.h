@@ -36,14 +36,14 @@ class BoostXmlGmlInterface : public BaseLib::IO::XMLInterface
 {
 public:
     BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs);
-    virtual ~BoostXmlGmlInterface() = default;
+    ~BoostXmlGmlInterface() override = default;
 
     /// Reads an xml-file containing OGS geometry
-    bool readFile(const std::string &fname);
+    bool readFile(const std::string& fname) override;
 
 protected:
     /// Required method for writing geometry. This is not implemented here, use the Qt class for writing.
-    bool write();
+    bool write() override;
 
 private:
     /// Reads GeoLib::Point-objects from an xml-file

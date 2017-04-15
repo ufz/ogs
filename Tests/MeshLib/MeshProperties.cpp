@@ -26,11 +26,7 @@ public:
         mesh = MeshLib::MeshGenerator::generateRegularHexMesh(1.0, mesh_size);
     }
 
-    ~MeshLibProperties()
-    {
-        delete mesh;
-    }
-
+    ~MeshLibProperties() override { delete mesh; }
     static std::size_t const mesh_size = 5;
     MeshLib::Mesh * mesh;
 };

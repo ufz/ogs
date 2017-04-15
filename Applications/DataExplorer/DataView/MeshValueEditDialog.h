@@ -33,17 +33,17 @@ public:
     /// Constructor for creating a new FEM condition.
     MeshValueEditDialog(MeshLib::Mesh* mesh, QDialog* parent = nullptr);
 
-    ~MeshValueEditDialog(void);
+    ~MeshValueEditDialog(void) override;
 
 private:
     MeshLib::Mesh* _mesh;
 
 private slots:
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 
     void on_replaceButton_toggled(bool isSelected);
 

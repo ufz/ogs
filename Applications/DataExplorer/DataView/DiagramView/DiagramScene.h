@@ -30,7 +30,7 @@ class DiagramScene : public QGraphicsScene
 public:
     DiagramScene(QObject* parent = nullptr);
     DiagramScene(DiagramList* list, QObject* parent = nullptr);
-    ~DiagramScene();
+    ~DiagramScene() override;
 
     QArrow* addArrow(float length, float angle, QPen &pen);
     void addGraph(DiagramList* list);

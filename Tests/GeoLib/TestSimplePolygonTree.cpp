@@ -86,7 +86,7 @@ public:
         _p3 = new GeoLib::Polygon(ply3);
     }
 
-    ~CreatePolygonTreesTest()
+    ~CreatePolygonTreesTest() override
     {
         delete _p0;
         delete _p1;

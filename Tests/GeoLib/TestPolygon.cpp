@@ -64,7 +64,7 @@ public:
         _polygon = new GeoLib::Polygon(ply);
     }
 
-    ~PolygonTest()
+    ~PolygonTest() override
     {
         delete _polygon;
         for (auto & _pnt : _pnts)

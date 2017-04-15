@@ -46,7 +46,7 @@ public:
     VtkCompositeFilter(vtkAlgorithm* inputAlgorithm);
 
     /// @brief Destructor.
-    virtual ~VtkCompositeFilter();
+    ~VtkCompositeFilter() override;
 
     /// @return the type of the data input.
     /// Can be compared with

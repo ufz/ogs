@@ -34,9 +34,11 @@ public:
     double getEquilibriumLoading(const double p_Ads, const double T_Ads, const double M_Ads)
     const override;
 
-    virtual double getEnthalpy(const double p_Ads, const double T_Ads, const double M_Ads) const override;
-    virtual double getReactionRate(const double p_Ads, const double T_Ads,
-                                   const double M_Ads, const double loading) const override;
+    double getEnthalpy(const double p_Ads, const double T_Ads,
+                       const double M_Ads) const override;
+    double getReactionRate(const double p_Ads, const double T_Ads,
+                           const double M_Ads,
+                           const double loading) const override;
     /**
      * @brief get_d_reaction_rate
      * @param p_Ads

@@ -37,7 +37,7 @@ public:
     /// Constructor
     FileListDialog(FileType input, FileType output, QWidget* parent = nullptr);
     /// Destructor
-    ~FileListDialog(void);
+    ~FileListDialog(void) override;
 
     /// Returns list of all selected files
     const QStringList getInputFileList() const { return _allFiles.stringList(); };
@@ -61,9 +61,8 @@ private slots:
     void on_browseButton_pressed();
 
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
-
+    void reject() override;
 };

@@ -27,16 +27,16 @@ class VtkCompositeElementSelectionFilter : public VtkCompositeFilter
 {
 public:
     VtkCompositeElementSelectionFilter(vtkAlgorithm* inputAlgorithm);
-    virtual ~VtkCompositeElementSelectionFilter() = default;
+    ~VtkCompositeElementSelectionFilter() override = default;
 
-    virtual void init();
+    void init() override;
 
     // Sets the range for the quality measure (default is [0,1] but this may vary for area- and volume-metrics).
     void setRange(double min_val, double max_val) { _range = std::make_pair(min_val, max_val); }
 
     void setSelectionArray(const std::string &selection_name, const std::vector<double> &selection = std::vector<double>());
 
-    virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
+    void SetUserVectorProperty(QString name, QList<QVariant> values) override;
 
 private:
     /// Returns a colour lookup table optimised for quality measures

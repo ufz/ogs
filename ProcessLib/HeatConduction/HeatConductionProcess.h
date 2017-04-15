@@ -46,7 +46,7 @@ public:
                                     const double delta_t) override;
 
     // Get the solution of the previous time step.
-    virtual GlobalVector* getPreviousTimeStepSolution() const override
+    GlobalVector* getPreviousTimeStepSolution() const override
     {
         return _x_previous_timestep.get();
     }

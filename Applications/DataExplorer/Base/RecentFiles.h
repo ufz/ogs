@@ -49,7 +49,7 @@ public:
      * \param settingsName The setting key
      */
     RecentFiles(QObject* parent, const char* slot, QString settingsName);
-    ~RecentFiles();
+    ~RecentFiles() override;
 
     /// Returns the created menu. Add this menu to your QMainWindow menu.
     QMenu* menu();

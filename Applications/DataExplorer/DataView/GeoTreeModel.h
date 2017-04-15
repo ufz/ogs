@@ -43,7 +43,7 @@ class GeoTreeModel : public TreeModel
 
 public:
     GeoTreeModel(QObject* parent = nullptr);
-    ~GeoTreeModel();
+    ~GeoTreeModel() override;
 
     /**
      * Inserts a new subtree under _rootItem for a geometry with the given name along with a subtree named "Points" for that new geometry.

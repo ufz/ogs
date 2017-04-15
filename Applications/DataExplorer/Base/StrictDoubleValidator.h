@@ -30,7 +30,7 @@ public:
         QDoubleValidator( parent)
     {}
 
-    QValidator::State validate(QString & input, int &pos) const
+    QValidator::State validate(QString& input, int& pos) const override
     {
         if (input.isEmpty() || input == "." || input == "-") return Intermediate;
 

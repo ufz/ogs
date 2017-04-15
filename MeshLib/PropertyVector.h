@@ -85,7 +85,7 @@ public:
     }
 
     PropertyVectorBase* clone(
-        std::vector<std::size_t> const& exclude_positions) const
+        std::vector<std::size_t> const& exclude_positions) const override
     {
         auto* t(new PropertyVector<PROP_VAL_TYPE>(
             _property_name, _mesh_item_type, _n_components));
@@ -144,7 +144,7 @@ class PropertyVector<T*> : public std::vector<std::size_t>,
 friend class Properties;
 public:
     /// Destructor ensures the deletion of the heap-constructed objects.
-    ~PropertyVector()
+    ~PropertyVector() override
     {
         for (auto v : _values)
             delete [] v;
@@ -195,7 +195,8 @@ public:
         return _n_components * std::vector<std::size_t>::size();
     }
 
-    PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
+    PropertyVectorBase* clone(
+        std::vector<std::size_t> const& exclude_positions) const override
     {
         // create new PropertyVector with modified mapping
         PropertyVector<T*> *t(new PropertyVector<T*>

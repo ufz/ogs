@@ -33,7 +33,7 @@ class StationBorehole : public Station
 public:
     /** constructor initialises the borehole with the given coordinates */
     StationBorehole(double x = 0.0, double y = 0.0, double z = 0.0, const std::string &name = "");
-    ~StationBorehole(void);
+    ~StationBorehole(void) override;
 
     /// Creates a StationBorehole-object from a string (assuming the string has the right format)
     static StationBorehole* createStation(const std::string &line);

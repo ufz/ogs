@@ -38,7 +38,7 @@ public:
                                  QVariant::Type type,
                                  VtkAlgorithmProperties* algProps,
                                  QWidget* parent = nullptr);
-    virtual ~VtkAlgorithmPropertyLineEdit();
+    ~VtkAlgorithmPropertyLineEdit() override;
 
 private:
     const QString _name;

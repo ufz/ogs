@@ -38,7 +38,8 @@ public:
 
 protected slots:
     /// Instructions if the selection of items in the view has changed.
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void selectionChanged(const QItemSelection& selected,
+                          const QItemSelection& deselected) override;
 
     /// Instructions if the selection of items in the view has changed by events outside the view (i.e. by actions made in the visualisation).
     void selectionChangedFromOutside(const QItemSelection &selected,
@@ -46,7 +47,7 @@ protected slots:
 
 private:
     /// Actions to be taken after a right mouse click is performed in the station view.
-    void contextMenuEvent( QContextMenuEvent* e );
+    void contextMenuEvent(QContextMenuEvent* e) override;
     /// Calls a FEMConditionSetupDialog.
     void setElementAsCondition(bool set_on_points = false);
 

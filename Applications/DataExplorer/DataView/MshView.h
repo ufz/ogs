@@ -38,14 +38,15 @@ class MshView : public QTreeView
 
 public:
     MshView(QWidget* parent = nullptr);
-    ~MshView();
+    ~MshView() override;
 
 public slots:
     void updateView();
 
 protected slots:
     /// Is called when the selection of this view changes.
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void selectionChanged(const QItemSelection& selected,
+                          const QItemSelection& deselected) override;
 
 private:
     struct MeshAction
@@ -55,7 +56,7 @@ private:
         unsigned max_dim;
     };
 
-    void contextMenuEvent( QContextMenuEvent* event );
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private slots:
     /// Opens a dialog for mapping 2d meshes.

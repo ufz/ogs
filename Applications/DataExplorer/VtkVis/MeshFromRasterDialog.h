@@ -35,7 +35,7 @@ class MeshFromRasterDialog : public QDialog, private Ui_MeshFromRaster
 public:
     /// Constructor
     MeshFromRasterDialog(QDialog* parent = nullptr);
-    ~MeshFromRasterDialog(void);
+    ~MeshFromRasterDialog(void) override;
 
     std::string getMeshName() const { return _mesh_name; }
     std::string getArrayName() const { return _array_name; }
@@ -44,10 +44,10 @@ public:
 
 private slots:
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 
 private:
     std::string _mesh_name;

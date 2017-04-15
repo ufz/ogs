@@ -224,7 +224,7 @@ public:
     {
     }
 
-    ~MatrixTranslatorCrankNicolson()
+    ~MatrixTranslatorCrankNicolson() override
     {
         NumLib::GlobalMatrixProvider::provider.releaseMatrix(
             _M_bar);

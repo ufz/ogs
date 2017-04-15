@@ -21,11 +21,11 @@ class VtkCompositeLineToTubeFilter : public VtkCompositeFilter
 {
 public:
     VtkCompositeLineToTubeFilter(vtkAlgorithm* inputAlgorithm);
-    virtual ~VtkCompositeLineToTubeFilter();
+    ~VtkCompositeLineToTubeFilter() override;
 
-    virtual void init() override;
+    void init() override;
 
-    virtual void SetUserProperty(QString name, QVariant value) override;
+    void SetUserProperty(QString name, QVariant value) override;
 
 private:
 
