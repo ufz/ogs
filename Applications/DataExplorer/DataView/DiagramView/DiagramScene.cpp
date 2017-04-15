@@ -78,7 +78,7 @@ QArrow* DiagramScene::addArrow(float length, float angle, QPen &pen)
 /// Adds a caption for a graph beneath the actual diagram.
 void DiagramScene::addCaption(const QString &name, QPen &pen)
 {
-    QGraphicsItemGroup* caption = new QGraphicsItemGroup(NULL);
+    QGraphicsItemGroup* caption = new QGraphicsItemGroup(nullptr);
     QGraphicsLineItem* l = addLine(0,0,100,0,pen);
     QGraphicsTextItem* t = addText(name);
     l->setPos(0,0);

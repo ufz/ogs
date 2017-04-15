@@ -39,7 +39,7 @@ class MshModel : public TreeModel
     Q_OBJECT
 
 public:
-    MshModel(DataHolderLib::Project &project, QObject* parent = 0);
+    MshModel(DataHolderLib::Project& project, QObject* parent = nullptr);
 
     /// Adds a new mesh
     void addMesh(std::unique_ptr<MeshLib::Mesh> mesh);

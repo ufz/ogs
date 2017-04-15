@@ -121,9 +121,9 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
     QMenu menu;
 
     // The current index is a list of points/polylines/surfaces
-    if (list != NULL)
+    if (list != nullptr)
     {
-        QAction* connectPlyAction(NULL);
+        QAction* connectPlyAction(nullptr);
         if (list->getType() == GeoLib::GEOTYPE::POLYLINE)
         {
             connectPlyAction = menu.addAction("Connect Polylines...");
@@ -142,7 +142,7 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
         GeoObjectListItem* parent = dynamic_cast<GeoObjectListItem*>(item->parentItem());
 
         // The current index refers to a geo-object
-        if (parent != NULL)
+        if (parent != nullptr)
         {
             QMenu* cond_menu = new QMenu("Set FEM Condition");
             //menu.addMenu(cond_menu);
@@ -260,7 +260,8 @@ void GeoTreeView::writeToFile() const
          file_type.append(";;Legacy geometry file (*.gli)");
 #endif // DEBUG
         QString geoName = item->data(0).toString();
-        QString fileName = QFileDialog::getSaveFileName(NULL, "Save geometry as",
+        QString fileName = QFileDialog::getSaveFileName(
+            nullptr, "Save geometry as",
             LastSavedFileDirectory::getDir() + geoName, file_type);
         if (!fileName.isEmpty())
         {

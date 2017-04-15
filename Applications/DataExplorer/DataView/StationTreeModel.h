@@ -43,7 +43,7 @@ class StationTreeModel : public TreeModel
     Q_OBJECT
 
 public:
-    StationTreeModel(QObject* parent = 0);
+    StationTreeModel(QObject* parent = nullptr);
     ~StationTreeModel();
 
     void addStationList(QString listName, const std::vector<GeoLib::Point*>* stations);

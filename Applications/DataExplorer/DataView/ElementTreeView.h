@@ -26,7 +26,7 @@ class ElementTreeView : public QTreeView
 
 public:
     /// Constructor
-    ElementTreeView(QWidget* parent = 0);
+    ElementTreeView(QWidget* parent = nullptr);
 
 public slots:
     void updateView();

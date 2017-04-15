@@ -25,8 +25,9 @@ const double PI = 3.14159265;
 class QArrow : public QGraphicsItem
 {
 public:
-    QArrow(float l, float a, float hl, float hw, QPen &pen, QGraphicsItem* parent = 0);
-    QArrow(float l, float a, QPen &pen, QGraphicsItem* parent = 0);
+    QArrow(float l, float a, float hl, float hw, QPen& pen,
+           QGraphicsItem* parent = nullptr);
+    QArrow(float l, float a, QPen& pen, QGraphicsItem* parent = nullptr);
     ~QArrow();
 
     double getLength();

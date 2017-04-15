@@ -32,7 +32,7 @@ class ElementTreeModel : public TreeModel
     Q_OBJECT
 
 public:
-    ElementTreeModel( QObject* parent = 0 );
+    ElementTreeModel(QObject* parent = nullptr);
     ~ElementTreeModel();
 
     vtkUnstructuredGridAlgorithm const* getSource() const { return _mesh_source; };

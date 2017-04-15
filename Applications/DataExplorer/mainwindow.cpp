@@ -926,8 +926,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                 gmsh_io.writeToFile(fileName.toStdString());
             }
 
-
-            if (system(NULL) != 0) // command processor available
+            if (system(nullptr) != 0)  // command processor available
             {
                 QSettings settings;
                 std::string gmsh_path = settings.value("DataExplorerGmshPath").toString().toStdString();
@@ -1245,7 +1244,7 @@ void MainWindow::startPresentationMode()
 
     // Move the widget to the screen and maximize it
     // Real fullscreen hides the menu
-    _vtkWidget->setParent(NULL, Qt::Window);
+    _vtkWidget->setParent(nullptr, Qt::Window);
     _vtkWidget->move(QPoint(_screenGeometries[screen].x(),
                             _screenGeometries[screen].y()));
     //_vtkWidget->showFullScreen();

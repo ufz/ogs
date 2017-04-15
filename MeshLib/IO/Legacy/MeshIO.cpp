@@ -251,7 +251,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
         break;
     }
     default:
-        elem = NULL;
+        elem = nullptr;
         break;
     }
 

@@ -34,7 +34,7 @@ class MeshFromRasterDialog : public QDialog, private Ui_MeshFromRaster
 
 public:
     /// Constructor
-    MeshFromRasterDialog(QDialog* parent = 0);
+    MeshFromRasterDialog(QDialog* parent = nullptr);
     ~MeshFromRasterDialog(void);
 
     std::string getMeshName() const { return _mesh_name; }

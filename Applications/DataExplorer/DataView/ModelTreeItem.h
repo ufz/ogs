@@ -32,7 +32,8 @@ public:
      * \param parent The parent item in the tree
      * \param item The ModelItem-object
      */
-    ModelTreeItem(const QList<QVariant> &data, TreeItem* parent, BaseItem* item = NULL);
+    ModelTreeItem(const QList<QVariant>& data, TreeItem* parent,
+                  BaseItem* item = nullptr);
     ~ModelTreeItem() { delete _item; }
 
     /// Returns the station object from which this item has been constructed

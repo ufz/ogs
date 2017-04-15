@@ -32,7 +32,8 @@ class MergeGeometriesDialog : public QDialog, private Ui_MergeGeometries
     Q_OBJECT
 
 public:
-    MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDialog* parent = 0);
+    MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects,
+                          QDialog* parent = nullptr);
     ~MergeGeometriesDialog(void);
 
     /// Returns a vector of selected geometries

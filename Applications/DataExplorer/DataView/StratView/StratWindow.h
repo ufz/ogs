@@ -36,9 +36,10 @@ public:
      * \param stratColors A color map.
      * \param parent The parent QWidget.
      */
-    StratWindow(GeoLib::StationBorehole* station,
-                std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
-                QWidget* parent = 0);
+    StratWindow(
+        GeoLib::StationBorehole* station,
+        std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
+        QWidget* parent = nullptr);
     ~StratWindow(void) { this->destroy(); }
 
 private:

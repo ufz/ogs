@@ -25,7 +25,7 @@ class ModellingTabWidget : public QWidget, public Ui_ModellingTabWidgetBase
     Q_OBJECT
 
 public:
-    ModellingTabWidget(QWidget* parent = 0);
+    ModellingTabWidget(QWidget* parent = nullptr);
 
 private slots:
 

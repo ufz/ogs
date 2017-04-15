@@ -27,7 +27,10 @@ class LinearEditDialog : public QDialog, private Ui_LinearEdit
     Q_OBJECT
 
 public:
-    LinearEditDialog(const GeoLib::Polyline &line, const std::vector<std::size_t> &dis_nodes, const std::vector<double> &dis_values, QDialog* parent = 0);
+    LinearEditDialog(const GeoLib::Polyline& line,
+                     const std::vector<std::size_t>& dis_nodes,
+                     const std::vector<double>& dis_values,
+                     QDialog* parent = nullptr);
     ~LinearEditDialog(void);
 
 private:

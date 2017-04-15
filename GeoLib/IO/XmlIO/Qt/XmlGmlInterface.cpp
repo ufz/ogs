@@ -124,7 +124,7 @@ void XmlGmlInterface::readPoints(const QDomNode &pointsRoot, std::vector<GeoLib:
         point = point.nextSiblingElement();
     }
 
-    // if names-map is empty, set it to NULL because it is not needed
+    // if names-map is empty, set it to nullptr because it is not needed
     if (pnt_names->empty())
     {
         delete pnt_names;
@@ -170,7 +170,7 @@ void XmlGmlInterface::readPolylines(const QDomNode &polylinesRoot,
         polyline = polyline.nextSiblingElement();
     }
 
-    // if names-map is empty, set it to NULL because it is not needed
+    // if names-map is empty, set it to nullptr because it is not needed
     if (ply_names->empty())
     {
         delete ply_names;
@@ -206,7 +206,7 @@ void XmlGmlInterface::readSurfaces(const QDomNode &surfacesRoot,
         surface = surface.nextSiblingElement();
     }
 
-    // if names-map is empty, set it to NULL because it is not needed
+    // if names-map is empty, set it to nullptr because it is not needed
     if (sfc_names->empty())
     {
         delete sfc_names;

@@ -336,7 +336,8 @@ void GMSHPolygonTree::writeSubPolygonsAsLineConstraints(std::size_t &line_offset
         dynamic_cast<GMSHPolygonTree*>((*it))->writeSubPolygonsAsLineConstraints(line_offset, sfc_number, out);
     }
 
-    if (_parent != NULL) {
+    if (_parent != nullptr)
+    {
         const std::size_t n_pnts(_node_polygon->getNumberOfPoints());
         std::size_t first_pnt_id(_node_polygon->getPointID(0)), second_pnt_id;
         for (std::size_t k(1); k<n_pnts; k++) {

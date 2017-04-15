@@ -41,7 +41,7 @@ void VtkCompositeElementSelectionFilter::init()
     this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
 
     this->SetLookUpTable(QString::fromStdString(_selection_name), this->GetLookupTable());
-     vtkSmartPointer<VtkAppendArrayFilter> selFilter (NULL);
+    vtkSmartPointer<VtkAppendArrayFilter> selFilter(nullptr);
     if (!_selection.empty())
     {
         selFilter = vtkSmartPointer<VtkAppendArrayFilter>::New();

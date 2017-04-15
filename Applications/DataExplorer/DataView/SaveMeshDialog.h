@@ -29,7 +29,7 @@ class SaveMeshDialog : public QDialog, private Ui_SaveMesh
     Q_OBJECT
 
 public:
-    SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent = 0);
+    SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent = nullptr);
     ~SaveMeshDialog() {}
 
 private slots:

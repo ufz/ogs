@@ -35,8 +35,7 @@
 
 vtkStandardNewMacro(VtkStationSource);
 
-VtkStationSource::VtkStationSource()
-    : _stations(NULL)
+VtkStationSource::VtkStationSource() : _stations(nullptr)
 {
     _removable = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);

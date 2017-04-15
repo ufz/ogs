@@ -19,8 +19,7 @@
 
 vtkStandardNewMacro(QVtkDataSetMapper);
 
-QVtkDataSetMapper::QVtkDataSetMapper()
-    : QObject(NULL)
+QVtkDataSetMapper::QVtkDataSetMapper() : QObject(nullptr)
 {
 }
 

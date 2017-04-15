@@ -37,7 +37,7 @@ public:
      */
     StratBar(GeoLib::StationBorehole* station,
              std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
-             QGraphicsItem* parent = 0);
+             QGraphicsItem* parent = nullptr);
     ~StratBar();
 
     /// Returns the bounding rectangle of the bar.

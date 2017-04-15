@@ -30,11 +30,13 @@ namespace FileIO
 {
 namespace GMSH
 {
-
-GMSHAdaptiveMeshDensity::GMSHAdaptiveMeshDensity(double pnt_density, double station_density,
-                                                 std::size_t max_pnts_per_leaf) :
-    _pnt_density(pnt_density), _station_density(station_density),
-    _max_pnts_per_leaf(max_pnts_per_leaf), _quad_tree(NULL)
+GMSHAdaptiveMeshDensity::GMSHAdaptiveMeshDensity(double pnt_density,
+                                                 double station_density,
+                                                 std::size_t max_pnts_per_leaf)
+    : _pnt_density(pnt_density),
+      _station_density(station_density),
+      _max_pnts_per_leaf(max_pnts_per_leaf),
+      _quad_tree(nullptr)
 {
 }
 

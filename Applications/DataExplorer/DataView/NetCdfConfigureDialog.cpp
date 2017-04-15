@@ -221,7 +221,7 @@ void NetCdfConfigureDialog::setDimensionSelect()
 
 void NetCdfConfigureDialog::getDimEdges(int dimId, unsigned &size, double &firstValue, double &lastValue)
 {
-    if ((_currentFile->get_var(_currentVar->get_dim(dimId)->name())) != NULL)
+    if ((_currentFile->get_var(_currentVar->get_dim(dimId)->name())) != nullptr)
     {
         NcVar *tmpVarOfDim = _currentFile->get_var(_currentVar->get_dim(dimId)->name());
         if ((tmpVarOfDim->num_dims()) == 1)

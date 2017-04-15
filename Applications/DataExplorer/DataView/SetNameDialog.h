@@ -32,7 +32,8 @@ class SetNameDialog : public QDialog
 
 public:
     /// Constructor
-    SetNameDialog(const std::string &geo_object_type, std::size_t id, const std::string &old_name, QDialog* parent = 0);
+    SetNameDialog(const std::string& geo_object_type, std::size_t id,
+                  const std::string& old_name, QDialog* parent = nullptr);
     ~SetNameDialog();
 
     std::string getNewName();

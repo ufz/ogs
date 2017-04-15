@@ -36,7 +36,8 @@ class MeshElementRemovalDialog : public QDialog, private Ui_MeshElementRemoval
     Q_OBJECT
 
 public:
-    MeshElementRemovalDialog(DataHolderLib::Project const& project, QDialog* parent = 0);
+    MeshElementRemovalDialog(DataHolderLib::Project const& project,
+                             QDialog* parent = nullptr);
     ~MeshElementRemovalDialog(void);
 
 private slots:

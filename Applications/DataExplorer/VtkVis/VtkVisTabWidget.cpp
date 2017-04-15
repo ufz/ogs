@@ -233,8 +233,8 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
     while(layout->count())
         delete layout->takeAt(0)->widget();
 
-    QMap<QString, QVariant>* propMap = NULL;
-    QMap<QString, QList<QVariant> >* propVecMap = NULL;
+    QMap<QString, QVariant>* propMap = nullptr;
+    QMap<QString, QList<QVariant>>* propVecMap = nullptr;
     VtkAlgorithmProperties* algProps = item->getVtkProperties();
 
     if (algProps == nullptr)

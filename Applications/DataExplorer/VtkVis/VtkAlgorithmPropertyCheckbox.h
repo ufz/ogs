@@ -31,7 +31,8 @@ public:
     /// @param algProps The VtkAlgorithmProperties object.
     /// @param parent The parent widget.
     VtkAlgorithmPropertyCheckbox(const bool value, const QString& name,
-                                 VtkAlgorithmProperties* algProps, QWidget* parent = 0);
+                                 VtkAlgorithmProperties* algProps,
+                                 QWidget* parent = nullptr);
 
     /// @brief Destructor.
     virtual ~VtkAlgorithmPropertyCheckbox();

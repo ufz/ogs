@@ -74,7 +74,7 @@ void DiagramPrefsDialog::accept()
         if (_list[0]->size() > 0)
         {
             bool window_is_empty(false);
-            if (_window == NULL)
+            if (_window == nullptr)
             {
                 _window = new DetailWindow();
                 _window->setAttribute(Qt::WA_DeleteOnClose);
@@ -96,7 +96,7 @@ void DiagramPrefsDialog::accept()
             else
             {
                 delete _window;
-                _window = NULL;
+                _window = nullptr;
                 OGSError::box("No dataset selected.");
             }
         }

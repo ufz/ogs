@@ -30,7 +30,7 @@ class VtkVisTabWidget : public QWidget, public Ui_VtkVisTabWidgetBase
 
 public:
     /// Constructor
-    VtkVisTabWidget(QWidget* parent = 0);
+    VtkVisTabWidget(QWidget* parent = nullptr);
 
 protected slots:
     /// Updates the property panels to show informations on the given VtkVisPipelineItem.

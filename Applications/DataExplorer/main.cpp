@@ -8,8 +8,8 @@
 #ifdef VTKFBXCONVERTER_FOUND
 #include <fbxsdk.h>
 #include "Common.h"
-FbxManager* lSdkManager = NULL;
-FbxScene* lScene = NULL;
+FbxManager* lSdkManager = nullptr;
+FbxScene* lScene = nullptr;
 #endif
 
 #include <vtkSmartPointer.h>

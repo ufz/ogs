@@ -39,7 +39,7 @@ class MeshLayerEditDialog : public QDialog, private Ui_MeshLayerEdit
     Q_OBJECT
 
 public:
-    MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent = 0);
+    MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent = nullptr);
     ~MeshLayerEditDialog(void);
 
 private:

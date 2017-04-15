@@ -45,10 +45,14 @@ extern FbxScene* lScene;
 #endif
 
 VtkVisPipelineItem::VtkVisPipelineItem(
-        vtkAlgorithm* algorithm, TreeItem* parentItem,
-        const QList<QVariant> data /*= QList<QVariant>()*/)
-    : TreeItem(data, parentItem),   _actor(NULL), _algorithm(algorithm),
-      _renderer(NULL), _compositeFilter(NULL), _vtkProps(NULL)
+    vtkAlgorithm* algorithm, TreeItem* parentItem,
+    const QList<QVariant> data /*= QList<QVariant>()*/)
+    : TreeItem(data, parentItem),
+      _actor(nullptr),
+      _algorithm(algorithm),
+      _renderer(nullptr),
+      _compositeFilter(nullptr),
+      _vtkProps(nullptr)
 {
     VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
     if (parentItem->parentItem())
@@ -56,10 +60,13 @@ VtkVisPipelineItem::VtkVisPipelineItem(
 }
 
 VtkVisPipelineItem::VtkVisPipelineItem(
-        VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
-        const QList<QVariant> data /*= QList<QVariant>()*/)
-    : TreeItem(data, parentItem), _actor(NULL), _renderer(NULL), _compositeFilter(compositeFilter),
-      _vtkProps(NULL)
+    VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
+    const QList<QVariant> data /*= QList<QVariant>()*/)
+    : TreeItem(data, parentItem),
+      _actor(nullptr),
+      _renderer(nullptr),
+      _compositeFilter(compositeFilter),
+      _vtkProps(nullptr)
 {
     _algorithm = _compositeFilter->GetOutputAlgorithm();
 }
@@ -77,7 +84,7 @@ VtkVisPipelineItem* VtkVisPipelineItem::child( int row ) const
     if (treeItem)
         return dynamic_cast<VtkVisPipelineItem*>(treeItem);
     else
-        return NULL;
+        return nullptr;
 }
 
 QVariant VtkVisPipelineItem::data( int column ) const
@@ -138,7 +145,8 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
                 }
             }
             else
-                QMessageBox::warning(NULL, "Conversion to FBX not possible",
+                QMessageBox::warning(
+                    nullptr, "Conversion to FBX not possible",
                     "It is not possible to convert an vtkImageData based object \
                     to FBX. If you want to convert raster data import it via \" \
                     File / Import / Raster Files as PolyData\"!");

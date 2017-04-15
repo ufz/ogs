@@ -25,20 +25,23 @@
 class QGraphicsGrid : public QGraphicsItem
 {
 public:
-    QGraphicsGrid(QRectF rect, int xCells, int yCells, QGraphicsItem* parent = 0);
+    QGraphicsGrid(QRectF rect,
+                  int xCells,
+                  int yCells,
+                  QGraphicsItem* parent = nullptr);
     QGraphicsGrid(int x,
                   int y,
                   int width,
                   int height,
                   int xCells,
                   int yCells,
-                  QGraphicsItem* parent = 0);
+                  QGraphicsItem* parent = nullptr);
     QGraphicsGrid(QRectF rect,
                   int xCells,
                   int yCells,
                   bool ticks,
                   QPen pen,
-                  QGraphicsItem* parent = 0);
+                  QGraphicsItem* parent = nullptr);
     QGraphicsGrid(int x,
                   int y,
                   int width,
@@ -47,7 +50,7 @@ public:
                   int yCells,
                   bool ticks,
                   QPen pen,
-                  QGraphicsItem* parent = 0);
+                  QGraphicsItem* parent = nullptr);
     ~QGraphicsGrid();
 
     QRectF boundingRect() const;

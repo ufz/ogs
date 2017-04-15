@@ -31,7 +31,7 @@ class StationTreeView : public QTreeView
 
 public:
     /// Constructor
-    StationTreeView(QWidget* parent = 0);
+    StationTreeView(QWidget* parent = nullptr);
 
     /// Update the view to visualise changes made to the underlying data
     void updateView();

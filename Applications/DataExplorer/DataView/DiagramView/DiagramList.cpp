@@ -200,7 +200,11 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 
                 for (int i = 0; i < nLists; i++)
                 {
-                    value = strtod(BaseLib::replaceString(",", ".",fields.takeFirst().toStdString()).c_str(),0);
+                    value =
+                        strtod(BaseLib::replaceString(
+                                   ",", ".", fields.takeFirst().toStdString())
+                                   .c_str(),
+                               nullptr);
                     lists[i]->addNextPoint(numberOfSecs,value);
                 }
             }

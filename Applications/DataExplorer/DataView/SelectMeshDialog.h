@@ -35,8 +35,8 @@ class SelectMeshDialog : public QDialog
 public:
     /// Constructor
     SelectMeshDialog(const GeoLib::GeoObject* geo_object,
-                  const std::list<std::string> &msh_names,
-                  QDialog* parent = 0);
+                     const std::list<std::string>& msh_names,
+                     QDialog* parent = nullptr);
     ~SelectMeshDialog();
 
     QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.

@@ -109,7 +109,7 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
         if (geoTiff)
         {
             int imgWidth = 0, imgHeight = 0, nImages = 0, pntCount = 0;
-            double* pnts = 0;
+            double* pnts = nullptr;
 
             // get actual number of images in the tiff file
             do {

@@ -262,7 +262,9 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
             DBFWriteIntegerAttribute(hDBF, polygon_id, node1_field, e->getNode(1)->getID());
             DBFWriteIntegerAttribute(hDBF, polygon_id, node2_field, e->getNode(2)->getID());
 
-            SHPObject *object = SHPCreateObject(SHPT_POLYGON, polygon_id++, 0, 0, NULL, ++nNodes, padfX, padfY, padfZ, NULL);
+            SHPObject* object =
+                SHPCreateObject(SHPT_POLYGON, polygon_id++, 0, nullptr, nullptr,
+                                ++nNodes, padfX, padfY, padfZ, nullptr);
             SHPWriteObject(hSHP, -1, object);
 
             // Note: cleaning up the coordinate arrays padfX, -Y, -Z results in a crash, I assume that shapelib removes them

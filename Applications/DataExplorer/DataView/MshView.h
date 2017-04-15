@@ -37,7 +37,7 @@ class MshView : public QTreeView
     Q_OBJECT
 
 public:
-    MshView(QWidget* parent = 0);
+    MshView(QWidget* parent = nullptr);
     ~MshView();
 
 public slots:

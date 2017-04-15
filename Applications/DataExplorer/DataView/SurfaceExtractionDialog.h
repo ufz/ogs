@@ -31,7 +31,7 @@ class SurfaceExtractionDialog : public QDialog, private Ui_SurfaceExtraction
     Q_OBJECT
 
 public:
-    SurfaceExtractionDialog(QDialog* parent = 0);
+    SurfaceExtractionDialog(QDialog* parent = nullptr);
     ~SurfaceExtractionDialog() {}
 
     int getTolerance() const { return _tolerance; }

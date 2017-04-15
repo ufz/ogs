@@ -42,7 +42,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     std::string line(""), cName(""), sName("");
     std::list<std::string>::const_iterator it;
     GeoLib::Point* pnt = new GeoLib::Point();
-    GeoLib::StationBorehole* newBorehole = NULL;
+    GeoLib::StationBorehole* newBorehole = nullptr;
     std::ifstream in( filename.c_str() );
 
     if (!in.is_open())
@@ -64,9 +64,9 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
             if (fields.begin()->compare(cName) == 0) // add new layer
             {
                 it = fields.begin();
-                (*pnt)[0] = strtod((++it)->c_str(), 0);
-                (*pnt)[1] = strtod((++it)->c_str(), 0);
-                (*pnt)[2] = strtod((++it)->c_str(), 0);
+                (*pnt)[0] = strtod((++it)->c_str(), nullptr);
+                (*pnt)[1] = strtod((++it)->c_str(), nullptr);
+                (*pnt)[2] = strtod((++it)->c_str(), nullptr);
 
                 // check if current layer has a thickness of 0.0.
                 // if so skip it since it will mess with the vtk-visualisation later on!
@@ -85,16 +85,16 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
             }
             else // add new borehole
             {
-                if (newBorehole != NULL)
+                if (newBorehole != nullptr)
                 {
                     newBorehole->setDepth((*newBorehole)[2] - depth);
                     boreholes->push_back(newBorehole);
                 }
                 cName = *fields.begin();
                 it = fields.begin();
-                (*pnt)[0] = strtod((++it)->c_str(), 0);
-                (*pnt)[1] = strtod((++it)->c_str(), 0);
-                (*pnt)[2] = strtod((++it)->c_str(), 0);
+                (*pnt)[0] = strtod((++it)->c_str(), nullptr);
+                (*pnt)[1] = strtod((++it)->c_str(), nullptr);
+                (*pnt)[2] = strtod((++it)->c_str(), nullptr);
                 sName = (*(++it));
                 newBorehole =
                         GeoLib::StationBorehole::createStation(cName, (*pnt)[0],
@@ -107,7 +107,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
             ERR("GMSInterface::readBoreholeFromGMS(): Error reading format.");
     }
     // write the last borehole from the file
-    if (newBorehole != NULL)
+    if (newBorehole != nullptr)
     {
         newBorehole->setDepth((*newBorehole)[2] - depth);
         boreholes->push_back(newBorehole);
@@ -226,7 +226,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
     if (!in.is_open())
     {
         ERR("GMSInterface::readGMS3DMMesh(): Could not open file %s.", filename.c_str());
-        return NULL;
+        return nullptr;
     }
 
     // Read data from file
@@ -234,7 +234,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
     if (line.compare("MESH3D") != 0)
     {
         ERR("GMSInterface::readGMS3DMMesh(): Could not read expected file header.");
-        return NULL;
+        return nullptr;
     }
 
     INFO("GMSInterface::readGMS3DMMesh(): Read GMS-3DM mesh.");
@@ -314,7 +314,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
         {
             WARN("GMSInterface::readGMS3DMMesh() - Element type \"%s\" not recognised.",
                  element_id.c_str());
-            return NULL;
+            return nullptr;
         }
     }
 

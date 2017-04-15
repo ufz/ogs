@@ -32,8 +32,7 @@
 
 vtkStandardNewMacro(VtkPointsSource);
 
-VtkPointsSource::VtkPointsSource()
-    : _points(NULL)
+VtkPointsSource::VtkPointsSource() : _points(nullptr)
 {
     _removable = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);

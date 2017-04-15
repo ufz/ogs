@@ -31,7 +31,7 @@ class CheckboxDelegate : public QItemDelegate
 
 public:
     /// \brief Constructor
-    CheckboxDelegate (QObject* parent = 0);
+    CheckboxDelegate(QObject* parent = nullptr);
 
     /// \brief Paints a checkbox. This overrides the default painting of a combo box.
     void paint(QPainter* painter, const QStyleOptionViewItem& option,

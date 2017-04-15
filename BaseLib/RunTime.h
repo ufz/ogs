@@ -40,7 +40,7 @@ class RunTime
 #else
 #ifndef _MSC_VER
             timeval t;
-            gettimeofday(&t, 0);
+            gettimeofday(&t, nullptr);
             _start_time = t.tv_sec + t.tv_usec/1000000.0;
 #else
             _start_time = timeGetTime();
@@ -56,7 +56,7 @@ class RunTime
 #else
 #ifndef _MSC_VER
             timeval t;
-            gettimeofday(&t, 0);
+            gettimeofday(&t, nullptr);
             return t.tv_sec + t.tv_usec/1000000.0 - _start_time;
 #else
             return (timeGetTime() - _start_time)/1000.0;

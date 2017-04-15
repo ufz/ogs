@@ -37,7 +37,7 @@ public:
                                    const QString& name,
                                    QVariant::Type type,
                                    VtkAlgorithmProperties* algProps,
-                                   QWidget* parent = 0);
+                                   QWidget* parent = nullptr);
     virtual ~VtkAlgorithmPropertyVectorEdit();
 
 private:

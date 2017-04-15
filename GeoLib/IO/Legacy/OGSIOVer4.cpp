@@ -174,7 +174,7 @@ std::string readPolyline(std::istream &in,
         if (line.find("$TYPE") != std::string::npos) // subkeyword found
         {
             in >> line; // read value
-            type = static_cast<std::size_t> (strtol(line.c_str(), NULL, 0));
+            type = static_cast<std::size_t>(strtol(line.c_str(), nullptr, 0));
         }
         //....................................................................
         if (line.find("$EPSILON") != std::string::npos) // subkeyword found
@@ -280,7 +280,7 @@ std::string readSurface(std::istream &in,
                         std::string const& path, std::vector<std::string>& errors)
 {
     std::string line;
-    GeoLib::Surface* sfc(NULL);
+    GeoLib::Surface* sfc(nullptr);
 
     int type (-1);
     std::string name;
@@ -301,7 +301,7 @@ std::string readSurface(std::istream &in,
         if (line.find("$TYPE") != std::string::npos) // subkeyword found
         {
             in >> line; // read value
-            type = strtol(line.c_str(), NULL, 0);
+            type = strtol(line.c_str(), nullptr, 0);
         }
         //....................................................................
         if (line.find("$EPSILON") != std::string::npos) // subkeyword found

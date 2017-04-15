@@ -388,7 +388,8 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
         {
             double zVal(0.0);
             if (station_node->first_attribute("z"))
-                zVal = strtod(station_node->first_attribute("z")->value(), 0);
+                zVal = strtod(station_node->first_attribute("z")->value(),
+                              nullptr);
 
             std::string station_name(""), sensor_data_file_name(""), bdate_str("0000-00-00");
             double station_value(0.0), borehole_depth(0.0);
@@ -398,16 +399,19 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
                 sensor_data_file_name =
                         station_node->first_node("sensordata")->value();
             if (station_node->first_node("value"))
-                station_value = strtod(station_node->first_node("value")->value(), 0);
+                station_value =
+                    strtod(station_node->first_node("value")->value(), nullptr);
             /* add other station features here */
 
             if (std::string(station_node->name()).compare("station") == 0)
             {
                 GeoLib::Station* s = new GeoLib::Station(
-                        strtod(station_node->first_attribute("x")->value(), 0),
-                        strtod(station_node->first_attribute("y")->value(), 0),
-                        zVal,
-                        station_name);
+                    strtod(station_node->first_attribute("x")->value(),
+                           nullptr),
+                    strtod(station_node->first_attribute("y")->value(),
+                           nullptr),
+                    zVal,
+                    station_name);
                 s->setStationValue(station_value);
                 if (!sensor_data_file_name.empty())
                     s->addSensorDataFromCSV(BaseLib::copyPathToFileName(
@@ -418,15 +422,19 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
             else if (std::string(station_node->name()).compare("borehole") == 0)
             {
                 if (station_node->first_node("bdepth"))
-                    borehole_depth = strtod(station_node->first_node("bdepth")->value(), 0);
+                    borehole_depth = strtod(
+                        station_node->first_node("bdepth")->value(), nullptr);
                 if (station_node->first_node("bdate"))
                     bdate_str = station_node->first_node("bdate")->value();
                 /* add other borehole features here */
 
-                GeoLib::StationBorehole* s = GeoLib::StationBorehole::createStation(
+                GeoLib::StationBorehole* s =
+                    GeoLib::StationBorehole::createStation(
                         station_name,
-                        strtod(station_node->first_attribute("x")->value(), 0),
-                        strtod(station_node->first_attribute("y")->value(), 0),
+                        strtod(station_node->first_attribute("x")->value(),
+                               nullptr),
+                        strtod(station_node->first_attribute("y")->value(),
+                               nullptr),
                         zVal,
                         borehole_depth,
                         bdate_str);
@@ -459,13 +467,17 @@ void XmlStnInterface::rapidReadStratigraphy( const rapidxml::xml_node<>* strat_r
                 horizon_name = horizon_node->first_node("name")->value();
             /* add other horizon features here */
 
-            double depth (strtod(horizon_node->first_attribute("z")->value(), 0));
+            double depth(
+                strtod(horizon_node->first_attribute("z")->value(), nullptr));
             if (fabs(depth - depth_check) > std::numeric_limits<double>::epsilon()) // skip soil-layer if its thickness is zero
             {
-                borehole->addSoilLayer(strtod(horizon_node->first_attribute("x")->value(), 0),
-                                       strtod(horizon_node->first_attribute("y")->value(), 0),
-                                       depth,
-                                       horizon_name);
+                borehole->addSoilLayer(
+                    strtod(horizon_node->first_attribute("x")->value(),
+                           nullptr),
+                    strtod(horizon_node->first_attribute("y")->value(),
+                           nullptr),
+                    depth,
+                    horizon_name);
                 depth_check = depth;
             }
             else

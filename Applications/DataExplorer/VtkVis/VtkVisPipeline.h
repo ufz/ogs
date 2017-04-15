@@ -57,7 +57,7 @@ class VtkVisPipeline : public TreeModel
     Q_OBJECT
 
 public:
-    VtkVisPipeline(vtkRenderer* renderer, QObject* parent = 0);
+    VtkVisPipeline(vtkRenderer* renderer, QObject* parent = nullptr);
 
     /// \brief Emits vtkVisPipelineChanged() and calls base class method.
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
@@ -65,7 +65,7 @@ public:
     /// \brief Adds a light to the scene at the given coordinates.
     void addLight(const GeoLib::Point &pos);
 
-    /// \brief Returns a light (or NULL) for the given coordinates.
+    /// \brief Returns a light (or nullptr) for the given coordinates.
     vtkLight* getLight(const GeoLib::Point &pos) const;
 
     /// \brief Removes a light at the given coordinates (if possible).

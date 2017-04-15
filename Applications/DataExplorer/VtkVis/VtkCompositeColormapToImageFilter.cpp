@@ -44,7 +44,7 @@ void VtkCompositeColormapToImageFilter::init()
 
     vtkSmartPointer<VtkColorLookupTable> colormap = vtkSmartPointer<VtkColorLookupTable>::New();
 
-    QWidget* parent = 0;
+    QWidget* parent = nullptr;
     QSettings settings;
     QString fileName = QFileDialog::getOpenFileName(parent, "Select color lookup table",
                                                     settings.value("lastOpenedLookupTableFileDirectory").toString(),

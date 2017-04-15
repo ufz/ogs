@@ -24,8 +24,9 @@
 class QNonScalableGraphicsTextItem : public QGraphicsTextItem
 {
 public:
-    QNonScalableGraphicsTextItem(QGraphicsItem* parent = 0);
-    QNonScalableGraphicsTextItem(const QString &text, QGraphicsItem* parent = 0);
+    QNonScalableGraphicsTextItem(QGraphicsItem* parent = nullptr);
+    QNonScalableGraphicsTextItem(const QString& text,
+                                 QGraphicsItem* parent = nullptr);
     ~QNonScalableGraphicsTextItem();
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);

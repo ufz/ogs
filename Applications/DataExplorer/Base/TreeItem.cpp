@@ -45,14 +45,14 @@ void TreeItem::appendChild(TreeItem* item)
 /**
  * Returns the child that corresponds to the specified row number
  * in the item's list of child items
- * Returns NULL if that child does not exist.
+ * Returns nullptr if that child does not exist.
  */
 TreeItem* TreeItem::child(int row) const
 {
     if (_childItems.count() > row)
         return _childItems.value(row);
     else
-        return NULL;
+        return nullptr;
 }
 
 /**

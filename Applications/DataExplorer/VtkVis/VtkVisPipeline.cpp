@@ -70,7 +70,7 @@ VtkVisPipeline::VtkVisPipeline( vtkRenderer* renderer, QObject* parent /*= 0*/ )
     QList<QVariant> rootData;
     rootData << "Object name" << "Visible";
     delete _rootItem;
-    _rootItem = new TreeItem(rootData, NULL);
+    _rootItem = new TreeItem(rootData, nullptr);
 
     QSettings settings;
     QVariant backgroundColorVariant = settings.value("VtkBackgroundColor");
@@ -112,7 +112,7 @@ vtkLight* VtkVisPipeline::getLight(const GeoLib::Point &pos) const
         if (pos[0] == lightPos[0] && pos[1] == lightPos[1] && pos[2] == lightPos[2])
             return *it;
     }
-    return NULL;
+    return nullptr;
 }
 
 void VtkVisPipeline::removeLight(const GeoLib::Point &pos)
@@ -286,7 +286,8 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
     if (!parent.isValid()) // Set global superelevation on source objects
     {
         QSettings settings;
-        if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()) == NULL) // if not an image
+        if (dynamic_cast<vtkImageAlgorithm*>(item->algorithm()) ==
+            nullptr)  // if not an image
             item->setScale(1.0, 1.0, settings.value("globalSuperelevation", 1.0).toDouble());
     }
 
@@ -338,7 +339,7 @@ QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source, QModelIndex p
     QList<QVariant> itemData;
     itemData << QString::fromStdString(itemName) << true;
 
-    VtkVisPipelineItem* item(NULL);
+    VtkVisPipelineItem* item(nullptr);
     if (dynamic_cast<vtkImageAlgorithm*>(source))
         item = new VtkVisImageItem(source, getItem(parent), itemData);
     else

@@ -62,7 +62,7 @@ public:
      * @param i local index of node, at most the number of nodes of the
      * element that you can obtain with Element::getNumberOfBaseNodes()
      * @return a pointer to the appropriate (and constant, i.e. not
-     * modifiable by the user) instance of class Node or a NULL pointer
+     * modifiable by the user) instance of class Node or a nullptr
      * @sa Element::getNodeIndex()
      */
     const Node* getNode(unsigned i) const;

@@ -27,8 +27,9 @@ class ColorTableModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    ColorTableModel( const std::map<std::string, DataHolderLib::Color*> &colorLookupTable,
-                     QObject* parent = 0 );
+    ColorTableModel(
+        const std::map<std::string, DataHolderLib::Color*>& colorLookupTable,
+        QObject* parent = nullptr);
     ~ColorTableModel();
 
     int columnCount(const QModelIndex& parent = QModelIndex()) const;

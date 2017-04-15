@@ -31,7 +31,7 @@ class MeshValueEditDialog : public QDialog, private Ui_MeshValueEdit
 
 public:
     /// Constructor for creating a new FEM condition.
-    MeshValueEditDialog(MeshLib::Mesh* mesh, QDialog* parent = 0);
+    MeshValueEditDialog(MeshLib::Mesh* mesh, QDialog* parent = nullptr);
 
     ~MeshValueEditDialog(void);
 

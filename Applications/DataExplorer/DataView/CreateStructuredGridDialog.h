@@ -27,7 +27,7 @@ class CreateStructuredGridDialog : public QDialog, private Ui_CreateStructuredGr
     Q_OBJECT
 
 public:
-    CreateStructuredGridDialog(QDialog* parent = 0);
+    CreateStructuredGridDialog(QDialog* parent = nullptr);
 
 private slots:
     void on_lineButton_toggled()  const;

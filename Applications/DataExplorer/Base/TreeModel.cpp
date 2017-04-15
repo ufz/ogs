@@ -29,7 +29,7 @@ TreeModel::TreeModel( QObject* parent )
     //_modelType = TREE_MODEL;
     QList<QVariant> rootData;
     rootData << "1" << "2" << "3";
-    _rootItem = new TreeItem(rootData, NULL);
+    _rootItem = new TreeItem(rootData, nullptr);
     //setupModelData(data, _rootItem);
 }
 
@@ -151,7 +151,7 @@ bool TreeModel::setData( const QModelIndex &index, const QVariant &value, int ro
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return 0;
+        return nullptr;
 
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }

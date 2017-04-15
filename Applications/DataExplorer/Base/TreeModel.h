@@ -31,7 +31,7 @@ class TreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    TreeModel(QObject* parent = 0);
+    TreeModel(QObject* parent = nullptr);
     virtual ~TreeModel();
 
     QVariant data(const QModelIndex &index, int role) const;

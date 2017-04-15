@@ -123,7 +123,9 @@ int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* bo
             fields.pop_front();
 
             ERR("StationBorehole::addLayer - assuming correct order");
-            double thickness(strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), 0));
+            double thickness(
+                strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(),
+                       nullptr));
             fields.pop_front();
             borehole->addSoilLayer(thickness, fields.front());
         }
@@ -178,8 +180,9 @@ int StationBorehole::addStratigraphies(const std::string &path, std::vector<Poin
                 fields.pop_front();
                 //the method just assumes that layers are read in correct order
                 fields.pop_front();
-                double thickness (strtod(BaseLib::replaceString(",", ".",
-                                                       fields.front()).c_str(), 0));
+                double thickness(strtod(
+                    BaseLib::replaceString(",", ".", fields.front()).c_str(),
+                    nullptr));
                 fields.pop_front();
                 std::string soil_name (fields.front());
                 fields.pop_front();

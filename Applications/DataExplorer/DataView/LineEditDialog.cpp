@@ -80,7 +80,8 @@ void LineEditDialog::accept()
     if (!selectedIndeces.empty())
     {
         std::string prox_string = this->proximityEdit->text().toStdString();
-        double prox = (prox_string.empty()) ? 0.0 : strtod( prox_string.c_str(), 0 );
+        double prox =
+            (prox_string.empty()) ? 0.0 : strtod(prox_string.c_str(), nullptr);
         std::string ply_name =
                 (plyNameEdit->text().toStdString().empty()) ? "" : plyNameEdit->text().
                 toStdString();

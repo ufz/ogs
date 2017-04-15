@@ -44,9 +44,9 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::Initialize()
 {
-    this->_nodes = NULL;
+    this->_nodes = nullptr;
     delete [] this->TempDoubleArray;
-    this->TempDoubleArray = NULL;
+    this->TempDoubleArray = nullptr;
     this->MaxId = -1;
     this->Size = 0;
     this->NumberOfComponents = 1;
@@ -114,7 +114,7 @@ template <class Scalar> vtkArrayIterator* VtkMeshNodalCoordinatesTemplate<Scalar
 ::NewIterator()
 {
     vtkErrorMacro(<<"Not implemented.");
-    return NULL;
+    return nullptr;
 }
 
 template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
@@ -373,9 +373,9 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
     return;
 }
 
-template <class Scalar> VtkMeshNodalCoordinatesTemplate<Scalar>
-::VtkMeshNodalCoordinatesTemplate()
-    : _nodes(NULL), TempDoubleArray(NULL)
+template <class Scalar>
+VtkMeshNodalCoordinatesTemplate<Scalar>::VtkMeshNodalCoordinatesTemplate()
+    : _nodes(nullptr), TempDoubleArray(nullptr)
 {
 
 }

@@ -38,16 +38,17 @@
 #include <vtkXMLImageDataWriter.h>
 
 VtkVisImageItem::VtkVisImageItem(
-        vtkAlgorithm* algorithm, TreeItem* parentItem,
-        const QList<QVariant> data /*= QList<QVariant>()*/)
-    : VtkVisPipelineItem(algorithm, parentItem, data), _transformFilter(NULL)
+    vtkAlgorithm* algorithm, TreeItem* parentItem,
+    const QList<QVariant> data /*= QList<QVariant>()*/)
+    : VtkVisPipelineItem(algorithm, parentItem, data), _transformFilter(nullptr)
 {
 }
 
 VtkVisImageItem::VtkVisImageItem(
-        VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
-        const QList<QVariant> data /*= QList<QVariant>()*/)
-    : VtkVisPipelineItem(compositeFilter, parentItem, data), _transformFilter(NULL)
+    VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
+    const QList<QVariant> data /*= QList<QVariant>()*/)
+    : VtkVisPipelineItem(compositeFilter, parentItem, data),
+      _transformFilter(nullptr)
 {
 }
 
@@ -109,7 +110,7 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
             newProps->SetTexture(parentProps->GetTexture());
             setVtkProperties(newProps);
             vtkProps = newProps;
-            parentItem = NULL;
+            parentItem = nullptr;
         }
         else
             parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
@@ -127,7 +128,7 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
                     dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
             if (visParentItem)
                 this->SetActiveAttribute(visParentItem->GetActiveAttribute());
-            if (vtkProps->GetTexture() != NULL)
+            if (vtkProps->GetTexture() != nullptr)
                 this->SetActiveAttribute("Solid Color");
         }
     }

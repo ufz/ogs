@@ -83,7 +83,7 @@ void CondFromRasterDialog::accept()
         return;
     }
 
-    MeshLib::Mesh* mesh (NULL);
+    MeshLib::Mesh* mesh(nullptr);
     for (std::size_t i=0; i<_msh_vec.size(); i++)
         if (_msh_vec[i]->getName().compare(mesh_name) == 0)
         {

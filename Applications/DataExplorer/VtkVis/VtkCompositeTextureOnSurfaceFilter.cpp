@@ -60,7 +60,7 @@ void VtkCompositeTextureOnSurfaceFilter::init()
     else
         surface->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
-    QWidget* parent = 0;
+    QWidget* parent = nullptr;
     QSettings settings;
     QString fileName = QFileDialog::getOpenFileName(parent, "Select raster file to apply as texture",
                                                     settings.value("lastOpenedTextureFileDirectory").toString(),
@@ -84,7 +84,7 @@ void VtkCompositeTextureOnSurfaceFilter::init()
     {
         NetCdfConfigureDialog dlg(fileName.toStdString().c_str());
         dlg.exec();
-        if (dlg.getRaster() != NULL)
+        if (dlg.getRaster() != nullptr)
         {
             VtkGeoImageSource* image = dlg.getRaster();
             double origin[3];

@@ -33,7 +33,8 @@ class NetCdfConfigureDialog : public QDialog, private Ui_NetCdfConfigure
     Q_OBJECT
 
 public:
-    NetCdfConfigureDialog(const std::string &fileName, QDialog* parent = 0);
+    NetCdfConfigureDialog(const std::string& fileName,
+                          QDialog* parent = nullptr);
     ~NetCdfConfigureDialog(void);
     MeshLib::Mesh* getMesh() { return _currentMesh; };
     std::string getName();

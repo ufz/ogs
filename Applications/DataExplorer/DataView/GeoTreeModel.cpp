@@ -30,7 +30,7 @@ GeoTreeModel::GeoTreeModel( QObject* parent )
     QList<QVariant> rootData;
     delete _rootItem;
     rootData << "Id" << "x" << "y" << "z" << "name ";
-    _rootItem = new GeoTreeItem(rootData, NULL, NULL);
+    _rootItem = new GeoTreeItem(rootData, nullptr, nullptr);
 }
 
 GeoTreeModel::~GeoTreeModel()
@@ -84,14 +84,14 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
     beginResetModel();
 
     int nLists = _rootItem->childCount();
-    TreeItem* geo(NULL);
+    TreeItem* geo(nullptr);
     for (int i = 0; i < nLists; i++)
     {
         if (_rootItem->child(i)->data(0).toString().compare(geoName) == 0)
             geo = _rootItem->child(i);
     }
 
-    if (geo == NULL)
+    if (geo == nullptr)
     {
         ERR("GeoTreeModel::addPolylineList(): No corresponding geometry for \"%s\" found.", geoName.toStdString().c_str());
         return;
@@ -175,7 +175,7 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
     beginResetModel();
 
     int nLists = _rootItem->childCount();
-    TreeItem* geo(NULL);
+    TreeItem* geo(nullptr);
     for (int i = 0; i < nLists; i++)
     {
         if (_rootItem->child(i)->data(0).toString().compare(geoName) == 0)
@@ -316,7 +316,7 @@ vtkPolyDataAlgorithm* GeoTreeModel::vtkSource(const std::string &name, GeoLib::G
                     return item->vtkSource();
             }
     }
-    return NULL;
+    return nullptr;
 }
 
 void GeoTreeModel::setNameForItem(const std::string &name,
