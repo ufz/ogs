@@ -17,9 +17,11 @@
 
 #include <QFileInfo>
 #include <QSettings>
+#include <utility>
 
-RecentFiles::RecentFiles(  QObject* parent, const char* slot, QString settingsName)
-    : QObject(parent), _settingsName(settingsName)
+RecentFiles::RecentFiles(QObject* parent, const char* slot,
+                         QString settingsName)
+    : QObject(parent), _settingsName(std::move(settingsName))
 {
     _filesMenu = new QMenu(tr("Recent files"));
     for (auto& _fileAction : _fileActions)

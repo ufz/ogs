@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "ISpatialFunction.h"
 
 namespace NumLib
@@ -30,9 +32,7 @@ public:
      * Constructor
      * @param f  a function object
      */
-    TemplateSpatialFunction(const T_FUNCTION &f)
-    : _f(f) {}
-
+    TemplateSpatialFunction(T_FUNCTION f) : _f(std::move(f)) {}
     /**
      * evaluate a function
      * @param pnt  a point object

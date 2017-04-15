@@ -11,6 +11,7 @@
 
 #include <forward_list>
 #include <logog/include/logog.hpp>
+#include <utility>
 
 #include "Error.h"
 
@@ -30,12 +31,14 @@ const char ConfigTree::pathseparator = '/';
 const std::string ConfigTree::key_chars_start = "abcdefghijklmnopqrstuvwxyz";
 const std::string ConfigTree::key_chars = key_chars_start + "_0123456789";
 
-ConfigTree::
-ConfigTree(PTree const& tree,
-              std::string const& filename,
-              Callback const& error_cb,
-              Callback const& warning_cb)
-    : _tree(&tree), _filename(filename), _onerror(error_cb), _onwarning(warning_cb)
+ConfigTree::ConfigTree(PTree const& tree,
+                       std::string filename,
+                       Callback error_cb,
+                       Callback warning_cb)
+    : _tree(&tree),
+      _filename(std::move(filename)),
+      _onerror(std::move(error_cb)),
+      _onwarning(std::move(warning_cb))
 {
     if (!_onerror) {
         OGS_FATAL("ConfigTree: No valid error handler provided.");

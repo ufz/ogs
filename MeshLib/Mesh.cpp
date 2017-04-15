@@ -15,6 +15,7 @@
 #include "Mesh.h"
 
 #include <memory>
+#include <utility>
 
 #include "BaseLib/RunTime.h"
 
@@ -28,23 +29,27 @@
 
 namespace MeshLib
 {
-
-Mesh::Mesh(const std::string &name,
-           const std::vector<Node*> &nodes,
-           const std::vector<Element*> &elements,
+Mesh::Mesh(std::string name,
+           std::vector<Node*>
+               nodes,
+           std::vector<Element*>
+               elements,
            Properties const& properties,
            const std::size_t n_base_nodes)
-    : _id(_counter_value-1), _mesh_dimension(0),
+    : _id(_counter_value - 1),
+      _mesh_dimension(0),
       _edge_length(std::numeric_limits<double>::max(), 0),
       _node_distance(std::numeric_limits<double>::max(), 0),
-      _name(name), _nodes(nodes), _elements(elements),
+      _name(std::move(name)),
+      _nodes(std::move(nodes)),
+      _elements(std::move(elements)),
       _n_base_nodes(n_base_nodes),
       _properties(properties)
 {
-    assert(n_base_nodes <= nodes.size());
+    assert(_n_base_nodes <= _nodes.size());
     this->resetNodeIDs();
     this->resetElementIDs();
-    if ((n_base_nodes==0 && hasNonlinearElement()) || isNonlinear())
+    if ((_n_base_nodes == 0 && hasNonlinearElement()) || isNonlinear())
         this->checkNonlinearNodeIDs();
     this->setDimension();
     this->setElementsConnectedToNodes();

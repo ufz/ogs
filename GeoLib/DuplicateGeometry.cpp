@@ -10,6 +10,7 @@
 #include "DuplicateGeometry.h"
 
 #include <logog/include/logog.hpp>
+#include <utility>
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
@@ -20,11 +21,10 @@
 
 namespace GeoLib
 {
-
-DuplicateGeometry::DuplicateGeometry(GeoLib::GEOObjects &geo_objects,
-    std::string const& input_name,
-    std::string const& output_name)
-: _output_name(output_name), _geo_objects(geo_objects)
+DuplicateGeometry::DuplicateGeometry(GeoLib::GEOObjects& geo_objects,
+                                     std::string const& input_name,
+                                     std::string output_name)
+    : _output_name(std::move(output_name)), _geo_objects(geo_objects)
 {
     duplicate(input_name);
 }

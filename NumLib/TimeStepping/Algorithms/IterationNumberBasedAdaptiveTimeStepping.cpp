@@ -11,21 +11,31 @@
 
 #include "IterationNumberBasedAdaptiveTimeStepping.h"
 
-#include <limits>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <limits>
+#include <utility>
 
 namespace NumLib
 {
-
-IterationNumberBasedAdaptiveTimeStepping::IterationNumberBasedAdaptiveTimeStepping(double t0, double tn,
-                                double min_ts, double max_ts, double initial_ts,
-                                const std::vector<std::size_t> &iter_times_vector,
-                                const std::vector<double> &multiplier_vector)
-: _t_initial(t0), _t_end(tn), _iter_times_vector(iter_times_vector), _multiplier_vector(multiplier_vector),
-  _min_ts(min_ts), _max_ts(max_ts), _initial_ts(initial_ts), _max_iter(_iter_times_vector.empty() ? 0 : _iter_times_vector.back()),
-  _iter_times(0), _ts_pre(t0), _ts_current(t0), _n_rejected_steps(0)
+IterationNumberBasedAdaptiveTimeStepping::
+    IterationNumberBasedAdaptiveTimeStepping(
+        double t0, double tn, double min_ts, double max_ts, double initial_ts,
+        std::vector<std::size_t> iter_times_vector,
+        std::vector<double> multiplier_vector)
+    : _t_initial(t0),
+      _t_end(tn),
+      _iter_times_vector(std::move(iter_times_vector)),
+      _multiplier_vector(std::move(multiplier_vector)),
+      _min_ts(min_ts),
+      _max_ts(max_ts),
+      _initial_ts(initial_ts),
+      _max_iter(_iter_times_vector.empty() ? 0 : _iter_times_vector.back()),
+      _iter_times(0),
+      _ts_pre(t0),
+      _ts_current(t0),
+      _n_rejected_steps(0)
 {
     assert(iter_times_vector.size() == multiplier_vector.size());
 }

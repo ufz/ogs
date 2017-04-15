@@ -30,7 +30,7 @@ public:
     /// @param name The name of the user property to set.
     /// @param algProps The VtkAlgorithmProperties object.
     /// @param parent The parent widget.
-    VtkAlgorithmPropertyCheckbox(const bool value, const QString& name,
+    VtkAlgorithmPropertyCheckbox(const bool value, QString name,
                                  VtkAlgorithmProperties* algProps,
                                  QWidget* parent = nullptr);
 

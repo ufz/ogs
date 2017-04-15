@@ -14,6 +14,7 @@
 #include <iterator>
 #include <ostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "BaseLib/Error.h"
@@ -35,12 +36,12 @@ public:
     std::size_t getNumberOfComponents() const { return _n_components; }
 
 protected:
-    PropertyVectorBase(std::string const& property_name,
+    PropertyVectorBase(std::string property_name,
                        MeshItemType mesh_item_type,
                        std::size_t n_components)
         : _n_components(n_components),
           _mesh_item_type(mesh_item_type),
-          _property_name(property_name)
+          _property_name(std::move(property_name))
     {}
 
     std::size_t const _n_components;
@@ -254,11 +255,12 @@ protected:
     /// nodes or cells (see enumeration MeshItemType)
     /// @param n_components the number of elements of a tuple
     PropertyVector(std::size_t n_prop_groups,
-                   std::vector<std::size_t> const& item2group_mapping,
+                   std::vector<std::size_t>
+                       item2group_mapping,
                    std::string const& property_name,
                    MeshItemType mesh_item_type,
                    std::size_t n_components)
-        : std::vector<std::size_t>(item2group_mapping),
+        : std::vector<std::size_t>(std::move(item2group_mapping)),
           PropertyVectorBase(property_name, mesh_item_type, n_components),
           _values(n_prop_groups * n_components)
     {}

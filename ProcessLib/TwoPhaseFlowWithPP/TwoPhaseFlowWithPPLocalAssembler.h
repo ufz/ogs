@@ -32,11 +32,11 @@ template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType,
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
-        NodalRowVectorType const& N_, GlobalDimNodalMatrixType const& dNdx_,
+        NodalRowVectorType N_, GlobalDimNodalMatrixType dNdx_,
         TwoPhaseFlowWithPPMaterialProperties& material_property_,
         double const& integration_weight_, NodalMatrixType const massOperator_)
-        : N(N_),
-          dNdx(dNdx_),
+        : N(std::move(N_)),
+          dNdx(std::move(dNdx_)),
           mat_property(material_property_),
           integration_weight(integration_weight_),
           massOperator(massOperator_)

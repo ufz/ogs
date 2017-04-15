@@ -9,8 +9,9 @@
 
 #pragma once
 
-#include <memory>
 #include <Eigen/Dense>
+#include <memory>
+#include <utility>
 
 #include "MeshLib/ElementStatus.h"
 #include "MeshLib/PropertyVector.h"
@@ -44,13 +45,14 @@ struct HydroMechanicsProcessData
         Parameter<double> const& biot_coefficient_,
         Parameter<double> const& porosity_,
         Parameter<double> const& solid_density_,
-        Eigen::Matrix<double, GlobalDim, 1> const& specific_body_force_,
-        std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>&& fracture_model,
+        Eigen::Matrix<double, GlobalDim, 1>
+            specific_body_force_,
+        std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>&&
+            fracture_model,
         std::unique_ptr<FractureProperty>&& fracture_prop,
         Parameter<double> const& initial_effective_stress_,
         Parameter<double> const& initial_fracture_effective_stress_,
-        bool const deactivate_matrix_in_flow_
-        )
+        bool const deactivate_matrix_in_flow_)
         : material{std::move(material_)},
           intrinsic_permeability(intrinsic_permeability_),
           specific_storage(specific_storage_),
@@ -59,7 +61,7 @@ struct HydroMechanicsProcessData
           biot_coefficient(biot_coefficient_),
           porosity(porosity_),
           solid_density(solid_density_),
-          specific_body_force(specific_body_force_),
+          specific_body_force(std::move(specific_body_force_)),
           fracture_model{std::move(fracture_model)},
           fracture_property{std::move(fracture_prop)},
           initial_effective_stress(initial_effective_stress_),

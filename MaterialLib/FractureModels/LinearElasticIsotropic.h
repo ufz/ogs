@@ -10,6 +10,7 @@
 #pragma once
 
 #include <Eigen/Eigen>
+#include <utility>
 
 #include "ProcessLib/Parameter/Parameter.h"
 
@@ -55,9 +56,8 @@ public:
     }
 
 public:
-    explicit LinearElasticIsotropic(
-        MaterialProperties const& material_properties)
-        : _mp(material_properties)
+    explicit LinearElasticIsotropic(MaterialProperties material_properties)
+        : _mp(std::move(material_properties))
     {
     }
 

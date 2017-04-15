@@ -22,13 +22,15 @@
 #include <QIntValidator>
 #include <QLineEdit>
 #include <QSize>
+#include <utility>
 
-VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit( const QList<QString> contents,
-                                                                const QString& name,
-                                                                QVariant::Type type,
-                                                                VtkAlgorithmProperties* algProps,
-                                                                QWidget* parent /*= 0*/ )
-    : QWidget(parent), _name(name), _algProps(algProps), _type(type)
+VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit(
+    const QList<QString> contents,
+    QString name,
+    QVariant::Type type,
+    VtkAlgorithmProperties* algProps,
+    QWidget* parent /*= 0*/)
+    : QWidget(parent), _name(std::move(name)), _algProps(algProps), _type(type)
 {
     auto* layout = new QHBoxLayout;
     layout->setSpacing(3);

@@ -17,6 +17,7 @@
 #include <limits>
 
 #include <logog/include/logog.hpp>
+#include <utility>
 
 namespace GeoLib
 {
@@ -47,9 +48,13 @@ public:
      * @param ur upper right point of the square
      * @param max_points_per_leaf maximum number of points per leaf
      */
-    QuadTree(POINT const& ll, POINT const& ur, std::size_t max_points_per_leaf) :
-        _father (nullptr), _ll (ll), _ur (ur), _depth (0), _is_leaf (true),
-        _max_points_per_leaf (max_points_per_leaf)
+    QuadTree(POINT ll, POINT ur, std::size_t max_points_per_leaf)
+        : _father(nullptr),
+          _ll(std::move(ll)),
+          _ur(std::move(ur)),
+          _depth(0),
+          _is_leaf(true),
+          _max_points_per_leaf(max_points_per_leaf)
     {
         assert (_max_points_per_leaf > 0);
 
@@ -368,13 +373,17 @@ private:
      * @param max_points_per_leaf maximum number of points per leaf
      * @return
      */
-    QuadTree (POINT const& ll,
-              POINT const& ur,
-              QuadTree* father,
-              std::size_t depth,
-              std::size_t max_points_per_leaf) :
-        _father (father), _ll (ll), _ur (ur), _depth (depth), _is_leaf (true),
-        _max_points_per_leaf (max_points_per_leaf)
+    QuadTree(POINT ll,
+             POINT ur,
+             QuadTree* father,
+             std::size_t depth,
+             std::size_t max_points_per_leaf)
+        : _father(father),
+          _ll(std::move(ll)),
+          _ur(std::move(ur)),
+          _depth(depth),
+          _is_leaf(true),
+          _max_points_per_leaf(max_points_per_leaf)
     {
         // init children
         for (auto& k : _children)

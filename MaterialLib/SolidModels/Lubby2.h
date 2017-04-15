@@ -10,6 +10,7 @@
 #pragma once
 
 #include <logog/include/logog.hpp>
+#include <utility>
 
 #include "BaseLib/Error.h"
 #include "NumLib/NewtonRaphson.h"
@@ -166,10 +167,10 @@ public:
                                          Eigen::RowMajor>;
 
 public:
-    explicit Lubby2(NumLib::NewtonRaphsonSolverParameters const&
-                        nonlinear_solver_parameters,
-                    Lubby2MaterialProperties& material_properties)
-        : _nonlinear_solver_parameters(nonlinear_solver_parameters),
+    explicit Lubby2(
+        NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
+        Lubby2MaterialProperties& material_properties)
+        : _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
           _mp(material_properties)
     {
     }

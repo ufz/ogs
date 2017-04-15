@@ -23,14 +23,14 @@
 #include <QCryptographicHash>
 
 #include <logog/include/logog.hpp>
+#include <utility>
 
 namespace BaseLib
 {
 namespace IO
 {
-
-XMLQtInterface::XMLQtInterface(const std::string &schemaFile) :
-        _schemaName(schemaFile)
+XMLQtInterface::XMLQtInterface(std::string schemaFile)
+    : _schemaName(std::move(schemaFile))
 {}
 
 int XMLQtInterface::readFile(const QString &fileName)

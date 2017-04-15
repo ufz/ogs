@@ -9,6 +9,7 @@
 
 #include "TwoPhaseFlowWithPrhoMaterialProperties.h"
 #include <logog/include/logog.hpp>
+#include <utility>
 #include "BaseLib/reorderVector.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
@@ -58,7 +59,7 @@ TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
       _gas_density(std::move(gas_density)),
       _gas_viscosity(std::move(gas_viscosity)),
       _material_ids(material_ids),
-      _intrinsic_permeability_models(intrinsic_permeability_models),
+      _intrinsic_permeability_models(std::move(intrinsic_permeability_models)),
       _porosity_models(std::move(porosity_models)),
       _storage_models(std::move(storage_models)),
       _capillary_pressure_models(std::move(capillary_pressure_models)),

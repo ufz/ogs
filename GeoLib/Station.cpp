@@ -23,14 +23,20 @@
 
 namespace GeoLib
 {
-Station::Station(double x, double y, double z, std::string const& name) :
-    Point (x,y,z), _name(name), _type(Station::StationType::STATION),
-    _station_value(0.0), _sensor_data(nullptr)
+Station::Station(double x, double y, double z, std::string name)
+    : Point(x, y, z),
+      _name(std::move(name)),
+      _type(Station::StationType::STATION),
+      _station_value(0.0),
+      _sensor_data(nullptr)
 {}
 
-Station::Station(Point* coords, std::string const& name) :
-    Point (*coords), _name(name), _type(Station::StationType::STATION),
-    _station_value(0.0), _sensor_data(nullptr)
+Station::Station(Point* coords, std::string name)
+    : Point(*coords),
+      _name(std::move(name)),
+      _type(Station::StationType::STATION),
+      _station_value(0.0),
+      _sensor_data(nullptr)
 {}
 
 Station::Station(Station const& src) :

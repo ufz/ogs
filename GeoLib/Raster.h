@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "Surface.h"
 
 namespace GeoLib {
@@ -49,9 +51,10 @@ public:
      * @param begin input iterator pointing to the first element of the data
      * @param end input iterator pointing to the last element of the data, end have to be reachable from begin
      */
-    template<typename InputIterator>
-    Raster(RasterHeader header, InputIterator begin, InputIterator end) :
-        _header(header), _raster_data(new double[_header.n_cols*_header.n_rows])
+    template <typename InputIterator>
+    Raster(RasterHeader header, InputIterator begin, InputIterator end)
+        : _header(std::move(header)),
+          _raster_data(new double[_header.n_cols * _header.n_rows])
     {
         iterator raster_it(_raster_data);
         for (InputIterator it(begin); it != end; ++it) {

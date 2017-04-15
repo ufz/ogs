@@ -12,14 +12,16 @@
  *
  */
 
+#include <utility>
+
 #include "TreeItem.h"
 
 /**
  * The constructor is only used to record the item's parent
  * and the data associated with each column.
  */
-TreeItem::TreeItem(const QList<QVariant> &data, TreeItem* parent)
-: _itemData(data), _parentItem(parent)
+TreeItem::TreeItem(QList<QVariant> data, TreeItem* parent)
+    : _itemData(std::move(data)), _parentItem(parent)
 {
 }
 

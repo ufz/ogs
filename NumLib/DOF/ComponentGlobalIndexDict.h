@@ -18,6 +18,7 @@
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index_container.hpp>
+#include <utility>
 
 #include "MeshLib/Location.h"
 #include "NumLib/NumericsConfig.h"
@@ -39,19 +40,20 @@ struct Line
     // Position in global matrix or vector
     GlobalIndexType global_index;
 
-    Line(MeshLib::Location const& l, std::size_t c, GlobalIndexType i)
-    : location(l), comp_id(c), global_index(i)
+    Line(MeshLib::Location l, std::size_t c, GlobalIndexType i)
+        : location(std::move(l)), comp_id(c), global_index(i)
     {}
 
-    Line(MeshLib::Location const& l, std::size_t c)
-    : location(l), comp_id(c),
-        global_index(std::numeric_limits<GlobalIndexType>::max())
+    Line(MeshLib::Location l, std::size_t c)
+        : location(std::move(l)),
+          comp_id(c),
+          global_index(std::numeric_limits<GlobalIndexType>::max())
     {}
 
-    explicit Line(MeshLib::Location const& l)
-    : location(l),
-        comp_id(std::numeric_limits<std::size_t>::max()),
-        global_index(std::numeric_limits<GlobalIndexType>::max())
+    explicit Line(MeshLib::Location l)
+        : location(std::move(l)),
+          comp_id(std::numeric_limits<std::size_t>::max()),
+          global_index(std::numeric_limits<GlobalIndexType>::max())
     {}
 
     friend std::ostream& operator<<(std::ostream& os, Line const& l)

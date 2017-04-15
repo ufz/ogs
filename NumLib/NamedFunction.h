@@ -14,6 +14,7 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace detail
@@ -57,7 +58,7 @@ public:
      * \param function the actual function object
      */
     template <typename ReturnType, typename... Arguments>
-    NamedFunction(std::string const& name,
+    NamedFunction(std::string name,
                   std::vector<std::string>&& argument_names,
                   std::function<ReturnType(Arguments...)>&& function);
 
@@ -92,10 +93,10 @@ private:
 };
 
 template <typename ReturnType, typename... Arguments>
-NamedFunction::NamedFunction(std::string const& name,
+NamedFunction::NamedFunction(std::string name,
                              std::vector<std::string>&& argument_names,
                              std::function<ReturnType(Arguments...)>&& function)
-    : _name(name),
+    : _name(std::move(name)),
       _argument_names(std::move(argument_names)),
       _function(
           new std::function<ReturnType(Arguments...)>(std::move(function)))

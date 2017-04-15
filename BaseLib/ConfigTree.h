@@ -14,6 +14,7 @@
 
 #include <functional>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include <boost/property_tree/ptree.hpp>
@@ -105,9 +106,9 @@ public:
     public:
         using Iterator = boost::property_tree::ptree::const_assoc_iterator;
 
-        explicit SubtreeIterator(Iterator it, std::string const& root,
+        explicit SubtreeIterator(Iterator it, std::string root,
                                  ConfigTree const& parent)
-            : _it(it), _tagname(root), _parent(parent)
+            : _it(it), _tagname(std::move(root)), _parent(parent)
         {}
 
         SubtreeIterator& operator++() {
@@ -189,9 +190,9 @@ public:
     public:
         using Iterator = boost::property_tree::ptree::const_assoc_iterator;
 
-        explicit ValueIterator(Iterator it, std::string const& root,
+        explicit ValueIterator(Iterator it, std::string root,
                                ConfigTree const& parent)
-            : _it(it), _tagname(root), _parent(parent)
+            : _it(it), _tagname(std::move(root)), _parent(parent)
         {}
 
         ValueIterator<ValueType>& operator++() {
@@ -255,9 +256,9 @@ public:
      * i.e., warnings will also result in program abortion!
      */
     explicit ConfigTree(PTree const& tree,
-                        std::string const& filename,
-                        Callback const& error_cb,
-                        Callback const& warning_cb);
+                        std::string filename,
+                        Callback error_cb,
+                        Callback warning_cb);
 
     /*! This constructor is deleted in order to prevent the user from passing
      * temporary instances of \c PTree.

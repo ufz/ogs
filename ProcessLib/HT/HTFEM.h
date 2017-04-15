@@ -30,10 +30,12 @@ namespace HT
 template < typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
-    IntegrationPointData(NodalRowVectorType const& N_,
-                         GlobalDimNodalMatrixType const& dNdx_,
+    IntegrationPointData(NodalRowVectorType N_,
+                         GlobalDimNodalMatrixType dNdx_,
                          double const& integration_weight_)
-        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+        : N(std::move(N_)),
+          dNdx(std::move(dNdx_)),
+          integration_weight(integration_weight_)
     {}
 
     NodalRowVectorType const N;

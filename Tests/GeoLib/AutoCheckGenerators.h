@@ -11,6 +11,7 @@
 #include <cmath>
 #include <memory>
 #include <random>
+#include <utility>
 
 #include "autocheck/autocheck.hpp"
 #include "MathLib/Point3d.h"
@@ -55,9 +56,8 @@ template <typename Gen = RandomCirclePointGeneratorXY<generator<double>>>
 struct SymmSegmentGeneratorXY
 {
     SymmSegmentGeneratorXY(
-        Gen s,
-        std::function<MathLib::Point3d(MathLib::Point3d const&)> f)
-        : source(s), function(f)
+        Gen s, std::function<MathLib::Point3d(MathLib::Point3d const&)> f)
+        : source(std::move(s)), function(std::move(f))
     {}
 
     using result_type = GeoLib::LineSegment;
@@ -82,7 +82,7 @@ struct PairSegmentGeneratorXY
 {
     PairSegmentGeneratorXY(
         Gen s, std::function<GeoLib::LineSegment(GeoLib::LineSegment const&)> f)
-        : segment_generator(s), function(f)
+        : segment_generator(std::move(s)), function(std::move(f))
     {
     }
 

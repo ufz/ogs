@@ -14,6 +14,7 @@
 
 #include <array>
 #include <numeric>
+#include <utility>
 
 namespace MathLib
 {
@@ -36,8 +37,8 @@ public:
      * \param coefficients  an array of coefficients of a linear function.
      * The size of the coefficient array should equal to the number of variables + 1
      */
-    explicit LinearFunction(const std::array<T_TYPE, N_VARS+1> &coefficients)
-    : _coefficients(coefficients)
+    explicit LinearFunction(std::array<T_TYPE, N_VARS + 1> coefficients)
+        : _coefficients(std::move(coefficients))
     {}
 
     /**

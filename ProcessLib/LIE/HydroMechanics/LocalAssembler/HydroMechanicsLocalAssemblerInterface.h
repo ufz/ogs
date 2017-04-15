@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <utility>
 #include <vector>
 
 #include "BaseLib/Error.h"
@@ -31,11 +32,12 @@ class HydroMechanicsLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    HydroMechanicsLocalAssemblerInterface(
-            MeshLib::Element const& element,
-            std::size_t n_local_size,
-            std::vector<unsigned> const& dofIndex_to_localIndex)
-        : _element(element), _dofIndex_to_localIndex(dofIndex_to_localIndex)
+    HydroMechanicsLocalAssemblerInterface(MeshLib::Element const& element,
+                                          std::size_t n_local_size,
+                                          std::vector<unsigned>
+                                              dofIndex_to_localIndex)
+        : _element(element),
+          _dofIndex_to_localIndex(std::move(dofIndex_to_localIndex))
     {
         _local_u.resize(n_local_size);
         _local_udot.resize(n_local_size);

@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "Parameter.h"
 
 namespace ProcessLib
@@ -25,11 +27,10 @@ struct ConstantParameter final : public Parameter<T>
 
     /// Construction with a tuple.
     /// The given tuple must be non-empty.
-    explicit ConstantParameter(std::string const& name_,
-                               std::vector<T> const& values)
-        : Parameter<T>(name_), _values(values)
+    explicit ConstantParameter(std::string const& name_, std::vector<T> values)
+        : Parameter<T>(name_), _values(std::move(values))
     {
-        assert(!values.empty());
+        assert(!_values.empty());
     }
 
     bool isTimeDependent() const override { return false; }

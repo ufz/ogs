@@ -17,13 +17,15 @@
 
 #include <QFileDialog>
 #include <QSettings>
+#include <utility>
 
 #include "DirectConditionGenerator.h"
 #include "OGSError.h"
 #include "StrictDoubleValidator.h"
 
-CondFromRasterDialog::CondFromRasterDialog(const std::vector<MeshLib::Mesh*> &msh_vec, QDialog* parent)
-    : QDialog(parent), _msh_vec(msh_vec)
+CondFromRasterDialog::CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
+                                           QDialog* parent)
+    : QDialog(parent), _msh_vec(std::move(msh_vec))
 {
     setupUi(this);
 

@@ -27,6 +27,7 @@
 
 #include <Eigen/Dense>
 #include <logog/include/logog.hpp>
+#include <utility>
 
 #include "BaseLib/Error.h"
 #include "NumLib/NewtonRaphson.h"
@@ -210,12 +211,11 @@ public:
 
 public:
     explicit SolidEhlers(
-        NumLib::NewtonRaphsonSolverParameters const&
-            nonlinear_solver_parameters,
-        MaterialProperties const& material_properties,
+        NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
+        MaterialProperties material_properties,
         std::unique_ptr<EhlersDamageProperties>&& damage_properties)
-        : _nonlinear_solver_parameters(nonlinear_solver_parameters),
-          _mp(material_properties),
+        : _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
+          _mp(std::move(material_properties)),
           _damage_properties(std::move(damage_properties))
     {
     }

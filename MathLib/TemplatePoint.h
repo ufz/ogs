@@ -15,12 +15,13 @@
 #pragma once
 
 // STL
-#include <array>
 #include <algorithm>
-#include <cmath>
-#include <iterator>
-#include <istream>
+#include <array>
 #include <cassert>
+#include <cmath>
+#include <istream>
+#include <iterator>
+#include <utility>
 
 namespace MathLib
 {
@@ -42,7 +43,7 @@ public:
      *
      * @param x std::array containing the coordinates of the point
      */
-    explicit TemplatePoint(std::array<T,DIM> const& x);
+    explicit TemplatePoint(std::array<T, DIM> x);
 
     /** virtual destructor */
     virtual ~TemplatePoint() = default;
@@ -100,8 +101,7 @@ TemplatePoint<T,DIM>::TemplatePoint() :
 {}
 
 template <typename T, std::size_t DIM>
-TemplatePoint<T,DIM>::TemplatePoint(std::array<T,DIM> const& x) :
-    _x(x)
+TemplatePoint<T, DIM>::TemplatePoint(std::array<T, DIM> x) : _x(std::move(x))
 {}
 
 /** Equality of TemplatePoint's up to an epsilon.

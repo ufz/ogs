@@ -74,13 +74,15 @@ public:
      * (\f$a_1\f$, \f$a_2\f$, ..., \f$a_n\f$) corresponding to the intervals given by iter_times_vector.
      * A time step size is calculated by \f$\Delta t_{n+1} = a * \Delta t_{n}\f$
      */
-    IterationNumberBasedAdaptiveTimeStepping( double t_initial,
-                                double t_end,
-                                double min_ts,
-                                double max_ts,
-                                double initial_ts,
-                                const std::vector<std::size_t> &iter_times_vector,
-                                const std::vector<double> &multiplier_vector);
+    IterationNumberBasedAdaptiveTimeStepping(double t_initial,
+                                             double t_end,
+                                             double min_ts,
+                                             double max_ts,
+                                             double initial_ts,
+                                             std::vector<std::size_t>
+                                                 iter_times_vector,
+                                             std::vector<double>
+                                                 multiplier_vector);
 
     virtual ~IterationNumberBasedAdaptiveTimeStepping() = default;
 

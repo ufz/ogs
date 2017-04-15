@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <utility>
 #include <vector>
 
 #include "BaseLib/Error.h"
@@ -30,11 +31,9 @@ class SmallDeformationLocalAssemblerInterface
 {
 public:
     SmallDeformationLocalAssemblerInterface() : _dofIndex_to_localIndex{} {}
-
     SmallDeformationLocalAssemblerInterface(
-            std::size_t n_local_size,
-            std::vector<unsigned> const& dofIndex_to_localIndex)
-        : _dofIndex_to_localIndex(dofIndex_to_localIndex)
+        std::size_t n_local_size, std::vector<unsigned> dofIndex_to_localIndex)
+        : _dofIndex_to_localIndex(std::move(dofIndex_to_localIndex))
     {
         _local_u.resize(n_local_size);
         _local_b.resize(_local_u.size());
