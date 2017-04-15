@@ -25,7 +25,7 @@ namespace Fluid
 class FluidProperty
 {
 public:
-    typedef std::array<double, PropertyVariableNumber> ArrayType;
+    using ArrayType = std::array<double, PropertyVariableNumber>;
 
     virtual ~FluidProperty() = default;
     /// Get model name.

@@ -22,8 +22,6 @@ extern template class MeshLib::TemplateElement<MeshLib::LineRule2>;
 extern template class MeshLib::TemplateElement<MeshLib::LineRule3>;
 
 namespace MeshLib {
-
-typedef TemplateElement<LineRule2> Line;
-typedef TemplateElement<LineRule3> Line3;
-
+using Line = TemplateElement<MeshLib::LineRule2>;
+using Line3 = TemplateElement<MeshLib::LineRule3>;
 }

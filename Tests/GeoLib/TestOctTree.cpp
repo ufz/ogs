@@ -18,7 +18,7 @@
 class GeoLibOctTree : public testing::Test
 {
 public:
-    typedef std::vector<GeoLib::Point*> VectorOfPoints;
+    using VectorOfPoints = std::vector<GeoLib::Point*>;
 
     GeoLibOctTree() = default;
     ~GeoLibOctTree()

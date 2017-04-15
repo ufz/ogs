@@ -27,7 +27,7 @@ public:
     template <template <typename> class ShapeMatrixPolicy_>
     using FeType = NumLib::FeLINE2<ShapeMatrixPolicy_>;
 
-    typedef MeshLib::Line MeshElementType;
+    using MeshElementType = MeshLib::Line;
     static const unsigned dim = MeshElementType::dimension;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;
     static const unsigned n_sample_pt_order2 = 2;

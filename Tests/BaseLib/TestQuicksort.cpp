@@ -73,7 +73,7 @@ template <typename T>
 struct OrderedUniqueListGen
 {
     ac::generator<std::vector<T>> source;
-    typedef std::vector<T> result_type;
+    using result_type = std::vector<T>;
 
     std::vector<T> operator()(std::size_t size)
     {

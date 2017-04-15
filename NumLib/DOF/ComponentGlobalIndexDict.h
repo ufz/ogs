@@ -89,34 +89,23 @@ struct ByLocationAndComponent {};
 struct ByComponent {};
 struct ByGlobalIndex {};
 
-typedef boost::multi_index::multi_index_container<
-        Line,
-        boost::multi_index::indexed_by
-        <
-            boost::multi_index::ordered_unique
-            <
-                boost::multi_index::tag<ByLocationAndComponent>,
-                boost::multi_index::identity<Line>,
-                LineByLocationAndComponentComparator
-            >,
-            boost::multi_index::ordered_non_unique
-            <
-                boost::multi_index::tag<ByLocation>,
-                boost::multi_index::identity<Line>,
-                LineByLocationComparator
-            >,
-            boost::multi_index::ordered_non_unique
-            <
-                boost::multi_index::tag<ByComponent>,
-                boost::multi_index::member<Line, std::size_t, &Line::comp_id>
-            >,
-            boost::multi_index::ordered_non_unique
-            <
-                boost::multi_index::tag<ByGlobalIndex>,
-                boost::multi_index::member<Line, GlobalIndexType, &Line::global_index>
-            >
-        >
-    > ComponentGlobalIndexDict;
+using ComponentGlobalIndexDict = boost::multi_index::multi_index_container<
+    Line,
+    boost::multi_index::indexed_by<
+        boost::multi_index::ordered_unique<
+            boost::multi_index::tag<ByLocationAndComponent>,
+            boost::multi_index::identity<Line>,
+            LineByLocationAndComponentComparator>,
+        boost::multi_index::ordered_non_unique<
+            boost::multi_index::tag<ByLocation>,
+            boost::multi_index::identity<Line>, LineByLocationComparator>,
+        boost::multi_index::ordered_non_unique<
+            boost::multi_index::tag<ByComponent>,
+            boost::multi_index::member<Line, std::size_t, &Line::comp_id>>,
+        boost::multi_index::ordered_non_unique<
+            boost::multi_index::tag<ByGlobalIndex>,
+            boost::multi_index::member<Line, GlobalIndexType,
+                                       &Line::global_index>>>>;
 
 }    // namespace detail
 }    // namespace NumLib

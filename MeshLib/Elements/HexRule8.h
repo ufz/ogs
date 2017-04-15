@@ -73,7 +73,7 @@ public:
     static const unsigned edge_nodes[12][2];
 
     /// Returns the i-th edge of the element.
-    typedef LinearEdgeReturn EdgeReturn;
+    using EdgeReturn = MeshLib::LinearEdgeReturn;
 
     /// Returns the i-th face of the element.
     static const Element* getFace(const Element* e, unsigned i);

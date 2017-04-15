@@ -19,7 +19,7 @@ namespace MeshLib
 
 namespace MeshLib
 {
-typedef Eigen::Matrix<double, 3u, 3u, Eigen::RowMajor> RotationMatrix;
+using RotationMatrix = Eigen::Matrix<double, 3u, 3u, Eigen::RowMajor>;
 
 /**
  * This class maps node coordinates on intrinsic coordinates of the given element.

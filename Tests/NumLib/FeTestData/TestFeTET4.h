@@ -26,7 +26,7 @@ public:
     template <template <typename> class ShapeMatrixPolicy_>
     using FeType = NumLib::FeTET4<ShapeMatrixPolicy_>;
 
-    typedef MeshLib::Tet MeshElementType;
+    using MeshElementType = MeshLib::Tet;
     static const unsigned dim = 3;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;
     static const unsigned n_sample_pt_order2 = 5;

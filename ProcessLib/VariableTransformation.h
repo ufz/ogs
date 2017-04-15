@@ -80,6 +80,5 @@ private:
     double _factor;
 };
 
-typedef TrafoScale Trafo;
-
+using Trafo = ProcessLib::TrafoScale;
 }

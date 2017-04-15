@@ -44,95 +44,95 @@ namespace
 template <class TestFeType_, template <typename, unsigned> class ShapeMatrixPolicy_>
 struct TestCase
 {
-    typedef TestFeType_ TestFeType;
+    using TestFeType = TestFeType_;
     static const unsigned GlobalDim = TestFeType::global_dim;
     using ShapeMatrixTypes = ShapeMatrixPolicy_<typename TestFeType::ShapeFunction, GlobalDim>;
     template <typename X>
     using ShapeMatrixPolicy = ShapeMatrixPolicy_<X, GlobalDim>;
 };
 
-typedef ::testing::Types<
-    TestCase<TestFeHEX8, EigenDynamicShapeMatrixPolicy>,
-    TestCase<TestFeLINE2, EigenDynamicShapeMatrixPolicy>,
-    TestCase<TestFeLINE2Y, EigenDynamicShapeMatrixPolicy>,
-    TestCase<TestFeLINE3, EigenDynamicShapeMatrixPolicy>,
-    TestCase<TestFePRISM6, EigenDynamicShapeMatrixPolicy>,
-    TestCase<TestFePYRA5, EigenDynamicShapeMatrixPolicy>,
-    TestCase<TestFeQUAD4, EigenDynamicShapeMatrixPolicy>,
-    TestCase<TestFeTET4, EigenDynamicShapeMatrixPolicy>,
-    TestCase<TestFeTRI3, EigenDynamicShapeMatrixPolicy>,
+using TestTypes =
+    ::testing::Types<TestCase<TestFeHEX8, EigenDynamicShapeMatrixPolicy>,
+                     TestCase<TestFeLINE2, EigenDynamicShapeMatrixPolicy>,
+                     TestCase<TestFeLINE2Y, EigenDynamicShapeMatrixPolicy>,
+                     TestCase<TestFeLINE3, EigenDynamicShapeMatrixPolicy>,
+                     TestCase<TestFePRISM6, EigenDynamicShapeMatrixPolicy>,
+                     TestCase<TestFePYRA5, EigenDynamicShapeMatrixPolicy>,
+                     TestCase<TestFeQUAD4, EigenDynamicShapeMatrixPolicy>,
+                     TestCase<TestFeTET4, EigenDynamicShapeMatrixPolicy>,
+                     TestCase<TestFeTRI3, EigenDynamicShapeMatrixPolicy>,
 
-    TestCase<TestFeHEX8, EigenFixedShapeMatrixPolicy>,
-    TestCase<TestFeLINE2, EigenFixedShapeMatrixPolicy>,
-    TestCase<TestFeLINE2Y, EigenFixedShapeMatrixPolicy>,
-    TestCase<TestFeLINE3, EigenFixedShapeMatrixPolicy>,
-    TestCase<TestFePRISM6, EigenFixedShapeMatrixPolicy>,
-    TestCase<TestFePYRA5, EigenFixedShapeMatrixPolicy>,
-    TestCase<TestFeQUAD4, EigenFixedShapeMatrixPolicy>,
-    TestCase<TestFeTET4, EigenFixedShapeMatrixPolicy>,
-    TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>
-    > TestTypes;
+                     TestCase<TestFeHEX8, EigenFixedShapeMatrixPolicy>,
+                     TestCase<TestFeLINE2, EigenFixedShapeMatrixPolicy>,
+                     TestCase<TestFeLINE2Y, EigenFixedShapeMatrixPolicy>,
+                     TestCase<TestFeLINE3, EigenFixedShapeMatrixPolicy>,
+                     TestCase<TestFePRISM6, EigenFixedShapeMatrixPolicy>,
+                     TestCase<TestFePYRA5, EigenFixedShapeMatrixPolicy>,
+                     TestCase<TestFeQUAD4, EigenFixedShapeMatrixPolicy>,
+                     TestCase<TestFeTET4, EigenFixedShapeMatrixPolicy>,
+                     TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>>;
 }
 
 template <class T>
 class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
 {
  public:
-    typedef typename T::ShapeMatrixTypes ShapeMatrixTypes;
-    typedef typename T::TestFeType TestFeType;
-    // Matrix types
-    typedef typename ShapeMatrixTypes::NodalMatrixType NodalMatrix;
-    typedef typename ShapeMatrixTypes::NodalVectorType NodalVector;
-    typedef typename ShapeMatrixTypes::DimNodalMatrixType DimNodalMatrix;
-    typedef typename ShapeMatrixTypes::DimMatrixType DimMatrix;
-    typedef typename ShapeMatrixTypes::GlobalDimMatrixType GlobalDimMatrixType;
+     using ShapeMatrixTypes = typename T::ShapeMatrixTypes;
+     using TestFeType = typename T::TestFeType;
+     // Matrix types
+     using NodalMatrix = typename ShapeMatrixTypes::NodalMatrixType;
+     using NodalVector = typename ShapeMatrixTypes::NodalVectorType;
+     using DimNodalMatrix = typename ShapeMatrixTypes::DimNodalMatrixType;
+     using DimMatrix = typename ShapeMatrixTypes::DimMatrixType;
+     using GlobalDimMatrixType = typename ShapeMatrixTypes::GlobalDimMatrixType;
 
-    // Finite element type
-    template <typename X>
-    using ShapeMatrixPolicy = typename T::template ShapeMatrixPolicy<X>;
-    typedef typename TestFeType::template FeType<ShapeMatrixPolicy>::type FeType;
+     // Finite element type
+     template <typename X>
+     using ShapeMatrixPolicy = typename T::template ShapeMatrixPolicy<X>;
+     using FeType =
+         typename TestFeType::template FeType<ShapeMatrixPolicy>::type;
 
-    // Shape matrix data type
-    typedef typename ShapeMatrixTypes::ShapeMatrices ShapeMatricesType;
-    typedef typename TestFeType::MeshElementType MeshElementType;
+     // Shape matrix data type
+     using ShapeMatricesType = typename ShapeMatrixTypes::ShapeMatrices;
+     using MeshElementType = typename TestFeType::MeshElementType;
 
-    static const unsigned dim = TestFeType::dim;
-    static const unsigned e_nnodes = TestFeType::e_nnodes;
-    static const unsigned n_sample_pt_order2 = TestFeType::n_sample_pt_order2;
-    static const unsigned n_sample_pt_order3 = TestFeType::n_sample_pt_order3;
+     static const unsigned dim = TestFeType::dim;
+     static const unsigned e_nnodes = TestFeType::e_nnodes;
+     static const unsigned n_sample_pt_order2 = TestFeType::n_sample_pt_order2;
+     static const unsigned n_sample_pt_order3 = TestFeType::n_sample_pt_order3;
 
-    using IntegrationMethod =
-        typename NumLib::GaussIntegrationPolicy<MeshElementType>::IntegrationMethod;
-
+     using IntegrationMethod = typename NumLib::GaussIntegrationPolicy<
+         MeshElementType>::IntegrationMethod;
 
  public:
-    NumLibFemIsoTest() :
-        D(dim, dim),
-        expectedM(e_nnodes,e_nnodes),
-        expectedK(e_nnodes,e_nnodes),
-        integration_method(2)
-    {
-        // create a mesh element used for testing
-        mesh_element = this->createMeshElement();
+     NumLibFemIsoTest()
+         : D(dim, dim),
+           expectedM(e_nnodes, e_nnodes),
+           expectedK(e_nnodes, e_nnodes),
+           integration_method(2)
+     {
+         // create a mesh element used for testing
+         mesh_element = this->createMeshElement();
 
-        // set a conductivity tensor
-        setIdentityMatrix(dim, D);
-        D *= conductivity;
-        MeshLib::ElementCoordinatesMappingLocal ele_local_coord(
-            *mesh_element, MeshLib::CoordinateSystem(*mesh_element).getDimension());
-        auto R = ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(
-            TestFeType::dim, TestFeType::global_dim);
-        globalD.noalias() = R.transpose() * (D * R);
+         // set a conductivity tensor
+         setIdentityMatrix(dim, D);
+         D *= conductivity;
+         MeshLib::ElementCoordinatesMappingLocal ele_local_coord(
+             *mesh_element,
+             MeshLib::CoordinateSystem(*mesh_element).getDimension());
+         auto R = ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(
+             TestFeType::dim, TestFeType::global_dim);
+         globalD.noalias() = R.transpose() * (D * R);
 
-        // set expected matrices
-        this->setExpectedMassMatrix(expectedM);
-        this->setExpectedLaplaceMatrix(conductivity, expectedK);
+         // set expected matrices
+         this->setExpectedMassMatrix(expectedM);
+         this->setExpectedLaplaceMatrix(conductivity, expectedK);
 
-        // for destructor
-        vec_eles.push_back(mesh_element);
-        for (auto e : vec_eles)
-            for (unsigned i=0; i<e->getNumberOfNodes(); i++)
-                vec_nodes.push_back(e->getNode(i));
+         // for destructor
+         vec_eles.push_back(mesh_element);
+         for (auto e : vec_eles)
+             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
+                 vec_nodes.push_back(e->getNode(i));
     }
 
     virtual ~NumLibFemIsoTest()
@@ -183,9 +183,9 @@ TYPED_TEST_CASE(NumLibFemIsoTest, TestTypes);
 TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
 {
     // Refer to typedefs in the fixture
-    typedef typename TestFixture::FeType FeType;
-    typedef typename TestFixture::NodalMatrix NodalMatrix;
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
+    using FeType = typename TestFixture::FeType;
+    using NodalMatrix = typename TestFixture::NodalMatrix;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
 
     // create a finite element object
     FeType fe(*this->mesh_element);
@@ -208,9 +208,9 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
 TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
 {
     // Refer to typedefs in the fixture
-    typedef typename TestFixture::FeType FeType;
-    typedef typename TestFixture::NodalMatrix NodalMatrix;
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
+    using FeType = typename TestFixture::FeType;
+    using NodalMatrix = typename TestFixture::NodalMatrix;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
 
     // create a finite element object
     FeType fe(*this->mesh_element);
@@ -233,9 +233,9 @@ TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
 TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
 {
     // Refer to typedefs in the fixture
-    typedef typename TestFixture::FeType FeType;
-    typedef typename TestFixture::NodalMatrix NodalMatrix;
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
+    using FeType = typename TestFixture::FeType;
+    using NodalMatrix = typename TestFixture::NodalMatrix;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
 
     // create a finite element object
     FeType fe(*this->mesh_element);
@@ -262,9 +262,9 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
 TYPED_TEST(NumLibFemIsoTest, CheckGaussIntegrationLevel)
 {
     // Refer to typedefs in the fixture
-    typedef typename TestFixture::FeType FeType;
-    typedef typename TestFixture::NodalMatrix NodalMatrix;
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
+    using FeType = typename TestFixture::FeType;
+    using NodalMatrix = typename TestFixture::NodalMatrix;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
 
     // create a finite element object with gauss quadrature level 2
     FeType fe(*this->mesh_element);

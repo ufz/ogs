@@ -33,7 +33,8 @@ enum class ComponentOrder
 class MeshComponentMap final
 {
 public:
-    typedef MeshLib::Location Location;
+    using Location = MeshLib::Location;
+
 public:
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector

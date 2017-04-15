@@ -22,9 +22,9 @@
 class NumLibMeshComponentMapTest : public ::testing::Test
 {
     public:
-    typedef MeshLib::MeshItemType MeshItemType;
-    typedef MeshLib::Location Location;
-    typedef NumLib::MeshComponentMap MeshComponentMap;
+        using MeshItemType = MeshLib::MeshItemType;
+        using Location = MeshLib::Location;
+        using MeshComponentMap = NumLib::MeshComponentMap;
 
     public:
     NumLibMeshComponentMapTest()

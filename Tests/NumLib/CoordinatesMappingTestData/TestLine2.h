@@ -18,8 +18,8 @@ class TestLine2
 {
 public:
     // Element information
-    typedef MeshLib::Line ElementType;
-    typedef NumLib::ShapeLine2 ShapeFunctionType;
+    using ElementType = MeshLib::Line;
+    using ShapeFunctionType = NumLib::ShapeLine2;
     static const unsigned global_dim = ElementType::dimension;
     static const unsigned dim = ElementType::dimension;
     static const unsigned e_nnodes = ElementType::n_all_nodes;

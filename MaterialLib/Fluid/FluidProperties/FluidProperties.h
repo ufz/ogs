@@ -40,7 +40,7 @@ const unsigned FluidPropertyTypeNumber =
 class FluidProperties
 {
 public:
-    typedef std::array<double, PropertyVariableNumber> ArrayType;
+    using ArrayType = std::array<double, PropertyVariableNumber>;
 
     FluidProperties(
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& density,

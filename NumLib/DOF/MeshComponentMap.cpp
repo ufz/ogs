@@ -248,7 +248,7 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
     std::vector<Location> const& ls) const
 {
     // vector of (Component, global Index) pairs.
-    typedef std::pair<std::size_t, GlobalIndexType> CIPair;
+    using CIPair = std::pair<std::size_t, GlobalIndexType>;
     std::vector<CIPair> pairs;
     pairs.reserve(ls.size());
 

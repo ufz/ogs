@@ -42,7 +42,7 @@ struct Partition
 class NodeWiseMeshPartitioner
 {
 public:
-    typedef long IntegerType;
+    using IntegerType = long;
 
 public:
     /*!

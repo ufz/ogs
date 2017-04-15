@@ -26,6 +26,6 @@ namespace GeoLib {
  * additional one can give the vector of polylines a name
  * */
 
-typedef TemplateVec<Polyline> PolylineVec;
+using PolylineVec = TemplateVec<GeoLib::Polyline>;
 
 } // end namespace

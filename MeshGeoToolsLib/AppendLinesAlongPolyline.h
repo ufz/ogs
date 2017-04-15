@@ -14,7 +14,7 @@ namespace GeoLib
 {
 class Polyline;
 template <typename T> class TemplateVec;
-typedef TemplateVec<Polyline> PolylineVec;
+using PolylineVec = TemplateVec<GeoLib::Polyline>;
 }
 
 namespace MeshLib

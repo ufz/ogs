@@ -27,7 +27,7 @@ public:
     template <template <typename> class ShapeMatrixPolicy_>
     using FeType = NumLib::FeTRI3<ShapeMatrixPolicy_>;
 
-    typedef MeshLib::Tri MeshElementType;
+    using MeshElementType = MeshLib::Tri;
     static const unsigned dim = 2; //MeshElementType::dimension;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;
     static const unsigned n_sample_pt_order2 = 3;

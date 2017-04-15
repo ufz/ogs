@@ -33,7 +33,8 @@ template <typename T>
 class Histogram
 {
 public:
-    typedef typename std::vector<T> Data; /// Underlying input data vector type.
+    using Data =
+        typename std::vector<double>;  /// Underlying input data vector type.
 
 public:
     /** Creates histogram of the given element in the range \c [first, last).

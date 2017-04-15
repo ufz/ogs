@@ -223,7 +223,7 @@ TESTCASESLIST
     TestCase<ODE, NumLib::TIMEDISC>
 #define TCLSEP ,
 
-typedef ::testing::Types<TESTCASESLIST> TestCases;
+using TestCases = ::testing::Types<TESTCASESLIST>;
 
 #undef TESTCASESLIST
 #undef TCLSEP

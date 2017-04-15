@@ -19,6 +19,6 @@ namespace NumLib
 {
 
 /// Representation of linear functions f: R^3 -> R; f({x, y, z}) = a + bx + cy + dz
-typedef TemplateSpatialFunction<MathLib::LinearFunction<double, 3> > SpatialFunctionLinear;
-
+using SpatialFunctionLinear =
+    TemplateSpatialFunction<MathLib::LinearFunction<double, 3>>;
 }

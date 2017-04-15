@@ -48,7 +48,7 @@ class MeshLibQuadMesh : public ::testing::Test
         return mesh->getNodes()[i * n_nodes + j];
     }
 
-    typedef std::list<std::size_t> Indices;
+    using Indices = std::list<std::size_t>;
     Indices getNeighbor(std::size_t const i) const
     {
         std::list<std::size_t> result;

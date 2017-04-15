@@ -37,8 +37,8 @@ namespace NumLib
 class LocalToGlobalIndexMap final
 {
 public:
-    typedef MathLib::RowColumnIndices<GlobalIndexType> RowColumnIndices;
-    typedef RowColumnIndices::LineIndex LineIndex;
+    using RowColumnIndices = MathLib::RowColumnIndices<GlobalIndexType>;
+    using LineIndex = RowColumnIndices::LineIndex;
 
 public:
     /// Creates a MeshComponentMap internally and stores the global indices for

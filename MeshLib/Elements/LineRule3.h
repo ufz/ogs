@@ -31,7 +31,7 @@ public:
     static const CellType cell_type = CellType::LINE3;
 
     /// Edge rule
-    typedef QuadraticEdgeReturn EdgeReturn;
+    using EdgeReturn = MeshLib::QuadraticEdgeReturn;
 }; /* class */
 
 } /* namespace */

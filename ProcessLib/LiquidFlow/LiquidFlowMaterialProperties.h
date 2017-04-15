@@ -57,7 +57,7 @@ namespace LiquidFlow
 class LiquidFlowMaterialProperties
 {
 public:
-    typedef MaterialLib::Fluid::FluidProperty::ArrayType ArrayType;
+    using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
 
     LiquidFlowMaterialProperties(
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,

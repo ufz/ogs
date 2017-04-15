@@ -185,7 +185,7 @@ template <typename T1> TemplateVector3<T1> operator*(
     return v * s;
 }
 
-typedef TemplateVector3<double> Vector3;
+using Vector3 = TemplateVector3<double>;
 
 /// Calculates the scalar triple (u x v) . w
 double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v,

@@ -22,8 +22,6 @@ extern template class MeshLib::TemplateElement<MeshLib::PrismRule15>;
 extern template class MeshLib::TemplateElement<MeshLib::PrismRule6>;
 
 namespace MeshLib {
-
-typedef TemplateElement<PrismRule6> Prism;
-typedef TemplateElement<PrismRule15> Prism15;
-
+using Prism = TemplateElement<MeshLib::PrismRule6>;
+using Prism15 = TemplateElement<MeshLib::PrismRule15>;
 }

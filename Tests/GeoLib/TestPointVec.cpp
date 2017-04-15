@@ -15,7 +15,7 @@
 class PointVecTest : public testing::Test
 {
 public:
-    typedef std::vector<GeoLib::Point*> VectorOfPoints;
+    using VectorOfPoints = std::vector<GeoLib::Point*>;
 
     PointVecTest()
         : gen(std::random_device() ()), name("JustAName")

@@ -25,9 +25,7 @@ extern template class MeshLib::TemplateElement<MeshLib::QuadRule9>;
 
 namespace MeshLib
 {
-
-typedef TemplateElement<QuadRule4> Quad;
-typedef TemplateElement<QuadRule8> Quad8;
-typedef TemplateElement<QuadRule9> Quad9;
-
+using Quad = TemplateElement<MeshLib::QuadRule4>;
+using Quad8 = TemplateElement<MeshLib::QuadRule8>;
+using Quad9 = TemplateElement<MeshLib::QuadRule9>;
 }

@@ -26,12 +26,14 @@ TEST(NumLib, FemShapeMatricesWithEigen)
     const static unsigned e_nnodes = 4;
 
     // Eigen matrix types
-    typedef Eigen::Matrix<double, e_nnodes, 1> NodalVector;
-    typedef Eigen::Matrix<double, dim, e_nnodes, Eigen::RowMajor> DimNodalMatrix;
-    typedef Eigen::Matrix<double, dim, dim, Eigen::RowMajor> DimMatrix;
+    using NodalVector = Eigen::Matrix<double, e_nnodes, 1>;
+    using DimNodalMatrix =
+        Eigen::Matrix<double, dim, e_nnodes, Eigen::RowMajor>;
+    using DimMatrix = Eigen::Matrix<double, dim, dim, Eigen::RowMajor>;
 
     // Shape data type
-    typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,DimNodalMatrix> ShapeMatricesType;
+    using ShapeMatricesType =
+        ShapeMatrices<NodalVector, DimNodalMatrix, DimMatrix, DimNodalMatrix>;
 
     auto setShapeDataToOnes = [](ShapeMatricesType &shape)
             {

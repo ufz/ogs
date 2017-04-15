@@ -18,40 +18,40 @@ class TestHex8
 {
  public:
     // Element information
-    typedef MeshLib::Hex ElementType;
-    typedef NumLib::ShapeHex8 ShapeFunctionType;
-    static const unsigned global_dim = ElementType::dimension;
-    static const unsigned dim = 3; //ElementType::dimension;
-    static const unsigned e_nnodes = ElementType::n_all_nodes;
-    // Coordinates where shape functions are evaluated
-    static const double r[dim];
-    // Expected results for natural shape
-    static const double nat_exp_N[e_nnodes];
-    static const double nat_exp_dNdr[e_nnodes*dim];
-    // Expected results for irregular shape
-    static const double ir_exp_J[dim*dim];
-    static const double ir_exp_invJ[dim*dim];
-    static const double ir_exp_detJ;
-    static const double ir_exp_dNdx[e_nnodes*dim];
-    // Expected results for clock-wise node ordering
-    static const double cl_exp_J[dim*dim];
-    // Expected results for zero volume
-    static const double cl_exp_detJ;
-    static const double ze_exp_J[dim*dim];
+     using ElementType = MeshLib::Hex;
+     using ShapeFunctionType = NumLib::ShapeHex8;
+     static const unsigned global_dim = ElementType::dimension;
+     static const unsigned dim = 3;  // ElementType::dimension;
+     static const unsigned e_nnodes = ElementType::n_all_nodes;
+     // Coordinates where shape functions are evaluated
+     static const double r[dim];
+     // Expected results for natural shape
+     static const double nat_exp_N[e_nnodes];
+     static const double nat_exp_dNdr[e_nnodes * dim];
+     // Expected results for irregular shape
+     static const double ir_exp_J[dim * dim];
+     static const double ir_exp_invJ[dim * dim];
+     static const double ir_exp_detJ;
+     static const double ir_exp_dNdx[e_nnodes * dim];
+     // Expected results for clock-wise node ordering
+     static const double cl_exp_J[dim * dim];
+     // Expected results for zero volume
+     static const double cl_exp_detJ;
+     static const double ze_exp_J[dim * dim];
 
-    // element shape identical to that in natural coordinates (see ShapeHex8.h)
-    MeshLib::Hex* createNaturalShape()
-    {
-        auto** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node(-1.0, -1.0, -1.0);
-        nodes[1] = new MeshLib::Node( 1.0, -1.0, -1.0);
-        nodes[2] = new MeshLib::Node( 1.0,  1.0, -1.0);
-        nodes[3] = new MeshLib::Node(-1.0,  1.0, -1.0);
-        nodes[4] = new MeshLib::Node(-1.0, -1.0,  1.0);
-        nodes[5] = new MeshLib::Node( 1.0, -1.0,  1.0);
-        nodes[6] = new MeshLib::Node( 1.0,  1.0,  1.0);
-        nodes[7] = new MeshLib::Node(-1.0,  1.0,  1.0);
-        return new MeshLib::Hex(nodes);
+     // element shape identical to that in natural coordinates (see ShapeHex8.h)
+     MeshLib::Hex* createNaturalShape()
+     {
+         auto** nodes = new MeshLib::Node*[e_nnodes];
+         nodes[0] = new MeshLib::Node(-1.0, -1.0, -1.0);
+         nodes[1] = new MeshLib::Node(1.0, -1.0, -1.0);
+         nodes[2] = new MeshLib::Node(1.0, 1.0, -1.0);
+         nodes[3] = new MeshLib::Node(-1.0, 1.0, -1.0);
+         nodes[4] = new MeshLib::Node(-1.0, -1.0, 1.0);
+         nodes[5] = new MeshLib::Node(1.0, -1.0, 1.0);
+         nodes[6] = new MeshLib::Node(1.0, 1.0, 1.0);
+         nodes[7] = new MeshLib::Node(-1.0, 1.0, 1.0);
+         return new MeshLib::Hex(nodes);
     }
 
     // element having irregular or skew shape

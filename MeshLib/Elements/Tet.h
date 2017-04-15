@@ -22,8 +22,6 @@ extern template class MeshLib::TemplateElement<MeshLib::TetRule10>;
 extern template class MeshLib::TemplateElement<MeshLib::TetRule4>;
 
 namespace MeshLib {
-
-typedef TemplateElement<TetRule4> Tet;
-typedef TemplateElement<TetRule10> Tet10;
-
+using Tet = TemplateElement<MeshLib::TetRule4>;
+using Tet10 = TemplateElement<MeshLib::TetRule10>;
 }

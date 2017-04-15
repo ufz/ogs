@@ -39,8 +39,8 @@ struct RasterHeader
  */
 class Raster {
 public:
-    typedef double const* const_iterator;
-    typedef double* iterator;
+    using const_iterator = const double*;
+    using iterator = double*;
 
     /**
      * @brief Constructor for an object of class Raster. The raster data have
