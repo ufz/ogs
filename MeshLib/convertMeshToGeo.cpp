@@ -99,7 +99,7 @@ MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface &sfc, const std::strin
     for (std::size_t i=0; i<sfc.getNumberOfTriangles(); i++)
     {
         auto* tri = sfc[i];
-        MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
+        auto** tri_nodes = new MeshLib::Node*[3];
         for (unsigned j=0; j<3; j++)
             tri_nodes[j] = new MeshLib::Node(tri->getPoint(j)->getCoords(), nodeId++);
         elements.push_back(new MeshLib::Tri(tri_nodes, i));

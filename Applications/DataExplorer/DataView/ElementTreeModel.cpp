@@ -46,8 +46,8 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
     _mesh_source = grid;
     this->clearView();
 
-    MeshLib::VtkMappedMeshSource const*const source =
-        dynamic_cast<MeshLib::VtkMappedMeshSource const*const>(grid);
+    auto const* const source =
+        dynamic_cast<MeshLib::VtkMappedMeshSource const* const>(grid);
 
     if (!source)
         return;
@@ -57,12 +57,12 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
 
     QList<QVariant> elemData;
     elemData << "Element " + QString::number(elem_index) << "" << "" << "";
-    TreeItem* elemItem = new TreeItem(elemData, _rootItem);
+    auto* elemItem = new TreeItem(elemData, _rootItem);
     _rootItem->appendChild(elemItem);
 
     QList<QVariant> typeData;
     typeData << "Element Type: " << QString::fromStdString(MeshElemType2String(elem->getGeomType()));
-    TreeItem* typeItem = new TreeItem(typeData, elemItem);
+    auto* typeItem = new TreeItem(typeData, elemItem);
     elemItem->appendChild(typeItem);
 
     MeshLib::PropertyVector<int> const*const mat_ids =
@@ -72,18 +72,18 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
     QString matIdString = !mat_ids ? QString("not defined") : QString::number((*mat_ids)[elem->getID()]);
     QList<QVariant> materialData;
     materialData << "MaterialID: " << matIdString;
-    TreeItem* matItem = new TreeItem(materialData, elemItem);
+    auto* matItem = new TreeItem(materialData, elemItem);
     elemItem->appendChild(matItem);
 
     QList<QVariant> volData;
     volData << "Area/Volume: " <<
     QString::number(mesh->getElement(elem_index)->getContent());
-    TreeItem* volItem = new TreeItem(volData, elemItem);
+    auto* volItem = new TreeItem(volData, elemItem);
     elemItem->appendChild(volItem);
 
     QList<QVariant> nodeListData;
     nodeListData << "Nodes" << "" << "" << "";
-    TreeItem* nodeListItem = new TreeItem(nodeListData, elemItem);
+    auto* nodeListItem = new TreeItem(nodeListData, elemItem);
     elemItem->appendChild(nodeListItem);
 
     //const std::vector<MeshLib::Node*> nodes_vec = grid->getNodes();
@@ -95,7 +95,7 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
         nodeData << "Node " + QString::number(node->getID()) <<
         QString::number((*node)[0]) << QString::number((*node)[1]) <<
         QString::number((*node)[2]);
-        TreeItem* nodeItem = new TreeItem(nodeData, nodeListItem);
+        auto* nodeItem = new TreeItem(nodeData, nodeListItem);
         nodeListItem->appendChild(nodeItem);
     }
     endResetModel();
@@ -116,17 +116,17 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
 
     QList<QVariant> mesh_name;
     mesh_name << "Name:" << QString::fromStdString(mesh.getName()) << "" << "" << "";
-    TreeItem* name_item = new TreeItem(mesh_name, _rootItem);
+    auto* name_item = new TreeItem(mesh_name, _rootItem);
     _rootItem->appendChild(name_item);
 
     QList<QVariant> nodes_number;
     nodes_number << "#Nodes: " << QString::number(mesh.getNumberOfNodes()) << "" << "";
-    TreeItem* nodes_item = new TreeItem(nodes_number, _rootItem);
+    auto* nodes_item = new TreeItem(nodes_number, _rootItem);
     _rootItem->appendChild(nodes_item);
 
     QList<QVariant> elements_number;
     elements_number << "#Elements: " << QString::number(mesh.getNumberOfElements()) << "" << "";
-    TreeItem* elements_item = new TreeItem(elements_number, _rootItem);
+    auto* elements_item = new TreeItem(elements_number, _rootItem);
     _rootItem->appendChild(elements_item);
 
     const std::array<QString, 7> n_element_names = {{ "Lines:", "Triangles:", "Quads:", "Tetrahedra:", "Hexahedra:", "Pyramids:", "Prisms:" }};
@@ -137,14 +137,14 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
         {
             QList<QVariant> elements_number;
             elements_number << n_element_names[i] << QString::number(n_element_types[i]) << "" << "";
-            TreeItem* type_item = new TreeItem(elements_number, elements_item);
+            auto* type_item = new TreeItem(elements_number, elements_item);
             elements_item->appendChild(type_item);
         }
     }
 
     QList<QVariant> bounding_box;
     bounding_box << "Bounding Box" << "" << "" << "";
-    TreeItem* aabb_item = new TreeItem(bounding_box, _rootItem);
+    auto* aabb_item = new TreeItem(bounding_box, _rootItem);
     _rootItem->appendChild(aabb_item);
 
     const GeoLib::AABB aabb (MeshLib::MeshInformation::getBoundingBox(mesh));
@@ -153,17 +153,17 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
 
     QList<QVariant> min_aabb;
     min_aabb << "Min:" << QString::number(min[0], 'f') << QString::number(min[1], 'f') << QString::number(min[2], 'f');
-    TreeItem* min_item = new TreeItem(min_aabb, aabb_item);
+    auto* min_item = new TreeItem(min_aabb, aabb_item);
     aabb_item->appendChild(min_item);
 
     QList<QVariant> max_aabb;
     max_aabb << "Max:" << QString::number(max[0], 'f') << QString::number(max[1], 'f') << QString::number(max[2], 'f');
-    TreeItem* max_item = new TreeItem(max_aabb, aabb_item);
+    auto* max_item = new TreeItem(max_aabb, aabb_item);
     aabb_item->appendChild(max_item);
 
     QList<QVariant> edges;
     edges << "Edge Length: " << "[" + QString::number(mesh.getMinEdgeLength(), 'f') + "," << QString::number(mesh.getMaxEdgeLength(), 'f') + "]" << "";
-    TreeItem* edge_item = new TreeItem(edges, _rootItem);
+    auto* edge_item = new TreeItem(edges, _rootItem);
     _rootItem->appendChild(edge_item);
 
     std::vector<std::string> const& vec_names (mesh.getProperties().getPropertyVectorNames());
@@ -182,7 +182,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
         }
         if (array_info.size() == 1)
             array_info << "[ ?" << "? ]" << "";
-        TreeItem* vec_item = new TreeItem(array_info, _rootItem);
+        auto* vec_item = new TreeItem(array_info, _rootItem);
         _rootItem->appendChild(vec_item);
     }
 

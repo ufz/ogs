@@ -46,7 +46,7 @@ const Element* PrismRule15::getFace(const Element* e, unsigned i)
     if (i < n_faces)
     {
         unsigned nFaceNodes(PrismRule15::n_face_nodes[i]);
-        Node** nodes = new Node*[nFaceNodes];
+        auto** nodes = new Node*[nFaceNodes];
         for (unsigned j=0; j<nFaceNodes; j++)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 

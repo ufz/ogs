@@ -28,7 +28,7 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
     std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
 
     if (length_type==LengthType::Edge) {
-        for (std::vector<MeshLib::Element*>::const_iterator it(elements.cbegin());
+        for (auto it(elements.cbegin());
                 it != elements.cend(); ++it) {
             std::size_t const n_edges((*it)->getNumberOfEdges());
             for (std::size_t k(0); k<n_edges; k++) {

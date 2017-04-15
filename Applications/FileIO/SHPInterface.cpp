@@ -79,9 +79,9 @@ void SHPInterface::readPoints(const SHPHandle &hSHP, int numberOfElements, std::
         for (int i = 0; i < numberOfElements; i++) {
             hSHPObject = SHPReadObject(hSHP, i);
 
-            GeoLib::Point* pnt =
-                    new GeoLib::Point(*(hSHPObject->padfX), *(hSHPObject->padfY),
-                                      *(hSHPObject->padfZ));
+            auto* pnt =
+                new GeoLib::Point(*(hSHPObject->padfX), *(hSHPObject->padfY),
+                                  *(hSHPObject->padfZ));
             points->push_back(pnt);
         }
 
@@ -158,7 +158,7 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
             int const lastPnt = (p<(noOfParts - 1)) ?
                 *(hSHPObject->panPartStart + p + 1) : noOfPoints;
 
-            GeoLib::Polyline* line = new GeoLib::Polyline(*points.getVector());
+            auto* line = new GeoLib::Polyline(*points.getVector());
 
             // create polyline
             for (int j = firstPnt; j < lastPnt; ++j) {

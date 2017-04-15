@@ -38,25 +38,16 @@ GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* 
     this->param4->setText("0");
 
     // object will be deleted by Qt
-    StrictIntValidator* max_number_of_points_in_quadtree_leaf_validator (new StrictIntValidator (
-                                                                                 1,
-                                                                                 1000,
-                                                                                 this->param1));
+    auto* max_number_of_points_in_quadtree_leaf_validator(
+        new StrictIntValidator(1, 1000, this->param1));
     param1->setValidator (max_number_of_points_in_quadtree_leaf_validator);
     // object will be deleted by Qt
-    StrictDoubleValidator* mesh_density_scaling_pnts_validator(new StrictDoubleValidator (
-                                                                       1e-10,
-                                                                       1.0,
-                                                                       5,
-                                                                       this
-                                                                       ->param2));
+    auto* mesh_density_scaling_pnts_validator(
+        new StrictDoubleValidator(1e-10, 1.0, 5, this->param2));
     param2->setValidator (mesh_density_scaling_pnts_validator);
     // object will be deleted by Qt#
-    StrictDoubleValidator* mesh_density_scaling_stations_validator(new StrictDoubleValidator (
-                                                                           1e-10,
-                                                                           1.0,
-                                                                           5,
-                                                                           this->param3));
+    auto* mesh_density_scaling_stations_validator(
+        new StrictDoubleValidator(1e-10, 1.0, 5, this->param3));
     param3->setValidator (mesh_density_scaling_stations_validator);
 
     std::vector<std::string> geoNames;

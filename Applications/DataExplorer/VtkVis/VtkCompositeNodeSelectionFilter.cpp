@@ -65,7 +65,7 @@ void VtkCompositeNodeSelectionFilter::setSelectionArray(const std::vector<unsign
     for (unsigned i=0; i<point_indeces.size(); ++i)
     {
         double * coords = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPoint(point_indeces[i]);
-        GeoLib::Point* p (new GeoLib::Point(coords[0], coords[1], coords[2]));
+        auto* p(new GeoLib::Point(coords[0], coords[1], coords[2]));
         _selection.push_back(p);
     }
     init();

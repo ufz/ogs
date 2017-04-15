@@ -40,7 +40,7 @@ namespace TestLine2
     std::unique_ptr<MeshLib::Line> createLine(
         std::array<double, 3> const& a, std::array<double, 3> const& b)
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(a);
         nodes[1] = new MeshLib::Node(b);
         return std::unique_ptr<MeshLib::Line>{new MeshLib::Line(nodes)};
@@ -79,7 +79,7 @@ namespace TestQuad4
         std::array<double, 3> const& a, std::array<double, 3> const& b,
         std::array<double, 3> const& c, std::array<double, 3> const& d)
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(a);
         nodes[1] = new MeshLib::Node(b);
         nodes[2] = new MeshLib::Node(c);

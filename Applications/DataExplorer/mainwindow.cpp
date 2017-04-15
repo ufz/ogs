@@ -321,7 +321,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
     menuWindows->addAction(showVisDockAction);
 
     // Presentation mode
-    QMenu* presentationMenu = new QMenu(this);
+    auto* presentationMenu = new QMenu(this);
     presentationMenu->setTitle("Presentation on");
     connect(presentationMenu, SIGNAL(aboutToShow()), this,
             SLOT(createPresentationMenu()));
@@ -379,7 +379,7 @@ void MainWindow::showVisDockWidget(bool show)
 void MainWindow::open(int file_type)
 {
     QSettings settings;
-    ImportFileType::type t = static_cast<ImportFileType::type>(file_type);
+    auto t = static_cast<ImportFileType::type>(file_type);
     QString type_str = QString::fromStdString((ImportFileType::convertImportFileTypeToString(t)));
     QString fileName = QFileDialog::getOpenFileName(this, "Select " + type_str + " file to import",
                                                     settings.value("lastOpenedFileDirectory").toString(),
@@ -395,7 +395,7 @@ void MainWindow::open(int file_type)
 
 void MainWindow::openRecentFile()
 {
-    QAction* action = qobject_cast<QAction*> (sender());
+    auto* action = qobject_cast<QAction*>(sender());
     if (action)
         loadFile(ImportFileType::OGS, action->data().toString());
 }
@@ -699,7 +699,7 @@ void MainWindow::about()
 
 QMenu* MainWindow::createImportFilesMenu()
 {
-    QSignalMapper* signal_mapper = new QSignalMapper(this); //owned by MainWindow
+    auto* signal_mapper = new QSignalMapper(this);  // owned by MainWindow
     QMenu* importFiles = new QMenu("&Import Files", this);
     QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
     connect(feflowFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
@@ -967,7 +967,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 
 void MainWindow::showFileConverter()
 {
-    OGSFileConverter* dlg = new OGSFileConverter(this);
+    auto* dlg = new OGSFileConverter(this);
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->show();
     dlg->raise();
@@ -981,7 +981,7 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 
     if ((stn->type() == GeoLib::Station::StationType::STATION) && stn->getSensorData())
     {
-        DiagramPrefsDialog* prefs ( new DiagramPrefsDialog(stn) );
+        auto* prefs(new DiagramPrefsDialog(stn));
         prefs->setAttribute(Qt::WA_DeleteOnClose);
         prefs->show();
     }
@@ -999,7 +999,7 @@ void MainWindow::showDiagramPrefsDialog()
     {
         QDir dir = QDir(fileName);
         settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-        DiagramPrefsDialog* prefs = new DiagramPrefsDialog(fileName);
+        auto* prefs = new DiagramPrefsDialog(fileName);
         prefs->setAttribute(Qt::WA_DeleteOnClose);
         prefs->show();
     }
@@ -1020,7 +1020,7 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 void MainWindow::showStationNameDialog(const std::string& stn_vec_name, std::size_t id)
 {
     std::vector<GeoLib::Point*> const* stations = _project.getGEOObjects().getStationVec(stn_vec_name);
-    GeoLib::Station *const stn = static_cast<GeoLib::Station*>((*stations)[id]);
+    auto* const stn = static_cast<GeoLib::Station*>((*stations)[id]);
     SetNameDialog dlg("Station", id, stn->getName());
     if (dlg.exec() != QDialog::Accepted)
         return;
@@ -1047,7 +1047,7 @@ void MainWindow::showMeshElementRemovalDialog()
 
 void MainWindow::showMeshAnalysisDialog()
 {
-    MeshAnalysisDialog* dlg = new MeshAnalysisDialog(this->_project.getMeshObjects());
+    auto* dlg = new MeshAnalysisDialog(this->_project.getMeshObjects());
     dlg->exec();
 }
 
@@ -1203,12 +1203,13 @@ void MainWindow::on_actionExportObj_triggered(bool checked /*= false*/)
 
 void MainWindow::createPresentationMenu()
 {
-    QMenu* menu = static_cast<QMenu*> (QObject::sender());
+    auto* menu = static_cast<QMenu*>(QObject::sender());
     menu->clear();
     if (!_vtkWidget->parent())
     {
         QAction* action = new QAction("Quit presentation mode", menu);
-        connect(action, SIGNAL(triggered()), this, SLOT(quitPresentationMode()));
+        connect(action, SIGNAL(triggered()), this,
+                SLOT(quitPresentationMode()));
         action->setShortcutContext(Qt::WidgetShortcut);
         action->setShortcut(QKeySequence(Qt::Key_Escape));
         menu->addAction(action);

@@ -22,7 +22,7 @@ AddLayerToMeshDialog::AddLayerToMeshDialog(QDialog* parent)
 {
     setupUi(this);
 
-    StrictDoubleValidator* thickness_validator = new StrictDoubleValidator(0, 1000000, 7, this);
+    auto* thickness_validator = new StrictDoubleValidator(0, 1000000, 7, this);
     this->thicknessEdit->setValidator (thickness_validator);
 }
 

@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
     vtkOutputWindow::SetInstance(myOutputWindow);
 
     LOGOG_INITIALIZE();
-    logog::Cout* logogCout = new logog::Cout;
-    BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
+    auto* logogCout = new logog::Cout;
+    auto* formatter = new BaseLib::LogogSimpleFormatter;
     logogCout->SetFormatter(*formatter);
     QApplication a(argc, argv);
     QApplication::setApplicationName("OpenGeoSys - Data Explorer");

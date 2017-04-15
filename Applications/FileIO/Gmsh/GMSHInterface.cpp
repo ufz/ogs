@@ -93,9 +93,8 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         _keep_preprocessed_geometry = true;
     }
 
-    std::vector<GeoLib::Point*>* merged_pnts(
-        const_cast<std::vector<GeoLib::Point*>*>(
-            _geo_objs.getPointVec(_gmsh_geo_name)));
+    auto* merged_pnts(const_cast<std::vector<GeoLib::Point*>*>(
+        _geo_objs.getPointVec(_gmsh_geo_name)));
     if (! merged_pnts) {
         ERR("GMSHInterface::writeGMSHInputFile(): Did not found any points.");
         return 2;

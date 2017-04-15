@@ -61,19 +61,20 @@ VtkVisPointSetItem::VtkVisPointSetItem(
     : VtkVisPipelineItem(algorithm, parentItem, data), _mapper(nullptr),
     _transformFilter(nullptr), _onPointData(true), _activeArrayName("")
 {
-    VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
+    auto* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
     if (parentItem->parentItem())
     {
-        // special case if parent is image but child is not (e.g. Image2BarChartFilter)
+        // special case if parent is image but child is not (e.g.
+        // Image2BarChartFilter)
         if (dynamic_cast<vtkImageAlgorithm*>(visParentItem->algorithm()))
-            _algorithm->SetInputConnection(visParentItem->algorithm()->GetOutputPort());
+            _algorithm->SetInputConnection(
+                visParentItem->algorithm()->GetOutputPort());
         else
         {
-            VtkVisPointSetItem* pointSetItem =
-                    dynamic_cast<VtkVisPointSetItem*>(parentItem);
+            auto* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(parentItem);
             if (pointSetItem)
                 _algorithm->SetInputConnection(
-                        pointSetItem->transformFilter()->GetOutputPort());
+                    pointSetItem->transformFilter()->GetOutputPort());
         }
     }
 }
@@ -120,7 +121,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 
     // Determine the right pre-set properties
     // Order is: _algorithm, _compositeFilter, create a new one with props copied from parent
-    VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
+    auto* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
     if (!vtkProps)
     {
         vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_compositeFilter);
@@ -128,22 +129,28 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
         // Copy properties from parent or create a new VtkAlgorithmProperties
         if (!vtkProps)
         {
-            VtkVisPipelineItem* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
+            auto* parentItem =
+                dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
             while (parentItem)
             {
                 VtkAlgorithmProperties* parentProps = nullptr;
-                if(dynamic_cast<VtkVisPointSetItem*>(parentItem))
-                    parentProps = dynamic_cast<VtkVisPointSetItem*>(parentItem)->getVtkProperties();
+                if (dynamic_cast<VtkVisPointSetItem*>(parentItem))
+                    parentProps = dynamic_cast<VtkVisPointSetItem*>(parentItem)
+                                      ->getVtkProperties();
                 if (parentProps)
                 {
-                    vtkProps = new VtkAlgorithmProperties(); // TODO memory leak?
-                    vtkProps->SetScalarVisibility(parentProps->GetScalarVisibility());
+                    vtkProps =
+                        new VtkAlgorithmProperties();  // TODO memory leak?
+                    vtkProps->SetScalarVisibility(
+                        parentProps->GetScalarVisibility());
                     vtkProps->SetTexture(parentProps->GetTexture());
-                    vtkProps->SetActiveAttribute(parentProps->GetActiveAttribute());
+                    vtkProps->SetActiveAttribute(
+                        parentProps->GetActiveAttribute());
                     parentItem = nullptr;
                 }
                 else
-                    parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
+                    parentItem = dynamic_cast<VtkVisPipelineItem*>(
+                        parentItem->parentItem());
             }
 
             // Has no parents
@@ -198,7 +205,7 @@ void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
     QObject::connect(vtkProps, SIGNAL(ScalarVisibilityChanged(bool)),
                      _mapper, SLOT(SetScalarVisibility(bool)));
 
-    vtkActor* actor = dynamic_cast<vtkActor*>(_actor);
+    auto* actor = dynamic_cast<vtkActor*>(_actor);
     if (actor)
     {
         if (vtkProps->GetTexture() != nullptr)
@@ -221,7 +228,7 @@ void VtkVisPointSetItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
 {
     std::string file_name_cpy(filename);
-    vtkPolyDataAlgorithm* algPD = dynamic_cast<vtkPolyDataAlgorithm*>(algorithm);
+    auto* algPD = dynamic_cast<vtkPolyDataAlgorithm*>(algorithm);
     if (algPD)
     {
         vtkSmartPointer<vtkXMLPolyDataWriter> pdWriter =
@@ -233,7 +240,7 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
         return pdWriter->Write();
     }
 
-    vtkUnstructuredGridAlgorithm* algUG = dynamic_cast<vtkUnstructuredGridAlgorithm*>(algorithm);
+    auto* algUG = dynamic_cast<vtkUnstructuredGridAlgorithm*>(algorithm);
     if (algUG)
     {
         vtkSmartPointer<vtkXMLUnstructuredGridWriter> ugWriter =
@@ -300,7 +307,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
     _mapper->ScalarVisibilityOn();
     _mapper->UseLookupTableScalarRangeOn();
 
-    QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
+    auto* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
     if (mapper)
     {
         // Create a default color table when there is no lookup table for this attribute
@@ -340,7 +347,7 @@ void VtkVisPointSetItem::setScale(double x, double y, double z) const
 {
     if (this->transformFilter())
     {
-        vtkTransform* transform =
+        auto* transform =
             static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
         double* trans = transform->GetPosition();
         transform->Identity();
@@ -354,7 +361,7 @@ void VtkVisPointSetItem::setTranslation(double x, double y, double z) const
 {
     if (this->transformFilter())
     {
-        vtkTransform* transform =
+        auto* transform =
             static_cast<vtkTransform*>(this->_transformFilter->GetTransform());
         double* scale = transform->GetScale();
         transform->Identity();

@@ -38,7 +38,7 @@ public:
     MeshLib::Hex* createMeshElement()
     {
         // cubic
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
         nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0);
         nodes[2] = new MeshLib::Node(1.0, 1.0, 0.0);

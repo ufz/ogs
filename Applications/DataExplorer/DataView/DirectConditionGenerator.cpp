@@ -127,7 +127,7 @@ int DirectConditionGenerator::writeToFile(const std::string &name) const
 
     if (out)
     {
-        for (std::vector< std::pair<std::size_t,double> >::const_iterator it = _direct_values.begin(); it != _direct_values.end(); ++it)
+        for (auto it = _direct_values.begin(); it != _direct_values.end(); ++it)
             out << it->first << "\t" << it->second << "\n";
 
         out.close();

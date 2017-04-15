@@ -54,7 +54,8 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
      ASSERT_GE(half_box_size, max_pnt[1]) << "coordinate 1 of max_pnt is greater than " << half_box_size;
      ASSERT_GE(half_box_size, max_pnt[2]) << "coordinate 2 of max_pnt is greater than " << half_box_size;
 
-     for (std::list<GeoLib::Point*>::iterator it(pnts_list.begin()); it != pnts_list.end(); it++) {
+     for (auto it(pnts_list.begin()); it != pnts_list.end(); it++)
+     {
          delete *it;
      }
 }
@@ -122,7 +123,8 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPointsInAVector)
      ASSERT_GE(half_box_size, max_pnt[1]) << "coordinate 1 of max_pnt is greater than " << half_box_size;
      ASSERT_GE(half_box_size, max_pnt[2]) << "coordinate 2 of max_pnt is greater than " << half_box_size;
 
-     for (std::vector<GeoLib::Point*>::iterator it(pnts.begin()); it != pnts.end(); it++) {
+     for (auto it(pnts.begin()); it != pnts.end(); it++)
+     {
          delete *it;
      }
 }
@@ -170,9 +172,9 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
      double half_box_size_x(box_size_x/2);
      double half_box_size_y(box_size_y/2);
      double half_box_size_z(box_size_z/2);
-     int minus_half_box_size_x(static_cast<int>(-half_box_size_x));
-     int minus_half_box_size_y(static_cast<int>(-half_box_size_y));
-     int minus_half_box_size_z(static_cast<int>(-half_box_size_z));
+     auto minus_half_box_size_x(static_cast<int>(-half_box_size_x));
+     auto minus_half_box_size_y(static_cast<int>(-half_box_size_y));
+     auto minus_half_box_size_z(static_cast<int>(-half_box_size_z));
 
      // fill list with points
      std::list<GeoLib::Point> pnts;

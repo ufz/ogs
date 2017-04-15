@@ -42,7 +42,7 @@ class TestHex8
     // element shape identical to that in natural coordinates (see ShapeHex8.h)
     MeshLib::Hex* createNaturalShape()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(-1.0, -1.0, -1.0);
         nodes[1] = new MeshLib::Node( 1.0, -1.0, -1.0);
         nodes[2] = new MeshLib::Node( 1.0,  1.0, -1.0);
@@ -58,7 +58,7 @@ class TestHex8
     MeshLib::Hex* createIrregularShape()
     {
         // two times longer in z direction than the natural
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(-1.0, -1.0, -1.0);
         nodes[1] = new MeshLib::Node( 1.0, -1.0, -1.0);
         nodes[2] = new MeshLib::Node( 1.0,  1.0, -1.0);
@@ -73,7 +73,7 @@ class TestHex8
     // invalid case: clock wise node ordering
     MeshLib::Hex* createClockWise()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(-1.0, -1.0, -1.0);
         nodes[3] = new MeshLib::Node( 1.0, -1.0, -1.0);
         nodes[2] = new MeshLib::Node( 1.0,  1.0, -1.0);
@@ -88,7 +88,7 @@ class TestHex8
     // invalid case: zero volume
     MeshLib::Hex* createZeroVolume()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(-1.0, -1.0,  1.0);
         nodes[1] = new MeshLib::Node( 1.0, -1.0,  1.0);
         nodes[2] = new MeshLib::Node( 1.0,  1.0,  1.0);

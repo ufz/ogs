@@ -31,7 +31,7 @@ namespace MeshLib
 {
 vtkStandardNewMacro(VtkMappedMeshSource)
 
-void VtkMappedMeshSource::PrintSelf(std::ostream& os, vtkIndent indent)
+    void VtkMappedMeshSource::PrintSelf(std::ostream& os, vtkIndent indent)
 {
     this->Superclass::PrintSelf(os, indent);
     os << indent << "Mesh: " << (_mesh ? _mesh->getName() : "(none)") << endl;
@@ -130,8 +130,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
     std::vector<std::string> const& propertyNames =
         properties.getPropertyVectorNames();
 
-    for (std::vector<std::string>::const_iterator name = propertyNames.cbegin();
-         name != propertyNames.cend();
+    for (auto name = propertyNames.cbegin(); name != propertyNames.cend();
          ++name)
     {
         if (addProperty<double>(properties, *name))

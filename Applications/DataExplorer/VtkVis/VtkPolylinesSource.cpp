@@ -54,8 +54,7 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
     if (_polylines->size() == 0)
         return;
 
-    for (std::vector<GeoLib::Polyline*>::const_iterator it = _polylines->begin();
-         it != _polylines->end(); ++it)
+    for (auto it = _polylines->begin(); it != _polylines->end(); ++it)
     {
         os << indent << "== Polyline ==" << "\n";
         int numPoints = (*it)->getNumberOfPoints();

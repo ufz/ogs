@@ -22,7 +22,7 @@ const Element* LinearEdgeReturn::getEdge(const Element* e, unsigned i)
 {
     if (i < e->getNumberOfEdges())
     {
-        Node** nodes = new Node*[2];
+        auto** nodes = new Node*[2];
         nodes[0] = const_cast<Node*>(e->getEdgeNode(i,0));
         nodes[1] = const_cast<Node*>(e->getEdgeNode(i,1));
         return new Line(nodes);
@@ -35,7 +35,7 @@ const Element* QuadraticEdgeReturn::getEdge(const Element* e, unsigned i)
 {
     if (i < e->getNumberOfEdges())
     {
-        Node** nodes = new Node*[3];
+        auto** nodes = new Node*[3];
         nodes[0] = const_cast<Node*>(e->getEdgeNode(i,0));
         nodes[1] = const_cast<Node*>(e->getEdgeNode(i,1));
         nodes[2] = const_cast<Node*>(e->getEdgeNode(i,2));

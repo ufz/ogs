@@ -80,7 +80,7 @@ bool ColorTableModel::buildTable(const std::map<std::string, DataHolderLib::Colo
     int count = 0;
     beginInsertRows(QModelIndex(), 0, colorLookupTable.size() - 1);
 
-    for (std::map<std::string, DataHolderLib::Color*>::const_iterator it = colorLookupTable.begin();
+    for (auto it = colorLookupTable.begin();
          it != colorLookupTable.end(); ++it)
     {
         QColor color((*(it->second))[0], (*(it->second))[1], (*(it->second))[2]);

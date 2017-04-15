@@ -48,7 +48,7 @@ const Element* PrismRule6::getFace(const Element* e, unsigned i)
     if (i < n_faces)
     {
         unsigned nFaceNodes(PrismRule6::n_face_nodes[i]);
-        Node** nodes = new Node*[nFaceNodes];
+        auto** nodes = new Node*[nFaceNodes];
         for (unsigned j=0; j<nFaceNodes; j++)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 
@@ -102,7 +102,7 @@ ElementErrorCode PrismRule6::validate(const Element* e)
 
     for (unsigned i=1; i<4; ++i)
     {
-        const MeshLib::Quad* quad (dynamic_cast<const MeshLib::Quad*>(e->getFace(i)));
+        const auto* quad(dynamic_cast<const MeshLib::Quad*>(e->getFace(i)));
         if (quad)
             error_code |= quad->validate();
         else

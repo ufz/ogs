@@ -29,7 +29,7 @@ namespace IO
 
 std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::string &fileName)
 {
-    std::vector<GeoLib::Point*> *stations = new std::vector<GeoLib::Point*>;
+    auto* stations = new std::vector<GeoLib::Point*>;
     std::ifstream in(fileName.c_str());
     if (in.fail())
     {
@@ -41,7 +41,7 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
     in.seekg(0, std::ios::end);
     std::size_t length = in.tellg();
     in.seekg(0, std::ios::beg);
-    char* buffer = new char[length+1];
+    auto* buffer = new char[length + 1];
     in.read(buffer, length);
     buffer[in.gcount()] = '\0';
     in.close();
@@ -162,7 +162,7 @@ void RapidStnInterface::readStations(const rapidxml::xml_node<>* station_root, s
 
             if (std::string(station_node->name()).compare("station") == 0)
             {
-                GeoLib::Station* s = new GeoLib::Station(
+                auto* s = new GeoLib::Station(
                     strtod(station_node->first_attribute("x")->value(),
                            nullptr),
                     strtod(station_node->first_attribute("y")->value(),

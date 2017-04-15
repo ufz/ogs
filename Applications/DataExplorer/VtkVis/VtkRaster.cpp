@@ -67,7 +67,7 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, GeoLib::RasterHeader header)
 {
     const unsigned length = header.n_rows*header.n_cols;
-    float* data = new float[length*2];
+    auto* data = new float[length * 2];
     float max_val = *std::max_element(data_array, data_array+length);
     for (unsigned j=0; j<length; ++j)
     {
@@ -139,8 +139,8 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
             }
 
             // read pixel values
-            uint32* pixVal =
-                    (uint32*) _TIFFmalloc(imgWidth * imgHeight * sizeof (uint32));
+            auto* pixVal =
+                (uint32*)_TIFFmalloc(imgWidth * imgHeight * sizeof(uint32));
             if ((imgWidth > 0) && (imgHeight > 0))
                 if (!TIFFReadRGBAImage(tiff, imgWidth, imgHeight, pixVal, 0))
                 {
@@ -162,8 +162,8 @@ vtkImageImport* VtkRaster::loadImageFromTIFF(const std::string &fileName,
                                             &cmap_green,
                                             &cmap_blue);
 
-            float* data = new float[imgWidth * imgHeight * 4];
-            int* pxl (new int[4]);
+            auto* data = new float[imgWidth * imgHeight * 4];
+            auto* pxl(new int[4]);
             for (int j = 0; j < imgHeight; ++j)
             {
                 int lineindex = j * imgWidth;

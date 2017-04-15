@@ -145,17 +145,12 @@ TEST_F(MeshLibProperties, AddDoublePointerProperties)
     std::vector<std::size_t> prop_item2group_mapping(n_items);
     // create simple mat_group to index mapping
     for (std::size_t j(0); j<n_prop_val_groups; j++) {
-        std::size_t const lower(
-            static_cast<std::size_t>(
-                (static_cast<double>(j)/n_prop_val_groups)*n_items
-            )
-        );
-        std::size_t const upper(
-            static_cast<std::size_t>(
-                (static_cast<double>(j+1)/n_prop_val_groups)*n_items
-            )
-        );
-        for (std::size_t k(lower); k<upper; k++) {
+        auto const lower(static_cast<std::size_t>(
+            (static_cast<double>(j) / n_prop_val_groups) * n_items));
+        auto const upper(static_cast<std::size_t>(
+            (static_cast<double>(j + 1) / n_prop_val_groups) * n_items));
+        for (std::size_t k(lower); k < upper; k++)
+        {
             prop_item2group_mapping[k] = j;
         }
     }
@@ -172,19 +167,14 @@ TEST_F(MeshLibProperties, AddDoublePointerProperties)
     }
     // check mapping to values
     for (std::size_t i(0); i<n_prop_val_groups; i++) {
-        std::size_t const lower(
-            static_cast<std::size_t>(
-                (static_cast<double>(i)/n_prop_val_groups)*n_items
-            )
-        );
-        std::size_t const upper(
-            static_cast<std::size_t>(
-                (static_cast<double>(i+1)/n_prop_val_groups)*n_items
-            )
-        );
-        for (std::size_t k(lower); k<upper; k++) {
-            ASSERT_NEAR(static_cast<double>(i+1), *(*group_properties)[k],
-                std::numeric_limits<double>::epsilon());
+        auto const lower(static_cast<std::size_t>(
+            (static_cast<double>(i) / n_prop_val_groups) * n_items));
+        auto const upper(static_cast<std::size_t>(
+            (static_cast<double>(i + 1) / n_prop_val_groups) * n_items));
+        for (std::size_t k(lower); k < upper; k++)
+        {
+            ASSERT_NEAR(static_cast<double>(i + 1), *(*group_properties)[k],
+                        std::numeric_limits<double>::epsilon());
         }
     }
 
@@ -213,17 +203,12 @@ TEST_F(MeshLibProperties, AddArrayPointerProperties)
     std::vector<std::size_t> prop_item2group_mapping(n_items);
     // create simple mat_group to index mapping
     for (std::size_t j(0); j<n_prop_val_groups; j++) {
-        std::size_t const lower(
-            static_cast<std::size_t>(
-                (static_cast<double>(j)/n_prop_val_groups)*n_items
-            )
-        );
-        std::size_t const upper(
-            static_cast<std::size_t>(
-                (static_cast<double>(j+1)/n_prop_val_groups)*n_items
-            )
-        );
-        for (std::size_t k(lower); k<upper; k++) {
+        auto const lower(static_cast<std::size_t>(
+            (static_cast<double>(j) / n_prop_val_groups) * n_items));
+        auto const upper(static_cast<std::size_t>(
+            (static_cast<double>(j + 1) / n_prop_val_groups) * n_items));
+        for (std::size_t k(lower); k < upper; k++)
+        {
             prop_item2group_mapping[k] = j;
         }
     }
@@ -244,23 +229,18 @@ TEST_F(MeshLibProperties, AddArrayPointerProperties)
     }
     // check the mapping to values
     for (std::size_t i(0); i<n_prop_val_groups; i++) {
-        std::size_t const lower(
-            static_cast<std::size_t>(
-                (static_cast<double>(i)/n_prop_val_groups)*n_items
-            )
-        );
-        std::size_t const upper(
-            static_cast<std::size_t>(
-                (static_cast<double>(i+1)/n_prop_val_groups)*n_items
-            )
-        );
-        for (std::size_t k(lower); k<upper; k++) {
+        auto const lower(static_cast<std::size_t>(
+            (static_cast<double>(i) / n_prop_val_groups) * n_items));
+        auto const upper(static_cast<std::size_t>(
+            (static_cast<double>(i + 1) / n_prop_val_groups) * n_items));
+        for (std::size_t k(lower); k < upper; k++)
+        {
             ASSERT_NEAR(static_cast<double>(i), (*(*group_prop_vec)[k])[0],
-                std::numeric_limits<double>::epsilon());
-            ASSERT_NEAR(static_cast<double>(i+1), (*(*group_prop_vec)[k])[1],
-                std::numeric_limits<double>::epsilon());
-            ASSERT_NEAR(static_cast<double>(i+2), (*(*group_prop_vec)[k])[2],
-                std::numeric_limits<double>::epsilon());
+                        std::numeric_limits<double>::epsilon());
+            ASSERT_NEAR(static_cast<double>(i + 1), (*(*group_prop_vec)[k])[1],
+                        std::numeric_limits<double>::epsilon());
+            ASSERT_NEAR(static_cast<double>(i + 2), (*(*group_prop_vec)[k])[2],
+                        std::numeric_limits<double>::epsilon());
         }
     }
 
@@ -297,17 +277,12 @@ TEST_F(MeshLibProperties, AddVariousDifferentProperties)
     std::vector<std::size_t> prop_item2group_mapping(n_items);
     // create simple mat_group to index mapping
     for (std::size_t j(0); j<n_prop_val_groups; j++) {
-        std::size_t const lower(
-            static_cast<std::size_t>(
-                (static_cast<double>(j)/n_prop_val_groups)*n_items
-            )
-        );
-        std::size_t const upper(
-            static_cast<std::size_t>(
-                (static_cast<double>(j+1)/n_prop_val_groups)*n_items
-            )
-        );
-        for (std::size_t k(lower); k<upper; k++) {
+        auto const lower(static_cast<std::size_t>(
+            (static_cast<double>(j) / n_prop_val_groups) * n_items));
+        auto const upper(static_cast<std::size_t>(
+            (static_cast<double>(j + 1) / n_prop_val_groups) * n_items));
+        for (std::size_t k(lower); k < upper; k++)
+        {
             prop_item2group_mapping[k] = j;
         }
     }
@@ -436,17 +411,12 @@ TEST_F(MeshLibProperties, CopyConstructor)
     std::vector<std::size_t> prop_item2group_mapping(n_items);
     // create simple mat_group to index mapping
     for (std::size_t j(0); j<n_prop_val_groups; j++) {
-        std::size_t const lower(
-            static_cast<std::size_t>(
-                (static_cast<double>(j)/n_prop_val_groups)*n_items
-            )
-        );
-        std::size_t const upper(
-            static_cast<std::size_t>(
-                (static_cast<double>(j+1)/n_prop_val_groups)*n_items
-            )
-        );
-        for (std::size_t k(lower); k<upper; k++) {
+        auto const lower(static_cast<std::size_t>(
+            (static_cast<double>(j) / n_prop_val_groups) * n_items));
+        auto const upper(static_cast<std::size_t>(
+            (static_cast<double>(j + 1) / n_prop_val_groups) * n_items));
+        for (std::size_t k(lower); k < upper; k++)
+        {
             prop_item2group_mapping[k] = j;
         }
     }

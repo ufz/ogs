@@ -120,7 +120,7 @@ FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::operator* (FP_TYPE* const& x) const
 template<typename FP_TYPE, typename IDX_TYPE>
 FP_TYPE* DenseMatrix<FP_TYPE, IDX_TYPE>::operator* (FP_TYPE const* const& x) const
 {
-    FP_TYPE *y(new FP_TYPE[_n_rows]);
+    auto* y(new FP_TYPE[_n_rows]);
     for (IDX_TYPE i(0); i < _n_rows; i++) {
         y[i] = 0.0;
         for (IDX_TYPE j(0); j < _n_cols; j++) {

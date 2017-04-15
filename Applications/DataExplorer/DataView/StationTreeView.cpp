@@ -50,7 +50,8 @@ void StationTreeView::selectionChanged( const QItemSelection &selected,
         const QModelIndex idx = *(selected.indexes().begin());
         const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
 
-        const ModelTreeItem* list_item = dynamic_cast<const ModelTreeItem*>(tree_item->parentItem());
+        const auto* list_item =
+            dynamic_cast<const ModelTreeItem*>(tree_item->parentItem());
         if (list_item->getItem())
         {
             if (list_item)
@@ -85,7 +86,7 @@ void StationTreeView::selectionChangedFromOutside( const QItemSelection &selecte
 void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
 {
     QModelIndex index = this->selectionModel()->currentIndex();
-    ModelTreeItem* item = static_cast<ModelTreeItem*>(index.internalPointer());
+    auto* item = static_cast<ModelTreeItem*>(index.internalPointer());
 
     if (!item)  // Otherwise sometimes it crashes when (unmotivated ;-) ) clicking in a treeview
         return;
@@ -147,8 +148,11 @@ void StationTreeView::displayStratigraphy()
     std::map<std::string, DataHolderLib::Color> colorLookupTable =
         static_cast<VtkStationSource*>(static_cast<StationTreeModel*>
             (model())->vtkSource(temp_name.toStdString()))->getColorLookupTable();
-    StratWindow* stratView = new StratWindow(static_cast<GeoLib::StationBorehole*>
-        (static_cast<StationTreeModel*>(model())->stationFromIndex(index,temp_name)), &colorLookupTable);
+    auto* stratView = new StratWindow(
+        static_cast<GeoLib::StationBorehole*>(
+            static_cast<StationTreeModel*>(model())->stationFromIndex(
+                index, temp_name)),
+        &colorLookupTable);
     stratView->setAttribute(Qt::WA_DeleteOnClose); // this fixes the memory leak shown by cppcheck
     stratView->show();
 }
@@ -252,8 +256,9 @@ void StationTreeView::writeStratigraphiesAsImages(QString listName)
 
         for (std::size_t i = 0; i < stations.size(); i++)
         {
-            StratWindow* stratView = new StratWindow(
-                static_cast<GeoLib::StationBorehole*>(stations[i]), &colorLookupTable);
+            auto* stratView = new StratWindow(
+                static_cast<GeoLib::StationBorehole*>(stations[i]),
+                &colorLookupTable);
             stratView->setAttribute(Qt::WA_DeleteOnClose);
             stratView->show();
             stratView->stationView->saveAsImage(QString::fromStdString(

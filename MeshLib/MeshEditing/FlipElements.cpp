@@ -25,7 +25,7 @@ std::unique_ptr<MeshLib::Element> createFlippedElement(MeshLib::Element const& e
         return nullptr;
 
     unsigned const n_nodes (elem.getNumberOfNodes());
-    MeshLib::Node** elem_nodes = new MeshLib::Node*[n_nodes];
+    auto** elem_nodes = new MeshLib::Node*[n_nodes];
     for (unsigned i=0; i<n_nodes; ++i)
         elem_nodes[i] = nodes[elem.getNode(i)->getID()];
     std::swap(elem_nodes[0], elem_nodes[1]);

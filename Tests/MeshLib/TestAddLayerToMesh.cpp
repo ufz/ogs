@@ -27,7 +27,8 @@ namespace AddLayerValidation
     {
         int const reduce_tests = (testNodeOrder) ? 0 : 1;
 
-        std::size_t const nErrorFlags (static_cast<std::size_t>(ElementErrorFlag::MaxValue));
+        auto const nErrorFlags(
+            static_cast<std::size_t>(ElementErrorFlag::MaxValue));
         ElementErrorFlag const flags[nErrorFlags] = {ElementErrorFlag::ZeroVolume,
         ElementErrorFlag::NonCoplanar, ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder};
         std::vector<ElementErrorCode> const codes (MeshLib::MeshValidation::testElementGeometry(mesh));

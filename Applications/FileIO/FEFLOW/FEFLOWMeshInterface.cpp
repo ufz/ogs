@@ -351,7 +351,7 @@ std::vector<std::size_t> FEFLOWMeshInterface::getIndexList(
         else if (is_range)
         {
             const std::size_t start = vec_node_IDs.back();
-            const std::size_t end = BaseLib::str2number<std::size_t>(str);
+            const auto end = BaseLib::str2number<std::size_t>(str);
             for (std::size_t i = start + 1; i < end + 1; i++)
                 vec_node_IDs.push_back(i);
             is_range = false;
@@ -477,7 +477,7 @@ MeshLib::Element* FEFLOWMeshInterface::readElement(
     unsigned idx[8];
     for (std::size_t i = 0; i < n_nodes_of_element; ++i)
         ss >> idx[i];
-    MeshLib::Node** ele_nodes = new MeshLib::Node*[n_nodes_of_element];
+    auto** ele_nodes = new MeshLib::Node*[n_nodes_of_element];
 
     switch (elem_type)
     {
@@ -518,7 +518,7 @@ MeshLib::Element* FEFLOWMeshInterface::readElement(
     unsigned idx[8];
     for (std::size_t i = 0; i < fem_dim.n_nodes_of_element; ++i)
         ss >> idx[i];
-    MeshLib::Node** ele_nodes = new MeshLib::Node*[fem_dim.n_nodes_of_element];
+    auto** ele_nodes = new MeshLib::Node*[fem_dim.n_nodes_of_element];
 
     switch (elem_type)
     {

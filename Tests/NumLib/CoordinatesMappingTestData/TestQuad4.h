@@ -42,7 +42,7 @@ class TestQuad4
     // element shape identical to that in natural coordinates
     MeshLib::Quad* createNaturalShape()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node( 1.0,  1.0,  0.0);
         nodes[1] = new MeshLib::Node(-1.0,  1.0,  0.0);
         nodes[2] = new MeshLib::Node(-1.0, -1.0,  0.0);
@@ -53,7 +53,7 @@ class TestQuad4
     // element having irregular or skew shape
     MeshLib::Quad* createIrregularShape()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(-0.5, -0.5,  0.0);
         nodes[1] = new MeshLib::Node( 0.6, -0.6,  0.0);
         nodes[2] = new MeshLib::Node( 0.5,  0.4,  0.0);
@@ -64,7 +64,7 @@ class TestQuad4
     // invalid case: clock wise node ordering
     MeshLib::Quad* createClockWise()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node( 1.0,  1.0,  0.0);
         nodes[3] = new MeshLib::Node(-1.0,  1.0,  0.0);
         nodes[2] = new MeshLib::Node(-1.0, -1.0,  0.0);
@@ -75,7 +75,7 @@ class TestQuad4
     // invalid case: zero area
     MeshLib::Quad* createZeroVolume()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node( 1.0,  1.0,  0.0);
         nodes[1] = new MeshLib::Node(-1.0,  1.0,  0.0);
         nodes[2] = new MeshLib::Node(-1.0,  1.0,  0.0);

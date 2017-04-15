@@ -162,7 +162,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
         fields.takeFirst();
         for (int i = 0; i < nLists; i++)
         {
-            DiagramList* l = new DiagramList;
+            auto* l = new DiagramList;
             l->setName(fields.takeFirst());
             //value = strtod(BaseLib::replaceStringreplaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
             //l->setStartDate(startDate);
@@ -256,7 +256,7 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 
     for (int i = 0; i < nLists; i++)
     {
-        DiagramList* l = new DiagramList;
+        auto* l = new DiagramList;
         l->setName(QString::fromStdString(SensorData::convertSensorDataType2String(time_series_names[i])));
         l->setXLabel("Time");
         lists.push_back(l);

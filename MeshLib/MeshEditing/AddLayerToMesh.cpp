@@ -53,7 +53,7 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
         return nullptr;
 
     const unsigned nElemNodes(sfc_elem.getNumberOfBaseNodes());
-    MeshLib::Node** new_nodes = new MeshLib::Node*[2*nElemNodes];
+    auto** new_nodes = new MeshLib::Node*[2 * nElemNodes];
 
     for (unsigned j=0; j<nElemNodes; ++j)
     {

@@ -54,9 +54,10 @@ VtkVisPipelineItem::VtkVisPipelineItem(
       _compositeFilter(nullptr),
       _vtkProps(nullptr)
 {
-    VtkVisPipelineItem* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
+    auto* visParentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem);
     if (parentItem->parentItem())
-        _algorithm->SetInputConnection(visParentItem->algorithm()->GetOutputPort());
+        _algorithm->SetInputConnection(
+            visParentItem->algorithm()->GetOutputPort());
 }
 
 VtkVisPipelineItem::VtkVisPipelineItem(

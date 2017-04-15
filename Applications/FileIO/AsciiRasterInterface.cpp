@@ -47,7 +47,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
     // header information
     GeoLib::RasterHeader header;
     if (readASCHeader(in, header)) {
-        double* values = new double[header.n_cols*header.n_rows];
+        auto* values = new double[header.n_cols * header.n_rows];
         std::string s;
         // read the data into the double-array
         for (std::size_t j(0); j < header.n_rows; ++j) {
@@ -132,7 +132,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
     if (readSurferHeader(in, header, min, max))
     {
         const double no_data_val (min-1);
-        double* values = new double[header.n_cols*header.n_rows];
+        auto* values = new double[header.n_cols * header.n_rows];
         std::string s;
         // read the data into the double-array
         for (std::size_t j(0); j < header.n_rows; ++j)

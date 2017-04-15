@@ -106,8 +106,8 @@ protected:
 
 TEST_F(CreatePolygonTreesTest, P0AndP1)
 {
-    GeoLib::SimplePolygonTree *pt0(new GeoLib::SimplePolygonTree(_p0, nullptr));
-    GeoLib::SimplePolygonTree *pt1(new GeoLib::SimplePolygonTree(_p1, nullptr));
+    auto* pt0(new GeoLib::SimplePolygonTree(_p0, nullptr));
+    auto* pt1(new GeoLib::SimplePolygonTree(_p1, nullptr));
 
     std::list<GeoLib::SimplePolygonTree*> pt_list;
     pt_list.push_back(pt0);
@@ -121,9 +121,9 @@ TEST_F(CreatePolygonTreesTest, P0AndP1)
 
 TEST_F(CreatePolygonTreesTest, P0AndP1AndP2)
 {
-    GeoLib::SimplePolygonTree *pt0(new GeoLib::SimplePolygonTree(_p0, nullptr));
-    GeoLib::SimplePolygonTree *pt1(new GeoLib::SimplePolygonTree(_p1, nullptr));
-    GeoLib::SimplePolygonTree *pt2(new GeoLib::SimplePolygonTree(_p2, nullptr));
+    auto* pt0(new GeoLib::SimplePolygonTree(_p0, nullptr));
+    auto* pt1(new GeoLib::SimplePolygonTree(_p1, nullptr));
+    auto* pt2(new GeoLib::SimplePolygonTree(_p2, nullptr));
 
     std::list<GeoLib::SimplePolygonTree*> pt_list;
     pt_list.push_back(pt0);
@@ -146,10 +146,10 @@ TEST_F(CreatePolygonTreesTest, P0AndP1AndP2)
 
 TEST_F(CreatePolygonTreesTest, P0AndP1AndP2AndP3)
 {
-    GeoLib::SimplePolygonTree *pt0(new GeoLib::SimplePolygonTree(_p0, nullptr));
-    GeoLib::SimplePolygonTree *pt1(new GeoLib::SimplePolygonTree(_p1, nullptr));
-    GeoLib::SimplePolygonTree *pt2(new GeoLib::SimplePolygonTree(_p2, nullptr));
-    GeoLib::SimplePolygonTree *pt3(new GeoLib::SimplePolygonTree(_p3, nullptr));
+    auto* pt0(new GeoLib::SimplePolygonTree(_p0, nullptr));
+    auto* pt1(new GeoLib::SimplePolygonTree(_p1, nullptr));
+    auto* pt2(new GeoLib::SimplePolygonTree(_p2, nullptr));
+    auto* pt3(new GeoLib::SimplePolygonTree(_p3, nullptr));
 
     std::list<GeoLib::SimplePolygonTree*> pt_list;
     pt_list.push_back(pt0);

@@ -57,7 +57,7 @@ bool CheckboxDelegate::editorEvent(QEvent* event, QAbstractItemModel* model,
     if ((event->type() == QEvent::MouseButtonRelease) ||
         (event->type() == QEvent::MouseButtonDblClick))
     {
-        QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+        auto* mouse_event = static_cast<QMouseEvent*>(event);
         if (mouse_event->button() != Qt::LeftButton ||
             !checkboxRect(option).contains(mouse_event->pos()))
             return false;

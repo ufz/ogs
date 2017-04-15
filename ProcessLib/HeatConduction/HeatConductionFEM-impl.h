@@ -121,7 +121,7 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
                 dynamic_cast<const ProcessLib::LiquidFlow::LiquidFlowProcess*>(
                     &(coupled_process_pair.second)) != nullptr);
 
-            ProcessLib::LiquidFlow::LiquidFlowProcess const& pcs =
+            auto const& pcs =
                 static_cast<ProcessLib::LiquidFlow::LiquidFlowProcess const&>(
                     coupled_process_pair.second);
             const auto liquid_flow_prop = pcs.getLiquidFlowMaterialProperties();

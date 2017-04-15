@@ -89,7 +89,7 @@ void VtkCompositeColormapToImageFilter::SetUserProperty( QString name, QVariant 
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 
-    vtkImageMapToColors* map = static_cast<vtkImageMapToColors*>(_outputAlgorithm);
+    auto* map = static_cast<vtkImageMapToColors*>(_outputAlgorithm);
     if (name.compare("PassAlphaToOutput") == 0)
         map->SetPassAlphaToOutput(value.toBool());
     else if (name.compare("NumberOfColors") == 0)
@@ -100,7 +100,7 @@ void VtkCompositeColormapToImageFilter::SetUserVectorProperty( QString name, QLi
 {
     VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 
-    vtkImageMapToColors* map = static_cast<vtkImageMapToColors*>(_outputAlgorithm);
+    auto* map = static_cast<vtkImageMapToColors*>(_outputAlgorithm);
     if (name.compare("TableRange") == 0)
         static_cast<vtkLookupTable*>(map->GetLookupTable())->SetTableRange(
                 values[0].toInt(), values[1].toInt());

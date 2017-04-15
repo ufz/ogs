@@ -111,7 +111,7 @@ private:
             return;
         }
         vec->reserve(nTuples*nComponents);
-        T* data_array = static_cast<T*>(array.GetVoidPointer(0));
+        auto* data_array = static_cast<T*>(array.GetVoidPointer(0));
         std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
         return;
     }

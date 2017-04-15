@@ -118,7 +118,7 @@ private:
             {
                 if (!pix_vis[i*imgWidth+j])
                     continue;
-                T val (static_cast<T>(pix_val[i*(imgWidth+1)+j]));
+                auto val(static_cast<T>(pix_val[i * (imgWidth + 1) + j]));
                 if (elem_type == MeshElemType::TRIANGLE)
                 {
                     prop_vec.push_back(val);

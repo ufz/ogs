@@ -103,7 +103,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     for (auto elem = sfc_elements.cbegin(); elem != sfc_elements.cend(); ++elem)
     {
         unsigned const n_elem_nodes ((*elem)->getNumberOfBaseNodes());
-        MeshLib::Node** new_nodes = new MeshLib::Node*[n_elem_nodes];
+        auto** new_nodes = new MeshLib::Node*[n_elem_nodes];
         for (unsigned k(0); k<n_elem_nodes; k++)
             new_nodes[k] = sfc_nodes[node_id_map[(*elem)->getNode(k)->getID()]];
         if ((*elem)->getGeomType() == MeshElemType::TRIANGLE)

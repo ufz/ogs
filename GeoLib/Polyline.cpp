@@ -90,9 +90,9 @@ bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
         }
     }
 
-    std::vector<std::size_t>::difference_type const pos_dt(
+    auto const pos_dt(
         static_cast<std::vector<std::size_t>::difference_type>(pos));
-    std::vector<std::size_t>::iterator it(_ply_pnt_ids.begin() + pos_dt);
+    auto it(_ply_pnt_ids.begin() + pos_dt);
     _ply_pnt_ids.insert(it, pnt_id);
 
     if (_ply_pnt_ids.size() > 1) {
@@ -131,7 +131,7 @@ bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
                 double update_dist(
                         len_seg0 + len_seg1 - (_length[pos] - dist_until_now));
                 _length[pos] = dist_until_now + len_seg0;
-                std::vector<double>::iterator it1(_length.begin() + pos_dt + 1);
+                auto it1(_length.begin() + pos_dt + 1);
                 _length.insert(it1, _length[pos] + len_seg1);
                 for (it1 = _length.begin() + pos_dt + 2; it1 != _length.end();
                      ++it1)
@@ -147,7 +147,7 @@ void Polyline::removePoint(std::size_t pos)
     if (pos >= _ply_pnt_ids.size())
         return;
 
-    std::vector<std::size_t>::difference_type const pos_dt(
+    auto const pos_dt(
         static_cast<std::vector<std::size_t>::difference_type>(pos));
     _ply_pnt_ids.erase(_ply_pnt_ids.begin() + pos_dt);
 
@@ -270,7 +270,7 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
 {
     std::size_t nLines = ply_vec.size();
 
-    Polyline* new_ply = new Polyline(*ply_vec[0]);
+    auto* new_ply = new Polyline(*ply_vec[0]);
     std::vector<GeoLib::Point*> pnt_vec(new_ply->getPointsVec());
 
     std::vector<Polyline*> local_ply_vec;
@@ -281,8 +281,7 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
     {
         bool ply_found(false);
         prox *= prox; // square distance once to save time later
-        for (std::vector<Polyline*>::iterator it = local_ply_vec.begin();
-             it != local_ply_vec.end(); ++it)
+        for (auto it = local_ply_vec.begin(); it != local_ply_vec.end(); ++it)
         {
             if (pnt_vec == (*it)->getPointsVec())
             {
@@ -292,7 +291,7 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
                 if (pointsAreIdentical(pnt_vec, new_ply->getPointID(0),
                                        (*it)->getPointID(0), prox))
                 {
-                    Polyline* tmp = new Polyline((*it)->getPointsVec());
+                    auto* tmp = new Polyline((*it)->getPointsVec());
                     for (std::size_t k = 0; k < nPoints; k++)
                         tmp->addPoint((*it)->getPointID(nPoints - k - 1));
 
@@ -307,7 +306,7 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
                 else if (pointsAreIdentical(pnt_vec, new_ply->getPointID(0),
                                             (*it)->getPointID(nPoints - 1), prox))
                 {
-                    Polyline* tmp = new Polyline(**it);
+                    auto* tmp = new Polyline(**it);
                     std::size_t new_ply_size(new_ply->getNumberOfPoints());
                     for (std::size_t k = 1; k < new_ply_size; k++)
                         tmp->addPoint(new_ply->getPointID(k));

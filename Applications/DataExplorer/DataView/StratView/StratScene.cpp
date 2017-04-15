@@ -85,7 +85,7 @@ void StratScene::addDepthLabels(std::vector<GeoLib::Point*> profile, double offs
 
 QNonScalableGraphicsTextItem* StratScene::addNonScalableText(const QString &text, const QFont &font)
 {
-    QNonScalableGraphicsTextItem* item = new QNonScalableGraphicsTextItem(text);
+    auto* item = new QNonScalableGraphicsTextItem(text);
     item->setFont(font);
     addItem(item);
     return item;
@@ -115,7 +115,7 @@ void StratScene::addSoilNameLabels(std::vector<std::string> soilNames,
 StratBar* StratScene::addStratBar(GeoLib::StationBorehole* station,
                                   std::map<std::string, DataHolderLib::Color>* stratColors)
 {
-    StratBar* b = new StratBar(station, stratColors);
+    auto* b = new StratBar(station, stratColors);
     addItem(b);
     return b;
 }

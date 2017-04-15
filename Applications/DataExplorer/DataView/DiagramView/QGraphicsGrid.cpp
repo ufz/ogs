@@ -167,9 +167,8 @@ void QGraphicsGrid::paint(QPainter* painter,
     /* draw horizontal lines */
     for (int i = 0; i <= _numberOfXCells; ++i)
     {
-        int x =
-                static_cast<int>(_bounds.left() +
-                                 (i * (_bounds.width() - 1) / _numberOfXCells));
+        auto x = static_cast<int>(
+            _bounds.left() + (i * (_bounds.width() - 1) / _numberOfXCells));
 
         if (i > 0 && i < _numberOfXCells)
         {
@@ -191,9 +190,8 @@ void QGraphicsGrid::paint(QPainter* painter,
     /* draw vertical lines */
     for (int j = 0; j <= _numberOfYCells; ++j)
     {
-        int y =
-                static_cast<int>(_bounds.bottom() -
-                                 (j * (_bounds.height() - 1) / _numberOfYCells));
+        auto y = static_cast<int>(
+            _bounds.bottom() - (j * (_bounds.height() - 1) / _numberOfYCells));
 
         if (j > 0 && j < _numberOfYCells)
         {

@@ -54,7 +54,7 @@ VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
     : QTreeView(parent)
 {
     this->setItemsExpandable(false);
-    CheckboxDelegate* checkboxDelegate = new CheckboxDelegate(this);
+    auto* checkboxDelegate = new CheckboxDelegate(this);
     this->setItemDelegateForColumn(1, checkboxDelegate);
     this->header()->setStretchLastSection(false);
     this->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -242,7 +242,7 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
     QModelIndex index = *selected.indexes().begin();
     if (index.isValid())
     {
-        VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(index.internalPointer());
+        auto* item = static_cast<VtkVisPipelineItem*>(index.internalPointer());
         emit actorSelected(item->actor());
         emit itemSelected(item);
         if (item->transformFilter())
@@ -287,7 +287,7 @@ void VtkVisPipelineView::addColorTable()
 
     if (fi.suffix().toLower() == "xml")
     {
-        VtkVisPointSetItem* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(item);
+        auto* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(item);
         if (pointSetItem)
         {
             VtkAlgorithmProperties* props = pointSetItem->getVtkProperties();

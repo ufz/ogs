@@ -51,8 +51,7 @@ void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
     os << indent << "== VtkPointsSource ==" << "\n";
 
     int i = 0;
-    for (std::vector<GeoLib::Point*>::const_iterator it = _points->begin();
-         it != _points->end(); ++it)
+    for (auto it = _points->begin(); it != _points->end(); ++it)
     {
         const double* coords = (*it)->getCoords();
         os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] << ", " <<
@@ -96,8 +95,7 @@ int VtkPointsSource::RequestData( vtkInformation* request,
 
     // Generate points and vertices
     unsigned i = 0;
-    for (std::vector<GeoLib::Point*>::const_iterator it = _points->begin();
-         it != _points->end(); ++it)
+    for (auto it = _points->begin(); it != _points->end(); ++it)
     {
         double coords[3] = {(*(*it))[0], (*(*it))[1], (*(*it))[2]};
         newPoints->SetPoint(i, coords);

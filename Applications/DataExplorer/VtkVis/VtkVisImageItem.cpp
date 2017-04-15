@@ -59,28 +59,28 @@ VtkVisImageItem::~VtkVisImageItem()
 
 void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 {
-    vtkImageAlgorithm* img = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
+    auto* img = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
     img->Update();
-    //VtkGeoImageSource* img = dynamic_cast<VtkGeoImageSource*>(_algorithm);
+    // VtkGeoImageSource* img = dynamic_cast<VtkGeoImageSource*>(_algorithm);
 
     double origin[3];
     double spacing[3];
     double range[2];
     img->GetOutput()->GetOrigin(origin);
     img->GetOutput()->GetSpacing(spacing);
-    //img->getRange(range);
+    // img->getRange(range);
     img->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
     vtkImageShiftScale* scale = vtkImageShiftScale::New();
     scale->SetOutputScalarTypeToUnsignedChar();
     scale->SetInputConnection(img->GetOutputPort());
     scale->SetShift(-range[0]);
-    scale->SetScale(255.0/(range[1]-range[0]));
+    scale->SetScale(255.0 / (range[1] - range[0]));
 
     _transformFilter = vtkImageChangeInformation::New();
     _transformFilter->SetInputConnection(scale->GetOutputPort());
-    //double origin[3];
-    //img->getOrigin(origin);
-    //double spacing = img->getSpacing();
+    // double origin[3];
+    // img->getOrigin(origin);
+    // double spacing = img->getSpacing();
     //_transformFilter->SetOutputOrigin(origin2);
     //_transformFilter->SetOutputSpacing(spacing2);
     _transformFilter->Update();
@@ -94,18 +94,18 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
     _renderer->AddActor(_actor);
 
     // Set pre-set properties
-    VtkAlgorithmProperties* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
+    auto* vtkProps = dynamic_cast<VtkAlgorithmProperties*>(_algorithm);
     if (vtkProps)
         setVtkProperties(vtkProps);
 
-    VtkVisPipelineItem* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
+    auto* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
     while (parentItem)
     {
-        VtkAlgorithmProperties* parentProps =
-                dynamic_cast<VtkAlgorithmProperties*>(parentItem->algorithm());
+        auto* parentProps =
+            dynamic_cast<VtkAlgorithmProperties*>(parentItem->algorithm());
         if (parentProps)
         {
-            VtkAlgorithmProperties* newProps = new VtkAlgorithmProperties();
+            auto* newProps = new VtkAlgorithmProperties();
             newProps->SetScalarVisibility(parentProps->GetScalarVisibility());
             newProps->SetTexture(parentProps->GetTexture());
             setVtkProperties(newProps);
@@ -113,7 +113,8 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
             parentItem = nullptr;
         }
         else
-            parentItem = dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
+            parentItem =
+                dynamic_cast<VtkVisPipelineItem*>(parentItem->parentItem());
     }
 
     // Set active scalar to the desired one from VtkAlgorithmProperties
@@ -124,8 +125,8 @@ void VtkVisImageItem::Initialize(vtkRenderer* renderer)
             this->SetActiveAttribute(vtkProps->GetActiveAttribute());
         else
         {
-            VtkVisPipelineItem* visParentItem =
-                    dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
+            auto* visParentItem =
+                dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
             if (visParentItem)
                 this->SetActiveAttribute(visParentItem->GetActiveAttribute());
             if (vtkProps->GetTexture() != nullptr)
@@ -143,7 +144,7 @@ void VtkVisImageItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
 int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
 {
     std::string file_name_cpy(filename);
-    vtkImageAlgorithm* algID = dynamic_cast<vtkImageAlgorithm*>(algorithm);
+    auto* algID = dynamic_cast<vtkImageAlgorithm*>(algorithm);
     if (algID)
     {
         vtkSmartPointer<vtkXMLImageDataWriter> iWriter =

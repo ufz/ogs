@@ -91,8 +91,8 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 int main(int argc, char *argv[])
 {
     LOGOG_INITIALIZE();
-    logog::Cout* logog_cout (new logog::Cout);
-    BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
+    auto* logog_cout(new logog::Cout);
+    auto* custom_format(new BaseLib::LogogSimpleFormatter);
     logog_cout->SetFormatter(*custom_format);
 
     TCLAP::CmdLine cmd("Simple mesh search test", ' ', "0.1");

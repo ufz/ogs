@@ -155,7 +155,7 @@ std::string readPolyline(std::istream &in,
                          std::vector<std::string> &errors)
 {
     std::string line, name_of_ply;
-    GeoLib::Polyline* ply(new GeoLib::Polyline(pnt_vec));
+    auto* ply(new GeoLib::Polyline(pnt_vec));
     std::size_t type = 2; // need an initial value
 
     // Schleife ueber alle Phasen bzw. Komponenten
@@ -191,13 +191,13 @@ std::string readPolyline(std::istream &in,
                        && (line.find('#') == std::string::npos)
                        && (line.find('$') == std::string::npos))
                 {
-                    std::size_t pnt_id(BaseLib::str2number<std::size_t> (line));
+                    auto pnt_id(BaseLib::str2number<std::size_t>(line));
                     if (!zero_based_indexing)
                         pnt_id--;  // one based indexing
-                    std::size_t ply_size (ply->getNumberOfPoints());
+                    std::size_t ply_size(ply->getNumberOfPoints());
                     if (ply_size > 0)
                     {
-                        if (ply->getPointID (ply_size - 1) != pnt_id_map[pnt_id])
+                        if (ply->getPointID(ply_size - 1) != pnt_id_map[pnt_id])
                             ply->addPoint(pnt_id_map[pnt_id]);
                     }
                     else
@@ -325,7 +325,7 @@ std::string readSurface(std::istream &in,
                    && (line.find('$') == std::string::npos))
             {
                 // we did read the name of a polyline -> search the id for polyline
-                std::map<std::string,std::size_t>::const_iterator it (ply_vec_names.find (line));
+                auto it(ply_vec_names.find(line));
                 if (it != ply_vec_names.end())
                     ply_id = it->second;
                 else
@@ -449,7 +449,7 @@ bool readGLIFileV4(const std::string& fname,
         getline (in, tag);
 
     // read names of points into vector of strings
-    std::map<std::string,std::size_t>* pnt_id_names_map (new std::map<std::string,std::size_t>);
+    auto* pnt_id_names_map(new std::map<std::string, std::size_t>);
     bool zero_based_idx(true);
     auto pnt_vec = std::unique_ptr<std::vector<GeoLib::Point*>>(
         new std::vector<GeoLib::Point*>);
@@ -465,13 +465,13 @@ bool readGLIFileV4(const std::string& fname,
     const std::string path = BaseLib::extractPath(fname);
 
     // read names of plys into temporary string-vec
-    std::map<std::string,std::size_t>* ply_names (new std::map<std::string,std::size_t>);
+    auto* ply_names(new std::map<std::string, std::size_t>);
     auto ply_vec = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
         new std::vector<GeoLib::Polyline*>);
     GeoLib::PointVec & point_vec(
         *const_cast<GeoLib::PointVec*>(geo.getPointVecObj(unique_name)));
-    std::vector<GeoLib::Point*>* geo_pnt_vec(const_cast<std::vector<GeoLib::Point*>*>(
-        point_vec.getVector()));
+    auto* geo_pnt_vec(
+        const_cast<std::vector<GeoLib::Point*>*>(point_vec.getVector()));
     if (tag.find("#POLYLINE") != std::string::npos && in)
     {
         INFO("GeoLib::readGLIFile(): read polylines from stream.");
@@ -485,7 +485,7 @@ bool readGLIFileV4(const std::string& fname,
 
     auto sfc_vec = std::unique_ptr<std::vector<GeoLib::Surface*>>(
         new std::vector<GeoLib::Surface*>);
-    std::map<std::string,std::size_t>* sfc_names (new std::map<std::string,std::size_t>);
+    auto* sfc_names(new std::map<std::string, std::size_t>);
     if (tag.find("#SURFACE") != std::string::npos && in)
     {
         INFO("GeoLib::readGLIFile(): read surfaces from stream.");

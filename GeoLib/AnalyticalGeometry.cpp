@@ -351,7 +351,7 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     MathLib::Vector3 & plane_normal)
 {
     // 1 copy all points
-    std::vector<GeoLib::Point*> *polygon_pnts(new std::vector<GeoLib::Point*>);
+    auto* polygon_pnts(new std::vector<GeoLib::Point*>);
     for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
         polygon_pnts->push_back (new GeoLib::Point (*(polygon_in.getPoint(k))));
 

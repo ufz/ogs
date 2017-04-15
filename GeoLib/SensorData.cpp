@@ -124,7 +124,7 @@ int SensorData::readDataFromFile(const std::string &file_name)
     {
         this->_vec_names.push_back(SensorData::convertString2SensorDataType(*++it));
         this->_data_unit_string.push_back("");
-        std::vector<float> *data = new std::vector<float>;
+        auto* data = new std::vector<float>;
         this->_data_vecs.push_back(data);
     }
 

@@ -154,7 +154,7 @@ int DiagramPrefsDialog::loadList(const std::vector< std::pair<QDateTime, float> 
 {
     if (!coords.empty())
     {
-        DiagramList* l = new DiagramList;
+        auto* l = new DiagramList;
         l->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
         l->setXLabel("Time");
         //l->setYLabel("Water Level");

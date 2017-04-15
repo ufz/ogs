@@ -59,7 +59,7 @@ public:
     {
         (void)order;
         const unsigned gp_r = igp % 3;
-        const unsigned gp_t = (unsigned)(igp/3);
+        const auto gp_t = (unsigned)(igp / 3);
         std::array<double, 3> rst;
         rst[0] = MathLib::GaussLegendreTri<2>::X[gp_r][0];
         rst[1] = MathLib::GaussLegendreTri<2>::X[gp_r][1];

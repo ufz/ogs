@@ -28,7 +28,7 @@ VtkPickCallback* VtkPickCallback::New()
 void VtkPickCallback::Execute( vtkObject* caller, unsigned long vtkNotUsed(
                                        eventId), void* vtkNotUsed(callData) )
 {
-    vtkCellPicker* picker = static_cast<vtkCellPicker*>(caller);
+    auto* picker = static_cast<vtkCellPicker*>(caller);
     if (picker->GetCellId() < 0)
     {
         // Nothing is picked

@@ -30,13 +30,13 @@ VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit( const QList<QStr
                                                                 QWidget* parent /*= 0*/ )
     : QWidget(parent), _name(name), _algProps(algProps), _type(type)
 {
-    QHBoxLayout* layout = new QHBoxLayout;
+    auto* layout = new QHBoxLayout;
     layout->setSpacing(3);
     layout->setContentsMargins(0, 0, 0, 0);
 
     foreach(QString content, contents)
     {
-        QLineEdit* lineEdit = new QLineEdit(content, this);
+        auto* lineEdit = new QLineEdit(content, this);
         layout->addWidget(lineEdit);
 
         switch(_type)
@@ -68,7 +68,7 @@ void VtkAlgorithmPropertyVectorEdit::setNewValue()
     QList<QVariant> list;
     for (int i = 0; i < layout->count(); ++i)
     {
-        QLineEdit* lineEdit = static_cast<QLineEdit*>(layout->itemAt(i)->widget());
+        auto* lineEdit = static_cast<QLineEdit*>(layout->itemAt(i)->widget());
         list.push_back(QVariant(lineEdit->text()));
     }
 

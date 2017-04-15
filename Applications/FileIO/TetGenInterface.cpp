@@ -106,8 +106,8 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input)
             continue;
 
         const std::list<std::string> fields = BaseLib::splitString(line, ' ');
-        std::list<std::string>::const_iterator it = fields.begin();
-        const std::size_t nFacets (BaseLib::str2number<std::size_t> (*it));
+        auto it = fields.begin();
+        const auto nFacets(BaseLib::str2number<std::size_t>(*it));
         if (fields.size() > 1)
             _boundary_markers = (BaseLib::str2number<std::size_t> (*(++it)) == 0) ? false : true;
         return nFacets;
@@ -147,7 +147,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
         // read facets
         const std::list<std::string> point_fields = BaseLib::splitString(line, ' ');
         it = point_fields.begin();
-        const std::size_t nPoints = BaseLib::str2number<std::size_t>(*it);
+        const auto nPoints = BaseLib::str2number<std::size_t>(*it);
         if (nPoints != 3)
         {
             ERR ("Smesh-files are currently only supported for triangle meshes.");
@@ -306,7 +306,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
                                  std::size_t dim)
 {
     std::string line;
-    double* coordinates (new double[dim]);
+    auto* coordinates(new double[dim]);
     nodes.reserve(n_nodes);
 
     std::size_t k(0);
@@ -435,7 +435,8 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
                                     bool region_attribute) const
 {
     std::string line;
-    std::size_t* ids (static_cast<std::size_t*>(alloca (sizeof (std::size_t) * n_nodes_per_tet)));
+    auto* ids(static_cast<std::size_t*>(
+        alloca(sizeof(std::size_t) * n_nodes_per_tet)));
     elements.reserve(n_tets);
     materials.reserve(n_tets);
 
@@ -495,7 +496,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
             }
         }
         // insert new element into vector
-        MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
+        auto** tet_nodes = new MeshLib::Node*[4];
         for (unsigned k(0); k<4; k++) {
             tet_nodes[k] = nodes[ids[k]];
         }

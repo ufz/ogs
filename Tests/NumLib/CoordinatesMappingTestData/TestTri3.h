@@ -42,7 +42,7 @@ class TestTri3
     // element having shape identical to that in natural coordinates
     MeshLib::Tri* createNaturalShape()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node( 0.0,  0.0,  0.0);
         nodes[1] = new MeshLib::Node( 1.0,  0.0,  0.0);
         nodes[2] = new MeshLib::Node( 0.0, 1.0,  0.0);
@@ -52,7 +52,7 @@ class TestTri3
     // element having irregular or skew shape
     MeshLib::Tri* createIrregularShape()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node( 0.1, 0.1,  0.0);
         nodes[1] = new MeshLib::Node( 2.0, -0.6,  0.0);
         nodes[2] = new MeshLib::Node( 1.5,  0.4,  0.0);
@@ -62,7 +62,7 @@ class TestTri3
     // invalid case: clock wise node ordering
     MeshLib::Tri* createClockWise()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node( 0.0,  0.0,  0.0);
         nodes[2] = new MeshLib::Node( 1.0,  0.0,  0.0);
         nodes[1] = new MeshLib::Node( 0.0, 1.0,  0.0);
@@ -72,7 +72,7 @@ class TestTri3
     // invalid case: zero area
     MeshLib::Tri* createZeroVolume()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node( 0.0,  0.0,  0.0);
         nodes[1] = new MeshLib::Node( 1.0,  0.0,  0.0);
         nodes[2] = new MeshLib::Node( 1.0,  0.0,  0.0);

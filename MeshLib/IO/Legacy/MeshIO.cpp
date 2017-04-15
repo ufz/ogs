@@ -83,7 +83,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
                     getline(in, line_string);
                     std::stringstream iss(line_string);
                     iss >> idx >> x >> y >> z;
-                    MeshLib::Node* node(new MeshLib::Node(x, y, z, idx));
+                    auto* node(new MeshLib::Node(x, y, z, idx));
                     nodes.push_back(node);
                     iss >> s;
                     if (s.find("$AREA") != std::string::npos)
@@ -174,7 +174,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
         elem_type = MeshLib::String2MeshElemType(elem_type_str);
     } while (elem_type == MeshLib::MeshElemType::INVALID);
 
-    unsigned* idx = new unsigned[8];
+    auto* idx = new unsigned[8];
     MeshLib::Element* elem;
 
     switch(elem_type)
@@ -184,7 +184,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
             if (!(in >> idx[i]))
                 return nullptr;
         // edge_nodes array will be deleted from Line object
-        MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
+        auto** edge_nodes = new MeshLib::Node*[2];
         for (unsigned k(0); k < 2; ++k)
             edge_nodes[k] = nodes[idx[k]];
         elem = new MeshLib::Line(edge_nodes);
@@ -194,7 +194,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
         for (int i = 0; i < 3; ++i)
             if (!(in >> idx[i]))
                 return nullptr;
-        MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
+        auto** tri_nodes = new MeshLib::Node*[3];
         for (unsigned k(0); k < 3; ++k)
             tri_nodes[k] = nodes[idx[k]];
         elem = new MeshLib::Tri(tri_nodes);
@@ -204,7 +204,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
         for (int i = 0; i < 4; ++i)
             if (!(in >> idx[i]))
                 return nullptr;
-        MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
+        auto** quad_nodes = new MeshLib::Node*[4];
         for (unsigned k(0); k < 4; ++k)
             quad_nodes[k] = nodes[idx[k]];
         elem = new MeshLib::Quad(quad_nodes);
@@ -214,7 +214,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
         for (int i = 0; i < 4; ++i)
             if (!(in >> idx[i]))
                 return nullptr;
-        MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
+        auto** tet_nodes = new MeshLib::Node*[4];
         for (unsigned k(0); k < 4; ++k)
             tet_nodes[k] = nodes[idx[k]];
         elem = new MeshLib::Tet(tet_nodes);
@@ -224,7 +224,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
         for (int i = 0; i < 8; ++i)
             if (!(in >> idx[i]))
                 return nullptr;
-        MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
+        auto** hex_nodes = new MeshLib::Node*[8];
         for (unsigned k(0); k < 8; ++k)
             hex_nodes[k] = nodes[idx[k]];
         elem = new MeshLib::Hex(hex_nodes);
@@ -234,7 +234,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
         for (int i = 0; i < 5; ++i)
             if (!(in >> idx[i]))
                 return nullptr;
-        MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
+        auto** pyramid_nodes = new MeshLib::Node*[5];
         for (unsigned k(0); k < 5; ++k)
             pyramid_nodes[k] = nodes[idx[k]];
         elem = new MeshLib::Pyramid(pyramid_nodes);
@@ -244,7 +244,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
         for (int i = 0; i < 6; ++i)
             if (!(in >> idx[i]))
                 return nullptr;
-        MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
+        auto** prism_nodes = new MeshLib::Node*[6];
         for (unsigned k(0); k < 6; ++k)
             prism_nodes[k] = nodes[idx[k]];
         elem = new MeshLib::Prism(prism_nodes);

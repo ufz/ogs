@@ -49,13 +49,13 @@ TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
 
     // *** create polylines
     auto& pnts = *geo_objs.getPointVec(geo_name);
-    GeoLib::Polyline* ply0(new GeoLib::Polyline(pnts));
+    auto* ply0(new GeoLib::Polyline(pnts));
     ply0->addPoint(0);
     ply0->addPoint(1);
-    GeoLib::Polyline* ply1(new GeoLib::Polyline(pnts));
+    auto* ply1(new GeoLib::Polyline(pnts));
     for (std::size_t k(2); k<pnts.size(); ++k)
         ply1->addPoint(k);
-    std::vector<GeoLib::Polyline*>* plys(new std::vector<GeoLib::Polyline*>);
+    auto* plys(new std::vector<GeoLib::Polyline*>);
     plys->push_back(ply0);
     plys->push_back(ply1);
 

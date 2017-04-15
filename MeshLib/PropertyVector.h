@@ -86,7 +86,7 @@ public:
     PropertyVectorBase* clone(
         std::vector<std::size_t> const& exclude_positions) const
     {
-        PropertyVector<PROP_VAL_TYPE>* t(new PropertyVector<PROP_VAL_TYPE>(
+        auto* t(new PropertyVector<PROP_VAL_TYPE>(
             _property_name, _mesh_item_type, _n_components));
         BaseLib::excludeObjectCopy(*this, exclude_positions, *t);
         return t;
@@ -166,7 +166,7 @@ public:
         if (_n_components != 1)
             OGS_FATAL("Single-component version of initPropertyValue() is called "
                       "for a multi-components PropertyVector<T*>");
-        T* p = new T[1];
+        auto* p = new T[1];
         p[0] = value;
         _values[group_id] = p;
     }
@@ -177,7 +177,7 @@ public:
             OGS_FATAL("The size of provided values in initPropertyValue() is "
                       "not same as the number of components in PropertyVector<T*>");
 
-        T* p = new T[values.size()];
+        auto* p = new T[values.size()];
         for (unsigned i=0; i<values.size(); i++)
             p[i] = values[i];
         _values[group_id] = p;

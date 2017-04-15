@@ -280,7 +280,8 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) cons
     }
 
     // walk through children
-    for (std::list<SimplePolygonTree*>::const_iterator it (_children.begin()); it != _children.end(); ++it) {
+    for (auto it(_children.begin()); it != _children.end(); ++it)
+    {
         dynamic_cast<GMSHPolygonTree*>((*it))->createGMSHPoints(gmsh_pnts);
     }
 }
@@ -332,7 +333,8 @@ void GMSHPolygonTree::writeLineConstraints(std::size_t& line_offset,
 
 void GMSHPolygonTree::writeSubPolygonsAsLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const
 {
-    for (std::list<SimplePolygonTree*>::const_iterator it (_children.begin()); it != _children.end(); ++it) {
+    for (auto it(_children.begin()); it != _children.end(); ++it)
+    {
         dynamic_cast<GMSHPolygonTree*>((*it))->writeSubPolygonsAsLineConstraints(line_offset, sfc_number, out);
     }
 

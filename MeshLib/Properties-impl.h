@@ -77,8 +77,7 @@ PropertyVector<T>* Properties::createNewPropertyVector(
 template <typename T>
 bool Properties::existsPropertyVector(std::string const& name) const
 {
-    std::map<std::string, PropertyVectorBase*>::const_iterator it(
-        _properties.find(name));
+    auto it(_properties.find(name));
     // Check that a PropertyVector with the approriate name exists.
     if (it == _properties.end())
     {
@@ -92,8 +91,7 @@ template <typename T>
 PropertyVector<T> const* Properties::getPropertyVector(
     std::string const& name) const
 {
-    std::map<std::string, PropertyVectorBase*>::const_iterator it(
-        _properties.find(name));
+    auto it(_properties.find(name));
     if (it == _properties.end())
     {
         OGS_FATAL(
@@ -113,8 +111,7 @@ PropertyVector<T> const* Properties::getPropertyVector(
 template <typename T>
 PropertyVector<T>* Properties::getPropertyVector(std::string const& name)
 {
-    std::map<std::string, PropertyVectorBase*>::iterator it(
-        _properties.find(name));
+    auto it(_properties.find(name));
     if (it == _properties.end())
     {
         OGS_FATAL(

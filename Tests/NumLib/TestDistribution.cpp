@@ -51,7 +51,7 @@ public:
         _ply0->addPoint(1);
         plys->push_back(_ply0);
 
-        GeoLib::Polyline* ply1 = new GeoLib::Polyline(*pnts);
+        auto* ply1 = new GeoLib::Polyline(*pnts);
         ply1->addPoint(0);
         ply1->addPoint(1);
         ply1->addPoint(2);
@@ -108,7 +108,7 @@ public:
         _ply0->addPoint(0);
         _ply0->addPoint(4);
         plys->push_back(_ply0);
-        GeoLib::Polyline* ply1 = new GeoLib::Polyline(*pnts); // polygon for left surface
+        auto* ply1 = new GeoLib::Polyline(*pnts);  // polygon for left surface
         ply1->addPoint(0);
         ply1->addPoint(3);
         ply1->addPoint(7);

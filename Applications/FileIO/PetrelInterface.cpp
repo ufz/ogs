@@ -210,7 +210,7 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
 
     // read column information
     std::list<std::string> str_list = BaseLib::splitString(line, ' ');
-    std::list<std::string>::const_iterator it = str_list.begin();
+    auto it = str_list.begin();
     while (it != str_list.end()) {
         INFO("PetrelInterface::readPetrelWellTraceData(): column information: %s.", it->c_str());
         ++it;

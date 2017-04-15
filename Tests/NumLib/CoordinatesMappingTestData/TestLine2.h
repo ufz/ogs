@@ -42,7 +42,7 @@ public:
     // element shape identical to that in natural coordinates (see ShapeLine2.h)
     static MeshLib::Line* createNaturalShape()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(-1.0, 0.0, 0.0);
         nodes[1] = new MeshLib::Node( 1.0, 0.0, 0.0);
         return new MeshLib::Line(nodes);
@@ -52,7 +52,7 @@ public:
     MeshLib::Line* createIrregularShape()
     {
         // two times longer than the natural
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(-2.0, 0.0, 0.0);
         nodes[1] = new MeshLib::Node( 2.0, 0.0, 0.0);
         return new MeshLib::Line(nodes);
@@ -61,7 +61,7 @@ public:
     // invalid case: clock wise node ordering
     MeshLib::Line* createClockWise()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[1] = new MeshLib::Node(-1.0, 0.0, 0.0);
         nodes[0] = new MeshLib::Node( 1.0, 0.0, 0.0);
         return new MeshLib::Line(nodes);
@@ -70,7 +70,7 @@ public:
     // invalid case: zero volume
     MeshLib::Line* createZeroVolume()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
         nodes[1] = new MeshLib::Node(0.0, 0.0, 0.0);
         return new MeshLib::Line(nodes);
@@ -79,7 +79,7 @@ public:
     // 1.5d line
     static MeshLib::Line* createY()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(0.0, -1.0, 0.0);
         nodes[1] = new MeshLib::Node(0.0,  1.0, 0.0);
         return new MeshLib::Line(nodes);

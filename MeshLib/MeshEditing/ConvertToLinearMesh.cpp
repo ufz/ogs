@@ -32,7 +32,7 @@ T_ELEMENT* createLinearElement(MeshLib::Element const* e,
                   std::vector<MeshLib::Node*> const& vec_new_nodes)
 {
     auto const n_base_nodes = T_ELEMENT::n_base_nodes;
-    MeshLib::Node** nodes = new MeshLib::Node*[n_base_nodes];
+    auto** nodes = new MeshLib::Node*[n_base_nodes];
     for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
         nodes[i] = const_cast<MeshLib::Node*>(vec_new_nodes[e->getNode(i)->getID()]);
     return new T_ELEMENT(nodes);

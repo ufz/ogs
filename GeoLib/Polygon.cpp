@@ -48,8 +48,9 @@ Polygon::Polygon(Polygon const& other)
 Polygon::~Polygon()
 {
     // remove polygons from list
-    for (std::list<Polygon*>::iterator it (_simple_polygon_list.begin());
-         it != _simple_polygon_list.end(); ++it)
+    for (auto it(_simple_polygon_list.begin());
+         it != _simple_polygon_list.end();
+         ++it)
         // the first entry of the list can be a pointer the object itself
         if (*it != this)
             delete *it;
@@ -101,8 +102,7 @@ bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
         if (n_intersections % 2 == 1)
             return true;
     } else {
-        for (std::list<Polygon*>::const_iterator it(
-                 _simple_polygon_list.begin()++);
+        for (auto it(_simple_polygon_list.begin()++);
              it != _simple_polygon_list.end();
              ++it)
         {
@@ -262,8 +262,9 @@ void Polygon::computeListOfSimplePolygons ()
     splitPolygonAtPoint (_simple_polygon_list.begin());
     splitPolygonAtIntersection (_simple_polygon_list.begin());
 
-    for (std::list<Polygon*>::iterator it (_simple_polygon_list.begin());
-         it != _simple_polygon_list.end(); ++it)
+    for (auto it(_simple_polygon_list.begin());
+         it != _simple_polygon_list.end();
+         ++it)
         (*it)->initialise ();
 }
 
@@ -467,7 +468,7 @@ GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt, doubl
     double angle (boost::math::double_constants::two_pi / resolution);
     for (std::size_t k(0); k < resolution; k++)
     {
-        GeoLib::Point* pnt(new GeoLib::Point(middle_pnt));
+        auto* pnt(new GeoLib::Point(middle_pnt));
         (*pnt)[0] += radius * cos (k * angle);
         (*pnt)[1] += radius * sin (k * angle);
         pnts.push_back (pnt);

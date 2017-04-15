@@ -70,7 +70,7 @@ DiagramScene::~DiagramScene()
 /// Adds an arrow object to the diagram which might be used as a coordinate axis, etc.
 QArrow* DiagramScene::addArrow(float length, float angle, QPen &pen)
 {
-    QArrow* arrow = new QArrow(length, angle, 8, 5, pen);
+    auto* arrow = new QArrow(length, angle, 8, 5, pen);
     addItem(arrow);
     return arrow;
 }
@@ -78,7 +78,7 @@ QArrow* DiagramScene::addArrow(float length, float angle, QPen &pen)
 /// Adds a caption for a graph beneath the actual diagram.
 void DiagramScene::addCaption(const QString &name, QPen &pen)
 {
-    QGraphicsItemGroup* caption = new QGraphicsItemGroup(nullptr);
+    auto* caption = new QGraphicsItemGroup(nullptr);
     QGraphicsLineItem* l = addLine(0,0,100,0,pen);
     QGraphicsTextItem* t = addText(name);
     l->setPos(0,0);
@@ -123,7 +123,7 @@ QGraphicsGrid* DiagramScene::addGrid(const QRectF &rect, int xTicks, int yTicks,
 QNonScalableGraphicsTextItem* DiagramScene::addNonScalableText(const QString &text,
                                                                const QFont &font)
 {
-    QNonScalableGraphicsTextItem* item = new QNonScalableGraphicsTextItem(text);
+    auto* item = new QNonScalableGraphicsTextItem(text);
     item->setFont(font);
     addItem(item);
     return item;
@@ -206,8 +206,9 @@ void DiagramScene::constructGrid()
     {
         for (int i = 0; i <= numXTicks; ++i)
         {
-            int x = static_cast<int>(_bounds.left() / _scaleX +
-                                     (i * (_bounds.width() / _scaleX) / numXTicks));
+            auto x =
+                static_cast<int>(_bounds.left() / _scaleX +
+                                 (i * (_bounds.width() / _scaleX) / numXTicks));
             _xTicksText.push_back(addNonScalableText(QString::number(x)));
             _xTicksText.last()->setPos(x * _scaleX, _bounds.bottom() + 15);
         }
@@ -216,10 +217,12 @@ void DiagramScene::constructGrid()
     {
         for (int i = 0; i <= numXTicks; ++i)
         {
-            int x = static_cast<int>(_bounds.left() / _scaleX +
-                                     (i * (_bounds.width() / _scaleX) / numXTicks));
+            auto x =
+                static_cast<int>(_bounds.left() / _scaleX +
+                                 (i * (_bounds.width() / _scaleX) / numXTicks));
             QDateTime currentDate = _startDate.addSecs(x);
-            _xTicksText.push_back(addNonScalableText(currentDate.toString("dd.MM.yyyy")));
+            _xTicksText.push_back(
+                addNonScalableText(currentDate.toString("dd.MM.yyyy")));
             _xTicksText.last()->setPos(x * _scaleX, _bounds.bottom() + 15);
         }
     }
@@ -346,8 +349,8 @@ void DiagramScene::update()
     for (int i = 0; i < _graphs.size(); i++)
     {
         rect = _graphs[i]->boundingRect();
-        int offset = static_cast<int>(fabs(rect.bottom() - _bounds.bottom())
-                                      - fabs(rect.top() - _bounds.top()));
+        auto offset = static_cast<int>(fabs(rect.bottom() - _bounds.bottom()) -
+                                       fabs(rect.top() - _bounds.top()));
         _graphs[i]->setPos(0, offset);
 
         rect = itemsBoundingRect();

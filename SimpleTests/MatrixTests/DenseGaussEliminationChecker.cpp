@@ -24,8 +24,8 @@
 int main(int argc, char *argv[])
 {
     LOGOG_INITIALIZE();
-    BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-    logog::Cout *logogCout(new logog::Cout);
+    auto* custom_format(new BaseLib::LogogSimpleFormatter);
+    auto* logogCout(new logog::Cout);
     logogCout->SetFormatter(*custom_format);
 
     TCLAP::CmdLine cmd("Simple direct matrix solver test.\n\

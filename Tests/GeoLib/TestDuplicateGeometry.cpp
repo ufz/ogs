@@ -72,7 +72,7 @@ TEST(GeoLib, DuplicateGeometry)
     for (std::size_t i=0; i<n_plys; ++i)
     {
         int n_ply_pnts (rand() % 100 + 2);
-        GeoLib::Polyline* line = new GeoLib::Polyline(*geo.getPointVec(input_name));
+        auto* line = new GeoLib::Polyline(*geo.getPointVec(input_name));
         for (std::size_t j=0; j<static_cast<std::size_t>(n_ply_pnts); ++j)
             line->addPoint(rand() % n_pnts);
         plys->push_back(line);
@@ -110,7 +110,7 @@ TEST(GeoLib, DuplicateGeometry)
     for (std::size_t i=0; i<n_sfcs; ++i)
     {
         int n_tris (rand() % 10);
-        GeoLib::Surface* sfc = new GeoLib::Surface(*geo.getPointVec(input_name));
+        auto* sfc = new GeoLib::Surface(*geo.getPointVec(input_name));
         for (std::size_t j=0; j<static_cast<std::size_t>(n_tris); ++j)
             sfc->addTriangle(rand() % n_pnts, rand() % n_pnts, rand() % n_pnts);
         if (sfc->getNumberOfTriangles() > 0)
@@ -146,7 +146,7 @@ TEST(GeoLib, DuplicateGeometry)
         mod_pnts.push_back(new GeoLib::Point(1,0,0,n_pnts));
         mod_pnts.push_back(new GeoLib::Point(0,1,0,n_pnts+1));
         mod_pnts.push_back(new GeoLib::Point(0,0,1,n_pnts+2));
-        GeoLib::Surface* sfc = new GeoLib::Surface(mod_pnts);
+        auto* sfc = new GeoLib::Surface(mod_pnts);
         sfc->addTriangle(n_pnts, n_pnts+1, n_pnts+2);
         mod_sfcs.push_back(sfc);
         ASSERT_EQ(mod_sfcs.size(), sfcs->size() + 1);

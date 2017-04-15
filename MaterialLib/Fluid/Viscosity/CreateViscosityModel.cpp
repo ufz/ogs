@@ -37,13 +37,13 @@ static std::unique_ptr<FluidProperty> createLinearPressureDependentViscosity(
     config.checkConfigParameter("type", "LinearPressure");
 
     //! \ogs_file_param{material__fluid__viscosity__LinearPressure__mu0}
-    const double mu0 = config.getConfigParameter<double>("mu0");
+    const auto mu0 = config.getConfigParameter<double>("mu0");
 
     //! \ogs_file_param{material__fluid__viscosity__LinearPressure__p0}
-    const double p0 = config.getConfigParameter<double>("p0");
+    const auto p0 = config.getConfigParameter<double>("p0");
 
     //! \ogs_file_param{material__fluid__viscosity__LinearPressure__gamma}
-    const double gamma = config.getConfigParameter<double>("gamma");
+    const auto gamma = config.getConfigParameter<double>("gamma");
 
     return std::unique_ptr<FluidProperty>(
         new LinearPressureDependentViscosity(mu0, p0, gamma));
@@ -61,13 +61,13 @@ static std::unique_ptr<FluidProperty> createTemperatureDependentViscosity(
     config.checkConfigParameter("type", "TemperatureDependent");
 
     //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent__mu0}
-    const double mu0 = config.getConfigParameter<double>("mu0");
+    const auto mu0 = config.getConfigParameter<double>("mu0");
 
     //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent__tc}
-    const double Tc = config.getConfigParameter<double>("tc");
+    const auto Tc = config.getConfigParameter<double>("tc");
 
     //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent__tv}
-    const double Tv = config.getConfigParameter<double>("tv");
+    const auto Tv = config.getConfigParameter<double>("tv");
 
     return std::unique_ptr<FluidProperty>(
         new TemperatureDependentViscosity(mu0, Tc, Tv));

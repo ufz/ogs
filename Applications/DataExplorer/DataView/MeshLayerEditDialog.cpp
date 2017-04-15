@@ -79,7 +79,7 @@ void MeshLayerEditDialog::nextButtonPressed()
     _layerEdit->setEnabled(false);
     _nextButton->setEnabled(false);
 
-    QVBoxLayout* _radiobuttonLayout (new QVBoxLayout(_radioButtonBox));
+    auto* _radiobuttonLayout(new QVBoxLayout(_radioButtonBox));
     QRadioButton* selectButton1 (new QRadioButton("Add layers based on raster files", _radioButtonBox));
     QRadioButton* selectButton2 (new QRadioButton("Add layers with static thickness", _radioButtonBox));
     _radioButtonBox = new QGroupBox(this);
@@ -107,7 +107,7 @@ void MeshLayerEditDialog::createWithRasters()
         if (i==0) text = "Surface";
         else if (i == _n_layers) text = "Layer" + QString::number(_n_layers) + "-Bottom";
         else text="Layer" + QString::number(i+1) + "-Top";
-        QLineEdit* edit (new QLineEdit(this));
+        auto* edit(new QLineEdit(this));
         QPushButton* button (new QPushButton("...", _layerBox));
 
         this->_edits.push_back(edit);
@@ -147,9 +147,9 @@ void MeshLayerEditDialog::createStatic()
 
 void MeshLayerEditDialog::createMeshToolSelection()
 {
-    QGroupBox* meshToolSelectionBox (new QGroupBox(this));
+    auto* meshToolSelectionBox(new QGroupBox(this));
     meshToolSelectionBox->setTitle("Output element type");
-    QGridLayout* meshToolSelectionLayout (new QGridLayout(meshToolSelectionBox));
+    auto* meshToolSelectionLayout(new QGridLayout(meshToolSelectionBox));
     _ogsMeshButton = new QRadioButton("Prisms", meshToolSelectionBox);
     QRadioButton* tetgenMeshButton = new QRadioButton("Tetrahedra", meshToolSelectionBox);
     tetgenMeshButton->setFixedWidth(150);
@@ -157,7 +157,8 @@ void MeshLayerEditDialog::createMeshToolSelection()
     minThicknessLabel->setText("Minimum thickness of layers:");
     _minThicknessEdit = new QLineEdit(meshToolSelectionBox);
     _minThicknessEdit->setText("1.0");
-    QDoubleValidator* min_thickness_validator = new QDoubleValidator(0, 1000000, 15, _minThicknessEdit);
+    auto* min_thickness_validator =
+        new QDoubleValidator(0, 1000000, 15, _minThicknessEdit);
     _minThicknessEdit->setValidator(min_thickness_validator);
     _minThicknessEdit->setMaximumWidth(100);
     _minThicknessEdit->setFixedWidth(100);
@@ -303,11 +304,12 @@ void MeshLayerEditDialog::reject()
 
 void MeshLayerEditDialog::getFileName()
 {
-    QPushButton* button = dynamic_cast<QPushButton*>(this->sender());
+    auto* button = dynamic_cast<QPushButton*>(this->sender());
     QSettings settings;
-    QString filename = QFileDialog::getOpenFileName(this, "Select raster file to open",
-                                                    settings.value("lastOpenedRasterFileDirectory").toString(),
-                                                    "ASCII raster files (*.asc);;All files (* *.*)");
+    QString filename = QFileDialog::getOpenFileName(
+        this, "Select raster file to open",
+        settings.value("lastOpenedRasterFileDirectory").toString(),
+        "ASCII raster files (*.asc);;All files (* *.*)");
     _fileButtonMap[button]->setText(filename);
     QFileInfo fi(filename);
     settings.setValue("lastOpenedRasterFileDirectory", fi.absolutePath());

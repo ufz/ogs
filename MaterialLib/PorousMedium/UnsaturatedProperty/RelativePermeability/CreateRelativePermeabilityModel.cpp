@@ -46,13 +46,13 @@ std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
     config.checkConfigParameter("type", "WettingPhaseVanGenuchten");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__sr}
-    const double Sr = config.getConfigParameter<double>("sr");
+    const auto Sr = config.getConfigParameter<double>("sr");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__smax}
-    const double Smax = config.getConfigParameter<double>("smax");
+    const auto Smax = config.getConfigParameter<double>("smax");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__m}
-    const double m = config.getConfigParameter<double>("m");
+    const auto m = config.getConfigParameter<double>("m");
     if (m < 0. || m > 1.0)
     {
         OGS_FATAL(
@@ -60,7 +60,7 @@ std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
             " permeability model, m, must be in an interval of [0, 1]");
     }
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__krel_min}
-    const double krel_min = config.getConfigParameter<double>("krel_min");
+    const auto krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
         new WettingPhaseVanGenuchten(Sr, Smax, m, krel_min));
@@ -78,13 +78,13 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
     config.checkConfigParameter("type", "NonWettingPhaseVanGenuchten");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__sr}
-    const double Sr = config.getConfigParameter<double>("sr");
+    const auto Sr = config.getConfigParameter<double>("sr");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__smax}
-    const double Smax = config.getConfigParameter<double>("smax");
+    const auto Smax = config.getConfigParameter<double>("smax");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__m}
-    const double m = config.getConfigParameter<double>("m");
+    const auto m = config.getConfigParameter<double>("m");
     if (m < 0. || m > 1.0)
     {
         OGS_FATAL(
@@ -93,7 +93,7 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
     }
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__krel_min}
-    const double krel_min = config.getConfigParameter<double>("krel_min");
+    const auto krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
         new NonWettingPhaseVanGenuchten(Sr, Smax, m, krel_min));
@@ -111,13 +111,13 @@ std::unique_ptr<RelativePermeability> createWettingPhaseBrooksCoreyOilGas(
     config.checkConfigParameter("type", "WettingPhaseBrooksCoreyOilGas");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrooksCoreyOilGas__sr}
-    const double Sr = config.getConfigParameter<double>("sr");
+    const auto Sr = config.getConfigParameter<double>("sr");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrooksCoreyOilGas__smax}
-    const double Smax = config.getConfigParameter<double>("smax");
+    const auto Smax = config.getConfigParameter<double>("smax");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrooksCoreyOilGas__m}
-    const double m = config.getConfigParameter<double>("m");
+    const auto m = config.getConfigParameter<double>("m");
     if (m < 1.0)  // m >= 1
     {
         OGS_FATAL(
@@ -126,7 +126,7 @@ std::unique_ptr<RelativePermeability> createWettingPhaseBrooksCoreyOilGas(
     }
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrooksCoreyOilGas__krel_min}
-    const double krel_min = config.getConfigParameter<double>("krel_min");
+    const auto krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
         new WettingPhaseBrooksCoreyOilGas(Sr, Smax, m, krel_min));
@@ -144,13 +144,13 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseBrooksCoreyOilGas(
     config.checkConfigParameter("type", "NonWettingPhaseBrooksCoreyOilGas");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrooksCoreyOilGas__sr}
-    const double Sr = config.getConfigParameter<double>("sr");
+    const auto Sr = config.getConfigParameter<double>("sr");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrooksCoreyOilGas__smax}
-    const double Smax = config.getConfigParameter<double>("smax");
+    const auto Smax = config.getConfigParameter<double>("smax");
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrooksCoreyOilGas__m}
-    const double m = config.getConfigParameter<double>("m");
+    const auto m = config.getConfigParameter<double>("m");
     if (m < 1.0)  // m >= 1
     {
         OGS_FATAL(
@@ -159,7 +159,7 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseBrooksCoreyOilGas(
     }
 
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrooksCoreyOilGas__krel_min}
-    const double krel_min = config.getConfigParameter<double>("krel_min");
+    const auto krel_min = config.getConfigParameter<double>("krel_min");
 
     return std::unique_ptr<RelativePermeability>(
         new NonWettingPhaseBrooksCoreyOilGas(Sr, Smax, m, krel_min));

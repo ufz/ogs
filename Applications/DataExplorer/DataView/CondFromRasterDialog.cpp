@@ -32,7 +32,7 @@ CondFromRasterDialog::CondFromRasterDialog(const std::vector<MeshLib::Mesh*> &ms
     this->scalingEdit->setText("1.0");
     this->scalingEdit->setValidator (_scale_validator);
 
-    for (std::vector<MeshLib::Mesh*>::const_iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
+    for (auto it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
         this->meshBox->addItem(QString::fromStdString((*it)->getName()));
 
     this->directButton->setChecked(true);
@@ -105,7 +105,7 @@ void CondFromRasterDialog::accept()
             OGSError::box("No valid scaling factor given.");
             return;
         }
-        MeshLib::Mesh* new_mesh = const_cast<MeshLib::Mesh*>(mesh);
+        auto* new_mesh = const_cast<MeshLib::Mesh*>(mesh);
         DirectConditionGenerator dcg;
         direct_values = dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
 

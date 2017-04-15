@@ -179,7 +179,9 @@ std::vector<MeshLib::Node*> RasterToMesh::createNodeVector(
                 continue;
 
             double const zValue = (use_elevation) ? elevation[index] : 0;
-            MeshLib::Node* node (new MeshLib::Node(x_offset + (header.cell_size * j), y_offset + (header.cell_size * i), zValue));
+            auto* node(new MeshLib::Node(x_offset + (header.cell_size * j),
+                                         y_offset + (header.cell_size * i),
+                                         zValue));
             nodes.push_back(node);
             node_idx_map[index] = node_idx_count;
             node_idx_count++;
@@ -206,12 +208,12 @@ std::vector<MeshLib::Element*> RasterToMesh::createElementVector(
             int const idx = i * incWidth + j;
             if (elem_type == MeshElemType::TRIANGLE)
             {
-                MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];
+                auto** tri1_nodes = new MeshLib::Node*[3];
                 tri1_nodes[0] = nodes[node_idx_map[idx]];
                 tri1_nodes[1] = nodes[node_idx_map[idx+1]];
                 tri1_nodes[2] = nodes[node_idx_map[idx+incWidth]];
 
-                MeshLib::Node** tri2_nodes = new MeshLib::Node*[3];
+                auto** tri2_nodes = new MeshLib::Node*[3];
                 tri2_nodes[0] = nodes[node_idx_map[idx+1]];
                 tri2_nodes[1] = nodes[node_idx_map[idx+incWidth+1]];
                 tri2_nodes[2] = nodes[node_idx_map[idx+incWidth]];
@@ -221,7 +223,7 @@ std::vector<MeshLib::Element*> RasterToMesh::createElementVector(
             }
             else if (elem_type == MeshElemType::QUAD)
             {
-                MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
+                auto** quad_nodes = new MeshLib::Node*[4];
                 quad_nodes[0] = nodes[node_idx_map[idx]];
                 quad_nodes[1] = nodes[node_idx_map[idx + 1]];
                 quad_nodes[2] = nodes[node_idx_map[idx + incWidth + 1]];

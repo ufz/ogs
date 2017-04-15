@@ -56,7 +56,7 @@ T_ELEMENT* createQuadraticElement(
 {
     auto const n_all_nodes = T_ELEMENT::n_all_nodes;
     auto const n_base_nodes = T_ELEMENT::n_base_nodes;
-    MeshLib::Node** nodes = new MeshLib::Node*[n_all_nodes];
+    auto** nodes = new MeshLib::Node*[n_all_nodes];
     for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
         nodes[i] =
             const_cast<MeshLib::Node*>(vec_new_nodes[e->getNode(i)->getID()]);
