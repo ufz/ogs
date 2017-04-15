@@ -37,9 +37,7 @@ VtkColorByHeightFilter::VtkColorByHeightFilter()
 {
 }
 
-VtkColorByHeightFilter::~VtkColorByHeightFilter()
-{
-}
+VtkColorByHeightFilter::~VtkColorByHeightFilter() = default;
 
 void VtkColorByHeightFilter::PrintSelf( ostream& os, vtkIndent indent )
 {

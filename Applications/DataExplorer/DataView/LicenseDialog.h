@@ -26,7 +26,8 @@ class LicenseDialog : public QDialog, private Ui_License
 
 public:
     LicenseDialog(QDialog* parent = nullptr);
-    ~LicenseDialog() {};
+    ~LicenseDialog() = default;
+    ;
 
 private:
     void setText();

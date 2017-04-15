@@ -31,7 +31,7 @@ class XMLQtInterface
 {
 public:
     XMLQtInterface(const std::string &schemaFile = "");
-    virtual ~XMLQtInterface() {}
+    virtual ~XMLQtInterface() = default;
 
     /// As QXMLStreamWriter seems currently unable to include style-file links into xml-files, this method will workaround this issue and include the stylefile link.
     int insertStyleFileDefinition(const QString &fileName) const;

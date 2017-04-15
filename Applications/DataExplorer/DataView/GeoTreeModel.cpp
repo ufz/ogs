@@ -33,9 +33,7 @@ GeoTreeModel::GeoTreeModel( QObject* parent )
     _rootItem = new GeoTreeItem(rootData, nullptr, nullptr);
 }
 
-GeoTreeModel::~GeoTreeModel()
-{
-}
+GeoTreeModel::~GeoTreeModel() = default;
 
 void GeoTreeModel::addPointList(QString geoName, GeoLib::PointVec const& pointVec)
 {

@@ -23,9 +23,7 @@ QVtkDataSetMapper::QVtkDataSetMapper() : QObject(nullptr)
 {
 }
 
-QVtkDataSetMapper::~QVtkDataSetMapper()
-{
-}
+QVtkDataSetMapper::~QVtkDataSetMapper() = default;
 
 void QVtkDataSetMapper::PrintSelf(ostream& os, vtkIndent indent)
 {

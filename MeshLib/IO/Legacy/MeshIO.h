@@ -39,7 +39,7 @@ public:
     /// Constructor.
     MeshIO();
 
-    virtual ~MeshIO() {}
+    virtual ~MeshIO() = default;
 
     /// Read mesh from file.
     MeshLib::Mesh* loadMeshFromFile(const std::string& fileName);

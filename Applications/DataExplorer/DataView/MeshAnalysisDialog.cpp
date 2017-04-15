@@ -42,9 +42,7 @@ MeshAnalysisDialog::MeshAnalysisDialog(
     this->zeroVolumeThreshold->setValidator (volume_threshold_validator);
 }
 
-MeshAnalysisDialog::~MeshAnalysisDialog()
-{
-}
+MeshAnalysisDialog::~MeshAnalysisDialog() = default;
 
 void MeshAnalysisDialog::on_startButton_pressed()
 {

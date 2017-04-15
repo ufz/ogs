@@ -30,7 +30,7 @@ class SaveMeshDialog : public QDialog, private Ui_SaveMesh
 
 public:
     SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent = nullptr);
-    ~SaveMeshDialog() {}
+    ~SaveMeshDialog() = default;
 
 private slots:
     /// Selection of path to save file

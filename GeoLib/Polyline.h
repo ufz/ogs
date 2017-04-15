@@ -101,7 +101,7 @@ public:
     Polyline(const Polyline& ply);
     Polyline& operator=(Polyline const& other) = delete;
 
-    virtual ~Polyline() {}
+    virtual ~Polyline() = default;
 
     /// return a geometry type
     virtual GEOTYPE getGeoType() const {return GEOTYPE::POLYLINE;}

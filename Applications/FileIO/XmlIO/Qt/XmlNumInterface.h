@@ -25,7 +25,7 @@ class XmlNumInterface : public BaseLib::IO::XMLInterface, public BaseLib::IO::XM
 public:
     XmlNumInterface();
 
-    virtual ~XmlNumInterface() {}
+    virtual ~XmlNumInterface() = default;
 
     int readFile(QString const& fileName);
 

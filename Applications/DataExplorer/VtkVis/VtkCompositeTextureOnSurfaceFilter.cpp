@@ -39,9 +39,8 @@ VtkCompositeTextureOnSurfaceFilter::VtkCompositeTextureOnSurfaceFilter(
     this->init();
 }
 
-VtkCompositeTextureOnSurfaceFilter::~VtkCompositeTextureOnSurfaceFilter()
-{
-}
+VtkCompositeTextureOnSurfaceFilter::~VtkCompositeTextureOnSurfaceFilter() =
+    default;
 
 void VtkCompositeTextureOnSurfaceFilter::init()
 {

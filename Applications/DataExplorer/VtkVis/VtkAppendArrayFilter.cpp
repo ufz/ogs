@@ -29,13 +29,9 @@
 
 vtkStandardNewMacro(VtkAppendArrayFilter);
 
-VtkAppendArrayFilter::VtkAppendArrayFilter()
-{
-}
+VtkAppendArrayFilter::VtkAppendArrayFilter() = default;
 
-VtkAppendArrayFilter::~VtkAppendArrayFilter()
-{
-}
+VtkAppendArrayFilter::~VtkAppendArrayFilter() = default;
 
 void VtkAppendArrayFilter::PrintSelf( ostream& os, vtkIndent indent )
 {

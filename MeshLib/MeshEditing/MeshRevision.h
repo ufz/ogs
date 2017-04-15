@@ -41,7 +41,7 @@ public:
      */
     MeshRevision(MeshLib::Mesh &mesh);
 
-    virtual ~MeshRevision() {}
+    virtual ~MeshRevision() = default;
 
     /**
      * Collapsed all nodes with distance < eps but ignores elements

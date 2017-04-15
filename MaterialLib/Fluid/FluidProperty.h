@@ -27,7 +27,7 @@ class FluidProperty
 public:
     typedef std::array<double, PropertyVariableNumber> ArrayType;
 
-    virtual ~FluidProperty() {}
+    virtual ~FluidProperty() = default;
     /// Get model name.
     virtual std::string getName() const = 0;
 

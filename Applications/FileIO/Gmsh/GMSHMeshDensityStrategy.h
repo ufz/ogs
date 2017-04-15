@@ -28,7 +28,7 @@ namespace GMSH
 class GMSHMeshDensityStrategy
 {
 public:
-    virtual ~GMSHMeshDensityStrategy() {}
+    virtual ~GMSHMeshDensityStrategy() = default;
     virtual void initialize(std::vector<GeoLib::Point const*> const&) = 0;
     virtual double getMeshDensityAtPoint(GeoLib::Point const*const) const = 0;
     virtual double getMeshDensityAtStation(GeoLib::Point const*const) const = 0;

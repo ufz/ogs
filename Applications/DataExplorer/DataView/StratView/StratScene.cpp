@@ -63,9 +63,7 @@ StratScene::StratScene(GeoLib::StationBorehole* station,
                           (stratBarBounds.width() / 2));
 }
 
-StratScene::~StratScene()
-{
-}
+StratScene::~StratScene() = default;
 
 void StratScene::addDepthLabels(std::vector<GeoLib::Point*> profile, double offset)
 {

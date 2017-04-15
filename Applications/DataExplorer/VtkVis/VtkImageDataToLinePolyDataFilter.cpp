@@ -33,9 +33,7 @@ VtkImageDataToLinePolyDataFilter::VtkImageDataToLinePolyDataFilter() :
     this->SetLengthScaleFactor(1.0);
 }
 
-VtkImageDataToLinePolyDataFilter::~VtkImageDataToLinePolyDataFilter()
-{
-}
+VtkImageDataToLinePolyDataFilter::~VtkImageDataToLinePolyDataFilter() = default;
 
 void VtkImageDataToLinePolyDataFilter::PrintSelf(ostream& os, vtkIndent indent)
 {

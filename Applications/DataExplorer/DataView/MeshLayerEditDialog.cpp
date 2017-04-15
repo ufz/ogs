@@ -64,9 +64,7 @@ MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* par
     this->_layerSelectionLayout->setColumnStretch(2, 10);
 }
 
-MeshLayerEditDialog::~MeshLayerEditDialog()
-{
-}
+MeshLayerEditDialog::~MeshLayerEditDialog() = default;
 
 void MeshLayerEditDialog::nextButtonPressed()
 {

@@ -107,9 +107,7 @@ DetailWindow::DetailWindow(std::vector<std::size_t> data, QWidget* parent) : QWi
     resizeWindow();
 }
 
-DetailWindow::~DetailWindow()
-{
-}
+DetailWindow::~DetailWindow() = default;
 
 void DetailWindow::on_closeButton_clicked()
 {

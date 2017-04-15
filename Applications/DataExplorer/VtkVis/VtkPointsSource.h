@@ -43,7 +43,7 @@ public:
 
 protected:
     VtkPointsSource();
-    ~VtkPointsSource() {}
+    ~VtkPointsSource() = default;
 
     /// Computes the polygonal data object.
     int RequestData(vtkInformation* request,

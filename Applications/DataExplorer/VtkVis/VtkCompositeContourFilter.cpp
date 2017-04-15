@@ -28,9 +28,7 @@ VtkCompositeContourFilter::VtkCompositeContourFilter( vtkAlgorithm* inputAlgorit
     this->init();
 }
 
-VtkCompositeContourFilter::~VtkCompositeContourFilter()
-{
-}
+VtkCompositeContourFilter::~VtkCompositeContourFilter() = default;
 
 void VtkCompositeContourFilter::init()
 {

@@ -26,7 +26,7 @@ class ElementSizeMetric : public ElementQualityMetric
 {
 public:
     ElementSizeMetric(Mesh const& mesh);
-    virtual ~ElementSizeMetric() {}
+    virtual ~ElementSizeMetric() = default;
 
     virtual void calculateQuality ();
 

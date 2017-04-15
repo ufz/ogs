@@ -54,9 +54,7 @@ MshView::MshView( QWidget* parent /*= 0*/ )
     //resizeRowsToContents();
 }
 
-MshView::~MshView()
-{
-}
+MshView::~MshView() = default;
 
 void MshView::updateView()
 {

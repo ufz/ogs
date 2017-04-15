@@ -51,9 +51,7 @@ QArrow::QArrow(float l, float a, QPen &pen, QGraphicsItem* parent) : QGraphicsIt
     _arrowPen    = pen;
 }
 
-QArrow::~QArrow()
-{
-}
+QArrow::~QArrow() = default;
 
 double QArrow::calcCos(double angle)
 {

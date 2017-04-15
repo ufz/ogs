@@ -55,9 +55,7 @@ VtkCompositeGeoObjectFilter::VtkCompositeGeoObjectFilter( vtkAlgorithm* inputAlg
     }
 }
 
-VtkCompositeGeoObjectFilter::~VtkCompositeGeoObjectFilter()
-{
-}
+VtkCompositeGeoObjectFilter::~VtkCompositeGeoObjectFilter() = default;
 
 void VtkCompositeGeoObjectFilter::init()
 {

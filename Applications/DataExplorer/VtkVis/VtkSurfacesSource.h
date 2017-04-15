@@ -47,7 +47,7 @@ public:
 
 protected:
     VtkSurfacesSource();
-    ~VtkSurfacesSource() {}
+    ~VtkSurfacesSource() = default;
 
     /// Computes the polygonal data object.
     int RequestData(vtkInformation* request,

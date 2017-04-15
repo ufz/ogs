@@ -32,7 +32,7 @@ class SurfaceExtractionDialog : public QDialog, private Ui_SurfaceExtraction
 
 public:
     SurfaceExtractionDialog(QDialog* parent = nullptr);
-    ~SurfaceExtractionDialog() {}
+    ~SurfaceExtractionDialog() = default;
 
     int getTolerance() const { return _tolerance; }
     MathLib::Vector3 const& getNormal() const { return _dir; }

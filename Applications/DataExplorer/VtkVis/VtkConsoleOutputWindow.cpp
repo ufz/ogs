@@ -20,15 +20,10 @@
 vtkStandardNewMacro(VtkConsoleOutputWindow);
 
 //----------------------------------------------------------------------------
-VtkConsoleOutputWindow::VtkConsoleOutputWindow()
-{
-
-}
+VtkConsoleOutputWindow::VtkConsoleOutputWindow() = default;
 
 //----------------------------------------------------------------------------
-VtkConsoleOutputWindow::~VtkConsoleOutputWindow()
-{
-}
+VtkConsoleOutputWindow::~VtkConsoleOutputWindow() = default;
 
 //----------------------------------------------------------------------------
 // Display text in the window, and translate the \n to \r\n.

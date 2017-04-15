@@ -30,9 +30,7 @@ DataExplorerSettingsDialog::DataExplorerSettingsDialog(QDialog* parent) : QDialo
     this->gmshPathEdit->setText(settings.value("DataExplorerGmshPath").toString());
 }
 
-DataExplorerSettingsDialog::~DataExplorerSettingsDialog()
-{
-}
+DataExplorerSettingsDialog::~DataExplorerSettingsDialog() = default;
 
 void DataExplorerSettingsDialog::on_gmshPathButton_clicked()
 {

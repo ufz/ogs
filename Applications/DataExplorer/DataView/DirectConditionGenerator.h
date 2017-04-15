@@ -24,14 +24,17 @@ namespace MeshLib {
 class DirectConditionGenerator
 {
 public:
-    DirectConditionGenerator() {};
-    ~DirectConditionGenerator() {};
+    DirectConditionGenerator() = default;
+    ~DirectConditionGenerator() = default;
 
-    const std::vector< std::pair<std::size_t,double> >& directToSurfaceNodes(const MeshLib::Mesh &mesh, const std::string &filename);
+    const std::vector<std::pair<std::size_t, double>>& directToSurfaceNodes(
+        const MeshLib::Mesh& mesh, const std::string& filename);
 
-    const std::vector< std::pair<std::size_t,double> >& directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling);
+    const std::vector<std::pair<std::size_t, double>>&
+    directWithSurfaceIntegration(MeshLib::Mesh& mesh,
+                                 const std::string& filename, double scaling);
 
-    int writeToFile(const std::string &name) const;
+    int writeToFile(const std::string& name) const;
 
 private:
     std::vector< std::pair<std::size_t,double> > _direct_values;

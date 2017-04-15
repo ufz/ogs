@@ -27,9 +27,7 @@ VtkCompositeThresholdFilter::VtkCompositeThresholdFilter( vtkAlgorithm* inputAlg
     this->init();
 }
 
-VtkCompositeThresholdFilter::~VtkCompositeThresholdFilter()
-{
-}
+VtkCompositeThresholdFilter::~VtkCompositeThresholdFilter() = default;
 
 void VtkCompositeThresholdFilter::init()
 {

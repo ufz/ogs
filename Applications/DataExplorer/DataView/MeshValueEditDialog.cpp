@@ -26,9 +26,7 @@ MeshValueEditDialog::MeshValueEditDialog(MeshLib::Mesh* mesh, QDialog* parent)
     this->replaceCheckBox->setEnabled(false);
 }
 
-MeshValueEditDialog::~MeshValueEditDialog(void)
-{
-}
+MeshValueEditDialog::~MeshValueEditDialog(void) = default;
 
 void MeshValueEditDialog::accept()
 {

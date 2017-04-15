@@ -40,9 +40,7 @@ NetCdfConfigureDialog::NetCdfConfigureDialog(std::string const& fileName, QDialo
     this->radioMesh->setChecked(true);
 }
 
-NetCdfConfigureDialog::~NetCdfConfigureDialog()
-{
-}
+NetCdfConfigureDialog::~NetCdfConfigureDialog() = default;
 
 // Instructions if the OK-Button has been pressed.
 void NetCdfConfigureDialog::accept()

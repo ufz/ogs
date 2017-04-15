@@ -60,9 +60,7 @@ VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit( const QList<QStr
     this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 }
 
-VtkAlgorithmPropertyVectorEdit::~VtkAlgorithmPropertyVectorEdit()
-{
-}
+VtkAlgorithmPropertyVectorEdit::~VtkAlgorithmPropertyVectorEdit() = default;
 
 void VtkAlgorithmPropertyVectorEdit::setNewValue()
 {

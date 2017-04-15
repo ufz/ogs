@@ -48,9 +48,7 @@ MeshElementRemovalDialog::MeshElementRemovalDialog(DataHolderLib::Project const&
     }
 }
 
-MeshElementRemovalDialog::~MeshElementRemovalDialog()
-{
-}
+MeshElementRemovalDialog::~MeshElementRemovalDialog() = default;
 
 void MeshElementRemovalDialog::accept()
 {

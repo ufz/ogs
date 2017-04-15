@@ -23,7 +23,7 @@ public:
     /// Returns a vector of subdivided points
     virtual std::vector<double> operator()() const = 0;
 
-    virtual ~ISubdivision() {}
+    virtual ~ISubdivision() = default;
 };
 
 /**

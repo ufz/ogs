@@ -33,9 +33,8 @@ VtkCompositeColormapToImageFilter::VtkCompositeColormapToImageFilter( vtkAlgorit
     this->init();
 }
 
-VtkCompositeColormapToImageFilter::~VtkCompositeColormapToImageFilter()
-{
-}
+VtkCompositeColormapToImageFilter::~VtkCompositeColormapToImageFilter() =
+    default;
 
 void VtkCompositeColormapToImageFilter::init()
 {

@@ -35,9 +35,7 @@ OGSFileConverter::OGSFileConverter(QWidget* parent)
     setupUi(this);
 }
 
-OGSFileConverter::~OGSFileConverter()
-{
-}
+OGSFileConverter::~OGSFileConverter() = default;
 
 void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &output) const
 {

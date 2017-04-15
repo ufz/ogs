@@ -37,9 +37,7 @@ ElementTreeModel::ElementTreeModel( QObject* parent )
     _rootItem = new TreeItem(rootData, nullptr);
 }
 
-ElementTreeModel::~ElementTreeModel()
-{
-}
+ElementTreeModel::~ElementTreeModel() = default;
 
 void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index)
 {

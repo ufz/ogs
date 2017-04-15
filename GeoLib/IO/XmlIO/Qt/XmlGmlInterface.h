@@ -35,7 +35,7 @@ class XmlGmlInterface : public BaseLib::IO::XMLInterface,
 public:
     XmlGmlInterface(GeoLib::GEOObjects& geo_objs);
 
-    virtual ~XmlGmlInterface() {}
+    virtual ~XmlGmlInterface() = default;
 
     /// Reads an xml-file containing geometric object definitions into the GEOObjects used in the contructor
     int readFile(const QString &fileName);

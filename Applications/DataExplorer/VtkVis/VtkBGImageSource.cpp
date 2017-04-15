@@ -34,9 +34,7 @@ VtkBGImageSource::VtkBGImageSource() : _origin(0,0), _cellsize(1)
 {
 }
 
-VtkBGImageSource::~VtkBGImageSource()
-{
-}
+VtkBGImageSource::~VtkBGImageSource() = default;
 
 void VtkBGImageSource::SetRaster(vtkImageAlgorithm *img, double x0, double y0, double scalingFactor)
 {

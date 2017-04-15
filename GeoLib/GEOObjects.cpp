@@ -23,9 +23,7 @@
 
 namespace GeoLib
 {
-GEOObjects::GEOObjects()
-{
-}
+GEOObjects::GEOObjects() = default;
 
 GEOObjects::~GEOObjects()
 {

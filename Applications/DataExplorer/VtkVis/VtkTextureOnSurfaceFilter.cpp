@@ -39,9 +39,7 @@ VtkTextureOnSurfaceFilter::VtkTextureOnSurfaceFilter() : _origin(.0f,.0f), _scal
 {
 }
 
-VtkTextureOnSurfaceFilter::~VtkTextureOnSurfaceFilter()
-{
-}
+VtkTextureOnSurfaceFilter::~VtkTextureOnSurfaceFilter() = default;
 
 void VtkTextureOnSurfaceFilter::PrintSelf( ostream& os, vtkIndent indent )
 {

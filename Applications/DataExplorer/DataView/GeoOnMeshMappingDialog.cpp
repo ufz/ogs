@@ -30,9 +30,7 @@ GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(
         this->meshNameComboBox->addItem(QString::fromStdString(mesh_vec[i]->getName()));
 }
 
-GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog()
-{
-}
+GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog() = default;
 
 int GeoOnMeshMappingDialog::getDataSetChoice() const
 {

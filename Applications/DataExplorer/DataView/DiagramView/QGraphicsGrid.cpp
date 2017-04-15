@@ -129,9 +129,7 @@ QGraphicsGrid::QGraphicsGrid(int x,
     _inside.setCosmetic(true);
 }
 
-QGraphicsGrid::~QGraphicsGrid()
-{
-}
+QGraphicsGrid::~QGraphicsGrid() = default;
 
 /// Returns the bounding rectangle of the grid.
 QRectF QGraphicsGrid::boundingRect() const

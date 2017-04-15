@@ -27,7 +27,7 @@ class VtkCompositeElementSelectionFilter : public VtkCompositeFilter
 {
 public:
     VtkCompositeElementSelectionFilter(vtkAlgorithm* inputAlgorithm);
-    virtual ~VtkCompositeElementSelectionFilter() {}
+    virtual ~VtkCompositeElementSelectionFilter() = default;
 
     virtual void init();
 

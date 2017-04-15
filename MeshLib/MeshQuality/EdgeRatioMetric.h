@@ -27,7 +27,7 @@ class EdgeRatioMetric : public ElementQualityMetric
 {
 public:
     EdgeRatioMetric(Mesh const& mesh);
-    virtual ~EdgeRatioMetric () {}
+    virtual ~EdgeRatioMetric() = default;
 
     virtual void calculateQuality ();
 

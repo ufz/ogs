@@ -33,9 +33,7 @@ FileListDialog::FileListDialog(FileType input, FileType output, QWidget* parent)
     this->listView->setModel(&_allFiles);
 }
 
-FileListDialog::~FileListDialog()
-{
-}
+FileListDialog::~FileListDialog() = default;
 
 void FileListDialog::on_addButton_pressed()
 {

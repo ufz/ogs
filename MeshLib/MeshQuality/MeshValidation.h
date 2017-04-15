@@ -33,7 +33,7 @@ public:
     /// Constructor
     /// \warning This might change the mesh when removing unused mesh nodes.
     MeshValidation(MeshLib::Mesh &mesh);
-    ~MeshValidation() {}
+    ~MeshValidation() = default;
 
     /**
      * Tests if elements are geometrically correct.

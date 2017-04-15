@@ -82,7 +82,7 @@ public:
                                 const std::vector<std::size_t> &iter_times_vector,
                                 const std::vector<double> &multiplier_vector);
 
-    virtual ~IterationNumberBasedAdaptiveTimeStepping() {}
+    virtual ~IterationNumberBasedAdaptiveTimeStepping() = default;
 
     /// return the beginning of time steps
     virtual double begin() const {return _t_initial;}

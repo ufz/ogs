@@ -45,9 +45,7 @@ void LinearEditDialog::setupDialog(const std::vector<std::size_t> &dis_nodes,
         tableWidget->item(dis_nodes[i],0)->setText(QString::number(dis_values[i]));
 }
 
-LinearEditDialog::~LinearEditDialog()
-{
-}
+LinearEditDialog::~LinearEditDialog() = default;
 
 void LinearEditDialog::on_comboBox_currentIndexChanged(int index)
 {

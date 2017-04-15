@@ -45,9 +45,7 @@ VtkPolylinesSource::VtkPolylinesSource() : _polylines(nullptr)
     GetProperties()->SetColor(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
 }
 
-VtkPolylinesSource::~VtkPolylinesSource()
-{
-}
+VtkPolylinesSource::~VtkPolylinesSource() = default;
 
 void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 {

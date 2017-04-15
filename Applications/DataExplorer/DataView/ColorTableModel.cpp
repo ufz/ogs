@@ -22,9 +22,7 @@ ColorTableModel::ColorTableModel( const std::map<std::string, DataHolderLib::Col
     this->buildTable(colorLookupTable);
 }
 
-ColorTableModel::~ColorTableModel()
-{
-}
+ColorTableModel::~ColorTableModel() = default;
 
 int ColorTableModel::columnCount( const QModelIndex& parent /*= QModelIndex()*/ ) const
 {

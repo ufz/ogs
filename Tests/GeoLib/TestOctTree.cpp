@@ -20,9 +20,7 @@ class GeoLibOctTree : public testing::Test
 public:
     typedef std::vector<GeoLib::Point*> VectorOfPoints;
 
-    GeoLibOctTree()
-    {}
-
+    GeoLibOctTree() = default;
     ~GeoLibOctTree()
     {
         for (auto p : ps_ptr) {

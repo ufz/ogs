@@ -34,9 +34,7 @@ StationTreeModel::StationTreeModel( QObject* parent )
     _rootItem = new ModelTreeItem(rootData, nullptr, nullptr);
 }
 
-StationTreeModel::~StationTreeModel()
-{
-}
+StationTreeModel::~StationTreeModel() = default;
 
 /**
  * Returns the model index of an item in the tree.

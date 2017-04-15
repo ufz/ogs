@@ -36,7 +36,7 @@ class XmlGspInterface : public BaseLib::IO::XMLInterface,
 public:
     XmlGspInterface(DataHolderLib::Project &project);
 
-    virtual ~XmlGspInterface() {}
+    virtual ~XmlGspInterface() = default;
 
     /// Reads an xml-file containing a GeoSys project.
     /// Project files currently cover only geo-, msh- and station-data. This will be expanded in the future.

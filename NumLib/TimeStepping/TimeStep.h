@@ -46,14 +46,7 @@ public:
     : _previous(src._previous), _current(src._current), _dt(_current-_previous), _steps(src._steps) {}
 
     /// copy a time step
-    TimeStep &operator=(const TimeStep &src)
-    {
-        _previous = src._previous;
-        _current = src._current;
-        _dt = src._dt;
-        _steps = src._steps;
-        return *this;
-    }
+    TimeStep& operator=(const TimeStep& src) = default;
 
     /// return a time step incremented by the given time step size
     TimeStep operator+(const double dt) const

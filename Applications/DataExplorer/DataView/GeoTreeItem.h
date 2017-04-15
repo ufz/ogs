@@ -38,7 +38,7 @@ public:
         : TreeItem(data, parent), _item(item)
     {
     }
-    ~GeoTreeItem() {}
+    ~GeoTreeItem() = default;
 
     /// Returns the geo-object associated with this item (i.e. a point, polyline or surface).
     const GeoLib::GeoObject* getGeoObject() const { return _item; }

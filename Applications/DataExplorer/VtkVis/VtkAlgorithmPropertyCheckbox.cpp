@@ -27,9 +27,7 @@ VtkAlgorithmPropertyCheckbox::VtkAlgorithmPropertyCheckbox(const bool value,
     connect(this, SIGNAL(stateChanged(int)), this, SLOT(setNewValue(int)));
 }
 
-VtkAlgorithmPropertyCheckbox::~VtkAlgorithmPropertyCheckbox()
-{
-}
+VtkAlgorithmPropertyCheckbox::~VtkAlgorithmPropertyCheckbox() = default;
 
 void VtkAlgorithmPropertyCheckbox::setNewValue( int state )
 {

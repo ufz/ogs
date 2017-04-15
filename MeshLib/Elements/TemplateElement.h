@@ -60,7 +60,7 @@ public:
     TemplateElement(const TemplateElement &e);
 
     /// Destructor
-    virtual ~TemplateElement() {}
+    virtual ~TemplateElement() = default;
 
     /// Returns a copy of this object.
     virtual Element* clone() const

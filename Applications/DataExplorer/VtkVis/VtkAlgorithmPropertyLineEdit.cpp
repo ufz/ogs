@@ -44,9 +44,7 @@ VtkAlgorithmPropertyLineEdit::VtkAlgorithmPropertyLineEdit(const QString& conten
     connect(this, SIGNAL(editingFinished()), this, SLOT(setNewValue()));
 }
 
-VtkAlgorithmPropertyLineEdit::~VtkAlgorithmPropertyLineEdit()
-{
-}
+VtkAlgorithmPropertyLineEdit::~VtkAlgorithmPropertyLineEdit() = default;
 
 void VtkAlgorithmPropertyLineEdit::setNewValue()
 {
