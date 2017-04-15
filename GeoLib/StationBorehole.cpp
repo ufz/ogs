@@ -37,7 +37,7 @@ StationBorehole::StationBorehole(double x, double y, double z, const std::string
 
     // add first point of borehole
     _profilePntVec.push_back(this);
-    _soilName.push_back("");
+    _soilName.emplace_back("");
 }
 
 StationBorehole::~StationBorehole(void)

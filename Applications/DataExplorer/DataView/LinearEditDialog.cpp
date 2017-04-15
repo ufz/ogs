@@ -66,7 +66,7 @@ void LinearEditDialog::accept()
     {
         QString row_text (tableWidget->item(i,0)->text());
         if (row_text.length() > 0)
-            linear_values.push_back( std::pair<std::size_t, double>(i, row_text.toDouble()) );
+            linear_values.emplace_back(i, row_text.toDouble());
     }
 
     emit transmitDisValues(linear_values);

@@ -293,13 +293,14 @@ void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)
     int numberOfDays;
 
     this->_startDate = coords[0].first;
-    _coords.push_back(std::pair<float, float>(0.0f, coords[0].second));
+    _coords.emplace_back(0.0f, coords[0].second);
 
     std::size_t nCoords = coords.size();
     for (std::size_t i = 1; i < nCoords; i++)
     {
         numberOfDays = this->_startDate.daysTo(coords[i].first);
-        _coords.push_back(std::pair<float, float>(static_cast<float>(numberOfDays), coords[i].second));
+        _coords.emplace_back(static_cast<float>(numberOfDays),
+                             coords[i].second);
     }
 
     update();

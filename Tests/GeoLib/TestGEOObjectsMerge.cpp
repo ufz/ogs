@@ -52,11 +52,11 @@ TEST(GeoLib, GEOObjectsMergePoints)
 
     // *** insert set of points number 0
     GeoLib::Point shift (0.0,0.0,0.0);
-    names.push_back("PointSet0");
+    names.emplace_back("PointSet0");
     createSetOfTestPointsAndAssociatedNames(geo_objs, names[0], shift);
 
     // *** insert set of points number 1
-    names.push_back("PointSet1");
+    names.emplace_back("PointSet1");
     createSetOfTestPointsAndAssociatedNames(geo_objs, names[1], shift);
 
     // *** merge geometries
@@ -75,7 +75,7 @@ TEST(GeoLib, GEOObjectsMergePoints)
 
     // *** insert "shifted" set of points
     shift[0] += 1e-4;
-    names.push_back("ShiftedPointSet");
+    names.emplace_back("ShiftedPointSet");
     createSetOfTestPointsAndAssociatedNames(geo_objs, names[2], shift);
 
     // *** merge PointSet0, PointSet1 and ShiftedPointSet
@@ -134,7 +134,7 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
 
     // *** insert set of points number
     GeoLib::Point shift (0.0,0.0,0.0);
-    names.push_back("PointSet0");
+    names.emplace_back("PointSet0");
     createSetOfTestPointsAndAssociatedNames(geo_objs, names[1], shift);
 
     // *** merge geometries

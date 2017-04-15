@@ -46,7 +46,7 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
             if (value)
             {
                 Values values(1, *value);
-                vec_index_values.push_back(Index_Values(index, values));
+                vec_index_values.emplace_back(index, values);
                 continue;
             }
         }
@@ -58,7 +58,7 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
         if (values.empty())
             OGS_FATAL("No value available for constant parameter.");
 
-        vec_index_values.push_back(Index_Values(index, values));
+        vec_index_values.emplace_back(index, values);
     }
 
     // check the input

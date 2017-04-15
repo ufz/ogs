@@ -124,7 +124,7 @@ PointVec::PointVec(const std::string& name,
 std::size_t PointVec::push_back(Point* pnt)
 {
     _pnt_id_map.push_back(uniqueInsert(pnt));
-    _id_to_name_map.push_back("");
+    _id_to_name_map.emplace_back("");
     return _pnt_id_map[_pnt_id_map.size() - 1];
 }
 
@@ -133,7 +133,7 @@ void PointVec::push_back(Point* pnt, std::string const* const name)
     if (name == nullptr)
     {
         _pnt_id_map.push_back(uniqueInsert(pnt));
-        _id_to_name_map.push_back("");
+        _id_to_name_map.emplace_back("");
         return;
     }
 
@@ -141,7 +141,7 @@ void PointVec::push_back(Point* pnt, std::string const* const name)
         _name_id_map->find(*name));
     if (it != _name_id_map->end())
     {
-        _id_to_name_map.push_back("");
+        _id_to_name_map.emplace_back("");
         WARN("PointVec::push_back(): two points share the name %s.",
              name->c_str());
         return;

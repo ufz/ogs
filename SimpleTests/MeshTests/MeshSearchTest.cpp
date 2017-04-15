@@ -36,7 +36,7 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
         std::size_t n_nodes(mesh->getNodes().size());
         mesh_nodes.reserve(n_nodes);
         for (std::size_t k(0); k<n_nodes; k++) {
-            mesh_nodes.push_back(MeshLib::Node(*(mesh->getNodes()[k])));
+            mesh_nodes.emplace_back(*(mesh->getNodes()[k]));
         }
 #ifndef WIN32
         BaseLib::MemWatch mem_watch;

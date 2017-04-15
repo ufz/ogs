@@ -206,7 +206,9 @@ std::string readPolyline(std::istream &in,
                 }
             else {
                 WARN("readPolyline(): polyline is an arc *** reading not implemented");
-                errors.push_back ("[readPolyline] reading polyline as an arc is not implemented");
+                errors.emplace_back(
+                    "[readPolyline] reading polyline as an arc is not "
+                    "implemented");
             }
             // empty line or the keyword or subkeyword or end of file
         }
@@ -333,15 +335,20 @@ std::string readSurface(std::istream &in,
 
                 if (ply_id == ply_vec.size()) {
                     WARN("readSurface(): polyline for surface not found!");
-                    errors.push_back("[readSurface] polyline for surface not found!");
+                    errors.emplace_back(
+                        "[readSurface] polyline for surface not found!");
                 } else {
                     if (type == 3) {
                         WARN("readSurface(): surface type 3: flat surface with any normal direction - reading not implemented.");
-                        errors.push_back("[readSurface] surface type 3: flat surface with any normal direction - reading not implemented");
+                        errors.emplace_back(
+                            "[readSurface] surface type 3: flat surface with "
+                            "any normal direction - reading not implemented");
                     }
                     if (type == 2) {
                         WARN("readSurface(): vertical surface (type 2) - reading not implemented");
-                        errors.push_back("[readSurface] vertical surface (type 2) - reading not implemented");
+                        errors.emplace_back(
+                            "[readSurface] vertical surface (type 2) - reading "
+                            "not implemented");
                     }
                 }
                 in >> line;

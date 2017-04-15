@@ -95,7 +95,8 @@ DetailWindow::DetailWindow(std::vector<std::size_t> data, QWidget* parent) : QWi
     std::vector< std::pair<float, float> > list_data(nEntries);
 
     for (std::size_t i=0; i<nEntries; i++)
-        list_data.push_back(std::pair<float, float>(static_cast<float>(i), static_cast<float>(data[i])));
+        list_data.emplace_back(static_cast<float>(i),
+                               static_cast<float>(data[i]));
 
     auto* list = new DiagramList();
     list->setList(list_data);

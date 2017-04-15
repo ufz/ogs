@@ -663,7 +663,9 @@ void TetGenInterface::write3dElements(std::ofstream &out,
             this->writeElementToFacets(out, *face, element_count, mat_id_str);
         }
         if (materialIds)
-            attribute_points.push_back(MeshLib::Node(elements[i]->getCenterOfGravity().getCoords(), (*materialIds)[i]));
+            attribute_points.emplace_back(
+                elements[i]->getCenterOfGravity().getCoords(),
+                (*materialIds)[i]);
     }
     // add number of facets at correct position and jump back
     const std::streamoff after_elems_pos (out.tellp());

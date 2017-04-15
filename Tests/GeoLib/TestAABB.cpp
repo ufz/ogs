@@ -72,7 +72,9 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAList)
      // fill list with points
      std::list<GeoLib::Point> pnts_list;
      for (int k(0); k<n; k++) {
-         pnts_list.push_back(GeoLib::Point(rand() % box_size - half_box_size, rand() % box_size - half_box_size, rand() % box_size - half_box_size));
+         pnts_list.emplace_back(rand() % box_size - half_box_size,
+                                rand() % box_size - half_box_size,
+                                rand() % box_size - half_box_size);
      }
 
      // construct from list points a axis algined bounding box
@@ -141,7 +143,9 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAVector)
      // fill list with points
      std::list<GeoLib::Point> pnts;
      for (int k(0); k<n; k++) {
-         pnts.push_back(GeoLib::Point(rand() % box_size - half_box_size, rand() % box_size - half_box_size, rand() % box_size - half_box_size));
+         pnts.emplace_back(rand() % box_size - half_box_size,
+                           rand() % box_size - half_box_size,
+                           rand() % box_size - half_box_size);
      }
 
      // construct from list points a axis algined bounding box
@@ -179,7 +183,9 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
      // fill list with points
      std::list<GeoLib::Point> pnts;
      for (int k(0); k<n; k++) {
-         pnts.push_back(GeoLib::Point(rand() % box_size_x - half_box_size_x, rand() % box_size_y - half_box_size_y, rand() % box_size_z - half_box_size_z));
+         pnts.emplace_back(rand() % box_size_x - half_box_size_x,
+                           rand() % box_size_y - half_box_size_y,
+                           rand() % box_size_z - half_box_size_z);
      }
 
      // construct from list points a axis aligned bounding box
@@ -226,8 +232,8 @@ TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesII)
 {
     std::vector<GeoLib::Point> pnts;
 
-    pnts.push_back(GeoLib::Point(-1, -1, -1));
-    pnts.push_back(GeoLib::Point(-10, -10, -10));
+    pnts.emplace_back(-1, -1, -1);
+    pnts.emplace_back(-10, -10, -10);
 
     // construct from points of the vector a axis aligned bounding box
     GeoLib::AABB aabb(pnts.begin(), pnts.end());
