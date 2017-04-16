@@ -85,10 +85,11 @@ public:
      * @param pnt_names vector of the names corresponding to the points
      * @param eps relative tolerance value for testing of point uniqueness
      */
-    void addPointVec(std::unique_ptr<std::vector<Point*>> points,
-                     std::string& name,
-                     std::map<std::string, std::size_t>* pnt_names = nullptr,
-                     double eps = sqrt(std::numeric_limits<double>::epsilon()));
+    void addPointVec(
+        std::unique_ptr<std::vector<Point*>> points,
+        std::string& name,
+        std::unique_ptr<std::map<std::string, std::size_t>> pnt_names = nullptr,
+        double eps = sqrt(std::numeric_limits<double>::epsilon()));
 
     /**
      * Returns the point vector with the given name.
@@ -137,8 +138,9 @@ public:
      * @param ply_names map of names and ids that are corresponding to the polylines
      */
     void addPolylineVec(std::unique_ptr<std::vector<Polyline*>> lines,
-                                const std::string &name,
-                                std::map<std::string,std::size_t>* ply_names = nullptr);
+                        const std::string& name,
+                        std::unique_ptr<std::map<std::string, std::size_t>>
+                            ply_names = nullptr);
 
     /** copies the pointers to the polylines in the vector to the PolylineVec with provided name.
      * the pointers are managed by the GEOObjects, i.e. GEOObjects will delete the Polylines at the
@@ -179,8 +181,9 @@ public:
 
     /** Adds a vector of surfaces with the given name to GEOObjects. */
     void addSurfaceVec(std::unique_ptr<std::vector<Surface*>> surfaces,
-                               const std::string &name,
-                               std::map<std::string, std::size_t>* sfc_names = nullptr);
+                       const std::string& name,
+                       std::unique_ptr<std::map<std::string, std::size_t>>
+                           sfc_names = nullptr);
 
     /**
      * Copies the surfaces in the vector to the SurfaceVec with the given name.

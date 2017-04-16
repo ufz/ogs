@@ -68,7 +68,8 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
     for (auto st : doc->getConfigSubtreeList("points"))
     {
         readPoints(st, *points, *pnt_names);
-        _geo_objects.addPointVec(std::move(points), geo_name, pnt_names.release());
+        _geo_objects.addPointVec(std::move(points), geo_name,
+                                 std::move(pnt_names));
     }
 
     //! \ogs_file_param{gml__polylines}
@@ -92,11 +93,13 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
     }
 
     if (!polylines->empty()) {
-        _geo_objects.addPolylineVec(std::move(polylines), geo_name, ply_names.release());
+        _geo_objects.addPolylineVec(std::move(polylines), geo_name,
+                                    std::move(ply_names));
     }
 
     if (!surfaces->empty()) {
-        _geo_objects.addSurfaceVec(std::move(surfaces), geo_name, sfc_names.release());
+        _geo_objects.addSurfaceVec(std::move(surfaces), geo_name,
+                                   std::move(sfc_names));
     }
 
     return true;
