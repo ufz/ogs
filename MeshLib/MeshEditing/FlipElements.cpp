@@ -18,26 +18,30 @@
 
 namespace MeshLib
 {
-
-std::unique_ptr<MeshLib::Element> createFlippedElement(MeshLib::Element const& elem, std::vector<MeshLib::Node*> const& nodes)
+std::unique_ptr<MeshLib::Element> createFlippedElement(
+    MeshLib::Element const& elem, std::vector<MeshLib::Node*> const& nodes)
 {
-    if (elem.getDimension()>2)
+    if (elem.getDimension() > 2)
         return nullptr;
 
-    unsigned const n_nodes (elem.getNumberOfNodes());
-    auto** elem_nodes = new MeshLib::Node*[n_nodes];
-    for (unsigned i=0; i<n_nodes; ++i)
+    unsigned const n_nodes(elem.getNumberOfNodes());
+    auto elem_nodes =
+        std::unique_ptr<MeshLib::Node* []> { new MeshLib::Node*[n_nodes] };
+    for (unsigned i = 0; i < n_nodes; ++i)
         elem_nodes[i] = nodes[elem.getNode(i)->getID()];
     std::swap(elem_nodes[0], elem_nodes[1]);
 
     if (elem.getGeomType() == MeshElemType::LINE)
-        return std::unique_ptr<MeshLib::Line>(new MeshLib::Line(elem_nodes, elem.getID()));
+        return std::unique_ptr<MeshLib::Line>(
+            new MeshLib::Line(elem_nodes.release(), elem.getID()));
     else if (elem.getGeomType() == MeshElemType::TRIANGLE)
-        return std::unique_ptr<MeshLib::Tri>(new MeshLib::Tri(elem_nodes, elem.getID()));
+        return std::unique_ptr<MeshLib::Tri>(
+            new MeshLib::Tri(elem_nodes.release(), elem.getID()));
     else if (elem.getGeomType() == MeshElemType::QUAD)
     {
         std::swap(elem_nodes[2], elem_nodes[3]);
-        return std::unique_ptr<MeshLib::Quad>(new MeshLib::Quad(elem_nodes, elem.getID()));
+        return std::unique_ptr<MeshLib::Quad>(
+            new MeshLib::Quad(elem_nodes.release(), elem.getID()));
     }
     return nullptr;
 }
