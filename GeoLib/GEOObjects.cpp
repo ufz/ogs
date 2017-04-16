@@ -12,12 +12,10 @@
  *
  */
 
-#include <fstream>
-
-#include <logog/include/logog.hpp>
-
-// GeoLib
 #include "GEOObjects.h"
+
+#include <fstream>
+#include <logog/include/logog.hpp>
 
 #include "Triangle.h"
 
