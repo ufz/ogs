@@ -23,7 +23,8 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects & geo_objs, std:
 {
     auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
         new std::vector<GeoLib::Point*>);
-    auto* pnt_name_map(new std::map<std::string, std::size_t>);
+    std::unique_ptr<std::map<std::string, std::size_t>> pnt_name_map{
+        new std::map<std::string, std::size_t>};
 
     const std::size_t pnts_per_edge(8);
     for (std::size_t k(0); k < pnts_per_edge; k++) {
@@ -42,7 +43,7 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects & geo_objs, std:
         }
     }
 
-    geo_objs.addPointVec(std::move(pnts), name, pnt_name_map);
+    geo_objs.addPointVec(std::move(pnts), name, std::move(pnt_name_map));
 }
 
 TEST(GeoLib, GEOObjectsMergePoints)
@@ -178,9 +179,10 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
     auto plys_0 = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
         new std::vector<GeoLib::Polyline*>);
     plys_0->push_back(ply_00);
-    auto* names_map_0(new std::map<std::string, std::size_t>);
+    std::unique_ptr<std::map<std::string, std::size_t>> names_map_0{
+        new std::map<std::string, std::size_t>};
     names_map_0->insert(std::pair<std::string, std::size_t>("Polyline0FromGeometry0", 0));
-    geo_objs.addPolylineVec(std::move(plys_0), geometry_0, names_map_0);
+    geo_objs.addPolylineVec(std::move(plys_0), geometry_0, std::move(names_map_0));
     names.push_back(geometry_0);
 
     auto pnts_1 = std::unique_ptr<std::vector<GeoLib::Point*>>(
@@ -208,10 +210,12 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
         new std::vector<GeoLib::Polyline*>);
     plys_1->push_back(ply_10);
     plys_1->push_back(ply_11);
-    auto* names_map_1(new std::map<std::string, std::size_t>);
+    std::unique_ptr<std::map<std::string, std::size_t>> names_map_1{
+        new std::map<std::string, std::size_t>};
     names_map_1->insert(std::pair<std::string, std::size_t>("Polyline0FromGeometry1", 0));
     names_map_1->insert(std::pair<std::string, std::size_t>("Polyline1FromGeometry1", 1));
-    geo_objs.addPolylineVec(std::move(plys_1), geometry_1, names_map_1);
+    geo_objs.addPolylineVec(
+        std::move(plys_1), geometry_1, std::move(names_map_1));
     names.push_back(geometry_1);
 
     // *** merge geometries
