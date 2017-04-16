@@ -12,20 +12,18 @@
  *
  */
 
-// GeoLib
-#include "AABB.h"
-#include "Point.h"
-#include "Station.h"
+#pragma once
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#pragma once
-
-#include "TemplateVec.h"
+#include "AABB.h"
 #include "OctTree.h"
+#include "Point.h"
+#include "Station.h"
+#include "TemplateVec.h"
 
 namespace GeoLib
 {
