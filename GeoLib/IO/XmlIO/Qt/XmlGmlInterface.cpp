@@ -24,6 +24,32 @@
 #include "BaseLib/FileFinder.h"
 #include "GeoLib/Triangle.h"
 
+namespace
+{
+void deletePolylines(std::unique_ptr<std::vector<GeoLib::Polyline*>> polylines)
+{
+    for (GeoLib::Polyline* line : *polylines)
+        delete line;
+}
+
+void deleteSurfaces(std::unique_ptr<std::vector<GeoLib::Surface*>> surfaces)
+{
+    for (GeoLib::Surface* line : *surfaces)
+        delete line;
+}
+void deleteGeometry(std::unique_ptr<std::vector<GeoLib::Point*>> points,
+                    std::unique_ptr<std::vector<GeoLib::Polyline*>>
+                        polylines,
+                    std::unique_ptr<std::vector<GeoLib::Surface*>>
+                        surfaces)
+{
+    for (GeoLib::Point* point : *points)
+        delete point;
+    deletePolylines(std::move(polylines));
+    deleteSurfaces(std::move(surfaces));
+}
+}
+
 namespace GeoLib
 {
 namespace IO
@@ -220,34 +246,6 @@ void XmlGmlInterface::readSurfaces(
         surface = surface.nextSiblingElement();
     }
 }
-
-void XmlGmlInterface::deleteGeometry(
-    std::unique_ptr<std::vector<GeoLib::Point*>> points,
-    std::unique_ptr<std::vector<GeoLib::Polyline*>>
-        polylines,
-    std::unique_ptr<std::vector<GeoLib::Surface*>>
-        surfaces) const
-{
-    for (GeoLib::Point* point : *points)
-        delete point;
-    deletePolylines(std::move(polylines));
-    deleteSurfaces(std::move(surfaces));
-}
-
-void XmlGmlInterface::deletePolylines(
-    std::unique_ptr<std::vector<GeoLib::Polyline*>> polylines) const
-{
-    for (GeoLib::Polyline* line : *polylines)
-        delete line;
-}
-
-void XmlGmlInterface::deleteSurfaces(
-    std::unique_ptr<std::vector<GeoLib::Surface*>> surfaces) const
-{
-    for (GeoLib::Surface* line : *surfaces)
-        delete line;
-}
-
 bool XmlGmlInterface::write()
 {
     if (this->_exportName.empty())

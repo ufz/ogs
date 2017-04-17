@@ -68,21 +68,6 @@ private:
                       const std::vector<std::size_t>& pnt_id_map,
                       std::map<std::string, std::size_t>* sfc_names);
 
-    /// Deletes all geometry data structures
-    void deleteGeometry(std::unique_ptr<std::vector<GeoLib::Point*>> points,
-                        std::unique_ptr<std::vector<GeoLib::Polyline*>>
-                            polylines,
-                        std::unique_ptr<std::vector<GeoLib::Surface*>>
-                            surfaces) const;
-
-    /// Cleans up polylines-vector as well as its content if necessary
-    void deletePolylines(
-        std::unique_ptr<std::vector<GeoLib::Polyline*>> polylines) const;
-
-    /// Cleans up surfaces-vector as well as its content if necessary
-    void deleteSurfaces(
-        std::unique_ptr<std::vector<GeoLib::Surface*>> surfaces) const;
-
     GeoLib::GEOObjects& _geo_objs;
     std::map<std::size_t, std::size_t> _idx_map;
 };
