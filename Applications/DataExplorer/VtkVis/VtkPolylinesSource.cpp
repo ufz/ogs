@@ -51,7 +51,7 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_polylines->size() == 0)
+    if (_polylines->empty())
         return;
 
     for (auto _polyline : *_polylines)
@@ -77,7 +77,7 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 
     if (!_polylines)
         return 0;
-    if (_polylines->size() == 0)
+    if (_polylines->empty())
     {
         ERR("VtkPolylineSource::RequestData(): Size of polyline vector is 0");
         return 0;

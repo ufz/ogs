@@ -139,7 +139,7 @@ std::unique_ptr<Process> createHTProcess(
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__HT__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
-    assert(b.size() > 0 && b.size() < 4);
+    assert(!b.empty() && b.size() < 4);
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
     if (has_gravity)
         std::copy_n(b.data(), b.size(), specific_body_force.data());

@@ -48,7 +48,7 @@ void VtkSurfacesSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_surfaces->size() == 0)
+    if (_surfaces->empty())
         return;
 
     os << indent << "== VtkSurfacesSource ==" << "\n";

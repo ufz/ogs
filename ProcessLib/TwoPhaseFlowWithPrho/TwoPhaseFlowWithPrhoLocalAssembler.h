@@ -140,14 +140,14 @@ public:
     std::vector<double> const& getIntPtSaturation(
         std::vector<double>& /*cache*/) const override
     {
-        assert(_saturation.size() > 0);
+        assert(!_saturation.empty());
         return _saturation;
     }
 
     std::vector<double> const& getIntPtNonWettingPressure(
         std::vector<double>& /*cache*/) const override
     {
-        assert(_pressure_nonwetting.size() > 0);
+        assert(!_pressure_nonwetting.empty());
         return _pressure_nonwetting;
     }
 

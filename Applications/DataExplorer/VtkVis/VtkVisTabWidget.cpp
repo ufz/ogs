@@ -319,7 +319,7 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
             QList<QVariant> values = i.value();
 
             VtkAlgorithmPropertyVectorEdit* vectorEdit;
-            if (values.size() > 0)
+            if (!values.empty())
             {
                 QList<QString> valuesAsString;
                 foreach (QVariant variant, values)

@@ -187,9 +187,9 @@ std::string readPolyline(std::istream &in,
         { // read the point ids
             in >> line;
             if (type != 100)
-                while (!in.eof() && !in.fail() && line.size() != 0
-                       && (line.find('#') == std::string::npos)
-                       && (line.find('$') == std::string::npos))
+                while (!in.eof() && !in.fail() && !line.empty() &&
+                       (line.find('#') == std::string::npos) &&
+                       (line.find('$') == std::string::npos))
                 {
                     auto pnt_id(BaseLib::str2number<std::size_t>(line));
                     if (!zero_based_indexing)
@@ -219,7 +219,7 @@ std::string readPolyline(std::istream &in,
             line = path + line;
             readPolylinePointVector(line, pnt_vec, ply, path, errors);
         } // subkeyword found
-    } while (line.find('#') == std::string::npos && line.size() != 0 && in);
+    } while (line.find('#') == std::string::npos && !line.empty() && in);
 
     if (type != 100)
     {
@@ -322,9 +322,9 @@ std::string readSurface(std::istream &in,
         if (line.find("$POLYLINES") != std::string::npos) // subkeyword found
         { // read the name of the polyline(s)
             in >> line;
-            while (!in.eof() && !in.fail() && line.size() != 0
-                   && (line.find('#') == std::string::npos)
-                   && (line.find('$') == std::string::npos))
+            while (!in.eof() && !in.fail() && !line.empty() &&
+                   (line.find('#') == std::string::npos) &&
+                   (line.find('$') == std::string::npos))
             {
                 // we did read the name of a polyline -> search the id for polyline
                 auto it(ply_vec_names.find(line));
@@ -355,7 +355,7 @@ std::string readSurface(std::istream &in,
             }
             // empty line or a keyword is found
         }
-    } while (line.find('#') == std::string::npos && line.size() != 0 && in);
+    } while (line.find('#') == std::string::npos && !line.empty() && in);
 
     if (!name.empty())
         sfc_names.insert(std::pair<std::string,std::size_t>(name,sfc_vec.size()));

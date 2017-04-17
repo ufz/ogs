@@ -67,11 +67,11 @@ PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
     // store data in GEOObject
     geo_obj->addPointVec(std::unique_ptr<std::vector<GeoLib::Point*>>(pnt_vec),
                          _unique_name);
-    if (well_vec->size() > 0)
+    if (!well_vec->empty())
         geo_obj->addStationVec(
             std::unique_ptr<std::vector<GeoLib::Point*>>(well_vec),
             _unique_name);
-    if (ply_vec->size() > 0)
+    if (!ply_vec->empty())
         geo_obj->addPolylineVec(
             std::unique_ptr<std::vector<GeoLib::Polyline*>>(ply_vec),
             _unique_name);

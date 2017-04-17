@@ -58,7 +58,7 @@ StratScene::StratScene(GeoLib::StationBorehole* station,
 
     addDepthLabels(station->getProfile(), stratBarOffset + stratBarBounds.width());
 
-    if (station->getSoilNames().size() > 0)
+    if (!station->getSoilNames().empty())
         addSoilNameLabels(station->getSoilNames(), station->getProfile(), stratBarOffset +
                           (stratBarBounds.width() / 2));
 }

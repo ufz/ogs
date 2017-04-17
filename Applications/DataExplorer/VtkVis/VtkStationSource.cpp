@@ -48,7 +48,7 @@ void VtkStationSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_stations->size() == 0)
+    if (_stations->empty())
         return;
 
     os << indent << "== VtkStationSource ==" << "\n";

@@ -746,7 +746,7 @@ void MainWindow::loadPetrelFiles()
             this, "Select surface data file(s) to import", "", "Petrel files (*)");
     QStringList well_path_file_names = QFileDialog::getOpenFileNames(
             this, "Select well path data file(s) to import", "", "Petrel files (*)");
-    if (sfc_file_names.size() != 0 || well_path_file_names.size() != 0)
+    if (!sfc_file_names.empty() || !well_path_file_names.empty())
     {
         QStringList::const_iterator it = sfc_file_names.begin();
         std::list<std::string> sfc_files;
@@ -1284,7 +1284,7 @@ QString MainWindow::getLastUsedDir()
     QSettings settings;
     QString fileName("");
     QStringList files = settings.value("recentFileList").toStringList();
-    if (files.size() != 0)
+    if (!files.empty())
         return QFileInfo(files[0]).absolutePath();
     else
         return QDir::homePath();

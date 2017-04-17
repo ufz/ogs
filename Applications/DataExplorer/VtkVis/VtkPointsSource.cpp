@@ -45,7 +45,7 @@ void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_points->size() == 0)
+    if (_points->empty())
         return;
 
     os << indent << "== VtkPointsSource ==" << "\n";

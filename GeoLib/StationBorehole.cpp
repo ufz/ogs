@@ -140,7 +140,7 @@ int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* bo
 
 int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> &soil_names)
 {
-    if (((profile.size()-1) == soil_names.size()) && (soil_names.size()>0))
+    if (((profile.size() - 1) == soil_names.size()) && (!soil_names.empty()))
     {
         this->_profilePntVec.push_back(profile[0]);
         std::size_t nLayers = soil_names.size();
