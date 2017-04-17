@@ -90,10 +90,9 @@ bool OctTree<POINT, MAX_POINTS>::addPoint(POINT * pnt, POINT *& ret_pnt)
         for (auto c : _children) {
             if (c->addPoint_(pnt, ret_pnt)) {
                 return true;
-            } else {
-                if (ret_pnt != nullptr)
-                    return false;
             }
+            if (ret_pnt != nullptr)
+                return false;
         }
     }
 
@@ -154,10 +153,9 @@ bool OctTree<POINT, MAX_POINTS>::addPoint_(POINT * pnt, POINT *& ret_pnt)
         for (auto c : _children) {
             if (c->addPoint_(pnt, ret_pnt)) {
                 return true;
-            } else {
-                if (ret_pnt != nullptr)
-                    return false;
             }
+            if (ret_pnt != nullptr)
+                return false;
         }
     }
 

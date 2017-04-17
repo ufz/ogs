@@ -96,10 +96,13 @@ void FileListDialog::reject()
 const QString FileListDialog::getFileTypeString(FileType file_type) const
 {
     if      (file_type==FileType::GML) return "OpenGeoSys geometry files (*.gml)";
-    else if (file_type==FileType::VTU) return "OpenGeoSys mesh files (*.vtu)";
-    else if (file_type==FileType::GLI) return "GeoSys geometry files (*.gli)";
-    else if (file_type==FileType::MSH) return "GeoSys mesh files (*.msh)";
-    else return "All files (*.*)";
+    if (file_type == FileType::VTU)
+        return "OpenGeoSys mesh files (*.vtu)";
+    if (file_type == FileType::GLI)
+        return "GeoSys geometry files (*.gli)";
+    if (file_type == FileType::MSH)
+        return "GeoSys mesh files (*.msh)";
+    return "All files (*.*)";
 }
 
 void FileListDialog::displayWarningLabel() const

@@ -137,11 +137,11 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     {
         return createBrooksCorey(config);
     }
-    else if (type == "vanGenuchten")
+    if (type == "vanGenuchten")
     {
         return createVanGenuchten(config);
     }
-    else if (type == "Curve")
+    if (type == "Curve")
     {
         //! \ogs_file_param{material__porous_medium__capillary_pressure__type}
         config.checkConfigParameter("type", "Curve");
@@ -155,14 +155,12 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
         return std::make_unique<CapillaryPressureSaturationCurve>(
             std::move(curve));
     }
-    else
-    {
-        OGS_FATAL(
-            "The capillary pressure saturation models %s are unavailable.\n"
-            "The available types are: \n\tBrooksCorey, \n\tvanGenuchten,",
-            "\n\tCurve.\n",
-            type.data());
-    }
+
+    OGS_FATAL(
+        "The capillary pressure saturation models %s are unavailable.\n"
+        "The available types are: \n\tBrooksCorey, \n\tvanGenuchten,",
+        "\n\tCurve.\n",
+        type.data());
 }
 
 }  // end namespace

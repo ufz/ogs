@@ -333,14 +333,14 @@ bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::
         if(arrayName.compare(name) == 0)
             arrayFound = true;
     }
-    if(arrayFound)
+    if (arrayFound)
     {
         // TODO Necessary? Currently this function is not called
         data->SetActiveAttribute(name.c_str(), vtkDataSetAttributes::SCALARS);
         return true;
     }
-    else
-        return false;
+
+    return false;
 }
 
 void VtkVisPointSetItem::setScale(double x, double y, double z) const

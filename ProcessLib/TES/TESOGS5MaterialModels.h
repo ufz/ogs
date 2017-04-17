@@ -36,11 +36,9 @@ double mypow(const double x)
     {
         return 1.0 / mypow<-i>(x);
     }
-    else
-    {
-        const double p = mypow<(i >> 1)>(x);
-        return (i & 1) ? p * p * x : p * p;
-    }
+
+    const double p = mypow<(i >> 1)>(x);
+    return (i & 1) ? p * p * x : p * p;
 }
 
 template <>

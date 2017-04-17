@@ -50,10 +50,10 @@ const Element* PrismRule15::getFace(const Element* e, unsigned i)
         for (unsigned j=0; j<nFaceNodes; j++)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 
-        if (i==0 || i==4)
+        if (i == 0 || i == 4)
             return new Tri6(nodes);
-        else
-            return new Quad8(nodes);
+
+        return new Quad8(nodes);
     }
     ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
     return nullptr;

@@ -276,14 +276,12 @@ PropertyVector<T>* getOrCreateMeshProperty(Mesh& mesh,
         assert(result->size() == numberOfMeshItems() * number_of_components);
         return result;
     }
-    else
-    {
-        auto result = mesh.getProperties().template createNewPropertyVector<T>(
-            property_name, item_type, number_of_components);
-        assert(result);
-        result->resize(numberOfMeshItems() * number_of_components);
-        return result;
-    }
+
+    auto result = mesh.getProperties().template createNewPropertyVector<T>(
+        property_name, item_type, number_of_components);
+    assert(result);
+    result->resize(numberOfMeshItems() * number_of_components);
+    return result;
 }
 
 } /* namespace */

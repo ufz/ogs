@@ -48,11 +48,11 @@ public:
     {
         if (e == ElementErrorFlag::ZeroVolume)
             return "zero volume";
-        else if (e == ElementErrorFlag::NonCoplanar)
+        if (e == ElementErrorFlag::NonCoplanar)
             return "non coplanar nodes";
-        else if (e == ElementErrorFlag::NonConvex)
+        if (e == ElementErrorFlag::NonConvex)
             return "non-convex geometry";
-        else if (e == ElementErrorFlag::NodeOrder)
+        if (e == ElementErrorFlag::NodeOrder)
             return "wrong node order";
         return "nonspecified error";
     }

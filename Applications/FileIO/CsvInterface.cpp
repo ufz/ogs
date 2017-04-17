@@ -179,8 +179,8 @@ std::size_t CsvInterface::findColumn(std::string const& line, char delim, std::s
     {
         if (field.compare(column_name) == 0)
             break;
-        else
-            count++;
+
+        count++;
     }
 
     if (count == fields.size())
@@ -232,9 +232,9 @@ std::size_t CsvInterface::getVectorSize(std::size_t idx) const
 {
     if (_data[idx].type() == typeid(std::vector<std::string>))
         return boost::any_cast<std::vector<std::string>>(_data[idx]).size();
-    else if (_data[idx].type() == typeid(std::vector<double>))
+    if (_data[idx].type() == typeid(std::vector<double>))
         return boost::any_cast<std::vector<double>>(_data[idx]).size();
-    else if (_data[idx].type() == typeid(std::vector<int>))
+    if (_data[idx].type() == typeid(std::vector<int>))
         return boost::any_cast<std::vector<int>>(_data[idx]).size();
     return 0;
 }

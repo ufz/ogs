@@ -81,34 +81,30 @@ double EdgeRatioMetric::checkTriangle (MathLib::Point3d const& a,
                                        MathLib::Point3d const& b,
                                        MathLib::Point3d const& c) const
 {
-    double len0 (sqrt(MathLib::sqrDist (b,a)));
-    double len1 (sqrt(MathLib::sqrDist (b,c)));
-    double len2 (sqrt(MathLib::sqrDist (a,c)));
+    double len0(sqrt(MathLib::sqrDist(b, a)));
+    double len1(sqrt(MathLib::sqrDist(b, c)));
+    double len2(sqrt(MathLib::sqrDist(a, c)));
 
     if (len0 < len1 && len0 < len2)
     {
         if (len1 < len2)
             return len0 / len2;
-        else
-            return len0 / len1;
+
+        return len0 / len1;
     }
-    else
+
+    if (len1 < len2)
     {
-        if (len1 < len2)
-        {
-            if (len0 < len2)
-                return len1 / len2;
-            else
-                return len1 / len0;
-        }
-        else
-        {
-            if (len0 < len1)
-                return len2 / len1;
-            else
-                return len2 / len0;
-        }
+        if (len0 < len2)
+            return len1 / len2;
+
+        return len1 / len0;
     }
+
+    if (len0 < len1)
+        return len2 / len1;
+
+    return len2 / len0;
 }
 
 double EdgeRatioMetric::checkQuad (MathLib::Point3d const& a,

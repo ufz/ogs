@@ -30,17 +30,15 @@ double VanGenuchtenCapillaryPressureSaturation::getCapillaryPressure(
         {
             return getPcBarvGSg(Sg);
         }
-        else if (Sg < _saturation_nonwet_r)
+        if (Sg < _saturation_nonwet_r)
         {
             return getPcBarvGSg(_saturation_nonwet_r) +
                    getdPcdSvGBar(_saturation_nonwet_r) *
                        (Sg - _saturation_nonwet_r);
         }
-        else
-        {
-            return getPcBarvGSg(1 - _saturation_r) +
-                   getdPcdSvGBar(1 - _saturation_r) * (Sg - 1 + _saturation_r);
-        }
+
+        return getPcBarvGSg(1 - _saturation_r) +
+               getdPcdSvGBar(1 - _saturation_r) * (Sg - 1 + _saturation_r);
     }
     const double S =
         MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,
@@ -72,14 +70,12 @@ double VanGenuchtenCapillaryPressureSaturation::getdPcdS(
         {
             return -getdPcdSvGBar(Sg);
         }
-        else if (Sg < _saturation_nonwet_r)
+        if (Sg < _saturation_nonwet_r)
         {
             return -getdPcdSvGBar(_saturation_nonwet_r);
         }
-        else
-        {
-            return -getdPcdSvGBar(1 - _saturation_r);
-        }
+
+        return -getdPcdSvGBar(1 - _saturation_r);
     }
     const double S =
         MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,

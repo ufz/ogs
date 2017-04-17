@@ -33,10 +33,10 @@ std::unique_ptr<MeshLib::Element> createFlippedElement(
     if (elem.getGeomType() == MeshElemType::LINE)
         return std::make_unique<MeshLib::Line>(elem_nodes.release(),
                                                elem.getID());
-    else if (elem.getGeomType() == MeshElemType::TRIANGLE)
+    if (elem.getGeomType() == MeshElemType::TRIANGLE)
         return std::make_unique<MeshLib::Tri>(elem_nodes.release(),
                                               elem.getID());
-    else if (elem.getGeomType() == MeshElemType::QUAD)
+    if (elem.getGeomType() == MeshElemType::QUAD)
     {
         std::swap(elem_nodes[2], elem_nodes[3]);
         return std::make_unique<MeshLib::Quad>(elem_nodes.release(),

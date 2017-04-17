@@ -40,9 +40,10 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
     if (it != _supp_pnts.end())
     {
         const std::size_t i = std::distance(_supp_pnts.begin(), it);
-        OGS_FATAL("Variable %d and variable %d are the same. "
-                  "Piecewise linear interpolation is not possible\n",
-                  i, i+1);
+        OGS_FATAL(
+            "Variable %d and variable %d are the same. "
+            "Piecewise linear interpolation is not possible\n",
+            i, i + 1);
     }
 }
 
@@ -114,12 +115,10 @@ double PiecewiseLinearInterpolation::getDerivative(
         double const w = (pnt_to_interpolate - x) / (x_l - x);
         return (1. - w) * tangent_right + w * tangent_left;
     }
-    else
-    {
-        return (_values_at_supp_pnts[interval_idx] -
-                _values_at_supp_pnts[interval_idx - 1]) /
-               (_supp_pnts[interval_idx] - _supp_pnts[interval_idx - 1]);
-    }
+
+    return (_values_at_supp_pnts[interval_idx] -
+            _values_at_supp_pnts[interval_idx - 1]) /
+           (_supp_pnts[interval_idx] - _supp_pnts[interval_idx - 1]);
 }
 
 double PiecewiseLinearInterpolation::getSupportMax() const

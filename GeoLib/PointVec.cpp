@@ -188,11 +188,9 @@ std::size_t PointVec::uniqueInsert(Point* pnt)
         _data_vec->push_back(pnt);
         return _data_vec->size() - 1;
     }
-    else
-    {
-        delete pnt;
-        return ret_pnt->getID();
-    }
+
+    delete pnt;
+    return ret_pnt->getID();
 }
 
 void PointVec::correctNameIDMapping()

@@ -121,7 +121,7 @@ public:
             id = it->second;
             return true;
         }
-        else return false;
+        return false;
     }
 
     /// Returns an element with the given name.
@@ -131,8 +131,8 @@ public:
         bool ret (getElementIDByName (name, id));
         if (ret)
             return (*_data_vec)[id];
-        else
-            return nullptr;
+
+        return nullptr;
     }
 
     /**

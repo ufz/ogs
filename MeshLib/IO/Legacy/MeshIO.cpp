@@ -70,7 +70,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
             // check keywords
             if (line_string.find("#STOP") != std::string::npos)
                 break;
-            else if (line_string.find("$NODES") != std::string::npos)
+            if (line_string.find("$NODES") != std::string::npos)
             {
                 double x, y, z, double_dummy;
                 unsigned idx;
@@ -147,11 +147,9 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
         in.close();
         return mesh;
     }
-    else
-    {
-        in.close();
-        return nullptr;
-    }
+
+    in.close();
+    return nullptr;
 }
 
 std::size_t MeshIO::readMaterialID(std::istream & in) const

@@ -322,13 +322,11 @@ private:
                             e, n_variables, local_matrix_size, dofIndex_to_localIndex,
                             std::forward<ConstructorArgs>(args)...
                         }};
-                } else {
-                    return LADataIntfPtr{
-                        new LADataMatrixNearFracture<ShapeFunctionDisplacement, ShapeFunctionPressure>{
-                            e, n_variables, local_matrix_size, dofIndex_to_localIndex,
-                            std::forward<ConstructorArgs>(args)...
-                        }};
                 }
+                return LADataIntfPtr{new LADataMatrixNearFracture<
+                    ShapeFunctionDisplacement, ShapeFunctionPressure>{
+                    e, n_variables, local_matrix_size, dofIndex_to_localIndex,
+                    std::forward<ConstructorArgs>(args)...}};
             }
             return LADataIntfPtr{
                 new LAFractureData<ShapeFunctionDisplacement, ShapeFunctionPressure>{

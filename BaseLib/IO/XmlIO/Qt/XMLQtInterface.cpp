@@ -62,11 +62,11 @@ int XMLQtInterface::isValid() const
         QXmlSchemaValidator validator( schema );
         if ( validator.validate( _fileData ) )
             return 1;
-        else
-        {
-            INFO("XMLQtInterface::isValid(): XML file %s is invalid (in reference to schema %s).",
-                 _fileName.toStdString().c_str(), _schemaName.c_str());
-        }
+
+        INFO(
+            "XMLQtInterface::isValid(): XML file %s is invalid (in reference "
+            "to schema %s).",
+            _fileName.toStdString().c_str(), _schemaName.c_str());
     }
     else
     {
@@ -75,11 +75,11 @@ int XMLQtInterface::isValid() const
         QXmlSchemaValidator validator;
         if ( validator.validate( _fileData ) )
             return 1;
-        else
-        {
-            INFO("XMLQtInterface::isValid(): XML file %s is invalid (in reference to its schema).",
-                 _fileName.toStdString().c_str());
-        }
+
+        INFO(
+            "XMLQtInterface::isValid(): XML file %s is invalid (in reference "
+            "to its schema).",
+            _fileName.toStdString().c_str());
     }
     return 0;
 }

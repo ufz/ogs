@@ -49,8 +49,8 @@ void MeshFromRasterDialog::accept()
             OGSError::box("Please specify a name for the data vector.");
             return;
         }
-        else
-            _array_name = this->arrayNameEdit->text().toStdString();
+
+        _array_name = this->arrayNameEdit->text().toStdString();
     }
     _element_selection = MeshLib::MeshElemType::TRIANGLE;
     if (this->quadButton->isChecked()) _element_selection = MeshLib::MeshElemType::QUAD;

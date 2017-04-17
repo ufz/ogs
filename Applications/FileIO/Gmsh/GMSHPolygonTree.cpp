@@ -82,9 +82,8 @@ bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
         // station did not fit into child nodes -> insert the station into this node
         _stations.push_back (station);
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 void GMSHPolygonTree::insertPolyline(GeoLib::PolylineWithSegmentMarker * ply)

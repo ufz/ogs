@@ -59,10 +59,9 @@ bool Polygon::initialise ()
     if (this->isClosed()) {
         ensureCWOrientation();
         return true;
-    } else {
-        WARN("Polygon::initialise(): base polyline is not closed.");
-        return false;
     }
+    WARN("Polygon::initialise(): base polyline is not closed.");
+    return false;
 }
 
 bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
@@ -271,16 +270,16 @@ EdgeType Polygon::getEdgeType (std::size_t k, GeoLib::Point const & pnt) const
         const GeoLib::Point & w (*(getPoint(k + 1)));
         if (v[1] < pnt[1] && pnt[1] <= w[1])
             return EdgeType::CROSSING;
-        else
-            return EdgeType::INESSENTIAL;
+
+        return EdgeType::INESSENTIAL;
     }
     case Location::RIGHT: {
         const GeoLib::Point & v (*(getPoint(k)));
         const GeoLib::Point & w (*(getPoint(k + 1)));
         if (w[1] < pnt[1] && pnt[1] <= v[1])
             return EdgeType::CROSSING;
-        else
-            return EdgeType::INESSENTIAL;
+
+        return EdgeType::INESSENTIAL;
     }
     case Location::BETWEEN:
     case Location::SOURCE:
@@ -524,31 +523,38 @@ bool operator==(Polygon const& lhs, Polygon const& rhs)
             }
         }
         return true;
-    } else {
-        // opposite direction with start point of first polygon at arbitrary position
-        // *** ATTENTION
-        WARN("operator==(Polygon const& lhs, Polygon const& rhs) - not tested case (implementation is probably buggy) - please contact thomas.fischer@ufz.de mentioning the problem.");
-        // in second polygon
-        if (lhs.getPointID(1) == rhs.getPointID(k-1)) {
-            std::size_t j(k-2);
-            for (; j>0; j--) {
-                if (lhs.getPointID(k-2-j) != rhs.getPointID(j)) {
-                    return false;
-                }
-            }
-            // new start point at second polygon - the point n-1 of a polygon is equal to the
-            // first point of the polygon (for this reason: n-2)
-            j=n-2;
-            for (; j>k-1; j--) {
-                if (lhs.getPointID(n-2+j+k-2) != rhs.getPointID(j)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
     }
+    // opposite direction with start point of first polygon at arbitrary
+    // position
+    // *** ATTENTION
+    WARN(
+        "operator==(Polygon const& lhs, Polygon const& rhs) - not tested case "
+        "(implementation is probably buggy) - please contact "
+        "thomas.fischer@ufz.de mentioning the problem.");
+    // in second polygon
+    if (lhs.getPointID(1) == rhs.getPointID(k - 1))
+    {
+        std::size_t j(k - 2);
+        for (; j > 0; j--)
+        {
+            if (lhs.getPointID(k - 2 - j) != rhs.getPointID(j))
+            {
+                return false;
+            }
+        }
+        // new start point at second polygon - the point n-1 of a polygon is
+        // equal to the first point of the polygon (for this reason: n-2)
+        j = n - 2;
+        for (; j > k - 1; j--)
+        {
+            if (lhs.getPointID(n - 2 + j + k - 2) != rhs.getPointID(j))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 } // end namespace GeoLib

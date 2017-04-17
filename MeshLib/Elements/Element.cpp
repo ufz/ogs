@@ -224,7 +224,7 @@ bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
 
         return MathLib::isPointInTriangleXY(p, n0, n1, n2);
     }
-    else if (e.getGeomType() == MeshElemType::QUAD)
+    if (e.getGeomType() == MeshElemType::QUAD)
     {
         MathLib::Point3d const& n0(*e.getNode(0));
         MathLib::Point3d const& n1(*e.getNode(1));
@@ -234,12 +234,9 @@ bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
         return MathLib::isPointInTriangleXY(p, n0, n1, n2) ||
                MathLib::isPointInTriangleXY(p, n0, n2, n3);
     }
-    else
-    {
-        WARN("isPointInElementXY: element type \"%s\" is not supported.",
-             MeshLib::MeshElemType2String(e.getGeomType()).c_str());
-        return false;
-    }
-}
 
+    WARN("isPointInElementXY: element type \"%s\" is not supported.",
+         MeshLib::MeshElemType2String(e.getGeomType()).c_str());
+    return false;
+}
 }

@@ -165,10 +165,9 @@ getValue() const
 
     if (auto v = _tree->get_value_optional<T>()) {
         return *v;
-    } else {
-        error("Value `" + shortString(_tree->data())
-              + "' is not convertible to the desired type.");
     }
+    error("Value `" + shortString(_tree->data()) +
+          "' is not convertible to the desired type.");
 }
 
 template<typename T>
@@ -195,11 +194,10 @@ getConfigAttributeOptional(std::string const& attr) const
             ++ct.count; // count only if attribute has been found
             if (auto v = a->get_value_optional<T>()) {
                 return v;
-            } else {
-                error("Value for XML attribute \"" + attr + "\" `"
-                      + shortString(a->data())
-                      + "' not convertible to the desired type.");
             }
+            error("Value for XML attribute \"" + attr + "\" `" +
+                  shortString(a->data()) +
+                  "' not convertible to the desired type.");
         }
     }
 

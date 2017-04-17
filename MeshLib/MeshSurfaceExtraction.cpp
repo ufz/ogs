@@ -182,11 +182,11 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
     MeshLib::NodeSearch ns(*result);
     if (ns.searchUnused() == 0) {
         return result;
-    } else {
-        auto removed = MeshLib::removeNodes(*result, ns.getSearchedNodeIDs(), result->getName());
-        delete result;
-        return removed;
     }
+    auto removed = MeshLib::removeNodes(*result, ns.getSearchedNodeIDs(),
+                                        result->getName());
+    delete result;
+    return removed;
 }
 
 void MeshSurfaceExtraction::get2DSurfaceElements(

@@ -112,10 +112,7 @@ class PETScMatrix
         }
 
         /// Get matrix reference.
-        PETSc_Mat &getRawMatrix()
-        {
-            return _A;
-        }
+        Mat& getRawMatrix() { return _A; }
 
         /*! Get a matrix reference.
          *
@@ -123,10 +120,7 @@ class PETScMatrix
          * This method is dangerous insofar as you can do arbitrary things also
          * with a const PETSc matrix.
          */
-        PETSc_Mat const& getRawMatrix() const
-        {
-            return _A;
-        }
+        Mat const& getRawMatrix() const { return _A; }
 
         /// Set all entries to zero.
         void setZero()
@@ -227,7 +221,7 @@ class PETScMatrix
         void destroy() { if (_A) MatDestroy(&_A); _A = nullptr; }
 
         /// PETSc matrix
-        PETSc_Mat _A = nullptr;
+        Mat _A = nullptr;
 
         /// Number of the global rows
         PetscInt _nrows;

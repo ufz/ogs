@@ -106,11 +106,11 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
             //! \ogs_file_param{material__fluid__density__Constant__value}
             config.getConfigParameter<double>("value"));
     }
-    else if (type == "LiquidDensity")
+    if (type == "LiquidDensity")
         return createLiquidDensity(config);
-    else if (type == "TemperatureDependent")
+    if (type == "TemperatureDependent")
         return createLinearTemperatureDependentDensity(config);
-    else if (type == "ConcentrationDependent")
+    if (type == "ConcentrationDependent")
         return createLinearConcentrationDependentDensity(config);
     else if (type == "IdealGasLaw")
     {

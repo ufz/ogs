@@ -171,9 +171,8 @@ std::string joinPaths(std::string const& pathA, std::string const& pathB)
     if (pathB.front() == pathSeparator) {
         auto const tmpB = pathB.substr(1);
         return appendPathSeparator(pathA) + tmpB;
-    } else {
-        return appendPathSeparator(pathA) + pathB;
     }
+    return appendPathSeparator(pathA) + pathB;
 }
 
 } // end namespace BaseLib

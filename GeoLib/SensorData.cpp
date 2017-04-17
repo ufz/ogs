@@ -158,17 +158,21 @@ int SensorData::readDataFromFile(const std::string &file_name)
 std::string SensorData::convertSensorDataType2String(SensorDataType t)
 {
     if (SensorDataType::EVAPORATION == t) return "Evaporation";
-    else if (SensorDataType::PRECIPITATION == t) return "Precipitation";
-    else if (SensorDataType::TEMPERATURE == t) return "Temperature";
+    if (SensorDataType::PRECIPITATION == t)
+        return "Precipitation";
+    if (SensorDataType::TEMPERATURE == t)
+        return "Temperature";
     // pls leave this as last choice
-    else return "Unknown";
+    return "Unknown";
 }
 
 SensorDataType SensorData::convertString2SensorDataType(const std::string &s)
 {
     if ((s.compare("Evaporation")==0) || (s.compare("EVAPORATION")==0)) return SensorDataType::EVAPORATION;
-    else if ((s.compare("Precipitation")==0) || (s.compare("PRECIPITATION")==0)) return SensorDataType::PRECIPITATION;
-    else if ((s.compare("Temperature")==0) || (s.compare("TEMPERATURE")==0)) return SensorDataType::TEMPERATURE;
-    else return SensorDataType::OTHER;
+    if ((s.compare("Precipitation") == 0) || (s.compare("PRECIPITATION") == 0))
+        return SensorDataType::PRECIPITATION;
+    if ((s.compare("Temperature") == 0) || (s.compare("TEMPERATURE") == 0))
+        return SensorDataType::TEMPERATURE;
+    return SensorDataType::OTHER;
 }
 

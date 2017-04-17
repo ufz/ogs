@@ -163,8 +163,8 @@ bool GEOObjects::appendPolylineVec(const std::vector<Polyline*>& polylines,
         _callbacks->appendPolylineVec(name);
         return true;
     }
-    else
-        return false;
+
+    return false;
 }
 
 const std::vector<Polyline*>* GEOObjects::getPolylineVec(const std::string &name) const
@@ -235,16 +235,14 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
         _callbacks->appendSurfaceVec(name);
         return true;
     }
-    else
-    {
-        // the copy is needed because addSurfaceVec is passing it to SurfaceVec
-        // ctor, which needs write access to the surface vector.
-        auto sfc = std::make_unique<std::vector<GeoLib::Surface*>>();
-        for (auto surface : surfaces)
-            sfc->push_back(surface);
-        addSurfaceVec(std::move(sfc), name);
-        return false;
-    }
+
+    // the copy is needed because addSurfaceVec is passing it to SurfaceVec
+    // ctor, which needs write access to the surface vector.
+    auto sfc = std::make_unique<std::vector<GeoLib::Surface*>>();
+    for (auto surface : surfaces)
+        sfc->push_back(surface);
+    addSurfaceVec(std::move(sfc), name);
+    return false;
 }
 
 const std::vector<Surface*>* GEOObjects::getSurfaceVec(const std::string &name) const

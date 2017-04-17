@@ -27,7 +27,9 @@ std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
     if (type == "Analytical") {
         config->ignoreConfigParameter("type");
         return std::make_unique<AnalyticalJacobianAssembler>();
-    } else if (type == "CentralDifferences") {
+    }
+    if (type == "CentralDifferences")
+    {
         return createCentralDifferencesJacobianAssembler(*config);
     }
 

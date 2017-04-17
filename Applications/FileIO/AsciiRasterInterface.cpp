@@ -62,10 +62,10 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
         GeoLib::Raster *raster(new GeoLib::Raster(header, values, values+header.n_cols*header.n_rows));
         delete [] values;
         return raster;
-    } else {
-        WARN("Raster::getRasterFromASCFile(): Could not read header of file %s", fname.c_str());
-        return nullptr;
     }
+    WARN("Raster::getRasterFromASCFile(): Could not read header of file %s",
+         fname.c_str());
+    return nullptr;
 }
 
 bool AsciiRasterInterface::readASCHeader(std::ifstream &in, GeoLib::RasterHeader &header)
@@ -150,10 +150,10 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
         GeoLib::Raster *raster(new GeoLib::Raster(header, values, values+header.n_cols*header.n_rows));
         delete [] values;
         return raster;
-    } else {
-        ERR("Raster::getRasterFromASCFile() - could not read header of file %s", fname.c_str());
-        return nullptr;
     }
+    ERR("Raster::getRasterFromASCFile() - could not read header of file %s",
+        fname.c_str());
+    return nullptr;
 }
 
 bool AsciiRasterInterface::readSurferHeader(
@@ -168,27 +168,26 @@ bool AsciiRasterInterface::readSurferHeader(
         ERR("Error in readSurferHeader() - No Surfer file.");
         return false;
     }
+
+    in >> header.n_cols >> header.n_rows;
+    in >> min >> max;
+    header.origin[0] = min;
+    header.cell_size = (max - min) / static_cast<double>(header.n_cols);
+
+    in >> min >> max;
+    header.origin[1] = min;
+    header.origin[2] = 0;
+
+    if (ceil((max - min) / static_cast<double>(header.n_rows)) ==
+        ceil(header.cell_size))
+        header.cell_size = ceil(header.cell_size);
     else
     {
-        in >> header.n_cols >> header.n_rows;
-        in >> min >> max;
-        header.origin[0] = min;
-        header.cell_size = (max-min)/static_cast<double>(header.n_cols);
-
-        in >> min >> max;
-        header.origin[1] = min;
-        header.origin[2] = 0;
-
-        if (ceil((max-min)/static_cast<double>(header.n_rows)) == ceil(header.cell_size))
-            header.cell_size = ceil(header.cell_size);
-        else
-        {
-            ERR("Error in readSurferHeader() - Anisotropic cellsize detected.");
-            return false;
-        }
-        header.no_data = min-1;
-        in >> min >> max;
+        ERR("Error in readSurferHeader() - Anisotropic cellsize detected.");
+        return false;
     }
+    header.no_data = min - 1;
+    in >> min >> max;
 
     return true;
 }

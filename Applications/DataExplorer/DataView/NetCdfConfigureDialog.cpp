@@ -288,25 +288,21 @@ double NetCdfConfigureDialog::getResolution()
 {
     if (comboBoxDim1->currentIndex() > -1)
     {
-        NcVar *latVar = _currentFile->get_var(comboBoxDim1->currentIndex());
-        double firstValue=0, lastValue=0;
-        unsigned size=0;
-        getDimEdges(latVar->id(),size,firstValue,lastValue);
+        NcVar* latVar = _currentFile->get_var(comboBoxDim1->currentIndex());
+        double firstValue = 0, lastValue = 0;
+        unsigned size = 0;
+        getDimEdges(latVar->id(), size, firstValue, lastValue);
         if (size < 2)
         {
             return 1;
         }
-        else
-        {
-            double interval = fabs(lastValue-firstValue);
-            double resolution = (double)interval/(size-1);
-            return resolution;
-        }
+
+        double interval = fabs(lastValue - firstValue);
+        double resolution = (double)interval / (size - 1);
+        return resolution;
     }
-    else
-    {
-        return 0;
-    }
+
+    return 0;
 }
 
 void NetCdfConfigureDialog::createDataObject()

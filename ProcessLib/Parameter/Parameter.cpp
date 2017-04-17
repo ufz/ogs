@@ -39,19 +39,19 @@ std::unique_ptr<ParameterBase> createParameter(
         auto param = createConstantParameter(name, config);
         return param;
     }
-    else if (type == "CurveScaled")
+    if (type == "CurveScaled")
     {
         INFO("CurveScaledParameter: %s", name.c_str());
         auto param = createCurveScaledParameter(name, config, curves);
         return param;
     }
-    else if (type == "Group")
+    if (type == "Group")
     {
         INFO("GroupBasedParameter: %s", name.c_str());
         auto param = createGroupBasedParameter(name, config, *meshes.front());
         return param;
     }
-    else if (type == "MeshElement")
+    if (type == "MeshElement")
     {
         INFO("MeshElementParameter: %s", name.c_str());
         auto param = createMeshElementParameter(name, config, *meshes.front());

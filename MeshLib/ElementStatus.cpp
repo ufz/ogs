@@ -71,16 +71,16 @@ std::vector<MeshLib::Element*> const& ElementStatus::getActiveElements() const
 {
     if (_hasAnyInactive)
         return _vec_active_eles;
-    else
-        return _mesh->getElements();
+
+    return _mesh->getElements();
 }
 
 std::vector<MeshLib::Node*> const& ElementStatus::getActiveNodes() const
 {
     if (_hasAnyInactive)
         return _vec_active_nodes;
-    else
-        return _mesh->getNodes();
+
+    return _mesh->getNodes();
 }
 
 std::vector<MeshLib::Element*> ElementStatus::getActiveElementsAtNode(std::size_t node_id) const

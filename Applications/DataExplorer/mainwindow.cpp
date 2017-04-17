@@ -1287,6 +1287,6 @@ QString MainWindow::getLastUsedDir()
     QStringList files = settings.value("recentFileList").toStringList();
     if (!files.empty())
         return QFileInfo(files[0]).absolutePath();
-    else
-        return QDir::homePath();
+
+    return QDir::homePath();
 }

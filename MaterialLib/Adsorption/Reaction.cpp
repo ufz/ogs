@@ -39,11 +39,11 @@ newInstance(BaseLib::ConfigTree const& conf)
 
     if (type == "Z13XBF")
         return std::make_unique<DensityLegacy>();
-    else if (type == "Z13XBF_100MPa")
+    if (type == "Z13XBF_100MPa")
         return std::make_unique<Density100MPa>();
-    else if (type == "Z13XBF_Const")
+    if (type == "Z13XBF_Const")
         return std::make_unique<DensityConst>();
-    else if (type == "Z13XBF_Cook")
+    if (type == "Z13XBF_Cook")
         return std::make_unique<DensityCook>();
     else if (type == "Z13XBF_Dubinin")
         return std::make_unique<DensityDubinin>();

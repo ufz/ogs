@@ -74,8 +74,8 @@ TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationIntersecting)
             const double sqr_dist(MathLib::sqrDist(ipnts[0], center));
             if (sqr_dist < std::numeric_limits<double>::epsilon())
                 return true;
-            else
-                return false;
+
+            return false;
         }
         return ipnts.size() == 2;
     };

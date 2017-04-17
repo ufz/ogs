@@ -124,8 +124,7 @@ std::string formatDate(
     if (std::strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S%z",
                       std::localtime(&time_t))) {
         return time_str;
-    } else {
-        return "FAILED FORMATTING THE GIVEN TIME POINT.";
     }
+    return "FAILED FORMATTING THE GIVEN TIME POINT.";
 }
 } // end namespace BaseLib

@@ -521,8 +521,8 @@ bool readGLIFileV4(const std::string& fname,
 
     if (errors.empty())
         return true;
-    else
-        return false;
+
+    return false;
 }
 
 std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_vec, std::size_t sfc_count, std::string const& path)

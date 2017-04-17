@@ -87,8 +87,7 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
         return std::make_unique<
             GroupBasedParameter<double, MeshLib::MeshItemType::Node>>(
             name, *group_id_property, vec_values);
-    else if (group_id_property->getMeshItemType() ==
-             MeshLib::MeshItemType::Cell)
+    if (group_id_property->getMeshItemType() == MeshLib::MeshItemType::Cell)
         return std::make_unique<
             GroupBasedParameter<double, MeshLib::MeshItemType::Cell>>(
             name, *group_id_property, vec_values);

@@ -173,15 +173,15 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     {
         return createWettingPhaseVanGenuchten(config);
     }
-    else if (type == "NonWettingPhaseVanGenuchten")
+    if (type == "NonWettingPhaseVanGenuchten")
     {
         return createNonWettingPhaseVanGenuchten(config);
     }
-    else if (type == "WettingPhaseBrooksCoreyOilGas")
+    if (type == "WettingPhaseBrooksCoreyOilGas")
     {
         return createWettingPhaseBrooksCoreyOilGas(config);
     }
-    else if (type == "NonWettingPhaseBrooksCoreyOilGas")
+    if (type == "NonWettingPhaseBrooksCoreyOilGas")
     {
         return createNonWettingPhaseBrooksCoreyOilGas(config);
     }
