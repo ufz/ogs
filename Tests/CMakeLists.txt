@@ -76,6 +76,8 @@ endif()
 
 ADD_VTK_DEPENDENCY(testrunner)
 
+cotire(testrunner)
+
 # Add make-target tests which runs the testrunner
 if(DEFINED ENV{CI})
     set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}

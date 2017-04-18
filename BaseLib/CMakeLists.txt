@@ -35,3 +35,5 @@ endif()
 if(TARGET Boost)
     add_dependencies(BaseLib Boost)
 endif()
+
+cotire(BaseLib)

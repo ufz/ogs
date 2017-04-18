@@ -22,6 +22,7 @@ endif()
 
 # Create the library
 add_library(MeshLib ${SOURCES})
+cotire(MeshLib)
 
 target_link_libraries(MeshLib
     BaseLib

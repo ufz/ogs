@@ -14,3 +14,5 @@ target_link_libraries(MeshGeoToolsLib
 if(TARGET Boost)
     add_dependencies(MeshGeoToolsLib Boost)
 endif()
+
+cotire(MeshGeoToolsLib)

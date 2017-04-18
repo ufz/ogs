@@ -31,5 +31,7 @@ if(TARGET Boost)
     add_dependencies(GeoLib Boost)
 endif()
 
+cotire(GeoLib)
+
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/InstallXmlSchemaFiles.cmake)
 InstallXmlSchemaFiles("IO/XmlIO/*.xsd")

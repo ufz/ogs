@@ -9,3 +9,5 @@ target_link_libraries(DataHolderLib
     MeshLib
     logog
 )
+
+cotire(DataHolderLib)

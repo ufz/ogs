@@ -5,6 +5,13 @@ SET_DEFAULT_BUILD_TYPE(Debug)
 include(MSVCMultipleProcessCompile) # /MP switch (multi processor) for VS
 set(CMAKE_OSX_ARCHITECTURES "x86_64")
 
+# C++ standard setup
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+include(cotire) # compile time reducer
+
 # Set compiler helper variables
 
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
@@ -49,7 +56,7 @@ if(COMPILER_IS_GCC)
             set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT -D_GLIBCXX_DEBUG_PEDASSERT -D_GLIBCXX_DEBUG_VERIFY")
         endif()
     endif()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -std=c++11 -Wno-deprecated -Wall -Wextra")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -Wno-deprecated -Wall -Wextra -fext-numeric-literals")
 endif() # COMPILER_IS_GCC
 
 ### Clang
@@ -57,7 +64,7 @@ if(COMPILER_IS_CLANG)
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.5")
         message(FATAL_ERROR "Aborting: Clang 3.5 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
     endif()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -std=c++11 -Wall -Wno-c++98-compat-pedantic")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -Wall -Wno-c++98-compat-pedantic")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         # Enable assertions in STL in debug mode.
         if (NOT STL_NO_DEBUG)
@@ -70,7 +77,6 @@ endif() # COMPILER_IS_CLANG
 
 ### Intel compiler
 if(COMPILER_IS_INTEL)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
         message(STATUS "Set Intel release flags")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG")
