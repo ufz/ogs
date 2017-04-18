@@ -101,7 +101,7 @@ endif ()
 if (WIN32)
     ## For Visual Studio compiler
     if (MSVC)
-        if(OGS_CPU_ARCHITECTURE STREQUAL "generic")
+        if(OGS_CPU_ARCHITECTURE STREQUAL "native")
             set(CPU_FLAGS "/favor:blend")
         else()
             set(CPU_FLAGS "/favor:${OGS_CPU_ARCHITECTURE}")
