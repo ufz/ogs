@@ -58,3 +58,5 @@ endif()
 if(TARGET Eigen)
     add_dependencies(MathLib Eigen)
 endif()
+
+cotire(MathLib)

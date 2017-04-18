@@ -19,3 +19,5 @@ endif()
 if(TARGET Boost)
     add_dependencies(ApplicationsLib Boost)
 endif()
+
+cotire(ApplicationsLib)

@@ -1,7 +1,5 @@
 
-add_executable(ogs
-    ogs.cpp
-)
+add_executable(ogs ogs.cpp)
 
 target_link_libraries(ogs
     ApplicationsLib
@@ -19,6 +17,8 @@ endif()
 if(OGS_INSITU)
     target_link_libraries(ogs InSituLib)
 endif()
+
+cotire(ogs)
 
 ####################
 ### Tests ##########

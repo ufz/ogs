@@ -34,3 +34,5 @@ endif()
 if(TARGET Boost)
     add_dependencies(NumLib Boost)
 endif()
+
+cotire(NumLib)

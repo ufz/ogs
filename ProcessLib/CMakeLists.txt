@@ -73,3 +73,5 @@ endif()
 if(OGS_INSITU)
     target_link_libraries(ProcessLib InSituLib)
 endif()
+
+cotire(ProcessLib)

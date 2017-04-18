@@ -20,10 +20,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../VtkVis
 )
 
-add_library( VtkAct
-    ${SOURCES}
-    ${HEADERS}
-)
+add_library(VtkAct ${SOURCES} ${HEADERS})
 
 ADD_VTK_DEPENDENCY(VtkAct)
 
