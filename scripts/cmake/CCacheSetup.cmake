@@ -10,6 +10,10 @@ if(COMPILER_IS_CLANG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Qunused-arguments")
 endif()
 
+if($ENV{TRAVIS})
+    return()
+endif()
+
 # Check ccache pre-compiled headers config
 execute_process(COMMAND ${CCACHE_TOOL_PATH} --print-config
     OUTPUT_VARIABLE CCACHE_CONFIG
