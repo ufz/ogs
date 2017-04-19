@@ -35,3 +35,5 @@ add_library(QtStratView
 target_link_libraries(QtStratView Qt5::Gui QtBase)
 
 set_property(TARGET QtStratView PROPERTY FOLDER "DataExplorer")
+
+cotire(QtStratView)

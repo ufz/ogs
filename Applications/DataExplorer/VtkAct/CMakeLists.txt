@@ -31,3 +31,5 @@ target_link_libraries( VtkAct
     )
 
 set_property(TARGET VtkAct PROPERTY FOLDER "DataExplorer")
+
+cotire(VtkAct)

@@ -47,3 +47,5 @@ target_link_libraries(QtDiagramView
     )
 
 set_property(TARGET QtDiagramView PROPERTY FOLDER "DataExplorer")
+
+cotire(QtDiagramView)
