@@ -49,7 +49,13 @@ if(COMPILER_IS_GCC)
             set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT -D_GLIBCXX_DEBUG_PEDASSERT -D_GLIBCXX_DEBUG_VERIFY")
         endif()
     endif()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -std=c++11 -Wno-deprecated -Wall -Wextra")
+    if(CYGWIN)
+        # option "-Wa,-mbig-obj" is used to avoid the error of objects having "too many sections".
+        # c.f. (http://stackoverflow.com/questions/16596876/object-file-has-too-many-sections).
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -std=gnu++11 -Wa,-mbig-obj -Wno-deprecated -Wall -Wextra")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -std=c++11 -Wno-deprecated -Wall -Wextra")
+    endif()
 endif() # COMPILER_IS_GCC
 
 ### Clang
