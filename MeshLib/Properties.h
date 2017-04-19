@@ -81,7 +81,7 @@ public:
 
     /// Checks if a property vector with given \c name and the given type
     /// exists.
-    /// @param name name if the requested property vector
+    /// @param name name of the requested property vector
     template <typename T>
     bool existsPropertyVector(std::string const& name) const;
 
