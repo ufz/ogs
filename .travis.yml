@@ -26,6 +26,7 @@ env:
   global:
     - VTK_DIR=$HOME/VTK-Install-7.1/lib/cmake/vtk-7.1
     - BOOST_ROOT=$HOME/boost_1_56_0
+    - CCACHE_SLOPPINESS=pch_defines,time_macros
 matrix:
   include:
     - compiler: gcc
