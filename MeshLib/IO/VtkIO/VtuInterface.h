@@ -44,7 +44,7 @@ public:
 
     /// Writes the given mesh to vtu file.
     /// \param file_name      File name.
-    /// \param num_partitions Number of partiions to be merged.
+    /// \param num_partitions Number of partitions to be merged.
     /// \return True on success, false on error
     template<typename UnstructuredGridWriter> bool writeVTU(std::string const &file_name, const int num_partitions = 1);
 
