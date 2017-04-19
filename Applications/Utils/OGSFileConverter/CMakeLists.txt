@@ -58,6 +58,8 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 set_property(TARGET OGSFileConverter PROPERTY FOLDER "Utilities")
 
+cotire(OGSFileConverter)
+
 ####################
 ### Installation ###
 ####################

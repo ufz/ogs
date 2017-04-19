@@ -112,6 +112,7 @@ ADD_VTK_DEPENDENCY(DataExplorer)
 
 set_property(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 
+cotire(DataExplorer)
 
 ####################
 ### Installation ###

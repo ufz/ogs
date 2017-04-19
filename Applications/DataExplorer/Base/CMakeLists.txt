@@ -41,3 +41,5 @@ target_link_libraries(QtBase
     GeoLib)
 
 set_property(TARGET QtBase PROPERTY FOLDER "DataExplorer")
+
+cotire(QtBase)
