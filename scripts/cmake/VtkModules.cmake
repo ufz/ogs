@@ -5,7 +5,7 @@ set(VTK_MODULES
 )
 
 if(OGS_USE_MPI)
-    set(VTK_MODULES ${VTK_MODULES} vtkIOParallelXML)
+    set(VTK_MODULES ${VTK_MODULES} vtkIOParallelXML vtkParallelMPI)
 endif()
 
 if(OGS_BUILD_GUI)
