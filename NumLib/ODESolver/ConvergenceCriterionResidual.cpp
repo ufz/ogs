@@ -57,7 +57,7 @@ void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
     if (_abstol) {
         satisfied_abs = norm_res < *_abstol;
     }
-    if (_reltol && !_is_first_iteration) {
+    if (_reltol) {
         satisfied_rel =
             checkRelativeTolerance(*_reltol, norm_res, _residual_norm_0);
     }

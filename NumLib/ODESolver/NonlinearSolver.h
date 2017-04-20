@@ -140,8 +140,8 @@ private:
     std::size_t _res_id = 0u;            //!< ID of the residual vector.
     std::size_t _J_id = 0u;              //!< ID of the Jacobian matrix.
     std::size_t _minus_delta_x_id = 0u;  //!< ID of the \f$ -\Delta x\f$ vector.
-    std::size_t _x_new_id =
-        0u;  //!< ID of the vector storing \f$ x - (-\Delta x) \f$.
+    std::size_t _x_old_id =
+        0u;  //!< ID of the vector storing previous solution.
 };
 
 /*! Find a solution to a nonlinear equation using the Picard fixpoint iteration

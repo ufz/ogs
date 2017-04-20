@@ -66,9 +66,7 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
         OGS_FATAL("D.o.f. table or mesh have not been set.");
 
     bool satisfied_abs = true;
-    // Make sure that in the first iteration the relative residual tolerance is
-    // not satisfied.
-    bool satisfied_rel = _is_first_iteration ? false : true;
+    bool satisfied_rel = true;
 
     for (unsigned global_component = 0; global_component < _abstols.size();
          ++global_component)

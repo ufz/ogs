@@ -70,23 +70,25 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         sys.applyKnownSolutionsPicard(A, rhs, x_new);
         INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
 
-        if (!sys.isLinear() && _convergence_criterion->hasResidualCheck()) {
+        bool needToSolveLinearEquations = true;
+        if (_convergence_criterion->hasResidualCheck()) {
             GlobalVector res;
             LinAlg::matMult(A, x_new, res); // res = A * x_new
             LinAlg::axpy(res, -1.0, rhs);   // res -= rhs
             _convergence_criterion->checkResidual(res);
+            needToSolveLinearEquations = !_convergence_criterion->isSatisfied();
         }
 
-        BaseLib::RunTime time_linear_solver;
-        time_linear_solver.start();
-        bool iteration_succeeded = _linear_solver.solve(A, rhs, x_new);
-        INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
-
-        if (!iteration_succeeded)
+        bool iteration_succeeded = true;
+        if (needToSolveLinearEquations)
         {
-            ERR("Picard: The linear solver failed.");
+            BaseLib::RunTime time_linear_solver;
+            time_linear_solver.start();
+            iteration_succeeded = _linear_solver.solve(A, rhs, x_new);
+            INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
         }
-        else
+
+        if (iteration_succeeded)
         {
             if (postIterationCallback)
                 postIterationCallback(iteration, x_new);
@@ -116,6 +118,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         if (!iteration_succeeded)
         {
+            ERR("Picard: The linear solver failed.");
             // Don't compute error norms, break here.
             error_norms_met = false;
             break;
@@ -213,32 +216,51 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
         INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
 
-        if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
+        bool needToSolveLinearEquations = true;
+        if (_convergence_criterion->hasResidualCheck())
+        {
             _convergence_criterion->checkResidual(res);
-
-        BaseLib::RunTime time_linear_solver;
-        time_linear_solver.start();
-        bool iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
-        INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
-
-        if (!iteration_succeeded)
-        {
-            ERR("Newton: The linear solver failed.");
+            needToSolveLinearEquations = !_convergence_criterion->isSatisfied();
         }
-        else
+
+        bool iteration_succeeded = true;
+        GlobalVector* x_old = nullptr;
+        if (needToSolveLinearEquations)
         {
-            // TODO could be solved in a better way
-            // cf.
-            // http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
-            auto& x_new =
-                NumLib::GlobalVectorProvider::provider.getVector(
-                    x, _x_new_id);
-            LinAlg::axpy(x_new, -_alpha, minus_delta_x);
+            BaseLib::RunTime time_linear_solver;
+            time_linear_solver.start();
+            iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
+            INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
 
+            if (iteration_succeeded)
+            {
+                // copy previous solution to x_old
+                x_old =
+                    &NumLib::GlobalVectorProvider::provider.getVector(
+                        x, _x_old_id);
+                LinAlg::copy(x, *x_old);
+                // update solution
+                LinAlg::axpy(x, -_alpha, minus_delta_x);
+
+                if (sys.isLinear()) {
+                    error_norms_met = true;
+                } else {
+                    if (_convergence_criterion->hasDeltaXCheck()) {
+                        // Note: x contains the new solution!
+                        _convergence_criterion->checkDeltaX(minus_delta_x, x);
+                    }
+
+                    error_norms_met = _convergence_criterion->isSatisfied();
+                }
+            }
+        }
+
+        if (iteration_succeeded)
+        {
             if (postIterationCallback)
-                postIterationCallback(iteration, x_new);
+                postIterationCallback(iteration, x);
 
-            switch(sys.postIteration(x_new))
+            switch(sys.postIteration(x))
             {
                 case IterationResult::SUCCESS:
                     break;
@@ -253,34 +275,24 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                         "iteration"
                         " has to be repeated.");
                     // TODO introduce some onDestroy hook.
-                    NumLib::GlobalVectorProvider::provider
-                        .releaseVector(x_new);
+                    if (x_old)
+                    {
+                        // TODO could be done via swap. Note: that also requires swapping
+                        // the ids. Same for the Picard scheme.
+                        LinAlg::copy(*x_old, x);  // restore previous solution
+                        NumLib::GlobalVectorProvider::provider
+                            .releaseVector(*x_old);
+                    }
                     continue;  // That throws the iteration result away.
             }
-
-            // TODO could be done via swap. Note: that also requires swapping
-            // the ids. Same for the Picard scheme.
-            LinAlg::copy(x_new, x);  // copy new solution to x
-            NumLib::GlobalVectorProvider::provider.releaseVector(
-                x_new);
         }
 
         if (!iteration_succeeded)
         {
+            ERR("Newton: The linear solver failed.");
             // Don't compute further error norms, but break here.
             error_norms_met = false;
             break;
-        }
-
-        if (sys.isLinear()) {
-            error_norms_met = true;
-        } else {
-            if (_convergence_criterion->hasDeltaXCheck()) {
-                // Note: x contains the new solution!
-                _convergence_criterion->checkDeltaX(minus_delta_x, x);
-            }
-
-            error_norms_met = _convergence_criterion->isSatisfied();
         }
 
         INFO("[time] Iteration #%u took %g s.", iteration,
