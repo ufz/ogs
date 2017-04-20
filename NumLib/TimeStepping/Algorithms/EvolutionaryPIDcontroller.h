@@ -16,8 +16,6 @@
 
 #include "ITimeStepAlgorithm.h"
 
-#include "MathLib/LinAlg/LinAlg.h"
-
 namespace BaseLib
 {
 class ConfigTree;
@@ -60,7 +58,7 @@ public:
                               const std::vector<double>&& specific_times,
                               const double tol,
                               const MathLib::VecNormType norm_type)
-        : ITimeStepAlgorithm(t0, t_end),
+        : ITimeStepAlgorithm(t0, t_end, norm_type),
           _h0(h0),
           _h_min(h_min),
           _h_max(h_max),
@@ -68,7 +66,6 @@ public:
           _rel_h_max(rel_h_max),
           _specific_times(std::move(specific_times)),
           _tol(tol),
-          _norm_type(norm_type),
           _e_n_minus1(0.),
           _e_n_minus2(0.),
           _is_accepted(true)
@@ -103,7 +100,6 @@ private:
     std::vector<double> _specific_times;
 
     const double _tol;
-    const MathLib::VecNormType _norm_type;
 
     double _e_n_minus1;  ///< \f$e_{n-1}\f$.
     double _e_n_minus2;  ///< \f$e_{n-2}\f$.
@@ -117,12 +113,7 @@ private:
                         std::min(h_in_range, _rel_h_max * h_n));
     }
 
-    double checkSpecificTimeReached(const double h_new) const
-    {
-        if (_ts_current.current() + h_new;
-        return std::max(_rel_h_min * h_n,
-                        std::min(h_in_range, _rel_h_max * h_n));
-    }
+    double checkSpecificTimeReached(const double h_new);
 };
 
 /// Create an EvolutionaryPIDcontroller time stepper from the given

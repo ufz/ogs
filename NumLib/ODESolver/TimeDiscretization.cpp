@@ -25,6 +25,9 @@ namespace NumLib
 static double computeRelativeError(GlobalVector const& x, GlobalVector& x_old,
                                    MathLib::VecNormType norm_type)
 {
+    if (norm_type == MathLib::VecNormType::INVALID)
+        return 0.;
+
     const double norm2_x = MathLib::LinAlg::norm(x, norm_type);
     assert(norm2_x > std::numeric_limits<double>::epsilon());
 
@@ -33,25 +36,30 @@ static double computeRelativeError(GlobalVector const& x, GlobalVector& x_old,
     return MathLib::LinAlg::norm(x_old, norm_type) / norm2_x;
 }
 
-double BackwardEuler::getRelativeError(GlobalVector const& x, MathLib::VecNormType norm_type)
+double BackwardEuler::getRelativeError(GlobalVector const& x,
+                                       MathLib::VecNormType norm_type)
 {
     return computeRelativeError(x, _x_old, norm_type);
 }
 
-double ForwardEuler::getRelativeError(GlobalVector const& x, MathLib::VecNormType norm_type)
+double ForwardEuler::getRelativeError(GlobalVector const& x,
+                                      MathLib::VecNormType norm_type)
 {
     return computeRelativeError(x, _x_old, norm_type);
 }
 
-double CrankNicolson::getRelativeError(GlobalVector const& x, MathLib::VecNormType norm_type)
+double CrankNicolson::getRelativeError(GlobalVector const& x,
+                                       MathLib::VecNormType norm_type)
 {
     return computeRelativeError(x, _x_old, norm_type);
 }
 
-double BackwardDifferentiationFormula::getRelativeError(GlobalVector const& x, MathLib::VecNormType norm_type)
+double BackwardDifferentiationFormula::getRelativeError(
+    GlobalVector const& x, MathLib::VecNormType norm_type)
 {
-    return (_xs_old.size() < _num_steps) ? 0. : computeRelativeError(
-                                                    x, *_xs_old[_offset], norm_type);
+    return (_xs_old.size() < _num_steps)
+               ? 0.
+               : computeRelativeError(x, *_xs_old[_offset], norm_type);
 }
 
 void BackwardDifferentiationFormula::pushState(const double,

@@ -42,8 +42,6 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
 
     // step accepted.
     _is_accepted = true;
-    if (_specific_times.size() > 0)
-        _specific_times.pop_back();
 
     if (_ts_current.steps() == 0)
     {
@@ -81,16 +79,34 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
             h_new = limitStepSize(h_new, h_n);
         }
 
-        _dt_vector.push_back(h_new);
+        const double checked_h_new = checkSpecificTimeReached(h_new);
+        _dt_vector.push_back(checked_h_new);
 
         _ts_prev = _ts_current;
-        _ts_current += h_new;
+        _ts_current += checked_h_new;
 
         _e_n_minus2 = _e_n_minus1;
         _e_n_minus1 = e_n;
     }
 
     return true;
+}
+
+double EvolutionaryPIDcontroller::checkSpecificTimeReached(const double h_new)
+{
+    if (_specific_times.empty())
+        return h_new;
+
+    const double specific_time = _specific_times.back();
+    const double zero_threshlod = std::numeric_limits<double>::epsilon();
+    if ((specific_time > _ts_current.current()) &&
+        (_ts_current.current() + h_new - specific_time > zero_threshlod))
+    {
+        _specific_times.pop_back();
+        return specific_time - _ts_current.current();
+    }
+
+    return h_new;
 }
 
 /// Create an EvolutionaryPIDcontroller time stepper from the given

@@ -16,6 +16,8 @@
 
 #include "NumLib/TimeStepping/TimeStep.h"
 
+#include "MathLib/LinAlg/LinAlg.h"  // For MathLib::VecNormType
+
 namespace NumLib
 {
 /**
@@ -25,23 +27,41 @@ namespace NumLib
 class ITimeStepAlgorithm
 {
 public:
-    ITimeStepAlgorithm(const double t0, const double t_end)
-        : _t_initial(t0), _t_end(t_end), _ts_prev(t0), _ts_current(t0)
+    ITimeStepAlgorithm(const double t0, const double t_end,
+                       const MathLib::VecNormType norm_type)
+        : _t_initial(t0),
+          _t_end(t_end),
+          _ts_prev(t0),
+          _ts_current(t0),
+          _norm_type(norm_type)
     {
     }
 
-    ITimeStepAlgorithm(const double t0, const double t_end, const double dt)
-        : _t_initial(t0), _t_end(t_end), _ts_prev(t0), _ts_current(t0),
-          _dt_vector(static_cast<std::size_t>(std::ceil((t_end - t0) / dt)), dt)
+    ITimeStepAlgorithm(const double t0, const double t_end, const double dt,
+                       const MathLib::VecNormType norm_type)
+        : _t_initial(t0),
+          _t_end(t_end),
+          _ts_prev(t0),
+          _ts_current(t0),
+          _dt_vector(static_cast<std::size_t>(std::ceil((t_end - t0) / dt)),
+                     dt),
+          _norm_type(norm_type)
     {
     }
 
     ITimeStepAlgorithm(const double t0, const double t_end,
-                      const std::vector<double>& all_step_sizes)
-        : _t_initial(t0), _t_end(t_end), _ts_prev(t0), _ts_current(t0),
-          _dt_vector(all_step_sizes)
+                       const std::vector<double>& all_step_sizes,
+                       const MathLib::VecNormType norm_type)
+        : _t_initial(t0),
+          _t_end(t_end),
+          _ts_prev(t0),
+          _ts_current(t0),
+          _dt_vector(all_step_sizes),
+          _norm_type(norm_type)
     {
     }
+
+    virtual ~ITimeStepAlgorithm() = default;
 
     /// return the beginning of time steps
     double begin() const { return _t_initial; }
@@ -70,7 +90,7 @@ public:
         return _dt_vector;
     }
 
-    virtual ~ITimeStepAlgorithm() = default;
+    MathLib::VecNormType getSolutionNormType() const { return _norm_type; }
 protected:
     /// initial time
     const double _t_initial;
@@ -84,6 +104,9 @@ protected:
 
     /// a vector of time step sizes
     std::vector<double> _dt_vector;
+
+    /// Type of the norm of the solution vector.
+    const MathLib::VecNormType _norm_type;
 };
 
 }  // NumLib

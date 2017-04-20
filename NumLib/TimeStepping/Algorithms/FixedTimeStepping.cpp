@@ -26,12 +26,15 @@ namespace NumLib
 FixedTimeStepping::FixedTimeStepping(double t0,
                                      double tn,
                                      const std::vector<double>& vec_all_dt)
-    : ITimeStepAlgorithm(t0, computeEnd(t0, tn, vec_all_dt), vec_all_dt)
+    : ITimeStepAlgorithm(t0,
+                         computeEnd(t0, tn, vec_all_dt),
+                         vec_all_dt,
+                         MathLib::VecNormType::INVALID)
 {
 }
 
 FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
-    : ITimeStepAlgorithm(t0, tn, dt)
+    : ITimeStepAlgorithm(t0, tn, dt, MathLib::VecNormType::INVALID)
 {
 }
 

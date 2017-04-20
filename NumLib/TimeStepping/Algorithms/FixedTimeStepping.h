@@ -71,7 +71,6 @@ public:
 
     /// return if current time step is accepted
     bool accepted() const override { return true; }
-
 private:
     /// determine true end time
     static double computeEnd(double t_initial, double t_end,
