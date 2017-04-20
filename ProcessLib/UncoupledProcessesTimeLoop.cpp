@@ -8,6 +8,7 @@
  */
 
 #include "UncoupledProcessesTimeLoop.h"
+
 #include "BaseLib/uniqueInsert.h"
 #include "BaseLib/RunTime.h"
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
@@ -493,9 +494,6 @@ bool solveOneTimeStepOneProcess(GlobalVector& x, std::size_t const timestep,
     bool nonlinear_solver_succeeded =
         nonlinear_solver.solve(x, coupling_term, post_iteration_callback);
 
-    auto& mat_strg = *process_data.mat_strg;
-    time_disc.pushState(t, x, mat_strg);
-
     return nonlinear_solver_succeeded;
 }
 
@@ -568,6 +566,89 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
     return true;
 }
 
+double UncoupledProcessesTimeLoop::computeTimeSteppping(
+    const double t, const std::size_t timesteps, std::size_t& accepted_steps,
+    std::size_t& rejected_steps)
+{
+    bool all_process_steps_accepted = true;
+    // Get minimum time step size among step sizes of all processes.
+    double dt = std::numeric_limits<double>::max();
+    for (std::size_t i = 0; i < _per_process_data.size(); i++)
+    {
+        const auto& ppd = *_per_process_data[i];
+        const auto& timestepper = ppd.timestepper;
+        if (t > timestepper->end())
+            // skip the process that already reaches the ending time.
+            continue;
+
+        auto& time_disc = ppd.time_disc;
+        auto const& x = *_process_solutions[i];
+
+        const double solution_error =
+            (t == timestepper->begin())
+                ? 0.
+                : time_disc->getRelativeError(
+                      x, timestepper->getSolutionNormType());
+        if (!timestepper->next(solution_error))
+        {
+            // Not all processes have accepted steps.
+            all_process_steps_accepted = false;
+        }
+
+        if (timestepper->getTimeStep().dt() < dt)
+        {
+            dt = timestepper->getTimeStep().dt();
+        }
+    }
+
+    bool is_initial_step = false;
+    // Reset the time step with the minimum step size, dt
+    // Update the solution of the previous time step in time_disc.
+    for (std::size_t i = 0; i < _per_process_data.size(); i++)
+    {
+        const auto& ppd = *_per_process_data[i];
+        auto& timestepper = ppd.timestepper;
+        timestepper->resetCurrentTimeStep(dt);
+
+        if (t == timestepper->begin())
+        {
+            is_initial_step = true;
+            continue;
+        }
+
+        if (all_process_steps_accepted)
+        {
+            auto& time_disc = ppd.time_disc;
+            auto& mat_strg = *ppd.mat_strg;
+            auto const& x = *_process_solutions[i];
+            time_disc->pushState(t, x, mat_strg);
+        }
+        else
+        {
+            WARN(
+                "Time step %d is rejected. "
+                "The computation is back to the previous time.",
+                timesteps)
+        }
+    }
+
+    if (!is_initial_step)
+    {
+        if (all_process_steps_accepted)
+            accepted_steps++;
+        else
+            rejected_steps++;
+    }
+
+    // Adjust step size if t < _end_time, while t+dt exceeds the end time
+    if (t < _end_time && t + dt > _end_time)
+    {
+        dt = _end_time - t;
+    }
+
+    return dt;
+}
+
 /*
  * TODO:
  * Now we have a structure inside the time loop which is very similar to the
@@ -621,62 +702,55 @@ bool UncoupledProcessesTimeLoop::loop()
     const bool is_staggered_coupling = setCoupledSolutions();
 
     double t = _start_time;
-    std::size_t timestep = 1;  // the first timestep really is number one
+    std::size_t timesteps = 1;  // the first timestep really is number one
+    std::size_t accepted_steps = 0;
+    std::size_t rejected_steps = 0;
     bool nonlinear_solver_succeeded = true;
+
+    double dt =
+        computeTimeSteppping(t, timesteps, accepted_steps, rejected_steps);
 
     while (t < _end_time)
     {
         BaseLib::RunTime time_timestep;
         time_timestep.start();
 
-        // Find the minimum time step size among the predicted step sizes of
-        // processes and step it as common time step size.
-        double dt = std::numeric_limits<double>::max();
-        for (std::size_t i = 0; i < _per_process_data.size(); i++)
-        {
-            const auto& timestepper = _per_process_data[i]->timestepper;
-            if (t > timestepper->end())  // skip the process that already stops
-                continue;
-
-            // TODO SOON          timestepper->next();
-            if (timestepper->getTimeStep().dt() < dt)
-            {
-                dt = timestepper->getTimeStep().dt();
-            }
-        }
-        // Adjust step size if t < _end_time, while t+dt exceeds the end time
-        if (t < _end_time && t + dt > _end_time)
-        {
-            dt = _end_time - t;
-            if (dt < std::numeric_limits<double>::epsilon())
-                break;  // break the time stepping loop
-        }
-
         t += dt;
 
-        for (auto& spd : _per_process_data)
-        {
-            spd->timestepper->resetCurrentTimeStep(dt);
-        }
-
         INFO("=== timestep #%u (t=%gs, dt=%gs) ==============================",
-             timestep, t, dt);
+             timesteps, t, dt);
 
         if (is_staggered_coupling)
             nonlinear_solver_succeeded =
-                solveCoupledEquationSystemsByStaggeredScheme(t, dt, timestep);
+                solveCoupledEquationSystemsByStaggeredScheme(t, dt, timesteps);
         else
             nonlinear_solver_succeeded =
-                solveUncoupledEquationSystems(t, dt, timestep);
+                solveUncoupledEquationSystems(t, dt, timesteps);
 
-        INFO("[time] Time step #%u took %g s.", timestep,
+        INFO("[time] Time step #%u took %g s.", timesteps,
              time_timestep.elapsed());
 
-        timestep++;
+        dt = computeTimeSteppping(t, timesteps, accepted_steps, rejected_steps);
+
+        if (dt < std::numeric_limits<double>::epsilon())
+        {
+            WARN(
+                "Time step size of %g is too small.\n"
+                "Time stepping stops at step %u and at time of %g.",
+                dt, timesteps, t);
+            break;
+        }
+
+        timesteps++;
 
         if (!nonlinear_solver_succeeded)
             break;
     }
+
+    INFO(
+        "The whole computation took %u steps, in which\n"
+        "\t accepted steps are %u, rejected steps are %u.\n",
+        timesteps, accepted_steps, rejected_steps)
 
     // output last time step
     if (nonlinear_solver_succeeded)
@@ -686,8 +760,8 @@ bool UncoupledProcessesTimeLoop::loop()
         {
             auto& pcs = spd->process;
             auto const& x = *_process_solutions[pcs_idx];
-            _output->doOutputLastTimestep(pcs, spd->process_output, timestep, t,
-                                          x);
+            _output->doOutputLastTimestep(pcs, spd->process_output, timesteps,
+                                          t, x);
 
             ++pcs_idx;
         }
