@@ -117,3 +117,6 @@ if(USE_CONAN)
     # Install Qt platform shared libraries
     install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/platforms DESTINATION bin OPTIONAL)
 endif()
+
+configure_file(Documentation/README.txt.in ${PROJECT_BINARY_DIR}/README.txt)
+install(FILES ${PROJECT_BINARY_DIR}/README.txt DESTINATION .)

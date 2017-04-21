@@ -23,6 +23,7 @@ class OpenGeoSysConan(ConanFile):
     def imports(self):
         self.copy(pattern="*.dll", dst="bin", src="bin")
         self.copy(pattern="*.dylib*", dst="bin", src="lib")
+        self.copy(pattern="*.so*", dst="bin", src="lib")
         self.copy(pattern="*.framework*", dst="bin", src="lib")
         self.copy(pattern="*.dll", dst="bin/platforms", src="plugins/platforms")
         self.copy(pattern="*.dylib*", dst="bin/platforms", src="plugins/platforms")
