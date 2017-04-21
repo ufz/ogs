@@ -33,6 +33,7 @@ withEnv(helper.getEnv(this)) {
     stage('Data Explorer (Win)') {
         configure.win(
             cmakeOptions: defaultCMakeOptions + ' ' + guiCMakeOptions, keepDir: true,
+            conanOptions: "-o gui=True",
             script: this
         )
         build.win(script: this)
