@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   BrookCoreyCapillaryPressureSaturation.h
+ * \file   BrooksCoreyCapillaryPressureSaturation.h
  *
  *  Created on November 1, 2016, 9:45 AM
  */
@@ -21,7 +21,7 @@ namespace MaterialLib
 namespace PorousMedium
 {
 /**
- *   \brief Brook-Corey capillary pressure saturation model
+ *   \brief Brooks-Corey capillary pressure saturation model
  *
  *   \f[p_c=p_b S_e^{-1/m}\f]
  *   with
@@ -37,7 +37,7 @@ namespace PorousMedium
  *    Note:
  *     \f[m=1/(1-n)\f]
  */
-class BrookCoreyCapillaryPressureSaturation final
+class BrooksCoreyCapillaryPressureSaturation final
     : public CapillaryPressureSaturation
 {
 public:
@@ -49,9 +49,9 @@ public:
      * @param m      Exponent, \f$ m \f$
      * @param Pc_max Maximum capillary pressure, \f$ P_c^{\mbox{max}}\f$
      */
-    BrookCoreyCapillaryPressureSaturation(const double pb, const double Sr,
-                                          const double Sg_r, const double Smax,
-                                          const double m, const double Pc_max)
+    BrooksCoreyCapillaryPressureSaturation(const double pb, const double Sr,
+                                           const double Sg_r, const double Smax,
+                                           const double m, const double Pc_max)
         : CapillaryPressureSaturation(Sr, Sg_r, Smax, Pc_max), _pb(pb), _m(m)
     {
     }
@@ -59,7 +59,7 @@ public:
     /// Get model name.
     std::string getName() const override
     {
-        return "Brook-Corey capillary pressure saturation model.";
+        return "Brooks-Corey capillary pressure saturation model.";
     }
 
     /// Get capillary pressure.

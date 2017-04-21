@@ -35,11 +35,11 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     return MaterialLib::PorousMedium::createCapillaryPressureModel(sub_config);
 }
 
-TEST(MaterialPorousMedium, checkBrookCoreyCapillaryPressure)
+TEST(MaterialPorousMedium, checkBrooksCoreyCapillaryPressure)
 {
     const char xml[] =
         "<capillary_pressure>"
-        "   <type>BrookCorey</type>"
+        "   <type>BrooksCorey</type>"
         "   <pd> 19600.0 </pd> "
         "   <sr> 0.1 </sr> "
         "   <smax> 1. </smax> "

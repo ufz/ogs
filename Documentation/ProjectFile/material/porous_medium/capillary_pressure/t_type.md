@@ -1,4 +1,4 @@
 Type of capillary pressure saturation model. The available models are:
-    BrookCorey,
+    BrooksCorey,
     vanGenuchten,
     Curve

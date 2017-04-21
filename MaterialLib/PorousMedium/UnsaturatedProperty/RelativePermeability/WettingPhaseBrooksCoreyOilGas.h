@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   WettingPhaseBrookCoreyOilGas.h
+ * \file   WettingPhaseBrooksCoreyOilGas.h
  *
  * Created on November 1, 2016, 3:37 PM
  */
@@ -19,7 +19,7 @@ namespace MaterialLib
 namespace PorousMedium
 {
 /**
- *   \brief BrookCorey oil-gas model: wetting phase
+ *   \brief BrooksCorey oil-gas model: wetting phase
  *
  *   \f[k{rel}= S_e^{3 + 2 /m}\f]
  *   with
@@ -31,7 +31,7 @@ namespace PorousMedium
  *       &m(>=1) &        \mbox{ exponent.}\\
  *    \f}
  */
-class WettingPhaseBrookCoreyOilGas final : public RelativePermeability
+class WettingPhaseBrooksCoreyOilGas final : public RelativePermeability
 {
 public:
     /**
@@ -40,8 +40,8 @@ public:
      * @param m        Exponent, \f$ m \f$
      * @param krel_min Minimum relative permeability,\f$ k_{rel}^{\mbox{min}}\f$
      */
-    WettingPhaseBrookCoreyOilGas(const double Sr, const double Smax,
-                                 const double m, const double krel_min)
+    WettingPhaseBrooksCoreyOilGas(const double Sr, const double Smax,
+                                  const double m, const double krel_min)
         : RelativePermeability(Sr, Smax), _m(m), _krel_min(krel_min)
     {
     }
@@ -49,7 +49,7 @@ public:
     /// Get model name.
     std::string getName() const override
     {
-        return "Wetting phase Brook-Corey relative permeability model.";
+        return "Wetting phase Brooks-Corey relative permeability model.";
     }
 
     /// Get relative permeability value.
