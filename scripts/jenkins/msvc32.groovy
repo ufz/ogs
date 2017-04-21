@@ -22,6 +22,7 @@ withEnv(helper.getEnv(this, 'x32')) {
         configure.win(
             arch: 'x86',
             cmakeOptions: defaultCMakeOptions + guiCMakeOptions,
+            conanOptions: "-o gui=True",
             script: this
         )
         build.win(script: this)

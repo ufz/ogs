@@ -41,6 +41,7 @@ image.inside(defaultDockerArgs) {
     stage('Data Explorer (Linux-Docker)') {
         configure.linux(
             cmakeOptions: defaultCMakeOptions + guiCMakeOptions,
+            conanOptions: "-o gui=True",
             keepDir: true,
             script: this,
             useConan: true
