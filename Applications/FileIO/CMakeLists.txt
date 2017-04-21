@@ -1,13 +1,12 @@
 GET_SOURCE_FILES(SOURCES)
+APPEND_SOURCE_FILES(SOURCES Gmsh)
+
 if(NOT Shapelib_FOUND)
     list(REMOVE_ITEM SOURCES SHPInterface.h SHPInterface.cpp)
 endif()
-if(Qt5XmlPatterns_FOUND)
-    APPEND_SOURCE_FILES(SOURCES XmlIO/Qt)
-endif()
-APPEND_SOURCE_FILES(SOURCES Gmsh)
 
 if(Qt5XmlPatterns_FOUND)
+    APPEND_SOURCE_FILES(SOURCES XmlIO/Qt)
     APPEND_SOURCE_FILES(SOURCES FEFLOW)
 endif()
 
@@ -21,13 +20,6 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 # Create the library
 add_library(ApplicationsFileIO ${SOURCES})
 target_link_libraries(ApplicationsFileIO DataHolderLib)
-
-if(Qt5XmlPatterns_FOUND)
-    target_link_libraries(ApplicationsFileIO Qt5::Xml Qt5::XmlPatterns)
-    if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
-        target_link_libraries(ApplicationsFileIO Qt5::Network ${OPENSSL_LIBRARIES} ws2_32)
-    endif()
-endif()
 
 if(Shapelib_FOUND)
     target_link_libraries(ApplicationsFileIO ${Shapelib_LIBRARIES})

@@ -15,7 +15,7 @@
 
 #include <QDomElement>
 #include <QString>
-#include <QtXml>
+#include <QtXml/QDomDocument>
 
 #include <logog/include/logog.hpp>
 
