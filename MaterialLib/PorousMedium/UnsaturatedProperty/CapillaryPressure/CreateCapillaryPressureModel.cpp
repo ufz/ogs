@@ -18,7 +18,7 @@
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 #include "MathLib/Curve/PiecewiseLinearMonotonicCurve.h"
 
-#include "BrookCoreyCapillaryPressureSaturation.h"
+#include "BrooksCoreyCapillaryPressureSaturation.h"
 #include "CapillaryPressureSaturation.h"
 #include "CapillaryPressureSaturationCurve.h"
 #include "VanGenuchtenCapillaryPressureSaturation.h"
@@ -29,23 +29,23 @@ namespace PorousMedium
 {
 /**
     \param config ConfigTree object which contains the input data
-                  including `<type>BrookCorey</type>`
+                  including `<type>BrooksCorey</type>`
                   and it has a tag of `<capillary_pressure>`
 */
-static std::unique_ptr<CapillaryPressureSaturation> createBrookCorey(
+static std::unique_ptr<CapillaryPressureSaturation> createBrooksCorey(
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__porous_medium__capillary_pressure__type}
-    config.checkConfigParameter("type", "BrookCorey");
+    config.checkConfigParameter("type", "BrooksCorey");
 
-    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey__pd}
+    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrooksCorey__pd}
     const double pd = config.getConfigParameter<double>("pd");
 
-    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey__sr}
+    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrooksCorey__sr}
     const double Sr = config.getConfigParameter<double>("sr");
 
     double Sg_r = 0.0;
-    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey__sg_r}
+    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrooksCorey__sg_r}
     if (auto const Sg_r_ptr = config.getConfigParameterOptional<double>("sg_r"))
     {
         DBUG(
@@ -54,22 +54,22 @@ static std::unique_ptr<CapillaryPressureSaturation> createBrookCorey(
             (*Sg_r_ptr));
         Sg_r = *Sg_r_ptr;
     }
-    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey__smax}
+    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrooksCorey__smax}
     const double Smax = config.getConfigParameter<double>("smax");
 
-    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey__m}
+    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrooksCorey__m}
     const double m = config.getConfigParameter<double>("m");
     if (m < 1.0)  // m >= 1
     {
         OGS_FATAL(
-            "The exponent parameter of BrookCorey capillary pressure "
+            "The exponent parameter of BrooksCorey capillary pressure "
             "saturation model, m, must not be smaller than 1");
     }
-    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrookCorey__pc_max}
+    //! \ogs_file_param{material__porous_medium__capillary_pressure__BrooksCorey__pc_max}
     const double Pc_max = config.getConfigParameter<double>("pc_max");
 
     return std::unique_ptr<CapillaryPressureSaturation>(
-        new BrookCoreyCapillaryPressureSaturation(
+        new BrooksCoreyCapillaryPressureSaturation(
             pd, Sr, Sg_r, Smax, m, Pc_max));
 }
 
@@ -135,9 +135,9 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     //! \ogs_file_param{material__porous_medium__capillary_pressure__type}
     auto const type = config.peekConfigParameter<std::string>("type");
 
-    if (type == "BrookCorey")
+    if (type == "BrooksCorey")
     {
-        return createBrookCorey(config);
+        return createBrooksCorey(config);
     }
     else if (type == "vanGenuchten")
     {
@@ -161,7 +161,7 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     {
         OGS_FATAL(
             "The capillary pressure saturation models %s are unavailable.\n"
-            "The available types are: \n\tBrookCorey, \n\tvanGenuchten,",
+            "The available types are: \n\tBrooksCorey, \n\tvanGenuchten,",
             "\n\tCurve.\n",
             type.data());
     }

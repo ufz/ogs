@@ -1,2 +1,0 @@
-\copydoc MaterialLib::PorousMedium::WettingPhaseBrookCoreyOilGas
-

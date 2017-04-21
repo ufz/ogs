@@ -10,7 +10,7 @@
  *  Created on November 1, 2016, 9:45 AM
  */
 
-#include "BrookCoreyCapillaryPressureSaturation.h"
+#include "BrooksCoreyCapillaryPressureSaturation.h"
 
 #include <cmath>
 
@@ -20,7 +20,7 @@ namespace MaterialLib
 {
 namespace PorousMedium
 {
-double BrookCoreyCapillaryPressureSaturation::getCapillaryPressure(
+double BrooksCoreyCapillaryPressureSaturation::getCapillaryPressure(
     const double saturation) const
 {
     const double S =
@@ -31,7 +31,7 @@ double BrookCoreyCapillaryPressureSaturation::getCapillaryPressure(
     return MathLib::limitValueInInterval(pc, _minor_offset, _pc_max);
 }
 
-double BrookCoreyCapillaryPressureSaturation::getSaturation(
+double BrooksCoreyCapillaryPressureSaturation::getSaturation(
     const double capillary_pressure) const
 {
     const double pc =
@@ -42,7 +42,7 @@ double BrookCoreyCapillaryPressureSaturation::getSaturation(
                                          _saturation_max - _minor_offset);
 }
 
-double BrookCoreyCapillaryPressureSaturation::getdPcdS(
+double BrooksCoreyCapillaryPressureSaturation::getdPcdS(
     const double saturation) const
 {
     const double S =
