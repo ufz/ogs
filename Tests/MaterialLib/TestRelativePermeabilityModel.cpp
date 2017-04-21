@@ -99,11 +99,11 @@ TEST(MaterialPorousMedium, checkNonWettingPhaseVanGenuchten)
     }
 }
 
-TEST(MaterialPorousMedium, checkWettingPhaseBrookCoreyOilGas)
+TEST(MaterialPorousMedium, checkWettingPhaseBrooksCoreyOilGas)
 {
     const char xml[] =
         "<relative_permeability id=\"0\">"
-        "   <type>WettingPhaseBrookCoreyOilGas</type>"
+        "   <type>WettingPhaseBrooksCoreyOilGas</type>"
         "   <sr>  0.2 </sr> "
         "   <smax> 0.8 </smax> "
         "   <m> 2 </m> "
@@ -136,11 +136,11 @@ TEST(MaterialPorousMedium, checkWettingPhaseBrookCoreyOilGas)
     }
 }
 
-TEST(MaterialPorousMedium, checkNonWettingPhaseBrookCoreyOilGas)
+TEST(MaterialPorousMedium, checkNonWettingPhaseBrooksCoreyOilGas)
 {
     const char xml[] =
         "<relative_permeability id=\"0\">"
-        "   <type>NonWettingPhaseBrookCoreyOilGas</type>"
+        "   <type>NonWettingPhaseBrooksCoreyOilGas</type>"
         "   <sr>  0.2 </sr> "
         "   <smax> 0.8 </smax> "
         "   <m> 2 </m> "
