@@ -77,7 +77,8 @@ public:
             delete e;
     }
 
-    void initComponents(const unsigned num_components, const unsigned selected_component,
+    void initComponents(const unsigned num_components,
+                        const int selected_component,
                         const NL::ComponentOrder order)
     {
         assert(selected_component < num_components);
@@ -97,7 +98,7 @@ public:
 
         dof_map_boundary.reset(dof_map->deriveBoundaryConstrainedMap(
             0,  // variable id
-            selected_component,
+            {selected_component},
             std::move(components_boundary),
             boundary_elements));
     }

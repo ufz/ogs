@@ -80,22 +80,7 @@ public:
 
     /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
     /// elements. A new mesh component map will be constructed using the passed
-    /// mesh_subsets for the given variable and component id.
-    ///
-    /// This is single-component version.
-    ///
-    /// \note The elements are not necessarily those used in the mesh_subsets.
-    LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
-        int const variable_id,
-        int const component_id,
-        std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
-        std::vector<MeshLib::Element*> const& elements) const;
-
-    /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
-    /// elements. A new mesh component map will be constructed using the passed
     /// mesh_subsets for the given variable and component ids.
-    ///
-    /// This is multi-component version.
     ///
     /// \note The elements are not necessarily those used in the mesh_subsets.
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(

@@ -258,27 +258,6 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 
 LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
     int const variable_id,
-    int const component_id,
-    std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
-    std::vector<MeshLib::Element*> const& elements) const
-{
-    DBUG("Construct reduced local to global index map.");
-    // Create a subset of the current mesh component map.
-    auto const global_component_id =
-        getGlobalComponent(variable_id, component_id);
-
-    auto mesh_component_map =
-        _mesh_component_map.getSubset({global_component_id}, *mesh_subsets);
-
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
-    all_mesh_subsets.emplace_back(std::move(mesh_subsets));
-    return new LocalToGlobalIndexMap(std::move(all_mesh_subsets),
-                                     global_component_id, elements,
-                                     std::move(mesh_component_map));
-}
-
-LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
-    int const variable_id,
     std::vector<int> const& component_ids,
     std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
     std::vector<MeshLib::Element*> const& elements) const
