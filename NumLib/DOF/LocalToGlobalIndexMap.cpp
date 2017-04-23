@@ -194,33 +194,6 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     }
 }
 
-
-LocalToGlobalIndexMap::LocalToGlobalIndexMap(
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
-    int const component_id,
-    std::vector<MeshLib::Element*> const& elements,
-    NumLib::MeshComponentMap&& mesh_component_map)
-    : _mesh_subsets(std::move(mesh_subsets)),
-      _mesh_component_map(std::move(mesh_component_map)),
-      _variable_component_offsets(to_cumulative(std::vector<unsigned>(1,1))) // Single variable only.
-{
-    // There is only one mesh_subsets in the vector _mesh_subsets.
-    assert(_mesh_subsets.size() == 1);
-    auto const mss = *_mesh_subsets.front();
-
-    // For all MeshSubset in mesh_subsets and each element of that MeshSubset
-    // save a line of global indices.
-    for (MeshLib::MeshSubset const* const ms : mss)
-    {
-        std::size_t const mesh_id = ms->getMeshID();
-
-        findGlobalIndices(elements.cbegin(), elements.cend(), ms->getNodes(), mesh_id,
-                          component_id, 0);  // There is only one component to
-                                             // write out, therefore the zero
-                                             // parameter.
-    }
-}
-
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
     std::vector<std::size_t> const& global_component_ids,

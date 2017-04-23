@@ -170,17 +170,6 @@ private:
     /// this construtor.
     explicit LocalToGlobalIndexMap(
         std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
-        int const component_id,
-        std::vector<MeshLib::Element*> const& elements,
-        NumLib::MeshComponentMap&& mesh_component_map);
-
-    /// Private constructor used by internally created local-to-global index
-    /// maps. The mesh_component_map is passed as argument instead of being
-    /// created by the constructor.
-    /// \attention The passed mesh_component_map is in undefined state after
-    /// this construtor.
-    explicit LocalToGlobalIndexMap(
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
         std::vector<std::size_t> const& global_component_ids,
         std::vector<MeshLib::Element*> const& elements,
         NumLib::MeshComponentMap&& mesh_component_map);
