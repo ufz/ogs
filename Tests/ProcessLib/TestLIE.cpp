@@ -38,34 +38,17 @@ std::unique_ptr<MeshLib::Mesh> createTriangle(
 }
 
 std::unique_ptr<MeshLib::Mesh> createLine(
-    std::array<double, 3> const& a, std::array<double, 3> const& b)
+    std::array<std::array<double, 3>, 2> const& points)
 {
     MeshLib::Node** nodes = new MeshLib::Node*[2];
-    nodes[0] = new MeshLib::Node(a);
-    nodes[1] = new MeshLib::Node(b);
+    for (int i = 0; i < points.size(); ++i)
+        nodes[i] = new MeshLib::Node(points[i]);
     MeshLib::Element* e = new MeshLib::Line(nodes);
 
     return std::unique_ptr<MeshLib::Mesh>(
-                new MeshLib::Mesh("",
-                                  std::vector<MeshLib::Node*>{nodes[0], nodes[1]},
-                                  std::vector<MeshLib::Element*>{e})
-                );
-}
-
-std::unique_ptr<MeshLib::Mesh> createX()
-{
-    return createLine({{-1.0, 0.0, 0.0}}, {{1.0,  0.0, 0.0}});
-}
-
-std::unique_ptr<MeshLib::Mesh> createY()
-{
-    return createLine({{0.0, -1.0, 0.0}}, {{0.0,  1.0, 0.0}});
-}
-
-std::unique_ptr<MeshLib::Mesh> createXY()
-{
-    // 45degree inclined
-    return createLine({{0.0, 0.0, 0.0}}, {{2./std::sqrt(2), 2./std::sqrt(2), 0.0}});
+        new MeshLib::Mesh("",
+                          std::vector<MeshLib::Node*>{nodes[0], nodes[1]},
+                          std::vector<MeshLib::Element*>{e}));
 }
 
 const double eps = std::numeric_limits<double>::epsilon();
@@ -124,7 +107,7 @@ TEST(LIE, rotationMatrixYZTriangle)
 
 TEST(LIE, rotationMatrixX)
 {
-    auto msh(createX());
+    auto msh = createLine({{{{-1.0, 0.0, 0.0}}, {{1.0, 0.0, 0.0}}}});
     auto e(msh->getElement(0));
     Eigen::Vector3d nv;
     ProcessLib::LIE::computeNormalVector(*e, 2, nv);
@@ -143,7 +126,7 @@ TEST(LIE, rotationMatrixX)
 
 TEST(LIE, rotationMatrixY)
 {
-    auto msh(createY());
+    auto msh = createLine({{{{0.0, -1.0, 0.0}}, {{0.0, 1.0, 0.0}}}});
     auto e(msh->getElement(0));
     Eigen::Vector3d nv;
     ProcessLib::LIE::computeNormalVector(*e, 2, nv);
@@ -162,7 +145,9 @@ TEST(LIE, rotationMatrixY)
 
 TEST(LIE, rotationMatrixXY)
 {
-    auto msh(createXY());
+    // 45degree inclined
+    auto msh = createLine(
+        {{{{0.0, 0.0, 0.0}}, {{2. / std::sqrt(2), 2. / std::sqrt(2), 0.0}}}});
     auto e(msh->getElement(0));
     Eigen::Vector3d nv;
     ProcessLib::LIE::computeNormalVector(*e, 2, nv);
