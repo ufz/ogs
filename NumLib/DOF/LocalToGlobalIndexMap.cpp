@@ -268,7 +268,7 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
         getGlobalComponent(variable_id, component_id);
 
     auto mesh_component_map =
-        _mesh_component_map.getSubset(global_component_id, *mesh_subsets);
+        _mesh_component_map.getSubset({global_component_id}, *mesh_subsets);
 
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
     all_mesh_subsets.emplace_back(std::move(mesh_subsets));

@@ -165,7 +165,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
 
     // Subset the original cmap.
     MeshComponentMap cmap_subset =
-        cmap->getSubset(selected_component_id, *selected_component);
+        cmap->getSubset({selected_component_id}, *selected_component);
 
     // Check number of components as selected
     ASSERT_EQ(ids.size(), cmap_subset.dofSizeWithGhosts());
@@ -202,7 +202,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
 
     // Subset the original cmap.
     MeshComponentMap cmap_subset =
-        cmap->getSubset(selected_component_id, *selected_component);
+        cmap->getSubset({selected_component_id}, *selected_component);
 
     // Check number of components as selected
     ASSERT_EQ(ids.size(), cmap_subset.dofSizeWithGhosts());
