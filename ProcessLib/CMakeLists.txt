@@ -74,4 +74,6 @@ if(OGS_INSITU)
     target_link_libraries(ProcessLib InSituLib)
 endif()
 
-cotire(ProcessLib)
+if(OGS_USE_PCH)
+    cotire(ProcessLib)
+endif()

@@ -24,4 +24,6 @@ target_link_libraries(MaterialLib
     BaseLib
 )
 
-cotire(MaterialLib)
+if(OGS_USE_PCH)
+    cotire(MaterialLib)
+endif()

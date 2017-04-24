@@ -112,7 +112,9 @@ ADD_VTK_DEPENDENCY(DataExplorer)
 
 set_property(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 
-cotire(DataExplorer)
+if(OGS_USE_PCH)
+    cotire(DataExplorer)
+endif()
 
 ####################
 ### Installation ###

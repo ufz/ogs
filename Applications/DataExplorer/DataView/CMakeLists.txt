@@ -151,4 +151,6 @@ endif () # GEOTIFF_FOUND
 
 set_property(TARGET QtDataView PROPERTY FOLDER "DataExplorer")
 
-cotire(QtDataView)
+if(OGS_USE_PCH)
+    cotire(QtDataView)
+endif()

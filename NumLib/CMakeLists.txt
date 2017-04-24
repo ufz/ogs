@@ -35,4 +35,6 @@ if(TARGET Boost)
     add_dependencies(NumLib Boost)
 endif()
 
-cotire(NumLib)
+if(OGS_USE_PCH)
+    cotire(NumLib)
+endif()

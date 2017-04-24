@@ -35,7 +35,9 @@ if(TARGET Boost)
     add_dependencies(ApplicationsFileIO Boost)
 endif()
 
-cotire(ApplicationsFileIO)
+if(OGS_USE_PCH)
+    cotire(ApplicationsFileIO)
+endif()
 
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/InstallXmlSchemaFiles.cmake)
 InstallXmlSchemaFiles("XmlIO/*.xsd")

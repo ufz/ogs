@@ -36,4 +36,6 @@ target_link_libraries(QtStratView Qt5::Gui QtBase)
 
 set_property(TARGET QtStratView PROPERTY FOLDER "DataExplorer")
 
-cotire(QtStratView)
+if(OGS_USE_PCH)
+    cotire(QtStratView)
+endif()

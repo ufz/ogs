@@ -18,7 +18,9 @@ if(OGS_INSITU)
     target_link_libraries(ogs InSituLib)
 endif()
 
-cotire(ogs)
+if(OGS_USE_PCH)
+    cotire(ogs)
+endif()
 
 ####################
 ### Tests ##########

@@ -3,4 +3,6 @@ GET_SOURCE_FILES(SOURCES)
 
 # Library
 add_library(InSituLib ${SOURCES})
-cotire(InSituLib)
+if(OGS_USE_PCH)
+    cotire(InSituLib)
+endif()

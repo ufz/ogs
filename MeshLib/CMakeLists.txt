@@ -22,7 +22,9 @@ endif()
 
 # Create the library
 add_library(MeshLib ${SOURCES})
-cotire(MeshLib)
+if(OGS_USE_PCH)
+    cotire(MeshLib)
+endif()
 
 target_link_libraries(MeshLib
     BaseLib

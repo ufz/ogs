@@ -135,4 +135,6 @@ endif() # GEOTIFF_FOUND
 target_link_libraries(VtkVis Qt5::Gui QtDataView VtkAct)
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")
 
-cotire(VtkVis)
+if(OGS_USE_PCH)
+    cotire(VtkVis)
+endif()

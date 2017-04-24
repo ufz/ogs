@@ -20,4 +20,6 @@ if(TARGET Boost)
     add_dependencies(ApplicationsLib Boost)
 endif()
 
-cotire(ApplicationsLib)
+if(OGS_USE_PCH)
+    cotire(ApplicationsLib)
+endif()

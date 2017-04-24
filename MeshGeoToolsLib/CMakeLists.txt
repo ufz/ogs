@@ -15,4 +15,6 @@ if(TARGET Boost)
     add_dependencies(MeshGeoToolsLib Boost)
 endif()
 
-cotire(MeshGeoToolsLib)
+if(OGS_USE_PCH)
+    cotire(MeshGeoToolsLib)
+endif()

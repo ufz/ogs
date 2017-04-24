@@ -26,6 +26,7 @@ set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults to native (*nix) / blend (MSVC).")
 option(OGS_ENABLE_AVX2 "Enable the use of AVX2 instructions" OFF)
 option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
+option(OGS_USE_PCH "Should pre-compiled headers be used?" ON)
 
 ### CMake includes ###
 include(scripts/cmake/ConanSetup.cmake)

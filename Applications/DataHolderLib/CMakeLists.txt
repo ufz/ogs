@@ -10,4 +10,6 @@ target_link_libraries(DataHolderLib
     logog
 )
 
-cotire(DataHolderLib)
+if(OGS_USE_PCH)
+    cotire(DataHolderLib)
+endif()

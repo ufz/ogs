@@ -76,7 +76,9 @@ endif()
 
 ADD_VTK_DEPENDENCY(testrunner)
 
-cotire(testrunner)
+if(OGS_USE_PCH)
+    cotire(testrunner)
+endif()
 
 # Add make-target tests which runs the testrunner
 if(DEFINED ENV{CI})
