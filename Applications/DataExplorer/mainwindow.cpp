@@ -466,8 +466,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
                                                    _project.getGEOObjects(),
                                                    unique_name, errors))
             {
-                for (std::size_t k(0); k<errors.size(); k++)
-                    OGSError::box(QString::fromStdString(errors[k]));
+                for (auto& error : errors)
+                    OGSError::box(QString::fromStdString(error));
             }
         }
         else if (fi.suffix().toLower() == "gsp")

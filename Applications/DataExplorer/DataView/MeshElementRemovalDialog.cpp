@@ -65,15 +65,16 @@ void MeshElementRemovalDialog::accept()
     if (this->elementTypeCheckBox->isChecked())
     {
         QList<QListWidgetItem*> items = this->elementTypeListWidget->selectedItems();
-        for (int i=0; i<items.size(); ++i)
-            ex.searchByElementType(MeshLib::String2MeshElemType(items[i]->text().toStdString()));
+        for (auto& item : items)
+            ex.searchByElementType(
+                MeshLib::String2MeshElemType(item->text().toStdString()));
         anything_checked = true;
     }
     if (this->materialIDCheckBox->isChecked())
     {
         QList<QListWidgetItem*> items = this->materialListWidget->selectedItems();
-        for (int i=0; i<items.size(); ++i)
-            ex.searchByPropertyValue(items[i]->text().toInt());
+        for (auto& item : items)
+            ex.searchByPropertyValue(item->text().toInt());
         anything_checked = true;
     }
     if (this->boundingBoxCheckBox->isChecked())

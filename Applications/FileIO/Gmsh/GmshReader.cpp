@@ -235,8 +235,9 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     }
     in.close();
     if (elements.empty()) {
-        for (auto it(nodes.begin()); it != nodes.end(); ++it) {
-            delete *it;
+        for (auto& node : nodes)
+        {
+            delete node;
         }
         return nullptr;
     }

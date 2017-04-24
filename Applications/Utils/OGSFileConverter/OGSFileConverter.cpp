@@ -45,15 +45,15 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
     GeoLib::GEOObjects geo_objects;
     GeoLib::IO::XmlGmlInterface xml(geo_objects);
 
-    for (QStringList::const_iterator it=input.begin(); it!=input.end(); ++it)
+    for (const auto& it : input)
     {
-        const QFileInfo fi(*it);
+        const QFileInfo fi(it);
         const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".gli").toStdString();
 
         if (fileExists(output_str))
             continue;
 
-        if (!xml.readFile(*it))
+        if (!xml.readFile(it))
         {
             OGSError::box("Error reading geometry " + fi.fileName());
             continue;
@@ -76,9 +76,9 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
     GeoLib::GEOObjects geo_objects;
     GeoLib::IO::XmlGmlInterface xml(geo_objects);
 
-    for (QStringList::const_iterator it=input.begin(); it!=input.end(); ++it)
+    for (const auto& it : input)
     {
-        const QFileInfo fi(*it);
+        const QFileInfo fi(it);
         const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".gml").toStdString();
 
         if (fileExists(output_str))
@@ -87,10 +87,12 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
         std::string unique_name;
         std::vector<std::string> errors;
 
-        GeoLib::IO::Legacy::readGLIFileV4(it->toStdString(), geo_objects, unique_name, errors);
+        GeoLib::IO::Legacy::readGLIFileV4(it.toStdString(), geo_objects,
+                                          unique_name, errors);
         if (errors.empty() || (errors.size()==1 && errors[0].compare("[readSurface] polyline for surface not found!")==0))
         {
-            std::string const geo_name = BaseLib::extractBaseName(it->toStdString());
+            std::string const geo_name =
+                BaseLib::extractBaseName(it.toStdString());
             xml.setNameForExport(geo_name);
             xml.writeToFile(output_str);
             geo_objects.removeSurfaceVec(geo_name);
@@ -98,8 +100,8 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
             geo_objects.removePointVec(geo_name);
         }
         else
-            for (std::size_t k(0); k<errors.size(); ++k)
-                OGSError::box(QString::fromStdString(errors[k]));
+            for (auto& error : errors)
+                OGSError::box(QString::fromStdString(error));
     }
     OGSError::box("File conversion finished");
 }
@@ -109,15 +111,16 @@ void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &o
     if (input.empty())
         return;
 
-    for (QStringList::const_iterator it=input.begin(); it!=input.end(); ++it)
+    for (const auto& it : input)
     {
-        const QFileInfo fi(*it);
+        const QFileInfo fi(it);
         const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".msh").toStdString();
 
         if (fileExists(output_str))
             continue;
 
-        MeshLib::Mesh const*const mesh (MeshLib::IO::VtuInterface::readVTUFile(it->toStdString().c_str()));
+        MeshLib::Mesh const* const mesh(
+            MeshLib::IO::VtuInterface::readVTUFile(it.toStdString().c_str()));
         if (mesh == nullptr)
         {
             OGSError::box("Error reading mesh " + fi.fileName());
@@ -136,16 +139,17 @@ void OGSFileConverter::convertMSH2VTU(const QStringList &input, const QString &o
     if (input.empty())
         return;
 
-    for (QStringList::const_iterator it=input.begin(); it!=input.end(); ++it)
+    for (const auto& it : input)
     {
-        const QFileInfo fi(*it);
+        const QFileInfo fi(it);
         const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".vtu").toStdString();
 
         if (fileExists(output_str))
             continue;
 
         MeshLib::IO::Legacy::MeshIO meshIO;
-        MeshLib::Mesh const*const mesh (meshIO.loadMeshFromFile(it->toStdString()));
+        MeshLib::Mesh const* const mesh(
+            meshIO.loadMeshFromFile(it.toStdString()));
         if (mesh == nullptr)
         {
             OGSError::box("Error reading mesh " + fi.fileName());

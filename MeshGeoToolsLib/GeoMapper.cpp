@@ -562,9 +562,9 @@ void GeoMapper::advancedMapOnMesh(MeshLib::Mesh const& mesh)
     // 3. map each polyline
     auto org_lines(_geo_objects.getPolylineVec(_geo_name));
     auto org_points(_geo_objects.getPointVecObj(_geo_name));
-    for (std::size_t k(0); k<org_lines->size(); ++k) {
-        mapPolylineOnSurfaceMesh(*((*org_lines)[k]), *org_points,
-                                 mesh_element_grid);
+    for (auto org_line : *org_lines)
+    {
+        mapPolylineOnSurfaceMesh(*org_line, *org_points, mesh_element_grid);
     }
 }
 

@@ -105,10 +105,12 @@ void GEOObjects::addStationVec(std::unique_ptr<std::vector<Point*>> stations,
 const std::vector<GeoLib::Point*>* GEOObjects::getStationVec(
     const std::string& name) const
 {
-    for (auto it(_pnt_vecs.begin()); it != _pnt_vecs.end(); ++it)
+    for (auto _pnt_vec : _pnt_vecs)
     {
-        if ((*it)->getName().compare(name) == 0 && (*it)->getType() == PointVec::PointType::STATION) {
-            return (*it)->getVector();
+        if (_pnt_vec->getName().compare(name) == 0 &&
+            _pnt_vec->getType() == PointVec::PointType::STATION)
+        {
+            return _pnt_vec->getVector();
         }
     }
     DBUG("GEOObjects::getStationVec() - No entry found with name \"%s\".", name.c_str());
@@ -311,14 +313,14 @@ bool GEOObjects::isUniquePointVecName(std::string &name)
 bool GEOObjects::isPntVecUsed (const std::string &name) const
 {
     // search dependent data structures (Polyline)
-    for (auto it(_ply_vecs.begin()); it != _ply_vecs.end(); ++it)
+    for (auto _ply_vec : _ply_vecs)
     {
-        if (((*it)->getName()).compare(name) == 0)
+        if ((_ply_vec->getName()).compare(name) == 0)
             return true;
     }
-    for (auto it(_sfc_vecs.begin()); it != _sfc_vecs.end(); ++it)
+    for (auto _sfc_vec : _sfc_vecs)
     {
-        if (((*it)->getName()).compare(name) == 0)
+        if ((_sfc_vec->getName()).compare(name) == 0)
             return true;
     }
 
@@ -327,17 +329,17 @@ bool GEOObjects::isPntVecUsed (const std::string &name) const
 
 void GEOObjects::getStationVectorNames(std::vector<std::string>& names) const
 {
-    for (auto it(_pnt_vecs.begin()); it != _pnt_vecs.end(); ++it)
-        if ((*it)->getType() == PointVec::PointType::STATION)
-            names.push_back((*it)->getName());
+    for (auto _pnt_vec : _pnt_vecs)
+        if (_pnt_vec->getType() == PointVec::PointType::STATION)
+            names.push_back(_pnt_vec->getName());
 }
 
 void GEOObjects::getGeometryNames (std::vector<std::string>& names) const
 {
     names.clear ();
-    for (auto it(_pnt_vecs.begin()); it != _pnt_vecs.end(); ++it)
-        if ((*it)->getType() == PointVec::PointType::POINT)
-            names.push_back((*it)->getName());
+    for (auto _pnt_vec : _pnt_vecs)
+        if (_pnt_vec->getType() == PointVec::PointType::POINT)
+            names.push_back(_pnt_vec->getName());
 }
 
 const std::string GEOObjects::getElementNameByID(const std::string &geometry_name, GeoLib::GEOTYPE type, std::size_t id) const

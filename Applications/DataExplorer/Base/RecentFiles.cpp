@@ -22,12 +22,12 @@ RecentFiles::RecentFiles(  QObject* parent, const char* slot, QString settingsNa
     : QObject(parent), _settingsName(settingsName)
 {
     _filesMenu = new QMenu(tr("Recent files"));
-    for (int i = 0; i < _maxFiles; i++)
+    for (auto& _fileAction : _fileActions)
     {
-        _fileActions[i] = new QAction(this);
-        _fileActions[i]->setVisible(false);
-        connect(_fileActions[i], SIGNAL(triggered()), parent, slot);
-        _filesMenu->addAction(_fileActions[i]);
+        _fileAction = new QAction(this);
+        _fileAction->setVisible(false);
+        connect(_fileAction, SIGNAL(triggered()), parent, slot);
+        _filesMenu->addAction(_fileAction);
     }
     updateRecentFileActions();
 }

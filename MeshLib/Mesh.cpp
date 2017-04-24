@@ -144,19 +144,19 @@ void Mesh::setDimension()
 
 void Mesh::setElementsConnectedToNodes()
 {
-    for (auto e = _elements.begin(); e != _elements.end(); ++e)
+    for (auto& _element : _elements)
     {
-        const unsigned nNodes ((*e)->getNumberOfNodes());
+        const unsigned nNodes(_element->getNumberOfNodes());
         for (unsigned j=0; j<nNodes; ++j)
-            (*e)->_nodes[j]->addElement(*e);
+            _element->_nodes[j]->addElement(_element);
     }
 }
 
 void Mesh::resetElementsConnectedToNodes()
 {
-    for (auto node = _nodes.begin(); node != _nodes.end(); ++node)
-        if (*node)
-            (*node)->clearElements();
+    for (auto& _node : _nodes)
+        if (_node)
+            _node->clearElements();
     this->setElementsConnectedToNodes();
 }
 
@@ -180,11 +180,9 @@ void Mesh::calcEdgeLengthRange()
 void Mesh::setElementNeighbors()
 {
     std::vector<Element*> neighbors;
-    for (auto it = _elements.begin(); it != _elements.end(); ++it)
+    for (auto element : _elements)
     {
         // create vector with all elements connected to current element (includes lots of doubles!)
-        Element *const element = *it;
-
         const std::size_t nNodes (element->getNumberOfBaseNodes());
         for (unsigned n(0); n<nNodes; ++n)
         {

@@ -54,13 +54,13 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
     if (_polylines->size() == 0)
         return;
 
-    for (auto it = _polylines->begin(); it != _polylines->end(); ++it)
+    for (auto _polyline : *_polylines)
     {
         os << indent << "== Polyline ==" << "\n";
-        int numPoints = (*it)->getNumberOfPoints();
+        int numPoints = _polyline->getNumberOfPoints();
         for (int i = 0; i < numPoints; i++)
         {
-            const GeoLib::Point* point = (*it)->getPoint(i);
+            const GeoLib::Point* point = _polyline->getPoint(i);
             const double* coords = point->getCoords();
             os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] <<
             ", " << coords[2] << ")\n";

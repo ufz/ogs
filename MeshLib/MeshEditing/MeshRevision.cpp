@@ -858,11 +858,11 @@ unsigned MeshRevision::lutPrismThirdNode(unsigned id1, unsigned id2) const
 
 void MeshRevision::cleanUp(std::vector<MeshLib::Node*> &new_nodes, std::vector<MeshLib::Element*> &new_elements) const
 {
-    for (auto elem = new_elements.begin(); elem != new_elements.end(); ++elem)
-        delete *elem;
+    for (auto& new_element : new_elements)
+        delete new_element;
 
-    for (auto node = new_nodes.begin(); node != new_nodes.end(); ++node)
-        delete *node;
+    for (auto& new_node : new_nodes)
+        delete new_node;
 }
 
 } // end namespace MeshLib

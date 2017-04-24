@@ -68,11 +68,11 @@ void MergeGeometriesDialog::on_selectGeoButton_pressed()
     QModelIndexList selected = this->allGeoView->selectionModel()->selectedIndexes();
     QStringList list = _selGeo->stringList();
 
-    for (QModelIndexList::iterator it = selected.begin(); it != selected.end(); ++it)
+    for (auto& it : selected)
     {
-        list.append(it->data().toString());
+        list.append(it.data().toString());
 
-        _allGeo->removeRow(it->row());
+        _allGeo->removeRow(it.row());
     }
     _selGeo->setStringList(list);
 }
@@ -82,11 +82,11 @@ void MergeGeometriesDialog::on_deselectGeoButton_pressed()
     QModelIndexList selected = this->selectedGeoView->selectionModel()->selectedIndexes();
     QStringList list = _allGeo->stringList();
 
-    for (QModelIndexList::iterator it = selected.begin(); it != selected.end(); ++it)
+    for (auto& it : selected)
     {
-        list.append(it->data().toString());
+        list.append(it.data().toString());
 
-        _selGeo->removeRow(it->row());
+        _selGeo->removeRow(it.row());
     }
     _allGeo->setStringList(list);
 }
@@ -108,8 +108,8 @@ std::vector<std::string> const MergeGeometriesDialog::getSelectedGeometries() co
 {
     std::vector<std::string> indexList;
     QStringList const& list (_selGeo->stringList());
-    for (QStringList::const_iterator it = list.begin(); it != list.end(); ++it)
-        indexList.push_back(it->toStdString());
+    for (const auto& it : list)
+        indexList.push_back(it.toStdString());
     return indexList;
 }
 

@@ -50,20 +50,20 @@ DiagramScene::~DiagramScene()
     delete _yLabel;
     delete _xUnit;
     delete _yUnit;
-    for (int i = 0; i < _graphCaptions.size(); i++)
-        delete _graphCaptions[i];
+    for (auto& _graphCaption : _graphCaptions)
+        delete _graphCaption;
     _graphCaptions.clear();
-    for (int i = 0; i < _graphs.size(); i++)
-        delete _graphs[i];
+    for (auto& _graph : _graphs)
+        delete _graph;
     _graphs.clear();
-    for (int i = 0; i < _xTicksText.size(); i++)
-        delete _xTicksText[i];
+    for (auto& i : _xTicksText)
+        delete i;
     _xTicksText.clear();
-    for (int i = 0; i < _yTicksText.size(); i++)
-        delete _yTicksText[i];
+    for (auto& i : _yTicksText)
+        delete i;
     _yTicksText.clear();
-    for (int i = 0; i < _lists.size(); i++)
-        delete _lists[i];
+    for (auto& _list : _lists)
+        delete _list;
     _lists.clear();
 }
 
@@ -105,8 +105,8 @@ void DiagramScene::addGraph(DiagramList* list)
     constructGrid();
 
     _lists.push_back(list);
-    for (int i = 0; i < _lists.size(); i++)
-        drawGraph(_lists[i]);
+    for (auto& _list : _lists)
+        drawGraph(_list);
 
     update();
 }
@@ -163,14 +163,14 @@ void DiagramScene::clearGrid()
     {
         removeItem(_grid);
 
-        for (int i = 0; i < _xTicksText.size(); ++i)
-            removeItem(_xTicksText[i]);
-        for (int j = 0; j < _yTicksText.size(); ++j)
-            removeItem(_yTicksText[j]);
-        for (int k = 0; k < _graphs.size(); k++)
-            removeItem(_graphs[k]);
-        for (int l = 0; l < _graphCaptions.size(); l++)
-            removeItem(_graphCaptions[l]);
+        for (auto& i : _xTicksText)
+            removeItem(i);
+        for (auto& j : _yTicksText)
+            removeItem(j);
+        for (auto& _graph : _graphs)
+            removeItem(_graph);
+        for (auto& _graphCaption : _graphCaptions)
+            removeItem(_graphCaption);
 
         _xTicksText.clear();
         _yTicksText.clear();

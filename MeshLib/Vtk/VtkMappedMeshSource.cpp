@@ -81,13 +81,13 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
     // Cells
     auto elems = _mesh->getElements();
     output->Allocate(elems.size());
-    for (std::size_t cell = 0; cell < elems.size(); cell++)
+    for (auto& cell : elems)
     {
-        auto cellType = OGSToVtkCellType(elems[cell]->getCellType());
+        auto cellType = OGSToVtkCellType(cell->getCellType());
 
-        const MeshLib::Element* const elem = (elems)[cell];
+        const MeshLib::Element* const elem = cell;
         const unsigned numNodes(elem->getNumberOfNodes());
-        const MeshLib::Node* const* nodes = elems[cell]->getNodes();
+        const MeshLib::Node* const* nodes = cell->getNodes();
         vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
         ptIds->SetNumberOfIds(numNodes);
 

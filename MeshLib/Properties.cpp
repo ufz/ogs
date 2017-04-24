@@ -94,9 +94,10 @@ Properties::Properties(Properties const& properties)
     : _properties(properties._properties)
 {
     std::vector<std::size_t> exclude_positions;
-    for (auto it(_properties.begin()); it != _properties.end(); ++it) {
-        PropertyVectorBase *t(it->second->clone(exclude_positions));
-        it->second = t;
+    for (auto& _propertie : _properties)
+    {
+        PropertyVectorBase* t(_propertie.second->clone(exclude_positions));
+        _propertie.second = t;
     }
 }
 

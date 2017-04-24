@@ -120,8 +120,8 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
         if (elements.empty())
         {
             ERR ("MeshIO::loadMeshFromFile() - File did not contain element information.");
-            for (auto it = nodes.begin(); it!=nodes.end(); ++it)
-                delete *it;
+            for (auto& node : nodes)
+                delete node;
             return nullptr;
         }
 

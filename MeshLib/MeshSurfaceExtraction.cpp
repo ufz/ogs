@@ -100,19 +100,20 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     // create new elements vector with newly created nodes
     std::vector<MeshLib::Element*> new_elements;
     new_elements.reserve(sfc_elements.size());
-    for (auto elem = sfc_elements.cbegin(); elem != sfc_elements.cend(); ++elem)
+    for (auto sfc_element : sfc_elements)
     {
-        unsigned const n_elem_nodes ((*elem)->getNumberOfBaseNodes());
+        unsigned const n_elem_nodes(sfc_element->getNumberOfBaseNodes());
         auto** new_nodes = new MeshLib::Node*[n_elem_nodes];
         for (unsigned k(0); k<n_elem_nodes; k++)
-            new_nodes[k] = sfc_nodes[node_id_map[(*elem)->getNode(k)->getID()]];
-        if ((*elem)->getGeomType() == MeshElemType::TRIANGLE)
+            new_nodes[k] =
+                sfc_nodes[node_id_map[sfc_element->getNode(k)->getID()]];
+        if (sfc_element->getGeomType() == MeshElemType::TRIANGLE)
             new_elements.push_back(new MeshLib::Tri(new_nodes));
         else {
-            assert((*elem)->getGeomType() == MeshElemType::QUAD);
+            assert(sfc_element->getGeomType() == MeshElemType::QUAD);
             new_elements.push_back(new MeshLib::Quad(new_nodes));
         }
-        delete *elem;
+        delete sfc_element;
     }
 
     std::vector<std::size_t> id_map;
@@ -166,9 +167,8 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
     std::vector<MeshLib::Element*> boundary_elements;
 
     std::vector<MeshLib::Element*> const& org_elems (mesh.getElements());
-    for (auto it=org_elems.begin(); it!=org_elems.end(); ++it)
+    for (auto elem : org_elems)
     {
-        MeshLib::Element* elem (*it);
         std::size_t const n_edges (elem->getNumberOfEdges());
         for (std::size_t i=0; i<n_edges; ++i)
             if (elem->getNeighbor(i) == nullptr)

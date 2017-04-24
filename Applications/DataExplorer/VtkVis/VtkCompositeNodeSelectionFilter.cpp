@@ -33,8 +33,8 @@ VtkCompositeNodeSelectionFilter::VtkCompositeNodeSelectionFilter( vtkAlgorithm* 
 
 VtkCompositeNodeSelectionFilter::~VtkCompositeNodeSelectionFilter()
 {
-    for (unsigned i=0; i<_selection.size(); ++i)
-        delete _selection[i];
+    for (auto& i : _selection)
+        delete i;
 }
 
 void VtkCompositeNodeSelectionFilter::init()
@@ -62,9 +62,11 @@ void VtkCompositeNodeSelectionFilter::init()
 
 void VtkCompositeNodeSelectionFilter::setSelectionArray(const std::vector<unsigned> &point_indeces)
 {
-    for (unsigned i=0; i<point_indeces.size(); ++i)
+    for (unsigned int point_indece : point_indeces)
     {
-        double * coords = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPoint(point_indeces[i]);
+        double* coords = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)
+                             ->GetOutput()
+                             ->GetPoint(point_indece);
         auto* p(new GeoLib::Point(coords[0], coords[1], coords[2]));
         _selection.push_back(p);
     }

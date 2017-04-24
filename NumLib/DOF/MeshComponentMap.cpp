@@ -234,9 +234,9 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByLocation(
     global_indices.reserve(ls.size());
 
     auto const &m = _dict.get<ByLocation>();
-    for (auto l = ls.cbegin(); l != ls.cend(); ++l)
+    for (const auto& l : ls)
     {
-        auto const p = m.equal_range(Line(*l));
+        auto const p = m.equal_range(Line(l));
         for (auto itr = p.first; itr != p.second; ++itr)
             global_indices.push_back(itr->global_index);
     }
@@ -254,9 +254,9 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
 
     // Create a sub dictionary containing all lines with location from ls.
     auto const &m = _dict.get<ByLocation>();
-    for (auto l = ls.cbegin(); l != ls.cend(); ++l)
+    for (const auto& l : ls)
     {
-        auto const p = m.equal_range(Line(*l));
+        auto const p = m.equal_range(Line(l));
         for (auto itr = p.first; itr != p.second; ++itr)
             pairs.emplace_back(itr->comp_id, itr->global_index);
     }
@@ -272,8 +272,8 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
 
     std::vector<GlobalIndexType> global_indices;
     global_indices.reserve(pairs.size());
-    for (auto p = pairs.cbegin(); p != pairs.cend(); ++p)
-        global_indices.push_back(p->second);
+    for (const auto& pair : pairs)
+        global_indices.push_back(pair.second);
 
     return global_indices;
 }

@@ -54,9 +54,9 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
      ASSERT_GE(half_box_size, max_pnt[1]) << "coordinate 1 of max_pnt is greater than " << half_box_size;
      ASSERT_GE(half_box_size, max_pnt[2]) << "coordinate 2 of max_pnt is greater than " << half_box_size;
 
-     for (auto it(pnts_list.begin()); it != pnts_list.end(); it++)
+     for (auto& it : pnts_list)
      {
-         delete *it;
+         delete it;
      }
 }
 
@@ -123,9 +123,9 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPointsInAVector)
      ASSERT_GE(half_box_size, max_pnt[1]) << "coordinate 1 of max_pnt is greater than " << half_box_size;
      ASSERT_GE(half_box_size, max_pnt[2]) << "coordinate 2 of max_pnt is greater than " << half_box_size;
 
-     for (auto it(pnts.begin()); it != pnts.end(); it++)
+     for (auto& pnt : pnts)
      {
-         delete *it;
+         delete pnt;
      }
 }
 

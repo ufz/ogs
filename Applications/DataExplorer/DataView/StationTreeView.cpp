@@ -254,15 +254,17 @@ void StationTreeView::writeStratigraphiesAsImages(QString listName)
         std::vector<GeoLib::Point*> const& stations =
             *dynamic_cast<BaseItem*>(lists[i]->getItem())->getStations();
 
-        for (std::size_t i = 0; i < stations.size(); i++)
+        for (auto station : stations)
         {
-            auto* stratView = new StratWindow(
-                static_cast<GeoLib::StationBorehole*>(stations[i]),
-                &colorLookupTable);
+            auto* stratView =
+                new StratWindow(static_cast<GeoLib::StationBorehole*>(station),
+                                &colorLookupTable);
             stratView->setAttribute(Qt::WA_DeleteOnClose);
             stratView->show();
-            stratView->stationView->saveAsImage(QString::fromStdString(
-                static_cast<GeoLib::StationBorehole*>(stations[i])->getName()) + ".jpg");
+            stratView->stationView->saveAsImage(
+                QString::fromStdString(
+                    static_cast<GeoLib::StationBorehole*>(station)->getName()) +
+                ".jpg");
             stratView->close();
         }
     }

@@ -28,9 +28,9 @@ const std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(const Mes
 {
     std::array<unsigned, 7> n_element_types = {{0, 0, 0, 0, 0, 0, 0}};
     const std::vector<MeshLib::Element*> &elements (mesh.getElements());
-    for (auto it = elements.begin(); it != elements.end(); ++it)
+    for (auto element : elements)
     {
-        MeshElemType t = (*it)->getGeomType();
+        MeshElemType t = element->getGeomType();
         if (t == MeshElemType::LINE) n_element_types[0]++;
         if (t == MeshElemType::TRIANGLE) n_element_types[1]++;
         if (t == MeshElemType::QUAD) n_element_types[2]++;

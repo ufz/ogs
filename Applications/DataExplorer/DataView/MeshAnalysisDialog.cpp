@@ -32,8 +32,8 @@ MeshAnalysisDialog::MeshAnalysisDialog(
     if (mesh_vec.empty())
         this->startButton->setDisabled(true);
 
-    for (std::size_t i=0; i<mesh_vec.size(); ++i)
-        this->meshListBox->addItem(QString::fromStdString(mesh_vec[i]->getName()));
+    for (const auto& i : mesh_vec)
+        this->meshListBox->addItem(QString::fromStdString(i->getName()));
 
     auto* collapse_threshold_validator =
         new StrictDoubleValidator(0, 1000000, 7, this);

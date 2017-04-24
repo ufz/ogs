@@ -91,16 +91,16 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
     }
 
     vtkIdType count(0);
-    for (auto it = _surfaces->begin(); it != _surfaces->end(); ++it)
+    for (auto _surface : *_surfaces)
     {
-        const std::size_t nTriangles = (*it)->getNumberOfTriangles();
+        const std::size_t nTriangles = _surface->getNumberOfTriangles();
 
         for (std::size_t i = 0; i < nTriangles; ++i)
         {
             vtkTriangle* new_tri = vtkTriangle::New();
             new_tri->GetPointIds()->SetNumberOfIds(3);
 
-            const GeoLib::Triangle* triangle = (**it)[i];
+            const GeoLib::Triangle* triangle = (*_surface)[i];
             for (std::size_t j = 0; j < 3; ++j)
                 new_tri->GetPointIds()->SetId(j, ((*triangle)[j]));
             newPolygons->InsertNextCell(new_tri);

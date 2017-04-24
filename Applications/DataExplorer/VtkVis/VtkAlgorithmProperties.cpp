@@ -41,8 +41,8 @@ VtkAlgorithmProperties::~VtkAlgorithmProperties()
     _property->Delete();
     if (_texture != nullptr) _texture->Delete();
 
-    for (auto it = _lut.begin(); it != _lut.end(); ++it)
-        it->second->Delete();
+    for (auto& it : _lut)
+        it.second->Delete();
     delete _algorithmUserProperties;
     delete _algorithmUserVectorProperties;
 }

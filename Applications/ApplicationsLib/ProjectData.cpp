@@ -195,8 +195,8 @@ bool ProjectData::isMeshNameUniqueAndProvideUniqueName(std::string& name) const
         if (count > 1)
             cpName = cpName + "-" + std::to_string(count);
 
-        for (auto it = _mesh_vec.begin(); it != _mesh_vec.end(); ++it)
-            if (cpName.compare((*it)->getName()) == 0)
+        for (auto it : _mesh_vec)
+            if (cpName.compare(it->getName()) == 0)
                 isUnique = false;
     }
 

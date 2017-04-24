@@ -61,8 +61,8 @@ void FileListDialog::on_addButton_pressed()
 void FileListDialog::on_removeButton_pressed()
 {
     QModelIndexList selected = this->listView->selectionModel()->selectedIndexes();
-    for (QModelIndexList::iterator it = selected.begin(); it != selected.end(); ++it)
-        this->_allFiles.removeRow(it->row());
+    for (auto& it : selected)
+        this->_allFiles.removeRow(it.row());
 }
 
 void FileListDialog::on_browseButton_pressed()

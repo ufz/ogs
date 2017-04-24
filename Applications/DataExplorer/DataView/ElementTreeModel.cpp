@@ -167,16 +167,18 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
     _rootItem->appendChild(edge_item);
 
     std::vector<std::string> const& vec_names (mesh.getProperties().getPropertyVectorNames());
-    for (std::size_t i=0; i<vec_names.size(); ++i)
+    for (const auto& vec_name : vec_names)
     {
         QList<QVariant> array_info;
-        array_info << QString::fromStdString(vec_names[i]) + ": ";
-        auto vec_bounds (MeshLib::MeshInformation::getValueBounds<int>(mesh, vec_names[i]));
+        array_info << QString::fromStdString(vec_name) + ": ";
+        auto vec_bounds(
+            MeshLib::MeshInformation::getValueBounds<int>(mesh, vec_name));
         if (vec_bounds.second != std::numeric_limits<int>::max())
             array_info << "[" + QString::number(vec_bounds.first) + "," << QString::number(vec_bounds.second) + "]" << "";
         else
         {
-            auto vec_bounds (MeshLib::MeshInformation::getValueBounds<double>(mesh, vec_names[i]));
+            auto vec_bounds(MeshLib::MeshInformation::getValueBounds<double>(
+                mesh, vec_name));
             if (vec_bounds.second != std::numeric_limits<double>::max())
                 array_info  << "[" + QString::number(vec_bounds.first) + "," << QString::number(vec_bounds.second) + "]" << "";
         }

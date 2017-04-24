@@ -110,13 +110,12 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
 
 void GeoTreeModel::appendPolylines(const std::string &name, GeoLib::PolylineVec const& polylineVec)
 {
-    for (std::size_t i = 0; i < _lists.size(); i++)
+    for (auto& _list : _lists)
     {
-        if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
-            for (int j = 0; j < _lists[i]->childCount(); j++)
+        if (name.compare(_list->data(0).toString().toStdString()) == 0)
+            for (int j = 0; j < _list->childCount(); j++)
             {
-                auto* parent =
-                    static_cast<GeoObjectListItem*>(_lists[i]->child(j));
+                auto* parent = static_cast<GeoObjectListItem*>(_list->child(j));
                 if (GeoLib::GEOTYPE::POLYLINE == parent->getType())
                 {
                     beginResetModel();
@@ -201,15 +200,14 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
 
 void GeoTreeModel::appendSurfaces(const std::string &name, GeoLib::SurfaceVec const& surfaceVec)
 {
-    for (std::size_t i = 0; i < _lists.size(); i++)
+    for (auto& _list : _lists)
     {
-        if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
+        if (name.compare(_list->data(0).toString().toStdString()) == 0)
         {
-            int nChildren = _lists[i]->childCount();
+            int nChildren = _list->childCount();
             for (int j = 0; j < nChildren; j++)
             {
-                auto* parent =
-                    static_cast<GeoObjectListItem*>(_lists[i]->child(j));
+                auto* parent = static_cast<GeoObjectListItem*>(_list->child(j));
                 if (GeoLib::GEOTYPE::SURFACE == parent->getType())
                 {
                     beginResetModel();

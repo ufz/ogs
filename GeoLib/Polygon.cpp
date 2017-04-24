@@ -48,12 +48,10 @@ Polygon::Polygon(Polygon const& other)
 Polygon::~Polygon()
 {
     // remove polygons from list
-    for (auto it(_simple_polygon_list.begin());
-         it != _simple_polygon_list.end();
-         ++it)
+    for (auto& it : _simple_polygon_list)
         // the first entry of the list can be a pointer the object itself
-        if (*it != this)
-            delete *it;
+        if (it != this)
+            delete it;
 }
 
 bool Polygon::initialise ()
@@ -235,11 +233,9 @@ bool Polygon::getNextIntersectionPointPolygonLine(
             }
         }
     } else {
-        for (auto polygon_it(_simple_polygon_list.begin());
-             polygon_it != _simple_polygon_list.end();
-             ++polygon_it)
+        for (auto polygon_it : _simple_polygon_list)
         {
-            Polygon const& polygon(*(*polygon_it));
+            Polygon const& polygon(*polygon_it);
             for (auto seg_it(polygon.begin()); seg_it != polygon.end(); ++seg_it)
             {
                 if (GeoLib::lineSegmentIntersect(*seg_it, seg, intersection)) {
@@ -262,10 +258,8 @@ void Polygon::computeListOfSimplePolygons ()
     splitPolygonAtPoint (_simple_polygon_list.begin());
     splitPolygonAtIntersection (_simple_polygon_list.begin());
 
-    for (auto it(_simple_polygon_list.begin());
-         it != _simple_polygon_list.end();
-         ++it)
-        (*it)->initialise ();
+    for (auto& it : _simple_polygon_list)
+        it->initialise();
 }
 
 EdgeType Polygon::getEdgeType (std::size_t k, GeoLib::Point const & pnt) const

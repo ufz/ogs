@@ -32,8 +32,8 @@ CondFromRasterDialog::CondFromRasterDialog(const std::vector<MeshLib::Mesh*> &ms
     this->scalingEdit->setText("1.0");
     this->scalingEdit->setValidator (_scale_validator);
 
-    for (auto it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
-        this->meshBox->addItem(QString::fromStdString((*it)->getName()));
+    for (auto it : _msh_vec)
+        this->meshBox->addItem(QString::fromStdString(it->getName()));
 
     this->directButton->setChecked(true);
 }
@@ -84,10 +84,10 @@ void CondFromRasterDialog::accept()
     }
 
     MeshLib::Mesh* mesh(nullptr);
-    for (std::size_t i=0; i<_msh_vec.size(); i++)
-        if (_msh_vec[i]->getName().compare(mesh_name) == 0)
+    for (auto i : _msh_vec)
+        if (i->getName().compare(mesh_name) == 0)
         {
-            mesh = _msh_vec[i];
+            mesh = i;
             break;
         }
 

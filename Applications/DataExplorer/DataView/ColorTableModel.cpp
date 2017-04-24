@@ -80,11 +80,10 @@ bool ColorTableModel::buildTable(const std::map<std::string, DataHolderLib::Colo
     int count = 0;
     beginInsertRows(QModelIndex(), 0, colorLookupTable.size() - 1);
 
-    for (auto it = colorLookupTable.begin();
-         it != colorLookupTable.end(); ++it)
+    for (const auto& it : colorLookupTable)
     {
-        QColor color((*(it->second))[0], (*(it->second))[1], (*(it->second))[2]);
-        QString name(QString::fromStdString(it->first));
+        QColor color((*(it.second))[0], (*(it.second))[1], (*(it.second))[2]);
+        QString name(QString::fromStdString(it.first));
 
         /* Saudi Arabia strat names *
            if (it->first.compare("1")==0) name="Buweib";

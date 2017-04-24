@@ -53,8 +53,9 @@ void GMSHPolygonTree::markSharedSegments()
     if (_parent == nullptr)
         return;
 
-    for (auto it(_children.begin()); it != _children.end(); it++) {
-        std::size_t const n_pnts((*it)->getPolygon()->getNumberOfPoints());
+    for (auto& it : _children)
+    {
+        std::size_t const n_pnts(it->getPolygon()->getNumberOfPoints());
         for (std::size_t k(1); k<n_pnts; k++) {
             if (GeoLib::containsEdge(*(_parent->getPolygon()),
                 _node_polygon->getPointID(k-1),
@@ -280,9 +281,9 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) cons
     }
 
     // walk through children
-    for (auto it(_children.begin()); it != _children.end(); ++it)
+    for (auto it : _children)
     {
-        dynamic_cast<GMSHPolygonTree*>((*it))->createGMSHPoints(gmsh_pnts);
+        dynamic_cast<GMSHPolygonTree*>(it)->createGMSHPoints(gmsh_pnts);
     }
 }
 
@@ -333,9 +334,10 @@ void GMSHPolygonTree::writeLineConstraints(std::size_t& line_offset,
 
 void GMSHPolygonTree::writeSubPolygonsAsLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const
 {
-    for (auto it(_children.begin()); it != _children.end(); ++it)
+    for (auto it : _children)
     {
-        dynamic_cast<GMSHPolygonTree*>((*it))->writeSubPolygonsAsLineConstraints(line_offset, sfc_number, out);
+        dynamic_cast<GMSHPolygonTree*>(it)->writeSubPolygonsAsLineConstraints(
+            line_offset, sfc_number, out);
     }
 
     if (_parent != nullptr)
