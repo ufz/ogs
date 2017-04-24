@@ -42,4 +42,6 @@ target_link_libraries(QtBase
 
 set_property(TARGET QtBase PROPERTY FOLDER "DataExplorer")
 
-cotire(QtBase)
+if(OGS_USE_PCH)
+    cotire(QtBase)
+endif()

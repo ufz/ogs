@@ -59,4 +59,6 @@ if(TARGET Eigen)
     add_dependencies(MathLib Eigen)
 endif()
 
-cotire(MathLib)
+if(OGS_USE_PCH)
+    cotire(MathLib)
+endif()

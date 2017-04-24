@@ -10,7 +10,12 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(cotire) # compile time reducer
+if(MSVC_VERSION LESS 1910) # < VS 15.0
+    set(OGS_USE_PCH OFF CACHE INTERNAL "")
+endif()
+if(OGS_USE_PCH)
+    include(cotire) # compile time reducer
+endif()
 
 # Set compiler helper variables
 
