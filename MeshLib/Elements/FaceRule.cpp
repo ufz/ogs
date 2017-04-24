@@ -15,19 +15,28 @@
 
 namespace MeshLib
 {
-
 bool FaceRule::testElementNodeOrder(const Element* e)
 {
-    MathLib::Vector3 up_vec (0,0,1);
-    return (MathLib::scalarProduct(getSurfaceNormal(e), up_vec) < 0) ? true : false;
+    return getSurfaceNormal(e)[2] < 0;
+}
+
+MathLib::Vector3 FaceRule::getFirstSurfaceVector(Element const* const e)
+{
+    Node* const* const _nodes = e->getNodes();
+    return {*_nodes[1], *_nodes[0]};
+}
+
+MathLib::Vector3 FaceRule::getSecondSurfaceVector(Element const* const e)
+{
+    Node* const* const _nodes = e->getNodes();
+    return {*_nodes[1], *_nodes[2]};
 }
 
 MathLib::Vector3 FaceRule::getSurfaceNormal(const Element* e)
 {
-    Node * const * _nodes = e->getNodes();
-    const MathLib::Vector3 u (*_nodes[1], *_nodes[0]);
-    const MathLib::Vector3 v (*_nodes[1], *_nodes[2]);
-    return MathLib::crossProduct(u,v);
+    const MathLib::Vector3 u = getFirstSurfaceVector(e);
+    const MathLib::Vector3 v = getSecondSurfaceVector(e);
+    return MathLib::crossProduct(u, v);
 }
 
 } /* namespace */

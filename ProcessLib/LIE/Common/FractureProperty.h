@@ -47,9 +47,9 @@ inline void setFractureProperty(unsigned dim, MeshLib::Element const& e,
     // a fracture is not curving
     for (int j=0; j<3; j++)
         frac_prop.point_on_fracture[j] = e.getNode(0)->getCoords()[j];
-    computeNormalVector(e, frac_prop.normal_vector);
+    computeNormalVector(e, dim, frac_prop.normal_vector);
     frac_prop.R.resize(dim, dim);
-    computeRotationMatrix(frac_prop.normal_vector, dim, frac_prop.R);
+    computeRotationMatrix(e, frac_prop.normal_vector, dim, frac_prop.R);
 }
 
 }  // namespace LIE

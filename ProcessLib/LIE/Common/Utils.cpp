@@ -11,6 +11,7 @@
 #include <cmath>
 
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Node.h"
 
 namespace ProcessLib
@@ -18,50 +19,48 @@ namespace ProcessLib
 namespace LIE
 {
 
-namespace
+void computeNormalVector(MeshLib::Element const& e, unsigned const global_dim,
+                         Eigen::Vector3d& element_normal)
 {
+    if (global_dim == 2)
+    {
+        assert(e.getGeomType() == MeshLib::MeshElemType::LINE);
+        auto v1 = (*e.getNode(1)) - (*e.getNode(0));
+        element_normal[0] = -v1[1];
+        element_normal[1] = v1[0];
+        element_normal.normalize();
+    }
+    else if (global_dim == 3)
+    {
+        auto const element_normal_vector =
+            MeshLib::FaceRule::getSurfaceNormal(&e).getNormalizedVector();
 
-// Computed normal vector is oriented in the left direction of the given line element
-// such that computeRotationMatrix2D() returns the indentity matrix for line elements
-// parallel to a vector (1,0,0)
-void computeNormalVector2D(MeshLib::Element const& e, Eigen::Vector3d & normal_vector)
-{
-    assert(e.getGeomType() == MeshLib::MeshElemType::LINE);
-
-    auto v1 = (*e.getNode(1)) - (*e.getNode(0));
-    normal_vector[0] = -v1[1];
-    normal_vector[1] = v1[0];
-    normal_vector[2] = 0.0;
-    normal_vector.normalize();
+        std::copy_n(element_normal_vector.getCoords(), global_dim,
+                    element_normal.data());
+    }
 }
 
-// Compute a rotation matrix from global coordinates to local coordinates whose y axis
-// should be same as the given normal vector
-void computeRotationMatrix2D(Eigen::Vector3d const& n, Eigen::MatrixXd& matR)
+void computeRotationMatrix(MeshLib::Element const& e, Eigen::Vector3d const& n,
+                           unsigned const global_dim, Eigen::MatrixXd& R)
 {
-    matR(0,0) = n[1];
-    matR(0,1) = -n[0];
-    matR(1,0) = n[0];
-    matR(1,1) = n[1];
-}
+    if (global_dim == 2)
+    {
+        R.resize(2, 2);
+        R << n[1] , -n[0]
+           , n[0] ,  n[1];
+    }
+    else if (global_dim == 3)
+    {
+        auto const u =
+            MeshLib::FaceRule::getFirstSurfaceVector(&e).getNormalizedVector();
+        auto const v =
+            MeshLib::FaceRule::getSecondSurfaceVector(&e).getNormalizedVector();
 
-} // no named namespace
-
-
-void computeNormalVector(MeshLib::Element const& e, Eigen::Vector3d & normal_vector)
-{
-    if (e.getDimension() == 1)
-        computeNormalVector2D(e, normal_vector);
-    else
-        OGS_FATAL("2D elements are not supported in computeNormalVector()");
-}
-
-void computeRotationMatrix(Eigen::Vector3d const& normal_vector, int dim, Eigen::MatrixXd &matR)
-{
-    if (dim==2)
-        computeRotationMatrix2D(normal_vector, matR);
-    else
-        OGS_FATAL("2D elements are not supported in computeNormalVector()");
+        R.resize(3, 3);
+        R << u[0] , u[1] , u[2]
+           , v[0] , v[1] , v[2]
+           , n[0] , n[1] , n[2];
+    }
 }
 
 }  // namespace LIE

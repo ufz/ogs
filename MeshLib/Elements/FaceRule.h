@@ -33,6 +33,12 @@ public:
      */
     static bool testElementNodeOrder(const Element* /*e*/);
 
+    /// \returns the first vector forming the surface' plane
+    static MathLib::Vector3 getFirstSurfaceVector(Element const* const e);
+
+    /// \returns the second vector forming the surface' plane
+    static MathLib::Vector3 getSecondSurfaceVector(Element const* const e);
+
     /// Returns the surface normal of a 2D element.
     static MathLib::Vector3 getSurfaceNormal(const Element* e);
 
