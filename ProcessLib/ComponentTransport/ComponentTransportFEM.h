@@ -148,6 +148,9 @@ public:
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
 
+        GlobalDimMatrixType const& I(
+            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
+
         auto KCC = local_K.template block<num_nodes, num_nodes>(0, 0);
         auto MCC = local_M.template block<num_nodes, num_nodes>(0, 0);
         auto Kpp =
@@ -185,7 +188,6 @@ public:
             auto const retardation_factor =
                 _process_data.retardation_factor(t, pos)[0];
 
-
             auto const& solute_dispersivity_transverse =
                 _process_data.solute_dispersivity_transverse(t, pos)[0];
             auto const& solute_dispersivity_longitudinal =
@@ -220,8 +222,6 @@ public:
                                           p_nodal_values);
 
             double const velocity_magnitude = velocity.norm();
-            GlobalDimMatrixType const& I(
-                GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
             GlobalDimMatrixType const hydrodynamic_dispersion =
                 velocity_magnitude != 0.0
                     ? GlobalDimMatrixType(
