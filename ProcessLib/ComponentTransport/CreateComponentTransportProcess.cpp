@@ -9,8 +9,7 @@
 
 #include "CreateComponentTransportProcess.h"
 
-#include "MaterialLib/Fluid/Density/CreateFluidDensityModel.h"
-#include "MaterialLib/Fluid/Viscosity/CreateViscosityModel.h"
+#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
@@ -58,15 +57,9 @@ std::unique_ptr<Process> createComponentTransportProcess(
 
     //! \ogs_file_param{prj__processes__process__ComponentTransport__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");
-    //! \ogs_file_param{prj__processes__process__ComponentTransport__fluid__viscosity}
-    auto const& viscosity_conf = fluid_config.getConfigSubtree("viscosity");
-    auto viscosity_model =
-        MaterialLib::Fluid::createViscosityModel(viscosity_conf);
 
-    //! \ogs_file_param{prj__processes__process__ComponentTransport__fluid__density}
-    auto const& fluid_density_conf = fluid_config.getConfigSubtree("density");
-    auto fluid_density =
-        MaterialLib::Fluid::createFluidDensityModel(fluid_density_conf);
+    auto fluid_properties =
+        MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Parameter for the density of the fluid.
     auto& fluid_reference_density= findParameter<double>(
@@ -79,8 +72,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     // Parameter for the longitudinal solute dispersivity.
     auto const& molecular_diffusion_coefficient = findParameter<double>(
         config,
-        //!
-        //\ogs_file_param_special{prj__processes__process__ComponentTransport__molecular_diffusion_coefficient
+        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__molecular_diffusion_coefficient
         "molecular_diffusion_coefficient", parameters, 1);
     DBUG("Use \'%s\' as molecular diffusion coefficient parameter.",
          molecular_diffusion_coefficient.name.c_str());
@@ -88,8 +80,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     // Parameter for the longitudinal solute dispersivity.
     auto const& solute_dispersivity_longitudinal = findParameter<double>(
         config,
-        //!
-        //\ogs_file_param_special{prj__processes__process__ComponentTransport__solute_dispersivity_longitudinal
+        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__solute_dispersivity_longitudinal
         "solute_dispersivity_longitudinal", parameters, 1);
     DBUG("Use \'%s\' as longitudinal solute dispersivity parameter.",
          solute_dispersivity_longitudinal.name.c_str());
@@ -97,8 +88,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     // Parameter for the transverse solute dispersivity.
     auto const& solute_dispersivity_transverse = findParameter<double>(
         config,
-        //!
-        //\ogs_file_param_special{prj__processes__process__ComponentTransport__solute_dispersivity_transverse
+        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__solute_dispersivity_transverse
         "solute_dispersivity_transverse", parameters, 1);
     DBUG("Use \'%s\' as transverse solute dispersivity parameter.",
          solute_dispersivity_transverse.name.c_str());
@@ -135,9 +125,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
 
     ComponentTransportProcessData process_data{
         std::move(porous_media_properties),
-        std::move(viscosity_model),
         fluid_reference_density,
-        std::move(fluid_density),
+        std::move(fluid_properties),
         molecular_diffusion_coefficient,
         solute_dispersivity_longitudinal,
         solute_dispersivity_transverse,

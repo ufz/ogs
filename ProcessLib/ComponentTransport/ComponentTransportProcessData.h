@@ -11,7 +11,7 @@
 
 #include <memory>
 
-#include "MaterialLib/Fluid/FluidProperty.h"
+#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 
@@ -33,9 +33,9 @@ struct ComponentTransportProcessData
 {
     ComponentTransportProcessData(
         PorousMediaProperties&& porous_media_properties_,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& viscosity_model_,
         ProcessLib::Parameter<double> const& fluid_reference_density_,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_density_,
+        std::unique_ptr<MaterialLib::Fluid::FluidProperties>&&
+            fluid_properties_,
         ProcessLib::Parameter<double> const& molecular_diffusion_coefficient_,
         ProcessLib::Parameter<double> const& solute_dispersivity_longitudinal_,
         ProcessLib::Parameter<double> const& solute_dispersivity_transverse_,
@@ -44,9 +44,8 @@ struct ComponentTransportProcessData
         Eigen::VectorXd const& specific_body_force_,
         bool const has_gravity_)
         : porous_media_properties(std::move(porous_media_properties_)),
-          viscosity_model(std::move(viscosity_model_)),
           fluid_reference_density(fluid_reference_density_),
-          fluid_density(std::move(fluid_density_)),
+          fluid_properties(std::move(fluid_properties_)),
           molecular_diffusion_coefficient(molecular_diffusion_coefficient_),
           solute_dispersivity_longitudinal(solute_dispersivity_longitudinal_),
           solute_dispersivity_transverse(solute_dispersivity_transverse_),
@@ -59,9 +58,8 @@ struct ComponentTransportProcessData
 
     ComponentTransportProcessData(ComponentTransportProcessData&& other)
         : porous_media_properties(std::move(other.porous_media_properties)),
-          viscosity_model(other.viscosity_model.release()),
           fluid_reference_density(other.fluid_reference_density),
-          fluid_density(other.fluid_density.release()),
+          fluid_properties(other.fluid_properties.release()),
           molecular_diffusion_coefficient(
               other.molecular_diffusion_coefficient),
           solute_dispersivity_longitudinal(
@@ -85,9 +83,8 @@ struct ComponentTransportProcessData
     void operator=(ComponentTransportProcessData&&) = delete;
 
     PorousMediaProperties porous_media_properties;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity_model;
     Parameter<double> const& fluid_reference_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> fluid_density;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
     Parameter<double> const& molecular_diffusion_coefficient;
     Parameter<double> const& solute_dispersivity_longitudinal;
     Parameter<double> const& solute_dispersivity_transverse;

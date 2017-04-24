@@ -14,6 +14,7 @@
 
 
 #include "ComponentTransportProcessData.h"
+#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -198,8 +199,8 @@ public:
                 MaterialLib::Fluid::PropertyVariableType::C)] = C_int_pt;
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
-            auto const density_water =
-                _process_data.fluid_density->getValue(vars);
+            auto const density_water = _process_data.fluid_properties->getValue(
+                MaterialLib::Fluid::FluidPropertyType::Density, vars);
             auto const& decay_rate = _process_data.decay_rate(t, pos)[0];
             auto const& molecular_diffusion_coefficient =
                 _process_data.molecular_diffusion_coefficient(t, pos)[0];
@@ -268,7 +269,8 @@ public:
                                                                            pos);
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
 
-        auto const mu = _process_data.viscosity_model->getValue(vars);
+        auto const mu = _process_data.fluid_properties->getValue(
+            MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
         GlobalDimMatrixType const K_over_mu = K / mu;
 
         unsigned const n_integration_points =
@@ -295,7 +297,8 @@ public:
                 vars[static_cast<int>(
                     MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
 
-                auto const rho_w = _process_data.fluid_density->getValue(vars);
+                auto const rho_w = _process_data.fluid_properties->getValue(
+                    MaterialLib::Fluid::FluidPropertyType::Density, vars);
                 auto const b = _process_data.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
                 velocity += K_over_mu * rho_w * b;
