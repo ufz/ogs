@@ -123,8 +123,9 @@ protected:
 
 private:
     // Not implemented
-    VtkMeshNodalCoordinatesTemplate(const VtkMeshNodalCoordinatesTemplate &);
-    void operator=(const VtkMeshNodalCoordinatesTemplate &);
+    VtkMeshNodalCoordinatesTemplate(const VtkMeshNodalCoordinatesTemplate&) =
+        delete;
+    void operator=(const VtkMeshNodalCoordinatesTemplate&) = delete;
 
     vtkIdType Lookup(const Scalar &val, vtkIdType startIndex);
     double *TempDoubleArray;

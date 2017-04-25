@@ -30,6 +30,7 @@ protected:
     ~VtkConsoleOutputWindow() override;
 
 private:
-    VtkConsoleOutputWindow(const VtkConsoleOutputWindow &);  // Not implemented.
-    void operator=(const VtkConsoleOutputWindow &);  // Not implemented.
+    VtkConsoleOutputWindow(const VtkConsoleOutputWindow&) =
+        delete;                                              // Not implemented.
+    void operator=(const VtkConsoleOutputWindow&) = delete;  // Not implemented.
 };

@@ -66,6 +66,8 @@ protected:
     double ImageSpacing;
 
 private:
-    VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&); // Not implemented.
-    void operator=(const VtkImageDataToLinePolyDataFilter&); // Not implemented
+    VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&) =
+        delete;  // Not implemented.
+    void operator=(const VtkImageDataToLinePolyDataFilter&) =
+        delete;  // Not implemented
 };

@@ -69,8 +69,8 @@ protected:
     void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
-    VtkGeoImageSource(const VtkGeoImageSource&); // Not implemented.
-    void operator=(const VtkGeoImageSource&); // Not implemented
+    VtkGeoImageSource(const VtkGeoImageSource&) = delete;  // Not implemented.
+    void operator=(const VtkGeoImageSource&) = delete;     // Not implemented
 
     vtkImageAlgorithm* _imageSource;
 
