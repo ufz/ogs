@@ -38,11 +38,7 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vtkdiff/CMakeLists.txt AND OGS_BUILD_TESTS
 endif()
 
 if(NOT TARGET vtkGUISupportQt AND OGS_BUILD_GUI)
-    if(QT4_FOUND)
-        set(VTK_QT_VERSION 4 CACHE INTERNAL "")
-    else()
-        set(VTK_QT_VERSION 5 CACHE INTERNAL "")
-    endif()
+    set(VTK_QT_VERSION 5 CACHE INTERNAL "")
     include_directories(SYSTEM ${VTK_INCLUDE_DIRS})
     add_subdirectory(${CMAKE_SOURCE_DIR}/ThirdParty/vtkGUISupportQt)
 endif()
