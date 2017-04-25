@@ -70,11 +70,6 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 bool VtuInterface::writeToFile(std::string const &file_name)
 {
 #ifdef USE_PETSC
-    // Also for other approach with DDC.
-    // In such case, a MPI_Comm argument is need to this member,
-    // and PETSC_COMM_WORLD should be replaced with the argument.
-    int mpi_rank;
-    MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
     auto const file_name_base = boost::erase_last_copy(file_name, ".vtu");
 
     auto const dirname = BaseLib::extractPath(file_name_base);
@@ -84,24 +79,12 @@ bool VtuInterface::writeToFile(std::string const &file_name)
     std::replace(basename.begin(), basename.end(), '.', '_');
 
     auto const vtu_file_name = BaseLib::joinPaths(dirname, basename);
-
-    const std::string file_name_rank = vtu_file_name + "_"
-                                       + std::to_string(mpi_rank) + ".vtu";
-    bool vtu_status_i = writeVTU<vtkXMLUnstructuredGridWriter>(file_name_rank);
-    bool vtu_status = false;
-    MPI_Allreduce(&vtu_status_i, &vtu_status, 1, MPI_C_BOOL, MPI_LAND, PETSC_COMM_WORLD);
-
+    int rank;
+    MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
     int mpi_size;
     MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
-    bool pvtu_status = false;
-    if (mpi_rank == 0)
-    {
-        pvtu_status = writeVTU<vtkXMLPUnstructuredGridWriter>(vtu_file_name + ".pvtu", mpi_size);
-    }
-    MPI_Bcast(&pvtu_status, 1, MPI_C_BOOL, 0, PETSC_COMM_WORLD);
-
-    return vtu_status && pvtu_status;
-
+    return writeVTU<vtkXMLPUnstructuredGridWriter>(vtu_file_name + ".pvtu",
+                                                   mpi_size, rank);
 #else
     return writeVTU<vtkXMLUnstructuredGridWriter>(file_name);
 #endif

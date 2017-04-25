@@ -45,8 +45,11 @@ public:
     /// Writes the given mesh to vtu file.
     /// \param file_name      File name.
     /// \param num_partitions Number of partitions to be merged.
+    /// \param rank the rank of the mpi process.
     /// \return True on success, false on error
-    template<typename UnstructuredGridWriter> bool writeVTU(std::string const &file_name, const int num_partitions = 1);
+    template <typename UnstructuredGridWriter>
+    bool writeVTU(std::string const& file_name, const int num_partitions = 1,
+                  const int rank = 1);
 
 private:
     const MeshLib::Mesh* _mesh;
