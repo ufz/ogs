@@ -15,6 +15,7 @@
 
 #ifdef USE_PETSC
 #include <vtkMPIController.h>
+#include <vtkSmartPointer.h>
 #endif
 
 // BaseLib
@@ -114,7 +115,8 @@ int main(int argc, char *argv[])
             ApplicationsLib::LinearSolverLibrarySetup
                 linear_solver_library_setup(argc, argv);
 #if defined(USE_PETSC)
-            vtkMPIController* controller = vtkMPIController::New();
+            vtkSmartPointer<vtkMPIController> controller =
+                vtkSmartPointer<vtkMPIController>::New();
             controller->Initialize(&argc, &argv, 1);
             vtkMPIController::SetGlobalController(controller);
 #endif
@@ -161,7 +163,7 @@ int main(int argc, char *argv[])
                 InSituLib::Finalize();
  #endif
 #if defined(USE_PETSC)
-            controller->Delete() ;
+            controller->Finalize(1) ;
 #endif
         }  // This nested scope ensures that everything that could possibly
            // possess a ConfigTree is destructed before the final check below is
