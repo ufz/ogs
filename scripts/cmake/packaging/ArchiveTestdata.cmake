@@ -13,6 +13,6 @@ endif()
 add_custom_target(archive-data
     bash ${PROJECT_SOURCE_DIR}/scripts/packaging/archive-testdata.sh
     DEPENDS data
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
     COMMENT "Packaging testdata to ogs6-data.tar.gz and ogs6-data.zip" VERBATIM
 )

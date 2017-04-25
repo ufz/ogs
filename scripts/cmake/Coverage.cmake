@@ -3,7 +3,7 @@ include(CodeCoverage)
 set(COVERAGE_EXCLUDES
     '/gpfs0/*'
     '/usr/*'
-    '${CMAKE_BINARY_DIR}/*'
+    '${PROJECT_BINARY_DIR}/*'
     '${PROJECT_SOURCE_DIR}/Tests/*'
     '${PROJECT_SOURCE_DIR}/ThirdParty/*'
 )

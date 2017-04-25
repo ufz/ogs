@@ -42,7 +42,7 @@ if(VTK_FOUND)
         include_directories(SYSTEM ${VTK_DIR}/../ThirdParty/netcdf/vtknetcdf/cxx)
     return()
 endif()
-set(VTK_DIR ${CMAKE_BINARY_DIR}/External/vtk/src/vtk-build CACHE PATH "" FORCE)
+set(VTK_DIR ${PROJECT_BINARY_DIR}/External/vtk/src/vtk-build CACHE PATH "" FORCE)
 
 message(STATUS "Building VTK as an external project in the build directory")
 
@@ -65,7 +65,7 @@ foreach(arg ${VTK_MODULES})
 endforeach()
 
 ExternalProject_Add(vtk
-    PREFIX ${CMAKE_BINARY_DIR}/External/vtk
+    PREFIX ${PROJECT_BINARY_DIR}/External/vtk
     URL ${OGS_VTK_URL}
     CMAKE_ARGS -Wno-dev
     CMAKE_CACHE_ARGS ${VTK_CMAKE_ARGS}

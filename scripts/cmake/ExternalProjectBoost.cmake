@@ -42,7 +42,7 @@ if(NOT Boost_INCLUDE_DIRS)
 endif()
 
 ExternalProject_Add(Boost
-    PREFIX ${CMAKE_BINARY_DIR}/External/boost
+    PREFIX ${PROJECT_BINARY_DIR}/External/boost
     URL ${OGS_BOOST_URL}
     URL_MD5 ${OGS_BOOST_MD5}
     UPDATE_COMMAND ""

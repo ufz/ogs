@@ -26,7 +26,7 @@ if(ParaView_FOUND)
     return()
 elseif()
         # If nothing was found build ParaView as an external project
-        set(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
+        set(ParaView_DIR ${PROJECT_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
     endif()
 endif()
 
@@ -55,7 +55,7 @@ endif()
 message(STATUS "Building ParaView as an external project in the build directory")
 
 ExternalProject_Add(Catalyst
-    PREFIX ${CMAKE_BINARY_DIR}/External/catalyst
+    PREFIX ${PROJECT_BINARY_DIR}/External/catalyst
     GIT_REPOSITORY ${CATALYST_GIT_URL}
     CONFIGURE_COMMAND ../Catalyst/${CATALYST_CONFIGURE_COMMAND} -G ${CATALYST_CMAKE_GENERATOR}
         -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} ../Catalyst

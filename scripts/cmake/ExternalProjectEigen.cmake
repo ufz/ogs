@@ -31,7 +31,7 @@ endif()
 include(ThirdPartyLibVersions)
 include(ExternalProject)
 ExternalProject_Add(Eigen
-    PREFIX ${CMAKE_BINARY_DIR}/External/eigen
+    PREFIX ${PROJECT_BINARY_DIR}/External/eigen
     URL ${OGS_EIGEN_URL}
     URL_MD5 ${OGS_EIGEN_MD5}
     UPDATE_COMMAND ""

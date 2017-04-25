@@ -31,7 +31,7 @@ enable_testing() # Enable CTest
 set(CTEST_CUSTOM_TESTS_IGNORE test-harness) # ignore logog test
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/CTestCustom.cmake.in
-    ${CMAKE_BINARY_DIR}/CTestCustom.cmake
+    ${PROJECT_BINARY_DIR}/CTestCustom.cmake
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
