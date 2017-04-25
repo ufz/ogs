@@ -75,7 +75,7 @@ ExternalProject_Add(vtk
 
 if(NOT VTK_FOUND)
     # Rerun cmake in initial build
-    add_custom_target(VtkRescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS vtk)
+    add_custom_target(VtkRescan ${CMAKE_COMMAND} ${PROJECT_SOURCE_DIR} DEPENDS vtk)
 else()
     add_custom_target(VtkRescan) # dummy target for caching
 endif()

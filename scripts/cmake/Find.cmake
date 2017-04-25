@@ -58,7 +58,7 @@ find_program(CCACHE_TOOL_PATH ccache)
 
 # Tools for web
 find_program(VTKJS_CONVERTER vtkDataConverter
-    PATHS ${CMAKE_SOURCE_DIR}/web/node_modules/.bin)
+    PATHS ${PROJECT_SOURCE_DIR}/web/node_modules/.bin)
 find_program(HUGO hugo)
 find_program(NPM npm)
 find_program(YARN yarn)
@@ -105,6 +105,9 @@ if(OGS_BUILD_GUI)
     endif()
     find_package( Qt5 5.2 REQUIRED Gui Widgets Xml XmlPatterns)
     cmake_policy(SET CMP0020 NEW)
+    set(CMAKE_AUTOMOC TRUE)
+    set(CMAKE_AUTOUIC TRUE)
+    set(CMAKE_AUTORCC TRUE)
     if(CMAKE_CROSSCOMPILING)
         find_package(PkgConfig REQUIRED)
         pkg_check_modules(QT_XML_DEPS REQUIRED Xml)

@@ -4,8 +4,8 @@ set(COVERAGE_EXCLUDES
     '/gpfs0/*'
     '/usr/*'
     '${CMAKE_BINARY_DIR}/*'
-    '${CMAKE_SOURCE_DIR}/Tests/*'
-    '${CMAKE_SOURCE_DIR}/ThirdParty/*'
+    '${PROJECT_SOURCE_DIR}/Tests/*'
+    '${PROJECT_SOURCE_DIR}/ThirdParty/*'
 )
 
 if(LCOV_PATH AND GENHTML_PATH)

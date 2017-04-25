@@ -7,10 +7,6 @@ if(VTKFBXCONVERTER_FOUND)
     include_directories(${VTKFBXCONVERTER_INCLUDE_DIRS})
 endif()
 
-set(CMAKE_AUTOMOC TRUE)
-set(CMAKE_AUTOUIC TRUE)
-set(CMAKE_AUTORCC TRUE)
-
 # Add subprojects
 add_subdirectory(Base)
 add_subdirectory(DataView/StratView)

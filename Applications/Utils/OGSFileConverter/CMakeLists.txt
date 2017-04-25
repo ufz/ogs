@@ -1,31 +1,19 @@
-cmake_minimum_required(VERSION 2.8.6)
-
-project(OGSFileConverter)
-
-cmake_policy(SET CMP0020 NEW)
-
-set(CMAKE_AUTOMOC TRUE)
-set(CMAKE_AUTOUIC TRUE)
-set(CMAKE_AUTORCC TRUE)
-
 set(SOURCES
     FileListDialog.cpp
     OGSFileConverter.cpp
 )
 
-find_package(Qt5 QUIET REQUIRED Gui Widgets Xml XmlPatterns)
-
 include_directories(
-    ${CMAKE_SOURCE_DIR}/BaseLib
-    ${CMAKE_SOURCE_DIR}/FileIO
-    ${CMAKE_SOURCE_DIR}/GeoLib
-    ${CMAKE_SOURCE_DIR}/MeshLib
-    ${CMAKE_SOURCE_DIR}/Applications/DataExplorer/Base
-    ${CMAKE_SOURCE_DIR}/Applications/DataExplorer/DataView
-    ${CMAKE_SOURCE_DIR}/Applications/DataExplorer/VtkVis
+    ${PROJECT_SOURCE_DIR}/BaseLib
+    ${PROJECT_SOURCE_DIR}/FileIO
+    ${PROJECT_SOURCE_DIR}/GeoLib
+    ${PROJECT_SOURCE_DIR}/MeshLib
+    ${PROJECT_SOURCE_DIR}/Applications/DataExplorer/Base
+    ${PROJECT_SOURCE_DIR}/Applications/DataExplorer/DataView
+    ${PROJECT_SOURCE_DIR}/Applications/DataExplorer/VtkVis
 
     # Qt generated file includes
-    ${CMAKE_BINARY_DIR}/Applications/Utils/OGSFileConverter
+    ${CMAKE_CURRENT_BINARY_DIR}
 
     # Workaround for CMake 3.8
     ${CMAKE_CURRENT_BINARY_DIR}/OGSFileConverterLib_autogen/include
@@ -51,10 +39,6 @@ target_link_libraries(OGSFileConverter
     QtBase
     GeoLib)
 ADD_VTK_DEPENDENCY(OGSFileConverter)
-
-set(CMAKE_CONFIGURATION_TYPES "Release;Debug" CACHE TYPE INTERNAL FORCE)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 set_property(TARGET OGSFileConverter PROPERTY FOLDER "Utilities")
 

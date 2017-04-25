@@ -13,13 +13,13 @@ if(MODULE_CMD)
             set(MODULE_LOAD_STRING "${MODULE_LOAD_STRING}module load ${line}\n")
         endif()
     endforeach()
-    configure_file(${CMAKE_SOURCE_DIR}/scripts/cmake/packaging/module.in
-        ${CMAKE_BINARY_DIR}/module
+    configure_file(${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/module.in
+        ${PROJECT_BINARY_DIR}/module
     )
     if(OGS_MODULEFILE)
         get_filename_component(MODULE_DIR ${OGS_MODULEFILE} DIRECTORY)
         get_filename_component(MODULE_NAME ${OGS_MODULEFILE} NAME)
-        install(FILES ${CMAKE_BINARY_DIR}/module DESTINATION ${MODULE_DIR}
+        install(FILES ${PROJECT_BINARY_DIR}/module DESTINATION ${MODULE_DIR}
             RENAME ${MODULE_NAME})
     endif()
 endif()

@@ -9,7 +9,7 @@ target_link_libraries(SWMMConverter
     SwmmInterface
 )
 
-include_directories( ${CMAKE_SOURCE_DIR}/Applications/FileIO )
+include_directories( ${PROJECT_SOURCE_DIR}/Applications/FileIO )
 
 ADD_VTK_DEPENDENCY(SWMMConverter)
 

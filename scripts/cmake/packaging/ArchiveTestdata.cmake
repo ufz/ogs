@@ -11,7 +11,7 @@ if(NOT REALPATH_TOOL_PATH OR NOT ZIP_TOOL_PATH)
 endif()
 
 add_custom_target(archive-data
-    bash ${CMAKE_SOURCE_DIR}/scripts/packaging/archive-testdata.sh
+    bash ${PROJECT_SOURCE_DIR}/scripts/packaging/archive-testdata.sh
     DEPENDS data
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Packaging testdata to ogs6-data.tar.gz and ogs6-data.zip" VERBATIM

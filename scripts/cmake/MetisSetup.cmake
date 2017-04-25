@@ -1,7 +1,7 @@
 message( STATUS "The METIS package is copyrighted by the Regents of the University of Minnesota." )
 message( STATUS "Please read the license of the METIS package carefully before you use the METIS." )
 
-set(METIS_PATH "${CMAKE_SOURCE_DIR}/ThirdParty/metis")
+set(METIS_PATH ${PROJECT_SOURCE_DIR}/ThirdParty/metis)
 add_definitions(-DUSE_GKREGEX)
 set(GKLIB_PATH "${METIS_PATH}/GKlib" CACHE PATH "path to GKlib")
 

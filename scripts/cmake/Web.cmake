@@ -10,18 +10,18 @@ endif()
 
 add_custom_target(web-install
     COMMAND ${PACKAGE_MANAGER}
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/web
-    BYPRODUCTS ${CMAKE_SOURCE_DIR}/web/node_modules
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/web
+    BYPRODUCTS ${PROJECT_SOURCE_DIR}/web/node_modules
 )
 
 if(PIP AND PYTHON_EXECUTABLE AND
-    (EXISTS ${CMAKE_SOURCE_DIR}/web/import/secret.py OR
+    (EXISTS ${PROJECT_SOURCE_DIR}/web/import/secret.py OR
      DEFINED ENV{CONTENTFUL_ACCESS_TOKEN}))
 
     add_custom_target(web-import
         COMMAND ${PIP} install -r ../requirements.txt
         COMMAND ${PYTHON_EXECUTABLE} import.py
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/web/import
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/web/import
         DEPENDS web-install
     )
 
@@ -40,11 +40,11 @@ endif()
 
 add_custom_target(web
     COMMAND ${NPM} run build:release -- ${HUGO_ARGS}
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/web
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/web
     DEPENDS web-install ${IMPORT_TARGET}
 )
 
 add_custom_target(web-clean
     COMMAND ${NPM} run clean
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/web
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/web
 )
