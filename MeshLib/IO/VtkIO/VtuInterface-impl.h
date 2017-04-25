@@ -30,9 +30,9 @@ namespace MeshLib
 {
 namespace IO
 {
-
-template<typename UnstructuredGridWriter>
-bool VtuInterface::writeVTU(std::string const &file_name, const int num_partitions)
+template <typename UnstructuredGridWriter>
+bool VtuInterface::writeVTU(std::string const& file_name,
+                            const int num_partitions, const int rank)
 {
     if(!_mesh)
     {
@@ -46,7 +46,8 @@ bool VtuInterface::writeVTU(std::string const &file_name, const int num_partitio
     vtkSmartPointer<UnstructuredGridWriter> vtuWriter =
         vtkSmartPointer<UnstructuredGridWriter>::New();
 
-    vtuWriter->SetInputConnection(vtkSource->GetOutputPort());
+    vtkSource->Update();
+    vtuWriter->SetInputData(vtkSource->GetOutput());
 
     if(_use_compressor)
         vtuWriter->SetCompressorTypeToZLib();
@@ -73,8 +74,12 @@ bool VtuInterface::writeVTU(std::string const &file_name, const int num_partitio
     }
 
     vtuWriter->SetFileName(file_name.c_str());
-    if (num_partitions > 0)
-        vtuWriter->SetNumberOfPieces(num_partitions);
+#ifdef USE_PETSC
+    vtuWriter->SetGhostLevel(1);
+    vtuWriter->SetNumberOfPieces(num_partitions);
+    vtuWriter->SetStartPiece(rank);
+    vtuWriter->SetEndPiece(rank);
+#endif
 
     return (vtuWriter->Write() > 0);
 }
