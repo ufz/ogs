@@ -13,13 +13,14 @@
  */
 
 #include "FileListDialog.h"
-#include "OGSError.h"
 
-#include "StringTools.h"
 #include <QSettings>
 #include <QFileInfo>
 #include <QFont>
 #include <QLineEdit>
+
+#include "Applications/DataExplorer/Base/OGSError.h"
+#include "BaseLib/StringTools.h"
 
 FileListDialog::FileListDialog(FileType input, FileType output, QWidget* parent)
 : QDialog(parent), _output_dir(""), _input_file_type(input), _output_file_type(output)
@@ -114,4 +115,3 @@ void FileListDialog::displayWarningLabel() const
     this->warningLabel->setStyleSheet("QLabel { color : red; }");
     this->warningLabel->setText("Warning: all scalar information except<br />MaterialIDs will be lost!");
 }
-

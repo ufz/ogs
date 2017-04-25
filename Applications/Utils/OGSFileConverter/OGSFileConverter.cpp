@@ -15,21 +15,17 @@
 #define BOOST_FILESYSTEM_VERSION 3
 
 #include "OGSFileConverter.h"
-#include "FileListDialog.h"
-#include "FileTools.h"
-#include "OGSError.h"
 
 #include <QFileInfo>
 
-// conversion includes
+#include "FileListDialog.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
-#include "StringTools.h"
-
-// geometry
-#include "GEOObjects.h"
+#include "Applications/DataExplorer/Base/OGSError.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/StringTools.h"
+#include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/Legacy/OGSIOVer4.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
-
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 

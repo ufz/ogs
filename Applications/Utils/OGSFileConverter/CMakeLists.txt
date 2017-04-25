@@ -4,14 +4,6 @@ set(SOURCES
 )
 
 include_directories(
-    ${PROJECT_SOURCE_DIR}/BaseLib
-    ${PROJECT_SOURCE_DIR}/FileIO
-    ${PROJECT_SOURCE_DIR}/GeoLib
-    ${PROJECT_SOURCE_DIR}/MeshLib
-    ${PROJECT_SOURCE_DIR}/Applications/DataExplorer/Base
-    ${PROJECT_SOURCE_DIR}/Applications/DataExplorer/DataView
-    ${PROJECT_SOURCE_DIR}/Applications/DataExplorer/VtkVis
-
     # Qt generated file includes
     ${CMAKE_CURRENT_BINARY_DIR}
 
