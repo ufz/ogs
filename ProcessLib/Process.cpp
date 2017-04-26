@@ -148,15 +148,14 @@ void Process::constructDofTable()
         new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
 
     // Collect the mesh subsets in a vector.
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
     for (ProcessVariable const& pv : _process_variables)
     {
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
             pv.getNumberOfComponents(),
             [&]() {
-                return std::unique_ptr<MeshLib::MeshSubsets>{
-                    new MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}};
+                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
             });
     }
 
@@ -186,10 +185,9 @@ void Process::initializeExtrapolator()
     else
     {
         // Otherwise construct a new DOF table.
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>
-            all_mesh_subsets_single_component;
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
         all_mesh_subsets_single_component.emplace_back(
-            new MeshLib::MeshSubsets(_mesh_subset_all_nodes.get()));
+            MeshLib::MeshSubsets(_mesh_subset_all_nodes.get()));
 
         dof_table_single_component = new NumLib::LocalToGlobalIndexMap(
             std::move(all_mesh_subsets_single_component),

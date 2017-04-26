@@ -135,9 +135,8 @@ public:
         : _integration_order(integration_order)
         , _mesh_subset_all_nodes(mesh, &mesh.getNodes())
     {
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
-        all_mesh_subsets.emplace_back(
-            new MeshLib::MeshSubsets{&_mesh_subset_all_nodes});
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+        all_mesh_subsets.emplace_back(&_mesh_subset_all_nodes);
 
         _dof_table.reset(new NumLib::LocalToGlobalIndexMap(
             std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_COMPONENT));

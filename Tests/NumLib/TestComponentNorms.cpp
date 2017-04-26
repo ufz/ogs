@@ -20,13 +20,12 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "Tests/VectorUtils.h"
 
-static std::vector<std::unique_ptr<MeshLib::MeshSubsets>> createMeshSubsets(
+static std::vector<MeshLib::MeshSubsets> createMeshSubsets(
     MeshLib::MeshSubset const& mesh_subset, unsigned const num_components)
 {
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> mesh_subsets;
+    std::vector<MeshLib::MeshSubsets> mesh_subsets;
     for (unsigned i=0; i<num_components; ++i)
-        mesh_subsets.emplace_back(
-            new MeshLib::MeshSubsets{&mesh_subset});
+        mesh_subsets.emplace_back(MeshLib::MeshSubsets{&mesh_subset});
 
     return mesh_subsets;
 }

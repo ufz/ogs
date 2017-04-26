@@ -28,19 +28,17 @@ GlobalIndexType const MeshComponentMap::nop =
 
 #ifdef USE_PETSC
 MeshComponentMap::MeshComponentMap(
-    const std::vector<std::unique_ptr<MeshLib::MeshSubsets>>& components,
-    ComponentOrder order)
+    const std::vector<MeshLib::MeshSubsets>& components, ComponentOrder order)
 {
     // get number of unknows
     GlobalIndexType num_unknowns = 0;
     for (auto const& c : components)
     {
-        assert(c != nullptr);
-        for (unsigned mesh_subset_index = 0; mesh_subset_index < c->size();
+        for (unsigned mesh_subset_index = 0; mesh_subset_index < c.size();
              mesh_subset_index++)
         {
             MeshLib::MeshSubset const& mesh_subset =
-                c->getMeshSubset(mesh_subset_index);
+                c.getMeshSubset(mesh_subset_index);
             // PETSc always works with MeshLib::NodePartitionedMesh.
             const MeshLib::NodePartitionedMesh& mesh =
                 static_cast<const MeshLib::NodePartitionedMesh&>(
@@ -56,12 +54,11 @@ MeshComponentMap::MeshComponentMap(
     _num_local_dof = 0;
     for (auto const& c : components)
     {
-        assert(c != nullptr);
-        for (unsigned mesh_subset_index = 0; mesh_subset_index < c->size();
+        for (unsigned mesh_subset_index = 0; mesh_subset_index < c.size();
              mesh_subset_index++)
         {
             MeshLib::MeshSubset const& mesh_subset =
-                c->getMeshSubset(mesh_subset_index);
+                c.getMeshSubset(mesh_subset_index);
             assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(
                        &mesh_subset.getMesh()) != nullptr);
             std::size_t const mesh_id = mesh_subset.getMeshID();
@@ -117,18 +114,16 @@ MeshComponentMap::MeshComponentMap(
 }
 #else
 MeshComponentMap::MeshComponentMap(
-    const std::vector<std::unique_ptr<MeshLib::MeshSubsets>>& components,
-    ComponentOrder order)
+    const std::vector<MeshLib::MeshSubsets>& components, ComponentOrder order)
 {
     // construct dict (and here we number global_index by component type)
     GlobalIndexType global_index = 0;
     std::size_t comp_id = 0;
     for (auto const& c : components)
     {
-        assert (c != nullptr);
-        for (std::size_t mesh_subset_index = 0; mesh_subset_index < c->size(); mesh_subset_index++)
+        for (std::size_t mesh_subset_index = 0; mesh_subset_index < c.size(); mesh_subset_index++)
         {
-            MeshLib::MeshSubset const& mesh_subset = c->getMeshSubset(mesh_subset_index);
+            MeshLib::MeshSubset const& mesh_subset = c.getMeshSubset(mesh_subset_index);
             std::size_t const mesh_id = mesh_subset.getMeshID();
             // mesh items are ordered first by node, cell, ....
             for (std::size_t j=0; j<mesh_subset.getNumberOfNodes(); j++)

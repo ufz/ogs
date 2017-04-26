@@ -83,18 +83,16 @@ public:
     {
         assert(selected_component < num_components);
 
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
+        std::vector<MeshLib::MeshSubsets> components;
         for (unsigned i=0; i<num_components; ++i)
         {
-            components.emplace_back(
-                new MeL::MeshSubsets{mesh_items_all_nodes.get()});
+            components.emplace_back(mesh_items_all_nodes.get());
         }
         std::vector<unsigned> vec_var_n_components(1, num_components);
         dof_map.reset(
             new NL::LocalToGlobalIndexMap(std::move(components), vec_var_n_components, order));
 
-        auto components_boundary = std::unique_ptr<MeshLib::MeshSubsets>{
-            new MeL::MeshSubsets{mesh_items_boundary.get()}};
+        MeL::MeshSubsets components_boundary{mesh_items_boundary.get()};
 
         dof_map_boundary.reset(dof_map->deriveBoundaryConstrainedMap(
             0,  // variable id
@@ -110,18 +108,16 @@ public:
     {
         assert(selected_components.size() <= num_components);
 
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
+        std::vector<MeshLib::MeshSubsets> components;
         for (unsigned i = 0; i < num_components; ++i)
         {
-            components.emplace_back(
-                new MeL::MeshSubsets{mesh_items_all_nodes.get()});
+            components.emplace_back(mesh_items_all_nodes.get());
         }
         std::vector<unsigned> vec_var_n_components(1, num_components);
         dof_map.reset(new NL::LocalToGlobalIndexMap(
             std::move(components), vec_var_n_components, order));
 
-        auto components_boundary = std::unique_ptr<MeshLib::MeshSubsets>{
-            new MeL::MeshSubsets{mesh_items_boundary.get()}};
+        MeL::MeshSubsets components_boundary{mesh_items_boundary.get()};
 
         dof_map_boundary.reset(dof_map->deriveBoundaryConstrainedMap(
             0,  // variable id

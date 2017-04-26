@@ -29,8 +29,8 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentLinearMesh)
     std::unique_ptr<MeshLib::MeshSubset const> nodesSubset(
         new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
 
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
-    components.emplace_back(new MeshLib::MeshSubsets{nodesSubset.get()});
+    std::vector<MeshLib::MeshSubsets> components;
+    components.emplace_back(nodesSubset.get());
     NumLib::LocalToGlobalIndexMap dof_map(
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
@@ -58,8 +58,8 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
     std::unique_ptr<MeshLib::MeshSubset const> nodesSubset(
         new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
 
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
-    components.emplace_back(new MeshLib::MeshSubsets{nodesSubset.get()});
+    std::vector<MeshLib::MeshSubsets> components;
+    components.emplace_back(MeshLib::MeshSubsets{nodesSubset.get()});
     NumLib::LocalToGlobalIndexMap dof_map(
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
@@ -88,9 +88,9 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearMesh)
     std::unique_ptr<MeshLib::MeshSubset const> nodesSubset(
         new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
 
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
-    components.emplace_back(new MeshLib::MeshSubsets{nodesSubset.get()});
-    components.emplace_back(new MeshLib::MeshSubsets{nodesSubset.get()});
+    std::vector<MeshLib::MeshSubsets> components;
+    components.emplace_back(nodesSubset.get());
+    components.emplace_back(nodesSubset.get());
     NumLib::LocalToGlobalIndexMap dof_map(
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
@@ -124,9 +124,9 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearQuadraticMesh)
     std::unique_ptr<MeshLib::MeshSubset const> allNodesSubset(
         new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
 
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
-    components.emplace_back(new MeshLib::MeshSubsets{baseNodesSubset.get()});
-    components.emplace_back(new MeshLib::MeshSubsets{allNodesSubset.get()});
+    std::vector<MeshLib::MeshSubsets> components;
+    components.emplace_back(baseNodesSubset.get());
+    components.emplace_back(allNodesSubset.get());
     NumLib::LocalToGlobalIndexMap dof_map(
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);

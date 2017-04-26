@@ -34,8 +34,8 @@ class NumLibMeshComponentMapTest : public ::testing::Test
         nodesSubset = new MeshLib::MeshSubset(*mesh, &mesh->getNodes());
 
         // Add two components both based on the same nodesSubset.
-        components.emplace_back(new MeshLib::MeshSubsets{nodesSubset});
-        components.emplace_back(new MeshLib::MeshSubsets{nodesSubset});
+        components.emplace_back(nodesSubset);
+        components.emplace_back(nodesSubset);
     }
 
     ~NumLibMeshComponentMapTest() override
@@ -52,7 +52,7 @@ class NumLibMeshComponentMapTest : public ::testing::Test
     //data component 0 and 1 are assigned to all nodes in the mesh
     static std::size_t const comp0_id = 0;
     static std::size_t const comp1_id = 1;
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
+    std::vector<MeshLib::MeshSubsets> components;
     MeshComponentMap const* cmap;
 
     //
