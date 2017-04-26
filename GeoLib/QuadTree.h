@@ -59,8 +59,8 @@ public:
         assert (_max_points_per_leaf > 0);
 
         // init children
-        for (auto& k : _children)
-            k = nullptr;
+        for (auto& child : _children)
+            child = nullptr;
 
         if ((_ur[0] - _ll[0]) > (_ur[1] - _ll[1]))
             _ur[1] = _ll[1] + _ur[0] - _ll[0];
@@ -75,9 +75,9 @@ public:
      */
     ~QuadTree()
     {
-        for (auto& k : _children)
+        for (auto& child : _children)
         {
-            delete k;
+            delete child;
         }
     }
 
@@ -95,9 +95,9 @@ public:
         if ((*pnt)[1] >= _ur[1]) return false;
 
         if (!_is_leaf) {
-            for (auto& k : _children)
+            for (auto& child : _children)
             {
-                if (k->addPoint(pnt))
+                if (child->addPoint(pnt))
                     return true;
             }
             return false;
@@ -189,8 +189,8 @@ public:
         if (_is_leaf)
             leaf_list.push_back (this);
         else
-            for (auto& k : _children)
-                k->getLeafs(leaf_list);
+            for (auto& child : _children)
+                child->getLeafs(leaf_list);
     }
 
     const std::vector<POINT const*>& getPoints () const { return _pnts; }
@@ -247,11 +247,11 @@ public:
         if (max_depth < _depth)
             max_depth = _depth;
 
-        for (auto& k : _children)
+        for (auto& child : _children)
         {
-            if (k)
+            if (child)
             {
-                k->getMaxDepth(max_depth);
+                child->getMaxDepth(max_depth);
             }
         }
     }
@@ -386,8 +386,8 @@ private:
           _max_points_per_leaf(max_points_per_leaf)
     {
         // init children
-        for (auto& k : _children)
-            k = nullptr;
+        for (auto& child : _children)
+            child = nullptr;
     }
 
     void splitNode ()

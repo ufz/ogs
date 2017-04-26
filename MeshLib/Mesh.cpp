@@ -149,19 +149,19 @@ void Mesh::setDimension()
 
 void Mesh::setElementsConnectedToNodes()
 {
-    for (auto& _element : _elements)
+    for (auto& element : _elements)
     {
-        const unsigned nNodes(_element->getNumberOfNodes());
+        const unsigned nNodes(element->getNumberOfNodes());
         for (unsigned j=0; j<nNodes; ++j)
-            _element->_nodes[j]->addElement(_element);
+            element->_nodes[j]->addElement(element);
     }
 }
 
 void Mesh::resetElementsConnectedToNodes()
 {
-    for (auto& _node : _nodes)
-        if (_node)
-            _node->clearElements();
+    for (auto& node : _nodes)
+        if (node)
+            node->clearElements();
     this->setElementsConnectedToNodes();
 }
 

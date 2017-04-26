@@ -28,7 +28,7 @@ public:
 
     void init() override;
 
-    /// Sets the point indeces to be highlighted
+    /// Sets the point indices to be highlighted
     void setSelectionArray(const std::vector<unsigned> &point_indeces);
 
 private:

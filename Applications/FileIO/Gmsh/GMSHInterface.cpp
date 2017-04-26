@@ -192,9 +192,9 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     }
 
     // *** init mesh density strategies
-    for (auto& it : _polygon_tree_list)
+    for (auto& polygon_tree : _polygon_tree_list)
     {
-        it->initMeshDensityStrategy();
+        polygon_tree->initMeshDensityStrategy();
     }
 
     // *** create GMSH data structures
@@ -203,9 +203,9 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     for (std::size_t k(0); k<n_merged_pnts; k++) {
         _gmsh_pnts[k] = nullptr;
     }
-    for (auto& it : _polygon_tree_list)
+    for (auto& polygon_tree : _polygon_tree_list)
     {
-        it->createGMSHPoints(_gmsh_pnts);
+        polygon_tree->createGMSHPoints(_gmsh_pnts);
     }
 
     // *** finally write data :-)

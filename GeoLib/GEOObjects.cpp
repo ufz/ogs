@@ -28,14 +28,14 @@ GEOObjects::GEOObjects() = default;
 GEOObjects::~GEOObjects()
 {
     // delete surfaces
-    for (auto & _sfc_vec : _sfc_vecs)
-        delete _sfc_vec;
+    for (auto& surface : _sfc_vecs)
+        delete surface;
     // delete polylines
-    for (auto & _ply_vec : _ply_vecs)
-        delete _ply_vec;
+    for (auto& polyline : _ply_vecs)
+        delete polyline;
     // delete points
-    for (auto & _pnt_vec : _pnt_vecs)
-        delete _pnt_vec;
+    for (auto& point : _pnt_vecs)
+        delete point;
 }
 
 void GEOObjects::addPointVec(
@@ -105,12 +105,12 @@ void GEOObjects::addStationVec(std::unique_ptr<std::vector<Point*>> stations,
 const std::vector<GeoLib::Point*>* GEOObjects::getStationVec(
     const std::string& name) const
 {
-    for (auto _pnt_vec : _pnt_vecs)
+    for (auto point : _pnt_vecs)
     {
-        if (_pnt_vec->getName().compare(name) == 0 &&
-            _pnt_vec->getType() == PointVec::PointType::STATION)
+        if (point->getName().compare(name) == 0 &&
+            point->getType() == PointVec::PointType::STATION)
         {
-            return _pnt_vec->getVector();
+            return point->getVector();
         }
     }
     DBUG("GEOObjects::getStationVec() - No entry found with name \"%s\".", name.c_str());
@@ -294,8 +294,8 @@ bool GEOObjects::isUniquePointVecName(std::string &name)
         if (count > 1)
             cpName = cpName + "-" + std::to_string(count);
 
-        for (auto & _pnt_vec : _pnt_vecs)
-            if ( cpName.compare(_pnt_vec->getName()) == 0 )
+        for (auto& point : _pnt_vecs)
+            if (cpName.compare(point->getName()) == 0)
                 isUnique = false;
     }
 
@@ -313,14 +313,14 @@ bool GEOObjects::isUniquePointVecName(std::string &name)
 bool GEOObjects::isPntVecUsed (const std::string &name) const
 {
     // search dependent data structures (Polyline)
-    for (auto _ply_vec : _ply_vecs)
+    for (auto polyline : _ply_vecs)
     {
-        if ((_ply_vec->getName()).compare(name) == 0)
+        if ((polyline->getName()).compare(name) == 0)
             return true;
     }
-    for (auto _sfc_vec : _sfc_vecs)
+    for (auto surface : _sfc_vecs)
     {
-        if ((_sfc_vec->getName()).compare(name) == 0)
+        if ((surface->getName()).compare(name) == 0)
             return true;
     }
 
@@ -329,17 +329,17 @@ bool GEOObjects::isPntVecUsed (const std::string &name) const
 
 void GEOObjects::getStationVectorNames(std::vector<std::string>& names) const
 {
-    for (auto _pnt_vec : _pnt_vecs)
-        if (_pnt_vec->getType() == PointVec::PointType::STATION)
-            names.push_back(_pnt_vec->getName());
+    for (auto point : _pnt_vecs)
+        if (point->getType() == PointVec::PointType::STATION)
+            names.push_back(point->getName());
 }
 
 void GEOObjects::getGeometryNames (std::vector<std::string>& names) const
 {
     names.clear ();
-    for (auto _pnt_vec : _pnt_vecs)
-        if (_pnt_vec->getType() == PointVec::PointType::POINT)
-            names.push_back(_pnt_vec->getName());
+    for (auto point : _pnt_vecs)
+        if (point->getType() == PointVec::PointType::POINT)
+            names.push_back(point->getName());
 }
 
 const std::string GEOObjects::getElementNameByID(const std::string &geometry_name, GeoLib::GEOTYPE type, std::size_t id) const

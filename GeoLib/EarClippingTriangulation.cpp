@@ -114,11 +114,11 @@ void EarClippingTriangulation::ensureCWOrientation ()
 
 bool EarClippingTriangulation::isEar(std::size_t v0, std::size_t v1, std::size_t v2) const
 {
-    for (unsigned long it : _vertex_list)
+    for (unsigned long v : _vertex_list)
     {
-        if (it != v0 && it != v1 && it != v2)
+        if (v != v0 && v != v1 && v != v2)
         {
-            if (MathLib::isPointInTriangle(*_pnts[it], *_pnts[v0], *_pnts[v1],
+            if (MathLib::isPointInTriangle(*_pnts[v], *_pnts[v0], *_pnts[v1],
                                            *_pnts[v2]))
             {
                 return false;

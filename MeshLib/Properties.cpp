@@ -52,19 +52,20 @@ Properties Properties::excludeCopyProperties(
     std::vector<std::size_t> const& exclude_node_ids) const
 {
     Properties exclude_copy;
-    for (auto property_vector : _properties) {
-        if (property_vector.second->getMeshItemType() == MeshItemType::Cell) {
-            exclude_copy._properties.insert(
-                std::make_pair(property_vector.first,
-                property_vector.second->clone(exclude_elem_ids))
-            );
-        }
-        else if (property_vector.second->getMeshItemType() == MeshItemType::Node)
+    for (auto name_vector_pair : _properties)
+    {
+        if (name_vector_pair.second->getMeshItemType() == MeshItemType::Cell)
         {
-            exclude_copy._properties.insert(
-                std::make_pair(property_vector.first,
-                property_vector.second->clone(exclude_node_ids))
-            );
+            exclude_copy._properties.insert(std::make_pair(
+                name_vector_pair.first,
+                name_vector_pair.second->clone(exclude_elem_ids)));
+        }
+        else if (name_vector_pair.second->getMeshItemType() ==
+                 MeshItemType::Node)
+        {
+            exclude_copy._properties.insert(std::make_pair(
+                name_vector_pair.first,
+                name_vector_pair.second->clone(exclude_node_ids)));
         }
     }
     return exclude_copy;
@@ -74,18 +75,18 @@ Properties Properties::excludeCopyProperties(
     std::vector<MeshItemType> const& exclude_mesh_item_types) const
 {
     Properties new_properties;
-    for (auto property_vector : _properties) {
+    for (auto name_vector_pair : _properties)
+    {
         if (std::find(exclude_mesh_item_types.begin(),
                       exclude_mesh_item_types.end(),
-                      property_vector.second->getMeshItemType()) !=
+                      name_vector_pair.second->getMeshItemType()) !=
             exclude_mesh_item_types.end())
             continue;
 
         std::vector<std::size_t> const exclude_positions{};
         new_properties._properties.insert(
-            std::make_pair(property_vector.first,
-            property_vector.second->clone(exclude_positions))
-        );
+            std::make_pair(name_vector_pair.first,
+                           name_vector_pair.second->clone(exclude_positions)));
     }
     return new_properties;
 }
@@ -94,17 +95,19 @@ Properties::Properties(Properties const& properties)
     : _properties(properties._properties)
 {
     std::vector<std::size_t> exclude_positions;
-    for (auto& _propertie : _properties)
+    for (auto& name_vector_pair : _properties)
     {
-        PropertyVectorBase* t(_propertie.second->clone(exclude_positions));
-        _propertie.second = t;
+        PropertyVectorBase* t(
+            name_vector_pair.second->clone(exclude_positions));
+        name_vector_pair.second = t;
     }
 }
 
 Properties::~Properties()
 {
-    for (auto property_vector : _properties) {
-        delete property_vector.second;
+    for (auto name_vector_pair : _properties)
+    {
+        delete name_vector_pair.second;
     }
 }
 

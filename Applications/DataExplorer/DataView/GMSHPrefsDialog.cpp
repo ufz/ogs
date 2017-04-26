@@ -90,11 +90,11 @@ void GMSHPrefsDialog::on_selectGeoButton_pressed()
     QModelIndexList selected = this->allGeoView->selectionModel()->selectedIndexes();
     QStringList list = _selGeo->stringList();
 
-    for (auto& it : selected)
+    for (auto& index : selected)
     {
-        list.append(it.data().toString());
+        list.append(index.data().toString());
 
-        _allGeo->removeRow(it.row());
+        _allGeo->removeRow(index.row());
     }
     _selGeo->setStringList(list);
 }
@@ -104,11 +104,11 @@ void GMSHPrefsDialog::on_deselectGeoButton_pressed()
     QModelIndexList selected = this->selectedGeoView->selectionModel()->selectedIndexes();
     QStringList list = _allGeo->stringList();
 
-    for (auto& it : selected)
+    for (auto& index : selected)
     {
-        list.append(it.data().toString());
+        list.append(index.data().toString());
 
-        _selGeo->removeRow(it.row());
+        _selGeo->removeRow(index.row());
     }
     _allGeo->setStringList(list);
 }
@@ -179,7 +179,7 @@ void GMSHPrefsDialog::reject()
 std::vector<std::string> GMSHPrefsDialog::getSelectedObjects(QStringList list)
 {
     std::vector<std::string> indexList;
-    for (auto& it : list)
-        indexList.push_back(it.toStdString());
+    for (auto& index : list)
+        indexList.push_back(index.toStdString());
     return indexList;
 }

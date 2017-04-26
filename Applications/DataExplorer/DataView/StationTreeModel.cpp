@@ -178,7 +178,7 @@ void StationTreeModel::removeStationList(QModelIndex index)
  */
 void StationTreeModel::removeStationList(const std::string &name)
 {
-    for (auto& _list : _lists)
-        if (name.compare(_list->data(0).toString().toStdString()) == 0)
-            removeStationList(createIndex(_list->row(), 0, _list));
+    for (auto& list : _lists)
+        if (name.compare(list->data(0).toString().toStdString()) == 0)
+            removeStationList(createIndex(list->row(), 0, list));
 }

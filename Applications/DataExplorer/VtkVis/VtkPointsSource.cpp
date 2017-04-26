@@ -51,9 +51,9 @@ void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
     os << indent << "== VtkPointsSource ==" << "\n";
 
     int i = 0;
-    for (auto _point : *_points)
+    for (auto point : *_points)
     {
-        const double* coords = _point->getCoords();
+        const double* coords = point->getCoords();
         os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] << ", " <<
         coords[2] << ")\n";
         i++;
@@ -95,9 +95,9 @@ int VtkPointsSource::RequestData( vtkInformation* request,
 
     // Generate points and vertices
     unsigned i = 0;
-    for (auto _point : *_points)
+    for (auto point : *_points)
     {
-        double coords[3] = {(*_point)[0], (*_point)[1], (*_point)[2]};
+        double coords[3] = {(*point)[0], (*point)[1], (*point)[2]};
         newPoints->SetPoint(i, coords);
         newVerts->InsertNextCell(1);
         newVerts->InsertCellPoint(i);

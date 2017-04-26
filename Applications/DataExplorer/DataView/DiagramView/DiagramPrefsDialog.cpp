@@ -129,14 +129,15 @@ int DiagramPrefsDialog::loadFile(const QString &filename)
 {
     if (DiagramList::readList(filename, _list))
     {
-        for (auto& i : _list)
+        for (auto& item : _list)
         {
-            //_list[i]->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
-            i->setXLabel("Time");
-            //_list[i]->setYLabel("Water Level");
-            i->setXUnit("day");
-            //_list[i]->setYUnit("metres");
-            i->setColor(QColor(Qt::red));
+            // item->setName(stationTypeLabel->text() + ": " +
+            // stationNameLabel->text());
+            item->setXLabel("Time");
+            // item->setYLabel("Water Level");
+            item->setXUnit("day");
+            // item->setYUnit("metres");
+            item->setColor(QColor(Qt::red));
         }
         fromDateLine->setText(_list[0]->getStartDate().toString("dd.MM.yyyy")); //QString::number(_list[0]->minXValue()));
         QDateTime endDate =
@@ -170,9 +171,9 @@ int DiagramPrefsDialog::loadList(const std::vector< std::pair<QDateTime, float> 
 
 void DiagramPrefsDialog::createVisibilityCheckboxes()
 {
-    for (auto& i : _list)
+    for (auto& item : _list)
     {
-        QCheckBox* box = new QCheckBox(i->getName());
+        QCheckBox* box = new QCheckBox(item->getName());
         box->setChecked(true);
         this->CheckBoxLayout->addWidget(box);
         _visability.push_back(box);

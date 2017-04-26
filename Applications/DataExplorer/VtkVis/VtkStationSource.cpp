@@ -54,9 +54,9 @@ void VtkStationSource::PrintSelf( ostream& os, vtkIndent indent )
     os << indent << "== VtkStationSource ==" << "\n";
 
     int i = 0;
-    for (auto _station : *_stations)
+    for (auto station : *_stations)
     {
-        const double* coords = _station->getCoords();
+        const double* coords = station->getCoords();
         os << indent << "Station " << i << " (" << coords[0] << ", " << coords[1] <<
         ", " << coords[2] << ")\n";
         i++;
@@ -122,23 +122,23 @@ int VtkStationSource::RequestData( vtkInformation* request,
     std::size_t site_count(0);
 
     // Generate graphic objects
-    for (auto _station : *_stations)
+    for (auto station : *_stations)
     {
-        double coords[3] = {(*_station)[0], (*_station)[1], (*_station)[2]};
+        double coords[3] = {(*station)[0], (*station)[1], (*station)[2]};
         vtkIdType sid = newStations->InsertNextPoint(coords);
         station_ids->InsertNextValue(site_count);
         if (useStationValues)
             station_values->InsertNextValue(
-                static_cast<GeoLib::Station*>(_station)->getStationValue());
+                static_cast<GeoLib::Station*>(station)->getStationValue());
 
         if (!isBorehole)
             newVerts->InsertNextCell(1, &sid);
         else
         {
             std::vector<GeoLib::Point*> profile =
-                static_cast<GeoLib::StationBorehole*>(_station)->getProfile();
+                static_cast<GeoLib::StationBorehole*>(station)->getProfile();
             std::vector<std::string> soilNames =
-                static_cast<GeoLib::StationBorehole*>(_station)->getSoilNames();
+                static_cast<GeoLib::StationBorehole*>(station)->getSoilNames();
             const std::size_t nLayers = profile.size();
 
             for (std::size_t i = 1; i < nLayers; i++)
@@ -155,7 +155,7 @@ int VtkStationSource::RequestData( vtkInformation* request,
                 strat_ids->InsertNextValue(this->GetIndexByName(soilNames[i]));
                 if (useStationValues)
                     station_values->InsertNextValue(
-                        static_cast<GeoLib::Station*>(_station)
+                        static_cast<GeoLib::Station*>(station)
                             ->getStationValue());
             }
             lastMaxIndex++;

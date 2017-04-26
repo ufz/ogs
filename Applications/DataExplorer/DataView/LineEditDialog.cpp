@@ -50,11 +50,11 @@ void LineEditDialog::on_selectPlyButton_pressed()
     QModelIndexList selected = this->allPlyView->selectionModel()->selectedIndexes();
     QStringList list = _selPly->stringList();
 
-    for (auto& it : selected)
+    for (auto& index : selected)
     {
-        list.append(it.data().toString());
+        list.append(index.data().toString());
 
-        _allPly->removeRow(it.row());
+        _allPly->removeRow(index.row());
     }
     _selPly->setStringList(list);
 }
@@ -64,11 +64,11 @@ void LineEditDialog::on_deselectPlyButton_pressed()
     QModelIndexList selected = this->selectedPlyView->selectionModel()->selectedIndexes();
     QStringList list = _allPly->stringList();
 
-    for (auto& it : selected)
+    for (auto& index : selected)
     {
-        list.append(it.data().toString());
+        list.append(index.data().toString());
 
-        _selPly->removeRow(it.row());
+        _selPly->removeRow(index.row());
     }
     _allPly->setStringList(list);
 }
@@ -105,9 +105,9 @@ void LineEditDialog::reject()
 std::vector<std::size_t> LineEditDialog::getSelectedIndeces(QStringList list)
 {
     std::vector<std::size_t> indexList;
-    for (auto& it : list)
+    for (auto& index : list)
     {
-        QString s = it.mid(5, it.indexOf("  ") - 5);
+        QString s = index.mid(5, index.indexOf("  ") - 5);
         indexList.push_back(s.toInt());
     }
     return indexList;

@@ -199,9 +199,9 @@ void PointVec::correctNameIDMapping()
 {
     // create mapping id -> name using the std::vector id_names
     std::vector<std::string> id_names(_pnt_id_map.size(), std::string(""));
-    for (auto& it : *_name_id_map)
+    for (auto& id_name_pair : *_name_id_map)
     {
-        id_names[it.second] = it.first;
+        id_names[id_name_pair.second] = id_name_pair.first;
     }
 
     for (auto it = _name_id_map->begin(); it != _name_id_map->end();)

@@ -91,9 +91,9 @@ bool VtkVisPipeline::setData( const QModelIndex &index, const QVariant &value,
 void VtkVisPipeline::addLight(const GeoLib::Point &pos)
 {
     double lightPos[3];
-    for (auto& _light : _lights)
+    for (auto& light : _lights)
     {
-        _light->GetPosition(lightPos);
+        light->GetPosition(lightPos);
         if (pos[0] == lightPos[0] && pos[1] == lightPos[1] && pos[2] == lightPos[2])
             return;
     }
@@ -106,11 +106,11 @@ void VtkVisPipeline::addLight(const GeoLib::Point &pos)
 vtkLight* VtkVisPipeline::getLight(const GeoLib::Point &pos) const
 {
     double lightPos[3];
-    for (auto _light : _lights)
+    for (auto light : _lights)
     {
-        _light->GetPosition(lightPos);
+        light->GetPosition(lightPos);
         if (pos[0] == lightPos[0] && pos[1] == lightPos[1] && pos[2] == lightPos[2])
-            return _light;
+            return light;
     }
     return nullptr;
 }

@@ -26,8 +26,9 @@ GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(
 {
     setupUi(this);
 
-    for (const auto& i : mesh_vec)
-        this->meshNameComboBox->addItem(QString::fromStdString(i->getName()));
+    for (const auto& mesh : mesh_vec)
+        this->meshNameComboBox->addItem(
+            QString::fromStdString(mesh->getName()));
 }
 
 GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog() = default;
