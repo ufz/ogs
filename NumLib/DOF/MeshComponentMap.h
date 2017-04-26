@@ -45,7 +45,7 @@ public:
     /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the
     /// current map.
     ///
-    /// \note For each component the same mesh subset will be used.
+    /// \note For each component the given MeshSubsets object will be used.
     ///
     /// \param component_ids  The vector of global components id.
     /// \param components components that should remain in the created subset
