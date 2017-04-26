@@ -141,6 +141,15 @@ public:
         {
         }
 
+        MaterialStateVariables& operator=(MaterialStateVariables const&) =
+            default;
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+        operator=(typename MechanicsBase<DisplacementDim>::
+                      MaterialStateVariables const& state) noexcept override
+        {
+            return operator=(static_cast<MaterialStateVariables const&>(state));
+        }
+
         void setInitialConditions()
         {
             eps_p_D = eps_p_D_prev;

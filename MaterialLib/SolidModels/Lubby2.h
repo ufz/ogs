@@ -118,6 +118,15 @@ public:
             eps_M_j.resize(KelvinVectorSize);
         }
 
+        MaterialStateVariables& operator=(MaterialStateVariables const&) =
+            default;
+        MaterialStateVariables& operator=(
+            typename MechanicsBase<DisplacementDim>::
+                MaterialStateVariables const& state) noexcept override
+        {
+            return operator=(static_cast<MaterialStateVariables const&>(state));
+        }
+
         void setInitialConditions()
         {
             eps_K_j = eps_K_t;
