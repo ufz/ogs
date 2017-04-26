@@ -21,7 +21,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/DataView/StratView
     ${CMAKE_CURRENT_SOURCE_DIR}/DataView/DiagramView
     ${CMAKE_CURRENT_SOURCE_DIR}/VtkVis
-    ${CMAKE_CURRENT_SOURCE_DIR}/VtkAct
 
     # Qt generated file includes
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -67,7 +66,6 @@ target_link_libraries(DataExplorer
     QtDiagramView
     QtStratView
     VtkVis
-    VtkAct
     Threads::Threads
     OGSFileConverterLib
     vtkGUISupportQt

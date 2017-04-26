@@ -41,6 +41,8 @@ set(SOURCES
     VtkVisPipelineView.cpp
     VtkVisPointSetItem.cpp
     VtkVisTabWidget.cpp
+    VtkPickCallback.cpp
+    VtkCustomInteractorStyle.cpp
 )
 
 set(HEADERS
@@ -86,6 +88,8 @@ set(HEADERS
     VtkVisPipelineView.h
     VtkVisTabWidget.h
     VtkConsoleOutputWindow.h
+    VtkPickCallback.h
+    VtkCustomInteractorStyle.h
 )
 
 # Visual Studio folder
@@ -106,7 +110,6 @@ include_directories(
     ${SOURCE_DIR_REL}/GeoLib
     ${SOURCE_DIR_REL}/MathLib
     ${SOURCE_DIR_REL}/MeshLib
-    ${GUI_SOURCE_DIR_REL}/VtkAct
     ${GUI_SOURCE_DIR_REL}/Base
     ${GUI_SOURCE_DIR_REL}/DataView
     ${GUI_SOURCE_DIR_REL}/VtkModules/Qt
@@ -129,10 +132,13 @@ ADD_VTK_DEPENDENCY(VtkVis)
 
 if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
-    target_link_libraries(VtkVis ${GEOTIFF_LIBRARIES})
+    target_link_libraries(VtkVis INTERFACE ${GEOTIFF_LIBRARIES})
 endif() # GEOTIFF_FOUND
 
-target_link_libraries(VtkVis Qt5::Gui QtDataView VtkAct)
+target_link_libraries(VtkVis
+    PUBLIC Qt5::Gui QtDataView
+    INTERFACE ${VTK_LIBRARIES}
+)
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")
 
 if(OGS_USE_PCH)
