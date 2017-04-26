@@ -224,7 +224,10 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
 
             ASSERT_EQ(2, global_idcs.size()); // boundary of quad is line with two nodes
 
-            for (unsigned n=0; n<2; ++n) // boundary of quad is line with two nodes
+            // e is the number of a boundary element (which is a line, so two
+            // nodes) from 0 to something. e+n must be the node ids along the
+            // x-axis of the mesh;
+            for (unsigned n = 0; n < 2; ++n)
             {
                 auto const node = e + n;
                 auto const glob_idx =
@@ -286,8 +289,10 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
                 2,
                 global_idcs.size());  // boundary of quad is line with two nodes
 
-            for (unsigned n = 0; n < 2;
-                 ++n)  // boundary of quad is line with two nodes
+            // e is the number of a boundary element (which is a line, so two
+            // nodes) from 0 to something. e+n must be the node ids along the
+            // x-axis of the mesh;
+            for (unsigned n = 0; n < 2; ++n)
             {
                 auto const node = e + n;
                 auto const glob_idx =
