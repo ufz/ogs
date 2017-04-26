@@ -302,8 +302,7 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
     // The last component is moved after the for-loop.
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
     for (std::size_t i = 0; i < global_component_ids.size() - 1; ++i)
-        all_mesh_subsets.emplace_back(
-            new MeshLib::MeshSubsets{*mesh_subsets});
+        all_mesh_subsets.emplace_back(new MeshLib::MeshSubsets{*mesh_subsets});
     all_mesh_subsets.emplace_back(std::move(mesh_subsets));
 
     return new LocalToGlobalIndexMap(std::move(all_mesh_subsets),
