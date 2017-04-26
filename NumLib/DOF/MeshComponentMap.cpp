@@ -30,8 +30,6 @@ GlobalIndexType const MeshComponentMap::nop =
 MeshComponentMap::MeshComponentMap(
     const std::vector<std::unique_ptr<MeshLib::MeshSubsets>>& components,
     ComponentOrder order)
-    : _num_components(components.size())
-
 {
     // get number of unknows
     GlobalIndexType num_unknowns = 0;
@@ -121,7 +119,6 @@ MeshComponentMap::MeshComponentMap(
 MeshComponentMap::MeshComponentMap(
     const std::vector<std::unique_ptr<MeshLib::MeshSubsets>>& components,
     ComponentOrder order)
-    : _num_components(components.size())
 {
     // construct dict (and here we number global_index by component type)
     GlobalIndexType global_index = 0;
@@ -152,7 +149,6 @@ MeshComponentMap MeshComponentMap::getSubset(
     std::vector<std::size_t> const& component_ids,
     MeshLib::MeshSubsets const& mesh_subsets) const
 {
-    assert(component_ids.size() <= _num_components);
     // New dictionary for the subset.
     ComponentGlobalIndexDict subset_dict;
 
@@ -175,7 +171,7 @@ MeshComponentMap MeshComponentMap::getSubset(
                             component_id));
     }
 
-    return MeshComponentMap(subset_dict, 1);
+    return MeshComponentMap(subset_dict);
 }
 
 void MeshComponentMap::renumberByLocation(GlobalIndexType offset)

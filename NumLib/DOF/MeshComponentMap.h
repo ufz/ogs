@@ -160,9 +160,8 @@ public:
 
 private:
     /// Private constructor used by internally created mesh component maps.
-    MeshComponentMap(detail::ComponentGlobalIndexDict& dict,
-                     unsigned const num_components)
-        : _dict(dict), _num_components(num_components)
+    explicit MeshComponentMap(detail::ComponentGlobalIndexDict& dict)
+        : _dict(dict)
     { }
 
     /// Looks up if a line is already stored in the dictionary.
@@ -183,10 +182,6 @@ private:
     /// Number of global unknowns. Used internally only.
     std::size_t _num_global_dof = 0;
 #endif
-
-    /// Number of components
-    /// introduced mainly for error checking
-    unsigned const _num_components;
 
     /// Global ID for ghost entries
     std::vector<GlobalIndexType> _ghosts_indices;
