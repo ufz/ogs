@@ -199,7 +199,7 @@ public:
                 MaterialLib::Fluid::PropertyVariableType::C)] = C_int_pt;
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
-            auto const density_water = _process_data.fluid_properties->getValue(
+            auto const density = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Density, vars);
             auto const& decay_rate = _process_data.decay_rate(t, pos)[0];
             auto const& molecular_diffusion_coefficient =
@@ -216,11 +216,9 @@ public:
 
             GlobalDimVectorType const velocity =
                 _process_data.has_gravity
-                    ? GlobalDimVectorType(
-                          -perm_over_visc *
-                          (dNdx * p_nodal_values - density_water * b))
-                    : GlobalDimVectorType(-perm_over_visc * dNdx *
-                                          p_nodal_values);
+                    ? GlobalDimVectorType(-K_over_mu *
+                                          (dNdx * p_nodal_values - density * b))
+                    : GlobalDimVectorType(-K_over_mu * dNdx * p_nodal_values);
 
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const hydrodynamic_dispersion =
@@ -249,10 +247,10 @@ public:
                 w;
             MCC.noalias() +=
                 w * N.transpose() * porosity * retardation_factor * N;
-            Kpp.noalias() += w * dNdx.transpose() * perm_over_visc * dNdx;
+            Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
             Mpp.noalias() += w * N.transpose() * specific_storage * N;
             if (_process_data.has_gravity)
-                Bp += w * density_water * dNdx.transpose() * perm_over_visc * b;
+                Bp += w * density * dNdx.transpose() * K_over_mu * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
         }
