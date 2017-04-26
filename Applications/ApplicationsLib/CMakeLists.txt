@@ -9,9 +9,7 @@ target_link_libraries(ApplicationsLib
     MeshGeoToolsLib
     NumLib
     ProcessLib
-    ${VTK_LIBRARIES}
 )
-ADD_VTK_DEPENDENCY(ApplicationsLib)
 
 if(TARGET Eigen)
     add_dependencies(ApplicationsLib Eigen)
