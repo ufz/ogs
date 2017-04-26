@@ -196,7 +196,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
-    std::vector<std::size_t> const& global_component_ids,
+    std::vector<int> const& global_component_ids,
     std::vector<MeshLib::Element*> const& elements,
     NumLib::MeshComponentMap&& mesh_component_map)
     : _mesh_subsets(std::move(mesh_subsets)),
@@ -211,7 +211,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
             "There are %d mesh subsets and %d components.",
             mesh_subsets.size(), global_component_ids.size());
 
-    for (std::size_t i = 0; i < global_component_ids.size(); ++i)
+    for (int i = 0; i < global_component_ids.size(); ++i)
     {
         auto const& mss = *_mesh_subsets[i];
 
@@ -241,7 +241,7 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
         OGS_FATAL("Expected non-empty vector of component ids.");
 
     // Create a subset of the current mesh component map.
-    std::vector<std::size_t> global_component_ids;
+    std::vector<int> global_component_ids;
 
     for (auto component_id : component_ids)
         global_component_ids.push_back(
@@ -253,7 +253,7 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
     // Create copies of the mesh_subsets for each of the global components.
     // The last component is moved after the for-loop.
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
-    for (std::size_t i = 0; i < global_component_ids.size() - 1; ++i)
+    for (int i = 0; i < static_cast<int>(global_component_ids.size()) - 1; ++i)
         all_mesh_subsets.emplace_back(new MeshLib::MeshSubsets{*mesh_subsets});
     all_mesh_subsets.emplace_back(std::move(mesh_subsets));
 

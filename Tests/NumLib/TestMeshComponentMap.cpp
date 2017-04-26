@@ -160,7 +160,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
     MeshLib::MeshSubset const some_nodes_mesh_subset(*mesh, &some_nodes);
     MeshLib::MeshSubsets const selected_component{&some_nodes_mesh_subset};
 
-    std::size_t const selected_component_id = 1;
+    int const selected_component_id = 1;
 
     // Subset the original cmap.
     MeshComponentMap cmap_subset =
@@ -196,7 +196,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
     MeshLib::MeshSubset const some_nodes_mesh_subset(*mesh, &some_nodes);
     MeshLib::MeshSubsets const selected_component{&some_nodes_mesh_subset};
 
-    std::size_t const selected_component_id = 1;
+    int const selected_component_id = 1;
 
     // Subset the original cmap.
     MeshComponentMap cmap_subset =
@@ -233,7 +233,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_MulticomponentVariable)
     MeshLib::MeshSubsets const selected_component{&some_nodes_mesh_subset};
 
     // Subset the original cmap.
-    std::vector<std::size_t> const selected_component_ids = {0, 1};
+    std::vector<int> const selected_component_ids = {0, 1};
     MeshComponentMap cmap_subset =
         cmap->getSubset(selected_component_ids, selected_component);
 
@@ -271,7 +271,7 @@ TEST_F(NumLibMeshComponentMapTest,
     MeshLib::MeshSubsets const selected_component{&some_nodes_mesh_subset};
 
     // Subset the original cmap.
-    std::vector<std::size_t> const selected_component_ids = {1};
+    std::vector<int> const selected_component_ids = {1};
     MeshComponentMap cmap_subset =
         cmap->getSubset(selected_component_ids, selected_component);
 

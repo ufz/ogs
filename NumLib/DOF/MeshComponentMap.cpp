@@ -146,7 +146,7 @@ MeshComponentMap::MeshComponentMap(
 #endif // end of USE_PETSC
 
 MeshComponentMap MeshComponentMap::getSubset(
-    std::vector<std::size_t> const& component_ids,
+    std::vector<int> const& component_ids,
     MeshLib::MeshSubsets const& mesh_subsets) const
 {
     // New dictionary for the subset.
@@ -158,13 +158,13 @@ MeshComponentMap MeshComponentMap::getSubset(
         // Lookup the locations in the current mesh component map and
         // insert the full lines into the subset dictionary.
         for (std::size_t j = 0; j < mesh_subset->getNumberOfNodes(); j++)
-            for (std::size_t component_id : component_ids)
+            for (auto component_id : component_ids)
                 subset_dict.insert(
                     getLine(Location(mesh_id, MeshLib::MeshItemType::Node,
                                      mesh_subset->getNodeID(j)),
                             component_id));
         for (std::size_t j = 0; j < mesh_subset->getNumberOfElements(); j++)
-            for (std::size_t component_id : component_ids)
+            for (auto component_id : component_ids)
                 subset_dict.insert(
                     getLine(Location(mesh_id, MeshLib::MeshItemType::Cell,
                                      mesh_subset->getElementID(j)),

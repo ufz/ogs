@@ -49,7 +49,7 @@ public:
     ///
     /// \param component_ids  The vector of global components id.
     /// \param components components that should remain in the created subset
-    MeshComponentMap getSubset(std::vector<std::size_t> const& component_ids,
+    MeshComponentMap getSubset(std::vector<int> const& component_ids,
                                MeshLib::MeshSubsets const& components) const;
 
     /// The number of dofs including the those located in the ghost nodes.
