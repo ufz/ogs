@@ -27,11 +27,15 @@ if(OGS_USE_PCH)
 endif()
 
 target_link_libraries(MeshLib
-    BaseLib
-    GeoLib
-    MathLib
-    ${VTK_LIBRARIES}
+    PUBLIC BaseLib GeoLib MathLib
+    INTERFACE vtkIOXML
 )
+
+if(OGS_USE_MPI)
+    target_link_libraries(MeshLib
+        INTERFACE vtkIOParallelXML vtkParallelMPI
+    )
+endif()
 
 ADD_VTK_DEPENDENCY(MeshLib)
 
