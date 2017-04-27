@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <typeinfo>
 #include <typeindex>
+#include <string>
 
 #include <logog/include/logog.hpp>
 
