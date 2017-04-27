@@ -69,7 +69,7 @@ PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
     }
 
     KSPSetInitialGuessNonzero(_solver, PETSC_TRUE);
-    KSPSetFromOptions(_solver);  // set running time option
+    KSPSetFromOptions(_solver);  // set run-time options
 }
 
 bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
