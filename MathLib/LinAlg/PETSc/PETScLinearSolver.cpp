@@ -68,6 +68,7 @@ PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
         KSPSetOptionsPrefix(_solver, prefix.c_str());
     }
 
+    KSPSetInitialGuessNonzero(_solver, PETSC_TRUE);
     KSPSetFromOptions(_solver);  // set running time option
 }
 
