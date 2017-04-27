@@ -29,7 +29,8 @@ enum class FluidPropertyType
     Viscosity = 1,
     HeatCapacity = 2,
     ThermalConductivity = 3,
-    number_of_property_types = 4  ///< Number of property types.
+    Concentration = 4,
+    number_of_property_types = 5  ///< Number of property types.
 };
 
 const unsigned FluidPropertyTypeNumber =

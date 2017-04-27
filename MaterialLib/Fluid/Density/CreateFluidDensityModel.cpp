@@ -16,6 +16,7 @@
 #include "BaseLib/Error.h"
 
 #include "IdealGasLaw.h"
+#include "LinearConcentrationDependentDensity.h"
 #include "LinearTemperatureDependentDensity.h"
 #include "LiquidDensity.h"
 #include "WaterDensityIAPWSIF97Region1.h"
@@ -72,6 +73,28 @@ static std::unique_ptr<FluidProperty> createLinearTemperatureDependentDensity(
         new LinearTemperatureDependentDensity(rho0, T0, beta));
 }
 
+static std::unique_ptr<FluidProperty> createLinearConcentrationDependentDensity(
+    BaseLib::ConfigTree const& config)
+{
+    //! \ogs_file_param{material__fluid__density__type}
+    config.checkConfigParameter("type", "ConcentrationDependent");
+
+    const double reference_density =
+    //! \ogs_file_param{material__fluid__density__ConcentrationDependent__reference_density}
+        config.getConfigParameter<double>("reference_density");
+    const double reference_concentration =
+    //! \ogs_file_param{material__fluid__density__ConcentrationDependent__reference_concentration}
+        config.getConfigParameter<double>("reference_concentration");
+    const double fluid_density_difference_ratio =
+    //! \ogs_file_param{material__fluid__density__ConcentrationDependent__fluid_density_difference_ratio}
+        config.getConfigParameter<double>("fluid_density_difference_ratio");
+    return std::unique_ptr<FluidProperty>(
+        new LinearConcentrationDependentDensity(
+            reference_density,
+            reference_concentration,
+            fluid_density_difference_ratio));
+}
+
 std::unique_ptr<FluidProperty> createFluidDensityModel(
     BaseLib::ConfigTree const& config)
 {
@@ -90,6 +113,8 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
         return createLiquidDensity(config);
     else if (type == "TemperatureDependent")
         return createLinearTemperatureDependentDensity(config);
+    else if (type == "ConcentrationDependent")
+        return createLinearConcentrationDependentDensity(config);
     else if (type == "IdealGasLaw")
     {
         //! \ogs_file_param{material__fluid__density__type}

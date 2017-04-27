@@ -22,7 +22,8 @@ enum class PropertyVariableType
     T = 0,                   ///< temperature.
     p = 1,                   ///< pressure.
     rho = p,                 ///< density. For some models, rho substitutes p
-    number_of_variables = 2  ///< Number of property variables.
+    C = 2,                   ///< concentration.
+    number_of_variables = 3  ///< Number of property variables.
 };
 
 const unsigned PropertyVariableNumber =
