@@ -62,7 +62,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
     // Create local DOF table from intersected mesh subsets for the given
     // variable and component ids.
     _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
-        variable_id, component_id, std::move(all_mesh_subsets), _elements));
+        variable_id, {component_id}, std::move(all_mesh_subsets), _elements));
 
     createLocalAssemblers<LocalAssemblerImplementation>(
         global_dim, _elements, *_dof_table_boundary, shapefunction_order, _local_assemblers,

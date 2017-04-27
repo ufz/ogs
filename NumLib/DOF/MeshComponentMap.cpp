@@ -30,8 +30,6 @@ GlobalIndexType const MeshComponentMap::nop =
 MeshComponentMap::MeshComponentMap(
     const std::vector<std::unique_ptr<MeshLib::MeshSubsets>>& components,
     ComponentOrder order)
-    : _num_components(components.size())
-
 {
     // get number of unknows
     GlobalIndexType num_unknowns = 0;
@@ -121,7 +119,6 @@ MeshComponentMap::MeshComponentMap(
 MeshComponentMap::MeshComponentMap(
     const std::vector<std::unique_ptr<MeshLib::MeshSubsets>>& components,
     ComponentOrder order)
-    : _num_components(components.size())
 {
     // construct dict (and here we number global_index by component type)
     GlobalIndexType global_index = 0;
@@ -149,10 +146,9 @@ MeshComponentMap::MeshComponentMap(
 #endif // end of USE_PETSC
 
 MeshComponentMap MeshComponentMap::getSubset(
-    std::size_t const component_id,
+    std::vector<int> const& component_ids,
     MeshLib::MeshSubsets const& mesh_subsets) const
 {
-    assert(component_id < _num_components);
     // New dictionary for the subset.
     ComponentGlobalIndexDict subset_dict;
 
@@ -162,18 +158,20 @@ MeshComponentMap MeshComponentMap::getSubset(
         // Lookup the locations in the current mesh component map and
         // insert the full lines into the subset dictionary.
         for (std::size_t j = 0; j < mesh_subset->getNumberOfNodes(); j++)
-            subset_dict.insert(
-                getLine(Location(mesh_id, MeshLib::MeshItemType::Node,
-                                 mesh_subset->getNodeID(j)),
-                        component_id));
+            for (auto component_id : component_ids)
+                subset_dict.insert(
+                    getLine(Location(mesh_id, MeshLib::MeshItemType::Node,
+                                     mesh_subset->getNodeID(j)),
+                            component_id));
         for (std::size_t j = 0; j < mesh_subset->getNumberOfElements(); j++)
-            subset_dict.insert(
-                getLine(Location(mesh_id, MeshLib::MeshItemType::Cell,
-                                 mesh_subset->getElementID(j)),
-                        component_id));
+            for (auto component_id : component_ids)
+                subset_dict.insert(
+                    getLine(Location(mesh_id, MeshLib::MeshItemType::Cell,
+                                     mesh_subset->getElementID(j)),
+                            component_id));
     }
 
-    return MeshComponentMap(subset_dict, 1);
+    return MeshComponentMap(subset_dict);
 }
 
 void MeshComponentMap::renumberByLocation(GlobalIndexType offset)

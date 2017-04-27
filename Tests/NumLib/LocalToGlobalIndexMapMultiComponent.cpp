@@ -77,7 +77,8 @@ public:
             delete e;
     }
 
-    void initComponents(const unsigned num_components, const unsigned selected_component,
+    void initComponents(const unsigned num_components,
+                        const int selected_component,
                         const NL::ComponentOrder order)
     {
         assert(selected_component < num_components);
@@ -97,13 +98,47 @@ public:
 
         dof_map_boundary.reset(dof_map->deriveBoundaryConstrainedMap(
             0,  // variable id
-            selected_component,
+            {selected_component},
+            std::move(components_boundary),
+            boundary_elements));
+    }
+
+    // Multi-component version.
+    void initComponents(unsigned const num_components,
+                        std::vector<int> const& selected_components,
+                        NL::ComponentOrder const order)
+    {
+        assert(selected_components.size() <= num_components);
+
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
+        for (unsigned i = 0; i < num_components; ++i)
+        {
+            components.emplace_back(
+                new MeL::MeshSubsets{mesh_items_all_nodes.get()});
+        }
+        std::vector<unsigned> vec_var_n_components(1, num_components);
+        dof_map.reset(new NL::LocalToGlobalIndexMap(
+            std::move(components), vec_var_n_components, order));
+
+        auto components_boundary = std::unique_ptr<MeshLib::MeshSubsets>{
+            new MeL::MeshSubsets{mesh_items_boundary.get()}};
+
+        dof_map_boundary.reset(dof_map->deriveBoundaryConstrainedMap(
+            0,  // variable id
+            selected_components,
             std::move(components_boundary),
             boundary_elements));
     }
 
     template <NL::ComponentOrder order>
     void test(const unsigned num_components, const unsigned selected_component,
+              std::function<std::size_t(std::size_t, std::size_t)> const&
+                  compute_global_index);
+
+    // Multicomponent version
+    template <NL::ComponentOrder order>
+    void test(const unsigned num_components,
+              std::vector<int> const& selected_component,
               std::function<std::size_t(std::size_t, std::size_t)> const&
                   compute_global_index);
 
@@ -189,7 +224,10 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
 
             ASSERT_EQ(2, global_idcs.size()); // boundary of quad is line with two nodes
 
-            for (unsigned n=0; n<2; ++n) // boundary of quad is line with two nodes
+            // e is the number of a boundary element (which is a line, so two
+            // nodes) from 0 to something. e+n must be the node ids along the
+            // x-axis of the mesh;
+            for (unsigned n = 0; n < 2; ++n)
             {
                 auto const node = e + n;
                 auto const glob_idx =
@@ -200,8 +238,70 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     }
 }
 
+// Multicomponent version
+template <NL::ComponentOrder ComponentOrder>
+void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
+    unsigned const num_components,
+    std::vector<int> const& selected_components,
+    std::function<std::size_t(std::size_t, std::size_t)> const&
+        compute_global_index)
+{
+    initComponents(num_components, selected_components, ComponentOrder);
 
+    ASSERT_EQ(dof_map->getNumberOfComponents(), num_components);
+    ASSERT_EQ(dof_map->size(), mesh->getNumberOfElements());
 
+    ASSERT_EQ(dof_map_boundary->getNumberOfComponents(),
+              selected_components.size());
+    ASSERT_EQ(dof_map_boundary->size(), boundary_elements.size());
+
+    // check mesh elements
+    for (unsigned e = 0; e < dof_map->size(); ++e)
+    {
+        auto const element_nodes_size = mesh->getElement(e)->getNumberOfNodes();
+        auto const ptr_element_nodes = mesh->getElement(e)->getNodes();
+
+        for (unsigned c = 0; c < dof_map->getNumberOfComponents(); ++c)
+        {
+            auto const& global_idcs = (*dof_map)(e, c).rows;
+            ASSERT_EQ(element_nodes_size, global_idcs.size());
+
+            for (unsigned n = 0; n < element_nodes_size; ++n)
+            {
+                auto const node_id = ptr_element_nodes[n]->getID();
+                auto const glob_idx = compute_global_index(node_id, c);
+                EXPECT_EQ(glob_idx, global_idcs[n]);
+            }
+        }
+    }
+
+    // check boundary elements
+    for (unsigned e = 0; e < dof_map_boundary->size(); ++e)
+    {
+        ASSERT_EQ(selected_components.size(),
+                  dof_map_boundary->getNumberOfComponents());
+
+        for (unsigned c = 0; c < selected_components.size(); ++c)
+        {
+            auto const& global_idcs = (*dof_map_boundary)(e, c).rows;
+
+            ASSERT_EQ(
+                2,
+                global_idcs.size());  // boundary of quad is line with two nodes
+
+            // e is the number of a boundary element (which is a line, so two
+            // nodes) from 0 to something. e+n must be the node ids along the
+            // x-axis of the mesh;
+            for (unsigned n = 0; n < 2; ++n)
+            {
+                auto const node = e + n;
+                auto const glob_idx =
+                    compute_global_index(node, selected_components[c]);
+                EXPECT_EQ(glob_idx, global_idcs[n]);
+            }
+        }
+    }
+}
 
 void assert_equal(NL::LocalToGlobalIndexMap const& dof1, NL::LocalToGlobalIndexMap const& dof2)
 {
@@ -259,8 +359,42 @@ TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByLocation)
 TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByLocation)
 #endif
 {
-    unsigned const num_components = 5;
-    for (unsigned c = 0; c < num_components; ++c)
+    int const num_components = 5;
+    for (int c = 0; c < num_components; ++c)
         test<NL::ComponentOrder::BY_LOCATION>(
             num_components, c, ComputeGlobalIndexByLocation{num_components});
+}
+
+#ifndef USE_PETSC
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, TestMultiComp2ByComponent)
+#else
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest,
+       DISABLED_TestMultiComp2ByComponent)
+#endif
+{
+    int const num_components = 5;
+    for (int c = 0; c < num_components; ++c)
+    {
+        std::vector<int> const components = {c, (c + 1) % num_components};
+        test<NL::ComponentOrder::BY_COMPONENT>(
+            num_components, components,
+            ComputeGlobalIndexByComponent{(mesh_subdivs + 1) *
+                                          (mesh_subdivs + 1)});
+    }
+}
+#ifndef USE_PETSC
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, TestMultiComp2ByLocation)
+#else
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest,
+       DISABLED_TestMultiComp2ByLocation)
+#endif
+{
+    int const num_components = 5;
+    for (int c = 0; c < num_components; ++c)
+    {
+        std::vector<int> const components = {c, (c + 1) % num_components};
+        test<NL::ComponentOrder::BY_LOCATION>(
+            num_components, components,
+            ComputeGlobalIndexByLocation{num_components});
+    }
 }

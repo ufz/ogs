@@ -107,8 +107,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
         new MeshLib::MeshSubsets{selected_subset.get()}};
 
     auto dof_map_subset = std::unique_ptr<NumLib::LocalToGlobalIndexMap>{
-        dof_map->deriveBoundaryConstrainedMap(1,  // variable id
-                                              0,  // component id
+        dof_map->deriveBoundaryConstrainedMap(1,    // variable id
+                                              {0},  // component id
                                               std::move(selected_component),
                                               some_elements)};
 

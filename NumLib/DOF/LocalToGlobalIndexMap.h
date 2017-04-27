@@ -85,7 +85,7 @@ public:
     /// \note The elements are not necessarily those used in the mesh_subsets.
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
         int const variable_id,
-        int const component_id,
+        std::vector<int> const& component_ids,
         std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
         std::vector<MeshLib::Element*> const& elements) const;
 
@@ -170,7 +170,7 @@ private:
     /// this construtor.
     explicit LocalToGlobalIndexMap(
         std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
-        int const component_id,
+        std::vector<int> const& global_component_ids,
         std::vector<MeshLib::Element*> const& elements,
         NumLib::MeshComponentMap&& mesh_component_map);
 
@@ -190,8 +190,7 @@ private:
 
     /// The global component id for the specific variable (like velocity) and a
     /// component (like x, or y, or z).
-    std::size_t getGlobalComponent(int const variable_id,
-                                   int const component_id) const
+    int getGlobalComponent(int const variable_id, int const component_id) const
     {
         return _variable_component_offsets[variable_id] + component_id;
     }
