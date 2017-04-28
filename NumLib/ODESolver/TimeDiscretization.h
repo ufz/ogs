@@ -114,6 +114,8 @@ public:
 class TimeDiscretization
 {
 public:
+    TimeDiscretization() : _dx(nullptr) {}
+
     //! Sets the initial condition.
     virtual void setInitialState(const double t0, GlobalVector const& x0) = 0;
 
@@ -211,6 +213,23 @@ public:
      */
     virtual bool needsPreload() const { return false; }
     //! @}
+
+protected:
+    std::unique_ptr<GlobalVector> _dx; ///< Used to store \f$ u_{n+1}-u_{n}\f$.
+
+    /**
+      * Compute and return the relative change of solutions between two successive
+      * time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+      *
+      * @param x      The current solution
+      * @param x_old  The previous solution
+      * @return       \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+      *
+      *  \warning the value of x_old is changed to x - x_old after this computation.
+    */    
+    double computeRelativeError(GlobalVector const& x,
+                                GlobalVector const& x_old,
+                                MathLib::VecNormType norm_type);    
 };
 
 //! Backward Euler scheme.
@@ -218,7 +237,8 @@ class BackwardEuler final : public TimeDiscretization
 {
 public:
     BackwardEuler()
-        : _x_old(NumLib::GlobalVectorProvider::provider.getVector())
+        : TimeDiscretization(),
+          _x_old(NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
 
@@ -270,7 +290,8 @@ class ForwardEuler final : public TimeDiscretization
 {
 public:
     ForwardEuler()
-        : _x_old(NumLib::GlobalVectorProvider::provider.getVector())
+        :  TimeDiscretization(),
+           _x_old(NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
 
@@ -347,7 +368,7 @@ public:
      *              \arg 0.5 traditional Crank-Nicolson scheme.
      */
     explicit CrankNicolson(const double theta)
-        : _theta(theta),
+        : TimeDiscretization(), _theta(theta),
           _x_old(NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
@@ -419,7 +440,7 @@ public:
      *       the first timesteps.
      */
     explicit BackwardDifferentiationFormula(const unsigned num_steps)
-        : _num_steps(num_steps)
+        :  TimeDiscretization(), _num_steps(num_steps)
     {
         assert(1 <= num_steps && num_steps <= 6);
         _xs_old.reserve(num_steps);

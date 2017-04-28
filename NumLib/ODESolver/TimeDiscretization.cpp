@@ -10,20 +10,14 @@
  */
 
 #include "TimeDiscretization.h"
+
+#include "MathLib/LinAlg/MatrixVectorTraits.h"
+
 namespace NumLib
 {
-/**
- * Compute and return the relative change of solutions between two successive
- * time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
- *
- * @param x      The current solution
- * @param x_old  The previous solution
- * @return       \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
- *
- *  \warning the value of x_old is changed to x - x_old after this computation.
- */
-static double computeRelativeError(GlobalVector const& x, GlobalVector& x_old,
-                                   MathLib::VecNormType norm_type)
+double TimeDiscretization::computeRelativeError(GlobalVector const& x,
+                                                GlobalVector const& x_old,
+                                                MathLib::VecNormType norm_type)
 {
     if (norm_type == MathLib::VecNormType::INVALID)
         return 0.;
@@ -31,9 +25,15 @@ static double computeRelativeError(GlobalVector const& x, GlobalVector& x_old,
     const double norm2_x = MathLib::LinAlg::norm(x, norm_type);
     assert(norm2_x > std::numeric_limits<double>::epsilon());
 
-    // dx = x - x_old --> x_old
-    MathLib::LinAlg::axpy(x_old, -1.0, x);
-    return MathLib::LinAlg::norm(x_old, norm_type) / norm2_x;
+    if (!_dx)
+        _dx = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+   
+    auto& dx = *_dx;
+    MathLib::LinAlg::copy(x_old, dx); // copy x_old to dx.
+
+    // dx = x - x_old --> x - dx --> dx
+    MathLib::LinAlg::axpy(dx, -1.0, x);
+    return MathLib::LinAlg::norm(dx, norm_type) / norm2_x;
 }
 
 double BackwardEuler::getRelativeError(GlobalVector const& x,
