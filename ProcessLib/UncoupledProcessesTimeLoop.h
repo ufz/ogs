@@ -120,7 +120,7 @@ private:
      *
      *  @param t           Current time
      */
-    double computeTimeSteppping(const double t, const std::size_t timesteps,
+    double computeTimeSteppping(const double prev_dt, double& t,
                                 std::size_t& accepted_steps,
                                 std::size_t& rejected_steps);
 };

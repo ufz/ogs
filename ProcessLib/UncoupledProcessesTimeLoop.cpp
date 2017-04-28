@@ -572,7 +572,7 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
 }
 
 double UncoupledProcessesTimeLoop::computeTimeSteppping(
-    const double t, const std::size_t timesteps, std::size_t& accepted_steps,
+    const double prev_dt, double& t, std::size_t& accepted_steps,
     std::size_t& rejected_steps)
 {
     bool all_process_steps_accepted = true;
@@ -649,7 +649,7 @@ double UncoupledProcessesTimeLoop::computeTimeSteppping(
                 WARN(
                     "Time step %d is rejected. "
                     "The computation is back to the previous time.",
-                    timesteps);
+                    accepted_steps + rejected_steps);
             }
         }
     }
@@ -661,7 +661,10 @@ double UncoupledProcessesTimeLoop::computeTimeSteppping(
         else
         {
             if (t < _end_time)
+            {
+                t -= prev_dt;
                 rejected_steps++;
+            }
         }
     }
 
@@ -727,13 +730,11 @@ bool UncoupledProcessesTimeLoop::loop()
     const bool is_staggered_coupling = setCoupledSolutions();
 
     double t = _start_time;
-    std::size_t timesteps = 1;  // the first timestep really is number one
-    std::size_t accepted_steps = 1;
+    std::size_t accepted_steps = 0;
     std::size_t rejected_steps = 0;
     bool nonlinear_solver_succeeded = true;
 
-    double dt =
-        computeTimeSteppping(t, timesteps, accepted_steps, rejected_steps);
+    double dt = computeTimeSteppping(0.0, t, accepted_steps, rejected_steps);
 
     while (t < _end_time)
     {
@@ -741,7 +742,9 @@ bool UncoupledProcessesTimeLoop::loop()
         time_timestep.start();
 
         t += dt;
+        const double prev_dt = dt;
 
+        const std::size_t timesteps = accepted_steps + rejected_steps + 1;
         // TODO, input option for time unit.
         INFO("=== Time stepping at step #%u and time %g with step size %g",
              timesteps, t, dt);
@@ -764,11 +767,13 @@ bool UncoupledProcessesTimeLoop::loop()
                 "\tThe time stepping steps back to the previous time\n"
                 "\tand starts again with the half of the current step size.",
                 timesteps);
+            t -= prev_dt;
             dt *= 0.5;
+            rejected_steps++;
             continue;
         }
 
-        dt = computeTimeSteppping(t, timesteps, accepted_steps, rejected_steps);
+        dt = computeTimeSteppping(prev_dt, t, accepted_steps, rejected_steps);
 
         if (dt < std::numeric_limits<double>::epsilon())
         {
@@ -779,16 +784,14 @@ bool UncoupledProcessesTimeLoop::loop()
             break;
         }
 
-        if (t + dt > this->_end_time)
+        if (t + dt > _end_time)
             break;
-
-        timesteps++;
     }
 
     INFO(
-        "The whole computation took %u steps, in which\n"
+        "The whole computation of the time stepping took %u steps, in which\n"
         "\t the accepted steps are %u, and the rejected steps are %u.\n",
-        timesteps, accepted_steps, rejected_steps)
+        accepted_steps + rejected_steps, accepted_steps, rejected_steps)
 
     // output last time step
     if (nonlinear_solver_succeeded)
@@ -798,8 +801,9 @@ bool UncoupledProcessesTimeLoop::loop()
         {
             auto& pcs = spd->process;
             auto const& x = *_process_solutions[pcs_idx];
-            _output->doOutputLastTimestep(pcs, spd->process_output, timesteps,
-                                          t, x);
+            _output->doOutputLastTimestep(pcs, spd->process_output,
+                                          accepted_steps + rejected_steps, t,
+                                          x);
 
             ++pcs_idx;
         }
