@@ -59,13 +59,6 @@ bool VtuInterface::writeVTU(std::string const& file_name,
         vtuWriter->SetEncodeAppendedData(1);
     if (_data_mode == vtkXMLWriter::Ascii)
     {
-        // Mapped data structures for OGS to VTK mesh conversion are not fully
-        // implemented and doing so is not trivial. Therefore for ascii output
-        // the mapped unstructured grid is copied to a regular VTK grid.
-        // See http://www.vtk.org/pipermail/vtkusers/2014-October/089400.html
-        WARN(
-            "Ascii data mode is currently not supported and the program may "
-            "crash!");
         vtkSource->Update();
         vtkSmartPointer<vtkUnstructuredGrid> tempGrid =
             vtkSmartPointer<vtkUnstructuredGrid>::New();

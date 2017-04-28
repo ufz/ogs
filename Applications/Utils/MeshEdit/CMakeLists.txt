@@ -89,6 +89,10 @@ add_executable(convertToLinearMesh convertToLinearMesh.cpp )
 target_link_libraries(convertToLinearMesh MeshLib)
 set_target_properties(convertToLinearMesh PROPERTIES FOLDER Utilities)
 
+add_executable(UnityPreprocessing UnityPreprocessing.cpp )
+target_link_libraries(UnityPreprocessing MeshLib)
+set_target_properties(UnityPreprocessing PROPERTIES FOLDER Utilities)
+
 ####################
 ### Installation ###
 ####################
@@ -111,5 +115,6 @@ install(TARGETS
     reviseMesh
     queryMesh
     swapNodeCoordinateAxes
+    UnityPreprocessing
     RUNTIME DESTINATION bin COMPONENT Utilities
 )
