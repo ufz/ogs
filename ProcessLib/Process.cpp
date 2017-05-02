@@ -187,7 +187,7 @@ void Process::initializeExtrapolator()
         // Otherwise construct a new DOF table.
         std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
         all_mesh_subsets_single_component.emplace_back(
-            MeshLib::MeshSubsets(_mesh_subset_all_nodes.get()));
+            _mesh_subset_all_nodes.get());
 
         dof_table_single_component = new NumLib::LocalToGlobalIndexMap(
             std::move(all_mesh_subsets_single_component),

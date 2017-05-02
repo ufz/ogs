@@ -148,8 +148,7 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
     // pressure
     vec_n_components.push_back(1);
-    all_mesh_subsets.push_back(
-        MeshLib::MeshSubsets{_mesh_subset_nodes_p.get()});
+    all_mesh_subsets.emplace_back(_mesh_subset_nodes_p.get());
     if (!_process_data.deactivate_matrix_in_flow)
     {
         vec_var_elements.push_back(&_mesh.getElements());

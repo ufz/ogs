@@ -25,7 +25,7 @@ static std::vector<MeshLib::MeshSubsets> createMeshSubsets(
 {
     std::vector<MeshLib::MeshSubsets> mesh_subsets;
     for (unsigned i=0; i<num_components; ++i)
-        mesh_subsets.emplace_back(MeshLib::MeshSubsets{&mesh_subset});
+        mesh_subsets.emplace_back(&mesh_subset);
 
     return mesh_subsets;
 }

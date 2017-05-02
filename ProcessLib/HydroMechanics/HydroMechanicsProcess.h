@@ -72,8 +72,7 @@ private:
 
         // For pressure, which is the first
         std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
-        all_mesh_subsets.push_back(
-            MeshLib::MeshSubsets{_mesh_subset_base_nodes.get()});
+        all_mesh_subsets.emplace_back(_mesh_subset_base_nodes.get());
 
         // For displacement.
         std::generate_n(

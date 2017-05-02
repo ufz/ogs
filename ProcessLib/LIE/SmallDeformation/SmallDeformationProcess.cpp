@@ -177,7 +177,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     // for extrapolation of secondary variables
     std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
     all_mesh_subsets_single_component.emplace_back(
-        MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()});
+        _mesh_subset_all_nodes.get());
     _local_to_global_index_map_single_component.reset(
         new NumLib::LocalToGlobalIndexMap(
             std::move(all_mesh_subsets_single_component),

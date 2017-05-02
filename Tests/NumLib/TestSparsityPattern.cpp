@@ -59,7 +59,7 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
         new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
 
     std::vector<MeshLib::MeshSubsets> components;
-    components.emplace_back(MeshLib::MeshSubsets{nodesSubset.get()});
+    components.emplace_back(nodesSubset.get());
     NumLib::LocalToGlobalIndexMap dof_map(
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
