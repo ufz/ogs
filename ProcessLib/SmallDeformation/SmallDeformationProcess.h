@@ -202,7 +202,7 @@ private:
             _local_assemblers, *_local_to_global_index_map, x, t, dt);
     }
 
-    void postTimestepConcreteProcess(GlobalVector const& x) override
+    void postTimestepConcreteProcess(GlobalVector const&) override
     {
         DBUG("PostTimestep SmallDeformationProcess.");
 
