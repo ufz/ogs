@@ -48,11 +48,10 @@ Polygon::Polygon(Polygon const& other)
 Polygon::~Polygon()
 {
     // remove polygons from list
-    for (std::list<Polygon*>::iterator it (_simple_polygon_list.begin());
-         it != _simple_polygon_list.end(); ++it)
+    for (auto& polygon : _simple_polygon_list)
         // the first entry of the list can be a pointer the object itself
-        if (*it != this)
-            delete *it;
+        if (polygon != this)
+            delete polygon;
 }
 
 bool Polygon::initialise ()
@@ -101,8 +100,7 @@ bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
         if (n_intersections % 2 == 1)
             return true;
     } else {
-        for (std::list<Polygon*>::const_iterator it(
-                 _simple_polygon_list.begin()++);
+        for (auto it(_simple_polygon_list.begin()++);
              it != _simple_polygon_list.end();
              ++it)
         {
@@ -235,12 +233,10 @@ bool Polygon::getNextIntersectionPointPolygonLine(
             }
         }
     } else {
-        for (auto polygon_it(_simple_polygon_list.begin());
-             polygon_it != _simple_polygon_list.end();
-             ++polygon_it)
+        for (auto polygon : _simple_polygon_list)
         {
-            Polygon const& polygon(*(*polygon_it));
-            for (auto seg_it(polygon.begin()); seg_it != polygon.end(); ++seg_it)
+            for (auto seg_it(polygon->begin()); seg_it != polygon->end();
+                 ++seg_it)
             {
                 if (GeoLib::lineSegmentIntersect(*seg_it, seg, intersection)) {
                     seg_num = seg_it.getSegmentNumber();
@@ -262,9 +258,8 @@ void Polygon::computeListOfSimplePolygons ()
     splitPolygonAtPoint (_simple_polygon_list.begin());
     splitPolygonAtIntersection (_simple_polygon_list.begin());
 
-    for (std::list<Polygon*>::iterator it (_simple_polygon_list.begin());
-         it != _simple_polygon_list.end(); ++it)
-        (*it)->initialise ();
+    for (auto& polygon : _simple_polygon_list)
+        polygon->initialise();
 }
 
 EdgeType Polygon::getEdgeType (std::size_t k, GeoLib::Point const & pnt) const
@@ -467,7 +462,7 @@ GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt, doubl
     double angle (boost::math::double_constants::two_pi / resolution);
     for (std::size_t k(0); k < resolution; k++)
     {
-        GeoLib::Point* pnt(new GeoLib::Point(middle_pnt));
+        auto* pnt(new GeoLib::Point(middle_pnt));
         (*pnt)[0] += radius * cos (k * angle);
         (*pnt)[1] += radius * sin (k * angle);
         pnts.push_back (pnt);

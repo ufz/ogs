@@ -28,8 +28,8 @@ class MeshQualitySelectionDialog : public QDialog, private Ui_MeshQualitySelecti
     Q_OBJECT
 
 public:
-    MeshQualitySelectionDialog(QDialog* parent = 0);
-    ~MeshQualitySelectionDialog(void);
+    MeshQualitySelectionDialog(QDialog* parent = nullptr);
+    ~MeshQualitySelectionDialog(void) override;
 
     /// Returns selected metric
     MeshLib::MeshQualityType getSelectedMetric() const { return _metric; }
@@ -48,6 +48,6 @@ private slots:
     void on_histogramCheckBox_toggled(bool is_checked) const;
     void on_histogramPathButton_pressed();
 
-    void accept();
-    void reject();
+    void accept() override;
+    void reject() override;
 };

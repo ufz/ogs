@@ -27,7 +27,8 @@ namespace GeoLib {
 
 void Raster::refineRaster(std::size_t scaling)
 {
-    double *new_raster_data(new double[_header.n_rows*_header.n_cols*scaling*scaling]);
+    auto* new_raster_data(
+        new double[_header.n_rows * _header.n_cols * scaling * scaling]);
 
     for (std::size_t row(0); row<_header.n_rows; row++) {
         for (std::size_t col(0); col<_header.n_cols; col++) {
@@ -62,7 +63,7 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
     const std::size_t n_cols = static_cast<std::size_t>(std::abs(ur[0]-ll[0]) / cell_size)+1;
     const std::size_t n_rows = static_cast<std::size_t>(std::abs(ur[1]-ll[1]) / cell_size)+1;
     const std::size_t n_triangles(sfc.getNumberOfTriangles());
-    double *z_vals (new double[n_cols*n_rows]);
+    auto* z_vals(new double[n_cols * n_rows]);
     std::size_t k(0);
 
     for (std::size_t r(0); r < n_cols; r++) {
@@ -93,16 +94,21 @@ double Raster::getValueAtPoint(const MathLib::Point3d &pnt) const
     if (pnt[0]>=_header.origin[0] && pnt[0]<(_header.origin[0]+(_header.cell_size*_header.n_cols)) &&
         pnt[1]>=_header.origin[1] && pnt[1]<(_header.origin[1]+(_header.cell_size*_header.n_rows)))
     {
-        int cell_x = static_cast<int>(std::floor((pnt[0] - _header.origin[0])/_header.cell_size));
-        int cell_y = static_cast<int>(std::floor((pnt[1] - _header.origin[1])/_header.cell_size));
+        auto cell_x = static_cast<int>(
+            std::floor((pnt[0] - _header.origin[0]) / _header.cell_size));
+        auto cell_y = static_cast<int>(
+            std::floor((pnt[1] - _header.origin[1]) / _header.cell_size));
 
-        // use raster boundary values if node is outside raster due to rounding errors or floating point arithmetic
-        cell_x = (cell_x < 0) ?  0 : ((cell_x > static_cast<int>(_header.n_cols)) ?
-            static_cast<int>(_header.n_cols-1) : cell_x);
-        cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(_header.n_rows)) ?
-            static_cast<int>(_header.n_rows-1) : cell_y);
+        // use raster boundary values if node is outside raster due to rounding
+        // errors or floating point arithmetic
+        cell_x = (cell_x < 0) ? 0 : ((cell_x > static_cast<int>(_header.n_cols))
+                                         ? static_cast<int>(_header.n_cols - 1)
+                                         : cell_x);
+        cell_y = (cell_y < 0) ? 0 : ((cell_y > static_cast<int>(_header.n_rows))
+                                         ? static_cast<int>(_header.n_rows - 1)
+                                         : cell_y);
 
-        const std::size_t index = cell_y*_header.n_cols+cell_x;
+        const std::size_t index = cell_y * _header.n_cols + cell_x;
         return _raster_data[index];
     }
     return _header.no_data;

@@ -31,8 +31,9 @@ class CondFromRasterDialog : public QDialog, private Ui_CondFromRaster
     Q_OBJECT
 
 public:
-    CondFromRasterDialog(const std::vector<MeshLib::Mesh*> &msh_vec, QDialog* parent = 0);
-    ~CondFromRasterDialog(void);
+    CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
+                         QDialog* parent = nullptr);
+    ~CondFromRasterDialog(void) override;
 
 private:
     const std::vector<MeshLib::Mesh*> _msh_vec;
@@ -43,10 +44,10 @@ private slots:
     void on_selectButton_pressed();
 
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 
 signals:
     void directNodesWritten(std::string);

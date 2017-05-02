@@ -33,14 +33,14 @@ public:
     using IndexType = Eigen::SparseMatrix<double>::Index;
 
     // TODO: preliminary
-    EigenVector() {}
+    EigenVector() = default;
 
     /// Constructor for initialization of the number of rows
     /// @param length number of rows
     explicit EigenVector(std::size_t length) : _vec(length) {}
 
     /// copy constructor
-    EigenVector(EigenVector const &src) : _vec(src._vec) {}
+    EigenVector(EigenVector const& src) = default;
 
     /// return a vector length
     std::size_t size() const { return _vec.size(); }

@@ -32,7 +32,7 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
 
     assert(dynamic_cast<MaterialStateVariables*>(&material_state_variables) !=
            nullptr);
-    MaterialStateVariables& state =
+    auto& state =
         static_cast<MaterialStateVariables&>(material_state_variables);
     state.setInitialConditions();
 

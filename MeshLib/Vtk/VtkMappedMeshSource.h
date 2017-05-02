@@ -72,8 +72,9 @@ protected:
                            vtkInformationVector*) override;
 
 private:
-    VtkMappedMeshSource(const VtkMappedMeshSource&);  // Not implemented.
-    void operator=(const VtkMappedMeshSource&);       // Not implemented.
+    VtkMappedMeshSource(const VtkMappedMeshSource&) =
+        delete;                                           // Not implemented.
+    void operator=(const VtkMappedMeshSource&) = delete;  // Not implemented.
 
     /// Adds a zero-copy vtk array wrapper.
     /// \param properties MeshLib::Properties object

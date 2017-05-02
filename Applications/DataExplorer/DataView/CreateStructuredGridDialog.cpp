@@ -31,25 +31,25 @@ CreateStructuredGridDialog::CreateStructuredGridDialog(QDialog* parent) : QDialo
 
 void CreateStructuredGridDialog::setValidators()
 {
-    StrictDoubleValidator* origin_x_validator = new StrictDoubleValidator(this);
+    auto* origin_x_validator = new StrictDoubleValidator(this);
     this->xOriginEdit->setValidator (origin_x_validator);
-    StrictDoubleValidator* origin_y_validator = new StrictDoubleValidator(this);
+    auto* origin_y_validator = new StrictDoubleValidator(this);
     this->yOriginEdit->setValidator (origin_y_validator);
-    StrictDoubleValidator* origin_z_validator = new StrictDoubleValidator(this);
+    auto* origin_z_validator = new StrictDoubleValidator(this);
     this->zOriginEdit->setValidator (origin_z_validator);
 
-    StrictDoubleValidator* x_length_validator = new StrictDoubleValidator(0, 10000000, 10, this);
+    auto* x_length_validator = new StrictDoubleValidator(0, 10000000, 10, this);
     this->xLengthEdit->setValidator (x_length_validator);
-    StrictDoubleValidator* y_length_validator = new StrictDoubleValidator(0, 10000000, 10, this);
+    auto* y_length_validator = new StrictDoubleValidator(0, 10000000, 10, this);
     this->yLengthEdit->setValidator (y_length_validator);
-    StrictDoubleValidator* z_length_validator = new StrictDoubleValidator(0, 10000000, 10, this);
+    auto* z_length_validator = new StrictDoubleValidator(0, 10000000, 10, this);
     this->zLengthEdit->setValidator (z_length_validator);
 
-    QIntValidator* x_n_elem_validator = new QIntValidator(1, 10000000, this);
+    auto* x_n_elem_validator = new QIntValidator(1, 10000000, this);
     this->xElemEdit->setValidator (x_n_elem_validator);
-    QIntValidator* y_n_elem_validator = new QIntValidator(1, 10000000, this);
+    auto* y_n_elem_validator = new QIntValidator(1, 10000000, this);
     this->yElemEdit->setValidator (y_n_elem_validator);
-    QIntValidator* z_n_elem_validator = new QIntValidator(1, 10000000, this);
+    auto* z_n_elem_validator = new QIntValidator(1, 10000000, this);
     this->zElemEdit->setValidator (z_n_elem_validator);
 }
 

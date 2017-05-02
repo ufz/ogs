@@ -50,7 +50,8 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
 std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib::Mesh &mesh, double min_volume)
 {
     INFO ("Testing mesh element geometry:");
-    const std::size_t nErrorCodes (static_cast<std::size_t>(ElementErrorFlag::MaxValue));
+    const auto nErrorCodes(
+        static_cast<std::size_t>(ElementErrorFlag::MaxValue));
     unsigned error_count[nErrorCodes];
     std::fill_n(error_count, 4, 0);
     const std::size_t nElements (mesh.getNumberOfElements());
@@ -78,7 +79,8 @@ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib:
                 error_code_vector[i].set(ElementErrorFlag::ZeroVolume);
 
     // output
-    const unsigned error_sum (static_cast<unsigned>(std::accumulate(error_count, error_count+nErrorCodes, 0.0)));
+    const auto error_sum(static_cast<unsigned>(
+        std::accumulate(error_count, error_count + nErrorCodes, 0.0)));
     if (error_sum != 0)
     {
         ElementErrorFlag flags[nErrorCodes] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar,
@@ -95,28 +97,32 @@ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib:
 std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
 MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes)
 {
-    const std::size_t nErrorFlags (static_cast<std::size_t>(ElementErrorFlag::MaxValue));
-    ElementErrorFlag flags[nErrorFlags] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar,
-                                            ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder };
-    const std::size_t nElements (error_codes.size());
-    std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)> output;
+    const auto nErrorFlags(
+        static_cast<std::size_t>(ElementErrorFlag::MaxValue));
+    ElementErrorFlag flags[nErrorFlags] = {
+        ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar,
+        ElementErrorFlag::NonConvex, ElementErrorFlag::NodeOrder};
+    const std::size_t nElements(error_codes.size());
+    std::array<std::string,
+               static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
+        output;
 
-    for (std::size_t i=0; i<nErrorFlags; ++i)
+    for (std::size_t i = 0; i < nErrorFlags; ++i)
     {
         unsigned count(0);
         std::string elementIdStr("");
 
-        for (std::size_t j=0; j<nElements; ++j)
+        for (std::size_t j = 0; j < nElements; ++j)
         {
             if (error_codes[j][flags[i]])
             {
                 elementIdStr += (std::to_string(j) + ", ");
                 count++;
             }
-
         }
         const std::string nErrorsStr = (count) ? std::to_string(count) : "No";
-        output[i] = (nErrorsStr + " elements found with " + ElementErrorCode::toString(flags[i]) + ".\n");
+        output[i] = (nErrorsStr + " elements found with " +
+                     ElementErrorCode::toString(flags[i]) + ".\n");
 
         if (count)
             output[i] += ("ElementIDs: " + elementIdStr + "\n");
@@ -134,7 +140,7 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
 
     std::vector<unsigned> sfc_idx (elements.size(), std::numeric_limits<unsigned>::max());
     unsigned current_surface_id (0);
-    std::vector<unsigned>::const_iterator it = sfc_idx.cbegin();
+    auto it = sfc_idx.cbegin();
 
     while (it != sfc_idx.cend())
     {

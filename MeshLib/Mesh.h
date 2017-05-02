@@ -56,9 +56,11 @@ public:
     ///                      parameter for nonlinear case.  If the parameter is
     ///                      set to zero, we consider there are no nonlinear
     ///                      nodes.
-    Mesh(const std::string &name,
-         const std::vector<Node*> &nodes,
-         const std::vector<Element*> &elements,
+    Mesh(std::string name,
+         std::vector<Node*>
+             nodes,
+         std::vector<Element*>
+             elements,
          Properties const& properties = Properties(),
          const std::size_t n_base_nodes = 0);
 

@@ -15,6 +15,7 @@
 #include "Mesh.h"
 
 #include <memory>
+#include <utility>
 
 #include "BaseLib/RunTime.h"
 
@@ -28,23 +29,27 @@
 
 namespace MeshLib
 {
-
-Mesh::Mesh(const std::string &name,
-           const std::vector<Node*> &nodes,
-           const std::vector<Element*> &elements,
+Mesh::Mesh(std::string name,
+           std::vector<Node*>
+               nodes,
+           std::vector<Element*>
+               elements,
            Properties const& properties,
            const std::size_t n_base_nodes)
-    : _id(_counter_value-1), _mesh_dimension(0),
+    : _id(_counter_value - 1),
+      _mesh_dimension(0),
       _edge_length(std::numeric_limits<double>::max(), 0),
       _node_distance(std::numeric_limits<double>::max(), 0),
-      _name(name), _nodes(nodes), _elements(elements),
+      _name(std::move(name)),
+      _nodes(std::move(nodes)),
+      _elements(std::move(elements)),
       _n_base_nodes(n_base_nodes),
       _properties(properties)
 {
-    assert(n_base_nodes <= nodes.size());
+    assert(_n_base_nodes <= _nodes.size());
     this->resetNodeIDs();
     this->resetElementIDs();
-    if ((n_base_nodes==0 && hasNonlinearElement()) || isNonlinear())
+    if ((_n_base_nodes == 0 && hasNonlinearElement()) || isNonlinear())
         this->checkNonlinearNodeIDs();
     this->setDimension();
     this->setElementsConnectedToNodes();
@@ -144,19 +149,19 @@ void Mesh::setDimension()
 
 void Mesh::setElementsConnectedToNodes()
 {
-    for (auto e = _elements.begin(); e != _elements.end(); ++e)
+    for (auto& element : _elements)
     {
-        const unsigned nNodes ((*e)->getNumberOfNodes());
+        const unsigned nNodes(element->getNumberOfNodes());
         for (unsigned j=0; j<nNodes; ++j)
-            (*e)->_nodes[j]->addElement(*e);
+            element->_nodes[j]->addElement(element);
     }
 }
 
 void Mesh::resetElementsConnectedToNodes()
 {
-    for (auto node = _nodes.begin(); node != _nodes.end(); ++node)
-        if (*node)
-            (*node)->clearElements();
+    for (auto& node : _nodes)
+        if (node)
+            node->clearElements();
     this->setElementsConnectedToNodes();
 }
 
@@ -180,11 +185,9 @@ void Mesh::calcEdgeLengthRange()
 void Mesh::setElementNeighbors()
 {
     std::vector<Element*> neighbors;
-    for (auto it = _elements.begin(); it != _elements.end(); ++it)
+    for (auto element : _elements)
     {
         // create vector with all elements connected to current element (includes lots of doubles!)
-        Element *const element = *it;
-
         const std::size_t nNodes (element->getNumberOfBaseNodes());
         for (unsigned n(0); n<nNodes; ++n)
         {

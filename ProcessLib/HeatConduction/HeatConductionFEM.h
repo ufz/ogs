@@ -171,7 +171,7 @@ public:
     std::vector<double> const& getIntPtHeatFluxX(
         std::vector<double>& /*cache*/) const override
     {
-        assert(_heat_fluxes.size() > 0);
+        assert(!_heat_fluxes.empty());
         return _heat_fluxes[0];
     }
 

@@ -32,8 +32,8 @@ using namespace CoordinatesMappingTestData;
 namespace
 {
 // Element types to be tested
-typedef ::testing::Types<TestLine2, TestLine3, TestTri3, TestQuad4, TestHex8>
-    TestTypes;
+using TestTypes =
+    ::testing::Types<TestLine2, TestLine3, TestTri3, TestQuad4, TestHex8>;
 }
 
 template <class T_TEST>
@@ -41,26 +41,25 @@ class NumLibFemNaturalCoordinatesMappingTest : public ::testing::Test,
                                                public T_TEST
 {
 public:
-    typedef typename T_TEST::ElementType ElementType;
-    typedef typename T_TEST::ShapeFunctionType ShapeFunctionType;
+    using ElementType = typename T_TEST::ElementType;
+    using ShapeFunctionType = typename T_TEST::ShapeFunctionType;
     static const unsigned dim = T_TEST::dim;
     static const unsigned e_nnodes = T_TEST::e_nnodes;
     static const unsigned global_dim = T_TEST::global_dim;
     // Matrix types
-    typedef typename ::detail::EigenMatrixType<1, e_nnodes>::type NodalVector;
-    typedef
-        typename ::detail::EigenMatrixType<dim, e_nnodes>::type DimNodalMatrix;
-    typedef typename ::detail::EigenMatrixType<dim, dim>::type DimMatrix;
-    typedef typename ::detail::EigenMatrixType<global_dim, e_nnodes>::type
-        GlobalDimNodalMatrix;
+    using NodalVector = typename ::detail::EigenMatrixType<1, e_nnodes>::type;
+    using DimNodalMatrix =
+        typename ::detail::EigenMatrixType<dim, e_nnodes>::type;
+    using DimMatrix = typename ::detail::EigenMatrixType<dim, dim>::type;
+    using GlobalDimNodalMatrix =
+        typename ::detail::EigenMatrixType<global_dim, e_nnodes>::type;
     // Shape data type
-    typedef ShapeMatrices<NodalVector, DimNodalMatrix, DimMatrix,
-                          GlobalDimNodalMatrix>
-        ShapeMatricesType;
+    using ShapeMatricesType = ShapeMatrices<NodalVector, DimNodalMatrix,
+                                            DimMatrix, GlobalDimNodalMatrix>;
     // Natural coordinates mapping type
-    typedef NaturalCoordinatesMapping<ElementType, ShapeFunctionType,
-                                      ShapeMatricesType>
-        NaturalCoordsMappingType;
+    using NaturalCoordsMappingType =
+        NaturalCoordinatesMapping<ElementType, ShapeFunctionType,
+                                  ShapeMatricesType>;
 
 public:
     NumLibFemNaturalCoordinatesMappingTest()
@@ -82,7 +81,7 @@ public:
                 vec_nodes.push_back(e->getNode(i));
     }
 
-    virtual ~NumLibFemNaturalCoordinatesMappingTest()
+    ~NumLibFemNaturalCoordinatesMappingTest() override
     {
         for (auto itr = vec_nodes.begin(); itr != vec_nodes.end(); ++itr)
             delete *itr;
@@ -103,9 +102,9 @@ TYPED_TEST_CASE(NumLibFemNaturalCoordinatesMappingTest, TestTypes);
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N)
 {
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef
-        typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
+    using NaturalCoordsMappingType =
+        typename TestFixture::NaturalCoordsMappingType;
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // only N
@@ -121,9 +120,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N)
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDR)
 {
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef
-        typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
+    using NaturalCoordsMappingType =
+        typename TestFixture::NaturalCoordsMappingType;
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // dNdr
@@ -140,9 +139,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDR)
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N_J)
 {
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef
-        typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
+    using NaturalCoordsMappingType =
+        typename TestFixture::NaturalCoordsMappingType;
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // N_J
@@ -161,9 +160,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N_J)
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest,
            CheckFieldSpecification_DNDR_J)
 {
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef
-        typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
+    using NaturalCoordsMappingType =
+        typename TestFixture::NaturalCoordsMappingType;
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // dNdr, J
@@ -180,9 +179,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest,
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDX)
 {
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef
-        typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
+    using NaturalCoordsMappingType =
+        typename TestFixture::NaturalCoordsMappingType;
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // DNDX
@@ -199,9 +198,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDX)
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_ALL)
 {
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef
-        typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
+    using NaturalCoordsMappingType =
+        typename TestFixture::NaturalCoordsMappingType;
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // ALL
@@ -218,9 +217,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_ALL)
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckNaturalShape)
 {
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef
-        typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
+    using NaturalCoordsMappingType =
+        typename TestFixture::NaturalCoordsMappingType;
 
     // identical to natural coordinates
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
@@ -243,9 +242,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckNaturalShape)
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckIrregularShape)
 {
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef
-        typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
+    using NaturalCoordsMappingType =
+        typename TestFixture::NaturalCoordsMappingType;
 
     // irregular shape
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
@@ -268,9 +267,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckIrregularShape)
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckClockwise)
 {
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef
-        typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
+    using NaturalCoordsMappingType =
+        typename TestFixture::NaturalCoordsMappingType;
 
     // clockwise node ordering, which is invalid)
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
@@ -281,9 +280,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckClockwise)
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
 {
-    typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
-    typedef
-        typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
+    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
+    using NaturalCoordsMappingType =
+        typename TestFixture::NaturalCoordsMappingType;
 
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
@@ -293,17 +292,15 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
 
 TEST(NumLib, FemNaturalCoordinatesMappingLineY)
 {
-    typedef ::detail::EigenMatrixType<1, 2>::type NodalVector;
-    typedef ::detail::EigenMatrixType<1, 2>::type DimNodalMatrix;
-    typedef ::detail::EigenMatrixType<1, 1>::type DimMatrix;
-    typedef ::detail::EigenMatrixType<2, 2>::type GlobalDimNodalMatrix;
+    using NodalVector = ::detail::EigenMatrixType<1, 2>::type;
+    using DimNodalMatrix = ::detail::EigenMatrixType<1, 2>::type;
+    using DimMatrix = ::detail::EigenMatrixType<1, 1>::type;
+    using GlobalDimNodalMatrix = ::detail::EigenMatrixType<2, 2>::type;
     // Shape data type
-    typedef ShapeMatrices<NodalVector, DimNodalMatrix, DimMatrix,
-                          GlobalDimNodalMatrix>
-        ShapeMatricesType;
-    typedef NaturalCoordinatesMapping<MeshLib::Line, ShapeLine2,
-                                      ShapeMatricesType>
-        MappingType;
+    using ShapeMatricesType = ShapeMatrices<NodalVector, DimNodalMatrix,
+                                            DimMatrix, GlobalDimNodalMatrix>;
+    using MappingType =
+        NaturalCoordinatesMapping<MeshLib::Line, ShapeLine2, ShapeMatricesType>;
     double r[] = {0.5};
     auto line = TestLine2::createY();
     static const unsigned dim = 1;

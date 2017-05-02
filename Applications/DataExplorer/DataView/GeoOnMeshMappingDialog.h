@@ -33,8 +33,8 @@ class GeoOnMeshMappingDialog : public QDialog, private Ui_GeoOnMeshMapping
 public:
     GeoOnMeshMappingDialog(
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
-        QDialog* parent = 0);
-    ~GeoOnMeshMappingDialog(void);
+        QDialog* parent = nullptr);
+    ~GeoOnMeshMappingDialog(void) override;
 
     std::string const& getNewGeoName() const { return _new_geo_name; };
     int getDataSetChoice() const;
@@ -48,9 +48,8 @@ private slots:
     void on_meshNameComboBox_currentIndexChanged(int idx);
 
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject() { this->done(QDialog::Rejected); };
-
+    void reject() override { this->done(QDialog::Rejected); };
 };

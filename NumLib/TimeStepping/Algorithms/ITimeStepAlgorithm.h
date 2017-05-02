@@ -44,7 +44,7 @@ public:
     /// return a history of time step sizes
     virtual const std::vector<double>& getTimeStepSizeHistory() const = 0;
 
-    virtual ~ITimeStepAlgorithm() {}
+    virtual ~ITimeStepAlgorithm() = default;
 };
 
 } //NumLib

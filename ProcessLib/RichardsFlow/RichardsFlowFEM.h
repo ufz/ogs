@@ -235,14 +235,14 @@ public:
     std::vector<double> const& getIntPtSaturation(
         std::vector<double>& /*cache*/) const override
     {
-        assert(_saturation.size() > 0);
+        assert(!_saturation.empty());
         return _saturation;
     }
 
     std::vector<double> const& getIntPtDarcyVelocityX(
         std::vector<double>& /*cache*/) const override
     {
-        assert(_darcy_velocities.size() > 0);
+        assert(!_darcy_velocities.empty());
         return _darcy_velocities[0];
     }
 

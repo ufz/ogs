@@ -27,9 +27,9 @@ class EdgeRatioMetric : public ElementQualityMetric
 {
 public:
     EdgeRatioMetric(Mesh const& mesh);
-    virtual ~EdgeRatioMetric () {}
+    ~EdgeRatioMetric() override = default;
 
-    virtual void calculateQuality ();
+    void calculateQuality() override;
 
 private:
     double checkTriangle (MathLib::Point3d const& a,

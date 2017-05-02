@@ -34,9 +34,7 @@ StationTreeModel::StationTreeModel( QObject* parent )
     _rootItem = new ModelTreeItem(rootData, nullptr, nullptr);
 }
 
-StationTreeModel::~StationTreeModel()
-{
-}
+StationTreeModel::~StationTreeModel() = default;
 
 /**
  * Returns the model index of an item in the tree.
@@ -58,7 +56,7 @@ QModelIndex StationTreeModel::index( int row, int column,
     else
         parentItem = static_cast<ModelTreeItem*>(parent.internalPointer());
 
-    ModelTreeItem* childItem = (ModelTreeItem*)(parentItem->child(row));
+    auto* childItem = (ModelTreeItem*)(parentItem->child(row));
     if (childItem)
     {
         QModelIndex newIndex = createIndex(row, column, childItem);
@@ -83,7 +81,7 @@ GeoLib::Station* StationTreeModel::stationFromIndex( const QModelIndex& index,
 {
     if (index.isValid())
     {
-        ModelTreeItem* treeItem = static_cast<ModelTreeItem*>(index.internalPointer());
+        auto* treeItem = static_cast<ModelTreeItem*>(index.internalPointer());
         TreeItem* parentItem = treeItem->parentItem();
         listName = parentItem->data(0).toString();
         return treeItem->getStation();
@@ -132,7 +130,8 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib
         listName.append(QString::number(rowCount() + 1));
     }
     grpName << listName << "" << "" << "";
-    ModelTreeItem* group = new ModelTreeItem(grpName, _rootItem, new BaseItem(listName, stations));
+    auto* group =
+        new ModelTreeItem(grpName, _rootItem, new BaseItem(listName, stations));
     _lists.push_back(group);
     _rootItem->appendChild(group);
     int vectorSize = stations->size();
@@ -145,7 +144,7 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib
             << QString::number((*(*stations)[i])[1],'f')
             << QString::number((*(*stations)[i])[2],'f');
 
-        ModelTreeItem* child = new ModelTreeItem(stn, group);
+        auto* child = new ModelTreeItem(stn, group);
         child->setStation(static_cast<GeoLib::Station*>((*stations)[i]));
         group->appendChild(child);
     }
@@ -162,7 +161,7 @@ void StationTreeModel::removeStationList(QModelIndex index)
 {
     if (index.isValid()) //
     {
-        ModelTreeItem* item = static_cast<ModelTreeItem*>(getItem(index));
+        auto* item = static_cast<ModelTreeItem*>(getItem(index));
 
         // also delete the lists entry in the list directory of the model
         for (std::size_t i = 0; i < _lists.size(); i++)
@@ -179,7 +178,7 @@ void StationTreeModel::removeStationList(QModelIndex index)
  */
 void StationTreeModel::removeStationList(const std::string &name)
 {
-    for (std::size_t i = 0; i < _lists.size(); i++)
-        if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
-            removeStationList(createIndex(_lists[i]->row(), 0, _lists[i]));
+    for (auto& list : _lists)
+        if (name.compare(list->data(0).toString().toStdString()) == 0)
+            removeStationList(createIndex(list->row(), 0, list));
 }

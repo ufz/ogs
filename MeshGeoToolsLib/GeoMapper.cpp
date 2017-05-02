@@ -299,9 +299,9 @@ static std::vector<GeoLib::LineSegment> createSubSegmentsForElement(
         // added.
         if (MathLib::sqrDist(beg_pnt, intersections[0]) >
             std::numeric_limits<double>::epsilon())
-            sub_segments.emplace_back(GeoLib::LineSegment{
-                new GeoLib::Point{beg_pnt, 0},
-                new GeoLib::Point{intersections[0], 0}, true});
+            sub_segments.emplace_back(new GeoLib::Point{beg_pnt, 0},
+                                      new GeoLib::Point{intersections[0], 0},
+                                      true);
     }
 
     if (intersections.size() == 1 && elem == end_elem)
@@ -311,9 +311,8 @@ static std::vector<GeoLib::LineSegment> createSubSegmentsForElement(
         // added.
         if (MathLib::sqrDist(end_pnt, intersections[0]) >
             std::numeric_limits<double>::epsilon())
-            sub_segments.emplace_back(
-                GeoLib::LineSegment{new GeoLib::Point{intersections[0], 0},
-                                    new GeoLib::Point{end_pnt, 0}, true});
+            sub_segments.emplace_back(new GeoLib::Point{intersections[0], 0},
+                                      new GeoLib::Point{end_pnt, 0}, true);
     }
 
     if (intersections.size() == 1 && (elem != beg_elem && elem != end_elem))
@@ -326,9 +325,8 @@ static std::vector<GeoLib::LineSegment> createSubSegmentsForElement(
     // create sub segment for the current element
     if (intersections.size() == 2)
     {
-        sub_segments.emplace_back(
-            GeoLib::LineSegment{new GeoLib::Point{intersections[0], 0},
-                                new GeoLib::Point{intersections[1], 0}, true});
+        sub_segments.emplace_back(new GeoLib::Point{intersections[0], 0},
+                                  new GeoLib::Point{intersections[1], 0}, true);
     }
     return sub_segments;
 }
@@ -384,8 +382,7 @@ static std::vector<GeoLib::LineSegment> mapLineSegment(
                     MathLib::sqrDist(beg_pnt, min_dist_segment->getEndPoint())
                 ? new GeoLib::Point{min_dist_segment->getBeginPoint()}
                 : new GeoLib::Point{min_dist_segment->getEndPoint()}};
-        sub_segments.emplace_back(
-            GeoLib::LineSegment{new GeoLib::Point{beg_pnt, 0}, pnt, true});
+        sub_segments.emplace_back(new GeoLib::Point{beg_pnt, 0}, pnt, true);
     }
     // sort all sub segments for the given segment (beg_pnt, end_pnt)
     GeoLib::sortSegments(beg_pnt, sub_segments);
@@ -562,9 +559,9 @@ void GeoMapper::advancedMapOnMesh(MeshLib::Mesh const& mesh)
     // 3. map each polyline
     auto org_lines(_geo_objects.getPolylineVec(_geo_name));
     auto org_points(_geo_objects.getPointVecObj(_geo_name));
-    for (std::size_t k(0); k<org_lines->size(); ++k) {
-        mapPolylineOnSurfaceMesh(*((*org_lines)[k]), *org_points,
-                                 mesh_element_grid);
+    for (auto org_line : *org_lines)
+    {
+        mapPolylineOnSurfaceMesh(*org_line, *org_points, mesh_element_grid);
     }
 }
 

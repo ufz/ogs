@@ -28,11 +28,12 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
     std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
 
     if (length_type==LengthType::Edge) {
-        for (std::vector<MeshLib::Element*>::const_iterator it(elements.cbegin());
-                it != elements.cend(); ++it) {
-            std::size_t const n_edges((*it)->getNumberOfEdges());
+        for (auto element : elements)
+        {
+            std::size_t const n_edges(element->getNumberOfEdges());
             for (std::size_t k(0); k<n_edges; k++) {
-                auto edge = (*it)->getEdge(k);    // allocation inside getEdge().
+                auto edge =
+                    element->getEdge(k);  // allocation inside getEdge().
                 double const len = edge->getContent();
                 delete edge;
                 sum += len;

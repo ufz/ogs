@@ -22,8 +22,6 @@ extern template class MeshLib::TemplateElement<MeshLib::PyramidRule13>;
 extern template class MeshLib::TemplateElement<MeshLib::PyramidRule5>;
 
 namespace MeshLib {
-
-typedef TemplateElement<PyramidRule5> Pyramid;
-typedef TemplateElement<PyramidRule13> Pyramid13;
-
+using Pyramid = TemplateElement<MeshLib::PyramidRule5>;
+using Pyramid13 = TemplateElement<MeshLib::PyramidRule13>;
 }

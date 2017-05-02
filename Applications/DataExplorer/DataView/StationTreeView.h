@@ -31,7 +31,7 @@ class StationTreeView : public QTreeView
 
 public:
     /// Constructor
-    StationTreeView(QWidget* parent = 0);
+    StationTreeView(QWidget* parent = nullptr);
 
     /// Update the view to visualise changes made to the underlying data
     void updateView();
@@ -41,7 +41,8 @@ public slots:
 
 protected slots:
     /// Instructions if the selection of items in the view has changed.
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void selectionChanged(const QItemSelection& selected,
+                          const QItemSelection& deselected) override;
 
     /// Instructions if the selection of items in the view has changed by events outside the view (i.e. by actions made in the visualisation).
     void selectionChangedFromOutside(const QItemSelection &selected,
@@ -49,7 +50,7 @@ protected slots:
 
 private:
     /// Actions to be taken after a right mouse click is performed in the station view.
-    void contextMenuEvent( QContextMenuEvent* e );
+    void contextMenuEvent(QContextMenuEvent* e) override;
 
     /// Create image files from all stratigraphies in a borehole vector
     void writeStratigraphiesAsImages(QString listName);

@@ -22,6 +22,6 @@ extern template class MeshLib::TemplateElement<MeshLib::HexRule20>;
 extern template class MeshLib::TemplateElement<MeshLib::HexRule8>;
 
 namespace MeshLib {
-typedef TemplateElement<HexRule8> Hex;
-typedef TemplateElement<HexRule20> Hex20;
+using Hex = TemplateElement<MeshLib::HexRule8>;
+using Hex20 = TemplateElement<MeshLib::HexRule20>;
 }

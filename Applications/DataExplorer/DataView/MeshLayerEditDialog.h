@@ -39,8 +39,8 @@ class MeshLayerEditDialog : public QDialog, private Ui_MeshLayerEdit
     Q_OBJECT
 
 public:
-    MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent = 0);
-    ~MeshLayerEditDialog(void);
+    MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent = nullptr);
+    ~MeshLayerEditDialog(void) override;
 
 private:
     void createMeshToolSelection();
@@ -72,10 +72,10 @@ private slots:
     void createStatic();
 
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 
 signals:
     void mshEditFinished(MeshLib::Mesh*);

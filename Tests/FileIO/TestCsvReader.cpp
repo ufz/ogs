@@ -41,10 +41,7 @@ public:
         out.close();
     }
 
-    ~CsvInterfaceTest()
-    {
-        std::remove(_file_name.c_str());
-    }
+    ~CsvInterfaceTest() override { std::remove(_file_name.c_str()); }
 
 protected:
     int _result;

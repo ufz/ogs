@@ -35,9 +35,9 @@ class SelectMeshDialog : public QDialog
 public:
     /// Constructor
     SelectMeshDialog(const GeoLib::GeoObject* geo_object,
-                  const std::list<std::string> &msh_names,
-                  QDialog* parent = 0);
-    ~SelectMeshDialog();
+                     const std::list<std::string>& msh_names,
+                     QDialog* parent = nullptr);
+    ~SelectMeshDialog() override;
 
     QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
 
@@ -53,10 +53,10 @@ private:
 
 private slots:
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 
 signals:
     //void requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string);

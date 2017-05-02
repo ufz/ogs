@@ -45,7 +45,7 @@ public:
     static const unsigned edge_nodes[4][3];
 
     /// Returns the i-th edge of the element.
-    typedef QuadraticEdgeReturn EdgeReturn;
+    using EdgeReturn = MeshLib::QuadraticEdgeReturn;
 
 }; /* class */
 

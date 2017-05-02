@@ -23,11 +23,11 @@ class VtkCompositeTextureOnSurfaceFilter : public VtkCompositeFilter
 {
 public:
     VtkCompositeTextureOnSurfaceFilter(vtkAlgorithm* inputAlgorithm);
-    virtual ~VtkCompositeTextureOnSurfaceFilter();
+    ~VtkCompositeTextureOnSurfaceFilter() override;
 
-    virtual void init() override;
+    void init() override;
 
-    virtual void SetUserProperty(QString name, QVariant value) override;
+    void SetUserProperty(QString name, QVariant value) override;
 
 private:
 };

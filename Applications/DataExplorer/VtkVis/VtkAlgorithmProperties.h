@@ -140,9 +140,9 @@ class VtkAlgorithmProperties : public QObject
 
 public:
     /// Constructor (sets default values)
-    VtkAlgorithmProperties(QObject* parent = NULL);
+    VtkAlgorithmProperties(QObject* parent = nullptr);
 
-    virtual ~VtkAlgorithmProperties();
+    ~VtkAlgorithmProperties() override;
 
     /// @brief Returns the vtk properties
     vtkProperty* GetProperties() const { return _property; }

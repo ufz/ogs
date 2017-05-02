@@ -22,12 +22,12 @@ struct IntegerSequence {
 template <int N, int... S>
 struct GenerateIntegerSequence {
     // effectively pushes N-1 from the left to the list int... S of integers.
-    typedef typename GenerateIntegerSequence<N - 1, N - 1, S...>::type type;
+    using type = typename GenerateIntegerSequence<N - 1, N - 1, S...>::type;
 };
 
 template <int... S>
 struct GenerateIntegerSequence<0, S...> {
-    typedef IntegerSequence<S...> type;
+    using type = IntegerSequence<S...>;
 };
 /* The template metaprogram proceeds in the following way:
  *

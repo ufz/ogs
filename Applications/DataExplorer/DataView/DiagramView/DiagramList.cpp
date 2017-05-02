@@ -28,9 +28,7 @@ DiagramList::DiagramList() : _maxX(0), _maxY(0), _minX(0), _minY(0), _xLabel("")
 {
 }
 
-DiagramList::~DiagramList()
-{
-}
+DiagramList::~DiagramList() = default;
 
 float DiagramList::calcMinXValue()
 {
@@ -164,7 +162,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
         fields.takeFirst();
         for (int i = 0; i < nLists; i++)
         {
-            DiagramList* l = new DiagramList;
+            auto* l = new DiagramList;
             l->setName(fields.takeFirst());
             //value = strtod(BaseLib::replaceStringreplaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
             //l->setStartDate(startDate);
@@ -200,7 +198,11 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
 
                 for (int i = 0; i < nLists; i++)
                 {
-                    value = strtod(BaseLib::replaceString(",", ".",fields.takeFirst().toStdString()).c_str(),0);
+                    value =
+                        strtod(BaseLib::replaceString(
+                                   ",", ".", fields.takeFirst().toStdString())
+                                   .c_str(),
+                               nullptr);
                     lists[i]->addNextPoint(numberOfSecs,value);
                 }
             }
@@ -254,7 +256,7 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 
     for (int i = 0; i < nLists; i++)
     {
-        DiagramList* l = new DiagramList;
+        auto* l = new DiagramList;
         l->setName(QString::fromStdString(SensorData::convertSensorDataType2String(time_series_names[i])));
         l->setXLabel("Time");
         lists.push_back(l);
@@ -291,13 +293,14 @@ void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)
     int numberOfDays;
 
     this->_startDate = coords[0].first;
-    _coords.push_back(std::pair<float, float>(0.0f, coords[0].second));
+    _coords.emplace_back(0.0f, coords[0].second);
 
     std::size_t nCoords = coords.size();
     for (std::size_t i = 1; i < nCoords; i++)
     {
         numberOfDays = this->_startDate.daysTo(coords[i].first);
-        _coords.push_back(std::pair<float, float>(static_cast<float>(numberOfDays), coords[i].second));
+        _coords.emplace_back(static_cast<float>(numberOfDays),
+                             coords[i].second);
     }
 
     update();

@@ -33,7 +33,7 @@ class GMSHPrefsDialog : public QDialog, private Ui_GMSHPrefs
 
 public:
     GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* parent = nullptr);
-    ~GMSHPrefsDialog(void);
+    ~GMSHPrefsDialog(void) override;
 
 private:
     std::vector<std::string> getSelectedObjects(QStringList list);
@@ -47,10 +47,10 @@ private slots:
     void on_radioAdaptive_toggled(bool isTrue);
 
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 
 signals:
     void requestMeshing(std::vector<std::string> &, unsigned, double, double, double, bool);

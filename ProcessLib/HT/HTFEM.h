@@ -30,10 +30,12 @@ namespace HT
 template < typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
-    IntegrationPointData(NodalRowVectorType const& N_,
-                         GlobalDimNodalMatrixType const& dNdx_,
+    IntegrationPointData(NodalRowVectorType N_,
+                         GlobalDimNodalMatrixType dNdx_,
                          double const& integration_weight_)
-        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+        : N(std::move(N_)),
+          dNdx(std::move(dNdx_)),
+          integration_weight(integration_weight_)
     {}
 
     NodalRowVectorType const N;
@@ -276,7 +278,7 @@ public:
     std::vector<double> const& getIntPtDarcyVelocityX(
         std::vector<double>& /*cache*/) const override
     {
-        assert(_darcy_velocities.size() > 0);
+        assert(!_darcy_velocities.empty());
         return _darcy_velocities[0];
     }
 

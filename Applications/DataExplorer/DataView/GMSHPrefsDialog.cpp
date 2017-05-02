@@ -38,25 +38,16 @@ GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* 
     this->param4->setText("0");
 
     // object will be deleted by Qt
-    StrictIntValidator* max_number_of_points_in_quadtree_leaf_validator (new StrictIntValidator (
-                                                                                 1,
-                                                                                 1000,
-                                                                                 this->param1));
+    auto* max_number_of_points_in_quadtree_leaf_validator(
+        new StrictIntValidator(1, 1000, this->param1));
     param1->setValidator (max_number_of_points_in_quadtree_leaf_validator);
     // object will be deleted by Qt
-    StrictDoubleValidator* mesh_density_scaling_pnts_validator(new StrictDoubleValidator (
-                                                                       1e-10,
-                                                                       1.0,
-                                                                       5,
-                                                                       this
-                                                                       ->param2));
+    auto* mesh_density_scaling_pnts_validator(
+        new StrictDoubleValidator(1e-10, 1.0, 5, this->param2));
     param2->setValidator (mesh_density_scaling_pnts_validator);
     // object will be deleted by Qt#
-    StrictDoubleValidator* mesh_density_scaling_stations_validator(new StrictDoubleValidator (
-                                                                           1e-10,
-                                                                           1.0,
-                                                                           5,
-                                                                           this->param3));
+    auto* mesh_density_scaling_stations_validator(
+        new StrictDoubleValidator(1e-10, 1.0, 5, this->param3));
     param3->setValidator (mesh_density_scaling_stations_validator);
 
     std::vector<std::string> geoNames;
@@ -66,8 +57,8 @@ GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* 
     std::vector<std::string> geo_station_names;
     geoObjects.getStationVectorNames(geo_station_names);
 
-    for (unsigned k(0); k < geo_station_names.size(); ++k)
-        geoNames.push_back (geo_station_names[k]);
+    for (auto& geo_station_name : geo_station_names)
+        geoNames.push_back(geo_station_name);
 
     std::size_t nGeoObjects(geoNames.size());
 
@@ -99,11 +90,11 @@ void GMSHPrefsDialog::on_selectGeoButton_pressed()
     QModelIndexList selected = this->allGeoView->selectionModel()->selectedIndexes();
     QStringList list = _selGeo->stringList();
 
-    for (QModelIndexList::iterator it = selected.begin(); it != selected.end(); ++it)
+    for (auto& index : selected)
     {
-        list.append(it->data().toString());
+        list.append(index.data().toString());
 
-        _allGeo->removeRow(it->row());
+        _allGeo->removeRow(index.row());
     }
     _selGeo->setStringList(list);
 }
@@ -113,11 +104,11 @@ void GMSHPrefsDialog::on_deselectGeoButton_pressed()
     QModelIndexList selected = this->selectedGeoView->selectionModel()->selectedIndexes();
     QStringList list = _allGeo->stringList();
 
-    for (QModelIndexList::iterator it = selected.begin(); it != selected.end(); ++it)
+    for (auto& index : selected)
     {
-        list.append(it->data().toString());
+        list.append(index.data().toString());
 
-        _selGeo->removeRow(it->row());
+        _selGeo->removeRow(index.row());
     }
     _allGeo->setStringList(list);
 }
@@ -188,7 +179,7 @@ void GMSHPrefsDialog::reject()
 std::vector<std::string> GMSHPrefsDialog::getSelectedObjects(QStringList list)
 {
     std::vector<std::string> indexList;
-    for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
-        indexList.push_back(it->toStdString());
+    for (auto& index : list)
+        indexList.push_back(index.toStdString());
     return indexList;
 }

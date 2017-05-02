@@ -94,7 +94,7 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
                 continue;
 
             const unsigned nElemNodes(sfc_elem->getNumberOfBaseNodes());
-            MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
+            auto** e_nodes = new MeshLib::Node*[2 * nElemNodes];
 
             for (unsigned j=0; j<nElemNodes; ++j)
             {
@@ -127,11 +127,11 @@ bool MeshLayerMapper::createRasterLayers(
         return false;
     }
 
-    MeshLib::Mesh* top (new MeshLib::Mesh(mesh));
+    auto* top(new MeshLib::Mesh(mesh));
     if (!layerMapping(*top, *rasters.back(), noDataReplacementValue))
         return false;
 
-    MeshLib::Mesh* bottom (new MeshLib::Mesh(mesh));
+    auto* bottom(new MeshLib::Mesh(mesh));
     if (!layerMapping(*bottom, *rasters[0], 0))
     {
         delete top;

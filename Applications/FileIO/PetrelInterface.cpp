@@ -67,11 +67,11 @@ PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
     // store data in GEOObject
     geo_obj->addPointVec(std::unique_ptr<std::vector<GeoLib::Point*>>(pnt_vec),
                          _unique_name);
-    if (well_vec->size() > 0)
+    if (!well_vec->empty())
         geo_obj->addStationVec(
             std::unique_ptr<std::vector<GeoLib::Point*>>(well_vec),
             _unique_name);
-    if (ply_vec->size() > 0)
+    if (!ply_vec->empty())
         geo_obj->addPolylineVec(
             std::unique_ptr<std::vector<GeoLib::Polyline*>>(ply_vec),
             _unique_name);
@@ -210,7 +210,7 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
 
     // read column information
     std::list<std::string> str_list = BaseLib::splitString(line, ' ');
-    std::list<std::string>::const_iterator it = str_list.begin();
+    auto it = str_list.begin();
     while (it != str_list.end()) {
         INFO("PetrelInterface::readPetrelWellTraceData(): column information: %s.", it->c_str());
         ++it;

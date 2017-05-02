@@ -74,33 +74,36 @@ public:
      * (\f$a_1\f$, \f$a_2\f$, ..., \f$a_n\f$) corresponding to the intervals given by iter_times_vector.
      * A time step size is calculated by \f$\Delta t_{n+1} = a * \Delta t_{n}\f$
      */
-    IterationNumberBasedAdaptiveTimeStepping( double t_initial,
-                                double t_end,
-                                double min_ts,
-                                double max_ts,
-                                double initial_ts,
-                                const std::vector<std::size_t> &iter_times_vector,
-                                const std::vector<double> &multiplier_vector);
+    IterationNumberBasedAdaptiveTimeStepping(double t_initial,
+                                             double t_end,
+                                             double min_ts,
+                                             double max_ts,
+                                             double initial_ts,
+                                             std::vector<std::size_t>
+                                                 iter_times_vector,
+                                             std::vector<double>
+                                                 multiplier_vector);
 
-    virtual ~IterationNumberBasedAdaptiveTimeStepping() {}
+    ~IterationNumberBasedAdaptiveTimeStepping() override = default;
 
     /// return the beginning of time steps
-    virtual double begin() const {return _t_initial;}
-
+    double begin() const override { return _t_initial; }
     /// return the end of time steps
-    virtual double end() const {return _t_end;}
-
+    double end() const override { return _t_end; }
     /// return current time step
-    virtual const TimeStep getTimeStep() const;
+    const TimeStep getTimeStep() const override;
 
     /// move to the next time step
-    virtual bool next();
+    bool next() override;
 
     /// return if the current step is accepted
-    virtual bool accepted() const;
+    bool accepted() const override;
 
     /// return a history of time step sizes
-    virtual const std::vector<double>& getTimeStepSizeHistory() const {return this->_dt_vector;}
+    const std::vector<double>& getTimeStepSizeHistory() const override
+    {
+        return this->_dt_vector;
+    }
 
     /// set the number of iterations
     void setNIterations(std::size_t n_itr) {this->_iter_times = n_itr;}

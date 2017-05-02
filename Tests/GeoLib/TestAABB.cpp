@@ -54,8 +54,9 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
      ASSERT_GE(half_box_size, max_pnt[1]) << "coordinate 1 of max_pnt is greater than " << half_box_size;
      ASSERT_GE(half_box_size, max_pnt[2]) << "coordinate 2 of max_pnt is greater than " << half_box_size;
 
-     for (std::list<GeoLib::Point*>::iterator it(pnts_list.begin()); it != pnts_list.end(); it++) {
-         delete *it;
+     for (auto& point : pnts_list)
+     {
+         delete point;
      }
 }
 
@@ -71,7 +72,9 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAList)
      // fill list with points
      std::list<GeoLib::Point> pnts_list;
      for (int k(0); k<n; k++) {
-         pnts_list.push_back(GeoLib::Point(rand() % box_size - half_box_size, rand() % box_size - half_box_size, rand() % box_size - half_box_size));
+         pnts_list.emplace_back(rand() % box_size - half_box_size,
+                                rand() % box_size - half_box_size,
+                                rand() % box_size - half_box_size);
      }
 
      // construct from list points a axis algined bounding box
@@ -122,8 +125,9 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPointsInAVector)
      ASSERT_GE(half_box_size, max_pnt[1]) << "coordinate 1 of max_pnt is greater than " << half_box_size;
      ASSERT_GE(half_box_size, max_pnt[2]) << "coordinate 2 of max_pnt is greater than " << half_box_size;
 
-     for (std::vector<GeoLib::Point*>::iterator it(pnts.begin()); it != pnts.end(); it++) {
-         delete *it;
+     for (auto& point : pnts)
+     {
+         delete point;
      }
 }
 
@@ -139,7 +143,9 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAVector)
      // fill list with points
      std::list<GeoLib::Point> pnts;
      for (int k(0); k<n; k++) {
-         pnts.push_back(GeoLib::Point(rand() % box_size - half_box_size, rand() % box_size - half_box_size, rand() % box_size - half_box_size));
+         pnts.emplace_back(rand() % box_size - half_box_size,
+                           rand() % box_size - half_box_size,
+                           rand() % box_size - half_box_size);
      }
 
      // construct from list points a axis algined bounding box
@@ -170,14 +176,16 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
      double half_box_size_x(box_size_x/2);
      double half_box_size_y(box_size_y/2);
      double half_box_size_z(box_size_z/2);
-     int minus_half_box_size_x(static_cast<int>(-half_box_size_x));
-     int minus_half_box_size_y(static_cast<int>(-half_box_size_y));
-     int minus_half_box_size_z(static_cast<int>(-half_box_size_z));
+     auto minus_half_box_size_x(static_cast<int>(-half_box_size_x));
+     auto minus_half_box_size_y(static_cast<int>(-half_box_size_y));
+     auto minus_half_box_size_z(static_cast<int>(-half_box_size_z));
 
      // fill list with points
      std::list<GeoLib::Point> pnts;
      for (int k(0); k<n; k++) {
-         pnts.push_back(GeoLib::Point(rand() % box_size_x - half_box_size_x, rand() % box_size_y - half_box_size_y, rand() % box_size_z - half_box_size_z));
+         pnts.emplace_back(rand() % box_size_x - half_box_size_x,
+                           rand() % box_size_y - half_box_size_y,
+                           rand() % box_size_z - half_box_size_z);
      }
 
      // construct from list points a axis aligned bounding box
@@ -224,8 +232,8 @@ TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesII)
 {
     std::vector<GeoLib::Point> pnts;
 
-    pnts.push_back(GeoLib::Point(-1, -1, -1));
-    pnts.push_back(GeoLib::Point(-10, -10, -10));
+    pnts.emplace_back(-1, -1, -1);
+    pnts.emplace_back(-10, -10, -10);
 
     // construct from points of the vector a axis aligned bounding box
     GeoLib::AABB aabb(pnts.begin(), pnts.end());

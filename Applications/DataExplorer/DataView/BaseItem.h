@@ -28,7 +28,8 @@
 class BaseItem
 {
 public:
-    BaseItem(const QString &listName, const std::vector<GeoLib::Point*>* stations = NULL )
+    BaseItem(const QString& listName,
+             const std::vector<GeoLib::Point*>* stations = nullptr)
         : _stations(stations), _vtkSource(VtkStationSource::New())
     {
         // create the vtk-object for 3d-visualisation of this list

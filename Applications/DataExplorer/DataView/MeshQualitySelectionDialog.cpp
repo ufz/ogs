@@ -27,9 +27,7 @@ MeshQualitySelectionDialog::MeshQualitySelectionDialog(QDialog* parent)
     this->choiceEdges->toggle();
 }
 
-MeshQualitySelectionDialog::~MeshQualitySelectionDialog()
-{
-}
+MeshQualitySelectionDialog::~MeshQualitySelectionDialog() = default;
 
 void MeshQualitySelectionDialog::on_histogramCheckBox_toggled(bool is_checked) const
 {

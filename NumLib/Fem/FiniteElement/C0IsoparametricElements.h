@@ -33,101 +33,116 @@
 
 namespace NumLib
 {
-
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FePOINT1
 {
-    typedef TemplateIsoparametric<ShapePoint1, T_SHAPE_MATRIX_POLICY<ShapePoint1>> type;
+    using type =
+        TemplateIsoparametric<ShapePoint1, T_SHAPE_MATRIX_POLICY<ShapePoint1>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeLINE2
 {
-    typedef TemplateIsoparametric<ShapeLine2, T_SHAPE_MATRIX_POLICY<ShapeLine2>> type;
+    using type =
+        TemplateIsoparametric<ShapeLine2, T_SHAPE_MATRIX_POLICY<ShapeLine2>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeLINE3
 {
-    typedef TemplateIsoparametric<ShapeLine3, T_SHAPE_MATRIX_POLICY<ShapeLine3>> type;
+    using type =
+        TemplateIsoparametric<ShapeLine3, T_SHAPE_MATRIX_POLICY<ShapeLine3>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeTRI3
 {
-    typedef TemplateIsoparametric<ShapeTri3, T_SHAPE_MATRIX_POLICY<ShapeTri3>> type;
+    using type =
+        TemplateIsoparametric<ShapeTri3, T_SHAPE_MATRIX_POLICY<ShapeTri3>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeTRI6
 {
-    typedef TemplateIsoparametric<ShapeTri6, T_SHAPE_MATRIX_POLICY<ShapeTri6>> type;
+    using type =
+        TemplateIsoparametric<ShapeTri6, T_SHAPE_MATRIX_POLICY<ShapeTri6>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeQUAD4
 {
-    typedef TemplateIsoparametric<ShapeQuad4, T_SHAPE_MATRIX_POLICY<ShapeQuad4>> type;
+    using type =
+        TemplateIsoparametric<ShapeQuad4, T_SHAPE_MATRIX_POLICY<ShapeQuad4>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeQUAD8
 {
-    typedef TemplateIsoparametric<ShapeQuad8, T_SHAPE_MATRIX_POLICY<ShapeQuad8>> type;
+    using type =
+        TemplateIsoparametric<ShapeQuad8, T_SHAPE_MATRIX_POLICY<ShapeQuad8>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeQUAD9
 {
-    typedef TemplateIsoparametric<ShapeQuad9, T_SHAPE_MATRIX_POLICY<ShapeQuad9>> type;
+    using type =
+        TemplateIsoparametric<ShapeQuad9, T_SHAPE_MATRIX_POLICY<ShapeQuad9>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeHEX8
 {
-    typedef TemplateIsoparametric<ShapeHex8, T_SHAPE_MATRIX_POLICY<ShapeHex8>> type;
+    using type =
+        TemplateIsoparametric<ShapeHex8, T_SHAPE_MATRIX_POLICY<ShapeHex8>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeHEX20
 {
-    typedef TemplateIsoparametric<ShapeHex20, T_SHAPE_MATRIX_POLICY<ShapeHex20>> type;
+    using type =
+        TemplateIsoparametric<ShapeHex20, T_SHAPE_MATRIX_POLICY<ShapeHex20>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeTET4
 {
-    typedef TemplateIsoparametric<ShapeTet4, T_SHAPE_MATRIX_POLICY<ShapeTet4>> type;
+    using type =
+        TemplateIsoparametric<ShapeTet4, T_SHAPE_MATRIX_POLICY<ShapeTet4>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeTET10
 {
-    typedef TemplateIsoparametric<ShapeTet10, T_SHAPE_MATRIX_POLICY<ShapeTet10>> type;
+    using type =
+        TemplateIsoparametric<ShapeTet10, T_SHAPE_MATRIX_POLICY<ShapeTet10>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FePRISM6
 {
-    typedef TemplateIsoparametric<ShapePrism6, T_SHAPE_MATRIX_POLICY<ShapePrism6>> type;
+    using type =
+        TemplateIsoparametric<ShapePrism6, T_SHAPE_MATRIX_POLICY<ShapePrism6>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FePRISM15
 {
-    typedef TemplateIsoparametric<ShapePrism15, T_SHAPE_MATRIX_POLICY<ShapePrism15>> type;
+    using type = TemplateIsoparametric<ShapePrism15,
+                                       T_SHAPE_MATRIX_POLICY<ShapePrism15>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FePYRA5
 {
-    typedef TemplateIsoparametric<ShapePyra5, T_SHAPE_MATRIX_POLICY<ShapePyra5>> type;
+    using type =
+        TemplateIsoparametric<ShapePyra5, T_SHAPE_MATRIX_POLICY<ShapePyra5>>;
 };
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FePYRA13
 {
-    typedef TemplateIsoparametric<ShapePyra13, T_SHAPE_MATRIX_POLICY<ShapePyra13>> type;
+    using type =
+        TemplateIsoparametric<ShapePyra13, T_SHAPE_MATRIX_POLICY<ShapePyra13>>;
 };
 
 } // NumLib

@@ -26,13 +26,12 @@ GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(
 {
     setupUi(this);
 
-    for (std::size_t i=0; i<mesh_vec.size(); ++i)
-        this->meshNameComboBox->addItem(QString::fromStdString(mesh_vec[i]->getName()));
+    for (const auto& mesh : mesh_vec)
+        this->meshNameComboBox->addItem(
+            QString::fromStdString(mesh->getName()));
 }
 
-GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog()
-{
-}
+GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog() = default;
 
 int GeoOnMeshMappingDialog::getDataSetChoice() const
 {

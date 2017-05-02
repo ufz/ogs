@@ -10,6 +10,7 @@
 #pragma once
 
 #include <map>
+#include <utility>
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "Parameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -20,10 +21,10 @@ template <typename T>
 struct CurveScaledParameter final : public Parameter<T> {
     CurveScaledParameter(std::string const& name_,
                          MathLib::PiecewiseLinearInterpolation const& curve,
-                         std::string const& referenced_parameter_name)
+                         std::string referenced_parameter_name)
         : Parameter<T>(name_),
           _curve(curve),
-          _referenced_parameter_name(referenced_parameter_name)
+          _referenced_parameter_name(std::move(referenced_parameter_name))
     {
     }
 

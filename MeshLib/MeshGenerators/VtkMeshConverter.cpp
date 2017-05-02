@@ -45,7 +45,7 @@ template <class T_ELEMENT>
 MeshLib::Element* createElementWithSameNodeOrder(const std::vector<MeshLib::Node*> &nodes,
         vtkIdList* const node_ids)
 {
-    MeshLib::Node** ele_nodes = new MeshLib::Node*[T_ELEMENT::n_all_nodes];
+    auto** ele_nodes = new MeshLib::Node*[T_ELEMENT::n_all_nodes];
     for (unsigned k(0); k<T_ELEMENT::n_all_nodes; k++)
         ele_nodes[k] = nodes[node_ids->GetId(k)];
     return new T_ELEMENT(ele_nodes);
@@ -92,7 +92,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
             break;
         }
         case VTK_PIXEL: {
-            MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
+            auto** quad_nodes = new MeshLib::Node*[4];
             quad_nodes[0] = nodes[node_ids->GetId(0)];
             quad_nodes[1] = nodes[node_ids->GetId(1)];
             quad_nodes[2] = nodes[node_ids->GetId(3)];
@@ -109,7 +109,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
             break;
         }
         case VTK_VOXEL: {
-            MeshLib::Node** voxel_nodes = new MeshLib::Node*[8];
+            auto** voxel_nodes = new MeshLib::Node*[8];
             voxel_nodes[0] = nodes[node_ids->GetId(0)];
             voxel_nodes[1] = nodes[node_ids->GetId(1)];
             voxel_nodes[2] = nodes[node_ids->GetId(3)];
@@ -126,7 +126,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
             break;
         }
         case VTK_WEDGE: {
-            MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
+            auto** prism_nodes = new MeshLib::Node*[6];
             for (unsigned i=0; i<3; ++i)
             {
                 prism_nodes[i] = nodes[node_ids->GetId(i+3)];
@@ -164,7 +164,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
             break;
         }
         case VTK_QUADRATIC_WEDGE: {
-            MeshLib::Node** prism_nodes = new MeshLib::Node*[15];
+            auto** prism_nodes = new MeshLib::Node*[15];
             for (unsigned i=0; i<3; ++i)
             {
                 prism_nodes[i] = nodes[node_ids->GetId(i+3)];
@@ -197,17 +197,19 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh)
 {
     vtkPointData* point_data = grid.GetPointData();
-    unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
+    auto const n_point_arrays =
+        static_cast<unsigned>(point_data->GetNumberOfArrays());
     for (unsigned i=0; i<n_point_arrays; ++i)
         convertArray(*point_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Node);
 
     vtkCellData* cell_data = grid.GetCellData();
-    unsigned const n_cell_arrays = static_cast<unsigned>(cell_data->GetNumberOfArrays());
+    auto const n_cell_arrays =
+        static_cast<unsigned>(cell_data->GetNumberOfArrays());
     for (unsigned i=0; i<n_cell_arrays; ++i)
         convertArray(*cell_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Cell);
 
     vtkFieldData* field_data = grid.GetFieldData();
-    unsigned const n_field_arrays =
+    auto const n_field_arrays =
         static_cast<unsigned>(field_data->GetNumberOfArrays());
     for (unsigned i = 0; i < n_field_arrays; ++i)
         convertArray(

@@ -54,7 +54,7 @@ VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
     : QTreeView(parent)
 {
     this->setItemsExpandable(false);
-    CheckboxDelegate* checkboxDelegate = new CheckboxDelegate(this);
+    auto* checkboxDelegate = new CheckboxDelegate(this);
     this->setItemDelegateForColumn(1, checkboxDelegate);
     this->header()->setStretchLastSection(false);
     this->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -85,8 +85,8 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
         QMenu menu;
         QAction* addFilterAction = menu.addAction("Add filter...");
 
-        QAction* addLUTAction(NULL);
-        QAction* addMeshingAction(NULL);
+        QAction* addLUTAction(nullptr);
+        QAction* addMeshingAction(nullptr);
         if (objectType == VTK_IMAGE_DATA)
         {
             // this exception is needed as image object are only displayed in the vis-pipeline
@@ -101,7 +101,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
             connect(addLUTAction, SIGNAL(triggered()), this, SLOT(addColorTable()));
         }
 
-        QAction* addConvertToMeshAction(NULL);
+        QAction* addConvertToMeshAction(nullptr);
         if (objectType == VTK_UNSTRUCTURED_GRID)
         {
             addConvertToMeshAction = menu.addAction("Convert to Mesh...");
@@ -113,7 +113,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 #ifdef VTKFBXCONVERTER_FOUND
         QAction* exportFbxAction = menu.addAction("Export as Fbx");
 #endif
-        QAction* removeAction = NULL;
+        QAction* removeAction = nullptr;
         if (!isSourceItem || vtkProps->IsRemovable())
         {
             menu.addSeparator();
@@ -209,8 +209,7 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
         static_cast<VtkVisPipeline*>(this->model())->getItem(this->selectionModel()->currentIndex()));
     vtkSmartPointer<vtkAlgorithm> algorithm = item->algorithm();
 
-
-    vtkUnstructuredGrid* grid(NULL);
+    vtkUnstructuredGrid* grid(nullptr);
     vtkUnstructuredGridAlgorithm* ugAlg = vtkUnstructuredGridAlgorithm::SafeDownCast(algorithm);
     if (ugAlg)
         grid = ugAlg->GetOutput();
@@ -243,7 +242,7 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
     QModelIndex index = *selected.indexes().begin();
     if (index.isValid())
     {
-        VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(index.internalPointer());
+        auto* item = static_cast<VtkVisPipelineItem*>(index.internalPointer());
         emit actorSelected(item->actor());
         emit itemSelected(item);
         if (item->transformFilter())
@@ -252,9 +251,9 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
     }
     else
     {
-        emit actorSelected(NULL);
-        emit itemSelected(NULL);
-        emit dataObjectSelected(NULL);
+        emit actorSelected(nullptr);
+        emit itemSelected(nullptr);
+        emit dataObjectSelected(nullptr);
     }
 }
 
@@ -288,7 +287,7 @@ void VtkVisPipelineView::addColorTable()
 
     if (fi.suffix().toLower() == "xml")
     {
-        VtkVisPointSetItem* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(item);
+        auto* pointSetItem = dynamic_cast<VtkVisPointSetItem*>(item);
         if (pointSetItem)
         {
             VtkAlgorithmProperties* props = pointSetItem->getVtkProperties();
@@ -300,8 +299,10 @@ void VtkVisPipelineView::addColorTable()
             }
         }
         else
-            QMessageBox::warning(NULL, "Color lookup table could not be applied.",
-                                 "Color lookup tables can only be applied to VtkVisPointSetItem.");
+            QMessageBox::warning(nullptr,
+                                 "Color lookup table could not be applied.",
+                                 "Color lookup tables can only be applied to "
+                                 "VtkVisPointSetItem.");
         QDir dir = QDir(filename);
         settings.setValue("lastOpenedLutFileDirectory", dir.absolutePath());
     }

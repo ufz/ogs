@@ -8,8 +8,8 @@
 #ifdef VTKFBXCONVERTER_FOUND
 #include <fbxsdk.h>
 #include "Common.h"
-FbxManager* lSdkManager = NULL;
-FbxScene* lScene = NULL;
+FbxManager* lSdkManager = nullptr;
+FbxScene* lScene = nullptr;
 #endif
 
 #include <vtkSmartPointer.h>
@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
     vtkOutputWindow::SetInstance(myOutputWindow);
 
     LOGOG_INITIALIZE();
-    logog::Cout* logogCout = new logog::Cout;
-    BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
+    auto* logogCout = new logog::Cout;
+    auto* formatter = new BaseLib::LogogSimpleFormatter;
     logogCout->SetFormatter(*formatter);
     QApplication a(argc, argv);
     QApplication::setApplicationName("OpenGeoSys - Data Explorer");

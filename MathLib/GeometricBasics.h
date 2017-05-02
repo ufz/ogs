@@ -17,7 +17,7 @@ namespace MathLib
 {
 
 template <typename T, std::size_t DIM> class TemplatePoint;
-typedef MathLib::TemplatePoint<double,3> Point3d;
+using Point3d = MathLib::TemplatePoint<double, 3>;
 
 enum TriangleTest
 {

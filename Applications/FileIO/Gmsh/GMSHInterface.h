@@ -75,10 +75,10 @@ public:
     GMSHInterface& operator=(GMSHInterface const&) = delete;
     GMSHInterface& operator=(GMSHInterface &&) = delete;
 
-    ~GMSHInterface();
+    ~GMSHInterface() override;
 
 protected:
-    bool write();
+    bool write() override;
 
 private:
     /**

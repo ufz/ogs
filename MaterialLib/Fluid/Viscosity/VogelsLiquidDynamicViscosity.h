@@ -13,10 +13,11 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
 #include <array>
 #include <cmath>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "MaterialLib/Fluid/FluidProperty.h"
 
@@ -37,8 +38,8 @@ public:
      *  \param constants Constants of the fluid.
      *
      */
-    explicit VogelsLiquidDynamicViscosity(const VogelsConstants& constants)
-        : _constants(constants)
+    explicit VogelsLiquidDynamicViscosity(VogelsConstants constants)
+        : _constants(std::move(constants))
     {
     }
 

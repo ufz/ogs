@@ -32,7 +32,8 @@ class VtkPickCallback : public QObject, public vtkCommand
 public:
     static VtkPickCallback* New();
 
-    void Execute(vtkObject* caller, unsigned long eventId, void* callData);
+    void Execute(vtkObject* caller, unsigned long eventId,
+                 void* callData) override;
 
 protected:
     VtkPickCallback();

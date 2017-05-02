@@ -44,7 +44,7 @@ Color getRandomColor()
 
 Color const getColor(const std::string &id, std::map<std::string, Color> &colors)
 {
-    for (std::map<std::string, Color>::const_iterator it=colors.begin(); it !=colors.end(); ++it)
+    for (auto it = colors.begin(); it != colors.end(); ++it)
     {
         if (id.compare(it->first) == 0)
             return it->second;

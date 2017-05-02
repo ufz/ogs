@@ -69,12 +69,12 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
     QVariant const display_name (QString::fromStdString(mesh->getName()));
     QList<QVariant> meshData;
     meshData << display_name << "" << "";
-    MshItem *const newMesh = new MshItem(meshData, _rootItem, mesh);
+    auto* const newMesh = new MshItem(meshData, _rootItem, mesh);
     _rootItem->appendChild(newMesh);
 
     // display elements
     std::vector<MeshLib::Element*> const& elems = mesh->getElements();
-    int const nElems (static_cast<int>(elems.size()));
+    auto const nElems(static_cast<int>(elems.size()));
 
     for (int i = 0; i < nElems; i++)
     {
@@ -92,7 +92,7 @@ const MeshLib::Mesh* MshModel::getMesh(const QModelIndex &idx) const
 {
     if (idx.isValid())
     {
-        MshItem* item = dynamic_cast<MshItem*>(this->getItem(idx));
+        auto* item = dynamic_cast<MshItem*>(this->getItem(idx));
         if (item)
             return item->getMesh();
         else
@@ -106,7 +106,7 @@ const MeshLib::Mesh* MshModel::getMesh(const std::string &name) const
 {
     for (int i = 0; i < _rootItem->childCount(); i++)
     {
-        MshItem* item = static_cast<MshItem*>(_rootItem->child(i));
+        auto* item = static_cast<MshItem*>(_rootItem->child(i));
         if (item->data(0).toString().toStdString().compare(name) == 0)
             return item->getMesh();
     }
@@ -119,7 +119,7 @@ bool MshModel::removeMesh(const QModelIndex &idx)
 {
     if (idx.isValid())
     {
-        MshItem* item = dynamic_cast<MshItem*>(this->getItem(idx));
+        auto* item = dynamic_cast<MshItem*>(this->getItem(idx));
         if (item)
             return this->removeMesh(item->getMesh()->getName());
         return false;
@@ -182,7 +182,7 @@ vtkUnstructuredGridAlgorithm* MshModel::vtkSource(const QModelIndex &idx) const
 {
     if (idx.isValid())
     {
-        MshItem* item = static_cast<MshItem*>(this->getItem(idx));
+        auto* item = static_cast<MshItem*>(this->getItem(idx));
         return item->vtkSource();
     }
 
@@ -194,7 +194,7 @@ vtkUnstructuredGridAlgorithm* MshModel::vtkSource(const std::string &name) const
 {
     for (int i = 0; i < _rootItem->childCount(); i++)
     {
-        MshItem* item = static_cast<MshItem*>(_rootItem->child(i));
+        auto* item = static_cast<MshItem*>(_rootItem->child(i));
         if (item->data(0).toString().toStdString().compare(name) == 0)
             return item->vtkSource();
     }

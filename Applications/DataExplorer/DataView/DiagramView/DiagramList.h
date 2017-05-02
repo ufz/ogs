@@ -106,8 +106,7 @@ public:
     void setName(QString name) { _name = name; }
 
     /// Adds a point at (x,y) to the list
-    void addNextPoint(float x, float y) { _coords.push_back(std::pair<float, float>(x, y)); }
-
+    void addNextPoint(float x, float y) { _coords.emplace_back(x, y); }
     /// Sets the start date (i.e. the min-value of the x-axis).
     void setStartDate(QDateTime date) { _startDate = date; }
 

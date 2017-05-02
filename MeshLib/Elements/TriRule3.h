@@ -59,7 +59,7 @@ public:
     static const unsigned edge_nodes[3][2];
 
     /// Returns the i-th edge of the element.
-    typedef LinearEdgeReturn EdgeReturn;
+    using EdgeReturn = MeshLib::LinearEdgeReturn;
 
     /**
      * \copydoc MeshLib::Element::isPntInElement()

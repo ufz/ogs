@@ -32,8 +32,7 @@
 
 vtkStandardNewMacro(VtkPointsSource);
 
-VtkPointsSource::VtkPointsSource()
-    : _points(NULL)
+VtkPointsSource::VtkPointsSource() : _points(nullptr)
 {
     _removable = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
@@ -46,16 +45,15 @@ void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_points->size() == 0)
+    if (_points->empty())
         return;
 
     os << indent << "== VtkPointsSource ==" << "\n";
 
     int i = 0;
-    for (std::vector<GeoLib::Point*>::const_iterator it = _points->begin();
-         it != _points->end(); ++it)
+    for (auto point : *_points)
     {
-        const double* coords = (*it)->getCoords();
+        const double* coords = point->getCoords();
         os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] << ", " <<
         coords[2] << ")\n";
         i++;
@@ -97,10 +95,9 @@ int VtkPointsSource::RequestData( vtkInformation* request,
 
     // Generate points and vertices
     unsigned i = 0;
-    for (std::vector<GeoLib::Point*>::const_iterator it = _points->begin();
-         it != _points->end(); ++it)
+    for (auto point : *_points)
     {
-        double coords[3] = {(*(*it))[0], (*(*it))[1], (*(*it))[2]};
+        double coords[3] = {(*point)[0], (*point)[1], (*point)[2]};
         newPoints->SetPoint(i, coords);
         newVerts->InsertNextCell(1);
         newVerts->InsertCellPoint(i);

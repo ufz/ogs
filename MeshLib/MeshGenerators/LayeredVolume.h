@@ -31,28 +31,45 @@ namespace GeoLib {
 class LayeredVolume : public LayeredMeshGenerator
 {
 public:
-    LayeredVolume() {}
-    ~LayeredVolume() {}
+    LayeredVolume() = default;
+    ~LayeredVolume() override = default;
 
     /**
-     * Constructs a subsurface representation of a mesh using only 2D elements (i.e. layer boundaries are represented by surfaces)
-     * @param mesh                    The 2D surface mesh that is used as a basis for the subsurface mesh
-     * @param rasters                 Containing all the raster-data for the subsurface layers from bottom to top (starting with the bottom of the oldest layer and ending with the DEM)
-     * @param minimum_thickness       Minimum thickness of each of the newly created layers (i.e. nodes with a vertical distance smaller than this will be collapsed)
-     * @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0])
-     * @result true if the subsurface representation has been created, false if there was an error
+     * Constructs a subsurface representation of a mesh using only 2D elements
+     * (i.e. layer boundaries are represented by surfaces)
+     * @param mesh                    The 2D surface mesh that is used as a
+     * basis
+     * for the subsurface mesh
+     * @param rasters                 Containing all the raster-data for the
+     * subsurface layers from bottom to top (starting with the bottom of the
+     * oldest layer and ending with the DEM)
+     * @param minimum_thickness       Minimum thickness of each of the newly
+     * created layers (i.e. nodes with a vertical distance smaller than this
+     * will
+     * be collapsed)
+     * @param noDataReplacementValue  Default z-coordinate if there are mesh
+     * nodes
+     * not located on the DEM raster (i.e. raster_paths[0])
+     * @result true if the subsurface representation has been created, false if
+     * there was an error
      */
-    bool createRasterLayers(const MeshLib::Mesh &mesh,
-                            const std::vector<GeoLib::Raster const*> &rasters,
+    bool createRasterLayers(const MeshLib::Mesh& mesh,
+                            const std::vector<GeoLib::Raster const*>& rasters,
                             double minimum_thickness,
-                            double noDataReplacementValue = 0.0);
+                            double noDataReplacementValue = 0.0) override;
 
-    /// Returns the region attribute vector necessary for assigning region attributes via TetGen
-    std::vector<MeshLib::Node> getAttributePoints() { return _attribute_points; }
+    /// Returns the region attribute vector necessary for assigning region
+    /// attributes via TetGen
+    std::vector<MeshLib::Node> getAttributePoints()
+    {
+        return _attribute_points;
+    }
 
 private:
     /// Adds another layer to the subsurface mesh
-    void addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id, GeoLib::Raster const& raster);
+    void addLayerToMesh(const MeshLib::Mesh& mesh_layer,
+                        unsigned layer_id,
+                        GeoLib::Raster const& raster) override;
 
     /// Creates boundary surfaces between the mapped layers to make the volumes watertight
     void addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t nLayers);

@@ -33,9 +33,9 @@ public:
      * \param input_name  The geometry to be copied
      * \param output_name The name of the copy (note: this might be modified by GEOObjects)
      */
-    DuplicateGeometry(GeoLib::GEOObjects &geo_objects,
-        std::string const& input_name,
-        std::string const& output_name);
+    DuplicateGeometry(GeoLib::GEOObjects& geo_objects,
+                      std::string const& input_name,
+                      std::string output_name);
 
     // Returns the (possibly modified) output name of the new geometry.
     std::string const& getFinalizedOutputName() const { return _output_name; }

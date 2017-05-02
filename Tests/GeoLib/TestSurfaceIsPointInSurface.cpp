@@ -77,8 +77,8 @@ getRotMat(double alpha, double beta, double gamma)
 TEST(GeoLib, SurfaceIsPointInSurface)
 {
     std::vector<std::function<double(double, double)>> surface_functions;
-    surface_functions.push_back(constant);
-    surface_functions.push_back(coscos);
+    surface_functions.emplace_back(constant);
+    surface_functions.emplace_back(coscos);
 
     for (const auto& f : surface_functions) {
         std::random_device rd;

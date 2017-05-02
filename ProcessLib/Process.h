@@ -56,37 +56,33 @@ public:
     /// Postprocessing after a complete timestep.
     void postTimestep(GlobalVector const& x);
 
-    void preIteration(const unsigned iter,
-                      GlobalVector const& x) override final;
+    void preIteration(const unsigned iter, GlobalVector const& x) final;
 
     /// compute secondary variables for the coupled equations or for output.
     void computeSecondaryVariable(const double t, GlobalVector const& x,
                                   StaggeredCouplingTerm const& coupled_term);
 
-    NumLib::IterationResult postIteration(GlobalVector const& x) override final;
+    NumLib::IterationResult postIteration(GlobalVector const& x) final;
 
     void initialize();
 
     void setInitialConditions(const double t, GlobalVector& x);
 
-    MathLib::MatrixSpecifications getMatrixSpecifications()
-        const override final;
+    MathLib::MatrixSpecifications getMatrixSpecifications() const final;
 
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b,
-                  StaggeredCouplingTerm const& coupling_term)
-                  override final;
+                  StaggeredCouplingTerm const& coupling_term) final;
 
     void assembleWithJacobian(const double t, GlobalVector const& x,
                               GlobalVector const& xdot, const double dxdot_dx,
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac,
-                              StaggeredCouplingTerm const& coupling_term)
-                              override final;
+                              StaggeredCouplingTerm const& coupling_term) final;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
-    getKnownSolutions(double const t) const override final
+    getKnownSolutions(double const t) const final
     {
         return _boundary_conditions.getKnownSolutions(t);
     }

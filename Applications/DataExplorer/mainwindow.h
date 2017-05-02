@@ -45,14 +45,14 @@ class MainWindow : public QMainWindow, public Ui_MainWindowClass
     Q_OBJECT
 
 public:
-    MainWindow(QWidget* parent = 0);
+    MainWindow(QWidget* parent = nullptr);
 
     void ShowWindow();
     void HideWindow();
     void loadFileOnStartUp(const QString &fileName);
 
 protected:
-    void closeEvent( QCloseEvent* event );
+    void closeEvent(QCloseEvent* event) override;
 
 protected slots:
     void showGeoDockWidget( bool show );

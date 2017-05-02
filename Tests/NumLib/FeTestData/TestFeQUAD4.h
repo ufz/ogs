@@ -27,7 +27,7 @@ public:
     template <template <typename> class ShapeMatrixPolicy_>
     using FeType = NumLib::FeQUAD4<ShapeMatrixPolicy_>;
 
-    typedef MeshLib::Quad MeshElementType;
+    using MeshElementType = MeshLib::Quad;
     static const unsigned dim = 2; //MeshElementType::dimension;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;
     static const unsigned n_sample_pt_order2 = 2*2;
@@ -38,7 +38,7 @@ public:
     MeshLib::Quad* createMeshElement()
     {
         // square
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
         nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0);
         nodes[2] = new MeshLib::Node(1.0, 1.0, 0.0);

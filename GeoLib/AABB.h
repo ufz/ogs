@@ -70,9 +70,7 @@ public:
      * copy constructor.
      * @param src an axis aligned bounding box
      * */
-    AABB(AABB const& src) :
-        _min_pnt(src._min_pnt), _max_pnt(src._max_pnt)
-    {}
+    AABB(AABB const& src) = default;
 
     /**
      * Construction of object using input iterators. In contrast to give a vector

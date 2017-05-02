@@ -39,15 +39,15 @@ static std::unique_ptr<FluidProperty> createLiquidDensity(
     config.checkConfigParameter("type", "LiquidDensity");
 
     //! \ogs_file_param{material__fluid__density__LiquidDensity__beta}
-    const double beta = config.getConfigParameter<double>("beta");
+    const auto beta = config.getConfigParameter<double>("beta");
     //! \ogs_file_param{material__fluid__density__LiquidDensity__rho0}
-    const double rho0 = config.getConfigParameter<double>("rho0");
+    const auto rho0 = config.getConfigParameter<double>("rho0");
     //! \ogs_file_param{material__fluid__density__LiquidDensity__temperature0}
-    const double T0 = config.getConfigParameter<double>("temperature0");
+    const auto T0 = config.getConfigParameter<double>("temperature0");
     //! \ogs_file_param{material__fluid__density__LiquidDensity__p0}
-    const double p0 = config.getConfigParameter<double>("p0");
+    const auto p0 = config.getConfigParameter<double>("p0");
     //! \ogs_file_param{material__fluid__density__LiquidDensity__bulk_modulus}
-    const double E = config.getConfigParameter<double>("bulk_modulus");
+    const auto E = config.getConfigParameter<double>("bulk_modulus");
     return std::unique_ptr<FluidProperty>(
         new LiquidDensity(beta, rho0, T0, p0, E));
 }
@@ -64,11 +64,11 @@ static std::unique_ptr<FluidProperty> createLinearTemperatureDependentDensity(
     config.checkConfigParameter("type", "TemperatureDependent");
 
     //! \ogs_file_param{material__fluid__density__TemperatureDependent__rho0}
-    const double rho0 = config.getConfigParameter<double>("rho0");
+    const auto rho0 = config.getConfigParameter<double>("rho0");
     //! \ogs_file_param{material__fluid__density__TemperatureDependent__temperature0}
-    const double T0 = config.getConfigParameter<double>("temperature0");
+    const auto T0 = config.getConfigParameter<double>("temperature0");
     //! \ogs_file_param{material__fluid__density__TemperatureDependent__beta}
-    const double beta = config.getConfigParameter<double>("beta");
+    const auto beta = config.getConfigParameter<double>("beta");
     return std::unique_ptr<FluidProperty>(
         new LinearTemperatureDependentDensity(rho0, T0, beta));
 }

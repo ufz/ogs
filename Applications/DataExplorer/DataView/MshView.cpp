@@ -54,9 +54,7 @@ MshView::MshView( QWidget* parent /*= 0*/ )
     //resizeRowsToContents();
 }
 
-MshView::~MshView()
-{
-}
+MshView::~MshView() = default;
 
 void MshView::updateView()
 {
@@ -76,7 +74,7 @@ void MshView::selectionChanged( const QItemSelection &selected, const QItemSelec
         const QModelIndex idx = *(selected.indexes().begin());
         const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
 
-        const MshItem* list_item = dynamic_cast<const MshItem*>(tree_item);
+        const auto* list_item = dynamic_cast<const MshItem*>(tree_item);
         if (list_item)
         {
             emit enableSaveButton(true);
@@ -203,7 +201,7 @@ void MshView::openValuesEditDialog()
 {
     MshModel const*const model = static_cast<MshModel*>(this->model());
     QModelIndex const index = this->selectionModel()->currentIndex();
-    MeshLib::Mesh* mesh = const_cast<MeshLib::Mesh*>(model->getMesh(index));
+    auto* mesh = const_cast<MeshLib::Mesh*>(model->getMesh(index));
 
     MeshValueEditDialog valueEdit(mesh);
     connect(&valueEdit, SIGNAL(valueEditFinished(MeshLib::Mesh*)),

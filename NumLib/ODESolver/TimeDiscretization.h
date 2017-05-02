@@ -211,7 +211,7 @@ public:
     {
     }
 
-    ~BackwardEuler()
+    ~BackwardEuler() override
     {
         NumLib::GlobalVectorProvider::provider.releaseVector(_x_old);
     }
@@ -260,7 +260,7 @@ public:
     {
     }
 
-    ~ForwardEuler()
+    ~ForwardEuler() override
     {
         NumLib::GlobalVectorProvider::provider.releaseVector(_x_old);
     }
@@ -335,7 +335,7 @@ public:
     {
     }
 
-    ~CrankNicolson()
+    ~CrankNicolson() override
     {
         NumLib::GlobalVectorProvider::provider.releaseVector(_x_old);
     }
@@ -422,7 +422,7 @@ public:
         _xs_old.reserve(num_steps);
     }
 
-    ~BackwardDifferentiationFormula()
+    ~BackwardDifferentiationFormula() override
     {
         for (auto* x : _xs_old)
             NumLib::GlobalVectorProvider::provider.releaseVector(*x);

@@ -58,7 +58,7 @@ public:
     virtual std::unique_ptr<MaterialStateVariables>
     createMaterialStateVariables() = 0;
 
-    virtual ~FractureModelBase() {}
+    virtual ~FractureModelBase() = default;
 
     /**
      * Computation of the constitutive relation for specific material model.

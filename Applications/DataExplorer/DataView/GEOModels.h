@@ -39,7 +39,7 @@ class GEOModels : public QObject
 
 public:
     GEOModels(GeoLib::GEOObjects& geo_objects, QObject* parent = nullptr);
-    ~GEOModels();
+    ~GEOModels() override;
 
     GeoTreeModel* getGeoModel() { return _geoModel; }
     StationTreeModel* getStationModel() { return _stationModel; }

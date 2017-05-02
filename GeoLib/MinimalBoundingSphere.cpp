@@ -187,7 +187,7 @@ double MinimalBoundingSphere::pointDistanceSquared(MathLib::Point3d const& pnt) 
 
 std::vector<MathLib::Point3d*>* MinimalBoundingSphere::getRandomSpherePoints(std::size_t n_points) const
 {
-    std::vector<MathLib::Point3d*> *pnts = new std::vector<MathLib::Point3d*>;
+    auto* pnts = new std::vector<MathLib::Point3d*>;
     pnts->reserve(n_points);
     srand ( static_cast<unsigned>(time(nullptr)) );
 

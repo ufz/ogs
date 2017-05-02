@@ -93,9 +93,8 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         _keep_preprocessed_geometry = true;
     }
 
-    std::vector<GeoLib::Point*>* merged_pnts(
-        const_cast<std::vector<GeoLib::Point*>*>(
-            _geo_objs.getPointVec(_gmsh_geo_name)));
+    auto* merged_pnts(const_cast<std::vector<GeoLib::Point*>*>(
+        _geo_objs.getPointVec(_gmsh_geo_name)));
     if (! merged_pnts) {
         ERR("GMSHInterface::writeGMSHInputFile(): Did not found any points.");
         return 2;
@@ -193,9 +192,9 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     }
 
     // *** init mesh density strategies
-    for (auto it(_polygon_tree_list.begin());
-        it != _polygon_tree_list.end(); ++it) {
-        (*it)->initMeshDensityStrategy();
+    for (auto& polygon_tree : _polygon_tree_list)
+    {
+        polygon_tree->initMeshDensityStrategy();
     }
 
     // *** create GMSH data structures
@@ -204,9 +203,9 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     for (std::size_t k(0); k<n_merged_pnts; k++) {
         _gmsh_pnts[k] = nullptr;
     }
-    for (auto it(_polygon_tree_list.begin());
-        it != _polygon_tree_list.end(); ++it) {
-        (*it)->createGMSHPoints(_gmsh_pnts);
+    for (auto& polygon_tree : _polygon_tree_list)
+    {
+        polygon_tree->createGMSHPoints(_gmsh_pnts);
     }
 
     // *** finally write data :-)

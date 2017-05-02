@@ -82,7 +82,7 @@ protected:
     VtkColorLookupTable();
 
     /// Destructor
-    ~VtkColorLookupTable();
+    ~VtkColorLookupTable() override;
 
 private:
     /// Interpolates values linearly.

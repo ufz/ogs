@@ -25,7 +25,7 @@ class StationTabWidget : public QWidget, public Ui_StationTabWidgetBase
     Q_OBJECT
 
 public:
-    StationTabWidget(QWidget* parent = 0);
+    StationTabWidget(QWidget* parent = nullptr);
 
 private:
 

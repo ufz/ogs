@@ -101,21 +101,18 @@ Surface* Surface::createSurface(const Polyline& ply)
     }
 
     // create empty surface
-    Surface* sfc(new Surface(ply.getPointsVec()));
+    auto* sfc(new Surface(ply.getPointsVec()));
 
-    Polygon* polygon(new Polygon(ply));
+    auto* polygon(new Polygon(ply));
     polygon->computeListOfSimplePolygons();
 
     // create surfaces from simple polygons
     const std::list<GeoLib::Polygon*>& list_of_simple_polygons(
         polygon->getListOfSimplePolygons());
-    for (std::list<GeoLib::Polygon*>::const_iterator simple_polygon_it(
-             list_of_simple_polygons.begin());
-         simple_polygon_it != list_of_simple_polygons.end();
-         ++simple_polygon_it)
+    for (auto simple_polygon : list_of_simple_polygons)
     {
         std::list<GeoLib::Triangle> triangles;
-        GeoLib::EarClippingTriangulation(*simple_polygon_it, triangles);
+        GeoLib::EarClippingTriangulation(simple_polygon, triangles);
 
         // add Triangles to Surface
         std::list<GeoLib::Triangle>::const_iterator it(triangles.begin());

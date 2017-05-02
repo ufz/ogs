@@ -53,8 +53,9 @@ void GMSHPolygonTree::markSharedSegments()
     if (_parent == nullptr)
         return;
 
-    for (auto it(_children.begin()); it != _children.end(); it++) {
-        std::size_t const n_pnts((*it)->getPolygon()->getNumberOfPoints());
+    for (auto& child : _children)
+    {
+        std::size_t const n_pnts(child->getPolygon()->getNumberOfPoints());
         for (std::size_t k(1); k<n_pnts; k++) {
             if (GeoLib::containsEdge(*(_parent->getPolygon()),
                 _node_polygon->getPointID(k-1),
@@ -280,8 +281,9 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) cons
     }
 
     // walk through children
-    for (std::list<SimplePolygonTree*>::const_iterator it (_children.begin()); it != _children.end(); ++it) {
-        dynamic_cast<GMSHPolygonTree*>((*it))->createGMSHPoints(gmsh_pnts);
+    for (auto child : _children)
+    {
+        dynamic_cast<GMSHPolygonTree*>(child)->createGMSHPoints(gmsh_pnts);
     }
 }
 
@@ -332,11 +334,14 @@ void GMSHPolygonTree::writeLineConstraints(std::size_t& line_offset,
 
 void GMSHPolygonTree::writeSubPolygonsAsLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const
 {
-    for (std::list<SimplePolygonTree*>::const_iterator it (_children.begin()); it != _children.end(); ++it) {
-        dynamic_cast<GMSHPolygonTree*>((*it))->writeSubPolygonsAsLineConstraints(line_offset, sfc_number, out);
+    for (auto child : _children)
+    {
+        dynamic_cast<GMSHPolygonTree*>(child)
+            ->writeSubPolygonsAsLineConstraints(line_offset, sfc_number, out);
     }
 
-    if (_parent != NULL) {
+    if (_parent != nullptr)
+    {
         const std::size_t n_pnts(_node_polygon->getNumberOfPoints());
         std::size_t first_pnt_id(_node_polygon->getPointID(0)), second_pnt_id;
         for (std::size_t k(1); k<n_pnts; k++) {

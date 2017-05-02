@@ -45,7 +45,7 @@ const Element* PyramidRule13::getFace(const Element* e, unsigned i)
     if (i<e->getNumberOfFaces())
     {
         unsigned nFaceNodes(PyramidRule13::n_face_nodes[i]);
-        Node** nodes = new Node*[nFaceNodes];
+        auto** nodes = new Node*[nFaceNodes];
         for (unsigned j=0; j<nFaceNodes; j++)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 

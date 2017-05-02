@@ -32,10 +32,10 @@ class VisualizationWidget : public QWidget, public Ui_VisualizationWidgetBase
 public:
 
     /// @brief Constructor.
-    VisualizationWidget(QWidget* parent = 0);
+    VisualizationWidget(QWidget* parent = nullptr);
 
     /// @brief Destructor.
-    ~VisualizationWidget();
+    ~VisualizationWidget() override;
 
     /// @brief Returns the VtkCustomInteractorStyle.
     VtkCustomInteractorStyle* interactorStyle() const;

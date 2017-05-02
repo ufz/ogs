@@ -18,42 +18,42 @@ class TestQuad4
 {
  public:
     // Element information
-    typedef MeshLib::Quad ElementType;
-    typedef NumLib::ShapeQuad4 ShapeFunctionType;
-    static const unsigned global_dim = ElementType::dimension;
-    static const unsigned dim = 2; //ElementType::dimension;
-    static const unsigned e_nnodes = ElementType::n_all_nodes;
-    // Coordinates where shape functions are evaluated
-    static const double r[dim];
-    // Expected results for natural shape
-    static const double nat_exp_N[e_nnodes];
-    static const double nat_exp_dNdr[e_nnodes*dim];
-    // Expected results for irregular shape
-    static const double ir_exp_J[dim*dim];
-    static const double ir_exp_invJ[dim*dim];
-    static const double ir_exp_detJ;
-    static const double ir_exp_dNdx[e_nnodes*dim];
-    // Expected results for clock-wise node ordering
-    static const double cl_exp_J[dim*dim];
-    // Expected results for zero volume
-    static const double cl_exp_detJ;
-    static const double ze_exp_J[dim*dim];
+     using ElementType = MeshLib::Quad;
+     using ShapeFunctionType = NumLib::ShapeQuad4;
+     static const unsigned global_dim = ElementType::dimension;
+     static const unsigned dim = 2;  // ElementType::dimension;
+     static const unsigned e_nnodes = ElementType::n_all_nodes;
+     // Coordinates where shape functions are evaluated
+     static const double r[dim];
+     // Expected results for natural shape
+     static const double nat_exp_N[e_nnodes];
+     static const double nat_exp_dNdr[e_nnodes * dim];
+     // Expected results for irregular shape
+     static const double ir_exp_J[dim * dim];
+     static const double ir_exp_invJ[dim * dim];
+     static const double ir_exp_detJ;
+     static const double ir_exp_dNdx[e_nnodes * dim];
+     // Expected results for clock-wise node ordering
+     static const double cl_exp_J[dim * dim];
+     // Expected results for zero volume
+     static const double cl_exp_detJ;
+     static const double ze_exp_J[dim * dim];
 
-    // element shape identical to that in natural coordinates
-    MeshLib::Quad* createNaturalShape()
-    {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node( 1.0,  1.0,  0.0);
-        nodes[1] = new MeshLib::Node(-1.0,  1.0,  0.0);
-        nodes[2] = new MeshLib::Node(-1.0, -1.0,  0.0);
-        nodes[3] = new MeshLib::Node( 1.0, -1.0,  0.0);
-        return new MeshLib::Quad(nodes);
+     // element shape identical to that in natural coordinates
+     MeshLib::Quad* createNaturalShape()
+     {
+         auto** nodes = new MeshLib::Node*[e_nnodes];
+         nodes[0] = new MeshLib::Node(1.0, 1.0, 0.0);
+         nodes[1] = new MeshLib::Node(-1.0, 1.0, 0.0);
+         nodes[2] = new MeshLib::Node(-1.0, -1.0, 0.0);
+         nodes[3] = new MeshLib::Node(1.0, -1.0, 0.0);
+         return new MeshLib::Quad(nodes);
     }
 
     // element having irregular or skew shape
     MeshLib::Quad* createIrregularShape()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(-0.5, -0.5,  0.0);
         nodes[1] = new MeshLib::Node( 0.6, -0.6,  0.0);
         nodes[2] = new MeshLib::Node( 0.5,  0.4,  0.0);
@@ -64,7 +64,7 @@ class TestQuad4
     // invalid case: clock wise node ordering
     MeshLib::Quad* createClockWise()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node( 1.0,  1.0,  0.0);
         nodes[3] = new MeshLib::Node(-1.0,  1.0,  0.0);
         nodes[2] = new MeshLib::Node(-1.0, -1.0,  0.0);
@@ -75,7 +75,7 @@ class TestQuad4
     // invalid case: zero area
     MeshLib::Quad* createZeroVolume()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node( 1.0,  1.0,  0.0);
         nodes[1] = new MeshLib::Node(-1.0,  1.0,  0.0);
         nodes[2] = new MeshLib::Node(-1.0,  1.0,  0.0);

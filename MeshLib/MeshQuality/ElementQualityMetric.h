@@ -34,7 +34,7 @@ class ElementQualityMetric
 public:
     ElementQualityMetric(Mesh const& mesh);
 
-    virtual ~ElementQualityMetric () {}
+    virtual ~ElementQualityMetric() = default;
 
     /// Calculates the quality metric for each element of the mesh
     virtual void calculateQuality () = 0;

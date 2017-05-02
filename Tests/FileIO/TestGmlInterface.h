@@ -99,8 +99,9 @@ public:
         {
             auto const & pnt_id_map(pnt_vec.getIDMap());
             lines[line_id] = new GeoLib::Polyline(*(pnt_vec.getVector()));
-            for (std::size_t k(0); k<pnt_ids.size(); ++k) {
-                lines[line_id]->addPoint(pnt_id_map[pnt_ids[k]]);
+            for (unsigned long pnt_id : pnt_ids)
+            {
+                lines[line_id]->addPoint(pnt_id_map[pnt_id]);
             }
 
             if (!name.empty())
@@ -111,8 +112,7 @@ public:
 
         auto lines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
             new std::vector<GeoLib::Polyline*>(5));
-        std::map<std::string, std::size_t>* name_map =
-            new std::map<std::string, std::size_t>;
+        auto* name_map = new std::map<std::string, std::size_t>;
 
         createPolyline(pnt_vec, *(lines.get()), 0, {0, 1, 2}, *name_map, "left");
         createPolyline(pnt_vec, *(lines.get()), 1, {3, 4, 5}, *name_map, "center");
@@ -157,8 +157,7 @@ public:
 
         auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(
             new std::vector<GeoLib::Surface*>(2));
-        std::map<std::string, std::size_t>* sfc_names =
-            new std::map<std::string, std::size_t>;
+        auto* sfc_names = new std::map<std::string, std::size_t>;
         (*sfcs)[0] = new GeoLib::Surface(*points);
         (*sfcs)[0]->addTriangle(pnt_id_map[0], pnt_id_map[3], pnt_id_map[1]);
         (*sfcs)[0]->addTriangle(pnt_id_map[1], pnt_id_map[3], pnt_id_map[4]);

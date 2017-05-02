@@ -14,6 +14,7 @@
 #include <iterator>
 #include <ostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "BaseLib/Error.h"
@@ -35,12 +36,12 @@ public:
     std::size_t getNumberOfComponents() const { return _n_components; }
 
 protected:
-    PropertyVectorBase(std::string const& property_name,
+    PropertyVectorBase(std::string property_name,
                        MeshItemType mesh_item_type,
                        std::size_t n_components)
         : _n_components(n_components),
           _mesh_item_type(mesh_item_type),
-          _property_name(property_name)
+          _property_name(std::move(property_name))
     {}
 
     std::size_t const _n_components;
@@ -84,9 +85,9 @@ public:
     }
 
     PropertyVectorBase* clone(
-        std::vector<std::size_t> const& exclude_positions) const
+        std::vector<std::size_t> const& exclude_positions) const override
     {
-        PropertyVector<PROP_VAL_TYPE>* t(new PropertyVector<PROP_VAL_TYPE>(
+        auto* t(new PropertyVector<PROP_VAL_TYPE>(
             _property_name, _mesh_item_type, _n_components));
         BaseLib::excludeObjectCopy(*this, exclude_positions, *t);
         return t;
@@ -143,7 +144,7 @@ class PropertyVector<T*> : public std::vector<std::size_t>,
 friend class Properties;
 public:
     /// Destructor ensures the deletion of the heap-constructed objects.
-    ~PropertyVector()
+    ~PropertyVector() override
     {
         for (auto v : _values)
             delete [] v;
@@ -166,7 +167,7 @@ public:
         if (_n_components != 1)
             OGS_FATAL("Single-component version of initPropertyValue() is called "
                       "for a multi-components PropertyVector<T*>");
-        T* p = new T[1];
+        auto* p = new T[1];
         p[0] = value;
         _values[group_id] = p;
     }
@@ -177,7 +178,7 @@ public:
             OGS_FATAL("The size of provided values in initPropertyValue() is "
                       "not same as the number of components in PropertyVector<T*>");
 
-        T* p = new T[values.size()];
+        auto* p = new T[values.size()];
         for (unsigned i=0; i<values.size(); i++)
             p[i] = values[i];
         _values[group_id] = p;
@@ -194,7 +195,8 @@ public:
         return _n_components * std::vector<std::size_t>::size();
     }
 
-    PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
+    PropertyVectorBase* clone(
+        std::vector<std::size_t> const& exclude_positions) const override
     {
         // create new PropertyVector with modified mapping
         PropertyVector<T*> *t(new PropertyVector<T*>
@@ -254,11 +256,12 @@ protected:
     /// nodes or cells (see enumeration MeshItemType)
     /// @param n_components the number of elements of a tuple
     PropertyVector(std::size_t n_prop_groups,
-                   std::vector<std::size_t> const& item2group_mapping,
+                   std::vector<std::size_t>
+                       item2group_mapping,
                    std::string const& property_name,
                    MeshItemType mesh_item_type,
                    std::size_t n_components)
-        : std::vector<std::size_t>(item2group_mapping),
+        : std::vector<std::size_t>(std::move(item2group_mapping)),
           PropertyVectorBase(property_name, mesh_item_type, n_components),
           _values(n_prop_groups * n_components)
     {}

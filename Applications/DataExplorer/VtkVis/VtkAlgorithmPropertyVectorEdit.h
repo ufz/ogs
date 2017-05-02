@@ -34,11 +34,11 @@ public:
     /// @param algProps The VtkAlgorithmProperties object.
     /// @param parent The parent widget.
     VtkAlgorithmPropertyVectorEdit(const QList<QString> contents,
-                                   const QString& name,
+                                   QString name,
                                    QVariant::Type type,
                                    VtkAlgorithmProperties* algProps,
-                                   QWidget* parent = 0);
-    virtual ~VtkAlgorithmPropertyVectorEdit();
+                                   QWidget* parent = nullptr);
+    ~VtkAlgorithmPropertyVectorEdit() override;
 
 private:
     const QString _name;

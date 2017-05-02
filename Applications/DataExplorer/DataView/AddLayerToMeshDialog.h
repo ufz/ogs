@@ -40,8 +40,8 @@ public:
 
 private slots:
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 };

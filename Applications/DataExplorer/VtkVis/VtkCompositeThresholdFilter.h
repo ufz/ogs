@@ -23,11 +23,11 @@ class VtkCompositeThresholdFilter : public VtkCompositeFilter
 {
 public:
     VtkCompositeThresholdFilter(vtkAlgorithm* inputAlgorithm);
-    virtual ~VtkCompositeThresholdFilter();
+    ~VtkCompositeThresholdFilter() override;
 
-    virtual void init() override;
+    void init() override;
 
-    virtual void SetUserProperty(QString name, QVariant value) override;
+    void SetUserProperty(QString name, QVariant value) override;
 
     void SetUserVectorProperty(QString name, QList<QVariant> values) override;
 

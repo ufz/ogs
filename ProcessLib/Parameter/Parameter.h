@@ -11,6 +11,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 #include <vector>
 #include "SpatialPosition.h"
 
@@ -36,8 +37,7 @@ namespace ProcessLib
 /// Its property name helps addressing the right parameter.
 struct ParameterBase
 {
-    ParameterBase(std::string const& name_) : name(name_) {}
-
+    ParameterBase(std::string name_) : name(std::move(name_)) {}
     virtual ~ParameterBase() = default;
 
     virtual bool isTimeDependent() const = 0;
@@ -63,8 +63,7 @@ template <typename T>
 struct Parameter : public ParameterBase
 {
     Parameter(std::string const& name_) : ParameterBase(name_) {}
-
-    virtual ~Parameter() = default;
+    ~Parameter() override = default;
 
     //! Returns the number of components this Parameter has at every position and
     //! point in time.

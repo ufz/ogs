@@ -25,7 +25,7 @@ namespace MeshLib
 class MeshLayerMapper : public LayeredMeshGenerator
 {
 public:
-    virtual ~MeshLayerMapper() = default;
+    ~MeshLayerMapper() override = default;
 
     /**
     * Based on a 2D triangle-or quad mesh this method creates a 3D mesh with a given number of prism- or hex-layers
@@ -52,7 +52,7 @@ public:
     bool createRasterLayers(MeshLib::Mesh const& mesh,
                             std::vector<GeoLib::Raster const*> const& rasters,
                             double minimum_thickness,
-                            double noDataReplacementValue = 0.0);
+                            double noDataReplacementValue = 0.0) override;
 
     /**
     * Maps the elevation of nodes of a given 2D mesh according to the raster. At
@@ -66,7 +66,9 @@ public:
 
 private:
     /// Adds another layer to a subsurface mesh
-    void addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id, GeoLib::Raster const& raster);
+    void addLayerToMesh(const MeshLib::Mesh& mesh_layer,
+                        unsigned layer_id,
+                        GeoLib::Raster const& raster) override;
 };
 
 } // end namespace MeshLib

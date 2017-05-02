@@ -12,14 +12,16 @@
  *
  */
 
+#include <utility>
+
 #include "TreeItem.h"
 
 /**
  * The constructor is only used to record the item's parent
  * and the data associated with each column.
  */
-TreeItem::TreeItem(const QList<QVariant> &data, TreeItem* parent)
-: _itemData(data), _parentItem(parent)
+TreeItem::TreeItem(QList<QVariant> data, TreeItem* parent)
+    : _itemData(std::move(data)), _parentItem(parent)
 {
 }
 
@@ -45,14 +47,14 @@ void TreeItem::appendChild(TreeItem* item)
 /**
  * Returns the child that corresponds to the specified row number
  * in the item's list of child items
- * Returns NULL if that child does not exist.
+ * Returns nullptr if that child does not exist.
  */
 TreeItem* TreeItem::child(int row) const
 {
     if (_childItems.count() > row)
         return _childItems.value(row);
     else
-        return NULL;
+        return nullptr;
 }
 
 /**

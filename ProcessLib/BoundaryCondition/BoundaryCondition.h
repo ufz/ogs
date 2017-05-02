@@ -69,7 +69,7 @@ public:
 class BoundaryConditionBuilder
 {
 public:
-    virtual ~BoundaryConditionBuilder() {}
+    virtual ~BoundaryConditionBuilder() = default;
 
     virtual std::unique_ptr<BoundaryCondition> createBoundaryCondition(
         const BoundaryConditionConfig& config,

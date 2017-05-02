@@ -21,8 +21,8 @@ ModelTreeItem::ModelTreeItem(const QList<QVariant> &data, TreeItem* parent, Base
 
 BaseItem* ModelTreeItem::getItem() const
 {
-    if (_item != NULL)
+    if (_item != nullptr)
         return _item;
-    return NULL;
+    return nullptr;
 }
 

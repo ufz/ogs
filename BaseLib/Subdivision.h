@@ -23,7 +23,7 @@ public:
     /// Returns a vector of subdivided points
     virtual std::vector<double> operator()() const = 0;
 
-    virtual ~ISubdivision() {}
+    virtual ~ISubdivision() = default;
 };
 
 /**
@@ -41,7 +41,7 @@ public:
     : _length(length), _n_subdivision(n_subdivision) {}
 
     /// Returns a vector of subdivided points
-    std::vector<double> operator()() const
+    std::vector<double> operator()() const override
     {
         std::vector<double> x;
         x.reserve(_n_subdivision+1);
@@ -77,7 +77,7 @@ public:
     : _length(L), _dL0(dL0), _max_dL(max_dL), _multiplier(multiplier) {}
 
     /// Returns a vector of subdivided points
-    std::vector<double> operator()() const
+    std::vector<double> operator()() const override
     {
         std::vector<double> vec_x;
 

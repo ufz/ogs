@@ -19,8 +19,8 @@ namespace NumLib
  */
 class IntegrationGaussPyramid
 {
-    typedef MathLib::TemplateWeightedPoint<double, double, 3>
-        WeightedPoint;
+    using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 3>;
+
 public:
     /**
      * Construct this object with the given integration order

@@ -65,7 +65,7 @@ TESFEMReactionAdaptorAdsorption::TESFEMReactionAdaptorAdsorption(
     assert(dynamic_cast<Adsorption::AdsorptionReaction const*>(
                data.ap.react_sys.get()) != nullptr &&
            "Reactive system has wrong type.");
-    assert(_bounds_violation.size() != 0);
+    assert(!_bounds_violation.empty());
 }
 
 ReactionRate

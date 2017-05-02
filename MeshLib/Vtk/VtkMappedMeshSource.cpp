@@ -31,7 +31,7 @@ namespace MeshLib
 {
 vtkStandardNewMacro(VtkMappedMeshSource)
 
-void VtkMappedMeshSource::PrintSelf(std::ostream& os, vtkIndent indent)
+    void VtkMappedMeshSource::PrintSelf(std::ostream& os, vtkIndent indent)
 {
     this->Superclass::PrintSelf(os, indent);
     os << indent << "Mesh: " << (_mesh ? _mesh->getName() : "(none)") << endl;
@@ -81,13 +81,13 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
     // Cells
     auto elems = _mesh->getElements();
     output->Allocate(elems.size());
-    for (std::size_t cell = 0; cell < elems.size(); cell++)
+    for (auto& cell : elems)
     {
-        auto cellType = OGSToVtkCellType(elems[cell]->getCellType());
+        auto cellType = OGSToVtkCellType(cell->getCellType());
 
-        const MeshLib::Element* const elem = (elems)[cell];
+        const MeshLib::Element* const elem = cell;
         const unsigned numNodes(elem->getNumberOfNodes());
-        const MeshLib::Node* const* nodes = elems[cell]->getNodes();
+        const MeshLib::Node* const* nodes = cell->getNodes();
         vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
         ptIds->SetNumberOfIds(numNodes);
 
@@ -130,8 +130,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
     std::vector<std::string> const& propertyNames =
         properties.getPropertyVectorNames();
 
-    for (std::vector<std::string>::const_iterator name = propertyNames.cbegin();
-         name != propertyNames.cend();
+    for (auto name = propertyNames.cbegin(); name != propertyNames.cend();
          ++name)
     {
         if (addProperty<double>(properties, *name))

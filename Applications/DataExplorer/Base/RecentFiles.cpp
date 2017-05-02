@@ -17,17 +17,19 @@
 
 #include <QFileInfo>
 #include <QSettings>
+#include <utility>
 
-RecentFiles::RecentFiles(  QObject* parent, const char* slot, QString settingsName)
-    : QObject(parent), _settingsName(settingsName)
+RecentFiles::RecentFiles(QObject* parent, const char* slot,
+                         QString settingsName)
+    : QObject(parent), _settingsName(std::move(settingsName))
 {
     _filesMenu = new QMenu(tr("Recent files"));
-    for (int i = 0; i < _maxFiles; i++)
+    for (auto& fileAction : _fileActions)
     {
-        _fileActions[i] = new QAction(this);
-        _fileActions[i]->setVisible(false);
-        connect(_fileActions[i], SIGNAL(triggered()), parent, slot);
-        _filesMenu->addAction(_fileActions[i]);
+        fileAction = new QAction(this);
+        fileAction->setVisible(false);
+        connect(fileAction, SIGNAL(triggered()), parent, slot);
+        _filesMenu->addAction(fileAction);
     }
     updateRecentFileActions();
 }

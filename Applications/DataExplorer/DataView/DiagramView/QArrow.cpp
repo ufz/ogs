@@ -51,9 +51,7 @@ QArrow::QArrow(float l, float a, QPen &pen, QGraphicsItem* parent) : QGraphicsIt
     _arrowPen    = pen;
 }
 
-QArrow::~QArrow()
-{
-}
+QArrow::~QArrow() = default;
 
 double QArrow::calcCos(double angle)
 {
@@ -101,10 +99,10 @@ void QArrow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
     double theta2    = (ddeltaX < 0.0) ? (theta + PI) : theta;
     int lengthdeltaX = -static_cast<int>(cos(theta2) * _headLength);
     int lengthdeltaY = -static_cast<int>(sin(theta2) * _headLength);
-    int widthdeltaX  =  static_cast<int>(sin(theta2) * _headWidth);
-    int widthdeltaY  =  static_cast<int>(cos(theta2) * _headWidth);
-    int deltaX = static_cast<int>(ddeltaX);
-    int deltaY = static_cast<int>(ddeltaY);
+    auto widthdeltaX = static_cast<int>(sin(theta2) * _headWidth);
+    auto widthdeltaY = static_cast<int>(cos(theta2) * _headWidth);
+    auto deltaX = static_cast<int>(ddeltaX);
+    auto deltaY = static_cast<int>(ddeltaY);
     painter->setPen(_arrowPen);
     painter->drawLine(0, 0, deltaX, deltaY);
     painter->drawLine(deltaX,

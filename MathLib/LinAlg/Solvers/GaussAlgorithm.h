@@ -35,8 +35,8 @@ template <typename MAT_T, typename VEC_T = typename MAT_T::FP_T*>
 class GaussAlgorithm
 {
 public:
-    typedef typename MAT_T::FP_T FP_T;
-    typedef typename MAT_T::IDX_T IDX_T;
+    using FP_T = typename MAT_T::FP_T;
+    using IDX_T = typename MAT_T::IDX_T;
 
 public:
     /**

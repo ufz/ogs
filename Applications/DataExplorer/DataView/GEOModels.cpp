@@ -226,29 +226,26 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
     GeoLib::PointVec* pnt_vec = _geo_objects.getPointVecObj(geometry_name);
     if (object_type == GeoLib::GEOTYPE::POLYLINE)
     {
-        const GeoLib::Polyline* ply = dynamic_cast<const GeoLib::Polyline*>(obj);
+        const auto* ply = dynamic_cast<const GeoLib::Polyline*>(obj);
         std::size_t nPoints = ply->getNumberOfPoints();
         for (std::size_t i = 0; i < nPoints; i++)
-            pnt_vec->setNameForElement(ply->getPointID(
-                                               i), new_name + "_Point" +
-                                       std::to_string(ply->getPointID(i)));
+            pnt_vec->setNameForElement(
+                ply->getPointID(i),
+                new_name + "_Point" + std::to_string(ply->getPointID(i)));
     }
     else if (object_type == GeoLib::GEOTYPE::SURFACE)
     {
-        const GeoLib::Surface* sfc = dynamic_cast<const GeoLib::Surface*>(obj);
+        const auto* sfc = dynamic_cast<const GeoLib::Surface*>(obj);
         std::size_t nTriangles = sfc->getNumberOfTriangles();
         for (std::size_t i = 0; i < nTriangles; i++)
         {
             const GeoLib::Triangle* tri = (*sfc)[i];
-            pnt_vec->setNameForElement((*tri)[0],
-                                       new_name + "_Point" +
-                                       std::to_string((*tri)[0]));
-            pnt_vec->setNameForElement((*tri)[1],
-                                       new_name + "_Point" +
-                                       std::to_string((*tri)[1]));
-            pnt_vec->setNameForElement((*tri)[2],
-                                       new_name + "_Point" +
-                                       std::to_string((*tri)[2]));
+            pnt_vec->setNameForElement(
+                (*tri)[0], new_name + "_Point" + std::to_string((*tri)[0]));
+            pnt_vec->setNameForElement(
+                (*tri)[1], new_name + "_Point" + std::to_string((*tri)[1]));
+            pnt_vec->setNameForElement(
+                (*tri)[2], new_name + "_Point" + std::to_string((*tri)[2]));
         }
     }
     else

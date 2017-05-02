@@ -79,9 +79,9 @@ double computeBarMu0Factor(const double barT)
 {
     double sum_val = 0.;
     double barT_i = 1.;
-    for (int i = 0; i < 4; i++)
+    for (double value : Hi)
     {
-        sum_val += (Hi[i] / barT_i);
+        sum_val += (value / barT_i);
         barT_i *= barT;
     }
     return sum_val;

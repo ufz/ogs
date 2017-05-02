@@ -47,7 +47,7 @@ const Element* PyramidRule5::getFace(const Element* e, unsigned i)
     if (i<e->getNumberOfFaces())
     {
         unsigned nFaceNodes(PyramidRule5::n_face_nodes[i]);
-        Node** nodes = new Node*[nFaceNodes];
+        auto** nodes = new Node*[nFaceNodes];
         for (unsigned j=0; j<nFaceNodes; j++)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 
@@ -96,7 +96,7 @@ ElementErrorCode PyramidRule5::validate(const Element* e)
     ElementErrorCode error_code;
     error_code[ElementErrorFlag::ZeroVolume] = e->hasZeroVolume();
 
-    const MeshLib::Quad* base (dynamic_cast<const MeshLib::Quad*>(e->getFace(4)));
+    const auto* base(dynamic_cast<const MeshLib::Quad*>(e->getFace(4)));
     if (base)
     {
         error_code |= base->validate();

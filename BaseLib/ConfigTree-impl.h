@@ -10,6 +10,7 @@
 #include "ConfigTree.h"
 
 #include <sstream>
+#include <utility>
 
 namespace BaseLib
 {
@@ -20,7 +21,7 @@ class Range
 {
 public:
     explicit Range(Iterator begin, Iterator end)
-        : _begin(begin), _end(end)
+        : _begin(std::move(begin)), _end(std::move(end))
     {}
 
     Iterator begin() const { return _begin; }

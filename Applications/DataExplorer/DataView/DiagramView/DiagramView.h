@@ -31,14 +31,14 @@ public:
     /**
      * Creates an empty view.
      */
-    DiagramView(QWidget* parent = 0);
+    DiagramView(QWidget* parent = nullptr);
     /**
      * Creates a view already containing a graph
      * \param list Contains a list of data points and metainformation to be displayed by the scene.
      * \param parent The parent QWidget.
      */
-    DiagramView(DiagramList* list, QWidget* parent = 0);
-    ~DiagramView();
+    DiagramView(DiagramList* list, QWidget* parent = nullptr);
+    ~DiagramView() override;
 
     /// Adds a new graph to the scene.
     void addGraph(DiagramList* list);
@@ -49,13 +49,13 @@ public:
 
 protected:
     /// Resizes the scene.
-    void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     void initialize();
     void keepItemAspectRatio();
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
+    QSize minimumSizeHint() const override;
+    QSize sizeHint() const override;
     void update();
 
     DiagramScene* _scene;

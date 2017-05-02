@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "BaseLib/Error.h"
 #include "MeshLib/PropertyVector.h"
 
@@ -39,10 +41,11 @@ struct GroupBasedParameter final
      */
     GroupBasedParameter(std::string const& name_,
                         MeshLib::PropertyVector<int> const& property,
-                        std::vector<std::vector<double>> const& vec_values)
+                        std::vector<std::vector<double>>
+                            vec_values)
         : Parameter<T>(name_),
           _property_index(property),
-          _vec_values(vec_values)
+          _vec_values(std::move(vec_values))
     {
     }
 

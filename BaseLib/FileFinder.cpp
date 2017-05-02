@@ -40,7 +40,7 @@ void FileFinder::addDirectory(std::string const& dir)
         return;
 
     if (dir[dir.size() - 1] != '/')
-        _directories.push_back(std::string(dir + "/"));
+        _directories.emplace_back(dir + "/");
     else
         _directories.push_back(dir);
 }

@@ -10,6 +10,7 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <utility>
 
 namespace MeshLib
 {
@@ -33,7 +34,8 @@ struct HydroMechanicsProcessData
         Parameter<double> const& biot_coefficient_,
         Parameter<double> const& porosity_,
         Parameter<double> const& solid_density_,
-        Eigen::Matrix<double, DisplacementDim, 1> const& specific_body_force_)
+        Eigen::Matrix<double, DisplacementDim, 1>
+            specific_body_force_)
         : material{std::move(material_)},
           intrinsic_permeability(intrinsic_permeability_),
           specific_storage(specific_storage_),
@@ -42,7 +44,7 @@ struct HydroMechanicsProcessData
           biot_coefficient(biot_coefficient_),
           porosity(porosity_),
           solid_density(solid_density_),
-          specific_body_force(specific_body_force_)
+          specific_body_force(std::move(specific_body_force_))
     {
     }
 

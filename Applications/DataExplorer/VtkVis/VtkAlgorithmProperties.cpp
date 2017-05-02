@@ -41,16 +41,15 @@ VtkAlgorithmProperties::~VtkAlgorithmProperties()
     _property->Delete();
     if (_texture != nullptr) _texture->Delete();
 
-    for (std::map<QString, vtkLookupTable*>::iterator it = _lut.begin();
-        it != _lut.end(); ++it)
-        it->second->Delete();
+    for (auto& row : _lut)
+        row.second->Delete();
     delete _algorithmUserProperties;
     delete _algorithmUserVectorProperties;
 }
 
 vtkLookupTable* VtkAlgorithmProperties::GetLookupTable(const QString& array_name)
 {
-    std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
+    auto it = _lut.find(array_name);
     if (it != _lut.end())
         return it->second;
     else
@@ -59,7 +58,7 @@ vtkLookupTable* VtkAlgorithmProperties::GetLookupTable(const QString& array_name
 
 void VtkAlgorithmProperties::RemoveLookupTable(const QString& array_name)
 {
-    std::map<QString, vtkLookupTable*>::iterator it = _lut.find(array_name);
+    auto it = _lut.find(array_name);
     if (it != _lut.end())
     {
         it->second->Delete();

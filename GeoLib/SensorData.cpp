@@ -123,8 +123,8 @@ int SensorData::readDataFromFile(const std::string &file_name)
     for (std::size_t i=0; i<nDataArrays; i++)
     {
         this->_vec_names.push_back(SensorData::convertString2SensorDataType(*++it));
-        this->_data_unit_string.push_back("");
-        std::vector<float> *data = new std::vector<float>;
+        this->_data_unit_string.emplace_back("");
+        auto* data = new std::vector<float>;
         this->_data_vecs.push_back(data);
     }
 
@@ -140,7 +140,8 @@ int SensorData::readDataFromFile(const std::string &file_name)
             this->_time_steps.push_back(current_time_step);
 
             for (std::size_t i=0; i<nDataArrays; i++)
-                this->_data_vecs[i]->push_back(static_cast<float>(strtod((it++)->c_str(), 0)));
+                this->_data_vecs[i]->push_back(
+                    static_cast<float>(strtod((it++)->c_str(), nullptr)));
         }
         else
             return 0;

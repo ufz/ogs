@@ -186,7 +186,8 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
 
             // check if the underlying object is a mesh and if so, send a signal to the element model for display of information about the picked element.
             vtkAlgorithm* data_set = picker->GetActor()->GetMapper()->GetInputConnection(0, 0)->GetProducer()->GetInputConnection(0,0)->GetProducer();
-            vtkUnstructuredGridAlgorithm* source = dynamic_cast<vtkUnstructuredGridAlgorithm*>(data_set);
+            auto* source =
+                dynamic_cast<vtkUnstructuredGridAlgorithm*>(data_set);
             if (source)
                 emit elementPicked(source, static_cast<unsigned>(picker->GetCellId()));
             else

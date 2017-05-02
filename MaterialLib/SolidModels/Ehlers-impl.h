@@ -441,7 +441,7 @@ void SolidEhlers<DisplacementDim>::updateDamage(
 {
     assert(dynamic_cast<MaterialStateVariables*>(&material_state_variables) !=
            nullptr);
-    MaterialStateVariables& state =
+    auto& state =
         static_cast<MaterialStateVariables&>(material_state_variables);
 
     // Default case of the rate problem. Updated below if volumetric plastic
@@ -546,7 +546,7 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
 {
     assert(dynamic_cast<MaterialStateVariables*>(&material_state_variables) !=
            nullptr);
-    MaterialStateVariables& _state =
+    auto& _state =
         static_cast<MaterialStateVariables&>(material_state_variables);
     _state.setInitialConditions();
 

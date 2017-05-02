@@ -34,8 +34,8 @@ private:
     W_T const _weight;
 };
 
-typedef TemplateWeightedPoint<double, double, 1> WeightedPoint1D;
-typedef TemplateWeightedPoint<double, double, 2> WeightedPoint2D;
-typedef TemplateWeightedPoint<double, double, 3> WeightedPoint3D;
+using WeightedPoint1D = TemplateWeightedPoint<double, double, 1>;
+using WeightedPoint2D = TemplateWeightedPoint<double, double, 2>;
+using WeightedPoint3D = TemplateWeightedPoint<double, double, 3>;
 
 } // end namespace MathLib

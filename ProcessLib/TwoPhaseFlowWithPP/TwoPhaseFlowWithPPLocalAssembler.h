@@ -32,11 +32,11 @@ template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType,
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
-        NodalRowVectorType const& N_, GlobalDimNodalMatrixType const& dNdx_,
+        NodalRowVectorType N_, GlobalDimNodalMatrixType dNdx_,
         TwoPhaseFlowWithPPMaterialProperties& material_property_,
         double const& integration_weight_, NodalMatrixType const massOperator_)
-        : N(N_),
-          dNdx(dNdx_),
+        : N(std::move(N_)),
+          dNdx(std::move(dNdx_)),
           mat_property(material_property_),
           integration_weight(integration_weight_),
           massOperator(massOperator_)
@@ -137,14 +137,14 @@ public:
     std::vector<double> const& getIntPtSaturation(
         std::vector<double>& /*cache*/) const override
     {
-        assert(_saturation.size() > 0);
+        assert(!_saturation.empty());
         return _saturation;
     }
 
     std::vector<double> const& getIntPtWetPressure(
         std::vector<double>& /*cache*/) const override
     {
-        assert(_pressure_wet.size() > 0);
+        assert(!_pressure_wet.empty());
         return _pressure_wet;
     }
 

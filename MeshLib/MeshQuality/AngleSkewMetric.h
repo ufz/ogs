@@ -27,7 +27,7 @@ class AngleSkewMetric final : public ElementQualityMetric
 public:
     AngleSkewMetric(Mesh const& mesh);
 
-    void calculateQuality();
+    void calculateQuality() override;
 
 private:
     double checkTriangle(Element const& elem) const;

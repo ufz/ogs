@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "MechanicsBase.h"
 
 namespace MaterialLib
@@ -54,7 +56,7 @@ public:
     struct MaterialStateVariables
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
-        void pushBackState() {}
+        void pushBackState() override {}
     };
 
     std::unique_ptr<
@@ -72,9 +74,8 @@ public:
     using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
     using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
 
-    explicit LinearElasticIsotropic(
-        MaterialProperties const& material_properties)
-        : _mp(material_properties)
+    explicit LinearElasticIsotropic(MaterialProperties material_properties)
+        : _mp(std::move(material_properties))
     {
     }
 

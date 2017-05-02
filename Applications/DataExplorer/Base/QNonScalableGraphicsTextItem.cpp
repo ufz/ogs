@@ -36,9 +36,7 @@ QNonScalableGraphicsTextItem::QNonScalableGraphicsTextItem(const QString & text,
     setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
 }
 
-QNonScalableGraphicsTextItem::~QNonScalableGraphicsTextItem()
-{
-}
+QNonScalableGraphicsTextItem::~QNonScalableGraphicsTextItem() = default;
 
 /// Paints the text item.
 void QNonScalableGraphicsTextItem::paint(QPainter* painter,

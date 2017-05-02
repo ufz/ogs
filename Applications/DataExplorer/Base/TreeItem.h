@@ -27,7 +27,7 @@
 class TreeItem
 {
 public:
-    TreeItem(const QList<QVariant> &data, TreeItem* parent);
+    TreeItem(QList<QVariant> data, TreeItem* parent);
     virtual ~TreeItem();
 
     void appendChild(TreeItem* child);

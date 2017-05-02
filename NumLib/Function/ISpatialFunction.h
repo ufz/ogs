@@ -25,7 +25,7 @@ namespace NumLib
 class ISpatialFunction
 {
 public:
-    virtual ~ISpatialFunction(){}
+    virtual ~ISpatialFunction() = default;
 
     /**
      * return a value at the given point

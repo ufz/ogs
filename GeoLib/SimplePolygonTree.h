@@ -85,11 +85,11 @@ private:
 template <typename POLYGONTREETYPE>
 void createPolygonTrees (std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hierarchies)
 {
-    typedef typename std::list<POLYGONTREETYPE*>::const_iterator CIT;
-    typedef typename std::list<POLYGONTREETYPE*>::iterator IT;
-    for (CIT it0(list_of_simple_polygon_hierarchies.begin());
-        it0 != list_of_simple_polygon_hierarchies.end(); ++it0) {
-        IT it1 = list_of_simple_polygon_hierarchies.begin();
+    for (auto it0 = list_of_simple_polygon_hierarchies.begin();
+         it0 != list_of_simple_polygon_hierarchies.end();
+         ++it0)
+    {
+        auto it1 = list_of_simple_polygon_hierarchies.begin();
         while (it1 != list_of_simple_polygon_hierarchies.end()) {
             if (it0 == it1) { // don't check same polygons
                 ++it1;

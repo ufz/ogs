@@ -36,7 +36,7 @@ class Surface final : public GeoObject
 public:
     explicit Surface(const std::vector<Point*>& pnt_vec);
     Surface(Surface const& src);
-    ~Surface();
+    ~Surface() override;
 
     Surface(Surface && src) = delete;
     Surface& operator=(Surface const& src) = delete;

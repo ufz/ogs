@@ -17,7 +17,7 @@ namespace MathLib
 template <typename IDX_TYPE>
 struct RowColumnIndices
 {
-    typedef typename std::vector<IDX_TYPE> LineIndex;
+    using LineIndex = typename std::vector<IDX_TYPE>;
     RowColumnIndices(LineIndex const& rows_, LineIndex const& columns_)
         : rows(rows_), columns(columns_)
     { }

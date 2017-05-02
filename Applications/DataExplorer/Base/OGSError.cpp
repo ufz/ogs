@@ -16,11 +16,9 @@
 #include <QMessageBox>
 #include <QString>
 
-OGSError::OGSError()
-{}
+OGSError::OGSError() = default;
 
-OGSError::~OGSError()
-{}
+OGSError::~OGSError() = default;
 
 void OGSError::box(const QString &e)
 {

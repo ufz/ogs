@@ -32,8 +32,7 @@
 
 vtkStandardNewMacro(VtkSurfacesSource);
 
-VtkSurfacesSource::VtkSurfacesSource()
-    : _surfaces(NULL)
+VtkSurfacesSource::VtkSurfacesSource() : _surfaces(nullptr)
 {
     _removable = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
@@ -49,7 +48,7 @@ void VtkSurfacesSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_surfaces->size() == 0)
+    if (_surfaces->empty())
         return;
 
     os << indent << "== VtkSurfacesSource ==" << "\n";
@@ -92,17 +91,16 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
     }
 
     vtkIdType count(0);
-    for (std::vector<GeoLib::Surface*>::const_iterator it = _surfaces->begin();
-         it != _surfaces->end(); ++it)
+    for (auto surface : *_surfaces)
     {
-        const std::size_t nTriangles = (*it)->getNumberOfTriangles();
+        const std::size_t nTriangles = surface->getNumberOfTriangles();
 
         for (std::size_t i = 0; i < nTriangles; ++i)
         {
             vtkTriangle* new_tri = vtkTriangle::New();
             new_tri->GetPointIds()->SetNumberOfIds(3);
 
-            const GeoLib::Triangle* triangle = (**it)[i];
+            const GeoLib::Triangle* triangle = (*surface)[i];
             for (std::size_t j = 0; j < 3; ++j)
                 new_tri->GetPointIds()->SetId(j, ((*triangle)[j]));
             newPolygons->InsertNextCell(new_tri);

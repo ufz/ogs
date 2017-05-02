@@ -42,10 +42,10 @@ enum class ShapeMatrixType
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
 struct ShapeMatrices
 {
-    typedef T_N ShapeType;
-    typedef T_DNDR DrShapeType;
-    typedef T_J JacobianType;
-    typedef T_DNDX DxShapeType;
+    using ShapeType = T_N;
+    using DrShapeType = T_DNDR;
+    using JacobianType = T_J;
+    using DxShapeType = T_DNDX;
 
     ShapeType N;        ///< Vector of shape functions, N(r)
     DrShapeType dNdr;   ///< Matrix of gradient of shape functions in natural coordinates, dN(r)/dr

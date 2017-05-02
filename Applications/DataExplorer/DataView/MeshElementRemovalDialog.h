@@ -36,8 +36,9 @@ class MeshElementRemovalDialog : public QDialog, private Ui_MeshElementRemoval
     Q_OBJECT
 
 public:
-    MeshElementRemovalDialog(DataHolderLib::Project const& project, QDialog* parent = 0);
-    ~MeshElementRemovalDialog(void);
+    MeshElementRemovalDialog(DataHolderLib::Project const& project,
+                             QDialog* parent = nullptr);
+    ~MeshElementRemovalDialog(void) override;
 
 private slots:
     void on_boundingBoxCheckBox_toggled(bool is_checked);
@@ -50,8 +51,8 @@ private slots:
     void on_yMaxEdit_textChanged() { aabb_edits[3] = true; }
     void on_zMinEdit_textChanged() { aabb_edits[4] = true; }
     void on_zMaxEdit_textChanged() { aabb_edits[5] = true; }
-    void accept();
-    void reject();
+    void accept() override;
+    void reject() override;
 
 private:
     DataHolderLib::Project const& _project;

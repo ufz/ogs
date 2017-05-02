@@ -14,9 +14,10 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iterator>
-#include <iosfwd>
 #include <fstream>
+#include <iosfwd>
+#include <iterator>
+#include <utility>
 #include <vector>
 
 #include <logog/include/logog.hpp>
@@ -32,7 +33,8 @@ template <typename T>
 class Histogram
 {
 public:
-    typedef typename std::vector<T> Data; /// Underlying input data vector type.
+    using Data =
+        typename std::vector<double>;  /// Underlying input data vector type.
 
 public:
     /** Creates histogram of the given element in the range \c [first, last).
@@ -59,9 +61,9 @@ public:
      * \param computeHistogram Compute histogram if set. If not set user must call
      * \c update() before accessing data.
      */
-    Histogram(std::vector<T> const& data, const unsigned int nr_bins = 16,
+    Histogram(std::vector<T> data, const unsigned int nr_bins = 16,
               const bool computeHistogram = true)
-        : _data(data), _nr_bins(nr_bins)
+        : _data(std::move(data)), _nr_bins(nr_bins)
     {
         init(computeHistogram);
     }
@@ -83,13 +85,11 @@ public:
 
         _bin_width = (_max - _min) / _nr_bins;
 
-        typedef typename Data::const_iterator DataCI;
-        DataCI it = _data.begin();
-        DataCI itEnd;
+        auto it = _data.begin();
         for (unsigned int bin = 0; bin < _nr_bins; bin++)
         {
-            itEnd = std::upper_bound(it, (DataCI)_data.end(),
-                                     _min + (bin + 1) * _bin_width);
+            auto itEnd = std::upper_bound(it, _data.end(),
+                                          _min + (bin + 1) * _bin_width);
             _histogram[bin] = std::distance(it, itEnd);
             it = itEnd;
         }

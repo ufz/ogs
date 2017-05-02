@@ -17,13 +17,15 @@
 
 #include <QFileDialog>
 #include <QSettings>
+#include <utility>
 
 #include "DirectConditionGenerator.h"
 #include "OGSError.h"
 #include "StrictDoubleValidator.h"
 
-CondFromRasterDialog::CondFromRasterDialog(const std::vector<MeshLib::Mesh*> &msh_vec, QDialog* parent)
-    : QDialog(parent), _msh_vec(msh_vec)
+CondFromRasterDialog::CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
+                                           QDialog* parent)
+    : QDialog(parent), _msh_vec(std::move(msh_vec))
 {
     setupUi(this);
 
@@ -32,8 +34,8 @@ CondFromRasterDialog::CondFromRasterDialog(const std::vector<MeshLib::Mesh*> &ms
     this->scalingEdit->setText("1.0");
     this->scalingEdit->setValidator (_scale_validator);
 
-    for (std::vector<MeshLib::Mesh*>::const_iterator it = _msh_vec.begin(); it != _msh_vec.end(); ++it)
-        this->meshBox->addItem(QString::fromStdString((*it)->getName()));
+    for (auto mesh : _msh_vec)
+        this->meshBox->addItem(QString::fromStdString(mesh->getName()));
 
     this->directButton->setChecked(true);
 }
@@ -83,11 +85,11 @@ void CondFromRasterDialog::accept()
         return;
     }
 
-    MeshLib::Mesh* mesh (NULL);
-    for (std::size_t i=0; i<_msh_vec.size(); i++)
-        if (_msh_vec[i]->getName().compare(mesh_name) == 0)
+    MeshLib::Mesh* mesh(nullptr);
+    for (auto mesh_ : _msh_vec)
+        if (mesh_->getName().compare(mesh_name) == 0)
         {
-            mesh = _msh_vec[i];
+            mesh = mesh_;
             break;
         }
 
@@ -105,7 +107,7 @@ void CondFromRasterDialog::accept()
             OGSError::box("No valid scaling factor given.");
             return;
         }
-        MeshLib::Mesh* new_mesh = const_cast<MeshLib::Mesh*>(mesh);
+        auto* new_mesh = const_cast<MeshLib::Mesh*>(mesh);
         DirectConditionGenerator dcg;
         direct_values = dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
 

@@ -26,13 +26,13 @@ inline NumLib::NewtonRaphsonSolverParameters
 createNewtonRaphsonSolverParameters(BaseLib::ConfigTree const& config)
 {
     DBUG("Create local nonlinear solver parameters.");
-    int const maximum_iterations =
+    auto const maximum_iterations =
         //! \ogs_file_param{material__solid__constitutive_relation__Ehlers__nonlinear_solver__maximum_iterations}
         config.getConfigParameter<int>("maximum_iterations");
 
     DBUG("\tmaximum_iterations: %d.", maximum_iterations);
 
-    double const error_tolerance =
+    auto const error_tolerance =
         //! \ogs_file_param{material__solid__constitutive_relation__Ehlers__nonlinear_solver__error_tolerance}
         config.getConfigParameter<double>("error_tolerance");
 

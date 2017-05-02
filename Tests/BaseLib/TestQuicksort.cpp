@@ -29,7 +29,7 @@ namespace ac = autocheck;
 
 struct BaseLibQuicksort : public ::testing::Test
 {
-    virtual void SetUp()
+    void SetUp() override
     {
         cls.trivial([](const std::vector<int>& xs)
                     {
@@ -73,7 +73,7 @@ template <typename T>
 struct OrderedUniqueListGen
 {
     ac::generator<std::vector<T>> source;
-    typedef std::vector<T> result_type;
+    using result_type = std::vector<T>;
 
     std::vector<T> operator()(std::size_t size)
     {

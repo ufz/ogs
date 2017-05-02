@@ -18,12 +18,10 @@
 class GeoLibOctTree : public testing::Test
 {
 public:
-    typedef std::vector<GeoLib::Point*> VectorOfPoints;
+    using VectorOfPoints = std::vector<GeoLib::Point*>;
 
-    GeoLibOctTree()
-    {}
-
-    ~GeoLibOctTree()
+    GeoLibOctTree() = default;
+    ~GeoLibOctTree() override
     {
         for (auto p : ps_ptr) {
             delete p;

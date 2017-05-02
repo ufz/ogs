@@ -23,7 +23,7 @@ class QValueTooltipSlider : public QSlider
     Q_OBJECT
 
 public:
-    QValueTooltipSlider(QWidget* parent = 0);
+    QValueTooltipSlider(QWidget* parent = nullptr);
 
 public slots:
     void setTooltipValue(int value);

@@ -36,8 +36,7 @@
 
 vtkStandardNewMacro(VtkPolylinesSource);
 
-VtkPolylinesSource::VtkPolylinesSource()
-    : _polylines(NULL)
+VtkPolylinesSource::VtkPolylinesSource() : _polylines(nullptr)
 {
     _removable = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
@@ -46,25 +45,22 @@ VtkPolylinesSource::VtkPolylinesSource()
     GetProperties()->SetColor(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
 }
 
-VtkPolylinesSource::~VtkPolylinesSource()
-{
-}
+VtkPolylinesSource::~VtkPolylinesSource() = default;
 
 void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_polylines->size() == 0)
+    if (_polylines->empty())
         return;
 
-    for (std::vector<GeoLib::Polyline*>::const_iterator it = _polylines->begin();
-         it != _polylines->end(); ++it)
+    for (auto polyline : *_polylines)
     {
         os << indent << "== Polyline ==" << "\n";
-        int numPoints = (*it)->getNumberOfPoints();
+        int numPoints = polyline->getNumberOfPoints();
         for (int i = 0; i < numPoints; i++)
         {
-            const GeoLib::Point* point = (*it)->getPoint(i);
+            const GeoLib::Point* point = polyline->getPoint(i);
             const double* coords = point->getCoords();
             os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] <<
             ", " << coords[2] << ")\n";
@@ -81,7 +77,7 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 
     if (!_polylines)
         return 0;
-    if (_polylines->size() == 0)
+    if (_polylines->empty())
     {
         ERR("VtkPolylineSource::RequestData(): Size of polyline vector is 0");
         return 0;

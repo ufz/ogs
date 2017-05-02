@@ -17,6 +17,7 @@
 #include <limits>
 
 #include <logog/include/logog.hpp>
+#include <utility>
 
 namespace GeoLib
 {
@@ -47,15 +48,19 @@ public:
      * @param ur upper right point of the square
      * @param max_points_per_leaf maximum number of points per leaf
      */
-    QuadTree(POINT const& ll, POINT const& ur, std::size_t max_points_per_leaf) :
-        _father (nullptr), _ll (ll), _ur (ur), _depth (0), _is_leaf (true),
-        _max_points_per_leaf (max_points_per_leaf)
+    QuadTree(POINT ll, POINT ur, std::size_t max_points_per_leaf)
+        : _father(nullptr),
+          _ll(std::move(ll)),
+          _ur(std::move(ur)),
+          _depth(0),
+          _is_leaf(true),
+          _max_points_per_leaf(max_points_per_leaf)
     {
         assert (_max_points_per_leaf > 0);
 
         // init children
-        for (std::size_t k(0); k < 4; k++)
-            _children[k] = nullptr;
+        for (auto& child : _children)
+            child = nullptr;
 
         if ((_ur[0] - _ll[0]) > (_ur[1] - _ll[1]))
             _ur[1] = _ll[1] + _ur[0] - _ll[0];
@@ -70,8 +75,9 @@ public:
      */
     ~QuadTree()
     {
-        for (std::size_t k(0); k < 4; k++) {
-            delete _children[k];
+        for (auto& child : _children)
+        {
+            delete child;
         }
     }
 
@@ -89,8 +95,9 @@ public:
         if ((*pnt)[1] >= _ur[1]) return false;
 
         if (!_is_leaf) {
-            for (std::size_t k(0); k < 4; k++) {
-                if (_children[k]->addPoint (pnt))
+            for (auto& child : _children)
+            {
+                if (child->addPoint(pnt))
                     return true;
             }
             return false;
@@ -182,9 +189,8 @@ public:
         if (_is_leaf)
             leaf_list.push_back (this);
         else
-            for (std::size_t k(0); k < 4; k++)
-                _children[k]->getLeafs (leaf_list);
-
+            for (auto& child : _children)
+                child->getLeafs(leaf_list);
     }
 
     const std::vector<POINT const*>& getPoints () const { return _pnts; }
@@ -241,9 +247,11 @@ public:
         if (max_depth < _depth)
             max_depth = _depth;
 
-        for (std::size_t k(0); k<4; k++) {
-            if (_children[k]) {
-                _children[k]->getMaxDepth(max_depth);
+        for (auto& child : _children)
+        {
+            if (child)
+            {
+                child->getMaxDepth(max_depth);
             }
         }
     }
@@ -365,17 +373,21 @@ private:
      * @param max_points_per_leaf maximum number of points per leaf
      * @return
      */
-    QuadTree (POINT const& ll,
-              POINT const& ur,
-              QuadTree* father,
-              std::size_t depth,
-              std::size_t max_points_per_leaf) :
-        _father (father), _ll (ll), _ur (ur), _depth (depth), _is_leaf (true),
-        _max_points_per_leaf (max_points_per_leaf)
+    QuadTree(POINT ll,
+             POINT ur,
+             QuadTree* father,
+             std::size_t depth,
+             std::size_t max_points_per_leaf)
+        : _father(father),
+          _ll(std::move(ll)),
+          _ur(std::move(ur)),
+          _depth(depth),
+          _is_leaf(true),
+          _max_points_per_leaf(max_points_per_leaf)
     {
         // init children
-        for (std::size_t k(0); k < 4; k++)
-            _children[k] = nullptr;
+        for (auto& child : _children)
+            child = nullptr;
     }
 
     void splitNode ()

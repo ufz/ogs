@@ -38,7 +38,7 @@ public:
     TreeModelIterator(TreeModel* model);
 
     /// \brief Dereferencing the iterator to retrieve the current TreeItem.
-    /// Returns NULL if the iterator is at the end.
+    /// Returns nullptr if the iterator is at the end.
     TreeItem* operator* () const;
 
     /// \brief Advance the iterator to the next TreeItem.

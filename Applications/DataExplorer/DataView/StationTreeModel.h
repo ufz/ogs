@@ -43,12 +43,13 @@ class StationTreeModel : public TreeModel
     Q_OBJECT
 
 public:
-    StationTreeModel(QObject* parent = 0);
-    ~StationTreeModel();
+    StationTreeModel(QObject* parent = nullptr);
+    ~StationTreeModel() override;
 
     void addStationList(QString listName, const std::vector<GeoLib::Point*>* stations);
     const std::vector<ModelTreeItem*> &getLists() { return _lists; }
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+    QModelIndex index(int row, int column,
+                      const QModelIndex& parent = QModelIndex()) const override;
     //BaseItem* itemFromIndex( const QModelIndex& index ) const;
     void removeStationList(QModelIndex index);
     void removeStationList(const std::string &name);

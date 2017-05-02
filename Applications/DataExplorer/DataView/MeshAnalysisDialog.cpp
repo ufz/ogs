@@ -32,19 +32,19 @@ MeshAnalysisDialog::MeshAnalysisDialog(
     if (mesh_vec.empty())
         this->startButton->setDisabled(true);
 
-    for (std::size_t i=0; i<mesh_vec.size(); ++i)
-        this->meshListBox->addItem(QString::fromStdString(mesh_vec[i]->getName()));
+    for (const auto& mesh : mesh_vec)
+        this->meshListBox->addItem(QString::fromStdString(mesh->getName()));
 
-    StrictDoubleValidator* collapse_threshold_validator = new StrictDoubleValidator(0, 1000000, 7, this);
+    auto* collapse_threshold_validator =
+        new StrictDoubleValidator(0, 1000000, 7, this);
     this->collapsibleNodesThreshold->setValidator (collapse_threshold_validator);
 
-    StrictDoubleValidator* volume_threshold_validator = new StrictDoubleValidator(0, 1e10, 10, this);
+    auto* volume_threshold_validator =
+        new StrictDoubleValidator(0, 1e10, 10, this);
     this->zeroVolumeThreshold->setValidator (volume_threshold_validator);
 }
 
-MeshAnalysisDialog::~MeshAnalysisDialog()
-{
-}
+MeshAnalysisDialog::~MeshAnalysisDialog() = default;
 
 void MeshAnalysisDialog::on_startButton_pressed()
 {

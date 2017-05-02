@@ -26,11 +26,7 @@ MeshFromRasterDialog::MeshFromRasterDialog(QDialog* parent)
     this->mshNameEdit->setText("RasterDataMesh");
 }
 
-
-MeshFromRasterDialog::~MeshFromRasterDialog()
-{
-}
-
+MeshFromRasterDialog::~MeshFromRasterDialog() = default;
 
 void MeshFromRasterDialog::accept()
 {

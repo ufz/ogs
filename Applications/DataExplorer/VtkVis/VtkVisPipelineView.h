@@ -40,20 +40,21 @@ class VtkVisPipelineView : public QTreeView
 
 public:
     /// @brief Constructor.
-    VtkVisPipelineView(QWidget* parent = 0);
+    VtkVisPipelineView(QWidget* parent = nullptr);
 
     /// @brief Overridden to set model specific header properties.
-    virtual void setModel(QAbstractItemModel* model);
+    void setModel(QAbstractItemModel* model) override;
 
 protected slots:
     /// Emits itemSelected() signals when an items was selected.
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void selectionChanged(const QItemSelection& selected,
+                          const QItemSelection& deselected) override;
     void selectItem(vtkProp3D* actor);
     void selectItem(const QModelIndex &index);
 
 private:
     /// Creates a menu on right-clicking on an item.
-    void contextMenuEvent(QContextMenuEvent* event);
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private slots:
     /// Adds a color lookup table to the current scalar array of the selected pipeline item.

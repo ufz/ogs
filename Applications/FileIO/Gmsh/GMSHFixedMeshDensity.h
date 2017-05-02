@@ -21,10 +21,10 @@ class GMSHFixedMeshDensity : public GMSHMeshDensityStrategy
 {
 public:
     GMSHFixedMeshDensity(double mesh_density);
-    void initialize(std::vector<GeoLib::Point const*> const& vec);
-    double getMeshDensityAtPoint(GeoLib::Point const*const) const;
-    double getMeshDensityAtStation(GeoLib::Point const*const) const;
-    virtual ~GMSHFixedMeshDensity() {}
+    void initialize(std::vector<GeoLib::Point const*> const& vec) override;
+    double getMeshDensityAtPoint(GeoLib::Point const* const) const override;
+    double getMeshDensityAtStation(GeoLib::Point const* const) const override;
+    ~GMSHFixedMeshDensity() override = default;
 
 private:
     double _mesh_density;

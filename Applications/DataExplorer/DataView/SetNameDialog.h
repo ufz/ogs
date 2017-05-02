@@ -32,8 +32,9 @@ class SetNameDialog : public QDialog
 
 public:
     /// Constructor
-    SetNameDialog(const std::string &geo_object_type, std::size_t id, const std::string &old_name, QDialog* parent = 0);
-    ~SetNameDialog();
+    SetNameDialog(const std::string& geo_object_type, std::size_t id,
+                  const std::string& old_name, QDialog* parent = nullptr);
+    ~SetNameDialog() override;
 
     std::string getNewName();
 
@@ -48,8 +49,8 @@ private:
 
 private slots:
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 };

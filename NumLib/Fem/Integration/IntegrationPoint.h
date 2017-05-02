@@ -17,7 +17,7 @@ namespace NumLib
 /// It is only needed to satisfy the common integration rule concepts.
 class IntegrationPoint
 {
-    typedef MathLib::TemplateWeightedPoint<double, double, 1> WeightedPoint;
+    using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 1>;
 
 public:
     /// IntegrationPoint constructor for given order.

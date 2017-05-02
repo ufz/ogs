@@ -548,7 +548,7 @@ private:
     }
 };
 
-typedef ::testing::Types<
+using TestCases = ::testing::Types<
     // DiagX
     LocalAssemblerM<MatVecDiagX>, LocalAssemblerK<MatVecDiagX>,
     LocalAssemblerB<MatVecDiagX>,
@@ -566,8 +566,7 @@ typedef ::testing::Types<
     LocalAssemblerK<MatVecXSquaredShifted>,
     LocalAssemblerB<MatVecXSquaredShifted>,
     LocalAssemblerMKb<MatVecXSquaredShifted, MatVecXSquaredShifted,
-                      MatVecXSquaredShifted>>
-    TestCases;
+                      MatVecXSquaredShifted>>;
 
 TYPED_TEST_CASE(ProcessLibCentralDifferencesJacobianAssembler, TestCases);
 

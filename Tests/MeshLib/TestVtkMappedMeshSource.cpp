@@ -128,11 +128,7 @@ class InSituMesh : public ::testing::Test
             material_id_properties->begin(), material_id_properties->end(), 1);
     }
 
-    ~InSituMesh()
-    {
-        delete mesh;
-    }
-
+    ~InSituMesh() override { delete mesh; }
     MeshLib::Mesh * mesh;
     const std::size_t subdivisions = 5;
     const double length = 1.0;

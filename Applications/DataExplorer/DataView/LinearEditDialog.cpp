@@ -45,9 +45,7 @@ void LinearEditDialog::setupDialog(const std::vector<std::size_t> &dis_nodes,
         tableWidget->item(dis_nodes[i],0)->setText(QString::number(dis_values[i]));
 }
 
-LinearEditDialog::~LinearEditDialog()
-{
-}
+LinearEditDialog::~LinearEditDialog() = default;
 
 void LinearEditDialog::on_comboBox_currentIndexChanged(int index)
 {
@@ -68,7 +66,7 @@ void LinearEditDialog::accept()
     {
         QString row_text (tableWidget->item(i,0)->text());
         if (row_text.length() > 0)
-            linear_values.push_back( std::pair<std::size_t, double>(i, row_text.toDouble()) );
+            linear_values.emplace_back(i, row_text.toDouble());
     }
 
     emit transmitDisValues(linear_values);

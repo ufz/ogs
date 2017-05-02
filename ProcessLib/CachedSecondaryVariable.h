@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "NumLib/Extrapolation/ExtrapolatableElementCollection.h"
 #include "NumLib/NamedFunctionProvider.h"
 #include "NumLib/NumericsConfig.h"
@@ -36,17 +38,17 @@ public:
     template <typename LocalAssemblerCollection,
               typename IntegrationPointValuesMethod>
     CachedSecondaryVariable(
-        std::string const& internal_variable_name,
+        std::string internal_variable_name,
         NumLib::Extrapolator& extrapolator,
         LocalAssemblerCollection const& local_assemblers,
         IntegrationPointValuesMethod integration_point_values_method,
         SecondaryVariableContext const& context)
-        : _extrapolator(extrapolator)
-        , _extrapolatables(new NumLib::ExtrapolatableLocalAssemblerCollection<
+        : _extrapolator(extrapolator),
+          _extrapolatables(new NumLib::ExtrapolatableLocalAssemblerCollection<
                            LocalAssemblerCollection>{
-              local_assemblers, integration_point_values_method})
-        , _context(context)
-        , _internal_variable_name(internal_variable_name)
+              local_assemblers, integration_point_values_method}),
+          _context(context),
+          _internal_variable_name(std::move(internal_variable_name))
     {
     }
 

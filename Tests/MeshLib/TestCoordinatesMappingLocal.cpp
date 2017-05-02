@@ -34,16 +34,16 @@ namespace
 
 namespace TestLine2
 {
-    typedef MeshLib::Line ElementType;
-    const unsigned e_nnodes = ElementType::n_all_nodes;
+using ElementType = MeshLib::Line;
+const unsigned e_nnodes = ElementType::n_all_nodes;
 
-    std::unique_ptr<MeshLib::Line> createLine(
-        std::array<double, 3> const& a, std::array<double, 3> const& b)
-    {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node(a);
-        nodes[1] = new MeshLib::Node(b);
-        return std::unique_ptr<MeshLib::Line>{new MeshLib::Line(nodes)};
+std::unique_ptr<MeshLib::Line> createLine(std::array<double, 3> const& a,
+                                          std::array<double, 3> const& b)
+{
+    auto** nodes = new MeshLib::Node*[e_nnodes];
+    nodes[0] = new MeshLib::Node(a);
+    nodes[1] = new MeshLib::Node(b);
+    return std::unique_ptr<MeshLib::Line>{new MeshLib::Line(nodes)};
     }
 
     std::unique_ptr<MeshLib::Line> createY()
@@ -72,19 +72,20 @@ namespace TestLine2
 namespace TestQuad4
 {
     // Element information
-    typedef MeshLib::Quad ElementType;
-    const unsigned e_nnodes = ElementType::n_all_nodes;
+using ElementType = MeshLib::Quad;
+const unsigned e_nnodes = ElementType::n_all_nodes;
 
-    std::unique_ptr<MeshLib::Quad> createQuad(
-        std::array<double, 3> const& a, std::array<double, 3> const& b,
-        std::array<double, 3> const& c, std::array<double, 3> const& d)
-    {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node(a);
-        nodes[1] = new MeshLib::Node(b);
-        nodes[2] = new MeshLib::Node(c);
-        nodes[3] = new MeshLib::Node(d);
-        return std::unique_ptr<MeshLib::Quad>{new MeshLib::Quad(nodes)};
+std::unique_ptr<MeshLib::Quad> createQuad(std::array<double, 3> const& a,
+                                          std::array<double, 3> const& b,
+                                          std::array<double, 3> const& c,
+                                          std::array<double, 3> const& d)
+{
+    auto** nodes = new MeshLib::Node*[e_nnodes];
+    nodes[0] = new MeshLib::Node(a);
+    nodes[1] = new MeshLib::Node(b);
+    nodes[2] = new MeshLib::Node(c);
+    nodes[3] = new MeshLib::Node(d);
+    return std::unique_ptr<MeshLib::Quad>{new MeshLib::Quad(nodes)};
     }
 
     // 2.5D case: inclined

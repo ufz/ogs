@@ -24,6 +24,6 @@ namespace GeoLib {
  * and a name.
  * */
 
-typedef TemplateVec<Surface> SurfaceVec;
+using SurfaceVec = TemplateVec<GeoLib::Surface>;
 
 } // end namespace

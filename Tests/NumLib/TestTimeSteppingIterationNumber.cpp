@@ -11,6 +11,7 @@
 
 #include <gtest/gtest.h>
 
+#include <utility>
 #include <vector>
 
 #include <logog/include/logog.hpp>
@@ -100,8 +101,11 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
 
     struct IterationNumberUpdate
     {
-        IterationNumberUpdate(const std::vector<std::size_t> &vec, std::size_t& counter)
-            : _nr_iterations(vec), i(counter) {}
+        IterationNumberUpdate(std::vector<std::size_t> vec,
+                              std::size_t& counter)
+            : _nr_iterations(std::move(vec)), i(counter)
+        {
+        }
 
         std::vector<std::size_t> _nr_iterations;
         std::size_t& i;

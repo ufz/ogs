@@ -200,7 +200,7 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
             const std::size_t n_points = str.toLong();
             QString str_ptId_list = xmlEle.text().simplified();
             {
-                GeoLib::Polyline* line = new GeoLib::Polyline(*points);
+                auto* line = new GeoLib::Polyline(*points);
                 lines->push_back(line);
                 std::istringstream ss(str_ptId_list.toStdString());
                 for (std::size_t i = 0; i < n_points; i++)

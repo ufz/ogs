@@ -23,8 +23,6 @@ extern template class MeshLib::TemplateElement<MeshLib::TriRule3>;
 extern template class MeshLib::TemplateElement<MeshLib::TriRule6>;
 
 namespace MeshLib {
-
-typedef TemplateElement<TriRule3> Tri;
-typedef TemplateElement<TriRule6> Tri6;
-
+using Tri = TemplateElement<MeshLib::TriRule3>;
+using Tri6 = TemplateElement<MeshLib::TriRule6>;
 }

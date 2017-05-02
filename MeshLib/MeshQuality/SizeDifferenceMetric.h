@@ -27,8 +27,8 @@ class SizeDifferenceMetric : public ElementQualityMetric
 {
 public:
     SizeDifferenceMetric(Mesh const& mesh);
-    virtual ~SizeDifferenceMetric() {}
+    ~SizeDifferenceMetric() override = default;
 
-    virtual void calculateQuality ();
+    void calculateQuality() override;
 };
 }

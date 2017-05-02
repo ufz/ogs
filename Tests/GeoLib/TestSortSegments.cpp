@@ -50,12 +50,12 @@ TEST_F(GeoLibSortLineSegments, SortSubSegments)
         for (auto sub_seg_id : sub_seg_ids)
         {
             double t(dt * sub_seg_id);
-            GeoLib::Point* sub_seg_begin_pnt(new GeoLib::Point{
+            auto* sub_seg_begin_pnt(new GeoLib::Point{
                 (1 - t) * s0.getBeginPoint()[0] + t * s0.getEndPoint()[0],
                 (1 - t) * s0.getBeginPoint()[1] + t * s0.getEndPoint()[1],
                 (1 - t) * s0.getBeginPoint()[2] + t * s0.getEndPoint()[2]});
             t += dt;
-            GeoLib::Point* sub_seg_end_pnt(new GeoLib::Point{
+            auto* sub_seg_end_pnt(new GeoLib::Point{
                 (1 - t) * s0.getBeginPoint()[0] + t * s0.getEndPoint()[0],
                 (1 - t) * s0.getBeginPoint()[1] + t * s0.getEndPoint()[1],
                 (1 - t) * s0.getBeginPoint()[2] + t * s0.getEndPoint()[2]});

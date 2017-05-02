@@ -49,7 +49,7 @@ public:
     vtkGetObjectMacro(ColorLookupTable,VtkColorLookupTable);
 
     /// @brief This filter gets updated when the color look-up table was modified.
-    virtual vtkMTimeType GetMTime() override;
+    vtkMTimeType GetMTime() override;
 
     /// @brief Sets user properties.
     void SetUserProperty(QString name, QVariant value) override
@@ -67,7 +67,7 @@ public:
 
 protected:
     VtkColorByHeightFilter();
-    ~VtkColorByHeightFilter();
+    ~VtkColorByHeightFilter() override;
 
     /// @brief The filter logic.
     int RequestData(vtkInformation* request,

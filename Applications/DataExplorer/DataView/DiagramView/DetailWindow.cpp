@@ -74,8 +74,8 @@ DetailWindow::DetailWindow(QString filename, QWidget* parent) : QWidget(parent)
     std::vector<DiagramList*> lists;
     DiagramList::readList(filename, lists);
 
-    for (std::size_t i = 0; i < lists.size(); i++)
-        stationView->addGraph(lists[i]);
+    for (auto& list : lists)
+        stationView->addGraph(list);
 
     resizeWindow();
 }
@@ -95,9 +95,10 @@ DetailWindow::DetailWindow(std::vector<std::size_t> data, QWidget* parent) : QWi
     std::vector< std::pair<float, float> > list_data(nEntries);
 
     for (std::size_t i=0; i<nEntries; i++)
-        list_data.push_back(std::pair<float, float>(static_cast<float>(i), static_cast<float>(data[i])));
+        list_data.emplace_back(static_cast<float>(i),
+                               static_cast<float>(data[i]));
 
-    DiagramList* list = new DiagramList();
+    auto* list = new DiagramList();
     list->setList(list_data);
     list->setXUnit("Value");
     list->setYUnit("Amount");
@@ -107,9 +108,7 @@ DetailWindow::DetailWindow(std::vector<std::size_t> data, QWidget* parent) : QWi
     resizeWindow();
 }
 
-DetailWindow::~DetailWindow()
-{
-}
+DetailWindow::~DetailWindow() = default;
 
 void DetailWindow::on_closeButton_clicked()
 {
@@ -147,7 +146,7 @@ void DetailWindow::on_addDataButton_clicked()
     {
         QDir dir = QDir(fileName);
         settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-        DiagramPrefsDialog* prefs = new DiagramPrefsDialog(fileName, this);
+        auto* prefs = new DiagramPrefsDialog(fileName, this);
         prefs->setAttribute(Qt::WA_DeleteOnClose);
         prefs->show();
     }

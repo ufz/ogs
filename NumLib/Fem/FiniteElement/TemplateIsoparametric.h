@@ -64,8 +64,7 @@ public:
     : _ele(&e)
     {
     }
-
-    ~TemplateIsoparametric() {}
+    ~TemplateIsoparametric() = default;
 
     /// return current mesh element
     const MeshElementType* getMeshElement() const {return _ele;}

@@ -113,8 +113,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
     {
         double val(raster->getValueAtPoint(*surface_nodes[i]));
         val = (val == no_data) ? 0 : ((val*node_area_vec[i])/scaling);
-        _direct_values.push_back(
-            std::pair<std::size_t, double>((*node_id_pv)[i], val));
+        _direct_values.emplace_back((*node_id_pv)[i], val);
     }
 
     return _direct_values;
@@ -127,8 +126,8 @@ int DirectConditionGenerator::writeToFile(const std::string &name) const
 
     if (out)
     {
-        for (std::vector< std::pair<std::size_t,double> >::const_iterator it = _direct_values.begin(); it != _direct_values.end(); ++it)
-            out << it->first << "\t" << it->second << "\n";
+        for (const auto& direct_value : _direct_values)
+            out << direct_value.first << "\t" << direct_value.second << "\n";
 
         out.close();
     }

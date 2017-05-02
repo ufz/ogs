@@ -32,9 +32,9 @@ public:
      * \param parent The parent item in the tree
      * \param item The ModelItem-object
      */
-    ModelTreeItem(const QList<QVariant> &data, TreeItem* parent, BaseItem* item = NULL);
-    ~ModelTreeItem() { delete _item; }
-
+    ModelTreeItem(const QList<QVariant>& data, TreeItem* parent,
+                  BaseItem* item = nullptr);
+    ~ModelTreeItem() override { delete _item; }
     /// Returns the station object from which this item has been constructed
     GeoLib::Station* getStation() { return _stn; }
 

@@ -19,9 +19,9 @@ MeshMapping2DDialog::MeshMapping2DDialog(QDialog* parent)
 {
     setupUi(this);
 
-    StrictDoubleValidator* no_data_validator = new StrictDoubleValidator(this);
+    auto* no_data_validator = new StrictDoubleValidator(this);
     this->noDataValueEdit->setValidator (no_data_validator);
-    StrictDoubleValidator* static_value_validator = new StrictDoubleValidator(this);
+    auto* static_value_validator = new StrictDoubleValidator(this);
     this->staticValueEdit->setValidator (static_value_validator);
 }
 

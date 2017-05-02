@@ -35,8 +35,7 @@
 
 vtkStandardNewMacro(VtkStationSource);
 
-VtkStationSource::VtkStationSource()
-    : _stations(NULL)
+VtkStationSource::VtkStationSource() : _stations(nullptr)
 {
     _removable = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
@@ -49,16 +48,15 @@ void VtkStationSource::PrintSelf( ostream& os, vtkIndent indent )
 {
     this->Superclass::PrintSelf(os,indent);
 
-    if (_stations->size() == 0)
+    if (_stations->empty())
         return;
 
     os << indent << "== VtkStationSource ==" << "\n";
 
     int i = 0;
-    for (std::vector<GeoLib::Point*>::const_iterator it = _stations->begin();
-         it != _stations->end(); ++it)
+    for (auto station : *_stations)
     {
-        const double* coords = (*it)->getCoords();
+        const double* coords = station->getCoords();
         os << indent << "Station " << i << " (" << coords[0] << ", " << coords[1] <<
         ", " << coords[2] << ")\n";
         i++;
@@ -124,37 +122,41 @@ int VtkStationSource::RequestData( vtkInformation* request,
     std::size_t site_count(0);
 
     // Generate graphic objects
-    for (std::vector<GeoLib::Point*>::const_iterator it = _stations->begin();
-         it != _stations->end(); ++it)
+    for (auto station : *_stations)
     {
-        double coords[3] = { (*(*it))[0], (*(*it))[1], (*(*it))[2] };
+        double coords[3] = {(*station)[0], (*station)[1], (*station)[2]};
         vtkIdType sid = newStations->InsertNextPoint(coords);
         station_ids->InsertNextValue(site_count);
         if (useStationValues)
-            station_values->InsertNextValue(static_cast<GeoLib::Station*>(*it)->getStationValue());
+            station_values->InsertNextValue(
+                static_cast<GeoLib::Station*>(station)->getStationValue());
 
         if (!isBorehole)
             newVerts->InsertNextCell(1, &sid);
         else
         {
             std::vector<GeoLib::Point*> profile =
-                    static_cast<GeoLib::StationBorehole*>(*it)->getProfile();
+                static_cast<GeoLib::StationBorehole*>(station)->getProfile();
             std::vector<std::string> soilNames =
-                    static_cast<GeoLib::StationBorehole*>(*it)->getSoilNames();
+                static_cast<GeoLib::StationBorehole*>(station)->getSoilNames();
             const std::size_t nLayers = profile.size();
 
             for (std::size_t i = 1; i < nLayers; i++)
             {
-                double* pCoords = const_cast<double*>(profile[i]->getCoords());
-                double loc[3] = { pCoords[0], pCoords[1], pCoords[2] };
+                auto* pCoords = const_cast<double*>(profile[i]->getCoords());
+                double loc[3] = {pCoords[0], pCoords[1], pCoords[2]};
                 newStations->InsertNextPoint(loc);
                 station_ids->InsertNextValue(site_count);
                 newLines->InsertNextCell(2);
-                newLines->InsertCellPoint(lastMaxIndex); // start of borehole-layer
-                newLines->InsertCellPoint(++lastMaxIndex); //end of boreholelayer
+                newLines->InsertCellPoint(
+                    lastMaxIndex);  // start of borehole-layer
+                newLines->InsertCellPoint(
+                    ++lastMaxIndex);  // end of boreholelayer
                 strat_ids->InsertNextValue(this->GetIndexByName(soilNames[i]));
                 if (useStationValues)
-                    station_values->InsertNextValue(static_cast<GeoLib::Station*>(*it)->getStationValue());
+                    station_values->InsertNextValue(
+                        static_cast<GeoLib::Station*>(station)
+                            ->getStationValue());
             }
             lastMaxIndex++;
         }
@@ -200,8 +202,7 @@ void VtkStationSource::SetUserProperty( QString name, QVariant value )
 std::size_t VtkStationSource::GetIndexByName( std::string const& name )
 {
     vtkIdType max_key(0);
-    for (std::map<std::string, vtkIdType>::const_iterator it = _id_map.begin();
-         it != _id_map.end(); ++it)
+    for (auto it = _id_map.begin(); it != _id_map.end(); ++it)
     {
         if (name.compare(it->first) == 0)
             return it->second;

@@ -25,9 +25,7 @@ VtkCompositeLineToTubeFilter::VtkCompositeLineToTubeFilter( vtkAlgorithm* inputA
     this->init();
 }
 
-VtkCompositeLineToTubeFilter::~VtkCompositeLineToTubeFilter()
-{
-}
+VtkCompositeLineToTubeFilter::~VtkCompositeLineToTubeFilter() = default;
 
 void VtkCompositeLineToTubeFilter::init()
 {

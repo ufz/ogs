@@ -40,9 +40,7 @@ NetCdfConfigureDialog::NetCdfConfigureDialog(std::string const& fileName, QDialo
     this->radioMesh->setChecked(true);
 }
 
-NetCdfConfigureDialog::~NetCdfConfigureDialog()
-{
-}
+NetCdfConfigureDialog::~NetCdfConfigureDialog() = default;
 
 // Instructions if the OK-Button has been pressed.
 void NetCdfConfigureDialog::accept()
@@ -221,7 +219,7 @@ void NetCdfConfigureDialog::setDimensionSelect()
 
 void NetCdfConfigureDialog::getDimEdges(int dimId, unsigned &size, double &firstValue, double &lastValue)
 {
-    if ((_currentFile->get_var(_currentVar->get_dim(dimId)->name())) != NULL)
+    if ((_currentFile->get_var(_currentVar->get_dim(dimId)->name())) != nullptr)
     {
         NcVar *tmpVarOfDim = _currentFile->get_var(_currentVar->get_dim(dimId)->name());
         if ((tmpVarOfDim->num_dims()) == 1)
@@ -249,12 +247,12 @@ void NetCdfConfigureDialog::getDimEdges(int dimId, unsigned &size, double &first
 
 void NetCdfConfigureDialog::getDaysTime(double minSince, QTime &time, int &days)
 {
-    long tmpMin = (long) minSince;
+    auto tmpMin = (long)minSince;
     long minuits = tmpMin % 60;
     long tmpHours = tmpMin / 60;
     long hours = tmpHours % 24;
-    days = (int) (tmpHours / 24);
-    time.setHMS(hours,minuits,0);
+    days = (int)(tmpHours / 24);
+    time.setHMS(hours, minuits, 0);
 }
 
 long NetCdfConfigureDialog::convertDateToMinutes(QDateTime initialDateTime, QDate selectedDate, QTime selectedTime)
@@ -313,7 +311,7 @@ double NetCdfConfigureDialog::getResolution()
 
 void NetCdfConfigureDialog::createDataObject()
 {
-    std::size_t* length = new std::size_t[_currentVar->num_dims()];
+    auto* length = new std::size_t[_currentVar->num_dims()];
     double originLon = 0, originLat = 0;
     double lastLon = 0, lastLat = 0;
     unsigned sizeLon = 0, sizeLat = 0;
@@ -328,13 +326,13 @@ void NetCdfConfigureDialog::createDataObject()
     length[comboBoxDim2->currentIndex()]=sizeLon;
 
     // set up array
-    double* data_array = new double[sizeLat*sizeLon];
+    auto* data_array = new double[sizeLat * sizeLon];
     for(std::size_t i=0; i < (sizeLat*sizeLon); i++) data_array[i]=0;
 
     //Time-Dimension:
     if (_currentVar->num_dims() > 2)
     {
-        long* newOrigin = new long[_currentVar->num_dims()];
+        auto* newOrigin = new long[_currentVar->num_dims()];
         for (int i=0; i < _currentVar->num_dims(); i++) newOrigin[i]=0;
         newOrigin[comboBoxDim3->currentIndex()] = getTimeStep(); //set origin to selected time
         _currentVar->set_cur(newOrigin);
@@ -409,7 +407,7 @@ std::string NetCdfConfigureDialog::getName()
 
 void NetCdfConfigureDialog::reverseNorthSouth(double* data, std::size_t width, std::size_t height)
 {
-    double* cp_array = new double[width*height];
+    auto* cp_array = new double[width * height];
 
     for (std::size_t i=0; i<height; i++)
     {

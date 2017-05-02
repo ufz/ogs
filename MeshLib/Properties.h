@@ -118,7 +118,7 @@ public:
     Properties excludeCopyProperties(
         std::vector<MeshItemType> const& exclude_mesh_item_types) const;
 
-    Properties() {}
+    Properties() = default;
 
     Properties(Properties const& properties);
 

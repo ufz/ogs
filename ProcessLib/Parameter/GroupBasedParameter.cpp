@@ -31,8 +31,8 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
         mesh.getProperties().getPropertyVector<int>(group_id_property_name);
 
     // parse mapping data
-    typedef std::vector<double> Values;
-    typedef std::pair<int, Values> Index_Values;
+    using Values = std::vector<double>;
+    using Index_Values = std::pair<int, Values>;
     std::vector<Index_Values> vec_index_values;
     //! \ogs_file_param{prj__parameters__parameter__Group__index_values}
     for (auto p : config.getConfigSubtreeList("index_values"))
@@ -46,7 +46,7 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
             if (value)
             {
                 Values values(1, *value);
-                vec_index_values.push_back(Index_Values(index, values));
+                vec_index_values.emplace_back(index, values);
                 continue;
             }
         }
@@ -58,7 +58,7 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
         if (values.empty())
             OGS_FATAL("No value available for constant parameter.");
 
-        vec_index_values.push_back(Index_Values(index, values));
+        vec_index_values.emplace_back(index, values);
     }
 
     // check the input

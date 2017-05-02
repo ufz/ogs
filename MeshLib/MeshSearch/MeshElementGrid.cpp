@@ -233,34 +233,34 @@ void getGridGeometry(MeshElementGrid const& grid,
                     new std::vector<GeoLib::Polyline*>);
                 auto & points = *geometries.getPointVec(cell_names.back());
 
-                GeoLib::Polyline* ply_bottom(new GeoLib::Polyline(points));
+                auto* ply_bottom(new GeoLib::Polyline(points));
                 for (std::size_t l(0); l < 4; ++l)
                     ply_bottom->addPoint(l);
                 ply_bottom->addPoint(0); // close to bottom surface
                 plys->push_back(ply_bottom);
 
-                GeoLib::Polyline* ply_top(new GeoLib::Polyline(points));
+                auto* ply_top(new GeoLib::Polyline(points));
                 for (std::size_t l(4); l<8; ++l)
                     ply_top->addPoint(l);
                 ply_top->addPoint(4); // close to top surface
                 plys->push_back(ply_top);
 
-                GeoLib::Polyline* ply_04(new GeoLib::Polyline(points));
+                auto* ply_04(new GeoLib::Polyline(points));
                 ply_04->addPoint(0);
                 ply_04->addPoint(4);
                 plys->push_back(ply_04);
 
-                GeoLib::Polyline* ply_15(new GeoLib::Polyline(points));
+                auto* ply_15(new GeoLib::Polyline(points));
                 ply_15->addPoint(1);
                 ply_15->addPoint(5);
                 plys->push_back(ply_15);
 
-                GeoLib::Polyline* ply_26(new GeoLib::Polyline(points));
+                auto* ply_26(new GeoLib::Polyline(points));
                 ply_26->addPoint(2);
                 ply_26->addPoint(6);
                 plys->push_back(ply_26);
 
-                GeoLib::Polyline* ply_37(new GeoLib::Polyline(points));
+                auto* ply_37(new GeoLib::Polyline(points));
                 ply_37->addPoint(3);
                 ply_37->addPoint(7);
                 plys->push_back(ply_37);

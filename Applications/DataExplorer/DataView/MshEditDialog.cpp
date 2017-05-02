@@ -29,17 +29,19 @@
 #include <QVBoxLayout>
 
 MshEditDialog::MshEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
-    : QDialog(parent), _msh(mesh), _noDataDeleteBox(NULL),
-      _nLayerLabel (new QLabel("Please specify the number of layers to add:")),
-      _nLayerExplanation (new QLabel("(select \"0\" for surface mapping)")),
-      _layerEdit (new QLineEdit("0")),
-      _nextButton (new QPushButton("Next")),
-      _layerBox (NULL),
-      _radioButtonBox (NULL),
-      _layerSelectionLayout (new QGridLayout),
-      _radiobuttonLayout (new QVBoxLayout),
-      _selectButton1 (new QRadioButton("Add layers based on raster files")),
-      _selectButton2 (new QRadioButton("Add layers with static thickness")),
+    : QDialog(parent),
+      _msh(mesh),
+      _noDataDeleteBox(nullptr),
+      _nLayerLabel(new QLabel("Please specify the number of layers to add:")),
+      _nLayerExplanation(new QLabel("(select \"0\" for surface mapping)")),
+      _layerEdit(new QLineEdit("0")),
+      _nextButton(new QPushButton("Next")),
+      _layerBox(nullptr),
+      _radioButtonBox(nullptr),
+      _layerSelectionLayout(new QGridLayout),
+      _radiobuttonLayout(new QVBoxLayout),
+      _selectButton1(new QRadioButton("Add layers based on raster files")),
+      _selectButton2(new QRadioButton("Add layers with static thickness")),
       _n_layers(0),
       _use_rasters(true)
 {
@@ -187,7 +189,7 @@ void MshEditDialog::accept()
         {
             int result(1);
             const unsigned nLayers = _layerEdit->text().toInt();
-            MeshLib::Mesh* new_mesh (NULL);
+            MeshLib::Mesh* new_mesh(nullptr);
 
             if (nLayers==0)
             {

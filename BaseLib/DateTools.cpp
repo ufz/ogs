@@ -43,8 +43,8 @@ std::string int2date(int date)
 {
     if (date > 10000000 && date < 22000000)
     {
-        int y = static_cast<int>(std::floor(date / 10000.0));
-        int m = static_cast<int>(std::floor((date - (y * 10000)) / 100.0));
+        auto y = static_cast<int>(std::floor(date / 10000.0));
+        auto m = static_cast<int>(std::floor((date - (y * 10000)) / 100.0));
         int d = date - (y * 10000) - (m * 100);
         std::stringstream ss;
         if (d < 10)
@@ -66,10 +66,10 @@ std::string date2string(double ddate)
         return "0.0.0000";
     }
 
-    int rest (static_cast<int>(ddate));
-    int y = static_cast<int>(std::floor(rest / 10000.0));
+    auto rest(static_cast<int>(ddate));
+    auto y = static_cast<int>(std::floor(rest / 10000.0));
     rest = rest % (y * 10000);
-    int m = static_cast<int>(std::floor(rest / 100.0));
+    auto m = static_cast<int>(std::floor(rest / 100.0));
     if (m < 1 || m > 12)
         WARN("date2String(): month not in [1:12].");
     rest = rest % (m * 100);

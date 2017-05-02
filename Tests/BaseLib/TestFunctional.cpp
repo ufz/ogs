@@ -17,7 +17,7 @@ class A : private InstanceCounter<A>
 {
 public:
     A(const double value) : _value(value) {}
-    A(A const& other) : InstanceCounter(other), _value(other._value) {}
+    A(A const& other) = default;
     A(A&& other) : InstanceCounter(std::move(other)), _value(other._value) {}
     A& operator=(A const& other) { _value = other._value; return *this; }
     A& operator=(A&& other) { _value = other._value; return *this; }

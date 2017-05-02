@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <utility>
 #include <vector>
 
 #include "BaseLib/Error.h"
@@ -30,27 +31,23 @@ class SmallDeformationLocalAssemblerInterface
 {
 public:
     SmallDeformationLocalAssemblerInterface() : _dofIndex_to_localIndex{} {}
-
     SmallDeformationLocalAssemblerInterface(
-            std::size_t n_local_size,
-            std::vector<unsigned> const& dofIndex_to_localIndex)
-        : _dofIndex_to_localIndex(dofIndex_to_localIndex)
+        std::size_t n_local_size, std::vector<unsigned> dofIndex_to_localIndex)
+        : _dofIndex_to_localIndex(std::move(dofIndex_to_localIndex))
     {
         _local_u.resize(n_local_size);
         _local_b.resize(_local_u.size());
         _local_J.resize(_local_u.size(), _local_u.size());
     }
 
-
-    virtual void assembleWithJacobian(
-        double const t,
-        std::vector<double> const& local_x_,
-        std::vector<double> const& /*local_xdot*/,
-        const double /*dxdot_dx*/, const double /*dx_dx*/,
-        std::vector<double>& /*local_M_data*/,
-        std::vector<double>& /*local_K_data*/,
-        std::vector<double>& local_b_data,
-        std::vector<double>& local_Jac_data) override
+    void assembleWithJacobian(double const t,
+                              std::vector<double> const& local_x_,
+                              std::vector<double> const& /*local_xdot*/,
+                              const double /*dxdot_dx*/, const double /*dx_dx*/,
+                              std::vector<double>& /*local_M_data*/,
+                              std::vector<double>& /*local_K_data*/,
+                              std::vector<double>& local_b_data,
+                              std::vector<double>& local_Jac_data) override
     {
         auto const local_dof_size = local_x_.size();
 

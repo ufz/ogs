@@ -58,7 +58,7 @@ public:
     static const unsigned edge_nodes[12][3];
 
     /// Returns the i-th edge of the element.
-    typedef QuadraticEdgeReturn EdgeReturn;
+    using EdgeReturn = MeshLib::QuadraticEdgeReturn;
 
     /// Returns the i-th face of the element.
     static const Element* getFace(const Element* e, unsigned i);

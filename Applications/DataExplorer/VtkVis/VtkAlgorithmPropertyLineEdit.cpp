@@ -19,13 +19,18 @@
 
 #include <QDoubleValidator>
 #include <QIntValidator>
+#include <utility>
 
-VtkAlgorithmPropertyLineEdit::VtkAlgorithmPropertyLineEdit(const QString& contents,
-                                                           const QString& name,
-                                                           QVariant::Type type,
-                                                           VtkAlgorithmProperties* algProps,
-                                                           QWidget* parent /*= 0*/)
-    : QLineEdit(contents, parent), _name(name), _algProps(algProps), _type(type)
+VtkAlgorithmPropertyLineEdit::VtkAlgorithmPropertyLineEdit(
+    const QString& contents,
+    QString name,
+    QVariant::Type type,
+    VtkAlgorithmProperties* algProps,
+    QWidget* parent /*= 0*/)
+    : QLineEdit(contents, parent),
+      _name(std::move(name)),
+      _algProps(algProps),
+      _type(type)
 {
     switch(_type)
     {
@@ -44,9 +49,7 @@ VtkAlgorithmPropertyLineEdit::VtkAlgorithmPropertyLineEdit(const QString& conten
     connect(this, SIGNAL(editingFinished()), this, SLOT(setNewValue()));
 }
 
-VtkAlgorithmPropertyLineEdit::~VtkAlgorithmPropertyLineEdit()
-{
-}
+VtkAlgorithmPropertyLineEdit::~VtkAlgorithmPropertyLineEdit() = default;
 
 void VtkAlgorithmPropertyLineEdit::setNewValue()
 {

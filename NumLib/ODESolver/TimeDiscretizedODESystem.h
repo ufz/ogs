@@ -84,7 +84,7 @@ public:
      */
     explicit TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization);
 
-    ~TimeDiscretizedODESystem();
+    ~TimeDiscretizedODESystem() override;
 
     void assemble(const GlobalVector& x_new_timestep,
                   ProcessLib::StaggeredCouplingTerm const& coupling_term)
@@ -178,7 +178,7 @@ public:
      */
     explicit TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization);
 
-    ~TimeDiscretizedODESystem();
+    ~TimeDiscretizedODESystem() override;
 
     void assemble(const GlobalVector& x_new_timestep,
                   ProcessLib::StaggeredCouplingTerm const& coupling_term)

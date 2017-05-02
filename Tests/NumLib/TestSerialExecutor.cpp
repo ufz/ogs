@@ -67,7 +67,7 @@ public:
     static std::size_t const size = 100;
 };
 
-typedef ::testing::Types<int> TestCases;
+using TestCases = ::testing::Types<int>;
 
 TYPED_TEST_CASE(NumLibSerialExecutor, TestCases);
 

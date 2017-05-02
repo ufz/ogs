@@ -151,14 +151,14 @@ std::vector<MeshLib::Mesh*>::iterator ProjectData::findMeshByName(
 
 const MeshLib::Mesh* ProjectData::getMesh(const std::string& name) const
 {
-    std::vector<MeshLib::Mesh*>::const_iterator it = findMeshByName(name);
+    auto it = findMeshByName(name);
     return (it == _mesh_vec.end() ? nullptr : *it);
 }
 
 bool ProjectData::removeMesh(const std::string& name)
 {
     bool mesh_found = false;
-    std::vector<MeshLib::Mesh*>::iterator it = findMeshByName(name);
+    auto it = findMeshByName(name);
     while (it != _mesh_vec.end())
     {
         delete *it;
@@ -195,10 +195,8 @@ bool ProjectData::isMeshNameUniqueAndProvideUniqueName(std::string& name) const
         if (count > 1)
             cpName = cpName + "-" + std::to_string(count);
 
-        for (std::vector<MeshLib::Mesh*>::const_iterator it = _mesh_vec.begin();
-             it != _mesh_vec.end();
-             ++it)
-            if (cpName.compare((*it)->getName()) == 0)
+        for (auto mesh : _mesh_vec)
+            if (cpName.compare(mesh->getName()) == 0)
                 isUnique = false;
     }
 

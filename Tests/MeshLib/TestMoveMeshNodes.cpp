@@ -19,7 +19,7 @@
 TEST(MeshLib, moveMeshNodes)
 {
     /* initialize random seed: */
-    srand ( static_cast<unsigned>(time(NULL)) );
+    srand(static_cast<unsigned>(time(nullptr)));
 
     std::size_t const size (16384);
 

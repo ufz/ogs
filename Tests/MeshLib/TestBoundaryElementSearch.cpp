@@ -47,7 +47,7 @@ public:
         _hex_mesh(MeshGenerator::generateRegularHexMesh(_geometric_size, _number_of_subdivisions_per_direction))
     {}
 
-    ~MeshLibBoundaryElementSearchInSimpleHexMesh()
+    ~MeshLibBoundaryElementSearchInSimpleHexMesh() override
     {
         delete _hex_mesh;
     }

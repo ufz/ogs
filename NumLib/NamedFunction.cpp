@@ -33,7 +33,7 @@ double call_(void* function, std::vector<double> const& arguments)
     return (*fct)(args[Indices]...);
 }
 
-typedef double (*CallerFunction) (void*, std::vector<double> const&);
+using CallerFunction = double (*)(void*, const std::vector<double>&);
 
 //! Helps instantiating the call_() function.
 template <int... Indices>
@@ -82,7 +82,7 @@ void delete_(void* function)
     delete fct;
 }
 
-typedef void (*DeleterFunction) (void*);
+using DeleterFunction = void (*)(void*);
 
 //! Helps instantiating the delete_() function.
 template <int... Indices>
@@ -131,7 +131,7 @@ void* copy_(void* function)
     return new std::function<double(typename Double<Indices>::type...)>(*fct);
 }
 
-typedef void* (*CopierFunction) (void*);
+using CopierFunction = void* (*)(void*);
 
 //! Helps instantiating the copy_() function.
 template <int... Indices>

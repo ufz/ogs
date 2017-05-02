@@ -74,7 +74,7 @@ void DiagramPrefsDialog::accept()
         if (_list[0]->size() > 0)
         {
             bool window_is_empty(false);
-            if (_window == NULL)
+            if (_window == nullptr)
             {
                 _window = new DetailWindow();
                 _window->setAttribute(Qt::WA_DeleteOnClose);
@@ -96,7 +96,7 @@ void DiagramPrefsDialog::accept()
             else
             {
                 delete _window;
-                _window = NULL;
+                _window = nullptr;
                 OGSError::box("No dataset selected.");
             }
         }
@@ -129,14 +129,15 @@ int DiagramPrefsDialog::loadFile(const QString &filename)
 {
     if (DiagramList::readList(filename, _list))
     {
-        for (std::size_t i = 0; i < _list.size(); i++)
+        for (auto& item : _list)
         {
-            //_list[i]->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
-            _list[i]->setXLabel("Time");
-            //_list[i]->setYLabel("Water Level");
-            _list[i]->setXUnit("day");
-            //_list[i]->setYUnit("metres");
-            _list[i]->setColor(QColor(Qt::red));
+            // item->setName(stationTypeLabel->text() + ": " +
+            // stationNameLabel->text());
+            item->setXLabel("Time");
+            // item->setYLabel("Water Level");
+            item->setXUnit("day");
+            // item->setYUnit("metres");
+            item->setColor(QColor(Qt::red));
         }
         fromDateLine->setText(_list[0]->getStartDate().toString("dd.MM.yyyy")); //QString::number(_list[0]->minXValue()));
         QDateTime endDate =
@@ -154,7 +155,7 @@ int DiagramPrefsDialog::loadList(const std::vector< std::pair<QDateTime, float> 
 {
     if (!coords.empty())
     {
-        DiagramList* l = new DiagramList;
+        auto* l = new DiagramList;
         l->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
         l->setXLabel("Time");
         //l->setYLabel("Water Level");
@@ -170,9 +171,9 @@ int DiagramPrefsDialog::loadList(const std::vector< std::pair<QDateTime, float> 
 
 void DiagramPrefsDialog::createVisibilityCheckboxes()
 {
-    for (std::size_t i = 0; i < _list.size(); i++)
+    for (auto& item : _list)
     {
-        QCheckBox* box = new QCheckBox(_list[i]->getName());
+        QCheckBox* box = new QCheckBox(item->getName());
         box->setChecked(true);
         this->CheckBoxLayout->addWidget(box);
         _visability.push_back(box);

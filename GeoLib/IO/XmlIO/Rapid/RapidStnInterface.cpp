@@ -29,19 +29,19 @@ namespace IO
 
 std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::string &fileName)
 {
-    std::vector<GeoLib::Point*> *stations = new std::vector<GeoLib::Point*>;
+    auto* stations = new std::vector<GeoLib::Point*>;
     std::ifstream in(fileName.c_str());
     if (in.fail())
     {
         ERR("XmlStnInterface::rapidReadFile() - Can't open xml-file.");
-        return NULL;
+        return nullptr;
     }
 
     // buffer file
     in.seekg(0, std::ios::end);
     std::size_t length = in.tellg();
     in.seekg(0, std::ios::beg);
-    char* buffer = new char[length+1];
+    auto* buffer = new char[length + 1];
     in.read(buffer, length);
     buffer[in.gcount()] = '\0';
     in.close();
@@ -54,7 +54,7 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
     if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN") != 0)
     {
         ERR("XmlStnInterface::readFile() - Unexpected XML root.");
-        return NULL;
+        return nullptr;
     }
 
     // iterate over all station lists
@@ -146,7 +146,8 @@ void RapidStnInterface::readStations(const rapidxml::xml_node<>* station_root, s
         {
             double zVal(0.0);
             if (station_node->first_attribute("z"))
-                zVal = strtod(station_node->first_attribute("z")->value(), 0);
+                zVal = strtod(station_node->first_attribute("z")->value(),
+                              nullptr);
 
             std::string station_name(""), sensor_data_file_name(""), bdate_str("0000-00-00");
             double station_value(0.0), borehole_depth(0.0);
@@ -155,16 +156,19 @@ void RapidStnInterface::readStations(const rapidxml::xml_node<>* station_root, s
             if (station_node->first_node("sensordata"))
                 sensor_data_file_name = station_node->first_node("sensordata")->value();
             if (station_node->first_node("value"))
-                station_value = strtod(station_node->first_node("value")->value(), 0);
+                station_value =
+                    strtod(station_node->first_node("value")->value(), nullptr);
             /* add other station features here */
 
             if (std::string(station_node->name()).compare("station") == 0)
             {
-                GeoLib::Station* s = new GeoLib::Station(
-                            strtod(station_node->first_attribute("x")->value(), 0),
-                            strtod(station_node->first_attribute("y")->value(), 0),
-                            zVal,
-                            station_name);
+                auto* s = new GeoLib::Station(
+                    strtod(station_node->first_attribute("x")->value(),
+                           nullptr),
+                    strtod(station_node->first_attribute("y")->value(),
+                           nullptr),
+                    zVal,
+                    station_name);
                 s->setStationValue(station_value);
                 if (!sensor_data_file_name.empty())
                     s->addSensorDataFromCSV(BaseLib::copyPathToFileName(sensor_data_file_name, file_name));
@@ -173,15 +177,19 @@ void RapidStnInterface::readStations(const rapidxml::xml_node<>* station_root, s
             else if (std::string(station_node->name()).compare("borehole") == 0)
             {
                 if (station_node->first_node("bdepth"))
-                    borehole_depth = strtod(station_node->first_node("bdepth")->value(), 0);
+                    borehole_depth = strtod(
+                        station_node->first_node("bdepth")->value(), nullptr);
                 if (station_node->first_node("bdate"))
                     bdate_str = station_node->first_node("bdate")->value();
                 /* add other borehole features here */
 
-                GeoLib::StationBorehole* s = GeoLib::StationBorehole::createStation(
+                GeoLib::StationBorehole* s =
+                    GeoLib::StationBorehole::createStation(
                         station_name,
-                        strtod(station_node->first_attribute("x")->value(), 0),
-                        strtod(station_node->first_attribute("y")->value(), 0),
+                        strtod(station_node->first_attribute("x")->value(),
+                               nullptr),
+                        strtod(station_node->first_attribute("y")->value(),
+                               nullptr),
                         zVal,
                         borehole_depth,
                         bdate_str);
@@ -217,13 +225,17 @@ void RapidStnInterface::readStratigraphy( const rapidxml::xml_node<>* strat_root
                 horizon_name = horizon_node->first_node("name")->value();
             /* add other horizon features here */
 
-            double depth (strtod(horizon_node->first_attribute("z")->value(), 0));
+            double depth(
+                strtod(horizon_node->first_attribute("z")->value(), nullptr));
             if (fabs(depth - depth_check) > std::numeric_limits<double>::epsilon()) // skip soil-layer if its thickness is zero
             {
-                borehole->addSoilLayer(strtod(horizon_node->first_attribute("x")->value(), 0),
-                                       strtod(horizon_node->first_attribute("y")->value(), 0),
-                                       depth,
-                                       horizon_name);
+                borehole->addSoilLayer(
+                    strtod(horizon_node->first_attribute("x")->value(),
+                           nullptr),
+                    strtod(horizon_node->first_attribute("y")->value(),
+                           nullptr),
+                    depth,
+                    horizon_name);
                 depth_check = depth;
             }
             else

@@ -37,14 +37,16 @@ public:
      */
     StratBar(GeoLib::StationBorehole* station,
              std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
-             QGraphicsItem* parent = 0);
-    ~StratBar();
+             QGraphicsItem* parent = nullptr);
+    ~StratBar() override;
 
     /// Returns the bounding rectangle of the bar.
-    QRectF boundingRect() const;
+    QRectF boundingRect() const override;
 
     /// Paints the bar.
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+    void paint(QPainter* painter,
+               const QStyleOptionGraphicsItem* option,
+               QWidget* widget) override;
 
 private:
     /**

@@ -38,14 +38,14 @@ public:
      * corresponding line segment.
      * @see Polyline::addPoint()
      */
-    virtual bool addPoint(std::size_t pnt_id) override;
+    bool addPoint(std::size_t pnt_id) override;
 
     /**
      * Method calls the @see Polyline::insertPoint() and initializes the inserted line
      * segment with the same value the previous line segment had.
      * @see Polyline::insertPoint()
      */
-    virtual bool insertPoint(std::size_t pos, std::size_t pnt_id) override;
+    bool insertPoint(std::size_t pos, std::size_t pnt_id) override;
 
 private:
     std::vector<bool> _marker;

@@ -55,9 +55,9 @@ public:
     Station(double x = 0.0,
             double y = 0.0,
             double z = 0.0,
-            std::string const& name = "");
+            std::string name = "");
 
-    Station(Point* coords, std::string const& name = "");
+    Station(Point* coords, std::string name = "");
 
     /**
      * Constructor copies the source object
@@ -65,7 +65,7 @@ public:
      */
     Station(Station const& src);
 
-    virtual ~Station();
+    ~Station() override;
 
     /// Returns the name of the station.
     std::string const& getName() const { return _name; }

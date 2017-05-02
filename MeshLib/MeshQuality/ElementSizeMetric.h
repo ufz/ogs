@@ -26,9 +26,9 @@ class ElementSizeMetric : public ElementQualityMetric
 {
 public:
     ElementSizeMetric(Mesh const& mesh);
-    virtual ~ElementSizeMetric() {}
+    ~ElementSizeMetric() override = default;
 
-    virtual void calculateQuality ();
+    void calculateQuality() override;
 
 private:
     std::size_t calc1dQuality();

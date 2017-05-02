@@ -45,7 +45,7 @@ public:
     static const unsigned edge_nodes[1][2];
 
     /// Edge rule
-    typedef LinearEdgeReturn EdgeReturn;
+    using EdgeReturn = MeshLib::LinearEdgeReturn;
 
     /**
      * \copydoc MeshLib::Element::isPntInElement()

@@ -39,7 +39,7 @@ public:
     ogsUserPropertyMacro(LengthScaleFactor,double);
 
     /// @brief Sets a user property.
-    virtual void SetUserProperty(QString name, QVariant value) override
+    void SetUserProperty(QString name, QVariant value) override
     {
         if (name.compare("LengthScaleFactor") == 0)
             SetLengthScaleFactor(value.toDouble());
@@ -53,20 +53,21 @@ protected:
     VtkImageDataToLinePolyDataFilter();
 
     /// @brief Destructor.
-    virtual ~VtkImageDataToLinePolyDataFilter();
+    ~VtkImageDataToLinePolyDataFilter() override;
 
     /// @brief Sets input port to vtkImageData.
-    virtual int FillInputPortInformation(int port,
-                                         vtkInformation* info) override;
+    int FillInputPortInformation(int port, vtkInformation* info) override;
 
     /// @brief Converts the image data to lines
-    virtual int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
-                            vtkInformationVector* outputVector) override;
+    int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
+                    vtkInformationVector* outputVector) override;
 
     /// @brief The spacing of the image
     double ImageSpacing;
 
 private:
-    VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&); // Not implemented.
-    void operator=(const VtkImageDataToLinePolyDataFilter&); // Not implemented
+    VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&) =
+        delete;  // Not implemented.
+    void operator=(const VtkImageDataToLinePolyDataFilter&) =
+        delete;  // Not implemented
 };

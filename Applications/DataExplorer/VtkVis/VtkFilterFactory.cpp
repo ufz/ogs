@@ -133,7 +133,7 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type,
         return new VtkCompositeGeoObjectFilter(inputAlgorithm);
 
     else
-        return NULL;
+        return nullptr;
 }
 
 vtkAlgorithm* VtkFilterFactory::CreateSimpleFilter( QString type )
@@ -143,5 +143,5 @@ vtkAlgorithm* VtkFilterFactory::CreateSimpleFilter( QString type )
     if (type.compare(QString("vtkDataSetSurfaceFilter")) == 0)
         return vtkDataSetSurfaceFilter::New();
 
-    return NULL;
+    return nullptr;
 }

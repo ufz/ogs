@@ -24,10 +24,13 @@
 class QNonScalableGraphicsTextItem : public QGraphicsTextItem
 {
 public:
-    QNonScalableGraphicsTextItem(QGraphicsItem* parent = 0);
-    QNonScalableGraphicsTextItem(const QString &text, QGraphicsItem* parent = 0);
-    ~QNonScalableGraphicsTextItem();
+    QNonScalableGraphicsTextItem(QGraphicsItem* parent = nullptr);
+    QNonScalableGraphicsTextItem(const QString& text,
+                                 QGraphicsItem* parent = nullptr);
+    ~QNonScalableGraphicsTextItem() override;
 
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
-    virtual QRectF boundingRect() const;
+    void paint(QPainter* painter,
+               const QStyleOptionGraphicsItem* option,
+               QWidget* widget) override;
+    QRectF boundingRect() const override;
 };

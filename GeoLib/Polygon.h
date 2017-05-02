@@ -54,7 +54,7 @@ public:
     Polygon(Polygon const& other);
     Polygon& operator=(Polygon const& rhs) = delete;
 
-    virtual ~Polygon();
+    ~Polygon() override;
 
     bool initialise ();
 

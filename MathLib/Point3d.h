@@ -20,7 +20,7 @@
 
 namespace MathLib
 {
-typedef MathLib::TemplatePoint<double,3> Point3d;
+using Point3d = MathLib::TemplatePoint<double, 3>;
 
 extern const Point3d ORIGIN;
 /**

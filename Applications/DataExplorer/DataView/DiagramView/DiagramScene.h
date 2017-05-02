@@ -28,9 +28,9 @@ class QDateTime;
 class DiagramScene : public QGraphicsScene
 {
 public:
-    DiagramScene(QObject* parent = 0);
-    DiagramScene(DiagramList* list, QObject* parent = 0);
-    ~DiagramScene();
+    DiagramScene(QObject* parent = nullptr);
+    DiagramScene(DiagramList* list, QObject* parent = nullptr);
+    ~DiagramScene() override;
 
     QArrow* addArrow(float length, float angle, QPen &pen);
     void addGraph(DiagramList* list);

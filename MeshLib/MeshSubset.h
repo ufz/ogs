@@ -137,7 +137,7 @@ public:
     MeshSubset*
     getIntersectionByNodes(std::vector<Node*> const& nodes) const
     {
-        std::vector<Node*>* active_nodes = new std::vector<Node*>;
+        auto* active_nodes = new std::vector<Node*>;
 
         if (_nodes == nullptr || _nodes->empty())
             return new MeshSubset(_msh, active_nodes);   // Empty mesh subset

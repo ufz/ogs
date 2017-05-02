@@ -43,7 +43,7 @@ public:
     /// Constructor
     SHPImportDialog(std::string filename, GeoLib::GEOObjects& geo_objects,
                     QDialog* parent = nullptr);
-    ~SHPImportDialog();
+    ~SHPImportDialog() override;
 
     QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
 
@@ -62,10 +62,10 @@ private:
 
 private slots:
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject();
+    void reject() override;
 
 signals:
     void shpLoaded(QString);

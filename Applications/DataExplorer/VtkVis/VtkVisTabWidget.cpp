@@ -66,7 +66,8 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
         _item = item;
         transformTabWidget->setEnabled(true);
 
-        vtkTransformFilter* transform_filter = dynamic_cast<vtkTransformFilter*>(_item->transformFilter());
+        auto* transform_filter =
+            dynamic_cast<vtkTransformFilter*>(_item->transformFilter());
         if (transform_filter) // if data set
         {
             actorPropertiesGroupBox->setEnabled(true);
@@ -76,8 +77,8 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
             edgeColorPickerButton->setColor(vtkProps->GetEdgeColor());
             opacitySlider->setValue((int)(vtkProps->GetOpacity() * 100.0));
 
-            vtkTransform* transform =
-                    static_cast<vtkTransform*>(transform_filter->GetTransform());
+            auto* transform =
+                static_cast<vtkTransform*>(transform_filter->GetTransform());
             if (transform)
             {
                 double scale[3];
@@ -119,7 +120,8 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
         {
             const VtkVisImageItem* img = static_cast<VtkVisImageItem*>(_item);
             actorPropertiesGroupBox->setEnabled(false);
-            vtkImageChangeInformation* transform = static_cast<vtkImageChangeInformation*>(img->transformFilter());
+            auto* transform =
+                static_cast<vtkImageChangeInformation*>(img->transformFilter());
             double trans[3];
             transform->GetOriginTranslation(trans);
             this->transX->blockSignals(true);
@@ -197,13 +199,13 @@ void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
             VtkVisPipelineItem* childItem = _item->child(i);
             if (childItem)
             {
-                VtkCompositeColorByHeightFilter* colorFilter =
-                        dynamic_cast<VtkCompositeColorByHeightFilter*>
-                        (childItem->compositeFilter());
+                auto* colorFilter =
+                    dynamic_cast<VtkCompositeColorByHeightFilter*>(
+                        childItem->compositeFilter());
                 if (colorFilter)
                     VtkColorByHeightFilter::SafeDownCast(
-                            colorFilter->GetOutputAlgorithm())->
-                    SetTableRangeScaling(scale);
+                        colorFilter->GetOutputAlgorithm())
+                        ->SetTableRangeScaling(scale);
             }
         }
 
@@ -229,12 +231,13 @@ void VtkVisTabWidget::translateItem()
 
 void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
 {
-    QFormLayout* layout = static_cast<QFormLayout*>(this->scrollAreaWidgetContents->layout());
-    while(layout->count())
+    auto* layout =
+        static_cast<QFormLayout*>(this->scrollAreaWidgetContents->layout());
+    while (layout->count())
         delete layout->takeAt(0)->widget();
 
-    QMap<QString, QVariant>* propMap = NULL;
-    QMap<QString, QList<QVariant> >* propVecMap = NULL;
+    QMap<QString, QVariant>* propMap = nullptr;
+    QMap<QString, QList<QVariant>>* propVecMap = nullptr;
     VtkAlgorithmProperties* algProps = item->getVtkProperties();
 
     if (algProps == nullptr)
@@ -244,7 +247,8 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
     if (item->compositeFilter())
     {
         propMap = item->compositeFilter()->GetAlgorithmUserProperties();
-        propVecMap = item->compositeFilter()->GetAlgorithmUserVectorProperties();
+        propVecMap =
+            item->compositeFilter()->GetAlgorithmUserVectorProperties();
     }
     else
     {
@@ -315,7 +319,7 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
             QList<QVariant> values = i.value();
 
             VtkAlgorithmPropertyVectorEdit* vectorEdit;
-            if (values.size() > 0)
+            if (!values.empty())
             {
                 QList<QString> valuesAsString;
                 foreach (QVariant variant, values)

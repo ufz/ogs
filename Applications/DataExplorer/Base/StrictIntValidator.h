@@ -23,11 +23,11 @@
 class StrictIntValidator : public QIntValidator
 {
 public:
-    StrictIntValidator ( int min, int max, QObject* parent = 0) :
-        QIntValidator( min, max, parent)
+    StrictIntValidator(int min, int max, QObject* parent = nullptr)
+        : QIntValidator(min, max, parent)
     {}
 
-    QValidator::State validate(QString & input, int &pos) const
+    QValidator::State validate(QString& input, int& pos) const override
     {
         if (input.isEmpty()) return Intermediate;
 

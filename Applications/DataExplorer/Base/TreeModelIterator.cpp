@@ -18,8 +18,8 @@
 #include "TreeItem.h"
 #include "TreeModel.h"
 
-TreeModelIterator::TreeModelIterator( TreeModel* model )
-    : _current(NULL), _model(model)
+TreeModelIterator::TreeModelIterator(TreeModel* model)
+    : _current(nullptr), _model(model)
 {
     if (_model->rootItem()->childCount() > 0)
     {
@@ -46,9 +46,9 @@ TreeModelIterator& TreeModelIterator::operator++()
 TreeItem* TreeModelIterator::next( const TreeItem* current )
 {
     if (!current)
-        return NULL;
+        return nullptr;
 
-    TreeItem* next = NULL;
+    TreeItem* next = nullptr;
     if (current->childCount())
     {
         // walk the child

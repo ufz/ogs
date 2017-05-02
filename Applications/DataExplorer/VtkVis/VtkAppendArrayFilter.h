@@ -46,7 +46,7 @@ public:
 
 protected:
     VtkAppendArrayFilter();
-    ~VtkAppendArrayFilter();
+    ~VtkAppendArrayFilter() override;
 
     /// @brief The filter logic.
     int RequestData(vtkInformation* request,

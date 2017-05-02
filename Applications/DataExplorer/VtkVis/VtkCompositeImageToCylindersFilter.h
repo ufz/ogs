@@ -25,11 +25,11 @@ class VtkCompositeImageToCylindersFilter : public VtkCompositeFilter
 {
 public:
     VtkCompositeImageToCylindersFilter(vtkAlgorithm* inputAlgorithm);
-    virtual ~VtkCompositeImageToCylindersFilter();
+    ~VtkCompositeImageToCylindersFilter() override;
 
-    virtual void init() override;
+    void init() override;
 
-    virtual void SetUserProperty(QString name, QVariant value) override;
+    void SetUserProperty(QString name, QVariant value) override;
 
     void SetUserVectorProperty(QString name, QList<QVariant> values) override;
 

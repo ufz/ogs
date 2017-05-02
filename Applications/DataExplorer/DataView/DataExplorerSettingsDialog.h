@@ -25,17 +25,15 @@ class DataExplorerSettingsDialog : public QDialog, private Ui_DataExplorerSettin
     Q_OBJECT
 
 public:
-    DataExplorerSettingsDialog(QDialog* parent = 0);
-    ~DataExplorerSettingsDialog(void);
-
+    DataExplorerSettingsDialog(QDialog* parent = nullptr);
+    ~DataExplorerSettingsDialog(void) override;
 
 private slots:
     void on_gmshPathButton_clicked();
 
     /// Instructions if the OK-Button has been pressed.
-    void accept();
+    void accept() override;
 
     /// Instructions if the Cancel-Button has been pressed.
-    void reject() { this->done(QDialog::Rejected); };
-
+    void reject() override { this->done(QDialog::Rejected); };
 };

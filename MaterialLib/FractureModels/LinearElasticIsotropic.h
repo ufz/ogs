@@ -10,6 +10,7 @@
 #pragma once
 
 #include <Eigen/Eigen>
+#include <utility>
 
 #include "ProcessLib/Parameter/Parameter.h"
 
@@ -42,7 +43,7 @@ public:
     struct MaterialStateVariables
         : public FractureModelBase<DisplacementDim>::MaterialStateVariables
     {
-        void pushBackState() {}
+        void pushBackState() override {}
     };
 
     std::unique_ptr<
@@ -55,9 +56,8 @@ public:
     }
 
 public:
-    explicit LinearElasticIsotropic(
-        MaterialProperties const& material_properties)
-        : _mp(material_properties)
+    explicit LinearElasticIsotropic(MaterialProperties material_properties)
+        : _mp(std::move(material_properties))
     {
     }
 

@@ -20,6 +20,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <logog/include/logog.hpp>
@@ -39,8 +40,9 @@ namespace GeoLib
 template <class T> class TemplateVec
 {
 protected:
-    typedef std::pair<std::string, std::size_t> NameIdPair;
-    typedef std::map<std::string, std::size_t> NameIdMap;
+    using NameIdPair = std::pair<std::string, std::size_t>;
+    using NameIdMap = std::map<std::string, std::size_t>;
+
 public:
     /**
      * Constructor of class TemlateVec.
@@ -55,9 +57,11 @@ public:
      * of the element and the value for std::size_t stands for an index in
      * the data_vec.
      */
-    TemplateVec (const std::string &name, std::unique_ptr<std::vector<T*>> data_vec,
-                 NameIdMap* elem_name_map = nullptr) :
-        _name(name), _data_vec(std::move(data_vec)), _name_id_map (elem_name_map)
+    TemplateVec(std::string name, std::unique_ptr<std::vector<T*>> data_vec,
+                NameIdMap* elem_name_map = nullptr)
+        : _name(std::move(name)),
+          _data_vec(std::move(data_vec)),
+          _name_id_map(elem_name_map)
     {
         if (_data_vec == nullptr)
         {

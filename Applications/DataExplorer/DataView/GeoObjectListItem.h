@@ -34,11 +34,13 @@ class GeoObjectListItem : public TreeItem
 {
 public:
     /// Constructor for the TreeItem specifying the "Points"-subtree of a geometry.
-    GeoObjectListItem(const QList<QVariant> &data,
+    GeoObjectListItem(const QList<QVariant>& data,
                       TreeItem* parent,
-                      const std::vector<GeoLib::Point*>* geo_data = NULL,
+                      const std::vector<GeoLib::Point*>* geo_data = nullptr,
                       GeoLib::GEOTYPE type = GeoLib::GEOTYPE::POINT)
-        : TreeItem(data, parent), _vtkSource(VtkPointsSource::New()), _type(type)
+        : TreeItem(data, parent),
+          _vtkSource(VtkPointsSource::New()),
+          _type(type)
     {
         QString geo_name = parent->data(0).toString();
         static_cast<VtkPointsSource*>(_vtkSource)->setPoints(geo_data);
@@ -46,11 +48,13 @@ public:
     }
 
     /// Constructor for the TreeItem specifying the "Polylines"-subtree of a geometry.
-    GeoObjectListItem(const QList<QVariant> &data,
+    GeoObjectListItem(const QList<QVariant>& data,
                       TreeItem* parent,
-                      const std::vector<GeoLib::Polyline*>* geo_data = NULL,
+                      const std::vector<GeoLib::Polyline*>* geo_data = nullptr,
                       GeoLib::GEOTYPE type = GeoLib::GEOTYPE::POLYLINE)
-        : TreeItem(data, parent), _vtkSource(VtkPolylinesSource::New()), _type(type)
+        : TreeItem(data, parent),
+          _vtkSource(VtkPolylinesSource::New()),
+          _type(type)
     {
         QString geo_name = parent->data(0).toString();
         static_cast<VtkPolylinesSource*>(_vtkSource)->setPolylines(geo_data);
@@ -58,22 +62,20 @@ public:
     }
 
     /// Constructor for the TreeItem specifying the "Surfaces"-subtree of a geometry.
-    GeoObjectListItem(const QList<QVariant> &data,
+    GeoObjectListItem(const QList<QVariant>& data,
                       TreeItem* parent,
-                      const std::vector<GeoLib::Surface*>* geo_data = NULL,
+                      const std::vector<GeoLib::Surface*>* geo_data = nullptr,
                       GeoLib::GEOTYPE type = GeoLib::GEOTYPE::SURFACE)
-        : TreeItem(data, parent), _vtkSource(VtkSurfacesSource::New()),  _type(type)
+        : TreeItem(data, parent),
+          _vtkSource(VtkSurfacesSource::New()),
+          _type(type)
     {
         QString geo_name = parent->data(0).toString();
         static_cast<VtkSurfacesSource*>(_vtkSource)->setSurfaces(geo_data);
         static_cast<VtkSurfacesSource*>(_vtkSource)->SetName(geo_name + " - Surfaces");
     }
 
-    ~GeoObjectListItem()
-    {
-        _vtkSource->Delete();
-    }
-
+    ~GeoObjectListItem() override { _vtkSource->Delete(); }
     /// Returns the type of geo-objects contained in the subtree of this item.
     GeoLib::GEOTYPE getType() { return _type; }
 

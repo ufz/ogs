@@ -70,13 +70,15 @@ void GeoTreeView::selectionChanged( const QItemSelection &selected,
             else // line points or surface triangles
             {
                 emit enableSaveButton(false);
-                const GeoObjectListItem* geo_type = dynamic_cast<const GeoObjectListItem*>(tree_item);
+                const auto* geo_type =
+                    dynamic_cast<const GeoObjectListItem*>(tree_item);
                 if (geo_type) // geometry list item
                     emit enableRemoveButton(true);
                 else
                 {
                     // highlight a point for an expanded polyline
-                    GeoObjectListItem* list_item = dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem());
+                    auto* list_item = dynamic_cast<GeoObjectListItem*>(
+                        tree_item->parentItem()->parentItem());
                     if (list_item && list_item->getType() == GeoLib::GEOTYPE::POLYLINE)
                         geoItemSelected(
                             dynamic_cast<GeoObjectListItem*>(tree_item->parentItem()->parentItem()->parentItem()->child(0))->vtkSource(),
@@ -115,15 +117,15 @@ void GeoTreeView::selectionChangedFromOutside( const QItemSelection &selected,
 void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
 {
     QModelIndex index = this->selectionModel()->currentIndex();
-    TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+    auto* item = static_cast<TreeItem*>(index.internalPointer());
 
-    GeoObjectListItem* list = dynamic_cast<GeoObjectListItem*>(item);
+    auto* list = dynamic_cast<GeoObjectListItem*>(item);
     QMenu menu;
 
     // The current index is a list of points/polylines/surfaces
-    if (list != NULL)
+    if (list != nullptr)
     {
-        QAction* connectPlyAction(NULL);
+        QAction* connectPlyAction(nullptr);
         if (list->getType() == GeoLib::GEOTYPE::POLYLINE)
         {
             connectPlyAction = menu.addAction("Connect Polylines...");
@@ -139,10 +141,10 @@ void GeoTreeView::contextMenuEvent( QContextMenuEvent* event )
         if (!item)  // Otherwise sometimes it crashes when (unmotivated ;-) ) clicking in a treeview
             return;
 
-        GeoObjectListItem* parent = dynamic_cast<GeoObjectListItem*>(item->parentItem());
+        auto* parent = dynamic_cast<GeoObjectListItem*>(item->parentItem());
 
         // The current index refers to a geo-object
-        if (parent != NULL)
+        if (parent != nullptr)
         {
             QMenu* cond_menu = new QMenu("Set FEM Condition");
             //menu.addMenu(cond_menu);
@@ -201,7 +203,7 @@ void GeoTreeView::removeGeometry()
     else
     {
         TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(index);
-        GeoObjectListItem* list = dynamic_cast<GeoObjectListItem*>(item);
+        auto* list = dynamic_cast<GeoObjectListItem*>(item);
         if (list) {
             emit listRemoved((item->parentItem()->data(
                                       0).toString()).toStdString(), list->getType());
@@ -260,7 +262,8 @@ void GeoTreeView::writeToFile() const
          file_type.append(";;Legacy geometry file (*.gli)");
 #endif // DEBUG
         QString geoName = item->data(0).toString();
-        QString fileName = QFileDialog::getSaveFileName(NULL, "Save geometry as",
+        QString fileName = QFileDialog::getSaveFileName(
+            nullptr, "Save geometry as",
             LastSavedFileDirectory::getDir() + geoName, file_type);
         if (!fileName.isEmpty())
         {

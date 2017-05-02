@@ -37,7 +37,7 @@ StationBorehole::StationBorehole(double x, double y, double z, const std::string
 
     // add first point of borehole
     _profilePntVec.push_back(this);
-    _soilName.push_back("");
+    _soilName.emplace_back("");
 }
 
 StationBorehole::~StationBorehole(void)
@@ -123,7 +123,9 @@ int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* bo
             fields.pop_front();
 
             ERR("StationBorehole::addLayer - assuming correct order");
-            double thickness(strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), 0));
+            double thickness(
+                strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(),
+                       nullptr));
             fields.pop_front();
             borehole->addSoilLayer(thickness, fields.front());
         }
@@ -138,7 +140,7 @@ int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* bo
 
 int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const std::vector<std::string> &soil_names)
 {
-    if (((profile.size()-1) == soil_names.size()) && (soil_names.size()>0))
+    if (((profile.size() - 1) == soil_names.size()) && (!soil_names.empty()))
     {
         this->_profilePntVec.push_back(profile[0]);
         std::size_t nLayers = soil_names.size();
@@ -178,8 +180,9 @@ int StationBorehole::addStratigraphies(const std::string &path, std::vector<Poin
                 fields.pop_front();
                 //the method just assumes that layers are read in correct order
                 fields.pop_front();
-                double thickness (strtod(BaseLib::replaceString(",", ".",
-                                                       fields.front()).c_str(), 0));
+                double thickness(strtod(
+                    BaseLib::replaceString(",", ".", fields.front()).c_str(),
+                    nullptr));
                 fields.pop_front();
                 std::string soil_name (fields.front());
                 fields.pop_front();
@@ -255,7 +258,7 @@ void StationBorehole::createSurrogateStratigraphies(std::vector<Point*>* borehol
     std::size_t nBoreholes = boreholes->size();
     for (std::size_t i = 0; i < nBoreholes; i++)
     {
-        StationBorehole* bore = static_cast<StationBorehole*>((*boreholes)[i]);
+        auto* bore = static_cast<StationBorehole*>((*boreholes)[i]);
         bore->addSoilLayer(bore->getDepth(), "depth");
     }
 }
@@ -295,8 +298,7 @@ void StationBorehole::addSoilLayer ( double x, double y, double z, const std::st
 
 bool isBorehole(GeoLib::Point const* pnt)
 {
-    GeoLib::StationBorehole const* bh(
-        dynamic_cast<GeoLib::StationBorehole const*>(pnt));
+    auto const* bh(dynamic_cast<GeoLib::StationBorehole const*>(pnt));
     return bh != nullptr;
 }
 

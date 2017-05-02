@@ -13,26 +13,27 @@
  */
 
 // ** INCLUDES **
+#include <utility>
+
 #include "VtkAlgorithmPropertyCheckbox.h"
 
 #include "VtkAlgorithmProperties.h"
 
-VtkAlgorithmPropertyCheckbox::VtkAlgorithmPropertyCheckbox(const bool value,
-                                                           const QString& name,
-                                                           VtkAlgorithmProperties* algProps,
-                                                           QWidget* parent /*= 0*/ )
-    : QCheckBox(parent), _name(name), _algProps(algProps)
+VtkAlgorithmPropertyCheckbox::VtkAlgorithmPropertyCheckbox(
+    const bool value,
+    QString name,
+    VtkAlgorithmProperties* algProps,
+    QWidget* parent /*= 0*/)
+    : QCheckBox(parent), _name(std::move(name)), _algProps(algProps)
 {
     this->setChecked(value);
     connect(this, SIGNAL(stateChanged(int)), this, SLOT(setNewValue(int)));
 }
 
-VtkAlgorithmPropertyCheckbox::~VtkAlgorithmPropertyCheckbox()
-{
-}
+VtkAlgorithmPropertyCheckbox::~VtkAlgorithmPropertyCheckbox() = default;
 
 void VtkAlgorithmPropertyCheckbox::setNewValue( int state )
 {
-    bool boolState = (bool)state;
+    auto boolState = (bool)state;
     _algProps->SetUserProperty(_name, QVariant(boolState));
 }

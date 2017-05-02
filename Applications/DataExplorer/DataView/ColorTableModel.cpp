@@ -22,9 +22,7 @@ ColorTableModel::ColorTableModel( const std::map<std::string, DataHolderLib::Col
     this->buildTable(colorLookupTable);
 }
 
-ColorTableModel::~ColorTableModel()
-{
-}
+ColorTableModel::~ColorTableModel() = default;
 
 int ColorTableModel::columnCount( const QModelIndex& parent /*= QModelIndex()*/ ) const
 {
@@ -82,11 +80,10 @@ bool ColorTableModel::buildTable(const std::map<std::string, DataHolderLib::Colo
     int count = 0;
     beginInsertRows(QModelIndex(), 0, colorLookupTable.size() - 1);
 
-    for (std::map<std::string, DataHolderLib::Color*>::const_iterator it = colorLookupTable.begin();
-         it != colorLookupTable.end(); ++it)
+    for (const auto& row : colorLookupTable)
     {
-        QColor color((*(it->second))[0], (*(it->second))[1], (*(it->second))[2]);
-        QString name(QString::fromStdString(it->first));
+        QColor color((*row.second)[0], (*row.second)[1], (*row.second)[2]);
+        QString name(QString::fromStdString(row.first));
 
         /* Saudi Arabia strat names *
            if (it->first.compare("1")==0) name="Buweib";

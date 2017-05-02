@@ -30,12 +30,10 @@ GeoTreeModel::GeoTreeModel( QObject* parent )
     QList<QVariant> rootData;
     delete _rootItem;
     rootData << "Id" << "x" << "y" << "z" << "name ";
-    _rootItem = new GeoTreeItem(rootData, NULL, NULL);
+    _rootItem = new GeoTreeItem(rootData, nullptr, nullptr);
 }
 
-GeoTreeModel::~GeoTreeModel()
-{
-}
+GeoTreeModel::~GeoTreeModel() = default;
 
 void GeoTreeModel::addPointList(QString geoName, GeoLib::PointVec const& pointVec)
 {
@@ -45,13 +43,14 @@ void GeoTreeModel::addPointList(QString geoName, GeoLib::PointVec const& pointVe
 
     QList<QVariant> geoData;
     geoData << QVariant(geoName) << "" << "" << "" << "";
-    GeoTreeItem* geo (new GeoTreeItem(geoData, _rootItem));
+    auto* geo(new GeoTreeItem(geoData, _rootItem));
     _lists.push_back(geo);
     _rootItem->appendChild(geo);
 
     QList<QVariant> pointData;
     pointData << "Points" << "" << "" << "" << "";
-    GeoObjectListItem* pointList = new GeoObjectListItem(pointData, geo, points, GeoLib::GEOTYPE::POINT);
+    auto* pointList =
+        new GeoObjectListItem(pointData, geo, points, GeoLib::GEOTYPE::POINT);
     geo->appendChild(pointList);
 
     std::size_t nPoints = points->size();
@@ -84,14 +83,14 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
     beginResetModel();
 
     int nLists = _rootItem->childCount();
-    TreeItem* geo(NULL);
+    TreeItem* geo(nullptr);
     for (int i = 0; i < nLists; i++)
     {
         if (_rootItem->child(i)->data(0).toString().compare(geoName) == 0)
             geo = _rootItem->child(i);
     }
 
-    if (geo == NULL)
+    if (geo == nullptr)
     {
         ERR("GeoTreeModel::addPolylineList(): No corresponding geometry for \"%s\" found.", geoName.toStdString().c_str());
         return;
@@ -101,7 +100,8 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
 
     QList<QVariant> plyData;
     plyData << "Polylines" << "" << "" << "";
-    GeoObjectListItem* plyList = new GeoObjectListItem(plyData, geo, lines, GeoLib::GEOTYPE::POLYLINE);
+    auto* plyList =
+        new GeoObjectListItem(plyData, geo, lines, GeoLib::GEOTYPE::POLYLINE);
     geo->appendChild(plyList);
     this->addChildren(plyList, polylineVec, 0, lines->size());
 
@@ -110,18 +110,16 @@ void GeoTreeModel::addPolylineList(QString geoName, GeoLib::PolylineVec const& p
 
 void GeoTreeModel::appendPolylines(const std::string &name, GeoLib::PolylineVec const& polylineVec)
 {
-    for (std::size_t i = 0; i < _lists.size(); i++)
+    for (auto& list : _lists)
     {
-        if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
-            for (int j = 0; j < _lists[i]->childCount(); j++)
+        if (name.compare(list->data(0).toString().toStdString()) == 0)
+            for (int j = 0; j < list->childCount(); j++)
             {
-                GeoObjectListItem* parent =
-                        static_cast<GeoObjectListItem*>(_lists[i]->child(j));
+                auto* parent = static_cast<GeoObjectListItem*>(list->child(j));
                 if (GeoLib::GEOTYPE::POLYLINE == parent->getType())
                 {
                     beginResetModel();
-                    this->addChildren(parent, polylineVec,
-                                      parent->childCount(),
+                    this->addChildren(parent, polylineVec, parent->childCount(),
                                       polylineVec.getVector()->size());
                     endResetModel();
                     parent->vtkSource()->Modified();
@@ -146,10 +144,10 @@ void GeoTreeModel::addChildren(GeoObjectListItem* plyList,
         line_data << "Line " + QString::number(i) << "" << "" << "";
 
         const GeoLib::Polyline &line(*(lines[i]));
-        GeoTreeItem* lineItem(new GeoTreeItem(line_data, plyList, &line));
+        auto* lineItem(new GeoTreeItem(line_data, plyList, &line));
         plyList->appendChild(lineItem);
 
-        int nPoints = static_cast<int>(lines[i]->getNumberOfPoints());
+        auto nPoints = static_cast<int>(lines[i]->getNumberOfPoints());
         for (int j = 0; j < nPoints; j++)
         {
             const GeoLib::Point pnt(*(line.getPoint(j)));
@@ -175,7 +173,7 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
     beginResetModel();
 
     int nLists = _rootItem->childCount();
-    TreeItem* geo(NULL);
+    TreeItem* geo(nullptr);
     for (int i = 0; i < nLists; i++)
     {
         if (_rootItem->child(i)->data(0).toString().compare(geoName) == 0)
@@ -192,7 +190,8 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
 
     QList<QVariant> sfcData;
     sfcData << "Surfaces" << "" << "" << "";
-    GeoObjectListItem* sfcList = new GeoObjectListItem(sfcData, geo, surfaces, GeoLib::GEOTYPE::SURFACE);
+    auto* sfcList =
+        new GeoObjectListItem(sfcData, geo, surfaces, GeoLib::GEOTYPE::SURFACE);
     geo->appendChild(sfcList);
     this->addChildren(sfcList, surfaceVec, 0, surfaces->size());
 
@@ -201,20 +200,18 @@ void GeoTreeModel::addSurfaceList(QString geoName, GeoLib::SurfaceVec const& sur
 
 void GeoTreeModel::appendSurfaces(const std::string &name, GeoLib::SurfaceVec const& surfaceVec)
 {
-    for (std::size_t i = 0; i < _lists.size(); i++)
+    for (auto& list : _lists)
     {
-        if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
+        if (name.compare(list->data(0).toString().toStdString()) == 0)
         {
-            int nChildren = _lists[i]->childCount();
+            int nChildren = list->childCount();
             for (int j = 0; j < nChildren; j++)
             {
-                GeoObjectListItem* parent =
-                        static_cast<GeoObjectListItem*>(_lists[i]->child(j));
+                auto* parent = static_cast<GeoObjectListItem*>(list->child(j));
                 if (GeoLib::GEOTYPE::SURFACE == parent->getType())
                 {
                     beginResetModel();
-                    this->addChildren(parent, surfaceVec,
-                                      parent->childCount(),
+                    this->addChildren(parent, surfaceVec, parent->childCount(),
                                       surfaceVec.getVector()->size());
                     parent->vtkSource()->Modified();
                     endResetModel();
@@ -242,10 +239,10 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
         "" << "";
 
         const GeoLib::Surface &sfc(*(*surfaces)[i]);
-        GeoTreeItem* surfaceItem(new GeoTreeItem(surface, sfcList, &sfc));
+        auto* surfaceItem(new GeoTreeItem(surface, sfcList, &sfc));
         sfcList->appendChild(surfaceItem);
 
-        int nElems = static_cast<int>((*surfaces)[i]->getNumberOfTriangles());
+        auto nElems = static_cast<int>((*surfaces)[i]->getNumberOfTriangles());
         for (int j = 0; j < nElems; j++)
         {
             QList<QVariant> elem;
@@ -254,7 +251,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
             elem << j << static_cast<int>(triangle[0])
                  << static_cast<int>(triangle[1])
                  << static_cast<int>(triangle[2]);
-            TreeItem* child(new TreeItem(elem, surfaceItem));
+            auto* child(new TreeItem(elem, surfaceItem));
             surfaceItem->appendChild(child);
 
             for (int k = 0; k < 3; k++)
@@ -310,13 +307,13 @@ vtkPolyDataAlgorithm* GeoTreeModel::vtkSource(const std::string &name, GeoLib::G
         if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
             for (int j = 0; j < _lists[i]->childCount(); j++)
             {
-                GeoObjectListItem* item =
-                        dynamic_cast<GeoObjectListItem*>(_lists[i]->child(j));
+                auto* item =
+                    dynamic_cast<GeoObjectListItem*>(_lists[i]->child(j));
                 if (item->getType() == type)
                     return item->vtkSource();
             }
     }
-    return NULL;
+    return nullptr;
 }
 
 void GeoTreeModel::setNameForItem(const std::string &name,

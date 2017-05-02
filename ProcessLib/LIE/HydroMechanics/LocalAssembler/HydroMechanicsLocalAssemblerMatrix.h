@@ -63,12 +63,11 @@ public:
     }
 
 protected:
-    virtual void assembleWithJacobianConcrete(
-        double const t,
-        Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_x_dot,
-        Eigen::VectorXd& local_rhs,
-        Eigen::MatrixXd& local_Jac) override;
+    void assembleWithJacobianConcrete(double const t,
+                                      Eigen::VectorXd const& local_x,
+                                      Eigen::VectorXd const& local_x_dot,
+                                      Eigen::VectorXd& local_rhs,
+                                      Eigen::MatrixXd& local_Jac) override;
 
     void assembleBlockMatricesWithJacobian(
         double const t,

@@ -28,8 +28,9 @@ namespace NumLib
 template <unsigned N_DIM>
 class IntegrationGaussRegular
 {
-    typedef typename MathLib::TemplateWeightedPoint<double, double, N_DIM>
-        WeightedPoint;
+    using WeightedPoint =
+        typename MathLib::TemplateWeightedPoint<double, double, N_DIM>;
+
 public:
     /// Create IntegrationGaussRegular of the given Gauss-Legendre integration
     /// order.

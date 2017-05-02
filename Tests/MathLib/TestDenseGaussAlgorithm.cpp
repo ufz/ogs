@@ -38,7 +38,7 @@ TEST(MathLib, DenseGaussAlgorithm)
     }
 
     // *** create solution vector, set all entries to 0.0
-    double *x(new double[n_cols]);
+    auto* x(new double[n_cols]);
     std::fill(x,x+n_cols, 0.0);
     double *b0(mat * x);
 
@@ -53,7 +53,7 @@ TEST(MathLib, DenseGaussAlgorithm)
     // right hand side and solution vector with random entries
     double *b3(mat * x);
     double *b3_copy(mat * x);
-    double *x3 (new double[n_cols]);
+    auto* x3(new double[n_cols]);
     std::generate(x3,x3+n_cols, std::rand);
 
     MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>, double*> gauss;

@@ -39,13 +39,13 @@ class MshModel : public TreeModel
     Q_OBJECT
 
 public:
-    MshModel(DataHolderLib::Project &project, QObject* parent = 0);
+    MshModel(DataHolderLib::Project& project, QObject* parent = nullptr);
 
     /// Adds a new mesh
     void addMesh(std::unique_ptr<MeshLib::Mesh> mesh);
 
     /// Returns the number of columns used for the data list
-    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
 public slots:
     /// Adds a new mesh (using no unique_ptr as this interferes with Qt's signal/slot policy)

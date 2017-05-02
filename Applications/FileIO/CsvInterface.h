@@ -80,7 +80,7 @@ public:
     }
 
     /// Writes the CSV file.
-    bool write();
+    bool write() override;
 
     /**
      * Reads 3D points from a CSV file. It is assumed that the file has a header

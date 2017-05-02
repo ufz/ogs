@@ -23,11 +23,7 @@ class MeshLibQuadMesh : public ::testing::Test
         mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(1.0, n_elements);
     }
 
-    ~MeshLibQuadMesh()
-    {
-        delete mesh;
-    }
-
+    ~MeshLibQuadMesh() override { delete mesh; }
     static std::size_t const n_elements = 4;
     static std::size_t const n_nodes = n_elements + 1;
     static std::size_t const elements_stride = n_elements - 1;
@@ -48,7 +44,7 @@ class MeshLibQuadMesh : public ::testing::Test
         return mesh->getNodes()[i * n_nodes + j];
     }
 
-    typedef std::list<std::size_t> Indices;
+    using Indices = std::list<std::size_t>;
     Indices getNeighbor(std::size_t const i) const
     {
         std::list<std::size_t> result;
