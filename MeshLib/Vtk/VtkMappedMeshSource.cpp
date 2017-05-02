@@ -98,7 +98,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation*,
         {
             for (unsigned i = 0; i < 3; ++i)
             {
-                const unsigned prism_swap_id = ptIds->GetId(i);
+                const auto prism_swap_id = ptIds->GetId(i);
                 ptIds->SetId(i, ptIds->GetId(i + 3));
                 ptIds->SetId(i + 3, prism_swap_id);
             }
