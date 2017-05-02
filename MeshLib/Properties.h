@@ -103,6 +103,8 @@ public:
     bool hasPropertyVector(std::string const& name) const;
 
     std::vector<std::string> getPropertyVectorNames() const;
+    std::vector<std::string> getPropertyVectorNames(
+        MeshLib::MeshItemType t) const;
 
     /** copy all PropertyVector objects stored in the (internal) map but only
      * those nodes/elements of a PropertyVector whose ids are not in the vectors
