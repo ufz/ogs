@@ -14,41 +14,9 @@
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
-#include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
-#include "NumLib/TimeStepping/Algorithms/EvolutionaryPIDcontroller.h"
+#include "NumLib/TimeStepping/CreateTimeStepper.h"
 
 #include "MathLib/LinAlg/LinAlg.h"
-
-std::unique_ptr<NumLib::ITimeStepAlgorithm> createTimeStepper(
-    BaseLib::ConfigTree const& config)
-{
-    //! \ogs_file_param{prj__time_loop__time_stepping__type}
-    auto const type = config.peekConfigParameter<std::string>("type");
-
-    std::unique_ptr<NumLib::ITimeStepAlgorithm> timestepper;
-
-    if (type == "SingleStep")
-    {
-        //! \ogs_file_param_special{prj__time_loop__time_stepping__SingleStep}
-        config.ignoreConfigParameter("type");
-        timestepper =
-            std::make_unique<NumLib::FixedTimeStepping>(0.0, 1.0, 1.0);
-    }
-    else if (type == "FixedTimeStepping")
-    {
-        timestepper = NumLib::FixedTimeStepping::newInstance(config);
-    }
-    else if (type == "EvolutionaryPIDcontroller")
-    {
-        timestepper = NumLib::createEvolutionaryPIDcontroller(config);
-    }
-    else
-    {
-        OGS_FATAL("Unknown timestepper type: `%s'.", type.c_str());
-    }
-
-    return timestepper;
-}
 
 std::unique_ptr<ProcessLib::Output> createOutput(
     BaseLib::ConfigTree const& config, std::string const& output_directory)
@@ -321,8 +289,9 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
             pcs_config.getConfigSubtree("time_discretization"));
 
         auto timestepper =
-            //! \ogs_file_param{prj__time_loop__processes__process__time_stepping}
-            createTimeStepper(pcs_config.getConfigSubtree("time_stepping"));
+            NumLib::createTimeStepper(
+                //! \ogs_file_param{prj__time_loop__processes__process__time_stepping}
+                pcs_config.getConfigSubtree("time_stepping"));
 
         auto conv_crit = NumLib::createConvergenceCriterion(
             //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion}
