@@ -55,7 +55,6 @@ stage('Archive (Linux-Docker)') {
 }
 
 stage('Post (Linux-Docker)') {
-    post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
-        'ogs/scripts/jenkins/clang-log-parser.rules'
+    post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml'
     post.cleanup()
 }
