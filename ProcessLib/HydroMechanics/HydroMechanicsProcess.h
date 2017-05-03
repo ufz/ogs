@@ -71,17 +71,15 @@ private:
         // Collect the mesh subsets in a vector.
 
         // For pressure, which is the first
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
-        all_mesh_subsets.push_back(std::unique_ptr<MeshLib::MeshSubsets>{
-            new MeshLib::MeshSubsets{_mesh_subset_base_nodes.get()}});
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+        all_mesh_subsets.emplace_back(_mesh_subset_base_nodes.get());
 
         // For displacement.
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
             getProcessVariables()[1].get().getNumberOfComponents(),
             [&]() {
-                return std::unique_ptr<MeshLib::MeshSubsets>{
-                    new MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}};
+                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
             });
 
         std::vector<unsigned> const vec_n_components{1, DisplacementDim};
@@ -105,10 +103,9 @@ private:
 
         // TODO move the two data members somewhere else.
         // for extrapolation of secondary variables
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>
-            all_mesh_subsets_single_component;
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
         all_mesh_subsets_single_component.emplace_back(
-            new MeshLib::MeshSubsets(_mesh_subset_all_nodes.get()));
+            _mesh_subset_all_nodes.get());
         _local_to_global_index_map_single_component.reset(
             new NumLib::LocalToGlobalIndexMap(
                 std::move(all_mesh_subsets_single_component),

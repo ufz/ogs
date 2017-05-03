@@ -125,28 +125,20 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     {
         _mesh_subset_fracture_nodes.push_back(
             std::unique_ptr<MeshLib::MeshSubset const>(
-                        new MeshLib::MeshSubset(_mesh, &_vec_fracture_nodes[i])
-                        ));
+                new MeshLib::MeshSubset(_mesh, &_vec_fracture_nodes[i])));
     }
 
     // Collect the mesh subsets in a vector.
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
     std::generate_n(
-        std::back_inserter(all_mesh_subsets),
-        DisplacementDim,
-        [&]() {
-            return std::unique_ptr<MeshLib::MeshSubsets>{
-                new MeshLib::MeshSubsets{_mesh_subset_matrix_nodes.get()}};
+        std::back_inserter(all_mesh_subsets), DisplacementDim, [&]() {
+            return MeshLib::MeshSubsets{_mesh_subset_matrix_nodes.get()};
         });
     for (auto& ms : _mesh_subset_fracture_nodes)
     {
-        std::generate_n(
-            std::back_inserter(all_mesh_subsets),
-            DisplacementDim,
-            [&]() {
-                return std::unique_ptr<MeshLib::MeshSubsets>{
-                    new MeshLib::MeshSubsets{ms.get()}};
-            });
+        std::generate_n(std::back_inserter(all_mesh_subsets),
+                        DisplacementDim,
+                        [&]() { return MeshLib::MeshSubsets{ms.get()}; });
     }
 
     std::vector<unsigned> const vec_n_components(
@@ -183,10 +175,9 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>>
-        all_mesh_subsets_single_component;
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
     all_mesh_subsets_single_component.emplace_back(
-        new MeshLib::MeshSubsets(_mesh_subset_all_nodes.get()));
+        _mesh_subset_all_nodes.get());
     _local_to_global_index_map_single_component.reset(
         new NumLib::LocalToGlobalIndexMap(
             std::move(all_mesh_subsets_single_component),

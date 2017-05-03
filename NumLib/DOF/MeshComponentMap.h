@@ -38,9 +38,8 @@ public:
 public:
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector
-    MeshComponentMap(
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> const& components,
-        ComponentOrder order);
+    MeshComponentMap(std::vector<MeshLib::MeshSubsets> const& components,
+                     ComponentOrder order);
 
     /// Creates a multi-component subset of the current mesh component map.
     /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the

@@ -53,8 +53,8 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // Allocate a coefficient matrix, RHS and solution vectors
     //--------------------------------------------------------------------------
     // define a mesh item composition in a vector
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> vec_comp_dis;
-    vec_comp_dis.emplace_back(new MeshLib::MeshSubsets{&mesh_items_all_nodes});
+    std::vector<MeshLib::MeshSubsets> vec_comp_dis;
+    vec_comp_dis.emplace_back(&mesh_items_all_nodes);
     NumLib::LocalToGlobalIndexMap local_to_global_index_map(
         std::move(vec_comp_dis), NumLib::ComponentOrder::BY_COMPONENT);
 

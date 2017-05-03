@@ -56,8 +56,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
     // to each of the MeshSubset in the mesh_subsets.
     _mesh_subset_all_nodes.reset(
         mesh_subsets.getMeshSubset(0).getIntersectionByNodes(nodes));
-    std::unique_ptr<MeshLib::MeshSubsets> all_mesh_subsets{
-        new MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}};
+    MeshLib::MeshSubsets all_mesh_subsets{_mesh_subset_all_nodes.get()};
 
     // Create local DOF table from intersected mesh subsets for the given
     // variable and component ids.
@@ -65,8 +64,9 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         variable_id, {component_id}, std::move(all_mesh_subsets), _elements));
 
     createLocalAssemblers<LocalAssemblerImplementation>(
-        global_dim, _elements, *_dof_table_boundary, shapefunction_order, _local_assemblers,
-        is_axially_symmetric, _integration_order, _data, fracture_prop, variable_id);
+        global_dim, _elements, *_dof_table_boundary, shapefunction_order,
+        _local_assemblers, is_axially_symmetric, _integration_order, _data,
+        fracture_prop, variable_id);
 }
 
 template <typename BoundaryConditionData,

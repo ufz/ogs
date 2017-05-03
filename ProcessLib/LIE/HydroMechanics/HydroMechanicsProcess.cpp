@@ -143,13 +143,12 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     }
 
     // Collect the mesh subsets in a vector.
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
     std::vector<unsigned> vec_n_components;
     std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
     // pressure
     vec_n_components.push_back(1);
-    all_mesh_subsets.push_back(std::unique_ptr<MeshLib::MeshSubsets>{
-        new MeshLib::MeshSubsets{_mesh_subset_nodes_p.get()}});
+    all_mesh_subsets.emplace_back(_mesh_subset_nodes_p.get());
     if (!_process_data.deactivate_matrix_in_flow)
     {
         vec_var_elements.push_back(&_mesh.getElements());
@@ -163,8 +162,7 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     // regular displacement
     vec_n_components.push_back(GlobalDim);
     std::generate_n(std::back_inserter(all_mesh_subsets), GlobalDim, [&]() {
-        return std::unique_ptr<MeshLib::MeshSubsets>{
-            new MeshLib::MeshSubsets{_mesh_subset_matrix_nodes.get()}};
+        return MeshLib::MeshSubsets{_mesh_subset_matrix_nodes.get()};
     });
     vec_var_elements.push_back(&_vec_matrix_elements);
     if (!_vec_fracture_nodes.empty())
@@ -172,8 +170,7 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
         // displacement jump
         vec_n_components.push_back(GlobalDim);
         std::generate_n(std::back_inserter(all_mesh_subsets), GlobalDim, [&]() {
-            return std::unique_ptr<MeshLib::MeshSubsets>{
-                new MeshLib::MeshSubsets{_mesh_subset_fracture_nodes.get()}};
+            return MeshLib::MeshSubsets{_mesh_subset_fracture_nodes.get()};
         });
         vec_var_elements.push_back(&_vec_fracture_matrix_elements);
     }
