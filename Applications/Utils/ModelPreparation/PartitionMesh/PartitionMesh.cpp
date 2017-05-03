@@ -86,6 +86,9 @@ int main(int argc, char* argv[])
          mesh_ptr->getNumberOfNodes(),
          mesh_ptr->getNumberOfElements());
 
+    std::size_t const number_of_nodes(mesh_ptr->getNumberOfNodes());
+    std::size_t const number_of_elements(mesh_ptr->getNumberOfElements());
+
     ApplicationUtils::NodeWiseMeshPartitioner mesh_partitioner(
         nparts.getValue(), std::move(mesh_ptr));
 
@@ -118,6 +121,25 @@ int main(int argc, char* argv[])
                 INFO("Return value of system call %d ", status);
                 return EXIT_FAILURE;
             }
+        }
+        else if (num_partitions == 1 && exe_metis_flag.getValue())
+        {
+            // The mpmetis tool can not be used for 'partitioning' in only one
+            // domain. For this reason the according files are written for just
+            // one domain in the metis output format in the following.
+            auto writePartitionFile = [&file_name_base](
+                std::string const& file_name_extension, std::size_t number) {
+                std::string const name(file_name_base + file_name_extension);
+                std::ofstream os(name);
+                if (!os)
+                    OGS_FATAL("Couldn't open file '%s' for writing.",
+                              name.c_str())
+                for (std::size_t n(0); n < number; ++n)
+                    os << "0\n";
+            };
+
+            writePartitionFile(".mesh.npart.1", number_of_nodes);
+            writePartitionFile(".mesh.epart.1", number_of_elements);
         }
 
         mesh_partitioner.readMetisData(file_name_base);
