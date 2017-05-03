@@ -36,12 +36,14 @@ elseif(MSVC)
   generate_export_header(metis)
 endif()
 
-install(TARGETS metis
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-  ARCHIVE DESTINATION lib
-  COMPONENT ogs_partmesh
-)
+if(BUILD_SHARED_LIBS)
+    install(TARGETS metis
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+        ARCHIVE DESTINATION lib
+        COMPONENT ogs_partmesh
+    )
+endif()
 
 ## Compile mpmetis
 add_definitions(-DSVNINFO="")
