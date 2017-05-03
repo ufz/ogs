@@ -14,14 +14,20 @@ namespace NumLib
 {
 namespace
 {
-template <class CalculateNorm>
+template <typename CalculateNorm>
 double norm(GlobalVector const& x, unsigned const global_component,
             LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh,
             CalculateNorm calculate_norm)
 {
+#ifdef USE_PETSC
+    x.setLocalAccessibleVector();
+#endif
+
     double res = 0.0;
-    MeshLib::MeshSubsets const& mss = dof_table.getMeshSubsets(global_component);
-    for (unsigned i=0; i<mss.size(); i++)
+    MeshLib::MeshSubsets const& mss =
+        dof_table.getMeshSubsets(global_component);
+
+    for (unsigned i = 0; i < mss.size(); i++)
     {
         MeshLib::MeshSubset const& ms = mss.getMeshSubset(i);
         if (ms.getMeshID() != mesh.getID())
@@ -30,10 +36,18 @@ double norm(GlobalVector const& x, unsigned const global_component,
         {
             auto const value = getNonGhostNodalValue(
                 x, mesh, dof_table, node->getID(), global_component);
-
             res = calculate_norm(res, value);
         }
     }
+    return res;
+}
+
+double norm1(GlobalVector const& x, unsigned const global_component,
+             LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh)
+{
+    double res =
+        norm(x, global_component, dof_table, mesh,
+             [](double res, double value) { return res + std::abs(value); });
 
 #ifdef USE_PETSC
     double global_result = 0.0;
@@ -44,7 +58,40 @@ double norm(GlobalVector const& x, unsigned const global_component,
     return res;
 }
 
-} // anonymous namespace
+double norm2(GlobalVector const& x, unsigned const global_component,
+             LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh)
+{
+    double res =
+        norm(x, global_component, dof_table, mesh,
+             [](double res, double value) { return res + value * value; });
+
+#ifdef USE_PETSC
+    double global_result = 0.0;
+    MPI_Allreduce(&res, &global_result, 1, MPI_DOUBLE, MPI_SUM,
+                  PETSC_COMM_WORLD);
+    res = global_result;
+#endif
+    return std::sqrt(res);
+}
+
+double normInfinity(GlobalVector const& x, unsigned const global_component,
+                    LocalToGlobalIndexMap const& dof_table,
+                    MeshLib::Mesh const& mesh)
+{
+    double res = norm(x, global_component, dof_table, mesh,
+                      [](double res, double value) {
+                          return std::max(res, std::abs(value));
+                      });
+
+#ifdef USE_PETSC
+    double global_result = 0.0;
+    MPI_Allreduce(&res, &global_result, 1, MPI_DOUBLE, MPI_MAX,
+                  PETSC_COMM_WORLD);
+    res = global_result;
+#endif
+    return res;
+}
+}  // anonymous namespace
 
 double getNonGhostNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -115,28 +162,20 @@ NumLib::LocalToGlobalIndexMap::RowColumnIndices getRowColumnIndices(
     return NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
 }
 
-
 double norm(GlobalVector const& x, unsigned const global_component,
             MathLib::VecNormType norm_type,
             LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh)
 {
-    switch(norm_type)
+    switch (norm_type)
     {
-    case MathLib::VecNormType::NORM1:
-        return norm(
-            x, global_component, dof_table, mesh,
-            [](double res, double value) { return res + std::abs(value); });
-    case MathLib::VecNormType::NORM2:
-        return std::sqrt(
-            norm(x, global_component, dof_table, mesh,
-                 [](double res, double value) { return res + value * value; }));
-    case MathLib::VecNormType::INFINITY_N:
-        return norm(x, global_component, dof_table, mesh,
-                    [](double res, double value) {
-                        return std::max(res, std::abs(value));
-                    });
-    default:
-        OGS_FATAL("An invalid norm type has been passed.");
+        case MathLib::VecNormType::NORM1:
+            return norm1(x, global_component, dof_table, mesh);
+        case MathLib::VecNormType::NORM2:
+            return norm2(x, global_component, dof_table, mesh);
+        case MathLib::VecNormType::INFINITY_N:
+            return normInfinity(x, global_component, dof_table, mesh);
+        default:
+            OGS_FATAL("An invalid norm type has been passed.");
     }
 }
 
