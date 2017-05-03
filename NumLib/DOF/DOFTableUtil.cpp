@@ -14,12 +14,11 @@ namespace NumLib
 {
 namespace
 {
-
 template <class CalculateNorm>
 double norm(GlobalVector const& x, unsigned const global_component,
-             LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh, CalculateNorm calculate_norm)
+            LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh,
+            CalculateNorm calculate_norm)
 {
-    // TODO that also includes ghost nodes.
     double res = 0.0;
     MeshLib::MeshSubsets const& mss = dof_table.getMeshSubsets(global_component);
     for (unsigned i=0; i<mss.size(); i++)
@@ -29,8 +28,8 @@ double norm(GlobalVector const& x, unsigned const global_component,
             continue;
         for (MeshLib::Node const* node : ms.getNodes())
         {
-            auto const value =
-                getNodalValue(x, mesh, dof_table, node->getID(), global_component);
+            auto const value = getNonGhostNodalValue(
+                x, mesh, dof_table, node->getID(), global_component);
 
             res = calculate_norm(res, value);
         }
@@ -46,6 +45,23 @@ double norm(GlobalVector const& x, unsigned const global_component,
 }
 
 } // anonymous namespace
+
+double getNonGhostNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
+                             NumLib::LocalToGlobalIndexMap const& dof_table,
+                             std::size_t const node_id,
+                             std::size_t const global_component_id)
+{
+    MeshLib::Location const l{mesh.getID(), MeshLib::MeshItemType::Node,
+                              node_id};
+
+    auto const index = dof_table.getGlobalIndex(l, global_component_id);
+    assert (index != NumLib::MeshComponentMap::nop);
+
+    if (index < 0)  // ghost node value
+        return 0.0;
+
+    return x.get(index);
+}
 
 double getNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
                      NumLib::LocalToGlobalIndexMap const& dof_table,
