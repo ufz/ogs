@@ -209,7 +209,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
             "There are %d mesh subsets and %d components.",
             mesh_subsets.size(), global_component_ids.size());
 
-    for (int i = 0; i < global_component_ids.size(); ++i)
+    for (int i = 0; i < static_cast<int>(global_component_ids.size()); ++i)
     {
         auto const& mss = _mesh_subsets[i];
 

@@ -99,7 +99,7 @@ public:
         {
             auto const & pnt_id_map(pnt_vec.getIDMap());
             lines[line_id] = new GeoLib::Polyline(*(pnt_vec.getVector()));
-            for (unsigned long pnt_id : pnt_ids)
+            for (auto pnt_id : pnt_ids)
             {
                 lines[line_id]->addPoint(pnt_id_map[pnt_id]);
             }

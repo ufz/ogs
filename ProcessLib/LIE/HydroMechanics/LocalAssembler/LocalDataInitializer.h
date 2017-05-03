@@ -195,7 +195,7 @@ public:
         auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
         const std::vector<std::size_t> varIDs(_dof_table.getElementVariableIDs(id));
         bool const isPressureDeactivated = (varIDs.front()!=0);
-        std::vector<std::size_t> involved_varIDs; // including deactived elements
+        std::vector<int> involved_varIDs;  // including deactived elements
         involved_varIDs.reserve(varIDs.size()+1);
         if (isPressureDeactivated)
             involved_varIDs.push_back(0); // always pressure come in
@@ -219,7 +219,7 @@ public:
             auto const var_id = involved_varIDs[i];
             auto const n_var_comp = _dof_table.getNumberOfVariableComponents(var_id);
             auto const n_var_element_nodes = vec_n_element_nodes[i];
-            for (unsigned var_comp_id = 0; var_comp_id < n_var_comp; var_comp_id++)
+            for (int var_comp_id = 0; var_comp_id < n_var_comp; var_comp_id++)
             {
                 auto& mss = _dof_table.getMeshSubsets(var_id, var_comp_id);
                 assert(mss.size() == 1);
