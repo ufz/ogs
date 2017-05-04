@@ -140,15 +140,11 @@ int XmlGmlInterface::readFile(const QString &fileName)
         }
     }
 
-    if (polylines->empty())
-        deletePolylines(std::move(polylines));
-    else
+    if (!polylines->empty())
         _geo_objs.addPolylineVec(std::move(polylines), gliName,
                                  std::move(ply_names));
 
-    if (surfaces->empty())
-        deleteSurfaces(std::move(surfaces));
-    else
+    if (!surfaces->empty())
         _geo_objs.addSurfaceVec(std::move(surfaces), gliName,
                                 std::move(sfc_names));
     return 1;
