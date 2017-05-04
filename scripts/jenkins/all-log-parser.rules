@@ -1,5 +1,5 @@
-# Workflow stages used for grouping
-start /stage:/
+# Ignore warnings in Conan packages on Windows
+ok /\\\.conan\\/
 
 # CMake
 warning /CMake Warning/
