@@ -9,6 +9,13 @@ error /CMake Error/
 warning \\[WARNING\]\
 error \[*][*][*]Failed\
 
+# Clang
+warning /: warning:/
+
+# Clang sanitizer
+error /: runtime error:/
+error /==ERROR:/
+
 # MSVC
 warning /: warning C/
 error /: error C/

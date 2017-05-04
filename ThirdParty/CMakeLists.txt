@@ -13,6 +13,9 @@ endif()
 set_property(TARGET logog PROPERTY FOLDER "logog")
 set_property(TARGET test-logog PROPERTY FOLDER "logog")
 set_target_properties(test-logog PROPERTIES EXCLUDE_FROM_ALL TRUE)
+if(MSVC)
+    set_target_properties(logog PROPERTIES COMPILE_FLAGS /W0)
+endif()
 
 add_subdirectory(gtest)
 

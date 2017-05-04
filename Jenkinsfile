@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.5') _
+@Library('jenkins-pipeline@1.0.6') _
 
 def builders = [:]
 def helper = new ogs.helper()
@@ -59,14 +59,22 @@ builders['docs'] = {
 
 parallel builders
 
+def tag = ""
+node('master') {
+    checkoutWithTags()
+    tag = helper.getTag()
+    step([$class: 'LogParserPublisher',
+        failBuildOnError: true,
+        projectRulePath: "scripts/jenkins/all-log-parser.rules",
+        showGraphs: true,
+        unstableOnWarning: false,
+        useProjectRule: true
+    ])
+}
+
 if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
     if (helper.isOriginMaster(this)) {
         build job: 'OGS-6/clang-sanitizer', wait: false
-        def tag = ""
-        node('master') {
-            checkoutWithTags()
-            tag = helper.getTag()
-        }
         if (tag != "") {
             keepBuild()
             currentBuild.displayName = tag

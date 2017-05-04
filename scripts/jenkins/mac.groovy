@@ -49,7 +49,6 @@ stage('Archive (Mac)') {
 }
 
 stage('Post (Mac)') {
-    post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
-        'ogs/scripts/jenkins/msvc-log-parser.rules'
+    post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml'
     post.cleanup()
 }

@@ -23,6 +23,12 @@ include_directories(BEFORE ${METIS_PATH}/libmetis)
 file(GLOB metis_sources ${METIS_PATH}/libmetis/*.c)
 # Build libmetis.
 add_library(metis ${GKlib_sources} ${metis_sources})
+if(MSVC)
+    set_target_properties(metis PROPERTIES COMPILE_FLAGS /W0)
+else()
+    set_target_properties(metis PROPERTIES COMPILE_FLAGS -w)
+endif()
+
 if(UNIX)
   target_link_libraries(metis m)
 elseif(MSVC)
@@ -30,12 +36,14 @@ elseif(MSVC)
   generate_export_header(metis)
 endif()
 
-install(TARGETS metis
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-  ARCHIVE DESTINATION lib
-  COMPONENT ogs_partmesh
-)
+if(BUILD_SHARED_LIBS)
+    install(TARGETS metis
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+        ARCHIVE DESTINATION lib
+        COMPONENT ogs_partmesh
+    )
+endif()
 
 ## Compile mpmetis
 add_definitions(-DSVNINFO="")
