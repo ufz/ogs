@@ -230,7 +230,7 @@ MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
     }
     auto pos = is.tellg();
     auto offset =
-        pos +
+        static_cast<long>(pos) +
         static_cast<long>(_mpi_rank *
                           sizeof(MeshLib::IO::PropertyVectorPartitionMetaData));
     is.seekg(offset);
