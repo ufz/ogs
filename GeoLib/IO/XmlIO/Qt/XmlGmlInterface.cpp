@@ -106,7 +106,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
         {
             readPoints(type_node, points.get(), pnt_names.get());
 
-            // if names-map is empty, set it to NULL because it is not needed
+            // if names-map is empty, set it to nullptr because it is not needed
             if (pnt_names->empty())
             {
                 pnt_names.reset(nullptr);
@@ -120,7 +120,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
                 type_node, polylines.get(), *_geo_objs.getPointVec(gliName),
                 _geo_objs.getPointVecObj(gliName)->getIDMap(), ply_names.get());
 
-            // if names-map is empty, set it to NULL because it is not needed
+            // if names-map is empty, set it to nullptr because it is not needed
             if (ply_names->empty())
             {
                 ply_names.reset(nullptr);
@@ -132,7 +132,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
                 type_node, surfaces.get(), *_geo_objs.getPointVec(gliName),
                 _geo_objs.getPointVecObj(gliName)->getIDMap(), sfc_names.get());
 
-            // if names-map is empty, set it to NULL because it is not needed
+            // if names-map is empty, set it to nullptr because it is not needed
             if (sfc_names->empty())
             {
                 sfc_names.reset(nullptr);

@@ -163,7 +163,6 @@ std::string readPolyline(std::istream &in,
         in >> line;
         if (line.find("$ID") != std::string::npos) // subkeyword found CC
             in >> line; // read value
-            //            id = strtol(line_string.data(), NULL, 0);
         //....................................................................
         if (line.find("$NAME") != std::string::npos) // subkeyword found
         {
@@ -292,7 +291,6 @@ std::string readSurface(std::istream &in,
         in >> line;
         if (line.find("$ID") != std::string::npos) // subkeyword found CC
             in >> line; // read value
-            //            id = strtol(line_string.data(), NULL, 0);
         //....................................................................
         if (line.find("$NAME") != std::string::npos) // subkeyword found
         {
