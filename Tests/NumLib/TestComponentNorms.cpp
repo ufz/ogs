@@ -11,10 +11,17 @@
 #include <limits>
 #include <logog/include/logog.hpp>
 
+#ifdef USE_PETSC
+#include "BaseLib/BuildInfo.h"
+#endif
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/MatrixSpecifications.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
+#ifdef USE_PETSC
+#include "MeshLib/IO/readMeshFromFile.h"
+#else
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#endif
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/NumericsConfig.h"
 #include "NumLib/DOF/DOFTableUtil.h"
@@ -34,8 +41,14 @@ struct DOFTableData
 {
     DOFTableData(unsigned const num_components,
                  NumLib::ComponentOrder const order)
+#ifdef USE_PETSC
+        : mesh(MeshLib::IO::readMeshFromFile(
+              BaseLib::BuildInfo::data_path +
+              "/EllipticPETSc/quad_20x10_GroundWaterFlow.")),
+#else
         : mesh(MeshLib::MeshGenerator::generateRegularHexMesh(
               mesh_length, mesh_elements_in_each_direction)),
+#endif
           mesh_subset_all_nodes(*mesh, &mesh->getNodes()),
           dof_table(createMeshSubsets(mesh_subset_all_nodes, num_components),
                     order)
@@ -46,12 +59,16 @@ struct DOFTableData
     MeshLib::MeshSubset const mesh_subset_all_nodes;
     NumLib::LocalToGlobalIndexMap const dof_table;
 
+#ifndef USE_PETSC
 private:
     static const double mesh_length;
     static const std::size_t mesh_elements_in_each_direction;
+#endif
 };
+#ifndef USE_PETSC
 const double DOFTableData::mesh_length = 1;
 const std::size_t DOFTableData::mesh_elements_in_each_direction = 5;
+#endif
 
 template <typename AccumulateCallback, typename AccumulateFinishCallback>
 void do_test(unsigned const num_components,
@@ -65,7 +82,11 @@ void do_test(unsigned const num_components,
      * vector.
      */
     using CO = NumLib::ComponentOrder;
+#ifdef USE_PETSC
+    for (auto order : {CO::BY_LOCATION})
+#else
     for (auto order : {CO::BY_COMPONENT, CO::BY_LOCATION})
+#endif
     {
         DOFTableData dtd(num_components, order);
 
@@ -97,7 +118,7 @@ void do_test(unsigned const num_components,
 #ifndef USE_PETSC
 TEST(NumLib, ComponentNormSingleComponent)
 #else
-TEST(NumLib, DISABLED_ComponentNormSingleComponent)
+TEST(MPITest_NumLib, ComponentNormSingleComponent)
 #endif
 {
     unsigned const num_components = 1;
@@ -116,7 +137,7 @@ TEST(NumLib, DISABLED_ComponentNormSingleComponent)
 #ifndef USE_PETSC
 TEST(NumLib, ComponentNormMultiComponent1)
 #else
-TEST(NumLib, DISABLED_ComponentNormMultiComponent1)
+TEST(MPITest_NumLib, ComponentNormMultiComponent1)
 #endif
 {
     unsigned const num_components = 3;
@@ -132,7 +153,7 @@ TEST(NumLib, DISABLED_ComponentNormMultiComponent1)
 #ifndef USE_PETSC
 TEST(NumLib, ComponentNormMultiComponent2)
 #else
-TEST(NumLib, DISABLED_ComponentNormMultiComponent2)
+TEST(MPITest_NumLib, ComponentNormMultiComponent2)
 #endif
 {
     unsigned const num_components = 3;
@@ -148,7 +169,7 @@ TEST(NumLib, DISABLED_ComponentNormMultiComponent2)
 #ifndef USE_PETSC
 TEST(NumLib, ComponentNormMultiComponentInfinity)
 #else
-TEST(NumLib, DISABLED_ComponentNormMultiComponentInfinity)
+TEST(MPITest_NumLib, ComponentNormMultiComponentInfinity)
 #endif
 {
     unsigned const num_components = 3;
