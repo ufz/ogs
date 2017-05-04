@@ -34,8 +34,8 @@ void deletePolylines(std::unique_ptr<std::vector<GeoLib::Polyline*>> polylines)
 
 void deleteSurfaces(std::unique_ptr<std::vector<GeoLib::Surface*>> surfaces)
 {
-    for (GeoLib::Surface* line : *surfaces)
-        delete line;
+    for (GeoLib::Surface* surface : *surfaces)
+        delete surface;
 }
 void deleteGeometry(std::unique_ptr<std::vector<GeoLib::Point*>> points,
                     std::unique_ptr<std::vector<GeoLib::Polyline*>>
