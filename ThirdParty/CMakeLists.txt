@@ -51,6 +51,7 @@ endif()
 
 if(OGS_BUILD_SWMM)
     add_subdirectory(SWMMInterface)
+    set_target_properties(SWMM SwmmInterface PROPERTIES COMPILE_FLAGS /W0)
 endif()
 
 if(OGS_BUILD_METIS)
