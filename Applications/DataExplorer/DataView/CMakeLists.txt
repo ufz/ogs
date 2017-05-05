@@ -134,7 +134,7 @@ add_library(QtDataView
 )
 
 target_link_libraries(QtDataView
-    PUBLIC GeoLib MeshGeoToolsLib MeshLib QtBase VtkVis
+    PUBLIC GeoLib MeshGeoToolsLib MeshLib QtBase # VtkVis
     PRIVATE BaseLib MathLib ApplicationsFileIO QtDiagramView QtStratView
         DataHolderLib logog Qt5::Core Qt5::Gui
 )
