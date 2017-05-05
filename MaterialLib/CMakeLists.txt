@@ -21,7 +21,8 @@ append_source_files(SOURCES TwoPhaseModels)
 
 add_library(MaterialLib ${SOURCES})
 target_link_libraries(MaterialLib
-    BaseLib
+    PUBLIC BaseLib NumLib ProcessLib logog
+    PRIVATE MathLib MeshLib
 )
 
 if(OGS_USE_PCH)

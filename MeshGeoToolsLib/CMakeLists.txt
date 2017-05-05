@@ -5,10 +5,8 @@ GET_SOURCE_FILES(SOURCES)
 add_library(MeshGeoToolsLib ${SOURCES})
 
 target_link_libraries(MeshGeoToolsLib
-    BaseLib
-    MathLib
-    MeshLib
-    GeoLib
+    PUBLIC GeoLib MathLib
+    PRIVATE BaseLib MeshLib logog
 )
 
 if(TARGET Boost)

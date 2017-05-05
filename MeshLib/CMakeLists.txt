@@ -27,7 +27,7 @@ if(OGS_USE_PCH)
 endif()
 
 target_link_libraries(MeshLib
-    PUBLIC BaseLib GeoLib MathLib
+    PUBLIC BaseLib GeoLib MathLib logog
     INTERFACE vtkIOXML
 )
 

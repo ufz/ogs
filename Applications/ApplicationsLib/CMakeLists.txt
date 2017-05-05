@@ -6,9 +6,8 @@ set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
 add_library(ApplicationsLib ${LIB_SOURCES})
 
 target_link_libraries(ApplicationsLib
-    MeshGeoToolsLib
-    NumLib
-    ProcessLib
+    PUBLIC BaseLib GeoLib NumLib ProcessLib logog
+    PRIVATE MathLib MeshLib
 )
 
 if(TARGET Eigen)
