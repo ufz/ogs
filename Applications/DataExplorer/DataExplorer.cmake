@@ -54,21 +54,25 @@ add_executable(DataExplorer
 )
 
 target_link_libraries(DataExplorer
+    BaseLib
+    GeoLib
+    MeshGeoToolsLib
+    MeshLib
+    ApplicationsLib
+    ApplicationsFileIO
+    DataHolderLib
+    OGSFileConverterLib
+    QtBase
+    QtDataView
+    QtDiagramView
+    VtkVis
+    Threads::Threads
+    vtkGUISupportQt
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Xml
     Qt5::Network
-    ApplicationsLib
-    ApplicationsFileIO
-    DataHolderLib
-    QtDataView
-    QtDiagramView
-    QtStratView
-    VtkVis
-    Threads::Threads
-    OGSFileConverterLib
-    vtkGUISupportQt
     logog
 )
 
@@ -93,8 +97,6 @@ endif()
 if(GEOTIFF_FOUND)
     target_link_libraries(DataExplorer ${GEOTIFF_LIBRARIES} )
 endif()
-
-add_dependencies (DataExplorer VtkVis)
 
 if(MSVC)
     # Set linker flags
