@@ -5,9 +5,8 @@ GET_SOURCE_FILES(SOURCES_DataHolderLib)
 add_library(DataHolderLib ${SOURCES_DataHolderLib})
 
 target_link_libraries(DataHolderLib
-    GeoLib
-    MeshLib
-    logog
+    PUBLIC GeoLib MeshLib
+    PRIVATE BaseLib logog
 )
 
 if(OGS_USE_PCH)

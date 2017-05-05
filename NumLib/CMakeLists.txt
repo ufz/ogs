@@ -20,12 +20,8 @@ add_library(NumLib ${SOURCES})
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(NumLib
-    BaseLib
-    GeoLib
-    MathLib
-    MeshLib
-    MeshGeoToolsLib
-    logog
+    PUBLIC BaseLib GeoLib MathLib MeshLib logog
+    PRIVATE MeshGeoToolsLib
 )
 
 if(TARGET Eigen)

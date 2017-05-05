@@ -28,28 +28,26 @@ add_library(MathLib ${SOURCES})
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(MathLib
-    BaseLib
-)
+target_link_libraries(MathLib PUBLIC BaseLib logog)
 
 if (CVODE_FOUND)
-    target_link_libraries(MathLib ${CVODE_LIBRARIES})
+    target_link_libraries(MathLib PUBLIC ${CVODE_LIBRARIES})
 endif()
 
 if(LAPACK_FOUND)
-    target_link_libraries(MathLib ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+    target_link_libraries(MathLib PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 endif()
 
 if (OGS_USE_LIS)
-    target_link_libraries(MathLib ${LIS_LIBRARIES})
+    target_link_libraries(MathLib PUBLIC ${LIS_LIBRARIES})
 endif()
 
 if (OGS_USE_MKL)
-    target_link_libraries(MathLib ${MKL_LIBRARIES})
+    target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
 endif()
 
 if (OGS_USE_PETSC)
-    target_link_libraries(MathLib ${PETSC_LIBRARIES})
+    target_link_libraries(MathLib PUBLIC ${PETSC_LIBRARIES})
 endif()
 
 if(TARGET Boost)

@@ -2,20 +2,17 @@
 add_executable(ogs ogs.cpp)
 
 target_link_libraries(ogs
-    ApplicationsLib
-    MeshGeoToolsLib
-    ProcessLib
-    NumLib
+    PRIVATE BaseLib ApplicationsLib NumLib ProcessLib
 )
 
 ADD_VTK_DEPENDENCY(ogs)
 
 if(OGS_USE_PETSC)
-    target_link_libraries(ogs ${PETSC_LIBRARIES})
+    target_link_libraries(ogs PRIVATE ${PETSC_LIBRARIES})
 endif()
 
 if(OGS_INSITU)
-    target_link_libraries(ogs InSituLib)
+    target_link_libraries(ogs PRIVATE InSituLib)
 endif()
 
 if(OGS_USE_PCH)

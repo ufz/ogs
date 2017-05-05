@@ -19,10 +19,17 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # Create the library
 add_library(ApplicationsFileIO ${SOURCES})
-target_link_libraries(ApplicationsFileIO DataHolderLib)
+target_link_libraries(ApplicationsFileIO
+    PUBLIC BaseLib DataHolderLib GeoLib MathLib logog
+    PRIVATE ApplicationsLib MeshLib
+)
 
 if(Shapelib_FOUND)
-    target_link_libraries(ApplicationsFileIO ${Shapelib_LIBRARIES})
+    target_link_libraries(ApplicationsFileIO PRIVATE ${Shapelib_LIBRARIES})
+endif()
+
+if(OGS_BUILD_SWMM)
+    target_link_libraries(ApplicationsFileIO PRIVATE SwmmInterface)
 endif()
 
 ADD_VTK_DEPENDENCY(ApplicationsFileIO)
