@@ -41,10 +41,8 @@ add_library(QtDiagramView
 )
 
 target_link_libraries(QtDiagramView
-    Qt5::Gui
-    GeoLib
-    QtBase
-    )
+    PRIVATE BaseLib GeoLib QtBase DataHolderLib Qt5::Gui logog
+)
 
 set_property(TARGET QtDiagramView PROPERTY FOLDER "DataExplorer")
 

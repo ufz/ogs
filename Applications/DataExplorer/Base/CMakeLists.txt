@@ -36,9 +36,7 @@ add_library(QtBase
     ${HEADERS}
 )
 
-target_link_libraries(QtBase
-    Qt5::Widgets
-    GeoLib)
+target_link_libraries(QtBase Qt5::Widgets)
 
 set_property(TARGET QtBase PROPERTY FOLDER "DataExplorer")
 
