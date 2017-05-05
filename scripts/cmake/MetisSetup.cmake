@@ -23,11 +23,6 @@ include_directories(BEFORE ${METIS_PATH}/libmetis)
 file(GLOB metis_sources ${METIS_PATH}/libmetis/*.c)
 # Build libmetis.
 add_library(metis ${GKlib_sources} ${metis_sources})
-if(MSVC)
-    set_target_properties(metis PROPERTIES COMPILE_FLAGS /W0)
-else()
-    set_target_properties(metis PROPERTIES COMPILE_FLAGS -w)
-endif()
 
 if(UNIX)
   target_link_libraries(metis m)
@@ -58,3 +53,10 @@ set(METIS_SOURCES
 add_executable(mpmetis ${METIS_SOURCES})
 target_link_libraries(mpmetis metis)
 install(TARGETS mpmetis RUNTIME DESTINATION bin COMPONENT ogs_partmesh)
+
+# Disable warnings
+if(MSVC)
+    set_target_properties(metis mpmetis PROPERTIES COMPILE_FLAGS /W0)
+else()
+    set_target_properties(metis mpmetis PROPERTIES COMPILE_FLAGS -w)
+endif()

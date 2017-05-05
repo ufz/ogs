@@ -1,5 +1,9 @@
-# Workflow stages used for grouping
-start /stage:/
+# Ignore warnings in Conan packages on Windows
+ok /\\\.conan\\/
+
+# Ignore linker warnings on envinf1 with petsc
+ok /.*/usr/bin/ld: warning: libssl.*may conflict with libssl.*/
+ok /.*/usr/bin/ld: warning: libcrypto.*may conflict with libcrypto.*/
 
 # CMake
 warning /CMake Warning/
