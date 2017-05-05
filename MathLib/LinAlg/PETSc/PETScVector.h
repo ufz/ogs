@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <petscvec.h>
@@ -155,21 +156,14 @@ class PETScVector
         }
 
         //! Get several entries
-        std::vector<double> get(std::vector<IndexType> const& indices) const
-        {
-            std::vector<double> local_x(indices.size());
-
-            VecGetValues(_v, indices.size(), indices.data(), local_x.data());
-
-            return local_x;
-        }
+        std::vector<double> get(std::vector<IndexType> const& indices) const;
 
         // TODO preliminary
         double operator[] (PetscInt idx) const
         {
-            double value;
-            VecGetValues(_v, 1, &idx, &value);
-            return value;
+            const PetscInt id_p = (idx == -_size) ?  0 : std::abs(idx);
+            //VecGetValues(_v, 1, &id_p, &value);
+            return _global_v[id_p];
         }
 
         /*!
@@ -188,9 +182,11 @@ class PETScVector
         /// and it only get local value. Use it for only test purpose
         PetscScalar get(const PetscInt idx) const
         {
-            PetscScalar x;
-            VecGetValues(_v, 1, &idx, &x);
-            return x;
+            //PetscScalar x;
+            //VecGetValues(_v, 1, &idx, &x);
+            const PetscInt id_p = (idx == -_size) ?  0 : std::abs(idx);
+            //VecGetValues(_v, 1, &id_p, &value);
+            return _global_v[id_p];
         }
 
         // TODO eliminate in favour of getRawVector()
@@ -272,6 +268,13 @@ class PETScVector
         bool _has_ghost_id = false;
 
         /*!
+           Scattered global vector to all processors. Note: this member
+           and its associated computations can be dropped if
+           VecGetValues can get values from different processors.
+        */
+        std::unique_ptr<PetscScalar[]> _global_v = nullptr;
+
+        /*!
               \brief  Collect local vectors
               \param  local_array Local array
               \param  global_array Global array
@@ -292,6 +295,16 @@ class PETScVector
 
         /// A funtion called by constructors to configure members
         void config();
+
+        /// Set _global_v
+        void setGlobalVector()
+        {
+            if (!_global_v)
+            {
+                _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };;
+            }
+            getGlobalVector(_global_v.get());
+        }
 
         friend void finalizeVectorAssembly(PETScVector &vec);
 };

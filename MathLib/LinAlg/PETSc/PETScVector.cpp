@@ -38,6 +38,8 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
     }
 
     config();
+
+    _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
 }
 
 PETScVector::PETScVector(const PetscInt vec_size,
@@ -61,6 +63,8 @@ PETScVector::PETScVector(const PetscInt vec_size,
     }
 
     config();
+
+    _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
 }
 
 PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
@@ -72,6 +76,13 @@ PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
     {
         VecCopy(existing_vec._v, _v);
     }
+
+    if (!_global_v)
+    {
+        _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
+    }
+
+    getGlobalVector(_global_v.get());
 }
 
 PETScVector::PETScVector(PETScVector &&other)
@@ -83,7 +94,14 @@ PETScVector::PETScVector(PETScVector &&other)
     , _size_loc{other._size_loc}
     , _size_ghosts{other._size_ghosts}
     , _has_ghost_id{other._has_ghost_id}
-{}
+{
+    if (!_global_v)
+    {
+        _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
+    }
+
+    getGlobalVector(_global_v.get());
+}
 
 void PETScVector::config()
 {
@@ -101,6 +119,13 @@ void PETScVector::finalizeAssembly()
 {
     VecAssemblyBegin(_v);
     VecAssemblyEnd(_v);
+
+    if (!_global_v)
+    {
+        _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
+    }
+
+    getGlobalVector(_global_v.get());
 }
 
 void PETScVector::gatherLocalVectors( PetscScalar local_array[],
@@ -163,6 +188,24 @@ void PETScVector::copyValues(std::vector<double>& u) const
     double* loc_x = getLocalVector();
     std::copy_n(loc_x, getLocalSize() + getGhostSize(), u.begin());
     restoreArray(loc_x);
+}
+
+std::vector<double> PETScVector::get(std::vector<IndexType> const& indices) const
+{
+    std::vector<double> local_x(indices.size());
+    // If VecGetValues can get values from different processors,
+    // use VecGetValues(_v, indices.size(), indices.data(),
+    //                    local_x.data());
+
+    for (std::size_t i=0; i<indices.size(); i++)
+    {
+        // Ghost entries, and its original index is 0.
+        const IndexType id_p = (indices[i] == -_size)
+                                  ?  0 : std::abs(indices[i]);
+        local_x[i] = _global_v[id_p];
+    }
+
+    return local_x;
 }
 
 PetscScalar* PETScVector::getLocalVector() const
@@ -228,6 +271,7 @@ void PETScVector::shallowCopy(const PETScVector &v)
 void finalizeVectorAssembly(PETScVector &vec)
 {
     vec.finalizeAssembly();
+    vec.setGlobalVector();
 }
 
 } //end of namespace
