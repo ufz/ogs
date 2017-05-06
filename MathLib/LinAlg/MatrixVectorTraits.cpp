@@ -12,8 +12,6 @@
 
 #ifdef USE_PETSC
 
-#include "MeshLib/NodePartitionedMesh.h"
-
 namespace MathLib
 {
 
