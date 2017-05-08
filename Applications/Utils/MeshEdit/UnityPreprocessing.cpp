@@ -27,39 +27,15 @@
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
-template <class T>
-bool checkType(MeshLib::Properties const& props, std::string const& name)
-{
-    if (props.existsPropertyVector<T>(name))
-    {
-        MeshLib::PropertyVector<T> const*const vec = props.getPropertyVector<T>(name);
-        if (vec->getMeshItemType() == MeshLib::MeshItemType::Cell)
-            return true;
-    }
-    return false;
-}
 
-bool isCellVec(MeshLib::Properties const& props, std::string const& name)
-{
-    if (checkType<int>(props, name))
-        return true;
-    if (checkType<double>(props, name))
-        return true;
-    if (checkType<long>(props, name))
-        return true;
-    return false;
-}
 
 bool containsCellVecs(MeshLib::Mesh const& mesh)
 {
     MeshLib::Properties const& props (mesh.getProperties());
-    std::vector<std::string> const& vec_names(props.getPropertyVectorNames());
-    for (std::string name : vec_names)
-    {
-        if (isCellVec(props, name))
-            return true;
-    }
-    return false;
+    std::vector<std::string> const& vec_names(props.getPropertyVectorNames(MeshLib::MeshItemType::Cell));
+    if (vec_names.empty())
+        return false;
+    return true;
 }
 
 template <class T>
@@ -131,7 +107,7 @@ MeshLib::Properties constructProperties(MeshLib::Properties const& props,
 {
     std::vector<std::string> const& names = props.getPropertyVectorNames();
     MeshLib::Properties new_props;
-    for (std::string name : names)
+    for (std::string const& name : names)
     {
         if (fillPropVec<int>(props, name, new_props, elems, node_map, n_nodes))
             continue;
