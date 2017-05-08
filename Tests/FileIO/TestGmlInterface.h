@@ -52,7 +52,8 @@ public:
         auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
             new std::vector<GeoLib::Point*>(9));
 
-        auto cpy_name_id_map = new std::map<std::string, std::size_t>;
+        std::unique_ptr<std::map<std::string, std::size_t>> cpy_name_id_map{
+            new std::map<std::string, std::size_t>};
         std::size_t pos(0);
         for (auto p : test_pnts) {
             (*points)[pos] = new GeoLib::Point(p);
@@ -61,7 +62,8 @@ public:
             pos++;
         }
 
-        geo_objects.addPointVec(std::move(points), geo_name, cpy_name_id_map);
+        geo_objects.addPointVec(std::move(points), geo_name,
+                                std::move(cpy_name_id_map));
     }
 
     void checkPointProperties()
@@ -112,14 +114,16 @@ public:
 
         auto lines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
             new std::vector<GeoLib::Polyline*>(5));
-        auto* name_map = new std::map<std::string, std::size_t>;
+        auto name_map = std::unique_ptr<std::map<std::string, std::size_t>>{
+            new std::map<std::string, std::size_t>};
 
         createPolyline(pnt_vec, *(lines.get()), 0, {0, 1, 2}, *name_map, "left");
         createPolyline(pnt_vec, *(lines.get()), 1, {3, 4, 5}, *name_map, "center");
         createPolyline(pnt_vec, *(lines.get()), 2, {0, 3}, *name_map, "line1");
         createPolyline(pnt_vec, *(lines.get()), 3, {3, 6}, *name_map, "line2");
         createPolyline(pnt_vec, *(lines.get()), 4, {6, 7, 8}, *name_map, "right");
-        geo_objects.addPolylineVec(std::move(lines), geo_name, name_map);
+        geo_objects.addPolylineVec(std::move(lines), geo_name,
+                                   std::move(name_map));
     }
 
     void checkPolylineProperties()
@@ -157,7 +161,8 @@ public:
 
         auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(
             new std::vector<GeoLib::Surface*>(2));
-        auto* sfc_names = new std::map<std::string, std::size_t>;
+        auto sfc_names = std::unique_ptr<std::map<std::string, std::size_t>>{
+            new std::map<std::string, std::size_t>};
         (*sfcs)[0] = new GeoLib::Surface(*points);
         (*sfcs)[0]->addTriangle(pnt_id_map[0], pnt_id_map[3], pnt_id_map[1]);
         (*sfcs)[0]->addTriangle(pnt_id_map[1], pnt_id_map[3], pnt_id_map[4]);
@@ -168,7 +173,8 @@ public:
         (*sfcs)[1]->addTriangle(pnt_id_map[3], pnt_id_map[6], pnt_id_map[8]);
         (*sfcs)[1]->addTriangle(pnt_id_map[3], pnt_id_map[8], pnt_id_map[5]);
         (*sfc_names)["SecondSurface"] = 1;
-        geo_objects.addSurfaceVec(std::move(sfcs), geo_name, sfc_names);
+        geo_objects.addSurfaceVec(std::move(sfcs), geo_name,
+                                  std::move(sfc_names));
     }
 
     void checkSurfaceProperties()

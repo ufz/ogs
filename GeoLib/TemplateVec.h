@@ -58,10 +58,10 @@ public:
      * the data_vec.
      */
     TemplateVec(std::string name, std::unique_ptr<std::vector<T*>> data_vec,
-                NameIdMap* elem_name_map = nullptr)
+                std::unique_ptr<NameIdMap> elem_name_map = nullptr)
         : _name(std::move(name)),
           _data_vec(std::move(data_vec)),
-          _name_id_map(elem_name_map)
+          _name_id_map(std::move(elem_name_map))
     {
         if (_data_vec == nullptr)
         {
@@ -69,7 +69,7 @@ public:
         }
 
         if (!_name_id_map)
-            _name_id_map = new NameIdMap;
+            _name_id_map.reset(new NameIdMap);
     }
 
     /**
@@ -78,7 +78,6 @@ public:
     virtual ~TemplateVec ()
     {
         for (std::size_t k(0); k < size(); k++) delete (*_data_vec)[k];
-        delete _name_id_map;
     }
 
     /** sets the name of the vector of geometric objects
@@ -238,6 +237,6 @@ protected:
     /**
      * store names associated with the element ids
      */
-    NameIdMap* _name_id_map;
+    std::unique_ptr<NameIdMap> _name_id_map;
 };
 } // end namespace GeoLib

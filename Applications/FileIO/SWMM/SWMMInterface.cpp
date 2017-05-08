@@ -416,7 +416,8 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         return geometryCleanup(*points, *lines);
     }
 
-    std::map<std::string, std::size_t> *name_id_map (new std::map<std::string, std::size_t>);
+    std::unique_ptr<std::map<std::string, std::size_t>> name_id_map{
+        new std::map<std::string, std::size_t>};
     std::size_t const n_names (pnt_names.size());
     for (std::size_t i=0; i<n_names; ++i)
     {
@@ -456,7 +457,7 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         }
     }
 
-    geo_objects.addPointVec(std::move(points), geo_name, name_id_map);
+    geo_objects.addPointVec(std::move(points), geo_name, std::move(name_id_map));
     if (!lines->empty())
     {
         if (lines->size() != line_names.size())
@@ -467,7 +468,8 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
                 delete ply;
             return false;
         }
-        std::map<std::string, std::size_t> *line_id_map (new std::map<std::string, std::size_t>);
+        std::unique_ptr<std::map<std::string, std::size_t>> line_id_map{
+            new std::map<std::string, std::size_t>};
         std::size_t const n_names (line_names.size());
         for (std::size_t i=0; i<n_names; ++i)
             line_id_map->insert(std::make_pair(line_names[i], i));
@@ -489,7 +491,8 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
                 line->addPoint(line->getPointID(0));
             }
         }
-        geo_objects.addPolylineVec(std::move(lines), geo_name, line_id_map);
+        geo_objects.addPolylineVec(std::move(lines), geo_name,
+                                   std::move(line_id_map));
     }
     return true;
 }

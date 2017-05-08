@@ -90,7 +90,7 @@ int StationBorehole::addStratigraphy(const std::string &path, StationBorehole* b
             addLayer(data[i], borehole);
 
         // check if a layer is missing
-        size = borehole->_soilName.size();
+        // size = borehole->_soilName.size();
         INFO("StationBorehole::addStratigraphy ToDo");
         //    for (std::size_t i=0; i<size; i++)
         //    {

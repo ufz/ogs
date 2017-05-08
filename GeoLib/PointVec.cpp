@@ -22,11 +22,11 @@
 
 namespace GeoLib
 {
-PointVec::PointVec(const std::string& name,
-                   std::unique_ptr<std::vector<Point*>> points,
-                   std::map<std::string, std::size_t>* name_id_map,
-                   PointType type, double rel_eps)
-    : TemplateVec<Point>(name, std::move(points), name_id_map),
+PointVec::PointVec(
+    const std::string& name, std::unique_ptr<std::vector<Point*>> points,
+    std::unique_ptr<std::map<std::string, std::size_t>> name_id_map,
+    PointType type, double rel_eps)
+    : TemplateVec<Point>(name, std::move(points), std::move(name_id_map)),
       _type(type),
       _aabb(_data_vec->begin(), _data_vec->end()),
       _rel_eps(rel_eps * std::sqrt(MathLib::sqrDist(_aabb.getMinPoint(),

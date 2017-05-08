@@ -12,20 +12,18 @@
  *
  */
 
-// GeoLib
-#include "AABB.h"
-#include "Point.h"
-#include "Station.h"
+#pragma once
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#pragma once
-
-#include "TemplateVec.h"
+#include "AABB.h"
 #include "OctTree.h"
+#include "Point.h"
+#include "Station.h"
+#include "TemplateVec.h"
 
 namespace GeoLib
 {
@@ -68,9 +66,13 @@ public:
      * real tolerance \f$tol\f$. Two points \f$p_0, p_1 \f$ are identical iff
      * \f$|p_1 - p_0| \le tol.\f$
      */
-    PointVec (const std::string& name, std::unique_ptr<std::vector<Point*>> points,
-              std::map<std::string, std::size_t>* name_id_map = nullptr,
-              PointType type = PointVec::PointType::POINT, double rel_eps = std::numeric_limits<double>::epsilon());
+    PointVec(const std::string& name,
+             std::unique_ptr<std::vector<Point*>>
+                 points,
+             std::unique_ptr<std::map<std::string, std::size_t>> name_id_map =
+                 nullptr,
+             PointType type = PointVec::PointType::POINT,
+             double rel_eps = std::numeric_limits<double>::epsilon());
 
     /**
      * Method adds a Point to the (internal) standard vector and takes the ownership.

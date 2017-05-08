@@ -53,7 +53,9 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
         return nullptr;
 
     const unsigned nElemNodes(sfc_elem.getNumberOfBaseNodes());
-    auto** new_nodes = new MeshLib::Node*[2 * nElemNodes];
+    auto new_nodes = std::unique_ptr<MeshLib::Node* []> {
+        new MeshLib::Node*[2 * nElemNodes]
+    };
 
     for (unsigned j=0; j<nElemNodes; ++j)
     {
@@ -65,11 +67,11 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
     }
 
     if (sfc_elem.getGeomType() == MeshLib::MeshElemType::LINE)
-        return new MeshLib::Quad(new_nodes);
+        return new MeshLib::Quad(new_nodes.release());
     if (sfc_elem.getGeomType() == MeshLib::MeshElemType::TRIANGLE)
-        return new MeshLib::Prism(new_nodes);
+        return new MeshLib::Prism(new_nodes.release());
     if (sfc_elem.getGeomType() == MeshLib::MeshElemType::QUAD)
-        return new MeshLib::Hex(new_nodes);
+        return new MeshLib::Hex(new_nodes.release());
 
     return nullptr;
 }
