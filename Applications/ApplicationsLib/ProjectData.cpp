@@ -435,8 +435,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                         "given dimension");
             }
         }
-        else if (type == "THERMOMECHANICS")
+        else if (type == "THERMO_MECHANICS")
         {
+            //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:

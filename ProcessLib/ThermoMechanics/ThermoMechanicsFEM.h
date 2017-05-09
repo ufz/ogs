@@ -92,7 +92,7 @@ struct IntegrationPointData final
                                     SpatialPosition const& x_position,
                                     double const dt,
                                     DisplacementVectorType const& u,
-                                    double& thermal_strain)
+                                    double const thermal_strain)
     {
         eps.noalias() = b_matrices * u;
         eps_m.noalias() = eps - thermal_strain * Invariants::identity2;
@@ -179,7 +179,7 @@ public:
     ThermoMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
-        bool is_axially_symmetric,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
         ThermoMechanicsProcessData<DisplacementDim>& process_data)
         : _process_data(process_data),
@@ -300,12 +300,12 @@ public:
 
             auto const& C = _ip_data[ip].C;
 
-            double delta_T = N.dot(T) - _process_data.reference_temperature;
+            double const delta_T = N.dot(T) - _process_data.reference_temperature;
             // calculate thermally induced strain
             auto const alpha =
                 _process_data.linear_thermal_expansion_coefficient(
                     t, x_position)[0];
-            double thermal_strain = alpha * delta_T;
+            double const thermal_strain = alpha * delta_T;
 
             //
             // displacement equation, displacement part
@@ -331,8 +331,8 @@ public:
                 MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
 
             // calculate real density
-            auto rho_sr = _process_data.solid_density(t, x_position)[0];
-            double rho_s = rho_sr * (1 - 3 * thermal_strain);
+            auto const rho_sr = _process_data.solid_density(t, x_position)[0];
+            double const rho_s = rho_sr * (1 - 3 * thermal_strain);
 
             auto const& b = _process_data.specific_body_force;
             local_rhs.template block<displacement_size, 1>(displacement_index,

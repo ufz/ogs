@@ -36,20 +36,20 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{process__type}
-    config.checkConfigParameter("type", "THERMOMECHANICS");
+    //! \ogs_file_param{prj__processes__process__type}
+    config.checkConfigParameter("type", "THERMO_MECHANICS");
     DBUG("Create ThermoMechanicsProcess.");
 
     // Process variable.
 
-    //! \ogs_file_param{prj__processes__process__THERMOMECHANICS__process_variables}
+    //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
     auto process_variables = findProcessVariables(
         variables, pv_config,
-        {//! \ogs_file_param_special{prj__processes__process__THERMOMECHANICS__process_variables__temperature}
+        {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__temperature}
          "temperature",
-         //! \ogs_file_param_special{prj__processes__process__THERMOMECHANICS__process_variables__displacement}
+         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__displacement}
          "displacement"});
 
     DBUG("Associate displacement with process variable \'%s\'.",
@@ -80,11 +80,11 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     // Constitutive relation.
     // read type;
     auto const constitutive_relation_config =
-        //! \ogs_file_param{process__THERMOMECHANICS_constitutive_relation}
+        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__constitutive_relation}
         config.getConfigSubtree("constitutive_relation");
 
     auto const type =
-        //! \ogs_file_param{prj__processes__process__THERMOMECHANICS__constitutive_relation__type}
+        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__constitutive_relation__type}
         constitutive_relation_config.peekConfigParameter<std::string>("type");
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
@@ -105,41 +105,41 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     // Solid density
     auto& solid_density = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMOMECHANICS_solid_density}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__solid_density}
         "solid_density", parameters, 1);
     DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
 
     // Linear thermal expansion coefficient
     auto& linear_thermal_expansion_coefficient = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMOMECHANICS_linear_thermal_expansion_coefficient}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__linear_thermal_expansion_coefficient}
         "linear_thermal_expansion_coefficient", parameters, 1);
     DBUG("Use \'%s\' as linear thermal expansion coefficient.",
          linear_thermal_expansion_coefficient.name.c_str());
     // Specific heat capacity
     auto& specific_heat_capacity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMOMECHANICS_specific_heat_capacity}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__specific_heat_capacity}
         "specific_heat_capacity", parameters, 1);
     DBUG("Use \'%s\' as specific heat capacity parameter.",
          specific_heat_capacity.name.c_str());
     // Thermal conductivity
     auto& thermal_conductivity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMOMECHANICS_thermal_conductivity}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__thermal_conductivity}
         "thermal_conductivity", parameters, 1);
     DBUG("Use \'%s\' as thermal conductivity parameter.",
          thermal_conductivity.name.c_str());
     // Reference temperature
     const double reference_temperature =
-        //! \ogs_file_param_special{process__THERMOMECHANICS_reference_temperature}
+        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__reference_temperature}
         config.getConfigParameter<double>("reference_temperature");
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
         std::vector<double> const b =
-            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__specific_body_force}
+            //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__specific_body_force}
             config.getConfigParameter<std::vector<double>>(
                 "specific_body_force");
         if (specific_body_force.size() != DisplacementDim)

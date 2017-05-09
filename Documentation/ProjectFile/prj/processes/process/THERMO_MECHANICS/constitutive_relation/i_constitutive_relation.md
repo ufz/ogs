@@ -1,0 +1,1 @@
+The constitutive relation for the mechanical part. Only linear elasticity is available in the moment.
