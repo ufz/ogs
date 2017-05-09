@@ -62,83 +62,84 @@ private:
         unsigned const integration_order) override
     {
         ProcessLib::ThermoMechanics::createLocalAssemblers<DisplacementDim,
-                                                          LocalAssemblerData>(
+                                                           LocalAssemblerData>(
             mesh.getDimension(), mesh.getElements(), dof_table,
             _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
             _process_data);
 
-    // TODO move the two data members somewhere else.
-    // for extrapolation of secondary variables
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(
-        _mesh_subset_all_nodes.get());
-    _local_to_global_index_map_single_component.reset(
-        new NumLib::LocalToGlobalIndexMap(
-            std::move(all_mesh_subsets_single_component),
-            // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "sigma_xx", 1,
-        makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXX));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "sigma_yy", 1,
-        makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaYY));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "sigma_zz", 1,
-        makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaZZ));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "sigma_xy", 1,
-        makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXY));
-
-    if (DisplacementDim == 3) {
-        Base::_secondary_variables.addSecondaryVariable(
-            "sigma_xz", 1,
-            makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
-                &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXZ));
+        // TODO move the two data members somewhere else.
+        // for extrapolation of secondary variables
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
+        all_mesh_subsets_single_component.emplace_back(
+            _mesh_subset_all_nodes.get());
+        _local_to_global_index_map_single_component.reset(
+            new NumLib::LocalToGlobalIndexMap(
+                std::move(all_mesh_subsets_single_component),
+                // by location order is needed for output
+                NumLib::ComponentOrder::BY_LOCATION));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_yz", 1,
+            "sigma_xx", 1,
             makeExtrapolator(
                 getExtrapolator(), _local_assemblers,
-                &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaYZ));
-    }
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_xx", 1,
-        makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXX));
+                &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXX));
 
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_yy", 1,
-        makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonYY));
+        Base::_secondary_variables.addSecondaryVariable(
+            "sigma_yy", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaYY));
 
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_zz", 1,
-        makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonZZ));
+        Base::_secondary_variables.addSecondaryVariable(
+            "sigma_zz", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaZZ));
 
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_xy", 1,
-        makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXY));
-    if (DisplacementDim == 3)
+        Base::_secondary_variables.addSecondaryVariable(
+            "sigma_xy", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXY));
+
+        if (DisplacementDim == 3)
+        {
+            Base::_secondary_variables.addSecondaryVariable(
+                "sigma_xz", 1,
+                makeExtrapolator(
+                    getExtrapolator(), _local_assemblers,
+                    &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXZ));
+
+            Base::_secondary_variables.addSecondaryVariable(
+                "sigma_yz", 1,
+                makeExtrapolator(
+                    getExtrapolator(), _local_assemblers,
+                    &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaYZ));
+        }
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_xx", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXX));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_yy", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonYY));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_zz", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonZZ));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "epsilon_xy", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXY));
+        if (DisplacementDim == 3)
         {
             Base::_secondary_variables.addSecondaryVariable(
                 "epsilon_yz", 1,
@@ -154,11 +155,9 @@ private:
         }
     }
 
-    void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                 GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b,
-                                 StaggeredCouplingTerm const&
-                                 coupling_term) override
+    void assembleConcreteProcess(
+        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+        GlobalVector& b, StaggeredCouplingTerm const& coupling_term) override
     {
         DBUG("Assemble ThermoMechanicsProcess.");
 
@@ -214,7 +213,7 @@ private:
     std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
-            _local_to_global_index_map_single_component;
+        _local_to_global_index_map_single_component;
 };
 
 }  // namespace ThermoMechanics

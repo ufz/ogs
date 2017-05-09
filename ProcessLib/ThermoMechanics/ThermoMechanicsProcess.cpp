@@ -14,9 +14,8 @@ namespace ProcessLib
 {
 namespace ThermoMechanics
 {
-
 template class ThermoMechanicsProcess<2>;
 template class ThermoMechanicsProcess<3>;
 
-}   // namespace ThermoMechanics
-}   // namespace ProcessLib
+}  // namespace ThermoMechanics
+}  // namespace ProcessLib

@@ -262,7 +262,6 @@ private:
                 bool, (GlobalDim >= ShapeFunction::DIM)>*>(nullptr));
     }
 
-
     /// Mapping of element types to local assembler constructors.
     std::unordered_map<std::type_index, LADataBuilder> _builder;
 
@@ -280,7 +279,8 @@ private:
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,
-                  ConstructorArgs&&... args) {
+                  ConstructorArgs&&... args)
+        {
             return LADataIntfPtr{new LAData<ShapeFunction>{
                 e, local_matrix_size, std::forward<ConstructorArgs>(args)...}};
         };
@@ -295,9 +295,8 @@ private:
     }
 };
 
-}   // namespace ThermoMechanics
-}   // namespace ProcessLib
-
+}  // namespace ThermoMechanics
+}  // namespace ProcessLib
 
 #undef ENABLED_ELEMENT_TYPE_SIMPLEX
 #undef ENABLED_ELEMENT_TYPE_CUBOID

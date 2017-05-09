@@ -55,8 +55,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     DBUG("Associate displacement with process variable \'%s\'.",
          process_variables[1].get().getName().c_str());
 
-    if (process_variables[1].get().getNumberOfComponents() !=
-        DisplacementDim)
+    if (process_variables[1].get().getNumberOfComponents() != DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '%s' is different "
@@ -71,13 +70,12 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     if (process_variables[0].get().getNumberOfComponents() != 1)
     {
         OGS_FATAL(
-            "Temperature process variable '%s' is not a scalar variable but has "
+            "Temperature process variable '%s' is not a scalar variable but has"
             "%d components.",
             process_variables[0].get().getName().c_str(),
             process_variables[0].get().getNumberOfComponents(),
             DisplacementDim);
     }
-
 
     // Constitutive relation.
     // read type;
@@ -108,17 +106,14 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     auto& solid_density = findParameter<double>(
         config,
         //! \ogs_file_param_special{process__THERMOMECHANICS_solid_density}
-        "solid_density",
-        parameters, 1);
-    DBUG("Use \'%s\' as solid density parameter.",
-         solid_density.name.c_str());
+        "solid_density", parameters, 1);
+    DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
 
     // Linear thermal expansion coefficient
     auto& linear_thermal_expansion_coefficient = findParameter<double>(
         config,
         //! \ogs_file_param_special{process__THERMOMECHANICS_linear_thermal_expansion_coefficient}
-        "linear_thermal_expansion_coefficient",
-        parameters, 1);
+        "linear_thermal_expansion_coefficient", parameters, 1);
     DBUG("Use \'%s\' as linear thermal expansion coefficient.",
          linear_thermal_expansion_coefficient.name.c_str());
     // Specific heat capacity
@@ -158,8 +153,12 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     }
 
     ThermoMechanicsProcessData<DisplacementDim> process_data{
-        std::move(material), solid_density, linear_thermal_expansion_coefficient,
-        specific_heat_capacity, thermal_conductivity, reference_temperature,
+        std::move(material),
+        solid_density,
+        linear_thermal_expansion_coefficient,
+        specific_heat_capacity,
+        thermal_conductivity,
+        reference_temperature,
         specific_body_force};
 
     SecondaryVariableCollection secondary_variables;

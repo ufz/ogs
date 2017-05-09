@@ -71,8 +71,7 @@ struct IntegrationPointData final
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables>
-        material_state_variables;
+        DisplacementDim>::MaterialStateVariables> material_state_variables;
 
     typename BMatricesType::KelvinMatrixType C;
     double integration_weight;
@@ -86,16 +85,14 @@ struct IntegrationPointData final
 
     static const int kelvin_vector_size =
         KelvinVectorDimensions<DisplacementDim>::value;
-    using Invariants =
-        MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
+    using Invariants = MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
 
     template <typename DisplacementVectorType>
-    void updateConstitutiveRelation(
-        double const t,
-        SpatialPosition const& x_position,
-        double const dt,
-        DisplacementVectorType const& u,
-        double& thermal_strain)
+    void updateConstitutiveRelation(double const t,
+                                    SpatialPosition const& x_position,
+                                    double const dt,
+                                    DisplacementVectorType const& u,
+                                    double& thermal_strain)
     {
         eps.noalias() = b_matrices * u;
         eps_m.noalias() = eps - thermal_strain * Invariants::identity2;
@@ -156,7 +153,8 @@ struct ThermoMechanicsLocalAssemblerInterface
 
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
-class ThermoMechanicsLocalAssembler : public ThermoMechanicsLocalAssemblerInterface
+class ThermoMechanicsLocalAssembler
+    : public ThermoMechanicsLocalAssemblerInterface
 {
 public:
     using ShapeMatricesType =
@@ -174,7 +172,8 @@ public:
         ShapeFunction::NPOINTS + ShapeFunction::NPOINTS * DisplacementDim,
         ShapeFunction::NPOINTS + ShapeFunction::NPOINTS * DisplacementDim>;
 
-    ThermoMechanicsLocalAssembler(ThermoMechanicsLocalAssembler const&) = delete;
+    ThermoMechanicsLocalAssembler(ThermoMechanicsLocalAssembler const&) =
+        delete;
     ThermoMechanicsLocalAssembler(ThermoMechanicsLocalAssembler&&) = delete;
 
     ThermoMechanicsLocalAssembler(
@@ -206,8 +205,8 @@ public:
             _ip_data[ip].integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 shape_matrices[ip].detJ;
-            ip_data.b_matrices.resize(
-                kelvin_vector_size, ShapeFunction::NPOINTS * DisplacementDim);
+            ip_data.b_matrices.resize(kelvin_vector_size,
+                                      ShapeFunction::NPOINTS * DisplacementDim);
 
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
@@ -255,7 +254,7 @@ public:
 
         auto T = Eigen::Map<typename ShapeMatricesType::template VectorType<
             temperature_size> const>(local_x.data() + temperature_index,
-                                    temperature_size);
+                                     temperature_size);
 
         auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
             displacement_size> const>(local_x.data() + displacement_index,
@@ -263,7 +262,7 @@ public:
 
         auto T_dot = Eigen::Map<typename ShapeMatricesType::template VectorType<
             temperature_size> const>(local_xdot.data() + temperature_index,
-                                    temperature_size);
+                                     temperature_size);
 
         auto local_Jac = MathLib::createZeroedMatrix<JacobianMatrix>(
             local_Jac_data, local_matrix_size, local_matrix_size);
@@ -272,8 +271,7 @@ public:
             local_rhs_data, local_matrix_size);
 
         typename ShapeMatricesType::template MatrixType<displacement_size,
-                                                        temperature_size>
-            KuT;
+                                                        temperature_size> KuT;
         KuT.setZero(displacement_size, temperature_size);
 
         typename ShapeMatricesType::NodalMatrixType KTT;
@@ -304,30 +302,29 @@ public:
 
             double delta_T = N.dot(T) - _process_data.reference_temperature;
             // calculate thermally induced strain
-            auto const alpha = _process_data.linear_thermal_expansion_coefficient(t, x_position)[0];
+            auto const alpha =
+                _process_data.linear_thermal_expansion_coefficient(
+                    t, x_position)[0];
             double thermal_strain = alpha * delta_T;
 
             //
             // displacement equation, displacement part
             //
-            _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u, thermal_strain);
+            _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+                                                    thermal_strain);
 
-            local_Jac
-                .template block<displacement_size, displacement_size>(
-                    displacement_index, displacement_index)
-                .noalias() +=
-                B.transpose() * C * B * w;
+            local_Jac.template block<displacement_size, displacement_size>(
+                         displacement_index, displacement_index)
+                .noalias() += B.transpose() * C * B * w;
 
-            typename ShapeMatricesType::template MatrixType<DisplacementDim,
-                                                            displacement_size>
-                N_u = ShapeMatricesType::template MatrixType<
-                    DisplacementDim,
-                    displacement_size>::Zero(DisplacementDim,
-                                             displacement_size);
+            typename ShapeMatricesType::template MatrixType<
+                DisplacementDim, displacement_size> N_u = ShapeMatricesType::
+                template MatrixType<DisplacementDim, displacement_size>::Zero(
+                    DisplacementDim, displacement_size);
 
             for (int i = 0; i < DisplacementDim; ++i)
                 N_u.template block<1, displacement_size / DisplacementDim>(
-                     i, i * displacement_size / DisplacementDim)
+                       i, i * displacement_size / DisplacementDim)
                     .noalias() = N;
 
             using Invariants =
@@ -338,39 +335,39 @@ public:
             double rho_s = rho_sr * (1 - 3 * thermal_strain);
 
             auto const& b = _process_data.specific_body_force;
-            local_rhs
-                .template block<displacement_size, 1>(displacement_index, 0)
+            local_rhs.template block<displacement_size, 1>(displacement_index,
+                                                           0)
                 .noalias() -=
-                (B.transpose() * sigma
-                 - N_u.transpose() * rho_s * b) * w;
+                (B.transpose() * sigma - N_u.transpose() * rho_s * b) * w;
             //
             // displacement equation, temperature part
             //
-            KuT.noalias() += B.transpose() * C * alpha * Invariants::identity2 * N * w;
+            KuT.noalias() +=
+                B.transpose() * C * alpha * Invariants::identity2 * N * w;
 
             //
             // temperature equation, temperature part;
             //
-            auto const lambda = _process_data.thermal_conductivity(t, x_position)[0];
+            auto const lambda =
+                _process_data.thermal_conductivity(t, x_position)[0];
             KTT.noalias() += dNdx.transpose() * lambda * dNdx * w;
 
-            auto const c = _process_data.specific_heat_capacity(t, x_position)[0];
+            auto const c =
+                _process_data.specific_heat_capacity(t, x_position)[0];
             DTT.noalias() += N.transpose() * rho_s * c * N * w;
         }
         // temperature equation, temperature part
-        local_Jac
-            .template block<temperature_size, temperature_size>(
-                temperature_index, temperature_index)
+        local_Jac.template block<temperature_size, temperature_size>(
+                     temperature_index, temperature_index)
             .noalias() += KTT + DTT / dt;
 
         // displacement equation, temperature part
-        local_Jac
-            .template block<displacement_size, temperature_size>(
-                displacement_index, temperature_index)
+        local_Jac.template block<displacement_size, temperature_size>(
+                     displacement_index, temperature_index)
             .noalias() -= KuT;
 
         local_rhs.template block<temperature_size, 1>(temperature_index, 0)
-           .noalias() -= KTT * T + DTT * T_dot;
+            .noalias() -= KTT * T + DTT * T_dot;
     }
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
@@ -478,10 +475,11 @@ private:
         cache.clear();
         cache.reserve(_ip_data.size());
 
-        for (auto const& ip_data : _ip_data) {
+        for (auto const& ip_data : _ip_data)
+        {
             if (component < 3)  // xx, yy, zz components
                 cache.push_back(ip_data.sigma[component]);
-            else    // mixed xy, yz, xz components
+            else  // mixed xy, yz, xz components
                 cache.push_back(ip_data.sigma[component] / std::sqrt(2));
         }
 
@@ -493,7 +491,8 @@ private:
         cache.clear();
         cache.reserve(_ip_data.size());
 
-        for (auto const& ip_data : _ip_data) {
+        for (auto const& ip_data : _ip_data)
+        {
             cache.push_back(ip_data.eps[component]);
         }
 
@@ -502,9 +501,8 @@ private:
 
     ThermoMechanicsProcessData<DisplacementDim>& _process_data;
 
-    std::vector<
-        IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>>
-        _ip_data;
+    std::vector<IntegrationPointData<BMatricesType, ShapeMatricesType,
+                                     DisplacementDim>> _ip_data;
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
@@ -523,19 +521,20 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim, int DisplacementDim>
 class LocalAssemblerData final
     : public ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                                      DisplacementDim>
+                                           DisplacementDim>
 {
 public:
     LocalAssemblerData(LocalAssemblerData const&) = delete;
     LocalAssemblerData(LocalAssemblerData&&) = delete;
 
-    LocalAssemblerData(MeshLib::Element const& e,
-                       std::size_t const local_matrix_size,
-                       bool is_axially_symmetric,
-                       unsigned const integration_order,
-                       ThermoMechanicsProcessData<DisplacementDim>& process_data)
+    LocalAssemblerData(
+        MeshLib::Element const& e,
+        std::size_t const local_matrix_size,
+        bool is_axially_symmetric,
+        unsigned const integration_order,
+        ThermoMechanicsProcessData<DisplacementDim>& process_data)
         : ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                                   DisplacementDim>(
+                                        DisplacementDim>(
               e, local_matrix_size, is_axially_symmetric, integration_order,
               process_data)
     {
