@@ -52,7 +52,6 @@ struct IntegrationPointData final
           eps_prev(std::move(other.eps_prev)),
           solid_material(other.solid_material),
           material_state_variables(std::move(other.material_state_variables)),
-          C(std::move(other.C)),
           integration_weight(std::move(other.integration_weight))
     {
     }
@@ -73,8 +72,6 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
-
-    typename BMatricesType::KelvinMatrixType C;
     double integration_weight;
 
     void pushBackState()
@@ -85,15 +82,27 @@ struct IntegrationPointData final
     }
 
     template <typename DisplacementVectorType>
-    void updateConstitutiveRelation(double const t,
-                                    SpatialPosition const& x_position,
-                                    double const dt,
-                                    DisplacementVectorType const& u)
+    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
+        double const t,
+        SpatialPosition const& x_position,
+        double const dt,
+        DisplacementVectorType const& u)
     {
         eps.noalias() = b_matrices * u;
-        solid_material.computeConstitutiveRelation(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev, sigma_eff, C,
+
+        KelvinMatrixType<DisplacementDim> C;
+        std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
+            DisplacementDim>::MaterialStateVariables>
+            new_state;
+        std::tie(sigma_eff, new_state, C) = solid_material.integrateStress(
+            t, x_position, dt, eps_prev, eps, sigma_eff_prev,
             *material_state_variables);
+
+        if (!new_state)
+            OGS_FATAL("Computation of local constitutive relation failed.");
+        material_state_variables = std::move(new_state);
+
+        return C;
     }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
@@ -226,7 +235,6 @@ public:
             ip_data.sigma_eff_prev.resize(kelvin_vector_size);
             ip_data.eps.resize(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
-            ip_data.C.resize(kelvin_vector_size, kelvin_vector_size);
 
             ip_data.N_u = ShapeMatricesTypeDisplacement::template MatrixType<
                 DisplacementDim, displacement_size>::Zero(DisplacementDim,
@@ -325,8 +333,6 @@ public:
             auto const& B = _ip_data[ip].b_matrices;
             auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
-            auto const& C = _ip_data[ip].C;
-
             double const S = _process_data.specific_storage(t, x_position)[0];
             double const K_over_mu =
                 _process_data.intrinsic_permeability(t, x_position)[0] /
@@ -342,7 +348,8 @@ public:
             //
             // displacement equation, displacement part
             //
-            _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u);
+            auto C =
+                _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u);
 
             local_Jac
                 .template block<displacement_size, displacement_size>(

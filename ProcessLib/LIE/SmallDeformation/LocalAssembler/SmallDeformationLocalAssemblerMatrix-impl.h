@@ -137,19 +137,25 @@ assembleWithJacobian(
 
         auto& eps = _ip_data[ip]._eps;
         auto& sigma = _ip_data[ip]._sigma;
-        auto& C = _ip_data[ip]._C;
-        auto& material_state_variables =
-            *_ip_data[ip]._material_state_variables;
+        auto& state = _ip_data[ip]._material_state_variables;
 
         eps.noalias() =
             B *
             Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
                 local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
-        if (!_ip_data[ip]._solid_material.computeConstitutiveRelation(
+        KelvinMatrixType<DisplacementDim> C;
+        std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
+            DisplacementDim>::MaterialStateVariables>
+            new_state;
+        std::tie(sigma, new_state, C) =
+            _ip_data[ip]._solid_material.integrateStress(
                 t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
-                sigma, C, material_state_variables))
+                *state);
+
+        if (!new_state)
             OGS_FATAL("Computation of local constitutive relation failed.");
+        state = std::move(new_state);
 
         local_b.noalias() -=
             B.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
