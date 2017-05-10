@@ -88,25 +88,36 @@ public:
     {
     }
 
-    bool computeConstitutiveRelation(
+    std::tuple<KelvinVector,
+               std::unique_ptr<typename MechanicsBase<
+                   DisplacementDim>::MaterialStateVariables>,
+               KelvinMatrix>
+    integrateStress(
         double const t,
         ProcessLib::SpatialPosition const& x,
         double const /*dt*/,
         KelvinVector const& eps_prev,
         KelvinVector const& eps,
         KelvinVector const& sigma_prev,
-        KelvinVector& sigma,
-        KelvinMatrix& C,
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-        /*material_state_variables*/) override
+        KelvinVector const& /*sigma*/,
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
+            material_state_variables) override
     {
-        C.setZero();
+        KelvinMatrix C = KelvinMatrix::Zero();
 
         C.template topLeftCorner<3, 3>().setConstant(_mp.lambda(t, x));
         C.noalias() += 2 * _mp.mu(t, x) * KelvinMatrix::Identity();
 
-        sigma.noalias() = sigma_prev + C * (eps - eps_prev);
-        return true;
+        KelvinVector sigma = sigma_prev + C * (eps - eps_prev);
+
+        return std::make_tuple(
+            sigma,
+            std::unique_ptr<typename MechanicsBase<
+                DisplacementDim>::MaterialStateVariables>{
+                new MaterialStateVariables{
+                    static_cast<MaterialStateVariables const&>(
+                        material_state_variables)}},
+            C);
     }
 
 private:
