@@ -170,7 +170,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
 
     DBUG("Use \'%s\' as gammap.", gammap.name.c_str());
 
-    MaterialProperties mp{
+    MaterialPropertiesParameters mp{
         shear_modulus, bulk_modulus, alpha,  beta,
         gamma,         delta,        eps,    m,
         alphap,        betap,        gammap, deltap,

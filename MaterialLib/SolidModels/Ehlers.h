@@ -44,19 +44,21 @@ namespace Ehlers
 //
 // Variables specific to the material model.
 //
-struct MaterialProperties
+struct MaterialPropertiesParameters
 {
     using P = ProcessLib::Parameter<double>;
 
     /// material parameters in relation to Ehler's single-surface model
     /// see Ehler's paper "A single-surface yield function for geomaterials"
     /// for more details.
-    MaterialProperties(P const& G_, P const& K_, P const& alpha_,
-                       P const& beta_, P const& gamma_, P const& delta_,
-                       P const& epsilon_, P const& m_, P const& alpha_p_,
-                       P const& beta_p_, P const& gamma_p_, P const& delta_p_,
-                       P const& epsilon_p_, P const& m_p_, P const& kappa_,
-                       P const& hardening_coefficient_)
+    MaterialPropertiesParameters(P const& G_, P const& K_, P const& alpha_,
+                                 P const& beta_, P const& gamma_,
+                                 P const& delta_, P const& epsilon_,
+                                 P const& m_, P const& alpha_p_,
+                                 P const& beta_p_, P const& gamma_p_,
+                                 P const& delta_p_, P const& epsilon_p_,
+                                 P const& m_p_, P const& kappa_,
+                                 P const& hardening_coefficient_)
         : G(G_),
           K(K_),
           alpha(alpha_),
@@ -215,7 +217,7 @@ public:
 public:
     explicit SolidEhlers(
         NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
-        MaterialProperties material_properties,
+        MaterialPropertiesParameters material_properties,
         std::unique_ptr<EhlersDamageProperties>&& damage_properties)
         : _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
           _mp(std::move(material_properties)),
@@ -241,14 +243,18 @@ private:
     /// Computes the damage internal material variable explicitly based on the
     /// results obtained from the local stress return algorithm.
     void updateDamage(
-        double const t, ProcessLib::SpatialPosition const& x,
+        double const eps_p_V_diff,
+        double const eps_p_eff_diff,
+        Damage const& damage,
+        double const t,
+        ProcessLib::SpatialPosition const& x,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
             material_state_variables);
 
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
 
-    MaterialProperties _mp;
+    MaterialPropertiesParameters _mp;
     std::unique_ptr<EhlersDamageProperties> _damage_properties;
 };
 
