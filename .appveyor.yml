@@ -20,10 +20,20 @@ cache:
   - C:\projects\deps\conan
 
 install:
-  - mkdir C:\projects\deps
-  - mkdir C:\projects\deps\conan
+  # All external dependencies are installed in C:\projects\deps
+  - if not exist "C:\projects\deps\" mkdir C:\projects\deps
+
+  # Install conan
+  - if not exist "C:\projects\deps\conan\" mkdir C:\projects\deps\conan
   - set PATH=%PATH%;%PYTHON%/Scripts/
   - C:\Python27-x64\Scripts\pip.exe install conan
+
+  # Install Ninja
+  - set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.7.2/ninja-win.zip"
+  - appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
+  - 7z x ninja.zip -oC:\projects\deps\ninja > nul
+  - set PATH=C:\projects\deps\ninja;%PATH%
+  - ninja --version
 
 before_build:
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
@@ -34,7 +44,7 @@ before_build:
 build_script:
   - mkdir build & cd build
   - conan install ..
-  - cmake .. -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=%configuration%
+  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration%
   - cmake --build . --config %configuration%
 
 test_script:
