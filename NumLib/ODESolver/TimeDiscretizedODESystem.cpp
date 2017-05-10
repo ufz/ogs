@@ -10,6 +10,7 @@
 #include "TimeDiscretizedODESystem.h"
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/IndexValueVector.h"
 
@@ -79,6 +80,9 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
     auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
     _time_disc.getXdot(x_new_timestep, xdot);
+    // The function only has computation if DDC is appied,
+    // e.g. Parallel comuting.
+    MathLib::LinAlg::setLocalAccessibleVector(xdot);
 
     _M->setZero();
     _K->setZero();
@@ -106,6 +110,9 @@ void TimeDiscretizedODESystem<
     //      fragile.
     auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
     _time_disc.getXdot(x_new_timestep, xdot);
+    // The function only has computation if DDC is appied,
+    // e.g. Parallel comuting.
+    MathLib::LinAlg::setLocalAccessibleVector(xdot);
 
     _mat_trans->computeResidual(*_M, *_K, *_b, x_new_timestep, xdot, res);
 

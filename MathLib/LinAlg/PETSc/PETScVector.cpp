@@ -38,8 +38,6 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
     }
 
     config();
-
-    _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
 }
 
 PETScVector::PETScVector(const PetscInt vec_size,
@@ -63,8 +61,6 @@ PETScVector::PETScVector(const PetscInt vec_size,
     }
 
     config();
-
-    _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
 }
 
 PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
@@ -76,13 +72,6 @@ PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
     {
         VecCopy(existing_vec._v, _v);
     }
-
-    if (!_global_v)
-    {
-        _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
-    }
-
-    getGlobalVector(_global_v.get());
 }
 
 PETScVector::PETScVector(PETScVector &&other)
@@ -119,13 +108,6 @@ void PETScVector::finalizeAssembly()
 {
     VecAssemblyBegin(_v);
     VecAssemblyEnd(_v);
-
-    if (!_global_v)
-    {
-        _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
-    }
-
-    getGlobalVector(_global_v.get());
 }
 
 void PETScVector::gatherLocalVectors( PetscScalar local_array[],
@@ -179,6 +161,17 @@ void PETScVector::getGlobalVector(PetscScalar u[])
     PetscMemoryGetCurrentUsage(&mem2);
     PetscPrintf(PETSC_COMM_WORLD, "### Memory usage by Updating. Before :%f After:%f Increase:%d\n", mem1, mem2, (int)(mem2 - mem1));
 #endif
+}
+
+void PETScVector::setLocalAccessibleVector()
+{
+    // TODO: use getLocalVector
+    if (!_global_v)
+    {
+        _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
+    }
+
+    getGlobalVector(_global_v.get());
 }
 
 void PETScVector::copyValues(std::vector<double>& u) const

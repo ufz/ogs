@@ -155,14 +155,17 @@ class PETScVector
             VecSetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], INSERT_VALUES);
         }
 
-        //! Get several entries
+        /// Set local accessible vector in order to get entries.
+        /// Call this before call operator[] or get(...).
+        void setLocalAccessibleVector();
+
+        /// Get several entries
         std::vector<double> get(std::vector<IndexType> const& indices) const;
 
         // TODO preliminary
         double operator[] (PetscInt idx) const
         {
             const PetscInt id_p = (idx == -_size) ?  0 : std::abs(idx);
-            //VecGetValues(_v, 1, &id_p, &value);
             return _global_v[id_p];
         }
 

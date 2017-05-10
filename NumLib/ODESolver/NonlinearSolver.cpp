@@ -55,10 +55,15 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         BaseLib::RunTime time_iteration;
         time_iteration.start();
 
+        // The function only has computation if DDC is appied,
+        // e.g. Parallel comuting.
+        MathLib::LinAlg::setLocalAccessibleVector(x);
+
         sys.preIteration(iteration, x);
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
+
         sys.assemble(x, coupling_term);
         sys.getA(A);
         sys.getRhs(rhs);
@@ -88,6 +93,10 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         }
         else
         {
+            // The function only has computation if DDC is appied,
+            // e.g. Parallel comuting.
+            LinAlg::setLocalAccessibleVector(x_new);
+
             if (postIterationCallback)
                 postIterationCallback(iteration, x_new);
 
@@ -105,6 +114,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                     // Thereby the failed solution can be used by the caller for
                     // debugging purposes.
                     LinAlg::copy(x_new, x);
+                    LinAlg::setLocalAccessibleVector(x);
                     break;
                 case IterationResult::REPEAT_ITERATION:
                     INFO(
@@ -136,6 +146,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         // Update x s.t. in the next iteration we will compute the right delta x
         LinAlg::copy(x_new, x);
+        LinAlg::setLocalAccessibleVector(x);
 
         INFO("[time] Iteration #%u took %g s.", iteration,
              time_iteration.elapsed());
@@ -199,10 +210,15 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         BaseLib::RunTime time_iteration;
         time_iteration.start();
 
+        // The function only has computation if DDC is appied,
+        // e.g. Parallel comuting.
+        LinAlg::setLocalAccessibleVector(x);
+
         sys.preIteration(iteration, x);
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
+
         sys.assemble(x, coupling_term);
         sys.getResidual(x, res);
         sys.getJacobian(J);
@@ -235,6 +251,11 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                     x, _x_new_id);
             LinAlg::axpy(x_new, -_alpha, minus_delta_x);
 
+            // The function only has computation if DDC is appied,
+            // e.g. Parallel comuting.
+            LinAlg::setLocalAccessibleVector(x_new);
+
+
             if (postIterationCallback)
                 postIterationCallback(iteration, x_new);
 
@@ -261,6 +282,8 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             // TODO could be done via swap. Note: that also requires swapping
             // the ids. Same for the Picard scheme.
             LinAlg::copy(x_new, x);  // copy new solution to x
+            LinAlg::setLocalAccessibleVector(x);
+
             NumLib::GlobalVectorProvider::provider.releaseVector(
                 x_new);
         }

@@ -148,6 +148,10 @@ namespace LinAlg
 
 // Vector
 
+/// Set local accessible vector in order to get entries.
+/// Call this before call operator[] or get(...).
+void setLocalAccessibleVector(PETScVector& x);
+
 void set(PETScVector& x, double const a);
 
 void copy(PETScVector const& x, PETScVector& y);
@@ -205,6 +209,10 @@ namespace LinAlg
 {
 
 // Vector
+
+/// Set local accessible vector in order to get entries.
+/// Call this before call operator[] or get(...). Not used for EIGEN
+void setLocalAccessibleVector(EigenVector& x);
 
 void set(EigenVector& x, double const a);
 
