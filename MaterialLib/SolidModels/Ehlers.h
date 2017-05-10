@@ -41,6 +41,61 @@ namespace Solids
 {
 namespace Ehlers
 {
+//
+// Variables specific to the material model.
+//
+struct MaterialProperties
+{
+    using P = ProcessLib::Parameter<double>;
+
+    /// material parameters in relation to Ehler's single-surface model
+    /// see Ehler's paper "A single-surface yield function for geomaterials"
+    /// for more details.
+    MaterialProperties(P const& G_, P const& K_, P const& alpha_,
+                       P const& beta_, P const& gamma_, P const& delta_,
+                       P const& epsilon_, P const& m_, P const& alpha_p_,
+                       P const& beta_p_, P const& gamma_p_, P const& delta_p_,
+                       P const& epsilon_p_, P const& m_p_, P const& kappa_,
+                       P const& hardening_coefficient_)
+        : G(G_),
+          K(K_),
+          alpha(alpha_),
+          beta(beta_),
+          gamma(gamma_),
+          delta(delta_),
+          epsilon(epsilon_),
+          m(m_),
+          alpha_p(alpha_p_),
+          beta_p(beta_p_),
+          gamma_p(gamma_p_),
+          delta_p(delta_p_),
+          epsilon_p(epsilon_p_),
+          m_p(m_p_),
+          kappa(kappa_),
+          hardening_coefficient(hardening_coefficient_)
+    {
+    }
+    // basic material parameters
+    P const& G;  ///< shear modulus
+    P const& K;  ///< bulk modulus
+
+    P const& alpha;
+    P const& beta;
+    P const& gamma;
+    P const& delta;
+    P const& epsilon;
+    P const& m;
+
+    P const& alpha_p;
+    P const& beta_p;
+    P const& gamma_p;
+    P const& delta_p;
+    P const& epsilon_p;
+    P const& m_p;
+
+    P const& kappa;
+    P const& hardening_coefficient;
+};
 
 struct EhlersDamageProperties
 {
@@ -48,6 +103,16 @@ struct EhlersDamageProperties
     P const& alpha_d;
     P const& beta_d;
     P const& h_d;
+};
+
+
+struct Damage final
+{
+    Damage() = default;
+    Damage(double const kappa_d_, double const damage_)
+        : kappa_d(kappa_d_), damage(damage_){};
+    double kappa_d = 0;  ///< damage driving variable
+    double damage = 0;   ///< isotropic damage variable
 };
 
 template <int DisplacementDim>
@@ -66,73 +131,6 @@ public:
                                          JacobianResidualSize, Eigen::RowMajor>;
 
 public:
-    //
-    // Variables specific to the material model.
-    //
-    struct MaterialProperties
-    {
-        using P = ProcessLib::Parameter<double>;
-
-        using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-        using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
-
-        /// material parameters in relation to Ehler's single-surface model
-        /// see Ehler's paper "A single-surface yield function for geomaterials"
-        /// for more details.
-        MaterialProperties(P const& G_, P const& K_, P const& alpha_,
-                           P const& beta_, P const& gamma_, P const& delta_,
-                           P const& epsilon_, P const& m_, P const& alpha_p_,
-                           P const& beta_p_, P const& gamma_p_,
-                           P const& delta_p_, P const& epsilon_p_,
-                           P const& m_p_, P const& kappa_,
-                           P const& hardening_coefficient_)
-            : G(G_),
-              K(K_),
-              alpha(alpha_),
-              beta(beta_),
-              gamma(gamma_),
-              delta(delta_),
-              epsilon(epsilon_),
-              m(m_),
-              alpha_p(alpha_p_),
-              beta_p(beta_p_),
-              gamma_p(gamma_p_),
-              delta_p(delta_p_),
-              epsilon_p(epsilon_p_),
-              m_p(m_p_),
-              kappa(kappa_),
-              hardening_coefficient(hardening_coefficient_)
-        {
-        }
-        // basic material parameters
-        P const& G;  ///< shear modulus
-        P const& K;  ///< bulk modulus
-
-        P const& alpha;
-        P const& beta;
-        P const& gamma;
-        P const& delta;
-        P const& epsilon;
-        P const& m;
-
-        P const& alpha_p;
-        P const& beta_p;
-        P const& gamma_p;
-        P const& delta_p;
-        P const& epsilon_p;
-        P const& m_p;
-
-        P const& kappa;
-        P const& hardening_coefficient;
-        // Drucker-Prager: Import kappa and beta in terms of Drucker-Prager
-        // criterion solution dependent values
-        double k;
-
-        void calculateIsotropicHardening(double const t,
-                                         ProcessLib::SpatialPosition const& x,
-                                         const double e_pv_curr);
-    };
-
     struct MaterialStateVariables
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
@@ -155,9 +153,8 @@ public:
             eps_p_D = eps_p_D_prev;
             eps_p_V = eps_p_V_prev;
             eps_p_eff = eps_p_eff_prev;
-            kappa_d = kappa_d_prev;
-            damage = damage_prev;
             lambda = 0;
+            damage = damage_prev;
         }
 
         void pushBackState() override
@@ -165,9 +162,8 @@ public:
             eps_p_D_prev = eps_p_D;
             eps_p_V_prev = eps_p_V;
             eps_p_eff_prev = eps_p_eff;  // effective part of trace(eps_p)
-            kappa_d_prev = kappa_d;
-            damage_prev = damage;
             lambda = 0;
+            damage_prev = damage;
         }
 
         using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
@@ -175,16 +171,14 @@ public:
         KelvinVector eps_p_D;  ///< deviatoric plastic strain
         double eps_p_V = 0;    ///< volumetric strain
         double eps_p_eff = 0;  ///< effective plastic strain
-        double kappa_d = 0;    ///< damage driving variable
-        double damage = 0;     ///< isotropic damage variable
+        Damage damage;         ///< damage part of the state.
 
         // Initial values from previous timestep
         KelvinVector eps_p_D_prev;  ///< \copydoc eps_p_D
         double eps_p_V_prev = 0;    ///< \copydoc eps_p_V
         double eps_p_eff_prev = 0;  ///< \copydoc eps_p_eff
-        double kappa_d_prev = 0;    ///< \copydoc kappa_d
-        double damage_prev = 0;     ///< \copydoc damage
         double lambda = 0;          ///< plastic multiplier
+        Damage damage_prev;         ///< \copydoc damage
 
 #ifndef NDEBUG
         friend std::ostream& operator<<(std::ostream& os,
@@ -193,12 +187,12 @@ public:
             os << "State:\n"
                << "eps_p_D: " << m.eps_p_D << "\n"
                << "eps_p_eff: " << m.eps_p_eff << "\n"
-               << "kappa_d: " << m.kappa_d << "\n"
-               << "damage: " << m.damage << "\n"
+               << "kappa_d: " << m.damage.kappa_d << "\n"
+               << "damage: " << m.damage.damage << "\n"
                << "eps_p_D_prev: " << m.eps_p_D_prev << "\n"
                << "eps_p_eff_prev: " << m.eps_p_eff_prev << "\n"
-               << "kappa_d_prev: " << m.kappa_d_prev << "\n"
-               << "damage_prev: " << m.damage_prev << "\n"
+               << "kappa_d_prev: " << m.damage_prev.kappa_d << "\n"
+               << "damage_prev: " << m.damage_prev.damage << "\n"
                << "lambda: " << m.lambda << "\n";
             return os;
         }
