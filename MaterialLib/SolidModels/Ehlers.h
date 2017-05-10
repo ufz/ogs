@@ -117,6 +117,75 @@ struct Damage final
 };
 
 template <int DisplacementDim>
+struct MaterialStateVariables
+    : public MechanicsBase<DisplacementDim>::MaterialStateVariables
+{
+    MaterialStateVariables()
+        : eps_p_D(KelvinVector::Zero()), eps_p_D_prev(KelvinVector::Zero())
+    {
+    }
+
+    MaterialStateVariables& operator=(MaterialStateVariables const&) = default;
+    typename MechanicsBase<DisplacementDim>::MaterialStateVariables& operator=(
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
+            state) noexcept override
+    {
+        assert(dynamic_cast<MaterialStateVariables const*>(&state) != nullptr);
+        return operator=(static_cast<MaterialStateVariables const&>(state));
+    }
+
+    void setInitialConditions()
+    {
+        eps_p_D = eps_p_D_prev;
+        eps_p_V = eps_p_V_prev;
+        eps_p_eff = eps_p_eff_prev;
+        lambda = 0;
+        damage = damage_prev;
+    }
+
+    void pushBackState() override
+    {
+        eps_p_D_prev = eps_p_D;
+        eps_p_V_prev = eps_p_V;
+        eps_p_eff_prev = eps_p_eff;  // effective part of trace(eps_p)
+        lambda = 0;
+        damage_prev = damage;
+    }
+
+    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
+
+    KelvinVector eps_p_D;  ///< deviatoric plastic strain
+    double eps_p_V = 0;    ///< volumetric strain
+    double eps_p_eff = 0;  ///< effective plastic strain
+    Damage damage;         ///< damage part of the state.
+
+    // Initial values from previous timestep
+    KelvinVector eps_p_D_prev;  ///< \copydoc eps_p_D
+    double eps_p_V_prev = 0;    ///< \copydoc eps_p_V
+    double eps_p_eff_prev = 0;  ///< \copydoc eps_p_eff
+    double lambda = 0;          ///< plastic multiplier
+    Damage damage_prev;         ///< \copydoc damage
+
+#ifndef NDEBUG
+    friend std::ostream& operator<<(
+        std::ostream& os, MaterialStateVariables<DisplacementDim> const& m)
+    {
+        os << "State:\n"
+           << "eps_p_D: " << m.eps_p_D << "\n"
+           << "eps_p_eff: " << m.eps_p_eff << "\n"
+           << "kappa_d: " << m.damage.kappa_d << "\n"
+           << "damage: " << m.damage.damage << "\n"
+           << "eps_p_D_prev: " << m.eps_p_D_prev << "\n"
+           << "eps_p_eff_prev: " << m.eps_p_eff_prev << "\n"
+           << "kappa_d_prev: " << m.damage_prev.kappa_d << "\n"
+           << "damage_prev: " << m.damage_prev.damage << "\n"
+           << "lambda: " << m.lambda << "\n";
+        return os;
+    }
+#endif  // NDEBUG
+};
+
+template <int DisplacementDim>
 class SolidEhlers final : public MechanicsBase<DisplacementDim>
 {
 public:
@@ -132,81 +201,13 @@ public:
                                          JacobianResidualSize, Eigen::RowMajor>;
 
 public:
-    struct MaterialStateVariables
-        : public MechanicsBase<DisplacementDim>::MaterialStateVariables
-    {
-        MaterialStateVariables()
-            : eps_p_D(KelvinVector::Zero()), eps_p_D_prev(KelvinVector::Zero())
-        {
-        }
-
-        MaterialStateVariables& operator=(MaterialStateVariables const&) =
-            default;
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-        operator=(typename MechanicsBase<DisplacementDim>::
-                      MaterialStateVariables const& state) noexcept override
-        {
-            return operator=(static_cast<MaterialStateVariables const&>(state));
-        }
-
-        void setInitialConditions()
-        {
-            eps_p_D = eps_p_D_prev;
-            eps_p_V = eps_p_V_prev;
-            eps_p_eff = eps_p_eff_prev;
-            lambda = 0;
-            damage = damage_prev;
-        }
-
-        void pushBackState() override
-        {
-            eps_p_D_prev = eps_p_D;
-            eps_p_V_prev = eps_p_V;
-            eps_p_eff_prev = eps_p_eff;  // effective part of trace(eps_p)
-            lambda = 0;
-            damage_prev = damage;
-        }
-
-        using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-
-        KelvinVector eps_p_D;  ///< deviatoric plastic strain
-        double eps_p_V = 0;    ///< volumetric strain
-        double eps_p_eff = 0;  ///< effective plastic strain
-        Damage damage;         ///< damage part of the state.
-
-        // Initial values from previous timestep
-        KelvinVector eps_p_D_prev;  ///< \copydoc eps_p_D
-        double eps_p_V_prev = 0;    ///< \copydoc eps_p_V
-        double eps_p_eff_prev = 0;  ///< \copydoc eps_p_eff
-        double lambda = 0;          ///< plastic multiplier
-        Damage damage_prev;         ///< \copydoc damage
-
-#ifndef NDEBUG
-        friend std::ostream& operator<<(std::ostream& os,
-                                        MaterialStateVariables const& m)
-        {
-            os << "State:\n"
-               << "eps_p_D: " << m.eps_p_D << "\n"
-               << "eps_p_eff: " << m.eps_p_eff << "\n"
-               << "kappa_d: " << m.damage.kappa_d << "\n"
-               << "damage: " << m.damage.damage << "\n"
-               << "eps_p_D_prev: " << m.eps_p_D_prev << "\n"
-               << "eps_p_eff_prev: " << m.eps_p_eff_prev << "\n"
-               << "kappa_d_prev: " << m.damage_prev.kappa_d << "\n"
-               << "damage_prev: " << m.damage_prev.damage << "\n"
-               << "lambda: " << m.lambda << "\n";
-            return os;
-        }
-#endif  // NDEBUG
-    };
-
     std::unique_ptr<
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
     createMaterialStateVariables() override
     {
         return std::unique_ptr<
             typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
-            new MaterialStateVariables};
+            new MaterialStateVariables<DisplacementDim>};
     }
 
 public:
