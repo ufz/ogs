@@ -592,40 +592,36 @@ newton(double const dt, MaterialProperties const& mp,
     // same matrix. This saves one decomposition.
     Eigen::FullPivLU<JacobianMatrix> linear_solver;
 
-    ResidualVectorType solution;
-    solution << sigma, state.eps_p.D, state.eps_p.V, state.eps_p.eff, 0;
-
     auto const update_residual = [&](ResidualVectorType& residual) {
 
-        auto const& eps_p_D =
-            solution.template segment<KelvinVectorSize>(KelvinVectorSize);
-        KelvinVector const eps_p_D_dot = (eps_p_D - state.eps_p_prev.D) / dt;
+        KelvinVector const eps_p_D_dot =
+            (state.eps_p.D - state.eps_p_prev.D) / dt;
+        double const eps_p_V_dot = (state.eps_p.V - state.eps_p_prev.V) / dt;
+        double const eps_p_eff_dot =
+            (state.eps_p.eff - state.eps_p_prev.eff) / dt;
 
-        double const& eps_p_V = solution(KelvinVectorSize * 2);
-        double const eps_p_V_dot = (eps_p_V - state.eps_p_prev.V) / dt;
-
-        double const& eps_p_eff = solution(KelvinVectorSize * 2 + 1);
-        double const eps_p_eff_dot = (eps_p_eff - state.eps_p_prev.eff) / dt;
-
-        double const k_hardening =
-            calculateIsotropicHardening(mp.kappa, mp.hardening_coefficient,
-                                        solution(KelvinVectorSize * 2 + 1));
-        residual = calculatePlasticResidual<DisplacementDim>(
-            eps_D, eps_V, s,
-            solution.template segment<KelvinVectorSize>(KelvinVectorSize),
-            eps_p_D_dot, solution(KelvinVectorSize * 2), eps_p_V_dot,
-            eps_p_eff_dot, solution(KelvinVectorSize * 2 + 2), k_hardening, mp);
+        double const k_hardening = calculateIsotropicHardening(
+            mp.kappa, mp.hardening_coefficient, state.eps_p.eff);
+        calculatePlasticResidual<DisplacementDim>(
+            eps_D, eps_V, s, state.eps_p.D, eps_p_D_dot, state.eps_p.V,
+            eps_p_V_dot, eps_p_eff_dot, state.lambda, k_hardening, mp,
+            residual);
     };
 
     auto const update_jacobian = [&](JacobianMatrix& jacobian) {
-        jacobian = calculatePlasticJacobian<DisplacementDim>(
-            dt, s, solution(KelvinVectorSize * 2 + 2), mp);
+        calculatePlasticJacobian<DisplacementDim>(dt, jacobian, s, state.lambda,
+                                                  mp);
     };
 
     auto const update_solution = [&](ResidualVectorType const& increment) {
-        solution += increment;
-        s = PhysicalStressWithInvariants<DisplacementDim>{
-            mp.G * solution.template segment<KelvinVectorSize>(0)};
+        sigma.noalias() +=
+            increment.template segment<KelvinVectorSize>(KelvinVectorSize * 0);
+        s = PhysicalStressWithInvariants<DisplacementDim>{mp.G * sigma};
+        state.eps_p.D.noalias() +=
+            increment.template segment<KelvinVectorSize>(KelvinVectorSize * 1);
+        state.eps_p.V += increment(KelvinVectorSize * 2);
+        state.eps_p.eff += increment(KelvinVectorSize * 2 + 1);
+        state.lambda += increment(KelvinVectorSize * 2 + 2);
     };
 
     auto newton_solver =
@@ -645,9 +641,6 @@ newton(double const dt, MaterialProperties const& mp,
     // This happens usually for the first iteration of the first timestep.
     if (*success_iterations == 0)
         linear_solver.compute(jacobian);
-
-    std::tie(sigma, state.eps_p, std::ignore) =
-        splitSolutionVector<ResidualVectorType, KelvinVector>(solution);
 
     return std::make_tuple(sigma, state, linear_solver);
 }
