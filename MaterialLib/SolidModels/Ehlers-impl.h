@@ -85,12 +85,12 @@ struct MaterialProperties final
     double const hardening_coefficient;
 };
 
-/// Evaluated DamageProperties container.
-struct DamagePropertiesV
+/// Evaluated DamagePropertiesParameters container.
+struct DamageProperties
 {
-    DamagePropertiesV(double const t,
-                      ProcessLib::SpatialPosition const& x,
-                      DamageProperties const& dp)
+    DamageProperties(double const t,
+                     ProcessLib::SpatialPosition const& x,
+                     DamagePropertiesParameters const& dp)
         : alpha_d(dp.alpha_d(t, x)[0]),
           beta_d(dp.beta_d(t, x)[0]),
           h_d(dp.h_d(t, x)[0])
@@ -468,7 +468,7 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
 inline Damage calculateDamage(double const eps_p_V_diff,
                               double const eps_p_eff_diff,
                               double kappa_d,
-                              DamagePropertiesV const& dp)
+                              DamageProperties const& dp)
 {
     // Default case of the rate problem. Updated below if volumetric plastic
     // strain rate is positive (dilatancy).
@@ -729,7 +729,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
 
         if (_damage_properties)
         {
-            DamagePropertiesV damage_properties(t, x, *_damage_properties);
+            DamageProperties damage_properties(t, x, *_damage_properties);
             state.damage =
                 calculateDamage(state.eps_p.V - state.eps_p_prev.V,
                                 state.eps_p.eff - state.eps_p_prev.eff,
