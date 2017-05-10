@@ -83,14 +83,7 @@ PETScVector::PETScVector(PETScVector &&other)
     , _size_loc{other._size_loc}
     , _size_ghosts{other._size_ghosts}
     , _has_ghost_id{other._has_ghost_id}
-{
-    if (!_global_v)
-    {
-        _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };
-    }
-
-    getGlobalVector(_global_v.get());
-}
+{}
 
 void PETScVector::config()
 {
@@ -264,7 +257,6 @@ void PETScVector::shallowCopy(const PETScVector &v)
 void finalizeVectorAssembly(PETScVector &vec)
 {
     vec.finalizeAssembly();
-    vec.setGlobalVector();
 }
 
 } //end of namespace

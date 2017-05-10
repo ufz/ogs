@@ -520,6 +520,7 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
                 const std::size_t c_id =
                     std::distance(_per_process_data.begin(), found_item);
 
+                MathLib::LinAlg::setLocalAccessibleVector(*_process_solutions[c_id]);
                 BaseLib::insertIfTypeIndexKeyUniqueElseError(
                     coupled_xs, coupled_process_pair.first,
                     *_process_solutions[c_id], "global_coupled_x");
@@ -532,6 +533,7 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
         // Create a vector to store the solution of the last coupling iteration
         auto& x_coupling0 = NumLib::GlobalVectorProvider::provider.getVector(x);
         MathLib::LinAlg::copy(x, x_coupling0);
+        MathLib::LinAlg::setLocalAccessibleVector(x_coupling0);
 
         // append a solution vector of suitable size
         _solutions_of_last_cpl_iteration.emplace_back(&x_coupling0);

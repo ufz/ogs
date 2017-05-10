@@ -285,6 +285,10 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
         std::vector<double> local_x_cache;
         std::vector<double> local_x_prev_ts_cache;
 
+        // The function only has computation if DDC is appied,
+        // e.g. Parallel comuting.
+        MathLib::LinAlg::setLocalAccessibleVector(*_x_previous_timestep);
+
         auto check_variable_bounds = [&](std::size_t id,
                                          TESLocalAssemblerInterface& loc_asm) {
             auto const r_c_indices = NumLib::getRowColumnIndices(

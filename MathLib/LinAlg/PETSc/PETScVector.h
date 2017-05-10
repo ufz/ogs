@@ -299,16 +299,6 @@ class PETScVector
         /// A funtion called by constructors to configure members
         void config();
 
-        /// Set _global_v
-        void setGlobalVector()
-        {
-            if (!_global_v)
-            {
-                _global_v = std::unique_ptr<PetscScalar[]>{ new PetscScalar[_size] };;
-            }
-            getGlobalVector(_global_v.get());
-        }
-
         friend void finalizeVectorAssembly(PETScVector &vec);
 };
 
