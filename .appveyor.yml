@@ -44,7 +44,7 @@ before_build:
 build_script:
   - mkdir build & cd build
   - conan install ..
-  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration%
+  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=ON -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON
   - cmake --build . --config %configuration%
 
 test_script:
