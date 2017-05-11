@@ -17,7 +17,7 @@ namespace MaterialLib
 namespace Solids
 {
 template <int DisplacementDim>
-class LinearElasticIsotropic final : public MechanicsBase<DisplacementDim>
+class LinearElasticIsotropic : public MechanicsBase<DisplacementDim>
 {
 public:
     /// Variables specific to the material model
@@ -47,6 +47,13 @@ public:
                    (2 * (1 + _poissons_ratio(t, x)[0]));
         }
 
+        /// the bulk modulus.
+        double bulk_modulus(double const t, X const& x) const
+        {
+            return _youngs_modulus(t, x)[0] /
+                   (3 * (1 - 2 * _poissons_ratio(t, x)[0]));
+        }
+
     private:
         P const& _youngs_modulus;
         P const& _poissons_ratio;
@@ -55,6 +62,7 @@ public:
     struct MaterialStateVariables
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
+<<<<<<< HEAD
         void pushBackState() override {}
 
         MaterialStateVariables& operator=(MaterialStateVariables const&) =
@@ -65,6 +73,9 @@ public:
         {
             return operator=(static_cast<MaterialStateVariables const&>(state));
         }
+=======
+        void pushBackState() {}
+>>>>>>> added phasefield process and test.
     };
 
     std::unique_ptr<
@@ -101,7 +112,7 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables) override;
 
-private:
+protected:
     MaterialProperties _mp;
 };
 
