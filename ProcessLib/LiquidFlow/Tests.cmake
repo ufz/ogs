@@ -86,12 +86,29 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-16 RELTOL 1e-10
+    ABSTOL 1.1 RELTOL 1e-7
     DIFF_DATA
-    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu pressure_ref pressure
-    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu temperature_ref temperature
-    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu v_x_ref v_x
-    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300.000000.vtu v_y_ref v_y
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu OGS5_PRESSURE1 pressure
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu OGS5_TEMPERATURE1 temperature
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu v_x_ref v_x
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu v_y_ref v_y
+)
+
+# Coupling
+AddTest(
+    NAME Adaptive_dt_StaggeredTH_ThermalDensityDrivenFlow2D
+    PATH StaggeredCoupledProcesses/TH/ThermalDensityDrivenFlow2D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS thermal_gravity_driven_flow2d_adaptive_dt.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1.1 RELTOL 1e-6
+    DIFF_DATA
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300.000000.vtu OGS5_PRESSURE1 pressure
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300.000000.vtu OGS5_TEMPERATURE1 temperature
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300.000000.vtu v_x_ref v_x
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300.000000.vtu v_y_ref v_y
 )
 
 # PETSc/MPI
@@ -181,10 +198,28 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-10 RELTOL 1e-10
+    ABSTOL 1.1 RELTOL 1e-7
     DIFF_DATA
-    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu pressure_ref pressure
-    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu temperature_ref temperature
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu OGS5_PRESSURE1  pressure
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu OGS5_TEMPERATURE1 temperature
+# To be activated when the output of velocity is correct under PETSc version.
+#    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu v_x_ref v_x
+#    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu v_y_ref v_y
+
+)
+
+AddTest(
+    NAME Adaptive_dt_StaggeredTH_ThermalDensityDrivenFlow2D
+    PATH StaggeredCoupledProcesses/TH/ThermalDensityDrivenFlow2D
+    EXECUTABLE_ARGS thermal_gravity_driven_flow2d_adaptive_dt.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    ABSTOL 1.1 RELTOL 1e-7
+    DIFF_DATA
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300_000000_0.vtu OGS5_PRESSURE1 pressure
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300_000000_0.vtu OGS5_TEMPERATURE1 temperature
 # To be activated when the output of velocity is correct under PETSc version.
 #    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_x_ref v_x
 #    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_y_ref v_y
