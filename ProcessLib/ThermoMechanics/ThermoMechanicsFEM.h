@@ -48,15 +48,15 @@ struct IntegrationPointData final
     // The default generated move-ctor is correctly generated for other
     // compilers.
     explicit IntegrationPointData(IntegrationPointData&& other)
-        : b_matrices(std::move(other._b_matrices)),
-          sigma(std::move(other._sigma)),
-          sigma_prev(std::move(other._sigma_prev)),
-          eps(std::move(other._eps)),
-          eps_m(std::move(other._eps_m)),
-          eps_m_prev(std::move(other._eps_m_prev)),
-          solid_material(other._solid_material),
-          material_state_variables(std::move(other._material_state_variables)),
-          C(std::move(other._C)),
+        : b_matrices(std::move(other.b_matrices)),
+          sigma(std::move(other.sigma)),
+          sigma_prev(std::move(other.sigma_prev)),
+          eps(std::move(other.eps)),
+          eps_m(std::move(other.eps_m)),
+          eps_m_prev(std::move(other.eps_m_prev)),
+          solid_material(other.solid_material),
+          material_state_variables(std::move(other.material_state_variables)),
+          C(std::move(other.C)),
           integration_weight(std::move(other.integration_weight)),
     {
     }
@@ -92,10 +92,11 @@ struct IntegrationPointData final
                                     SpatialPosition const& x_position,
                                     double const dt,
                                     DisplacementVectorType const& u,
-                                    double const thermal_strain)
+                                    double const linear_thermal_strain)
     {
         eps.noalias() = b_matrices * u;
-        eps_m.noalias() = eps - thermal_strain * Invariants::identity2;
+        // assume isotropic thermal expansion
+        eps_m.noalias() = eps - linear_thermal_strain * Invariants::identity2;
         solid_material.computeConstitutiveRelation(
             t, x_position, dt, eps_m_prev, eps_m, sigma_prev, sigma, C,
             *material_state_variables);
@@ -302,16 +303,17 @@ public:
 
             double const delta_T = N.dot(T) - _process_data.reference_temperature;
             // calculate thermally induced strain
+            // assume isotropic thermal expansion
             auto const alpha =
                 _process_data.linear_thermal_expansion_coefficient(
                     t, x_position)[0];
-            double const thermal_strain = alpha * delta_T;
+            double const linear_thermal_strain = alpha * delta_T;
 
             //
             // displacement equation, displacement part
             //
             _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
-                                                    thermal_strain);
+                                                    linear_thermal_strain);
 
             local_Jac.template block<displacement_size, displacement_size>(
                          displacement_index, displacement_index)
@@ -332,7 +334,7 @@ public:
 
             // calculate real density
             auto const rho_sr = _process_data.solid_density(t, x_position)[0];
-            double const rho_s = rho_sr * (1 - 3 * thermal_strain);
+            double const rho_s = rho_sr * (1 - 3 * linear_thermal_strain);
 
             auto const& b = _process_data.specific_body_force;
             local_rhs.template block<displacement_size, 1>(displacement_index,
