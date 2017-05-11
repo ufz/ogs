@@ -11,7 +11,9 @@
 
 #include <cassert>
 
+#include "MaterialLib/SolidModels/CreateEhlers.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/CreateLubby2.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 
 #include "ThermoMechanicsProcess.h"
@@ -89,11 +91,21 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         material = nullptr;
-    if (type == "LinearElasticIsotropic")
+    if (type == "Ehlers")
+    {
+        material = MaterialLib::Solids::Ehlers::createEhlers<DisplacementDim>(
+            parameters, constitutive_relation_config);
+    }
+    else if (type == "LinearElasticIsotropic")
     {
         material =
             MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
                 parameters, constitutive_relation_config);
+    }
+    else if (type == "Lubby2")
+    {
+        material = MaterialLib::Solids::Lubby2::createLubby2<DisplacementDim>(
+            parameters, constitutive_relation_config);
     }
     else
     {
