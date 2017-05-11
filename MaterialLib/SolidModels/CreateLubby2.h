@@ -9,12 +9,9 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
-
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 
 #include "Lubby2.h"
-#include "MechanicsBase.h"
 
 namespace MaterialLib
 {
@@ -42,7 +39,7 @@ createNewtonRaphsonSolverParameters(BaseLib::ConfigTree const& config)
 }
 
 template <int DisplacementDim>
-std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
+std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
@@ -126,7 +123,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createLubby2(
     auto const nonlinear_solver_parameters =
         createNewtonRaphsonSolverParameters(nonlinear_solver_config);
 
-    return std::unique_ptr<MechanicsBase<DisplacementDim>>{
+    return std::unique_ptr<Lubby2<DisplacementDim>>{
         new Lubby2<DisplacementDim>{nonlinear_solver_parameters, mp}};
 }
 

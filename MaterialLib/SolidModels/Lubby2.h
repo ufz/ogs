@@ -9,11 +9,8 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
-#include <utility>
-
-#include "BaseLib/Error.h"
 #include "NumLib/NewtonRaphson.h"
+#include "ProcessLib/Parameter/Parameter.h"
 
 #include "KelvinVector.h"
 #include "MechanicsBase.h"

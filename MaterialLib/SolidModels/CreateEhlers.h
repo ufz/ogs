@@ -9,12 +9,8 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
-
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
-
 #include "Ehlers.h"
-#include "MechanicsBase.h"
 
 namespace MaterialLib
 {
@@ -67,7 +63,7 @@ inline std::unique_ptr<DamagePropertiesParameters> createDamageProperties(
 }
 
 template <int DisplacementDim>
-std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
+std::unique_ptr<SolidEhlers<DisplacementDim>> createEhlers(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
@@ -194,7 +190,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
     auto const nonlinear_solver_parameters =
         createNewtonRaphsonSolverParameters(nonlinear_solver_config);
 
-    return std::unique_ptr<MechanicsBase<DisplacementDim>>{
+    return std::unique_ptr<SolidEhlers<DisplacementDim>>{
         new SolidEhlers<DisplacementDim>{nonlinear_solver_parameters, mp,
                                          std::move(ehlers_damage_properties)}};
 }
