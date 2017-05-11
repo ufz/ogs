@@ -223,16 +223,18 @@ public:
     {
     }
 
-    bool computeConstitutiveRelation(
+    std::tuple<KelvinVector, std::unique_ptr<typename MechanicsBase<
+                                 DisplacementDim>::MaterialStateVariables>,
+               KelvinMatrix>
+    integrateStress(
         double const t,
         ProcessLib::SpatialPosition const& x,
         double const dt,
         KelvinVector const& eps_prev,
         KelvinVector const& eps,
         KelvinVector const& sigma_prev,
-        KelvinVector& sigma,
-        KelvinMatrix& C,
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+        KelvinVector const& sigma,
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables) override;
 
 private:

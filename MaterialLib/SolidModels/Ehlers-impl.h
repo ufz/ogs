@@ -531,26 +531,30 @@ typename SolidEhlers<DisplacementDim>::KelvinVector predict_sigma(
 }
 
 template <int DisplacementDim>
-bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
+std::tuple<typename SolidEhlers<DisplacementDim>::KelvinVector,
+           std::unique_ptr<
+               typename MechanicsBase<DisplacementDim>::MaterialStateVariables>,
+           typename SolidEhlers<DisplacementDim>::KelvinMatrix>
+SolidEhlers<DisplacementDim>::integrateStress(
     double const t,
     ProcessLib::SpatialPosition const& x,
     double const dt,
     KelvinVector const& eps_prev,
     KelvinVector const& eps,
     KelvinVector const& sigma_prev,
-    KelvinVector& sigma_final,
-    KelvinMatrix& C,
-    typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+    KelvinVector const& /*sigma_final*/,
+    typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
         material_state_variables)
 {
-    assert(dynamic_cast<MaterialStateVariables*>(&material_state_variables) !=
-           nullptr);
+    assert(dynamic_cast<MaterialStateVariables const*>(
+               &material_state_variables) != nullptr);
     auto& _state =
-        static_cast<MaterialStateVariables&>(material_state_variables);
-    _state.setInitialConditions();
+        static_cast<MaterialStateVariables const&>(material_state_variables);
+
+    MaterialStateVariables state(_state);
+    state.setInitialConditions();
 
     using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
-    C.setZero();
 
     // volumetric strain
     double const eps_V = Invariants::trace(eps);
@@ -570,16 +574,18 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
     {
         // Compute sigma_eff from damage total stress sigma, which is given by
         // sigma_eff=sigma_prev / (1-damage)
-        sigma_eff_prev = sigma_prev / (1 - _state.damage_prev.damage);
+        sigma_eff_prev = sigma_prev / (1 - state.damage_prev.damage);
     }
-    KelvinVector sigma =
-        predict_sigma<DisplacementDim>(G, K, sigma_eff_prev, eps, eps_prev, eps_V);
+    KelvinVector sigma = predict_sigma<DisplacementDim>(G, K, sigma_eff_prev,
+                                                        eps, eps_prev, eps_V);
+
+    KelvinMatrix tangentStiffness;
 
     // update parameter
     double const k =
         calculateIsotropicHardening(_mp.kappa(t, x)[0],
                                     _mp.hardening_coefficient(t, x)[0],
-                                    _state.eps_p_eff);
+                                    state.eps_p_eff);
 
     PhysicalStressWithInvariants<DisplacementDim> s{G * sigma};
     // Quit early if sigma is zero (nothing to do) or if we are still in elastic
@@ -587,9 +593,10 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
     if (sigma.squaredNorm() == 0 ||
         yieldFunction<DisplacementDim>(s, _mp, t, x, k) < 0)
     {
-        C.setZero();
-        C.template topLeftCorner<3, 3>().setConstant(K - 2. / 3 * G);
-        C.noalias() += 2 * G * KelvinMatrix::Identity();
+        tangentStiffness.setZero();
+        tangentStiffness.template topLeftCorner<3, 3>().setConstant(
+            K - 2. / 3 * G);
+        tangentStiffness.noalias() += 2 * G * KelvinMatrix::Identity();
     }
     else
     {
@@ -603,26 +610,26 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
             auto const update_residual = [&](ResidualVectorType& residual) {
 
                 KelvinVector const eps_p_D_dot =
-                    (_state.eps_p_D - _state.eps_p_D_prev) / dt;
+                    (state.eps_p_D - state.eps_p_D_prev) / dt;
                 double const eps_p_V_dot =
-                    (_state.eps_p_V - _state.eps_p_V_prev) / dt;
+                    (state.eps_p_V - state.eps_p_V_prev) / dt;
                 double const eps_p_eff_dot =
-                    (_state.eps_p_eff - _state.eps_p_eff_prev) / dt;
+                    (state.eps_p_eff - state.eps_p_eff_prev) / dt;
 
                 double const k = calculateIsotropicHardening(
                     _mp.kappa(t, x)[0],
                     _mp.hardening_coefficient(t, x)[0],
-                    _state.eps_p_eff);
+                    state.eps_p_eff);
 
                 calculatePlasticResidual<DisplacementDim>(
-                    t, x, eps_D, eps_V, s, _state.eps_p_D, eps_p_D_dot,
-                    _state.eps_p_V, eps_p_V_dot, eps_p_eff_dot, _state.lambda,
-                    k, _mp, residual);
+                    t, x, eps_D, eps_V, s, state.eps_p_D, eps_p_D_dot,
+                    state.eps_p_V, eps_p_V_dot, eps_p_eff_dot, state.lambda, k,
+                    _mp, residual);
             };
 
             auto const update_jacobian = [&](JacobianMatrix& jacobian) {
                 calculatePlasticJacobian<DisplacementDim>(dt, t, x, jacobian, s,
-                                                          _state.lambda, _mp);
+                                                          state.lambda, _mp);
             };
 
             auto const update_solution = [&](
@@ -630,12 +637,12 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
                 sigma.noalias() += increment.template segment<KelvinVectorSize>(
                     KelvinVectorSize * 0);
                 s = PhysicalStressWithInvariants<DisplacementDim>{G * sigma};
-                _state.eps_p_D.noalias() +=
+                state.eps_p_D.noalias() +=
                     increment.template segment<KelvinVectorSize>(
                         KelvinVectorSize * 1);
-                _state.eps_p_V += increment(KelvinVectorSize * 2);
-                _state.eps_p_eff += increment(KelvinVectorSize * 2 + 1);
-                _state.lambda += increment(KelvinVectorSize * 2 + 2);
+                state.eps_p_V += increment(KelvinVectorSize * 2);
+                state.eps_p_eff += increment(KelvinVectorSize * 2 + 1);
+                state.lambda += increment(KelvinVectorSize * 2 + 2);
             };
 
             auto newton_solver = NumLib::NewtonRaphson<
@@ -648,7 +655,7 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
             auto const success_iterations = newton_solver.solve(jacobian);
 
             if (!success_iterations)
-                return false;
+                return {sigma, nullptr, tangentStiffness};
 
             // If the Newton loop didn't run, the linear solver will not be
             // initialized.
@@ -668,22 +675,28 @@ bool SolidEhlers<DisplacementDim>::computeConstitutiveRelation(
             .noalias() = calculateDResidualDEps<DisplacementDim>(K, G);
 
         if (_damage_properties)
-            updateDamage(t, x, _state);
+            updateDamage(t, x, state);
 
         // Extract consistent tangent.
-        C.noalias() =
+        tangentStiffness =
             _mp.G(t, x)[0] *
             linear_solver.solve(-dresidual_deps)
                 .template block<KelvinVectorSize, KelvinVectorSize>(0, 0);
     }
 
-    // Update sigma.
     if (_damage_properties)
-        sigma_final = G * sigma * (1 - _state.damage.damage);
-    else
-        sigma_final.noalias() = G * sigma;
+        return {_mp.G(t, x)[0] * sigma * (1 - state.damage.damage),
+                std::unique_ptr<typename MechanicsBase<
+                    DisplacementDim>::MaterialStateVariables>{
+                    new MaterialStateVariables{state}},
+                std::move(tangentStiffness)};
 
-    return true;
+    return {
+        _mp.G(t, x)[0] * sigma,
+        std::unique_ptr<
+            typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
+            new MaterialStateVariables{state}},
+        tangentStiffness};
 }
 
 }  // namespace Ehlers
