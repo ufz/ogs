@@ -29,10 +29,13 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     set(COMPILER_IS_MSVC TRUE CACHE INTERNAL "")
 endif() # CMAKE_CXX_COMPILER_ID
 
-# When static libraries are used in some shared libraries it is required that
-# also the static libraries have position independent code.
 if(BUILD_SHARED_LIBS)
+    # When static libraries are used in some shared libraries it is required
+    # that also the static libraries have position independent code.
     set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+
+    # Enable Windows DLL support.
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 endif()
 
 # Set additional user-given compiler flags
