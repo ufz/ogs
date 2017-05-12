@@ -56,7 +56,7 @@ script:
   - if [ "$CASE" == "CHECK" ]; then git config core.whitespace -blank-at-eof; git diff --check `git merge-base origin/master HEAD` HEAD; fi
   - if [ "$CASE" != "CHECK" ]; then mkdir build; fi
   - if [ "$CASE" != "CHECK" ]; then cd build; fi
-  - if [ "$CASE" != "CHECK" ]; then cmake $CMAKE_ARGS -DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System -DCMAKE_BUILD_TYPE=Debug ..; fi
+  - if [ "$CASE" != "CHECK" ]; then cmake $CMAKE_ARGS -DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System -DOGS_USE_PCH=OFF -DCMAKE_BUILD_TYPE=Debug ..; fi
   - if [ "$CASE" != "CHECK" ]; then make -j 2; fi
   - if [ "$CASE" != "CHECK" ]; then make tests; fi
 
