@@ -39,12 +39,12 @@ before_build:
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - cd %APPVEYOR_BUILD_FOLDER%
-  - echo -> %APPVEYOR_BUILD_FOLDER%
+  - echo %APPVEYOR_BUILD_FOLDER%
 
 build_script:
   - mkdir build & cd build
   - conan install ..
-  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=ON -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF
+  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF
   - cmake --build . --config %configuration%
 
 test_script:
