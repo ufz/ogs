@@ -12,10 +12,10 @@
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-#include "RichardsFlowProcess.h"
-#include "RichardsFlowProcessData.h"
 
 #include "CreateRichardsFlowMaterialProperties.h"
+#include "RichardsFlowProcess.h"
+#include "RichardsFlowProcessData.h"
 
 namespace ProcessLib
 {
