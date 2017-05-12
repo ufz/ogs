@@ -21,7 +21,9 @@ add_library(OGSFileConverterLib
 )
 target_link_libraries(OGSFileConverterLib
     QtBase
-    MeshLib)
+    MeshLib
+    NumLib
+)
 
 add_executable(OGSFileConverter main.cpp)
 

@@ -6,7 +6,7 @@ set_target_properties(moveMeshNodes PROPERTIES FOLDER Utilities)
 
 add_executable(MapGeometryToMeshSurface
     MapGeometryToMeshSurface.cpp )
-target_link_libraries(MapGeometryToMeshSurface MeshGeoToolsLib)
+target_link_libraries(MapGeometryToMeshSurface MeshGeoToolsLib MeshLib)
 ADD_VTK_DEPENDENCY(MapGeometryToMeshSurface)
 set_target_properties(MapGeometryToMeshSurface PROPERTIES FOLDER Utilities)
 
@@ -26,7 +26,7 @@ ADD_VTK_DEPENDENCY(MoveMesh)
 set_target_properties(MoveMesh PROPERTIES FOLDER Utilities)
 
 add_executable(appendLinesAlongPolyline appendLinesAlongPolyline.cpp)
-target_link_libraries(appendLinesAlongPolyline MeshGeoToolsLib)
+target_link_libraries(appendLinesAlongPolyline MeshGeoToolsLib MeshLib)
 ADD_VTK_DEPENDENCY(appendLinesAlongPolyline)
 set_target_properties(appendLinesAlongPolyline PROPERTIES FOLDER Utilities)
 
@@ -64,7 +64,7 @@ set_target_properties(createLayeredMeshFromRasters PROPERTIES FOLDER Utilities)
 
 add_executable(CreateBoundaryConditionsAlongPolylines
     CreateBoundaryConditionsAlongPolylines.cpp )
-target_link_libraries(CreateBoundaryConditionsAlongPolylines MeshGeoToolsLib)
+target_link_libraries(CreateBoundaryConditionsAlongPolylines MeshGeoToolsLib MeshLib)
 ADD_VTK_DEPENDENCY(CreateBoundaryConditionsAlongPolylines)
 set_target_properties(CreateBoundaryConditionsAlongPolylines
     PROPERTIES FOLDER Utilities)

@@ -9,18 +9,20 @@
 
 #pragma once
 
+#include "numlib_export.h"
+
 #include "MatrixProviderUser.h"
 
 namespace NumLib
 {
 struct GlobalVectorProvider
 {
-    static VectorProvider& provider;
+    static NUMLIB_EXPORT VectorProvider& provider;
 };
 
 struct GlobalMatrixProvider
 {
-    static MatrixProvider& provider;
+    static NUMLIB_EXPORT MatrixProvider& provider;
 };
 
 void cleanupGlobalMatrixProviders();

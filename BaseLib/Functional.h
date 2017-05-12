@@ -10,6 +10,7 @@
 #pragma once
 
 #include <functional>
+#include "baselib_export.h"
 #include "BaseLib/TMPUtil.h"
 
 namespace BaseLib
@@ -28,7 +29,7 @@ struct IndexedPlacedPlaceholder;
 #define SPECIALIZE_INDEXEDPLACEHOLDER(INDEX, INDEX_P_1)               \
     template <>                                                       \
     struct IndexedPlacedPlaceholder<(INDEX)> {                        \
-        static const decltype(std::placeholders::_##INDEX_P_1) value; \
+        static BASELIB_EXPORT const decltype(std::placeholders::_##INDEX_P_1) value; \
     }
 
 // Create specializations up to the tenth placeholder

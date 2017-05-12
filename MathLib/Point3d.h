@@ -15,6 +15,8 @@
 
 #include <limits>
 
+#include "mathlib_export.h"
+
 #include "TemplatePoint.h"
 #include "MathTools.h"
 
@@ -22,7 +24,7 @@ namespace MathLib
 {
 using Point3d = MathLib::TemplatePoint<double, 3>;
 
-extern const Point3d ORIGIN;
+extern MATHLIB_EXPORT const Point3d ORIGIN;
 /**
  * rotation of points
  * @param mat a rotation matrix

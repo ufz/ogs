@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "materiallib_export.h"
+
 #include "BaseLib/ConfigTree.h"
 #include "Reaction.h"
 #include "Adsorption.h"
@@ -78,8 +80,8 @@ private:
     friend class ProcessLib::TESFEMReactionAdaptorCaOH2;
 
 public:
-    static const double rho_low; //! lower density limit
-    static const double rho_up;  //! upper density limit
+    static MATERIALLIB_EXPORT const double rho_low; //! lower density limit
+    static MATERIALLIB_EXPORT const double rho_up;  //! upper density limit
 };
 
 }

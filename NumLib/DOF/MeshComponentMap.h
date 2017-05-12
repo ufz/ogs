@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "numlib_export.h"
+
 #include "ComponentGlobalIndexDict.h"
 
 namespace MeshLib
@@ -141,7 +143,7 @@ public:
 
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.
-    static GlobalIndexType const nop;
+    static NUMLIB_EXPORT GlobalIndexType const nop;
 
 #ifndef NDEBUG
     const detail::ComponentGlobalIndexDict& getDictionary() const
