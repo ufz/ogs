@@ -42,7 +42,7 @@ namespace RichardsFlow
 * flow.
 */
 
-class RichardsFlowMaterialProperties
+class RichardsFlowMaterialProperties final
 {
 public:
     using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
