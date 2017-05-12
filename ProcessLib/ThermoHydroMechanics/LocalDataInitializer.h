@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -11,9 +11,9 @@
 
 #include <functional>
 #include <memory>
+#include <type_traits>
 #include <typeindex>
 #include <typeinfo>
-#include <type_traits>
 #include <unordered_map>
 
 #include "MeshLib/Elements/Elements.h"
@@ -280,7 +280,6 @@ private:
 
 }  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib
-
 
 #undef ENABLED_ELEMENT_TYPE_SIMPLEX
 #undef ENABLED_ELEMENT_TYPE_CUBOID

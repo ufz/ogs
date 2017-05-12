@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -40,7 +40,8 @@ struct ThermoHydroMechanicsProcessData
         Parameter<double> const& lambda_s_,
         Parameter<double> const& lambda_f_,
         Parameter<double> const& reference_temperature_,
-        Eigen::Matrix<double, DisplacementDim, 1> specific_body_force_)
+        Eigen::Matrix<double, DisplacementDim, 1>
+            specific_body_force_)
         : material{std::move(material_)},
           intrinsic_permeability(intrinsic_permeability_),
           storage_coefficient(storage_coefficient_),
@@ -83,7 +84,8 @@ struct ThermoHydroMechanicsProcessData
     }
 
     //! Copies are forbidden.
-    ThermoHydroMechanicsProcessData(ThermoHydroMechanicsProcessData const&) = delete;
+    ThermoHydroMechanicsProcessData(ThermoHydroMechanicsProcessData const&) =
+        delete;
 
     //! Assignments are not needed.
     void operator=(ThermoHydroMechanicsProcessData const&) = delete;
@@ -117,4 +119,3 @@ struct ThermoHydroMechanicsProcessData
 
 }  // namespace ThermoHydroMechanics
 }  // namespace ThermoProcessLib
-
