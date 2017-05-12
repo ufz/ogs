@@ -29,14 +29,11 @@ namespace ProcessLib
 {
 namespace RichardsFlow
 {
-    RichardsFlowMaterialProperties::RichardsFlowMaterialProperties(
+RichardsFlowMaterialProperties::RichardsFlowMaterialProperties(
     boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
-        fluid_density,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
-        fluid_viscosity,
-    std::vector<Eigen::MatrixXd>&&
-        intrinsic_permeability_models,
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_density,
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_viscosity,
+    std::vector<Eigen::MatrixXd>&& intrinsic_permeability_models,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
         porosity_models,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
@@ -59,8 +56,7 @@ namespace RichardsFlow
     DBUG("Create material properties for Richards flow.");
 }
 
-int RichardsFlowMaterialProperties::getMaterialID(
-    const std::size_t element_id)
+int RichardsFlowMaterialProperties::getMaterialID(const std::size_t element_id)
 {
     if (!_material_ids)
     {
@@ -71,8 +67,8 @@ int RichardsFlowMaterialProperties::getMaterialID(
     return (*_material_ids)[element_id];
 }
 
-double RichardsFlowMaterialProperties::getFluidDensity(
-    const double p, const double T) const
+double RichardsFlowMaterialProperties::getFluidDensity(const double p,
+                                                       const double T) const
 {
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
@@ -80,8 +76,8 @@ double RichardsFlowMaterialProperties::getFluidDensity(
     return _fluid_density->getValue(vars);
 }
 
-double RichardsFlowMaterialProperties::getFluidViscosity(
-    const double p, const double T) const
+double RichardsFlowMaterialProperties::getFluidViscosity(const double p,
+                                                         const double T) const
 {
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;

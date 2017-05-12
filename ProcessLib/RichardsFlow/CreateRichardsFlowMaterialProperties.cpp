@@ -51,7 +51,6 @@ createRichardsFlowMaterialProperties(
     auto const& mu_conf = fluid_config.getConfigSubtree("fluid_viscosity");
     auto fluid_viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
 
-
     // Get porous properties
     std::vector<int> mat_ids;
     std::vector<int> mat_krel_ids;
@@ -102,9 +101,8 @@ createRichardsFlowMaterialProperties(
         auto const& krel_config =
             //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property__porous_medium__porous_medium__relative_permeability}
             conf.getConfigSubtree("relative_permeability");
-        auto krel =
-            MaterialLib::PorousMedium::createRelativePermeabilityModel(
-                krel_config);
+        auto krel = MaterialLib::PorousMedium::createRelativePermeabilityModel(
+            krel_config);
         relative_permeability_models.emplace_back(std::move(krel));
     }
 
@@ -114,8 +112,8 @@ createRichardsFlowMaterialProperties(
 
     return std::unique_ptr<RichardsFlowMaterialProperties>{
         new RichardsFlowMaterialProperties{
-            material_ids, std::move(fluid_density),
-            std::move(fluid_viscosity), std::move(intrinsic_permeability_models),
+            material_ids, std::move(fluid_density), std::move(fluid_viscosity),
+            std::move(intrinsic_permeability_models),
             std::move(porosity_models), std::move(storage_models),
             std::move(capillary_pressure_models),
             std::move(relative_permeability_models)}};

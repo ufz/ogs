@@ -9,7 +9,6 @@
 
 #pragma once
 
-
 #include "RichardsFlowMaterialProperties.h"
 namespace BaseLib
 {

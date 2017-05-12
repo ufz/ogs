@@ -9,14 +9,13 @@
 
 #include "CreateRichardsFlowProcess.h"
 
+#include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-#include "ProcessLib/Parameter/ConstantParameter.h"
 #include "RichardsFlowProcess.h"
 #include "RichardsFlowProcessData.h"
 
 #include "CreateRichardsFlowMaterialProperties.h"
-
 
 namespace ProcessLib
 {
@@ -51,14 +50,14 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     SecondaryVariableCollection secondary_variables;
 
     NumLib::NamedFunctionCaller named_function_caller(
-    { "RichardsFlow_pressure" });
+        {"RichardsFlow_pressure"});
 
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
-        named_function_caller);
+                                        named_function_caller);
 
     // Specific body force
     std::vector<double> const b =
-        //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__specific_body_force}
+        //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
     assert(b.size() > 0 && b.size() < 4);
     Eigen::VectorXd specific_body_force(b.size());
@@ -89,18 +88,16 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     {
         INFO("The Richards flow is in homogeneous porous media.");
     }
-    std::unique_ptr<RichardsFlowMaterialProperties>
-        material = createRichardsFlowMaterialProperties(mat_config, material_ids);
+    std::unique_ptr<RichardsFlowMaterialProperties> material =
+        createRichardsFlowMaterialProperties(mat_config, material_ids);
     RichardsFlowProcessData process_data{std::move(material),
-                                         specific_body_force,
-                                         has_gravity,
-                                         mass_lumping,temperature};
+                                         specific_body_force, has_gravity,
+                                         mass_lumping, temperature};
 
     return std::make_unique<RichardsFlowProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller),mat_config,curves };
-}
+        std::move(secondary_variables), std::move(named_function_caller),mat_config,curves };}
 
 }  // namespace RichardsFlow
 }  // namespace ProcessLib

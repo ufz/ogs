@@ -37,8 +37,8 @@ public:
         NumLib::NamedFunctionCaller&& named_function_caller,
         BaseLib::ConfigTree const& config,
         std::map<std::string,
-        std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+            curves);
 
     //! \name ODESystem interface
     //! @{
@@ -56,11 +56,9 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                 GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b,
-                                 StaggeredCouplingTerm const& coupling_term
-                                ) override;
+    void assembleConcreteProcess(
+        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+        GlobalVector& b, StaggeredCouplingTerm const& coupling_term) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,

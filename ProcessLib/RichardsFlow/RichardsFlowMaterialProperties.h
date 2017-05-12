@@ -33,13 +33,14 @@ namespace ProcessLib
 class SpatialPosition;
 namespace RichardsFlow
 {
-    /** This class has a collection of material properties for Richards flow model
-    *  and it makes description of the properties of unsaturated porous media
-    *  i.e. the fluid density and viscosity models
-    *  the relative permeability models,
-    *  the capillary pressure-saturation relationships.
-    *  It generally provides the computation of the PDE coefficients for Richards flow.
-    */
+/** This class has a collection of material properties for Richards flow model
+*  and it makes description of the properties of unsaturated porous media
+*  i.e. the fluid density and viscosity models
+*  the relative permeability models,
+*  the capillary pressure-saturation relationships.
+*  It generally provides the computation of the PDE coefficients for Richards
+* flow.
+*/
 
 class RichardsFlowMaterialProperties
 {
@@ -48,12 +49,9 @@ public:
 
     RichardsFlowMaterialProperties(
         boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
-            fluid_density,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
-            fluid_viscosity,
-        std::vector<Eigen::MatrixXd>&&
-            intrinsic_permeability_models,
+        std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_density,
+        std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_viscosity,
+        std::vector<Eigen::MatrixXd>&& intrinsic_permeability_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
             porosity_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
@@ -78,9 +76,9 @@ public:
                        const double T, const double porosity_variable) const;
 
     double getRelativePermeability(const double t,
-                                         const ProcessLib::SpatialPosition& pos,
-                                         const double p, const double T,
-                                         const double saturation) const;
+                                   const ProcessLib::SpatialPosition& pos,
+                                   const double p, const double T,
+                                   const double saturation) const;
 
     double getSaturation(const int material_id, const double t,
                          const ProcessLib::SpatialPosition& pos, const double p,
@@ -106,8 +104,8 @@ private:
         _porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> const
         _storage_models;
-    std::vector<
-        std::unique_ptr<MaterialLib::PorousMedium::CapillaryPressureSaturation>> const
+    std::vector<std::unique_ptr<
+        MaterialLib::PorousMedium::CapillaryPressureSaturation>> const
         _capillary_pressure_models;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>> const

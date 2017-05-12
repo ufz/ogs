@@ -25,7 +25,7 @@ struct RichardsFlowProcessData
 {
     RichardsFlowProcessData(
         std::unique_ptr<RichardsFlowMaterialProperties>&& material_,
-        Eigen::VectorXd const  specific_body_force_,
+        Eigen::VectorXd const specific_body_force_,
         bool const has_gravity_,
         bool const has_mass_lumping_,
         Parameter<double> const& temperature_)
