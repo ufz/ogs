@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -43,7 +43,7 @@ void createLocalAssemblers(
     // Populate the vector of local assemblers.
     local_assemblers.resize(mesh_elements.size());
 
-    LocalDataInitializer initializer(dof_table,shapefunction_order);
+    LocalDataInitializer initializer(dof_table, shapefunction_order);
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalExecutor::transformDereferenced(
