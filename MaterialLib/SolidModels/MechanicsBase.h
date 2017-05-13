@@ -71,7 +71,6 @@ struct MechanicsBase
                     Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps_prev,
                     Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps,
                     Eigen::Matrix<double, Eigen::Dynamic, 1> const& sigma_prev,
-                    Eigen::Matrix<double, Eigen::Dynamic, 1> const& sigma,
                     MaterialStateVariables const& material_state_variables)
     {
         // TODO Avoid copies of data:
@@ -82,10 +81,9 @@ struct MechanicsBase
         KelvinVector const eps_prev_{eps_prev};
         KelvinVector const eps_{eps};
         KelvinVector const sigma_prev_{sigma_prev};
-        KelvinVector const sigma_{sigma};
 
         return integrateStress(
-            t, x, dt, eps_prev_, eps_, sigma_, sigma_prev_, material_state_variables);
+            t, x, dt, eps_prev_, eps_, sigma_prev_, material_state_variables);
     }
 
     /// Computation of the constitutive relation for specific material model.
@@ -103,7 +101,6 @@ struct MechanicsBase
                     KelvinVector const& eps_prev,
                     KelvinVector const& eps,
                     KelvinVector const& sigma_prev,
-                    KelvinVector const& sigma,
                     MaterialStateVariables const& material_state_variables) = 0;
 
     virtual ~MechanicsBase() = default;

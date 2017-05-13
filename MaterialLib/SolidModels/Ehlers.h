@@ -235,7 +235,6 @@ public:
         KelvinVector const& eps_prev,
         KelvinVector const& eps,
         KelvinVector const& sigma_prev,
-        KelvinVector const& sigma,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables) override;
 
