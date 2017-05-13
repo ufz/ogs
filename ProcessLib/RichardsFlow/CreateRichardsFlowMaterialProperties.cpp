@@ -13,6 +13,7 @@
 
 #include "BaseLib/reorderVector.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
+#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
@@ -41,15 +42,8 @@ createRichardsFlowMaterialProperties(
 
     //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");
-
-    // Get fluid properties
-    //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property__fluid_density}
-    auto const& rho_conf = fluid_config.getConfigSubtree("fluid_density");
-    auto fluid_density = MaterialLib::Fluid::createFluidDensityModel(rho_conf);
-
-    //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property__fluid_viscosity}
-    auto const& mu_conf = fluid_config.getConfigSubtree("fluid_viscosity");
-    auto fluid_viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
+    auto fluid_properties =
+        MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Get porous properties
     std::vector<int> mat_ids;
@@ -112,7 +106,7 @@ createRichardsFlowMaterialProperties(
 
     return std::unique_ptr<RichardsFlowMaterialProperties>{
         new RichardsFlowMaterialProperties{
-            material_ids, std::move(fluid_density), std::move(fluid_viscosity),
+            material_ids, std::move(fluid_properties),
             std::move(intrinsic_permeability_models),
             std::move(porosity_models), std::move(storage_models),
             std::move(capillary_pressure_models),

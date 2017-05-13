@@ -31,8 +31,7 @@ namespace RichardsFlow
 {
 RichardsFlowMaterialProperties::RichardsFlowMaterialProperties(
     boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_density,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_viscosity,
+    std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
     std::vector<Eigen::MatrixXd>&& intrinsic_permeability_models,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
         porosity_models,
@@ -45,8 +44,7 @@ RichardsFlowMaterialProperties::RichardsFlowMaterialProperties(
         std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>>&&
         relative_permeability_models)
     : _material_ids(material_ids),
-      _fluid_density(std::move(fluid_density)),
-      _fluid_viscosity(std::move(fluid_viscosity)),
+      _fluid_properties(std::move(fluid_properties)),
       _intrinsic_permeability_models(intrinsic_permeability_models),
       _porosity_models(std::move(porosity_models)),
       _storage_models(std::move(storage_models)),
@@ -73,7 +71,8 @@ double RichardsFlowMaterialProperties::getFluidDensity(const double p,
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _fluid_density->getValue(vars);
+    return _fluid_properties->getValue(
+        MaterialLib::Fluid::FluidPropertyType::Density, vars);
 }
 
 double RichardsFlowMaterialProperties::getFluidViscosity(const double p,
@@ -82,7 +81,8 @@ double RichardsFlowMaterialProperties::getFluidViscosity(const double p,
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _fluid_viscosity->getValue(vars);
+    return _fluid_properties->getValue(
+        MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
 }
 
 Eigen::MatrixXd const& RichardsFlowMaterialProperties::getPermeability(

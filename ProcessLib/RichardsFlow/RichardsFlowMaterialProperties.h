@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
+#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
@@ -49,8 +50,7 @@ public:
 
     RichardsFlowMaterialProperties(
         boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_density,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& fluid_viscosity,
+        std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
         std::vector<Eigen::MatrixXd>&& intrinsic_permeability_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
             porosity_models,
@@ -96,8 +96,8 @@ private:
     */
     boost::optional<MeshLib::PropertyVector<int> const&> const _material_ids;
 
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> const _fluid_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> const _fluid_viscosity;
+    const std::unique_ptr<MaterialLib::Fluid::FluidProperties>
+        _fluid_properties;
 
     std::vector<Eigen::MatrixXd> const _intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> const
