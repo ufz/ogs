@@ -621,8 +621,8 @@ newton(double const dt, MaterialProperties const& mp,
     };
 
     auto const update_jacobian = [&](JacobianMatrix& jacobian) {
-        calculatePlasticJacobian<DisplacementDim>(
-            dt, jacobian, s, solution[KelvinVectorSize * 2 + 2], mp);
+        jacobian = calculatePlasticJacobian<DisplacementDim>(
+            dt, s, solution[KelvinVectorSize * 2 + 2], mp);
     };
 
     auto const update_solution = [&](ResidualVectorType const& increment) {
