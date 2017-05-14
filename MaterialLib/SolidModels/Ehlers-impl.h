@@ -613,12 +613,11 @@ newton(double const dt, MaterialProperties const& mp,
         double const k_hardening =
             calculateIsotropicHardening(mp.kappa, mp.hardening_coefficient,
                                         solution[KelvinVectorSize * 2 + 1]);
-        calculatePlasticResidual<DisplacementDim>(
+        residual = calculatePlasticResidual<DisplacementDim>(
             eps_D, eps_V, s,
             solution.template segment<KelvinVectorSize>(KelvinVectorSize),
             eps_p_D_dot, solution[KelvinVectorSize * 2], eps_p_V_dot,
-            eps_p_eff_dot, solution[KelvinVectorSize * 2 + 2], k_hardening, mp,
-            residual);
+            eps_p_eff_dot, solution[KelvinVectorSize * 2 + 2], k_hardening, mp);
     };
 
     auto const update_jacobian = [&](JacobianMatrix& jacobian) {
