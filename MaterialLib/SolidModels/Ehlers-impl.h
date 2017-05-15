@@ -670,11 +670,11 @@ SolidEhlers<DisplacementDim>::integrateStress(
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
         material_state_variables)
 {
-    assert(dynamic_cast<MaterialStateVariables<DisplacementDim> const*>(
+    assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                &material_state_variables) != nullptr);
 
-    MaterialStateVariables<DisplacementDim> state =
-        static_cast<MaterialStateVariables<DisplacementDim> const&>(
+    StateVariables<DisplacementDim> state =
+        static_cast<StateVariables<DisplacementDim> const&>(
             material_state_variables);
     state.setInitialConditions();
 
@@ -759,14 +759,14 @@ SolidEhlers<DisplacementDim>::integrateStress(
         return std::make_tuple(mp.G * sigma * (1 - state.damage.value()),
                 std::unique_ptr<typename MechanicsBase<
                     DisplacementDim>::MaterialStateVariables>{
-                    new MaterialStateVariables<DisplacementDim>{state}},
+                    new StateVariables<DisplacementDim>{state}},
                 tangentStiffness);
 
     return {
         mp.G * sigma,
         std::unique_ptr<
             typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
-            new MaterialStateVariables<DisplacementDim>{state}},
+            new StateVariables<DisplacementDim>{state}},
         tangentStiffness};
 }
 

@@ -133,16 +133,16 @@ private:
 };
 
 template <int DisplacementDim>
-struct MaterialStateVariables
+struct StateVariables
     : public MechanicsBase<DisplacementDim>::MaterialStateVariables
 {
-    MaterialStateVariables& operator=(MaterialStateVariables const&) = default;
+    StateVariables& operator=(StateVariables const&) = default;
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables& operator=(
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             state) noexcept override
     {
-        assert(dynamic_cast<MaterialStateVariables const*>(&state) != nullptr);
-        return operator=(static_cast<MaterialStateVariables const&>(state));
+        assert(dynamic_cast<StateVariables const*>(&state) != nullptr);
+        return operator=(static_cast<StateVariables const&>(state));
     }
 
     void setInitialConditions()
@@ -168,7 +168,7 @@ struct MaterialStateVariables
 
 #ifndef NDEBUG
     friend std::ostream& operator<<(
-        std::ostream& os, MaterialStateVariables<DisplacementDim> const& m)
+        std::ostream& os, StateVariables<DisplacementDim> const& m)
     {
         os << "State:\n"
            << "eps_p_D: " << m.eps_p.D << "\n"
@@ -205,8 +205,8 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
     createMaterialStateVariables() override
     {
-        return std::unique_ptr<MaterialStateVariables<DisplacementDim>>{
-            new MaterialStateVariables<DisplacementDim>};
+        return std::unique_ptr<StateVariables<DisplacementDim>>{
+            new StateVariables<DisplacementDim>};
     }
 
 public:
