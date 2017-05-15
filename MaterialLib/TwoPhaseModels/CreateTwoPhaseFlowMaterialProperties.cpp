@@ -33,8 +33,7 @@ std::tuple<std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties>,
            BaseLib::ConfigTree>
 createTwoPhaseFlowMaterialProperties(
     BaseLib::ConfigTree const& config,
-    boost::optional<MeshLib::PropertyVector<int> const&>
-        material_ids)
+    MeshLib::PropertyVector<int> const& material_ids)
 {
     DBUG("Reading material properties of two-phase flow process.");
 

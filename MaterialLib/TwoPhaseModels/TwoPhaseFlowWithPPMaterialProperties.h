@@ -56,7 +56,7 @@ public:
     using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
 
     TwoPhaseFlowWithPPMaterialProperties(
-        boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
+        MeshLib::PropertyVector<int> const& material_ids,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
             liquid_density,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
@@ -118,7 +118,7 @@ private:
     /** Use two phase models for different material zones.
     *  Material IDs must be given as mesh element properties.
     */
-    boost::optional<MeshLib::PropertyVector<int> const&> const _material_ids;
+    MeshLib::PropertyVector<int> const& _material_ids;
 
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> const _liquid_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> const _liquid_viscosity;

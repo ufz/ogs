@@ -30,7 +30,7 @@ namespace MaterialLib
 namespace TwoPhaseFlowWithPP
 {
 TwoPhaseFlowWithPPMaterialProperties::TwoPhaseFlowWithPPMaterialProperties(
-    boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
+    MeshLib::PropertyVector<int> const& material_ids,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& liquid_density,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& liquid_viscosity,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& gas_density,
@@ -63,13 +63,13 @@ TwoPhaseFlowWithPPMaterialProperties::TwoPhaseFlowWithPPMaterialProperties(
 int TwoPhaseFlowWithPPMaterialProperties::getMaterialID(
     const std::size_t element_id) const
 {
-    if (!_material_ids)
+    if (_material_ids.empty())
     {
         return 0;
     }
 
-    assert(element_id < _material_ids->size());
-    return (*_material_ids)[element_id];
+    assert(element_id < _material_ids.size());
+    return _material_ids[element_id];
 }
 
 double TwoPhaseFlowWithPPMaterialProperties::getLiquidDensity(
