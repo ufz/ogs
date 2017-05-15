@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include "mathlib_export.h"
+
 // STL
 #include <algorithm>
 #include <array>

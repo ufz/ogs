@@ -27,13 +27,12 @@ if(OGS_USE_PCH)
 endif()
 
 target_link_libraries(MeshLib
-    PUBLIC BaseLib GeoLib MathLib logog
-    INTERFACE vtkIOXML
+    PUBLIC BaseLib GeoLib MathLib logog vtkIOXML
 )
 
 if(OGS_USE_MPI)
     target_link_libraries(MeshLib
-        INTERFACE vtkIOParallelXML vtkParallelMPI
+        PUBLIC vtkIOParallelXML vtkParallelMPI
     )
 endif()
 

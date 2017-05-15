@@ -1,0 +1,52 @@
+version: 6.0.8.{build}
+clone_depth: 100
+
+image:
+  - Visual Studio 2015
+
+environment:
+  PYTHON: "C:\\Python27-x64"
+  PYTHON_VERSION: "2.7.11"
+  PYTHON_ARCH: "64"
+  CONAN_USER_HOME: "C:\\projects\\deps\\conan"
+
+platform:
+  - x64
+
+configuration:
+  - Release
+
+cache:
+  - C:\projects\deps\conan
+
+install:
+  # All external dependencies are installed in C:\projects\deps
+  - if not exist "C:\projects\deps\" mkdir C:\projects\deps
+
+  # Install conan
+  - if not exist "C:\projects\deps\conan\" mkdir C:\projects\deps\conan
+  - set PATH=%PATH%;%PYTHON%/Scripts/
+  - C:\Python27-x64\Scripts\pip.exe install conan
+
+  # Install Ninja
+  - set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.7.2/ninja-win.zip"
+  - appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
+  - 7z x ninja.zip -oC:\projects\deps\ninja > nul
+  - set PATH=C:\projects\deps\ninja;%PATH%
+  - ninja --version
+
+before_build:
+  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - echo %APPVEYOR_BUILD_FOLDER%
+
+build_script:
+  - mkdir build & cd build
+  - conan install .. -o gui=True
+  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF -DOGS_BUILD_GUI=ON
+  - cmake --build . --config %configuration%
+
+test_script:
+  - cmake --build . --config %configuration% --target tests
+  - cmake --build . --config %configuration% --target ctest

@@ -16,6 +16,9 @@ APPEND_SOURCE_FILES(SOURCES Extrapolation)
 
 # Create the library
 add_library(NumLib ${SOURCES})
+include(GenerateExportHeader)
+generate_export_header(NumLib)
+target_include_directories(NumLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 

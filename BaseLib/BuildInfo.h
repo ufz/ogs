@@ -13,29 +13,31 @@
 
 #include <string>
 
+#include "baselib_export.h"
+
 namespace BaseLib
 {
 
 namespace BuildInfo
 {
-    extern const std::string build_timestamp;
+    extern BASELIB_EXPORT const std::string build_timestamp;
 
-    extern const std::string cmake_cxx_compiler;
-    extern const std::string cmake_cxx_flags;
-    extern const std::string cmake_cxx_flags_release;
-    extern const std::string cmake_cxx_flags_debug;
+    extern BASELIB_EXPORT const std::string cmake_cxx_compiler;
+    extern BASELIB_EXPORT const std::string cmake_cxx_flags;
+    extern BASELIB_EXPORT const std::string cmake_cxx_flags_release;
+    extern BASELIB_EXPORT const std::string cmake_cxx_flags_debug;
 
-    extern const std::string git_version_sha1;
-    extern const std::string git_version_sha1_short;
+    extern BASELIB_EXPORT const std::string git_version_sha1;
+    extern BASELIB_EXPORT const std::string git_version_sha1_short;
 
-    extern const std::string git_describe;
-    extern const std::string ogs_version;
+    extern BASELIB_EXPORT const std::string git_describe;
+    extern BASELIB_EXPORT const std::string ogs_version;
 
-    extern const std::string source_path;
-    extern const std::string geo_xml_schema_path;
-    extern const std::string app_xml_schema_path;
-    extern const std::string data_path;
-    extern const std::string data_binary_path;
-    extern const std::string tests_tmp_path;
+    extern BASELIB_EXPORT const std::string source_path;
+    extern BASELIB_EXPORT const std::string geo_xml_schema_path;
+    extern BASELIB_EXPORT const std::string app_xml_schema_path;
+    extern BASELIB_EXPORT const std::string data_path;
+    extern BASELIB_EXPORT const std::string data_binary_path;
+    extern BASELIB_EXPORT const std::string tests_tmp_path;
 }
 }
