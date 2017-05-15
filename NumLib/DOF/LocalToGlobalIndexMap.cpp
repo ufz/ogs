@@ -310,7 +310,7 @@ LocalToGlobalIndexMap::getElementVariableIDs(std::size_t const mesh_item_id) con
     std::vector<std::size_t> vec;
     for (unsigned i=0; i<getNumberOfVariables(); i++)
     {
-        for (unsigned j=0; j<getNumberOfVariableComponents(i); j++)
+        for (int j=0; j<getNumberOfVariableComponents(i); j++)
         {
             auto comp_id = getGlobalComponent(i, j);
             if (!_rows(mesh_item_id, comp_id).empty())
