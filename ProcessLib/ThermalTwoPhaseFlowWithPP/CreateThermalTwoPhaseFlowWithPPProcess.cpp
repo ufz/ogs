@@ -100,42 +100,42 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
-    auto const& mat_ids =
-        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-
-    std::unique_ptr<ProcessLib::ThermalTwoPhaseFlowWithPP::
-                        ThermalTwoPhaseFlowWithPPMaterialProperties>
+    std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties>
         material = nullptr;
 
-    boost::optional<MeshLib::PropertyVector<int> const&> material_ids;
-
-    if (mat_ids != nullptr)
+    if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
     {
         INFO("The twophase flow is in heterogeneous porous media.");
-        material_ids = *mat_ids;
+        auto const& mat_ids =
+            mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+        material = createThermalTwoPhaseFlowWithPPMaterialProperties(mat_config,
+                                                                     *mat_ids);
     }
     else
     {
         INFO("The twophase flow is in homogeneous porous media.");
+        MeshLib::Properties dummy_property;
+        auto const& dummy_property_vector =
+            dummy_property.createNewPropertyVector<int>(
+                "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+        material = createThermalTwoPhaseFlowWithPPMaterialProperties(
+            mat_config, *dummy_property_vector);
     }
 
-    material = ProcessLib::ThermalTwoPhaseFlowWithPP::createThermalTwoPhaseFlowWithPPMaterialProperties(mat_config, material_ids);
-
-    ThermalTwoPhaseFlowWithPPProcessData process_data{
-        specific_body_force,
-        has_gravity,
-        mass_lumping,
-        diff_coeff_b,
-        diff_coeff_a,
-        density_solid,
-        latent_heat_evaporation,
-        std::move(material) };
+    ThermalTwoPhaseFlowWithPPProcessData process_data{specific_body_force,
+                                                      has_gravity,
+                                                      mass_lumping,
+                                                      diff_coeff_b,
+                                                      diff_coeff_a,
+                                                      density_solid,
+                                                      latent_heat_evaporation,
+                                                      std::move(material)};
 
     return std::unique_ptr<Process>{new ThermalTwoPhaseFlowWithPPProcess{
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        mat_config, curves }};
+        mat_config, curves}};
 }
 
 }  // end of namespace
