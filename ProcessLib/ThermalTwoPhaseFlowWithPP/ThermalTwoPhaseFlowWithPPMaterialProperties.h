@@ -98,7 +98,7 @@ public:
                                       const double mass_density_water) const;
     ///
     double calculatedDensityNonwetdT(const double p_air_nonwet,
-                                 const double p_vapor_nonwetconst, double pc,
+                                 const double p_vapor_nonwet, const double pc,
                                  const double T,
                                  const double mass_density_water) const;
     /// Specific enthalpy of water vapor
@@ -109,7 +109,7 @@ public:
         const double latent_heat_evaporation) const;
     /// Specific enthalpy of air
     double getAirEnthalpySimple(const double temperature,
-                                const double heat_capacity_water_air,
+                                const double heat_capacity_dry_air,
                                 const double /*pg*/) const;
     /// Specific enthalpy of liquid water
     double getLiquidWaterEnthalpySimple(const double temperature,
