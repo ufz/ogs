@@ -137,8 +137,9 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surfac
     return *_mesh_nodes_along_surfaces.back();
 }
 
-MeshNodeSearcher&
-MeshNodeSearcher::getMeshNodeSearcher(MeshLib::Mesh const& mesh)
+MeshNodeSearcher& MeshNodeSearcher::getMeshNodeSearcher(
+    MeshLib::Mesh const& mesh,
+    MeshGeoToolsLib::SearchLength const& search_length_algorithm)
 {
     std::size_t const mesh_id = mesh.getID();
     if (_mesh_node_searchers.size() < mesh_id+1)
@@ -146,7 +147,8 @@ MeshNodeSearcher::getMeshNodeSearcher(MeshLib::Mesh const& mesh)
 
     if (!_mesh_node_searchers[mesh_id])
         _mesh_node_searchers[mesh_id].reset(
-            new MeshGeoToolsLib::MeshNodeSearcher(mesh));
+            new MeshGeoToolsLib::MeshNodeSearcher(mesh,
+                                                  search_length_algorithm));
 
     return *_mesh_node_searchers[mesh_id];
 }

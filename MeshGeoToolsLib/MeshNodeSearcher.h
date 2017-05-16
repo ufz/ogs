@@ -59,9 +59,9 @@ public:
      * @param search_all_nodes switch between searching all mesh nodes and
      * searching the base nodes.
      */
-    explicit MeshNodeSearcher(MeshLib::Mesh const& mesh,
-        MeshGeoToolsLib::SearchLength const& search_length_algorithm
-            = MeshGeoToolsLib::SearchLength(),
+    MeshNodeSearcher(
+        MeshLib::Mesh const& mesh,
+        MeshGeoToolsLib::SearchLength const& search_length_algorithm,
         bool search_all_nodes = true);
 
     virtual ~MeshNodeSearcher();
@@ -133,7 +133,10 @@ public:
      * Returns a (possibly new) mesh node searcher for the mesh.
      * A new one will be created, if it does not already exists.
      */
-    static MeshNodeSearcher& getMeshNodeSearcher(MeshLib::Mesh const& mesh);
+    static MeshNodeSearcher& getMeshNodeSearcher(
+        MeshLib::Mesh const& mesh,
+        MeshGeoToolsLib::SearchLength const& search_length_algorithm =
+            MeshGeoToolsLib::SearchLength());
 
 private:
     MeshLib::Mesh const& _mesh;

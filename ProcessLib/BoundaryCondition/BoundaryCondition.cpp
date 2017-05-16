@@ -25,8 +25,11 @@ std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::createBoundaryCondi
     const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
+    MeshGeoToolsLib::SearchLength search_length_algorithm;
+
     MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
-        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(mesh);
+        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
+            mesh, search_length_algorithm);
 
     MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
         mesh, mesh_node_searcher);
