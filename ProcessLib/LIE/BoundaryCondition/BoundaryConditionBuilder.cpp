@@ -17,16 +17,15 @@ namespace ProcessLib
 {
 namespace LIE
 {
-
 std::unique_ptr<BoundaryCondition>
 BoundaryConditionBuilder::createNeumannBoundaryCondition(
-        const BoundaryConditionConfig& config,
-        const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
-        const int variable_id, const unsigned integration_order,
-        const unsigned shapefunction_order,
-        const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
-        MeshGeoToolsLib::MeshNodeSearcher& /*mesh_node_searcher*/,
-        MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher)
+    const BoundaryConditionConfig& config,
+    const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
+    const int variable_id, const unsigned integration_order,
+    const unsigned shapefunction_order,
+    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
+    MeshGeoToolsLib::MeshNodeSearcher const& /*mesh_node_searcher*/,
+    MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher)
 {
     return ProcessLib::LIE::createNeumannBoundaryCondition(
         config.config,

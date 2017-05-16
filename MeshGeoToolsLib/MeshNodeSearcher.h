@@ -70,7 +70,8 @@ public:
      * @param geoObj a GeoLib::GeoObject where the nearest mesh node is searched for
      * @return a vector of mesh node ids
      */
-    std::vector<std::size_t> getMeshNodeIDs(GeoLib::GeoObject const& geoObj);
+    std::vector<std::size_t> getMeshNodeIDs(
+        GeoLib::GeoObject const& geoObj) const;
 
     /**
      * Searches for the node nearest by the given point. If there are two nodes
@@ -80,7 +81,8 @@ public:
      * @param pnt a GeoLib::Point the nearest mesh node is searched for
      * @return  a vector of mesh node ids
      */
-    std::vector<std::size_t> const& getMeshNodeIDsForPoint(GeoLib::Point const& pnt);
+    std::vector<std::size_t> const& getMeshNodeIDsForPoint(
+        GeoLib::Point const& pnt) const;
 
     /**
      * Searches for the nearest mesh nodes along a GeoLib::Polyline.
@@ -90,7 +92,8 @@ public:
      * @param ply the GeoLib::Polyline the nearest mesh nodes are searched for
      * @return a vector of mesh node ids
      */
-    std::vector<std::size_t> const& getMeshNodeIDsAlongPolyline(GeoLib::Polyline const& ply);
+    std::vector<std::size_t> const& getMeshNodeIDsAlongPolyline(
+        GeoLib::Polyline const& ply) const;
 
     /**
      * Searches for the nearest mesh nodes along a GeoLib::Surface.
@@ -100,28 +103,31 @@ public:
      * @param sfc the GeoLib::Surface the nearest mesh nodes are searched for
      * @return a vector of mesh node ids
      */
-    std::vector<std::size_t> const& getMeshNodeIDsAlongSurface(GeoLib::Surface const& sfc);
+    std::vector<std::size_t> const& getMeshNodeIDsAlongSurface(
+        GeoLib::Surface const& sfc) const;
 
     /**
      * Return a MeshNodesOnPoint object for the given GeoLib::Point object.
      * @param pnt the GeoLib::Point the nearest mesh nodes are searched for
      * @return a reference to a MeshNodesOnPoint object
      */
-    MeshNodesOnPoint& getMeshNodesOnPoint(GeoLib::Point const& pnt);
+    MeshNodesOnPoint& getMeshNodesOnPoint(GeoLib::Point const& pnt) const;
 
     /**
      * Return a MeshNodesAlongPolyline object for the given GeoLib::Polyline object.
      * @param ply the GeoLib::Polyline the nearest mesh nodes are searched for
      * @return a reference to a MeshNodesAlongPolyline object
      */
-    MeshNodesAlongPolyline& getMeshNodesAlongPolyline(GeoLib::Polyline const& ply);
+    MeshNodesAlongPolyline& getMeshNodesAlongPolyline(
+        GeoLib::Polyline const& ply) const;
 
     /**
      * Return a MeshNodesAlongSurface object for the given GeoLib::Surface object.
      * @param sfc the GeoLib::Surface the nearest mesh nodes are searched for
      * @return a reference to a MeshNodesAlongSurface object
      */
-    MeshNodesAlongSurface& getMeshNodesAlongSurface(GeoLib::Surface const& sfc);
+    MeshNodesAlongSurface& getMeshNodesAlongSurface(
+        GeoLib::Surface const& sfc) const;
 
     /**
      * Get the mesh this searcher operates on.
@@ -132,7 +138,7 @@ public:
      * Returns a (possibly new) mesh node searcher for the mesh.
      * A new one will be created, if it does not already exists.
      */
-    static MeshNodeSearcher& getMeshNodeSearcher(
+    static MeshNodeSearcher const& getMeshNodeSearcher(
         MeshLib::Mesh const& mesh,
         MeshGeoToolsLib::SearchLength&& search_length_algorithm);
 
@@ -142,9 +148,9 @@ private:
     MeshGeoToolsLib::SearchLength _search_length_algorithm;
     bool _search_all_nodes;
     // with newer compiler we can omit to use a pointer here
-    std::vector<MeshNodesOnPoint*> _mesh_nodes_on_points;
-    std::vector<MeshNodesAlongPolyline*> _mesh_nodes_along_polylines;
-    std::vector<MeshNodesAlongSurface*> _mesh_nodes_along_surfaces;
+    mutable std::vector<MeshNodesOnPoint*> _mesh_nodes_on_points;
+    mutable std::vector<MeshNodesAlongPolyline*> _mesh_nodes_along_polylines;
+    mutable std::vector<MeshNodesAlongSurface*> _mesh_nodes_along_surfaces;
 
     /// Mesh node searcher for the meshes indexed by the meshs' ids.
     static std::vector<std::unique_ptr<MeshNodeSearcher>> _mesh_node_searchers;

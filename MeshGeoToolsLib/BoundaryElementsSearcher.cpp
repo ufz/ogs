@@ -25,8 +25,9 @@
 
 namespace MeshGeoToolsLib
 {
-
-BoundaryElementsSearcher::BoundaryElementsSearcher(MeshLib::Mesh const& mesh, MeshNodeSearcher &mshNodeSearcher) : _mesh(mesh), _mshNodeSearcher(mshNodeSearcher)
+BoundaryElementsSearcher::BoundaryElementsSearcher(
+    MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher)
+    : _mesh(mesh), _mshNodeSearcher(mshNodeSearcher)
 {}
 
 BoundaryElementsSearcher::~BoundaryElementsSearcher()

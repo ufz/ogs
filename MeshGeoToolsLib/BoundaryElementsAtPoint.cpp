@@ -20,8 +20,8 @@
 namespace MeshGeoToolsLib
 {
 BoundaryElementsAtPoint::BoundaryElementsAtPoint(
-    MeshLib::Mesh const &mesh, MeshNodeSearcher &mshNodeSearcher,
-    GeoLib::Point const &point)
+    MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher,
+    GeoLib::Point const& point)
     : _mesh(mesh), _point(point)
 {
     auto const node_ids = mshNodeSearcher.getMeshNodeIDs(_point);

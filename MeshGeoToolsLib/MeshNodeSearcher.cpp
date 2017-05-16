@@ -54,7 +54,8 @@ MeshNodeSearcher::~MeshNodeSearcher()
         delete pointer;
 }
 
-std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject const& geoObj)
+std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
+    GeoLib::GeoObject const& geoObj) const
 {
     std::vector<std::size_t> vec_nodes;
     switch (geoObj.getGeoType()) {
@@ -75,24 +76,26 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
     return vec_nodes;
 }
 
-std::vector<std::size_t> const&
-MeshNodeSearcher::getMeshNodeIDsForPoint(GeoLib::Point const& pnt)
+std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsForPoint(
+    GeoLib::Point const& pnt) const
 {
     return getMeshNodesOnPoint(pnt).getNodeIDs();
 }
 
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
-        GeoLib::Polyline const& ply)
+    GeoLib::Polyline const& ply) const
 {
     return getMeshNodesAlongPolyline(ply).getNodeIDs();
 }
 
-std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(GeoLib::Surface const& sfc)
+std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(
+    GeoLib::Surface const& sfc) const
 {
     return getMeshNodesAlongSurface(sfc).getNodeIDs();
 }
 
-MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(GeoLib::Point const& pnt)
+MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(
+    GeoLib::Point const& pnt) const
 {
     std::vector<MeshNodesOnPoint*>::const_iterator it(_mesh_nodes_on_points.begin());
     for (; it != _mesh_nodes_on_points.end(); ++it) {
@@ -110,7 +113,8 @@ MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(GeoLib::Point const& pnt
     return *_mesh_nodes_on_points.back();
 }
 
-MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Polyline const& ply)
+MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(
+    GeoLib::Polyline const& ply) const
 {
     std::vector<MeshNodesAlongPolyline*>::const_iterator it(_mesh_nodes_along_polylines.begin());
     for (; it != _mesh_nodes_along_polylines.end(); ++it) {
@@ -127,7 +131,8 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Poly
     return *_mesh_nodes_along_polylines.back();
 }
 
-MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surface const& sfc)
+MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(
+    GeoLib::Surface const& sfc) const
 {
     std::vector<MeshNodesAlongSurface*>::const_iterator it(_mesh_nodes_along_surfaces.begin());
     for (; it != _mesh_nodes_along_surfaces.end(); ++it) {
@@ -146,7 +151,7 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surfac
     return *_mesh_nodes_along_surfaces.back();
 }
 
-MeshNodeSearcher& MeshNodeSearcher::getMeshNodeSearcher(
+MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
     MeshLib::Mesh const& mesh,
     MeshGeoToolsLib::SearchLength&& search_length_algorithm)
 {
@@ -156,24 +161,19 @@ MeshNodeSearcher& MeshNodeSearcher::getMeshNodeSearcher(
 
     if (_mesh_node_searchers[mesh_id])
     {
+        auto const& m = *_mesh_node_searchers[mesh_id];
         // recreate searcher if search length algorithm does not fit
-        if (typeid(_mesh_node_searchers[mesh_id]->_search_length_algorithm) !=
-                typeid(search_length_algorithm) ||
-            _mesh_node_searchers[mesh_id]
-                    ->_search_length_algorithm.getSearchLength() !=
+        if (typeid(m._search_length_algorithm) ==
+                typeid(search_length_algorithm) &&
+            m._search_length_algorithm.getSearchLength() ==
                 search_length_algorithm.getSearchLength())
         {
-            _mesh_node_searchers[mesh_id].reset(
-                new MeshGeoToolsLib::MeshNodeSearcher(
-                    mesh, std::move(search_length_algorithm)));
+            return m;
         }
     }
-    else
-    {
-        _mesh_node_searchers[mesh_id].reset(
-            new MeshGeoToolsLib::MeshNodeSearcher(
-                mesh, std::move(search_length_algorithm)));
-    }
+
+    _mesh_node_searchers[mesh_id].reset(new MeshGeoToolsLib::MeshNodeSearcher(
+        mesh, std::move(search_length_algorithm)));
 
     return *_mesh_node_searchers[mesh_id];
 }

@@ -55,7 +55,10 @@ public:
 
         geo_objs.addPolylineVec(std::move(plys), geometry_0, nullptr);
 
-        MGTL::MeshNodeSearcher& searcher_nodes = MGTL::MeshNodeSearcher::getMeshNodeSearcher(*mesh);
+        MGTL::SearchLength search_length;
+        MGTL::MeshNodeSearcher const& searcher_nodes =
+            MGTL::MeshNodeSearcher::getMeshNodeSearcher(
+                *mesh, std::move(search_length));
         MGTL::BoundaryElementsSearcher searcher_elements(*mesh, searcher_nodes);
 
         auto elems = searcher_elements.getBoundaryElements(*ply);
