@@ -12,6 +12,8 @@
 #include <cassert>
 
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/CreateLubby2.h"
+#include "MaterialLib/SolidModels/CreateEhlers.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 
 #include "ThermoHydroMechanicsProcess.h"
@@ -36,7 +38,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{process__type}
+    //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "THERMO_HYDRO_MECHANICS");
     DBUG("Create ThermoHydroMechanicsProcess.");
 
@@ -47,8 +49,12 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
 
     auto process_variables = findProcessVariables(
         variables, pv_config,
-        {//! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_process_variables__process_variable}
-         "temperature", "pressure", "displacement"});
+        {//! \ogs_file_param_special{prj__prcoesses__process__THERMO_HYDRO_MECHANICS__process_variables__temperature}
+         "temperature",
+         //! \ogs_file_param_special{prj__prcoesses__process__THERMO_HYDRO_MECHANICS__process_variables__pressure}
+         "pressure",
+         //! \ogs_file_param_special{prj__prcoesses__process__THERMO_HYDRO_MECHANICS__process_variables__displacement}
+         "displacement"});
 
     DBUG("Associate displacement with process variable \'%s\'.",
          process_variables[2].get().getName().c_str());
@@ -90,10 +96,11 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     // Constitutive relation.
     // read type;
     auto const constitutive_relation_config =
-        //! \ogs_file_param{process__THERMO_HYDRO_MECHANICS_constitutive_relation}
+        //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__constitutive_relation}
         config.getConfigSubtree("constitutive_relation");
 
     auto const type =
+        //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__constitutive_relation__type}
         constitutive_relation_config.peekConfigParameter<std::string>("type");
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
@@ -104,6 +111,18 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
             MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
                 parameters, constitutive_relation_config);
     }
+    else if (type == "Ehlers")
+    {
+        material =
+            MaterialLib::Solids::Ehlers::createEhlers<DisplacementDim>(
+                parameters, constitutive_relation_config);
+    }
+    else if (type == "Lubby2")
+    {
+        material =
+            MaterialLib::Solids::Lubby2::createLubby2<DisplacementDim>(
+                parameters, constitutive_relation_config);
+    }
     else
     {
         OGS_FATAL(
@@ -111,19 +130,19 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
             type.c_str());
     }
 
-    // Intrinsic permeability
+    // Intrinsic permeability // currently only considers isotropic
     auto& intrinsic_permeability = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_intrinsic_permeability}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_intrinsic_permeability}
         "intrinsic_permeability", parameters, 1);
 
-    DBUG("Use \'%s\' as hydraulic conductivity parameter.",
+    DBUG("Use \'%s\' as intrinsic permeability parameter.",
          intrinsic_permeability.name.c_str());
 
     // Storage coefficient
     auto& storage_coefficient = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_storage_coefficient}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_storage_coefficient}
         "storage_coefficient", parameters, 1);
 
     DBUG("Use \'%s\' as storage coefficient parameter.",
@@ -132,7 +151,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     // Fluid viscosity
     auto& fluid_viscosity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_fluid_viscosity}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_fluid_viscosity}
         "fluid_viscosity", parameters, 1);
     DBUG("Use \'%s\' as fluid viscosity parameter.",
          fluid_viscosity.name.c_str());
@@ -140,7 +159,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     // Biot coefficient
     auto& biot_coefficient = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_biot_coefficient}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_biot_coefficient}
         "biot_coefficient", parameters, 1);
     DBUG("Use \'%s\' as Biot coefficient parameter.",
          biot_coefficient.name.c_str());
@@ -148,76 +167,76 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     // Porosity
     auto& porosity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_porosity}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_porosity}
         "porosity", parameters, 1);
     DBUG("Use \'%s\' as porosity parameter.", porosity.name.c_str());
 
     // Solid density
     auto& solid_density = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_solid_density}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_solid_density}
         "solid_density", parameters, 1);
     DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
 
     // Fluid density
     auto const& fluid_density = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_fluid_density}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_fluid_density}
         "fluid_density", parameters, 1);
     DBUG("Use \'%s\' as fluid density parameter.", fluid_density.name.c_str());
 
-    // thermal expansion coefficient for solid
-    auto const& beta_solid = findParameter<double>(
+    // linear thermal expansion coefficient for solid
+    auto const& solid_linear_thermal_expansion_coefficient = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_solid_thermal_expansion_coefficient}
-        "beta_solid", parameters, 1);
-    DBUG("Use \'%s\' as solid thermal expansion coefficient parameter.",
-         beta_solid.name.c_str());
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_solid_linear_thermal_expansion_coefficient}
+        "solid_linear_thermal_expansion_coefficient", parameters, 1);
+    DBUG("Use \'%s\' as solid linear thermal expansion coefficient parameter.",
+         solid_linear_thermal_expansion_coefficient.name.c_str());
 
-    // thermal expansion coefficient for fluid
-    auto& beta_fluid = findParameter<double>(
+    // volumetric thermal expansion coefficient for fluid
+    auto const& fluid_volumetric_thermal_expansion_coefficient = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_fluid_thermal_expansion_coefficient}
-        "beta_fluid", parameters, 1);
-    DBUG("Use \'%s\' as fluid thermal expansion coefficient parameter.",
-         beta_fluid.name.c_str());
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_fluid_volumetric_thermal_expansion_coefficient}
+        "fluid_volumetric_thermal_expansion_coefficient", parameters, 1);
+    DBUG("Use \'%s\' as fluid volumetric thermal expansion coefficient parameter.",
+         fluid_volumetric_thermal_expansion_coefficient.name.c_str());
 
     // specific heat capacity for fluid
-    auto& fluid_heat_capacity = findParameter<double>(
+    auto& fluid_specific_heat_capacity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_fluid_heat_capacity}
-        "fluid_heat_capacity", parameters, 1);
-    DBUG("Use \'%s\' as fluid heat capacity parameter.",
-         fluid_heat_capacity.name.c_str());
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_fluid_specific_heat_capacity}
+        "fluid_specific_heat_capacity", parameters, 1);
+    DBUG("Use \'%s\' as fluid specific heat capacity parameter.",
+         fluid_specific_heat_capacity.name.c_str());
 
     // specific heat capacity for solid
-    auto& solid_heat_capacity = findParameter<double>(
+    auto& solid_specific_heat_capacity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_solid_heat_capacity}
-        "solid_heat_capacity", parameters, 1);
-    DBUG("Use \'%s\' as solid heat capacity parameter.",
-         solid_heat_capacity.name.c_str());
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_solid_specific_heat_capacity}
+        "solid_specific_heat_capacity", parameters, 1);
+    DBUG("Use \'%s\' as solid specific heat capacity parameter.",
+         solid_specific_heat_capacity.name.c_str());
 
-    // thermal conductivity for solid
-    auto& lambda_s = findParameter<double>(
+    // thermal conductivity for solid // currently only considers isotropic
+    auto& solid_thermal_conductivity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_solid_thermal_conductivity}
-        "lambda_s", parameters, 1);
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_solid_thermal_conductivity}
+        "solid_thermal_conductivity", parameters, 1);
     DBUG("Use \'%s\' as solid thermal conductivity parameter.",
-         lambda_s.name.c_str());
+         solid_thermal_conductivity.name.c_str());
 
-    // thermal conductivity for fluid
-    auto& lambda_f = findParameter<double>(
+    // thermal conductivity for fluid // currently only considers isotropic
+    auto& fluid_thermal_conductivity = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_fluid_thermal_conductivity}
-        "lambda_f", parameters, 1);
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_fluid_thermal_conductivity}
+        "fluid_thermal_conductivity", parameters, 1);
     DBUG("Use \'%s\' as fluid thermal conductivity parameter.",
-         lambda_f.name.c_str());
+         fluid_thermal_conductivity.name.c_str());
 
     // reference temperature
     auto& reference_temperature = findParameter<double>(
         config,
-        //! \ogs_file_param_special{process__THERMO_HYDRO_MECHANICS_reference_temperature}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_reference_temperature}
         "reference_temperature", parameters, 1);
     DBUG("Use \'%s\' as reference temperature parameter.",
          reference_temperature.name.c_str());
@@ -226,7 +245,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
         std::vector<double> const b =
-            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__specific_body_force}
+            //! \ogs_file_param{prj__processes__processes__process__HYDRO_MECHANICS__specific_body_force}
             config.getConfigParameter<std::vector<double>>(
                 "specific_body_force");
         if (specific_body_force.size() != DisplacementDim)
@@ -248,12 +267,12 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         porosity,
         solid_density,
         fluid_density,
-        beta_solid,
-        beta_fluid,
-        fluid_heat_capacity,
-        solid_heat_capacity,
-        lambda_s,
-        lambda_f,
+        solid_linear_thermal_expansion_coefficient,
+        fluid_volumetric_thermal_expansion_coefficient,
+        fluid_specific_heat_capacity,
+        solid_specific_heat_capacity,
+        solid_thermal_conductivity,
+        fluid_thermal_conductivity,
         reference_temperature,
         specific_body_force};
 

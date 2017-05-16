@@ -33,12 +33,12 @@ struct ThermoHydroMechanicsProcessData
         Parameter<double> const& porosity_,
         Parameter<double> const& solid_density_,
         Parameter<double> const& fluid_density_,
-        Parameter<double> const& beta_solid_,
-        Parameter<double> const& beta_fluid_,
-        Parameter<double> const& fluid_heat_capacity_,
-        Parameter<double> const& solid_heat_capacity_,
-        Parameter<double> const& lambda_s_,
-        Parameter<double> const& lambda_f_,
+        Parameter<double> const& solid_linear_thermal_expansion_coefficient_,
+        Parameter<double> const& fluid_volumetric_thermal_expansion_coefficient_,
+        Parameter<double> const& fluid_specific_heat_capacity_,
+        Parameter<double> const& solid_specific_heat_capacity_,
+        Parameter<double> const& solid_thermal_conductivity_,
+        Parameter<double> const& fluid_thermal_conductivity_,
         Parameter<double> const& reference_temperature_,
         Eigen::Matrix<double, DisplacementDim, 1>
             specific_body_force_)
@@ -50,12 +50,12 @@ struct ThermoHydroMechanicsProcessData
           porosity(porosity_),
           solid_density(solid_density_),
           fluid_density(fluid_density_),
-          beta_solid(beta_solid_),
-          beta_fluid(beta_fluid_),
-          fluid_heat_capacity(fluid_heat_capacity_),
-          solid_heat_capacity(solid_heat_capacity_),
-          lambda_s(lambda_s_),
-          lambda_f(lambda_f_),
+          solid_linear_thermal_expansion_coefficient(solid_linear_thermal_expansion_coefficient_),
+          fluid_volumetric_thermal_expansion_coefficient(fluid_volumetric_thermal_expansion_coefficient_),
+          fluid_specific_heat_capacity(fluid_specific_heat_capacity_),
+          solid_specific_heat_capacity(solid_specific_heat_capacity_),
+          solid_thermal_conductivity(solid_thermal_conductivity_),
+          fluid_thermal_conductivity(fluid_thermal_conductivity_),
           reference_temperature(reference_temperature_),
           specific_body_force(std::move(specific_body_force_))
     {
@@ -70,12 +70,12 @@ struct ThermoHydroMechanicsProcessData
           porosity(other.porosity),
           solid_density(other.solid_density),
           fluid_density(other.fluid_density),
-          beta_solid(other.beta_solid),
-          beta_fluid(other.beta_fluid),
-          fluid_heat_capacity(other.fluid_heat_capacity),
-          solid_heat_capacity(other.solid_heat_capacity),
-          lambda_s(other.lambda_s),
-          lambda_f(other.lambda_f),
+          solid_linear_thermal_expansion_coefficient(other.solid_linear_thermal_expansion_coefficient),
+          fluid_volumetric_thermal_expansion_coefficient(other.fluid_volumetric_thermal_expansion_coefficient),
+          fluid_specific_heat_capacity(other.fluid_specific_heat_capacity),
+          solid_specific_heat_capacity(other.solid_specific_heat_capacity),
+          solid_thermal_conductivity(other.solid_thermal_conductivity),
+          fluid_thermal_conductivity(other.fluid_thermal_conductivity),
           reference_temperature(other.reference_temperature),
           specific_body_force(other.specific_body_force),
           dt(other.dt),
@@ -102,12 +102,12 @@ struct ThermoHydroMechanicsProcessData
     Parameter<double> const& porosity;
     Parameter<double> const& solid_density;
     Parameter<double> const& fluid_density;
-    Parameter<double> const& beta_solid;
-    Parameter<double> const& beta_fluid;
-    Parameter<double> const& fluid_heat_capacity;
-    Parameter<double> const& solid_heat_capacity;
-    Parameter<double> const& lambda_s;
-    Parameter<double> const& lambda_f;
+    Parameter<double> const& solid_linear_thermal_expansion_coefficient;
+    Parameter<double> const& fluid_volumetric_thermal_expansion_coefficient;
+    Parameter<double> const& fluid_specific_heat_capacity;
+    Parameter<double> const& solid_specific_heat_capacity;
+    Parameter<double> const& solid_thermal_conductivity;
+    Parameter<double> const& fluid_thermal_conductivity;
     Parameter<double> const& reference_temperature;
     /// Specific body forces applied to solid and fluid.
     /// It is usually used to apply gravitational forces.
@@ -118,4 +118,4 @@ struct ThermoHydroMechanicsProcessData
 };
 
 }  // namespace ThermoHydroMechanics
-}  // namespace ThermoProcessLib
+}  // namespace ProcessLib
