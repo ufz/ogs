@@ -98,12 +98,11 @@ struct IntegrationPointData final
                                     SpatialPosition const& x_position,
                                     double const dt,
                                     DisplacementVectorType const& u,
-                                    double const beta_s,
-                                    double& delta_T)
+                                    double const thermal_strain)
     {
         eps.noalias() = b_matrices * u;
         // assume isotropic thermal expansion
-        eps_m.noalias() = eps - beta_s / 3 * delta_T * Invariants::identity2;
+        eps_m.noalias() = eps - thermal_strain * Invariants::identity2;
         solid_material.computeConstitutiveRelation(
             t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev, sigma_eff, C,
             *material_state_variables);
@@ -268,7 +267,7 @@ public:
                   std::vector<double>& /*local_rhs_data*/) override
     {
         OGS_FATAL(
-            "ThermoHydroMechanicsLocalAssembler: assembly without jacobian is "
+            "ThermoHydroMechanicsLocalAssembler: assembly without Jacobian is "
             "not "
             "implemented.");
     }
@@ -389,14 +388,14 @@ public:
             double const K_over_mu =
                 _process_data.intrinsic_permeability(t, x_position)[0] /
                 _process_data.fluid_viscosity(t, x_position)[0];
-            double const beta_s = _process_data.beta_solid(t, x_position)[0];
-            double const beta_f = _process_data.beta_fluid(t, x_position)[0];
-            double const lambda_f = _process_data.lambda_f(t, x_position)[0];
-            double const lambda_s = _process_data.lambda_s(t, x_position)[0];
+            double const alpha_s = _process_data.solid_linear_thermal_expansion_coefficient(t, x_position)[0];
+            double const beta_f = _process_data.fluid_volumetric_thermal_expansion_coefficient(t, x_position)[0];
+            double const lambda_f = _process_data.fluid_thermal_conductivity(t, x_position)[0];
+            double const lambda_s = _process_data.solid_thermal_conductivity(t, x_position)[0];
             double const C_f =
-                _process_data.fluid_heat_capacity(t, x_position)[0];
+                _process_data.fluid_specific_heat_capacity(t, x_position)[0];
             double const C_s =
-                _process_data.solid_heat_capacity(t, x_position)[0];
+                _process_data.solid_specific_heat_capacity(t, x_position)[0];
             double const T0 =
                 _process_data.reference_temperature(t, x_position)[0];
             auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
@@ -405,10 +404,14 @@ public:
             auto const porosity = _process_data.porosity(t, x_position)[0];
             auto const& b = _process_data.specific_body_force;
 
+            // calculate linear thermal strain
+            // assume isotropic thermal expansion
             auto T_int_pt = N_T * T;
             double delta_T(T_int_pt - T0);
+            double const thermal_strain = alpha_s * delta_T;
+
             double rho_f = rho_fr * (1 - beta_f * delta_T);
-            double rho_s = rho_sr * (1 - beta_s * delta_T);
+            double rho_s = rho_sr * (1 - 3 * thermal_strain);
 
             auto velocity = (-K_over_mu * dNdx_p * p).eval();
             velocity += K_over_mu * rho_f * b;
@@ -421,7 +424,7 @@ public:
             // displacement equation, displacement part (K_uu)
             //
             _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
-                                                    beta_s, delta_T);
+                                                    thermal_strain);
 
             local_Jac
                 .template block<displacement_size, displacement_size>(
@@ -432,13 +435,6 @@ public:
             local_rhs.template segment<displacement_size>(displacement_index)
                 .noalias() -=
                 (B.transpose() * sigma_eff - N_u.transpose() * rho * b) * w;
-
-            //
-            // displacement equation, temperature part (K_uT)
-            //
-            double beta = beta_s * (1 - porosity) + porosity * beta_f;
-            KuT.noalias() +=
-                B.transpose() * C * identity2 * (beta_s / 3) * N_T * w;
 
             //
             // displacement equation, pressure part (K_up)
@@ -459,6 +455,7 @@ public:
             //
             // pressure equation, temperature part (M_pT)
             //
+            auto beta = porosity * beta_f + (1-porosity)* 3 * alpha_s;
             storage_T.noalias() += N_p.transpose() * beta * N_p * w;
 
             //
@@ -722,7 +719,10 @@ private:
 
         for (auto const& ip_data : _ip_data)
         {
-            cache.push_back(ip_data.eps[component]);
+            if (component < 3)  // xx, yy, zz components
+                cache.push_back(ip_data.eps[component]);
+            else  // mixed xy, yz, xz components
+                cache.push_back(ip_data.eps[component] / std::sqrt(2));
         }
 
         return cache;

@@ -1,0 +1,1 @@
+Permeability of the solid.
