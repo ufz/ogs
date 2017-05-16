@@ -9,6 +9,9 @@
  */
 
 #include "MeshNodeSearcher.h"
+
+#include <typeinfo>
+
 #include "HeuristicSearchLength.h"
 #include "MeshNodesAlongPolyline.h"
 #include "MeshNodesAlongSurface.h"
@@ -16,11 +19,9 @@
 
 #include <logog/include/logog.hpp>
 
-// GeoLib
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"
 
-// MeshLib
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -29,7 +30,6 @@ namespace MeshGeoToolsLib
 {
 
 std::vector<std::unique_ptr<MeshNodeSearcher>> MeshNodeSearcher::_mesh_node_searchers;
-
 
 MeshNodeSearcher::MeshNodeSearcher(
     MeshLib::Mesh const& mesh,
@@ -154,10 +154,26 @@ MeshNodeSearcher& MeshNodeSearcher::getMeshNodeSearcher(
     if (_mesh_node_searchers.size() < mesh_id+1)
         _mesh_node_searchers.resize(mesh_id+1);
 
-    if (!_mesh_node_searchers[mesh_id])
+    if (_mesh_node_searchers[mesh_id])
+    {
+        // recreate searcher if search length algorithm does not fit
+        if (typeid(_mesh_node_searchers[mesh_id]->_search_length_algorithm) !=
+                typeid(search_length_algorithm) ||
+            _mesh_node_searchers[mesh_id]
+                    ->_search_length_algorithm.getSearchLength() !=
+                search_length_algorithm.getSearchLength())
+        {
+            _mesh_node_searchers[mesh_id].reset(
+                new MeshGeoToolsLib::MeshNodeSearcher(
+                    mesh, std::move(search_length_algorithm)));
+        }
+    }
+    else
+    {
         _mesh_node_searchers[mesh_id].reset(
-            new MeshGeoToolsLib::MeshNodeSearcher(mesh,
-                                                  search_length_algorithm));
+            new MeshGeoToolsLib::MeshNodeSearcher(
+                mesh, std::move(search_length_algorithm)));
+    }
 
     return *_mesh_node_searchers[mesh_id];
 }
