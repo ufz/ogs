@@ -70,7 +70,7 @@ createThermalTwoPhaseFlowWithPPMaterialProperties(
             spec_heat_capacity_air_conf);
     auto const& spec_heat_capacity_vapor_conf =
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__material_property__specific_heat_capacity_water_vapor}
-        fluid_config.getConfigSubtree("specific_heat_capacity_vapor");
+        fluid_config.getConfigSubtree("specific_heat_capacity_water_vapor");
     auto specific_heat_capacity_vapor =
         MaterialLib::Fluid::createSpecificFluidHeatCapacityModel(
             spec_heat_capacity_vapor_conf);
