@@ -10,6 +10,7 @@
 #include "BoundaryCondition.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshGeoToolsLib/SearchLength.h"
 #include "BoundaryConditionConfig.h"
 #include "DirichletBoundaryCondition.h"
 #include "NeumannBoundaryCondition.h"
@@ -17,23 +18,14 @@
 
 namespace ProcessLib
 {
-
-std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::createBoundaryCondition(
+std::unique_ptr<BoundaryCondition>
+BoundaryConditionBuilder::createBoundaryCondition(
     const BoundaryConditionConfig& config,
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned integration_order,
     const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
-    MeshGeoToolsLib::SearchLength search_length_algorithm;
-
-    MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
-        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-            mesh, std::move(search_length_algorithm));
-
-    MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
-        mesh, mesh_node_searcher);
-
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
 
@@ -41,22 +33,19 @@ std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::createBoundaryCondi
     {
         return createDirichletBoundaryCondition(
                     config, dof_table, mesh, variable_id,
-                    integration_order, shapefunction_order, parameters,
-                    mesh_node_searcher, boundary_element_searcher);
+                    integration_order, shapefunction_order, parameters);
     }
     else if (type == "Neumann")
     {
         return createNeumannBoundaryCondition(
                     config, dof_table, mesh, variable_id,
-                    integration_order, shapefunction_order, parameters,
-                    mesh_node_searcher, boundary_element_searcher);
+                    integration_order, shapefunction_order, parameters);
     }
     else if (type == "Robin")
     {
         return createRobinBoundaryCondition(
                     config, dof_table, mesh, variable_id,
-                    integration_order, shapefunction_order, parameters,
-                    mesh_node_searcher, boundary_element_searcher);
+                    integration_order, shapefunction_order, parameters);
     }
     else
     {
@@ -70,10 +59,13 @@ BoundaryConditionBuilder::createDirichletBoundaryCondition(
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned /*integration_order*/,
     const unsigned /*shapefunction_order*/,
-    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
-    MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher,
-    MeshGeoToolsLib::BoundaryElementsSearcher& /*boundary_element_searcher*/)
+    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
+    MeshGeoToolsLib::SearchLength search_length_algorithm;
+    MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
+        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
+            mesh, std::move(search_length_algorithm));
+
     // Find nodes' ids on the given mesh on which this boundary condition
     // is defined.
     std::vector<std::size_t> ids =
@@ -119,10 +111,16 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned integration_order,
     const unsigned shapefunction_order,
-    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
-    MeshGeoToolsLib::MeshNodeSearcher const& /*mesh_node_searcher*/,
-    MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher)
+    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
+    MeshGeoToolsLib::SearchLength search_length_algorithm;
+    MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
+        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
+            mesh, std::move(search_length_algorithm));
+
+    MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
+        mesh, mesh_node_searcher);
+
     return ProcessLib::createNeumannBoundaryCondition(
         config.config,
         getClonedElements(boundary_element_searcher, config.geometry),
@@ -137,10 +135,16 @@ BoundaryConditionBuilder::createRobinBoundaryCondition(
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned integration_order,
     const unsigned shapefunction_order,
-    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
-    MeshGeoToolsLib::MeshNodeSearcher const& /*mesh_node_searcher*/,
-    MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher)
+    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
+    MeshGeoToolsLib::SearchLength search_length_algorithm;
+    MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
+        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
+            mesh, std::move(search_length_algorithm));
+
+    MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
+        mesh, mesh_node_searcher);
+
     return ProcessLib::createRobinBoundaryCondition(
         config.config,
         getClonedElements(boundary_element_searcher, config.geometry),

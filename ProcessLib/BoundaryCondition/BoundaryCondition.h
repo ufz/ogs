@@ -24,6 +24,7 @@ class Mesh;
 
 namespace MeshGeoToolsLib
 {
+class SearchLength;
 class MeshNodeSearcher;
 class BoundaryElementsSearcher;
 }
@@ -73,10 +74,12 @@ public:
 
     virtual std::unique_ptr<BoundaryCondition> createBoundaryCondition(
         const BoundaryConditionConfig& config,
-        const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
+        const MeshLib::Mesh& mesh,
         const int variable_id, const unsigned integration_order,
         const unsigned shapefunction_order,
-        const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters);
+        const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
+            parameters);
 
 protected:
     virtual std::unique_ptr<BoundaryCondition> createDirichletBoundaryCondition(
@@ -86,9 +89,7 @@ protected:
         const unsigned integration_order,
         const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
-            parameters,
-        MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher,
-        MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher);
+            parameters);
 
     virtual std::unique_ptr<BoundaryCondition> createNeumannBoundaryCondition(
         const BoundaryConditionConfig& config,
@@ -96,9 +97,7 @@ protected:
         const MeshLib::Mesh& mesh, const int variable_id,
         const unsigned integration_order, const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
-            parameters,
-        MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher,
-        MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher);
+            parameters);
 
     virtual std::unique_ptr<BoundaryCondition> createRobinBoundaryCondition(
         const BoundaryConditionConfig& config,
@@ -106,9 +105,7 @@ protected:
         const MeshLib::Mesh& mesh, const int variable_id,
         const unsigned integration_order, const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
-            parameters,
-        MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher,
-        MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher);
+            parameters);
 
     static std::vector<MeshLib::Element*> getClonedElements(
         MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,

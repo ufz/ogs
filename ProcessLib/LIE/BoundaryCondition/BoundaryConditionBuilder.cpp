@@ -9,6 +9,10 @@
 
 #include "BoundaryConditionBuilder.h"
 
+#include "MeshGeoToolsLib/SearchLength.h"
+#include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
+
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 
 #include "NeumannBoundaryCondition.h"
@@ -23,10 +27,16 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned integration_order,
     const unsigned shapefunction_order,
-    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
-    MeshGeoToolsLib::MeshNodeSearcher const& /*mesh_node_searcher*/,
-    MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher)
+    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
+    MeshGeoToolsLib::SearchLength search_length_algorithm;
+    MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
+        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
+            mesh, std::move(search_length_algorithm));
+
+    MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
+        mesh, mesh_node_searcher);
+
     return ProcessLib::LIE::createNeumannBoundaryCondition(
         config.config,
         getClonedElements(boundary_element_searcher, config.geometry),
