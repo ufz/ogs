@@ -45,6 +45,7 @@
 #include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
+#include "ProcessLib/ThermalTwoPhaseFlowWithPP/CreateThermalTwoPhaseFlowWithPPProcess.h"
 #include "ProcessLib/TwoPhaseFlowWithPP/CreateTwoPhaseFlowWithPPProcess.h"
 #include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowWithPrhoProcess.h"
 
@@ -454,6 +455,15 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         {
             process = ProcessLib::TwoPhaseFlowWithPrho::
                 createTwoPhaseFlowWithPrhoProcess(
+                    *_mesh_vec[0], std::move(jacobian_assembler),
+                    _process_variables, _parameters, integration_order,
+                    process_config, _curves);
+        }
+
+        else if (type == "THERMAL_TWOPHASE_WITH_PP")
+        {
+            process = ProcessLib::ThermalTwoPhaseFlowWithPP::
+                createThermalTwoPhaseFlowWithPPProcess(
                     *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _curves);

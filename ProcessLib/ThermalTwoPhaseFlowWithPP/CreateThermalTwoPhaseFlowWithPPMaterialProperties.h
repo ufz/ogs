@@ -10,26 +10,25 @@
 #pragma once
 
 #include <memory>
-#include <tuple>
 
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
+#include "MaterialLib/TwoPhaseModels/CreateTwoPhaseFlowMaterialProperties.h"
 
-#include "TwoPhaseFlowWithPPMaterialProperties.h"
+#include "ThermalTwoPhaseFlowWithPPMaterialProperties.h"
 namespace BaseLib
 {
 class ConfigTree;
 }
 
-namespace MaterialLib
+namespace ProcessLib
 {
-namespace TwoPhaseFlowWithPP
+namespace ThermalTwoPhaseFlowWithPP
 {
-std::tuple<std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties>,
-           BaseLib::ConfigTree>
-createTwoPhaseFlowMaterialProperties(
+std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties>
+createThermalTwoPhaseFlowWithPPMaterialProperties(
     BaseLib::ConfigTree const& config,
     MeshLib::PropertyVector<int> const& material_ids);
 

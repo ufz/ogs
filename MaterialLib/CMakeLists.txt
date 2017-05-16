@@ -11,6 +11,7 @@ append_source_files(SOURCES Fluid/GibbsFreeEnergy)
 append_source_files(SOURCES Fluid/FluidProperties)
 append_source_files(SOURCES Fluid/SpecificHeatCapacity)
 append_source_files(SOURCES Fluid/ThermalConductivity)
+append_source_files(SOURCES Fluid/WaterVaporProperties)
 
 append_source_files(SOURCES PorousMedium/Porosity)
 append_source_files(SOURCES PorousMedium/Storage)
