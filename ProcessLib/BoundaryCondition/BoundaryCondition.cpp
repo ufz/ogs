@@ -29,7 +29,7 @@ std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::createBoundaryCondi
 
     MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-            mesh, search_length_algorithm);
+            mesh, std::move(search_length_algorithm));
 
     MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
         mesh, mesh_node_searcher);

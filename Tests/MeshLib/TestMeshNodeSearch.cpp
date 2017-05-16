@@ -68,7 +68,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchEpsHalfEdge)
     // 2 perform search and compare results with expected vals
     MeshGeoToolsLib::SearchLength search_length(dx_half);
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
-        search_length);
+        std::move(search_length));
 
     GeoLib::Point p1(0.0, 0.0, 0.0);
     EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p1).size());
@@ -94,7 +94,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchZeroEps)
     // 2 perform search and compare results with expected vals
     MeshGeoToolsLib::SearchLength search_length;
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
-        search_length);
+        std::move(search_length));
 
     // find ORIGIN
     GeoLib::Point pnt1(0.0, 0.0, 0.0);
@@ -140,7 +140,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
     // perform search and compare results with expected vals
     MeshGeoToolsLib::HeuristicSearchLength search_length(*_quad_mesh);
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
-        search_length);
+        std::move(search_length));
     std::vector<std::size_t> const& found_ids_ply0(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply0));
 
     ASSERT_EQ(100u, found_ids_ply0.size());
@@ -222,7 +222,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
 
     MeshGeoToolsLib::SearchLength search_length;
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
-        search_length);
+        std::move(search_length));
 
     // entire domain
     GeoLib::Polyline ply0(pnts);
@@ -273,7 +273,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
 
     MeshGeoToolsLib::SearchLength search_length;
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_hex_mesh,
-        search_length);
+        std::move(search_length));
 
     const std::size_t n_nodes_1d = _number_of_subdivisions_per_direction + 1;
     const std::size_t n_nodes_2d = n_nodes_1d * n_nodes_1d;

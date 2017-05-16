@@ -59,10 +59,9 @@ public:
      * @param search_all_nodes switch between searching all mesh nodes and
      * searching the base nodes.
      */
-    MeshNodeSearcher(
-        MeshLib::Mesh const& mesh,
-        MeshGeoToolsLib::SearchLength const& search_length_algorithm,
-        bool search_all_nodes = true);
+    MeshNodeSearcher(MeshLib::Mesh const& mesh,
+                     MeshGeoToolsLib::SearchLength&& search_length_algorithm,
+                     bool search_all_nodes = true);
 
     virtual ~MeshNodeSearcher();
 
@@ -135,13 +134,12 @@ public:
      */
     static MeshNodeSearcher& getMeshNodeSearcher(
         MeshLib::Mesh const& mesh,
-        MeshGeoToolsLib::SearchLength const& search_length_algorithm =
-            MeshGeoToolsLib::SearchLength());
+        MeshGeoToolsLib::SearchLength&& search_length_algorithm);
 
 private:
     MeshLib::Mesh const& _mesh;
     GeoLib::Grid<MeshLib::Node> _mesh_grid;
-    double _search_length;
+    MeshGeoToolsLib::SearchLength _search_length_algorithm;
     bool _search_all_nodes;
     // with newer compiler we can omit to use a pointer here
     std::vector<MeshNodesOnPoint*> _mesh_nodes_on_points;
