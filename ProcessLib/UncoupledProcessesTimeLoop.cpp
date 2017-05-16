@@ -392,6 +392,7 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
 
 std::vector<GlobalVector*> setInitialConditions(
     double const t0,
+    double const delta_t0,
     std::vector<std::unique_ptr<SingleProcessData>> const& per_process_data)
 {
     std::vector<GlobalVector*> process_solutions;
@@ -421,8 +422,10 @@ std::vector<GlobalVector*> setInitialConditions(
             auto& nonlinear_solver = spd->nonlinear_solver;
             auto& mat_strg = *spd->mat_strg;
             auto& conv_crit = *spd->conv_crit;
+            time_disc.nextTimestep(t0, delta_t0);
 
             setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
+
             nonlinear_solver.assemble(
                 x0, ProcessLib::createVoidStaggeredCouplingTerm());
             time_disc.pushState(
@@ -575,9 +578,11 @@ bool UncoupledProcessesTimeLoop::loop()
     }
 
     auto const t0 = _timestepper->getTimeStep().current();  // time of the IC
+    auto const delta_t0 =
+        _timestepper->getTimeStep().dt();  // initial time increment
 
     // init solution storage
-    _process_solutions = setInitialConditions(t0, _per_process_data);
+    _process_solutions = setInitialConditions(t0, delta_t0, _per_process_data);
 
     // output initial conditions
     {
