@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.6') _
+@Library('jenkins-pipeline@1.0.7') _
 
 def builders = [:]
 def helper = new ogs.helper()
@@ -78,6 +78,7 @@ if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
         if (tag != "") {
             keepBuild()
             currentBuild.displayName = tag
+            helper.notification(msg: "Marked build for ${tag}.", script: this)
 
             node('mac') {
                 dir('ogs') { checkoutWithTags() }
@@ -85,6 +86,12 @@ if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
             }
         }
     }
+} else {
+    if (helper.isOriginMaster(this)) {
+        helper.notification(title: "${env.JOB_NAME} failed!", script: this,
+            msg: "Build failed", url: "${env.BUILD_URL}/flowGraphTable/")
+    }
 }
+
 
 } // end timestamps
