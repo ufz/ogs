@@ -13,11 +13,14 @@
  */
 #pragma once
 
-#include "Point.h"
-
 #include "VtkStationSource.h"
 #include <QModelIndex>
 #include <vtkPolyDataAlgorithm.h>
+
+namespace GeoLib
+{
+class Point;
+}
 
 /**
  * \brief A BaseItem contains additional Information about a subtree in the StationTreeModel.
