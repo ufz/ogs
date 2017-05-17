@@ -41,10 +41,7 @@ MeshGeoToolsLib::SearchLength createSearchLengthAlgorithm(
     {
         return MeshGeoToolsLib::HeuristicSearchLength(mesh);
     }
-    else
-    {
-        OGS_FATAL("Unknown search length algorithm type '%s'.", type.c_str());
-    }
+    OGS_FATAL("Unknown search length algorithm type '%s'.", type.c_str());
 }
 
 }  // end namespace MeshGeoToolsLib
