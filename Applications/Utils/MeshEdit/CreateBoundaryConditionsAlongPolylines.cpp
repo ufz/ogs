@@ -205,7 +205,7 @@ int main (int argc, char* argv[])
 
     GeoLib::GEOObjects geometry_sets;
     MeshGeoToolsLib::MeshNodeSearcher mesh_searcher(*surface_mesh,
-        search_length_strategy);
+        std::move(search_length_strategy));
     for(std::size_t k(0); k<plys->size(); k++) {
         std::vector<std::size_t> ids
             (mesh_searcher.getMeshNodeIDsAlongPolyline(*((*plys)[k])));
