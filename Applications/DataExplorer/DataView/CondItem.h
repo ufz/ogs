@@ -16,7 +16,6 @@
 
 #include "FEMCondition.h"
 #include "TreeItem.h"
-#include "VtkPointsSource.h"
 
 /**
  * \brief A TreeItem containing a condition of a FEM (BC, IC or ST).
