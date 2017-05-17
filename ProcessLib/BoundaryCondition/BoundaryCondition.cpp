@@ -11,6 +11,7 @@
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/SearchLength.h"
+#include "MeshGeoToolsLib/CreateSearchLength.h"
 #include "BoundaryConditionConfig.h"
 #include "DirichletBoundaryCondition.h"
 #include "NeumannBoundaryCondition.h"
@@ -61,7 +62,9 @@ BoundaryConditionBuilder::createDirichletBoundaryCondition(
     const unsigned /*shapefunction_order*/,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
-    MeshGeoToolsLib::SearchLength search_length_algorithm;
+    MeshGeoToolsLib::SearchLength search_length_algorithm =
+        MeshGeoToolsLib::createSearchLengthAlgorithm(config.config, mesh);
+
     MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
             mesh, std::move(search_length_algorithm));
