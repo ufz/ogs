@@ -35,8 +35,10 @@ void Initialize(BaseLib::ConfigTree const& scripts_config,
     {
         Processor->RemoveAllPipelines();
     }
+    //! \ogs_file_param{prj__insitu__scripts__script}
     for (auto script_config : scripts_config.getConfigSubtreeList("script"))
     {
+        //! \ogs_file_param{prj__insitu__scripts__script__name}
         auto scriptName = script_config.getConfigParameter<std::string>("name");
         INFO("Initializing in-situ script: %s", scriptName.c_str());
         std::stringstream ss;
