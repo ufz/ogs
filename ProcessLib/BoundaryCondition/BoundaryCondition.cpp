@@ -116,7 +116,9 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
     const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
-    MeshGeoToolsLib::SearchLength search_length_algorithm;
+    MeshGeoToolsLib::SearchLength search_length_algorithm =
+        MeshGeoToolsLib::createSearchLengthAlgorithm(config.config, mesh);
+
     MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
             mesh, std::move(search_length_algorithm));
@@ -140,7 +142,9 @@ BoundaryConditionBuilder::createRobinBoundaryCondition(
     const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
-    MeshGeoToolsLib::SearchLength search_length_algorithm;
+    MeshGeoToolsLib::SearchLength search_length_algorithm =
+        MeshGeoToolsLib::createSearchLengthAlgorithm(config.config, mesh);
+
     MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
             mesh, std::move(search_length_algorithm));
