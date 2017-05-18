@@ -78,8 +78,10 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
     ply0.addPoint(0);
 
     // perform search on the polyline
-    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
-        MeshGeoToolsLib::HeuristicSearchLength(*_quad_mesh),
+    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(
+        *_quad_mesh,
+        std::unique_ptr<MeshGeoToolsLib::HeuristicSearchLength>{
+            new MeshGeoToolsLib::HeuristicSearchLength(*_quad_mesh)},
         MeshGeoToolsLib::SearchAllNodes::Yes);
     MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(*_quad_mesh, mesh_node_searcher);
     std::vector<MeshLib::Element*> const& found_edges_ply0(boundary_element_searcher.getBoundaryElements(ply0));
@@ -148,7 +150,9 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 
     // perform search on the bottom surface
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(
-        *_hex_mesh, MeshGeoToolsLib::HeuristicSearchLength(*_hex_mesh),
+        *_hex_mesh,
+        std::unique_ptr<MeshGeoToolsLib::HeuristicSearchLength>{
+            new MeshGeoToolsLib::HeuristicSearchLength(*_hex_mesh)},
         MeshGeoToolsLib::SearchAllNodes::Yes);
     MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(*_hex_mesh, mesh_node_searcher);
     std::vector<MeshLib::Element*> const& found_faces_sfc_b(boundary_element_searcher.getBoundaryElements(*sfc_bottom));

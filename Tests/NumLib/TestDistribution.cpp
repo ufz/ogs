@@ -35,7 +35,9 @@ public:
           _msh(MeshLib::MeshGenerator::generateRegularQuadMesh(
               _geometric_size, _number_of_subdivisions_per_direction)),
           _project_name("test"),
-          _mshNodesSearcher(*_msh, MeshGeoToolsLib::SearchLength(),
+          _mshNodesSearcher(*_msh,
+                            std::unique_ptr<MeshGeoToolsLib::SearchLength>{
+                                new MeshGeoToolsLib::SearchLength},
                             MeshGeoToolsLib::SearchAllNodes::Yes),
           _ply0(nullptr)
     {
@@ -92,7 +94,9 @@ public:
           _msh(MeshLib::MeshGenerator::generateRegularHexMesh(
               _geometric_size, _number_of_subdivisions_per_direction)),
           _project_name("test"),
-          _mshNodesSearcher(*_msh, MeshGeoToolsLib::SearchLength(),
+          _mshNodesSearcher(*_msh,
+                            std::unique_ptr<MeshGeoToolsLib::SearchLength>{
+                                new MeshGeoToolsLib::SearchLength},
                             MeshGeoToolsLib::SearchAllNodes::Yes),
           _ply0(nullptr)
     {

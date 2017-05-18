@@ -197,10 +197,11 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    MeshGeoToolsLib::SearchLength search_length_strategy;
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_strategy{
+        new MeshGeoToolsLib::SearchLength};
     if (search_length_arg.isSet()) {
-        search_length_strategy =
-            MeshGeoToolsLib::SearchLength(search_length_arg.getValue());
+        search_length_strategy.reset(
+            new MeshGeoToolsLib::SearchLength(search_length_arg.getValue()));
     }
 
     GeoLib::GEOObjects geometry_sets;

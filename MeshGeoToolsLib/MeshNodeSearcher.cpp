@@ -33,7 +33,7 @@ std::vector<std::unique_ptr<MeshNodeSearcher>> MeshNodeSearcher::_mesh_node_sear
 
 MeshNodeSearcher::MeshNodeSearcher(
     MeshLib::Mesh const& mesh,
-    MeshGeoToolsLib::SearchLength&& search_length_algorithm,
+    std::unique_ptr<MeshGeoToolsLib::SearchLength>&& search_length_algorithm,
     SearchAllNodes search_all_nodes)
     : _mesh(mesh),
       _mesh_grid(_mesh.getNodes().cbegin(), _mesh.getNodes().cend()),
@@ -41,7 +41,7 @@ MeshNodeSearcher::MeshNodeSearcher(
       _search_all_nodes(search_all_nodes)
 {
     DBUG("The search length for mesh \"%s\" is %e.",
-        _mesh.getName().c_str(), _search_length_algorithm.getSearchLength());
+        _mesh.getName().c_str(), _search_length_algorithm->getSearchLength());
 }
 
 MeshNodeSearcher::~MeshNodeSearcher()
@@ -108,7 +108,7 @@ MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(
         new MeshNodesOnPoint(_mesh,
                              _mesh_grid,
                              pnt,
-                             _search_length_algorithm.getSearchLength(),
+                             _search_length_algorithm->getSearchLength(),
                              _search_all_nodes));
     return *_mesh_nodes_on_points.back();
 }
@@ -126,7 +126,7 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(
 
     // compute nodes (and supporting points) along polyline
     _mesh_nodes_along_polylines.push_back(new MeshNodesAlongPolyline(
-        _mesh, ply, _search_length_algorithm.getSearchLength(),
+        _mesh, ply, _search_length_algorithm->getSearchLength(),
         _search_all_nodes));
     return *_mesh_nodes_along_polylines.back();
 }
@@ -146,14 +146,14 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(
     _mesh_nodes_along_surfaces.push_back(
         new MeshNodesAlongSurface(_mesh,
                                   sfc,
-                                  _search_length_algorithm.getSearchLength(),
+                                  _search_length_algorithm->getSearchLength(),
                                   _search_all_nodes));
     return *_mesh_nodes_along_surfaces.back();
 }
 
 MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
     MeshLib::Mesh const& mesh,
-    MeshGeoToolsLib::SearchLength&& search_length_algorithm)
+    std::unique_ptr<MeshGeoToolsLib::SearchLength>&& search_length_algorithm)
 {
     std::size_t const mesh_id = mesh.getID();
     if (_mesh_node_searchers.size() < mesh_id+1)
@@ -166,8 +166,8 @@ MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
         // lenght are the same, else recreate the searcher
         if (typeid(m._search_length_algorithm) ==
                 typeid(search_length_algorithm) &&
-            m._search_length_algorithm.getSearchLength() ==
-                search_length_algorithm.getSearchLength())
+            m._search_length_algorithm->getSearchLength() ==
+                search_length_algorithm->getSearchLength())
         {
             return m;
         }

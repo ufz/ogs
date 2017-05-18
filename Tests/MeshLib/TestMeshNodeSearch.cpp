@@ -66,7 +66,8 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchEpsHalfEdge)
     ASSERT_TRUE(_quad_mesh != nullptr);
 
     // 2 perform search and compare results with expected vals
-    MeshGeoToolsLib::SearchLength search_length(dx_half);
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length{
+        new MeshGeoToolsLib::SearchLength(dx_half)};
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
 
@@ -92,7 +93,8 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchZeroEps)
     // 1 create a geometry
 
     // 2 perform search and compare results with expected vals
-    MeshGeoToolsLib::SearchLength search_length;
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length{
+        new MeshGeoToolsLib::SearchLength};
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
 
@@ -138,7 +140,8 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
     ply0.addPoint(1);
 
     // perform search and compare results with expected vals
-    MeshGeoToolsLib::HeuristicSearchLength search_length(*_quad_mesh);
+    std::unique_ptr<MeshGeoToolsLib::HeuristicSearchLength> search_length{
+        new MeshGeoToolsLib::HeuristicSearchLength(*_quad_mesh)};
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
     std::vector<std::size_t> const& found_ids_ply0(mesh_node_searcher.getMeshNodeIDsAlongPolyline(ply0));
@@ -220,7 +223,8 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
     pnts.push_back(new GeoLib::Point(_geometric_size, 0.5*_geometric_size, 0.0));
     pnts.push_back(new GeoLib::Point(0.0, 0.5*_geometric_size, 0.0));
 
-    MeshGeoToolsLib::SearchLength search_length;
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length{
+        new MeshGeoToolsLib::SearchLength};
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
 
@@ -271,7 +275,8 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
     pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, _geometric_size));
     pnts.push_back(new GeoLib::Point(0.0, _geometric_size, _geometric_size));
 
-    MeshGeoToolsLib::SearchLength search_length;
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length{
+        new MeshGeoToolsLib::SearchLength};
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_hex_mesh,
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
 

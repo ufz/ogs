@@ -62,7 +62,7 @@ BoundaryConditionBuilder::createDirichletBoundaryCondition(
     const unsigned /*shapefunction_order*/,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
-    MeshGeoToolsLib::SearchLength search_length_algorithm =
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
         MeshGeoToolsLib::createSearchLengthAlgorithm(config.config, mesh);
 
     MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
@@ -116,7 +116,7 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
     const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
-    MeshGeoToolsLib::SearchLength search_length_algorithm =
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
         MeshGeoToolsLib::createSearchLengthAlgorithm(config.config, mesh);
 
     MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
@@ -142,7 +142,7 @@ BoundaryConditionBuilder::createRobinBoundaryCondition(
     const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
-    MeshGeoToolsLib::SearchLength search_length_algorithm =
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
         MeshGeoToolsLib::createSearchLengthAlgorithm(config.config, mesh);
 
     MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =

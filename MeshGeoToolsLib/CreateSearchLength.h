@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include "BaseLib/ConfigTree.h"
 
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
@@ -18,7 +20,7 @@
 
 namespace MeshGeoToolsLib
 {
-MeshGeoToolsLib::SearchLength createSearchLengthAlgorithm(
+std::unique_ptr<MeshGeoToolsLib::SearchLength> createSearchLengthAlgorithm(
     BaseLib::ConfigTree const& external_config, MeshLib::Mesh const& mesh)
 {
     boost::optional<BaseLib::ConfigTree> config =
@@ -26,7 +28,8 @@ MeshGeoToolsLib::SearchLength createSearchLengthAlgorithm(
         external_config.getConfigSubtreeOptional("search_length_algorithm");
 
     if (!config)
-        return MeshGeoToolsLib::SearchLength();
+        return std::unique_ptr<MeshGeoToolsLib::SearchLength>{
+            new MeshGeoToolsLib::SearchLength()};
 
     //! \ogs_file_param{prj__search_length_algorithm__type}
     std::string const type = config->getConfigParameter<std::string>("type");
@@ -35,11 +38,13 @@ MeshGeoToolsLib::SearchLength createSearchLengthAlgorithm(
     {
         //! \ogs_file_param{prj__search_length_algorithm__value}
         double const length = config->getConfigParameter<double>("value");
-        return MeshGeoToolsLib::SearchLength(length);
+        return std::unique_ptr<MeshGeoToolsLib::SearchLength>{
+            new MeshGeoToolsLib::SearchLength(length)};
     }
     if (type == "heuristic")
     {
-        return MeshGeoToolsLib::HeuristicSearchLength(mesh);
+        return std::unique_ptr<MeshGeoToolsLib::HeuristicSearchLength>{
+            new MeshGeoToolsLib::HeuristicSearchLength(mesh)};
     }
     OGS_FATAL("Unknown search length algorithm type '%s'.", type.c_str());
 }
