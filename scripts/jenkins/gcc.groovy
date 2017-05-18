@@ -63,8 +63,8 @@ image.inside(defaultDockerArgs) {
                         '/var/www/dev.opengeosys.org'
                 }
             } else {
-                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false,
-                    keepAll: false, reportDir: 'ogs/web/public', reportFiles: 'index.html',
+                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
+                    keepAll: true, reportDir: 'ogs/web/public', reportFiles: 'index.html',
                     reportName: 'Web'])
             }
         }

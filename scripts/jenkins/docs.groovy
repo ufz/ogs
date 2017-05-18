@@ -21,8 +21,8 @@ image.inside() {
 }
 
 stage('Reports (Docs)') {
-    publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false,
-        keepAll: false, reportDir: 'build/docs', reportFiles: 'index.html',
+    publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
+        keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
         reportName: 'Doxygen'])
     step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
         messagesPattern:
