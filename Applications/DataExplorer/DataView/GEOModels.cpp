@@ -27,7 +27,7 @@
 GEOModels::GEOModels(GeoLib::GEOObjects& geo_objects, QObject* parent /*= 0*/)
     : QObject(parent), _geo_objects(geo_objects)
 {
-    _geo_objects._callbacks.reset(new GEOModelsCallbacks{*this});
+    _geo_objects._callbacks = std::make_unique<GEOModelsCallbacks>(*this);
 
     _geoModel = new GeoTreeModel();
     _stationModel = new StationTreeModel();

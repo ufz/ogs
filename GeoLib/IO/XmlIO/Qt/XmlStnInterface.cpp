@@ -57,8 +57,7 @@ int XmlStnInterface::readFile(const QString &fileName)
     {
         // read all the station lists
         QDomNodeList stationList = lists.at(i).childNodes();
-        auto stations = std::unique_ptr<std::vector<GeoLib::Point*>>(
-            new std::vector<GeoLib::Point*>);
+        auto stations = std::make_unique<std::vector<GeoLib::Point*>>();
         std::string stnName("[NN]");
 
         for (int j = 0; j < stationList.count(); j++)
@@ -351,8 +350,7 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
     for (rapidxml::xml_node<>* station_list = doc.first_node()->first_node(); station_list;
          station_list = station_list->next_sibling())
     {
-        auto stations = std::unique_ptr<std::vector<GeoLib::Point*>>(
-            new std::vector<GeoLib::Point*>);
+        auto stations = std::make_unique<std::vector<GeoLib::Point*>>();
         std::string stnName("[NN]");
 
         stnName = station_list->first_node("name")->value();

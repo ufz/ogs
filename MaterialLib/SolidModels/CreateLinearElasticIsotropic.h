@@ -44,8 +44,7 @@ createLinearElasticIsotropic(
     typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp{
         youngs_modulus, poissons_ratio};
 
-    return std::unique_ptr<LinearElasticIsotropic<DisplacementDim>>{
-        new LinearElasticIsotropic<DisplacementDim>{mp}};
+    return std::make_unique<LinearElasticIsotropic<DisplacementDim>>(mp);
 }
 
 }  // namespace Solids

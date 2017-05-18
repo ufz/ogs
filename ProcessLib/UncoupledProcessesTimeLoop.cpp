@@ -29,7 +29,8 @@ std::unique_ptr<NumLib::ITimeStepAlgorithm> createTimeStepper(
     {
         //! \ogs_file_param_special{prj__time_loop__time_stepping__SingleStep}
         config.ignoreConfigParameter("type");
-        timestepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
+        timestepper =
+            std::make_unique<NumLib::FixedTimeStepping>(0.0, 1.0, 1.0);
     }
     else if (type == "FixedTimeStepping")
     {
@@ -205,9 +206,9 @@ void setTimeDiscretizedODESystem(
         // because the Newton ODESystem derives from the Picard ODESystem.
         // So no further checks are needed here.
 
-        spd.tdisc_ode_sys.reset(
-            new NumLib::TimeDiscretizedODESystem<ODETag, Tag::Picard>(
-                ode_sys, *spd.time_disc));
+        spd.tdisc_ode_sys = std::make_unique<
+            NumLib::TimeDiscretizedODESystem<ODETag, Tag::Picard>>(
+            ode_sys, *spd.time_disc);
     }
     else if (dynamic_cast<NonlinearSolverNewton*>(&spd.nonlinear_solver))
     {
@@ -216,9 +217,9 @@ void setTimeDiscretizedODESystem(
         using ODENewton = NumLib::ODESystem<ODETag, Tag::Newton>;
         if (auto* ode_newton = dynamic_cast<ODENewton*>(&ode_sys))
         {
-            spd.tdisc_ode_sys.reset(
-                new NumLib::TimeDiscretizedODESystem<ODETag, Tag::Newton>(
-                    *ode_newton, *spd.time_disc));
+            spd.tdisc_ode_sys = std::make_unique<
+                NumLib::TimeDiscretizedODESystem<ODETag, Tag::Newton>>(
+                *ode_newton, *spd.time_disc);
         }
         else
         {
@@ -255,19 +256,19 @@ std::unique_ptr<SingleProcessData> makeSingleProcessData(
             dynamic_cast<NumLib::NonlinearSolver<Tag::Picard>*>(
                 &nonlinear_solver))
     {
-        return std::unique_ptr<SingleProcessData>{new SingleProcessData{
+        return std::make_unique<SingleProcessData>(
             *nonlinear_solver_picard, std::move(conv_crit),
             std::move(time_disc), process, std::move(coupled_processes),
-            std::move(process_output)}};
+            std::move(process_output));
     }
     else if (auto* nonlinear_solver_newton =
                  dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
                      &nonlinear_solver))
     {
-        return std::unique_ptr<SingleProcessData>{new SingleProcessData{
+        return std::make_unique<SingleProcessData>(
             *nonlinear_solver_newton, std::move(conv_crit),
             std::move(time_disc), process, std::move(coupled_processes),
-            std::move(process_output)}};
+            std::move(process_output));
     }
     else
     {
@@ -383,11 +384,9 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
         //! \ogs_file_param{prj__time_loop__processes}
         config.getConfigSubtree("processes"), processes, nonlinear_solvers);
 
-    return std::unique_ptr<UncoupledProcessesTimeLoop>{
-        new UncoupledProcessesTimeLoop{
-            std::move(timestepper), std::move(output),
-            std::move(per_process_data), max_coupling_iterations,
-            std::move(coupling_conv_crit)}};
+    return std::make_unique<UncoupledProcessesTimeLoop>(
+        std::move(timestepper), std::move(output), std::move(per_process_data),
+        max_coupling_iterations, std::move(coupling_conv_crit));
 }
 
 std::vector<GlobalVector*> setInitialConditions(

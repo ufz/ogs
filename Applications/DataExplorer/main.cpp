@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     QApplication::setOrganizationDomain("opengeosys.org");
     setlocale(LC_NUMERIC,"C");
     QLocale::setDefault(QLocale::German);
-    std::unique_ptr<MainWindow> w (new MainWindow());
+    auto w = std::make_unique<MainWindow>();
     w->setWindowTitle( w->windowTitle() + " - " +
         QString::fromStdString(BaseLib::BuildInfo::git_describe));
     if (QCoreApplication::arguments().size()>1) {

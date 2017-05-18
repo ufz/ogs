@@ -159,7 +159,7 @@ void MshView::openMap2dMeshDialog()
     if (dlg.exec() != QDialog::Accepted)
         return;
 
-    std::unique_ptr<MeshLib::Mesh> result(new MeshLib::Mesh(*mesh));
+    auto result = std::make_unique<MeshLib::Mesh>(*mesh);
     result->setName(dlg.getNewMeshName());
     if (dlg.useRasterMapping())
     {

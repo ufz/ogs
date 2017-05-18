@@ -51,8 +51,7 @@ createMohrCoulomb(
     typename MohrCoulomb<DisplacementDim>::MaterialProperties mp{
         Kn, Ks, friction_angle, dilatancy_angle, cohesion};
 
-    return std::unique_ptr<MohrCoulomb<DisplacementDim>>{
-        new MohrCoulomb<DisplacementDim>{mp}};
+    return std::make_unique<MohrCoulomb<DisplacementDim>>(mp);
 }
 
 

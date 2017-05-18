@@ -32,10 +32,9 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
 
     auto const& param = findParameter<double>(param_name, parameters, 1);
 
-    return std::unique_ptr<NeumannBoundaryCondition>(
-        new NeumannBoundaryCondition(is_axially_symmetric, integration_order, shapefunction_order,
-                                     dof_table, variable_id, component_id,
-                                     global_dim, std::move(elements), param));
+    return std::make_unique<NeumannBoundaryCondition>(
+        is_axially_symmetric, integration_order, shapefunction_order, dof_table,
+        variable_id, component_id, global_dim, std::move(elements), param);
 }
 
 }  // ProcessLib

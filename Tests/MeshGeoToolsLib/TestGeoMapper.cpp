@@ -51,8 +51,7 @@ TEST_F(MeshGeoToolsLibGeoMapper, PointsOnSurfaceMesh)
     {
         GeoLib::GEOObjects geo_obj;
         std::string geo_name("TestGeoMapperPoints");
-        auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
-            new std::vector<GeoLib::Point*>);
+        auto points = std::make_unique<std::vector<GeoLib::Point*>>();
         for (auto & p : pnts) {
             points->push_back(new GeoLib::Point(p));
         }

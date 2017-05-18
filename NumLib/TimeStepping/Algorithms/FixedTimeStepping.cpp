@@ -85,7 +85,7 @@ FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
         timesteps.resize(timesteps.size() + repeat, delta_t);
     }
 
-    return std::unique_ptr<ITimeStepAlgorithm>(new FixedTimeStepping(t_initial, t_end, timesteps));
+    return std::make_unique<FixedTimeStepping>(t_initial, t_end, timesteps);
 }
 
 const TimeStep FixedTimeStepping::getTimeStep() const

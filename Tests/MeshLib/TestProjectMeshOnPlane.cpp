@@ -36,7 +36,7 @@ public:
         for (std::size_t i=0; i<n_nodes-1; i++)
             elements.push_back(new MeshLib::Line(std::array<MeshLib::Node*,2>{{nodes[i], nodes[i+1]}}));
 
-        _mesh = std::unique_ptr<MeshLib::Mesh>{new MeshLib::Mesh{"TestMesh", nodes, elements}};
+        _mesh = std::make_unique<MeshLib::Mesh>("TestMesh", nodes, elements);
     }
 
 protected:

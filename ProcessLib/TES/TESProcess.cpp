@@ -184,11 +184,10 @@ void TESProcess::initializeSecondaryVariables()
     // /////////////////////////////////////////////////////////////////////////
 
     // named functions: solid density //////////////////////////////////////////
-    std::unique_ptr<CachedSecondaryVariable> solid_density(
-        new CachedSecondaryVariable(
-            "TES_solid_density", getExtrapolator(), _local_assemblers,
-            &TESLocalAssemblerInterface::getIntPtSolidDensity,
-            _secondary_variable_context));
+    auto solid_density = std::make_unique<CachedSecondaryVariable>(
+        "TES_solid_density", getExtrapolator(), _local_assemblers,
+        &TESLocalAssemblerInterface::getIntPtSolidDensity,
+        _secondary_variable_context);
 
     for (auto&& fct : solid_density->getNamedFunctions())
         _named_function_caller.addNamedFunction(std::move(fct));

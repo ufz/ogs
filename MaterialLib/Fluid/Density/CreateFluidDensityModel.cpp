@@ -48,8 +48,7 @@ static std::unique_ptr<FluidProperty> createLiquidDensity(
     const auto p0 = config.getConfigParameter<double>("p0");
     //! \ogs_file_param{material__fluid__density__LiquidDensity__bulk_modulus}
     const auto E = config.getConfigParameter<double>("bulk_modulus");
-    return std::unique_ptr<FluidProperty>(
-        new LiquidDensity(beta, rho0, T0, p0, E));
+    return std::make_unique<LiquidDensity>(beta, rho0, T0, p0, E);
 }
 
 /**
@@ -69,8 +68,7 @@ static std::unique_ptr<FluidProperty> createLinearTemperatureDependentDensity(
     const auto T0 = config.getConfigParameter<double>("temperature0");
     //! \ogs_file_param{material__fluid__density__TemperatureDependent__beta}
     const auto beta = config.getConfigParameter<double>("beta");
-    return std::unique_ptr<FluidProperty>(
-        new LinearTemperatureDependentDensity(rho0, T0, beta));
+    return std::make_unique<LinearTemperatureDependentDensity>(rho0, T0, beta);
 }
 
 static std::unique_ptr<FluidProperty> createLinearConcentrationDependentDensity(
@@ -88,11 +86,10 @@ static std::unique_ptr<FluidProperty> createLinearConcentrationDependentDensity(
     const double fluid_density_difference_ratio =
     //! \ogs_file_param{material__fluid__density__ConcentrationDependent__fluid_density_difference_ratio}
         config.getConfigParameter<double>("fluid_density_difference_ratio");
-    return std::unique_ptr<FluidProperty>(
-        new LinearConcentrationDependentDensity(
-            reference_density,
-            reference_concentration,
-            fluid_density_difference_ratio));
+    return std::make_unique<LinearConcentrationDependentDensity>(
+        reference_density,
+        reference_concentration,
+        fluid_density_difference_ratio);
 }
 
 std::unique_ptr<FluidProperty> createFluidDensityModel(
@@ -105,9 +102,9 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
     {
         //! \ogs_file_param{material__fluid__density__type}
         config.checkConfigParameter("type", "Constant");
-        return std::unique_ptr<FluidProperty>(new ConstantFluidProperty(
+        return std::make_unique<ConstantFluidProperty>(
             //! \ogs_file_param{material__fluid__density__Constant__value}
-            config.getConfigParameter<double>("value")));
+            config.getConfigParameter<double>("value"));
     }
     else if (type == "LiquidDensity")
         return createLiquidDensity(config);
@@ -119,14 +116,13 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
     {
         //! \ogs_file_param{material__fluid__density__type}
         config.checkConfigParameter("type", "IdealGasLaw");
-        return std::unique_ptr<FluidProperty>(
+        return std::make_unique<IdealGasLaw>(
             //! \ogs_file_param{material__fluid__density__IdealGasLaw__molar_mass}
-            new IdealGasLaw(config.getConfigParameter<double>("molar_mass")));
+            config.getConfigParameter<double>("molar_mass"));
     }
     else if (type == "WaterDensityIAPWSIF97Region1")
     {
-        return std::unique_ptr<FluidProperty>(
-            new WaterDensityIAPWSIF97Region1());
+        return std::make_unique<WaterDensityIAPWSIF97Region1>();
     }
     else
     {

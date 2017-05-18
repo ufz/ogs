@@ -71,7 +71,7 @@ int main (int argc, char* argv[])
         ' ',
         BaseLib::BuildInfo::git_describe);
 
-    std::unique_ptr<BaseLib::TCLAPCustomOutput> tclapOutput(new BaseLib::TCLAPCustomOutput());
+    auto tclapOutput = std::make_unique<BaseLib::TCLAPCustomOutput>();
     cmd.setOutput(tclapOutput.get());
 
     std::vector<std::string> allowed_ele_types;

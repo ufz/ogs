@@ -68,9 +68,8 @@ static std::unique_ptr<CapillaryPressureSaturation> createBrooksCorey(
     //! \ogs_file_param{material__porous_medium__capillary_pressure__BrooksCorey__pc_max}
     const auto Pc_max = config.getConfigParameter<double>("pc_max");
 
-    return std::unique_ptr<CapillaryPressureSaturation>(
-        new BrooksCoreyCapillaryPressureSaturation(
-            pd, Sr, Sg_r, Smax, m, Pc_max));
+    return std::make_unique<BrooksCoreyCapillaryPressureSaturation>(
+        pd, Sr, Sg_r, Smax, m, Pc_max);
 }
 
 /**
@@ -124,9 +123,8 @@ static std::unique_ptr<CapillaryPressureSaturation> createVanGenuchten(
              (*has_regularized_conf) ? "true" : "false");
         has_regularized = *has_regularized_conf;
     }
-    return std::unique_ptr<CapillaryPressureSaturation>(
-        new VanGenuchtenCapillaryPressureSaturation(
-            pd, Sr, Sg_r, Smax, m, Pc_max, has_regularized));
+    return std::make_unique<VanGenuchtenCapillaryPressureSaturation>(
+        pd, Sr, Sg_r, Smax, m, Pc_max, has_regularized);
 }
 
 std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
@@ -154,8 +152,8 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
         auto curve = MathLib::createPiecewiseLinearCurve<
             MathLib::PiecewiseLinearMonotonicCurve>(curve_config);
 
-        return std::unique_ptr<CapillaryPressureSaturation>(
-            new CapillaryPressureSaturationCurve(std::move(curve)));
+        return std::make_unique<CapillaryPressureSaturationCurve>(
+            std::move(curve));
     }
     else
     {

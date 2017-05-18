@@ -57,10 +57,10 @@ int main(int argc, char* argv[])
     ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
                 argc, argv);
 
-    logog_setup.setFormatter(std::unique_ptr<BaseLib::TemplateLogogFormatterSuppressedGCC
-        <TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> >
-            (new BaseLib::TemplateLogogFormatterSuppressedGCC
-            <TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG>()));
+    logog_setup.setFormatter(
+        std::make_unique<BaseLib::TemplateLogogFormatterSuppressedGCC<
+            TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG |
+            TOPIC_LINE_NUMBER_FLAG>>());
     logog_setup.setLevel(logLevel);
 
     try

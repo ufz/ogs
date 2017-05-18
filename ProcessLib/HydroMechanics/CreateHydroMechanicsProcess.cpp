@@ -192,11 +192,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
 
-    return std::unique_ptr<HydroMechanicsProcess<DisplacementDim>>{
-        new HydroMechanicsProcess<DisplacementDim>{
-            mesh, std::move(jacobian_assembler), parameters, integration_order,
-            std::move(process_variables), std::move(process_data),
-            std::move(secondary_variables), std::move(named_function_caller)}};
+    return std::make_unique<HydroMechanicsProcess<DisplacementDim>>(
+        mesh, std::move(jacobian_assembler), parameters, integration_order,
+        std::move(process_variables), std::move(process_data),
+        std::move(secondary_variables), std::move(named_function_caller));
 }
 
 template std::unique_ptr<Process> createHydroMechanicsProcess<2>(

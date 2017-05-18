@@ -69,9 +69,8 @@ std::unique_ptr<ConvergenceCriterionDeltaX> createConvergenceCriterionDeltaX(
     if (norm_type == MathLib::VecNormType::INVALID)
         OGS_FATAL("Unknown vector norm type `%s'.", norm_type_str.c_str());
 
-    return std::unique_ptr<ConvergenceCriterionDeltaX>(
-        new ConvergenceCriterionDeltaX(std::move(abstol), std::move(reltol),
-                                       norm_type));
+    return std::make_unique<ConvergenceCriterionDeltaX>(
+        std::move(abstol), std::move(reltol), norm_type);
 }
 
 }  // NumLib

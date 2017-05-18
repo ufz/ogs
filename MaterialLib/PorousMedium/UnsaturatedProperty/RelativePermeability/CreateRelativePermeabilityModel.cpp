@@ -62,8 +62,7 @@ std::unique_ptr<RelativePermeability> createWettingPhaseVanGenuchten(
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseVanGenuchten__krel_min}
     const auto krel_min = config.getConfigParameter<double>("krel_min");
 
-    return std::unique_ptr<RelativePermeability>(
-        new WettingPhaseVanGenuchten(Sr, Smax, m, krel_min));
+    return std::make_unique<WettingPhaseVanGenuchten>(Sr, Smax, m, krel_min);
 }
 
 /**
@@ -95,8 +94,7 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseVanGenuchten(
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseVanGenuchten__krel_min}
     const auto krel_min = config.getConfigParameter<double>("krel_min");
 
-    return std::unique_ptr<RelativePermeability>(
-        new NonWettingPhaseVanGenuchten(Sr, Smax, m, krel_min));
+    return std::make_unique<NonWettingPhaseVanGenuchten>(Sr, Smax, m, krel_min);
 }
 
 /**
@@ -128,8 +126,8 @@ std::unique_ptr<RelativePermeability> createWettingPhaseBrooksCoreyOilGas(
     //! \ogs_file_param{material__porous_medium__relative_permeability__WettingPhaseBrooksCoreyOilGas__krel_min}
     const auto krel_min = config.getConfigParameter<double>("krel_min");
 
-    return std::unique_ptr<RelativePermeability>(
-        new WettingPhaseBrooksCoreyOilGas(Sr, Smax, m, krel_min));
+    return std::make_unique<WettingPhaseBrooksCoreyOilGas>(
+        Sr, Smax, m, krel_min);
 }
 
 /**
@@ -161,8 +159,8 @@ std::unique_ptr<RelativePermeability> createNonWettingPhaseBrooksCoreyOilGas(
     //! \ogs_file_param{material__porous_medium__relative_permeability__NonWettingPhaseBrooksCoreyOilGas__krel_min}
     const auto krel_min = config.getConfigParameter<double>("krel_min");
 
-    return std::unique_ptr<RelativePermeability>(
-        new NonWettingPhaseBrooksCoreyOilGas(Sr, Smax, m, krel_min));
+    return std::make_unique<NonWettingPhaseBrooksCoreyOilGas>(
+        Sr, Smax, m, krel_min);
 }
 
 std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
@@ -197,8 +195,7 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
 
         auto curve = MathLib::createPiecewiseLinearCurve<MathLib
                               ::PiecewiseLinearInterpolation>(curve_config);
-        return std::unique_ptr<RelativePermeability>(
-            new RelativePermeabilityCurve(std::move(curve)));
+        return std::make_unique<RelativePermeabilityCurve>(std::move(curve));
     }
     else
     {

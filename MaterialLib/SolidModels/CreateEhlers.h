@@ -62,8 +62,8 @@ inline std::unique_ptr<EhlersDamageProperties> createDamageProperties(
 
     DBUG("Use \'%s\' as h_d.", h_d.name.c_str());
 
-    return std::unique_ptr<EhlersDamageProperties>{
-        new EhlersDamageProperties{alpha_d, beta_d, h_d}};
+    return std::make_unique<EhlersDamageProperties>(
+        EhlersDamageProperties{alpha_d, beta_d, h_d});
 }
 
 template <int DisplacementDim>

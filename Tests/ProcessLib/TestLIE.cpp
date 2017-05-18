@@ -31,9 +31,9 @@ std::unique_ptr<MeshLib::Mesh> createTriangle(
         nodes[i] = new MeshLib::Node(points[i]);
     MeshLib::Element* e = new MeshLib::Tri(nodes);
 
-    return std::unique_ptr<MeshLib::Mesh>(new MeshLib::Mesh(
+    return std::make_unique<MeshLib::Mesh>(
         "", std::vector<MeshLib::Node*>{nodes[0], nodes[1], nodes[2]},
-        std::vector<MeshLib::Element*>{e}));
+        std::vector<MeshLib::Element*>{e});
 }
 
 std::unique_ptr<MeshLib::Mesh> createLine(
@@ -44,9 +44,9 @@ std::unique_ptr<MeshLib::Mesh> createLine(
         nodes[i] = new MeshLib::Node(points[i]);
     MeshLib::Element* e = new MeshLib::Line(nodes);
 
-    return std::unique_ptr<MeshLib::Mesh>(
-        new MeshLib::Mesh("", std::vector<MeshLib::Node*>{nodes[0], nodes[1]},
-                          std::vector<MeshLib::Element*>{e}));
+    return std::make_unique<MeshLib::Mesh>(
+        "", std::vector<MeshLib::Node*>{nodes[0], nodes[1]},
+        std::vector<MeshLib::Element*>{e});
 }
 
 const double eps = std::numeric_limits<double>::epsilon();

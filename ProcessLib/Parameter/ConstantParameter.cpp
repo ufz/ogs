@@ -30,8 +30,7 @@ std::unique_ptr<ParameterBase> createConstantParameter(
         if (value)
         {
             DBUG("Using value %g for constant parameter.", *value);
-            return std::unique_ptr<ParameterBase>(
-                new ConstantParameter<double>(name, *value));
+            return std::make_unique<ConstantParameter<double>>(name, *value);
         }
     }
 
@@ -50,8 +49,7 @@ std::unique_ptr<ParameterBase> createConstantParameter(
         DBUG("\t%g", v);
     }
 
-    return std::unique_ptr<ParameterBase>(
-        new ConstantParameter<double>(name, values));
+    return std::make_unique<ConstantParameter<double>>(name, values);
 }
 
 }  // ProcessLib

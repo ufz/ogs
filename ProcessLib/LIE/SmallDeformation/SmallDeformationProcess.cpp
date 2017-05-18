@@ -98,9 +98,8 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
         if (pv.getName().find("displacement_jump") == std::string::npos)
             continue;
         pv.setBoundaryConditionBuilder(
-            std::unique_ptr<ProcessLib::BoundaryConditionBuilder>(
-                new BoundaryConditionBuilder(
-                    *_process_data._vec_fracture_property[pv_disp_jump_id].get())));
+            std::make_unique<BoundaryConditionBuilder>(
+                *_process_data._vec_fracture_property[pv_disp_jump_id].get()));
         pv_disp_jump_id++;
     }
 
@@ -117,15 +116,17 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     // prepare mesh subsets to define DoFs
     //------------------------------------------------------------
     // for extrapolation
-    _mesh_subset_all_nodes.reset(new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
+    _mesh_subset_all_nodes =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
     // regular u
-    _mesh_subset_matrix_nodes.reset(new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
+    _mesh_subset_matrix_nodes =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
     // u jump
     for (unsigned i=0; i<_vec_fracture_nodes.size(); i++)
     {
         _mesh_subset_fracture_nodes.push_back(
-            std::unique_ptr<MeshLib::MeshSubset const>(
-                new MeshLib::MeshSubset(_mesh, &_vec_fracture_nodes[i])));
+            std::make_unique<MeshLib::MeshSubset const>(
+                _mesh, &_vec_fracture_nodes[i]));
     }
 
     // Collect the mesh subsets in a vector.
@@ -149,12 +150,12 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     for (unsigned i=0; i<_vec_fracture_matrix_elements.size(); i++)
         vec_var_elements.push_back(&_vec_fracture_matrix_elements[i]);
 
-    _local_to_global_index_map.reset(
-        new NumLib::LocalToGlobalIndexMap(
+    _local_to_global_index_map =
+        std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets),
             vec_n_components,
             vec_var_elements,
-            NumLib::ComponentOrder::BY_COMPONENT));
+            NumLib::ComponentOrder::BY_COMPONENT);
 }
 
 
@@ -178,11 +179,11 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
     all_mesh_subsets_single_component.emplace_back(
         _mesh_subset_all_nodes.get());
-    _local_to_global_index_map_single_component.reset(
-        new NumLib::LocalToGlobalIndexMap(
+    _local_to_global_index_map_single_component =
+        std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets_single_component),
             // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION));
+            NumLib::ComponentOrder::BY_LOCATION);
 
     Base::_secondary_variables.addSecondaryVariable(
         "sigma_xx", 1,

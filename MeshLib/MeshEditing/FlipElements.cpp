@@ -25,23 +25,22 @@ std::unique_ptr<MeshLib::Element> createFlippedElement(
         return nullptr;
 
     unsigned const n_nodes(elem.getNumberOfNodes());
-    auto elem_nodes =
-        std::unique_ptr<MeshLib::Node* []> { new MeshLib::Node*[n_nodes] };
+    auto elem_nodes = std::make_unique<MeshLib::Node* []>(n_nodes);
     for (unsigned i = 0; i < n_nodes; ++i)
         elem_nodes[i] = nodes[elem.getNode(i)->getID()];
     std::swap(elem_nodes[0], elem_nodes[1]);
 
     if (elem.getGeomType() == MeshElemType::LINE)
-        return std::unique_ptr<MeshLib::Line>(
-            new MeshLib::Line(elem_nodes.release(), elem.getID()));
+        return std::make_unique<MeshLib::Line>(elem_nodes.release(),
+                                               elem.getID());
     else if (elem.getGeomType() == MeshElemType::TRIANGLE)
-        return std::unique_ptr<MeshLib::Tri>(
-            new MeshLib::Tri(elem_nodes.release(), elem.getID()));
+        return std::make_unique<MeshLib::Tri>(elem_nodes.release(),
+                                              elem.getID());
     else if (elem.getGeomType() == MeshElemType::QUAD)
     {
         std::swap(elem_nodes[2], elem_nodes[3]);
-        return std::unique_ptr<MeshLib::Quad>(
-            new MeshLib::Quad(elem_nodes.release(), elem.getID()));
+        return std::make_unique<MeshLib::Quad>(elem_nodes.release(),
+                                               elem.getID());
     }
     return nullptr;
 }
@@ -60,8 +59,8 @@ std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh)
     for (std::size_t i=0; i<n_elems; ++i)
         new_elems.push_back(createFlippedElement(*elems[i], new_nodes).release());
 
-    return std::unique_ptr<MeshLib::Mesh>(new MeshLib::Mesh(
-        "FlippedElementMesh", new_nodes, new_elems, mesh.getProperties()));
+    return std::make_unique<MeshLib::Mesh>("FlippedElementMesh", new_nodes,
+                                           new_elems, mesh.getProperties());
 }
 
 } // end namespace MeshLib

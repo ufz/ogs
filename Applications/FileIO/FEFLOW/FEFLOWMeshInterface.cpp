@@ -211,8 +211,8 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     INFO("Create mesh");
     std::string project_name(
         BaseLib::extractBaseNameWithoutExtension(filename));
-    auto mesh(std::unique_ptr<MeshLib::Mesh>(
-        new MeshLib::Mesh(project_name, vec_nodes, vec_elements)));
+    auto mesh(
+        std::make_unique<MeshLib::Mesh>(project_name, vec_nodes, vec_elements));
     INFO("Set values for material property.");
     auto opt_material_ids(mesh->getProperties().createNewPropertyVector<int>(
         "MaterialIDs", MeshLib::MeshItemType::Cell, 1));

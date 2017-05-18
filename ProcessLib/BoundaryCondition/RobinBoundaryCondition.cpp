@@ -34,10 +34,10 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     auto const& alpha = findParameter<double>(alpha_name, parameters, 1);
     auto const& u_0 = findParameter<double>(u_0_name, parameters, 1);
 
-    return std::unique_ptr<RobinBoundaryCondition>(new RobinBoundaryCondition(
-        is_axially_symmetric, integration_order, shapefunction_order, dof_table, variable_id,
-        component_id, global_dim, std::move(elements),
-        RobinBoundaryConditionData{alpha, u_0}));
+    return std::make_unique<RobinBoundaryCondition>(
+        is_axially_symmetric, integration_order, shapefunction_order, dof_table,
+        variable_id, component_id, global_dim, std::move(elements),
+        RobinBoundaryConditionData{alpha, u_0});
 }
 
 }  // ProcessLib

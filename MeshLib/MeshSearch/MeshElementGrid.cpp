@@ -199,12 +199,10 @@ void getGridGeometry(MeshElementGrid const& grid,
 {
     std::vector<std::string> cell_names;
 
-    auto addPoints = [&geometries](MathLib::Point3d const& p,
-        std::array<double,3> const& d, std::array<std::size_t,3> const& c,
-        std::string & name)
-    {
-        auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
-            new std::vector<GeoLib::Point*>);
+    auto addPoints = [&geometries](
+        MathLib::Point3d const& p, std::array<double, 3> const& d,
+        std::array<std::size_t, 3> const& c, std::string& name) {
+        auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
         pnts->push_back(new GeoLib::Point(p[0]+c[0]*d[0], p[1]+c[1]*d[1], p[2]+c[2]*d[2]));
         pnts->push_back(new GeoLib::Point(p[0]+c[0]*d[0], p[1]+(c[1]+1)*d[1], p[2]+c[2]*d[2]));
         pnts->push_back(new GeoLib::Point(p[0]+(c[0]+1)*d[0], p[1]+(c[1]+1)*d[1], p[2]+c[2]*d[2]));
@@ -229,8 +227,7 @@ void getGridGeometry(MeshElementGrid const& grid,
                     +std::to_string(j)+"-"+std::to_string(k));
                 addPoints(grid._aabb.getMinPoint(), grid._step_sizes,
                           {{i, j, k}}, cell_names.back());
-                auto plys = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
-                    new std::vector<GeoLib::Polyline*>);
+                auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
                 auto & points = *geometries.getPointVec(cell_names.back());
 
                 auto* ply_bottom(new GeoLib::Polyline(points));

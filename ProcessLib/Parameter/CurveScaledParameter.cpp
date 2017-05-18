@@ -36,8 +36,8 @@ std::unique_ptr<ParameterBase> createCurveScaledParameter(
     DBUG("Using parameter %s", referenced_parameter_name.c_str());
 
     // TODO other data types than only double
-    return std::unique_ptr<ParameterBase>(new CurveScaledParameter<double>(
-        name, *curve_it->second, referenced_parameter_name));
+    return std::make_unique<CurveScaledParameter<double>>(
+        name, *curve_it->second, referenced_parameter_name);
 }
 
 }  // ProcessLib

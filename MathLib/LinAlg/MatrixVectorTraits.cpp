@@ -19,14 +19,14 @@ std::unique_ptr<PETScMatrix>
 MatrixVectorTraits<PETScMatrix>::
 newInstance()
 {
-    return std::unique_ptr<PETScMatrix>(new PETScMatrix);
+    return std::make_unique<PETScMatrix>();
 }
 
 std::unique_ptr<PETScMatrix>
 MatrixVectorTraits<PETScMatrix>::
 newInstance(PETScMatrix const& A)
 {
-    return std::unique_ptr<PETScMatrix>(new PETScMatrix(A));
+    return std::make_unique<PETScMatrix>(A);
 }
 
 std::unique_ptr<PETScMatrix>
@@ -47,26 +47,24 @@ newInstance(MatrixSpecifications const& spec)
         mat_opt.d_nz = max_nonzeroes;
         mat_opt.o_nz = max_nonzeroes;
         mat_opt.is_global_size = false;
-        return std::unique_ptr<PETScMatrix>(
-            new PETScMatrix(nrows, ncols, mat_opt));
+        return std::make_unique<PETScMatrix>(nrows, ncols, mat_opt);
     }
     else
-        return std::unique_ptr<PETScMatrix>(
-            new PETScMatrix(nrows, ncols));
+        return std::make_unique<PETScMatrix>(nrows, ncols);
 }
 
 std::unique_ptr<PETScVector>
 MatrixVectorTraits<PETScVector>::
 newInstance()
 {
-    return std::unique_ptr<PETScVector>(new PETScVector);
+    return std::make_unique<PETScVector>();
 }
 
 std::unique_ptr<PETScVector>
 MatrixVectorTraits<PETScVector>::
 newInstance(PETScVector const& x)
 {
-    return std::unique_ptr<PETScVector>(new PETScVector(x));
+    return std::make_unique<PETScVector>(x);
 }
 
 std::unique_ptr<PETScVector>
@@ -76,11 +74,10 @@ newInstance(MatrixSpecifications const& spec)
     auto const is_global_size = false;
 
     if (spec.ghost_indices != nullptr) {
-        return std::unique_ptr<PETScVector>(
-            new PETScVector(spec.nrows, *spec.ghost_indices, is_global_size));
+        return std::make_unique<PETScVector>(spec.nrows, *spec.ghost_indices,
+                                             is_global_size);
     } else {
-        return std::unique_ptr<PETScVector>(
-            new PETScVector(spec.nrows, is_global_size));
+        return std::make_unique<PETScVector>(spec.nrows, is_global_size);
     }
 }
 
@@ -96,21 +93,21 @@ std::unique_ptr<EigenMatrix>
 MatrixVectorTraits<EigenMatrix>::
 newInstance()
 {
-    return std::unique_ptr<EigenMatrix>(new EigenMatrix(0, 0)); // TODO default constructor
+    return std::make_unique<EigenMatrix>(0, 0);  // TODO default constructor
 }
 
 std::unique_ptr<EigenMatrix>
 MatrixVectorTraits<EigenMatrix>::
 newInstance(EigenMatrix const& A)
 {
-    return std::unique_ptr<EigenMatrix>(new EigenMatrix(A));
+    return std::make_unique<EigenMatrix>(A);
 }
 
 std::unique_ptr<EigenMatrix>
 MatrixVectorTraits<EigenMatrix>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto A = std::unique_ptr<EigenMatrix>(new EigenMatrix(spec.nrows));
+    auto A = std::make_unique<EigenMatrix>(spec.nrows);
 
     if (spec.sparsity_pattern)
         setMatrixSparsity(*A, *spec.sparsity_pattern);
@@ -122,21 +119,21 @@ std::unique_ptr<EigenVector>
 MatrixVectorTraits<EigenVector>::
 newInstance()
 {
-    return std::unique_ptr<EigenVector>(new EigenVector);
+    return std::make_unique<EigenVector>();
 }
 
 std::unique_ptr<EigenVector>
 MatrixVectorTraits<EigenVector>::
 newInstance(EigenVector const& x)
 {
-    return std::unique_ptr<EigenVector>(new EigenVector(x));
+    return std::make_unique<EigenVector>(x);
 }
 
 std::unique_ptr<EigenVector>
 MatrixVectorTraits<EigenVector>::
 newInstance(MatrixSpecifications const& spec)
 {
-    return std::unique_ptr<EigenVector>(new EigenVector(spec.nrows));
+    return std::make_unique<EigenVector>(spec.nrows);
 }
 
 } // namespace MathLib

@@ -26,8 +26,8 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentLinearMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
-    std::unique_ptr<MeshLib::MeshSubset const> nodesSubset(
-        new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
+    auto nodesSubset =
+        std::make_unique<MeshLib::MeshSubset const>(*mesh, &mesh->getNodes());
 
     std::vector<MeshLib::MeshSubsets> components;
     components.emplace_back(nodesSubset.get());
@@ -55,8 +55,8 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::createQuadraticOrderMesh(*linear_mesh));
-    std::unique_ptr<MeshLib::MeshSubset const> nodesSubset(
-        new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
+    auto nodesSubset =
+        std::make_unique<MeshLib::MeshSubset const>(*mesh, &mesh->getNodes());
 
     std::vector<MeshLib::MeshSubsets> components;
     components.emplace_back(nodesSubset.get());
@@ -85,8 +85,8 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
-    std::unique_ptr<MeshLib::MeshSubset const> nodesSubset(
-        new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
+    auto nodesSubset =
+        std::make_unique<MeshLib::MeshSubset const>(*mesh, &mesh->getNodes());
 
     std::vector<MeshLib::MeshSubsets> components;
     components.emplace_back(nodesSubset.get());
@@ -119,10 +119,10 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearQuadraticMesh)
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::createQuadraticOrderMesh(*linear_mesh));
     auto base_nodes = MeshLib::getBaseNodes(mesh->getElements());
-    std::unique_ptr<MeshLib::MeshSubset const> baseNodesSubset(
-        new MeshLib::MeshSubset(*mesh, &base_nodes));
-    std::unique_ptr<MeshLib::MeshSubset const> allNodesSubset(
-        new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
+    auto baseNodesSubset =
+        std::make_unique<MeshLib::MeshSubset const>(*mesh, &base_nodes);
+    auto allNodesSubset =
+        std::make_unique<MeshLib::MeshSubset const>(*mesh, &mesh->getNodes());
 
     std::vector<MeshLib::MeshSubsets> components;
     components.emplace_back(baseNodesSubset.get());

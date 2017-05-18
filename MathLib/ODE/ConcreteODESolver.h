@@ -59,8 +59,7 @@ public:
                      JacobianFunction<NumEquations> df) override
     {
         Implementation::setFunction(
-            std::unique_ptr<detail::FunctionHandlesImpl<NumEquations>>{
-                new detail::FunctionHandlesImpl<NumEquations>{f, df}});
+            std::make_unique<detail::FunctionHandlesImpl<NumEquations>>(f, df));
     }
 
     void setTolerance(const std::array<double, NumEquations>& abstol,

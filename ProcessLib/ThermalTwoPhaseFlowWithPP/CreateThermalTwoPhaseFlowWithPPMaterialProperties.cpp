@@ -89,19 +89,17 @@ createThermalTwoPhaseFlowWithPPMaterialProperties(
             thermal_conductivity_wet_solid_conf);
 
     std::unique_ptr<MaterialLib::Fluid::WaterVaporProperties> vapor_property =
-        std::unique_ptr<MaterialLib::Fluid::WaterVaporProperties>(
-            new MaterialLib::Fluid::WaterVaporProperties());
+        std::make_unique<MaterialLib::Fluid::WaterVaporProperties>();
 
-    return std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties>{
-        new ThermalTwoPhaseFlowWithPPMaterialProperties{
-            std::move(two_phase_material_model),
-            std::move(specific_heat_capacity_solid),
-            std::move(specific_heat_capacity_water),
-            std::move(specific_heat_capacity_air),
-            std::move(specific_heat_capacity_vapor),
-            std::move(thermal_conductivity_dry_solid),
-            std::move(thermal_conductivity_wet_solid),
-            std::move(vapor_property)}};
+    return std::make_unique<ThermalTwoPhaseFlowWithPPMaterialProperties>(
+        std::move(two_phase_material_model),
+        std::move(specific_heat_capacity_solid),
+        std::move(specific_heat_capacity_water),
+        std::move(specific_heat_capacity_air),
+        std::move(specific_heat_capacity_vapor),
+        std::move(thermal_conductivity_dry_solid),
+        std::move(thermal_conductivity_wet_solid),
+        std::move(vapor_property));
 }
 
 }  // end namespace

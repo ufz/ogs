@@ -28,9 +28,9 @@ std::unique_ptr<Porosity> createPorosityModel(BaseLib::ConfigTree const& config)
     auto const type = config.getConfigParameter<std::string>("type");
 
     if (type == "Constant")
-        return std::unique_ptr<Porosity>(
+        return std::make_unique<ConstantPorosity>(
             //! \ogs_file_param{material__porous_medium__porosity__Constant__value}
-            new ConstantPorosity(config.getConfigParameter<double>("value")));
+            config.getConfigParameter<double>("value"));
     else
     {
         OGS_FATAL("The porosity type %s is unavailable.\n",

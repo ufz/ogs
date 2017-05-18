@@ -77,8 +77,8 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
 
     // generate a mesh
     const std::string name = mesh.getName() + "_with_lines";
-    std::unique_ptr<MeshLib::Mesh> new_mesh(
-        new MeshLib::Mesh(name, vec_new_nodes, vec_new_eles));
+    auto new_mesh =
+        std::make_unique<MeshLib::Mesh>(name, vec_new_nodes, vec_new_eles);
     auto opt_mat_pv = new_mesh->getProperties().createNewPropertyVector<int>(
         "MaterialIDs", MeshLib::MeshItemType::Cell);
     if (opt_mat_pv) {

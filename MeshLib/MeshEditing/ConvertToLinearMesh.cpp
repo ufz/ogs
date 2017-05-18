@@ -70,11 +70,11 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
         }
     }
 
-    std::unique_ptr<MeshLib::Mesh> new_mesh(
-        new MeshLib::Mesh(new_mesh_name, vec_new_nodes, vec_new_eles,
-                          org_mesh.getProperties().excludeCopyProperties(
-                              std::vector<MeshLib::MeshItemType>(
-                                  1, MeshLib::MeshItemType::Node))));
+    auto new_mesh = std::make_unique<MeshLib::Mesh>(
+        new_mesh_name, vec_new_nodes, vec_new_eles,
+        org_mesh.getProperties().excludeCopyProperties(
+            std::vector<MeshLib::MeshItemType>(1,
+                                               MeshLib::MeshItemType::Node)));
 
     // copy property vectors for nodes
     MeshLib::Properties const& src_properties = org_mesh.getProperties();

@@ -45,7 +45,7 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
     std::unique_ptr<MeshLib::Mesh> top(
         removeElements(mesh, ex.getSearchedElementIDs(), "MeshLayer"));
     if (top==nullptr)
-        top.reset(new MeshLib::Mesh(mesh));
+        top = std::make_unique<MeshLib::Mesh>(mesh);
 
     if (!MeshLib::MeshLayerMapper::layerMapping(
             *top, *rasters.back(), noDataReplacementValue))

@@ -61,12 +61,12 @@ private:
     void constructDofTable() override
     {
         // Create single component dof in every of the mesh's nodes.
-        _mesh_subset_all_nodes.reset(
-            new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
+        _mesh_subset_all_nodes =
+            std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
         // Create single component dof in the mesh's base nodes.
         _base_nodes = MeshLib::getBaseNodes(_mesh.getElements());
-        _mesh_subset_base_nodes.reset(
-            new MeshLib::MeshSubset(_mesh, &_base_nodes));
+        _mesh_subset_base_nodes =
+            std::make_unique<MeshLib::MeshSubset>(_mesh, &_base_nodes);
 
         // Collect the mesh subsets in a vector.
 
@@ -83,9 +83,10 @@ private:
             });
 
         std::vector<unsigned> const vec_n_components{1, DisplacementDim};
-        _local_to_global_index_map.reset(new NumLib::LocalToGlobalIndexMap(
-            std::move(all_mesh_subsets), vec_n_components,
-            NumLib::ComponentOrder::BY_LOCATION));
+        _local_to_global_index_map =
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
+                std::move(all_mesh_subsets), vec_n_components,
+                NumLib::ComponentOrder::BY_LOCATION);
     }
 
     void initializeConcreteProcess(
@@ -106,11 +107,11 @@ private:
         std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
         all_mesh_subsets_single_component.emplace_back(
             _mesh_subset_all_nodes.get());
-        _local_to_global_index_map_single_component.reset(
-            new NumLib::LocalToGlobalIndexMap(
+        _local_to_global_index_map_single_component =
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets_single_component),
                 // by location order is needed for output
-                NumLib::ComponentOrder::BY_LOCATION));
+                NumLib::ComponentOrder::BY_LOCATION);
 
         Base::_secondary_variables.addSecondaryVariable(
             "sigma_xx", 1,

@@ -32,7 +32,7 @@ TEST(GeoLib, DuplicateGeometry)
     std::size_t n_pnts (rand() % 1000 + 100);
     int box_size (std::rand());
     double half_box_size(box_size/2);
-    std::unique_ptr<std::vector<GeoLib::Point*>> pnts (new std::vector<GeoLib::Point*>);
+    auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
     pnts->reserve(n_pnts);
     for (int k(0); k<static_cast<int>(n_pnts); k++) {
         pnts->push_back(new GeoLib::Point(
@@ -68,7 +68,7 @@ TEST(GeoLib, DuplicateGeometry)
 
     // add polylines
     std::size_t n_plys (rand() % 10 + 1);
-    std::unique_ptr<std::vector<GeoLib::Polyline*>> plys (new std::vector<GeoLib::Polyline*>);
+    auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
     for (std::size_t i=0; i<n_plys; ++i)
     {
         int n_ply_pnts (rand() % 100 + 2);
@@ -106,7 +106,7 @@ TEST(GeoLib, DuplicateGeometry)
 
     // add surfaces
     std::size_t n_sfcs (rand() % 10 + 1);
-    std::unique_ptr<std::vector<GeoLib::Surface*>> sfcs (new std::vector<GeoLib::Surface*>);
+    auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
     for (std::size_t i=0; i<n_sfcs; ++i)
     {
         int n_tris (rand() % 10);

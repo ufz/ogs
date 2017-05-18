@@ -21,8 +21,8 @@ MathLib::Point3d reflect(MathLib::Point3d const& c, MathLib::Point3d const& p)
 GeoLib::LineSegment translate(MathLib::Vector3 const& translation,
                               GeoLib::LineSegment const& line_seg)
 {
-    std::unique_ptr<GeoLib::Point> a{new GeoLib::Point{line_seg.getBeginPoint()}};
-    std::unique_ptr<GeoLib::Point> b{new GeoLib::Point{line_seg.getEndPoint()}};
+    auto a = std::make_unique<GeoLib::Point>(line_seg.getBeginPoint());
+    auto b = std::make_unique<GeoLib::Point>(line_seg.getEndPoint());
     for (std::size_t k(0); k<3; ++k)
         (*a)[k] += translation[k];
     for (std::size_t k(0); k<3; ++k)

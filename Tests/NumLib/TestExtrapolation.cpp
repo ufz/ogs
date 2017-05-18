@@ -138,12 +138,13 @@ public:
         std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
         all_mesh_subsets.emplace_back(&_mesh_subset_all_nodes);
 
-        _dof_table.reset(new NumLib::LocalToGlobalIndexMap(
-            std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_COMPONENT));
+        _dof_table = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+            std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_COMPONENT);
 
         // Passing _dof_table works, because this process has only one variable
         // and the variable has exactly one component.
-        _extrapolator.reset(new ExtrapolatorImplementation(*_dof_table));
+        _extrapolator =
+            std::make_unique<ExtrapolatorImplementation>(*_dof_table);
 
         // createAssemblers(mesh);
         ProcessLib::createLocalAssemblers<LocalAssemblerData>(

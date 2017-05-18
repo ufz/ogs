@@ -131,11 +131,11 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
                                                       latent_heat_evaporation,
                                                       std::move(material)};
 
-    return std::unique_ptr<Process>{new ThermalTwoPhaseFlowWithPPProcess{
+    return std::make_unique<ThermalTwoPhaseFlowWithPPProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        mat_config, curves}};
+        mat_config, curves);
 }
 
 }  // end of namespace

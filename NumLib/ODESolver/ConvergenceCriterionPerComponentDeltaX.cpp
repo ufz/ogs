@@ -108,9 +108,8 @@ createConvergenceCriterionPerComponentDeltaX(const BaseLib::ConfigTree& config)
     if (norm_type == MathLib::VecNormType::INVALID)
         OGS_FATAL("Unknown vector norm type `%s'.", norm_type_str.c_str());
 
-    return std::unique_ptr<ConvergenceCriterionPerComponentDeltaX>(
-        new ConvergenceCriterionPerComponentDeltaX(
-            std::move(*abstols), std::move(*reltols), norm_type));
+    return std::make_unique<ConvergenceCriterionPerComponentDeltaX>(
+        std::move(*abstols), std::move(*reltols), norm_type);
 }
 
 }  // NumLib

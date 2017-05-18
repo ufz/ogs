@@ -45,17 +45,14 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
     doc->ignoreConfigAttribute("xsi:noNamespaceSchemaLocation");
     doc->ignoreConfigAttribute("xmlns:ogs");
 
-    auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
-        new std::vector<GeoLib::Point*>);
-    auto polylines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
-        new std::vector<GeoLib::Polyline*>);
-    auto surfaces = std::unique_ptr<std::vector<GeoLib::Surface*>>(
-        new std::vector<GeoLib::Surface*>);
+    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
+    auto polylines = std::make_unique<std::vector<GeoLib::Polyline*>>();
+    auto surfaces = std::make_unique<std::vector<GeoLib::Surface*>>();
 
     using MapNameId = std::map<std::string, std::size_t>;
-    std::unique_ptr<MapNameId> pnt_names{new MapNameId};
-    std::unique_ptr<MapNameId> ply_names{new MapNameId};
-    std::unique_ptr<MapNameId> sfc_names{new MapNameId};
+    auto pnt_names = std::make_unique<MapNameId>();
+    auto ply_names = std::make_unique<MapNameId>();
+    auto sfc_names = std::make_unique<MapNameId>();
 
     //! \ogs_file_param{gml__name}
     auto geo_name = doc->getConfigParameter<std::string>("name");

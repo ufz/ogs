@@ -91,14 +91,14 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
         if (pv.getName().find("displacement_jump") == std::string::npos)
             continue;
         pv.setBoundaryConditionBuilder(
-            std::unique_ptr<ProcessLib::BoundaryConditionBuilder>(
-                new BoundaryConditionBuilder(
-                    *_process_data.fracture_property.get())));
+            std::make_unique<BoundaryConditionBuilder>(
+                *_process_data.fracture_property.get()));
     }
 
     if (!_process_data.deactivate_matrix_in_flow)
     {
-        _process_data.p_element_status.reset(new MeshLib::ElementStatus(&mesh));
+        _process_data.p_element_status =
+            std::make_unique<MeshLib::ElementStatus>(&mesh);
     }
     else
     {
@@ -111,7 +111,9 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
                           matID) == vec_fracture_mat_IDs.end())
                 vec_p_inactive_matIDs.push_back(matID);
         }
-        _process_data.p_element_status.reset(new MeshLib::ElementStatus(&mesh, vec_p_inactive_matIDs));
+        _process_data.p_element_status =
+            std::make_unique<MeshLib::ElementStatus>(&mesh,
+                                                     vec_p_inactive_matIDs);
 
         ProcessVariable const& pv_p = getProcessVariables()[0];
         _process_data.p0 = &pv_p.getInitialCondition();
@@ -126,20 +128,21 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     // prepare mesh subsets to define DoFs
     //------------------------------------------------------------
     // for extrapolation
-    _mesh_subset_all_nodes.reset(
-        new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
+    _mesh_subset_all_nodes =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
     // pressure
     _mesh_nodes_p = MeshLib::getBaseNodes(
         _process_data.p_element_status->getActiveElements());
-    _mesh_subset_nodes_p.reset(new MeshLib::MeshSubset(_mesh, &_mesh_nodes_p));
+    _mesh_subset_nodes_p =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh_nodes_p);
     // regular u
-    _mesh_subset_matrix_nodes.reset(
-        new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
+    _mesh_subset_matrix_nodes =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
     if (!_vec_fracture_nodes.empty())
     {
         // u jump
-        _mesh_subset_fracture_nodes.reset(
-            new MeshLib::MeshSubset(_mesh, &_vec_fracture_nodes));
+        _mesh_subset_fracture_nodes =
+            std::make_unique<MeshLib::MeshSubset>(_mesh, &_vec_fracture_nodes);
     }
 
     // Collect the mesh subsets in a vector.
@@ -176,11 +179,12 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     }
 
     INFO("[LIE/HM] creating a DoF table");
-    _local_to_global_index_map.reset(new NumLib::LocalToGlobalIndexMap(
-        std::move(all_mesh_subsets),
-        vec_n_components,
-        vec_var_elements,
-        NumLib::ComponentOrder::BY_COMPONENT));
+    _local_to_global_index_map =
+        std::make_unique<NumLib::LocalToGlobalIndexMap>(
+            std::move(all_mesh_subsets),
+            vec_n_components,
+            vec_var_elements,
+            NumLib::ComponentOrder::BY_COMPONENT);
 
     DBUG("created %d DoF", _local_to_global_index_map->size());
 }

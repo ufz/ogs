@@ -38,27 +38,27 @@ newInstance(BaseLib::ConfigTree const& conf)
     auto const type = conf.getConfigParameter<std::string>("type");
 
     if (type == "Z13XBF")
-        return std::unique_ptr<Reaction>(new DensityLegacy);
+        return std::make_unique<DensityLegacy>();
     else if (type == "Z13XBF_100MPa")
-        return std::unique_ptr<Reaction>(new Density100MPa);
+        return std::make_unique<Density100MPa>();
     else if (type == "Z13XBF_Const")
-        return std::unique_ptr<Reaction>(new DensityConst);
+        return std::make_unique<DensityConst>();
     else if (type == "Z13XBF_Cook")
-        return std::unique_ptr<Reaction>(new DensityCook);
+        return std::make_unique<DensityCook>();
     else if (type == "Z13XBF_Dubinin")
-        return std::unique_ptr<Reaction>(new DensityDubinin);
+        return std::make_unique<DensityDubinin>();
     else if (type == "Z13XBF_Hauer")
-        return std::unique_ptr<Reaction>(new DensityHauer);
+        return std::make_unique<DensityHauer>();
     else if (type == "Z13XBF_Mette")
-        return std::unique_ptr<Reaction>(new DensityMette);
+        return std::make_unique<DensityMette>();
     else if (type == "Z13XBF_Nunez")
-        return std::unique_ptr<Reaction>(new DensityNunez);
+        return std::make_unique<DensityNunez>();
     else if (type == "Inert")
-        return std::unique_ptr<Reaction>(new ReactionInert);
+        return std::make_unique<ReactionInert>();
     else if (type == "Sinusoidal")
-        return std::unique_ptr<Reaction>(new ReactionSinusoidal(conf));
+        return std::make_unique<ReactionSinusoidal>(conf);
     else if (type == "CaOH2")
-        return std::unique_ptr<Reaction>(new ReactionCaOH2(conf));
+        return std::make_unique<ReactionCaOH2>(conf);
 
     OGS_FATAL("Unknown reactive system: %s.", type.c_str());
 

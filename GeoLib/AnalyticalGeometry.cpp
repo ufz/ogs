@@ -310,10 +310,9 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
     u*=denom;
     v*=denom;
     w*=denom;
-    return std::unique_ptr<GeoLib::Point>{
-        new GeoLib::Point(u * a[0] + v * b[0] + w * c[0],
-                          u * a[1] + v * b[1] + w * c[1],
-                          u * a[2] + v * b[2] + w * c[2])};
+    return std::make_unique<GeoLib::Point>(u * a[0] + v * b[0] + w * c[0],
+                                           u * a[1] + v * b[1] + w * c[1],
+                                           u * a[2] + v * b[2] + w * c[2]);
 }
 
 void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,

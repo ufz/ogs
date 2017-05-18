@@ -142,9 +142,8 @@ createConvergenceCriterionPerComponentResidual(
     if (norm_type == MathLib::VecNormType::INVALID)
         OGS_FATAL("Unknown vector norm type `%s'.", norm_type_str.c_str());
 
-    return std::unique_ptr<ConvergenceCriterionPerComponentResidual>(
-        new ConvergenceCriterionPerComponentResidual(
-            std::move(*abstols), std::move(*reltols), norm_type));
+    return std::make_unique<ConvergenceCriterionPerComponentResidual>(
+        std::move(*abstols), std::move(*reltols), norm_type);
 }
 
 }  // NumLib

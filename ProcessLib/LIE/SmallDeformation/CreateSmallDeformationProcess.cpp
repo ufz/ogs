@@ -177,11 +177,10 @@ createSmallDeformationProcess(
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
 
-    return std::unique_ptr<SmallDeformationProcess<DisplacementDim>>{
-        new SmallDeformationProcess<DisplacementDim>{
-            mesh, std::move(jacobian_assembler), parameters, integration_order,
-            std::move(process_variables), std::move(process_data),
-            std::move(secondary_variables), std::move(named_function_caller)}};
+    return std::make_unique<SmallDeformationProcess<DisplacementDim>>(
+        mesh, std::move(jacobian_assembler), parameters, integration_order,
+        std::move(process_variables), std::move(process_data),
+        std::move(secondary_variables), std::move(named_function_caller));
 }
 
 template

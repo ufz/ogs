@@ -28,8 +28,7 @@
 std::unique_ptr<GlobalLinearSolver>
 createLinearSolver()
 {
-    return std::unique_ptr<GlobalLinearSolver>{
-        new GlobalLinearSolver{"", nullptr}};
+    return std::make_unique<GlobalLinearSolver>("", nullptr);
 }
 #else
 std::unique_ptr<GlobalLinearSolver>
@@ -42,8 +41,7 @@ createLinearSolver()
     auto const ptree = readXml(xml);
     BaseLib::ConfigTree config(ptree, "", BaseLib::ConfigTree::onerror,
                                BaseLib::ConfigTree::onwarning);
-    return std::unique_ptr<GlobalLinearSolver>{
-        new GlobalLinearSolver{"", &config}};
+    return std::make_unique<GlobalLinearSolver>("", &config);
 }
 #endif
 
@@ -73,11 +71,10 @@ public:
                 ode_sys(ode, timeDisc);
 
         auto linear_solver = createLinearSolver();
-        auto conv_crit = std::unique_ptr<NumLib::ConvergenceCriterion>(
-            new NumLib::ConvergenceCriterionDeltaX(
-                _tol, boost::none, MathLib::VecNormType::NORM2));
-        std::unique_ptr<NLSolver> nonlinear_solver(
-            new NLSolver(*linear_solver, _maxiter));
+        auto conv_crit = std::make_unique<NumLib::ConvergenceCriterionDeltaX>(
+            _tol, boost::none, MathLib::VecNormType::NORM2);
+        auto nonlinear_solver =
+            std::make_unique<NLSolver>(*linear_solver, _maxiter);
 
         NumLib::TimeLoopSingleODE<NLTag> loop(ode_sys, std::move(linear_solver),
                                               std::move(nonlinear_solver),

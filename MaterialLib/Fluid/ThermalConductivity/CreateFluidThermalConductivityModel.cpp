@@ -30,9 +30,9 @@ std::unique_ptr<FluidProperty> createFluidThermalConductivityModel(
     auto const type = config.getConfigParameter<std::string>("type");
 
     if (type == "Constant")
-        return std::unique_ptr<FluidProperty>(new ConstantFluidProperty(
+        return std::make_unique<ConstantFluidProperty>(
             //! \ogs_file_param{material__fluid__thermal_conductivity__Constant__value}
-            config.getConfigParameter<double>("value")));
+            config.getConfigParameter<double>("value"));
     // TODO: add more models
     else
     {

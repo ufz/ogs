@@ -34,10 +34,10 @@ public:
     NumLibLocalToGlobalIndexMapMultiDOFTest()
     {
         mesh.reset(MeL::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs));
-        mesh_items_all_nodes.reset(new MeL::MeshSubset(*mesh, &mesh->getNodes()));
+        mesh_items_all_nodes =
+            std::make_unique<MeL::MeshSubset>(*mesh, &mesh->getNodes());
 
-        std::unique_ptr<std::vector<GeoLib::Point*>> ply_pnts(
-                    new std::vector<GeoLib::Point*>);
+        auto ply_pnts = std::make_unique<std::vector<GeoLib::Point*>>();
         ply_pnts->push_back(new GeoLib::Point(0.0, 0.0, 0.0));
         ply_pnts->push_back(new GeoLib::Point(1.0, 0.0, 0.0));
 
@@ -49,14 +49,12 @@ public:
         ply->addPoint(0);
         ply->addPoint(1);
 
-        std::unique_ptr<std::vector<GeoLib::Polyline*>> plys(
-                    new std::vector<GeoLib::Polyline*>);
+        auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
         plys->push_back(ply);
 
         geo_objs.addPolylineVec(std::move(plys), geometry_0, nullptr);
 
-        std::unique_ptr<MGTL::SearchLength> search_length{
-            new MGTL::SearchLength};
+        auto search_length = std::make_unique<MGTL::SearchLength>();
         MGTL::MeshNodeSearcher const& searcher_nodes =
             MGTL::MeshNodeSearcher::getMeshNodeSearcher(
                 *mesh, std::move(search_length));
@@ -93,8 +91,8 @@ public:
             components.emplace_back(mesh_items_all_nodes.get());
         }
         std::vector<unsigned> vec_var_n_components(1, num_components);
-        dof_map.reset(
-            new NL::LocalToGlobalIndexMap(std::move(components), vec_var_n_components, order));
+        dof_map = std::make_unique<NL::LocalToGlobalIndexMap>(
+            std::move(components), vec_var_n_components, order);
 
         MeL::MeshSubsets components_boundary{mesh_items_boundary.get()};
 
@@ -118,8 +116,8 @@ public:
             components.emplace_back(mesh_items_all_nodes.get());
         }
         std::vector<unsigned> vec_var_n_components(1, num_components);
-        dof_map.reset(new NL::LocalToGlobalIndexMap(
-            std::move(components), vec_var_n_components, order));
+        dof_map = std::make_unique<NL::LocalToGlobalIndexMap>(
+            std::move(components), vec_var_n_components, order);
 
         MeL::MeshSubsets components_boundary{mesh_items_boundary.get()};
 
