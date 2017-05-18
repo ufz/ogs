@@ -24,19 +24,19 @@ std::unique_ptr<MeshGeoToolsLib::SearchLength> createSearchLengthAlgorithm(
     BaseLib::ConfigTree const& external_config, MeshLib::Mesh const& mesh)
 {
     boost::optional<BaseLib::ConfigTree> config =
-        //! \ogs_file_param{prj__search_length_algorithm}
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm}
         external_config.getConfigSubtreeOptional("search_length_algorithm");
 
     if (!config)
         return std::unique_ptr<MeshGeoToolsLib::SearchLength>{
             new MeshGeoToolsLib::SearchLength()};
 
-    //! \ogs_file_param{prj__search_length_algorithm__type}
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm__type}
     std::string const type = config->getConfigParameter<std::string>("type");
 
     if (type == "fixed")
     {
-        //! \ogs_file_param{prj__search_length_algorithm__value}
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm__fixed__value}
         double const length = config->getConfigParameter<double>("value");
         return std::unique_ptr<MeshGeoToolsLib::SearchLength>{
             new MeshGeoToolsLib::SearchLength(length)};
