@@ -3,7 +3,7 @@ export MODULEPATH=$MODULEPATH:/global/apps/modulefiles
 
 module load python/2
 module load cmake/3.6.2-1
-module load gcc/4.8.1-3
+module load gcc/6.2.0-1
 
 # Tools
 module load coreutils/8.21-1
