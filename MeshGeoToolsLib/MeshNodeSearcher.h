@@ -17,6 +17,7 @@
 
 // MeshGeoToolsLib
 #include "MeshGeoToolsLib/SearchLength.h"
+#include "MeshGeoToolsLib/SearchAllNodes.h"
 
 // forward declaration
 namespace GeoLib
@@ -42,6 +43,7 @@ class MeshNodesAlongSurface;
 
 namespace MeshGeoToolsLib
 {
+
 /**
  * Class for searching mesh node ids along polylines or points. This ids
  * can be used to set boundary conditions, source terms, initial conditions
@@ -61,7 +63,7 @@ public:
      */
     MeshNodeSearcher(MeshLib::Mesh const& mesh,
                      MeshGeoToolsLib::SearchLength&& search_length_algorithm,
-                     bool search_all_nodes = true);
+                     SearchAllNodes search_all_nodes);
 
     virtual ~MeshNodeSearcher();
 
@@ -146,7 +148,7 @@ private:
     MeshLib::Mesh const& _mesh;
     GeoLib::Grid<MeshLib::Node> _mesh_grid;
     MeshGeoToolsLib::SearchLength _search_length_algorithm;
-    bool _search_all_nodes;
+    SearchAllNodes _search_all_nodes;
     // with newer compiler we can omit to use a pointer here
     mutable std::vector<MeshNodesOnPoint*> _mesh_nodes_on_points;
     mutable std::vector<MeshNodesAlongPolyline*> _mesh_nodes_along_polylines;

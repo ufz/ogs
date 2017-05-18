@@ -34,7 +34,7 @@ std::vector<std::unique_ptr<MeshNodeSearcher>> MeshNodeSearcher::_mesh_node_sear
 MeshNodeSearcher::MeshNodeSearcher(
     MeshLib::Mesh const& mesh,
     MeshGeoToolsLib::SearchLength&& search_length_algorithm,
-    bool search_all_nodes)
+    SearchAllNodes search_all_nodes)
     : _mesh(mesh),
       _mesh_grid(_mesh.getNodes().cbegin(), _mesh.getNodes().cend()),
       _search_length_algorithm(std::move(search_length_algorithm)),
@@ -109,7 +109,7 @@ MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(
                              _mesh_grid,
                              pnt,
                              _search_length_algorithm.getSearchLength(),
-                             _search_all_nodes));
+                             _search_all_nodes == SearchAllNodes::Yes));
     return *_mesh_nodes_on_points.back();
 }
 
@@ -127,7 +127,7 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(
     // compute nodes (and supporting points) along polyline
     _mesh_nodes_along_polylines.push_back(new MeshNodesAlongPolyline(
         _mesh, ply, _search_length_algorithm.getSearchLength(),
-        _search_all_nodes));
+        _search_all_nodes == SearchAllNodes::Yes));
     return *_mesh_nodes_along_polylines.back();
 }
 
@@ -147,7 +147,7 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(
         new MeshNodesAlongSurface(_mesh,
                                   sfc,
                                   _search_length_algorithm.getSearchLength(),
-                                  _search_all_nodes));
+                                  _search_all_nodes == SearchAllNodes::Yes));
     return *_mesh_nodes_along_surfaces.back();
 }
 
@@ -174,7 +174,7 @@ MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
     }
 
     _mesh_node_searchers[mesh_id].reset(new MeshGeoToolsLib::MeshNodeSearcher(
-        mesh, std::move(search_length_algorithm)));
+        mesh, std::move(search_length_algorithm), SearchAllNodes::Yes));
 
     return *_mesh_node_searchers[mesh_id];
 }

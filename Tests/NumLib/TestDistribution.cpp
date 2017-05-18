@@ -29,12 +29,15 @@
 class NumLibDistributionQuad : public testing::Test
 {
 public:
-    NumLibDistributionQuad() :
-        _geometric_size(10.0), _number_of_subdivisions_per_direction(10),
-        _msh(MeshLib::MeshGenerator::generateRegularQuadMesh(_geometric_size, _number_of_subdivisions_per_direction)),
-        _project_name("test"),
-        _mshNodesSearcher(*_msh,MeshGeoToolsLib::SearchLength()),
-        _ply0(nullptr)
+    NumLibDistributionQuad()
+        : _geometric_size(10.0),
+          _number_of_subdivisions_per_direction(10),
+          _msh(MeshLib::MeshGenerator::generateRegularQuadMesh(
+              _geometric_size, _number_of_subdivisions_per_direction)),
+          _project_name("test"),
+          _mshNodesSearcher(*_msh, MeshGeoToolsLib::SearchLength(),
+                            MeshGeoToolsLib::SearchAllNodes::Yes),
+          _ply0(nullptr)
     {
         // create geometry
         auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
@@ -83,12 +86,15 @@ protected:
 class NumLibDistributionHex : public testing::Test
 {
 public:
-    NumLibDistributionHex() :
-        _geometric_size(10.0), _number_of_subdivisions_per_direction(10),
-        _msh(MeshLib::MeshGenerator::generateRegularHexMesh(_geometric_size, _number_of_subdivisions_per_direction)),
-        _project_name("test"),
-        _mshNodesSearcher(*_msh,MeshGeoToolsLib::SearchLength()),
-        _ply0(nullptr)
+    NumLibDistributionHex()
+        : _geometric_size(10.0),
+          _number_of_subdivisions_per_direction(10),
+          _msh(MeshLib::MeshGenerator::generateRegularHexMesh(
+              _geometric_size, _number_of_subdivisions_per_direction)),
+          _project_name("test"),
+          _mshNodesSearcher(*_msh, MeshGeoToolsLib::SearchLength(),
+                            MeshGeoToolsLib::SearchAllNodes::Yes),
+          _ply0(nullptr)
     {
         // create geometry
         auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
