@@ -72,7 +72,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     if (process_variables[0].get().getNumberOfComponents() != 1)
     {
         OGS_FATAL(
-            "Temperature process variable '%s' is not a scalar variable but has"
+            "Temperature process variable '%s' is not a scalar variable but has "
             "%d components.",
             process_variables[0].get().getName().c_str(),
             process_variables[0].get().getNumberOfComponents(),

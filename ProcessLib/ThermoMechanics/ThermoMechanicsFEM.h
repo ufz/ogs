@@ -203,7 +203,7 @@ public:
             // displacement (subscript u)
             _ip_data.emplace_back(*_process_data.material);
             auto& ip_data = _ip_data[ip];
-            _ip_data[ip].integration_weight =
+            ip_data.integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 shape_matrices[ip].detJ;
             ip_data.b_matrices.resize(kelvin_vector_size,

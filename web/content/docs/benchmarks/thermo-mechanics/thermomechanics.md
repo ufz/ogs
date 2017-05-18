@@ -27,10 +27,11 @@ Result showing temperature and stresses development with time in the centre node
 The analytical solution of stresses after heating is:
 $$
 \begin{equation}
-\sigma_{xx} = \sigma_{yy} = sigma_{zz} = - \frac{\alpha \Delta T E}{1 - 2 \nu}\end{equation} = - 3.260869 \mathrm{MPa}
+\sigma_{xx} = \sigma_{yy} = \sigma_{zz} = - \frac{\alpha \Delta T E}{1 - 2 \nu} = - 3.260869\, \mathrm{MPa}
+\end{equation}
 $$
 
-The relative error between the numerical simulation and the analytical solution is 9.2 \cdot 10^{-13}.
+The relative error between the numerical simulation and the analytical solution is 9.2 $\cdot$ 10\uexp{-13}.
 
 Kolditz, Olaf, Uwe-Jens Görke, Hua Shao, and Wenqing Wang, eds. Thermo-hydro-mechanical-chemical processes in porous media: benchmarks and examples. Vol. 86. Springer Science & Business Media, 2012.
 
