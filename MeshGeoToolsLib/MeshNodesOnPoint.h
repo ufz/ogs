@@ -13,6 +13,8 @@
 #include "GeoLib/Point.h"
 #include "GeoLib/Grid.h"
 
+#include "MeshGeoToolsLib/SearchAllNodes.h"
+
 #include "MeshLib/Node.h"
 
 namespace MeshLib
@@ -35,10 +37,12 @@ public:
      * @param mesh_grid Grid object constructed with mesh nodes
      * @param pnt a point
      * @param epsilon_radius Search radius
-     * @param search_all_nodes whether this shearches all nodes or only base nodes
+     * @param search_all_nodes whether this searches all nodes or only base nodes
      */
-    MeshNodesOnPoint(MeshLib::Mesh const& mesh, GeoLib::Grid<MeshLib::Node> const &mesh_grid,
-            GeoLib::Point const& pnt, double epsilon_radius, bool search_all_nodes = true);
+    MeshNodesOnPoint(MeshLib::Mesh const& mesh,
+                     GeoLib::Grid<MeshLib::Node> const& mesh_grid,
+                     GeoLib::Point const& pnt, double epsilon_radius,
+                     SearchAllNodes search_all_nodes);
 
     /// return the mesh object
     MeshLib::Mesh const& getMesh() const { return _mesh; }

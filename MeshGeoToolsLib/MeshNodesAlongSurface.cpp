@@ -22,16 +22,16 @@
 
 namespace MeshGeoToolsLib
 {
-
-MeshNodesAlongSurface::MeshNodesAlongSurface(
-        MeshLib::Mesh const& mesh,
-        GeoLib::Surface const& sfc,
-        double epsilon_radius,
-        bool search_all_nodes) :
-    _mesh(mesh), _sfc(sfc)
+MeshNodesAlongSurface::MeshNodesAlongSurface(MeshLib::Mesh const& mesh,
+                                             GeoLib::Surface const& sfc,
+                                             double epsilon_radius,
+                                             SearchAllNodes search_all_nodes)
+    : _mesh(mesh), _sfc(sfc)
 {
     auto& mesh_nodes = _mesh.getNodes();
-    const std::size_t n_nodes (search_all_nodes ? _mesh.getNumberOfNodes() : _mesh.getNumberOfBaseNodes());
+    const std::size_t n_nodes(search_all_nodes == SearchAllNodes::Yes
+                                  ? _mesh.getNumberOfNodes()
+                                  : _mesh.getNumberOfBaseNodes());
     // loop over all nodes
     for (std::size_t i = 0; i < n_nodes; i++) {
         auto* node = mesh_nodes[i];

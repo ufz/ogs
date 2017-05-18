@@ -22,15 +22,16 @@
 
 namespace MeshGeoToolsLib
 {
-MeshNodesAlongPolyline::MeshNodesAlongPolyline(
-        MeshLib::Mesh const& mesh,
-        GeoLib::Polyline const& ply,
-        double epsilon_radius,
-        bool search_all_nodes) :
-    _mesh(mesh), _ply(ply)
+MeshNodesAlongPolyline::MeshNodesAlongPolyline(MeshLib::Mesh const& mesh,
+                                               GeoLib::Polyline const& ply,
+                                               double epsilon_radius,
+                                               SearchAllNodes search_all_nodes)
+    : _mesh(mesh), _ply(ply)
 {
     assert(epsilon_radius > 0);
-    const std::size_t n_nodes (search_all_nodes ? _mesh.getNumberOfNodes() : _mesh.getNumberOfBaseNodes());
+    const std::size_t n_nodes(search_all_nodes == SearchAllNodes::Yes
+                                  ? _mesh.getNumberOfNodes()
+                                  : _mesh.getNumberOfBaseNodes());
     auto &mesh_nodes = _mesh.getNodes();
     // loop over all nodes
     for (std::size_t i = 0; i < n_nodes; i++) {

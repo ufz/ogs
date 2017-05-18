@@ -109,7 +109,7 @@ MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(
                              _mesh_grid,
                              pnt,
                              _search_length_algorithm.getSearchLength(),
-                             _search_all_nodes == SearchAllNodes::Yes));
+                             _search_all_nodes));
     return *_mesh_nodes_on_points.back();
 }
 
@@ -127,7 +127,7 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(
     // compute nodes (and supporting points) along polyline
     _mesh_nodes_along_polylines.push_back(new MeshNodesAlongPolyline(
         _mesh, ply, _search_length_algorithm.getSearchLength(),
-        _search_all_nodes == SearchAllNodes::Yes));
+        _search_all_nodes));
     return *_mesh_nodes_along_polylines.back();
 }
 
@@ -147,7 +147,7 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(
         new MeshNodesAlongSurface(_mesh,
                                   sfc,
                                   _search_length_algorithm.getSearchLength(),
-                                  _search_all_nodes == SearchAllNodes::Yes));
+                                  _search_all_nodes));
     return *_mesh_nodes_along_surfaces.back();
 }
 
