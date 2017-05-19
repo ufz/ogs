@@ -1,1 +1,1 @@
-A tag for using mass-lumping scheme
+A tag for enabling mass-lumping scheme
