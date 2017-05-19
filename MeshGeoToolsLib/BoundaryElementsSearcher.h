@@ -42,7 +42,8 @@ public:
      * @param mesh             a mesh object
      * @param mshNodeSearcher  a MeshNodeSearcher object which is internally used to search mesh nodes
      */
-    BoundaryElementsSearcher(MeshLib::Mesh const& mesh, MeshNodeSearcher &mshNodeSearcher);
+    BoundaryElementsSearcher(MeshLib::Mesh const& mesh,
+                             MeshNodeSearcher const& mshNodeSearcher);
 
     /// destructor
     virtual ~BoundaryElementsSearcher();
@@ -79,7 +80,7 @@ public:
 
 private:
     MeshLib::Mesh const& _mesh;
-    MeshNodeSearcher &_mshNodeSearcher;
+    MeshNodeSearcher const& _mshNodeSearcher;
     std::vector<BoundaryElementsAtPoint*> _boundary_elements_at_point;
     std::vector<BoundaryElementsAlongPolyline*> _boundary_elements_along_polylines;
     std::vector<BoundaryElementsOnSurface*> _boundary_elements_along_surfaces;

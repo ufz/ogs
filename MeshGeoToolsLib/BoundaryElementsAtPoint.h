@@ -35,8 +35,8 @@ public:
     /// used to search mesh nodes
     /// \param point            a point object where edges are searched
     BoundaryElementsAtPoint(MeshLib::Mesh const& mesh,
-                           MeshNodeSearcher& mshNodeSearcher,
-                           GeoLib::Point const& point);
+                            MeshNodeSearcher const& mshNodeSearcher,
+                            GeoLib::Point const& point);
 
     ~BoundaryElementsAtPoint();
 

@@ -43,12 +43,9 @@ private:
         const BoundaryConditionConfig& config,
         const NumLib::LocalToGlobalIndexMap& dof_table,
         const MeshLib::Mesh& mesh, const int variable_id,
-        const unsigned integration_order,
-        const unsigned shapefunction_order,
+        const unsigned integration_order, const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
-            parameters,
-        MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher,
-        MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher) override;
+            parameters) override;
 
     FractureProperty const& _fracture_prop;
 };

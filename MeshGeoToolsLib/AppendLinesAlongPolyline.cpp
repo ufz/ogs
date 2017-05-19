@@ -53,7 +53,9 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
         const GeoLib::Polyline* ply = (*ply_vec.getVector())[k];
 
         // search nodes on the polyline
-        MeshGeoToolsLib::MeshNodesAlongPolyline mshNodesAlongPoly(mesh, *ply, mesh.getMinEdgeLength()*0.5);
+        MeshGeoToolsLib::MeshNodesAlongPolyline mshNodesAlongPoly(
+            mesh, *ply, mesh.getMinEdgeLength() * 0.5,
+            MeshGeoToolsLib::SearchAllNodes::Yes);
         auto &vec_nodes_on_ply = mshNodesAlongPoly.getNodeIDs();
         if (vec_nodes_on_ply.empty()) {
             std::string ply_name;

@@ -131,7 +131,8 @@ ProcessVariable::createBoundaryConditions(
 
     for (auto& config : _bc_configs)
         bcs.emplace_back(_bc_builder->createBoundaryCondition(
-            config, dof_table, _mesh, variable_id, integration_order, _shapefunction_order, parameters));
+            config, dof_table, _mesh, variable_id, integration_order,
+            _shapefunction_order, parameters));
 
     return bcs;
 }

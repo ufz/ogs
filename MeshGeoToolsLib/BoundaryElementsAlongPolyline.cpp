@@ -23,9 +23,10 @@
 
 namespace MeshGeoToolsLib
 {
-
-BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(MeshLib::Mesh const& mesh, MeshNodeSearcher &mshNodeSearcher, GeoLib::Polyline const& ply)
-: _mesh(mesh), _ply(ply)
+BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
+    MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher,
+    GeoLib::Polyline const& ply)
+    : _mesh(mesh), _ply(ply)
 {
     // search nodes and elements located along the polyline
     auto node_ids_on_poly = mshNodeSearcher.getMeshNodeIDsAlongPolyline(ply);

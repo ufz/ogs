@@ -14,6 +14,8 @@
 
 #include <vector>
 
+#include "MeshGeoToolsLib/SearchAllNodes.h"
+
 namespace GeoLib
 {
 class Surface;
@@ -44,7 +46,7 @@ public:
      * searching the base nodes.
      */
     MeshNodesAlongSurface(MeshLib::Mesh const& mesh, GeoLib::Surface const& sfc,
-                          double epsilon, bool search_all_nodes = true);
+                          double epsilon, SearchAllNodes search_all_nodes);
 
     /// return the mesh object
     MeshLib::Mesh const& getMesh() const;

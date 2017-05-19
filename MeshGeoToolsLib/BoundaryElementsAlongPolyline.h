@@ -37,7 +37,9 @@ public:
      * @param mshNodeSearcher  a MeshNodeSearcher object which is internally used to search mesh nodes
      * @param ply              a polyline object where edges are searched
      */
-    BoundaryElementsAlongPolyline(MeshLib::Mesh const& mesh, MeshNodeSearcher &mshNodeSearcher, GeoLib::Polyline const& ply);
+    BoundaryElementsAlongPolyline(MeshLib::Mesh const& mesh,
+                                  MeshNodeSearcher const& mshNodeSearcher,
+                                  GeoLib::Polyline const& ply);
 
     /// destructor
     virtual ~BoundaryElementsAlongPolyline();

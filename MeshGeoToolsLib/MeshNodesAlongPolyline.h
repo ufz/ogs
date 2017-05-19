@@ -14,6 +14,8 @@
 
 #include <vector>
 
+#include "MeshGeoToolsLib/SearchAllNodes.h"
+
 namespace GeoLib
 {
 class Polyline;
@@ -45,9 +47,10 @@ public:
      * @param search_all_nodes switch between searching all mesh nodes and
      * searching the base nodes.
      */
-    MeshNodesAlongPolyline(MeshLib::Mesh const& mesh,
-                           GeoLib::Polyline const& ply, double epsilon_radius,
-                           bool search_all_nodes = true);
+    MeshNodesAlongPolyline(
+        MeshLib::Mesh const& mesh, GeoLib::Polyline const& ply,
+        double epsilon_radius,
+        SearchAllNodes search_all_nodes);
 
     /// return the mesh object
     MeshLib::Mesh const& getMesh() const;

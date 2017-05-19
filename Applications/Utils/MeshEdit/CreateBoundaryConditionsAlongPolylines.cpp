@@ -197,15 +197,17 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    MeshGeoToolsLib::SearchLength search_length_strategy;
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_strategy{
+        new MeshGeoToolsLib::SearchLength};
     if (search_length_arg.isSet()) {
-        search_length_strategy =
-            MeshGeoToolsLib::SearchLength(search_length_arg.getValue());
+        search_length_strategy.reset(
+            new MeshGeoToolsLib::SearchLength(search_length_arg.getValue()));
     }
 
     GeoLib::GEOObjects geometry_sets;
-    MeshGeoToolsLib::MeshNodeSearcher mesh_searcher(*surface_mesh,
-        search_length_strategy);
+    MeshGeoToolsLib::MeshNodeSearcher mesh_searcher(
+        *surface_mesh, std::move(search_length_strategy),
+        MeshGeoToolsLib::SearchAllNodes::Yes);
     for(std::size_t k(0); k<plys->size(); k++) {
         std::vector<std::size_t> ids
             (mesh_searcher.getMeshNodeIDsAlongPolyline(*((*plys)[k])));

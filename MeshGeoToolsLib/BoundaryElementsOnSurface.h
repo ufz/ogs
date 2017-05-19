@@ -37,7 +37,9 @@ public:
      * @param mshNodeSearcher  a MeshNodeSearcher object which is internally used to search mesh nodes
      * @param sfc              a surface object where face elements are searched for
      */
-    BoundaryElementsOnSurface(MeshLib::Mesh const& mesh, MeshNodeSearcher &mshNodeSearcher, GeoLib::Surface const& sfc);
+    BoundaryElementsOnSurface(MeshLib::Mesh const& mesh,
+                              MeshNodeSearcher const& mshNodeSearcher,
+                              GeoLib::Surface const& sfc);
 
     /// destructor
     virtual ~BoundaryElementsOnSurface();

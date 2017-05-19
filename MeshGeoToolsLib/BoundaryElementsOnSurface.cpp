@@ -18,9 +18,10 @@
 
 namespace MeshGeoToolsLib
 {
-
-BoundaryElementsOnSurface::BoundaryElementsOnSurface(MeshLib::Mesh const& mesh, MeshNodeSearcher &mshNodeSearcher, GeoLib::Surface const& sfc)
-: _mesh(mesh), _sfc(sfc)
+BoundaryElementsOnSurface::BoundaryElementsOnSurface(
+    MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher,
+    GeoLib::Surface const& sfc)
+    : _mesh(mesh), _sfc(sfc)
 {
     // search elements near the surface
     auto node_ids_on_sfc = mshNodeSearcher.getMeshNodeIDsAlongSurface(sfc);
