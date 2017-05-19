@@ -14,9 +14,8 @@ namespace ProcessLib
 {
 namespace PhaseField
 {
-
 template class PhaseFieldProcess<2>;
 template class PhaseFieldProcess<3>;
 
-}   // namespace PhaseField
-}   // namespace ProcessLib
+}  // namespace PhaseField
+}  // namespace ProcessLib
