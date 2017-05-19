@@ -56,8 +56,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     DBUG("Associate displacement with process variable \'%s\'.",
          process_variables[1].get().getName().c_str());
 
-    if (process_variables[1].get().getNumberOfComponents() !=
-        DisplacementDim)
+    if (process_variables[1].get().getNumberOfComponents() != DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '%s' is different "
@@ -79,7 +78,6 @@ std::unique_ptr<Process> createPhaseFieldProcess(
             DisplacementDim);
     }
 
-
     // Constitutive relation.
     // read type;
     auto const constitutive_relation_config =
@@ -94,9 +92,8 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         material = nullptr;
     if (type == "LinearElasticIsotropicPhaseField")
     {
-        material =
-            MaterialLib::Solids::createLinearElasticIsotropicPhaseField<DisplacementDim>(
-                parameters, constitutive_relation_config);
+        material = MaterialLib::Solids::createLinearElasticIsotropicPhaseField<
+            DisplacementDim>(parameters, constitutive_relation_config);
     }
     else
     {
@@ -108,52 +105,45 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     // Residual stiffness
     auto& residual_stiffness = findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__TMPHASE_FIELD__residual_stiffness}
+        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__residual_stiffness}
         "residual_stiffness", parameters, 1);
-    DBUG("Use \'%s\' as residual stiffness.",
-        residual_stiffness.name.c_str());
+    DBUG("Use \'%s\' as residual stiffness.", residual_stiffness.name.c_str());
 
     // Crack resistance
     auto& crack_resistance = findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__TMPHASE_FIELD__crack_resistance}
+        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__crack_resistance}
         "crack_resistance", parameters, 1);
-    DBUG("Use \'%s\' as crack resistance.",
-        crack_resistance.name.c_str());
+    DBUG("Use \'%s\' as crack resistance.", crack_resistance.name.c_str());
 
     // Crack length scale
     auto& crack_length_scale = findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__TMPHASE_FIELD__crack_length_scale}
+        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__crack_length_scale}
         "crack_length_scale", parameters, 1);
-    DBUG("Use \'%s\' as crack length scale.",
-        crack_length_scale.name.c_str());
+    DBUG("Use \'%s\' as crack length scale.", crack_length_scale.name.c_str());
 
     // Kinetic coefficient
     auto& kinetic_coefficient = findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__TMPHASE_FIELD__kinetic_coefficient}
+        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__kinetic_coefficient}
         "kinetic_coefficient", parameters, 1);
     DBUG("Use \'%s\' as kinetic coefficient.",
-        kinetic_coefficient.name.c_str());
+         kinetic_coefficient.name.c_str());
 
     // Solid density
     auto& solid_density = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__solid_density}
-        "solid_density",
-        parameters, 1);
-    DBUG("Use \'%s\' as solid density parameter.",
-         solid_density.name.c_str());
+        "solid_density", parameters, 1);
+    DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
 
     // History field
     auto& history_field = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__history_field}
-        "history_field",
-        parameters, 1);
-    DBUG("Use \'%s\' as history field.",
-         history_field.name.c_str());
+        "history_field", parameters, 1);
+    DBUG("Use \'%s\' as history field.", history_field.name.c_str());
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
@@ -173,9 +163,9 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     }
 
     PhaseFieldProcessData<DisplacementDim> process_data{
-        std::move(material), residual_stiffness, crack_resistance,
-        crack_length_scale, kinetic_coefficient, solid_density,
-        history_field, specific_body_force};
+        std::move(material), residual_stiffness,  crack_resistance,
+        crack_length_scale,  kinetic_coefficient, solid_density,
+        history_field,       specific_body_force};
 
     SecondaryVariableCollection secondary_variables;
 
