@@ -25,10 +25,13 @@
 
 static void swapNodeCoordinateAxes(MeshLib::Mesh &mesh, std::array<int, 3> const& new_axes_indices)
 {
+    double new_coords[3] = {};
     for (MeshLib::Node* node : mesh.getNodes())
     {
         for (int i=0; i<3; i++)
-            (*node)[i] = (*node)[new_axes_indices[i]];
+            new_coords[i] = (*node)[new_axes_indices[i]];
+        for (int i=0; i<3; i++)
+            (*node)[i] = new_coords[i];
     }
 }
 
