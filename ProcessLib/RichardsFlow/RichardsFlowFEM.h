@@ -144,9 +144,7 @@ public:
             local_K_data, local_matrix_size, local_matrix_size);
         auto local_b = MathLib::createZeroedVector<NodalVectorType>(
             local_b_data, local_matrix_size);
-        NodalMatrixType laplace_operator;
-        laplace_operator.setZero(ShapeFunction::NPOINTS,
-                                 ShapeFunction::NPOINTS);
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
         SpatialPosition pos;
@@ -196,10 +194,9 @@ public:
                     t, pos, p_int_pt, temperature, Sw);
             auto const mu = _process_data.material->getFluidViscosity(
                 p_int_pt, temperature);
-            laplace_operator.noalias() = _ip_data[ip].dNdx.transpose() *
-                                         permeability * _ip_data[ip].dNdx *
-                                         _ip_data[ip].integration_weight;
-            local_K.noalias() += laplace_operator * (k_rel / mu);
+            local_K.noalias() += _ip_data[ip].dNdx.transpose() *
+                permeability * _ip_data[ip].dNdx *
+                _ip_data[ip].integration_weight * (k_rel / mu);
 
             if (_process_data.has_gravity)
             {
