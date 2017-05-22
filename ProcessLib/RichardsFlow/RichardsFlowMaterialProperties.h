@@ -75,6 +75,11 @@ public:
                        const ProcessLib::SpatialPosition& pos, const double p,
                        const double T, const double porosity_variable) const;
 
+    double getStorage(
+        const int material_id, const double t,
+        const ProcessLib::SpatialPosition& pos, const double p,
+        const double T, const double storage_variable) const;
+
     double getRelativePermeability(const double t,
                                    const ProcessLib::SpatialPosition& pos,
                                    const double p, const double T,

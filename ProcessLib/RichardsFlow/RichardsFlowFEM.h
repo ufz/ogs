@@ -184,9 +184,10 @@ public:
 
             // \TODO Extend to pressure dependent density.
             double const drhow_dp(0.0);
-
+            auto const storage = _process_data.material->getStorage(
+                    material_id, t, pos, p_int_pt,temperature,0);
             double const mass_mat_coeff =
-                porosity * Sw * drhow_dp - porosity * dSw_dpc;
+                storage * Sw + porosity * Sw * drhow_dp - porosity * dSw_dpc;
 
             local_M.noalias() += mass_mat_coeff * _ip_data[ip].mass_operator;
 

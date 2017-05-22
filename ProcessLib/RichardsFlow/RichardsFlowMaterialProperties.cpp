@@ -100,6 +100,16 @@ double RichardsFlowMaterialProperties::getPorosity(
     return _porosity_models[material_id]->getValue(porosity_variable, T);
 }
 
+double RichardsFlowMaterialProperties::getStorage(
+    const int material_id, const double /*t*/,
+    const ProcessLib::SpatialPosition& /*pos*/, const double /*p*/,
+    const double /*T*/, const double storage_variable) const
+{
+    // \todo getValue() can be extended for non
+    // constant storage model
+    return _storage_models[material_id]->getValue(storage_variable);
+}
+
 double RichardsFlowMaterialProperties::getRelativePermeability(
     const double /*t*/, const ProcessLib::SpatialPosition& /*pos*/,
     const double /*p*/, const double /*T*/, const double saturation) const
