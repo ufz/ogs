@@ -9,10 +9,6 @@
 
 #pragma once
 #include "RichardsFlowMaterialProperties.h"
-namespace MeshLib
-{
-class Element;
-}
 
 namespace ProcessLib
 {
