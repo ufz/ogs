@@ -193,14 +193,13 @@ double yieldFunction(MaterialProperties const& mp,
     double const I_1_squared = boost::math::pow<2>(s.I_1);
     assert(s.J_2 != 0);
 
-    return std::sqrt(s.J_2 *
-                         std::pow(1 +
-                                      mp.gamma * s.J_3 /
-                                          boost::math::pow<3>(std::sqrt(s.J_2)),
-                                  mp.m) +
-                     mp.alpha / 2. * I_1_squared +
-                     boost::math::pow<2>(mp.delta) *
-                         boost::math::pow<2>(I_1_squared)) +
+    return std::sqrt(
+               s.J_2 *
+                   std::pow(1 + mp.gamma * s.J_3 / (s.J_2 * std::sqrt(s.J_2)),
+                            mp.m) +
+               mp.alpha / 2. * I_1_squared +
+               boost::math::pow<2>(mp.delta) *
+                   boost::math::pow<2>(I_1_squared)) +
            mp.beta * s.I_1 + mp.epsilon * I_1_squared - k;
 }
 
@@ -227,7 +226,7 @@ calculatePlasticResidual(
     auto const& P_dev = Invariants::deviatoric_projection;
     auto const& identity2 = Invariants::identity2;
 
-    double const theta = s.J_3 / boost::math::pow<3>(std::sqrt(s.J_2));
+    double const theta = s.J_3 / (s.J_2 * std::sqrt(s.J_2));
 
     typename SolidEhlers<DisplacementDim>::ResidualVectorType residual;
     // calculate stress residual
@@ -285,7 +284,7 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
     auto const& P_dev = Invariants::deviatoric_projection;
     auto const& identity2 = Invariants::identity2;
 
-    double const theta = s.J_3 / boost::math::pow<3>(std::sqrt(s.J_2));
+    double const theta = s.J_3 / (s.J_2 * std::sqrt(s.J_2));
     OnePlusGamma_pTheta const one_gt{mp.gamma_p, theta, mp.m_p};
 
     // inverse of deviatoric stress tensor
