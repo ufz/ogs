@@ -144,8 +144,8 @@ void Process::assembleWithJacobian(const double t, GlobalVector const& x,
 void Process::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
-    _mesh_subset_all_nodes.reset(
-        new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
+    _mesh_subset_all_nodes =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
 
     // Collect the mesh subsets in a vector.
     std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
@@ -164,10 +164,10 @@ void Process::constructDofTable()
     for (ProcessVariable const& pv : _process_variables)
         vec_var_n_components.push_back(pv.getNumberOfComponents());
 
-    _local_to_global_index_map.reset(new NumLib::LocalToGlobalIndexMap(
-        std::move(all_mesh_subsets), vec_var_n_components,
-        NumLib::ComponentOrder::BY_LOCATION));
-
+    _local_to_global_index_map =
+        std::make_unique<NumLib::LocalToGlobalIndexMap>(
+            std::move(all_mesh_subsets), vec_var_n_components,
+            NumLib::ComponentOrder::BY_LOCATION);
 }
 
 void Process::initializeExtrapolator()

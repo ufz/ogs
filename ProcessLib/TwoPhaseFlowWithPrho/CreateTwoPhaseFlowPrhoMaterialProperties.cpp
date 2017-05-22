@@ -125,13 +125,12 @@ createTwoPhaseFlowPrhoMaterialProperties(
     BaseLib::reorderVector(_porosity_models, mat_ids);
     BaseLib::reorderVector(_storage_models, mat_ids);
 
-    return std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties>{
-        new TwoPhaseFlowWithPrhoMaterialProperties{
-            material_ids, std::move(_liquid_density), std::move(_viscosity),
-            std::move(_gas_density), std::move(_gas_viscosity),
-            _intrinsic_permeability_models, std::move(_porosity_models),
-            std::move(_storage_models), std::move(_capillary_pressure_models),
-            std::move(_relative_permeability_models)}};
+    return std::make_unique<TwoPhaseFlowWithPrhoMaterialProperties>(
+        material_ids, std::move(_liquid_density), std::move(_viscosity),
+        std::move(_gas_density), std::move(_gas_viscosity),
+        _intrinsic_permeability_models, std::move(_porosity_models),
+        std::move(_storage_models), std::move(_capillary_pressure_models),
+        std::move(_relative_permeability_models));
 }
 
 }  // end namespace

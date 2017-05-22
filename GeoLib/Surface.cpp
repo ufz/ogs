@@ -74,7 +74,7 @@ void Surface::addTriangle(std::size_t pnt_a,
         ids[0] = pnt_a;
         ids[1] = pnt_b;
         ids[2] = pnt_c;
-        _bounding_volume.reset(new AABB(_sfc_pnts, ids));
+        _bounding_volume = std::make_unique<GeoLib::AABB>(_sfc_pnts, ids);
     }
     else
     {
@@ -155,7 +155,7 @@ bool Surface::isPntInSfc(MathLib::Point3d const& pnt, double eps) const
     // Mutable _surface_grid is constructed if method is called the first time.
     if (_surface_grid == nullptr)
     {
-        _surface_grid.reset(new SurfaceGrid(this));
+        _surface_grid = std::make_unique<GeoLib::SurfaceGrid>(this);
     }
     return _surface_grid->isPointInSurface(pnt, eps);
 }

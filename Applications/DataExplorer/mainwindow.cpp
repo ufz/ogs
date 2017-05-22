@@ -108,11 +108,11 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
     setupUi(this);
 
     // Setup various models
-    _meshModel.reset(new MshModel(_project));
-    _elementModel.reset(new ElementTreeModel());
-    _processModel.reset(new TreeModel());
+    _meshModel = std::make_unique<MshModel>(_project);
+    _elementModel = std::make_unique<ElementTreeModel>();
+    _processModel = std::make_unique<TreeModel>();
 
-    _geo_model.reset(new GEOModels{_project.getGEOObjects()});
+    _geo_model = std::make_unique<GEOModels>(_project.getGEOObjects());
     geoTabWidget->treeView->setModel(_geo_model->getGeoModel());
     stationTabWidget->treeView->setModel(_geo_model->getStationModel());
     mshTabWidget->treeView->setModel(_meshModel.get());
@@ -120,7 +120,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
     modellingTabWidget->treeView->setModel(_processModel.get());
 
     // vtk visualization pipeline
-    _vtkVisPipeline.reset(new VtkVisPipeline(visualizationWidget->renderer()));
+    _vtkVisPipeline =
+        std::make_unique<VtkVisPipeline>(visualizationWidget->renderer());
 
     // station model connects
     connect(stationTabWidget->treeView, SIGNAL(openStationListFile(int)),
@@ -327,7 +328,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
             SLOT(createPresentationMenu()));
     menuWindows->insertMenu(showVisDockAction, presentationMenu);
 
-    _visPrefsDialog.reset(new VisPrefsDialog(*_vtkVisPipeline, *visualizationWidget));
+    _visPrefsDialog = std::make_unique<VisPrefsDialog>(*_vtkVisPipeline,
+                                                       *visualizationWidget);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -540,8 +542,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     {
         if (fi.suffix().toLower() == "txt") // GMS borehole files
         {
-            auto boreholes = std::unique_ptr<std::vector<GeoLib::Point*>>(
-                new std::vector<GeoLib::Point*>());
+            auto boreholes = std::make_unique<std::vector<GeoLib::Point*>>();
             std::string name = fi.baseName().toStdString();
 
             if (GMSInterface::readBoreholesFromGMS(boreholes.get(), fileName.toStdString()))

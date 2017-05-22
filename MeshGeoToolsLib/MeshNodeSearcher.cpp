@@ -173,8 +173,9 @@ MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
         }
     }
 
-    _mesh_node_searchers[mesh_id].reset(new MeshGeoToolsLib::MeshNodeSearcher(
-        mesh, std::move(search_length_algorithm), SearchAllNodes::Yes));
+    _mesh_node_searchers[mesh_id] =
+        std::make_unique<MeshGeoToolsLib::MeshNodeSearcher>(
+            mesh, std::move(search_length_algorithm), SearchAllNodes::Yes);
 
     return *_mesh_node_searchers[mesh_id];
 }

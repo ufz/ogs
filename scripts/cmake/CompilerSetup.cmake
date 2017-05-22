@@ -6,7 +6,7 @@ include(MSVCMultipleProcessCompile) # /MP switch (multi processor) for VS
 set(CMAKE_OSX_ARCHITECTURES "x86_64")
 
 # C++ standard setup
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 

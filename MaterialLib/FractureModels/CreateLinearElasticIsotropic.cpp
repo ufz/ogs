@@ -38,8 +38,7 @@ createLinearElasticIsotropic(
     typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp{
         Kn, Ks};
 
-    return std::unique_ptr<LinearElasticIsotropic<DisplacementDim>>{
-        new LinearElasticIsotropic<DisplacementDim>{mp}};
+    return std::make_unique<LinearElasticIsotropic<DisplacementDim>>(mp);
 }
 
 

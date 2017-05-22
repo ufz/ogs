@@ -239,8 +239,7 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
     {
         // the copy is needed because addSurfaceVec is passing it to SurfaceVec
         // ctor, which needs write access to the surface vector.
-        auto sfc = std::unique_ptr<std::vector<GeoLib::Surface*>>{
-            new std::vector<GeoLib::Surface*>};
+        auto sfc = std::make_unique<std::vector<GeoLib::Surface*>>();
         for (auto surface : surfaces)
             sfc->push_back(surface);
         addSurfaceVec(std::move(sfc), name);
@@ -390,10 +389,9 @@ bool GEOObjects::mergePoints(std::vector<std::string> const & geo_names,
 {
     const std::size_t n_geo_names(geo_names.size());
 
-    auto merged_points = std::unique_ptr<std::vector<GeoLib::Point*>>(
-        new std::vector<GeoLib::Point*>);
-    std::unique_ptr<std::map<std::string, std::size_t>> merged_pnt_names{
-        new std::map<std::string, std::size_t>};
+    auto merged_points = std::make_unique<std::vector<GeoLib::Point*>>();
+    auto merged_pnt_names =
+        std::make_unique<std::map<std::string, std::size_t>>();
 
     for (std::size_t j(0); j < n_geo_names; ++j) {
         GeoLib::PointVec const*const pnt_vec(this->getPointVecObj(geo_names[j]));
@@ -435,10 +433,9 @@ void GEOObjects::mergePolylines(std::vector<std::string> const & geo_names,
     const std::size_t n_geo_names(geo_names.size());
     std::vector<std::size_t> ply_offsets(n_geo_names, 0);
 
-    auto merged_polylines = std::unique_ptr<std::vector<GeoLib::Polyline*>>{
-        new std::vector<GeoLib::Polyline*>};
-    std::unique_ptr<std::map<std::string, std::size_t>> merged_ply_names{
-        new  std::map<std::string, std::size_t>};
+    auto merged_polylines = std::make_unique<std::vector<GeoLib::Polyline*>>();
+    auto merged_ply_names =
+        std::make_unique<std::map<std::string, std::size_t>>();
 
     std::vector<GeoLib::Point*> const* merged_points(this->getPointVecObj(merged_geo_name)->getVector());
     std::vector<std::size_t> const& id_map (this->getPointVecObj(merged_geo_name)->getIDMap ());
@@ -481,8 +478,7 @@ void GEOObjects::mergeSurfaces(std::vector<std::string> const & geo_names,
 
     const std::size_t n_geo_names(geo_names.size());
     std::vector<std::size_t> sfc_offsets(n_geo_names, 0);
-    auto merged_sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(
-        new std::vector<GeoLib::Surface*>);
+    auto merged_sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
     std::unique_ptr<std::map<std::string, std::size_t>> merged_sfc_names;
     for (std::size_t j(0); j < n_geo_names; j++) {
         const std::vector<GeoLib::Surface*>* sfcs (this->getSurfaceVec(geo_names[j]));

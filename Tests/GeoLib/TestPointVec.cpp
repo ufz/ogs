@@ -49,14 +49,14 @@ TEST_F(PointVecTest, TestPointVecCtorNullptr)
 // Testing empty input vector.
 TEST_F(PointVecTest, TestPointVecCtorEmpty)
 {
-    auto ps_ptr = std::unique_ptr<VectorOfPoints>(new VectorOfPoints);
+    auto ps_ptr = std::make_unique<VectorOfPoints>();
     ASSERT_THROW(GeoLib::PointVec(name, std::move(ps_ptr)), std::runtime_error);
 }
 
 // Testing input vector with single point.
 TEST_F(PointVecTest, TestPointVecCtorSinglePoint)
 {
-    auto ps_ptr = std::unique_ptr<VectorOfPoints>(new VectorOfPoints);
+    auto ps_ptr = std::make_unique<VectorOfPoints>();
     ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
     GeoLib::PointVec* point_vec = nullptr;
     point_vec = new GeoLib::PointVec(name, std::move(ps_ptr));
@@ -68,7 +68,7 @@ TEST_F(PointVecTest, TestPointVecCtorSinglePoint)
 // Testing input vector with two different points.
 TEST_F(PointVecTest, TestPointVecCtorTwoDiffPoints)
 {
-    auto ps_ptr = std::unique_ptr<VectorOfPoints>(new VectorOfPoints);
+    auto ps_ptr = std::make_unique<VectorOfPoints>();
     ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
     ps_ptr->push_back(new GeoLib::Point(1,0,0,1));
 
@@ -82,7 +82,7 @@ TEST_F(PointVecTest, TestPointVecCtorTwoDiffPoints)
 // Testing input vector with two equal points.
 TEST_F(PointVecTest, TestPointVecCtorTwoEqualPoints)
 {
-    auto ps_ptr = std::unique_ptr<VectorOfPoints>(new VectorOfPoints);
+    auto ps_ptr = std::make_unique<VectorOfPoints>();
     ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
     ps_ptr->push_back(new GeoLib::Point(0,0,0,1));
 
@@ -96,7 +96,7 @@ TEST_F(PointVecTest, TestPointVecCtorTwoEqualPoints)
 // Testing input vector with single point.
 TEST_F(PointVecTest, TestPointVecPushBack)
 {
-    auto ps_ptr = std::unique_ptr<VectorOfPoints>(new VectorOfPoints);
+    auto ps_ptr = std::make_unique<VectorOfPoints>();
     ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
     ps_ptr->push_back(new GeoLib::Point(1,0,0,1));
     ps_ptr->push_back(new GeoLib::Point(0,1,0,2));
@@ -185,7 +185,7 @@ TEST_F(PointVecTest, TestPointVecPushBack)
 // Testing random input points.
 TEST_F(PointVecTest, TestPointVecCtorRandomPoints)
 {
-    auto ps_ptr = std::unique_ptr<VectorOfPoints>(new VectorOfPoints);
+    auto ps_ptr = std::make_unique<VectorOfPoints>();
     generateRandomPoints(*ps_ptr, 10000);
 
     GeoLib::PointVec* point_vec = nullptr;
@@ -195,7 +195,7 @@ TEST_F(PointVecTest, TestPointVecCtorRandomPoints)
 }
 TEST_F(PointVecTest, TestPointVecCtorRandomPointsLargeEps)
 {
-    auto ps_ptr = std::unique_ptr<VectorOfPoints>(new VectorOfPoints);
+    auto ps_ptr = std::make_unique<VectorOfPoints>();
     generateRandomPoints(*ps_ptr, 10000);
 
     GeoLib::PointVec* point_vec = nullptr;

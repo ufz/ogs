@@ -50,10 +50,10 @@ std::unique_ptr<Process> createTESProcess(
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
 
-    return std::unique_ptr<Process>{new TESProcess{
+    return std::make_unique<TESProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(secondary_variables),
-        std::move(named_function_caller), config}};
+        std::move(named_function_caller), config);
 }
 
 }  // namespace TES

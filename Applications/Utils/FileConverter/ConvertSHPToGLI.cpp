@@ -41,7 +41,7 @@ void convertPoints (DBFHandle dbf_handle,
     int n_records (DBFGetRecordCount (dbf_handle));
     INFO("Reading %d records.", n_records);
 
-    auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(new std::vector<GeoLib::Point*>);
+    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
     points->reserve (n_records);
 
     std::string name;

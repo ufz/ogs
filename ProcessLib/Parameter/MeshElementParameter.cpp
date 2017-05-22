@@ -33,8 +33,7 @@ std::unique_ptr<ParameterBase> createMeshElementParameter(
                   field_name.c_str());
     }
 
-    return std::unique_ptr<ParameterBase>(
-        new MeshElementParameter<double>(name, *property));
+    return std::make_unique<MeshElementParameter<double>>(name, *property);
 }
 
 }  // ProcessLib

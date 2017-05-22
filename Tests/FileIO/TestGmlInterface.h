@@ -49,8 +49,7 @@ public:
         test_pnts.emplace_back(3,1,0,6);
         test_pnts.emplace_back(3,2,0,7);
         test_pnts.emplace_back(3,3,0,8);
-        auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
-            new std::vector<GeoLib::Point*>(9));
+        auto points = std::make_unique<std::vector<GeoLib::Point*>>(9);
 
         std::unique_ptr<std::map<std::string, std::size_t>> cpy_name_id_map{
             new std::map<std::string, std::size_t>};
@@ -112,10 +111,8 @@ public:
 
         auto const& pnt_vec = *(geo_objects.getPointVecObj(geo_name));
 
-        auto lines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
-            new std::vector<GeoLib::Polyline*>(5));
-        auto name_map = std::unique_ptr<std::map<std::string, std::size_t>>{
-            new std::map<std::string, std::size_t>};
+        auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>(5);
+        auto name_map = std::make_unique<std::map<std::string, std::size_t>>();
 
         createPolyline(pnt_vec, *(lines.get()), 0, {0, 1, 2}, *name_map, "left");
         createPolyline(pnt_vec, *(lines.get()), 1, {3, 4, 5}, *name_map, "center");
@@ -159,10 +156,8 @@ public:
         const std::vector<std::size_t> pnt_id_map(
             geo_objects.getPointVecObj(geo_name)->getIDMap());
 
-        auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(
-            new std::vector<GeoLib::Surface*>(2));
-        auto sfc_names = std::unique_ptr<std::map<std::string, std::size_t>>{
-            new std::map<std::string, std::size_t>};
+        auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>(2);
+        auto sfc_names = std::make_unique<std::map<std::string, std::size_t>>();
         (*sfcs)[0] = new GeoLib::Surface(*points);
         (*sfcs)[0]->addTriangle(pnt_id_map[0], pnt_id_map[3], pnt_id_map[1]);
         (*sfcs)[0]->addTriangle(pnt_id_map[1], pnt_id_map[3], pnt_id_map[4]);

@@ -97,8 +97,7 @@ int main(int argc, char *argv[])
 
     // create surface
     INFO ("Triangulating surface...");
-    auto new_sfc = std::unique_ptr<std::vector<GeoLib::Surface*>>(
-        new std::vector<GeoLib::Surface*>);
+    auto new_sfc = std::make_unique<std::vector<GeoLib::Surface*>>();
     new_sfc->push_back(GeoLib::Surface::createSurface(*line));
 
     GeoLib::SurfaceVec* sfc_vec (geo_objects.getSurfaceVecObj(geo_names[0]));

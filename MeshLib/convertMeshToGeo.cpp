@@ -39,8 +39,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
     // nodes to points conversion
     std::string mesh_name(mesh.getName());
     {
-        auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
-            new std::vector<GeoLib::Point*>);
+        auto points = std::make_unique<std::vector<GeoLib::Point*>>();
         points->reserve(mesh.getNumberOfNodes());
 
         for (auto node_ptr : mesh.getNodes())
@@ -54,7 +53,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
     std::string const mat_name ("MaterialIDs");
     auto bounds (MeshInformation::getValueBounds<int>(mesh, mat_name));
     const unsigned nMatGroups(bounds.second-bounds.first+1);
-    auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(new std::vector<GeoLib::Surface*>);
+    auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
     sfcs->reserve(nMatGroups);
     auto const& points = *geo_objects.getPointVec(mesh_name);
     for (unsigned i=0; i<nMatGroups; ++i)

@@ -29,8 +29,8 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
     const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
-    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_strategy{
-        new MeshGeoToolsLib::SearchLength};
+    auto search_length_strategy =
+        std::make_unique<MeshGeoToolsLib::SearchLength>();
     MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
             mesh, std::move(search_length_strategy));

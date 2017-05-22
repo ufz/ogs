@@ -166,8 +166,8 @@ createCentralDifferencesJacobianAssembler(BaseLib::ConfigTree const& config)
         abs_eps.emplace_back(1e-8);
     }
 
-    return std::unique_ptr<CentralDifferencesJacobianAssembler>(
-        new CentralDifferencesJacobianAssembler(std::move(abs_eps)));
+    return std::make_unique<CentralDifferencesJacobianAssembler>(
+        std::move(abs_eps));
 }
 
 }  // ProcessLib

@@ -38,7 +38,6 @@ std::unique_ptr<CurveType> createPiecewiseLinearCurve(
             "The given coordinates and values vector sizes are "
             "different.");
     }
-    return std::unique_ptr<CurveType>(
-        new CurveType(std::move(x), std::move(y)));
+    return std::make_unique<CurveType>(std::move(x), std::move(y));
 }
 }

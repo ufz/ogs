@@ -40,10 +40,8 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
     GeoLib::GEOObjects & geometry_sets)
 {
     // copy data
-    auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
-        new std::vector<GeoLib::Point*>);
-    std::unique_ptr<std::map<std::string, std::size_t>> pnt_names{
-        new std::map<std::string, std::size_t>};
+    auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
+    auto pnt_names = std::make_unique<std::map<std::string, std::size_t>>();
     std::size_t cnt(0);
     for (std::size_t id: node_ids) {
         pnts->push_back(new GeoLib::Point(*(nodes[id]), cnt));
@@ -197,8 +195,8 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_strategy{
-        new MeshGeoToolsLib::SearchLength};
+    auto search_length_strategy =
+        std::make_unique<MeshGeoToolsLib::SearchLength>();
     if (search_length_arg.isSet()) {
         search_length_strategy.reset(
             new MeshGeoToolsLib::SearchLength(search_length_arg.getValue()));
@@ -245,10 +243,8 @@ int main (int argc, char* argv[])
     );
 
     double const eps (std::numeric_limits<double>::epsilon());
-    auto surface_pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
-        new std::vector<GeoLib::Point*>);
-    std::unique_ptr<std::map<std::string, std::size_t>> name_id_map{
-        new std::map<std::string, std::size_t>};
+    auto surface_pnts = std::make_unique<std::vector<GeoLib::Point*>>();
+    auto name_id_map = std::make_unique<std::map<std::string, std::size_t>>();
 
     // insert first point
     surface_pnts->push_back(

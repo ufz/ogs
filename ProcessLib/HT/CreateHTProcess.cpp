@@ -167,10 +167,10 @@ std::unique_ptr<Process> createHTProcess(
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
 
-    return std::unique_ptr<Process>{new HTProcess{
+    return std::make_unique<HTProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller)}};
+        std::move(secondary_variables), std::move(named_function_caller));
 }
 
 }  // namespace HT

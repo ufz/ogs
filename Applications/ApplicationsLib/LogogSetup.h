@@ -28,9 +28,8 @@ public:
     LogogSetup()
     {
         LOGOG_INITIALIZE();
-        logog_cout = std::unique_ptr<logog::Cout>(new logog::Cout);
-        setFormatter(std::unique_ptr<BaseLib::LogogSimpleFormatter>
-            (new BaseLib::LogogSimpleFormatter));
+        logog_cout = std::make_unique<logog::Cout>();
+        setFormatter(std::make_unique<BaseLib::LogogSimpleFormatter>());
     }
 
     ~LogogSetup()

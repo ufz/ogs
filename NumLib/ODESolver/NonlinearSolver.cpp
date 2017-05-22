@@ -309,8 +309,6 @@ std::pair<std::unique_ptr<NonlinearSolverBase>, NonlinearSolverTag>
 createNonlinearSolver(GlobalLinearSolver& linear_solver,
                       BaseLib::ConfigTree const& config)
 {
-    using AbstractNLS = NonlinearSolverBase;
-
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__type}
     auto const type = config.getConfigParameter<std::string>("type");
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__max_iter}
@@ -320,16 +318,12 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
         auto const tag = NonlinearSolverTag::Picard;
         using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(
-            std::unique_ptr<AbstractNLS>(
-                new ConcreteNLS{linear_solver, max_iter}),
-            tag);
+            std::make_unique<ConcreteNLS>(linear_solver, max_iter), tag);
     } else if (type == "Newton") {
         auto const tag = NonlinearSolverTag::Newton;
         using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(
-            std::unique_ptr<AbstractNLS>(
-                new ConcreteNLS{linear_solver, max_iter}),
-            tag);
+            std::make_unique<ConcreteNLS>(linear_solver, max_iter), tag);
     }
     OGS_FATAL("Unsupported nonlinear solver type");
 }

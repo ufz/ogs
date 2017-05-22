@@ -27,7 +27,8 @@ public:
     NumLibLocalToGlobalIndexMapTest()
     {
         mesh.reset(MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size));
-        nodesSubset.reset(new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
+        nodesSubset =
+            std::make_unique<MeshLib::MeshSubset>(*mesh, &mesh->getNodes());
 
         // Add two components both based on the same nodesSubset.
         components.emplace_back(nodesSubset.get());
@@ -57,8 +58,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByComponent)
     // DOF-table.
     std::size_t components_size = components.size();
 
-    dof_map.reset(new NumLib::LocalToGlobalIndexMap(std::move(components),
-        NumLib::ComponentOrder::BY_COMPONENT));
+    dof_map = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        std::move(components), NumLib::ComponentOrder::BY_COMPONENT);
 
     // There must be as many rows as nodes in the input times the number of
     // components.
@@ -75,8 +76,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByLocation)
     // DOF-table.
     std::size_t components_size = components.size();
 
-    dof_map.reset(new NumLib::LocalToGlobalIndexMap(std::move(components),
-        NumLib::ComponentOrder::BY_LOCATION));
+    dof_map = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        std::move(components), NumLib::ComponentOrder::BY_LOCATION);
 
     // There must be as many rows as nodes in the input times the number of
     // components.
@@ -89,8 +90,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, SubsetByComponent)
 TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
 #endif
 {
-    dof_map.reset(new NumLib::LocalToGlobalIndexMap(std::move(components),
-        NumLib::ComponentOrder::BY_COMPONENT));
+    dof_map = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        std::move(components), NumLib::ComponentOrder::BY_COMPONENT);
 
     // Select some elements from the full mesh.
     std::array<std::size_t, 3> const ids = {{ 0, 5, 8 }};
@@ -127,10 +128,10 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
 
     std::vector<unsigned> vec_var_n_components{1, 2};
 
-    dof_map.reset(new NumLib::LocalToGlobalIndexMap(
-                      std::move(components),
-                      vec_var_n_components,
-                      NumLib::ComponentOrder::BY_COMPONENT));
+    dof_map = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        std::move(components),
+        vec_var_n_components,
+        NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(30, dof_map->dofSizeWithGhosts());
     ASSERT_EQ(3u, dof_map->getNumberOfComponents());
@@ -156,10 +157,10 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
 
     std::vector<unsigned> vec_var_n_components{2, 1};
 
-    dof_map.reset(new NumLib::LocalToGlobalIndexMap(
-                      std::move(components),
-                      vec_var_n_components,
-                      NumLib::ComponentOrder::BY_COMPONENT));
+    dof_map = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        std::move(components),
+        vec_var_n_components,
+        NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(30, dof_map->dofSizeWithGhosts());
     ASSERT_EQ(3u, dof_map->getNumberOfComponents());
@@ -185,7 +186,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     // - 1st variable with 2 components for all nodes, elements
     // - 2nd variable with 1 component for nodes of element id 1
     std::vector<MeshLib::Node*> var2_nodes{const_cast<MeshLib::Node*>(mesh->getNode(1)), const_cast<MeshLib::Node*>(mesh->getNode(2))};
-    std::unique_ptr<MeshLib::MeshSubset> var2_subset(new MeshLib::MeshSubset(*mesh, &var2_nodes));
+    auto var2_subset =
+        std::make_unique<MeshLib::MeshSubset>(*mesh, &var2_nodes);
     components.emplace_back(var2_subset.get());
 
     std::vector<unsigned> vec_var_n_components{2, 1};
@@ -194,11 +196,11 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     std::vector<MeshLib::Element*> var2_elements{const_cast<MeshLib::Element*>(mesh->getElement(1))};
     vec_var_elements.push_back(&var2_elements);
 
-    dof_map.reset(new NumLib::LocalToGlobalIndexMap(
-                      std::move(components),
-                      vec_var_n_components,
-                      vec_var_elements,
-                      NumLib::ComponentOrder::BY_COMPONENT));
+    dof_map = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        std::move(components),
+        vec_var_n_components,
+        vec_var_elements,
+        NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(22u, dof_map->dofSizeWithGhosts());
     ASSERT_EQ(3u, dof_map->getNumberOfComponents());
@@ -237,7 +239,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     // - 1st variable with 2 components for all nodes, elements
     // - 2nd variable with 1 component for 1st node of element id 1
     std::vector<MeshLib::Node*> var2_nodes{const_cast<MeshLib::Node*>(mesh->getNode(1))};
-    std::unique_ptr<MeshLib::MeshSubset> var2_subset(new MeshLib::MeshSubset(*mesh, &var2_nodes));
+    auto var2_subset =
+        std::make_unique<MeshLib::MeshSubset>(*mesh, &var2_nodes);
     components.emplace_back(var2_subset.get());
 
     std::vector<unsigned> vec_var_n_components{2, 1};
@@ -246,11 +249,11 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     std::vector<MeshLib::Element*> var2_elements{const_cast<MeshLib::Element*>(mesh->getElement(1))};
     vec_var_elements.push_back(&var2_elements);
 
-    dof_map.reset(new NumLib::LocalToGlobalIndexMap(
-                      std::move(components),
-                      vec_var_n_components,
-                      vec_var_elements,
-                      NumLib::ComponentOrder::BY_COMPONENT));
+    dof_map = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        std::move(components),
+        vec_var_n_components,
+        vec_var_elements,
+        NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(21u, dof_map->dofSizeWithGhosts());
     ASSERT_EQ(3u, dof_map->getNumberOfComponents());

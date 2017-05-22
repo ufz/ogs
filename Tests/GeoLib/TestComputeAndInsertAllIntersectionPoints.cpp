@@ -26,8 +26,7 @@ TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
 
     {
         // *** insert points in vector
-        auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
-            new std::vector<GeoLib::Point*>);
+        auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
         pnts->push_back(new GeoLib::Point(0.0,0.0,0.0,0));
         pnts->push_back(new GeoLib::Point(11.0,0.0,0.0,1));
 

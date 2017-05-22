@@ -77,10 +77,9 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
 
     auto& param = findParameter<double>(param_name, parameters, 1);
 
-    return std::unique_ptr<DirichletBoundaryCondition>(
-        new DirichletBoundaryCondition(param, std::move(mesh_node_ids),
-                                       dof_table, mesh_id, variable_id,
-                                       component_id));
+    return std::make_unique<DirichletBoundaryCondition>(
+        param, std::move(mesh_node_ids), dof_table, mesh_id, variable_id,
+        component_id);
 }
 
 }  // namespace ProcessLib

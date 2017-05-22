@@ -108,25 +108,22 @@ createLiquidFlowMaterialProperties(
         auto& biot_constant = findParameter<double>(
             //! \ogs_file_param_special{prj__processes__process__LIQUID_FLOW__material_property__solid__biot_constant}
             *solid_config, "biot_constant", parameters, 1);
-        return std::unique_ptr<LiquidFlowMaterialProperties>(
-            new LiquidFlowMaterialProperties(
-                std::move(fluid_properties),
-                std::move(intrinsic_permeability_models),
-                std::move(porosity_models), std::move(storage_models),
-                has_material_ids, material_ids, solid_thermal_expansion,
-                biot_constant));
+        return std::make_unique<LiquidFlowMaterialProperties>(
+            std::move(fluid_properties),
+            std::move(intrinsic_permeability_models),
+            std::move(porosity_models), std::move(storage_models),
+            has_material_ids, material_ids, solid_thermal_expansion,
+            biot_constant);
     }
     else
     {
         ConstantParameter<double> void_parameter("void_solid_thermal_expansion",
                                                  0.);
-        return std::unique_ptr<LiquidFlowMaterialProperties>(
-            new LiquidFlowMaterialProperties(
-                std::move(fluid_properties),
-                std::move(intrinsic_permeability_models),
-                std::move(porosity_models), std::move(storage_models),
-                has_material_ids, material_ids, void_parameter,
-                void_parameter));
+        return std::make_unique<LiquidFlowMaterialProperties>(
+            std::move(fluid_properties),
+            std::move(intrinsic_permeability_models),
+            std::move(porosity_models), std::move(storage_models),
+            has_material_ids, material_ids, void_parameter, void_parameter);
     }
 }
 

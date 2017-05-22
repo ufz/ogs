@@ -106,8 +106,9 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
         sfc_mesh.reset(MeshLib::MeshSurfaceExtraction::getMeshSurface(
             mesh, dir, angle, prop_name));
     else {
-        sfc_mesh = (on_top) ? std::unique_ptr<MeshLib::Mesh>(new MeshLib::Mesh(mesh)) :
-                              std::unique_ptr<MeshLib::Mesh>(MeshLib::createFlippedMesh(mesh));
+        sfc_mesh = (on_top) ? std::make_unique<MeshLib::Mesh>(mesh)
+                            : std::unique_ptr<MeshLib::Mesh>(
+                                  MeshLib::createFlippedMesh(mesh));
         // add property storing node ids
         auto* const pv =
             sfc_mesh->getProperties().createNewPropertyVector<std::size_t>(

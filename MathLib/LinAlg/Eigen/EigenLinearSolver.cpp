@@ -120,7 +120,7 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver()
 {
     using Slv = EigenIterativeLinearSolver<
         Solver<EigenMatrix::RawMatrixType, Precon>>;
-    return std::unique_ptr<Slv>(new Slv);
+    return std::make_unique<Slv>();
 }
 
 template <template <typename, typename> class Solver>
@@ -188,7 +188,8 @@ EigenLinearSolver::EigenLinearSolver(
         case EigenOption::SolverType::SparseLU: {
             using SolverType =
                 Eigen::SparseLU<Matrix, Eigen::COLAMDOrdering<int>>;
-            _solver.reset(new details::EigenDirectLinearSolver<SolverType>);
+            _solver = std::make_unique<
+                details::EigenDirectLinearSolver<SolverType>>();
             return;
         }
         case EigenOption::SolverType::BiCGSTAB:
@@ -266,7 +267,8 @@ bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
     if (_option.scaling)
     {
         INFO("-> scale");
-        scal.reset(new Eigen::IterScaling<EigenMatrix::RawMatrixType>());
+        scal =
+            std::make_unique<Eigen::IterScaling<EigenMatrix::RawMatrixType>>();
         scal->computeRef(A.getRawMatrix());
         b.getRawVector() = scal->LeftScaling().cwiseProduct(b.getRawVector());
     }

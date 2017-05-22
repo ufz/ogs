@@ -38,7 +38,7 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
         return;
     }
 
-    std::unique_ptr< std::vector<GeoLib::Point*> > new_pnts (new std::vector<GeoLib::Point*>);
+    auto new_pnts = std::make_unique<std::vector<GeoLib::Point*>>();
     new_pnts->reserve(pnts->size());
     std::transform(pnts->cbegin(), pnts->cend(), std::back_inserter(*new_pnts),
         [](GeoLib::Point* point) { return new GeoLib::Point(*point); });
@@ -63,8 +63,8 @@ std::unique_ptr<std::vector<GeoLib::Polyline*>> DuplicateGeometry::copyPolylines
     std::vector<GeoLib::Polyline*> const& polylines) const
 {
     std::size_t const n_plys = polylines.size();
-    std::unique_ptr<std::vector<GeoLib::Polyline*>> new_lines
-        (new std::vector<Polyline*>(n_plys, nullptr));
+    auto new_lines =
+        std::make_unique<std::vector<GeoLib::Polyline*>>(n_plys, nullptr);
 
     for (std::size_t i=0; i<n_plys; ++i)
     {
@@ -82,8 +82,8 @@ std::unique_ptr<std::vector<Surface*>> DuplicateGeometry::copySurfacesVector(
     std::vector<Surface*> const& surfaces) const
 {
     std::size_t const n_sfc = surfaces.size();
-    std::unique_ptr<std::vector<GeoLib::Surface*>> new_surfaces
-        (new std::vector<Surface*>(n_sfc, nullptr));
+    auto new_surfaces =
+        std::make_unique<std::vector<GeoLib::Surface*>>(n_sfc, nullptr);
 
     for (std::size_t i=0; i<n_sfc; ++i)
     {

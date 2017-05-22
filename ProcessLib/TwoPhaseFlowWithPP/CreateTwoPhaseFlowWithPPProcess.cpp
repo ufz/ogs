@@ -92,11 +92,11 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     TwoPhaseFlowWithPPProcessData process_data{
         specific_body_force, has_gravity, mass_lumping, temperature, std::move(material)};
 
-    return std::unique_ptr<Process>{new TwoPhaseFlowWithPPProcess{
+    return std::make_unique<TwoPhaseFlowWithPPProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        mat_config, curves}};
+        mat_config, curves);
 }
 
 }  // end of namespace

@@ -76,18 +76,17 @@ std::unique_ptr<FluidProperties> createFluidProperties(
 
     if (is_mu_density_dependent || is_cp_density_dependent ||
         is_KT_density_dependent)
-        return std::unique_ptr<MaterialLib::Fluid::FluidProperties>(
-            new MaterialLib::Fluid::FluidPropertiesWithDensityDependentModels(
-                std::move(liquid_density), std::move(viscosity),
-                std::move(specific_heat_capacity),
-                std::move(thermal_conductivity), is_mu_density_dependent,
-                is_cp_density_dependent, is_KT_density_dependent));
+        return std::make_unique<
+            MaterialLib::Fluid::FluidPropertiesWithDensityDependentModels>(
+            std::move(liquid_density), std::move(viscosity),
+            std::move(specific_heat_capacity), std::move(thermal_conductivity),
+            is_mu_density_dependent, is_cp_density_dependent,
+            is_KT_density_dependent);
     else
-        return std::unique_ptr<MaterialLib::Fluid::FluidProperties>(
-            new MaterialLib::Fluid::PrimaryVariableDependentFluidProperties(
-                std::move(liquid_density), std::move(viscosity),
-                std::move(specific_heat_capacity),
-                std::move(thermal_conductivity)));
+        return std::make_unique<
+            MaterialLib::Fluid::PrimaryVariableDependentFluidProperties>(
+            std::move(liquid_density), std::move(viscosity),
+            std::move(specific_heat_capacity), std::move(thermal_conductivity));
 }
 
 }  // end namespace

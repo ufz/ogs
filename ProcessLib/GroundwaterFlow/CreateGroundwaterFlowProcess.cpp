@@ -93,12 +93,12 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
         surface_mesh->setAxiallySymmetric(mesh.isAxiallySymmetric());
     }
 
-    return std::unique_ptr<Process>{new GroundwaterFlowProcess{
+    return std::make_unique<GroundwaterFlowProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
         surface_mesh.release(), std::move(balance_pv_name),
-        std::move(balance_out_fname)}};
+        std::move(balance_out_fname));
 }
 
 }  // namespace GroundwaterFlow

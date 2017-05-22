@@ -69,7 +69,7 @@ public:
         }
 
         if (!_name_id_map)
-            _name_id_map.reset(new NameIdMap);
+            _name_id_map = std::make_unique<NameIdMap>();
     }
 
     /**

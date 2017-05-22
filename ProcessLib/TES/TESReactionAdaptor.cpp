@@ -31,28 +31,24 @@ std::unique_ptr<TESFEMReactionAdaptor> TESFEMReactionAdaptor::newInstance(
     auto const* ads = data.ap.react_sys.get();
     if (dynamic_cast<Adsorption::AdsorptionReaction const*>(ads) != nullptr)
     {
-        return std::unique_ptr<TESFEMReactionAdaptor>(
-            new TESFEMReactionAdaptorAdsorption(data));
+        return std::make_unique<TESFEMReactionAdaptorAdsorption>(data);
     }
     else if (dynamic_cast<Adsorption::ReactionInert const*>(ads) != nullptr)
     {
-        return std::unique_ptr<TESFEMReactionAdaptor>(
-            new TESFEMReactionAdaptorInert(data));
+        return std::make_unique<TESFEMReactionAdaptorInert>(data);
     }
     else if (dynamic_cast<Adsorption::ReactionSinusoidal const*>(ads) !=
              nullptr)
     {
-        return std::unique_ptr<TESFEMReactionAdaptor>(
-            new TESFEMReactionAdaptorSinusoidal(data));
+        return std::make_unique<TESFEMReactionAdaptorSinusoidal>(data);
     }
     else if (dynamic_cast<Adsorption::ReactionCaOH2 const*>(ads) != nullptr)
     {
-        return std::unique_ptr<TESFEMReactionAdaptor>(
-            new TESFEMReactionAdaptorCaOH2(data));
+        return std::make_unique<TESFEMReactionAdaptorCaOH2>(data);
     }
 
     OGS_FATAL("No suitable TESFEMReactionAdaptor found. Aborting.");
-    return std::unique_ptr<TESFEMReactionAdaptor>(nullptr);
+    return nullptr;
 }
 
 TESFEMReactionAdaptorAdsorption::TESFEMReactionAdaptorAdsorption(

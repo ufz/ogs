@@ -33,7 +33,7 @@ ProcessVariable::ProcessVariable(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
           parameters, _n_components)),
-      _bc_builder(new BoundaryConditionBuilder())
+      _bc_builder(std::make_unique<BoundaryConditionBuilder>())
 {
     DBUG("Constructing process variable %s", _name.c_str());
 

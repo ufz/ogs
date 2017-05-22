@@ -84,14 +84,14 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
         vec_values[p.first] = p.second;
 
     if (group_id_property->getMeshItemType() == MeshLib::MeshItemType::Node)
-        return std::unique_ptr<ParameterBase>(
-            new GroupBasedParameter<double, MeshLib::MeshItemType::Node>(
-                name, *group_id_property, vec_values));
+        return std::make_unique<
+            GroupBasedParameter<double, MeshLib::MeshItemType::Node>>(
+            name, *group_id_property, vec_values);
     else if (group_id_property->getMeshItemType() ==
              MeshLib::MeshItemType::Cell)
-        return std::unique_ptr<ParameterBase>(
-            new GroupBasedParameter<double, MeshLib::MeshItemType::Cell>(
-                name, *group_id_property, vec_values));
+        return std::make_unique<
+            GroupBasedParameter<double, MeshLib::MeshItemType::Cell>>(
+            name, *group_id_property, vec_values);
 
     OGS_FATAL("Mesh item type of the specified property is not supported.");
 }

@@ -157,8 +157,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     // *** insert stations and polylines (except polygons) in the appropriate object of
     //     class GMSHPolygonTree
     // *** insert stations
-    auto gmsh_stations = std::unique_ptr<std::vector<GeoLib::Point*>>(
-        new std::vector<GeoLib::Point*>);
+    auto gmsh_stations = std::make_unique<std::vector<GeoLib::Point*>>();
     for (auto const& geometry_name : _selected_geometries) {
         auto const* stations(_geo_objs.getStationVec(geometry_name));
         if (stations) {

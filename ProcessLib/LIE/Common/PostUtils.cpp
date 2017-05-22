@@ -107,7 +107,8 @@ PostProcessTool::PostProcessTool(
     }
 
     // new mesh
-    _output_mesh.reset(new MeshLib::Mesh(org_mesh.getName(), new_nodes, new_eles));
+    _output_mesh = std::make_unique<MeshLib::Mesh>(org_mesh.getName(),
+                                                   new_nodes, new_eles);
     createProperties<int>();
     createProperties<double>();
     copyProperties<int>();

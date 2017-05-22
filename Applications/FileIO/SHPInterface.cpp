@@ -72,8 +72,7 @@ void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, cons
 void SHPInterface::readPoints(const SHPHandle &hSHP, int numberOfElements, std::string listName)
 {
     if (numberOfElements > 0) {
-        auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
-            new std::vector<GeoLib::Point*>);
+        auto points = std::make_unique<std::vector<GeoLib::Point*>>();
         SHPObject* hSHPObject;
 
         for (int i = 0; i < numberOfElements; i++) {
@@ -93,8 +92,7 @@ void SHPInterface::readPoints(const SHPHandle &hSHP, int numberOfElements, std::
 void SHPInterface::readStations(const SHPHandle &hSHP, int numberOfElements, std::string listName)
 {
     if (numberOfElements > 0) {
-        auto stations = std::unique_ptr<std::vector<GeoLib::Point*>>(
-            new std::vector<GeoLib::Point*>);
+        auto stations = std::make_unique<std::vector<GeoLib::Point*>>();
         stations->reserve(numberOfElements);
         SHPObject* hSHPObject;
 
@@ -116,10 +114,8 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
 {
     if (numberOfElements <= 0)
         return;
-    auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
-        new std::vector<GeoLib::Point*>);
-    auto lines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
-        new std::vector<GeoLib::Polyline*>);
+    auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
+    auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
 
     std::size_t pnt_id(0);
     // for each polyline
@@ -178,8 +174,7 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, con
     readPolylines(hSHP, numberOfElements, listName);
 
     auto const polylines = _geoObjects.getPolylineVec(listName);
-    auto sfc_vec = std::unique_ptr<std::vector<GeoLib::Surface*>>(
-        new std::vector<GeoLib::Surface*>);
+    auto sfc_vec = std::make_unique<std::vector<GeoLib::Surface*>>();
 
     for (auto const* polyline : *polylines) {
         GeoLib::Surface* sfc(GeoLib::Surface::createSurface(*polyline));
