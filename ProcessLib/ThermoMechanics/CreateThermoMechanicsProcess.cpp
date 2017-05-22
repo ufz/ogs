@@ -135,7 +135,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         "specific_heat_capacity", parameters, 1);
     DBUG("Use \'%s\' as specific heat capacity parameter.",
          specific_heat_capacity.name.c_str());
-    // Thermal conductivity
+    // Thermal conductivity // TODO To be changed as tensor input.
     auto& thermal_conductivity = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__thermal_conductivity}
