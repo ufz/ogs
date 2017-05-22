@@ -568,14 +568,16 @@ splitSolutionVector(ResidualVector const& solution)
 template <int JacobianResidualSize, int DisplacementDim>
 boost::optional<std::tuple<
     ProcessLib::KelvinVectorType<DisplacementDim>,
-    MaterialStateVariables<DisplacementDim>,
+    PlasticStrain<ProcessLib::KelvinVectorType<DisplacementDim>>,
     Eigen::FullPivLU<Eigen::Matrix<double, JacobianResidualSize,
                                    JacobianResidualSize, Eigen::RowMajor>>>>
 newton(double const dt, MaterialProperties const& mp,
        typename SolidEhlers<DisplacementDim>::KelvinVector const& eps_D,
        double const eps_V,
        NumLib::NewtonRaphsonSolverParameters const& nonlinear_solver_parameters,
-       MaterialStateVariables<DisplacementDim> state,
+       PlasticStrain<ProcessLib::KelvinVectorType<DisplacementDim>> eps_p,
+       PlasticStrain<ProcessLib::KelvinVectorType<DisplacementDim>> const&
+           eps_p_prev,
        PhysicalStressWithInvariants<DisplacementDim> s,
        typename SolidEhlers<DisplacementDim>::KelvinVector sigma)
 {
@@ -594,19 +596,19 @@ newton(double const dt, MaterialProperties const& mp,
 
     // Agglomerated solution vector construction.
     ResidualVectorType solution;
-    solution << sigma, state.eps_p.D, state.eps_p.V, state.eps_p.eff, 0;
+    solution << sigma, eps_p.D, eps_p.V, eps_p.eff, 0;
 
     auto const update_residual = [&](ResidualVectorType& residual) {
 
         auto const& eps_p_D =
             solution.template segment<KelvinVectorSize>(KelvinVectorSize);
-        KelvinVector const eps_p_D_dot = (eps_p_D - state.eps_p_prev.D) / dt;
+        KelvinVector const eps_p_D_dot = (eps_p_D - eps_p_prev.D) / dt;
 
         double const& eps_p_V = solution[KelvinVectorSize * 2];
-        double const eps_p_V_dot = (eps_p_V - state.eps_p_prev.V) / dt;
+        double const eps_p_V_dot = (eps_p_V - eps_p_prev.V) / dt;
 
         double const& eps_p_eff = solution[KelvinVectorSize * 2 + 1];
-        double const eps_p_eff_dot = (eps_p_eff - state.eps_p_prev.eff) / dt;
+        double const eps_p_eff_dot = (eps_p_eff - eps_p_prev.eff) / dt;
 
         double const k_hardening =
             calculateIsotropicHardening(mp.kappa, mp.hardening_coefficient,
@@ -648,10 +650,10 @@ newton(double const dt, MaterialProperties const& mp,
     if (*success_iterations == 0)
         linear_solver.compute(jacobian);
 
-    std::tie(sigma, state.eps_p, std::ignore) =
+    std::tie(sigma, eps_p, std::ignore) =
         splitSolutionVector<ResidualVectorType, KelvinVector>(solution);
 
-    return std::make_tuple(sigma, state, linear_solver);
+    return {{sigma, eps_p, linear_solver}};
 }
 
 template <int DisplacementDim>
@@ -723,9 +725,9 @@ SolidEhlers<DisplacementDim>::integrateStress(
             linear_solver;
 
         if (auto&& solution = newton<JacobianResidualSize>(
-                dt, mp, eps_D, eps_V, _nonlinear_solver_parameters, state, s,
-                sigma))
-            std::tie(sigma, state, linear_solver) = *solution;
+                dt, mp, eps_D, eps_V, _nonlinear_solver_parameters, state.eps_p,
+                state.eps_p_prev, s, sigma))
+            std::tie(sigma, state.eps_p, linear_solver) = *solution;
         else
                 return {sigma, nullptr, tangentStiffness};
 
