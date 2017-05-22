@@ -69,7 +69,8 @@ struct ThermoMechanicsProcessData
     Parameter<double> const& solid_density;
     Parameter<double> const& linear_thermal_expansion_coefficient;
     Parameter<double> const& specific_heat_capacity;
-    Parameter<double> const& thermal_conductivity;
+    Parameter<double> const&
+        thermal_conductivity;  // TODO To be changed as a matrix type variable.
     double const reference_temperature;
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt;
