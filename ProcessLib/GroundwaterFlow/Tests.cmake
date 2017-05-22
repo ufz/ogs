@@ -392,7 +392,7 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-15 RELTOL 1e-14
+    ABSTOL 2e-15 RELTOL 1e-16
     DIFF_DATA
     quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_0.vtu quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure
     quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_1.vtu quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_1.vtu pressure pressure
@@ -407,7 +407,7 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-14 RELTOL 1e-6
+    ABSTOL 2e-15 RELTOL 1e-16
     DIFF_DATA
     cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure
     cube_1e3_pcs_0_ts_1_t_1_000000_1.vtu cube_1e3_pcs_0_ts_1_t_1_000000_1.vtu pressure pressure
