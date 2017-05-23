@@ -31,8 +31,8 @@ calculatedGdEBurgers()
                   Lubby2<DisplacementDim>::KelvinVectorSize>
         dGdE;
     dGdE.setZero();
-    dGdE.template block<Lubby2<DisplacementDim>::KelvinVectorSize,
-                        Lubby2<DisplacementDim>::KelvinVectorSize>(0, 0)
+    dGdE.template topLeftCorner<Lubby2<DisplacementDim>::KelvinVectorSize,
+                                Lubby2<DisplacementDim>::KelvinVectorSize>()
         .diagonal()
         .setConstant(-2);
     return dGdE;
@@ -54,7 +54,7 @@ ProcessLib::KelvinMatrixType<DisplacementDim> tangentStiffnessA(
 
     KelvinMatrix const dzdE =
         linear_solver.solve(-dGdE)
-            .template block<KelvinVectorSize, KelvinVectorSize>(0, 0);
+            .template topLeftCorner<KelvinVectorSize, KelvinVectorSize>();
 
     using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
     auto const& P_sph = Invariants::spherical_projection;
@@ -139,14 +139,14 @@ Lubby2<DisplacementDim>::integrateStress(
 
         auto const update_solution = [&](LocalResidualVector const& increment) {
             // increment solution vectors
-            sigd_j.noalias() += increment.template block<KelvinVectorSize, 1>(
-                KelvinVectorSize * 0, 0);
+            sigd_j.noalias() += increment.template segment<KelvinVectorSize>(
+                KelvinVectorSize * 0);
             state.eps_K_j.noalias() +=
-                increment.template block<KelvinVectorSize, 1>(
-                    KelvinVectorSize * 1, 0);
+                increment.template segment<KelvinVectorSize>(KelvinVectorSize *
+                                                             1);
             state.eps_M_j.noalias() +=
-                increment.template block<KelvinVectorSize, 1>(
-                    KelvinVectorSize * 2, 0);
+                increment.template segment<KelvinVectorSize>(KelvinVectorSize *
+                                                             2);
 
             // Calculate effective stress and update material properties
             sig_eff = MaterialLib::SolidModels::Invariants<
@@ -202,17 +202,17 @@ void Lubby2<DisplacementDim>::calculateResidualBurgers(
     detail::LocalLubby2Properties<DisplacementDim> const& properties)
 {
     // calculate stress residual
-    res.template block<KelvinVectorSize, 1>(0, 0).noalias() =
+    res.template segment<KelvinVectorSize>(0).noalias() =
         stress_curr - 2. * (strain_curr - strain_Kel_curr - strain_Max_curr);
 
     // calculate Kelvin strain residual
-    res.template block<KelvinVectorSize, 1>(KelvinVectorSize, 0).noalias() =
+    res.template segment<KelvinVectorSize>(KelvinVectorSize).noalias() =
         1. / dt * (strain_Kel_curr - strain_Kel_t) -
         1. / (2. * properties.etaK) * (properties.GM0 * stress_curr -
                                        2. * properties.GK * strain_Kel_curr);
 
     // calculate Maxwell strain residual
-    res.template block<KelvinVectorSize, 1>(2 * KelvinVectorSize, 0).noalias() =
+    res.template segment<KelvinVectorSize>(2 * KelvinVectorSize).noalias() =
         1. / dt * (strain_Max_curr - strain_Max_t) -
         0.5 * properties.GM0 / properties.etaM * stress_curr;
 }
