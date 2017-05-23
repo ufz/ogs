@@ -87,10 +87,10 @@ public:
     {
     }
 
-    std::tuple<KelvinVector,
-               std::unique_ptr<typename MechanicsBase<
-                   DisplacementDim>::MaterialStateVariables>,
-               KelvinMatrix>
+    boost::optional<std::tuple<KelvinVector,
+                               std::unique_ptr<typename MechanicsBase<
+                                   DisplacementDim>::MaterialStateVariables>,
+                               KelvinMatrix>>
     integrateStress(
         double const t,
         ProcessLib::SpatialPosition const& x,
@@ -108,14 +108,13 @@ public:
 
         KelvinVector sigma = sigma_prev + C * (eps - eps_prev);
 
-        return std::make_tuple(
-            sigma,
-            std::unique_ptr<typename MechanicsBase<
-                DisplacementDim>::MaterialStateVariables>{
-                new MaterialStateVariables{
-                    static_cast<MaterialStateVariables const&>(
-                        material_state_variables)}},
-            C);
+        return {{sigma,
+                 std::unique_ptr<typename MechanicsBase<
+                     DisplacementDim>::MaterialStateVariables>{
+                     new MaterialStateVariables{
+                         static_cast<MaterialStateVariables const&>(
+                             material_state_variables)}},
+                 C}};
     }
 
 private:

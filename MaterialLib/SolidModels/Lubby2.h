@@ -181,10 +181,10 @@ public:
     {
     }
 
-    std::tuple<KelvinVector,
-               std::unique_ptr<typename MechanicsBase<
-                   DisplacementDim>::MaterialStateVariables>,
-               KelvinMatrix>
+    boost::optional<std::tuple<KelvinVector,
+                               std::unique_ptr<typename MechanicsBase<
+                                   DisplacementDim>::MaterialStateVariables>,
+                               KelvinMatrix>>
     integrateStress(
         double const t,
         ProcessLib::SpatialPosition const& x,

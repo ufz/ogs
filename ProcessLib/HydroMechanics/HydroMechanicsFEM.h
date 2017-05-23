@@ -90,17 +90,15 @@ struct IntegrationPointData final
     {
         eps.noalias() = b_matrices * u;
 
-        KelvinMatrixType<DisplacementDim> C;
-        std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-            DisplacementDim>::MaterialStateVariables>
-            new_state;
-        std::tie(sigma_eff, new_state, C) = solid_material.integrateStress(
+        auto&& solution = solid_material.integrateStress(
             t, x_position, dt, eps_prev, eps, sigma_eff_prev,
             *material_state_variables);
 
-        if (!new_state)
+        if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
-        material_state_variables = std::move(new_state);
+
+        KelvinMatrixType<DisplacementDim> C;
+        std::tie(sigma_eff, material_state_variables, C) = std::move(*solution);
 
         return C;
     }

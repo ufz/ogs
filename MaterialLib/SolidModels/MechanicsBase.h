@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <boost/optional.hpp>
 #include <memory>
 #include <tuple>
 
@@ -60,11 +61,11 @@ struct MechanicsBase
 
     /// Dynamic size Kelvin vector and matrix wrapper for the polymorphic
     /// constitutive relation compute function.
-    /// Returns false in case of errors in the computation if Newton iterations
-    /// did not converge, for example.
-    std::tuple<KelvinVector,
-               std::unique_ptr<MaterialStateVariables>,
-               KelvinMatrix>
+    /// Returns nothing in case of errors in the computation if Newton
+    /// iterations did not converge, for example.
+    boost::optional<std::tuple<KelvinVector,
+                               std::unique_ptr<MaterialStateVariables>,
+                               KelvinMatrix>>
     integrateStress(double const t,
                     ProcessLib::SpatialPosition const& x,
                     double const dt,
@@ -90,11 +91,11 @@ struct MechanicsBase
     /// This should be implemented in the derived model. Fixed Kelvin vector and
     /// matrix size version; for dynamic size arguments there is an overloaded
     /// wrapper function.
-    /// Returns false in case of errors in the computation if Newton iterations
-    /// did not converge, for example.
-    virtual std::tuple<KelvinVector,
-                       std::unique_ptr<MaterialStateVariables>,
-                       KelvinMatrix>
+    /// Returns nothing in case of errors in the computation if Newton
+    /// iterations did not converge, for example.
+    virtual boost::optional<std::tuple<KelvinVector,
+                                       std::unique_ptr<MaterialStateVariables>,
+                                       KelvinMatrix>>
     integrateStress(double const t,
                     ProcessLib::SpatialPosition const& x,
                     double const dt,

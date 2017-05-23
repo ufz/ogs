@@ -65,10 +65,10 @@ ProcessLib::KelvinMatrixType<DisplacementDim> tangentStiffnessA(
 };
 
 template <int DisplacementDim>
-std::tuple<typename Lubby2<DisplacementDim>::KelvinVector,
-           std::unique_ptr<
-               typename MechanicsBase<DisplacementDim>::MaterialStateVariables>,
-           typename Lubby2<DisplacementDim>::KelvinMatrix>
+boost::optional<std::tuple<typename Lubby2<DisplacementDim>::KelvinVector,
+                           std::unique_ptr<typename MechanicsBase<
+                               DisplacementDim>::MaterialStateVariables>,
+                           typename Lubby2<DisplacementDim>::KelvinMatrix>>
 Lubby2<DisplacementDim>::integrateStress(
     double const t,
     ProcessLib::SpatialPosition const& x,
@@ -164,7 +164,7 @@ Lubby2<DisplacementDim>::integrateStress(
         auto const success_iterations = newton_solver.solve(K_loc);
 
         if (!success_iterations)
-            return std::make_tuple(sigma_prev, nullptr, KelvinMatrix::Zero());
+            return {};
 
         // If the Newton loop didn't run, the linear solver will not be
         // initialized.
@@ -180,13 +180,13 @@ Lubby2<DisplacementDim>::integrateStress(
 
     // Hydrostatic part for the stress and the tangent.
     double const eps_i_trace = Invariants::trace(eps);
-    return std::make_tuple(
-        local_lubby2_properties.GM0 * sigd_j +
-            local_lubby2_properties.KM0 * eps_i_trace * Invariants::identity2,
-        std::unique_ptr<
-            typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
-            new MaterialStateVariables{state}},
-        C);
+    return {
+        {local_lubby2_properties.GM0 * sigd_j +
+             local_lubby2_properties.KM0 * eps_i_trace * Invariants::identity2,
+         std::unique_ptr<
+             typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
+             new MaterialStateVariables{state}},
+         C}};
 }
 
 template <int DisplacementDim>

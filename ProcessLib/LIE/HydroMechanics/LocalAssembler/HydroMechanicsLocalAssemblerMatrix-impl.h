@@ -224,18 +224,15 @@ assembleBlockMatricesWithJacobian(
 
         eps.noalias() = B * u;
 
-        KelvinMatrixType<GlobalDim> C;
-        std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-            GlobalDim>::MaterialStateVariables>
-            new_state;
-        std::tie(sigma_eff, new_state, C) =
-            _ip_data[ip].solid_material.integrateStress(
-                t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
-                *state);
+        auto&& solution = _ip_data[ip].solid_material.integrateStress(
+            t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
+            *state);
 
-        if (!new_state)
+        if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
-        state = std::move(new_state);
+
+        KelvinMatrixType<GlobalDim> C;
+        std::tie(sigma_eff, state, C) = std::move(*solution);
 
         q.noalias() = - k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
 
@@ -337,17 +334,15 @@ computeSecondaryVariableConcreteWithBlockVectors(
 
         eps.noalias() = B * u;
 
-        std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-            GlobalDim>::MaterialStateVariables>
-            new_state;
-        std::tie(sigma_eff, new_state, ip_data.C) =
-            _ip_data[ip].solid_material.integrateStress(
-                t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
-                *state);
+        auto&& solution = _ip_data[ip].solid_material.integrateStress(
+            t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
+            *state);
 
-        if (!new_state)
+        if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
-        state = std::move(new_state);
+
+        KelvinMatrixType<GlobalDim> C;
+        std::tie(sigma_eff, state, C) = std::move(*solution);
 
         q.noalias() = - k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
     }

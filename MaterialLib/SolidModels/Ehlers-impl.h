@@ -655,10 +655,10 @@ newton(double const dt, MaterialProperties const& mp,
 }
 
 template <int DisplacementDim>
-std::tuple<typename SolidEhlers<DisplacementDim>::KelvinVector,
-           std::unique_ptr<
-               typename MechanicsBase<DisplacementDim>::MaterialStateVariables>,
-           typename SolidEhlers<DisplacementDim>::KelvinMatrix>
+boost::optional<std::tuple<typename SolidEhlers<DisplacementDim>::KelvinVector,
+                           std::unique_ptr<typename MechanicsBase<
+                               DisplacementDim>::MaterialStateVariables>,
+                           typename SolidEhlers<DisplacementDim>::KelvinMatrix>>
 SolidEhlers<DisplacementDim>::integrateStress(
     double const t,
     ProcessLib::SpatialPosition const& x,
@@ -727,7 +727,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
                 state.eps_p_prev, s, sigma))
             std::tie(sigma, state.eps_p, linear_solver) = *solution;
         else
-                return {sigma, nullptr, tangentStiffness};
+            return {};
 
         if (_damage_properties)
         {
@@ -759,11 +759,12 @@ SolidEhlers<DisplacementDim>::integrateStress(
         sigma_final *= 1 - state.damage.value();
 
     return {
-        sigma_final,
-        std::unique_ptr<
-            typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
-            new StateVariables<DisplacementDim>{state}},
-        tangentStiffness};
+        {sigma_final,
+         std::unique_ptr<
+             typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
+             new StateVariables<DisplacementDim>{
+                 static_cast<StateVariables<DisplacementDim> const&>(state)}},
+         tangentStiffness}};
 }
 
 }  // namespace Ehlers
