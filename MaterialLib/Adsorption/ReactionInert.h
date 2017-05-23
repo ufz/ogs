@@ -28,7 +28,7 @@ public:
     double getReactionRate(const double /*p_Ads*/, const double /*T_Ads*/, const double /*M_Ads*/,
                              const double /*loading*/) const override
     {
-        OGS_FATAL("Method getReactionRate() should never be called directly")
+        OGS_FATAL("Method getReactionRate() should never be called directly");
     }
 };
 

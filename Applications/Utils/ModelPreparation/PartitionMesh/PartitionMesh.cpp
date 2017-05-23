@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
                 std::ofstream os(name);
                 if (!os)
                     OGS_FATAL("Couldn't open file '%s' for writing.",
-                              name.c_str())
+                              name.c_str());
                 for (std::size_t n(0); n < number; ++n)
                     os << "0\n";
             };
