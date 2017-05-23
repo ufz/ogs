@@ -10,6 +10,7 @@
 #pragma once
 
 #include <cmath>
+#include <vector>
 
 namespace BaseLib
 {
@@ -73,8 +74,7 @@ public:
             const double L,
             const double dL0,
             const double max_dL,
-            const double multiplier)
-    : _length(L), _dL0(dL0), _max_dL(max_dL), _multiplier(multiplier) {}
+            const double multiplier);
 
     /// Returns a vector of subdivided points
     std::vector<double> operator()() const override
@@ -103,6 +103,33 @@ private:
     const double _length;
     const double _dL0;
     const double _max_dL;
+    const double _multiplier;
+};
+
+/**
+ * Gradual subdivision operator with a constant _multiplier.
+ *
+ * In this class the number of subdivisions is known a priori.
+ */
+class GradualSubdivisionFixedNum : public ISubdivision
+{
+public:
+    /**
+     * Constructor
+     * @param L                 total length to be subdivided
+     * @param num_subdivisions  number of subdivisions to generate
+     * @param multiplier        multiplier to cell length
+     */
+    GradualSubdivisionFixedNum(const double L,
+                               const std::size_t num_subdivisions,
+                               const double multiplier);
+
+    /// Returns a vector of subdivided points
+    std::vector<double> operator()() const override;
+
+private:
+    const double _length;
+    const std::size_t _num_subdivisions;
     const double _multiplier;
 };
 
