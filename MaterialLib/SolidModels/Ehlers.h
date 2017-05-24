@@ -205,8 +205,7 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
     createMaterialStateVariables() override
     {
-        return std::unique_ptr<StateVariables<DisplacementDim>>{
-            new StateVariables<DisplacementDim>};
+        return std::make_unique<StateVariables<DisplacementDim>>();
     }
 
 public:
