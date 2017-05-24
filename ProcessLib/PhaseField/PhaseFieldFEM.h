@@ -49,13 +49,10 @@ struct IntegrationPointData final
     // compilers.
     explicit IntegrationPointData(IntegrationPointData&& other)
         : b_matrices(std::move(other.b_matrices)),
-          sigma(std::move(other.sigma)),
-          sigma_prev(std::move(other.sigma_prev)),
           eps(std::move(other.eps)),
           eps_prev(std::move(other.eps_prev)),
           solid_material(other.solid_material),
           material_state_variables(std::move(other.material_state_variables)),
-          C(std::move(other.C)),
           C_tensile(std::move(other.C_tensile)),
           C_compressive(std::move(other.C_compressive)),
           integration_weight(std::move(other.integration_weight)),
@@ -73,7 +70,6 @@ struct IntegrationPointData final
     typename ShapeMatrixType::NodalRowVectorType N;
     typename ShapeMatrixType::GlobalDimNodalMatrixType dNdx;
     typename BMatricesType::BMatrixType b_matrices;
-    typename BMatricesType::KelvinVectorType sigma, sigma_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 
     typename BMatricesType::KelvinVectorType sigma_tensile, sigma_compressive,
@@ -84,7 +80,7 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables> material_state_variables;
 
-    typename BMatricesType::KelvinMatrixType C, C_tensile, C_compressive;
+    typename BMatricesType::KelvinMatrixType C_tensile, C_compressive;
     double integration_weight;
     double history_variable;
     double history_variable_prev;
@@ -104,9 +100,9 @@ struct IntegrationPointData final
                                     double const degradation)
     {
         eps.noalias() = b_matrices * u;
-        solid_material.computeConstitutiveRelation(t, x_position, dt, eps_prev,
-                                                   eps, sigma_prev, sigma, C,
-                                                   *material_state_variables);
+        //solid_material.computeConstitutiveRelation(t, x_position, dt, eps_prev,
+         //                                          eps, sigma_prev, sigma, C,
+          //                                         *material_state_variables);
 
         static_cast<MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>&>(
             solid_material)
@@ -231,17 +227,13 @@ public:
                 shape_matrices[ip].dNdx, ip_data.b_matrices,
                 is_axially_symmetric, shape_matrices[ip].N, x_coord);
 
-            ip_data.sigma.resize(kelvin_vector_size);
-            ip_data.sigma_prev.resize(kelvin_vector_size);
             ip_data.eps.resize(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
-            ip_data.C.resize(kelvin_vector_size, kelvin_vector_size);
             ip_data.C_tensile.resize(kelvin_vector_size, kelvin_vector_size);
             ip_data.C_compressive.resize(kelvin_vector_size,
                                          kelvin_vector_size);
             ip_data.sigma_tensile.resize(kelvin_vector_size);
             ip_data.sigma_compressive.resize(kelvin_vector_size);
-            ip_data.strain_energy_tensile;
             ip_data.history_variable =
                 process_data.history_field(0, x_position)[0];
             ip_data.history_variable_prev =
@@ -438,12 +430,8 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data[ip].pushBackState();
-            if (_ip_data[ip].history_variable_prev <
-                _ip_data[ip].history_variable)
-            {
-                _ip_data[ip].history_variable_prev =
+            _ip_data[ip].history_variable_prev =
                     _ip_data[ip].history_variable;
-            }
         }
     }
 
@@ -558,7 +546,10 @@ private:
 
         for (auto const& ip_data : _ip_data)
         {
-            cache.push_back(ip_data.eps[component]);
+            if (component < 3)  // xx, yy, zz components
+                cache.push_back(ip_data.eps[component]);
+            else  // mixed xy, yz, xz components
+                cache.push_back(ip_data.eps[component] / std::sqrt(2));
         }
 
         return cache;
