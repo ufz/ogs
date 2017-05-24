@@ -97,7 +97,8 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     return std::make_unique<RichardsFlowProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller),mat_config,curves };}
+        std::move(secondary_variables), std::move(named_function_caller),mat_config,curves );
+}
 
 }  // namespace RichardsFlow
 }  // namespace ProcessLib
