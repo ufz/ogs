@@ -24,14 +24,14 @@ struct ThermoMechanicsProcessData
     ThermoMechanicsProcessData(
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&&
             material_,
-        Parameter<double> const& solid_density_,
+        Parameter<double> const& reference_solid_density_,
         Parameter<double> const& linear_thermal_expansion_coefficient_,
         Parameter<double> const& specific_heat_capacity_,
         Parameter<double> const& thermal_conductivity_,
         double const reference_temperature_,
         Eigen::Matrix<double, DisplacementDim, 1> const& specific_body_force_)
         : material{std::move(material_)},
-          solid_density(solid_density_),
+          reference_solid_density(reference_solid_density_),
           linear_thermal_expansion_coefficient(
               linear_thermal_expansion_coefficient_),
           specific_heat_capacity(specific_heat_capacity_),
@@ -43,7 +43,7 @@ struct ThermoMechanicsProcessData
 
     ThermoMechanicsProcessData(ThermoMechanicsProcessData&& other)
         : material{std::move(other.material)},
-          solid_density(other.solid_density),
+          reference_solid_density(other.reference_solid_density),
           linear_thermal_expansion_coefficient(
               other.linear_thermal_expansion_coefficient),
           specific_heat_capacity(other.specific_heat_capacity),
@@ -66,7 +66,7 @@ struct ThermoMechanicsProcessData
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         material;
-    Parameter<double> const& solid_density;
+    Parameter<double> const& reference_solid_density;
     Parameter<double> const& linear_thermal_expansion_coefficient;
     Parameter<double> const& specific_heat_capacity;
     Parameter<double> const&

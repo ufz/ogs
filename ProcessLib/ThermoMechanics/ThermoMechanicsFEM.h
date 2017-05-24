@@ -338,7 +338,8 @@ public:
                 MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
 
             // calculate real density
-            auto const rho_sr = _process_data.solid_density(t, x_position)[0];
+            auto const rho_sr =
+                _process_data.reference_solid_density(t, x_position)[0];
             double const rho_s = rho_sr * (1 - 3 * linear_thermal_strain);
 
             auto const& b = _process_data.specific_body_force;
