@@ -46,7 +46,7 @@ Eigen::MatrixXd createPermeabilityModel(BaseLib::ConfigTree const& config)
         default:
         {
             OGS_FATAL(
-                "Number of values for permeability tensor must be 1, 4 or 9.")
+                "Number of values for permeability tensor must be 1, 4 or 9.");
         }
     }
 
