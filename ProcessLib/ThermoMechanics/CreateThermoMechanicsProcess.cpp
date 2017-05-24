@@ -114,12 +114,12 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
             type.c_str());
     }
 
-    // Solid density
-    auto& solid_density = findParameter<double>(
+    // Reference solid density
+    auto& reference_solid_density = findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__solid_density}
-        "solid_density", parameters, 1);
-    DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
+        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__reference_solid_density}
+        "reference_solid_density", parameters, 1);
+    DBUG("Use \'%s\' as solid density parameter.", reference_solid_density.name.c_str());
 
     // Linear thermal expansion coefficient
     auto& linear_thermal_expansion_coefficient = findParameter<double>(
@@ -166,7 +166,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
 
     ThermoMechanicsProcessData<DisplacementDim> process_data{
         std::move(material),
-        solid_density,
+        reference_solid_density,
         linear_thermal_expansion_coefficient,
         specific_heat_capacity,
         thermal_conductivity,
