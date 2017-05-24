@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include <cmath>
 #include <vector>
 
 namespace BaseLib
@@ -77,27 +76,7 @@ public:
             const double multiplier);
 
     /// Returns a vector of subdivided points
-    std::vector<double> operator()() const override
-    {
-        std::vector<double> vec_x;
-
-        double x = 0;
-        unsigned i=0;
-        do {
-            vec_x.push_back(x);
-            x += std::min(_max_dL, _dL0*std::pow(_multiplier, static_cast<double>(i)));
-            i++;
-        } while (x<_length);
-
-        if (vec_x.back() < _length) {
-            double last_dx = vec_x[vec_x.size()-1] - vec_x[vec_x.size()-2];
-            if (_length-vec_x.back()<last_dx)
-                vec_x[vec_x.size()-1] = _length;
-            else
-                vec_x.push_back(_length);
-        }
-        return vec_x;
-    }
+    std::vector<double> operator()() const override;
 
 private:
     const double _length;
