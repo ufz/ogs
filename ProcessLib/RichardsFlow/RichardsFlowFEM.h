@@ -202,7 +202,7 @@ public:
             {
                 auto const rho_w = _process_data.material->getFluidDensity(
                     p_int_pt, temperature);
-                auto const body_force = _process_data.specific_body_force;
+                auto const& body_force = _process_data.specific_body_force;
                 assert(body_force.size() == GlobalDim);
                 NodalVectorType gravity_operator =
                     _ip_data[ip].dNdx.transpose() * permeability * body_force *
@@ -264,7 +264,7 @@ public:
             {
                 auto const rho_w = _process_data.material->getFluidDensity(
                     p_int_pt, temperature);
-                auto const body_force = _process_data.specific_body_force;
+                auto const& body_force = _process_data.specific_body_force;
                 assert(body_force.size() == GlobalDim);
                 // here it is assumed that the vector body_force is directed
                 // 'downwards'
