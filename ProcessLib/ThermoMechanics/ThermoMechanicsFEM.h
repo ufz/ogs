@@ -112,7 +112,7 @@ struct IntegrationPointData final
 template <typename ShapeMatrixType>
 struct SecondaryData
 {
-    std::vector<ShapeMatrixType> N;
+    std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N;
 };
 
 struct ThermoMechanicsLocalAssemblerInterface
@@ -514,8 +514,11 @@ private:
 
     ThermoMechanicsProcessData<DisplacementDim>& _process_data;
 
-    std::vector<IntegrationPointData<BMatricesType, ShapeMatricesType,
-                                     DisplacementDim>> _ip_data;
+    std::vector<
+        IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>,
+        Eigen::aligned_allocator<IntegrationPointData<
+            BMatricesType, ShapeMatricesType, DisplacementDim>>>
+        _ip_data;
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
