@@ -150,7 +150,7 @@ public:
         SpatialPosition pos;
         pos.setElementID(_element.getID());
         const int material_id =
-            _process_data.material->getMaterialID(pos.getElementID().get());
+            _process_data.material->getMaterialID(_element.getID());
         const Eigen::MatrixXd& perm = _process_data.material->getPermeability(
             material_id, t, pos, _element.getDimension());
         assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
@@ -172,18 +172,23 @@ public:
 
             double const pc_int_pt = -p_int_pt;
 
-            double const Sw = (pc_int_pt>0) ? _process_data.material->getSaturation(
-                material_id, t, pos, p_int_pt, temperature, pc_int_pt) : 1.0;
+            double const Sw =
+                (pc_int_pt > 0)
+                    ? _process_data.material->getSaturation(
+                          material_id, t, pos, p_int_pt, temperature, pc_int_pt)
+                    : 1.0;
             _saturation[ip] = Sw;
 
-            double const dSw_dpc = (pc_int_pt>0) ?
-                _process_data.material->getSaturationDerivative(
-                    material_id, t, pos, p_int_pt, temperature, Sw) : 0.;
+            double const dSw_dpc =
+                (pc_int_pt > 0)
+                    ? _process_data.material->getSaturationDerivative(
+                          material_id, t, pos, p_int_pt, temperature, Sw)
+                    : 0.;
 
             // \TODO Extend to pressure dependent density.
             double const drhow_dp(0.0);
             auto const storage = _process_data.material->getStorage(
-                    material_id, t, pos, p_int_pt,temperature,0);
+                material_id, t, pos, p_int_pt, temperature, 0);
             double const mass_mat_coeff =
                 storage * Sw + porosity * Sw * drhow_dp - porosity * dSw_dpc;
 
@@ -194,9 +199,9 @@ public:
                     t, pos, p_int_pt, temperature, Sw);
             auto const mu = _process_data.material->getFluidViscosity(
                 p_int_pt, temperature);
-            local_K.noalias() += _ip_data[ip].dNdx.transpose() *
-                permeability * _ip_data[ip].dNdx *
-                _ip_data[ip].integration_weight * (k_rel / mu);
+            local_K.noalias() += _ip_data[ip].dNdx.transpose() * permeability *
+                                 _ip_data[ip].dNdx *
+                                 _ip_data[ip].integration_weight * (k_rel / mu);
 
             if (_process_data.has_gravity)
             {
@@ -227,7 +232,7 @@ public:
         SpatialPosition pos;
         pos.setElementID(_element.getID());
         const int material_id =
-            _process_data.material->getMaterialID(pos.getElementID().get());
+            _process_data.material->getMaterialID(_element.getID());
 
         const Eigen::MatrixXd& perm = _process_data.material->getPermeability(
             material_id, t, pos, _element.getDimension());
@@ -258,8 +263,9 @@ public:
                     t, pos, p_int_pt, temperature, Sw);
             auto const mu = _process_data.material->getFluidViscosity(
                 p_int_pt, temperature);
-            GlobalDimVectorType velocity = -permeability * (k_rel / mu) *
-                                           _ip_data[ip].dNdx * p_nodal_values;
+            auto const K_mat_coeff = permeability * (k_rel / mu);
+            GlobalDimVectorType velocity =
+                -K_mat_coeff * _ip_data[ip].dNdx * p_nodal_values;
             if (_process_data.has_gravity)
             {
                 auto const rho_w = _process_data.material->getFluidDensity(
@@ -268,7 +274,7 @@ public:
                 assert(body_force.size() == GlobalDim);
                 // here it is assumed that the vector body_force is directed
                 // 'downwards'
-                velocity += permeability * (k_rel / mu) * rho_w * body_force;
+                velocity += K_mat_coeff * rho_w * body_force;
             }
 
             for (unsigned d = 0; d < GlobalDim; ++d)
