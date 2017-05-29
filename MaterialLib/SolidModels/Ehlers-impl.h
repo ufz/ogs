@@ -739,13 +739,13 @@ SolidEhlers<DisplacementDim>::integrateStress(
     if (_damage_properties)
         sigma_final *= 1 - state.damage.value();
 
-    return {
-        {sigma_final,
-         std::unique_ptr<
-             typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
-             new StateVariables<DisplacementDim>{
-                 static_cast<StateVariables<DisplacementDim> const&>(state)}},
-         tangentStiffness}};
+    return {std::make_tuple(
+        sigma_final,
+        std::unique_ptr<
+            typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
+            new StateVariables<DisplacementDim>{
+                static_cast<StateVariables<DisplacementDim> const&>(state)}},
+        tangentStiffness)};
 }
 
 }  // namespace Ehlers

@@ -180,13 +180,15 @@ Lubby2<DisplacementDim>::integrateStress(
 
     // Hydrostatic part for the stress and the tangent.
     double const eps_i_trace = Invariants::trace(eps);
-    return {
-        {local_lubby2_properties.GM0 * sigd_j +
-             local_lubby2_properties.KM0 * eps_i_trace * Invariants::identity2,
-         std::unique_ptr<
-             typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
-             new MaterialStateVariables{state}},
-         C}};
+    KelvinVector const sigma =
+        local_lubby2_properties.GM0 * sigd_j +
+        local_lubby2_properties.KM0 * eps_i_trace * Invariants::identity2;
+    return {std::make_tuple(
+        sigma,
+        std::unique_ptr<
+            typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
+            new MaterialStateVariables{state}},
+        C)};
 }
 
 template <int DisplacementDim>

@@ -108,13 +108,14 @@ public:
 
         KelvinVector sigma = sigma_prev + C * (eps - eps_prev);
 
-        return {{sigma,
-                 std::unique_ptr<typename MechanicsBase<
-                     DisplacementDim>::MaterialStateVariables>{
-                     new MaterialStateVariables{
-                         static_cast<MaterialStateVariables const&>(
-                             material_state_variables)}},
-                 C}};
+        return {
+            std::make_tuple(sigma,
+                            std::unique_ptr<typename MechanicsBase<
+                                DisplacementDim>::MaterialStateVariables>{
+                                new MaterialStateVariables{
+                                    static_cast<MaterialStateVariables const&>(
+                                        material_state_variables)}},
+                            C)};
     }
 
 private:
