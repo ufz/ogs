@@ -560,100 +560,6 @@ splitSolutionVector(ResidualVector const& solution)
         solution[size * 2 + 2]);
 }
 
-/// Returns new solution, corresponding state, and the linear solver with the
-/// last decomposition. In case of failure nothing is returned.
-/// \note Internally an agglomerated solution vector is used which is split into
-/// individual parts by splitSolutionVector().
-template <int JacobianResidualSize, int DisplacementDim>
-boost::optional<std::tuple<
-    ProcessLib::KelvinVectorType<DisplacementDim>,
-    PlasticStrain<ProcessLib::KelvinVectorType<DisplacementDim>>,
-    Eigen::FullPivLU<Eigen::Matrix<double, JacobianResidualSize,
-                                   JacobianResidualSize, Eigen::RowMajor>>>>
-newton(double const dt, MaterialProperties const& mp,
-       typename SolidEhlers<DisplacementDim>::KelvinVector const& eps_D,
-       double const eps_V,
-       NumLib::NewtonRaphsonSolverParameters const& nonlinear_solver_parameters,
-       PlasticStrain<ProcessLib::KelvinVectorType<DisplacementDim>> eps_p,
-       PlasticStrain<ProcessLib::KelvinVectorType<DisplacementDim>> const&
-           eps_p_prev,
-       PhysicalStressWithInvariants<DisplacementDim> s,
-       typename SolidEhlers<DisplacementDim>::KelvinVector sigma)
-{
-    static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-    using ResidualVectorType = Eigen::Matrix<double, JacobianResidualSize, 1>;
-    using JacobianMatrix = Eigen::Matrix<double, JacobianResidualSize,
-                                         JacobianResidualSize, Eigen::RowMajor>;
-
-    JacobianMatrix jacobian;
-
-    // Linear solver for the newton loop is required after the loop with the
-    // same matrix. This saves one decomposition.
-    Eigen::FullPivLU<JacobianMatrix> linear_solver;
-
-    // Agglomerated solution vector construction.
-    ResidualVectorType solution;
-    solution << sigma, eps_p.D, eps_p.V, eps_p.eff, 0;
-
-    auto const update_residual = [&](ResidualVectorType& residual) {
-
-        auto const& eps_p_D =
-            solution.template segment<KelvinVectorSize>(KelvinVectorSize);
-        KelvinVector const eps_p_D_dot = (eps_p_D - eps_p_prev.D) / dt;
-
-        double const& eps_p_V = solution[KelvinVectorSize * 2];
-        double const eps_p_V_dot = (eps_p_V - eps_p_prev.V) / dt;
-
-        double const& eps_p_eff = solution[KelvinVectorSize * 2 + 1];
-        double const eps_p_eff_dot = (eps_p_eff - eps_p_prev.eff) / dt;
-
-        double const k_hardening =
-            calculateIsotropicHardening(mp.kappa, mp.hardening_coefficient,
-                                        solution[KelvinVectorSize * 2 + 1]);
-        residual = calculatePlasticResidual<DisplacementDim>(
-            eps_D, eps_V, s,
-            solution.template segment<KelvinVectorSize>(KelvinVectorSize),
-            eps_p_D_dot, solution[KelvinVectorSize * 2], eps_p_V_dot,
-            eps_p_eff_dot, solution[KelvinVectorSize * 2 + 2], k_hardening, mp);
-    };
-
-    auto const update_jacobian = [&](JacobianMatrix& jacobian) {
-        jacobian = calculatePlasticJacobian<DisplacementDim>(
-            dt, s, solution[KelvinVectorSize * 2 + 2], mp);
-    };
-
-    auto const update_solution = [&](ResidualVectorType const& increment) {
-        solution += increment;
-        s = PhysicalStressWithInvariants<DisplacementDim>{
-            mp.G * solution.template segment<KelvinVectorSize>(0)};
-    };
-
-    auto newton_solver =
-        NumLib::NewtonRaphson<decltype(linear_solver), JacobianMatrix,
-                              decltype(update_jacobian), ResidualVectorType,
-                              decltype(update_residual),
-                              decltype(update_solution)>(
-            linear_solver, update_jacobian, update_residual, update_solution,
-            nonlinear_solver_parameters);
-
-    auto const success_iterations = newton_solver.solve(jacobian);
-
-    if (!success_iterations)
-        return {};
-
-    // If the Newton loop didn't run, the linear solver will not be initialized.
-    // This happens usually for the first iteration of the first timestep.
-    if (*success_iterations == 0)
-        linear_solver.compute(jacobian);
-
-    std::tie(sigma, eps_p, std::ignore) =
-        splitSolutionVector<ResidualVectorType, KelvinVector>(solution);
-
-    return {{sigma, eps_p, linear_solver}};
-}
-
 template <int DisplacementDim>
 boost::optional<std::tuple<typename SolidEhlers<DisplacementDim>::KelvinVector,
                            std::unique_ptr<typename MechanicsBase<
@@ -718,16 +624,91 @@ SolidEhlers<DisplacementDim>::integrateStress(
     }
     else
     {
+        // Linear solver for the newton loop is required after the loop with the
+        // same matrix. This saves one decomposition.
         Eigen::FullPivLU<Eigen::Matrix<double, JacobianResidualSize,
                                        JacobianResidualSize, Eigen::RowMajor>>
             linear_solver;
 
-        if (auto&& solution = newton<JacobianResidualSize>(
-                dt, mp, eps_D, eps_V, _nonlinear_solver_parameters, state.eps_p,
-                state.eps_p_prev, s, sigma))
-            std::tie(sigma, state.eps_p, linear_solver) = *solution;
-        else
-            return {};
+        {
+            static int const KelvinVectorSize =
+                ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
+            using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
+            using ResidualVectorType =
+                Eigen::Matrix<double, JacobianResidualSize, 1>;
+            using JacobianMatrix =
+                Eigen::Matrix<double, JacobianResidualSize,
+                              JacobianResidualSize, Eigen::RowMajor>;
+
+            JacobianMatrix jacobian;
+
+            // Agglomerated solution vector construction.  It is later split
+            // into individual parts by splitSolutionVector().
+            ResidualVectorType solution;
+            solution << sigma, state.eps_p.D, state.eps_p.V, state.eps_p.eff, 0;
+
+            auto const update_residual = [&](ResidualVectorType& residual) {
+
+                auto const& eps_p_D =
+                    solution.template segment<KelvinVectorSize>(
+                        KelvinVectorSize);
+                KelvinVector const eps_p_D_dot =
+                    (eps_p_D - state.eps_p_prev.D) / dt;
+
+                double const& eps_p_V = solution[KelvinVectorSize * 2];
+                double const eps_p_V_dot =
+                    (eps_p_V - state.eps_p_prev.V) / dt;
+
+                double const& eps_p_eff = solution[KelvinVectorSize * 2 + 1];
+                double const eps_p_eff_dot =
+                    (eps_p_eff - state.eps_p_prev.eff) / dt;
+
+                double const k_hardening = calculateIsotropicHardening(
+                    mp.kappa, mp.hardening_coefficient,
+                    solution[KelvinVectorSize * 2 + 1]);
+                residual = calculatePlasticResidual<DisplacementDim>(
+                    eps_D, eps_V, s,
+                    solution.template segment<KelvinVectorSize>(
+                        KelvinVectorSize),
+                    eps_p_D_dot, solution[KelvinVectorSize * 2], eps_p_V_dot,
+                    eps_p_eff_dot, solution[KelvinVectorSize * 2 + 2],
+                    k_hardening, mp);
+            };
+
+            auto const update_jacobian = [&](JacobianMatrix& jacobian) {
+                jacobian = calculatePlasticJacobian<DisplacementDim>(
+                    dt, s, solution[KelvinVectorSize * 2 + 2], mp);
+            };
+
+            auto const update_solution =
+                [&](ResidualVectorType const& increment) {
+                    solution += increment;
+                    s = PhysicalStressWithInvariants<DisplacementDim>{
+                        mp.G * solution.template segment<KelvinVectorSize>(0)};
+                };
+
+            auto newton_solver = NumLib::NewtonRaphson<
+                decltype(linear_solver), JacobianMatrix,
+                decltype(update_jacobian), ResidualVectorType,
+                decltype(update_residual), decltype(update_solution)>(
+                linear_solver, update_jacobian, update_residual,
+                update_solution, _nonlinear_solver_parameters);
+
+            auto const success_iterations = newton_solver.solve(jacobian);
+
+            if (!success_iterations)
+                return {};
+
+            // If the Newton loop didn't run, the linear solver will not be
+            // initialized.
+            // This happens usually for the first iteration of the first
+            // timestep.
+            if (*success_iterations == 0)
+                linear_solver.compute(jacobian);
+
+            std::tie(sigma, state.eps_p, std::ignore) =
+                splitSolutionVector<ResidualVectorType, KelvinVector>(solution);
+        }
 
         if (_damage_properties)
         {
