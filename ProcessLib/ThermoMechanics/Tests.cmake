@@ -23,7 +23,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    ABSTOL 1e-15 RELTOL 1e-15
+    ABSTOL 1e-11 RELTOL 1e-15
     DIFF_DATA
     expected_tm_q_pcs_0_ts_20_t_20000.000000.vtu tm_q_pcs_0_ts_20_t_20000.000000.vtu displacement displacement
     expected_tm_q_pcs_0_ts_20_t_20000.000000.vtu tm_q_pcs_0_ts_20_t_20000.000000.vtu temperature temperature
@@ -40,7 +40,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    ABSTOL 1e-15 RELTOL 1e-15
+    ABSTOL 1e-10 RELTOL 1e-15
     DIFF_DATA
     expected_tm_a_pcs_0_ts_20_t_20000.000000.vtu tm_a_pcs_0_ts_20_t_20000.000000.vtu displacement displacement
     expected_tm_a_pcs_0_ts_20_t_20000.000000.vtu tm_a_pcs_0_ts_20_t_20000.000000.vtu temperature temperature
@@ -57,7 +57,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    ABSTOL 1e-15 RELTOL 1e-15
+    ABSTOL 5e-11 RELTOL 1e-15
     DIFF_DATA
     expected_tm_q_quad_pcs_0_ts_20_t_20000.000000.vtu tm_q_quad_pcs_0_ts_20_t_20000.000000.vtu displacement displacement
     expected_tm_q_quad_pcs_0_ts_20_t_20000.000000.vtu tm_q_quad_pcs_0_ts_20_t_20000.000000.vtu temperature temperature
@@ -74,7 +74,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    ABSTOL 1e-15 RELTOL 1e-15
+    ABSTOL 5e-10 RELTOL 1e-15
     DIFF_DATA
     expected_tm_a_quad_pcs_0_ts_20_t_20000.000000.vtu tm_a_quad_pcs_0_ts_20_t_20000.000000.vtu displacement displacement
     expected_tm_a_quad_pcs_0_ts_20_t_20000.000000.vtu tm_a_quad_pcs_0_ts_20_t_20000.000000.vtu temperature temperature
