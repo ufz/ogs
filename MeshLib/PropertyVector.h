@@ -80,8 +80,7 @@ public:
     {
         assert(component < _n_components);
         assert(tuple_index < getNumberOfTuples());
-        return this->operator[](tuple_index* getNumberOfComponents() +
-                                component);
+		return this->operator[](tuple_index* _n_components + component);
     }
 
     PropertyVectorBase* clone(
