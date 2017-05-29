@@ -9,9 +9,11 @@
 
 #include "CreateRichardsFlowProcess.h"
 
+#include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-#include "ProcessLib/Parameter/ConstantParameter.h"
+
+#include "CreateRichardsFlowMaterialProperties.h"
 #include "RichardsFlowProcess.h"
 #include "RichardsFlowProcessData.h"
 
@@ -45,75 +47,6 @@ std::unique_ptr<Process> createRichardsFlowProcess(
         {//! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__process_variables__process_variable}
          "process_variable"});
 
-    // Hydraulic conductivity parameter.
-    auto& intrinsic_permeability = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__intrinsic_permeability}
-        "intrinsic_permeability", parameters, 1);
-
-    DBUG("Use \'%s\' as intrinsic permeability parameter.",
-         intrinsic_permeability.name.c_str());
-
-    // Porosity parameter.
-    auto& porosity = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__porosity}
-        "porosity", parameters, 1);
-
-    DBUG("Use \'%s\' as porosity parameter.", porosity.name.c_str());
-
-    // Viscosity parameter.
-    auto& viscosity = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__viscosity}
-        "viscosity", parameters, 1);
-
-    DBUG("Use \'%s\' as porosity parameter.", viscosity.name.c_str());
-
-    // storage parameter.
-    auto& storage = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__storage}
-        "storage", parameters, 1);
-
-    DBUG("Use \'%s\' as storage parameter.", storage.name.c_str());
-
-    // water_density parameter.
-    auto& water_density = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__water_density}
-        "water_density", parameters, 1);
-
-    DBUG("Use \'%s\' as storage parameter.", water_density.name.c_str());
-
-    // Specific body force parameter.
-    auto& specific_body_force = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__specific_body_force}
-        "specific_body_force", parameters, mesh.getDimension());
-    DBUG("Use \'%s\' as specific body force parameter.",
-         specific_body_force.name.c_str());
-
-    // Assume constant parameter, then check the norm at arbitrary
-    // SpatialPosition and time.
-    assert(dynamic_cast<ConstantParameter<double>*>(&specific_body_force));
-    bool const has_gravity =
-        MathLib::toVector(specific_body_force(0, SpatialPosition{})).norm() > 0;
-
-    // has mass lumping
-    //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__mass_lumping}
-    auto mass_lump = config.getConfigParameter<bool>("mass_lumping");
-
-    RichardsFlowProcessData process_data{intrinsic_permeability,
-                                         porosity,
-                                         viscosity,
-                                         storage,
-                                         water_density,
-                                         specific_body_force,
-                                         has_gravity,
-                                         mass_lump,
-                                         *curves.at("curve_PC_S"),
-                                         *curves.at("curve_S_Krel")};
     SecondaryVariableCollection secondary_variables;
 
     NumLib::NamedFunctionCaller named_function_caller(
@@ -122,10 +55,50 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
 
+    // Specific body force
+    std::vector<double> const b =
+        //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__specific_body_force}
+        config.getConfigParameter<std::vector<double>>("specific_body_force");
+    assert(b.size() > 0 && b.size() < 4);
+    Eigen::VectorXd specific_body_force(b.size());
+    bool const has_gravity = MathLib::toVector(b).norm() > 0;
+    if (has_gravity)
+        std::copy_n(b.data(), b.size(), specific_body_force.data());
+
+    // has mass lumping
+    //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__mass_lumping}
+    auto mass_lumping = config.getConfigParameter<bool>("mass_lumping");
+
+    auto& temperature = findParameter<double>(
+        config,
+        //! \ogs_file_param_special{prj__processes__process__RICHARDS_FLOW__temperature}
+        "temperature", parameters, 1);
+
+    //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property}
+    auto const& mat_config = config.getConfigSubtree("material_property");
+
+    boost::optional<MeshLib::PropertyVector<int> const&> material_ids;
+    if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
+    {
+        INFO("The Richards flow is in heterogeneous porous media.");
+        material_ids =
+            *mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+    }
+    else
+    {
+        INFO("The Richards flow is in homogeneous porous media.");
+    }
+    std::unique_ptr<RichardsFlowMaterialProperties> material =
+        createRichardsFlowMaterialProperties(mat_config, material_ids);
+    RichardsFlowProcessData process_data{std::move(material),
+                                         specific_body_force, has_gravity,
+                                         mass_lumping, temperature};
+
     return std::make_unique<RichardsFlowProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller));
+        std::move(secondary_variables), std::move(named_function_caller),
+        mat_config, curves);
 }
 
 }  // namespace RichardsFlow

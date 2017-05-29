@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Specific body forces applied to solid and fluid. It is usually used to apply gravitational forces.

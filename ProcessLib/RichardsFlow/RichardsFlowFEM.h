@@ -28,6 +28,26 @@ namespace ProcessLib
 {
 namespace RichardsFlow
 {
+template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType,
+          typename NodalMatrixType>
+struct IntegrationPointData final
+{
+    IntegrationPointData(NodalRowVectorType const& N_,
+                         GlobalDimNodalMatrixType const& dNdx_,
+                         double const& integration_weight_,
+                         NodalMatrixType const mass_operator_)
+        : N(N_),
+          dNdx(dNdx_),
+          integration_weight(integration_weight_),
+          mass_operator(mass_operator_)
+    {
+    }
+
+    NodalRowVectorType const N;
+    GlobalDimNodalMatrixType const dNdx;
+    double const integration_weight;
+    NodalMatrixType const mass_operator;
+};
 const unsigned NUM_NODAL_DOF = 1;
 
 class RichardsFlowLocalAssemblerInterface
@@ -58,28 +78,54 @@ class LocalAssemblerData : public RichardsFlowLocalAssemblerInterface
     using LocalAssemblerTraits = ProcessLib::LocalAssemblerTraits<
         ShapeMatricesType, ShapeFunction::NPOINTS, NUM_NODAL_DOF, GlobalDim>;
 
-    using NodalMatrixType = typename LocalAssemblerTraits::LocalMatrix;
-    using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
+    using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
+    using GlobalDimNodalMatrixType =
+        typename ShapeMatricesType::GlobalDimNodalMatrixType;
+    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
+    using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
+    using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
 
 public:
     LocalAssemblerData(MeshLib::Element const& element,
-                       std::size_t const /*local_matrix_size*/,
+                       std::size_t const local_matrix_size,
                        bool is_axially_symmetric,
                        unsigned const integration_order,
                        RichardsFlowProcessData const& process_data)
         : _element(element),
           _process_data(process_data),
           _integration_method(integration_order),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                            IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method)),
           _saturation(
               std::vector<double>(_integration_method.getNumberOfPoints())),
           _darcy_velocities(
               GlobalDim,
               std::vector<double>(_integration_method.getNumberOfPoints()))
     {
+        // This assertion is valid only if all nodal d.o.f. use the same shape
+        // matrices.
+        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+        (void)local_matrix_size;
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        _ip_data.reserve(n_integration_points);
+
+        auto const shape_matrices =
+            initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                              IntegrationMethod, GlobalDim>(
+                element, is_axially_symmetric, _integration_method);
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto const& sm = shape_matrices[ip];
+            const double integration_factor = sm.integralMeasure * sm.detJ;
+            _ip_data.emplace_back(
+                sm.N, sm.dNdx,
+                _integration_method.getWeightedPoint(ip).getWeight() *
+                    integration_factor,
+                sm.N.transpose() * sm.N * integration_factor *
+                    _integration_method.getWeightedPoint(ip).getWeight());
+        }
     }
 
     void assemble(double const t, std::vector<double> const& local_x,
@@ -92,11 +138,6 @@ public:
         // matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
 
-        MathLib::PiecewiseLinearInterpolation const& interpolated_Pc =
-            _process_data.interpolated_Pc;
-        MathLib::PiecewiseLinearInterpolation const& interpolated_Kr =
-            _process_data.interpolated_Kr;
-
         auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
             local_M_data, local_matrix_size, local_matrix_size);
         auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
@@ -108,59 +149,72 @@ public:
             _integration_method.getNumberOfPoints();
         SpatialPosition pos;
         pos.setElementID(_element.getID());
+        const int material_id =
+            _process_data.material->getMaterialID(_element.getID());
+        const Eigen::MatrixXd& perm = _process_data.material->getPermeability(
+            material_id, t, pos, _element.getDimension());
+        assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
+        GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
+            _element.getDimension(), _element.getDimension());
+        if (perm.rows() == _element.getDimension())
+            permeability = perm;
+        else if (perm.rows() == 1)
+            permeability.diagonal().setConstant(perm(0, 0));
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
-            auto const& sm = _shape_matrices[ip];
-            auto const& wp = _integration_method.getWeightedPoint(ip);
+            double p_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
+            const double& temperature = _process_data.temperature(t, pos)[0];
+            auto const porosity = _process_data.material->getPorosity(
+                material_id, t, pos, p_int_pt, temperature, 0);
 
-            double P_int_pt = 0.0;
-            NumLib::shapeFunctionInterpolate(local_x, sm.N, P_int_pt);
+            double const pc_int_pt = -p_int_pt;
 
-            auto const K = _process_data.intrinsic_permeability(t, pos)[0];
-            auto const poro = _process_data.porosity(t, pos)[0];
-            auto const mu = _process_data.viscosity(t, pos)[0];
-            auto const storage = _process_data.storage(t, pos)[0];
-            double const Pc = -P_int_pt;
-
-            double dSwdPc = interpolated_Pc.getDerivative(Pc);
-            if (Pc > interpolated_Pc.getSupportMax())
-                dSwdPc = interpolated_Pc.getDerivative(
-                    interpolated_Pc.getSupportMax());
-            else if (Pc < interpolated_Pc.getSupportMin())
-                dSwdPc = interpolated_Pc.getDerivative(
-                    interpolated_Pc.getSupportMin());
-
-            double const Sw = interpolated_Pc.getValue(Pc);
+            double const Sw =
+                (pc_int_pt > 0)
+                    ? _process_data.material->getSaturation(
+                          material_id, t, pos, p_int_pt, temperature, pc_int_pt)
+                    : 1.0;
             _saturation[ip] = Sw;
 
-            double const k_rel = interpolated_Kr.getValue(Sw);
+            double const dSw_dpc =
+                (pc_int_pt > 0)
+                    ? _process_data.material->getSaturationDerivative(
+                          material_id, t, pos, p_int_pt, temperature, Sw)
+                    : 0.;
+
             // \TODO Extend to pressure dependent density.
             double const drhow_dp(0.0);
-
+            auto const storage = _process_data.material->getStorage(
+                material_id, t, pos, p_int_pt, temperature, 0);
             double const mass_mat_coeff =
-                storage * Sw + poro * Sw * drhow_dp - poro * dSwdPc;
-            double const K_mat_coeff = K * k_rel / mu;
+                storage * Sw + porosity * Sw * drhow_dp - porosity * dSw_dpc;
 
-            local_K.noalias() += sm.dNdx.transpose() * K_mat_coeff * sm.dNdx *
-                                 sm.detJ * sm.integralMeasure * wp.getWeight();
+            local_M.noalias() += mass_mat_coeff * _ip_data[ip].mass_operator;
 
-            local_M.noalias() += sm.N.transpose() * mass_mat_coeff * sm.N *
-                                 sm.detJ * sm.integralMeasure * wp.getWeight();
+            double const k_rel =
+                _process_data.material->getRelativePermeability(
+                    t, pos, p_int_pt, temperature, Sw);
+            auto const mu = _process_data.material->getFluidViscosity(
+                p_int_pt, temperature);
+            local_K.noalias() += _ip_data[ip].dNdx.transpose() * permeability *
+                                 _ip_data[ip].dNdx *
+                                 _ip_data[ip].integration_weight * (k_rel / mu);
+
             if (_process_data.has_gravity)
             {
-                auto const rho_w = _process_data.water_density(t, pos)[0];
-                auto const body_force =
-                    _process_data.specific_body_force(t, pos);
+                auto const rho_w = _process_data.material->getFluidDensity(
+                    p_int_pt, temperature);
+                auto const& body_force = _process_data.specific_body_force;
                 assert(body_force.size() == GlobalDim);
-                auto const b = MathLib::toVector<GlobalDimVectorType>(
-                    body_force, GlobalDim);
-                local_b.noalias() += sm.dNdx.transpose() * K_mat_coeff * rho_w *
-                                     b * sm.detJ * sm.integralMeasure *
-                                     wp.getWeight();
+                NodalVectorType gravity_operator =
+                    _ip_data[ip].dNdx.transpose() * permeability * body_force *
+                    _ip_data[ip].integration_weight;
+                local_b.noalias() += (k_rel / mu) * rho_w * gravity_operator;
             }
-        }  // end of GP
+        }
         if (_process_data.has_mass_lumping)
         {
             for (int idx_ml = 0; idx_ml < local_M.cols(); idx_ml++)
@@ -177,13 +231,18 @@ public:
     {
         SpatialPosition pos;
         pos.setElementID(_element.getID());
+        const int material_id =
+            _process_data.material->getMaterialID(_element.getID());
 
-        auto const K = _process_data.intrinsic_permeability(t, pos)[0];
-        MathLib::PiecewiseLinearInterpolation const& interpolated_Pc =
-            _process_data.interpolated_Pc;
-        MathLib::PiecewiseLinearInterpolation const& interpolated_Kr =
-            _process_data.interpolated_Kr;
-        auto const mu = _process_data.viscosity(t, pos)[0];
+        const Eigen::MatrixXd& perm = _process_data.material->getPermeability(
+            material_id, t, pos, _element.getDimension());
+        assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
+        GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
+            _element.getDimension(), _element.getDimension());
+        if (perm.rows() == _element.getDimension())
+            permeability = perm;
+        else if (perm.rows() == 1)
+            permeability.diagonal().setConstant(perm(0, 0));
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -193,27 +252,29 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
-            auto const& sm = _shape_matrices[ip];
-
-            double P_int_pt = 0.0;
-            NumLib::shapeFunctionInterpolate(local_x, sm.N, P_int_pt);
-            double const Pc = -P_int_pt;
-            double const Sw = interpolated_Pc.getValue(Pc);
-            double const k_rel = interpolated_Kr.getValue(Sw);
-            double const K_mat_coeff = K * k_rel / mu;
-
+            double p_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
+            double const pc_int_pt = -p_int_pt;
+            const double& temperature = _process_data.temperature(t, pos)[0];
+            double const Sw = _process_data.material->getSaturation(
+                material_id, t, pos, p_int_pt, temperature, pc_int_pt);
+            double const k_rel =
+                _process_data.material->getRelativePermeability(
+                    t, pos, p_int_pt, temperature, Sw);
+            auto const mu = _process_data.material->getFluidViscosity(
+                p_int_pt, temperature);
+            auto const K_mat_coeff = permeability * (k_rel / mu);
             GlobalDimVectorType velocity =
-                -K_mat_coeff * sm.dNdx * p_nodal_values;
+                -K_mat_coeff * _ip_data[ip].dNdx * p_nodal_values;
             if (_process_data.has_gravity)
             {
-                auto const rho_w = _process_data.water_density(t, pos)[0];
-                auto const body_force =
-                    _process_data.specific_body_force(t, pos);
+                auto const rho_w = _process_data.material->getFluidDensity(
+                    p_int_pt, temperature);
+                auto const& body_force = _process_data.specific_body_force;
                 assert(body_force.size() == GlobalDim);
-                auto const b = MathLib::toVector<GlobalDimVectorType>(
-                    body_force, GlobalDim);
-                // here it is assumed that the vector b is directed 'downwards'
-                velocity += K_mat_coeff * rho_w * b;
+                // here it is assumed that the vector body_force is directed
+                // 'downwards'
+                velocity += K_mat_coeff * rho_w * body_force;
             }
 
             for (unsigned d = 0; d < GlobalDim; ++d)
@@ -226,7 +287,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _shape_matrices[integration_point].N;
+        auto const& N = _ip_data[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -267,7 +328,12 @@ private:
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
-
+    std::vector<
+        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType,
+                             NodalMatrixType>,
+        Eigen::aligned_allocator<IntegrationPointData<
+            NodalRowVectorType, GlobalDimNodalMatrixType, NodalMatrixType>>>
+        _ip_data;
     std::vector<double> _saturation;
     std::vector<std::vector<double>> _darcy_velocities;
 };
