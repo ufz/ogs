@@ -84,16 +84,16 @@ VtkVisPipelineItem* VtkVisPipelineItem::child( int row ) const
     TreeItem* treeItem = TreeItem::child(row);
     if (treeItem)
         return dynamic_cast<VtkVisPipelineItem*>(treeItem);
-    else
-        return nullptr;
+
+    return nullptr;
 }
 
 QVariant VtkVisPipelineItem::data( int column ) const
 {
     if (column == 1)
         return isVisible();
-    else
-        return TreeItem::data(column);
+
+    return TreeItem::data(column);
 }
 
 bool VtkVisPipelineItem::setData( int column, const QVariant &value )
@@ -103,8 +103,8 @@ bool VtkVisPipelineItem::setData( int column, const QVariant &value )
         setVisible(value.toBool());
         return true;
     }
-    else
-        return TreeItem::setData(column, value);
+
+    return TreeItem::setData(column, value);
 }
 bool VtkVisPipelineItem::isVisible() const
 {

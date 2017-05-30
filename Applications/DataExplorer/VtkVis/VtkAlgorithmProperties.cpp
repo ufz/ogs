@@ -52,8 +52,8 @@ vtkLookupTable* VtkAlgorithmProperties::GetLookupTable(const QString& array_name
     auto it = _lut.find(array_name);
     if (it != _lut.end())
         return it->second;
-    else
-        return nullptr;
+
+    return nullptr;
 }
 
 void VtkAlgorithmProperties::RemoveLookupTable(const QString& array_name)
@@ -101,22 +101,18 @@ QVariant VtkAlgorithmProperties::GetUserProperty(QString name) const
 {
     if (this->_algorithmUserProperties->contains(name))
         return this->_algorithmUserProperties->value(name);
-    else
-    {
-        ERR("Not a valid property: %s", name.toStdString().c_str());
-        return QVariant();
-    }
+
+    ERR("Not a valid property: %s", name.toStdString().c_str());
+    return QVariant();
 }
 
 QList<QVariant> VtkAlgorithmProperties::GetUserVectorProperty(QString name) const
 {
     if (this->_algorithmUserVectorProperties->contains(name))
         return this->_algorithmUserVectorProperties->value(name);
-    else
-    {
-        ERR("Not a valid property: %s", name.toStdString().c_str());
-        return QList<QVariant>();
-    }
+
+    ERR("Not a valid property: %s", name.toStdString().c_str());
+    return QList<QVariant>();
 }
 
 void VtkAlgorithmProperties::SetActiveAttribute(QString name)

@@ -36,13 +36,11 @@ bool PiecewiseLinearMonotonicCurve::isStrongMonotonic() const
 
     if (std::fabs(gradient0) < std::numeric_limits<double>::min())
         return false;
-    else
-    {
-        return std::none_of(_supp_pnts.begin(), _supp_pnts.end(),
-                            [&](const double p) {
-                                return this->getDerivative(p) * gradient0 <= 0.;
-                            });
-    }
+
+    return std::none_of(_supp_pnts.begin(), _supp_pnts.end(),
+                        [&](const double p) {
+                            return this->getDerivative(p) * gradient0 <= 0.;
+                        });
 }
 
 double PiecewiseLinearMonotonicCurve::getInversVariable(const double y) const
@@ -54,17 +52,15 @@ double PiecewiseLinearMonotonicCurve::getInversVariable(const double y) const
         {
             return _supp_pnts[0];
         }
-        else if (y >= _values_at_supp_pnts.back())
+        if (y >= _values_at_supp_pnts.back())
         {
             return _supp_pnts[_supp_pnts.size() - 1];
         }
-        else
-        {
-            // search interval that has the point inside
-            auto const& it(std::lower_bound(_values_at_supp_pnts.begin(),
-                                            _values_at_supp_pnts.end(), y));
-            interval_idx = std::distance(_values_at_supp_pnts.begin(), it) - 1;
-        }
+
+        // search interval that has the point inside
+        auto const& it(std::lower_bound(_values_at_supp_pnts.begin(),
+                                        _values_at_supp_pnts.end(), y));
+        interval_idx = std::distance(_values_at_supp_pnts.begin(), it) - 1;
     }
     else
     {
@@ -72,19 +68,16 @@ double PiecewiseLinearMonotonicCurve::getInversVariable(const double y) const
         {
             return _supp_pnts[0];
         }
-        else if (y <= _values_at_supp_pnts.back())
+        if (y <= _values_at_supp_pnts.back())
         {
             return _supp_pnts[_supp_pnts.size() - 1];
         }
-        else
-        {
-            // search interval in the reverse direction for the point inside
-            auto const& it(std::lower_bound(_values_at_supp_pnts.rbegin(),
-                                            _values_at_supp_pnts.rend(), y));
-            interval_idx = _values_at_supp_pnts.size() -
-                           (std::distance(_values_at_supp_pnts.rbegin(), it)) -
-                           1;
-        }
+
+        // search interval in the reverse direction for the point inside
+        auto const& it(std::lower_bound(_values_at_supp_pnts.rbegin(),
+                                        _values_at_supp_pnts.rend(), y));
+        interval_idx = _values_at_supp_pnts.size() -
+                       (std::distance(_values_at_supp_pnts.rbegin(), it)) - 1;
     }
 
     const double xi_1 = _supp_pnts[interval_idx + 1];

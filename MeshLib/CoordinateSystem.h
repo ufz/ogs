@@ -55,10 +55,10 @@ public:
     unsigned getDimension() const {
         if (hasZ())
             return 3;
-        else if (hasY())
+        if (hasY())
             return 2;
-        else
-            return 1;
+
+        return 1;
     }
 
     /// has X dimension

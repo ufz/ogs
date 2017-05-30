@@ -66,7 +66,7 @@ double FluidPropertiesWithDensityDependentModels::getdValue(
         {
             return compute_df_drho_drho_dT(property_type, variable_values);
         }
-        else if (variable_type == PropertyVariableType::p)
+        if (variable_type == PropertyVariableType::p)
         {
             return compute_df_drho_drho_dp(property_type, variable_values);
         }

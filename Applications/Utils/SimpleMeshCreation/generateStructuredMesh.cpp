@@ -157,12 +157,15 @@ int main (int argc, char* argv[])
     if (!isLengthSet) {
         ERR("Missing input: Length information is not provided at all.");
         return EXIT_FAILURE;
-    } else {
-        for (unsigned i=0; i<3; i++) {
-            if (dim_used[i] && !vec_lengthArg[i]->isSet()) {
-                ERR("Missing input: Length for dimension [%d] is required but missing.", i);
-                return EXIT_FAILURE;
-            }
+    }
+    for (unsigned i = 0; i < 3; i++)
+    {
+        if (dim_used[i] && !vec_lengthArg[i]->isSet())
+        {
+            ERR("Missing input: Length for dimension [%d] is required but "
+                "missing.",
+                i);
+            return EXIT_FAILURE;
         }
     }
 

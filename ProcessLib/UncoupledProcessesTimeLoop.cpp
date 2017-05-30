@@ -261,19 +261,17 @@ std::unique_ptr<SingleProcessData> makeSingleProcessData(
             std::move(time_disc), process, std::move(coupled_processes),
             std::move(process_output));
     }
-    else if (auto* nonlinear_solver_newton =
-                 dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
-                     &nonlinear_solver))
+    if (auto* nonlinear_solver_newton =
+            dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
+                &nonlinear_solver))
     {
         return std::make_unique<SingleProcessData>(
             *nonlinear_solver_newton, std::move(conv_crit),
             std::move(time_disc), process, std::move(coupled_processes),
             std::move(process_output));
     }
-    else
-    {
-        OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
-    }
+
+    OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
 }
 
 std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
@@ -687,10 +685,8 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
 
             return false;
         }
-        else
-        {
-            _output->doOutput(pcs, spd->process_output, timestep_id, t, x);
-        }
+
+        _output->doOutput(pcs, spd->process_output, timestep_id, t, x);
 
         ++pcs_idx;
     }  // end of for (auto& spd : _per_process_data)

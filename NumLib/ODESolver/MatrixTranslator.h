@@ -297,17 +297,14 @@ std::unique_ptr<MatrixTranslator<ODETag>> createMatrixTranslator(
         return std::unique_ptr<MatrixTranslator<ODETag>>(
             new MatrixTranslatorForwardEuler<ODETag>(*fwd_euler));
     }
-    else if (auto* crank =
-                 dynamic_cast<CrankNicolson const*>(&timeDisc))
+    if (auto* crank = dynamic_cast<CrankNicolson const*>(&timeDisc))
     {
         return std::unique_ptr<MatrixTranslator<ODETag>>(
             new MatrixTranslatorCrankNicolson<ODETag>(*crank));
     }
-    else
-    {
-        return std::unique_ptr<MatrixTranslator<ODETag>>(
-            new MatrixTranslatorGeneral<ODETag>(timeDisc));
-    }
+
+    return std::unique_ptr<MatrixTranslator<ODETag>>(
+        new MatrixTranslatorGeneral<ODETag>(timeDisc));
 }
 
 //! @}

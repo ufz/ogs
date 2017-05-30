@@ -139,13 +139,13 @@ bool MeshElementGrid::sortElementInGridCells(MeshLib::Element const& element)
         c = getGridCellCoordinates(*(static_cast<MathLib::Point3d const*>(element.getNode(k))));
         if (!c.first)
             return false;
-        else {
-            for (std::size_t j(0); j<3; ++j) {
-                if (min[j] > c.second[j])
-                    min[j] = c.second[j];
-                if (max[j] < c.second[j])
-                    max[j] = c.second[j];
-            }
+
+        for (std::size_t j(0); j < 3; ++j)
+        {
+            if (min[j] > c.second[j])
+                min[j] = c.second[j];
+            if (max[j] < c.second[j])
+                max[j] = c.second[j];
         }
     }
 

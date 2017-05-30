@@ -146,9 +146,8 @@ getConfigSubtree(std::string const& root) const
 {
     if (auto t = getConfigSubtreeOptional(root)) {
         return std::move(*t);
-    } else {
-        error("Key <" + root + "> has not been found.");
     }
+    error("Key <" + root + "> has not been found.");
 }
 
 boost::optional<ConfigTree>
@@ -160,10 +159,9 @@ getConfigSubtreeOptional(std::string const& root) const
     if (auto subtree = _tree->get_child_optional(root)) {
         markVisited(root, Attr::TAG, false);
         return ConfigTree(*subtree, *this, root);
-    } else {
-        markVisited(root, Attr::TAG, true);
-        return boost::none;
     }
+    markVisited(root, Attr::TAG, true);
+    return boost::none;
 }
 
 Range<ConfigTree::SubtreeIterator>

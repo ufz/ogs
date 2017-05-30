@@ -26,11 +26,17 @@ std::unique_ptr<ConvergenceCriterion> createConvergenceCriterion(
 
     if (type == "DeltaX") {
         return createConvergenceCriterionDeltaX(config);
-    } else if (type == "Residual") {
+    }
+    if (type == "Residual")
+    {
         return createConvergenceCriterionResidual(config);
-    } else if (type == "PerComponentDeltaX") {
+    }
+    if (type == "PerComponentDeltaX")
+    {
         return createConvergenceCriterionPerComponentDeltaX(config);
-    } else if (type == "PerComponentResidual") {
+    }
+    if (type == "PerComponentResidual")
+    {
         return createConvergenceCriterionPerComponentResidual(config);
     }
 

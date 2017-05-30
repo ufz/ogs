@@ -80,11 +80,9 @@ MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh, const std::vector<std::
                                   removed_element_ids, removed_node_ids));
         return new_mesh;
     }
-    else
-    {
-        INFO("Current selection removes all elements.");
-        return nullptr;
-    }
+
+    INFO("Current selection removes all elements.");
+    return nullptr;
 }
 
 MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::size_t> &del_nodes_idx, const std::string &new_mesh_name)
@@ -131,10 +129,8 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::siz
                                   removed_element_ids, del_nodes_idx));
         return new_mesh;
     }
-    else
-    {
-        return nullptr;
-    }
+
+    return nullptr;
 }
 } // end namespace MeshLib
 

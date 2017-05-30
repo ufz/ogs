@@ -294,8 +294,8 @@ private:
 
         if (this->_father->isChild (this, Quadrant::NW))
             return north_neighbor->getChild (Quadrant::SW);
-        else
-            return north_neighbor->getChild (Quadrant::SE);
+
+        return north_neighbor->getChild(Quadrant::SE);
     }
 
     QuadTree<POINT>* getSouthNeighbor () const
@@ -316,8 +316,8 @@ private:
 
         if (this->_father->isChild (this, Quadrant::SW))
             return south_neighbor->getChild (Quadrant::NW);
-        else
-            return south_neighbor->getChild (Quadrant::NE);
+
+        return south_neighbor->getChild(Quadrant::NE);
     }
 
     QuadTree<POINT>* getEastNeighbor () const
@@ -338,8 +338,8 @@ private:
 
         if (this->_father->isChild (this, Quadrant::SE))
             return east_neighbor->getChild (Quadrant::SW);
-        else
-            return east_neighbor->getChild (Quadrant::NW);
+
+        return east_neighbor->getChild(Quadrant::NW);
     }
 
     QuadTree<POINT>* getWestNeighbor () const
@@ -360,8 +360,8 @@ private:
 
         if (this->_father->isChild (this, Quadrant::SW))
             return west_neighbor->getChild (Quadrant::SE);
-        else
-            return west_neighbor->getChild (Quadrant::NE);
+
+        return west_neighbor->getChild(Quadrant::NE);
     }
 
     /**

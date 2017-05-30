@@ -417,7 +417,7 @@ void FEFLOWMeshInterface::readElevation(std::ifstream& in,
         {
             break;
         }
-        else if (mode == 1)
+        if (mode == 1)
         {
             // slice number
             l++;
@@ -609,7 +609,7 @@ void FEFLOWMeshInterface::readELEMENTALSETS(
         {
             break;
         }
-        else if (mode == 1)
+        if (mode == 1)
         {
             // starting a new set
             std::string set_name;

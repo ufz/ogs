@@ -52,16 +52,19 @@ double AdsorptionReaction::getEvaporationEnthalpy(double T_Ads) // in kJ/kg
         for (size_t i=0; i< sizeof(c)/sizeof(c[0]);i++)
             hv += c[i] * pow(T_Ads,i);
         return hv;
-    } else if (T_Ads <= 300.){
+    }
+    if (T_Ads <= 300.)
+    {
         const double c[] = {2.50043e3,-2.35209,1.91685e-4,-1.94824e-5,2.89539e-7,-3.51199e-9,2.06926e-11,-6.4067e-14,8.518e-17,1.558e-20,-1.122e-22};
         double hv = 0.;
         for (size_t i=0; i< sizeof(c)/sizeof(c[0]);i++)
             hv += c[i] * pow(T_Ads,i);
         return hv;
-    } else {
-        const double c[] = {2.99866e3,-3.1837e-3,-1.566964e1,-2.514e-6,2.045933e-2,1.0389e-8};
-        return ((c[0] + c[2]*T_Ads + c[4]*pow(T_Ads,2))/(1. + c[1]*T_Ads + c[3]*pow(T_Ads,2) + c[5]*pow(T_Ads,3)));
     }
+    const double c[] = {2.99866e3, -3.1837e-3,  -1.566964e1,
+                        -2.514e-6, 2.045933e-2, 1.0389e-8};
+    return ((c[0] + c[2] * T_Ads + c[4] * pow(T_Ads, 2)) /
+            (1. + c[1] * T_Ads + c[3] * pow(T_Ads, 2) + c[5] * pow(T_Ads, 3)));
 }
 
 

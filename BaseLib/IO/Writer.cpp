@@ -37,8 +37,8 @@ std::string Writer::writeToString()
 
     if (this->write())
         return _out.str();
-    else
-        return std::string("");
+
+    return std::string("");
 }
 
 int Writer::writeToFile(std::string const& filename)

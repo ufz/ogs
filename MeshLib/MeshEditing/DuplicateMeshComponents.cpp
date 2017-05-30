@@ -44,11 +44,11 @@ MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::v
 {
     if (element->getGeomType() == MeshElemType::LINE)
         return copyElement<MeshLib::Line>(element, nodes);
-    else if (element->getGeomType() == MeshElemType::TRIANGLE)
+    if (element->getGeomType() == MeshElemType::TRIANGLE)
         return copyElement<MeshLib::Tri>(element, nodes);
-    else if (element->getGeomType() == MeshElemType::QUAD)
+    if (element->getGeomType() == MeshElemType::QUAD)
         return copyElement<MeshLib::Quad>(element, nodes);
-    else if (element->getGeomType() == MeshElemType::TETRAHEDRON)
+    if (element->getGeomType() == MeshElemType::TETRAHEDRON)
         return copyElement<MeshLib::Tet>(element, nodes);
     else if (element->getGeomType() == MeshElemType::HEXAHEDRON)
         return copyElement<MeshLib::Hex>(element, nodes);

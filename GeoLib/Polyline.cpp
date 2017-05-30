@@ -78,17 +78,18 @@ bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
     // check if inserting pnt_id would result in two identical IDs for adjacent points
     if (pos == 0 && pnt_id == _ply_pnt_ids[0]) {
         return false;
-    } else {
-        if (pos != 0) {
-            if (pos == (_ply_pnt_ids.size() - 1) && pnt_id == _ply_pnt_ids[pos]) {
-                return false;
-            } else {
-                if (pnt_id == _ply_pnt_ids[pos - 1] || pnt_id == _ply_pnt_ids[pos]) {
-                    return false;
-                }
-            }
-        }
     }
+    if (pos != 0)
+    {
+        if (pos == (_ply_pnt_ids.size() - 1) && pnt_id == _ply_pnt_ids[pos])
+        {
+            return false;
+        }
+        if (pnt_id == _ply_pnt_ids[pos - 1] || pnt_id == _ply_pnt_ids[pos])
+        {
+            return false;
+        }
+        }
 
     auto const pos_dt(
         static_cast<std::vector<std::size_t>::difference_type>(pos));
@@ -193,8 +194,8 @@ bool Polyline::isClosed() const
 
     if (_ply_pnt_ids.front() == _ply_pnt_ids.back())
         return true;
-    else
-        return false;
+
+    return false;
 }
 
 bool Polyline::isCoplanar() const

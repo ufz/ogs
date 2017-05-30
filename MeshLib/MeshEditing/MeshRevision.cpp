@@ -279,11 +279,11 @@ std::size_t MeshRevision::subdivideElement(
 {
     if (element->getGeomType() == MeshElemType::QUAD)
         return this->subdivideQuad(element, nodes, elements);
-    else if (element->getGeomType() == MeshElemType::HEXAHEDRON)
+    if (element->getGeomType() == MeshElemType::HEXAHEDRON)
         return this->subdivideHex(element, nodes, elements);
-    else if (element->getGeomType() == MeshElemType::PYRAMID)
+    if (element->getGeomType() == MeshElemType::PYRAMID)
         return this->subdividePyramid(element, nodes, elements);
-    else if (element->getGeomType() == MeshElemType::PRISM)
+    if (element->getGeomType() == MeshElemType::PRISM)
         return this->subdividePrism(element, nodes, elements);
     return 0;
 }
@@ -301,9 +301,9 @@ std::size_t MeshRevision::reduceElement(MeshLib::Element const*const element,
     {
         elements.push_back (this->constructLine(element, nodes));
         return 1;
-    } else
-        if ((element->getGeomType() == MeshElemType::QUAD) ||
-            (element->getGeomType() == MeshElemType::TETRAHEDRON))
+    }
+    if ((element->getGeomType() == MeshElemType::QUAD) ||
+        (element->getGeomType() == MeshElemType::TETRAHEDRON))
     {
         if (n_unique_nodes == 3 && min_elem_dim < 3)
             elements.push_back (this->constructTri(element, nodes));
@@ -311,9 +311,12 @@ std::size_t MeshRevision::reduceElement(MeshLib::Element const*const element,
             elements.push_back (this->constructLine(element, nodes));
         return 1;
     }
-    else if (element->getGeomType() == MeshElemType::HEXAHEDRON) {
+    if (element->getGeomType() == MeshElemType::HEXAHEDRON)
+    {
         return reduceHex(element, n_unique_nodes, nodes, elements, min_elem_dim);
-    } else if (element->getGeomType() == MeshElemType::PYRAMID) {
+    }
+    if (element->getGeomType() == MeshElemType::PYRAMID)
+    {
         this->reducePyramid(element, n_unique_nodes, nodes, elements, min_elem_dim);
         return 1;
     } else if (element->getGeomType() == MeshElemType::PRISM) {
@@ -759,20 +762,18 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
         {
             if (elem->validate().none())
                 return elem;
-            else
-            {
-                // change node order if not convex
-                MeshLib::Node* tmp = new_nodes[i+1];
-                new_nodes[i+1] = new_nodes[i];
-                new_nodes[i] = tmp;
-            }
+
+            // change node order if not convex
+            MeshLib::Node* tmp = new_nodes[i + 1];
+            new_nodes[i + 1] = new_nodes[i];
+            new_nodes[i] = tmp;
         }
         return elem;
     }
-    else if (!isQuad)
+    if (!isQuad)
         return new MeshLib::Tet(new_nodes);
-    else // is quad but min elem dim == 3
-        return nullptr;
+    // is quad but min elem dim == 3
+    return nullptr;
 }
 
 unsigned MeshRevision::findPyramidTopNode(MeshLib::Element const& element,
@@ -847,13 +848,19 @@ const std::pair<unsigned, unsigned> MeshRevision::lutHexBackNodes(
 
 unsigned MeshRevision::lutPrismThirdNode(unsigned id1, unsigned id2) const
 {
-    if      ((id1==0 && id2==1) || (id1==1 && id2==2)) return 2;
-    else if ((id1==1 && id2==2) || (id1==2 && id2==1)) return 0;
-    else if ((id1==0 && id2==2) || (id1==2 && id2==0)) return 1;
-    else if ((id1==3 && id2==4) || (id1==4 && id2==3)) return 5;
-    else if ((id1==4 && id2==5) || (id1==5 && id2==4)) return 3;
-    else if ((id1==3 && id2==5) || (id1==5 && id2==3)) return 4;
-    else return std::numeric_limits<unsigned>::max();
+    if ((id1 == 0 && id2 == 1) || (id1 == 1 && id2 == 2))
+        return 2;
+    if ((id1 == 1 && id2 == 2) || (id1 == 2 && id2 == 1))
+        return 0;
+    if ((id1 == 0 && id2 == 2) || (id1 == 2 && id2 == 0))
+        return 1;
+    if ((id1 == 3 && id2 == 4) || (id1 == 4 && id2 == 3))
+        return 5;
+    if ((id1 == 4 && id2 == 5) || (id1 == 5 && id2 == 4))
+        return 3;
+    if ((id1 == 3 && id2 == 5) || (id1 == 5 && id2 == 3))
+        return 4;
+    return std::numeric_limits<unsigned>::max();
 }
 
 void MeshRevision::cleanUp(std::vector<MeshLib::Node*> &new_nodes, std::vector<MeshLib::Element*> &new_elements) const

@@ -136,26 +136,25 @@ void SHPImportDialog::accept()
         OGSError::box("Please insert a name for the data in this file.");
         return;
     }
-    else
-    {
-        if (_fileType == 1 && _choice1->isChecked())
-            _shpInterface->readSHPFile(_filename,
-                                       FileIO::SHPInterface::OGSType::POINT,
-                                       list_name.toStdString());
-        if (_fileType == 1 && _choice2->isChecked())
-            _shpInterface->readSHPFile(_filename,
-                                       FileIO::SHPInterface::OGSType::STATION,
-                                       list_name.toStdString());
-        if (_fileType == 2 && _choice1->isChecked())
-            _shpInterface->readSHPFile(_filename,
-                                       FileIO::SHPInterface::OGSType::POLYLINE,
-                                       list_name.toStdString());
-        if (_fileType == 2 && _choice2->isChecked())
-            _shpInterface->readSHPFile(_filename,
-                                       FileIO::SHPInterface::OGSType::POLYGON,
-                                       list_name.toStdString());
-        emit shpLoaded(list_name);
-    }
+
+    if (_fileType == 1 && _choice1->isChecked())
+        _shpInterface->readSHPFile(_filename,
+                                   FileIO::SHPInterface::OGSType::POINT,
+                                   list_name.toStdString());
+    if (_fileType == 1 && _choice2->isChecked())
+        _shpInterface->readSHPFile(_filename,
+                                   FileIO::SHPInterface::OGSType::STATION,
+                                   list_name.toStdString());
+    if (_fileType == 2 && _choice1->isChecked())
+        _shpInterface->readSHPFile(_filename,
+                                   FileIO::SHPInterface::OGSType::POLYLINE,
+                                   list_name.toStdString());
+    if (_fileType == 2 && _choice2->isChecked())
+        _shpInterface->readSHPFile(_filename,
+                                   FileIO::SHPInterface::OGSType::POLYGON,
+                                   list_name.toStdString());
+    emit shpLoaded(list_name);
+
     this->done(QDialog::Accepted);
 }
 

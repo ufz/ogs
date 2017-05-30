@@ -95,8 +95,8 @@ const MeshLib::Mesh* MshModel::getMesh(const QModelIndex &idx) const
         auto* item = dynamic_cast<MshItem*>(this->getItem(idx));
         if (item)
             return item->getMesh();
-        else
-            return nullptr;
+
+        return nullptr;
     }
     WARN("MshModel::getMesh(): Specified index does not exist.");
     return nullptr;

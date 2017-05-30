@@ -111,29 +111,28 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type,
 {
     if (type.compare(QString("VtkCompositeImageToCylindersFilter")) == 0)
         return new VtkCompositeImageToCylindersFilter(inputAlgorithm);
-    else if (type.compare(QString("VtkCompositePointToGlyphFilter")) == 0)
+    if (type.compare(QString("VtkCompositePointToGlyphFilter")) == 0)
         return new VtkCompositePointToGlyphFilter(inputAlgorithm);
-    else if (type.compare(QString("VtkCompositeLineToTubeFilter")) == 0)
+    if (type.compare(QString("VtkCompositeLineToTubeFilter")) == 0)
         return new VtkCompositeLineToTubeFilter(inputAlgorithm);
-    else if (type.compare(QString("VtkCompositeColormapToImageFilter")) == 0)
+    if (type.compare(QString("VtkCompositeColormapToImageFilter")) == 0)
         return new VtkCompositeColormapToImageFilter(inputAlgorithm);
-    else if (type.compare(QString("VtkCompositeTextureOnSurfaceFilter")) == 0)
+    if (type.compare(QString("VtkCompositeTextureOnSurfaceFilter")) == 0)
         return new VtkCompositeTextureOnSurfaceFilter(inputAlgorithm);
-    else if (type.compare(QString("VtkCompositeThresholdFilter")) == 0)
+    if (type.compare(QString("VtkCompositeThresholdFilter")) == 0)
         return new VtkCompositeThresholdFilter(inputAlgorithm);
-    else if (type.compare(QString("VtkCompositeColorByHeightFilter")) == 0)
+    if (type.compare(QString("VtkCompositeColorByHeightFilter")) == 0)
         return new VtkCompositeColorByHeightFilter(inputAlgorithm);
-    else if (type.compare(QString("VtkCompositeElementSelectionFilter")) == 0)
+    if (type.compare(QString("VtkCompositeElementSelectionFilter")) == 0)
         return new VtkCompositeElementSelectionFilter(inputAlgorithm);
-    else if (type.compare(QString("VtkCompositeNodeSelectionFilter")) == 0)
+    if (type.compare(QString("VtkCompositeNodeSelectionFilter")) == 0)
         return new VtkCompositeNodeSelectionFilter(inputAlgorithm);
-    else if (type.compare(QString("VtkCompositeContourFilter")) == 0)
+    if (type.compare(QString("VtkCompositeContourFilter")) == 0)
         return new VtkCompositeContourFilter(inputAlgorithm);
-    else if (type.compare(QString("VtkCompositeGeoObjectFilter")) == 0)
+    if (type.compare(QString("VtkCompositeGeoObjectFilter")) == 0)
         return new VtkCompositeGeoObjectFilter(inputAlgorithm);
 
-    else
-        return nullptr;
+    return nullptr;
 }
 
 vtkAlgorithm* VtkFilterFactory::CreateSimpleFilter( QString type )

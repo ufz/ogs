@@ -123,11 +123,12 @@ bool operator< (TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
     {
         if (a[i] > b[i]) {
             return false;
-        } else {
-            if (a[i] < b[i]) {
-                return true;
-            }
         }
+        if (a[i] < b[i])
+        {
+            return true;
+            }
+
         // continue with next dimension, because a[0] == b[0]
     }
 
@@ -161,10 +162,7 @@ bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
         // test a relative and an absolute criterion
         if (coordinateIsLargerEps(a[i], b[i]))
         {
-            if (a[i] <= b[i])
-                return true;
-            else
-                return false;
+            return static_cast<bool>(a[i] <= b[i]);
         }
         // a[i] ~= b[i] up to an epsilon. Compare next dimension.
     }

@@ -242,11 +242,11 @@ static MeshLib::Element const* findElementContainingPointXY(
                 delete elem_2d->getNode(k);
             }
             return elem;
-        } else {
-            // clean up the copied nodes
-            for (std::size_t k(0); k<elem_2d->getNumberOfNodes(); ++k) {
-                delete elem_2d->getNode(k);
-            }
+        }
+        // clean up the copied nodes
+        for (std::size_t k(0); k < elem_2d->getNumberOfNodes(); ++k)
+        {
+            delete elem_2d->getNode(k);
         }
     }
     return nullptr;

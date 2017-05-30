@@ -63,8 +63,8 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
     TreeItem* childItem = parentItem->child(row);
     if (childItem)
         return createIndex(row, column, childItem);
-    else
-        return QModelIndex();
+
+    return QModelIndex();
 }
 
 /**
@@ -109,8 +109,8 @@ int TreeModel::columnCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
         return static_cast<TreeItem*>(parent.internalPointer())->columnCount();
-    else
-        return _rootItem->columnCount();
+
+    return _rootItem->columnCount();
 }
 
 void TreeModel::updateData()

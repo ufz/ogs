@@ -115,16 +115,13 @@ createLiquidFlowMaterialProperties(
             has_material_ids, material_ids, solid_thermal_expansion,
             biot_constant);
     }
-    else
-    {
-        ConstantParameter<double> void_parameter("void_solid_thermal_expansion",
-                                                 0.);
-        return std::make_unique<LiquidFlowMaterialProperties>(
-            std::move(fluid_properties),
-            std::move(intrinsic_permeability_models),
-            std::move(porosity_models), std::move(storage_models),
-            has_material_ids, material_ids, void_parameter, void_parameter);
-    }
+
+    ConstantParameter<double> void_parameter("void_solid_thermal_expansion",
+                                             0.);
+    return std::make_unique<LiquidFlowMaterialProperties>(
+        std::move(fluid_properties), std::move(intrinsic_permeability_models),
+        std::move(porosity_models), std::move(storage_models), has_material_ids,
+        material_ids, void_parameter, void_parameter);
 }
 
 }  // end of namespace

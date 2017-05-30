@@ -123,10 +123,8 @@ public:
         if (updated.second.any()) {
             enlarge(updated.second);
             return true;
-        } else if (updated.first) {
-            return true;
         }
-        return false;
+        return updated.first;
     }
 
     /**

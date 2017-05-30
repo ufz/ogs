@@ -62,12 +62,12 @@ QModelIndex StationTreeModel::index( int row, int column,
         QModelIndex newIndex = createIndex(row, column, childItem);
         // assign ModelIndex to BaseItem so it can communicate with the model
         BaseItem* item = childItem->getItem();
-        if ( item != nullptr )
+        if (item != nullptr)
             item->setModelIndex(newIndex);
         return newIndex;
     }
-    else
-        return QModelIndex();
+
+    return QModelIndex();
 }
 
 /**
@@ -86,8 +86,8 @@ GeoLib::Station* StationTreeModel::stationFromIndex( const QModelIndex& index,
         listName = parentItem->data(0).toString();
         return treeItem->getStation();
     }
-    else
-        return nullptr;
+
+    return nullptr;
 }
 
 vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const

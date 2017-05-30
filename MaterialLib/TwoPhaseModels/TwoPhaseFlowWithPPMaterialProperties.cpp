@@ -166,7 +166,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getNonwetRelativePermeability(
 {
     if (saturation < 0.)
         return 1.0;
-    else if (saturation > 1)
+    if (saturation > 1)
         return 0.0;
     return boost::math::pow<3>(1 - saturation);
 }
@@ -177,7 +177,7 @@ double TwoPhaseFlowWithPPMaterialProperties::getWetRelativePermeability(
 {
     if (saturation < 0)
         return 0.0;
-    else if (saturation > 1)
+    if (saturation > 1)
         return 1.0;
     return boost::math::pow<3>(saturation);
 }

@@ -42,51 +42,66 @@ public:
 
     static std::string convertImportFileTypeToString(ImportFileType::type t)
     {
-        if (t==ImportFileType::FEFLOW) return "FEFLOW";
-        else if (t==ImportFileType::GMS) return "GMS";
-        else if (t==ImportFileType::GMSH) return "GMSH";
-        else if (t==ImportFileType::NETCDF) return "NetCDF";
-        else if (t==ImportFileType::OGS) return "OGS";
-        else if (t==ImportFileType::OGS_GEO) return "OGS geometry";
-        else if (t==ImportFileType::OGS_STN) return "OGS station list";
-        else if (t==ImportFileType::OGS_MSH) return "OGS mesh";
-        else if (t==ImportFileType::PETREL) return "Petrel";
-        else if((t==ImportFileType::RASTER) || (t==ImportFileType::POLYRASTER)) return "Raster";
-        else if (t==ImportFileType::SHAPE) return "Shape";
-        else if (t==ImportFileType::TETGEN) return "TetGen node";
-        else if (t==ImportFileType::VTK) return "VTK";
-        else return "";
+        if (t == ImportFileType::FEFLOW)
+            return "FEFLOW";
+        if (t == ImportFileType::GMS)
+            return "GMS";
+        if (t == ImportFileType::GMSH)
+            return "GMSH";
+        if (t == ImportFileType::NETCDF)
+            return "NetCDF";
+        if (t == ImportFileType::OGS)
+            return "OGS";
+        if (t == ImportFileType::OGS_GEO)
+            return "OGS geometry";
+        if (t == ImportFileType::OGS_STN)
+            return "OGS station list";
+        if (t == ImportFileType::OGS_MSH)
+            return "OGS mesh";
+        if (t == ImportFileType::PETREL)
+            return "Petrel";
+        if ((t == ImportFileType::RASTER) || (t == ImportFileType::POLYRASTER))
+            return "Raster";
+        if (t == ImportFileType::SHAPE)
+            return "Shape";
+        else if (t == ImportFileType::TETGEN)
+            return "TetGen node";
+        else if (t == ImportFileType::VTK)
+            return "VTK";
+        else
+            return "";
     }
 
     static std::string getFileSuffixString(ImportFileType::type t)
     {
-        if (t==ImportFileType::FEFLOW)
+        if (t == ImportFileType::FEFLOW)
             return "FEFLOW files (*.fem)";
-        else if (t==ImportFileType::GMS)
+        if (t == ImportFileType::GMS)
             return "GMS files (*.txt *.3dm)";
-        else if (t==ImportFileType::GMSH)
+        if (t == ImportFileType::GMSH)
             return "GMSH mesh files (*.msh)";
-        else if (t==ImportFileType::NETCDF)
+        if (t == ImportFileType::NETCDF)
             return "NetCDF files (*.nc)";
-        else if (t==ImportFileType::OGS)
-            return "OpenGeosys files (*.gsp *.gml *.vtu *.stn);;GeoSys legacy files (*.gli *.msh);;All files (* *.*)";
-        else if (t==ImportFileType::OGS_GEO)
+        if (t == ImportFileType::OGS)
+            return "OpenGeosys files (*.gsp *.gml *.vtu *.stn);;GeoSys legacy "
+                   "files (*.gli *.msh);;All files (* *.*)";
+        if (t == ImportFileType::OGS_GEO)
             return "OpenGeosys files (*.gml *.gli)";
-        else if (t==ImportFileType::OGS_STN)
+        if (t == ImportFileType::OGS_STN)
             return "OpenGeosys files (*.stn)";
-        else if (t==ImportFileType::OGS_MSH)
+        if (t == ImportFileType::OGS_MSH)
             return "OpenGeosys files (*.vtu *.msh)";
-        else if (t==ImportFileType::PETREL)
+        if (t == ImportFileType::PETREL)
             return "Petrel files (*)";
-        else if (t==ImportFileType::RASTER)
+        if (t == ImportFileType::RASTER)
             return "Raster files (*.asc *.grd *.bmp *.jpg *.png *.tif)";
-        else if (t==ImportFileType::SHAPE)
+        if (t == ImportFileType::SHAPE)
             return "ESRI Shape files (*.shp)";
-        else if (t==ImportFileType::TETGEN)
+        else if (t == ImportFileType::TETGEN)
             return "TetGen node files (*.node *.poly *.smesh)";
-        else if (t==ImportFileType::VTK)
+        else if (t == ImportFileType::VTK)
             return "VTK files (*.vtk *.vti *.vtr *.vts *.vtp *.vtu)";
-        else return "All files (*.*)";
-}
-
+        else
+            return "All files (*.*)";
+    }
 };

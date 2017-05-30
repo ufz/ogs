@@ -81,7 +81,9 @@ public:
             if (detail::almost_zero(fc)) {
                 _a = _b = c;
                 return;
-            } else if (!detail::same_sign(fc, _fb)) {
+            }
+            if (!detail::same_sign(fc, _fb))
+            {
                 _a = _b; _fa = _fb;
                 _b =  c; _fb =  fc;
             } else {

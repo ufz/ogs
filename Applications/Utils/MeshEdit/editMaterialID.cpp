@@ -56,7 +56,9 @@ int main (int argc, char* argv[])
     if (!replaceArg.isSet() && !condenseArg.isSet() && !specifyArg.isSet()) {
         INFO("Please select editing mode: -r or -c or -s");
         return 0;
-    } else if (replaceArg.isSet() && condenseArg.isSet()) {
+    }
+    if (replaceArg.isSet() && condenseArg.isSet())
+    {
         INFO("Please select only one editing mode: -r or -c or -s");
         return 0;
     } else if (replaceArg.isSet()) {

@@ -52,7 +52,8 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
         raster.reset(FileIO::AsciiRasterInterface::getRasterFromSurferFile(fileName));
     if (raster)
         return VtkRaster::loadImageFromArray(raster->begin(), raster->getHeader());
-    else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
+    if ((fileInfo.suffix().toLower() == "tif") ||
+        (fileInfo.suffix().toLower() == "tiff"))
     {
 #ifdef GEOTIFF_FOUND
         return loadImageFromTIFF(fileName, x0, y0, delta);
@@ -61,8 +62,8 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
         return nullptr;
 #endif
     }
-    else
-        return loadImageFromFile(fileName);
+
+    return loadImageFromFile(fileName);
 }
 vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, GeoLib::RasterHeader header)
 {

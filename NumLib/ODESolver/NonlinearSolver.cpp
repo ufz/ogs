@@ -319,7 +319,9 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
         using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(
             std::make_unique<ConcreteNLS>(linear_solver, max_iter), tag);
-    } else if (type == "Newton") {
+    }
+    if (type == "Newton")
+    {
         auto const tag = NonlinearSolverTag::Newton;
         using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(

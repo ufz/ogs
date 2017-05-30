@@ -34,13 +34,11 @@ std::unique_ptr<FluidProperty> createFluidThermalConductivityModel(
             //! \ogs_file_param{material__fluid__thermal_conductivity__Constant__value}
             config.getConfigParameter<double>("value"));
     // TODO: add more models
-    else
-    {
-        OGS_FATAL(
-            "The viscosity type %s is unavailable.\n"
-            "The available type is \n\tConstant\n",
-            type.data());
-    }
+
+    OGS_FATAL(
+        "The viscosity type %s is unavailable.\n"
+        "The available type is \n\tConstant\n",
+        type.data());
 }
 
 }  // end namespace

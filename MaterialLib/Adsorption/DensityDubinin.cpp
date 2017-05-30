@@ -38,19 +38,18 @@ double DensityDubinin::getAdsorbateDensity(const double T_Ads) const
 
     if (T_Ads < Tb) {
         return rhoWaterDean(T_Ads);
-    } else {
-        const double Tc = 647.3; // K
-        const double pc = 221.2e5; // Pa
-        // boiling point density
-        const double rhob = rhoWaterDean(Tb);
-        // state values
-        const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
-        const double M = MaterialLib::PhysicalConstant::MolarMass::Water;
-        const double b = R * Tc/(8. * pc); // m^3/mol
-        const double rhom = M/b; // kg/m^3
-        const double rho = rhob - (rhob-rhom)/(Tc-Tb)*(T_Ads-Tb);
-        return rho;
     }
+    const double Tc = 647.3;    // K
+    const double pc = 221.2e5;  // Pa
+    // boiling point density
+    const double rhob = rhoWaterDean(Tb);
+    // state values
+    const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
+    const double M = MaterialLib::PhysicalConstant::MolarMass::Water;
+    const double b = R * Tc / (8. * pc);  // m^3/mol
+    const double rhom = M / b;            // kg/m^3
+    const double rho = rhob - (rhob - rhom) / (Tc - Tb) * (T_Ads - Tb);
+    return rho;
 }
 
 //Thermal expansivity model for water found in the works of Hauer
@@ -59,21 +58,20 @@ double DensityDubinin::getAlphaT(const double T_Ads) const
     const double Tb = 373.1;
     if (T_Ads <= Tb) {
         return alphaTWaterDean(T_Ads);
-    } else {
-        // critical T and p
-        const double Tc = 647.3; // K
-        // const double rhoc = 322.; // kg/m^3
-        const double pc = 221.2e5; // Pa
-        // boiling point density
-        const double rhob = rhoWaterDean(Tb);
-        // state values
-        const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
-        const double M = MaterialLib::PhysicalConstant::MolarMass::Water;
-        const double b = R * Tc/(8. * pc); // m^3/mol
-        const double rhom = M/(b); // kg/m^3
-        const double rho = rhob - (rhob-rhom)/(Tc-Tb)*(T_Ads-Tb);
-        return ((rhob-rhom)/(Tc-Tb)*1./rho);
     }
+    // critical T and p
+    const double Tc = 647.3;  // K
+    // const double rhoc = 322.; // kg/m^3
+    const double pc = 221.2e5;  // Pa
+    // boiling point density
+    const double rhob = rhoWaterDean(Tb);
+    // state values
+    const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
+    const double M = MaterialLib::PhysicalConstant::MolarMass::Water;
+    const double b = R * Tc / (8. * pc);  // m^3/mol
+    const double rhom = M / (b);          // kg/m^3
+    const double rho = rhob - (rhob - rhom) / (Tc - Tb) * (T_Ads - Tb);
+    return ((rhob - rhom) / (Tc - Tb) * 1. / rho);
 }
 
 // Characteristic curve. Return W (A)

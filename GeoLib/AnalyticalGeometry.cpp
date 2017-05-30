@@ -474,12 +474,12 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
             double const t = (c[0] - a[0]) / (b[0] - a[0]);
             return 0.0 <= t && t <= 1.0;
         }
-        else if (b[1] - a[1] != 0)
+        if (b[1] - a[1] != 0)
         {
             double const t = (c[1] - a[1]) / (b[1] - a[1]);
             return 0.0 <= t && t <= 1.0;
         }
-        else if (b[2] - a[2] != 0)
+        if (b[2] - a[2] != 0)
         {
             double const t = (c[2] - a[2]) / (b[2] - a[2]);
             return 0.0 <= t && t <= 1.0;
@@ -523,9 +523,9 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
         return { MathLib::Point3d{std::array<double,3>{{
                 c[0]+rhs[1]*(d[0]-c[0]), c[1]+rhs[1]*(d[1]-c[1]),
                 c[2]+rhs[1]*(d[2]-c[2])}} } };
-    } else {
-        return std::vector<MathLib::Point3d>(); // parameter s not in the valid range
     }
+    return std::vector<MathLib::Point3d>();  // parameter s not in the valid
+                                             // range
 }
 
 void sortSegments(

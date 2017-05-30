@@ -67,10 +67,9 @@ makeConfigTree(const std::string& filepath, const bool be_ruthless,
 
     if (auto child = ptree.get_child_optional(toplevel_tag)) {
         return ConfigTreeTopLevel(filepath, be_ruthless, std::move(*child));
-    } else {
-        OGS_FATAL("Tag <%s> has not been found in file `%s'.",
-            toplevel_tag.c_str(), filepath.c_str());
     }
+    OGS_FATAL("Tag <%s> has not been found in file `%s'.", toplevel_tag.c_str(),
+              filepath.c_str());
 }
 
 }

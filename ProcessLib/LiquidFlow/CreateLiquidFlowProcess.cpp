@@ -90,28 +90,26 @@ std::unique_ptr<Process> createLiquidFlowProcess(
             std::move(named_function_caller), *mat_ids, has_material_ids,
             gravity_axis_id, g, reference_temperature, mat_config}};
     }
-    else
-    {
-        INFO("The liquid flow is in homogeneous porous media.");
 
-        MeshLib::Properties dummy_property;
-        // For a reference argument of LiquidFlowProcess(...).
-        auto const& dummy_property_vector =
-            dummy_property.createNewPropertyVector<int>(
-                "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+    INFO("The liquid flow is in homogeneous porous media.");
 
-        // Since dummy_property_vector is only visible in this function,
-        // the following constant, has_material_ids, is employed to indicate
-        // that material_ids does not exist.
-        const bool has_material_ids = false;
+    MeshLib::Properties dummy_property;
+    // For a reference argument of LiquidFlowProcess(...).
+    auto const& dummy_property_vector =
+        dummy_property.createNewPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
 
-        return std::unique_ptr<Process>{new LiquidFlowProcess{
-            mesh, std::move(jacobian_assembler), parameters, integration_order,
-            std::move(process_variables), std::move(secondary_variables),
-            std::move(named_function_caller), *dummy_property_vector,
-            has_material_ids, gravity_axis_id, g, reference_temperature,
-            mat_config}};
-    }
+    // Since dummy_property_vector is only visible in this function,
+    // the following constant, has_material_ids, is employed to indicate
+    // that material_ids does not exist.
+    const bool has_material_ids = false;
+
+    return std::unique_ptr<Process>{new LiquidFlowProcess{
+        mesh, std::move(jacobian_assembler), parameters, integration_order,
+        std::move(process_variables), std::move(secondary_variables),
+        std::move(named_function_caller), *dummy_property_vector,
+        has_material_ids, gravity_axis_id, g, reference_temperature,
+        mat_config}};
 }
 
 }  // end of namespace

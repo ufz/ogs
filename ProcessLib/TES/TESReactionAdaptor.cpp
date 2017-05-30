@@ -33,16 +33,15 @@ std::unique_ptr<TESFEMReactionAdaptor> TESFEMReactionAdaptor::newInstance(
     {
         return std::make_unique<TESFEMReactionAdaptorAdsorption>(data);
     }
-    else if (dynamic_cast<Adsorption::ReactionInert const*>(ads) != nullptr)
+    if (dynamic_cast<Adsorption::ReactionInert const*>(ads) != nullptr)
     {
         return std::make_unique<TESFEMReactionAdaptorInert>(data);
     }
-    else if (dynamic_cast<Adsorption::ReactionSinusoidal const*>(ads) !=
-             nullptr)
+    if (dynamic_cast<Adsorption::ReactionSinusoidal const*>(ads) != nullptr)
     {
         return std::make_unique<TESFEMReactionAdaptorSinusoidal>(data);
     }
-    else if (dynamic_cast<Adsorption::ReactionCaOH2 const*>(ads) != nullptr)
+    if (dynamic_cast<Adsorption::ReactionCaOH2 const*>(ads) != nullptr)
     {
         return std::make_unique<TESFEMReactionAdaptorCaOH2>(data);
     }
@@ -299,7 +298,7 @@ ReactionRate TESFEMReactionAdaptorSinusoidal::initReaction(
 TESFEMReactionAdaptorCaOH2::TESFEMReactionAdaptorCaOH2(
     TESLocalAssemblerData const& data)
     : _d(data),
-      _react(dynamic_cast<Adsorption::ReactionCaOH2&>(*data.ap.react_sys.get()))
+      _react(dynamic_cast<Adsorption::ReactionCaOH2&>(*data.ap.react_sys))
 {
     _ode_solver = MathLib::ODE::createODESolver<1>(_react.getOdeSolverConfig());
     // TODO invalidate config

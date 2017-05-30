@@ -53,8 +53,8 @@ TreeItem* TreeItem::child(int row) const
 {
     if (_childItems.count() > row)
         return _childItems.value(row);
-    else
-        return nullptr;
+
+    return nullptr;
 }
 
 /**

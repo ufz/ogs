@@ -73,7 +73,7 @@ float DiagramList::calcMaxYValue()
 bool DiagramList::getPath(QPainterPath &path, float scaleX, float scaleY)
 {
     QPointF p;
-    if (getPoint(p,0))
+    if (getPoint(p, 0))
     {
         QPainterPath pp(QPointF(p.x() * scaleX, p.y() * scaleY));
         path = pp;
@@ -81,13 +81,13 @@ bool DiagramList::getPath(QPainterPath &path, float scaleX, float scaleY)
         std::size_t nCoords = _coords.size();
         for (std::size_t i = 1; i < nCoords; i++)
         {
-            getPoint(p,i);
+            getPoint(p, i);
             path.lineTo(QPointF(p.x() * scaleX, p.y() * scaleY));
         }
         return true;
     }
-    else
-        return false;
+
+    return false;
 }
 
 bool DiagramList::getPoint(QPointF &p, std::size_t i)
@@ -98,8 +98,8 @@ bool DiagramList::getPoint(QPointF &p, std::size_t i)
         p.setY(_coords[i].second);
         return true;
     }
-    else
-        return false;
+
+    return false;
 }
 
 /*
@@ -320,8 +320,8 @@ std::size_t DiagramList::size()
 {
     if (!(_coords.empty()))
         return _coords.size();
-    else
-        return 0;
+
+    return 0;
 }
 
 void DiagramList::update()
@@ -336,6 +336,6 @@ QDateTime DiagramList::getDateTime(QString stringDate)
 {
     if (stringDate.length() <= 10)
         return QDateTime::fromString(stringDate, "dd.MM.yyyy");
-    else
-        return QDateTime::fromString(stringDate, "dd.MM.yyyy.HH.mm.ss");
+
+    return QDateTime::fromString(stringDate, "dd.MM.yyyy.HH.mm.ss");
 }

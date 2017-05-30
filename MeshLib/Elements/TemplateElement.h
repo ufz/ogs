@@ -144,10 +144,11 @@ public:
     /// Return a specific edge node.
     inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const override
     {
-        if (getNumberOfEdges()>0)
-            return const_cast<Node*>(this->_nodes[ELEMENT_RULE::edge_nodes[edge_id][node_id]]);
-        else
-            return nullptr;
+        if (getNumberOfEdges() > 0)
+            return const_cast<Node*>(
+                this->_nodes[ELEMENT_RULE::edge_nodes[edge_id][node_id]]);
+
+        return nullptr;
     }
 
     /**

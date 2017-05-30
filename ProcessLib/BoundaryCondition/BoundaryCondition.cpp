@@ -36,22 +36,20 @@ BoundaryConditionBuilder::createBoundaryCondition(
                     config, dof_table, mesh, variable_id,
                     integration_order, shapefunction_order, parameters);
     }
-    else if (type == "Neumann")
+    if (type == "Neumann")
     {
         return createNeumannBoundaryCondition(
                     config, dof_table, mesh, variable_id,
                     integration_order, shapefunction_order, parameters);
     }
-    else if (type == "Robin")
+    if (type == "Robin")
     {
         return createRobinBoundaryCondition(
                     config, dof_table, mesh, variable_id,
                     integration_order, shapefunction_order, parameters);
     }
-    else
-    {
-        OGS_FATAL("Unknown boundary condition type: `%s'.", type.c_str());
-    }
+
+    OGS_FATAL("Unknown boundary condition type: `%s'.", type.c_str());
 }
 
 std::unique_ptr<BoundaryCondition>
