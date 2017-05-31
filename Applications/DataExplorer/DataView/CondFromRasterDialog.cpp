@@ -87,7 +87,7 @@ void CondFromRasterDialog::accept()
 
     MeshLib::Mesh* mesh(nullptr);
     for (auto mesh_ : _msh_vec)
-        if (mesh_->getName().compare(mesh_name) == 0)
+        if (mesh_->getName() == mesh_name)
         {
             mesh = mesh_;
             break;

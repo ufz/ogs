@@ -60,21 +60,21 @@ const std::string MeshElemType2StringShort(const MeshElemType t)
 
 MeshElemType String2MeshElemType(const std::string &s)
 {
-    if ((s.compare("point") == 0) || (s.compare("Point") == 0))
+    if ((s == "point") || (s == "Point"))
         return MeshElemType::POINT;
-    if ((s.compare("line") == 0) || (s.compare("Line") == 0))
+    if ((s == "line") || (s == "Line"))
         return MeshElemType::LINE;
-    if ((s.compare("quad") == 0) || (s.compare("Quadrilateral") == 0))
+    if ((s == "quad") || (s == "Quadrilateral"))
         return MeshElemType::QUAD;
-    if ((s.compare("hex")  == 0) || (s.compare("Hexahedron") == 0))
+    if ((s == "hex") || (s == "Hexahedron"))
         return MeshElemType::HEXAHEDRON;
-    if ((s.compare("tri")  == 0) || (s.compare("Triangle") == 0))
+    if ((s == "tri") || (s == "Triangle"))
         return MeshElemType::TRIANGLE;
-    if ((s.compare("tet")  == 0) || (s.compare("Tetrahedron") == 0))
+    if ((s == "tet") || (s == "Tetrahedron"))
         return MeshElemType::TETRAHEDRON;
-    if ((s.compare("pris") == 0) || (s.compare("Prism") == 0))
+    if ((s == "pris") || (s == "Prism"))
         return MeshElemType::PRISM;
-    if ((s.compare("pyra") == 0) || (s.compare("Pyramid") == 0))
+    if ((s == "pyra") || (s == "Pyramid"))
         return MeshElemType::PYRAMID;
     return MeshElemType::INVALID;
 }

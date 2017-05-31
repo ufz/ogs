@@ -168,10 +168,11 @@ std::string SensorData::convertSensorDataType2String(SensorDataType t)
 
 SensorDataType SensorData::convertString2SensorDataType(const std::string &s)
 {
-    if ((s.compare("Evaporation")==0) || (s.compare("EVAPORATION")==0)) return SensorDataType::EVAPORATION;
-    if ((s.compare("Precipitation") == 0) || (s.compare("PRECIPITATION") == 0))
+    if ((s == "Evaporation") || (s == "EVAPORATION"))
+        return SensorDataType::EVAPORATION;
+    if ((s == "Precipitation") || (s == "PRECIPITATION"))
         return SensorDataType::PRECIPITATION;
-    if ((s.compare("Temperature") == 0) || (s.compare("TEMPERATURE") == 0))
+    if ((s == "Temperature") || (s == "TEMPERATURE"))
         return SensorDataType::TEMPERATURE;
     return SensorDataType::OTHER;
 }

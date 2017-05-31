@@ -204,7 +204,7 @@ std::size_t VtkStationSource::GetIndexByName( std::string const& name )
     vtkIdType max_key(0);
     for (auto it = _id_map.begin(); it != _id_map.end(); ++it)
     {
-        if (name.compare(it->first) == 0)
+        if (name == it->first)
             return it->second;
         if (it->second > max_key)
             max_key = it->second;

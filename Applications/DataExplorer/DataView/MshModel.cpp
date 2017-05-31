@@ -107,7 +107,7 @@ const MeshLib::Mesh* MshModel::getMesh(const std::string &name) const
     for (int i = 0; i < _rootItem->childCount(); i++)
     {
         auto* item = static_cast<MshItem*>(_rootItem->child(i));
-        if (item->data(0).toString().toStdString().compare(name) == 0)
+        if (item->data(0).toString().toStdString() == name)
             return item->getMesh();
     }
 
@@ -132,7 +132,7 @@ bool MshModel::removeMesh(const std::string &name)
     for (int i = 0; i < _rootItem->childCount(); i++)
     {
         TreeItem* item = _rootItem->child(i);
-        if (item->data(0).toString().toStdString().compare(name) == 0)
+        if (item->data(0).toString().toStdString() == name)
         {
             beginResetModel();
             emit meshRemoved(this, this->index(i, 0, QModelIndex()));
@@ -195,7 +195,7 @@ vtkUnstructuredGridAlgorithm* MshModel::vtkSource(const std::string &name) const
     for (int i = 0; i < _rootItem->childCount(); i++)
     {
         auto* item = static_cast<MshItem*>(_rootItem->child(i));
-        if (item->data(0).toString().toStdString().compare(name) == 0)
+        if (item->data(0).toString().toStdString() == name)
             return item->vtkSource();
     }
 

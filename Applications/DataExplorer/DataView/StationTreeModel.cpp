@@ -94,7 +94,7 @@ vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
 {
     std::size_t nLists = _lists.size();
     for (std::size_t i = 0; i < nLists; i++)
-        if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
+        if (name == _lists[i]->data(0).toString().toStdString())
             return dynamic_cast<BaseItem*>(_lists[i]->getItem())->vtkSource();
     return nullptr;
 }
@@ -179,6 +179,6 @@ void StationTreeModel::removeStationList(QModelIndex index)
 void StationTreeModel::removeStationList(const std::string &name)
 {
     for (auto& list : _lists)
-        if (name.compare(list->data(0).toString().toStdString()) == 0)
+        if (name == list->data(0).toString().toStdString())
             removeStationList(createIndex(list->row(), 0, list));
 }

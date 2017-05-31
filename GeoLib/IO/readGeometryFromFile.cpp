@@ -27,7 +27,8 @@ namespace IO
 void
 readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
 {
-    if (BaseLib::getFileExtension(fname).compare("gml") == 0) {
+    if (BaseLib::getFileExtension(fname) == "gml")
+    {
         GeoLib::IO::BoostXmlGmlInterface xml(geo_objs);
         xml.readFile(fname);
     } else {

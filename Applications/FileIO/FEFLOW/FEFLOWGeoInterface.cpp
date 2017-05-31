@@ -65,7 +65,7 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
         }
         //....................................................................
         // GRAVITY
-        else if (line_string.compare("GRAVITY") == 0)
+        else if (line_string == "GRAVITY")
         {
             getline(in, line_string);
             line_stream.str(line_string);
@@ -78,7 +78,7 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
         }
         //....................................................................
         // SUPERMESH
-        else if (line_string.compare("SUPERMESH") == 0)
+        else if (line_string == "SUPERMESH")
         {
             readSuperMesh(in, dimension, points, lines);
         }

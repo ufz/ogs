@@ -46,7 +46,7 @@ Color const getColor(const std::string &id, std::map<std::string, Color> &colors
 {
     for (auto it = colors.begin(); it != colors.end(); ++it)
     {
-        if (id.compare(it->first) == 0)
+        if (id == it->first)
             return it->second;
     }
     WARN("Key \"%s\" not found in color lookup table.", id.c_str());

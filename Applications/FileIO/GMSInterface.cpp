@@ -61,7 +61,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
 
         if (fields.size() >= 5)
         {
-            if (fields.begin()->compare(cName) == 0) // add new layer
+            if (*fields.begin() == cName)  // add new layer
             {
                 it = fields.begin();
                 (*pnt)[0] = strtod((++it)->c_str(), nullptr);
@@ -151,7 +151,7 @@ void GMSInterface::writeBoreholesToGMS(const std::vector<GeoLib::Point*>* statio
         std::size_t nLayers = profile.size();
         for (std::size_t i = 1; i < nLayers; i++)
         {
-            if ((i > 1) && (soilNames[i].compare(soilNames[i - 1]) == 0))
+            if ((i > 1) && (soilNames[i] == soilNames[i - 1]))
                 continue;
             // idx = getSoilID(soilID, soilNames[i]);
             current_soil_name = soilNames[i];
@@ -175,7 +175,7 @@ void GMSInterface::writeBoreholesToGMS(const std::vector<GeoLib::Point*>* statio
 std::size_t GMSInterface::getSoilID(std::vector<std::string> &soilID, std::string &soilName)
 {
     for (std::size_t j = 0; j < soilID.size(); j++)
-        if (soilID[j].compare(soilName) == 0)
+        if (soilID[j] == soilName)
             return j;
     soilID.push_back(soilName);
     return soilID.size() - 1;
@@ -229,7 +229,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 
     // Read data from file
     getline(in, line); // "MESH3D"
-    if (line.compare("MESH3D") != 0)
+    if (line != "MESH3D")
     {
         ERR("GMSInterface::readGMS3DMMesh(): Could not read expected file header.");
         return nullptr;
@@ -271,7 +271,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
         std::string element_id(line.substr(0,3));
         std::stringstream str(line);
 
-        if (element_id.compare("E6W") == 0) // Prism
+        if (element_id == "E6W")  // Prism
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
             node_idx[3]
@@ -283,7 +283,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
             elements.push_back(new MeshLib::Prism(prism_nodes));
             mat_ids.push_back(mat_id);
         }
-        else if (element_id.compare("E4T") == 0) // Tet
+        else if (element_id == "E4T")  // Tet
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
             node_idx[3] >> mat_id;
@@ -294,7 +294,9 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
             elements.push_back(new MeshLib::Tet(tet_nodes));
             mat_ids.push_back(mat_id);
         }
-        else if ((element_id.compare("E4P") == 0) || (element_id.compare("E5P") == 0)) // Pyramid (both do exist for some reason)
+        else if ((element_id == "E4P") ||
+                 (element_id ==
+                  "E5P"))  // Pyramid (both do exist for some reason)
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
             node_idx[3] >> node_idx[4] >> mat_id;
@@ -305,7 +307,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
             elements.push_back(new MeshLib::Pyramid(pyramid_nodes));
             mat_ids.push_back(mat_id);
         }
-        else if (element_id.compare("ND ") == 0) // Node
+        else if (element_id == "ND ")  // Node
 
             continue; // skip because nodes have already been read
         else //default

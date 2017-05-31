@@ -115,7 +115,9 @@ int StationBorehole::addLayer(std::list<std::string> fields, StationBorehole* bo
 {
     if (fields.size() >= 4) /* check if there are enough fields to create a borehole object */
     {
-        if (fields.front().compare(borehole->_name) == 0) /* check if the name of the borehole matches the name in the data */
+        if (fields.front() == borehole->_name) /* check if the name of the
+                                                  borehole matches the name in
+                                                  the data */
         {
             fields.pop_front();
 
@@ -173,7 +175,7 @@ int StationBorehole::addStratigraphies(const std::string &path, std::vector<Poin
             if (fields.size() >= 4)
             {
                 name = static_cast<StationBorehole*>((*boreholes)[it])->_name;
-                if ( fields.front().compare(name) != 0 )
+                if (fields.front() != name)
                     if (it < boreholes->size() - 1)
                         it++;
 
@@ -248,7 +250,7 @@ StationBorehole* StationBorehole::createStation(const std::string &name,
     (*station)[1]   = y;
     (*station)[2]   = z;
     station->_depth = depth;
-    if (date.compare("0000-00-00") != 0)
+    if (date != "0000-00-00")
         station->_date  = BaseLib::xmlDate2int(date);
     return station;
 }

@@ -177,7 +177,7 @@ std::size_t CsvInterface::findColumn(std::string const& line, char delim, std::s
     std::size_t count(0);
     for (const auto& field : fields)
     {
-        if (field.compare(column_name) == 0)
+        if (field == column_name)
             break;
 
         count++;
