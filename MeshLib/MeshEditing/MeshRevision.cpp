@@ -319,7 +319,9 @@ std::size_t MeshRevision::reduceElement(MeshLib::Element const*const element,
     {
         this->reducePyramid(element, n_unique_nodes, nodes, elements, min_elem_dim);
         return 1;
-    } else if (element->getGeomType() == MeshElemType::PRISM) {
+    }
+    if (element->getGeomType() == MeshElemType::PRISM)
+    {
         return reducePrism(element, n_unique_nodes, nodes, elements, min_elem_dim);
     }
 

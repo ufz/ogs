@@ -50,11 +50,11 @@ MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::v
         return copyElement<MeshLib::Quad>(element, nodes);
     if (element->getGeomType() == MeshElemType::TETRAHEDRON)
         return copyElement<MeshLib::Tet>(element, nodes);
-    else if (element->getGeomType() == MeshElemType::HEXAHEDRON)
+    if (element->getGeomType() == MeshElemType::HEXAHEDRON)
         return copyElement<MeshLib::Hex>(element, nodes);
-    else if (element->getGeomType() == MeshElemType::PYRAMID)
+    if (element->getGeomType() == MeshElemType::PYRAMID)
         return copyElement<MeshLib::Pyramid>(element, nodes);
-    else if (element->getGeomType() == MeshElemType::PRISM)
+    if (element->getGeomType() == MeshElemType::PRISM)
         return copyElement<MeshLib::Prism>(element, nodes);
 
     ERR ("Error: Unknown element type.");

@@ -112,7 +112,7 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
         return createLinearTemperatureDependentDensity(config);
     if (type == "ConcentrationDependent")
         return createLinearConcentrationDependentDensity(config);
-    else if (type == "IdealGasLaw")
+    if (type == "IdealGasLaw")
     {
         //! \ogs_file_param{material__fluid__density__type}
         config.checkConfigParameter("type", "IdealGasLaw");
@@ -120,19 +120,17 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
             //! \ogs_file_param{material__fluid__density__IdealGasLaw__molar_mass}
             config.getConfigParameter<double>("molar_mass"));
     }
-    else if (type == "WaterDensityIAPWSIF97Region1")
+    if (type == "WaterDensityIAPWSIF97Region1")
     {
         return std::make_unique<WaterDensityIAPWSIF97Region1>();
     }
-    else
-    {
-        OGS_FATAL(
-            "The density type %s is unavailable.\n"
-            "The available types are: \n\tConstant, \n\tLiquidDensity, "
-            "\n\tTemperatureDependent, \n\tIdealGasLaw."
-            "\n\tWaterDensityIAPWSIF97Region1\n",
-            type.data());
-    }
+
+    OGS_FATAL(
+        "The density type %s is unavailable.\n"
+        "The available types are: \n\tConstant, \n\tLiquidDensity, "
+        "\n\tTemperatureDependent, \n\tIdealGasLaw."
+        "\n\tWaterDensityIAPWSIF97Region1\n",
+        type.data());
 }
 
 }  // end namespace

@@ -43,9 +43,7 @@ std::unique_ptr<TimeDiscretization> createTimeDiscretization(
         auto const order = config.getConfigParameter<unsigned>("order");
         return std::make_unique<BackwardDifferentiationFormula>(order);
     }
-    else
-    {
-        OGS_FATAL("Unrecognized time discretization type `%s'", type.c_str());
-    }
+
+    OGS_FATAL("Unrecognized time discretization type `%s'", type.c_str());
 }
 }

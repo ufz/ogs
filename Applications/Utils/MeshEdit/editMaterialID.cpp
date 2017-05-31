@@ -61,7 +61,9 @@ int main (int argc, char* argv[])
     {
         INFO("Please select only one editing mode: -r or -c or -s");
         return 0;
-    } else if (replaceArg.isSet()) {
+    }
+    if (replaceArg.isSet())
+    {
         if (!matIDArg.isSet() || !newIDArg.isSet()) {
             INFO("current and new material IDs must be provided for replacement");
             return 0;

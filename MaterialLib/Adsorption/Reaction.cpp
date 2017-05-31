@@ -45,19 +45,19 @@ newInstance(BaseLib::ConfigTree const& conf)
         return std::make_unique<DensityConst>();
     if (type == "Z13XBF_Cook")
         return std::make_unique<DensityCook>();
-    else if (type == "Z13XBF_Dubinin")
+    if (type == "Z13XBF_Dubinin")
         return std::make_unique<DensityDubinin>();
-    else if (type == "Z13XBF_Hauer")
+    if (type == "Z13XBF_Hauer")
         return std::make_unique<DensityHauer>();
-    else if (type == "Z13XBF_Mette")
+    if (type == "Z13XBF_Mette")
         return std::make_unique<DensityMette>();
-    else if (type == "Z13XBF_Nunez")
+    if (type == "Z13XBF_Nunez")
         return std::make_unique<DensityNunez>();
-    else if (type == "Inert")
+    if (type == "Inert")
         return std::make_unique<ReactionInert>();
-    else if (type == "Sinusoidal")
+    if (type == "Sinusoidal")
         return std::make_unique<ReactionSinusoidal>(conf);
-    else if (type == "CaOH2")
+    if (type == "CaOH2")
         return std::make_unique<ReactionCaOH2>(conf);
 
     OGS_FATAL("Unknown reactive system: %s.", type.c_str());
