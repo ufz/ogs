@@ -89,7 +89,7 @@ add_executable(convertToLinearMesh convertToLinearMesh.cpp )
 target_link_libraries(convertToLinearMesh MeshLib)
 set_target_properties(convertToLinearMesh PROPERTIES FOLDER Utilities)
 
-add_executable(UnityPreprocessing UnityPreprocessing.cpp )
+add_executable(UnityPreprocessing UnityPreprocessing.cpp)
 target_link_libraries(UnityPreprocessing MeshLib)
 set_target_properties(UnityPreprocessing PROPERTIES FOLDER Utilities)
 
