@@ -123,7 +123,6 @@ MeshLib::Mesh* constructMesh(MeshLib::Mesh const& mesh)
 {
     INFO("Splitting nodes...")
     std::vector<MeshLib::Element*> const& elems = mesh.getElements();
-    std::size_t const n_elems (elems.size());
     std::vector<MeshLib::Node*> new_nodes;
     std::vector<MeshLib::Element*> new_elems;
     std::vector<std::vector<std::size_t>> node_map;
@@ -179,7 +178,7 @@ int main (int argc, char* argv[])
     cmd.parse(argc, argv);
 
     INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
-    MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(mesh_arg.getValue());
+    std::unique_ptr<MeshLib::Mesh> mesh {MeshLib::IO::readMeshFromFile(mesh_arg.getValue())};
     if (!mesh)
         return EXIT_FAILURE;
     INFO("done.\n");
@@ -187,33 +186,33 @@ int main (int argc, char* argv[])
     INFO("Checking for line elements...")
     std::array<unsigned, 7> const& n_element_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
-    MeshLib::Mesh* result;
+    std::unique_ptr<MeshLib::Mesh> result;
     if (n_element_types[0] == 0)
     {
         INFO ("No line elements found.\n");
-        result = mesh;
+        result = std::move(mesh);
     }
     else if (n_element_types[0] == mesh->getNumberOfElements())
     {
         INFO ("Keeping line mesh.\n");
-        result = mesh;
+        result = std::move(mesh);
     }
     else
     {
         MeshLib::ElementSearch searcher(*mesh);
         std::size_t const n_rem_elems = searcher.searchByElementType(MeshLib::MeshElemType::LINE);
-        result = MeshLib::removeElements(*mesh, searcher.getSearchedElementIDs(), "temp mesh");
+        result.reset(MeshLib::removeElements(*mesh, searcher.getSearchedElementIDs(), "temp mesh"));
         INFO ("%d line elements found and removed.\n", n_rem_elems);
     }
 
     INFO("Checking for cell-arrays...");
     if (containsCellVecs(*result))
-        result = constructMesh(*result);
+        result.reset(constructMesh(*result));
     else
         INFO("No cell arrays found, keeping mesh structure.\n");
 
     INFO("Writing mesh \"%s\" ... ", mesh_out_arg.getValue().c_str());
-    MeshLib::IO::VtuInterface writer(result, vtkXMLWriter::Ascii, false);
+    MeshLib::IO::VtuInterface writer(result.get(), vtkXMLWriter::Ascii, false);
     writer.writeToFile(mesh_out_arg.getValue());
     INFO("done.");
 
