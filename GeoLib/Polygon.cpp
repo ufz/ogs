@@ -183,9 +183,9 @@ bool Polygon::containsSegment(GeoLib::LineSegment const& segment) const
         if (!isPntInPolygon(GeoLib::Point(0.5*(s[k][0]+s[k+1][0]), 0.5*(s[k][1]+s[k+1][1]), 0.5*(s[k][2]+s[k+1][2]))))
         return false;
     }
-    if (!isPntInPolygon(GeoLib::Point(0.5*(s[0][0]+b[0]), 0.5*(s[0][1]+b[1]), 0.5*(s[0][2]+b[2]))))
-        return false;
-    return true;
+    return isPntInPolygon(GeoLib::Point(0.5 * (s[0][0] + b[0]),
+                                        0.5 * (s[0][1] + b[1]),
+                                        0.5 * (s[0][2] + b[2])));
 }
 
 bool Polygon::isPolylineInPolygon(const Polyline& ply) const

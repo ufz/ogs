@@ -135,10 +135,7 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
                                             std::size_t i)
     {
         // check if p is located at v=(a,b): (ap = t*v, t in [0,1])
-        if (0.0 <= ap[i] / v[i] && ap[i] / v[i] <= 1.0) {
-            return true;
-        }
-        return false;
+        return 0.0 <= ap[i] / v[i] && ap[i] / v[i] <= 1.0;
     };
 
     if (parallel(v,w)) { // original line segments (a,b) and (c,d) are parallel
@@ -403,8 +400,7 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
         auto isPointOnSegment = [](double q, double p0, double p1)
         {
             double const t((q - p0) / (p1 - p0));
-            if (0 <= t && t <= 1) return true;
-            return false;
+            return 0 <= t && t <= 1;
         };
 
         // check if c in (ab)

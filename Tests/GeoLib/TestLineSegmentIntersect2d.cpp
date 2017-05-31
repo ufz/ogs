@@ -72,10 +72,7 @@ TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationIntersecting)
                 {(s0.getBeginPoint()[0] + s0.getEndPoint()[0]) / 2,
                  (s0.getBeginPoint()[1] + s0.getEndPoint()[1]) / 2, 0.0}}};
             const double sqr_dist(MathLib::sqrDist(ipnts[0], center));
-            if (sqr_dist < std::numeric_limits<double>::epsilon())
-                return true;
-
-            return false;
+            return sqr_dist < std::numeric_limits<double>::epsilon();
         }
         return ipnts.size() == 2;
     };

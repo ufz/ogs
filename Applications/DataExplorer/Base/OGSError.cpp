@@ -41,8 +41,6 @@ bool OGSError::question(const QString &e, const QString &t)
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Cancel);
 
-    if (msgBox.exec() == QMessageBox::Ok)
-        return true;
-    return false;
+    return msgBox.exec() == QMessageBox::Ok;
 }
 

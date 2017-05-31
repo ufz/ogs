@@ -175,10 +175,11 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 
 bool Raster::isPntOnRaster(MathLib::Point3d const& pnt) const
 {
-    if ((pnt[0]<_header.origin[0]) || (pnt[0]>_header.origin[0]+(_header.n_cols*_header.cell_size)) ||
-        (pnt[1]<_header.origin[1]) || (pnt[1]>_header.origin[1]+(_header.n_rows*_header.cell_size)))
-        return false;
-    return true;
+    return !(
+        (pnt[0] < _header.origin[0]) ||
+        (pnt[0] > _header.origin[0] + (_header.n_cols * _header.cell_size)) ||
+        (pnt[1] < _header.origin[1]) ||
+        (pnt[1] > _header.origin[1] + (_header.n_rows * _header.cell_size)));
 }
 
 } // end namespace GeoLib

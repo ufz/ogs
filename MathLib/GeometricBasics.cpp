@@ -73,9 +73,7 @@ bool isPointInTetrahedron(MathLib::Point3d const& p, MathLib::Point3d const& a,
             return false;
         // if p is on the same side of abc as d
         double const d4 (MathLib::orientation3d(p, a, b, c));
-        if (!(d0_sign == (d4>=0) || std::abs(d4) < eps))
-            return false;
-        return true;
+        return d0_sign == (d4 >= 0) || std::abs(d4) < eps;
     }
     return false;
 }
@@ -164,9 +162,7 @@ bool barycentricPointInTriangle(MathLib::Point3d const& p,
     if (beta < -eps_pnt_out_of_tri || beta > 1 + eps_pnt_out_of_tri)
         return false;
     double const gamma(1 - alpha - beta);
-    if (gamma < -eps_pnt_out_of_tri || gamma > 1 + eps_pnt_out_of_tri)
-        return false;
-    return true;
+    return !(gamma < -eps_pnt_out_of_tri || gamma > 1 + eps_pnt_out_of_tri);
 }
 
 bool isPointInTriangleXY(MathLib::Point3d const& p,
@@ -186,12 +182,7 @@ bool isPointInTriangleXY(MathLib::Point3d const& p,
     gauss.solve(mat, y, true);
 
     // check if u0 and u1 fulfills the condition
-    if (0 <= y[0] && y[0] <= 1 && 0 <= y[1] && y[1] <= 1 && y[0] + y[1] <= 1)
-    {
-        return true;
-    }
-    return false;
-
+    return 0 <= y[0] && y[0] <= 1 && 0 <= y[1] && y[1] <= 1 && y[0] + y[1] <= 1;
 }
 
 bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,

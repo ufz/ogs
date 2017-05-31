@@ -32,11 +32,7 @@ void Properties::removePropertyVector(std::string const& name)
 
 bool Properties::hasPropertyVector(std::string const& name) const
 {
-    auto it(_properties.find(name));
-    if (it == _properties.end()) {
-        return false;
-    }
-    return true;
+    return _properties.find(name) != _properties.end();
 }
 
 std::vector<std::string> Properties::getPropertyVectorNames() const
