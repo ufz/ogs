@@ -43,7 +43,7 @@ public:
             DisplacementDim>::createMaterialStateVariables();
     }
 
-    bool computeConstitutiveRelation(
+    /*bool computeConstitutiveRelation(
         double const t,
         ProcessLib::SpatialPosition const& x,
         double const dt,
@@ -65,7 +65,7 @@ public:
                                         sigma,
                                         C,
                                         material_state_variables);
-    }
+    }*/
 
     bool specialFunction(double const t,
                          ProcessLib::SpatialPosition const& x,

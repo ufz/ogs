@@ -55,7 +55,6 @@ struct IntegrationPointData final
           eps_prev(std::move(other.eps_prev)),
           solid_material(other.solid_material),
           material_state_variables(std::move(other.material_state_variables)),
-          C(std::move(other.C)),
           C_tensile(std::move(other.C_tensile)),
           C_compressive(std::move(other.C_compressive)),
           integration_weight(std::move(other.integration_weight)),
@@ -84,7 +83,7 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables> material_state_variables;
 
-    typename BMatricesType::KelvinMatrixType C, C_tensile, C_compressive;
+    typename BMatricesType::KelvinMatrixType C_tensile, C_compressive;
     double integration_weight;
     double history_variable;
     double history_variable_prev;
@@ -97,16 +96,25 @@ struct IntegrationPointData final
     }
 
     template <typename DisplacementVectorType>
-    void updateConstitutiveRelation(double const t,
+    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
+                                    double const t,
                                     SpatialPosition const& x_position,
                                     double const dt,
                                     DisplacementVectorType const& u,
                                     double const degradation)
     {
         eps.noalias() = b_matrices * u;
-        solid_material.computeConstitutiveRelation(t, x_position, dt, eps_prev,
-                                                   eps, sigma_prev, sigma, C,
-                                                   *material_state_variables);
+        auto&& solution = solid_material.integrateStress(
+            t, x_position, dt, eps_prev, eps, sigma_prev,
+            *material_state_variables);
+
+        if (!solution)
+            OGS_FATAL("Computation of local constitutive relation failed.");
+
+        KelvinMatrixType<DisplacementDim> C;
+        std::tie(sigma, material_state_variables, C) = std::move(*solution);
+
+        return C;
 
         static_cast<MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>&>(
             solid_material)
@@ -219,7 +227,7 @@ public:
             auto& ip_data = _ip_data[ip];
             ip_data.integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *
-                shape_matrices[ip].detJ;
+                shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
             ip_data.b_matrices.resize(kelvin_vector_size,
                                       ShapeFunction::NPOINTS * DisplacementDim);
 
@@ -235,7 +243,6 @@ public:
             ip_data.sigma_prev.resize(kelvin_vector_size);
             ip_data.eps.resize(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
-            ip_data.C.resize(kelvin_vector_size, kelvin_vector_size);
             ip_data.C_tensile.resize(kelvin_vector_size, kelvin_vector_size);
             ip_data.C_compressive.resize(kelvin_vector_size,
                                          kelvin_vector_size);
@@ -352,7 +359,7 @@ public:
             double const k = _process_data.residual_stiffness(t, x_position)[0];
             double const d_ip = N.dot(d);
             double const degradation = d_ip * d_ip * (1 - k) + k;
-            _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+            auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                     degradation);
 
             local_Jac.template block<displacement_size, displacement_size>(

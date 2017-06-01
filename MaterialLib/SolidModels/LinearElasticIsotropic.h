@@ -62,7 +62,6 @@ public:
     struct MaterialStateVariables
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
-<<<<<<< HEAD
         void pushBackState() override {}
 
         MaterialStateVariables& operator=(MaterialStateVariables const&) =
@@ -73,9 +72,6 @@ public:
         {
             return operator=(static_cast<MaterialStateVariables const&>(state));
         }
-=======
-        void pushBackState() {}
->>>>>>> added phasefield process and test.
     };
 
     std::unique_ptr<

@@ -29,14 +29,14 @@ createLinearElasticIsotropicPhaseField(
 
     // Youngs modulus
     auto& youngs_modulus = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__youngs_modulus}
+        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropicPhaseField__youngs_modulus}
         config, "youngs_modulus", parameters, 1);
 
     DBUG("Use '%s' as youngs_modulus parameter.", youngs_modulus.name.c_str());
 
     // Poissons ratio
     auto& poissons_ratio = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__poissons_ratio}
+        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropicPhaseField__poissons_ratio}
         config, "poissons_ratio", parameters, 1);
 
     DBUG("Use '%s' as poissons_ratio parameter.", poissons_ratio.name.c_str());
