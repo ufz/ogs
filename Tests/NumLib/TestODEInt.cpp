@@ -95,7 +95,7 @@ public:
         sol.ts.push_back(t0);
         sol.solutions.push_back(x0);
 
-        auto cb = [this, &sol](const double t, GlobalVector const& x) {
+        auto cb = [&sol](const double t, GlobalVector const& x) {
             sol.ts.push_back(t);
             sol.solutions.push_back(x);
         };
