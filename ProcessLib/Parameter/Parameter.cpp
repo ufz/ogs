@@ -57,17 +57,15 @@ std::unique_ptr<ParameterBase> createParameter(
         auto param = createMeshElementParameter(name, config, *meshes.front());
         return param;
     }
-    else if (type == "MeshNode")
+    if (type == "MeshNode")
     {
         INFO("MeshNodeParameter: %s", name.c_str());
         auto param = createMeshNodeParameter(name, config, *meshes.front());
         return param;
     }
-    else
-    {
-        OGS_FATAL("Cannot construct a parameter of given type \'%s\'.",
-                  type.c_str());
-    }
+
+    OGS_FATAL("Cannot construct a parameter of given type \'%s\'.",
+              type.c_str());
 }
 
 }  // ProcessLib

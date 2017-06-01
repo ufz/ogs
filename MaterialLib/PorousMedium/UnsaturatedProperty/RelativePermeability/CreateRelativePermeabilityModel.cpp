@@ -185,7 +185,7 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
     {
         return createNonWettingPhaseBrooksCoreyOilGas(config);
     }
-    else if (type == "Curve")
+    if (type == "Curve")
     {
         //! \ogs_file_param{material__porous_medium__relative_permeability__type}
         config.checkConfigParameter("type", "Curve");
@@ -197,18 +197,16 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
                               ::PiecewiseLinearInterpolation>(curve_config);
         return std::make_unique<RelativePermeabilityCurve>(std::move(curve));
     }
-    else
-    {
-        OGS_FATAL(
-            "The relative permeability model %s is unavailable.\n"
-            "The available models are:"
-            "\n\tWettingPhaseVanGenuchten,"
-            "\n\tNonWettingPhaseVanGenuchten,"
-            "\n\tWettingPhaseBrooksCoreyOilGas,"
-            "\n\tNonWettingPhaseBrooksCoreyOilGas,",
-            "\n\tCurve.\n",
-            type.data());
-    }
+
+    OGS_FATAL(
+        "The relative permeability model %s is unavailable.\n"
+        "The available models are:"
+        "\n\tWettingPhaseVanGenuchten,"
+        "\n\tNonWettingPhaseVanGenuchten,"
+        "\n\tWettingPhaseBrooksCoreyOilGas,"
+        "\n\tNonWettingPhaseBrooksCoreyOilGas,",
+        "\n\tCurve.\n",
+        type.data());
 }
 
 }  // end namespace
