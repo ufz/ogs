@@ -192,10 +192,7 @@ bool Polyline::isClosed() const
     if (_ply_pnt_ids.size() < 3)
         return false;
 
-    if (_ply_pnt_ids.front() == _ply_pnt_ids.back())
-        return true;
-
-    return false;
+    return _ply_pnt_ids.front() == _ply_pnt_ids.back();
 }
 
 bool Polyline::isCoplanar() const

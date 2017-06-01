@@ -70,10 +70,7 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
         {
             if (cnt == 0)
             {
-                if (id == 0)
-                    zero_based_indexing = true;
-                else
-                    zero_based_indexing = false;
+                zero_based_indexing = id == 0;
             }
             pnt_vec->push_back(new GeoLib::Point(x, y, z, id));
 
@@ -519,10 +516,7 @@ bool readGLIFileV4(const std::string& fname,
             std::move(sfc_vec), unique_name,
             std::move(sfc_names));  // KR: insert into GEOObjects if not empty
 
-    if (errors.empty())
-        return true;
-
-    return false;
+    return errors.empty();
 }
 
 std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_vec, std::size_t sfc_count, std::string const& path)

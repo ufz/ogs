@@ -51,7 +51,7 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
     doc.parse<0>(buffer);
 
     // parse content
-    if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN") != 0)
+    if (std::string(doc.first_node()->name()) != "OpenGeoSysSTN")
     {
         ERR("XmlStnInterface::readFile() - Unexpected XML root.");
         return nullptr;
@@ -66,9 +66,9 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
         for (rapidxml::xml_node<>* list_item = station_list->first_node(); list_item; list_item = list_item->next_sibling())
         {
             std::string b(list_item->name());
-            if (b.compare("stations") == 0)
+            if (b == "stations")
                 RapidStnInterface::readStations(list_item, stations, fileName);
-            if (b.compare("boreholes") == 0)
+            if (b == "boreholes")
                 RapidStnInterface::readStations(list_item, stations, fileName);
         }
     }
@@ -160,7 +160,7 @@ void RapidStnInterface::readStations(const rapidxml::xml_node<>* station_root, s
                     strtod(station_node->first_node("value")->value(), nullptr);
             /* add other station features here */
 
-            if (std::string(station_node->name()).compare("station") == 0)
+            if (std::string(station_node->name()) == "station")
             {
                 auto* s = new GeoLib::Station(
                     strtod(station_node->first_attribute("x")->value(),
@@ -174,7 +174,7 @@ void RapidStnInterface::readStations(const rapidxml::xml_node<>* station_root, s
                     s->addSensorDataFromCSV(BaseLib::copyPathToFileName(sensor_data_file_name, file_name));
                 stations->push_back(s);
             }
-            else if (std::string(station_node->name()).compare("borehole") == 0)
+            else if (std::string(station_node->name()) == "borehole")
             {
                 if (station_node->first_node("bdepth"))
                     borehole_depth = strtod(

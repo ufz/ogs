@@ -86,9 +86,8 @@ int VtkStationSource::RequestData( vtkInformation* request,
             break;
         }
 
-    bool isBorehole =
-            (static_cast<GeoLib::Station*>((*_stations)[0])->type() ==
-    GeoLib::Station::StationType::BOREHOLE) ? true : false;
+    bool isBorehole = static_cast<GeoLib::Station*>((*_stations)[0])->type() ==
+                      GeoLib::Station::StationType::BOREHOLE;
 
     vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
     vtkSmartPointer<vtkPolyData> output =
@@ -204,7 +203,7 @@ std::size_t VtkStationSource::GetIndexByName( std::string const& name )
     vtkIdType max_key(0);
     for (auto it = _id_map.begin(); it != _id_map.end(); ++it)
     {
-        if (name.compare(it->first) == 0)
+        if (name == it->first)
             return it->second;
         if (it->second > max_key)
             max_key = it->second;

@@ -49,7 +49,7 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
         return false;
     }
     std::string ext (BaseLib::getFileExtension(geo_fname));
-    if (ext.compare("smesh") != 0)
+    if (ext != "smesh")
     {
         ERR ("TetGenInterface::readTetGenGeometry() - unknown file type (only *.smesh is supported).");
         return false;
@@ -107,7 +107,7 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input)
         auto it = fields.begin();
         const auto nFacets(BaseLib::str2number<std::size_t>(*it));
         if (fields.size() > 1)
-            _boundary_markers = (BaseLib::str2number<std::size_t> (*(++it)) == 0) ? false : true;
+            _boundary_markers = BaseLib::str2number<std::size_t>(*(++it)) != 0;
         return nFacets;
     }
     return 0;
@@ -293,7 +293,7 @@ bool TetGenInterface::parseNodesFileHeader(std::string &line,
     }
 
     n_attributes = BaseLib::str2number<std::size_t> (*(++it));
-    boundary_markers = ((++it)->compare("1") == 0) ? true : false;
+    boundary_markers = *(++it) == "1";
 
     return true;
 }
@@ -416,10 +416,7 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
     pos_end = line.find_first_of(" \t\n", pos_beg);
     if (pos_end == std::string::npos)
         pos_end = line.size();
-    if ((line.substr(pos_beg, pos_end - pos_beg)).compare("1") == 0)
-        region_attribute = true;
-    else
-        region_attribute = false;
+    region_attribute = line.substr(pos_beg, pos_end - pos_beg) == "1";
 
     return true;
 }

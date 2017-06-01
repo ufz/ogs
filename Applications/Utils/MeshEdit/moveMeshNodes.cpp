@@ -98,7 +98,7 @@ int main (int argc, char* argv[])
 
     bool is_keyword(false);
     for (auto & keyword : keywords)
-        if (current_key.compare(keyword)==0)
+        if (current_key == keyword)
         {
             is_keyword = true;
             break;
@@ -122,7 +122,7 @@ int main (int argc, char* argv[])
     // Start keyword-specific selection of nodes
 
     // moves the elevation of all nodes by value
-    if (current_key.compare("-ALL")==0)
+    if (current_key == "-ALL")
     {
         if (argc < 5)
         {
@@ -130,7 +130,7 @@ int main (int argc, char* argv[])
             return EXIT_FAILURE;
         }
         const std::string dir(argv[3]);
-        unsigned idx = (dir.compare("x") == 0) ? 0 : (dir.compare("y") == 0) ? 1 : 2;
+        unsigned idx = (dir == "x") ? 0 : (dir == "y") ? 1 : 2;
         const double value(strtod(argv[4],0));
         INFO("Moving all mesh nodes by %g in direction %d (%s)...", value, idx,
              dir.c_str());
@@ -144,7 +144,7 @@ int main (int argc, char* argv[])
     }
 
     // maps the elevation of mesh nodes according to a ground truth mesh whenever nodes exist within max_dist
-    if (current_key.compare("-MESH")==0)
+    if (current_key == "-MESH")
     {
         if (argc < 5)
         {
@@ -183,7 +183,7 @@ int main (int argc, char* argv[])
 
     // a simple lowpass filter for the elevation of mesh nodes using the elevation of each node
     // weighted by 2 and the elevation of each connected node weighted by 1
-    if (current_key.compare("-LOWPASS")==0)
+    if (current_key == "-LOWPASS")
     {
         const std::size_t nNodes(mesh->getNumberOfNodes());
         std::vector<MeshLib::Node*> nodes (mesh->getNodes());

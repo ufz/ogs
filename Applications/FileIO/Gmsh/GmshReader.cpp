@@ -167,12 +167,14 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     }
 
     getline(in, line); // version-number file-type data-size
-    if (line.substr(0,3).compare("2.2") != 0) {
+    if (line.substr(0, 3) != "2.2")
+    {
         WARN("Wrong gmsh file format version.");
         return nullptr;
     }
 
-    if (line.substr(4,1).compare("0") != 0) {
+    if (line[4] != '0')
+    {
         WARN("Currently reading gmsh binary file type is not supported.");
         return nullptr;
     }

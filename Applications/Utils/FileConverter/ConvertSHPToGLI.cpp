@@ -214,14 +214,14 @@ int main (int argc, char* argv[])
             fname += ".gml";
 
         INFO("Writing to %s.", fname.c_str());
-        convertPoints (dbf_handle,
-                       fname,
-                       x_id,
-                       y_id,
-                       z_id,
-                       name_component_ids,
-                       fname_base,
-                       station == 0 ? true : false);
+        convertPoints(dbf_handle,
+                      fname,
+                      x_id,
+                      y_id,
+                      z_id,
+                      name_component_ids,
+                      fname_base,
+                      station == 0);
         DBFClose (dbf_handle);
         INFO("\tok.");
     } else {

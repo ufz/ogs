@@ -28,9 +28,9 @@ GeoLib::Raster* AsciiRasterInterface::readRaster(std::string const& fname)
 {
     std::string ext (BaseLib::getFileExtension(fname));
     std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
-    if (ext.compare("asc") == 0)
+    if (ext == "asc")
         return getRasterFromASCFile(fname);
-    if (ext.compare("grd") == 0)
+    if (ext == "grd")
         return getRasterFromSurferFile(fname);
     return nullptr;
 }
@@ -73,26 +73,30 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream &in, GeoLib::RasterHeader
     std::string tag, value;
 
     in >> tag;
-    if (tag.compare("ncols") == 0) {
+    if (tag == "ncols")
+    {
         in >> value;
         header.n_cols = atoi(value.c_str());
     } else return false;
 
     in >> tag;
-    if (tag.compare("nrows") == 0) {
+    if (tag == "nrows")
+    {
         in >> value;
         header.n_rows = atoi(value.c_str());
     } else return false;
 
     in >> tag;
-    if (tag.compare("xllcorner") == 0 || tag.compare("xllcenter") == 0) {
+    if (tag == "xllcorner" || tag == "xllcenter")
+    {
         in >> value;
         header.origin[0] =
             strtod(BaseLib::replaceString(",", ".", value).c_str(), nullptr);
     } else return false;
 
     in >> tag;
-    if (tag.compare("yllcorner") == 0 || tag.compare("yllcenter") == 0) {
+    if (tag == "yllcorner" || tag == "yllcenter")
+    {
         in >> value;
         header.origin[1] =
             strtod(BaseLib::replaceString(",", ".", value).c_str(), nullptr);
@@ -100,14 +104,16 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream &in, GeoLib::RasterHeader
     header.origin[2] = 0;
 
     in >> tag;
-    if (tag.compare("cellsize") == 0) {
+    if (tag == "cellsize")
+    {
         in >> value;
         header.cell_size =
             strtod(BaseLib::replaceString(",", ".", value).c_str(), nullptr);
     } else return false;
 
     in >> tag;
-    if (tag.compare("NODATA_value") == 0 || tag.compare("nodata_value") == 0) {
+    if (tag == "NODATA_value" || tag == "nodata_value")
+    {
         in >> value;
         header.no_data =
             strtod(BaseLib::replaceString(",", ".", value).c_str(), nullptr);
@@ -163,7 +169,7 @@ bool AsciiRasterInterface::readSurferHeader(
 
     in >> tag;
 
-    if (tag.compare("DSAA") != 0)
+    if (tag != "DSAA")
     {
         ERR("Error in readSurferHeader() - No Surfer file.");
         return false;

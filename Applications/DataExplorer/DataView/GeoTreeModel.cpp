@@ -112,7 +112,7 @@ void GeoTreeModel::appendPolylines(const std::string &name, GeoLib::PolylineVec 
 {
     for (auto& list : _lists)
     {
-        if (name.compare(list->data(0).toString().toStdString()) == 0)
+        if (name == list->data(0).toString().toStdString())
             for (int j = 0; j < list->childCount(); j++)
             {
                 auto* parent = static_cast<GeoObjectListItem*>(list->child(j));
@@ -202,7 +202,7 @@ void GeoTreeModel::appendSurfaces(const std::string &name, GeoLib::SurfaceVec co
 {
     for (auto& list : _lists)
     {
-        if (name.compare(list->data(0).toString().toStdString()) == 0)
+        if (name == list->data(0).toString().toStdString())
         {
             int nChildren = list->childCount();
             for (int j = 0; j < nChildren; j++)
@@ -280,7 +280,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
 void GeoTreeModel::removeGeoList(const std::string &name, GeoLib::GEOTYPE type)
 {
     for (std::size_t i = 0; i < _lists.size(); i++)
-        if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
+        if (name == _lists[i]->data(0).toString().toStdString())
         {
             for (int j = 0; j < _lists[i]->childCount(); j++)
                 if (type ==
@@ -304,7 +304,7 @@ vtkPolyDataAlgorithm* GeoTreeModel::vtkSource(const std::string &name, GeoLib::G
     std::size_t nLists = _lists.size();
     for (std::size_t i = 0; i < nLists; i++)
     {
-        if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
+        if (name == _lists[i]->data(0).toString().toStdString())
             for (int j = 0; j < _lists[i]->childCount(); j++)
             {
                 auto* item =
@@ -340,14 +340,13 @@ void GeoTreeModel::setNameForItem(const std::string &name,
         geo_type_str = "";
     }
 
-    auto it = find_if(_lists.begin(), _lists.end(), [&name](GeoTreeItem* geo)
-    {
-        return (name.compare( geo->data(0).toString().toStdString() ) == 0);
+    auto it = find_if(_lists.begin(), _lists.end(), [&name](GeoTreeItem* geo) {
+        return (name == geo->data(0).toString().toStdString());
     });
 
     for (int i = 0; i < (*it)->childCount(); i++)
     {
-        if ( geo_type_str.compare( (*it)->child(i)->data(0).toString().toStdString() ) == 0 )
+        if (geo_type_str == (*it)->child(i)->data(0).toString().toStdString())
         {
             TreeItem* item = (*it)->child(i)->child(id);
             item->setData(col_idx, QString::fromStdString(item_name));

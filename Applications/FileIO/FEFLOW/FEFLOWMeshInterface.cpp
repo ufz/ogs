@@ -73,7 +73,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         }
         //....................................................................
         // DIMENS
-        else if (line_string.compare("DIMENS") == 0)
+        else if (line_string == "DIMENS")
         {
             // DIMENS
             std::getline(in, line_string);
@@ -94,7 +94,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         }
         //....................................................................
         // NODE (node index for elements)
-        else if (line_string.compare("NODE") == 0)
+        else if (line_string == "NODE")
         {
             assert(!vec_nodes.empty());
 
@@ -138,7 +138,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
                     readElement(fem_dim, eleType, line_string, vec_nodes));
             }
         }
-        else if (line_string.compare("VARNODE") == 0)
+        else if (line_string == "VARNODE")
         {
             assert(!vec_nodes.empty());
 
@@ -163,16 +163,16 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         }
         //....................................................................
         // COOR
-        else if (line_string.compare("COOR") == 0)
+        else if (line_string == "COOR")
         {
             readNodeCoordinates(in, fem_class, fem_dim, vec_nodes);
         }
-        else if (line_string.compare("XYZCOOR") == 0)
+        else if (line_string == "XYZCOOR")
         {
             readNodeCoordinates(in, vec_nodes);
         }
         // ELEV_I
-        else if (line_string.compare("ELEV_I") == 0)
+        else if (line_string == "ELEV_I")
         {
             if (fem_class.dimension == 2)
                 continue;
@@ -180,7 +180,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         }
         //....................................................................
         // GRAVITY
-        else if (line_string.compare("GRAVITY") == 0)
+        else if (line_string == "GRAVITY")
         {
             getline(in, line_string);
             line_stream.str(line_string);
@@ -193,13 +193,13 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         }
         //....................................................................
         // ELEMENTALSETS
-        else if (line_string.compare("ELEMENTALSETS") == 0)
+        else if (line_string == "ELEMENTALSETS")
         {
             readELEMENTALSETS(in, vec_elementsets);
         }
         //....................................................................
         // SUPERMESH
-        else if (line_string.compare("SUPERMESH") == 0)
+        else if (line_string == "SUPERMESH")
         {
             FileIO::FEFLOWGeoInterface::readSuperMesh(
                 in, fem_class.dimension, points, lines);

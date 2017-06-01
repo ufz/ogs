@@ -234,7 +234,7 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
         vtkSmartPointer<vtkXMLPolyDataWriter> pdWriter =
                 vtkSmartPointer<vtkXMLPolyDataWriter>::New();
         pdWriter->SetInputData(algPD->GetOutputDataObject(0));
-        if (BaseLib::getFileExtension(filename).compare("vtp") != 0)
+        if (BaseLib::getFileExtension(filename) != "vtp")
             file_name_cpy.append(".vtp");
         pdWriter->SetFileName(file_name_cpy.c_str());
         return pdWriter->Write();
@@ -246,7 +246,7 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
         vtkSmartPointer<vtkXMLUnstructuredGridWriter> ugWriter =
                 vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
         ugWriter->SetInputData(algUG->GetOutputDataObject(0));
-        if (BaseLib::getFileExtension(filename).compare("vtu") != 0)
+        if (BaseLib::getFileExtension(filename) != "vtu")
             file_name_cpy.append(".vtu");
         ugWriter->SetFileName(file_name_cpy.c_str());
         return ugWriter->Write();
@@ -330,7 +330,7 @@ bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::
     for (int i = 0; i < data->GetNumberOfArrays() && !arrayFound; i++)
     {
         std::string arrayName = data->GetArrayName(i);
-        if(arrayName.compare(name) == 0)
+        if (arrayName == name)
             arrayFound = true;
     }
     if (arrayFound)

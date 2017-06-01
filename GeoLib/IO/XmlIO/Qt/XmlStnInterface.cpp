@@ -211,9 +211,8 @@ bool XmlStnInterface::write()
     root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysSTN.xsd" );
 
     const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_exportName));
-    bool isBorehole =
-            (static_cast<GeoLib::Station*>((*stations)[0])->type() ==
-             GeoLib::Station::StationType::BOREHOLE) ? true : false;
+    bool isBorehole = static_cast<GeoLib::Station*>((*stations)[0])->type() ==
+                      GeoLib::Station::StationType::BOREHOLE;
 
     doc.appendChild(root);
     QDomElement stationListTag = doc.createElement("stationlist");
@@ -340,7 +339,7 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
     doc.parse<0>(buffer);
 
     // parse content
-    if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN") != 0)
+    if (std::string(doc.first_node()->name()) != "OpenGeoSysSTN")
     {
         ERR("XmlStnInterface::readFile() - Unexpected XML root.");
         return 0;
@@ -358,9 +357,9 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
              list_item = list_item->next_sibling())
         {
             std::string b(list_item->name());
-            if (b.compare("stations") == 0)
+            if (b == "stations")
                 this->rapidReadStations(list_item, stations.get(), fileName);
-            if (b.compare("boreholes") == 0)
+            if (b == "boreholes")
                 this->rapidReadStations(list_item, stations.get(), fileName);
         }
 
@@ -401,7 +400,7 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
                     strtod(station_node->first_node("value")->value(), nullptr);
             /* add other station features here */
 
-            if (std::string(station_node->name()).compare("station") == 0)
+            if (std::string(station_node->name()) == "station")
             {
                 auto* s = new GeoLib::Station(
                     strtod(station_node->first_attribute("x")->value(),
@@ -417,7 +416,7 @@ void XmlStnInterface::rapidReadStations(const rapidxml::xml_node<>* station_root
                                                     file_name));
                 stations->push_back(s);
             }
-            else if (std::string(station_node->name()).compare("borehole") == 0)
+            else if (std::string(station_node->name()) == "borehole")
             {
                 if (station_node->first_node("bdepth"))
                     borehole_depth = strtod(

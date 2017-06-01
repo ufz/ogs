@@ -68,7 +68,7 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
     bool satisfied_abs = true;
     // Make sure that in the first iteration the relative residual tolerance is
     // not satisfied.
-    bool satisfied_rel = _is_first_iteration ? false : true;
+    bool satisfied_rel = !_is_first_iteration;
 
     for (unsigned global_component = 0; global_component < _abstols.size();
          ++global_component)

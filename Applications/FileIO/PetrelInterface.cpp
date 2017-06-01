@@ -202,7 +202,7 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
     // read yet another header line
     in.getline(buffer, MAX_COLS_PER_ROW);
     line = buffer;
-    while (line.substr(0, 1).compare("#") == 0)
+    while (line[0] == '#')
     {
         in.getline(buffer, MAX_COLS_PER_ROW);
         line = buffer;
@@ -222,7 +222,7 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
     line = buffer;
     while (in)
     {
-        if (line.size() > 1 && line.substr(0, 1).compare("#") != 0)
+        if (line.size() > 1 && line[0] != '#')
         {
             std::stringstream stream(line);
             stream >> md;
