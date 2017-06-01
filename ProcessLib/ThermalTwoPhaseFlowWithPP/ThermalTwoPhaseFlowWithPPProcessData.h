@@ -11,11 +11,6 @@
 
 #include "ThermalTwoPhaseFlowWithPPMaterialProperties.h"
 
-namespace MeshLib
-{
-class Element;
-}
-
 namespace ProcessLib
 {
 template <typename T>

@@ -9,11 +9,6 @@
 
 #pragma once
 
-namespace MeshLib
-{
-class Element;
-}
-
 namespace ProcessLib
 {
 template <typename T>

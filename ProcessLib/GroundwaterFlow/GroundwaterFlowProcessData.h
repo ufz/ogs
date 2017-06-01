@@ -9,12 +9,6 @@
 
 #pragma once
 
-namespace MeshLib
-{
-    class Element;
-}
-
-
 namespace ProcessLib
 {
 

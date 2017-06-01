@@ -17,11 +17,6 @@
 
 #include "PorousMediaProperties.h"
 
-namespace MeshLib
-{
-class Element;
-}
-
 namespace ProcessLib
 {
 template <typename ReturnType>

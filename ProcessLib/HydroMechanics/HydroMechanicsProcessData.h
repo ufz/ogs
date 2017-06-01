@@ -12,11 +12,6 @@
 #include <Eigen/Dense>
 #include <utility>
 
-namespace MeshLib
-{
-class Element;
-}
-
 namespace ProcessLib
 {
 namespace HydroMechanics
