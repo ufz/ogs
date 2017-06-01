@@ -60,21 +60,21 @@ const std::string MeshElemType2StringShort(const MeshElemType t)
 
 MeshElemType String2MeshElemType(const std::string &s)
 {
-    if ((s == "point") || (s == "Point"))
+    if (s == "point" || s == "Point")
         return MeshElemType::POINT;
-    if ((s == "line") || (s == "Line"))
+    if (s == "line" || s == "Line")
         return MeshElemType::LINE;
-    if ((s == "quad") || (s == "Quadrilateral"))
+    if (s == "quad" || s == "Quadrilateral")
         return MeshElemType::QUAD;
-    if ((s == "hex") || (s == "Hexahedron"))
+    if (s == "hex" || s == "Hexahedron")
         return MeshElemType::HEXAHEDRON;
-    if ((s == "tri") || (s == "Triangle"))
+    if (s == "tri" || s == "Triangle")
         return MeshElemType::TRIANGLE;
-    if ((s == "tet") || (s == "Tetrahedron"))
+    if (s == "tet" || s == "Tetrahedron")
         return MeshElemType::TETRAHEDRON;
-    if ((s == "pris") || (s == "Prism"))
+    if (s == "pris" || s == "Prism")
         return MeshElemType::PRISM;
-    if ((s == "pyra") || (s == "Pyramid"))
+    if (s == "pyra" || s == "Pyramid")
         return MeshElemType::PYRAMID;
     return MeshElemType::INVALID;
 }

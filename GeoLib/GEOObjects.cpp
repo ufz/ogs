@@ -150,7 +150,7 @@ bool GEOObjects::appendPolylineVec(const std::vector<Polyline*>& polylines,
     std::size_t idx (0);
     bool nfound (true);
     for (idx = 0; idx < _ply_vecs.size() && nfound; idx++)
-        if ((_ply_vecs[idx]->getName()) == name)
+        if (_ply_vecs[idx]->getName() == name)
             nfound = false;
 
     if (!nfound)
@@ -222,7 +222,7 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
     std::size_t idx (0);
     bool nfound (true);
     for (idx = 0; idx < _sfc_vecs.size() && nfound; idx++)
-        if ((_sfc_vecs[idx]->getName()) == name)
+        if (_sfc_vecs[idx]->getName() == name)
             nfound = false;
 
     if (!nfound)
@@ -318,12 +318,12 @@ bool GEOObjects::isPntVecUsed (const std::string &name) const
     // search dependent data structures (Polyline)
     for (auto polyline : _ply_vecs)
     {
-        if ((polyline->getName()) == name)
+        if (polyline->getName() == name)
             return true;
     }
     for (auto surface : _sfc_vecs)
     {
-        if ((surface->getName()) == name)
+        if (surface->getName() == name)
             return true;
     }
 

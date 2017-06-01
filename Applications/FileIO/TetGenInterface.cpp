@@ -416,7 +416,7 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
     pos_end = line.find_first_of(" \t\n", pos_beg);
     if (pos_end == std::string::npos)
         pos_end = line.size();
-    region_attribute = (line.substr(pos_beg, pos_end - pos_beg)) == "1";
+    region_attribute = line.substr(pos_beg, pos_end - pos_beg) == "1";
 
     return true;
 }
