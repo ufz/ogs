@@ -377,6 +377,8 @@ public:
 
             auto const& N_T = N_p;
             auto const& dNdx_T = dNdx_p;
+            auto T_int_pt = N_T * T;
+            auto p_int_pt = N_T * p;
 
             auto const& B = _ip_data[ip].b_matrices;
             auto const& sigma_eff = _ip_data[ip].sigma_eff;
@@ -387,30 +389,34 @@ public:
                 _process_data.storage_coefficient(t, x_position)[0];
             double const K_over_mu =
                 _process_data.intrinsic_permeability(t, x_position)[0] /
-                _process_data.fluid_viscosity(t, x_position)[0];
+                _process_data.getFluidViscosity(
+                        p_int_pt, T_int_pt);
             double const alpha_s = _process_data.solid_linear_thermal_expansion_coefficient(t, x_position)[0];
             double const beta_f = _process_data.fluid_volumetric_thermal_expansion_coefficient(t, x_position)[0];
-            double const lambda_f = _process_data.fluid_thermal_conductivity(t, x_position)[0];
+            double const lambda_f = _process_data.getFluidThermalConductivity(
+                        p_int_pt, T_int_pt);
             double const lambda_s = _process_data.solid_thermal_conductivity(t, x_position)[0];
             double const C_f =
-                _process_data.fluid_specific_heat_capacity(t, x_position)[0];
+                _process_data.getFluidHeatCapacity(
+                        p_int_pt, T_int_pt);
             double const C_s =
                 _process_data.solid_specific_heat_capacity(t, x_position)[0];
             double const T0 =
                 _process_data.reference_temperature(t, x_position)[0];
             auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
             auto rho_sr = _process_data.solid_density(t, x_position)[0];
-            auto rho_fr = _process_data.fluid_density(t, x_position)[0];
+            auto rho_f = _process_data.getFluidDensity(
+                        p_int_pt, T_int_pt);
             auto const porosity = _process_data.porosity(t, x_position)[0];
             auto const& b = _process_data.specific_body_force;
 
             // calculate linear thermal strain
             // assume isotropic thermal expansion
-            auto T_int_pt = N_T * T;
+
             double delta_T(T_int_pt - T0);
             double const thermal_strain = alpha_s * delta_T;
 
-            double rho_f = rho_fr * (1 - beta_f * delta_T);
+            //double rho_f = rho_fr * (1 - beta_f * delta_T);
             double rho_s = rho_sr * (1 - 3 * thermal_strain);
 
             auto velocity = (-K_over_mu * dNdx_p * p).eval();
@@ -451,7 +457,7 @@ public:
             // fp
             //
             local_rhs.template segment<pressure_size>(pressure_index)
-                .noalias() += dNdx_p.transpose() * rho_fr * K_over_mu * b * w;
+                .noalias() += dNdx_p.transpose() * rho_f * K_over_mu * b * w;
             //
             // pressure equation, temperature part (M_pT)
             //
@@ -469,17 +475,17 @@ public:
             double lambda = porosity * lambda_f + (1 - porosity) * lambda_s;
             KTT.noalias() +=
                 (dNdx_T.transpose() * lambda * dNdx_T +
-                 dNdx_T.transpose() * velocity * N_p * rho_fr * C_f) *
+                 dNdx_T.transpose() * velocity * N_p * rho_f * C_f) *
                 w;
             // coeff matrix using for RHS
             double heat_capacity =
-                porosity * C_f * rho_fr + (1 - porosity) * C_s * rho_sr;
+                porosity * C_f * rho_f + (1 - porosity) * C_s * rho_sr;
             MTT.noalias() += N_T.transpose() * heat_capacity * N_T * w;
 
             //
             // temperature equation, pressure part !!!!!!.positive or negative
             //
-            KTp.noalias() += K_over_mu * rho_fr * C_f * dNdx_p.transpose() *
+            KTp.noalias() += K_over_mu * rho_f * C_f * dNdx_p.transpose() *
                              (dNdx_T * T) * N_T * w * 0;
         }
         // temperature equation, temperature part
@@ -545,6 +551,12 @@ public:
             Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
                 pressure_size> const>(local_x.data() + pressure_index,
                                       pressure_size);
+
+        auto T =
+            Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+                pressure_size> const>(local_x.data() + temperature_index,
+                                      temperature_size);
+
         using GlobalDimVectorType =
             typename ShapeMatricesTypePressure::GlobalDimVectorType;
 
@@ -555,18 +567,22 @@ public:
         x_position.setElementID(_element.getID());
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            auto const& N_T = _ip_data[ip].N_p;
+            auto T_int_pt = N_T * T;
+            auto p_int_pt = N_T * p;
+
             x_position.setIntegrationPoint(ip);
             double const K_over_mu =
                 _process_data.intrinsic_permeability(t, x_position)[0] /
-                _process_data.fluid_viscosity(t, x_position)[0];
+                _process_data.getFluidViscosity(p_int_pt, T_int_pt);
 
-            auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+            auto const rho_f = _process_data.getFluidDensity(p_int_pt, T_int_pt);
             auto const& b = _process_data.specific_body_force;
 
             // Compute the velocity
             auto const& dNdx_p = _ip_data[ip].dNdx_p;
             GlobalDimVectorType const darcy_velocity =
-                -K_over_mu * dNdx_p * p - K_over_mu * rho_fr * b;
+                -K_over_mu * dNdx_p * p - K_over_mu * rho_f * b;
             for (unsigned d = 0; d < DisplacementDim; ++d)
             {
                 _darcy_velocities[d][ip] = darcy_velocity[d];
