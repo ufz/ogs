@@ -9,11 +9,11 @@ if (Qt5XmlPatterns_FOUND)
     set_target_properties(FEFLOW2OGS PROPERTIES FOLDER Utilities)
     target_link_libraries(FEFLOW2OGS ApplicationsFileIO)
     ADD_VTK_DEPENDENCY(FEFLOW2OGS)
-
-    add_executable(convertGEO convertGEO.cpp)
-    set_target_properties(convertGEO PROPERTIES FOLDER Utilities)
-    target_link_libraries(convertGEO GeoLib)
 endif ()
+
+add_executable(convertGEO convertGEO.cpp)
+set_target_properties(convertGEO PROPERTIES FOLDER Utilities)
+target_link_libraries(convertGEO GeoLib)
 
 add_executable(generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
 target_link_libraries(generateMatPropsFromMatID MeshLib)
