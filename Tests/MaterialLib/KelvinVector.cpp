@@ -157,11 +157,10 @@ TEST_F(MaterialLibSolidsKelvinVector4, Inverse)
         return error < 1e-6 && 1e-8 * std::pow(v.norm(), 1.4);
     };
 
-    auto eps = std::numeric_limits<double>::epsilon();
     ac::check<KelvinVector<4>>(
         f, 1000,
         ac::make_arbitrary(kelvinVectorGenerator)
-            .discard_if([&eps](KelvinVector<4> const& v) {
+            .discard_if([](KelvinVector<4> const& v) {
                 // only invertable matrices
                 return (std::abs(kelvinToTensor(v).determinant()) == 0);
             }),
@@ -178,11 +177,10 @@ TEST_F(MaterialLibSolidsKelvinVector6, Inverse)
         return error < 1e-6 && 1e-8 * std::pow(v.norm(), 1.4);
     };
 
-    auto eps = std::numeric_limits<double>::epsilon();
     ac::check<KelvinVector<6>>(
         f, 1000,
         ac::make_arbitrary(kelvinVectorGenerator)
-            .discard_if([&eps](KelvinVector<6> const& v) {
+            .discard_if([](KelvinVector<6> const& v) {
                 // only invertable matrices
                 return (std::abs(kelvinToTensor(v).determinant()) == 0);
             }),
