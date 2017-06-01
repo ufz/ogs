@@ -1,16 +1,15 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- */
-
-/*
+ *
  * Implementation of Ehler's single-surface model.
  * see Ehler's paper "A single-surface yield function for geomaterials" for more
- * details. \cite{Ehlers1995}
+ * details. \cite Ehlers1995
  *
  * Refer to "Single-surface benchmark of OpenGeoSys documentation
  * (https://docs.opengeosys.org/docs/benchmarks/small-deformations/mechanics-plasticity-single-surface)"
@@ -36,16 +35,13 @@ namespace Solids
 {
 namespace Ehlers
 {
-//
-// Variables specific to the material model.
-//
+/// material parameters in relation to Ehler's single-surface model see Ehler's
+/// paper "A single-surface yield function for geomaterials" for more details
+/// \cite Ehlers1995.
 struct MaterialPropertiesParameters
 {
     using P = ProcessLib::Parameter<double>;
 
-    /// material parameters in relation to Ehler's single-surface model
-    /// see Ehler's paper "A single-surface yield function for geomaterials"
-    /// for more details.
     MaterialPropertiesParameters(P const& G_, P const& K_, P const& alpha_,
                                  P const& beta_, P const& gamma_,
                                  P const& delta_, P const& epsilon_,
@@ -76,21 +72,22 @@ struct MaterialPropertiesParameters
     P const& G;  ///< shear modulus
     P const& K;  ///< bulk modulus
 
-    P const& alpha;  // material dependent parameter in relation to Ehlers model, refer to Ehlers, W. "A single-surface yield function for geomaterials." Archive of Applied Mechanics 65.4 (1995): 246-259 for more details.
-    P const& beta;  // copydoc alpha
-    P const& gamma;  // copydoc alpha
-    P const& delta;  // copydoc alpha
-    P const& epsilon;  // copydoc alpha
-    P const& m;  // copydoc alpha
+    P const& alpha;    ///< material dependent parameter in relation to Ehlers
+                       ///< model, refer to \cite Ehlers1995 .
+    P const& beta;     ///< \copydoc alpha
+    P const& gamma;    ///< \copydoc alpha
+    P const& delta;    ///< \copydoc alpha
+    P const& epsilon;  ///< \copydoc alpha
+    P const& m;        ///< \copydoc alpha
 
-    P const& alpha_p;  // copydoc alpha
-    P const& beta_p;  // copydoc alpha
-    P const& gamma_p;  // copydoc alpha
-    P const& delta_p;  // copydoc alpha
-    P const& epsilon_p;  // copydoc alpha
-    P const& m_p;  // copydoc alpha
+    P const& alpha_p;    ///< \copydoc alpha
+    P const& beta_p;     ///< \copydoc alpha
+    P const& gamma_p;    ///< \copydoc alpha
+    P const& delta_p;    ///< \copydoc alpha
+    P const& epsilon_p;  ///< \copydoc alpha
+    P const& m_p;        ///< \copydoc alpha
 
-    P const& kappa;  // hardening parameter
+    P const& kappa;  ///< hardening parameter
     P const& hardening_coefficient;
 };
 

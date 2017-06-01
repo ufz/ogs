@@ -40,7 +40,8 @@ namespace Solids
 {
 namespace Ehlers
 {
-/// Evaluated MaterialPropertiesParameters container.
+/// Evaluated MaterialPropertiesParameters container, see its documentation for
+/// details.
 struct MaterialProperties final
 {
     MaterialProperties(double const t, ProcessLib::SpatialPosition const& x,
@@ -63,9 +64,8 @@ struct MaterialProperties final
           hardening_coefficient(mp.hardening_coefficient(t, x)[0])
     {
     }
-    // basic material parameters
-    double const G;  ///< shear modulus
-    double const K;  ///< bulk modulus
+    double const G;
+    double const K;
 
     double const alpha;
     double const beta;
@@ -85,7 +85,8 @@ struct MaterialProperties final
     double const hardening_coefficient;
 };
 
-/// Evaluated DamagePropertiesParameters container.
+/// Evaluated DamagePropertiesParameters container, see its documentation for
+/// details.
 struct DamageProperties
 {
     DamageProperties(double const t,
