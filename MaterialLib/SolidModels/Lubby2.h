@@ -9,11 +9,8 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
-#include <utility>
-
-#include "BaseLib/Error.h"
 #include "NumLib/NewtonRaphson.h"
+#include "ProcessLib/Parameter/Parameter.h"
 
 #include "KelvinVector.h"
 #include "MechanicsBase.h"
@@ -118,6 +115,15 @@ public:
             eps_M_j.resize(KelvinVectorSize);
         }
 
+        MaterialStateVariables& operator=(MaterialStateVariables const&) =
+            default;
+        MaterialStateVariables& operator=(
+            typename MechanicsBase<DisplacementDim>::
+                MaterialStateVariables const& state) noexcept override
+        {
+            return operator=(static_cast<MaterialStateVariables const&>(state));
+        }
+
         void setInitialConditions()
         {
             eps_K_j = eps_K_t;
@@ -175,16 +181,18 @@ public:
     {
     }
 
-    bool computeConstitutiveRelation(
+    boost::optional<std::tuple<KelvinVector,
+                               std::unique_ptr<typename MechanicsBase<
+                                   DisplacementDim>::MaterialStateVariables>,
+                               KelvinMatrix>>
+    integrateStress(
         double const t,
-        ProcessLib::SpatialPosition const& x_position,
+        ProcessLib::SpatialPosition const& x,
         double const dt,
         KelvinVector const& eps_prev,
         KelvinVector const& eps,
         KelvinVector const& sigma_prev,
-        KelvinVector& sigma,
-        KelvinMatrix& C,
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables) override;
 
 private:
@@ -210,29 +218,6 @@ private:
         const KelvinVector& sig_i,
         const KelvinVector& eps_K_i,
         detail::LocalLubby2Properties<DisplacementDim> const& properties);
-
-    /// Calculates the 18x6 derivative of the residuals with respect to total
-    /// strain.
-    ///
-    /// Function definition can not be moved into implementation because of a
-    /// MSVC compiler errors. See
-    /// http://stackoverflow.com/questions/1484885/strange-vc-compile-error-c2244
-    /// and https://support.microsoft.com/en-us/kb/930198
-    Eigen::
-        Matrix<double, JacobianResidualSize, KelvinVectorSize, Eigen::RowMajor>
-        calculatedGdEBurgers() const
-    {
-        Eigen::Matrix<double,
-                      JacobianResidualSize,
-                      KelvinVectorSize,
-                      Eigen::RowMajor>
-            dGdE;
-        dGdE.setZero();
-        dGdE.template block<KelvinVectorSize, KelvinVectorSize>(0, 0)
-            .diagonal()
-            .setConstant(-2);
-        return dGdE;
-    }
 
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;

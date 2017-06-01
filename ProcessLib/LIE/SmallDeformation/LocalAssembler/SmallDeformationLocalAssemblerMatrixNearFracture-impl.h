@@ -208,15 +208,18 @@ assembleWithJacobian(
 
         auto& eps = ip_data._eps;
         auto& sigma = ip_data._sigma;
-        auto& C = ip_data._C;
-        auto& material_state_variables = *ip_data._material_state_variables;
+        auto& state = ip_data._material_state_variables;
 
         eps.noalias() = B * nodal_total_u;
 
-        if (!ip_data._solid_material.computeConstitutiveRelation(
-                t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
-                sigma, C, material_state_variables))
+        auto&& solution = _ip_data[ip]._solid_material.integrateStress(
+            t, x_position, _process_data.dt, eps_prev, eps, sigma_prev, *state);
+
+        if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
+
+        KelvinMatrixType<DisplacementDim> C;
+        std::tie(sigma, state, C) = std::move(*solution);
 
         // r_u = B^T * Sigma = B^T * C * B * (u+phi*[u])
         // r_[u] = (phi*B)^T * Sigma = (phi*B)^T * C * B * (u+phi*[u])
@@ -230,15 +233,19 @@ assembleWithJacobian(
         for (unsigned i=0; i<n_fractures; i++)
         {
             // J_u[u] += B^T * C * (levelset * B)
-            vec_local_J_ug[i].noalias() += B.transpose() * C *(levelsets[i] * B) * ip_factor;
+            vec_local_J_ug[i].noalias() +=
+                B.transpose() * C * (levelsets[i] * B) * ip_factor;
 
             // J_[u]u += (levelset * B)^T * C * B
-            vec_local_J_gu[i].noalias() += (levelsets[i] * B.transpose()) * C * B * ip_factor;
+            vec_local_J_gu[i].noalias() +=
+                (levelsets[i] * B.transpose()) * C * B * ip_factor;
 
             for (unsigned j=0; j<n_fractures; j++)
             {
                 // J_[u][u] += (levelset * B)^T * C * (levelset * B)
-                vec_local_J_gg[i][j].noalias() += (levelsets[i] * B.transpose()) * C * (levelsets[j] * B) * ip_factor;
+                vec_local_J_gg[i][j].noalias() +=
+                    (levelsets[i] * B.transpose()) * C * (levelsets[j] * B) *
+                    ip_factor;
             }
         }
     }

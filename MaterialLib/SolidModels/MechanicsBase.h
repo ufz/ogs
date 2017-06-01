@@ -9,10 +9,16 @@
 
 #pragma once
 
+#include <boost/optional.hpp>
 #include <memory>
+#include <tuple>
 
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
-#include "ProcessLib/Parameter/Parameter.h"
+
+namespace ProcessLib
+{
+class SpatialPosition;
+}
 
 namespace MeshLib
 {
@@ -39,6 +45,9 @@ struct MechanicsBase
     struct MaterialStateVariables
     {
         virtual ~MaterialStateVariables() = default;
+        virtual MaterialStateVariables& operator=(
+            MaterialStateVariables const&) = default;
+
         virtual void pushBackState() = 0;
     };
 
@@ -52,19 +61,18 @@ struct MechanicsBase
 
     /// Dynamic size Kelvin vector and matrix wrapper for the polymorphic
     /// constitutive relation compute function.
-    /// Returns false in case of errors in the computation if Newton iterations
-    /// did not converge, for example.
-    bool computeConstitutiveRelation(
-        double const t,
-        ProcessLib::SpatialPosition const& x,
-        double const dt,
-        Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps_prev,
-        Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps,
-        Eigen::Matrix<double, Eigen::Dynamic, 1> const& sigma_prev,
-        Eigen::Matrix<double, Eigen::Dynamic, 1>& sigma,
-        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>&
-            C,
-        MaterialStateVariables& material_state_variables)
+    /// Returns nothing in case of errors in the computation if Newton
+    /// iterations did not converge, for example.
+    boost::optional<std::tuple<KelvinVector,
+                               std::unique_ptr<MaterialStateVariables>,
+                               KelvinMatrix>>
+    integrateStress(double const t,
+                    ProcessLib::SpatialPosition const& x,
+                    double const dt,
+                    Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps_prev,
+                    Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps,
+                    Eigen::Matrix<double, Eigen::Dynamic, 1> const& sigma_prev,
+                    MaterialStateVariables const& material_state_variables)
     {
         // TODO Avoid copies of data:
         // Using MatrixBase<Derived> not possible because template functions
@@ -74,41 +82,27 @@ struct MechanicsBase
         KelvinVector const eps_prev_{eps_prev};
         KelvinVector const eps_{eps};
         KelvinVector const sigma_prev_{sigma_prev};
-        KelvinVector sigma_{sigma};
-        KelvinMatrix C_{C};
 
-        bool const result =
-            computeConstitutiveRelation(t,
-                                        x,
-                                        dt,
-                                        eps_prev_,
-                                        eps_,
-                                        sigma_prev_,
-                                        sigma_,
-                                        C_,
-                                        material_state_variables);
-
-        sigma = sigma_;
-        C = C_;
-        return result;
+        return integrateStress(
+            t, x, dt, eps_prev_, eps_, sigma_prev_, material_state_variables);
     }
 
     /// Computation of the constitutive relation for specific material model.
     /// This should be implemented in the derived model. Fixed Kelvin vector and
     /// matrix size version; for dynamic size arguments there is an overloaded
     /// wrapper function.
-    /// Returns false in case of errors in the computation if Newton iterations
-    /// did not converge, for example.
-    virtual bool computeConstitutiveRelation(
-        double const t,
-        ProcessLib::SpatialPosition const& x,
-        double const dt,
-        KelvinVector const& eps_prev,
-        KelvinVector const& eps,
-        KelvinVector const& sigma_prev,
-        KelvinVector& sigma,
-        KelvinMatrix& C,
-        MaterialStateVariables& material_state_variables) = 0;
+    /// Returns nothing in case of errors in the computation if Newton
+    /// iterations did not converge, for example.
+    virtual boost::optional<std::tuple<KelvinVector,
+                                       std::unique_ptr<MaterialStateVariables>,
+                                       KelvinMatrix>>
+    integrateStress(double const t,
+                    ProcessLib::SpatialPosition const& x,
+                    double const dt,
+                    KelvinVector const& eps_prev,
+                    KelvinVector const& eps,
+                    KelvinVector const& sigma_prev,
+                    MaterialStateVariables const& material_state_variables) = 0;
 
     virtual ~MechanicsBase() = default;
 };

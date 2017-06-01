@@ -53,7 +53,6 @@ struct IntegrationPointData final
           eps_prev(std::move(other.eps_prev)),
           solid_material(other.solid_material),
           material_state_variables(std::move(other.material_state_variables)),
-          C(std::move(other.C)),
           integration_weight(std::move(other.integration_weight))
     {
     }
@@ -68,7 +67,6 @@ struct IntegrationPointData final
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
-    typename BMatricesType::KelvinMatrixType C;
     double integration_weight;
 
     void pushBackState()
@@ -200,8 +198,6 @@ public:
             ip_data.eps.resize(KelvinVectorDimensions<DisplacementDim>::value);
             ip_data.eps_prev.resize(
                 KelvinVectorDimensions<DisplacementDim>::value);
-            ip_data.C.resize(KelvinVectorDimensions<DisplacementDim>::value,
-                             KelvinVectorDimensions<DisplacementDim>::value);
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
         }
@@ -251,19 +247,22 @@ public:
 
             auto& eps = _ip_data[ip].eps;
             auto& sigma = _ip_data[ip].sigma;
-            auto& C = _ip_data[ip].C;
-            auto& material_state_variables =
-                *_ip_data[ip].material_state_variables;
+            auto& state = _ip_data[ip].material_state_variables;
 
             eps.noalias() =
                 B *
                 Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
                     local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
-            if (!_ip_data[ip].solid_material.computeConstitutiveRelation(
-                    t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
-                    sigma, C, material_state_variables))
+            auto&& solution = _ip_data[ip].solid_material.integrateStress(
+                t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
+                *state);
+
+            if (!solution)
                 OGS_FATAL("Computation of local constitutive relation failed.");
+
+            KelvinMatrixType<DisplacementDim> C;
+            std::tie(sigma, state, C) = std::move(*solution);
 
             local_b.noalias() -= B.transpose() * sigma * w;
             local_Jac.noalias() += B.transpose() * C * B * w;

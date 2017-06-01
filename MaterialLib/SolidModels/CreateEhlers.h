@@ -9,12 +9,8 @@
 
 #pragma once
 
-#include <logog/include/logog.hpp>
-
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
-
 #include "Ehlers.h"
-#include "MechanicsBase.h"
 
 namespace MaterialLib
 {
@@ -41,7 +37,7 @@ createNewtonRaphsonSolverParameters(BaseLib::ConfigTree const& config)
     return {maximum_iterations, error_tolerance};
 }
 
-inline std::unique_ptr<EhlersDamageProperties> createDamageProperties(
+inline std::unique_ptr<DamagePropertiesParameters> createDamageProperties(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
@@ -62,12 +58,12 @@ inline std::unique_ptr<EhlersDamageProperties> createDamageProperties(
 
     DBUG("Use \'%s\' as h_d.", h_d.name.c_str());
 
-    return std::make_unique<EhlersDamageProperties>(
-        EhlersDamageProperties{alpha_d, beta_d, h_d});
+    return std::make_unique<DamagePropertiesParameters>(
+        DamagePropertiesParameters{alpha_d, beta_d, h_d});
 }
 
 template <int DisplacementDim>
-std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
+std::unique_ptr<SolidEhlers<DisplacementDim>> createEhlers(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
@@ -170,14 +166,14 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
 
     DBUG("Use \'%s\' as gammap.", gammap.name.c_str());
 
-    typename SolidEhlers<DisplacementDim>::MaterialProperties mp{
+    MaterialPropertiesParameters mp{
         shear_modulus, bulk_modulus, alpha,  beta,
         gamma,         delta,        eps,    m,
         alphap,        betap,        gammap, deltap,
         epsp,          paremeter_mp, kappa,  hardening_modulus};
 
     // Damage properties.
-    std::unique_ptr<EhlersDamageProperties> ehlers_damage_properties;
+    std::unique_ptr<DamagePropertiesParameters> ehlers_damage_properties;
 
     auto const& ehlers_damage_config =
         //! \ogs_file_param{material__solid__constitutive_relation__Ehlers__damage_properties}
@@ -194,7 +190,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createEhlers(
     auto const nonlinear_solver_parameters =
         createNewtonRaphsonSolverParameters(nonlinear_solver_config);
 
-    return std::unique_ptr<MechanicsBase<DisplacementDim>>{
+    return std::unique_ptr<SolidEhlers<DisplacementDim>>{
         new SolidEhlers<DisplacementDim>{nonlinear_solver_parameters, mp,
                                          std::move(ehlers_damage_properties)}};
 }

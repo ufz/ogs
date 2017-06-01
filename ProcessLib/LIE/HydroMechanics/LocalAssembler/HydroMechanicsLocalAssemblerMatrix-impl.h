@@ -201,11 +201,10 @@ assembleBlockMatricesWithJacobian(
         auto const& B = ip_data.b_matrices;
         auto const& eps_prev = ip_data.eps_prev;
         auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
+        auto& sigma_eff = ip_data.sigma_eff;
 
         auto& eps = ip_data.eps;
-        auto& sigma_eff = ip_data.sigma_eff;
-        auto& C = ip_data.C;
-        auto& material_state_variables = *ip_data.material_state_variables;
+        auto& state = ip_data.material_state_variables;
 
         auto q = ip_data.darcy_velocity.head(GlobalDim);
 
@@ -225,10 +224,15 @@ assembleBlockMatricesWithJacobian(
 
         eps.noalias() = B * u;
 
-        if (!_ip_data[ip].solid_material.computeConstitutiveRelation(
-                t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
-                sigma_eff, C, material_state_variables))
+        auto&& solution = _ip_data[ip].solid_material.integrateStress(
+            t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
+            *state);
+
+        if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
+
+        KelvinMatrixType<GlobalDim> C;
+        std::tie(sigma_eff, state, C) = std::move(*solution);
 
         q.noalias() = - k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
 
@@ -320,8 +324,7 @@ computeSecondaryVariableConcreteWithBlockVectors(
 
         auto& eps = ip_data.eps;
         auto& sigma_eff = ip_data.sigma_eff;
-        auto& C = ip_data.C;
-        auto& material_state_variables = *ip_data.material_state_variables;
+        auto& state = ip_data.material_state_variables;
         double const k_over_mu =
             _process_data.intrinsic_permeability(t, x_position)[0] /
             _process_data.fluid_viscosity(t, x_position)[0];
@@ -331,10 +334,15 @@ computeSecondaryVariableConcreteWithBlockVectors(
 
         eps.noalias() = B * u;
 
-        if (!_ip_data[ip].solid_material.computeConstitutiveRelation(
-                t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
-                sigma_eff, C, material_state_variables))
+        auto&& solution = _ip_data[ip].solid_material.integrateStress(
+            t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
+            *state);
+
+        if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
+
+        KelvinMatrixType<GlobalDim> C;
+        std::tie(sigma_eff, state, C) = std::move(*solution);
 
         q.noalias() = - k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
     }

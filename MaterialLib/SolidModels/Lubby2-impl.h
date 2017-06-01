@@ -15,25 +15,76 @@ namespace Solids
 {
 namespace Lubby2
 {
+/// Calculates the 18x6 derivative of the residuals with respect to total
+/// strain.
+///
+/// Function definition can not be moved into implementation because of a
+/// MSVC compiler errors. See
+/// http://stackoverflow.com/questions/1484885/strange-vc-compile-error-c2244
+/// and https://support.microsoft.com/en-us/kb/930198
 template <int DisplacementDim>
-bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
+Eigen::Matrix<double, Lubby2<DisplacementDim>::JacobianResidualSize,
+              Lubby2<DisplacementDim>::KelvinVectorSize>
+calculatedGdEBurgers()
+{
+    Eigen::Matrix<double, Lubby2<DisplacementDim>::JacobianResidualSize,
+                  Lubby2<DisplacementDim>::KelvinVectorSize>
+        dGdE;
+    dGdE.setZero();
+    dGdE.template topLeftCorner<Lubby2<DisplacementDim>::KelvinVectorSize,
+                                Lubby2<DisplacementDim>::KelvinVectorSize>()
+        .diagonal()
+        .setConstant(-2);
+    return dGdE;
+}
+
+template <int DisplacementDim, typename LinearSolver>
+ProcessLib::KelvinMatrixType<DisplacementDim> tangentStiffnessA(
+    double const GM0, double const KM0, LinearSolver const& linear_solver)
+{
+    // Calculate dGdE for time step
+    auto const dGdE = calculatedGdEBurgers<DisplacementDim>();
+
+    // Consistent tangent from local Newton iteration of material
+    // functionals.
+    // Only the upper left block is relevant for the global tangent.
+    static int const KelvinVectorSize =
+        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
+    using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
+
+    KelvinMatrix const dzdE =
+        linear_solver.solve(-dGdE)
+            .template topLeftCorner<KelvinVectorSize, KelvinVectorSize>();
+
+    using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
+    auto const& P_sph = Invariants::spherical_projection;
+    auto const& P_dev = Invariants::deviatoric_projection;
+
+    KelvinMatrix C = GM0 * dzdE * P_dev + 3. * KM0 * P_sph;
+    return C;
+};
+
+template <int DisplacementDim>
+boost::optional<std::tuple<typename Lubby2<DisplacementDim>::KelvinVector,
+                           std::unique_ptr<typename MechanicsBase<
+                               DisplacementDim>::MaterialStateVariables>,
+                           typename Lubby2<DisplacementDim>::KelvinMatrix>>
+Lubby2<DisplacementDim>::integrateStress(
     double const t,
     ProcessLib::SpatialPosition const& x,
     double const dt,
     KelvinVector const& /*eps_prev*/,
     KelvinVector const& eps,
     KelvinVector const& /*sigma_prev*/,
-    KelvinVector& sigma,
-    KelvinMatrix& C,
-    typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+    typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
         material_state_variables)
 {
     using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
 
-    assert(dynamic_cast<MaterialStateVariables*>(&material_state_variables) !=
-           nullptr);
-    auto& state =
-        static_cast<MaterialStateVariables&>(material_state_variables);
+    assert(dynamic_cast<MaterialStateVariables const*>(
+               &material_state_variables) != nullptr);
+    MaterialStateVariables state(
+        static_cast<MaterialStateVariables const&>(material_state_variables));
     state.setInitialConditions();
 
     auto local_lubby2_properties =
@@ -56,8 +107,7 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
 
     // Linear solver for the newton loop is required after the loop with the
     // same matrix. This saves one decomposition.
-    Eigen::PartialPivLU<LocalJacobianMatrix> linear_solver(KelvinVectorSize *
-                                                           3);
+    Eigen::FullPivLU<LocalJacobianMatrix> linear_solver;
 
     // Different solvers are available for the solution of the local system.
     // TODO Make the following choice of linear solvers available from the
@@ -70,11 +120,11 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
     //      K_loc.llt().solve(-res_loc);
     //      K_loc.ldlt().solve(-res_loc);
 
+    LocalJacobianMatrix K_loc;
     {  // Local Newton solver
         using LocalResidualVector =
             Eigen::Matrix<double, KelvinVectorSize * 3, 1>;
 
-        LocalJacobianMatrix K_loc;
         auto const update_residual = [&](LocalResidualVector& residual) {
             calculateResidualBurgers(
                 dt, epsd_i, sigd_j, state.eps_K_j, state.eps_K_t, state.eps_M_j,
@@ -89,14 +139,14 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
 
         auto const update_solution = [&](LocalResidualVector const& increment) {
             // increment solution vectors
-            sigd_j.noalias() += increment.template block<KelvinVectorSize, 1>(
-                KelvinVectorSize * 0, 0);
+            sigd_j.noalias() += increment.template segment<KelvinVectorSize>(
+                KelvinVectorSize * 0);
             state.eps_K_j.noalias() +=
-                increment.template block<KelvinVectorSize, 1>(
-                    KelvinVectorSize * 1, 0);
+                increment.template segment<KelvinVectorSize>(KelvinVectorSize *
+                                                             1);
             state.eps_M_j.noalias() +=
-                increment.template block<KelvinVectorSize, 1>(
-                    KelvinVectorSize * 2, 0);
+                increment.template segment<KelvinVectorSize>(KelvinVectorSize *
+                                                             2);
 
             // Calculate effective stress and update material properties
             sig_eff = MaterialLib::SolidModels::Invariants<
@@ -114,7 +164,7 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
         auto const success_iterations = newton_solver.solve(K_loc);
 
         if (!success_iterations)
-            return false;
+            return {};
 
         // If the Newton loop didn't run, the linear solver will not be
         // initialized.
@@ -123,29 +173,22 @@ bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
             linear_solver.compute(K_loc);
     }
 
+    KelvinMatrix C =
+        tangentStiffnessA<DisplacementDim>(local_lubby2_properties.GM0,
+                                           local_lubby2_properties.KM0,
+                                           linear_solver);
+
     // Hydrostatic part for the stress and the tangent.
     double const eps_i_trace = Invariants::trace(eps);
-
-    sigma.noalias() =
+    KelvinVector const sigma =
         local_lubby2_properties.GM0 * sigd_j +
         local_lubby2_properties.KM0 * eps_i_trace * Invariants::identity2;
-
-    // Calculate dGdE for time step
-    Eigen::Matrix<double, KelvinVectorSize * 3, KelvinVectorSize,
-                  Eigen::RowMajor> const dGdE = calculatedGdEBurgers();
-
-    // Consistent tangent from local Newton iteration of material
-    // functionals.
-    // Only the upper left block is relevant for the global tangent.
-    KelvinMatrix const dzdE =
-        linear_solver.solve(-dGdE)
-            .template block<KelvinVectorSize, KelvinVectorSize>(0, 0);
-
-    auto const& P_sph = Invariants::spherical_projection;
-    C.noalias() = local_lubby2_properties.GM0 * dzdE * P_dev +
-                  3. * local_lubby2_properties.KM0 * P_sph;
-
-    return true;
+    return {std::make_tuple(
+        sigma,
+        std::unique_ptr<
+            typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
+            new MaterialStateVariables{state}},
+        C)};
 }
 
 template <int DisplacementDim>
@@ -161,17 +204,17 @@ void Lubby2<DisplacementDim>::calculateResidualBurgers(
     detail::LocalLubby2Properties<DisplacementDim> const& properties)
 {
     // calculate stress residual
-    res.template block<KelvinVectorSize, 1>(0, 0).noalias() =
+    res.template segment<KelvinVectorSize>(0).noalias() =
         stress_curr - 2. * (strain_curr - strain_Kel_curr - strain_Max_curr);
 
     // calculate Kelvin strain residual
-    res.template block<KelvinVectorSize, 1>(KelvinVectorSize, 0).noalias() =
+    res.template segment<KelvinVectorSize>(KelvinVectorSize).noalias() =
         1. / dt * (strain_Kel_curr - strain_Kel_t) -
         1. / (2. * properties.etaK) * (properties.GM0 * stress_curr -
                                        2. * properties.GK * strain_Kel_curr);
 
     // calculate Maxwell strain residual
-    res.template block<KelvinVectorSize, 1>(2 * KelvinVectorSize, 0).noalias() =
+    res.template segment<KelvinVectorSize>(2 * KelvinVectorSize).noalias() =
         1. / dt * (strain_Max_curr - strain_Max_t) -
         0.5 * properties.GM0 / properties.etaM * stress_curr;
 }
