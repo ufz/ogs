@@ -95,6 +95,7 @@ void checkGlobalVectorInterfacePETSc()
 
     const int r0 = x.getRangeBegin();
     //x.get(0) is expensive, only get local value. Use it for test purpose
+    x.setLocalAccessibleVector();
     ASSERT_EQ(.0, x.get(r0));
 
     set(x, 10.);
@@ -103,18 +104,22 @@ void checkGlobalVectorInterfacePETSc()
     // Value of x is not copied to y
     const bool deep_copy = false;
     T_VECTOR y(x, deep_copy);
+    y.setLocalAccessibleVector();
     ASSERT_EQ(0, y.get(r0));
 
     set(y, 10.0);
+    y.setLocalAccessibleVector();
     ASSERT_EQ(10, y.get(r0));
 
     // y += x
     axpy(y, 1., x);
+    y.setLocalAccessibleVector();
     ASSERT_EQ(20, y.get(r0));
     ASSERT_EQ(80., norm2(y));
 
     // y -= x
     axpy(y, -1., x);
+    y.setLocalAccessibleVector();
     ASSERT_EQ(10, y.get(r0));
     ASSERT_EQ(40., norm2(y));
 
