@@ -220,18 +220,12 @@ public:
     {
         _t = t0;
         MathLib::LinAlg::copy(x0, _x_old);
-        // The function only has computation if DDC is appied,
-        // e.g. Parallel comuting.
-        MathLib::LinAlg::setLocalAccessibleVector(_x_old);
     }
 
     void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const&) override
     {
         MathLib::LinAlg::copy(x, _x_old);
-        // The function only has computation if DDC is appied,
-        // e.g. Parallel comuting.
-        MathLib::LinAlg::setLocalAccessibleVector(_x_old);
     }
 
     void nextTimestep(const double t, const double delta_t) override
@@ -276,18 +270,12 @@ public:
         _t = t0;
         _t_old = t0;
         MathLib::LinAlg::copy(x0, _x_old);
-        // The function only has computation if DDC is appied,
-        // e.g. Parallel comuting.
-        MathLib::LinAlg::setLocalAccessibleVector(_x_old);
     }
 
     void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const&) override
     {
         MathLib::LinAlg::copy(x, _x_old);
-        // The function only has computation if DDC is appied,
-        // e.g. Parallel comuting.
-        MathLib::LinAlg::setLocalAccessibleVector(_x_old);
     }
 
     void nextTimestep(const double t, const double delta_t) override
@@ -356,18 +344,12 @@ public:
     {
         _t = t0;
         MathLib::LinAlg::copy(x0, _x_old);
-        // The function only has computation if DDC is appied,
-        // e.g. Parallel comuting.
-        MathLib::LinAlg::setLocalAccessibleVector(_x_old);
     }
 
     void pushState(const double, GlobalVector const& x,
                    InternalMatrixStorage const& strg) override
     {
         MathLib::LinAlg::copy(x, _x_old);
-        // The function only has computation if DDC is appied,
-        // e.g. Parallel comuting.
-        MathLib::LinAlg::setLocalAccessibleVector(_x_old);
         strg.pushMatrices();
     }
 
@@ -451,12 +433,6 @@ public:
         _t = t0;
         _xs_old.push_back(
             &NumLib::GlobalVectorProvider::provider.getVector(x0));
-        for (auto x_old : _xs_old)
-        {
-            // The function only has computation if DDC is appied,
-            // e.g. Parallel comuting.
-            MathLib::LinAlg::setLocalAccessibleVector(*x_old);
-        }
     }
 
     void pushState(const double, GlobalVector const& x,
@@ -476,13 +452,6 @@ public:
             LinAlg::copy(x, *_xs_old[_offset]);
             _offset = (_offset + 1) %
                       _num_steps;  // treat _xs_old as a circular buffer
-        }
-
-        for (auto x_old : _xs_old)
-        {
-            // The function only has computation if DDC is appied,
-            // e.g. Parallel comuting.
-            MathLib::LinAlg::setLocalAccessibleVector(*x_old);
         }
     }
 

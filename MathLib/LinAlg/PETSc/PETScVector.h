@@ -157,7 +157,7 @@ class PETScVector
 
         /// Set local accessible vector in order to get entries.
         /// Call this before call operator[] or get(...).
-        void setLocalAccessibleVector();
+        void setLocalAccessibleVector() const;
 
         /// Get several entries
         std::vector<double> get(std::vector<IndexType> const& indices) const;
@@ -173,7 +173,7 @@ class PETScVector
            Get global vector
            \param u Array to store the global vector. Memory allocation is needed in advance
         */
-        void getGlobalVector(PetscScalar u[]);
+        void getGlobalVector(PetscScalar u[]) const;
 
         /*!
            Copy local entries including ghost ones to an array
@@ -275,7 +275,7 @@ class PETScVector
            and its associated computations can be dropped if
            VecGetValues can get values from different processors.
         */
-        std::unique_ptr<PetscScalar[]> _global_v = nullptr;
+        mutable std::unique_ptr<PetscScalar[]> _global_v;
 
         /*!
               \brief  Collect local vectors
@@ -283,7 +283,7 @@ class PETScVector
               \param  global_array Global array
         */
         void gatherLocalVectors(PetscScalar local_array[],
-                                PetscScalar global_array[]);
+                                PetscScalar global_array[]) const;
 
         /*!
            Get local vector, i.e. entries in the same rank

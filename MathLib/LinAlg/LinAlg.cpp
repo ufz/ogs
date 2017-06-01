@@ -22,7 +22,7 @@ namespace MathLib { namespace LinAlg
 
 // Vector
 
-void setLocalAccessibleVector(PETScVector& x)
+void setLocalAccessibleVector(PETScVector const& x)
 {
     x.setLocalAccessibleVector();
 }
@@ -182,7 +182,7 @@ namespace MathLib { namespace LinAlg
 
 // Vector
 
-void setLocalAccessibleVector(EigenVector& /*x*/)
+void setLocalAccessibleVector(EigenVector const& /*x*/)
 {
 }
 

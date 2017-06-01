@@ -104,7 +104,7 @@ void PETScVector::finalizeAssembly()
 }
 
 void PETScVector::gatherLocalVectors( PetscScalar local_array[],
-                                      PetscScalar global_array[])
+                                      PetscScalar global_array[]) const
 {
     // Collect vectors from processors.
     int size_rank;
@@ -130,7 +130,7 @@ void PETScVector::gatherLocalVectors( PetscScalar local_array[],
 
 }
 
-void PETScVector::getGlobalVector(PetscScalar u[])
+void PETScVector::getGlobalVector(PetscScalar u[]) const
 {
 
 #ifdef TEST_MEM_PETSC
@@ -156,7 +156,7 @@ void PETScVector::getGlobalVector(PetscScalar u[])
 #endif
 }
 
-void PETScVector::setLocalAccessibleVector()
+void PETScVector::setLocalAccessibleVector() const
 {
     // TODO: use getLocalVector
     if (!_global_v)

@@ -122,6 +122,10 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                        GlobalMatrix& K, GlobalVector& b,
                        StaggeredCouplingTerm const& coupling_term)
 {
+    // The function only has computation if DDC is appied,
+    // e.g. Parallel comuting.
+    MathLib::LinAlg::setLocalAccessibleVector(x);
+
     assembleConcreteProcess(t, x, M, K, b, coupling_term);
 
     _boundary_conditions.applyNaturalBC(t, x, K, b);
@@ -134,6 +138,11 @@ void Process::assembleWithJacobian(const double t, GlobalVector const& x,
                                    GlobalVector& b, GlobalMatrix& Jac,
                                    StaggeredCouplingTerm const& coupling_term)
 {
+    // The function only has computation if DDC is appied,
+    // e.g. Parallel comuting.
+    MathLib::LinAlg::setLocalAccessibleVector(x);
+    MathLib::LinAlg::setLocalAccessibleVector(xdot);
+
     assembleWithJacobianConcreteProcess(t, x, xdot, dxdot_dx, dx_dx, M, K, b,
                                         Jac, coupling_term);
 
@@ -248,6 +257,10 @@ void Process::computeSecondaryVariable(const double t, GlobalVector const& x,
                                        StaggeredCouplingTerm const&
                                        coupled_term)
 {
+    // The function only has computation if DDC is appied,
+    // e.g. Parallel comuting.
+    MathLib::LinAlg::setLocalAccessibleVector(x);
+
     computeSecondaryVariableConcrete(t, x, coupled_term);
 }
 

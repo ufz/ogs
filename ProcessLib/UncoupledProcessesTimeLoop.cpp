@@ -520,7 +520,6 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
                 const std::size_t c_id =
                     std::distance(_per_process_data.begin(), found_item);
 
-                MathLib::LinAlg::setLocalAccessibleVector(*_process_solutions[c_id]);
                 BaseLib::insertIfTypeIndexKeyUniqueElseError(
                     coupled_xs, coupled_process_pair.first,
                     *_process_solutions[c_id], "global_coupled_x");
@@ -533,7 +532,6 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
         // Create a vector to store the solution of the last coupling iteration
         auto& x_coupling0 = NumLib::GlobalVectorProvider::provider.getVector(x);
         MathLib::LinAlg::copy(x, x_coupling0);
-        MathLib::LinAlg::setLocalAccessibleVector(x_coupling0);
 
         // append a solution vector of suitable size
         _solutions_of_last_cpl_iteration.emplace_back(&x_coupling0);
@@ -589,7 +587,7 @@ bool UncoupledProcessesTimeLoop::loop()
         for (auto& spd : _per_process_data)
         {
             auto& pcs = spd->process;
-            auto& x0 = *_process_solutions[pcs_idx];
+            auto const& x0 = *_process_solutions[pcs_idx];
 
             pcs.preTimestep(x0, t0, _timestepper->getTimeStep().dt());
             _output->doOutput(pcs, spd->process_output, 0, t0, x0);
@@ -638,7 +636,7 @@ bool UncoupledProcessesTimeLoop::loop()
         for (auto& spd : _per_process_data)
         {
             auto& pcs = spd->process;
-            auto& x = *_process_solutions[pcs_idx];
+            auto const& x = *_process_solutions[pcs_idx];
             _output->doOutputLastTimestep(pcs, spd->process_output, timestep, t,
                                           x);
 
@@ -669,11 +667,6 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
         const auto nonlinear_solver_succeeded =
             solveOneTimeStepOneProcess(x, timestep_id, t, dt, *spd,
                                        void_staggered_coupling_term, *_output);
-
-        // The function only has computation if DDC is appied,
-        // e.g. Parallel comuting.
-        MathLib::LinAlg::setLocalAccessibleVector(x);
-
         pcs.postTimestep(x);
         pcs.computeSecondaryVariable(t, x, void_staggered_coupling_term);
 
@@ -805,11 +798,6 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         StaggeredCouplingTerm coupled_term(
             spd->coupled_processes, _solutions_of_coupled_processes[pcs_idx],
             0.0);
-
-        // The function only has computation if DDC is appied,
-        // e.g. Parallel comuting.
-        MathLib::LinAlg::setLocalAccessibleVector(x);
-
         pcs.computeSecondaryVariable(t, x, coupled_term);
 
         _output->doOutput(pcs, spd->process_output, timestep_id, t, x);
