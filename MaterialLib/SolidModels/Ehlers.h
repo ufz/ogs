@@ -76,21 +76,21 @@ struct MaterialPropertiesParameters
     P const& G;  ///< shear modulus
     P const& K;  ///< bulk modulus
 
-    P const& alpha;
-    P const& beta;
-    P const& gamma;
-    P const& delta;
-    P const& epsilon;
-    P const& m;
+    P const& alpha;  // material dependent parameter in relation to Ehlers model, refer to Ehlers, W. "A single-surface yield function for geomaterials." Archive of Applied Mechanics 65.4 (1995): 246-259 for more details.
+    P const& beta;  // copydoc alpha
+    P const& gamma;  // copydoc alpha
+    P const& delta;  // copydoc alpha
+    P const& epsilon;  // copydoc alpha
+    P const& m;  // copydoc alpha
 
-    P const& alpha_p;
-    P const& beta_p;
-    P const& gamma_p;
-    P const& delta_p;
-    P const& epsilon_p;
-    P const& m_p;
+    P const& alpha_p;  // copydoc alpha
+    P const& beta_p;  // copydoc alpha
+    P const& gamma_p;  // copydoc alpha
+    P const& delta_p;  // copydoc alpha
+    P const& epsilon_p;  // copydoc alpha
+    P const& m_p;  // copydoc alpha
 
-    P const& kappa;
+    P const& kappa;  // hardening parameter
     P const& hardening_coefficient;
 };
 
