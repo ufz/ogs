@@ -66,10 +66,6 @@ public:
         enlarge();
     }
 
-    /**
-     * copy constructor.
-     * @param src an axis aligned bounding box
-     * */
     AABB(AABB const&) = default;
 
     /**
