@@ -215,7 +215,7 @@ public:
             auto& ip_data = _ip_data[ip];
             ip_data.integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *
-                shape_matrices[ip].detJ;
+                shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
             ip_data.b_matrices.resize(kelvin_vector_size,
                                       ShapeFunction::NPOINTS * DisplacementDim);
 
