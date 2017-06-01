@@ -173,7 +173,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
         return nullptr;
     }
 
-    if (line.substr(4, 1) != "0")
+    if (line[4] != '0')
     {
         WARN("Currently reading gmsh binary file type is not supported.");
         return nullptr;
