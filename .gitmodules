@@ -25,3 +25,6 @@
 [submodule "ThirdParty/SwmmInterface"]
 	path = ThirdParty/SwmmInterface
 	url = https://github.com/ufz/SwmmInterface.git
+[submodule "ThirdParty/cmake-modules"]
+	path = ThirdParty/cmake-modules
+	url = https://github.com/bilke/cmake-modules.git
