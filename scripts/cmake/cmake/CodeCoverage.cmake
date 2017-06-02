@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-#
+# CHANGES:
 #
 # 2012-01-31, Lars Bilke
 # - Enable Code Coverage
@@ -38,6 +38,10 @@
 # 2016-02-03, Lars Bilke
 # - Refactored functions to use named parameters
 #
+# 2017-06-02, Lars Bilke
+# - Merged with modified version from github.com/ufz/ogs
+#
+#
 # USAGE:
 #
 # 1. Copy this file into your cmake modules path.
@@ -45,31 +49,29 @@
 # 2. Add the following line to your CMakeLists.txt:
 #      include(CodeCoverage)
 #
-# 3. If you need to exclude additional directories from the report, specify them
+# 3. Append necessary compiler flags:
+#      APPEND_COVERAGE_COMPILER_FLAGS()
+#
+# 4. If you need to exclude additional directories from the report, specify them
 #    using the COVERAGE_EXCLUDES variable before calling SETUP_TARGET_FOR_COVERAGE.
 #    Example:
-#    set(COVERAGE_EXCLUDES 'dir1/*' 'dir2/*')
+#      set(COVERAGE_EXCLUDES 'dir1/*' 'dir2/*')
 #
-# 4. Use the function SETUP_TARGET_FOR_COVERAGE to create a custom make target
-#    which runs your test executable and produces a lcov code coverage report.
-#      INCLUDE(CodeCoverage)
-#
-# 3. Use the function SETUP_TARGET_FOR_COVERAGE to create a custom make target
+# 5. Use the function SETUP_TARGET_FOR_COVERAGE to create a custom make target
 #    which runs your test executable and produces a lcov code coverage report:
 #    Example:
-#	 SETUP_TARGET_FOR_COVERAGE(
-#				my_coverage_target  # Name for custom target.
-#				test_driver         # Name of the test driver executable that runs the tests.
-#									# NOTE! This should always have a ZERO as exit code
-#									# otherwise the coverage generation will not complete.
-#				coverage            # Name of output directory.
-#				)
+#      SETUP_TARGET_FOR_COVERAGE(
+#          my_coverage_target  # Name for custom target.
+#          test_driver         # Name of the test driver executable that runs the tests.
+#                              # NOTE! This should always have a ZERO as exit code
+#                              # otherwise the coverage generation will not complete.
+#          coverage            # Name of output directory.
+#      )
 #
-# 4. Build a Debug build:
-#	 cmake -DCMAKE_BUILD_TYPE=Debug ..
-#	 make
-#	 make my_coverage_target
-#
+# 6. Build a Debug build:
+#      cmake -DCMAKE_BUILD_TYPE=Debug ..
+#      make
+#      make my_coverage_target
 #
 
 include(CMakeParseArguments)
@@ -93,12 +95,15 @@ elseif(NOT CMAKE_COMPILER_IS_GNUCXX)
     message(FATAL_ERROR "Compiler is not GNU gcc! Aborting...")
 endif()
 
+set(COVERAGE_COMPILER_FLAGS "-g -O0 --coverage -fprofile-arcs -ftest-coverage"
+    CACHE INTERNAL "")
+
 set(CMAKE_CXX_FLAGS_COVERAGE
-    "-g -O0 --coverage -fprofile-arcs -ftest-coverage"
+    ${COVERAGE_COMPILER_FLAGS}
     CACHE STRING "Flags used by the C++ compiler during coverage builds."
     FORCE )
 set(CMAKE_C_FLAGS_COVERAGE
-    "-g -O0 --coverage -fprofile-arcs -ftest-coverage"
+    ${COVERAGE_COMPILER_FLAGS}
     CACHE STRING "Flags used by the C compiler during coverage builds."
     FORCE )
 set(CMAKE_EXE_LINKER_FLAGS_COVERAGE
@@ -182,7 +187,6 @@ endfunction() # SETUP_TARGET_FOR_COVERAGE
 # Builds dependencies, runs the given executable and outputs reports.
 # NOTE! The executable should always have a ZERO as exit code otherwise
 # the coverage generation will not complete.
-
 #
 # SETUP_TARGET_FOR_COVERAGE_COBERTURA(
 #     NAME ctest_coverage                    # New target name
@@ -230,3 +234,9 @@ function(SETUP_TARGET_FOR_COVERAGE_COBERTURA)
     )
 
 endfunction() # SETUP_TARGET_FOR_COVERAGE_COBERTURA
+
+function(APPEND_COVERAGE_COMPILER_FLAGS)
+    set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_COMPILER_FLAGS}" PARENT_SCOPE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_COMPILER_FLAGS}" PARENT_SCOPE)
+    message(STATUS "Appending code coverage compiler flags: ${COVERAGE_COMPILER_FLAGS}")
+endfunction() # APPEND_COVERAGE_COMPILER_FLAGS
