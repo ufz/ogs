@@ -222,6 +222,9 @@ public:
             auto const& K =
                 _process_data.porous_media_properties.getIntrinsicPermeability(
                     t, pos);
+            auto const& k_rel =
+                _process_data.porous_media_properties.getRelativePermeability(
+                    t, pos).getValue(Sw);
             // Use the viscosity model to compute the viscosity
             auto const mu = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);

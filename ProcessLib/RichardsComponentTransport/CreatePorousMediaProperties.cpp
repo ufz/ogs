@@ -16,6 +16,7 @@
 #include "MaterialLib/PorousMedium/Permeability/createPermeabilityModel.h"
 #include "MaterialLib/PorousMedium/Porosity/createPorosityModel.h"
 #include "MaterialLib/PorousMedium/Storage/createStorageModel.h"
+#include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/CreateRelativePermeabilityModel.h"
 
 #include "MeshLib/Mesh.h"
 
@@ -33,6 +34,9 @@ PorousMediaProperties createPorousMediaProperties(
         porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
         storage_models;
+    std::vector<
+        std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>>
+        relative_permeability_models;
 
     std::vector<int> mat_ids;
     for (auto const& porous_medium_config :
@@ -63,6 +67,13 @@ PorousMediaProperties createPorousMediaProperties(
             porous_medium_config.getConfigSubtree("storage");
         storage_models.emplace_back(
             MaterialLib::PorousMedium::createStorageModel(storage_config));
+
+        auto const& krel_config =
+            //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium__porous_medium__relative_permeability}
+            porous_medium_config.getConfigSubtree("relative_permeability");
+        auto krel = MaterialLib::PorousMedium::createRelativePermeabilityModel(
+            krel_config);
+        relative_permeability_models.emplace_back(std::move(krel));
     }
 
     BaseLib::reorderVector(intrinsic_permeability_models, mat_ids);
@@ -79,10 +90,10 @@ PorousMediaProperties createPorousMediaProperties(
                   material_ids.begin());
     }
 
-    return PorousMediaProperties{std::move(porosity_models),
-                                 std::move(intrinsic_permeability_models),
-                                 std::move(storage_models),
-                                 std::move(material_ids)};
+    return PorousMediaProperties{
+        std::move(porosity_models), std::move(intrinsic_permeability_models),
+        std::move(storage_models), std::move(relative_permeability_models),
+        std::move(material_ids)};
 }
 
 }  // namespace ComponentTransport
