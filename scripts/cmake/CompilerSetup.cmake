@@ -51,9 +51,8 @@ endif()
 
 ### GNU C/CXX compiler
 if(COMPILER_IS_GCC)
-    get_gcc_version(GCC_VERSION)
-    if(GCC_VERSION VERSION_LESS "4.9")
-        message(FATAL_ERROR "GCC minimum required version is 4.9! You are using ${GCC_VERSION}.")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
+        message(FATAL_ERROR "GCC minimum required version is 4.9! You are using ${CMAKE_CXX_COMPILER_VERSION}.")
     endif()
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
         message(STATUS "Set GCC release flags")

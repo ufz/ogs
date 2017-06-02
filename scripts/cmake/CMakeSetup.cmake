@@ -8,7 +8,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 include(UseBackportedModules)
 include(OptionRequires)
 include(CppcheckTargets)
-include(GetCompilerInfoString)
 include(AddVtkDependency)
 
 include(ProcessorCount)
