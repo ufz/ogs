@@ -13,7 +13,7 @@ image.inside(defaultDockerArgs) {
     stage('Build (Coverage)') {
         build.linux(
             script: this,
-            target: 'testrunner_coverage_cobertura ctest_coverage_cobertura'
+            target: 'testrunner_coverage_cobertura'
         )
     }
 }
