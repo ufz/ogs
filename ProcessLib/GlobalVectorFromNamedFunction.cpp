@@ -53,10 +53,11 @@ GlobalVector const& GlobalVectorFromNamedFunction::call(
         _context.index = node_id;
         auto const value = _function_caller.call(args);
 
-        // TODO Problems with PETSc? (local vs. global index)
+        // Problems with PETSc also uses global index.
         result->set(node_id, value);
     }
 
+    MathLib::finalizeVectorAssembly(*result);
     return *result;
 }
 
