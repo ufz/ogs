@@ -32,6 +32,8 @@ find_library(CVODE_NVECSERIAL
     PATH_SUFFIXES lib Lib
 )
 
+find_library(CVODE_KLU klu)
+
 find_package_handle_standard_args(CVODE DEFAULT_MSG
     CVODE_LIBRARY
     CVODE_NVECSERIAL
@@ -39,7 +41,9 @@ find_package_handle_standard_args(CVODE DEFAULT_MSG
 )
 
 if(CVODE_FOUND)
-    set(CVODE_LIBRARIES ${CVODE_LIBRARY} ${CVODE_NVECSERIAL})
+    set(CVODE_LIBRARIES
+        ${CVODE_LIBRARY} ${CVODE_NVECSERIAL} ${CVODE_KLU}
+        CACHE INTERNAL "")
 endif()
 
 mark_as_advanced(CVODE_INCLUDE_DIRS CVODE_LIBRARY CVODE_NVECSERIAL)
