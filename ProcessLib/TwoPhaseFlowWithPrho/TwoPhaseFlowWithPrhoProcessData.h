@@ -10,10 +10,6 @@
 #pragma once
 
 #include "TwoPhaseFlowWithPrhoMaterialProperties.h"
-namespace MeshLib
-{
-class Element;
-}
 
 namespace ProcessLib
 {

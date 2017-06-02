@@ -66,11 +66,7 @@ public:
         enlarge();
     }
 
-    /**
-     * copy constructor.
-     * @param src an axis aligned bounding box
-     * */
-    AABB(AABB const& src) = default;
+    AABB(AABB const&) = default;
 
     /**
      * Construction of object using input iterators. In contrast to give a vector
