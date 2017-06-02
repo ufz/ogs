@@ -16,6 +16,7 @@
 #include "MaterialLib/PorousMedium/Permeability/createPermeabilityModel.h"
 #include "MaterialLib/PorousMedium/Porosity/createPorosityModel.h"
 #include "MaterialLib/PorousMedium/Storage/createStorageModel.h"
+#include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CreateCapillaryPressureModel.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/CreateRelativePermeabilityModel.h"
 
 #include "MeshLib/Mesh.h"
@@ -34,6 +35,9 @@ PorousMediaProperties createPorousMediaProperties(
         porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
         storage_models;
+    std::vector<
+        std::unique_ptr<MaterialLib::PorousMedium::CapillaryPressureSaturation>>
+        capillary_pressure_models;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>>
         relative_permeability_models;
@@ -68,6 +72,13 @@ PorousMediaProperties createPorousMediaProperties(
         storage_models.emplace_back(
             MaterialLib::PorousMedium::createStorageModel(storage_config));
 
+        auto const& capillary_pressure_config =
+            //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium__porous_medium__capillary_pressure}
+            porous_medium_config.getConfigSubtree("capillary_pressure");
+        auto capillary_pressure = MaterialLib::PorousMedium::createCapillaryPressureModel(
+            capillary_pressure_config);
+        capillary_pressure_models.emplace_back(std::move(capillary_pressure));
+
         auto const& krel_config =
             //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium__porous_medium__relative_permeability}
             porous_medium_config.getConfigSubtree("relative_permeability");
@@ -90,10 +101,12 @@ PorousMediaProperties createPorousMediaProperties(
                   material_ids.begin());
     }
 
-    return PorousMediaProperties{
-        std::move(porosity_models), std::move(intrinsic_permeability_models),
-        std::move(storage_models), std::move(relative_permeability_models),
-        std::move(material_ids)};
+    return PorousMediaProperties{std::move(porosity_models),
+                                 std::move(intrinsic_permeability_models),
+                                 std::move(storage_models),
+                                 std::move(capillary_pressure_models),
+                                 std::move(relative_permeability_models),
+                                 std::move(material_ids)};
 }
 
 }  // namespace ComponentTransport
