@@ -1,4 +1,5 @@
 include(CodeCoverage)
+APPEND_COVERAGE_COMPILER_FLAGS()
 
 set(COVERAGE_EXCLUDES
     '/gpfs0/*'
@@ -11,7 +12,7 @@ set(COVERAGE_EXCLUDES
 if(LCOV_PATH AND GENHTML_PATH)
     SETUP_TARGET_FOR_COVERAGE(
         NAME testrunner_coverage
-        EXECUTABLE testrunner -j ${PROCESSOR_COUNT}
+        EXECUTABLE testrunner -j ${PROCESSOR_COUNT} --gtest_filter=BaseLib*
         DEPENDENCIES testrunner
     )
     SETUP_TARGET_FOR_COVERAGE(
