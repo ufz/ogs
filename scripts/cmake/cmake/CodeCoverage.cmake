@@ -1,4 +1,4 @@
-# Copyright (c) 2012 - 2016, Lars Bilke
+# Copyright (c) 2012 - 2017, Lars Bilke
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,18 +34,42 @@
 # 2013-09-17, Joakim Söderberg
 # - Added support for Clang.
 # - Some additional usage instructions.
-
+#
 # 2016-02-03, Lars Bilke
 # - Refactored functions to use named parameters
 #
 # USAGE:
-# 1. Copy this file into your cmake modules path
+#
+# 1. Copy this file into your cmake modules path.
+#
 # 2. Add the following line to your CMakeLists.txt:
 #      include(CodeCoverage)
 #
-# 3. set(COVERAGE_EXCLUDES 'dir1/*' 'dir2/*')
+# 3. If you need to exclude additional directories from the report, specify them
+#    using the COVERAGE_EXCLUDES variable before calling SETUP_TARGET_FOR_COVERAGE.
+#    Example:
+#    set(COVERAGE_EXCLUDES 'dir1/*' 'dir2/*')
+#
 # 4. Use the function SETUP_TARGET_FOR_COVERAGE to create a custom make target
 #    which runs your test executable and produces a lcov code coverage report.
+#      INCLUDE(CodeCoverage)
+#
+# 3. Use the function SETUP_TARGET_FOR_COVERAGE to create a custom make target
+#    which runs your test executable and produces a lcov code coverage report:
+#    Example:
+#	 SETUP_TARGET_FOR_COVERAGE(
+#				my_coverage_target  # Name for custom target.
+#				test_driver         # Name of the test driver executable that runs the tests.
+#									# NOTE! This should always have a ZERO as exit code
+#									# otherwise the coverage generation will not complete.
+#				coverage            # Name of output directory.
+#				)
+#
+# 4. Build a Debug build:
+#	 cmake -DCMAKE_BUILD_TYPE=Debug ..
+#	 make
+#	 make my_coverage_target
+#
 #
 
 include(CMakeParseArguments)
@@ -61,18 +85,39 @@ if(NOT GCOV_PATH)
     message(FATAL_ERROR "gcov not found! Aborting...")
 endif() # NOT GCOV_PATH
 
-if(NOT (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR
-    ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang"))
-    message(FATAL_ERROR "Compiler is not gcc or clang! Aborting...")
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
+    if("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS 3)
+        message(FATAL_ERROR "Clang version must be 3.0.0 or greater! Aborting...")
+    endif()
+elseif(NOT CMAKE_COMPILER_IS_GNUCXX)
+    message(FATAL_ERROR "Compiler is not GNU gcc! Aborting...")
 endif()
 
-if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+set(CMAKE_CXX_FLAGS_COVERAGE
+    "-g -O0 --coverage -fprofile-arcs -ftest-coverage"
+    CACHE STRING "Flags used by the C++ compiler during coverage builds."
+    FORCE )
+set(CMAKE_C_FLAGS_COVERAGE
+    "-g -O0 --coverage -fprofile-arcs -ftest-coverage"
+    CACHE STRING "Flags used by the C compiler during coverage builds."
+    FORCE )
+set(CMAKE_EXE_LINKER_FLAGS_COVERAGE
+    ""
+    CACHE STRING "Flags used for linking binaries during coverage builds."
+    FORCE )
+set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
+    ""
+    CACHE STRING "Flags used by the shared libraries linker during coverage builds."
+    FORCE )
+mark_as_advanced(
+    CMAKE_CXX_FLAGS_COVERAGE
+    CMAKE_C_FLAGS_COVERAGE
+    CMAKE_EXE_LINKER_FLAGS_COVERAGE
+    CMAKE_SHARED_LINKER_FLAGS_COVERAGE )
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(WARNING "Code coverage results with an optimised (non-Debug) build may be misleading")
 endif() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
-
-
-# Setup compiler options
-add_definitions(-fprofile-arcs -ftest-coverage)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     link_libraries(gcov)
@@ -87,7 +132,7 @@ endif()
 #
 # SETUP_TARGET_FOR_COVERAGE(
 #     NAME testrunner_coverage                    # New target name
-#     EXECUTABLE testrunner -j ${PROCESSOR_COUNT} # Executable in CMAKE_BINARY_DIR
+#     EXECUTABLE testrunner -j ${PROCESSOR_COUNT} # Executable in PROJECT_BINARY_DIR
 #     DEPENDENCIES testrunner                     # Dependencies to build first
 # )
 function(SETUP_TARGET_FOR_COVERAGE)
@@ -120,7 +165,7 @@ function(SETUP_TARGET_FOR_COVERAGE)
         COMMAND ${GENHTML_PATH} -o ${Coverage_NAME} ${Coverage_NAME}.info.cleaned
         COMMAND ${CMAKE_COMMAND} -E remove ${Coverage_NAME}.info ${Coverage_NAME}.info.cleaned
 
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS ${Coverage_DEPENDENCIES}
         COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report."
     )
@@ -141,7 +186,7 @@ endfunction() # SETUP_TARGET_FOR_COVERAGE
 #
 # SETUP_TARGET_FOR_COVERAGE_COBERTURA(
 #     NAME ctest_coverage                    # New target name
-#     EXECUTABLE ctest -j ${PROCESSOR_COUNT} # Executable in CMAKE_BINARY_DIR
+#     EXECUTABLE ctest -j ${PROCESSOR_COUNT} # Executable in PROJECT_BINARY_DIR
 #     DEPENDENCIES executable_target         # Dependencies to build first
 # )
 function(SETUP_TARGET_FOR_COVERAGE_COBERTURA)
@@ -173,7 +218,7 @@ function(SETUP_TARGET_FOR_COVERAGE_COBERTURA)
         # Running gcovr
         COMMAND ${GCOVR_PATH} -x -r ${CMAKE_SOURCE_DIR} ${COBERTURA_EXCLUDES}
             -o ${Coverage_NAME}.xml
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS ${Coverage_DEPENDENCIES}
         COMMENT "Running gcovr to produce Cobertura code coverage report."
     )
