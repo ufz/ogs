@@ -57,7 +57,11 @@ builders['docs'] = {
     }
 }
 
-parallel builders
+// parallel builders
+node('docker') {
+    dir('ogs') { checkoutWithTags() }
+    load 'ogs/scripts/jenkins/coverage.groovy'
+}
 
 def tag = ""
 node('master') {
@@ -73,11 +77,6 @@ node('master') {
 }
 
 if (helper.isOriginMaster(this)) {
-
-    node('docker') {
-        dir('ogs') { checkoutWithTags() }
-        load 'ogs/scripts/jenkins/coverage.groovy'
-    }
 
     if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
         build job: 'OGS-6/clang-sanitizer', wait: false
