@@ -306,7 +306,7 @@ public:
                              ip_data.mass_operator;
 
             if (_process_data.has_gravity)
-                Bp += w * density * dNdx.transpose() * K_over_mu * b;
+                Bp += w * density * dNdx.transpose() * K * b * (k_rel/mu);
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
         }
