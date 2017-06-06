@@ -166,8 +166,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     local_vec[1] = 2. * (mrank+1);
     x.set(row_pos, local_vec);
 
-    double x0[6];
-    double x1[6];
+    std::vector<double> x0(6);
     x.getGlobalVector(x0);
 
     MathLib::LinAlg::matMult(A, x, b);
@@ -194,6 +193,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
 
     EXPECT_GT(ls.getNumberOfIterations(), 0u);
 
+    std::vector<double> x1(6);
     x.getGlobalVector(x1);
     ASSERT_ARRAY_NEAR(x0, x1, 6, 1e-5);
 }

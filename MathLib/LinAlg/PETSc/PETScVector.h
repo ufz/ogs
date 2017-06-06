@@ -16,9 +16,11 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
+
 #include <petscvec.h>
 
 namespace MathLib
@@ -162,18 +164,17 @@ class PETScVector
         /// Get several entries
         std::vector<double> get(std::vector<IndexType> const& indices) const;
 
-        // TODO preliminary
+        // Get the value of an entry by [] operator
         double operator[] (PetscInt idx) const
         {
-            const PetscInt id_p = (idx == -_size) ?  0 : std::abs(idx);
-            return _global_v[id_p];
+            return get(idx);
         }
 
         /*!
            Get global vector
            \param u Array to store the global vector. Memory allocation is needed in advance
         */
-        void getGlobalVector(PetscScalar u[]) const;
+        void getGlobalVector(std::vector<PetscScalar>& u) const;
 
         /*!
            Copy local entries including ghost ones to an array
@@ -183,14 +184,7 @@ class PETScVector
 
         /// Get an entry value. This is an expensive operation,
         /// and it only get local value. Use it for only test purpose
-        PetscScalar get(const PetscInt idx) const
-        {
-            //PetscScalar x;
-            //VecGetValues(_v, 1, &idx, &x);
-            const PetscInt id_p = (idx == -_size) ?  0 : std::abs(idx);
-            //VecGetValues(_v, 1, &id_p, &value);
-            return _global_v[id_p];
-        }
+        PetscScalar get(const PetscInt idx) const;
 
         // TODO eliminate in favour of getRawVector()
         /// Get PETsc vector. Use it only for test purpose
@@ -216,7 +210,7 @@ class PETScVector
          * This method is dangerous insofar as you can do arbitrary things also
          * with a const PETSc vector!
          */
-        PETSc_Vec getRawVector() const {return _v; }
+        PETSc_Vec getRawVector() const { return _v; }
 
 
         /*! View the global vector for test purpose. Do not use it for output a big vector.
@@ -252,7 +246,7 @@ class PETScVector
 
         PETSc_Vec _v = nullptr;
         /// Local vector, which is only for the case that  _v is created
-        /// with ghost entries. 
+        /// with ghost entries.
         mutable PETSc_Vec _v_loc = nullptr;
 
         /// Starting index in a rank
@@ -271,11 +265,16 @@ class PETScVector
         bool _has_ghost_id = false;
 
         /*!
-           Scattered global vector to all processors. Note: this member
-           and its associated computations can be dropped if
-           VecGetValues can get values from different processors.
+           \brief Array containing the entries of the vector.
+           If the vector is created without given ghost IDs, the array
+           contains all entries of the global vector, _v. Otherwise it
+           only contains the entries of the global vector owned by the
+           current rank.
         */
-        mutable std::unique_ptr<PetscScalar[]> _global_v;
+        mutable std::vector<PetscScalar> _entry_array;
+
+        /// Map global indices of ghost enrties to local indices
+        mutable std::map<PetscInt, PetscInt> _global_ids2local_ids_ghost;
 
         /*!
               \brief  Collect local vectors
@@ -289,6 +288,9 @@ class PETScVector
            Get local vector, i.e. entries in the same rank
         */
         PetscScalar* getLocalVector() const;
+
+        /// Get local index by a global index
+        PetscInt getLocalIndex(const PetscInt global_index) const;
 
         /*!
            Restore array after finish access local array

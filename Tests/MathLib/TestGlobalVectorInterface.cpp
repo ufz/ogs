@@ -135,7 +135,7 @@ void checkGlobalVectorInterfacePETSc()
 
     ASSERT_NEAR(0.0, normy-norm2(y), 1.e-10);
 
-    double x0[16];
+    std::vector<double> x0(16);
     double z[] =
     {
         2.0000000000000000e+01,
