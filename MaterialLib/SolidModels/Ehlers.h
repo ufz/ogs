@@ -224,6 +224,24 @@ public:
     {
     }
 
+    double computeFreeEnergyDensity(
+        KelvinVector const& eps,
+        KelvinVector const& sigma,
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
+            material_state_variables) const override
+    {
+        assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                   &material_state_variables) != nullptr);
+
+        auto const& eps_p = static_cast<StateVariables<DisplacementDim> const&>(
+                                material_state_variables)
+                                .eps_p;
+        using Invariants =
+            MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
+        auto const& identity2 = Invariants::identity2;
+        return (eps - eps_p.D - eps_p.V / 3 * identity2).dot(sigma) / 2;
+    }
+
     boost::optional<
         std::tuple<KelvinVector, std::unique_ptr<typename MechanicsBase<
                                      DisplacementDim>::MaterialStateVariables>,
