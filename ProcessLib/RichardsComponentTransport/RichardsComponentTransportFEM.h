@@ -28,19 +28,25 @@ namespace ProcessLib
 {
 namespace RichardsComponentTransport
 {
-template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
+template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType,
+          typename NodalMatrixType>
 struct IntegrationPointData final
 {
     IntegrationPointData(NodalRowVectorType const& N_,
                          GlobalDimNodalMatrixType const& dNdx_,
-                         double const& integration_weight_)
-        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+                         double const& integration_weight_,
+                         NodalMatrixType const mass_operator_)
+        : N(N_),
+          dNdx(dNdx_),
+          integration_weight(integration_weight_),
+          mass_operator(mass_operator_)
     {
     }
 
     NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
+    NodalMatrixType const mass_operator;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
@@ -98,6 +104,7 @@ class LocalAssemblerData
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
     using GlobalDimNodalMatrixType =
         typename ShapeMatricesType::GlobalDimNodalMatrixType;
+    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
     using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
 
 public:
@@ -132,11 +139,14 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            auto const& sm = shape_matrices[ip];
+            double const integration_factor = sm.integralMeasure * sm.detJ;
             _ip_data.emplace_back(
-                shape_matrices[ip].N, shape_matrices[ip].dNdx,
+                sm.N, sm.dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
-                    shape_matrices[ip].integralMeasure *
-                    shape_matrices[ip].detJ);
+                    integration_factor,
+                sm.N.transpose() * sm.N * integration_factor *
+                    _integration_method.getWeightedPoint(ip).getWeight());
         }
     }
 
@@ -405,9 +415,10 @@ private:
 
     IntegrationMethod const _integration_method;
     std::vector<
-        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
-        Eigen::aligned_allocator<
-            IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
+        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType,
+                             NodalMatrixType>,
+        Eigen::aligned_allocator<IntegrationPointData<
+            NodalRowVectorType, GlobalDimNodalMatrixType, NodalMatrixType>>>
         _ip_data;
     std::vector<double> _saturation;
     std::vector<std::vector<double>> _darcy_velocities;
