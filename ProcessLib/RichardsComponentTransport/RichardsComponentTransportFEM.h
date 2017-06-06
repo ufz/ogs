@@ -52,6 +52,12 @@ class RichardsComponentTransportLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
+    virtual std::vector<double> const& getIntPtSaturation(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& /*cache*/) const = 0;
+
     virtual std::vector<double> const& getIntPtDarcyVelocityX(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
@@ -104,6 +110,8 @@ public:
         : _element(element),
           _process_data(process_data),
           _integration_method(integration_order),
+          _saturation(
+              std::vector<double>(_integration_method.getNumberOfPoints())),
           _darcy_velocities(
               GlobalDim,
               std::vector<double>(_integration_method.getNumberOfPoints()))
@@ -194,6 +202,22 @@ public:
             // Order matters: First C, then p!
             NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt, p_int_pt);
 
+            double const pc_int_pt = -p_int_pt;
+            double const Sw =
+                (pc_int_pt > 0)
+                    ? _process_data.porous_media_properties
+                          .getCapillaryPressureSaturationModel(t, pos)
+                          .getSaturation(pc_int_pt)
+                    : 1.0;
+            _saturation[ip] = Sw;
+
+            double const dSw_dpc =
+                (pc_int_pt > 0)
+                    ? 1. /
+                          _process_data.porous_media_properties
+                              .getCapillaryPressureSaturationModel(t, pos)
+                              .getdPcdS(Sw)
+                    : 0.;
             // \todo the first argument has to be changed for non constant
             // porosity model
             auto const porosity =
@@ -335,6 +359,16 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
+    std::vector<double> const& getIntPtSaturation(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(!_saturation.empty());
+        return _saturation;
+    }
+
     std::vector<double> const& getIntPtDarcyVelocityX(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
@@ -375,6 +409,7 @@ private:
         Eigen::aligned_allocator<
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
+    std::vector<double> _saturation;
     std::vector<std::vector<double>> _darcy_velocities;
 };
 
