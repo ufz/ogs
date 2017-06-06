@@ -1,20 +1,23 @@
 defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
-defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System'
 
-node('docker') {
-    def build = new ogs.build()
+def configure = new ogs.configure()
+def build = new ogs.build()
 
-    stage('Checkout') { dir('ogs') { checkout scm } }
-
-    stage('Build') {
-        def image = docker.image('ogs6/gcc-base:latest')
-        image.pull()
-        image.inside(defaultDockerArgs) {
-            build this, 'build', '-DOGS_COVERAGE=ON',
-                'testrunner_coverage_cobertura ctest_coverage_cobertura'
-        }
+def image = docker.image('ogs6/gcc-base:latest')
+image.pull()
+image.inside(defaultDockerArgs) {
+    stage('Configure (Coverage)') {
+        configure.linux(cmakeOptions: '-DOGS_COVERAGE=ON', script: this)
     }
 
-    archiveArtifacts 'build/*.xml'
-    // TODO: Report is published in a free-style child job
+    stage('Build (Coverage)') {
+        build.linux(
+            script: this,
+            target: 'testrunner_coverage_cobertura'
+        )
+    }
+}
+
+stage('Publish (Coverage)') {
+    step([$class: 'CoberturaPublisher', coberturaReportFile: 'build/*.xml'])
 }

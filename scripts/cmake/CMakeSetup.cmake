@@ -1,6 +1,5 @@
 # Set additional CMake modules path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-  "${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/cmake"
   "${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake"
   "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/cmake-modules")
 

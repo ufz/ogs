@@ -1,4 +1,5 @@
 include(CodeCoverage)
+APPEND_COVERAGE_COMPILER_FLAGS()
 
 set(COVERAGE_EXCLUDES
     '/gpfs0/*'

@@ -72,8 +72,14 @@ node('master') {
     ])
 }
 
-if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
-    if (helper.isOriginMaster(this)) {
+if (helper.isOriginMaster(this)) {
+
+    node('docker') {
+        dir('ogs') { checkoutWithTags() }
+        load 'ogs/scripts/jenkins/coverage.groovy'
+    }
+
+    if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
         build job: 'OGS-6/clang-sanitizer', wait: false
         if (tag != "") {
             keepBuild()
@@ -85,9 +91,7 @@ if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
                 load 'ogs/scripts/jenkins/docset.groovy'
             }
         }
-    }
-} else {
-    if (helper.isOriginMaster(this)) {
+    } else {
         helper.notification(title: "${env.JOB_NAME} failed!", script: this,
             msg: "Build failed", url: "${env.BUILD_URL}/flowGraphTable/")
     }
