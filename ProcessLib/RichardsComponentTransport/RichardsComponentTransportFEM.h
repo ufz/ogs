@@ -299,7 +299,12 @@ public:
             MCC.noalias() +=
                 w * N.transpose() * porosity * retardation_factor * N;
             Kpp.noalias() += w * dNdx.transpose() * K * dNdx * (k_rel/mu);
-            Mpp.noalias() += w * N.transpose() * specific_storage * N;
+            // \TODO Extend to pressure dependent density.
+            double const drhow_dp(0.0);
+            Mpp.noalias() += (specific_storage * Sw + porosity * Sw * drhow_dp -
+                              porosity * dSw_dpc) *
+                             ip_data.mass_operator;
+
             if (_process_data.has_gravity)
                 Bp += w * density * dNdx.transpose() * K_over_mu * b;
             /* with Oberbeck-Boussing assumption density difference only exists
