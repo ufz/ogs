@@ -45,29 +45,12 @@ void RichardsComponentTransportProcess::initializeConcreteProcess(
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
-        "darcy_velocity_x",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+        "darcy_velocity",
+        makeExtrapolator(mesh.getDimension(), getExtrapolator(),
+                         _local_assemblers,
                          &RichardsComponentTransportLocalAssemblerInterface::
-                             getIntPtDarcyVelocityX));
+                             getIntPtDarcyVelocity));
 
-    if (mesh.getDimension() > 1)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "darcy_velocity_y",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &RichardsComponentTransportLocalAssemblerInterface::
-                    getIntPtDarcyVelocityY));
-    }
-    if (mesh.getDimension() > 2)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "darcy_velocity_z",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &RichardsComponentTransportLocalAssemblerInterface::
-                    getIntPtDarcyVelocityZ));
-    }
     _secondary_variables.addSecondaryVariable(
         "saturation",
         makeExtrapolator(1, getExtrapolator(), _local_assemblers,
@@ -102,17 +85,6 @@ void RichardsComponentTransportProcess::assembleWithJacobianConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
         dx_dx, M, K, b, Jac, _coupling_term);
-}
-
-void RichardsComponentTransportProcess::computeSecondaryVariableConcrete(
-    double const t, GlobalVector const& x,
-    StaggeredCouplingTerm const& coupling_term)
-{
-    DBUG("Compute the Darcy velocity for RichardsComponentTransportProcess.");
-    GlobalExecutor::executeMemberOnDereferenced(
-        &RichardsComponentTransportLocalAssemblerInterface::
-            computeSecondaryVariable,
-        _local_assemblers, *_local_to_global_index_map, t, x, coupling_term);
 }
 
 }  // namespace RichardsComponentTransport
