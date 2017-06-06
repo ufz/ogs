@@ -68,6 +68,11 @@ void RichardsComponentTransportProcess::initializeConcreteProcess(
                 &RichardsComponentTransportLocalAssemblerInterface::
                     getIntPtDarcyVelocityZ));
     }
+    _secondary_variables.addSecondaryVariable(
+        "saturation",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &RichardsComponentTransportLocalAssemblerInterface::
+                             getIntPtSaturation));
 }
 
 void RichardsComponentTransportProcess::assembleConcreteProcess(
