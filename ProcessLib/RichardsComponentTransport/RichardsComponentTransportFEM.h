@@ -263,13 +263,14 @@ public:
             auto const mu = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
 
-            GlobalDimMatrixType const K_over_mu = K / mu;
+            auto const K_times_k_rel_over_mu = K * (k_rel/mu);
 
             GlobalDimVectorType const velocity =
                 _process_data.has_gravity
-                    ? GlobalDimVectorType(-K_over_mu *
+                    ? GlobalDimVectorType(-K_times_k_rel_over_mu *
                                           (dNdx * p_nodal_values - density * b))
-                    : GlobalDimVectorType(-K_over_mu * dNdx * p_nodal_values);
+                    : GlobalDimVectorType(-K_times_k_rel_over_mu * dNdx *
+                                          p_nodal_values);
 
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const hydrodynamic_dispersion =
@@ -298,7 +299,8 @@ public:
                 w;
             MCC.noalias() +=
                 w * N.transpose() * porosity * retardation_factor * N;
-            Kpp.noalias() += w * dNdx.transpose() * K * dNdx * (k_rel/mu);
+            Kpp.noalias() +=
+                w * dNdx.transpose() * K_times_k_rel_over_mu * dNdx;
             // \TODO Extend to pressure dependent density.
             double const drhow_dp(0.0);
             Mpp.noalias() += (specific_storage * Sw + porosity * Sw * drhow_dp -
@@ -306,7 +308,8 @@ public:
                              ip_data.mass_operator;
 
             if (_process_data.has_gravity)
-                Bp += w * density * dNdx.transpose() * K * b * (k_rel/mu);
+                Bp +=
+                    w * density * dNdx.transpose() * K_times_k_rel_over_mu * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
         }
