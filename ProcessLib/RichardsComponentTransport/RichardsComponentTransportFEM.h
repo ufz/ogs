@@ -298,7 +298,7 @@ public:
                 w;
             MCC.noalias() +=
                 w * N.transpose() * porosity * retardation_factor * N;
-            Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
+            Kpp.noalias() += w * dNdx.transpose() * K * dNdx * (k_rel/mu);
             Mpp.noalias() += w * N.transpose() * specific_storage * N;
             if (_process_data.has_gravity)
                 Bp += w * density * dNdx.transpose() * K_over_mu * b;
