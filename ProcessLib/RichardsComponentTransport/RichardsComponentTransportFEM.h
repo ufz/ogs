@@ -16,6 +16,7 @@
 #include "RichardsComponentTransportProcessData.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -64,23 +65,11 @@ public:
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
-    virtual std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
+    virtual std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& cache) const = 0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -116,12 +105,7 @@ public:
         RichardsComponentTransportProcessData const& process_data)
         : _element(element),
           _process_data(process_data),
-          _integration_method(integration_order),
-          _saturation(
-              std::vector<double>(_integration_method.getNumberOfPoints())),
-          _darcy_velocities(
-              GlobalDim,
-              std::vector<double>(_integration_method.getNumberOfPoints()))
+          _integration_method(integration_order)
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
@@ -219,7 +203,6 @@ public:
                           .getCapillaryPressureSaturationModel(t, pos)
                           .getSaturation(pc_int_pt)
                     : 1.0;
-            _saturation[ip] = Sw;
 
             double const dSw_dpc =
                 (pc_int_pt > 0)
@@ -228,6 +211,7 @@ public:
                               .getCapillaryPressureSaturationModel(t, pos)
                               .getdPcdS(Sw)
                     : 0.;
+
             // \todo the first argument has to be changed for non constant
             // porosity model
             auto const porosity =
@@ -262,7 +246,6 @@ public:
             // Use the viscosity model to compute the viscosity
             auto const mu = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
-
             auto const K_times_k_rel_over_mu = K * (k_rel/mu);
 
             GlobalDimVectorType const velocity =
@@ -315,23 +298,28 @@ public:
         }
     }
 
-    void computeSecondaryVariableConcrete(
-        double const t, std::vector<double> const& local_x) override
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& cache) const override
     {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+        assert(!indices.empty());
+        auto const local_x = current_solution.get(indices);
+
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, n_integration_points);
+
         SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const& K =
-            _process_data.porous_media_properties.getIntrinsicPermeability(t,
-                                                                           pos);
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
-
-        auto const mu = _process_data.fluid_properties->getValue(
-            MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
-        GlobalDimMatrixType const K_over_mu = K / mu;
-
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
 
         auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[ShapeFunction::NPOINTS], ShapeFunction::NPOINTS);
@@ -342,13 +330,34 @@ public:
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
 
-            GlobalDimVectorType velocity = -K_over_mu * dNdx * p_nodal_values;
+            pos.setIntegrationPoint(ip);
+
+            auto const& K =
+                _process_data.porous_media_properties.getIntrinsicPermeability(
+                    t, pos);
+            auto const mu = _process_data.fluid_properties->getValue(
+                MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+
+            double C_int_pt = 0.0;
+            double p_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt, p_int_pt);
+
+            // saturation
+            double const pc_int_pt = -p_int_pt;
+            double const Sw =
+                (pc_int_pt > 0)
+                    ? _process_data.porous_media_properties
+                          .getCapillaryPressureSaturationModel(t, pos)
+                          .getSaturation(pc_int_pt)
+                    : 1.0;
+
+            auto const& k_rel = _process_data.porous_media_properties
+                                    .getRelativePermeability(t, pos)
+                                    .getValue(Sw);
+
+            cache_mat.col(ip).noalias() = -dNdx * p_nodal_values;
             if (_process_data.has_gravity)
             {
-                double C_int_pt = 0.0;
-                double p_int_pt = 0.0;
-                NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt,
-                                                 p_int_pt);
                 vars[static_cast<int>(
                     MaterialLib::Fluid::PropertyVariableType::C)] = C_int_pt;
                 vars[static_cast<int>(
@@ -358,14 +367,11 @@ public:
                     MaterialLib::Fluid::FluidPropertyType::Density, vars);
                 auto const b = _process_data.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
-                velocity += K_over_mu * rho_w * b;
+                cache_mat.col(ip).noalias() += rho_w * b;
             }
-
-            for (unsigned d = 0; d < GlobalDim; ++d)
-            {
-                _darcy_velocities[d][ip] = velocity[d];
-            }
+            cache_mat.col(ip).noalias() = k_rel/mu * (K * cache_mat.col(ip));
         }
+        return cache;
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
@@ -378,43 +384,46 @@ public:
     }
 
     std::vector<double> const& getIntPtSaturation(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& cache) const override
     {
-        assert(!_saturation.empty());
-        return _saturation;
-    }
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
 
-    std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 0);
-        return _darcy_velocities[0];
-    }
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
-    std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 1);
-        return _darcy_velocities[1];
-    }
+        auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+        assert(!indices.empty());
+        auto const local_x = current_solution.get(indices);
 
-    std::vector<double> const& getIntPtDarcyVelocityZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 2);
-        return _darcy_velocities[2];
+        cache.clear();
+        auto cache_vec = MathLib::createZeroedVector<LocalVectorType>(
+            cache, n_integration_points);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& ip_data = _ip_data[ip];
+            auto const& N = ip_data.N;
+
+            double C_int_pt = 0.0;
+            double p_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt, p_int_pt);
+
+            // saturation
+            double const pc_int_pt = -p_int_pt;
+            double const Sw =
+                (pc_int_pt > 0)
+                    ? _process_data.porous_media_properties
+                          .getCapillaryPressureSaturationModel(t, pos)
+                          .getSaturation(pc_int_pt)
+                    : 1.0;
+            cache_vec[ip] = Sw;
+        }
+
+        return cache;
     }
 
 private:
@@ -428,8 +437,6 @@ private:
         Eigen::aligned_allocator<IntegrationPointData<
             NodalRowVectorType, GlobalDimNodalMatrixType, NodalMatrixType>>>
         _ip_data;
-    std::vector<double> _saturation;
-    std::vector<std::vector<double>> _darcy_velocities;
 };
 
 }  // namespace RichardsComponentTransport
