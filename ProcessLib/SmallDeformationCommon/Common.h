@@ -16,6 +16,9 @@
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "ProcessLib/Deformation/BMatrixPolicy.h"
+#include "ProcessLib/Deformation/LinearBMatrix.h"
+#include "ProcessLib/Utils/InitShapeMatrices.h"
 
 namespace ProcessLib
 {
@@ -29,30 +32,37 @@ struct NodalForceCalculationInterface
     virtual ~NodalForceCalculationInterface() = default;
 };
 
-template <int DisplacementDim, int NPoints,
-          typename NodalDisplacementVectorType, typename IPData,
-          typename IntegrationMethod>
+template <int DisplacementDim, typename ShapeFunction,
+          typename ShapeMatricesType, typename NodalDisplacementVectorType,
+          typename BMatrixType, typename IPData, typename IntegrationMethod>
 std::vector<double> const& getNodalForces(
     std::vector<double>& nodal_values,
     IntegrationMethod const& _integration_method, IPData const& _ip_data,
-    int element_id)
+    MeshLib::Element const& element, bool const is_axially_symmetric)
 {
     nodal_values.clear();
     auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
-        nodal_values, NPoints * DisplacementDim);
+        nodal_values, ShapeFunction::NPOINTS * DisplacementDim);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
     SpatialPosition x_position;
-    x_position.setElementID(element_id);
+    x_position.setElementID(element.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
-        auto const& B = _ip_data[ip].b_matrices;
+        BMatrixType B(KelvinVectorDimensions<DisplacementDim>(),
+                      ShapeFunction::NPOINTS * DisplacementDim);
+        auto const x_coord =
+            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                element, _ip_data[ip].N);
+        LinearBMatrix::computeBMatrix<DisplacementDim, ShapeFunction::NPOINTS>(
+            _ip_data[ip].dNdx, B, is_axially_symmetric, _ip_data[ip].N,
+            x_coord);
         auto& sigma = _ip_data[ip].sigma;
 
         local_b.noalias() += B.transpose() * sigma * w;
