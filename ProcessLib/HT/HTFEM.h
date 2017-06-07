@@ -217,19 +217,17 @@ public:
             auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
 
             // Use the fluid density model to compute the density
-            auto const density_water_T =
-                _process_data.fluid_properties->getValue(
-                    MaterialLib::Fluid::FluidPropertyType::Density, vars);
+            auto const density = _process_data.fluid_properties->getValue(
+                MaterialLib::Fluid::FluidPropertyType::Density, vars);
 
             // Use the viscosity model to compute the viscosity
             auto const viscosity =
                 _process_data.fluid_properties->getValue(
                     MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
-            GlobalDimMatrixType perm_over_visc =
-                intrinsic_permeability / viscosity;
+            GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
             GlobalDimVectorType const velocity =
-                -perm_over_visc * (dNdx * p_nodal_values - density_water_T * b);
+                -K_over_mu * (dNdx * p_nodal_values - density * b);
 
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const& I(
@@ -255,10 +253,10 @@ public:
                  N.transpose() * velocity.transpose() * dNdx *
                      fluid_reference_density * specific_heat_capacity_fluid) *
                 w;
-            Kpp.noalias() += w * dNdx.transpose() * perm_over_visc * dNdx;
+            Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
             Mtt.noalias() += w * N.transpose() * heat_capacity * N;
             Mpp.noalias() += w * N.transpose() * specific_storage * N;
-            Bp += w * density_water_T * dNdx.transpose() * perm_over_visc * b;
+            Bp += w * density * dNdx.transpose() * K_over_mu * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
         }
