@@ -33,10 +33,12 @@ class HydroMechanicsLocalAssemblerInterface
 {
 public:
     HydroMechanicsLocalAssemblerInterface(MeshLib::Element const& element,
+                                          bool const is_axially_symmetric,
                                           std::size_t n_local_size,
                                           std::vector<unsigned>
                                               dofIndex_to_localIndex)
         : _element(element),
+          _is_axially_symmetric(is_axially_symmetric),
           _dofIndex_to_localIndex(std::move(dofIndex_to_localIndex))
     {
         _local_u.resize(n_local_size);
@@ -112,6 +114,7 @@ protected:
         double const t, Eigen::VectorXd const& local_u) = 0;
 
     MeshLib::Element const& _element;
+    bool const _is_axially_symmetric;
 
 private:
     Eigen::VectorXd _local_u;

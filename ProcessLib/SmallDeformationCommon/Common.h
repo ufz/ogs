@@ -55,14 +55,14 @@ std::vector<double> const& getNodalForces(
         x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
-        BMatrixType B(KelvinVectorDimensions<DisplacementDim>(),
-                      ShapeFunction::NPOINTS * DisplacementDim);
         auto const x_coord =
             interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
                 element, _ip_data[ip].N);
-        LinearBMatrix::computeBMatrix<DisplacementDim, ShapeFunction::NPOINTS>(
-            _ip_data[ip].dNdx, B, is_axially_symmetric, _ip_data[ip].N,
-            x_coord);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunction::NPOINTS, BMatrixType>(
+                _ip_data[ip].dNdx, is_axially_symmetric, _ip_data[ip].N,
+                x_coord);
         auto& sigma = _ip_data[ip].sigma;
 
         local_b.noalias() += B.transpose() * sigma * w;

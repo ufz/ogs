@@ -322,17 +322,14 @@ public:
             auto const& N_p = _ip_data[ip].N_p;
             auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
-            typename BMatricesType::BMatrixType B(
-                KelvinVectorDimensions<DisplacementDim>(),
-                ShapeFunctionDisplacement::NPOINTS * DisplacementDim);
-
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunctionDisplacement,
                                        ShapeMatricesTypeDisplacement>(_element,
                                                                       N_u);
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunctionDisplacement::NPOINTS>(
-                dNdx_u, B, _is_axially_symmetric, N_u, x_coord);
+            auto const B = LinearBMatrix::computeBMatrix<
+                DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
+                typename BMatricesType::BMatrixType>(
+                dNdx_u, _is_axially_symmetric, N_u, x_coord);
 
             auto& eps = _ip_data[ip].eps;
             auto const& sigma_eff = _ip_data[ip].sigma_eff;

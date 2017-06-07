@@ -35,20 +35,20 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
-                               DisplacementDim>::
+                                     DisplacementDim>::
     SmallDeformationLocalAssemblerMatrix(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
-        bool is_axially_symmetric,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
     : _process_data(process_data),
       _integration_method(integration_order),
-      _element(e)
+      _element(e),
+      _is_axially_symmetric(is_axially_symmetric)
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -66,20 +66,10 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
         _ip_data.emplace_back(*_process_data._material);
         auto& ip_data = _ip_data[ip];
         auto const& sm = shape_matrices[ip];
+        ip_data.N = sm.N;
+        ip_data.dNdx = sm.dNdx;
         ip_data._detJ = sm.detJ;
         ip_data._integralMeasure = sm.integralMeasure;
-        ip_data._b_matrices.resize(
-            KelvinVectorDimensions<DisplacementDim>::value,
-            ShapeFunction::NPOINTS * DisplacementDim);
-
-        auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(e,
-                                                                     sm.N);
-        LinearBMatrix::computeBMatrix<DisplacementDim,
-                                      ShapeFunction::NPOINTS>(
-            sm.dNdx, ip_data._b_matrices, is_axially_symmetric, sm.N,
-            x_coord);
-
         ip_data._sigma.resize(KelvinVectorDimensions<DisplacementDim>::value);
         ip_data._sigma_prev.resize(
             KelvinVectorDimensions<DisplacementDim>::value);
@@ -131,7 +121,17 @@ assembleWithJacobian(
         auto const& detJ = _ip_data[ip]._detJ;
         auto const& integralMeasure = _ip_data[ip]._integralMeasure;
 
-        auto const& B = _ip_data[ip]._b_matrices;
+        auto const& N = _ip_data[ip].N;
+        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const x_coord =
+            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
+                                                                     N);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunction::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx, _is_axially_symmetric, N, x_coord);
+
         auto const& eps_prev = _ip_data[ip]._eps_prev;
         auto const& sigma_prev = _ip_data[ip]._sigma_prev;
 

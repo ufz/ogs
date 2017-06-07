@@ -18,13 +18,14 @@ namespace LinearBMatrix
 namespace detail
 {
 template <int NPOINTS, typename DNDX_Type, typename BMatrixType>
-void fillBMatrix2DCartesianPart(DNDX_Type const& dNdx, BMatrixType& b_matrix)
+void fillBMatrix2DCartesianPart(DNDX_Type const& dNdx, BMatrixType& B)
 {
-    for (int i = 0; i < NPOINTS; ++i) {
-        b_matrix(1, NPOINTS + i) = dNdx(1, i);
-        b_matrix(3, i) = dNdx(1, i) / std::sqrt(2);
-        b_matrix(3, NPOINTS + i) = dNdx(0, i) / std::sqrt(2);
-        b_matrix(0, i) = dNdx(0, i);
+    for (int i = 0; i < NPOINTS; ++i)
+    {
+        B(1, NPOINTS + i) = dNdx(1, i);
+        B(3, i) = dNdx(1, i) / std::sqrt(2);
+        B(3, NPOINTS + i) = dNdx(0, i) / std::sqrt(2);
+        B(0, i) = dNdx(0, i);
     }
 }
 }  // detail
@@ -32,47 +33,50 @@ void fillBMatrix2DCartesianPart(DNDX_Type const& dNdx, BMatrixType& b_matrix)
 /// Fills a B-matrix based on given shape function dN/dx values.
 template <int DisplacementDim,
           int NPOINTS,
+          typename BMatrixType,
           typename N_Type,
-          typename DNDX_Type,
-          typename BMatrixType>
-void computeBMatrix(DNDX_Type const& dNdx,
-                    BMatrixType& b_matrix,
-                    const bool is_axially_symmetric,
-                    N_Type const& N,
-                    const double radius)
+          typename DNDX_Type>
+BMatrixType computeBMatrix(DNDX_Type const& dNdx,
+                           const bool is_axially_symmetric,
+                           N_Type const& N,
+                           const double radius)
 {
     static_assert(0 < DisplacementDim && DisplacementDim <= 3,
                   "LinearBMatrix::computeBMatrix: DisplacementDim must be in "
                   "range [1,3].");
 
-    b_matrix.setZero();
+    BMatrixType B =
+        BMatrixType::Zero(KelvinVectorDimensions<DisplacementDim>::value,
+                          NPOINTS * DisplacementDim);
 
     switch (DisplacementDim)
     {
         case 3:
             for (int i = 0; i < NPOINTS; ++i)
             {
-                b_matrix(2, 2 * NPOINTS + i) = dNdx(2, i);
-                b_matrix(4, NPOINTS + i) = dNdx(2, i) / std::sqrt(2);
-                b_matrix(4, 2 * NPOINTS + i) = dNdx(1, i) / std::sqrt(2);
-                b_matrix(5, i) = dNdx(2, i) / std::sqrt(2);
-                b_matrix(5, 2 * NPOINTS + i) = dNdx(0, i) / std::sqrt(2);
+                B(2, 2 * NPOINTS + i) = dNdx(2, i);
+                B(4, NPOINTS + i) = dNdx(2, i) / std::sqrt(2);
+                B(4, 2 * NPOINTS + i) = dNdx(1, i) / std::sqrt(2);
+                B(5, i) = dNdx(2, i) / std::sqrt(2);
+                B(5, 2 * NPOINTS + i) = dNdx(0, i) / std::sqrt(2);
             }
-            detail::fillBMatrix2DCartesianPart<NPOINTS>(dNdx, b_matrix);
+            detail::fillBMatrix2DCartesianPart<NPOINTS>(dNdx, B);
             break;
         case 2:
-            detail::fillBMatrix2DCartesianPart<NPOINTS>(dNdx, b_matrix);
+            detail::fillBMatrix2DCartesianPart<NPOINTS>(dNdx, B);
             if (is_axially_symmetric)
             {
                 for (int i = 0; i < NPOINTS; ++i)
                 {
-                    b_matrix(2, i) = N[i] / radius;
+                    B(2, i) = N[i] / radius;
                 }
             }
             break;
         default:
             break;
     }
+
+    return B;
 }
 
 }  // namespace LinearBMatrix

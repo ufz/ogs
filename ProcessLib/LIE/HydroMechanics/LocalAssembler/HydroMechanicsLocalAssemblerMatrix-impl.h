@@ -36,7 +36,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         unsigned const integration_order,
         HydroMechanicsProcessData<GlobalDim>& process_data)
     : HydroMechanicsLocalAssemblerInterface(
-          e,
+          e, is_axially_symmetric,
           (n_variables - 1) * ShapeFunctionDisplacement::NPOINTS * GlobalDim +
               ShapeFunctionPressure::NPOINTS,
           dofIndex_to_localIndex),
@@ -71,21 +71,14 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         ip_data.integration_weight =
             sm_u.detJ * sm_u.integralMeasure *
             integration_method.getWeightedPoint(ip).getWeight();
-        ip_data.b_matrices.resize(kelvin_vector_size, displacement_size);
 
         ip_data.N_u = sm_u.N;
+        ip_data.dNdx_u = sm_u.dNdx;
         ip_data.H_u.setZero(GlobalDim, displacement_size);
         for (unsigned i = 0; i < GlobalDim; ++i)
             ip_data.H_u.template block<1, displacement_size / GlobalDim>(
                    i, i * displacement_size / GlobalDim)
                 .noalias() = ip_data.N_u;
-        auto const x_coord =
-            interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(e, sm_u.N);
-        LinearBMatrix::computeBMatrix<GlobalDim,
-                                      ShapeFunctionDisplacement::NPOINTS>(
-            sm_u.dNdx, ip_data.b_matrices, is_axially_symmetric, sm_u.N,
-            x_coord);
 
         ip_data.N_p = sm_p.N;
         ip_data.dNdx_p = sm_p.dNdx;
@@ -194,11 +187,22 @@ assembleBlockMatricesWithJacobian(
 
         auto& ip_data = _ip_data[ip];
         auto const& ip_w = ip_data.integration_weight;
+        auto const& N_u = ip_data.N_u;
+        auto const& dNdx_u = ip_data.dNdx_u;
         auto const& N_p = ip_data.N_p;
         auto const& dNdx_p = ip_data.dNdx_p;
         auto const& H_u = ip_data.H_u;
 
-        auto const& B = ip_data.b_matrices;
+        auto const x_coord =
+            interpolateXCoordinate<ShapeFunctionDisplacement,
+                                   ShapeMatricesTypeDisplacement>(_element,
+                                                                  N_u);
+        auto const B =
+            LinearBMatrix::computeBMatrix<GlobalDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx_u, _is_axially_symmetric, N_u, x_coord);
+
         auto const& eps_prev = ip_data.eps_prev;
         auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
         auto& sigma_eff = ip_data.sigma_eff;
@@ -318,7 +322,6 @@ computeSecondaryVariableConcreteWithBlockVectors(
         auto& ip_data = _ip_data[ip];
 
         auto const& dNdx_p = ip_data.dNdx_p;
-        auto const& B = ip_data.b_matrices;
         auto const& eps_prev = ip_data.eps_prev;
         auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
 
@@ -331,6 +334,19 @@ computeSecondaryVariableConcreteWithBlockVectors(
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
 
         auto q = ip_data.darcy_velocity.head(GlobalDim);
+
+        auto const& N_u = ip_data.N_u;
+        auto const& dNdx_u = ip_data.dNdx_u;
+
+        auto const x_coord =
+            interpolateXCoordinate<ShapeFunctionDisplacement,
+                                   ShapeMatricesTypeDisplacement>(_element,
+                                                                  N_u);
+        auto const B =
+            LinearBMatrix::computeBMatrix<GlobalDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx_u, _is_axially_symmetric, N_u, x_coord);
 
         eps.noalias() = B * u;
 
