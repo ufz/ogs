@@ -194,8 +194,14 @@ public:
 
             auto const specific_heat_capacity_solid =
                 _process_data.specific_heat_capacity_solid(t, pos)[0];
+
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::T)] = T_int_pt;
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
             auto const specific_heat_capacity_fluid =
-                _process_data.specific_heat_capacity_fluid(t, pos)[0];
+                _process_data.fluid_properties->getValue(
+                    MaterialLib::Fluid::FluidPropertyType::HeatCapacity, vars);
 
             auto const thermal_dispersivity_longitudinal =
                 _process_data.thermal_dispersivity_longitudinal(t, pos)[0];
@@ -211,16 +217,14 @@ public:
             auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
 
             // Use the fluid density model to compute the density
-            vars[static_cast<int>(
-                MaterialLib::Fluid::PropertyVariableType::T)] = T_int_pt;
-            vars[static_cast<int>(
-                MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
             auto const density_water_T =
-                _process_data.fluid_density->getValue(vars);
+                _process_data.fluid_properties->getValue(
+                    MaterialLib::Fluid::FluidPropertyType::Density, vars);
 
             // Use the viscosity model to compute the viscosity
             auto const viscosity =
-                _process_data.viscosity_model->getValue(vars);
+                _process_data.fluid_properties->getValue(
+                    MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
             GlobalDimMatrixType perm_over_visc =
                 intrinsic_permeability / viscosity;
 

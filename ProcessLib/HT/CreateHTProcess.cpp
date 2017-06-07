@@ -9,8 +9,7 @@
 
 #include "CreateHTProcess.h"
 
-#include "MaterialLib/Fluid/Density/CreateFluidDensityModel.h"
-#include "MaterialLib/Fluid/Viscosity/CreateViscosityModel.h"
+#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
@@ -58,22 +57,8 @@ std::unique_ptr<Process> createHTProcess(
 
     //! \ogs_file_param{prj__processes__process__HT__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");
-    //! \ogs_file_param{prj__processes__process__HT__fluid__viscosity}
-    auto const& viscosity_conf = fluid_config.getConfigSubtree("viscosity");
-    auto viscosity_model =
-        MaterialLib::Fluid::createViscosityModel(viscosity_conf);
-
-    // Parameter for the density of the solid.
-    auto& density_solid = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__density_solid}
-        "density_solid", parameters, 1);
-    DBUG("Use \'%s\' as density_solid parameter.", density_solid.name.c_str());
-
-    //! \ogs_file_param{prj__processes__process__HT__fluid__density}
-    auto const& fluid_density_conf = fluid_config.getConfigSubtree("density");
-    auto fluid_density =
-        MaterialLib::Fluid::createFluidDensityModel(fluid_density_conf);
+    auto fluid_properties =
+        MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Parameter for the density of the fluid.
     auto& fluid_reference_density= findParameter<double>(
@@ -83,6 +68,13 @@ std::unique_ptr<Process> createHTProcess(
     DBUG("Use \'%s\' as fluid_reference_density parameter.",
          fluid_reference_density.name.c_str());
 
+    // Parameter for the density of the solid.
+    auto& density_solid = findParameter<double>(
+        config,
+        //! \ogs_file_param_special{prj__processes__process__HT__density_solid}
+        "density_solid", parameters, 1);
+    DBUG("Use \'%s\' as density_solid parameter.", density_solid.name.c_str());
+
     // Parameter for the specific heat capacity of the solid.
     auto& specific_heat_capacity_solid = findParameter<double>(
         config,
@@ -90,14 +82,6 @@ std::unique_ptr<Process> createHTProcess(
         "specific_heat_capacity_solid", parameters, 1);
     DBUG("Use \'%s\' as specific_heat_capacity_solid parameter.",
          specific_heat_capacity_solid.name.c_str());
-
-    // Parameter for the specific heat capacity of the fluid.
-    auto& specific_heat_capacity_fluid = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__specific_heat_capacity_fluid}
-        "specific_heat_capacity_fluid", parameters, 1);
-    DBUG("Use \'%s\' as specific_heat_capacity_fluid parameter.",
-         specific_heat_capacity_fluid.name.c_str());
 
     // Parameter for the thermal conductivity of the solid (only one scalar per
     // element, i.e., the isotropic case is handled at the moment)
@@ -152,20 +136,17 @@ std::unique_ptr<Process> createHTProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
-    HTProcessData process_data{
-        std::move(porous_media_properties),
-        std::move(viscosity_model),
-        density_solid,
-        fluid_reference_density,
-        std::move(fluid_density),
-        thermal_dispersivity_longitudinal,
-        thermal_dispersivity_transversal,
-        specific_heat_capacity_solid,
-        specific_heat_capacity_fluid,
-        thermal_conductivity_solid,
-        thermal_conductivity_fluid,
-        specific_body_force,
-        has_gravity};
+    HTProcessData process_data{std::move(porous_media_properties),
+                               density_solid,
+                               fluid_reference_density,
+                               std::move(fluid_properties),
+                               thermal_dispersivity_longitudinal,
+                               thermal_dispersivity_transversal,
+                               specific_heat_capacity_solid,
+                               thermal_conductivity_solid,
+                               thermal_conductivity_fluid,
+                               specific_body_force,
+                               has_gravity};
 
     SecondaryVariableCollection secondary_variables;
 
