@@ -59,8 +59,7 @@ struct IntegrationPointData final
 
     typename ShapeMatrixTypeDisplacement::template MatrixType<
         DisplacementDim, NPoints * DisplacementDim>
-        N_u;
-    // typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
+        N_u_op;
     typename BMatricesType::BMatrixType b_matrices;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
@@ -234,11 +233,11 @@ public:
             ip_data.eps.resize(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
 
-            ip_data.N_u = ShapeMatricesTypeDisplacement::template MatrixType<
+            ip_data.N_u_op = ShapeMatricesTypeDisplacement::template MatrixType<
                 DisplacementDim, displacement_size>::Zero(DisplacementDim,
                                                           displacement_size);
             for (int i = 0; i < DisplacementDim; ++i)
-                ip_data.N_u
+                ip_data.N_u_op
                     .template block<1, displacement_size / DisplacementDim>(
                         i, i * displacement_size / DisplacementDim)
                     .noalias() = shape_matrices_u[ip].N;
@@ -324,8 +323,8 @@ public:
             x_position.setIntegrationPoint(ip);
             auto const& w = _ip_data[ip].integration_weight;
 
+            auto const& N_u_op = _ip_data[ip].N_u_op;
             auto const& N_p = _ip_data[ip].N_p;
-            auto const& N_u = _ip_data[ip].N_u;
             auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
             auto const& B = _ip_data[ip].b_matrices;
@@ -357,7 +356,7 @@ public:
             double const rho = rho_sr * (1 - porosity) + porosity * rho_fr;
             local_rhs.template segment<displacement_size>(displacement_index)
                 .noalias() -=
-                (B.transpose() * sigma_eff - N_u.transpose() * rho * b) * w;
+                (B.transpose() * sigma_eff - N_u_op.transpose() * rho * b) * w;
 
             //
             // displacement equation, pressure part
