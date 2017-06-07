@@ -136,13 +136,19 @@ public:
         auto local_b = MathLib::createZeroedVector<LocalVectorType>(
             local_b_data, local_matrix_size);
 
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+        auto const num_nodes = ShapeFunction::NPOINTS;
+
+        auto Ktt = local_K.template block<num_nodes, num_nodes>(0, 0);
+        auto Mtt = local_M.template block<num_nodes, num_nodes>(0, 0);
+        auto Kpp =
+            local_K.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
+        auto Mpp =
+            local_M.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
+        auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
 
         SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const num_nodes = ShapeFunction::NPOINTS;
         auto p_nodal_values =
             Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
 
@@ -152,6 +158,9 @@ public:
             GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
         for (std::size_t ip(0); ip < n_integration_points; ip++)
         {
@@ -210,14 +219,6 @@ public:
                 _process_data.thermal_dispersivity_longitudinal(t, pos)[0];
             auto const thermal_dispersivity_transversal =
                 _process_data.thermal_dispersivity_transversal(t, pos)[0];
-
-            auto Ktt = local_K.template block<num_nodes, num_nodes>(0, 0);
-            auto Mtt = local_M.template block<num_nodes, num_nodes>(0, 0);
-            auto Kpp = local_K.template block<num_nodes, num_nodes>(num_nodes,
-                                                                    num_nodes);
-            auto Mpp = local_M.template block<num_nodes, num_nodes>(num_nodes,
-                                                                    num_nodes);
-            auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
 
             // Use the fluid density model to compute the density
             auto const density = _process_data.fluid_properties->getValue(
