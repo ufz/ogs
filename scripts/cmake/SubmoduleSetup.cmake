@@ -25,6 +25,13 @@ if(OGS_BUILD_SWMM)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/SwmmInterface)
 endif()
 
+# Sync submodules, which is required when a submodule changed its URL
+execute_process(
+    COMMAND ${GIT_TOOL_PATH} submodule sync
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_QUIET
+)
+
 foreach(SUBMODULE ${REQUIRED_SUBMODULES})
     execute_process(
         COMMAND ${GIT_TOOL_PATH} submodule status ${SUBMODULE}
