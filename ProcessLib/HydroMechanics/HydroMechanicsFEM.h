@@ -45,8 +45,7 @@ struct IntegrationPointData final
     // The default generated move-ctor is correctly generated for other
     // compilers.
     explicit IntegrationPointData(IntegrationPointData&& other)
-        : b_matrices(std::move(other.b_matrices)),
-          sigma_eff(std::move(other.sigma_eff)),
+        : sigma_eff(std::move(other.sigma_eff)),
           sigma_eff_prev(std::move(other.sigma_eff_prev)),
           eps(std::move(other.eps)),
           eps_prev(std::move(other.eps_prev)),
@@ -60,9 +59,11 @@ struct IntegrationPointData final
     typename ShapeMatrixTypeDisplacement::template MatrixType<
         DisplacementDim, NPoints * DisplacementDim>
         N_u_op;
-    typename BMatricesType::BMatrixType b_matrices;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
+
+    typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
+    typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
 
     typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
@@ -87,8 +88,6 @@ struct IntegrationPointData final
         double const dt,
         DisplacementVectorType const& u)
     {
-        eps.noalias() = b_matrices * u;
-
         auto&& solution = solid_material.integrateStress(
             t, x_position, dt, eps_prev, eps, sigma_eff_prev,
             *material_state_variables);
@@ -182,12 +181,13 @@ public:
     HydroMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
-        bool is_axially_symmetric,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
         HydroMechanicsProcessData<DisplacementDim>& process_data)
         : _process_data(process_data),
           _integration_method(integration_order),
-          _element(e)
+          _element(e),
+          _is_axially_symmetric(is_axially_symmetric)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -211,22 +211,10 @@ public:
             // displacement (subscript u)
             _ip_data.emplace_back(*_process_data.material);
             auto& ip_data = _ip_data[ip];
-            auto const& sm = shape_matrices_u[ip];
+            auto const& sm_u = shape_matrices_u[ip];
             _ip_data[ip].integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *
-                sm.integralMeasure * shape_matrices_u[ip].detJ;
-            ip_data.b_matrices.resize(
-                kelvin_vector_size,
-                ShapeFunctionDisplacement::NPOINTS * DisplacementDim);
-
-            auto const x_coord =
-                interpolateXCoordinate<ShapeFunctionDisplacement,
-                                       ShapeMatricesTypeDisplacement>(
-                    e, shape_matrices_u[ip].N);
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunctionDisplacement::NPOINTS>(
-                shape_matrices_u[ip].dNdx, ip_data.b_matrices,
-                is_axially_symmetric, shape_matrices_u[ip].N, x_coord);
+                sm_u.integralMeasure * sm_u.detJ;
 
             ip_data.sigma_eff.resize(kelvin_vector_size);
             ip_data.sigma_eff_prev.resize(kelvin_vector_size);
@@ -240,7 +228,10 @@ public:
                 ip_data.N_u_op
                     .template block<1, displacement_size / DisplacementDim>(
                         i, i * displacement_size / DisplacementDim)
-                    .noalias() = shape_matrices_u[ip].N;
+                    .noalias() = sm_u.N;
+
+            ip_data.N_u = sm_u.N;
+            ip_data.dNdx_u = sm_u.dNdx;
 
             ip_data.N_p = shape_matrices_p[ip].N;
             ip_data.dNdx_p = shape_matrices_p[ip].dNdx;
@@ -324,10 +315,26 @@ public:
             auto const& w = _ip_data[ip].integration_weight;
 
             auto const& N_u_op = _ip_data[ip].N_u_op;
+
+            auto const& N_u = _ip_data[ip].N_u;
+            auto const& dNdx_u = _ip_data[ip].dNdx_u;
+
             auto const& N_p = _ip_data[ip].N_p;
             auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
-            auto const& B = _ip_data[ip].b_matrices;
+            typename BMatricesType::BMatrixType B(
+                KelvinVectorDimensions<DisplacementDim>(),
+                ShapeFunctionDisplacement::NPOINTS * DisplacementDim);
+
+            auto const x_coord =
+                interpolateXCoordinate<ShapeFunctionDisplacement,
+                                       ShapeMatricesTypeDisplacement>(_element,
+                                                                      N_u);
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS>(
+                dNdx_u, B, _is_axially_symmetric, N_u, x_coord);
+
+            auto& eps = _ip_data[ip].eps;
             auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
             double const S = _process_data.specific_storage(t, x_position)[0];
@@ -340,11 +347,13 @@ public:
             auto const porosity = _process_data.porosity(t, x_position)[0];
             auto const& b = _process_data.specific_body_force;
             auto const& identity2 = MaterialLib::SolidModels::Invariants<
-                kelvin_vector_size>::identity2;
+                KelvinVectorDimensions<DisplacementDim>::value>::identity2;
 
             //
             // displacement equation, displacement part
             //
+            eps.noalias() = B * u;
+
             auto C =
                 _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u);
 
@@ -606,6 +615,7 @@ private:
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
+    bool const _is_axially_symmetric;
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         _secondary_data;
