@@ -146,7 +146,7 @@ public:
         auto p_nodal_values =
             Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
 
-        auto const & b = _process_data.specific_body_force.head(GlobalDim);
+        auto const& b = _process_data.specific_body_force;
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
 
