@@ -201,7 +201,7 @@ assembleBlockMatricesWithJacobian(
             LinearBMatrix::computeBMatrix<GlobalDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, _is_axially_symmetric, N_u, x_coord);
+                dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
         auto const& eps_prev = ip_data.eps_prev;
         auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
@@ -346,7 +346,7 @@ computeSecondaryVariableConcreteWithBlockVectors(
             LinearBMatrix::computeBMatrix<GlobalDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, _is_axially_symmetric, N_u, x_coord);
+                dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
         eps.noalias() = B * u;
 

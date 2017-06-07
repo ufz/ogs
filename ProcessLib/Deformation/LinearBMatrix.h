@@ -37,9 +37,9 @@ template <int DisplacementDim,
           typename N_Type,
           typename DNDX_Type>
 BMatrixType computeBMatrix(DNDX_Type const& dNdx,
-                           const bool is_axially_symmetric,
                            N_Type const& N,
-                           const double radius)
+                           const double radius,
+                           const bool is_axially_symmetric)
 {
     static_assert(0 < DisplacementDim && DisplacementDim <= 3,
                   "LinearBMatrix::computeBMatrix: DisplacementDim must be in "

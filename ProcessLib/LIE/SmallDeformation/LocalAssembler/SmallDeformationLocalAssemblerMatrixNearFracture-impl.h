@@ -208,7 +208,7 @@ assembleWithJacobian(
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx, _is_axially_symmetric, N, x_coord);
+                dNdx, N, x_coord, _is_axially_symmetric);
 
         // strain, stress
         auto const& eps_prev = ip_data._eps_prev;

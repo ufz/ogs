@@ -61,8 +61,8 @@ std::vector<double> const& getNodalForces(
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS, BMatrixType>(
-                _ip_data[ip].dNdx, is_axially_symmetric, _ip_data[ip].N,
-                x_coord);
+                _ip_data[ip].dNdx, _ip_data[ip].N, x_coord,
+                is_axially_symmetric);
         auto& sigma = _ip_data[ip].sigma;
 
         local_b.noalias() += B.transpose() * sigma * w;

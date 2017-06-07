@@ -328,8 +328,8 @@ public:
                                                                       N_u);
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
-                typename BMatricesType::BMatrixType>(
-                dNdx_u, _is_axially_symmetric, N_u, x_coord);
+                typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,
+                                                     _is_axially_symmetric);
 
             auto& eps = _ip_data[ip].eps;
             auto const& sigma_eff = _ip_data[ip].sigma_eff;

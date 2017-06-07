@@ -240,8 +240,8 @@ public:
                     _element, N);
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunction::NPOINTS,
-                typename BMatricesType::BMatrixType>(
-                dNdx, _is_axially_symmetric, N, x_coord);
+                typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
+                                                     _is_axially_symmetric);
 
             auto const& eps_prev = _ip_data[ip].eps_prev;
             auto const& sigma_prev = _ip_data[ip].sigma_prev;
