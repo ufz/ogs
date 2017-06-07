@@ -261,8 +261,54 @@ public:
             Bp += w * density_water_T * dNdx.transpose() * perm_over_visc * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
+        }
+    }
 
-            // velocity computed for output.
+    void computeSecondaryVariableConcrete(
+        double const t, std::vector<double> const& local_x) override
+    {
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        auto const K =
+            _process_data.porous_media_properties.getIntrinsicPermeability(t,
+                                                                           pos);
+        MaterialLib::Fluid::FluidProperty::ArrayType vars;
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[ShapeFunction::NPOINTS], ShapeFunction::NPOINTS);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& ip_data = _ip_data[ip];
+            auto const& N = ip_data.N;
+            auto const& dNdx = ip_data.dNdx;
+
+            double T_int_pt = 0.0;
+            double p_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::T)] = T_int_pt;
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
+
+            auto const mu = _process_data.fluid_properties->getValue(
+                MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+            GlobalDimMatrixType const K_over_mu = K / mu;
+
+            GlobalDimVectorType velocity = -K_over_mu * dNdx * p_nodal_values;
+            if (_process_data.has_gravity)
+            {
+                auto const rho_w = _process_data.fluid_properties->getValue(
+                    MaterialLib::Fluid::FluidPropertyType::Density, vars);
+                auto const b = _process_data.specific_body_force;
+                // here it is assumed that the vector b is directed 'downwards'
+                velocity += K_over_mu * rho_w * b;
+            }
+
             for (unsigned d = 0; d < GlobalDim; ++d)
             {
                 _darcy_velocities[d][ip] = velocity[d];
