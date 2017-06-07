@@ -27,13 +27,14 @@ LocalLinearLeastSquaresExtrapolator::LocalLinearLeastSquaresExtrapolator(
           MathLib::MatrixSpecifications(dof_table.dofSizeWithoutGhosts(),
                                         dof_table.dofSizeWithoutGhosts(),
                                         &dof_table.getGhostIndices(),
-                                        nullptr)))
+                                        nullptr))),
 #ifndef USE_PETSC
-    , _residuals(dof_table.size())
+      _residuals(dof_table.size()),
 #else
-    , _residuals(dof_table.size(), false)
+      _residuals(dof_table.dofSizeWithoutGhosts(),
+                 dof_table.getGhostIndices(), false),
 #endif
-    , _local_to_global(dof_table)
+      _local_to_global(dof_table)
 {
     /* Note in case the following assertion fails:
      * If you copied the extrapolation code, for your processes from
