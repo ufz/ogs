@@ -8,6 +8,7 @@
  */
 
 #include "GlobalVectorFromNamedFunction.h"
+#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 
