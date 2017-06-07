@@ -148,6 +148,9 @@ public:
 
         auto const& b = _process_data.specific_body_force;
 
+        GlobalDimMatrixType const& I(
+            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
+
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
 
         for (std::size_t ip(0); ip < n_integration_points; ip++)
@@ -230,8 +233,6 @@ public:
                 -K_over_mu * (dNdx * p_nodal_values - density * b);
 
             double const velocity_magnitude = velocity.norm();
-            GlobalDimMatrixType const& I(
-                GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
             GlobalDimMatrixType const thermal_dispersivity =
                 fluid_reference_density * specific_heat_capacity_fluid *
                 (thermal_dispersivity_transversal * velocity_magnitude *
