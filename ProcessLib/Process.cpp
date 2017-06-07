@@ -244,12 +244,18 @@ void Process::computeSparsityPattern()
 void Process::preTimestep(GlobalVector const& x, const double t,
                  const double delta_t)
 {
+    // The function only has computation if DDC is appied,
+    // e.g. Parallel comuting.
+    MathLib::LinAlg::setLocalAccessibleVector(x);
     preTimestepConcreteProcess(x, t, delta_t);
     _boundary_conditions.preTimestep(t);
 }
 
 void Process::postTimestep(GlobalVector const& x)
 {
+    // The function only has computation if DDC is appied,
+    // e.g. Parallel comuting.
+    MathLib::LinAlg::setLocalAccessibleVector(x);
     postTimestepConcreteProcess(x);
 }
 
@@ -271,11 +277,17 @@ void Process::preIteration(const unsigned iter, const GlobalVector &x)
         cached_var->expire();
     }
 
+    // The function only has computation if DDC is appied,
+    // e.g. Parallel comuting.
+    MathLib::LinAlg::setLocalAccessibleVector(x);
     preIterationConcreteProcess(iter, x);
 }
 
 NumLib::IterationResult Process::postIteration(const GlobalVector &x)
 {
+    // The function only has computation if DDC is appied,
+    // e.g. Parallel comuting.
+    MathLib::LinAlg::setLocalAccessibleVector(x);
     return postIterationConcreteProcess(x);
 }
 
