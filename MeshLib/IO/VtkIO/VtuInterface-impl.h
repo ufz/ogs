@@ -72,6 +72,10 @@ bool VtuInterface::writeVTU(std::string const& file_name,
     vtuWriter->SetNumberOfPieces(num_partitions);
     vtuWriter->SetStartPiece(rank);
     vtuWriter->SetEndPiece(rank);
+#else
+    // avoid unused parameter warnings.
+    (void)num_partitions;
+    (void)rank;
 #endif
 
     return (vtuWriter->Write() > 0);
