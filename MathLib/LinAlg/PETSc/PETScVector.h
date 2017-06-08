@@ -161,10 +161,12 @@ class PETScVector
         /// Call this before call operator[] or get(...).
         void setLocalAccessibleVector() const;
 
-        /// Get several entries
+        /// Get several entries. setLocalAccessibleVector() must be
+        /// called beforehand.
         std::vector<double> get(std::vector<IndexType> const& indices) const;
 
-        // Get the value of an entry by [] operator
+        /// Get the value of an entry by [] operator.
+        /// setLocalAccessibleVector() must be called beforehand.
         double operator[] (PetscInt idx) const
         {
             return get(idx);
@@ -182,8 +184,11 @@ class PETScVector
         */
         void copyValues(std::vector<double>& u) const;
 
-        /// Get an entry value. This is an expensive operation,
-        /// and it only get local value. Use it for only test purpose
+        /* Get an entry value. This is an expensive operation,
+           and it only get local value. Use it for only test purpose
+           Get the value of an entry by [] operator.
+           setLocalAccessibleVector() must be called beforehand.
+        */
         PetscScalar get(const PetscInt idx) const;
 
         // TODO eliminate in favour of getRawVector()
