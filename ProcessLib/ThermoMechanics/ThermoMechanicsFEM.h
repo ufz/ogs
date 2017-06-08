@@ -56,7 +56,6 @@ struct IntegrationPointData final
           eps_m_prev(std::move(other.eps_m_prev)),
           solid_material(other.solid_material),
           material_state_variables(std::move(other.material_state_variables)),
-          C(std::move(other.C)),
           integration_weight(std::move(other.integration_weight)),
     {
     }
@@ -73,7 +72,6 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables> material_state_variables;
 
-    typename BMatricesType::KelvinMatrixType C;
     double integration_weight;
 
     void pushBackState()
@@ -88,7 +86,8 @@ struct IntegrationPointData final
     using Invariants = MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
 
     template <typename DisplacementVectorType>
-    void updateConstitutiveRelation(double const t,
+    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
+                                    double const t,
                                     SpatialPosition const& x_position,
                                     double const dt,
                                     DisplacementVectorType const& u,
@@ -97,9 +96,17 @@ struct IntegrationPointData final
         eps.noalias() = b_matrices * u;
         // assume isotropic thermal expansion
         eps_m.noalias() = eps - linear_thermal_strain * Invariants::identity2;
-        solid_material.computeConstitutiveRelation(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, sigma, C,
+        auto&& solution = solid_material.integrateStress(
+            t, x_position, dt, eps_m_prev, eps_m, sigma_prev,
             *material_state_variables);
+
+        if (!solution)
+            OGS_FATAL("Computation of local constitutive relation failed.");
+
+        KelvinMatrixType<DisplacementDim> C;
+        std::tie(sigma, material_state_variables, C) = std::move(*solution);
+
+        return C;
     }
 };
 
@@ -222,7 +229,6 @@ public:
             ip_data.eps.resize(kelvin_vector_size);
             ip_data.eps_m.resize(kelvin_vector_size);
             ip_data.eps_m_prev.resize(kelvin_vector_size);
-            ip_data.C.resize(kelvin_vector_size, kelvin_vector_size);
 
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;
@@ -299,8 +305,6 @@ public:
             auto const& B = _ip_data[ip].b_matrices;
             auto const& sigma = _ip_data[ip].sigma;
 
-            auto const& C = _ip_data[ip].C;
-
             double const delta_T = N.dot(T) - _process_data.reference_temperature;
             // calculate thermally induced strain
             // assume isotropic thermal expansion
@@ -312,7 +316,7 @@ public:
             //
             // displacement equation, displacement part
             //
-            _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+            auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                     linear_thermal_strain);
 
             local_Jac.template block<displacement_size, displacement_size>(
