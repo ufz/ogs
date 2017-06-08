@@ -191,8 +191,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
     FeType fe(*this->mesh_element);
 
     // evaluate a mass matrix M = int{ N^T D N }dA_e
-    NodalMatrix M(this->e_nnodes, this->e_nnodes);
-    M.setZero();
+    NodalMatrix M = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
         shape.setZero();
@@ -216,8 +215,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
     FeType fe(*this->mesh_element);
 
     // evaluate a Laplace matrix K = int{ dNdx^T D dNdx }dA_e
-    NodalMatrix K(this->e_nnodes, this->e_nnodes);
-    K.setZero();
+    NodalMatrix K = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
         shape.setZero();
@@ -241,10 +239,8 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
     FeType fe(*this->mesh_element);
 
     // evaluate both mass and laplace matrices at once
-    NodalMatrix M(this->e_nnodes, this->e_nnodes);
-    M.setZero();
-    NodalMatrix K(this->e_nnodes, this->e_nnodes);
-    K.setZero();
+    NodalMatrix M = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
+    NodalMatrix K = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
         shape.setZero();

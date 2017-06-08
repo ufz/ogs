@@ -163,23 +163,24 @@ assembleBlockMatricesWithJacobian(
     // in a displacement vector
     auto const index_normal = GlobalDim - 1;
 
-    typename ShapeMatricesTypePressure::NodalMatrixType laplace_p;
-    laplace_p.setZero(pressure_size, pressure_size);
+    typename ShapeMatricesTypePressure::NodalMatrixType laplace_p =
+        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                         pressure_size);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType storage_p;
-    storage_p.setZero(pressure_size, pressure_size);
+    typename ShapeMatricesTypePressure::NodalMatrixType storage_p =
+        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                         pressure_size);
 
     typename ShapeMatricesTypeDisplacement::template MatrixType<
         displacement_size, pressure_size>
-        Kgp;
-    Kgp.setZero(displacement_size, pressure_size);
+        Kgp = ShapeMatricesTypeDisplacement::template MatrixType<
+            displacement_size, pressure_size>::Zero(displacement_size,
+                                                    pressure_size);
 
     using GlobalDimMatrix = Eigen::Matrix<double, GlobalDim, GlobalDim>;
     using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
-    GlobalDimMatrix local_k_tensor;
-    local_k_tensor.setZero();
-    GlobalDimMatrix local_dk_db_tensor;
-    local_dk_db_tensor.setZero();
+    GlobalDimMatrix local_k_tensor = GlobalDimMatrix::Zero();
+    GlobalDimMatrix local_dk_db_tensor = GlobalDimMatrix::Zero();
 
     auto const& gravity_vec = _process_data.specific_body_force;
 
@@ -309,8 +310,7 @@ computeSecondaryVariableConcreteWithVector(
 
     using GlobalDimMatrix = Eigen::Matrix<double, GlobalDim, GlobalDim>;
     using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
-    GlobalDimMatrix local_k_tensor;
-    local_k_tensor.setZero();
+    GlobalDimMatrix local_k_tensor = GlobalDimMatrix::Zero();
 
     auto const& gravity_vec = _process_data.specific_body_force;
 
@@ -364,10 +364,8 @@ computeSecondaryVariableConcreteWithVector(
 
     double ele_b = 0;
     double ele_k = 0;
-    Eigen::Vector2d ele_sigma_eff;
-    ele_sigma_eff.setZero();
-    Eigen::Vector2d ele_w;
-    ele_w.setZero();
+    Eigen::Vector2d ele_sigma_eff = Eigen::Vector2d::Zero();
+    Eigen::Vector2d ele_w = Eigen::Vector2d::Zero();
     double ele_Fs = - std::numeric_limits<double>::max();
     for (auto const& ip : _ip_data)
     {

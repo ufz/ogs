@@ -163,16 +163,19 @@ assembleBlockMatricesWithJacobian(
 {
     assert (this->_element.getDimension() == GlobalDim);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType laplace_p;
-    laplace_p.setZero(pressure_size, pressure_size);
+    typename ShapeMatricesTypePressure::NodalMatrixType laplace_p =
+        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                         pressure_size);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType storage_p;
-    storage_p.setZero(pressure_size, pressure_size);
+    typename ShapeMatricesTypePressure::NodalMatrixType storage_p =
+        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                         pressure_size);
 
     typename ShapeMatricesTypeDisplacement::template MatrixType<
         displacement_size, pressure_size>
-        Kup;
-    Kup.setZero(displacement_size, pressure_size);
+        Kup = ShapeMatricesTypeDisplacement::template MatrixType<
+            displacement_size, pressure_size>::Zero(displacement_size,
+                                                    pressure_size);
 
     double const& dt = _process_data.dt;
     auto const& gravity_vec = _process_data.specific_body_force;
@@ -363,12 +366,9 @@ computeSecondaryVariableConcreteWithBlockVectors(
         q.noalias() = - k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
     }
 
-    Eigen::Vector3d ele_stress;
-    ele_stress.setZero();
-    Eigen::Vector3d ele_strain;
-    ele_strain.setZero();
-    Eigen::Vector3d ele_velocity;
-    ele_velocity.setZero();
+    Eigen::Vector3d ele_stress = Eigen::Vector3d::Zero();
+    Eigen::Vector3d ele_strain = Eigen::Vector3d::Zero();
+    Eigen::Vector3d ele_velocity = Eigen::Vector3d::Zero();
 
     for (auto const& ip_data : _ip_data)
     {

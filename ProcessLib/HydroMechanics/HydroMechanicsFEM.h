@@ -291,16 +291,19 @@ public:
                 displacement_size + pressure_size>>(
             local_rhs_data, displacement_size + pressure_size);
 
-        typename ShapeMatricesTypePressure::NodalMatrixType laplace_p;
-        laplace_p.setZero(pressure_size, pressure_size);
+        typename ShapeMatricesTypePressure::NodalMatrixType laplace_p =
+            ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                             pressure_size);
 
-        typename ShapeMatricesTypePressure::NodalMatrixType storage_p;
-        storage_p.setZero(pressure_size, pressure_size);
+        typename ShapeMatricesTypePressure::NodalMatrixType storage_p =
+            ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                             pressure_size);
 
         typename ShapeMatricesTypeDisplacement::template MatrixType<
             displacement_size, pressure_size>
-            Kup;
-        Kup.setZero(displacement_size, pressure_size);
+            Kup = ShapeMatricesTypeDisplacement::template MatrixType<
+                displacement_size, pressure_size>::Zero(displacement_size,
+                                                        pressure_size);
 
         double const& dt = _process_data.dt;
 
