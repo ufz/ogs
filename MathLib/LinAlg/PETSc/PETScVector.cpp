@@ -200,13 +200,10 @@ PetscScalar PETScVector::get(const PetscInt idx) const
     {
         return _entry_array[getLocalIndex(idx)];
     }
-    else
-    {
-        // Ghost entries, and its original index is 0.
-        const PetscInt id_p = (idx == -_size) ?  0 : std::abs(idx);
-        return _entry_array[id_p];
-    }
-    return 0; // avoid warning.
+
+    // Ghost entries, and its original index is 0.
+    const PetscInt id_p = (idx == -_size) ?  0 : std::abs(idx);
+    return _entry_array[id_p];
 }
 
 

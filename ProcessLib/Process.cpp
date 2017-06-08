@@ -122,8 +122,6 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                        GlobalMatrix& K, GlobalVector& b,
                        StaggeredCouplingTerm const& coupling_term)
 {
-    // The function only has computation if DDC is appied,
-    // e.g. Parallel comuting.
     MathLib::LinAlg::setLocalAccessibleVector(x);
 
     assembleConcreteProcess(t, x, M, K, b, coupling_term);
@@ -138,8 +136,6 @@ void Process::assembleWithJacobian(const double t, GlobalVector const& x,
                                    GlobalVector& b, GlobalMatrix& Jac,
                                    StaggeredCouplingTerm const& coupling_term)
 {
-    // The function only has computation if DDC is appied,
-    // e.g. Parallel comuting.
     MathLib::LinAlg::setLocalAccessibleVector(x);
     MathLib::LinAlg::setLocalAccessibleVector(xdot);
 
@@ -244,8 +240,6 @@ void Process::computeSparsityPattern()
 void Process::preTimestep(GlobalVector const& x, const double t,
                  const double delta_t)
 {
-    // The function only has computation if DDC is appied,
-    // e.g. Parallel comuting.
     MathLib::LinAlg::setLocalAccessibleVector(x);
     preTimestepConcreteProcess(x, t, delta_t);
     _boundary_conditions.preTimestep(t);
@@ -253,8 +247,6 @@ void Process::preTimestep(GlobalVector const& x, const double t,
 
 void Process::postTimestep(GlobalVector const& x)
 {
-    // The function only has computation if DDC is appied,
-    // e.g. Parallel comuting.
     MathLib::LinAlg::setLocalAccessibleVector(x);
     postTimestepConcreteProcess(x);
 }
@@ -263,8 +255,6 @@ void Process::computeSecondaryVariable(const double t, GlobalVector const& x,
                                        StaggeredCouplingTerm const&
                                        coupled_term)
 {
-    // The function only has computation if DDC is appied,
-    // e.g. Parallel comuting.
     MathLib::LinAlg::setLocalAccessibleVector(x);
 
     computeSecondaryVariableConcrete(t, x, coupled_term);
@@ -277,16 +267,12 @@ void Process::preIteration(const unsigned iter, const GlobalVector &x)
         cached_var->expire();
     }
 
-    // The function only has computation if DDC is appied,
-    // e.g. Parallel comuting.
     MathLib::LinAlg::setLocalAccessibleVector(x);
     preIterationConcreteProcess(iter, x);
 }
 
 NumLib::IterationResult Process::postIteration(const GlobalVector &x)
 {
-    // The function only has computation if DDC is appied,
-    // e.g. Parallel comuting.
     MathLib::LinAlg::setLocalAccessibleVector(x);
     return postIterationConcreteProcess(x);
 }

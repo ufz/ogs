@@ -17,7 +17,6 @@
 #pragma once
 
 #include <map>
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -157,6 +156,14 @@ class PETScVector
             VecSetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], INSERT_VALUES);
         }
 
+        // TODO preliminary
+        void setZero() { VecSet(_v, 0.0); }
+
+        /// Disallow moving.
+        /// \todo This operator should be implemented properly when doing a
+        ///       general cleanup of all matrix and vector classes.
+        PETScVector& operator = (PETScVector &&) = delete;
+
         /// Set local accessible vector in order to get entries.
         /// Call this before call operator[] or get(...).
         void setLocalAccessibleVector() const;
@@ -178,33 +185,12 @@ class PETScVector
         */
         void getGlobalVector(std::vector<PetscScalar>& u) const;
 
-        /*!
-           Copy local entries including ghost ones to an array
-           \param u Preallocated vector for the values of local entries.
-        */
-        void copyValues(std::vector<double>& u) const;
-
         /* Get an entry value. This is an expensive operation,
            and it only get local value. Use it for only test purpose
            Get the value of an entry by [] operator.
            setLocalAccessibleVector() must be called beforehand.
         */
         PetscScalar get(const PetscInt idx) const;
-
-        // TODO eliminate in favour of getRawVector()
-        /// Get PETsc vector. Use it only for test purpose
-        const PETSc_Vec &getData() const
-        {
-            return _v;
-        }
-
-        // TODO preliminary
-        void setZero() { VecSet(_v, 0.0); }
-
-        /// Disallow moving.
-        /// \todo This operator should be implemented properly when doing a
-        ///       general cleanup of all matrix and vector classes.
-        PETScVector& operator = (PETScVector &&) = delete;
 
         //! Exposes the underlying PETSc vector.
         PETSc_Vec getRawVector() { return _v; }
@@ -217,6 +203,11 @@ class PETScVector
          */
         PETSc_Vec getRawVector() const { return _v; }
 
+        /*!
+           Copy local entries including ghost ones to an array
+           \param u Preallocated vector for the values of local entries.
+        */
+        void copyValues(std::vector<double>& u) const;
 
         /*! View the global vector for test purpose. Do not use it for output a big vector.
             \param file_name  File name for output

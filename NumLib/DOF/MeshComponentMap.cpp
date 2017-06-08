@@ -84,9 +84,6 @@ MeshComponentMap::MeshComponentMap(
                     OGS_FATAL("Global index in the system of equations"
                               " can only be numbered by the oder type"
                               " of ComponentOrder::BY_LOCATION");
-                    // _num_global_dof is used as the global index offset
-                    //global_id = static_cast<GlobalIndexType>(
-                    //    _num_global_dof + mesh.getGlobalNodeID(j));
                 }
                 const bool is_ghost =
                     mesh.isGhostNode(mesh.getNode(j)->getID());

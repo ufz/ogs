@@ -149,7 +149,7 @@ namespace LinAlg
 // Vector
 
 /// Set local accessible vector in order to get entries.
-/// Call this before call operator[] or get(...).
+/// Call this before call operator[] or get(...) of x.
 void setLocalAccessibleVector(PETScVector const& x);
 
 void set(PETScVector& x, double const a);
@@ -210,8 +210,14 @@ namespace LinAlg
 
 // Vector
 
-/// Set local accessible vector in order to get entries.
-/// Call this before call operator[] or get(...). Not used for EIGEN
+/**
+    Set local accessible vector in order to get entries. Call this
+    before call operator[] or get(...) of x.
+    The function only has computation if DDC is appied,
+    e.g. parallel computing. Up to now, Eigen vector is not used for
+    global vectors in parallel computing. Therefore this function is
+    empty in the current status.
+*/
 void setLocalAccessibleVector(EigenVector const& x);
 
 void set(EigenVector& x, double const a);
