@@ -285,6 +285,8 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
         std::vector<double> local_x_cache;
         std::vector<double> local_x_prev_ts_cache;
 
+        MathLib::LinAlg::setLocalAccessibleVector(*_x_previous_timestep);
+
         auto check_variable_bounds = [&](std::size_t id,
                                          TESLocalAssemblerInterface& loc_asm) {
             auto const r_c_indices = NumLib::getRowColumnIndices(
@@ -340,7 +342,6 @@ TESProcess::computeVapourPartialPressure(
         auto const x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
             x_mV, _assembly_params.M_react, _assembly_params.M_inert);
 
-        // TODO Problems with PETSc? (local vs. global index)
         result_cache->set(node_id, p * x_nV);
     }
 
@@ -378,7 +379,6 @@ TESProcess::computeRelativeHumidity(
         auto const p_S =
             Adsorption::AdsorptionReaction::getEquilibriumVapourPressure(T);
 
-        // TODO Problems with PETSc? (local vs. global index)
         result_cache->set(node_id, p * x_nV / p_S);
     }
 
@@ -419,7 +419,6 @@ TESProcess::computeEquilibriumLoading(
                          : _assembly_params.react_sys->getEquilibriumLoading(
                                p_V, T, _assembly_params.M_react);
 
-        // TODO Problems with PETSc? (local vs. global index)
         result_cache->set(node_id, C_eq);
     }
 

@@ -22,6 +22,11 @@ namespace MathLib { namespace LinAlg
 
 // Vector
 
+void setLocalAccessibleVector(PETScVector const& x)
+{
+    x.setLocalAccessibleVector();
+}
+
 void set(PETScVector& x, double const a)
 {
     VecSet(x.getRawVector(), a);
@@ -176,6 +181,10 @@ namespace MathLib { namespace LinAlg
 {
 
 // Vector
+
+void setLocalAccessibleVector(EigenVector const& /*x*/)
+{
+}
 
 void set(EigenVector& x, double const a)
 {

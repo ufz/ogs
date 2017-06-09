@@ -8,6 +8,7 @@
  */
 
 #include "GlobalVectorFromNamedFunction.h"
+#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 
@@ -53,10 +54,10 @@ GlobalVector const& GlobalVectorFromNamedFunction::call(
         _context.index = node_id;
         auto const value = _function_caller.call(args);
 
-        // TODO Problems with PETSc? (local vs. global index)
         result->set(node_id, value);
     }
 
+    MathLib::finalizeVectorAssembly(*result);
     return *result;
 }
 

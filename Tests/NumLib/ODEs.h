@@ -113,6 +113,7 @@ public:
                  ) override
     {
         MathLib::setMatrix(M, {1.0});
+        MathLib::LinAlg::setLocalAccessibleVector(x);
         MathLib::setMatrix(K, {x[0]});
         MathLib::setVector(b, {0.0});
     }
@@ -200,6 +201,7 @@ public:
                   ProcessLib::StaggeredCouplingTerm const& /*coupling_term*/
                  ) override
     {
+        MathLib::LinAlg::setLocalAccessibleVector(x_curr);
         auto const u = x_curr[0];
         auto const v = x_curr[1];
 
@@ -217,6 +219,8 @@ public:
                               ProcessLib::StaggeredCouplingTerm const&
                               coupling_term) override
     {
+        MathLib::LinAlg::setLocalAccessibleVector(x_curr);
+        MathLib::LinAlg::setLocalAccessibleVector(xdot);
         assemble(t, x_curr, M, K, b, coupling_term);
 
         auto const u = x_curr[0];

@@ -12,6 +12,7 @@
 
 #include "MeshComponentMap.h"
 
+#include "BaseLib/Error.h"
 #include "MeshLib/MeshSubsets.h"
 
 #ifdef USE_PETSC
@@ -70,17 +71,18 @@ MeshComponentMap::MeshComponentMap(
             for (std::size_t j = 0; j < mesh_subset.getNumberOfNodes(); j++)
             {
                 GlobalIndexType global_id = 0;
-                if (order == ComponentOrder::BY_LOCATION)
+                if (order != ComponentOrder::BY_LOCATION)
                 {
-                    global_id = static_cast<GlobalIndexType>(
-                        components.size() * mesh.getGlobalNodeID(j) + comp_id);
+                    // Deactivated since this case is not suitable to
+                    // arrange non ghost entries of a partition within
+                    // a rank in the parallel computing.
+                    OGS_FATAL("Global index in the system of equations"
+                              " can only be numbered by the oder type"
+                              " of ComponentOrder::BY_LOCATION");
                 }
-                else
-                {
-                    // _num_global_dof is used as the global index offset
-                    global_id = static_cast<GlobalIndexType>(
-                        _num_global_dof + mesh.getGlobalNodeID(j));
-                }
+                global_id = static_cast<GlobalIndexType>(
+                    components.size() * mesh.getGlobalNodeID(j)
+                        + comp_id);
                 const bool is_ghost =
                     mesh.isGhostNode(mesh.getNode(j)->getID());
                 if (is_ghost)
@@ -294,16 +296,19 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
 
     // A special case for a ghost location with global index equal to the size
     // of the local vector:
-    if (-global_index == static_cast<GlobalIndexType>(_num_global_dof))
-        return 0;
+    GlobalIndexType const real_global_index =
+        (-global_index == static_cast<GlobalIndexType>(_num_global_dof))
+        ? 0 : -global_index;
 
     // TODO Find in ghost indices is O(n^2/2) for n being the length of
     // _ghosts_indices. Providing an inverted table would be faster.
     auto const ghost_index_it = std::find(_ghosts_indices.begin(),
-                                          _ghosts_indices.end(), -global_index);
+                                          _ghosts_indices.end(),
+                                          real_global_index);
     if (ghost_index_it == _ghosts_indices.end())
     {
-        OGS_FATAL("index %d not found in ghost_indices", -global_index);
+        OGS_FATAL("index %d not found in ghost_indices",
+                  real_global_index);
     }
 
     // Using std::distance on a std::vector is O(1). As long as _ghost_indices

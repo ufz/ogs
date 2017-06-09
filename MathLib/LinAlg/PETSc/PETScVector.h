@@ -16,8 +16,10 @@
 
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
+
 #include <petscvec.h>
 
 namespace MathLib
@@ -154,52 +156,6 @@ class PETScVector
             VecSetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], INSERT_VALUES);
         }
 
-        //! Get several entries
-        std::vector<double> get(std::vector<IndexType> const& indices) const
-        {
-            std::vector<double> local_x(indices.size());
-
-            VecGetValues(_v, indices.size(), indices.data(), local_x.data());
-
-            return local_x;
-        }
-
-        // TODO preliminary
-        double operator[] (PetscInt idx) const
-        {
-            double value;
-            VecGetValues(_v, 1, &idx, &value);
-            return value;
-        }
-
-        /*!
-           Get global vector
-           \param u Array to store the global vector. Memory allocation is needed in advance
-        */
-        void getGlobalVector(PetscScalar u[]);
-
-        /*!
-           Copy local entries including ghost ones to an array
-           \param u Preallocated vector for the values of local entries.
-        */
-        void copyValues(std::vector<double>& u) const;
-
-        /// Get an entry value. This is an expensive operation,
-        /// and it only get local value. Use it for only test purpose
-        PetscScalar get(const PetscInt idx) const
-        {
-            PetscScalar x;
-            VecGetValues(_v, 1, &idx, &x);
-            return x;
-        }
-
-        // TODO eliminate in favour of getRawVector()
-        /// Get PETsc vector. Use it only for test purpose
-        const PETSc_Vec &getData() const
-        {
-            return _v;
-        }
-
         // TODO preliminary
         void setZero() { VecSet(_v, 0.0); }
 
@@ -207,6 +163,34 @@ class PETScVector
         /// \todo This operator should be implemented properly when doing a
         ///       general cleanup of all matrix and vector classes.
         PETScVector& operator = (PETScVector &&) = delete;
+
+        /// Set local accessible vector in order to get entries.
+        /// Call this before call operator[] or get(...).
+        void setLocalAccessibleVector() const;
+
+        /// Get several entries. setLocalAccessibleVector() must be
+        /// called beforehand.
+        std::vector<PetscScalar> get(std::vector<IndexType> const& indices) const;
+
+        /// Get the value of an entry by [] operator.
+        /// setLocalAccessibleVector() must be called beforehand.
+        PetscScalar operator[] (PetscInt idx) const
+        {
+            return get(idx);
+        }
+
+        /*!
+           Get global vector
+           \param u Array to store the global vector. Memory allocation is needed in advance
+        */
+        void getGlobalVector(std::vector<PetscScalar>& u) const;
+
+        /* Get an entry value. This is an expensive operation,
+           and it only get local value. Use it for only test purpose
+           Get the value of an entry by [] operator.
+           setLocalAccessibleVector() must be called beforehand.
+        */
+        PetscScalar get(const PetscInt idx) const;
 
         //! Exposes the underlying PETSc vector.
         PETSc_Vec getRawVector() { return _v; }
@@ -217,8 +201,13 @@ class PETScVector
          * This method is dangerous insofar as you can do arbitrary things also
          * with a const PETSc vector!
          */
-        PETSc_Vec getRawVector() const {return _v; }
+        PETSc_Vec getRawVector() const { return _v; }
 
+        /*!
+           Copy local entries including ghost ones to an array
+           \param u Preallocated vector for the values of local entries.
+        */
+        void copyValues(std::vector<PetscScalar>& u) const;
 
         /*! View the global vector for test purpose. Do not use it for output a big vector.
             \param file_name  File name for output
@@ -253,7 +242,7 @@ class PETScVector
 
         PETSc_Vec _v = nullptr;
         /// Local vector, which is only for the case that  _v is created
-        /// with ghost entries. 
+        /// with ghost entries.
         mutable PETSc_Vec _v_loc = nullptr;
 
         /// Starting index in a rank
@@ -272,17 +261,32 @@ class PETScVector
         bool _has_ghost_id = false;
 
         /*!
+           \brief Array containing the entries of the vector.
+           If the vector is created without given ghost IDs, the array
+           contains all entries of the global vector, _v. Otherwise it
+           only contains the entries of the global vector owned by the
+           current rank.
+        */
+        mutable std::vector<PetscScalar> _entry_array;
+
+        /// Map global indices of ghost enrties to local indices
+        mutable std::map<PetscInt, PetscInt> _global_ids2local_ids_ghost;
+
+        /*!
               \brief  Collect local vectors
               \param  local_array Local array
               \param  global_array Global array
         */
         void gatherLocalVectors(PetscScalar local_array[],
-                                PetscScalar global_array[]);
+                                PetscScalar global_array[]) const;
 
         /*!
            Get local vector, i.e. entries in the same rank
         */
         PetscScalar* getLocalVector() const;
+
+        /// Get local index by a global index
+        PetscInt getLocalIndex(const PetscInt global_index) const;
 
         /*!
            Restore array after finish access local array

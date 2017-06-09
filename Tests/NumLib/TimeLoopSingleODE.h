@@ -12,6 +12,7 @@
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
+#include "MathLib/LinAlg/LinAlg.h"
 
 #include "ProcessLib/StaggeredCouplingTerm.h"
 
@@ -97,6 +98,7 @@ bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
 
     if (time_disc.needsPreload())
     {
+        MathLib::LinAlg::setLocalAccessibleVector(x);
         _nonlinear_solver->assemble(x,
                                  ProcessLib::createVoidStaggeredCouplingTerm());
         time_disc.pushState(t0, x0,

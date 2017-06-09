@@ -83,7 +83,7 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector &b, PETScVector &x)
     KSPSetOperators(_solver, A.getRawMatrix(), A.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
 #endif
 
-    KSPSolve(_solver, b.getData(), x.getData());
+    KSPSolve(_solver, b.getRawVector(), x.getRawVector());
 
     KSPConvergedReason reason;
     KSPGetConvergedReason(_solver, &reason);

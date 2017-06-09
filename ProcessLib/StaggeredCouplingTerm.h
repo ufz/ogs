@@ -36,13 +36,7 @@ struct StaggeredCouplingTerm
             coupled_processes_,
         std::unordered_map<std::type_index, GlobalVector const&> const&
             coupled_xs_,
-        const double dt_, const bool empty_ = false)
-        : coupled_processes(coupled_processes_),
-          coupled_xs(coupled_xs_),
-          dt(dt_),
-          empty(empty_)
-    {
-    }
+        const double dt_, const bool empty_ = false);
 
     /// References to the coupled processes are distinguished by the keys of
     /// process types.

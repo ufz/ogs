@@ -19,6 +19,7 @@
 #include "BaseLib/BuildInfo.h"
 #include "NumLib/NumericsConfig.h"
 #include "NumLib/ODESolver/ConvergenceCriterionDeltaX.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "Tests/TestTools.h"
 #include "ODEs.h"
 
@@ -102,6 +103,9 @@ public:
 
         if (num_timesteps > 0)
             EXPECT_TRUE(loop.loop(t0, x0, t_end, delta_t, cb));
+
+        for (auto& x :  sol.solutions)
+            MathLib::LinAlg::setLocalAccessibleVector(x);
 
         return sol;
     }
@@ -258,7 +262,8 @@ public:
                             TestParams::tol_picard_newton);
 
                 auto const t = sol_picard.ts[i];
-                auto const sol_analyt = ODETraits<ODE>::solution(t);
+                auto sol_analyt = ODETraits<ODE>::solution(t);
+                MathLib::LinAlg::setLocalAccessibleVector(sol_analyt);
 
                 EXPECT_NEAR(sol_picard.solutions[i][comp], sol_analyt[comp],
                             TestParams::tol_analyt);
