@@ -11,10 +11,40 @@
  */
 
 #include "StaggeredCouplingTerm.h"
+
+#include "MathLib/LinAlg/LinAlg.h"
 #include "Process.h"
 
 namespace ProcessLib
 {
+
+StaggeredCouplingTerm::StaggeredCouplingTerm(
+    std::unordered_map<std::type_index, Process const&> const&
+        coupled_processes_,
+    std::unordered_map<std::type_index, GlobalVector const&> const& coupled_xs_,
+    const double dt_, const bool empty_)
+    : coupled_processes(coupled_processes_),
+      coupled_xs(coupled_xs_),
+      dt(dt_),
+      empty(empty_)
+{
+    for (auto const& coupled_x_pair : coupled_xs)
+    {
+        auto const& coupled_x = coupled_x_pair.second;
+        MathLib::LinAlg::setLocalAccessibleVector(coupled_x);
+    }
+
+    for (auto const& coupled_process_pair : coupled_processes)
+    {
+        auto const& coupled_pcs = coupled_process_pair.second;
+        auto const prevous_time_x = coupled_pcs.getPreviousTimeStepSolution();
+        if (prevous_time_x)
+        {
+            MathLib::LinAlg::setLocalAccessibleVector(*prevous_time_x);
+        }
+    }
+}
+
 const StaggeredCouplingTerm createVoidStaggeredCouplingTerm()
 {
     std::unordered_map<std::type_index, Process const&> coupled_processes;
