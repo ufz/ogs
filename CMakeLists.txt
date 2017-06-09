@@ -182,7 +182,10 @@ if(OGS_USE_MPI)
 endif()
 
 # Eigen
-add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO) # TODO check if needed
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
+endif()
+
 if (EIGEN_NO_DEBUG)
     add_definitions(-DEIGEN_NO_DEBUG)
 endif()
