@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include<string>
+#include <string>
 
 #include <petscksp.h>
 
@@ -29,7 +29,6 @@
 
 namespace MathLib
 {
-
 /*! A class of linear solver based on PETSc rountines.
 
  All command-line options that are not recognized by OGS are passed on to
@@ -39,46 +38,37 @@ namespace MathLib
 */
 class PETScLinearSolver
 {
-    public:
+public:
+    /*!
+        Constructor
+        \param prefix  Name used to distinguish the options in the command
+                       line for this solver. It can be the name of the PDE
+                       that owns an instance of this class.
+        \param option  Petsc options, which will be inserted into the global
+                       petsc options database.
+    */
+    PETScLinearSolver(const std::string prefix,
+                      BaseLib::ConfigTree const* const option);
 
-        /*!
-            Constructor
-            \param prefix  Name used to distinguish the options in the command
-                           line for this solver. It can be the name of the PDE
-                           that owns an instance of this class.
-            \param option  Petsc options, which will be inserted into the global
-                           petsc options database.
-        */
-        PETScLinearSolver(const std::string prefix,
-                          BaseLib::ConfigTree const* const option);
+    ~PETScLinearSolver() { KSPDestroy(&_solver); }
+    // TODO check if some args in LinearSolver interface can be made const&.
+    bool solve(PETScMatrix& A, PETScVector& b, PETScVector& x);
 
-        ~PETScLinearSolver()
-        {
-            KSPDestroy(&_solver);
-        }
+    /// Get number of iterations.
+    PetscInt getNumberOfIterations() const
+    {
+        PetscInt its = 0;
+        KSPGetIterationNumber(_solver, &its);
+        return its;
+    }
 
-        // TODO check if some args in LinearSolver interface can be made const&.
-        bool solve(PETScMatrix& A, PETScVector &b, PETScVector &x);
+    /// Get elapsed wall clock time.
+    double getElapsedTime() const { return _elapsed_ctime; }
+private:
+    KSP _solver;  ///< Solver type.
+    PC _pc;       ///< Preconditioner type.
 
-        /// Get number of iterations.
-        PetscInt getNumberOfIterations() const
-        {
-            PetscInt its = 0;
-            KSPGetIterationNumber(_solver, &its);
-            return its;
-        }
-
-        /// Get elapsed wall clock time.
-        double getElapsedTime() const
-        {
-            return _elapsed_ctime;
-        }
-
-    private:
-        KSP _solver; ///< Solver type.
-        PC _pc;      ///< Preconditioner type.
-
-        double _elapsed_ctime = 0.0; ///< Clock time
+    double _elapsed_ctime = 0.0;  ///< Clock time
 };
 
-} // end namespace
+}  // end namespace

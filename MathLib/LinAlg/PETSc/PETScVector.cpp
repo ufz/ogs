@@ -18,7 +18,6 @@
  *
  */
 
-
 #include "PETScVector.h"
 
 #include <algorithm>
@@ -28,7 +27,7 @@ namespace MathLib
 {
 PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
 {
-    if( is_global_size )
+    if (is_global_size)
     {
         VecCreate(PETSC_COMM_WORLD, &_v);
         VecSetSizes(_v, PETSC_DECIDE, vec_size);
@@ -46,11 +45,10 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
 PETScVector::PETScVector(const PetscInt vec_size,
                          const std::vector<PetscInt>& ghost_ids,
                          const bool is_global_size)
-    : _size_ghosts {static_cast<PetscInt>(ghost_ids.size())},
-      _has_ghost_id {true}
+    : _size_ghosts{static_cast<PetscInt>(ghost_ids.size())}, _has_ghost_id{true}
 {
-    PetscInt nghosts = static_cast<PetscInt>( ghost_ids.size() );
-    if ( is_global_size )
+    PetscInt nghosts = static_cast<PetscInt>(ghost_ids.size());
+    if (is_global_size)
     {
         VecCreateGhost(PETSC_COMM_WORLD, PETSC_DECIDE, vec_size, nghosts,
                        ghost_ids.data(), &_v);
@@ -65,33 +63,33 @@ PETScVector::PETScVector(const PetscInt vec_size,
 
     config();
 
-    for (PetscInt i=0; i<nghosts; i++)
-        _global_ids2local_ids_ghost.emplace(ghost_ids[i],
-                                            _size_loc + i);
+    for (PetscInt i = 0; i < nghosts; i++)
+        _global_ids2local_ids_ghost.emplace(ghost_ids[i], _size_loc + i);
 }
 
-PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
+PETScVector::PETScVector(const PETScVector& existing_vec, const bool deep_copy)
 {
     shallowCopy(existing_vec);
 
     // Copy values
-    if(deep_copy)
+    if (deep_copy)
     {
         VecCopy(existing_vec._v, _v);
     }
 }
 
-PETScVector::PETScVector(PETScVector &&other)
-    : _v {std::move(other._v)},
-      _v_loc {std::move(other._v_loc)},
-      _start_rank {other._start_rank},
-      _end_rank {other._end_rank},
-      _size {other._size},
-      _size_loc {other._size_loc},
-      _size_ghosts {other._size_ghosts},
-      _has_ghost_id {other._has_ghost_id},
-      _global_ids2local_ids_ghost {other._global_ids2local_ids_ghost}
-{}
+PETScVector::PETScVector(PETScVector&& other)
+    : _v{std::move(other._v)},
+      _v_loc{std::move(other._v_loc)},
+      _start_rank{other._start_rank},
+      _end_rank{other._end_rank},
+      _size{other._size},
+      _size_loc{other._size_loc},
+      _size_ghosts{other._size_ghosts},
+      _has_ghost_id{other._has_ghost_id},
+      _global_ids2local_ids_ghost{other._global_ids2local_ids_ghost}
+{
+}
 
 void PETScVector::config()
 {
@@ -111,36 +109,35 @@ void PETScVector::finalizeAssembly()
     VecAssemblyEnd(_v);
 }
 
-void PETScVector::gatherLocalVectors( PetscScalar local_array[],
-                                      PetscScalar global_array[]) const
+void PETScVector::gatherLocalVectors(PetscScalar local_array[],
+                                     PetscScalar global_array[]) const
 {
     // Collect vectors from processors.
     int size_rank;
     MPI_Comm_size(PETSC_COMM_WORLD, &size_rank);
 
     // number of elements to be sent for each rank
-    std::vector<PetscInt>  i_cnt(size_rank);
+    std::vector<PetscInt> i_cnt(size_rank);
 
-    MPI_Allgather(&_size_loc, 1, MPI_INT, &i_cnt[0], 1, MPI_INT, PETSC_COMM_WORLD);
+    MPI_Allgather(&_size_loc, 1, MPI_INT, &i_cnt[0], 1, MPI_INT,
+                  PETSC_COMM_WORLD);
 
     // collect local array
     PetscInt offset = 0;
     // offset in the receive vector of the data from each rank
-    std::vector<PetscInt>  i_disp(size_rank);
-    for(PetscInt i=0; i<size_rank; i++)
+    std::vector<PetscInt> i_disp(size_rank);
+    for (PetscInt i = 0; i < size_rank; i++)
     {
         i_disp[i] = offset;
         offset += i_cnt[i];
     }
 
-    MPI_Allgatherv(local_array, _size_loc, MPI_DOUBLE,
-                   global_array, &i_cnt[0], &i_disp[0], MPI_DOUBLE, PETSC_COMM_WORLD);
-
+    MPI_Allgatherv(local_array, _size_loc, MPI_DOUBLE, global_array, &i_cnt[0],
+                   &i_disp[0], MPI_DOUBLE, PETSC_COMM_WORLD);
 }
 
 void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
 {
-
 #ifdef TEST_MEM_PETSC
     PetscLogDouble mem1, mem2;
     PetscMemoryGetCurrentUsage(&mem1);
@@ -148,21 +145,24 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
 
     assert(u.size() == _size);
 
-    PetscScalar *xp = nullptr;
+    PetscScalar* xp = nullptr;
     VecGetArray(_v, &xp);
 
     gatherLocalVectors(xp, u.data());
 
-    //This following line may be needed late on
+    // This following line may be needed late on
     //  for a communication load balance:
-    //MPI_Barrier(PETSC_COMM_WORLD);
+    // MPI_Barrier(PETSC_COMM_WORLD);
 
     VecRestoreArray(_v, &xp);
 
-    //TEST
+// TEST
 #ifdef TEST_MEM_PETSC
     PetscMemoryGetCurrentUsage(&mem2);
-    PetscPrintf(PETSC_COMM_WORLD, "### Memory usage by Updating. Before :%f After:%f Increase:%d\n", mem1, mem2, (int)(mem2 - mem1));
+    PetscPrintf(
+        PETSC_COMM_WORLD,
+        "### Memory usage by Updating. Before :%f After:%f Increase:%d\n", mem1,
+        mem2, (int)(mem2 - mem1));
 #endif
 }
 
@@ -170,17 +170,16 @@ void PETScVector::setLocalAccessibleVector() const
 {
     if (_entry_array.empty())
     {
-        const PetscInt array_size
-            = _global_ids2local_ids_ghost.size() > 0 ?
-                      _size_loc + _size_ghosts: _size;
+        const PetscInt array_size = _global_ids2local_ids_ghost.size() > 0
+                                        ? _size_loc + _size_ghosts
+                                        : _size;
         _entry_array.resize(array_size);
     }
 
-    if ( !_global_ids2local_ids_ghost.empty() )
+    if (!_global_ids2local_ids_ghost.empty())
     {
         PetscScalar* loc_x = getLocalVector();
-        std::copy_n(loc_x, _size_loc + _size_ghosts,
-                    _entry_array.begin());
+        std::copy_n(loc_x, _size_loc + _size_ghosts, _entry_array.begin());
         restoreArray(loc_x);
     }
     else
@@ -189,7 +188,7 @@ void PETScVector::setLocalAccessibleVector() const
 
 void PETScVector::copyValues(std::vector<PetscScalar>& u) const
 {
-    assert(u.size() == (std::size_t) (getLocalSize() + getGhostSize()));
+    assert(u.size() == (std::size_t)(getLocalSize() + getGhostSize()));
 
     PetscScalar* loc_x = getLocalVector();
     std::copy_n(loc_x, getLocalSize() + getGhostSize(), u.begin());
@@ -204,12 +203,12 @@ PetscScalar PETScVector::get(const PetscInt idx) const
     }
 
     // Ghost entries, and its original index is 0.
-    const PetscInt id_p = (idx == -_size) ?  0 : std::abs(idx);
+    const PetscInt id_p = (idx == -_size) ? 0 : std::abs(idx);
     return _entry_array[id_p];
 }
 
-
-std::vector<PetscScalar> PETScVector::get(std::vector<IndexType> const& indices) const
+std::vector<PetscScalar> PETScVector::get(
+    std::vector<IndexType> const& indices) const
 {
     std::vector<PetscScalar> local_x(indices.size());
     // If VecGetValues can get values from different processors,
@@ -218,18 +217,18 @@ std::vector<PetscScalar> PETScVector::get(std::vector<IndexType> const& indices)
 
     if (_global_ids2local_ids_ghost.size() > 0)
     {
-        for (std::size_t i=0; i<indices.size(); i++)
+        for (std::size_t i = 0; i < indices.size(); i++)
         {
             local_x[i] = _entry_array[getLocalIndex(indices[i])];
         }
     }
     else
     {
-        for (std::size_t i=0; i<indices.size(); i++)
+        for (std::size_t i = 0; i < indices.size(); i++)
         {
             // Ghost entries, and its original index is 0.
-            const IndexType id_p = (indices[i] == -_size)
-                                   ?  0 : std::abs(indices[i]);
+            const IndexType id_p =
+                (indices[i] == -_size) ? 0 : std::abs(indices[i]);
             local_x[i] = _entry_array[id_p];
         }
     }
@@ -239,7 +238,7 @@ std::vector<PetscScalar> PETScVector::get(std::vector<IndexType> const& indices)
 
 PetscScalar* PETScVector::getLocalVector() const
 {
-    PetscScalar *loc_array;
+    PetscScalar* loc_array;
     if (_has_ghost_id)
     {
         VecGhostUpdateBegin(_v, INSERT_VALUES, SCATTER_FORWARD);
@@ -254,13 +253,12 @@ PetscScalar* PETScVector::getLocalVector() const
 
 PetscInt PETScVector::getLocalIndex(const PetscInt global_index) const
 {
-    if (global_index >= 0)    // non-ghost entry.
+    if (global_index >= 0)  // non-ghost entry.
         return global_index - _start_rank;
 
     // A special case for a ghost location with global index equal to
     // the size of the local vector:
-    PetscInt real_global_index =
-        (-global_index == _size) ? 0 : -global_index;
+    PetscInt real_global_index = (-global_index == _size) ? 0 : -global_index;
 
     return _global_ids2local_ids_ghost.at(real_global_index);
 }
@@ -276,7 +274,8 @@ void PETScVector::restoreArray(PetscScalar* array) const
         VecRestoreArray(_v, &array);
 }
 
-void PETScVector::viewer(const std::string &file_name, const PetscViewerFormat vw_format) const
+void PETScVector::viewer(const std::string& file_name,
+                         const PetscViewerFormat vw_format) const
 {
     PetscViewer viewer;
     PetscViewerASCIIOpen(PETSC_COMM_WORLD, file_name.c_str(), &viewer);
@@ -285,35 +284,34 @@ void PETScVector::viewer(const std::string &file_name, const PetscViewerFormat v
     PetscObjectSetName((PetscObject)_v, file_name.c_str());
     VecView(_v, viewer);
 
-#define  nEXIT_TEST
+#define nEXIT_TEST
 #ifdef EXIT_TEST
     VecDestroy(_v);
     PetscFinalize();
     exit(0);
 #endif
-
 }
 
-void PETScVector::shallowCopy(const PETScVector &v)
+void PETScVector::shallowCopy(const PETScVector& v)
 {
     destroy();
 
     VecDuplicate(v.getRawVector(), &_v);
 
-    _start_rank   = v._start_rank;
-    _end_rank     = v._end_rank;
-    _size         = v._size;
-    _size_loc     = v._size_loc;
-    _size_ghosts  = v._size_ghosts;
+    _start_rank = v._start_rank;
+    _end_rank = v._end_rank;
+    _size = v._size;
+    _size_loc = v._size_loc;
+    _size_ghosts = v._size_ghosts;
     _has_ghost_id = v._has_ghost_id;
     _global_ids2local_ids_ghost = v._global_ids2local_ids_ghost;
 
     VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
 }
 
-void finalizeVectorAssembly(PETScVector &vec)
+void finalizeVectorAssembly(PETScVector& vec)
 {
     vec.finalizeAssembly();
 }
 
-} //end of namespace
+}  // end of namespace

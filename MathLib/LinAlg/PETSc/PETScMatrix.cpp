@@ -1,6 +1,7 @@
 /*!
    \file  PETScMatrix.cpp
-   \brief Definition of member functions of class PETScMatrix, which provides an interface to
+   \brief Definition of member functions of class PETScMatrix, which provides an
+   interface to
           PETSc matrix routines.
 
    \author Wenqing Wang
@@ -17,12 +18,13 @@
 
 namespace MathLib
 {
-
-PETScMatrix::PETScMatrix (const PetscInt nrows, const PETScMatrixOption &mat_opt)
-    :_nrows(nrows), _ncols(nrows), _n_loc_rows(PETSC_DECIDE),
-     _n_loc_cols(mat_opt.n_local_cols)
+PETScMatrix::PETScMatrix(const PetscInt nrows, const PETScMatrixOption& mat_opt)
+    : _nrows(nrows),
+      _ncols(nrows),
+      _n_loc_rows(PETSC_DECIDE),
+      _n_loc_cols(mat_opt.n_local_cols)
 {
-    if(!mat_opt.is_global_size)
+    if (!mat_opt.is_global_size)
     {
         _n_loc_rows = nrows;
         _n_loc_cols = nrows;
@@ -33,11 +35,14 @@ PETScMatrix::PETScMatrix (const PetscInt nrows, const PETScMatrixOption &mat_opt
     create(mat_opt.d_nz, mat_opt.o_nz);
 }
 
-PETScMatrix::PETScMatrix (const PetscInt nrows, const PetscInt ncols, const PETScMatrixOption &mat_opt)
-    :_nrows(nrows), _ncols(ncols),  _n_loc_rows(PETSC_DECIDE),
-     _n_loc_cols(mat_opt.n_local_cols)
+PETScMatrix::PETScMatrix(const PetscInt nrows, const PetscInt ncols,
+                         const PETScMatrixOption& mat_opt)
+    : _nrows(nrows),
+      _ncols(ncols),
+      _n_loc_rows(PETSC_DECIDE),
+      _n_loc_cols(mat_opt.n_local_cols)
 {
-    if(!mat_opt.is_global_size)
+    if (!mat_opt.is_global_size)
     {
         _nrows = PETSC_DECIDE;
         _ncols = PETSC_DECIDE;
@@ -48,19 +53,18 @@ PETScMatrix::PETScMatrix (const PetscInt nrows, const PetscInt ncols, const PETS
     create(mat_opt.d_nz, mat_opt.o_nz);
 }
 
-PETScMatrix::PETScMatrix(const PETScMatrix &A)
-    : _nrows(A._nrows)
-    , _ncols(A._ncols)
-    , _n_loc_rows(A._n_loc_rows)
-    , _n_loc_cols(A._n_loc_cols)
-    , _start_rank(A._start_rank)
-    , _end_rank(A._end_rank)
+PETScMatrix::PETScMatrix(const PETScMatrix& A)
+    : _nrows(A._nrows),
+      _ncols(A._ncols),
+      _n_loc_rows(A._n_loc_rows),
+      _n_loc_cols(A._n_loc_cols),
+      _start_rank(A._start_rank),
+      _end_rank(A._end_rank)
 {
     MatConvert(A._A, MATSAME, MAT_INITIAL_MATRIX, &_A);
 }
 
-PETScMatrix&
-PETScMatrix::operator=(PETScMatrix const& A)
+PETScMatrix& PETScMatrix::operator=(PETScMatrix const& A)
 {
     _nrows = A._nrows;
     _ncols = A._ncols;
@@ -69,10 +73,13 @@ PETScMatrix::operator=(PETScMatrix const& A)
     _start_rank = A._start_rank;
     _end_rank = A._end_rank;
 
-    if (_A) {
+    if (_A)
+    {
         // TODO this is the slowest option for copying
         MatCopy(A._A, _A, DIFFERENT_NONZERO_PATTERN);
-    } else {
+    }
+    else
+    {
         destroy();
         MatConvert(A._A, MATSAME, MAT_INITIAL_MATRIX, &_A);
     }
@@ -82,9 +89,10 @@ PETScMatrix::operator=(PETScMatrix const& A)
 
 void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
 {
-    // Each rank (compute core) processes only the rows that belong to the rank itself.
+    // Each rank (compute core) processes only the rows that belong to the rank
+    // itself.
     const PetscScalar one = 1.0;
-    const PetscInt nrows = static_cast<PetscInt> (row_pos.size());
+    const PetscInt nrows = static_cast<PetscInt>(row_pos.size());
 
     // Each process will only zero its own rows.
     // This avoids all reductions in the zero row routines
@@ -93,15 +101,16 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
     MatSetOption(_A, MAT_NO_OFF_PROC_ZERO_ROWS, PETSC_TRUE);
 
     // Keep the non-zero pattern for the assignment operator.
-    MatSetOption(_A, MAT_KEEP_NONZERO_PATTERN,PETSC_TRUE);
+    MatSetOption(_A, MAT_KEEP_NONZERO_PATTERN, PETSC_TRUE);
 
-    if(nrows>0)
+    if (nrows > 0)
         MatZeroRows(_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
     else
         MatZeroRows(_A, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
 }
 
-void PETScMatrix::viewer(const std::string &file_name, const PetscViewerFormat vw_format)
+void PETScMatrix::viewer(const std::string& file_name,
+                         const PetscViewerFormat vw_format)
 {
     PetscViewer viewer;
     PetscViewerASCIIOpen(PETSC_COMM_WORLD, file_name.c_str(), &viewer);
@@ -109,17 +118,17 @@ void PETScMatrix::viewer(const std::string &file_name, const PetscViewerFormat v
 
     finalizeAssembly();
 
-    PetscObjectSetName((PetscObject)_A,"Stiffness_matrix");
-    MatView(_A,viewer);
+    PetscObjectSetName((PetscObject)_A, "Stiffness_matrix");
+    MatView(_A, viewer);
 
-// This preprocessor is only for debugging, e.g. dump the matrix and exit the program.
+// This preprocessor is only for debugging, e.g. dump the matrix and exit the
+// program.
 //#define EXIT_TEST
 #ifdef EXIT_TEST
     MatDestroy(_A);
     PetscFinalize();
     exit(0);
 #endif
-
 }
 
 void PETScMatrix::create(const PetscInt d_nz, const PetscInt o_nz)
@@ -136,15 +145,14 @@ void PETScMatrix::create(const PetscInt d_nz, const PetscInt o_nz)
     // slower.
 
     MatGetOwnershipRange(_A, &_start_rank, &_end_rank);
-    MatGetSize(_A, &_nrows,  &_ncols);
+    MatGetSize(_A, &_nrows, &_ncols);
     MatGetLocalSize(_A, &_n_loc_rows, &_n_loc_cols);
 }
 
-bool finalizeMatrixAssembly(PETScMatrix &mat, const MatAssemblyType asm_type)
+bool finalizeMatrixAssembly(PETScMatrix& mat, const MatAssemblyType asm_type)
 {
     mat.finalizeAssembly(asm_type);
     return true;
 }
 
-} //end of namespace
-
+}  // end of namespace
