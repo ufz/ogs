@@ -170,11 +170,11 @@ class PETScVector
 
         /// Get several entries. setLocalAccessibleVector() must be
         /// called beforehand.
-        std::vector<double> get(std::vector<IndexType> const& indices) const;
+        std::vector<PetscScalar> get(std::vector<IndexType> const& indices) const;
 
         /// Get the value of an entry by [] operator.
         /// setLocalAccessibleVector() must be called beforehand.
-        double operator[] (PetscInt idx) const
+        PetscScalar operator[] (PetscInt idx) const
         {
             return get(idx);
         }
@@ -207,7 +207,7 @@ class PETScVector
            Copy local entries including ghost ones to an array
            \param u Preallocated vector for the values of local entries.
         */
-        void copyValues(std::vector<double>& u) const;
+        void copyValues(std::vector<PetscScalar>& u) const;
 
         /*! View the global vector for test purpose. Do not use it for output a big vector.
             \param file_name  File name for output

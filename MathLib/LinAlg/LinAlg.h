@@ -213,7 +213,7 @@ namespace LinAlg
 /**
     Set local accessible vector in order to get entries. Call this
     before call operator[] or get(...) of x.
-    The function only has computation if DDC is appied,
+    The function only has computation if DDC is enabled,
     e.g. parallel computing. Up to now, Eigen vector is not used for
     global vectors in parallel computing. Therefore this function is
     empty in the current status.

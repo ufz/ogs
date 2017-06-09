@@ -54,7 +54,6 @@ GlobalVector const& GlobalVectorFromNamedFunction::call(
         _context.index = node_id;
         auto const value = _function_caller.call(args);
 
-        // Problems with PETSc also uses global index.
         result->set(node_id, value);
     }
 

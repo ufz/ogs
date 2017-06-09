@@ -71,12 +71,7 @@ MeshComponentMap::MeshComponentMap(
             for (std::size_t j = 0; j < mesh_subset.getNumberOfNodes(); j++)
             {
                 GlobalIndexType global_id = 0;
-                if (order == ComponentOrder::BY_LOCATION)
-                {
-                    global_id = static_cast<GlobalIndexType>(
-                        components.size() * mesh.getGlobalNodeID(j) + comp_id);
-                }
-                else
+                if (order != ComponentOrder::BY_LOCATION)
                 {
                     // Deactivated since this case is not suitable to
                     // arrange non ghost entries of a partition within
@@ -85,6 +80,9 @@ MeshComponentMap::MeshComponentMap(
                               " can only be numbered by the oder type"
                               " of ComponentOrder::BY_LOCATION");
                 }
+                global_id = static_cast<GlobalIndexType>(
+                    components.size() * mesh.getGlobalNodeID(j)
+                        + comp_id);
                 const bool is_ghost =
                     mesh.isGhostNode(mesh.getNode(j)->getID());
                 if (is_ghost)

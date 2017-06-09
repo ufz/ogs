@@ -66,8 +66,8 @@ PETScVector::PETScVector(const PetscInt vec_size,
     config();
 
     for (PetscInt i=0; i<nghosts; i++)
-        _global_ids2local_ids_ghost.insert
-        (std::make_pair(ghost_ids[i], _size_loc + i));
+        _global_ids2local_ids_ghost.emplace(ghost_ids[i],
+                                            _size_loc + i);
 }
 
 PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
@@ -146,10 +146,12 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
     PetscMemoryGetCurrentUsage(&mem1);
 #endif
 
+    assert(u.size() == _size);
+
     PetscScalar *xp = nullptr;
     VecGetArray(_v, &xp);
 
-    gatherLocalVectors(xp, &u[0]);
+    gatherLocalVectors(xp, u.data());
 
     //This following line may be needed late on
     //  for a communication load balance:
@@ -166,17 +168,17 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
 
 void PETScVector::setLocalAccessibleVector() const
 {
-    if (_entry_array.size() == 0)
+    if (_entry_array.empty())
     {
         const PetscInt array_size
             = _global_ids2local_ids_ghost.size() > 0 ?
-              _size_loc + _size_ghosts: _size;
+                      _size_loc + _size_ghosts: _size;
         _entry_array.resize(array_size);
     }
 
-    if (_global_ids2local_ids_ghost.size() > 0)
+    if ( !_global_ids2local_ids_ghost.empty() )
     {
-        double* loc_x = getLocalVector();
+        PetscScalar* loc_x = getLocalVector();
         std::copy_n(loc_x, _size_loc + _size_ghosts,
                     _entry_array.begin());
         restoreArray(loc_x);
@@ -185,11 +187,11 @@ void PETScVector::setLocalAccessibleVector() const
         getGlobalVector(_entry_array);
 }
 
-void PETScVector::copyValues(std::vector<double>& u) const
+void PETScVector::copyValues(std::vector<PetscScalar>& u) const
 {
     assert(u.size() == (std::size_t) (getLocalSize() + getGhostSize()));
 
-    double* loc_x = getLocalVector();
+    PetscScalar* loc_x = getLocalVector();
     std::copy_n(loc_x, getLocalSize() + getGhostSize(), u.begin());
     restoreArray(loc_x);
 }
@@ -207,9 +209,9 @@ PetscScalar PETScVector::get(const PetscInt idx) const
 }
 
 
-std::vector<double> PETScVector::get(std::vector<IndexType> const& indices) const
+std::vector<PetscScalar> PETScVector::get(std::vector<IndexType> const& indices) const
 {
-    std::vector<double> local_x(indices.size());
+    std::vector<PetscScalar> local_x(indices.size());
     // If VecGetValues can get values from different processors,
     // use VecGetValues(_v, indices.size(), indices.data(),
     //                    local_x.data());
