@@ -37,8 +37,9 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         unsigned const integration_order,
         HydroMechanicsProcessData<GlobalDim>& process_data)
     : HydroMechanicsLocalAssemblerInterface(
-          e,
-          ShapeFunctionDisplacement::NPOINTS * GlobalDim + ShapeFunctionPressure::NPOINTS,
+          e, is_axially_symmetric,
+          ShapeFunctionDisplacement::NPOINTS * GlobalDim +
+              ShapeFunctionPressure::NPOINTS,
           dofIndex_to_localIndex),
       _process_data(process_data)
 {

@@ -36,8 +36,8 @@ struct IntegrationPointDataMatrix final
     // compilers.
     explicit IntegrationPointDataMatrix(IntegrationPointDataMatrix&& other)
         : N_u(std::move(other.N_u)),
+          dNdx_u(std::move(other.dNdx_u)),
           H_u(std::move(other.H_u)),
-          b_matrices(std::move(other.b_matrices)),
           sigma_eff(std::move(other.sigma_eff)),
           sigma_eff_prev(std::move(other.sigma_eff_prev)),
           eps(std::move(other.eps)),
@@ -53,10 +53,10 @@ struct IntegrationPointDataMatrix final
     }
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
+    typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
     typename ShapeMatrixTypeDisplacement::template MatrixType<
         GlobalDim, NPoints * GlobalDim>
         H_u;
-    typename BMatricesType::BMatrixType b_matrices;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 

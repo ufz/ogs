@@ -42,11 +42,12 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
-template <typename ShapeFunction, typename IntegrationMethod,
+template <typename ShapeFunction,
+          typename IntegrationMethod,
           int DisplacementDim>
-SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction, IntegrationMethod,
-                               DisplacementDim>::
+SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
+                                                 IntegrationMethod,
+                                                 DisplacementDim>::
     SmallDeformationLocalAssemblerMatrixNearFracture(
         MeshLib::Element const& e,
         std::size_t const n_variables,
@@ -60,12 +61,18 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction, IntegrationMetho
           dofIndex_to_localIndex),
       _process_data(process_data),
       _integration_method(integration_order),
-      _shape_matrices(
-          initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                            IntegrationMethod, DisplacementDim>(
-              e, is_axially_symmetric, _integration_method)),
-      _element(e)
+      _element(e),
+      _is_axially_symmetric(is_axially_symmetric)
 {
+    std::vector<
+        ShapeMatrices,
+        Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
+        shape_matrices = initShapeMatrices<ShapeFunction,
+                                           ShapeMatricesType,
+                                           IntegrationMethod,
+                                           DisplacementDim>(
+            e, is_axially_symmetric, _integration_method);
+
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -76,20 +83,11 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction, IntegrationMetho
     {
         _ip_data.emplace_back(*_process_data._material);
         auto& ip_data = _ip_data[ip];
-        auto const& sm = _shape_matrices[ip];
+        auto const& sm = shape_matrices[ip];
+        ip_data.N = sm.N;
+        ip_data.dNdx = sm.dNdx;
         ip_data._detJ = sm.detJ;
         ip_data._integralMeasure = sm.integralMeasure;
-        ip_data._b_matrices.resize(
-            KelvinVectorDimensions<DisplacementDim>::value,
-            ShapeFunction::NPOINTS * DisplacementDim);
-
-        auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(e,
-                                                                     sm.N);
-        LinearBMatrix::computeBMatrix<DisplacementDim,
-                                      ShapeFunction::NPOINTS>(
-            sm.dNdx, ip_data._b_matrices, is_axially_symmetric, sm.N,
-            x_coord);
 
         ip_data._sigma.resize(KelvinVectorDimensions<DisplacementDim>::value);
         ip_data._sigma_prev.resize(
@@ -184,13 +182,15 @@ assembleWithJacobian(
     {
         x_position.setIntegrationPoint(ip);
 
-        auto const& sm = _shape_matrices[ip];
         auto &ip_data = _ip_data[ip];
         auto const& wp = _integration_method.getWeightedPoint(ip);
         auto const ip_factor = ip_data._detJ * wp.getWeight() * ip_data._integralMeasure;
 
+        auto const& N = ip_data.N;
+        auto const& dNdx = ip_data.dNdx;
+
         // levelset functions
-        auto const ip_physical_coords = computePhysicalCoordinates(_element, sm.N);
+        auto const ip_physical_coords = computePhysicalCoordinates(_element, N);
         std::vector<double> levelsets(n_fractures);
         for (unsigned i = 0; i < n_fractures; i++)
             levelsets[i] = calculateLevelSetFunction(*_fracture_props[i],
@@ -201,8 +201,16 @@ assembleWithJacobian(
         for (unsigned i=0; i<n_fractures; i++)
             nodal_total_u += levelsets[i] * vec_nodal_g[i];
 
+        auto const x_coord =
+            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
+                                                                     N);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunction::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx, N, x_coord, _is_axially_symmetric);
+
         // strain, stress
-        auto const& B = ip_data._b_matrices;
         auto const& eps_prev = ip_data._eps_prev;
         auto const& sigma_prev = ip_data._sigma_prev;
 

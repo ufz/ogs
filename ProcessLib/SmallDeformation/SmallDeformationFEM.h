@@ -31,7 +31,8 @@ namespace ProcessLib
 {
 namespace SmallDeformation
 {
-template <typename BMatricesType, int DisplacementDim>
+template <typename BMatricesType, typename ShapeMatricesType,
+          int DisplacementDim>
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
@@ -46,7 +47,6 @@ struct IntegrationPointData final
     // The default generated move-ctor is correctly generated for other
     // compilers.
     explicit IntegrationPointData(IntegrationPointData&& other)
-        : b_matrices(std::move(other.b_matrices)),
           sigma(std::move(other.sigma)),
           sigma_prev(std::move(other.sigma_prev)),
           eps(std::move(other.eps)),
@@ -58,7 +58,6 @@ struct IntegrationPointData final
     }
 #endif  // _MSC_VER
 
-    typename BMatricesType::BMatrixType b_matrices;
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 
@@ -68,6 +67,8 @@ struct IntegrationPointData final
         material_state_variables;
 
     double integration_weight;
+    typename ShapeMatricesType::NodalRowVectorType N;
+    typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx;
 
     void pushBackState()
     {
@@ -153,12 +154,13 @@ public:
     SmallDeformationLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
-        bool is_axially_symmetric,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
         : _process_data(process_data),
           _integration_method(integration_order),
-          _element(e)
+          _element(e),
+          _is_axially_symmetric(is_axially_symmetric)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -179,25 +181,15 @@ public:
             _ip_data[ip].integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 sm.integralMeasure * sm.detJ;
-            ip_data.b_matrices.resize(
-                KelvinVectorDimensions<DisplacementDim>::value,
-                ShapeFunction::NPOINTS * DisplacementDim);
 
-            auto const x_coord =
-                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(e,
-                                                                         sm.N);
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunction::NPOINTS>(
-                sm.dNdx, ip_data.b_matrices, is_axially_symmetric, sm.N,
-                x_coord);
+            ip_data.N = sm.N;
+            ip_data.dNdx = sm.dNdx;
 
-            ip_data.sigma.resize(
-                KelvinVectorDimensions<DisplacementDim>::value);
+            ip_data.sigma.resize(KelvinVectorDimensions<DisplacementDim>::value);
             ip_data.sigma_prev.resize(
                 KelvinVectorDimensions<DisplacementDim>::value);
             ip_data.eps.resize(KelvinVectorDimensions<DisplacementDim>::value);
-            ip_data.eps_prev.resize(
-                KelvinVectorDimensions<DisplacementDim>::value);
+            ip_data.eps_prev.resize(KelvinVectorDimensions<DisplacementDim>::value);
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
         }
@@ -240,8 +232,17 @@ public:
         {
             x_position.setIntegrationPoint(ip);
             auto const& w = _ip_data[ip].integration_weight;
+            auto const& N = _ip_data[ip].N;
+            auto const& dNdx = _ip_data[ip].dNdx;
 
-            auto const& B = _ip_data[ip].b_matrices;
+            auto const x_coord =
+                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                    _element, N);
+            auto const B = LinearBMatrix::computeBMatrix<
+                DisplacementDim, ShapeFunction::NPOINTS,
+                typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
+                                                     _is_axially_symmetric);
+
             auto const& eps_prev = _ip_data[ip].eps_prev;
             auto const& sigma_prev = _ip_data[ip].sigma_prev;
 
@@ -286,9 +287,10 @@ public:
         std::vector<double>& nodal_values) const override
     {
         return ProcessLib::SmallDeformation::getNodalForces<
-            DisplacementDim, ShapeFunction::NPOINTS,
-            NodalDisplacementVectorType>(nodal_values, _integration_method,
-                                         _ip_data, _element.getID());
+            DisplacementDim, ShapeFunction, ShapeMatricesType,
+            NodalDisplacementVectorType, typename BMatricesType::BMatrixType>(
+            nodal_values, _integration_method, _ip_data, _element,
+            _is_axially_symmetric);
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
@@ -413,14 +415,16 @@ private:
 
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
-    std::vector<IntegrationPointData<BMatricesType, DisplacementDim>,
-                Eigen::aligned_allocator<
-                    IntegrationPointData<BMatricesType, DisplacementDim>>>
+    std::vector<
+        IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>,
+        Eigen::aligned_allocator<IntegrationPointData<
+            BMatricesType, ShapeMatricesType, DisplacementDim>>>
         _ip_data;
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+    bool const _is_axially_symmetric;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
