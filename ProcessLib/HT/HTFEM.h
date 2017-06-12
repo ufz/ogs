@@ -225,9 +225,8 @@ public:
                 MaterialLib::Fluid::FluidPropertyType::Density, vars);
 
             // Use the viscosity model to compute the viscosity
-            auto const viscosity =
-                _process_data.fluid_properties->getValue(
-                    MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+            auto const viscosity = _process_data.fluid_properties->getValue(
+                MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
             GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
             GlobalDimVectorType const velocity =
