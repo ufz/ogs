@@ -175,7 +175,7 @@ public:
             auto const specific_storage =
                 _process_data.porous_media_properties.getSpecificStorage(t, pos)
                     .getValue(0.0);
-            auto const& intrinsic_permeability =
+            auto const intrinsic_permeability =
                 _process_data.porous_media_properties.getIntrinsicPermeability(
                     t, pos);
 
