@@ -273,7 +273,7 @@ public:
                 unsigned local_id = 0;
                 for (auto i : varIDs)
                 {
-                    for (unsigned j = 0;
+                    for (int j = 0;
                          j < _dof_table.getNumberOfVariableComponents(i); j++)
                     {
                         auto& mss = _dof_table.getMeshSubsets(i, j);

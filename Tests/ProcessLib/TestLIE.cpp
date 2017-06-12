@@ -27,7 +27,7 @@ std::unique_ptr<MeshLib::Mesh> createTriangle(
     std::array<std::array<double, 3>, 3> const& points)
 {
     auto** nodes = new MeshLib::Node*[3];
-    for (int i = 0; i < points.size(); ++i)
+    for (std::size_t i = 0; i < points.size(); ++i)
         nodes[i] = new MeshLib::Node(points[i]);
     MeshLib::Element* e = new MeshLib::Tri(nodes);
 
@@ -40,7 +40,7 @@ std::unique_ptr<MeshLib::Mesh> createLine(
     std::array<std::array<double, 3>, 2> const& points)
 {
     auto** nodes = new MeshLib::Node*[2];
-    for (int i = 0; i < points.size(); ++i)
+    for (std::size_t i = 0; i < points.size(); ++i)
         nodes[i] = new MeshLib::Node(points[i]);
     MeshLib::Element* e = new MeshLib::Line(nodes);
 
