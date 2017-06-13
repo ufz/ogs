@@ -5,6 +5,7 @@ AddTest(
     EXECUTABLE_ARGS cube_1e3.prj
     WRAPPER time
     TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
     ABSTOL 1e-10 RELTOL 1e-12
     DIFF_DATA
     stress_analytical.vtu cube_1e3_tm_pcs_0_ts_80_t_72000.000000.vtu sigma_xx sigma_xx
@@ -21,6 +22,7 @@ AddTest(
     EXECUTABLE_ARGS iglu_quarter_plane_strain.prj
     WRAPPER time
     TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
     ABSTOL 1e-15 RELTOL 1e-15
     DIFF_DATA
     expected_tm_q_pcs_0_ts_20_t_20000.000000.vtu tm_q_pcs_0_ts_20_t_20000.000000.vtu displacement displacement
@@ -37,6 +39,7 @@ AddTest(
     EXECUTABLE_ARGS iglu_axisymmetric_plane_strain.prj
     WRAPPER time
     TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
     ABSTOL 1e-15 RELTOL 1e-15
     DIFF_DATA
     expected_tm_a_pcs_0_ts_20_t_20000.000000.vtu tm_a_pcs_0_ts_20_t_20000.000000.vtu displacement displacement
@@ -53,6 +56,7 @@ AddTest(
     EXECUTABLE_ARGS iglu_quarter_plane_strain_quad.prj
     WRAPPER time
     TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
     ABSTOL 1e-15 RELTOL 1e-15
     DIFF_DATA
     expected_tm_q_quad_pcs_0_ts_20_t_20000.000000.vtu tm_q_quad_pcs_0_ts_20_t_20000.000000.vtu displacement displacement
@@ -69,6 +73,7 @@ AddTest(
     EXECUTABLE_ARGS iglu_axisymmetric_plane_strain_quad.prj
     WRAPPER time
     TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
     ABSTOL 1e-15 RELTOL 1e-15
     DIFF_DATA
     expected_tm_a_quad_pcs_0_ts_20_t_20000.000000.vtu tm_a_quad_pcs_0_ts_20_t_20000.000000.vtu displacement displacement
