@@ -143,7 +143,7 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
     PetscMemoryGetCurrentUsage(&mem1);
 #endif
 
-    assert(u.size() == _size);
+    assert(static_cast<PetscInt>(u.size()) == _size);
 
     PetscScalar* xp = nullptr;
     VecGetArray(_v, &xp);

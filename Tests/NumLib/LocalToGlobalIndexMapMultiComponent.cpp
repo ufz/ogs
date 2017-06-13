@@ -83,7 +83,7 @@ public:
                         const int selected_component,
                         const NL::ComponentOrder order)
     {
-        assert(selected_component < num_components);
+        assert(selected_component < static_cast<int>(num_components));
 
         std::vector<MeshLib::MeshSubsets> components;
         for (unsigned i=0; i<num_components; ++i)
