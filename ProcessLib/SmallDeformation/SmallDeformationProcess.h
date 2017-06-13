@@ -201,12 +201,21 @@ private:
             _local_assemblers, *_local_to_global_index_map, x, t, dt);
     }
 
-    void postTimestepConcreteProcess(GlobalVector const&) override
+    void postTimestepConcreteProcess(GlobalVector const& x) override
     {
         DBUG("PostTimestep SmallDeformationProcess.");
 
+        if (!_global_nodal_force_vector)
+        {
+            _global_nodal_force_vector
+                = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+        }
+
         ProcessLib::SmallDeformation::writeNodalForces(
-            *_nodal_forces, _local_assemblers, *_local_to_global_index_map);
+            *_global_nodal_force_vector, _local_assemblers,
+            *_local_to_global_index_map);
+
+        _global_nodal_force_vector->copyValues(*_nodal_forces);
     }
 
 private:
@@ -217,6 +226,7 @@ private:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
+    std::unique_ptr<GlobalVector> _global_nodal_force_vector;
 };
 
 }  // namespace SmallDeformation

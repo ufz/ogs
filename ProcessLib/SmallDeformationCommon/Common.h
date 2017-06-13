@@ -15,6 +15,8 @@
 #include <vector>
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
@@ -73,31 +75,30 @@ std::vector<double> const& getNodalForces(
 
 template <typename LocalAssemblerInterface>
 void writeNodalForces(
-    MeshLib::PropertyVector<double>& nodal_forces,
+    GlobalVector& nodal_force_vector,
     std::vector<std::unique_ptr<LocalAssemblerInterface>> const&
         local_assemblers,
     NumLib::LocalToGlobalIndexMap const& local_to_global_index_map)
 {
     DBUG("Compute nodal forces for small deformation process.");
 
-    // Zero-out the output vector before averaging.
-    std::fill(std::begin(nodal_forces), std::end(nodal_forces), 0);
+    MathLib::LinAlg::set(nodal_force_vector, 0.0);
 
     GlobalExecutor::executeDereferenced(
         [](const std::size_t mesh_item_id,
            LocalAssemblerInterface& local_assembler,
            const NumLib::LocalToGlobalIndexMap& dof_table,
-           std::vector<double>& node_values) {
+            GlobalVector& nodal_force_vec) {
             auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
             std::vector<double> local_data;
 
             local_assembler.getNodalForces(local_data);
 
             assert(local_data.size() == indices.size());
-            for (std::size_t i = 0; i < indices.size(); ++i)
-                node_values[indices[i]] += local_data[i];
+            nodal_force_vec.add(indices, local_data);
         },
-        local_assemblers, local_to_global_index_map, nodal_forces);
+        local_assemblers, local_to_global_index_map, nodal_force_vector);
+    MathLib::LinAlg::finalizeAssembly(nodal_force_vector);
 }
 
 }  // namespace SmallDeformation
