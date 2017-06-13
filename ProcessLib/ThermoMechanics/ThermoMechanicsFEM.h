@@ -83,12 +83,10 @@ struct IntegrationPointData final
         KelvinVectorDimensions<DisplacementDim>::value;
     using Invariants = MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
 
-    template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         double const t,
         SpatialPosition const& x_position,
         double const dt,
-        DisplacementVectorType const& u,
         double const linear_thermal_strain)
     {
         // assume isotropic thermal expansion
@@ -315,7 +313,7 @@ public:
             //
             eps.noalias() = B * u;
             auto C = _ip_data[ip].updateConstitutiveRelation(
-                t, x_position, dt, u, linear_thermal_strain);
+                t, x_position, dt, linear_thermal_strain);
 
             local_Jac
                 .template block<displacement_size, displacement_size>(
