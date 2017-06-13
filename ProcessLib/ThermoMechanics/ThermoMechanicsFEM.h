@@ -48,8 +48,7 @@ struct IntegrationPointData final
     // The default generated move-ctor is correctly generated for other
     // compilers.
     explicit IntegrationPointData(IntegrationPointData&& other)
-        : b_matrices(std::move(other.b_matrices)),
-          sigma(std::move(other.sigma)),
+        : sigma(std::move(other.sigma)),
           sigma_prev(std::move(other.sigma_prev)),
           eps(std::move(other.eps)),
           eps_m(std::move(other.eps_m)),
@@ -63,7 +62,6 @@ struct IntegrationPointData final
 
     typename ShapeMatrixType::NodalRowVectorType N;
     typename ShapeMatrixType::GlobalDimNodalMatrixType dNdx;
-    typename BMatricesType::BMatrixType b_matrices;
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
     typename BMatricesType::KelvinVectorType eps;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
@@ -93,7 +91,6 @@ struct IntegrationPointData final
                                     DisplacementVectorType const& u,
                                     double const linear_thermal_strain)
     {
-        eps.noalias() = b_matrices * u;
         // assume isotropic thermal expansion
         eps_m.noalias() = eps - linear_thermal_strain * Invariants::identity2;
         auto&& solution = solid_material.integrateStress(
@@ -192,7 +189,8 @@ public:
         ThermoMechanicsProcessData<DisplacementDim>& process_data)
         : _process_data(process_data),
           _integration_method(integration_order),
-          _element(e)
+          _element(e),
+          _is_axially_symmetric(is_axially_symmetric)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -213,16 +211,7 @@ public:
             ip_data.integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
-            ip_data.b_matrices.resize(kelvin_vector_size,
-                                      ShapeFunction::NPOINTS * DisplacementDim);
 
-            auto const x_coord =
-                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                    e, shape_matrices[ip].N);
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunction::NPOINTS>(
-                shape_matrices[ip].dNdx, ip_data.b_matrices,
-                is_axially_symmetric, shape_matrices[ip].N, x_coord);
 
             ip_data.sigma.resize(kelvin_vector_size);
             ip_data.sigma_prev.resize(kelvin_vector_size);
@@ -302,8 +291,15 @@ public:
             auto const& dNdx = _ip_data[ip].dNdx;
             auto const& N = _ip_data[ip].N;
 
-            auto const& B = _ip_data[ip].b_matrices;
+            auto const x_coord =
+                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                    _element, N);
+            auto const& B = LinearBMatrix::computeBMatrix<DisplacementDim,
+                    ShapeFunction::NPOINTS,
+                    typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
+                                                         _is_axially_symmetric);
             auto const& sigma = _ip_data[ip].sigma;
+            auto& eps = _ip_data[ip].eps;
 
             double const delta_T = N.dot(T) - _process_data.reference_temperature;
             // calculate thermally induced strain
@@ -316,6 +312,7 @@ public:
             //
             // displacement equation, displacement part
             //
+            eps.noalias() = B * u;
             auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                     linear_thermal_strain);
 
@@ -515,6 +512,7 @@ private:
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
+    bool const _is_axially_symmetric;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 
     static const int temperature_index = 0;
