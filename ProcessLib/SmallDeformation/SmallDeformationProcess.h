@@ -13,7 +13,6 @@
 
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
-#include "ProcessLib/SmallDeformationCommon/Common.h"
 
 #include "SmallDeformationFEM.h"
 #include "SmallDeformationProcessData.h"
@@ -186,6 +185,10 @@ private:
             _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
             _local_assemblers, *_local_to_global_index_map, t, x, xdot,
             dxdot_dx, dx_dx, M, K, b, Jac, coupling_term);
+
+        b.copyValues(*_nodal_forces);
+        std::transform(_nodal_forces->begin(), _nodal_forces->end(),
+            _nodal_forces->begin(), [](double val) { return -val;});
     }
 
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,
@@ -201,23 +204,6 @@ private:
             _local_assemblers, *_local_to_global_index_map, x, t, dt);
     }
 
-    void postTimestepConcreteProcess(GlobalVector const& x) override
-    {
-        DBUG("PostTimestep SmallDeformationProcess.");
-
-        if (!_global_nodal_force_vector)
-        {
-            _global_nodal_force_vector
-                = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
-        }
-
-        ProcessLib::SmallDeformation::writeNodalForces(
-            *_global_nodal_force_vector, _local_assemblers,
-            *_local_to_global_index_map);
-
-        _global_nodal_force_vector->copyValues(*_nodal_forces);
-    }
-
 private:
     SmallDeformationProcessData<DisplacementDim> _process_data;
 
@@ -226,7 +212,6 @@ private:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
-    std::unique_ptr<GlobalVector> _global_nodal_force_vector;
 };
 
 }  // namespace SmallDeformation
