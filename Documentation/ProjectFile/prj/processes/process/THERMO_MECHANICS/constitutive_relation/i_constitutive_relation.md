@@ -1,0 +1,1 @@
+The constitutive relation for the mechanical part. It works for all material models.
