@@ -21,6 +21,43 @@ namespace ComponentTransport
 /**
  * # ComponentTransport process
  *
+ * ## Governing equations
+ *
+ * The flow process is described by
+ * \f[
+ * S \frac{\partial p}{\partial t}
+ *     - \nabla \cdot \left[\frac{\kappa}{\mu(C)} \nabla \left( p + \rho g z \right)\right]
+ *     - Q_p = 0,
+ * \f]
+ * where \f$S\f$ is the storage, \f$p\f$ is the pressure,
+ * \f$\kappa\f$ is permeability,
+ * \f$\mu\f$ is viscosity of the fluid,
+ * \f$\rho\f$ is the density of the fluid, and
+ * \f$g\f$ is the gravitational acceleration.
+ *
+ * The mass transport process is described by
+ * \f[
+ * \phi R \frac{\partial C}{\partial t}
+    + \nabla \cdot \left(\vec{q} C - D \nabla C \right)
+        + \phi R \vartheta C - Q_C = 0
+ * \f]
+ * where \f$\phi\f$ is the porosity,
+ * \f$R\f$ is the retardation factor,
+ * \f$C\f$ is the concentration,
+ * \f$\vec{q} = \frac{\kappa}{\mu(C)} \nabla \left( p + \rho g z \right)\f$
+ *      is the Darcy velocity,
+ * \f$D\f$ is the hydrodynamic dispersion tensor,
+ * \f$\vartheta\f$ is the decay rate.
+ *
+ * For the hydrodynamic dispersion tensor the relation
+ * \f[
+ * D = (\phi D_d + \beta_T \|\vec{q}\|) I + (\beta_L - \beta_T) \frac{\vec{q}
+ * \vec{q}^T}{\|\vec{q}\|}
+ * \f]
+ * is implemented, where \f$D_d\f$ is the molecular diffusion coefficient,
+ * \f$\beta_L\f$ the longitudinal dispersivity of chemical species, and
+ * \f$\beta_T\f$ the transverse dispersivity of chemical species.
+ *
  * The implementation uses a monolithic approach, i.e., both processes
  * are assembled within one global system of equations.
  *
@@ -28,7 +65,7 @@ namespace ComponentTransport
  *
  * The advective term of the concentration equation is given by the confined
  * groundwater flow process, i.e., the concentration distribution depends on
- * darcy velocity of the groundwater flow process. On the other hand the
+ * Darcy velocity of the groundwater flow process. On the other hand the
  * concentration dependencies of the viscosity and density in the groundwater
  * flow couples the H process to the C process.
  *

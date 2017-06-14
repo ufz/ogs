@@ -1,1 +1,1 @@
-Implementation of the component transport.
+\copydoc ProcessLib::ComponentTransport::ComponentTransportProcess
