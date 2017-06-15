@@ -14,7 +14,7 @@
 #include <vector>
 #include <memory>
 
-#include "ITimeStepAlgorithm.h"
+#include "TimeStepAlgorithm.h"
 
 namespace BaseLib
 {
@@ -48,7 +48,7 @@ namespace NumLib
  *
  *   Similar algorithm can be found in \cite ahmed2015adaptive .
  */
-class EvolutionaryPIDcontroller final : public ITimeStepAlgorithm
+class EvolutionaryPIDcontroller final : public TimeStepAlgorithm
 {
 public:
     EvolutionaryPIDcontroller(const double t0, const double t_end,
@@ -58,7 +58,7 @@ public:
                               const std::vector<double>&& specific_times,
                               const double tol,
                               const MathLib::VecNormType norm_type)
-        : ITimeStepAlgorithm(t0, t_end, norm_type),
+        : TimeStepAlgorithm(t0, t_end, norm_type),
           _h0(h0),
           _h_min(h_min),
           _h_max(h_max),
@@ -118,7 +118,7 @@ private:
 
 /// Create an EvolutionaryPIDcontroller time stepper from the given
 /// configuration
-std::unique_ptr<ITimeStepAlgorithm> createEvolutionaryPIDcontroller(
+std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     BaseLib::ConfigTree const& config);
 
 }  // end of namespace NumLib

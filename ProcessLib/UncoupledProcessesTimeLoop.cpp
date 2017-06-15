@@ -103,7 +103,7 @@ struct SingleProcessData
 {
     template <NumLib::NonlinearSolverTag NLTag>
     SingleProcessData(
-        std::unique_ptr<NumLib::ITimeStepAlgorithm>&& timestepper_,
+        std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper_,
         NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
         std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
         std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
@@ -114,7 +114,7 @@ struct SingleProcessData
 
     SingleProcessData(SingleProcessData&& spd);
 
-    std::unique_ptr<NumLib::ITimeStepAlgorithm> timestepper;
+    std::unique_ptr<NumLib::TimeStepAlgorithm> timestepper;
 
     //! Flag of skiping time stepping. It is used in the modelling of
     //! coupled processes. If the stepping of any process reaches a steady state
@@ -141,7 +141,7 @@ struct SingleProcessData
 
 template <NumLib::NonlinearSolverTag NLTag>
 SingleProcessData::SingleProcessData(
-    std::unique_ptr<NumLib::ITimeStepAlgorithm>&& timestepper_,
+    std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper_,
     NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
     std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
     std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
@@ -228,7 +228,7 @@ void setTimeDiscretizedODESystem(SingleProcessData& spd)
 }
 
 std::unique_ptr<SingleProcessData> makeSingleProcessData(
-    std::unique_ptr<NumLib::ITimeStepAlgorithm>&& timestepper,
+    std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper,
     NumLib::NonlinearSolverBase& nonlinear_solver,
     Process& process,
     std::unique_ptr<NumLib::TimeDiscretization>&& time_disc,
@@ -288,10 +288,9 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
             //! \ogs_file_param{prj__time_loop__processes__process__time_discretization}
             pcs_config.getConfigSubtree("time_discretization"));
 
-        auto timestepper =
-            NumLib::createTimeStepper(
-                //! \ogs_file_param{prj__time_loop__processes__process__time_stepping}
-                pcs_config.getConfigSubtree("time_stepping"));
+        auto timestepper = NumLib::createTimeStepper(
+            //! \ogs_file_param{prj__time_loop__processes__process__time_stepping}
+            pcs_config.getConfigSubtree("time_stepping"));
 
         auto conv_crit = NumLib::createConvergenceCriterion(
             //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion}
@@ -385,9 +384,8 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
             ->timestepper->end();
 
     return std::make_unique<UncoupledProcessesTimeLoop>(
-            std::move(output), std::move(per_process_data),
-            max_coupling_iterations, std::move(coupling_conv_crit), start_time,
-            end_time);
+        std::move(output), std::move(per_process_data), max_coupling_iterations,
+        std::move(coupling_conv_crit), start_time, end_time);
 }
 
 std::vector<GlobalVector*> setInitialConditions(

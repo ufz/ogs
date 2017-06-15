@@ -18,7 +18,7 @@
 #include <logog/include/logog.hpp>
 
 #include "NumLib/ODESolver/NonlinearSolver.h"
-#include "NumLib/TimeStepping/Algorithms/ITimeStepAlgorithm.h"
+#include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
 
 #include "Output.h"
 #include "Process.h"

@@ -152,7 +152,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
                 coupling_term.dt, coupling_term.coupled_processes,
                 std::move(local_coupled_xs0), std::move(local_coupled_xs));
 
-            _jacobian_assembler->assembleWithJacobianAndCouping(
+            _jacobian_assembler->assembleWithJacobianAndCoupling(
                 local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
                 _local_M_data, _local_K_data, _local_b_data, _local_Jac_data,
                 local_coupling_term);

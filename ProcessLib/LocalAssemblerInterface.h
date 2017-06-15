@@ -56,7 +56,7 @@ public:
                                       std::vector<double>& local_b_data,
                                       std::vector<double>& local_Jac_data);
 
-    virtual void assembleWithJacobianAndCouping(double const t,
+    virtual void assembleWithJacobianAndCoupling(double const t,
                                       std::vector<double> const& local_x,
                                       std::vector<double> const& local_xdot,
                                       const double dxdot_dx, const double dx_dx,

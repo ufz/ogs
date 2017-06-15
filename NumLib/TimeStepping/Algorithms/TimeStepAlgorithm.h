@@ -24,11 +24,11 @@ namespace NumLib
  * \brief Interface of time stepping algorithms
  *
  */
-class ITimeStepAlgorithm
+class TimeStepAlgorithm
 {
 public:
-    ITimeStepAlgorithm(const double t0, const double t_end,
-                       const MathLib::VecNormType norm_type)
+    TimeStepAlgorithm(const double t0, const double t_end,
+                      const MathLib::VecNormType norm_type)
         : _t_initial(t0),
           _t_end(t_end),
           _ts_prev(t0),
@@ -37,8 +37,8 @@ public:
     {
     }
 
-    ITimeStepAlgorithm(const double t0, const double t_end, const double dt,
-                       const MathLib::VecNormType norm_type)
+    TimeStepAlgorithm(const double t0, const double t_end, const double dt,
+                      const MathLib::VecNormType norm_type)
         : _t_initial(t0),
           _t_end(t_end),
           _ts_prev(t0),
@@ -49,9 +49,9 @@ public:
     {
     }
 
-    ITimeStepAlgorithm(const double t0, const double t_end,
-                       const std::vector<double>& all_step_sizes,
-                       const MathLib::VecNormType norm_type)
+    TimeStepAlgorithm(const double t0, const double t_end,
+                      const std::vector<double>& all_step_sizes,
+                      const MathLib::VecNormType norm_type)
         : _t_initial(t0),
           _t_end(t_end),
           _ts_prev(t0),
@@ -61,7 +61,7 @@ public:
     {
     }
 
-    virtual ~ITimeStepAlgorithm() = default;
+    virtual ~TimeStepAlgorithm() = default;
 
     /// return the beginning of time steps
     double begin() const { return _t_initial; }

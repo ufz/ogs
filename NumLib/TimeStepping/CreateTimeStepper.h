@@ -20,7 +20,7 @@ class ConfigTree;
 
 namespace NumLib
 {
-class ITimeStepAlgorithm;
-std::unique_ptr<ITimeStepAlgorithm> createTimeStepper(
+class TimeStepAlgorithm;
+std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     BaseLib::ConfigTree const& config);
 };

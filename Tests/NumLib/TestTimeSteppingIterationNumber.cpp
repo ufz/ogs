@@ -42,7 +42,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_TRUE(alg.next(solution_error)); // t=4, dt=2
 
     // dt*=2
-    alg.setNIterations(3);
+    alg.setIterationNumber(3);
     ASSERT_TRUE(alg.next(solution_error)); // t=8, dt=4
     ts = alg.getTimeStep();
     ASSERT_EQ(3u, ts.steps());
@@ -52,7 +52,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_TRUE(alg.accepted());
 
     // dt*=1
-    alg.setNIterations(5);
+    alg.setIterationNumber(5);
     ASSERT_TRUE(alg.next(solution_error)); // t=12, dt=4
     ts = alg.getTimeStep();
     ASSERT_EQ(4u, ts.steps());
@@ -62,7 +62,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_TRUE(alg.accepted());
 
     // dt*=0.5
-    alg.setNIterations(7);
+    alg.setIterationNumber(7);
     ASSERT_TRUE(alg.next(solution_error)); // t=14, dt=2
     ts = alg.getTimeStep();
     ASSERT_EQ(5u, ts.steps());
@@ -72,7 +72,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_TRUE(alg.accepted());
 
     // dt*=0.25 but dt_min = 1
-    alg.setNIterations(8); // exceed max
+    alg.setIterationNumber(8); // exceed max
     ASSERT_TRUE(alg.next(solution_error)); // t=13, dt=1
     ts = alg.getTimeStep();
     ASSERT_EQ(5u, ts.steps());
@@ -82,7 +82,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_FALSE(alg.accepted());
 
     // restart, dt*=1
-    alg.setNIterations(4);
+    alg.setIterationNumber(4);
     ASSERT_TRUE(alg.next(solution_error)); // t=14, dt=1
     ts = alg.getTimeStep();
     ASSERT_EQ(6u, ts.steps());
@@ -116,7 +116,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
         {
             std::size_t n = (i<_nr_iterations.size()) ? _nr_iterations[i++] : 0;
             //INFO("-> NR-iterations=%d", n);
-            obj.setNIterations(n);
+            obj.setIterationNumber(n);
         }
     };
 

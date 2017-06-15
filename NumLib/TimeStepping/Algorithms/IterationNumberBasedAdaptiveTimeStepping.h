@@ -13,7 +13,7 @@
 
 #include <vector>
 
-#include "ITimeStepAlgorithm.h"
+#include "TimeStepAlgorithm.h"
 
 namespace NumLib
 {
@@ -62,7 +62,7 @@ namespace NumLib
  * Friedrich-Alexander-Universität Erlangen-Nürnberg.
  *
  */
-class IterationNumberBasedAdaptiveTimeStepping final : public ITimeStepAlgorithm
+class IterationNumberBasedAdaptiveTimeStepping final : public TimeStepAlgorithm
 {
 public:
     /**
@@ -101,7 +101,7 @@ public:
     bool accepted() const override;
 
     /// set the number of iterations
-    void setNIterations(std::size_t n_itr) { this->_iter_times = n_itr; }
+    void setIterationNumber(std::size_t n_itr) { this->_iter_times = n_itr; }
     /// return the number of repeated steps
     std::size_t getNumberOfRepeatedSteps() const
     {

@@ -26,19 +26,19 @@ namespace NumLib
 FixedTimeStepping::FixedTimeStepping(double t0,
                                      double tn,
                                      const std::vector<double>& vec_all_dt)
-    : ITimeStepAlgorithm(t0,
-                         computeEnd(t0, tn, vec_all_dt),
-                         vec_all_dt,
-                         MathLib::VecNormType::INVALID)
+    : TimeStepAlgorithm(t0,
+                        computeEnd(t0, tn, vec_all_dt),
+                        vec_all_dt,
+                        MathLib::VecNormType::INVALID)
 {
 }
 
 FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
-    : ITimeStepAlgorithm(t0, tn, dt, MathLib::VecNormType::INVALID)
+    : TimeStepAlgorithm(t0, tn, dt, MathLib::VecNormType::INVALID)
 {
 }
 
-std::unique_ptr<ITimeStepAlgorithm> FixedTimeStepping::newInstance(
+std::unique_ptr<TimeStepAlgorithm> FixedTimeStepping::newInstance(
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__time_loop__time_stepping__type}

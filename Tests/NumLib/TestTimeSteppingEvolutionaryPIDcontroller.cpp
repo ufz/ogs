@@ -23,7 +23,7 @@
 
 #include "Tests/TestTools.h"
 
-std::unique_ptr<NumLib::ITimeStepAlgorithm> createTestTimeStepper(
+std::unique_ptr<NumLib::TimeStepAlgorithm> createTestTimeStepper(
     const char xml[])
 {
     auto const ptree = readXml(xml);

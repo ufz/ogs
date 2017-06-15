@@ -38,7 +38,7 @@ void LocalAssemblerInterface::assembleWithJacobian(
         "assembler.");
 }
 
-void LocalAssemblerInterface::assembleWithJacobianAndCouping(
+void LocalAssemblerInterface::assembleWithJacobianAndCoupling(
     double const /*t*/, std::vector<double> const& /*local_x*/,
     std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
     const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
@@ -48,7 +48,7 @@ void LocalAssemblerInterface::assembleWithJacobianAndCouping(
     LocalCouplingTerm const& /*coupling_term*/)
 {
     OGS_FATAL(
-        "The assembleWithJacobianAndCouping() function is not implemented in"
+        "The assembleWithJacobianAndCoupling() function is not implemented in"
         " the local assembler.");
 }
 

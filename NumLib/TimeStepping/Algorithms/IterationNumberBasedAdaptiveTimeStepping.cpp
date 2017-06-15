@@ -24,7 +24,7 @@ IterationNumberBasedAdaptiveTimeStepping::
         double t0, double tn, double min_ts, double max_ts, double initial_ts,
         std::vector<std::size_t>& iter_times_vector,
         std::vector<double>& multiplier_vector)
-    : ITimeStepAlgorithm(t0, tn, MathLib::VecNormType::INVALID),
+    : TimeStepAlgorithm(t0, tn, MathLib::VecNormType::INVALID),
       _iter_times_vector(iter_times_vector),
       _multiplier_vector(multiplier_vector),
       _min_ts(min_ts),

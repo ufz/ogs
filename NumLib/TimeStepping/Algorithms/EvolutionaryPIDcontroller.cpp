@@ -18,7 +18,7 @@
 #include "EvolutionaryPIDcontroller.h"
 
 #include "BaseLib/ConfigTree.h"
-#include "ITimeStepAlgorithm.h"
+#include "TimeStepAlgorithm.h"
 
 namespace NumLib
 {
@@ -75,7 +75,6 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
             {
                 h_new = std::pow(_tol / e_n, _kI) * h_n;
             }
-
         }
 
         h_new = limitStepSize(h_new, h_n);
@@ -111,7 +110,7 @@ double EvolutionaryPIDcontroller::checkSpecificTimeReached(const double h_new)
 
 /// Create an EvolutionaryPIDcontroller time stepper from the given
 /// configuration
-std::unique_ptr<ITimeStepAlgorithm> createEvolutionaryPIDcontroller(
+std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__time_loop__time_stepping__type}
@@ -160,7 +159,7 @@ std::unique_ptr<ITimeStepAlgorithm> createEvolutionaryPIDcontroller(
         (norm_type_opt) ? MathLib::convertStringToVecNormType(*norm_type_opt)
                         : MathLib::VecNormType::NORM2;
 
-    return std::unique_ptr<ITimeStepAlgorithm>(
+    return std::unique_ptr<TimeStepAlgorithm>(
         new EvolutionaryPIDcontroller(t0,
                                       t_end,
                                       h0,

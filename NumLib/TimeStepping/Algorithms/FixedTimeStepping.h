@@ -14,7 +14,7 @@
 #include <memory>
 #include <vector>
 
-#include "ITimeStepAlgorithm.h"
+#include "TimeStepAlgorithm.h"
 
 namespace BaseLib
 {
@@ -28,7 +28,7 @@ namespace NumLib
  *
  * This algorithm returns time step size defined by a user priori.
  */
-class FixedTimeStepping final : public ITimeStepAlgorithm
+class FixedTimeStepping final : public TimeStepAlgorithm
 {
 public:
     /**
@@ -63,7 +63,7 @@ public:
                       const std::vector<double>& vec_all_dt);
 
     /// Create timestepper from the given configuration
-    static std::unique_ptr<ITimeStepAlgorithm> newInstance(
+    static std::unique_ptr<TimeStepAlgorithm> newInstance(
         BaseLib::ConfigTree const& config);
 
     /// move to the next time step
