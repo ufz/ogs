@@ -93,7 +93,7 @@ add_custom_target(tests-cleanup ${CMAKE_COMMAND} -E remove testrunner.xml)
 set_target_properties(tests-cleanup PROPERTIES FOLDER Testing)
 
 if(OGS_USE_PETSC)
-    set(TEST_FILTER_MPI --gtest_filter=-MPITest_Math.*)
+    set(TEST_FILTER_MPI --gtest_filter=-MPITest*)
     add_custom_target(tests
         mpirun -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} ${TEST_FILTER_MPI}
         DEPENDS testrunner tests-cleanup
