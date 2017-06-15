@@ -80,7 +80,7 @@ void VectorMatrixAssembler::assemble(
         auto local_coupled_xs = getCurrentLocalSolutionsOfCoupledProcesses(
             coupling_term.coupled_xs, indices);
 
-        if (local_coupled_xs0.size() == 0 || local_coupled_xs.size() == 0)
+        if (local_coupled_xs0.empty() || local_coupled_xs.empty())
         {
             local_assembler.assemble(t, local_x, _local_M_data, _local_K_data,
                                      _local_b_data);
@@ -146,7 +146,13 @@ void VectorMatrixAssembler::assembleWithJacobian(
             getPreviousLocalSolutionsOfCoupledProcesses(coupling_term, indices);
         auto local_coupled_xs = getCurrentLocalSolutionsOfCoupledProcesses(
             coupling_term.coupled_xs, indices);
-        if (local_coupled_xs0.size() == 0 || local_coupled_xs.size() == 0)
+        if (local_coupled_xs0.empty() || local_coupled_xs.empty())
+        {
+            _jacobian_assembler->assembleWithJacobian(
+                local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
+                _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
+        }
+        else
         {
             ProcessLib::LocalCouplingTerm local_coupling_term(
                 coupling_term.dt, coupling_term.coupled_processes,
@@ -156,12 +162,6 @@ void VectorMatrixAssembler::assembleWithJacobian(
                 local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
                 _local_M_data, _local_K_data, _local_b_data, _local_Jac_data,
                 local_coupling_term);
-        }
-        else
-        {
-            _jacobian_assembler->assembleWithJacobian(
-                local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
-                _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
         }
     }
 

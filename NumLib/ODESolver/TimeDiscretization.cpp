@@ -15,51 +15,61 @@
 
 namespace NumLib
 {
-double TimeDiscretization::computeRelativeError(GlobalVector const& x,
-                                                GlobalVector const& x_old,
-                                                MathLib::VecNormType norm_type)
+double TimeDiscretization::computeRelativeChangeFromPreviousTimestep(
+    GlobalVector const& x,
+    GlobalVector const& x_old,
+    MathLib::VecNormType norm_type)
 {
     if (norm_type == MathLib::VecNormType::INVALID)
-        return 0.;
-
-    const double norm2_x = MathLib::LinAlg::norm(x, norm_type);
-    assert(norm2_x > std::numeric_limits<double>::epsilon());
+    {
+        OGS_FATAL("An invalid norm type has been passed");
+    }
 
     if (!_dx)
         _dx = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
-   
+
     auto& dx = *_dx;
-    MathLib::LinAlg::copy(x_old, dx); // copy x_old to dx.
+    MathLib::LinAlg::copy(x, dx);  // copy x to dx.
 
     // dx = x - x_old --> x - dx --> dx
-    MathLib::LinAlg::axpy(dx, -1.0, x);
-    return MathLib::LinAlg::norm(dx, norm_type) / norm2_x;
+    MathLib::LinAlg::axpy(dx, -1.0, x_old);
+    const double norm_dx = MathLib::LinAlg::norm(dx, norm_type);
+
+    const double norm_x = MathLib::LinAlg::norm(x, norm_type);
+    if (norm_x > std::numeric_limits<double>::epsilon())
+        return norm_dx / norm_x;
+
+    // Both of norm_x and norm_dx are close to zero
+    if (norm_dx < std::numeric_limits<double>::epsilon())
+        return 1.0;
+
+    // Only norm_x is close to zero
+    return norm_dx / std::numeric_limits<double>::epsilon();
 }
 
-double BackwardEuler::getRelativeError(GlobalVector const& x,
-                                       MathLib::VecNormType norm_type)
-{
-    return computeRelativeError(x, _x_old, norm_type);
-}
-
-double ForwardEuler::getRelativeError(GlobalVector const& x,
-                                      MathLib::VecNormType norm_type)
-{
-    return computeRelativeError(x, _x_old, norm_type);
-}
-
-double CrankNicolson::getRelativeError(GlobalVector const& x,
-                                       MathLib::VecNormType norm_type)
-{
-    return computeRelativeError(x, _x_old, norm_type);
-}
-
-double BackwardDifferentiationFormula::getRelativeError(
+double BackwardEuler::getRelativeChangeFromPreviousTimestep(
     GlobalVector const& x, MathLib::VecNormType norm_type)
 {
-    return (_xs_old.size() < _num_steps)
-               ? 0.
-               : computeRelativeError(x, *_xs_old[_offset], norm_type);
+    return computeRelativeChangeFromPreviousTimestep(x, _x_old, norm_type);
+}
+
+double ForwardEuler::getRelativeChangeFromPreviousTimestep(
+    GlobalVector const& x, MathLib::VecNormType norm_type)
+{
+    return computeRelativeChangeFromPreviousTimestep(x, _x_old, norm_type);
+}
+
+double CrankNicolson::getRelativeChangeFromPreviousTimestep(
+    GlobalVector const& x, MathLib::VecNormType norm_type)
+{
+    return computeRelativeChangeFromPreviousTimestep(x, _x_old, norm_type);
+}
+
+double BackwardDifferentiationFormula::getRelativeChangeFromPreviousTimestep(
+    GlobalVector const& x, MathLib::VecNormType norm_type)
+{
+    return computeRelativeChangeFromPreviousTimestep(
+        x, *_xs_old[_offset], norm_type);
 }
 
 void BackwardDifferentiationFormula::pushState(const double,

@@ -46,15 +46,14 @@ void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
     if (_is_first_iteration)
     {
         INFO("Convergence criterion: |r0|=%.4e", norm_res);
-        _residual_norm_0 =
-            (norm_res < std::numeric_limits<double>::min()) ? 1.0 : norm_res;
+        _residual_norm_0 = norm_res;
     }
     else
     {
-        _residual_norm_0 = (_residual_norm_0 == 1 &&
-                            norm_res > std::numeric_limits<double>::min())
-                               ? norm_res
-                               : _residual_norm_0;
+        _residual_norm_0 =
+            (_residual_norm_0 < std::numeric_limits<double>::epsilon())
+                ? norm_res
+                : _residual_norm_0;
         INFO("Convergence criterion: |r|=%.4e |r0|=%.4e |r|/|r0|=%.4e",
              norm_res, _residual_norm_0, norm_res / _residual_norm_0);
     }
@@ -72,7 +71,7 @@ void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
             checkRelativeTolerance(*_reltol, norm_res, _residual_norm_0);
     }
 
-    _satisfied = (satisfied_abs || satisfied_rel);
+    _satisfied = _satisfied && (satisfied_abs || satisfied_rel);
 }
 
 std::unique_ptr<ConvergenceCriterionResidual>

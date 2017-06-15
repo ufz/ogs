@@ -27,37 +27,27 @@ namespace NumLib
 class TimeStepAlgorithm
 {
 public:
-    TimeStepAlgorithm(const double t0, const double t_end,
-                      const MathLib::VecNormType norm_type)
-        : _t_initial(t0),
-          _t_end(t_end),
-          _ts_prev(t0),
-          _ts_current(t0),
-          _norm_type(norm_type)
+    TimeStepAlgorithm(const double t0, const double t_end)
+        : _t_initial(t0), _t_end(t_end), _ts_prev(t0), _ts_current(t0)
     {
     }
 
-    TimeStepAlgorithm(const double t0, const double t_end, const double dt,
-                      const MathLib::VecNormType norm_type)
+    TimeStepAlgorithm(const double t0, const double t_end, const double dt)
         : _t_initial(t0),
           _t_end(t_end),
           _ts_prev(t0),
           _ts_current(t0),
-          _dt_vector(static_cast<std::size_t>(std::ceil((t_end - t0) / dt)),
-                     dt),
-          _norm_type(norm_type)
+          _dt_vector(static_cast<std::size_t>(std::ceil((t_end - t0) / dt)), dt)
     {
     }
 
     TimeStepAlgorithm(const double t0, const double t_end,
-                      const std::vector<double>& all_step_sizes,
-                      const MathLib::VecNormType norm_type)
+                      const std::vector<double>& all_step_sizes)
         : _t_initial(t0),
           _t_end(t_end),
           _ts_prev(t0),
           _ts_current(t0),
-          _dt_vector(all_step_sizes),
-          _norm_type(norm_type)
+          _dt_vector(all_step_sizes)
     {
     }
 
@@ -90,7 +80,14 @@ public:
         return _dt_vector;
     }
 
-    MathLib::VecNormType getSolutionNormType() const { return _norm_type; }
+    virtual MathLib::VecNormType getSolutionNormType() const
+    {
+        return MathLib::VecNormType::NORM2;
+    }
+
+    /// Get a flag to indicate whether this algorithm needs to compute
+    /// solution error. The default return value is false.
+    virtual bool isSolutionErrorComputationNeeded() { return false; }
 protected:
     /// initial time
     const double _t_initial;
@@ -104,9 +101,6 @@ protected:
 
     /// a vector of time step sizes
     std::vector<double> _dt_vector;
-
-    /// Type of the norm of the solution vector.
-    const MathLib::VecNormType _norm_type;
 };
 
 }  // NumLib

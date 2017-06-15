@@ -114,7 +114,7 @@ public:
 class TimeDiscretization
 {
 public:
-    TimeDiscretization() : _dx(nullptr) {}
+    TimeDiscretization() = default;
 
     //! Sets the initial condition.
     virtual void setInitialState(const double t0, GlobalVector const& x0) = 0;
@@ -122,13 +122,11 @@ public:
     /*! Get the relative change of solutions between two successive time steps
      *  by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
      *
-     * \warning _x_old kept in the derived classes is changed to x - _x_old
-     *          after this computation! Therefore it can be only called just
-     *          before pushState(...), in which the value of _x_old is updated.
-     * \param x    The solution at the current timestep.
+     * \param x         The solution at the current timestep.
+     * \param norm_type The type of global vector norm.
      */
-    virtual double getRelativeError(GlobalVector const& x,
-                                    MathLib::VecNormType norm_type) = 0;
+    virtual double getRelativeChangeFromPreviousTimestep(
+        GlobalVector const& x, MathLib::VecNormType norm_type) = 0;
 
     /*! Indicate that the current timestep is done and that you will proceed to
      * the next one.
@@ -221,15 +219,17 @@ protected:
       * Compute and return the relative change of solutions between two successive
       * time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
       *
-      * @param x      The current solution
-      * @param x_old  The previous solution
-      * @return       \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+      * @param x         The current solution
+      * @param x_old     The previous solution
+      * @param norm_type The norm type of global vector
+      * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
       *
-      *  \warning the value of x_old is changed to x - x_old after this computation.
-    */    
-    double computeRelativeError(GlobalVector const& x,
-                                GlobalVector const& x_old,
-                                MathLib::VecNormType norm_type);    
+      * @warning the value of x_old is changed to x - x_old after this computation.
+    */
+    double computeRelativeChangeFromPreviousTimestep(
+        GlobalVector const& x,
+        GlobalVector const& x_old,
+        MathLib::VecNormType norm_type);
 };
 
 //! Backward Euler scheme.
@@ -237,8 +237,7 @@ class BackwardEuler final : public TimeDiscretization
 {
 public:
     BackwardEuler()
-        : TimeDiscretization(),
-          _x_old(NumLib::GlobalVectorProvider::provider.getVector())
+        : _x_old(NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
 
@@ -253,8 +252,8 @@ public:
         MathLib::LinAlg::copy(x0, _x_old);
     }
 
-    double getRelativeError(GlobalVector const& x,
-                            MathLib::VecNormType norm_type) override;
+    double getRelativeChangeFromPreviousTimestep(
+        GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
     void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const&) override
@@ -290,8 +289,7 @@ class ForwardEuler final : public TimeDiscretization
 {
 public:
     ForwardEuler()
-        :  TimeDiscretization(),
-           _x_old(NumLib::GlobalVectorProvider::provider.getVector())
+        :  _x_old(NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
 
@@ -307,8 +305,8 @@ public:
         MathLib::LinAlg::copy(x0, _x_old);
     }
 
-    double getRelativeError(GlobalVector const& x,
-                            MathLib::VecNormType norm_type) override;
+    double getRelativeChangeFromPreviousTimestep(
+        GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
     void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const&) override
@@ -368,7 +366,7 @@ public:
      *              \arg 0.5 traditional Crank-Nicolson scheme.
      */
     explicit CrankNicolson(const double theta)
-        : TimeDiscretization(), _theta(theta),
+        : _theta(theta),
           _x_old(NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
@@ -384,8 +382,8 @@ public:
         MathLib::LinAlg::copy(x0, _x_old);
     }
 
-    double getRelativeError(GlobalVector const& x,
-                            MathLib::VecNormType norm_type) override;
+    double getRelativeChangeFromPreviousTimestep(
+        GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
     void pushState(const double, GlobalVector const& x,
                    InternalMatrixStorage const& strg) override
@@ -440,7 +438,7 @@ public:
      *       the first timesteps.
      */
     explicit BackwardDifferentiationFormula(const unsigned num_steps)
-        :  TimeDiscretization(), _num_steps(num_steps)
+        :  _num_steps(num_steps)
     {
         assert(1 <= num_steps && num_steps <= 6);
         _xs_old.reserve(num_steps);
@@ -459,8 +457,8 @@ public:
             &NumLib::GlobalVectorProvider::provider.getVector(x0));
     }
 
-    double getRelativeError(GlobalVector const& x,
-                            MathLib::VecNormType norm_type) override;
+    double getRelativeChangeFromPreviousTimestep(
+        GlobalVector const& x, MathLib::VecNormType norm_type) override;
 
     void pushState(const double, GlobalVector const& x,
                    InternalMatrixStorage const&) override;

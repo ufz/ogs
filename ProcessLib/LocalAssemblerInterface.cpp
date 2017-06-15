@@ -69,7 +69,7 @@ void LocalAssemblerInterface::computeSecondaryVariable(
         auto const local_coupled_xs =
             getCurrentLocalSolutionsOfCoupledProcesses(coupled_term.coupled_xs,
                                                        indices);
-        if (local_coupled_xs.size() != 0)
+        if (!local_coupled_xs.empty())
             computeSecondaryVariableWithCoupledProcessConcrete(
                 t, local_x, local_coupled_xs);
         else

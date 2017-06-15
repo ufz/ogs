@@ -58,7 +58,7 @@ public:
                               const std::vector<double>&& specific_times,
                               const double tol,
                               const MathLib::VecNormType norm_type)
-        : TimeStepAlgorithm(t0, t_end, norm_type),
+        : TimeStepAlgorithm(t0, t_end),
           _h0(h0),
           _h_min(h_min),
           _h_max(h_max),
@@ -68,7 +68,8 @@ public:
           _tol(tol),
           _e_n_minus1(0.),
           _e_n_minus2(0.),
-          _is_accepted(true)
+          _is_accepted(true),
+          _norm_type(norm_type)
     {
     }
 
@@ -82,10 +83,18 @@ public:
 
     /// return if current time step is accepted
     bool accepted() const override { return _is_accepted; }
+    /// Get a flag to indicate that this algorithm need to compute
+    /// solution error.
+    bool isSolutionErrorComputationNeeded() override { return true; }
+    MathLib::VecNormType getSolutionNormType() const override
+    {
+        return _norm_type;
+    }
+
 private:
-    const double _kP = 0.075;
-    const double _kI = 0.175;
-    const double _kD = 0.01;
+    const double _kP = 0.075;  ///< Paramter. \see EvolutionaryPIDcontroller
+    const double _kI = 0.175;  ///< Paramter. \see EvolutionaryPIDcontroller
+    const double _kD = 0.01;   ///< Paramter. \see EvolutionaryPIDcontroller
 
     const double _h0;     ///< initial time step size.
     const double _h_min;  ///< minimum step size.
@@ -105,6 +114,9 @@ private:
     double _e_n_minus2;  ///< \f$e_{n-2}\f$.
 
     bool _is_accepted;
+
+    /// Type of the norm of the solution vector.
+    const MathLib::VecNormType _norm_type;
 
     double limitStepSize(const double h_new, const double h_n) const
     {

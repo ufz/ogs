@@ -13,7 +13,6 @@
 #include <unordered_map>
 #include <typeinfo>
 #include <typeindex>
-#include <string>
 
 #include <logog/include/logog.hpp>
 
@@ -120,9 +119,9 @@ private:
      *
      *  @param t           Current time
      */
-    double computeTimeSteppping(const double prev_dt, double& t,
-                                std::size_t& accepted_steps,
-                                std::size_t& rejected_steps);
+    double computeTimeStepping(const double prev_dt, double& t,
+                               std::size_t& accepted_steps,
+                               std::size_t& rejected_steps);
 };
 
 //! Builds an UncoupledProcessesTimeLoop from the given configuration.

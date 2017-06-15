@@ -45,7 +45,7 @@ std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
         OGS_FATAL(
             "Unknown time stepping type: `%s'. "
             "The available types are \n\tSingleStep, \n\tFixedTimeStepping"
-            "\n\tFixedTimeStepping\n",
+            "\n\tEvolutionaryPIDcontroller\n",
             type.data());
     }
 

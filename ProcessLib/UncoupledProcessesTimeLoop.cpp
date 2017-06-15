@@ -538,7 +538,7 @@ bool UncoupledProcessesTimeLoop::setCoupledSolutions()
     return true;
 }
 
-double UncoupledProcessesTimeLoop::computeTimeSteppping(
+double UncoupledProcessesTimeLoop::computeTimeStepping(
     const double prev_dt, double& t, std::size_t& accepted_steps,
     std::size_t& rejected_steps)
 {
@@ -560,10 +560,12 @@ double UncoupledProcessesTimeLoop::computeTimeSteppping(
         auto const& x = *_process_solutions[i];
 
         const double solution_error =
-            (t == timestepper->begin())
-                ? 0.
-                : time_disc->getRelativeError(
-                      x, timestepper->getSolutionNormType());
+            (timestepper->isSolutionErrorComputationNeeded())
+                ? ((t == timestepper->begin())
+                       ? 0.  // Always accepts the first step
+                       : time_disc->getRelativeChangeFromPreviousTimestep(
+                             x, timestepper->getSolutionNormType()))
+                : 0.;
         if (!timestepper->next(solution_error))
         {
             // Not all processes have accepted steps.
@@ -571,7 +573,7 @@ double UncoupledProcessesTimeLoop::computeTimeSteppping(
         }
 
         if (timestepper->getTimeStep().dt() >
-            std::numeric_limits<double>::epsilon())
+            std::numeric_limits<double>::min())
         {
             if (timestepper->getTimeStep().dt() < dt)
             {
@@ -580,6 +582,11 @@ double UncoupledProcessesTimeLoop::computeTimeSteppping(
         }
         else
         {
+            // dt being close to 0 only happens when
+            // t_n + dt > t_s, and dt is forced to be zero. Where t_n the time
+            // of previous time step, and t_s is the specified time taken from
+            // input or the end time. Under this condition, the time stepping
+            // is skipped.
             ppd.skip_time_stepping = true;
         }
     }
@@ -697,11 +704,11 @@ bool UncoupledProcessesTimeLoop::loop()
     const bool is_staggered_coupling = setCoupledSolutions();
 
     double t = _start_time;
-    std::size_t accepted_steps = 0;
+    std::size_t accepted_steps = 1;
     std::size_t rejected_steps = 0;
     bool nonlinear_solver_succeeded = true;
 
-    double dt = computeTimeSteppping(0.0, t, accepted_steps, rejected_steps);
+    double dt = computeTimeStepping(0.0, t, accepted_steps, rejected_steps);
 
     while (t < _end_time)
     {
@@ -711,7 +718,7 @@ bool UncoupledProcessesTimeLoop::loop()
         t += dt;
         const double prev_dt = dt;
 
-        const std::size_t timesteps = accepted_steps + rejected_steps + 1;
+        const std::size_t timesteps = accepted_steps + rejected_steps;
         // TODO, input option for time unit.
         INFO("=== Time stepping at step #%u and time %g with step size %g",
              timesteps, t, dt);
@@ -723,7 +730,7 @@ bool UncoupledProcessesTimeLoop::loop()
             nonlinear_solver_succeeded =
                 solveUncoupledEquationSystems(t, dt, timesteps);
 
-        INFO("[time] Time step #%u took %g .", timesteps,
+        INFO("[time] Time step #%u took %g s.", timesteps,
              time_timestep.elapsed());
 
         if (!nonlinear_solver_succeeded)
@@ -740,7 +747,7 @@ bool UncoupledProcessesTimeLoop::loop()
             continue;
         }
 
-        dt = computeTimeSteppping(prev_dt, t, accepted_steps, rejected_steps);
+        dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
 
         if (dt < std::numeric_limits<double>::epsilon())
         {
@@ -844,7 +851,6 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     {
         // TODO use process name
         bool nonlinear_solver_succeeded = true;
-        coupling_iteration_converged = true;
         unsigned pcs_idx = 0;
         for (auto& spd : _per_process_data)
         {
@@ -859,14 +865,13 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             time_timestep_process.start();
 
             auto& x = *_process_solutions[pcs_idx];
-            auto& pcs = spd->process;
             if (global_coupling_iteration == 0)
             {
                 // Copy the solution of the previous time step to a vector that
                 // belongs to process. For some problems, both of the current
                 // solution and the solution of the previous time step are
                 // required for the coupling computation.
-                pcs.preTimestep(x, t, dt);
+                spd->process.preTimestep(x, t, dt);
 
                 // Set the flag of the first iteration be true.
                 _global_coupling_conv_crit->preFirstIteration();
@@ -897,7 +902,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                     timestep_id, t, pcs_idx);
 
                 // save unsuccessful solution
-                _output->doOutputAlways(pcs, spd->process_output, timestep_id,
+                _output->doOutputAlways(spd->process, spd->process_output, timestep_id,
                                         t, x);
 
                 break;
