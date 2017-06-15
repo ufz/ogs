@@ -129,6 +129,12 @@ public:
         return _mesh_component_map.getGlobalIndex(l, c);
     }
 
+    GlobalIndexType getGlobalIndex(MeshLib::Location const& l,
+                                   int const global_component_id) const
+    {
+        return _mesh_component_map.getGlobalIndex(l, global_component_id);
+    }
+
     /// Forwards the respective method from MeshComponentMap.
     std::vector<GlobalIndexType> getGlobalIndices(const MeshLib::Location &l) const
     {

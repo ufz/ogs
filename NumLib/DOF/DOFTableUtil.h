@@ -15,6 +15,13 @@
 namespace NumLib
 {
 //! Returns the value for the given \c node_id and \c global_component_id from
+//! the vector \c x in case the node is not a ghost node. Else 0.0 is returned.
+double getNonGhostNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
+                             NumLib::LocalToGlobalIndexMap const& dof_table,
+                             std::size_t const node_id,
+                             std::size_t const global_component_id);
+
+//! Returns the value for the given \c node_id and \c global_component_id from
 //! the vector \c x.
 double getNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
                      NumLib::LocalToGlobalIndexMap const& dof_table,

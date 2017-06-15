@@ -24,4 +24,7 @@ void fillVectorRandomly(Vector& x)
     for (Index i = 0; i < size; ++i) {
         MathLib::setVector(x, i, rnd(random_number_generator));
     }
+#ifdef USE_PETSC
+    finalizeVectorAssembly(x);
+#endif
 }

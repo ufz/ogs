@@ -77,7 +77,7 @@ MeshComponentMap::MeshComponentMap(
                     // arrange non ghost entries of a partition within
                     // a rank in the parallel computing.
                     OGS_FATAL("Global index in the system of equations"
-                              " can only be numbered by the oder type"
+                              " can only be numbered by the order type"
                               " of ComponentOrder::BY_LOCATION");
                 }
                 global_id = static_cast<GlobalIndexType>(
