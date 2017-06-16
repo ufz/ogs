@@ -452,7 +452,8 @@ bool readGLIFileV4(const std::string& fname,
 
     // read names of points into vector of strings
     auto pnt_id_names_map =
-        std::unique_ptr<std::map<std::string, std::size_t>>{};
+        std::unique_ptr<std::map<std::string, std::size_t>>
+            { new std::map<std::string, std::size_t> };
 
     bool zero_based_idx(true);
     auto pnt_vec = std::make_unique<std::vector<GeoLib::Point*>>();
