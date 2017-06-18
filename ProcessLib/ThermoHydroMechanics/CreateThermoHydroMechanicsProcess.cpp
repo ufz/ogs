@@ -146,14 +146,14 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     DBUG("Use \'%s\' as intrinsic permeability parameter.",
          intrinsic_permeability.name.c_str());
 
-    // Storage coefficient
-    auto& storage_coefficient = findParameter<double>(
+    // Specific storage
+    auto& specific_storage = findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_storage_coefficient}
-        "storage_coefficient", parameters, 1);
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_specific_storage}
+        "specific_storage", parameters, 1);
 
-    DBUG("Use \'%s\' as storage coefficient parameter.",
-         storage_coefficient.name.c_str());
+    DBUG("Use \'%s\' as specific storage parameter.",
+         specific_storage.name.c_str());
 
   /*  // Fluid viscosity
     auto& fluid_viscosity = findParameter<double>(
@@ -269,7 +269,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         std::move(material),
         std::move(fluid_properties),
         intrinsic_permeability,
-        storage_coefficient,
+        specific_storage,
         //fluid_viscosity,
         biot_coefficient,
         porosity,
