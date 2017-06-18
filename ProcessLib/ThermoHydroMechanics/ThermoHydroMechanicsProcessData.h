@@ -43,7 +43,7 @@ struct ThermoHydroMechanicsProcessData
             material_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties_,
         Parameter<double> const& intrinsic_permeability_,
-        Parameter<double> const& storage_coefficient_,
+        Parameter<double> const& specific_storage_,
         //Parameter<double> const& fluid_viscosity_,
         Parameter<double> const& biot_coefficient_,
         Parameter<double> const& porosity_,
@@ -61,7 +61,7 @@ struct ThermoHydroMechanicsProcessData
         : material{std::move(material_)},
           fluid_properties{std::move(fluid_properties_)},
           intrinsic_permeability(intrinsic_permeability_),
-          storage_coefficient(storage_coefficient_),
+          specific_storage(specific_storage_),
           //fluid_viscosity(fluid_viscosity_),
           biot_coefficient(biot_coefficient_),
           porosity(porosity_),
@@ -82,7 +82,7 @@ struct ThermoHydroMechanicsProcessData
         : material{std::move(other.material)},
           fluid_properties{std::move(other.fluid_properties)},
           intrinsic_permeability(other.intrinsic_permeability),
-          storage_coefficient(other.storage_coefficient),
+          specific_storage(other.specific_storage),
           //fluid_viscosity(other.fluid_viscosity),
           biot_coefficient(other.biot_coefficient),
           porosity(other.porosity),
@@ -115,7 +115,7 @@ struct ThermoHydroMechanicsProcessData
         material;
     std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
     Parameter<double> const& intrinsic_permeability;
-    Parameter<double> const& storage_coefficient;
+    Parameter<double> const& specific_storage;
     //Parameter<double> const& fluid_viscosity;
     Parameter<double> const& biot_coefficient;
     Parameter<double> const& porosity;
