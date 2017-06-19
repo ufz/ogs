@@ -188,13 +188,15 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     MathLib::finalizeMatrixAssembly(A);
 
     // solve
+    T_VECTOR y(b, deep_copy);
+    y.setZero();
     T_LINEAR_SOVLER ls(prefix_name, &ls_option);
-    EXPECT_TRUE(ls.solve(A, b, x));
+    EXPECT_TRUE(ls.solve(A, b, y));
 
     EXPECT_GT(ls.getNumberOfIterations(), 0u);
 
     std::vector<double> x1(6);
-    x.getGlobalVector(x1);
+    y.getGlobalVector(x1);
     ASSERT_ARRAY_NEAR(x0, x1, 6, 1e-5);
 }
 #endif
