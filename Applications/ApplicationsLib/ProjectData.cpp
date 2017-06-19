@@ -46,6 +46,7 @@
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
 #include "ProcessLib/ThermalTwoPhaseFlowWithPP/CreateThermalTwoPhaseFlowWithPPProcess.h"
+#include "ProcessLib/ThermoMechanics/CreateThermoMechanicsProcess.h"
 #include "ProcessLib/TwoPhaseFlowWithPP/CreateTwoPhaseFlowWithPPProcess.h"
 #include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowWithPrhoProcess.h"
 
@@ -432,6 +433,27 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     OGS_FATAL(
                         "SMALL_DEFORMATION_WITH_LIE process does not support "
                         "given dimension");
+            }
+        }
+        else if (type == "THERMO_MECHANICS")
+        {
+            //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__dimension}
+            switch (process_config.getConfigParameter<int>("dimension"))
+            {
+                case 2:
+                    process = ProcessLib::ThermoMechanics::
+                        createThermoMechanicsProcess<2>(
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, integration_order,
+                            process_config);
+                    break;
+                case 3:
+                    process = ProcessLib::ThermoMechanics::
+                        createThermoMechanicsProcess<3>(
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, integration_order,
+                            process_config);
+                    break;
             }
         }
         else if (type == "RICHARDS_FLOW")
