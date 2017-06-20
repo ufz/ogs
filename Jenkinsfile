@@ -57,7 +57,25 @@ builders['docs'] = {
     }
 }
 
-parallel builders
+if (helper.isOriginMaster(this)) {
+    builders['coverage'] = {
+        node('docker') {
+            dir('ogs') { checkoutWithTags() }
+            load 'ogs/scripts/jenkins/coverage.groovy'
+        }
+    }
+}
+
+try {
+    parallel builders
+}
+catch (err) {
+    currentBuild.result = 'FAILURE'
+    if (helper.isOriginMaster(this)) {
+        helper.notification(title: "${env.JOB_NAME} failed!", script: this,
+            msg: "Build failed", url: "${env.BUILD_URL}/flowGraphTable/")
+    }
+}
 
 def tag = ""
 node('master') {
@@ -73,12 +91,6 @@ node('master') {
 }
 
 if (helper.isOriginMaster(this)) {
-
-    node('docker') {
-        dir('ogs') { checkoutWithTags() }
-        load 'ogs/scripts/jenkins/coverage.groovy'
-    }
-
     if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
         build job: 'OGS-6/clang-sanitizer', wait: false
         if (tag != "") {
@@ -91,9 +103,6 @@ if (helper.isOriginMaster(this)) {
                 load 'ogs/scripts/jenkins/docset.groovy'
             }
         }
-    } else {
-        helper.notification(title: "${env.JOB_NAME} failed!", script: this,
-            msg: "Build failed", url: "${env.BUILD_URL}/flowGraphTable/")
     }
 }
 
