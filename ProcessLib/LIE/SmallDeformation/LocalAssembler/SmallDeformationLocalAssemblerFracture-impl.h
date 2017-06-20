@@ -72,20 +72,24 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         auto& ip_data = _ip_data[ip];
         ip_data._detJ = sm.detJ;
         ip_data._integralMeasure = sm.integralMeasure;
-        ip_data._h_matrices.resize(
-            DisplacementDim,
-            ShapeFunction::NPOINTS * DisplacementDim);
+        ip_data._h_matrices.setZero(DisplacementDim,
+                                    ShapeFunction::NPOINTS * DisplacementDim);
 
         computeHMatrix<
             DisplacementDim, ShapeFunction::NPOINTS,
             typename ShapeMatricesType::NodalRowVectorType, HMatrixType>(
             sm.N, ip_data._h_matrices);
 
-        ip_data._w.resize(DisplacementDim);
-        ip_data._w_prev.resize(DisplacementDim);
-        ip_data._sigma.resize(DisplacementDim);
+        // Initialize current time step values
+        ip_data._w.setZero(DisplacementDim);
+        ip_data._sigma.setZero(DisplacementDim);
+
+        // Previous time step values are not initialized and are set later.
         ip_data._sigma_prev.resize(DisplacementDim);
+        ip_data._w_prev.resize(DisplacementDim);
+
         ip_data._C.resize(DisplacementDim, DisplacementDim);
+
         ip_data._aperture0 = (*_fracture_property->aperture0)(0, x_position)[0];
         ip_data._aperture_prev = ip_data._aperture0;
 

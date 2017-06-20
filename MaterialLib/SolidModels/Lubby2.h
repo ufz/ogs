@@ -109,10 +109,13 @@ public:
     {
         MaterialStateVariables()
         {
+            // Previous time step values are not initialized and are set later.
             eps_K_t.resize(KelvinVectorSize);
-            eps_K_j.resize(KelvinVectorSize);
             eps_M_t.resize(KelvinVectorSize);
-            eps_M_j.resize(KelvinVectorSize);
+
+            // Initialize current time step values
+            eps_K_j.setZero(KelvinVectorSize);
+            eps_M_j.setZero(KelvinVectorSize);
         }
 
         MaterialStateVariables& operator=(MaterialStateVariables const&) =

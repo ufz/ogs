@@ -216,10 +216,13 @@ public:
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 sm_u.integralMeasure * sm_u.detJ;
 
-            ip_data.sigma_eff.resize(kelvin_vector_size);
-            ip_data.sigma_eff_prev.resize(kelvin_vector_size);
-            ip_data.eps.resize(kelvin_vector_size);
+            // Initialize current time step values
+            ip_data.sigma_eff.setZero(kelvin_vector_size);
+            ip_data.eps.setZero(kelvin_vector_size);
+
+            // Previous time step values are not initialized and are set later.
             ip_data.eps_prev.resize(kelvin_vector_size);
+            ip_data.sigma_eff_prev.resize(kelvin_vector_size);
 
             ip_data.N_u_op = ShapeMatricesTypeDisplacement::template MatrixType<
                 DisplacementDim, displacement_size>::Zero(DisplacementDim,

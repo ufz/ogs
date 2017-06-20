@@ -83,9 +83,10 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         ip_data.N_p = sm_p.N;
         ip_data.dNdx_p = sm_p.dNdx;
 
-        ip_data.sigma_eff.resize(kelvin_vector_size);
+        ip_data.sigma_eff.setZero(kelvin_vector_size);
+        ip_data.eps.setZero(kelvin_vector_size);
+
         ip_data.sigma_eff_prev.resize(kelvin_vector_size);
-        ip_data.eps.resize(kelvin_vector_size);
         ip_data.eps_prev.resize(kelvin_vector_size);
         ip_data.C.resize(kelvin_vector_size, kelvin_vector_size);
 

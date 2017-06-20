@@ -184,11 +184,16 @@ public:
             ip_data.N = sm.N;
             ip_data.dNdx = sm.dNdx;
 
-            ip_data.sigma.resize(KelvinVectorDimensions<DisplacementDim>::value);
+            // Initialize current time step values
+            ip_data.sigma.setZero(
+                KelvinVectorDimensions<DisplacementDim>::value);
+            ip_data.eps.setZero(KelvinVectorDimensions<DisplacementDim>::value);
+
+            // Previous time step values are not initialized and are set later.
             ip_data.sigma_prev.resize(
                 KelvinVectorDimensions<DisplacementDim>::value);
-            ip_data.eps.resize(KelvinVectorDimensions<DisplacementDim>::value);
-            ip_data.eps_prev.resize(KelvinVectorDimensions<DisplacementDim>::value);
+            ip_data.eps_prev.resize(
+                KelvinVectorDimensions<DisplacementDim>::value);
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
         }

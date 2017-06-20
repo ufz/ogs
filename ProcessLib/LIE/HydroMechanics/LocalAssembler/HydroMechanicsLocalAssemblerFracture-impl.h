@@ -77,8 +77,8 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             sm_u.detJ * sm_u.integralMeasure *
             integration_method.getWeightedPoint(ip).getWeight();
 
-        ip_data.H_u.resize(GlobalDim,
-                           ShapeFunctionDisplacement::NPOINTS * GlobalDim);
+        ip_data.H_u.setZero(GlobalDim,
+                            ShapeFunctionDisplacement::NPOINTS * GlobalDim);
         computeHMatrix<
             GlobalDim, ShapeFunctionDisplacement::NPOINTS,
             typename ShapeMatricesTypeDisplacement::NodalRowVectorType, HMatrixType>(
@@ -86,11 +86,16 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         ip_data.N_p = sm_p.N;
         ip_data.dNdx_p = sm_p.dNdx;
 
-        ip_data.w.resize(GlobalDim);
+        // Initialize current time step values
+        ip_data.w.setZero(GlobalDim);
+        ip_data.sigma_eff.setZero(GlobalDim);
+
+        // Previous time step values are not initialized and are set later.
         ip_data.w_prev.resize(GlobalDim);
-        ip_data.sigma_eff.resize(GlobalDim);
         ip_data.sigma_eff_prev.resize(GlobalDim);
+
         ip_data.C.resize(GlobalDim, GlobalDim);
+
         ip_data.aperture0 = (*frac_prop.aperture0)(0, x_position)[0];
         ip_data.aperture = ip_data.aperture0;
 
