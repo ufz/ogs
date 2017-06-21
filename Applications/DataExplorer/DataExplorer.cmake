@@ -49,7 +49,6 @@ target_link_libraries(DataExplorer
     GeoLib
     MeshGeoToolsLib
     MeshLib
-    ApplicationsLib
     ApplicationsFileIO
     DataHolderLib
     OGSFileConverterLib

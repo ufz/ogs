@@ -21,7 +21,7 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 add_library(ApplicationsFileIO ${SOURCES})
 target_link_libraries(ApplicationsFileIO
     PUBLIC BaseLib DataHolderLib GeoLib MathLib logog
-    PRIVATE ApplicationsLib MeshLib
+    PRIVATE MeshLib
 )
 
 if(Shapelib_FOUND)
