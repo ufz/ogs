@@ -13,7 +13,6 @@
 
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
-#include "ProcessLib/SmallDeformationCommon/Common.h"
 
 #include "SmallDeformationFEM.h"
 #include "SmallDeformationProcessData.h"
@@ -186,6 +185,10 @@ private:
             _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
             _local_assemblers, *_local_to_global_index_map, t, x, xdot,
             dxdot_dx, dx_dx, M, K, b, Jac, coupling_term);
+
+        b.copyValues(*_nodal_forces);
+        std::transform(_nodal_forces->begin(), _nodal_forces->end(),
+            _nodal_forces->begin(), [](double val) { return -val;});
     }
 
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,
@@ -199,14 +202,6 @@ private:
         GlobalExecutor::executeMemberOnDereferenced(
             &SmallDeformationLocalAssemblerInterface::preTimestep,
             _local_assemblers, *_local_to_global_index_map, x, t, dt);
-    }
-
-    void postTimestepConcreteProcess(GlobalVector const&) override
-    {
-        DBUG("PostTimestep SmallDeformationProcess.");
-
-        ProcessLib::SmallDeformation::writeNodalForces(
-            *_nodal_forces, _local_assemblers, *_local_to_global_index_map);
     }
 
 private:

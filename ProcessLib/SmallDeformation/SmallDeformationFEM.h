@@ -88,7 +88,6 @@ struct SecondaryData
 
 struct SmallDeformationLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
-      public ProcessLib::SmallDeformation::NodalForceCalculationInterface,
       public NumLib::ExtrapolatableElement
 {
     virtual std::vector<double> const& getIntPtSigmaXX(
@@ -281,16 +280,6 @@ public:
         {
             _ip_data[ip].pushBackState();
         }
-    }
-
-    std::vector<double> const& getNodalForces(
-        std::vector<double>& nodal_values) const override
-    {
-        return ProcessLib::SmallDeformation::getNodalForces<
-            DisplacementDim, ShapeFunction, ShapeMatricesType,
-            NodalDisplacementVectorType, typename BMatricesType::BMatrixType>(
-            nodal_values, _integration_method, _ip_data, _element,
-            _is_axially_symmetric);
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(

@@ -232,3 +232,18 @@ AddTest(
     uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu displacement displacement
     uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma_yy sigma_yy
 )
+
+#With PETSc
+AddTest(
+    NAME Parallel_Mechanics_SDL_disc_with_hole
+    PATH Mechanics/Linear
+    EXECUTABLE_ARGS disc_with_hole.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 4
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    ABSTOL 1e-16 RELTOL 1e-16
+    DIFF_DATA
+    disc_with_hole_pcs_0_ts_4_t_1_000000_0.vtu disc_with_hole_pcs_0_ts_4_t_1_000000_0.vtu displacement displacement
+    VIS disc_with_hole_pcs_0_ts_0_t_0_000000.pvtu
+)
