@@ -7,7 +7,7 @@
 #include "LogogSimpleFormatter.h"
 #ifdef VTKFBXCONVERTER_FOUND
 #include <fbxsdk.h>
-#include "Common.h"
+#include "ThirdParty/VtkFbxConverter/Common.h"
 FbxManager* lSdkManager = nullptr;
 FbxScene* lScene = nullptr;
 #endif

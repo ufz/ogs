@@ -9,7 +9,6 @@ endif()
 
 if(VTKFBXCONVERTER_FOUND)
     add_definitions(-DVTKFBXCONVERTER_FOUND)
-    include_directories(${VTKFBXCONVERTER_INCLUDE_DIRS})
 endif()
 
 # Add subprojects
