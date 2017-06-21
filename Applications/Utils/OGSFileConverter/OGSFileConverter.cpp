@@ -19,7 +19,6 @@
 #include <QFileInfo>
 
 #include "FileListDialog.h"
-#include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"

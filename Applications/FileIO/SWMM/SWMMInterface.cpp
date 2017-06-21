@@ -27,8 +27,6 @@
 
 #include "Applications/FileIO/CsvInterface.h"
 
-#include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "ThirdParty/SWMMInterface/swmm5_iface.h"
 
 
