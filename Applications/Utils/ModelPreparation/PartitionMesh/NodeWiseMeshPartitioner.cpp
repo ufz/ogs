@@ -103,8 +103,7 @@ void NodeWiseMeshPartitioner::findNonGhostNodesInPartition(
         partition.number_of_non_ghost_base_nodes + extra_nodes.size();
 }
 
-void NodeWiseMeshPartitioner::findElementsInPartition(
-    std::size_t const part_id, const bool is_mixed_high_order_linear_elems)
+void NodeWiseMeshPartitioner::findElementsInPartition(std::size_t const part_id)
 {
     auto& partition = _partitions[part_id];
     std::vector<MeshLib::Element*> const& elements = _mesh->getElements();
@@ -193,7 +192,7 @@ void NodeWiseMeshPartitioner::processPartition(std::size_t const part_id,
     findNonGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
                                  extra_nodes);
 
-    findElementsInPartition(part_id, is_mixed_high_order_linear_elems);
+    findElementsInPartition(part_id);
     findGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
                               extra_nodes);
     auto& partition = _partitions[part_id];
