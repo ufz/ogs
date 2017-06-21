@@ -18,15 +18,16 @@
 
 #include <QFileInfo>
 
-#include "FileListDialog.h"
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
+#include "FileListDialog.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/Legacy/OGSIOVer4.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/Mesh.h"
 
 OGSFileConverter::OGSFileConverter(QWidget* parent)
     : QDialog(parent)
