@@ -68,7 +68,8 @@ PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
         KSPSetOptionsPrefix(_solver, prefix.c_str());
     }
 
-    KSPSetFromOptions(_solver);  // set running time option
+    KSPSetInitialGuessNonzero(_solver, PETSC_TRUE);
+    KSPSetFromOptions(_solver);  // set run-time options
 }
 
 bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
@@ -110,7 +111,21 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
 
         PetscInt its;
         KSPGetIterationNumber(_solver, &its);
-        PetscPrintf(PETSC_COMM_WORLD, "\nconverged in %d iterations.", its);
+        PetscPrintf(PETSC_COMM_WORLD, "\nconverged in %d iterations", its);
+        switch (reason)
+        {
+            case KSP_CONVERGED_RTOL:
+                PetscPrintf(PETSC_COMM_WORLD,
+                            " (relative convergence criterion fulfilled).");
+                break;
+            case  KSP_CONVERGED_ATOL:
+                PetscPrintf(PETSC_COMM_WORLD,
+                            " (absolute convergence criterion fulfilled).");
+                break;
+            default:
+                PetscPrintf(PETSC_COMM_WORLD, ".");
+        }
+
         PetscPrintf(PETSC_COMM_WORLD,
                     "\n================================================\n");
     }
