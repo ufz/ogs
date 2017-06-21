@@ -69,8 +69,9 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     auto A = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(ms);
     A->setZero();
     auto rhs = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(ms);
+    rhs->setZero();
     auto x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(ms);
-    // TODO no setZero() for rhs, x?
+    x->setZero();
 
     using LocalAssembler = Example::LocalAssemblerData;
     // Initializer of the local assembler data.
