@@ -409,9 +409,9 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     ABSTOL 2e-15 RELTOL 1e-16
     DIFF_DATA
-    cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure
-    cube_1e3_pcs_0_ts_1_t_1_000000_1.vtu cube_1e3_pcs_0_ts_1_t_1_000000_1.vtu pressure pressure
-    cube_1e3_pcs_0_ts_1_t_1_000000_2.vtu cube_1e3_pcs_0_ts_1_t_1_000000_2.vtu pressure pressure
+    cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure
+    cube_1e3_pcs_0_ts_1_t_1_000000_1.vtu cube_1e3_pcs_0_ts_1_t_1_000000_1.vtu Linear_1_to_minus1 pressure
+    cube_1e3_pcs_0_ts_1_t_1_000000_2.vtu cube_1e3_pcs_0_ts_1_t_1_000000_2.vtu Linear_1_to_minus1 pressure
 )
 
 AddTest(
@@ -422,11 +422,11 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-14 RELTOL 1e-14
+    ABSTOL 1e-2 RELTOL 1e-2
     DIFF_DATA
-    cube_1e3_neumann_pcs_0_ts_1_t_1_000000_0.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure
-    cube_1e3_neumann_pcs_0_ts_1_t_1_000000_1.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_1.vtu pressure pressure
-    cube_1e3_neumann_pcs_0_ts_1_t_1_000000_2.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_2.vtu pressure pressure
+    cube_1e3_neumann_pcs_0_ts_1_t_1_000000_0.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_front_N1_right pressure
+    cube_1e3_neumann_pcs_0_ts_1_t_1_000000_1.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_1.vtu D1_left_front_N1_right pressure
+    cube_1e3_neumann_pcs_0_ts_1_t_1_000000_2.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_2.vtu D1_left_front_N1_right pressure
 )
 
 # Single core
