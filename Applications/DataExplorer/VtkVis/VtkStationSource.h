@@ -16,8 +16,8 @@
 
 #include <vtkPolyDataAlgorithm.h>
 
-#include "Station.h"
 #include "Applications/DataHolderLib/Color.h"
+#include "GeoLib/Station.h"
 #include "VtkAlgorithmProperties.h"
 
 /**

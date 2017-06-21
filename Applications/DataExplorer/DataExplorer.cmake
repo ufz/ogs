@@ -7,15 +7,6 @@ set(SOURCES
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 include_directories(
-    ${SOURCE_DIR_REL}/Applications/Utils/OGSFileConverter
-    ${SOURCE_DIR_REL}/Applications/FileIO
-    ${SOURCE_DIR_REL}/BaseLib
-    ${SOURCE_DIR_REL}/MathLib
-    ${SOURCE_DIR_REL}/GeoLib
-    ${SOURCE_DIR_REL}/FileIO
-    ${SOURCE_DIR_REL}/MeshLib
-    ${SOURCE_DIR_REL}/MeshLibGEOTOOLS
-    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Base
     ${CMAKE_CURRENT_SOURCE_DIR}/DataView
     ${CMAKE_CURRENT_SOURCE_DIR}/DataView/StratView

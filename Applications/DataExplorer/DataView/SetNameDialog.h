@@ -14,9 +14,8 @@
 
 #pragma once
 
-#include "GeoType.h"
-
 #include <QDialog>
+#include "GeoLib/GeoType.h"
 
 class QDialogButtonBox;
 class QLabel;

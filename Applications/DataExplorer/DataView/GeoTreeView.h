@@ -14,10 +14,10 @@
 
 #pragma once
 
-#include "GeoType.h"
-
 #include <QContextMenuEvent>
 #include <QTreeView>
+
+#include "GeoLib/GeoType.h"
 
 class vtkPolyDataAlgorithm;
 

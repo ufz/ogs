@@ -14,14 +14,14 @@
 
 #pragma once
 
+#include <vtkPolyDataAlgorithm.h>
 #include <vector>
 
-#include "GeoType.h"
-#include "PointVec.h"
-#include "PolylineVec.h"
-#include "SurfaceVec.h"
+#include "GeoLib/GeoType.h"
+#include "GeoLib/PointVec.h"
+#include "GeoLib/PolylineVec.h"
+#include "GeoLib/SurfaceVec.h"
 #include "TreeModel.h"
-#include <vtkPolyDataAlgorithm.h>
 
 namespace GeoLib
 {

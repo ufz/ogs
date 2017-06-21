@@ -17,11 +17,11 @@
 #include <QMap>
 #include <QVector>
 
-#include "GeoType.h"
-#include "MeshEnums.h"
-#include "Point.h"
-#include "TreeModel.h"
 #include "Applications/DataHolderLib/Color.h"
+#include "GeoLib/GeoType.h"
+#include "GeoLib/Point.h"
+#include "MeshLib/MeshEnums.h"
+#include "TreeModel.h"
 
 class vtkAlgorithm;
 class vtkDataSet;
