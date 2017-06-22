@@ -5,9 +5,8 @@ def defaultCMakeOptions =
     '-DOGS_LIB_VTK=System ' +
     '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
     '-DOGS_BUILD_GUI=ON ' +
-    '-DOGS_BUILD_UTILS=ON ' +
+    '-DOGS_BUILD_UTILS=OFF ' +
     '-DOGS_BUILD_TESTS=OFF ' +
-    '-DOGS_BUILD_METIS=ON ' +
     '-DOGS_BUILD_CLI=OFF'
 
 def configure = new ogs.configure()
