@@ -47,7 +47,6 @@ add_executable(DataExplorer
 target_link_libraries(DataExplorer
     BaseLib
     GeoLib
-    MeshGeoToolsLib
     MeshLib
     ApplicationsFileIO
     DataHolderLib

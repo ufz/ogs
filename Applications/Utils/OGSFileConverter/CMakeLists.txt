@@ -20,18 +20,16 @@ add_library(OGSFileConverterLib
     ${UIS}
 )
 target_link_libraries(OGSFileConverterLib
-    QtBase
-    MeshLib
-    NumLib
+    PUBLIC QtBase MathLib
+    INTERFACE MeshLib
 )
+ADD_VTK_DEPENDENCY(OGSFileConverterLib)
 
 add_executable(OGSFileConverter main.cpp)
 
 target_link_libraries(OGSFileConverter
-    ApplicationsLib
     OGSFileConverterLib
-    QtBase
-    GeoLib)
+)
 ADD_VTK_DEPENDENCY(OGSFileConverter)
 
 set_property(TARGET OGSFileConverter PROPERTY FOLDER "Utilities")
