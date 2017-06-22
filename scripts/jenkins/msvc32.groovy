@@ -3,13 +3,12 @@ def defaultCMakeOptions =
     '-DOGS_32_BIT=ON ' +
     '-DOGS_LIB_BOOST=System ' +
     '-DOGS_LIB_VTK=System ' +
-    '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON '
-
-def guiCMakeOptions =
+    '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
     '-DOGS_BUILD_GUI=ON ' +
     '-DOGS_BUILD_UTILS=ON ' +
     '-DOGS_BUILD_TESTS=OFF ' +
-    '-DOGS_BUILD_METIS=ON '
+    '-DOGS_BUILD_METIS=ON ' +
+    '-DOGS_BUILD_CLI=OFF'
 
 def configure = new ogs.configure()
 def build = new ogs.build()
@@ -21,7 +20,7 @@ withEnv(helper.getEnv(this, 'x32')) {
     stage('Data Explorer 32-bit (Win)') {
         configure.win(
             arch: 'x86',
-            cmakeOptions: defaultCMakeOptions + guiCMakeOptions,
+            cmakeOptions: defaultCMakeOptions,
             conanOptions: "-o gui=True",
             script: this
         )
