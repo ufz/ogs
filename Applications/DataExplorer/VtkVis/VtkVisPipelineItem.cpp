@@ -35,10 +35,9 @@
 #include <QMessageBox>
 
 #ifdef VTKFBXCONVERTER_FOUND
-#include "ThirdParty/VtkFbxConverter/VtkFbxConverter.h"
-#include "Common.h"
 #include <fbxsdk.h>
-
+#include "ThirdParty/VtkFbxConverter/Common.h"
+#include "ThirdParty/VtkFbxConverter/VtkFbxConverter.h"
 
 extern FbxManager* lSdkManager;
 extern FbxScene* lScene;

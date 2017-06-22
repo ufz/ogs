@@ -1,13 +1,12 @@
 #include "mainwindow.h"
 
-#include <memory>
 #include <QApplication>
-
 #include <logog/include/logog.hpp>
-#include "LogogSimpleFormatter.h"
+#include <memory>
+
 #ifdef VTKFBXCONVERTER_FOUND
 #include <fbxsdk.h>
-#include "Common.h"
+#include "ThirdParty/VtkFbxConverter/Common.h"
 FbxManager* lSdkManager = nullptr;
 FbxScene* lScene = nullptr;
 #endif
@@ -15,6 +14,7 @@ FbxScene* lScene = nullptr;
 #include <vtkSmartPointer.h>
 
 #include "BaseLib/BuildInfo.h"
+#include "BaseLib/LogogSimpleFormatter.h"
 #include "VtkVis/VtkConsoleOutputWindow.h"
 
 int main(int argc, char* argv[])

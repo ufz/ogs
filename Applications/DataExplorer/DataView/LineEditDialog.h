@@ -15,9 +15,9 @@
 #pragma once
 
 #include "ui_LineEdit.h"
-#include <QDialog>
 
-#include "PolylineVec.h"
+#include <QDialog>
+#include "GeoLib/PolylineVec.h"
 
 class QStringListModel;
 

@@ -16,73 +16,6 @@
 
 #include <logog/include/logog.hpp>
 
-// BaseLib
-#include "BaseLib/BuildInfo.h"
-#include "BaseLib/FileTools.h"
-#include "BaseLib/Histogram.h"
-
-// GeoLib
-#include "Raster.h"
-#include "GeoLib/IO/Legacy/OGSIOVer4.h"
-#include "GeoLib/DuplicateGeometry.h"
-
-// MeshGeoLib
-#include "MeshGeoToolsLib/GeoMapper.h"
-
-//dialogs
-#include "CreateStructuredGridDialog.h"
-#include "DataExplorerSettingsDialog.h"
-#include "DiagramPrefsDialog.h"
-#include "GeoOnMeshMappingDialog.h"
-#include "GMSHPrefsDialog.h"
-#include "LicenseDialog.h"
-#include "LineEditDialog.h"
-#include "MergeGeometriesDialog.h"
-#include "MeshAnalysisDialog.h"
-#include "MeshElementRemovalDialog.h"
-#include "MeshQualitySelectionDialog.h"
-#include "NetCdfConfigureDialog.h"
-#include "SetNameDialog.h"
-#include "SHPImportDialog.h"
-#include "VtkAddFilterDialog.h"
-
-#include "GeoTreeModel.h"
-#include "LastSavedFileDirectory.h"
-#include "OGSError.h"
-#include "RecentFiles.h"
-#include "StationTreeModel.h"
-#include "TreeModelIterator.h"
-#include "VtkBGImageSource.h"
-#include "VtkGeoImageSource.h"
-#include "VtkRaster.h"
-#include "VtkVisPipelineItem.h"
-
-#include "MeshLib/Vtk/VtkMappedMeshSource.h"
-
-// FileIO includes
-#include "GMSInterface.h"
-#include "Applications/FileIO/FEFLOW/FEFLOWMeshInterface.h"
-#include "MeshLib/IO/Legacy/MeshIO.h"
-#include "MeshLib/IO/readMeshFromFile.h"
-#include "Applications/FileIO/AsciiRasterInterface.h"
-#include "Applications/FileIO/PetrelInterface.h"
-#include "Applications/FileIO/Gmsh/GmshReader.h"
-#include "Applications/FileIO/TetGenInterface.h"
-#include "Applications/FileIO/XmlIO/Qt/XmlGspInterface.h"
-#include "Applications/FileIO/Gmsh/GMSHInterface.h"
-#include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"
-#include "Applications/FileIO/Gmsh/GMSHInterface.h"
-#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
-#include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
-
-// MeshLib
-#include "Node.h"
-#include "Mesh.h"
-#include "Elements/Element.h"
-#include "MeshSurfaceExtraction.h"
-#include "convertMeshToGeo.h"
-#include "MeshQuality/ElementQualityInterface.h"
-
 // Qt includes
 #include <QDesktopWidget>
 #include <QFileDialog>
@@ -96,9 +29,62 @@
 #include <vtkRenderer.h>
 #include <vtkVRMLExporter.h>
 
+#include "Applications/FileIO/AsciiRasterInterface.h"
+#include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"
+#include "Applications/FileIO/FEFLOW/FEFLOWMeshInterface.h"
+#include "Applications/FileIO/GMSInterface.h"
+#include "Applications/FileIO/Gmsh/GMSHInterface.h"
+#include "Applications/FileIO/Gmsh/GmshReader.h"
+#include "Applications/FileIO/PetrelInterface.h"
+#include "Applications/FileIO/TetGenInterface.h"
+#include "Applications/FileIO/XmlIO/Qt/XmlGspInterface.h"
 #include "Applications/Utils/OGSFileConverter/OGSFileConverter.h"
-
 #include "BaseLib/BuildInfo.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/Histogram.h"
+#include "GeoLib/DuplicateGeometry.h"
+#include "GeoLib/IO/Legacy/OGSIOVer4.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
+#include "GeoLib/Raster.h"
+#include "MeshGeoToolsLib/GeoMapper.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshQuality/ElementQualityInterface.h"
+#include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Vtk/VtkMappedMeshSource.h"
+#include "MeshLib/convertMeshToGeo.h"
+
+// Dialogs
+#include "CreateStructuredGridDialog.h"
+#include "DataExplorerSettingsDialog.h"
+#include "DiagramPrefsDialog.h"
+#include "GMSHPrefsDialog.h"
+#include "GeoOnMeshMappingDialog.h"
+#include "LicenseDialog.h"
+#include "LineEditDialog.h"
+#include "MergeGeometriesDialog.h"
+#include "MeshAnalysisDialog.h"
+#include "MeshElementRemovalDialog.h"
+#include "MeshQualitySelectionDialog.h"
+#include "NetCdfConfigureDialog.h"
+#include "SHPImportDialog.h"
+#include "SetNameDialog.h"
+#include "VtkAddFilterDialog.h"
+
+#include "GeoTreeModel.h"
+#include "LastSavedFileDirectory.h"
+#include "OGSError.h"
+#include "RecentFiles.h"
+#include "StationTreeModel.h"
+#include "TreeModelIterator.h"
+#include "VtkBGImageSource.h"
+#include "VtkGeoImageSource.h"
+#include "VtkRaster.h"
+#include "VtkVisPipelineItem.h"
 
 using namespace FileIO;
 

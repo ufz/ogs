@@ -14,9 +14,10 @@
 
 #pragma once
 
-#include "MeshEnums.h"
 #include "ui_MeshQualitySelection.h"
+
 #include <QDialog>
+#include "MeshLib/MeshEnums.h"
 
 class VtkMeshSource;
 

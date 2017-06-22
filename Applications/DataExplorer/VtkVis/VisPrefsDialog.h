@@ -14,9 +14,10 @@
 
 #pragma once
 
-#include "Point.h"
 #include "ui_VisPrefs.h"
+
 #include <QDialog>
+#include "GeoLib/Point.h"
 
 class VtkVisPipeline;
 class VisualizationWidget;

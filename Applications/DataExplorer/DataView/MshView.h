@@ -13,9 +13,9 @@
  */
 #pragma once
 
-#include "Point.h"
-#include "GeoType.h"
 #include <QTreeView>
+#include "GeoLib/GeoType.h"
+#include "GeoLib/Point.h"
 
 class MshModel;
 class vtkUnstructuredGridAlgorithm;

@@ -14,10 +14,9 @@
 
 #pragma once
 
-#include "Station.h"
-
 #include <QContextMenuEvent>
 #include <QTreeView>
+#include "GeoLib/Station.h"
 
 class vtkPolyDataAlgorithm;
 

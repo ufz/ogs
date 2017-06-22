@@ -14,15 +14,14 @@
 
 #pragma once
 
-// ** INCLUDES **
-#include "BuildInfo.h"
-#include "TreeItem.h"
-
 #include <QList>
 #include <QMap>
-//#include <QObject>
 #include <QString>
 #include <QVariant>
+
+#include "BaseLib/BuildInfo.h"
+
+#include "TreeItem.h"
 
 class QStringList;
 class vtkAlgorithm;
