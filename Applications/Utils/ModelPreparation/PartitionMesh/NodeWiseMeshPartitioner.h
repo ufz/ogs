@@ -22,6 +22,7 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 
 namespace ApplicationUtils
@@ -130,7 +131,8 @@ private:
                                     std::vector<IntegerType>& elem_info,
                                     IntegerType& counter);
 
-    void writePropertiesBinary(std::string const& file_name_base) const;
+    void writeNodePropertiesBinary(std::string const& file_name_base) const;
+    void writeCellPropertiesBinary(std::string const& file_name_base) const;
 
     /// 1 copy pointers to nodes belonging to the partition part_id
     /// 2 collect non-linear element nodes belonging to the partition part_id in
@@ -144,8 +146,7 @@ private:
     /// fills vector partition.regular_elements
     /// 2 find ghost elements belonging to the partition part_id
     /// fills vector partition.ghost_elements
-    void findElementsInPartition(std::size_t const part_id,
-                                 const bool is_mixed_high_order_linear_elems);
+    void findElementsInPartition(std::size_t const part_id);
 
     /// Prerequisite: the ghost elements has to be found (using
     /// findElementsInPartition).
@@ -164,10 +165,11 @@ private:
     void processPartition(std::size_t const part_id,
                           const bool is_mixed_high_order_linear_elems);
 
-    void processProperties();
+    void processNodeProperties();
+    void processCellProperties();
 
     template <typename T>
-    bool copyPropertyVector(std::string const& name,
+    bool copyNodePropertyVector(std::string const& name,
                             std::size_t const total_number_of_tuples)
     {
         auto const& original_properties(_mesh->getProperties());
@@ -189,6 +191,41 @@ private:
                 (*partitioned_pv)[position_offset + i] = (*pv)[global_id];
             }
             position_offset += p.nodes.size();
+        }
+        return true;
+    }
+
+    template <typename T>
+    bool copyCellPropertyVector(std::string const& name,
+                                std::size_t const total_number_of_tuples)
+    {
+        auto const& original_properties(_mesh->getProperties());
+        if (!original_properties.existsPropertyVector<T>(name))
+            return false;
+
+        auto const& pv(original_properties.getPropertyVector<T>(name));
+        auto partitioned_pv =
+            _partitioned_properties.createNewPropertyVector<T>(
+                name, pv->getMeshItemType(), pv->getNumberOfComponents());
+        partitioned_pv->resize(total_number_of_tuples *
+                               pv->getNumberOfComponents());
+        std::size_t position_offset(0);
+        for (auto const& p : _partitions)
+        {
+            std::size_t const n_regular(p.regular_elements.size());
+            for (std::size_t i = 0; i < n_regular; ++i)
+            {
+                const auto id = p.regular_elements[i]->getID();
+                (*partitioned_pv)[position_offset + i] = (*pv)[id];
+            }
+            position_offset += n_regular;
+            std::size_t const n_ghost(p.ghost_elements.size());
+            for (std::size_t i = 0; i < n_ghost; ++i)
+            {
+                const auto id = p.ghost_elements[i]->getID();
+                (*partitioned_pv)[position_offset + i] = (*pv)[id];
+            }
+            position_offset += n_ghost;
         }
         return true;
     }

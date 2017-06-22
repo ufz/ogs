@@ -165,18 +165,30 @@ private:
      */
     MeshLib::NodePartitionedMesh* readBinary(const std::string &file_name_base);
 
-    MeshLib::Properties readPropertiesBinary(const std::string& file_name_base) const;
+    MeshLib::Properties readPropertiesBinary(
+        const std::string& file_name_base) const;
+
+    void readPropertiesBinary(const std::string& file_name_base,
+                              MeshLib::MeshItemType t,
+                              MeshLib::Properties& p) const;
+
+    void readDomainSpecificPartOfPropertyVectors(
+        std::vector<boost::optional<MeshLib::IO::PropertyVectorMetaData>> const&
+            vec_pvmd,
+        MeshLib::IO::PropertyVectorPartitionMetaData const& pvpmd,
+        MeshLib::MeshItemType t,
+        std::istream& is,
+        MeshLib::Properties& p) const;
 
     template <typename T>
     void createPropertyVectorPart(
         std::istream& is, MeshLib::IO::PropertyVectorMetaData const& pvmd,
         MeshLib::IO::PropertyVectorPartitionMetaData const& pvpmd,
-        unsigned long global_offset, MeshLib::Properties& p) const
+        MeshLib::MeshItemType t, unsigned long global_offset,
+        MeshLib::Properties& p) const
     {
-        MeshLib::PropertyVector<T>* pv =
-            p.createNewPropertyVector<T>(pvmd.property_name,
-                                         MeshLib::MeshItemType::Node,
-                                         pvmd.number_of_components);
+        MeshLib::PropertyVector<T>* pv = p.createNewPropertyVector<T>(
+            pvmd.property_name, t, pvmd.number_of_components);
         pv->resize(pvpmd.number_of_tuples * pvmd.number_of_components);
         // jump to the place for reading the specific part of the
         // PropertyVector

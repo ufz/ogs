@@ -198,14 +198,26 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
 MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
     const std::string& file_name_base) const
 {
-    const std::string fname_cfg = file_name_base +
-                                  "_partitioned_properties_cfg" +
+    MeshLib::Properties p;
+    readPropertiesBinary(file_name_base, MeshLib::MeshItemType::Node, p);
+    readPropertiesBinary(file_name_base, MeshLib::MeshItemType::Cell, p);
+    return p;
+}
+
+void NodePartitionedMeshReader::readPropertiesBinary(
+    const std::string& file_name_base, MeshLib::MeshItemType t,
+    MeshLib::Properties& p) const
+{
+    std::string const item_type =
+        t == MeshLib::MeshItemType::Node ? "node" : "cell";
+    const std::string fname_cfg = file_name_base + "_partitioned_" + item_type +
+                                  "_properties_cfg" +
                                   std::to_string(_mpi_comm_size) + ".bin";
     std::ifstream is(fname_cfg.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
         WARN("Could not open file '%s' in binary mode.", fname_cfg.c_str());
-        return MeshLib::Properties();
+        return;
     }
     std::size_t number_of_properties = 0;
     is.read(reinterpret_cast<char*>(&number_of_properties), sizeof(std::size_t));
@@ -251,33 +263,43 @@ MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
     DBUG("[%d] %d tuples in partition.", _mpi_rank, pvpmd->number_of_tuples);
     is.close();
 
-    const std::string fname_val = file_name_base + "_partitioned_properties_val"
-                              + std::to_string(_mpi_comm_size) + ".bin";
+    const std::string fname_val = file_name_base + "_partitioned_" + item_type +
+                                  "_properties_val" +
+                                  std::to_string(_mpi_comm_size) + ".bin";
     is.open(fname_val.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
         ERR("Could not open file '%s' in binary mode.", fname_val.c_str());
     }
 
-    MeshLib::Properties p;
+    readDomainSpecificPartOfPropertyVectors(vec_pvmd, *pvpmd, t, is, p);
+}
 
-    // Read the specific parts of the PropertyVector values for this process.
+void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
+    std::vector<boost::optional<MeshLib::IO::PropertyVectorMetaData>> const&
+        vec_pvmd,
+    MeshLib::IO::PropertyVectorPartitionMetaData const& pvpmd,
+    MeshLib::MeshItemType t,
+    std::istream& is,
+    MeshLib::Properties& p) const
+{
     unsigned long global_offset = 0;
+    std::size_t const number_of_properties = vec_pvmd.size();
     for (std::size_t i(0); i < number_of_properties; ++i)
     {
-        INFO("[%d] global offset: %d, offset within the PropertyVector: %d.",
+        DBUG("[%d] global offset: %d, offset within the PropertyVector: %d.",
              _mpi_rank, global_offset,
              global_offset +
-                 pvpmd->offset * vec_pvmd[i]->data_type_size_in_bytes);
+                 pvpmd.offset * vec_pvmd[i]->data_type_size_in_bytes);
         if (vec_pvmd[i]->is_int_type)
         {
             if (vec_pvmd[i]->is_data_type_signed)
             {
                 if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(int))
-                    createPropertyVectorPart<int>(is, *vec_pvmd[i], *pvpmd,
+                    createPropertyVectorPart<int>(is, *vec_pvmd[i], pvpmd, t,
                                                   global_offset, p);
                 if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(long))
-                    createPropertyVectorPart<long>(is, *vec_pvmd[i], *pvpmd,
+                    createPropertyVectorPart<long>(is, *vec_pvmd[i], pvpmd, t,
                                                    global_offset, p);
             }
             else
@@ -285,32 +307,31 @@ MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
                 if (vec_pvmd[i]->data_type_size_in_bytes ==
                     sizeof(unsigned int))
                     createPropertyVectorPart<unsigned int>(
-                        is, *vec_pvmd[i], *pvpmd, global_offset, p);
+                        is, *vec_pvmd[i], pvpmd, t, global_offset, p);
                 if (vec_pvmd[i]->data_type_size_in_bytes ==
                     sizeof(unsigned long))
                     createPropertyVectorPart<unsigned long>(
-                        is, *vec_pvmd[i], *pvpmd, global_offset, p);
+                        is, *vec_pvmd[i], pvpmd, t, global_offset, p);
             }
         }
         else
         {
             if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(float))
-                createPropertyVectorPart<float>(is, *vec_pvmd[i], *pvpmd,
+                createPropertyVectorPart<float>(is, *vec_pvmd[i], pvpmd, t,
                                                 global_offset, p);
             if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(double))
-                createPropertyVectorPart<double>(is, *vec_pvmd[i], *pvpmd,
+                createPropertyVectorPart<double>(is, *vec_pvmd[i], pvpmd, t,
                                                  global_offset, p);
         }
         global_offset += vec_pvmd[i]->data_type_size_in_bytes *
                          vec_pvmd[i]->number_of_tuples *
                          vec_pvmd[i]->number_of_components;
     }
-
-    return p;
 }
 
-bool NodePartitionedMeshReader::openASCIIFiles(std::string const& file_name_base,
-    std::ifstream& is_cfg, std::ifstream& is_node, std::ifstream& is_elem) const
+bool NodePartitionedMeshReader::openASCIIFiles(
+    std::string const& file_name_base, std::ifstream& is_cfg,
+    std::ifstream& is_node, std::ifstream& is_elem) const
 {
     const std::string fname_header = file_name_base +  "_partitioned_";
     const std::string fname_num_p_ext = std::to_string(_mpi_comm_size) + ".msh";

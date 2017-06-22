@@ -74,7 +74,7 @@ inline void writePropertyVectorMetaData(PropertyVectorMetaData const& pvmd)
     DBUG("is_int_data_type: %d", pvmd.is_int_type);
     DBUG("is_data_type_signed: %d", pvmd.is_data_type_signed);
     DBUG("data_type_size_in_bytes: %d", pvmd.data_type_size_in_bytes);
-    DBUG("number of components: i%d", pvmd.number_of_components);
+    DBUG("number of components: %d", pvmd.number_of_components);
     DBUG("number of tuples: %d", pvmd.number_of_tuples);
 }
 
