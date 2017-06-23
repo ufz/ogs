@@ -8,6 +8,7 @@
  */
 
 #include "LinearElasticIsotropic.h"
+#include "LinearElasticIsotropic-impl.h"
 
 namespace MaterialLib
 {

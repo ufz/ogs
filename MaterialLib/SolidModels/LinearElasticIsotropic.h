@@ -99,24 +99,7 @@ public:
         KelvinVector const& eps,
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables) override
-    {
-        KelvinMatrix C = KelvinMatrix::Zero();
-
-        C.template topLeftCorner<3, 3>().setConstant(_mp.lambda(t, x));
-        C.noalias() += 2 * _mp.mu(t, x) * KelvinMatrix::Identity();
-
-        KelvinVector sigma = sigma_prev + C * (eps - eps_prev);
-
-        return {
-            std::make_tuple(sigma,
-                            std::unique_ptr<typename MechanicsBase<
-                                DisplacementDim>::MaterialStateVariables>{
-                                new MaterialStateVariables{
-                                    static_cast<MaterialStateVariables const&>(
-                                        material_state_variables)}},
-                            C)};
-    }
+            material_state_variables) override;
 
 private:
     MaterialProperties _mp;
