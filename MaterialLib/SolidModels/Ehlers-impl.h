@@ -130,15 +130,6 @@ struct PhysicalStressWithInvariants final
     {
     }
 
-    PhysicalStressWithInvariants(PhysicalStressWithInvariants const&) = default;
-    PhysicalStressWithInvariants& operator=(
-        PhysicalStressWithInvariants const&) = default;
-#if defined(_MSC_VER) && (_MSC_VER >= 1900)
-    PhysicalStressWithInvariants(PhysicalStressWithInvariants&&) = default;
-    PhysicalStressWithInvariants& operator=(PhysicalStressWithInvariants&&) =
-        default;
-#endif  // _MSC_VER
-
     KelvinVector value;
     KelvinVector D;
     double I_1;
