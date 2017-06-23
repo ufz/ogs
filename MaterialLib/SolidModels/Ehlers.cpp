@@ -8,6 +8,7 @@
  */
 
 #include "Ehlers.h"
+#include "Ehlers-impl.h"
 
 namespace MaterialLib
 {
