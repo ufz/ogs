@@ -188,7 +188,6 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     // TODO be more efficient
     // init _minus_delta_x to the right size and 0.0
     LinAlg::copy(x, minus_delta_x);
-    minus_delta_x.setZero();
 
     _convergence_criterion->preFirstIteration();
 
@@ -207,6 +206,8 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.getResidual(x, res);
         sys.getJacobian(J);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
+
+        minus_delta_x.setZero();
 
         BaseLib::RunTime time_dirichlet;
         time_dirichlet.start();
