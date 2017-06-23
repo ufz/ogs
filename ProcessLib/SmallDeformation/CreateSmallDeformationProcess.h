@@ -9,7 +9,24 @@
 
 #pragma once
 
-#include "ProcessLib/Process.h"
+#include <memory>
+#include <vector>
+
+namespace BaseLib
+{
+class ConfigTree;
+}
+namespace MeshLib
+{
+class Mesh;
+}
+namespace ProcessLib
+{
+class AbstractJacobianAssembler;
+struct ParameterBase;
+class Process;
+class ProcessVariable;
+}
 
 namespace ProcessLib
 {
