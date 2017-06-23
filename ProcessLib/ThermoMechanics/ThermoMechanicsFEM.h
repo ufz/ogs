@@ -43,22 +43,6 @@ struct IntegrationPointData final
     {
     }
 
-#if defined(_MSC_VER) && _MSC_VER < 1900
-    // The default generated move-ctor is correctly generated for other
-    // compilers.
-    explicit IntegrationPointData(IntegrationPointData&& other)
-        : sigma(std::move(other.sigma)),
-          sigma_prev(std::move(other.sigma_prev)),
-          eps(std::move(other.eps)),
-          eps_m(std::move(other.eps_m)),
-          eps_m_prev(std::move(other.eps_m_prev)),
-          solid_material(other.solid_material),
-          material_state_variables(std::move(other.material_state_variables)),
-          integration_weight(std::move(other.integration_weight)),
-    {
-    }
-#endif  // _MSC_VER
-
     typename ShapeMatrixType::NodalRowVectorType N;
     typename ShapeMatrixType::GlobalDimNodalMatrixType dNdx;
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;

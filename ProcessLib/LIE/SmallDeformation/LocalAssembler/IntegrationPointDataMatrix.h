@@ -32,22 +32,6 @@ struct IntegrationPointDataMatrix final
     {
     }
 
-#if defined(_MSC_VER) && _MSC_VER < 1900
-    // The default generated move-ctor is correctly generated for other
-    // compilers.
-    explicit IntegrationPointDataMatrix(IntegrationPointDataMatrix&& other)
-        : _sigma(std::move(other._sigma)),
-          _sigma_prev(std::move(other._sigma_prev)),
-          _eps(std::move(other._eps)),
-          _eps_prev(std::move(other._eps_prev)),
-          _solid_material(other._solid_material),
-          _material_state_variables(std::move(other._material_state_variables)),
-          _C(std::move(other._C)),
-          _detJ(std::move(other._detJ))
-    {
-    }
-#endif  // _MSC_VER
-
     typename BMatricesType::KelvinVectorType _sigma, _sigma_prev;
     typename BMatricesType::KelvinVectorType _eps, _eps_prev;
 
