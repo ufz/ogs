@@ -8,6 +8,7 @@
  */
 
 #include "Lubby2.h"
+#include "Lubby2-impl.h"
 
 namespace MaterialLib
 {
