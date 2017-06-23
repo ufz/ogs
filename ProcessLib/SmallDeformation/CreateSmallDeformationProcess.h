@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "MaterialLib/SolidModels/CreateLubby2.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
