@@ -117,7 +117,9 @@ void checkLinearSolverInterface(T_MATRIX &A, BaseLib::ConfigTree const& ls_optio
 
     // set RHS and solution vectors
     T_VECTOR rhs(ex1.dim_eqs);
+    rhs.setZero();
     T_VECTOR x(ex1.dim_eqs);
+    x.setZero();
 
     // apply BC
     MathLib::applyKnownSolution(A, rhs, x, ex1.vec_dirichlet_bc_id, ex1.vec_dirichlet_bc_value);

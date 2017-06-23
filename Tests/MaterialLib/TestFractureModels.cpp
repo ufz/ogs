@@ -35,11 +35,15 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
     std::unique_ptr<FractureModelBase<2>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
 
-    Eigen::Vector2d w_prev, w, sigma_prev, sigma;
+    Eigen::Vector2d const w_prev = Eigen::Vector2d::Zero();
+    Eigen::Vector2d const sigma_prev = Eigen::Vector2d::Zero();
+    Eigen::Vector2d w(-1e-5, -1e-5);
+
+    // Result vectors, not initialized.
+    Eigen::Vector2d sigma;
     Eigen::Matrix2d C;
 
     ProcessLib::SpatialPosition x;
-    w << -1e-5, -1e-5;
     fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-1e4, sigma[0], eps_sigma);
@@ -74,12 +78,15 @@ TEST(MaterialLib_Fracture, MohrCoulomb)
     std::unique_ptr<FractureModelBase<2>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
 
-    Eigen::Vector2d w_prev, w, sigma_prev, sigma;
+    Eigen::Vector2d const w_prev = Eigen::Vector2d::Zero();
+    Eigen::Vector2d const sigma_prev(-3.46e6, -2e6);
+    Eigen::Vector2d const w(-1.08e-5, -0.25e-5);
+
+    // Result vectors, not initialized.
+    Eigen::Vector2d sigma;
     Eigen::Matrix2d C;
 
     ProcessLib::SpatialPosition x;
-    sigma_prev << -3.46e6, -2e6;
-    w << -1.08e-5, -0.25e-5;
     fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-3.50360e6, sigma[0], eps_sigma);

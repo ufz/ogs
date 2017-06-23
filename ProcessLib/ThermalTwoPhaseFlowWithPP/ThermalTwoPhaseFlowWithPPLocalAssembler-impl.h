@@ -100,8 +100,8 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
     auto Met = local_M.template block<temperature_size, temperature_size>(
         temperature_matrix_index, temperature_matrix_index);
 
-    NodalMatrixType laplace_operator;
-    laplace_operator.setZero(ShapeFunction::NPOINTS, ShapeFunction::NPOINTS);
+    NodalMatrixType laplace_operator =
+        NodalMatrixType::Zero(ShapeFunction::NPOINTS, ShapeFunction::NPOINTS);
 
     auto Kgp =
         local_K.template block<nonwet_pressure_size, nonwet_pressure_size>(

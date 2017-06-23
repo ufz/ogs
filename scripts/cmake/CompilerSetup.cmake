@@ -38,9 +38,6 @@ if(BUILD_SHARED_LIBS)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 endif()
 
-# Set additional user-given compiler flags
-set(CMAKE_CXX_FLAGS ${OGS_CXX_FLAGS})
-
 if(OGS_ENABLE_AVX2)
     set(CPU_FLAGS "-mavx2 -march=core-avx2")
 elseif(OGS_CPU_ARCHITECTURE STREQUAL "generic")
@@ -146,3 +143,8 @@ if(MSVC)
 else()
     add_definitions(-DOPENMP_LOOP_TYPE=unsigned)
 endif()
+
+# Set additional user-given compiler flags. The given flags must follow the
+# preceding cxx flags definition in order to override earlier flags, e.g. for
+# optimization.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OGS_CXX_FLAGS}")

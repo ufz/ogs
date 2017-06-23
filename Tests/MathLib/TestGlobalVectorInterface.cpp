@@ -36,6 +36,7 @@ template <class T_VECTOR>
 void checkGlobalVectorInterface()
 {
     T_VECTOR x(10);
+    x.setZero();
 
     ASSERT_EQ(10u, x.size());
     ASSERT_EQ(0u, x.getRangeBegin());

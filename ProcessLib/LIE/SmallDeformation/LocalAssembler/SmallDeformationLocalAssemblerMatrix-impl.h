@@ -70,12 +70,17 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
         ip_data.dNdx = sm.dNdx;
         ip_data._detJ = sm.detJ;
         ip_data._integralMeasure = sm.integralMeasure;
-        ip_data._sigma.resize(KelvinVectorDimensions<DisplacementDim>::value);
+
+        // Initialize current time step values
+        ip_data._sigma.setZero(KelvinVectorDimensions<DisplacementDim>::value);
+        ip_data._eps.setZero(KelvinVectorDimensions<DisplacementDim>::value);
+
+        // Previous time step values are not initialized and are set later.
         ip_data._sigma_prev.resize(
             KelvinVectorDimensions<DisplacementDim>::value);
-        ip_data._eps.resize(KelvinVectorDimensions<DisplacementDim>::value);
         ip_data._eps_prev.resize(
             KelvinVectorDimensions<DisplacementDim>::value);
+
         ip_data._C.resize(KelvinVectorDimensions<DisplacementDim>::value,
                           KelvinVectorDimensions<DisplacementDim>::value);
 

@@ -216,10 +216,13 @@ public:
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 sm_u.integralMeasure * sm_u.detJ;
 
-            ip_data.sigma_eff.resize(kelvin_vector_size);
-            ip_data.sigma_eff_prev.resize(kelvin_vector_size);
-            ip_data.eps.resize(kelvin_vector_size);
+            // Initialize current time step values
+            ip_data.sigma_eff.setZero(kelvin_vector_size);
+            ip_data.eps.setZero(kelvin_vector_size);
+
+            // Previous time step values are not initialized and are set later.
             ip_data.eps_prev.resize(kelvin_vector_size);
+            ip_data.sigma_eff_prev.resize(kelvin_vector_size);
 
             ip_data.N_u_op = ShapeMatricesTypeDisplacement::template MatrixType<
                 DisplacementDim, displacement_size>::Zero(DisplacementDim,
@@ -291,16 +294,19 @@ public:
                 displacement_size + pressure_size>>(
             local_rhs_data, displacement_size + pressure_size);
 
-        typename ShapeMatricesTypePressure::NodalMatrixType laplace_p;
-        laplace_p.setZero(pressure_size, pressure_size);
+        typename ShapeMatricesTypePressure::NodalMatrixType laplace_p =
+            ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                             pressure_size);
 
-        typename ShapeMatricesTypePressure::NodalMatrixType storage_p;
-        storage_p.setZero(pressure_size, pressure_size);
+        typename ShapeMatricesTypePressure::NodalMatrixType storage_p =
+            ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                             pressure_size);
 
         typename ShapeMatricesTypeDisplacement::template MatrixType<
             displacement_size, pressure_size>
-            Kup;
-        Kup.setZero(displacement_size, pressure_size);
+            Kup = ShapeMatricesTypeDisplacement::template MatrixType<
+                displacement_size, pressure_size>::Zero(displacement_size,
+                                                        pressure_size);
 
         double const& dt = _process_data.dt;
 

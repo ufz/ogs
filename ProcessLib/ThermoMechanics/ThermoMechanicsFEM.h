@@ -210,11 +210,11 @@ public:
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
 
-            ip_data.sigma.resize(kelvin_vector_size);
-            ip_data.sigma_prev.resize(kelvin_vector_size);
-            ip_data.eps.resize(kelvin_vector_size);
-            ip_data.eps_m.resize(kelvin_vector_size);
-            ip_data.eps_m_prev.resize(kelvin_vector_size);
+            ip_data.sigma.setZero(kelvin_vector_size);
+            ip_data.sigma_prev.setZero(kelvin_vector_size);
+            ip_data.eps.setZero(kelvin_vector_size);
+            ip_data.eps_m.setZero(kelvin_vector_size);
+            ip_data.eps_m_prev.setZero(kelvin_vector_size);
 
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;

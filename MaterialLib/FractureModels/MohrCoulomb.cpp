@@ -66,8 +66,7 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     MaterialPropertyValues const mat(_mp, t, x);
     Eigen::VectorXd const dw = w - w_prev;
 
-    Eigen::MatrixXd Ke(2,2);
-    Ke.setZero();
+    Eigen::MatrixXd Ke = Eigen::MatrixXd::Zero(2, 2);
     Ke(0,0) = mat.Ks;
     Ke(1,1) = mat.Kn;
 

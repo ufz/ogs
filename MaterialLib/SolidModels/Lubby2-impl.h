@@ -29,8 +29,9 @@ calculatedGdEBurgers()
 {
     Eigen::Matrix<double, Lubby2<DisplacementDim>::JacobianResidualSize,
                   Lubby2<DisplacementDim>::KelvinVectorSize>
-        dGdE;
-    dGdE.setZero();
+        dGdE =
+            Eigen::Matrix<double, Lubby2<DisplacementDim>::JacobianResidualSize,
+                          Lubby2<DisplacementDim>::KelvinVectorSize>::Zero();
     dGdE.template topLeftCorner<Lubby2<DisplacementDim>::KelvinVectorSize,
                                 Lubby2<DisplacementDim>::KelvinVectorSize>()
         .diagonal()
