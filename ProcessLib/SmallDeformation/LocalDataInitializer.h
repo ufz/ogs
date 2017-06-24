@@ -110,7 +110,8 @@ namespace ProcessLib
 /// For example for MeshLib::Quad a local assembler data with template argument
 /// NumLib::ShapeQuad4 is created.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, unsigned, int> class LocalAssemblerData,
+          template <typename, typename, int>
+          class SmallDeformationLocalAssembler,
           unsigned GlobalDim, int DisplacementDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
@@ -245,9 +246,8 @@ private:
         typename ShapeFunction::MeshElement>::IntegrationMethod;
 
     template <typename ShapeFunction>
-    using LAData =
-        LocalAssemblerData<ShapeFunction, IntegrationMethod<ShapeFunction>,
-                           GlobalDim, DisplacementDim>;
+    using LAData = SmallDeformationLocalAssembler<
+        ShapeFunction, IntegrationMethod<ShapeFunction>, DisplacementDim>;
 
     /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
     /// depending whether the global dimension is less than the shape function's

@@ -51,8 +51,8 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    ProcessLib::SmallDeformation::createLocalAssemblers<DisplacementDim,
-                                                        LocalAssemblerData>(
+    ProcessLib::SmallDeformation::createLocalAssemblers<
+        DisplacementDim, SmallDeformationLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 

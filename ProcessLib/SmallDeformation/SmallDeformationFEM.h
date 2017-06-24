@@ -365,29 +365,5 @@ private:
     bool const _is_axially_symmetric;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim, int DisplacementDim>
-class LocalAssemblerData final
-    : public SmallDeformationLocalAssembler<ShapeFunction, IntegrationMethod,
-                                            DisplacementDim>
-{
-public:
-    LocalAssemblerData(LocalAssemblerData const&) = delete;
-    LocalAssemblerData(LocalAssemblerData&&) = delete;
-
-    LocalAssemblerData(
-        MeshLib::Element const& e,
-        std::size_t const local_matrix_size,
-        bool is_axially_symmetric,
-        unsigned const integration_order,
-        SmallDeformationProcessData<DisplacementDim>& process_data)
-        : SmallDeformationLocalAssembler<ShapeFunction, IntegrationMethod,
-                                         DisplacementDim>(
-              e, local_matrix_size, is_axially_symmetric, integration_order,
-              process_data)
-    {
-    }
-};
-
 }  // namespace SmallDeformation
 }  // namespace ProcessLib
