@@ -12,13 +12,9 @@
 #include <algorithm>
 #include <functional>
 #include <limits>
-#include <string>
 #include <vector>
 
 #include "EvolutionaryPIDcontroller.h"
-
-#include "BaseLib/ConfigTree.h"
-#include "TimeStepAlgorithm.h"
 
 namespace NumLib
 {
@@ -106,70 +102,6 @@ double EvolutionaryPIDcontroller::checkSpecificTimeReached(const double h_new)
     }
 
     return h_new;
-}
-
-/// Create an EvolutionaryPIDcontroller time stepper from the given
-/// configuration
-std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
-    BaseLib::ConfigTree const& config)
-{
-    //! \ogs_file_param{prj__time_loop__time_stepping__type}
-    config.checkConfigParameter("type", "EvolutionaryPIDcontroller");
-
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__t_initial}
-    auto const t0 = config.getConfigParameter<double>("t_initial");
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__t_end}
-    auto const t_end = config.getConfigParameter<double>("t_end");
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__dt_guess}
-    auto const h0 = config.getConfigParameter<double>("dt_guess");
-
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__dt_min}
-    auto const h_min = config.getConfigParameter<double>("dt_min");
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__dt_max}
-    auto const h_max = config.getConfigParameter<double>("dt_max");
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__rel_dt_min}
-    auto const rel_h_min = config.getConfigParameter<double>("rel_dt_min");
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__rel_dt_max}
-    auto const rel_h_max = config.getConfigParameter<double>("rel_dt_max");
-
-    auto specific_times_opt =
-        //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__specific_times}
-        config.getConfigParameterOptional<std::vector<double>>(
-            "specific_times");
-    std::vector<double> dummy_vector;
-    std::vector<double>& specific_times =
-        (specific_times_opt) ? *specific_times_opt : dummy_vector;
-    if (specific_times.size() > 0)
-    {
-        // Sort in descending order.
-        std::sort(specific_times.begin(),
-                  specific_times.end(),
-                  std::greater<double>());
-        // Remove possible duplicated elements.
-        auto last = std::unique(specific_times.begin(), specific_times.end());
-        specific_times.erase(last, specific_times.end());
-    }
-
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__tol}
-    auto const tol = config.getConfigParameter<double>("tol");
-    auto const norm_type_opt =
-        //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__norm_type}
-        config.getConfigParameterOptional<std::string>("norm_type");
-    const MathLib::VecNormType norm_type =
-        (norm_type_opt) ? MathLib::convertStringToVecNormType(*norm_type_opt)
-                        : MathLib::VecNormType::NORM2;
-
-    return std::unique_ptr<TimeStepAlgorithm>(
-        new EvolutionaryPIDcontroller(t0,
-                                      t_end,
-                                      h0,
-                                      h_min,
-                                      h_max,
-                                      rel_h_min,
-                                      rel_h_max,
-                                      std::move(specific_times),
-                                      tol,
-                                      norm_type));
 }
 
 }  // end of namespace NumLib

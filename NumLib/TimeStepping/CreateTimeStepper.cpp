@@ -11,10 +11,14 @@
 
 #include "CreateTimeStepper.h"
 
-#include "BaseLib/ConfigTree.h"
+#include <string>
 
+#include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
+
+#include "NumLib/TimeStepping/Algorithms/CreateFixedTimeStepping.h"
 #include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
-#include "NumLib/TimeStepping/Algorithms/EvolutionaryPIDcontroller.h"
+#include "NumLib/TimeStepping/Algorithms/CreateEvolutionaryPIDcontroller.h"
 
 namespace NumLib
 {
@@ -34,7 +38,7 @@ std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     }
     else if (type == "FixedTimeStepping")
     {
-        timestepper = NumLib::FixedTimeStepping::newInstance(config);
+        timestepper = NumLib::createFixedTimeStepping(config);
     }
     else if (type == "EvolutionaryPIDcontroller")
     {

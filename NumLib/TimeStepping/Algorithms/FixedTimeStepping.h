@@ -16,11 +16,6 @@
 
 #include "TimeStepAlgorithm.h"
 
-namespace BaseLib
-{
-class ConfigTree;
-}
-
 namespace NumLib
 {
 /**
@@ -61,10 +56,6 @@ public:
      */
     FixedTimeStepping(double t_initial, double t_end,
                       const std::vector<double>& vec_all_dt);
-
-    /// Create timestepper from the given configuration
-    static std::unique_ptr<TimeStepAlgorithm> newInstance(
-        BaseLib::ConfigTree const& config);
 
     /// move to the next time step
     bool next(const double solution_error) override;
