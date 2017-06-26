@@ -23,11 +23,6 @@ namespace ProcessLib
 {
 namespace SmallDeformation
 {
-template <int DisplacementDim>
-class SmallDeformationProcess;
-
-extern template class SmallDeformationProcess<2>;
-extern template class SmallDeformationProcess<3>;
 
 template <int DisplacementDim>
 std::unique_ptr<Process>
