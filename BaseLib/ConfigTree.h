@@ -152,20 +152,8 @@ public:
     class ParameterIterator : public SubtreeIterator
     {
     public:
-#if defined(_MSC_VER) && _MSC_VER < 1900
-        // 1900 == MSCV 14.0 == Visual Studio 2015
-        // according to this post: http://stackoverflow.com/a/70630
-        // This table: http://en.cppreference.com/w/cpp/compiler_support
-        // says that since MSVC 14.0 inheriting of constructors is supported.
-        //! Inherit the constructor
-        explicit ParameterIterator(Iterator it, std::string const& root,
-                                   ConfigTree const& parent)
-            : SubtreeIterator(it, root, parent)
-        {}
-#else
         //! Inherit the constructor
         using SubtreeIterator::SubtreeIterator;
-#endif
 
         ConfigTree operator*() {
             auto st = SubtreeIterator::operator*();
@@ -538,16 +526,7 @@ private:
      *
      * This method only acts as a helper method and throws std::runtime_error.
      */
-#if defined(_MSC_VER) && _MSC_VER < 1900
-    // 1900 == MSCV 14.0 == Visual Studio 2015
-    // according to this post: http://stackoverflow.com/a/70630
-    // This table: http://en.cppreference.com/w/cpp/compiler_support
-    // says that since MSVC 14.0 attributes are supported.
-    __declspec(noreturn)
-#else
-    [[noreturn]]
-#endif
-    void error(std::string const& message) const;
+    [[noreturn]] void error(std::string const& message) const;
 
     //! Called for printing warning messages. Will call the warning callback.
     //! This method only acts as a helper method.
