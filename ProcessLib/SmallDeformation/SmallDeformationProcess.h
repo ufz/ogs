@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "LocalAssemblerInterface.h"
 #include <cassert>
 
 #include "ProcessLib/Process.h"
