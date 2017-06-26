@@ -112,7 +112,7 @@ namespace ProcessLib
 template <typename LocalAssemblerInterface,
           template <typename, typename, int>
           class SmallDeformationLocalAssembler,
-          unsigned GlobalDim, int DisplacementDim, typename... ConstructorArgs>
+          int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:
@@ -247,7 +247,7 @@ private:
 
     template <typename ShapeFunction>
     using LAData = SmallDeformationLocalAssembler<
-        ShapeFunction, IntegrationMethod<ShapeFunction>, DisplacementDim>;
+        ShapeFunction, IntegrationMethod<ShapeFunction>, GlobalDim>;
 
     /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
     /// depending whether the global dimension is less than the shape function's

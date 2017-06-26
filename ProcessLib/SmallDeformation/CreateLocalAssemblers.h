@@ -22,7 +22,7 @@ namespace SmallDeformation
 {
 namespace detail
 {
-template <unsigned GlobalDim, int DisplacementDim,
+template <int GlobalDim,
           template <typename, typename, int> class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
@@ -35,7 +35,7 @@ void createLocalAssemblers(
     using LocalDataInitializer =
         LocalDataInitializer<LocalAssemblerInterface,
                              LocalAssemblerImplementation, GlobalDim,
-                             DisplacementDim, ExtraCtorArgs...>;
+                             ExtraCtorArgs...>;
 
     DBUG("Create local assemblers.");
     // Populate the vector of local assemblers.
@@ -64,11 +64,10 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template <int DisplacementDim,
+template <int GlobalDim,
           template <typename, typename, int> class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
-    const unsigned dimension,
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
@@ -76,16 +75,7 @@ void createLocalAssemblers(
 {
     DBUG("Create local assemblers.");
 
-    if (DisplacementDim != 2 || DisplacementDim != 3)
-        OGS_FATAL(
-            "Meshes with dimension different than two and three are not "
-            "supported.");
-
-    if (dimension != DisplacementDim)
-        return;
-
-    detail::createLocalAssemblers<DisplacementDim, DisplacementDim,
-                                  LocalAssemblerImplementation>(
+    detail::createLocalAssemblers<GlobalDim, LocalAssemblerImplementation>(
         dof_table, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }

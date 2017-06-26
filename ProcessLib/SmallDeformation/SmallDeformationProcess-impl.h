@@ -53,7 +53,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 {
     ProcessLib::SmallDeformation::createLocalAssemblers<
         DisplacementDim, SmallDeformationLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+        mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     // TODO move the two data members somewhere else.
