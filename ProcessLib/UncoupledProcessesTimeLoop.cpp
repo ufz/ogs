@@ -566,14 +566,19 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
                        : time_disc->getRelativeChangeFromPreviousTimestep(
                              x, timestepper->getSolutionNormType()))
                 : 0.;
-        if (!timestepper->next(solution_error))
+        if (!timestepper->next(solution_error) &&
+            // In case of FixedTimeStepping, which makes timestepper->next(...)
+            // return false when the ending time is reached.
+            t + std::numeric_limits<double>::epsilon() < timestepper->end())
         {
             // Not all processes have accepted steps.
             all_process_steps_accepted = false;
         }
 
         if (timestepper->getTimeStep().dt() >
-            std::numeric_limits<double>::min())
+                std::numeric_limits<double>::min() ||
+            std::abs(t - timestepper->end()) <
+                std::numeric_limits<double>::epsilon())
         {
             if (timestepper->getTimeStep().dt() < dt)
             {
@@ -704,7 +709,7 @@ bool UncoupledProcessesTimeLoop::loop()
     const bool is_staggered_coupling = setCoupledSolutions();
 
     double t = _start_time;
-    std::size_t accepted_steps = 1;
+    std::size_t accepted_steps = 0;
     std::size_t rejected_steps = 0;
     bool nonlinear_solver_succeeded = true;
 
@@ -718,7 +723,7 @@ bool UncoupledProcessesTimeLoop::loop()
         t += dt;
         const double prev_dt = dt;
 
-        const std::size_t timesteps = accepted_steps + rejected_steps;
+        const std::size_t timesteps = accepted_steps + rejected_steps + 1;
         // TODO, input option for time unit.
         INFO("=== Time stepping at step #%u and time %g with step size %g",
              timesteps, t, dt);
@@ -749,6 +754,10 @@ bool UncoupledProcessesTimeLoop::loop()
 
         dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
 
+        if (t + dt > _end_time ||
+            t + std::numeric_limits<double>::epsilon() > _end_time)
+            break;
+
         if (dt < std::numeric_limits<double>::epsilon())
         {
             WARN(
@@ -757,9 +766,6 @@ bool UncoupledProcessesTimeLoop::loop()
                 dt, timesteps, t);
             break;
         }
-
-        if (t + dt > _end_time)
-            break;
     }
 
     INFO(
@@ -902,8 +908,8 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                     timestep_id, t, pcs_idx);
 
                 // save unsuccessful solution
-                _output->doOutputAlways(spd->process, spd->process_output, timestep_id,
-                                        t, x);
+                _output->doOutputAlways(spd->process, spd->process_output,
+                                        timestep_id, t, x);
 
                 break;
             }
