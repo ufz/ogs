@@ -13,15 +13,15 @@
 
 #include "BaseLib/reorderVector.h"
 
-#include "MaterialLib/PorousMedium/Permeability/createPermeabilityModel.h"
-#include "MaterialLib/PorousMedium/Porosity/createPorosityModel.h"
-#include "MaterialLib/PorousMedium/Storage/createStorageModel.h"
+#include "Permeability/createPermeabilityModel.h"
+#include "Porosity/createPorosityModel.h"
+#include "Storage/createStorageModel.h"
 
 #include "MeshLib/Mesh.h"
 
-namespace ProcessLib
+namespace MaterialLib
 {
-namespace ComponentTransport
+namespace PorousMedium
 {
 PorousMediaProperties createPorousMediaProperties(
     MeshLib::Mesh& mesh, BaseLib::ConfigTree const& porous_medium_configs)
