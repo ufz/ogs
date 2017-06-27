@@ -17,14 +17,14 @@
 #include "BaseLib/reorderVector.h"
 
 
-#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
+#include "Porosity/Porosity.h"
+#include "Storage/Storage.h"
 
 #include "ProcessLib/Parameter/SpatialPosition.h"
 
-namespace ProcessLib
+namespace MaterialLib
 {
-namespace ComponentTransport
+namespace PorousMedium
 {
 
 class PorousMediaProperties
@@ -54,16 +54,16 @@ public:
     }
 
     MaterialLib::PorousMedium::Porosity const& getPorosity(
-        double t, SpatialPosition const& pos) const;
+        double t, ProcessLib::SpatialPosition const& pos) const;
 
     Eigen::MatrixXd const& getIntrinsicPermeability(
-        double t, SpatialPosition const& pos) const;
+        double t, ProcessLib::SpatialPosition const& pos) const;
 
     MaterialLib::PorousMedium::Storage const& getSpecificStorage(
-        double t, SpatialPosition const& pos) const;
+        double t, ProcessLib::SpatialPosition const& pos) const;
 
 private:
-    int getMaterialID(SpatialPosition const& pos) const;
+    int getMaterialID(ProcessLib::SpatialPosition const& pos) const;
 private:
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         _porosity_models;

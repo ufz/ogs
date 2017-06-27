@@ -13,7 +13,7 @@
 #include <utility>
 
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
-#include "PorousMediaProperties.h"
+#include "MaterialLib/PorousMedium/PorousMediaProperties.h"
 
 namespace ProcessLib
 {
@@ -25,7 +25,8 @@ namespace HT
 struct HTProcessData
 {
     HTProcessData(
-        PorousMediaProperties&& porous_media_properties_,
+        MaterialLib::PorousMedium::PorousMediaProperties&&
+            porous_media_properties_,
         ProcessLib::Parameter<double> const& density_solid_,
         ProcessLib::Parameter<double> const& fluid_reference_density_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&&
@@ -77,7 +78,7 @@ struct HTProcessData
     //! Assignments are not needed.
     void operator=(HTProcessData&&) = delete;
 
-    PorousMediaProperties porous_media_properties;
+    MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
     Parameter<double> const& density_solid;
     Parameter<double> const& fluid_reference_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;

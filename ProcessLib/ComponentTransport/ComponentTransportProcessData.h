@@ -14,8 +14,7 @@
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
-
-#include "PorousMediaProperties.h"
+#include "MaterialLib/PorousMedium/PorousMediaProperties.h"
 
 namespace ProcessLib
 {
@@ -27,7 +26,8 @@ namespace ComponentTransport
 struct ComponentTransportProcessData
 {
     ComponentTransportProcessData(
-        PorousMediaProperties&& porous_media_properties_,
+        MaterialLib::PorousMedium::PorousMediaProperties&&
+            porous_media_properties_,
         ProcessLib::Parameter<double> const& fluid_reference_density_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&&
             fluid_properties_,
@@ -77,7 +77,7 @@ struct ComponentTransportProcessData
     //! Assignments are not needed.
     void operator=(ComponentTransportProcessData&&) = delete;
 
-    PorousMediaProperties porous_media_properties;
+    MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
     Parameter<double> const& fluid_reference_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
     Parameter<double> const& molecular_diffusion_coefficient;
