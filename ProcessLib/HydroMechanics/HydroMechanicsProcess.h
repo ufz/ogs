@@ -257,5 +257,8 @@ private:
         _local_to_global_index_map_single_component;
 };
 
+extern template class HydroMechanicsProcess<2>;
+extern template class HydroMechanicsProcess<3>;
+
 }  // namespace HydroMechanics
 }  // namespace ProcessLib

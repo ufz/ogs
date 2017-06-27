@@ -21,11 +21,6 @@ namespace ProcessLib
 {
 namespace HydroMechanics
 {
-template <int DisplacementDim>
-class HydroMechanicsProcess;
-
-extern template class HydroMechanicsProcess<2>;
-extern template class HydroMechanicsProcess<3>;
 
 template <int DisplacementDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
