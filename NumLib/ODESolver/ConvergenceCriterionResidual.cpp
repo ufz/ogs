@@ -54,8 +54,16 @@ void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
             (_residual_norm_0 < std::numeric_limits<double>::epsilon())
                 ? norm_res
                 : _residual_norm_0;
-        INFO("Convergence criterion: |r|=%.4e |r0|=%.4e |r|/|r0|=%.4e",
-             norm_res, _residual_norm_0, norm_res / _residual_norm_0);
+        if (_residual_norm_0 < std::numeric_limits<double>::epsilon())
+        {
+            INFO("Convergence criterion: |r|=%.4e |r0|=%.4e",
+                 norm_res, _residual_norm_0);
+        }
+        else
+        {
+            INFO("Convergence criterion: |r|=%.4e |r0|=%.4e |r|/|r0|=%.4e",
+                 norm_res, _residual_norm_0, norm_res / _residual_norm_0);
+        }
     }
 
     bool satisfied_abs = false;

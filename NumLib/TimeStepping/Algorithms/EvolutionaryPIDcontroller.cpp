@@ -27,9 +27,12 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
     {
         _is_accepted = false;
 
-        const double h_new = (e_n > zero_threshlod)
+        double h_new = (e_n > zero_threshlod)
                                  ? _ts_current.dt() * _tol / e_n
                                  : 0.5 * _ts_current.dt();
+
+        h_new = limitStepSize(h_new, _ts_current.dt());
+        h_new = checkSpecificTimeReached(h_new);
 
         _ts_current = _ts_prev;
         _ts_current += h_new;
