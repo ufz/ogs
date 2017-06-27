@@ -11,6 +11,7 @@
 
 #include "CreateTimeStepper.h"
 
+#include <memory>
 #include <string>
 
 #include "BaseLib/ConfigTree.h"
@@ -34,7 +35,8 @@ std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     {
         //! \ogs_file_param_special{prj__time_loop__time_stepping__SingleStep}
         config.ignoreConfigParameter("type");
-        timestepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
+        timestepper =
+            std::make_unique<NumLib::FixedTimeStepping>(0.0, 1.0, 1.0);
     }
     else if (type == "FixedTimeStepping")
     {

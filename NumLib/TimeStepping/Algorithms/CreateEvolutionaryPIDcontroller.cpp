@@ -12,6 +12,7 @@
 #include "CreateEvolutionaryPIDcontroller.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/makeVectorUnique.h"
 
 #include "EvolutionaryPIDcontroller.h"
 #include "TimeStepAlgorithm.h"
@@ -41,22 +42,18 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__rel_dt_max}
     auto const rel_h_max = config.getConfigParameter<double>("rel_dt_max");
 
-    auto specific_times_opt =
+    auto specific_times =
         //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__specific_times}
-        config.getConfigParameterOptional<std::vector<double>>(
-            "specific_times");
-    std::vector<double> dummy_vector;
-    std::vector<double>& specific_times =
-        (specific_times_opt) ? *specific_times_opt : dummy_vector;
-    if (specific_times.size() > 0)
+        config.getConfigParameter<std::vector<double>>(
+            "specific_times", std::vector<double>{});
+    if (!specific_times.empty())
     {
         // Sort in descending order.
         std::sort(specific_times.begin(),
                   specific_times.end(),
                   std::greater<double>());
         // Remove possible duplicated elements.
-        auto last = std::unique(specific_times.begin(), specific_times.end());
-        specific_times.erase(last, specific_times.end());
+        BaseLib::makeVectorUnique(specific_times);
     }
 
     //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__tol}
@@ -68,16 +65,8 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
         (norm_type_opt) ? MathLib::convertStringToVecNormType(*norm_type_opt)
                         : MathLib::VecNormType::NORM2;
 
-    return std::unique_ptr<TimeStepAlgorithm>(
-        new EvolutionaryPIDcontroller(t0,
-                                      t_end,
-                                      h0,
-                                      h_min,
-                                      h_max,
-                                      rel_h_min,
-                                      rel_h_max,
-                                      std::move(specific_times),
-                                      tol,
-                                      norm_type));
+    return std::make_unique<EvolutionaryPIDcontroller>(
+        t0, t_end, h0, h_min, h_max, rel_h_min, rel_h_max,
+        std::move(specific_times), tol, norm_type);
 }
 }  // end of namespace NumLib

@@ -92,9 +92,9 @@ public:
     }
 
 private:
-    const double _kP = 0.075;  ///< Paramter. \see EvolutionaryPIDcontroller
-    const double _kI = 0.175;  ///< Paramter. \see EvolutionaryPIDcontroller
-    const double _kD = 0.01;   ///< Paramter. \see EvolutionaryPIDcontroller
+    const double _kP = 0.075;  ///< Parameter. \see EvolutionaryPIDcontroller
+    const double _kI = 0.175;  ///< Parameter. \see EvolutionaryPIDcontroller
+    const double _kD = 0.01;   ///< Parameter. \see EvolutionaryPIDcontroller
 
     const double _h0;     ///< initial time step size.
     const double _h_min;  ///< minimum step size.

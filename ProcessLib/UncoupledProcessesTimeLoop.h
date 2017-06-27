@@ -117,7 +117,12 @@ private:
      *  Find the minimum time step size among the predicted step sizes of
      *  processes and step it as common time step size.
      *
-     *  @param t           Current time
+     *  @param prev_dt        Previous time step size.
+     *  @param t              Current time.
+     *  @param accepted_steps Accepted time steps that are counted in this
+     *                        function.
+     *  @param rejected_steps Rejected time steps that are counted in this
+     *                        function.
      */
     double computeTimeStepping(const double prev_dt, double& t,
                                std::size_t& accepted_steps,
