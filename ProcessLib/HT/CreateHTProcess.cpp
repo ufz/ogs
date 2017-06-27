@@ -49,12 +49,9 @@ std::unique_ptr<Process> createHTProcess(
         //! \ogs_file_param_special{prj__processes__process__HT__process_variables__pressure}
         "pressure"});
 
-    auto const& porous_medium_configs =
-        //! \ogs_file_param{prj__processes__process__HT__porous_medium}
-        config.getConfigSubtree("porous_medium");
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties{
         MaterialLib::PorousMedium::createPorousMediaProperties(
-            mesh, porous_medium_configs)};
+            mesh, config)};
 
     //! \ogs_file_param{prj__processes__process__HT__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");

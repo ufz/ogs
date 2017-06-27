@@ -24,9 +24,13 @@ namespace MaterialLib
 namespace PorousMedium
 {
 PorousMediaProperties createPorousMediaProperties(
-    MeshLib::Mesh& mesh, BaseLib::ConfigTree const& porous_medium_configs)
+    MeshLib::Mesh& mesh, BaseLib::ConfigTree const& configs)
 {
     DBUG("Create PorousMediaProperties.");
+
+    auto const& porous_medium_configs =
+        //! \ogs_file_param{material__porous_medium__porous_medium}
+        configs.getConfigSubtree("porous_medium");
 
     std::vector<Eigen::MatrixXd> intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
