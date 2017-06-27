@@ -233,5 +233,3 @@ extern template class Lubby2<3>;
 }  // namespace Lubby2
 }  // namespace Solids
 }  // namespace MaterialLib
-
-#include "Lubby2-impl.h"

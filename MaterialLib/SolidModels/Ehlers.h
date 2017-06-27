@@ -241,7 +241,8 @@ private:
     std::unique_ptr<DamagePropertiesParameters> _damage_properties;
 };
 
+extern template class SolidEhlers<2>;
+extern template class SolidEhlers<3>;
 }  // namespace Ehlers
 }  // namespace Solids
 }  // namespace MaterialLib
-#include "Ehlers-impl.h"
