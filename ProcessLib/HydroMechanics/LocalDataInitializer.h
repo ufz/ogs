@@ -115,11 +115,11 @@ namespace HydroMechanics
 ///
 /// \attention This is modified version of the ProcessLib::LocalDataInitializer
 /// class which does not include line elements, allows only shapefunction of
-/// order 2, and provides additional template argument DisplacementDim.
+/// order 2.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, typename, unsigned, int>
-          class LocalAssemblerData,
-          unsigned GlobalDim, int DisplacementDim, typename... ConstructorArgs>
+          template <typename, typename, typename, int>
+          class HydroMechanicsLocalAssembler,
+          int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:
@@ -223,10 +223,9 @@ private:
 
     template <typename ShapeFunctionDisplacement,
               typename ShapeFunctionPressure>
-    using LAData =
-        LocalAssemblerData<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                           IntegrationMethod<ShapeFunctionDisplacement>,
-                           GlobalDim, DisplacementDim>;
+    using LAData = HydroMechanicsLocalAssembler<
+        ShapeFunctionDisplacement, ShapeFunctionPressure,
+        IntegrationMethod<ShapeFunctionDisplacement>, GlobalDim>;
 
     /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
     /// depending whether the global dimension is less than the shape function's

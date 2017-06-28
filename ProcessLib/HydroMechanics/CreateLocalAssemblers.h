@@ -22,8 +22,8 @@ namespace HydroMechanics
 {
 namespace detail
 {
-template <unsigned GlobalDim, int DisplacementDim,
-          template <typename, typename, typename, unsigned, int>
+template <int GlobalDim,
+          template <typename, typename, typename, int>
           class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
@@ -37,7 +37,7 @@ void createLocalAssemblers(
     using LocalDataInitializer =
         LocalDataInitializer<LocalAssemblerInterface,
                              LocalAssemblerImplementation, GlobalDim,
-                             DisplacementDim, ExtraCtorArgs...>;
+                             ExtraCtorArgs...>;
 
     DBUG("Create local assemblers.");
     // Populate the vector of local assemblers.
@@ -64,9 +64,8 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template <int DisplacementDim,
-          template <typename, typename, typename, unsigned, int>
-          class LocalAssemblerImplementation,
+template <int GlobalDim, template <typename, typename, typename, int>
+                         class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     const unsigned dimension,
@@ -78,25 +77,9 @@ void createLocalAssemblers(
 {
     DBUG("Create local assemblers.");
 
-    switch (dimension)
-    {
-        case 2:
-            detail::createLocalAssemblers<2, DisplacementDim,
-                                          LocalAssemblerImplementation>(
-                dof_table, shapefunction_order, mesh_elements, local_assemblers,
-                std::forward<ExtraCtorArgs>(extra_ctor_args)...);
-            break;
-        case 3:
-            detail::createLocalAssemblers<3, DisplacementDim,
-                                          LocalAssemblerImplementation>(
-                dof_table, shapefunction_order, mesh_elements, local_assemblers,
-                std::forward<ExtraCtorArgs>(extra_ctor_args)...);
-            break;
-        default:
-            OGS_FATAL(
-                "Meshes with dimension different than two and three are not "
-                "supported.");
-    }
+    detail::createLocalAssemblers<GlobalDim, LocalAssemblerImplementation>(
+        dof_table, shapefunction_order, mesh_elements, local_assemblers,
+        std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 }  // HydroMechanics
 
