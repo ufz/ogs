@@ -345,6 +345,22 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         mesh_prop_fracture_shear_failure->resize(mesh.getNumberOfElements());
         _process_data.mesh_prop_fracture_shear_failure =
             mesh_prop_fracture_shear_failure;
+
+        auto mesh_prop_nodal_w =
+            const_cast<MeshLib::Mesh&>(mesh)
+                .getProperties()
+                .template createNewPropertyVector<double>(
+                    "nodal_w", MeshLib::MeshItemType::Node, GlobalDim);
+        mesh_prop_nodal_w->resize(mesh.getNumberOfNodes() * GlobalDim);
+        _process_data.mesh_prop_nodal_w = mesh_prop_nodal_w;
+
+        auto mesh_prop_nodal_b =
+            const_cast<MeshLib::Mesh&>(mesh)
+                .getProperties()
+                .template createNewPropertyVector<double>(
+                    "nodal_aperture", MeshLib::MeshItemType::Node);
+        mesh_prop_nodal_b->resize(mesh.getNumberOfNodes());
+        _process_data.mesh_prop_nodal_b = mesh_prop_nodal_b;
     }
 }
 
@@ -357,6 +373,91 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     GlobalExecutor::executeMemberOnDereferenced(
         &HydroMechanicsLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, *_local_to_global_index_map, t, x, coupled_term);
+
+    // Copy displacement jumps in a solution vector to mesh property
+    // Remark: the copy is required because mesh properties for primary variables are set
+    // during output and are not ready yet when this function is called.
+    int g_variable_id = 0;
+    int g_global_component_offset = 0;
+    {
+        int global_component_offset_next = 0;
+        int global_component_offset = 0;
+        for (int variable_id = 0;
+             variable_id < static_cast<int>(this->getProcessVariables().size());
+             ++variable_id)
+        {
+            ProcessVariable& pv = this->getProcessVariables()[variable_id];
+            int const n_components = pv.getNumberOfComponents();
+            global_component_offset = global_component_offset_next;
+            global_component_offset_next += n_components;
+            if (pv.getName() != "displacement_jump1")
+                continue;
+
+            g_variable_id = variable_id;
+            g_global_component_offset = global_component_offset;
+            break;
+        }
+    }
+
+#ifdef USE_PETSC
+    // TODO It is also possible directly to copy the data for single process
+    // variable to a mesh property. It needs a vector of global indices and
+    // some PETSc magic to do so.
+    std::vector<double> x_copy(x.getLocalSize() + x.getGhostSize());
+#else
+    std::vector<double> x_copy(x.size());
+#endif
+    x.copyValues(x_copy);
+
+    ProcessVariable& pv_g = this->getProcessVariables()[g_variable_id];
+    auto& mesh_prop_g = pv_g.getOrCreateMeshProperty();
+    auto const num_comp = pv_g.getNumberOfComponents();
+    for (int component_id = 0; component_id < num_comp; ++component_id)
+    {
+        auto const& mesh_subsets =
+            _local_to_global_index_map->getMeshSubsets(g_variable_id,
+                                                       component_id);
+        for (auto const& mesh_subset : mesh_subsets)
+        {
+            auto const mesh_id = mesh_subset->getMeshID();
+            for (auto const* node : mesh_subset->getNodes())
+            {
+                MeshLib::Location const l(
+                    mesh_id, MeshLib::MeshItemType::Node, node->getID());
+
+                auto const global_component_id = g_global_component_offset + component_id;
+                auto const index =
+                        _local_to_global_index_map->getLocalIndex(
+                            l, global_component_id, x.getRangeBegin(),
+                            x.getRangeEnd());
+
+                mesh_prop_g[node->getID() * num_comp + component_id] =
+                        x_copy[index];
+            }
+        }
+    }
+
+    // compute nodal w and aperture
+    auto const& R = _process_data.fracture_property->R;
+    MeshLib::PropertyVector<double>& vec_w = *_process_data.mesh_prop_nodal_w;
+    MeshLib::PropertyVector<double>& vec_b = *_process_data.mesh_prop_nodal_b;
+
+    Eigen::VectorXd g(GlobalDim), w(GlobalDim);
+    for (MeshLib::Node const* node : _vec_fracture_nodes)
+    {
+        auto const node_id = node->getID();
+        g.setZero();
+        for (unsigned k=0; k<GlobalDim; k++)
+            g[k] = mesh_prop_g[node_id*GlobalDim + k];
+
+        w.noalias() = R * g;
+        for (unsigned k=0; k<GlobalDim; k++)
+            vec_w[node_id*GlobalDim + k] = w[k];
+
+        ProcessLib::SpatialPosition x;
+        x.setNodeID(node_id);
+        vec_b[node_id] = w[GlobalDim==2 ? 1 : 2] + (*_process_data.fracture_property->aperture0)(0,x)[0];
+    }
 }
 
 // ------------------------------------------------------------------------------------
