@@ -8,6 +8,7 @@
  */
 
 #include "HydroMechanicsProcess.h"
+#include "HydroMechanicsProcess-impl.h"
 
 namespace ProcessLib
 {
