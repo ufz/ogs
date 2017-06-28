@@ -10,6 +10,7 @@
 #pragma once
 
 #include <memory>
+#include "MathLib/LinAlg/LinAlg.h" // For MathLib::VecNormType
 #include "NumLib/NumericsConfig.h"
 
 namespace BaseLib {
@@ -27,6 +28,11 @@ namespace NumLib
 class ConvergenceCriterion
 {
 public:
+    ConvergenceCriterion(const MathLib::VecNormType norm_type)
+        : _norm_type(norm_type)
+    {
+    }
+
     //! Tells if the change of the solution between iterations is checked.
     //!
     //! \remark
@@ -76,11 +82,14 @@ public:
     //! Tell if the convergence criterion is satisfied.
     virtual bool isSatisfied() const { return _satisfied; };
 
+    MathLib::VecNormType getVectorNormType () const { return _norm_type; }
+
     virtual ~ConvergenceCriterion() = default;
 
 protected:
     bool _satisfied = true;
     bool _is_first_iteration = true;
+    const MathLib::VecNormType _norm_type;
 };
 
 //! Creates a convergence criterion from the given configuration.

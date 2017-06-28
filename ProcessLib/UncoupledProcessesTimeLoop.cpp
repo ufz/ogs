@@ -559,12 +559,17 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
 
+        auto const& conv_crit = ppd.conv_crit;
+        const MathLib::VecNormType norm_type =
+            (conv_crit) ? conv_crit->getVectorNormType()
+                        : MathLib::VecNormType::NORM2;
+
         const double solution_error =
             (timestepper->isSolutionErrorComputationNeeded())
                 ? ((t == timestepper->begin())
-                       ? 0.  // Always accepts the first step
+                       ? 0.  // Always accepts the zeroth step
                        : time_disc->getRelativeChangeFromPreviousTimestep(
-                             x, timestepper->getSolutionNormType()))
+                             x, norm_type))
                 : 0.;
         if (!timestepper->next(solution_error) &&
             // In case of FixedTimeStepping, which makes timestepper->next(...)

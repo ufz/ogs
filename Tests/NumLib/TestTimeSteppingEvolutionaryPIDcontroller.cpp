@@ -46,7 +46,6 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
         "   <rel_dt_min> 0.01 </rel_dt_min>"
         "   <rel_dt_max> 5 </rel_dt_max>"
         "   <tol> 1.e-3 </tol>"
-        "   <norm_type> NORM2 </norm_type>"
         "</time_stepping>";
     auto const PIDStepper = createTestTimeStepper(xml);
 

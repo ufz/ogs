@@ -58,15 +58,9 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
 
     //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__tol}
     auto const tol = config.getConfigParameter<double>("tol");
-    auto const norm_type_opt =
-        //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__norm_type}
-        config.getConfigParameterOptional<std::string>("norm_type");
-    const MathLib::VecNormType norm_type =
-        (norm_type_opt) ? MathLib::convertStringToVecNormType(*norm_type_opt)
-                        : MathLib::VecNormType::NORM2;
 
     return std::make_unique<EvolutionaryPIDcontroller>(
         t0, t_end, h0, h_min, h_max, rel_h_min, rel_h_max,
-        std::move(specific_times), tol, norm_type);
+        std::move(specific_times), tol);
 }
 }  // end of namespace NumLib

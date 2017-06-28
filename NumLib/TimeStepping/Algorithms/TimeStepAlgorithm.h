@@ -16,8 +16,6 @@
 
 #include "NumLib/TimeStepping/TimeStep.h"
 
-#include "MathLib/LinAlg/LinAlg.h"  // For MathLib::VecNormType
-
 namespace NumLib
 {
 /**
@@ -78,11 +76,6 @@ public:
     const std::vector<double>& getTimeStepSizeHistory() const
     {
         return _dt_vector;
-    }
-
-    virtual MathLib::VecNormType getSolutionNormType() const
-    {
-        return MathLib::VecNormType::NORM2;
     }
 
     /// Get a flag to indicate whether this algorithm needs to compute
