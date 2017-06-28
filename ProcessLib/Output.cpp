@@ -54,9 +54,9 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
         config.getConfigParameterOptional<bool>("output_iteration_results");
 
     std::unique_ptr<Output> out{new Output{
-        BaseLib::joinPaths(output_directory,
-                           //! \ogs_file_param{prj__time_loop__output__prefix}
-                           config.getConfigParameter<std::string>("prefix")),
+        output_directory,
+        //! \ogs_file_param{prj__time_loop__output__prefix}
+        config.getConfigParameter<std::string>("prefix"),
         //! \ogs_file_param{prj__time_loop__output__compress_output}
         config.getConfigParameter("compress_output", true),
         output_iteration_results ? *output_iteration_results : false}};
@@ -92,7 +92,7 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
 void Output::addProcess(ProcessLib::Process const& process, const unsigned pcs_idx)
 {
     auto const filename =
-        _output_file_prefix + "_pcs_" + std::to_string(pcs_idx) + ".pvd";
+        BaseLib::joinPaths(_output_directory, _output_file_prefix + "_pcs_" + std::to_string(pcs_idx) + ".pvd");
     _single_process_data.emplace(std::piecewise_construct,
                                  std::forward_as_tuple(&process),
                                  std::forward_as_tuple(pcs_idx, filename));
@@ -119,8 +119,9 @@ void Output::doOutputAlways(Process const& process,
             + "_ts_" + std::to_string(timestep)
             + "_t_"  + std::to_string(t)
             + ".vtu";
-    DBUG("output to %s", output_file_name.c_str());
-    doProcessOutput(output_file_name, _output_file_compression, x,
+    std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
+    DBUG("output to %s", output_file_path.c_str());
+    doProcessOutput(output_file_path, _output_file_compression, x,
                     process.getMesh(), process.getDOFTable(),
                     process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);
@@ -182,8 +183,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
             + "_t_"  + std::to_string(t)
             + "_nliter_" + std::to_string(iteration)
             + ".vtu";
-    DBUG("output iteration results to %s", output_file_name.c_str());
-    doProcessOutput(output_file_name, _output_file_compression, x,
+    std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
+    DBUG("output iteration results to %s", output_file_path.c_str());
+    doProcessOutput(output_file_path, _output_file_compression, x,
                     process.getMesh(), process.getDOFTable(),
                     process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);

@@ -84,14 +84,16 @@ private:
         MeshLib::IO::PVDFile pvd_file;
     };
 
-    Output(std::string prefix, bool const compress_output,
+    Output(std::string output_directory, std::string prefix, bool const compress_output,
            bool const output_nonlinear_iteration_results)
-        : _output_file_prefix(std::move(prefix)),
+        : _output_directory(std::move(output_directory)),
+          _output_file_prefix(std::move(prefix)),
           _output_file_compression(compress_output),
           _output_nonlinear_iteration_results(
               output_nonlinear_iteration_results)
     {}
 
+    std::string const _output_directory;
     std::string const _output_file_prefix;
 
     //! Enables or disables zlib-compression of the output files.
