@@ -94,7 +94,6 @@ AddTest(
     mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu v_y_ref v_y
 )
 
-# Coupling
 AddTest(
     NAME Adaptive_dt_StaggeredTH_ThermalDensityDrivenFlow2D
     PATH StaggeredCoupledProcesses/TH/ThermalDensityDrivenFlow2D
@@ -111,6 +110,35 @@ AddTest(
     mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu v_y_ref v_y
 )
 
+AddTest(
+    NAME Adaptive_dt_ThermalConvectionFlow2D
+    PATH StaggeredCoupledProcesses/TH/ThermalConvection2D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS quad_5500x5500_adaptive_dt.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    ABSTOL 1.e-16 RELTOL 1e-16
+    DIFF_DATA
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_232_t_50000000000.000000.vtu  pressure pressure
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_232_t_50000000000.000000.vtu  temperature temperature
+)
+
+AddTest(
+    NAME Adaptive_dt_ThermalConvectionFlow2D_Constant_Viscosity
+    PATH StaggeredCoupledProcesses/TH/ThermalConvection2D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS quad_5500x5500_adaptive_dt_constant_viscosity.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    ABSTOL 1.e-16 RELTOL 1e-16
+    DIFF_DATA
+    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  pressure pressure
+    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  temperature temperature
+)
+
+#===============================================================================
 # PETSc/MPI
 AddTest(
     NAME LiquidFlow_LineDirichletNeumannBC
@@ -224,4 +252,31 @@ AddTest(
 #    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_x_ref v_x
 #    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_y_ref v_y
 
+)
+AddTest(
+    NAME Adaptive_dt_ThermalConvectionFlow2D
+    PATH StaggeredCoupledProcesses/TH/ThermalConvection2D
+    EXECUTABLE_ARGS quad_5500x5500_adaptive_dt.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    ABSTOL 1.e-9 RELTOL 1e-8
+    DIFF_DATA
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_232_t_50000000000_000000_0.vtu  pressure pressure
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_232_t_50000000000_000000_0.vtu  temperature temperature
+)
+
+AddTest(
+    NAME Adaptive_dt_ThermalConvectionFlow2D_Constant_Viscosity
+    PATH StaggeredCoupledProcesses/TH/ThermalConvection2D
+    EXECUTABLE_ARGS quad_5500x5500_adaptive_dt_constant_viscosity.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    ABSTOL 1.e-9 RELTOL 1e-9
+    DIFF_DATA
+    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000_000000_0.vtu  pressure pressure
+    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000_000000_0.vtu  temperature temperature
 )
