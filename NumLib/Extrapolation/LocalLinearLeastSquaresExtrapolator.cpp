@@ -97,7 +97,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
            "integration points.");
 
     auto const pair_it_inserted = _qr_decomposition_cache.emplace(
-        std::make_pair(num_nodes, num_int_pts), CachedData{{}});
+        std::make_pair(num_nodes, num_int_pts), CachedData{});
 
     auto& cached_data = pair_it_inserted.first->second;
     if (pair_it_inserted.second)
