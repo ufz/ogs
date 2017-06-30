@@ -9,6 +9,7 @@
 
 #include "UncoupledProcessesTimeLoop.h"
 
+#include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
 #include "BaseLib/uniqueInsert.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
@@ -797,6 +798,11 @@ bool UncoupledProcessesTimeLoop::loop()
     return nonlinear_solver_succeeded;
 }
 
+static std::string nonlinear_fixed_dt_fails_info =
+    "Nonlinear solver fails. Because of the time stepper"
+    " of FixedTimeStepping is used, the program has to be"
+    " terminated ";
+
 bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
     const double t, const double dt, const std::size_t timestep_id)
 {
@@ -839,6 +845,11 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
             // save unsuccessful solution
             _output->doOutputAlways(pcs, spd->process_output, timestep_id, t,
                                     x);
+
+            if (!spd->timestepper->isSolutionErrorComputationNeeded())
+            {
+                OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
+            }
 
             return false;
         }
@@ -915,6 +926,11 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 // save unsuccessful solution
                 _output->doOutputAlways(spd->process, spd->process_output,
                                         timestep_id, t, x);
+
+                if (!spd->timestepper->isSolutionErrorComputationNeeded())
+                {
+                    OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
+                }
 
                 break;
             }
