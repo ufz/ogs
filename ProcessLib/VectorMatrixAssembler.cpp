@@ -79,13 +79,22 @@ void VectorMatrixAssembler::assemble(
             getPreviousLocalSolutionsOfCoupledProcesses(coupling_term, indices);
         auto local_coupled_xs = getCurrentLocalSolutionsOfCoupledProcesses(
             coupling_term.coupled_xs, indices);
-        ProcessLib::LocalCouplingTerm local_coupling_term(
-            coupling_term.dt, coupling_term.coupled_processes,
-            std::move(local_coupled_xs0), std::move(local_coupled_xs));
 
-        local_assembler.assembleWithCoupledTerm(t, local_x, _local_M_data,
-                                          _local_K_data, _local_b_data,
-                                          local_coupling_term);
+        if (local_coupled_xs0.empty() || local_coupled_xs.empty())
+        {
+            local_assembler.assemble(t, local_x, _local_M_data, _local_K_data,
+                                     _local_b_data);
+        }
+        else
+        {
+            ProcessLib::LocalCouplingTerm local_coupling_term(
+                coupling_term.dt, coupling_term.coupled_processes,
+                std::move(local_coupled_xs0), std::move(local_coupled_xs));
+
+            local_assembler.assembleWithCoupledTerm(
+                t, local_x, _local_M_data, _local_K_data, _local_b_data,
+                local_coupling_term);
+        }
     }
 
     auto const num_r_c = indices.size();
@@ -137,14 +146,23 @@ void VectorMatrixAssembler::assembleWithJacobian(
             getPreviousLocalSolutionsOfCoupledProcesses(coupling_term, indices);
         auto local_coupled_xs = getCurrentLocalSolutionsOfCoupledProcesses(
             coupling_term.coupled_xs, indices);
-        ProcessLib::LocalCouplingTerm local_coupling_term(
-            coupling_term.dt, coupling_term.coupled_processes,
-            std::move(local_coupled_xs0), std::move(local_coupled_xs));
+        if (local_coupled_xs0.empty() || local_coupled_xs.empty())
+        {
+            _jacobian_assembler->assembleWithJacobian(
+                local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
+                _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
+        }
+        else
+        {
+            ProcessLib::LocalCouplingTerm local_coupling_term(
+                coupling_term.dt, coupling_term.coupled_processes,
+                std::move(local_coupled_xs0), std::move(local_coupled_xs));
 
-        _jacobian_assembler->assembleWithJacobianAndCouping(
-            local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
-            _local_M_data, _local_K_data, _local_b_data, _local_Jac_data,
-            local_coupling_term);
+            _jacobian_assembler->assembleWithJacobianAndCoupling(
+                local_assembler, t, local_x, local_xdot, dxdot_dx, dx_dx,
+                _local_M_data, _local_K_data, _local_b_data, _local_Jac_data,
+                local_coupling_term);
+        }
     }
 
     auto const num_r_c = indices.size();

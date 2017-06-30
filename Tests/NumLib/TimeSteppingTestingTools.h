@@ -31,7 +31,7 @@ std::vector<double> timeStepping(T_TIME_STEPPING &algorithm, T* obj=nullptr)
     std::vector<double> vec_t;
     vec_t.push_back(algorithm.begin());
 
-    while (algorithm.next()) {
+    while (algorithm.next(0.0)) {
         NumLib::TimeStep t = algorithm.getTimeStep();
         //INFO("t: n=%d,t=%g,dt=%g", t.steps(), t.current(), t.dt());
         if (obj)

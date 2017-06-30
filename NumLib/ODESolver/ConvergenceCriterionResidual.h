@@ -27,7 +27,7 @@ public:
     ConvergenceCriterionResidual(
         boost::optional<double>&& absolute_tolerance,
         boost::optional<double>&& relative_tolerance,
-        MathLib::VecNormType norm_type);
+        const MathLib::VecNormType norm_type);
 
     bool hasDeltaXCheck() const override { return true; }
     bool hasResidualCheck() const override { return true; }
@@ -41,7 +41,6 @@ public:
 private:
     const boost::optional<double> _abstol;
     const boost::optional<double> _reltol;
-    const MathLib::VecNormType _norm_type;
     double _residual_norm_0;
 };
 

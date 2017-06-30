@@ -18,10 +18,9 @@ namespace NumLib
 ConvergenceCriterionResidual::ConvergenceCriterionResidual(
     boost::optional<double>&& absolute_tolerance,
     boost::optional<double>&& relative_tolerance,
-    MathLib::VecNormType norm_type)
-    : _abstol(std::move(absolute_tolerance)),
-      _reltol(std::move(relative_tolerance)),
-      _norm_type(norm_type)
+    const MathLib::VecNormType norm_type)
+    : ConvergenceCriterion(norm_type), _abstol(std::move(absolute_tolerance)),
+      _reltol(std::move(relative_tolerance))
 {
     if ((!_abstol) && (!_reltol))
         OGS_FATAL(
@@ -29,8 +28,8 @@ ConvergenceCriterionResidual::ConvergenceCriterionResidual(
             "specified.");
 }
 
-void ConvergenceCriterionResidual::checkDeltaX(const GlobalVector& minus_delta_x,
-                                             GlobalVector const& x)
+void ConvergenceCriterionResidual::checkDeltaX(
+    const GlobalVector& minus_delta_x, GlobalVector const& x)
 {
     auto error_dx = MathLib::LinAlg::norm(minus_delta_x, _norm_type);
     auto norm_x = MathLib::LinAlg::norm(x, _norm_type);
@@ -43,21 +42,38 @@ void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
 {
     auto norm_res = MathLib::LinAlg::norm(residual, _norm_type);
 
-    if (_is_first_iteration) {
+    if (_is_first_iteration)
+    {
         INFO("Convergence criterion: |r0|=%.4e", norm_res);
         _residual_norm_0 = norm_res;
-    } else {
-        INFO("Convergence criterion: |r|=%.4e |r0|=%.4e |r|/|r0|=%.4e",
-             norm_res, _residual_norm_0, norm_res / _residual_norm_0);
+    }
+    else
+    {
+        _residual_norm_0 =
+            (_residual_norm_0 < std::numeric_limits<double>::epsilon())
+                ? norm_res
+                : _residual_norm_0;
+        if (_residual_norm_0 < std::numeric_limits<double>::epsilon())
+        {
+            INFO("Convergence criterion: |r|=%.4e |r0|=%.4e",
+                 norm_res, _residual_norm_0);
+        }
+        else
+        {
+            INFO("Convergence criterion: |r|=%.4e |r0|=%.4e |r|/|r0|=%.4e",
+                 norm_res, _residual_norm_0, norm_res / _residual_norm_0);
+        }
     }
 
     bool satisfied_abs = false;
     bool satisfied_rel = false;
 
-    if (_abstol) {
+    if (_abstol)
+    {
         satisfied_abs = norm_res < *_abstol;
     }
-    if (_reltol && !_is_first_iteration) {
+    if (_reltol && !_is_first_iteration)
+    {
         satisfied_rel =
             checkRelativeTolerance(*_reltol, norm_res, _residual_norm_0);
     }

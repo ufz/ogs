@@ -13,7 +13,6 @@
 
 namespace ProcessLib
 {
-
 void LocalAssemblerInterface::assembleWithCoupledTerm(
     double const /*t*/, std::vector<double> const& /*local_x*/,
     std::vector<double>& /*local_M_data*/,
@@ -22,8 +21,8 @@ void LocalAssemblerInterface::assembleWithCoupledTerm(
     LocalCouplingTerm const& /*coupling_term*/)
 {
     OGS_FATAL(
-        "The assembleWithCoupledTerm() function is not implemented in the local "
-        "assembler.");
+        "The assembleWithCoupledTerm() function is not implemented in the "
+        "local assembler.");
 }
 
 void LocalAssemblerInterface::assembleWithJacobian(
@@ -39,7 +38,7 @@ void LocalAssemblerInterface::assembleWithJacobian(
         "assembler.");
 }
 
-void LocalAssemblerInterface::assembleWithJacobianAndCouping(
+void LocalAssemblerInterface::assembleWithJacobianAndCoupling(
     double const /*t*/, std::vector<double> const& /*local_x*/,
     std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
     const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
@@ -49,15 +48,14 @@ void LocalAssemblerInterface::assembleWithJacobianAndCouping(
     LocalCouplingTerm const& /*coupling_term*/)
 {
     OGS_FATAL(
-        "The assembleWithJacobianAndCouping() function is not implemented in"
+        "The assembleWithJacobianAndCoupling() function is not implemented in"
         " the local assembler.");
 }
 
 void LocalAssemblerInterface::computeSecondaryVariable(
-                              std::size_t const mesh_item_id,
-                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                              double const t, GlobalVector const& x,
-                              StaggeredCouplingTerm const& coupled_term)
+    std::size_t const mesh_item_id,
+    NumLib::LocalToGlobalIndexMap const& dof_table, double const t,
+    GlobalVector const& x, StaggeredCouplingTerm const& coupled_term)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
@@ -68,11 +66,14 @@ void LocalAssemblerInterface::computeSecondaryVariable(
     }
     else
     {
-        auto const local_coupled_xs
-            = getCurrentLocalSolutionsOfCoupledProcesses(
-                    coupled_term.coupled_xs, indices);
-        computeSecondaryVariableWithCoupledProcessConcrete(t, local_x,
-                                                           local_coupled_xs);
+        auto const local_coupled_xs =
+            getCurrentLocalSolutionsOfCoupledProcesses(coupled_term.coupled_xs,
+                                                       indices);
+        if (!local_coupled_xs.empty())
+            computeSecondaryVariableWithCoupledProcessConcrete(
+                t, local_x, local_coupled_xs);
+        else
+            computeSecondaryVariableConcrete(t, local_x);
     }
 }
 

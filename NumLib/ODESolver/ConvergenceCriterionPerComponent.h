@@ -11,6 +11,8 @@
 
 #include "ConvergenceCriterion.h"
 
+#include "MathLib/LinAlg/LinAlg.h" // For MathLib::VecNormType
+
 namespace MeshLib
 {
 class Mesh;
@@ -26,6 +28,9 @@ class LocalToGlobalIndexMap;
 class ConvergenceCriterionPerComponent : public ConvergenceCriterion
 {
 public:
+    ConvergenceCriterionPerComponent(const MathLib::VecNormType norm_type)
+        :ConvergenceCriterion(norm_type) {}
+
     //! Sets the d.o.f. table used to extract data for a specific component.
     virtual void setDOFTable(NumLib::LocalToGlobalIndexMap const& dof_table,
                              MeshLib::Mesh const& mesh) = 0;

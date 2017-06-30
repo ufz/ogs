@@ -19,10 +19,10 @@ namespace NumLib
 ConvergenceCriterionPerComponentDeltaX::ConvergenceCriterionPerComponentDeltaX(
     std::vector<double>&& absolute_tolerances,
     std::vector<double>&& relative_tolerances,
-    MathLib::VecNormType norm_type)
-    : _abstols(std::move(absolute_tolerances)),
-      _reltols(std::move(relative_tolerances)),
-      _norm_type(norm_type)
+    const MathLib::VecNormType norm_type)
+    : ConvergenceCriterionPerComponent(norm_type),
+      _abstols(std::move(absolute_tolerances)),
+      _reltols(std::move(relative_tolerances))
 {
     if (_abstols.size() != _reltols.size())
         OGS_FATAL(

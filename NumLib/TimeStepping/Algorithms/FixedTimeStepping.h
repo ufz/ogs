@@ -14,20 +14,16 @@
 #include <memory>
 #include <vector>
 
-#include "ITimeStepAlgorithm.h"
-
-namespace BaseLib { class ConfigTree; }
+#include "TimeStepAlgorithm.h"
 
 namespace NumLib
 {
-
 /**
  * \brief Fixed time stepping algorithm
  *
  * This algorithm returns time step size defined by a user priori.
  */
-class FixedTimeStepping final
-        : public ITimeStepAlgorithm
+class FixedTimeStepping final : public TimeStepAlgorithm
 {
 public:
     /**
@@ -58,43 +54,18 @@ public:
      * @param t_end         finish time
      * @param vec_all_dt    a vector of all time steps
      */
-    FixedTimeStepping(double t_initial, double t_end, const std::vector<double> &vec_all_dt);
-
-    /// Create timestepper from the given configuration
-    static std::unique_ptr<ITimeStepAlgorithm> newInstance(BaseLib::ConfigTree const& config);
-
-    /// return the beginning of time steps
-    double begin() const override { return _t_initial; }
-
-    /// return the end of time steps
-    double end() const override { return _t_end; }
-
-    /// return current time step
-    const TimeStep getTimeStep() const override;
+    FixedTimeStepping(double t_initial, double t_end,
+                      const std::vector<double>& vec_all_dt);
 
     /// move to the next time step
-    bool next() override;
+    bool next(const double solution_error) override;
 
     /// return if current time step is accepted
     bool accepted() const override { return true; }
-
-    /// return a history of time step sizes
-    const std::vector<double>& getTimeStepSizeHistory() const override { return _dt_vector; }
-
 private:
     /// determine true end time
-    static double computeEnd(double t_initial, double t_end, const std::vector<double> &dt_vector);
-
-    /// initial time
-    const double _t_initial;
-    /// end time
-    const double _t_end;
-    /// a vector of time step sizes
-    const std::vector<double> _dt_vector;
-    /// previous time step information
-    TimeStep _ts_prev;
-    /// current time step information
-    TimeStep _ts_current;
+    static double computeEnd(double t_initial, double t_end,
+                             const std::vector<double>& dt_vector);
 };
 
-} //NumLib
+}  // NumLib

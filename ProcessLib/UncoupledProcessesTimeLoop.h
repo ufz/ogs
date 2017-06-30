@@ -17,7 +17,7 @@
 #include <logog/include/logog.hpp>
 
 #include "NumLib/ODESolver/NonlinearSolver.h"
-#include "NumLib/TimeStepping/Algorithms/ITimeStepAlgorithm.h"
+#include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
 
 #include "Output.h"
 #include "Process.h"
@@ -38,12 +38,12 @@ class UncoupledProcessesTimeLoop
 {
 public:
     explicit UncoupledProcessesTimeLoop(
-        std::unique_ptr<NumLib::ITimeStepAlgorithm>&& timestepper,
         std::unique_ptr<Output>&& output,
         std::vector<std::unique_ptr<SingleProcessData>>&& per_process_data,
         const unsigned global_coupling_max_iterations,
         std::unique_ptr<NumLib::ConvergenceCriterion>&&
-            global_coupling_conv_crit);
+            global_coupling_conv_crit,
+        const double start_time, const double end_time);
 
     bool loop();
 
@@ -63,9 +63,11 @@ public:
 
 private:
     std::vector<GlobalVector*> _process_solutions;
-    std::unique_ptr<NumLib::ITimeStepAlgorithm> _timestepper;
     std::unique_ptr<Output> _output;
     std::vector<std::unique_ptr<SingleProcessData>> _per_process_data;
+
+    const double _start_time;
+    const double _end_time;
 
     /// Maximum iterations of the global coupling.
     const unsigned _global_coupling_max_iterations;
@@ -110,6 +112,21 @@ private:
      */
     bool solveCoupledEquationSystemsByStaggeredScheme(
         const double t, const double dt, const std::size_t timestep_id);
+
+    /**
+     *  Find the minimum time step size among the predicted step sizes of
+     *  processes and step it as common time step size.
+     *
+     *  @param prev_dt        Previous time step size.
+     *  @param t              Current time.
+     *  @param accepted_steps Accepted time steps that are counted in this
+     *                        function.
+     *  @param rejected_steps Rejected time steps that are counted in this
+     *                        function.
+     */
+    double computeTimeStepping(const double prev_dt, double& t,
+                               std::size_t& accepted_steps,
+                               std::size_t& rejected_steps);
 };
 
 //! Builds an UncoupledProcessesTimeLoop from the given configuration.

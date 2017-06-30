@@ -29,7 +29,7 @@ public:
     ConvergenceCriterionPerComponentDeltaX(
         std::vector<double>&& absolute_tolerances,
         std::vector<double>&& relative_tolerances,
-        MathLib::VecNormType norm_type);
+        const MathLib::VecNormType norm_type);
 
     bool hasDeltaXCheck() const override { return true; }
     bool hasResidualCheck() const override { return false; }
@@ -46,7 +46,6 @@ public:
 private:
     const std::vector<double> _abstols;
     const std::vector<double> _reltols;
-    const MathLib::VecNormType _norm_type;
     LocalToGlobalIndexMap const* _dof_table = nullptr;
     MeshLib::Mesh const* _mesh = nullptr;
 };

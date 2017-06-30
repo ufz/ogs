@@ -18,10 +18,9 @@ namespace NumLib
 ConvergenceCriterionDeltaX::ConvergenceCriterionDeltaX(
     boost::optional<double>&& absolute_tolerance,
     boost::optional<double>&& relative_tolerance,
-    MathLib::VecNormType norm_type)
-    : _abstol(std::move(absolute_tolerance)),
-      _reltol(std::move(relative_tolerance)),
-      _norm_type(norm_type)
+    const MathLib::VecNormType norm_type)
+    : ConvergenceCriterion(norm_type), _abstol(std::move(absolute_tolerance)),
+      _reltol(std::move(relative_tolerance))
 {
     if ((!_abstol) && (!_reltol))
         OGS_FATAL(
