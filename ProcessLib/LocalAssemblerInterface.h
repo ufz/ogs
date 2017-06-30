@@ -56,15 +56,13 @@ public:
                                       std::vector<double>& local_b_data,
                                       std::vector<double>& local_Jac_data);
 
-    virtual void assembleWithJacobianAndCoupling(double const t,
-                                      std::vector<double> const& local_x,
-                                      std::vector<double> const& local_xdot,
-                                      const double dxdot_dx, const double dx_dx,
-                                      std::vector<double>& local_M_data,
-                                      std::vector<double>& local_K_data,
-                                      std::vector<double>& local_b_data,
-                                      std::vector<double>& local_Jac_data,
-                                      LocalCouplingTerm const& coupling_term);
+    virtual void assembleWithJacobianAndCoupling(
+        double const t, std::vector<double> const& local_x,
+        std::vector<double> const& local_xdot, const double dxdot_dx,
+        const double dx_dx, std::vector<double>& local_M_data,
+        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data,
+        LocalCouplingTerm const& coupling_term);
 
     virtual void computeSecondaryVariable(std::size_t const mesh_item_id,
                               NumLib::LocalToGlobalIndexMap const& dof_table,

@@ -10,7 +10,7 @@
 #pragma once
 
 #include <memory>
-#include "MathLib/LinAlg/LinAlg.h" // For MathLib::VecNormType
+#include "MathLib/LinAlg/LinAlg.h"  // For MathLib::VecNormType
 #include "NumLib/NumericsConfig.h"
 
 namespace BaseLib {
@@ -82,7 +82,7 @@ public:
     //! Tell if the convergence criterion is satisfied.
     virtual bool isSatisfied() const { return _satisfied; };
 
-    MathLib::VecNormType getVectorNormType () const { return _norm_type; }
+    MathLib::VecNormType getVectorNormType() const { return _norm_type; }
 
     virtual ~ConvergenceCriterion() = default;
 

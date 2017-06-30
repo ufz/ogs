@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include <vector>
 #include <cmath>
+#include <vector>
 
 #include "NumLib/TimeStepping/TimeStep.h"
 
@@ -81,6 +81,7 @@ public:
     /// Get a flag to indicate whether this algorithm needs to compute
     /// solution error. The default return value is false.
     virtual bool isSolutionErrorComputationNeeded() { return false; }
+
 protected:
     /// initial time
     const double _t_initial;

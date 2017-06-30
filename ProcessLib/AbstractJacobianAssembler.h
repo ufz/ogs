@@ -40,7 +40,9 @@ public:
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
         std::vector<double>& /*local_Jac_data*/,
-        LocalCouplingTerm const& /*coupling_term*/) {}
+        LocalCouplingTerm const& /*coupling_term*/)
+    {
+    }
 
     virtual ~AbstractJacobianAssembler() = default;
 };

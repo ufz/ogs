@@ -19,7 +19,8 @@ ConvergenceCriterionDeltaX::ConvergenceCriterionDeltaX(
     boost::optional<double>&& absolute_tolerance,
     boost::optional<double>&& relative_tolerance,
     const MathLib::VecNormType norm_type)
-    : ConvergenceCriterion(norm_type), _abstol(std::move(absolute_tolerance)),
+    : ConvergenceCriterion(norm_type),
+      _abstol(std::move(absolute_tolerance)),
       _reltol(std::move(relative_tolerance))
 {
     if ((!_abstol) && (!_reltol))

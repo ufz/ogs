@@ -213,19 +213,20 @@ public:
     //! @}
 
 protected:
-    std::unique_ptr<GlobalVector> _dx; ///< Used to store \f$ u_{n+1}-u_{n}\f$.
+    std::unique_ptr<GlobalVector> _dx;  ///< Used to store \f$ u_{n+1}-u_{n}\f$.
 
     /**
-      * Compute and return the relative change of solutions between two successive
-      * time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
-      *
-      * @param x         The current solution
-      * @param x_old     The previous solution
-      * @param norm_type The norm type of global vector
-      * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
-      *
-      * @warning the value of x_old is changed to x - x_old after this computation.
-    */
+     * Compute and return the relative change of solutions between two
+     * successive time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+     *
+     * @param x         The current solution
+     * @param x_old     The previous solution
+     * @param norm_type The norm type of global vector
+     * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+     *
+     * @warning the value of x_old is changed to x - x_old after this
+     * computation.
+     */
     double computeRelativeChangeFromPreviousTimestep(
         GlobalVector const& x,
         GlobalVector const& x_old,
@@ -288,8 +289,7 @@ private:
 class ForwardEuler final : public TimeDiscretization
 {
 public:
-    ForwardEuler()
-        :  _x_old(NumLib::GlobalVectorProvider::provider.getVector())
+    ForwardEuler() : _x_old(NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
 
@@ -438,7 +438,7 @@ public:
      *       the first timesteps.
      */
     explicit BackwardDifferentiationFormula(const unsigned num_steps)
-        :  _num_steps(num_steps)
+        : _num_steps(num_steps)
     {
         assert(1 <= num_steps && num_steps <= 6);
         _xs_old.reserve(num_steps);

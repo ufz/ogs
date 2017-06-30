@@ -19,7 +19,8 @@ ConvergenceCriterionResidual::ConvergenceCriterionResidual(
     boost::optional<double>&& absolute_tolerance,
     boost::optional<double>&& relative_tolerance,
     const MathLib::VecNormType norm_type)
-    : ConvergenceCriterion(norm_type), _abstol(std::move(absolute_tolerance)),
+    : ConvergenceCriterion(norm_type),
+      _abstol(std::move(absolute_tolerance)),
       _reltol(std::move(relative_tolerance))
 {
     if ((!_abstol) && (!_reltol))
@@ -55,8 +56,8 @@ void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
                 : _residual_norm_0;
         if (_residual_norm_0 < std::numeric_limits<double>::epsilon())
         {
-            INFO("Convergence criterion: |r|=%.4e |r0|=%.4e",
-                 norm_res, _residual_norm_0);
+            INFO("Convergence criterion: |r|=%.4e |r0|=%.4e", norm_res,
+                 _residual_norm_0);
         }
         else
         {

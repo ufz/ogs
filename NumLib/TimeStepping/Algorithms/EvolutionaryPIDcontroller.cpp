@@ -27,9 +27,8 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
     {
         _is_accepted = false;
 
-        double h_new = (e_n > zero_threshlod)
-                                 ? _ts_current.dt() * _tol / e_n
-                                 : 0.5 * _ts_current.dt();
+        double h_new = (e_n > zero_threshlod) ? _ts_current.dt() * _tol / e_n
+                                              : 0.5 * _ts_current.dt();
 
         h_new = limitStepSize(h_new, _ts_current.dt());
         h_new = checkSpecificTimeReached(h_new);
@@ -65,7 +64,8 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
                             std::pow(_tol / e_n, _kI) *
                             std::pow(
                                 _e_n_minus1 * _e_n_minus1 / (e_n * _e_n_minus2),
-                                _kD) * h_n;
+                                _kD) *
+                            h_n;
                 }
                 else
                 {

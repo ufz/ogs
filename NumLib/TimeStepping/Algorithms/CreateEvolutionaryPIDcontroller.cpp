@@ -44,8 +44,8 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
 
     auto specific_times =
         //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__specific_times}
-        config.getConfigParameter<std::vector<double>>(
-            "specific_times", std::vector<double>{});
+        config.getConfigParameter<std::vector<double>>("specific_times",
+                                                       std::vector<double>{});
     if (!specific_times.empty())
     {
         // Sort in descending order.

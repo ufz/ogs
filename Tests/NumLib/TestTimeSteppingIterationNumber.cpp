@@ -31,7 +31,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     const double solution_error = 0.;
 
-    ASSERT_TRUE(alg.next(solution_error)); // t=2, dt=1
+    ASSERT_TRUE(alg.next(solution_error));  // t=2, dt=1
     NumLib::TimeStep ts = alg.getTimeStep();
     ASSERT_EQ(1u, ts.steps());
     ASSERT_EQ(1., ts.previous());
@@ -39,11 +39,11 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(1., ts.dt());
     ASSERT_TRUE(alg.accepted());
 
-    ASSERT_TRUE(alg.next(solution_error)); // t=4, dt=2
+    ASSERT_TRUE(alg.next(solution_error));  // t=4, dt=2
 
     // dt*=2
     alg.setIterationNumber(3);
-    ASSERT_TRUE(alg.next(solution_error)); // t=8, dt=4
+    ASSERT_TRUE(alg.next(solution_error));  // t=8, dt=4
     ts = alg.getTimeStep();
     ASSERT_EQ(3u, ts.steps());
     ASSERT_EQ(4., ts.previous());
@@ -53,7 +53,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     // dt*=1
     alg.setIterationNumber(5);
-    ASSERT_TRUE(alg.next(solution_error)); // t=12, dt=4
+    ASSERT_TRUE(alg.next(solution_error));  // t=12, dt=4
     ts = alg.getTimeStep();
     ASSERT_EQ(4u, ts.steps());
     ASSERT_EQ(8., ts.previous());
@@ -63,7 +63,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     // dt*=0.5
     alg.setIterationNumber(7);
-    ASSERT_TRUE(alg.next(solution_error)); // t=14, dt=2
+    ASSERT_TRUE(alg.next(solution_error));  // t=14, dt=2
     ts = alg.getTimeStep();
     ASSERT_EQ(5u, ts.steps());
     ASSERT_EQ(12., ts.previous());
@@ -72,8 +72,8 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_TRUE(alg.accepted());
 
     // dt*=0.25 but dt_min = 1
-    alg.setIterationNumber(8); // exceed max
-    ASSERT_TRUE(alg.next(solution_error)); // t=13, dt=1
+    alg.setIterationNumber(8);              // exceed max
+    ASSERT_TRUE(alg.next(solution_error));  // t=13, dt=1
     ts = alg.getTimeStep();
     ASSERT_EQ(5u, ts.steps());
     ASSERT_EQ(12., ts.previous());
@@ -83,7 +83,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     // restart, dt*=1
     alg.setIterationNumber(4);
-    ASSERT_TRUE(alg.next(solution_error)); // t=14, dt=1
+    ASSERT_TRUE(alg.next(solution_error));  // t=14, dt=1
     ts = alg.getTimeStep();
     ASSERT_EQ(6u, ts.steps());
     ASSERT_EQ(13., ts.previous());

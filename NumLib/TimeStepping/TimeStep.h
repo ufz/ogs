@@ -110,6 +110,7 @@ public:
     double dt() const { return _dt; }
     /// the number of time _steps
     std::size_t steps() const { return _steps; }
+
 private:
     /// previous time step
     double _previous;
