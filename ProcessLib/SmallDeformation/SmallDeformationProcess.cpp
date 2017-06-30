@@ -7,8 +7,8 @@
  *
  */
 
-#include "SmallDeformationProcess-fwd.h"
 #include "SmallDeformationProcess.h"
+#include "SmallDeformationProcess-impl.h"
 
 namespace ProcessLib
 {
