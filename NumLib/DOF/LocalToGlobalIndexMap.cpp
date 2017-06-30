@@ -284,7 +284,7 @@ LocalToGlobalIndexMap::getNumberOfElementDOF(std::size_t const mesh_item_id) con
 {
     std::size_t ndof = 0;
 
-    for (unsigned c=0; c<_rows.cols(); ++c)
+    for (Table::Index c = 0; c < _rows.cols(); ++c)
     {
         ndof += _rows(mesh_item_id, c).size();
     }
@@ -296,7 +296,7 @@ std::size_t
 LocalToGlobalIndexMap::getNumberOfElementComponents(std::size_t const mesh_item_id) const
 {
     std::size_t n = 0;
-    for (unsigned c=0; c<_rows.cols(); ++c)
+    for (Table::Index c = 0; c < _rows.cols(); ++c)
     {
         if (!_rows(mesh_item_id, c).empty())
             n++;
