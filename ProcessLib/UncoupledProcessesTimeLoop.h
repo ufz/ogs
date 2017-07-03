@@ -66,6 +66,7 @@ private:
     std::unique_ptr<Output> _output;
     std::vector<std::unique_ptr<SingleProcessData>> _per_process_data;
 
+    bool _last_step_rejected = false;
     const double _start_time;
     const double _end_time;
 

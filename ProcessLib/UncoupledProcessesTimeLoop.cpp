@@ -642,13 +642,28 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
     if (!is_initial_step)
     {
         if (all_process_steps_accepted)
+        {
             accepted_steps++;
+            _last_step_rejected = false;
+        }
         else
         {
+            if (std::abs(dt -prev_dt) < std::numeric_limits<double>::min()
+                && _last_step_rejected)
+            {
+                OGS_FATAL("\tThis time step is rejected and the new computed"
+                          " step size is the same as\n"
+                          "\tthat was just used.\n"
+                          "\tSuggest to adjust the parameters of the time"
+                          " stepper or try other time stepper.\n"
+                          "\tThe program stops");
+            }
+
             if (t < _end_time)
             {
                 t -= prev_dt;
                 rejected_steps++;
+                _last_step_rejected = true;
             }
         }
     }
