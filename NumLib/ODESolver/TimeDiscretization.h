@@ -142,6 +142,14 @@ public:
     virtual void pushState(const double t, GlobalVector const& x,
                            InternalMatrixStorage const& strg) = 0;
 
+    /*! Indicate that the current timestep is rejected and that the computation
+     *  of the present time step will be restarted with a new time step size.
+     *
+     * \param x    The solution at the current time step, which is going to be
+     *             reset to its previous value.
+     */
+    virtual void popState(GlobalVector& x) = 0;
+
     /*! Indicate that the computation of a new timestep is being started now.
      *
      * \warning Currently changing timestep sizes are not supported. Thus,
@@ -262,6 +270,11 @@ public:
         MathLib::LinAlg::copy(x, _x_old);
     }
 
+    void popState(GlobalVector& x) override
+    {
+        MathLib::LinAlg::copy(_x_old, x);
+    }
+
     void nextTimestep(const double t, const double delta_t) override
     {
         _t = t;
@@ -312,6 +325,11 @@ public:
                    InternalMatrixStorage const&) override
     {
         MathLib::LinAlg::copy(x, _x_old);
+    }
+
+    void popState(GlobalVector& x) override
+    {
+        MathLib::LinAlg::copy(_x_old, x);
     }
 
     void nextTimestep(const double t, const double delta_t) override
@@ -392,6 +410,11 @@ public:
         strg.pushMatrices();
     }
 
+    void popState(GlobalVector& x) override
+    {
+        MathLib::LinAlg::copy(_x_old, x);
+    }
+
     void nextTimestep(const double t, const double delta_t) override
     {
         _t = t;
@@ -462,6 +485,11 @@ public:
 
     void pushState(const double, GlobalVector const& x,
                    InternalMatrixStorage const&) override;
+
+    void popState(GlobalVector& x) override
+    {
+        MathLib::LinAlg::copy(*_xs_old[_xs_old.size()-1], x);
+    }
 
     void nextTimestep(const double t, const double delta_t) override
     {

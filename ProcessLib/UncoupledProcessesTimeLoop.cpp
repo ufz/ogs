@@ -620,11 +620,11 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
             continue;
         }
 
+        auto& time_disc = ppd.time_disc;
+        auto& mat_strg = *ppd.mat_strg;
+        auto& x = *_process_solutions[i];
         if (all_process_steps_accepted)
         {
-            auto& time_disc = ppd.time_disc;
-            auto& mat_strg = *ppd.mat_strg;
-            auto const& x = *_process_solutions[i];
             time_disc->pushState(t, x, mat_strg);
         }
         else
@@ -635,6 +635,7 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
                     "Time step %d is rejected. "
                     "The computation is back to the previous time.",
                     accepted_steps + rejected_steps);
+                time_disc->popState(x);
             }
         }
     }
