@@ -634,7 +634,7 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
                 WARN(
                     "Time step %d is rejected. "
                     "The computation is back to the previous time.",
-                    accepted_steps + rejected_steps);
+                    accepted_steps + 1);
                 time_disc->popState(x);
             }
         }
@@ -745,7 +745,7 @@ bool UncoupledProcessesTimeLoop::loop()
         t += dt;
         const double prev_dt = dt;
 
-        const std::size_t timesteps = accepted_steps + rejected_steps + 1;
+        const std::size_t timesteps = accepted_steps + 1;
         // TODO, input option for time unit.
         INFO("=== Time stepping at step #%u and time %g with step size %g",
              timesteps, t, dt);
