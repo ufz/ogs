@@ -142,11 +142,15 @@ public:
     virtual void pushState(const double t, GlobalVector const& x,
                            InternalMatrixStorage const& strg) = 0;
 
-    /*! Indicate that the current timestep is rejected and that the computation
-     *  of the present time step will be restarted with a new time step size.
+    /*!
+     * Restores the given vector x to its old value.
+     * Used only for repeating of the time step with new time step size when
+     * the current time step is rejected. The restored x is only used as
+     * an initial guess for linear solver in the first Picard nonlinear
+     * iteration.
      *
-     * \param x    The solution at the current time step, which is going to be
-     *             reset to its previous value.
+     * \param x The solution at the current time step, which is going to be
+     *          reset to its previous value.
      */
     virtual void popState(GlobalVector& x) = 0;
 

@@ -626,15 +626,16 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         if (all_process_steps_accepted)
         {
             time_disc->pushState(t, x, mat_strg);
+            _repeating_times_of_rejected_step = 0;
         }
         else
         {
             if (t < _end_time)
             {
                 WARN(
-                    "Time step %d is rejected. "
-                    "The computation is back to the previous time.",
-                    accepted_steps + 1);
+                    "Time step %d was rejected %d times "
+                    "and it will be repeated with a reduced step size.",
+                    accepted_steps + 1, _repeating_times_of_rejected_step++);
                 time_disc->popState(x);
             }
         }
