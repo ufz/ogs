@@ -298,6 +298,8 @@ public:
         SpatialPosition x_position;
         x_position.setElementID(_element.getID());
 
+        auto const b_alpha = _process_data.biot_coefficient(t, x_position)[0];
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
         for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -329,7 +331,6 @@ public:
             double const K_over_mu =
                 _process_data.intrinsic_permeability(t, x_position)[0] /
                 _process_data.fluid_viscosity(t, x_position)[0];
-            auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
             auto const rho_sr = _process_data.solid_density(t, x_position)[0];
             auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
             auto const porosity = _process_data.porosity(t, x_position)[0];
@@ -358,7 +359,7 @@ public:
             //
             // displacement equation, pressure part
             //
-            Kup.noalias() += B.transpose() * alpha * identity2 * N_p * w;
+            Kup.noalias() += B.transpose() * identity2 * N_p * w;
 
             //
             // pressure equation, pressure part.
@@ -379,7 +380,7 @@ public:
         local_Jac
             .template block<displacement_size, pressure_size>(
                 displacement_index, pressure_index)
-            .noalias() -= Kup;
+            .noalias() -= b_alpha * Kup;
 
         // pressure equation, pressure part.
         local_Jac
