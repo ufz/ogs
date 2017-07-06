@@ -883,13 +883,19 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     const double t, const double dt, const std::size_t timestep_id)
 {
     // Coupling iteration
+    if (_global_coupling_max_iterations != 0)
+    {
+        // Set the flag of the first iteration be true.
+        _global_coupling_conv_crit->preFirstIteration();
+    }
     bool coupling_iteration_converged = true;
     for (unsigned global_coupling_iteration = 0;
          global_coupling_iteration < _global_coupling_max_iterations;
-         global_coupling_iteration++)
+         global_coupling_iteration++, _global_coupling_conv_crit->reset())
     {
         // TODO use process name
         bool nonlinear_solver_succeeded = true;
+        coupling_iteration_converged = true;
         unsigned pcs_idx = 0;
         for (auto& spd : _per_process_data)
         {
@@ -911,15 +917,8 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 // solution and the solution of the previous time step are
                 // required for the coupling computation.
                 spd->process.preTimestep(x, t, dt);
+            }
 
-                // Set the flag of the first iteration be true.
-                _global_coupling_conv_crit->preFirstIteration();
-            }
-            else
-            {
-                // Set the flag of the first iteration be false.
-                _global_coupling_conv_crit->setNoFirstIteration();
-            }
             StaggeredCouplingTerm coupling_term(
                 spd->coupled_processes,
                 _solutions_of_coupled_processes[pcs_idx], dt);
