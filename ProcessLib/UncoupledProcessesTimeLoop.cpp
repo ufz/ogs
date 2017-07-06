@@ -620,21 +620,23 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
             continue;
         }
 
+        auto& time_disc = ppd.time_disc;
+        auto& mat_strg = *ppd.mat_strg;
+        auto& x = *_process_solutions[i];
         if (all_process_steps_accepted)
         {
-            auto& time_disc = ppd.time_disc;
-            auto& mat_strg = *ppd.mat_strg;
-            auto const& x = *_process_solutions[i];
             time_disc->pushState(t, x, mat_strg);
+            _repeating_times_of_rejected_step = 0;
         }
         else
         {
             if (t < _end_time)
             {
                 WARN(
-                    "Time step %d is rejected. "
-                    "The computation is back to the previous time.",
-                    accepted_steps + rejected_steps);
+                    "Time step %d was rejected %d times "
+                    "and it will be repeated with a reduced step size.",
+                    accepted_steps + 1, _repeating_times_of_rejected_step++);
+                time_disc->popState(x);
             }
         }
     }
@@ -642,13 +644,28 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
     if (!is_initial_step)
     {
         if (all_process_steps_accepted)
+        {
             accepted_steps++;
+            _last_step_rejected = false;
+        }
         else
         {
+            if (std::abs(dt -prev_dt) < std::numeric_limits<double>::min()
+                && _last_step_rejected)
+            {
+                OGS_FATAL("\tThis time step is rejected and the new computed"
+                          " step size is the same as\n"
+                          "\tthat was just used.\n"
+                          "\tSuggest to adjust the parameters of the time"
+                          " stepper or try other time stepper.\n"
+                          "\tThe program stops");
+            }
+
             if (t < _end_time)
             {
                 t -= prev_dt;
                 rejected_steps++;
+                _last_step_rejected = true;
             }
         }
     }
@@ -729,7 +746,7 @@ bool UncoupledProcessesTimeLoop::loop()
         t += dt;
         const double prev_dt = dt;
 
-        const std::size_t timesteps = accepted_steps + rejected_steps + 1;
+        const std::size_t timesteps = accepted_steps + 1;
         // TODO, input option for time unit.
         INFO("=== Time stepping at step #%u and time %g with step size %g",
              timesteps, t, dt);

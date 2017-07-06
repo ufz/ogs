@@ -105,10 +105,10 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     ABSTOL 1.1 RELTOL 1e-6
     DIFF_DATA
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300.000000.vtu OGS5_PRESSURE1 pressure
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300.000000.vtu OGS5_TEMPERATURE1 temperature
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300.000000.vtu v_x_ref v_x
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300.000000.vtu v_y_ref v_y
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu OGS5_PRESSURE1 pressure
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu OGS5_TEMPERATURE1 temperature
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu v_x_ref v_x
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu v_y_ref v_y
 )
 
 # PETSc/MPI
@@ -218,8 +218,8 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     ABSTOL 1.1 RELTOL 1e-7
     DIFF_DATA
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300_000000_0.vtu OGS5_PRESSURE1 pressure
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_11_t_300_000000_0.vtu OGS5_TEMPERATURE1 temperature
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300_000000_0.vtu OGS5_PRESSURE1 pressure
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300_000000_0.vtu OGS5_TEMPERATURE1 temperature
 # To be activated when the output of velocity is correct under PETSc version.
 #    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_x_ref v_x
 #    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_y_ref v_y

@@ -16,6 +16,8 @@
 
 #include "EvolutionaryPIDcontroller.h"
 
+#include <logog/include/logog.hpp>
+
 namespace NumLib
 {
 bool EvolutionaryPIDcontroller::next(const double solution_error)
@@ -35,6 +37,13 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
 
         _ts_current = _ts_prev;
         _ts_current += h_new;
+
+        WARN("\tThis step is rejected due to the relative change from the\n"
+             "\tsolution of the previous time step to the current solution\n"
+             "\t exceeds the given tolerance of %g.\n"
+             "\tThis time step will be repeated with a new time step size of"
+             " %g or the simulation will be halted." , _tol, h_new);
+
         return false;
     }
 
