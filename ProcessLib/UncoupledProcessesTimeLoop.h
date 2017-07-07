@@ -67,7 +67,7 @@ private:
     std::vector<std::unique_ptr<SingleProcessData>> _per_process_data;
 
     bool _last_step_rejected = false;
-    bool _repeating_times_of_rejected_step = 0;
+    int _repeating_times_of_rejected_step = 0;
     const double _start_time;
     const double _end_time;
 

@@ -602,6 +602,15 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         }
     }
 
+    if (all_process_steps_accepted)
+    {
+        _repeating_times_of_rejected_step = 0;
+    }
+    else
+    {
+        _repeating_times_of_rejected_step++;
+    }
+
     bool is_initial_step = false;
     // Reset the time step with the minimum step size, dt
     // Update the solution of the previous time step in time_disc.
@@ -626,7 +635,6 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         if (all_process_steps_accepted)
         {
             time_disc->pushState(t, x, mat_strg);
-            _repeating_times_of_rejected_step = 0;
         }
         else
         {
@@ -635,7 +643,7 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
                 WARN(
                     "Time step %d was rejected %d times "
                     "and it will be repeated with a reduced step size.",
-                    accepted_steps + 1, _repeating_times_of_rejected_step++);
+                    accepted_steps + 1, _repeating_times_of_rejected_step);
                 time_disc->popState(x);
             }
         }
