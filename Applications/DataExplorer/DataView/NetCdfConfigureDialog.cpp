@@ -157,10 +157,10 @@ void NetCdfConfigureDialog::on_comboBoxDim4_currentIndexChanged(int id)
 
 int NetCdfConfigureDialog::setVariableSelect()
 {
-    std::size_t max_dim(0);
-    std::size_t max_dim_idx(0);
-    std::size_t const n_vars (_currentFile->num_vars());
-    for (int i=0; i<n_vars; i++)
+    int max_dim = 0;
+    int max_dim_idx = 0;
+    auto const n_vars = _currentFile->num_vars();
+    for (int i = 0; i < n_vars; i++)
     {
         NcVar const& focusedVar = *_currentFile->get_var(i);
         if (focusedVar.num_dims() > 1)
@@ -179,10 +179,10 @@ int NetCdfConfigureDialog::setVariableSelect()
 
 void NetCdfConfigureDialog::setDimensionSelect()
 {
-    int const dim (_currentVar->num_dims());
+    int const dim = _currentVar->num_dims();
     std::array<QComboBox*,4> dim_box = {{ comboBoxDim1, comboBoxDim2, comboBoxDim3, comboBoxDim4 }};
 
-    for (std::size_t i=0; i<4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         dim_box[i]->clear();
         dim_box[i]->setEnabled(i < dim);
@@ -190,7 +190,7 @@ void NetCdfConfigureDialog::setDimensionSelect()
 
     for (int i=0; i < dim; ++i) //write dimension-names into selection-boxes
     {
-        for (std::size_t j=0; j<dim; ++j)
+        for (int j = 0; j < dim; ++j)
             dim_box[j]->addItem(_currentVar->get_dim(i)->name());
     }
     comboBoxDim1->setCurrentIndex(dim-2);

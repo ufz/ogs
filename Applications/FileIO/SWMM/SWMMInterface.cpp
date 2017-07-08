@@ -9,7 +9,7 @@
 #include "SwmmInterface.h"
 
 #include <cctype>
-#include <iostream>
+#include <fstream>
 #include <utility>
 
 #include "BaseLib/FileTools.h"

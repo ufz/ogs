@@ -100,7 +100,7 @@ vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
 }
 
 void StationTreeModel::setNameForItem(const std::string& stn_vec_name,
-                                      std::size_t id,
+                                      std::size_t const id,
                                       std::string const& item_name)
 {
     auto const stn_list = find_if(
@@ -108,7 +108,8 @@ void StationTreeModel::setNameForItem(const std::string& stn_vec_name,
             return (stn_vec_name == item->data(0).toString().toStdString());
         });
 
-    if (id >=  (*stn_list)->childCount())
+    if (stn_list == _lists.end() ||
+        id >= static_cast<std::size_t>((*stn_list)->childCount()))
         return;
     TreeItem *const item = (*stn_list)->child(id);
     item->setData(0, QString::fromStdString(item_name));

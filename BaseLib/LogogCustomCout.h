@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <iostream>
+#include <ostream>
 
 #include <logog/include/logog.hpp>
 
