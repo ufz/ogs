@@ -102,10 +102,10 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     else
     {
         for (int i=0; i<index_ns; i++)
-            dFs_dS[i] = boost::math::sign(tau) / tau * sigma[i];
+            dFs_dS[i] = sigma[i] / std::abs(tau);
 
         for (int i=0; i<index_ns; i++)
-            dQs_dS[i] = boost::math::sign(tau) / tau * sigma[i];
+            dQs_dS[i] = sigma[i] / std::abs(tau);
     }
     dFs_dS[index_ns] = std::tan(mat.phi);
     dQs_dS[index_ns] = std::tan(mat.psi);
