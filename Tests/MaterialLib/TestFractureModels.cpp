@@ -65,7 +65,7 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
     ASSERT_NEAR(0, C(1,1), eps_C);
 }
 
-TEST(MaterialLib_Fracture, MohrCoulomb)
+TEST(MaterialLib_Fracture, MohrCoulomb2D)
 {
     ProcessLib::ConstantParameter<double> const kn("", 50e9);
     ProcessLib::ConstantParameter<double> const ks("", 20e9);
@@ -95,5 +95,44 @@ TEST(MaterialLib_Fracture, MohrCoulomb)
     ASSERT_NEAR(1.26558e+10, C(0,1), eps_C);
     ASSERT_NEAR(4.13226e+09, C(1,0), eps_C);
     ASSERT_NEAR(4.72319e+10, C(1,1), eps_C);
+}
+
+
+TEST(MaterialLib_Fracture, MohrCoulomb3D)
+{
+    ProcessLib::ConstantParameter<double> const kn("", 50e9);
+    ProcessLib::ConstantParameter<double> const ks("", 20e9);
+    ProcessLib::ConstantParameter<double> const phi("", 15);
+    ProcessLib::ConstantParameter<double> const psi("", 5);
+    ProcessLib::ConstantParameter<double> const c("", 3e6);
+    MohrCoulomb<3>::MaterialProperties const mp{kn, ks, phi, psi, c};
+
+    MohrCoulomb<3> fractureModel{mp};
+    std::unique_ptr<FractureModelBase<3>::MaterialStateVariables> state(
+        fractureModel.createMaterialStateVariables());
+
+    Eigen::Vector3d const w_prev = Eigen::Vector3d::Zero();
+    Eigen::Vector3d const sigma_prev(-3.46e6, 0, -2e6);
+    Eigen::Vector3d const w(-1.08e-5, 0, -0.25e-5);
+
+    // Result vectors, not initialized.
+    Eigen::Vector3d sigma;
+    Eigen::Matrix3d C;
+
+    ProcessLib::SpatialPosition x;
+    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
+
+    ASSERT_NEAR(-3.50360e6, sigma[0], eps_sigma);
+    ASSERT_NEAR(0.0, sigma[1], eps_sigma);
+    ASSERT_NEAR(-2.16271e6, sigma[2], eps_sigma);
+    ASSERT_NEAR(1.10723e+09, C(0,0), eps_C);
+    ASSERT_NEAR(0.0, C(0,1), eps_C);
+    ASSERT_NEAR(1.26558e+10, C(0,2), eps_C);
+    ASSERT_NEAR(0.0, C(1,0), eps_C);
+    ASSERT_NEAR(20.e9, C(1,1), eps_C);
+    ASSERT_NEAR(0.0, C(1,2), eps_C);
+    ASSERT_NEAR(4.13226e+09, C(2,0), eps_C);
+    ASSERT_NEAR(0.0, C(2,1), eps_C);
+    ASSERT_NEAR(4.72319e+10, C(2,2), eps_C);
 }
 
