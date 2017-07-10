@@ -373,15 +373,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
         }
     }
 
-#ifdef USE_PETSC
-    // TODO It is also possible directly to copy the data for single process
-    // variable to a mesh property. It needs a vector of global indices and
-    // some PETSc magic to do so.
-    std::vector<double> x_copy(x.getLocalSize() + x.getGhostSize());
-#else
-    std::vector<double> x_copy(x.size());
-#endif
-    x.copyValues(x_copy);
+    MathLib::LinAlg::setLocalAccessibleVector(x);
 
     ProcessVariable& pv_g = this->getProcessVariables()[g_variable_id];
     auto& mesh_prop_g = pv_g.getOrCreateMeshProperty();
@@ -400,13 +392,8 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
                     mesh_id, MeshLib::MeshItemType::Node, node->getID());
 
                 auto const global_component_id = g_global_component_offset + component_id;
-                auto const index =
-                        _local_to_global_index_map->getLocalIndex(
-                            l, global_component_id, x.getRangeBegin(),
-                            x.getRangeEnd());
-
                 mesh_prop_g[node->getID() * num_comp + component_id] =
-                        x_copy[index];
+                        x[global_component_id];
             }
         }
     }
