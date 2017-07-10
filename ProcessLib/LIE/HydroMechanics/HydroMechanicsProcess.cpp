@@ -207,66 +207,53 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
         _process_data);
 
-    auto mesh_prop_sigma_xx = const_cast<MeshLib::Mesh&>(mesh)
-                                  .getProperties()
-                                  .template createNewPropertyVector<double>(
-                                      "stress_xx", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_sigma_xx = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "stress_xx", MeshLib::MeshItemType::Cell, 1);
     mesh_prop_sigma_xx->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_stress_xx = mesh_prop_sigma_xx;
 
-    auto mesh_prop_sigma_yy = const_cast<MeshLib::Mesh&>(mesh)
-                                  .getProperties()
-                                  .template createNewPropertyVector<double>(
-                                      "stress_yy", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_sigma_yy = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "stress_yy", MeshLib::MeshItemType::Cell, 1);
     mesh_prop_sigma_yy->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_stress_yy = mesh_prop_sigma_yy;
 
-    auto mesh_prop_sigma_xy = const_cast<MeshLib::Mesh&>(mesh)
-                                  .getProperties()
-                                  .template createNewPropertyVector<double>(
-                                      "stress_xy", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_sigma_xy = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "stress_xy", MeshLib::MeshItemType::Cell, 1);
     mesh_prop_sigma_xy->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_stress_xy = mesh_prop_sigma_xy;
 
-    auto mesh_prop_epsilon_xx =
-        const_cast<MeshLib::Mesh&>(mesh)
-            .getProperties()
-            .template createNewPropertyVector<double>(
-                "strain_xx", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_epsilon_xx = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "strain_xx", MeshLib::MeshItemType::Cell, 1);
     mesh_prop_epsilon_xx->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_strain_xx = mesh_prop_epsilon_xx;
 
-    auto mesh_prop_epsilon_yy =
-        const_cast<MeshLib::Mesh&>(mesh)
-            .getProperties()
-            .template createNewPropertyVector<double>(
-                "strain_yy", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_epsilon_yy = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "strain_yy", MeshLib::MeshItemType::Cell, 1);
     mesh_prop_epsilon_yy->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_strain_yy = mesh_prop_epsilon_yy;
 
-    auto mesh_prop_epsilon_xy =
-        const_cast<MeshLib::Mesh&>(mesh)
-            .getProperties()
-            .template createNewPropertyVector<double>(
-                "strain_xy", MeshLib::MeshItemType::Cell);
+    auto mesh_prop_epsilon_xy = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "strain_xy", MeshLib::MeshItemType::Cell, 1);
     mesh_prop_epsilon_xy->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_strain_xy = mesh_prop_epsilon_xy;
 
-    auto mesh_prop_velocity =
-        const_cast<MeshLib::Mesh&>(mesh)
-            .getProperties()
-            .template createNewPropertyVector<double>(
-                "velocity", MeshLib::MeshItemType::Cell, 3);
+    auto mesh_prop_velocity = MeshLib::getOrCreateMeshProperty<double>(
+                                const_cast<MeshLib::Mesh&>(mesh),
+                                "velocity", MeshLib::MeshItemType::Cell, 3);
     mesh_prop_velocity->resize(mesh.getNumberOfElements() * 3);
     _process_data.mesh_prop_velocity = mesh_prop_velocity;
 
     if (!_vec_fracture_elements.empty())
     {
-        auto mesh_prop_levelset =
-            const_cast<MeshLib::Mesh&>(mesh)
-                .getProperties()
-                .template createNewPropertyVector<double>(
-                    "levelset1", MeshLib::MeshItemType::Cell);
+        auto mesh_prop_levelset = MeshLib::getOrCreateMeshProperty<double>(
+                                    const_cast<MeshLib::Mesh&>(mesh),
+                                    "levelset1", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_levelset->resize(mesh.getNumberOfElements());
         for (MeshLib::Element const* e : _mesh.getElements())
         {
@@ -279,23 +266,20 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             (*mesh_prop_levelset)[e->getID()] = levelsets;
         }
 
-        auto mesh_prop_w_n = const_cast<MeshLib::Mesh&>(mesh)
-                                 .getProperties()
-                                 .template createNewPropertyVector<double>(
-                                     "w_n", MeshLib::MeshItemType::Cell);
+        auto mesh_prop_w_n = MeshLib::getOrCreateMeshProperty<double>(
+                                    const_cast<MeshLib::Mesh&>(mesh),
+                                    "w_n", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_w_n->resize(mesh.getNumberOfElements());
-        auto mesh_prop_w_s = const_cast<MeshLib::Mesh&>(mesh)
-                                 .getProperties()
-                                 .template createNewPropertyVector<double>(
-                                     "w_s", MeshLib::MeshItemType::Cell);
+        auto mesh_prop_w_s = MeshLib::getOrCreateMeshProperty<double>(
+                                    const_cast<MeshLib::Mesh&>(mesh),
+                                    "w_s", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_w_s->resize(mesh.getNumberOfElements());
         _process_data.mesh_prop_w_n = mesh_prop_w_n;
         _process_data.mesh_prop_w_s = mesh_prop_w_s;
 
-        auto mesh_prop_b = const_cast<MeshLib::Mesh&>(mesh)
-                               .getProperties()
-                               .template createNewPropertyVector<double>(
-                                   "aperture", MeshLib::MeshItemType::Cell);
+        auto mesh_prop_b = MeshLib::getOrCreateMeshProperty<double>(
+                                    const_cast<MeshLib::Mesh&>(mesh),
+                                    "aperture", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_b->resize(mesh.getNumberOfElements());
         auto mesh_prop_matid =
             mesh.getProperties().getPropertyVector<int>("MaterialIDs");
@@ -312,53 +296,43 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         }
         _process_data.mesh_prop_b = mesh_prop_b;
 
-        auto mesh_prop_k_f = const_cast<MeshLib::Mesh&>(mesh)
-                                 .getProperties()
-                                 .template createNewPropertyVector<double>(
-                                     "k_f", MeshLib::MeshItemType::Cell);
+
+        auto mesh_prop_k_f = MeshLib::getOrCreateMeshProperty<double>(
+                                    const_cast<MeshLib::Mesh&>(mesh),
+                                    "k_f", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_k_f->resize(mesh.getNumberOfElements());
         _process_data.mesh_prop_k_f = mesh_prop_k_f;
 
-        auto mesh_prop_fracture_stress_shear =
-            const_cast<MeshLib::Mesh&>(mesh)
-                .getProperties()
-                .template createNewPropertyVector<double>(
-                    "f_stress_s", MeshLib::MeshItemType::Cell);
+        auto mesh_prop_fracture_stress_shear = MeshLib::getOrCreateMeshProperty<double>(
+                                    const_cast<MeshLib::Mesh&>(mesh),
+                                    "f_stress_s", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_fracture_stress_shear->resize(mesh.getNumberOfElements());
         _process_data.mesh_prop_fracture_stress_shear =
             mesh_prop_fracture_stress_shear;
 
-        auto mesh_prop_fracture_stress_normal =
-            const_cast<MeshLib::Mesh&>(mesh)
-                .getProperties()
-                .template createNewPropertyVector<double>(
-                    "f_stress_n", MeshLib::MeshItemType::Cell);
+        auto mesh_prop_fracture_stress_normal = MeshLib::getOrCreateMeshProperty<double>(
+                                    const_cast<MeshLib::Mesh&>(mesh),
+                                    "f_stress_n", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_fracture_stress_normal->resize(mesh.getNumberOfElements());
         _process_data.mesh_prop_fracture_stress_normal =
             mesh_prop_fracture_stress_normal;
 
-        auto mesh_prop_fracture_shear_failure =
-            const_cast<MeshLib::Mesh&>(mesh)
-                .getProperties()
-                .template createNewPropertyVector<double>(
-                    "f_shear_failure", MeshLib::MeshItemType::Cell);
+        auto mesh_prop_fracture_shear_failure = MeshLib::getOrCreateMeshProperty<double>(
+                                    const_cast<MeshLib::Mesh&>(mesh),
+                                    "f_shear_failure", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_fracture_shear_failure->resize(mesh.getNumberOfElements());
         _process_data.mesh_prop_fracture_shear_failure =
             mesh_prop_fracture_shear_failure;
 
-        auto mesh_prop_nodal_w =
-            const_cast<MeshLib::Mesh&>(mesh)
-                .getProperties()
-                .template createNewPropertyVector<double>(
-                    "nodal_w", MeshLib::MeshItemType::Node, GlobalDim);
+        auto mesh_prop_nodal_w = MeshLib::getOrCreateMeshProperty<double>(
+                                    const_cast<MeshLib::Mesh&>(mesh),
+                                    "nodal_w", MeshLib::MeshItemType::Node, GlobalDim);
         mesh_prop_nodal_w->resize(mesh.getNumberOfNodes() * GlobalDim);
         _process_data.mesh_prop_nodal_w = mesh_prop_nodal_w;
 
-        auto mesh_prop_nodal_b =
-            const_cast<MeshLib::Mesh&>(mesh)
-                .getProperties()
-                .template createNewPropertyVector<double>(
-                    "nodal_aperture", MeshLib::MeshItemType::Node);
+        auto mesh_prop_nodal_b = MeshLib::getOrCreateMeshProperty<double>(
+                                    const_cast<MeshLib::Mesh&>(mesh),
+                                    "nodal_aperture", MeshLib::MeshItemType::Node, 1);
         mesh_prop_nodal_b->resize(mesh.getNumberOfNodes());
         _process_data.mesh_prop_nodal_b = mesh_prop_nodal_b;
     }
