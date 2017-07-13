@@ -48,13 +48,13 @@ public:
         nodes[7] = new MeshLib::Node(0.5, 0.25, 0.0);
         nodes[8] = new MeshLib::Node(0.25, 0.25, 0.0);
 
-        nodes[9] = new MeshLib::Node(0.0, 0.0, 0.25);
-        nodes[10] = new MeshLib::Node(0.5, 0.0, 0.25);
-        nodes[11] = new MeshLib::Node(0.5, 0.5, 0.25);
+        nodes[9] = new MeshLib::Node(0.25, 0.0, 0.5);
+        nodes[10] = new MeshLib::Node(0.5, 0.25, 0.5);
+        nodes[11] = new MeshLib::Node(0.25, 0.25, 0.5);
 
-        nodes[12] = new MeshLib::Node(0.25, 0.0, 0.5);
-        nodes[13] = new MeshLib::Node(0.5, 0.25, 0.5);
-        nodes[14] = new MeshLib::Node(0.25, 0.25, 0.5);
+        nodes[12] = new MeshLib::Node(0.0, 0.0, 0.25);
+        nodes[13] = new MeshLib::Node(0.5, 0.0, 0.25);
+        nodes[14] = new MeshLib::Node(0.5, 0.5, 0.25);
 
         return new MeshElementType(nodes);
     }

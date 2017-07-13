@@ -44,7 +44,7 @@ public:
         nodes[4] = new MeshLib::Node(0.5, 0.5, 0.0);
         nodes[5] = new MeshLib::Node(0.0, 0.5, 0.0);
 
-        return new MeshLib::Tri(nodes);
+        return new MeshElementType(nodes);
     }
 
     double getVolume() const { return 0.5; }

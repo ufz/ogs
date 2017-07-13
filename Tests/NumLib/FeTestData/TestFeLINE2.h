@@ -43,6 +43,8 @@ public:
         return new MeshLib::Line(nodes);
     }
 
+    double getVolume() const { return 1.0; }
+
     /// set an expected mass matrix
     template <class T_MATRIX>
     void setExpectedMassMatrix(T_MATRIX &m)

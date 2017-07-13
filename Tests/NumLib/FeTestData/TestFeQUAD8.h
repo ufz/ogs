@@ -31,6 +31,8 @@ public:
     static const unsigned n_sample_pt_order3 = 3 * 3;
     static const unsigned global_dim = MeshElementType::dimension;
 
+    const double perturbation = -0.1;
+
     /// create a mesh element
     MeshElementType* createMeshElement()
     {
@@ -41,15 +43,15 @@ public:
         nodes[2] = new MeshLib::Node(1.0, 1.0, 0.0);
         nodes[3] = new MeshLib::Node(0.0, 1.0, 0.0);
 
-        nodes[4] = new MeshLib::Node(0.5, 0.0, 0.0);
-        nodes[5] = new MeshLib::Node(1.0, 0.5, 0.0);
-        nodes[6] = new MeshLib::Node(0.5, 1.0, 0.0);
-        nodes[7] = new MeshLib::Node(0.0, 0.5, 0.0);
+        nodes[4] = new MeshLib::Node(0.5, perturbation, 0.0);
+        nodes[5] = new MeshLib::Node(1.0 - perturbation, 0.5, 0.0);
+        nodes[6] = new MeshLib::Node(0.5, 1.0 - perturbation, 0.0);
+        nodes[7] = new MeshLib::Node(perturbation, 0.5, 0.0);
 
         return new MeshElementType(nodes);
     }
 
-    double getVolume() const { return 1.0; }
+    double getVolume() const { return 1.26666666667; }
 };
 
 }  // namespace

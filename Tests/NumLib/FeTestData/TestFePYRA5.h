@@ -46,6 +46,8 @@ public:
         return new MeshElementType(nodes);
     }
 
+    double getVolume() const { return 0.5 * 0.5 * 0.25 / 3.0; }
+
     /// set an expected mass matrix
     template <class T_MATRIX>
     void setExpectedMassMatrix(T_MATRIX &m)
