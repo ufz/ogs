@@ -75,9 +75,10 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-3 RELTOL 1e-3
+    ABSTOL 1e-11 RELTOL 1e-16
     DIFF_DATA
-    UnconfinedCompressionAnalytical_1s.vtu square_1e2_UC_early_pcs_0_ts_10_t_1.000000.vtu displacement_ana displacement
+    expected_square_1e2_UC_early_pcs_0_ts_10_t_1.000000.vtu square_1e2_UC_early_pcs_0_ts_10_t_1.000000.vtu displacement displacement
+    expected_square_1e2_UC_early_pcs_0_ts_10_t_1.000000.vtu square_1e2_UC_early_pcs_0_ts_10_t_1.000000.vtu pressure pressure
 )
 # HydroMechanics; Small deformation, linear poroelastic (unconfined compression late) the drainage process is finished and the displacement of the porous media is only a result of solid properties.
 AddTest(
@@ -88,7 +89,8 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-3 RELTOL 1e-3
+    ABSTOL 5e-14 RELTOL 1e-16
     DIFF_DATA
-    UnconfinedCompressionAnalytical_1000s.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu displacement_ana displacement
+    expected_square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu displacement displacement
+    expected_square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu pressure pressure
 )
