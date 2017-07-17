@@ -33,19 +33,7 @@ class GroundwaterFlowLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    virtual std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
+    virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
@@ -79,10 +67,7 @@ public:
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method)),
-          _darcy_velocities(
-              GlobalDim,
-              std::vector<double>(_integration_method.getNumberOfPoints()))
+              element, is_axially_symmetric, _integration_method))
     {
     }
 
@@ -114,39 +99,6 @@ public:
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
                                  sm.integralMeasure * wp.getWeight();
-        }
-    }
-
-    void computeSecondaryVariableConcrete(
-                                    const double t,
-                                    std::vector<double> const& local_x) override
-    {
-        auto const local_matrix_size = local_x.size();
-        // This assertion is valid only if all nodal d.o.f. use the same shape
-        // matrices.
-        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
-
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        const auto local_x_vec =
-        MathLib::toVector<NodalVectorType>(local_x, local_matrix_size);
-
-        SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            pos.setIntegrationPoint(ip);
-            auto const& sm = _shape_matrices[ip];
-            auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
-            // Darcy velocity only computed for output.
-            GlobalDimVectorType const darcy_velocity = -k * sm.dNdx * local_x_vec;
-
-            for (unsigned d = 0; d < GlobalDim; ++d)
-            {
-                _darcy_velocities[d][ip] = darcy_velocity[d];
-            }
         }
     }
 
@@ -197,34 +149,40 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
-    std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& cache) const override
     {
-        assert(!_darcy_velocities.empty());
-        return _darcy_velocities[0];
-    }
+        // auto const num_nodes = ShapeFunction_::NPOINTS;
+        auto const num_intpts = _shape_matrices.size();
 
-    std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 1);
-        return _darcy_velocities[1];
-    }
+        auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+        assert(!indices.empty());
+        auto const local_x = current_solution.get(indices);
+        auto const local_x_vec =
+            MathLib::toVector<Eigen::Matrix<double, ShapeFunction::NPOINTS, 1>>(
+                local_x, ShapeFunction::NPOINTS);
 
-    std::vector<double> const& getIntPtDarcyVelocityZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 2);
-        return _darcy_velocities[2];
+        cache.clear();
+        auto cache_vec = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, num_intpts);
+
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        for (unsigned i = 0; i < num_intpts; ++i)
+        {
+            pos.setIntegrationPoint(i);
+            auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
+            // dimensions: (d x 1) = (d x n) * (n x 1)
+            cache_vec.col(i).noalias() =
+                -k * _shape_matrices[i].dNdx * local_x_vec;
+        }
+
+        return cache;
     }
 
 private:
@@ -234,8 +192,6 @@ private:
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
-
-    std::vector<std::vector<double>> _darcy_velocities;
 };
 
 }  // namespace GroundwaterFlow

@@ -87,11 +87,6 @@ public:
         }
     }
 
-    void computeSecondaryVariableConcrete(double const t,
-                                          GlobalVector const& x,
-                                          StaggeredCouplingTerm const&
-                                          coupled_term) override;
-
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
