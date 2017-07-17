@@ -33,7 +33,7 @@ AddTest(
 )
 
 AddTest(
-    NAME 2D_RichardsFlow_h_us_quad_small_Adpative_dt
+    NAME 2D_RichardsFlow_h_us_quad_small_Adaptive_dt
     PATH Parabolic/Richards
     EXECUTABLE ogs
     EXECUTABLE_ARGS RichardsFlow_2d_small_adaptive_dt.prj
