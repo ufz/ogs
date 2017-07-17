@@ -69,8 +69,8 @@ private:
 
     //! Computes the secondary Variable.
     GlobalVector const& evalField(
-        GlobalVector const& /*x*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        GlobalVector const& x,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& /*result_cache*/
         ) const;
 
@@ -85,6 +85,9 @@ private:
     std::unique_ptr<NumLib::ExtrapolatableElementCollection> _extrapolatables;
     SecondaryVariableContext const& _context;
     std::string const _internal_variable_name;
+
+    GlobalVector const* _current_solution = nullptr;
+    NumLib::LocalToGlobalIndexMap const* _dof_table = nullptr;
 };
 
 }  // namespace ProcessLib
