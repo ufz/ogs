@@ -83,21 +83,39 @@ public:
     }
 
     virtual std::vector<double> const& getIntPtSigmaXX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaYY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaZZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaXY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaXZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaYZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtEpsilonXX(

@@ -13,6 +13,7 @@
 
 #include "GroundwaterFlowProcessData.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -33,12 +34,21 @@ class GroundwaterFlowLocalAssemblerInterface
 {
 public:
     virtual std::vector<double> const& getIntPtDarcyVelocityX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
     virtual std::vector<double> const& getIntPtDarcyVelocityY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
     virtual std::vector<double> const& getIntPtDarcyVelocityZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 };
 
@@ -188,6 +198,9 @@ public:
     }
 
     std::vector<double> const& getIntPtDarcyVelocityX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         assert(!_darcy_velocities.empty());
@@ -195,6 +208,9 @@ public:
     }
 
     std::vector<double> const& getIntPtDarcyVelocityY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         assert(_darcy_velocities.size() > 1);
@@ -202,6 +218,9 @@ public:
     }
 
     std::vector<double> const& getIntPtDarcyVelocityZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         assert(_darcy_velocities.size() > 2);

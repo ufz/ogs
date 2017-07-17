@@ -57,14 +57,14 @@ void ThermalTwoPhaseFlowWithPPProcess::initializeConcreteProcess(
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
-        "saturation", 1,
-        makeExtrapolator(getExtrapolator(), _local_assemblers,
+        "saturation",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                          &ThermalTwoPhaseFlowWithPPLocalAssemblerInterface::
                              getIntPtSaturation));
 
     _secondary_variables.addSecondaryVariable(
-        "pressure_wetting", 1,
-        makeExtrapolator(getExtrapolator(), _local_assemblers,
+        "pressure_wetting",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                          &ThermalTwoPhaseFlowWithPPLocalAssemblerInterface::
                              getIntPtWettingPressure));
 }

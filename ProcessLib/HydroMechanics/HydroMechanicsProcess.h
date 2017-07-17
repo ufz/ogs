@@ -114,83 +114,83 @@ private:
                 NumLib::ComponentOrder::BY_LOCATION);
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_xx", 1,
+            "sigma_xx",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaXX));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_yy", 1,
+            "sigma_yy",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaYY));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_zz", 1,
+            "sigma_zz",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaZZ));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_xy", 1,
+            "sigma_xy",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaXY));
 
         if (DisplacementDim == 3)
         {
             Base::_secondary_variables.addSecondaryVariable(
-                "sigma_xz", 1,
+                "sigma_xz",
                 makeExtrapolator(
-                    getExtrapolator(), _local_assemblers,
+                    1, getExtrapolator(), _local_assemblers,
                     &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaXZ));
 
             Base::_secondary_variables.addSecondaryVariable(
-                "sigma_yz", 1,
+                "sigma_yz",
                 makeExtrapolator(
-                    getExtrapolator(), _local_assemblers,
+                    1, getExtrapolator(), _local_assemblers,
                     &HydroMechanicsLocalAssemblerInterface::getIntPtSigmaYZ));
         }
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_xx", 1,
+            "epsilon_xx",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &HydroMechanicsLocalAssemblerInterface::getIntPtEpsilonXX));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_yy", 1,
+            "epsilon_yy",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &HydroMechanicsLocalAssemblerInterface::getIntPtEpsilonYY));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_zz", 1,
+            "epsilon_zz",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &HydroMechanicsLocalAssemblerInterface::getIntPtEpsilonZZ));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_xy", 1,
+            "epsilon_xy",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &HydroMechanicsLocalAssemblerInterface::getIntPtEpsilonXY));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "velocity_x", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "velocity_x",
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &HydroMechanicsLocalAssemblerInterface::
                                  getIntPtDarcyVelocityX));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "velocity_y", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "velocity_y",
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &HydroMechanicsLocalAssemblerInterface::
                                  getIntPtDarcyVelocityY));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "velocity_z", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "velocity_z",
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &HydroMechanicsLocalAssemblerInterface::
                                  getIntPtDarcyVelocityZ));
     }

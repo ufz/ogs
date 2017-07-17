@@ -184,18 +184,24 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtSolidDensity(std::vector<double>& /*cache*/) const
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtSolidDensity(const double /*t*/,
+                         GlobalVector const& /*current_solution*/,
+                         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                         std::vector<double>& /*cache*/) const
 {
     return _d.getData().solid_density;
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtLoading(std::vector<double>& cache) const
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtLoading(const double /*t*/,
+                    GlobalVector const& /*current_solution*/,
+                    NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                    std::vector<double>& cache) const
 {
     auto const rho_SR = _d.getData().solid_density;
     auto const rho_SR_dry = _d.getAssemblyParameters().rho_SR_dry;
@@ -204,7 +210,7 @@ std::vector<double> const& TESLocalAssembler<
     cache.reserve(rho_SR.size());
 
     for (auto const rho : rho_SR) {
-        cache.push_back(rho/rho_SR_dry - 1.0);
+        cache.push_back(rho / rho_SR_dry - 1.0);
     }
 
     return cache;
@@ -214,7 +220,10 @@ template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
 std::vector<double> const&
 TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
-    getIntPtReactionDampingFactor(std::vector<double>& cache) const
+    getIntPtReactionDampingFactor(
+        const double /*t*/, GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& cache) const
 {
     auto const fac = _d.getData().reaction_adaptor->getReactionDampingFactor();
     auto const num_integration_points = _d.getData().solid_density.size();
@@ -227,27 +236,36 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtReactionRate(std::vector<double>& /*cache*/) const
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtReactionRate(const double /*t*/,
+                         GlobalVector const& /*current_solution*/,
+                         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                         std::vector<double>& /*cache*/) const
 {
     return _d.getData().reaction_rate;
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtDarcyVelocityX(std::vector<double>& /*cache*/) const
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtDarcyVelocityX(const double /*t*/,
+                           GlobalVector const& /*current_solution*/,
+                           NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                           std::vector<double>& /*cache*/) const
 {
     return _d.getData().velocity[0];
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtDarcyVelocityY(std::vector<double>& /*cache*/) const
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtDarcyVelocityY(const double /*t*/,
+                           GlobalVector const& /*current_solution*/,
+                           NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                           std::vector<double>& /*cache*/) const
 {
     assert(_d.getData().velocity.size() > 1);
     return _d.getData().velocity[1];
@@ -255,9 +273,12 @@ std::vector<double> const& TESLocalAssembler<
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtDarcyVelocityZ(std::vector<double>& /*cache*/) const
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtDarcyVelocityZ(const double /*t*/,
+                           GlobalVector const& /*current_solution*/,
+                           NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                           std::vector<double>& /*cache*/) const
 {
     assert(_d.getData().velocity.size() > 2);
     return _d.getData().velocity[2];

@@ -69,16 +69,19 @@ private:
         StaggeredCouplingTerm const& coupling_term) override;
 
     GlobalVector const& computeVapourPartialPressure(
+        const double t,
         GlobalVector const& x,
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);
 
     GlobalVector const& computeRelativeHumidity(
+        const double t,
         GlobalVector const& x,
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);
 
     GlobalVector const& computeEquilibriumLoading(
+        const double t,
         GlobalVector const& x,
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);

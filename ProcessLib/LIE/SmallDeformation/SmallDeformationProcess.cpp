@@ -186,27 +186,27 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             NumLib::ComponentOrder::BY_LOCATION);
 
     Base::_secondary_variables.addSecondaryVariable(
-        "sigma_xx", 1,
+        "sigma_xx",
         makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXX));
 
     Base::_secondary_variables.addSecondaryVariable(
-        "sigma_yy", 1,
+        "sigma_yy",
         makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtSigmaYY));
 
     Base::_secondary_variables.addSecondaryVariable(
-        "sigma_zz", 1,
+        "sigma_zz",
         makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtSigmaZZ));
 
     Base::_secondary_variables.addSecondaryVariable(
-        "sigma_xy", 1,
+        "sigma_xy",
         makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXY));
 
     if (DisplacementDim == 3)

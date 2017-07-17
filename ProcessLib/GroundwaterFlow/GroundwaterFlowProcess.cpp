@@ -51,22 +51,22 @@ void GroundwaterFlowProcess::initializeConcreteProcess(
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
-        "darcy_velocity_x", 1,
+        "darcy_velocity_x",
         makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), _local_assemblers,
             &GroundwaterFlowLocalAssemblerInterface::getIntPtDarcyVelocityX));
 
     if (mesh.getDimension() > 1) {
         _secondary_variables.addSecondaryVariable(
-            "darcy_velocity_y", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "darcy_velocity_y",
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &GroundwaterFlowLocalAssemblerInterface::
                                  getIntPtDarcyVelocityY));
     }
     if (mesh.getDimension() > 2) {
         _secondary_variables.addSecondaryVariable(
-            "darcy_velocity_z", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "darcy_velocity_z",
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &GroundwaterFlowLocalAssemblerInterface::
                                  getIntPtDarcyVelocityZ));
     }

@@ -37,12 +37,21 @@ class HeatConductionLocalAssemblerInterface
 {
 public:
     virtual std::vector<double> const& getIntPtHeatFluxX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
     virtual std::vector<double> const& getIntPtHeatFluxY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
     virtual std::vector<double> const& getIntPtHeatFluxZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 };
 
@@ -169,6 +178,9 @@ public:
     }
 
     std::vector<double> const& getIntPtHeatFluxX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         assert(!_heat_fluxes.empty());
@@ -176,6 +188,9 @@ public:
     }
 
     std::vector<double> const& getIntPtHeatFluxY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         assert(_heat_fluxes.size() > 1);
@@ -183,6 +198,9 @@ public:
     }
 
     std::vector<double> const& getIntPtHeatFluxZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         assert(_heat_fluxes.size() > 2);

@@ -49,31 +49,31 @@ void RichardsFlowProcess::initializeConcreteProcess(
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
-        "saturation", 1,
+        "saturation",
         makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), _local_assemblers,
             &RichardsFlowLocalAssemblerInterface::getIntPtSaturation));
 
     _secondary_variables.addSecondaryVariable(
-        "darcy_velocity_x", 1,
+        "darcy_velocity_x",
         makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), _local_assemblers,
             &RichardsFlowLocalAssemblerInterface::getIntPtDarcyVelocityX));
 
     if (mesh.getDimension() > 1)
     {
         _secondary_variables.addSecondaryVariable(
-            "darcy_velocity_y", 1,
+            "darcy_velocity_y",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &RichardsFlowLocalAssemblerInterface::getIntPtDarcyVelocityY));
     }
     if (mesh.getDimension() > 2)
     {
         _secondary_variables.addSecondaryVariable(
-            "darcy_velocity_z", 1,
+            "darcy_velocity_z",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &RichardsFlowLocalAssemblerInterface::getIntPtDarcyVelocityZ));
     }
 }
