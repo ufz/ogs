@@ -120,9 +120,8 @@ void doProcessOutput(std::string const& file_name,
     // the following section is for the output of secondary variables
 
     auto add_secondary_var = [&](SecondaryVariable const& var,
-                             std::string const& output_name)
-    {
-        assert(var.n_components == 1); // TODO implement other cases
+                                 std::string const& output_name) {
+        assert(var.fcts.num_components == 1);  // TODO implement other cases
 
         {
             DBUG("  secondary variable %s", output_name.c_str());
@@ -135,7 +134,8 @@ void doProcessOutput(std::string const& file_name,
                     var.fcts.eval_field(x, dof_table, result_cache);
 
             // Copy result
-            for (GlobalIndexType i = 0; i < nodal_values.size(); ++i) {
+            for (GlobalIndexType i = 0; i < nodal_values.size(); ++i)
+            {
                 assert(!std::isnan(nodal_values[i]));
                 (*result)[i] = nodal_values[i];
             }

@@ -36,10 +36,10 @@ SecondaryVariableFunctions CachedSecondaryVariable::getExtrapolator()
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector> & /*result_cache*/
         ) -> GlobalVector const& {
-        _extrapolator.calculateResiduals(*_extrapolatables, x, dof_table);
+        _extrapolator.calculateResiduals(1, *_extrapolatables, x, dof_table);
         return _extrapolator.getElementResiduals();
     };
-    return {BaseLib::easyBind(&CachedSecondaryVariable::evalField, this),
+    return {1, BaseLib::easyBind(&CachedSecondaryVariable::evalField, this),
             eval_residuals};
 }
 
@@ -63,7 +63,7 @@ GlobalVector const& CachedSecondaryVariable::evalFieldNoArgs() const
     }
     DBUG("Recomputing %s.", _internal_variable_name.c_str());
     _extrapolator.extrapolate(
-        *_extrapolatables, *_current_solution, *_dof_table);
+        1, *_extrapolatables, *_current_solution, *_dof_table);
     auto const& nodal_values = _extrapolator.getNodalValues();
     MathLib::LinAlg::copy(nodal_values, _cached_nodal_values);
     _needs_recomputation = false;

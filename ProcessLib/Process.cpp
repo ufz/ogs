@@ -217,16 +217,14 @@ void Process::finishNamedFunctionsInitialization()
     for (auto const& named_function :
          _named_function_caller.getNamedFunctions()) {
         auto const& name = named_function.getName();
-        // secondary variables generated from named functions have the prefix
-        // "fct_".
         _secondary_variables.addSecondaryVariable(
-            "fct_" + name, 1,
-            {BaseLib::easyBind(
-                 &GlobalVectorFromNamedFunction::call,
-                 GlobalVectorFromNamedFunction(
-                     _named_function_caller.getSpecificFunctionCaller(name), _mesh,
-                     getSingleComponentDOFTable(),
-                     _secondary_variable_context)),
+            name,
+            {1, BaseLib::easyBind(
+                    &GlobalVectorFromNamedFunction::call,
+                    GlobalVectorFromNamedFunction(
+                        _named_function_caller.getSpecificFunctionCaller(name),
+                        _mesh, getSingleComponentDOFTable(),
+                        _secondary_variable_context)),
              nullptr});
     }
 }

@@ -43,10 +43,12 @@ struct SecondaryVariableFunctions final
 
     SecondaryVariableFunctions() = default;
 
-    template<typename F1, typename F2>
-    SecondaryVariableFunctions(F1&& eval_field_, F2&& eval_residuals_)
-        : eval_field(std::forward<F1>(eval_field_))
-        , eval_residuals(std::forward<F2>(eval_residuals_))
+    template <typename F1, typename F2>
+    SecondaryVariableFunctions(const unsigned num_components_, F1&& eval_field_,
+                               F2&& eval_residuals_)
+        : num_components(num_components_),
+          eval_field(std::forward<F1>(eval_field_)),
+          eval_residuals(std::forward<F2>(eval_residuals_))
     {
         // Used to detect nasty implicit conversions.
         static_assert(std::is_same<GlobalVector const&,
@@ -66,9 +68,11 @@ struct SecondaryVariableFunctions final
             " to a GlobalVector");
     }
 
-    template<typename F1>
-    SecondaryVariableFunctions(F1&& eval_field_, std::nullptr_t)
-        : eval_field(std::forward<F1>(eval_field_))
+    template <typename F1>
+    SecondaryVariableFunctions(const unsigned num_components_, F1&& eval_field_,
+                               std::nullptr_t)
+        : num_components(num_components_),
+          eval_field(std::forward<F1>(eval_field_))
     {
         // Used to detect nasty implicit conversions.
         static_assert(std::is_same<GlobalVector const&,
@@ -80,15 +84,15 @@ struct SecondaryVariableFunctions final
             " to a GlobalVector");
     }
 
-    Function eval_field;
-    Function eval_residuals;
+    const unsigned num_components;  //!< Number of components of the variable.
+    Function const eval_field;
+    Function const eval_residuals;
 };
 
 //! Stores information about a specific secondary variable
 struct SecondaryVariable final
 {
     std::string const name;      //!< Name of the variable; used, e.g., for output.
-    const unsigned n_components; //!< Number of components of the variable.
 
     //! Functions used for computing the secondary variable.
     SecondaryVariableFunctions fcts;
@@ -106,7 +110,6 @@ public:
      *
      * \param internal_name the tag in the project file associated with this
      * secondary variable.
-     * \param num_components the variable's number of components.
      * \param fcts functions that compute the variable.
      *
      * \note
@@ -115,7 +118,6 @@ public:
      * All other variables are silently ignored.
      */
     void addSecondaryVariable(std::string const& internal_name,
-                              const unsigned num_components,
                               SecondaryVariableFunctions&& fcts);
 
     //! Returns the secondary variable with the given external name.
@@ -147,13 +149,14 @@ private:
  */
 template <typename LocalAssemblerCollection>
 SecondaryVariableFunctions makeExtrapolator(
+    const unsigned num_components,
     NumLib::Extrapolator& extrapolator,
     LocalAssemblerCollection const& local_assemblers,
     typename NumLib::ExtrapolatableLocalAssemblerCollection<
         LocalAssemblerCollection>::IntegrationPointValuesMethod
         integration_point_values_method)
 {
-    auto const eval_field = [&extrapolator, &local_assemblers,
+    auto const eval_field = [num_components, &extrapolator, &local_assemblers,
                              integration_point_values_method](
         GlobalVector const& x,
         NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -161,11 +164,12 @@ SecondaryVariableFunctions makeExtrapolator(
         ) -> GlobalVector const& {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
-        extrapolator.extrapolate(extrapolatables, x, dof_table);
+        extrapolator.extrapolate(num_components, extrapolatables, x, dof_table);
         return extrapolator.getNodalValues();
     };
 
-    auto const eval_residuals = [&extrapolator, &local_assemblers,
+    auto const eval_residuals = [num_components, &extrapolator,
+                                 &local_assemblers,
                                  integration_point_values_method](
         GlobalVector const& x,
         NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -173,10 +177,11 @@ SecondaryVariableFunctions makeExtrapolator(
         ) -> GlobalVector const& {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
-        extrapolator.calculateResiduals(extrapolatables, x, dof_table);
+        extrapolator.calculateResiduals(num_components, extrapolatables, x,
+                                        dof_table);
         return extrapolator.getElementResiduals();
     };
-    return {eval_field, eval_residuals};
+    return {num_components, eval_field, eval_residuals};
 }
 
 }  // namespace ProcessLib
