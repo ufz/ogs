@@ -379,19 +379,19 @@ public:
         local_Jac
             .template block<displacement_size, pressure_size>(
                 displacement_index, pressure_index)
-            .noalias() -= Kup;
+            .noalias() = -Kup;
 
         // pressure equation, pressure part.
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
-            .noalias() += laplace_p + storage_p / dt;
+            .noalias() = laplace_p + storage_p / dt;
 
         // pressure equation, displacement part.
         local_Jac
             .template block<pressure_size, displacement_size>(
                 pressure_index, displacement_index)
-            .noalias() += Kup.transpose() / dt;
+            .noalias() = Kup.transpose() / dt;
 
         // pressure equation
         local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
