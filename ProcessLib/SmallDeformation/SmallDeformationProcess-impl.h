@@ -136,29 +136,42 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 
     auto const internal_variables =
         _process_data.material->getInternalVariables();
-    INFO("SmallDef has %lu internal vars.", internal_variables.size());
     for (auto const& internal_variable : internal_variables)
     {
         auto const& name = internal_variable.name;
         auto const& fct = internal_variable.getter;
-        INFO("internal var %s.", name.c_str());
+        auto const num_components = internal_variable.num_components;
+        DBUG("Registering internal variable %s.", name.c_str());
 
         auto getIntPtValues = BaseLib::easyBind(
-            [fct](LocalAssemblerInterface const& loc_asm,
-                  const double /*t*/,
-                  GlobalVector const& /*current_solution*/,
-                  NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                  std::vector<double>& cache) -> std::vector<double> const& {
+            [fct, num_components](
+                LocalAssemblerInterface const& loc_asm,
+                const double /*t*/,
+                GlobalVector const& /*current_solution*/,
+                NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                std::vector<double>& cache) -> std::vector<double> const& {
+
                 const unsigned num_int_pts =
                     loc_asm.getNumberOfIntegrationPoints();
 
                 cache.clear();
-                cache.reserve(num_int_pts);
+                auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+                    double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
+                    cache, num_components, num_int_pts);
+
+                // TODO avoid the heap allocation (one per finite element)
+                std::vector<double> cache_column(num_int_pts);
 
                 for (unsigned i = 0; i < num_int_pts; ++i)
                 {
                     auto const& state = loc_asm.getMaterialStateVariablesAt(i);
-                    cache.push_back(fct(state));
+
+                    auto const& int_pt_values = fct(state, cache_column);
+                    assert(int_pt_values.size() == num_components);
+                    auto const int_pt_values_vec =
+                        MathLib::toVector(int_pt_values);
+
+                    cache_mat.col(i).noalias() = int_pt_values_vec;
                 }
 
                 return cache;
@@ -166,8 +179,8 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 
         Base::_secondary_variables.addSecondaryVariable(
             name,
-            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                             std::move(getIntPtValues)));
+            makeExtrapolator(num_components, getExtrapolator(),
+                             _local_assemblers, std::move(getIntPtValues)));
     }
 }
 
