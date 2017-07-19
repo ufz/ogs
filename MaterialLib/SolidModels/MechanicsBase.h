@@ -106,11 +106,24 @@ struct MechanicsBase
                     KelvinVector const& sigma_prev,
                     MaterialStateVariables const& material_state_variables) = 0;
 
-    using InternalVariableGetter =
-        std::function<double(MaterialStateVariables const&)>;
+    /// Helper type for providing access to internal variables.
+    struct InternalVariable
+    {
+        using Getter = std::function<double(MaterialStateVariables const&)>;
 
-    virtual std::vector<std::pair<std::string, InternalVariableGetter>>
-    getInternalVariables() const
+        /// name of the internal variable
+        std::string const name;
+
+        /// number of components of the internal variable
+        unsigned const num_components;
+
+        /// function accessing the internal variable
+        Getter const getter;
+    };
+
+    /// Returns internal variables defined by the specific material model, if
+    /// any.
+    virtual std::vector<InternalVariable> getInternalVariables() const
     {
         return {};
     }

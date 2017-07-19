@@ -743,13 +743,11 @@ SolidEhlers<DisplacementDim>::integrateStress(
 }
 
 template <int DisplacementDim>
-std::vector<
-    std::pair<std::string,
-              typename MechanicsBase<DisplacementDim>::InternalVariableGetter>>
+std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
 SolidEhlers<DisplacementDim>::getInternalVariables() const
 {
     return {
-        {"damage.kappa_d",
+        {"damage.kappa_d", 1,
          [](typename MechanicsBase<
              DisplacementDim>::MaterialStateVariables const& state) -> double {
              assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
@@ -758,7 +756,7 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  static_cast<StateVariables<DisplacementDim> const&>(state);
              return ehlers_state.damage.kappa_d();
          }},
-        {"damage.value",
+        {"damage.value", 1,
          [](typename MechanicsBase<
              DisplacementDim>::MaterialStateVariables const& state) -> double {
              assert(dynamic_cast<StateVariables<DisplacementDim> const*>(

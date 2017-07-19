@@ -238,8 +238,7 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables) override;
 
-    std::vector<std::pair<std::string, typename MechanicsBase<DisplacementDim>::
-                                           InternalVariableGetter>>
+    std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
     getInternalVariables() const override;
 
 private:
