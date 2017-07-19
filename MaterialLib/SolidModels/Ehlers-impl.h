@@ -742,6 +742,33 @@ SolidEhlers<DisplacementDim>::integrateStress(
         tangentStiffness)};
 }
 
+template <int DisplacementDim>
+std::vector<
+    std::pair<std::string,
+              typename MechanicsBase<DisplacementDim>::InternalVariableGetter>>
+SolidEhlers<DisplacementDim>::getInternalVariables() const
+{
+    return {
+        {"damage.kappa_d",
+         [](typename MechanicsBase<
+             DisplacementDim>::MaterialStateVariables const& state) -> double {
+             assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                        &state) != nullptr);
+             auto const& ehlers_state =
+                 static_cast<StateVariables<DisplacementDim> const&>(state);
+             return ehlers_state.damage.kappa_d();
+         }},
+        {"damage.value",
+         [](typename MechanicsBase<
+             DisplacementDim>::MaterialStateVariables const& state) -> double {
+             assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                        &state) != nullptr);
+             auto const& ehlers_state =
+                 static_cast<StateVariables<DisplacementDim> const&>(state);
+             return ehlers_state.damage.value();
+         }}};
+}
+
 }  // namespace Ehlers
 }  // namespace Solids
 }  // namespace MaterialLib

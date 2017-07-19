@@ -10,8 +10,10 @@
 #pragma once
 
 #include <boost/optional.hpp>
+#include <functional>
 #include <memory>
 #include <tuple>
+#include <vector>
 
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 
@@ -103,6 +105,15 @@ struct MechanicsBase
                     KelvinVector const& eps,
                     KelvinVector const& sigma_prev,
                     MaterialStateVariables const& material_state_variables) = 0;
+
+    using InternalVariableGetter =
+        std::function<double(MaterialStateVariables const&)>;
+
+    virtual std::vector<std::pair<std::string, InternalVariableGetter>>
+    getInternalVariables() const
+    {
+        return {};
+    }
 
     virtual ~MechanicsBase() = default;
 };
