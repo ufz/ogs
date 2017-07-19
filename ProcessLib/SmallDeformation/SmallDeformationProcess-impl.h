@@ -134,12 +134,13 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                              &LocalAssemblerInterface::getIntPtEpsilonXZ));
     }
 
-    auto const int_vars = _process_data.material->getInternalVariables();
-    INFO("SmallDef has %lu internal vars.", int_vars.size());
-    for (auto const& name_fct : int_vars)
+    auto const internal_variables =
+        _process_data.material->getInternalVariables();
+    INFO("SmallDef has %lu internal vars.", internal_variables.size());
+    for (auto const& internal_variable : internal_variables)
     {
-        auto const& name = name_fct.first;
-        auto const& fct = name_fct.second;
+        auto const& name = internal_variable.name;
+        auto const& fct = internal_variable.getter;
         INFO("internal var %s.", name.c_str());
 
         auto getIntPtValues = BaseLib::easyBind(
