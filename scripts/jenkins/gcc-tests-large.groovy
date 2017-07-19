@@ -16,9 +16,12 @@ node('envinf11w') {
     def image = docker.image('ogs6/gcc-gui:latest')
     image.pull()
     image.inside(defaultDockerArgs) {
-        stage('Configure') { configure.linux(cmakeOptions: defaultCMakeOptions, script: this) }
+        stage('Configure') { configure.linux(cmakeOptions: defaultCMakeOptions,
+                                             script: this) }
         stage('Build') { build.linux(script: this) }
-        stage('Test') { build.linux(script: this, target: 'tests ctest-large') }
+        stage('Test') { build.linux(cmd: 'make -j 1'
+                                    script: this,
+                                    target: 'tests ctest-large') }
     }
 
     stage('Post') {
