@@ -24,6 +24,13 @@ struct SmallDeformationLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
       public NumLib::ExtrapolatableElement
 {
+    virtual std::vector<double> const& getIntPtSigma(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& cache) const = 0;
+
+    // TODO remove the component-wise methods.
     virtual std::vector<double> const& getIntPtSigmaXX(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
@@ -60,6 +67,13 @@ struct SmallDeformationLocalAssemblerInterface
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
+    virtual std::vector<double> const& getIntPtEpsilon(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& cache) const = 0;
+
+    // TODO remove the component-wise methods
     virtual std::vector<double> const& getIntPtEpsilonXX(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,

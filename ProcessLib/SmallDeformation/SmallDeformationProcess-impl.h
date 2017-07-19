@@ -70,6 +70,14 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     _nodal_forces->resize(DisplacementDim * mesh.getNumberOfNodes());
 
     Base::_secondary_variables.addSecondaryVariable(
+        "sigma",
+        makeExtrapolator(
+            ProcessLib::KelvinVectorType<DisplacementDim>::RowsAtCompileTime,
+            getExtrapolator(), _local_assemblers,
+            &LocalAssemblerInterface::getIntPtSigma));
+
+    // TODO remove the component-wise methods
+    Base::_secondary_variables.addSecondaryVariable(
         "sigma_xx",
         makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                          &LocalAssemblerInterface::getIntPtSigmaXX));
@@ -103,6 +111,14 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     }
 
     Base::_secondary_variables.addSecondaryVariable(
+        "epsilon",
+        makeExtrapolator(
+            ProcessLib::KelvinVectorType<DisplacementDim>::RowsAtCompileTime,
+            getExtrapolator(), _local_assemblers,
+            &LocalAssemblerInterface::getIntPtEpsilon));
+
+    // TODO remove the component-wise methods
+    Base::_secondary_variables.addSecondaryVariable(
         "epsilon_xx",
         makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                          &LocalAssemblerInterface::getIntPtEpsilonXX));
@@ -134,6 +150,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                              &LocalAssemblerInterface::getIntPtEpsilonXZ));
     }
 
+    // enable output of internal variables defined by material models
     auto const internal_variables =
         _process_data.material->getInternalVariables();
     for (auto const& internal_variable : internal_variables)

@@ -242,6 +242,46 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
+    std::vector<double> const& getIntPtSigma(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        using KelvinVectorType = typename BMatricesType::KelvinVectorType;
+        auto const kelvin_vector_size =
+            KelvinVectorDimensions<DisplacementDim>::value;
+        auto const num_intpts = _ip_data.size();
+
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, kelvin_vector_size, num_intpts);
+
+        // TODO make a general implementation for converting KelvinVectors
+        // back to symmetric rank-2 tensors.
+        for (unsigned ip = 0; ip < num_intpts; ++ip)
+        {
+            auto const& sigma = _ip_data[ip].sigma;
+
+            for (typename KelvinVectorType::Index component = 0;
+                 component < kelvin_vector_size && component < 3;
+                 ++component)
+            {  // xx, yy, zz components
+                cache_mat(component, ip) = sigma[component];
+            }
+            for (typename KelvinVectorType::Index component = 3;
+                 component < kelvin_vector_size;
+                 ++component)
+            {  // mixed xy, yz, xz components
+                cache_mat(component, ip) = sigma[component] / std::sqrt(2);
+            }
+        }
+
+        return cache;
+    }
+
+    // TODO remove the component-wise methods.
     std::vector<double> const& getIntPtSigmaXX(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
@@ -298,6 +338,46 @@ public:
         return getIntPtSigma(cache, 5);
     }
 
+    virtual std::vector<double> const& getIntPtEpsilon(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        using KelvinVectorType = typename BMatricesType::KelvinVectorType;
+        auto const kelvin_vector_size =
+            KelvinVectorDimensions<DisplacementDim>::value;
+        auto const num_intpts = _ip_data.size();
+
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, kelvin_vector_size, num_intpts);
+
+        // TODO make a general implementation for converting KelvinVectors
+        // back to symmetric rank-2 tensors.
+        for (unsigned ip = 0; ip < num_intpts; ++ip)
+        {
+            auto const& eps = _ip_data[ip].eps;
+
+            for (typename KelvinVectorType::Index component = 0;
+                 component < kelvin_vector_size && component < 3;
+                 ++component)
+            {  // xx, yy, zz components
+                cache_mat(component, ip) = eps[component];
+            }
+            for (typename KelvinVectorType::Index component = 3;
+                 component < kelvin_vector_size;
+                 ++component)
+            {  // mixed xy, yz, xz components
+                cache_mat(component, ip) = eps[component] / std::sqrt(2);
+            }
+        }
+
+        return cache;
+    }
+
+    // TODO remove the component-wise methods
     std::vector<double> const& getIntPtEpsilonXX(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
