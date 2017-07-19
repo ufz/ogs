@@ -13,7 +13,6 @@
 #include <vector>
 
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
-#include "MaterialLib/SolidModels/Lubby2.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -25,6 +24,7 @@
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
+#include "LocalAssemblerInterface.h"
 #include "SmallDeformationProcessData.h"
 
 namespace ProcessLib
@@ -76,7 +76,7 @@ struct SecondaryData
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 class SmallDeformationLocalAssembler
-    : public SmallDeformationLocalAssemblerInterface
+    : public SmallDeformationLocalAssemblerInterface<DisplacementDim>
 {
 public:
     using ShapeMatricesType =
@@ -352,6 +352,18 @@ public:
     {
         assert(DisplacementDim == 3);
         return getIntPtEpsilon(cache, 5);
+    }
+
+    unsigned getNumberOfIntegrationPoints() const override
+    {
+        return static_cast<unsigned>(_ip_data.size());
+    }
+
+    typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::MaterialStateVariables const&
+    getMaterialStateVariablesAt(unsigned integration_point) const override
+    {
+        return *_ip_data[integration_point].material_state_variables;
     }
 
 private:
