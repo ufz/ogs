@@ -55,7 +55,7 @@ add_custom_target(
     COMMAND ${CMAKE_CTEST_COMMAND} -T Test
     --force-new-ctest-process
     --output-on-failure --output-log Tests/ctest-large.log
-    ${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS} --test-action test
+    ${CONFIG_PARAMETER} --test-action test
     DEPENDS ogs vtkdiff ctest-large-cleanup
 )
 add_custom_target(
