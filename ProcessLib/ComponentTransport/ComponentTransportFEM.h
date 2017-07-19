@@ -285,6 +285,8 @@ public:
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
 
+            pos.setIntegrationPoint(ip);
+
             auto const& K =
                 _process_data.porous_media_properties.getIntrinsicPermeability(
                     t, pos);

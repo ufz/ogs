@@ -19,6 +19,7 @@
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
@@ -39,19 +40,7 @@ class LiquidFlowLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    virtual std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
+    virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
@@ -122,34 +111,43 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
-    std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& cache) const override
     {
-        assert(!_darcy_velocities.empty());
-        return _darcy_velocities[0];
-    }
+        // auto const num_nodes = ShapeFunction_::NPOINTS;
+        auto const num_intpts = _shape_matrices.size();
 
-    std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 1);
-        return _darcy_velocities[1];
-    }
+        auto const indices = NumLib::getIndices(
+            _element.getID(), dof_table);
+        assert(!indices.empty());
+        auto const local_x = current_solution.get(indices);
+        auto const local_x_vec =
+            MathLib::toVector<Eigen::Matrix<double, ShapeFunction::NPOINTS, 1>>(
+                local_x, ShapeFunction::NPOINTS);
 
-    std::vector<double> const& getIntPtDarcyVelocityZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 2);
-        return _darcy_velocities[2];
+        cache.clear();
+        auto cache_vec = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, num_intpts);
+
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        // TODO fix
+#if 0
+        for (unsigned i = 0; i < num_intpts; ++i) {
+            pos.setIntegrationPoint(i);
+            auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
+            // dimensions: (d x 1) = (d x n) * (n x 1)
+            cache_vec.col(i).noalias() =
+                -k * _shape_matrices[i].dNdx * local_x_vec;
+        }
+#endif
+
+        return cache;
     }
 
 private:

@@ -69,27 +69,10 @@ void LiquidFlowProcess::initializeConcreteProcess(
         *_material_properties);
 
     _secondary_variables.addSecondaryVariable(
-        "darcy_velocity_x",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LiquidFlowLocalAssemblerInterface::getIntPtDarcyVelocityX));
-
-    if (mesh.getDimension() > 1)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "darcy_velocity_y",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &LiquidFlowLocalAssemblerInterface::getIntPtDarcyVelocityY));
-    }
-    if (mesh.getDimension() > 2)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "darcy_velocity_z",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &LiquidFlowLocalAssemblerInterface::getIntPtDarcyVelocityZ));
-    }
+        "darcy_velocity",
+        makeExtrapolator(mesh.getDimension(),
+            getExtrapolator(), _local_assemblers,
+            &LiquidFlowLocalAssemblerInterface::getIntPtDarcyVelocity));
 }
 
 void LiquidFlowProcess::assembleConcreteProcess(
