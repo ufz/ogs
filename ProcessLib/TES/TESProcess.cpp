@@ -204,14 +204,9 @@ void TESProcess::initializeSecondaryVariables()
     add2nd("reaction_rate",
            makeEx(1, &TESLocalAssemblerInterface::getIntPtReactionRate));
 
-    add2nd("velocity_x",
-           makeEx(1, &TESLocalAssemblerInterface::getIntPtDarcyVelocityX));
-    if (_mesh.getDimension() >= 2)
-        add2nd("velocity_y",
-               makeEx(1, &TESLocalAssemblerInterface::getIntPtDarcyVelocityY));
-    if (_mesh.getDimension() >= 3)
-        add2nd("velocity_z",
-               makeEx(1, &TESLocalAssemblerInterface::getIntPtDarcyVelocityZ));
+    add2nd("darcy_velocity",
+           makeEx(_mesh.getDimension(),
+                  &TESLocalAssemblerInterface::getIntPtDarcyVelocity));
 
     add2nd("loading", makeEx(1, &TESLocalAssemblerInterface::getIntPtLoading));
     add2nd(

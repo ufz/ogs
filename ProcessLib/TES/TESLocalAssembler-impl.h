@@ -10,6 +10,7 @@
 
 #include "MaterialLib/Adsorption/Adsorption.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
@@ -112,7 +113,8 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
                       bool is_axially_symmetric,
                       unsigned const integration_order,
                       AssemblyParams const& asm_params)
-    : _integration_method(integration_order),
+    : _element(e),
+      _integration_method(integration_order),
       _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                         IntegrationMethod_, GlobalDim>(
           e, is_axially_symmetric, _integration_method)),
@@ -250,38 +252,44 @@ template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
 std::vector<double> const&
 TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
-    getIntPtDarcyVelocityX(const double /*t*/,
-                           GlobalVector const& /*current_solution*/,
-                           NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                           std::vector<double>& /*cache*/) const
+    getIntPtDarcyVelocity(const double /*t*/,
+                          GlobalVector const& current_solution,
+                          NumLib::LocalToGlobalIndexMap const& dof_table,
+                          std::vector<double>& cache) const
 {
-    return _d.getData().velocity[0];
-}
+    // auto const num_nodes = ShapeFunction_::NPOINTS;
+    auto const num_intpts = _shape_matrices.size();
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
-std::vector<double> const&
-TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
-    getIntPtDarcyVelocityY(const double /*t*/,
-                           GlobalVector const& /*current_solution*/,
-                           NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                           std::vector<double>& /*cache*/) const
-{
-    assert(_d.getData().velocity.size() > 1);
-    return _d.getData().velocity[1];
-}
+    auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+    assert(!indices.empty());
+    auto const local_x = current_solution.get(indices);
+    // local_x is ordered by component, local_x_mat is row major
+    // TODO fixed size matrix ShapeFunction_::NPOINTS columns. Conflicts with
+    // RowMajor for (presumably) 0D element.
+    auto const local_x_mat = MathLib::toMatrix<
+        Eigen::Matrix<double, NODAL_DOF, Eigen::Dynamic, Eigen::RowMajor>>(
+        local_x, NODAL_DOF, ShapeFunction_::NPOINTS);
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
-std::vector<double> const&
-TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
-    getIntPtDarcyVelocityZ(const double /*t*/,
-                           GlobalVector const& /*current_solution*/,
-                           NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-                           std::vector<double>& /*cache*/) const
-{
-    assert(_d.getData().velocity.size() > 2);
-    return _d.getData().velocity[2];
+    cache.clear();
+    auto cache_vec = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, GlobalDim, num_intpts);
+
+    for (unsigned i = 0; i < num_intpts; ++i)
+    {
+        double p, T, x;
+        NumLib::shapeFunctionInterpolate(local_x, _shape_matrices[i].N, p, T,
+                                         x);
+        const double eta_GR = fluid_viscosity(p, T, x);
+
+        auto const& k = _d.getAssemblyParameters().solid_perm_tensor;
+        cache_vec.col(i).noalias() =
+            k * (_shape_matrices[i].dNdx *
+                 local_x_mat.row(COMPONENT_ID_PRESSURE).transpose()) /
+            -eta_GR;
+    }
+
+    return cache;
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
