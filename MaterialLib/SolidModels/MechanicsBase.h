@@ -109,7 +109,8 @@ struct MechanicsBase
     /// Helper type for providing access to internal variables.
     struct InternalVariable
     {
-        using Getter = std::function<double(MaterialStateVariables const&)>;
+        using Getter = std::function<std::vector<double> const&(
+            MaterialStateVariables const&, std::vector<double>& /*cache*/)>;
 
         /// name of the internal variable
         std::string const name;

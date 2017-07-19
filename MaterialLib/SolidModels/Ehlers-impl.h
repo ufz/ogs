@@ -749,21 +749,84 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
     return {
         {"damage.kappa_d", 1,
          [](typename MechanicsBase<
-             DisplacementDim>::MaterialStateVariables const& state) -> double {
+                DisplacementDim>::MaterialStateVariables const& state,
+            std::vector<double>& cache) -> std::vector<double> const& {
              assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                         &state) != nullptr);
              auto const& ehlers_state =
                  static_cast<StateVariables<DisplacementDim> const&>(state);
-             return ehlers_state.damage.kappa_d();
+
+             cache.resize(1);
+             cache.front() = ehlers_state.damage.kappa_d();
+             return cache;
          }},
         {"damage.value", 1,
          [](typename MechanicsBase<
-             DisplacementDim>::MaterialStateVariables const& state) -> double {
+                DisplacementDim>::MaterialStateVariables const& state,
+            std::vector<double>& cache) -> std::vector<double> const& {
              assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                         &state) != nullptr);
              auto const& ehlers_state =
                  static_cast<StateVariables<DisplacementDim> const&>(state);
-             return ehlers_state.damage.value();
+
+             cache.resize(1);
+             cache.front() = ehlers_state.damage.value();
+             return cache;
+         }},
+        {"eps_p.D", KelvinVector::RowsAtCompileTime,
+         [](typename MechanicsBase<
+                DisplacementDim>::MaterialStateVariables const& state,
+            std::vector<double>& cache) -> std::vector<double> const& {
+             assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                        &state) != nullptr);
+             auto const& ehlers_state =
+                 static_cast<StateVariables<DisplacementDim> const&>(state);
+             auto const& D = ehlers_state.eps_p.D;
+
+             cache.resize(KelvinVector::RowsAtCompileTime);
+
+             // TODO make a general implementation for converting KelvinVectors
+             // back to symmetric rank-2 tensors.
+             for (typename KelvinVector::Index component = 0;
+                  component < KelvinVector::RowsAtCompileTime && component < 3;
+                  ++component)
+             {  // xx, yy, zz components
+                 cache[component] = D[component];
+             }
+             for (typename KelvinVector::Index component = 3;
+                  component < KelvinVector::RowsAtCompileTime;
+                  ++component)
+             {  // mixed xy, yz, xz components
+                 cache[component] = D[component] / std::sqrt(2);
+             }
+
+             return cache;
+         }},
+        {"eps_p.V", 1,
+         [](typename MechanicsBase<
+                DisplacementDim>::MaterialStateVariables const& state,
+            std::vector<double>& cache) -> std::vector<double> const& {
+             assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                        &state) != nullptr);
+             auto const& ehlers_state =
+                 static_cast<StateVariables<DisplacementDim> const&>(state);
+
+             cache.resize(1);
+             cache.front() = ehlers_state.eps_p.V;
+             return cache;
+         }},
+        {"eps_p.eff", 1,
+         [](typename MechanicsBase<
+                DisplacementDim>::MaterialStateVariables const& state,
+            std::vector<double>& cache) -> std::vector<double> const& {
+             assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                        &state) != nullptr);
+             auto const& ehlers_state =
+                 static_cast<StateVariables<DisplacementDim> const&>(state);
+
+             cache.resize(1);
+             cache.front() = ehlers_state.eps_p.eff;
+             return cache;
          }}};
 }
 
