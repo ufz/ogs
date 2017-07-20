@@ -394,6 +394,13 @@ computeSecondaryVariableConcreteWithVector(
     (*_process_data.mesh_prop_fracture_stress_normal)[element_id] = ele_sigma_eff[index_normal];
     (*_process_data.mesh_prop_fracture_stress_shear)[element_id] = ele_sigma_eff[0];
     (*_process_data.mesh_prop_fracture_shear_failure)[element_id] = ele_Fs;
+
+    if (GlobalDim == 3)
+    {
+        (*_process_data.mesh_prop_w_s2)[element_id] = ele_w[1];
+        (*_process_data.mesh_prop_fracture_stress_shear2)[element_id] =
+            ele_sigma_eff[1];
+    }
 }
 
 }  // namespace HydroMechanics

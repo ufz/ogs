@@ -372,6 +372,22 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
                                     "nodal_aperture", MeshLib::MeshItemType::Node, 1);
         mesh_prop_nodal_b->resize(mesh.getNumberOfNodes());
         _process_data.mesh_prop_nodal_b = mesh_prop_nodal_b;
+
+        if (GlobalDim == 3)
+        {
+            auto mesh_prop_w_s2 = MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh), "w_s2",
+                MeshLib::MeshItemType::Cell, 1);
+            mesh_prop_w_s2->resize(mesh.getNumberOfElements());
+            _process_data.mesh_prop_w_s2 = mesh_prop_w_s2;
+
+            auto mesh_prop_fracture_stress_shear2 = MeshLib::getOrCreateMeshProperty<double>(
+                                        const_cast<MeshLib::Mesh&>(mesh),
+                                        "f_stress_s2", MeshLib::MeshItemType::Cell, 1);
+            mesh_prop_fracture_stress_shear2->resize(mesh.getNumberOfElements());
+            _process_data.mesh_prop_fracture_stress_shear2 =
+                mesh_prop_fracture_stress_shear2;
+        }
     }
 }
 
