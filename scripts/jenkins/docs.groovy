@@ -26,7 +26,7 @@ stage('Reports (Docs)') {
         reportName: 'Doxygen'])
     step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
         messagesPattern:
-            '.*DOT_GRAPH_MAX_NODES.,' +
+            '.*DOT_GRAPH_MAX_NODES. ' +
             '.*potential recursive class relation.*',
         parserConfigurations: [[parserName: 'Doxygen', pattern:
         'build/DoxygenWarnings.log']], unstableTotalAll: '0'])
