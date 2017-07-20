@@ -21,7 +21,7 @@ node('envinf11w') {
         stage('Build') { build.linux(script: this) }
         stage('Test') { build.linux(cmd: 'make -j 1',
                                     script: this,
-                                    target: 'tests ctest-large') }
+                                    target: 'tests ctest-large-serial') }
     }
 
     stage('Post') {
