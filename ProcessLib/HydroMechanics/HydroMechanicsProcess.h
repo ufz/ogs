@@ -11,11 +11,14 @@
 
 #include "ProcessLib/Process.h"
 #include "HydroMechanicsProcessData.h"
+#include "LocalAssemblerInterface.h"
 
 namespace ProcessLib
 {
 namespace HydroMechanics
 {
+struct LocalAssemblerInterface;
+
 /// Linear kinematics poro-mechanical/biphasic (fluid-solid mixture) model.
 ///
 /// The mixture momentum balance and the mixture mass balance are solved under
@@ -72,8 +75,7 @@ private:
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
     HydroMechanicsProcessData<DisplacementDim> _process_data;
 
-    std::vector<std::unique_ptr<HydroMechanicsLocalAssemblerInterface>>
-        _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;

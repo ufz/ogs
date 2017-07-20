@@ -18,12 +18,12 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "HydroMechanicsProcessData.h"
+#include "LocalAssemblerInterface.h"
 
 namespace ProcessLib
 {
@@ -97,105 +97,9 @@ struct SecondaryData
     std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N_u;
 };
 
-struct HydroMechanicsLocalAssemblerInterface
-    : public ProcessLib::LocalAssemblerInterface,
-      public NumLib::ExtrapolatableElement
-{
-    virtual std::vector<double> const& getIntPtSigmaXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-};
-
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
-class HydroMechanicsLocalAssembler
-    : public HydroMechanicsLocalAssemblerInterface
+class HydroMechanicsLocalAssembler : public LocalAssemblerInterface
 {
 public:
     using ShapeMatricesTypeDisplacement =
@@ -710,31 +614,6 @@ private:
         ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
     static const int kelvin_vector_size =
         KelvinVectorDimensions<DisplacementDim>::value;
-};
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, unsigned GlobalDim, int DisplacementDim>
-class LocalAssemblerData final
-    : public HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                          ShapeFunctionPressure,
-                                          IntegrationMethod, DisplacementDim>
-{
-public:
-    LocalAssemblerData(LocalAssemblerData const&) = delete;
-    LocalAssemblerData(LocalAssemblerData&&) = delete;
-
-    LocalAssemblerData(MeshLib::Element const& e,
-                       std::size_t const local_matrix_size,
-                       bool is_axially_symmetric,
-                       unsigned const integration_order,
-                       HydroMechanicsProcessData<DisplacementDim>& process_data)
-        : HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                       ShapeFunctionPressure, IntegrationMethod,
-                                       DisplacementDim>(
-              e, local_matrix_size, is_axially_symmetric, integration_order,
-              process_data)
-    {
-    }
 };
 
 }  // namespace HydroMechanics

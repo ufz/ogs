@@ -81,8 +81,8 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    ProcessLib::HydroMechanics::createLocalAssemblers<DisplacementDim,
-                                                      LocalAssemblerData>(
+    ProcessLib::HydroMechanics::createLocalAssemblers<
+        DisplacementDim, HydroMechanicsLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         // use displacment process variable for shapefunction order
         getProcessVariables()[1].get().getShapeFunctionOrder(),
