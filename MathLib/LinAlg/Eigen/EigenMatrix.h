@@ -39,23 +39,23 @@ public:
      * @param n the number of rows (that is equal to the number of columns)
      * @param n_nonzero_columns the number of non-zero columns used for preallocation
      */
-    explicit EigenMatrix(std::size_t n, std::size_t n_nonzero_columns = 0) :_mat(n, n)
+    explicit EigenMatrix(IndexType n, IndexType n_nonzero_columns = 0) :_mat(n, n)
     {
         if (n_nonzero_columns > 0)
             _mat.reserve(Eigen::VectorXi::Constant(n, n_nonzero_columns));
     }
 
     /// return the number of rows
-    std::size_t getNumberOfRows() const { return _mat.rows(); }
+    IndexType getNumberOfRows() const { return _mat.rows(); }
 
     /// return the number of columns
-    std::size_t getNumberOfColumns() const { return _mat.cols(); }
+    IndexType getNumberOfColumns() const { return _mat.cols(); }
 
     /// return a start index of the active data range
-    std::size_t getRangeBegin() const  { return 0; }
+    IndexType getRangeBegin() const  { return 0; }
 
     /// return an end index of the active data range
-    std::size_t getRangeEnd() const  { return getNumberOfRows(); }
+    IndexType getRangeEnd() const  { return getNumberOfRows(); }
 
     /// reset data entries to zero.
     void setZero()

@@ -37,19 +37,19 @@ public:
 
     /// Constructor for initialization of the number of rows
     /// @param length number of rows
-    explicit EigenVector(std::size_t length) : _vec(length) {}
+    explicit EigenVector(IndexType length) : _vec(length) {}
 
     /// copy constructor
     EigenVector(EigenVector const& src) = default;
 
     /// return a vector length
-    std::size_t size() const { return _vec.size(); }
+    IndexType size() const { return _vec.size(); }
 
     /// return a start index of the active data range
-    std::size_t getRangeBegin() const { return 0;}
+    IndexType getRangeBegin() const { return 0;}
 
     /// return an end index of the active data range
-    std::size_t getRangeEnd() const { return size(); }
+    IndexType getRangeEnd() const { return size(); }
 
     // TODO preliminary
     void setZero() { _vec.setZero(); }

@@ -133,8 +133,8 @@ void setMatrix(EigenMatrix& m,
     Eigen::MatrixXd tmp(rows, cols);
 
     auto it = values.begin();
-    for (std::size_t r=0; r<rows; ++r) {
-        for (std::size_t c=0; c<cols; ++c) {
+    for (GlobalIndexType r=0; r<rows; ++r) {
+        for (GlobalIndexType c=0; c<cols; ++c) {
             tmp(r, c) = *(it++);
         }
     }
@@ -157,8 +157,8 @@ void addToMatrix(EigenMatrix& m,
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(rows, cols);
 
     auto it = values.begin();
-    for (std::size_t r=0; r<rows; ++r) {
-        for (std::size_t c=0; c<cols; ++c) {
+    for (GlobalIndexType r=0; r<rows; ++r) {
+        for (GlobalIndexType c=0; c<cols; ++c) {
             tmp(r, c) = *(it++);
         }
     }
