@@ -8,6 +8,8 @@ if(VIS_FILES AND VTKJS_CONVERTER)
     endforeach()
 endif()
 
+message(STATUS "running command checking test results: cd ${case_path} && ${TESTER_COMMAND}")
+
 if(WIN32)
     execute_process(
         COMMAND cmd /C ${TESTER_COMMAND}
