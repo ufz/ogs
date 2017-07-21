@@ -135,8 +135,7 @@ void doProcessOutput(std::string const& file_name,
                     var.fcts.eval_field(x, dof_table, result_cache);
 
             // Copy result
-            for (std::size_t i = 0; i < mesh.getNumberOfNodes(); ++i)
-            {
+            for (GlobalIndexType i = 0; i < nodal_values.size(); ++i) {
                 assert(!std::isnan(nodal_values[i]));
                 (*result)[i] = nodal_values[i];
             }
@@ -155,7 +154,7 @@ void doProcessOutput(std::string const& file_name,
                     var.fcts.eval_residuals(x, dof_table, result_cache);
 
             // Copy result
-            for (std::size_t i = 0; i < mesh.getNumberOfElements(); ++i)
+            for (GlobalIndexType i = 0; i < residuals.size(); ++i)
             {
                 assert(!std::isnan(residuals[i]));
                 (*result)[i] = residuals[i];
