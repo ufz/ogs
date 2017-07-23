@@ -60,7 +60,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolate(
     // compute the average afterwards
     auto counts =
         MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*_nodal_values);
-    counts->setZero();  // TODO BLAS?
+    counts->setZero();
 
     auto const size = extrapolatables.size();
     for (std::size_t i = 0; i < size; ++i)
@@ -154,7 +154,8 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         interpolation_matrix.resize(num_int_pts, num_nodes);
 
         interpolation_matrix.row(0) = N_0;
-        for (unsigned int_pt = 1; int_pt < num_int_pts; ++int_pt) {
+        for (unsigned int_pt = 1; int_pt < num_int_pts; ++int_pt)
+        {
             auto const& shp_mat =
                 extrapolatables.getShapeMatrix(element_index, int_pt);
             assert(shp_mat.cols() == num_nodes);
@@ -165,7 +166,8 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
 
         // JacobiSVD is extremely reliable, but fast only for small matrices.
         // But we usually have small matrices and we don't compute very often.
-        // Cf. http://eigen.tuxfamily.org/dox/group__TopicLinearAlgebraDecompositions.html
+        // Cf.
+        // http://eigen.tuxfamily.org/dox/group__TopicLinearAlgebraDecompositions.html
         //
         // Decomposes interpolation_matrix = U S V^T.
         Eigen::JacobiSVD<Eigen::MatrixXd> svd(
@@ -180,23 +182,20 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         assert(rank == num_nodes);
 
         // cf. http://eigen.tuxfamily.org/dox/JacobiSVD_8h_source.html
-        cached_data.A_pinv.noalias() =
-            V.leftCols(rank) *
-            S.head(rank).asDiagonal().inverse() *
-            U.leftCols(rank).transpose();
+        cached_data.A_pinv.noalias() = V.leftCols(rank) *
+                                       S.head(rank).asDiagonal().inverse() *
+                                       U.leftCols(rank).transpose();
     }
-    else if (cached_data.A.row(0) != N_0) {
+    else if (cached_data.A.row(0) != N_0)
+    {
         OGS_FATAL("The cached and the passed shapematrices differ.");
     }
 
-    // TODO: for now always zeroth component is used. This has to be extended if
-    // multi-component properties shall be extrapolated
     auto const& global_indices =
         _dof_table_single_component(element_index, 0).rows;
 
     if (num_components == 1)
     {
-        // TODO make gp_vals an Eigen::VectorXd const& ?
         auto const integration_point_values_vec =
             MathLib::toVector(integration_point_values);
 
@@ -204,14 +203,14 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         Eigen::VectorXd const nodal_values =
             cached_data.A_pinv * integration_point_values_vec;
 
-        // TODO does that give rise to PETSc problems?
+        // TODO does that give rise to PETSc problems? E.g., writing to ghost
+        // nodes? Furthermore: Is ghost nodes communication necessary for PETSc?
         _nodal_values->add(global_indices, nodal_values);
         counts.add(global_indices,
                    std::vector<double>(global_indices.size(), 1.0));
     }
     else
     {
-        // TODO make gp_vals an Eigen::VectorXd const& ?
         auto const integration_point_values_mat = MathLib::toMatrix(
             integration_point_values, num_components, num_int_pts);
 
@@ -222,8 +221,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         std::vector<GlobalIndexType> indices;
         indices.reserve(num_components * global_indices.size());
 
-        // component-wise in nodal_values_flat, location-wise ordering in
-        // _nodal_values
+        // _nodal_values is ordered location-wise
         for (unsigned comp = 0; comp < num_components; ++comp)
         {
             for (auto i : global_indices)
@@ -262,7 +260,6 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
     // number of integration points in the element
     const auto num_int_pts = num_values / num_components;
 
-    // TODO: for now always zeroth component is used
     const auto& global_indices =
         _dof_table_single_component(element_index, 0).rows;
     const unsigned num_nodes = global_indices.size();
