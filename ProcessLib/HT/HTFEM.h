@@ -280,7 +280,7 @@ public:
         auto const local_x = current_solution.get(indices);
 
         cache.clear();
-        auto cache_vec = MathLib::createZeroedMatrix<
+        auto cache_mat = MathLib::createZeroedMatrix<
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, GlobalDim, num_intpts);
 
@@ -317,7 +317,7 @@ public:
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
             GlobalDimMatrixType const K_over_mu = K / mu;
 
-            cache_vec.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
+            cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
 
             if (_process_data.has_gravity)
             {
@@ -325,7 +325,7 @@ public:
                     MaterialLib::Fluid::FluidPropertyType::Density, vars);
                 auto const b = _process_data.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
-                cache_vec.col(ip).noalias() += K_over_mu * rho_w * b;
+                cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
             }
         }
 

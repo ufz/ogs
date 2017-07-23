@@ -166,7 +166,7 @@ public:
                 local_x, ShapeFunction::NPOINTS);
 
         cache.clear();
-        auto cache_vec = MathLib::createZeroedMatrix<
+        auto cache_mat = MathLib::createZeroedMatrix<
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, GlobalDim, num_intpts);
 
@@ -178,7 +178,7 @@ public:
             pos.setIntegrationPoint(i);
             auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
             // dimensions: (d x 1) = (d x n) * (n x 1)
-            cache_vec.col(i).noalias() =
+            cache_mat.col(i).noalias() =
                 -k * _shape_matrices[i].dNdx * local_x_vec;
         }
 

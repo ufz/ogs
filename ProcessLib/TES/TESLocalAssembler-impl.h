@@ -264,14 +264,12 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     assert(!indices.empty());
     auto const local_x = current_solution.get(indices);
     // local_x is ordered by component, local_x_mat is row major
-    // TODO fixed size matrix ShapeFunction_::NPOINTS columns. Conflicts with
-    // RowMajor for (presumably) 0D element.
     auto const local_x_mat = MathLib::toMatrix<
         Eigen::Matrix<double, NODAL_DOF, Eigen::Dynamic, Eigen::RowMajor>>(
         local_x, NODAL_DOF, ShapeFunction_::NPOINTS);
 
     cache.clear();
-    auto cache_vec = MathLib::createZeroedMatrix<
+    auto cache_mat = MathLib::createZeroedMatrix<
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, GlobalDim, num_intpts);
 
@@ -283,7 +281,7 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
         const double eta_GR = fluid_viscosity(p, T, x);
 
         auto const& k = _d.getAssemblyParameters().solid_perm_tensor;
-        cache_vec.col(i).noalias() =
+        cache_mat.col(i).noalias() =
             k * (_shape_matrices[i].dNdx *
                  local_x_mat.row(COMPONENT_ID_PRESSURE).transpose()) /
             -eta_GR;
