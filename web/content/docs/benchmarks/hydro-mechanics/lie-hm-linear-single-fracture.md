@@ -27,3 +27,15 @@ Result showing pore pressure increase due to the injection and subsequent fractu
 
 {{< img src="../x_p_t500.png" >}}
 {{< img src="../x_b_t500.png" >}}
+
+## 3D setup
+
+Same setup as for the given 2D case above with additional plane strain
+conditions in the front and back x-y planes.
+Warp of the 1000-times oversized displacement and the fracture's aperture are
+shown in the following figure.
+{{< img src="../single_fracture_3D.png" >}}
+
+Comparison with 2D setup yields identical results (up to numerical differences
+in order of 1e-15):
+{{< img src="../single_fracture_3D_vs_2D.png" >}}
