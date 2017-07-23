@@ -89,7 +89,14 @@ struct SecondaryVariableFunctions final
     }
 
     const unsigned num_components;  //!< Number of components of the variable.
+
+    //! Computes the value of the field at every node of the underlying mesh.
     Function const eval_field;
+
+    //! If the secondary variable is extrapolated from integration points to
+    //! mesh nodes, this function computes the extrapolation residual. For
+    //! further information check the specific NumLib::Extrapolator
+    //! documentation.
     Function const eval_residuals;
 };
 
@@ -144,6 +151,7 @@ private:
 /*! Creates an object that computes a secondary variable via extrapolation of
  * integration point values.
  *
+ * \param num_components The number of components of the secondary variable.
  * \param extrapolator The extrapolator used for extrapolation.
  * \param local_assemblers The collection of local assemblers whose integration
  * point values will be extrapolated.
