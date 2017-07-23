@@ -37,6 +37,11 @@ public:
     /*! Returns integration point values of some property of a specific element.
      *
      * \param id ID of the element of which the property is queried.
+     * \param t The time used in the evaluation if time dependent quantities.
+     * \param current_solution The current solution of a ProcessLib::Process;
+     * more generally any nodal GlobalVector.
+     * \param dof_table The processes d.o.f. table used to get each element's
+     * local d.o.f. from \c current_solution.
      * \param cache Can be used to compute a property on-the-fly.
      *
      * \remark

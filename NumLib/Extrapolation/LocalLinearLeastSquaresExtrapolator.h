@@ -28,12 +28,10 @@ namespace NumLib
  * the residuals are computed from the actual interpolation result that is being
  * returned by this class.
  *
- * Currently this class only supports interpolating single component variables.
- *
- * Furthermore, the number of integration points in each element must be greater
- * than or equal to the number of nodes of that element. This restriction is due to
- * the use of the least squares which requires an exact or overdetermined equation
- * system.
+ * The number of integration points in each element must be greater than or
+ * equal to the number of nodes of that element. This restriction is due
+ * to the use of the least squares which requires an exact or overdetermined
+ * equation system.
  * \endparblock
  */
 class LocalLinearLeastSquaresExtrapolator : public Extrapolator
@@ -114,12 +112,12 @@ private:
         Eigen::MatrixXd A_pinv;
     };
 
-    /*! Maps (#nodes, #int_pts) to (N_0, QR decomposition),
+    /*! Maps (\#nodes, \#int_pts) to (N_0, QR decomposition),
      * where N_0 is the shape matrix of the first integration point.
      *
-     * \note It is assumed that the pair (#nodes, #int_pts) uniquely identifies
-     * the set of all shape matrices N for a mesh element (i.e., only N, not
-     * dN/dx etc.).
+     * \note It is assumed that the pair (\#nodes, \#int_pts) uniquely
+     * identifies the set of all shape matrices N for a mesh element (i.e., only
+     * N, not dN/dx etc.).
      *
      * \todo Add the element dimension as identifying criterion, or change to
      * typeid.
