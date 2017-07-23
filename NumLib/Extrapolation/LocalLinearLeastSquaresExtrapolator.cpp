@@ -121,8 +121,9 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
             _integration_point_values_cache);
 
     auto const& N_0 = extrapolatables.getShapeMatrix(element_index, 0);
-    const unsigned num_nodes = N_0.cols();
-    const unsigned num_values = integration_point_values.size();
+    auto const num_nodes = static_cast<unsigned>(N_0.cols());
+    auto const num_values =
+        static_cast<unsigned>(integration_point_values.size());
 
     if (num_values % num_components != 0)
         OGS_FATAL(
@@ -249,7 +250,7 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
         element_index, t, current_solution, dof_table,
         _integration_point_values_cache);
 
-    const unsigned num_values = int_pt_vals.size();
+    auto const num_values = static_cast<unsigned>(int_pt_vals.size());
     if (num_values % num_components != 0)
         OGS_FATAL(
             "The number of computed integration point values is not divisable "
@@ -262,7 +263,7 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
 
     const auto& global_indices =
         _dof_table_single_component(element_index, 0).rows;
-    const unsigned num_nodes = global_indices.size();
+    const auto num_nodes = static_cast<unsigned>(global_indices.size());
 
     auto const& interpolation_matrix =
         _qr_decomposition_cache.find({num_nodes, num_int_pts})->second.A;
@@ -285,7 +286,8 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
                                  int_pt_vals_mat.row(comp).transpose())
                                     .squaredNorm();
 
-        auto const eidx = num_components * element_index + comp;
+        auto const eidx =
+            static_cast<GlobalIndexType>(num_components * element_index + comp);
         _residuals->set(eidx, std::sqrt(residual / num_int_pts));
     }
 }
