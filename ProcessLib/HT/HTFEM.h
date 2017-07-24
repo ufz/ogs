@@ -273,7 +273,8 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::vector<double>& cache) const override
     {
-        auto const num_intpts = _ip_data.size();
+        auto const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
         auto const indices = NumLib::getIndices(_element.getID(), dof_table);
         assert(!indices.empty());
@@ -282,15 +283,12 @@ public:
         cache.clear();
         auto cache_mat = MathLib::createZeroedMatrix<
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, GlobalDim, num_intpts);
+            cache, GlobalDim, n_integration_points);
 
         SpatialPosition pos;
         pos.setElementID(_element.getID());
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
-
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
 
         auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[ShapeFunction::NPOINTS], ShapeFunction::NPOINTS);

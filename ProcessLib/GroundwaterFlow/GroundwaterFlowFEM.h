@@ -155,8 +155,8 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::vector<double>& cache) const override
     {
-        // auto const num_nodes = ShapeFunction_::NPOINTS;
-        auto const num_intpts = _shape_matrices.size();
+        auto const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
         auto const indices = NumLib::getIndices(_element.getID(), dof_table);
         assert(!indices.empty());
@@ -168,12 +168,12 @@ public:
         cache.clear();
         auto cache_mat = MathLib::createZeroedMatrix<
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, GlobalDim, num_intpts);
+            cache, GlobalDim, n_integration_points);
 
         SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        for (unsigned i = 0; i < num_intpts; ++i)
+        for (unsigned i = 0; i < n_integration_points; ++i)
         {
             pos.setIntegrationPoint(i);
             auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
