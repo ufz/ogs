@@ -241,7 +241,6 @@ void Process::preTimestep(GlobalVector const& x, const double t,
     for (auto& cached_var : _cached_secondary_variables)
     {
         cached_var->setTime(t);
-        cached_var->updateCurrentSolution(x, *_local_to_global_index_map);
     }
 
     MathLib::LinAlg::setLocalAccessibleVector(x);
