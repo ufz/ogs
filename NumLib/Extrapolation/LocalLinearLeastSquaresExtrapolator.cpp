@@ -288,7 +288,9 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
 
         auto const eidx =
             static_cast<GlobalIndexType>(num_components * element_index + comp);
-        _residuals->set(eidx, std::sqrt(residual / num_int_pts));
+        // The residual is set to the root mean square value.
+        auto const root_mean_square = std::sqrt(residual / num_int_pts);
+        _residuals->set(eidx, root_mean_square);
     }
 }
 
