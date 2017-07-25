@@ -13,6 +13,10 @@
 #include <chrono>
 #include <tclap/CmdLine.h>
 
+#ifndef NDEBUG
+#include <cfenv>
+#endif  // NDEBUG
+
 #ifdef USE_PETSC
 #include <vtkMPIController.h>
 #include <vtkSmartPointer.h>
@@ -96,6 +100,11 @@ int main(int argc, char *argv[])
 
     INFO("This is OpenGeoSys-6 version %s.",
          BaseLib::BuildInfo::git_describe.c_str());
+
+// Enable floating point exceptions for debugging.
+#ifndef NDEBUG
+    feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+#endif  // NDEBUG
 
     BaseLib::RunTime run_time;
     run_time.start();
