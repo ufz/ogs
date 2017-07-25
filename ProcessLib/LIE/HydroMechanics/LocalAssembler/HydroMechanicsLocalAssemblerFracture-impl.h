@@ -369,8 +369,10 @@ computeSecondaryVariableConcreteWithVector(
 
     double ele_b = 0;
     double ele_k = 0;
-    Eigen::Vector2d ele_sigma_eff = Eigen::Vector2d::Zero();
-    Eigen::Vector2d ele_w = Eigen::Vector2d::Zero();
+    typename HMatricesType::ForceVectorType ele_sigma_eff =
+        HMatricesType::ForceVectorType::Zero(GlobalDim);
+    typename HMatricesType::ForceVectorType ele_w =
+        HMatricesType::ForceVectorType::Zero(GlobalDim);
     double ele_Fs = - std::numeric_limits<double>::max();
     for (auto const& ip : _ip_data)
     {
@@ -392,6 +394,13 @@ computeSecondaryVariableConcreteWithVector(
     (*_process_data.mesh_prop_fracture_stress_normal)[element_id] = ele_sigma_eff[index_normal];
     (*_process_data.mesh_prop_fracture_stress_shear)[element_id] = ele_sigma_eff[0];
     (*_process_data.mesh_prop_fracture_shear_failure)[element_id] = ele_Fs;
+
+    if (GlobalDim == 3)
+    {
+        (*_process_data.mesh_prop_w_s2)[element_id] = ele_w[1];
+        (*_process_data.mesh_prop_fracture_stress_shear2)[element_id] =
+            ele_sigma_eff[1];
+    }
 }
 
 }  // namespace HydroMechanics

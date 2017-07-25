@@ -15,6 +15,21 @@ AddTest(
 )
 
 AddTest(
+    NAME LIE_HM_single_fracture_3D
+    PATH LIE/HydroMechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS single_fracture_3D.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    ABSTOL 1e-12 RELTOL 1e-12
+    DIFF_DATA
+    expected_single_fracture_3D_pcs_0_ts_10_t_100.000000.vtu single_fracture_3D_pcs_0_ts_10_t_100.000000.vtu pressure pressure
+    expected_single_fracture_3D_pcs_0_ts_10_t_100.000000.vtu single_fracture_3D_pcs_0_ts_10_t_100.000000.vtu displacement displacement
+    expected_single_fracture_3D_pcs_0_ts_10_t_100.000000.vtu single_fracture_3D_pcs_0_ts_10_t_100.000000.vtu displacement_jump1 displacement_jump1
+)
+
+AddTest(
     NAME LIE_HM_TaskB
     PATH LIE/HydroMechanics
     EXECUTABLE ogs

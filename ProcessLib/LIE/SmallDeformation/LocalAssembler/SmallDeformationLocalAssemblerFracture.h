@@ -140,9 +140,55 @@ public:
         return getIntPtSigma(cache, 5);
     }
 
+    std::vector<double> const& getIntPtEpsilonXX(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 0);
+    }
+
+    std::vector<double> const& getIntPtEpsilonYY(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 1);
+    }
+
+    std::vector<double> const& getIntPtEpsilonZZ(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 2);
+    }
+
+    std::vector<double> const& getIntPtEpsilonXY(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtEpsilon(cache, 3);
+    }
+
+    std::vector<double> const& getIntPtEpsilonXZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtEpsilon(cache, 4);
+    }
+
+    std::vector<double> const& getIntPtEpsilonYZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtEpsilon(cache, 5);
+    }
+
 private:
     std::vector<double> const& getIntPtSigma(std::vector<double>& cache,
                                              std::size_t const /*component*/) const
+    {
+        cache.resize(_ip_data.size());
+
+        return cache;
+    }
+
+    std::vector<double> const& getIntPtEpsilon(
+        std::vector<double>& cache, std::size_t const /*component*/) const
     {
         cache.resize(_ip_data.size());
 

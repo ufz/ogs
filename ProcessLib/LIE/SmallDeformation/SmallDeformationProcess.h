@@ -30,9 +30,9 @@ class SmallDeformationProcess final : public Process
 {
     using Base = Process;
 
-    static_assert(DisplacementDim==2,
+    static_assert(DisplacementDim == 2 || DisplacementDim == 3,
                   "Currently LIE::SmallDeformationProcess "
-                  "supports only 2D.");
+                  "supports only 2D or 3D.");
 
 public:
     SmallDeformationProcess(

@@ -367,22 +367,15 @@ computeSecondaryVariableConcreteWithBlockVectors(
         q.noalias() = - k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
     }
 
-    Eigen::Vector3d ele_stress = Eigen::Vector3d::Zero();
-    Eigen::Vector3d ele_strain = Eigen::Vector3d::Zero();
+    int n = GlobalDim == 2 ? 4 : 6;
+    Eigen::VectorXd ele_stress = Eigen::VectorXd::Zero(n);
+    Eigen::VectorXd ele_strain = Eigen::VectorXd::Zero(n);
     Eigen::Vector3d ele_velocity = Eigen::Vector3d::Zero();
 
     for (auto const& ip_data : _ip_data)
     {
-        ele_stress[0] += ip_data.sigma_eff[0];
-        ele_stress[1] += ip_data.sigma_eff[1];
-        // sigma_xy
-        ele_stress[2] += ip_data.sigma_eff[3]; // sigma_eff[2] stores sigma_z
-
-        ele_strain[0] += ip_data.eps[0];
-        ele_strain[1] += ip_data.eps[1];
-        // strain_xy
-        ele_strain[2] += ip_data.eps[3];
-
+        ele_stress += ip_data.sigma_eff;
+        ele_strain += ip_data.eps;
         ele_velocity += ip_data.darcy_velocity;
     }
 
@@ -391,12 +384,26 @@ computeSecondaryVariableConcreteWithBlockVectors(
     ele_velocity /= static_cast<double>(n_integration_points);
 
     auto const element_id = _element.getID();
-    (*_process_data.mesh_prop_stress_xx)[element_id] = ele_stress[0];
-    (*_process_data.mesh_prop_stress_yy)[element_id] = ele_stress[1];
-    (*_process_data.mesh_prop_stress_xy)[element_id] = ele_stress[2];
-    (*_process_data.mesh_prop_strain_xx)[element_id] = ele_strain[0];
-    (*_process_data.mesh_prop_strain_yy)[element_id] = ele_strain[1];
-    (*_process_data.mesh_prop_strain_xy)[element_id] = ele_strain[2];
+    (*_process_data.mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
+    (*_process_data.mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];
+    (*_process_data.mesh_prop_stress_zz)[_element.getID()] = ele_stress[2];
+    (*_process_data.mesh_prop_stress_xy)[_element.getID()] = ele_stress[3];
+    if (GlobalDim == 3)
+    {
+        (*_process_data.mesh_prop_stress_yz)[_element.getID()] = ele_stress[4];
+        (*_process_data.mesh_prop_stress_xz)[_element.getID()] = ele_stress[5];
+    }
+
+    (*_process_data.mesh_prop_strain_xx)[_element.getID()] = ele_strain[0];
+    (*_process_data.mesh_prop_strain_yy)[_element.getID()] = ele_strain[1];
+    (*_process_data.mesh_prop_strain_zz)[_element.getID()] = ele_strain[2];
+    (*_process_data.mesh_prop_strain_xy)[_element.getID()] = ele_strain[3];
+    if (GlobalDim == 3)
+    {
+        (*_process_data.mesh_prop_strain_yz)[_element.getID()] = ele_strain[4];
+        (*_process_data.mesh_prop_strain_xz)[_element.getID()] = ele_strain[5];
+    }
+
     for (unsigned i=0; i<3; i++)
         (*_process_data.mesh_prop_velocity)[element_id*3 + i] = ele_velocity[i];
 }

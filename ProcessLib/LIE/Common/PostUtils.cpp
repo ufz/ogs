@@ -131,19 +131,18 @@ void PostProcessTool::createProperties()
         // it as a vector
         auto const n_dest_comp = (n_src_comp==2) ? 3 : n_src_comp;
 
+        auto new_prop = MeshLib::getOrCreateMeshProperty<T>(
+            *_output_mesh, name, src_prop->getMeshItemType(), n_dest_comp);
+
         if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Node)
         {
-            auto new_prop =
-                _output_mesh->getProperties().createNewPropertyVector<T>(
-                    name, MeshLib::MeshItemType::Node, n_dest_comp);
-            new_prop->resize(_output_mesh->getNumberOfNodes() * n_dest_comp);
+            assert(new_prop->size() ==
+                   _output_mesh->getNumberOfNodes() * n_dest_comp);
         }
         else if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Cell)
         {
-            auto new_prop =
-                _output_mesh->getProperties().createNewPropertyVector<T>(
-                    name, MeshLib::MeshItemType::Cell, n_dest_comp);
-            new_prop->resize(src_prop->size());
+            assert(new_prop->size() ==
+                   _output_mesh->getNumberOfElements() * n_dest_comp);
         }
         else
         {

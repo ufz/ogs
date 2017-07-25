@@ -100,6 +100,24 @@ public:
     virtual std::vector<double> const& getIntPtSigmaYZ(
         std::vector<double>& cache) const = 0;
 
+    virtual std::vector<double> const& getIntPtEpsilonXX(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonYY(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonZZ(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonXY(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonXZ(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonYZ(
+        std::vector<double>& cache) const = 0;
+
 private:
     Eigen::VectorXd _local_u;
     Eigen::VectorXd _local_b;
