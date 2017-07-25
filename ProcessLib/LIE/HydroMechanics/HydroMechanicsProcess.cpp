@@ -231,17 +231,20 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     mesh_prop_sigma_xy->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_stress_xy = mesh_prop_sigma_xy;
 
-    auto mesh_prop_sigma_yz = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "stress_yz",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_sigma_yz->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_stress_yz = mesh_prop_sigma_yz;
+    if (GlobalDim == 3)
+    {
+        auto mesh_prop_sigma_xz = MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "stress_xz",
+            MeshLib::MeshItemType::Cell, 1);
+        mesh_prop_sigma_xz->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_stress_xz = mesh_prop_sigma_xz;
 
-    auto mesh_prop_sigma_xz = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "stress_xz",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_sigma_xz->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_stress_xz = mesh_prop_sigma_xz;
+        auto mesh_prop_sigma_yz = MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "stress_yz",
+            MeshLib::MeshItemType::Cell, 1);
+        mesh_prop_sigma_yz->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_stress_yz = mesh_prop_sigma_yz;
+    }
 
     auto mesh_prop_epsilon_xx = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "strain_xx",
@@ -267,17 +270,20 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     mesh_prop_epsilon_xy->resize(mesh.getNumberOfElements());
     _process_data.mesh_prop_strain_xy = mesh_prop_epsilon_xy;
 
-    auto mesh_prop_epsilon_yz = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "strain_yz",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_epsilon_yz->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_strain_yz = mesh_prop_epsilon_yz;
+    if (GlobalDim == 3)
+    {
+        auto mesh_prop_epsilon_xz = MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "strain_xz",
+            MeshLib::MeshItemType::Cell, 1);
+        mesh_prop_epsilon_xz->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_strain_xz = mesh_prop_epsilon_xz;
 
-    auto mesh_prop_epsilon_xz = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "strain_xz",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_epsilon_xz->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_strain_xz = mesh_prop_epsilon_xz;
+        auto mesh_prop_epsilon_yz = MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "strain_yz",
+            MeshLib::MeshItemType::Cell, 1);
+        mesh_prop_epsilon_yz->resize(mesh.getNumberOfElements());
+        _process_data.mesh_prop_strain_yz = mesh_prop_epsilon_yz;
+    }
 
     auto mesh_prop_velocity = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "velocity",
