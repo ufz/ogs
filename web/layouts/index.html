@@ -1,28 +1,23 @@
 {{ define "main" }}
 
-  <div class="col-xs-12">
-    <h2>docs</h1>
+  <div class="col-xs-4">
+    <h2>Content</h2>
     <ul>
-    {{ range first 10 .Data.Pages }}
-      {{ if eq .Type "docs"}}
+    {{ range .Site.Sections }}
         <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
-      {{ end }}
     {{ end }}
-  </ul>
-
-    <h2>pages</h1>
-    <ul>
     {{ range .Data.Pages }}
       {{ if eq .Type "page" }}
         <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
       {{ end }}
     {{ end }}
-    </ul>
+    <li><a href="/news">News</a></li>
+  </div>
 
-    <h2>Contentful</h2>
-    <ul>
-      <li><a href="/news">News</a></li>
-    </ul>
+  <div class="col-xs-8">
+    <h1>Benchmark documentation site</h1>
+    <p>For the moment this site contains just the <a href="/docs/benchmarks">➥ benchmark documentation</a> for <a href="https://github.com/ufz/ogs6">OpenGeoSys-6</a>.
+    </p>
   </div>
 
 {{ end }}
