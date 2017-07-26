@@ -1,0 +1,26 @@
+{{ if .Site.Data.bibliography }}
+	<p>
+		{{ $id := .Get "id" }}
+		{{ range where .Site.Data.bibliography "id" $id }}
+			{{ range .author }}
+				{{ .family }}, {{ .given}}
+			{{ end }}
+			({{ range .issued }}
+				{{ range . }}
+					{{ range . }}
+						{{.}}
+					{{ end }}
+				{{ end }}
+			{{ end }}):
+			<i>{{ .title }}</i>.
+			 <!-- Workaround for keys with hyphens inside with index-function -->
+			{{ if isset . "container-title" }}{{ index . "container-title" }}{{ end }}
+			{{ if isset . "issue" }}{{ .issue }},{{ end }}
+			{{ if isset . "volume" }}vol. {{ .volume }},{{ end }}
+			{{ if isset . "page" }}p. {{ .page }},{{ end }}
+			{{ .publisher }}
+		{{ end }}
+	</p>
+{{ else }}
+	{{ printf "Warning: Bibliography not converted! Missing bib id: "}}<code>{{.Get "id"}}</code>
+{{ end }}

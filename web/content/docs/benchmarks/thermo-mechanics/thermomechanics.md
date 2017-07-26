@@ -33,4 +33,6 @@ $$
 
 The relative error between the numerical simulation and the analytical solution is $9.2 \cdot 10^{-13}$.
 
-Kolditz, Olaf, Uwe-Jens Görke, Hua Shao, and Wenqing Wang, eds. Thermo-hydro-mechanical-chemical processes in porous media: benchmarks and examples. Vol. 86. Springer Science & Business Media, 2012.
+## References
+
+{{< bib id="Kolditz2012" >}}

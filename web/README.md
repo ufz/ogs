@@ -131,6 +131,19 @@ Run `npm run convert` to get a list of possible arguments.
 
 Equations can be set with typical LaTeX syntax by using [MathJax](https://www.mathjax.org/). Blocks are defined by `$$` at the beginning and `$$` at the end of the block. Inline math uses one `$` as the delimiter. For more usage instructions see the [MathJax LaTeX help](http://docs.mathjax.org/en/latest/tex.html).
 
+### Bibliography references
+
+Bibliography items from *Documentation/bibliography.bib* can be referenced by
+their id with the `bib`-shortcode:
+
+```go
+{{< bib id="Kolditz2012" >}}
+```
+
+When building the `web`-target the file *Documentation/bibliography.bib* is
+converted to *web/data/bibliography.json* with the tool `pandoc-citeproc`. This
+json-file is then used by the shortcode.
+
 ## Developer notes
 
 When adding a new module with `yarn add` you have to manually rebuild node-sass:

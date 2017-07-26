@@ -30,6 +30,13 @@ else()
     message(STATUS "[web] Skipping import from Contentful!")
 endif()
 
+if(PANDOC_CITEPROC)
+    add_custom_target(web-bib-convert
+        COMMAND ${PANDOC_CITEPROC} --bib2json ${PROJECT_SOURCE_DIR}/Documentation/bibliography.bib > ${PROJECT_SOURCE_DIR}/web/data/bibliography.json
+    )
+    set(BIB_CONVERT_TARGET web-bib-convert)
+endif()
+
 if(DEFINED OGS_WEB_BASE_URL)
     set(HUGO_ARGS --baseURL ${OGS_WEB_BASE_URL})
 endif()
@@ -41,7 +48,7 @@ endif()
 add_custom_target(web
     COMMAND ${NPM} run build:release -- ${HUGO_ARGS}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/web
-    DEPENDS web-install ${IMPORT_TARGET}
+    DEPENDS web-install ${IMPORT_TARGET} ${BIB_CONVERT_TARGET}
 )
 
 add_custom_target(web-clean
