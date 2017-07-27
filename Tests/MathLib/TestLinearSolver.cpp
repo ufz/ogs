@@ -19,7 +19,6 @@
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
-#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
 #ifdef OGS_USE_EIGEN
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"

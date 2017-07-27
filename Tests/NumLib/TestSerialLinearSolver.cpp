@@ -20,7 +20,6 @@
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/MatrixSpecifications.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
-#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/MathTools.h"
 

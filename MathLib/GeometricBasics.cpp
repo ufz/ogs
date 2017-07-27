@@ -10,8 +10,8 @@
 
 #include <logog/include/logog.hpp>
 
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
-#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
+#include <Eigen/Dense>
+
 #include "Point3d.h"
 #include "Vector3.h"
 
@@ -112,17 +112,16 @@ bool gaussPointInTriangle(MathLib::Point3d const& q,
     MathLib::Vector3 const v(a, b);
     MathLib::Vector3 const w(a, c);
 
-    MathLib::DenseMatrix<double> mat(2, 2);
+    Eigen::Matrix2d mat;
     mat(0, 0) = v.getSqrLength();
     mat(0, 1) = v[0] * w[0] + v[1] * w[1] + v[2] * w[2];
     mat(1, 0) = mat(0, 1);
     mat(1, 1) = w.getSqrLength();
-    double y[2] = {
-        v[0] * (q[0] - a[0]) + v[1] * (q[1] - a[1]) + v[2] * (q[2] - a[2]),
-        w[0] * (q[0] - a[0]) + w[1] * (q[1] - a[1]) + w[2] * (q[2] - a[2])};
+    Eigen::Vector2d y;
+    y << v[0] * (q[0] - a[0]) + v[1] * (q[1] - a[1]) + v[2] * (q[2] - a[2]),
+        w[0] * (q[0] - a[0]) + w[1] * (q[1] - a[1]) + w[2] * (q[2] - a[2]);
 
-    MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss;
-    gauss.solve(mat, y);
+    y = mat.partialPivLu().solve(y);
 
     const double lower(eps_pnt_out_of_tri);
     const double upper(1 + lower);
@@ -171,15 +170,15 @@ bool isPointInTriangleXY(MathLib::Point3d const& p,
                          MathLib::Point3d const& c)
 {
     // criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
-    MathLib::DenseMatrix<double> mat(2, 2);
+    Eigen::Matrix2d mat;
     mat(0, 0) = b[0] - a[0];
     mat(0, 1) = c[0] - a[0];
     mat(1, 0) = b[1] - a[1];
     mat(1, 1) = c[1] - a[1];
-    double y[2] = {p[0] - a[0], p[1] - a[1]};
+    Eigen::Vector2d y;
+    y << p[0] - a[0], p[1] - a[1];
 
-    MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss;
-    gauss.solve(mat, y, true);
+    y = mat.partialPivLu().solve(y);
 
     // check if u0 and u1 fulfills the condition
     return 0 <= y[0] && y[0] <= 1 && 0 <= y[1] && y[1] <= 1 && y[0] + y[1] <= 1;
