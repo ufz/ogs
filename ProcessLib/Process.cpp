@@ -217,16 +217,14 @@ void Process::finishNamedFunctionsInitialization()
     for (auto const& named_function :
          _named_function_caller.getNamedFunctions()) {
         auto const& name = named_function.getName();
-        // secondary variables generated from named functions have the prefix
-        // "fct_".
         _secondary_variables.addSecondaryVariable(
-            "fct_" + name, 1,
-            {BaseLib::easyBind(
-                 &GlobalVectorFromNamedFunction::call,
-                 GlobalVectorFromNamedFunction(
-                     _named_function_caller.getSpecificFunctionCaller(name), _mesh,
-                     getSingleComponentDOFTable(),
-                     _secondary_variable_context)),
+            name,
+            {1, BaseLib::easyBind(
+                    &GlobalVectorFromNamedFunction::call,
+                    GlobalVectorFromNamedFunction(
+                        _named_function_caller.getSpecificFunctionCaller(name),
+                        _mesh, getSingleComponentDOFTable(),
+                        _secondary_variable_context)),
              nullptr});
     }
 }
@@ -240,6 +238,11 @@ void Process::computeSparsityPattern()
 void Process::preTimestep(GlobalVector const& x, const double t,
                  const double delta_t)
 {
+    for (auto& cached_var : _cached_secondary_variables)
+    {
+        cached_var->setTime(t);
+    }
+
     MathLib::LinAlg::setLocalAccessibleVector(x);
     preTimestepConcreteProcess(x, t, delta_t);
     _boundary_conditions.preTimestep(t);
@@ -264,7 +267,7 @@ void Process::preIteration(const unsigned iter, const GlobalVector &x)
 {
     // In every new iteration cached values of secondary variables are expired.
     for (auto& cached_var : _cached_secondary_variables) {
-        cached_var->expire();
+        cached_var->updateCurrentSolution(x, *_local_to_global_index_map);
     }
 
     MathLib::LinAlg::setLocalAccessibleVector(x);

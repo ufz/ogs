@@ -28,6 +28,7 @@ GlobalVectorFromNamedFunction::GlobalVectorFromNamedFunction(
 }
 
 GlobalVector const& GlobalVectorFromNamedFunction::call(
+    const double /*t*/,
     GlobalVector const& x,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::unique_ptr<GlobalVector>& result)

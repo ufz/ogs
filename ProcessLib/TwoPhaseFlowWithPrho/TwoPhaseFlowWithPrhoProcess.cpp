@@ -56,14 +56,14 @@ void TwoPhaseFlowWithPrhoProcess::initializeConcreteProcess(
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
-        "saturation", 1,
+        "saturation",
         makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), _local_assemblers,
             &TwoPhaseFlowWithPrhoLocalAssemblerInterface::getIntPtSaturation));
 
     _secondary_variables.addSecondaryVariable(
-        "pressure_nonwetting", 1,
-        makeExtrapolator(getExtrapolator(), _local_assemblers,
+        "pressure_nonwetting",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                          &TwoPhaseFlowWithPrhoLocalAssemblerInterface::
                              getIntPtNonWettingPressure));
 }

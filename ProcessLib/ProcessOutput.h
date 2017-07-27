@@ -32,6 +32,7 @@ struct ProcessOutput final
 //! Writes output to the given \c file_name using the VTU file format.
 void doProcessOutput(std::string const& file_name,
                      bool const compress_output,
+                     const double t,
                      GlobalVector const& x,
                      MeshLib::Mesh& mesh,
                      NumLib::LocalToGlobalIndexMap const& dof_table,

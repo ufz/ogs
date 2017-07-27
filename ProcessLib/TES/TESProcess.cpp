@@ -152,17 +152,21 @@ void TESProcess::initializeConcreteProcess(
 void TESProcess::initializeSecondaryVariables()
 {
     // adds a secondary variables to the collection of all secondary variables.
-    auto add2nd = [&](std::string const& var_name, unsigned const n_components,
+    auto add2nd = [&](std::string const& var_name,
                       SecondaryVariableFunctions&& fcts) {
-        _secondary_variables.addSecondaryVariable(var_name, n_components,
-                                                  std::move(fcts));
+        _secondary_variables.addSecondaryVariable(var_name, std::move(fcts));
     };
 
     // creates an extrapolator
-    auto makeEx =
-        [&](std::vector<double> const& (TESLocalAssemblerInterface::*method)(
-            std::vector<double>&)const) -> SecondaryVariableFunctions {
-        return ProcessLib::makeExtrapolator(getExtrapolator(),
+    auto makeEx = [&](
+        unsigned const n_components,
+        std::vector<double> const& (TESLocalAssemblerInterface::*method)(
+            const double /*t*/,
+            GlobalVector const& /*current_solution*/,
+            NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+            std::vector<double>& /*cache*/)
+            const) -> SecondaryVariableFunctions {
+        return ProcessLib::makeExtrapolator(n_components, getExtrapolator(),
                                             _local_assemblers, method);
     };
 
@@ -192,32 +196,28 @@ void TESProcess::initializeSecondaryVariables()
     for (auto&& fct : solid_density->getNamedFunctions())
         _named_function_caller.addNamedFunction(std::move(fct));
 
-    add2nd("solid_density", 1, solid_density->getExtrapolator());
+    add2nd("solid_density", solid_density->getExtrapolator());
 
     _cached_secondary_variables.emplace_back(std::move(solid_density));
     // /////////////////////////////////////////////////////////////////////////
 
-    add2nd("reaction_rate", 1,
-           makeEx(&TESLocalAssemblerInterface::getIntPtReactionRate));
+    add2nd("reaction_rate",
+           makeEx(1, &TESLocalAssemblerInterface::getIntPtReactionRate));
 
-    add2nd("velocity_x", 1,
-           makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityX));
-    if (_mesh.getDimension() >= 2)
-        add2nd("velocity_y", 1,
-               makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityY));
-    if (_mesh.getDimension() >= 3)
-        add2nd("velocity_z", 1,
-               makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityZ));
+    add2nd("darcy_velocity",
+           makeEx(_mesh.getDimension(),
+                  &TESLocalAssemblerInterface::getIntPtDarcyVelocity));
 
-    add2nd("loading", 1, makeEx(&TESLocalAssemblerInterface::getIntPtLoading));
-    add2nd("reaction_damping_factor", 1,
-          makeEx(&TESLocalAssemblerInterface::getIntPtReactionDampingFactor));
+    add2nd("loading", makeEx(1, &TESLocalAssemblerInterface::getIntPtLoading));
+    add2nd(
+        "reaction_damping_factor",
+        makeEx(1, &TESLocalAssemblerInterface::getIntPtReactionDampingFactor));
 
-    add2nd("relative_humidity", 1,
-           {BaseLib::easyBind(&TESProcess::computeRelativeHumidity, this),
+    add2nd("relative_humidity",
+           {1, BaseLib::easyBind(&TESProcess::computeRelativeHumidity, this),
             nullptr});
-    add2nd("equilibrium_loading", 1,
-           {BaseLib::easyBind(&TESProcess::computeEquilibriumLoading, this),
+    add2nd("equilibrium_loading",
+           {1, BaseLib::easyBind(&TESProcess::computeEquilibriumLoading, this),
             nullptr});
 }
 
@@ -316,8 +316,8 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
     return NumLib::IterationResult::SUCCESS;
 }
 
-GlobalVector const&
-TESProcess::computeVapourPartialPressure(
+GlobalVector const& TESProcess::computeVapourPartialPressure(
+    const double /*t*/,
     GlobalVector const& x,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
@@ -348,8 +348,8 @@ TESProcess::computeVapourPartialPressure(
     return *result_cache;
 }
 
-GlobalVector const&
-TESProcess::computeRelativeHumidity(
+GlobalVector const& TESProcess::computeRelativeHumidity(
+    double const /*t*/,
     GlobalVector const& x,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
@@ -385,8 +385,8 @@ TESProcess::computeRelativeHumidity(
     return *result_cache;
 }
 
-GlobalVector const&
-TESProcess::computeEquilibriumLoading(
+GlobalVector const& TESProcess::computeEquilibriumLoading(
+    double const /*t*/,
     GlobalVector const& x,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)

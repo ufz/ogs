@@ -56,16 +56,16 @@ void TwoPhaseFlowWithPPProcess::initializeConcreteProcess(
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
-        "saturation", 1,
+        "saturation",
         makeExtrapolator(
-            getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), _local_assemblers,
             &TwoPhaseFlowWithPPLocalAssemblerInterface::getIntPtSaturation));
 
     _secondary_variables.addSecondaryVariable(
-        "pressure_wet", 1,
-        makeExtrapolator(getExtrapolator(), _local_assemblers,
-                         &TwoPhaseFlowWithPPLocalAssemblerInterface::
-                             getIntPtWetPressure));
+        "pressure_wet",
+        makeExtrapolator(
+            1, getExtrapolator(), _local_assemblers,
+            &TwoPhaseFlowWithPPLocalAssemblerInterface::getIntPtWetPressure));
 }
 
 void TwoPhaseFlowWithPPProcess::assembleConcreteProcess(const double t,

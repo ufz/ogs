@@ -17,6 +17,7 @@
 
 namespace NumLib
 {
+class LocalToGlobalIndexMap;
 
 //! Interface for classes that extrapolate integration point values to nodal
 //! values.
@@ -25,7 +26,11 @@ class Extrapolator
 public:
     //! Extrapolates the given \c property from the given local assemblers.
     virtual void extrapolate(
-            ExtrapolatableElementCollection const& extrapolatables) = 0;
+        const unsigned num_components,
+        ExtrapolatableElementCollection const& extrapolatables,
+        const double t,
+        GlobalVector const& current_solution,
+        LocalToGlobalIndexMap const& dof_table) = 0;
 
     /*! Computes residuals from the extrapolation of the given \c property.
      *
@@ -34,7 +39,11 @@ public:
      * \pre extrapolate() must have been called before with the same arguments.
      */
     virtual void calculateResiduals(
-            ExtrapolatableElementCollection const& extrapolatables) = 0;
+        const unsigned num_components,
+        ExtrapolatableElementCollection const& extrapolatables,
+        const double t,
+        GlobalVector const& current_solution,
+        LocalToGlobalIndexMap const& dof_table) = 0;
 
     //! Returns the extrapolated nodal values.
     //! \todo Maybe write directly to a MeshProperty.

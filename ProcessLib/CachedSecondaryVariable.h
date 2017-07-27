@@ -60,8 +60,19 @@ public:
     //! Returns extrapolation functions that compute the secondary variable.
     SecondaryVariableFunctions getExtrapolator();
 
-    //! Set that recomputation is necessary.
-    void expire() { _needs_recomputation = true; }
+    void setTime(const double t)
+    {
+        _t = t;
+        _needs_recomputation = true;
+    }
+
+    void updateCurrentSolution(GlobalVector const& x,
+                               NumLib::LocalToGlobalIndexMap const& dof_table)
+    {
+        _current_solution = &x;
+        _dof_table = &dof_table;
+        _needs_recomputation = true;
+    }
 
 private:
     //! Provides the value at the current index of the _context.
@@ -69,8 +80,9 @@ private:
 
     //! Computes the secondary Variable.
     GlobalVector const& evalField(
-        GlobalVector const& /*x*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        const double t,
+        GlobalVector const& x,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& /*result_cache*/
         ) const;
 
@@ -85,6 +97,10 @@ private:
     std::unique_ptr<NumLib::ExtrapolatableElementCollection> _extrapolatables;
     SecondaryVariableContext const& _context;
     std::string const _internal_variable_name;
+
+    double _t = 0.0;
+    GlobalVector const* _current_solution = nullptr;
+    NumLib::LocalToGlobalIndexMap const* _dof_table = nullptr;
 };
 
 }  // namespace ProcessLib

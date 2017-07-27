@@ -10,6 +10,7 @@
 
 #include "MaterialLib/Adsorption/Adsorption.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
@@ -112,7 +113,8 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
                       bool is_axially_symmetric,
                       unsigned const integration_order,
                       AssemblyParams const& asm_params)
-    : _integration_method(integration_order),
+    : _element(e),
+      _integration_method(integration_order),
       _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                         IntegrationMethod_, GlobalDim>(
           e, is_axially_symmetric, _integration_method)),
@@ -184,18 +186,24 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtSolidDensity(std::vector<double>& /*cache*/) const
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtSolidDensity(const double /*t*/,
+                         GlobalVector const& /*current_solution*/,
+                         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                         std::vector<double>& /*cache*/) const
 {
     return _d.getData().solid_density;
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtLoading(std::vector<double>& cache) const
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtLoading(const double /*t*/,
+                    GlobalVector const& /*current_solution*/,
+                    NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                    std::vector<double>& cache) const
 {
     auto const rho_SR = _d.getData().solid_density;
     auto const rho_SR_dry = _d.getAssemblyParameters().rho_SR_dry;
@@ -204,7 +212,7 @@ std::vector<double> const& TESLocalAssembler<
     cache.reserve(rho_SR.size());
 
     for (auto const rho : rho_SR) {
-        cache.push_back(rho/rho_SR_dry - 1.0);
+        cache.push_back(rho / rho_SR_dry - 1.0);
     }
 
     return cache;
@@ -214,7 +222,10 @@ template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
 std::vector<double> const&
 TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
-    getIntPtReactionDampingFactor(std::vector<double>& cache) const
+    getIntPtReactionDampingFactor(
+        const double /*t*/, GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& cache) const
 {
     auto const fac = _d.getData().reaction_adaptor->getReactionDampingFactor();
     auto const num_integration_points = _d.getData().solid_density.size();
@@ -227,40 +238,55 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtReactionRate(std::vector<double>& /*cache*/) const
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtReactionRate(const double /*t*/,
+                         GlobalVector const& /*current_solution*/,
+                         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+                         std::vector<double>& /*cache*/) const
 {
     return _d.getData().reaction_rate;
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtDarcyVelocityX(std::vector<double>& /*cache*/) const
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtDarcyVelocity(const double /*t*/,
+                          GlobalVector const& current_solution,
+                          NumLib::LocalToGlobalIndexMap const& dof_table,
+                          std::vector<double>& cache) const
 {
-    return _d.getData().velocity[0];
-}
+    auto const n_integration_points = _integration_method.getNumberOfPoints();
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtDarcyVelocityY(std::vector<double>& /*cache*/) const
-{
-    assert(_d.getData().velocity.size() > 1);
-    return _d.getData().velocity[1];
-}
+    auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+    assert(!indices.empty());
+    auto const local_x = current_solution.get(indices);
+    // local_x is ordered by component, local_x_mat is row major
+    auto const local_x_mat = MathLib::toMatrix<
+        Eigen::Matrix<double, NODAL_DOF, Eigen::Dynamic, Eigen::RowMajor>>(
+        local_x, NODAL_DOF, ShapeFunction_::NPOINTS);
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
-std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::getIntPtDarcyVelocityZ(std::vector<double>& /*cache*/) const
-{
-    assert(_d.getData().velocity.size() > 2);
-    return _d.getData().velocity[2];
+    cache.clear();
+    auto cache_mat = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, GlobalDim, n_integration_points);
+
+    for (unsigned i = 0; i < n_integration_points; ++i)
+    {
+        double p, T, x;
+        NumLib::shapeFunctionInterpolate(local_x, _shape_matrices[i].N, p, T,
+                                         x);
+        const double eta_GR = fluid_viscosity(p, T, x);
+
+        auto const& k = _d.getAssemblyParameters().solid_perm_tensor;
+        cache_mat.col(i).noalias() =
+            k * (_shape_matrices[i].dNdx *
+                 local_x_mat.row(COMPONENT_ID_PRESSURE).transpose()) /
+            -eta_GR;
+    }
+
+    return cache;
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,

@@ -55,14 +55,25 @@ public:
         std::vector<double> const& local_nodal_values) = 0;
 
     virtual std::vector<double> const& getStoredQuantity(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
     virtual std::vector<double> const& getDerivedQuantity(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 };
 
 using IntegrationPointValuesMethod = std::vector<double> const& (
-    LocalAssemblerDataInterface::*)(std::vector<double>&)const;
+    LocalAssemblerDataInterface::*)(const double /*t*/,
+                                    GlobalVector const& /*current_solution*/,
+                                    NumLib::
+                                        LocalToGlobalIndexMap const& /*dof_table*/
+                                    ,
+                                    std::vector<double>& /*cache*/) const;
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
@@ -95,12 +106,18 @@ public:
     }
 
     std::vector<double> const& getStoredQuantity(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         return _int_pt_values;
     }
 
     std::vector<double> const& getDerivedQuantity(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         cache.clear();
@@ -169,13 +186,15 @@ public:
     }
 
     std::pair<GlobalVector const*, GlobalVector const*> extrapolate(
-        IntegrationPointValuesMethod method) const
+        IntegrationPointValuesMethod method, const double t,
+        const GlobalVector& x) const
     {
         auto const extrapolatables =
             NumLib::makeExtrapolatable(_local_assemblers, method);
 
-        _extrapolator->extrapolate(extrapolatables);
-        _extrapolator->calculateResiduals(extrapolatables);
+        _extrapolator->extrapolate(1, extrapolatables, t, x, *_dof_table);
+        _extrapolator->calculateResiduals(1, extrapolatables, t, x,
+                                          *_dof_table);
 
         return {&_extrapolator->getNodalValues(),
                 &_extrapolator->getElementResiduals()};
@@ -201,7 +220,10 @@ void extrapolate(TestProcess const& pcs, IntegrationPointValuesMethod method,
     auto const tolerance_dx  = 30.0 * std::numeric_limits<double>::epsilon();
     auto const tolerance_res = 15.0 * std::numeric_limits<double>::epsilon();
 
-    auto const result = pcs.extrapolate(method);
+    const double t = 0.0;
+
+    auto const result =
+        pcs.extrapolate(method, t, expected_extrapolated_global_nodal_values);
     auto const& x_extra = *result.first;
     auto const& residual = *result.second;
 

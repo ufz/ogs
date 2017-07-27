@@ -25,16 +25,15 @@ void SecondaryVariableCollection::addNameMapping(std::string const& internal_nam
 }
 
 void SecondaryVariableCollection::addSecondaryVariable(
-    std::string const& internal_name,
-    const unsigned num_components,
-    SecondaryVariableFunctions&& fcts)
+    std::string const& internal_name, SecondaryVariableFunctions&& fcts)
 {
     if (!_configured_secondary_variables
              .emplace(std::make_pair(
                  internal_name,
                  SecondaryVariable{internal_name /* TODO change */,
-                                   num_components, std::move(fcts)}))
-             .second) {
+                                   std::move(fcts)}))
+             .second)
+    {
         OGS_FATAL(
             "The secondary variable with internal name `%s' has already been "
             "set up.",

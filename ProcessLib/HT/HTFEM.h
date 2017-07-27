@@ -15,6 +15,7 @@
 
 #include "HTProcessData.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -50,13 +51,10 @@ class HTLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    virtual std::vector<double> const& getIntPtDarcyVelocityX(
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityY(
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
+    virtual std::vector<double> const& getIntPtDarcyVelocity(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 };
 
@@ -90,10 +88,7 @@ public:
                        HTProcessData const& process_data)
         : _element(element),
           _process_data(process_data),
-          _integration_method(integration_order),
-          _darcy_velocities(
-              GlobalDim,
-              std::vector<double>(_integration_method.getNumberOfPoints()))
+          _integration_method(integration_order)
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
@@ -263,19 +258,37 @@ public:
         }
     }
 
-    void computeSecondaryVariableConcrete(
-        double const t, std::vector<double> const& local_x) override
+    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
+        const unsigned integration_point) const override
     {
+        auto const& N = _ip_data[integration_point].N;
+
+        // assumes N is stored contiguously in memory
+        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
+    }
+
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& cache) const override
+    {
+        auto const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+        assert(!indices.empty());
+        auto const local_x = current_solution.get(indices);
+
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, n_integration_points);
+
         SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const K =
-            _process_data.porous_media_properties.getIntrinsicPermeability(t,
-                                                                           pos);
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
-
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
 
         auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[ShapeFunction::NPOINTS], ShapeFunction::NPOINTS);
@@ -294,55 +307,27 @@ public:
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
 
+            auto const K =
+                _process_data.porous_media_properties.getIntrinsicPermeability(
+                    t, pos);
+
             auto const mu = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
             GlobalDimMatrixType const K_over_mu = K / mu;
 
-            GlobalDimVectorType velocity = -K_over_mu * dNdx * p_nodal_values;
+            cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
+
             if (_process_data.has_gravity)
             {
                 auto const rho_w = _process_data.fluid_properties->getValue(
                     MaterialLib::Fluid::FluidPropertyType::Density, vars);
                 auto const b = _process_data.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
-                velocity += K_over_mu * rho_w * b;
-            }
-
-            for (unsigned d = 0; d < GlobalDim; ++d)
-            {
-                _darcy_velocities[d][ip] = velocity[d];
+                cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
             }
         }
-    }
 
-    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
-        const unsigned integration_point) const override
-    {
-        auto const& N = _ip_data[integration_point].N;
-
-        // assumes N is stored contiguously in memory
-        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
-    }
-
-    std::vector<double> const& getIntPtDarcyVelocityX(
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(!_darcy_velocities.empty());
-        return _darcy_velocities[0];
-    }
-
-    std::vector<double> const& getIntPtDarcyVelocityY(
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 1);
-        return _darcy_velocities[1];
-    }
-
-    std::vector<double> const& getIntPtDarcyVelocityZ(
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 2);
-        return _darcy_velocities[2];
+        return cache;
     }
 
 private:
@@ -355,7 +340,6 @@ private:
         Eigen::aligned_allocator<
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
-    std::vector<std::vector<double>> _darcy_velocities;
 };
 
 }  // namespace HT
