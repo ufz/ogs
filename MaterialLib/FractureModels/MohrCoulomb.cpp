@@ -68,9 +68,8 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     Ke(index_ns, index_ns) = mat.Kn;
 
     sigma.noalias() = sigma_prev + Ke * dw;
-    double const tau = (DisplacementDim==2) ? sigma[0] : std::sqrt(sigma[0]*sigma[0] + sigma[1]*sigma[1]);
-    double const sigma_n = sigma[index_ns];
 
+    double const sigma_n = sigma[index_ns];
     // if opening
     if (sigma_n > 0)
     {
@@ -81,7 +80,9 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     }
 
     // check shear yield function (Fs)
-    double const Fs = std::abs(tau) + sigma_n * std::tan(mat.phi) - mat.c;
+    Eigen::VectorXd const sigma_s = sigma.head(DisplacementDim-1);
+    double const mag_tau = sigma_s.norm(); // magnitude
+    double const Fs = mag_tau + sigma_n * std::tan(mat.phi) - mat.c;
 
     material_state_variables.setShearYieldFunctionValue(Fs);
     if (Fs < .0)
@@ -91,23 +92,11 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     }
 
     Eigen::VectorXd dFs_dS(DisplacementDim);
-    // plastic potential function: Qs = |tau| + Sn * tan da
-    Eigen::VectorXd dQs_dS(DisplacementDim);
-
-    if (DisplacementDim == 2)
-    {
-        dFs_dS[0] = boost::math::sign(tau);
-        dQs_dS[0] = boost::math::sign(tau);
-    }
-    else
-    {
-        for (int i=0; i<index_ns; i++)
-            dFs_dS[i] = sigma[i] / std::abs(tau);
-
-        for (int i=0; i<index_ns; i++)
-            dQs_dS[i] = sigma[i] / std::abs(tau);
-    }
+    dFs_dS.head(DisplacementDim-1).noalias() = sigma_s.normalized();
     dFs_dS[index_ns] = std::tan(mat.phi);
+
+    // plastic potential function: Qs = |tau| + Sn * tan da
+    Eigen::VectorXd dQs_dS = dFs_dS;
     dQs_dS[index_ns] = std::tan(mat.psi);
 
     // plastic multiplier
