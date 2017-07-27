@@ -20,12 +20,13 @@
 
 #include <logog/include/logog.hpp>
 
+#include <Eigen/Dense>
+
 #include "BaseLib/StringTools.h"
 
 #include "Polyline.h"
 #include "PointVec.h"
 
-#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathLib/GeometricBasics.h"
 
 extern double orient2d(double *, double *, double *);
@@ -172,16 +173,16 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
     const double sqr_len_v(v.getSqrLength());
     const double sqr_len_w(w.getSqrLength());
 
-    MathLib::DenseMatrix<double> mat(2,2);
+    Eigen::Matrix2d mat;
     mat(0,0) = sqr_len_v;
     mat(0,1) = -1.0 * MathLib::scalarProduct(v,w);
     mat(1,1) = sqr_len_w;
     mat(1,0) = mat(0,1);
 
-    double rhs[2] = {MathLib::scalarProduct(v,qp), MathLib::scalarProduct(w,pq)};
+    Eigen::Vector2d rhs;
+    rhs << MathLib::scalarProduct(v, qp), MathLib::scalarProduct(w, pq);
 
-    MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu;
-    lu.solve(mat, rhs, true);
+    rhs = mat.partialPivLu().solve(rhs);
 
     // no theory for the following tolerances, determined by testing
     // lower tolerance: little bit smaller than zero
@@ -505,16 +506,15 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
     // at this point it is sure that there is an intersection and the system of
     // linear equations will be invertible
     // solve the two linear equations (b-a, c-d) (t, s)^T = (c-a) simultaneously
-    MathLib::DenseMatrix<double, std::size_t> mat(2,2);
+    Eigen::Matrix2d mat;
     mat(0,0) = b[0]-a[0];
     mat(0,1) = c[0]-d[0];
     mat(1,0) = b[1]-a[1];
     mat(1,1) = c[1]-d[1];
-    std::vector<double> rhs = {{c[0]-a[0], c[1]-a[1]}};
+    Eigen::Vector2d rhs;
+    rhs << c[0] - a[0], c[1] - a[1];
 
-    MathLib::GaussAlgorithm<
-        MathLib::DenseMatrix<double, std::size_t>, std::vector<double>> solver;
-    solver.solve(mat, rhs);
+    rhs = mat.partialPivLu().solve(rhs);
     if (0 <= rhs[1] && rhs[1] <= 1.0) {
         return { MathLib::Point3d{std::array<double,3>{{
                 c[0]+rhs[1]*(d[0]-c[0]), c[1]+rhs[1]*(d[1]-c[1]),
