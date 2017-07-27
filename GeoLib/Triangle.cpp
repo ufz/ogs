@@ -10,10 +10,11 @@
 
 #include "Triangle.h"
 
+#include <Eigen/Dense>
+
 #include "Point.h"
 #include "AnalyticalGeometry.h"
 
-#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathLib/GeometricBasics.h"
 
 namespace GeoLib {
@@ -49,15 +50,15 @@ bool Triangle::containsPoint2D (Point const& pnt) const
     GeoLib::Point const& c (*(_pnts[_pnt_ids[2]]));
 
     // criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
-    MathLib::DenseMatrix<double> mat (2,2);
+    Eigen::Matrix2d mat;
     mat(0,0) = b[0] - a[0];
     mat(0,1) = c[0] - a[0];
     mat(1,0) = b[1] - a[1];
     mat(1,1) = c[1] - a[1];
-    double y[2] = {pnt[0]-a[0], pnt[1]-a[1]};
+    Eigen::Vector2d y;
+    y << pnt[0]-a[0], pnt[1]-a[1];
 
-    MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss;
-    gauss.solve(mat, y, true);
+    y = mat.partialPivLu().solve(y);
 
     const double delta (std::numeric_limits<double>::epsilon());
     const double upper (1+delta);
@@ -72,7 +73,7 @@ void getPlaneCoefficients(Triangle const& tri, double c[3])
     GeoLib::Point const& p0 (*(tri.getPoint(0)));
     GeoLib::Point const& p1 (*(tri.getPoint(1)));
     GeoLib::Point const& p2 (*(tri.getPoint(2)));
-    MathLib::DenseMatrix<double> mat (3,3);
+    Eigen::Matrix3d mat;
     mat(0,0) = p0[0];
     mat(0,1) = p0[1];
     mat(0,2) = 1.0;
@@ -82,12 +83,10 @@ void getPlaneCoefficients(Triangle const& tri, double c[3])
     mat(2,0) = p2[0];
     mat(2,1) = p2[1];
     mat(2,2) = 1.0;
-    c[0] = p0[2];
-    c[1] = p1[2];
-    c[2] = p2[2];
+    Eigen::Vector3d y;
+    y << p0[2], p1[2], p2[2];
 
-    MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss;
-    gauss.solve (mat, c);
+    Eigen::Map<Eigen::Vector3d>(c,3) = mat.partialPivLu().solve(y);
 }
 
 } // end namespace GeoLib
