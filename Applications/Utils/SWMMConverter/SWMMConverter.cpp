@@ -111,6 +111,18 @@ int writeCsvOutput(std::string input_file, std::string output_file,
     if (swmm == nullptr)
         return -1;
 
+    if (!swmm->existsSwmmOutputFile())
+    {
+        INFO("No output file found, skipping data conversion to CSV.");
+        return -1;
+    }
+
+    if (!(node_args || link_args || catchment_args || system_args))
+    {
+        INFO("No data category selected. Nothing to write.");
+        return 0;
+    }
+
     std::string const basename = BaseLib::dropFileExtension(output_file);
     std::string const extension = std::string("." + BaseLib::getFileExtension(output_file));
 
