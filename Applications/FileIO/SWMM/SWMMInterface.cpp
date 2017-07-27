@@ -917,11 +917,11 @@ std::size_t SwmmInterface::getNumberOfParameters(SwmmObject obj_type) const
     switch (obj_type)
     {
         case SwmmObject::SUBCATCHMENT:
-            return (n_obj_params[0] - 1 + SWMM_Npolluts);
+            return (n_obj_params[0] + SWMM_Npolluts);
         case SwmmObject::NODE:
-            return (n_obj_params[1] - 1 + SWMM_Npolluts);
+            return (n_obj_params[1] + SWMM_Npolluts);
         case SwmmObject::LINK:
-            return (n_obj_params[2] - 1 + SWMM_Npolluts);
+            return (n_obj_params[2] + SWMM_Npolluts);
         case SwmmObject::SYSTEM:
             return n_obj_params[3];
         default:
@@ -944,7 +944,7 @@ std::size_t SwmmInterface::getNumberOfTimeSteps() const
 bool SwmmInterface::addResultsToMesh(MeshLib::Mesh &mesh, SwmmObject const swmm_type,
     std::string const& vec_name, std::vector<double> const& data)
 {
-    if (!(swmm_type == SwmmObject::NODE) || (swmm_type == SwmmObject::LINK))
+    if (!(swmm_type == SwmmObject::NODE || swmm_type == SwmmObject::LINK))
     {
         ERR ("Information of this object type cannot be added to mesh.");
         return false;
@@ -968,18 +968,15 @@ bool SwmmInterface::addResultsToMesh(MeshLib::Mesh &mesh, SwmmObject const swmm_
         return false;
     }
 
-    MeshLib::Properties& p = mesh.getProperties();
-    MeshLib::MeshItemType item_type = (swmm_type == SwmmObject::NODE) ?
+    MeshLib::MeshItemType const item_type = (swmm_type == SwmmObject::NODE) ?
         MeshLib::MeshItemType::Node : MeshLib::MeshItemType::Cell;
-    auto* const prop =
-        p.createNewPropertyVector<double>(vec_name, item_type, 1);
+    MeshLib::PropertyVector<double>* prop = MeshLib::getOrCreateMeshProperty<double>(mesh, vec_name, item_type, 1);
     if (!prop)
     {
-        ERR ("Error creating array \"%s\".", vec_name.c_str());
+        ERR ("Error fetching array \"%s\".", vec_name.c_str());
         return false;
     }
-    prop->reserve(data.size());
-    std::copy(data.cbegin(), data.cend(), std::back_inserter(*prop));
+    std::copy(data.cbegin(), data.cend(), prop->begin());
     return true;
 }
 
@@ -1151,14 +1148,14 @@ std::string SwmmInterface::getArrayName(SwmmObject obj_type, std::size_t var_idx
         if (var_idx < n_obj_params[1])
             return node_vars[var_idx];
         if (var_idx < n_obj_params[1]+n_pollutants)
-            return _pollutant_names[var_idx-n_obj_params[1]];
+            return std::string("Node_" + _pollutant_names[var_idx-n_obj_params[1]]);
     }
     if (obj_type == SwmmObject::LINK)
     {
         if (var_idx < n_obj_params[2])
             return link_vars[var_idx];
         if (var_idx < n_obj_params[2]+n_pollutants)
-            return _pollutant_names[var_idx-n_obj_params[2]];
+            return std::string("Link_" + _pollutant_names[var_idx-n_obj_params[2]]);
     }
     if (obj_type == SwmmObject::SYSTEM && var_idx < n_obj_params[3])
     {
