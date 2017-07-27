@@ -56,24 +56,22 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
         typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
         material_state_variables)
 {
-    if (DisplacementDim == 3)
-    {
-        OGS_FATAL("MohrCoulomb fracture model does not support 3D case.");
-        return;
-    }
     material_state_variables.reset();
 
     MaterialPropertyValues const mat(_mp, t, x);
     Eigen::VectorXd const dw = w - w_prev;
 
-    Eigen::MatrixXd Ke = Eigen::MatrixXd::Zero(2, 2);
-    Ke(0,0) = mat.Ks;
-    Ke(1,1) = mat.Kn;
+    const int index_ns = DisplacementDim - 1;
+    Eigen::MatrixXd Ke = Eigen::MatrixXd::Zero(DisplacementDim,DisplacementDim);
+    for (int i=0; i<index_ns; i++)
+        Ke(i,i) = mat.Ks;
+    Ke(index_ns, index_ns) = mat.Kn;
 
     sigma.noalias() = sigma_prev + Ke * dw;
 
+    double const sigma_n = sigma[index_ns];
     // if opening
-    if (sigma[1] > 0)
+    if (sigma_n > 0)
     {
         Kep.setZero();
         sigma.setZero();
@@ -82,7 +80,10 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     }
 
     // check shear yield function (Fs)
-    double const Fs = std::abs(sigma[0]) + sigma[1] * std::tan(mat.phi) - mat.c;
+    Eigen::VectorXd const sigma_s = sigma.head(DisplacementDim-1);
+    double const mag_tau = sigma_s.norm(); // magnitude
+    double const Fs = mag_tau + sigma_n * std::tan(mat.phi) - mat.c;
+
     material_state_variables.setShearYieldFunctionValue(Fs);
     if (Fs < .0)
     {
@@ -90,14 +91,13 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
         return;
     }
 
-    Eigen::VectorXd dFs_dS(2);
-    dFs_dS[0] = boost::math::sign(sigma[0]);
-    dFs_dS[1] = std::tan(mat.phi);
+    Eigen::VectorXd dFs_dS(DisplacementDim);
+    dFs_dS.head(DisplacementDim-1).noalias() = sigma_s.normalized();
+    dFs_dS[index_ns] = std::tan(mat.phi);
 
     // plastic potential function: Qs = |tau| + Sn * tan da
-    Eigen::VectorXd dQs_dS(2);
-    dQs_dS[0] = boost::math::sign(sigma[0]);
-    dQs_dS[1] = std::tan(mat.psi);
+    Eigen::VectorXd dQs_dS = dFs_dS;
+    dQs_dS[index_ns] = std::tan(mat.psi);
 
     // plastic multiplier
     Eigen::RowVectorXd const A = dFs_dS.transpose() * Ke / (dFs_dS.transpose() * Ke * dQs_dS);
