@@ -34,7 +34,7 @@ createNonuniformNeumannBoundaryCondition(
     // Surface mesh and bulk mesh must have equal axial symmetry flags!
     boundary_mesh->setAxiallySymmetric(bulk_mesh.isAxiallySymmetric());
 
-    // TODO add field type?
+    // TODO finally use ProcessLib::Parameter here
     auto const field_name =
         config.getConfigParameter<std::string>("field_name");
 
