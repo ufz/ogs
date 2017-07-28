@@ -21,54 +21,58 @@ template <typename Data>
 GenericNonuniformNaturalBoundaryCondition<BoundaryConditionData,
                                           LocalAssemblerImplementation>::
     GenericNonuniformNaturalBoundaryCondition(
-        typename std::enable_if<
-            std::is_same<typename std::decay<BoundaryConditionData>::type,
-                         typename std::decay<Data>::type>::value,
-            bool>::type is_axially_symmetric,
-        unsigned const integration_order, unsigned const shapefunction_order,
-        NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
-        int const variable_id, int const component_id,
-        unsigned const global_dim, std::vector<MeshLib::Element*>&& elements,
-        Data&& data)
-    : _data(std::forward<Data>(data)),
-      _elements(std::move(elements)),
-      _integration_order(integration_order)
+        bool is_axially_symmetric, unsigned const integration_order,
+        unsigned const shapefunction_order, unsigned const global_dim,
+        std::unique_ptr<MeshLib::Mesh>&& boundary_mesh, Data&& data)
+    : _data(std::forward<Data>(data)), _boundary_mesh(std::move(boundary_mesh))
 {
-    assert(component_id <
-           static_cast<int>(dof_table_bulk.getNumberOfComponents()));
+    static_assert(std::is_same<typename std::decay<BoundaryConditionData>::type,
+                               typename std::decay<Data>::type>::value,
+                  "Type mismatch between declared and passed BC data.");
 
-    std::vector<MeshLib::Node*> nodes = MeshLib::getUniqueNodes(_elements);
-    DBUG("Found %d nodes for Natural BCs for the variable %d and component %d",
-         nodes.size(), variable_id, component_id);
+#if 0
+    // TODO fix/improve check!
+    if (component_id >=
+           static_cast<int>(dof_table_bulk.getNumberOfComponents()))
+    {
+        OGS_FATAL("");  // TODO better error message.
+    }
+#endif
 
-    auto const& mesh_subsets =
-        dof_table_bulk.getMeshSubsets(variable_id, component_id);
+    if (_boundary_mesh->getDimension() + 1 != global_dim)
+    {
+        OGS_FATAL(
+            "The dimension of the given boundary mesh (%d) is not by one lower "
+            "than the bulk dimension (%d).",
+            _boundary_mesh->getDimension(), global_dim);
+    }
 
-    // TODO extend the node intersection to all parts of mesh_subsets, i.e.
-    // to each of the MeshSubset in the mesh_subsets.
-    _mesh_subset_all_nodes.reset(
-        mesh_subsets.getMeshSubset(0).getIntersectionByNodes(nodes));
-    MeshLib::MeshSubsets all_mesh_subsets{_mesh_subset_all_nodes.get()};
-
-    // Create local DOF table from intersected mesh subsets for the given
-    // variable and component ids.
-    _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
-        variable_id, {component_id}, std::move(all_mesh_subsets), _elements));
+    constructDofTable();
 
     createLocalAssemblers<LocalAssemblerImplementation>(
-        global_dim, _elements, *_dof_table_boundary, shapefunction_order,
-        _local_assemblers, is_axially_symmetric, _integration_order, _data);
+        global_dim, _boundary_mesh->getElements(), *_dof_table_boundary,
+        shapefunction_order, _local_assemblers, is_axially_symmetric,
+        integration_order, _data);
 }
 
 template <typename BoundaryConditionData,
           template <typename, typename, unsigned>
           class LocalAssemblerImplementation>
-GenericNonuniformNaturalBoundaryCondition<
-    BoundaryConditionData,
-    LocalAssemblerImplementation>::~GenericNonuniformNaturalBoundaryCondition()
+void GenericNonuniformNaturalBoundaryCondition<
+    BoundaryConditionData, LocalAssemblerImplementation>::constructDofTable()
 {
-    for (auto e : _elements)
-        delete e;
+    // construct one-component dof table for the surface mesh
+    _mesh_subset_all_nodes.reset(
+        new MeshLib::MeshSubset(*_boundary_mesh, &_boundary_mesh->getNodes()));
+
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets{
+        _mesh_subset_all_nodes.get()};
+
+    std::vector<unsigned> vec_var_n_components{1};
+
+    _dof_table_boundary = std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        std::move(all_mesh_subsets), vec_var_n_components,
+        NumLib::ComponentOrder::BY_LOCATION);
 }
 
 template <typename BoundaryConditionData,

@@ -9,12 +9,27 @@
 
 #pragma once
 
-#include "GenericNonuniformNaturalBoundaryConditionLocalAssembler.h"
+#include "MeshLib/PropertyVector.h"
 #include "NumLib/DOF/DOFTableUtil.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "NumLib/Function/Interpolation.h"
+
+#include "GenericNonuniformNaturalBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
+struct NonuniformNeumannBoundaryConditionData
+{
+    /* TODO use Parameter */
+    MeshLib::PropertyVector<double> const& values;
+
+    // Used for mapping boundary nodes to bulk nodes.
+    std::size_t bulk_mesh_id;
+    MeshLib::PropertyVector<long> const& mapping_to_bulk_nodes;
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk;
+    int const variable_id_bulk;
+    int const component_id_bulk;
+};
+
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class NonuniformNeumannBoundaryConditionLocalAssembler final
@@ -32,16 +47,16 @@ public:
         std::size_t const local_matrix_size,
         bool is_axially_symmetric,
         unsigned const integration_order,
-        Parameter<double> const& neumann_bc_parameter)
+        NonuniformNeumannBoundaryConditionData const& data)
         : Base(e, is_axially_symmetric, integration_order),
-          _neumann_bc_parameter(neumann_bc_parameter),
+          _data(data),
           _local_rhs(local_matrix_size)
     {
     }
 
     void assemble(std::size_t const id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
-                  double const t, const GlobalVector& /*x*/,
+                  double const /*t*/, const GlobalVector& /*x*/,
                   GlobalMatrix& /*K*/, GlobalVector& b) override
     {
         _local_rhs.setZero();
@@ -49,25 +64,48 @@ public:
         unsigned const n_integration_points =
             Base::_integration_method.getNumberOfPoints();
 
-        SpatialPosition pos;
-        pos.setElementID(id);
+        auto indices = NumLib::getIndices(id, dof_table_boundary);
+
+        // TODO lots of heap allocations.
+        std::vector<double> neumann_param_nodal_values_local;
+        neumann_param_nodal_values_local.reserve(indices.size());
+        for (auto i : indices)
+        {
+            neumann_param_nodal_values_local.push_back(
+                _data.values.getComponent(i, 0));
+        }
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
             auto const& sm = Base::_shape_matrices[ip];
+            double flux;
+            NumLib::shapeFunctionInterpolate(neumann_param_nodal_values_local,
+                                             sm.N, flux);
+
             auto const& wp = Base::_integration_method.getWeightedPoint(ip);
-            _local_rhs.noalias() += sm.N * _neumann_bc_parameter(t, pos)[0] *
-                                    sm.detJ * wp.getWeight() *
-                                    sm.integralMeasure;
+            _local_rhs.noalias() +=
+                sm.N * flux * sm.detJ * wp.getWeight() * sm.integralMeasure;
         }
 
-        auto const indices = NumLib::getIndices(id, dof_table_boundary);
+        // map boundary dof indices to bulk dof indices
+        for (auto& i : indices)
+        {
+            auto const bulk_node_id =
+                _data.mapping_to_bulk_nodes.getComponent(i, 0);
+
+            MeshLib::Location const l{_data.bulk_mesh_id,
+                                      MeshLib::MeshItemType::Node,
+                                      static_cast<std::size_t>(bulk_node_id)};
+
+            i = _data.dof_table_bulk.getGlobalIndex(l, _data.variable_id_bulk,
+                                                    _data.component_id_bulk);
+            assert(i != NumLib::MeshComponentMap::nop);
+        }
         b.add(indices, _local_rhs);
     }
 
 private:
-    Parameter<double> const& _neumann_bc_parameter;
+    NonuniformNeumannBoundaryConditionData const& _data;
     typename Base::NodalVectorType _local_rhs;
 
 public:
