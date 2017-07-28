@@ -55,12 +55,11 @@ int addObjectsToMesh(FileIO::SwmmInterface &swmm, MeshLib::Mesh &mesh,
 int writeMeshOutput(std::string const& input_file, std::string const& output_file,
     bool const node_args, bool const link_args)
 {
-    std::unique_ptr<FileIO::SwmmInterface> swmm = nullptr;
-    swmm = FileIO::SwmmInterface::create(input_file);
+    std::unique_ptr<FileIO::SwmmInterface> swmm = FileIO::SwmmInterface::create(input_file);
     if (swmm == nullptr)
     return -1;
 
-    MeshLib::Mesh mesh = swmm->getMesh();
+    MeshLib::Mesh& mesh = swmm->getMesh();
 
     bool const no_output_file = !swmm->existsSwmmOutputFile();
     if (!(node_args || link_args) || no_output_file)
@@ -106,8 +105,7 @@ void writeObjectsOfSwmmTypeToCsv(FileIO::SwmmInterface &swmm, FileIO::SwmmObject
 int writeCsvOutput(std::string input_file, std::string output_file,
     bool const node_args, bool const link_args, bool const catchment_args, bool const system_args)
 {
-    std::unique_ptr<FileIO::SwmmInterface> swmm = nullptr;
-    swmm = FileIO::SwmmInterface::create(input_file);
+    std::unique_ptr<FileIO::SwmmInterface> swmm = FileIO::SwmmInterface::create(input_file);
     if (swmm == nullptr)
         return -1;
 
