@@ -43,29 +43,29 @@ public:
             DisplacementDim>::createMaterialStateVariables();
     }
 
-    /*bool computeConstitutiveRelation(
+    boost::optional<std::tuple<KelvinVector,
+                               std::unique_ptr<typename MechanicsBase<
+                                   DisplacementDim>::MaterialStateVariables>,
+                               KelvinMatrix>>
+    integrateStress(
         double const t,
         ProcessLib::SpatialPosition const& x,
         double const dt,
         KelvinVector const& eps_prev,
         KelvinVector const& eps,
         KelvinVector const& sigma_prev,
-        KelvinVector& sigma,
-        KelvinMatrix& C,
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-        material_state_variables) override
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
+            material_state_variables) override
     {
         return LinearElasticIsotropic<DisplacementDim>::
-            computeConstitutiveRelation(t,
+                        integrateStress(t,
                                         x,
                                         dt,
                                         eps_prev,
                                         eps,
                                         sigma_prev,
-                                        sigma,
-                                        C,
                                         material_state_variables);
-    }*/
+    }
 
     bool specialFunction(double const t,
                          ProcessLib::SpatialPosition const& x,

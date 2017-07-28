@@ -79,78 +79,79 @@ private:
                 NumLib::ComponentOrder::BY_LOCATION));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_xx", 1,
+            "sigma_xx",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &PhaseFieldLocalAssemblerInterface::getIntPtSigmaXX));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_yy", 1,
+            "sigma_yy",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &PhaseFieldLocalAssemblerInterface::getIntPtSigmaYY));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_zz", 1,
+            "sigma_zz",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &PhaseFieldLocalAssemblerInterface::getIntPtSigmaZZ));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_xy", 1,
+            "sigma_xy",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &PhaseFieldLocalAssemblerInterface::getIntPtSigmaXY));
 
         if (DisplacementDim == 3)
         {
             Base::_secondary_variables.addSecondaryVariable(
-                "sigma_xz", 1,
+                "sigma_xz",
                 makeExtrapolator(
-                    getExtrapolator(), _local_assemblers,
+                    1, getExtrapolator(), _local_assemblers,
                     &PhaseFieldLocalAssemblerInterface::getIntPtSigmaXZ));
 
             Base::_secondary_variables.addSecondaryVariable(
-                "sigma_yz", 1,
+                "sigma_yz",
                 makeExtrapolator(
-                    getExtrapolator(), _local_assemblers,
+                    1, getExtrapolator(), _local_assemblers,
                     &PhaseFieldLocalAssemblerInterface::getIntPtSigmaYZ));
         }
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_xx", 1,
+            "epsilon_xx",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &PhaseFieldLocalAssemblerInterface::getIntPtEpsilonXX));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_yy", 1,
+            "epsilon_yy",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &PhaseFieldLocalAssemblerInterface::getIntPtEpsilonYY));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_zz", 1,
+            "epsilon_zz",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &PhaseFieldLocalAssemblerInterface::getIntPtEpsilonZZ));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_xy", 1,
+            "epsilon_xy",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &PhaseFieldLocalAssemblerInterface::getIntPtEpsilonXY));
         if (DisplacementDim == 3)
         {
             Base::_secondary_variables.addSecondaryVariable(
-                "epsilon_yz", 1,
-                makeExtrapolator(
-                    getExtrapolator(), _local_assemblers,
-                    &PhaseFieldLocalAssemblerInterface::getIntPtEpsilonYZ));
+                "epsilon_yz",
+                makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                                 &PhaseFieldLocalAssemblerInterface::
+                                     getIntPtEpsilonYZ));
+
             Base::_secondary_variables.addSecondaryVariable(
-                "epsilon_xz", 1,
-                makeExtrapolator(
-                    getExtrapolator(), _local_assemblers,
-                    &PhaseFieldLocalAssemblerInterface::getIntPtEpsilonXZ));
+                "epsilon_xz",
+                makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                                 &PhaseFieldLocalAssemblerInterface::
+                                     getIntPtEpsilonXZ));
         }
     }
 

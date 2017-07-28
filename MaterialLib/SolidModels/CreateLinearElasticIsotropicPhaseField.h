@@ -44,8 +44,7 @@ createLinearElasticIsotropicPhaseField(
     typename LinearElasticIsotropicPhaseField<
         DisplacementDim>::MaterialProperties mp{youngs_modulus, poissons_ratio};
 
-    return std::unique_ptr<LinearElasticIsotropicPhaseField<DisplacementDim>>{
-        new LinearElasticIsotropicPhaseField<DisplacementDim>{mp}};
+    return std::make_unique<LinearElasticIsotropicPhaseField<DisplacementDim>>(mp);
 }
 
 }  // namespace Solids

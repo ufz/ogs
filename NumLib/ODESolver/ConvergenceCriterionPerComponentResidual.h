@@ -32,7 +32,7 @@ public:
         std::vector<double>&& relative_tolerances,
         const MathLib::VecNormType norm_type);
 
-    bool hasDeltaXCheck() const override { return true; }
+    bool hasDeltaXCheck() const override { return false; }
     bool hasResidualCheck() const override { return true; }
 
     /// The function will only do diagnostic output and no actual check of the
