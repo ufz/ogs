@@ -13,9 +13,9 @@
 #include <chrono>
 #include <tclap/CmdLine.h>
 
-#ifndef NDEBUG
+#ifndef _WIN32
 #include <cfenv>
-#endif  // NDEBUG
+#endif  // _WIN32
 
 #ifdef USE_PETSC
 #include <vtkMPIController.h>
@@ -89,6 +89,11 @@ int main(int argc, char *argv[])
         "use unbuffered standard output");
     cmd.add(unbuffered_cout_arg);
 
+    TCLAP::SwitchArg enable_fpe_arg("",
+        "enable-fpe",
+        "enables floating point exceptions. Does nothing on windows");
+    cmd.add(enable_fpe_arg);
+
     cmd.parse(argc, argv);
 
     // deactivate buffer for standard output if specified
@@ -101,10 +106,11 @@ int main(int argc, char *argv[])
     INFO("This is OpenGeoSys-6 version %s.",
          BaseLib::BuildInfo::git_describe.c_str());
 
-// Enable floating point exceptions for debugging.
-#ifndef NDEBUG
-    feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
-#endif  // NDEBUG
+#ifndef _WIN32  // On windows this command line option has no effect.
+    // Enable floating point exceptions
+    if (enable_fpe_arg.isSet())
+        feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+#endif  // _WIN32
 
     BaseLib::RunTime run_time;
     run_time.start();
