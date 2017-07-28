@@ -36,8 +36,11 @@ int writeGeoOutput(std::string input_file, std::string output_file)
     return 0;
 }
 
-int addObjectsToMesh(FileIO::SwmmInterface &swmm, MeshLib::Mesh &mesh,
-    FileIO::SwmmObject const type, std::size_t const timestep)
+int addObjectsToMesh(
+    FileIO::SwmmInterface &swmm,
+    MeshLib::Mesh &mesh,
+    FileIO::SwmmObject const type,
+    std::size_t const timestep)
 {
     std::size_t const n_node_params(swmm.getNumberOfParameters(type));
     for (std::size_t j = 0; j<n_node_params; ++j)
@@ -52,8 +55,11 @@ int addObjectsToMesh(FileIO::SwmmInterface &swmm, MeshLib::Mesh &mesh,
     return 0;
 }
 
-int writeMeshOutput(std::string const& input_file, std::string const& output_file,
-    bool const node_args, bool const link_args)
+int writeMeshOutput(
+    std::string const& input_file,
+    std::string const& output_file,
+    bool const node_args,
+    bool const link_args)
 {
     std::unique_ptr<FileIO::SwmmInterface> swmm = FileIO::SwmmInterface::create(input_file);
     if (swmm == nullptr)
@@ -90,8 +96,11 @@ int writeMeshOutput(std::string const& input_file, std::string const& output_fil
     return 0;
 }
 
-void writeObjectsOfSwmmTypeToCsv(FileIO::SwmmInterface &swmm, FileIO::SwmmObject const type,
-    std::string const& base, std::string const& ext)
+void writeObjectsOfSwmmTypeToCsv(
+    FileIO::SwmmInterface &swmm,
+    FileIO::SwmmObject const type,
+    std::string const& base,
+    std::string const& ext)
 {
     std::size_t n_objects = swmm.getNumberOfObjects(type);
     for (std::size_t i = 0; i<n_objects; ++i)
@@ -102,8 +111,13 @@ void writeObjectsOfSwmmTypeToCsv(FileIO::SwmmInterface &swmm, FileIO::SwmmObject
     }
 }
 
-int writeCsvOutput(std::string input_file, std::string output_file,
-    bool const node_args, bool const link_args, bool const catchment_args, bool const system_args)
+int writeCsvOutput(
+    std::string input_file,
+    std::string output_file,
+    bool const node_args,
+    bool const link_args,
+    bool const catchment_args,
+    bool const system_args)
 {
     std::unique_ptr<FileIO::SwmmInterface> swmm = FileIO::SwmmInterface::create(input_file);
     if (swmm == nullptr)
