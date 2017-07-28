@@ -61,7 +61,10 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 
     vtkUnstructuredGrid* vtkGrid = reader->GetOutput();
     if (vtkGrid->GetNumberOfPoints() == 0)
+    {
+        ERR("Mesh \"%s\" contains zero points.", file_name.c_str());
         return nullptr;
+    }
 
     std::string const mesh_name (BaseLib::extractBaseNameWithoutExtension(file_name));
     return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid, mesh_name);
