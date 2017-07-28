@@ -28,18 +28,18 @@ createNonuniformNeumannBoundaryCondition(
     // TODO handle paths correctly
     auto const mesh_file = config.getConfigParameter<std::string>("mesh");
 
-    std::unique_ptr<MeshLib::Mesh> surface_mesh(
+    std::unique_ptr<MeshLib::Mesh> boundary_mesh(
         MeshLib::IO::readMeshFromFile(mesh_file));
 
     // Surface mesh and bulk mesh must have equal axial symmetry flags!
-    surface_mesh->setAxiallySymmetric(bulk_mesh.isAxiallySymmetric());
+    boundary_mesh->setAxiallySymmetric(bulk_mesh.isAxiallySymmetric());
 
     // TODO add field type?
     auto const field_name =
         config.getConfigParameter<std::string>("field_name");
 
     auto const* const property =
-        surface_mesh->getProperties().getPropertyVector<double>(field_name);
+        boundary_mesh->getProperties().getPropertyVector<double>(field_name);
 
     if (!property)
     {
@@ -61,7 +61,7 @@ createNonuniformNeumannBoundaryCondition(
     }
 
     auto const* const mapping_to_bulk_nodes =
-        surface_mesh->getProperties().getPropertyVector<long>(
+        boundary_mesh->getProperties().getPropertyVector<long>(
             "bulk_mesh_node_ids");
 
     if (!(mapping_to_bulk_nodes &&
@@ -73,8 +73,8 @@ createNonuniformNeumannBoundaryCondition(
     }
 
     return std::make_unique<NonuniformNeumannBoundaryCondition>(
-        bulk_mesh.isAxiallySymmetric(), integration_order, shapefunction_order,
-        bulk_mesh.getDimension(), std::move(surface_mesh),
+        integration_order, shapefunction_order, bulk_mesh.getDimension(),
+        std::move(boundary_mesh),
         NonuniformNeumannBoundaryConditionData{
             *property, bulk_mesh.getID(), *mapping_to_bulk_nodes, dof_table,
             variable_id, component_id});

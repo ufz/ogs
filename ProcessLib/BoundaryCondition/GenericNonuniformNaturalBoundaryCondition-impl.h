@@ -21,8 +21,8 @@ template <typename Data>
 GenericNonuniformNaturalBoundaryCondition<BoundaryConditionData,
                                           LocalAssemblerImplementation>::
     GenericNonuniformNaturalBoundaryCondition(
-        bool is_axially_symmetric, unsigned const integration_order,
-        unsigned const shapefunction_order, unsigned const global_dim,
+        unsigned const integration_order, unsigned const shapefunction_order,
+        unsigned const global_dim,
         std::unique_ptr<MeshLib::Mesh>&& boundary_mesh, Data&& data)
     : _data(std::forward<Data>(data)), _boundary_mesh(std::move(boundary_mesh))
 {
@@ -51,8 +51,8 @@ GenericNonuniformNaturalBoundaryCondition<BoundaryConditionData,
 
     createLocalAssemblers<LocalAssemblerImplementation>(
         global_dim, _boundary_mesh->getElements(), *_dof_table_boundary,
-        shapefunction_order, _local_assemblers, is_axially_symmetric,
-        integration_order, _data);
+        shapefunction_order, _local_assemblers,
+        _boundary_mesh->isAxiallySymmetric(), integration_order, _data);
 }
 
 template <typename BoundaryConditionData,

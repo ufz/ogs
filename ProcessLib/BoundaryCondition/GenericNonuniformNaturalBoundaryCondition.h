@@ -27,8 +27,8 @@ public:
     /// A local DOF-table, a subset of the given one, is constructed.
     template <typename Data>
     GenericNonuniformNaturalBoundaryCondition(
-        bool is_axially_symmetric, unsigned const integration_order,
-        unsigned const shapefunction_order, unsigned const global_dim,
+        unsigned const integration_order, unsigned const shapefunction_order,
+        unsigned const global_dim,
         std::unique_ptr<MeshLib::Mesh>&& boundary_mesh, Data&& data);
 
     /// Calls local assemblers which calculate their contributions to the global
