@@ -581,7 +581,7 @@ AddTest(
     EXECUTABLE_ARGS neumann_nonuniform.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-15 RELTOL 1e-15
+    ABSTOL 4e-2 RELTOL 1e-16
     DIFF_DATA
-    a b c d
+    inhomogeneous_permeability.vtu neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu mass_flux_ref mass_flux
 )
