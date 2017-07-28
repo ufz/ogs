@@ -31,6 +31,11 @@ createNonuniformNeumannBoundaryCondition(
     std::unique_ptr<MeshLib::Mesh> boundary_mesh(
         MeshLib::IO::readMeshFromFile(mesh_file));
 
+    if (!boundary_mesh)
+    {
+        OGS_FATAL("Error reading mesh `%s'", mesh_file.c_str());
+    }
+
     // Surface mesh and bulk mesh must have equal axial symmetry flags!
     boundary_mesh->setAxiallySymmetric(bulk_mesh.isAxiallySymmetric());
 
@@ -61,7 +66,7 @@ createNonuniformNeumannBoundaryCondition(
     }
 
     auto const* const mapping_to_bulk_nodes =
-        boundary_mesh->getProperties().getPropertyVector<long>(
+        boundary_mesh->getProperties().getPropertyVector<unsigned long>(
             "bulk_mesh_node_ids");
 
     if (!(mapping_to_bulk_nodes &&

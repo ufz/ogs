@@ -24,7 +24,7 @@ struct NonuniformNeumannBoundaryConditionData
 
     // Used for mapping boundary nodes to bulk nodes.
     std::size_t bulk_mesh_id;
-    MeshLib::PropertyVector<long> const& mapping_to_bulk_nodes;
+    MeshLib::PropertyVector<unsigned long> const& mapping_to_bulk_nodes;
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk;
     int const variable_id_bulk;
     int const component_id_bulk;
