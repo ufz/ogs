@@ -573,3 +573,15 @@ foreach(mesh_size 1e1)
         line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_N1_right pressure
     )
 endforeach()
+
+AddTest(
+    NAME GroundWaterFlowProcess_Neumann_nonuniform
+    PATH Elliptic/nonuniform_bc_Groundwaterflow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS neumann_nonuniform.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-15 RELTOL 1e-15
+    DIFF_DATA
+    a b c d
+)
