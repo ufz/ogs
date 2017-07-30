@@ -13,12 +13,12 @@ builders['gcc'] = {
     }
 }
 
-builders['gcc-conan'] = {
+// builders['gcc-conan'] = {
     node('docker') {
         dir('ogs') { checkoutWithTags() }
         load 'ogs/scripts/jenkins/gcc-conan.groovy'
     }
-}
+// }
 
 builders['gcc-dynamic'] = {
     node('envinf1') {
@@ -67,7 +67,7 @@ if (helper.isOriginMaster(this)) {
 }
 
 try {
-    parallel builders
+    // parallel builders
 }
 catch (err) {
     currentBuild.result = 'FAILURE'
