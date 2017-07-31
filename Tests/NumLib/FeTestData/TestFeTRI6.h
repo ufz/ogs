@@ -16,6 +16,16 @@
 
 namespace FeTestData
 {
+/** Test the six node iso parameter triangle element
+ * Assuming that the edge points are translated outside of the square shape
+ * element with a distance of b (perturbation) to their owner edges, we can
+ * obtain the the area of the changed element as
+ * \f[
+ *   A = A_0 + \sum_{i=1}^3\frac{2}{3}a_i b
+ * \f]
+ * where\f$A_0\f$ is the area of the original triangle, \f$a_i\f$ is the length
+ * of edge \f$i\f$ of the original element.
+ */
 class TestFeTRI6
 {
 public:
@@ -31,6 +41,7 @@ public:
     static const unsigned n_sample_pt_order2 = 3;
     static const unsigned n_sample_pt_order3 = 4;
     static const unsigned global_dim = MeshElementType::dimension;
+    const double perturbation = 0.1;
 
     /// create a mesh element
     MeshElementType* createMeshElement()
@@ -40,14 +51,23 @@ public:
         nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0);
         nodes[2] = new MeshLib::Node(0.0, 1.0, 0.0);
 
-        nodes[3] = new MeshLib::Node(0.5, 0.0, 0.0);
-        nodes[4] = new MeshLib::Node(0.5, 0.5, 0.0);
-        nodes[5] = new MeshLib::Node(0.0, 0.5, 0.0);
+        nodes[3] = new MeshLib::Node(0.5, perturbation, 0.0);
+        const double perturbation_hypotenuse =
+            0.5 * perturbation * std::sqrt(2.0);
+        nodes[4] = new MeshLib::Node(0.5 - perturbation_hypotenuse,
+                                     0.5 - perturbation_hypotenuse, 0.0);
+        nodes[5] = new MeshLib::Node(perturbation, 0.5, 0.0);
 
         return new MeshElementType(nodes);
     }
 
-    double getVolume() const { return 0.5; }
+    double getVolume() const
+    {
+        // The length of hypotenuse is a_h=sqrt(2)
+        // Area = 0.5 - 2 * 2 * a * b /3 - 2 * a_h * b /3
+        // where a=1.0, b=perturbation
+        return 0.27238576250846036;
+    }
 };
 
 }  // namespace

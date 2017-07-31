@@ -15,6 +15,15 @@
 
 namespace FeTestData
 {
+/** Test the eight node iso parameter quadrilateral element
+ * Assuming that the edge points are translated outside of the square shape
+ * element with a distance of b (perturbation) to their owner edges, we can
+ * obtain the the area of the changed element as
+ * \f[
+ *   A = a^2 + \frac{8}{3}a b
+ * \f]
+ * where \f$a\f$ is the length of the edge of the original element.
+ */
 class TestFeQUAD8
 {
 public:
@@ -36,7 +45,6 @@ public:
     /// create a mesh element
     MeshElementType* createMeshElement()
     {
-        // square
         auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
         nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0);

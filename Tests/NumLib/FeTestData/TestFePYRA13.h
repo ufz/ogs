@@ -35,23 +35,26 @@ public:
     /// create a mesh element
     MeshElementType* createMeshElement()
     {
-        // cubic
         auto** nodes = new MeshLib::Node*[e_nnodes];
+        // nodes on base
         nodes[0] = new MeshLib::Node(0.0, 0.0, 0.5);
         nodes[1] = new MeshLib::Node(0.0, 0.0, 0.0);
         nodes[2] = new MeshLib::Node(0.0, 0.5, 0.0);
         nodes[3] = new MeshLib::Node(0.0, 0.5, 0.5);
+        // node at the top
         nodes[4] = new MeshLib::Node(0.25, 0.25, 0.25);
 
+        // mid-edge nodes on base
         nodes[5] = new MeshLib::Node(0.0, 0.0, 0.25);
         nodes[6] = new MeshLib::Node(0.0, 0.25, 0.0);
         nodes[7] = new MeshLib::Node(0.0, 0.5, 0.25);
         nodes[8] = new MeshLib::Node(0.0, 0.25, 0.5);
 
-        nodes[9] = new MeshLib::Node(0.125, 0.125, 0.3625);
+        // mid-edge nodes between the base and the top
+        nodes[9] = new MeshLib::Node(0.125, 0.125, 0.375);
         nodes[10] = new MeshLib::Node(0.125, 0.125, 0.125);
-        nodes[11] = new MeshLib::Node(0.125, 0.3625, 0.125);
-        nodes[12] = new MeshLib::Node(0.125, 0.3625, 0.3625);
+        nodes[11] = new MeshLib::Node(0.125, 0.375, 0.125);
+        nodes[12] = new MeshLib::Node(0.125, 0.375, 0.375);
 
         return new MeshElementType(nodes);
     }
