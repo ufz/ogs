@@ -103,10 +103,11 @@ void writeObjectsOfSwmmTypeToCsv(
     std::string const& ext)
 {
     std::size_t n_objects = swmm.getNumberOfObjects(type);
+    std::string const& type_str (swmm.swmmObjectTypeToString(type));
     for (std::size_t i = 0; i<n_objects; ++i)
     {
         std::string const obj_name = swmm.getName(type, i);
-        std::string const obj_file_name = std::string(base + "_" + obj_name + ext);
+        std::string const obj_file_name = std::string(base + "_" + type_str + "_" + obj_name + ext);
         swmm.writeCsvForObject(obj_file_name, type, i);
     }
 }
@@ -189,11 +190,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if ((add_nodes_arg.getValue() || add_links_arg.getValue()) && !mesh_output_arg.isSet())
-    {
-        ERR("Please specify mesh output file for exporting node or link parameters.");
-        return -1;
-    }
     if ((add_subcatchments_arg.getValue() || add_system_arg.getValue()) && !csv_output_arg.isSet())
     {
         ERR("Please specify csv output file for exporting subcatchment or system parameters.");
@@ -208,8 +204,13 @@ int main(int argc, char *argv[])
             add_nodes_arg.getValue(), add_links_arg.getValue());
 
     if (csv_output_arg.isSet())
-        writeCsvOutput(swmm_input_arg.getValue(), csv_output_arg.getValue(),
-            false, false, add_subcatchments_arg.getValue(), add_system_arg.getValue());
+        writeCsvOutput(
+            swmm_input_arg.getValue(),
+            csv_output_arg.getValue(),
+            add_nodes_arg.getValue(),
+            add_links_arg.getValue(),
+            add_subcatchments_arg.getValue(),
+            add_system_arg.getValue());
 
     return 0;
 }

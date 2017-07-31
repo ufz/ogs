@@ -114,6 +114,9 @@ public:
     /// Checks if a SWMM output file exists for the current input
     bool existsSwmmOutputFile() const;
 
+    /// Returns a string with the name of the object type
+    static std::string swmmObjectTypeToString(SwmmObject const obj_type);
+
     /// Reading a SWMM input file and conversion into OGS geometry.
     static bool convertSwmmInputToGeometry(std::string const& inp_file_name,
         GeoLib::GEOObjects &geo_objects, bool add_subcatchments);
