@@ -10,8 +10,15 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include <utility>
 
+namespace MaterialLib
+{
+namespace Solids
+{
+template <int DisplacementDim>
+struct MechanicsBase;
+}
+}
 namespace ProcessLib
 {
 namespace HydroMechanics
