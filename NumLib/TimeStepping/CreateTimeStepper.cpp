@@ -26,14 +26,14 @@ namespace NumLib
 std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{prj__time_loop__time_stepping__type}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     auto const type = config.peekConfigParameter<std::string>("type");
 
     std::unique_ptr<NumLib::TimeStepAlgorithm> timestepper;
 
     if (type == "SingleStep")
     {
-        //! \ogs_file_param_special{prj__time_loop__time_stepping__SingleStep}
+        //! \ogs_file_param_special{prj__time_loop__processes__process__time_stepping__SingleStep}
         config.ignoreConfigParameter("type");
         timestepper =
             std::make_unique<NumLib::FixedTimeStepping>(0.0, 1.0, 1.0);
