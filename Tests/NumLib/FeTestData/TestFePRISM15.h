@@ -30,6 +30,7 @@ public:
     static const unsigned n_sample_pt_order2 = 6;
     static const unsigned n_sample_pt_order3 = 6;  // TODO no implementation yet
     static const unsigned global_dim = MeshElementType::dimension;
+    const double perturbation = 0.2;
 
     /// create a mesh element
     MeshElementType* createMeshElement()
@@ -46,19 +47,19 @@ public:
         nodes[5] = new MeshLib::Node(0.5, 0.5, 0.5);
 
         // mid-edge nodes on bottom
-        nodes[6] = new MeshLib::Node(0.25, 0.0, 0.0);
-        nodes[7] = new MeshLib::Node(0.5, 0.25, 0.0);
-        nodes[8] = new MeshLib::Node(0.25, 0.25, 0.0);
+        nodes[6] = new MeshLib::Node(0.25, 0.0, perturbation);
+        nodes[7] = new MeshLib::Node(0.5, 0.25, perturbation);
+        nodes[8] = new MeshLib::Node(0.25, 0.25, perturbation);
 
         // mid-edge nodes on top
-        nodes[9] = new MeshLib::Node(0.25, 0.0, 0.5);
-        nodes[10] = new MeshLib::Node(0.5, 0.25, 0.5);
-        nodes[11] = new MeshLib::Node(0.25, 0.25, 0.5);
+        nodes[9] = new MeshLib::Node(0.25, 0.0, 0.5 + perturbation);
+        nodes[10] = new MeshLib::Node(0.5, 0.25, 0.5 + perturbation);
+        nodes[11] = new MeshLib::Node(0.25, 0.25, 0.5 + perturbation);
 
         // mid-edge nodes between the bottom and the top
-        nodes[12] = new MeshLib::Node(0.0, 0.0, 0.25);
-        nodes[13] = new MeshLib::Node(0.5, 0.0, 0.25);
-        nodes[14] = new MeshLib::Node(0.5, 0.5, 0.25);
+        nodes[12] = new MeshLib::Node(0.0, perturbation, 0.25);
+        nodes[13] = new MeshLib::Node(0.5, perturbation, 0.25);
+        nodes[14] = new MeshLib::Node(0.5, 0.5 + perturbation, 0.25);
 
         return new MeshElementType(nodes);
     }

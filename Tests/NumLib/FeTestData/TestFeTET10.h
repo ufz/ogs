@@ -31,6 +31,7 @@ public:
     static const unsigned n_sample_pt_order2 = 5;
     static const unsigned n_sample_pt_order3 = 15;
     static const unsigned global_dim = MeshElementType::dimension;
+    const double perturbation = 0.2;
 
     /// create a mesh element
     MeshElementType* createMeshElement()
@@ -38,25 +39,25 @@ public:
         auto** nodes = new MeshLib::Node*[e_nnodes];
         // nodes on the base
         nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
-        nodes[1] = new MeshLib::Node(0.5, 0.5, 0.5);
-        nodes[2] = new MeshLib::Node(0.5, 0.0, 0.5);
+        nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0);
+        nodes[2] = new MeshLib::Node(0.0, 1.0, 0.0);
         // top node
-        nodes[3] = new MeshLib::Node(1.0, 0.5, 0.5);
+        nodes[3] = new MeshLib::Node(0.0, 0.0, 1.0);
 
         // mid-edge nodes on the base
-        nodes[4] = new MeshLib::Node(0.25, 0.25, 0.25);
-        nodes[5] = new MeshLib::Node(0.5, 0.25, 0.5);
-        nodes[6] = new MeshLib::Node(0.25, 0.0, 0.25);
+        nodes[4] = new MeshLib::Node(0.5, 0.0, 0.0);
+        nodes[5] = new MeshLib::Node(0.5, 0.5, 0.0);
+        nodes[6] = new MeshLib::Node(0.0, 0.5, 0.0);
 
         // mid-edge nodes between the base and the top
-        nodes[7] = new MeshLib::Node(0.5, 0.25, 0.25);
-        nodes[8] = new MeshLib::Node(0.75, 0.5, 0.5);
-        nodes[9] = new MeshLib::Node(0.75, 0.25, 0.5);
+        nodes[7] = new MeshLib::Node(perturbation, 0.0, 0.5);
+        nodes[8] = new MeshLib::Node(0.5 + perturbation, 0.0, 0.5);
+        nodes[9] = new MeshLib::Node(perturbation, 0.5, 0.5);
 
         return new MeshElementType(nodes);
     }
 
-    double getVolume() const { return 0.125 / 6.; }
+    double getVolume() const { return 1.0 / 6.; }
 };
 
 }  // namespace

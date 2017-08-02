@@ -30,6 +30,7 @@ public:
     static const unsigned n_sample_pt_order2 = 2 * 2 * 2;
     static const unsigned n_sample_pt_order3 = 3 * 3 * 3;
     static const unsigned global_dim = MeshElementType::dimension;
+    const double perturbation = 0.2;
 
     /// create a mesh element
     MeshElementType* createMeshElement()
@@ -47,22 +48,22 @@ public:
         nodes[7] = new MeshLib::Node(0.0, 1.0, 1.0);
 
         // mid-edge nodes on bottom
-        nodes[8] = new MeshLib::Node(0.5, 0.0, 0.0);
-        nodes[9] = new MeshLib::Node(1.0, 0.5, 0.0);
-        nodes[10] = new MeshLib::Node(0.5, 1.0, 0.0);
-        nodes[11] = new MeshLib::Node(0.0, 0.5, 0.0);
+        nodes[8] = new MeshLib::Node(0.5, perturbation, 0.0);
+        nodes[9] = new MeshLib::Node(1.0 + perturbation, 0.5, 0.0);
+        nodes[10] = new MeshLib::Node(0.5, 1.0 + perturbation, 0.0);
+        nodes[11] = new MeshLib::Node(perturbation, 0.5, 0.0);
 
         // mid-edge nodes on top
-        nodes[12] = new MeshLib::Node(0.5, 0.0, 1.0);
-        nodes[13] = new MeshLib::Node(1.0, 0.5, 1.0);
-        nodes[14] = new MeshLib::Node(0.5, 1.0, 1.0);
-        nodes[15] = new MeshLib::Node(0.0, 0.5, 1.0);
+        nodes[12] = new MeshLib::Node(0.5,  perturbation, 1.0);
+        nodes[13] = new MeshLib::Node(1.0 + perturbation, 0.5, 1.0);
+        nodes[14] = new MeshLib::Node(0.5, 1.0 + perturbation, 1.0);
+        nodes[15] = new MeshLib::Node(perturbation, 0.5, 1.0);
 
         // mid-edge nodes between the bottom and the top
-        nodes[16] = new MeshLib::Node(0.0, 0.0, 0.5);
-        nodes[17] = new MeshLib::Node(1.0, 0.0, 0.5);
-        nodes[18] = new MeshLib::Node(1.0, 1.0, 0.5);
-        nodes[19] = new MeshLib::Node(0.0, 1.0, 0.5);
+        nodes[16] = new MeshLib::Node(perturbation, 0.0, 0.5);
+        nodes[17] = new MeshLib::Node(1.0 + perturbation, 0.0, 0.5);
+        nodes[18] = new MeshLib::Node(1.0 + perturbation, 1.0, 0.5);
+        nodes[19] = new MeshLib::Node(perturbation, 1.0, 0.5);
 
         return new MeshElementType(nodes);
     }
