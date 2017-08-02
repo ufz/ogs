@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     cmd.parse( argc, argv );
 
     const std::string str_order = new_order_arg.getValue();
-    std::array<int, 3> new_order = {};
+    std::array<int, 3> new_order = {{}};
     if (!parseNewOrder(str_order, new_order))
         return EXIT_FAILURE;
 

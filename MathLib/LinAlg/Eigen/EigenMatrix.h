@@ -195,7 +195,8 @@ void operator()(EigenMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
                   "Set matrix sparsity relies on the EigenMatrix to be in "
                   "row-major storage order.");
 
-    assert(matrix.getNumberOfRows() == sparsity_pattern.size());
+    assert(matrix.getNumberOfRows()
+               == static_cast<EigenMatrix::IndexType>(sparsity_pattern.size()));
 
     matrix.getRawMatrix().reserve(sparsity_pattern);
 }

@@ -68,7 +68,7 @@ template <int GlobalDim, template <typename, typename, typename, int>
                          class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
-    const unsigned dimension,
+    const unsigned /*dimension*/,
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     const unsigned shapefunction_order,
