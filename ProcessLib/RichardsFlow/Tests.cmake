@@ -40,7 +40,7 @@ AddTest(
     TESTER vtkdiff
     ABSTOL 1e-8 RELTOL 1e-3
     DIFF_DATA
-    ref_t_1600.000000.vtu richards_pcs_0_ts_805_t_1600.000000.vtu pressure pressure
+    ref_t_1600.000000.vtu richards_pcs_0_ts_803_t_1600.000000.vtu pressure pressure
     REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
 )
 
@@ -55,5 +55,5 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     ABSTOL 1e-8 RELTOL 1e-3
     DIFF_DATA
-    ref_t_1600.000000.vtu richards_pcs_0_ts_805_t_1600_000000_0.vtu pressure pressure
+    ref_t_1600.000000.vtu richards_pcs_0_ts_803_t_1600_000000_0.vtu pressure pressure
 )
