@@ -117,7 +117,7 @@ AddTest(
     EXECUTABLE_ARGS quad_5500x5500_adaptive_dt.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS NOT OGS_USE_MPI
     ABSTOL 1.e-16 RELTOL 1e-16
     DIFF_DATA
     ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_232_t_50000000000.000000.vtu  pressure pressure
@@ -131,8 +131,8 @@ AddTest(
     EXECUTABLE_ARGS quad_5500x5500_adaptive_dt_constant_viscosity.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    ABSTOL 1.e-16 RELTOL 1e-16
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1.e-16 RELTOL 1e-9 ### increased RETOL for the case of lis solver
     DIFF_DATA
     ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  pressure pressure
     ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  temperature temperature
