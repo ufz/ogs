@@ -445,8 +445,6 @@ public:
                      phasefield_index, displacement_index)
             .noalias() += Kdu;
 
-        // Eigen::EigenSolver<JacobianMatrix> eigensolver(local_Jac);
-        // std::cout << "eigenvalues" << eigensolver.eigenvalues() << "\n";
     }
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
@@ -513,7 +511,7 @@ public:
         return getIntPtSigma(cache, 3);
     }
 
-    std::vector<double> const& getIntPtSigmaXZ(
+    std::vector<double> const& getIntPtSigmaYZ(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
@@ -523,7 +521,7 @@ public:
         return getIntPtSigma(cache, 4);
     }
 
-    std::vector<double> const& getIntPtSigmaYZ(
+    std::vector<double> const& getIntPtSigmaXZ(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
@@ -569,7 +567,7 @@ public:
         return getIntPtEpsilon(cache, 3);
     }
 
-    std::vector<double> const& getIntPtEpsilonXZ(
+    std::vector<double> const& getIntPtEpsilonYZ(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
@@ -579,7 +577,7 @@ public:
         return getIntPtEpsilon(cache, 4);
     }
 
-    std::vector<double> const& getIntPtEpsilonYZ(
+    std::vector<double> const& getIntPtEpsilonXZ(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
