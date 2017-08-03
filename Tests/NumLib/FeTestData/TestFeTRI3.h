@@ -44,6 +44,8 @@ public:
         return new MeshLib::Tri(nodes);
     }
 
+    double getVolume() const { return 0.5; }
+
     /// set an expected mass matrix for 1m x 1m
     template <class T_MATRIX>
     void setExpectedMassMatrix(T_MATRIX &m)

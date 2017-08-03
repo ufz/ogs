@@ -20,9 +20,9 @@ void ShapeTet10::computeShapeFunction(const T_X &r, T_N &N)
     N[4] = 4.0 * r[0] * (1.0 - r[0] - r[1] - r[2]);
     N[5] = 4.0 * r[0] * r[1];
     N[6] = 4.0 * r[1] * (1.0 - r[0] - r[1] - r[2]);
-    N[7] = 4.0 * r[0] * r[2];
-    N[8] = 4.0 * r[1] * r[2];
-    N[9] = 4.0 * r[2] * (1.0 - r[0] - r[1] - r[2]);
+    N[7] = 4.0 * r[2] * (1.0 - r[0] - r[1] - r[2]);
+    N[8] = 4.0 * r[0] * r[2];
+    N[9] = 4.0 * r[1] * r[2];
 }
 
 template <class T_X, class T_N>
@@ -35,9 +35,9 @@ void ShapeTet10::computeGradShapeFunction(const T_X &r, T_N &dNdr)
     dNdr[4] = 4.0 * (1.0 - 2.0 * r[0] - r[1] - r[2]);
     dNdr[5] = 4.0 * r[1];
     dNdr[6] = -4.0 * r[1];
-    dNdr[7] = 4.0 * r[2];
-    dNdr[8] = 0.0;
-    dNdr[9] = -4.0 * r[2];
+    dNdr[7] = -4.0 * r[2];
+    dNdr[8] = 4.0 * r[2];
+    dNdr[9] = 0.0;
 
     dNdr[10] =  4. * (r[0] + r[1] + r[2]) - 3.;
     dNdr[11] = 0.0;
@@ -46,9 +46,9 @@ void ShapeTet10::computeGradShapeFunction(const T_X &r, T_N &dNdr)
     dNdr[14] = -4.0 * r[0];
     dNdr[15] = 4.0 * r[0];
     dNdr[16] = 4.0 * (1.0 - r[0] - 2.0 * r[1] - r[2]);
-    dNdr[17] = 0.0;
-    dNdr[18] = 4.0 * r[2];
-    dNdr[19] = -4.0 * r[2];
+    dNdr[17] = -4.0 * r[2];
+    dNdr[18] = 0.0;
+    dNdr[19] = 4.0 * r[2];
 
     dNdr[20] = 4. * (r[0] + r[1] + r[2]) - 3.;
     dNdr[21] = 0.;
@@ -57,9 +57,9 @@ void ShapeTet10::computeGradShapeFunction(const T_X &r, T_N &dNdr)
     dNdr[24] = -4.0 * r[0];
     dNdr[25] = 0.0;
     dNdr[26] = -4.0 * r[1];
-    dNdr[27] = 4.0 * r[0];
-    dNdr[28] = 4.0 * r[1];
-    dNdr[29] = 4.0 * (1.0 - r[0] - r[1] - 2.0 * r[2]);
+    dNdr[27] = 4.0 * (1.0 - r[0] - r[1] - 2.0 * r[2]);
+    dNdr[28] = 4.0 * r[0];
+    dNdr[29] = 4.0 * r[1];
 }
 
 }
