@@ -17,7 +17,7 @@ namespace FeTestData
 {
 class TestFeQUAD9
 {
-    /** Test the nine node iso parameter quadrilateral element
+    /** Test the nine node iso-parametric quadrilateral element
      * Assuming that the edge points are translated outside of the square shape
      * element with a distance of b (perturbation) to their owner edges, we can
      * obtain the the area of the changed element as

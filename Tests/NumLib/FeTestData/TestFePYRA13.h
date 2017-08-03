@@ -33,7 +33,7 @@ public:
     static const unsigned global_dim = MeshElementType::dimension;
     const double perturbation = 0.2;
 
-    /// create a mesh element
+    /// create a 13 node pyramid element with curved edges
     MeshElementType* createMeshElement()
     {
         auto** nodes = new MeshLib::Node*[e_nnodes];

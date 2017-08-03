@@ -16,7 +16,7 @@
 
 namespace FeTestData
 {
-/** Test the six node iso parameter triangle element
+/** Test the six node iso-parametric triangle element
  * Assuming that the edge points are translated outside of the square shape
  * element with a distance of b (perturbation) to their owner edges, we can
  * obtain the the area of the changed element as

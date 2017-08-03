@@ -101,7 +101,7 @@ using TestTypes =
 }
 
 template <class T>
-class GradShapeFucntionTest : public ::testing::Test, public T::TestFeType
+class GradShapeFunctionTest : public ::testing::Test, public T::TestFeType
 {
 public:
     using ShapeMatrixTypes = typename T::ShapeMatrixTypes;
@@ -126,7 +126,7 @@ public:
         MeshElementType>::IntegrationMethod;
 
 public:
-    GradShapeFucntionTest()
+    GradShapeFunctionTest()
         : integration_method(3),
           element_volume(this->getVolume()),
           mesh_element(this->createMeshElement())
@@ -138,7 +138,7 @@ public:
                 vec_nodes.push_back(e->getNode(i));
     }
 
-    ~GradShapeFucntionTest() override
+    ~GradShapeFunctionTest() override
     {
         for (auto itr = vec_nodes.begin(); itr != vec_nodes.end(); ++itr)
             delete *itr;
@@ -158,20 +158,20 @@ public:
 };  // NumLibFemIsoTest
 
 template <class T>
-const unsigned GradShapeFucntionTest<T>::dim;
+const unsigned GradShapeFunctionTest<T>::dim;
 
 template <class T>
-const unsigned GradShapeFucntionTest<T>::e_nnodes;
+const unsigned GradShapeFunctionTest<T>::e_nnodes;
 
 template <class T>
-const unsigned GradShapeFucntionTest<T>::n_sample_pt_order2;
+const unsigned GradShapeFunctionTest<T>::n_sample_pt_order2;
 
 template <class T>
-const unsigned GradShapeFucntionTest<T>::n_sample_pt_order3;
+const unsigned GradShapeFunctionTest<T>::n_sample_pt_order3;
 
-TYPED_TEST_CASE(GradShapeFucntionTest, TestTypes);
+TYPED_TEST_CASE(GradShapeFunctionTest, TestTypes);
 
-TYPED_TEST(GradShapeFucntionTest,
+TYPED_TEST(GradShapeFunctionTest,
            CheckGradShapeFunctionByComputingElementVolume)
 {
     // Refer to typedefs in the fixture

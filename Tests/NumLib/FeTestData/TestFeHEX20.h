@@ -32,7 +32,7 @@ public:
     static const unsigned global_dim = MeshElementType::dimension;
     const double perturbation = 0.2;
 
-    /// create a mesh element
+    /// create a 20 node hexahedral element with curved edges
     MeshElementType* createMeshElement()
     {
         auto** nodes = new MeshLib::Node*[e_nnodes];
@@ -54,7 +54,7 @@ public:
         nodes[11] = new MeshLib::Node(perturbation, 0.5, 0.0);
 
         // mid-edge nodes on top
-        nodes[12] = new MeshLib::Node(0.5,  perturbation, 1.0);
+        nodes[12] = new MeshLib::Node(0.5, perturbation, 1.0);
         nodes[13] = new MeshLib::Node(1.0 + perturbation, 0.5, 1.0);
         nodes[14] = new MeshLib::Node(0.5, 1.0 + perturbation, 1.0);
         nodes[15] = new MeshLib::Node(perturbation, 0.5, 1.0);
