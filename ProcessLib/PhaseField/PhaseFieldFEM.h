@@ -88,7 +88,7 @@ struct IntegrationPointData final
 
         static_cast<MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>&>(
             solid_material)
-            .specialFunction(t, x_position, eps, strain_energy_tensile,
+            .calculateDegradedStress(t, x_position, eps, strain_energy_tensile,
                              sigma_tensile, sigma_compressive, C_tensile,
                              C_compressive, sigma_real, degradation);
 

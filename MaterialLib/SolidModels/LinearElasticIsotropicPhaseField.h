@@ -67,7 +67,7 @@ public:
                                         material_state_variables);
     }
 
-    bool specialFunction(double const t,
+    bool calculateDegradedStress(double const t,
                          ProcessLib::SpatialPosition const& x,
                          KelvinVector const& eps,
                          double& strain_energy_tensile,

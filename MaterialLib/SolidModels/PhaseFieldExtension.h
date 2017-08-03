@@ -24,7 +24,7 @@ struct PhaseFieldExtension : public MechanicsBase<DisplacementDim>
 {
     using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
     using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
-    virtual bool specialFunction(double const t,
+    virtual bool calculateDegradedStress(double const t,
                                  ProcessLib::SpatialPosition const& x,
                                  KelvinVector const& eps,
                                  double& strain_energy_tensile,
@@ -37,7 +37,7 @@ struct PhaseFieldExtension : public MechanicsBase<DisplacementDim>
 
     /// Dynamic size Kelvin vector and matrix wrapper for the polymorphic
     /// constitutive relation compute function.
-    bool specialFunction(
+    bool calculateDegradedStress(
         double const t,
         ProcessLib::SpatialPosition const& x,
         Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps,
@@ -63,7 +63,7 @@ struct PhaseFieldExtension : public MechanicsBase<DisplacementDim>
         KelvinMatrix C_compressive_{C_compressive};
         KelvinVector sigma_real_{sigma_real};
 
-        bool const result = specialFunction(t,
+        bool const result = calculateDegradedStress(t,
                                             x,
                                             eps_,
                                             strain_energy_tensile,
