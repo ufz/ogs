@@ -668,18 +668,6 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         }
         else
         {
-            if (std::abs(dt - prev_dt) < std::numeric_limits<double>::min() &&
-                _last_step_rejected)
-            {
-                OGS_FATAL(
-                    "\tThis time step is rejected and the new computed"
-                    " step size is the same as\n"
-                    "\tthat was just used.\n"
-                    "\tSuggest to adjust the parameters of the time"
-                    " stepper or try other time stepper.\n"
-                    "\tThe program stops");
-            }
-
             if (t < _end_time)
             {
                 t -= prev_dt;
@@ -793,6 +781,36 @@ bool UncoupledProcessesTimeLoop::loop()
                 "Time stepping stops at step %u and at time of %g.",
                 dt, timesteps, t);
             break;
+        }
+
+        // If this step was rejected twice with the same time step size, jump
+        // out this function directly with a failure flag and let the main
+        // function terminate the program.
+        if (std::abs(dt - prev_dt) < std::numeric_limits<double>::min() &&
+            _last_step_rejected)
+        {
+            ALERT(
+                "\tTime step %u is rejected and the new computed"
+                " step size is the same as\n"
+                "\tthat was just used.\n"
+                "\tSuggest to adjust the parameters of the time"
+                " stepper or try other time stepper.\n"
+                "\tThe program will stop.",
+                timesteps);
+            // save unsuccessful solution
+            unsigned pcs_idx = 0;
+            for (auto const& spd : _per_process_data)
+            {
+                auto const& x = *_process_solutions[++pcs_idx];
+                // If nonlinear solver diverged, the solution has already been
+                // saved.
+                if (!spd->nonlinear_solver_converged)
+                    continue;
+
+                _output->doOutputAlways(spd->process, spd->process_output,
+                                        timesteps, t, x);
+            }
+            return false;
         }
     }
 
