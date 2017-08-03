@@ -973,12 +973,14 @@ bool SwmmInterface::addResultsToMesh(MeshLib::Mesh &mesh, SwmmObject const swmm_
         return false;
     }
 
-    MeshLib::MeshItemType const item_type = (swmm_type == SwmmObject::NODE) ?
-        MeshLib::MeshItemType::Node : MeshLib::MeshItemType::Cell;
-    MeshLib::PropertyVector<double>* prop = MeshLib::getOrCreateMeshProperty<double>(mesh, vec_name, item_type, 1);
+    MeshLib::MeshItemType const item_type = (swmm_type == SwmmObject::NODE)
+                                                ? MeshLib::MeshItemType::Node
+                                                : MeshLib::MeshItemType::Cell;
+    MeshLib::PropertyVector<double>* prop =
+        MeshLib::getOrCreateMeshProperty<double>(mesh, vec_name, item_type, 1);
     if (!prop)
     {
-        ERR ("Error fetching array \"%s\".", vec_name.c_str());
+        ERR("Error fetching array \"%s\".", vec_name.c_str());
         return false;
     }
     std::copy(data.cbegin(), data.cend(), prop->begin());
@@ -1152,14 +1154,16 @@ std::string SwmmInterface::getArrayName(SwmmObject obj_type, std::size_t var_idx
         if (var_idx < n_obj_params[1])
             return node_vars[var_idx];
         if (var_idx < n_obj_params[1]+n_pollutants)
-            return std::string("Node_" + _pollutant_names[var_idx-n_obj_params[1]]);
+            return std::string("Node_" +
+                               _pollutant_names[var_idx - n_obj_params[1]]);
     }
     if (obj_type == SwmmObject::LINK)
     {
         if (var_idx < n_obj_params[2])
             return link_vars[var_idx];
         if (var_idx < n_obj_params[2]+n_pollutants)
-            return std::string("Link_" + _pollutant_names[var_idx-n_obj_params[2]]);
+            return std::string("Link_" +
+                               _pollutant_names[var_idx - n_obj_params[2]]);
     }
     if (obj_type == SwmmObject::SYSTEM && var_idx < n_obj_params[3])
     {
@@ -1305,7 +1309,8 @@ bool SwmmInterface::writeCsvForTimestep(std::string const& file_name, SwmmObject
 bool SwmmInterface::writeCsvForObject(std::string const& file_name, SwmmObject obj_type, std::size_t obj_idx) const
 {
     FileIO::CsvInterface csv;
-    INFO ("Writing data for %s %d.", swmmObjectTypeToString(obj_type).c_str(), obj_idx);
+    INFO("Writing data for %s %d.", swmmObjectTypeToString(obj_type).c_str(),
+         obj_idx);
     csv.addIndexVectorForWriting(getNumberOfTimeSteps());
     std::size_t const n_params (getNumberOfParameters(obj_type));
     for (std::size_t i=0; i<n_params; ++i)
