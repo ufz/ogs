@@ -24,6 +24,10 @@ Result showing crack phase-field and displacement field distributions through th
 {{< img src="../beam_d.png" >}}
 {{< img src="../beam_u.png" >}}
 
+For highlight of the deviation between the analytical and numerical solution, we provide local results in the near field of the centre of the beam:
+{{< img src="../beam_d_zoom.png" >}}
+{{< img src="../beam_u_zoom.png" >}}
+
 The analytical solution is:
 $$
 \begin{equation}
