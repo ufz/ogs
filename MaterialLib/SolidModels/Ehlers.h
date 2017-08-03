@@ -110,6 +110,8 @@ struct PlasticStrain final
     KelvinVector D;  ///< deviatoric plastic strain
     double V = 0;    ///< volumetric strain
     double eff = 0;  ///< effective plastic strain
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 class Damage final
@@ -180,6 +182,8 @@ struct StateVariables
         return os;
     }
 #endif  // NDEBUG
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 template <int DisplacementDim>
