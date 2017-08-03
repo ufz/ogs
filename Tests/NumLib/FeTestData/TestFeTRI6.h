@@ -41,32 +41,36 @@ public:
     static const unsigned n_sample_pt_order2 = 3;
     static const unsigned n_sample_pt_order3 = 4;
     static const unsigned global_dim = MeshElementType::dimension;
+
+    const double a = 1.0;
     const double perturbation = 0.1;
 
-    /// create a mesh element
+    /// create a 6 node triangle element
     MeshElementType* createMeshElement()
     {
+        // Concave 6 node triangle element with curved edges.
         auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
-        nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0);
-        nodes[2] = new MeshLib::Node(0.0, 1.0, 0.0);
+        nodes[1] = new MeshLib::Node(a, 0.0, 0.0);
+        nodes[2] = new MeshLib::Node(0.0, a, 0.0);
 
-        nodes[3] = new MeshLib::Node(0.5, perturbation, 0.0);
+        nodes[3] = new MeshLib::Node(0.5 * a, perturbation, 0.0);
         const double perturbation_hypotenuse =
-            0.5 * perturbation * std::sqrt(2.0);
-        nodes[4] = new MeshLib::Node(0.5 - perturbation_hypotenuse,
-                                     0.5 - perturbation_hypotenuse, 0.0);
-        nodes[5] = new MeshLib::Node(perturbation, 0.5, 0.0);
+            0.5 * perturbation * std::sqrt(2 * a * a);
+        nodes[4] = new MeshLib::Node(0.5 * a - perturbation_hypotenuse,
+                                     0.5 * a - perturbation_hypotenuse, 0.0);
+        nodes[5] = new MeshLib::Node(perturbation, 0.5 * a, 0.0);
 
         return new MeshElementType(nodes);
     }
 
     double getVolume() const
     {
-        // The length of hypotenuse is a_h=sqrt(2)
-        // Area = 0.5 - 2 * 2 * a * b /3 - 2 * a_h * b /3
-        // where a=1.0, b=perturbation
-        return 0.27238576250846036;
+        // The length of hypotenuse is a_h sqrt(2 * a * a)
+        // Area = a^2 /2 - 2 * 2 * a * b /3 - 2 * a_h * b /3
+        // where b=perturbation
+        return 0.5 * a * a - 4.0 * a * perturbation / 3.0 -
+               2.0 * std::sqrt(2 * a * a) * perturbation / 3.0;
     }
 };
 

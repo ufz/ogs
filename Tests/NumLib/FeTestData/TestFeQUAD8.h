@@ -40,26 +40,31 @@ public:
     static const unsigned n_sample_pt_order3 = 3 * 3;
     static const unsigned global_dim = MeshElementType::dimension;
 
-    const double perturbation = -0.1;
+    const double a = 1.0;
+    const double perturbation = 0.1;
 
-    /// create a mesh element
+    /// create a 8 node quadrilateral element
     MeshElementType* createMeshElement()
     {
+        // Convex 8 node quadrilateral element with curved edges.
         auto** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
-        nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0);
-        nodes[2] = new MeshLib::Node(1.0, 1.0, 0.0);
-        nodes[3] = new MeshLib::Node(0.0, 1.0, 0.0);
+        nodes[1] = new MeshLib::Node(a, 0.0, 0.0);
+        nodes[2] = new MeshLib::Node(a, a, 0.0);
+        nodes[3] = new MeshLib::Node(0.0, a, 0.0);
 
-        nodes[4] = new MeshLib::Node(0.5, perturbation, 0.0);
-        nodes[5] = new MeshLib::Node(1.0 - perturbation, 0.5, 0.0);
-        nodes[6] = new MeshLib::Node(0.5, 1.0 - perturbation, 0.0);
-        nodes[7] = new MeshLib::Node(perturbation, 0.5, 0.0);
+        nodes[4] = new MeshLib::Node(0.5 * a, -perturbation, 0.0);
+        nodes[5] = new MeshLib::Node(a + perturbation, 0.5 * a, 0.0);
+        nodes[6] = new MeshLib::Node(0.5 * a, a + perturbation, 0.0);
+        nodes[7] = new MeshLib::Node(-perturbation, 0.5 * a, 0.0);
 
         return new MeshElementType(nodes);
     }
 
-    double getVolume() const { return 1.26666666667; }
+    double getVolume() const
+    {
+        return a * a + 4 * (2.0 * a * perturbation / 3.0);
+    }
 };
 
 }  // namespace
