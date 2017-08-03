@@ -70,7 +70,7 @@ public:
         std::string const& vec_name, std::vector<double> const& data);
 
     /// Returns the mesh generated from SWMM file content.
-    MeshLib::Mesh const& getMesh() const { return *_mesh; }
+    MeshLib::Mesh& getMesh() const { return *_mesh; }
 
     /// Returns the name of the data array for the given object type and parameter index.
     std::string getArrayName(SwmmObject obj_type, std::size_t var_idx) const;
@@ -113,6 +113,9 @@ public:
 
     /// Checks if a SWMM output file exists for the current input
     bool existsSwmmOutputFile() const;
+
+    /// Returns a string with the name of the object type
+    static std::string swmmObjectTypeToString(SwmmObject const obj_type);
 
     /// Reading a SWMM input file and conversion into OGS geometry.
     static bool convertSwmmInputToGeometry(std::string const& inp_file_name,
