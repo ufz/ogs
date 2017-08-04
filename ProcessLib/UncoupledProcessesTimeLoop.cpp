@@ -126,6 +126,7 @@ struct SingleProcessData
     //! other members of this struct to their concrety types.
     NumLib::NonlinearSolverTag const nonlinear_solver_tag;
     NumLib::NonlinearSolverBase& nonlinear_solver;
+    bool nonlinear_solver_converged;
     std::unique_ptr<NumLib::ConvergenceCriterion> conv_crit;
 
     std::unique_ptr<NumLib::TimeDiscretization> time_disc;
@@ -152,6 +153,7 @@ SingleProcessData::SingleProcessData(
     : timestepper(std::move(timestepper_)),
       nonlinear_solver_tag(NLTag),
       nonlinear_solver(nonlinear_solver),
+      nonlinear_solver_converged(true),
       conv_crit(std::move(conv_crit_)),
       time_disc(std::move(time_disc_)),
       process(process_),
@@ -164,6 +166,7 @@ SingleProcessData::SingleProcessData(SingleProcessData&& spd)
     : timestepper(std::move(spd.timestepper)),
       nonlinear_solver_tag(spd.nonlinear_solver_tag),
       nonlinear_solver(spd.nonlinear_solver),
+      nonlinear_solver_converged(spd.nonlinear_solver_converged),
       conv_crit(std::move(spd.conv_crit)),
       time_disc(std::move(spd.time_disc)),
       tdisc_ode_sys(std::move(spd.tdisc_ode_sys)),
@@ -572,12 +575,19 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
                        : time_disc->getRelativeChangeFromPreviousTimestep(
                              x, norm_type))
                 : 0.;
+
         if (!timestepper->next(solution_error) &&
             // In case of FixedTimeStepping, which makes timestepper->next(...)
             // return false when the ending time is reached.
             t + std::numeric_limits<double>::epsilon() < timestepper->end())
         {
             // Not all processes have accepted steps.
+            all_process_steps_accepted = false;
+        }
+
+        if (!ppd.nonlinear_solver_converged)
+        {
+            WARN("Time step will be rejected due to nonlinear solver diverged");
             all_process_steps_accepted = false;
         }
 
@@ -658,17 +668,6 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         }
         else
         {
-            if (std::abs(dt -prev_dt) < std::numeric_limits<double>::min()
-                && _last_step_rejected)
-            {
-                OGS_FATAL("\tThis time step is rejected and the new computed"
-                          " step size is the same as\n"
-                          "\tthat was just used.\n"
-                          "\tSuggest to adjust the parameters of the time"
-                          " stepper or try other time stepper.\n"
-                          "\tThe program stops");
-            }
-
             if (t < _end_time)
             {
                 t -= prev_dt;
@@ -769,20 +768,6 @@ bool UncoupledProcessesTimeLoop::loop()
         INFO("[time] Time step #%u took %g s.", timesteps,
              time_timestep.elapsed());
 
-        if (!nonlinear_solver_succeeded)
-        {
-            WARN(
-                "Time step %d is rejected due to "
-                "the divergence of the non-linear solver.\n"
-                "\tThe time stepping steps back to the previous time\n"
-                "\tand starts again with the half of the current step size.",
-                timesteps);
-            t -= prev_dt;
-            dt *= 0.5;
-            rejected_steps++;
-            continue;
-        }
-
         dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
 
         if (t + dt > _end_time ||
@@ -796,6 +781,36 @@ bool UncoupledProcessesTimeLoop::loop()
                 "Time stepping stops at step %u and at time of %g.",
                 dt, timesteps, t);
             break;
+        }
+
+        // If this step was rejected twice with the same time step size, jump
+        // out this function directly with a failure flag and let the main
+        // function terminate the program.
+        if (std::abs(dt - prev_dt) < std::numeric_limits<double>::min() &&
+            _last_step_rejected)
+        {
+            ALERT(
+                "\tTime step %u is rejected and the new computed"
+                " step size is the same as\n"
+                "\tthat was just used.\n"
+                "\tSuggest to adjust the parameters of the time"
+                " stepper or try other time stepper.\n"
+                "\tThe program will stop.",
+                timesteps);
+            // save unsuccessful solution
+            unsigned pcs_idx = 0;
+            for (auto const& spd : _per_process_data)
+            {
+                auto const& x = *_process_solutions[++pcs_idx];
+                // If nonlinear solver diverged, the solution has already been
+                // saved.
+                if (!spd->nonlinear_solver_converged)
+                    continue;
+
+                _output->doOutputAlways(spd->process, spd->process_output,
+                                        timesteps, t, x);
+            }
+            return false;
         }
     }
 
@@ -855,6 +870,7 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
         const auto nonlinear_solver_succeeded =
             solveOneTimeStepOneProcess(x, timestep_id, t, dt, *spd,
                                        void_staggered_coupling_term, *_output);
+        spd->nonlinear_solver_converged = nonlinear_solver_succeeded;
         pcs.postTimestep(x);
         pcs.computeSecondaryVariable(t, x, void_staggered_coupling_term);
 
@@ -933,6 +949,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
             const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
                 x, timestep_id, t, dt, *spd, coupling_term, *_output);
+            spd->nonlinear_solver_converged = nonlinear_solver_succeeded;
 
             INFO(
                 "[time] Solving process #%u took %g s in time step #%u "
