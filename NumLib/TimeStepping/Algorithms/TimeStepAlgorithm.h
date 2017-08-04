@@ -72,6 +72,10 @@ public:
     /// return if current time step is accepted or not
     virtual bool accepted() const = 0;
 
+    /// Set the status of the step. A boolean parameter is needed to indicated
+    /// whether the step is accepted or not.
+    virtual void setAcceptedOrNot(const bool /*accepted*/){};
+
     /// return a history of time step sizes
     const std::vector<double>& getTimeStepSizeHistory() const
     {
@@ -81,7 +85,6 @@ public:
     /// Get a flag to indicate whether this algorithm needs to compute
     /// solution error. The default return value is false.
     virtual bool isSolutionErrorComputationNeeded() { return false; }
-
 protected:
     /// initial time
     const double _t_initial;

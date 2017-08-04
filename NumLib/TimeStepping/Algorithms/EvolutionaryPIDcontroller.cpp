@@ -22,6 +22,8 @@ namespace NumLib
 {
 bool EvolutionaryPIDcontroller::next(const double solution_error)
 {
+    const bool is_previous_step_accepted = _is_accepted;
+
     const double e_n = solution_error;
     const double zero_threshlod = std::numeric_limits<double>::epsilon();
     // step rejected.
@@ -32,19 +34,22 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
         double h_new = (e_n > zero_threshlod) ? _ts_current.dt() * _tol / e_n
                                               : 0.5 * _ts_current.dt();
 
-        h_new = limitStepSize(h_new, _ts_current.dt());
+        h_new =
+            limitStepSize(h_new, _ts_current.dt(), is_previous_step_accepted);
         h_new = checkSpecificTimeReached(h_new);
 
         _ts_current = _ts_prev;
         _ts_current += h_new;
 
-        WARN("This step is rejected due to the relative change from the"
-             " solution of the previous\n"
-             "\t time step to the current solution exceeds the given tolerance"
-             " of %g.\n"
-             "\t This time step will be repeated with a new time step size of"
-             " %g\n"
-             "\t or the simulation will be halted." , _tol, h_new);
+        WARN(
+            "This step is rejected due to the relative change from the"
+            " solution of the previous\n"
+            "\t time step to the current solution exceeds the given tolerance"
+            " of %g.\n"
+            "\t This time step will be repeated with a new time step size of"
+            " %g\n"
+            "\t or the simulation will be halted.",
+            _tol, h_new);
 
         return false;
     }
@@ -90,7 +95,7 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
             }
         }
 
-        h_new = limitStepSize(h_new, h_n);
+        h_new = limitStepSize(h_new, h_n, is_previous_step_accepted);
         h_new = checkSpecificTimeReached(h_new);
         _dt_vector.push_back(h_new);
 
@@ -102,6 +107,35 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
     }
 
     return true;
+}
+
+double EvolutionaryPIDcontroller::limitStepSize(
+    const double h_new, const double h_n,
+    const bool previous_step_accepted) const
+{
+    const double h_in_range = std::max(_h_min, std::min(h_new, _h_max));
+    double limited_h =
+        std::max(_rel_h_min * h_n, std::min(h_in_range, _rel_h_max * h_n));
+
+    if (!previous_step_accepted)
+    {
+        // If the last time step was rejected and the new predicted time step
+        // size is identical to that of the previous rejected step, the new
+        // step size is then reduced by half.
+        if (std::fabs(limited_h - _ts_current.dt()) <
+            std::numeric_limits<double>::min())
+            limited_h = std::max(_h_min, 0.5 * limited_h);
+
+        // If the last time step was rejected and the new predicted time step
+        // size is larger than the step size of the rejected step, the new step
+        // size takes the half of the size of the rejected step. This could
+        // happen when a time step is rejected due to a diverged non-linear
+        // solver. In such case, this algorithm may give a large time step size
+        // by using the diverged solution.
+        if (limited_h > _ts_current.dt())
+            limited_h = std::max(_h_min, 0.5 * _ts_current.dt());
+    }
+    return limited_h;
 }
 
 double EvolutionaryPIDcontroller::checkSpecificTimeReached(const double h_new)
