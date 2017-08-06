@@ -83,6 +83,8 @@ public:
         b.add(indices, _local_rhs);
     }
 
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+
 private:
     Parameter<double> const& _neumann_bc_parameter;
     typename Base::NodalVectorType _local_rhs;

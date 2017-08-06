@@ -75,6 +75,8 @@ struct ThermoMechanicsProcessData
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt;
     double t;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 }  // namespace ThermoMechanics

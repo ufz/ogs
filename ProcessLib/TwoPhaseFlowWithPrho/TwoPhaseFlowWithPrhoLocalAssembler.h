@@ -52,6 +52,8 @@ struct IntegrationPointData final
     double integration_weight;
     NodalMatrixType massOperator;
     NodalMatrixType diffusionOperator;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 const unsigned NUM_NODAL_DOF = 2;
 
