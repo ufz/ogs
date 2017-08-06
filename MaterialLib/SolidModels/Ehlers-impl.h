@@ -135,6 +135,8 @@ struct PhysicalStressWithInvariants final
     double I_1;
     double J_2;
     double J_3;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 /// Holds powers of 1 + gamma_p*theta to base 0, m_p, and m_p-1.

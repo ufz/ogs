@@ -149,6 +149,8 @@ public:
         /// iteration
         KelvinVector eps_M_t;
         KelvinVector eps_M_j;
+
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
     };
 
     std::unique_ptr<
