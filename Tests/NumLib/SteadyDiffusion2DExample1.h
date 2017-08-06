@@ -147,4 +147,6 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
 
     LocalMatrixType _localA;
     LocalVectorType _localRhs;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
