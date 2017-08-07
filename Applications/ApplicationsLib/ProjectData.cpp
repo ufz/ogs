@@ -402,8 +402,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "PHASE_FIELD")
         {
-            //! \ogs_file_param{prj__processes__process__PHASE_FIELD__dimension
-            switch (process_config.getConfigParameter<int>("dimension"))
+            switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
                     process =
