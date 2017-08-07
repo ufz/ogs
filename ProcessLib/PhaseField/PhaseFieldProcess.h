@@ -206,8 +206,6 @@ private:
     }
 
 private:
-    std::vector<MeshLib::Node*> _base_nodes;
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
     PhaseFieldProcessData<DisplacementDim> _process_data;
 
     std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
