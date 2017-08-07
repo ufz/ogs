@@ -65,6 +65,12 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
+        if (history_variable_prev <
+            history_variable)
+        {
+            history_variable_prev =
+                history_variable;
+        }
         eps_prev = eps;
         sigma_real_prev = sigma_real;
         material_state_variables->pushBackState();
@@ -457,12 +463,6 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data[ip].pushBackState();
-            if (_ip_data[ip].history_variable_prev <
-                _ip_data[ip].history_variable)
-            {
-                _ip_data[ip].history_variable_prev =
-                    _ip_data[ip].history_variable;
-            }
         }
     }
 
