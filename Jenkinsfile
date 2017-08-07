@@ -3,12 +3,16 @@
 
 def builders = [:]
 def helper = new ogs.helper()
+def tag = ""
 
 timestamps {
 
 builders['gcc'] = {
     node('docker') {
-        dir('ogs') { checkoutWithTags() }
+        dir('ogs') {
+            checkoutWithTags()
+            tag = helper.getTag()
+        }
         load 'ogs/scripts/jenkins/gcc.groovy'
     }
 }
@@ -77,10 +81,7 @@ catch (err) {
     }
 }
 
-def tag = ""
 node('master') {
-    checkoutWithTags()
-    tag = helper.getTag()
     step([$class: 'LogParserPublisher',
         failBuildOnError: true,
         projectRulePath: "scripts/jenkins/all-log-parser.rules",
