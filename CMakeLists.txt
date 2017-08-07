@@ -134,6 +134,8 @@ endif ()
 # Code coverage
 option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 
+option(OGS_SYNC_SUBMODULES "Sync git submodules on CMake run. Overwrites custom URLs!" ON)
+
 # Packaging
 option(OGS_DOWNLOAD_ADDITIONAL_CONTENT "Should addional content such as manuals be downloaded and packaged?" OFF)
 include(scripts/cmake/packaging/Pack.cmake)
