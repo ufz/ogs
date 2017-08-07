@@ -20,6 +20,13 @@ namespace PressureBoundaryCondition
 {
 class PressureBoundaryConditionLocalAssemblerInterface;
 
+/// The pressure boundary condition is a special type of Neumann boundary
+/// condition where the given value is applied in the direction of the element's
+/// normal vector \f$\mathbf{n}\f$:
+/// \f[
+///      \bar{t} := \sigma \mathbf{n} = p \mathbf{n},
+/// \f]
+/// where \f$p\f$ is the value on the boundary given by the parameter tag.
 template <template <typename, typename, unsigned>
           class LocalAssemblerImplementation>
 class PressureBoundaryCondition final : public BoundaryCondition
