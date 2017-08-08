@@ -55,7 +55,7 @@ createNonuniformNeumannBoundaryCondition(
     if (property->getMeshItemType() != MeshLib::MeshItemType::Node)
     {
         OGS_FATAL(
-            "Only nodal fields are supported fur non-uniform fields. Field "
+            "Only nodal fields are supported for non-uniform fields. Field "
             "`%s' is not nodal.",
             field_name.c_str());
     }
@@ -65,16 +65,18 @@ createNonuniformNeumannBoundaryCondition(
         OGS_FATAL("`%s' is not a one-component field.", field_name.c_str());
     }
 
+    std::string mapping_to_bulk_nodes_property = "OriginalSubsurfaceNodeIDs";
     auto const* const mapping_to_bulk_nodes =
         boundary_mesh->getProperties().getPropertyVector<unsigned long>(
-            "bulk_mesh_node_ids");
+            mapping_to_bulk_nodes_property);
 
     if (!(mapping_to_bulk_nodes &&
           mapping_to_bulk_nodes->getMeshItemType() ==
               MeshLib::MeshItemType::Node) &&
         mapping_to_bulk_nodes->getNumberOfComponents() == 1)
     {
-        OGS_FATAL("Field `bulk_mesh_node_ids' is not set up properly.");
+        OGS_FATAL("Field `%s' is not set up properly.",
+                  mapping_to_bulk_nodes_property.c_str());
     }
 
     return std::make_unique<NonuniformNeumannBoundaryCondition>(
