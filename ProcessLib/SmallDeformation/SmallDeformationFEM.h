@@ -318,7 +318,7 @@ public:
         return getIntPtSigma(cache, 3);
     }
 
-    std::vector<double> const& getIntPtSigmaXZ(
+    std::vector<double> const& getIntPtSigmaYZ(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
@@ -328,7 +328,7 @@ public:
         return getIntPtSigma(cache, 4);
     }
 
-    std::vector<double> const& getIntPtSigmaYZ(
+    std::vector<double> const& getIntPtSigmaXZ(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
