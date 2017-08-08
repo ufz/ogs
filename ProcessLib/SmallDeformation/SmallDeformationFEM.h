@@ -436,7 +436,7 @@ public:
 
     unsigned getNumberOfIntegrationPoints() const override
     {
-        return static_cast<unsigned>(_ip_data.size());
+        return _integration_method.getNumberOfPoints();
     }
 
     typename MaterialLib::Solids::MechanicsBase<
