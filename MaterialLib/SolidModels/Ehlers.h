@@ -238,6 +238,9 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables) override;
 
+    std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
+    getInternalVariables() const override;
+
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
 

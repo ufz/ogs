@@ -41,7 +41,8 @@ public:
     //! @}
 
 private:
-    using LocalAssemblerInterface = SmallDeformationLocalAssemblerInterface;
+    using LocalAssemblerInterface =
+        SmallDeformationLocalAssemblerInterface<DisplacementDim>;
 
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
