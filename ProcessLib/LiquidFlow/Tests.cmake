@@ -118,10 +118,10 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1.e-16 RELTOL 1e-16
+    ABSTOL 1.e-3 RELTOL 1e-10
     DIFF_DATA
-    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_232_t_50000000000.000000.vtu  pressure pressure
-    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_232_t_50000000000.000000.vtu  temperature temperature
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000.000000.vtu  pressure pressure
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000.000000.vtu  temperature temperature
 )
 
 AddTest(
@@ -261,10 +261,10 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1.e-9 RELTOL 1e-8
+    ABSTOL 1.e-3 RELTOL 1e-10
     DIFF_DATA
-    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_232_t_50000000000_000000_0.vtu  pressure pressure
-    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_232_t_50000000000_000000_0.vtu  temperature temperature
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000_000000_0.vtu  pressure pressure
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000_000000_0.vtu  temperature temperature
 )
 
 AddTest(
