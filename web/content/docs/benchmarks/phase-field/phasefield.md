@@ -15,18 +15,17 @@ weight = 158
 
 ## Problem description
 
-We solve a homogeneous beam model under a given displacement loading. The length of the beam is 2\,mm. Detailed model description can refer [this PDF](../Miao_Biot2017Fullpaper.pdf).
+We solve a homogeneous beam model under a given displacement loading. The length of the beam is 2\,mm. Detailed model description can refer [this PDF](../Miao_Biot2017.pdf).
 ## Results and evaluation
 
-Result showing crack phase-field and displacement field distributions through the length of the beam:
+Results show crack phase-field and displacement field distributions through the length of the beam:
 
 {{< img src="../beam.png" >}}
 {{< img src="../beam_d.png" >}}
 {{< img src="../beam_u.png" >}}
 
-For highlight of the deviation between the analytical and numerical solution, we provide local results in the near field of the centre of the beam:
-{{< img src="../beam_d_zoom.png" >}}
-{{< img src="../beam_u_zoom.png" >}}
+For highlighting the deviation between the analytical and numerical solution, we provide the absolute error of the analytical solution and numerical simulation as follows:
+{{< img src="../error_u.png" >}}
 
 The analytical solution is:
 $$
