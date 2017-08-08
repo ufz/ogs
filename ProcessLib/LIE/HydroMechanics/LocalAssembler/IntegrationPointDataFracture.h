@@ -74,6 +74,8 @@ struct IntegrationPointDataFracture final
         w_prev = w;
         sigma_eff_prev = sigma_eff;
     }
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 }  // namespace HydroMechanics

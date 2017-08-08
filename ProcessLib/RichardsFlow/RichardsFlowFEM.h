@@ -47,6 +47,8 @@ struct IntegrationPointData final
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
     NodalMatrixType const mass_operator;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 const unsigned NUM_NODAL_DOF = 1;
 

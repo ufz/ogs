@@ -99,6 +99,8 @@ struct HydroMechanicsProcessData
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt = 0.0;
     double t = 0.0;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 }  // namespace HydroMechanics

@@ -53,6 +53,8 @@ struct IntegrationPointDataMatrix final
         _sigma_prev = _sigma;
         _material_state_variables->pushBackState();
     }
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 }  // namespace SmallDeformation

@@ -61,6 +61,8 @@ struct IntegrationPointData final
         sigma_prev = sigma;
         material_state_variables->pushBackState();
     }
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 /// Used by for extrapolation of the integration point values. It is ordered

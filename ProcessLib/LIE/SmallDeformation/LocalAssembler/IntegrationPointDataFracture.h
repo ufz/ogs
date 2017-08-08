@@ -72,6 +72,8 @@ struct IntegrationPointDataFracture final
         _sigma_prev = _sigma;
         _aperture_prev = _aperture;
     }
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 }  // namespace SmallDeformation
