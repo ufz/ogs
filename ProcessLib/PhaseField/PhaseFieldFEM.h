@@ -377,7 +377,7 @@ public:
             double const d_ip = N.dot(d);
             double const degradation = d_ip * d_ip * (1 - k) + k;
             eps.noalias() = B * u;
-            auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+            _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                     degradation);
 
             local_Jac.template block<displacement_size, displacement_size>(
