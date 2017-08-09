@@ -110,9 +110,9 @@ public:
         else
         {
             strain_energy_tensile = mu * epsd_curr.transpose() * epsd_curr;
-            sigma_tensile.noalias() = (2 * mu * epsd_curr).eval();
+            sigma_tensile.noalias() = 2 * mu * epsd_curr;
             sigma_compressive.noalias() =
-                 (K * eps_curr_trace * Invariants::identity2).eval();
+                 K * eps_curr_trace * Invariants::identity2;
             C_tensile.noalias() = 2 * mu * P_dev * KelvinMatrix::Identity();
             C_compressive.template topLeftCorner<3, 3>().setConstant(K);
         }
