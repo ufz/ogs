@@ -5,8 +5,6 @@ target_link_libraries(ogs
     PRIVATE BaseLib ApplicationsLib NumLib ProcessLib
 )
 
-ADD_VTK_DEPENDENCY(ogs)
-
 if(OGS_USE_PETSC)
     target_link_libraries(ogs PRIVATE ${PETSC_LIBRARIES})
 endif()

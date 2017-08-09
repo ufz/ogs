@@ -139,8 +139,6 @@ target_link_libraries(QtDataView
         DataHolderLib logog Qt5::Core Qt5::Gui
 )
 
-ADD_VTK_DEPENDENCY(QtDataView)
-
 if(GEOTIFF_FOUND)
     target_link_libraries(QtDataView PRIVATE ${GEOTIFF_LIBRARIES})
 endif () # GEOTIFF_FOUND

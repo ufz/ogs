@@ -33,8 +33,6 @@ if(OGS_BUILD_SWMM)
     target_link_libraries(ApplicationsFileIO PRIVATE SwmmInterface)
 endif()
 
-ADD_VTK_DEPENDENCY(ApplicationsFileIO)
-
 if(TARGET Eigen)
     add_dependencies(ApplicationsFileIO Eigen)
 endif()

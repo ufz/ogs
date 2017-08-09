@@ -97,8 +97,6 @@ if(VTKFBXCONVERTER_FOUND)
     target_link_libraries(DataExplorer ${VTKFBXCONVERTER_LIBRARIES})
 endif()
 
-ADD_VTK_DEPENDENCY(DataExplorer)
-
 set_property(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 
 if(OGS_USE_PCH)

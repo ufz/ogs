@@ -46,7 +46,6 @@ target_link_libraries(testrunner
     ProcessLib
     Threads::Threads
 )
-ADD_VTK_DEPENDENCY(testrunner)
 
 if(OGS_USE_PETSC)
     target_link_libraries(testrunner ${PETSC_LIBRARIES})
@@ -73,8 +72,6 @@ if(Qt5XmlPatterns_FOUND)
             ${QT_NETWORK_DEPS_LIBRARIES})
     endif()
 endif()
-
-ADD_VTK_DEPENDENCY(testrunner)
 
 if(OGS_USE_PCH)
     cotire(testrunner)

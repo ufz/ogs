@@ -4,7 +4,8 @@
 
 # Find doxygen
 if(WIN32)
-    find_program(DOXYGEN_DOT_EXECUTABLE NAMES dot PATHS "$ENV{ProgramFiles}/Graphviz*/bin")
+    find_program(DOXYGEN_DOT_EXECUTABLE NAMES dot
+        PATHS "$ENV{ProgramFiles}/Graphviz*/bin")
     find_package(Doxygen QUIET)
     if(DOXYGEN_DOT_PATH)
         file(TO_NATIVE_PATH ${DOXYGEN_DOT_PATH} DOXYGEN_DOT_PATH)
@@ -101,7 +102,7 @@ if(OGS_BUILD_GUI)
     if(USE_CONAN)
       set(Qt5_DIR ${CONAN_QT_ROOT}/lib/cmake/Qt5)
     endif()
-    find_package( Qt5 5.2 REQUIRED Gui Widgets Xml XmlPatterns)
+    find_package(Qt5 5.2 REQUIRED Gui Widgets Xml XmlPatterns)
     cmake_policy(SET CMP0020 NEW)
     set(CMAKE_AUTOMOC TRUE)
     set(CMAKE_AUTOUIC TRUE)
@@ -138,10 +139,11 @@ endif()
 if(OGS_USE_PETSC)
     message(STATUS "Configuring for PETSc")
 
-    option(FORCE_PETSC_EXECUTABLE_RUNS "Force CMake to accept a given PETSc configuration" ON)
+    option(FORCE_PETSC_EXECUTABLE_RUNS
+        "Force CMake to accept a given PETSc configuration" ON)
 
-    ##Force CMake to accept a given PETSc configuration in case the failure of MPI tests
-    ##This may cause the compilation broken.
+    # Force CMake to accept a given PETSc configuration in case the failure of
+    # MPI tests. This may cause the compilation broken.
     if(FORCE_PETSC_EXECUTABLE_RUNS)
         set(PETSC_EXECUTABLE_RUNS YES)
     endif()

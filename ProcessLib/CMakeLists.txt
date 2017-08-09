@@ -34,8 +34,6 @@ target_link_libraries(ProcessLib
     PRIVATE MeshGeoToolsLib
 )
 
-ADD_VTK_DEPENDENCY(ProcessLib)
-
 if(TARGET Eigen)
     add_dependencies(ProcessLib Eigen)
 endif()
