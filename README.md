@@ -5,7 +5,7 @@ OpenGeoSys 6
 [![BSD License (modified)](http://img.shields.io/badge/license-BSD-blue.svg?style=flat-square)](https://github.com/ufz/ogs/blob/master/LICENSE.txt)
 [![Build Status](https://jenkins.opengeosys.org/buildStatus/icon?job=ufz/ogs/master)](https://jenkins.opengeosys.org/job/ufz/job/ogs/job/master)
 [![Travis](https://img.shields.io/travis/ufz/ogs.svg?style=flat-square)](https://travis-ci.org/ufz/ogs)
-[![DOI](https://zenodo.org/badge/4228/ufz/ogs.svg)](https://zenodo.org/badge/latestdoi/4228/ufz/ogs)
+[![DOI](https://zenodo.org/badge/1701384.svg)](https://zenodo.org/badge/latestdoi/1701384)
 
 [OpenGeoSys][ogs] (OGS) is a scientific open source project for the development of
 numerical methods for the simulation of thermo-hydro-mechanical-chemical
