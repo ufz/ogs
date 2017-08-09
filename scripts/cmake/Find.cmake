@@ -60,6 +60,15 @@ find_program(MODULE_CMD modulecmd
 ######################
 ### Find libraries ###
 ######################
+find_package(Boost REQUIRED)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
+include(VtkModules)
+find_package(VTK COMPONENTS ${VTK_MODULES} REQUIRED)
+include(${VTK_USE_FILE})
+
+find_package(Eigen3 REQUIRED)
+include_directories(SYSTEM ${Eigen3_INCLUDE_DIRS})
 
 ## pthread, is a requirement of logog ##
 if(CMAKE_CROSSCOMPILING)

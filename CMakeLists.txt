@@ -246,19 +246,11 @@ add_definitions(-DLOGOG_LEVEL=${OGS_LOG_LEVEL})
 ######################
 
 # External projects
-include(scripts/cmake/ExternalProjectBoost.cmake)
-include(VtkModules)
 if(OGS_INSITU)
-    include(ExternalProjectCatalyst)
     include("${PARAVIEW_USE_FILE}")
     add_definitions(-DUSE_INSITU)
-else()
-    include(ExternalProjectVtk)
 endif()
 
-include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
-include(scripts/cmake/ExternalProjectEigen.cmake)
-include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 # Add subdirectories with the projects
 add_subdirectory( ThirdParty )
