@@ -25,3 +25,6 @@ Tri-dimensional elastic sphere comparison between numerical and analytical resul
 Axisymmetric plastic sphere comparison between numerical and analytical results:
 {{< img src="../sphere_axisymmetric_pl.pdf" >}}
 
+Axisymmetric plastic sphere residuals of stress:
+{{< img src="../sphere_axisymmetric_pl_residual_stress.pdf" >}}
+
