@@ -10,14 +10,13 @@
 #pragma once
 
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
-#include "LinearElasticIsotropic.h"
 
 namespace MaterialLib
 {
 namespace Solids
 {
 
-template <int DisplacementDim>
+template <int DisplacementDim, template<int> class LinearElasticIsotropic>
 std::unique_ptr<LinearElasticIsotropic<DisplacementDim>>
 createLinearElasticIsotropic(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,

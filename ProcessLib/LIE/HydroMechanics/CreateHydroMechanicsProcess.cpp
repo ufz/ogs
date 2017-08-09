@@ -11,6 +11,7 @@
 
 #include <cassert>
 
+#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/CreateMohrCoulomb.h"
@@ -105,7 +106,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     if (type == "LinearElasticIsotropic")
     {
         material =
-            MaterialLib::Solids::createLinearElasticIsotropic<GlobalDim>(
+            MaterialLib::Solids::createLinearElasticIsotropic<GlobalDim,
+                MaterialLib::Solids::LinearElasticIsotropic>(
                 parameters, constitutive_relation_config);
     }
     else
