@@ -1,1 +1,1 @@
-Process variable name for phasefield.
+Process variable name of phasefield.

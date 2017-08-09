@@ -1,1 +1,1 @@
-Process variable name for displacement.
+Process variable name of displacement.
