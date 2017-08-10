@@ -15,7 +15,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LIE_HM_single_fracture_3D
+    NAME LARGE_LIE_HM_single_fracture_3D
     PATH LIE/HydroMechanics
     EXECUTABLE ogs
     EXECUTABLE_ARGS single_fracture_3D.prj
