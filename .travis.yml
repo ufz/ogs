@@ -20,12 +20,14 @@ cache:
     - $HOME/cmake-3.1.1-Linux-x86_64
     - $HOME/VTK-Install-7.1
     - $HOME/boost_1_56_0
+    - $HOME/eigen-eigen-dc6cfdf9bcec
     - $HOME/.conan
 
 env:
   global:
     - VTK_DIR=$HOME/VTK-Install-7.1/lib/cmake/vtk-7.1
     - BOOST_ROOT=$HOME/boost_1_56_0
+    - EIGEN3_ROOT=$HOME/eigen-eigen-dc6cfdf9bcec
     - CCACHE_SLOPPINESS=pch_defines,time_macros
 matrix:
   include:
@@ -46,6 +48,7 @@ before_install:
   - if [ "$CASE" != "CHECK" ]; then bash scripts/travis/cmake.sh; fi
   - if [ "$CASE" != "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/boost.sh; fi
   - if [ "$CASE" != "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/vtk.sh; fi
+  - if [ "$CASE" != "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/eigen.sh; fi
   - if [ "$CASE" == "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/conan.sh; fi
 
 before_script:
