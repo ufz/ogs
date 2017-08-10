@@ -21,18 +21,19 @@
 using namespace MeshLib;
 namespace ac = autocheck;
 
-struct MeshLibFindElementInRadius : public ::testing::Test
+struct MeshLibFindElementWithinRadius : public ::testing::Test
 {
     ac::gtest_reporter gtest_reporter;
 };
 
 // For zero radius only the starting element is alway returned.
-TEST_F(MeshLibFindElementInRadius, ZeroRadius)
+TEST_F(MeshLibFindElementWithinRadius, ZeroRadius)
 {
     auto mesh = MeshGenerator::generateRegularQuadMesh(10., 10);
 
     auto same_element_returned = [&mesh](std::size_t& element_id) -> bool {
-        auto result = findElementsInRadius(*mesh->getElement(element_id), 0.);
+        auto result =
+            findElementsWithinRadius(*mesh->getElement(element_id), 0.);
         return (result.size() == 1) && (result[0] == element_id);
     };
 
@@ -68,8 +69,9 @@ std::vector<std::size_t> findByNodeConnectedElements(Element const& element)
 }
 
 // Find nodes in radius of a given node.
-std::vector<Node const*> findNodesInRadius(Mesh const& mesh, Node const& node,
-                                           double const radius)
+std::vector<Node const*> findNodesWithinRadius(Mesh const& mesh,
+                                               Node const& node,
+                                               double const radius)
 {
     std::vector<Node const*> nodes;
 
@@ -86,16 +88,16 @@ std::vector<Node const*> findNodesInRadius(Mesh const& mesh, Node const& node,
 }
 
 // Find nodes in radius of all nodes of a given element.
-std::vector<Node const*> findNodesInRadiusOfElement(Mesh const& mesh,
-                                                    Element const& element,
-                                                    double const radius)
+std::vector<Node const*> findNodesWithinRadius(Mesh const& mesh,
+                                               Element const& element,
+                                               double const radius)
 {
     std::vector<Node const*> nodes_in_radius;
 
     for (unsigned n = 0; n < element.getNumberOfBaseNodes(); ++n)
     {
         auto const& node = *element.getNode(n);
-        auto const& nodes = findNodesInRadius(mesh, node, radius);
+        auto const& nodes = findNodesWithinRadius(mesh, node, radius);
         std::copy(std::begin(nodes), std::end(nodes),
                   std::back_inserter(nodes_in_radius));
     }
@@ -105,12 +107,11 @@ std::vector<Node const*> findNodesInRadiusOfElement(Mesh const& mesh,
 }
 
 // Brute force search for checking the actual algorithm.
-std::vector<std::size_t> bruteForceFindElementIdsInRadius(
+std::vector<std::size_t> bruteForceFindElementIdsWithinRadius(
     Mesh const& mesh, Element const& element, double const radius)
 {
     std::vector<std::size_t> connected_elements;
-    auto const nodes_in_radius =
-        findNodesInRadiusOfElement(mesh, element, radius);
+    auto const nodes_in_radius = findNodesWithinRadius(mesh, element, radius);
     for (auto n : nodes_in_radius)
     {
         auto const& elements = findElementIdsConnectedToNode(*n);
@@ -124,14 +125,14 @@ std::vector<std::size_t> bruteForceFindElementIdsInRadius(
 
 // For a small radius only the element and its neighbors (through all nodes) are
 // expected.
-TEST_F(MeshLibFindElementInRadius, VerySmallRadius)
+TEST_F(MeshLibFindElementWithinRadius, VerySmallRadius)
 {
     auto mesh = MeshGenerator::generateRegularQuadMesh(10., 10);
 
     auto neighboring_elements_returned =
         [&mesh](std::size_t& element_id) -> bool {
         auto const& element = *mesh->getElement(element_id);
-        auto result = findElementsInRadius(element, 1e-5);
+        auto result = findElementsWithinRadius(element, 1e-5);
 
         std::sort(std::begin(result), std::end(result));
         auto const expected_elements = findByNodeConnectedElements(element);
@@ -148,12 +149,13 @@ TEST_F(MeshLibFindElementInRadius, VerySmallRadius)
 
 // For radii large enough to cover all of the mesh all of the elements are
 // expected to be found.
-TEST_F(MeshLibFindElementInRadius, VeryLargeRadius)
+TEST_F(MeshLibFindElementWithinRadius, VeryLargeRadius)
 {
     auto mesh = *MeshGenerator::generateRegularQuadMesh(10., 10);
 
     auto all_elements_returned = [&mesh](std::size_t& element_id) -> bool {
-        auto result = findElementsInRadius(*mesh.getElement(element_id), 1e5);
+        auto result =
+            findElementsWithinRadius(*mesh.getElement(element_id), 1e5);
         BaseLib::makeVectorUnique(result);
 
         return result.size() == mesh.getNumberOfElements();
@@ -165,7 +167,7 @@ TEST_F(MeshLibFindElementInRadius, VeryLargeRadius)
 
 // Random test (element_id and radius > 0); comparison with brute-force search
 // algorithm.
-TEST_F(MeshLibFindElementInRadius, RandomPositiveRadius2d)
+TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius2d)
 {
     auto mesh = *MeshGenerator::generateRegularQuadMesh(10., 10);
 
@@ -173,11 +175,11 @@ TEST_F(MeshLibFindElementInRadius, RandomPositiveRadius2d)
                                                  double const radius) -> bool {
         auto const& element = *mesh.getElement(element_id);
 
-        auto result = findElementsInRadius(element, radius);
+        auto result = findElementsWithinRadius(element, radius);
         std::sort(std::begin(result), std::end(result));
 
         auto const expected_elements =
-            bruteForceFindElementIdsInRadius(mesh, element, radius);
+            bruteForceFindElementIdsWithinRadius(mesh, element, radius);
 
         return result.size() == expected_elements.size() &&
                std::includes(std::begin(result), std::end(result),
@@ -196,7 +198,7 @@ TEST_F(MeshLibFindElementInRadius, RandomPositiveRadius2d)
 
 // Random test (element_id and radius > 0); comparison with brute-force search
 // algorithm.
-TEST_F(MeshLibFindElementInRadius, RandomPositiveRadius3d)
+TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius3d)
 {
     auto mesh = *MeshGenerator::generateRegularHexMesh(10., 10);
 
@@ -204,11 +206,11 @@ TEST_F(MeshLibFindElementInRadius, RandomPositiveRadius3d)
                                                  double const radius) -> bool {
         auto const& element = *mesh.getElement(element_id);
 
-        auto result = findElementsInRadius(element, radius);
+        auto result = findElementsWithinRadius(element, radius);
         std::sort(std::begin(result), std::end(result));
 
         auto const expected_elements =
-            bruteForceFindElementIdsInRadius(mesh, element, radius);
+            bruteForceFindElementIdsWithinRadius(mesh, element, radius);
 
         return result.size() == expected_elements.size() &&
                std::includes(std::begin(result), std::end(result),

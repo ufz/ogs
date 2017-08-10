@@ -21,9 +21,8 @@
 #include "Node.h"
 
 namespace MeshLib {
-
-std::vector<std::size_t> findElementsInRadius(Element const& start_element,
-                                              double const radius)
+std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
+                                                  double const radius)
 {
     // Special case for 0 radius. All other radii will include at least one
     // neighbor of the start element.
