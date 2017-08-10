@@ -10,11 +10,11 @@
 #include <autocheck/autocheck.hpp>
 
 #include "BaseLib/makeVectorUnique.h"
-#include "MeshLib/ElementAlgorithms.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/findElementsWithinRadius.h"
 
 #include "Tests/AutoCheckTools.h"
 

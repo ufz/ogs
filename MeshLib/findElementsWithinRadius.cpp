@@ -8,7 +8,7 @@
  *
  */
 
-#include "ElementAlgorithms.h"
+#include "findElementsWithinRadius.h"
 
 
 #include <deque>
