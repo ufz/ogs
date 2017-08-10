@@ -84,6 +84,10 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         //! \ogs_file_param{prj__processes__process__PHASE_FIELD__constitutive_relation}
         config.getConfigSubtree("constitutive_relation");
 
+    auto const phasefield_parameters_config =
+        //! \ogs_file_param{prj__processes__process__PHASE_FIELD__phasefield_parameters}
+        config.getConfigSubtree("phasefield_parameters");
+
     auto const type =
         //! \ogs_file_param{prj__processes__process__PHASE_FIELD__constitutive_relation__type}
         constitutive_relation_config.peekConfigParameter<std::string>("type");
@@ -107,28 +111,28 @@ std::unique_ptr<Process> createPhaseFieldProcess(
 
     // Residual stiffness
     auto& residual_stiffness = findParameter<double>(
-        config,
+        phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__residual_stiffness}
         "residual_stiffness", parameters, 1);
     DBUG("Use \'%s\' as residual stiffness.", residual_stiffness.name.c_str());
 
     // Crack resistance
     auto& crack_resistance = findParameter<double>(
-        config,
+        phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__crack_resistance}
         "crack_resistance", parameters, 1);
     DBUG("Use \'%s\' as crack resistance.", crack_resistance.name.c_str());
 
     // Crack length scale
     auto& crack_length_scale = findParameter<double>(
-        config,
+        phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__crack_length_scale}
         "crack_length_scale", parameters, 1);
     DBUG("Use \'%s\' as crack length scale.", crack_length_scale.name.c_str());
 
     // Kinetic coefficient
     auto& kinetic_coefficient = findParameter<double>(
-        config,
+        phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__kinetic_coefficient}
         "kinetic_coefficient", parameters, 1);
     DBUG("Use \'%s\' as kinetic coefficient.",
@@ -143,7 +147,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
 
     // History field
     auto& history_field = findParameter<double>(
-        config,
+        phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__history_field}
         "history_field", parameters, 1);
     DBUG("Use \'%s\' as history field.", history_field.name.c_str());
