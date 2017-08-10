@@ -53,7 +53,8 @@ std::vector<std::size_t> findElementIdsConnectedToNode(Node const& node)
 }
 
 // Find all elements connected through all nodes of the element
-std::vector<std::size_t> findByNodeConnectedElements(Element const& element)
+std::vector<std::size_t> findNextNeighborsConnectedByNode(
+    Element const& element)
 {
     std::vector<std::size_t> connected_elements;
     for (unsigned n = 0; n < element.getNumberOfBaseNodes(); ++n)
@@ -135,7 +136,8 @@ TEST_F(MeshLibFindElementWithinRadius, VerySmallRadius)
         auto result = findElementsWithinRadius(element, 1e-5);
 
         std::sort(std::begin(result), std::end(result));
-        auto const expected_elements = findByNodeConnectedElements(element);
+        auto const expected_elements =
+            findNextNeighborsConnectedByNode(element);
 
         return result.size() == expected_elements.size() &&
                std::includes(std::begin(result), std::end(result),
