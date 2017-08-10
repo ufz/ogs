@@ -108,6 +108,8 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables) override;
 
+    MaterialProperties getMaterialProperties() {return _mp;}
+
 protected:
     MaterialProperties _mp;
 };

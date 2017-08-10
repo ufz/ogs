@@ -12,7 +12,7 @@
 #include <cassert>
 
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
-#include "MaterialLib/SolidModels/CreateLinearElasticIsotropicPhaseField.h"
+#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 
 #include "PhaseFieldProcess.h"
@@ -90,10 +90,13 @@ std::unique_ptr<Process> createPhaseFieldProcess(
 
     std::unique_ptr<MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>>
         material = nullptr;
-    if (type == "LinearElasticIsotropicPhaseField")
+    if (type == "LinearElasticIsotropic")
     {
-        material = MaterialLib::Solids::createLinearElasticIsotropicPhaseField<
-            DisplacementDim>(parameters, constitutive_relation_config);
+        auto elastic_model = MaterialLib::Solids::createLinearElasticIsotropic<
+                DisplacementDim>(parameters, constitutive_relation_config);
+        material =
+                std::make_unique<MaterialLib::Solids::LinearElasticIsotropicPhaseField<
+                DisplacementDim>>(std::move(elastic_model->getMaterialProperties()));
     }
     else
     {

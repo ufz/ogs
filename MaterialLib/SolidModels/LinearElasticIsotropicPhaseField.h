@@ -30,8 +30,8 @@ public:
 
     explicit LinearElasticIsotropicPhaseField(
         typename LinearElasticIsotropic<
-            DisplacementDim>::MaterialProperties const& material_properties)
-        : LinearElasticIsotropic<DisplacementDim>(material_properties)
+            DisplacementDim>::MaterialProperties&& material_properties)
+        : LinearElasticIsotropic<DisplacementDim>(std::move(material_properties))
     {
     }
 
