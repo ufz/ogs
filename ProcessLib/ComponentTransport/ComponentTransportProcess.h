@@ -95,10 +95,6 @@ public:
     bool isLinear() const override { return false; }
     //! @}
 
-    void computeSecondaryVariableConcrete(
-        double const t, GlobalVector const& x,
-        StaggeredCouplingTerm const& coupling_term) override;
-
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
