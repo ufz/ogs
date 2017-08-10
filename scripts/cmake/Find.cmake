@@ -69,7 +69,7 @@ find_package(VTK COMPONENTS ${VTK_MODULES} REQUIRED)
 include(${VTK_USE_FILE})
 
 find_package(Eigen3 REQUIRED)
-include_directories(SYSTEM ${Eigen3_INCLUDE_DIRS})
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 ## pthread, is a requirement of logog ##
 if(CMAKE_CROSSCOMPILING)
