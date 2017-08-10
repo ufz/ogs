@@ -11,6 +11,7 @@
 
 #include <cassert>
 
+#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/CreateMohrCoulomb.h"
@@ -107,7 +108,8 @@ createSmallDeformationProcess(
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>> material = nullptr;
     if (type == "LinearElasticIsotropic")
     {
-        material = MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
+        material = MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim,
+                MaterialLib::Solids::LinearElasticIsotropic>(
             parameters, constitutive_relation_config);
     }
     else

@@ -11,6 +11,7 @@
 
 #include <cassert>
 
+#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 
@@ -86,7 +87,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     if (type == "LinearElasticIsotropic")
     {
         material =
-            MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
+            MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim,
+                MaterialLib::Solids::LinearElasticIsotropic>(
                 parameters, constitutive_relation_config);
     }
     else
