@@ -13,7 +13,7 @@
 
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/ThermoMechanics/CreateLocalAssemblers.h"
+#include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 
 #include "ThermoMechanicsFEM.h"
 #include "ThermoMechanicsProcessData.h"
@@ -61,11 +61,10 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override
     {
-        ProcessLib::ThermoMechanics::createLocalAssemblers<DisplacementDim,
-                                                           LocalAssemblerData>(
-            mesh.getDimension(), mesh.getElements(), dof_table,
-            _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-            _process_data);
+        ProcessLib::SmallDeformation::createLocalAssemblers<
+        DisplacementDim, ThermoMechanicsLocalAssembler>(
+        mesh.getElements(), dof_table, _local_assemblers,
+        mesh.isAxiallySymmetric(), integration_order, _process_data);
 
         // TODO move the two data members somewhere else.
         // for extrapolation of secondary variables
