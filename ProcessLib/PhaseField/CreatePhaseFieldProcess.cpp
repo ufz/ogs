@@ -112,28 +112,28 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     // Residual stiffness
     auto& residual_stiffness = findParameter<double>(
         phasefield_parameters_config,
-        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__residual_stiffness}
+        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__residual_stiffness}
         "residual_stiffness", parameters, 1);
     DBUG("Use \'%s\' as residual stiffness.", residual_stiffness.name.c_str());
 
     // Crack resistance
     auto& crack_resistance = findParameter<double>(
         phasefield_parameters_config,
-        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__crack_resistance}
+        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__crack_resistance}
         "crack_resistance", parameters, 1);
     DBUG("Use \'%s\' as crack resistance.", crack_resistance.name.c_str());
 
     // Crack length scale
     auto& crack_length_scale = findParameter<double>(
         phasefield_parameters_config,
-        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__crack_length_scale}
+        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__crack_length_scale}
         "crack_length_scale", parameters, 1);
     DBUG("Use \'%s\' as crack length scale.", crack_length_scale.name.c_str());
 
     // Kinetic coefficient
     auto& kinetic_coefficient = findParameter<double>(
         phasefield_parameters_config,
-        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__kinetic_coefficient}
+        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__kinetic_coefficient}
         "kinetic_coefficient", parameters, 1);
     DBUG("Use \'%s\' as kinetic coefficient.",
          kinetic_coefficient.name.c_str());
@@ -148,7 +148,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     // History field
     auto& history_field = findParameter<double>(
         phasefield_parameters_config,
-        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__history_field}
+        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__history_field}
         "history_field", parameters, 1);
     DBUG("Use \'%s\' as history field.", history_field.name.c_str());
 
