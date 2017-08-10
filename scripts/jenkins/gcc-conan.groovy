@@ -1,5 +1,5 @@
 def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache ' +
-    '-v /home/jenkins/conan-data:/root/.conan/data'
+    '-v /home/jenkins/conan-data:/home/jenkins/.conan/data'
 
 def defaultCMakeOptions =
     '-DCMAKE_BUILD_TYPE=Release ' +
