@@ -36,6 +36,17 @@ public:
           _variable_id(variable_id),
           _component_id(component_id)
     {
+        if (variable_id >= static_cast<int>(dof_table.getNumberOfVariables()) ||
+            component_id >=
+                dof_table.getNumberOfVariableComponents(variable_id))
+        {
+            OGS_FATAL(
+                "Variable id or component id too high. Actual values: (%d, "
+                "%d), "
+                "maximum values: (%d, %d).",
+                variable_id, component_id, dof_table.getNumberOfVariables(),
+                dof_table.getNumberOfVariableComponents(variable_id));
+        }
     }
 
     void preTimestep(const double t) override;

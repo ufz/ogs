@@ -30,14 +30,21 @@ GenericNonuniformNaturalBoundaryCondition<BoundaryConditionData,
                                typename std::decay<Data>::type>::value,
                   "Type mismatch between declared and passed BC data.");
 
-#if 0
-    // TODO fix/improve check!
-    if (component_id >=
-           static_cast<int>(dof_table_bulk.getNumberOfComponents()))
+    // check basic data consistency
+    if (_data.variable_id_bulk >=
+            static_cast<int>(_data.dof_table_bulk.getNumberOfVariables()) ||
+        _data.component_id_bulk >=
+            _data.dof_table_bulk.getNumberOfVariableComponents(
+                _data.variable_id_bulk))
     {
-        OGS_FATAL("");  // TODO better error message.
+        OGS_FATAL(
+            "Variable id or component id too high. Actual values: (%d, %d), "
+            "maximum values: (%d, %d).",
+            _data.variable_id_bulk, _data.component_id_bulk,
+            _data.dof_table_bulk.getNumberOfVariables(),
+            _data.dof_table_bulk.getNumberOfVariableComponents(
+                _data.variable_id_bulk));
     }
-#endif
 
     if (_boundary_mesh->getDimension() + 1 != global_dim)
     {
