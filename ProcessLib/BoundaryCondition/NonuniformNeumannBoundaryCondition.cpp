@@ -67,7 +67,7 @@ createNonuniformNeumannBoundaryCondition(
 
     std::string mapping_to_bulk_nodes_property = "OriginalSubsurfaceNodeIDs";
     auto const* const mapping_to_bulk_nodes =
-        boundary_mesh->getProperties().getPropertyVector<unsigned long>(
+        boundary_mesh->getProperties().getPropertyVector<std::size_t>(
             mapping_to_bulk_nodes_property);
 
     if (!(mapping_to_bulk_nodes &&
