@@ -48,11 +48,10 @@ private:
 
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 
-    /// Local dof table, a subset of the global one restricted to the
-    /// participating #_elements of the boundary condition.
+    /// DOF table (one single-component variable) of the boundary mesh.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
 
-    /// Local assemblers for each element of #_elements.
+    /// Local assemblers for each element of the boundary mesh.
     std::vector<std::unique_ptr<
         GenericNonuniformNaturalBoundaryConditionLocalAssemblerInterface>>
         _local_assemblers;
