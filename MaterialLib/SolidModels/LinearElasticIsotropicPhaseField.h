@@ -101,8 +101,8 @@ public:
                  K / 2 * eps_curr_trace * eps_curr_trace +
                  mu * epsd_curr.transpose() * epsd_curr;
             sigma_tensile.noalias() =
-                 (K * eps_curr_trace * Invariants::identity2 +
-                 2 * mu * epsd_curr).eval();
+                 K * eps_curr_trace * Invariants::identity2 +
+                 2 * mu * epsd_curr;
             sigma_compressive.noalias() = KelvinVector::Zero();
             C_tensile.template topLeftCorner<3, 3>().setConstant(K);
             C_tensile.noalias() += 2 * mu * P_dev * KelvinMatrix::Identity();
