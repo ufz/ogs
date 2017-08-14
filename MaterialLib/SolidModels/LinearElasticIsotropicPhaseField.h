@@ -67,6 +67,12 @@ public:
                                         material_state_variables);
     }
 
+    /** Decompose the stiffness into tensile and compressive part.
+     * Judging by the physical observations, compression perpendicular
+     * to a crack does not cause crack propagation. Thus,
+     * the phase-field parameter is only involved into the tensile part
+     * to degrade the elastic strain energy.
+     */
     bool calculateDegradedStress(double const t,
                          ProcessLib::SpatialPosition const& x,
                          KelvinVector const& eps,
