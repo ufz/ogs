@@ -13,7 +13,7 @@
 
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/PhaseField/CreateLocalAssemblers.h"
+#include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 
 #include "PhaseFieldFEM.h"
 #include "PhaseFieldProcessData.h"
@@ -88,11 +88,10 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override
     {
-        ProcessLib::PhaseField::createLocalAssemblers<DisplacementDim,
-                                                      LocalAssemblerData>(
-            mesh.getDimension(), mesh.getElements(), dof_table,
-            _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-            _process_data);
+        ProcessLib::SmallDeformation::createLocalAssemblers<
+                DisplacementDim, PhaseFieldLocalAssembler>(
+                mesh.getElements(), dof_table, _local_assemblers,
+                mesh.isAxiallySymmetric(), integration_order, _process_data);
 
         // TODO move the two data members somewhere else.
         // for extrapolation of secondary variables
