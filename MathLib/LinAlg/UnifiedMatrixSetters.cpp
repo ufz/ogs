@@ -129,7 +129,7 @@ void setMatrix(EigenMatrix& m,
     auto const rows = m.getNumberOfRows();
     auto const cols = m.getNumberOfColumns();
 
-    assert(values.size() == rows*cols);
+    assert(static_cast<EigenMatrix::IndexType>(values.size()) == rows*cols);
     Eigen::MatrixXd tmp(rows, cols);
 
     auto it = values.begin();
@@ -153,7 +153,7 @@ void addToMatrix(EigenMatrix& m,
     auto const rows = m.getNumberOfRows();
     auto const cols = m.getNumberOfColumns();
 
-    assert(values.size() == rows*cols);
+    assert(static_cast<EigenMatrix::IndexType>(values.size()) == rows*cols);
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(rows, cols);
 
     auto it = values.begin();

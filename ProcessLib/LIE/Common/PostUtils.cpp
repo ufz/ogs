@@ -138,6 +138,7 @@ void PostProcessTool::createProperties()
         {
             assert(new_prop->size() ==
                    _output_mesh->getNumberOfNodes() * n_dest_comp);
+            (void)(new_prop); // to avoid compilation warning.
         }
         else if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Cell)
         {

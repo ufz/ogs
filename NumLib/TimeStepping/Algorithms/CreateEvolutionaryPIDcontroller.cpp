@@ -23,27 +23,27 @@ class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{prj__time_loop__time_stepping__type}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     config.checkConfigParameter("type", "EvolutionaryPIDcontroller");
 
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__t_initial}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__t_initial}
     auto const t0 = config.getConfigParameter<double>("t_initial");
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__t_end}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__t_end}
     auto const t_end = config.getConfigParameter<double>("t_end");
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__dt_guess}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__dt_guess}
     auto const h0 = config.getConfigParameter<double>("dt_guess");
 
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__dt_min}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__dt_min}
     auto const h_min = config.getConfigParameter<double>("dt_min");
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__dt_max}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__dt_max}
     auto const h_max = config.getConfigParameter<double>("dt_max");
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__rel_dt_min}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__rel_dt_min}
     auto const rel_h_min = config.getConfigParameter<double>("rel_dt_min");
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__rel_dt_max}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__rel_dt_max}
     auto const rel_h_max = config.getConfigParameter<double>("rel_dt_max");
 
     auto specific_times =
-        //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__specific_times}
+        //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__specific_times}
         config.getConfigParameter<std::vector<double>>("specific_times",
                                                        std::vector<double>{});
     if (!specific_times.empty())
@@ -56,7 +56,7 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
         BaseLib::makeVectorUnique(specific_times);
     }
 
-    //! \ogs_file_param{prj__time_loop__time_stepping__EvolutionaryPIDcontroller__tol}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__tol}
     auto const tol = config.getConfigParameter<double>("tol");
 
     return std::make_unique<EvolutionaryPIDcontroller>(

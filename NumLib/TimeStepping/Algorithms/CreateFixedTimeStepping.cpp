@@ -24,14 +24,14 @@ class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{prj__time_loop__time_stepping__type}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     config.checkConfigParameter("type", "FixedTimeStepping");
 
-    //! \ogs_file_param{prj__time_loop__time_stepping__FixedTimeStepping__t_initial}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__t_initial}
     auto const t_initial = config.getConfigParameter<double>("t_initial");
-    //! \ogs_file_param{prj__time_loop__time_stepping__FixedTimeStepping__t_end}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__t_end}
     auto const t_end = config.getConfigParameter<double>("t_end");
-    //! \ogs_file_param{prj__time_loop__time_stepping__FixedTimeStepping__timesteps}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps}
     auto const delta_ts = config.getConfigSubtree("timesteps");
 
     std::vector<double> timesteps;
@@ -39,7 +39,7 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     double delta_t = 0.0;
 
     // TODO: consider adding call "listNonEmpty" to config tree
-    //! \ogs_file_param{prj__time_loop__time_stepping__FixedTimeStepping__timesteps__pair}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair}
     auto const range = delta_ts.getConfigSubtreeList("pair");
     if (range.begin() == range.end())
     {
@@ -47,9 +47,9 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     }
     for (auto const pair : range)
     {
-        //! \ogs_file_param{prj__time_loop__time_stepping__FixedTimeStepping__timesteps__pair__repeat}
+        //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair__repeat}
         auto const repeat = pair.getConfigParameter<std::size_t>("repeat");
-        //! \ogs_file_param{prj__time_loop__time_stepping__FixedTimeStepping__timesteps__pair__delta_t}
+        //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair__delta_t}
         delta_t = pair.getConfigParameter<double>("delta_t");
 
         if (repeat == 0)
