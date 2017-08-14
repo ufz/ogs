@@ -216,7 +216,9 @@ void NodePartitionedMeshReader::readPropertiesBinary(
     std::ifstream is(fname_cfg.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
-        WARN("Could not open file '%s' in binary mode.", fname_cfg.c_str());
+        WARN("Could not open file '%s'.\n"
+             "\tYou can ignore this warning if the mesh does not contain %s-"
+             "wise property data.", fname_cfg.c_str(), item_type.data());
         return;
     }
     std::size_t number_of_properties = 0;
@@ -269,7 +271,9 @@ void NodePartitionedMeshReader::readPropertiesBinary(
     is.open(fname_val.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
-        ERR("Could not open file '%s' in binary mode.", fname_val.c_str());
+        ERR("Could not open file '%s'\n."
+            "\tYou can ignore this warning if the mesh does not contain %s-"
+             "wise property data.", fname_val.c_str(), item_type.data());
     }
 
     readDomainSpecificPartOfPropertyVectors(vec_pvmd, *pvpmd, t, is, p);
