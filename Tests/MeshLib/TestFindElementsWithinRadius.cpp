@@ -177,11 +177,11 @@ TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius2d)
                                                  double const radius) -> bool {
         auto const& element = *mesh.getElement(element_id);
 
-        auto result = findElementsWithinRadius(element, radius);
+        auto result = findElementsWithinRadius(element, radius * radius);
         std::sort(std::begin(result), std::end(result));
 
-        auto const expected_elements =
-            bruteForceFindElementIdsWithinRadius(mesh, element, radius);
+        auto const expected_elements = bruteForceFindElementIdsWithinRadius(
+            mesh, element, radius * radius);
 
         return result.size() == expected_elements.size() &&
                std::includes(std::begin(result), std::end(result),
@@ -208,7 +208,7 @@ TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius3d)
                                                  double const radius) -> bool {
         auto const& element = *mesh.getElement(element_id);
 
-        auto result = findElementsWithinRadius(element, radius);
+        auto result = findElementsWithinRadius(element, radius * radius);
         std::sort(std::begin(result), std::end(result));
 
         auto const expected_elements =

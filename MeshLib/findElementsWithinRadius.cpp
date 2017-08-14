@@ -22,20 +22,21 @@
 
 namespace MeshLib {
 std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
-                                                  double const radius)
+                                                  double const radius_squared)
 {
     // Special case for 0 radius. All other radii will include at least one
     // neighbor of the start element.
-    if (radius == 0.)
+    if (radius_squared == 0.)
         return {start_element.getID()};
 
     // Returns true if the test node is inside the radius of any of the
     // element's nodes.
-    auto node_inside_radius = [&start_element, radius](Node const* test_node) {
+    auto node_inside_radius = [&start_element,
+                               radius_squared](Node const* test_node) {
         for (unsigned n = 0; n < start_element.getNumberOfNodes(); ++n)
         {
             if (MathLib::sqrDist(*test_node, *start_element.getNode(n)) <=
-                radius * radius)
+                radius_squared)
                 return true;
         }
         return false;

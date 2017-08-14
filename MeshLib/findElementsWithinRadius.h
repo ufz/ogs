@@ -31,6 +31,6 @@ namespace MeshLib
 ///
 /// \note For radius 0 only the given element's id is returned.
 std::vector<std::size_t> findElementsWithinRadius(Element const& e,
-                                                  double const radius);
+                                                  double const radius_squared);
 
 }  // namespace MeshLib
