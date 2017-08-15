@@ -275,7 +275,6 @@ struct F3DSeparablePolynomial final : FBase
     {
         double const a = -.5;
         double const b = .5;
-        double const x = b - a;
 
         double res = 1.0;
         for (unsigned d : {0, 1, 2})
@@ -314,7 +313,34 @@ std::unique_ptr<FBase> getF(unsigned polynomial_order)
     OGS_FATAL("unsupported polynomial order: %d.", polynomial_order);
 }
 
-TEST(MathLib, IntegrationGaussLegendreHexConst)
+TEST(MathLib, IntegrationGaussLegendreTet)
+{
+    auto const eps = 2 * std::numeric_limits<double>::epsilon();
+    std::unique_ptr<MeshLib::Mesh> mesh_tet(
+        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+                                               "/MathLib/unit_cube_tet.vtu"));
+
+    for (unsigned integration_order : {1, 2, 3})
+    {
+        DBUG("\n==== integration order: %u.\n", integration_order);
+        TestProcess pcs_tet(*mesh_tet, integration_order);
+
+        for (unsigned polynomial_order : {0, 1, 2})
+        {
+            if (polynomial_order > 2 * integration_order - 1)
+                break;
+
+            DBUG("  == polynomial order: %u.", polynomial_order);
+            auto f = getF(polynomial_order);
+
+            auto const integral_tet = pcs_tet.integrate(f->getClosure());
+            EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_tet,
+                        eps);
+        }
+    }
+}
+
+TEST(MathLib, IntegrationGaussLegendreHex)
 {
     auto const eps = 2 * std::numeric_limits<double>::epsilon();
     std::unique_ptr<MeshLib::Mesh> mesh_hex(
@@ -326,50 +352,6 @@ TEST(MathLib, IntegrationGaussLegendreHexConst)
         DBUG("\n==== integration order: %u.\n", integration_order);
         TestProcess pcs_hex(*mesh_hex, integration_order);
 
-        const unsigned polynomial_order = 0;
-        auto f = getF(polynomial_order);
-
-        auto const integral_hex = pcs_hex.integrate(f->getClosure());
-        EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_hex, eps);
-    }
-}
-
-TEST(MathLib, IntegrationGaussLegendreTetConst)
-{
-    auto const eps = std::numeric_limits<double>::epsilon();
-    std::unique_ptr<MeshLib::Mesh> mesh_tet(
-        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
-                                               "/MathLib/unit_cube_tet.vtu"));
-
-    for (unsigned integration_order : {1, 2, 3})
-    {
-        DBUG("\n==== integration order: %u.\n", integration_order);
-        TestProcess pcs_tet(*mesh_tet, integration_order);
-
-        const unsigned polynomial_order = 0;
-        auto f = getF(polynomial_order);
-
-        auto const integral_tet = pcs_tet.integrate(f->getClosure());
-        EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_tet, eps);
-    }
-}
-
-TEST(MathLib, IntegrationGaussLegendreTet)
-{
-    auto const eps = std::numeric_limits<double>::epsilon();
-    std::unique_ptr<MeshLib::Mesh> mesh_tet(
-        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
-                                               "/MathLib/unit_cube_tet.vtu"));
-    std::unique_ptr<MeshLib::Mesh> mesh_hex(
-        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
-                                               "/MathLib/unit_cube_hex.vtu"));
-
-    for (unsigned integration_order : {1, 2, 3})
-    {
-        DBUG("\n==== integration order: %u.\n", integration_order);
-        TestProcess pcs_tet(*mesh_tet, integration_order);
-        TestProcess pcs_hex(*mesh_hex, integration_order);
-
         for (unsigned polynomial_order : {0, 1, 2})
         {
             if (polynomial_order > 2 * integration_order - 1)
@@ -378,19 +360,42 @@ TEST(MathLib, IntegrationGaussLegendreTet)
             DBUG("  == polynomial order: %u.", polynomial_order);
             auto f = getF(polynomial_order);
 
-            auto const integral_tet = pcs_tet.integrate(f->getClosure());
             auto const integral_hex = pcs_hex.integrate(f->getClosure());
-            // DBUG("  integrals: %g, %g.", integral_tet, integral_hex);
             EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_hex,
                         eps);
-            EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_tet,
-                        eps);
-            EXPECT_NEAR(integral_hex, integral_tet, eps);
         }
     }
 }
 
-TEST(MathLib, IntegrationGaussLegendreHex)
+TEST(MathLib, IntegrationGaussLegendreTetSeparablePolynomial)
+{
+    auto const eps = 2 * std::numeric_limits<double>::epsilon();
+
+    std::unique_ptr<MeshLib::Mesh> mesh_tet(
+        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+                                               "/MathLib/unit_cube_tet.vtu"));
+
+    for (unsigned integration_order : {1, 2, 3})
+    {
+        DBUG("\n==== integration order: %u.\n", integration_order);
+        TestProcess pcs_tet(*mesh_tet, integration_order);
+
+        for (unsigned polynomial_order = 0;
+             // Gauss-Legendre integration is exact up to this order!
+             polynomial_order < 2 * integration_order;
+             ++polynomial_order)
+        {
+            DBUG("  == polynomial order: %u.", polynomial_order);
+            F3DSeparablePolynomial f(polynomial_order);
+
+            auto const integral_tet = pcs_tet.integrate(f.getClosure());
+            EXPECT_NEAR(f.getAnalyticalIntegralOverUnitCube(), integral_tet,
+                        eps);
+        }
+    }
+}
+
+TEST(MathLib, IntegrationGaussLegendreHexSeparablePolynomial)
 {
     auto const eps = 2 * std::numeric_limits<double>::epsilon();
 
