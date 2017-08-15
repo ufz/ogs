@@ -133,11 +133,6 @@ public:
     bool isAxiallySymmetric() const { return _is_axially_symmetric; }
     void setAxiallySymmetric(bool is_axial_symmetric) {
         _is_axially_symmetric = is_axial_symmetric;
-        if (_is_axially_symmetric && getDimension() != 2) {
-            OGS_FATAL(
-                "Axial symmetry is implemented only for two-dimensional "
-                "meshes.");
-        }
     }
 
 protected:

@@ -35,8 +35,18 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
       _elements(std::move(elements)),
       _integration_order(integration_order)
 {
-    assert(component_id <
-           static_cast<int>(dof_table_bulk.getNumberOfComponents()));
+    // check basic data consistency
+    if (variable_id >=
+            static_cast<int>(dof_table_bulk.getNumberOfVariables()) ||
+        component_id >=
+            dof_table_bulk.getNumberOfVariableComponents(variable_id))
+    {
+        OGS_FATAL(
+            "Variable id or component id too high. Actual values: (%d, %d), "
+            "maximum values: (%d, %d).",
+            variable_id, component_id, dof_table_bulk.getNumberOfVariables(),
+            dof_table_bulk.getNumberOfVariableComponents(variable_id));
+    }
 
     std::vector<MeshLib::Node*> nodes = MeshLib::getUniqueNodes(_elements);
     DBUG("Found %d nodes for Natural BCs for the variable %d and component %d",

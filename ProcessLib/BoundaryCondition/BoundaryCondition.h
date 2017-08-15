@@ -107,6 +107,13 @@ protected:
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
             parameters);
 
+    virtual std::unique_ptr<BoundaryCondition>
+    createNonuniformNeumannBoundaryCondition(
+        const BoundaryConditionConfig& config,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
+        const MeshLib::Mesh& mesh, const int variable_id,
+        const unsigned integration_order, const unsigned shapefunction_order);
+
     static std::vector<MeshLib::Element*> getClonedElements(
         MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,
         GeoLib::GeoObject const& geometry);
