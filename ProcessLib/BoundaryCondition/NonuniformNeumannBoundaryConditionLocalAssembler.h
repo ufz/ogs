@@ -61,9 +61,6 @@ public:
     {
         _local_rhs.setZero();
 
-        unsigned const n_integration_points =
-            Base::_integration_method.getNumberOfPoints();
-
         auto indices = NumLib::getIndices(id, dof_table_boundary);
 
         // TODO lots of heap allocations.
@@ -75,16 +72,15 @@ public:
                 _data.values.getComponent(i, 0));
         }
 
+        auto const n_integration_points = Base::_ns_and_weights.size();
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& sm = Base::_shape_matrices[ip];
+            auto const& n_and_weight = Base::_ns_and_weights[ip];
             double flux;
             NumLib::shapeFunctionInterpolate(neumann_param_nodal_values_local,
-                                             sm.N, flux);
-
-            auto const& wp = Base::_integration_method.getWeightedPoint(ip);
+                                             n_and_weight.N, flux);
             _local_rhs.noalias() +=
-                sm.N * flux * sm.detJ * wp.getWeight() * sm.integralMeasure;
+                n_and_weight.N * (n_and_weight.weight * flux);
         }
 
         // map boundary dof indices to bulk dof indices

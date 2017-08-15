@@ -36,23 +36,55 @@ protected:
     using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
 
+    struct NAndWeight
+    {
+        NAndWeight(typename ShapeMatricesType::ShapeMatrices::ShapeType&& N_,
+                   double const weight_)
+            : N(std::move(N_)), weight(weight_)
+        {
+        }
+        typename ShapeMatricesType::ShapeMatrices::ShapeType const N;
+        double const weight;
+    };
+
+private:
+    static std::vector<NAndWeight, Eigen::aligned_allocator<NAndWeight>>
+    initNsAndWeights(MeshLib::Element const& e, bool is_axially_symmetric,
+                     unsigned const integration_order)
+    {
+        IntegrationMethod const integration_method(integration_order);
+        std::vector<NAndWeight, Eigen::aligned_allocator<NAndWeight>>
+            ns_and_weights;
+        ns_and_weights.reserve(integration_method.getNumberOfPoints());
+
+        auto sms = initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                     IntegrationMethod, GlobalDim>(
+            e, is_axially_symmetric, integration_method);
+        for (unsigned ip = 0; ip < sms.size(); ++ip)
+        {
+            auto& sm = sms[ip];
+            double const w =
+                sm.detJ * sm.integralMeasure *
+                integration_method.getWeightedPoint(ip).getWeight();
+
+            ns_and_weights.emplace_back(std::move(sm.N), w);
+        }
+
+        return ns_and_weights;
+    }
+
 public:
     GenericNonuniformNaturalBoundaryConditionLocalAssembler(
         MeshLib::Element const& e, bool is_axially_symmetric,
         unsigned const integration_order)
-        : _integration_method(integration_order),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                            IntegrationMethod, GlobalDim>(
-              e, is_axially_symmetric, _integration_method))
+        : _ns_and_weights(
+              initNsAndWeights(e, is_axially_symmetric, integration_order))
     {
     }
 
 protected:
-    IntegrationMethod const _integration_method;
-    std::vector<typename ShapeMatricesType::ShapeMatrices,
-                Eigen::aligned_allocator<
-                    typename ShapeMatricesType::ShapeMatrices>> const
-        _shape_matrices;
+    std::vector<NAndWeight, Eigen::aligned_allocator<NAndWeight>> const
+        _ns_and_weights;
 };
 
 }  // ProcessLib
