@@ -41,10 +41,10 @@ $$
 with
 $$
 \begin{equation}
-\sigma = \dfrac{E u_0}{I (\varepsilong, k)}
+\sigma = \dfrac{E u_0}{I (\varepsilon, k)}
 \end{equation}
 $$
 \begin{equation}
-I (\varepsilong, k) =  \int_0^1  \dfrac{1}{d (x)^2 + k} \mathrm{d}x
+I (\varepsilon, k) =  \int_0^1  \dfrac{1}{d (x)^2 + k} \mathrm{d}x
 \end{equation}
 $$
