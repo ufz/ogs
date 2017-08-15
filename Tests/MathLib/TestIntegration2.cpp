@@ -296,6 +296,108 @@ private:
     unsigned const _degree;
 };
 
+unsigned binomial_coefficient(unsigned n, unsigned k)
+{
+    EXPECT_GE(n, k);
+    unsigned res = 1;
+
+    for (unsigned i = n; i > k; --i)
+    {
+        res *= i;
+    }
+
+    for (unsigned i = n - k; i > 0; --i)
+    {
+        res /= i;
+    }
+
+    return res;
+}
+
+/* This function is a polynomial where for each monomial a_ijk x^i y^j z^k
+ * holds: i + j + k <= n, where n is the overall polynomial degree
+ */
+struct F3DNonseparablePolynomial final : FBase
+{
+    // The number of coefficients/monomials are obtained as follows: Compute the
+    // number of combinations with repititions when drawing
+    // polynomial_degree times from the set { x, y, z, 1 }
+    F3DNonseparablePolynomial(unsigned polynomial_degree)
+        : FBase(binomial_coefficient(4 + polynomial_degree - 1, 4 - 1)),
+          _degree(polynomial_degree)
+    {
+    }
+
+    double operator()(std::array<double, 3> const& coords) const override
+    {
+        auto const x = coords[0];
+        auto const y = coords[1];
+        auto const z = coords[2];
+
+        double res = 0.0;
+        unsigned index = 0;
+
+        for (unsigned x_deg = 0; x_deg <= _degree; ++x_deg)
+        {
+            for (unsigned y_deg = 0; x_deg + y_deg <= _degree; ++y_deg)
+            {
+                for (unsigned z_deg = 0; x_deg + y_deg + z_deg <= _degree;
+                     ++z_deg)
+                {
+                    EXPECT_GT(coeffs.size(), index);
+
+                    res += coeffs[index] * std::pow(x, x_deg) *
+                           std::pow(y, y_deg) * std::pow(z, z_deg);
+
+                    ++index;
+                }
+            }
+        }
+
+        EXPECT_EQ(coeffs.size(), index);
+
+        return res;
+    }
+
+    double getAnalyticalIntegralOverUnitCube() const override
+    {
+        double const a = -.5;
+        double const b = .5;
+
+        double res = 0.0;
+        unsigned index = 0;
+
+        for (unsigned x_deg = 0; x_deg <= _degree; ++x_deg)
+        {
+            for (unsigned y_deg = 0; x_deg + y_deg <= _degree; ++y_deg)
+            {
+                for (unsigned z_deg = 0; x_deg + y_deg + z_deg <= _degree;
+                     ++z_deg)
+                {
+                    EXPECT_GT(coeffs.size(), index);
+
+                    res += coeffs[index] *
+                           (std::pow(b, x_deg + 1) - std::pow(a, x_deg + 1)) /
+                           (x_deg + 1) *
+                           (std::pow(b, y_deg + 1) - std::pow(a, y_deg + 1)) /
+                           (y_deg + 1) *
+                           (std::pow(b, z_deg + 1) - std::pow(a, z_deg + 1)) /
+                           (z_deg + 1);
+
+                    ++index;
+                }
+            }
+        }
+
+        EXPECT_EQ(coeffs.size(), index);
+
+        return res;
+    }
+
+private:
+    unsigned const _degree;
+};
+
 std::unique_ptr<FBase> getF(unsigned polynomial_order)
 {
     std::vector<double> coeffs;
@@ -312,6 +414,18 @@ std::unique_ptr<FBase> getF(unsigned polynomial_order)
 
     OGS_FATAL("unsupported polynomial order: %d.", polynomial_order);
 }
+
+/* *****************************************************************************
+ *
+ * The idea behind the tests in this file is to integrate polynomials of
+ * different degree over the unit cube.
+ *
+ * Gauss-Legendre integration should be able to exactly integrate those up to a
+ * certian degree.
+ *
+ * The coefficients of the tested polynomials are chosen randomly.
+ *
+ **************************************************************************** */
 
 TEST(MathLib, IntegrationGaussLegendreTet)
 {
@@ -367,7 +481,9 @@ TEST(MathLib, IntegrationGaussLegendreHex)
     }
 }
 
-TEST(MathLib, IntegrationGaussLegendreTetSeparablePolynomial)
+// This test is disabled, because the polynomials involved are too complicated
+// to be exactly integrated over tetrahedra using Gauss-Legendre quadrature
+TEST(MathLib, DISABLED_IntegrationGaussLegendreTetSeparablePolynomial)
 {
     auto const eps = 2 * std::numeric_limits<double>::epsilon();
 
@@ -415,6 +531,62 @@ TEST(MathLib, IntegrationGaussLegendreHexSeparablePolynomial)
         {
             DBUG("  == polynomial order: %u.", polynomial_order);
             F3DSeparablePolynomial f(polynomial_order);
+
+            auto const integral_hex = pcs_hex.integrate(f.getClosure());
+            EXPECT_NEAR(f.getAnalyticalIntegralOverUnitCube(), integral_hex,
+                        eps);
+        }
+    }
+}
+
+TEST(MathLib, IntegrationGaussLegendreTetNonSeparablePolynomial)
+{
+    auto const eps = 2 * std::numeric_limits<double>::epsilon();
+
+    std::unique_ptr<MeshLib::Mesh> mesh_tet(
+        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+                                               "/MathLib/unit_cube_tet.vtu"));
+
+    for (unsigned integration_order : {1, 2, 3})
+    {
+        DBUG("\n==== integration order: %u.\n", integration_order);
+        TestProcess pcs_tet(*mesh_tet, integration_order);
+
+        for (unsigned polynomial_order = 0;
+             // Gauss-Legendre integration is exact up to this order!
+             polynomial_order < 2 * integration_order;
+             ++polynomial_order)
+        {
+            DBUG("  == polynomial order: %u.", polynomial_order);
+            F3DNonseparablePolynomial f(polynomial_order);
+
+            auto const integral_tet = pcs_tet.integrate(f.getClosure());
+            EXPECT_NEAR(f.getAnalyticalIntegralOverUnitCube(), integral_tet,
+                        eps);
+        }
+    }
+}
+
+TEST(MathLib, IntegrationGaussLegendreHexNonSeparablePolynomial)
+{
+    auto const eps = 10 * std::numeric_limits<double>::epsilon();
+
+    std::unique_ptr<MeshLib::Mesh> mesh_hex(
+        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+                                               "/MathLib/unit_cube_hex.vtu"));
+
+    for (unsigned integration_order : {1, 2, 3, 4})
+    {
+        DBUG("\n==== integration order: %u.\n", integration_order);
+        TestProcess pcs_hex(*mesh_hex, integration_order);
+
+        for (unsigned polynomial_order = 0;
+             // Gauss-Legendre integration is exact up to this order!
+             polynomial_order < 2 * integration_order;
+             ++polynomial_order)
+        {
+            DBUG("  == polynomial order: %u.", polynomial_order);
+            F3DNonseparablePolynomial f(polynomial_order);
 
             auto const integral_hex = pcs_hex.integrate(f.getClosure());
             EXPECT_NEAR(f.getAnalyticalIntegralOverUnitCube(), integral_hex,
