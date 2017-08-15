@@ -26,6 +26,7 @@ createNonuniformNeumannBoundaryCondition(
     config.checkConfigParameter("type", "NonuniformNeumann");
 
     // TODO handle paths correctly
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformNeumann__mesh}
     auto const mesh_file = config.getConfigParameter<std::string>("mesh");
 
     std::unique_ptr<MeshLib::Mesh> boundary_mesh(
@@ -41,6 +42,7 @@ createNonuniformNeumannBoundaryCondition(
 
     // TODO finally use ProcessLib::Parameter here
     auto const field_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformNeumann__field_name}
         config.getConfigParameter<std::string>("field_name");
 
     auto const* const property =
