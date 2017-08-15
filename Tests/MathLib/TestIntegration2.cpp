@@ -204,8 +204,7 @@ std::pair<std::vector<double>, LocalAssemblerDataInterface::Function> getF(
             return {coeffs, getFQuad(coeffs)};
     }
 
-    EXPECT_TRUE(false);
-    return {{}, nullptr};
+    OGS_FATAL("unsupported polynomial order: %d.", polynomial_order);
 }
 
 TEST(MathLib, IntegrationGaussLegendreHexConst)
@@ -217,7 +216,7 @@ TEST(MathLib, IntegrationGaussLegendreHexConst)
 
     for (unsigned integration_order : {1, 2, 3})
     {
-        DBUG("== integration order: %u.", integration_order);
+        DBUG("\n==== integration order: %u.\n", integration_order);
         TestProcess pcs_hex(*mesh_hex, integration_order);
 
         const unsigned polynomial_order = 0;
@@ -237,7 +236,7 @@ TEST(MathLib, IntegrationGaussLegendreTetConst)
 
     for (unsigned integration_order : {1, 2, 3})
     {
-        DBUG("== integration order: %u.", integration_order);
+        DBUG("\n==== integration order: %u.\n", integration_order);
         TestProcess pcs_tet(*mesh_tet, integration_order);
 
         const unsigned polynomial_order = 0;
@@ -260,16 +259,16 @@ TEST(MathLib, IntegrationGaussLegendreTet)
 
     for (unsigned integration_order : {1, 2, 3})
     {
-        DBUG("== integration order: %u.", integration_order);
+        DBUG("\n==== integration order: %u.\n", integration_order);
         TestProcess pcs_tet(*mesh_tet, integration_order);
         TestProcess pcs_hex(*mesh_hex, integration_order);
 
         for (unsigned polynomial_order : {0, 1, 2})
         {
-            if (polynomial_order >= integration_order)
+            if (polynomial_order > 2 * integration_order - 1)
                 break;
 
-            DBUG(" == polynomial order: %u.", polynomial_order);
+            DBUG("  == polynomial order: %u.", polynomial_order);
             auto f = getF(polynomial_order);
 
             auto const integral_tet = pcs_tet.integrate(f.second);
