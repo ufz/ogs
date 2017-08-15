@@ -47,7 +47,6 @@ struct IntegrationPointData final
     typename ShapeMatrixType::NodalRowVectorType N;
     typename ShapeMatrixType::GlobalDimNodalMatrixType dNdx;
 
-    typename BMatricesType::KelvinVectorType sigma, sigma_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 
     typename BMatricesType::KelvinVectorType sigma_tensile, sigma_compressive,
@@ -235,8 +234,6 @@ public:
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
 
-            ip_data.sigma.setZero(kelvin_vector_size);
-            ip_data.sigma_prev.resize(kelvin_vector_size);
             ip_data.eps.setZero(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
             ip_data.C_tensile.setZero(kelvin_vector_size, kelvin_vector_size);
@@ -244,13 +241,11 @@ public:
                                          kelvin_vector_size);
             ip_data.sigma_tensile.setZero(kelvin_vector_size);
             ip_data.sigma_compressive.setZero(kelvin_vector_size);
-            // ip_data.strain_energy_tensile;
             ip_data.history_variable =
                 process_data.history_field(0, x_position)[0];
             ip_data.history_variable_prev =
                 process_data.history_field(0, x_position)[0];
             ip_data.sigma_real.setZero(kelvin_vector_size);
-            // ip_data.sigma_real_prev.setZero(kelvin_vector_size);
 
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;
