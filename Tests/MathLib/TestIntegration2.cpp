@@ -184,7 +184,7 @@ public:
     std::vector<double> const coeffs;
 };
 
-struct FConst : FBase
+struct FConst final : FBase
 {
     FConst() : FBase(1) {}
 
@@ -199,7 +199,7 @@ struct FConst : FBase
     }
 };
 
-struct FLin : FBase
+struct FLin final : FBase
 {
     FLin() : FBase(4) {}
 
@@ -217,7 +217,7 @@ struct FLin : FBase
     }
 };
 
-struct FQuad : FBase
+struct FQuad final : FBase
 {
     FQuad() : FBase(10) {}
 
@@ -241,6 +241,60 @@ struct FQuad : FBase
 
         return coeffs[0] + (coeffs[7] + coeffs[8] + coeffs[9]) * (b3 - a3) / 3.;
     }
+};
+
+struct F3DSeparablePolynomial final : FBase
+{
+    F3DSeparablePolynomial(unsigned polynomial_degree)
+        : FBase(3 * polynomial_degree + 3), _degree(polynomial_degree)
+    {
+    }
+
+    // f(x, y, z) = g(x) * h(y) * i(z)
+    double operator()(std::array<double, 3> const& coords) const override
+    {
+        double res = 1.0;
+        for (unsigned d : {0, 1, 2})
+        {
+            auto const x = coords[d];
+
+            double poly = 0.0;
+            for (unsigned n = 0; n <= _degree; ++n)
+            {
+                poly += coeffs[n + d * (_degree + 1)] * std::pow(x, n);
+            }
+
+            res *= poly;
+        }
+
+        return res;
+    }
+
+    // [ F(x, y, z) ]_a^b = [ G(x) ]_a^b * [ H(y) ]_a^b * [ I(z) ]_a^b
+    double getAnalyticalIntegralOverUnitCube() const override
+    {
+        double const a = -.5;
+        double const b = .5;
+        double const x = b - a;
+
+        double res = 1.0;
+        for (unsigned d : {0, 1, 2})
+        {
+            double poly = 0.0;
+            for (unsigned n = 0; n <= _degree; ++n)
+            {
+                poly += coeffs[n + d * (_degree + 1)] *
+                        (std::pow(b, n + 1) - std::pow(a, n + 1)) / (n + 1);
+            }
+
+            res *= poly;
+        }
+
+        return res;
+    }
+
+private:
+    unsigned const _degree;
 };
 
 std::unique_ptr<FBase> getF(unsigned polynomial_order)
@@ -332,6 +386,34 @@ TEST(MathLib, IntegrationGaussLegendreTet)
             EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_tet,
                         eps);
             EXPECT_NEAR(integral_hex, integral_tet, eps);
+        }
+    }
+}
+
+TEST(MathLib, IntegrationGaussLegendreHex)
+{
+    auto const eps = 2 * std::numeric_limits<double>::epsilon();
+
+    std::unique_ptr<MeshLib::Mesh> mesh_hex(
+        MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
+                                               "/MathLib/unit_cube_hex.vtu"));
+
+    for (unsigned integration_order : {1, 2, 3, 4})
+    {
+        DBUG("\n==== integration order: %u.\n", integration_order);
+        TestProcess pcs_hex(*mesh_hex, integration_order);
+
+        for (unsigned polynomial_order = 0;
+             // Gauss-Legendre integration is exact up to this order!
+             polynomial_order < 2 * integration_order;
+             ++polynomial_order)
+        {
+            DBUG("  == polynomial order: %u.", polynomial_order);
+            F3DSeparablePolynomial f(polynomial_order);
+
+            auto const integral_hex = pcs_hex.integrate(f.getClosure());
+            EXPECT_NEAR(f.getAnalyticalIntegralOverUnitCube(), integral_hex,
+                        eps);
         }
     }
 }
