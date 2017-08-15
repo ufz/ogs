@@ -167,27 +167,35 @@ TEST_F(MeshLibFindElementWithinRadius, VeryLargeRadius)
                            ac::make_arbitrary<std::size_t>(), gtest_reporter);
 }
 
+// Comparison with brute-force search algorithm.
+struct CompareToBruteForceSearch
+{
+    Mesh const& mesh;
+
+    bool operator()(std::size_t& element_id, double const radius) const
+    {
+        auto const& element = *mesh.getElement(element_id);
+
+        auto result = findElementsWithinRadius(element, radius * radius);
+        std::sort(std::begin(result), std::end(result));
+
+        auto const expected_elements =
+            bruteForceFindElementIdsWithinRadius(mesh, element, radius);
+
+        return result.size() == expected_elements.size() &&
+               std::includes(std::begin(result), std::end(result),
+                             std::begin(expected_elements),
+                             std::end(expected_elements));
+    }
+};
+
 // Random test (element_id and radius > 0); comparison with brute-force search
 // algorithm.
 TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius2d)
 {
     auto mesh = *MeshGenerator::generateRegularQuadMesh(10., 10);
 
-    auto compare_to_brute_force_search = [&mesh](std::size_t& element_id,
-                                                 double const radius) -> bool {
-        auto const& element = *mesh.getElement(element_id);
-
-        auto result = findElementsWithinRadius(element, radius * radius);
-        std::sort(std::begin(result), std::end(result));
-
-        auto const expected_elements = bruteForceFindElementIdsWithinRadius(
-            mesh, element, radius * radius);
-
-        return result.size() == expected_elements.size() &&
-               std::includes(std::begin(result), std::end(result),
-                             std::begin(expected_elements),
-                             std::end(expected_elements));
-    };
+    auto const compare_to_brute_force_search = CompareToBruteForceSearch{mesh};
 
     ac::check<std::size_t, double>(
         compare_to_brute_force_search, 100,
@@ -204,21 +212,7 @@ TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius3d)
 {
     auto mesh = *MeshGenerator::generateRegularHexMesh(10., 10);
 
-    auto compare_to_brute_force_search = [&mesh](std::size_t& element_id,
-                                                 double const radius) -> bool {
-        auto const& element = *mesh.getElement(element_id);
-
-        auto result = findElementsWithinRadius(element, radius * radius);
-        std::sort(std::begin(result), std::end(result));
-
-        auto const expected_elements =
-            bruteForceFindElementIdsWithinRadius(mesh, element, radius);
-
-        return result.size() == expected_elements.size() &&
-               std::includes(std::begin(result), std::end(result),
-                             std::begin(expected_elements),
-                             std::end(expected_elements));
-    };
+    auto const compare_to_brute_force_search = CompareToBruteForceSearch{mesh};
 
     ac::check<std::size_t, double>(
         compare_to_brute_force_search, 100,
