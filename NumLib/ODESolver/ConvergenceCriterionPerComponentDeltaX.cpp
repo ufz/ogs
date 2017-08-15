@@ -9,6 +9,7 @@
 
 #include "ConvergenceCriterionPerComponentDeltaX.h"
 #include <logog/include/logog.hpp>
+#include <limits>
 
 #include "BaseLib/ConfigTree.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -54,7 +55,9 @@ void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
         INFO(
             "Convergence criterion, component %u: |dx|=%.4e, |x|=%.4e, "
             "|dx|/|x|=%.4e",
-            error_dx, global_component, norm_x, error_dx / norm_x);
+            error_dx, global_component, norm_x,
+            (norm_x == 0. ? std::numeric_limits<double>::quiet_NaN()
+                          : (error_dx / norm_x)));
 
         satisfied_abs = satisfied_abs && error_dx < _abstols[global_component];
         satisfied_rel =
