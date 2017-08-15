@@ -424,9 +424,10 @@ std::unique_ptr<FBase> getF(unsigned polynomial_order)
  *
  **************************************************************************** */
 
+static double const eps = 10 * std::numeric_limits<double>::epsilon();
+
 TEST(MathLib, IntegrationGaussLegendreTet)
 {
-    auto const eps = 2 * std::numeric_limits<double>::epsilon();
     std::unique_ptr<MeshLib::Mesh> mesh_tet(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
                                                "/MathLib/unit_cube_tet.vtu"));
@@ -453,7 +454,6 @@ TEST(MathLib, IntegrationGaussLegendreTet)
 
 TEST(MathLib, IntegrationGaussLegendreHex)
 {
-    auto const eps = 2 * std::numeric_limits<double>::epsilon();
     std::unique_ptr<MeshLib::Mesh> mesh_hex(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
                                                "/MathLib/unit_cube_hex.vtu"));
@@ -482,8 +482,6 @@ TEST(MathLib, IntegrationGaussLegendreHex)
 // to be exactly integrated over tetrahedra using Gauss-Legendre quadrature
 TEST(MathLib, DISABLED_IntegrationGaussLegendreTetSeparablePolynomial)
 {
-    auto const eps = 2 * std::numeric_limits<double>::epsilon();
-
     std::unique_ptr<MeshLib::Mesh> mesh_tet(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
                                                "/MathLib/unit_cube_tet.vtu"));
@@ -510,8 +508,6 @@ TEST(MathLib, DISABLED_IntegrationGaussLegendreTetSeparablePolynomial)
 
 TEST(MathLib, IntegrationGaussLegendreHexSeparablePolynomial)
 {
-    auto const eps = 2 * std::numeric_limits<double>::epsilon();
-
     std::unique_ptr<MeshLib::Mesh> mesh_hex(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
                                                "/MathLib/unit_cube_hex.vtu"));
@@ -538,8 +534,6 @@ TEST(MathLib, IntegrationGaussLegendreHexSeparablePolynomial)
 
 TEST(MathLib, IntegrationGaussLegendreTetNonSeparablePolynomial)
 {
-    auto const eps = 2 * std::numeric_limits<double>::epsilon();
-
     std::unique_ptr<MeshLib::Mesh> mesh_tet(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
                                                "/MathLib/unit_cube_tet.vtu"));
@@ -566,8 +560,6 @@ TEST(MathLib, IntegrationGaussLegendreTetNonSeparablePolynomial)
 
 TEST(MathLib, IntegrationGaussLegendreHexNonSeparablePolynomial)
 {
-    auto const eps = 10 * std::numeric_limits<double>::epsilon();
-
     std::unique_ptr<MeshLib::Mesh> mesh_hex(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
                                                "/MathLib/unit_cube_hex.vtu"));
