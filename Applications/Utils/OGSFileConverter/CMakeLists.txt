@@ -21,7 +21,7 @@ add_library(OGSFileConverterLib
 )
 target_link_libraries(OGSFileConverterLib
     PUBLIC QtBase MathLib
-    INTERFACE MeshLib
+    INTERFACE MeshLib ApplicationsFileIO
 )
 ADD_VTK_DEPENDENCY(OGSFileConverterLib)
 
@@ -29,6 +29,7 @@ add_executable(OGSFileConverter main.cpp)
 
 target_link_libraries(OGSFileConverter
     OGSFileConverterLib
+    ApplicationsFileIO
 )
 ADD_VTK_DEPENDENCY(OGSFileConverter)
 

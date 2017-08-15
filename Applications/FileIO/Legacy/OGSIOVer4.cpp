@@ -24,7 +24,6 @@
 #include "BaseLib/StringTools.h"
 
 #include "GeoLib/AnalyticalGeometry.h"
-#include "GeoLib/EarClippingTriangulation.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/PointVec.h"
@@ -36,9 +35,7 @@
 
 #include "GeoLib/IO/TINInterface.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 namespace Legacy {
 
@@ -688,5 +685,4 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 }
 
 }
-} // end namespace IO
-} // end namespace GeoLib
+} // end namespace FileIO

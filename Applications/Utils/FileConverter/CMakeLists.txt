@@ -13,7 +13,7 @@ endif ()
 
 add_executable(convertGEO convertGEO.cpp)
 set_target_properties(convertGEO PROPERTIES FOLDER Utilities)
-target_link_libraries(convertGEO GeoLib)
+target_link_libraries(convertGEO GeoLib ApplicationsFileIO)
 
 add_executable(generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
 target_link_libraries(generateMatPropsFromMatID MeshLib)

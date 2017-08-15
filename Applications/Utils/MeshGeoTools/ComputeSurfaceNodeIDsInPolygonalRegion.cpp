@@ -17,15 +17,12 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
+#include "Applications/FileIO/readGeometryFromFile.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
-
-#include "MeshLib/IO/readMeshFromFile.h"
-
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
-#include "GeoLib/IO/readGeometryFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 #include "MathLib/Vector3.h"
 
@@ -89,7 +86,7 @@ int main (int argc, char* argv[])
     INFO("Mesh read: %u nodes, %u elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
     GeoLib::GEOObjects geo_objs;
-    GeoLib::IO::readGeometryFromFile(geo_in.getValue(), geo_objs);
+    FileIO::readGeometryFromFile(geo_in.getValue(), geo_objs);
     std::vector<std::string> geo_names;
     geo_objs.getGeometryNames(geo_names);
     INFO("Geometry \"%s\" read: %u points, %u polylines.",

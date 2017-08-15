@@ -16,13 +16,11 @@
 #include "BaseLib/FileTools.h"
 
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "GeoLib/IO/Legacy/OGSIOVer4.h"
+#include "Legacy/OGSIOVer4.h"
 
 #include "GeoLib/GEOObjects.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 void
 readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
@@ -34,7 +32,7 @@ readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
     } else {
         std::vector<std::string> errors;
         std::string geo_name; // geo_name is output of the reading function
-        GeoLib::IO::Legacy::readGLIFileV4(fname, geo_objs, geo_name, errors);
+        FileIO::Legacy::readGLIFileV4(fname, geo_objs, geo_name, errors);
     }
 
     std::vector<std::string> geo_names;
@@ -43,6 +41,5 @@ readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
         OGS_FATAL("GEOObjects has no geometry name after reading the geometry file. "
                   "Something is wrong in the reading function.");
     }
-}
 }
 }

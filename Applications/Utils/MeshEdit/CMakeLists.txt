@@ -26,7 +26,11 @@ ADD_VTK_DEPENDENCY(MoveMesh)
 set_target_properties(MoveMesh PROPERTIES FOLDER Utilities)
 
 add_executable(appendLinesAlongPolyline appendLinesAlongPolyline.cpp)
-target_link_libraries(appendLinesAlongPolyline MeshGeoToolsLib MeshLib)
+target_link_libraries(appendLinesAlongPolyline
+    MeshGeoToolsLib
+    MeshLib
+    ApplicationsFileIO
+)
 ADD_VTK_DEPENDENCY(appendLinesAlongPolyline)
 set_target_properties(appendLinesAlongPolyline PROPERTIES FOLDER Utilities)
 
@@ -47,7 +51,10 @@ set_target_properties(reviseMesh PROPERTIES FOLDER Utilities)
 
 add_executable(ResetPropertiesInPolygonalRegion
     ResetPropertiesInPolygonalRegion.cpp)
-target_link_libraries(ResetPropertiesInPolygonalRegion MeshLib)
+target_link_libraries(ResetPropertiesInPolygonalRegion
+    MeshLib
+    ApplicationsFileIO
+)
 set_target_properties(ResetPropertiesInPolygonalRegion
     PROPERTIES FOLDER Utilities)
 
@@ -64,7 +71,11 @@ set_target_properties(createLayeredMeshFromRasters PROPERTIES FOLDER Utilities)
 
 add_executable(CreateBoundaryConditionsAlongPolylines
     CreateBoundaryConditionsAlongPolylines.cpp )
-target_link_libraries(CreateBoundaryConditionsAlongPolylines MeshGeoToolsLib MeshLib)
+target_link_libraries(CreateBoundaryConditionsAlongPolylines
+    MeshGeoToolsLib
+    MeshLib
+    ApplicationsFileIO
+)
 ADD_VTK_DEPENDENCY(CreateBoundaryConditionsAlongPolylines)
 set_target_properties(CreateBoundaryConditionsAlongPolylines
     PROPERTIES FOLDER Utilities)

@@ -19,11 +19,11 @@
 #include <QFileInfo>
 
 #include "Applications/DataExplorer/Base/OGSError.h"
+#include "Applications/FileIO/Legacy/OGSIOVer4.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 #include "FileListDialog.h"
 #include "GeoLib/GEOObjects.h"
-#include "GeoLib/IO/Legacy/OGSIOVer4.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -60,7 +60,7 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
         }
         std::vector<std::string> geo_names;
         geo_objects.getGeometryNames(geo_names);
-        GeoLib::IO::Legacy::writeGLIFileV4(output_str, geo_names[0], geo_objects);
+        FileIO::Legacy::writeGLIFileV4(output_str, geo_names[0], geo_objects);
         geo_objects.removeSurfaceVec(geo_names[0]);
         geo_objects.removePolylineVec(geo_names[0]);
         geo_objects.removePointVec(geo_names[0]);
@@ -87,7 +87,7 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
         std::string unique_name;
         std::vector<std::string> errors;
 
-        GeoLib::IO::Legacy::readGLIFileV4(input_string.toStdString(),
+        FileIO::Legacy::readGLIFileV4(input_string.toStdString(),
                                           geo_objects, unique_name, errors);
         if (errors.empty() ||
             (errors.size() == 1 &&
