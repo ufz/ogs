@@ -48,7 +48,7 @@ private:
 
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 
-    /// DOF table (one single-component variable) of the boundary mesh.
+    /// DOF-table (one single-component variable) of the boundary mesh.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
 
     /// Local assemblers for each element of the boundary mesh.

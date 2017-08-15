@@ -68,7 +68,7 @@ template <typename BoundaryConditionData,
 void GenericNonuniformNaturalBoundaryCondition<
     BoundaryConditionData, LocalAssemblerImplementation>::constructDofTable()
 {
-    // construct one-component dof table for the surface mesh
+    // construct one-component DOF-table for the surface mesh
     _mesh_subset_all_nodes.reset(
         new MeshLib::MeshSubset(*_boundary_mesh, &_boundary_mesh->getNodes()));
 
