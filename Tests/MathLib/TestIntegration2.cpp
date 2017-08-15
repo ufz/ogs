@@ -95,6 +95,11 @@ public:
 
         for (unsigned ip = 0; ip < sms.size(); ++ip)
         {
+            // We need to assert that detJ is constant in each element in order
+            // to be sure that in every element that we are integrating over the
+            // effective polynomial degree is the one we expect.
+            EXPECT_NEAR(sms[0].detJ, sms[ip].detJ,
+                        std::numeric_limits<double>::epsilon());
             auto const& N = sms[ip].N;
             auto const coords = interpolateNodeCoordinates(_e, N);
             auto const function_value = f(coords);
@@ -150,58 +155,106 @@ private:
     std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 };
 
-LocalAssemblerDataInterface::Function getFConst(
-    std::vector<double> const& coeffs)
+struct FBase
 {
-    EXPECT_EQ(1u, coeffs.size());
-    auto const c = coeffs[0];
-    return [c](std::array<double, 3> const& /*coords*/) { return c; };
-}
+private:
+    static std::vector<double> initCoeffs(std::size_t const num_coeffs)
+    {
+        std::vector<double> cs(num_coeffs);
+        fillVectorRandomly(cs);
+        return cs;
+    }
 
-LocalAssemblerDataInterface::Function getFLin(std::vector<double> const& coeffs)
+public:
+    FBase(std::size_t const num_coeffs) : coeffs(initCoeffs(num_coeffs)) {}
+
+    virtual double operator()(
+        std::array<double, 3> const& /*coords*/) const = 0;
+    virtual double getAnalyticalIntegralOverUnitCube() const = 0;
+
+    LocalAssemblerDataInterface::Function getClosure() const
+    {
+        return [this](std::array<double, 3> const& coords) {
+            return this->operator()(coords);
+        };
+    }
+
+    virtual ~FBase() = default;
+
+    std::vector<double> const coeffs;
+};
+
+struct FConst : FBase
 {
-    EXPECT_EQ(4u, coeffs.size());
-    return [coeffs](std::array<double, 3> const& coords) {
+    FConst() : FBase(1) {}
+
+    double operator()(std::array<double, 3> const&) const override
+    {
+        return coeffs[0];
+    }
+
+    double getAnalyticalIntegralOverUnitCube() const override
+    {
+        return coeffs[0];
+    }
+};
+
+struct FLin : FBase
+{
+    FLin() : FBase(4) {}
+
+    double operator()(std::array<double, 3> const& coords) const override
+    {
         auto const x = coords[0];
         auto const y = coords[1];
         auto const z = coords[2];
         return coeffs[0] + coeffs[1] * x + coeffs[2] * y + coeffs[3] * z;
-    };
-}
+    }
 
-LocalAssemblerDataInterface::Function getFQuad(
-    std::vector<double> const& coeffs)
+    double getAnalyticalIntegralOverUnitCube() const override
+    {
+        return coeffs[0];
+    }
+};
+
+struct FQuad : FBase
 {
-    EXPECT_EQ(10u, coeffs.size());
-    return [coeffs](std::array<double, 3> const& coords) {
+    FQuad() : FBase(10) {}
+
+    double operator()(std::array<double, 3> const& coords) const override
+    {
         auto const x = coords[0];
         auto const y = coords[1];
         auto const z = coords[2];
         return coeffs[0] + coeffs[1] * x + coeffs[2] * y + coeffs[3] * z +
                coeffs[4] * x * y + coeffs[5] * y * z + coeffs[6] * z * x +
                coeffs[7] * x * x + coeffs[8] * y * y + coeffs[9] * z * z;
-    };
-}
+    }
 
-std::pair<std::vector<double>, LocalAssemblerDataInterface::Function> getF(
-    unsigned polynomial_order)
+    double getAnalyticalIntegralOverUnitCube() const override
+    {
+        double const a = -.5;
+        double const b = .5;
+
+        double const a3 = a * a * a;
+        double const b3 = b * b * b;
+
+        return coeffs[0] + (coeffs[7] + coeffs[8] + coeffs[9]) * (b3 - a3) / 3.;
+    }
+};
+
+std::unique_ptr<FBase> getF(unsigned polynomial_order)
 {
     std::vector<double> coeffs;
 
     switch (polynomial_order)
     {
         case 0:
-            coeffs.resize(1);
-            fillVectorRandomly(coeffs);
-            return {coeffs, getFConst(coeffs)};
+            return std::make_unique<FConst>();
         case 1:
-            coeffs.resize(4);
-            fillVectorRandomly(coeffs);
-            return {coeffs, getFLin(coeffs)};
+            return std::make_unique<FLin>();
         case 2:
-            coeffs.resize(10);
-            fillVectorRandomly(coeffs);
-            return {coeffs, getFQuad(coeffs)};
+            return std::make_unique<FQuad>();
     }
 
     OGS_FATAL("unsupported polynomial order: %d.", polynomial_order);
@@ -222,8 +275,8 @@ TEST(MathLib, IntegrationGaussLegendreHexConst)
         const unsigned polynomial_order = 0;
         auto f = getF(polynomial_order);
 
-        auto const integral_hex = pcs_hex.integrate(f.second);
-        EXPECT_NEAR(f.first[0], integral_hex, eps);
+        auto const integral_hex = pcs_hex.integrate(f->getClosure());
+        EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_hex, eps);
     }
 }
 
@@ -242,8 +295,8 @@ TEST(MathLib, IntegrationGaussLegendreTetConst)
         const unsigned polynomial_order = 0;
         auto f = getF(polynomial_order);
 
-        auto const integral_tet = pcs_tet.integrate(f.second);
-        EXPECT_NEAR(f.first[0], integral_tet, eps);
+        auto const integral_tet = pcs_tet.integrate(f->getClosure());
+        EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_tet, eps);
     }
 }
 
@@ -271,9 +324,13 @@ TEST(MathLib, IntegrationGaussLegendreTet)
             DBUG("  == polynomial order: %u.", polynomial_order);
             auto f = getF(polynomial_order);
 
-            auto const integral_tet = pcs_tet.integrate(f.second);
-            auto const integral_hex = pcs_hex.integrate(f.second);
+            auto const integral_tet = pcs_tet.integrate(f->getClosure());
+            auto const integral_hex = pcs_hex.integrate(f->getClosure());
             // DBUG("  integrals: %g, %g.", integral_tet, integral_hex);
+            EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_hex,
+                        eps);
+            EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_tet,
+                        eps);
             EXPECT_NEAR(integral_hex, integral_tet, eps);
         }
     }
