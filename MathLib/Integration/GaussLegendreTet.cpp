@@ -11,9 +11,9 @@
 
 namespace MathLib
 {
-
-template <> const std::array<std::array<double, 3>, GaussLegendreTet<1>::NPoints>
-GaussLegendreTet<1>::X = {{{{1./3., 1./3., 1./3.}}}};
+template <>
+const std::array<std::array<double, 3>, GaussLegendreTet<1>::NPoints>
+    GaussLegendreTet<1>::X = {{{{1. / 4., 1. / 4., 1. / 4.}}}};
 template <>
 double const GaussLegendreTet<1>::W[1] = {1. / 6.};
 
