@@ -44,24 +44,6 @@ struct IntegrationPointData final
     {
     }
 
-#if defined(_MSC_VER) && _MSC_VER < 1900
-    // The default generated move-ctor is correctly generated for other
-    // compilers.
-    explicit IntegrationPointData(IntegrationPointData&& other)
-        : sigma_eff(std::move(other.sigma_eff)),
-          sigma_eff_prev(std::move(other.sigma_eff_prev)),
-          eps(std::move(other.eps)),
-          eps_prev(std::move(other.eps_prev)),
-          eps_m(std::move(other.eps_m)),
-          eps_m_prev(std::move(other.eps_m_prev)),
-          solid_material(other.solid_material),
-          material_state_variables(std::move(other.material_state_variables)),
-          // C(std::move(other.C)),
-          integration_weight(std::move(other.integration_weight))
-    {
-    }
-#endif  // _MSC_VER
-
     typename ShapeMatrixTypeDisplacement::template MatrixType<
         DisplacementDim, NPoints * DisplacementDim>
         N_u_op;
@@ -94,12 +76,10 @@ struct IntegrationPointData final
         KelvinVectorDimensions<DisplacementDim>::value;
     using Invariants = MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
 
-    template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         double const t,
         SpatialPosition const& x_position,
         double const dt,
-        DisplacementVectorType const& u,
         double const thermal_strain)
     {
         // eps.noalias() = b_matrices * u;
@@ -133,48 +113,93 @@ struct ThermoHydroMechanicsLocalAssemblerInterface
 {
 public:
     virtual std::vector<double> const& getIntPtSigmaXX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaYY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaZZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaXY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaXZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaYZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtEpsilonXX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtEpsilonYY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtEpsilonZZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtEpsilonXY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtEpsilonXZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtEpsilonYZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtDarcyVelocityX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtDarcyVelocityY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtDarcyVelocityZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 };
 
@@ -251,11 +276,14 @@ public:
                 typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,
                                                      _is_axially_symmetric);*/
 
-            ip_data.sigma_eff.resize(kelvin_vector_size);
+            // Initialize current time step values
+            ip_data.sigma_eff.setZero(kelvin_vector_size);
+            ip_data.eps.setZero(kelvin_vector_size);
+            ip_data.eps_m.setZero(kelvin_vector_size);
+
+            // Previous time step values are not initialized and are set later
             ip_data.sigma_eff_prev.resize(kelvin_vector_size);
-            ip_data.eps.resize(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
-            ip_data.eps_m.resize(kelvin_vector_size);
             ip_data.eps_m_prev.resize(kelvin_vector_size);
             // ip_data.C.resize(kelvin_vector_size, kelvin_vector_size);
 
@@ -460,7 +488,7 @@ public:
             //
             eps.noalias() = B * u;
 
-            auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+            auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt,
                                                     thermal_strain);
 
             local_Jac
@@ -644,30 +672,45 @@ public:
     }
 
     std::vector<double> const& getIntPtSigmaXX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtSigma(cache, 0);
     }
 
     std::vector<double> const& getIntPtSigmaYY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtSigma(cache, 1);
     }
 
     std::vector<double> const& getIntPtSigmaZZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtSigma(cache, 2);
     }
 
     std::vector<double> const& getIntPtSigmaXY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtSigma(cache, 3);
     }
 
     std::vector<double> const& getIntPtSigmaXZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
@@ -675,6 +718,9 @@ public:
     }
 
     std::vector<double> const& getIntPtSigmaYZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
@@ -682,30 +728,45 @@ public:
     }
 
     std::vector<double> const& getIntPtEpsilonXX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtEpsilon(cache, 0);
     }
 
     std::vector<double> const& getIntPtEpsilonYY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtEpsilon(cache, 1);
     }
 
     std::vector<double> const& getIntPtEpsilonZZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtEpsilon(cache, 2);
     }
 
     std::vector<double> const& getIntPtEpsilonXY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         return getIntPtEpsilon(cache, 3);
     }
 
     std::vector<double> const& getIntPtEpsilonXZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
@@ -713,6 +774,9 @@ public:
     }
 
     std::vector<double> const& getIntPtEpsilonYZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
         assert(DisplacementDim == 3);
@@ -720,6 +784,9 @@ public:
     }
 
     std::vector<double> const& getIntPtDarcyVelocityX(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         assert(!_darcy_velocities.empty());
@@ -727,6 +794,9 @@ public:
     }
 
     std::vector<double> const& getIntPtDarcyVelocityY(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         assert(_darcy_velocities.size() > 1);
@@ -734,6 +804,9 @@ public:
     }
 
     std::vector<double> const& getIntPtDarcyVelocityZ(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
         assert(_darcy_velocities.size() > 2);

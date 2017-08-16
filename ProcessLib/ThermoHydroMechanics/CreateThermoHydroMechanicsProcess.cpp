@@ -255,12 +255,12 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
             //! \ogs_file_param{prj__processes__processes__process__HYDRO_MECHANICS__specific_body_force}
             config.getConfigParameter<std::vector<double>>(
                 "specific_body_force");
-        if (specific_body_force.size() != DisplacementDim)
+        if (b.size() != DisplacementDim)
             OGS_FATAL(
                 "The size of the specific body force vector does not match the "
                 "displacement dimension. Vector size is %d, displacement "
                 "dimension is %d",
-                specific_body_force.size(), DisplacementDim);
+                b.size(), DisplacementDim);
 
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }

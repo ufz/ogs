@@ -14,7 +14,7 @@
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/ThermoHydroMechanics/CreateLocalAssemblers.h"
+#include "ProcessLib/HydroMechanics//CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ThermoHydroMechanicsFEM.h"
 #include "ThermoHydroMechanicsProcessData.h"
@@ -92,8 +92,8 @@ public:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override
     {
-        ProcessLib::ThermoHydroMechanics::createLocalAssemblers<
-            DisplacementDim, LocalAssemblerData>(
+        ProcessLib::HydroMechanics::createLocalAssemblers<
+            DisplacementDim, ThermoHydroMechanicsLocalAssembler>(
             mesh.getDimension(), mesh.getElements(), dof_table,
             // use displacment process variable for shapefunction order
             getProcessVariables()[2].get().getShapeFunctionOrder(),
@@ -112,83 +112,92 @@ public:
                 NumLib::ComponentOrder::BY_LOCATION));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_xx", 1,
+            "sigma_xx",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &ThermoHydroMechanicsLocalAssemblerInterface::getIntPtSigmaXX));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_yy", 1,
+            "sigma_yy",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &ThermoHydroMechanicsLocalAssemblerInterface::getIntPtSigmaYY));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_zz", 1,
+            "sigma_zz",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &ThermoHydroMechanicsLocalAssemblerInterface::getIntPtSigmaZZ));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "sigma_xy", 1,
+            "sigma_xy",
             makeExtrapolator(
-                getExtrapolator(), _local_assemblers,
+                1, getExtrapolator(), _local_assemblers,
                 &ThermoHydroMechanicsLocalAssemblerInterface::getIntPtSigmaXY));
 
         if (DisplacementDim == 3)
         {
             Base::_secondary_variables.addSecondaryVariable(
-                "sigma_xz", 1,
-                makeExtrapolator(getExtrapolator(), _local_assemblers,
+                "sigma_xz",
+                makeExtrapolator(
+                    1, getExtrapolator(), _local_assemblers,
                                  &ThermoHydroMechanicsLocalAssemblerInterface::
                                      getIntPtSigmaXZ));
 
             Base::_secondary_variables.addSecondaryVariable(
-                "sigma_yz", 1,
-                makeExtrapolator(getExtrapolator(), _local_assemblers,
+                "sigma_yz",
+                makeExtrapolator(
+                    1, getExtrapolator(), _local_assemblers,
                                  &ThermoHydroMechanicsLocalAssemblerInterface::
                                      getIntPtSigmaYZ));
         }
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_xx", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "epsilon_xx",
+            makeExtrapolator(
+                1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtEpsilonXX));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_yy", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "epsilon_yy",
+            makeExtrapolator(
+                1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtEpsilonYY));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_zz", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "epsilon_zz",
+            makeExtrapolator(
+                1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtEpsilonZZ));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_xy", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "epsilon_xy",
+            makeExtrapolator(
+                1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtEpsilonXY));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "velocity_x", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "velocity_x",
+            makeExtrapolator(
+                1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtDarcyVelocityX));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "velocity_y", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "velocity_y",
+            makeExtrapolator(
+                1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtDarcyVelocityY));
 
         Base::_secondary_variables.addSecondaryVariable(
-            "velocity_z", 1,
-            makeExtrapolator(getExtrapolator(), _local_assemblers,
+            "velocity_z",
+            makeExtrapolator(
+                1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtDarcyVelocityZ));
     }
