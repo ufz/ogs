@@ -390,7 +390,8 @@ std::string readSurfaces(
     const std::vector<GeoLib::Polyline*>& ply_vec,
     const std::map<std::string, std::size_t>& ply_vec_names,
     GeoLib::PointVec& pnt_vec, const std::string& path,
-    std::vector<std::string>& errors, GeoLib::GEOObjects& geo)
+    std::vector<std::string>& errors, GeoLib::GEOObjects& geo,
+    std::string const& unique_name)
 {
     if (!in.good())
     {
@@ -408,10 +409,19 @@ std::string readSurfaces(
                           ply_vec_names, pnt_vec, path, errors);
         if (n_polygons < polygon_vec.size())
         {
-            std::string surface_name("test");
-            FileIO::createSurface(
-                *(dynamic_cast<GeoLib::Polyline*>(
-                    polygon_vec[polygon_vec.size() - 1])), surface_name, geo);
+            INFO("Creating a surface by triangulation of the polyline ...");
+            if (FileIO::createSurface(
+                    *(dynamic_cast<GeoLib::Polyline*>(polygon_vec.back())), geo,
+                    unique_name))
+            {
+                INFO("\t done");
+            }
+            else
+            {
+                WARN(
+                    "\t Creating a surface by triangulation of the polyline "
+                    "failed.");
+            }
         }
     }
     for (auto & k : polygon_vec)
@@ -475,31 +485,43 @@ bool readGLIFileV4(const std::string& fname,
     else
         INFO("GeoLib::readGLIFile(): tag #POLYLINE not found.");
 
+    if (!ply_vec->empty())
+        geo.addPolylineVec(
+            std::move(ply_vec), unique_name,
+            std::move(ply_names));  // KR: insert into GEOObjects if not empty
+
+    // Since ply_names is a unique_ptr and is given to the GEOObject instance
+    // geo it is not usable anymore. For this reason a copy is necessary.
+    std::map<std::string, std::size_t> ply_names_copy;
+    if (geo.getPolylineVecObj(unique_name))
+    {
+        ply_names_copy = std::map<std::string, std::size_t>{
+            geo.getPolylineVecObj(unique_name)->getNameIDMapBegin(),
+            geo.getPolylineVecObj(unique_name)->getNameIDMapEnd()};
+    }
+
     auto sfc_vec = std::make_unique<std::vector<GeoLib::Surface*>>();
     auto sfc_names = std::make_unique<std::map<std::string, std::size_t>>();
     if (tag.find("#SURFACE") != std::string::npos && in)
     {
         INFO("GeoLib::readGLIFile(): read surfaces from stream.");
+
         tag = readSurfaces(in,
                            *sfc_vec,
                            *sfc_names,
-                           *ply_vec,
-                           *ply_names,
+                           *geo.getPolylineVec(unique_name),
+                           ply_names_copy,
                            point_vec,
                            path,
                            errors,
-                           geo);
+                           geo,
+                           unique_name);
         INFO("GeoLib::readGLIFile(): \tok, %d surfaces read.", sfc_vec->size());
     }
     else
         INFO("GeoLib::readGLIFile(): tag #SURFACE not found.");
 
     in.close();
-
-    if (!ply_vec->empty())
-        geo.addPolylineVec(
-            std::move(ply_vec), unique_name,
-            std::move(ply_names));  // KR: insert into GEOObjects if not empty
 
     if (!sfc_vec->empty())
         geo.addSurfaceVec(
