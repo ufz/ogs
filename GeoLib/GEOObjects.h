@@ -192,8 +192,8 @@ public:
      * \return true if the surfaces are appended, false if the SurfaceVec with the
      * corresponding name does not exist and the surfaces are added.
      * */
-    bool appendSurfaceVec(const std::vector<Surface*> &surfaces,
-                                  const std::string &name);
+    bool appendSurfaceVec(const std::vector<Surface*>& surfaces,
+                          const std::string& name);
 
     /// Returns the surface vector with the given name as a const.
     const std::vector<Surface*>* getSurfaceVec(const std::string &name) const;
