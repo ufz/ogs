@@ -415,11 +415,8 @@ std::string readSurfaces(std::istream &in,
         {
             // subdivide polygon in simple polygons
             GeoLib::Surface* sfc(GeoLib::Surface::createSurface(
-                                         *(dynamic_cast<GeoLib::Polyline*> (polygon_vec
-                                                                            [
-                                                                                    polygon_vec
-                                                                                    .
-                                                                                    size() - 1]))));
+                *(dynamic_cast<GeoLib::Polyline*>(
+                    polygon_vec[polygon_vec.size() - 1]))));
             sfc_vec.push_back(sfc);
         }
     }
