@@ -261,20 +261,6 @@ public:
             _ip_data[ip].integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 sm_u.integralMeasure * sm_u.detJ;
-   /*             sm.integralMeasure * shape_matrices_u[ip].detJ;
-            ip_data.b_matrices.resize(
-                kelvin_vector_size,
-                ShapeFunctionDisplacement::NPOINTS * DisplacementDim);
-
-            auto const x_coord =
-                interpolateXCoordinate<ShapeFunctionDisplacement,
-                                       ShapeMatricesTypeDisplacement>(
-                    e, shape_matrices_u[ip].N);
-
-            auto const B = LinearBMatrix::computeBMatrix<
-                DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
-                typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,
-                                                     _is_axially_symmetric);*/
 
             // Initialize current time step values
             ip_data.sigma_eff.setZero(kelvin_vector_size);

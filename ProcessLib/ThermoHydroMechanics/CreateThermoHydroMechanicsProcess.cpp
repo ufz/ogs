@@ -155,14 +155,6 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     DBUG("Use \'%s\' as specific storage parameter.",
          specific_storage.name.c_str());
 
-  /*  // Fluid viscosity
-    auto& fluid_viscosity = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_fluid_viscosity}
-        "fluid_viscosity", parameters, 1);
-    DBUG("Use \'%s\' as fluid viscosity parameter.",
-         fluid_viscosity.name.c_str());*/
-
     // Biot coefficient
     auto& biot_coefficient = findParameter<double>(
         config,
@@ -208,14 +200,6 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     DBUG("Use \'%s\' as fluid volumetric thermal expansion coefficient parameter.",
          fluid_volumetric_thermal_expansion_coefficient.name.c_str());
 
-  /*  // specific heat capacity for fluid
-    auto& fluid_specific_heat_capacity = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_fluid_specific_heat_capacity}
-        "fluid_specific_heat_capacity", parameters, 1);
-    DBUG("Use \'%s\' as fluid specific heat capacity parameter.",
-         fluid_specific_heat_capacity.name.c_str()); */
-
     // specific heat capacity for solid
     auto& solid_specific_heat_capacity = findParameter<double>(
         config,
@@ -231,14 +215,6 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         "solid_thermal_conductivity", parameters, 1);
     DBUG("Use \'%s\' as solid thermal conductivity parameter.",
          solid_thermal_conductivity.name.c_str());
-
- /*   // thermal conductivity for fluid // currently only considers isotropic
-    auto& fluid_thermal_conductivity = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS_fluid_thermal_conductivity}
-        "fluid_thermal_conductivity", parameters, 1);
-    DBUG("Use \'%s\' as fluid thermal conductivity parameter.",
-         fluid_thermal_conductivity.name.c_str());*/
 
     // reference temperature
     auto& reference_temperature = findParameter<double>(
