@@ -67,8 +67,8 @@ public:
                   bool include_stations_as_constraints,
                   GMSH::MeshDensityAlgorithm mesh_density_algorithm,
                   double param1, double param2, std::size_t param3,
-                  std::vector<std::string>& selected_geometries,
-                  bool rotate = false, bool keep_preprocessed_geometry = false);
+                  std::vector<std::string>& selected_geometries, bool rotate,
+                  bool keep_preprocessed_geometry);
 
     GMSHInterface(GMSHInterface const&) = delete;
     GMSHInterface(GMSHInterface &&) = delete;

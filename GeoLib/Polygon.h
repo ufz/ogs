@@ -130,7 +130,7 @@ private:
      */
     EdgeType getEdgeType (std::size_t k, GeoLib::Point const & pnt) const;
 
-    void ensureCWOrientation ();
+    void ensureCCWOrientation ();
 
 #if __GNUC__ <= 4 && (__GNUC_MINOR__ < 9)
     void splitPolygonAtIntersection(

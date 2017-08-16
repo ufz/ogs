@@ -57,7 +57,7 @@ Polygon::~Polygon()
 bool Polygon::initialise ()
 {
     if (this->isClosed()) {
-        ensureCWOrientation();
+        ensureCCWOrientation();
         return true;
     }
     WARN("Polygon::initialise(): base polyline is not closed.");
@@ -290,7 +290,7 @@ EdgeType Polygon::getEdgeType (std::size_t k, GeoLib::Point const & pnt) const
     }
 }
 
-void Polygon::ensureCWOrientation ()
+void Polygon::ensureCCWOrientation ()
 {
     // *** pre processing: rotate points to xy-plan
     // *** copy points to vector - last point is identical to the first
@@ -338,7 +338,7 @@ void Polygon::ensureCWOrientation ()
                     tmp_polygon_pnts[0]);
     }
 
-    if (orient == GeoLib::CCW)
+    if (orient != GeoLib::CCW)
     {
         // switch orientation
         std::size_t tmp_n_pnts (n_pnts);
