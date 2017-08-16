@@ -20,6 +20,8 @@
 
 #include <logog/include/logog.hpp>
 
+#include "Applications/FileIO/Legacy/createSurface.h"
+
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 
@@ -265,14 +267,14 @@ std::string readPolylines(std::istream &in, std::vector<GeoLib::Polyline*>* ply_
    01/2010 TF signatur modification, reimplementation
 **************************************************************************/
 /** read a single Surface */
-std::string readSurface(std::istream &in,
-                        std::vector<GeoLib::Polygon*> &polygon_vec,
-                        std::vector<GeoLib::Surface*> &sfc_vec,
-                        std::map<std::string,std::size_t>& sfc_names,
-                        const std::vector<GeoLib::Polyline*> &ply_vec,
+std::string readSurface(std::istream& in,
+                        std::vector<GeoLib::Polygon*>& polygon_vec,
+                        std::vector<GeoLib::Surface*>& sfc_vec,
+                        std::map<std::string, std::size_t>& sfc_names,
+                        const std::vector<GeoLib::Polyline*>& ply_vec,
                         const std::map<std::string, std::size_t>& ply_vec_names,
-                        GeoLib::PointVec &pnt_vec,
-                        std::string const& path, std::vector<std::string>& errors)
+                        GeoLib::PointVec& pnt_vec, std::string const& path,
+                        std::vector<std::string>& errors)
 {
     std::string line;
     GeoLib::Surface* sfc(nullptr);
@@ -382,13 +384,13 @@ std::string readSurface(std::istream &in,
    05/2004 CC Modification
    01/2010 TF changed signature of function, big modifications
 **************************************************************************/
-std::string readSurfaces(std::istream &in,
-                         std::vector<GeoLib::Surface*> &sfc_vec,
-                         std::map<std::string, std::size_t>& sfc_names,
-                         const std::vector<GeoLib::Polyline*> &ply_vec,
-                         const std::map<std::string,std::size_t>& ply_vec_names,
-                         GeoLib::PointVec & pnt_vec,
-                         const std::string &path, std::vector<std::string>& errors)
+std::string readSurfaces(
+    std::istream& in, std::vector<GeoLib::Surface*>& sfc_vec,
+    std::map<std::string, std::size_t>& sfc_names,
+    const std::vector<GeoLib::Polyline*>& ply_vec,
+    const std::map<std::string, std::size_t>& ply_vec_names,
+    GeoLib::PointVec& pnt_vec, const std::string& path,
+    std::vector<std::string>& errors, GeoLib::GEOObjects& geo)
 {
     if (!in.good())
     {
@@ -402,22 +404,14 @@ std::string readSurfaces(std::istream &in,
     while (!in.eof() && !in.fail() && tag.find("#SURFACE") != std::string::npos)
     {
         std::size_t n_polygons (polygon_vec.size());
-        tag = readSurface(in,
-                          polygon_vec,
-                          sfc_vec,
-                          sfc_names,
-                          ply_vec,
-                          ply_vec_names,
-                          pnt_vec,
-                          path,
-                          errors);
+        tag = readSurface(in, polygon_vec, sfc_vec, sfc_names, ply_vec,
+                          ply_vec_names, pnt_vec, path, errors);
         if (n_polygons < polygon_vec.size())
         {
-            // subdivide polygon in simple polygons
-            GeoLib::Surface* sfc(GeoLib::Surface::createSurface(
+            std::string surface_name("test");
+            FileIO::createSurface(
                 *(dynamic_cast<GeoLib::Polyline*>(
-                    polygon_vec[polygon_vec.size() - 1]))));
-            sfc_vec.push_back(sfc);
+                    polygon_vec[polygon_vec.size() - 1])), surface_name, geo);
         }
     }
     for (auto & k : polygon_vec)
@@ -493,7 +487,8 @@ bool readGLIFileV4(const std::string& fname,
                            *ply_names,
                            point_vec,
                            path,
-                           errors);
+                           errors,
+                           geo);
         INFO("GeoLib::readGLIFile(): \tok, %d surfaces read.", sfc_vec->size());
     }
     else
