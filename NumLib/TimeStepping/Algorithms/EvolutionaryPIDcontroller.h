@@ -115,7 +115,18 @@ private:
 
     bool _is_accepted;
 
-    double limitStepSize(const double h_new, const double h_n,
+    /**
+     * Forced the computed time step size in the given range
+     * (see the formulas in the documentation of the class)
+     * or use the half of the previous time step size under some other
+     * constrains.
+     * @param h_new                   The computed time step size.
+     * @param previous_step_accepted  An indicator for whether the previous time
+     *                                step is rejected.
+     * @return                        The new time step after apply
+     *                                the constrains.
+     */
+    double limitStepSize(const double h_new,
                          const bool previous_step_accepted) const;
 
     double checkSpecificTimeReached(const double h_new);

@@ -34,8 +34,7 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
         double h_new = (e_n > zero_threshlod) ? _ts_current.dt() * _tol / e_n
                                               : 0.5 * _ts_current.dt();
 
-        h_new =
-            limitStepSize(h_new, _ts_current.dt(), is_previous_step_accepted);
+        h_new = limitStepSize(h_new, is_previous_step_accepted);
         h_new = checkSpecificTimeReached(h_new);
 
         _ts_current = _ts_prev;
@@ -95,7 +94,7 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
             }
         }
 
-        h_new = limitStepSize(h_new, h_n, is_previous_step_accepted);
+        h_new = limitStepSize(h_new, is_previous_step_accepted);
         h_new = checkSpecificTimeReached(h_new);
         _dt_vector.push_back(h_new);
 
@@ -110,10 +109,13 @@ bool EvolutionaryPIDcontroller::next(const double solution_error)
 }
 
 double EvolutionaryPIDcontroller::limitStepSize(
-    const double h_new, const double h_n,
-    const bool previous_step_accepted) const
+    const double h_new, const bool previous_step_accepted) const
 {
+    const double h_n = _ts_current.dt();
+    // Forced the computed time step size in the given range
+    // (see the formulas in the documentation of the class)
     const double h_in_range = std::max(_h_min, std::min(h_new, _h_max));
+    // Limit the step size change ratio.
     double limited_h =
         std::max(_rel_h_min * h_n, std::min(h_in_range, _rel_h_max * h_n));
 
