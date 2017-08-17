@@ -23,6 +23,38 @@ namespace ProcessLib
 {
 namespace ThermoHydroMechanics
 {
+
+/**
+ * \brief A class to simulate thermo-hydro-mechanical process
+ * described by
+ *
+ * \f[
+ *     \mathrm{div} \left[ (\boldsymbol{\mathrm{u}}_\mathrm{S})'_\mathrm{S} + \phi_\mathrm{F} \boldsymbol{\mathrm{w}}_\mathrm{FS} \right]
+ *     = \underbrace{\beta^\mathrm{eff}_\mathrm{T} T'_\mathrm{S}}_{\text{first term}} +
+ *     \underbrace{\phi_\mathrm{F} \beta_\mathrm{TF} \mathrm{grad}\, T \cdot \boldsymbol{\mathrm{w}}_\mathrm{FS}}_{\text{second term}}
+ * \f]
+ * \f[
+ *    \mathrm{div} \left[ \boldsymbol{\sigma}^\mathrm{E}_\mathrm{S} - \alpha_\mathrm{B} p \boldsymbol{I} \right]
+ *    + \varrho^\mathrm{eff} \boldsymbol{g} = \boldsymbol{0}
+ * \f]
+ * \f[
+ *   (\varrho c_p)^\mathrm{eff} \frac{\partial T}{\partial t} + \phi_\mathrm{F} \varrho_\mathrm{FR} c_{p\mathrm{F}} \mathrm{grad}\, T \cdot \boldsymbol{\mathrm{w}}_\mathrm{FS}
+ *   - \mathrm{div} \left[ \boldsymbol{\lambda}^\mathrm{eff} \mathrm{grad}\, T \right]
+ * \f]
+ * where
+ *    \f{eqnarray*}{
+ *       &\alpha_\mathrm{TS}:&                 \mbox{linear coefficient of thermal expansion of the solid phase,}\\
+ *       &\beta_\mathrm{TF}:&                  \mbox{volumetric coefficient of thermal expansion of the fluid phase,}\\
+ *       &\varrho:&                            \mbox{density,}\\
+ *       &\phi_\mrm{F}:&                       \mbox{porosity,}\\
+ *       &\alpha_\mrm{B}:&                     \mbox{Biot coefficient,}\\
+ *       &\boldsymbol{\kappa}_\mathrm{F}:&     \mbox{intrinsic permeability}\\
+ *       &\mu_\mathrm{FR}:&                    \mbox{viscosity}\\
+ *    \f}
+ *
+ * Detailed model description can refer
+ * <a href="Zheng_THMOGS6.pdf" target="_blank"><b>Phase field method</b></a>
+ */
 template <int DisplacementDim>
 class ThermoHydroMechanicsProcess final : public Process
 {
