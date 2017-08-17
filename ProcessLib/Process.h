@@ -93,7 +93,6 @@ public:
     }
 
     MeshLib::Mesh& getMesh() const { return _mesh; }
-
     std::vector<std::reference_wrapper<ProcessVariable>> const&
     getProcessVariables() const
     {
@@ -108,7 +107,7 @@ public:
     // Get the solution of the previous time step.
     virtual GlobalVector* getPreviousTimeStepSolution() const
     {
-       return nullptr;
+        return nullptr;
     }
 
     // Used as a call back for CalculateSurfaceFlux process.
@@ -137,17 +136,14 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) = 0;
 
-    virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                         GlobalMatrix& M, GlobalMatrix& K,
-                                         GlobalVector& b,
-                                         StaggeredCouplingTerm const&
-                                         coupling_term) = 0;
+    virtual void assembleConcreteProcess(
+        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+        GlobalVector& b, StaggeredCouplingTerm const& coupling_term) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
-        const double t, GlobalVector const& x,
-        GlobalVector const& xdot, const double dxdot_dx,
-        const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b, GlobalMatrix& Jac,
+        const double t, GlobalVector const& x, GlobalVector const& xdot,
+        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
         StaggeredCouplingTerm const& coupling_term) = 0;
 
     virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
@@ -157,14 +153,17 @@ private:
     }
 
     virtual void postTimestepConcreteProcess(GlobalVector const& /*x*/) {}
-
     virtual void preIterationConcreteProcess(const unsigned /*iter*/,
-                                             GlobalVector const& /*x*/){}
+                                             GlobalVector const& /*x*/)
+    {
+    }
 
-    virtual void computeSecondaryVariableConcrete(const double /*t*/,
-                                                  GlobalVector const& /*x*/,
-                                                  StaggeredCouplingTerm
-                                                  const& /*coupled_term*/) {}
+    virtual void computeSecondaryVariableConcrete(
+        const double /*t*/,
+        GlobalVector const& /*x*/,
+        StaggeredCouplingTerm const& /*coupled_term*/)
+    {
+    }
 
     virtual NumLib::IterationResult postIterationConcreteProcess(
         GlobalVector const& /*x*/)
