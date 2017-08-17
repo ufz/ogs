@@ -1,3 +1,4 @@
+## Appveyor cache version: 1
 from conans import ConanFile, CMake
 
 class OpenGeoSysConan(ConanFile):

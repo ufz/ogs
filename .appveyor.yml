@@ -17,7 +17,7 @@ configuration:
   - Release
 
 cache:
-  - C:\projects\deps\conan
+  - C:\projects\deps\conan -> conanfile.py
 
 install:
   # All external dependencies are installed in C:\projects\deps
