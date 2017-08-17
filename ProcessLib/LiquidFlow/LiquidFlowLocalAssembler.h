@@ -31,6 +31,8 @@
 
 namespace ProcessLib
 {
+struct StaggeredCouplingTerm;
+
 namespace LiquidFlow
 {
 const unsigned NUM_NODAL_DOF = 1;
@@ -40,11 +42,27 @@ class LiquidFlowLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
+    LiquidFlowLocalAssemblerInterface(
+        StaggeredCouplingTerm* const coupling_term)
+        : _coupling_term(coupling_term)
+    {
+    }
+
+    void setStaggeredCouplingTerm(std::size_t const /*mesh_item_id*/,
+                                  StaggeredCouplingTerm* const coupling_term)
+    {
+        _coupling_term = coupling_term;
+    }
+
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
+
+protected:
+    /// Pointer that gets from Process class
+    StaggeredCouplingTerm* _coupling_term;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -61,6 +79,9 @@ class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
     using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
 
+    using LocalMatrixType = Eigen::Map<
+        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>;
+
 public:
     LiquidFlowLocalAssembler(
         MeshLib::Element const& element,
@@ -70,8 +91,10 @@ public:
         int const gravitational_axis_id,
         double const gravitational_acceleration,
         double const reference_temperature,
-        LiquidFlowMaterialProperties const& material_propertries)
-        : _element(element),
+        LiquidFlowMaterialProperties const& material_propertries,
+        StaggeredCouplingTerm* coupling_term)
+        : LiquidFlowLocalAssemblerInterface(coupling_term),
+          _element(element),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
@@ -94,14 +117,6 @@ public:
         std::vector<double>& local_b_data,
         LocalCouplingTerm const& coupled_term) override;
 
-    void computeSecondaryVariableConcrete(
-        double const /*t*/, std::vector<double> const& local_x) override;
-
-    void computeSecondaryVariableWithCoupledProcessConcrete(
-        double const t, std::vector<double> const& local_x,
-        std::unordered_map<std::type_index, const std::vector<double>> const&
-            coupled_local_solutions) override;
-
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
@@ -115,40 +130,7 @@ public:
         const double t,
         GlobalVector const& current_solution,
         NumLib::LocalToGlobalIndexMap const& dof_table,
-        std::vector<double>& cache) const override
-    {
-        // auto const num_nodes = ShapeFunction_::NPOINTS;
-        auto const num_intpts = _shape_matrices.size();
-
-        auto const indices = NumLib::getIndices(
-            _element.getID(), dof_table);
-        assert(!indices.empty());
-        auto const local_x = current_solution.get(indices);
-        auto const local_x_vec =
-            MathLib::toVector<Eigen::Matrix<double, ShapeFunction::NPOINTS, 1>>(
-                local_x, ShapeFunction::NPOINTS);
-
-        cache.clear();
-        auto cache_vec = MathLib::createZeroedMatrix<
-            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, GlobalDim, num_intpts);
-
-        SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
-        // TODO fix
-#if 0
-        for (unsigned i = 0; i < num_intpts; ++i) {
-            pos.setIntegrationPoint(i);
-            auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
-            // dimensions: (d x 1) = (d x n) * (n x 1)
-            cache_vec.col(i).noalias() =
-                -k * _shape_matrices[i].dNdx * local_x_vec;
-        }
-#endif
-
-        return cache;
-    }
+        std::vector<double>& veloctiy_cache) const override;
 
 private:
     MeshLib::Element const& _element;
@@ -156,11 +138,6 @@ private:
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
-
-    std::vector<std::vector<double>> _darcy_velocities =
-        std::vector<std::vector<double>>(
-            GlobalDim,
-            std::vector<double>(_integration_method.getNumberOfPoints()));
 
     /**
      *  Calculator of the Laplacian and the gravity term for anisotropic
@@ -176,10 +153,10 @@ private:
             double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
-            std::vector<std::vector<double>>& darcy_velocities,
+            unsigned ip, LocalMatrixType& darcy_velocity_at_ips,
             Eigen::Map<const NodalVectorType> const& local_p,
             ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-            unsigned const ip, double const mu, double const rho_g,
+            double const mu, double const rho_g,
             int const gravitational_axis_id);
     };
 
@@ -197,10 +174,10 @@ private:
             double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
-            std::vector<std::vector<double>>& darcy_velocities,
+            unsigned ip, LocalMatrixType& darcy_velocity_at_ips,
             Eigen::Map<const NodalVectorType> const& local_p,
             ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-            unsigned const ip, double const mu, double const rho_g,
+            double const mu, double const rho_g,
             int const gravitational_axis_id);
     };
 
@@ -221,19 +198,28 @@ private:
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         SpatialPosition const& pos, Eigen::MatrixXd const& permeability);
 
-    template <typename LaplacianGravityVelocityCalculator>
-    void computeSecondaryVariableLocal(double const /*t*/,
-                                       std::vector<double> const& local_x,
-                                       SpatialPosition const& pos,
-                                       Eigen::MatrixXd const& permeability);
+    void computeDarcyVelocity(Eigen::MatrixXd const& permeability,
+                              std::vector<double> const& local_x,
+                              LocalMatrixType& darcy_velocity_at_ips) const;
+
+    void computeDarcyVelocityWithCoupling(
+        Eigen::MatrixXd const& permeability, std::vector<double> const& local_x,
+        std::unordered_map<std::type_index, const std::vector<double>> const&
+            coupled_local_solutions,
+        LocalMatrixType& darcy_velocity_at_ips) const;
 
     template <typename LaplacianGravityVelocityCalculator>
-    void computeSecondaryVariableCoupledWithHeatTransportLocal(
-        double const /*t*/,
+    void computeDarcyVelocityLocal(
+        std::vector<double> const& local_x,
+        Eigen::MatrixXd const& permeability,
+        LocalMatrixType& darcy_velocity_at_ips) const;
+
+    template <typename LaplacianGravityVelocityCalculator>
+    void computeDarcyVelocityCoupledWithHeatTransportLocal(
         std::vector<double> const& local_x,
         std::vector<double> const& local_T,
-        SpatialPosition const& pos,
-        Eigen::MatrixXd const& permeability);
+        Eigen::MatrixXd const& permeability,
+        LocalMatrixType& darcy_velocity_at_ips) const;
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;
