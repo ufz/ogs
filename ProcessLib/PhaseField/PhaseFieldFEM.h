@@ -79,7 +79,7 @@ struct IntegrationPointData final
     void updateConstitutiveRelation(
                                     double const t,
                                     SpatialPosition const& x_position,
-                                    double const dt,
+                                    double const /*dt*/,
                                     DisplacementVectorType const& /*u*/,
                                     double const degradation)
     {
