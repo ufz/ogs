@@ -576,6 +576,9 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
                              x, norm_type))
                 : 0.;
 
+        if (!ppd.nonlinear_solver_converged)
+            timestepper->setAcceptedOrNot(false);
+
         if (!timestepper->next(solution_error) &&
             // In case of FixedTimeStepping, which makes timestepper->next(...)
             // return false when the ending time is reached.

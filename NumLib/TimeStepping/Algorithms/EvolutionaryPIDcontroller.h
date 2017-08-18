@@ -81,10 +81,16 @@ public:
 
     /// return if current time step is accepted
     bool accepted() const override { return _is_accepted; }
+    /// Set the status of the step
+    /// \param accepted A flag for whether the step is accepted or not
+    void setAcceptedOrNot(const bool accepted) override
+    {
+        _is_accepted = accepted;
+    }
+
     /// Get a flag to indicate that this algorithm need to compute
     /// solution error.
     bool isSolutionErrorComputationNeeded() override { return true; }
-
 private:
     const double _kP = 0.075;  ///< Parameter. \see EvolutionaryPIDcontroller
     const double _kI = 0.175;  ///< Parameter. \see EvolutionaryPIDcontroller
@@ -109,12 +115,19 @@ private:
 
     bool _is_accepted;
 
-    double limitStepSize(const double h_new, const double h_n) const
-    {
-        const double h_in_range = std::max(_h_min, std::min(h_new, _h_max));
-        return std::max(_rel_h_min * h_n,
-                        std::min(h_in_range, _rel_h_max * h_n));
-    }
+    /**
+     * Forced the computed time step size in the given range
+     * (see the formulas in the documentation of the class)
+     * or use the half of the previous time step size under some other
+     * constrains.
+     * @param h_new                   The computed time step size.
+     * @param previous_step_accepted  An indicator for whether the previous time
+     *                                step is rejected.
+     * @return                        The new time step after apply
+     *                                the constrains.
+     */
+    double limitStepSize(const double h_new,
+                         const bool previous_step_accepted) const;
 
     double checkSpecificTimeReached(const double h_new);
 };
