@@ -90,6 +90,13 @@ option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
 option(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN "" ON)
 option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
+# We assume that it's save to use vectorization with Eigen < 3.3 (strictly smaller than 3.3.!).
+# At least we only observed vectorization issues with Eigen 3.3.x.
+# If you want to use Eigen vectorization, make sure that you run all the ctests several times, e.g.:
+# $ ctest --repeat-until-fail 50
+# You might also want to take a look at https://github.com/ufz/ogs/issues/1881.
+option(EIGEN_DONT_VECTORIZE "Disables explicit vectorization when defined." ON)
+
 set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Default" CACHE STRING "Use dynamically allocated shape matrices")
 set_property(CACHE OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
              PROPERTY STRINGS "Default" "ON" "OFF")
@@ -192,6 +199,11 @@ endif()
 if (EIGEN_NO_DEBUG)
     add_definitions(-DEIGEN_NO_DEBUG)
 endif()
+
+if (EIGEN_DONT_VECTORIZE)
+    add_definitions(-DEIGEN_DONT_VECTORIZE)
+endif()
+
 if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL)
     add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
 endif()
