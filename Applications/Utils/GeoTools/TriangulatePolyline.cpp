@@ -16,6 +16,7 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
+#include "Applications/FileIO/Legacy/createSurface.h"
 
 #include "BaseLib/BuildInfo.h"
 
@@ -97,17 +98,8 @@ int main(int argc, char *argv[])
 
     // create surface
     INFO ("Triangulating surface...");
-    auto new_sfc = std::make_unique<std::vector<GeoLib::Surface*>>();
-    new_sfc->push_back(GeoLib::Surface::createSurface(*line));
-
-    GeoLib::SurfaceVec* sfc_vec (geo_objects.getSurfaceVecObj(geo_names[0]));
-    if (sfc_vec == nullptr)
-    {
-        geo_objects.addSurfaceVec(std::move(new_sfc), geo_names[0]);
-        sfc_vec = geo_objects.getSurfaceVecObj(geo_names[0]);
-    }
-    else
-        geo_objects.appendSurfaceVec(*new_sfc, geo_names[0]);
+    FileIO::createSurface(*line, geo_objects, geo_names[0]);
+    GeoLib::SurfaceVec* sfc_vec(geo_objects.getSurfaceVecObj(geo_names[0]));
     std::size_t const sfc_id = geo_objects.getSurfaceVec(geo_names[0])->size() - 1;
     std::string const surface_name (polyline_name + "_surface");
     for (std::size_t i=1;;++i)
