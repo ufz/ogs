@@ -274,10 +274,31 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
     INFO("%d surfaces added.", end_index - start_index);
 }
 
+void GeoTreeModel::renameGeometry(std::string const& old_name,
+                                  std::string const& new_name)
+{
+    for (auto tree_item_entry : _lists)
+    {
+        if (old_name == tree_item_entry->data(0).toString().toStdString())
+        {
+            QVariant new_entry(QString::fromStdString(new_name));
+            tree_item_entry->setData(0, new_entry);
+            break;
+        }
+    }
+    for (auto tree_item_entry : _lists)
+    {
+        if (new_name == tree_item_entry->data(0).toString().toStdString())
+        {
+            INFO("Found tree_item_entry with name '%s'.", new_name.c_str());
+        }
+    }
+}
+
 /**
  * Removes the TreeItem with the given name including all its children
  */
-void GeoTreeModel::removeGeoList(const std::string &name, GeoLib::GEOTYPE type)
+void GeoTreeModel::removeGeoList(const std::string& name, GeoLib::GEOTYPE type)
 {
     for (std::size_t i = 0; i < _lists.size(); i++)
         if (name == _lists[i]->data(0).toString().toStdString())

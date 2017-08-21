@@ -67,6 +67,9 @@ public:
      */
     void removeGeoList(const std::string &name, GeoLib::GEOTYPE type);
 
+    void renameGeometry(std::string const& old_name,
+                        std::string const& new_name);
+
     void setNameForItem(const std::string &name, GeoLib::GEOTYPE type, std::size_t id, std::string item_name);
 
     /*
