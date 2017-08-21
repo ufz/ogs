@@ -45,14 +45,6 @@ StaggeredCouplingTerm::StaggeredCouplingTerm(
     }
 }
 
-const StaggeredCouplingTerm createVoidStaggeredCouplingTerm()
-{
-    std::unordered_map<std::type_index, Process const&> coupled_processes;
-    std::unordered_map<std::type_index, GlobalVector const&> coupled_xs;
-    const bool empty = true;
-    return StaggeredCouplingTerm(coupled_processes, coupled_xs, 0.0, empty);
-}
-
 std::unordered_map<std::type_index, const std::vector<double>>
 getCurrentLocalSolutionsOfCoupledProcesses(
     const std::unordered_map<std::type_index, GlobalVector const&>&

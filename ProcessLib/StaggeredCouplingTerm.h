@@ -91,13 +91,6 @@ struct LocalCouplingTerm
         local_coupled_xs;
 };
 
-/**
- *  A function to create a void instance of StaggeredCouplingTerm. The void
- *  instance is for the StaggeredCouplingTerm reference type of argument
- *  function or class member to indicate no coupling.
- */
-const StaggeredCouplingTerm createVoidStaggeredCouplingTerm();
-
 std::unordered_map<std::type_index, const std::vector<double>>
 getCurrentLocalSolutionsOfCoupledProcesses(
     const std::unordered_map<std::type_index, GlobalVector const&>&
