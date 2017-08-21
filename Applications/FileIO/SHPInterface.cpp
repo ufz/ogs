@@ -180,7 +180,17 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, con
 
     for (auto const* polyline : *polylines)
     {
-        FileIO::createSurface(*polyline, _geoObjects, listName);
+        INFO("Creating a surface by triangulation of the polyline ...");
+        if (FileIO::createSurface(*polyline, _geoObjects, listName))
+        {
+            INFO("\t done");
+        }
+        else
+        {
+            WARN(
+                "\t Creating a surface by triangulation of the polyline "
+                "failed.");
+        }
     }
 }
 

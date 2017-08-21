@@ -17,6 +17,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "Applications/FileIO/Legacy/createSurface.h"
 #include "GeoTreeModel.h"
 #include "StationTreeModel.h"
 
@@ -182,22 +183,34 @@ void GEOModels::connectPolylineSegments(
             // insert result in a new vector of polylines (because the GEOObjects::appendPolylines()-method requires a vector)
             std::vector<GeoLib::Polyline*> connected_ply;
 
+            connected_ply.push_back(new_line);
+            _geo_objects.appendPolylineVec(connected_ply, geoName);
+
             if (closePly)
             {
                 new_line->closePolyline();
 
                 if (triangulatePly)
                 {
-                    std::vector<GeoLib::Surface*> new_sfc;
-                    new_sfc.push_back(GeoLib::Surface::createSurface(*new_line));
-                    _geo_objects.appendSurfaceVec(new_sfc, geoName);
+                    INFO(
+                        "Creating a surface by triangulation of the polyline "
+                        "...");
+                    if (FileIO::createSurface(*new_line, _geo_objects, geoName))
+                    {
+                        INFO("\t done");
+                    }
+                    else
+                    {
+                        WARN(
+                            "\t Creating a surface by triangulation of the "
+                            "polyline failed.");
+                    }
+                    plyVec = _geo_objects.getPolylineVecObj(geoName);
                 }
             }
 
-            connected_ply.push_back(new_line);
             if (!ply_name.empty())
                 plyVec->setNameOfElementByID(polylines->size(), ply_name);
-            _geo_objects.appendPolylineVec(connected_ply, geoName);
         }
         else
             OGSError::box("Error connecting polyines.");
