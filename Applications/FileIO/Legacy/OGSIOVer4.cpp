@@ -281,7 +281,7 @@ std::string readSurface(std::istream& in,
 
     int type (-1);
     std::string name;
-    std::size_t ply_id (0); // std::numeric_limits<std::size_t>::max());
+    std::size_t ply_id (std::numeric_limits<std::size_t>::max());
 
     do {
         in >> line;
@@ -481,9 +481,13 @@ bool readGLIFileV4(const std::string& fname,
             std::move(ply_names));  // KR: insert into GEOObjects if not empty
 
     // copy of ply_names
-    std::map<std::string, std::size_t> ply_names_copy{
-        geo.getPolylineVecObj(unique_name)->getNameIDMapBegin(),
-        geo.getPolylineVecObj(unique_name)->getNameIDMapEnd()};
+    std::map<std::string, std::size_t> ply_names_copy;
+    if (geo.getPolylineVecObj(unique_name))
+    {
+        ply_names_copy = std::map<std::string, std::size_t>{
+            geo.getPolylineVecObj(unique_name)->getNameIDMapBegin(),
+            geo.getPolylineVecObj(unique_name)->getNameIDMapEnd()};
+    }
 
     auto sfc_vec = std::make_unique<std::vector<GeoLib::Surface*>>();
     auto sfc_names = std::make_unique<std::map<std::string, std::size_t>>();
