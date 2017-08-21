@@ -247,3 +247,83 @@ AddTest(
     disc_with_hole_pcs_0_ts_4_t_1_000000_0.vtu disc_with_hole_pcs_0_ts_4_t_1_000000_0.vtu displacement displacement
     VIS disc_with_hole_pcs_0_ts_0_t_0_000000.pvtu
 )
+
+# Pressure boundary condition
+AddTest(
+    NAME LARGE_SmallDeformation_PressureBC_hollow_sphere
+    PATH Mechanics/Linear/PressureBC
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS hollow_sphere.prj
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_LIS
+    ABSTOL 1e-15 RELTOL 0
+    DIFF_DATA
+    expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu displacement displacement
+    expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_xx sigma_xx
+    expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_yy sigma_yy
+    expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_zz sigma_zz
+)
+
+# Pressure boundary condition: elastic pipe plain strain
+AddTest(
+    NAME SmallDeformation_PressureBC_elastic_pipe_plain_strain
+    PATH Mechanics/Linear/
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS plain_strain_pipe.prj
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_LIS
+    ABSTOL 1e-15 RELTOL 0
+    DIFF_DATA
+    ref_plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu displacement displacement
+    ref_plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_xx sigma_xx
+    ref_plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_yy sigma_yy
+    ref_plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_zz sigma_zz
+)
+
+# Pressure boundary condition: elastic pipe axisymmetric
+AddTest(
+    NAME SmallDeformation_PressureBC_elastic_pipe_axisymmetric
+    PATH Mechanics/Linear/
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS axisymmetric_pipe.prj
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_LIS
+    ABSTOL 1e-15 RELTOL 0
+    DIFF_DATA
+    ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu displacement displacement
+    ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_xx sigma_xx
+    ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_yy sigma_yy
+    ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_zz sigma_zz
+)
+
+# Pressure boundary condition: elastic sphere axisymmetric
+AddTest(
+    NAME SmallDeformation_PressureBC_elastic_sphere_axisymmetric
+    PATH Mechanics/Linear/
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS axisymmetric_sphere.prj
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_LIS
+    ABSTOL 1e-15 RELTOL 0
+    DIFF_DATA
+    ref_axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu displacement displacement
+    ref_axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_xx sigma_xx
+    ref_axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_yy sigma_yy
+    ref_axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_zz sigma_zz
+)
+
+# Pressure boundary condition: plastic sphere axisymmetric
+AddTest(
+    NAME SmallDeformation_PressureBC_plastic_sphere_axisymmetric
+    PATH Mechanics/Ehlers/
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS axisymmetric_sphere_pl.prj
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_LIS
+    ABSTOL 1e-15 RELTOL 0
+    DIFF_DATA
+    ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu displacement displacement
+    ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu sigma_xx sigma_xx
+    ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu sigma_yy sigma_yy
+    ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu sigma_zz sigma_zz
+)
