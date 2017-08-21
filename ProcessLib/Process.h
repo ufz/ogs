@@ -21,7 +21,6 @@
 #include "SecondaryVariable.h"
 #include "CachedSecondaryVariable.h"
 #include "AbstractJacobianAssembler.h"
-#include "StaggeredCouplingTerm.h"
 #include "VectorMatrixAssembler.h"
 
 namespace MeshLib
@@ -31,6 +30,8 @@ class Mesh;
 
 namespace ProcessLib
 {
+struct StaggeredCouplingTerm;
+
 class Process
     : public NumLib::ODESystem<  // TODO: later on use a simpler ODE system
           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -59,8 +60,7 @@ public:
     void preIteration(const unsigned iter, GlobalVector const& x) final;
 
     /// compute secondary variables for the coupled equations or for output.
-    void computeSecondaryVariable(const double t, GlobalVector const& x,
-                                  StaggeredCouplingTerm const& coupled_term);
+    void computeSecondaryVariable(const double t, GlobalVector const& x);
 
     NumLib::IterationResult postIteration(GlobalVector const& x) final;
 
@@ -70,16 +70,20 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const final;
 
+    void setStaggeredCouplingTerm(
+        const std::shared_ptr<StaggeredCouplingTerm>& coupling_term)
+    {
+        _coupling_term = coupling_term;
+    }
+
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
-                  GlobalMatrix& K, GlobalVector& b,
-                  StaggeredCouplingTerm const& coupling_term) final;
+                  GlobalMatrix& K, GlobalVector& b) final;
 
     void assembleWithJacobian(const double t, GlobalVector const& x,
                               GlobalVector const& xdot, const double dxdot_dx,
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
-                              GlobalMatrix& Jac,
-                              StaggeredCouplingTerm const& coupling_term) final;
+                              GlobalMatrix& Jac) final;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const t) const final
@@ -136,15 +140,14 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) = 0;
 
-    virtual void assembleConcreteProcess(
-        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b, StaggeredCouplingTerm const& coupling_term) = 0;
+    virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
+                                         GlobalMatrix& M, GlobalMatrix& K,
+                                         GlobalVector& b) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
-        StaggeredCouplingTerm const& coupling_term) = 0;
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) = 0;
 
     virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
                                             const double /*t*/,
@@ -158,10 +161,8 @@ private:
     {
     }
 
-    virtual void computeSecondaryVariableConcrete(
-        const double /*t*/,
-        GlobalVector const& /*x*/,
-        StaggeredCouplingTerm const& /*coupled_term*/)
+    virtual void computeSecondaryVariableConcrete(const double /*t*/,
+                                                  GlobalVector const& /*x*/)
     {
     }
 
@@ -199,6 +200,9 @@ protected:
     SecondaryVariableContext _secondary_variable_context;
 
     VectorMatrixAssembler _global_assembler;
+
+    /// Coupled processes.
+    mutable std::weak_ptr<StaggeredCouplingTerm> _coupling_term;
 
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is

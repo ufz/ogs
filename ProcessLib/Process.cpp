@@ -15,6 +15,7 @@
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "GlobalVectorFromNamedFunction.h"
 #include "ProcessVariable.h"
+#include "StaggeredCouplingTerm.h"
 
 namespace ProcessLib
 {
@@ -119,12 +120,11 @@ MathLib::MatrixSpecifications Process::getMatrixSpecifications() const
 }
 
 void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
-                       GlobalMatrix& K, GlobalVector& b,
-                       StaggeredCouplingTerm const& coupling_term)
+                       GlobalMatrix& K, GlobalVector& b)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
 
-    assembleConcreteProcess(t, x, M, K, b, coupling_term);
+    assembleConcreteProcess(t, x, M, K, b);
 
     _boundary_conditions.applyNaturalBC(t, x, K, b);
 }
@@ -133,14 +133,13 @@ void Process::assembleWithJacobian(const double t, GlobalVector const& x,
                                    GlobalVector const& xdot,
                                    const double dxdot_dx, const double dx_dx,
                                    GlobalMatrix& M, GlobalMatrix& K,
-                                   GlobalVector& b, GlobalMatrix& Jac,
-                                   StaggeredCouplingTerm const& coupling_term)
+                                   GlobalVector& b, GlobalMatrix& Jac)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
     MathLib::LinAlg::setLocalAccessibleVector(xdot);
 
     assembleWithJacobianConcreteProcess(t, x, xdot, dxdot_dx, dx_dx, M, K, b,
-                                        Jac, coupling_term);
+                                       Jac);
 
     // TODO apply BCs to Jacobian.
     _boundary_conditions.applyNaturalBC(t, x, K, b);
@@ -254,13 +253,11 @@ void Process::postTimestep(GlobalVector const& x)
     postTimestepConcreteProcess(x);
 }
 
-void Process::computeSecondaryVariable(const double t, GlobalVector const& x,
-                                       StaggeredCouplingTerm const&
-                                       coupled_term)
+void Process::computeSecondaryVariable(const double t, GlobalVector const& x)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
 
-    computeSecondaryVariableConcrete(t, x, coupled_term);
+    computeSecondaryVariableConcrete(t, x);
 }
 
 void Process::preIteration(const unsigned iter, const GlobalVector &x)
