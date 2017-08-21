@@ -511,6 +511,36 @@ void GEOObjects::mergeSurfaces(std::vector<std::string> const & geo_names,
     }
 }
 
+void GEOObjects::renameGeometry(std::string const& old_name,
+                                std::string const& new_name)
+{
+    _callbacks->renameGeometry(old_name, new_name);
+    for (auto* pnt_vec : _pnt_vecs)
+    {
+        if (pnt_vec->getName() == old_name)
+        {
+            pnt_vec->setName(new_name);
+            break;
+        }
+    }
+    for (auto* ply_vec : _ply_vecs)
+    {
+        if (ply_vec->getName() == old_name)
+        {
+            ply_vec->setName(new_name);
+            break;
+        }
+    }
+    for (auto* sfc_vec : _sfc_vecs)
+    {
+        if (sfc_vec->getName() == old_name)
+        {
+            sfc_vec->setName(new_name);
+            break;
+        }
+    }
+}
+
 const GeoLib::GeoObject* GEOObjects::getGeoObject(const std::string &geo_name,
                                                             GeoLib::GEOTYPE type,
                                                             const std::string &geo_obj_name) const
