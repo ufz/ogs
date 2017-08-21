@@ -82,18 +82,16 @@ TEST(NumLib, SpatialFunctionInterpolationSurface)
     GeoLib::Point pt3(10.0, 10.0, 0.0);
     GeoLib::Point pt4(0.0, 10.0, 0.0);
     std::vector<GeoLib::Point*> pnts = {&pt1, &pt2, &pt3, &pt4};
-    GeoLib::Polyline ply0(pnts);
-    ply0.addPoint(0);
-    ply0.addPoint(1);
-    ply0.addPoint(2);
-    ply0.addPoint(3);
-    ply0.addPoint(0);
-    std::unique_ptr<GeoLib::Surface>  sfc1(GeoLib::Surface::createSurface(ply0));
+    GeoLib::Surface sfc1(pnts);
+    sfc1.addTriangle(0, 1, 2);
+    sfc1.addTriangle(0, 2, 3);
 
     // define a function
     const std::vector<std::size_t> vec_point_ids = {{0, 1, 2, 3}};
     const std::vector<double> vec_point_values = {{0., 100., 100., 0.}};
-    NumLib::LinearInterpolationOnSurface interpolate(*sfc1, vec_point_ids, vec_point_values, std::numeric_limits<double>::max());
+    NumLib::LinearInterpolationOnSurface interpolate(
+        sfc1, vec_point_ids, vec_point_values,
+        std::numeric_limits<double>::max());
 
     // normal
     for (unsigned k=0; k<10; k++) {

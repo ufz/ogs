@@ -227,30 +227,24 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
         std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
 
     // entire domain
-    GeoLib::Polyline ply0(pnts);
-    ply0.addPoint(0);
-    ply0.addPoint(1);
-    ply0.addPoint(2);
-    ply0.addPoint(3);
-    ply0.addPoint(0);
-    std::unique_ptr<GeoLib::Surface> sfc0(GeoLib::Surface::createSurface(ply0));
+    GeoLib::Surface sfc0(pnts);
+    sfc0.addTriangle(0, 1, 2);
+    sfc0.addTriangle(0, 2, 3);
 
-    std::vector<std::size_t> const& found_ids_sfc0(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc0));
+    std::vector<std::size_t> const& found_ids_sfc0(
+        mesh_node_searcher.getMeshNodeIDsAlongSurface(sfc0));
 
     ASSERT_EQ(_quad_mesh->getNumberOfNodes(), found_ids_sfc0.size());
     for (std::size_t k(0); k<found_ids_sfc0.size(); k++)
         ASSERT_EQ(k, found_ids_sfc0[k]);
 
     // bottom half domain
-    GeoLib::Polyline ply1(pnts);
-    ply1.addPoint(0);
-    ply1.addPoint(1);
-    ply1.addPoint(4);
-    ply1.addPoint(5);
-    ply1.addPoint(0);
-    std::unique_ptr<GeoLib::Surface> sfc1(GeoLib::Surface::createSurface(ply1));
+    GeoLib::Surface sfc1(pnts);
+    sfc1.addTriangle(0, 1, 4);
+    sfc1.addTriangle(0, 4, 5);
 
-    std::vector<std::size_t> const& found_ids_sfc1(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc1));
+    std::vector<std::size_t> const& found_ids_sfc1(
+        mesh_node_searcher.getMeshNodeIDsAlongSurface(sfc1));
 
     ASSERT_EQ(_quad_mesh->getNumberOfNodes()/2, found_ids_sfc1.size());
     for (std::size_t k(0); k<found_ids_sfc1.size(); k++)
@@ -282,44 +276,35 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
     const std::size_t n_nodes_3d = n_nodes_1d * n_nodes_1d * n_nodes_1d;
 
     // bottom surface
-    GeoLib::Polyline ply_bottom(pnts);
-    ply_bottom.addPoint(0);
-    ply_bottom.addPoint(1);
-    ply_bottom.addPoint(2);
-    ply_bottom.addPoint(3);
-    ply_bottom.addPoint(0);
-    std::unique_ptr<GeoLib::Surface> sfc_bottom(GeoLib::Surface::createSurface(ply_bottom));
+    GeoLib::Surface sfc_bottom(pnts);
+    sfc_bottom.addTriangle(0, 1, 2);
+    sfc_bottom.addTriangle(0, 2, 3);
 
-    std::vector<std::size_t> const& found_ids_sfc_b(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_bottom));
+    std::vector<std::size_t> const& found_ids_sfc_b(
+        mesh_node_searcher.getMeshNodeIDsAlongSurface(sfc_bottom));
     ASSERT_EQ(n_nodes_2d, found_ids_sfc_b.size());
     for (std::size_t k(0); k<found_ids_sfc_b.size(); k++)
         ASSERT_EQ(k, found_ids_sfc_b[k]);
 
     // top surface
-    GeoLib::Polyline ply_top(pnts);
-    ply_top.addPoint(4);
-    ply_top.addPoint(5);
-    ply_top.addPoint(6);
-    ply_top.addPoint(7);
-    ply_top.addPoint(4);
-    std::unique_ptr<GeoLib::Surface> sfc_top(GeoLib::Surface::createSurface(ply_top));
+    GeoLib::Surface sfc_top(pnts);
+    sfc_top.addTriangle(4, 5, 6);
+    sfc_top.addTriangle(4, 6, 7);
 
-    std::vector<std::size_t> const& found_ids_sfc_t(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_top));
+    std::vector<std::size_t> const& found_ids_sfc_t(
+        mesh_node_searcher.getMeshNodeIDsAlongSurface(sfc_top));
     ASSERT_EQ(n_nodes_2d, found_ids_sfc_t.size());
     const std::size_t offset_t = n_nodes_3d - n_nodes_2d;
     for (std::size_t k(0); k<found_ids_sfc_t.size(); k++)
         ASSERT_EQ(offset_t + k, found_ids_sfc_t[k]);
 
     // front
-    GeoLib::Polyline ply_front(pnts);
-    ply_front.addPoint(0);
-    ply_front.addPoint(1);
-    ply_front.addPoint(5);
-    ply_front.addPoint(4);
-    ply_front.addPoint(0);
-    std::unique_ptr<GeoLib::Surface> sfc_front(GeoLib::Surface::createSurface(ply_front));
+    GeoLib::Surface sfc_front(pnts);
+    sfc_front.addTriangle(0, 1, 5);
+    sfc_front.addTriangle(0, 5, 4);
 
-    std::vector<std::size_t> const& found_ids_sfc_f(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_front));
+    std::vector<std::size_t> const& found_ids_sfc_f(
+        mesh_node_searcher.getMeshNodeIDsAlongSurface(sfc_front));
     ASSERT_EQ(n_nodes_2d, found_ids_sfc_f.size());
     std::size_t cnt=0;
     for (std::size_t k(0); k<n_nodes_1d; k++) {
@@ -328,14 +313,12 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
     }
 
     // back
-    GeoLib::Polyline ply_back(pnts);
-    ply_back.addPoint(3);
-    ply_back.addPoint(2);
-    ply_back.addPoint(6);
-    ply_back.addPoint(7);
-    ply_back.addPoint(3);
-    std::unique_ptr<GeoLib::Surface> sfc_back(GeoLib::Surface::createSurface(ply_back));
-    std::vector<std::size_t> const& found_ids_sfc_back(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_back));
+    GeoLib::Surface sfc_back(pnts);
+    sfc_back.addTriangle(3, 2, 6);
+    sfc_back.addTriangle(3, 6, 7);
+
+    std::vector<std::size_t> const& found_ids_sfc_back(
+        mesh_node_searcher.getMeshNodeIDsAlongSurface(sfc_back));
     ASSERT_EQ(n_nodes_2d, found_ids_sfc_back.size());
     cnt = 0;
     const std::size_t y_offset = n_nodes_1d*(n_nodes_1d-1);
@@ -346,14 +329,12 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
     }
 
     // left
-    GeoLib::Polyline ply_left(pnts);
-    ply_left.addPoint(0);
-    ply_left.addPoint(3);
-    ply_left.addPoint(7);
-    ply_left.addPoint(4);
-    ply_left.addPoint(0);
-    std::unique_ptr<GeoLib::Surface> sfc_left(GeoLib::Surface::createSurface(ply_left));
-    std::vector<std::size_t> const& found_ids_sfc_left(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_left));
+    GeoLib::Surface sfc_left(pnts);
+    sfc_left.addTriangle(0, 3, 7);
+    sfc_left.addTriangle(0, 7, 4);
+
+    std::vector<std::size_t> const& found_ids_sfc_left(
+        mesh_node_searcher.getMeshNodeIDsAlongSurface(sfc_left));
     ASSERT_EQ(n_nodes_2d, found_ids_sfc_left.size());
     cnt = 0;
     for (std::size_t k(0); k<n_nodes_1d; k++) {
@@ -363,14 +344,12 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
     }
 
     // right
-    GeoLib::Polyline ply_right(pnts);
-    ply_right.addPoint(1);
-    ply_right.addPoint(2);
-    ply_right.addPoint(6);
-    ply_right.addPoint(5);
-    ply_right.addPoint(1);
-    std::unique_ptr<GeoLib::Surface> sfc_right(GeoLib::Surface::createSurface(ply_right));
-    std::vector<std::size_t> const& found_ids_sfc_right(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc_right));
+    GeoLib::Surface sfc_right(pnts);
+    sfc_right.addTriangle(1, 2, 6);
+    sfc_right.addTriangle(1, 6, 5);
+
+    std::vector<std::size_t> const& found_ids_sfc_right(
+        mesh_node_searcher.getMeshNodeIDsAlongSurface(sfc_right));
     ASSERT_EQ(n_nodes_2d, found_ids_sfc_right.size());
     cnt = 0;
     for (std::size_t k(0); k<n_nodes_1d; k++) {
