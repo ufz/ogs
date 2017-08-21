@@ -281,7 +281,7 @@ std::string readSurface(std::istream& in,
 
     int type (-1);
     std::string name;
-    std::size_t ply_id (0); // std::numeric_limits<std::size_t>::max());
+    std::size_t ply_id (std::numeric_limits<std::size_t>::max());
 
     do {
         in >> line;
