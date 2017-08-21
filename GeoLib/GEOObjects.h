@@ -74,6 +74,7 @@ public:
         virtual void addSurfaceVec(std::string const&){}
         virtual void appendSurfaceVec(std::string const&){}
         virtual void removeSurfaceVec(std::string const&){}
+        virtual void renameGeometry(std::string const&, std::string const&) {}
         virtual ~Callbacks() = default;
     };
 
@@ -240,6 +241,9 @@ public:
      * @return 0 if success, 1 if no point-list is found for at least one of the geometries and 2 if the mergelist only contains less than two geometry
      */
     int mergeGeometries(std::vector<std::string> const & names, std::string &merged_geo_name);
+
+    void renameGeometry(std::string const& old_name,
+                        std::string const& new_name);
 
     /// Returns the geo object for a geometric item of the given name and type for the associated geometry.
     const GeoLib::GeoObject* getGeoObject(const std::string &geo_name,
