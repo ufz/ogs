@@ -74,9 +74,7 @@ public:
         BaseLib::ConfigTree const& config);
 
     void computeSecondaryVariableConcrete(
-        double const t,
-        GlobalVector const& x,
-        StaggeredCouplingTerm const& coupled_term) override;
+        double const t, GlobalVector const& x) override;
 
     bool isLinear() const override { return true; }
     int getGravitationalAxisID() const { return _gravitational_axis_id; }
@@ -97,13 +95,12 @@ private:
 
     void assembleConcreteProcess(
         const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b, StaggeredCouplingTerm const& coupling_term) override;
+        GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
-        StaggeredCouplingTerm const& coupling_term) override;
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;

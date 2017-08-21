@@ -47,8 +47,7 @@ public:
     //! @}
 
     void computeSecondaryVariableConcrete(
-        double const t, GlobalVector const& x,
-        StaggeredCouplingTerm const& coupling_term) override;
+        double const t, GlobalVector const& x) override;
 
 private:
     void initializeConcreteProcess(
@@ -58,13 +57,12 @@ private:
 
     void assembleConcreteProcess(
         const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b, StaggeredCouplingTerm const& coupling_term) override;
+        GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
-        StaggeredCouplingTerm const& coupling_term) override;
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
     RichardsFlowProcessData _process_data;
 

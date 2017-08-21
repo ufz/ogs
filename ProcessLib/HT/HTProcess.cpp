@@ -55,23 +55,20 @@ void HTProcess::assembleConcreteProcess(const double t,
                                         GlobalVector const& x,
                                         GlobalMatrix& M,
                                         GlobalMatrix& K,
-                                        GlobalVector& b,
-                                        StaggeredCouplingTerm const&
-                                        coupling_term)
+                                        GlobalVector& b)
 {
     DBUG("Assemble HTProcess.");
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, coupling_term);
+        *_local_to_global_index_map, t, x, M, K, b, *_coupling_term.lock());
 }
 
 void HTProcess::assembleWithJacobianConcreteProcess(
     const double t, GlobalVector const& x, GlobalVector const& xdot,
     const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, GlobalMatrix& Jac,
-    StaggeredCouplingTerm const& coupling_term)
+    GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HTProcess.");
 
@@ -79,7 +76,7 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, coupling_term);
+        dx_dx, M, K, b, Jac, *_coupling_term.lock());
 }
 
 }  // namespace HT

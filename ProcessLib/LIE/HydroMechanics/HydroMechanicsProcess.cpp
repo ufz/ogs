@@ -402,13 +402,13 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 
 template <unsigned GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
-    const double t, GlobalVector const& x,
-    StaggeredCouplingTerm const& coupled_term)
+    const double t, GlobalVector const& x)
 {
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &HydroMechanicsLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, *_local_to_global_index_map, t, x, coupled_term);
+        _local_assemblers, *_local_to_global_index_map, t, x,
+        *_coupling_term.lock());
 
     // Copy displacement jumps in a solution vector to mesh property
     // Remark: the copy is required because mesh properties for primary

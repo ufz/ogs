@@ -425,8 +425,7 @@ std::vector<GlobalVector*> setInitialConditions(
             auto& conv_crit = *spd->conv_crit;
 
             setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
-            nonlinear_solver.assemble(
-                x0, ProcessLib::createVoidStaggeredCouplingTerm());
+            nonlinear_solver.assemble(x0);
             time_disc.pushState(
                 t0, x0, mat_strg);  // TODO: that might do duplicate work
         }
@@ -440,7 +439,6 @@ std::vector<GlobalVector*> setInitialConditions(
 bool solveOneTimeStepOneProcess(GlobalVector& x, std::size_t const timestep,
                                 double const t, double const delta_t,
                                 SingleProcessData& process_data,
-                                StaggeredCouplingTerm const& coupling_term,
                                 Output const& output_control)
 {
     auto& process = process_data.process;
@@ -468,7 +466,7 @@ bool solveOneTimeStepOneProcess(GlobalVector& x, std::size_t const timestep,
     };
 
     bool nonlinear_solver_succeeded =
-        nonlinear_solver.solve(x, coupling_term, post_iteration_callback);
+        nonlinear_solver.solve(x, post_iteration_callback);
 
     return nonlinear_solver_succeeded;
 }
@@ -867,15 +865,11 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
         auto& pcs = spd->process;
         pcs.preTimestep(x, t, dt);
 
-        const auto void_staggered_coupling_term =
-            ProcessLib::createVoidStaggeredCouplingTerm();
-
         const auto nonlinear_solver_succeeded =
-            solveOneTimeStepOneProcess(x, timestep_id, t, dt, *spd,
-                                       void_staggered_coupling_term, *_output);
+            solveOneTimeStepOneProcess(x, timestep_id, t, dt, *spd, *_output);
         spd->nonlinear_solver_converged = nonlinear_solver_succeeded;
         pcs.postTimestep(x);
-        pcs.computeSecondaryVariable(t, x, void_staggered_coupling_term);
+        pcs.computeSecondaryVariable(t, x);
 
         INFO("[time] Solving process #%u took %g s in time step #%u ", pcs_idx,
              time_timestep_process.elapsed(), timestep_id);
@@ -946,12 +940,15 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 spd->process.preTimestep(x, t, dt);
             }
 
-            StaggeredCouplingTerm coupling_term(
-                spd->coupled_processes,
-                _solutions_of_coupled_processes[pcs_idx], dt);
+            std::shared_ptr<StaggeredCouplingTerm> coupling_term =
+                std::make_shared<StaggeredCouplingTerm>(
+                    spd->coupled_processes,
+                    _solutions_of_coupled_processes[pcs_idx], dt);
+
+            spd->process.setStaggeredCouplingTerm(coupling_term);
 
             const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
-                x, timestep_id, t, dt, *spd, coupling_term, *_output);
+                x, timestep_id, t, dt, *spd, *_output);
             spd->nonlinear_solver_converged = nonlinear_solver_succeeded;
 
             INFO(
@@ -1024,10 +1021,13 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         auto& x = *_process_solutions[pcs_idx];
         pcs.postTimestep(x);
 
-        StaggeredCouplingTerm coupled_term(
-            spd->coupled_processes, _solutions_of_coupled_processes[pcs_idx],
-            0.0);
-        pcs.computeSecondaryVariable(t, x, coupled_term);
+        std::shared_ptr<StaggeredCouplingTerm> coupling_term =
+            std::make_shared<StaggeredCouplingTerm>(
+                spd->coupled_processes,
+                _solutions_of_coupled_processes[pcs_idx], dt);
+        spd->process.setStaggeredCouplingTerm(coupling_term);
+
+        pcs.computeSecondaryVariable(t, x);
 
         _output->doOutput(pcs, spd->process_output, timestep_id, t, x);
         ++pcs_idx;
