@@ -49,9 +49,6 @@ public:
      * */
     void addTriangle(std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
 
-    /// Triangulates a new surface based on closed polyline.
-    static Surface* createSurface(const Polyline& ply);
-
     /**
      * returns the number of triangles describing the Surface
      * */
