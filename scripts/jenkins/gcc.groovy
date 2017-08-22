@@ -58,8 +58,8 @@ image.inside(defaultDockerArgs) {
 
             if (helper.isOriginMaster(this)) {
                 sshagent(credentials: ['www-data_jenkins']) {
-                    sh 'rsync -a --delete --stats -e "ssh -o StrictHostKeyChecking=no"' +
-                        ' ogs/web/public/ www-data@jenkins.opengeosys.org:'+
+                    sh 'rsync -a --delete --stats ogs/web/public/ ' +
+                        'www-data@jenkins.opengeosys.org:' +
                         '/var/www/dev.opengeosys.org'
                 }
             } else {
