@@ -22,7 +22,6 @@
 
 #include "Triangle.h"
 #include "Polyline.h"
-#include "EarClippingTriangulation.h"
 
 namespace GeoLib
 {
@@ -82,56 +81,6 @@ void Surface::addTriangle(std::size_t pnt_a,
         _bounding_volume->update(*_sfc_pnts[pnt_b]);
         _bounding_volume->update(*_sfc_pnts[pnt_c]);
     }
-}
-
-Surface* Surface::createSurface(const Polyline& ply)
-{
-    if (!ply.isClosed())
-    {
-        WARN("Error in Surface::createSurface() - Polyline is not closed.");
-        return nullptr;
-    }
-
-    if (ply.getNumberOfPoints() <= 2)
-    {
-        WARN(
-            "Error in Surface::createSurface() - Polyline consists of less "
-            "than three points and therefore cannot be triangulated.");
-        return nullptr;
-    }
-
-    // create empty surface
-    auto* sfc(new Surface(ply.getPointsVec()));
-
-    auto* polygon(new Polygon(ply));
-    polygon->computeListOfSimplePolygons();
-
-    // create surfaces from simple polygons
-    const std::list<GeoLib::Polygon*>& list_of_simple_polygons(
-        polygon->getListOfSimplePolygons());
-    for (auto simple_polygon : list_of_simple_polygons)
-    {
-        std::list<GeoLib::Triangle> triangles;
-        GeoLib::EarClippingTriangulation(simple_polygon, triangles);
-
-        // add Triangles to Surface
-        std::list<GeoLib::Triangle>::const_iterator it(triangles.begin());
-        while (it != triangles.end())
-        {
-            sfc->addTriangle((*it)[0], (*it)[1], (*it)[2]);
-            ++it;
-        }
-    }
-    delete polygon;
-    if (sfc->getNumberOfTriangles() == 0)
-    {
-        WARN(
-            "Surface::createSurface(): Triangulation does not contain any "
-            "triangle.");
-        delete sfc;
-        return nullptr;
-    }
-    return sfc;
 }
 
 std::size_t Surface::getNumberOfTriangles() const
