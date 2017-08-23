@@ -528,10 +528,9 @@ public:
             MTT.noalias() += N_T.transpose() * heat_capacity * N_T * w;
 
             //
-            // temperature equation, pressure part !!!!!!.positive or negative
+            // temperature equation, pressure part
             //
-            KTp.noalias() += K_over_mu * rho_f * C_f * dNdx_p.transpose() *
-                             (dNdx_T * T) * N_T * w * 0;
+            KTp.noalias() += K_over_mu * rho_f * C_f * N_T.transpose() * (dNdx_T * T).transpose() * dNdx_T * w ;
         }
         // temperature equation, temperature part
         local_Jac
