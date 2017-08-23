@@ -486,9 +486,8 @@ bool readGLIFileV4(const std::string& fname,
         INFO("GeoLib::readGLIFile(): tag #POLYLINE not found.");
 
     if (!ply_vec->empty())
-        geo.addPolylineVec(
-            std::move(ply_vec), unique_name,
-            std::move(ply_names));  // KR: insert into GEOObjects if not empty
+        geo.addPolylineVec(std::move(ply_vec), unique_name,
+                           std::move(ply_names));
 
     // Since ply_names is a unique_ptr and is given to the GEOObject instance
     // geo it is not usable anymore. For this reason a copy is necessary.
