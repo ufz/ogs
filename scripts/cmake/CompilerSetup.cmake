@@ -148,3 +148,6 @@ endif()
 # preceding cxx flags definition in order to override earlier flags, e.g. for
 # optimization.
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OGS_CXX_FLAGS}")
+
+# Copy CXX to C flags. To have these flags in C libraries (e.g. metis) too.
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
