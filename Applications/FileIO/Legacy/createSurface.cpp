@@ -54,7 +54,7 @@ void createSurface(GeoLib::Polyline const& ply,
     auto ply_points = ply.getPointsVec();
     for (auto p : ply_points)
         polyline_points->push_back(new GeoLib::Point(*p));
-    std::string ply_name = "test_ply";
+    std::string ply_name = "temporary_polyline_name";
     geo.addPointVec(std::move(polyline_points), ply_name);
     auto polyline = new GeoLib::Polyline(*geo.getPointVec(ply_name));
     for (std::size_t k(0); k < ply.getNumberOfPoints(); ++k)
