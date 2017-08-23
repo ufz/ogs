@@ -89,7 +89,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 5e-14 RELTOL 1e-16
+    ABSTOL 1e-13 RELTOL 1e-16
     DIFF_DATA
     expected_square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu displacement displacement
     expected_square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu pressure pressure
