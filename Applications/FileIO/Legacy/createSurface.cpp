@@ -85,8 +85,8 @@ void createSurface(GeoLib::Polyline const& ply,
     auto surface_mesh =
         FileIO::GMSH::readGMSHMesh(file_base_name + ".msh");
 
-    std::remove(std::string(file_base_name + ".geo").c_str());
-    std::remove(std::string(file_base_name + ".msh").c_str());
+    std::remove((file_base_name + ".geo").c_str());
+    std::remove((file_base_name + ".msh").c_str());
 
     // convert the surface mesh into a geometric surface
     MeshLib::convertMeshToGeo(*surface_mesh, geometries,
