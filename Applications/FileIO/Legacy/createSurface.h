@@ -10,13 +10,9 @@
 
 #pragma once
 
-#include <vector>
-
-
 namespace GeoLib
 {
 class Polyline;
-class Surface;
 class GEOObjects;
 }
 
