@@ -79,11 +79,11 @@ void createSurface(GeoLib::Polyline const& ply,
     std::string const file_base_name(file_base_name_c);
     gmsh_io.writeToFile(file_base_name + ".geo");
     std::string gmsh_command =
-        "\"gmsh\" -2 -algo meshadapt " + file_base_name + ".geo";
-    gmsh_command += " -o " + file_base_name + ".msh";
+        "gmsh -2 -algo meshadapt \"" + file_base_name + ".geo\"";
+    gmsh_command += " -o \"" + file_base_name + ".msh\"";
     system(gmsh_command.c_str());
     auto surface_mesh =
-        FileIO::GMSH::readGMSHMesh(file_base_name + ".msh");
+        FileIO::GMSH::readGMSHMesh("\"" + file_base_name + ".msh\"");
 
     std::remove((file_base_name + ".geo").c_str());
     std::remove((file_base_name + ".msh").c_str());
