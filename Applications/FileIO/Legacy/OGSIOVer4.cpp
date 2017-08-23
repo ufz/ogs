@@ -409,9 +409,9 @@ std::string readSurfaces(
                           ply_vec_names, pnt_vec, path, errors);
         if (n_polygons < polygon_vec.size())
         {
-            FileIO::createSurface(*(dynamic_cast<GeoLib::Polyline*>(
-                                      polygon_vec[polygon_vec.size() - 1])),
-                                  geo, unique_name);
+            FileIO::createSurface(
+                *(dynamic_cast<GeoLib::Polyline*>(polygon_vec.back())), geo,
+                unique_name);
         }
     }
     for (auto & k : polygon_vec)
