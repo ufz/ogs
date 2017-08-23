@@ -17,16 +17,12 @@
 
 namespace ProcessLib
 {
-
 StaggeredCouplingTerm::StaggeredCouplingTerm(
     std::unordered_map<std::type_index, Process const&> const&
         coupled_processes_,
     std::unordered_map<std::type_index, GlobalVector const&> const& coupled_xs_,
-    const double dt_, const bool empty_)
-    : coupled_processes(coupled_processes_),
-      coupled_xs(coupled_xs_),
-      dt(dt_),
-      empty(empty_)
+    const double dt_)
+    : coupled_processes(coupled_processes_), coupled_xs(coupled_xs_), dt(dt_)
 {
     for (auto const& coupled_x_pair : coupled_xs)
     {
