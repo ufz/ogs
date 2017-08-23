@@ -56,11 +56,12 @@ void createSurface(GeoLib::Polyline const& ply,
         polyline_points->push_back(new GeoLib::Point(*p));
     std::string ply_name = "temporary_polyline_name";
     geo.addPointVec(std::move(polyline_points), ply_name);
-    auto polyline = new GeoLib::Polyline(*geo.getPointVec(ply_name));
+    auto polyline =
+        std::make_unique<GeoLib::Polyline>(*geo.getPointVec(ply_name));
     for (std::size_t k(0); k < ply.getNumberOfPoints(); ++k)
         polyline->addPoint(ply.getPointID(k));
     auto polylines = std::make_unique<std::vector<GeoLib::Polyline*>>();
-    polylines->push_back(polyline);
+    polylines->push_back(polyline.release());
     geo.addPolylineVec(std::move(polylines), ply_name);
 
     // use GMSHInterface to create a mesh from the closed polyline
