@@ -940,12 +940,11 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 spd->process.preTimestep(x, t, dt);
             }
 
-            std::shared_ptr<StaggeredCouplingTerm> coupling_term =
-                std::make_shared<StaggeredCouplingTerm>(
-                    spd->coupled_processes,
-                    _solutions_of_coupled_processes[pcs_idx], dt);
+            StaggeredCouplingTerm coupling_term(
+                spd->coupled_processes,
+                _solutions_of_coupled_processes[pcs_idx], dt);
 
-            spd->process.setStaggeredCouplingTerm(coupling_term);
+            spd->process.setStaggeredCouplingTerm(&coupling_term);
 
             const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
                 x, timestep_id, t, dt, *spd, *_output);
@@ -1021,11 +1020,10 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         auto& x = *_process_solutions[pcs_idx];
         pcs.postTimestep(x);
 
-        std::shared_ptr<StaggeredCouplingTerm> coupling_term =
-            std::make_shared<StaggeredCouplingTerm>(
-                spd->coupled_processes,
-                _solutions_of_coupled_processes[pcs_idx], dt);
-        spd->process.setStaggeredCouplingTerm(coupling_term);
+        StaggeredCouplingTerm coupling_term(
+            spd->coupled_processes, _solutions_of_coupled_processes[pcs_idx],
+            dt);
+        spd->process.setStaggeredCouplingTerm(&coupling_term);
 
         pcs.computeSecondaryVariable(t, x);
 

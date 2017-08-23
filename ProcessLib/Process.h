@@ -70,8 +70,7 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const final;
 
-    void setStaggeredCouplingTerm(
-        const std::shared_ptr<StaggeredCouplingTerm>& coupling_term)
+    void setStaggeredCouplingTerm(StaggeredCouplingTerm* const coupling_term)
     {
         _coupling_term = coupling_term;
     }
@@ -201,8 +200,10 @@ protected:
 
     VectorMatrixAssembler _global_assembler;
 
-    /// Coupled processes.
-    mutable std::weak_ptr<StaggeredCouplingTerm> _coupling_term;
+    /// Pointer to StaggeredCouplingTerm, which contains the references to the
+    /// coupled processes and the references to the solutions of the coupled
+    /// processes.
+    StaggeredCouplingTerm* _coupling_term;
 
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is

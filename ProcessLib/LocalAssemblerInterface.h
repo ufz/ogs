@@ -15,7 +15,6 @@
 
 #include "NumLib/NumericsConfig.h"
 #include "MathLib/Point3d.h"
-#include "StaggeredCouplingTerm.h"
 
 namespace NumLib
 {
@@ -24,6 +23,8 @@ class LocalToGlobalIndexMap;
 
 namespace ProcessLib
 {
+struct StaggeredCouplingTerm;
+struct LocalCouplingTerm;
 
 /*! Common interface for local assemblers
  * NumLib::ODESystemTag::FirstOrderImplicitQuasilinear ODE systems.
@@ -67,7 +68,7 @@ public:
     virtual void computeSecondaryVariable(std::size_t const mesh_item_id,
                               NumLib::LocalToGlobalIndexMap const& dof_table,
                               const double t, GlobalVector const& x,
-                              StaggeredCouplingTerm const& coupled_term);
+                              StaggeredCouplingTerm const* coupled_term);
 
     virtual void preTimestep(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
