@@ -476,9 +476,8 @@ bool readGLIFileV4(const std::string& fname,
         INFO("GeoLib::readGLIFile(): tag #POLYLINE not found.");
 
     if (!ply_vec->empty())
-        geo.addPolylineVec(
-            std::move(ply_vec), unique_name,
-            std::move(ply_names));  // KR: insert into GEOObjects if not empty
+        geo.addPolylineVec(std::move(ply_vec), unique_name,
+                           std::move(ply_names));
 
     // copy of ply_names
     std::map<std::string, std::size_t> ply_names_copy;
