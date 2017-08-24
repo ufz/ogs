@@ -409,9 +409,19 @@ std::string readSurfaces(
                           ply_vec_names, pnt_vec, path, errors);
         if (n_polygons < polygon_vec.size())
         {
-            FileIO::createSurface(
-                *(dynamic_cast<GeoLib::Polyline*>(polygon_vec.back())), geo,
-                unique_name);
+            INFO("Creating a surface by triangulation of the polyline ...");
+            if (FileIO::createSurface(
+                    *(dynamic_cast<GeoLib::Polyline*>(polygon_vec.back())), geo,
+                    unique_name))
+            {
+                INFO("\t done");
+            }
+            else
+            {
+                WARN(
+                    "\t Creating a surface by triangulation of the polyline "
+                    "failed.");
+            }
         }
     }
     for (auto & k : polygon_vec)
