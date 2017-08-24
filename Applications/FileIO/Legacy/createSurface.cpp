@@ -30,14 +30,14 @@
 
 namespace FileIO
 {
-void createSurface(GeoLib::Polyline const& ply,
+bool createSurface(GeoLib::Polyline const& ply,
                    GeoLib::GEOObjects& geometries,
                    std::string const& geometry_name)
 {
     if (!ply.isClosed())
     {
         WARN("Error in createSurface() - Polyline is not closed.");
-        return;
+        return false;
     }
 
     if (ply.getNumberOfPoints() <= 2)
@@ -45,7 +45,7 @@ void createSurface(GeoLib::Polyline const& ply,
         WARN(
             "Error in createSurface() - Polyline consists of less "
             "than three points and therefore cannot be triangulated.");
-        return;
+        return false;
     }
 
     // create new GEOObjects and insert a copy of the polyline
@@ -82,17 +82,28 @@ void createSurface(GeoLib::Polyline const& ply,
     std::string gmsh_command =
         "gmsh -2 -algo meshadapt \"" + file_base_name + ".geo\"";
     gmsh_command += " -o \"" + file_base_name + ".msh\"";
-    system(gmsh_command.c_str());
+    std::system(gmsh_command.c_str());
     auto surface_mesh =
         FileIO::GMSH::readGMSHMesh("\"" + file_base_name + ".msh\"");
-
-    std::remove((file_base_name + ".geo").c_str());
-    std::remove((file_base_name + ".msh").c_str());
+    if (!surface_mesh)
+    {
+        WARN("The surface mesh could not be created.");
+        return false;
+    }
+    if (std::remove((file_base_name + ".geo").c_str()) !=0)
+        WARN("Could not remove temporary file '%s'.",
+            (file_base_name + ".geo").c_str());
+    if (std::remove((file_base_name + ".msh").c_str()) !=0)
+        WARN("Could not remove temporary file '%s'.",
+            (file_base_name + ".msh").c_str());
 
     // convert the surface mesh into a geometric surface
-    MeshLib::convertMeshToGeo(*surface_mesh, geometries,
-                              std::numeric_limits<double>::epsilon());
-
+    if (!MeshLib::convertMeshToGeo(*surface_mesh, geometries,
+                                   std::numeric_limits<double>::epsilon()))
+    {
+        WARN("The surface mesh could not be converted to a geometry.");
+        return false;
+    }
     std::string merged_geometry_name("geometry_with_surfaces");
     geometries.mergeGeometries({geometry_name, surface_mesh->getName()},
                                merged_geometry_name);
@@ -103,6 +114,8 @@ void createSurface(GeoLib::Polyline const& ply,
     geometries.removePolylineVec(surface_mesh->getName());
     geometries.removePointVec(surface_mesh->getName());
     geometries.renameGeometry(merged_geometry_name, geometry_name);
+
+    return true;
 }
 
 } // end namespace
