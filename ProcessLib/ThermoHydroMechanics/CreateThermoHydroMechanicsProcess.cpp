@@ -46,21 +46,21 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
 
     // Process variable.
 
-    //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__process_variables}
+    //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
-    //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property__fluid}
+    //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__material_property__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");
     auto fluid_properties =
         MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     auto process_variables = findProcessVariables(
         variables, pv_config,
-        {//! \ogs_file_param_special{prj__prcoesses__process__THERMO_HYDRO_MECHANICS__process_variables__temperature}
+        {//! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__process_variables__temperature}
          "temperature",
-         //! \ogs_file_param_special{prj__prcoesses__process__THERMO_HYDRO_MECHANICS__process_variables__pressure}
+         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__process_variables__pressure}
          "pressure",
-         //! \ogs_file_param_special{prj__prcoesses__process__THERMO_HYDRO_MECHANICS__process_variables__displacement}
+         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__process_variables__displacement}
          "displacement"});
 
     DBUG("Associate displacement with process variable \'%s\'.",
@@ -221,7 +221,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
         std::vector<double> const b =
-            //! \ogs_file_param{prj__processes__processes__process__HYDRO_MECHANICS__specific_body_force}
+            //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__specific_body_force}
             config.getConfigParameter<std::vector<double>>(
                 "specific_body_force");
         if (b.size() != DisplacementDim)
