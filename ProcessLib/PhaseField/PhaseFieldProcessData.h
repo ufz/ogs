@@ -73,9 +73,9 @@ struct PhaseFieldProcessData
     Parameter<double> const& kinetic_coefficient;
     Parameter<double> const& solid_density;
     Parameter<double>& history_field;
-    Eigen::Matrix<double, DisplacementDim, 1> const& specific_body_force;
-    double dt;
-    double t;
+    Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
+    double dt = 0.0;
+    double t = 0.0;
 };
 
 }  // namespace PhaseField
