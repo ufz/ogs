@@ -54,7 +54,9 @@ void ConvergenceCriterionPerComponentResidual::checkDeltaX(
         INFO(
             "Convergence criterion, component %u: |dx|=%.4e, |x|=%.4e, "
             "|dx|/|x|=%.4e",
-            error_dx, global_component, norm_x, error_dx / norm_x);
+            error_dx, global_component, norm_x,
+            (norm_x == 0. ? std::numeric_limits<double>::quiet_NaN()
+                          : (error_dx / norm_x)));
     }
 }
 
@@ -85,7 +87,9 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
             INFO(
                 "Convergence criterion, component %u: |r|=%.4e, |r0|=%.4e, "
                 "|r|/|r0|=%.4e",
-                global_component, norm_res, norm_res0, norm_res / norm_res0);
+                global_component, norm_res, norm_res0,
+                (norm_res0 == 0. ? std::numeric_limits<double>::quiet_NaN()
+                                 : (norm_res / norm_res0)));
         }
 
         satisfied_abs = satisfied_abs && norm_res < _abstols[global_component];
