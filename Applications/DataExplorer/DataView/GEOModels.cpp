@@ -192,7 +192,19 @@ void GEOModels::connectPolylineSegments(
 
                 if (triangulatePly)
                 {
-                    FileIO::createSurface(*new_line, _geo_objects, geoName);
+                    INFO(
+                        "Creating a surface by triangulation of the polyline "
+                        "...");
+                    if (FileIO::createSurface(*new_line, _geo_objects, geoName))
+                    {
+                        INFO("\t done");
+                    }
+                    else
+                    {
+                        WARN(
+                            "\t Creating a surface by triangulation of the "
+                            "polyline failed.");
+                    }
                     plyVec = _geo_objects.getPolylineVecObj(geoName);
                 }
             }
