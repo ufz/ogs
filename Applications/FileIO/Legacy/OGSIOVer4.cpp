@@ -489,7 +489,8 @@ bool readGLIFileV4(const std::string& fname,
         geo.addPolylineVec(std::move(ply_vec), unique_name,
                            std::move(ply_names));
 
-    // copy of ply_names
+    // Since ply_names is a unique_ptr and is given to the GEOObject instance
+    // geo it is not usable anymore. For this reason a copy is necessary.
     std::map<std::string, std::size_t> ply_names_copy;
     if (geo.getPolylineVecObj(unique_name))
     {
