@@ -242,6 +242,10 @@ public:
      */
     int mergeGeometries(std::vector<std::string> const & names, std::string &merged_geo_name);
 
+    /// Renames an existing geometry, i.e. renames the internal PointVec,
+    /// PolylineVec and the SurfaceVec objects from \c old_name to \c new_name.
+    /// If no such PointVec, PolylineVec and SurfaceVec objects exist nothing
+    /// will happen.
     void renameGeometry(std::string const& old_name,
                         std::string const& new_name);
 
