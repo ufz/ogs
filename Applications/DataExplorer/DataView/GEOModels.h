@@ -76,6 +76,9 @@ public slots:
     void appendSurfaceVec(std::string const& name);
     void removeSurfaceVec(std::string const& name);
 
+    void renameGeometry(std::string const& old_name,
+                        std::string const& new_name);
+
     /// Adds the name 'new_name' for the geo-object specified by the parameters
     void addNameForElement(std::string const& geometry_name,
                            GeoLib::GEOTYPE const object_type,
@@ -165,6 +168,12 @@ public:
     {
         _geo_models.removeSurfaceVec(name);
     };
+
+    void renameGeometry(std::string const& old_name,
+                        std::string const& new_name) override
+    {
+        _geo_models.renameGeometry(old_name, new_name);
+    }
 
 private:
     GEOModels& _geo_models;

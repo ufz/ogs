@@ -19,6 +19,8 @@
 
 #include <logog/include/logog.hpp>
 
+#include "Applications/FileIO/Legacy/createSurface.h"
+
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polyline.h"
@@ -176,17 +178,20 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, con
     auto const polylines = _geoObjects.getPolylineVec(listName);
     auto sfc_vec = std::make_unique<std::vector<GeoLib::Surface*>>();
 
-    for (auto const* polyline : *polylines) {
-        GeoLib::Surface* sfc(GeoLib::Surface::createSurface(*polyline));
-        if (sfc)
-            sfc_vec->push_back(sfc);
-        else {
-            WARN("SHPInterface::readPolygons(): Could not triangulate polygon.")
+    for (auto const* polyline : *polylines)
+    {
+        INFO("Creating a surface by triangulation of the polyline ...");
+        if (FileIO::createSurface(*polyline, _geoObjects, listName))
+        {
+            INFO("\t done");
+        }
+        else
+        {
+            WARN(
+                "\t Creating a surface by triangulation of the polyline "
+                "failed.");
         }
     }
-
-    if (!sfc_vec->empty())
-        _geoObjects.addSurfaceVec(std::move(sfc_vec), listName);
 }
 
 bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh)

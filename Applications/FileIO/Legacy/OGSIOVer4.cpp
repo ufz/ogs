@@ -20,11 +20,12 @@
 
 #include <logog/include/logog.hpp>
 
+#include "Applications/FileIO/Legacy/createSurface.h"
+
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 
 #include "GeoLib/AnalyticalGeometry.h"
-#include "GeoLib/EarClippingTriangulation.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/PointVec.h"
@@ -36,9 +37,7 @@
 
 #include "GeoLib/IO/TINInterface.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 namespace Legacy {
 
@@ -268,21 +267,21 @@ std::string readPolylines(std::istream &in, std::vector<GeoLib::Polyline*>* ply_
    01/2010 TF signatur modification, reimplementation
 **************************************************************************/
 /** read a single Surface */
-std::string readSurface(std::istream &in,
-                        std::vector<GeoLib::Polygon*> &polygon_vec,
-                        std::vector<GeoLib::Surface*> &sfc_vec,
-                        std::map<std::string,std::size_t>& sfc_names,
-                        const std::vector<GeoLib::Polyline*> &ply_vec,
+std::string readSurface(std::istream& in,
+                        std::vector<GeoLib::Polygon*>& polygon_vec,
+                        std::vector<GeoLib::Surface*>& sfc_vec,
+                        std::map<std::string, std::size_t>& sfc_names,
+                        const std::vector<GeoLib::Polyline*>& ply_vec,
                         const std::map<std::string, std::size_t>& ply_vec_names,
-                        GeoLib::PointVec &pnt_vec,
-                        std::string const& path, std::vector<std::string>& errors)
+                        GeoLib::PointVec& pnt_vec, std::string const& path,
+                        std::vector<std::string>& errors)
 {
     std::string line;
     GeoLib::Surface* sfc(nullptr);
 
     int type (-1);
     std::string name;
-    std::size_t ply_id (0); // std::numeric_limits<std::size_t>::max());
+    std::size_t ply_id (std::numeric_limits<std::size_t>::max());
 
     do {
         in >> line;
@@ -385,13 +384,14 @@ std::string readSurface(std::istream &in,
    05/2004 CC Modification
    01/2010 TF changed signature of function, big modifications
 **************************************************************************/
-std::string readSurfaces(std::istream &in,
-                         std::vector<GeoLib::Surface*> &sfc_vec,
-                         std::map<std::string, std::size_t>& sfc_names,
-                         const std::vector<GeoLib::Polyline*> &ply_vec,
-                         const std::map<std::string,std::size_t>& ply_vec_names,
-                         GeoLib::PointVec & pnt_vec,
-                         const std::string &path, std::vector<std::string>& errors)
+std::string readSurfaces(
+    std::istream& in, std::vector<GeoLib::Surface*>& sfc_vec,
+    std::map<std::string, std::size_t>& sfc_names,
+    const std::vector<GeoLib::Polyline*>& ply_vec,
+    const std::map<std::string, std::size_t>& ply_vec_names,
+    GeoLib::PointVec& pnt_vec, const std::string& path,
+    std::vector<std::string>& errors, GeoLib::GEOObjects& geo,
+    std::string const& unique_name)
 {
     if (!in.good())
     {
@@ -405,25 +405,23 @@ std::string readSurfaces(std::istream &in,
     while (!in.eof() && !in.fail() && tag.find("#SURFACE") != std::string::npos)
     {
         std::size_t n_polygons (polygon_vec.size());
-        tag = readSurface(in,
-                          polygon_vec,
-                          sfc_vec,
-                          sfc_names,
-                          ply_vec,
-                          ply_vec_names,
-                          pnt_vec,
-                          path,
-                          errors);
+        tag = readSurface(in, polygon_vec, sfc_vec, sfc_names, ply_vec,
+                          ply_vec_names, pnt_vec, path, errors);
         if (n_polygons < polygon_vec.size())
         {
-            // subdivide polygon in simple polygons
-            GeoLib::Surface* sfc(GeoLib::Surface::createSurface(
-                                         *(dynamic_cast<GeoLib::Polyline*> (polygon_vec
-                                                                            [
-                                                                                    polygon_vec
-                                                                                    .
-                                                                                    size() - 1]))));
-            sfc_vec.push_back(sfc);
+            INFO("Creating a surface by triangulation of the polyline ...");
+            if (FileIO::createSurface(
+                    *(dynamic_cast<GeoLib::Polyline*>(polygon_vec.back())), geo,
+                    unique_name))
+            {
+                INFO("\t done");
+            }
+            else
+            {
+                WARN(
+                    "\t Creating a surface by triangulation of the polyline "
+                    "failed.");
+            }
         }
     }
     for (auto & k : polygon_vec)
@@ -487,30 +485,42 @@ bool readGLIFileV4(const std::string& fname,
     else
         INFO("GeoLib::readGLIFile(): tag #POLYLINE not found.");
 
+    if (!ply_vec->empty())
+        geo.addPolylineVec(std::move(ply_vec), unique_name,
+                           std::move(ply_names));
+
+    // Since ply_names is a unique_ptr and is given to the GEOObject instance
+    // geo it is not usable anymore. For this reason a copy is necessary.
+    std::map<std::string, std::size_t> ply_names_copy;
+    if (geo.getPolylineVecObj(unique_name))
+    {
+        ply_names_copy = std::map<std::string, std::size_t>{
+            geo.getPolylineVecObj(unique_name)->getNameIDMapBegin(),
+            geo.getPolylineVecObj(unique_name)->getNameIDMapEnd()};
+    }
+
     auto sfc_vec = std::make_unique<std::vector<GeoLib::Surface*>>();
     auto sfc_names = std::make_unique<std::map<std::string, std::size_t>>();
     if (tag.find("#SURFACE") != std::string::npos && in)
     {
         INFO("GeoLib::readGLIFile(): read surfaces from stream.");
+
         tag = readSurfaces(in,
                            *sfc_vec,
                            *sfc_names,
-                           *ply_vec,
-                           *ply_names,
+                           *geo.getPolylineVec(unique_name),
+                           ply_names_copy,
                            point_vec,
                            path,
-                           errors);
+                           errors,
+                           geo,
+                           unique_name);
         INFO("GeoLib::readGLIFile(): \tok, %d surfaces read.", sfc_vec->size());
     }
     else
         INFO("GeoLib::readGLIFile(): tag #SURFACE not found.");
 
     in.close();
-
-    if (!ply_vec->empty())
-        geo.addPolylineVec(
-            std::move(ply_vec), unique_name,
-            std::move(ply_names));  // KR: insert into GEOObjects if not empty
 
     if (!sfc_vec->empty())
         geo.addSurfaceVec(
@@ -688,5 +698,4 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 }
 
 }
-} // end namespace IO
-} // end namespace GeoLib
+} // end namespace FileIO

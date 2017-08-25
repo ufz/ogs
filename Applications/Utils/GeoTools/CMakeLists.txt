@@ -1,6 +1,6 @@
 if(Qt5XmlPatterns_FOUND)
     add_executable(TriangulatePolyline TriangulatePolyline.cpp)
-    target_link_libraries(TriangulatePolyline GeoLib)
+    target_link_libraries(TriangulatePolyline GeoLib ApplicationsFileIO)
     set_target_properties(TriangulatePolyline PROPERTIES FOLDER Utilities)
     install(TARGETS
         TriangulatePolyline

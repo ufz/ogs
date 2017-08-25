@@ -20,11 +20,12 @@
 namespace GeoLib
 {
 class GEOObjects;
+}
 
-namespace IO
+namespace FileIO
 {
-namespace Legacy {
-
+namespace Legacy
+{
 /** Interface for handling geometry from OGS-5 and below (*.gli files) */
 
 /** Reads geometric objects from file in gli format */
@@ -42,5 +43,4 @@ void writeGLIFileV4 (const std::string& fname,
 void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects& geo);
 
 }
-} // end namespace IO
-} // end namespace GeoLib
+} // end namespace FileIO

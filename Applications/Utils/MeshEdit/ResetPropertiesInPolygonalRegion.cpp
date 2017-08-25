@@ -16,6 +16,7 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
+#include "Applications/FileIO/readGeometryFromFile.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -23,7 +24,6 @@
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
-#include "GeoLib/IO/readGeometryFromFile.h"
 
 #include "MathLib/Vector3.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
@@ -153,7 +153,7 @@ int main (int argc, char* argv[])
 
     // *** read geometry
     GeoLib::GEOObjects geometries;
-    GeoLib::IO::readGeometryFromFile(geometry_fname.getValue(), geometries);
+    FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries);
 
     std::string geo_name;
     {

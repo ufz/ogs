@@ -62,7 +62,9 @@ public:
         plys->push_back(ply1);
 
         auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
-        _sfc1 = GeoLib::Surface::createSurface(*ply1);
+        _sfc1 = new GeoLib::Surface(*pnts);
+        _sfc1->addTriangle(0, 1, 2);
+        _sfc1->addTriangle(0, 2, 3);
         sfcs->push_back(_sfc1);
 
         _geo_objs.addPointVec(std::move(pnts), _project_name);
@@ -120,7 +122,9 @@ public:
         plys->push_back(ply1);
 
         auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
-        _sfc1 = GeoLib::Surface::createSurface(*ply1);
+        _sfc1 = new GeoLib::Surface(*pnts);
+        _sfc1->addTriangle(0, 3, 7);
+        _sfc1->addTriangle(0, 7, 4);
         sfcs->push_back(_sfc1);
 
         _geo_objs.addPointVec(std::move(pnts) ,_project_name);

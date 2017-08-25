@@ -131,32 +131,27 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
     pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, _geometric_size));
     pnts.push_back(new GeoLib::Point(0.0, 0.0, _geometric_size));
 
-    GeoLib::Polyline ply_bottom(pnts);
-    ply_bottom.addPoint(0);
-    ply_bottom.addPoint(1);
-    ply_bottom.addPoint(2);
-    ply_bottom.addPoint(3);
-    ply_bottom.addPoint(0);
-    std::unique_ptr<GeoLib::Surface> sfc_bottom(GeoLib::Surface::createSurface(ply_bottom));
+    GeoLib::Surface sfc_bottom(pnts);
+    sfc_bottom.addTriangle(0, 1, 2);
+    sfc_bottom.addTriangle(0, 2, 3);
 
-    GeoLib::Polyline ply_front(pnts);
-    ply_front.addPoint(0);
-    ply_front.addPoint(1);
-    ply_front.addPoint(4);
-    ply_front.addPoint(5);
-    ply_front.addPoint(0);
-    std::unique_ptr<GeoLib::Surface> sfc_front(GeoLib::Surface::createSurface(ply_front));
+    GeoLib::Surface sfc_front(pnts);
+    sfc_front.addTriangle(0, 1, 4);
+    sfc_front.addTriangle(0, 4, 5);
 
     // perform search on the bottom surface
     MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(
         *_hex_mesh,
         std::make_unique<MeshGeoToolsLib::HeuristicSearchLength>(*_hex_mesh),
         MeshGeoToolsLib::SearchAllNodes::Yes);
-    MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(*_hex_mesh, mesh_node_searcher);
-    std::vector<MeshLib::Element*> const& found_faces_sfc_b(boundary_element_searcher.getBoundaryElements(*sfc_bottom));
+    MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
+        *_hex_mesh, mesh_node_searcher);
+    std::vector<MeshLib::Element*> const& found_faces_sfc_b(
+        boundary_element_searcher.getBoundaryElements(sfc_bottom));
     ASSERT_EQ(n_eles_2d, found_faces_sfc_b.size());
-    double sum_area_b = std::accumulate(found_faces_sfc_b.begin(), found_faces_sfc_b.end(), 0.0,
-                [](double v, MeshLib::Element*e){return v+e->getContent();});
+    double sum_area_b = std::accumulate(
+        found_faces_sfc_b.begin(), found_faces_sfc_b.end(), 0.0,
+        [](double v, MeshLib::Element* e) { return v + e->getContent(); });
     ASSERT_EQ(_geometric_size*_geometric_size, sum_area_b);
     auto connected_nodes_b = MeshLib::getUniqueNodes(found_faces_sfc_b);
     ASSERT_EQ(n_nodes_2d, connected_nodes_b.size());
@@ -164,10 +159,12 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
         ASSERT_EQ(0.0, (*node)[2]); // check z coordinates
 
     // perform search on the front surface
-    std::vector<MeshLib::Element*> const& found_faces_sfc_f(boundary_element_searcher.getBoundaryElements(*sfc_front));
+    std::vector<MeshLib::Element*> const& found_faces_sfc_f(
+        boundary_element_searcher.getBoundaryElements(sfc_front));
     ASSERT_EQ(n_eles_2d, found_faces_sfc_f.size());
-    double sum_area_f = std::accumulate(found_faces_sfc_f.begin(), found_faces_sfc_f.end(), 0.0,
-                [](double v, MeshLib::Element*e){return v+e->getContent();});
+    double sum_area_f = std::accumulate(
+        found_faces_sfc_f.begin(), found_faces_sfc_f.end(), 0.0,
+        [](double v, MeshLib::Element* e) { return v + e->getContent(); });
     ASSERT_EQ(_geometric_size*_geometric_size, sum_area_f);
     auto connected_nodes_f = MeshLib::getUniqueNodes(found_faces_sfc_f);
     ASSERT_EQ(n_nodes_2d, connected_nodes_f.size());

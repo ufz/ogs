@@ -4,6 +4,7 @@ TARGET_LINK_LIBRARIES( ComputeSurfaceNodeIDsInPolygonalRegion
     MeshLib
     GeoLib
     MathLib
+    ApplicationsFileIO
     ${OGS_VTK_REQUIRED_LIBS}
 )
 

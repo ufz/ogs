@@ -9,12 +9,12 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
+#include "Applications/FileIO/readGeometryFromFile.h"
 
 #include "BaseLib/FileTools.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/PolylineVec.h"
-#include "GeoLib/IO/readGeometryFromFile.h"
 
 #include "MeshGeoToolsLib/AppendLinesAlongPolyline.h"
 
@@ -44,7 +44,7 @@ int main (int argc, char* argv[])
 
     // read GEO objects
     GeoLib::GEOObjects geo_objs;
-    GeoLib::IO::readGeometryFromFile(geoFileArg.getValue(), geo_objs);
+    FileIO::readGeometryFromFile(geoFileArg.getValue(), geo_objs);
 
     std::vector<std::string> geo_names;
     geo_objs.getGeometryNames (geo_names);

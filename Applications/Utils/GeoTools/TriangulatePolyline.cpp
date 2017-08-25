@@ -16,6 +16,7 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
+#include "Applications/FileIO/Legacy/createSurface.h"
 
 #include "BaseLib/BuildInfo.h"
 
@@ -95,19 +96,18 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
     }
 
-    // create surface
-    INFO ("Triangulating surface...");
-    auto new_sfc = std::make_unique<std::vector<GeoLib::Surface*>>();
-    new_sfc->push_back(GeoLib::Surface::createSurface(*line));
-
-    GeoLib::SurfaceVec* sfc_vec (geo_objects.getSurfaceVecObj(geo_names[0]));
-    if (sfc_vec == nullptr)
+    INFO ("Creating a surface by triangulation of the polyline ...");
+    if (FileIO::createSurface(*line, geo_objects, geo_names[0]))
     {
-        geo_objects.addSurfaceVec(std::move(new_sfc), geo_names[0]);
-        sfc_vec = geo_objects.getSurfaceVecObj(geo_names[0]);
+        INFO("\t done");
     }
     else
-        geo_objects.appendSurfaceVec(*new_sfc, geo_names[0]);
+    {
+        WARN(
+            "\t Creating a surface by triangulation of the polyline "
+            "failed.");
+    }
+    GeoLib::SurfaceVec* sfc_vec(geo_objects.getSurfaceVecObj(geo_names[0]));
     std::size_t const sfc_id = geo_objects.getSurfaceVec(geo_names[0])->size() - 1;
     std::string const surface_name (polyline_name + "_surface");
     for (std::size_t i=1;;++i)

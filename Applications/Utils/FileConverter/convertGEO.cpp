@@ -15,9 +15,8 @@
 #include "BaseLib/BuildInfo.h"
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
-#include "GeoLib/IO/readGeometryFromFile.h"
-#include "GeoLib/IO/writeGeometryToFile.h"
+#include "Applications/FileIO/readGeometryFromFile.h"
+#include "Applications/FileIO/writeGeometryToFile.h"
 #include "GeoLib/GEOObjects.h"
 
 
@@ -39,12 +38,12 @@ int main (int argc, char* argv[])
     cmd.parse(argc, argv);
 
     GeoLib::GEOObjects geoObjects;
-    GeoLib::IO::readGeometryFromFile(argInputFileName.getValue(), geoObjects);
+    FileIO::readGeometryFromFile(argInputFileName.getValue(), geoObjects);
     std::vector<std::string> geo_names;
     geoObjects.getGeometryNames(geo_names);
     assert(geo_names.size() == 1);
 
-    GeoLib::IO::writeGeometryToFile(geo_names[0], geoObjects, argOutputFileName.getValue());
+    FileIO::writeGeometryToFile(geo_names[0], geoObjects, argOutputFileName.getValue());
 
     return EXIT_SUCCESS;
 }

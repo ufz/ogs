@@ -35,6 +35,7 @@
 #include "Applications/FileIO/GMSInterface.h"
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/Gmsh/GmshReader.h"
+#include "Applications/FileIO/Legacy/OGSIOVer4.h"
 #include "Applications/FileIO/PetrelInterface.h"
 #include "Applications/FileIO/TetGenInterface.h"
 #include "Applications/FileIO/XmlIO/Qt/XmlGspInterface.h"
@@ -43,7 +44,6 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Histogram.h"
 #include "GeoLib/DuplicateGeometry.h"
-#include "GeoLib/IO/Legacy/OGSIOVer4.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 #include "GeoLib/Raster.h"
@@ -450,9 +450,9 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
         {
             std::string unique_name;
             std::vector<std::string> errors;
-            if (!GeoLib::IO::Legacy::readGLIFileV4(fileName.toStdString(),
-                                                   _project.getGEOObjects(),
-                                                   unique_name, errors))
+            if (!FileIO::Legacy::readGLIFileV4(fileName.toStdString(),
+                                               _project.getGEOObjects(),
+                                               unique_name, errors))
             {
                 for (auto& error : errors)
                     OGSError::box(QString::fromStdString(error));
@@ -773,8 +773,8 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
     QFileInfo fi(fileName);
     if (fi.suffix().toLower() == "gli")
     {
-        GeoLib::IO::Legacy::writeAllDataToGLIFileV4(fileName.toStdString(),
-                                                    _project.getGEOObjects());
+        FileIO::Legacy::writeAllDataToGLIFileV4(fileName.toStdString(),
+                                                _project.getGEOObjects());
         return;
     }
 #endif
