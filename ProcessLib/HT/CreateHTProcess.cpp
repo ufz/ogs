@@ -127,8 +127,7 @@ std::unique_ptr<Process> createHTProcess(
             "specific body force (gravity vector) has %d components, mesh "
             "dimension is %d",
             b.size(), mesh.getDimension());
-    bool const has_gravity = MathLib::toVector(b).norm() > 0;
-    if (has_gravity)
+    if (MathLib::toVector(b).norm() > 0)
     {
         specific_body_force.resize(b.size());
         std::copy_n(b.data(), b.size(), specific_body_force.data());
@@ -143,8 +142,7 @@ std::unique_ptr<Process> createHTProcess(
                                specific_heat_capacity_solid,
                                thermal_conductivity_solid,
                                thermal_conductivity_fluid,
-                               specific_body_force,
-                               has_gravity};
+                               specific_body_force};
 
     SecondaryVariableCollection secondary_variables;
 

@@ -226,8 +226,10 @@ public:
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
             GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
-            GlobalDimVectorType const velocity =
-                -K_over_mu * (dNdx * p_nodal_values - density * b);
+            GlobalDimVectorType grad_p_and_g = dNdx * p_nodal_values;
+            if (b.size() > 0)
+                grad_p_and_g -= density * b;
+            GlobalDimVectorType const velocity = -K_over_mu * grad_p_and_g;
 
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const thermal_dispersivity =
@@ -254,7 +256,8 @@ public:
             Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
             Mtt.noalias() += w * N.transpose() * heat_capacity * N;
             Mpp.noalias() += w * N.transpose() * specific_storage * N;
-            Bp += w * density * dNdx.transpose() * K_over_mu * b;
+            if (b.size() > 0)
+                Bp += w * density * dNdx.transpose() * K_over_mu * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
         }
@@ -319,7 +322,7 @@ public:
 
             cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
 
-            if (_process_data.has_gravity)
+            if (_process_data.specific_body_force.size() > 0)
             {
                 auto const rho_w = _process_data.fluid_properties->getValue(
                     MaterialLib::Fluid::FluidPropertyType::Density, vars);
