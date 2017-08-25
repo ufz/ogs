@@ -27,6 +27,8 @@
 
 #include "Tests/VectorUtils.h"
 
+namespace GaussLegendreTest
+{
 template <typename Shp>
 static std::array<double, 3> interpolateNodeCoordinates(
     MeshLib::Element const& e, Shp const& N)
@@ -111,12 +113,13 @@ private:
     MeshLib::Element const& _e;
 };
 
-class TestProcess
+class IntegrationTestProcess
 {
 public:
     using LocalAssembler = LocalAssemblerDataInterface;
 
-    TestProcess(MeshLib::Mesh const& mesh, unsigned const integration_order)
+    IntegrationTestProcess(MeshLib::Mesh const& mesh,
+                           unsigned const integration_order)
         : _integration_order(integration_order),
           _mesh_subset_all_nodes(mesh, &mesh.getNodes())
     {
@@ -412,6 +415,8 @@ std::unique_ptr<FBase> getF(unsigned polynomial_order)
     OGS_FATAL("unsupported polynomial order: %d.", polynomial_order);
 }
 
+}  // namespace GaussLegendreTest
+
 /* *****************************************************************************
  *
  * The idea behind the tests in this file is to integrate polynomials of
@@ -435,7 +440,8 @@ TEST(MathLib, IntegrationGaussLegendreTet)
     for (unsigned integration_order : {1, 2, 3})
     {
         DBUG("\n==== integration order: %u.\n", integration_order);
-        TestProcess pcs_tet(*mesh_tet, integration_order);
+        GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
+                                                          integration_order);
 
         for (unsigned polynomial_order : {0, 1, 2})
         {
@@ -443,7 +449,7 @@ TEST(MathLib, IntegrationGaussLegendreTet)
                 break;
 
             DBUG("  == polynomial order: %u.", polynomial_order);
-            auto f = getF(polynomial_order);
+            auto f = GaussLegendreTest::getF(polynomial_order);
 
             auto const integral_tet = pcs_tet.integrate(f->getClosure());
             EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_tet,
@@ -461,7 +467,8 @@ TEST(MathLib, IntegrationGaussLegendreHex)
     for (unsigned integration_order : {1, 2, 3})
     {
         DBUG("\n==== integration order: %u.\n", integration_order);
-        TestProcess pcs_hex(*mesh_hex, integration_order);
+        GaussLegendreTest::IntegrationTestProcess pcs_hex(*mesh_hex,
+                                                          integration_order);
 
         for (unsigned polynomial_order : {0, 1, 2})
         {
@@ -469,7 +476,7 @@ TEST(MathLib, IntegrationGaussLegendreHex)
                 break;
 
             DBUG("  == polynomial order: %u.", polynomial_order);
-            auto f = getF(polynomial_order);
+            auto f = GaussLegendreTest::getF(polynomial_order);
 
             auto const integral_hex = pcs_hex.integrate(f->getClosure());
             EXPECT_NEAR(f->getAnalyticalIntegralOverUnitCube(), integral_hex,
@@ -489,7 +496,8 @@ TEST(MathLib, DISABLED_IntegrationGaussLegendreTetSeparablePolynomial)
     for (unsigned integration_order : {1, 2, 3})
     {
         DBUG("\n==== integration order: %u.\n", integration_order);
-        TestProcess pcs_tet(*mesh_tet, integration_order);
+        GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
+                                                          integration_order);
 
         for (unsigned polynomial_order = 0;
              // Gauss-Legendre integration is exact up to this order!
@@ -497,7 +505,7 @@ TEST(MathLib, DISABLED_IntegrationGaussLegendreTetSeparablePolynomial)
              ++polynomial_order)
         {
             DBUG("  == polynomial order: %u.", polynomial_order);
-            F3DSeparablePolynomial f(polynomial_order);
+            GaussLegendreTest::F3DSeparablePolynomial f(polynomial_order);
 
             auto const integral_tet = pcs_tet.integrate(f.getClosure());
             EXPECT_NEAR(f.getAnalyticalIntegralOverUnitCube(), integral_tet,
@@ -515,7 +523,8 @@ TEST(MathLib, IntegrationGaussLegendreHexSeparablePolynomial)
     for (unsigned integration_order : {1, 2, 3, 4})
     {
         DBUG("\n==== integration order: %u.\n", integration_order);
-        TestProcess pcs_hex(*mesh_hex, integration_order);
+        GaussLegendreTest::IntegrationTestProcess pcs_hex(*mesh_hex,
+                                                          integration_order);
 
         for (unsigned polynomial_order = 0;
              // Gauss-Legendre integration is exact up to this order!
@@ -523,7 +532,7 @@ TEST(MathLib, IntegrationGaussLegendreHexSeparablePolynomial)
              ++polynomial_order)
         {
             DBUG("  == polynomial order: %u.", polynomial_order);
-            F3DSeparablePolynomial f(polynomial_order);
+            GaussLegendreTest::F3DSeparablePolynomial f(polynomial_order);
 
             auto const integral_hex = pcs_hex.integrate(f.getClosure());
             EXPECT_NEAR(f.getAnalyticalIntegralOverUnitCube(), integral_hex,
@@ -541,7 +550,8 @@ TEST(MathLib, IntegrationGaussLegendreTetNonSeparablePolynomial)
     for (unsigned integration_order : {1, 2, 3})
     {
         DBUG("\n==== integration order: %u.\n", integration_order);
-        TestProcess pcs_tet(*mesh_tet, integration_order);
+        GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
+                                                          integration_order);
 
         for (unsigned polynomial_order = 0;
              // Gauss-Legendre integration is exact up to this order!
@@ -549,7 +559,7 @@ TEST(MathLib, IntegrationGaussLegendreTetNonSeparablePolynomial)
              ++polynomial_order)
         {
             DBUG("  == polynomial order: %u.", polynomial_order);
-            F3DNonseparablePolynomial f(polynomial_order);
+            GaussLegendreTest::F3DNonseparablePolynomial f(polynomial_order);
 
             auto const integral_tet = pcs_tet.integrate(f.getClosure());
             EXPECT_NEAR(f.getAnalyticalIntegralOverUnitCube(), integral_tet,
@@ -567,7 +577,8 @@ TEST(MathLib, IntegrationGaussLegendreHexNonSeparablePolynomial)
     for (unsigned integration_order : {1, 2, 3, 4})
     {
         DBUG("\n==== integration order: %u.\n", integration_order);
-        TestProcess pcs_hex(*mesh_hex, integration_order);
+        GaussLegendreTest::IntegrationTestProcess pcs_hex(*mesh_hex,
+                                                          integration_order);
 
         for (unsigned polynomial_order = 0;
              // Gauss-Legendre integration is exact up to this order!
@@ -575,7 +586,7 @@ TEST(MathLib, IntegrationGaussLegendreHexNonSeparablePolynomial)
              ++polynomial_order)
         {
             DBUG("  == polynomial order: %u.", polynomial_order);
-            F3DNonseparablePolynomial f(polynomial_order);
+            GaussLegendreTest::F3DNonseparablePolynomial f(polynomial_order);
 
             auto const integral_hex = pcs_hex.integrate(f.getClosure());
             EXPECT_NEAR(f.getAnalyticalIntegralOverUnitCube(), integral_hex,
