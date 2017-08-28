@@ -431,7 +431,18 @@ std::unique_ptr<FBase> getF(unsigned polynomial_order)
 
 static double const eps = 10 * std::numeric_limits<double>::epsilon();
 
-TEST(MathLib, IntegrationGaussLegendreTet)
+/* The tests in this file fundamentally rely on a mesh being read from a vtu
+ * file, and a DOF table being computed for that mesh. Since our PETSc build
+ * only works with node partitioned meshes, it cannot digest the read meshes.
+ */
+#ifndef USE_PETSC
+#define OGS_DONT_TEST_THIS_IF_PETSC(group, test_case) TEST(group, test_case)
+#else
+#define OGS_DONT_TEST_THIS_IF_PETSC(group, test_case) \
+    TEST(group, DISABLED_##test_case)
+#endif
+
+OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreTet)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_tet(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
@@ -458,7 +469,7 @@ TEST(MathLib, IntegrationGaussLegendreTet)
     }
 }
 
-TEST(MathLib, IntegrationGaussLegendreHex)
+OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreHex)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_hex(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
@@ -487,7 +498,8 @@ TEST(MathLib, IntegrationGaussLegendreHex)
 
 // This test is disabled, because the polynomials involved are too complicated
 // to be exactly integrated over tetrahedra using Gauss-Legendre quadrature
-TEST(MathLib, DISABLED_IntegrationGaussLegendreTetSeparablePolynomial)
+OGS_DONT_TEST_THIS_IF_PETSC(
+    MathLib, DISABLED_IntegrationGaussLegendreTetSeparablePolynomial)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_tet(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
@@ -514,7 +526,8 @@ TEST(MathLib, DISABLED_IntegrationGaussLegendreTetSeparablePolynomial)
     }
 }
 
-TEST(MathLib, IntegrationGaussLegendreHexSeparablePolynomial)
+OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
+                            IntegrationGaussLegendreHexSeparablePolynomial)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_hex(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
@@ -541,7 +554,8 @@ TEST(MathLib, IntegrationGaussLegendreHexSeparablePolynomial)
     }
 }
 
-TEST(MathLib, IntegrationGaussLegendreTetNonSeparablePolynomial)
+OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
+                            IntegrationGaussLegendreTetNonSeparablePolynomial)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_tet(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
@@ -568,7 +582,8 @@ TEST(MathLib, IntegrationGaussLegendreTetNonSeparablePolynomial)
     }
 }
 
-TEST(MathLib, IntegrationGaussLegendreHexNonSeparablePolynomial)
+OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
+                            IntegrationGaussLegendreHexNonSeparablePolynomial)
 {
     std::unique_ptr<MeshLib::Mesh> mesh_hex(
         MeshLib::IO::VtuInterface::readVTUFile(BaseLib::BuildInfo::data_path +
@@ -594,3 +609,5 @@ TEST(MathLib, IntegrationGaussLegendreHexNonSeparablePolynomial)
         }
     }
 }
+
+#undef OGS_DONT_TEST_THIS_IF_PETSC
