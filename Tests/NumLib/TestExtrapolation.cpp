@@ -11,8 +11,8 @@
 
 #include "MathLib/LinAlg/LinAlg.h"
 
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/MatrixProviderUser.h"
@@ -24,13 +24,13 @@
 #include "NumLib/Function/Interpolation.h"
 #include "NumLib/NumericsConfig.h"
 
-#include "ProcessLib/Utils/LocalDataInitializer.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
+#include "ProcessLib/Utils/LocalDataInitializer.h"
 
 #include "Tests/VectorUtils.h"
 
-namespace
+namespace ExtrapolationTest
 {
 template <typename ShapeMatrices>
 void interpolateNodalValuesToIntegrationPoints(
@@ -39,14 +39,12 @@ void interpolateNodalValuesToIntegrationPoints(
         shape_matrices,
     std::vector<double>& interpolated_values)
 {
-    for (unsigned ip=0; ip<shape_matrices.size(); ++ip)
+    for (unsigned ip = 0; ip < shape_matrices.size(); ++ip)
     {
         NumLib::shapeFunctionInterpolate(
             local_nodal_values, shape_matrices[ip].N, interpolated_values[ip]);
     }
 }
-
-} // anonymous namespace
 
 class LocalAssemblerDataInterface : public NumLib::ExtrapolatableElement
 {
@@ -96,8 +94,8 @@ public:
     {
     }
 
-    Eigen::Map<const Eigen::RowVectorXd>
-    getShapeMatrix(const unsigned integration_point) const override
+    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
+        const unsigned integration_point) const override
     {
         auto const& N = _shape_matrices[integration_point].N;
 
@@ -129,7 +127,7 @@ public:
     void interpolateNodalValuesToIntegrationPoints(
         std::vector<double> const& local_nodal_values) override
     {
-        ::interpolateNodalValuesToIntegrationPoints(
+        ExtrapolationTest::interpolateNodalValuesToIntegrationPoints(
             local_nodal_values, _shape_matrices, _int_pt_values);
     }
 
@@ -139,7 +137,7 @@ private:
     std::vector<double> _int_pt_values;
 };
 
-class TestProcess
+class ExtrapolationTestProcess
 {
 public:
     using LocalAssembler = LocalAssemblerDataInterface;
@@ -148,9 +146,10 @@ public:
     using ExtrapolatorImplementation =
         NumLib::LocalLinearLeastSquaresExtrapolator;
 
-    TestProcess(MeshLib::Mesh const& mesh, unsigned const integration_order)
-        : _integration_order(integration_order)
-        , _mesh_subset_all_nodes(mesh, &mesh.getNodes())
+    ExtrapolationTestProcess(MeshLib::Mesh const& mesh,
+                             unsigned const integration_order)
+        : _integration_order(integration_order),
+          _mesh_subset_all_nodes(mesh, &mesh.getNodes())
     {
         std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
         all_mesh_subsets.emplace_back(&_mesh_subset_all_nodes);
@@ -211,13 +210,14 @@ private:
     std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };
 
-void extrapolate(TestProcess const& pcs, IntegrationPointValuesMethod method,
+void extrapolate(ExtrapolationTestProcess const& pcs,
+                 IntegrationPointValuesMethod method,
                  GlobalVector const& expected_extrapolated_global_nodal_values,
                  std::size_t const nnodes, std::size_t const nelements)
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto const tolerance_dx  = 30.0 * std::numeric_limits<double>::epsilon();
+    auto const tolerance_dx = 30.0 * std::numeric_limits<double>::epsilon();
     auto const tolerance_res = 15.0 * std::numeric_limits<double>::epsilon();
 
     const double t = 0.0;
@@ -227,7 +227,7 @@ void extrapolate(TestProcess const& pcs, IntegrationPointValuesMethod method,
     auto const& x_extra = *result.first;
     auto const& residual = *result.second;
 
-    ASSERT_EQ(nnodes,    x_extra.size());
+    ASSERT_EQ(nnodes, x_extra.size());
     ASSERT_EQ(nelements, residual.size());
 
     auto const res_norm = LinAlg::normMax(residual);
@@ -235,13 +235,15 @@ void extrapolate(TestProcess const& pcs, IntegrationPointValuesMethod method,
     EXPECT_GT(tolerance_res, res_norm);
 
     auto delta_x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-                expected_extrapolated_global_nodal_values);
-    LinAlg::axpy(*delta_x, -1.0, x_extra); // delta_x = x_expected - x_extra
+        expected_extrapolated_global_nodal_values);
+    LinAlg::axpy(*delta_x, -1.0, x_extra);  // delta_x = x_expected - x_extra
 
     auto const dx_norm = LinAlg::normMax(*delta_x);
     DBUG("maximum norm of delta x:  %g", dx_norm);
     EXPECT_GT(tolerance_dx, dx_norm);
 }
+
+}  // anonymous namespace
 
 #ifndef USE_PETSC
 TEST(NumLib, Extrapolation)
@@ -264,18 +266,20 @@ TEST(NumLib, DISABLED_Extrapolation)
 
     // generate mesh
     std::unique_ptr<MeshLib::Mesh> mesh(
-                MeshLib::MeshGenerator::generateRegularHexMesh(
-                    mesh_length, mesh_elements_in_each_direction));
+        MeshLib::MeshGenerator::generateRegularHexMesh(
+            mesh_length, mesh_elements_in_each_direction));
 
     for (unsigned integration_order : {2, 3, 4})
     {
         namespace LinAlg = MathLib::LinAlg;
 
-        auto const nnodes    = mesh->getNumberOfNodes();
+        auto const nnodes = mesh->getNumberOfNodes();
         auto const nelements = mesh->getNumberOfElements();
-        DBUG("number of nodes: %lu, number of elements: %lu", nnodes, nelements);
+        DBUG("number of nodes: %lu, number of elements: %lu", nnodes,
+             nelements);
 
-        TestProcess pcs(*mesh, integration_order);
+        ExtrapolationTest::ExtrapolationTestProcess pcs(*mesh,
+                                                        integration_order);
 
         // generate random nodal values
         MathLib::MatrixSpecifications spec{nnodes, nnodes, nullptr, nullptr};
@@ -287,16 +291,20 @@ TEST(NumLib, DISABLED_Extrapolation)
 
         // test extrapolation of a quantity that is stored in the local
         // assembler
-        extrapolate(pcs, &LocalAssemblerDataInterface::getStoredQuantity, *x,
-                    nnodes, nelements);
+        ExtrapolationTest::extrapolate(
+            pcs,
+            &ExtrapolationTest::LocalAssemblerDataInterface::getStoredQuantity,
+            *x, nnodes, nelements);
 
         // expect 2*x as extraplation result for derived quantity
         auto two_x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*x);
-        LinAlg::axpy(*two_x, 1.0, *x); // two_x = x + x
+        LinAlg::axpy(*two_x, 1.0, *x);  // two_x = x + x
 
         // test extrapolation of a quantity that is derived from some
         // integration point values
-        extrapolate(pcs, &LocalAssemblerDataInterface::getDerivedQuantity,
-                    *two_x, nnodes, nelements);
+        ExtrapolationTest::extrapolate(
+            pcs,
+            &ExtrapolationTest::LocalAssemblerDataInterface::getDerivedQuantity,
+            *two_x, nnodes, nelements);
     }
 }

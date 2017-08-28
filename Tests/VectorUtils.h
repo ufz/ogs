@@ -28,3 +28,15 @@ void fillVectorRandomly(Vector& x)
     finalizeVectorAssembly(x);
 #endif
 }
+
+inline void fillVectorRandomly(std::vector<double>& x)
+{
+    std::random_device rd;
+    std::mt19937 random_number_generator(rd());
+    std::uniform_real_distribution<double> rnd;
+
+    for (auto& value : x)
+    {
+        value = rnd(random_number_generator);
+    }
+}
