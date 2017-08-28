@@ -22,5 +22,5 @@ This benchmark is dedicated to simulate the thermohydromechanical process in por
 
 ## Results and evaluation
 
-See [this PDF](Thermohydromechanical_Process.pdf).
+See [this PDF](THM.pdf).
 
