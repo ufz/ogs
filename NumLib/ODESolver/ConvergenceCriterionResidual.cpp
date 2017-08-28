@@ -36,7 +36,9 @@ void ConvergenceCriterionResidual::checkDeltaX(
     auto norm_x = MathLib::LinAlg::norm(x, _norm_type);
 
     INFO("Convergence criterion: |dx|=%.4e, |x|=%.4e, |dx|/|x|=%.4e", error_dx,
-         norm_x, error_dx / norm_x);
+         norm_x,
+         (norm_x == 0. ? std::numeric_limits<double>::quiet_NaN()
+                       : (error_dx / norm_x)));
 }
 
 void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
@@ -62,7 +64,10 @@ void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
         else
         {
             INFO("Convergence criterion: |r|=%.4e |r0|=%.4e |r|/|r0|=%.4e",
-                 norm_res, _residual_norm_0, norm_res / _residual_norm_0);
+                 norm_res, _residual_norm_0,
+                 (_residual_norm_0 == 0.
+                      ? std::numeric_limits<double>::quiet_NaN()
+                      : (norm_res / _residual_norm_0)));
         }
     }
 
