@@ -143,7 +143,7 @@ TEST(MPITest_NumLib, ComponentNormMultiComponent1)
     unsigned const num_components = 3;
     auto const norm_type = MathLib::VecNormType::NORM1;
     auto const tolerance =
-        num_components * 600 * std::numeric_limits<double>::epsilon();
+        num_components * 1700 * std::numeric_limits<double>::epsilon();
 
     do_test(num_components, norm_type, tolerance,
             [](double n_total, double n) { return n_total + n; },
@@ -159,7 +159,7 @@ TEST(MPITest_NumLib, ComponentNormMultiComponent2)
     unsigned const num_components = 3;
     auto const norm_type = MathLib::VecNormType::NORM2;
     auto const tolerance =
-        num_components * 20 * std::numeric_limits<double>::epsilon();
+        num_components * 22 * std::numeric_limits<double>::epsilon();
 
     do_test(num_components, norm_type, tolerance,
             [](double n_total, double n) { return n_total + n*n; },
