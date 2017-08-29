@@ -16,12 +16,6 @@
 #include "ODESystem.h"
 #include "TimeDiscretization.h"
 
-
-namespace ProcessLib
-{
-    struct StaggeredCouplingTerm;
-}
-
 namespace NumLib
 {
 //! \addtogroup ODESolver
@@ -86,8 +80,7 @@ public:
 
     ~TimeDiscretizedODESystem() override;
 
-    void assemble(const GlobalVector& x_new_timestep,
-                  ProcessLib::StaggeredCouplingTerm const& coupling_term)
+    void assemble(const GlobalVector& x_new_timestep)
                   override;
 
     void getResidual(GlobalVector const& x_new_timestep,
@@ -180,8 +173,7 @@ public:
 
     ~TimeDiscretizedODESystem() override;
 
-    void assemble(const GlobalVector& x_new_timestep,
-                  ProcessLib::StaggeredCouplingTerm const& coupling_term)
+    void assemble(const GlobalVector& x_new_timestep)
                   override;
 
     void getA(GlobalMatrix& A) const override

@@ -22,11 +22,6 @@ namespace BaseLib
 class ConfigTree;
 }
 
-namespace ProcessLib
-{
-    struct StaggeredCouplingTerm;
-}
-
 // TODO Document in the ODE solver lib, which matrices and vectors that are
 // passed around as method arguments are guaranteed to be of the right size
 // (and zeroed out) and which are not.
@@ -47,27 +42,18 @@ public:
      *
      * \param x             the state at which the equation system will be
      *                      assembled.
-     * \param coupling_term  the coupled term including the reference of the
-     *                      coupled processes and solutions of the equations of
-     *                      the coupled processes.
      */
-    virtual void assemble(GlobalVector const& x,
-                          ProcessLib::StaggeredCouplingTerm const& coupling_term
-                         ) const = 0;
+    virtual void assemble(GlobalVector const& x) const = 0;
 
     /*! Assemble and solve the equation system.
      *
      * \param x   in: the initial guess, out: the solution.
-     * \param coupling_term  the coupled term including the reference of the
-     *                      coupled processes and solutions of the equations of
-     *                      the coupled processes.
      * \param postIterationCallback called after each iteration if set.
      *
      * \retval true if the equation system could be solved
      * \retval false otherwise
      */
     virtual bool solve(GlobalVector& x,
-                       ProcessLib::StaggeredCouplingTerm const& coupling_term,
                        std::function<void(unsigned, GlobalVector const&)> const&
                            postIterationCallback) = 0;
 
@@ -117,12 +103,9 @@ public:
         _convergence_criterion = &conv_crit;
     }
 
-    void assemble(GlobalVector const& x,
-                  ProcessLib::StaggeredCouplingTerm const& coupling_term
-                 ) const override;
+    void assemble(GlobalVector const& x) const override;
 
     bool solve(GlobalVector& x,
-               ProcessLib::StaggeredCouplingTerm const& coupling_term,
                std::function<void(unsigned, GlobalVector const&)> const&
                    postIterationCallback) override;
 
@@ -176,12 +159,9 @@ public:
         _convergence_criterion = &conv_crit;
     }
 
-    void assemble(GlobalVector const& x,
-                  ProcessLib::StaggeredCouplingTerm const& coupling_term
-                 ) const override;
+    void assemble(GlobalVector const& x) const override;
 
     bool solve(GlobalVector& x,
-               ProcessLib::StaggeredCouplingTerm const& coupling_term,
                std::function<void(unsigned, GlobalVector const&)> const&
                    postIterationCallback) override;
 

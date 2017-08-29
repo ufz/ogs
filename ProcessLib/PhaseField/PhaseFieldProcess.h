@@ -183,7 +183,7 @@ private:
 
     void assembleConcreteProcess(
         const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b, StaggeredCouplingTerm const& coupling_term) override
+        GlobalVector& b) override
     {
         DBUG("Assemble PhaseFieldProcess.");
 
@@ -191,14 +191,13 @@ private:
         GlobalExecutor::executeMemberDereferenced(
             _global_assembler, &VectorMatrixAssembler::assemble,
             _local_assemblers, *_local_to_global_index_map, t, x, M, K, b,
-            coupling_term);
+            _coupling_term);
     }
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
-        StaggeredCouplingTerm const& coupling_term) override
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override
     {
         // DBUG("AssembleJacobian PhaseFieldProcess.");
 
@@ -206,7 +205,7 @@ private:
         GlobalExecutor::executeMemberDereferenced(
             _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
             _local_assemblers, *_local_to_global_index_map, t, x, xdot,
-            dxdot_dx, dx_dx, M, K, b, Jac, coupling_term);
+            dxdot_dx, dx_dx, M, K, b, Jac, _coupling_term);
     }
 
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,

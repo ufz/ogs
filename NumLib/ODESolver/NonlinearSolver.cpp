@@ -21,14 +21,13 @@
 namespace NumLib
 {
 void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
-    GlobalVector const& x,
-    ProcessLib::StaggeredCouplingTerm const& coupling_term) const
+    GlobalVector const& x) const
 {
-    _equation_system->assemble(x, coupling_term);
+    _equation_system->assemble(x);
 }
 
 bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
-    GlobalVector& x, ProcessLib::StaggeredCouplingTerm const& coupling_term,
+    GlobalVector& x,
     std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
 {
     namespace LinAlg = MathLib::LinAlg;
@@ -59,7 +58,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assemble(x, coupling_term);
+        sys.assemble(x);
         sys.getA(A);
         sys.getRhs(rhs);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
@@ -159,17 +158,16 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 }
 
 void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
-    GlobalVector const& x,
-    ProcessLib::StaggeredCouplingTerm const& coupling_term) const
+    GlobalVector const& x) const
 {
-    _equation_system->assemble(x, coupling_term);
+    _equation_system->assemble(x);
     // TODO if the equation system would be reset to nullptr after each
     //      assemble() or solve() call, the user would be forced to set the
     //      equation every time and could not forget it.
 }
 
 bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
-    GlobalVector& x, ProcessLib::StaggeredCouplingTerm const& coupling_term,
+    GlobalVector& x,
     std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
 {
     namespace LinAlg = MathLib::LinAlg;
@@ -202,7 +200,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assemble(x, coupling_term);
+        sys.assemble(x);
         sys.getResidual(x, res);
         sys.getJacobian(J);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());

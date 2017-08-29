@@ -17,16 +17,12 @@
 
 namespace ProcessLib
 {
-
 StaggeredCouplingTerm::StaggeredCouplingTerm(
     std::unordered_map<std::type_index, Process const&> const&
         coupled_processes_,
     std::unordered_map<std::type_index, GlobalVector const&> const& coupled_xs_,
-    const double dt_, const bool empty_)
-    : coupled_processes(coupled_processes_),
-      coupled_xs(coupled_xs_),
-      dt(dt_),
-      empty(empty_)
+    const double dt_)
+    : coupled_processes(coupled_processes_), coupled_xs(coupled_xs_), dt(dt_)
 {
     for (auto const& coupled_x_pair : coupled_xs)
     {
@@ -43,14 +39,6 @@ StaggeredCouplingTerm::StaggeredCouplingTerm(
             MathLib::LinAlg::setLocalAccessibleVector(*prevous_time_x);
         }
     }
-}
-
-const StaggeredCouplingTerm createVoidStaggeredCouplingTerm()
-{
-    std::unordered_map<std::type_index, Process const&> coupled_processes;
-    std::unordered_map<std::type_index, GlobalVector const&> coupled_xs;
-    const bool empty = true;
-    return StaggeredCouplingTerm(coupled_processes, coupled_xs, 0.0, empty);
 }
 
 std::unordered_map<std::type_index, const std::vector<double>>

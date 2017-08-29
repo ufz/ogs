@@ -36,7 +36,7 @@ struct StaggeredCouplingTerm
             coupled_processes_,
         std::unordered_map<std::type_index, GlobalVector const&> const&
             coupled_xs_,
-        const double dt_, const bool empty_ = false);
+        const double dt_);
 
     /// References to the coupled processes are distinguished by the keys of
     /// process types.
@@ -47,8 +47,7 @@ struct StaggeredCouplingTerm
     /// The coupled solutions are distinguished by the keys of process types.
     std::unordered_map<std::type_index, GlobalVector const&> const& coupled_xs;
 
-    const double dt;   ///< Time step size.
-    const bool empty;  ///< Flag to indicate whether the couping term is empty.
+    const double dt;  ///< Time step size.
 };
 
 /**
@@ -90,13 +89,6 @@ struct LocalCouplingTerm
     std::unordered_map<std::type_index, const std::vector<double>> const
         local_coupled_xs;
 };
-
-/**
- *  A function to create a void instance of StaggeredCouplingTerm. The void
- *  instance is for the StaggeredCouplingTerm reference type of argument
- *  function or class member to indicate no coupling.
- */
-const StaggeredCouplingTerm createVoidStaggeredCouplingTerm();
 
 std::unordered_map<std::type_index, const std::vector<double>>
 getCurrentLocalSolutionsOfCoupledProcesses(
