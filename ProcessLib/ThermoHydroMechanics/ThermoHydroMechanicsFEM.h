@@ -62,7 +62,6 @@ struct IntegrationPointData final
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
-    //  typename BMatricesType::KelvinMatrixType C;
     double integration_weight;
 
     void pushBackState()
@@ -212,7 +211,6 @@ public:
     using ShapeMatricesTypeDisplacement =
         ShapeMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
 
-    // Types for pressure.
     using ShapeMatricesTypePressure =
         ShapeMatrixPolicyType<ShapeFunctionPressure, DisplacementDim>;
     using ShapeMatrices = typename ShapeMatricesTypeDisplacement::ShapeMatrices;
@@ -232,9 +230,6 @@ public:
           _integration_method(integration_order),
           _element(e),
           _is_axially_symmetric(is_axially_symmetric)
-    //       _darcy_velocities(
-    //           2,
-    //           std::vector<double>(_integration_method.getNumberOfPoints()))
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -272,7 +267,6 @@ public:
             ip_data.sigma_eff_prev.resize(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
             ip_data.eps_m_prev.resize(kelvin_vector_size);
-            // ip_data.C.resize(kelvin_vector_size, kelvin_vector_size);
 
             ip_data.N_u_op = ShapeMatricesTypeDisplacement::template MatrixType<
                 DisplacementDim, displacement_size>::Zero(DisplacementDim,
@@ -427,8 +421,6 @@ public:
             auto& eps = _ip_data[ip].eps;
             auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
-            // auto const& C = _ip_data[ip].C;
-
             double const S = _process_data.specific_storage(t, x_position)[0];
             double const K_over_mu =
                 _process_data.intrinsic_permeability(t, x_position)[0] /
@@ -467,7 +459,6 @@ public:
             auto velocity = (-K_over_mu * dNdx_p * p).eval();
             velocity += K_over_mu * rho_f * b;
 
-            // mapping matrix (m)
             auto const& identity2 = MaterialLib::SolidModels::Invariants<
                 KelvinVectorDimensions<DisplacementDim>::value>::identity2;
 
@@ -512,7 +503,7 @@ public:
             storage_T.noalias() += N_p.transpose() * beta * N_p * w;
 
             //
-            // pressure equation, displacement part.  (M_pu)
+            // pressure equation, displacement part.
             //
             // Reusing Kup.transpose().
 
@@ -615,8 +606,9 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto const& N_T = _ip_data[ip].N_p;
+            auto const& N_p = N_T;
             auto T_int_pt = N_T * T;
-            auto p_int_pt = N_T * p;
+            auto p_int_pt = N_p * p;
 
             x_position.setIntegrationPoint(ip);
             double const K_over_mu =
@@ -865,7 +857,6 @@ private:
         ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
     static const int kelvin_vector_size =
         KelvinVectorDimensions<DisplacementDim>::value;
-    // std::vector<std::vector<double>> _darcy_velocities;
 };
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
