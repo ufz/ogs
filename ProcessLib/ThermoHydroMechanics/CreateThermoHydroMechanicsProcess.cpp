@@ -11,11 +11,11 @@
 
 #include <cassert>
 
-#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
+#include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
+#include "MaterialLib/SolidModels/CreateEhlers.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/CreateLubby2.h"
-#include "MaterialLib/SolidModels/CreateEhlers.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 
 #include "ThermoHydroMechanicsProcess.h"
@@ -93,7 +93,8 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     if (process_variables[0].get().getNumberOfComponents() != 1)
     {
         OGS_FATAL(
-            "Temperature process variable '%s' is not a scalar variable but has "
+            "Temperature process variable '%s' is not a scalar variable but "
+            "has "
             "%d components.",
             process_variables[0].get().getName().c_str(),
             process_variables[0].get().getNumberOfComponents(),
@@ -120,15 +121,13 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     }
     else if (type == "Ehlers")
     {
-        material =
-            MaterialLib::Solids::Ehlers::createEhlers<DisplacementDim>(
-                parameters, constitutive_relation_config);
+        material = MaterialLib::Solids::Ehlers::createEhlers<DisplacementDim>(
+            parameters, constitutive_relation_config);
     }
     else if (type == "Lubby2")
     {
-        material =
-            MaterialLib::Solids::Lubby2::createLubby2<DisplacementDim>(
-                parameters, constitutive_relation_config);
+        material = MaterialLib::Solids::Lubby2::createLubby2<DisplacementDim>(
+            parameters, constitutive_relation_config);
     }
     else
     {
@@ -178,7 +177,8 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
 
     // linear thermal expansion coefficient for solid
-    auto const& solid_linear_thermal_expansion_coefficient = findParameter<double>(
+    auto const& solid_linear_thermal_expansion_coefficient = findParameter<
+        double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__solid_linear_thermal_expansion_coefficient}
         "solid_linear_thermal_expansion_coefficient", parameters, 1);
@@ -186,12 +186,15 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
          solid_linear_thermal_expansion_coefficient.name.c_str());
 
     // volumetric thermal expansion coefficient for fluid
-    auto const& fluid_volumetric_thermal_expansion_coefficient = findParameter<double>(
+    auto const& fluid_volumetric_thermal_expansion_coefficient = findParameter<
+        double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__fluid_volumetric_thermal_expansion_coefficient}
         "fluid_volumetric_thermal_expansion_coefficient", parameters, 1);
-    DBUG("Use \'%s\' as fluid volumetric thermal expansion coefficient parameter.",
-         fluid_volumetric_thermal_expansion_coefficient.name.c_str());
+    DBUG(
+        "Use \'%s\' as fluid volumetric thermal expansion coefficient "
+        "parameter.",
+        fluid_volumetric_thermal_expansion_coefficient.name.c_str());
 
     // specific heat capacity for solid
     auto& solid_specific_heat_capacity = findParameter<double>(
@@ -259,8 +262,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
 
     return std::unique_ptr<ThermoHydroMechanicsProcess<DisplacementDim>>{
         new ThermoHydroMechanicsProcess<DisplacementDim>{
-            mesh,
-            std::move(jacobian_assembler), parameters, integration_order,
+            mesh, std::move(jacobian_assembler), parameters, integration_order,
             std::move(process_variables), std::move(process_data),
             std::move(secondary_variables), std::move(named_function_caller)}};
 }

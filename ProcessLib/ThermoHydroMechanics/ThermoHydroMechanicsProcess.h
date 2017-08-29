@@ -13,8 +13,8 @@
 
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
-#include "ProcessLib/Process.h"
 #include "ProcessLib/HydroMechanics//CreateLocalAssemblers.h"
+#include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ThermoHydroMechanicsFEM.h"
 #include "ThermoHydroMechanicsProcessData.h"
@@ -23,28 +23,36 @@ namespace ProcessLib
 {
 namespace ThermoHydroMechanics
 {
-
 /**
  * \brief A class to simulate thermo-hydro-mechanical process
  * described by
  *
  * \f[
- *     \mathrm{div} \left[ (\boldsymbol{\mathrm{u}}_\mathrm{S})'_\mathrm{S} + \phi_\mathrm{F} \boldsymbol{\mathrm{w}}_\mathrm{FS} \right]
- *     = \underbrace{\beta^\mathrm{eff}_\mathrm{T} T'_\mathrm{S}}_{\text{first term}} +
- *     \underbrace{\phi_\mathrm{F} \beta_\mathrm{TF} \mathrm{grad}\, T \cdot \boldsymbol{\mathrm{w}}_\mathrm{FS}}_{\text{second term}}
+ *     \mathrm{div} \left[ (\boldsymbol{\mathrm{u}}_\mathrm{S})'_\mathrm{S} +
+ * \phi_\mathrm{F} \boldsymbol{\mathrm{w}}_\mathrm{FS} \right]
+ *     = \underbrace{\beta^\mathrm{eff}_\mathrm{T} T'_\mathrm{S}}_{\text{first
+ * term}} +
+ *     \underbrace{\phi_\mathrm{F} \beta_\mathrm{TF} \mathrm{grad}\, T \cdot
+ * \boldsymbol{\mathrm{w}}_\mathrm{FS}}_{\text{second term}}
  * \f]
  * \f[
- *    \mathrm{div} \left[ \boldsymbol{\sigma}^\mathrm{E}_\mathrm{S} - \alpha_\mathrm{B} p \boldsymbol{I} \right]
+ *    \mathrm{div} \left[ \boldsymbol{\sigma}^\mathrm{E}_\mathrm{S} -
+ * \alpha_\mathrm{B} p \boldsymbol{I} \right]
  *    + \varrho^\mathrm{eff} \boldsymbol{g} = \boldsymbol{0}
  * \f]
  * \f[
- *   (\varrho c_p)^\mathrm{eff} \frac{\partial T}{\partial t} + \phi_\mathrm{F} \varrho_\mathrm{FR} c_{p\mathrm{F}} \mathrm{grad}\, T \cdot \boldsymbol{\mathrm{w}}_\mathrm{FS}
- *   - \mathrm{div} \left[ \boldsymbol{\lambda}^\mathrm{eff} \mathrm{grad}\, T \right]
+ *   (\varrho c_p)^\mathrm{eff} \frac{\partial T}{\partial t} + \phi_\mathrm{F}
+ * \varrho_\mathrm{FR} c_{p\mathrm{F}} \mathrm{grad}\, T \cdot
+ * \boldsymbol{\mathrm{w}}_\mathrm{FS}
+ *   - \mathrm{div} \left[ \boldsymbol{\lambda}^\mathrm{eff} \mathrm{grad}\, T
+ * \right]
  * \f]
  * where
  *    \f{eqnarray*}{
- *       &\alpha_\mathrm{TS}:&                 \mbox{linear coefficient of thermal expansion of the solid phase,}\\
- *       &\beta_\mathrm{TF}:&                  \mbox{volumetric coefficient of thermal expansion of the fluid phase,}\\
+ *       &\alpha_\mathrm{TS}:&                 \mbox{linear coefficient of
+ * thermal expansion of the solid phase,}\\
+ *       &\beta_\mathrm{TF}:&                  \mbox{volumetric coefficient of
+ * thermal expansion of the fluid phase,}\\
  *       &\varrho:&                            \mbox{density,}\\
  *       &\phi_\mrm{F}:&                       \mbox{porosity,}\\
  *       &\alpha_\mrm{B}:&                     \mbox{Biot coefficient,}\\
@@ -115,9 +123,9 @@ public:
 
         std::vector<unsigned> const vec_n_components{1, 1, DisplacementDim};
         _local_to_global_index_map =
-        std::make_unique<NumLib::LocalToGlobalIndexMap>(
-        std::move(all_mesh_subsets), vec_n_components,
-        NumLib::ComponentOrder::BY_LOCATION);
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
+                std::move(all_mesh_subsets), vec_n_components,
+                NumLib::ComponentOrder::BY_LOCATION);
     }
 
     using LocalAssemblerInterface = ThermoHydroMechanicsLocalAssemblerInterface;
@@ -174,65 +182,56 @@ public:
         {
             Base::_secondary_variables.addSecondaryVariable(
                 "sigma_xz",
-                makeExtrapolator(
-                    1, getExtrapolator(), _local_assemblers,
+                makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                                  &ThermoHydroMechanicsLocalAssemblerInterface::
                                      getIntPtSigmaXZ));
 
             Base::_secondary_variables.addSecondaryVariable(
                 "sigma_yz",
-                makeExtrapolator(
-                    1, getExtrapolator(), _local_assemblers,
+                makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                                  &ThermoHydroMechanicsLocalAssemblerInterface::
                                      getIntPtSigmaYZ));
         }
 
         Base::_secondary_variables.addSecondaryVariable(
             "epsilon_xx",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtEpsilonXX));
 
         Base::_secondary_variables.addSecondaryVariable(
             "epsilon_yy",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtEpsilonYY));
 
         Base::_secondary_variables.addSecondaryVariable(
             "epsilon_zz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtEpsilonZZ));
 
         Base::_secondary_variables.addSecondaryVariable(
             "epsilon_xy",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtEpsilonXY));
 
         Base::_secondary_variables.addSecondaryVariable(
             "velocity_x",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtDarcyVelocityX));
 
         Base::_secondary_variables.addSecondaryVariable(
             "velocity_y",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtDarcyVelocityY));
 
         Base::_secondary_variables.addSecondaryVariable(
             "velocity_z",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                              &ThermoHydroMechanicsLocalAssemblerInterface::
                                  getIntPtDarcyVelocityZ));
     }

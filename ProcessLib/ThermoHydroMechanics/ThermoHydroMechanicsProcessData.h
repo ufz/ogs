@@ -23,11 +23,12 @@ namespace MaterialLib
 namespace Solids
 {
 template <int DisplacementDim>
-struct MechanicsBase;}}
+struct MechanicsBase;
+}
+}
 
 namespace ProcessLib
 {
-
 template <typename T>
 struct Parameter;
 
@@ -41,14 +42,16 @@ struct ThermoHydroMechanicsProcessData
     ThermoHydroMechanicsProcessData(
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&&
             material_,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties_,
+        std::unique_ptr<MaterialLib::Fluid::FluidProperties>&&
+            fluid_properties_,
         Parameter<double> const& intrinsic_permeability_,
         Parameter<double> const& specific_storage_,
         Parameter<double> const& biot_coefficient_,
         Parameter<double> const& porosity_,
         Parameter<double> const& solid_density_,
         Parameter<double> const& solid_linear_thermal_expansion_coefficient_,
-        Parameter<double> const& fluid_volumetric_thermal_expansion_coefficient_,
+        Parameter<double> const&
+            fluid_volumetric_thermal_expansion_coefficient_,
         Parameter<double> const& solid_specific_heat_capacity_,
         Parameter<double> const& solid_thermal_conductivity_,
         Parameter<double> const& reference_temperature_,
@@ -61,8 +64,10 @@ struct ThermoHydroMechanicsProcessData
           biot_coefficient(biot_coefficient_),
           porosity(porosity_),
           solid_density(solid_density_),
-          solid_linear_thermal_expansion_coefficient(solid_linear_thermal_expansion_coefficient_),
-          fluid_volumetric_thermal_expansion_coefficient(fluid_volumetric_thermal_expansion_coefficient_),
+          solid_linear_thermal_expansion_coefficient(
+              solid_linear_thermal_expansion_coefficient_),
+          fluid_volumetric_thermal_expansion_coefficient(
+              fluid_volumetric_thermal_expansion_coefficient_),
           solid_specific_heat_capacity(solid_specific_heat_capacity_),
           solid_thermal_conductivity(solid_thermal_conductivity_),
           reference_temperature(reference_temperature_),
@@ -78,8 +83,10 @@ struct ThermoHydroMechanicsProcessData
           biot_coefficient(other.biot_coefficient),
           porosity(other.porosity),
           solid_density(other.solid_density),
-          solid_linear_thermal_expansion_coefficient(other.solid_linear_thermal_expansion_coefficient),
-          fluid_volumetric_thermal_expansion_coefficient(other.fluid_volumetric_thermal_expansion_coefficient),
+          solid_linear_thermal_expansion_coefficient(
+              other.solid_linear_thermal_expansion_coefficient),
+          fluid_volumetric_thermal_expansion_coefficient(
+              other.fluid_volumetric_thermal_expansion_coefficient),
           solid_specific_heat_capacity(other.solid_specific_heat_capacity),
           solid_thermal_conductivity(other.solid_thermal_conductivity),
           reference_temperature(other.reference_temperature),
@@ -119,30 +126,30 @@ struct ThermoHydroMechanicsProcessData
     double dt = 0.0;
     double t = 0.0;
     double getFluidDensity(const double p, const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return fluid_properties->getValue(
-        MaterialLib::Fluid::FluidPropertyType::Density, vars);
-}
+    {
+        ArrayType vars;
+        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
+        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
+        return fluid_properties->getValue(
+            MaterialLib::Fluid::FluidPropertyType::Density, vars);
+    }
 
     double getFluidViscosity(const double p, const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return fluid_properties->getValue(
-        MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
-}
+    {
+        ArrayType vars;
+        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
+        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
+        return fluid_properties->getValue(
+            MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+    }
     double getFluidThermalConductivity(const double p, const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return fluid_properties->getValue(
-        MaterialLib::Fluid::FluidPropertyType::ThermalConductivity, vars);
-}
+    {
+        ArrayType vars;
+        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
+        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
+        return fluid_properties->getValue(
+            MaterialLib::Fluid::FluidPropertyType::ThermalConductivity, vars);
+    }
     double getFluidHeatCapacity(const double p, const double T) const
     {
         ArrayType vars;
