@@ -113,8 +113,11 @@ public:
                 return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
             });
 
-        _local_to_global_index_map.reset(new NumLib::LocalToGlobalIndexMap(
-            std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_LOCATION));
+        std::vector<unsigned> const vec_n_components{1, 1, DisplacementDim};
+        _local_to_global_index_map =
+        std::make_unique<NumLib::LocalToGlobalIndexMap>(
+        std::move(all_mesh_subsets), vec_n_components,
+        NumLib::ComponentOrder::BY_LOCATION);
     }
 
     using LocalAssemblerInterface = ThermoHydroMechanicsLocalAssemblerInterface;
