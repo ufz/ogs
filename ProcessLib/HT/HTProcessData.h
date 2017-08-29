@@ -36,8 +36,7 @@ struct HTProcessData
         ProcessLib::Parameter<double> const& specific_heat_capacity_solid_,
         ProcessLib::Parameter<double> const& thermal_conductivity_solid_,
         ProcessLib::Parameter<double> const& thermal_conductivity_fluid_,
-        Eigen::VectorXd specific_body_force_,
-        bool const has_gravity_)
+        Eigen::VectorXd specific_body_force_)
         : porous_media_properties(std::move(porous_media_properties_)),
           density_solid(density_solid_),
           fluid_reference_density(fluid_reference_density_),
@@ -47,8 +46,7 @@ struct HTProcessData
           thermal_dispersivity_transversal(thermal_dispersivity_transversal_),
           thermal_conductivity_solid(thermal_conductivity_solid_),
           thermal_conductivity_fluid(thermal_conductivity_fluid_),
-          specific_body_force(std::move(specific_body_force_)),
-          has_gravity(has_gravity_)
+          specific_body_force(std::move(specific_body_force_))
     {
     }
 
@@ -64,8 +62,7 @@ struct HTProcessData
               other.thermal_dispersivity_transversal),
           thermal_conductivity_solid(other.thermal_conductivity_solid),
           thermal_conductivity_fluid(other.thermal_conductivity_fluid),
-          specific_body_force(other.specific_body_force),
-          has_gravity(other.has_gravity)
+          specific_body_force(other.specific_body_force)
     {
     }
 
@@ -88,7 +85,6 @@ struct HTProcessData
     Parameter<double> const& thermal_conductivity_solid;
     Parameter<double> const& thermal_conductivity_fluid;
     Eigen::VectorXd const specific_body_force;
-    bool const has_gravity;
 };
 
 }  // namespace HT
