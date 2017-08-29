@@ -227,7 +227,11 @@ public:
             GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
             GlobalDimVectorType const velocity =
-                -K_over_mu * (dNdx * p_nodal_values - density * b);
+                _process_data.has_gravity
+                    ? GlobalDimVectorType(-K_over_mu *
+                                          (dNdx * p_nodal_values - density * b))
+                    : GlobalDimVectorType(-K_over_mu * dNdx * p_nodal_values);
+
 
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const thermal_dispersivity =
@@ -254,7 +258,8 @@ public:
             Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
             Mtt.noalias() += w * N.transpose() * heat_capacity * N;
             Mpp.noalias() += w * N.transpose() * specific_storage * N;
-            Bp += w * density * dNdx.transpose() * K_over_mu * b;
+            if (_process_data.has_gravity)
+                Bp += w * density * dNdx.transpose() * K_over_mu * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
         }
