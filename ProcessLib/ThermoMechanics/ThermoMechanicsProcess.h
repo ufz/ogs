@@ -11,7 +11,7 @@
 
 #include "ProcessLib/Process.h"
 
-#include "ThermoMechanicsFEM.h"
+#include "LocalAssemblerInterface.h"
 #include "ThermoMechanicsProcessData.h"
 
 namespace ProcessLib
