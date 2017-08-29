@@ -41,10 +41,36 @@ bool shallDoOutput(unsigned timestep, CountsSteps const& repeats_each_steps)
 
     return timestep % each_steps == 0;
 }
+
+//! Converts a vtkXMLWriter's data mode string to an int. See
+/// Output::_output_file_data_mode.
+int convertVtkDataMode(std::string const& data_mode)
+{
+    if (data_mode == "Ascii")
+        return 0;
+    if (data_mode == "Binary")
+        return 1;
+    if (data_mode == "Appended")
+        return 2;
+    OGS_FATAL(
+        "Unsupported vtk output file data mode \"%s\". Expected Ascii, "
+        "Binary, or Appended.",
+        data_mode.c_str());
+}
 }
 
 namespace ProcessLib
 {
+Output::Output(std::string output_directory, std::string prefix,
+               bool const compress_output, std::string const& data_mode,
+               bool const output_nonlinear_iteration_results)
+    : _output_directory(std::move(output_directory)),
+      _output_file_prefix(std::move(prefix)),
+      _output_file_compression(compress_output),
+      _output_file_data_mode(convertVtkDataMode(data_mode)),
+      _output_nonlinear_iteration_results(output_nonlinear_iteration_results)
+{
+}
 
 std::unique_ptr<Output> Output::
 newInstance(const BaseLib::ConfigTree &config, std::string const& output_directory)
@@ -59,6 +85,8 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
         config.getConfigParameter<std::string>("prefix"),
         //! \ogs_file_param{prj__time_loop__output__compress_output}
         config.getConfigParameter("compress_output", true),
+        //! \ogs_file_param{prj__time_loop__output__data_mode}
+        config.getConfigParameter<std::string>("data_mode", "Binary"),
         output_iteration_results ? *output_iteration_results : false}};
 
     //! \ogs_file_param{prj__time_loop__output__timesteps}
@@ -121,9 +149,9 @@ void Output::doOutputAlways(Process const& process,
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
     DBUG("output to %s", output_file_path.c_str());
-    doProcessOutput(output_file_path, _output_file_compression, t, x,
-                    process.getMesh(), process.getDOFTable(),
-                    process.getProcessVariables(),
+    doProcessOutput(output_file_path, _output_file_compression,
+                    _output_file_data_mode, t, x, process.getMesh(),
+                    process.getDOFTable(), process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);
     spd.pvd_file.addVTUFile(output_file_name, t);
 
@@ -185,9 +213,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
     DBUG("output iteration results to %s", output_file_path.c_str());
-    doProcessOutput(output_file_path, _output_file_compression, t, x,
-                    process.getMesh(), process.getDOFTable(),
-                    process.getProcessVariables(),
+    doProcessOutput(output_file_path, _output_file_compression,
+                    _output_file_data_mode, t, x, process.getMesh(),
+                    process.getDOFTable(), process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);
 
     INFO("[time] Output took %g s.", time_output.elapsed());

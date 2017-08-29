@@ -84,20 +84,20 @@ private:
         MeshLib::IO::PVDFile pvd_file;
     };
 
-    Output(std::string output_directory, std::string prefix, bool const compress_output,
-           bool const output_nonlinear_iteration_results)
-        : _output_directory(std::move(output_directory)),
-          _output_file_prefix(std::move(prefix)),
-          _output_file_compression(compress_output),
-          _output_nonlinear_iteration_results(
-              output_nonlinear_iteration_results)
-    {}
+    Output(std::string output_directory, std::string prefix,
+           bool const compress_output, std::string const& data_mode,
+           bool const output_nonlinear_iteration_results);
 
     std::string const _output_directory;
     std::string const _output_file_prefix;
 
     //! Enables or disables zlib-compression of the output files.
     bool const _output_file_compression;
+
+    //! Chooses vtk's data mode for output following the enumeration given in
+    /// the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
+    /// documentation http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
+    int const _output_file_data_mode;
     bool const _output_nonlinear_iteration_results;
 
     //! Describes after which timesteps to write output.
