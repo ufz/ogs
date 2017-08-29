@@ -514,29 +514,5 @@ private:
         KelvinVectorDimensions<DisplacementDim>::value;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim, int DisplacementDim>
-class LocalAssemblerData final
-    : public ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                                           DisplacementDim>
-{
-public:
-    LocalAssemblerData(LocalAssemblerData const&) = delete;
-    LocalAssemblerData(LocalAssemblerData&&) = delete;
-
-    LocalAssemblerData(
-        MeshLib::Element const& e,
-        std::size_t const local_matrix_size,
-        bool is_axially_symmetric,
-        unsigned const integration_order,
-        ThermoMechanicsProcessData<DisplacementDim>& process_data)
-        : ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                                        DisplacementDim>(
-              e, local_matrix_size, is_axially_symmetric, integration_order,
-              process_data)
-    {
-    }
-};
-
 }  // namespace ThermoMechanics
 }  // namespace ProcessLib
