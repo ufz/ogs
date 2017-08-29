@@ -13,26 +13,25 @@
 #include <vector>
 
 #include "MaterialLib/SolidModels/KelvinVector.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/LocalAssemblerInterface.h"
-#include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
+#include "LocalAssemblerInterface.h"
 #include "ThermoMechanicsProcessData.h"
 
 namespace ProcessLib
 {
 namespace ThermoMechanics
 {
-template <typename BMatricesType, typename ShapeMatrixType, int DisplacementDim>
+template <typename BMatricesType, typename ShapeMatricesType,
+          int DisplacementDim>
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
@@ -43,8 +42,6 @@ struct IntegrationPointData final
     {
     }
 
-    typename ShapeMatrixType::NodalRowVectorType N;
-    typename ShapeMatrixType::GlobalDimNodalMatrixType dNdx;
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
     typename BMatricesType::KelvinVectorType eps;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
@@ -55,6 +52,8 @@ struct IntegrationPointData final
         material_state_variables;
 
     double integration_weight;
+    typename ShapeMatricesType::NodalRowVectorType N;
+    typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx;
 
     void pushBackState()
     {
@@ -221,18 +220,18 @@ public:
 
         double const& dt = _process_data.dt;
 
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
         SpatialPosition x_position;
         x_position.setElementID(_element.getID());
 
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
             auto const& w = _ip_data[ip].integration_weight;
-
-            auto const& dNdx = _ip_data[ip].dNdx;
             auto const& N = _ip_data[ip].N;
+            auto const& dNdx = _ip_data[ip].dNdx;
 
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
@@ -290,6 +289,7 @@ public:
                 .template block<displacement_size, 1>(displacement_index, 0)
                 .noalias() -=
                 (B.transpose() * sigma - N_u.transpose() * rho_s * b) * w;
+
             //
             // displacement equation, temperature part
             //
@@ -474,6 +474,7 @@ private:
 
         return cache;
     }
+
     std::vector<double> const& getIntPtEpsilon(
         std::vector<double>& cache, std::size_t const component) const
     {
@@ -501,8 +502,8 @@ private:
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+    bool const _is_axially_symmetric;
 
     static const int temperature_index = 0;
     static const int temperature_size = ShapeFunction::NPOINTS;
