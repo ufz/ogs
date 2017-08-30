@@ -62,31 +62,6 @@ struct IntegrationPointData final
         material_state_variables->pushBackState();
     }
 
-    static const int kelvin_vector_size =
-        KelvinVectorDimensions<DisplacementDim>::value;
-    using Invariants = MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
-
-    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
-        double const t,
-        SpatialPosition const& x_position,
-        double const dt,
-        double const linear_thermal_strain)
-    {
-        // assume isotropic thermal expansion
-        eps_m.noalias() = eps - linear_thermal_strain * Invariants::identity2;
-        auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_prev,
-            *material_state_variables);
-
-        if (!solution)
-            OGS_FATAL("Computation of local constitutive relation failed.");
-
-        KelvinMatrixType<DisplacementDim> C;
-        std::tie(sigma, material_state_variables, C) = std::move(*solution);
-
-        return C;
-    }
-
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
@@ -240,8 +215,14 @@ public:
                 DisplacementDim, ShapeFunction::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
                                                      _is_axially_symmetric);
-            auto const& sigma = _ip_data[ip].sigma;
+
+            auto& sigma = _ip_data[ip].sigma;
+            auto const& sigma_prev = _ip_data[ip].sigma_prev;
             auto& eps = _ip_data[ip].eps;
+
+            auto& eps_m = _ip_data[ip].eps_m;
+            auto& eps_m_prev = _ip_data[ip].eps_m_prev;
+            auto& state = _ip_data[ip].material_state_variables;
 
             double const delta_T =
                 N.dot(T) - _process_data.reference_temperature;
@@ -256,8 +237,21 @@ public:
             // displacement equation, displacement part
             //
             eps.noalias() = B * u;
-            auto C = _ip_data[ip].updateConstitutiveRelation(
-                t, x_position, dt, linear_thermal_strain);
+
+            using Invariants =
+                MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
+
+            // assume isotropic thermal expansion
+            eps_m.noalias() =
+                eps - linear_thermal_strain * Invariants::identity2;
+            auto&& solution = _ip_data[ip].solid_material.integrateStress(
+                t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state);
+
+            if (!solution)
+                OGS_FATAL("Computation of local constitutive relation failed.");
+
+            KelvinMatrixType<DisplacementDim> C;
+            std::tie(sigma, state, C) = std::move(*solution);
 
             local_Jac
                 .template block<displacement_size, displacement_size>(
@@ -275,9 +269,6 @@ public:
                 N_u.template block<1, displacement_size / DisplacementDim>(
                        i, i * displacement_size / DisplacementDim)
                     .noalias() = N;
-
-            using Invariants =
-                MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
 
             // calculate real density
             auto const rho_sr =
