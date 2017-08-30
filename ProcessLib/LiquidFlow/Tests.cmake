@@ -10,7 +10,7 @@ AddTest(
     ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
     sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
-    sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticVec v_x
+    sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticVec v
 )
 AddTest(
     NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
@@ -35,8 +35,7 @@ AddTest(
     ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
     mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
-    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticVx v_x
-    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticVy v_y
+    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu v_ref v
 )
 AddTest(
     NAME LiquidFlow_AxisymTheis
@@ -90,8 +89,7 @@ AddTest(
     DIFF_DATA
     mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu OGS5_PRESSURE1 pressure
     mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu OGS5_TEMPERATURE1 temperature
-    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu v_x_ref v_x
-    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu v_y_ref v_y
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu v_ref v
 )
 
 AddTest(
@@ -106,8 +104,7 @@ AddTest(
     DIFF_DATA
     mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu OGS5_PRESSURE1 pressure
     mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu OGS5_TEMPERATURE1 temperature
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu v_x_ref v_x
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu v_y_ref v_y
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu v_ref v
 )
 
 AddTest(
@@ -151,7 +148,7 @@ AddTest(
     ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
     sat1D.vtu sat_1D_pcs_0_ts_1_t_1_000000_0.vtu AnalyticPressure pressure
-#    sat1D.vtu sat_1D_pcs_0_ts_1_t_1_000000_0.vtu AnalyticVec v_x
+#    sat1D.vtu sat_1D_pcs_0_ts_1_t_1_000000_0.vtu AnalyticVec v
 )
 AddTest(
     NAME LiquidFlow_GravityDriven
@@ -164,8 +161,7 @@ AddTest(
     ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
     mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu AnalyticPressure pressure
-#    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu AnalyticVx v_x
-#    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu AnalyticVy v_y
+#    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu v_ref v
 )
 AddTest(
     NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
@@ -231,8 +227,7 @@ AddTest(
     mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu OGS5_PRESSURE1  pressure
     mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu OGS5_TEMPERATURE1 temperature
 # To be activated when the output of velocity is correct under PETSc version.
-#    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu v_x_ref v_x
-#    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu v_y_ref v_y
+#    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu v_ref v
 
 )
 
@@ -249,9 +244,7 @@ AddTest(
     mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300_000000_0.vtu OGS5_PRESSURE1 pressure
     mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300_000000_0.vtu OGS5_TEMPERATURE1 temperature
 # To be activated when the output of velocity is correct under PETSc version.
-#    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_x_ref v_x
-#    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_y_ref v_y
-
+#    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_ref v
 )
 AddTest(
     NAME Adaptive_dt_ThermalConvectionFlow2D
