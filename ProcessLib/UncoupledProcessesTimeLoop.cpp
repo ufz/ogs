@@ -722,22 +722,35 @@ bool UncoupledProcessesTimeLoop::loop()
     // init solution storage
     _process_solutions = setInitialConditions(_start_time, _per_process_data);
 
+    const bool is_staggered_coupling = setCoupledSolutions();
+
     // output initial conditions
     {
         unsigned pcs_idx = 0;
         for (auto& spd : _per_process_data)
         {
             auto& pcs = spd->process;
+
             auto const& x0 = *_process_solutions[pcs_idx];
 
             pcs.preTimestep(x0, _start_time,
                             spd->timestepper->getTimeStep().dt());
-            _output->doOutput(pcs, spd->process_output, 0, _start_time, x0);
+            if (is_staggered_coupling)
+            {
+                StaggeredCouplingTerm coupling_term(
+                    spd->coupled_processes,
+                    _solutions_of_coupled_processes[pcs_idx], 0.0);
+
+                spd->process.setStaggeredCouplingTerm(&coupling_term);
+                spd->process.setStaggeredCouplingTermToLocalAssemblers();
+                _output->doOutput(pcs, spd->process_output, 0, _start_time, x0);
+            }
+            else
+                _output->doOutput(pcs, spd->process_output, 0, _start_time, x0);
+
             ++pcs_idx;
         }
     }
-
-    const bool is_staggered_coupling = setCoupledSolutions();
 
     double t = _start_time;
     std::size_t accepted_steps = 0;
@@ -802,14 +815,27 @@ bool UncoupledProcessesTimeLoop::loop()
             unsigned pcs_idx = 0;
             for (auto const& spd : _per_process_data)
             {
-                auto const& x = *_process_solutions[++pcs_idx];
+                auto const& x = *_process_solutions[pcs_idx];
                 // If nonlinear solver diverged, the solution has already been
                 // saved.
                 if (!spd->nonlinear_solver_converged)
                     continue;
 
-                _output->doOutputAlways(spd->process, spd->process_output,
-                                        timesteps, t, x);
+                if (is_staggered_coupling)
+                {
+                    StaggeredCouplingTerm coupling_term(
+                        spd->coupled_processes,
+                        _solutions_of_coupled_processes[pcs_idx], dt);
+                    spd->process.setStaggeredCouplingTerm(&coupling_term);
+                    spd->process.setStaggeredCouplingTermToLocalAssemblers();
+
+                    _output->doOutputAlways(spd->process, spd->process_output,
+                                            timesteps, t, x);
+                }
+                else
+                    _output->doOutputAlways(spd->process, spd->process_output,
+                                            timesteps, t, x);
+                pcs_idx++;
             }
             return false;
         }
@@ -828,9 +854,23 @@ bool UncoupledProcessesTimeLoop::loop()
         {
             auto& pcs = spd->process;
             auto const& x = *_process_solutions[pcs_idx];
-            _output->doOutputLastTimestep(pcs, spd->process_output,
-                                          accepted_steps + rejected_steps, t,
-                                          x);
+
+            if (is_staggered_coupling)
+            {
+                StaggeredCouplingTerm coupling_term(
+                    spd->coupled_processes,
+                    _solutions_of_coupled_processes[pcs_idx], 0.0);
+
+                spd->process.setStaggeredCouplingTerm(&coupling_term);
+                spd->process.setStaggeredCouplingTermToLocalAssemblers();
+                _output->doOutputLastTimestep(pcs, spd->process_output,
+                                              accepted_steps + rejected_steps,
+                                              t, x);
+            }
+            else
+                _output->doOutputLastTimestep(pcs, spd->process_output,
+                                              accepted_steps + rejected_steps,
+                                              t, x);
 
             ++pcs_idx;
         }
@@ -1023,7 +1063,8 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         StaggeredCouplingTerm coupling_term(
             spd->coupled_processes, _solutions_of_coupled_processes[pcs_idx],
             dt);
-        spd->process.setStaggeredCouplingTerm(&coupling_term);
+        pcs.setStaggeredCouplingTerm(&coupling_term);
+        pcs.setStaggeredCouplingTermToLocalAssemblers();
 
         pcs.computeSecondaryVariable(t, x);
 
