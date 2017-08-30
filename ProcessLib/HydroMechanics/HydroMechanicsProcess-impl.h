@@ -166,7 +166,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     Base::_secondary_variables.addSecondaryVariable(
         "velocity",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
+            mesh.getDimension(), getExtrapolator(), _local_assemblers,
             &LocalAssemblerInterface::getIntPtDarcyVelocity));
 }
 

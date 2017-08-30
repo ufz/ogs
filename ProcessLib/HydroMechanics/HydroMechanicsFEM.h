@@ -499,7 +499,7 @@ public:
         auto const local_x = current_solution.get(indices);
 
         cache.clear();
-        auto cache_vec = MathLib::createZeroedMatrix<Eigen::Matrix<
+        auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
             double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, DisplacementDim, num_intpts);
 
@@ -510,8 +510,6 @@ public:
             Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
                 pressure_size> const>(local_x.data() + pressure_index,
                                       pressure_size);
-        using GlobalDimVectorType =
-            typename ShapeMatricesTypePressure::GlobalDimVectorType;
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -529,7 +527,7 @@ public:
 
             // Compute the velocity
             auto const& dNdx_p = _ip_data[ip].dNdx_p;
-            cache_vec.col(ip).noalias() =
+            cache_matrix.col(ip).noalias() =
                 -K_over_mu * dNdx_p * p - K_over_mu * rho_fr * b;
         }
 
