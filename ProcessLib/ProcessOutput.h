@@ -28,10 +28,13 @@ struct ProcessOutput final
     bool output_residuals = false;
 };
 
-
 //! Writes output to the given \c file_name using the VTU file format.
+///
+/// See Output::_output_file_data_mode documentation for the data_mode
+/// parameter.
 void doProcessOutput(std::string const& file_name,
                      bool const compress_output,
+                     int const data_mode,
                      const double t,
                      GlobalVector const& x,
                      MeshLib::Mesh& mesh,

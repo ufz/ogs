@@ -42,6 +42,7 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
 
 void doProcessOutput(std::string const& file_name,
                      bool const compress_output,
+                     int const data_mode,
                      const double t,
                      GlobalVector const& x,
                      MeshLib::Mesh& mesh,
@@ -215,8 +216,7 @@ void doProcessOutput(std::string const& file_name,
 
     // Write output file
     DBUG("Writing output to \'%s\'.", file_name.c_str());
-    MeshLib::IO::VtuInterface vtu_interface(&mesh, vtkXMLWriter::Binary,
-                                            compress_output);
+    MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
     vtu_interface.writeToFile(file_name);
 }
 
