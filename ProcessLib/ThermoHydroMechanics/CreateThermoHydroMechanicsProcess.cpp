@@ -49,11 +49,6 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
-    //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__material_property__fluid}
-    auto const& fluid_config = config.getConfigSubtree("fluid");
-    auto fluid_properties =
-        MaterialLib::Fluid::createFluidProperties(fluid_config);
-
     auto process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__process_variables__temperature}
@@ -100,6 +95,11 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
             process_variables[0].get().getNumberOfComponents(),
             DisplacementDim);
     }
+
+    //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__material_property__fluid}
+    auto const& fluid_config = config.getConfigSubtree("fluid");
+    auto fluid_properties =
+        MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Constitutive relation.
     // read type;

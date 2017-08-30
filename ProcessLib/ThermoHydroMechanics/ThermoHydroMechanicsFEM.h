@@ -403,6 +403,7 @@ public:
             auto const& dNdx_u = _ip_data[ip].dNdx_u;
             auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
+            // same shape function for pressure and temperature
             auto const& N_T = N_p;
             auto const& dNdx_T = dNdx_p;
             auto T_int_pt = N_T * T;
@@ -453,7 +454,6 @@ public:
             double delta_T(T_int_pt - T0);
             double const thermal_strain = alpha_s * delta_T;
 
-            // double rho_f = rho_fr * (1 - beta_f * delta_T);
             double rho_s = rho_sr * (1 - 3 * thermal_strain);
 
             auto velocity = (-K_over_mu * dNdx_p * p).eval();
@@ -492,15 +492,15 @@ public:
 
             storage_p.noalias() += N_p.transpose() * S * N_p * w;
             //
-            // fp
+            //  RHS, pressure part
             //
             local_rhs.template segment<pressure_size>(pressure_index)
                 .noalias() += dNdx_p.transpose() * rho_f * K_over_mu * b * w;
             //
             // pressure equation, temperature part (M_pT)
             //
-            auto beta = porosity * beta_f + (1 - porosity) * 3 * alpha_s;
-            storage_T.noalias() += N_p.transpose() * beta * N_p * w;
+            auto const beta = porosity * beta_f + (1 - porosity) * 3 * alpha_s;
+            storage_T.noalias() += N_T.transpose() * beta * N_T * w;
 
             //
             // pressure equation, displacement part.
@@ -510,13 +510,13 @@ public:
             //
             // temperature equation, temperature part.
             //
-            double lambda = porosity * lambda_f + (1 - porosity) * lambda_s;
+            auto const lambda = porosity * lambda_f + (1 - porosity) * lambda_s;
             KTT.noalias() +=
                 (dNdx_T.transpose() * lambda * dNdx_T +
                  dNdx_T.transpose() * velocity * N_p * rho_f * C_f) *
                 w;
-            // coeff matrix using for RHS
-            double heat_capacity =
+            // coefficient matrix using for RHS
+            auto const heat_capacity =
                 porosity * C_f * rho_f + (1 - porosity) * C_s * rho_sr;
             MTT.noalias() += N_T.transpose() * heat_capacity * N_T * w;
 
