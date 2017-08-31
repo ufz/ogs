@@ -251,7 +251,6 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::vector<double>& cache) const override
     {
-        // auto const num_nodes = ShapeFunction_::NPOINTS;
         auto const num_intpts = _shape_matrices.size();
 
         auto const indices = NumLib::getIndices(

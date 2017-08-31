@@ -61,7 +61,10 @@ public:
         std::vector<double>& /*cache*/) const = 0;
 
 protected:
-    /// Pointer that gets from Process class
+    // TODO: remove _coupling_term or move integration point data from local
+    // assembler class to a new class to make local assembler unique for each
+    //process.
+    /// Pointer that is set from a Process class.
     StaggeredCouplingTerm* _coupling_term;
 };
 
@@ -79,7 +82,7 @@ class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
     using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
 
-    using LocalMatrixType = Eigen::Map<
+    using MatrixOfVelocityAtIntegrationPoints = Eigen::Map<
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>;
 
 public:
@@ -153,11 +156,11 @@ private:
             double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
-            unsigned ip, LocalMatrixType& darcy_velocity_at_ips,
-            Eigen::Map<const NodalVectorType> const& local_p,
+            unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
             ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
             double const mu, double const rho_g,
-            int const gravitational_axis_id);
+            int const gravitational_axis_id,
+            MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips);
     };
 
     /**
@@ -174,11 +177,11 @@ private:
             double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
-            unsigned ip, LocalMatrixType& darcy_velocity_at_ips,
-            Eigen::Map<const NodalVectorType> const& local_p,
+            unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
             ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
             double const mu, double const rho_g,
-            int const gravitational_axis_id);
+            int const gravitational_axis_id,
+            MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips);
     };
 
     template <typename LaplacianGravityVelocityCalculator>
@@ -198,28 +201,29 @@ private:
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         SpatialPosition const& pos, Eigen::MatrixXd const& permeability);
 
-    void computeDarcyVelocity(Eigen::MatrixXd const& permeability,
-                              std::vector<double> const& local_x,
-                              LocalMatrixType& darcy_velocity_at_ips) const;
+    void computeDarcyVelocity(
+        Eigen::MatrixXd const& permeability,
+        std::vector<double> const& local_x,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
 
     void computeDarcyVelocityWithCoupling(
         Eigen::MatrixXd const& permeability, std::vector<double> const& local_x,
         std::unordered_map<std::type_index, const std::vector<double>> const&
             coupled_local_solutions,
-        LocalMatrixType& darcy_velocity_at_ips) const;
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
 
     template <typename LaplacianGravityVelocityCalculator>
     void computeDarcyVelocityLocal(
         std::vector<double> const& local_x,
         Eigen::MatrixXd const& permeability,
-        LocalMatrixType& darcy_velocity_at_ips) const;
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
 
     template <typename LaplacianGravityVelocityCalculator>
     void computeDarcyVelocityCoupledWithHeatTransportLocal(
         std::vector<double> const& local_x,
         std::vector<double> const& local_T,
         Eigen::MatrixXd const& permeability,
-        LocalMatrixType& darcy_velocity_at_ips) const;
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;

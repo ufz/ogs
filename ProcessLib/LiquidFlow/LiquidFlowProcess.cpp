@@ -66,7 +66,7 @@ void LiquidFlowProcess::initializeConcreteProcess(
         pv.getShapeFunctionOrder(), _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _gravitational_axis_id,
         _gravitational_acceleration, _reference_temperature,
-        *_material_properties, this->_coupling_term);
+        *_material_properties, _coupling_term);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
