@@ -129,6 +129,12 @@ private:
     double computeTimeStepping(const double prev_dt, double& t,
                                std::size_t& accepted_steps,
                                std::size_t& rejected_steps);
+
+    template <typename OutputClass, typename OutputClassMember>
+    void outputSolutions(bool const output_initial_condition,
+                         bool const is_staggered_coupling, unsigned timestep,
+                         const double t, OutputClass& output_object,
+                         OutputClassMember output_class_member) const;
 };
 
 //! Builds an UncoupledProcessesTimeLoop from the given configuration.
