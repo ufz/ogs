@@ -42,22 +42,12 @@ export function load(container, options) {
         option.value = array.name;
         arraySelect.add(option);
 
-        var range = [0.0,0.0];
         var pointData = false;
-        if (array.location == 'pointData') {
-          range[0] = array.ds[0].pointData.arrays[indexPointData].data.ranges[0].min;
-          range[1] = array.ds[0].pointData.arrays[indexPointData].data.ranges[0].max;
+        if (array.location == 'pointData')
           pointData = true;
-          indexPointData++;
-        } else {
-          range[0] = array.ds[0].cellData.arrays[indexCellData].data.ranges[0].min;
-          range[1] = array.ds[0].cellData.arrays[indexCellData].data.ranges[0].max;
-          indexCellData++;
-        }
-        var lut = vtkLookupTable.newInstance({
-          hueRange: [0.0, 0.33],
-          mappingRange: range,
-        });
+        // Rainbow table blue to red
+        var lut = vtkLookupTable.newInstance({ hueRange: [0.66, 0.0] });
+        lut.setMappingRange(array.array.ranges[0].min, array.array.ranges[0].max);
         arrays.push({name: array.name, pointData: pointData, lut: lut})
       });
       if (arrays.length > 0)
