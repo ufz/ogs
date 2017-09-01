@@ -10,7 +10,7 @@ const commonConfig = merge([
       app: pkg.paths.src.js + 'app.js', // PATHS.app,
     },
     output: {
-      path: __dirname + pkg.paths.dist.js,
+      path: __dirname + "/" + pkg.paths.dist.js,
       filename: 'bundle.js'
     },
     module: {
