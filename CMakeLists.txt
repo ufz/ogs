@@ -27,6 +27,7 @@ set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults
 option(OGS_ENABLE_AVX2 "Enable the use of AVX2 instructions" OFF)
 option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 option(OGS_USE_PCH "Should pre-compiled headers be used?" ON)
+option(OGS_USE_CONAN "Should Conan package manager be used?" OFF)
 
 ### CMake includes ###
 include(scripts/cmake/PreFind.cmake)
@@ -153,16 +154,12 @@ option(OGS_SYNC_SUBMODULES "Sync git submodules on CMake run. Overwrites custom 
 option(OGS_DOWNLOAD_ADDITIONAL_CONTENT "Should addional content such as manuals be downloaded and packaged?" OFF)
 include(scripts/cmake/packaging/Pack.cmake)
 
-# Third-party libraries
-# Default checks for system first, then builds locally
-set(OGS_LIB_VTK "Default" CACHE STRING "Which VTK library should be used?")
-set(OGS_LIB_BOOST "Default" CACHE STRING "Which Boost library should be used?")
-set(OGS_LIB_EIGEN "Default" CACHE STRING "Which Eigen library should be used?")
-set_property(CACHE
-    OGS_LIB_VTK
-    OGS_LIB_BOOST
-    OGS_LIB_EIGEN
-    PROPERTY STRINGS "Default" "System" "Local")
+# Third-party libraries, names come from Conan package names
+set(OGS_LIBS VTK Boost Eigen3 Qt Shapelib libgeotiff CACHE INTERNAL "")
+foreach(LIB ${OGS_LIBS})
+    set(OGS_LIB_${LIB} "Default" CACHE STRING "Which ${LIB} library should be used?")
+    set_property(CACHE OGS_LIB_${LIB} PROPERTY STRINGS "Default" "System")
+endforeach(LIB)
 
 # Options controlling which FEM elements will be compiled
 set(OGS_MAX_ELEMENT_DIM   3 CACHE STRING "Maximum dimension of FEM elements to be built.")

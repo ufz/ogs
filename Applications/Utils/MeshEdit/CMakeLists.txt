@@ -21,7 +21,11 @@ target_link_libraries(MoveMesh MeshLib)
 set_target_properties(MoveMesh PROPERTIES FOLDER Utilities)
 
 add_executable(appendLinesAlongPolyline appendLinesAlongPolyline.cpp)
-target_link_libraries(appendLinesAlongPolyline MeshGeoToolsLib MeshLib)
+target_link_libraries(appendLinesAlongPolyline
+    MeshGeoToolsLib
+    MeshLib
+    ApplicationsFileIO
+)
 set_target_properties(appendLinesAlongPolyline PROPERTIES FOLDER Utilities)
 
 add_executable(editMaterialID editMaterialID.cpp)
@@ -58,7 +62,11 @@ set_target_properties(createLayeredMeshFromRasters PROPERTIES FOLDER Utilities)
 
 add_executable(CreateBoundaryConditionsAlongPolylines
     CreateBoundaryConditionsAlongPolylines.cpp )
-target_link_libraries(CreateBoundaryConditionsAlongPolylines MeshGeoToolsLib MeshLib)
+target_link_libraries(CreateBoundaryConditionsAlongPolylines
+    MeshGeoToolsLib
+    MeshLib
+    ApplicationsFileIO
+)
 set_target_properties(CreateBoundaryConditionsAlongPolylines
     PROPERTIES FOLDER Utilities)
 
