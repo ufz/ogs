@@ -112,7 +112,7 @@ function(conan_cmake_settings result)
         endif()
 
         if(${CMAKE_GENERATOR} STREQUAL "Ninja")
-            if($ENV{Platform} STREQUAL "X64")
+            if($ENV{Platform} STREQUAL "X64" OR MSVC_CXX_ARCHITECTURE_ID MATCHES "64")
                 set(_SETTINGS ${_SETTINGS} -s arch=x86_64)
             elseif($ENV{Platform} STREQUAL "ARM")
                 message(STATUS "Conan: Using default ARM architecture from MSVC")
