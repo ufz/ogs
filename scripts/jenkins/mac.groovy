@@ -1,8 +1,6 @@
 def defaultCMakeOptions =
     '-DCMAKE_BUILD_TYPE=Release ' +
     '-DOGS_CPU_ARCHITECTURE=core2 ' +
-    '-DOGS_LIB_BOOST=System' +
-    '-DOGS_LIB_VTK=System ' +
     '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
     '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.11" '
 
