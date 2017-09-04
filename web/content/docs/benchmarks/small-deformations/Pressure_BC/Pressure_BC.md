@@ -1,6 +1,13 @@
 +++
 author = "Francesco Parisio"
 title = "Pressure boundary conditions"
+project = "Mechanics/Linear/PressureBC/hollow_sphere.prj"
+weight = 117
+
+[menu]
+  [menu.benchmarks]
+    parent = "small-deformations"
+
 +++
 
 ##Problem description
