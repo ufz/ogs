@@ -8,7 +8,7 @@
  */
 
 #include "ThermoMechanicsProcess.h"
-#include "ThermoMechanicsProcess-fwd.h"
+#include "ThermoMechanicsProcess-impl.h"
 
 namespace ProcessLib
 {

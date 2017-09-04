@@ -24,12 +24,6 @@ namespace ProcessLib
 namespace ThermoMechanics
 {
 template <int DisplacementDim>
-class ThermoMechanicsProcess;
-
-extern template class ThermoMechanicsProcess<2>;
-extern template class ThermoMechanicsProcess<3>;
-
-template <int DisplacementDim>
 std::unique_ptr<Process> createThermoMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
@@ -182,11 +176,10 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
 
-    return std::unique_ptr<ThermoMechanicsProcess<DisplacementDim>>{
-        new ThermoMechanicsProcess<DisplacementDim>{
-            mesh, std::move(jacobian_assembler), parameters, integration_order,
-            std::move(process_variables), std::move(process_data),
-            std::move(secondary_variables), std::move(named_function_caller)}};
+    return std::make_unique<ThermoMechanicsProcess<DisplacementDim>>(
+        mesh, std::move(jacobian_assembler), parameters, integration_order,
+        std::move(process_variables), std::move(process_data),
+        std::move(secondary_variables), std::move(named_function_caller));
 }
 
 template std::unique_ptr<Process> createThermoMechanicsProcess<2>(

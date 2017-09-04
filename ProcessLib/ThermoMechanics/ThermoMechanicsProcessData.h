@@ -9,11 +9,14 @@
 
 #pragma once
 
-namespace MeshLib
+namespace MaterialLib
 {
-class Element;
+namespace Solids
+{
+template <int DisplacementDim>
+struct MechanicsBase;
 }
-
+}
 namespace ProcessLib
 {
 namespace ThermoMechanics
@@ -73,8 +76,8 @@ struct ThermoMechanicsProcessData
         thermal_conductivity;  // TODO To be changed as a matrix type variable.
     double const reference_temperature;
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    double dt;
-    double t;
+    double dt = 0;
+    double t = 0;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

@@ -13,26 +13,25 @@
 #include <vector>
 
 #include "MaterialLib/SolidModels/KelvinVector.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/LocalAssemblerInterface.h"
-#include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
+#include "LocalAssemblerInterface.h"
 #include "ThermoMechanicsProcessData.h"
 
 namespace ProcessLib
 {
 namespace ThermoMechanics
 {
-template <typename BMatricesType, typename ShapeMatrixType, int DisplacementDim>
+template <typename BMatricesType, typename ShapeMatricesType,
+          int DisplacementDim>
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
@@ -43,8 +42,6 @@ struct IntegrationPointData final
     {
     }
 
-    typename ShapeMatrixType::NodalRowVectorType N;
-    typename ShapeMatrixType::GlobalDimNodalMatrixType dNdx;
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
     typename BMatricesType::KelvinVectorType eps;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
@@ -55,37 +52,14 @@ struct IntegrationPointData final
         material_state_variables;
 
     double integration_weight;
+    typename ShapeMatricesType::NodalRowVectorType N;
+    typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx;
 
     void pushBackState()
     {
         eps_m_prev = eps_m;
         sigma_prev = sigma;
         material_state_variables->pushBackState();
-    }
-
-    static const int kelvin_vector_size =
-        KelvinVectorDimensions<DisplacementDim>::value;
-    using Invariants = MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
-
-    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
-        double const t,
-        SpatialPosition const& x_position,
-        double const dt,
-        double const linear_thermal_strain)
-    {
-        // assume isotropic thermal expansion
-        eps_m.noalias() = eps - linear_thermal_strain * Invariants::identity2;
-        auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_prev,
-            *material_state_variables);
-
-        if (!solution)
-            OGS_FATAL("Computation of local constitutive relation failed.");
-
-        KelvinMatrixType<DisplacementDim> C;
-        std::tie(sigma, material_state_variables, C) = std::move(*solution);
-
-        return C;
     }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
@@ -97,83 +71,6 @@ template <typename ShapeMatrixType>
 struct SecondaryData
 {
     std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N;
-};
-
-struct ThermoMechanicsLocalAssemblerInterface
-    : public ProcessLib::LocalAssemblerInterface,
-      public NumLib::ExtrapolatableElement
-{
-    virtual std::vector<double> const& getIntPtSigmaXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -298,18 +195,18 @@ public:
 
         double const& dt = _process_data.dt;
 
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
         SpatialPosition x_position;
         x_position.setElementID(_element.getID());
 
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
             auto const& w = _ip_data[ip].integration_weight;
-
-            auto const& dNdx = _ip_data[ip].dNdx;
             auto const& N = _ip_data[ip].N;
+            auto const& dNdx = _ip_data[ip].dNdx;
 
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
@@ -318,8 +215,14 @@ public:
                 DisplacementDim, ShapeFunction::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
                                                      _is_axially_symmetric);
-            auto const& sigma = _ip_data[ip].sigma;
+
+            auto& sigma = _ip_data[ip].sigma;
+            auto const& sigma_prev = _ip_data[ip].sigma_prev;
             auto& eps = _ip_data[ip].eps;
+
+            auto& eps_m = _ip_data[ip].eps_m;
+            auto& eps_m_prev = _ip_data[ip].eps_m_prev;
+            auto& state = _ip_data[ip].material_state_variables;
 
             double const delta_T =
                 N.dot(T) - _process_data.reference_temperature;
@@ -334,8 +237,21 @@ public:
             // displacement equation, displacement part
             //
             eps.noalias() = B * u;
-            auto C = _ip_data[ip].updateConstitutiveRelation(
-                t, x_position, dt, linear_thermal_strain);
+
+            using Invariants =
+                MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
+
+            // assume isotropic thermal expansion
+            eps_m.noalias() =
+                eps - linear_thermal_strain * Invariants::identity2;
+            auto&& solution = _ip_data[ip].solid_material.integrateStress(
+                t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state);
+
+            if (!solution)
+                OGS_FATAL("Computation of local constitutive relation failed.");
+
+            KelvinMatrixType<DisplacementDim> C;
+            std::tie(sigma, state, C) = std::move(*solution);
 
             local_Jac
                 .template block<displacement_size, displacement_size>(
@@ -354,9 +270,6 @@ public:
                        i, i * displacement_size / DisplacementDim)
                     .noalias() = N;
 
-            using Invariants =
-                MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
-
             // calculate real density
             auto const rho_sr =
                 _process_data.reference_solid_density(t, x_position)[0];
@@ -367,6 +280,7 @@ public:
                 .template block<displacement_size, 1>(displacement_index, 0)
                 .noalias() -=
                 (B.transpose() * sigma - N_u.transpose() * rho_s * b) * w;
+
             //
             // displacement equation, temperature part
             //
@@ -551,6 +465,7 @@ private:
 
         return cache;
     }
+
     std::vector<double> const& getIntPtEpsilon(
         std::vector<double>& cache, std::size_t const component) const
     {
@@ -578,8 +493,8 @@ private:
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+    bool const _is_axially_symmetric;
 
     static const int temperature_index = 0;
     static const int temperature_size = ShapeFunction::NPOINTS;
@@ -588,30 +503,6 @@ private:
         ShapeFunction::NPOINTS * DisplacementDim;
     static const int kelvin_vector_size =
         KelvinVectorDimensions<DisplacementDim>::value;
-};
-
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim, int DisplacementDim>
-class LocalAssemblerData final
-    : public ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                                           DisplacementDim>
-{
-public:
-    LocalAssemblerData(LocalAssemblerData const&) = delete;
-    LocalAssemblerData(LocalAssemblerData&&) = delete;
-
-    LocalAssemblerData(
-        MeshLib::Element const& e,
-        std::size_t const local_matrix_size,
-        bool is_axially_symmetric,
-        unsigned const integration_order,
-        ThermoMechanicsProcessData<DisplacementDim>& process_data)
-        : ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                                        DisplacementDim>(
-              e, local_matrix_size, is_axially_symmetric, integration_order,
-              process_data)
-    {
-    }
 };
 
 }  // namespace ThermoMechanics
