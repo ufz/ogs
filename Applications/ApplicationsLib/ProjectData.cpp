@@ -471,7 +471,6 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "THERMO_MECHANICS")
         {
-            //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__dimension}
             switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
