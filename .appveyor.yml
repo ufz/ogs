@@ -17,7 +17,7 @@ configuration:
   - Release
 
 cache:
-  - C:\projects\deps\conan -> conanfile.py
+  - C:\projects\deps\conan -> scripts/cmake/ConanSetup.cmake
 
 install:
   # All external dependencies are installed in C:\projects\deps
@@ -25,8 +25,8 @@ install:
 
   # Install conan
   - if not exist "C:\projects\deps\conan\" mkdir C:\projects\deps\conan
-  - set PATH=%PATH%;%PYTHON%/Scripts/
-  - C:\Python27-x64\Scripts\pip.exe install conan
+  - set PATH=%PYTHON%/Scripts/;%PATH%
+  - pip.exe install conan --upgrade
   - conan remote add -i 0 ogs https://api.bintray.com/conan/ogs/conan
 
   # Install Ninja
@@ -44,8 +44,7 @@ before_build:
 
 build_script:
   - mkdir build & cd build
-  - conan install .. # -o gui=True
-  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF # -DOGS_BUILD_GUI=ON
+  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF -DOGS_USE_CONAN=ON # -DOGS_BUILD_GUI=ON
   - cmake --build . --config %configuration%
 
 test_script:
