@@ -31,11 +31,11 @@ option(OGS_USE_CONAN "Should Conan package manager be used?" OFF)
 
 ### CMake includes ###
 include(scripts/cmake/PreFind.cmake)
-include(scripts/cmake/ConanSetup.cmake)
 include(scripts/cmake/CheckTypeSizes.cmake)
 include(scripts/cmake/Functions.cmake)
 include(scripts/cmake/SubmoduleSetup.cmake)
 include(scripts/cmake/CMakeSetup.cmake)
+include(scripts/cmake/ConanSetup.cmake)
 include(scripts/cmake/CompilerSetup.cmake)
 include(scripts/cmake/Find.cmake)
 include(scripts/cmake/CCacheSetup.cmake)
