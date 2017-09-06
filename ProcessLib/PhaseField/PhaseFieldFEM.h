@@ -51,7 +51,8 @@ struct IntegrationPointData final
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables> material_state_variables;
+        DisplacementDim>::MaterialStateVariables>
+        material_state_variables;
 
     typename BMatricesType::KelvinMatrixType C_tensile, C_compressive;
     double integration_weight;
@@ -60,11 +61,9 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        if (history_variable_prev <
-            history_variable)
+        if (history_variable_prev < history_variable)
         {
-            history_variable_prev =
-                history_variable;
+            history_variable_prev = history_variable;
         }
         eps_prev = eps;
         sigma_real_prev = sigma_real;
@@ -72,8 +71,7 @@ struct IntegrationPointData final
     }
 
     template <typename DisplacementVectorType>
-    void updateConstitutiveRelation(
-                                    double const t,
+    void updateConstitutiveRelation(double const t,
                                     SpatialPosition const& x_position,
                                     double const /*dt*/,
                                     DisplacementVectorType const& /*u*/,
@@ -82,8 +80,9 @@ struct IntegrationPointData final
         static_cast<MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>&>(
             solid_material)
             .calculateDegradedStress(t, x_position, eps, strain_energy_tensile,
-                             sigma_tensile, sigma_compressive, C_tensile,
-                             C_compressive, sigma_real, degradation);
+                                     sigma_tensile, sigma_compressive,
+                                     C_tensile, C_compressive, sigma_real,
+                                     degradation);
     }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
@@ -128,7 +127,7 @@ public:
         : _process_data(process_data),
           _integration_method(integration_order),
           _element(e),
-         _is_axially_symmetric(is_axially_symmetric)
+          _is_axially_symmetric(is_axially_symmetric)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -157,7 +156,7 @@ public:
             ip_data.eps_prev.resize(kelvin_vector_size);
             ip_data.C_tensile.setZero(kelvin_vector_size, kelvin_vector_size);
             ip_data.C_compressive.setZero(kelvin_vector_size,
-                                         kelvin_vector_size);
+                                          kelvin_vector_size);
             ip_data.sigma_tensile.setZero(kelvin_vector_size);
             ip_data.sigma_compressive.setZero(kelvin_vector_size);
             ip_data.history_variable =
@@ -214,11 +213,13 @@ public:
             local_rhs_data, local_matrix_size);
 
         typename ShapeMatricesType::template MatrixType<displacement_size,
-                                                        phasefield_size> Kud;
+                                                        phasefield_size>
+            Kud;
         Kud.setZero(displacement_size, phasefield_size);
 
         typename ShapeMatricesType::template MatrixType<phasefield_size,
-                                                        displacement_size> Kdu;
+                                                        displacement_size>
+            Kdu;
         Kdu.setZero(phasefield_size, displacement_size);
 
         typename ShapeMatricesType::NodalMatrixType Kdd;
@@ -281,8 +282,9 @@ public:
             _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                     degradation);
 
-            local_Jac.template block<displacement_size, displacement_size>(
-                         displacement_index, displacement_index)
+            local_Jac
+                .template block<displacement_size, displacement_size>(
+                    displacement_index, displacement_index)
                 .noalias() += B.transpose() *
                               (degradation * C_tensile + C_compressive) * B * w;
 
@@ -300,7 +302,8 @@ public:
 
             auto const rho_sr = _process_data.solid_density(t, x_position)[0];
             auto const& b = _process_data.specific_body_force;
-            local_rhs.template block<displacement_size, 1>(displacement_index, 0)
+            local_rhs
+                .template block<displacement_size, 1>(displacement_index, 0)
                 .noalias() -=
                 (B.transpose() * sigma_real - N_u.transpose() * rho_sr * b) * w;
 
@@ -338,20 +341,22 @@ public:
             Ddd.noalias() += N.transpose() / M * N * w;
         }
         // displacement equation, phasefield part
-        local_Jac.template block<displacement_size, phasefield_size>(
-                     displacement_index, phasefield_index)
+        local_Jac
+            .template block<displacement_size, phasefield_size>(
+                displacement_index, phasefield_index)
             .noalias() += Kud;
 
         // phasefield equation, phasefield part.
-        local_Jac.template block<phasefield_size, phasefield_size>(
-                     phasefield_index, phasefield_index)
+        local_Jac
+            .template block<phasefield_size, phasefield_size>(phasefield_index,
+                                                              phasefield_index)
             .noalias() += Kdd + Ddd / dt;
 
         // phasefield equation, displacement part.
-        local_Jac.template block<phasefield_size, displacement_size>(
-                     phasefield_index, displacement_index)
+        local_Jac
+            .template block<phasefield_size, displacement_size>(
+                phasefield_index, displacement_index)
             .noalias() += Kdu;
-
     }
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
