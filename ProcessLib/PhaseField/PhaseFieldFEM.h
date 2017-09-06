@@ -547,28 +547,5 @@ private:
         KelvinVectorDimensions<DisplacementDim>::value;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim, int DisplacementDim>
-class LocalAssemblerData final
-    : public PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                      DisplacementDim>
-{
-public:
-    LocalAssemblerData(LocalAssemblerData const&) = delete;
-    LocalAssemblerData(LocalAssemblerData&&) = delete;
-
-    LocalAssemblerData(MeshLib::Element const& e,
-                       std::size_t const local_matrix_size,
-                       bool is_axially_symmetric,
-                       unsigned const integration_order,
-                       PhaseFieldProcessData<DisplacementDim>& process_data)
-        : PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                   DisplacementDim>(
-              e, local_matrix_size, is_axially_symmetric, integration_order,
-              process_data)
-    {
-    }
-};
-
 }  // namespace PhaseField
 }  // namespace ProcessLib
