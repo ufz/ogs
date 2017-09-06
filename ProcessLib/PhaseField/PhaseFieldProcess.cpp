@@ -8,6 +8,7 @@
  */
 
 #include "PhaseFieldProcess.h"
+#include "PhaseFieldProcess-impl.h"
 
 namespace ProcessLib
 {
