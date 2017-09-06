@@ -12,9 +12,7 @@
 #include <memory>
 #include <vector>
 
-#include "MaterialLib/SolidModels/KelvinVector.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/PhaseFieldExtension.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -160,9 +158,9 @@ public:
             ip_data.sigma_tensile.setZero(kelvin_vector_size);
             ip_data.sigma_compressive.setZero(kelvin_vector_size);
             ip_data.history_variable =
-                process_data.history_field(0, x_position)[0];
+                _process_data.history_field(0, x_position)[0];
             ip_data.history_variable_prev =
-                process_data.history_field(0, x_position)[0];
+                _process_data.history_field(0, x_position)[0];
             ip_data.sigma_real.setZero(kelvin_vector_size);
 
             ip_data.N = shape_matrices[ip].N;
@@ -239,9 +237,8 @@ public:
         {
             x_position.setIntegrationPoint(ip);
             auto const& w = _ip_data[ip].integration_weight;
-
-            auto const& dNdx = _ip_data[ip].dNdx;
             auto const& N = _ip_data[ip].N;
+            auto const& dNdx = _ip_data[ip].dNdx;
 
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
@@ -538,8 +535,8 @@ private:
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+    bool const _is_axially_symmetric;
 
     static const int phasefield_index = 0;
     static const int phasefield_size = ShapeFunction::NPOINTS;
