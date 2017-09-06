@@ -46,7 +46,8 @@ build_script:
   - mkdir build & cd build
   - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF -DOGS_USE_CONAN=ON # -DOGS_BUILD_GUI=ON
   - cmake --build . --config %configuration%
-
-test_script:
   - cmake --build . --config %configuration% --target tests
   - cmake --build . --config %configuration% --target ctest
+  # - cmake . -DOGS_BUILD_GUI=ON
+  # - cmake --build . --config %configuration% --target DataExplorer
+
