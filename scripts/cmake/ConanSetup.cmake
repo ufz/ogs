@@ -19,10 +19,13 @@ set(CONAN_REQUIRES
 
 set(CONAN_OPTIONS
     Boost:header_only=True
-    Boost:without_iostreams=True
     Qt:xmlpatterns=True
     CACHE INTERNAL ""
 )
+
+if(LINUX AND BUILD_SHARED_LIBS)
+    set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:fPIC=True)
+endif()
 
 if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
