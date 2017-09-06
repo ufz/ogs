@@ -22,11 +22,6 @@ namespace ProcessLib
 {
 namespace PhaseField
 {
-template <int DisplacementDim>
-class PhaseFieldProcess;
-
-extern template class PhaseFieldProcess<2>;
-extern template class PhaseFieldProcess<3>;
 
 template <int DisplacementDim>
 std::unique_ptr<Process> createPhaseFieldProcess(
