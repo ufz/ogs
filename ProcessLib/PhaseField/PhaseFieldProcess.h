@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "PhaseFieldFEM.h"
+#include "LocalAssemblerInterface.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
