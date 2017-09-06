@@ -66,35 +66,20 @@ void LiquidFlowProcess::initializeConcreteProcess(
         pv.getShapeFunctionOrder(), _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _gravitational_axis_id,
         _gravitational_acceleration, _reference_temperature,
-        *_material_properties);
+        *_material_properties, _coupling_term);
 
     _secondary_variables.addSecondaryVariable(
-        "darcy_velocity_x",
+        "darcy_velocity",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LiquidFlowLocalAssemblerInterface::getIntPtDarcyVelocityX));
-
-    if (mesh.getDimension() > 1)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "darcy_velocity_y",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &LiquidFlowLocalAssemblerInterface::getIntPtDarcyVelocityY));
-    }
-    if (mesh.getDimension() > 2)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "darcy_velocity_z",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &LiquidFlowLocalAssemblerInterface::getIntPtDarcyVelocityZ));
-    }
+            mesh.getDimension(), getExtrapolator(), _local_assemblers,
+            &LiquidFlowLocalAssemblerInterface::getIntPtDarcyVelocity));
 }
 
-void LiquidFlowProcess::assembleConcreteProcess(
-    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b)
+void LiquidFlowProcess::assembleConcreteProcess(const double t,
+                                                GlobalVector const& x,
+                                                GlobalMatrix& M,
+                                                GlobalMatrix& K,
+                                                GlobalVector& b)
 {
     DBUG("Assemble LiquidFlowProcess.");
     // Call global assembler for each local assembly item.
@@ -117,15 +102,21 @@ void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac, _coupling_term);
 }
 
-void LiquidFlowProcess::computeSecondaryVariableConcrete(
-    const double t,
-    GlobalVector const& x)
+void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
+                                                         GlobalVector const& x)
 {
     DBUG("Compute the velocity for LiquidFlowProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, *_local_to_global_index_map, t, x,
-        _coupling_term);
+        _local_assemblers, *_local_to_global_index_map, t, x, _coupling_term);
+}
+
+void LiquidFlowProcess::setStaggeredCouplingTermToLocalAssemblers()
+{
+    DBUG("Compute the velocity for LiquidFlowProcess.");
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LiquidFlowLocalAssemblerInterface::setStaggeredCouplingTerm,
+        _local_assemblers, _coupling_term);
 }
 
 }  // end of namespace

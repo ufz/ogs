@@ -73,8 +73,8 @@ public:
         double const reference_temperature,
         BaseLib::ConfigTree const& config);
 
-    void computeSecondaryVariableConcrete(
-        double const t, GlobalVector const& x) override;
+    void computeSecondaryVariableConcrete(double const t,
+                                          GlobalVector const& x) override;
 
     bool isLinear() const override { return true; }
     int getGravitationalAxisID() const { return _gravitational_axis_id; }
@@ -88,14 +88,16 @@ public:
         return _material_properties.get();
     }
 
+    void setStaggeredCouplingTermToLocalAssemblers() override;
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh, unsigned const integration_order) override;
 
-    void assembleConcreteProcess(
-        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b) override;
+    void assembleConcreteProcess(const double t, GlobalVector const& x,
+                                 GlobalMatrix& M, GlobalMatrix& K,
+                                 GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,

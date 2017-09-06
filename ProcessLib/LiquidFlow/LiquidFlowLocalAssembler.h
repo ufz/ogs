@@ -19,6 +19,7 @@
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
@@ -30,6 +31,8 @@
 
 namespace ProcessLib
 {
+struct StaggeredCouplingTerm;
+
 namespace LiquidFlow
 {
 const unsigned NUM_NODAL_DOF = 1;
@@ -39,23 +42,30 @@ class LiquidFlowLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    virtual std::vector<double> const& getIntPtDarcyVelocityX(
+    LiquidFlowLocalAssemblerInterface(
+        StaggeredCouplingTerm* const coupling_term)
+        : _coupling_term(coupling_term)
+    {
+    }
+
+    void setStaggeredCouplingTerm(std::size_t const /*mesh_item_id*/,
+                                  StaggeredCouplingTerm* const coupling_term)
+    {
+        _coupling_term = coupling_term;
+    }
+
+    virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
-    virtual std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
+protected:
+    // TODO: remove _coupling_term or move integration point data from local
+    // assembler class to a new class to make local assembler unique for each
+    //process.
+    /// Pointer that is set from a Process class.
+    StaggeredCouplingTerm* _coupling_term;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -72,6 +82,9 @@ class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
     using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
 
+    using MatrixOfVelocityAtIntegrationPoints = Eigen::Map<
+        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>;
+
 public:
     LiquidFlowLocalAssembler(
         MeshLib::Element const& element,
@@ -81,8 +94,10 @@ public:
         int const gravitational_axis_id,
         double const gravitational_acceleration,
         double const reference_temperature,
-        LiquidFlowMaterialProperties const& material_propertries)
-        : _element(element),
+        LiquidFlowMaterialProperties const& material_propertries,
+        StaggeredCouplingTerm* coupling_term)
+        : LiquidFlowLocalAssemblerInterface(coupling_term),
+          _element(element),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
@@ -105,14 +120,6 @@ public:
         std::vector<double>& local_b_data,
         LocalCouplingTerm const& coupled_term) override;
 
-    void computeSecondaryVariableConcrete(
-        double const /*t*/, std::vector<double> const& local_x) override;
-
-    void computeSecondaryVariableWithCoupledProcessConcrete(
-        double const t, std::vector<double> const& local_x,
-        std::unordered_map<std::type_index, const std::vector<double>> const&
-            coupled_local_solutions) override;
-
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
@@ -122,35 +129,11 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
-    std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(!_darcy_velocities.empty());
-        return _darcy_velocities[0];
-    }
-
-    std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 1);
-        return _darcy_velocities[1];
-    }
-
-    std::vector<double> const& getIntPtDarcyVelocityZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 2);
-        return _darcy_velocities[2];
-    }
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& veloctiy_cache) const override;
 
 private:
     MeshLib::Element const& _element;
@@ -158,11 +141,6 @@ private:
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
-
-    std::vector<std::vector<double>> _darcy_velocities =
-        std::vector<std::vector<double>>(
-            GlobalDim,
-            std::vector<double>(_integration_method.getNumberOfPoints()));
 
     /**
      *  Calculator of the Laplacian and the gravity term for anisotropic
@@ -178,11 +156,11 @@ private:
             double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
-            std::vector<std::vector<double>>& darcy_velocities,
-            Eigen::Map<const NodalVectorType> const& local_p,
+            unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
             ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-            unsigned const ip, double const mu, double const rho_g,
-            int const gravitational_axis_id);
+            double const mu, double const rho_g,
+            int const gravitational_axis_id,
+            MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips);
     };
 
     /**
@@ -199,11 +177,11 @@ private:
             double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
-            std::vector<std::vector<double>>& darcy_velocities,
-            Eigen::Map<const NodalVectorType> const& local_p,
+            unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
             ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-            unsigned const ip, double const mu, double const rho_g,
-            int const gravitational_axis_id);
+            double const mu, double const rho_g,
+            int const gravitational_axis_id,
+            MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips);
     };
 
     template <typename LaplacianGravityVelocityCalculator>
@@ -223,19 +201,29 @@ private:
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         SpatialPosition const& pos, Eigen::MatrixXd const& permeability);
 
-    template <typename LaplacianGravityVelocityCalculator>
-    void computeSecondaryVariableLocal(double const /*t*/,
-                                       std::vector<double> const& local_x,
-                                       SpatialPosition const& pos,
-                                       Eigen::MatrixXd const& permeability);
+    void computeDarcyVelocity(
+        Eigen::MatrixXd const& permeability,
+        std::vector<double> const& local_x,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
+
+    void computeDarcyVelocityWithCoupling(
+        Eigen::MatrixXd const& permeability, std::vector<double> const& local_x,
+        std::unordered_map<std::type_index, const std::vector<double>> const&
+            coupled_local_solutions,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
 
     template <typename LaplacianGravityVelocityCalculator>
-    void computeSecondaryVariableCoupledWithHeatTransportLocal(
-        double const /*t*/,
+    void computeDarcyVelocityLocal(
+        std::vector<double> const& local_x,
+        Eigen::MatrixXd const& permeability,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
+
+    template <typename LaplacianGravityVelocityCalculator>
+    void computeDarcyVelocityCoupledWithHeatTransportLocal(
         std::vector<double> const& local_x,
         std::vector<double> const& local_T,
-        SpatialPosition const& pos,
-        Eigen::MatrixXd const& permeability);
+        Eigen::MatrixXd const& permeability,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
 
     const int _gravitational_axis_id;
     const double _gravitational_acceleration;

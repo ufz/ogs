@@ -16,6 +16,8 @@
 
 #include "NumLib/Function/Interpolation.h"
 
+#include "ProcessLib/StaggeredCouplingTerm.h"
+
 #include "ProcessLib/HeatConduction/HeatConductionProcess.h"
 
 namespace ProcessLib
@@ -241,10 +243,21 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    computeSecondaryVariableConcrete(double const t,
-                                     std::vector<double> const& local_x)
+std::vector<double> const&
+LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+    getIntPtDarcyVelocity(const double t,
+                          GlobalVector const& current_solution,
+                          NumLib::LocalToGlobalIndexMap const& dof_table,
+                          std::vector<double>& veloctiy_cache) const
 {
+    auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+    auto const local_x = current_solution.get(indices);
+    auto const num_intpts = _integration_method.getNumberOfPoints();
+    veloctiy_cache.clear();
+    auto veloctiy_cache_vectors = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        veloctiy_cache, GlobalDim, num_intpts);
+
     SpatialPosition pos;
     pos.setElementID(_element.getID());
     const int material_id = _material_properties.getMaterialID(pos);
@@ -252,26 +265,53 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         material_id, t, pos, _element.getDimension());
 
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
-    //  the assert must be changed to permeability.rows() ==
-    //  _element->getDimension()
+    //  the assert must be changed to perm.rows() == _element->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
-    if (permeability.size() == 1)  // isotropic or 1D problem.
-        computeSecondaryVariableLocal<IsotropicCalculator>(t, local_x, pos,
-                                                           permeability);
+    if (!_coupling_term)
+    {
+        computeDarcyVelocity(permeability, local_x, veloctiy_cache_vectors);
+    }
     else
-        computeSecondaryVariableLocal<AnisotropicCalculator>(t, local_x, pos,
-                                                             permeability);
+    {
+        auto const local_coupled_xs =
+            getCurrentLocalSolutionsOfCoupledProcesses(
+                _coupling_term->coupled_xs, indices);
+        if (local_coupled_xs.empty())
+            computeDarcyVelocity(permeability, local_x, veloctiy_cache_vectors);
+        else
+            computeDarcyVelocityWithCoupling(permeability, local_x,
+                                             local_coupled_xs,
+                                             veloctiy_cache_vectors);
+    }
+
+    return veloctiy_cache;
+}
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+    computeDarcyVelocity(
+        Eigen::MatrixXd const& permeability,
+        std::vector<double> const& local_x,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const
+{
+    if (permeability.size() == 1)  // isotropic or 1D problem.
+        computeDarcyVelocityLocal<IsotropicCalculator>(local_x, permeability,
+                                                       darcy_velocity_at_ips);
+    else
+        computeDarcyVelocityLocal<AnisotropicCalculator>(local_x, permeability,
+                                                         darcy_velocity_at_ips);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 template <typename LaplacianGravityVelocityCalculator>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    computeSecondaryVariableLocal(double const /*t*/,
-                                  std::vector<double> const& local_x,
-                                  SpatialPosition const& /*pos*/,
-                                  Eigen::MatrixXd const& permeability)
+    computeDarcyVelocityLocal(
+        std::vector<double> const& local_x,
+        Eigen::MatrixXd const& permeability,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const
 {
     auto const local_matrix_size = local_x.size();
     assert(local_matrix_size == ShapeFunction::NPOINTS);
@@ -296,50 +336,41 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             _material_properties.getViscosity(p, _reference_temperature);
 
         LaplacianGravityVelocityCalculator::calculateVelocity(
-            _darcy_velocities, local_p_vec, sm, permeability, ip, mu, rho_g,
-            _gravitational_axis_id);
+            ip, local_p_vec, sm, permeability, mu, rho_g,
+            _gravitational_axis_id, darcy_velocity_at_ips);
     }
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    computeSecondaryVariableWithCoupledProcessConcrete(
-        double const t, std::vector<double> const& local_x,
+    computeDarcyVelocityWithCoupling(
+        Eigen::MatrixXd const& permeability, std::vector<double> const& local_x,
         std::unordered_map<std::type_index, const std::vector<double>> const&
-            coupled_local_solutions)
+            coupled_local_solutions,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const
 {
-    SpatialPosition pos;
-    pos.setElementID(_element.getID());
-    const int material_id = _material_properties.getMaterialID(pos);
-    const Eigen::MatrixXd& perm = _material_properties.getPermeability(
-        material_id, t, pos, _element.getDimension());
-
     const auto local_T = coupled_local_solutions.at(std::type_index(
         typeid(ProcessLib::HeatConduction::HeatConductionProcess)));
 
-    // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
-    //  the assert must be changed to perm.rows() == _element->getDimension()
-    assert(perm.rows() == GlobalDim || perm.rows() == 1);
-
-    if (perm.size() == 1)  // isotropic or 1D problem.
-        computeSecondaryVariableCoupledWithHeatTransportLocal<
-            IsotropicCalculator>(t, local_x, local_T, pos, perm);
+    if (permeability.size() == 1)  // isotropic or 1D problem.
+        computeDarcyVelocityCoupledWithHeatTransportLocal<IsotropicCalculator>(
+            local_x, local_T, permeability, darcy_velocity_at_ips);
     else
-        computeSecondaryVariableCoupledWithHeatTransportLocal<
-            AnisotropicCalculator>(t, local_x, local_T, pos, perm);
+        computeDarcyVelocityCoupledWithHeatTransportLocal<
+            AnisotropicCalculator>(local_x, local_T, permeability,
+                                   darcy_velocity_at_ips);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 template <typename LaplacianGravityVelocityCalculator>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    computeSecondaryVariableCoupledWithHeatTransportLocal(
-        double const /*t*/,
+    computeDarcyVelocityCoupledWithHeatTransportLocal(
         std::vector<double> const& local_x,
         std::vector<double> const& local_T,
-        SpatialPosition const& /*pos*/,
-        Eigen::MatrixXd const& permeability)
+        Eigen::MatrixXd const& permeability,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const
 {
     auto const local_matrix_size = local_x.size();
     assert(local_matrix_size == ShapeFunction::NPOINTS);
@@ -364,8 +395,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         const double mu = _material_properties.getViscosity(p, T);
 
         LaplacianGravityVelocityCalculator::calculateVelocity(
-            _darcy_velocities, local_p_vec, sm, permeability, ip, mu, rho_g,
-            _gravitational_axis_id);
+            ip, local_p_vec, sm, permeability, mu, rho_g,
+            _gravitational_axis_id, darcy_velocity_at_ips);
     }
 }
 
@@ -397,22 +428,17 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     IsotropicCalculator::calculateVelocity(
-        std::vector<std::vector<double>>& darcy_velocities,
-        Eigen::Map<const NodalVectorType> const& local_p,
+        unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
         ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-        unsigned const ip, double const mu, double const rho_g,
-        int const gravitational_axis_id)
+        double const mu, double const rho_g, int const gravitational_axis_id,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips)
 {
     const double K = permeability(0, 0) / mu;
     // Compute the velocity
-    GlobalDimVectorType darcy_velocity = -K * sm.dNdx * local_p;
+    darcy_velocity_at_ips.col(ip).noalias() = -K * sm.dNdx * local_p;
     // gravity term
     if (gravitational_axis_id >= 0)
-        darcy_velocity[gravitational_axis_id] -= K * rho_g;
-    for (unsigned d = 0; d < GlobalDim; ++d)
-    {
-        darcy_velocities[d][ip] = darcy_velocity[d];
-    }
+        darcy_velocity_at_ips.col(ip)[gravitational_axis_id] -= K * rho_g;
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -441,22 +467,18 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     AnisotropicCalculator::calculateVelocity(
-        std::vector<std::vector<double>>& darcy_velocities,
-        Eigen::Map<const NodalVectorType> const& local_p,
+        unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
         ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-        unsigned const ip, double const mu, double const rho_g,
-        int const gravitational_axis_id)
+        double const mu, double const rho_g, int const gravitational_axis_id,
+        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips)
 {
     // Compute the velocity
-    GlobalDimVectorType darcy_velocity = -permeability * sm.dNdx * local_p / mu;
+    darcy_velocity_at_ips.col(ip).noalias() =
+        -permeability * sm.dNdx * local_p / mu;
     if (gravitational_axis_id >= 0)
     {
-        darcy_velocity.noalias() -=
+        darcy_velocity_at_ips.col(ip).noalias() -=
             rho_g * permeability.col(gravitational_axis_id) / mu;
-    }
-    for (unsigned d = 0; d < GlobalDim; ++d)
-    {
-        darcy_velocities[d][ip] = darcy_velocity[d];
     }
 }
 

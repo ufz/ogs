@@ -75,6 +75,7 @@ public:
         _coupling_term = coupling_term;
     }
 
+    virtual void setStaggeredCouplingTermToLocalAssemblers() {}
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b) final;
 

@@ -15,6 +15,7 @@
 #include "MaterialLib/SolidModels/KelvinVector.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
@@ -364,43 +365,6 @@ public:
         }
     }
 
-    void postTimestepConcrete(std::vector<double> const& local_x) override
-    {
-        double const& t = _process_data.t;
-
-        auto p =
-            Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-                pressure_size> const>(local_x.data() + pressure_index,
-                                      pressure_size);
-        using GlobalDimVectorType =
-            typename ShapeMatricesTypePressure::GlobalDimVectorType;
-
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        SpatialPosition x_position;
-        x_position.setElementID(_element.getID());
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            x_position.setIntegrationPoint(ip);
-            double const K_over_mu =
-                _process_data.intrinsic_permeability(t, x_position)[0] /
-                _process_data.fluid_viscosity(t, x_position)[0];
-
-            auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
-            auto const& b = _process_data.specific_body_force;
-
-            // Compute the velocity
-            auto const& dNdx_p = _ip_data[ip].dNdx_p;
-            GlobalDimVectorType const darcy_velocity =
-                -K_over_mu * dNdx_p * p - K_over_mu * rho_fr * b;
-            for (unsigned d = 0; d < DisplacementDim; ++d)
-            {
-                _darcy_velocities[d][ip] = darcy_velocity[d];
-            }
-        }
-    }
-
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
@@ -522,34 +486,52 @@ public:
         return getIntPtEpsilon(cache, 5);
     }
 
-    std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& cache) const override
     {
-        assert(!_darcy_velocities.empty());
-        return _darcy_velocities[0];
-    }
+        auto const num_intpts = _ip_data.size();
 
-    std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 1);
-        return _darcy_velocities[1];
-    }
+        auto const indices = NumLib::getIndices(_element.getID(), dof_table);
+        assert(!indices.empty());
+        auto const local_x = current_solution.get(indices);
 
-    std::vector<double> const& getIntPtDarcyVelocityZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 2);
-        return _darcy_velocities[2];
+        cache.clear();
+        auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, DisplacementDim, num_intpts);
+
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        auto p =
+            Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+                pressure_size> const>(local_x.data() + pressure_index,
+                                      pressure_size);
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
+        for (unsigned ip = 0; ip < n_integration_points; ip++) {
+            x_position.setIntegrationPoint(ip);
+            double const K_over_mu =
+                _process_data.intrinsic_permeability(t, x_position)[0] /
+                _process_data.fluid_viscosity(t, x_position)[0];
+
+            auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+            auto const& b = _process_data.specific_body_force;
+
+            // Compute the velocity
+            auto const& dNdx_p = _ip_data[ip].dNdx_p;
+            cache_matrix.col(ip).noalias() =
+                -K_over_mu * dNdx_p * p - K_over_mu * rho_fr * b;
+        }
+
+        return cache;
     }
 
 private:
@@ -601,11 +583,6 @@ private:
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         _secondary_data;
-
-    std::vector<std::vector<double>> _darcy_velocities =
-        std::vector<std::vector<double>>(
-            DisplacementDim,
-            std::vector<double>(_integration_method.getNumberOfPoints()));
 
     static const int pressure_index = 0;
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;

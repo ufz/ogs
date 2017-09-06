@@ -14,6 +14,7 @@
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MeshLib/CoordinateSystem.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -63,19 +64,7 @@ public:
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
-    virtual std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const = 0;
-
-    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
+    virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
@@ -110,9 +99,6 @@ public:
           _process_data(process_data),
           _integration_method(integration_order),
           _saturation(
-              std::vector<double>(_integration_method.getNumberOfPoints())),
-          _darcy_velocities(
-              GlobalDim,
               std::vector<double>(_integration_method.getNumberOfPoints()))
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -240,9 +226,43 @@ public:
         }  // end of mass lumping
     }
 
-    void computeSecondaryVariableConcrete(
-        double const t, std::vector<double> const& local_x) override
+    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
+        const unsigned integration_point) const override
     {
+        auto const& N = _ip_data[integration_point].N;
+
+        // assumes N is stored contiguously in memory
+        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
+    }
+
+    std::vector<double> const& getIntPtSaturation(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(!_saturation.empty());
+        return _saturation;
+    }
+
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& cache) const override
+    {
+        auto const num_intpts = _shape_matrices.size();
+
+        auto const indices = NumLib::getIndices(
+            _element.getID(), dof_table);
+        assert(!indices.empty());
+        auto const local_x = current_solution.get(indices);
+
+        cache.clear();
+        auto cache_vec = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, num_intpts);
+
         SpatialPosition pos;
         pos.setElementID(_element.getID());
         const int material_id =
@@ -278,7 +298,7 @@ public:
             auto const mu = _process_data.material->getFluidViscosity(
                 p_int_pt, temperature);
             auto const K_mat_coeff = permeability * (k_rel / mu);
-            GlobalDimVectorType velocity =
+            cache_vec.col(ip).noalias() =
                 -K_mat_coeff * _ip_data[ip].dNdx * p_nodal_values;
             if (_process_data.has_gravity)
             {
@@ -288,63 +308,11 @@ public:
                 assert(body_force.size() == GlobalDim);
                 // here it is assumed that the vector body_force is directed
                 // 'downwards'
-                velocity += K_mat_coeff * rho_w * body_force;
-            }
-
-            for (unsigned d = 0; d < GlobalDim; ++d)
-            {
-                _darcy_velocities[d][ip] = velocity[d];
+                cache_vec.col(ip).noalias() += K_mat_coeff * rho_w * body_force;
             }
         }
-    }
 
-    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
-        const unsigned integration_point) const override
-    {
-        auto const& N = _ip_data[integration_point].N;
-
-        // assumes N is stored contiguously in memory
-        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
-    }
-
-    std::vector<double> const& getIntPtSaturation(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(!_saturation.empty());
-        return _saturation;
-    }
-
-    std::vector<double> const& getIntPtDarcyVelocityX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(!_darcy_velocities.empty());
-        return _darcy_velocities[0];
-    }
-
-    std::vector<double> const& getIntPtDarcyVelocityY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 1);
-        return _darcy_velocities[1];
-    }
-
-    std::vector<double> const& getIntPtDarcyVelocityZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_darcy_velocities.size() > 2);
-        return _darcy_velocities[2];
+        return cache;
     }
 
 private:
@@ -361,7 +329,6 @@ private:
             NodalRowVectorType, GlobalDimNodalMatrixType, NodalMatrixType>>>
         _ip_data;
     std::vector<double> _saturation;
-    std::vector<std::vector<double>> _darcy_velocities;
 };
 
 }  // namespace RichardsFlow

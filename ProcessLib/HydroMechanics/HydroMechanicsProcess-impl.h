@@ -164,22 +164,10 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             &LocalAssemblerInterface::getIntPtEpsilonXY));
 
     Base::_secondary_variables.addSecondaryVariable(
-        "velocity_x",
+        "velocity",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtDarcyVelocityX));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "velocity_y",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtDarcyVelocityY));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "velocity_z",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtDarcyVelocityZ));
+            mesh.getDimension(), getExtrapolator(), _local_assemblers,
+            &LocalAssemblerInterface::getIntPtDarcyVelocity));
 }
 
 template <int DisplacementDim>
