@@ -9,13 +9,19 @@
 
 #pragma once
 
-namespace MeshLib
+namespace MaterialLib
 {
-class Element;
+namespace Solids
+{
+template <int DisplacementDim>
+struct MechanicsBase;
 }
-
+}
 namespace ProcessLib
 {
+template <typename T>
+struct Parameter;
+
 namespace PhaseField
 {
 template <int DisplacementDim>

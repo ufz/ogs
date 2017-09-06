@@ -12,7 +12,7 @@
 #include <cassert>
 
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 
 #include "PhaseFieldProcess.h"
