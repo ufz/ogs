@@ -85,7 +85,7 @@ struct IntegrationPointData final
                              sigma_tensile, sigma_compressive, C_tensile,
                              C_compressive, sigma_real, degradation);
     }
-
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 /// Used by for extrapolation of the integration point values. It is ordered
