@@ -14,8 +14,6 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 
-#include "PhaseFieldProcessData.h"
-
 namespace ProcessLib
 {
 namespace PhaseField

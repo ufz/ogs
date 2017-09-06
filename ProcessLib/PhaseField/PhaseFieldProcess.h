@@ -9,8 +9,10 @@
 
 #pragma once
 
-#include "LocalAssemblerInterface.h"
 #include "ProcessLib/Process.h"
+
+#include "LocalAssemblerInterface.h"
+#include "PhaseFieldProcessData.h"
 
 namespace ProcessLib
 {
