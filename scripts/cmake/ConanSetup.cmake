@@ -11,7 +11,7 @@ endif()
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
-    Boost/[>=1.56.0]@lasote/stable
+    Boost/1.64.0@conan/stable
     Eigen3/3.2.9@bilke/stable
     VTK/[>=7.1]@bilke/stable
     CACHE INTERNAL ""
@@ -50,6 +50,14 @@ else()
     # Add ogs repo as first
     message(STATUS "Conan adding ogs remote repositoy (https://api.bintray.com/conan/ogs/conan)")
     execute_process(COMMAND ${CONAN_CMD} remote add -i 0 ogs https://ogs.jfrog.io/ogs/api/conan/conan)
+endif()
+
+# Add conan-community remote
+if("${CONAN_REMOTES}" MATCHES "conan-community: https://api.bintray.com/conan/conan-community/conan")
+    execute_process(COMMAND ${CONAN_CMD} remote update -i 2 conan-community https://api.bintray.com/conan/conan-community/conan)
+else()
+    message(STATUS "Conan adding community remote repositoy (https://api.bintray.com/conan/conan-community/conan)")
+    execute_process(COMMAND ${CONAN_CMD} remote add -i 2 conan-community https://api.bintray.com/conan/conan-community/conan)
 endif()
 
 # Remove libraries from Conan which are set to "System"
