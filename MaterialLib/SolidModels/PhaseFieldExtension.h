@@ -10,8 +10,6 @@
 
 #pragma once
 
-#include "ProcessLib/Deformation/BMatrixPolicy.h"
-#include "ProcessLib/Parameter/SpatialPosition.h"
 #include "MechanicsBase.h"
 
 namespace MaterialLib
@@ -80,8 +78,6 @@ struct PhaseFieldExtension : public MechanicsBase<DisplacementDim>
         sigma_real = sigma_real_;
         return result;
     }
-
-    virtual ~PhaseFieldExtension() = default;
 };
 
 }  // namespace Solids
