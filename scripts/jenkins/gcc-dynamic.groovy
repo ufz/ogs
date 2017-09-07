@@ -2,7 +2,8 @@ def defaultCMakeOptions =
     '-DCMAKE_BUILD_TYPE=Release ' +
     '-DOGS_LIB_BOOST=System ' +
     '-DOGS_LIB_VTK=System ' +
-    '-DOGS_BUILD_UTILS=ON '
+    '-DOGS_BUILD_UTILS=ON ' +
+    '-DOGS_BUILD_METIS=ON '
 
 def configure = new ogs.configure()
 def build = new ogs.build()
