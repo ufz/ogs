@@ -306,6 +306,8 @@ public:
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
 
+            pos.setIntegrationPoint(ip);
+
             double T_int_pt = 0.0;
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
