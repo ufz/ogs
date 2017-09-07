@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
  * \date   07.09.2017
- * \brief  
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -11,17 +11,15 @@
  *
  */
 
-#ifndef MATERIALLIB_MPL_MPMEDIUM_H_
-#define MATERIALLIB_MPL_MPMEDIUM_H_
+#include "mpMedium.h"
 
 namespace MaterialPropertyLib
 {
-class Medium
-{
-public:
-    Medium();
-};
 
-}
+Medium::Medium(){};
 
-#endif /* MATERIALLIB_MPL_MPMEDIUM_H_ */
+} // MaterialPropertyLib
+
+
+
+
