@@ -1,6 +1,6 @@
 AddTest(
     NAME 2D_ComponentTransport_ConcentrationDiffusionOnly
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS ConcentrationDiffusionOnly.prj
     WRAPPER time
@@ -16,7 +16,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_ConcentrationDiffusionAndStorage
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS ConcentrationDiffusionAndStorage.prj
     WRAPPER time
@@ -35,7 +35,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvection
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvection.prj
     WRAPPER time
@@ -69,7 +69,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndGravityAndDispersionHalf
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndGravityAndDispersionHalf.prj
     WRAPPER time
@@ -103,7 +103,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDispersion
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersion.prj
     WRAPPER time
@@ -137,7 +137,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDecay
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDecay.prj
     WRAPPER time
@@ -171,7 +171,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDispersionHalf
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersionHalf.prj
     WRAPPER time
