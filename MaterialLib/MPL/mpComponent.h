@@ -29,6 +29,8 @@ public:
 
 };
 
+Component* newComponent (boost::optional<std::string> const &name);
+
 } //MaterialPropertyLib
 
 

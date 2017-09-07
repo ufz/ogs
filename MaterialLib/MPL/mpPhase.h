@@ -32,7 +32,6 @@ public:
     void createComponents(BaseLib::ConfigTree const&);
     void createProperties(BaseLib::ConfigTree const&);
 
-    Component* newComponent (boost::optional<std::string> const&);
 };
 
 } //MaterialPropertyLib
