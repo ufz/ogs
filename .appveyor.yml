@@ -27,7 +27,7 @@ install:
   - if not exist "C:\projects\deps\conan\" mkdir C:\projects\deps\conan
   - set PATH=%PYTHON%/Scripts/;%PATH%
   - pip.exe install conan --upgrade
-  - conan remote add -i 0 ogs https://api.bintray.com/conan/ogs/conan
+  - conan remote add -i 0 ogs https://ogs.jfrog.io/ogs/api/conan/conan
 
   # Install Ninja
   - set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.7.2/ninja-win.zip"
