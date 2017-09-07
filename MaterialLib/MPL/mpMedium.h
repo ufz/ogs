@@ -14,12 +14,16 @@
 #ifndef MATERIALLIB_MPL_MPMEDIUM_H_
 #define MATERIALLIB_MPL_MPMEDIUM_H_
 
+#include "BaseLib/ConfigTree.h"
+
 namespace MaterialPropertyLib
 {
 class Medium
 {
 public:
-    Medium();
+    Medium(BaseLib::ConfigTree const&);
+    void createPhases (BaseLib::ConfigTree const&);
+    void createProperties (BaseLib::ConfigTree const&);
 };
 
 }
