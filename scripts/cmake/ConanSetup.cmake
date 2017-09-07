@@ -35,6 +35,23 @@ if(OGS_BUILD_GUI)
     )
 endif()
 
+# Add Conan ogs remote
+find_program(CONAN_CMD conan)
+if(NOT CONAN_CMD)
+    message(FATAL_ERROR "Conan executable not found!")
+endif()
+execute_process(COMMAND ${CONAN_CMD} remote list OUTPUT_VARIABLE CONAN_REMOTES)
+
+# Add ogs remote
+if("${CONAN_REMOTES}" MATCHES "ogs: https://ogs.jfrog.io/ogs/api/conan/conan")
+    # Make sure ogs repo is first
+    execute_process(COMMAND ${CONAN_CMD} remote update -i 0 ogs https://ogs.jfrog.io/ogs/api/conan/conan)
+else()
+    # Add ogs repo as first
+    message(STATUS "Conan adding ogs remote repositoy (https://api.bintray.com/conan/ogs/conan)")
+    execute_process(COMMAND ${CONAN_CMD} remote add -i 0 ogs https://ogs.jfrog.io/ogs/api/conan/conan)
+endif()
+
 # Remove libraries from Conan which are set to "System"
 message(STATUS "Third-party libraries:")
 foreach(LIB ${OGS_LIBS})
