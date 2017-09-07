@@ -13,6 +13,7 @@
 #ifndef MATERIALLIB_MPL_MPCOMPONENT_H_
 #define MATERIALLIB_MPL_MPCOMPONENT_H_
 
+#include "BaseLib/ConfigTree.h"
 #include "mpProperty.h"
 
 namespace MaterialPropertyLib
@@ -23,6 +24,10 @@ protected:
     PropertyArray _properties;
 public:
     Component();
+
+    void createProperties(BaseLib::ConfigTree const&);
+    Property* newProperty (BaseLib::ConfigTree const&);
+
 };
 
 } //MaterialPropertyLib
