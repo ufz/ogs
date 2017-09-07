@@ -28,6 +28,8 @@
 #include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/Mesh.h"
 
+#include "MaterialLib/MPL/mpMedium.h"
+
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
 #include "ProcessLib/CreateJacobianAssembler.h"
 
@@ -158,6 +160,10 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     //! \ogs_file_param{prj__process_variables}
     parseProcessVariables(project_config.getConfigSubtree("process_variables"));
 
+    //! \ogs_file_param{prj__materials}
+    parseMaterials(project_config.getConfigSubtree("media"));
+
+
     //! \ogs_file_param{prj__processes}
     parseProcesses(project_config.getConfigSubtree("processes"),
                    project_directory, output_directory);
@@ -230,6 +236,21 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
 
     for (auto& parameter : _parameters)
         parameter->initialize(_parameters);
+}
+
+void ProjectData::parseMaterials(BaseLib::ConfigTree const& media_config)
+{
+    DBUG("Reading materials:");
+
+    if (_mesh_vec.empty() || _mesh_vec[0] == nullptr)
+    {
+        ERR("A mesh is required to define medium materials.");
+        return;
+    }
+
+    auto const medium_config = media_config.getConfigSubtree("medium");
+    MaterialPropertyLib::Medium medium;
+
 }
 
 void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
