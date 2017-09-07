@@ -14,7 +14,11 @@
 #include <tclap/CmdLine.h>
 
 #ifndef _WIN32
+#ifdef __APPLE__
+#include <xmmintrin.h>
+#else
 #include <cfenv>
+#endif  // __APPLE__
 #endif  // _WIN32
 
 #ifdef USE_PETSC
@@ -111,7 +115,11 @@ int main(int argc, char *argv[])
 #ifndef _WIN32  // On windows this command line option is not present.
     // Enable floating point exceptions
     if (enable_fpe_arg.isSet())
+#ifdef __APPLE__
+        _MM_SET_EXCEPTION_MASK(_MM_GET_EXCEPTION_MASK() & ~_MM_MASK_INVALID);
+#else
         feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+#endif  // __APPLE__
 #endif  // _WIN32
 
     BaseLib::RunTime run_time;

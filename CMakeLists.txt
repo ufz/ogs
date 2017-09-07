@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 # Set CMake policies
-cmake_policy(SET CMP0011 OLD)
+cmake_policy(SET CMP0011 NEW)
 cmake_policy(SET CMP0054 NEW)
 
 # Project name

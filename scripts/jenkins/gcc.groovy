@@ -58,8 +58,8 @@ image.inside(defaultDockerArgs) {
 
             if (helper.isOriginMaster(this)) {
                 sshagent(credentials: ['www-data_jenkins']) {
-                    sh 'rsync -a --delete --stats -e "ssh -o StrictHostKeyChecking=no"' +
-                        ' ogs/web/public/ www-data@jenkins.opengeosys.org:'+
+                    sh 'rsync -a --delete --stats ogs/web/public/ ' +
+                        'www-data@jenkins.opengeosys.org:' +
                         '/var/www/dev.opengeosys.org'
                 }
             } else {
@@ -76,11 +76,30 @@ image.inside(defaultDockerArgs) {
             keepDir: true,
             script: this
         )
-        build.linux(script: this)
+        build.linux(script: this, target: 'package doc')
     }
 }
 
 stage('Post (Linux-Docker)') {
     post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml'
+
+    publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
+        keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
+        reportName: 'Doxygen'])
+    step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
+        messagesPattern: """
+            .*DOT_GRAPH_MAX_NODES.
+            .*potential recursive class relation.*""",
+        parserConfigurations: [[parserName: 'Doxygen', pattern:
+        'build/DoxygenWarnings.log']], unstableTotalAll: '0'])
+
+    if (helper.isOriginMaster(this)) {
+        sshagent(credentials: ['www-data_jenkins']) {
+            sh 'rsync -a --delete --stats -e "ssh -o StrictHostKeyChecking=no"' +
+                ' build/docs/ www-data@jenkins.opengeosys.org:'+
+                '/var/www/doxygen.opengeosys.org'
+        }
+    }
+
     post.cleanup()
 }

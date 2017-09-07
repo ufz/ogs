@@ -54,13 +54,6 @@ if (helper.isRelease(this)) {
     }
 }
 
-builders['docs'] = {
-    node('docker') {
-        dir('ogs') { checkoutWithTags() }
-        load 'ogs/scripts/jenkins/docs.groovy'
-    }
-}
-
 if (helper.isOriginMaster(this)) {
     builders['coverage'] = {
         node('docker') {
