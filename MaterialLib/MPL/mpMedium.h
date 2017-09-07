@@ -16,6 +16,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "mpPhase.h"
+#include "mpProperty.h"
 
 #include <vector>
 
@@ -25,6 +26,7 @@ class Medium
 {
 private:
     std::vector<Phase*> _phases;
+    PropertyArray _properties;
 public:
     Medium(BaseLib::ConfigTree const&);
     void createPhases (BaseLib::ConfigTree const&);
