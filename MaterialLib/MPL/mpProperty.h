@@ -13,6 +13,9 @@
 #ifndef MATERIALLIB_MPL_MPPROPERTY_H_
 #define MATERIALLIB_MPL_MPPROPERTY_H_
 
+#include "mpEnums.h"
+#include <array>
+
 namespace MaterialPropertyLib
 {
 class Property
@@ -21,8 +24,9 @@ public:
     Property();
 };
 
-} //MaterialPropertyLib
+using PropertyArray = std::array<Property*, number_of_property_enums>;
 
+} //MaterialPropertyLib
 
 
 #endif /* MATERIALLIB_MPL_MPPROPERTY_H_ */
