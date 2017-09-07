@@ -15,6 +15,7 @@ append_source_files(SOURCES Fluid/WaterVaporProperties)
 
 append_source_files(SOURCES MPL)
 append_source_files(SOURCES MPL/Properties)
+append_source_files(SOURCES MPL/Components)
 
 append_source_files(SOURCES PorousMedium)
 append_source_files(SOURCES PorousMedium/Porosity)
