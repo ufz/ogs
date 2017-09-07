@@ -32,7 +32,25 @@ Medium::Medium(BaseLib::ConfigTree const& config)
 
 void Medium::createPhases(BaseLib::ConfigTree const& config)
 {
-
+    std::vector<Phase*> phases;
+    for (auto phase_config : config.getConfigSubtreeList("phase"))
+    {
+        // Unlike a medium, a phase may have a name. However, this is
+        // silly at the moment since this name has no effect (except of some
+        // benefits in terms of readability)
+        auto const phase_name = phase_config.getConfigParameter<std::string>("name");
+        Phase newPhase (phase_name);
+        // Furthermore, a phase (similar to a medium) consists of components and
+        // properties.
+        // Parsing the components:
+        auto const components_config = phase_config.getConfigSubtree("components");
+        newPhase.createComponents (components_config);
+        // Parsing the phase properties:
+        auto const properties_config = phase_config.getConfigSubtree("properties");
+        newPhase.createProperties (properties_config);
+        phases.push_back(&newPhase);
+    }
+    _phases = phases;
 }
 
 void Medium::createProperties(BaseLib::ConfigTree const& config)
