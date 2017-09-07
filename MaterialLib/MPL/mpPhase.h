@@ -13,10 +13,18 @@
 #ifndef MATERIALLIB_MPL_MPPHASE_H_
 #define MATERIALLIB_MPL_MPPHASE_H_
 
+#include "mpComponent.h"
+
+#include <string>
+#include <vector>
+
 namespace MaterialPropertyLib
 {
 class Phase
 {
+private:
+    std::string _name;
+    std::vector<Component*> _components;
 public:
     Phase();
 };
