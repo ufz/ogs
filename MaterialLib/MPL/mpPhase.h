@@ -26,6 +26,7 @@ class Phase
 private:
     std::string _name;
     std::vector<Component*> _components;
+    PropertyArray _properties;
 public:
     Phase();
     Phase(boost::optional<std::string> const&);

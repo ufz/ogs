@@ -51,8 +51,19 @@ void Phase::createComponents(BaseLib::ConfigTree const& config)
 
 void Phase::createProperties(BaseLib::ConfigTree const& config)
 {
+    PropertyArray properties;
+    for (auto property_config : config.getConfigSubtreeList("property"))
     {
+        /// create a new Property based on configuration tree
+        Property* property = newProperty (property_config);
+        /// parse the name of the property
+        auto const property_name =
+                property_config.getConfigParameter<std::string>("name");
+        /// insert the newly created property at the right place
+        /// into the property array
+        properties[convertStringToProperty(property_name)];
     }
+    _properties = properties;
 }
 
 
