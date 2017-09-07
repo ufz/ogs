@@ -38,7 +38,7 @@ void Medium::createPhases(BaseLib::ConfigTree const& config)
         // Unlike a medium, a phase may have a name. However, this is
         // silly at the moment since this name has no effect (except of some
         // benefits in terms of readability)
-        auto const phase_name = phase_config.getConfigParameter<std::string>("name");
+        auto const phase_name = phase_config.getConfigParameterOptional<std::string>("name");
         Phase newPhase (phase_name);
         // Furthermore, a phase (similar to a medium) consists of components and
         // properties.

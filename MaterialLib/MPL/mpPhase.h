@@ -28,7 +28,7 @@ private:
     std::vector<Component*> _components;
 public:
     Phase();
-    Phase(std::string);
+    Phase(boost::optional<std::string> const&);
     void createComponents(BaseLib::ConfigTree const&);
     void createProperties(BaseLib::ConfigTree const&);
 

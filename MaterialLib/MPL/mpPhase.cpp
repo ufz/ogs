@@ -18,8 +18,13 @@ namespace MaterialPropertyLib
 {
 
 Phase::Phase(){};
-Phase::Phase(std::string name)
-: _name (name){};
+Phase::Phase(boost::optional<std::string> const& name)
+{
+    if (name)
+        _name = name.get();
+    else
+        _name = "unknown";
+};
 
 void Phase::createComponents(BaseLib::ConfigTree const& config)
 {
