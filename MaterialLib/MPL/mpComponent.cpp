@@ -56,6 +56,8 @@ Property* Component::newProperty(BaseLib::ConfigTree const& config)
             auto const property_value = config.getConfigParameter<double>("value");
             return new Constant();
         }
+        OGS_FATAL("The specified component property type \"%s\" was not "
+                "recognized", property_type.c_str());
         return nullptr;
 }
 
