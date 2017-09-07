@@ -13,10 +13,14 @@
 #ifndef MATERIALLIB_MPL_MPCOMPONENT_H_
 #define MATERIALLIB_MPL_MPCOMPONENT_H_
 
+#include "mpProperty.h"
+
 namespace MaterialPropertyLib
 {
 class Component
 {
+protected:
+    PropertyArray _properties;
 public:
     Component();
 };
