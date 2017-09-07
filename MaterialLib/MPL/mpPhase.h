@@ -13,6 +13,7 @@
 #ifndef MATERIALLIB_MPL_MPPHASE_H_
 #define MATERIALLIB_MPL_MPPHASE_H_
 
+#include "BaseLib/ConfigTree.h"
 #include "mpComponent.h"
 
 #include <string>
@@ -27,6 +28,9 @@ private:
     std::vector<Component*> _components;
 public:
     Phase();
+    Phase(std::string);
+    void createComponents(BaseLib::ConfigTree const&);
+    void createProperties(BaseLib::ConfigTree const&);
 };
 
 } //MaterialPropertyLib

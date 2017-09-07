@@ -18,6 +18,19 @@ namespace MaterialPropertyLib
 {
 
 Phase::Phase(){};
+Phase::Phase(std::string name)
+: _name (name){};
+
+void Phase::createComponents(BaseLib::ConfigTree const& config)
+{
+
+}
+
+void Phase::createProperties(BaseLib::ConfigTree const& config)
+{
+
+}
+
 
 } // MaterialPropertyLib
 
