@@ -26,7 +26,6 @@ public:
     Component();
 
     void createProperties(BaseLib::ConfigTree const&);
-    Property* newProperty (BaseLib::ConfigTree const&);
 
 };
 

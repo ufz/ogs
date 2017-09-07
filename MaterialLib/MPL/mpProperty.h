@@ -13,6 +13,7 @@
 #ifndef MATERIALLIB_MPL_MPPROPERTY_H_
 #define MATERIALLIB_MPL_MPPROPERTY_H_
 
+#include "BaseLib/ConfigTree.h"
 #include "mpEnums.h"
 #include <array>
 
@@ -25,6 +26,7 @@ public:
 };
 
 using PropertyArray = std::array<Property*, number_of_property_enums>;
+Property* newProperty(BaseLib::ConfigTree const&);
 
 } //MaterialPropertyLib
 
