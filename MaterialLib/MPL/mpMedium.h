@@ -15,11 +15,16 @@
 #define MATERIALLIB_MPL_MPMEDIUM_H_
 
 #include "BaseLib/ConfigTree.h"
+#include "mpPhase.h"
+
+#include <vector>
 
 namespace MaterialPropertyLib
 {
 class Medium
 {
+private:
+    std::vector<Phase*> _phases;
 public:
     Medium(BaseLib::ConfigTree const&);
     void createPhases (BaseLib::ConfigTree const&);
