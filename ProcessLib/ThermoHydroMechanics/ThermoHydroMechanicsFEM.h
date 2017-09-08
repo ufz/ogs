@@ -81,7 +81,6 @@ struct IntegrationPointData final
         double const dt,
         double const thermal_strain)
     {
-        // eps.noalias() = b_matrices * u;
         // assume isotropic thermal expansion
         eps_m.noalias() = eps - thermal_strain * Invariants::identity2;
         auto&& solution = solid_material.integrateStress(
@@ -293,8 +292,7 @@ public:
     {
         OGS_FATAL(
             "ThermoHydroMechanicsLocalAssembler: assembly without Jacobian is "
-            "not "
-            "implemented.");
+            "not implemented.");
     }
 
     void assembleWithJacobian(double const t,
@@ -309,30 +307,30 @@ public:
         assert(local_x.size() ==
                temperature_size + pressure_size + displacement_size);
 
-        auto T =
+        auto const T =
             Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
                 temperature_size> const>(local_x.data() + temperature_index,
                                          temperature_size);
 
-        auto p =
+        auto const p =
             Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
                 pressure_size> const>(local_x.data() + pressure_index,
                                       pressure_size);
 
-        auto u = Eigen::Map<typename ShapeMatricesTypeDisplacement::
+        auto const u = Eigen::Map<typename ShapeMatricesTypeDisplacement::
                                 template VectorType<displacement_size> const>(
             local_x.data() + displacement_index, displacement_size);
 
-        auto T_dot =
+        auto const T_dot =
             Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
                 temperature_size> const>(local_xdot.data() + temperature_index,
                                          temperature_size);
 
-        auto p_dot =
+        auto const p_dot =
             Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
                 pressure_size> const>(local_xdot.data() + pressure_index,
                                       pressure_size);
-        auto u_dot =
+        auto const u_dot =
             Eigen::Map<typename ShapeMatricesTypeDisplacement::
                            template VectorType<displacement_size> const>(
                 local_xdot.data() + displacement_index, displacement_size);
@@ -391,6 +389,10 @@ public:
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
+
+        auto const& identity2 = MaterialLib::SolidModels::Invariants<
+            KelvinVectorDimensions<DisplacementDim>::value>::identity2;
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
@@ -403,11 +405,11 @@ public:
             auto const& dNdx_u = _ip_data[ip].dNdx_u;
             auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
-            // same shape function for pressure and temperature
+            // same shape function for pressure and temperature since they have the same order
             auto const& N_T = N_p;
             auto const& dNdx_T = dNdx_p;
-            auto T_int_pt = N_T * T;
-            auto p_int_pt = N_T * p;
+            auto const T_int_pt = N_T * T;
+            auto const p_int_pt = N_T * p;
 
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -443,31 +445,27 @@ public:
             double const T0 =
                 _process_data.reference_temperature(t, x_position)[0];
             auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
-            auto rho_sr = _process_data.solid_density(t, x_position)[0];
-            auto rho_f = _process_data.getFluidDensity(p_int_pt, T_int_pt);
+            auto const rho_sr = _process_data.solid_density(t, x_position)[0];
+            auto const rho_f = _process_data.getFluidDensity(p_int_pt, T_int_pt);
             auto const porosity = _process_data.porosity(t, x_position)[0];
             auto const& b = _process_data.specific_body_force;
 
             // calculate linear thermal strain
             // assume isotropic thermal expansion
 
-            double delta_T(T_int_pt - T0);
+            double const delta_T(T_int_pt - T0);
             double const thermal_strain = alpha_s * delta_T;
 
-            double rho_s = rho_sr * (1 - 3 * thermal_strain);
+            double const rho_s = rho_sr * (1 - 3 * thermal_strain);
 
             auto velocity = (-K_over_mu * dNdx_p * p).eval();
             velocity += K_over_mu * rho_f * b;
-
-            auto const& identity2 = MaterialLib::SolidModels::Invariants<
-                KelvinVectorDimensions<DisplacementDim>::value>::identity2;
 
             //
             // displacement equation, displacement part (K_uu)
             //
             eps.noalias() = B * u;
-
-            auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt,
+            auto const C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt,
                                                              thermal_strain);
 
             local_Jac
@@ -475,7 +473,7 @@ public:
                     displacement_index, displacement_index)
                 .noalias() += B.transpose() * C * B * w;
 
-            double const rho = rho_s * (1 - porosity) + porosity * rho_f;
+            auto const rho = rho_s * (1 - porosity) + porosity * rho_f;
             local_rhs.template segment<displacement_size>(displacement_index)
                 .noalias() -=
                 (B.transpose() * sigma_eff - N_u_op.transpose() * rho * b) * w;
@@ -515,7 +513,7 @@ public:
                 (dNdx_T.transpose() * lambda * dNdx_T +
                  dNdx_T.transpose() * velocity * N_p * rho_f * C_f) *
                 w;
-            // coefficient matrix using for RHS
+            // coefficient matrix which is used for caculating the residual
             auto const heat_capacity =
                 porosity * C_f * rho_f + (1 - porosity) * C_s * rho_sr;
             MTT.noalias() += N_T.transpose() * heat_capacity * N_T * w;

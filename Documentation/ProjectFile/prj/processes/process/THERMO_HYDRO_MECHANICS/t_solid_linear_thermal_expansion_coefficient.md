@@ -1,1 +1,1 @@
-Solid linear expansion changes in one dimension.
+Solid linear expansion in one dimension.

@@ -1,8 +1,5 @@
 +++
-project = "Thermohydromechanics/Linear/Beam_sealed_bimaterial/"
-project = "Thermohydromechanics/Linear/Beam_unsealed_bimaterial/"
-project = "Thermohydromechanics/Linear/Point_injection/"
-project = "Thermohydromechanics/Linear/Square_sealed_homogeneous/"
+project = "Thermohydromechanics/Linear/"
 author = "Tianyuan Zheng"
 date = "2017-08-23T20:39:58+01:00"
 title = "Thermohydromechanics"

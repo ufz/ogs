@@ -1,1 +1,1 @@
-Volumetric average specific storage of the solid and fluid phases.
+Volumetric average specific storage of porous medium and fluid phases.

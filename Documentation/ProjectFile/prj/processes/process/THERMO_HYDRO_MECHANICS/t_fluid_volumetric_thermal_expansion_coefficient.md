@@ -1,1 +1,1 @@
-Volumetric thermal expansion coefficient for fluid.
+Volumetric thermal expansion coefficient of fluid.

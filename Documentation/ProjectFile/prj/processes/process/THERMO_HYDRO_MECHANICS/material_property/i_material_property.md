@@ -1,1 +1,1 @@
-A tag for material properties of the Thermohydromechanical process.
+A tag for material properties of the ThermoHydroMechanical process.

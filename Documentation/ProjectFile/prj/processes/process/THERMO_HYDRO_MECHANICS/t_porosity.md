@@ -1,1 +1,1 @@
-Porosity of the solid.
+Porosity of porous medium.

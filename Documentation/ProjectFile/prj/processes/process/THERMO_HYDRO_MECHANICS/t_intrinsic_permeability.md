@@ -1,1 +1,1 @@
-Permeability of the solid.
+Permeability of porous medium.

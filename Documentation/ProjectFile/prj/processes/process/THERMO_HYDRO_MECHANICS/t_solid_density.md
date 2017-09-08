@@ -1,1 +1,1 @@
-Solid's density.
+Solid density.

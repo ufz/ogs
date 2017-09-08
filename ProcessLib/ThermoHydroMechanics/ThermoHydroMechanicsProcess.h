@@ -61,7 +61,7 @@ namespace ThermoHydroMechanics
  *    \f}
  *
  * Detailed model description can refer
- * <a href="Zheng_THMOGS6.pdf" target="_blank"><b>Phase field method</b></a>
+ * <a href="THM.pdf" target="_blank"><b>ThermoHydroMechanical Process</b></a>
  */
 template <int DisplacementDim>
 class ThermoHydroMechanicsProcess final : public Process

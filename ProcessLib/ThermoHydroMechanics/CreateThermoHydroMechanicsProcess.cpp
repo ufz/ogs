@@ -136,7 +136,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
             type.c_str());
     }
 
-    // Intrinsic permeability // currently only considers isotropic
+    // Intrinsic permeability (currently only considers isotropic)
     auto& intrinsic_permeability = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__intrinsic_permeability}
