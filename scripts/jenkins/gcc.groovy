@@ -58,9 +58,9 @@ image.inside(defaultDockerArgs) {
 
             if (helper.isOriginMaster(this)) {
                 sshagent(credentials: ['www-data_jenkins']) {
-                    sh 'rsync -a --delete --stats ogs/web/public/ ' +
-                        'www-data@jenkins.opengeosys.org:' +
-                        '/var/www/dev.opengeosys.org'
+                    sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+                        'ogs/scripts/jenkins/known_hosts" ogs/web/public/ ' +
+                        'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
                 }
             } else {
                 publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
@@ -95,9 +95,9 @@ stage('Post (Linux-Docker)') {
 
     if (helper.isOriginMaster(this)) {
         sshagent(credentials: ['www-data_jenkins']) {
-            sh 'rsync -a --delete --stats -e "ssh -o StrictHostKeyChecking=no"' +
-                ' build/docs/ www-data@jenkins.opengeosys.org:'+
-                '/var/www/doxygen.opengeosys.org'
+            sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+                        'ogs/scripts/jenkins/known_hosts" build/docs/ ' +
+                        'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
         }
     }
 
