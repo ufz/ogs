@@ -605,8 +605,8 @@ public:
         {
             auto const& N_T = _ip_data[ip].N_p;
             auto const& N_p = N_T;
-            auto T_int_pt = N_T * T;
-            auto p_int_pt = N_p * p;
+            auto const T_int_pt = N_T * T;
+            auto const p_int_pt = N_p * p;
 
             x_position.setIntegrationPoint(ip);
             double const K_over_mu =
