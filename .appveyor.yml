@@ -43,8 +43,8 @@ before_build:
 
 build_script:
   - mkdir build & cd build
-  - conan install .. -o gui=True
-  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF -DOGS_BUILD_GUI=ON
+  - conan install .. # -o gui=True
+  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF # -DOGS_BUILD_GUI=ON
   - cmake --build . --config %configuration%
 
 test_script:
