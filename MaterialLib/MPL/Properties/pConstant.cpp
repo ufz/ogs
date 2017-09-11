@@ -16,7 +16,10 @@
 namespace MaterialPropertyLib
 {
 
-Constant::Constant(){};
+Constant::Constant(PropertyDataType const &v)
+{
+    _value = v;
+};
 
 } // MaterialPropertyLib
 
