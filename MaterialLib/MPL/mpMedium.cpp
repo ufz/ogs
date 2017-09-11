@@ -70,6 +70,15 @@ void Medium::createProperties(BaseLib::ConfigTree const& config)
     _properties = properties;
 }
 
+Phase* Medium::phase(std::size_t const index)
+{
+    return _phases[index];
+}
+std::size_t Medium::numberOfPhases(void)
+{
+    return _phases.size();
+}
+
 } // MaterialPropertyLib
 
 

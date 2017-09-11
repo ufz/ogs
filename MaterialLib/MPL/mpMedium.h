@@ -31,6 +31,9 @@ public:
     Medium(BaseLib::ConfigTree const&);
     void createPhases (BaseLib::ConfigTree const&);
     void createProperties (BaseLib::ConfigTree const&);
+
+    Phase* phase (std::size_t const);
+    std::size_t numberOfPhases(void);
 };
 
 }
