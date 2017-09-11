@@ -44,6 +44,11 @@ void Component::createProperties(BaseLib::ConfigTree const& config)
     }
 }
 
+Property* Component::property(PropertyEnum const &p)
+{
+    return _properties[p];
+}
+
 Component* newComponent (boost::optional<std::string> const &name)
 {
     /// Check whether a name is given or not

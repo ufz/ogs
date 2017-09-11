@@ -26,6 +26,7 @@ public:
     Component();
 
     void createProperties(BaseLib::ConfigTree const&);
+    Property* property(PropertyEnum const&);
 
 };
 
