@@ -66,6 +66,20 @@ void Phase::createProperties(BaseLib::ConfigTree const& config)
     _properties = properties;
 }
 
+Component* Phase::component(const std::size_t &index)
+{
+    return _components[index];
+}
+
+std::string Phase::name (void)
+{
+    return _name;
+}
+
+std::size_t Phase::numberOfComponents(void)
+{
+    return _components.size();
+}
 
 } // MaterialPropertyLib
 

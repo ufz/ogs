@@ -33,6 +33,10 @@ public:
     void createComponents(BaseLib::ConfigTree const&);
     void createProperties(BaseLib::ConfigTree const&);
 
+    Component* component (std::size_t const&);
+    std::string name (void);
+    std::size_t numberOfComponents(void);
+
 };
 
 } //MaterialPropertyLib
