@@ -1,0 +1,4 @@
+[core]
+    hooksPath = .hooks
+[submodule]
+	fetchJobs = 4

@@ -30,6 +30,7 @@ option(OGS_USE_PCH "Should pre-compiled headers be used?" ON)
 
 ### CMake includes ###
 include(scripts/cmake/PreFind.cmake)
+include(scripts/cmake/GitSetup.cmake)
 include(scripts/cmake/ConanSetup.cmake)
 include(scripts/cmake/CheckTypeSizes.cmake)
 include(scripts/cmake/Functions.cmake)
