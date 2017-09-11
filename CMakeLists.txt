@@ -23,11 +23,14 @@ list(APPEND CMAKE_PREFIX_PATH
 option(BUILD_SHARED_LIBS "Create shared libraries?" OFF)
 set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
     "Additional library installation path, e.g. /opt/local or C:/libs")
-set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults to native (*nix) / blend (MSVC).")
+set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, \
+    defaults to native (*nix) / blend (MSVC).")
 option(OGS_ENABLE_AVX2 "Enable the use of AVX2 instructions" OFF)
 option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 option(OGS_USE_PCH "Should pre-compiled headers be used?" ON)
 option(OGS_USE_CONAN "Should Conan package manager be used?" OFF)
+set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
+    never or list of libs to build" )
 
 ### CMake includes ###
 include(scripts/cmake/PreFind.cmake)

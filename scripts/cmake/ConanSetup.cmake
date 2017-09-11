@@ -73,5 +73,5 @@ conan_cmake_run(REQUIRES ${CONAN_REQUIRES}
                 OPTIONS ${CONAN_OPTIONS}
                 BASIC_SETUP
                 UPDATE
-                BUILD missing
+                BUILD ${OGS_CONAN_BUILD}
 )
