@@ -16,7 +16,8 @@
 namespace MaterialPropertyLib
 {
 
-Phase::Phase(){};
+Phase::Phase()
+: _name ("unknown"){};
 Phase::Phase(boost::optional<std::string> const& name)
 {
     if (name)
