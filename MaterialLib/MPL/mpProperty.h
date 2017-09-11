@@ -16,17 +16,38 @@
 #include "BaseLib/ConfigTree.h"
 #include "mpEnums.h"
 #include <array>
+#include <boost/variant.hpp>
 
 namespace MaterialPropertyLib
 {
+
+
+using Vector = std::array<double, 3>;
+using Tensor = std::array<double, 9>;
+
+using PropertyDataType = boost::variant<double, Vector, Tensor>;
+
 class Property
 {
+protected:
+    PropertyDataType _value;
 public:
     Property();
+    PropertyDataType value ();
 };
 
 using PropertyArray = std::array<Property*, number_of_property_enums>;
 Property* newProperty(BaseLib::ConfigTree const&);
+
+inline double getScalar (Property* p)
+{
+    return boost::get<double>(p->value());
+}
+template <typename T>
+T getValue (T const&, Property* p)
+{
+    return boost::get<T>(p->value());
+}
 
 } //MaterialPropertyLib
 
