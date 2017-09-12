@@ -93,7 +93,7 @@ if(COMPILER_IS_INTEL)
         message(STATUS "Set Intel release flags")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG")
     endif()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -xHOST -O3 -no-prec-div -DNDEBUG")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -xHOST")
 endif() # COMPILER_IS_INTEL
 
 # Profiling
