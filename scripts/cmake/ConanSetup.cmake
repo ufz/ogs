@@ -57,19 +57,26 @@ execute_process(COMMAND ${CONAN_CMD} remote list OUTPUT_VARIABLE CONAN_REMOTES)
 # Add ogs remote
 if("${CONAN_REMOTES}" MATCHES "ogs: https://ogs.jfrog.io/ogs/api/conan/conan")
     # Make sure ogs repo is first
-    execute_process(COMMAND ${CONAN_CMD} remote update -i 0 ogs https://ogs.jfrog.io/ogs/api/conan/conan)
+    execute_process(COMMAND ${CONAN_CMD} remote update -i 0 ogs
+        https://ogs.jfrog.io/ogs/api/conan/conan)
 else()
     # Add ogs repo as first
-    message(STATUS "Conan adding ogs remote repositoy (https://api.bintray.com/conan/ogs/conan)")
-    execute_process(COMMAND ${CONAN_CMD} remote add -i 0 ogs https://ogs.jfrog.io/ogs/api/conan/conan)
+    message(STATUS "Conan adding ogs remote repositoy \
+        (https://api.bintray.com/conan/ogs/conan)")
+    execute_process(COMMAND ${CONAN_CMD} remote add -i 0 ogs
+        https://ogs.jfrog.io/ogs/api/conan/conan)
 endif()
 
 # Add conan-community remote
-if("${CONAN_REMOTES}" MATCHES "conan-community: https://api.bintray.com/conan/conan-community/conan")
-    execute_process(COMMAND ${CONAN_CMD} remote update -i 2 conan-community https://api.bintray.com/conan/conan-community/conan)
+if("${CONAN_REMOTES}" MATCHES "conan-community: \
+    https://api.bintray.com/conan/conan-community/conan")
+    execute_process(COMMAND ${CONAN_CMD} remote update -i 2 conan-community
+        https://api.bintray.com/conan/conan-community/conan)
 else()
-    message(STATUS "Conan adding community remote repositoy (https://api.bintray.com/conan/conan-community/conan)")
-    execute_process(COMMAND ${CONAN_CMD} remote add -i 2 conan-community https://api.bintray.com/conan/conan-community/conan)
+    message(STATUS "Conan adding community remote repositoy \
+        (https://api.bintray.com/conan/conan-community/conan)")
+    execute_process(COMMAND ${CONAN_CMD} remote add -i 2 conan-community
+        https://api.bintray.com/conan/conan-community/conan)
 endif()
 
 # Remove libraries from Conan which are set to "System"
