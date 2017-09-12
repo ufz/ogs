@@ -49,30 +49,38 @@ endif()
 ### GNU C/CXX compiler
 if(COMPILER_IS_GCC)
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
-        message(FATAL_ERROR "GCC minimum required version is 4.9! You are using ${CMAKE_CXX_COMPILER_VERSION}.")
+        message(FATAL_ERROR "GCC minimum required version is 4.9! You are \
+            using ${CMAKE_CXX_COMPILER_VERSION}.")
     endif()
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
         message(STATUS "Set GCC release flags")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG")
     else()
         # Enable assertions in STL in debug mode.
-        if (NOT STL_NO_DEBUG)
-            set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT -D_GLIBCXX_DEBUG_PEDASSERT -D_GLIBCXX_DEBUG_VERIFY")
+        if(NOT STL_NO_DEBUG)
+            set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} \
+                -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT \
+                -D_GLIBCXX_DEBUG_PEDASSERT -D_GLIBCXX_DEBUG_VERIFY")
         endif()
     endif()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -Wno-deprecated -Wall -Wextra -fext-numeric-literals")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -Wno-deprecated -Wall \
+        -Wextra -fext-numeric-literals")
 endif() # COMPILER_IS_GCC
 
 ### Clang
 if(COMPILER_IS_CLANG)
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.5")
-        message(FATAL_ERROR "Aborting: Clang 3.5 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
+        message(FATAL_ERROR "Aborting: Clang 3.5 is required! Found version \
+            ${CMAKE_CXX_COMPILER_VERSION}")
     endif()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -Wall -Wno-c++98-compat-pedantic")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -Wall \
+        -Wno-c++98-compat-pedantic")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         # Enable assertions in STL in debug mode.
-        if (NOT STL_NO_DEBUG)
-            set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT -D_GLIBCXX_DEBUG_PEDASSERT -D_GLIBCXX_DEBUG_VERIFY")
+        if(NOT STL_NO_DEBUG)
+            set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} \
+                -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT \
+                -D_GLIBCXX_DEBUG_PEDASSERT -D_GLIBCXX_DEBUG_VERIFY")
         endif()
     endif()
 
@@ -91,20 +99,22 @@ endif() # COMPILER_IS_INTEL
 # Profiling
 if(OGS_PROFILE)
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
-        message(STATUS "When using profiling you should set CMAKE_BUILD_TYPE to Release.")
+        message(STATUS "When using profiling you should set CMAKE_BUILD_TYPE \
+            to Release.")
     endif()
     set(PROFILE_FLAGS "-pg -fno-omit-frame-pointer -O2 -DNDEBUG")
     # clang compiler does not know the following flags
     if(NOT COMPILER_IS_CLANG)
-        set(PROFILE_FLAGS "${PROFILE_FLAGS} -fno-inline-functions-called-once -fno-optimize-sibling-calls")
+        set(PROFILE_FLAGS "${PROFILE_FLAGS} -fno-inline-functions-called-once \
+            -fno-optimize-sibling-calls")
     endif()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROFILE_FLAGS}")
-endif ()
+endif()
 
 ### Windows
-if (WIN32)
+if(WIN32)
     ## For Visual Studio compiler
-    if (MSVC)
+    if(MSVC)
         if(OGS_CPU_ARCHITECTURE STREQUAL "native")
             set(CPU_FLAGS "/favor:blend")
         else()
@@ -118,13 +128,15 @@ if (WIN32)
             -D_CRT_NONSTDC_NO_WARNINGS
             -D_CRT_XNONSTDC_NO_WARNINGS
             -D__restrict__=__restrict   # this fixes #5
-            -DNOMINMAX # This fixes compile errors with std::numeric_limits<T>::min() / max()
+            # This fixes compile errors with
+            # std::numeric_limits<T>::min() / max()
+            -DNOMINMAX
         )
         # Sets warning level 3 and ignores some warnings
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} /W3 /wd4290 /wd4267 /wd4996")
-        # Allow big object files generated for template heavy code
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
-        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /ZI /Od /Ob0")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} /W3 /wd4290 \
+            /wd4267 /wd4996 /bigobj")
+        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} \
+            /ZI /Od /Ob0")
 
         DisableCompilerFlag(DEBUG /RTC1)
     # cygwin
@@ -135,7 +147,7 @@ if (WIN32)
             message(STATUS "Might be GCC under cygwin.")
         endif()
     endif()
-endif ()
+endif()
 
 # Missing OpenMP 3.0 implementation fix for Windows, this fixes #6
 if(MSVC)

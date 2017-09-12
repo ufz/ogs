@@ -36,8 +36,6 @@ if(OGS_USE_MPI)
     )
 endif()
 
-ADD_VTK_DEPENDENCY(MeshLib)
-
 if(TARGET Eigen)
     add_dependencies(MeshLib Eigen)
 endif()

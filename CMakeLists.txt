@@ -23,18 +23,22 @@ list(APPEND CMAKE_PREFIX_PATH
 option(BUILD_SHARED_LIBS "Create shared libraries?" OFF)
 set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
     "Additional library installation path, e.g. /opt/local or C:/libs")
-set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults to native (*nix) / blend (MSVC).")
+set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, \
+    defaults to native (*nix) / blend (MSVC).")
 option(OGS_ENABLE_AVX2 "Enable the use of AVX2 instructions" OFF)
 option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 option(OGS_USE_PCH "Should pre-compiled headers be used?" ON)
+option(OGS_USE_CONAN "Should Conan package manager be used?" OFF)
+set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
+    never or list of libs to build" )
 
 ### CMake includes ###
 include(scripts/cmake/PreFind.cmake)
-include(scripts/cmake/ConanSetup.cmake)
 include(scripts/cmake/CheckTypeSizes.cmake)
 include(scripts/cmake/Functions.cmake)
 include(scripts/cmake/SubmoduleSetup.cmake)
 include(scripts/cmake/CMakeSetup.cmake)
+include(scripts/cmake/ConanSetup.cmake)
 include(scripts/cmake/CompilerSetup.cmake)
 include(scripts/cmake/Find.cmake)
 include(scripts/cmake/CCacheSetup.cmake)
@@ -153,16 +157,12 @@ option(OGS_SYNC_SUBMODULES "Sync git submodules on CMake run. Overwrites custom 
 option(OGS_DOWNLOAD_ADDITIONAL_CONTENT "Should addional content such as manuals be downloaded and packaged?" OFF)
 include(scripts/cmake/packaging/Pack.cmake)
 
-# Third-party libraries
-# Default checks for system first, then builds locally
-set(OGS_LIB_VTK "Default" CACHE STRING "Which VTK library should be used?")
-set(OGS_LIB_BOOST "Default" CACHE STRING "Which Boost library should be used?")
-set(OGS_LIB_EIGEN "Default" CACHE STRING "Which Eigen library should be used?")
-set_property(CACHE
-    OGS_LIB_VTK
-    OGS_LIB_BOOST
-    OGS_LIB_EIGEN
-    PROPERTY STRINGS "Default" "System" "Local")
+# Third-party libraries, names come from Conan package names
+set(OGS_LIBS VTK Boost Eigen3 Qt Shapelib libgeotiff CACHE INTERNAL "")
+foreach(LIB ${OGS_LIBS})
+    set(OGS_LIB_${LIB} "Default" CACHE STRING "Which ${LIB} library should be used?")
+    set_property(CACHE OGS_LIB_${LIB} PROPERTY STRINGS "Default" "System")
+endforeach(LIB)
 
 # Options controlling which FEM elements will be compiled
 set(OGS_MAX_ELEMENT_DIM   3 CACHE STRING "Maximum dimension of FEM elements to be built.")
@@ -246,19 +246,11 @@ add_definitions(-DLOGOG_LEVEL=${OGS_LOG_LEVEL})
 ######################
 
 # External projects
-include(scripts/cmake/ExternalProjectBoost.cmake)
-include(VtkModules)
 if(OGS_INSITU)
-    include(ExternalProjectCatalyst)
     include("${PARAVIEW_USE_FILE}")
     add_definitions(-DUSE_INSITU)
-else()
-    include(ExternalProjectVtk)
 endif()
 
-include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
-include(scripts/cmake/ExternalProjectEigen.cmake)
-include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 # Add subdirectories with the projects
 add_subdirectory( ThirdParty )

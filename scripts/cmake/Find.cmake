@@ -4,7 +4,8 @@
 
 # Find doxygen
 if(WIN32)
-    find_program(DOXYGEN_DOT_EXECUTABLE NAMES dot PATHS "$ENV{ProgramFiles}/Graphviz*/bin")
+    find_program(DOXYGEN_DOT_EXECUTABLE NAMES dot
+        PATHS "$ENV{ProgramFiles}/Graphviz*/bin")
     find_package(Doxygen QUIET)
     if(DOXYGEN_DOT_PATH)
         file(TO_NATIVE_PATH ${DOXYGEN_DOT_PATH} DOXYGEN_DOT_PATH)
@@ -60,6 +61,25 @@ find_program(MODULE_CMD modulecmd
 ######################
 ### Find libraries ###
 ######################
+find_package(Boost REQUIRED)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
+include(VtkModules)
+find_package(VTK COMPONENTS ${VTK_MODULES} REQUIRED)
+include(${VTK_USE_FILE})
+if(NOT OGS_USE_CONAN)
+    foreach(DIR ${VTK_INCLUDE_DIRS})
+        if("${DIR}" MATCHES ".*vtknetcdf.*")
+            include_directories(SYSTEM ${DIR}/../cxx ${DIR}/include)
+        elseif("${DIR}" MATCHES ".*vtk.*")
+            include_directories(SYSTEM ${DIR}/vtknetcdf/include)
+        endif()
+    endforeach()
+    include_directories(SYSTEM ${VTK_DIR}/../ThirdParty/netcdf/vtknetcdf/cxx)
+endif()
+
+find_package(Eigen3 REQUIRED)
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 ## pthread, is a requirement of logog ##
 if(CMAKE_CROSSCOMPILING)
@@ -92,7 +112,7 @@ if(OGS_BUILD_GUI)
     if(USE_CONAN)
       set(Qt5_DIR ${CONAN_QT_ROOT}/lib/cmake/Qt5)
     endif()
-    find_package( Qt5 5.2 REQUIRED Gui Widgets Xml XmlPatterns)
+    find_package(Qt5 5.2 REQUIRED Gui Widgets Xml XmlPatterns)
     cmake_policy(SET CMP0020 NEW)
     set(CMAKE_AUTOMOC TRUE)
     set(CMAKE_AUTOUIC TRUE)
@@ -129,10 +149,11 @@ endif()
 if(OGS_USE_PETSC)
     message(STATUS "Configuring for PETSc")
 
-    option(FORCE_PETSC_EXECUTABLE_RUNS "Force CMake to accept a given PETSc configuration" ON)
+    option(FORCE_PETSC_EXECUTABLE_RUNS
+        "Force CMake to accept a given PETSc configuration" ON)
 
-    ##Force CMake to accept a given PETSc configuration in case the failure of MPI tests
-    ##This may cause the compilation broken.
+    # Force CMake to accept a given PETSc configuration in case the failure of
+    # MPI tests. This may cause the compilation broken.
     if(FORCE_PETSC_EXECUTABLE_RUNS)
         set(PETSC_EXECUTABLE_RUNS YES)
     endif()

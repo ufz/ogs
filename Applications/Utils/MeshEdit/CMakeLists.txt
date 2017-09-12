@@ -1,28 +1,23 @@
 
 add_executable(moveMeshNodes moveMeshNodes.cpp)
 target_link_libraries(moveMeshNodes MeshLib)
-ADD_VTK_DEPENDENCY(moveMeshNodes)
 set_target_properties(moveMeshNodes PROPERTIES FOLDER Utilities)
 
 add_executable(MapGeometryToMeshSurface
     MapGeometryToMeshSurface.cpp )
 target_link_libraries(MapGeometryToMeshSurface MeshGeoToolsLib MeshLib)
-ADD_VTK_DEPENDENCY(MapGeometryToMeshSurface)
 set_target_properties(MapGeometryToMeshSurface PROPERTIES FOLDER Utilities)
 
 add_executable(removeMeshElements removeMeshElements.cpp)
 target_link_libraries(removeMeshElements MeshLib)
-ADD_VTK_DEPENDENCY(removeMeshElements)
 set_target_properties(removeMeshElements PROPERTIES FOLDER Utilities)
 
 add_executable(NodeReordering NodeReordering.cpp)
 target_link_libraries(NodeReordering MeshLib)
-ADD_VTK_DEPENDENCY(NodeReordering)
 set_target_properties(NodeReordering PROPERTIES FOLDER Utilities)
 
 add_executable(MoveMesh MoveMesh.cpp)
 target_link_libraries(MoveMesh MeshLib)
-ADD_VTK_DEPENDENCY(MoveMesh)
 set_target_properties(MoveMesh PROPERTIES FOLDER Utilities)
 
 add_executable(appendLinesAlongPolyline appendLinesAlongPolyline.cpp)
@@ -31,22 +26,18 @@ target_link_libraries(appendLinesAlongPolyline
     MeshLib
     ApplicationsFileIO
 )
-ADD_VTK_DEPENDENCY(appendLinesAlongPolyline)
 set_target_properties(appendLinesAlongPolyline PROPERTIES FOLDER Utilities)
 
 add_executable(editMaterialID editMaterialID.cpp)
 target_link_libraries(editMaterialID MeshLib)
-ADD_VTK_DEPENDENCY(editMaterialID)
 set_target_properties(editMaterialID PROPERTIES FOLDER Utilities)
 
 add_executable(checkMesh checkMesh.cpp)
 target_link_libraries(checkMesh MeshLib)
-ADD_VTK_DEPENDENCY(checkMesh)
 set_target_properties(checkMesh PROPERTIES FOLDER Utilities)
 
 add_executable(reviseMesh reviseMesh.cpp)
 target_link_libraries (reviseMesh MeshLib)
-ADD_VTK_DEPENDENCY(reviseMesh)
 set_target_properties(reviseMesh PROPERTIES FOLDER Utilities)
 
 add_executable(ResetPropertiesInPolygonalRegion
@@ -76,7 +67,6 @@ target_link_libraries(CreateBoundaryConditionsAlongPolylines
     MeshLib
     ApplicationsFileIO
 )
-ADD_VTK_DEPENDENCY(CreateBoundaryConditionsAlongPolylines)
 set_target_properties(CreateBoundaryConditionsAlongPolylines
     PROPERTIES FOLDER Utilities)
 

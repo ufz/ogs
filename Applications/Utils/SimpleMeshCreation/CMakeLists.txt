@@ -6,7 +6,6 @@ if(OGS_BUILD_GUI)
         ApplicationsFileIO
         MeshLib
     )
-    ADD_VTK_DEPENDENCY(createMeshElemPropertiesFromASCRaster)
 endif() # OGS_BUILD_GUI (VtkVis-target is existing)
 
 

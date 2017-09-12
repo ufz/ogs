@@ -128,8 +128,6 @@ add_library(VtkVis
     ${UIS}
 )
 
-ADD_VTK_DEPENDENCY(VtkVis)
-
 if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
     target_link_libraries(VtkVis INTERFACE ${GEOTIFF_LIBRARIES})

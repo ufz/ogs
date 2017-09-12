@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.7') _
+@Library('jenkins-pipeline@1.0.8') _
 
 def builders = [:]
 def helper = new ogs.helper()

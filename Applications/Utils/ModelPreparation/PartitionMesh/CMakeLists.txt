@@ -1,7 +1,6 @@
 add_executable(partmesh PartitionMesh.cpp NodeWiseMeshPartitioner.h NodeWiseMeshPartitioner.cpp)
 set_target_properties(partmesh PROPERTIES FOLDER Utilities)
 target_link_libraries(partmesh MeshLib)
-ADD_VTK_DEPENDENCY(partmesh)
 
 ####################
 ### Installation ###

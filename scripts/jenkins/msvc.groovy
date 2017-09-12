@@ -1,15 +1,14 @@
 
 def defaultCMakeOptions =
-    '-DOGS_LIB_BOOST=System ' +
-    '-DOGS_LIB_VTK=System ' +
-    '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
+    '-DOGS_USE_CONAN=ON ' +
+    '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON '
 
 def guiCMakeOptions =
     '-DOGS_BUILD_GUI=ON ' +
     '-DOGS_BUILD_UTILS=ON ' +
     '-DOGS_BUILD_TESTS=OFF ' +
     '-DOGS_BUILD_SWMM=ON ' +
-    '-DOGS_BUILD_METIS=ON'
+    '-DOGS_BUILD_METIS=ON '
 
 def configure = new ogs.configure()
 def build = new ogs.build()
@@ -32,8 +31,7 @@ withEnv(helper.getEnv(this)) {
 
     stage('Data Explorer (Win)') {
         configure.win(
-            cmakeOptions: defaultCMakeOptions + ' ' + guiCMakeOptions, keepDir: true,
-            conanOptions: "-o gui=True",
+            cmakeOptions: defaultCMakeOptions + guiCMakeOptions, keepDir: true,
             script: this
         )
         build.win(script: this)

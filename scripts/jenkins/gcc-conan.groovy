@@ -1,10 +1,9 @@
 def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache ' +
-    '-v /home/jenkins/conan-data:/root/.conan/data'
+    '-v /home/jenkins/conan-data:/home/jenkins/.conan/data'
 
 def defaultCMakeOptions =
     '-DCMAKE_BUILD_TYPE=Release ' +
-    '-DOGS_LIB_BOOST=System ' +
-    '-DOGS_LIB_VTK=System ' +
+    '-DOGS_USE_CONAN=ON ' +
     '-DOGS_CPU_ARCHITECTURE=generic '
 
 def guiCMakeOptions =
@@ -25,8 +24,7 @@ image.inside(defaultDockerArgs) {
     stage('Configure (Linux-Docker)') {
         configure.linux(
             cmakeOptions: defaultCMakeOptions,
-            script: this,
-            useConan: true
+            script: this
         )
     }
 
@@ -41,17 +39,15 @@ image.inside(defaultDockerArgs) {
     stage('Data Explorer (Linux-Docker)') {
         configure.linux(
             cmakeOptions: defaultCMakeOptions + guiCMakeOptions,
-            conanOptions: "-o gui=True",
             keepDir: true,
-            script: this,
-            useConan: true
+            script: this
         )
         build.linux(script: this)
     }
 }
 
 stage('Archive (Linux-Docker)') {
-    archiveArtifacts 'build/*.tar.gz'
+    archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
 }
 
 stage('Post (Linux-Docker)') {

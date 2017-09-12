@@ -3,8 +3,6 @@
 node('docker') {
     def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
     def defaultCMakeOptions =
-        '-DOGS_LIB_BOOST=System ' +
-        '-DOGS_LIB_VTK=System ' +
         '-DOGS_ADDRESS_SANITIZER=ON ' +
         '-DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON ' +
         '-DOGS_BUILD_UTILS=ON'
