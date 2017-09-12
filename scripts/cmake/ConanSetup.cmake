@@ -35,11 +35,23 @@ if(OGS_BUILD_GUI)
     )
 endif()
 
-# Add Conan ogs remote
+# Find Conan and do version check
 find_program(CONAN_CMD conan)
 if(NOT CONAN_CMD)
     message(FATAL_ERROR "Conan executable not found!")
 endif()
+execute_process(COMMAND ${CONAN_CMD} --version
+    OUTPUT_VARIABLE CONAN_VERSION_OUTPUT)
+# Strip 'Conan version' & newline
+string(SUBSTRING ${CONAN_VERSION_OUTPUT} 14 -1 CONAN_VERSION)
+string(STRIP ${CONAN_VERSION} CONAN_VERSION)
+set(CONAN_VERSION_REQUIRED 0.26.0)
+if(${CONAN_VERSION} VERSION_LESS ${CONAN_VERSION_REQUIRED})
+    message(FATAL_ERROR "Conan outdated. Installed: ${CONAN_VERSION}, \
+        required: ${CONAN_VERSION_REQUIRED}. Consider updating via 'pip \
+        install conan --upgrade'.")
+endif()
+
 execute_process(COMMAND ${CONAN_CMD} remote list OUTPUT_VARIABLE CONAN_REMOTES)
 
 # Add ogs remote
