@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
- * \date   Sep 7, 2017
- * \brief
+ * \date   12.09.2017
+ * \brief  
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -10,13 +10,16 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MATERIALLIB_MPL_COMPONENTS_COMPONENTS_H_
-#define MATERIALLIB_MPL_COMPONENTS_COMPONENTS_H_
 
-#include "cWater.h"
-#include "cSalt.h"
 #include "cCarbonDioxide.h"
+#include "../Properties/properties.h"
 
+namespace MaterialPropertyLib
+{
 
+CarbonDioxide::CarbonDioxide()
+{
+	_properties[name] = new Constant("CarbonDioxide");
+};
 
-#endif /* MATERIALLIB_MPL_COMPONENTS_COMPONENTS_H_ */
+} // MaterialPropertyLib
