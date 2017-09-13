@@ -79,6 +79,26 @@ std::size_t Medium::numberOfPhases(void)
     return _phases.size();
 }
 
+void Medium::summary()
+{
+	auto const nPhase = numberOfPhases();
+	std::cout << "Number of phases: " << nPhase << "\n";
+	for (size_t p=0; p < nPhase; ++p)
+	{
+		std::cout << "   Phase number " << p << ":\n";
+		auto const nComponents = _phases[p]->numberOfComponents();
+		std::cout << "   Number of Components: " << nComponents << "\n";
+		for (size_t c=0; c < nComponents; ++c)
+		{
+			std::cout << "      Component number " << c << ":\n";
+			std::string component_name =
+					boost::get<std::string>
+					(_phases[p]->component(c)->property(name)->value());
+			std::cout << component_name << "\n";
+		}
+	}
+}
+
 } // MaterialPropertyLib
 
 
