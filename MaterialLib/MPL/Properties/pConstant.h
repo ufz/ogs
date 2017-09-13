@@ -17,7 +17,11 @@
 
 namespace MaterialPropertyLib
 {
-
+/**
+ * The constant property class. This property simply retrieves the stored
+ * constant value. It accepts all datatypes defined in PropertyDataType
+ * (currently: double, Vector, Tensor, std::string)
+ */
 class Constant : public Property
 {
 public:

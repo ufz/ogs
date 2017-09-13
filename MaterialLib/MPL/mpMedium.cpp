@@ -12,62 +12,93 @@
  */
 
 #include "mpMedium.h"
+#include "mpPhase.h"
+#include "mpComponent.h"
+#include "Properties/pAverageVolumeFraction.h"
+#include <iostream>
+#include <string>
+#include <boost/variant.hpp>
 
 namespace MaterialPropertyLib
 {
-
+/**
+ * This constructor parses the "phases" and "properties" subtrees
+ * of the config tree and calls create methods for the phase vector
+ * and the properties array. Medium properties are optional. If not
+ * defined, default properties are assigned.
+ */
 Medium::Medium(BaseLib::ConfigTree const& config)
 {
-    // A Medium consists of phases and properties only.
-    // Parse the phase configurations and push them into the
-    // Medium::_phases attribute;
+	// Parsing the phases
     auto const phases_config = config.getConfigSubtree("phases");
     createPhases(phases_config);
-
-    // Parse the property configurations. These are medium properties only.
-    // The properties of the phases are handled in the respective phases
-    auto const properties_config = config.getConfigSubtree("properties");
-    createProperties(properties_config);
+    // Initializing default properties
+    createDefaultProperties();
+    // Parsing medium properties, overwriting the defaults.
+    auto const properties_config = config.getConfigSubtreeOptional("properties");
+    if (properties_config)
+    	createProperties(properties_config.get());
 }
-
+/**
+ * This method creates the phases of the medium. Unlike a medium, a
+ * phase may have a name. However, this is silly at the moment since
+ * this name still has no effect (except of some benefits in regard of
+ * readability).
+ * Phase components are required (a phase consists of at least one
+ * component).
+ * Phase properties are optional. If not given, default properties
+ * are assigned. These default properties average the component
+ * properties, weighted by mole fraction.
+ */
 void Medium::createPhases(BaseLib::ConfigTree const& config)
 {
     std::vector<Phase*> phases;
     for (auto phase_config : config.getConfigSubtreeList("phase"))
     {
-        // Unlike a medium, a phase may have a name. However, this is
-        // silly at the moment since this name has no effect (except of some
-        // benefits in terms of readability)
+        // Phase name is optional
         auto const phase_name = phase_config.getConfigParameterOptional<std::string>("name");
-//        Phase newPhase (phase_name);
         Phase* newPhase = new Phase(phase_name);
-        // Furthermore, a phase (similar to a medium) consists of components and
-        // properties.
-        // Parsing the components:
+        // Parsing the components
         auto const components_config = phase_config.getConfigSubtree("components");
         newPhase->createComponents (components_config);
-        // Parsing the phase properties:
-        auto const properties_config = phase_config.getConfigSubtree("properties");
-        newPhase->createProperties (properties_config);
+
+        // Properties of phases are optional
+        if (auto const properties_config = phase_config.getConfigSubtreeOptional("properties"))
+                	newPhase->createProperties (properties_config.get());
+        // No else branch here, default properties are used. Those defaults
+        // were assigned by the phase constructor.
         phases.push_back(newPhase);
     }
     _phases = phases;
 }
-
+/**
+ * This method creates the properties of the Medium as defined in the
+ * prj-file. Only specified properties overwrite the default properties.
+ */
 void Medium::createProperties(BaseLib::ConfigTree const& config)
 {
     for (auto property_config : config.getConfigSubtreeList("property"))
     {
-        /// create a new Property based on configuration tree
-        Property* property = newProperty (property_config);
+        // create a new Property based on configuration tree
+        Property* property = newProperty (property_config, this);
         /// parse the name of the property
         auto const property_name =
                 property_config.getConfigParameter<std::string>("name");
-        /// insert the newly created property at the right place
-        /// into the property array
-        properties[convertStringToProperty(property_name)];
+        // insert the newly created property at the right place
+        // into the property array
         _properties[convertStringToProperty(property_name)]=property;
     }
+}
+
+/**
+ * This method defines default properties of the medium. Most properties
+ * are fine with the volume fraction average, but special-defaults are
+ * allowed as well...
+ */
+void Medium::createDefaultProperties(void)
+{
+	for (size_t i=0; i < number_of_property_enums; ++i)
+		this->_properties[i] = new AverageVolumeFraction(this);
 }
 
 Phase* Medium::phase(std::size_t const index)

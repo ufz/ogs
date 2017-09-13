@@ -18,23 +18,38 @@
 
 namespace MaterialPropertyLib
 {
+/**
+ * \class Component
+ * \brief This class defines components (substances).
+ * \details The Component class is a base class used for not
+ * further specified components. Components are specified by
+ * the property 'name'. For specified components we derive
+ * special classes from this class (for clarity they are located
+ * in the 'components' subfolder).
+ */
 class Component
 {
 protected:
+	/// The property array of the component.
     PropertyArray _properties;
 public:
     Component();
+    ~Component(){};
 
+    /// The method for creating component properties.
     void createProperties(BaseLib::ConfigTree const&);
+    /// The method for creating default properties.
+    void createDefaultProperties(void);
+    /// A get-function for retrieving a cartain property.
     Property* property(PropertyEnum const&);
 
 };
-
+/*
+ * Method for creating a new component based on the specified
+ * component name.
+ */
 Component* newComponent (boost::optional<std::string> const &name);
 
 } //MaterialPropertyLib
-
-
-
 
 #endif /* MATERIALLIB_MPL_MPCOMPONENT_H_ */

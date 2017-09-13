@@ -14,29 +14,48 @@
 #define MATERIALLIB_MPL_MPPHASE_H_
 
 #include "BaseLib/ConfigTree.h"
-#include "mpComponent.h"
+#include "mpProperty.h"
 
 #include <string>
 #include <vector>
 
 namespace MaterialPropertyLib
 {
+
+class Component;
+
+/**
+ * \class Phase
+ * \brief This class defines material phases.
+ * \details The Phase class consists of a vector of
+ * components and an array of properties.
+ */
 class Phase
 {
 private:
-    std::string _name;
     std::vector<Component*> _components;
     PropertyArray _properties;
 public:
-    Phase();
+    /// The Phase constructor is called with the optional
+    /// phase name.
     Phase(boost::optional<std::string> const&);
+    ~Phase(){};
+
+    /// The method creating phase components based on config subtree.
     void createComponents(BaseLib::ConfigTree const&);
+    /// The method creating phase properties based on config subtree.
     void createProperties(BaseLib::ConfigTree const&);
+    /// The method initializing the phase properties.
+    void createDefaultProperties(void);
 
+    /// A simple get-function for a component. The argument refers to the
+    /// Index of the component in the components vector.
     Component* component (std::size_t const&);
-    std::string name (void);
+    /// A get-function for a property. The argument refers to the
+    /// name of the property.
+    Property* property(PropertyEnum const&);
+    /// A get-function for retrieving the number of components in this phase
     std::size_t numberOfComponents(void);
-
 };
 
 } //MaterialPropertyLib

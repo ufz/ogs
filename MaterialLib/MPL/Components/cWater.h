@@ -17,7 +17,12 @@
 
 namespace MaterialPropertyLib
 {
-
+/**
+ * \class Water
+ * \brief A class for Water derived from Component
+ * \details This class can holds material constants and default
+ * properties of ordinary water
+ */
 class Water : public Component
 {
 public:

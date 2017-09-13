@@ -15,7 +15,11 @@
 
 namespace MaterialPropertyLib
 {
-
+/**
+ * This constructor accepts single values of any data type defined in the
+ * PropertyDataType definition and sets the protected attribute _value
+ * of the base class Property to that value.
+ */
 Constant::Constant(PropertyDataType const &v)
 {
     _value = v;

@@ -12,11 +12,15 @@
  */
 
 #include "cWater.h"
+#include "../Properties/properties.h"
 
 namespace MaterialPropertyLib
 {
 
-Water::Water(){};
+Water::Water()
+{
+	_properties[name] = new Constant("Water");
+};
 
 } // MaterialPropertyLib
 
