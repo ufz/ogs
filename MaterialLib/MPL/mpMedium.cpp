@@ -56,7 +56,6 @@ void Medium::createPhases(BaseLib::ConfigTree const& config)
 
 void Medium::createProperties(BaseLib::ConfigTree const& config)
 {
-    PropertyArray properties;
     for (auto property_config : config.getConfigSubtreeList("property"))
     {
         /// create a new Property based on configuration tree
@@ -67,8 +66,8 @@ void Medium::createProperties(BaseLib::ConfigTree const& config)
         /// insert the newly created property at the right place
         /// into the property array
         properties[convertStringToProperty(property_name)];
+        _properties[convertStringToProperty(property_name)]=property;
     }
-    _properties = properties;
 }
 
 Phase* Medium::phase(std::size_t const index)
