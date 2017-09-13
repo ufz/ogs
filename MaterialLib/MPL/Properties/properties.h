@@ -13,7 +13,9 @@
 #ifndef MATERIALLIB_MPL_PROPERTIES_PROPERTIES_H_
 #define MATERIALLIB_MPL_PROPERTIES_PROPERTIES_H_
 
+#include "pAverageMoleFraction.h"
+#include "pAverageVolumeFraction.h"
 #include "pConstant.h"
-
+#include "pLinearTemperature.h"
 
 #endif /* MATERIALLIB_MPL_PROPERTIES_PROPERTIES_H_ */
