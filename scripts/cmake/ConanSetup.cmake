@@ -62,7 +62,7 @@ if("${CONAN_REMOTES}" MATCHES "ogs: https://ogs.jfrog.io/ogs/api/conan/conan")
 else()
     # Add ogs repo as first
     message(STATUS "Conan adding ogs remote repositoy \
-        (https://api.bintray.com/conan/ogs/conan)")
+        (https://ogs.jfrog.io/ogs/api/conan/conan)")
     execute_process(COMMAND ${CONAN_CMD} remote add -i 0 ogs
         https://ogs.jfrog.io/ogs/api/conan/conan)
 endif()
