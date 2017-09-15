@@ -29,7 +29,8 @@ public:
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const t) const
     {
-        for (std::size_t i=0; i<_boundary_conditions.size(); ++i) {
+        auto const n_bcs = _boundary_conditions.size();
+        for (std::size_t i=0; i<n_bcs; ++i) {
             auto const& bc = *_boundary_conditions[i];
             auto& dirichlet_storage = _dirichlet_bcs[i];
             bc.getEssentialBCValues(t, dirichlet_storage);
