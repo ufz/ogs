@@ -59,9 +59,6 @@ public:
     /// Copy constructor
     TemplateElement(const TemplateElement &e);
 
-    /// Destructor
-    ~TemplateElement() override = default;
-
     /// Returns a copy of this object.
     Element* clone() const override { return new TemplateElement(*this); }
     Element* clone(Node** nodes, std::size_t id) const override

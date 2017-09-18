@@ -93,7 +93,8 @@ public:
     template<class T_SUBVEC>
     void add(const std::vector<IndexType> &pos, const T_SUBVEC &sub_vec)
     {
-        for (std::size_t i=0; i<pos.size(); ++i) {
+        auto const length = pos.size();
+        for (std::size_t i=0; i<length; ++i) {
             add(pos[i], sub_vec[i]);
         }
     }
