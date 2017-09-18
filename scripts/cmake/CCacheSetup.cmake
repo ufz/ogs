@@ -2,6 +2,19 @@ if(NOT CCACHE_TOOL_PATH)
     return()
 endif()
 
+# Check ccache version
+set(CCACHE_VERSION_REQUIRED 3.2.0)
+execute_process(COMMAND ${CCACHE_TOOL_PATH} --version
+    OUTPUT_VARIABLE CCACHE_VERSION
+)
+if("${CCACHE_VERSION}" MATCHES "ccache version ([0-9]\\.[0-9]\\.[0-9])")
+    if(${CMAKE_MATCH_1} VERSION_LESS ${CCACHE_VERSION_REQUIRED})
+        message(STATUS "CCache outdated. Installed: ${CMAKE_MATCH_1}, \
+            required: ${CCACHE_VERSION_REQUIRED}. Caching disabled.")
+        return()
+    endif()
+endif()
+
 # Set ccache as the compiler launcher
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
 set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
