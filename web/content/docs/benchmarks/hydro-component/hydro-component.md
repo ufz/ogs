@@ -56,7 +56,7 @@ Left side boundary conditions for these setups are pressure $p=1$ and concentrat
 {{< img src="../gif/DiffusionAndStorageAndAdvectionAndDispersion.gif" title="*Diffusion, Storage, Advection, and Dispersion*">}}
 {{< img src="../gif/DiffusionAndStorageAndAdvectionAndDispersionHalf.gif" title="*Diffusion, Storage, Advection, and Dispersion Half*">}}
 
-#### Diffusion, Storage, Gravity, and Dispersion 
+#### Diffusion, Storage, Gravity, and Dispersion
 
 Boundary condition for this setup is pressure $p=0$ for the top left corner and concentration $c=1$ for half of the left side. Relation between concentration and gravity is $beta_c = 1$.
 
