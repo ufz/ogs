@@ -68,8 +68,7 @@ else()
 endif()
 
 # Add conan-community remote
-if("${CONAN_REMOTES}" MATCHES "conan-community: \
-    https://api.bintray.com/conan/conan-community/conan")
+if("${CONAN_REMOTES}" MATCHES "conan-community: https://api.bintray.com/conan/conan-community/conan")
     execute_process(COMMAND ${CONAN_CMD} remote update -i 2 conan-community
         https://api.bintray.com/conan/conan-community/conan)
 else()
