@@ -139,22 +139,85 @@ void Medium::resetPropertyValues()
 }
 void Medium::summary()
 {
+    VariableArray stdRefCond;
+
+    stdRefCond[T] = 293.15;
+    stdRefCond[p_GR] = 101325.;
+    stdRefCond[p_LR] = 101325.;
+
+    std::cout << "\n";
+    std::cout << "Material summary: Showing only non-zero properties!\n";
+    std::cout << "==================================================\n";
+
+    std::string mediumName = getString(this->property(name));
+     std::cout << "Medium: \'" << mediumName << "\'\n";
+    std::cout << "----------";
+    for (short i=0; i<mediumName.length(); i++)
+        std::cout << "-";
+    std::cout << "\n";
+
 	auto const nPhase = numberOfPhases();
 	std::cout << "Number of phases: " << nPhase << "\n";
+
 	for (size_t p=0; p < nPhase; ++p)
 	{
-		std::cout << "   Phase number " << p << ":\n";
+	    Phase* thisPhase = _phases[p];
+	    std::string phaseName = getString(thisPhase->property(name));
+		std::cout << "   Phase number " << p << ": \'" << phaseName << "\'\n";
+	    std::cout << "   -----------------";
+	    for (short i=0; i<phaseName.length(); i++)
+	        std::cout << "-";
+	    std::cout << "\n";
 		auto const nComponents = _phases[p]->numberOfComponents();
 		std::cout << "   Number of Components: " << nComponents << "\n";
 		for (size_t c=0; c < nComponents; ++c)
 		{
-			std::cout << "      Component number " << c << ":\n";
-			std::string component_name =
-					boost::get<std::string>
-					(_phases[p]->component(c)->property(name)->value());
-			std::cout << component_name << "\n";
+		    Component* thisComponent = thisPhase->component(c);
+		    std::string componentName =
+		            getString(thisComponent->property(name));
+
+		    std::cout << "      Component number " << c << ": \'" << componentName << "\'\n";
+	        std::cout << "      ---------------------";
+	        for (short i=0; i<componentName.length(); i++)
+	            std::cout << "-";
+	        std::cout << "\n";
+		    for (size_t prop = 0; prop < number_of_property_enums; ++prop)
+		    {
+		        Property* thisProperty = thisComponent->property(static_cast<PropertyEnum>(prop));
+		        auto property_name = convertEnumToString[prop];
+		        if (property_name == "name")
+		            continue;
+		        const double property_value = getScalar(thisProperty);
+		        if (property_value != 0)
+		        std::cout << "         " << property_name << ": "
+		                << property_value << "\n";
+
+		    }
 		}
+        for (size_t prop = 0; prop < number_of_property_enums; ++prop)
+        {
+            Property* thisProperty = thisPhase->property(static_cast<PropertyEnum>(prop));
+            auto property_name = convertEnumToString[prop];
+            if (property_name == "name")
+                continue;
+            const double property_value = getScalar(thisProperty);
+            if (property_value != 0)
+            std::cout << "      " << property_name << ": "
+                    << property_value << "\n";
+        }
 	}
+    for (size_t prop = 0; prop < number_of_property_enums; ++prop)
+    {
+        Property* thisProperty = property(static_cast<PropertyEnum>(prop));
+        auto property_name = convertEnumToString[prop];
+        if (property_name == "name")
+            continue;
+        const double property_value = getScalar(thisProperty);
+        if (property_value != 0)
+        std::cout << "   " << property_name << ": "
+                << property_value << "\n";
+    }
+
 }
 
 } // MaterialPropertyLib
