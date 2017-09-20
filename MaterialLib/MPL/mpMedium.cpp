@@ -119,6 +119,12 @@ Phase* Medium::phase(std::size_t const index)
 {
     return _phases[index];
 }
+
+Property* Medium::property(PropertyEnum const &p)
+{
+    return _properties[p];
+}
+
 std::size_t Medium::numberOfPhases(void)
 {
     return _phases.size();
