@@ -28,7 +28,7 @@ Component::Component()
 
 	// Some properties can be initialized by other default
 	// properties:
-	_properties[name] = new Constant ("unspecified");
+	_properties[name] = new Constant ("no_name");
 }
 /**
  * \brief The method reads the 'properties' tag in the prj-file and creates
