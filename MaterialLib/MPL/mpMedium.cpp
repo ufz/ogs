@@ -15,6 +15,7 @@
 #include "mpPhase.h"
 #include "mpComponent.h"
 #include "Properties/pAverageVolumeFraction.h"
+#include "Properties/pConstant.h"
 #include <iostream>
 #include <string>
 #include <boost/variant.hpp>
@@ -29,13 +30,26 @@ namespace MaterialPropertyLib
  */
 Medium::Medium(BaseLib::ConfigTree const& config)
 {
+    // Default properties are initialized in the first place, such
+    // that user-defined properties overwrite those defaults.
+    createDefaultProperties();
+
+    // A name of a medium is entirely optional and has no effects
+    // other than a small gain of clarity in case several media
+    // should be defined.
+    auto const medium_name =
+            config.getConfigParameterOptional<std::string>("name");
+    if (medium_name)
+            _properties[name] = new Constant(medium_name.get());
+        else
+            _properties[name] = new Constant("no_name");
+
 	// Parsing the phases
     auto const phases_config = config.getConfigSubtree("phases");
     createPhases(phases_config);
-    // Initializing default properties
-    createDefaultProperties();
     // Parsing medium properties, overwriting the defaults.
-    auto const properties_config = config.getConfigSubtreeOptional("properties");
+    auto const properties_config =
+            config.getConfigSubtreeOptional("properties");
     if (properties_config)
     	createProperties(properties_config.get());
 }
