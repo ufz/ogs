@@ -34,6 +34,17 @@ PropertyDataType Property::value(VariableArray const&)
     return _value;
 }
 
+void Property::set(bool status)
+{
+    _set = status;
+}
+
+bool Property::set()
+{
+    return _set;
+}
+
+
 Property* newProperty(BaseLib::ConfigTree const& config, Medium* m)
 {
 	DBUG("   Selecting a new medium property..");

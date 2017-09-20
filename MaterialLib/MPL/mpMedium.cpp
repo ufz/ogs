@@ -130,6 +130,13 @@ std::size_t Medium::numberOfPhases(void)
     return _phases.size();
 }
 
+void Medium::resetPropertyValues()
+{
+    for (size_t i=0; i<number_of_property_enums; ++i)
+    {
+        _properties[i]->set(false);
+    }
+}
 void Medium::summary()
 {
 	auto const nPhase = numberOfPhases();

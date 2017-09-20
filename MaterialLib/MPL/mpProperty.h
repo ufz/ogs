@@ -44,8 +44,11 @@ class Property
 protected:
 	/// The single value of a property.
     PropertyDataType _value;
+    bool _set;
 public:
     Property();
+    void set(bool);
+    bool set ();
     virtual ~Property(){};
     /// This virtual method simply returns the private _value attribute
     /// without changing it.
@@ -53,7 +56,7 @@ public:
     /// This virtual method will compute the property value baesd on the
     /// primary variables that are passed as arguments.
     virtual PropertyDataType value (VariableArray const&);
-};
+};  // class Property
 
 /**
  * This data type is based on a std::array. It can hold pointers
@@ -80,7 +83,12 @@ inline double getScalar (Property* p)
 {
     return boost::get<double>(p->value());
 }
-
+/// This method returns a value of type string from the
+/// property value attribute
+inline std::string getString (Property* p)
+{
+    return boost::get<std::string>(p->value());
+}
 /// This method returns a value of any valid type from
 /// the property value attribute. The data type is provided
 /// by the first parameter in the argument list.
