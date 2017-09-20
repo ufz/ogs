@@ -39,6 +39,8 @@ public:
     /// The Phase constructor is called with the optional
     /// phase name.
     Phase(boost::optional<std::string> const&);
+    Phase();
+
     ~Phase(){};
 
     /// The method creating phase components based on config subtree.

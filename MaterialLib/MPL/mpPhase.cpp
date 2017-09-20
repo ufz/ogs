@@ -26,7 +26,11 @@ Phase::Phase(boost::optional<std::string> const& phase_name)
     else
     	_properties[name] = new Constant("unknown");
 };
-
+Phase::Phase()
+{
+   createDefaultProperties();
+  _properties[name] = new Constant("no_name");
+};
 /**
  *  Just like a phase, a component can have a name. But, in this case,
  *  the name has an important task. If a name is given, a specific
