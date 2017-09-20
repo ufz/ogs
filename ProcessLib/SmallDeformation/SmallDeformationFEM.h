@@ -259,15 +259,20 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
+        SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            x_position.setIntegrationPoint(ip);
+
             auto& ip_data = _ip_data[ip];
 
             // Update free energy density needed for material forces.
             ip_data.free_energy_density =
                 ip_data.solid_material.computeFreeEnergyDensity(
-                    ip_data.eps, ip_data.sigma,
-                    *ip_data.material_state_variables);
+                    _process_data.t, x_position, _process_data.dt, ip_data.eps,
+                    ip_data.sigma, *ip_data.material_state_variables);
         }
     }
 

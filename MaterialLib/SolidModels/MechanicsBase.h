@@ -131,6 +131,9 @@ struct MechanicsBase
     }
 
     virtual double computeFreeEnergyDensity(
+        double const t,
+        ProcessLib::SpatialPosition const& x,
+        double const dt,
         KelvinVector const& eps,
         KelvinVector const& sigma,
         MaterialStateVariables const& material_state_variables) const

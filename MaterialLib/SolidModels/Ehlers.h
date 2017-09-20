@@ -225,6 +225,9 @@ public:
     }
 
     double computeFreeEnergyDensity(
+        double const /*t*/,
+        ProcessLib::SpatialPosition const& /*x*/,
+        double const /*dt*/,
         KelvinVector const& eps,
         KelvinVector const& sigma,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
