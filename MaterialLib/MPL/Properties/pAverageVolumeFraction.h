@@ -34,8 +34,6 @@ private:
 	/// A pointer to the medium object.
 	Medium* _medium;
 public:
-	/// Probably useless empty constructor.
-	AverageVolumeFraction(){};
 	/// Constructor passing a pointer to the medium.
 	AverageVolumeFraction(Medium*);
 	/// Constructor passing a pointer to a phase.
@@ -49,10 +47,5 @@ public:
 };
 
 }  // MaterialPropertyLib
-
-
-
-
-
 
 #endif /* MATERIALLIB_MPL_PROPERTIES_PAVERAGEVOLUMEFRACTION_H_ */

@@ -34,8 +34,6 @@ private:
 	/// A pointer to the phase object.
 	Phase* _phase;
 public:
-	/// Probably useless empty constructor.
-	AverageMoleFraction(){};
 	/// Constructor passing a pointer to the medium.
 	AverageMoleFraction(Medium*);
 	/// Constructor passing a pointer to the phase.
