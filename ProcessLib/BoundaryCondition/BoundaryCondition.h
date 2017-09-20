@@ -108,6 +108,12 @@ protected:
             parameters);
 
     virtual std::unique_ptr<BoundaryCondition>
+    createNonuniformDirichletBoundaryCondition(
+        const BoundaryConditionConfig& config,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
+        const MeshLib::Mesh& mesh, const int variable_id);
+
+    virtual std::unique_ptr<BoundaryCondition>
     createNonuniformNeumannBoundaryCondition(
         const BoundaryConditionConfig& config,
         const NumLib::LocalToGlobalIndexMap& dof_table,
