@@ -307,14 +307,18 @@ public:
             //
             // displacement equation, phasefield part
             //
-            Kud.noalias() += B.transpose() * 2 * d_ip * sigma_tensile * N * w;
 
-            double const d_dot_ip = N.dot(d_dot);
+            // Temporary storage used in the Kud and for potential reuse in the
+            // Kdu matrix.
+            auto const Kud_ip_contribution =
+                (B.transpose() * 2 * d_ip * sigma_tensile * N * w).eval();
+
+            Kud.noalias() += Kud_ip_contribution;
 
             if (history_variable_prev < strain_energy_tensile)
             {
                 history_variable = strain_energy_tensile;
-                Kdu.noalias() = Kud.transpose();
+                Kdu.noalias() += Kud_ip_contribution.transpose();
             }
             else
             {
@@ -329,6 +333,8 @@ public:
                              w;
             double const M =
                 _process_data.kinetic_coefficient(t, x_position)[0];
+            double const d_dot_ip = N.dot(d_dot);
+
             local_rhs.template segment<phasefield_size>(phasefield_index)
                 .noalias() -= (N.transpose() * d_dot_ip / M + Kdd_1 * d +
                                N.transpose() * d_ip * 2 * history_variable -
