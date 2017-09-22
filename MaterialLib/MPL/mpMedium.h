@@ -64,10 +64,6 @@ public:
 
     void resetPropertyUpdateStatus(void);
 
-    /// A method that prints out a summary of the constructed medium object
-    /// with all its phases, components, and properties. Basically for
-    /// debugging purposes only.
-    void summary (void);
 };
 
 }
