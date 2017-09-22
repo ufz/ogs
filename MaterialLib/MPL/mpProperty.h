@@ -85,6 +85,14 @@ inline double getScalar (Property* p)
 {
     return boost::get<double>(p->value());
 }
+
+/// This method forces the computation of a value of type double
+/// and returns it
+inline double getScalar (Property* p, VariableArray const&v)
+{
+    return boost::get<double>(p->value(v));
+}
+
 /// This method returns a value of type string from the
 /// property value attribute
 inline std::string getString (Property* p)
