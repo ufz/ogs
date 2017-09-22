@@ -62,6 +62,20 @@ public:
             t, x, dt, eps_prev, eps, sigma_prev, material_state_variables);
     }
 
+    double computeFreeEnergyDensity(
+        double const t,
+        ProcessLib::SpatialPosition const& x,
+        double const dt,
+        KelvinVector const& eps,
+        KelvinVector const& sigma,
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
+            material_state_variables) const override
+    {
+        return LinearElasticIsotropic<DisplacementDim>::
+            computeFreeEnergyDensity(
+                t, x, dt, eps, sigma, material_state_variables);
+    }
+
     /** Decompose the stiffness into tensile and compressive part.
      * Judging by the physical observations, compression perpendicular
      * to a crack does not cause crack propagation. Thus,
