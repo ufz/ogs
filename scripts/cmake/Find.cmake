@@ -78,7 +78,7 @@ if(NOT OGS_USE_CONAN)
     include_directories(SYSTEM ${VTK_DIR}/../ThirdParty/netcdf/vtknetcdf/cxx)
 endif()
 
-find_package(Eigen3 REQUIRED)
+find_package(Eigen3 3.2.9 REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 ## pthread, is a requirement of logog ##
