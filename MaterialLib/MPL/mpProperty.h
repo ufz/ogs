@@ -47,7 +47,7 @@ protected:
     bool _isUpdated;
 public:
     Property();
-    virtual ~Property(){};
+    virtual ~Property() = default;
     void isUpdated(bool);
     bool isUpdated ();
     /// This method is called when a property is used for the wrong

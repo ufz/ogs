@@ -34,7 +34,7 @@ protected:
     PropertyArray _properties;
 public:
     Component();
-    ~Component(){};
+    virtual ~Component()= default;
 
     /// The method for creating component properties.
     void createProperties(BaseLib::ConfigTree const&);
