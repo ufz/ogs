@@ -86,6 +86,7 @@ enum PropertyEnum : std::size_t
 	acentric_factor,
     critical_temperature,
     critical_pressure,
+    critical_density,
     density,
     viscosity,
     thermal_conductivity,
@@ -119,6 +120,8 @@ inline PropertyEnum convertStringToProperty (std::string const& inString) {
         return critical_temperature;
     if (boost::iequals(inString, "critical_pressure"))
         return critical_pressure;
+    if (boost::iequals(inString, "critical_density"))
+        return critical_density;
     if (boost::iequals(inString, "density"))
         return density;
     if (boost::iequals(inString, "viscosity"))
@@ -156,6 +159,7 @@ const static std::vector<std::string> convertEnumToString
     {"acentric_factor"},
     {"critical_temperature"},
     {"critical_pressure"},
+    {"critical_density"},
     {"density"},
     {"viscosity"},
     {"thermal_conductivity"},
