@@ -136,12 +136,7 @@ struct MechanicsBase
         double const dt,
         KelvinVector const& eps,
         KelvinVector const& sigma,
-        MaterialStateVariables const& material_state_variables) const
-    {
-        OGS_FATAL(
-            "computeFreeEnergyDensity not implemented for the chosen material "
-            "model.");
-    }
+        MaterialStateVariables const& material_state_variables) const = 0;
 
     virtual ~MechanicsBase() = default;
 };
