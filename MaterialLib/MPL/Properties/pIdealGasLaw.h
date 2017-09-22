@@ -24,7 +24,7 @@ class Component;
 /**
  * \class IdealGasLaw
  */
-class IdealGasLaw : public Property
+class IdealGasLaw final : public Property
 {
 private:
     /// A pointer to the phase object.

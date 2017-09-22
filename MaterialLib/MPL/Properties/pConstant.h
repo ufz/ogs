@@ -22,7 +22,7 @@ namespace MaterialPropertyLib
  * constant value. It accepts all datatypes defined in PropertyDataType
  * (currently: double, Vector, Tensor, std::string)
  */
-class Constant : public Property
+class Constant final: public Property
 {
 public:
     Constant(){};

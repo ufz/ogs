@@ -26,7 +26,7 @@ class Component;
  * density function of temperature based on a reference density,
  * a slope, and a reference temperature.
  */
-class LinearTemperature : public Property
+class LinearTemperature final : public Property
 {
 private:
 	/// This property is (currently) implemented to obtain component

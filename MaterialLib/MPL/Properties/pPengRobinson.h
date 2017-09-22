@@ -28,7 +28,7 @@ class Component;
  * computes the average of individual phase properties
  * weighted by volume fraction.
  */
-class PengRobinson : public Property
+class PengRobinson final : public Property
 {
 private:
 	/// A pointer to the phase object.

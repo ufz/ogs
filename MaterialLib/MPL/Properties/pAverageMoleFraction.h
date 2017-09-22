@@ -28,7 +28,7 @@ class Component;
  * computes the average of individual component properties
  * weighted by mole fraction.
  */
-class AverageMoleFraction : public Property
+class AverageMoleFraction final : public Property
 {
 private:
 	/// A pointer to the phase object.
