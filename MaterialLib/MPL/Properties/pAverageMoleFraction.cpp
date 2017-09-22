@@ -37,6 +37,9 @@ AverageMoleFraction::AverageMoleFraction(Component*)
  */
 PropertyDataType AverageMoleFraction::value (VariableArray const&)
 {
+    if (isUpdated())
+        return _value;
+
 	/// \todo: implementation of AverageMoleFraction.
 	return _value;
 }

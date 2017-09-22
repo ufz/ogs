@@ -126,12 +126,14 @@ std::size_t Medium::numberOfPhases(void)
     return _phases.size();
 }
 
-void Medium::resetPropertyValues()
+void Medium::resetPropertyUpdateStatus()
 {
+    // Phase properties
+    for (size_t p = 0; p < _phases.size(); ++p)
+        _phases[p]->resetPropertyUpdateStatus();
+    // Medium properties
     for (size_t i=0; i<number_of_property_enums; ++i)
-    {
-        _properties[i]->set(false);
-    }
+        _properties[i]->isUpdated(false);
 }
 void Medium::summary()
 {

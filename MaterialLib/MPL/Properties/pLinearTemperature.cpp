@@ -49,6 +49,9 @@ LinearTemperature::LinearTemperature(Component* c)
  */
 PropertyDataType LinearTemperature::value(VariableArray const& v)
 {
+    if (isUpdated())
+        return _value;
+
 	const double rho_0 = getScalar(_component->property(reference_density));
 	const double drho_dT  = getScalar(_component->property(drhodT));
 	const double T_ref = getScalar(_component->property(reference_temperature));

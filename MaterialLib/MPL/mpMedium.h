@@ -62,7 +62,7 @@ public:
     /// medium consists of.
     std::size_t numberOfPhases(void);
 
-    void resetPropertyValues(void);
+    void resetPropertyUpdateStatus(void);
 
     /// A method that prints out a summary of the constructed medium object
     /// with all its phases, components, and properties. Basically for

@@ -43,6 +43,8 @@ public:
     /// A get-function for retrieving a cartain property.
     Property* property(PropertyEnum const&);
 
+    void resetPropertyUpdateStatus(void);
+
 };
 /*
  * Method for creating a new component based on the specified

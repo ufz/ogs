@@ -21,7 +21,9 @@ namespace MaterialPropertyLib
 {
 /// The base class constructor may remain empty since the base class is
 /// almost abstract.
-Property::Property(){};
+Property::Property()
+: _isUpdated (0)
+{};
 
 PropertyDataType Property::value() const
 {
@@ -34,14 +36,14 @@ PropertyDataType Property::value(VariableArray const&)
     return _value;
 }
 
-void Property::set(bool status)
+void Property::isUpdated(bool status)
 {
-    _set = status;
+    _isUpdated = status;
 }
 
-bool Property::set()
+bool Property::isUpdated()
 {
-    return _set;
+    return _isUpdated;
 }
 
 void Property::notImplemented(std::string property, std::string material)

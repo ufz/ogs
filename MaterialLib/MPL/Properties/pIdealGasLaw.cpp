@@ -35,6 +35,9 @@ IdealGasLaw::IdealGasLaw(Component* c)
  */
 PropertyDataType IdealGasLaw::value (VariableArray const&)
 {
+    if (isUpdated())
+        return _value;
+
     /// \todo: implementation of IdealGasLaw.
     return _value;
 }

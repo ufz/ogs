@@ -56,6 +56,7 @@ public:
     Property* property(PropertyEnum const&);
     /// A get-function for retrieving the number of components in this phase
     std::size_t numberOfComponents(void);
+    void resetPropertyUpdateStatus(void);
 };
 
 } //MaterialPropertyLib

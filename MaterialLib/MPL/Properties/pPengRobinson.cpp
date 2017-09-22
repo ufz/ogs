@@ -47,6 +47,9 @@ PengRobinson::PengRobinson(Component* c)
  */
 PropertyDataType PengRobinson::value (VariableArray const&v)
 {
+    if (isUpdated())
+        return _value;
+
     double M (0);
     double k_ij (0);
     double am(0), bm(0);
@@ -146,6 +149,8 @@ PropertyDataType PengRobinson::value (VariableArray const&v)
             *std::max_element(std::begin(roots), std::end(roots)): roots[0]);
 
     _value = M*pressure/Z/gasConstant/temperature;
+
+    isUpdated(true);
 
     return _value;
 }

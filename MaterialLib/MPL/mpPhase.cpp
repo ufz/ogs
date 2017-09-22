@@ -121,5 +121,15 @@ std::size_t Phase::numberOfComponents(void)
     return _components.size();
 }
 
+void Phase::resetPropertyUpdateStatus(void)
+{
+    // Component properties
+    for (size_t c=0; c<numberOfComponents(); ++c)
+        _components[c]->resetPropertyUpdateStatus();
+    // Medium properties
+    for (size_t p=0; p < number_of_property_enums; ++p)
+        _properties[p]->isUpdated(false);
+}
+
 } // MaterialPropertyLib
 

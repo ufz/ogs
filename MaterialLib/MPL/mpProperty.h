@@ -44,12 +44,12 @@ class Property
 protected:
 	/// The single value of a property.
     PropertyDataType _value;
-    bool _set;
+    bool _isUpdated;
 public:
     Property();
-    void set(bool);
-    bool set ();
     virtual ~Property(){};
+    void isUpdated(bool);
+    bool isUpdated ();
     /// This method is called when a property is used for the wrong
     /// kind of material, or if the proeprty is not implemented on
     /// this kind of material yet.

@@ -42,6 +42,9 @@ AverageVolumeFraction::AverageVolumeFraction(Component*)
  */
 PropertyDataType AverageVolumeFraction::value (VariableArray const&)
 {
+    if (isUpdated())
+        return _value;
+
 	/// \todo: implementation of AverageVolumeFraction.
 	return _value;
 }
