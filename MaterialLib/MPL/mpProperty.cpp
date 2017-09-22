@@ -44,6 +44,11 @@ bool Property::set()
     return _set;
 }
 
+void Property::notImplemented(std::string property, std::string material)
+{
+    OGS_FATAL("The property \'%s\' is not "
+        "available on the \'%s\' scale", property, material);
+}
 
 std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Medium* m)
 {

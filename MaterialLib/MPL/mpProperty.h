@@ -50,6 +50,10 @@ public:
     void set(bool);
     bool set ();
     virtual ~Property(){};
+    /// This method is called when a property is used for the wrong
+    /// kind of material, or if the proeprty is not implemented on
+    /// this kind of material yet.
+    void notImplemented (std::string, std::string);
     /// This virtual method simply returns the private _value attribute
     /// without changing it.
     virtual PropertyDataType value () const;

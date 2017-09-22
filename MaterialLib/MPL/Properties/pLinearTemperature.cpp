@@ -22,8 +22,7 @@ namespace MaterialPropertyLib
 LinearTemperature::LinearTemperature(Medium*)
 : _component (0)
 {
-	OGS_FATAL("The 'LinearTemperature' property is currently not "
-			"implemented on the Medium scale");
+    notImplemented("LinearTemperature", "Medium");
 };
 
 /// This constructor throws an error since it was used for a phase
@@ -31,8 +30,7 @@ LinearTemperature::LinearTemperature(Medium*)
 LinearTemperature::LinearTemperature(Phase*)
 : _component (0)
 {
-	OGS_FATAL("The 'LinearTemperature' property is currently not "
-			"implemented on the Phase scale");
+    notImplemented("LinearTemperature", "Phase");
 };
 
 /// This empty constructor is probably unnecessary.

@@ -19,8 +19,7 @@ IdealGasLaw::IdealGasLaw(Medium*)
 : _phase (0),
   _component (0)
 {
-    OGS_FATAL("The 'AverageMoleFraction' property is currently not "
-            "implemented on the Medium scale");
+    notImplemented("IdealGasLaw", "Medium");
 }
 
 IdealGasLaw::IdealGasLaw(Phase* p)

@@ -18,8 +18,7 @@ namespace MaterialPropertyLib
 AverageMoleFraction::AverageMoleFraction(Medium*)
 : _phase (0)
 {
-	OGS_FATAL("The 'AverageMoleFraction' property is currently not "
-			"implemented on the Medium scale");
+    notImplemented("AverageMoleFraction", "Medium");
 }
 
 AverageMoleFraction::AverageMoleFraction(Phase* p)
@@ -28,8 +27,7 @@ AverageMoleFraction::AverageMoleFraction(Phase* p)
 AverageMoleFraction::AverageMoleFraction(Component*)
 : _phase (0)
 {
-	OGS_FATAL("The 'AverageMoleFraction' property is currently not "
-			"implemented on the Component scale");
+	notImplemented("AverageMoleFraction", "Component");
 }
 /**
  * This method computes an average phase property by

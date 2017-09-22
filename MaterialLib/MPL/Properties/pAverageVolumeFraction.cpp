@@ -24,16 +24,14 @@ AverageVolumeFraction::AverageVolumeFraction(Medium* m)
 AverageVolumeFraction::AverageVolumeFraction(Phase*)
 : _medium (0)
 {
-	OGS_FATAL("The 'AverageVolumeFraction' property is not "
-			"available on the Phase scale");
+    notImplemented("AverageVolumeFraction", "Phase");
 };
 /// This constructor throws an error, since the property is not
 /// implemented on the component scale.
 AverageVolumeFraction::AverageVolumeFraction(Component*)
 : _medium (0)
 {
-	OGS_FATAL("The 'AverageVolumeFraction' property is not "
-			"available on the Component scale");
+    notImplemented("AverageVolumeFraction", "Component");
 }
 
 /**

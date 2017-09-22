@@ -27,8 +27,7 @@ PengRobinson::PengRobinson(Medium* m)
 : _phase (0),
   _component (0)
 {
-	OGS_FATAL("The 'PengRobinson' property is not "
-		"available on the Medium scale");
+    notImplemented("PengRobinson", "Medium");
 }
 /// Constructor for the phase version (binary mixture) of
 /// the Peng-Robinson EOS
