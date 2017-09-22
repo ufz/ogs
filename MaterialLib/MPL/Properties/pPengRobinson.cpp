@@ -91,8 +91,12 @@ PropertyDataType PengRobinson::value (VariableArray const&v)
     // from now on, the implementation is identical for both phase and
     // component property...
 
+
     const std::size_t nComponents = temp_components.size();
-    std::array<double, 2> a, sqrt_a, b, x_n;
+
+    assert(nComponents==1 ||nComponents==2);
+
+    std::array<double, 2> sqrt_a, b, x_n;
 
     // In order to solve the EOS, we need to obtain two characteristic
     // parameters a and b. In case of a binary mixture, these parameters
@@ -111,8 +115,7 @@ PropertyDataType PengRobinson::value (VariableArray const&v)
         const double alpha_Tr = alpha(temperature, T_crit, omega);
         const double a_Tc = cohesionPressure(T_crit, p_crit);
 
-        a[c] = a_Tc*alpha_Tr;
-        sqrt_a[c] = std::sqrt(a[c]);
+        sqrt_a[c] = std::sqrt(a_Tc*alpha_Tr);
         b[c] = coVolume(T_crit, p_crit);
         x_n[c] = getScalar(temp_components[c]->property(mole_fraction));
     }
