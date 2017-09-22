@@ -22,14 +22,14 @@ Phase::Phase(boost::optional<std::string> const& phase_name)
    createDefaultProperties();
 
     if (phase_name)
-    	_properties[name] = new Constant(phase_name.get());
+    	_properties[name] = std::make_unique<Constant>(Constant(phase_name.get()));
     else
-    	_properties[name] = new Constant("unknown");
+    	_properties[name] = std::make_unique<Constant>(Constant("no_name"));
 };
 Phase::Phase()
 {
    createDefaultProperties();
-  _properties[name] = new Constant("no_name");
+  _properties[name] =  std::make_unique<Constant>(Constant("no_name"));
 };
 /**
  *  Just like a phase, a component can have a name. But, in this case,
@@ -41,14 +41,14 @@ Phase::Phase()
  */
 void Phase::createComponents(BaseLib::ConfigTree const& config)
 {
-	std::vector<Component*> components;
 	for (auto component_config : config.getConfigSubtreeList("component"))
 	{
 
 		// Parsing the optional component name
 		auto const component_name =
 				component_config.getConfigParameterOptional<std::string>("name");
-		Component* component = newComponent (component_name);
+
+		auto component = newComponent(component_name);
 
 		// Parsing component properties. If a component name is given,
 		// properties are optional (since they may be predefined in the
@@ -69,9 +69,9 @@ void Phase::createComponents(BaseLib::ConfigTree const& config)
 			}
 		}
 
-		components.push_back(component);
+		_components.push_back(std::move(component));
+
 	}
-	_components = components;
 }
 /**
  * This method creates the properties of the Phase as defined in the
@@ -82,13 +82,13 @@ void Phase::createProperties(BaseLib::ConfigTree const& config)
     for (auto property_config : config.getConfigSubtreeList("property"))
     {
         // create a new Property based on configuration tree
-        Property* property = newProperty (property_config, this);
+        auto property = newProperty (property_config, this);
         // parse the name of the property
         auto const property_name =
                 property_config.getConfigParameter<std::string>("name");
         // insert the newly created property at the right place
         // into the property array
-        _properties[convertStringToProperty(property_name)]= property;
+        _properties[convertStringToProperty(property_name)] = std::move(property);
     }
 }
 
@@ -101,18 +101,19 @@ void Phase::createProperties(BaseLib::ConfigTree const& config)
 void Phase::createDefaultProperties(void)
 {
 	for (size_t i=0; i < number_of_property_enums; ++i)
-		this->_properties[i] = new AverageMoleFraction(this);
+          _properties[i] = std::make_unique<AverageMoleFraction>(this);
+
 	// After this, other special properties can be set as default
 }
 
 Component* Phase::component(const std::size_t &index)
 {
-    return _components[index];
+    return _components[index].get();
 }
 
 Property* Phase::property(PropertyEnum const &p)
 {
-    return _properties[p];
+    return _properties[p].get();
 }
 
 std::size_t Phase::numberOfComponents(void)

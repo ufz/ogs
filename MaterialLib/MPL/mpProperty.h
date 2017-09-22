@@ -64,18 +64,20 @@ public:
  * this array is determined by the number of entries of the
  * PropertyEnum enumerator.
 */
-using PropertyArray = std::array<Property*, number_of_property_enums>;
+using PropertyArray = std::array<std::unique_ptr<Property>, number_of_property_enums>;
 
 /// Method to select a property by name and to call a derived property
 /// constructor.
 template <typename MaterialType>
-Property* selectProperty (BaseLib::ConfigTree const&, MaterialType);
+//Property* selectProperty (BaseLib::ConfigTree const&, MaterialType);
+std::unique_ptr<Property> selectProperty
+(BaseLib::ConfigTree const&, MaterialType);
 /// This method creates a new medium property.
-Property* newProperty(BaseLib::ConfigTree const& config, Medium*);
+std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Medium*);
 /// This method creates a new phase property.
-Property* newProperty(BaseLib::ConfigTree const& config, Phase*);
+std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const&, Phase*);
 /// This method creates a new component property.
-Property* newProperty(BaseLib::ConfigTree const& config, Component*);
+std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Component*);
 
 /// This method returns a value of type double from the
 /// property value attribute

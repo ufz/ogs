@@ -48,7 +48,7 @@ public:
  * Method for creating a new component based on the specified
  * component name.
  */
-Component* newComponent (boost::optional<std::string> const &name);
+std::unique_ptr<Component> newComponent (boost::optional<std::string> const&);
 
 } //MaterialPropertyLib
 

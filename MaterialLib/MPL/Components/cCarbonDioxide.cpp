@@ -19,7 +19,7 @@ namespace MaterialPropertyLib
 
 CarbonDioxide::CarbonDioxide()
 {
-	_properties[name] = new Constant("CarbonDioxide");
+	_properties[name] = std::make_unique<Constant>("CarbonDioxide");
 };
 
 } // MaterialPropertyLib

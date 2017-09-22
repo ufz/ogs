@@ -45,19 +45,19 @@ bool Property::set()
 }
 
 
-Property* newProperty(BaseLib::ConfigTree const& config, Medium* m)
+std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Medium* m)
 {
 	DBUG("   Selecting a new medium property..");
 	return selectProperty(config, m);
 }
 
-Property* newProperty(BaseLib::ConfigTree const& config, Phase* p)
+std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Phase* p)
 {
 	DBUG("   Selecting a new phase property..");
 	return selectProperty(config, p);
 }
 
-Property* newProperty(BaseLib::ConfigTree const& config, Component* c)
+std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Component* c)
 {
 	DBUG("   Selecting a new component property..");
 	return selectProperty(config, c);
@@ -70,7 +70,7 @@ Property* newProperty(BaseLib::ConfigTree const& config, Component* c)
  * the property.
 */
 template <typename MaterialType>
-Property* selectProperty (BaseLib::ConfigTree const& config, MaterialType M)
+std::unique_ptr<Property> selectProperty (BaseLib::ConfigTree const& config, MaterialType M)
 {
     // Parsing the property type:
     auto const property_type = config.getConfigParameter<std::string>("type");
@@ -85,7 +85,7 @@ Property* selectProperty (BaseLib::ConfigTree const& config, MaterialType M)
     	/// by PropertyDataType. This could be enhanced in order
     	/// to define vectors or even tensors as constant properties.
         auto const property_value = config.getConfigParameter<double>("value");
-        return new Constant(property_value);
+        return std::make_unique<Constant>(Constant(property_value));
     }
     /// Properties can be medium, phase, or component properties.
     /// Some of them require information about the respective material.
@@ -96,62 +96,62 @@ Property* selectProperty (BaseLib::ConfigTree const& config, MaterialType M)
     /// pointers) must be overloaded for any type of material.
     if (boost::iequals(property_type, "LinearTemperature"))
     {
-    	return new LinearTemperature(M);
+    	return std::make_unique<LinearTemperature>(M);
     }
     if (boost::iequals(property_type, "LinearEpsilon"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new Constant(0.);
+    	return std::make_unique<Constant>(0);
     }
     if (boost::iequals(property_type, "AverageMolarMass"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new AverageMoleFraction(M);
+    	return std::make_unique<AverageMoleFraction>(M);
     }
     if (boost::iequals(property_type, "AverageVolumeFraction"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new Constant(0.);
+    	return std::make_unique<Constant>(0);
     }
     if (boost::iequals(property_type, "Duan_2012"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new Constant(0.);
+    	return std::make_unique<Constant>(0);
     }
     if (boost::iequals(property_type, "IAPWS_2008"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new Constant(0.);
+    	return std::make_unique<Constant>(0);
     }
     if (boost::iequals(property_type, "Islam_Carlson_2012"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new Constant(0.);
+    	return std::make_unique<Constant>(0);
     }
     if (boost::iequals(property_type, "Fenghour_1998"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new Constant(0.);
+    	return std::make_unique<Constant>(0);
     }
     if (boost::iequals(property_type, "Mualem_1978"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new Constant(0.);
+    	return std::make_unique<Constant>(0);
     }
     if (boost::iequals(property_type, "Buddenberg_Wilke_1949"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new Constant(0.);
+    	return std::make_unique<Constant>(0);
     }
     if (boost::iequals(property_type, "Peng_Robinson_1976"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new Constant(0.);
+    	return std::make_unique<Constant>(0);
     }
     if (boost::iequals(property_type, "Brooks_Corey_1964"))
     {
     	DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-    	return new Constant(0.);
+        return std::make_unique<Constant>(0);
     }
     // If none of the above property types are found, OGS throws an error.
     OGS_FATAL("The specified component property type \"%s\" was not "

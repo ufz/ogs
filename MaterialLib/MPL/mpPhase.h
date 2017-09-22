@@ -14,6 +14,7 @@
 #define MATERIALLIB_MPL_MPPHASE_H_
 
 #include "BaseLib/ConfigTree.h"
+#include "mpComponent.h"
 #include "mpProperty.h"
 
 #include <string>
@@ -21,9 +22,6 @@
 
 namespace MaterialPropertyLib
 {
-
-class Component;
-
 /**
  * \class Phase
  * \brief This class defines material phases.
@@ -33,7 +31,7 @@ class Component;
 class Phase
 {
 private:
-    std::vector<Component*> _components;
+    std::vector<std::unique_ptr<Component>> _components;
     PropertyArray _properties;
 public:
     /// The Phase constructor is called with the optional

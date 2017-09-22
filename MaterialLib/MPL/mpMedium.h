@@ -16,14 +16,14 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "mpProperty.h"
+#include "mpPhase.h"
 
 
+#include <memory>
 #include <vector>
 
 namespace MaterialPropertyLib
 {
-
-class Phase;
 /**
  * \class Medium
  * \brief This class is for material objects on the Medium scale.
@@ -34,8 +34,8 @@ class Medium
 {
 private:
 	/// The vector that holds the phases.
-    std::vector<Phase*> _phases;
-    /// The array that holds the maedium properties.
+    std::vector<std::unique_ptr<Phase>> _phases;
+    /// The array that holds the medium properties.
     PropertyArray _properties;
 public:
     /// The medium is constructed based on the config tree object.

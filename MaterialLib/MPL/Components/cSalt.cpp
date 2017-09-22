@@ -19,7 +19,7 @@ namespace MaterialPropertyLib
 
 Salt::Salt()
 {
-	_properties[name] = new Constant("Salt");
+	_properties[name] = std::make_unique<Constant>("Salt");
 };
 
 
