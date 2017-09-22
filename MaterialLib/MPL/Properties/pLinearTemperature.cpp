@@ -33,10 +33,6 @@ LinearTemperature::LinearTemperature(Phase*)
     notImplemented("LinearTemperature", "Phase");
 };
 
-/// This empty constructor is probably unnecessary.
-LinearTemperature::LinearTemperature()
-: _component (0)
-{};
 /// This constructor copies the pointer of the component from the
 /// arguments into the private attribute.
 LinearTemperature::LinearTemperature(Component* c)

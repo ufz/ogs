@@ -33,8 +33,6 @@ private:
 	/// properties only.
 	Component* _component;
 public:
-	/// Empty constructor (propbably not used).
-	LinearTemperature();
 	/// Constructor that passes a pointer to the medium.
 	LinearTemperature(Medium*);
 	/// Constructor that passes a pointer to the phase.
