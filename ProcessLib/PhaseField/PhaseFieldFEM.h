@@ -12,21 +12,15 @@
 #include <memory>
 #include <vector>
 
-#include "MaterialLib/SolidModels/KelvinVector.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/PhaseFieldExtension.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-#include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/LocalAssemblerInterface.h"
-#include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
+#include "LocalAssemblerInterface.h"
 #include "PhaseFieldProcessData.h"
 
 namespace ProcessLib
@@ -55,7 +49,8 @@ struct IntegrationPointData final
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables> material_state_variables;
+        DisplacementDim>::MaterialStateVariables>
+        material_state_variables;
 
     typename BMatricesType::KelvinMatrixType C_tensile, C_compressive;
     double integration_weight;
@@ -64,11 +59,9 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        if (history_variable_prev <
-            history_variable)
+        if (history_variable_prev < history_variable)
         {
-            history_variable_prev =
-                history_variable;
+            history_variable_prev = history_variable;
         }
         eps_prev = eps;
         sigma_real_prev = sigma_real;
@@ -76,8 +69,7 @@ struct IntegrationPointData final
     }
 
     template <typename DisplacementVectorType>
-    void updateConstitutiveRelation(
-                                    double const t,
+    void updateConstitutiveRelation(double const t,
                                     SpatialPosition const& x_position,
                                     double const /*dt*/,
                                     DisplacementVectorType const& /*u*/,
@@ -86,10 +78,11 @@ struct IntegrationPointData final
         static_cast<MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>&>(
             solid_material)
             .calculateDegradedStress(t, x_position, eps, strain_energy_tensile,
-                             sigma_tensile, sigma_compressive, C_tensile,
-                             C_compressive, sigma_real, degradation);
+                                     sigma_tensile, sigma_compressive,
+                                     C_tensile, C_compressive, sigma_real,
+                                     degradation);
     }
-
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 /// Used by for extrapolation of the integration point values. It is ordered
@@ -98,83 +91,6 @@ template <typename ShapeMatrixType>
 struct SecondaryData
 {
     std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N;
-};
-
-struct PhaseFieldLocalAssemblerInterface
-    : public ProcessLib::LocalAssemblerInterface,
-      public NumLib::ExtrapolatableElement
-{
-    virtual std::vector<double> const& getIntPtSigmaXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -209,7 +125,7 @@ public:
         : _process_data(process_data),
           _integration_method(integration_order),
           _element(e),
-         _is_axially_symmetric(is_axially_symmetric)
+          _is_axially_symmetric(is_axially_symmetric)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -238,13 +154,13 @@ public:
             ip_data.eps_prev.resize(kelvin_vector_size);
             ip_data.C_tensile.setZero(kelvin_vector_size, kelvin_vector_size);
             ip_data.C_compressive.setZero(kelvin_vector_size,
-                                         kelvin_vector_size);
+                                          kelvin_vector_size);
             ip_data.sigma_tensile.setZero(kelvin_vector_size);
             ip_data.sigma_compressive.setZero(kelvin_vector_size);
             ip_data.history_variable =
-                process_data.history_field(0, x_position)[0];
+                _process_data.history_field(0, x_position)[0];
             ip_data.history_variable_prev =
-                process_data.history_field(0, x_position)[0];
+                _process_data.history_field(0, x_position)[0];
             ip_data.sigma_real.setZero(kelvin_vector_size);
 
             ip_data.N = shape_matrices[ip].N;
@@ -295,11 +211,13 @@ public:
             local_rhs_data, local_matrix_size);
 
         typename ShapeMatricesType::template MatrixType<displacement_size,
-                                                        phasefield_size> Kud;
+                                                        phasefield_size>
+            Kud;
         Kud.setZero(displacement_size, phasefield_size);
 
         typename ShapeMatricesType::template MatrixType<phasefield_size,
-                                                        displacement_size> Kdu;
+                                                        displacement_size>
+            Kdu;
         Kdu.setZero(phasefield_size, displacement_size);
 
         typename ShapeMatricesType::NodalMatrixType Kdd;
@@ -319,9 +237,8 @@ public:
         {
             x_position.setIntegrationPoint(ip);
             auto const& w = _ip_data[ip].integration_weight;
-
-            auto const& dNdx = _ip_data[ip].dNdx;
             auto const& N = _ip_data[ip].N;
+            auto const& dNdx = _ip_data[ip].dNdx;
 
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
@@ -362,8 +279,9 @@ public:
             _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                     degradation);
 
-            local_Jac.template block<displacement_size, displacement_size>(
-                         displacement_index, displacement_index)
+            local_Jac
+                .template block<displacement_size, displacement_size>(
+                    displacement_index, displacement_index)
                 .noalias() += B.transpose() *
                               (degradation * C_tensile + C_compressive) * B * w;
 
@@ -381,21 +299,26 @@ public:
 
             auto const rho_sr = _process_data.solid_density(t, x_position)[0];
             auto const& b = _process_data.specific_body_force;
-            local_rhs.template block<displacement_size, 1>(displacement_index, 0)
+            local_rhs
+                .template block<displacement_size, 1>(displacement_index, 0)
                 .noalias() -=
                 (B.transpose() * sigma_real - N_u.transpose() * rho_sr * b) * w;
 
             //
             // displacement equation, phasefield part
             //
-            Kud.noalias() += B.transpose() * 2 * d_ip * sigma_tensile * N * w;
 
-            double const d_dot_ip = N.dot(d_dot);
+            // Temporary storage used in the Kud and for potential reuse in the
+            // Kdu matrix.
+            auto const Kud_ip_contribution =
+                (B.transpose() * 2 * d_ip * sigma_tensile * N * w).eval();
+
+            Kud.noalias() += Kud_ip_contribution;
 
             if (history_variable_prev < strain_energy_tensile)
             {
                 history_variable = strain_energy_tensile;
-                Kdu.noalias() = Kud.transpose();
+                Kdu.noalias() += Kud_ip_contribution.transpose();
             }
             else
             {
@@ -410,6 +333,8 @@ public:
                              w;
             double const M =
                 _process_data.kinetic_coefficient(t, x_position)[0];
+            double const d_dot_ip = N.dot(d_dot);
+
             local_rhs.template segment<phasefield_size>(phasefield_index)
                 .noalias() -= (N.transpose() * d_dot_ip / M + Kdd_1 * d +
                                N.transpose() * d_ip * 2 * history_variable -
@@ -419,20 +344,22 @@ public:
             Ddd.noalias() += N.transpose() / M * N * w;
         }
         // displacement equation, phasefield part
-        local_Jac.template block<displacement_size, phasefield_size>(
-                     displacement_index, phasefield_index)
+        local_Jac
+            .template block<displacement_size, phasefield_size>(
+                displacement_index, phasefield_index)
             .noalias() += Kud;
 
         // phasefield equation, phasefield part.
-        local_Jac.template block<phasefield_size, phasefield_size>(
-                     phasefield_index, phasefield_index)
+        local_Jac
+            .template block<phasefield_size, phasefield_size>(phasefield_index,
+                                                              phasefield_index)
             .noalias() += Kdd + Ddd / dt;
 
         // phasefield equation, displacement part.
-        local_Jac.template block<phasefield_size, displacement_size>(
-                     phasefield_index, displacement_index)
+        local_Jac
+            .template block<phasefield_size, displacement_size>(
+                phasefield_index, displacement_index)
             .noalias() += Kdu;
-
     }
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
@@ -614,8 +541,8 @@ private:
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+    bool const _is_axially_symmetric;
 
     static const int phasefield_index = 0;
     static const int phasefield_size = ShapeFunction::NPOINTS;
@@ -624,29 +551,6 @@ private:
         ShapeFunction::NPOINTS * DisplacementDim;
     static const int kelvin_vector_size =
         KelvinVectorDimensions<DisplacementDim>::value;
-};
-
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim, int DisplacementDim>
-class LocalAssemblerData final
-    : public PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                      DisplacementDim>
-{
-public:
-    LocalAssemblerData(LocalAssemblerData const&) = delete;
-    LocalAssemblerData(LocalAssemblerData&&) = delete;
-
-    LocalAssemblerData(MeshLib::Element const& e,
-                       std::size_t const local_matrix_size,
-                       bool is_axially_symmetric,
-                       unsigned const integration_order,
-                       PhaseFieldProcessData<DisplacementDim>& process_data)
-        : PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                   DisplacementDim>(
-              e, local_matrix_size, is_axially_symmetric, integration_order,
-              process_data)
-    {
-    }
 };
 
 }  // namespace PhaseField

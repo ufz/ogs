@@ -10,30 +10,27 @@
 
 #pragma once
 
-#include "ProcessLib/Deformation/BMatrixPolicy.h"
-#include "ProcessLib/Parameter/SpatialPosition.h"
 #include "MechanicsBase.h"
 
 namespace MaterialLib
 {
 namespace Solids
 {
-
 template <int DisplacementDim>
 struct PhaseFieldExtension : public MechanicsBase<DisplacementDim>
 {
     using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
     using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
     virtual bool calculateDegradedStress(double const t,
-                                 ProcessLib::SpatialPosition const& x,
-                                 KelvinVector const& eps,
-                                 double& strain_energy_tensile,
-                                 KelvinVector& sigma_tensile,
-                                 KelvinVector& sigma_compressive,
-                                 KelvinMatrix& C_tensile,
-                                 KelvinMatrix& C_compressive,
-                                 KelvinVector& sigma_real,
-                                 double const degradation) const = 0;
+                                         ProcessLib::SpatialPosition const& x,
+                                         KelvinVector const& eps,
+                                         double& strain_energy_tensile,
+                                         KelvinVector& sigma_tensile,
+                                         KelvinVector& sigma_compressive,
+                                         KelvinMatrix& C_tensile,
+                                         KelvinMatrix& C_compressive,
+                                         KelvinVector& sigma_real,
+                                         double const degradation) const = 0;
 
     /// Dynamic size Kelvin vector and matrix wrapper for the polymorphic
     /// constitutive relation compute function.
@@ -64,15 +61,15 @@ struct PhaseFieldExtension : public MechanicsBase<DisplacementDim>
         KelvinVector sigma_real_{sigma_real};
 
         bool const result = calculateDegradedStress(t,
-                                            x,
-                                            eps_,
-                                            strain_energy_tensile,
-                                            sigma_tensile_,
-                                            sigma_compressive_,
-                                            C_tensile_,
-                                            C_compressive_,
-                                            sigma_real_,
-                                            degradation);
+                                                    x,
+                                                    eps_,
+                                                    strain_energy_tensile,
+                                                    sigma_tensile_,
+                                                    sigma_compressive_,
+                                                    C_tensile_,
+                                                    C_compressive_,
+                                                    sigma_real_,
+                                                    degradation);
 
         sigma_tensile = sigma_tensile_;
         sigma_compressive = sigma_compressive_;
@@ -81,8 +78,6 @@ struct PhaseFieldExtension : public MechanicsBase<DisplacementDim>
         sigma_real = sigma_real_;
         return result;
     }
-
-    virtual ~PhaseFieldExtension() = default;
 };
 
 }  // namespace Solids

@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "PhaseFieldExtension.h"
-#include "LinearElasticIsotropic.h"
 #include "KelvinVector.h"
+#include "LinearElasticIsotropic.h"
+#include "PhaseFieldExtension.h"
 
 namespace MaterialLib
 {
@@ -29,9 +29,10 @@ public:
     using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
 
     explicit LinearElasticIsotropicPhaseField(
-        typename LinearElasticIsotropic<
-            DisplacementDim>::MaterialProperties&& material_properties)
-        : LinearElasticIsotropic<DisplacementDim>(std::move(material_properties))
+        typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties&&
+            material_properties)
+        : LinearElasticIsotropic<DisplacementDim>(
+              std::move(material_properties))
     {
     }
 
@@ -57,14 +58,8 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables) override
     {
-        return LinearElasticIsotropic<DisplacementDim>::
-                        integrateStress(t,
-                                        x,
-                                        dt,
-                                        eps_prev,
-                                        eps,
-                                        sigma_prev,
-                                        material_state_variables);
+        return LinearElasticIsotropic<DisplacementDim>::integrateStress(
+            t, x, dt, eps_prev, eps, sigma_prev, material_state_variables);
     }
 
     /** Decompose the stiffness into tensile and compressive part.
@@ -74,15 +69,15 @@ public:
      * to degrade the elastic strain energy.
      */
     bool calculateDegradedStress(double const t,
-                         ProcessLib::SpatialPosition const& x,
-                         KelvinVector const& eps,
-                         double& strain_energy_tensile,
-                         KelvinVector& sigma_tensile,
-                         KelvinVector& sigma_compressive,
-                         KelvinMatrix& C_tensile,
-                         KelvinMatrix& C_compressive,
-                         KelvinVector& sigma_real,
-                         double const degradation) const override
+                                 ProcessLib::SpatialPosition const& x,
+                                 KelvinVector const& eps,
+                                 double& strain_energy_tensile,
+                                 KelvinVector& sigma_tensile,
+                                 KelvinVector& sigma_compressive,
+                                 KelvinMatrix& C_tensile,
+                                 KelvinMatrix& C_compressive,
+                                 KelvinVector& sigma_real,
+                                 double const degradation) const override
     {
         using Invariants =
             MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
@@ -95,20 +90,17 @@ public:
 
         auto const& K =
             LinearElasticIsotropic<DisplacementDim>::_mp.bulk_modulus(t, x);
-        auto const& mu =
-            LinearElasticIsotropic<DisplacementDim>::_mp.mu(t, x);
+        auto const& mu = LinearElasticIsotropic<DisplacementDim>::_mp.mu(t, x);
 
         C_tensile = KelvinMatrix::Zero();
         C_compressive = KelvinMatrix::Zero();
 
         if (eps_curr_trace >= 0)
         {
-            strain_energy_tensile =
-                 K / 2 * eps_curr_trace * eps_curr_trace +
-                 mu * epsd_curr.transpose() * epsd_curr;
+            strain_energy_tensile = K / 2 * eps_curr_trace * eps_curr_trace +
+                                    mu * epsd_curr.transpose() * epsd_curr;
             sigma_tensile.noalias() =
-                 K * eps_curr_trace * Invariants::identity2 +
-                 2 * mu * epsd_curr;
+                K * eps_curr_trace * Invariants::identity2 + 2 * mu * epsd_curr;
             sigma_compressive.noalias() = KelvinVector::Zero();
             C_tensile.template topLeftCorner<3, 3>().setConstant(K);
             C_tensile.noalias() += 2 * mu * P_dev * KelvinMatrix::Identity();
@@ -118,7 +110,7 @@ public:
             strain_energy_tensile = mu * epsd_curr.transpose() * epsd_curr;
             sigma_tensile.noalias() = 2 * mu * epsd_curr;
             sigma_compressive.noalias() =
-                 K * eps_curr_trace * Invariants::identity2;
+                K * eps_curr_trace * Invariants::identity2;
             C_tensile.noalias() = 2 * mu * P_dev * KelvinMatrix::Identity();
             C_compressive.template topLeftCorner<3, 3>().setConstant(K);
         }
