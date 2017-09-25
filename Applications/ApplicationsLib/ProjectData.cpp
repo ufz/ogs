@@ -39,6 +39,7 @@
 #include "ProcessLib/HT/CreateHTProcess.h"
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
 #include "ProcessLib/HydroMechanics/CreateHydroMechanicsProcess.h"
+#include "ProcessLib/ThermoHydroMechanics/CreateThermoHydroMechanicsProcess.h"
 #include "ProcessLib/LIE/HydroMechanics/CreateHydroMechanicsProcess.h"
 #include "ProcessLib/LIE/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/LiquidFlow/CreateLiquidFlowProcess.h"
@@ -357,6 +358,31 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 default:
                     OGS_FATAL(
                         "HYDRO_MECHANICS process does not support given "
+                        "dimension");
+            }
+        }
+        else if (type == "THERMO_HYDRO_MECHANICS")
+        {
+            //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__dimension}
+            switch (process_config.getConfigParameter<int>("dimension"))
+            {
+                case 2:
+                    process =
+                        ProcessLib::ThermoHydroMechanics::createThermoHydroMechanicsProcess<
+                            2>(*_mesh_vec[0], std::move(jacobian_assembler),
+                               _process_variables, _parameters,
+                               integration_order, process_config);
+                    break;
+                case 3:
+                    process =
+                        ProcessLib::ThermoHydroMechanics::createThermoHydroMechanicsProcess<
+                            3>(*_mesh_vec[0], std::move(jacobian_assembler),
+                               _process_variables, _parameters,
+                               integration_order, process_config);
+                    break;
+                default:
+                    OGS_FATAL(
+                        "THERMO_HYDRO_MECHANICS process does not support given "
                         "dimension");
             }
         }
