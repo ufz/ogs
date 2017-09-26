@@ -1,6 +1,6 @@
 AddTest(
     NAME 2D_ComponentTransport_ConcentrationDiffusionOnly
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS ConcentrationDiffusionOnly.prj
     WRAPPER time
@@ -16,7 +16,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_ConcentrationDiffusionAndStorage
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS ConcentrationDiffusionAndStorage.prj
     WRAPPER time
@@ -35,7 +35,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvection
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvection.prj
     WRAPPER time
@@ -69,7 +69,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndGravityAndDispersionHalf
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndGravityAndDispersionHalf.prj
     WRAPPER time
@@ -103,7 +103,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDispersion
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersion.prj
     WRAPPER time
@@ -137,7 +137,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDecay
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDecay.prj
     WRAPPER time
@@ -171,7 +171,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDispersionHalf
-    PATH Parabolic/ComponentTransport/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics/
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersionHalf.prj
     WRAPPER time
@@ -238,4 +238,68 @@ AddTest(
     ComponentTransport_pcs_0_ts_366_t_3000.000000_expected.vtu ComponentTransport_pcs_0_ts_366_t_3000.000000.vtu darcy_velocity darcy_velocity
     ComponentTransport_pcs_0_ts_50_t_50.000000_expected.vtu ComponentTransport_pcs_0_ts_50_t_50.000000.vtu darcy_velocity darcy_velocity
     VIS ComponentTransport_pcs_0_ts_366_t_3000.000000.vtu
+)
+
+AddTest(
+    NAME LARGE_2D_ComponentTransport_Elder
+    PATH Parabolic/ComponentTransport/elder/
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS elder.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-1 RELTOL 1e-5
+    DIFF_DATA
+    elder_pcs_0_ts_0_t_0.000000_reference.vtu elder_pcs_0_ts_0_t_0.000000.vtu pressure pressure
+    elder_pcs_0_ts_100_t_26298000.000000_reference.vtu elder_pcs_0_ts_100_t_26298000.000000.vtu pressure pressure
+    elder_pcs_0_ts_120_t_31557600.000000_reference.vtu elder_pcs_0_ts_120_t_31557600.000000.vtu pressure pressure
+    elder_pcs_0_ts_140_t_36817200.000000_reference.vtu elder_pcs_0_ts_140_t_36817200.000000.vtu pressure pressure
+    elder_pcs_0_ts_160_t_42076800.000000_reference.vtu elder_pcs_0_ts_160_t_42076800.000000.vtu pressure pressure
+    elder_pcs_0_ts_180_t_47336400.000000_reference.vtu elder_pcs_0_ts_180_t_47336400.000000.vtu pressure pressure
+    elder_pcs_0_ts_200_t_52596000.000000_reference.vtu elder_pcs_0_ts_200_t_52596000.000000.vtu pressure pressure
+    elder_pcs_0_ts_20_t_5259600.000000_reference.vtu elder_pcs_0_ts_20_t_5259600.000000.vtu pressure pressure
+    elder_pcs_0_ts_220_t_57855600.000000_reference.vtu elder_pcs_0_ts_220_t_57855600.000000.vtu pressure pressure
+    elder_pcs_0_ts_240_t_63115200.000000_reference.vtu elder_pcs_0_ts_240_t_63115200.000000.vtu pressure pressure
+    elder_pcs_0_ts_260_t_68374800.000000_reference.vtu elder_pcs_0_ts_260_t_68374800.000000.vtu pressure pressure
+    elder_pcs_0_ts_280_t_73634400.000000_reference.vtu elder_pcs_0_ts_280_t_73634400.000000.vtu pressure pressure
+    elder_pcs_0_ts_300_t_78894000.000000_reference.vtu elder_pcs_0_ts_300_t_78894000.000000.vtu pressure pressure
+    elder_pcs_0_ts_320_t_84153600.000000_reference.vtu elder_pcs_0_ts_320_t_84153600.000000.vtu pressure pressure
+    elder_pcs_0_ts_340_t_89413200.000000_reference.vtu elder_pcs_0_ts_340_t_89413200.000000.vtu pressure pressure
+    elder_pcs_0_ts_360_t_94672800.000000_reference.vtu elder_pcs_0_ts_360_t_94672800.000000.vtu pressure pressure
+    elder_pcs_0_ts_380_t_99932400.000000_reference.vtu elder_pcs_0_ts_380_t_99932400.000000.vtu pressure pressure
+    elder_pcs_0_ts_400_t_105192000.000000_reference.vtu elder_pcs_0_ts_400_t_105192000.000000.vtu pressure pressure
+    elder_pcs_0_ts_40_t_10519200.000000_reference.vtu elder_pcs_0_ts_40_t_10519200.000000.vtu pressure pressure
+    elder_pcs_0_ts_420_t_110451600.000000_reference.vtu elder_pcs_0_ts_420_t_110451600.000000.vtu pressure pressure
+    elder_pcs_0_ts_440_t_115711200.000000_reference.vtu elder_pcs_0_ts_440_t_115711200.000000.vtu pressure pressure
+    elder_pcs_0_ts_460_t_120970800.000000_reference.vtu elder_pcs_0_ts_460_t_120970800.000000.vtu pressure pressure
+    elder_pcs_0_ts_480_t_126230400.000000_reference.vtu elder_pcs_0_ts_480_t_126230400.000000.vtu pressure pressure
+    elder_pcs_0_ts_500_t_131490000.000000_reference.vtu elder_pcs_0_ts_500_t_131490000.000000.vtu pressure pressure
+    elder_pcs_0_ts_60_t_15778800.000000_reference.vtu elder_pcs_0_ts_60_t_15778800.000000.vtu pressure pressure
+    elder_pcs_0_ts_80_t_21038400.000000_reference.vtu elder_pcs_0_ts_80_t_21038400.000000.vtu pressure pressure
+    elder_pcs_0_ts_0_t_0.000000_reference.vtu elder_pcs_0_ts_0_t_0.000000.vtu conc conc
+    elder_pcs_0_ts_100_t_26298000.000000_reference.vtu elder_pcs_0_ts_100_t_26298000.000000.vtu conc conc
+    elder_pcs_0_ts_120_t_31557600.000000_reference.vtu elder_pcs_0_ts_120_t_31557600.000000.vtu conc conc
+    elder_pcs_0_ts_140_t_36817200.000000_reference.vtu elder_pcs_0_ts_140_t_36817200.000000.vtu conc conc
+    elder_pcs_0_ts_160_t_42076800.000000_reference.vtu elder_pcs_0_ts_160_t_42076800.000000.vtu conc conc
+    elder_pcs_0_ts_180_t_47336400.000000_reference.vtu elder_pcs_0_ts_180_t_47336400.000000.vtu conc conc
+    elder_pcs_0_ts_200_t_52596000.000000_reference.vtu elder_pcs_0_ts_200_t_52596000.000000.vtu conc conc
+    elder_pcs_0_ts_20_t_5259600.000000_reference.vtu elder_pcs_0_ts_20_t_5259600.000000.vtu conc conc
+    elder_pcs_0_ts_220_t_57855600.000000_reference.vtu elder_pcs_0_ts_220_t_57855600.000000.vtu conc conc
+    elder_pcs_0_ts_240_t_63115200.000000_reference.vtu elder_pcs_0_ts_240_t_63115200.000000.vtu conc conc
+    elder_pcs_0_ts_260_t_68374800.000000_reference.vtu elder_pcs_0_ts_260_t_68374800.000000.vtu conc conc
+    elder_pcs_0_ts_280_t_73634400.000000_reference.vtu elder_pcs_0_ts_280_t_73634400.000000.vtu conc conc
+    elder_pcs_0_ts_300_t_78894000.000000_reference.vtu elder_pcs_0_ts_300_t_78894000.000000.vtu conc conc
+    elder_pcs_0_ts_320_t_84153600.000000_reference.vtu elder_pcs_0_ts_320_t_84153600.000000.vtu conc conc
+    elder_pcs_0_ts_340_t_89413200.000000_reference.vtu elder_pcs_0_ts_340_t_89413200.000000.vtu conc conc
+    elder_pcs_0_ts_360_t_94672800.000000_reference.vtu elder_pcs_0_ts_360_t_94672800.000000.vtu conc conc
+    elder_pcs_0_ts_380_t_99932400.000000_reference.vtu elder_pcs_0_ts_380_t_99932400.000000.vtu conc conc
+    elder_pcs_0_ts_400_t_105192000.000000_reference.vtu elder_pcs_0_ts_400_t_105192000.000000.vtu conc conc
+    elder_pcs_0_ts_40_t_10519200.000000_reference.vtu elder_pcs_0_ts_40_t_10519200.000000.vtu conc conc
+    elder_pcs_0_ts_420_t_110451600.000000_reference.vtu elder_pcs_0_ts_420_t_110451600.000000.vtu conc conc
+    elder_pcs_0_ts_440_t_115711200.000000_reference.vtu elder_pcs_0_ts_440_t_115711200.000000.vtu conc conc
+    elder_pcs_0_ts_460_t_120970800.000000_reference.vtu elder_pcs_0_ts_460_t_120970800.000000.vtu conc conc
+    elder_pcs_0_ts_480_t_126230400.000000_reference.vtu elder_pcs_0_ts_480_t_126230400.000000.vtu conc conc
+    elder_pcs_0_ts_500_t_131490000.000000_reference.vtu elder_pcs_0_ts_500_t_131490000.000000.vtu conc conc
+    elder_pcs_0_ts_60_t_15778800.000000_reference.vtu elder_pcs_0_ts_60_t_15778800.000000.vtu conc conc
+    elder_pcs_0_ts_80_t_21038400.000000_reference.vtu elder_pcs_0_ts_80_t_21038400.000000.vtu conc conc
 )
