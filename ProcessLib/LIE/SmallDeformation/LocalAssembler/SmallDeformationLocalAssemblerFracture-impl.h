@@ -148,6 +148,7 @@ assembleWithJacobian(
         // local C, local stress
         mat.computeConstitutiveRelation(
                     t, x_position,
+                    ip_data._aperture0,
                     w_prev, w,
                     sigma_prev, sigma, C, state);
 

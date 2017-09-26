@@ -231,6 +231,7 @@ assembleBlockMatricesWithJacobian(
         // local C, local stress
         mat.computeConstitutiveRelation(
                     t, x_position,
+                    ip_data.aperture0,
                     w_prev, w,
                     effective_stress_prev, effective_stress, C, state);
 
@@ -353,6 +354,7 @@ computeSecondaryVariableConcreteWithVector(
         // local C, local stress
         mat.computeConstitutiveRelation(
                     t, x_position,
+                    ip_data.aperture0,
                     w_prev, w,
                     effective_stress_prev, effective_stress, C, state);
 

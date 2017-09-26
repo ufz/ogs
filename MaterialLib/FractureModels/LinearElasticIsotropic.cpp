@@ -18,6 +18,7 @@ template <int DisplacementDim>
 void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
         double const t,
         ProcessLib::SpatialPosition const& x,
+        double const aperture0,
         Eigen::Ref<Eigen::VectorXd const> w_prev,
         Eigen::Ref<Eigen::VectorXd const> w,
         Eigen::Ref<Eigen::VectorXd const> sigma_prev,

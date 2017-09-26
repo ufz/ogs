@@ -75,6 +75,7 @@ public:
      *
      * @param t           current time
      * @param x           current position in space
+     * @param aperture0   initial fracture's aperture
      * @param w_prev      fracture displacement at previous time step
      * @param w           fracture displacement at current time step
      * @param sigma_prev  stress at previous time step
@@ -85,6 +86,7 @@ public:
     void computeConstitutiveRelation(
             double const t,
             ProcessLib::SpatialPosition const& x,
+            double const aperture0,
             Eigen::Ref<Eigen::VectorXd const> w_prev,
             Eigen::Ref<Eigen::VectorXd const> w,
             Eigen::Ref<Eigen::VectorXd const> sigma_prev,
