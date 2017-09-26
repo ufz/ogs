@@ -71,8 +71,9 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     sigma.noalias() = sigma_prev + Ke * dw;
 
     double const sigma_n = sigma[index_ns];
-    // if opening
-    if (sigma_n > 0)
+
+    // correction for an opening fracture
+    if (_tension_cutoff && sigma_n > 0)
     {
         Kep.setZero();
         sigma.setZero();

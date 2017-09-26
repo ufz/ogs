@@ -56,8 +56,9 @@ public:
     }
 
 public:
-    explicit LinearElasticIsotropic(MaterialProperties material_properties)
-        : _mp(std::move(material_properties))
+    explicit LinearElasticIsotropic(bool const tension_cutoff,
+                                    MaterialProperties material_properties)
+        : _tension_cutoff(tension_cutoff), _mp(std::move(material_properties))
     {
     }
 
@@ -87,6 +88,10 @@ public:
             material_state_variables) override;
 
 private:
+    /// If set no resistance to open the fracture over the initial aperture is
+    /// opposed.
+    bool const _tension_cutoff;
+
     MaterialProperties _mp;
 };
 

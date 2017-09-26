@@ -47,11 +47,14 @@ createMohrCoulomb(
         //! \ogs_file_param_special{material__solid__constitutive_relation__MohrCoulomb__cohesion}
         config, "cohesion", parameters, 1);
 
+    auto const tension_cutoff =
+        //! \ogs_file_param_special{material__solid__constitutive_relation__MohrCoulomb__tension_cutoff}
+        config.getConfigParameter<bool>("tension_cutoff");
 
     typename MohrCoulomb<DisplacementDim>::MaterialProperties mp{
         Kn, Ks, friction_angle, dilatancy_angle, cohesion};
 
-    return std::make_unique<MohrCoulomb<DisplacementDim>>(mp);
+    return std::make_unique<MohrCoulomb<DisplacementDim>>(tension_cutoff, mp);
 }
 
 

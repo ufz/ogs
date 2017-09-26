@@ -37,8 +37,8 @@ void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
 
     sigma.noalias() = sigma_prev + C * (w - w_prev);
 
-    // correct if fracture is opening
-    if (sigma[index_ns] > 0)
+    // correction for an opening fracture
+    if (_tension_cutoff && sigma[index_ns] > 0)
     {
         C.setZero();
         sigma.setZero();
