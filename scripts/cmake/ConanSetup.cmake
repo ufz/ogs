@@ -55,7 +55,7 @@ endif()
 execute_process(COMMAND ${CONAN_CMD} remote list OUTPUT_VARIABLE CONAN_REMOTES)
 
 # Add ogs remote
-if("${CONAN_REMOTES}" MATCHES "ogs: ")
+if("${CONAN_REMOTES}" MATCHES ".*ogs:.*")
     # Make sure ogs repo is first
     execute_process(COMMAND ${CONAN_CMD} remote update -i 0 ogs
         https://ogs.jfrog.io/ogs/api/conan/conan)
@@ -68,7 +68,7 @@ else()
 endif()
 
 # Add conan-community remote
-if("${CONAN_REMOTES}" MATCHES "conan-community: ")
+if("${CONAN_REMOTES}" MATCHES ".*conan-community:.*")
     execute_process(COMMAND ${CONAN_CMD} remote update -i 2 conan-community
         https://api.bintray.com/conan/conan-community/conan)
 else()
