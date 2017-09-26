@@ -65,12 +65,6 @@ public:
         const double /*t*/,
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override
     {
-        // TODO: Reenable when fixed ;)
-        // if (_already_computed)
-        // return;
-
-        _already_computed = true;
-
         SpatialPosition pos;
 
         bc_values.ids.clear();
@@ -106,8 +100,6 @@ private:
     NumLib::LocalToGlobalIndexMap const& _dof_table_bulk;
     int const _variable_id_bulk;
     int const _component_id_bulk;
-
-    mutable bool _already_computed = false;
 };
 
 std::unique_ptr<NonuniformDirichletBoundaryCondition>

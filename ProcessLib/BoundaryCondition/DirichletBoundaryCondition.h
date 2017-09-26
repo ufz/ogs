@@ -63,7 +63,6 @@ private:
     std::size_t const _mesh_id;
     int const _variable_id;
     int const _component_id;
-    mutable bool _already_computed = false;
 };
 
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
