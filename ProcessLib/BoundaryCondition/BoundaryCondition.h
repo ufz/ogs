@@ -62,8 +62,6 @@ public:
         // Therefore there is nothing to do here.
     }
 
-    virtual void preTimestep(const double /*t*/) {}
-
     virtual ~BoundaryCondition() = default;
 };
 

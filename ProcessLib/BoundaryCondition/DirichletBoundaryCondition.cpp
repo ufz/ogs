@@ -16,10 +16,6 @@
 
 namespace ProcessLib
 {
-void DirichletBoundaryCondition::preTimestep(const double /*t*/)
-{
-}
-
 void DirichletBoundaryCondition::getEssentialBCValues(
     const double t, NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
