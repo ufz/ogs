@@ -104,6 +104,14 @@ inline std::string getString (Property* p)
 {
     return boost::get<std::string>(p->value());
 }
+
+/// This method returns the 0-based index of the variant
+/// data types. Can be enhanced by using enums.
+inline std::size_t getType (Property* p)
+{
+    return p->value().which();
+}
+
 /// This method returns a value of any valid type from
 /// the property value attribute. The data type is provided
 /// by the first parameter in the argument list.
