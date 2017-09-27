@@ -26,13 +26,22 @@ struct SmallDeformationProcessData
 {
     SmallDeformationProcessData(
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&&
-            material)
-        : material{std::move(material)}
+            material,
+        Parameter<double> const& solid_density_,
+        Eigen::Matrix<double, DisplacementDim, 1>
+            specific_body_force_)
+        : material{std::move(material)},
+          solid_density(solid_density_),
+          specific_body_force(std::move(specific_body_force_))
     {
     }
 
     SmallDeformationProcessData(SmallDeformationProcessData&& other)
-        : material{std::move(other.material)}, dt{other.dt}, t{other.t}
+        : material{std::move(other.material)},
+          solid_density(other.solid_density),
+          specific_body_force(other.specific_body_force),
+          dt{other.dt},
+          t{other.t}
     {
     }
 
@@ -47,6 +56,12 @@ struct SmallDeformationProcessData
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         material;
+    /// Solid's density. A scalar quantity, Parameter<double>.
+    Parameter<double> const& solid_density;
+    /// Specific body forces applied to the solid.
+    /// It is usually used to apply gravitational forces.
+    /// A vector of displacement dimension's length.
+    Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt = 0;
     double t = 0;
 };

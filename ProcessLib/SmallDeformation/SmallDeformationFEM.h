@@ -185,6 +185,18 @@ public:
             auto const& N = _ip_data[ip].N;
             auto const& dNdx = _ip_data[ip].dNdx;
 
+            typename ShapeMatricesType::template MatrixType<DisplacementDim,
+                                                            displacement_size>
+                N_u_op = ShapeMatricesType::template MatrixType<
+                    DisplacementDim,
+                    displacement_size>::Zero(DisplacementDim,
+                                             displacement_size);
+            for (int i = 0; i < DisplacementDim; ++i)
+                N_u_op
+                    .template block<1, displacement_size / DisplacementDim>(
+                        i, i * displacement_size / DisplacementDim)
+                    .noalias() = N;
+
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
                     _element, N);
@@ -215,7 +227,10 @@ public:
             KelvinMatrixType<DisplacementDim> C;
             std::tie(sigma, state, C) = std::move(*solution);
 
-            local_b.noalias() -= B.transpose() * sigma * w;
+            auto const rho = _process_data.solid_density(t, x_position)[0];
+            auto const& b = _process_data.specific_body_force;
+            local_b.noalias() -=
+                (B.transpose() * sigma - N_u_op.transpose() * rho * b) * w;
             local_Jac.noalias() += B.transpose() * C * B * w;
         }
     }
@@ -493,6 +508,9 @@ private:
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
     bool const _is_axially_symmetric;
+
+    static const int displacement_size =
+        ShapeFunction::NPOINTS * DisplacementDim;
 };
 
 }  // namespace SmallDeformation

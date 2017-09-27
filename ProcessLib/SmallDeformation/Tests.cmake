@@ -327,3 +327,15 @@ AddTest(
     ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu sigma_yy sigma_yy
     ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu sigma_zz sigma_zz
 )
+
+# Two materials in gravity field
+AddTest(
+    NAME Parallel_Mechanics_SDL_two_material_gravity
+    PATH Mechanics/Linear
+    EXECUTABLE_ARGS two_material_gravity.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-16 RELTOL 1e-16
+    DIFF_DATA
+    expected_two_material_gravity.vtu two_material_gravity_pcs_0_ts_1_t_1.000000.vtu displacement displacement
+)
