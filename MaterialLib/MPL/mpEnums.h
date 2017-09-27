@@ -73,32 +73,33 @@ inline double getScalar (PrimaryVariableType pv)
  * PropertyEnum is an enumerator list of all known properties of a substance.
  * This includes all properties on all scales (i.e. component, phase, and
  * medium scales). It is used as an indexer for the PropertyArray of the
- * materials. If a necessary property is not in the list, simply add it
- * somewhere, but above the last entry 'number_of_property_enums'. Please note
- * that any of these entries must appear also in the convert function
- * 'convertStringToProperty'
+ * materials. If a necessary property is not in the list, simply add a new
+ * one in alphabetical order (of course, except for the last entry
+ * 'number_of_property_enums'). Please note that any of these entries must
+ * also appear in below convert functions.
 */
 enum PropertyEnum : std::size_t
 {
-    name,
-    mole_fraction,
-	molar_mass,
-	acentric_factor,
-    critical_temperature,
-    critical_pressure,
+    acentric_factor,
+    binary_interaction_coefficient,
     critical_density,
+    critical_pressure,
+    critical_temperature,
     density,
-    viscosity,
-    thermal_conductivity,
+    drhodT,
     effective_stress,
+    heat_capacity,
+    molar_mass,
+    mole_fraction,
+    name,
     permeability,
     phase_velocity,
-    saturation,
+    reference_density,
+    reference_temperature,
     relative_permeability,
-	reference_density,
-	reference_temperature,
-	drhodT,
-	binary_interaction_coefficient,
+    saturation,
+    thermal_conductivity,
+    viscosity,
     number_of_property_enums
 };
 
@@ -110,68 +111,76 @@ enum PropertyEnum : std::size_t
  * enumerator.
 */
 inline PropertyEnum convertStringToProperty (std::string const& inString) {
-    if (boost::iequals(inString, "name"))
-        return name;
-    if (boost::iequals(inString, "mole_fraction"))
-        return mole_fraction;
-    if (boost::iequals(inString, "molar_mass"))
-        return molar_mass;
-    if (boost::iequals(inString, "critical_temperature"))
-        return critical_temperature;
+
+    if (boost::iequals(inString, "acentric_factor"))
+            return acentric_factor;
+    if (boost::iequals(inString, "binary_interaction_coefficient"))
+        return binary_interaction_coefficient;
+    if (boost::iequals(inString, "critical_density"))
+            return critical_density;
     if (boost::iequals(inString, "critical_pressure"))
         return critical_pressure;
-    if (boost::iequals(inString, "critical_density"))
-        return critical_density;
-    if (boost::iequals(inString, "density"))
+    if (boost::iequals(inString, "critical_temperature"))
+        return critical_temperature;
+     if (boost::iequals(inString, "density"))
         return density;
-    if (boost::iequals(inString, "viscosity"))
-        return viscosity;
-    if (boost::iequals(inString, "thermal_conductivity"))
-        return thermal_conductivity;
+    if (boost::iequals(inString, "drhodT"))
+        return drhodT;
     if (boost::iequals(inString, "effective_stress"))
         return effective_stress;
+    if (boost::iequals(inString, "heat_capacity"))
+        return heat_capacity;
+    if (boost::iequals(inString, "molar_mass"))
+        return molar_mass;
+    if (boost::iequals(inString, "mole_fraction"))
+        return mole_fraction;
+    if (boost::iequals(inString, "name"))
+        return name;
     if (boost::iequals(inString, "permeability"))
         return permeability;
     if (boost::iequals(inString, "phase_velocity"))
         return phase_velocity;
-    if (boost::iequals(inString, "saturation"))
-        return saturation;
-    if (boost::iequals(inString, "relative_permeability"))
-        return relative_permeability;
     if (boost::iequals(inString, "reference_density"))
         return reference_density;
     if (boost::iequals(inString, "reference_temperature"))
         return reference_temperature;
-    if (boost::iequals(inString, "drhodT"))
-        return drhodT;
-    if (boost::iequals(inString, "binary_interaction_coefficient"))
-        return binary_interaction_coefficient;
+    if (boost::iequals(inString, "relative_permeability"))
+        return relative_permeability;
+    if (boost::iequals(inString, "saturation"))
+        return saturation;
+    if (boost::iequals(inString, "thermal_conductivity"))
+        return thermal_conductivity;
+    if (boost::iequals(inString, "viscosity"))
+        return viscosity;
+
     OGS_FATAL("The property name \"%s\" does not correspond to any known "
             "property", inString.c_str());
+
     return number_of_property_enums;  // to avoid the 'no return' warning
 }
 
 const static std::vector<std::string> convertEnumToString
 {
-    {"name"},
-    {"mole_fraction"},
-    {"molar_mass"},
     {"acentric_factor"},
-    {"critical_temperature"},
-    {"critical_pressure"},
+    {"binary_interaction_coefficient"},
     {"critical_density"},
+    {"critical_pressure"},
+    {"critical_temperature"},
     {"density"},
-    {"viscosity"},
-    {"thermal_conductivity"},
+    {"drhodT"},
     {"effective_stress"},
+    {"heat_capacity"},
+    {"molar_mass"},
+    {"mole_fraction"},
+    {"name"},
     {"permeability"},
     {"phase_velocity"},
-    {"saturation"},
-    {"relative_permeability"},
     {"reference_density"},
     {"reference_temperature"},
-    {"drhodT"},
-    {"binary_interaction_coefficient"}
+    {"relative_permeability"},
+    {"saturation"},
+    {"thermal_conductivity"},
+    {"viscosity"}
 };
 
 }   //MaterialPropertyLib
