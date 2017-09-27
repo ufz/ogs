@@ -54,19 +54,16 @@ void Property::notImplemented(std::string property, std::string material)
 
 std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Medium* m)
 {
-	DBUG("   Selecting a new medium property..");
 	return selectProperty(config, m);
 }
 
 std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Phase* p)
 {
-	DBUG("   Selecting a new phase property..");
 	return selectProperty(config, p);
 }
 
 std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Component* c)
 {
-	DBUG("   Selecting a new component property..");
 	return selectProperty(config, c);
 }
 

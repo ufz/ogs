@@ -22,7 +22,7 @@ namespace MaterialPropertyLib
 /// when the component is not specified via the 'name'-tag.
 Component::Component()
 {
-	DBUG ("      Unspecified component constructed.");
+	// DBUG ("      Unspecified component constructed.");
 	// Default properties are set to zero.
 	createDefaultProperties();
 
