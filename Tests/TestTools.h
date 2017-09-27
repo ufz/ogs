@@ -27,3 +27,6 @@
 
 boost::property_tree::ptree
 readXml(const char xml[]);
+
+boost::property_tree::ptree
+readXml(std::string);
