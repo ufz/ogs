@@ -6,7 +6,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-7 RELTOL 1e-10
+    ABSTOL 1e-2 RELTOL 1e-10 # darcy velocity has a large absolute error
     DIFF_DATA
     Padilla_NaCl1/Padilla_NaCl1_pcs_0_ts_0_t_0.000000.vtu Padilla_NaCl1_pcs_0_ts_0_t_0.000000.vtu concentration concentration
     Padilla_NaCl1/Padilla_NaCl1_pcs_0_ts_10005_t_20000.000000.vtu Padilla_NaCl1_pcs_0_ts_10005_t_20000.000000.vtu concentration concentration
@@ -158,7 +158,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-7 RELTOL 1e-10
+    ABSTOL 1e-2 RELTOL 1e-10 # darcy velocity has a large absolute error
     DIFF_DATA
     Padilla_NaCl6/Padilla_NaCl6_pcs_0_ts_0_t_0.000000.vtu Padilla_NaCl6_pcs_0_ts_0_t_0.000000.vtu concentration concentration
     Padilla_NaCl6/Padilla_NaCl6_pcs_0_ts_10000_t_19990.000000.vtu Padilla_NaCl6_pcs_0_ts_10000_t_19990.000000.vtu concentration concentration
