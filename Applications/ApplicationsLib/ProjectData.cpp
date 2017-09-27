@@ -251,10 +251,6 @@ void ProjectData::parseMaterials(BaseLib::ConfigTree const& media_config)
     auto const medium_config = media_config.getConfigSubtree("medium");
     MaterialPropertyLib::Medium medium(medium_config);
 
-    // Print a summary of the material object on screen, just
-    // for debugging purposes.
-    medium.summary();
-
 }
 
 void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
