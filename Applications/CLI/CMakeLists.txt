@@ -34,3 +34,8 @@ cpack_add_component(ogs_cli
     DESCRIPTION "The command line interface for OpenGeoSys."
     GROUP Applications
 )
+
+if(NOT APPLE)
+    include(packaging/InstallDependencies)
+    InstallDependencies(ogs)
+endif()

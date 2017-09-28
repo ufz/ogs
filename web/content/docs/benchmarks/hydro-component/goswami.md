@@ -3,7 +3,7 @@ author = "Marc Walther"
 weight = 142
 project = "Parabolic/ComponentTransport/goswami/"
 date = "2017-09-07T14:41:09+01:00"
-title = "Saturated Variable-Density Flow and Mass Transport"
+title = "Saturated Variable-Density Flow and Mass Transport (Goswami)"
 
 [menu]
   [menu.benchmarks]

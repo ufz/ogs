@@ -26,7 +26,7 @@ image.inside(defaultDockerArgs) {
     stage('Install prerequisites Web') {
         sh("""
             cd ogs/web
-            yarn --ignore-engines
+            yarn --ignore-engines --non-interactive
             node node_modules/node-sass/scripts/install.js
             npm rebuild node-sass
             sudo -H pip install -r requirements.txt

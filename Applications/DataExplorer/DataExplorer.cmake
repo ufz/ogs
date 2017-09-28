@@ -115,3 +115,8 @@ cpack_add_component(ogs_gui
 )
 set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "DataExplorer" "OGS Data Explorer" PARENT_SCOPE)
 set(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "bin/DataExplorer.exe" "Data Explorer" PARENT_SCOPE)
+
+if(NOT APPLE)
+    include(packaging/InstallDependencies)
+    InstallDependencies(DataExplorer)
+endif()
