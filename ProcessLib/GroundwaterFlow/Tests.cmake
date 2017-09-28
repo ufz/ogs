@@ -585,3 +585,15 @@ AddTest(
     DIFF_DATA
     inhomogeneous_permeability.vtu neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu mass_flux_ref mass_flux
 )
+
+AddTest(
+    NAME GroundWaterFlowProcess_Dirichlet_nonuniform
+    PATH Elliptic/nonuniform_bc_Groundwaterflow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS dirichlet_nonuniform.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-14 RELTOL 1e-16
+    DIFF_DATA
+    expected_dirichlet_nonuniform_pcs_0_ts_1_t_1.000000.vtu dirichlet_nonuniform_pcs_0_ts_1_t_1.000000.vtu pressure pressure
+)

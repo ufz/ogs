@@ -43,10 +43,4 @@ void BoundaryConditionCollection::addBCsForProcessVariables(
     // object if needed.
     _dirichlet_bcs.resize(_boundary_conditions.size());
 }
-
-void BoundaryConditionCollection::preTimestep(const double t)
-{
-    for (auto& bc : _boundary_conditions)
-        bc->preTimestep(t);
-}
 }

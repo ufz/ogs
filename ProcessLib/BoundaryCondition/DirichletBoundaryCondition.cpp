@@ -16,21 +16,9 @@
 
 namespace ProcessLib
 {
-void DirichletBoundaryCondition::preTimestep(const double /*t*/)
-{
-    if (_parameter.isTimeDependent())
-        _already_computed = false;
-}
-
 void DirichletBoundaryCondition::getEssentialBCValues(
     const double t, NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    // TODO: Reenable when fixed ;)
-    //if (_already_computed)
-        //return;
-
-    _already_computed = true;
-
     SpatialPosition pos;
 
     bc_values.ids.clear();

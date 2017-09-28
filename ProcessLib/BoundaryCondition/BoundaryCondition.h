@@ -62,8 +62,6 @@ public:
         // Therefore there is nothing to do here.
     }
 
-    virtual void preTimestep(const double /*t*/) {}
-
     virtual ~BoundaryCondition() = default;
 };
 
@@ -106,6 +104,12 @@ protected:
         const unsigned integration_order, const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
             parameters);
+
+    virtual std::unique_ptr<BoundaryCondition>
+    createNonuniformDirichletBoundaryCondition(
+        const BoundaryConditionConfig& config,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
+        const MeshLib::Mesh& mesh, const int variable_id);
 
     virtual std::unique_ptr<BoundaryCondition>
     createNonuniformNeumannBoundaryCondition(

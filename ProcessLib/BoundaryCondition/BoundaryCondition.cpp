@@ -15,6 +15,7 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/SearchLength.h"
 #include "NeumannBoundaryCondition.h"
+#include "NonuniformDirichletBoundaryCondition.h"
 #include "NonuniformNeumannBoundaryCondition.h"
 #include "PressureBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
@@ -49,6 +50,11 @@ BoundaryConditionBuilder::createBoundaryCondition(
         return createRobinBoundaryCondition(
                     config, dof_table, mesh, variable_id,
                     integration_order, shapefunction_order, parameters);
+    }
+    if (type == "NonuniformDirichlet")
+    {
+        return createNonuniformDirichletBoundaryCondition(config, dof_table,
+                                                          mesh, variable_id);
     }
     if (type == "NonuniformNeumann")
     {
@@ -173,6 +179,16 @@ BoundaryConditionBuilder::createRobinBoundaryCondition(
         dof_table, variable_id, *config.component_id,
         mesh.isAxiallySymmetric(), integration_order, shapefunction_order, mesh.getDimension(),
         parameters);
+}
+
+std::unique_ptr<BoundaryCondition>
+BoundaryConditionBuilder::createNonuniformDirichletBoundaryCondition(
+    const BoundaryConditionConfig& config,
+    const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
+    const int variable_id)
+{
+    return ProcessLib::createNonuniformDirichletBoundaryCondition(
+        config.config, dof_table, variable_id, *config.component_id, mesh);
 }
 
 std::unique_ptr<BoundaryCondition>
