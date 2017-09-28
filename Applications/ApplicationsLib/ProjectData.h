@@ -100,7 +100,7 @@ private:
     void parseParameters(BaseLib::ConfigTree const& parameters_config);
 
     /// Parses material configuration and saves them in an object.
-    void parseMaterials(BaseLib::ConfigTree const& media_config);
+    void parseMaterials(boost::optional<BaseLib::ConfigTree> const& media_config);
 
     /// Parses the processes configuration and creates new processes for each
     /// process entry passing the corresponding subtree to the process

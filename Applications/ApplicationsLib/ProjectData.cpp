@@ -161,8 +161,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     parseProcessVariables(project_config.getConfigSubtree("process_variables"));
 
     //! \ogs_file_param{prj__materials}
-    parseMaterials(project_config.getConfigSubtree("media"));
-
+    parseMaterials(project_config.getConfigSubtreeOptional("media"));
 
     //! \ogs_file_param{prj__processes}
     parseProcesses(project_config.getConfigSubtree("processes"),
@@ -238,8 +237,12 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
         parameter->initialize(_parameters);
 }
 
-void ProjectData::parseMaterials(BaseLib::ConfigTree const& media_config)
+void ProjectData::parseMaterials(
+        boost::optional<BaseLib::ConfigTree> const& media_config)
 {
+    if (!media_config)
+        return;
+
     DBUG("Reading materials:");
 
     if (_mesh_vec.empty() || _mesh_vec[0] == nullptr)
@@ -248,7 +251,7 @@ void ProjectData::parseMaterials(BaseLib::ConfigTree const& media_config)
         return;
     }
 
-    auto const medium_config = media_config.getConfigSubtree("medium");
+    auto const medium_config = media_config->getConfigSubtree("medium");
     MaterialPropertyLib::Medium medium(medium_config);
 
 }
