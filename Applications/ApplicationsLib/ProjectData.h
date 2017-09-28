@@ -21,6 +21,8 @@
 
 #include "GeoLib/GEOObjects.h"
 
+#include "MaterialLib/MPL/mpMedium.h"
+
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessVariable.h"
@@ -120,6 +122,7 @@ private:
     void parseCurves(boost::optional<BaseLib::ConfigTree> const& config);
 
     GeoLib::GEOObjects* _geoObjects = new GeoLib::GEOObjects();
+    std::unique_ptr<MaterialPropertyLib::Medium> _medium;
     std::vector<MeshLib::Mesh*> _mesh_vec;
     std::map<std::string, std::unique_ptr<ProcessLib::Process>> _processes;
     std::vector<ProcessLib::ProcessVariable> _process_variables;

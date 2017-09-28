@@ -252,7 +252,7 @@ void ProjectData::parseMaterials(
     }
 
     auto const medium_config = media_config->getConfigSubtree("medium");
-    MaterialPropertyLib::Medium medium(medium_config);
+    _medium.reset (new MaterialPropertyLib::Medium(medium_config));
 
 }
 
