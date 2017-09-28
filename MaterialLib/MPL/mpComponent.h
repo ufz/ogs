@@ -10,8 +10,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MATERIALLIB_MPL_MPCOMPONENT_H_
-#define MATERIALLIB_MPL_MPCOMPONENT_H_
+#pragma once
 
 #include "BaseLib/ConfigTree.h"
 #include "mpProperty.h"
@@ -54,4 +53,3 @@ std::unique_ptr<Component> newComponent(boost::optional<std::string> const&);
 
 }  // MaterialPropertyLib
 
-#endif /* MATERIALLIB_MPL_MPCOMPONENT_H_ */
