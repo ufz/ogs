@@ -111,7 +111,7 @@ void Medium::createProperties(BaseLib::ConfigTree const& config)
  */
 void Medium::createDefaultProperties(void)
 {
-    for (size_t i = 0; i < number_of_property_enums; ++i)
+    for (std::size_t i = 0; i < number_of_property_enums; ++i)
         this->_properties[i] = std::make_unique<AverageVolumeFraction>(this);
 }
 
@@ -133,10 +133,10 @@ std::size_t Medium::numberOfPhases(void)
 void Medium::resetPropertyUpdateStatus()
 {
     // Phase properties
-    for (size_t p = 0; p < _phases.size(); ++p)
+    for (std::size_t p = 0; p < _phases.size(); ++p)
         _phases[p]->resetPropertyUpdateStatus();
     // Medium properties
-    for (size_t i = 0; i < number_of_property_enums; ++i)
+    for (std::size_t i = 0; i < number_of_property_enums; ++i)
         _properties[i]->isUpdated(false);
 }
 
