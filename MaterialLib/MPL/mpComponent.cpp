@@ -59,7 +59,7 @@ void Component::createProperties(BaseLib::ConfigTree const& config)
  */
 void Component::createDefaultProperties(void)
 {
-    for (size_t i = 0; i < number_of_property_enums; ++i)
+    for (std::size_t i = 0; i < number_of_property_enums; ++i)
         _properties[i] = std::make_unique<Constant>(0);
 }
 
@@ -70,7 +70,7 @@ Property* Component::property(PropertyEnum const& p)
 
 void Component::resetPropertyUpdateStatus(void)
 {
-    for (size_t p = 0; p < number_of_property_enums; ++p)
+    for (std::size_t p = 0; p < number_of_property_enums; ++p)
         _properties[p]->isUpdated(false);
 }
 /**

@@ -100,7 +100,7 @@ void Phase::createProperties(BaseLib::ConfigTree const& config)
  */
 void Phase::createDefaultProperties(void)
 {
-    for (size_t i = 0; i < number_of_property_enums; ++i)
+    for (std::size_t i = 0; i < number_of_property_enums; ++i)
         _properties[i] = std::make_unique<AverageMoleFraction>(this);
 
     // After this, other special properties can be set as default
@@ -124,10 +124,10 @@ std::size_t Phase::numberOfComponents(void)
 void Phase::resetPropertyUpdateStatus(void)
 {
     // Component properties
-    for (size_t c = 0; c < numberOfComponents(); ++c)
+    for (std::size_t c = 0; c < numberOfComponents(); ++c)
         _components[c]->resetPropertyUpdateStatus();
     // Medium properties
-    for (size_t p = 0; p < number_of_property_enums; ++p)
+    for (std::size_t p = 0; p < number_of_property_enums; ++p)
         _properties[p]->isUpdated(false);
 }
 
