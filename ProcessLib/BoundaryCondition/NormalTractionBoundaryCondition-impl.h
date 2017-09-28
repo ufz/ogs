@@ -107,12 +107,10 @@ createNormalTractionBoundaryCondition(
     DBUG("Using parameter %s", parameter_name.c_str());
 
     auto const& pressure = findParameter<double>(parameter_name, parameters, 1);
-    return std::unique_ptr<NormalTractionBoundaryCondition<
-        NormalTractionBoundaryConditionLocalAssembler>>{
-        new NormalTractionBoundaryCondition<
-            NormalTractionBoundaryConditionLocalAssembler>{
-            is_axially_symmetric, integration_order, shapefunction_order,
-            dof_table, variable_id, global_dim, std::move(elements), pressure}};
+    return std::make_unique<NormalTractionBoundaryCondition<
+        NormalTractionBoundaryConditionLocalAssembler>>(
+        is_axially_symmetric, integration_order, shapefunction_order, dof_table,
+        variable_id, global_dim, std::move(elements), pressure);
 }
 
 }  // namespace NormalTractionBoundaryCondition
