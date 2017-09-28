@@ -1,0 +1,1 @@
+\copydoc ProcessLib::NormalTractionBoundaryCondition::NormalTractionBoundaryCondition
