@@ -118,7 +118,8 @@ protected:
         const MeshLib::Mesh& mesh, const int variable_id,
         const unsigned integration_order, const unsigned shapefunction_order);
 
-    virtual std::unique_ptr<BoundaryCondition> createPressureBoundaryCondition(
+    virtual std::unique_ptr<BoundaryCondition>
+    createNormalTractionBoundaryCondition(
         const BoundaryConditionConfig& config,
         const NumLib::LocalToGlobalIndexMap& dof_table,
         const MeshLib::Mesh& mesh, const int variable_id,
