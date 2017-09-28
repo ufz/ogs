@@ -10,8 +10,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MATERIALLIB_MPL_PROPERTIES_PVISCOSITY_FENGHOUR_H_
-#define MATERIALLIB_MPL_PROPERTIES_PVISCOSITY_FENGHOUR_H_
+#pragma once
 
 #include "../mpProperty.h"
 
@@ -44,5 +43,3 @@ public:
 };
 
 }  // MaterialPropertyLib
-
-#endif /* MATERIALLIB_MPL_PROPERTIES_PVISCOSITY_FENGHOUR_H_ */

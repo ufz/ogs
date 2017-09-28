@@ -10,13 +10,10 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MATERIALLIB_MPL_PROPERTIES_PUNIVERSALCONSTANTS_H_
-#define MATERIALLIB_MPL_PROPERTIES_PUNIVERSALCONSTANTS_H_
+#pragma once
 
 namespace MaterialPropertyLib
 {
 const double gasConstant = 8.3144598;
 
 }  // MaterialPropertyLib
-
-#endif /* MATERIALLIB_MPL_PROPERTIES_PUNIVERSALCONSTANTS_H_ */

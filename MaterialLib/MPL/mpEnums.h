@@ -11,8 +11,7 @@
  *
  */
 
-#ifndef MATERIALLIB_MPL_MPENUMS_H_
-#define MATERIALLIB_MPL_MPENUMS_H_
+#pragma once
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/variant.hpp>
@@ -183,5 +182,3 @@ const static std::vector<std::string> convertEnumToString{
     {"viscosity"}};
 
 }  // MaterialPropertyLib
-
-#endif /* MATERIALLIB_MPL_MPENUMS_H_ */

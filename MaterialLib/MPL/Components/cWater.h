@@ -10,8 +10,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MATERIALLIB_MPL_COMPONENTS_CWATER_H_
-#define MATERIALLIB_MPL_COMPONENTS_CWATER_H_
+#pragma once
 
 #include "../mpComponent.h"
 
@@ -30,5 +29,3 @@ public:
 };
 
 }  // MaterialPropertyLib
-
-#endif /* MATERIALLIB_MPL_COMPONENTS_CWATER_H_ */

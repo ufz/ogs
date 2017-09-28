@@ -10,12 +10,9 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MATERIALLIB_MPL_PROPERTIES_PROPERTIES_H_
-#define MATERIALLIB_MPL_PROPERTIES_PROPERTIES_H_
+#pragma once
 
 #include "pAverageMoleFraction.h"
 #include "pAverageVolumeFraction.h"
 #include "pConstant.h"
 #include "pLinearTemperature.h"
-
-#endif /* MATERIALLIB_MPL_PROPERTIES_PROPERTIES_H_ */

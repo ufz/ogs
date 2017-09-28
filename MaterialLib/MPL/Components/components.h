@@ -10,11 +10,8 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MATERIALLIB_MPL_COMPONENTS_COMPONENTS_H_
-#define MATERIALLIB_MPL_COMPONENTS_COMPONENTS_H_
+#pragma once
 
 #include "cCarbonDioxide.h"
 #include "cSalt.h"
 #include "cWater.h"
-
-#endif /* MATERIALLIB_MPL_COMPONENTS_COMPONENTS_H_ */

@@ -10,9 +10,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-
-#ifndef MATERIALLIB_MPL_MPMEDIUM_H_
-#define MATERIALLIB_MPL_MPMEDIUM_H_
+#pragma once
 
 #include "BaseLib/ConfigTree.h"
 #include "mpPhase.h"
@@ -64,6 +62,4 @@ public:
 
     void resetPropertyUpdateStatus(void);
 };
-}
-
-#endif /* MATERIALLIB_MPL_MPMEDIUM_H_ */
+} //MaterialPropertyLib

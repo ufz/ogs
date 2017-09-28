@@ -10,8 +10,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MATERIALLIB_MPL_PROPERTIES_PPENGROBINSON_H_
-#define MATERIALLIB_MPL_PROPERTIES_PPENGROBINSON_H_
+#pragma once
 
 #include "../mpProperty.h"
 
@@ -60,5 +59,3 @@ double cohesionPressure(const double Tc, const double pc);
 double coVolume(const double Tc, const double pc);
 
 }  // MaterialPropertyLib
-
-#endif /* MATERIALLIB_MPL_PROPERTIES_PPENGROBINSON_H_ */

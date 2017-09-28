@@ -10,8 +10,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#ifndef MATERIALLIB_MPL_MPPROPERTY_H_
-#define MATERIALLIB_MPL_MPPROPERTY_H_
+#pragma once
 
 #include "BaseLib/ConfigTree.h"
 #include "mpEnums.h"
@@ -125,5 +124,3 @@ T getValue(T const&, Property* p)
 }
 
 }  // MaterialPropertyLib
-
-#endif /* MATERIALLIB_MPL_MPPROPERTY_H_ */
