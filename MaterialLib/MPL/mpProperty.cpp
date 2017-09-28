@@ -49,7 +49,7 @@ void Property::notImplemented(std::string property, std::string material)
     OGS_FATAL(
         "The property \'%s\' is not "
         "available on the \'%s\' scale",
-        property, material);
+        property.c_str(), material.c_str());
 }
 
 std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config,
