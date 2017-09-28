@@ -146,13 +146,18 @@ public:
     }
 
     void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
-                  std::vector<double>& /*local_M_data*/,
-                  std::vector<double>& /*local_K_data*/,
-                  std::vector<double>& /*local_b_data*/) override
+                  std::vector<double>& local_M_data,
+                  std::vector<double>& local_K_data,
+                  std::vector<double>& local_b_data) override
     {
-        OGS_FATAL(
-            "SmallDeformationLocalAssembler: assembly without jacobian is not "
-            "implemented.");
+//        OGS_FATAL(
+//            "SmallDeformationLocalAssembler: assembly without jacobian is not "
+//            "implemented.");
+        //only for linear elastic
+//        M=0;
+//        K = B.transpose() * C B * w //vormals Jac
+//        b = N_u_op.transpose() * rho * b * w;
+
     }
 
     void assembleWithJacobian(double const t,
