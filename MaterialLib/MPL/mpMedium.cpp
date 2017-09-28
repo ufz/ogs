@@ -12,13 +12,13 @@
  */
 
 #include "mpMedium.h"
-#include "mpPhase.h"
-#include "mpComponent.h"
-#include "Properties/pAverageVolumeFraction.h"
-#include "Properties/pConstant.h"
+#include <boost/variant.hpp>
 #include <iostream>
 #include <string>
-#include <boost/variant.hpp>
+#include "Properties/pAverageVolumeFraction.h"
+#include "Properties/pConstant.h"
+#include "mpComponent.h"
+#include "mpPhase.h"
 
 namespace MaterialPropertyLib
 {
@@ -38,7 +38,7 @@ Medium::Medium(BaseLib::ConfigTree const& config)
     // other than a small gain of clarity in case several media
     // should be defined.
     auto const medium_name =
-            config.getConfigParameter<std::string>("name","no_name");
+        config.getConfigParameter<std::string>("name", "no_name");
 
     _properties[name] = std::make_unique<Constant>(medium_name);
 
@@ -47,9 +47,9 @@ Medium::Medium(BaseLib::ConfigTree const& config)
     createPhases(phases_config);
     // Parsing medium properties, overwriting the defaults.
     auto const properties_config =
-            config.getConfigSubtreeOptional("properties");
+        config.getConfigSubtreeOptional("properties");
     if (properties_config)
-    	createProperties(properties_config.get());
+        createProperties(properties_config.get());
 }
 /**
  * This method creates the phases of the medium. Unlike a medium, a
@@ -67,15 +67,18 @@ void Medium::createPhases(BaseLib::ConfigTree const& config)
     for (auto phase_config : config.getConfigSubtreeList("phase"))
     {
         // Phase name is optional
-        auto const phase_name = phase_config.getConfigParameterOptional<std::string>("name");
+        auto const phase_name =
+            phase_config.getConfigParameterOptional<std::string>("name");
         auto newPhase = std::make_unique<Phase>(phase_name);
         // Parsing the components
-        auto const components_config = phase_config.getConfigSubtree("components");
-        newPhase->createComponents (components_config);
+        auto const components_config =
+            phase_config.getConfigSubtree("components");
+        newPhase->createComponents(components_config);
 
         // Properties of phases are optional
-        if (auto const properties_config = phase_config.getConfigSubtreeOptional("properties"))
-                	newPhase->createProperties (properties_config.get());
+        if (auto const properties_config =
+                phase_config.getConfigSubtreeOptional("properties"))
+            newPhase->createProperties(properties_config.get());
         // No else branch here, default properties are used. Those defaults
         // were assigned by the phase constructor.
         _phases.push_back(std::move(newPhase));
@@ -90,13 +93,14 @@ void Medium::createProperties(BaseLib::ConfigTree const& config)
     for (auto property_config : config.getConfigSubtreeList("property"))
     {
         // create a new Property based on configuration tree
-        auto property = newProperty (property_config, this);
+        auto property = newProperty(property_config, this);
         /// parse the name of the property
         auto const property_name =
-                property_config.getConfigParameter<std::string>("name");
+            property_config.getConfigParameter<std::string>("name");
         // insert the newly created property at the right place
         // into the property array
-        _properties[convertStringToProperty(property_name)]= std::move(property);
+        _properties[convertStringToProperty(property_name)] =
+            std::move(property);
     }
 }
 
@@ -107,8 +111,8 @@ void Medium::createProperties(BaseLib::ConfigTree const& config)
  */
 void Medium::createDefaultProperties(void)
 {
-	for (size_t i=0; i < number_of_property_enums; ++i)
-		this->_properties[i] = std::make_unique<AverageVolumeFraction>(this);
+    for (size_t i = 0; i < number_of_property_enums; ++i)
+        this->_properties[i] = std::make_unique<AverageVolumeFraction>(this);
 }
 
 Phase* Medium::phase(std::size_t const index)
@@ -116,7 +120,7 @@ Phase* Medium::phase(std::size_t const index)
     return _phases[index].get();
 }
 
-Property* Medium::property(PropertyEnum const &p)
+Property* Medium::property(PropertyEnum const& p)
 {
     return _properties[p].get();
 }
@@ -132,12 +136,8 @@ void Medium::resetPropertyUpdateStatus()
     for (size_t p = 0; p < _phases.size(); ++p)
         _phases[p]->resetPropertyUpdateStatus();
     // Medium properties
-    for (size_t i=0; i<number_of_property_enums; ++i)
+    for (size_t i = 0; i < number_of_property_enums; ++i)
         _properties[i]->isUpdated(false);
 }
 
-} // MaterialPropertyLib
-
-
-
-
+}  // MaterialPropertyLib

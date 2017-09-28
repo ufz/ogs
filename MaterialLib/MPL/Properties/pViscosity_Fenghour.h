@@ -17,7 +17,6 @@
 
 namespace MaterialPropertyLib
 {
-
 class Medium;
 class Phase;
 class Component;
@@ -31,20 +30,19 @@ class ViscosityCO2Fenghour final : public Property
 {
 private:
     Component* _component;
-    std::array<double,5> _a;
-    std::array<double,5> _d;
+    std::array<double, 5> _a;
+    std::array<double, 5> _d;
 
 public:
-    ViscosityCO2Fenghour (Medium*);
-    ViscosityCO2Fenghour (Phase*);
-    ViscosityCO2Fenghour (Component*);
+    ViscosityCO2Fenghour(Medium*);
+    ViscosityCO2Fenghour(Phase*);
+    ViscosityCO2Fenghour(Component*);
 
     /// This method overrides the base class implementation and
     /// actually computes and sets the property _value.
-    PropertyDataType value (VariableArray const&) override;
+    PropertyDataType value(VariableArray const&) override;
 };
 
-} // MaterialPropertyLib
-
+}  // MaterialPropertyLib
 
 #endif /* MATERIALLIB_MPL_PROPERTIES_PVISCOSITY_FENGHOUR_H_ */

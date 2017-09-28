@@ -22,7 +22,6 @@
 
 namespace MaterialPropertyLib
 {
-
 class Medium;
 class Phase;
 class Component;
@@ -43,24 +42,25 @@ using PropertyDataType = boost::variant<double, Vector, Tensor, std::string>;
 class Property
 {
 protected:
-	/// The single value of a property.
+    /// The single value of a property.
     PropertyDataType _value;
     bool _isUpdated;
+
 public:
     Property();
     virtual ~Property() = default;
     void isUpdated(bool);
-    bool isUpdated ();
+    bool isUpdated();
     /// This method is called when a property is used for the wrong
     /// kind of material, or if the proeprty is not implemented on
     /// this kind of material yet.
-    void notImplemented (std::string, std::string);
+    void notImplemented(std::string, std::string);
     /// This virtual method simply returns the private _value attribute
     /// without changing it.
-    virtual PropertyDataType value () const;
+    virtual PropertyDataType value() const;
     /// This virtual method will compute the property value baesd on the
     /// primary variables that are passed as arguments.
-    virtual PropertyDataType value (VariableArray const&);
+    virtual PropertyDataType value(VariableArray const&);
 };  // class Property
 
 /**
@@ -69,45 +69,48 @@ public:
  * this array is determined by the number of entries of the
  * PropertyEnum enumerator.
 */
-using PropertyArray = std::array<std::unique_ptr<Property>, number_of_property_enums>;
+using PropertyArray =
+    std::array<std::unique_ptr<Property>, number_of_property_enums>;
 
 /// Method to select a property by name and to call a derived property
 /// constructor.
 template <typename MaterialType>
-//Property* selectProperty (BaseLib::ConfigTree const&, MaterialType);
-std::unique_ptr<Property> selectProperty
-(BaseLib::ConfigTree const&, MaterialType);
+// Property* selectProperty (BaseLib::ConfigTree const&, MaterialType);
+std::unique_ptr<Property> selectProperty(BaseLib::ConfigTree const&,
+                                         MaterialType);
 /// This method creates a new medium property.
-std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Medium*);
+std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config,
+                                      Medium*);
 /// This method creates a new phase property.
 std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const&, Phase*);
 /// This method creates a new component property.
-std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config, Component*);
+std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config,
+                                      Component*);
 
 /// This method returns a value of type double from the
 /// property value attribute
-inline double getScalar (Property* p)
+inline double getScalar(Property* p)
 {
     return boost::get<double>(p->value());
 }
 
 /// This method forces the computation of a value of type double
 /// and returns it
-inline double getScalar (Property* p, VariableArray const&v)
+inline double getScalar(Property* p, VariableArray const& v)
 {
     return boost::get<double>(p->value(v));
 }
 
 /// This method returns a value of type string from the
 /// property value attribute
-inline std::string getString (Property* p)
+inline std::string getString(Property* p)
 {
     return boost::get<std::string>(p->value());
 }
 
 /// This method returns the 0-based index of the variant
 /// data types. Can be enhanced by using enums.
-inline std::size_t getType (Property* p)
+inline std::size_t getType(Property* p)
 {
     return p->value().which();
 }
@@ -116,12 +119,11 @@ inline std::size_t getType (Property* p)
 /// the property value attribute. The data type is provided
 /// by the first parameter in the argument list.
 template <typename T>
-T getValue (T const&, Property* p)
+T getValue(T const&, Property* p)
 {
     return boost::get<T>(p->value());
 }
 
-} //MaterialPropertyLib
-
+}  // MaterialPropertyLib
 
 #endif /* MATERIALLIB_MPL_MPPROPERTY_H_ */

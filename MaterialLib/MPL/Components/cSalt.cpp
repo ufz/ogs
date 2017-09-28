@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
  * \date   12.09.2017
- * \brief  
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -16,12 +16,9 @@
 
 namespace MaterialPropertyLib
 {
-
 Salt::Salt()
 {
-	_properties[name] = std::make_unique<Constant>("Salt");
+    _properties[name] = std::make_unique<Constant>("Salt");
 };
 
-
-} // MaterialPropertyLib
-
+}  // MaterialPropertyLib

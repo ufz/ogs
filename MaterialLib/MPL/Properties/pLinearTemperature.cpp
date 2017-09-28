@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
  * \date   11.09.2017
- * \brief  
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,32 +12,28 @@
  */
 
 #include "pLinearTemperature.h"
-#include "../mpComponent.h"
 #include <iostream>
+#include "../mpComponent.h"
 
 namespace MaterialPropertyLib
 {
 /// This constructor throws an error since it was used for a medium
 /// property while it is a component property.
-LinearTemperature::LinearTemperature(Medium*)
-: _component (0)
+LinearTemperature::LinearTemperature(Medium*) : _component(0)
 {
     notImplemented("LinearTemperature", "Medium");
 };
 
 /// This constructor throws an error since it was used for a phase
 /// property while it is a component property.
-LinearTemperature::LinearTemperature(Phase*)
-: _component (0)
+LinearTemperature::LinearTemperature(Phase*) : _component(0)
 {
     notImplemented("LinearTemperature", "Phase");
 };
 
 /// This constructor copies the pointer of the component from the
 /// arguments into the private attribute.
-LinearTemperature::LinearTemperature(Component* c)
-: _component (c)
-{};
+LinearTemperature::LinearTemperature(Component* c) : _component(c){};
 
 /**
  * This method computes a density by a linear correlation with temperature
@@ -48,13 +44,12 @@ PropertyDataType LinearTemperature::value(VariableArray const& v)
     if (isUpdated())
         return _value;
 
-	const double rho_0 = getScalar(_component->property(reference_density));
-	const double drho_dT  = getScalar(_component->property(drhodT));
-	const double T_ref = getScalar(_component->property(reference_temperature));
+    const double rho_0 = getScalar(_component->property(reference_density));
+    const double drho_dT = getScalar(_component->property(drhodT));
+    const double T_ref = getScalar(_component->property(reference_temperature));
 
-	_value = rho_0 + drho_dT*(getScalar(v[T])-T_ref);
-	return _value;
+    _value = rho_0 + drho_dT * (getScalar(v[T]) - T_ref);
+    return _value;
 }
 
-} //MaterialPropertyLib
-
+}  // MaterialPropertyLib

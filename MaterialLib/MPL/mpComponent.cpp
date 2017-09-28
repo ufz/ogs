@@ -15,20 +15,19 @@
 #include "Components/components.h"
 #include "Properties/properties.h"
 
-
 namespace MaterialPropertyLib
 {
 /// Default constructor of Component. This constructor is used
 /// when the component is not specified via the 'name'-tag.
 Component::Component()
 {
-	// DBUG ("      Unspecified component constructed.");
-	// Default properties are set to zero.
-	createDefaultProperties();
+    // DBUG ("      Unspecified component constructed.");
+    // Default properties are set to zero.
+    createDefaultProperties();
 
-	// Some properties can be initialized by other default
-	// properties:
-	_properties[name] = std::make_unique<Constant>("no_name");
+    // Some properties can be initialized by other default
+    // properties:
+    _properties[name] = std::make_unique<Constant>("no_name");
 }
 /**
  * \brief The method reads the 'properties' tag in the prj-file and creates
@@ -43,13 +42,14 @@ void Component::createProperties(BaseLib::ConfigTree const& config)
     {
         // Parsing the property name:
         auto const property_name =
-                property_config.getConfigParameter<std::string>("name");
+            property_config.getConfigParameter<std::string>("name");
         // Create a new property based on the configuration subtree:
-        auto property = newProperty (property_config, this);
+        auto property = newProperty(property_config, this);
 
         // Insert the new property at the right position into the components
         // private PropertyArray:
-        _properties[convertStringToProperty(property_name)] = std::move(property);
+        _properties[convertStringToProperty(property_name)] =
+            std::move(property);
     }
 }
 
@@ -59,18 +59,18 @@ void Component::createProperties(BaseLib::ConfigTree const& config)
  */
 void Component::createDefaultProperties(void)
 {
-for (size_t i=0; i < number_of_property_enums; ++i)
-	_properties[i] = std::make_unique<Constant>(0);
+    for (size_t i = 0; i < number_of_property_enums; ++i)
+        _properties[i] = std::make_unique<Constant>(0);
 }
 
-Property* Component::property(PropertyEnum const &p)
+Property* Component::property(PropertyEnum const& p)
 {
     return _properties[p].get();
 }
 
 void Component::resetPropertyUpdateStatus(void)
 {
-    for (size_t p=0; p < number_of_property_enums; ++p)
+    for (size_t p = 0; p < number_of_property_enums; ++p)
         _properties[p]->isUpdated(false);
 }
 /**
@@ -80,7 +80,8 @@ void Component::resetPropertyUpdateStatus(void)
  * calls the constructors of the derived component classes (if found)
  * or that of the base class (if no name is specified).
  */
-std::unique_ptr<Component> newComponent (boost::optional<std::string> const &name)
+std::unique_ptr<Component> newComponent(
+    boost::optional<std::string> const& name)
 {
     // Check whether a name is given or not
     if (!name)
@@ -92,7 +93,7 @@ std::unique_ptr<Component> newComponent (boost::optional<std::string> const &nam
     std::string component_name = static_cast<std::string>(name.get());
     // If a name is given, it must conform with one of the
     // derived component names in the following list:
-    if (boost::iequals(component_name, "water")) // "string" == "StRiNg"
+    if (boost::iequals(component_name, "water"))  // "string" == "StRiNg"
     {
         return std::make_unique<Water>();
     }
@@ -106,9 +107,8 @@ std::unique_ptr<Component> newComponent (boost::optional<std::string> const &nam
     }
     // If the given name does not appear in the list, this
     // throws a fatal error.
-    OGS_FATAL("The specified component name \"%s\" was not recognized", component_name.c_str());
-    return nullptr; // to avoid the 'no return' warning.
+    OGS_FATAL("The specified component name \"%s\" was not recognized",
+              component_name.c_str());
+    return nullptr;  // to avoid the 'no return' warning.
 }
-} // MaterialPropertyLib
-
-
+}  // MaterialPropertyLib

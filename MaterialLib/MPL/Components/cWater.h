@@ -29,9 +29,6 @@ public:
     Water();
 };
 
-
-} // MaterialPropertyLib
-
-
+}  // MaterialPropertyLib
 
 #endif /* MATERIALLIB_MPL_COMPONENTS_CWATER_H_ */

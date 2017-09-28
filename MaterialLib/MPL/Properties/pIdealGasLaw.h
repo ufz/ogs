@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
  * \date   18.09.2017
- * \brief  
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -17,7 +17,6 @@
 
 namespace MaterialPropertyLib
 {
-
 class Medium;
 class Phase;
 class Component;
@@ -30,6 +29,7 @@ private:
     /// A pointer to the phase object.
     Phase* _phase;
     Component* _component;
+
 public:
     /// Constructor passing a pointer to the medium.
     IdealGasLaw(Medium*);
@@ -39,12 +39,9 @@ public:
     IdealGasLaw(Component*);
     /// This method overrides the base class implementation and
     /// actually computes and sets the property _value.
-    PropertyDataType value (VariableArray const&) override;
+    PropertyDataType value(VariableArray const&) override;
 };
 
 }  // MaterialPropertyLib
-
-
-
 
 #endif /* MATERIALLIB_MPL_PROPERTIES_PIDEALGASLAW_H_ */

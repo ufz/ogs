@@ -14,11 +14,11 @@
 #ifndef MATERIALLIB_MPL_MPENUMS_H_
 #define MATERIALLIB_MPL_MPENUMS_H_
 
-#include "BaseLib/Error.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/variant.hpp>
 #include <cstddef>
 #include <string>
+#include "BaseLib/Error.h"
 
 namespace MaterialPropertyLib
 {
@@ -37,15 +37,15 @@ using Tensor = std::array<double, 9>;
 */
 enum PrimaryVariables : std::size_t
 {
-	p_GR,
-	p_LR,
-	p_cap,
-	T_S,
-	T_L,
-	T_G,
-	T,
-	u,
-	numberOfPrimaryVariables
+    p_GR,
+    p_LR,
+    p_cap,
+    T_S,
+    T_L,
+    T_G,
+    T,
+    u,
+    numberOfPrimaryVariables
 };
 
 /**
@@ -59,12 +59,11 @@ using PrimaryVariableType = boost::variant<double, Vector>;
  * by the PrimaryVariables enumerator list. Data type of that array is
  * defined by the PrimaryVariableType definition.
 */
-using VariableArray =
-		std::array<PrimaryVariableType, numberOfPrimaryVariables>;
+using VariableArray = std::array<PrimaryVariableType, numberOfPrimaryVariables>;
 
 /// This method returns a value of type double from the
 /// primar variables array
-inline double getScalar (PrimaryVariableType pv)
+inline double getScalar(PrimaryVariableType pv)
 {
     return boost::get<double>(pv);
 }
@@ -110,19 +109,19 @@ enum PropertyEnum : std::size_t
  * strings) have to be identical to the syntax of the entries in the
  * enumerator.
 */
-inline PropertyEnum convertStringToProperty (std::string const& inString) {
-
+inline PropertyEnum convertStringToProperty(std::string const& inString)
+{
     if (boost::iequals(inString, "acentric_factor"))
-            return acentric_factor;
+        return acentric_factor;
     if (boost::iequals(inString, "binary_interaction_coefficient"))
         return binary_interaction_coefficient;
     if (boost::iequals(inString, "critical_density"))
-            return critical_density;
+        return critical_density;
     if (boost::iequals(inString, "critical_pressure"))
         return critical_pressure;
     if (boost::iequals(inString, "critical_temperature"))
         return critical_temperature;
-     if (boost::iequals(inString, "density"))
+    if (boost::iequals(inString, "density"))
         return density;
     if (boost::iequals(inString, "drhodT"))
         return drhodT;
@@ -153,14 +152,15 @@ inline PropertyEnum convertStringToProperty (std::string const& inString) {
     if (boost::iequals(inString, "viscosity"))
         return viscosity;
 
-    OGS_FATAL("The property name \"%s\" does not correspond to any known "
-            "property", inString.c_str());
+    OGS_FATAL(
+        "The property name \"%s\" does not correspond to any known "
+        "property",
+        inString.c_str());
 
     return number_of_property_enums;  // to avoid the 'no return' warning
 }
 
-const static std::vector<std::string> convertEnumToString
-{
+const static std::vector<std::string> convertEnumToString{
     {"acentric_factor"},
     {"binary_interaction_coefficient"},
     {"critical_density"},
@@ -180,9 +180,8 @@ const static std::vector<std::string> convertEnumToString
     {"relative_permeability"},
     {"saturation"},
     {"thermal_conductivity"},
-    {"viscosity"}
-};
+    {"viscosity"}};
 
-}   //MaterialPropertyLib
+}  // MaterialPropertyLib
 
 #endif /* MATERIALLIB_MPL_MPENUMS_H_ */

@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
  * \date   12.09.2017
- * \brief  
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -26,13 +26,9 @@ namespace MaterialPropertyLib
 class CarbonDioxide : public Component
 {
 public:
-	CarbonDioxide();
+    CarbonDioxide();
 };
 
-
-} // MaterialPropertyLib
-
-
-
+}  // MaterialPropertyLib
 
 #endif /* MATERIALLIB_MPL_COMPONENTS_CCARBONDIOXIDE_H_ */

@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
  * \date   12.09.2017
- * \brief  
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,19 +15,16 @@
 
 namespace MaterialPropertyLib
 {
-AverageMoleFraction::AverageMoleFraction(Medium*)
-: _phase (0)
+AverageMoleFraction::AverageMoleFraction(Medium*) : _phase(0)
 {
     notImplemented("AverageMoleFraction", "Medium");
 }
 
-AverageMoleFraction::AverageMoleFraction(Phase* p)
-: _phase (p){};
+AverageMoleFraction::AverageMoleFraction(Phase* p) : _phase(p){};
 
-AverageMoleFraction::AverageMoleFraction(Component*)
-: _phase (0)
+AverageMoleFraction::AverageMoleFraction(Component*) : _phase(0)
 {
-	notImplemented("AverageMoleFraction", "Component");
+    notImplemented("AverageMoleFraction", "Component");
 }
 /**
  * This method computes an average phase property by
@@ -35,12 +32,12 @@ AverageMoleFraction::AverageMoleFraction(Component*)
  * where \f$\xi\f$ is an arbitrary property, \f$\alpha\f$ is the phase,
  * \f$x_{n\zeta}^\alpha\f$ is the mole fraction of the component \f$\zeta\f$.
  */
-PropertyDataType AverageMoleFraction::value (VariableArray const&)
+PropertyDataType AverageMoleFraction::value(VariableArray const&)
 {
     if (isUpdated())
         return _value;
 
-	/// \todo: implementation of AverageMoleFraction.
-	return _value;
+    /// \todo: implementation of AverageMoleFraction.
+    return _value;
 }
-} //MaterialPropertyLib
+}  // MaterialPropertyLib

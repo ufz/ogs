@@ -17,7 +17,6 @@
 
 namespace MaterialPropertyLib
 {
-
 class Medium;
 class Phase;
 class Component;
@@ -35,17 +34,15 @@ private:
     std::array<std::array<double, 7>, 6> _h;
 
 public:
-    ViscosityWaterIAPWS (Medium*);
-    ViscosityWaterIAPWS (Phase*);
-    ViscosityWaterIAPWS (Component*);
-
+    ViscosityWaterIAPWS(Medium*);
+    ViscosityWaterIAPWS(Phase*);
+    ViscosityWaterIAPWS(Component*);
 
     /// This method overrides the base class implementation and
     /// actually computes and sets the property _value.
-    PropertyDataType value (VariableArray const&) override;
+    PropertyDataType value(VariableArray const&) override;
 };
 
 }  // MaterialPropertyLib
-
 
 #endif /* MATERIALLIB_MPL_PROPERTIES_PVISCOSITY_IAPWS_H_ */

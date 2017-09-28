@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
  * \date   18.09.2017
- * \brief  
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,25 +15,18 @@
 
 namespace MaterialPropertyLib
 {
-IdealGasLaw::IdealGasLaw(Medium*)
-: _phase (0),
-  _component (0)
+IdealGasLaw::IdealGasLaw(Medium*) : _phase(0), _component(0)
 {
     notImplemented("IdealGasLaw", "Medium");
 }
 
-IdealGasLaw::IdealGasLaw(Phase* p)
-: _phase (p),
-  _component (0)
-{};
+IdealGasLaw::IdealGasLaw(Phase* p) : _phase(p), _component(0){};
 
-IdealGasLaw::IdealGasLaw(Component* c)
-: _phase (0),
-  _component (c){};
+IdealGasLaw::IdealGasLaw(Component* c) : _phase(0), _component(c){};
 
 /**
  */
-PropertyDataType IdealGasLaw::value (VariableArray const&)
+PropertyDataType IdealGasLaw::value(VariableArray const&)
 {
     if (isUpdated())
         return _value;
@@ -41,5 +34,4 @@ PropertyDataType IdealGasLaw::value (VariableArray const&)
     /// \todo: implementation of IdealGasLaw.
     return _value;
 }
-} //MaterialPropertyLib
-
+}  // MaterialPropertyLib

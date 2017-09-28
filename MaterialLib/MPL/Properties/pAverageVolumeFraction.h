@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
  * \date   13.09.2017
- * \brief  
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -17,7 +17,6 @@
 
 namespace MaterialPropertyLib
 {
-
 class Medium;
 class Phase;
 class Component;
@@ -31,19 +30,20 @@ class Component;
 class AverageVolumeFraction final : public Property
 {
 private:
-	/// A pointer to the medium object.
-	Medium* _medium;
-public:
-	/// Constructor passing a pointer to the medium.
-	AverageVolumeFraction(Medium*);
-	/// Constructor passing a pointer to a phase.
-	AverageVolumeFraction(Phase*);
-	/// Constructor passing a pointer to a component.
-	AverageVolumeFraction(Component*);
+    /// A pointer to the medium object.
+    Medium* _medium;
 
-	/// This method overrides the base class implementation and
-	/// actually computes and sets the property _value.
-	PropertyDataType value (VariableArray const&) override;
+public:
+    /// Constructor passing a pointer to the medium.
+    AverageVolumeFraction(Medium*);
+    /// Constructor passing a pointer to a phase.
+    AverageVolumeFraction(Phase*);
+    /// Constructor passing a pointer to a component.
+    AverageVolumeFraction(Component*);
+
+    /// This method overrides the base class implementation and
+    /// actually computes and sets the property _value.
+    PropertyDataType value(VariableArray const&) override;
 };
 
 }  // MaterialPropertyLib

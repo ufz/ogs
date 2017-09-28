@@ -16,11 +16,9 @@
 
 namespace MaterialPropertyLib
 {
-
 Water::Water()
 {
-	_properties[name] = std::make_unique<Constant>("Water");
+    _properties[name] = std::make_unique<Constant>("Water");
 };
 
-} // MaterialPropertyLib
-
+}  // MaterialPropertyLib

@@ -13,10 +13,8 @@
 #ifndef MATERIALLIB_MPL_COMPONENTS_COMPONENTS_H_
 #define MATERIALLIB_MPL_COMPONENTS_COMPONENTS_H_
 
-#include "cWater.h"
-#include "cSalt.h"
 #include "cCarbonDioxide.h"
-
-
+#include "cSalt.h"
+#include "cWater.h"
 
 #endif /* MATERIALLIB_MPL_COMPONENTS_COMPONENTS_H_ */

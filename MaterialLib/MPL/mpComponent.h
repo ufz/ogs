@@ -30,11 +30,12 @@ namespace MaterialPropertyLib
 class Component
 {
 protected:
-	/// The property array of the component.
+    /// The property array of the component.
     PropertyArray _properties;
+
 public:
     Component();
-    virtual ~Component()= default;
+    virtual ~Component() = default;
 
     /// The method for creating component properties.
     void createProperties(BaseLib::ConfigTree const&);
@@ -44,14 +45,13 @@ public:
     Property* property(PropertyEnum const&);
 
     void resetPropertyUpdateStatus(void);
-
 };
 /*
  * Method for creating a new component based on the specified
  * component name.
  */
-std::unique_ptr<Component> newComponent (boost::optional<std::string> const&);
+std::unique_ptr<Component> newComponent(boost::optional<std::string> const&);
 
-} //MaterialPropertyLib
+}  // MaterialPropertyLib
 
 #endif /* MATERIALLIB_MPL_MPCOMPONENT_H_ */

@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
  * \date   11.09.2017
- * \brief  
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -17,7 +17,6 @@
 
 namespace MaterialPropertyLib
 {
-
 class Medium;
 class Phase;
 class Component;
@@ -29,26 +28,23 @@ class Component;
 class LinearTemperature final : public Property
 {
 private:
-	/// This property is (currently) implemented to obtain component
-	/// properties only.
-	Component* _component;
-public:
-	/// Constructor that passes a pointer to the medium.
-	LinearTemperature(Medium*);
-	/// Constructor that passes a pointer to the phase.
-	LinearTemperature(Phase*);
-	/// Constructor that passes a pointer to the component.
-	LinearTemperature(Component*);
+    /// This property is (currently) implemented to obtain component
+    /// properties only.
+    Component* _component;
 
-	/// This method overrides the base class implementation and
-	/// actually computes and sets the property _value.
-	PropertyDataType value (VariableArray const&) override;
+public:
+    /// Constructor that passes a pointer to the medium.
+    LinearTemperature(Medium*);
+    /// Constructor that passes a pointer to the phase.
+    LinearTemperature(Phase*);
+    /// Constructor that passes a pointer to the component.
+    LinearTemperature(Component*);
+
+    /// This method overrides the base class implementation and
+    /// actually computes and sets the property _value.
+    PropertyDataType value(VariableArray const&) override;
 };
 
 }  // MaterialPropertyLib
-
-
-
-
 
 #endif /* MATERIALLIB_MPL_PROPERTIES_PLINEARTEMPERATURE_H_ */

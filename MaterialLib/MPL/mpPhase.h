@@ -33,6 +33,7 @@ class Phase
 private:
     std::vector<std::unique_ptr<Component>> _components;
     PropertyArray _properties;
+
 public:
     /// The Phase constructor is called with the optional
     /// phase name.
@@ -50,7 +51,7 @@ public:
 
     /// A simple get-function for a component. The argument refers to the
     /// Index of the component in the components vector.
-    Component* component (std::size_t const&);
+    Component* component(std::size_t const&);
     /// A get-function for a property. The argument refers to the
     /// name of the property.
     Property* property(PropertyEnum const&);
@@ -59,8 +60,6 @@ public:
     void resetPropertyUpdateStatus(void);
 };
 
-} //MaterialPropertyLib
-
-
+}  // MaterialPropertyLib
 
 #endif /* MATERIALLIB_MPL_MPPHASE_H_ */

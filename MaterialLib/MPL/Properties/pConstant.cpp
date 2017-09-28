@@ -20,11 +20,9 @@ namespace MaterialPropertyLib
  * PropertyDataType definition and sets the protected attribute _value
  * of the base class Property to that value.
  */
-Constant::Constant(PropertyDataType const &v)
+Constant::Constant(PropertyDataType const& v)
 {
     _value = v;
 };
 
-} // MaterialPropertyLib
-
-
+}  // MaterialPropertyLib

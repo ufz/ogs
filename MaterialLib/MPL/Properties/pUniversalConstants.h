@@ -1,7 +1,7 @@
 /**
  * \author Norbert Grunwald
  * \date   18.09.2017
- * \brief  
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,12 +15,8 @@
 
 namespace MaterialPropertyLib
 {
-
 const double gasConstant = 8.3144598;
 
-} //MaterialPropertyLib
-
-
-
+}  // MaterialPropertyLib
 
 #endif /* MATERIALLIB_MPL_PROPERTIES_PUNIVERSALCONSTANTS_H_ */
