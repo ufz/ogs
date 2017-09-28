@@ -68,8 +68,10 @@ if(OGS_BUILD_GUI)
     add_definitions(-DOGS_BUILD_GUI)
     # TODO: Remove when this is fixed in CMake, maybe in 3.10
     # https://gitlab.kitware.com/cmake/cmake/issues/17205
-    if(${CMAKE_VERSION} VERSION_GREATER 3.8.2)
-        message(FATAL_ERROR "OGS_BUILD_GUI is not supported with CMake 3.9.x. Please downgrade CMake to 3.8.x!")
+    if(${CMAKE_VERSION} VERSION_GREATER 3.8.2 AND
+        NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+        message(FATAL_ERROR "OGS_BUILD_GUI is not supported with CMake 3.9.x! "
+            "Please downgrade CMake to 3.8.x!")
     endif()
 endif()
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
