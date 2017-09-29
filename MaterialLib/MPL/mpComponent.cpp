@@ -97,9 +97,9 @@ std::unique_ptr<Component> newComponent(
     {
         return std::make_unique<Water>();
     }
-    if (boost::iequals(component_name, "salt"))
+    if (boost::iequals(component_name, "sodiumchloride"))
     {
-        return std::make_unique<Salt>();
+        return std::make_unique<SodiumChloride>();
     }
     if (boost::iequals(component_name, "carbondioxide"))
     {

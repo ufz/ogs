@@ -10,15 +10,22 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+#pragma once
 
-#include "cSalt.h"
-#include "../Properties/properties.h"
+#include "../mpComponent.h"
 
 namespace MaterialPropertyLib
 {
-Salt::Salt()
+/**
+ * \class SodiumChloride
+ * \brief A class for sodium chloride derived from Component
+ * \details This class can holds material constants and default
+ * properties of sodium chloride.
+ */
+class SodiumChloride : public Component
 {
-    _properties[name] = std::make_unique<Constant>("Salt");
+public:
+    SodiumChloride();
 };
 
 }  // MaterialPropertyLib

@@ -13,5 +13,5 @@
 #pragma once
 
 #include "cCarbonDioxide.h"
-#include "cSalt.h"
+#include "cSodiumChloride.h"
 #include "cWater.h"

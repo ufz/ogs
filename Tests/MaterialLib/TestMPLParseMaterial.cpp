@@ -265,7 +265,7 @@ TEST(Material, parseMaterials)
 
     medium.phases[1].component[0].property[MPL::name] = "Water";
     medium.phases[1].component[1].property[MPL::name] = "CarbonDioxide";
-    medium.phases[1].component[2].property[MPL::name] = "Salt";
+    medium.phases[1].component[2].property[MPL::name] = "SodiumChloride";
 
     medium.phases[1].property[MPL::density] = "Duan_2012";
     medium.phases[1].property[MPL::viscosity] = "Islam_Carlson_2012";
