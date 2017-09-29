@@ -22,8 +22,10 @@ class Component;
 
 /**
  *
- *  \brief J.R. Cooper et. al: The International Association for the Properties
- *        of Water and Steam. Berlin, Germany, September 2008.
+ *  \brief Viscosity correlation for carbon dioxide, valid in the
+ *  temperature range 200K <= T <= 1500 K and for densities up to
+ *  1400 kg per cubic metre.
+ *  \cite Fenghour:1998
  */
 class ViscosityCO2Fenghour final : public Property
 {
