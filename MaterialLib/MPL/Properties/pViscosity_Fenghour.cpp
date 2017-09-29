@@ -44,7 +44,7 @@ PropertyDataType ViscosityCO2Fenghour::value(VariableArray const& vars)
     const double T_red = temperature / epsilon_k;
     const double rho = getScalar(_component->property(density), vars);
 
-    // some powers of rho, just in order to avoid expansive pow methods
+    // some powers of rho, just in order to avoid expensive pow methods
     const double rho_pow_2 = rho * rho;
     const double rho_pow_6 = rho_pow_2 * rho_pow_2 * rho_pow_2;
     const double rho_pow_8 = rho_pow_6 * rho_pow_2;
@@ -58,7 +58,7 @@ PropertyDataType ViscosityCO2Fenghour::value(VariableArray const& vars)
     const double eta_d = _d[0] * rho + _d[1] * rho_pow_2 +
                          _d[2] * rho_pow_6 / T_red + _d[3] * rho_pow_8 +
                          _d[4] * rho_pow_8 / T_red;
-    const double eta = (eta_0 + eta_d) / 1.e6;
+    const double eta = (eta_0 + eta_d) / 1.e6; // conversion MPa*s in Pa*s
 
     _value = eta;
     return eta;
