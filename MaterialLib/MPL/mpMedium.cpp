@@ -50,7 +50,7 @@ Medium::Medium(BaseLib::ConfigTree const& config)
     auto const properties_config =
         config.getConfigSubtreeOptional("properties");
     if (properties_config)
-        createProperties(properties_config.get());
+        createProperties(*properties_config);
 }
 /**
  * This method creates the phases of the medium. Unlike a medium, a
