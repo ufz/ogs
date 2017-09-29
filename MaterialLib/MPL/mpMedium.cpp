@@ -12,9 +12,10 @@
  */
 
 #include "mpMedium.h"
+
 #include <boost/variant.hpp>
-#include <iostream>
 #include <string>
+
 #include "Properties/pAverageVolumeFraction.h"
 #include "Properties/pConstant.h"
 #include "mpComponent.h"
