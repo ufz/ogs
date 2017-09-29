@@ -22,7 +22,7 @@ namespace MaterialPropertyLib
  * \details This class can holds material constants and default
  * properties of sodium chloride.
  */
-class SodiumChloride : public Component
+class SodiumChloride final : public Component
 {
 public:
     SodiumChloride();

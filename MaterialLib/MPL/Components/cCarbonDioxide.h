@@ -22,7 +22,7 @@ namespace MaterialPropertyLib
  * \details This class can holds material constants and default
  * properties of ordinary carbon dioxide.
  */
-class CarbonDioxide : public Component
+class CarbonDioxide final : public Component
 {
 public:
     CarbonDioxide();

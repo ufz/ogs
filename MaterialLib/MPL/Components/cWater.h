@@ -22,7 +22,7 @@ namespace MaterialPropertyLib
  * \details This class can holds material constants and default
  * properties of ordinary water
  */
-class Water : public Component
+class Water final : public Component
 {
 public:
     Water();
