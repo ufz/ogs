@@ -14,16 +14,16 @@
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
-#include "PressureBoundaryConditionLocalAssembler.h"
+#include "NormalTractionBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
-namespace PressureBoundaryCondition
+namespace NormalTractionBoundaryCondition
 {
 template <template <typename, typename, unsigned>
           class LocalAssemblerImplementation>
-PressureBoundaryCondition<LocalAssemblerImplementation>::
-    PressureBoundaryCondition(
+NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
+    NormalTractionBoundaryCondition(
         bool const is_axially_symmetric, unsigned const integration_order,
         unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
@@ -67,8 +67,8 @@ PressureBoundaryCondition<LocalAssemblerImplementation>::
 
 template <template <typename, typename, unsigned>
           class LocalAssemblerImplementation>
-PressureBoundaryCondition<
-    LocalAssemblerImplementation>::~PressureBoundaryCondition()
+NormalTractionBoundaryCondition<
+    LocalAssemblerImplementation>::~NormalTractionBoundaryCondition()
 {
     for (auto e : _elements)
         delete e;
@@ -76,17 +76,20 @@ PressureBoundaryCondition<
 
 template <template <typename, typename, unsigned>
           class LocalAssemblerImplementation>
-void PressureBoundaryCondition<LocalAssemblerImplementation>::applyNaturalBC(
-    const double t, const GlobalVector& x, GlobalMatrix& K, GlobalVector& b)
+void NormalTractionBoundaryCondition<
+    LocalAssemblerImplementation>::applyNaturalBC(const double t,
+                                                  const GlobalVector& x,
+                                                  GlobalMatrix& K,
+                                                  GlobalVector& b)
 {
     GlobalExecutor::executeMemberOnDereferenced(
-        &PressureBoundaryConditionLocalAssemblerInterface::assemble,
+        &NormalTractionBoundaryConditionLocalAssemblerInterface::assemble,
         _local_assemblers, *_dof_table_boundary, t, x, K, b);
 }
 
-std::unique_ptr<
-    PressureBoundaryCondition<PressureBoundaryConditionLocalAssembler>>
-createPressureBoundaryCondition(
+std::unique_ptr<NormalTractionBoundaryCondition<
+    NormalTractionBoundaryConditionLocalAssembler>>
+createNormalTractionBoundaryCondition(
     BaseLib::ConfigTree const& config,
     std::vector<MeshLib::Element*>&& elements,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
@@ -94,22 +97,21 @@ createPressureBoundaryCondition(
     unsigned const shapefunction_order, unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
-    DBUG("Constructing PressureBoundaryCondition from config.");
+    DBUG("Constructing NormalTractionBoundaryCondition from config.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
-    config.checkConfigParameter("type", "Pressure");
+    config.checkConfigParameter("type", "NormalTraction");
 
     auto const parameter_name =
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Pressure__parameter}
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NormalTraction__parameter}
         config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", parameter_name.c_str());
 
     auto const& pressure = findParameter<double>(parameter_name, parameters, 1);
-    return std::unique_ptr<
-        PressureBoundaryCondition<PressureBoundaryConditionLocalAssembler>>{
-        new PressureBoundaryCondition<PressureBoundaryConditionLocalAssembler>{
-            is_axially_symmetric, integration_order, shapefunction_order,
-            dof_table, variable_id, global_dim, std::move(elements), pressure}};
+    return std::make_unique<NormalTractionBoundaryCondition<
+        NormalTractionBoundaryConditionLocalAssembler>>(
+        is_axially_symmetric, integration_order, shapefunction_order, dof_table,
+        variable_id, global_dim, std::move(elements), pressure);
 }
 
-}  // namespace PressureBoundaryCondition
+}  // namespace NormalTractionBoundaryCondition
 }  // ProcessLib

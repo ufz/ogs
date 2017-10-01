@@ -18,7 +18,7 @@
 
 namespace ProcessLib
 {
-namespace PressureBoundaryCondition
+namespace NormalTractionBoundaryCondition
 {
 template <typename ShapeMatricesTypeDisplacement, int GlobalDim, int NPoints>
 struct IntegrationPointData final
@@ -38,20 +38,20 @@ struct IntegrationPointData final
     double const integration_weight;
 };
 
-class PressureBoundaryConditionLocalAssemblerInterface
+class NormalTractionBoundaryConditionLocalAssemblerInterface
 {
 public:
     virtual void assemble(
         std::size_t const id,
         NumLib::LocalToGlobalIndexMap const& dof_table_boundary, double const t,
         const GlobalVector& /*x*/, GlobalMatrix& /*K*/, GlobalVector& b) = 0;
-    virtual ~PressureBoundaryConditionLocalAssemblerInterface() = default;
+    virtual ~NormalTractionBoundaryConditionLocalAssemblerInterface() = default;
 };
 
 template <typename ShapeFunctionDisplacement, typename IntegrationMethod,
           unsigned GlobalDim>
-class PressureBoundaryConditionLocalAssembler final
-    : public PressureBoundaryConditionLocalAssemblerInterface
+class NormalTractionBoundaryConditionLocalAssembler final
+    : public NormalTractionBoundaryConditionLocalAssemblerInterface
 {
 public:
     using ShapeMatricesTypeDisplacement =
@@ -60,11 +60,12 @@ public:
         typename ShapeMatrixPolicyType<ShapeFunctionDisplacement,
                                        GlobalDim>::GlobalDimVectorType;
 
-    PressureBoundaryConditionLocalAssembler(MeshLib::Element const& e,
-                                            std::size_t const local_matrix_size,
-                                            bool is_axially_symmetric,
-                                            unsigned const integration_order,
-                                            Parameter<double> const& pressure)
+    NormalTractionBoundaryConditionLocalAssembler(
+        MeshLib::Element const& e,
+        std::size_t const local_matrix_size,
+        bool is_axially_symmetric,
+        unsigned const integration_order,
+        Parameter<double> const& pressure)
         : _integration_method(integration_order), _pressure(pressure)
     {
         _local_rhs.setZero(local_matrix_size);
@@ -170,5 +171,5 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
-}  // namespace PressureBoundaryCondition
+}  // namespace NormalTractionBoundaryCondition
 }  // namespace ProcessLib

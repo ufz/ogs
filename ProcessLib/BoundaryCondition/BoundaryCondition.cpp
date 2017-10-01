@@ -17,7 +17,7 @@
 #include "NeumannBoundaryCondition.h"
 #include "NonuniformDirichletBoundaryCondition.h"
 #include "NonuniformNeumannBoundaryCondition.h"
-#include "PressureBoundaryCondition.h"
+#include "NormalTractionBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
 
 namespace ProcessLib
@@ -66,11 +66,11 @@ BoundaryConditionBuilder::createBoundaryCondition(
     //
     // Special boundary conditions
     //
-    if (type == "Pressure")
+    if (type == "NormalTraction")
     {
-        return createPressureBoundaryCondition(config, dof_table, mesh,
-                                               variable_id, integration_order,
-                                               shapefunction_order, parameters);
+        return createNormalTractionBoundaryCondition(
+            config, dof_table, mesh, variable_id, integration_order,
+            shapefunction_order, parameters);
     }
     OGS_FATAL("Unknown boundary condition type: `%s'.", type.c_str());
 }
@@ -204,7 +204,7 @@ BoundaryConditionBuilder::createNonuniformNeumannBoundaryCondition(
 }
 
 std::unique_ptr<BoundaryCondition>
-BoundaryConditionBuilder::createPressureBoundaryCondition(
+BoundaryConditionBuilder::createNormalTractionBoundaryCondition(
     const BoundaryConditionConfig& config,
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned integration_order,
@@ -221,11 +221,13 @@ BoundaryConditionBuilder::createPressureBoundaryCondition(
     MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
         mesh, mesh_node_searcher);
 
-    return ProcessLib::PressureBoundaryCondition::createPressureBoundaryCondition(
-        config.config,
-        getClonedElements(boundary_element_searcher, config.geometry),
-        dof_table, variable_id, mesh.isAxiallySymmetric(), integration_order,
-        shapefunction_order, mesh.getDimension(), parameters);
+    return ProcessLib::NormalTractionBoundaryCondition::
+        createNormalTractionBoundaryCondition(
+            config.config,
+            getClonedElements(boundary_element_searcher, config.geometry),
+            dof_table, variable_id, mesh.isAxiallySymmetric(),
+            integration_order, shapefunction_order, mesh.getDimension(),
+            parameters);
 }
 
 std::vector<MeshLib::Element*> BoundaryConditionBuilder::getClonedElements(
