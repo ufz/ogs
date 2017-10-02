@@ -9,6 +9,8 @@
 
 #include "LinearElasticIsotropic.h"
 
+#include "LogPenalty.h"
+
 namespace MaterialLib
 {
 namespace Fracture
@@ -31,11 +33,23 @@ void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
 
     const int index_ns = DisplacementDim - 1;
     C.setZero();
-    for (int i=0; i<index_ns; i++)
-        C(i,i) = _mp.shear_stiffness(t, x)[0];
-    C(index_ns, index_ns) = _mp.normal_stiffness(t, x)[0];
+    for (int i = 0; i < index_ns; i++)
+        C(i, i) = _mp.shear_stiffness(t, x)[0];
 
-    sigma.noalias() = sigma_prev + C * (w - w_prev);
+    sigma.noalias() = C * w;
+
+    double const aperture = w[index_ns] + aperture0;
+
+    sigma.coeffRef(index_ns) =
+        _mp.normal_stiffness(t, x)[0] * w[index_ns] *
+        logPenalty(aperture0, aperture, _penalty_aperture_cutoff);
+
+    C(index_ns, index_ns) =
+        _mp.normal_stiffness(t, x)[0] *
+        logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
+
+    // TODO (naumov) after correct init sigma is passed.
+    // sigma += sigma0;
 
     // correction for an opening fracture
     if (_tension_cutoff && sigma[index_ns] > 0)
