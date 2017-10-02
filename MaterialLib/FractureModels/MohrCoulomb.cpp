@@ -8,6 +8,7 @@
  */
 
 #include "MohrCoulomb.h"
+#include "LogPenalty.h"
 
 #include "BaseLib/Error.h"
 #include "MathLib/MathTools.h"
@@ -63,12 +64,41 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     Eigen::VectorXd const dw = w - w_prev;
 
     const int index_ns = DisplacementDim - 1;
-    Eigen::MatrixXd Ke = Eigen::MatrixXd::Zero(DisplacementDim,DisplacementDim);
-    for (int i=0; i<index_ns; i++)
-        Ke(i,i) = mat.Ks;
-    Ke(index_ns, index_ns) = mat.Kn;
+    double const aperture = w[index_ns] + aperture0;
+    double const aperture_prev = w_prev[index_ns] + aperture0;
 
-    sigma.noalias() = sigma_prev + Ke * dw;
+    Eigen::MatrixXd Ke;
+    {  // Elastic tangent stiffness
+        Ke = Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim);
+        for (int i = 0; i < index_ns; i++)
+            Ke(i, i) = mat.Ks;
+
+        Ke(index_ns, index_ns) =
+            mat.Kn *
+            logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
+    }
+
+    Eigen::MatrixXd Ke_prev;
+    {  // Elastic tangent stiffness at w_prev
+        Ke_prev = Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim);
+        for (int i = 0; i < index_ns; i++)
+            Ke_prev(i, i) = mat.Ks;
+
+        Ke_prev(index_ns, index_ns) =
+            mat.Kn * logPenaltyDerivative(
+                         aperture0, aperture_prev, _penalty_aperture_cutoff);
+    }
+
+    // Total plastic aperture compression
+    Eigen::VectorXd const w_p_prev = Ke_prev.fullPivLu().solve(sigma_prev);
+
+    {  // Exact elastic predictor
+        sigma.noalias() = Ke * (w - w_p_prev);
+
+        sigma.coeffRef(index_ns) =
+            mat.Kn * w[index_ns] *
+            logPenalty(aperture0, aperture, _penalty_aperture_cutoff);
+    }
 
     double const sigma_n = sigma[index_ns];
 
