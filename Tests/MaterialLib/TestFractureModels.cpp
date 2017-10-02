@@ -40,7 +40,8 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
         fractureModel.createMaterialStateVariables());
 
     Eigen::Vector2d const w_prev = Eigen::Vector2d::Zero();
-    Eigen::Vector2d const sigma_prev = Eigen::Vector2d::Zero();
+    Eigen::Vector2d const sigma0 = Eigen::Vector2d::Zero();
+    Eigen::Vector2d const sigma_prev = sigma0;
     Eigen::Vector2d w(-1e-5, -1e-5);
 
     // Result vectors, not initialized.
@@ -48,8 +49,8 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
     Eigen::Matrix2d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
-                                              sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
+                                              w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-1e4, sigma[0], eps_sigma);
     ASSERT_NEAR(-1e6, sigma[1], eps_sigma);
@@ -60,8 +61,8 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
 
 
     w << -1e-5, 1e-5;
-    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
-                                              sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
+                                              w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(0, sigma[0], eps_sigma);
     ASSERT_NEAR(0, sigma[1], eps_sigma);
@@ -136,7 +137,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_negative_t)
         fractureModel.createMaterialStateVariables());
 
     Eigen::Vector2d const w_prev = Eigen::Vector2d::Zero();
-    Eigen::Vector2d const sigma_prev(-3.46e6, -2e6);
+    Eigen::Vector2d const sigma0(-3.46e6, -2e6);
+    Eigen::Vector2d const sigma_prev = sigma0;
     Eigen::Vector2d const w(-1.08e-5, -0.25e-5);
 
     // Result vectors, not initialized.
@@ -144,8 +146,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_negative_t)
     Eigen::Matrix2d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
-                                              sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
+                                              w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-3.50360e6, sigma[0], eps_sigma);
     ASSERT_NEAR(-2.16271e6, sigma[1], eps_sigma);
@@ -174,7 +176,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_positive_t)
         fractureModel.createMaterialStateVariables());
 
     Eigen::Vector2d const w_prev = Eigen::Vector2d::Zero();
-    Eigen::Vector2d const sigma_prev(0, -2e6);
+    Eigen::Vector2d const sigma0(0, -2e6);
+    Eigen::Vector2d const sigma_prev = sigma0;
     Eigen::Vector2d const w(20.08e-5, -0.25e-5);
 
     // Result vectors, not initialized.
@@ -182,8 +185,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_positive_t)
     Eigen::Matrix2d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
-                                              sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
+                                              w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(253972.0, sigma[0], eps_sigma);
     ASSERT_NEAR(-2.94784e+06, sigma[1], eps_sigma);
@@ -211,7 +214,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1)
         fractureModel.createMaterialStateVariables());
 
     Eigen::Vector3d const w_prev = Eigen::Vector3d::Zero();
-    Eigen::Vector3d const sigma_prev(-3.46e6, 0, -2e6);
+    Eigen::Vector3d const sigma0(-3.46e6, 0, -2e6);
+    Eigen::Vector3d const sigma_prev = sigma0;
     Eigen::Vector3d const w(-1.08e-5, 0, -0.25e-5);
 
     // Result vectors, not initialized.
@@ -219,8 +223,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1)
     Eigen::Matrix3d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
-                                              sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
+                                              w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-3.50360e6, sigma[0], eps_sigma);
     ASSERT_NEAR(0.0, sigma[1], eps_sigma);
@@ -254,7 +258,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t1)
         fractureModel.createMaterialStateVariables());
 
     Eigen::Vector3d const w_prev = Eigen::Vector3d::Zero();
-    Eigen::Vector3d const sigma_prev(0, 0, -2e6);
+    Eigen::Vector3d const sigma0(0, 0, -2e6);
+    Eigen::Vector3d const sigma_prev = sigma0;
     Eigen::Vector3d const w(20.08e-5, 0, -0.25e-5);
 
     // Result vectors, not initialized.
@@ -262,8 +267,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t1)
     Eigen::Matrix3d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
-                                              sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
+                                              w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(253972.0, sigma[0], eps_sigma);
     ASSERT_NEAR(0.0, sigma[1], eps_sigma);
@@ -298,7 +303,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t2)
         fractureModel.createMaterialStateVariables());
 
     Eigen::Vector3d const w_prev = Eigen::Vector3d::Zero();
-    Eigen::Vector3d const sigma_prev(0, 0, -2e6);
+    Eigen::Vector3d const sigma0(0, 0, -2e6);
+    Eigen::Vector3d const sigma_prev = sigma0;
     Eigen::Vector3d const w(0, 20.08e-5, -0.25e-5);
 
     // Result vectors, not initialized.
@@ -306,8 +312,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t2)
     Eigen::Matrix3d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
-                                              sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
+                                              w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(0.0, sigma[0], eps_sigma);
     ASSERT_NEAR(253972.0, sigma[1], eps_sigma);
@@ -342,7 +348,9 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1t2)
         fractureModel.createMaterialStateVariables());
 
     Eigen::Vector3d const w_prev = Eigen::Vector3d::Zero();
-    Eigen::Vector3d const sigma_prev(-3.46e6/std::sqrt(2), -3.46e6/std::sqrt(2), -2e6);
+    Eigen::Vector3d const sigma0(-3.46e6 / std::sqrt(2), -3.46e6 / std::sqrt(2),
+                                 -2e6);
+    Eigen::Vector3d const sigma_prev = sigma0;
     Eigen::Vector3d const w(-1.08e-5/std::sqrt(2), -1.08e-5/std::sqrt(2), -0.25e-5);
 
     // Result vectors, not initialized.
@@ -350,8 +358,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1t2)
     Eigen::Matrix3d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
-                                              sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
+                                              w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-3.50360e6/std::sqrt(2), sigma[0], eps_sigma);
     ASSERT_NEAR(-3.50360e6/std::sqrt(2), sigma[1], eps_sigma);
@@ -386,7 +394,9 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1_positive_t2)
         fractureModel.createMaterialStateVariables());
 
     Eigen::Vector3d const w_prev = Eigen::Vector3d::Zero();
-    Eigen::Vector3d const sigma_prev(-3.46e6/std::sqrt(2), 3.46e6/std::sqrt(2), -2e6);
+    Eigen::Vector3d const sigma0(-3.46e6 / std::sqrt(2), 3.46e6 / std::sqrt(2),
+                                 -2e6);
+    Eigen::Vector3d const sigma_prev = sigma0;
     Eigen::Vector3d const w(-1.08e-5/std::sqrt(2), 1.08e-5/std::sqrt(2), -0.25e-5);
 
     // Result vectors, not initialized.
@@ -394,8 +404,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1_positive_t2)
     Eigen::Matrix3d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
-                                              sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, sigma0, w_prev,
+                                              w, sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-3.50360e6/std::sqrt(2), sigma[0], eps_sigma);
     ASSERT_NEAR(3.50360e6/std::sqrt(2), sigma[1], eps_sigma);

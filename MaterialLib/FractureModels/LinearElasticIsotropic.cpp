@@ -15,18 +15,24 @@ namespace MaterialLib
 {
 namespace Fracture
 {
-
 template <int DisplacementDim>
 void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
-        double const t,
-        ProcessLib::SpatialPosition const& x,
-        double const aperture0,
-        Eigen::Ref<Eigen::VectorXd const> w_prev,
-        Eigen::Ref<Eigen::VectorXd const> w,
-        Eigen::Ref<Eigen::VectorXd const> sigma_prev,
-        Eigen::Ref<Eigen::VectorXd> sigma,
-        Eigen::Ref<Eigen::MatrixXd> C,
-        typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
+    double const t,
+    ProcessLib::SpatialPosition const& x,
+    double const aperture0,
+    Eigen::Ref<Eigen::VectorXd const>
+        sigma0,
+    Eigen::Ref<Eigen::VectorXd const>
+    /*w_prev*/,
+    Eigen::Ref<Eigen::VectorXd const>
+        w,
+    Eigen::Ref<Eigen::VectorXd const>
+    /*sigma_prev*/,
+    Eigen::Ref<Eigen::VectorXd>
+        sigma,
+    Eigen::Ref<Eigen::MatrixXd>
+        C,
+    typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
         material_state_variables)
 {
     material_state_variables.reset();
@@ -48,8 +54,7 @@ void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
         _mp.normal_stiffness(t, x)[0] *
         logPenaltyDerivative(aperture0, aperture, _penalty_aperture_cutoff);
 
-    // TODO (naumov) after correct init sigma is passed.
-    // sigma += sigma0;
+    sigma.noalias() += sigma0;
 
     // correction for an opening fracture
     if (_tension_cutoff && sigma[index_ns] > 0)

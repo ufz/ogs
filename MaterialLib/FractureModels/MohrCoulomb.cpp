@@ -47,15 +47,22 @@ struct MaterialPropertyValues
 
 template <int DisplacementDim>
 void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
-        double const t,
-        ProcessLib::SpatialPosition const& x,
-        double const aperture0,
-        Eigen::Ref<Eigen::VectorXd const> w_prev,
-        Eigen::Ref<Eigen::VectorXd const> w,
-        Eigen::Ref<Eigen::VectorXd const> sigma_prev,
-        Eigen::Ref<Eigen::VectorXd> sigma,
-        Eigen::Ref<Eigen::MatrixXd> Kep,
-        typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
+    double const t,
+    ProcessLib::SpatialPosition const& x,
+    double const aperture0,
+    Eigen::Ref<Eigen::VectorXd const>
+        sigma0,
+    Eigen::Ref<Eigen::VectorXd const>
+        w_prev,
+    Eigen::Ref<Eigen::VectorXd const>
+        w,
+    Eigen::Ref<Eigen::VectorXd const>
+        sigma_prev,
+    Eigen::Ref<Eigen::VectorXd>
+        sigma,
+    Eigen::Ref<Eigen::MatrixXd>
+        Kep,
+    typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
         material_state_variables)
 {
     material_state_variables.reset();
@@ -90,7 +97,11 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     }
 
     // Total plastic aperture compression
-    Eigen::VectorXd const w_p_prev = Ke_prev.fullPivLu().solve(sigma_prev);
+    // NOTE: Initial condition sigma0 seems to be associated with an initial
+    // condition of the w0 = 0. Therefore the initial state is not associated
+    // with a plastic aperture change.
+    Eigen::VectorXd const w_p_prev =
+        w_prev - Ke_prev.fullPivLu().solve(sigma_prev - sigma0);
 
     {  // Exact elastic predictor
         sigma.noalias() = Ke * (w - w_p_prev);
@@ -99,6 +110,8 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
             mat.Kn * w[index_ns] *
             logPenalty(aperture0, aperture, _penalty_aperture_cutoff);
     }
+
+    sigma.noalias() += sigma0;
 
     double const sigma_n = sigma[index_ns];
 
