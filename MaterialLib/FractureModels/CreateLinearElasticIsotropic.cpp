@@ -35,6 +35,10 @@ createLinearElasticIsotropic(
         //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__shear_stiffness}
         config, "shear_stiffness", parameters, 1);
 
+    auto const penalty_aperture_cutoff =
+        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__penalty_aperture_cutoff}
+        config.getConfigParameter<double>("penalty_aperture_cutoff");
+
     auto const tension_cutoff =
         //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__tension_cutoff}
         config.getConfigParameter<bool>("tension_cutoff");
