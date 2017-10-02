@@ -65,9 +65,12 @@ public:
     }
 
 public:
-    explicit MohrCoulomb(bool const tension_cutoff,
+    explicit MohrCoulomb(double const penalty_aperture_cutoff,
+                         bool const tension_cutoff,
                          MaterialProperties material_properties)
-        : _tension_cutoff(tension_cutoff), _mp(std::move(material_properties))
+        : _penalty_aperture_cutoff(penalty_aperture_cutoff),
+          _tension_cutoff(tension_cutoff),
+          _mp(std::move(material_properties))
     {
     }
 
@@ -97,6 +100,10 @@ public:
             material_state_variables) override;
 
 private:
+    /// \copydoc
+    /// MaterialLib::Fracture::LinearElasticIsotropic::_penalty_aperture_cutoff
+    double const _penalty_aperture_cutoff;
+
     /// \copydoc
     /// MaterialLib::Fracture::LinearElasticIsotropic::_tension_cutoff
     bool const _tension_cutoff;
