@@ -31,7 +31,11 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
     ProcessLib::ConstantParameter<double> const ks("", 1e9);
     LinearElasticIsotropic<2>::MaterialProperties const mp{kn, ks};
 
-    LinearElasticIsotropic<2> fractureModel{mp};
+    double const aperture0 = 1e-5;
+    double const penalty_aperture_cutoff = aperture0;
+    bool const tension_cutoff = true;
+    LinearElasticIsotropic<2> fractureModel{penalty_aperture_cutoff,
+                                            tension_cutoff, mp};
     std::unique_ptr<FractureModelBase<2>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
 
@@ -44,7 +48,8 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
     Eigen::Matrix2d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
+                                              sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-1e4, sigma[0], eps_sigma);
     ASSERT_NEAR(-1e6, sigma[1], eps_sigma);
@@ -55,7 +60,8 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
 
 
     w << -1e-5, 1e-5;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
+                                              sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(0, sigma[0], eps_sigma);
     ASSERT_NEAR(0, sigma[1], eps_sigma);
@@ -74,7 +80,10 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_negative_t)
     ProcessLib::ConstantParameter<double> const c("", 3e6);
     MohrCoulomb<2>::MaterialProperties const mp{kn, ks, phi, psi, c};
 
-    MohrCoulomb<2> fractureModel{mp};
+    double const aperture0 = 1e-5;
+    double const penalty_aperture_cutoff = aperture0;
+    bool const tension_cutoff = true;
+    MohrCoulomb<2> fractureModel{penalty_aperture_cutoff, tension_cutoff, mp};
     std::unique_ptr<FractureModelBase<2>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
 
@@ -87,7 +96,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_negative_t)
     Eigen::Matrix2d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
+                                              sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-3.50360e6, sigma[0], eps_sigma);
     ASSERT_NEAR(-2.16271e6, sigma[1], eps_sigma);
@@ -108,7 +118,10 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_positive_t)
     ProcessLib::ConstantParameter<double> const c("", 3e6);
     MohrCoulomb<2>::MaterialProperties const mp{kn, ks, phi, psi, c};
 
-    MohrCoulomb<2> fractureModel{mp};
+    double const aperture0 = 1e-5;
+    double const penalty_aperture_cutoff = aperture0;
+    bool const tension_cutoff = true;
+    MohrCoulomb<2> fractureModel{penalty_aperture_cutoff, tension_cutoff, mp};
     std::unique_ptr<FractureModelBase<2>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
 
@@ -121,7 +134,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb2D_positive_t)
     Eigen::Matrix2d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
+                                              sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(253972.0, sigma[0], eps_sigma);
     ASSERT_NEAR(-2.94784e+06, sigma[1], eps_sigma);
@@ -141,7 +155,10 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1)
     ProcessLib::ConstantParameter<double> const c("", 3e6);
     MohrCoulomb<3>::MaterialProperties const mp{kn, ks, phi, psi, c};
 
-    MohrCoulomb<3> fractureModel{mp};
+    double const aperture0 = 1e-5;
+    double const penalty_aperture_cutoff = aperture0;
+    bool const tension_cutoff = true;
+    MohrCoulomb<3> fractureModel{penalty_aperture_cutoff, tension_cutoff, mp};
     std::unique_ptr<FractureModelBase<3>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
 
@@ -154,7 +171,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1)
     Eigen::Matrix3d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
+                                              sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-3.50360e6, sigma[0], eps_sigma);
     ASSERT_NEAR(0.0, sigma[1], eps_sigma);
@@ -180,7 +198,10 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t1)
     ProcessLib::ConstantParameter<double> const c("", 3e6);
     MohrCoulomb<3>::MaterialProperties const mp{kn, ks, phi, psi, c};
 
-    MohrCoulomb<3> fractureModel{mp};
+    double const aperture0 = 1e-5;
+    double const penalty_aperture_cutoff = aperture0;
+    bool const tension_cutoff = true;
+    MohrCoulomb<3> fractureModel{penalty_aperture_cutoff, tension_cutoff, mp};
     std::unique_ptr<FractureModelBase<3>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
 
@@ -193,7 +214,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t1)
     Eigen::Matrix3d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
+                                              sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(253972.0, sigma[0], eps_sigma);
     ASSERT_NEAR(0.0, sigma[1], eps_sigma);
@@ -220,7 +242,10 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t2)
     ProcessLib::ConstantParameter<double> const c("", 3e6);
     MohrCoulomb<3>::MaterialProperties const mp{kn, ks, phi, psi, c};
 
-    MohrCoulomb<3> fractureModel{mp};
+    double const aperture0 = 1e-5;
+    double const penalty_aperture_cutoff = aperture0;
+    bool const tension_cutoff = true;
+    MohrCoulomb<3> fractureModel{penalty_aperture_cutoff, tension_cutoff, mp};
     std::unique_ptr<FractureModelBase<3>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
 
@@ -233,7 +258,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_positive_t2)
     Eigen::Matrix3d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
+                                              sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(0.0, sigma[0], eps_sigma);
     ASSERT_NEAR(253972.0, sigma[1], eps_sigma);
@@ -260,7 +286,10 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1t2)
     ProcessLib::ConstantParameter<double> const c("", 3e6);
     MohrCoulomb<3>::MaterialProperties const mp{kn, ks, phi, psi, c};
 
-    MohrCoulomb<3> fractureModel{mp};
+    double const aperture0 = 1e-5;
+    double const penalty_aperture_cutoff = aperture0;
+    bool const tension_cutoff = true;
+    MohrCoulomb<3> fractureModel{penalty_aperture_cutoff, tension_cutoff, mp};
     std::unique_ptr<FractureModelBase<3>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
 
@@ -273,7 +302,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1t2)
     Eigen::Matrix3d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
+                                              sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-3.50360e6/std::sqrt(2), sigma[0], eps_sigma);
     ASSERT_NEAR(-3.50360e6/std::sqrt(2), sigma[1], eps_sigma);
@@ -300,7 +330,10 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1_positive_t2)
     ProcessLib::ConstantParameter<double> const c("", 3e6);
     MohrCoulomb<3>::MaterialProperties const mp{kn, ks, phi, psi, c};
 
-    MohrCoulomb<3> fractureModel{mp};
+    double const aperture0 = 1e-5;
+    double const penalty_aperture_cutoff = aperture0;
+    bool const tension_cutoff = true;
+    MohrCoulomb<3> fractureModel{penalty_aperture_cutoff, tension_cutoff, mp};
     std::unique_ptr<FractureModelBase<3>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
 
@@ -313,7 +346,8 @@ TEST(MaterialLib_Fracture, MohrCoulomb3D_negative_t1_positive_t2)
     Eigen::Matrix3d C;
 
     ProcessLib::SpatialPosition x;
-    fractureModel.computeConstitutiveRelation(0, x, w_prev, w, sigma_prev, sigma, C, *state);
+    fractureModel.computeConstitutiveRelation(0, x, aperture0, w_prev, w,
+                                              sigma_prev, sigma, C, *state);
 
     ASSERT_NEAR(-3.50360e6/std::sqrt(2), sigma[0], eps_sigma);
     ASSERT_NEAR(3.50360e6/std::sqrt(2), sigma[1], eps_sigma);
