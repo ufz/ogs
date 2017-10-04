@@ -147,10 +147,12 @@ assembleWithJacobian(
 
         // local C, local stress
         mat.computeConstitutiveRelation(
-                    t, x_position,
-                    ip_data._aperture0,
-                    w_prev, w,
-                    sigma_prev, sigma, C, state);
+            t, x_position, ip_data._aperture0,
+            Eigen::Matrix<double, DisplacementDim, 1>::Zero(),  // TODO (naumov)
+                                                                // Replace with
+                                                                // initial
+                                                                // stress values
+            w_prev, w, sigma_prev, sigma, C, state);
 
         // r_[u] += H^T*Stress
         local_b.noalias() -= H.transpose() * R.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
