@@ -75,6 +75,7 @@ catch (err) {
 }
 
 node('master') {
+    checkoutWithTags()
     step([$class: 'LogParserPublisher',
         failBuildOnError: true,
         projectRulePath: "scripts/jenkins/all-log-parser.rules",
