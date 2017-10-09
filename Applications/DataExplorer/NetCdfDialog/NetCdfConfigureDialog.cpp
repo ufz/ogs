@@ -12,10 +12,10 @@
 
 #include "MathLib/Point3d.h"
 #include "GeoLib/Raster.h"
-#include "MeshGenerators/RasterToMesh.h"
+#include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshEnums.h"
-#include "VtkGeoImageSource.h"
-#include "VtkRaster.h"
+#include "VtkVis/VtkGeoImageSource.h"
+#include "VtkVis/VtkRaster.h"
 
 #include <QMessageBox>
 #include <QSettings>

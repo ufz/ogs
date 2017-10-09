@@ -113,13 +113,6 @@ include_directories(
     ${GUI_SOURCE_DIR_REL}/Base
     ${GUI_SOURCE_DIR_REL}/DataView
     ${GUI_SOURCE_DIR_REL}/VtkModules/Qt
-
-    # Qt generated file includes
-    ${CMAKE_CURRENT_BINARY_DIR}/../../BaseLib
-    ${CMAKE_CURRENT_BINARY_DIR}/../DataView
-
-    # Workaround for CMake 3.8
-    ${CMAKE_CURRENT_BINARY_DIR}/../DataView/QtDataView_autogen/include
 )
 
 add_library(VtkVis
@@ -135,7 +128,7 @@ endif() # GEOTIFF_FOUND
 
 target_link_libraries(VtkVis
     PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase
-    PRIVATE MathLib ApplicationsFileIO QtDataView Qt5::Gui logog
+    PRIVATE MathLib ApplicationsFileIO Qt5::Gui logog
     INTERFACE ${VTK_LIBRARIES}
 )
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")

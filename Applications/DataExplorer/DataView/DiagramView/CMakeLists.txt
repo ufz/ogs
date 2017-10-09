@@ -27,8 +27,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GUI_SOURCE_DIR_REL}/Base
     ${GUI_SOURCE_DIR_REL}/DataView
-    ${CMAKE_CURRENT_BINARY_DIR}/../../DataView
-    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 file(GLOB_RECURSE UIS *.ui)
