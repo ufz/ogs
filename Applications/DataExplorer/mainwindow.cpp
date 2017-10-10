@@ -70,7 +70,7 @@
 #include "MeshAnalysisDialog.h"
 #include "MeshElementRemovalDialog.h"
 #include "MeshQualitySelectionDialog.h"
-#include "NetCdfConfigureDialog.h"
+#include "NetCdfDialog/NetCdfConfigureDialog.h"
 #include "SHPImportDialog.h"
 #include "SetNameDialog.h"
 #include "VtkAddFilterDialog.h"

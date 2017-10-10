@@ -23,7 +23,7 @@
 #include <vtkUnstructuredGrid.h>
 #include "VtkGeoImageSource.h"
 #include "VtkRaster.h"
-#include "NetCdfConfigureDialog.h"
+#include "NetCdfDialog/NetCdfConfigureDialog.h"
 
 #include <QFileDialog>
 #include <QFileInfo>

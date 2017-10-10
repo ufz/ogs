@@ -50,6 +50,7 @@ target_link_libraries(DataExplorer
     MeshLib
     ApplicationsFileIO
     DataHolderLib
+    NetCdfDialogLib
     OGSFileConverterLib
     QtBase
     QtDataView

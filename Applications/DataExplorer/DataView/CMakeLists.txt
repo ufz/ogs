@@ -30,7 +30,6 @@ set(SOURCES
     MshModel.cpp
     MshTabWidget.cpp
     MshView.cpp
-    NetCdfConfigureDialog.cpp
     SaveMeshDialog.cpp
     SelectMeshDialog.cpp
     SetNameDialog.cpp
@@ -78,7 +77,6 @@ set(HEADERS
     MshModel.h
     MshTabWidget.h
     MshView.h
-    NetCdfConfigureDialog.h
     SaveMeshDialog.h
     SelectMeshDialog.h
     SetNameDialog.h
@@ -112,15 +110,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/DiagramView
     ${CMAKE_CURRENT_SOURCE_DIR}/StratView
-
-    # Qt generated file includes
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/DiagramView
-    ${CMAKE_CURRENT_BINARY_DIR}/StratView
-
-    # Workaround for CMake 3.8
-    ${CMAKE_CURRENT_BINARY_DIR}/DiagramView/QtDiagramView_autogen/include
-    ${CMAKE_CURRENT_BINARY_DIR}/StratView/QtStratView_autogen/include
 )
 
 if(GEOTIFF_FOUND)
