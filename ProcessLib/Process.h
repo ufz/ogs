@@ -77,9 +77,9 @@ public:
         _coupled_solutions = coupled_solutions;
     }
 
-    void preAssemble(const double t, GlobalVector const& x) override final;
 
     virtual void setCoupledSolutionsForStaggeredSchemeToLocalAssemblers() {}
+    void preAssemble(const double t, GlobalVector const& x) override final;
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b) final;
 
@@ -88,6 +88,11 @@ public:
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) final;
+
+    void setDecouplingSchemeType(const bool is_monolithic_scheme)
+    {
+        _is_monolithic_scheme = is_monolithic_scheme;
+    }
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const t) const final
@@ -211,10 +216,11 @@ protected:
 
     VectorMatrixAssembler _global_assembler;
 
+    mutable bool _is_monolithic_scheme;
+
     /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the
-    /// references to the
-    /// coupled processes and the references to the solutions of the coupled
-    /// processes.
+    /// references to the coupled processes and the references to the
+    /// solutions of the coupled processes.
     CoupledSolutionsForStaggeredScheme* _coupled_solutions;
 
     /// Order of the integration method for element-wise integration.

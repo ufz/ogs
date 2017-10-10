@@ -31,7 +31,8 @@ Process::Process(
       _secondary_variables(std::move(secondary_variables)),
       _named_function_caller(std::move(named_function_caller)),
       _global_assembler(std::move(jacobian_assembler)),
-      _coupled_solutions(nullptr),
+      _is_monolithic_scheme(true),
+      _coupling_term(nullptr),
       _integration_order(integration_order),
       _process_variables(std::move(process_variables)),
       _boundary_conditions(parameters)
@@ -188,9 +189,19 @@ void Process::constructDofTable()
 
     // Create a vector of the number of variable components
     std::vector<int> vec_var_n_components;
-    for (ProcessVariable const& pv : _process_variables)
-        vec_var_n_components.push_back(pv.getNumberOfComponents());
-
+    if (_is_monolithic_scheme)
+    {
+        for (ProcessVariable const& pv : _process_variables)
+            vec_var_n_components.push_back(pv.getNumberOfComponents());
+    }
+    else  // for staggered scheme
+    {
+        // Assuming that all equations of the coupled process use the same
+        // element order. Other cases can be considered by overloading this
+        // member function in the derived class.
+        vec_var_n_components.push_back(
+            _process_variables[0].get().getNumberOfComponents());
+    }
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets), vec_var_n_components,

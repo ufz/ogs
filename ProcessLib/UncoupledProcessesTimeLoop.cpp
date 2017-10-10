@@ -336,9 +336,25 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
     }
 
     if (per_process_data.size() != processes.size())
-        OGS_FATAL(
-            "Some processes have not been configured to be solved by this time "
-            "time loop.");
+    {
+        if (processes.size() > 1)
+        {
+            OGS_FATAL(
+                "Some processes have not been configured to be solved by this "
+                " time loop.");
+        }
+        else
+        {
+            const bool _is_monolithic_scheme = false;
+            for (auto const& process : processes)
+            {
+                process.second->setDecouplingSchemeType(_is_monolithic_scheme);
+            }
+            INFO(
+                "The equations of the coupled processes will be solved by the "
+                "staggered scheme.")
+        }
+    }
 
     return per_process_data;
 }
