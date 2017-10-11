@@ -13,6 +13,9 @@
 
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
+#include "MonolithicHTFEM.h"
+#include "StaggeredHTFEM.h"
+
 namespace ProcessLib
 {
 namespace HT
@@ -39,10 +42,21 @@ void HTProcess::initializeConcreteProcess(
     unsigned const integration_order)
 {
     ProcessLib::ProcessVariable const& pv = getProcessVariables()[0];
-    ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        pv.getShapeFunctionOrder(), _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, *_material_properties);
+
+    if (_is_monolithic_scheme)
+    {
+        ProcessLib::createLocalAssemblers<MonolithicHTFEM>(
+            mesh.getDimension(), mesh.getElements(), dof_table,
+            pv.getShapeFunctionOrder(), _local_assemblers,
+            mesh.isAxiallySymmetric(), integration_order, *_material_properties);
+    }
+    else
+    {
+        ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
+            mesh.getDimension(), mesh.getElements(), dof_table,
+            pv.getShapeFunctionOrder(), _local_assemblers,
+            mesh.isAxiallySymmetric(), integration_order, *_material_properties);
+    }
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
