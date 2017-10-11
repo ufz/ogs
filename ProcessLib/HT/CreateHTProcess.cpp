@@ -18,6 +18,7 @@
 
 #include "HTProcess.h"
 #include "HTMaterialProperties.h"
+#include "HTLocalAssemblerInterface.h"
 
 namespace ProcessLib
 {
