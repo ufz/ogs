@@ -75,8 +75,14 @@ public:
         CoupledSolutionsForStaggeredScheme* const coupled_solutions)
     {
         _coupled_solutions = coupled_solutions;
+
+    }
+    void setDecouplingSchemeType(const bool is_monolithic_scheme)
+    {
+        _is_monolithic_scheme = is_monolithic_scheme;
     }
 
+    bool useMonolithicScheme() const { return _is_monolithic_scheme; }
 
     virtual void setCoupledSolutionsForStaggeredSchemeToLocalAssemblers() {}
     void preAssemble(const double t, GlobalVector const& x) override final;
@@ -88,11 +94,6 @@ public:
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) final;
-
-    void setDecouplingSchemeType(const bool is_monolithic_scheme)
-    {
-        _is_monolithic_scheme = is_monolithic_scheme;
-    }
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const t) const final
