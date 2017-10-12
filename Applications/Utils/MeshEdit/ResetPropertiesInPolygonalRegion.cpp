@@ -189,12 +189,6 @@ int main (int argc, char* argv[])
     // *** read mesh
     auto mesh = std::unique_ptr<MeshLib::Mesh>(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
-    std::vector<std::string> property_names(
-        mesh->getProperties().getPropertyVectorNames());
-    INFO("Mesh contains %d property vectors:", property_names.size());
-    for (const auto& name : property_names) {
-        INFO("- %s", name.c_str());
-    }
     std::string const& property_name(property_name_arg.getValue());
 
     if (char_property_arg.isSet()) {
@@ -211,6 +205,13 @@ int main (int argc, char* argv[])
         bool bool_property_val(bool_property_arg.getValue());
         resetMeshElementProperty(*mesh, polygon, property_name,
                                  bool_property_arg.getValue());
+    }
+
+    std::vector<std::string> property_names(
+        mesh->getProperties().getPropertyVectorNames());
+    INFO("Mesh contains %d property vectors:", property_names.size());
+    for (const auto& name : property_names) {
+        INFO("- %s", name.c_str());
     }
 
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
