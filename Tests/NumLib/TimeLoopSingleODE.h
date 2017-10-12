@@ -14,8 +14,6 @@
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "MathLib/LinAlg/LinAlg.h"
 
-#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
-
 namespace NumLib
 {
 //! \addtogroup ODESolver
