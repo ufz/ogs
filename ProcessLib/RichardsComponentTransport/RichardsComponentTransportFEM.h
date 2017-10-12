@@ -157,9 +157,8 @@ public:
         SpatialPosition pos;
         pos.setElementID(_element_id);
 
-        auto const num_nodes = ShapeFunction::NPOINTS;
-        auto p_nodal_values =
-            Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
+        auto p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[pressure_index], pressure_size);
 
         auto const& b = _process_data.specific_body_force;
 
@@ -168,13 +167,17 @@ public:
         GlobalDimMatrixType const& I(
             GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
-        auto KCC = local_K.template block<num_nodes, num_nodes>(0, 0);
-        auto MCC = local_M.template block<num_nodes, num_nodes>(0, 0);
-        auto Kpp =
-            local_K.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
-        auto Mpp =
-            local_M.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
-        auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
+        auto KCC =
+            local_K.template block<concentration_size, concentration_size>(
+                concentration_index, concentration_index);
+        auto MCC =
+            local_M.template block<concentration_size, concentration_size>(
+                concentration_index, concentration_index);
+        auto Kpp = local_K.template block<pressure_size, pressure_size>(
+            pressure_index, pressure_index);
+        auto Mpp = local_M.template block<pressure_size, pressure_size>(
+            pressure_index, pressure_index);
+        auto Bp = local_b.template block<pressure_size, 1>(pressure_index, 0);
 
         for (std::size_t ip(0); ip < n_integration_points; ++ip)
         {
@@ -437,6 +440,11 @@ private:
         Eigen::aligned_allocator<IntegrationPointData<
             NodalRowVectorType, GlobalDimNodalMatrixType, NodalMatrixType>>>
         _ip_data;
+
+    static const int concentration_index = 0;
+    static const int concentration_size = ShapeFunction::NPOINTS;
+    static const int pressure_index = ShapeFunction::NPOINTS;
+    static const int pressure_size = ShapeFunction::NPOINTS;
 };
 
 }  // namespace RichardsComponentTransport
