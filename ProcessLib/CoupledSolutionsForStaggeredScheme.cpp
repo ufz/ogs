@@ -18,48 +18,46 @@
 namespace ProcessLib
 {
 CoupledSolutionsForStaggeredScheme::CoupledSolutionsForStaggeredScheme(
-    std::unordered_map<std::type_index, Process const&> const&
-        coupled_processes_,
-    std::unordered_map<std::type_index, GlobalVector const&> const& coupled_xs_,
-    const double dt_)
-    : coupled_processes(coupled_processes_), coupled_xs(coupled_xs_), dt(dt_)
+    std::vector<std::reference_wrapper<GlobalVector const>> const& coupled_xs_,
+    const double dt_, const int process_id_)
+    : coupled_xs(coupled_xs_), dt(dt_), process_id(process_id_)
 {
-    for (auto const& coupled_x_pair : coupled_xs)
+    for (auto const& coupled_x : coupled_xs)
     {
-        auto const& coupled_x = coupled_x_pair.second;
-        MathLib::LinAlg::setLocalAccessibleVector(coupled_x);
-    }
-
-    for (auto const& coupled_process_pair : coupled_processes)
-    {
-        auto const& coupled_pcs = coupled_process_pair.second;
-        auto const prevous_time_x = coupled_pcs.getPreviousTimeStepSolution();
-        if (prevous_time_x)
-        {
-            MathLib::LinAlg::setLocalAccessibleVector(*prevous_time_x);
-        }
+        MathLib::LinAlg::setLocalAccessibleVector(coupled_x.get());
     }
 }
 
-std::unordered_map<std::type_index, const std::vector<double>>
-getCurrentLocalSolutionsOfCoupledProcesses(
-    const std::unordered_map<std::type_index, GlobalVector const&>&
-        global_coupled_xs,
+std::vector<std::vector<double>> getPreviousLocalSolutions(
+    const CoupledSolutionsForStaggeredScheme& cpl_xs,
     const std::vector<GlobalIndexType>& indices)
 {
-    std::unordered_map<std::type_index, const std::vector<double>>
-        local_coupled_xs;
+    const auto number_of_coupled_solutions = cpl_xs.coupled_xs.size();
+    std::vector<std::vector<double>> local_xs_t0;
+    local_xs_t0.reserve(number_of_coupled_solutions);
 
-    // Get local nodal solutions of the coupled equations.
-    for (auto const& global_coupled_x_pair : global_coupled_xs)
+    for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
     {
-        auto const& coupled_x = global_coupled_x_pair.second;
-        auto const local_coupled_x = coupled_x.get(indices);
-        BaseLib::insertIfTypeIndexKeyUniqueElseError(
-            local_coupled_xs, global_coupled_x_pair.first, local_coupled_x,
-            "local_coupled_x");
+        auto const& x_t0 = *cpl_xs.coupled_xs_t0[i];
+        local_xs_t0.emplace_back(x_t0.get(indices));
     }
-    return local_coupled_xs;
+    return local_xs_t0;
+}
+
+std::vector<std::vector<double>> getCurrentLocalSolutions(
+    const CoupledSolutionsForStaggeredScheme& cpl_xs,
+    const std::vector<GlobalIndexType>& indices)
+{
+    const auto number_of_coupled_solutions = cpl_xs.coupled_xs.size();
+    std::vector<std::vector<double>> local_xs_t1;
+    local_xs_t1.reserve(number_of_coupled_solutions);
+
+    for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
+    {
+        auto const& x_t1 = cpl_xs.coupled_xs[i].get();
+        local_xs_t1.emplace_back(x_t1.get(indices));
+    }
+    return local_xs_t1;
 }
 
 }  // end of ProcessLib

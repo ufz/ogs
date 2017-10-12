@@ -59,6 +59,8 @@ void ComponentTransportProcess::assembleConcreteProcess(
     GlobalVector& b)
 {
     DBUG("Assemble ComponentTransportProcess.");
+    if (!_is_monolithic_scheme)
+        setCoupledSolutionsOfPreviousTimeStep();
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
@@ -72,6 +74,9 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
     GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian ComponentTransportProcess.");
+
+    if (!_is_monolithic_scheme)
+        setCoupledSolutionsOfPreviousTimeStep();
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(

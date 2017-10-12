@@ -12,18 +12,17 @@
 
 #pragma once
 
-#include <unordered_map>
-#include <typeindex>
+#include <functional>
+#include <utility>
+#include <vector>
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 
 namespace ProcessLib
 {
-class Process;
-
 /**
- *  A struct to keep the references of the coupled processes and the references
- *  of the current solutions of the equations of the coupled processes.
+ *  A struct to keep the references of the current solutions of the equations of
+ *  the coupled processes.
  *
  *  During staggered coupling iteration, an instance of this struct is created
  *  and passed through interfaces to global and local assemblers for each
@@ -32,68 +31,54 @@ class Process;
 struct CoupledSolutionsForStaggeredScheme
 {
     CoupledSolutionsForStaggeredScheme(
-        std::unordered_map<std::type_index, Process const&> const&
-            coupled_processes_,
-        std::unordered_map<std::type_index, GlobalVector const&> const&
+        std::vector<std::reference_wrapper<GlobalVector const>> const&
             coupled_xs_,
-        const double dt_);
-
-    /// References to the coupled processes are distinguished by the keys of
-    /// process types.
-    std::unordered_map<std::type_index, Process const&> const&
-        coupled_processes;
+        const double dt_, const int process_id_);
 
     /// References to the current solutions of the coupled processes.
-    /// The coupled solutions are distinguished by the keys of process types.
-    std::unordered_map<std::type_index, GlobalVector const&> const& coupled_xs;
+    std::vector<std::reference_wrapper<GlobalVector const>> const& coupled_xs;
+
+    /// Pointers to the vector of the solutions of the previous time step.
+    std::vector<GlobalVector*> coupled_xs_t0;
 
     const double dt;  ///< Time step size.
+    const int process_id;
 };
 
 /**
- *  A struct to keep the references of the coupled processes, and local element
- *  solutions  of the current and previous time step solutions of the equations
- *  of the coupled processes.
+ *  A struct to keep the references to the local element solutions  of the
+ *  current and previous time step solutions of the equations of the coupled
+ *  processes.
  *
  *  During the global assembly loop, an instance of this struct is created for
  *  each element and it is then passed to local assemblers.
  */
 struct LocalCoupledSolutions
 {
-    LocalCoupledSolutions(
-        const double dt_,
-        std::unordered_map<std::type_index, Process const&> const&
-            coupled_processes_,
-        std::unordered_map<std::type_index, const std::vector<double>>&&
-            local_coupled_xs0_,
-        std::unordered_map<std::type_index, const std::vector<double>>&&
-            local_coupled_xs_)
+    LocalCoupledSolutions(const double dt_, const int process_id_,
+                          std::vector<std::vector<double>>&& local_coupled_xs0_,
+                          std::vector<std::vector<double>>&& local_coupled_xs_)
         : dt(dt_),
-          coupled_processes(coupled_processes_),
+          process_id(process_id_),
           local_coupled_xs0(std::move(local_coupled_xs0_)),
           local_coupled_xs(std::move(local_coupled_xs_))
     {
     }
 
     const double dt;  ///< Time step size.
-
-    /// References to the coupled processes are distinguished by the keys of
-    /// process types.
-    std::unordered_map<std::type_index, Process const&> const&
-        coupled_processes;
+    const int process_id;
 
     /// Local solutions of the previous time step.
-    std::unordered_map<std::type_index, const std::vector<double>> const
-        local_coupled_xs0;
+    std::vector<std::vector<double>> const local_coupled_xs0;
     /// Local solutions of the current time step.
-    std::unordered_map<std::type_index, const std::vector<double>> const
-        local_coupled_xs;
+    std::vector<std::vector<double>> const local_coupled_xs;
 };
 
-std::unordered_map<std::type_index, const std::vector<double>>
-getCurrentLocalSolutionsOfCoupledProcesses(
-    const std::unordered_map<std::type_index, GlobalVector const&>&
-        global_coupled_xs,
+std::vector<std::vector<double>> getPreviousLocalSolutions(
+    const CoupledSolutionsForStaggeredScheme& cpl_xs,
     const std::vector<GlobalIndexType>& indices);
 
+std::vector<std::vector<double>> getCurrentLocalSolutions(
+    const CoupledSolutionsForStaggeredScheme& cpl_xs,
+    const std::vector<GlobalIndexType>& indices);
 }  // end of ProcessLib

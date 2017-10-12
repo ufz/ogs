@@ -7,6 +7,8 @@
  *
  */
 
+#include <bits/stl_vector.h>
+
 #include "Process.h"
 
 #include "BaseLib/Functional.h"
@@ -32,7 +34,7 @@ Process::Process(
       _named_function_caller(std::move(named_function_caller)),
       _global_assembler(std::move(jacobian_assembler)),
       _is_monolithic_scheme(true),
-      _coupling_solutions(nullptr),
+      _coupled_solutions(nullptr),
       _integration_order(integration_order),
       _process_variables(std::move(process_variables)),
       _boundary_conditions(parameters)
@@ -327,6 +329,18 @@ NumLib::IterationResult Process::postIteration(const GlobalVector& x)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
     return postIterationConcreteProcess(x);
+}
+
+void Process::setCoupledSolutionsOfPreviousTimeStep()
+{
+    const auto number_of_coupled_solutions =
+        _coupled_solutions->coupled_xs.size();
+    _coupled_solutions->coupled_xs_t0.reserve(number_of_coupled_solutions);
+    for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
+    {
+        _coupled_solutions->coupled_xs_t0.emplace_back(
+            getPreviousTimeStepSolution(i));
+    }
 }
 
 }  // namespace ProcessLib

@@ -15,8 +15,18 @@
 
 namespace ProcessLib
 {
+void LocalAssemblerInterface::assemble(double const /*t*/,
+                                       std::vector<double> const& /*local_x*/,
+                                       std::vector<double>& /*local_M_data*/,
+                                       std::vector<double>& /*local_K_data*/,
+                                       std::vector<double>& /*local_b_data*/)
+{
+    OGS_FATAL(
+        "The assemble() function is not implemented in the local assembler.");
+}
+
 void LocalAssemblerInterface::assembleWithCoupledTerm(
-    double const /*t*/, std::vector<double> const& /*local_x*/,
+    double const /*t*/,
     std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
     std::vector<double>& /*local_b_data*/,
@@ -41,13 +51,13 @@ void LocalAssemblerInterface::assembleWithJacobian(
 }
 
 void LocalAssemblerInterface::assembleWithJacobianAndCoupling(
-    double const /*t*/, std::vector<double> const& /*local_x*/,
-    std::vector<double> const& /*local_xdot*/, const double /*dxdot_dx*/,
-    const double /*dx_dx*/, std::vector<double>& /*local_M_data*/,
+    double const /*t*/, std::vector<double> const& /*local_xdot*/,
+    const double /*dxdot_dx*/, const double /*dx_dx*/,
+    std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
     std::vector<double>& /*local_b_data*/,
     std::vector<double>& /*local_Jac_data*/,
-    LocalCoupledSolutions const& /*coupled_solutions*/)
+    LocalCoupledSolutions const& /*local_coupled_solutions*/)
 {
     OGS_FATAL(
         "The assembleWithJacobianAndCoupling() function is not implemented in"
@@ -57,26 +67,20 @@ void LocalAssemblerInterface::assembleWithJacobianAndCoupling(
 void LocalAssemblerInterface::computeSecondaryVariable(
     std::size_t const mesh_item_id,
     NumLib::LocalToGlobalIndexMap const& dof_table, double const t,
-    GlobalVector const& x,
-    CoupledSolutionsForStaggeredScheme const* coupled_term)
+    GlobalVector const& x, CoupledSolutionsForStaggeredScheme const* coupled_xs)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
-    auto const local_x = x.get(indices);
 
-    if (!coupled_term)
+    if (!coupled_xs)
     {
+        auto const local_x = x.get(indices);
         computeSecondaryVariableConcrete(t, local_x);
     }
     else
     {
         auto const local_coupled_xs =
-            getCurrentLocalSolutionsOfCoupledProcesses(coupled_term->coupled_xs,
-                                                       indices);
-        if (!local_coupled_xs.empty())
-            computeSecondaryVariableWithCoupledProcessConcrete(
-                t, local_x, local_coupled_xs);
-        else
-            computeSecondaryVariableConcrete(t, local_x);
+            getCurrentLocalSolutions(*coupled_xs, indices);
+        computeSecondaryVariableWithCoupledProcessConcrete(t, local_coupled_xs);
     }
 }
 

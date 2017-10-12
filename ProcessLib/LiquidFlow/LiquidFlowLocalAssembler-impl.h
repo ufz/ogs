@@ -53,6 +53,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             pos, permeability);
 }
 
+/*
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
@@ -60,7 +61,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                             std::vector<double>& local_M_data,
                             std::vector<double>& local_K_data,
                             std::vector<double>& local_b_data,
-                            LocalCoupledSolutions const& coupled_term)
+                            LocalCouplingTerm const& coupled_term)
 {
     SpatialPosition pos;
     pos.setElementID(_element.getID());
@@ -104,6 +105,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         }
     }
 }
+*/
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
@@ -166,6 +168,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
+/*
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 template <typename LaplacianGravityVelocityCalculator>
@@ -240,6 +243,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             eff_thermal_expansion * (T - T0) * integration_factor * sm.N / dt;
     }
 }
+*/
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
@@ -268,22 +272,23 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     //  the assert must be changed to perm.rows() == _element->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
-    if (!_coupled_solutions)
+    //if (!_coupling_term)
     {
         computeDarcyVelocity(permeability, local_x, veloctiy_cache_vectors);
     }
+    /*
     else
     {
         auto const local_coupled_xs =
             getCurrentLocalSolutionsOfCoupledProcesses(
-                _coupled_solutions->coupled_xs, indices);
+                _coupling_term->coupled_xs, indices);
         if (local_coupled_xs.empty())
             computeDarcyVelocity(permeability, local_x, veloctiy_cache_vectors);
         else
             computeDarcyVelocityWithCoupling(permeability, local_x,
                                              local_coupled_xs,
                                              veloctiy_cache_vectors);
-    }
+    }*/
 
     return veloctiy_cache;
 }
@@ -341,6 +346,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
+/*
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
@@ -361,6 +367,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             AnisotropicCalculator>(local_x, local_T, permeability,
                                    darcy_velocity_at_ips);
 }
+
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
@@ -399,7 +406,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             _gravitational_axis_id, darcy_velocity_at_ips);
     }
 }
-
+*/
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::

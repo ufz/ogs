@@ -119,7 +119,8 @@ public:
     }
 
     // Get the solution of the previous time step.
-    virtual GlobalVector* getPreviousTimeStepSolution() const
+    virtual GlobalVector* getPreviousTimeStepSolution(
+        const int /*process_id*/) const
     {
         return nullptr;
     }
@@ -220,9 +221,12 @@ protected:
     mutable bool _is_monolithic_scheme;
 
     /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the
-    /// references to the coupled processes and the references to the
-    /// solutions of the coupled processes.
+    /// references to the solutions of the coupled processes.
     CoupledSolutionsForStaggeredScheme* _coupled_solutions;
+
+    /// Set the solutions of the previous time step to the coupled term.
+    /// It only performs for the staggered scheme.
+    void setCoupledSolutionsOfPreviousTimeStep();
 
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is

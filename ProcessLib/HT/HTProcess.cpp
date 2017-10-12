@@ -73,6 +73,9 @@ void HTProcess::assembleConcreteProcess(const double t,
 {
     DBUG("Assemble HTProcess.");
 
+    if (!_is_monolithic_scheme)
+        setCoupledSolutionsOfPreviousTimeStep();
+
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
@@ -86,11 +89,39 @@ void HTProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HTProcess.");
 
+    if (!_is_monolithic_scheme)
+        setCoupledSolutionsOfPreviousTimeStep();
+
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
         dx_dx, M, K, b, Jac, _coupled_solutions);
+}
+
+void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
+                                            const double /*t*/,
+                                            const double /*delta_t*/,
+                                            const int process_id)
+{
+    assert(process_id < 2);
+
+    if (_is_monolithic_scheme)
+        return;
+
+    if (!_xs_previous_timestep[process_id])
+    {
+        _xs_previous_timestep[process_id] =
+            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+    }
+    else
+    {
+        auto& x0 = *_xs_previous_timestep[process_id];
+        MathLib::LinAlg::copy(x, x0);
+    }
+    
+    auto& x0 = *_xs_previous_timestep[process_id];
+    MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
 }  // namespace HT
