@@ -187,7 +187,8 @@ int main (int argc, char* argv[])
     GeoLib::Polygon polygon(*(ply));
 
     // *** read mesh
-    MeshLib::Mesh * mesh(MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+    auto mesh = std::unique_ptr<MeshLib::Mesh>(
+        MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     std::vector<std::string> property_names(
         mesh->getProperties().getPropertyVectorNames());
     INFO("Mesh contains %d property vectors:", property_names.size());
