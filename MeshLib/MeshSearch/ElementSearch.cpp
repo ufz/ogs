@@ -59,7 +59,7 @@ std::size_t ElementSearch::searchByBoundingBox(
         [&aabb](MeshLib::Element* e) {
             std::size_t const nElemNodes (e->getNumberOfBaseNodes());
             for (std::size_t n=0; n < nElemNodes; ++n)
-                if (aabb.containsPoint(*e->getNode(n)))
+                if (aabb.containsPoint(*e->getNode(n), 0))
                     return true;    // any node of element is in aabb.
             return false;    // no nodes of element are in aabb.
         });

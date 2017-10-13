@@ -42,7 +42,7 @@ LinearInterpolationOnSurface::LinearInterpolationOnSurface(
 
 double LinearInterpolationOnSurface::operator()(const MathLib::Point3d& pnt) const
 {
-    if (!_sfc.isPntInBoundingVolume(pnt))
+    if (!_sfc.isPntInBoundingVolume(pnt, 0))
         return _default_value;
     auto* tri = _sfc.findTriangle(pnt);
     if (tri == nullptr)
