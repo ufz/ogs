@@ -94,9 +94,10 @@ const Triangle* Surface::operator[](std::size_t i) const
     return _sfc_triangles[i];
 }
 
-bool Surface::isPntInBoundingVolume(MathLib::Point3d const& pnt) const
+bool Surface::isPntInBoundingVolume(MathLib::Point3d const& pnt,
+                                    double eps) const
 {
-    return _bounding_volume->containsPoint(pnt);
+    return _bounding_volume->containsPoint(pnt, eps);
 }
 
 bool Surface::isPntInSfc(MathLib::Point3d const& pnt, double eps) const

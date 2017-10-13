@@ -62,7 +62,7 @@ public:
     /**
      * is the given point in the bounding volume of the surface
      */
-    bool isPntInBoundingVolume(MathLib::Point3d const& pnt) const;
+    bool isPntInBoundingVolume(MathLib::Point3d const& pnt, double eps) const;
 
     /**
      * is the given point pnt located in the surface

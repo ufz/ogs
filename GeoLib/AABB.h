@@ -127,11 +127,14 @@ public:
      * check if point is in the axis aligned bounding box
      */
     template <typename T>
-    bool containsPoint(T const & pnt) const
+    bool containsPoint(T const & pnt, double eps) const
     {
-        if (pnt[0] < _min_pnt[0] || _max_pnt[0] <= pnt[0]) return false;
-        if (pnt[1] < _min_pnt[1] || _max_pnt[1] <= pnt[1]) return false;
-        if (pnt[2] < _min_pnt[2] || _max_pnt[2] <= pnt[2]) return false;
+        if (pnt[0] < _min_pnt[0] - eps || _max_pnt[0] + eps <= pnt[0])
+            return false;
+        if (pnt[1] < _min_pnt[1] - eps || _max_pnt[1] + eps <= pnt[1])
+            return false;
+        if (pnt[2] < _min_pnt[2] - eps || _max_pnt[2] + eps <= pnt[2])
+            return false;
         return true;
     }
 
@@ -166,7 +169,8 @@ public:
      */
     bool containsAABB(AABB const& other_aabb) const
     {
-        return containsPoint(other_aabb.getMinPoint()) && containsPoint(other_aabb.getMaxPoint());
+        return containsPoint(other_aabb.getMinPoint(), 0) &&
+               containsPoint(other_aabb.getMaxPoint(), 0);
     }
 
 protected:
