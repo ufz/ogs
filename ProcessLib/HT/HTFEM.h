@@ -47,10 +47,10 @@ public:
           std::size_t const local_matrix_size,
           bool is_axially_symmetric,
           unsigned const integration_order,
-          HTMaterialProperties const& process_data,
+          HTMaterialProperties const& material_properties,
           const unsigned dof_per_node)
         : _element(element),
-          _process_data(process_data),
+          _material_properties(material_properties),
           _integration_method(integration_order)
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -129,20 +129,21 @@ public:
                 MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
 
             auto const K =
-                _process_data.porous_media_properties.getIntrinsicPermeability(
+                _material_properties.porous_media_properties.getIntrinsicPermeability(
                     t, pos).getValue(t, pos, 0.0, T_int_pt);
 
-            auto const mu = _process_data.fluid_properties->getValue(
+            auto const mu = _material_properties.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
             GlobalDimMatrixType const K_over_mu = K / mu;
 
             cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
 
-            if (_process_data.has_gravity)
+            if (_material_properties.has_gravity)
             {
-                auto const rho_w = _process_data.fluid_properties->getValue(
-                    MaterialLib::Fluid::FluidPropertyType::Density, vars);
-                auto const b = _process_data.specific_body_force;
+                auto const rho_w =
+                    _material_properties.fluid_properties->getValue(
+                        MaterialLib::Fluid::FluidPropertyType::Density, vars);
+                auto const b = _material_properties.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
                 cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
             }
@@ -153,7 +154,7 @@ public:
 
 protected:
     MeshLib::Element const& _element;
-    HTMaterialProperties const& _process_data;
+    HTMaterialProperties const& _material_properties;
 
     IntegrationMethod const _integration_method;
     std::vector<

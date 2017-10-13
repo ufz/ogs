@@ -50,26 +50,9 @@ struct HTMaterialProperties
           thermal_conductivity_solid(thermal_conductivity_solid_),
           thermal_conductivity_fluid(thermal_conductivity_fluid_),
           solid_thermal_expansion(solid_thermal_expansion_),
-          biot_constant(biot_constant),
+          biot_constant(biot_constant_),
           specific_body_force(std::move(specific_body_force_)),
           has_gravity(has_gravity_)
-    {
-    }
-
-    HTMaterialProperties(HTMaterialProperties&& other)
-        : porous_media_properties(std::move(other.porous_media_properties)),
-          density_solid(other.density_solid),
-          fluid_reference_density(other.fluid_reference_density),
-          fluid_properties(other.fluid_properties.release()),
-          specific_heat_capacity_solid(other.specific_heat_capacity_solid),
-          thermal_dispersivity_longitudinal(
-              other.thermal_dispersivity_longitudinal),
-          thermal_dispersivity_transversal(
-              other.thermal_dispersivity_transversal),
-          thermal_conductivity_solid(other.thermal_conductivity_solid),
-          thermal_conductivity_fluid(other.thermal_conductivity_fluid),
-          specific_body_force(other.specific_body_force),
-          has_gravity(other.has_gravity)
     {
     }
 

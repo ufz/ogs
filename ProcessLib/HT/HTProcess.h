@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <array>
+
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 
@@ -87,10 +89,9 @@ private:
     const std::unique_ptr<HTMaterialProperties> _material_properties;
 
     std::vector<std::unique_ptr<HTLocalAssemblerInterface>> _local_assemblers;
-    
+
     /// Solutions of the previous time step
     std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
-
 };
 
 }  // namespace HT

@@ -56,10 +56,10 @@ public:
                     std::size_t const local_matrix_size,
                     bool is_axially_symmetric,
                     unsigned const integration_order,
-                    HTMaterialProperties const& process_data)
+                    HTMaterialProperties const& material_properties)
         : HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>(
               element, local_matrix_size, is_axially_symmetric,
-              integration_order, process_data, NUM_NODAL_DOF)
+              integration_order, material_properties, NUM_NODAL_DOF)
     {
     }
 
@@ -96,7 +96,7 @@ public:
         auto p_nodal_values =
             Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
 
-        auto const& process_data = this->_process_data;
+        auto const& process_data = this->_material_properties;
 
         auto const& b = process_data.specific_body_force;
 

@@ -48,14 +48,14 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                               LocalCoupledSolutions const& coupled_term)
 {
     auto const& local_p = coupled_term.local_coupled_xs[0];
-    auto const& local_T = coupled_term.local_coupled_xs[1];
-    auto const& local_T1 = coupled_term.local_coupled_xs0[1];
-    const double dt = coupled_term.dt;
-
-    auto const local_matrix_size = local_x.size();
+    auto const local_matrix_size = local_p.size();
     // This assertion is valid only if all nodal d.o.f. use the same shape
     // matrices.
     assert(local_matrix_size == ShapeFunction::NPOINTS);
+
+    auto const& local_T1 = coupled_term.local_coupled_xs[1];
+    auto const& local_T0 = coupled_term.local_coupled_xs0[1];
+    const double dt = coupled_term.dt;
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_M_data, local_matrix_size, local_matrix_size);
@@ -67,9 +67,9 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     SpatialPosition pos;
     pos.setElementID(this->_element.getID());
 
-    auto const& process_data = this->_process_data;
+    auto const& material_properties = this->_material_properties;
 
-    auto const& b = process_data.specific_body_force;
+    auto const& b = material_properties.specific_body_force;
 
     GlobalDimMatrixType const& I(
         GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
@@ -83,74 +83,200 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     {
         pos.setIntegrationPoint(ip);
 
-        auto const fluid_reference_density =
-            process_data.fluid_reference_density(t, pos)[0];
+        auto const& ip_data = this->_ip_data[ip];
+        auto const& N = ip_data.N;
+        auto const& dNdx = ip_data.dNdx;
+        auto const& w = ip_data.integration_weight;
 
-        auto const density_solid = process_data.density_solid(t, pos)[0];
+        double p_at_xi = 0.;
+        NumLib::shapeFunctionInterpolate(local_p, N, p_at_xi);
+        double T1_at_xi = 0.;
+        NumLib::shapeFunctionInterpolate(local_T1, N, T1_at_xi);
+
+        auto const porosity =
+            material_properties.porous_media_properties.getPorosity(t, pos)
+                .getValue(t, pos, 0.0, T1_at_xi);
+
+        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] =
+            T1_at_xi;
+        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] =
+            p_at_xi;
+
+        // Use the fluid density model to compute the density
+        auto const fluid_density =
+            material_properties.fluid_properties->getValue(
+                MaterialLib::Fluid::FluidPropertyType::Density, vars);
+        const double dfluid_density_dp =
+            material_properties.fluid_properties->getdValue(
+                MaterialLib::Fluid::FluidPropertyType::Density, vars,
+                MaterialLib::Fluid::PropertyVariableType::p);
+        const double dfluid_density_dT =
+            material_properties.fluid_properties->getdValue(
+                MaterialLib::Fluid::FluidPropertyType::Density, vars,
+                MaterialLib::Fluid::PropertyVariableType::T);
+
+        // Use the viscosity model to compute the viscosity
+        auto const viscosity = material_properties.fluid_properties->getValue(
+            MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+
         // \todo the argument to getValue() has to be changed for non
         // constant storage model
         auto const specific_storage =
-            process_data.porous_media_properties.getSpecificStorage(t, pos)
+            material_properties.porous_media_properties
+                .getSpecificStorage(t, pos)
                 .getValue(0.0);
 
-        auto const thermal_conductivity_solid =
-            process_data.thermal_conductivity_solid(t, pos)[0];
-        auto const thermal_conductivity_fluid =
-            process_data.thermal_conductivity_fluid(t, pos)[0];
+        auto const intrinsic_permeability =
+            material_properties.porous_media_properties
+                .getIntrinsicPermeability(t, pos)
+                .getValue(t, pos, 0.0, T1_at_xi);
+        GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
+
+        // matrix assembly
+        local_M.noalias() += w * (porosity * dfluid_density_dp / fluid_density +
+                                  specific_storage) *
+                             N.transpose() * N;
+
+        local_K.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
+
+        // Add the thermal expansion term
+        auto const solid_thermal_expansion =
+            material_properties.solid_thermal_expansion(t, pos)[0];
+        if (solid_thermal_expansion > 0.0)
+        {
+            double T0_at_xi = 0.;
+            NumLib::shapeFunctionInterpolate(local_T0, N, T0_at_xi);
+            auto const biot_constant =
+                material_properties.biot_constant(t, pos)[0];
+            const double eff_thermal_expansion =
+                3.0 * (biot_constant - porosity) * solid_thermal_expansion -
+                porosity * dfluid_density_dT / fluid_density;
+            local_b.noalias() +=
+                eff_thermal_expansion * (T1_at_xi - T0_at_xi) * w * N / dt;
+        }
+
+        if (material_properties.has_gravity)
+        {
+            local_b.noalias() +=
+                w * fluid_density * dNdx.transpose() * K_over_mu * b;
+        }
+    }
+}
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
+    assembleHeatTransportEquation(double const t,
+                                  std::vector<double>& local_M_data,
+                                  std::vector<double>& local_K_data,
+                                  std::vector<double>& /*local_b_data*/,
+                                  LocalCoupledSolutions const& coupled_term)
+{
+    auto const& local_p = coupled_term.local_coupled_xs[0];
+    auto const local_matrix_size = local_p.size();
+    // This assertion is valid only if all nodal d.o.f. use the same shape
+    // matrices.
+    assert(local_matrix_size == ShapeFunction::NPOINTS);
+
+    auto local_p_Eigen_type =
+        Eigen::Map<const NodalVectorType>(&local_p[0], local_matrix_size);
+
+    auto const& local_T1 = coupled_term.local_coupled_xs[1];
+
+    auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
+        local_M_data, local_matrix_size, local_matrix_size);
+    auto local_K = MathLib::createZeroedMatrix<LocalMatrixType>(
+        local_K_data, local_matrix_size, local_matrix_size);
+
+    SpatialPosition pos;
+    pos.setElementID(this->_element.getID());
+
+    auto const& material_properties = this->_material_properties;
+
+    auto const& b = material_properties.specific_body_force;
+
+    GlobalDimMatrixType const& I(
+        GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
+
+    MaterialLib::Fluid::FluidProperty::ArrayType vars;
+
+    unsigned const n_integration_points =
+        this->_integration_method.getNumberOfPoints();
+
+    for (std::size_t ip(0); ip < n_integration_points; ip++)
+    {
+        pos.setIntegrationPoint(ip);
 
         auto const& ip_data = this->_ip_data[ip];
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
         auto const& w = ip_data.integration_weight;
 
-        double T_int_pt = 0.0;
-        double p_int_pt = 0.0;
-        // Order matters: First T, then P!
-        NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
+        double p_at_xi = 0.;
+        NumLib::shapeFunctionInterpolate(local_p, N, p_at_xi);
+        double T1_at_xi = 0.;
+        NumLib::shapeFunctionInterpolate(local_T1, N, T1_at_xi);
 
-        // \todo the first argument has to be changed for non constant
-        // porosity model
         auto const porosity =
-            process_data.porous_media_properties.getPorosity(t, pos).getValue(
-                t, pos, 0.0, T_int_pt);
-        auto const intrinsic_permeability =
-            process_data.porous_media_properties.getIntrinsicPermeability(
-                t, pos).getValue(t, pos, 0.0, T_int_pt);
+            material_properties.porous_media_properties.getPorosity(t, pos)
+                .getValue(t, pos, 0.0, T1_at_xi);
 
+        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] =
+            T1_at_xi;
+        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] =
+            p_at_xi;
+
+        // Assemble mass matrix
+        auto const specific_heat_capacity_solid =
+            material_properties.specific_heat_capacity_solid(t, pos)[0];
+        auto const specific_heat_capacity_fluid =
+            material_properties.fluid_properties->getValue(
+                MaterialLib::Fluid::FluidPropertyType::HeatCapacity, vars);
+        auto const fluid_reference_density =
+            material_properties.fluid_reference_density(t, pos)[0];
+
+        auto const solid_density = material_properties.density_solid(t, pos)[0];
+
+        // Use the fluid density model to compute the density
+        auto const fluid_density =
+            material_properties.fluid_properties->getValue(
+                MaterialLib::Fluid::FluidPropertyType::Density, vars);
+        double const heat_capacity =
+            solid_density * specific_heat_capacity_solid * (1 - porosity) +
+            fluid_density * specific_heat_capacity_fluid * porosity;
+
+        local_M.noalias() += w * heat_capacity * N.transpose() * N;
+
+        // Assemble Laplace matrix
+
+        auto const thermal_conductivity_solid =
+            material_properties.thermal_conductivity_solid(t, pos)[0];
+        auto const thermal_conductivity_fluid =
+            material_properties.thermal_conductivity_fluid(t, pos)[0];
         double const thermal_conductivity =
             thermal_conductivity_solid * (1 - porosity) +
             thermal_conductivity_fluid * porosity;
 
-        auto const specific_heat_capacity_solid =
-            process_data.specific_heat_capacity_solid(t, pos)[0];
-
-        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] =
-            T_int_pt;
-        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] =
-            p_int_pt;
-        auto const specific_heat_capacity_fluid =
-            process_data.fluid_properties->getValue(
-                MaterialLib::Fluid::FluidPropertyType::HeatCapacity, vars);
-
         auto const thermal_dispersivity_longitudinal =
-            process_data.thermal_dispersivity_longitudinal(t, pos)[0];
+            material_properties.thermal_dispersivity_longitudinal(t, pos)[0];
         auto const thermal_dispersivity_transversal =
-            process_data.thermal_dispersivity_transversal(t, pos)[0];
-
-        // Use the fluid density model to compute the density
-        auto const density = process_data.fluid_properties->getValue(
-            MaterialLib::Fluid::FluidPropertyType::Density, vars);
+            material_properties.thermal_dispersivity_transversal(t, pos)[0];
 
         // Use the viscosity model to compute the viscosity
-        auto const viscosity = process_data.fluid_properties->getValue(
+        auto const viscosity = material_properties.fluid_properties->getValue(
             MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
-        GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
+        auto const intrinsic_permeability =
+            material_properties.porous_media_properties
+                .getIntrinsicPermeability(t, pos)
+                .getValue(t, pos, 0.0, T1_at_xi);
+
+        GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
         GlobalDimVectorType const velocity =
-            process_data.has_gravity
-                ? GlobalDimVectorType(-K_over_mu *
-                                      (dNdx * p_nodal_values - density * b))
-                : GlobalDimVectorType(-K_over_mu * dNdx * p_nodal_values);
+            material_properties.has_gravity
+                ? GlobalDimVectorType(-K_over_mu * (dNdx * local_p_Eigen_type -
+                                                    fluid_density * b))
+                : GlobalDimVectorType(-K_over_mu * dNdx * local_p_Eigen_type);
 
         double const velocity_magnitude = velocity.norm();
         GlobalDimMatrixType const thermal_dispersivity =
@@ -163,35 +289,11 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         GlobalDimMatrixType const hydrodynamic_thermodispersion =
             thermal_conductivity * I + thermal_dispersivity;
 
-        double const heat_capacity =
-            density_solid * specific_heat_capacity_solid * (1 - porosity) +
-            fluid_reference_density * specific_heat_capacity_fluid * porosity;
-
-        // matrix assembly
-        Ktt.noalias() +=
-            (dNdx.transpose() * hydrodynamic_thermodispersion * dNdx +
-             N.transpose() * velocity.transpose() * dNdx *
-                 fluid_reference_density * specific_heat_capacity_fluid) *
-            w;
-        Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
-        Mtt.noalias() += w * N.transpose() * heat_capacity * N;
-        Mpp.noalias() += w * N.transpose() * specific_storage * N;
-        if (process_data.has_gravity)
-            Bp += w * density * dNdx.transpose() * K_over_mu * b;
-        /* with Oberbeck-Boussing assumption density difference only exists
-         * in buoyancy effects */
+        local_K.noalias() +=
+            w * (dNdx.transpose() * hydrodynamic_thermodispersion * dNdx +
+                 N.transpose() * velocity.transpose() * dNdx * fluid_density *
+                     specific_heat_capacity_fluid);
     }
-}
-
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
-void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assembleHeatTransportEquation(double const t,
-                                  std::vector<double>& local_M_data,
-                                  std::vector<double>& local_K_data,
-                                  std::vector<double>& local_b_data,
-                                  LocalCoupledSolutions const& coupled_term)
-{
 }
 
 }  // namespace HT
