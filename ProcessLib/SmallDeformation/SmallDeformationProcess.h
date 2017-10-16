@@ -71,7 +71,7 @@ private:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
-    MeshLib::PropertyVector<double>* _material_forces = nullptr;
+    std::unique_ptr<GlobalVector> _material_forces;
 };
 
 extern template class SmallDeformationProcess<2>;

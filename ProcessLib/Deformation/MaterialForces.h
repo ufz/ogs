@@ -15,6 +15,8 @@
 #include <vector>
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "MathLib/LinAlg/LinAlg.h"
+#include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/GMatrix.h"
 #include "ProcessLib/Parameter/SpatialPosition.h"
@@ -153,7 +155,7 @@ std::vector<double> const& getMaterialForces(
 
 template <typename LocalAssemblerInterface>
 void writeMaterialForces(
-    MeshLib::PropertyVector<double>& material_forces,
+    std::unique_ptr<GlobalVector>& material_forces,
     std::vector<std::unique_ptr<LocalAssemblerInterface>> const&
         local_assemblers,
     NumLib::LocalToGlobalIndexMap const& local_to_global_index_map,
@@ -161,15 +163,23 @@ void writeMaterialForces(
 {
     DBUG("Compute material forces for small deformation process.");
 
-    // Material forces
-    std::fill(std::begin(material_forces), std::end(material_forces), 0);
+    // Prepare local storage and fetch values.
+    MathLib::LinAlg::setLocalAccessibleVector(x);
+
+    if (!material_forces)
+    {
+        material_forces =
+            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+    }
+
+    MathLib::LinAlg::set(*material_forces, 0);
 
     GlobalExecutor::executeDereferenced(
         [](const std::size_t mesh_item_id,
            LocalAssemblerInterface& local_assembler,
            const NumLib::LocalToGlobalIndexMap& dof_table,
            GlobalVector const& x,
-           std::vector<double>& node_values) {
+           GlobalVector& node_values) {
             auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
             std::vector<double> local_data;
             auto const local_x = x.get(indices);
@@ -177,10 +187,10 @@ void writeMaterialForces(
             local_assembler.getMaterialForces(local_x, local_data);
 
             assert(local_data.size() == indices.size());
-            for (std::size_t i = 0; i < indices.size(); ++i)
-                node_values[indices[i]] += local_data[i];
+            node_values.add(indices, local_data);
         },
-        local_assemblers, local_to_global_index_map, x, material_forces);
+        local_assemblers, local_to_global_index_map, x, *material_forces);
+    MathLib::LinAlg::finalizeAssembly(*material_forces);
 }
 
 }  // namespace SmallDeformation
