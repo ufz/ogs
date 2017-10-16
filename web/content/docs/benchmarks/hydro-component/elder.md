@@ -30,7 +30,7 @@ The Elder benchmark describes free convection of a dense fluid in mixable, singl
 
 A comparison of the numerical data is shown in the figure below. The numerical results of OGS-6 coincide with those of OGS-5.
 
-{{< img src="../gif/elder.png" title="Results for numerical (OGS-5 - green, OGS-6 - white) results together with concentration distribution in the domain and mesh resolution for different time steps.">}}
+{{< img src="../gif/elder.gif" title="Results for numerical (OGS-5 - green, OGS-6 - white) results together with concentration distribution in the domain and mesh resolution for different time steps.">}}
 
 [The project files are here. ](../../../../../Tests/Data/Parabolic/ComponentTransport/elder)
 
