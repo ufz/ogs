@@ -50,8 +50,8 @@ std::unique_ptr<Process> createHTProcess(
          "pressure"});
 
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties{
-        MaterialLib::PorousMedium::createPorousMediaProperties(
-            mesh, config, parameters)};
+        MaterialLib::PorousMedium::createPorousMediaProperties(mesh, config,
+                                                               parameters)};
 
     //! \ogs_file_param{prj__processes__process__HT__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");
@@ -134,6 +134,54 @@ std::unique_ptr<Process> createHTProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    SecondaryVariableCollection secondary_variables;
+
+    NumLib::NamedFunctionCaller named_function_caller(
+        {"HT_temperature_pressure"});
+
+    ProcessLib::parseSecondaryVariables(config, secondary_variables,
+                                        named_function_caller);
+
+    //! \ogs_file_param{prj__processes__process__HT__solid_thermal_expansion}
+    auto const solid_config =
+        config.getConfigSubtreeOptional("solid_thermal_expansion");
+    if (solid_config)
+    {
+        auto& solid_thermal_expansion = findParameter<double>(
+            //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__thermal_expansion}
+            *solid_config, "thermal_expansion", parameters, 1);
+        DBUG("Use \'%s\' as solid thermal expansion.",
+             solid_thermal_expansion.name.c_str());
+        auto& biot_constant = findParameter<double>(
+            //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__biot_constant}
+            *solid_config, "biot_constant", parameters, 1);
+
+        std::unique_ptr<HTMaterialProperties> material_properties =
+            std::make_unique<HTMaterialProperties>(
+                std::move(porous_media_properties),
+                density_solid,
+                fluid_reference_density,
+                std::move(fluid_properties),
+                thermal_dispersivity_longitudinal,
+                thermal_dispersivity_transversal,
+                specific_heat_capacity_solid,
+                thermal_conductivity_solid,
+                thermal_conductivity_fluid,
+                solid_thermal_expansion,
+                biot_constant,
+                specific_body_force,
+                has_gravity);
+
+        return std::make_unique<HTProcess>(
+            mesh, std::move(jacobian_assembler), parameters, integration_order,
+            std::move(process_variables), std::move(material_properties),
+            std::move(secondary_variables), std::move(named_function_caller));
+    }
+
+    ConstantParameter<double> default_solid_thermal_expansion(
+        "default solid thermal expansion", 0.);
+    ConstantParameter<double> default_biot_constant("default_biot constant",
+                                                    0.);
     std::unique_ptr<HTMaterialProperties> material_properties =
         std::make_unique<HTMaterialProperties>(
             std::move(porous_media_properties),
@@ -145,16 +193,10 @@ std::unique_ptr<Process> createHTProcess(
             specific_heat_capacity_solid,
             thermal_conductivity_solid,
             thermal_conductivity_fluid,
+            default_solid_thermal_expansion,
+            default_biot_constant,
             specific_body_force,
             has_gravity);
-
-    SecondaryVariableCollection secondary_variables;
-
-    NumLib::NamedFunctionCaller named_function_caller(
-        {"HT_temperature_pressure"});
-
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
 
     return std::make_unique<HTProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,

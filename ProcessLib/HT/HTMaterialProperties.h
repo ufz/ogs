@@ -36,6 +36,8 @@ struct HTMaterialProperties
         ProcessLib::Parameter<double> const& specific_heat_capacity_solid_,
         ProcessLib::Parameter<double> const& thermal_conductivity_solid_,
         ProcessLib::Parameter<double> const& thermal_conductivity_fluid_,
+        Parameter<double> const& solid_thermal_expansion_,
+        Parameter<double> const& biot_constant_,
         Eigen::VectorXd specific_body_force_,
         bool const has_gravity_)
         : porous_media_properties(std::move(porous_media_properties_)),
@@ -47,6 +49,8 @@ struct HTMaterialProperties
           thermal_dispersivity_transversal(thermal_dispersivity_transversal_),
           thermal_conductivity_solid(thermal_conductivity_solid_),
           thermal_conductivity_fluid(thermal_conductivity_fluid_),
+          solid_thermal_expansion(solid_thermal_expansion_),
+          biot_constant(biot_constant),
           specific_body_force(std::move(specific_body_force_)),
           has_gravity(has_gravity_)
     {
@@ -87,6 +91,10 @@ struct HTMaterialProperties
     Parameter<double> const& thermal_dispersivity_transversal;
     Parameter<double> const& thermal_conductivity_solid;
     Parameter<double> const& thermal_conductivity_fluid;
+
+    Parameter<double> const& solid_thermal_expansion;
+    Parameter<double> const& biot_constant;
+
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
 };
