@@ -12,7 +12,6 @@
 #include <Eigen/Dense>
 #include <vector>
 
-
 #include "HTMaterialProperties.h"
 
 #include "NumLib/DOF/DOFTableUtil.h"

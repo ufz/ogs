@@ -14,7 +14,7 @@
 #include <Eigen/Dense>
 #include <vector>
 
-#include "HTProcessData.h"
+#include "HTMaterialProperties.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"

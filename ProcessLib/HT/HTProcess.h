@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "HTMaterialProperties.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 
@@ -18,6 +17,7 @@ namespace ProcessLib
 namespace HT
 {
 class HTLocalAssemblerInterface;
+struct HTMaterialProperties;
 
 /**
  * # HT process

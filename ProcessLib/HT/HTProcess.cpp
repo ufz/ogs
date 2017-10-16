@@ -13,6 +13,8 @@
 
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
+#include "HTMaterialProperties.h"
+
 #include "MonolithicHTFEM.h"
 #include "StaggeredHTFEM.h"
 
