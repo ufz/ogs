@@ -244,57 +244,51 @@ public:
         auto const type_idx = std::type_index(typeid(mesh_item));
         auto const it = _builder.find(type_idx);
 
-        if (it != _builder.end())
-        {
-            auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
-            auto const n_global_components =
-                _dof_table.getNumberOfElementComponents(id);
-            const std::vector<int> varIDs(_dof_table.getElementVariableIDs(id));
-
-            std::vector<unsigned> dofIndex_to_localIndex;
-            if (mesh_item.getDimension() < GlobalDim ||
-                n_global_components > GlobalDim)
-            {
-                dofIndex_to_localIndex.resize(n_local_dof);
-                unsigned dof_id = 0;
-                unsigned local_id = 0;
-                for (auto i : varIDs)
-                {
-                    for (int j = 0;
-                         j < _dof_table.getNumberOfVariableComponents(i); j++)
-                    {
-                        auto& mss = _dof_table.getMeshSubsets(i, j);
-                        assert(mss.size() == 1);
-                        auto mesh_id = mss.getMeshSubset(0).getMeshID();
-                        for (unsigned k = 0; k < mesh_item.getNumberOfNodes();
-                             k++)
-                        {
-                            MeshLib::Location l(mesh_id,
-                                                MeshLib::MeshItemType::Node,
-                                                mesh_item.getNodeIndex(k));
-                            auto global_index =
-                                _dof_table.getGlobalIndex(l, i, j);
-                            if (global_index != NumLib::MeshComponentMap::nop)
-                                dofIndex_to_localIndex[dof_id++] = local_id;
-                            local_id++;
-                        }
-                    }
-                }
-            }
-
-            data_ptr = it->second(mesh_item, varIDs.size(), n_local_dof,
-                                  dofIndex_to_localIndex,
-                                  std::forward<ConstructorArgs>(args)...);
-        }
-        else
-        {
+        if (it == _builder.end())
             OGS_FATAL(
                 "You are trying to build a local assembler for an unknown mesh "
                 "element type (%s)."
                 " Maybe you have disabled this mesh element type in your build "
                 "configuration or this process requires higher order elements.",
                 type_idx.name());
+
+        auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
+        auto const n_global_components =
+            _dof_table.getNumberOfElementComponents(id);
+        auto const varIDs = _dof_table.getElementVariableIDs(id);
+
+        std::vector<unsigned> dofIndex_to_localIndex;
+        if (mesh_item.getDimension() < GlobalDim ||
+            n_global_components > GlobalDim)
+        {
+            dofIndex_to_localIndex.resize(n_local_dof);
+            unsigned dof_id = 0;
+            unsigned local_id = 0;
+            for (auto i : varIDs)
+            {
+                for (int j = 0; j < _dof_table.getNumberOfVariableComponents(i);
+                     j++)
+                {
+                    auto& mss = _dof_table.getMeshSubsets(i, j);
+                    assert(mss.size() == 1);
+                    auto mesh_id = mss.getMeshSubset(0).getMeshID();
+                    for (unsigned k = 0; k < mesh_item.getNumberOfNodes(); k++)
+                    {
+                        MeshLib::Location l(mesh_id,
+                                            MeshLib::MeshItemType::Node,
+                                            mesh_item.getNodeIndex(k));
+                        auto global_index = _dof_table.getGlobalIndex(l, i, j);
+                        if (global_index != NumLib::MeshComponentMap::nop)
+                            dofIndex_to_localIndex[dof_id++] = local_id;
+                        local_id++;
+                    }
+                }
+            }
         }
+
+        data_ptr = it->second(mesh_item, varIDs.size(), n_local_dof,
+                              dofIndex_to_localIndex,
+                              std::forward<ConstructorArgs>(args)...);
     }
 
 private:
