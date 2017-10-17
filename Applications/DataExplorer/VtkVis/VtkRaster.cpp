@@ -58,6 +58,9 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 #ifdef GEOTIFF_FOUND
         return loadImageFromTIFF(fileName, x0, y0, delta);
 #else
+        (void)x0;
+        (void)y0;
+        (void)delta;
         ERR("VtkRaster::loadImage(): Tiff file format not supported in this version!");
         return nullptr;
 #endif
