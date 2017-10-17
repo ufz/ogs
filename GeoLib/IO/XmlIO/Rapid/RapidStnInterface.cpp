@@ -37,18 +37,16 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
         return nullptr;
     }
 
-    // buffer file
-    in.seekg(0, std::ios::end);
-    std::size_t length = in.tellg();
-    in.seekg(0, std::ios::beg);
-    auto* buffer = new char[length + 1];
-    in.read(buffer, length);
-    buffer[in.gcount()] = '\0';
+    // read the file in a buffer
+    std::stringstream sstr;
+    sstr << in.rdbuf();
+    std::string buffer = sstr.str();
     in.close();
 
     // build DOM tree
     rapidxml::xml_document<> doc;
-    doc.parse<0>(buffer);
+    doc.parse<rapidxml::parse_non_destructive>(
+        const_cast<char*>(buffer.data()));
 
     // parse content
     if (std::string(doc.first_node()->name()) != "OpenGeoSysSTN")
@@ -74,7 +72,6 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
     }
 
     doc.clear();
-    delete [] buffer;
 
     return stations;
 }
