@@ -48,11 +48,11 @@ foreach(SUBMODULE ${REQUIRED_SUBMODULES})
             set(DEPTH "--depth 10 ")
         endif()
         execute_process(
-            COMMAND "${GIT_TOOL_PATH} "
-                "submodule update --init --recursive ${DEPTH}${SUBMODULE}"
+            COMMAND ${GIT_TOOL_PATH}
+                submodule update --init --recursive ${DEPTH}${SUBMODULE}
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         )
-        return()
+
     elseif(MISMATCH)
         message(STATUS "Updating submodule ${SUBMODULE}")
         execute_process(
