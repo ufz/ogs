@@ -49,11 +49,13 @@ GMSHInterface::GMSHInterface(
 {
     switch (mesh_density_algorithm) {
     case GMSH::MeshDensityAlgorithm::FixedMeshDensity:
-        _mesh_density_strategy = new GMSH::GMSHFixedMeshDensity(pnt_density);
+        _mesh_density_strategy =
+            std::make_unique<GMSH::GMSHFixedMeshDensity>(pnt_density);
         break;
     case GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity:
-        _mesh_density_strategy = new GMSH::GMSHAdaptiveMeshDensity(
-            pnt_density, station_density, max_pnts_per_leaf);
+        _mesh_density_strategy =
+            std::make_unique<GMSH::GMSHAdaptiveMeshDensity>(
+                pnt_density, station_density, max_pnts_per_leaf);
         break;
     }
 }
@@ -62,7 +64,6 @@ GMSHInterface::~GMSHInterface()
 {
     for (auto * gmsh_pnt : _gmsh_pnts)
         delete gmsh_pnt;
-    delete _mesh_density_strategy;
     for (auto * polygon_tree : _polygon_tree_list)
         delete polygon_tree;
 }
@@ -138,7 +139,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         }
         _polygon_tree_list.push_back(new GMSH::GMSHPolygonTree(
             new GeoLib::PolygonWithSegmentMarker(*polyline), nullptr, _geo_objs,
-            _gmsh_geo_name, _mesh_density_strategy));
+            _gmsh_geo_name, _mesh_density_strategy.get()));
     }
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "
