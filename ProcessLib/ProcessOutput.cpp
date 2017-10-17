@@ -211,7 +211,8 @@ void doProcessOutput(std::string const& file_name,
                           external_variable_name);
     }
 #else
-    (void) secondary_variables;
+    (void)secondary_variables;
+    (void)t;
 #endif // USE_PETSC
 
     // Write output file
