@@ -926,8 +926,21 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                     if (pos != std::string::npos)
                         fname = fname.substr (0, pos);
                     gmsh_command += " -o " + fname + ".msh";
-                    system(gmsh_command.c_str());
-                    this->loadFile(ImportFileType::GMSH, fileName.left(fileName.length() - 3).append("msh"));
+                    auto const return_value = system(gmsh_command.c_str());
+                    if (return_value != 0)
+                    {
+                        QString const message =
+                            "Execution of gmsh command returned non-zero "
+                            "status, " +
+                            QString::number(return_value);
+                        OGSError::box(message, "Error");
+                    }
+                    else
+                    {
+                        this->loadFile(
+                            ImportFileType::GMSH,
+                            fileName.left(fileName.length() - 3).append("msh"));
+                    }
                 }
                 else
                     OGSError::box("Location of GMSH not specified.", "Error");
@@ -943,7 +956,15 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 #endif
                 remove_command += fileName.toStdString();
                 INFO("remove command: %s", remove_command.c_str());
-                system(remove_command.c_str());
+                auto const return_value = system(remove_command.c_str());
+                if (return_value != 0)
+                {
+                    QString const message =
+                        "Execution of remove command returned non-zero "
+                        "status, " +
+                        QString::number(return_value);
+                    OGSError::box(message, "Error");
+                }
             }
         }
     }
