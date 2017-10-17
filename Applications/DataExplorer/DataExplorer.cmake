@@ -67,7 +67,7 @@ target_link_libraries(DataExplorer
 )
 
 # Workaround for Windows conan tiff-package
-if(USE_CONAN AND WIN32)
+if(OGS_USE_CONAN AND WIN32)
     find_package(ZLIB REQUIRED)
     target_link_libraries(DataExplorer ${ZLIB_LIBRARIES})
 endif()

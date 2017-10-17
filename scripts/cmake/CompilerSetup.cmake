@@ -138,6 +138,8 @@ if(WIN32)
         set(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} \
             /ZI /Od /Ob0")
 
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+
         DisableCompilerFlag(DEBUG /RTC1)
     # cygwin
     else()
