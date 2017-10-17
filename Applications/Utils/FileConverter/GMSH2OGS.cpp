@@ -81,8 +81,8 @@ int main (int argc, char* argv[])
         return -1;
     }
 #ifndef WIN32
-    unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
-    INFO("Mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+    INFO("Mem for mesh: %i MB",
+         (mem_watch.getVirtMemUsage() - mem_without_mesh) / (1024 * 1024));
 #endif
 
     INFO("Time for reading: %f seconds.", run_time.elapsed());
