@@ -249,8 +249,7 @@ public:
             auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
             auto const n_global_components =
                 _dof_table.getNumberOfElementComponents(id);
-            const std::vector<std::size_t> varIDs(
-                _dof_table.getElementVariableIDs(id));
+            const std::vector<int> varIDs(_dof_table.getElementVariableIDs(id));
 
             std::vector<unsigned> dofIndex_to_localIndex;
             if (mesh_item.getDimension() < GlobalDim ||

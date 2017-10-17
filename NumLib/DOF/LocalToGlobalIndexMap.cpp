@@ -304,11 +304,11 @@ LocalToGlobalIndexMap::getNumberOfElementComponents(std::size_t const mesh_item_
     return n;
 }
 
-std::vector<std::size_t>
-LocalToGlobalIndexMap::getElementVariableIDs(std::size_t const mesh_item_id) const
+std::vector<int> LocalToGlobalIndexMap::getElementVariableIDs(
+    std::size_t const mesh_item_id) const
 {
-    std::vector<std::size_t> vec;
-    for (unsigned i=0; i<getNumberOfVariables(); i++)
+    std::vector<int> vec;
+    for (int i = 0; i < getNumberOfVariables(); i++)
     {
         for (int j=0; j<getNumberOfVariableComponents(i); j++)
         {
