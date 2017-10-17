@@ -33,12 +33,13 @@ namespace FileIO
 {
 namespace GMSH
 {
-GMSHInterface::GMSHInterface(GeoLib::GEOObjects& geo_objs,
-                             bool /*include_stations_as_constraints*/,
-                             GMSH::MeshDensityAlgorithm mesh_density_algorithm,
-                             double param1, double param2, std::size_t param3,
-                             std::vector<std::string>& selected_geometries,
-                             bool rotate, bool keep_preprocessed_geometry)
+GMSHInterface::GMSHInterface(
+    GeoLib::GEOObjects& geo_objs, bool /*include_stations_as_constraints*/,
+    GMSH::MeshDensityAlgorithm const mesh_density_algorithm,
+    double const pnt_density, double const station_density,
+    std::size_t const max_pnts_per_leaf,
+    std::vector<std::string> const& selected_geometries, bool const rotate,
+    bool const keep_preprocessed_geometry)
     : _n_lines(0),
       _n_plane_sfc(0),
       _geo_objs(geo_objs),
@@ -48,10 +49,11 @@ GMSHInterface::GMSHInterface(GeoLib::GEOObjects& geo_objs,
 {
     switch (mesh_density_algorithm) {
     case GMSH::MeshDensityAlgorithm::FixedMeshDensity:
-        _mesh_density_strategy = new GMSH::GMSHFixedMeshDensity(param1);
+        _mesh_density_strategy = new GMSH::GMSHFixedMeshDensity(pnt_density);
         break;
     case GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity:
-        _mesh_density_strategy = new GMSH::GMSHAdaptiveMeshDensity(param1, param2, param3);
+        _mesh_density_strategy = new GMSH::GMSHAdaptiveMeshDensity(
+            pnt_density, station_density, max_pnts_per_leaf);
         break;
     }
 }
