@@ -55,7 +55,10 @@ int main(int argc, char *argv[])
 
     const unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
     if (mem_with_mesh>0)
+    {
         INFO ("Memory size: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+        (void)mem_with_mesh;
+    }
     INFO ("Time for reading: %g s", run_time.elapsed());
 
     // Geometric information
@@ -73,13 +76,34 @@ int main(int argc, char *argv[])
     const std::array<unsigned, 7> nr_ele_types(MeshLib::MeshInformation::getNumberOfElementTypes(*mesh));
     INFO("Element types:");
     unsigned etype = 0;
-    if (nr_ele_types[etype]>0) INFO("\t%d lines", nr_ele_types[etype]);
-    if (nr_ele_types[++etype]>0) INFO("\t%d triangles", nr_ele_types[etype]);
-    if (nr_ele_types[++etype]>0) INFO("\t%d quads", nr_ele_types[etype]);
-    if (nr_ele_types[++etype]>0) INFO("\t%d tetrahedra", nr_ele_types[etype]);
-    if (nr_ele_types[++etype]>0) INFO("\t%d hexahedra", nr_ele_types[etype]);
-    if (nr_ele_types[++etype]>0) INFO("\t%d pyramids", nr_ele_types[etype]);
-    if (nr_ele_types[++etype]>0) INFO("\t%d prisms", nr_ele_types[etype]);
+    if (nr_ele_types[etype] > 0)
+    {
+        INFO("\t%d lines", nr_ele_types[etype]);
+    }
+    if (nr_ele_types[++etype] > 0)
+    {
+        INFO("\t%d triangles", nr_ele_types[etype]);
+    }
+    if (nr_ele_types[++etype] > 0)
+    {
+        INFO("\t%d quads", nr_ele_types[etype]);
+    }
+    if (nr_ele_types[++etype] > 0)
+    {
+        INFO("\t%d tetrahedra", nr_ele_types[etype]);
+    }
+    if (nr_ele_types[++etype] > 0)
+    {
+        INFO("\t%d hexahedra", nr_ele_types[etype]);
+    }
+    if (nr_ele_types[++etype] > 0)
+    {
+        INFO("\t%d pyramids", nr_ele_types[etype]);
+    }
+    if (nr_ele_types[++etype] > 0)
+    {
+        INFO("\t%d prisms", nr_ele_types[etype]);
+    }
 
     std::vector<std::string> const& vec_names (mesh->getProperties().getPropertyVectorNames());
     INFO("There are %d properties in the mesh:", vec_names.size());
@@ -87,14 +111,20 @@ int main(int argc, char *argv[])
     {
         auto vec_bounds (MeshLib::MeshInformation::getValueBounds<int>(*mesh, vec_name));
         if (vec_bounds.second != std::numeric_limits<int>::max())
+        {
             INFO("\t%s: [%d, %d]", vec_name.c_str(), vec_bounds.first, vec_bounds.second)
+        }
         else
         {
             auto vec_bounds (MeshLib::MeshInformation::getValueBounds<double>(*mesh, vec_name));
             if (vec_bounds.second != std::numeric_limits<double>::max())
+            {
                 INFO("\t%s: [%g, %g]", vec_name.c_str(), vec_bounds.first, vec_bounds.second)
+            }
             else
+            {
                 INFO("\t%s: Unknown properties", vec_name.c_str())
+            }
         }
     }
 
@@ -109,6 +139,8 @@ int main(int argc, char *argv[])
             INFO("%d hole(s) detected within the mesh", n_holes);
         }
         else
+        {
             INFO ("No holes found within the mesh.");
+        }
     }
 }
