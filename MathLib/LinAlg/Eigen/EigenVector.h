@@ -43,7 +43,7 @@ public:
     EigenVector(EigenVector const& src) = default;
 
     /// return a vector length
-    IndexType size() const { return _vec.size(); }
+    IndexType size() const { return static_cast<IndexType>(_vec.size()); }
 
     /// return a start index of the active data range
     IndexType getRangeBegin() const { return 0;}
