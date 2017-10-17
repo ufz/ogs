@@ -35,10 +35,19 @@ createLinearElasticIsotropic(
         //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__shear_stiffness}
         config, "shear_stiffness", parameters, 1);
 
+    auto const penalty_aperture_cutoff =
+        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__penalty_aperture_cutoff}
+        config.getConfigParameter<double>("penalty_aperture_cutoff");
+
+    auto const tension_cutoff =
+        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__tension_cutoff}
+        config.getConfigParameter<bool>("tension_cutoff");
+
     typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp{
         Kn, Ks};
 
-    return std::make_unique<LinearElasticIsotropic<DisplacementDim>>(mp);
+    return std::make_unique<LinearElasticIsotropic<DisplacementDim>>(
+        penalty_aperture_cutoff, tension_cutoff, mp);
 }
 
 

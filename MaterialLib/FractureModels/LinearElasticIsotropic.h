@@ -56,8 +56,12 @@ public:
     }
 
 public:
-    explicit LinearElasticIsotropic(MaterialProperties material_properties)
-        : _mp(std::move(material_properties))
+    explicit LinearElasticIsotropic(double const penalty_aperture_cutoff,
+                                    bool const tension_cutoff,
+                                    MaterialProperties material_properties)
+        : _penalty_aperture_cutoff(penalty_aperture_cutoff),
+          _tension_cutoff(tension_cutoff),
+          _mp(std::move(material_properties))
     {
     }
 
@@ -66,6 +70,8 @@ public:
      *
      * @param t           current time
      * @param x           current position in space
+     * @param aperture0   initial fracture's aperture
+     * @param sigma0      initial stress
      * @param w_prev      fracture displacement at previous time step
      * @param w           fracture displacement at current time step
      * @param sigma_prev  stress at previous time step
@@ -74,17 +80,35 @@ public:
      * @param material_state_variables   material state variables
      */
     void computeConstitutiveRelation(
-            double const t,
-            ProcessLib::SpatialPosition const& x,
-            Eigen::Ref<Eigen::VectorXd const> w_prev,
-            Eigen::Ref<Eigen::VectorXd const> w,
-            Eigen::Ref<Eigen::VectorXd const> sigma_prev,
-            Eigen::Ref<Eigen::VectorXd> sigma,
-            Eigen::Ref<Eigen::MatrixXd> C,
-            typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
+        double const t,
+        ProcessLib::SpatialPosition const& x,
+        double const aperture0,
+        Eigen::Ref<Eigen::VectorXd const>
+            sigma0,
+        Eigen::Ref<Eigen::VectorXd const>
+            w_prev,
+        Eigen::Ref<Eigen::VectorXd const>
+            w,
+        Eigen::Ref<Eigen::VectorXd const>
+            sigma_prev,
+        Eigen::Ref<Eigen::VectorXd>
+            sigma,
+        Eigen::Ref<Eigen::MatrixXd>
+            C,
+        typename FractureModelBase<DisplacementDim>::MaterialStateVariables&
             material_state_variables) override;
 
 private:
+    /// Compressive normal displacements above this value will not enter the
+    /// computation of the normal stiffness modulus of the fracture.
+    /// \note Setting this to the initial aperture value allows negative
+    /// apertures.
+    double const _penalty_aperture_cutoff;
+
+    /// If set no resistance to open the fracture over the initial aperture is
+    /// opposed.
+    bool const _tension_cutoff;
+
     MaterialProperties _mp;
 };
 

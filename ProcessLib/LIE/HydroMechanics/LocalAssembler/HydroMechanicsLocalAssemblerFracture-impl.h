@@ -228,11 +228,16 @@ assembleBlockMatricesWithJacobian(
         if (b < 0.0)
             OGS_FATAL("Element %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
 
+        auto const initial_effective_stress =
+            _process_data.initial_fracture_effective_stress(0, x_position);
+
+        Eigen::Map<typename HMatricesType::ForceVectorType const> const stress0(
+            initial_effective_stress.data(), initial_effective_stress.size());
+
         // local C, local stress
         mat.computeConstitutiveRelation(
-                    t, x_position,
-                    w_prev, w,
-                    effective_stress_prev, effective_stress, C, state);
+            t, x_position, ip_data.aperture0, stress0, w_prev, w,
+            effective_stress_prev, effective_stress, C, state);
 
         // permeability
         double const local_k = b * b / 12;
@@ -350,11 +355,16 @@ computeSecondaryVariableConcreteWithVector(
         if (b < 0.0)
             OGS_FATAL("Element %d, gp %d: Fracture aperture is %g, but it must be non-negative.", _element.getID(), ip, b);
 
+        auto const initial_effective_stress =
+            _process_data.initial_fracture_effective_stress(0, x_position);
+
+        Eigen::Map<typename HMatricesType::ForceVectorType const> const stress0(
+            initial_effective_stress.data(), initial_effective_stress.size());
+
         // local C, local stress
         mat.computeConstitutiveRelation(
-                    t, x_position,
-                    w_prev, w,
-                    effective_stress_prev, effective_stress, C, state);
+            t, x_position, ip_data.aperture0, stress0, w_prev, w,
+            effective_stress_prev, effective_stress, C, state);
 
         // permeability
         double const local_k = b * b / 12;
