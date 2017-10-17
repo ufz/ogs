@@ -44,11 +44,15 @@ foreach(SUBMODULE ${REQUIRED_SUBMODULES})
 
     if(UNINITIALIZED)
         message(STATUS "Initializing submodule ${SUBMODULE}")
+        if(${SUBMODULE} STREQUAL "Tests/Data")
+            set(DEPTH "--depth 10")
+        endif()
         execute_process(
-            COMMAND ${GIT_TOOL_PATH}
-                submodule update --init --recursive ${SUBMODULE}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMAND "${GIT_TOOL_PATH} "
+                "submodule update --init --recursive {DEPTH} ${SUBMODULE}"
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         )
+        return()
     elseif(MISMATCH)
         message(STATUS "Updating submodule ${SUBMODULE}")
         execute_process(

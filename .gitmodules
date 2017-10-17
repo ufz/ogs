@@ -16,7 +16,6 @@
 [submodule "Tests/Data"]
 	path = Tests/Data
 	url = https://github.com/ufz/ogs-data
-	shallow = true
 [submodule "ThirdParty/vtkGUISupportQt"]
 	path = ThirdParty/vtkGUISupportQt
 	url = https://github.com/ufz/vtkGUISupportQt.git
