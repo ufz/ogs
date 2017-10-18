@@ -44,12 +44,13 @@
                 </porous_medium>
             </porous_medium>
             <density_solid>rho_solid</density_solid>
-            <fluid_reference_density>rho_fluid</fluid_reference_density>
             <specific_heat_capacity_solid>c_solid</specific_heat_capacity_solid>
             <thermal_conductivity_solid>lambda_solid</thermal_conductivity_solid>
             <thermal_conductivity_fluid>lambda_fluid</thermal_conductivity_fluid>
-            <thermal_dispersivity_longitudinal>alpha_l</thermal_dispersivity_longitudinal>
-            <thermal_dispersivity_transversal>alpha_t</thermal_dispersivity_transversal>
+            <thermal_dispersivity>
+                <longitudinal>alpha_l</longitudinal>
+                <transversal>alpha_t</transversal>
+            </thermal_dispersivity>
             <specific_body_force>0 -9.81</specific_body_force>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>

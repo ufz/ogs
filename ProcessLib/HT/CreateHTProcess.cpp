@@ -83,21 +83,38 @@ std::unique_ptr<Process> createHTProcess(
 
     // Parameter for the thermal conductivity of the solid (only one scalar per
     // element, i.e., the isotropic case is handled at the moment)
-    auto& thermal_dispersivity_longitudinal = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__thermal_dispersivity_longitudinal}
-        "thermal_dispersivity_longitudinal", parameters, 1);
-    DBUG("Use \'%s\' as thermal_dispersivity_longitudinal parameter.",
-         thermal_dispersivity_longitudinal.name.c_str());
 
-    // Parameter for the thermal conductivity of the solid (only one scalar per
-    // element, i.e., the isotropic case is handled at the moment)
-    auto& thermal_dispersivity_transversal = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__thermal_dispersivity_transversal}
-        "thermal_dispersivity_transversal", parameters, 1);
-    DBUG("Use \'%s\' as thermal_dispersivity_transversal parameter.",
-         thermal_dispersivity_transversal.name.c_str());
+    ConstantParameter<double> default_thermal_dispersivity_longitudinal(
+        "default thermal dispersivity longitudinal", 0.);
+    ConstantParameter<double> default_thermal_dispersivity_transversal(
+        "default thermal dispersivity transversal", 0.);
+
+    Parameter<double>* thermal_dispersivity_longitudinal =
+        &default_thermal_dispersivity_longitudinal;
+    Parameter<double>* thermal_dispersivity_transversal =
+        &default_thermal_dispersivity_transversal;
+    auto const dispersion_config =
+        //! \ogs_file_param{prj__processes__process__HT__thermal_dispersivity}
+        config.getConfigSubtreeOptional("thermal_dispersivity");
+    if (dispersion_config)
+    {
+        thermal_dispersivity_longitudinal = &findParameter<double>(
+            *dispersion_config,
+            //! \ogs_file_param_special{prj__processes__process__HT__thermal_dispersivity__longitudinal}
+            "longitudinal", parameters, 1);
+        DBUG("Use \'%s\' as thermal_dispersivity_longitudinal parameter.",
+             thermal_dispersivity_longitudinal->name.c_str());
+
+        // Parameter for the thermal conductivity of the solid (only one scalar
+        // per
+        // element, i.e., the isotropic case is handled at the moment)
+        thermal_dispersivity_transversal = &findParameter<double>(
+            *dispersion_config,
+            //! \ogs_file_param_special{prj__processes__process__HT__thermal_dispersivity__transversal}
+            "transversal", parameters, 1);
+        DBUG("Use \'%s\' as thermal_dispersivity_transversal parameter.",
+             thermal_dispersivity_transversal->name.c_str());
+    }
 
     // Parameter for the thermal conductivity of the solid (only one scalar per
     // element, i.e., the isotropic case is handled at the moment)
@@ -134,62 +151,38 @@ std::unique_ptr<Process> createHTProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
-    SecondaryVariableCollection secondary_variables;
-
-    NumLib::NamedFunctionCaller named_function_caller(
-        {"HT_temperature_pressure"});
-
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
-
-    //! \ogs_file_param{prj__processes__process__HT__solid_thermal_expansion}
-    auto const solid_config =
-        config.getConfigSubtreeOptional("solid_thermal_expansion");
-    if (solid_config)
-    {
-        auto& solid_thermal_expansion = findParameter<double>(
-            //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__thermal_expansion}
-            *solid_config, "thermal_expansion", parameters, 1);
-        DBUG("Use \'%s\' as solid thermal expansion.",
-             solid_thermal_expansion.name.c_str());
-        auto& biot_constant = findParameter<double>(
-            //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__biot_constant}
-            *solid_config, "biot_constant", parameters, 1);
-
-        std::unique_ptr<HTMaterialProperties> material_properties =
-            std::make_unique<HTMaterialProperties>(
-                std::move(porous_media_properties),
-                density_solid,
-                fluid_reference_density,
-                std::move(fluid_properties),
-                thermal_dispersivity_longitudinal,
-                thermal_dispersivity_transversal,
-                specific_heat_capacity_solid,
-                thermal_conductivity_solid,
-                thermal_conductivity_fluid,
-                solid_thermal_expansion,
-                biot_constant,
-                specific_body_force,
-                has_gravity);
-
-        return std::make_unique<HTProcess>(
-            mesh, std::move(jacobian_assembler), parameters, integration_order,
-            std::move(process_variables), std::move(material_properties),
-            std::move(secondary_variables), std::move(named_function_caller));
-    }
-
     ConstantParameter<double> default_solid_thermal_expansion(
         "default solid thermal expansion", 0.);
     ConstantParameter<double> default_biot_constant("default_biot constant",
                                                     0.);
+    Parameter<double>* solid_thermal_expansion =
+        &default_solid_thermal_expansion;
+    Parameter<double>* biot_constant = &default_biot_constant;
+
+    auto const solid_config =
+        //! \ogs_file_param{prj__processes__process__HT__solid_thermal_expansion}
+        config.getConfigSubtreeOptional("solid_thermal_expansion");
+    if (solid_config)
+    {
+        solid_thermal_expansion = &findParameter<double>(
+            //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__thermal_expansion}
+            *solid_config, "thermal_expansion", parameters, 1);
+        DBUG("Use \'%s\' as solid thermal expansion.",
+             solid_thermal_expansion->name.c_str());
+        biot_constant = &findParameter<double>(
+            //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__biot_constant}
+            *solid_config, "biot_constant", parameters, 1);
+        DBUG("Use \'%s\' as Biot's constant.", biot_constant->name.c_str());
+    }
+
     std::unique_ptr<HTMaterialProperties> material_properties =
         std::make_unique<HTMaterialProperties>(
             std::move(porous_media_properties),
             density_solid,
             fluid_reference_density,
             std::move(fluid_properties),
-            thermal_dispersivity_longitudinal,
-            thermal_dispersivity_transversal,
+            *thermal_dispersivity_longitudinal,
+            *thermal_dispersivity_transversal,
             specific_heat_capacity_solid,
             thermal_conductivity_solid,
             thermal_conductivity_fluid,
@@ -197,6 +190,14 @@ std::unique_ptr<Process> createHTProcess(
             default_biot_constant,
             specific_body_force,
             has_gravity);
+
+    SecondaryVariableCollection secondary_variables;
+
+    NumLib::NamedFunctionCaller named_function_caller(
+        {"HT_temperature_pressure"});
+
+    ProcessLib::parseSecondaryVariables(config, secondary_variables,
+                                        named_function_caller);
 
     return std::make_unique<HTProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
