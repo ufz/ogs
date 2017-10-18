@@ -36,7 +36,9 @@ public:
         {
         }
 
+        /// Normal stiffness given in units of stress.
         P const& normal_stiffness;
+        /// Shear stiffness given in units of stress.
         P const& shear_stiffness;
     };
 
