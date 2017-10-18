@@ -225,44 +225,21 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             T1_at_xi;
         vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] =
             p_at_xi;
-
-        // Assemble mass matrix
-        auto const specific_heat_capacity_solid =
-            material_properties.specific_heat_capacity_solid(t, pos)[0];
-        auto const specific_heat_capacity_fluid =
-            material_properties.fluid_properties->getValue(
-                MaterialLib::Fluid::FluidPropertyType::HeatCapacity, vars);
-        auto const fluid_reference_density =
-            material_properties.fluid_reference_density(t, pos)[0];
-
-        auto const solid_density = material_properties.density_solid(t, pos)[0];
-
-        // Use the fluid density model to compute the density
         auto const fluid_density =
             material_properties.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Density, vars);
-        double const heat_capacity =
-            solid_density * specific_heat_capacity_solid * (1 - porosity) +
-            fluid_density * specific_heat_capacity_fluid * porosity;
+        auto const specific_heat_capacity_fluid =
+            material_properties.fluid_properties->getValue(
+                MaterialLib::Fluid::FluidPropertyType::HeatCapacity, vars);
 
-        local_M.noalias() += w * heat_capacity * N.transpose() * N;
+        // Assemble mass matrix
+        local_M.noalias() +=
+            w *
+            this->getHeatEnergyCoefficient(t, pos, porosity, fluid_density,
+                                           specific_heat_capacity_fluid) *
+            N.transpose() * N;
 
         // Assemble Laplace matrix
-
-        auto const thermal_conductivity_solid =
-            material_properties.thermal_conductivity_solid(t, pos)[0];
-        auto const thermal_conductivity_fluid =
-            material_properties.thermal_conductivity_fluid(t, pos)[0];
-        double const thermal_conductivity =
-            thermal_conductivity_solid * (1 - porosity) +
-            thermal_conductivity_fluid * porosity;
-
-        auto const thermal_dispersivity_longitudinal =
-            material_properties.thermal_dispersivity_longitudinal(t, pos)[0];
-        auto const thermal_dispersivity_transversal =
-            material_properties.thermal_dispersivity_transversal(t, pos)[0];
-
-        // Use the viscosity model to compute the viscosity
         auto const viscosity = material_properties.fluid_properties->getValue(
             MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
 
@@ -278,19 +255,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                                                     fluid_density * b))
                 : GlobalDimVectorType(-K_over_mu * dNdx * local_p_Eigen_type);
 
-        double const velocity_magnitude = velocity.norm();
-        GlobalDimMatrixType const thermal_dispersivity =
-            fluid_reference_density * specific_heat_capacity_fluid *
-            (thermal_dispersivity_transversal * velocity_magnitude * I +
-             (thermal_dispersivity_longitudinal -
-              thermal_dispersivity_transversal) /
-                 velocity_magnitude * velocity * velocity.transpose());
-
-        GlobalDimMatrixType const hydrodynamic_thermodispersion =
-            thermal_conductivity * I + thermal_dispersivity;
+        GlobalDimMatrixType const thermal_conductivity_dispersivity =
+            this->getThermalConductivityDispersivity(
+                t, pos, porosity, fluid_density, specific_heat_capacity_fluid,
+                velocity, I);
 
         local_K.noalias() +=
-            w * (dNdx.transpose() * hydrodynamic_thermodispersion * dNdx +
+            w * (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
                  N.transpose() * velocity.transpose() * dNdx * fluid_density *
                      specific_heat_capacity_fluid);
     }

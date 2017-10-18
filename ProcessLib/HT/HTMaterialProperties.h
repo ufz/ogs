@@ -56,15 +56,6 @@ struct HTMaterialProperties
     {
     }
 
-    //! Copies are forbidden.
-    HTMaterialProperties(HTMaterialProperties const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(HTMaterialProperties const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(HTMaterialProperties&&) = delete;
-
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
     Parameter<double> const& density_solid;
     Parameter<double> const& fluid_reference_density;

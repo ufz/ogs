@@ -112,20 +112,11 @@ public:
         {
             pos.setIntegrationPoint(ip);
 
-            auto const fluid_reference_density =
-                process_data.fluid_reference_density(t, pos)[0];
-
-            auto const density_solid = process_data.density_solid(t, pos)[0];
             // \todo the argument to getValue() has to be changed for non
             // constant storage model
             auto const specific_storage =
                 process_data.porous_media_properties.getSpecificStorage(t, pos)
                     .getValue(0.0);
-
-            auto const thermal_conductivity_solid =
-                process_data.thermal_conductivity_solid(t, pos)[0];
-            auto const thermal_conductivity_fluid =
-                process_data.thermal_conductivity_fluid(t, pos)[0];
 
             auto const& ip_data = this->_ip_data[ip];
             auto const& N = ip_data.N;
@@ -146,13 +137,6 @@ public:
                 process_data.porous_media_properties.getIntrinsicPermeability(
                     t, pos).getValue(t, pos, 0.0, T_int_pt);
 
-            double const thermal_conductivity =
-                thermal_conductivity_solid * (1 - porosity) +
-                thermal_conductivity_fluid * porosity;
-
-            auto const specific_heat_capacity_solid =
-                process_data.specific_heat_capacity_solid(t, pos)[0];
-
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::T)] = T_int_pt;
             vars[static_cast<int>(
@@ -161,13 +145,8 @@ public:
                 process_data.fluid_properties->getValue(
                     MaterialLib::Fluid::FluidPropertyType::HeatCapacity, vars);
 
-            auto const thermal_dispersivity_longitudinal =
-                process_data.thermal_dispersivity_longitudinal(t, pos)[0];
-            auto const thermal_dispersivity_transversal =
-                process_data.thermal_dispersivity_transversal(t, pos)[0];
-
             // Use the fluid density model to compute the density
-            auto const density = process_data.fluid_properties->getValue(
+            auto const fluid_density = process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Density, vars);
 
             // Use the viscosity model to compute the viscosity
@@ -177,37 +156,29 @@ public:
 
             GlobalDimVectorType const velocity =
                 process_data.has_gravity
-                    ? GlobalDimVectorType(-K_over_mu *
-                                          (dNdx * p_nodal_values - density * b))
+                    ? GlobalDimVectorType(-K_over_mu * (dNdx * p_nodal_values -
+                                                        fluid_density * b))
                     : GlobalDimVectorType(-K_over_mu * dNdx * p_nodal_values);
 
-            double const velocity_magnitude = velocity.norm();
-            GlobalDimMatrixType const thermal_dispersivity =
-                fluid_reference_density * specific_heat_capacity_fluid *
-                (thermal_dispersivity_transversal * velocity_magnitude * I +
-                 (thermal_dispersivity_longitudinal -
-                  thermal_dispersivity_transversal) /
-                     velocity_magnitude * velocity * velocity.transpose());
-
-            GlobalDimMatrixType const hydrodynamic_thermodispersion =
-                thermal_conductivity * I + thermal_dispersivity;
-
-            double const heat_capacity =
-                density_solid * specific_heat_capacity_solid * (1 - porosity) +
-                fluid_reference_density * specific_heat_capacity_fluid *
-                    porosity;
-
             // matrix assembly
+            GlobalDimMatrixType const thermal_conductivity_dispersivity =
+                this->getThermalConductivityDispersivity(
+                    t, pos, porosity, fluid_density,
+                    specific_heat_capacity_fluid, velocity, I);
             Ktt.noalias() +=
-                (dNdx.transpose() * hydrodynamic_thermodispersion * dNdx +
-                 N.transpose() * velocity.transpose() * dNdx *
-                     fluid_reference_density * specific_heat_capacity_fluid) *
+                (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
+                 N.transpose() * velocity.transpose() * dNdx * fluid_density *
+                     specific_heat_capacity_fluid) *
                 w;
             Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
-            Mtt.noalias() += w * N.transpose() * heat_capacity * N;
+            Mtt.noalias() +=
+                w *
+                this->getHeatEnergyCoefficient(t, pos, porosity, fluid_density,
+                                               specific_heat_capacity_fluid) *
+                N.transpose() * N;
             Mpp.noalias() += w * N.transpose() * specific_storage * N;
             if (process_data.has_gravity)
-                Bp += w * density * dNdx.transpose() * K_over_mu * b;
+                Bp += w * fluid_density * dNdx.transpose() * K_over_mu * b;
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
         }
