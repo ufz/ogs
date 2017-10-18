@@ -28,7 +28,6 @@ struct HTMaterialProperties
         MaterialLib::PorousMedium::PorousMediaProperties&&
             porous_media_properties_,
         ProcessLib::Parameter<double> const& density_solid_,
-        ProcessLib::Parameter<double> const& fluid_reference_density_,
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&&
             fluid_properties_,
         ProcessLib::Parameter<double> const& thermal_dispersivity_longitudinal_,
@@ -42,7 +41,6 @@ struct HTMaterialProperties
         bool const has_gravity_)
         : porous_media_properties(std::move(porous_media_properties_)),
           density_solid(density_solid_),
-          fluid_reference_density(fluid_reference_density_),
           fluid_properties(std::move(fluid_properties_)),
           specific_heat_capacity_solid(specific_heat_capacity_solid_),
           thermal_dispersivity_longitudinal(thermal_dispersivity_longitudinal_),
@@ -58,7 +56,6 @@ struct HTMaterialProperties
 
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
     Parameter<double> const& density_solid;
-    Parameter<double> const& fluid_reference_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
     Parameter<double> const& specific_heat_capacity_solid;
     Parameter<double> const& thermal_dispersivity_longitudinal;

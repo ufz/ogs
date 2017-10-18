@@ -58,14 +58,6 @@ std::unique_ptr<Process> createHTProcess(
     auto fluid_properties =
         MaterialLib::Fluid::createFluidProperties(fluid_config);
 
-    // Parameter for the density of the fluid.
-    auto& fluid_reference_density = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HT__fluid_reference_density}
-        "fluid_reference_density", parameters, 1);
-    DBUG("Use \'%s\' as fluid_reference_density parameter.",
-         fluid_reference_density.name.c_str());
-
     // Parameter for the density of the solid.
     auto& density_solid = findParameter<double>(
         config,
@@ -179,7 +171,6 @@ std::unique_ptr<Process> createHTProcess(
         std::make_unique<HTMaterialProperties>(
             std::move(porous_media_properties),
             density_solid,
-            fluid_reference_density,
             std::move(fluid_properties),
             *thermal_dispersivity_longitudinal,
             *thermal_dispersivity_transversal,
