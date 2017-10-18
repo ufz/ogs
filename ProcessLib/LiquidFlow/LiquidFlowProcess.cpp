@@ -20,6 +20,7 @@
 #include "LiquidFlowLocalAssembler.h"
 #include "LiquidFlowMaterialProperties.h"
 
+#include "MaterialLib/PorousMedium/Permeability/Permeability.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 
@@ -110,15 +111,6 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, *_local_to_global_index_map, t, x,
         _coupled_solutions);
-}
-
-void LiquidFlowProcess::setStaggeredCouplingTermToLocalAssemblers()
-{
-    DBUG("Compute the velocity for LiquidFlowProcess.");
-    /*
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LiquidFlowLocalAssemblerInterface::setStaggeredCouplingTerm,
-        _local_assemblers, _coupled_solutions);*/
 }
 
 }  // end of namespace
