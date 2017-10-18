@@ -183,6 +183,26 @@ public:
              * in buoyancy effects */
         }
     }
+
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& cache) const override
+    {
+        auto const indices =
+            NumLib::getIndices(this->_element.getID(), dof_table);
+        assert(!indices.empty());
+        auto local_x = current_solution.get(indices);
+
+        std::vector<double> local_T(
+            std::make_move_iterator(local_x.begin() + local_x.size() / 2),
+            std::make_move_iterator(local_x.end()));
+        // only p is kept in local_x
+        local_x.erase(local_x.begin() + local_x.size() / 2, local_x.end());
+
+        return this->getIntPtDarcyVelocityLocal(t, local_x, local_T, cache);
+    }
 };
 
 }  // namespace HT

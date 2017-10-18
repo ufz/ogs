@@ -67,6 +67,8 @@ public:
         return _xs_previous_timestep[process_id].get();
     }
 
+    void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() override;
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -82,9 +84,9 @@ private:
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
-    void preTimestepConcreteProcess(
-        GlobalVector const& x, double const t, double const dt,
-        const int process_id) override;
+    void preTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                    double const dt,
+                                    const int process_id) override;
 
     const std::unique_ptr<HTMaterialProperties> _material_properties;
 

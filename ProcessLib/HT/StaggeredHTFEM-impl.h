@@ -30,13 +30,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     if (coupled_term.variable_id == 0)
     {
-        assembleHydraulicEquation(t, local_M_data, local_K_data, local_b_data,
-                                  coupled_term);
+        assembleHeatTransportEquation(t, local_M_data, local_K_data,
+                                      local_b_data, coupled_term);
         return;
     }
 
-    assembleHeatTransportEquation(t, local_M_data, local_K_data, local_b_data,
-                                  coupled_term);
+    assembleHydraulicEquation(t, local_M_data, local_K_data, local_b_data,
+                              coupled_term);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -267,5 +267,21 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+std::vector<double> const&
+StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
+    getIntPtDarcyVelocity(const double t,
+                          GlobalVector const& /*current_solution*/,
+                          NumLib::LocalToGlobalIndexMap const& dof_table,
+                          std::vector<double>& cache) const
+{
+    auto const indices = NumLib::getIndices(this->_element.getID(), dof_table);
+    assert(!indices.empty());
+    auto const local_xs =
+        getCurrentLocalSolutions(*(this->_coupled_solutions), indices);
+
+    return this->getIntPtDarcyVelocityLocal(t, local_xs[0], local_xs[1], cache);
+}
 }  // namespace HT
 }  // namespace ProcessLib

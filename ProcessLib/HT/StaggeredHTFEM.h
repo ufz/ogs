@@ -67,6 +67,12 @@ public:
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_term) override;
 
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        GlobalVector const& current_solution,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<double>& cache) const override;
+
 private:
     void assembleHydraulicEquation(double const t,
                                    std::vector<double>& local_M_data,

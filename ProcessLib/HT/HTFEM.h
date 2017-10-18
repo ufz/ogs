@@ -49,7 +49,8 @@ public:
           unsigned const integration_order,
           HTMaterialProperties const& material_properties,
           const unsigned dof_per_node)
-        : _element(element),
+        : HTLocalAssemblerInterface(),
+          _element(element),
           _material_properties(material_properties),
           _integration_method(integration_order)
     {
@@ -84,72 +85,6 @@ public:
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
-    }
-
-    std::vector<double> const& getIntPtDarcyVelocity(
-        const double t,
-        GlobalVector const& current_solution,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
-        std::vector<double>& cache) const override
-    {
-        auto const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        auto const indices = NumLib::getIndices(_element.getID(), dof_table);
-        assert(!indices.empty());
-        auto const local_x = current_solution.get(indices);
-
-        cache.clear();
-        auto cache_mat = MathLib::createZeroedMatrix<
-            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, GlobalDim, n_integration_points);
-
-        SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
-        MaterialLib::Fluid::FluidProperty::ArrayType vars;
-
-        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
-            &local_x[ShapeFunction::NPOINTS], ShapeFunction::NPOINTS);
-
-        for (unsigned ip = 0; ip < n_integration_points; ++ip)
-        {
-            auto const& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
-            auto const& dNdx = ip_data.dNdx;
-
-            pos.setIntegrationPoint(ip);
-
-            double T_int_pt = 0.0;
-            double p_int_pt = 0.0;
-            NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
-            vars[static_cast<int>(
-                MaterialLib::Fluid::PropertyVariableType::T)] = T_int_pt;
-            vars[static_cast<int>(
-                MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
-
-            auto const K =
-                _material_properties.porous_media_properties.getIntrinsicPermeability(
-                    t, pos).getValue(t, pos, 0.0, T_int_pt);
-
-            auto const mu = _material_properties.fluid_properties->getValue(
-                MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
-            GlobalDimMatrixType const K_over_mu = K / mu;
-
-            cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
-
-            if (_material_properties.has_gravity)
-            {
-                auto const rho_w =
-                    _material_properties.fluid_properties->getValue(
-                        MaterialLib::Fluid::FluidPropertyType::Density, vars);
-                auto const b = _material_properties.specific_body_force;
-                // here it is assumed that the vector b is directed 'downwards'
-                cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
-            }
-        }
-
-        return cache;
     }
 
 protected:
@@ -211,6 +146,67 @@ protected:
                  velocity_magnitude * velocity * velocity.transpose());
 
         return thermal_conductivity * I + thermal_dispersivity;
+    }
+
+    std::vector<double> const& getIntPtDarcyVelocityLocal(
+        const double t, std::vector<double> const& local_p,
+        std::vector<double> const& local_T, std::vector<double>& cache) const
+    {
+        auto const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, n_integration_points);
+
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        MaterialLib::Fluid::FluidProperty::ArrayType vars;
+
+        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_p[0], ShapeFunction::NPOINTS);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& ip_data = _ip_data[ip];
+            auto const& N = ip_data.N;
+            auto const& dNdx = ip_data.dNdx;
+
+            pos.setIntegrationPoint(ip);
+
+            double T_int_pt = 0.0;
+            double p_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
+            NumLib::shapeFunctionInterpolate(local_T, N, T_int_pt);
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::T)] = T_int_pt;
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
+
+            auto const K = _material_properties.porous_media_properties
+                               .getIntrinsicPermeability(t, pos)
+                               .getValue(t, pos, 0.0, T_int_pt);
+
+            auto const mu = _material_properties.fluid_properties->getValue(
+                MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+            GlobalDimMatrixType const K_over_mu = K / mu;
+
+            cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
+
+            if (_material_properties.has_gravity)
+            {
+                auto const rho_w =
+                    _material_properties.fluid_properties->getValue(
+                        MaterialLib::Fluid::FluidPropertyType::Density, vars);
+                auto const b = _material_properties.specific_body_force;
+                // here it is assumed that the vector b is directed 'downwards'
+                cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
+            }
+        }
+
+        return cache;
     }
 };
 

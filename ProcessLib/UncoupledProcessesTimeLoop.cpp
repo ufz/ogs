@@ -987,11 +987,12 @@ void UncoupledProcessesTimeLoop::outputSolutions(
                             spd->timestepper->getTimeStep().dt(), pcs_idx);
         if (is_staggered_coupling)
         {
-            CoupledSolutionsForStaggeredScheme coupled_xs(
+            CoupledSolutionsForStaggeredScheme coupled_solutions(
                 _solutions_of_coupled_processes, 0.0, pcs_idx);
 
-            spd->process.setCoupledSolutionsForStaggeredScheme(&coupled_xs);
-            spd->process.setStaggeredCouplingTermToLocalAssemblers();
+            spd->process.setCoupledSolutionsForStaggeredScheme(
+                &coupled_solutions);
+            spd->process.setCoupledTermForTheStaggeredSchemeToLocalAssemblers();
             (output_object.*output_class_member)(pcs, spd->process_output,
                                                  timestep, t, x);
         }

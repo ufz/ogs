@@ -17,6 +17,8 @@
 
 namespace ProcessLib
 {
+struct CoupledSolutionsForStaggeredScheme;
+
 namespace HT
 {
 template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
@@ -42,11 +44,30 @@ class HTLocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                                   public NumLib::ExtrapolatableElement
 {
 public:
+    HTLocalAssemblerInterface() : _coupled_solutions(nullptr) {}
+    void setStaggeredCoupledSolutions(
+        std::size_t const /*mesh_item_id*/,
+        CoupledSolutionsForStaggeredScheme* const coupling_term)
+    {
+        _coupled_solutions = coupling_term;
+    }
+
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
+
+protected:
+    // TODO: remove _coupled_solutions or move integration point data from local
+    // assembler class to a new class to make local assembler unique for each
+    // process.
+    /** Pointer to CoupledSolutionsForStaggeredScheme that is set in a member of
+     *  Process class, setCoupledTermForTheStaggeredSchemeToLocalAssemblers.
+     *  It is used for calculate the secondary variables like velocity for
+     *  coupled processes.
+     */
+    CoupledSolutionsForStaggeredScheme* _coupled_solutions;
 };
 
 }  // namespace HT

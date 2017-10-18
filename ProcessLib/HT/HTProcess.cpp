@@ -104,9 +104,9 @@ void HTProcess::assembleWithJacobianConcreteProcess(
 }
 
 void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
-                                            const double /*t*/,
-                                            const double /*delta_t*/,
-                                            const int process_id)
+                                           const double /*t*/,
+                                           const double /*delta_t*/,
+                                           const int process_id)
 {
     assert(process_id < 2);
 
@@ -123,11 +123,19 @@ void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
         auto& x0 = *_xs_previous_timestep[process_id];
         MathLib::LinAlg::copy(x, x0);
     }
-    
+
     auto& x0 = *_xs_previous_timestep[process_id];
     MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
+void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers()
+{
+    DBUG("Set the coupled term for the staggered scheme to local assembers.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &HTLocalAssemblerInterface::setStaggeredCoupledSolutions,
+        _local_assemblers, _coupled_solutions);
+}
+
 }  // namespace HT
 }  // namespace ProcessLib
-
