@@ -821,7 +821,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
             std::unique_ptr<GeoLib::Raster> raster (
                 FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name.toStdString()));
             if (raster)
-                geo_mapper.mapOnDEM(raster.release());
+                geo_mapper.mapOnDEM(std::move(raster));
             else
                 OGSError::box("Error reading raster file.");
             _geo_model->updateGeometry(geo_name);

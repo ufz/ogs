@@ -50,14 +50,14 @@ GeoMapper::~GeoMapper()
     delete _surface_mesh;
 }
 
-void GeoMapper::mapOnDEM(GeoLib::Raster *const raster)
+void GeoMapper::mapOnDEM(std::unique_ptr<GeoLib::Raster const> raster)
 {
     std::vector<GeoLib::Point*> const* pnts(_geo_objects.getPointVec(_geo_name));
     if (! pnts) {
         ERR("Geometry \"%s\" does not exist.", _geo_name.c_str());
         return;
     }
-    _raster.reset(raster);
+    _raster = std::move(raster);
 
     if (GeoLib::isStation((*pnts)[0])) {
         mapStationData(*pnts);

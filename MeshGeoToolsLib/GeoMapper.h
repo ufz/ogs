@@ -43,7 +43,7 @@ public:
     ~GeoMapper();
 
     /// Maps geometry based on a raster file
-    void mapOnDEM(GeoLib::Raster *const raster);
+    void mapOnDEM(std::unique_ptr<GeoLib::Raster const> raster);
 
     /**
      * Maps the geometry based on the given mesh file. The elevation value of all geometric
@@ -90,7 +90,7 @@ private:
     GeoLib::Grid<MeshLib::Node>* _grid;
 
     /// only necessary for mapping on DEM
-    std::unique_ptr<GeoLib::Raster> _raster;
+    std::unique_ptr<GeoLib::Raster const> _raster;
 };
 
 } // end namespace MeshGeoToolsLib
