@@ -34,9 +34,10 @@ namespace GMSH
 
 class GMSHPolygonTree: public GeoLib::SimplePolygonTree {
 public:
-    GMSHPolygonTree(GeoLib::PolygonWithSegmentMarker* polygon, GMSHPolygonTree * parent,
-                    GeoLib::GEOObjects &geo_objs, std::string const& geo_name,
-                    GMSHMeshDensityStrategy * mesh_density_strategy);
+    GMSHPolygonTree(GeoLib::PolygonWithSegmentMarker* polygon,
+                    GMSHPolygonTree* parent, GeoLib::GEOObjects& geo_objs,
+                    std::string const& geo_name,
+                    GMSHMeshDensityStrategy& mesh_density_strategy);
     ~GMSHPolygonTree() override;
 
     /** Mark the segments shared by several polygons. */
@@ -96,7 +97,7 @@ private:
     std::vector<GeoLib::PolylineWithSegmentMarker*> _plys;
     std::vector<GMSHLine*> _gmsh_lines_for_constraints;
 
-    GMSHMeshDensityStrategy * _mesh_density_strategy;
+    GMSHMeshDensityStrategy& _mesh_density_strategy;
 };
 
 }  // end namespace GMSH

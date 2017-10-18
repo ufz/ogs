@@ -139,7 +139,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         }
         _polygon_tree_list.push_back(new GMSH::GMSHPolygonTree(
             new GeoLib::PolygonWithSegmentMarker(*polyline), nullptr, _geo_objs,
-            _gmsh_geo_name, _mesh_density_strategy.get()));
+            _gmsh_geo_name, *_mesh_density_strategy));
     }
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "

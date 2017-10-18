@@ -24,13 +24,15 @@ namespace FileIO
 {
 namespace GMSH
 {
-
 GMSHPolygonTree::GMSHPolygonTree(GeoLib::PolygonWithSegmentMarker* polygon,
-                GMSHPolygonTree* parent,
-                GeoLib::GEOObjects &geo_objs, std::string const& geo_name,
-                GMSHMeshDensityStrategy * mesh_density_strategy) :
-    GeoLib::SimplePolygonTree(polygon, parent), _geo_objs(geo_objs), _geo_name(geo_name),
-    _mesh_density_strategy(mesh_density_strategy)
+                                 GMSHPolygonTree* parent,
+                                 GeoLib::GEOObjects& geo_objs,
+                                 std::string const& geo_name,
+                                 GMSHMeshDensityStrategy& mesh_density_strategy)
+    : GeoLib::SimplePolygonTree(polygon, parent),
+      _geo_objs(geo_objs),
+      _geo_name(geo_name),
+      _mesh_density_strategy(mesh_density_strategy)
 {}
 
 GMSHPolygonTree::~GMSHPolygonTree()
@@ -222,7 +224,9 @@ void GMSHPolygonTree::checkIntersectionsSegmentExistingPolylines(
 
 void GMSHPolygonTree::initMeshDensityStrategy()
 {
-    if (dynamic_cast<GMSHAdaptiveMeshDensity*> (_mesh_density_strategy)) {
+    if (auto* adaptive_mesh_density =
+            dynamic_cast<GMSHAdaptiveMeshDensity*>(&_mesh_density_strategy))
+    {
         // collect points
         std::vector<GeoLib::Point const*> pnts;
         const std::size_t n_pnts_polygon (_node_polygon->getNumberOfPoints());
@@ -240,12 +244,12 @@ void GMSHPolygonTree::initMeshDensityStrategy()
         }
 
         // give collected points to the mesh density strategy
-        _mesh_density_strategy->initialize(pnts);
+        adaptive_mesh_density->initialize(pnts);
         // insert constraints
-        dynamic_cast<GMSHAdaptiveMeshDensity*>(_mesh_density_strategy)->addPoints(_stations);
+        adaptive_mesh_density->addPoints(_stations);
         std::vector<GeoLib::Point const*> stations;
         getStationsInsideSubPolygons(stations);
-        dynamic_cast<GMSHAdaptiveMeshDensity*>(_mesh_density_strategy)->addPoints(stations);
+        adaptive_mesh_density->addPoints(stations);
     }
 }
 
@@ -259,7 +263,7 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) cons
         if (gmsh_pnts[id] != nullptr)
             continue;
         gmsh_pnts[id] = new GMSHPoint(
-            *pnt, id, _mesh_density_strategy->getMeshDensityAtPoint(pnt));
+            *pnt, id, _mesh_density_strategy.getMeshDensityAtPoint(pnt));
     }
 
     const std::size_t n_plys(_plys.size());
@@ -274,7 +278,7 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) cons
                 GeoLib::Point const*const pnt(_plys[k]->getPoint(j));
                 gmsh_pnts[id] = new GMSHPoint(
                     *pnt, id,
-                    _mesh_density_strategy->getMeshDensityAtPoint(pnt));
+                    _mesh_density_strategy.getMeshDensityAtPoint(pnt));
             }
         }
     }
@@ -359,7 +363,7 @@ void GMSHPolygonTree::writeStations(std::size_t & pnt_id_offset, std::size_t sfc
     for (auto const* station : _stations) {
         out << "Point(" << pnt_id_offset << ") = {" << (*station)[0] << ", "
             << (*station)[1] << ", 0.0, "
-            << _mesh_density_strategy->getMeshDensityAtStation(station)
+            << _mesh_density_strategy.getMeshDensityAtStation(station)
             << "}; // Station "
             << static_cast<GeoLib::Station const*>(station)->getName() << " \n";
         out << "Point { " << pnt_id_offset << " } In Surface { " << sfc_number << " };\n";
@@ -369,14 +373,18 @@ void GMSHPolygonTree::writeStations(std::size_t & pnt_id_offset, std::size_t sfc
 
 void GMSHPolygonTree::writeAdditionalPointData(std::size_t & pnt_id_offset, std::size_t sfc_number, std::ostream& out) const
 {
-    if (dynamic_cast<GMSHAdaptiveMeshDensity*>(_mesh_density_strategy)) {
+    if (auto* adaptive_mesh_density =
+            dynamic_cast<GMSHAdaptiveMeshDensity*>(&_mesh_density_strategy))
+    {
         std::vector<GeoLib::Point*> steiner_pnts;
-        dynamic_cast<GMSHAdaptiveMeshDensity*>(_mesh_density_strategy)->getSteinerPoints(steiner_pnts, 0);
+        adaptive_mesh_density->getSteinerPoints(steiner_pnts, 0);
         const std::size_t n(steiner_pnts.size());
         for (std::size_t k(0); k<n; k++) {
             if (_node_polygon->isPntInPolygon(*(steiner_pnts[k]))) {
                 out << "Point(" << pnt_id_offset + k << ") = {" << (*(steiner_pnts[k]))[0] << "," << (*(steiner_pnts[k]))[1] << ", 0.0, ";
-                out << _mesh_density_strategy->getMeshDensityAtPoint(steiner_pnts[k]) << "};\n";
+                out << _mesh_density_strategy.getMeshDensityAtPoint(
+                           steiner_pnts[k])
+                    << "};\n";
                 out << "Point { " << pnt_id_offset + k << " } In Surface { " << sfc_number << " };\n";
             }
             delete steiner_pnts[k];
@@ -385,10 +393,12 @@ void GMSHPolygonTree::writeAdditionalPointData(std::size_t & pnt_id_offset, std:
     }
 
 #ifndef NDEBUG
-    if (dynamic_cast<GMSHAdaptiveMeshDensity*>(_mesh_density_strategy)) {
+    if (auto* adaptive_mesh_density =
+            dynamic_cast<GMSHAdaptiveMeshDensity*>(&_mesh_density_strategy))
+    {
         auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
         auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
-        dynamic_cast<GMSHAdaptiveMeshDensity*>(_mesh_density_strategy)->getQuadTreeGeometry(*pnts, *plys);
+        adaptive_mesh_density->getQuadTreeGeometry(*pnts, *plys);
         std::string quad_tree_geo("QuadTree");
         _geo_objs.addPointVec(std::move(pnts), quad_tree_geo);
         std::vector<std::size_t> const& id_map ((_geo_objs.getPointVecObj(quad_tree_geo))->getIDMap());
