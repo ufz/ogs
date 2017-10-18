@@ -90,7 +90,7 @@ private:
     GeoLib::Grid<MeshLib::Node>* _grid;
 
     /// only necessary for mapping on DEM
-    GeoLib::Raster *_raster;
+    std::unique_ptr<GeoLib::Raster> _raster;
 };
 
 } // end namespace MeshGeoToolsLib
