@@ -98,7 +98,7 @@ private:
     std::size_t _n_plane_sfc;
 
     GeoLib::GEOObjects & _geo_objs;
-    std::vector<std::string>& _selected_geometries;
+    std::vector<std::string> const& _selected_geometries;
     std::string _gmsh_geo_name;
     std::list<GMSH::GMSHPolygonTree*> _polygon_tree_list;
 
@@ -111,7 +111,7 @@ private:
         MathLib::DenseMatrix<double>(3, 3, 0);
     /// Signals if the input points should be rotated or projected to the
     /// \f$x\f$-\f$y\f$-plane
-    bool _rotate = false;
+    bool const _rotate = false;
     bool _keep_preprocessed_geometry = true;
 };
 } // end namespace GMSH
