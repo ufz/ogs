@@ -4,7 +4,8 @@ def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache ' +
 def defaultCMakeOptions =
     '-DCMAKE_BUILD_TYPE=Release ' +
     '-DOGS_USE_CONAN=ON ' +
-    '-DOGS_CPU_ARCHITECTURE=generic '
+    '-DOGS_CPU_ARCHITECTURE=generic ' +
+    '-DOGS_PACKAGE_DEPENDENCIES=ON '
 
 def guiCMakeOptions =
     '-DOGS_BUILD_CLI=OFF ' +

@@ -1,7 +1,8 @@
 
 def defaultCMakeOptions =
     '-DOGS_USE_CONAN=ON ' +
-    '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON '
+    '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
+    '-DOGS_PACKAGE_DEPENDENCIES=ON '
 
 def guiCMakeOptions =
     '-DOGS_BUILD_GUI=ON ' +

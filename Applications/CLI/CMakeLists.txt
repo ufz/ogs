@@ -35,7 +35,7 @@ cpack_add_component(ogs_cli
     GROUP Applications
 )
 
-if(NOT APPLE)
+if(NOT APPLE AND OGS_PACKAGE_DEPENDENCIES)
     include(packaging/InstallDependencies)
     InstallDependencies(ogs)
 endif()
