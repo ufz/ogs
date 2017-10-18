@@ -1,7 +1,5 @@
 include(ResetConfigurations)        # To Debug, Release, RelWithDebInfo
-include(SetDefaultBuildType)
 include(DisableCompilerFlag)
-SET_DEFAULT_BUILD_TYPE(Debug)
 include(MSVCMultipleProcessCompile) # /MP switch (multi processor) for VS
 set(CMAKE_OSX_ARCHITECTURES "x86_64")
 
@@ -137,8 +135,6 @@ if(WIN32)
             /wd4267 /wd4996 /bigobj")
         set(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} \
             /ZI /Od /Ob0")
-
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
 
         DisableCompilerFlag(DEBUG /RTC1)
     # cygwin

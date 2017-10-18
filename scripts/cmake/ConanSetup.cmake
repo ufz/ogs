@@ -2,6 +2,11 @@ if(NOT OGS_USE_CONAN)
     return()
 endif()
 
+if(CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+    message(FATAL_ERROR "Multi-config generators are not yet supported when "
+        "using Conan. Specify CMAKE_BUILD_TYPE!")
+endif()
+
 set(OGS_QT_VERSION 5.6.2)
 if((${CMAKE_CXX_COMPILER_ID} STREQUAL AppleClang) AND
     (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 8.3))

@@ -3,6 +3,7 @@ def defaultCMakeOptions =
     '-DOGS_USE_CONAN=ON ' +
     '-DOGS_32_BIT=ON ' +
     '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
+    '-DOGS_PACKAGE_DEPENDENCIES=ON ' +
     '-DOGS_BUILD_GUI=ON ' +
     '-DOGS_BUILD_UTILS=OFF ' +
     '-DOGS_BUILD_TESTS=OFF ' +
