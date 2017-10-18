@@ -40,6 +40,9 @@ int GeoOnMeshMappingDialog::getDataSetChoice() const
 
 void GeoOnMeshMappingDialog::on_meshNameComboBox_currentIndexChanged(int idx)
 {
+    if (idx == 1)
+        this->normalMappingButton->setChecked(true);
+
     bool is_enabled(idx != 1);
     this->normalMappingButton->setEnabled(is_enabled);
     this->advancedMappingButton->setEnabled(is_enabled);

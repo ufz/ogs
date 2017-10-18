@@ -821,7 +821,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
             std::unique_ptr<GeoLib::Raster> raster (
                 FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name.toStdString()));
             if (raster)
-                geo_mapper.mapOnDEM(raster.get());
+                geo_mapper.mapOnDEM(std::move(raster));
             else
                 OGSError::box("Error reading raster file.");
             _geo_model->updateGeometry(geo_name);
@@ -857,8 +857,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
         GeoLib::DuplicateGeometry dup(_project.getGEOObjects(), geo_name,
                                       new_geo_name);
         new_geo_name = dup.getFinalizedOutputName();
-        MeshGeoToolsLib::GeoMapper mapper =
-            MeshGeoToolsLib::GeoMapper(_project.getGEOObjects(), new_geo_name);
+        MeshGeoToolsLib::GeoMapper mapper(_project.getGEOObjects(), new_geo_name);
         mapper.advancedMapOnMesh(*mesh);
         _geo_model->updateGeometry(new_geo_name);
     }
