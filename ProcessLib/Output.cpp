@@ -123,10 +123,40 @@ void Output::addProcess(ProcessLib::Process const& process, const unsigned pcs_i
         BaseLib::joinPaths(_output_directory, _output_file_prefix + "_pcs_" + std::to_string(pcs_idx) + ".pvd");
     _single_process_data.emplace(std::piecewise_construct,
                                  std::forward_as_tuple(&process),
-                                 std::forward_as_tuple(pcs_idx, filename));
+                                 std::forward_as_tuple(filename));
 }
 
+Output::SingleProcessData Output::findSingleProcessData(
+    Process const& process, const unsigned process_index) const
+{
+    if (process.isMonolithicSchemeUsed())
+    {
+        auto spd_it = _single_process_data.find(&process);
+        if (spd_it == _single_process_data.end()) {
+            OGS_FATAL("The given process is not contained in the output"
+                      " configuration. Aborting.");
+        }
+        return spd_it->second;
+    }
+
+    auto spd_range = _single_process_data.equal_range(&process);
+    unsigned counter = 0;
+    for (auto spd_it=spd_range.first; spd_it!=spd_range.second; ++spd_it)
+    {
+        if(counter == process_index)
+        {
+            return spd_it->second;
+        }
+        counter++;
+    }
+
+    OGS_FATAL("The given process is not contained in the output"
+                      " configuration. Aborting.");
+}
+
+
 void Output::doOutputAlways(Process const& process,
+                            const unsigned process_index,
                             ProcessOutput const& process_output,
                             unsigned timestep,
                             const double t,
@@ -135,38 +165,45 @@ void Output::doOutputAlways(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    auto spd_it = _single_process_data.find(&process);
-    if (spd_it == _single_process_data.end()) {
-        OGS_FATAL("The given process is not contained in the output configuration."
-            " Aborting.");
-    }
-    auto& spd = spd_it->second;
+    auto spd = findSingleProcessData(process, process_index);
 
     std::string const output_file_name =
-            _output_file_prefix + "_pcs_" + std::to_string(spd.process_index)
+            _output_file_prefix + "_pcs_" + std::to_string(process_index)
             + "_ts_" + std::to_string(timestep)
             + "_t_"  + std::to_string(t)
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
-    DBUG("output to %s", output_file_path.c_str());
-    doProcessOutput(output_file_path, _output_file_compression,
+
+    const bool make_out =
+        (process_index < _single_process_data.size() -1
+         && !(process.isMonolithicSchemeUsed())) ? false : true;
+
+    if (make_out)
+        DBUG("output to %s", output_file_path.c_str());
+
+    doProcessOutput(output_file_path, make_out, _output_file_compression,
                     _output_file_data_mode, t, x, process.getMesh(),
                     process.getDOFTable(), process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);
-    spd.pvd_file.addVTUFile(output_file_name, t);
 
-    INFO("[time] Output of timestep %d took %g s.", timestep,
-         time_output.elapsed());
+    if (make_out)
+    {
+        spd.pvd_file.addVTUFile(output_file_name, t);
+
+        INFO("[time] Output of timestep %d took %g s.", timestep,
+             time_output.elapsed());
+    }
 }
 
 void Output::doOutput(Process const& process,
+                      const unsigned process_index,
                       ProcessOutput const& process_output,
                       unsigned timestep,
                       const double t,
                       GlobalVector const& x)
 {
     if (shallDoOutput(timestep, _repeats_each_steps))
-        doOutputAlways(process, process_output, timestep, t, x);
+        doOutputAlways(process, process_index,  process_output, timestep, t, x);
 #ifdef USE_INSITU
     // Note: last time step may be output twice: here and in
     // doOutputLastTimestep() which throws a warning.
@@ -175,19 +212,21 @@ void Output::doOutput(Process const& process,
 }
 
 void Output::doOutputLastTimestep(Process const& process,
+                                  const unsigned process_index,
                                   ProcessOutput const& process_output,
                                   unsigned timestep,
                                   const double t,
                                   GlobalVector const& x)
 {
     if (!shallDoOutput(timestep, _repeats_each_steps))
-        doOutputAlways(process, process_output, timestep, t, x);
+        doOutputAlways(process, process_index, process_output, timestep, t, x);
 #ifdef USE_INSITU
     InSituLib::CoProcess(process.getMesh(), t, timestep, true);
 #endif
 }
 
 void Output::doOutputNonlinearIteration(Process const& process,
+                                        const unsigned process_index,
                                         ProcessOutput const& process_output,
                                         const unsigned timestep, const double t,
                                         GlobalVector const& x,
@@ -198,27 +237,26 @@ void Output::doOutputNonlinearIteration(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    auto spd_it = _single_process_data.find(&process);
-    if (spd_it == _single_process_data.end()) {
-        OGS_FATAL("The given process is not contained in the output configuration."
-            " Aborting.");
-    }
-    auto& spd = spd_it->second;
+    findSingleProcessData(process, process_index);
 
     std::string const output_file_name =
-            _output_file_prefix + "_pcs_" + std::to_string(spd.process_index)
+            _output_file_prefix + "_pcs_" + std::to_string(process_index)
             + "_ts_" + std::to_string(timestep)
             + "_t_"  + std::to_string(t)
             + "_nliter_" + std::to_string(iteration)
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
     DBUG("output iteration results to %s", output_file_path.c_str());
-    doProcessOutput(output_file_path, _output_file_compression,
+    const bool make_out =
+        (process_index < _single_process_data.size() -1
+         && !(process.isMonolithicSchemeUsed())) ? false : true;
+    doProcessOutput(output_file_path, make_out, _output_file_compression,
                     _output_file_data_mode, t, x, process.getMesh(),
                     process.getDOFTable(), process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);
 
-    INFO("[time] Output took %g s.", time_output.elapsed());
+    if (make_out)
+        INFO("[time] Output took %g s.", time_output.elapsed());
 }
 
 }

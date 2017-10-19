@@ -67,7 +67,8 @@ public:
 
     void initialize();
 
-    void setInitialConditions(const double t, GlobalVector& x);
+    void setInitialConditions(const unsigned pcs_id, const double t,
+                              GlobalVector& x);
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const final;
 
@@ -202,6 +203,9 @@ private:
     /// Computes and stores global matrix' sparsity pattern from given
     /// DOF-table.
     void computeSparsityPattern();
+
+    void setVariableInitialCondition(const int variable_id, double const t,
+                                     GlobalVector& x);
 
 protected:
     MeshLib::Mesh& _mesh;

@@ -10,6 +10,7 @@
 #pragma once
 
 #include <utility>
+#include <map>
 
 #include "BaseLib/ConfigTree.h"
 #include "MeshLib/IO/VtkIO/PVDFile.h"
@@ -36,13 +37,15 @@ public:
 
     //! Writes output for the given \c process if it should be written in the
     //! given \c timestep.
-    void doOutput(Process const& process, ProcessOutput const& process_output,
+    void doOutput(Process const& process, const unsigned process_index,
+                  ProcessOutput const& process_output,
                   unsigned timestep, const double t, GlobalVector const& x);
 
     //! Writes output for the given \c process if it has not been written yet.
     //! This method is intended for doing output after the last timestep in order
     //! to make sure that its results are written.
     void doOutputLastTimestep(Process const& process,
+                              const unsigned process_index,
                               ProcessOutput const& process_output,
                               unsigned timestep, const double t,
                               GlobalVector const& x);
@@ -50,13 +53,14 @@ public:
     //! Writes output for the given \c process.
     //! This method will always write.
     //! It is intended to write output in error handling routines.
-    void doOutputAlways(Process const& process,
+    void doOutputAlways(Process const& process, const unsigned process_index,
                         ProcessOutput const& process_output, unsigned timestep,
                         const double t, GlobalVector const& x);
 
     //! Writes output for the given \c process.
     //! To be used for debug output after an iteration of the nonlinear solver.
     void doOutputNonlinearIteration(Process const& process,
+                                    const unsigned process_index,
                                     ProcessOutput const& process_output,
                                     const unsigned timestep, const double t,
                                     GlobalVector const& x,
@@ -71,16 +75,14 @@ public:
         const unsigned repeat;     //!< Apply \c each_steps \c repeat times.
         const unsigned each_steps; //!< Do output every \c each_steps timestep.
     };
+
 private:
     struct SingleProcessData
     {
-        SingleProcessData(unsigned process_index_,
-                          std::string const& filename)
-            : process_index(process_index_)
-            , pvd_file(filename)
+        SingleProcessData(std::string const& filename)
+            : pvd_file(filename)
         {}
 
-        const unsigned process_index;
         MeshLib::IO::PVDFile pvd_file;
     };
 
@@ -103,7 +105,10 @@ private:
     //! Describes after which timesteps to write output.
     std::vector<PairRepeatEachSteps> _repeats_each_steps;
 
-    std::map<Process const*, SingleProcessData> _single_process_data;
+    std::multimap<Process const*, SingleProcessData> _single_process_data;
+
+    SingleProcessData findSingleProcessData(
+        Process const& process, const unsigned process_index) const;
 };
 
 }
