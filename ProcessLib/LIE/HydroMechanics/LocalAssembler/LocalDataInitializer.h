@@ -199,7 +199,7 @@ public:
                 type_idx.name());
 
         auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
-        const std::vector<std::size_t> varIDs(_dof_table.getElementVariableIDs(id));
+        auto const varIDs = _dof_table.getElementVariableIDs(id);
         bool const isPressureDeactivated = (varIDs.front()!=0);
         std::vector<int> involved_varIDs;  // including deactived elements
         involved_varIDs.reserve(varIDs.size()+1);
@@ -215,7 +215,7 @@ public:
         //TODO how to get the shape function order for each variable?
         vec_n_element_nodes.push_back(mesh_item.getNumberOfBaseNodes()); // pressure
         auto const max_varID = *std::max_element(varIDs.begin(), varIDs.end());
-        for (unsigned i=1; i<max_varID+1; i++)
+        for (int i = 1; i < max_varID + 1; i++)
             vec_n_element_nodes.push_back(mesh_item.getNumberOfNodes()); // displacements
 
         unsigned local_id = 0;

@@ -33,14 +33,14 @@ TEST(CsvWriter, WriteReadTest)
     bool added;
     std::vector<std::string> vec_names { "String Vector", "Int Vector", "Double Vector"};
     added = csv.addVectorForWriting(vec_names[0], str_vec);
-    ASSERT_EQ(true, added);
+    ASSERT_TRUE(added);
     added = csv.addVectorForWriting(vec_names[1], int_vec);
-    ASSERT_EQ(true, added);
+    ASSERT_TRUE(added);
     added = csv.addVectorForWriting(vec_names[2], dbl_vec);
-    ASSERT_EQ(true, added);
+    ASSERT_TRUE(added);
     int_vec.push_back(128);
     added = csv.addVectorForWriting(vec_names[1], int_vec);
-    ASSERT_EQ(false, added);
+    ASSERT_FALSE(added);
     ASSERT_EQ(3, csv.getNArrays());
     csv.addIndexVectorForWriting(str_vec.size());
     ASSERT_EQ(4, csv.getNArrays());

@@ -202,7 +202,6 @@ int main (int argc, char* argv[])
     }
 
     if (bool_property_arg.isSet()) {
-        bool bool_property_val(bool_property_arg.getValue());
         resetMeshElementProperty(*mesh, polygon, property_name,
                                  bool_property_arg.getValue());
     }

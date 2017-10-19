@@ -80,10 +80,10 @@ public:
     unsigned getDimension() const { return _mesh_dimension; }
 
     /// Get the node with the given index.
-    const Node* getNode(unsigned idx) const { return _nodes[idx]; }
+    const Node* getNode(std::size_t idx) const { return _nodes[idx]; }
 
     /// Get the element with the given index.
-    const Element* getElement(unsigned idx) const { return _elements[idx]; }
+    const Element* getElement(std::size_t idx) const { return _elements[idx]; }
 
     /// Get the minimum edge length over all elements of the mesh.
     double getMinEdgeLength() const { return _edge_length.first; }

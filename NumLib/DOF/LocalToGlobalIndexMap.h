@@ -103,7 +103,10 @@ public:
 
     std::size_t size() const;
 
-    std::size_t getNumberOfVariables() const { return (_variable_component_offsets.size() - 1); }
+    int getNumberOfVariables() const
+    {
+        return static_cast<int>(_variable_component_offsets.size()) - 1;
+    }
 
     int getNumberOfVariableComponents(int variable_id) const
     {
@@ -119,7 +122,8 @@ public:
 
     std::size_t getNumberOfElementComponents(std::size_t const mesh_item_id) const;
 
-    std::vector<std::size_t> getElementVariableIDs(std::size_t const mesh_item_id) const;
+    std::vector<int> getElementVariableIDs(
+        std::size_t const mesh_item_id) const;
 
     GlobalIndexType getGlobalIndex(MeshLib::Location const& l,
                                    int const variable_id,

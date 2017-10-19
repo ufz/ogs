@@ -104,16 +104,15 @@ int main (int argc, char* argv[])
 
     // search elements IDs to be removed
     if (zveArg.isSet()) {
-        const std::size_t n_removed_elements = searcher.searchByContent();
-        INFO("%d zero volume elements found.", n_removed_elements);
+        INFO("%d zero volume elements found.", searcher.searchByContent());
     }
     if (eleTypeArg.isSet()) {
         const std::vector<std::string> eleTypeNames = eleTypeArg.getValue();
         for (const auto& typeName : eleTypeNames) {
             const MeshLib::MeshElemType type = MeshLib::String2MeshElemType(typeName);
             if (type == MeshLib::MeshElemType::INVALID) continue;
-            const std::size_t n_removed_elements = searcher.searchByElementType(type);
-            INFO("%d %s elements found.", n_removed_elements, typeName.c_str());
+            INFO("%d %s elements found.", searcher.searchByElementType(type),
+                 typeName.c_str());
         }
     }
 
@@ -150,9 +149,9 @@ int main (int argc, char* argv[])
                 ySmallArg.getValue(), zSmallArg.getValue()}}),
             MathLib::Point3d(std::array<double,3>{{xLargeArg.getValue(),
                 yLargeArg.getValue(), zLargeArg.getValue()}})}});
-        const std::size_t n_removed_elements = searcher.searchByBoundingBox(
-            GeoLib::AABB(extent.begin(), extent.end()));
-        INFO("%d elements found.", n_removed_elements);
+        INFO("%d elements found.",
+             searcher.searchByBoundingBox(
+                 GeoLib::AABB(extent.begin(), extent.end())));
     }
 
     // remove the elements and create a new mesh object.

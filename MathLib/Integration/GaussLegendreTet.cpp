@@ -37,20 +37,20 @@ std::array<std::array<double, 3>, GaussLegendreTet<3>::NPoints> initGLTet3X()
     const double e = 0.4544962958743506;
     const double f = 0.045503704125649;
 
-    return {{{a, b, b},
-             {b, a, b},
-             {b, b, a},
-             {b, b, b},
-             {c, d, d},
-             {d, c, d},
-             {d, d, c},
-             {d, d, d},
-             {e, e, f},
-             {e, f, e},
-             {e, f, f},
-             {f, e, e},
-             {f, e, f},
-             {f, f, e}}};
+    return {{{{a, b, b}},
+             {{b, a, b}},
+             {{b, b, a}},
+             {{b, b, b}},
+             {{c, d, d}},
+             {{d, c, d}},
+             {{d, d, c}},
+             {{d, d, d}},
+             {{e, e, f}},
+             {{e, f, e}},
+             {{e, f, f}},
+             {{f, e, e}},
+             {{f, e, f}},
+             {{f, f, e}}}};
 }
 
 const std::array<std::array<double, 3>, GaussLegendreTet<3>::NPoints>
