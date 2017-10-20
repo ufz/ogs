@@ -138,5 +138,5 @@ namespace Fracture
 {
 extern template class MohrCoulomb<2>;
 extern template class MohrCoulomb<3>;
-}  // namespace Fractrue
+}  // namespace Fracture
 }  // namespace MaterialLib
