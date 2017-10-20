@@ -7,8 +7,6 @@
  *
  */
 
-#include <bits/stl_vector.h>
-
 #include "Process.h"
 
 #include "BaseLib/Functional.h"
@@ -351,8 +349,19 @@ void Process::setCoupledSolutionsOfPreviousTimeStep()
     _coupled_solutions->coupled_xs_t0.reserve(number_of_coupled_solutions);
     for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
     {
-        _coupled_solutions->coupled_xs_t0.emplace_back(
-            getPreviousTimeStepSolution(i));
+        const auto x_t0 = getPreviousTimeStepSolution(i);
+        if (!x_t0)
+        {
+            OGS_FATAL(
+                "Memory is not allocated for the global vector "
+                "of the solution of the previous time step for the ."
+                "staggered scheme.\n It can be done by overloading "
+                "Process::preTimestepConcreteProcess"
+                "(ref. HTProcess::preTimestepConcreteProcess) ");
+        }
+
+        MathLib::LinAlg::setLocalAccessibleVector(*x_t0);
+        _coupled_solutions->coupled_xs_t0.emplace_back(x_t0);
     }
 }
 
