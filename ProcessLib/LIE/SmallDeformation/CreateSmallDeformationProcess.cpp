@@ -119,24 +119,25 @@ createSmallDeformationProcess(
 
     // Fracture constitutive relation.
     // read type;
-    auto const fracture_constitutive_relation_config =
-        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_constitutive_relation}
-        config.getConfigSubtree("fracture_constitutive_relation");
+    auto const fracture_model_config =
+        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_model}
+        config.getConfigSubtree("fracture_model");
 
     auto const frac_type =
-        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_constitutive_relation__type}
-        fracture_constitutive_relation_config.peekConfigParameter<std::string>("type");
+        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_model__type}
+        fracture_model_config.peekConfigParameter<std::string>("type");
 
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>> fracture_model = nullptr;
     if (frac_type == "LinearElasticIsotropic")
     {
-        fracture_model = MaterialLib::Fracture::createLinearElasticIsotropic<DisplacementDim>(
-            parameters, fracture_constitutive_relation_config);
+        fracture_model = MaterialLib::Fracture::createLinearElasticIsotropic<
+            DisplacementDim>(parameters, fracture_model_config);
     }
     else if (frac_type == "MohrCoulomb")
     {
-        fracture_model = MaterialLib::Fracture::createMohrCoulomb<DisplacementDim>(
-            parameters, fracture_constitutive_relation_config);
+        fracture_model =
+            MaterialLib::Fracture::createMohrCoulomb<DisplacementDim>(
+                parameters, fracture_model_config);
     }
     else
     {
