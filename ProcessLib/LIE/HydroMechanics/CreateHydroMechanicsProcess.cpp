@@ -198,26 +198,28 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     // Fracture constitutive relation.
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>> fracture_model = nullptr;
-    auto const opt_fracture_constitutive_relation_config =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_constitutive_relation}
-        config.getConfigSubtreeOptional("fracture_constitutive_relation");
-    if (opt_fracture_constitutive_relation_config)
+    auto const opt_fracture_model_config =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_model}
+        config.getConfigSubtreeOptional("fracture_model");
+    if (opt_fracture_model_config)
     {
-        auto& fracture_constitutive_relation_config = *opt_fracture_constitutive_relation_config;
+        auto& fracture_model_config = *opt_fracture_model_config;
 
         auto const frac_type =
-            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_constitutive_relation__type}
-            fracture_constitutive_relation_config.peekConfigParameter<std::string>("type");
+            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_model_type}
+            fracture_model_config.peekConfigParameter<std::string>("type");
 
         if (frac_type == "LinearElasticIsotropic")
         {
-            fracture_model = MaterialLib::Fracture::createLinearElasticIsotropic<GlobalDim>(
-                parameters, fracture_constitutive_relation_config);
+            fracture_model =
+                MaterialLib::Fracture::createLinearElasticIsotropic<GlobalDim>(
+                    parameters, fracture_model_config);
         }
         else if (frac_type == "MohrCoulomb")
         {
-            fracture_model = MaterialLib::Fracture::createMohrCoulomb<GlobalDim>(
-                parameters, fracture_constitutive_relation_config);
+            fracture_model =
+                MaterialLib::Fracture::createMohrCoulomb<GlobalDim>(
+                    parameters, fracture_model_config);
         }
         else
         {
