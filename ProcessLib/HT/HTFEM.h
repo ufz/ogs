@@ -58,6 +58,7 @@ public:
         // matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * dof_per_node);
         (void)local_matrix_size;
+        (void)dof_per_node;
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -128,14 +129,13 @@ protected:
             thermal_conductivity_solid * (1 - porosity) +
             thermal_conductivity_fluid * porosity;
 
-        auto const thermal_dispersivity_longitudinal =
+        if (!material_properties.has_fluid_thermal_dispersivity)
+            return thermal_conductivity * I;
+
+        double const thermal_dispersivity_longitudinal =
             material_properties.thermal_dispersivity_longitudinal(t, pos)[0];
         auto const thermal_dispersivity_transversal =
             material_properties.thermal_dispersivity_transversal(t, pos)[0];
-
-        if (thermal_dispersivity_longitudinal == 0.0 &&
-            thermal_dispersivity_transversal == 0.0)
-            return thermal_conductivity * I;
 
         double const velocity_magnitude = velocity.norm();
         GlobalDimMatrixType const thermal_dispersivity =

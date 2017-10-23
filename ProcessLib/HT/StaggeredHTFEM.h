@@ -65,7 +65,7 @@ public:
     void assembleWithCoupledTerm(
         double const t, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        LocalCoupledSolutions const& coupled_term) override;
+        LocalCoupledSolutions const& coupled_xs) override;
 
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
@@ -78,12 +78,12 @@ private:
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
                                    std::vector<double>& local_b_data,
-                                   LocalCoupledSolutions const& coupled_term);
+                                   LocalCoupledSolutions const& coupled_xs);
 
     void assembleHeatTransportEquation(
         double const t, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        LocalCoupledSolutions const& coupled_term);
+        LocalCoupledSolutions const& coupled_xs);
 };
 
 }  // namespace HT

@@ -75,10 +75,26 @@ void HTProcess::assembleConcreteProcess(const double t,
                                         GlobalMatrix& K,
                                         GlobalVector& b)
 {
-    DBUG("Assemble HTProcess.");
-
-    if (!_is_monolithic_scheme)
+    if (_is_monolithic_scheme)
+    {
+        DBUG("Assemble HTProcess.");
+    }
+    else
+    {
+        if (_coupled_solutions->process_id == 0)
+        {
+            DBUG(
+                "Assemble the equations of heat transport process within "
+                "HTProcess.");
+        }
+        else
+        {
+            DBUG(
+                "Assemble the equations of single phase fully saturated "
+                "fluid flow process within HTProcess.");
+        }
         setCoupledSolutionsOfPreviousTimeStep();
+    }
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(

@@ -26,17 +26,17 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                             std::vector<double>& local_M_data,
                             std::vector<double>& local_K_data,
                             std::vector<double>& local_b_data,
-                            LocalCoupledSolutions const& coupled_term)
+                            LocalCoupledSolutions const& coupled_xs)
 {
-    if (coupled_term.variable_id == 0)
+    if (coupled_xs.process_id == 0)
     {
         assembleHeatTransportEquation(t, local_M_data, local_K_data,
-                                      local_b_data, coupled_term);
+                                      local_b_data, coupled_xs);
         return;
     }
 
     assembleHydraulicEquation(t, local_M_data, local_K_data, local_b_data,
-                              coupled_term);
+                              coupled_xs);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -45,17 +45,17 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleHydraulicEquation(double const t, std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
-                              LocalCoupledSolutions const& coupled_term)
+                              LocalCoupledSolutions const& coupled_xs)
 {
-    auto const& local_p = coupled_term.local_coupled_xs[0];
+    auto const& local_p = coupled_xs.local_coupled_xs[1];
     auto const local_matrix_size = local_p.size();
     // This assertion is valid only if all nodal d.o.f. use the same shape
     // matrices.
     assert(local_matrix_size == ShapeFunction::NPOINTS);
 
-    auto const& local_T1 = coupled_term.local_coupled_xs[1];
-    auto const& local_T0 = coupled_term.local_coupled_xs0[1];
-    const double dt = coupled_term.dt;
+    auto const& local_T1 = coupled_xs.local_coupled_xs[0];
+    auto const& local_T0 = coupled_xs.local_coupled_xs0[0];
+    const double dt = coupled_xs.dt;
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_M_data, local_matrix_size, local_matrix_size);
@@ -70,9 +70,6 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto const& material_properties = this->_material_properties;
 
     auto const& b = material_properties.specific_body_force;
-
-    GlobalDimMatrixType const& I(
-        GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
     MaterialLib::Fluid::FluidProperty::ArrayType vars;
 
@@ -110,10 +107,6 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
             material_properties.fluid_properties->getdValue(
                 MaterialLib::Fluid::FluidPropertyType::Density, vars,
                 MaterialLib::Fluid::PropertyVariableType::p);
-        const double dfluid_density_dT =
-            material_properties.fluid_properties->getdValue(
-                MaterialLib::Fluid::FluidPropertyType::Density, vars,
-                MaterialLib::Fluid::PropertyVariableType::T);
 
         // Use the viscosity model to compute the viscosity
         auto const viscosity = material_properties.fluid_properties->getValue(
@@ -139,11 +132,23 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         local_K.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
 
-        // Add the thermal expansion term
-        auto const solid_thermal_expansion =
-            material_properties.solid_thermal_expansion(t, pos)[0];
-        if (solid_thermal_expansion > 0.0)
+        if (material_properties.has_gravity)
         {
+            local_b.noalias() +=
+                w * fluid_density * dNdx.transpose() * K_over_mu * b;
+        }
+
+        if (!material_properties.has_fluid_thermal_expansion)
+            return;
+
+        // Add the thermal expansion term
+        {
+            auto const solid_thermal_expansion =
+                material_properties.solid_thermal_expansion(t, pos)[0];
+            const double dfluid_density_dT =
+                material_properties.fluid_properties->getdValue(
+                    MaterialLib::Fluid::FluidPropertyType::Density, vars,
+                    MaterialLib::Fluid::PropertyVariableType::T);
             double T0_at_xi = 0.;
             NumLib::shapeFunctionInterpolate(local_T0, N, T0_at_xi);
             auto const biot_constant =
@@ -153,12 +158,6 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                 porosity * dfluid_density_dT / fluid_density;
             local_b.noalias() +=
                 eff_thermal_expansion * (T1_at_xi - T0_at_xi) * w * N / dt;
-        }
-
-        if (material_properties.has_gravity)
-        {
-            local_b.noalias() +=
-                w * fluid_density * dNdx.transpose() * K_over_mu * b;
         }
     }
 }
@@ -170,9 +169,9 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                                   std::vector<double>& local_M_data,
                                   std::vector<double>& local_K_data,
                                   std::vector<double>& /*local_b_data*/,
-                                  LocalCoupledSolutions const& coupled_term)
+                                  LocalCoupledSolutions const& coupled_xs)
 {
-    auto const& local_p = coupled_term.local_coupled_xs[0];
+    auto const& local_p = coupled_xs.local_coupled_xs[1];
     auto const local_matrix_size = local_p.size();
     // This assertion is valid only if all nodal d.o.f. use the same shape
     // matrices.
@@ -181,7 +180,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto local_p_Eigen_type =
         Eigen::Map<const NodalVectorType>(&local_p[0], local_matrix_size);
 
-    auto const& local_T1 = coupled_term.local_coupled_xs[1];
+    auto const& local_T1 = coupled_xs.local_coupled_xs[0];
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_M_data, local_matrix_size, local_matrix_size);

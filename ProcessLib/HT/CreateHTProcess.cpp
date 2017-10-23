@@ -88,6 +88,8 @@ std::unique_ptr<Process> createHTProcess(
     auto const dispersion_config =
         //! \ogs_file_param{prj__processes__process__HT__thermal_dispersivity}
         config.getConfigSubtreeOptional("thermal_dispersivity");
+    bool const has_fluid_thermal_dispersivity =
+        dispersion_config ? true : false;
     if (dispersion_config)
     {
         thermal_dispersivity_longitudinal = &findParameter<double>(
@@ -154,6 +156,7 @@ std::unique_ptr<Process> createHTProcess(
     auto const solid_config =
         //! \ogs_file_param{prj__processes__process__HT__solid_thermal_expansion}
         config.getConfigSubtreeOptional("solid_thermal_expansion");
+    const bool has_fluid_thermal_expansion = solid_config ? true : false;
     if (solid_config)
     {
         solid_thermal_expansion = &findParameter<double>(
@@ -172,13 +175,15 @@ std::unique_ptr<Process> createHTProcess(
             std::move(porous_media_properties),
             density_solid,
             std::move(fluid_properties),
+            has_fluid_thermal_dispersivity,
             *thermal_dispersivity_longitudinal,
             *thermal_dispersivity_transversal,
             specific_heat_capacity_solid,
             thermal_conductivity_solid,
             thermal_conductivity_fluid,
-            default_solid_thermal_expansion,
-            default_biot_constant,
+            has_fluid_thermal_expansion,
+            *solid_thermal_expansion,
+            *biot_constant,
             specific_body_force,
             has_gravity);
 
