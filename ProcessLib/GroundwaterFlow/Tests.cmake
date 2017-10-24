@@ -597,3 +597,106 @@ AddTest(
     DIFF_DATA
     expected_dirichlet_nonuniform_pcs_0_ts_1_t_1.000000.vtu dirichlet_nonuniform_pcs_0_ts_1_t_1.000000.vtu pressure pressure
 )
+
+# tests for nodal source term implementation
+# For the special setup with a dirac source term at position (xi, eta) the
+# analytical solution in 2 dimensions is valid:
+# u(x,y) = ln(sqrt((x-xi)^2+(y-eta)^2))/(2 * Pi)
+AddTest(
+    NAME GroundWaterFlowProcess_NodalSourceTerm_circle_1e1
+    PATH Elliptic/circle_radius_1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS circle_1e1_axi.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    ABSTOL 0.7 RELTOL 1e-16
+    DIFF_DATA
+    line_1_lines_1e1_expected.vtu circle_1e1_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure
+    VIS circle_1e1_axi_pcs_0_ts_1_t_1.000000.vtu
+)
+
+AddTest(
+    NAME GroundWaterFlowProcess_NodalSourceTerm_circle_1e2
+    PATH Elliptic/circle_radius_1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS circle_1e2_axi.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    ABSTOL 1.1 RELTOL 1e-16
+    DIFF_DATA
+    line_1_lines_1e2_expected.vtu circle_1e2_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure
+    VIS circle_1e2_axi_pcs_0_ts_1_t_1.000000.vtu
+)
+
+AddTest(
+    NAME GroundWaterFlowProcess_NodalSourceTerm_circle_1e3
+    PATH Elliptic/circle_radius_1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS circle_1e3_axi.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    ABSTOL 1.6 RELTOL 1e-16
+    DIFF_DATA
+    line_1_lines_1e3_expected.vtu circle_1e3_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure
+    VIS circle_1e3_axi_pcs_0_ts_1_t_1.000000.vtu
+)
+
+AddTest(
+    NAME GroundWaterFlowProcess_NodalSourceTerm_circle_1e4
+    PATH Elliptic/circle_radius_1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS circle_1e4_axi.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    ABSTOL 1.8 RELTOL 1e-16
+    DIFF_DATA
+    line_1_lines_1e4_expected.vtu circle_1e4_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure
+    VIS circle_1e4_axi_pcs_0_ts_1_t_1.000000.vtu
+)
+
+AddTest(
+    NAME LARGE_GroundWaterFlowProcess_NodalSourceTerm_circle_1e5
+    PATH Elliptic/circle_radius_1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS circle_1e5_axi.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    ABSTOL 2.15 RELTOL 1e-16
+    DIFF_DATA
+    line_1_lines_1e5_expected.vtu circle_1e5_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure
+    VIS circle_1e5_axi_pcs_0_ts_1_t_1.000000.vtu
+)
+
+AddTest(
+    NAME LARGE_GroundWaterFlowProcess_NodalSourceTerm_circle_1e6
+    PATH Elliptic/circle_radius_1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS circle_1e6_axi.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    ABSTOL 2.52 RELTOL 1e-16
+    DIFF_DATA
+    line_1_lines_1e6_expected.vtu circle_1e6_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure
+    VIS circle_1e6_axi_pcs_0_ts_1_t_1.000000.vtu
+)
+
+AddTest(
+    NAME LARGE_GroundWaterFlowProcess_NodalSourceTerm_square_1e6
+    PATH Elliptic/square_1x1_GroundWaterFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e6_with_nodal_sources.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    ABSTOL 1.41 RELTOL 1e-16
+    DIFF_DATA
+    square_1x1_quad_1e6_nodal_sources_expected.vtu square_1e6_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure
+    VIS square_1e6_pcs_0_ts_1_t_1.000000.vtu
+)
+
