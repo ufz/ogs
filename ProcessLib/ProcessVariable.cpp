@@ -33,7 +33,8 @@ ProcessVariable::ProcessVariable(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
           parameters, _n_components)),
-      _bc_builder(std::make_unique<BoundaryConditionBuilder>())
+      _bc_builder(std::make_unique<BoundaryConditionBuilder>()),
+      _source_term_builder(std::make_unique<SourceTermBuilder>())
 {
     DBUG("Constructing process variable %s", _name.c_str());
 
@@ -82,6 +83,49 @@ ProcessVariable::ProcessVariable(
     } else {
         INFO("No boundary conditions found.");
     }
+
+    // Source terms
+    //! \ogs_file_param{prj__process_variables__process_variable__source_terms}
+    if (auto sts_config = config.getConfigSubtreeOptional("source_terms"))
+    {
+        for (auto st_config :
+             //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term}
+             sts_config->getConfigSubtreeList("source_term"))
+        {
+            auto const geometrical_set_name =
+                    //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometrical_set}
+                   st_config.getConfigParameter<std::string>("geometrical_set");
+            auto const geometry_name =
+                    //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometry}
+                    st_config.getConfigParameter<std::string>("geometry");
+
+            GeoLib::GeoObject const* const geometry =
+                geometries.getGeoObject(geometrical_set_name, geometry_name);
+
+            if (! geometry)
+                OGS_FATAL(
+                    "No geometry with name `%s' has been found in the "
+                    "geometrical set `%s'.",
+                    geometry_name.c_str(), geometrical_set_name.c_str());
+
+            DBUG(
+                "Found geometry type \"%s\"",
+                GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
+
+            auto component_id =
+                //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__component}
+                st_config.getConfigParameterOptional<int>("component");
+
+            if (!component_id && _n_components == 1)
+                // default value for single component vars.
+                component_id = 0;
+
+            _source_term_configs.emplace_back(std::move(st_config), *geometry,
+                                              component_id);
+        }
+    } else {
+        INFO("No source terms found.");
+    }
 }
 
 ProcessVariable::ProcessVariable(ProcessVariable&& other)
@@ -91,7 +135,9 @@ ProcessVariable::ProcessVariable(ProcessVariable&& other)
       _shapefunction_order(other._shapefunction_order),
       _initial_condition(std::move(other._initial_condition)),
       _bc_configs(std::move(other._bc_configs)),
-      _bc_builder(std::move(other._bc_builder))
+      _bc_builder(std::move(other._bc_builder)),
+      _source_term_configs(std::move(other._source_term_configs)),
+      _source_term_builder(std::move(other._source_term_builder))
 {
 }
 
@@ -126,6 +172,22 @@ ProcessVariable::createBoundaryConditions(
             _shapefunction_order, parameters));
 
     return bcs;
+}
+
+std::vector<std::unique_ptr<NodalSourceTerm>>
+ProcessVariable::createSourceTerms(
+    const NumLib::LocalToGlobalIndexMap& dof_table,
+    const int variable_id,
+    unsigned const integration_order)
+{
+    std::vector<std::unique_ptr<NodalSourceTerm>> source_terms;
+
+    for (auto& config : _source_term_configs)
+        source_terms.emplace_back(_source_term_builder->createSourceTerm(
+            config, dof_table, _mesh, variable_id, integration_order,
+            _shapefunction_order));
+
+    return source_terms;
 }
 
 }  // namespace ProcessLib
