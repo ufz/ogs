@@ -53,7 +53,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium}
         config.getConfigSubtree("porous_medium");
     PorousMediaProperties porous_media_properties{
-        createPorousMediaProperties(mesh, porous_medium_configs)};
+        createPorousMediaProperties(mesh, porous_medium_configs, parameters)};
 
     //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");

@@ -24,6 +24,7 @@ namespace ProcessLib
 namespace RichardsComponentTransport
 {
 PorousMediaProperties createPorousMediaProperties(
-    MeshLib::Mesh& mesh, BaseLib::ConfigTree const& porous_media_config);
+    MeshLib::Mesh& mesh, BaseLib::ConfigTree const& porous_medium_configs,
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters);
 }
 }
