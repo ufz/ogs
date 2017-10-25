@@ -81,40 +81,6 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             getExtrapolator(), _local_assemblers,
             &LocalAssemblerInterface::getIntPtSigma));
 
-    // TODO remove the component-wise methods
-    Base::_secondary_variables.addSecondaryVariable(
-        "sigma_xx",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigmaXX));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "sigma_yy",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigmaYY));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "sigma_zz",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigmaZZ));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "sigma_xy",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigmaXY));
-
-    if (DisplacementDim == 3)
-    {
-        Base::_secondary_variables.addSecondaryVariable(
-            "sigma_xz",
-            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                             &LocalAssemblerInterface::getIntPtSigmaXZ));
-
-        Base::_secondary_variables.addSecondaryVariable(
-            "sigma_yz",
-            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                             &LocalAssemblerInterface::getIntPtSigmaYZ));
-    }
-
     Base::_secondary_variables.addSecondaryVariable(
         "epsilon",
         makeExtrapolator(
@@ -122,38 +88,6 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             getExtrapolator(), _local_assemblers,
             &LocalAssemblerInterface::getIntPtEpsilon));
 
-    // TODO remove the component-wise methods
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_xx",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilonXX));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_yy",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilonYY));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_zz",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilonZZ));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_xy",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilonXY));
-    if (DisplacementDim == 3)
-    {
-        Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_yz",
-            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                             &LocalAssemblerInterface::getIntPtEpsilonYZ));
-
-        Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_xz",
-            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                             &LocalAssemblerInterface::getIntPtEpsilonXZ));
-    }
 
     // enable output of internal variables defined by material models
     auto const internal_variables =
