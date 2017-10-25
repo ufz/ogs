@@ -195,7 +195,7 @@ public:
             // porosity model
             auto const porosity =
                 _process_data.porous_media_properties.getPorosity(t, pos)
-                    .getValue(0.0, T_int_pt);
+                    .getValue(t, pos, 0.0, T_int_pt);
 
             double const thermal_conductivity =
                 thermal_conductivity_solid * (1 - porosity) +

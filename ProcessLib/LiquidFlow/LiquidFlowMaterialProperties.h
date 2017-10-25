@@ -121,10 +121,12 @@ public:
 
     double getThermalConductivity(const double p, const double T) const;
 
-    double getPorosity(const int material_id, const double porosity_variable,
-                       const double T) const
+    double getPorosity(const int material_id, const double t,
+                       const SpatialPosition& pos,
+                       const double porosity_variable, const double T) const
     {
-        return _porosity_models[material_id]->getValue(porosity_variable, T);
+        return _porosity_models[material_id]->getValue(t, pos,
+                                                       porosity_variable, T);
     }
 
     double getSolidThermalExpansion(const double t,

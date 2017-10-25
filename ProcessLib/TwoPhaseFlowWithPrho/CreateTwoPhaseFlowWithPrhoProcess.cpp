@@ -97,7 +97,8 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     }
 
     std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties> material =
-        createTwoPhaseFlowPrhoMaterialProperties(mat_config, material_ids);
+        createTwoPhaseFlowPrhoMaterialProperties(mat_config, material_ids,
+                                                 parameters);
 
     TwoPhaseFlowWithPrhoProcessData process_data{
         specific_body_force, has_gravity, mass_lumping,       diff_coeff_b,

@@ -89,7 +89,8 @@ std::unique_ptr<Process> createRichardsFlowProcess(
         INFO("The Richards flow is in homogeneous porous media.");
     }
     std::unique_ptr<RichardsFlowMaterialProperties> material =
-        createRichardsFlowMaterialProperties(mat_config, material_ids);
+        createRichardsFlowMaterialProperties(mat_config, material_ids,
+                                             parameters);
     RichardsFlowProcessData process_data{std::move(material),
                                          specific_body_force, has_gravity,
                                          mass_lumping, temperature};

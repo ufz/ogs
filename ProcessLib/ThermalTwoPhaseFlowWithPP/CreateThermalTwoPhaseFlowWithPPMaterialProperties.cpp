@@ -38,13 +38,14 @@ namespace ThermalTwoPhaseFlowWithPP
 std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties>
 createThermalTwoPhaseFlowWithPPMaterialProperties(
     BaseLib::ConfigTree const& config,
-    MeshLib::PropertyVector<int> const& material_ids)
+    MeshLib::PropertyVector<int> const& material_ids,
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
 {
     DBUG(
         "Reading material properties of nonisothermal two-phase flow process.");
     auto two_phase_model_tuple =
         MaterialLib::TwoPhaseFlowWithPP::createTwoPhaseFlowMaterialProperties(
-            config, material_ids);
+            config, material_ids, parameters);
     auto two_phase_material_model =
         std::move(std::get<0>(two_phase_model_tuple));
     auto const& fluid_config = std::get<1>(two_phase_model_tuple);

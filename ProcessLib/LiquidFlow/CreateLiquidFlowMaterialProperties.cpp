@@ -80,8 +80,8 @@ createLiquidFlowMaterialProperties(
         auto const& porosity_config =
             //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__porosity}
             porous_medium_config.getConfigSubtree("porosity");
-        auto n =
-            MaterialLib::PorousMedium::createPorosityModel(porosity_config);
+        auto n = MaterialLib::PorousMedium::createPorosityModel(porosity_config,
+                                                                parameters);
         porosity_models.emplace_back(std::move(n));
 
         auto const& storage_config =

@@ -181,7 +181,7 @@ public:
             // porosity model
             auto const porosity =
                 _process_data.porous_media_properties.getPorosity(t, pos)
-                    .getValue(0.0, C_int_pt);
+                    .getValue(t, pos, 0.0, C_int_pt);
 
             auto const retardation_factor =
                 _process_data.retardation_factor(t, pos)[0];

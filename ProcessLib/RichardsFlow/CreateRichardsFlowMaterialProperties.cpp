@@ -36,7 +36,8 @@ std::unique_ptr<RichardsFlowMaterialProperties>
 createRichardsFlowMaterialProperties(
     BaseLib::ConfigTree const& config,
     boost::optional<MeshLib::PropertyVector<int> const&>
-        material_ids)
+        material_ids,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     DBUG("Reading material properties of Richards flow process.");
 
@@ -77,7 +78,8 @@ createRichardsFlowMaterialProperties(
 
         //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property__porous_medium__porous_medium__porosity}
         auto const& porosity_conf = conf.getConfigSubtree("porosity");
-        auto n = MaterialLib::PorousMedium::createPorosityModel(porosity_conf);
+        auto n = MaterialLib::PorousMedium::createPorosityModel(porosity_conf,
+                                                                parameters);
         porosity_models.emplace_back(std::move(n));
 
         //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property__porous_medium__porous_medium__storage}

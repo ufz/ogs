@@ -14,6 +14,8 @@
 
 #include <string>
 
+#include "ProcessLib/Parameter/Parameter.h"
+
 namespace MaterialLib
 {
 namespace PorousMedium
@@ -21,16 +23,32 @@ namespace PorousMedium
 class Porosity
 {
 public:
+    explicit Porosity(
+        ProcessLib::Parameter<double> const& parameter)
+        : _parameter(parameter)
+    {
+    }
     virtual ~Porosity() = default;
 
     /**
      *  Get property value.
-     *  @param variable    A variable that can be saturation, or an invariant
-     *                     of stress or strain.
-     *  @param temperature Temperature.
+     *  @param t point in time
+     *  @param pos spatial position
+     *  @param variable    A variable with any double type value.
+     *  @param temperature Temperature with any double type value.
      */
-    virtual double getValue(const double variable,
-                            const double temperature) const = 0;
+    virtual double getValue(const double t,
+                            ProcessLib::SpatialPosition const& pos,
+                            const double variable,
+                            const double temperature) const
+    {
+        (void)variable;
+        (void)temperature;
+        return _parameter(t, pos)[0];
+    }
+
+private:
+    ProcessLib::Parameter<double> const& _parameter;
 };
 
 }  // end of namespace

@@ -32,7 +32,8 @@ std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties>
 createTwoPhaseFlowWithPPMaterialProperties(
     BaseLib::ConfigTree const& config,
     boost::optional<MeshLib::PropertyVector<int> const&>
-        material_ids)
+        material_ids,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     DBUG("Reading material properties of two-phase flow process.");
 
@@ -86,7 +87,8 @@ createTwoPhaseFlowWithPPMaterialProperties(
 
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__material_property__porous_medium__porous_medium__porosity}
         auto const& porosity_conf = conf.getConfigSubtree("porosity");
-        auto n = MaterialLib::PorousMedium::createPorosityModel(porosity_conf);
+        auto n = MaterialLib::PorousMedium::createPorosityModel(porosity_conf,
+                                                                parameters);
         porosity_models.emplace_back(std::move(n));
 
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__material_property__porous_medium__porous_medium__storage}

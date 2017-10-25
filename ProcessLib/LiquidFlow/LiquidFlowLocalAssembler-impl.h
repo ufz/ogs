@@ -231,8 +231,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         auto const solid_thermal_expansion =
             _material_properties.getSolidThermalExpansion(t, pos);
         auto const biot_constant = _material_properties.getBiotConstant(t, pos);
-        auto const porosity =
-            _material_properties.getPorosity(material_id, porosity_variable, T);
+        auto const porosity = _material_properties.getPorosity(
+            material_id, t, pos, porosity_variable, T);
         const double eff_thermal_expansion =
             3.0 * (biot_constant - porosity) * solid_thermal_expansion -
             porosity * _material_properties.getdLiquidDensity_dT(p, T) / rho;

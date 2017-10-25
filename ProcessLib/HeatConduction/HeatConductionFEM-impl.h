@@ -74,7 +74,7 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // Porosity of porous media.
         double const n = liquid_flow_properties.getPorosity(
-            material_id, porosity_variable, T);
+            material_id, t, pos, porosity_variable, T);
 
         // Effective specific heat capacity.
         double const effective_cp = (1.0 - n) * cp_s * rho_s + n * cp_f * rho_f;

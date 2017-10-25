@@ -31,7 +31,8 @@ namespace TwoPhaseFlowWithPrho
 std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties>
 createTwoPhaseFlowPrhoMaterialProperties(
     BaseLib::ConfigTree const& config,
-    boost::optional<MeshLib::PropertyVector<int> const&> material_ids)
+    boost::optional<MeshLib::PropertyVector<int> const&> material_ids,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     DBUG("Reading material properties of two-phase flow process.");
 
@@ -86,7 +87,8 @@ createTwoPhaseFlowPrhoMaterialProperties(
 
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__material_property__porous_medium__porous_medium__porosity}
         auto const& porosity_conf = conf.getConfigSubtree("porosity");
-        auto n = MaterialLib::PorousMedium::createPorosityModel(porosity_conf);
+        auto n = MaterialLib::PorousMedium::createPorosityModel(porosity_conf,
+                                                                parameters);
         _porosity_models.emplace_back(std::move(n));
 
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__material_property__porous_medium__porous_medium__storage}

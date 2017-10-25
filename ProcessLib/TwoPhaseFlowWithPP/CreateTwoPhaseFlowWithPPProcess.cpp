@@ -86,8 +86,9 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     {
         INFO("The twophase flow is in homogeneous porous media.");
     }
-    std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties>
-    material = createTwoPhaseFlowWithPPMaterialProperties(mat_config, material_ids);
+    std::unique_ptr<TwoPhaseFlowWithPPMaterialProperties> material =
+        createTwoPhaseFlowWithPPMaterialProperties(mat_config, material_ids,
+                                                   parameters);
 
     TwoPhaseFlowWithPPProcessData process_data{
         specific_body_force, has_gravity, mass_lumping, temperature, std::move(material)};

@@ -108,8 +108,8 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
         INFO("The twophase flow is in heterogeneous porous media.");
         auto const& mat_ids =
             mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-        material = createThermalTwoPhaseFlowWithPPMaterialProperties(mat_config,
-                                                                     *mat_ids);
+        material = createThermalTwoPhaseFlowWithPPMaterialProperties(
+            mat_config, *mat_ids, parameters);
     }
     else
     {
@@ -119,7 +119,7 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
             dummy_property.createNewPropertyVector<int>(
                 "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
         material = createThermalTwoPhaseFlowWithPPMaterialProperties(
-            mat_config, *dummy_property_vector);
+            mat_config, *dummy_property_vector, parameters);
     }
 
     ThermalTwoPhaseFlowWithPPProcessData process_data{specific_body_force,

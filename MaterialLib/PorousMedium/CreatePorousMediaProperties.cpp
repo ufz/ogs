@@ -52,7 +52,8 @@ PorousMediaProperties createPorousMediaProperties(
             //! \ogs_file_param{material__porous_medium__porous_medium__porosity}
             porous_medium_config.getConfigSubtree("porosity");
         porosity_models.emplace_back(
-            MaterialLib::PorousMedium::createPorosityModel(porosity_config));
+            MaterialLib::PorousMedium::createPorosityModel(porosity_config,
+                                                           parameters));
 
         // Configuration for the intrinsic permeability (only one scalar per
         // element, i.e., the isotropic case is handled at the moment)
