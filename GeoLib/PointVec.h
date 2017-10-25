@@ -127,6 +127,17 @@ private:
     // this way the compiler does not create a (possible unwanted) assignment operator
     PointVec& operator= (const PointVec& rhs);
 
+	/**
+	 * Inserts the instance of the Point into internal data structures
+	 * (@see TemplateVec::_data_vec, _pnt_id_map) if and only if there
+	 * does not exist a point with the same coordinates (upto
+	 * std::numeric_limits<double>::epsilon()). In case there exists
+	 * already a point with the same coordinates the given pnt-object
+	 * will be deleted!
+	 * @param pnt  Pointer to GeooLib::Point instance
+	 * @return either the new id or the id of the existing point with
+	 * the same coordinates
+	 */
     std::size_t uniqueInsert (Point* pnt);
 
     /** the type of the point (\sa enum PointType) */

@@ -33,12 +33,13 @@ namespace FileIO
 {
 namespace GMSH
 {
-GMSHInterface::GMSHInterface(GeoLib::GEOObjects& geo_objs,
-                             bool /*include_stations_as_constraints*/,
-                             GMSH::MeshDensityAlgorithm mesh_density_algorithm,
-                             double param1, double param2, std::size_t param3,
-                             std::vector<std::string>& selected_geometries,
-                             bool rotate, bool keep_preprocessed_geometry)
+GMSHInterface::GMSHInterface(
+    GeoLib::GEOObjects& geo_objs, bool /*include_stations_as_constraints*/,
+    GMSH::MeshDensityAlgorithm const mesh_density_algorithm,
+    double const pnt_density, double const station_density,
+    std::size_t const max_pnts_per_leaf,
+    std::vector<std::string> const& selected_geometries, bool const rotate,
+    bool const keep_preprocessed_geometry)
     : _n_lines(0),
       _n_plane_sfc(0),
       _geo_objs(geo_objs),
@@ -48,10 +49,13 @@ GMSHInterface::GMSHInterface(GeoLib::GEOObjects& geo_objs,
 {
     switch (mesh_density_algorithm) {
     case GMSH::MeshDensityAlgorithm::FixedMeshDensity:
-        _mesh_density_strategy = new GMSH::GMSHFixedMeshDensity(param1);
+        _mesh_density_strategy =
+            std::make_unique<GMSH::GMSHFixedMeshDensity>(pnt_density);
         break;
     case GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity:
-        _mesh_density_strategy = new GMSH::GMSHAdaptiveMeshDensity(param1, param2, param3);
+        _mesh_density_strategy =
+            std::make_unique<GMSH::GMSHAdaptiveMeshDensity>(
+                pnt_density, station_density, max_pnts_per_leaf);
         break;
     }
 }
@@ -60,7 +64,6 @@ GMSHInterface::~GMSHInterface()
 {
     for (auto * gmsh_pnt : _gmsh_pnts)
         delete gmsh_pnt;
-    delete _mesh_density_strategy;
     for (auto * polygon_tree : _polygon_tree_list)
         delete polygon_tree;
 }
@@ -116,7 +119,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
 
     std::vector<GeoLib::Polyline*> const* merged_plys(
         _geo_objs.getPolylineVec(_gmsh_geo_name));
-    DBUG("GMSHInterface::writeGMSHInputFile(): \t ok.");
+    DBUG("GMSHInterface::writeGMSHInputFile(): Obtained data.");
 
     if (!merged_plys) {
         ERR("GMSHInterface::writeGMSHInputFile(): Did not find any polylines.");
@@ -136,7 +139,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         }
         _polygon_tree_list.push_back(new GMSH::GMSHPolygonTree(
             new GeoLib::PolygonWithSegmentMarker(*polyline), nullptr, _geo_objs,
-            _gmsh_geo_name, _mesh_density_strategy));
+            _gmsh_geo_name, *_mesh_density_strategy));
     }
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "

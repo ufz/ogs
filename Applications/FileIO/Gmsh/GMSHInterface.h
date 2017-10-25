@@ -52,9 +52,9 @@ public:
      * as constraints
      * @param mesh_density_algorithm one of the mesh density algorithms (\@see
      * enum MeshDensityAlgorithm)
-     * @param param1 parameter that can be used for the mesh density algorithm
-     * @param param2 parameter that can be used for the mesh density algorithm
-     * @param param3 parameter that can be used for the mesh density algorithm
+     * @param pnt_density parameter of the mesh density algorithm
+     * @param station_density parameter of the mesh density algorithm
+     * @param max_pnts_per_leaf parameter of the mesh density algorithm
      * @param selected_geometries vector of names of geometries, that should be
      * employed for mesh generation.
      * @param rotate if the value of the parameter is true then the input points
@@ -66,9 +66,10 @@ public:
     GMSHInterface(GeoLib::GEOObjects& geo_objs,
                   bool include_stations_as_constraints,
                   GMSH::MeshDensityAlgorithm mesh_density_algorithm,
-                  double param1, double param2, std::size_t param3,
-                  std::vector<std::string>& selected_geometries, bool rotate,
-                  bool keep_preprocessed_geometry);
+                  double pnt_density, double station_density,
+                  std::size_t max_pnts_per_leaf,
+                  std::vector<std::string> const& selected_geometries,
+                  bool rotate, bool keep_preprocessed_geometry);
 
     GMSHInterface(GMSHInterface const&) = delete;
     GMSHInterface(GMSHInterface &&) = delete;
@@ -97,20 +98,20 @@ private:
     std::size_t _n_plane_sfc;
 
     GeoLib::GEOObjects & _geo_objs;
-    std::vector<std::string>& _selected_geometries;
+    std::vector<std::string> const& _selected_geometries;
     std::string _gmsh_geo_name;
     std::list<GMSH::GMSHPolygonTree*> _polygon_tree_list;
 
     std::vector<GMSH::GMSHPoint*> _gmsh_pnts;
 
-    GMSH::GMSHMeshDensityStrategy *_mesh_density_strategy;
+    std::unique_ptr<GMSH::GMSHMeshDensityStrategy> _mesh_density_strategy;
     /// Holds the inverse rotation matrix. The matrix is used in writePoints() to
     /// revert the rotation done in writeGMSHInputFile().
     MathLib::DenseMatrix<double> _inverse_rot_mat =
         MathLib::DenseMatrix<double>(3, 3, 0);
     /// Signals if the input points should be rotated or projected to the
     /// \f$x\f$-\f$y\f$-plane
-    bool _rotate = false;
+    bool const _rotate = false;
     bool _keep_preprocessed_geometry = true;
 };
 } // end namespace GMSH
