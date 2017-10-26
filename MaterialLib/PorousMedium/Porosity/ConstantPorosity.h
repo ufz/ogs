@@ -23,9 +23,6 @@ class ConstantPorosity final : public Porosity
 public:
     explicit ConstantPorosity(const double value) : _value(value) {}
 
-    /// Get model name.
-    std::string getName() const override { return "Constant porosity"; }
-
     /**
      *  Get property value.
      *  @param variable    A variable with any double type value.

@@ -23,9 +23,6 @@ class Porosity
 public:
     virtual ~Porosity() = default;
 
-    /// Get model name.
-    virtual std::string getName() const = 0;
-
     /**
      *  Get property value.
      *  @param variable    A variable that can be saturation, or an invariant
