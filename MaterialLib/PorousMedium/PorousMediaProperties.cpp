@@ -28,10 +28,11 @@ MaterialLib::PorousMedium::Porosity const& PorousMediaProperties::getPorosity(
     return *_porosity_models[getMaterialID(pos)];
 }
 
-Eigen::MatrixXd const& PorousMediaProperties::getIntrinsicPermeability(
+MaterialLib::PorousMedium::Permeability const&
+PorousMediaProperties::getIntrinsicPermeability(
     double /*t*/, ProcessLib::SpatialPosition const& pos) const
 {
-    return _intrinsic_permeability_models[getMaterialID(pos)];
+    return *_intrinsic_permeability_models[getMaterialID(pos)];
 }
 
 MaterialLib::PorousMedium::Storage const&

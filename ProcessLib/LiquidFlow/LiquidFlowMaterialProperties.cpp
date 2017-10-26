@@ -118,10 +118,11 @@ double LiquidFlowMaterialProperties::getMassCoefficient(
 }
 
 Eigen::MatrixXd const& LiquidFlowMaterialProperties::getPermeability(
-    const int material_id, const double /*t*/, const SpatialPosition& /*pos*/,
+    const int material_id, const double t, const SpatialPosition& pos,
     const int /*dim*/) const
 {
-    return _intrinsic_permeability_models[material_id];
+    return _intrinsic_permeability_models[material_id]->getValue(t, pos, 0.0,
+                                                                 0.0);
 }
 
 double LiquidFlowMaterialProperties::getSolidThermalExpansion(

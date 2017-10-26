@@ -58,7 +58,8 @@ createTwoPhaseFlowWithPPMaterialProperties(
     // Get porous properties
     std::vector<int> mat_ids;
     std::vector<int> mat_krel_ids;
-    std::vector<Eigen::MatrixXd> intrinsic_permeability_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
+        intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
@@ -83,7 +84,7 @@ createTwoPhaseFlowWithPPMaterialProperties(
         auto const& permeability_conf = conf.getConfigSubtree("permeability");
         intrinsic_permeability_models.emplace_back(
             MaterialLib::PorousMedium::createPermeabilityModel(
-                permeability_conf));
+                permeability_conf, parameters));
 
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__material_property__porous_medium__porous_medium__porosity}
         auto const& porosity_conf = conf.getConfigSubtree("porosity");
@@ -130,7 +131,7 @@ createTwoPhaseFlowWithPPMaterialProperties(
     return std::make_unique<TwoPhaseFlowWithPPMaterialProperties>(
         material_ids, std::move(liquid_density), std::move(liquid_viscosity),
         std::move(gas_density), std::move(gas_viscosity),
-        intrinsic_permeability_models, std::move(porosity_models),
+        std::move(intrinsic_permeability_models), std::move(porosity_models),
         std::move(storage_models), std::move(capillary_pressure_models),
         std::move(relative_permeability_models));
 }

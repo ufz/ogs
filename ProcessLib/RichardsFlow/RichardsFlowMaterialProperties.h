@@ -51,7 +51,8 @@ public:
     RichardsFlowMaterialProperties(
         boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
-        std::vector<Eigen::MatrixXd>&& intrinsic_permeability_models,
+        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
+            intrinsic_permeability_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
             porosity_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
@@ -104,7 +105,8 @@ private:
     const std::unique_ptr<MaterialLib::Fluid::FluidProperties>
         _fluid_properties;
 
-    std::vector<Eigen::MatrixXd> const _intrinsic_permeability_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>> const
+        _intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> const
         _porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> const

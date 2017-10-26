@@ -204,7 +204,7 @@ public:
 
             auto const& K =
                 _process_data.porous_media_properties.getIntrinsicPermeability(
-                    t, pos);
+                    t, pos).getValue(t, pos, 0.0, 0.0);
             // Use the viscosity model to compute the viscosity
             auto const mu = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
@@ -289,7 +289,7 @@ public:
 
             auto const& K =
                 _process_data.porous_media_properties.getIntrinsicPermeability(
-                    t, pos);
+                    t, pos).getValue(t, pos, 0.0, 0.0);
             auto const mu = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
             GlobalDimMatrixType const K_over_mu = K / mu;

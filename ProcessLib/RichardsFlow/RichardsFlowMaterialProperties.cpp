@@ -31,7 +31,8 @@ namespace RichardsFlow
 RichardsFlowMaterialProperties::RichardsFlowMaterialProperties(
     boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
     std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
-    std::vector<Eigen::MatrixXd>&& intrinsic_permeability_models,
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
+        intrinsic_permeability_models,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
         porosity_models,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
@@ -44,7 +45,7 @@ RichardsFlowMaterialProperties::RichardsFlowMaterialProperties(
         relative_permeability_models)
     : _material_ids(material_ids),
       _fluid_properties(std::move(fluid_properties)),
-      _intrinsic_permeability_models(intrinsic_permeability_models),
+      _intrinsic_permeability_models(std::move(intrinsic_permeability_models)),
       _porosity_models(std::move(porosity_models)),
       _storage_models(std::move(storage_models)),
       _capillary_pressure_models(std::move(capillary_pressure_models)),
@@ -85,10 +86,11 @@ double RichardsFlowMaterialProperties::getFluidViscosity(const double p,
 }
 
 Eigen::MatrixXd const& RichardsFlowMaterialProperties::getPermeability(
-    const int material_id, const double /*t*/,
-    const ProcessLib::SpatialPosition& /*pos*/, const int /*dim*/) const
+    const int material_id, const double t,
+    const ProcessLib::SpatialPosition& pos, const int /*dim*/) const
 {
-    return _intrinsic_permeability_models[material_id];
+    return _intrinsic_permeability_models[material_id]->getValue(t, pos, 0.0,
+                                                                 0.0);
 }
 
 double RichardsFlowMaterialProperties::getPorosity(

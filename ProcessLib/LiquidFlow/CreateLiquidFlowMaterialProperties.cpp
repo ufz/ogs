@@ -51,7 +51,8 @@ createLiquidFlowMaterialProperties(
         MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Get porous properties
-    std::vector<Eigen::MatrixXd> intrinsic_permeability_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
+        intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
@@ -75,7 +76,7 @@ createLiquidFlowMaterialProperties(
             porous_medium_config.getConfigSubtree("permeability");
         intrinsic_permeability_models.emplace_back(
             MaterialLib::PorousMedium::createPermeabilityModel(
-                permeability_config));
+                permeability_config, parameters));
 
         auto const& porosity_config =
             //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property__porous_medium__porous_medium__porosity}

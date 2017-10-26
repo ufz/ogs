@@ -31,7 +31,8 @@ PorousMediaProperties createPorousMediaProperties(
 {
     DBUG("Create PorousMediaProperties.");
 
-    std::vector<Eigen::MatrixXd> intrinsic_permeability_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
+        intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
@@ -65,7 +66,7 @@ PorousMediaProperties createPorousMediaProperties(
             porous_medium_config.getConfigSubtree("permeability");
         intrinsic_permeability_models.emplace_back(
             MaterialLib::PorousMedium::createPermeabilityModel(
-                permeability_config));
+                permeability_config, parameters));
 
         // Configuration for the specific storage.
         auto const& storage_config =

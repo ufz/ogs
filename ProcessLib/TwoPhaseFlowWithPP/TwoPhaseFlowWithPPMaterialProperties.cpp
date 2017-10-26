@@ -37,7 +37,7 @@ TwoPhaseFlowWithPPMaterialProperties::TwoPhaseFlowWithPPMaterialProperties(
         gas_density,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>
         gas_viscosity,
-    std::vector<Eigen::MatrixXd>
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
         intrinsic_permeability_models,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
         porosity_models,
@@ -122,10 +122,11 @@ double TwoPhaseFlowWithPPMaterialProperties::getGasViscosity(
 }
 
 Eigen::MatrixXd const& TwoPhaseFlowWithPPMaterialProperties::getPermeability(
-    const int material_id, const double /*t*/,
-    const ProcessLib::SpatialPosition& /*pos*/, const int /*dim*/) const
+    const int material_id, const double t,
+    const ProcessLib::SpatialPosition& pos, const int /*dim*/) const
 {
-    return _intrinsic_permeability_models[material_id];
+    return _intrinsic_permeability_models[material_id]->getValue(t, pos, 0.0,
+                                                                 0.0);
 }
 
 double TwoPhaseFlowWithPPMaterialProperties::getPorosity(

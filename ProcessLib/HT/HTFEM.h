@@ -172,9 +172,6 @@ public:
             auto const specific_storage =
                 _process_data.porous_media_properties.getSpecificStorage(t, pos)
                     .getValue(0.0);
-            auto const intrinsic_permeability =
-                _process_data.porous_media_properties.getIntrinsicPermeability(
-                    t, pos);
 
             auto const thermal_conductivity_solid =
                 _process_data.thermal_conductivity_solid(t, pos)[0];
@@ -196,6 +193,10 @@ public:
             auto const porosity =
                 _process_data.porous_media_properties.getPorosity(t, pos)
                     .getValue(t, pos, 0.0, T_int_pt);
+
+            auto const intrinsic_permeability =
+                _process_data.porous_media_properties.getIntrinsicPermeability(
+                    t, pos).getValue(t, pos, 0.0, T_int_pt);
 
             double const thermal_conductivity =
                 thermal_conductivity_solid * (1 - porosity) +
@@ -318,7 +319,7 @@ public:
 
             auto const K =
                 _process_data.porous_media_properties.getIntrinsicPermeability(
-                    t, pos);
+                    t, pos).getValue(t, pos, 0.0, T_int_pt);
 
             auto const mu = _process_data.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);

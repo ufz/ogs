@@ -20,6 +20,7 @@
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
+#include "MaterialLib/PorousMedium/Permeability/Permeability.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 
 namespace MaterialLib
@@ -61,7 +62,8 @@ public:
 
     LiquidFlowMaterialProperties(
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
-        std::vector<Eigen::MatrixXd>&& intrinsic_permeability_models,
+        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
+            intrinsic_permeability_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
             porosity_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
@@ -146,7 +148,8 @@ private:
     const std::unique_ptr<MaterialLib::Fluid::FluidProperties>
         _fluid_properties;
 
-    const std::vector<Eigen::MatrixXd> _intrinsic_permeability_models;
+    const std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
+        _intrinsic_permeability_models;
     const std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         _porosity_models;
     const std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
