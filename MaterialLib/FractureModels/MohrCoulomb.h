@@ -41,10 +41,18 @@ public:
         {
         }
 
+        /// Normal stiffness given in units of stress.
         P const& normal_stiffness;
+        /// Shear stiffness given in units of stress.
         P const& shear_stiffness;
+        /// Governs the normal stress dependence of the shear strength.
+        /// \note Given in degrees (not radian).
         P const& friction_angle;
+        /// Governs the dilatancy behaviour during the plastic deformation of
+        /// the fault.
+        /// \note Given in degrees (not radian).
         P const& dilatancy_angle;
+        /// Fracture cohesion in units of stress.
         P const& cohesion;
     };
 
@@ -108,12 +116,14 @@ public:
             material_state_variables) override;
 
 private:
-    /// \copydoc
-    /// MaterialLib::Fracture::LinearElasticIsotropic::_penalty_aperture_cutoff
+    /// Compressive normal displacements above this value will not enter the
+    /// computation of the normal stiffness modulus of the fracture.
+    /// \note Setting this to the initial aperture value allows negative
+    /// apertures.
     double const _penalty_aperture_cutoff;
 
-    /// \copydoc
-    /// MaterialLib::Fracture::LinearElasticIsotropic::_tension_cutoff
+    /// If set no resistance to open the fracture over the initial aperture is
+    /// opposed.
     bool const _tension_cutoff;
 
     MaterialProperties _mp;
@@ -128,5 +138,5 @@ namespace Fracture
 {
 extern template class MohrCoulomb<2>;
 extern template class MohrCoulomb<3>;
-}  // namespace Fractrue
+}  // namespace Fracture
 }  // namespace MaterialLib

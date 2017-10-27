@@ -36,7 +36,9 @@ public:
         {
         }
 
+        /// Normal stiffness given in units of stress.
         P const& normal_stiffness;
+        /// Shear stiffness given in units of stress.
         P const& shear_stiffness;
     };
 
@@ -121,5 +123,5 @@ namespace Fracture
 {
 extern template class LinearElasticIsotropic<2>;
 extern template class LinearElasticIsotropic<3>;
-}  // namespace Fractrue
+}  // namespace Fracture
 }  // namespace MaterialLib

@@ -23,24 +23,24 @@ createLinearElasticIsotropic(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
-    //! \ogs_file_param{material__solid__constitutive_relation__type}
+    //! \ogs_file_param{material__fracture_model__type}
     config.checkConfigParameter("type", "LinearElasticIsotropic");
     DBUG("Create LinearElasticIsotropic material");
 
     auto& Kn = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__normal_stiffness}
+        //! \ogs_file_param_special{material__fracture_model__LinearElasticIsotropic__normal_stiffness}
         config, "normal_stiffness", parameters, 1);
 
     auto& Ks = ProcessLib::findParameter<double>(
-        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__shear_stiffness}
+        //! \ogs_file_param_special{material__fracture_model__LinearElasticIsotropic__shear_stiffness}
         config, "shear_stiffness", parameters, 1);
 
     auto const penalty_aperture_cutoff =
-        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__penalty_aperture_cutoff}
+        //! \ogs_file_param{material__fracture_model__LinearElasticIsotropic__penalty_aperture_cutoff}
         config.getConfigParameter<double>("penalty_aperture_cutoff");
 
     auto const tension_cutoff =
-        //! \ogs_file_param_special{material__solid__constitutive_relation__LinearElasticIsotropic__tension_cutoff}
+        //! \ogs_file_param{material__fracture_model__LinearElasticIsotropic__tension_cutoff}
         config.getConfigParameter<bool>("tension_cutoff");
 
     typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp{
