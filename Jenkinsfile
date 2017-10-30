@@ -10,7 +10,7 @@ timestamps {
 builders['gcc'] = {
     node('docker') {
         dir('ogs') {
-            checkoutWithTags()
+            checkout scm
             tag = helper.getTag()
         }
         load 'ogs/scripts/jenkins/gcc.groovy'
@@ -19,36 +19,36 @@ builders['gcc'] = {
 
 builders['gcc-conan'] = {
     node('docker') {
-        dir('ogs') { checkoutWithTags() }
+        dir('ogs') { checkout scm }
         load 'ogs/scripts/jenkins/gcc-conan.groovy'
     }
 }
 
 builders['gcc-dynamic'] = {
     node('envinf1') {
-        dir('ogs') { checkoutWithTags() }
+        dir('ogs') { checkout scm }
         load 'ogs/scripts/jenkins/gcc-dynamic.groovy'
     }
 }
 
 builders['msvc'] = {
     node('win && conan') {
-        dir('ogs') { checkoutWithTags() }
+        dir('ogs') { checkout scm }
         load 'ogs/scripts/jenkins/msvc.groovy'
     }
 }
 
-builders['mac'] = {
-    node('mac') {
-        dir('ogs') { checkoutWithTags() }
+// builders['mac'] = {
+    // node('mac') {
+        // dir('ogs') { checkout scm }
         // load 'ogs/scripts/jenkins/mac.groovy'
-    }
-}
+    // }
+// }
 
 if (helper.isRelease(this)) {
     builders['msvc32'] = {
         node('win && conan') {
-            dir('ogs') { checkoutWithTags() }
+            dir('ogs') { checkout scm }
             load 'ogs/scripts/jenkins/msvc32.groovy'
         }
     }
@@ -57,7 +57,7 @@ if (helper.isRelease(this)) {
 if (helper.isOriginMaster(this)) {
     builders['coverage'] = {
         node('docker') {
-            dir('ogs') { checkoutWithTags() }
+            dir('ogs') { checkout scm }
             load 'ogs/scripts/jenkins/coverage.groovy'
         }
     }
@@ -75,7 +75,7 @@ catch (err) {
 }
 
 node('master') {
-    checkoutWithTags()
+    checkout scm
     step([$class: 'LogParserPublisher',
         failBuildOnError: true,
         projectRulePath: "scripts/jenkins/all-log-parser.rules",
@@ -94,7 +94,7 @@ if (helper.isOriginMaster(this)) {
             helper.notification(msg: "Marked build for ${tag}.", script: this)
 
             node('mac') {
-                dir('ogs') { checkoutWithTags() }
+                dir('ogs') { checkout scm }
                 load 'ogs/scripts/jenkins/docset.groovy'
             }
         }
