@@ -38,12 +38,12 @@ builders['msvc'] = {
     }
 }
 
-builders['mac'] = {
-    node('mac') {
-        dir('ogs') { checkout scm }
+// builders['mac'] = {
+    // node('mac') {
+        // dir('ogs') { checkout scm }
         // load 'ogs/scripts/jenkins/mac.groovy'
-    }
-}
+    // }
+// }
 
 if (helper.isRelease(this)) {
     builders['msvc32'] = {
