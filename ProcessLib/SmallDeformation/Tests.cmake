@@ -202,7 +202,7 @@ AddTest(
     EXECUTABLE_ARGS cube_1e0_dp.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 5e-15 RELTOL 1e-13
+    ABSTOL 1e-14 RELTOL 0
     DIFF_DATA
     expected_cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu displacement displacement
     expected_cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu sigma sigma
@@ -232,7 +232,7 @@ AddTest(
     EXECUTABLE_ARGS data.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 2e-13 RELTOL 0
+    ABSTOL 5e-13 RELTOL 0
     DIFF_DATA
     uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu displacement displacement
     uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu sigma sigma
