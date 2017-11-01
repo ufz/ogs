@@ -145,12 +145,12 @@ public:
         }
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& local_x,
+    void assemble(double const t, std::vector<double> const& local_x,
             std::vector<double>& /*local_M_data*/,
             std::vector<double>& local_K_data,
             std::vector<double>& local_b_data) override
     {
-        //only for linear elastic
+        //fatal::only for linear elastic
         //        M=0;
         //        K = B.transpose() * C B * w //vormals Jac
         //        b = N_u_op.transpose() * rho * b * w;
@@ -166,15 +166,63 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
+        SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            x_position.setIntegrationPoint(ip);
+            auto const& w = _ip_data[ip].integration_weight;
+            auto const& N = _ip_data[ip].N;
+            auto const& dNdx = _ip_data[ip].dNdx;
+
+            typename ShapeMatricesType::template MatrixType<DisplacementDim,
+            displacement_size>
+            N_u_op = ShapeMatricesType::template MatrixType<
+            DisplacementDim,
+            displacement_size>::Zero(DisplacementDim,
+                    displacement_size);
+            for (int i = 0; i < DisplacementDim; ++i)
+                N_u_op
+                .template block<1, displacement_size / DisplacementDim>(
+                        i, i * displacement_size / DisplacementDim)
+                        .noalias() = N;
+
+            auto const x_coord =
+                    interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                            _element, N);
+            auto const B = LinearBMatrix::computeBMatrix<
+                    DisplacementDim, ShapeFunction::NPOINTS,
+                    typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
+                            _is_axially_symmetric);
+
+            auto const& eps_prev = _ip_data[ip].eps_prev;
+            auto const& sigma_prev = _ip_data[ip].sigma_prev;
+
+            auto& eps = _ip_data[ip].eps;
+            auto& sigma = _ip_data[ip].sigma;
+            auto& state = _ip_data[ip].material_state_variables;
+
+            eps.noalias() =
+                    B *
+                    Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
+                            local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
+
+            auto&& solution = _ip_data[ip].solid_material.integrateStress(
+                    t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
+                    *state);
+
+            if (!solution)
+                OGS_FATAL("Computation of local constitutive relation failed.");
+
             KelvinMatrixType<DisplacementDim> C;
             std::tie(sigma, state, C) = std::move(*solution);
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
             auto const& b = _process_data.specific_body_force;
+
             local_b.noalias() -=
-                (B.transpose() * sigma - N_u_op.transpose() * rho * b) * w;
+                    (N_u_op.transpose() * rho * b) * w;
             local_K.noalias() += B.transpose() * C * B * w;
         }
 
