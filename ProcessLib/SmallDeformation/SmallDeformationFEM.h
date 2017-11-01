@@ -145,18 +145,38 @@ public:
         }
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
-                  std::vector<double>& local_M_data,
-                  std::vector<double>& local_K_data,
-                  std::vector<double>& local_b_data) override
+    void assemble(double const /*t*/, std::vector<double> const& local_x,
+            std::vector<double>& /*local_M_data*/,
+            std::vector<double>& local_K_data,
+            std::vector<double>& local_b_data) override
     {
-//        OGS_FATAL(
-//            "SmallDeformationLocalAssembler: assembly without jacobian is not "
-//            "implemented.");
         //only for linear elastic
-//        M=0;
-//        K = B.transpose() * C B * w //vormals Jac
-//        b = N_u_op.transpose() * rho * b * w;
+        //        M=0;
+        //        K = B.transpose() * C B * w //vormals Jac
+        //        b = N_u_op.transpose() * rho * b * w;
+
+        auto const local_matrix_size = local_x.size();
+
+        auto local_K = MathLib::createZeroedMatrix<StiffnessMatrixType>(
+            local_K_data, local_matrix_size, local_matrix_size);
+
+        auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
+            local_b_data, local_matrix_size);
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            KelvinMatrixType<DisplacementDim> C;
+            std::tie(sigma, state, C) = std::move(*solution);
+
+            auto const rho = _process_data.solid_density(t, x_position)[0];
+            auto const& b = _process_data.specific_body_force;
+            local_b.noalias() -=
+                (B.transpose() * sigma - N_u_op.transpose() * rho * b) * w;
+            local_K.noalias() += B.transpose() * C * B * w;
+        }
 
     }
 
