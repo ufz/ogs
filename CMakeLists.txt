@@ -9,7 +9,9 @@ cmake_minimum_required(VERSION 3.1)
 cmake_policy(SET CMP0011 NEW)
 cmake_policy(SET CMP0054 NEW)
 
-if(WIN32 AND NOT ${CMAKE_GENERATOR} STREQUAL Ninja)
+if(WIN32 AND
+    NOT ${CMAKE_GENERATOR} STREQUAL Ninja AND
+    NOT ${CMAKE_GENERATOR} MATCHES 2015) # does not work on 2015
     # Force 64-bit VS compiler
     set(CMAKE_GENERATOR_TOOLSET host=x64)
 endif()
