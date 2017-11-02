@@ -2,6 +2,21 @@
 *.h   hooks.style=uncrustify
 *.cpp hooks.style=uncrustify
 *.hpp hooks.style=uncrustify
-web/**/*.jpg filter=lfs diff=lfs merge=lfs -text
-web/**/*.png filter=lfs diff=lfs merge=lfs -text
-web/**/*.pdf filter=lfs diff=lfs merge=lfs -text
+
+# Git LFS
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.pdf filter=lfs diff=lfs merge=lfs -text
+*.vtu filter=lfs diff=lfs merge=lfs -text
+*.pvtu filter=lfs diff=lfs merge=lfs -text
+*.smesh filter=lfs diff=lfs merge=lfs -text
+*.3dm filter=lfs diff=lfs merge=lfs -text
+*.fem filter=lfs diff=lfs merge=lfs -text
+*.ele filter=lfs diff=lfs merge=lfs -text
+*.node filter=lfs diff=lfs merge=lfs -text
+*.msh filter=lfs diff=lfs merge=lfs -text
+*.gml filter=lfs diff=lfs merge=lfs -text
+*.vti filter=lfs diff=lfs merge=lfs -text
+*.vtp filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.pvtu* filter=lfs diff=lfs merge=lfs -text
