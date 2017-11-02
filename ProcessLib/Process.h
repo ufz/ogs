@@ -14,6 +14,7 @@
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "NumLib/NamedFunctionCaller.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionCollection.h"
+#include "ProcessLib/SourceTerms/NodalSourceTerm.h"
 #include "ProcessLib/Parameter/Parameter.h"
 
 #include "ExtrapolatorData.h"
@@ -218,6 +219,7 @@ private:
     std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 
     BoundaryConditionCollection _boundary_conditions;
+    std::vector<std::unique_ptr<NodalSourceTerm>> _source_terms;
 
     ExtrapolatorData _extrapolator_data;
 };

@@ -59,6 +59,19 @@ void Process::initialize()
     DBUG("Initialize boundary conditions.");
     _boundary_conditions.addBCsForProcessVariables(
         _process_variables, *_local_to_global_index_map, _integration_order);
+
+    for (int variable_id = 0;
+         variable_id < static_cast<int>(_process_variables.size());
+         ++variable_id)
+    {
+        ProcessVariable& pv = _process_variables[variable_id];
+        auto sts =
+            pv.createSourceTerms(*_local_to_global_index_map, variable_id,
+                                 _integration_order);
+
+        std::move(sts.begin(), sts.end(),
+                  std::back_inserter(_source_terms));
+    }
 }
 
 void Process::setInitialConditions(double const t, GlobalVector& x)
@@ -128,6 +141,11 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
     assembleConcreteProcess(t, x, M, K, b);
 
     _boundary_conditions.applyNaturalBC(t, x, K, b);
+
+    for (auto const& st : _source_terms)
+    {
+        st->integrateNodalSourceTerm(t, b);
+    }
 }
 
 void Process::assembleWithJacobian(const double t, GlobalVector const& x,
