@@ -310,7 +310,7 @@ AddTest(
 # Pressure boundary condition: elastic pipe plain strain
 AddTest(
     NAME SmallDeformation_PressureBC_elastic_pipe_plain_strain
-    PATH Mechanics/Linear/
+    PATH Mechanics/Linear
     EXECUTABLE ogs
     EXECUTABLE_ARGS plain_strain_pipe.prj
     TESTER vtkdiff
@@ -324,7 +324,7 @@ AddTest(
 # Pressure boundary condition: elastic pipe axisymmetric
 AddTest(
     NAME SmallDeformation_PressureBC_elastic_pipe_axisymmetric
-    PATH Mechanics/Linear/
+    PATH Mechanics/Linear
     EXECUTABLE ogs
     EXECUTABLE_ARGS axisymmetric_pipe.prj
     TESTER vtkdiff
@@ -338,7 +338,7 @@ AddTest(
 # Pressure boundary condition: elastic sphere axisymmetric
 AddTest(
     NAME SmallDeformation_PressureBC_elastic_sphere_axisymmetric
-    PATH Mechanics/Linear/
+    PATH Mechanics/Linear
     EXECUTABLE ogs
     EXECUTABLE_ARGS axisymmetric_sphere.prj
     TESTER vtkdiff
@@ -352,7 +352,7 @@ AddTest(
 # Pressure boundary condition: plastic sphere axisymmetric
 AddTest(
     NAME SmallDeformation_PressureBC_plastic_sphere_axisymmetric
-    PATH Mechanics/Ehlers/
+    PATH Mechanics/Ehlers
     EXECUTABLE ogs
     EXECUTABLE_ARGS axisymmetric_sphere_pl.prj
     TESTER vtkdiff
