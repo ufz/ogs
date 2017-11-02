@@ -6,7 +6,6 @@ pipeline {
   options {
     ansiColor('xterm')
     timestamps()
-    // alwaysDoDockerPull()
   }
   stages {
     stage('Build') {
@@ -17,6 +16,7 @@ pipeline {
               image 'ogs6/gcc-gui:latest'
               label 'docker'
               args '-v /home/jenkins/.ccache:/usr/src/.ccache'
+              alwaysPull true
             }
           }
           steps {
