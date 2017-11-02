@@ -1,1 +1,1 @@
-The name of the on which the boundary condition is defined.
+The name of the geometry on which the boundary condition is defined.
