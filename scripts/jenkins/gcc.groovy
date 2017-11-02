@@ -24,6 +24,12 @@ if (helper.isOriginMaster(this))
 def image = docker.image('ogs6/gcc-gui:latest')
 image.pull()
 image.inside(defaultDockerArgs) {
+    stage('git diff check') {
+        sh """cd ogs
+              git config core.whitespace -blank-at-eof
+              git diff --check `git merge-base origin/master HEAD`
+           """.stripIndent()
+    }
     sh 'cd ogs && git lfs pull'
     stage('Install prerequisites Web') {
         sh("""
@@ -40,6 +46,10 @@ image.inside(defaultDockerArgs) {
 
     stage('CLI (Linux-Docker)') {
         build.linux(script: this)
+    }
+
+    stage('xml lint') {
+        sh 'cd ogs && find -name \'*.prj\' -exec xmllint --noout {} \\;'
     }
 
     stage('Test (Linux-Docker)') {
