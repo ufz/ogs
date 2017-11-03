@@ -33,7 +33,7 @@ A comparison of numerical and laboratory data is shown in the figure below. The 
 
 {{< img src="../goswami.png" title="Results for numerical (OGS5 - green, ogs6 - white) and laboratory data (black squares) together with concentration distribution in the domain and mesh resolution for steady state 1 (see original research paper).">}}
 
-[The project files are here. ](../../../../../Tests/Data/Parabolic/ComponentTransport/gosami)
+[The project files are here. ](../../../../../Tests/lfs-data/Parabolic/ComponentTransport/gosami)
 
 ## Literature
 
