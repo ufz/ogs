@@ -23,7 +23,7 @@ DRY_DAYS             0
 REPORT_STEP          03:00:00
 WET_STEP             00:05:00
 DRY_STEP             01:00:00
-ROUTING_STEP         0:00:30 
+ROUTING_STEP         0:00:30
 
 INERTIAL_DAMPING     PARTIAL
 NORMAL_FLOW_LIMITED  BOTH
@@ -43,333 +43,333 @@ CONSTANT         0.0
 DRY_ONLY         NO
 
 [RAINGAGES]
-;;Gage           Format    Interval SCF      Source    
+;;Gage           Format    Interval SCF      Source
 ;;-------------- --------- ------ ------ ----------
-RG               VOLUME    3:00     1.0      FILE       "Hefei.dat"      RG         MM   
+RG               VOLUME    3:00     1.0      FILE       "Hefei.dat"      RG         MM
 
 [SUBCATCHMENTS]
-;;Subcatchment   Rain Gage        Outlet           Area     %Imperv  Width    %Slope   CurbLen  Snow Pack       
+;;Subcatchment   Rain Gage        Outlet           Area     %Imperv  Width    %Slope   CurbLen  Snow Pack
 ;;-------------- ---------------- ---------------- -------- -------- -------- -------- -------- ----------------
 ;Industriegebiet
-Sub2-2           RG               G1               28.4312  30       500      7        0                        
-;Gewässer
-Sub2-3           RG               G1               0.1474   0        500      5        0                        
+Sub2-2           RG               G1               28.4312  30       500      7        0
+;GewÃ¤sser
+Sub2-3           RG               G1               0.1474   0        500      5        0
 ;Forstwirtschaft
-Sub2-1           RG               G1               97.1007  10       500      12       0                        
+Sub2-1           RG               G1               97.1007  10       500      12       0
 ;Wohngebiet
-Sub1-1           RG               G1               38.0725  64.45    500      7        0                        
+Sub1-1           RG               G1               38.0725  64.45    500      7        0
 ;Industriegebiet
-Sub1-2           RG               G1               30.4151  36       500      7        0                        
-;Grünschutzgürtel
-Sub1-3           RG               G1               108.3998 0        500      12       0                        
+Sub1-2           RG               G1               30.4151  36       500      7        0
+;GrÃ¼nschutzgÃ¼rtel
+Sub1-3           RG               G1               108.3998 0        500      12       0
 ;Infrastruktur
-Sub1-4           RG               G1               8.1449   60       500      7        0                        
+Sub1-4           RG               G1               8.1449   60       500      7        0
 ;Wohngebiet
-Sub3-1           RG               G2               0.6578   75       500      8        0                        
+Sub3-1           RG               G2               0.6578   75       500      8        0
 ;Industriegebiet
-Sub3-2           RG               G2               3.9567   50       500      9        0                        
-;Grünschutzgürtel
-Sub3-3           RG               G2               95.7511  0        500      13       0                        
+Sub3-2           RG               G2               3.9567   50       500      9        0
+;GrÃ¼nschutzgÃ¼rtel
+Sub3-3           RG               G2               95.7511  0        500      13       0
 ;Infrastruktur
-Sub3-4           RG               G2               0.8399   100      500      8        0                        
+Sub3-4           RG               G2               0.8399   100      500      8        0
 ;Wohngebiet
-Sub4-1           RG               G3               31.1978  59       500      6        0                        
+Sub4-1           RG               G3               31.1978  59       500      6        0
 ;Industriegebiet
-Sub4-2           RG               G3               6.7564   70       500      5        0                        
+Sub4-2           RG               G3               6.7564   70       500      5        0
 ;Gewerbegebiet
-Sub4-3           RG               G3               22.9546  16.6     500      6        0                        
-;Grünschutzgürtel
-Sub4-4           RG               G3               80.4443  8.6      500      10       0                        
+Sub4-3           RG               G3               22.9546  16.6     500      6        0
+;GrÃ¼nschutzgÃ¼rtel
+Sub4-4           RG               G3               80.4443  8.6      500      10       0
 ;Infrastruktur
-Sub4-5           RG               G3               16.2885  55.3     500      5        0                        
+Sub4-5           RG               G3               16.2885  55.3     500      5        0
 ;Wohngebiet
-Sub5-1           RG               G2               27.5493  75       500      5        0                        
+Sub5-1           RG               G2               27.5493  75       500      5        0
 ;Industriegebiet
-Sub5-2           RG               G2               72.5806  90       500      6        0                        
+Sub5-2           RG               G2               72.5806  90       500      6        0
 ;Gewerbegebiet
-Sub5-3           RG               G2               3.6762   80       500      5        0                        
-;Grünschutzgürtel
-Sub5-4           RG               G2               196.4988 9.1      500      12       0                        
-;öffentliche Gebäude
-Sub5-5           RG               G2               4.5371   65       500      5        0                        
+Sub5-3           RG               G2               3.6762   80       500      5        0
+;GrÃ¼nschutzgÃ¼rtel
+Sub5-4           RG               G2               196.4988 9.1      500      12       0
+;Ã¶ffentliche GebÃ¤ude
+Sub5-5           RG               G2               4.5371   65       500      5        0
 ;Infrastruktur
-Sub5-6           RG               G2               3.3718   60       500      5        0                        
+Sub5-6           RG               G2               3.3718   60       500      5        0
 ;Wohngebiet
-Sub6-1           RG               G3               37.8288  68       500      6        0                        
+Sub6-1           RG               G3               37.8288  68       500      6        0
 ;Industriegebiet
-Sub6-2           RG               G3               3.8967   85       500      6        0                        
+Sub6-2           RG               G3               3.8967   85       500      6        0
 ;Gewerbegebiet
-Sub6-3           RG               G3               3.7656   85       500      5        0                        
-;Grün Schutzgürtel
-Sub6-4           RG               G3               44.3093  69       500      10       0                        
-;öffentliche Gebäude
-Sub6-5           RG               G3               5.7579   69       500      5        0                        
+Sub6-3           RG               G3               3.7656   85       500      5        0
+;GrÃ¼n SchutzgÃ¼rtel
+Sub6-4           RG               G3               44.3093  69       500      10       0
+;Ã¶ffentliche GebÃ¤ude
+Sub6-5           RG               G3               5.7579   69       500      5        0
 ;Infrastruktur
-Sub6-6           RG               G3               155.6609 60       500      5        0                        
+Sub6-6           RG               G3               155.6609 60       500      5        0
 ;Wohngebiet
-Sub7-1           RG               G4               137.8336 77       500      3        0                        
-;öffenliche Gebaüde
-Sub7-2           RG               G4               43.0665  55       500      2        0                        
+Sub7-1           RG               G4               137.8336 77       500      3        0
+;Ã¶ffenliche GebaÃ¼de
+Sub7-2           RG               G4               43.0665  55       500      2        0
 ;Gewerbegebiet
-Sub7-3           RG               G4               23.7881  60       500      3        0                        
+Sub7-3           RG               G4               23.7881  60       500      3        0
 ;Infrastruktur
-Sub7-4           RG               G4               84.1254  53       500      3        0                        
-;Grün Schutzgürtel
-Sub7-5           RG               G4               300.1090 10       500      9        0                        
+Sub7-4           RG               G4               84.1254  53       500      3        0
+;GrÃ¼n SchutzgÃ¼rtel
+Sub7-5           RG               G4               300.1090 10       500      9        0
 ;Wohngebiet
-Sub8-1           RG               G4               29.8215  77       500      1.5      0                        
+Sub8-1           RG               G4               29.8215  77       500      1.5      0
 ;Infrakstruktur
-Sub8-2           RG               G4               25.8732  40       500      1        0                        
-;Grün Schutzgürtel
-Sub8-3           RG               G4               112.6558 24       500      1        0                        
+Sub8-2           RG               G4               25.8732  40       500      1        0
+;GrÃ¼n SchutzgÃ¼rtel
+Sub8-3           RG               G4               112.6558 24       500      1        0
 ;Gewerbegebiet
-Sub8-4           RG               G4               41.889   75       500      1.5      0                        
+Sub8-4           RG               G4               41.889   75       500      1.5      0
 ;Wohngebiet
-Sub9-1           RG               G6               3.9289   61       500      0.3      0                        
+Sub9-1           RG               G6               3.9289   61       500      0.3      0
 ;Infrakstruktur
-Sub9-2           RG               G6               1.0175   59       500      0.2      0                        
+Sub9-2           RG               G6               1.0175   59       500      0.2      0
 ;Gewerbegebiet
-Sub9-3           RG               G6               0.9911   73       500      0.2      0                        
-;Grünschutzgürtel
-Sub9-4           RG               G6               5.5912   30       500      0.3      0                        
+Sub9-3           RG               G6               0.9911   73       500      0.2      0
+;GrÃ¼nschutzgÃ¼rtel
+Sub9-4           RG               G6               5.5912   30       500      0.3      0
 ;Wohngebiet
-Sub10-1          RG               G5               163.9238 80       500      0.5      0                        
-;öffenliche Gebäude
-Sub10-2          RG               G5               26.5768  57       500      0.5      0                        
-;Grünschutzgürtel
-Sub10-3          RG               G5               22.4342  0        500      0.5      0                        
+Sub10-1          RG               G5               163.9238 80       500      0.5      0
+;Ã¶ffenliche GebÃ¤ude
+Sub10-2          RG               G5               26.5768  57       500      0.5      0
+;GrÃ¼nschutzgÃ¼rtel
+Sub10-3          RG               G5               22.4342  0        500      0.5      0
 ;Infrastruktur
-Sub10-4          RG               G5               46.3570  89       500      0.5      0                        
+Sub10-4          RG               G5               46.3570  89       500      0.5      0
 ;Gewerbegebiet
-Sub10-5          RG               G5               25.0212  64       500      0.5      0                        
+Sub10-5          RG               G5               25.0212  64       500      0.5      0
 ;Wohngebiet
-Sub11-1          RG               G6               3.59567  56       500      0.1      0                        
+Sub11-1          RG               G6               3.59567  56       500      0.1      0
 ;Gewerbegebiet
-Sub11-2          RG               G6               13.7783  27       500      0.1      0                        
-;Grün Schutzgürtel
-Sub11-3          RG               G6               16.4341  0        500      0.1      0                        
+Sub11-2          RG               G6               13.7783  27       500      0.1      0
+;GrÃ¼n SchutzgÃ¼rtel
+Sub11-3          RG               G6               16.4341  0        500      0.1      0
 ;Infrastruktur
-Sub11-4          RG               G6               20.3580  45       500      0.1      0                        
+Sub11-4          RG               G6               20.3580  45       500      0.1      0
 ;Gewerbgebiet
-Sub12-1          RG               S12              0.1311   75       500      0.1      0                        
-;Grün schutzgürtel
-Sub12-2          RG               S12              8.0818   0        500      0.1      0                        
+Sub12-1          RG               S12              0.1311   75       500      0.1      0
+;GrÃ¼n schutzgÃ¼rtel
+Sub12-2          RG               S12              8.0818   0        500      0.1      0
 ;Infrastruktur
-Sub12-3          RG               S12              8.1751   60       500      0.1      0                        
+Sub12-3          RG               S12              8.1751   60       500      0.1      0
 ;Wohngebiet
-Sub13-1          RG               G5               54.2343  56       500      0.3      0                        
-;öffenliche Gebäude
-Sub13-2          RG               G5               0.7235   77       500      0.2      0                        
+Sub13-1          RG               G5               54.2343  56       500      0.3      0
+;Ã¶ffenliche GebÃ¤ude
+Sub13-2          RG               G5               0.7235   77       500      0.2      0
 ;Gewerbegebiet
-Sub13-3          RG               G5               9.0715   0        500      0.3      0                        
-;Grün Schutzgürtel
-Sub13-4          RG               G5               35.2658  0        500      0.2      0                        
+Sub13-3          RG               G5               9.0715   0        500      0.3      0
+;GrÃ¼n SchutzgÃ¼rtel
+Sub13-4          RG               G5               35.2658  0        500      0.2      0
 ;Infrastruktur
-Sub13-5          RG               G5               44.3913  49       500      0.3      0                        
+Sub13-5          RG               G5               44.3913  49       500      0.3      0
 
 [SUBAREAS]
-;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     PctZero    RouteTo    PctRouted 
+;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     PctZero    RouteTo    PctRouted
 ;;-------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
-Sub2-2           0.012      0.275      0.05       0.05       25         OUTLET    
-Sub2-3           0          0.03       0.05       0.05       25         OUTLET    
-Sub2-1           0          0.13       0.05       0.05       25         OUTLET    
-Sub1-1           0.014      0.56       0.05       0.05       25         OUTLET    
-Sub1-2           0.012      0.275      0.05       0.05       25         OUTLET    
-Sub1-3           0          0.13       0.05       0.05       25         OUTLET    
-Sub1-4           0.011      0.1        0.05       0.05       25         OUTLET    
-Sub3-1           0.014      0.56       0.05       0.05       25         OUTLET    
-Sub3-2           0.012      0.275      0.05       0.05       25         OUTLET    
-Sub3-3           0          0.13       0.05       0.05       25         OUTLET    
-Sub3-4           0.011      0          0.05       0.05       25         OUTLET    
-Sub4-1           0.014      0.56       0.05       0.05       25         OUTLET    
-Sub4-2           0.012      0.275      0.05       0.05       25         OUTLET    
-Sub4-3           0.012      0.2        0.05       0.05       25         OUTLET    
-Sub4-4           0.024      0.13       0.05       0.05       25         OUTLET    
-Sub4-5           0.011      0.15       0.05       0.05       25         OUTLET    
-Sub5-1           0.014      0.56       0.05       0.05       25         OUTLET    
-Sub5-2           0.013      0.2        0.05       0.05       25         OUTLET    
-Sub5-3           0.014      0.2        0.05       0.05       25         OUTLET    
-Sub5-4           0.015      0.13       0.05       0.05       25         OUTLET    
-Sub5-5           0.012      0.15       0.05       0.05       25         OUTLET    
-Sub5-6           0.011      0.15       0.05       0.05       25         OUTLET    
-Sub6-1           0.014      0.56       0.05       0.05       25         OUTLET    
-Sub6-2           0.013      0.2        0.05       0.05       25         OUTLET    
-Sub6-3           0.014      0.05       0.05       0.05       25         OUTLET    
-Sub6-4           0          0.13       0.05       0.05       25         OUTLET    
-Sub6-5           0.012      0.15       0.05       0.05       25         OUTLET    
-Sub6-6           0.011      0.15       0.05       0.05       25         OUTLET    
-Sub7-1           0.014      0.4        0.05       0.05       25         OUTLET    
-Sub7-2           0.012      0.15       0.05       0.05       25         OUTLET    
-Sub7-3           0.014      0.2        0.05       0.05       25         OUTLET    
-Sub7-4           0.011      0.15       0.05       0.05       25         OUTLET    
-Sub7-5           0.015      0.17       0.05       0.05       25         OUTLET    
-Sub8-1           0.014      0.56       0.05       0.05       25         OUTLET    
-Sub8-2           0.011      0.15       0.05       0.05       25         OUTLET    
-Sub8-3           0.015      0.13       0.05       0.05       25         OUTLET    
-Sub8-4           0.03       0.2        0.05       0.05       25         OUTLET    
-Sub9-1           0.014      0.56       0.05       0.05       25         OUTLET    
-Sub9-2           0.011      0.15       0.05       0.05       25         OUTLET    
-Sub9-3           0.014      0.2        0.05       0.05       25         OUTLET    
-Sub9-4           0.015      0.13       0.05       0.05       25         OUTLET    
-Sub10-1          0.014      0.4        0.05       0.05       25         OUTLET    
-Sub10-2          0.012      0.15       0.05       0.05       25         OUTLET    
-Sub10-3          0          0.3        0.05       0.05       25         OUTLET    
-Sub10-4          0.011      0.15       0.05       0.05       25         OUTLET    
-Sub10-5          0.014      0.2        0.05       0.05       25         OUTLET    
-Sub11-1          0.014      0.56       0.05       0.05       25         OUTLET    
-Sub11-2          0.014      0.125      0.05       0.05       25         OUTLET    
-Sub11-3          0.015      0.13       0.05       0.05       25         OUTLET    
-Sub11-4          0.011      0.15       0.05       0.05       25         OUTLET    
-Sub12-1          0.014      0.2        0.05       0.05       25         OUTLET    
-Sub12-2          0          0.13       0.05       0.05       25         OUTLET    
-Sub12-3          0.011      0.15       0.05       0.05       25         OUTLET    
-Sub13-1          0.01       0.1        0.05       0.05       25         OUTLET    
-Sub13-2          0.01       0.1        0.05       0.05       25         OUTLET    
-Sub13-3          0.01       0.1        0.05       0.05       25         OUTLET    
-Sub13-4          0.01       0.1        0.05       0.05       25         OUTLET    
-Sub13-5          0.01       0.1        0.05       0.05       25         OUTLET    
+Sub2-2           0.012      0.275      0.05       0.05       25         OUTLET
+Sub2-3           0          0.03       0.05       0.05       25         OUTLET
+Sub2-1           0          0.13       0.05       0.05       25         OUTLET
+Sub1-1           0.014      0.56       0.05       0.05       25         OUTLET
+Sub1-2           0.012      0.275      0.05       0.05       25         OUTLET
+Sub1-3           0          0.13       0.05       0.05       25         OUTLET
+Sub1-4           0.011      0.1        0.05       0.05       25         OUTLET
+Sub3-1           0.014      0.56       0.05       0.05       25         OUTLET
+Sub3-2           0.012      0.275      0.05       0.05       25         OUTLET
+Sub3-3           0          0.13       0.05       0.05       25         OUTLET
+Sub3-4           0.011      0          0.05       0.05       25         OUTLET
+Sub4-1           0.014      0.56       0.05       0.05       25         OUTLET
+Sub4-2           0.012      0.275      0.05       0.05       25         OUTLET
+Sub4-3           0.012      0.2        0.05       0.05       25         OUTLET
+Sub4-4           0.024      0.13       0.05       0.05       25         OUTLET
+Sub4-5           0.011      0.15       0.05       0.05       25         OUTLET
+Sub5-1           0.014      0.56       0.05       0.05       25         OUTLET
+Sub5-2           0.013      0.2        0.05       0.05       25         OUTLET
+Sub5-3           0.014      0.2        0.05       0.05       25         OUTLET
+Sub5-4           0.015      0.13       0.05       0.05       25         OUTLET
+Sub5-5           0.012      0.15       0.05       0.05       25         OUTLET
+Sub5-6           0.011      0.15       0.05       0.05       25         OUTLET
+Sub6-1           0.014      0.56       0.05       0.05       25         OUTLET
+Sub6-2           0.013      0.2        0.05       0.05       25         OUTLET
+Sub6-3           0.014      0.05       0.05       0.05       25         OUTLET
+Sub6-4           0          0.13       0.05       0.05       25         OUTLET
+Sub6-5           0.012      0.15       0.05       0.05       25         OUTLET
+Sub6-6           0.011      0.15       0.05       0.05       25         OUTLET
+Sub7-1           0.014      0.4        0.05       0.05       25         OUTLET
+Sub7-2           0.012      0.15       0.05       0.05       25         OUTLET
+Sub7-3           0.014      0.2        0.05       0.05       25         OUTLET
+Sub7-4           0.011      0.15       0.05       0.05       25         OUTLET
+Sub7-5           0.015      0.17       0.05       0.05       25         OUTLET
+Sub8-1           0.014      0.56       0.05       0.05       25         OUTLET
+Sub8-2           0.011      0.15       0.05       0.05       25         OUTLET
+Sub8-3           0.015      0.13       0.05       0.05       25         OUTLET
+Sub8-4           0.03       0.2        0.05       0.05       25         OUTLET
+Sub9-1           0.014      0.56       0.05       0.05       25         OUTLET
+Sub9-2           0.011      0.15       0.05       0.05       25         OUTLET
+Sub9-3           0.014      0.2        0.05       0.05       25         OUTLET
+Sub9-4           0.015      0.13       0.05       0.05       25         OUTLET
+Sub10-1          0.014      0.4        0.05       0.05       25         OUTLET
+Sub10-2          0.012      0.15       0.05       0.05       25         OUTLET
+Sub10-3          0          0.3        0.05       0.05       25         OUTLET
+Sub10-4          0.011      0.15       0.05       0.05       25         OUTLET
+Sub10-5          0.014      0.2        0.05       0.05       25         OUTLET
+Sub11-1          0.014      0.56       0.05       0.05       25         OUTLET
+Sub11-2          0.014      0.125      0.05       0.05       25         OUTLET
+Sub11-3          0.015      0.13       0.05       0.05       25         OUTLET
+Sub11-4          0.011      0.15       0.05       0.05       25         OUTLET
+Sub12-1          0.014      0.2        0.05       0.05       25         OUTLET
+Sub12-2          0          0.13       0.05       0.05       25         OUTLET
+Sub12-3          0.011      0.15       0.05       0.05       25         OUTLET
+Sub13-1          0.01       0.1        0.05       0.05       25         OUTLET
+Sub13-2          0.01       0.1        0.05       0.05       25         OUTLET
+Sub13-3          0.01       0.1        0.05       0.05       25         OUTLET
+Sub13-4          0.01       0.1        0.05       0.05       25         OUTLET
+Sub13-5          0.01       0.1        0.05       0.05       25         OUTLET
 
 [INFILTRATION]
-;;Subcatchment   MaxRate    MinRate    Decay      DryTime    MaxInfil  
+;;Subcatchment   MaxRate    MinRate    Decay      DryTime    MaxInfil
 ;;-------------- ---------- ---------- ---------- ---------- ----------
-Sub2-2           3.0        0.5        4          7          0         
-Sub2-3           3.0        0.5        4          7          0         
-Sub2-1           3.0        0.5        4          7          0         
-Sub1-1           3.0        0.5        4          7          0         
-Sub1-2           3.0        0.5        4          7          0         
-Sub1-3           3.0        0.5        4          7          0         
-Sub1-4           3.0        0.5        4          7          0         
-Sub3-1           3.0        0.5        4          7          0         
-Sub3-2           3.0        0.5        4          7          0         
-Sub3-3           3.0        0.5        4          7          0         
-Sub3-4           3.0        0.5        4          7          0         
-Sub4-1           3.0        0.5        4          7          0         
-Sub4-2           3.0        0.5        4          7          0         
-Sub4-3           3.0        0.5        4          7          0         
-Sub4-4           3.0        0.5        4          7          0         
-Sub4-5           3.0        0.5        4          7          0         
-Sub5-1           3.0        0.5        4          7          0         
-Sub5-2           3.0        0.5        4          7          0         
-Sub5-3           3.0        0.5        4          7          0         
-Sub5-4           3.0        0.5        4          7          0         
-Sub5-5           3.0        0.5        4          7          0         
-Sub5-6           3.0        0.5        4          7          0         
-Sub6-1           3.0        0.5        4          7          0         
-Sub6-2           3.0        0.5        4          7          0         
-Sub6-3           3.0        0.5        4          7          0         
-Sub6-4           3.0        0.5        4          7          0         
-Sub6-5           3.0        0.5        4          7          0         
-Sub6-6           3.0        0.5        4          7          0         
-Sub7-1           3.0        0.5        4          7          0         
-Sub7-2           3.0        0.5        4          7          0         
-Sub7-3           3.0        0.5        4          7          0         
-Sub7-4           3.0        0.5        4          7          0         
-Sub7-5           3.0        0.5        4          7          0         
-Sub8-1           3.0        0.5        4          7          0         
-Sub8-2           3.0        0.5        4          7          0         
-Sub8-3           3.0        0.5        4          7          0         
-Sub8-4           3.0        0.5        4          7          0         
-Sub9-1           3.0        0.5        4          7          0         
-Sub9-2           3.0        0.5        4          7          0         
-Sub9-3           3.0        0.5        4          7          0         
-Sub9-4           3.0        0.5        4          7          0         
-Sub10-1          3.0        0.5        4          7          0         
-Sub10-2          3.0        0.5        4          7          0         
-Sub10-3          3.0        0.5        4          7          0         
-Sub10-4          3.0        0.5        4          7          0         
-Sub10-5          3.0        0.5        4          7          0         
-Sub11-1          3.0        0.5        4          7          0         
-Sub11-2          3.0        0.5        4          7          0         
-Sub11-3          3.0        0.5        4          7          0         
-Sub11-4          3.0        0.5        4          7          0         
-Sub12-1          3.0        0.5        4          7          0         
-Sub12-2          3.0        0.5        4          7          0         
-Sub12-3          3.0        0.5        4          7          0         
-Sub13-1          3.0        0.5        4          7          0         
-Sub13-2          3.0        0.5        4          7          0         
-Sub13-3          3.0        0.5        4          7          0         
-Sub13-4          3.0        0.5        4          7          0         
-Sub13-5          3.0        0.5        4          7          0         
+Sub2-2           3.0        0.5        4          7          0
+Sub2-3           3.0        0.5        4          7          0
+Sub2-1           3.0        0.5        4          7          0
+Sub1-1           3.0        0.5        4          7          0
+Sub1-2           3.0        0.5        4          7          0
+Sub1-3           3.0        0.5        4          7          0
+Sub1-4           3.0        0.5        4          7          0
+Sub3-1           3.0        0.5        4          7          0
+Sub3-2           3.0        0.5        4          7          0
+Sub3-3           3.0        0.5        4          7          0
+Sub3-4           3.0        0.5        4          7          0
+Sub4-1           3.0        0.5        4          7          0
+Sub4-2           3.0        0.5        4          7          0
+Sub4-3           3.0        0.5        4          7          0
+Sub4-4           3.0        0.5        4          7          0
+Sub4-5           3.0        0.5        4          7          0
+Sub5-1           3.0        0.5        4          7          0
+Sub5-2           3.0        0.5        4          7          0
+Sub5-3           3.0        0.5        4          7          0
+Sub5-4           3.0        0.5        4          7          0
+Sub5-5           3.0        0.5        4          7          0
+Sub5-6           3.0        0.5        4          7          0
+Sub6-1           3.0        0.5        4          7          0
+Sub6-2           3.0        0.5        4          7          0
+Sub6-3           3.0        0.5        4          7          0
+Sub6-4           3.0        0.5        4          7          0
+Sub6-5           3.0        0.5        4          7          0
+Sub6-6           3.0        0.5        4          7          0
+Sub7-1           3.0        0.5        4          7          0
+Sub7-2           3.0        0.5        4          7          0
+Sub7-3           3.0        0.5        4          7          0
+Sub7-4           3.0        0.5        4          7          0
+Sub7-5           3.0        0.5        4          7          0
+Sub8-1           3.0        0.5        4          7          0
+Sub8-2           3.0        0.5        4          7          0
+Sub8-3           3.0        0.5        4          7          0
+Sub8-4           3.0        0.5        4          7          0
+Sub9-1           3.0        0.5        4          7          0
+Sub9-2           3.0        0.5        4          7          0
+Sub9-3           3.0        0.5        4          7          0
+Sub9-4           3.0        0.5        4          7          0
+Sub10-1          3.0        0.5        4          7          0
+Sub10-2          3.0        0.5        4          7          0
+Sub10-3          3.0        0.5        4          7          0
+Sub10-4          3.0        0.5        4          7          0
+Sub10-5          3.0        0.5        4          7          0
+Sub11-1          3.0        0.5        4          7          0
+Sub11-2          3.0        0.5        4          7          0
+Sub11-3          3.0        0.5        4          7          0
+Sub11-4          3.0        0.5        4          7          0
+Sub12-1          3.0        0.5        4          7          0
+Sub12-2          3.0        0.5        4          7          0
+Sub12-3          3.0        0.5        4          7          0
+Sub13-1          3.0        0.5        4          7          0
+Sub13-2          3.0        0.5        4          7          0
+Sub13-3          3.0        0.5        4          7          0
+Sub13-4          3.0        0.5        4          7          0
+Sub13-5          3.0        0.5        4          7          0
 
 [JUNCTIONS]
-;;Junction       Invert     MaxDepth   InitDepth  SurDepth   Aponded   
+;;Junction       Invert     MaxDepth   InitDepth  SurDepth   Aponded
 ;;-------------- ---------- ---------- ---------- ---------- ----------
-G1               45.3       1.1        0          0          0         
-G2               28.15      2.2        0          0          0         
-G3               17.12      4.4        0          0          0         
-S8               25         0          0          0          0         
-G4               7.42       0          0          0          0         
-G6               4.91       0          0          0          0         
-S10              6.3        0          0          0          0         
-G5               6.07       0          0          0          0         
-S12              2.8        0          0          0          0         
-29               60.5       0          0          0          0         
-30               30.33      0          0          0          0         
-31               39.86      0          0          0          0         
-35               10.17      0          0          0          0         
-36               18.01      0          0          0          0         
-37               59.86      0          0          0          0         
-38               35.8       0          0          0          0         
-39               61.34      0          0          0          0         
-40               57         0          0          0          0         
-41               50.15      0          0          0          0         
-42               50.01      0          0          0          0         
-43               6.18       0          0          0          0         
+G1               45.3       1.1        0          0          0
+G2               28.15      2.2        0          0          0
+G3               17.12      4.4        0          0          0
+S8               25         0          0          0          0
+G4               7.42       0          0          0          0
+G6               4.91       0          0          0          0
+S10              6.3        0          0          0          0
+G5               6.07       0          0          0          0
+S12              2.8        0          0          0          0
+29               60.5       0          0          0          0
+30               30.33      0          0          0          0
+31               39.86      0          0          0          0
+35               10.17      0          0          0          0
+36               18.01      0          0          0          0
+37               59.86      0          0          0          0
+38               35.8       0          0          0          0
+39               61.34      0          0          0          0
+40               57         0          0          0          0
+41               50.15      0          0          0          0
+42               50.01      0          0          0          0
+43               6.18       0          0          0          0
 
 [OUTFALLS]
-;;Outfall        Invert     Type       Stage Data       Gated   
+;;Outfall        Invert     Type       Stage Data       Gated
 ;;-------------- ---------- ---------- ---------------- --------
 28               2.6        FREE                        NO
 
 [CONDUITS]
-;;Conduit        From Node        To Node          Length     Roughness  InOffset   OutOffset  InitFlow   MaxFlow   
+;;Conduit        From Node        To Node          Length     Roughness  InOffset   OutOffset  InitFlow   MaxFlow
 ;;-------------- ---------------- ---------------- ---------- ---------- ---------- ---------- ---------- ----------
-24               G1               31               561.14     0.06       *          *          0          0         
-26               29               G1               237.54     0.07       *          *          0          0         
-28               31               30               479.44     0.06       *          *          0          0         
-29               30               G3               1320.12    0.04       *          *          0          0         
-34               G2               G3               1054.14    0.04       *          *          0          0         
-35               G3               35               705.14     0.03       *          *          0          0         
-37               S8               36               214.71     0.07       *          *          0          0         
-38               36               G4               1254.40    0.05       *          *          0          0         
-40               S10              G5               1149.55    0.05       *          *          0          0         
-42               G5               G6               1311.91    0.03       *          *          0          0         
-43               G4               G6               555.34     0.025      *          *          0          0         
-44               G6               S12              577.55     0.025      *          *          0          0         
-45               35               G4               3171.42    0.03       *          *          0          0         
-46               S12              28               186.07     0.025      *          *          0          0         
-47               37               G1               400        0.07       *          *          0          0         
-48               38               G2               400        0.06       *          *          0          0         
-49               39               40               400        0.07       *          *          0          0         
-50               40               41               400        0.07       *          *          0          0         
-51               41               42               400        0.06       *          *          0          0         
-52               42               G2               400        0.06       *          *          0          0         
-53               43               G5               400        0.04       *          *          0          0         
+24               G1               31               561.14     0.06       *          *          0          0
+26               29               G1               237.54     0.07       *          *          0          0
+28               31               30               479.44     0.06       *          *          0          0
+29               30               G3               1320.12    0.04       *          *          0          0
+34               G2               G3               1054.14    0.04       *          *          0          0
+35               G3               35               705.14     0.03       *          *          0          0
+37               S8               36               214.71     0.07       *          *          0          0
+38               36               G4               1254.40    0.05       *          *          0          0
+40               S10              G5               1149.55    0.05       *          *          0          0
+42               G5               G6               1311.91    0.03       *          *          0          0
+43               G4               G6               555.34     0.025      *          *          0          0
+44               G6               S12              577.55     0.025      *          *          0          0
+45               35               G4               3171.42    0.03       *          *          0          0
+46               S12              28               186.07     0.025      *          *          0          0
+47               37               G1               400        0.07       *          *          0          0
+48               38               G2               400        0.06       *          *          0          0
+49               39               40               400        0.07       *          *          0          0
+50               40               41               400        0.07       *          *          0          0
+51               41               42               400        0.06       *          *          0          0
+52               42               G2               400        0.06       *          *          0          0
+53               43               G5               400        0.04       *          *          0          0
 
 [XSECTIONS]
-;;Link           Shape        Geom1            Geom2      Geom3      Geom4      Barrels   
+;;Link           Shape        Geom1            Geom2      Geom3      Geom4      Barrels
 ;;-------------- ------------ ---------------- ---------- ---------- ---------- ----------
-24               TRAPEZOIDAL  2                5          30         30         1                    
-26               TRAPEZOIDAL  2                2          30         30         1                    
-28               TRAPEZOIDAL  2                5          30         30         1                    
-29               TRAPEZOIDAL  2                10         30         30         1                    
-34               TRAPEZOIDAL  2                3          30         30         1                    
-35               TRAPEZOIDAL  2                5          30         30         1                    
-37               TRAPEZOIDAL  2                2          30         30         1                    
-38               TRAPEZOIDAL  2                3          30         30         1                    
-40               TRAPEZOIDAL  1                3          30         30         1                    
-42               TRAPEZOIDAL  1                3          30         30         1                    
-43               TRAPEZOIDAL  2                10         30         30         1                    
-44               TRAPEZOIDAL  2                10         30         30         1                    
-45               TRAPEZOIDAL  2                5          30         30         1                    
-46               TRAPEZOIDAL  2                10         30         30         1                    
-47               TRAPEZOIDAL  2                2          30         30         1                    
-48               TRAPEZOIDAL  2                2          30         30         1                    
-49               TRAPEZOIDAL  2                2          30         30         1                    
-50               TRAPEZOIDAL  2                2          30         30         1                    
-51               TRAPEZOIDAL  2                2          30         30         1                    
-52               TRAPEZOIDAL  2                2          30         30         1                    
-53               TRAPEZOIDAL  1                3          30         30         1                    
+24               TRAPEZOIDAL  2                5          30         30         1
+26               TRAPEZOIDAL  2                2          30         30         1
+28               TRAPEZOIDAL  2                5          30         30         1
+29               TRAPEZOIDAL  2                10         30         30         1
+34               TRAPEZOIDAL  2                3          30         30         1
+35               TRAPEZOIDAL  2                5          30         30         1
+37               TRAPEZOIDAL  2                2          30         30         1
+38               TRAPEZOIDAL  2                3          30         30         1
+40               TRAPEZOIDAL  1                3          30         30         1
+42               TRAPEZOIDAL  1                3          30         30         1
+43               TRAPEZOIDAL  2                10         30         30         1
+44               TRAPEZOIDAL  2                10         30         30         1
+45               TRAPEZOIDAL  2                5          30         30         1
+46               TRAPEZOIDAL  2                10         30         30         1
+47               TRAPEZOIDAL  2                2          30         30         1
+48               TRAPEZOIDAL  2                2          30         30         1
+49               TRAPEZOIDAL  2                2          30         30         1
+50               TRAPEZOIDAL  2                2          30         30         1
+51               TRAPEZOIDAL  2                2          30         30         1
+52               TRAPEZOIDAL  2                2          30         30         1
+53               TRAPEZOIDAL  1                3          30         30         1
 
 [REPORT]
 ;;Reporting Options
@@ -386,278 +386,278 @@ DIMENSIONS 575510.093 3496463.000 585483.907 3503675.000
 Units      Meters
 
 [COORDINATES]
-;;Node           X-Coord            Y-Coord           
+;;Node           X-Coord            Y-Coord
 ;;-------------- ------------------ ------------------
-G1               581033.000         3501517.000       
-G2               581917.000         3500467.000       
-G3               581934.000         3499413.000       
-S8               578756.000         3499401.000       
-G4               578769.000         3497957.000       
-G6               578600.000         3497428.000       
-S10              581011.000         3497295.000       
-G5               579875.000         3497119.000       
-S12              578699.000         3496859.000       
-29               581049.000         3501754.000       
-30               581611.000         3500693.000       
-31               581454.000         3501146.000       
-35               581849.000         3498713.000       
-36               578664.000         3499207.000       
-37               580529.000         3501275.000       
-38               581909.000         3500789.000       
-39               582680.000         3502189.000       
-40               582515.900         3501935.000       
-41               582427.000         3501756.000       
-42               582260.000         3501540.000       
-43               579739.000         3496667.000       
-28               578701.873         3496672.956       
+G1               581033.000         3501517.000
+G2               581917.000         3500467.000
+G3               581934.000         3499413.000
+S8               578756.000         3499401.000
+G4               578769.000         3497957.000
+G6               578600.000         3497428.000
+S10              581011.000         3497295.000
+G5               579875.000         3497119.000
+S12              578699.000         3496859.000
+29               581049.000         3501754.000
+30               581611.000         3500693.000
+31               581454.000         3501146.000
+35               581849.000         3498713.000
+36               578664.000         3499207.000
+37               580529.000         3501275.000
+38               581909.000         3500789.000
+39               582680.000         3502189.000
+40               582515.900         3501935.000
+41               582427.000         3501756.000
+42               582260.000         3501540.000
+43               579739.000         3496667.000
+28               578701.873         3496672.956
 
 [VERTICES]
-;;Link           X-Coord            Y-Coord           
+;;Link           X-Coord            Y-Coord
 ;;-------------- ------------------ ------------------
-51               582243.851         3501503.913       
+51               582243.851         3501503.913
 
 [Polygons]
-;;Subcatchment   X-Coord            Y-Coord           
+;;Subcatchment   X-Coord            Y-Coord
 ;;-------------- ------------------ ------------------
-Sub2-2           579247.760         3501764.397       
-Sub2-2           579247.760         3501470.459       
-Sub2-2           579699.166         3501491.454       
-Sub2-2           579709.664         3501743.402       
-Sub2-2           579226.764         3501753.900       
-Sub2-3           579342.240         3501323.489       
-Sub2-3           579300.249         3500935.070       
-Sub2-3           579657.175         3500861.585       
-Sub2-3           579678.170         3501312.991       
-Sub2-3           579300.249         3501291.996       
-Sub2-1           579867.131         3502173.812       
-Sub2-1           579688.668         3501858.878       
-Sub2-1           579247.760         3501921.865       
-Sub2-1           579352.738         3502205.306       
-Sub1-1           579368.857         3503229.084       
-Sub1-1           579573.974         3503177.804       
-Sub1-1           579586.793         3502870.129       
-Sub1-1           579356.037         3502857.309       
-Sub1-1           579368.857         3503267.543       
-Sub1-2           580266.243         3503267.543       
-Sub1-2           580253.424         3503036.787       
-Sub1-2           579997.027         3503036.787       
-Sub1-2           580022.667         3503318.822       
-Sub1-3           580676.017         3503374.424       
-Sub1-3           580663.230         3503157.046       
-Sub1-3           580407.491         3503118.685       
-Sub1-3           580420.278         3503425.572       
-Sub1-4           580944.543         3503336.063       
-Sub1-4           580931.756         3503208.194       
-Sub1-4           580816.674         3503182.620       
-Sub1-4           580816.674         3503399.998       
-Sub3-1           581775.694         3502990.816       
-Sub3-1           581775.694         3502760.651       
-Sub3-1           581494.381         3502747.864       
-Sub3-1           581494.381         3503029.177       
-Sub3-2           582082.581         3502619.995       
-Sub3-2           582069.794         3502351.469       
-Sub3-2           581941.924         3502313.108       
-Sub3-2           581852.416         3502632.782       
-Sub3-3           582440.615         3502837.373       
-Sub3-3           582504.550         3502632.782       
-Sub3-3           582172.089         3502492.125       
-Sub3-3           582095.368         3502799.012       
-Sub3-4           583118.323         3502671.142       
-Sub3-4           583028.814         3502402.617       
-Sub3-4           582721.928         3502428.191       
-Sub3-4           582657.993         3502735.077       
-Sub4-1           580816.674         3501111.136       
-Sub4-1           580714.378         3500740.314       
-Sub4-1           580343.557         3500791.462       
-Sub4-1           580317.983         3501059.988       
-Sub4-2           580573.722         3500561.297       
-Sub4-2           580535.361         3500228.837       
-Sub4-2           580151.753         3500267.198       
-Sub4-2           580164.540         3500650.806       
-Sub4-3           580356.344         3500100.967       
-Sub4-3           580484.213         3499806.868       
-Sub4-3           580023.883         3499768.507       
-Sub4-3           580011.096         3500113.754       
-Sub4-4           581404.873         3500625.232       
-Sub4-4           581174.708         3500510.149       
-Sub4-4           580957.330         3500689.167       
-Sub4-4           581097.986         3500880.971       
-Sub4-5           580816.674         3499691.785       
-Sub4-5           580982.904         3499538.342       
-Sub4-5           580701.591         3499410.473       
-Sub4-5           580573.722         3499640.637       
-Sub5-1           583727.110         3502069.502       
-Sub5-1           583688.883         3501827.403       
-Sub5-1           583319.364         3501814.661       
-Sub5-1           583332.106         3502158.696       
-Sub5-2           583930.982         3501712.724       
-Sub5-2           583969.208         3501419.657       
-Sub5-2           583548.721         3501304.979       
-Sub5-2           583472.269         3501661.756       
-Sub5-3           584147.597         3501241.269       
-Sub5-3           584211.307         3501088.364       
-Sub5-3           583880.014         3501011.912       
-Sub5-3           583727.110         3501241.269       
-Sub5-4           583153.717         3501878.371       
-Sub5-4           583128.233         3501738.208       
-Sub5-4           582949.845         3501585.304       
-Sub5-4           582924.360         3501801.919       
-Sub5-5           584733.731         3502451.763       
-Sub5-5           584695.505         3502056.760       
-Sub5-5           584236.792         3501840.145       
-Sub5-5           584287.760         3502260.633       
-Sub5-6           584988.572         3501725.466       
-Sub5-6           584873.894         3501534.336       
-Sub5-6           584453.406         3501266.753       
-Sub5-6           584568.085         3501712.724       
-Sub6-1           583434.042         3500680.618       
-Sub6-1           583510.495         3500476.746       
-Sub6-1           583166.459         3500336.583       
-Sub6-1           583064.523         3500540.456       
-Sub6-2           583459.527         3500311.099       
-Sub6-2           583574.205         3500132.710       
-Sub6-2           583319.364         3499979.806       
-Sub6-2           583179.201         3500221.905       
-Sub6-3           583599.689         3499941.580       
-Sub6-3           583676.141         3499839.643       
-Sub6-3           583459.527         3499686.739       
-Sub6-3           583370.332         3499890.611       
-Sub6-4           583778.078         3499699.481       
-Sub6-4           583867.272         3499623.028       
-Sub6-4           583561.463         3499368.187       
-Sub6-4           583344.848         3499597.544       
-Sub6-5           582886.134         3500400.293       
-Sub6-5           582771.456         3500604.166       
-Sub6-5           582465.647         3500400.293       
-Sub6-5           582644.035         3500260.131       
-Sub6-6           583357.590         3499406.413       
-Sub6-6           583268.396         3499202.541       
-Sub6-6           582949.845         3499151.572       
-Sub6-6           582949.845         3499457.382       
-Sub7-1           581637.413         3499049.636       
-Sub7-1           581624.671         3498871.247       
-Sub7-1           581306.120         3498756.569       
-Sub7-1           581229.668         3499049.636       
-Sub7-2           581662.898         3498565.438       
-Sub7-2           581828.544         3498425.276       
-Sub7-2           581509.993         3498310.597       
-Sub7-2           581420.799         3498514.470       
-Sub7-3           581038.537         3499100.604       
-Sub7-3           581076.763         3498922.216       
-Sub7-3           580847.406         3498794.795       
-Sub7-3           580745.470         3499036.894       
-Sub7-4           581560.961         3498234.145       
-Sub7-4           581560.961         3498017.530       
-Sub7-4           581255.152         3497966.562       
-Sub7-4           581242.410         3498272.371       
-Sub7-5           581153.216         3498004.788       
-Sub7-5           581153.216         3497775.431       
-Sub7-5           580911.117         3497749.947       
-Sub7-5           580911.117         3498017.530       
-Sub8-1           578719.484         3500081.742       
-Sub8-1           578732.226         3499737.707       
-Sub8-1           578439.159         3499635.770       
-Sub8-1           578337.223         3500043.516       
-Sub8-2           578158.834         3499865.127       
-Sub8-2           578222.544         3499572.060       
-Sub8-2           577916.735         3499355.445       
-Sub8-2           577751.088         3499750.449       
-Sub8-3           577763.830         3499444.640       
-Sub8-3           577853.025         3499177.057       
-Sub8-3           577623.668         3499036.894       
-Sub8-3           577343.343         3499368.187       
-Sub8-4           579382.071         3499559.318       
-Sub8-4           579165.456         3499228.025       
-Sub8-4           578821.420         3499380.929       
-Sub8-4           579076.261         3499814.159       
-Sub9-1           578286.254         3498399.792       
-Sub9-1           578286.254         3498157.693       
-Sub9-1           577942.219         3498246.887       
-Sub9-1           577980.445         3498578.180       
-Sub9-2           578056.898         3498093.982       
-Sub9-2           578056.898         3498093.982       
-Sub9-2           578133.350         3497864.625       
-Sub9-2           577725.604         3497864.625       
-Sub9-2           577700.120         3498259.629       
-Sub9-3           577853.025         3497749.947       
-Sub9-3           577891.251         3497597.042       
-Sub9-3           577572.700         3497482.364       
-Sub9-3           577496.247         3497762.689       
-Sub9-4           577571.936         3498215.670       
-Sub9-4           577595.621         3497978.823       
-Sub9-4           577382.458         3497789.345       
-Sub9-4           577299.562         3498132.773       
-Sub10-1          582297.039         3497990.665       
-Sub10-1          582285.197         3497706.448       
-Sub10-1          582000.980         3497623.552       
-Sub10-1          581929.926         3497931.453       
-Sub10-2          582522.044         3497765.660       
-Sub10-2          582557.571         3497505.128       
-Sub10-2          582237.828         3497256.438       
-Sub10-2          582060.192         3497505.128       
-Sub10-3          582450.990         3497197.227       
-Sub10-3          582450.990         3496984.064       
-Sub10-3          582107.562         3496984.064       
-Sub10-3          582095.719         3497244.596       
-Sub10-4          582036.507         3497007.749       
-Sub10-4          582060.192         3496818.271       
-Sub10-4          581823.345         3496770.901       
-Sub10-4          581704.921         3497007.749       
-Sub10-5          581681.236         3498038.034       
-Sub10-5          581870.714         3497978.823       
-Sub10-5          581704.921         3497718.291       
-Sub10-5          581468.074         3497824.872       
-Sub11-1          579360.133         3497694.606       
-Sub11-1          579371.975         3497588.025       
-Sub11-1          579170.655         3497540.655       
-Sub11-1          579194.340         3497753.818       
-Sub11-2          579111.443         3497777.502       
-Sub11-2          579111.443         3497635.394       
-Sub11-2          578945.650         3497611.709       
-Sub11-2          578910.123         3497801.187       
-Sub11-3          579490.399         3497445.916       
-Sub11-3          579348.291         3497363.020       
-Sub11-3          579241.709         3497469.601       
-Sub11-3          579454.872         3497564.340       
-Sub11-4          578874.596         3497813.030       
-Sub11-4          578874.596         3497623.552       
-Sub11-4          578756.172         3497588.025       
-Sub11-4          578756.172         3497730.133       
-Sub12-1          577524.567         3497410.389       
-Sub12-1          577583.778         3497209.069       
-Sub12-1          577323.246         3497055.118       
-Sub12-1          577275.877         3497327.493       
-Sub12-2          577500.882         3496972.222       
-Sub12-2          577536.409         3496759.059       
-Sub12-2          577264.034         3496699.847       
-Sub12-2          577216.665         3496936.695       
-Sub12-3          577844.310         3497043.276       
-Sub12-3          577832.468         3496901.167       
-Sub12-3          577607.463         3496913.010       
-Sub12-3          577631.148         3497078.803       
-Sub13-1          579206.182         3497126.172       
-Sub13-1          579241.709         3496948.537       
-Sub13-1          578969.335         3496901.167       
-Sub13-1          578957.493         3497126.172       
-Sub13-2          579229.867         3496865.640       
-Sub13-2          579348.291         3496676.163       
-Sub13-2          579111.443         3496616.951       
-Sub13-2          579064.074         3496806.429       
-Sub13-3          579679.877         3496628.793       
-Sub13-3          579644.350         3496486.685       
-Sub13-3          579371.975         3496510.369       
-Sub13-3          579371.975         3496676.163       
-Sub13-4          580094.360         3496664.320       
-Sub13-4          580058.833         3496474.842       
-Sub13-4          579833.828         3496474.842       
-Sub13-4          579810.143         3496688.005       
-Sub13-5          580544.369         3496699.847       
-Sub13-5          580544.369         3496498.527       
-Sub13-5          580271.995         3496486.685       
-Sub13-5          580236.468         3496688.005       
+Sub2-2           579247.760         3501764.397
+Sub2-2           579247.760         3501470.459
+Sub2-2           579699.166         3501491.454
+Sub2-2           579709.664         3501743.402
+Sub2-2           579226.764         3501753.900
+Sub2-3           579342.240         3501323.489
+Sub2-3           579300.249         3500935.070
+Sub2-3           579657.175         3500861.585
+Sub2-3           579678.170         3501312.991
+Sub2-3           579300.249         3501291.996
+Sub2-1           579867.131         3502173.812
+Sub2-1           579688.668         3501858.878
+Sub2-1           579247.760         3501921.865
+Sub2-1           579352.738         3502205.306
+Sub1-1           579368.857         3503229.084
+Sub1-1           579573.974         3503177.804
+Sub1-1           579586.793         3502870.129
+Sub1-1           579356.037         3502857.309
+Sub1-1           579368.857         3503267.543
+Sub1-2           580266.243         3503267.543
+Sub1-2           580253.424         3503036.787
+Sub1-2           579997.027         3503036.787
+Sub1-2           580022.667         3503318.822
+Sub1-3           580676.017         3503374.424
+Sub1-3           580663.230         3503157.046
+Sub1-3           580407.491         3503118.685
+Sub1-3           580420.278         3503425.572
+Sub1-4           580944.543         3503336.063
+Sub1-4           580931.756         3503208.194
+Sub1-4           580816.674         3503182.620
+Sub1-4           580816.674         3503399.998
+Sub3-1           581775.694         3502990.816
+Sub3-1           581775.694         3502760.651
+Sub3-1           581494.381         3502747.864
+Sub3-1           581494.381         3503029.177
+Sub3-2           582082.581         3502619.995
+Sub3-2           582069.794         3502351.469
+Sub3-2           581941.924         3502313.108
+Sub3-2           581852.416         3502632.782
+Sub3-3           582440.615         3502837.373
+Sub3-3           582504.550         3502632.782
+Sub3-3           582172.089         3502492.125
+Sub3-3           582095.368         3502799.012
+Sub3-4           583118.323         3502671.142
+Sub3-4           583028.814         3502402.617
+Sub3-4           582721.928         3502428.191
+Sub3-4           582657.993         3502735.077
+Sub4-1           580816.674         3501111.136
+Sub4-1           580714.378         3500740.314
+Sub4-1           580343.557         3500791.462
+Sub4-1           580317.983         3501059.988
+Sub4-2           580573.722         3500561.297
+Sub4-2           580535.361         3500228.837
+Sub4-2           580151.753         3500267.198
+Sub4-2           580164.540         3500650.806
+Sub4-3           580356.344         3500100.967
+Sub4-3           580484.213         3499806.868
+Sub4-3           580023.883         3499768.507
+Sub4-3           580011.096         3500113.754
+Sub4-4           581404.873         3500625.232
+Sub4-4           581174.708         3500510.149
+Sub4-4           580957.330         3500689.167
+Sub4-4           581097.986         3500880.971
+Sub4-5           580816.674         3499691.785
+Sub4-5           580982.904         3499538.342
+Sub4-5           580701.591         3499410.473
+Sub4-5           580573.722         3499640.637
+Sub5-1           583727.110         3502069.502
+Sub5-1           583688.883         3501827.403
+Sub5-1           583319.364         3501814.661
+Sub5-1           583332.106         3502158.696
+Sub5-2           583930.982         3501712.724
+Sub5-2           583969.208         3501419.657
+Sub5-2           583548.721         3501304.979
+Sub5-2           583472.269         3501661.756
+Sub5-3           584147.597         3501241.269
+Sub5-3           584211.307         3501088.364
+Sub5-3           583880.014         3501011.912
+Sub5-3           583727.110         3501241.269
+Sub5-4           583153.717         3501878.371
+Sub5-4           583128.233         3501738.208
+Sub5-4           582949.845         3501585.304
+Sub5-4           582924.360         3501801.919
+Sub5-5           584733.731         3502451.763
+Sub5-5           584695.505         3502056.760
+Sub5-5           584236.792         3501840.145
+Sub5-5           584287.760         3502260.633
+Sub5-6           584988.572         3501725.466
+Sub5-6           584873.894         3501534.336
+Sub5-6           584453.406         3501266.753
+Sub5-6           584568.085         3501712.724
+Sub6-1           583434.042         3500680.618
+Sub6-1           583510.495         3500476.746
+Sub6-1           583166.459         3500336.583
+Sub6-1           583064.523         3500540.456
+Sub6-2           583459.527         3500311.099
+Sub6-2           583574.205         3500132.710
+Sub6-2           583319.364         3499979.806
+Sub6-2           583179.201         3500221.905
+Sub6-3           583599.689         3499941.580
+Sub6-3           583676.141         3499839.643
+Sub6-3           583459.527         3499686.739
+Sub6-3           583370.332         3499890.611
+Sub6-4           583778.078         3499699.481
+Sub6-4           583867.272         3499623.028
+Sub6-4           583561.463         3499368.187
+Sub6-4           583344.848         3499597.544
+Sub6-5           582886.134         3500400.293
+Sub6-5           582771.456         3500604.166
+Sub6-5           582465.647         3500400.293
+Sub6-5           582644.035         3500260.131
+Sub6-6           583357.590         3499406.413
+Sub6-6           583268.396         3499202.541
+Sub6-6           582949.845         3499151.572
+Sub6-6           582949.845         3499457.382
+Sub7-1           581637.413         3499049.636
+Sub7-1           581624.671         3498871.247
+Sub7-1           581306.120         3498756.569
+Sub7-1           581229.668         3499049.636
+Sub7-2           581662.898         3498565.438
+Sub7-2           581828.544         3498425.276
+Sub7-2           581509.993         3498310.597
+Sub7-2           581420.799         3498514.470
+Sub7-3           581038.537         3499100.604
+Sub7-3           581076.763         3498922.216
+Sub7-3           580847.406         3498794.795
+Sub7-3           580745.470         3499036.894
+Sub7-4           581560.961         3498234.145
+Sub7-4           581560.961         3498017.530
+Sub7-4           581255.152         3497966.562
+Sub7-4           581242.410         3498272.371
+Sub7-5           581153.216         3498004.788
+Sub7-5           581153.216         3497775.431
+Sub7-5           580911.117         3497749.947
+Sub7-5           580911.117         3498017.530
+Sub8-1           578719.484         3500081.742
+Sub8-1           578732.226         3499737.707
+Sub8-1           578439.159         3499635.770
+Sub8-1           578337.223         3500043.516
+Sub8-2           578158.834         3499865.127
+Sub8-2           578222.544         3499572.060
+Sub8-2           577916.735         3499355.445
+Sub8-2           577751.088         3499750.449
+Sub8-3           577763.830         3499444.640
+Sub8-3           577853.025         3499177.057
+Sub8-3           577623.668         3499036.894
+Sub8-3           577343.343         3499368.187
+Sub8-4           579382.071         3499559.318
+Sub8-4           579165.456         3499228.025
+Sub8-4           578821.420         3499380.929
+Sub8-4           579076.261         3499814.159
+Sub9-1           578286.254         3498399.792
+Sub9-1           578286.254         3498157.693
+Sub9-1           577942.219         3498246.887
+Sub9-1           577980.445         3498578.180
+Sub9-2           578056.898         3498093.982
+Sub9-2           578056.898         3498093.982
+Sub9-2           578133.350         3497864.625
+Sub9-2           577725.604         3497864.625
+Sub9-2           577700.120         3498259.629
+Sub9-3           577853.025         3497749.947
+Sub9-3           577891.251         3497597.042
+Sub9-3           577572.700         3497482.364
+Sub9-3           577496.247         3497762.689
+Sub9-4           577571.936         3498215.670
+Sub9-4           577595.621         3497978.823
+Sub9-4           577382.458         3497789.345
+Sub9-4           577299.562         3498132.773
+Sub10-1          582297.039         3497990.665
+Sub10-1          582285.197         3497706.448
+Sub10-1          582000.980         3497623.552
+Sub10-1          581929.926         3497931.453
+Sub10-2          582522.044         3497765.660
+Sub10-2          582557.571         3497505.128
+Sub10-2          582237.828         3497256.438
+Sub10-2          582060.192         3497505.128
+Sub10-3          582450.990         3497197.227
+Sub10-3          582450.990         3496984.064
+Sub10-3          582107.562         3496984.064
+Sub10-3          582095.719         3497244.596
+Sub10-4          582036.507         3497007.749
+Sub10-4          582060.192         3496818.271
+Sub10-4          581823.345         3496770.901
+Sub10-4          581704.921         3497007.749
+Sub10-5          581681.236         3498038.034
+Sub10-5          581870.714         3497978.823
+Sub10-5          581704.921         3497718.291
+Sub10-5          581468.074         3497824.872
+Sub11-1          579360.133         3497694.606
+Sub11-1          579371.975         3497588.025
+Sub11-1          579170.655         3497540.655
+Sub11-1          579194.340         3497753.818
+Sub11-2          579111.443         3497777.502
+Sub11-2          579111.443         3497635.394
+Sub11-2          578945.650         3497611.709
+Sub11-2          578910.123         3497801.187
+Sub11-3          579490.399         3497445.916
+Sub11-3          579348.291         3497363.020
+Sub11-3          579241.709         3497469.601
+Sub11-3          579454.872         3497564.340
+Sub11-4          578874.596         3497813.030
+Sub11-4          578874.596         3497623.552
+Sub11-4          578756.172         3497588.025
+Sub11-4          578756.172         3497730.133
+Sub12-1          577524.567         3497410.389
+Sub12-1          577583.778         3497209.069
+Sub12-1          577323.246         3497055.118
+Sub12-1          577275.877         3497327.493
+Sub12-2          577500.882         3496972.222
+Sub12-2          577536.409         3496759.059
+Sub12-2          577264.034         3496699.847
+Sub12-2          577216.665         3496936.695
+Sub12-3          577844.310         3497043.276
+Sub12-3          577832.468         3496901.167
+Sub12-3          577607.463         3496913.010
+Sub12-3          577631.148         3497078.803
+Sub13-1          579206.182         3497126.172
+Sub13-1          579241.709         3496948.537
+Sub13-1          578969.335         3496901.167
+Sub13-1          578957.493         3497126.172
+Sub13-2          579229.867         3496865.640
+Sub13-2          579348.291         3496676.163
+Sub13-2          579111.443         3496616.951
+Sub13-2          579064.074         3496806.429
+Sub13-3          579679.877         3496628.793
+Sub13-3          579644.350         3496486.685
+Sub13-3          579371.975         3496510.369
+Sub13-3          579371.975         3496676.163
+Sub13-4          580094.360         3496664.320
+Sub13-4          580058.833         3496474.842
+Sub13-4          579833.828         3496474.842
+Sub13-4          579810.143         3496688.005
+Sub13-5          580544.369         3496699.847
+Sub13-5          580544.369         3496498.527
+Sub13-5          580271.995         3496486.685
+Sub13-5          580236.468         3496688.005
 
 [SYMBOLS]
-;;Gage           X-Coord            Y-Coord           
+;;Gage           X-Coord            Y-Coord
 ;;-------------- ------------------ ------------------
-RG               585934.869         3502047.838       
+RG               585934.869         3502047.838
 
