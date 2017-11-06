@@ -8,11 +8,7 @@
 
 #include "Utils.h"
 
-#include <cmath>
-
-#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/FaceRule.h"
-#include "MeshLib/Node.h"
 
 namespace ProcessLib
 {

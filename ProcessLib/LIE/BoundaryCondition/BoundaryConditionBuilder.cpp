@@ -12,7 +12,7 @@
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/SearchLength.h"
-
+#include "MeshLib/Mesh.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 
 #include "NeumannBoundaryCondition.h"

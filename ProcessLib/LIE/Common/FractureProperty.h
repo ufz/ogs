@@ -11,13 +11,17 @@
 
 #include <Eigen/Eigen>
 
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/Node.h"
-
-#include "ProcessLib/Parameter/Parameter.h"
-
 #include "Utils.h"
 
+namespace MeshLib
+{
+class Element;
+}
+namespace ProcessLib
+{
+template <typename T>
+struct Parameter;
+}
 namespace ProcessLib
 {
 namespace LIE

@@ -10,14 +10,19 @@
 #pragma once
 
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
-#include "ProcessLib/Parameter/Parameter.h"
-
-#include "ProcessLib/LIE/Common/FractureProperty.h"
 
 namespace MeshLib
 {
 class Element;
 }
+
+namespace ProcessLib
+{
+namespace LIE
+{
+struct FractureProperty;
+}
+}  // namespace ProcessLib
 
 namespace ProcessLib
 {

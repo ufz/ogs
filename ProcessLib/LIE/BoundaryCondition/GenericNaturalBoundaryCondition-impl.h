@@ -9,9 +9,7 @@
 
 #pragma once
 
-#include "GenericNaturalBoundaryCondition.h"
-
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"  // for getUniqueNodes
 
 #include "ProcessLib/BoundaryCondition/GenericNaturalBoundaryConditionLocalAssembler.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"

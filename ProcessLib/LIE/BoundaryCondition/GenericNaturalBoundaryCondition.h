@@ -11,7 +11,14 @@
 
 #include "MeshLib/MeshSubset.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
-#include "ProcessLib/LIE/Common/FractureProperty.h"
+
+namespace ProcessLib
+{
+namespace LIE
+{
+struct FractureProperty;
+}
+}  // namespace ProcessLib
 
 namespace ProcessLib
 {

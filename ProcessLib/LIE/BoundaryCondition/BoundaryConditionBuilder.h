@@ -9,11 +9,7 @@
 
 #pragma once
 
-#include "NumLib/NumericsConfig.h"
-
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
-
-#include "ProcessLib/LIE/Common/FractureProperty.h"
 
 namespace MeshLib
 {
@@ -29,8 +25,17 @@ namespace ProcessLib
 {
 namespace LIE
 {
-/// A boundary condition builder for displacement jumps. Boundary integration,
-/// e.g. for Neumann BC, should take into account the leveset function.
+struct FractureProperty;
+}
+}  // namespace ProcessLib
+
+namespace ProcessLib
+{
+namespace LIE
+{
+/// A boundary condition builder for displacement jumps. Boundary
+/// integration, e.g. for Neumann BC, should take into account the leveset
+/// function.
 class BoundaryConditionBuilder : public ProcessLib::BoundaryConditionBuilder
 {
 public:

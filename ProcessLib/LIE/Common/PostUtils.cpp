@@ -8,9 +8,6 @@
 
 #include "PostUtils.h"
 
-#include <map>
-#include <vector>
-
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"

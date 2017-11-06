@@ -9,7 +9,10 @@
 #include "MeshUtils.h"
 
 #include "BaseLib/makeVectorUnique.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshLib/Node.h"
 
 namespace ProcessLib
 {

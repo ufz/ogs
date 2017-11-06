@@ -10,9 +10,12 @@
 
 #include <vector>
 
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
+namespace MeshLib
+{
+class Element;
+class Mesh;
+class Node;
+}  // namespace MeshLib
 
 namespace ProcessLib
 {
