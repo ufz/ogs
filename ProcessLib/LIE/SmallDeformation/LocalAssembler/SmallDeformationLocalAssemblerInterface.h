@@ -17,14 +17,12 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 
-
 namespace ProcessLib
 {
 namespace LIE
 {
 namespace SmallDeformation
 {
-
 class SmallDeformationLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
       public NumLib::ExtrapolatableElement
@@ -52,7 +50,7 @@ public:
         auto const local_dof_size = local_x_.size();
 
         _local_u.setZero();
-        for (unsigned i=0; i<local_dof_size; i++)
+        for (unsigned i = 0; i < local_dof_size; i++)
             _local_u[_dofIndex_to_localIndex[i]] = local_x_[i];
         _local_b.setZero();
         _local_J.setZero();
@@ -60,26 +58,28 @@ public:
         assembleWithJacobian(t, _local_u, _local_b, _local_J);
 
         local_b_data.resize(local_dof_size);
-        for (unsigned i=0; i<local_dof_size; i++)
-             local_b_data[i] = _local_b[_dofIndex_to_localIndex[i]];
+        for (unsigned i = 0; i < local_dof_size; i++)
+            local_b_data[i] = _local_b[_dofIndex_to_localIndex[i]];
 
-        local_Jac_data.resize(local_dof_size*local_dof_size);
-         for (unsigned i=0; i<local_dof_size; i++)
-             for (unsigned j=0; j<local_dof_size; j++)
-                 local_Jac_data[i*local_dof_size + j] = _local_J(_dofIndex_to_localIndex[i],
-                                                                 _dofIndex_to_localIndex[j]);
+        local_Jac_data.resize(local_dof_size * local_dof_size);
+        for (unsigned i = 0; i < local_dof_size; i++)
+            for (unsigned j = 0; j < local_dof_size; j++)
+                local_Jac_data[i * local_dof_size + j] = _local_J(
+                    _dofIndex_to_localIndex[i], _dofIndex_to_localIndex[j]);
     }
 
-    virtual void assembleWithJacobian(
-        double const t,
-        Eigen::VectorXd const& local_u,
-        Eigen::VectorXd& local_b,
-        Eigen::MatrixXd& local_J) {
+    virtual void assembleWithJacobian(double const t,
+                                      Eigen::VectorXd const& local_u,
+                                      Eigen::VectorXd& local_b,
+                                      Eigen::MatrixXd& local_J)
+    {
         (void)t;
         (void)local_u;
         (void)local_b;
         (void)local_J;
-        OGS_FATAL("SmallDeformationLocalAssemblerInterface::assembleWithJacobian() is not implemented");
+        OGS_FATAL(
+            "SmallDeformationLocalAssemblerInterface::assembleWithJacobian() "
+            "is not implemented");
     }
 
     virtual std::vector<double> const& getIntPtSigmaXX(

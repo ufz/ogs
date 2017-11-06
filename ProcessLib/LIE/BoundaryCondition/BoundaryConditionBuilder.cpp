@@ -9,9 +9,9 @@
 
 #include "BoundaryConditionBuilder.h"
 
-#include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshGeoToolsLib/SearchLength.h"
 
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 
@@ -41,10 +41,10 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
     return ProcessLib::LIE::createNeumannBoundaryCondition(
         config.config,
         getClonedElements(boundary_element_searcher, config.geometry),
-        dof_table, variable_id, *config.component_id,
-        mesh.isAxiallySymmetric(), integration_order, shapefunction_order, mesh.getDimension(),
-        parameters, _fracture_prop);
+        dof_table, variable_id, *config.component_id, mesh.isAxiallySymmetric(),
+        integration_order, shapefunction_order, mesh.getDimension(), parameters,
+        _fracture_prop);
 }
 
-}  // LIE
-}  // ProcessLib
+}  // namespace LIE
+}  // namespace ProcessLib

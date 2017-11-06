@@ -13,15 +13,15 @@
 
 #include "MeshLib/PropertyVector.h"
 
-#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialLib/FractureModels/FractureModelBase.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
 
 #include "ProcessLib/LIE/Common/FractureProperty.h"
 
 namespace MeshLib
 {
 class Element;
-}
+}  // namespace MeshLib
 
 namespace ProcessLib
 {
@@ -29,16 +29,18 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <int DisplacementDim>
 struct SmallDeformationProcessData
 {
     SmallDeformationProcessData(
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&& material,
-        std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>&& fracture_model,
-        std::vector<std::unique_ptr<FractureProperty>>&& vec_fracture_prop
-        )
-        : _material{std::move(material)}, _fracture_model{std::move(fracture_model)},
+        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&&
+            material,
+        std::unique_ptr<
+            MaterialLib::Fracture::FractureModelBase<DisplacementDim>>&&
+            fracture_model,
+        std::vector<std::unique_ptr<FractureProperty>>&& vec_fracture_prop)
+        : _material{std::move(material)},
+          _fracture_model{std::move(fracture_model)},
           _vec_fracture_property(std::move(vec_fracture_prop))
     {
     }
@@ -59,8 +61,10 @@ struct SmallDeformationProcessData
     //! Assignments are not needed.
     void operator=(SmallDeformationProcessData&&) = delete;
 
-    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>> _material;
-    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>> _fracture_model;
+    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
+        _material;
+    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>
+        _fracture_model;
     std::vector<std::unique_ptr<FractureProperty>> _vec_fracture_property;
 
     MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;

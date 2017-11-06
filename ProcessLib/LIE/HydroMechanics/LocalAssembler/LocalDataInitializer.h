@@ -11,9 +11,9 @@
 
 #include <functional>
 #include <memory>
+#include <type_traits>
 #include <typeindex>
 #include <typeinfo>
-#include <type_traits>
 #include <unordered_map>
 
 #include "MeshLib/Elements/Elements.h"
@@ -145,7 +145,7 @@ public:
                 "The given shape function order %d is not supported.\nOnly "
                 "shape functions of order 2 are supported.",
                 shapefunction_order);
-// /// Quads and Hexahedra ///////////////////////////////////
+            // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -161,7 +161,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeHex20>();
 #endif
 
-// /// Simplices ////////////////////////////////////////////////
+        // /// Simplices ////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -181,11 +181,10 @@ public:
     /// \attention
     /// The index \c id is not necessarily the mesh item's id. Especially when
     /// having multiple meshes it will differ from the latter.
-    void operator()(
-            std::size_t const id,
-            MeshLib::Element const& mesh_item,
-            LADataIntfPtr& data_ptr,
-            ConstructorArgs&&... args) const
+    void operator()(std::size_t const id,
+                    MeshLib::Element const& mesh_item,
+                    LADataIntfPtr& data_ptr,
+                    ConstructorArgs&&... args) const
     {
         auto const type_idx = std::type_index(typeid(mesh_item));
         auto const it = _builder.find(type_idx);
@@ -200,42 +199,47 @@ public:
 
         auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
         auto const varIDs = _dof_table.getElementVariableIDs(id);
-        bool const isPressureDeactivated = (varIDs.front()!=0);
+        bool const isPressureDeactivated = (varIDs.front() != 0);
         std::vector<int> involved_varIDs;  // including deactived elements
-        involved_varIDs.reserve(varIDs.size()+1);
+        involved_varIDs.reserve(varIDs.size() + 1);
         if (isPressureDeactivated)
-            involved_varIDs.push_back(0); // always pressure come in
-        involved_varIDs.insert(involved_varIDs.end(), varIDs.begin(), varIDs.end());
+            involved_varIDs.push_back(0);  // always pressure come in
+        involved_varIDs.insert(involved_varIDs.end(), varIDs.begin(),
+                               varIDs.end());
 
         std::vector<unsigned> dofIndex_to_localIndex;
 
         // matrix and fracture assemblers with enrichments
         dofIndex_to_localIndex.resize(n_local_dof);
         std::vector<unsigned> vec_n_element_nodes;
-        //TODO how to get the shape function order for each variable?
-        vec_n_element_nodes.push_back(mesh_item.getNumberOfBaseNodes()); // pressure
+        // TODO how to get the shape function order for each variable?
+        vec_n_element_nodes.push_back(
+            mesh_item.getNumberOfBaseNodes());  // pressure
         auto const max_varID = *std::max_element(varIDs.begin(), varIDs.end());
         for (int i = 1; i < max_varID + 1; i++)
-            vec_n_element_nodes.push_back(mesh_item.getNumberOfNodes()); // displacements
+            vec_n_element_nodes.push_back(
+                mesh_item.getNumberOfNodes());  // displacements
 
         unsigned local_id = 0;
         unsigned dof_id = 0;
-        for (unsigned i=0; i<involved_varIDs.size(); i++)
+        for (unsigned i = 0; i < involved_varIDs.size(); i++)
         {
             auto const var_id = involved_varIDs[i];
-            auto const n_var_comp = _dof_table.getNumberOfVariableComponents(var_id);
+            auto const n_var_comp =
+                _dof_table.getNumberOfVariableComponents(var_id);
             auto const n_var_element_nodes = vec_n_element_nodes[i];
             for (int var_comp_id = 0; var_comp_id < n_var_comp; var_comp_id++)
             {
                 auto& mss = _dof_table.getMeshSubsets(var_id, var_comp_id);
                 assert(mss.size() == 1);
                 auto mesh_id = mss.getMeshSubset(0).getMeshID();
-                for (unsigned k=0; k<n_var_element_nodes; k++)
+                for (unsigned k = 0; k < n_var_element_nodes; k++)
                 {
                     MeshLib::Location l(mesh_id,
                                         MeshLib::MeshItemType::Node,
                                         mesh_item.getNodeIndex(k));
-                    auto global_index = _dof_table.getGlobalIndex(l, var_id, var_comp_id);
+                    auto global_index =
+                        _dof_table.getGlobalIndex(l, var_id, var_comp_id);
                     if (global_index != NumLib::MeshComponentMap::nop)
                         dofIndex_to_localIndex[dof_id++] = local_id;
                     local_id++;
@@ -243,31 +247,28 @@ public:
             }
         }
 
-        data_ptr = it->second(
-                       mesh_item, involved_varIDs.size(), n_local_dof, dofIndex_to_localIndex,
-                       std::forward<ConstructorArgs>(args)...);
+        data_ptr = it->second(mesh_item, involved_varIDs.size(), n_local_dof,
+                              dofIndex_to_localIndex,
+                              std::forward<ConstructorArgs>(args)...);
     }
 
 private:
     using LADataBuilder = std::function<LADataIntfPtr(
-            MeshLib::Element const& e,
-            std::size_t const n_variables,
-            std::size_t const local_matrix_size,
-            std::vector<unsigned> const& dofIndex_to_localIndex,
-            ConstructorArgs&&...
-        )>;
+        MeshLib::Element const& e,
+        std::size_t const n_variables,
+        std::size_t const local_matrix_size,
+        std::vector<unsigned> const& dofIndex_to_localIndex,
+        ConstructorArgs&&...)>;
 
     template <typename ShapeFunctionDisplacement>
     using IntegrationMethod = typename NumLib::GaussIntegrationPolicy<
-                typename ShapeFunctionDisplacement::MeshElement>::IntegrationMethod;
+        typename ShapeFunctionDisplacement::MeshElement>::IntegrationMethod;
 
     template <typename ShapeFunctionDisplacement,
               typename ShapeFunctionPressure>
-    using LADataMatrix =
-        LocalAssemblerDataMatrix<ShapeFunctionDisplacement,
-                                 ShapeFunctionPressure,
-                                 IntegrationMethod<ShapeFunctionDisplacement>,
-                                 GlobalDim>;
+    using LADataMatrix = LocalAssemblerDataMatrix<
+        ShapeFunctionDisplacement, ShapeFunctionPressure,
+        IntegrationMethod<ShapeFunctionDisplacement>, GlobalDim>;
 
     template <typename ShapeFunctionDisplacement,
               typename ShapeFunctionPressure>
@@ -277,11 +278,9 @@ private:
 
     template <typename ShapeFunctionDisplacement,
               typename ShapeFunctionPressure>
-    using LAFractureData =
-        LocalAssemblerDataFracture<ShapeFunctionDisplacement,
-                                   ShapeFunctionPressure,
-                                   IntegrationMethod<ShapeFunctionDisplacement>,
-                                   GlobalDim>;
+    using LAFractureData = LocalAssemblerDataFracture<
+        ShapeFunctionDisplacement, ShapeFunctionPressure,
+        IntegrationMethod<ShapeFunctionDisplacement>, GlobalDim>;
 
     /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
     /// depending whether the global dimension is less than the shape function's
@@ -317,28 +316,27 @@ private:
                   std::size_t const n_variables,
                   std::size_t const local_matrix_size,
                   std::vector<unsigned> const& dofIndex_to_localIndex,
-                  ConstructorArgs&&... args)
-        {
+                  ConstructorArgs&&... args) {
             if (e.getDimension() == GlobalDim)
             {
                 if (n_variables == 2)
                 {
                     return LADataIntfPtr{
-                        new LADataMatrix<ShapeFunctionDisplacement, ShapeFunctionPressure>{
-                            e, n_variables, local_matrix_size, dofIndex_to_localIndex,
-                            std::forward<ConstructorArgs>(args)...
-                        }};
+                        new LADataMatrix<ShapeFunctionDisplacement,
+                                         ShapeFunctionPressure>{
+                            e, n_variables, local_matrix_size,
+                            dofIndex_to_localIndex,
+                            std::forward<ConstructorArgs>(args)...}};
                 }
                 return LADataIntfPtr{new LADataMatrixNearFracture<
                     ShapeFunctionDisplacement, ShapeFunctionPressure>{
                     e, n_variables, local_matrix_size, dofIndex_to_localIndex,
                     std::forward<ConstructorArgs>(args)...}};
             }
-            return LADataIntfPtr{
-                new LAFractureData<ShapeFunctionDisplacement, ShapeFunctionPressure>{
-                    e, local_matrix_size, dofIndex_to_localIndex,
-                    std::forward<ConstructorArgs>(args)...
-                }};
+            return LADataIntfPtr{new LAFractureData<ShapeFunctionDisplacement,
+                                                    ShapeFunctionPressure>{
+                e, local_matrix_size, dofIndex_to_localIndex,
+                std::forward<ConstructorArgs>(args)...}};
         };
     }
 

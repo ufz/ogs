@@ -26,7 +26,6 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 class SmallDeformationLocalAssemblerFracture
@@ -46,12 +45,12 @@ public:
     using NodalDisplacementVectorType =
         typename HMatricesType::NodalForceVectorType;
 
-    using ForceVectorType =
-        typename HMatricesType::ForceVectorType;
+    using ForceVectorType = typename HMatricesType::ForceVectorType;
 
-    SmallDeformationLocalAssemblerFracture(SmallDeformationLocalAssemblerFracture const&) =
-        delete;
-    SmallDeformationLocalAssemblerFracture(SmallDeformationLocalAssemblerFracture&&) = delete;
+    SmallDeformationLocalAssemblerFracture(
+        SmallDeformationLocalAssemblerFracture const&) = delete;
+    SmallDeformationLocalAssemblerFracture(
+        SmallDeformationLocalAssemblerFracture&&) = delete;
 
     SmallDeformationLocalAssemblerFracture(
         MeshLib::Element const& e,
@@ -71,11 +70,10 @@ public:
             "implemented.");
     }
 
-    void assembleWithJacobian(
-        double const t,
-        Eigen::VectorXd const& local_u,
-        Eigen::VectorXd& local_b,
-        Eigen::MatrixXd& local_J) override;
+    void assembleWithJacobian(double const t,
+                              Eigen::VectorXd const& local_u,
+                              Eigen::VectorXd& local_b,
+                              Eigen::MatrixXd& local_J) override;
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/,
@@ -214,8 +212,8 @@ public:
     }
 
 private:
-    std::vector<double> const& getIntPtSigma(std::vector<double>& cache,
-                                             std::size_t const /*component*/) const
+    std::vector<double> const& getIntPtSigma(
+        std::vector<double>& cache, std::size_t const /*component*/) const
     {
         cache.resize(_ip_data.size());
 

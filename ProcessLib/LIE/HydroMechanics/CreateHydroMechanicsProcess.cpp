@@ -11,9 +11,9 @@
 
 #include <cassert>
 
-#include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/CreateMohrCoulomb.h"
+#include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
@@ -58,26 +58,31 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     {
         if (pv_name != "pressure" && pv_name != "displacement" &&
             pv_name.find("displacement_jump") != 0)
-            OGS_FATAL("Found a process variable name '%s'. It should be 'displacement' or 'displacement_jumpN' or 'pressure'");
-        auto variable = std::find_if(
-            variables.cbegin(), variables.cend(),
-            [&pv_name](ProcessVariable const& v) { return v.getName() == pv_name; });
+            OGS_FATAL(
+                "Found a process variable name '%s'. It should be "
+                "'displacement' or 'displacement_jumpN' or 'pressure'");
+        auto variable = std::find_if(variables.cbegin(), variables.cend(),
+                                     [&pv_name](ProcessVariable const& v) {
+                                         return v.getName() == pv_name;
+                                     });
 
         if (variable == variables.end())
         {
             OGS_FATAL(
-                "Could not find process variable '%s' in the provided variables "
+                "Could not find process variable '%s' in the provided "
+                "variables "
                 "list for config tag <%s>.",
                 pv_name.c_str(), "process_variable");
         }
         DBUG("Found process variable \'%s\' for config tag <%s>.",
              variable->getName().c_str(), "process_variable");
 
-        if (pv_name.find("displacement") != std::string::npos
-            && variable->getNumberOfComponents() != GlobalDim)
+        if (pv_name.find("displacement") != std::string::npos &&
+            variable->getNumberOfComponents() != GlobalDim)
         {
             OGS_FATAL(
-                "Number of components of the process variable '%s' is different "
+                "Number of components of the process variable '%s' is "
+                "different "
                 "from the displacement dimension: got %d, expected %d",
                 variable->getName().c_str(),
                 variable->getNumberOfComponents(),
@@ -100,13 +105,12 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__constitutive_relation__type}
         constitutive_relation_config.peekConfigParameter<std::string>("type");
 
-    std::unique_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>
-        material = nullptr;
+    std::unique_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>> material =
+        nullptr;
     if (type == "LinearElasticIsotropic")
     {
-        material =
-            MaterialLib::Solids::createLinearElasticIsotropic<GlobalDim>(
-                parameters, constitutive_relation_config);
+        material = MaterialLib::Solids::createLinearElasticIsotropic<GlobalDim>(
+            parameters, constitutive_relation_config);
     }
     else
     {
@@ -119,8 +123,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& intrinsic_permeability = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__intrinsic_permeability}
-        "intrinsic_permeability",
-        parameters, 1);
+        "intrinsic_permeability", parameters, 1);
 
     DBUG("Use \'%s\' as intrinsic permeabiltiy parameter.",
          intrinsic_permeability.name.c_str());
@@ -138,8 +141,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& fluid_viscosity = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fluid_viscosity}
-        "fluid_viscosity",
-        parameters, 1);
+        "fluid_viscosity", parameters, 1);
     DBUG("Use \'%s\' as fluid viscosity parameter.",
          fluid_viscosity.name.c_str());
 
@@ -147,17 +149,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& fluid_density = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fluid_density}
-        "fluid_density",
-        parameters, 1);
-    DBUG("Use \'%s\' as fluid density parameter.",
-         fluid_density.name.c_str());
+        "fluid_density", parameters, 1);
+    DBUG("Use \'%s\' as fluid density parameter.", fluid_density.name.c_str());
 
     // Biot coefficient
     auto& biot_coefficient = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__biot_coefficient}
-        "biot_coefficient",
-        parameters, 1);
+        "biot_coefficient", parameters, 1);
     DBUG("Use \'%s\' as Biot coefficient parameter.",
          biot_coefficient.name.c_str());
 
@@ -165,19 +164,15 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& porosity = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__porosity}
-        "porosity",
-        parameters, 1);
-    DBUG("Use \'%s\' as porosity parameter.",
-         porosity.name.c_str());
+        "porosity", parameters, 1);
+    DBUG("Use \'%s\' as porosity parameter.", porosity.name.c_str());
 
     // Solid density
     auto& solid_density = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__solid_density}
-        "solid_density",
-        parameters, 1);
-    DBUG("Use \'%s\' as solid density parameter.",
-         solid_density.name.c_str());
+        "solid_density", parameters, 1);
+    DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
 
     // Specific body force
     Eigen::Matrix<double, GlobalDim, 1> specific_body_force;
@@ -197,7 +192,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     }
 
     // Fracture constitutive relation.
-    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>> fracture_model = nullptr;
+    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>
+        fracture_model = nullptr;
     auto const opt_fracture_model_config =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_model}
         config.getConfigSubtreeOptional("fracture_model");
@@ -224,7 +220,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         else
         {
             OGS_FATAL(
-                "Cannot construct fracture constitutive relation of given type \'%s\'.",
+                "Cannot construct fracture constitutive relation of given type "
+                "\'%s\'.",
                 frac_type.c_str());
         }
     }
@@ -232,7 +229,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Fracture properties
     std::unique_ptr<FractureProperty> frac_prop = nullptr;
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties}
-    auto opt_fracture_properties_config = config.getConfigSubtreeOptional("fracture_properties");
+    auto opt_fracture_properties_config =
+        config.getConfigSubtreeOptional("fracture_properties");
     if (opt_fracture_properties_config)
     {
         auto& fracture_properties_config = *opt_fracture_properties_config;
@@ -256,8 +254,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& initial_effective_stress = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__initial_effective_stress}
-        "initial_effective_stress",
-        parameters, ProcessLib::KelvinVectorDimensions<GlobalDim>::value);
+        "initial_effective_stress", parameters,
+        ProcessLib::KelvinVectorDimensions<GlobalDim>::value);
     DBUG("Use \'%s\' as initial effective stress parameter.",
          initial_effective_stress.name.c_str());
 
@@ -265,18 +263,19 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto& initial_fracture_effective_stress = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__initial_fracture_effective_stress}
-        "initial_fracture_effective_stress",
-        parameters, GlobalDim);
+        "initial_fracture_effective_stress", parameters, GlobalDim);
     DBUG("Use \'%s\' as initial fracture effective stress parameter.",
          initial_fracture_effective_stress.name.c_str());
 
     // deactivation of matrix elements in flow
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__deactivate_matrix_in_flow}
-    auto opt_deactivate_matrix_in_flow = config.getConfigParameterOptional<bool>("deactivate_matrix_in_flow");
-    bool const deactivate_matrix_in_flow = opt_deactivate_matrix_in_flow && *opt_deactivate_matrix_in_flow;;
+    auto opt_deactivate_matrix_in_flow =
+        config.getConfigParameterOptional<bool>("deactivate_matrix_in_flow");
+    bool const deactivate_matrix_in_flow =
+        opt_deactivate_matrix_in_flow && *opt_deactivate_matrix_in_flow;
+    ;
     if (deactivate_matrix_in_flow)
         INFO("Deactivate matrix elements in flow calculation.");
-
 
     HydroMechanicsProcessData<GlobalDim> process_data{
         std::move(material),
@@ -326,4 +325,3 @@ template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib
-

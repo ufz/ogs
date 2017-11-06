@@ -17,12 +17,11 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim, int DisplacementDim>
 class LocalAssemblerDataMatrix final
-    : public SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
-                                            DisplacementDim>
+    : public SmallDeformationLocalAssemblerMatrix<
+          ShapeFunction, IntegrationMethod, DisplacementDim>
 {
 public:
     LocalAssemblerDataMatrix(LocalAssemblerDataMatrix const&) = delete;
@@ -35,7 +34,7 @@ public:
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
         : SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
-                                         DisplacementDim>(
+                                               DisplacementDim>(
               e, local_matrix_size, is_axially_symmetric, integration_order,
               process_data)
     {

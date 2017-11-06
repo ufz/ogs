@@ -17,7 +17,6 @@ namespace ProcessLib
 {
 namespace LIE
 {
-
 /// Compute a normal vector of the given element
 ///
 /// Computed normal vector is oriented in the left direction of the given line
@@ -41,16 +40,18 @@ void computeNormalVector(MeshLib::Element const& e, unsigned const global_dim,
 void computeRotationMatrix(MeshLib::Element const& e, Eigen::Vector3d const& n,
                            unsigned const global_dim, Eigen::MatrixXd& R);
 
-/// compute physical coordinates from the given shape vector, i.e. from the natural coordinates
+/// compute physical coordinates from the given shape vector, i.e. from the
+/// natural coordinates
 template <typename Derived>
-MathLib::Point3d computePhysicalCoordinates(MeshLib::Element const&e, Eigen::MatrixBase<Derived> const& shape)
+MathLib::Point3d computePhysicalCoordinates(
+    MeshLib::Element const& e, Eigen::MatrixBase<Derived> const& shape)
 {
     MathLib::Point3d pt;
-    for (unsigned i=0; i<e.getNumberOfNodes(); i++)
+    for (unsigned i = 0; i < e.getNumberOfNodes(); i++)
     {
         MeshLib::Node const& node = *e.getNode(i);
-        for (unsigned j=0; j<3; j++)
-            pt[j] += shape[i]*node[j];
+        for (unsigned j = 0; j < 3; j++)
+            pt[j] += shape[i] * node[j];
     }
     return pt;
 }

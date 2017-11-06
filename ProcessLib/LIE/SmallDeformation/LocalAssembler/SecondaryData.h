@@ -15,7 +15,6 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 /// Used by for extrapolation of the integration point values. It is ordered
 /// (and stored) by integration points.
 template <typename ShapeMatrixType>

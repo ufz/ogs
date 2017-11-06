@@ -36,8 +36,8 @@ struct IntegrationPointDataMatrix final
     typename BMatricesType::KelvinVectorType _eps, _eps_prev;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim>& _solid_material;
-    std::unique_ptr<
-        typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::MaterialStateVariables>
+    std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::MaterialStateVariables>
         _material_state_variables;
 
     typename BMatricesType::KelvinMatrixType _C;

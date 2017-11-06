@@ -17,16 +17,17 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim, int DisplacementDim>
 class LocalAssemblerDataMatrixNearFracture final
-    : public SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction, IntegrationMethod,
-                                            DisplacementDim>
+    : public SmallDeformationLocalAssemblerMatrixNearFracture<
+          ShapeFunction, IntegrationMethod, DisplacementDim>
 {
 public:
-    LocalAssemblerDataMatrixNearFracture(LocalAssemblerDataMatrixNearFracture const&) = delete;
-    LocalAssemblerDataMatrixNearFracture(LocalAssemblerDataMatrixNearFracture&&) = delete;
+    LocalAssemblerDataMatrixNearFracture(
+        LocalAssemblerDataMatrixNearFracture const&) = delete;
+    LocalAssemblerDataMatrixNearFracture(
+        LocalAssemblerDataMatrixNearFracture&&) = delete;
 
     LocalAssemblerDataMatrixNearFracture(
         MeshLib::Element const& e,
@@ -36,8 +37,8 @@ public:
         bool const is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
-        : SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction, IntegrationMethod,
-                                         DisplacementDim>(
+        : SmallDeformationLocalAssemblerMatrixNearFracture<
+              ShapeFunction, IntegrationMethod, DisplacementDim>(
               e, n_variables, local_matrix_size, dofIndex_to_localIndex,
               is_axially_symmetric, integration_order, process_data)
     {

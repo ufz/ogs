@@ -93,6 +93,7 @@ private:
     void preTimestepConcreteProcess(
         GlobalVector const& x, double const t, double const dt,
         const int /*process_id*/) override
+									const int /*process_id*/) override
     {
         DBUG("PreTimestep SmallDeformationProcess.");
 
@@ -120,7 +121,8 @@ private:
     std::vector<std::vector<MeshLib::Element*>> _vec_fracture_matrix_elements;
     std::vector<std::vector<MeshLib::Node*>> _vec_fracture_nodes;
 
-    std::vector<std::unique_ptr<MeshLib::MeshSubset const>> _mesh_subset_fracture_nodes;
+    std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
+        _mesh_subset_fracture_nodes;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_matrix_nodes;
 };
 

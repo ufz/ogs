@@ -28,7 +28,6 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 class SmallDeformationLocalAssemblerMatrix
@@ -47,9 +46,10 @@ public:
     using NodalDisplacementVectorType =
         typename BMatricesType::NodalForceVectorType;
 
-    SmallDeformationLocalAssemblerMatrix(SmallDeformationLocalAssemblerMatrix const&) =
-        delete;
-    SmallDeformationLocalAssemblerMatrix(SmallDeformationLocalAssemblerMatrix&&) = delete;
+    SmallDeformationLocalAssemblerMatrix(
+        SmallDeformationLocalAssemblerMatrix const&) = delete;
+    SmallDeformationLocalAssemblerMatrix(
+        SmallDeformationLocalAssemblerMatrix&&) = delete;
 
     SmallDeformationLocalAssemblerMatrix(
         MeshLib::Element const& e,
@@ -220,10 +220,11 @@ private:
         cache.clear();
         cache.reserve(_ip_data.size());
 
-        for (auto const& ip_data : _ip_data) {
+        for (auto const& ip_data : _ip_data)
+        {
             if (component < 3)  // xx, yy, zz components
                 cache.push_back(ip_data._sigma[component]);
-            else    // mixed xy, yz, xz components
+            else  // mixed xy, yz, xz components
                 cache.push_back(ip_data._sigma[component] / std::sqrt(2));
         }
 

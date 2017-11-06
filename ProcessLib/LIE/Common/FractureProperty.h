@@ -18,12 +18,10 @@
 
 #include "Utils.h"
 
-
 namespace ProcessLib
 {
 namespace LIE
 {
-
 struct FractureProperty
 {
     int fracture_id = 0;
@@ -41,11 +39,11 @@ struct FractureProperty
 /// configure fracture property based on a fracture element assuming
 /// a fracture is a straight line/flat plane
 inline void setFractureProperty(unsigned dim, MeshLib::Element const& e,
-                                FractureProperty &frac_prop)
+                                FractureProperty& frac_prop)
 {
     // 1st node is used but using other node is also possible, because
     // a fracture is not curving
-    for (int j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
         frac_prop.point_on_fracture[j] = e.getNode(0)->getCoords()[j];
     computeNormalVector(e, dim, frac_prop.normal_vector);
     frac_prop.R.resize(dim, dim);

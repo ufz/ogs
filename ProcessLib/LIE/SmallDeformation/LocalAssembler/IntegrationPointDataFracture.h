@@ -19,12 +19,12 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <typename HMatricesType, int DisplacementDim>
 struct IntegrationPointDataFracture final
 {
     explicit IntegrationPointDataFracture(
-        MaterialLib::Fracture::FractureModelBase<DisplacementDim>& fracture_material)
+        MaterialLib::Fracture::FractureModelBase<DisplacementDim>&
+            fracture_material)
         : _fracture_material(fracture_material),
           _material_state_variables(
               _fracture_material.createMaterialStateVariables())
@@ -56,7 +56,8 @@ struct IntegrationPointDataFracture final
     double _aperture_prev = 0.0;
     double _aperture0 = 0.0;
 
-    MaterialLib::Fracture::FractureModelBase<DisplacementDim>& _fracture_material;
+    MaterialLib::Fracture::FractureModelBase<DisplacementDim>&
+        _fracture_material;
     std::unique_ptr<typename MaterialLib::Fracture::FractureModelBase<
         DisplacementDim>::MaterialStateVariables>
         _material_state_variables;
@@ -64,7 +65,6 @@ struct IntegrationPointDataFracture final
     Eigen::MatrixXd _C;
     double _detJ = 0.0;
     double _integralMeasure;
-
 
     void pushBackState()
     {

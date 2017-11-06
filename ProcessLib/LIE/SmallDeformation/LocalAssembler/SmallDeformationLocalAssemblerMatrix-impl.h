@@ -57,9 +57,9 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
     _secondary_data.N.resize(n_integration_points);
 
     auto const shape_matrices =
-        initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                          IntegrationMethod, DisplacementDim>(
-                e, is_axially_symmetric, _integration_method);
+        initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod,
+                          DisplacementDim>(e, is_axially_symmetric,
+                                           _integration_method);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -88,22 +88,19 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
     }
 }
 
-
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
-                                    DisplacementDim>::
-assembleWithJacobian(
-    double const t,
-    std::vector<double> const& local_x,
-    std::vector<double> const& /*local_xdot*/,
-    const double /*dxdot_dx*/, const double /*dx_dx*/,
-    std::vector<double>& /*local_M_data*/,
-    std::vector<double>& /*local_K_data*/,
-    std::vector<double>& local_b_data,
-    std::vector<double>& local_Jac_data)
+                                          DisplacementDim>::
+    assembleWithJacobian(double const t, std::vector<double> const& local_x,
+                         std::vector<double> const& /*local_xdot*/,
+                         const double /*dxdot_dx*/, const double /*dx_dx*/,
+                         std::vector<double>& /*local_M_data*/,
+                         std::vector<double>& /*local_K_data*/,
+                         std::vector<double>& local_b_data,
+                         std::vector<double>& local_Jac_data)
 {
-    assert (_element.getDimension() == DisplacementDim);
+    assert(_element.getDimension() == DisplacementDim);
 
     auto const local_matrix_size = local_x.size();
 
@@ -145,9 +142,8 @@ assembleWithJacobian(
         auto& state = _ip_data[ip]._material_state_variables;
 
         eps.noalias() =
-            B *
-            Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
-                local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
+            B * Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
+                    local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
         auto&& solution = _ip_data[ip]._solid_material.integrateStress(
             t, x_position, _process_data.dt, eps_prev, eps, sigma_prev, *state);
@@ -165,12 +161,11 @@ assembleWithJacobian(
     }
 }
 
-
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
-                                    DisplacementDim>::
-postTimestepConcrete(std::vector<double> const& /*local_x*/)
+                                          DisplacementDim>::
+    postTimestepConcrete(std::vector<double> const& /*local_x*/)
 {
     // Compute average value per element
     const int n = DisplacementDim == 2 ? 4 : 6;

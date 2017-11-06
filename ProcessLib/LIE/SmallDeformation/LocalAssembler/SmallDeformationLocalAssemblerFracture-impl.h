@@ -19,18 +19,16 @@
 
 #include "ProcessLib/LIE/Common/LevelSetFunction.h"
 
-
 namespace ProcessLib
 {
 namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
-                               DisplacementDim>::
+                                       DisplacementDim>::
     SmallDeformationLocalAssemblerFracture(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
@@ -39,17 +37,16 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
     : SmallDeformationLocalAssemblerInterface(
-          ShapeFunction::NPOINTS * DisplacementDim, // no intersection
+          ShapeFunction::NPOINTS * DisplacementDim,  // no intersection
           dofIndex_to_localIndex),
       _process_data(process_data),
       _integration_method(integration_order),
-      _shape_matrices(
-          initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                            IntegrationMethod, DisplacementDim>(
-              e, is_axially_symmetric, _integration_method)),
+      _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                        IntegrationMethod, DisplacementDim>(
+          e, is_axially_symmetric, _integration_method)),
       _element(e)
 {
-    assert(_element.getDimension() == DisplacementDim-1);
+    assert(_element.getDimension() == DisplacementDim - 1);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -75,10 +72,9 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         ip_data._h_matrices.setZero(DisplacementDim,
                                     ShapeFunction::NPOINTS * DisplacementDim);
 
-        computeHMatrix<
-            DisplacementDim, ShapeFunction::NPOINTS,
-            typename ShapeMatricesType::NodalRowVectorType, HMatrixType>(
-            sm.N, ip_data._h_matrices);
+        computeHMatrix<DisplacementDim, ShapeFunction::NPOINTS,
+                       typename ShapeMatricesType::NodalRowVectorType,
+                       HMatrixType>(sm.N, ip_data._h_matrices);
 
         // Initialize current time step values
         ip_data._w.setZero(DisplacementDim);
@@ -97,16 +93,14 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
     }
 }
 
-
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
-void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
-                                    DisplacementDim>::
-assembleWithJacobian(
-    double const t,
-    Eigen::VectorXd const& local_u,
-    Eigen::VectorXd& local_b,
-    Eigen::MatrixXd& local_J)
+void SmallDeformationLocalAssemblerFracture<
+    ShapeFunction, IntegrationMethod,
+    DisplacementDim>::assembleWithJacobian(double const t,
+                                           Eigen::VectorXd const& local_u,
+                                           Eigen::VectorXd& local_b,
+                                           Eigen::MatrixXd& local_J)
 {
     auto const& nodal_jump = local_u;
 
@@ -155,20 +149,20 @@ assembleWithJacobian(
             w_prev, w, sigma_prev, sigma, C, state);
 
         // r_[u] += H^T*Stress
-        local_b.noalias() -= H.transpose() * R.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
+        local_b.noalias() -= H.transpose() * R.transpose() * sigma * detJ *
+                             wp.getWeight() * integralMeasure;
 
         // J_[u][u] += H^T*C*H
-        local_J.noalias() += H.transpose() * R.transpose() * C * R * H * detJ * wp.getWeight() * integralMeasure;
+        local_J.noalias() += H.transpose() * R.transpose() * C * R * H * detJ *
+                             wp.getWeight() * integralMeasure;
     }
-
 }
-
 
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
-                                    DisplacementDim>::
-postTimestepConcrete(std::vector<double> const& /*local_x*/)
+                                            DisplacementDim>::
+    postTimestepConcrete(std::vector<double> const& /*local_x*/)
 {
     double ele_b = 0;
     unsigned const n_integration_points =

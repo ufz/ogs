@@ -7,15 +7,15 @@
  *
  */
 
-#include "SmallDeformationProcess-fwd.h"
 #include "SmallDeformationProcess.h"
+#include "SmallDeformationProcess-fwd.h"
 
 #include <algorithm>
 #include <cassert>
 #include <vector>
 
-#include "MeshLib/Elements/Element.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
@@ -26,9 +26,9 @@
 #include "ProcessLib/LIE/Common/LevelSetFunction.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/LIE/Common/Utils.h"
+#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/LocalAssemblerDataFracture.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/LocalAssemblerDataMatrix.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/LocalAssemblerDataMatrixNearFracture.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/LocalAssemblerDataFracture.h"
 
 namespace ProcessLib
 {
@@ -36,24 +36,19 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <int DisplacementDim>
 SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     MeshLib::Mesh& mesh,
-    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
-        jacobian_assembler,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
-    std::vector<std::reference_wrapper<ProcessVariable>>&&
-        process_variables,
+    std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SmallDeformationProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller)
     : Process(mesh, std::move(jacobian_assembler), parameters,
-              integration_order,
-              std::move(process_variables),
-              std::move(secondary_variables),
-              std::move(named_function_caller)),
+              integration_order, std::move(process_variables),
+              std::move(secondary_variables), std::move(named_function_caller)),
       _process_data(std::move(process_data))
 {
     getFractureMatrixDataInMesh(mesh,
@@ -63,32 +58,39 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
                                 _vec_fracture_matrix_elements,
                                 _vec_fracture_nodes);
 
-    if (_vec_fracture_mat_IDs.size() != _process_data._vec_fracture_property.size())
-        OGS_FATAL("The number of the given fracture properties (%d) are not consistent"
-                  " with the number of fracture groups in a mesh (%d).",
-                  _process_data._vec_fracture_property.size(),
-                  _vec_fracture_mat_IDs.size());
+    if (_vec_fracture_mat_IDs.size() !=
+        _process_data._vec_fracture_property.size())
+        OGS_FATAL(
+            "The number of the given fracture properties (%d) are not "
+            "consistent"
+            " with the number of fracture groups in a mesh (%d).",
+            _process_data._vec_fracture_property.size(),
+            _vec_fracture_mat_IDs.size());
 
     // create a map from a material ID to a fracture ID
     auto max_frac_mat_id = std::max_element(_vec_fracture_mat_IDs.begin(),
                                             _vec_fracture_mat_IDs.end());
     _process_data._map_materialID_to_fractureID.resize(*max_frac_mat_id + 1);
-    for (unsigned i=0; i<_vec_fracture_mat_IDs.size(); i++)
-        _process_data._map_materialID_to_fractureID[_vec_fracture_mat_IDs[i]] = i;
+    for (unsigned i = 0; i < _vec_fracture_mat_IDs.size(); i++)
+        _process_data._map_materialID_to_fractureID[_vec_fracture_mat_IDs[i]] =
+            i;
 
     // create a table of connected fracture IDs for each element
-    _process_data._vec_ele_connected_fractureIDs.resize(mesh.getNumberOfElements());
-    for (unsigned i=0; i<_vec_fracture_matrix_elements.size(); i++)
+    _process_data._vec_ele_connected_fractureIDs.resize(
+        mesh.getNumberOfElements());
+    for (unsigned i = 0; i < _vec_fracture_matrix_elements.size(); i++)
         for (auto e : _vec_fracture_matrix_elements[i])
-            _process_data._vec_ele_connected_fractureIDs[e->getID()].push_back(i);
+            _process_data._vec_ele_connected_fractureIDs[e->getID()].push_back(
+                i);
 
     // set fracture property
     for (auto& fracture_prop : _process_data._vec_fracture_property)
     {
         // based on the 1st element assuming a fracture forms a straight line
-        setFractureProperty(DisplacementDim,
-                            *_vec_fracture_elements[fracture_prop->fracture_id][0],
-                            *fracture_prop.get());
+        setFractureProperty(
+            DisplacementDim,
+            *_vec_fracture_elements[fracture_prop->fracture_id][0],
+            *fracture_prop.get());
     }
 
     // need to use a custom Neumann BC assembler for displacement jumps
@@ -108,7 +110,6 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     _process_data._mesh_prop_materialIDs = material_ids;
 }
 
-
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::constructDofTable()
 {
@@ -122,7 +123,7 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     _mesh_subset_matrix_nodes =
         std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
     // u jump
-    for (unsigned i=0; i<_vec_fracture_nodes.size(); i++)
+    for (unsigned i = 0; i < _vec_fracture_nodes.size(); i++)
     {
         _mesh_subset_fracture_nodes.push_back(
             std::make_unique<MeshLib::MeshSubset const>(
@@ -145,9 +146,9 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     std::vector<int> const vec_n_components(1 + _vec_fracture_mat_IDs.size(),
                                             DisplacementDim);
 
-    std::vector<std::vector<MeshLib::Element*>const*> vec_var_elements;
+    std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
     vec_var_elements.push_back(&_vec_matrix_elements);
-    for (unsigned i=0; i<_vec_fracture_matrix_elements.size(); i++)
+    for (unsigned i = 0; i < _vec_fracture_matrix_elements.size(); i++)
         vec_var_elements.push_back(&_vec_fracture_matrix_elements[i]);
 
     _local_to_global_index_map =
@@ -158,21 +159,17 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
             NumLib::ComponentOrder::BY_COMPONENT);
 }
 
-
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    ProcessLib::LIE::SmallDeformation::createLocalAssemblers
-            <DisplacementDim,
-             LocalAssemblerDataMatrix,
-             LocalAssemblerDataMatrixNearFracture,
-             LocalAssemblerDataFracture>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-        _process_data);
+    ProcessLib::LIE::SmallDeformation::createLocalAssemblers<
+        DisplacementDim, LocalAssemblerDataMatrix,
+        LocalAssemblerDataMatrixNearFracture, LocalAssemblerDataFracture>(
+        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+        mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables
@@ -354,8 +351,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                 continue;
 
             double const levelsets = calculateLevelSetFunction(
-                *fracture_prop,
-                e->getCenterOfGravity().getCoords());
+                *fracture_prop, e->getCenterOfGravity().getCoords());
             (*mesh_prop_levelset)[e->getID()] = levelsets;
         }
     }
@@ -381,18 +377,16 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     _process_data._mesh_prop_b = mesh_prop_b;
 }
 
-
 template <int DisplacementDim>
-void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(GlobalVector const& x)
+void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
+    GlobalVector const& x)
 {
     DBUG("PostTimestep SmallDeformationProcess.");
 
     GlobalExecutor::executeMemberOnDereferenced(
         &SmallDeformationLocalAssemblerInterface::postTimestep,
         _local_assemblers, *_local_to_global_index_map, x);
-
 }
-
 
 // ------------------------------------------------------------------------------------
 // template instantiation
@@ -400,6 +394,6 @@ void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(Globa
 template class SmallDeformationProcess<2>;
 template class SmallDeformationProcess<3>;
 
-}   // namespace SmallDeformation
-}   // namespace LIE
-}   // namespace ProcessLib
+}  // namespace SmallDeformation
+}  // namespace LIE
+}  // namespace ProcessLib

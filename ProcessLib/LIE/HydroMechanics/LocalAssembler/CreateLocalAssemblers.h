@@ -40,12 +40,10 @@ void createLocalAssemblers(
     ExtraCtorArgs&&... extra_ctor_args)
 {
     // Shape matrices initializer
-    using LocalDataInitializer =
-        LocalDataInitializer<LocalAssemblerInterface,
-                             LocalAssemblerMatrixImplementation,
-                             LocalAssemblerMatrixNearFractureImplementation,
-                             LocalAssemblerFractureImplementation,
-                             GlobalDim, ExtraCtorArgs...>;
+    using LocalDataInitializer = LocalDataInitializer<
+        LocalAssemblerInterface, LocalAssemblerMatrixImplementation,
+        LocalAssemblerMatrixNearFractureImplementation,
+        LocalAssemblerFractureImplementation, GlobalDim, ExtraCtorArgs...>;
 
     DBUG("Create local assemblers for HydroMechanics with LIE.");
     // Populate the vector of local assemblers.
@@ -87,10 +85,10 @@ void createLocalAssemblers(
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
     ExtraCtorArgs&&... extra_ctor_args)
 {
-    detail::createLocalAssemblers<GlobalDim,
-                                  LocalAssemblerMatrixImplementation,
-                                  LocalAssemblerMatrixNearFractureImplementation,
-                                  LocalAssemblerFractureImplementation>(
+    detail::createLocalAssemblers<
+        GlobalDim, LocalAssemblerMatrixImplementation,
+        LocalAssemblerMatrixNearFractureImplementation,
+        LocalAssemblerFractureImplementation>(
         dof_table, shapefunction_order, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }

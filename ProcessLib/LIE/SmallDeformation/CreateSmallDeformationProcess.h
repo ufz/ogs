@@ -20,7 +20,6 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <int DisplacementDim>
 std::unique_ptr<Process> createSmallDeformationProcess(
     MeshLib::Mesh& mesh,

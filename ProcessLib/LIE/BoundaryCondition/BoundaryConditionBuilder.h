@@ -29,14 +29,15 @@ namespace ProcessLib
 {
 namespace LIE
 {
-
 /// A boundary condition builder for displacement jumps. Boundary integration,
 /// e.g. for Neumann BC, should take into account the leveset function.
 class BoundaryConditionBuilder : public ProcessLib::BoundaryConditionBuilder
 {
 public:
     explicit BoundaryConditionBuilder(FractureProperty const& fracture_prop)
-    : _fracture_prop(fracture_prop) {}
+        : _fracture_prop(fracture_prop)
+    {
+    }
 
 private:
     std::unique_ptr<BoundaryCondition> createNeumannBoundaryCondition(
@@ -50,5 +51,5 @@ private:
     FractureProperty const& _fracture_prop;
 };
 
-}  // LIE
-}  // ProcessLib
+}  // namespace LIE
+}  // namespace ProcessLib

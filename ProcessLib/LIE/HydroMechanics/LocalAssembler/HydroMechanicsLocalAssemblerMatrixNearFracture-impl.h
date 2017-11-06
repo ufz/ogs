@@ -19,9 +19,9 @@ namespace HydroMechanics
 {
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, unsigned GlobalDim>
-HydroMechanicsLocalAssemblerMatrixNearFracture<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    GlobalDim>::
+HydroMechanicsLocalAssemblerMatrixNearFracture<ShapeFunctionDisplacement,
+                                               ShapeFunctionPressure,
+                                               IntegrationMethod, GlobalDim>::
     HydroMechanicsLocalAssemblerMatrixNearFracture(
         MeshLib::Element const& e,
         std::size_t const n_variables,
@@ -38,22 +38,20 @@ HydroMechanicsLocalAssemblerMatrixNearFracture<
 {
 }
 
-
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, unsigned GlobalDim>
-void
-HydroMechanicsLocalAssemblerMatrixNearFracture<
+void HydroMechanicsLocalAssemblerMatrixNearFracture<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    GlobalDim>::
-assembleWithJacobianConcrete(
-    double const t,
-    Eigen::VectorXd const& local_x,
-    Eigen::VectorXd const& local_x_dot,
-    Eigen::VectorXd& local_b,
-    Eigen::MatrixXd& local_J)
+    GlobalDim>::assembleWithJacobianConcrete(double const t,
+                                             Eigen::VectorXd const& local_x,
+                                             Eigen::VectorXd const& local_x_dot,
+                                             Eigen::VectorXd& local_b,
+                                             Eigen::MatrixXd& local_J)
 {
-    auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index, pressure_size);
-    auto p_dot = const_cast<Eigen::VectorXd&>(local_x_dot).segment(pressure_index, pressure_size);
+    auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
+                                                           pressure_size);
+    auto p_dot = const_cast<Eigen::VectorXd&>(local_x_dot)
+                     .segment(pressure_index, pressure_size);
     if (_process_data.deactivate_matrix_in_flow)
     {
         Base::setPressureOfInactiveNodes(t, p);
@@ -84,7 +82,8 @@ assembleWithJacobianConcrete(
     if (ele_levelset == 0)
     {
         // no DoF exists for displacement jumps. do the normal assebmly
-        Base::assembleBlockMatricesWithJacobian(t, p, p_dot, u, u_dot, rhs_p, rhs_u, J_pp, J_pu, J_uu, J_up);
+        Base::assembleBlockMatricesWithJacobian(t, p, p_dot, u, u_dot, rhs_p,
+                                                rhs_u, J_pp, J_pu, J_uu, J_up);
         return;
     }
 
@@ -92,12 +91,15 @@ assembleWithJacobianConcrete(
 
     // compute true displacements
     auto const g = local_x.segment(displacement_jump_index, displacement_size);
-    auto const g_dot = local_x_dot.segment(displacement_jump_index, displacement_size);
+    auto const g_dot =
+        local_x_dot.segment(displacement_jump_index, displacement_size);
     Eigen::VectorXd const total_u = u + ele_levelset * g;
     Eigen::VectorXd const total_u_dot = u_dot + ele_levelset * g_dot;
 
     // evaluate residuals and Jacobians for pressure and displacements
-    Base::assembleBlockMatricesWithJacobian(t, p, p_dot, total_u, total_u_dot, rhs_p, rhs_u, J_pp, J_pu, J_uu, J_up);
+    Base::assembleBlockMatricesWithJacobian(t, p, p_dot, total_u, total_u_dot,
+                                            rhs_p, rhs_u, J_pp, J_pu, J_uu,
+                                            J_up);
 
     // compute residuals and Jacobians for displacement jumps
     auto rhs_g = local_b.segment(displacement_jump_index, displacement_size);
@@ -120,19 +122,16 @@ assembleWithJacobianConcrete(
     J_gg = ele_levelset * ele_levelset * J_uu;
 }
 
-
-
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, unsigned GlobalDim>
-void
-HydroMechanicsLocalAssemblerMatrixNearFracture<
+void HydroMechanicsLocalAssemblerMatrixNearFracture<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     GlobalDim>::
-computeSecondaryVariableConcreteWithVector(
-    double const t,
-    Eigen::VectorXd const& local_x)
+    computeSecondaryVariableConcreteWithVector(double const t,
+                                               Eigen::VectorXd const& local_x)
 {
-    auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index, pressure_size);
+    auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
+                                                           pressure_size);
     if (_process_data.deactivate_matrix_in_flow)
         Base::setPressureOfInactiveNodes(t, p);
     auto u = local_x.segment(displacement_index, displacement_size);
@@ -159,7 +158,6 @@ computeSecondaryVariableConcreteWithVector(
     // evaluate residuals and Jacobians for pressure and displacements
     Base::computeSecondaryVariableConcreteWithBlockVectors(t, p, total_u);
 }
-
 
 }  // namespace HydroMechanics
 }  // namespace LIE

@@ -22,7 +22,6 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 namespace detail
 {
 template <unsigned GlobalDim, int DisplacementDim,
@@ -44,8 +43,7 @@ void createLocalAssemblers(
         LocalDataInitializer<LocalAssemblerInterface,
                              LocalAssemblerMatrixImplementation,
                              LocalAssemblerMatrixNearFractureImplementation,
-                             LocalAssemblerFractureImplementation,
-                             GlobalDim,
+                             LocalAssemblerFractureImplementation, GlobalDim,
                              DisplacementDim, ExtraCtorArgs...>;
 
     DBUG("Create local assemblers.");
@@ -56,9 +54,7 @@ void createLocalAssemblers(
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalExecutor::transformDereferenced(
-        initializer,
-        mesh_elements,
-        local_assemblers,
+        initializer, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 
@@ -95,10 +91,10 @@ void createLocalAssemblers(
     switch (dimension)
     {
         case 2:
-            detail::createLocalAssemblers<2, DisplacementDim,
-                                          LocalAssemblerMatrixImplementation,
-                                          LocalAssemblerMatrixNearFractureImplementation,
-                                          LocalAssemblerFractureImplementation>(
+            detail::createLocalAssemblers<
+                2, DisplacementDim, LocalAssemblerMatrixImplementation,
+                LocalAssemblerMatrixNearFractureImplementation,
+                LocalAssemblerFractureImplementation>(
                 dof_table, mesh_elements, local_assemblers,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
