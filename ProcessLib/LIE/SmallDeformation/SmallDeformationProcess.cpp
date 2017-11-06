@@ -8,24 +8,16 @@
  */
 
 #include "SmallDeformationProcess.h"
-#include "SmallDeformationProcess-fwd.h"
-
-#include <algorithm>
-#include <cassert>
-#include <vector>
 
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
-#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 #include "ProcessLib/LIE/BoundaryCondition/BoundaryConditionBuilder.h"
-#include "ProcessLib/LIE/Common/LevelSetFunction.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
-#include "ProcessLib/LIE/Common/Utils.h"
+#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/CreateLocalAssemblers.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/LocalAssemblerDataFracture.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/LocalAssemblerDataMatrix.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/LocalAssemblerDataMatrixNearFracture.h"
@@ -406,6 +398,55 @@ void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
         _local_assemblers, *_local_to_global_index_map, x);
 }
 
+template <int DisplacementDim>
+bool SmallDeformationProcess<DisplacementDim>::isLinear() const
+{
+    return false;
+}
+
+template <int DisplacementDim>
+void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
+    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b)
+{
+    DBUG("Assemble SmallDeformationProcess.");
+
+    // Call global assembler for each local assembly item.
+    GlobalExecutor::executeMemberDereferenced(
+        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
+}
+template <int DisplacementDim>
+void SmallDeformationProcess<DisplacementDim>::
+    assembleWithJacobianConcreteProcess(const double t, GlobalVector const& x,
+                                        GlobalVector const& xdot,
+                                        const double dxdot_dx,
+                                        const double dx_dx, GlobalMatrix& M,
+                                        GlobalMatrix& K, GlobalVector& b,
+                                        GlobalMatrix& Jac)
+{
+    DBUG("AssembleWithJacobian SmallDeformationProcess.");
+
+    // Call global assembler for each local assembly item.
+    GlobalExecutor::executeMemberDereferenced(
+        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
+        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
+        dx_dx, M, K, b, Jac, _coupled_solutions);
+}
+template <int DisplacementDim>
+void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
+    GlobalVector const& x, double const t, double const dt,
+    const int /*process_id*/)
+{
+    DBUG("PreTimestep SmallDeformationProcess.");
+
+    _process_data.dt = dt;
+    _process_data.t = t;
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &SmallDeformationLocalAssemblerInterface::preTimestep,
+        _local_assemblers, *_local_to_global_index_map, x, t, dt);
+}
 // ------------------------------------------------------------------------------------
 // template instantiation
 // ------------------------------------------------------------------------------------
