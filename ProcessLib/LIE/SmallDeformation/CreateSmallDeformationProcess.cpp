@@ -28,12 +28,6 @@ namespace LIE
 namespace SmallDeformation
 {
 template <int DisplacementDim>
-class SmallDeformationProcess;
-
-extern template class SmallDeformationProcess<2>;
-extern template class SmallDeformationProcess<3>;
-
-template <int DisplacementDim>
 std::unique_ptr<Process> createSmallDeformationProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
