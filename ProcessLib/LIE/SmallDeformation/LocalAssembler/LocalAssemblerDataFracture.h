@@ -17,11 +17,10 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim, int DisplacementDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class LocalAssemblerDataFracture final
     : public SmallDeformationLocalAssemblerFracture<
-          ShapeFunction, IntegrationMethod, DisplacementDim>
+          ShapeFunction, IntegrationMethod, GlobalDim>
 {
 public:
     LocalAssemblerDataFracture(LocalAssemblerDataFracture const&) = delete;
@@ -33,9 +32,9 @@ public:
         std::vector<unsigned> const& dofIndex_to_localIndex,
         bool const is_axially_symmetric,
         unsigned const integration_order,
-        SmallDeformationProcessData<DisplacementDim>& process_data)
-        : SmallDeformationLocalAssemblerFracture<
-              ShapeFunction, IntegrationMethod, DisplacementDim>(
+        SmallDeformationProcessData<GlobalDim>& process_data)
+        : SmallDeformationLocalAssemblerFracture<ShapeFunction,
+                                                 IntegrationMethod, GlobalDim>(
               e, local_matrix_size, dofIndex_to_localIndex,
               is_axially_symmetric, integration_order, process_data)
     {

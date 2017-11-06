@@ -17,11 +17,10 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim, int DisplacementDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class LocalAssemblerDataMatrixNearFracture final
     : public SmallDeformationLocalAssemblerMatrixNearFracture<
-          ShapeFunction, IntegrationMethod, DisplacementDim>
+          ShapeFunction, IntegrationMethod, GlobalDim>
 {
 public:
     LocalAssemblerDataMatrixNearFracture(
@@ -36,9 +35,9 @@ public:
         std::vector<unsigned> const& dofIndex_to_localIndex,
         bool const is_axially_symmetric,
         unsigned const integration_order,
-        SmallDeformationProcessData<DisplacementDim>& process_data)
+        SmallDeformationProcessData<GlobalDim>& process_data)
         : SmallDeformationLocalAssemblerMatrixNearFracture<
-              ShapeFunction, IntegrationMethod, DisplacementDim>(
+              ShapeFunction, IntegrationMethod, GlobalDim>(
               e, n_variables, local_matrix_size, dofIndex_to_localIndex,
               is_axially_symmetric, integration_order, process_data)
     {

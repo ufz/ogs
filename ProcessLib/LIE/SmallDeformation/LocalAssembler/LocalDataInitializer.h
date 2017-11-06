@@ -119,13 +119,11 @@ namespace SmallDeformation
 /// For example for MeshLib::Quad a local assembler data with template argument
 /// NumLib::ShapeQuad4 is created.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, unsigned, int>
-          class LocalAssemblerDataMatrix,
-          template <typename, typename, unsigned, int>
+          template <typename, typename, int> class LocalAssemblerDataMatrix,
+          template <typename, typename, int>
           class LocalAssemblerDataMatrixNearFracture,
-          template <typename, typename, unsigned, int>
-          class LocalAssemblerDataFracture,
-          unsigned GlobalDim, int DisplacementDim, typename... ConstructorArgs>
+          template <typename, typename, int> class LocalAssemblerDataFracture,
+          int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:
@@ -311,8 +309,7 @@ private:
     template <typename ShapeFunction>
     using LADataMatrix =
         LocalAssemblerDataMatrix<ShapeFunction,
-                                 IntegrationMethod<ShapeFunction>, GlobalDim,
-                                 DisplacementDim>;
+                                 IntegrationMethod<ShapeFunction>, GlobalDim>;
 
     /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
     /// depending whether the global dimension is less than the shape function's
@@ -331,16 +328,13 @@ private:
     NumLib::LocalToGlobalIndexMap const& _dof_table;
 
     template <typename ShapeFunction>
-    using LADataMatrixNearFracture =
-        LocalAssemblerDataMatrixNearFracture<ShapeFunction,
-                                             IntegrationMethod<ShapeFunction>,
-                                             GlobalDim, DisplacementDim>;
+    using LADataMatrixNearFracture = LocalAssemblerDataMatrixNearFracture<
+        ShapeFunction, IntegrationMethod<ShapeFunction>, GlobalDim>;
 
     template <typename ShapeFunction>
     using LAFractureData =
         LocalAssemblerDataFracture<ShapeFunction,
-                                   IntegrationMethod<ShapeFunction>, GlobalDim,
-                                   DisplacementDim>;
+                                   IntegrationMethod<ShapeFunction>, GlobalDim>;
 
     // local assembler builder implementations.
 private:
