@@ -18,9 +18,9 @@
 #include "ProcessLib/LIE/BoundaryCondition/BoundaryConditionBuilder.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/CreateLocalAssemblers.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/LocalAssemblerDataFracture.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/LocalAssemblerDataMatrix.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/LocalAssemblerDataMatrixNearFracture.h"
+#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerFracture.h"
+#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerMatrix.h"
+#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerMatrixNearFracture.h"
 
 namespace ProcessLib
 {
@@ -170,8 +170,9 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     unsigned const integration_order)
 {
     ProcessLib::LIE::SmallDeformation::createLocalAssemblers<
-        DisplacementDim, LocalAssemblerDataMatrix,
-        LocalAssemblerDataMatrixNearFracture, LocalAssemblerDataFracture>(
+        DisplacementDim, SmallDeformationLocalAssemblerMatrix,
+        SmallDeformationLocalAssemblerMatrixNearFracture,
+        SmallDeformationLocalAssemblerFracture>(
         mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
