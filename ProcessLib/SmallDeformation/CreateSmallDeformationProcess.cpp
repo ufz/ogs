@@ -74,6 +74,7 @@ createSmallDeformationProcess(
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         material = nullptr;
+    bool linear_elastic (0);
     if (type == "Ehlers")
     {
         material = MaterialLib::Solids::Ehlers::createEhlers<DisplacementDim>(
@@ -84,6 +85,7 @@ createSmallDeformationProcess(
         material =
             MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
                 parameters, constitutive_relation_config);
+        linear_elastic = true;
     }
     else if (type == "Lubby2")
     {
@@ -122,7 +124,7 @@ createSmallDeformationProcess(
     }
 
     SmallDeformationProcessData<DisplacementDim> process_data{
-        std::move(material), solid_density, specific_body_force};
+        std::move(material), solid_density, specific_body_force, linear_elastic};
 
     SecondaryVariableCollection secondary_variables;
 

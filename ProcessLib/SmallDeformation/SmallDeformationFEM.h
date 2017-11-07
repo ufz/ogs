@@ -150,11 +150,14 @@ public:
             std::vector<double>& local_K_data,
             std::vector<double>& local_b_data) override
     {
-        //fatal::only for linear elastic
+        if (!_process_data.is_linear_elastic_isotropic)
+        {
+            OGS_FATAL("SmallDeformationLocalAssembler: assembly without jacobian "
+                    "requires linear elastic material behaviour.");
+        }
         //        M=0;
         //        K = B.transpose() * C B * w //vormals Jac
         //        b = N_u_op.transpose() * rho * b * w;
-
         auto const local_matrix_size = local_x.size();
 
         auto local_K = MathLib::createZeroedMatrix<StiffnessMatrixType>(
