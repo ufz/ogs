@@ -84,10 +84,12 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_CLI=OFF ' +
+                  '-DOGS_USE_PCH=OFF ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_TESTS=OFF ' +
                   '-DOGS_BUILD_METIS=ON '
+                keepDir = true
               }
               build { }
             }
