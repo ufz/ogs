@@ -60,28 +60,36 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
 
     if (_vec_fracture_mat_IDs.size() !=
         _process_data._vec_fracture_property.size())
+    {
         OGS_FATAL(
             "The number of the given fracture properties (%d) are not "
             "consistent"
             " with the number of fracture groups in a mesh (%d).",
             _process_data._vec_fracture_property.size(),
             _vec_fracture_mat_IDs.size());
+    }
 
     // create a map from a material ID to a fracture ID
     auto max_frac_mat_id = std::max_element(_vec_fracture_mat_IDs.begin(),
                                             _vec_fracture_mat_IDs.end());
     _process_data._map_materialID_to_fractureID.resize(*max_frac_mat_id + 1);
     for (unsigned i = 0; i < _vec_fracture_mat_IDs.size(); i++)
+    {
         _process_data._map_materialID_to_fractureID[_vec_fracture_mat_IDs[i]] =
             i;
+    }
 
     // create a table of connected fracture IDs for each element
     _process_data._vec_ele_connected_fractureIDs.resize(
         mesh.getNumberOfElements());
     for (unsigned i = 0; i < _vec_fracture_matrix_elements.size(); i++)
+    {
         for (auto e : _vec_fracture_matrix_elements[i])
+        {
             _process_data._vec_ele_connected_fractureIDs[e->getID()].push_back(
                 i);
+        }
+    }
 
     // set fracture property
     for (auto& fracture_prop : _process_data._vec_fracture_property)
@@ -98,7 +106,9 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     for (ProcessVariable& pv : getProcessVariables())
     {
         if (pv.getName().find("displacement_jump") == std::string::npos)
+        {
             continue;
+        }
         pv.setBoundaryConditionBuilder(
             std::make_unique<BoundaryConditionBuilder>(
                 *_process_data._vec_fracture_property[pv_disp_jump_id].get()));
@@ -149,7 +159,9 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
     vec_var_elements.push_back(&_vec_matrix_elements);
     for (unsigned i = 0; i < _vec_fracture_matrix_elements.size(); i++)
+    {
         vec_var_elements.push_back(&_vec_fracture_matrix_elements[i]);
+    }
 
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
@@ -348,7 +360,9 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         for (MeshLib::Element const* e : _mesh.getElements())
         {
             if (e->getDimension() < DisplacementDim)
+            {
                 continue;
+            }
 
             double const levelsets = calculateLevelSetFunction(
                 *fracture_prop, e->getCenterOfGravity().getCoords());
@@ -366,9 +380,13 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         for (MeshLib::Element const* e : _mesh.getElements())
         {
             if (e->getDimension() == DisplacementDim)
+            {
                 continue;
+            }
             if (mesh_prop_matid[e->getID()] != fracture_prop->mat_id)
+            {
                 continue;
+            }
             ProcessLib::SpatialPosition x;
             x.setElementID(e->getID());
             (*mesh_prop_b)[e->getID()] = (*fracture_prop->aperture0)(0, x)[0];

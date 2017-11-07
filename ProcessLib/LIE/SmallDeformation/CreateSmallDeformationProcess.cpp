@@ -56,9 +56,11 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     for (std::string const& pv_name : range)
     {
         if (pv_name != "displacement" && pv_name.find("displacement_jump") != 0)
+        {
             OGS_FATAL(
                 "Found a process variable name '%s'. It should be "
                 "'displacement' or 'displacement_jumpN'");
+        }
         auto variable = std::find_if(variables.cbegin(), variables.cend(),
                                      [&pv_name](ProcessVariable const& v) {
                                          return v.getName() == pv_name;
@@ -79,7 +81,9 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     }
     auto const n_fractures = process_variables.size() - 1;
     if (n_fractures < 1)
+    {
         OGS_FATAL("No displacement jump variables are specified");
+    }
 
     DBUG("Associate displacement with process variable \'%s\'.",
          process_variables.back().get().getName().c_str());
@@ -170,10 +174,12 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     }
 
     if (n_fractures != vec_fracture_property.size())
+    {
         OGS_FATAL(
             "The number of displacement jumps and the number of "
             "<fracture_properties> "
             "are not consistent");
+    }
 
     SmallDeformationProcessData<DisplacementDim> process_data(
         std::move(material), std::move(fracture_model),

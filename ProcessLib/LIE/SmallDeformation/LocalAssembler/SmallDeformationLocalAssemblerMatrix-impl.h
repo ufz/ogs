@@ -149,7 +149,9 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
             t, x_position, _process_data.dt, eps_prev, eps, sigma_prev, *state);
 
         if (!solution)
+        {
             OGS_FATAL("Computation of local constitutive relation failed.");
+        }
 
         KelvinMatrixType<DisplacementDim> C;
         std::tie(sigma, state, C) = std::move(*solution);

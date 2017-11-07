@@ -246,12 +246,14 @@ public:
         auto const it = _builder.find(type_idx);
 
         if (it == _builder.end())
+        {
             OGS_FATAL(
                 "You are trying to build a local assembler for an unknown mesh "
                 "element type (%s)."
                 " Maybe you have disabled this mesh element type in your build "
                 "configuration or this process requires higher order elements.",
                 type_idx.name());
+        }
 
         auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
         auto const n_global_components =
@@ -280,7 +282,9 @@ public:
                                             mesh_item.getNodeIndex(k));
                         auto global_index = _dof_table.getGlobalIndex(l, i, j);
                         if (global_index != NumLib::MeshComponentMap::nop)
+                        {
                             dofIndex_to_localIndex[dof_id++] = local_id;
+                        }
                         local_id++;
                     }
                 }

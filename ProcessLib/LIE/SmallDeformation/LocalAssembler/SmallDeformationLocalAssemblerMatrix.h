@@ -222,10 +222,14 @@ private:
 
         for (auto const& ip_data : _ip_data)
         {
-            if (component < 3)  // xx, yy, zz components
+            if (component < 3)
+            {  // xx, yy, zz components
                 cache.push_back(ip_data._sigma[component]);
-            else  // mixed xy, yz, xz components
+            }
+            else
+            {  // mixed xy, yz, xz components
                 cache.push_back(ip_data._sigma[component] / std::sqrt(2));
+            }
         }
 
         return cache;
@@ -239,10 +243,14 @@ private:
 
         for (auto const& ip_data : _ip_data)
         {
-            if (component < 3)  // xx, yy, zz components
+            if (component < 3)
+            {  // xx, yy, zz components
                 cache.push_back(ip_data._eps[component]);
-            else  // mixed xy, yz, xz components
+            }
+            else
+            {  // mixed xy, yz, xz components
                 cache.push_back(ip_data._eps[component] / std::sqrt(2));
+            }
         }
 
         return cache;

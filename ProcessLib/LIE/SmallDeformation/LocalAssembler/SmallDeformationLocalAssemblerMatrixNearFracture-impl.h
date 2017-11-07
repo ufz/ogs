@@ -105,8 +105,10 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
     }
 
     for (auto fid : process_data._vec_ele_connected_fractureIDs[e.getID()])
+    {
         _fracture_props.push_back(
             _process_data._vec_fracture_property[fid].get());
+    }
 }
 
 template <typename ShapeFunction,
@@ -146,8 +148,10 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
     auto local_b_u = local_b.segment<N_DOF_PER_VAR>(0);
     std::vector<BlockVectorType> vec_local_b_g;
     for (unsigned i = 0; i < n_fractures; i++)
+    {
         vec_local_b_g.push_back(
             local_b.segment<N_DOF_PER_VAR>(N_DOF_PER_VAR * (i + 1)));
+    }
 
     auto local_J_uu = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(0, 0);
     std::vector<BlockMatrixType> vec_local_J_ug;
@@ -205,13 +209,17 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         auto const ip_physical_coords = computePhysicalCoordinates(_element, N);
         std::vector<double> levelsets(n_fractures);
         for (unsigned i = 0; i < n_fractures; i++)
+        {
             levelsets[i] = calculateLevelSetFunction(
                 *_fracture_props[i], ip_physical_coords.getCoords());
+        }
 
         // nodal displacement = u^hat + sum_i(levelset_i(x) * [u]_i)
         NodalDisplacementVectorType nodal_total_u = nodal_u;
         for (unsigned i = 0; i < n_fractures; i++)
+        {
             nodal_total_u += levelsets[i] * vec_nodal_g[i];
+        }
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
@@ -236,7 +244,9 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
             t, x_position, _process_data.dt, eps_prev, eps, sigma_prev, *state);
 
         if (!solution)
+        {
             OGS_FATAL("Computation of local constitutive relation failed.");
+        }
 
         KelvinMatrixType<DisplacementDim> C;
         std::tie(sigma, state, C) = std::move(*solution);
@@ -245,8 +255,10 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         // r_[u] = (phi*B)^T * Sigma = (phi*B)^T * C * B * (u+phi*[u])
         local_b_u.noalias() -= B.transpose() * sigma * ip_factor;
         for (unsigned i = 0; i < n_fractures; i++)
+        {
             vec_local_b_g[i].noalias() -=
                 levelsets[i] * B.transpose() * sigma * ip_factor;
+        }
 
         // J_uu += B^T * C * B
         local_J_uu.noalias() += B.transpose() * C * B * ip_factor;
