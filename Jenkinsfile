@@ -10,6 +10,7 @@ pipeline {
   stages {
     stage('Build') {
       parallel {
+        // ************************** Docker ***********************************
         stage('Docker') {
           agent {
             docker {
@@ -32,7 +33,79 @@ pipeline {
               build { target="ctest" }
             }
           }
+          post {
+            always {
+              publishReports { }
+            }
+            failure {
+                dir('build') { deleteDir() }
+            }
+            success {
+                stash(name: 'web', include: 'web')
+                stash(name: 'doxygen', include: 'build/docs')
+                script {
+                  publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
+                    keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
+                    reportName: 'Doxygen'])
+                  step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
+                    messagesPattern: """
+                      .*DOT_GRAPH_MAX_NODES.
+                      .*potential recursive class relation.*""",
+                    parserConfigurations: [[parserName: 'Doxygen', pattern:
+                    'build/DoxygenWarnings.log']], unstableTotalAll: '0'])
+                }
+                dir('build') { deleteDir() }
+            }
+          }
         }
+        // ************************ Docker-Conan *******************************
+        stage('Docker-Conan') {
+          agent {
+            docker {
+              image 'ogs6/gcc-conan:latest'
+              label 'docker'
+              args '-v /home/jenkins/.ccache:/usr/src/.ccache'
+              alwaysPull true
+            }
+          }
+          steps {
+            script {
+              configure {
+                cmakeOptions =
+                  '-DCMAKE_BUILD_TYPE=Release ' +
+                  '-DOGS_USE_CONAN=ON ' +
+                  '-DOGS_CONAN_BUILD=never ' +
+                  '-DOGS_CPU_ARCHITECTURE=generic ' +
+                  '-DOGS_PACKAGE_DEPENDENCIES=ON '
+              }
+              build { }
+              build { target="tests" }
+              build { target="ctest" }
+              configure {
+                cmakeOptions =
+                  '-DOGS_BUILD_CLI=OFF ' +
+                  '-DOGS_BUILD_GUI=ON ' +
+                  '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_BUILD_TESTS=OFF ' +
+                  '-DOGS_BUILD_METIS=ON '
+              }
+              build { }
+            }
+          }
+          post {
+            always {
+              publishReports { }
+            }
+            failure {
+                dir('build') { deleteDir() }
+            }
+            success {
+                archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
+                dir('build') { deleteDir() }
+            }
+          }
+        }
+        // ************************** Windows **********************************
         stage('Win') {
           agent {
             label "win && conan"
@@ -78,6 +151,8 @@ pipeline {
             }
           }
         }
+      } // end parallel
+    } // end stage Build
       }
     }
   }
