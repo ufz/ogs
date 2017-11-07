@@ -41,8 +41,8 @@ pipeline {
                 dir('build') { deleteDir() }
             }
             success {
-                stash(name: 'web', include: 'web')
-                stash(name: 'doxygen', include: 'build/docs')
+                stash(name: 'web', includes: 'web')
+                stash(name: 'doxygen', includes: 'build/docs')
                 script {
                   publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                     keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
@@ -153,6 +153,23 @@ pipeline {
         }
       } // end parallel
     } // end stage Build
+
+    // ***************************** Deploy ************************************
+    stage('Deploy') {
+      when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
+      steps {
+        unstash web
+        unstash doxygen
+        script {
+          sshagent(credentials: ['www-data_jenkins']) {
+            sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+               'ogs/scripts/jenkins/known_hosts" ogs/web/public/ ' +
+               'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
+            sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+               'ogs/scripts/jenkins/known_hosts" build/docs/ ' +
+               'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
+          }
+        }
       }
     }
   }
