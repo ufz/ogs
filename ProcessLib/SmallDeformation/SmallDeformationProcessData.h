@@ -30,11 +30,11 @@ struct SmallDeformationProcessData
         Parameter<double> const& solid_density_,
         Eigen::Matrix<double, DisplacementDim, 1>
             specific_body_force_,
-        bool is_linear_elastic_isotropic)
+        bool const is_linear_elastic_isotropic_)
         : material{std::move(material)},
           solid_density(solid_density_),
           specific_body_force(std::move(specific_body_force_)),
-          is_linear_elastic_isotropic (is_linear_elastic_isotropic)
+          is_linear_elastic_isotropic (is_linear_elastic_isotropic_)
     {
     }
 
@@ -65,7 +65,7 @@ struct SmallDeformationProcessData
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    bool is_linear_elastic_isotropic;
+    bool const is_linear_elastic_isotropic;
     double dt = 0;
     double t = 0;
 };

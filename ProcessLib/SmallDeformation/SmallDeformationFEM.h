@@ -155,9 +155,6 @@ public:
             OGS_FATAL("SmallDeformationLocalAssembler: assembly without jacobian "
                     "requires linear elastic material behaviour.");
         }
-        //        M=0;
-        //        K = B.transpose() * C B * w //vormals Jac
-        //        b = N_u_op.transpose() * rho * b * w;
         auto const local_matrix_size = local_x.size();
 
         auto local_K = MathLib::createZeroedMatrix<StiffnessMatrixType>(

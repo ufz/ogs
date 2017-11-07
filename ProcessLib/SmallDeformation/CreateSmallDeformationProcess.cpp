@@ -74,7 +74,7 @@ createSmallDeformationProcess(
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         material = nullptr;
-    bool linear_elastic (0);
+    bool linear_elastic = false;
     if (type == "Ehlers")
     {
         material = MaterialLib::Solids::Ehlers::createEhlers<DisplacementDim>(
