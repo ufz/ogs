@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <mesh>line_0.1_100.msh</mesh>
+    <geometry>line_0.1.gml</geometry>
+    <processes>
+        <process>
+            <name>TES_pcs</name>
+            <type>TES</type>
+            <integration_order>2</integration_order>
+            <process_variables>
+                <fluid_pressure>       pressure    </fluid_pressure>
+                <temperature>          temperature </temperature>
+                <vapour_mass_fraction> v_mass_frac </vapour_mass_fraction>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable type="static" internal_name="TES_solid_density" output_name="solid_density"/>
+                <secondary_variable type="static" internal_name="reaction_rate" output_name="reaction_rate"/>
+                <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
+                <secondary_variable type="static" internal_name="vapour_partial_pressure" output_name="vapour_partial_pressure"/>
+                <secondary_variable type="static" internal_name="relative_humidity" output_name="relative_humidity"/>
+                <secondary_variable type="static" internal_name="loading" output_name="loading"/>
+                <secondary_variable type="static" internal_name="equilibrium_loading" output_name="equilibrium_loading"/>
+                <secondary_variable type="static" internal_name="reaction_damping_factor" output_name="reaction_damping_factor"/>
+            </secondary_variables>
+            <reactive_system>
+                <type>Z13XBF</type>
+            </reactive_system>
+            <fluid_specific_heat_source>            0.0     </fluid_specific_heat_source>
+            <fluid_specific_isobaric_heat_capacity> 1012.0  </fluid_specific_isobaric_heat_capacity>
+            <solid_hydraulic_permeability>          1.e-10  </solid_hydraulic_permeability>
+            <solid_specific_heat_source>            0.0     </solid_specific_heat_source>
+            <solid_heat_conductivity>               0.4     </solid_heat_conductivity>
+            <solid_specific_isobaric_heat_capacity> 880.0   </solid_specific_isobaric_heat_capacity>
+            <tortuosity>                            1.0     </tortuosity>
+            <diffusion_coefficient>                 3.0e-5  </diffusion_coefficient>
+            <porosity>                              0.4     </porosity>
+            <solid_density_dry>                     1150.0  </solid_density_dry>
+            <solid_density_initial>                 1305.25 </solid_density_initial>
+            <characteristic_pressure>             1e5  </characteristic_pressure>
+            <characteristic_temperature>          200  </characteristic_temperature>
+            <characteristic_vapour_mass_fraction> 0.01 </characteristic_vapour_mass_fraction>
+            <output_element_matrices>false</output_element_matrices>
+        </process>
+    </processes>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>     basic_picard </name>
+            <type>     Picard       </type>
+            <max_iter> 100          </max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i bicgstab -p ilu -tol 1e-24 -maxiter 10000 -print mem</lis>
+            <eigen>
+                <solver_type>        BiCGSTAB </solver_type>
+                <precon_type>        ILUT     </precon_type>
+                <max_iteration_step> 10000    </max_iteration_step>
+                <error_tolerance>    1e-24    </error_tolerance>
+            </eigen>
+            <petsc>
+                <prefix>tes</prefix>
+                <parameters>-tes_ksp_type cg -tes_pc_type bjacobi -tes_ksp_rtol 1e-24 -tes_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+    <time_loop>
+        <processes>
+            <process ref="TES_pcs">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1.e-3</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <output>
+                    <variables>
+                        <variable> pressure                </variable>
+                        <variable> temperature             </variable>
+                        <variable> v_mass_frac             </variable>
+                        <variable> solid_density           </variable>
+                        <variable> reaction_rate           </variable>
+                        <variable> darcy_velocity              </variable>
+                        <variable> loading                 </variable>
+                        <variable> equilibrium_loading     </variable>
+                        <variable> vapour_partial_pressure </variable>
+                        <variable> relative_humidity       </variable>
+                        <variable> reaction_damping_factor </variable>
+                    </variables>
+                    <output_extrapolation_residuals>true</output_extrapolation_residuals>
+                </output>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial> 0.0 </t_initial>
+                    <t_end>     1.0 </t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat> 10 </repeat>
+                            <delta_t> 0.001 </delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>  9 </repeat>
+                            <delta_t> 0.01  </delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>  9 </repeat>
+                            <delta_t> 0.1   </delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>tes_zeolite_discharge_large</prefix>
+            <timesteps>
+                <pair>
+                    <repeat> 1 </repeat>
+                    <each_steps> 10 </each_steps>
+                </pair>
+                <pair>
+                    <repeat> 1 </repeat>
+                    <each_steps> 18 </each_steps>
+                </pair>
+            </timesteps>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>p_in</name>
+            <type>Constant</type>
+            <value>1e5</value>
+        </parameter>
+        <parameter>
+            <name>T_in</name>
+            <type>Constant</type>
+            <value>303.15</value>
+        </parameter>
+        <parameter>
+            <name>xmV_in</name>
+            <type>Constant</type>
+            <value>0.025</value>
+        </parameter>
+        <parameter>
+            <name>mass_flux</name>
+            <type>Constant</type>
+            <value>0.04</value>
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>p_in</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>line_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Neumann</type>
+                    <parameter>mass_flux</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>line_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>p_in</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>T_in</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>line_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>T_in</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>v_mass_frac</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>xmV_in</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>line_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>xmV_in</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+</OpenGeoSysProject>

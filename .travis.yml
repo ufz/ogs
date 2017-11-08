@@ -23,6 +23,9 @@ cache:
     - $HOME/eigen-eigen-dc6cfdf9bcec
     - $HOME/.conan
 
+git:
+  lfs_skip_smudge: true
+
 env:
   global:
     - VTK_DIR=$HOME/VTK-Install-7.1/lib/cmake/vtk-7.1
@@ -50,6 +53,7 @@ before_install:
   - if [ "$CASE" != "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/vtk.sh; fi
   - if [ "$CASE" != "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/eigen.sh; fi
   - if [ "$CASE" == "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/conan.sh; fi
+  - git lfs pull
 
 before_script:
   - export PATH=$HOME/cmake-3.1.1-Linux-x86_64/bin:$PATH

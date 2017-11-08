@@ -35,6 +35,21 @@ install:
   - set PATH=C:\projects\deps\ninja;%PATH%
   - ninja --version
 
+clone_script:
+  - ps: >-
+      if(-not $env:appveyor_pull_request_number) {
+        $env:GIT_LFS_SKIP_SMUDGE = 1
+        git clone -q --branch=$env:appveyor_repo_branch https://github.com/$env:appveyor_repo_name $env:appveyor_build_folder
+        git checkout -qf $env:appveyor_repo_commit
+        git lfs pull
+      } else {
+        $env:GIT_LFS_SKIP_SMUDGE = 1
+        git clone -q https://github.com/$env:appveyor_repo_name $env:appveyor_build_folder
+        git fetch -q origin +refs/pull/$env:appveyor_pull_request_number/merge:
+        git checkout -qf FETCH_HEAD
+        git lfs pull
+      }
+
 before_build:
   - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
