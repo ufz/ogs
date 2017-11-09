@@ -67,8 +67,9 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         _ip_data.emplace_back(*_process_data._fracture_model);
         auto const& sm = _shape_matrices[ip];
         auto& ip_data = _ip_data[ip];
-        ip_data._detJ = sm.detJ;
-        ip_data._integralMeasure = sm.integralMeasure;
+        ip_data.integration_weight =
+            _integration_method.getWeightedPoint(ip).getWeight() *
+            sm.integralMeasure * sm.detJ;
         ip_data._h_matrices.setZero(DisplacementDim,
                                     ShapeFunction::NPOINTS * DisplacementDim);
 
@@ -119,11 +120,9 @@ void SmallDeformationLocalAssemblerFracture<
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& wp = _integration_method.getWeightedPoint(ip);
 
         auto& ip_data = _ip_data[ip];
-        auto const& detJ = ip_data._detJ;
-        auto const& integralMeasure = ip_data._integralMeasure;
+        auto const& integration_weight = ip_data.integration_weight;
         auto const& H = ip_data._h_matrices;
         auto& mat = ip_data._fracture_material;
         auto& sigma = ip_data._sigma;
@@ -149,12 +148,12 @@ void SmallDeformationLocalAssemblerFracture<
             w_prev, w, sigma_prev, sigma, C, state);
 
         // r_[u] += H^T*Stress
-        local_b.noalias() -= H.transpose() * R.transpose() * sigma * detJ *
-                             wp.getWeight() * integralMeasure;
+        local_b.noalias() -=
+            H.transpose() * R.transpose() * sigma * integration_weight;
 
         // J_[u][u] += H^T*C*H
-        local_J.noalias() += H.transpose() * R.transpose() * C * R * H * detJ *
-                             wp.getWeight() * integralMeasure;
+        local_J.noalias() +=
+            H.transpose() * R.transpose() * C * R * H * integration_weight;
     }
 }
 

@@ -85,8 +85,9 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
         auto const& sm = shape_matrices[ip];
         ip_data.N = sm.N;
         ip_data.dNdx = sm.dNdx;
-        ip_data._detJ = sm.detJ;
-        ip_data._integralMeasure = sm.integralMeasure;
+        ip_data.integration_weight =
+            _integration_method.getWeightedPoint(ip).getWeight() *
+            sm.integralMeasure * sm.detJ;
 
         // Initialize current time step values
         ip_data._sigma.setZero(KelvinVectorDimensions<DisplacementDim>::value);
@@ -198,9 +199,7 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         x_position.setIntegrationPoint(ip);
 
         auto& ip_data = _ip_data[ip];
-        auto const& wp = _integration_method.getWeightedPoint(ip);
-        auto const ip_factor =
-            ip_data._detJ * wp.getWeight() * ip_data._integralMeasure;
+        auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
@@ -253,32 +252,31 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
 
         // r_u = B^T * Sigma = B^T * C * B * (u+phi*[u])
         // r_[u] = (phi*B)^T * Sigma = (phi*B)^T * C * B * (u+phi*[u])
-        local_b_u.noalias() -= B.transpose() * sigma * ip_factor;
+        local_b_u.noalias() -= B.transpose() * sigma * w;
         for (unsigned i = 0; i < n_fractures; i++)
         {
             vec_local_b_g[i].noalias() -=
-                levelsets[i] * B.transpose() * sigma * ip_factor;
+                levelsets[i] * B.transpose() * sigma * w;
         }
 
         // J_uu += B^T * C * B
-        local_J_uu.noalias() += B.transpose() * C * B * ip_factor;
+        local_J_uu.noalias() += B.transpose() * C * B * w;
 
         for (unsigned i = 0; i < n_fractures; i++)
         {
             // J_u[u] += B^T * C * (levelset * B)
             vec_local_J_ug[i].noalias() +=
-                B.transpose() * C * (levelsets[i] * B) * ip_factor;
+                B.transpose() * C * (levelsets[i] * B) * w;
 
             // J_[u]u += (levelset * B)^T * C * B
             vec_local_J_gu[i].noalias() +=
-                (levelsets[i] * B.transpose()) * C * B * ip_factor;
+                (levelsets[i] * B.transpose()) * C * B * w;
 
             for (unsigned j = 0; j < n_fractures; j++)
             {
                 // J_[u][u] += (levelset * B)^T * C * (levelset * B)
                 vec_local_J_gg[i][j].noalias() +=
-                    (levelsets[i] * B.transpose()) * C * (levelsets[j] * B) *
-                    ip_factor;
+                    (levelsets[i] * B.transpose()) * C * (levelsets[j] * B) * w;
             }
         }
     }

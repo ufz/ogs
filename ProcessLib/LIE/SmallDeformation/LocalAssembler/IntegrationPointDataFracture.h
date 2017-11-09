@@ -45,8 +45,7 @@ struct IntegrationPointDataFracture final
         _material_state_variables;
 
     Eigen::MatrixXd _C;
-    double _detJ = 0.0;
-    double _integralMeasure;
+    double integration_weight;
 
     void pushBackState()
     {

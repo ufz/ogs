@@ -41,8 +41,7 @@ struct IntegrationPointDataMatrix final
         _material_state_variables;
 
     typename BMatricesType::KelvinMatrixType _C;
-    double _detJ;
-    double _integralMeasure;
+    double integration_weight;
 
     typename ShapeMatricesType::NodalRowVectorType N;
     typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx;

@@ -68,8 +68,9 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
         auto const& sm = shape_matrices[ip];
         ip_data.N = sm.N;
         ip_data.dNdx = sm.dNdx;
-        ip_data._detJ = sm.detJ;
-        ip_data._integralMeasure = sm.integralMeasure;
+        ip_data.integration_weight =
+            _integration_method.getWeightedPoint(ip).getWeight() *
+            sm.integralMeasure * sm.detJ;
 
         // Initialize current time step values
         ip_data._sigma.setZero(KelvinVectorDimensions<DisplacementDim>::value);
@@ -119,9 +120,7 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& wp = _integration_method.getWeightedPoint(ip);
-        auto const& detJ = _ip_data[ip]._detJ;
-        auto const& integralMeasure = _ip_data[ip]._integralMeasure;
+        auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
@@ -156,10 +155,8 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
         KelvinMatrixType<DisplacementDim> C;
         std::tie(sigma, state, C) = std::move(*solution);
 
-        local_b.noalias() -=
-            B.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
-        local_Jac.noalias() +=
-            B.transpose() * C * B * detJ * wp.getWeight() * integralMeasure;
+        local_b.noalias() -= B.transpose() * sigma * w;
+        local_Jac.noalias() += B.transpose() * C * B * w;
     }
 }
 
