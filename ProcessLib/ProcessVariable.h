@@ -12,6 +12,8 @@
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 #include "ProcessLib/Parameter/Parameter.h"
+#include "ProcessLib/SourceTerms/SourceTermConfig.h"
+#include "ProcessLib/SourceTerms/SourceTermBuilder.h"
 
 namespace MeshLib
 {
@@ -53,6 +55,10 @@ public:
         unsigned const integration_order,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
+    std::vector<std::unique_ptr<NodalSourceTerm>> createSourceTerms(
+        const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
+        unsigned const integration_order);
+
     Parameter<double> const& getInitialCondition() const
     {
         return _initial_condition;
@@ -87,6 +93,8 @@ private:
 
     std::vector<BoundaryConditionConfig> _bc_configs;
     std::unique_ptr<BoundaryConditionBuilder> _bc_builder;
+    std::vector<SourceTermConfig> _source_term_configs;
+    std::unique_ptr<SourceTermBuilder> _source_term_builder;
 };
 
 }  // namespace ProcessLib
