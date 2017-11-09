@@ -9,14 +9,10 @@
 
 #pragma once
 
-#include <cassert>
-
 #include "ProcessLib/Process.h"
 
-#include "ProcessLib/LIE/HydroMechanics/LocalAssembler/CreateLocalAssemblers.h"
-#include "ProcessLib/LIE/HydroMechanics/LocalAssembler/HydroMechanicsLocalAssemblerInterface.h"
-
 #include "HydroMechanicsProcessData.h"
+#include "LocalAssembler/HydroMechanicsLocalAssemblerInterface.h"
 
 namespace ProcessLib
 {
@@ -24,6 +20,8 @@ namespace LIE
 {
 namespace HydroMechanics
 {
+class HydroMechanicsLocalAssemblerInterface;
+
 template <unsigned GlobalDim>
 class HydroMechanicsProcess final : public Process
 {
@@ -48,8 +46,7 @@ public:
 
     //! \name ODESystem interface
     //! @{
-
-    bool isLinear() const override { return false; }
+    bool isLinear() const override;
     //! @}
 
     void computeSecondaryVariableConcrete(double const t,
@@ -67,44 +64,15 @@ private:
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b) override
-    {
-        DBUG("Assemble HydroMechanicsProcess.");
-
-        // Call global assembler for each local assembly item.
-        GlobalExecutor::executeMemberDereferenced(
-            _global_assembler, &VectorMatrixAssembler::assemble,
-            _local_assemblers, *_local_to_global_index_map, t, x, M, K, b,
-            _coupled_solutions);
-    }
+                                 GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override
-    {
-        DBUG("AssembleWithJacobian HydroMechanicsProcess.");
-
-        // Call global assembler for each local assembly item.
-        GlobalExecutor::executeMemberDereferenced(
-            _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-            _local_assemblers, *_local_to_global_index_map, t, x, xdot,
-            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
-    }
-
-    void preTimestepConcreteProcess(
-        GlobalVector const& x, double const t, double const dt,
-        const int /*process_id*/) override
-    {
-        DBUG("PreTimestep HydroMechanicsProcess.");
-
-        _process_data.dt = dt;
-        _process_data.t = t;
-
-        GlobalExecutor::executeMemberOnDereferenced(
-            &HydroMechanicsLocalAssemblerInterface::preTimestep,
-            _local_assemblers, *_local_to_global_index_map, x, t, dt);
-    }
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
+    void preTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                    double const dt,
+                                    const int /*process_id*/) override;
 
 private:
     HydroMechanicsProcessData<GlobalDim> _process_data;
