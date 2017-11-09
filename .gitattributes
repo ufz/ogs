@@ -2,7 +2,6 @@
 *.h   hooks.style=uncrustify
 *.cpp hooks.style=uncrustify
 *.hpp hooks.style=uncrustify
-
 # Git LFS
 *.jpg filter=lfs diff=lfs merge=lfs -text
 *.png filter=lfs diff=lfs merge=lfs -text
@@ -20,3 +19,4 @@
 *.vtp filter=lfs diff=lfs merge=lfs -text
 *.bin filter=lfs diff=lfs merge=lfs -text
 *.pvtu* filter=lfs diff=lfs merge=lfs -text
+*.gif filter=lfs diff=lfs merge=lfs -text
