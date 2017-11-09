@@ -28,12 +28,6 @@ namespace LIE
 namespace HydroMechanics
 {
 template <unsigned GlobalDim>
-class HydroMechanicsProcess;
-
-extern template class HydroMechanicsProcess<2>;
-extern template class HydroMechanicsProcess<3>;
-
-template <unsigned GlobalDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
