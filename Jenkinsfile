@@ -20,18 +20,29 @@ pipeline {
               alwaysPull true
             }
           }
+          environment {
+            CONTENTFUL_ACCESS_TOKEN = credentialsId('CONTENTFUL_ACCESS_TOKEN')
+            CONTENTFUL_OGS_SPACE_ID = credentialsId('CONTENTFUL_OGS_SPACE_ID')
+          }
           steps {
-            script {
-              configure {
-                cmakeOptions =
-                  '-DCMAKE_BUILD_TYPE=Release ' +
-                  '-DOGS_CPU_ARCHITECTURE=generic ' +
-                  '-DOGS_WEB_BASE_URL=$JOB_URL"Web/" '
-              }
-              build { }
-              build { target="tests" }
-              build { target="ctest" }
+            // Install web dependencies
+            sh("""
+              cd web
+              yarn --ignore-engines --non-interactive
+              node node_modules/node-sass/scripts/install.js
+              npm rebuild node-sass
+              sudo -H pip install -r requirements.txt
+              """.stripIndent())
+            configure {
+              cmakeOptions =
+                '-DCMAKE_BUILD_TYPE=Release ' +
+                '-DOGS_CPU_ARCHITECTURE=generic ' +
+                '-DOGS_WEB_BASE_URL=$JOB_URL"Web/" ' // TODO: or '-DOGS_WEB_BASE_URL=https://dev.opengeosys.org'
             }
+            build { }
+            build { target="tests" }
+            build { target="ctest" }
+            build { target="web" }
           }
           post {
             always {
