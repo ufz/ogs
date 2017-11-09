@@ -124,13 +124,13 @@ namespace HydroMechanics
 /// class which does not include line elements, allows only shapefunction of
 /// order 2, and provides additional template argument GlobalDim.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerDataMatrix,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerDataMatrixNearFracture,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerDataFracture,
-          unsigned GlobalDim, typename... ConstructorArgs>
+          int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:

@@ -28,7 +28,7 @@ namespace HydroMechanics
 template <typename ShapeFunctionDisplacement,
           typename ShapeFunctionPressure,
           typename IntegrationMethod,
-          unsigned GlobalDim>
+          int GlobalDim>
 class HydroMechanicsLocalAssemblerMatrix
     : public HydroMechanicsLocalAssemblerInterface
 {

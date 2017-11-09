@@ -22,7 +22,7 @@ namespace HydroMechanics
 {
 class HydroMechanicsLocalAssemblerInterface;
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 class HydroMechanicsProcess final : public Process
 {
     using Base = Process;

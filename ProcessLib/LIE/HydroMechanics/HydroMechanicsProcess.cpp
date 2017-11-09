@@ -32,7 +32,7 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <unsigned GlobalDim>
+template <int GlobalDim>
 HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
@@ -114,7 +114,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     }
 }
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::constructDofTable()
 {
     //------------------------------------------------------------
@@ -182,7 +182,7 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     DBUG("created %d DoF", _local_to_global_index_map->size());
 }
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
@@ -393,7 +393,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     }
 }
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     const double t, GlobalVector const& x)
 {
@@ -464,11 +464,11 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     {
         auto const node_id = node->getID();
         g.setZero();
-        for (unsigned k = 0; k < GlobalDim; k++)
+        for (int k = 0; k < GlobalDim; k++)
             g[k] = mesh_prop_g[node_id * GlobalDim + k];
 
         w.noalias() = R * g;
-        for (unsigned k = 0; k < GlobalDim; k++)
+        for (int k = 0; k < GlobalDim; k++)
             vec_w[node_id * GlobalDim + k] = w[k];
 
         ProcessLib::SpatialPosition x;
@@ -478,13 +478,13 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     }
 }
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 bool HydroMechanicsProcess<GlobalDim>::isLinear() const
 {
     return false;
 }
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
     const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
     GlobalVector& b)
@@ -497,7 +497,7 @@ void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
         *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
 }
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
     const double t, GlobalVector const& x, GlobalVector const& xdot,
     const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
@@ -512,7 +512,7 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
     GlobalVector const& x, double const t,
     double const dt, const int /*process_id*/)

@@ -18,7 +18,7 @@ namespace LIE
 namespace HydroMechanics
 {
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, unsigned GlobalDim>
+          typename IntegrationMethod, int GlobalDim>
 HydroMechanicsLocalAssemblerMatrixNearFracture<ShapeFunctionDisplacement,
                                                ShapeFunctionPressure,
                                                IntegrationMethod, GlobalDim>::
@@ -39,7 +39,7 @@ HydroMechanicsLocalAssemblerMatrixNearFracture<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, unsigned GlobalDim>
+          typename IntegrationMethod, int GlobalDim>
 void HydroMechanicsLocalAssemblerMatrixNearFracture<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     GlobalDim>::assembleWithJacobianConcrete(double const t,
@@ -123,7 +123,7 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, unsigned GlobalDim>
+          typename IntegrationMethod, int GlobalDim>
 void HydroMechanicsLocalAssemblerMatrixNearFracture<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     GlobalDim>::

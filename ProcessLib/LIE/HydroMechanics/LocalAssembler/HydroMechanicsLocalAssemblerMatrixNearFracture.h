@@ -22,7 +22,7 @@ namespace HydroMechanics
 template <typename ShapeFunctionDisplacement,
           typename ShapeFunctionPressure,
           typename IntegrationMethod,
-          unsigned GlobalDim>
+          int GlobalDim>
 class HydroMechanicsLocalAssemblerMatrixNearFracture
     : public HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                                 ShapeFunctionPressure,

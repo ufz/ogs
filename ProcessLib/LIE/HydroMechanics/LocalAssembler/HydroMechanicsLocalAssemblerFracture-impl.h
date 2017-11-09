@@ -24,7 +24,7 @@ namespace LIE
 namespace HydroMechanics
 {
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, unsigned GlobalDim>
+          typename IntegrationMethod, int GlobalDim>
 HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      GlobalDim>::
@@ -101,7 +101,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
         auto const initial_effective_stress =
             _process_data.initial_fracture_effective_stress(0, x_position);
-        for (unsigned i = 0; i < GlobalDim; i++)
+        for (int i = 0; i < GlobalDim; i++)
         {
             ip_data.sigma_eff[i] = initial_effective_stress[i];
             ip_data.sigma_eff_prev[i] = initial_effective_stress[i];
@@ -110,7 +110,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, unsigned GlobalDim>
+          typename IntegrationMethod, int GlobalDim>
 void HydroMechanicsLocalAssemblerFracture<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     GlobalDim>::assembleWithJacobianConcrete(double const t,
@@ -141,7 +141,7 @@ void HydroMechanicsLocalAssemblerFracture<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, unsigned GlobalDim>
+          typename IntegrationMethod, int GlobalDim>
 void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                                           ShapeFunctionPressure,
                                           IntegrationMethod, GlobalDim>::
@@ -315,7 +315,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, unsigned GlobalDim>
+          typename IntegrationMethod, int GlobalDim>
 void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                                           ShapeFunctionPressure,
                                           IntegrationMethod, GlobalDim>::

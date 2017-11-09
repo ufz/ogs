@@ -24,12 +24,12 @@ namespace HydroMechanics
 {
 namespace detail
 {
-template <unsigned GlobalDim,
-          template <typename, typename, typename, unsigned>
+template <int GlobalDim,
+          template <typename, typename, typename, int>
           class LocalAssemblerMatrixImplementation,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerMatrixNearFractureImplementation,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerFractureImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
@@ -70,12 +70,12 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template <unsigned GlobalDim,
-          template <typename, typename, typename, unsigned>
+template <int GlobalDim,
+          template <typename, typename, typename, int>
           class LocalAssemblerMatrixImplementation,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerMatrixNearFractureImplementation,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerFractureImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
