@@ -31,24 +31,6 @@ struct IntegrationPointDataFracture final
     {
     }
 
-    // The default generated move-ctor is correctly generated for other
-    // compilers.
-    explicit IntegrationPointDataFracture(IntegrationPointDataFracture&& other)
-        : _h_matrices(std::move(other._h_matrices)),
-          _sigma(std::move(other._sigma)),
-          _sigma_prev(std::move(other._sigma_prev)),
-          _w(std::move(other._w)),
-          _w_prev(std::move(other._w_prev)),
-          _aperture(std::move(other._aperture)),
-          _aperture_prev(std::move(other._aperture_prev)),
-          _aperture0(std::move(other._aperture0)),
-          _fracture_material(other._fracture_material),
-          _material_state_variables(std::move(other._material_state_variables)),
-          _C(std::move(other._C)),
-          _detJ(std::move(other._detJ))
-    {
-    }
-
     typename HMatricesType::HMatrixType _h_matrices;
     typename HMatricesType::ForceVectorType _sigma, _sigma_prev;
     typename HMatricesType::ForceVectorType _w, _w_prev;
