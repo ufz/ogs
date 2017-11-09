@@ -58,9 +58,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     {
         if (pv_name != "pressure" && pv_name != "displacement" &&
             pv_name.find("displacement_jump") != 0)
+        {
             OGS_FATAL(
                 "Found a process variable name '%s'. It should be "
                 "'displacement' or 'displacement_jumpN' or 'pressure'");
+        }
         auto variable = std::find_if(variables.cbegin(), variables.cend(),
                                      [&pv_name](ProcessVariable const& v) {
                                          return v.getName() == pv_name;
@@ -182,11 +184,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             config.getConfigParameter<std::vector<double>>(
                 "specific_body_force");
         if (b.size() != GlobalDim)
+        {
             OGS_FATAL(
                 "The size of the specific body force vector does not match the "
                 "displacement dimension. Vector size is %d, displacement "
                 "dimension is %d",
                 b.size(), GlobalDim);
+        }
 
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
