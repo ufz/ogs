@@ -6,7 +6,7 @@
 #
 # AddTest(
 #   NAME <name of the the test>
-#   PATH <working directory> # relative to SourceDir/Tests/Data
+#   PATH <working directory> # relative to SourceDir/Tests/lfs-data
 #   EXECUTABLE <executable target> # optional, defaults to ogs
 #   EXECUTABLE_ARGS <arguments>
 #   WRAPPER <time|memcheck|callgrind> # optional
@@ -22,7 +22,7 @@
 #
 #   diff-tester
 #     - DIFF_DATA <list of files to diff>
-#       # the given file is compared to a file with the same name from Tests/Data
+#       # the given file is compared to a file with the same name from Tests/lfs-data
 #
 #   vtkdiff-tester
 #     - DIFF_DATA <vtk file> <data array a name> <data array b name>

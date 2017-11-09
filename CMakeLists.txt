@@ -236,8 +236,8 @@ if (OGS_FATAL_ABORT)
 endif()
 
 if(OGS_BUILD_TESTS)
-    set(Data_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Tests/Data CACHE INTERNAL "")
-    set(Data_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Tests/Data CACHE INTERNAL "")
+    set(Data_SOURCE_DIR ${PROJECT_SOURCE_DIR}/Tests/lfs-data CACHE INTERNAL "")
+    set(Data_BINARY_DIR ${PROJECT_BINARY_DIR}/Tests/lfs-data CACHE INTERNAL "")
 endif()
 
 # Logging level

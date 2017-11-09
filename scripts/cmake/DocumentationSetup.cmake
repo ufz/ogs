@@ -62,7 +62,7 @@ if(DOXYGEN_FOUND)
     add_dependencies(doc internal_pre_doc)
 
     if (doc_use_external_tools)
-        set(data_dir "${PROJECT_SOURCE_DIR}/Tests/Data")
+        set(data_dir "${Data_SOURCE_DIR}")
         add_custom_target(internal_pre_doc_qa_page
             ${BASH_TOOL_PATH}
             "${PROJECT_SOURCE_DIR}/scripts/doc/generate-project-file-doc-qa.sh"

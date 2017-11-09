@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <mesh>mcwt.vtu</mesh>
+    <geometry>mcwt.gml</geometry>
+    <processes>
+        <process>
+            <name>GW23</name>
+            <type>TWOPHASE_FLOW_PP</type>
+            <integration_order>2</integration_order>
+            <jacobian_assembler>
+                <type>CentralDifferences</type>
+                <component_magnitudes>1e4 1e+5</component_magnitudes>
+                <relative_epsilons>1e-7 1e-7</relative_epsilons>
+            </jacobian_assembler>
+            <process_variables>
+                <capillary_pressure>capillary_pressure</capillary_pressure>
+                <gas_pressure>gas_pressure</gas_pressure>
+            </process_variables>
+            <material_property>
+                <fluid>
+                    <liquid_density>
+                        <type>Constant</type>
+                        <value> 1.e3 </value>
+                    </liquid_density>
+                    <gas_density>
+                        <type>Constant</type>
+                        <value> 1.e3  </value>
+                    </gas_density>
+                    <liquid_viscosity>
+                        <type>Constant</type>
+                        <value> 1.e-3 </value>
+                    </liquid_viscosity>
+                    <gas_viscosity>
+                        <type>Constant</type>
+                        <value> 1.e-3 </value>
+                    </gas_viscosity>
+                </fluid>
+                <porous_medium>
+                    <porous_medium id="0">
+                        <permeability>
+                            <values>1.0e-10</values>
+                        </permeability>
+                        <porosity>
+                            <type>Constant</type>
+                            <value> 0.3  </value>
+                        </porosity>
+                        <storage>
+                            <type>Constant</type>
+                            <value> 0.0 </value>
+                        </storage>
+                        <capillary_pressure>
+                            <type>BrooksCorey</type>
+                            <pd> 5000 </pd>
+                            <sr> 0.0 </sr>
+                            <smax> 1. </smax>
+                            <m> 2 </m>
+                            <pc_max> 2e+7 </pc_max>
+                        </capillary_pressure>
+                        <relative_permeability>
+                            <relative_permeability id="0">
+                                <type>NonWettingPhaseBrooksCoreyOilGas</type>
+                                <sr>  0.0 </sr>
+                                <smax> 1.0</smax>
+                                <m> 2 </m>
+                                <krel_min> 1e-9 </krel_min>
+                            </relative_permeability>
+                            <relative_permeability id="1">
+                                <type>WettingPhaseBrooksCoreyOilGas</type>
+                                <sr>  0.0 </sr>
+                                <smax> 1.0</smax>
+                                <m> 2 </m>
+                                <krel_min> 0.0 </krel_min>
+                            </relative_permeability>
+                        </relative_permeability>
+                    </porous_medium>
+                </porous_medium>
+            </material_property>
+            <secondary_variables>
+                <secondary_variable type="static" internal_name="saturation" output_name="saturation"/>
+            </secondary_variables>
+            <specific_body_force>0 0</specific_body_force>
+            <mass_lumping> true </mass_lumping>
+            <temperature> temp </temperature>
+        </process>
+    </processes>
+    <parameters>
+        <parameter>
+            <name>pc_Dirichlet_left</name>
+            <type>Constant</type>
+            <value>5000.0</value>
+        </parameter>
+        <parameter>
+            <name>pg_Dirichlet_left</name>
+            <type>Constant</type>
+            <value>2.e5</value>
+        </parameter>
+        <parameter>
+            <name>pc_0</name>
+            <type>Constant</type>
+            <values>5.e4</values>
+        </parameter>
+        <parameter>
+            <name>pg_0</name>
+            <type>Constant</type>
+            <values>0.0</values>
+        </parameter>
+        <parameter>
+            <name>temp</name>
+            <type>Constant</type>
+            <value>293.15</value>
+        </parameter>
+    </parameters>
+    <time_loop>
+        <processes>
+            <process ref="GW23">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1.e-6</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <output>
+                    <variables>
+                        <variable> capillary_pressure </variable>
+                        <variable> gas_pressure </variable>
+                        <variable> saturation </variable>
+                    </variables>
+                </output>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>1000</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>100</repeat>
+                            <delta_t>0.05</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>100</repeat>
+                            <delta_t>0.1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>100</repeat>
+                            <delta_t>1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>100</repeat>
+                            <delta_t>2</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>100</repeat>
+                            <delta_t>5</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>100</repeat>
+                            <delta_t>10</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>twophaseflow</prefix>
+            <timesteps>
+                <!-- only output last timestep -->
+                <pair>
+                    <repeat> 1 </repeat>
+                    <each_steps> 10000 </each_steps>
+                </pair>
+            </timesteps>
+            <output_iteration_results>false</output_iteration_results>
+        </output>
+    </time_loop>
+    <process_variables>
+        <process_variable>
+            <name>capillary_pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>pc_0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>mcwt</geometrical_set>
+                    <geometry>POINT0</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>pc_Dirichlet_left</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>gas_pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>pg_0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>mcwt</geometrical_set>
+                    <geometry>POINT0</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>pg_Dirichlet_left</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>     basic_newton </name>
+            <type>     Newton       </type>
+            <max_iter> 50          </max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i bicgstab -p ilut -tol 1e-18 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>BiCGSTAB</solver_type>
+                <precon_type>ILUT</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-18</error_tolerance>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+</OpenGeoSysProject>

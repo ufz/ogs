@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <mesh axially_symmetric="true">line_1_lines_1e4.vtu</mesh>
+    <geometry>circle_1_axi.gml</geometry>
+    <processes>
+        <process>
+            <name>GW23</name>
+            <type>GROUNDWATER_FLOW</type>
+            <integration_order>2</integration_order>
+            <hydraulic_conductivity>kappa</hydraulic_conductivity>
+            <process_variables>
+                <process_variable>pressure</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable type="static" internal_name="darcy_velocity" output_name="v"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="GW23">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1.e-6</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <output>
+                    <variables>
+                        <variable> pressure </variable>
+                        <variable> v      </variable>
+                    </variables>
+                </output>
+                <time_stepping>
+                    <type>SingleStep</type>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>circle_1e4_axi</prefix>
+        </output>
+    </time_loop>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>10</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i cg -p jacobi -tol 1e-16 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>CG</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>20000</max_iteration_step>
+                <error_tolerance>1e-14</error_tolerance>
+            </eigen>
+            <petsc>
+                <prefix>gw</prefix>
+                <parameters>-gw_ksp_type cg -gw_pc_type bjacobi -gw_ksp_rtol 1e-16 -gw_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+    <parameters>
+        <parameter>
+            <name>kappa</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>p0</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>pressure_bc</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>p0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>outer</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>pressure_bc</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+            <source_terms>
+                <source_term>
+                    <geometrical_set>geometry</geometrical_set>
+                    <geometry>inner</geometry>
+                    <type>Nodal</type>
+                    <value>1</value>
+                </source_term>
+            </source_terms>
+        </process_variable>
+    </process_variables>
+</OpenGeoSysProject>
