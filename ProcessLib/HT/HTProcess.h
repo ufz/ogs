@@ -43,16 +43,17 @@ struct HTMaterialProperties;
 class HTProcess final : public Process
 {
 public:
-    HTProcess(MeshLib::Mesh& mesh,
-              std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
-                  jacobian_assembler,
-              std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-              unsigned const integration_order,
-              std::vector<std::reference_wrapper<ProcessVariable>>&&
-                  process_variables,
-              std::unique_ptr<HTMaterialProperties>&& material_properties,
-              SecondaryVariableCollection&& secondary_variables,
-              NumLib::NamedFunctionCaller&& named_function_caller);
+    HTProcess(
+        MeshLib::Mesh& mesh,
+        std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
+            jacobian_assembler,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+        unsigned const integration_order,
+        std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
+            process_variables,
+        std::unique_ptr<HTMaterialProperties>&& material_properties,
+        SecondaryVariableCollection&& secondary_variables,
+        NumLib::NamedFunctionCaller&& named_function_caller);
 
     //! \name ODESystem interface
     //! @{

@@ -38,7 +38,7 @@ public:
         std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         unsigned const integration_order,
-        std::vector<std::reference_wrapper<ProcessVariable>>&&
+        std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         TwoPhaseFlowWithPrhoProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,

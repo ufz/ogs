@@ -33,7 +33,7 @@ public:
             jacobian_assembler,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         unsigned const integration_order,
-        std::vector<std::reference_wrapper<ProcessVariable>>&&
+        std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         GroundwaterFlowProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
