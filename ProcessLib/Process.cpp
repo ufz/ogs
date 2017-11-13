@@ -24,18 +24,28 @@ Process::Process(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
-    std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
+        process_variables,
     SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller)
+    NumLib::NamedFunctionCaller&& named_function_caller,
+    const bool use_monolithic_scheme)
     : _mesh(mesh),
       _secondary_variables(std::move(secondary_variables)),
       _named_function_caller(std::move(named_function_caller)),
       _global_assembler(std::move(jacobian_assembler)),
-      _is_monolithic_scheme(true),
+      _use_monolithic_scheme(use_monolithic_scheme),
       _coupled_solutions(nullptr),
       _integration_order(integration_order),
       _process_variables(std::move(process_variables)),
-      _boundary_conditions(parameters)
+      _boundary_conditions([&]() -> std::vector<BoundaryConditionCollection> {
+          std::vector<BoundaryConditionCollection> pcs_BCs;
+          pcs_BCs.reserve(process_variables.size());
+          for (std::size_t i = 0; i < process_variables.size(); i++)
+          {
+              pcs_BCs.emplace_back(BoundaryConditionCollection(parameters));
+          }
+          return pcs_BCs;
+      }())
 {
 }
 
@@ -58,56 +68,69 @@ void Process::initialize()
     finishNamedFunctionsInitialization();
 
     DBUG("Initialize boundary conditions.");
-    _boundary_conditions.addBCsForProcessVariables(
-        _process_variables, *_local_to_global_index_map, _integration_order);
-
-    for (int variable_id = 0;
-         variable_id < static_cast<int>(_process_variables.size());
-         ++variable_id)
+    for (std::size_t pcs_id = 0; pcs_id < _process_variables.size(); pcs_id++)
     {
-        ProcessVariable& pv = _process_variables[variable_id];
-        auto sts =
-            pv.createSourceTerms(*_local_to_global_index_map, variable_id,
-                                 _integration_order);
+        auto const& per_process_variables = _process_variables[pcs_id];
+        auto& per_process_BCs = _boundary_conditions[pcs_id];
+        std::vector<std::unique_ptr<NodalSourceTerm>> per_process_source_terms;
+        for (std::size_t variable_id = 0;
+             variable_id < per_process_variables.size();
+             variable_id++)
+        {
+            per_process_BCs.addBCsForProcessVariables(
+                per_process_variables, *_local_to_global_index_map,
+                _integration_order);
 
-        std::move(sts.begin(), sts.end(),
-                  std::back_inserter(_source_terms));
+            ProcessVariable& pv = per_process_variables[variable_id];
+            auto sts = pv.createSourceTerms(*_local_to_global_index_map, 0,
+                                            _integration_order);
+
+            std::move(sts.begin(), sts.end(),
+                      std::back_inserter(per_process_source_terms));
+        }
+        _source_terms.push_back(std::move(per_process_source_terms));
     }
 }
 
-void Process::setVariableInitialCondition(const int variable_id, double const t,
-                                          GlobalVector& x)
+void Process::setInitialConditions(const unsigned pcs_id, double const t,
+                                   GlobalVector& x)
 {
-    SpatialPosition pos;
-
-    auto const& pv = _process_variables[variable_id];
-    DBUG("Set the initial condition of variable %s.",
-         pv.get().getName().data());
-
-    auto const& ic = pv.get().getInitialCondition();
-
-    auto const num_comp = pv.get().getNumberOfComponents();
-
-    const int mesh_subset_id = _is_monolithic_scheme ? variable_id : 0;
-
-    for (int component_id = 0; component_id < num_comp; ++component_id)
+    auto const& per_process_variables = _process_variables[pcs_id];
+    for (std::size_t variable_id = 0;
+         variable_id < per_process_variables.size();
+         variable_id++)
     {
-        auto const& mesh_subsets = _local_to_global_index_map->getMeshSubsets(
-            mesh_subset_id, component_id);
-        for (auto const& mesh_subset : mesh_subsets)
+        SpatialPosition pos;
+
+        auto const& pv = per_process_variables[variable_id];
+        DBUG("Set the initial condition of variable %s of process %d.",
+             pv.get().getName().data(), pcs_id);
+
+        auto const& ic = pv.get().getInitialCondition();
+
+        auto const num_comp = pv.get().getNumberOfComponents();
+
+        const int mesh_subset_id = _use_monolithic_scheme ? variable_id : 0;
+
+        for (int component_id = 0; component_id < num_comp; ++component_id)
         {
-            auto const mesh_id = mesh_subset->getMeshID();
-            for (auto const* node : mesh_subset->getNodes())
+            auto const& mesh_subsets =
+                _local_to_global_index_map->getMeshSubsets(mesh_subset_id,
+                                                           component_id);
+            for (auto const& mesh_subset : mesh_subsets)
             {
-                MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
-                                          node->getID());
+                auto const mesh_id = mesh_subset->getMeshID();
+                for (auto const* node : mesh_subset->getNodes())
+                {
+                    MeshLib::Location const l(
+                        mesh_id, MeshLib::MeshItemType::Node, node->getID());
 
-                pos.setNodeID(node->getID());
-                auto const& ic_value = ic(t, pos);
+                    pos.setNodeID(node->getID());
+                    auto const& ic_value = ic(t, pos);
 
-                auto global_index =
-                    std::abs(_local_to_global_index_map->getGlobalIndex(
-                        l, mesh_subset_id, component_id));
+                    auto global_index =
+                        std::abs(_local_to_global_index_map->getGlobalIndex(
+                            l, mesh_subset_id, component_id));
 #ifdef USE_PETSC
                     // The global indices of the ghost entries of the global
                     // matrix or the global vectors need to be set as negative
@@ -120,25 +143,10 @@ void Process::setVariableInitialCondition(const int variable_id, double const t,
                     if (global_index == x.size())
                         global_index = 0;
 #endif
-                x.set(global_index, ic_value[component_id]);
+                    x.set(global_index, ic_value[component_id]);
+                }
             }
         }
-    }
-}
-
-void Process::setInitialConditions(const unsigned pcs_id, double const t,
-                                   GlobalVector& x)
-{
-    if (!_is_monolithic_scheme)
-    {
-        setVariableInitialCondition(pcs_id, t, x);
-        return;
-    }
-
-    for (std::size_t variable_id = 0; variable_id < _process_variables.size();
-         variable_id++)
-    {
-        setVariableInitialCondition(variable_id, t, x);
     }
 }
 
@@ -161,9 +169,12 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
 
     assembleConcreteProcess(t, x, M, K, b);
 
-    _boundary_conditions.applyNaturalBC(t, x, K, b);
+    const auto pcs_id =
+        (_coupled_solutions) ? _coupled_solutions->process_id : 0;
+    _boundary_conditions[pcs_id].applyNaturalBC(t, x, K, b);
 
-    for (auto const& st : _source_terms)
+    const auto _source_terms_per_pcs = _source_terms[pcs_id];
+    for (auto const& st : _source_terms_per_pcs)
     {
         st->integrateNodalSourceTerm(t, b);
     }
@@ -182,7 +193,9 @@ void Process::assembleWithJacobian(const double t, GlobalVector const& x,
                                         Jac);
 
     // TODO apply BCs to Jacobian.
-    _boundary_conditions.applyNaturalBC(t, x, K, b);
+    const auto pcs_id =
+        (_coupled_solutions) ? _coupled_solutions->process_id : 0;
+    _boundary_conditions[pcs_id].applyNaturalBC(t, x, K, b);
 }
 
 void Process::constructDofTable()
@@ -196,7 +209,7 @@ void Process::constructDofTable()
 
     // Vector of the number of variable components
     std::vector<int> vec_var_n_components;
-    if (_is_monolithic_scheme)
+    if (_use_monolithic_scheme)
     {
         // Collect the mesh subsets in a vector.
         for (ProcessVariable const& pv : _process_variables)
@@ -243,7 +256,7 @@ void Process::initializeExtrapolator()
     bool manage_storage;
 
     if (_local_to_global_index_map->getNumberOfComponents() == 1 ||
-        !_is_monolithic_scheme)
+        !_use_monolithic_scheme)
     {
         // For single-variable-single-component processes reuse the existing DOF
         // table.
