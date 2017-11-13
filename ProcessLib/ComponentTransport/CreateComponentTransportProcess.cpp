@@ -35,19 +35,43 @@ std::unique_ptr<Process> createComponentTransportProcess(
     config.checkConfigParameter("type", "ComponentTransport");
 
     DBUG("Create ComponentTransportProcess.");
+    auto const staggered_scheme =
+        //! \ogs_file_param{prj__processes__process__coupling_scheme}
+        config.getConfigParameterOptional<std::string>("coupling_scheme");
+    const bool use_monolithic_scheme =
+        (staggered_scheme && (*staggered_scheme == "staggered")) ? false : true;
 
     // Process variable.
 
     //! \ogs_file_param{prj__processes__process__ComponentTransport__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
-    auto process_variables = findProcessVariables(
-        variables, pv_config,
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        process_variables;
+    if (use_monolithic_scheme)  // monolithic scheme.
+    {
+        auto per_process_variables = findProcessVariables(
+            variables, pv_config,
+            {
+            //! \ogs_file_param_special{prj__processes__process__ComponentTransport__process_variables__concentration}
+             "concentration",
+             //! \ogs_file_param_special{prj__processes__process__ComponentTransport__process_variables__pressure}
+             "pressure"});
+        process_variables.push_back(std::move(per_process_variables));
+    }
+    else  // staggered scheme.
+    {
+        std::array<std::string, 2> variable_names = {
+            {"concentration",
+             "pressure"}};  // double-braces required in C++11 (not in C++14)
+
+        for (int i = 0; i < 2; i++)
         {
-        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__process_variables__concentration}
-        "concentration",
-        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__process_variables__pressure}
-        "pressure"});
+            auto per_process_variables =
+                findProcessVariables(variables, pv_config, {variable_names[i]});
+            process_variables.push_back(std::move(per_process_variables));
+        }
+    }
 
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties{
         MaterialLib::PorousMedium::createPorousMediaProperties(
@@ -144,7 +168,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
     return std::make_unique<ComponentTransportProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller));
+        std::move(secondary_variables), std::move(named_function_caller),
+        use_monolithic_scheme);
 }
 
 }  // namespace ComponentTransport

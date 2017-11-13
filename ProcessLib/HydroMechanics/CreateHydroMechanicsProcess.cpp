@@ -35,40 +35,71 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     config.checkConfigParameter("type", "HYDRO_MECHANICS");
     DBUG("Create HydroMechanicsProcess.");
 
+    auto const staggered_scheme =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme}
+        config.getConfigParameterOptional<std::string>("coupling_scheme");
+    const bool use_monolithic_scheme =
+        (staggered_scheme && (*staggered_scheme == "staggered")) ? false : true;
+
     // Process variable.
 
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
-    auto process_variables = findProcessVariables(
-        variables, pv_config,
-        {//! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__process_variables__pressure}
-         "pressure",
-         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__process_variables__displacement}
-         "displacement"});
+    ProcessVariable* variable_p;
+    ProcessVariable* variable_u;
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        process_variables;
+    if (use_monolithic_scheme)  // monolithic scheme.
+    {
+        auto per_process_variables = findProcessVariables(
+            variables, pv_config,
+            {//! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__process_variables__pressure}
+            "pressure",
+            //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__process_variables__displacement}
+            "displacement"});
+        variable_p = &per_process_variables[0].get();
+        variable_u = &per_process_variables[1].get();
+        process_variables.push_back(std::move(per_process_variables));
+    }
+    else  // staggered scheme.
+    {
+        std::array<std::string, 2> variable_names = {
+            {"pressure",
+             "displacement"}};  // double-braces required in C++11 (not in C++14)
+
+        for (int i = 0; i < 2; i++)
+        {
+            auto per_process_variables =
+                findProcessVariables(variables, pv_config, {variable_names[i]});
+            process_variables.push_back(std::move(per_process_variables));
+        }
+        variable_p = &process_variables[0][0].get();
+        variable_u = &process_variables[1][0].get();
+    }
 
     DBUG("Associate displacement with process variable \'%s\'.",
-         process_variables[1].get().getName().c_str());
+         variable_u->getName().c_str());
 
-    if (process_variables[1].get().getNumberOfComponents() != DisplacementDim)
+    if (variable_u->getNumberOfComponents() != DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '%s' is different "
             "from the displacement dimension: got %d, expected %d",
-            process_variables[1].get().getName().c_str(),
-            process_variables[1].get().getNumberOfComponents(),
+            variable_u->getName().c_str(),
+            variable_u->getNumberOfComponents(),
             DisplacementDim);
     }
 
     DBUG("Associate pressure with process variable \'%s\'.",
-         process_variables[0].get().getName().c_str());
-    if (process_variables[0].get().getNumberOfComponents() != 1)
+         variable_p->getName().c_str());
+    if (variable_p->getNumberOfComponents() != 1)
     {
         OGS_FATAL(
             "Pressure process variable '%s' is not a scalar variable but has "
             "%d components.",
-            process_variables[0].get().getName().c_str(),
-            process_variables[0].get().getNumberOfComponents());
+            variable_p->getName().c_str(),
+            variable_p->getNumberOfComponents());
     }
 
     // Constitutive relation.
@@ -190,7 +221,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     return std::make_unique<HydroMechanicsProcess<DisplacementDim>>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller));
+        std::move(secondary_variables), std::move(named_function_caller),
+        use_monolithic_scheme);
 }
 
 template std::unique_ptr<Process> createHydroMechanicsProcess<2>(

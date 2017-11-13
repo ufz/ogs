@@ -31,10 +31,12 @@ HTProcess::HTProcess(
         process_variables,
     std::unique_ptr<HTMaterialProperties>&& material_properties,
     SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller)
+    NumLib::NamedFunctionCaller&& named_function_caller,
+    bool const use_monolithic_scheme)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller)),
+              std::move(secondary_variables), std::move(named_function_caller),
+              use_monolithic_scheme),
       _material_properties(std::move(material_properties))
 {
 }
@@ -46,7 +48,7 @@ void HTProcess::initializeConcreteProcess(
 {
     ProcessLib::ProcessVariable const& pv = getProcessVariables()[0];
 
-    if (_is_monolithic_scheme)
+    if (_use_monolithic_scheme)
     {
         ProcessLib::createLocalAssemblers<MonolithicHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
@@ -76,7 +78,7 @@ void HTProcess::assembleConcreteProcess(const double t,
                                         GlobalMatrix& K,
                                         GlobalVector& b)
 {
-    if (_is_monolithic_scheme)
+    if (_use_monolithic_scheme)
     {
         DBUG("Assemble HTProcess.");
     }
@@ -110,7 +112,7 @@ void HTProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HTProcess.");
 
-    if (!_is_monolithic_scheme)
+    if (!_use_monolithic_scheme)
         setCoupledSolutionsOfPreviousTimeStep();
 
     // Call global assembler for each local assembly item.
@@ -127,7 +129,7 @@ void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
 {
     assert(process_id < 2);
 
-    if (_is_monolithic_scheme)
+    if (_use_monolithic_scheme)
         return;
 
     if (!_xs_previous_timestep[process_id])

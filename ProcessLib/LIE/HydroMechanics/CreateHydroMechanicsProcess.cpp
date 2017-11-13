@@ -39,6 +39,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HYDRO_MECHANICS_WITH_LIE");
     DBUG("Create HydroMechanicsProcess with LIE.");
+    auto const staggered_scheme =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__coupling_scheme}
+        config.getConfigParameterOptional<std::string>("coupling_scheme");
+    const bool use_monolithic_scheme =
+        (staggered_scheme && (*staggered_scheme == "staggered")) ? false : true;
 
     // Process variables
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__process_variables}
@@ -46,7 +51,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto range =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__process_variables__process_variable}
         pv_conf.getConfigParameterList<std::string>("process_variable");
-    std::vector<std::reference_wrapper<ProcessVariable>> process_variables;
+    std::vector<std::reference_wrapper<ProcessVariable>> p_u_process_variables;
+    std::vector<std::reference_wrapper<ProcessVariable>> p_process_variables;
+    std::vector<std::reference_wrapper<ProcessVariable>> u_process_variables;
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        process_variables;
     for (std::string const& pv_name : range)
     {
         if (pv_name != "pressure" && pv_name != "displacement" &&
@@ -84,11 +93,35 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                 GlobalDim);
         }
 
-        process_variables.emplace_back(const_cast<ProcessVariable&>(*variable));
+        if (!use_monolithic_scheme)
+        {
+            if (pv_name == "pressure")
+                p_process_variables.emplace_back(
+                    const_cast<ProcessVariable&>(*variable));
+            else
+            {
+                u_process_variables.emplace_back(
+                    const_cast<ProcessVariable&>(*variable));
+            }
+        }
+        else
+        {
+            p_u_process_variables.emplace_back(
+                const_cast<ProcessVariable&>(*variable));
+        }
     }
 
-    if (process_variables.size() > 3)
+    if (p_u_process_variables.size() > 3 || u_process_variables.size() > 2)
         OGS_FATAL("Currently only one displacement jump is supported");
+
+    if (!use_monolithic_scheme)
+    {
+        process_variables.push_back(std::move(p_process_variables));
+        process_variables.push_back(std::move(u_process_variables));
+    }
+    else
+        process_variables.push_back(std::move(p_u_process_variables));
+
 
     // Constitutive relation.
     // read type;
@@ -301,7 +334,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     return std::make_unique<HydroMechanicsProcess<GlobalDim>>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller));
+        std::move(secondary_variables), std::move(named_function_caller),
+        use_monolithic_scheme);
 }
 
 template std::unique_ptr<Process> createHydroMechanicsProcess<2>(

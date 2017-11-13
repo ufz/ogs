@@ -37,15 +37,16 @@ Process::Process(
       _coupled_solutions(nullptr),
       _integration_order(integration_order),
       _process_variables(std::move(process_variables)),
-      _boundary_conditions([&]() -> std::vector<BoundaryConditionCollection> {
+      _boundary_conditions([&](const size_t number_of_processes)
+                               -> std::vector<BoundaryConditionCollection> {
           std::vector<BoundaryConditionCollection> pcs_BCs;
-          pcs_BCs.reserve(process_variables.size());
-          for (std::size_t i = 0; i < process_variables.size(); i++)
+          pcs_BCs.reserve(number_of_processes);
+          for (std::size_t i = 0; i < number_of_processes; i++)
           {
               pcs_BCs.emplace_back(BoundaryConditionCollection(parameters));
           }
           return pcs_BCs;
-      }())
+      }(_process_variables.size()))
 {
 }
 
@@ -72,15 +73,16 @@ void Process::initialize()
     {
         auto const& per_process_variables = _process_variables[pcs_id];
         auto& per_process_BCs = _boundary_conditions[pcs_id];
+
+        per_process_BCs.addBCsForProcessVariables(per_process_variables,
+                                                  *_local_to_global_index_map,
+                                                  _integration_order);
+
         std::vector<std::unique_ptr<NodalSourceTerm>> per_process_source_terms;
         for (std::size_t variable_id = 0;
              variable_id < per_process_variables.size();
              variable_id++)
         {
-            per_process_BCs.addBCsForProcessVariables(
-                per_process_variables, *_local_to_global_index_map,
-                _integration_order);
-
             ProcessVariable& pv = per_process_variables[variable_id];
             auto sts = pv.createSourceTerms(*_local_to_global_index_map, 0,
                                             _integration_order);
@@ -173,8 +175,8 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
         (_coupled_solutions) ? _coupled_solutions->process_id : 0;
     _boundary_conditions[pcs_id].applyNaturalBC(t, x, K, b);
 
-    const auto _source_terms_per_pcs = _source_terms[pcs_id];
-    for (auto const& st : _source_terms_per_pcs)
+    auto& source_terms_per_pcs = _source_terms[pcs_id];
+    for (auto& st : source_terms_per_pcs)
     {
         st->integrateNodalSourceTerm(t, b);
     }
@@ -212,7 +214,7 @@ void Process::constructDofTable()
     if (_use_monolithic_scheme)
     {
         // Collect the mesh subsets in a vector.
-        for (ProcessVariable const& pv : _process_variables)
+        for (ProcessVariable const& pv : _process_variables[0])
         {
             std::generate_n(
                 std::back_inserter(all_mesh_subsets),
@@ -223,7 +225,7 @@ void Process::constructDofTable()
         }
 
         // Create a vector of the number of variable components
-        for (ProcessVariable const& pv : _process_variables)
+        for (ProcessVariable const& pv : _process_variables[0])
             vec_var_n_components.push_back(pv.getNumberOfComponents());
     }
     else  // for staggered scheme
@@ -235,14 +237,14 @@ void Process::constructDofTable()
         // Collect the mesh subsets in a vector.
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
-            _process_variables[0].get().getNumberOfComponents(),
+            _process_variables[0][0].get().getNumberOfComponents(),
             [&]() {
                 return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
             });
 
         // Create a vector of the number of variable components.
         vec_var_n_components.push_back(
-            _process_variables[0].get().getNumberOfComponents());
+            _process_variables[0][0].get().getNumberOfComponents());
     }
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
