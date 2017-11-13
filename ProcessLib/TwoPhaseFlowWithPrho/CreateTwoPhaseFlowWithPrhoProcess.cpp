@@ -40,12 +40,15 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
-    auto process_variables = findProcessVariables(
+    auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__process_variables__liquid_pressure}
          "liquid_pressure",
          //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__process_variables__overall_mass_density}
          "overall_mass_density"});
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        process_variables;
+    process_variables.push_back(std::move(per_process_variables));
 
     SecondaryVariableCollection secondary_variables;
 

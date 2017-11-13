@@ -46,7 +46,8 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     auto range =
         //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__process_variables__process_variable}
         pv_conf.getConfigParameterList<std::string>("process_variable");
-    std::vector<std::reference_wrapper<ProcessVariable>> process_variables;
+    std::vector<std::reference_wrapper<ProcessVariable>> per_process_variables;
+
     for (std::string const& pv_name : range)
     {
         if (pv_name != "displacement" && pv_name.find("displacement_jump") != 0)
@@ -71,27 +72,30 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         DBUG("Found process variable \'%s\' for config tag <%s>.",
              variable->getName().c_str(), "process_variable");
 
-        process_variables.emplace_back(const_cast<ProcessVariable&>(*variable));
+        per_process_variables.emplace_back(const_cast<ProcessVariable&>(*variable));
     }
-    auto const n_fractures = process_variables.size() - 1;
+    auto const n_fractures = per_process_variables.size() - 1;
     if (n_fractures < 1)
     {
         OGS_FATAL("No displacement jump variables are specified");
     }
 
     DBUG("Associate displacement with process variable \'%s\'.",
-         process_variables.back().get().getName().c_str());
+         per_process_variables.back().get().getName().c_str());
 
-    if (process_variables.back().get().getNumberOfComponents() !=
+    if (per_process_variables.back().get().getNumberOfComponents() !=
         DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '%s' is different "
             "from the displacement dimension: got %d, expected %d",
-            process_variables.back().get().getName().c_str(),
-            process_variables.back().get().getNumberOfComponents(),
+            per_process_variables.back().get().getName().c_str(),
+            per_process_variables.back().get().getNumberOfComponents(),
             DisplacementDim);
     }
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        process_variables;
+    process_variables.push_back(std::move(per_process_variables));
 
     // Constitutive relation.
     // read type;

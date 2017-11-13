@@ -43,24 +43,27 @@ createSmallDeformationProcess(
     //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
-    auto process_variables = findProcessVariables(
+    auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__process_variables__process_variable}
          "process_variable"});
 
     DBUG("Associate displacement with process variable \'%s\'.",
-         process_variables.back().get().getName().c_str());
+         per_process_variables.back().get().getName().c_str());
 
-    if (process_variables.back().get().getNumberOfComponents() !=
+    if (per_process_variables.back().get().getNumberOfComponents() !=
         DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '%s' is different "
             "from the displacement dimension: got %d, expected %d",
-            process_variables.back().get().getName().c_str(),
-            process_variables.back().get().getNumberOfComponents(),
+            per_process_variables.back().get().getName().c_str(),
+            per_process_variables.back().get().getNumberOfComponents(),
             DisplacementDim);
     }
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        process_variables;
+    process_variables.push_back(std::move(per_process_variables));
 
     // Constitutive relation.
     // read type;

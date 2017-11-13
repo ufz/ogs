@@ -32,7 +32,7 @@ std::unique_ptr<Process> createTESProcess(
     //! \ogs_file_param{prj__processes__process__TES__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
-    auto process_variables = findProcessVariables(
+    auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {
         //! \ogs_file_param_special{prj__processes__process__TES__process_variables__fluid_pressure}
@@ -41,6 +41,9 @@ std::unique_ptr<Process> createTESProcess(
         "temperature",
         //! \ogs_file_param_special{prj__processes__process__TES__process_variables__vapour_mass_fraction}
         "vapour_mass_fraction"});
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        process_variables;
+    process_variables.push_back(std::move(per_process_variables));
 
     SecondaryVariableCollection secondary_variables;
 
