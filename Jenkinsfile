@@ -54,8 +54,8 @@ pipeline {
                 dir('build') { deleteDir() }
             }
             success {
-                stash(name: 'web', includes: 'web')
-                stash(name: 'doxygen', includes: 'build/docs')
+                stash(name: 'web', includes: 'web/**')
+                stash(name: 'doxygen', includes: 'build/docs/**')
                 script {
                   publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                     keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
