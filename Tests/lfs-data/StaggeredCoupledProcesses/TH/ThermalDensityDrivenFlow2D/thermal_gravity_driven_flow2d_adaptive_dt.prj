@@ -57,11 +57,12 @@
                 <porous_medium>
                     <porous_medium id="0">
                         <permeability>
-                            <values>1.e-12</values>
+                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
+                            <type>Constant</type>
                         </permeability>
                         <porosity>
                             <type>Constant</type>
-                            <value> 0.2 </value>
+                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
                         </porosity>
                         <storage>
                             <type>Constant</type>
@@ -210,6 +211,16 @@
             <name>biot_const</name>
             <type>Constant</type>
             <value>1.0</value>
+        </parameter>
+        <parameter>
+            <name>kappa1</name>
+            <type>Constant</type>
+            <values>1.e-12</values>
+        </parameter>
+        <parameter>
+            <name>constant_porosity_parameter</name>
+            <type>Constant</type>
+            <value>0.2</value>
         </parameter>
     </parameters>
     <process_variables>
