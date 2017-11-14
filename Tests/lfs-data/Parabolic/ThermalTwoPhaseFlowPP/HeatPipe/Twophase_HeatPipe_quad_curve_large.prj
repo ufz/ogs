@@ -63,11 +63,12 @@
                 <porous_medium>
                     <porous_medium id="0">
                         <permeability>
-                            <values>1e-12</values>
+                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
+                            <type>Constant</type>
                         </permeability>
                         <porosity>
                             <type>Constant</type>
-                            <value> 0.4  </value>
+                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
                         </porosity>
                         <storage>
                             <type>Constant</type>
@@ -178,6 +179,16 @@
             <name>latent_heat_evp</name>
             <type>Constant</type>
             <value>2258000</value>
+        </parameter>
+        <parameter>
+            <name>constant_porosity_parameter</name>
+            <type>Constant</type>
+            <value>0.4</value>
+        </parameter>
+        <parameter>
+            <name>kappa1</name>
+            <type>Constant</type>
+            <values>1e-12</values>
         </parameter>
     </parameters>
     <time_loop>
