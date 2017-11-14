@@ -37,7 +37,7 @@
                         </permeability>
                         <porosity>
                             <type>Constant</type>
-                            <value> 0.2 </value>
+                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
                         </porosity>
                         <storage>
                             <type>Constant</type>
@@ -104,6 +104,11 @@
             <name>p_bc</name>
             <type>Constant</type>
             <value>.0</value>
+        </parameter>
+        <parameter>
+            <name>constant_porosity_parameter</name>
+            <type>Constant</type>
+            <value>0.2</value>
         </parameter>
     </parameters>
     <process_variables>
