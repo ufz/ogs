@@ -44,6 +44,7 @@ pipeline {
               build { target="tests" }
               build { target="ctest" }
               build { target="web" }
+              build { target="doc" }
             }
           }
           post {
@@ -54,8 +55,8 @@ pipeline {
                 dir('build') { deleteDir() }
             }
             success {
-                stash(name: 'web', includes: 'web/**')
-                stash(name: 'doxygen', includes: 'build/docs/**')
+                dir('web/public') { stash(name: 'web') }
+                dir('build/docs') { stash(name: 'doxygen') }
                 script {
                   publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                     keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
@@ -173,15 +174,15 @@ pipeline {
     stage('Deploy') {
       when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
       steps {
-        unstash web
-        unstash doxygen
+        dir('web') { unstash web }
+        dir('doxygen') { unstash doxygen }
         script {
           sshagent(credentials: ['www-data_jenkins']) {
             sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-               'ogs/scripts/jenkins/known_hosts" ogs/web/public/ ' +
+               'ogs/scripts/jenkins/known_hosts" . ' +
                'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
             sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-               'ogs/scripts/jenkins/known_hosts" build/docs/ ' +
+               'ogs/scripts/jenkins/known_hosts" . ' +
                'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
           }
         }
