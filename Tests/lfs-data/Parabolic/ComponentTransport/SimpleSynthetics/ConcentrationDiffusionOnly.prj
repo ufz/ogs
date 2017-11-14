@@ -26,11 +26,12 @@
             <porous_medium>
                 <porous_medium id="0">
                     <permeability>
-                        <values>1.239e-7 0 0 1.239e-7</values>
+                        <type>Constant</type>
+                        <permeability_tensor_entries>kappa1</permeability_tensor_entries>
                     </permeability>
                     <porosity>
                         <type>Constant</type>
-                        <value>0.2</value>
+                        <porosity_parameter>constant_porosity_parameter</porosity_parameter>
                     </porosity>
                     <storage>
                         <type>Constant</type>
@@ -39,11 +40,12 @@
                 </porous_medium>
                 <porous_medium id="1">
                     <permeability>
-                        <values>1e-3 0 0 1e-3</values>
+                        <type>Constant</type>
+                        <permeability_tensor_entries>kappa2</permeability_tensor_entries>
                     </permeability>
                     <porosity>
                         <type>Constant</type>
-                        <value>0.2</value>
+                        <porosity_parameter>constant_porosity_parameter</porosity_parameter>
                     </porosity>
                     <storage>
                         <type>Constant</type>
@@ -107,6 +109,21 @@
         </output>
     </time_loop>
     <parameters>
+        <parameter>
+            <name>kappa1</name>
+            <type>Constant</type>
+            <values>1.239e-7 0 0 1.239e-7</values>
+        </parameter>
+        <parameter>
+            <name>kappa2</name>
+            <type>Constant</type>
+            <values>1e-3 0 0 1e-3</values>
+        </parameter>
+        <parameter>
+            <name>constant_porosity_parameter</name>
+            <type>Constant</type>
+            <value>0.2</value>
+        </parameter>
         <parameter>
             <name>rho_fluid</name>
             <type>Constant</type>
