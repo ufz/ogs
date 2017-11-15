@@ -124,14 +124,42 @@ pipeline {
             }
           }
         }
+        stage('Envinf1 (serial)') {
+          agent { label "envinf1"}
+          steps {
+            script {
+              configure {
+                cmakeOptions =
+                  '-DCMAKE_BUILD_TYPE=Release ' +
+                  '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_BUILD_METIS=ON ' +
+                  '-DBUILD_SHARED_LIBS=ON '
+                env = 'envinf1/cli.sh'
+              }
+              build { env = 'envinf1/cli.sh' }
+              build {
+                env = 'envinf1/cli.sh'
+                target = 'tests'
+              }
+              build {
+                env = 'envinf1/cli.sh'
+                target = 'ctest'
+              }
+            }
+          }
+          post {
+            always {
+              publishReports { }
+              dir('build') { deleteDir() }
+            }
+          }
+        }
         // ************************** Windows **********************************
         stage('Win') {
-          agent {
-            label "win && conan"
-          }
+          agent {label 'win && conan' }
           environment {
             MSVC_NUMBER = '15'
-            MSVC_VERSION = "2017"
+            MSVC_VERSION = '2017'
           }
           steps {
             script {
