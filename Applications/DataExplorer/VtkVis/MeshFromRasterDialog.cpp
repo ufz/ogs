@@ -17,7 +17,7 @@
 #include "MeshGenerators/VtkMeshConverter.h"
 
 MeshFromRasterDialog::MeshFromRasterDialog(QDialog* parent)
-: QDialog(parent), _mesh_name("mesh"), _array_name("Colour")
+: QDialog(parent), _mesh_name("mesh"), _array_name("MaterialIDs")
 {
     setupUi(this);
 
