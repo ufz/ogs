@@ -124,6 +124,7 @@ pipeline {
             }
           }
         }
+        // ************************** envinf1 **********************************
         stage('Envinf1 (serial)') {
           agent { label "envinf1"}
           steps {
@@ -143,6 +144,37 @@ pipeline {
               }
               build {
                 env = 'envinf1/cli.sh'
+                target = 'ctest'
+              }
+            }
+          }
+          post {
+            always {
+              publishReports { }
+              dir('build') { deleteDir() }
+            }
+          }
+        }
+        stage('Envinf1 (parallel)') {
+          agent { label "envinf1"}
+          steps {
+            script {
+              configure {
+                cmakeOptions =
+                  '-DCMAKE_BUILD_TYPE=Release ' +
+                  '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_BUILD_METIS=ON ' +
+                  '-DBUILD_SHARED_LIBS=ON ' +
+                  '-DOGS_USE_PETSC=ON '
+                env = 'envinf1/petsc.sh'
+              }
+              build { env = 'envinf1/petsc.sh' }
+              build {
+                env = 'envinf1/petsc.sh'
+                target = 'tests'
+              }
+              build {
+                env = 'envinf1/petsc.sh'
                 target = 'ctest'
               }
             }
