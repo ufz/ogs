@@ -61,6 +61,9 @@ pipeline {
                   publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                     keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
                     reportName: 'Doxygen'])
+                  publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
+                    keepAll: true, reportDir: 'web/public', reportFiles: 'index.html',
+                    reportName: 'Web'])
                   step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
                     messagesPattern: """
                       .*DOT_GRAPH_MAX_NODES.
