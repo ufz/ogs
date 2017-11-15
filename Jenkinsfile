@@ -251,5 +251,78 @@ pipeline {
         }
       }
     }
+    // *************************** Log Parser **********************************
+    stage('Log Parser') {
+      steps {
+        script {
+          checkout scm
+          step([$class: 'LogParserPublisher',
+              failBuildOnError: true,
+              projectRulePath: "scripts/jenkins/all-log-parser.rules",
+              showGraphs: true,
+              unstableOnWarning: false,
+              useProjectRule: true
+          ])
+        }
+      }
+    }
+    // **************************** Sanitizer **********************************
+    stage('Sanitizer') {
+      when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
+      agent {
+        docker {
+          image 'ogs6/clang-base:latest'
+          label 'docker'
+          args '-v /home/jenkins/.ccache:/usr/src/.ccache'
+          alwaysPull true
+        }
+      }
+      steps {
+        script {
+          configure {
+            cmakeOptions =
+              '-DOGS_ADDRESS_SANITIZER=ON ' +
+              '-DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON ' +
+              '-DOGS_BUILD_UTILS=ON '
+          }
+          try {
+            build {
+              target = 'test'
+              cmd = 'UBSAN_OPTIONS=print_stacktrace=1 make -j $(nproc)'
+            }
+          }
+          catch(err) { echo "Clang sanitizer for unit tests failed!" }
+
+          try {
+            build {
+              target = 'ctest'
+              cmd = 'UBSAN_OPTIONS=print_stacktrace=1 make -j $(nproc)'
+            }
+          }
+          catch(err) { echo "Clang sanitizer for end-to-end tests failed!" }
+        }
+      }
+      post {
+        always {
+          dir('build') { deleteDir() }
+        }
+      }
+    }
+    // ***************************** Post **************************************
+    stage('Post') {
+      when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
+      steps {
+        script {
+          def helper = new ogs.helper()
+          checkout scm
+          def tag = helper.getTag()
+          if (tag != "") {
+            keepBuild()
+            currentBuild.displayName = tag
+            helper.notification(msg: "Marked build for ${tag}.", script: this)
+          }
+        }
+      }
+    }
   }
 }
