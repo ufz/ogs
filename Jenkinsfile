@@ -36,7 +36,6 @@ pipeline {
                 """.stripIndent())
 
               configure { cmakeOptions =
-                '-DCMAKE_BUILD_TYPE=Release ' +
                 '-DOGS_CPU_ARCHITECTURE=generic ' +
                 '-DOGS_WEB_BASE_URL=$JOB_URL"Web/" ' // TODO: or '-DOGS_WEB_BASE_URL=https://dev.opengeosys.org'
               }
@@ -89,7 +88,6 @@ pipeline {
             script {
               configure {
                 cmakeOptions =
-                  '-DCMAKE_BUILD_TYPE=Release ' +
                   '-DOGS_USE_CONAN=ON ' +
                   '-DOGS_CONAN_BUILD=never ' +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
@@ -131,10 +129,10 @@ pipeline {
             script {
               configure {
                 cmakeOptions =
-                  '-DCMAKE_BUILD_TYPE=Release ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_METIS=ON ' +
-                  '-DBUILD_SHARED_LIBS=ON '
+                  '-DBUILD_SHARED_LIBS=ON ' +
+                  '-DOGS_USE_PCH=OFF '
                 env = 'envinf1/cli.sh'
               }
               build { env = 'envinf1/cli.sh' }
@@ -161,12 +159,13 @@ pipeline {
             script {
               configure {
                 cmakeOptions =
-                  '-DCMAKE_BUILD_TYPE=Release ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_METIS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
+                  '-DOGS_USE_PCH=OFF ' +
                   '-DOGS_USE_PETSC=ON '
                 env = 'envinf1/petsc.sh'
+                generator = 'Unix Makefiles'
               }
               build { env = 'envinf1/petsc.sh' }
               build {
@@ -253,6 +252,7 @@ pipeline {
     }
     // *************************** Log Parser **********************************
     stage('Log Parser') {
+      agent any
       steps {
         script {
           checkout scm
@@ -311,6 +311,7 @@ pipeline {
     // ***************************** Post **************************************
     stage('Post') {
       when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
+      agent any
       steps {
         script {
           def helper = new ogs.helper()
