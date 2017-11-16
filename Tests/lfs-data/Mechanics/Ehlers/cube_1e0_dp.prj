@@ -82,8 +82,8 @@
             <prefix>cube_1e0_dp</prefix>
             <timesteps>
                 <pair>
-                    <repeat>203</repeat>
-                    <each_steps>1</each_steps>
+                    <repeat>1</repeat>
+                    <each_steps>203</each_steps>
                 </pair>
             </timesteps>
         </output>
