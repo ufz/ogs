@@ -63,7 +63,8 @@ public:
         }
 
         std::vector<std::size_t> matchedIDs;
-        for (std::size_t i(0); i < pv->getNumberOfTuples(); ++i) {
+        for (std::size_t i(0); i < pv->getNumberOfTuples(); ++i)
+        {
             if ((*pv)[i] == property_value)
                 matchedIDs.push_back(i);
         }
