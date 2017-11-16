@@ -1,2 +1,2 @@
-[remote "origin"]
-	lfsurl = https://gitlab.opengeosys.org/ogs/ogs.git/info/lfs
+[lfs]
+    url = https://gitlab.opengeosys.org/ogs/ogs.git/info/lfs
