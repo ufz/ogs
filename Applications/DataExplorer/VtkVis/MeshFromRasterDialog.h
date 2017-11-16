@@ -43,6 +43,8 @@ public:
     MeshLib::UseIntensityAs getIntensitySelection() const { return _intensity_selection; }
 
 private slots:
+    void on_elevationButton_toggled(bool isChecked);
+
     /// Instructions if the OK-Button has been pressed.
     void accept() override;
 

@@ -28,6 +28,20 @@ MeshFromRasterDialog::MeshFromRasterDialog(QDialog* parent)
 
 MeshFromRasterDialog::~MeshFromRasterDialog() = default;
 
+void MeshFromRasterDialog::on_elevationButton_toggled(bool isChecked)
+{
+    if (isChecked)
+    {
+        if (this->prismButton->isChecked())
+            this->triButton->setChecked(true);
+        if (this->hexButton->isChecked())
+            this->quadButton->setChecked(true);
+    }
+
+    this->prismButton->setEnabled(!isChecked);
+    this->hexButton->setEnabled(!isChecked);
+}
+
 void MeshFromRasterDialog::accept()
 {
     if (this->mshNameEdit->text().isEmpty())
@@ -54,6 +68,7 @@ void MeshFromRasterDialog::accept()
     }
     _element_selection = MeshLib::MeshElemType::TRIANGLE;
     if (this->quadButton->isChecked()) _element_selection = MeshLib::MeshElemType::QUAD;
+    else if (this->prismButton->isChecked()) _element_selection = MeshLib::MeshElemType::PRISM;
     else if (this->hexButton->isChecked()) _element_selection = MeshLib::MeshElemType::HEXAHEDRON;
 
     this->done(QDialog::Accepted);

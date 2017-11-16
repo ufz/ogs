@@ -129,7 +129,10 @@ MeshLib::Mesh* RasterToMesh::convert(
         return nullptr;
     }
 
-    MathLib::Point3d mesh_origin({header.origin[0]-(header.cell_size/2.0), header.origin[1]-(header.cell_size / 2.0), header.origin[2]});
+    MathLib::Point3d mesh_origin(
+        { header.origin[0]-(header.cell_size / 2.0),
+          header.origin[1]-(header.cell_size / 2.0),
+          header.origin[2]-(header.cell_size / 2.0) });
     std::unique_ptr<MeshLib::Mesh> mesh (nullptr);
     if (elem_type == MeshElemType::TRIANGLE)
         mesh.reset(MeshLib::MeshGenerator::generateRegularTriMesh(header.n_rows, header.n_cols, header.cell_size, mesh_origin, "RasterDataMesh"));
