@@ -70,6 +70,11 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     _nodal_forces->resize(DisplacementDim * mesh.getNumberOfNodes());
 
     Base::_secondary_variables.addSecondaryVariable(
+        "free_energy_density",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtFreeEnergyDensity));
+
+    Base::_secondary_variables.addSecondaryVariable(
         "sigma",
         makeExtrapolator(
             ProcessLib::KelvinVectorType<DisplacementDim>::RowsAtCompileTime,
@@ -246,6 +251,24 @@ void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
         *_local_to_global_index_map, x, t, dt);
+}
+
+template <int DisplacementDim>
+void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
+    GlobalVector const& x)
+{
+    DBUG("PostTimestep SmallDeformationProcess.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::postTimestep, _local_assemblers,
+        *_local_to_global_index_map, x);
+
+    ProcessLib::SmallDeformation::writeMaterialForces(
+        _material_forces, _local_assemblers, *_local_to_global_index_map, x);
+
+    auto material_forces_property = MeshLib::getOrCreateMeshProperty<double>(
+        _mesh, "MaterialForces", MeshLib::MeshItemType::Node, DisplacementDim);
+    _material_forces->copyValues(*material_forces_property);
 }
 
 }  // namespace SmallDeformation

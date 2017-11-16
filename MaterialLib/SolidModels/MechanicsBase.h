@@ -15,6 +15,7 @@
 #include <tuple>
 #include <vector>
 
+#include "BaseLib/Error.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 
 namespace ProcessLib
@@ -128,6 +129,14 @@ struct MechanicsBase
     {
         return {};
     }
+
+    virtual double computeFreeEnergyDensity(
+        double const t,
+        ProcessLib::SpatialPosition const& x,
+        double const dt,
+        KelvinVector const& eps,
+        KelvinVector const& sigma,
+        MaterialStateVariables const& material_state_variables) const = 0;
 
     virtual ~MechanicsBase() = default;
 };

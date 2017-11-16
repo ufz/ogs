@@ -84,6 +84,37 @@ AddTest(
     expected_cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu NodalForces NodalForces
 )
 
+# Mechanics; Small deformations, linear (SDL); Material forces
+AddTest(
+    NAME Mechanics_SDL_material_forces_bar
+    PATH Mechanics/Linear/MaterialForces
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS bar.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-14 RELTOL 1e-15
+    DIFF_DATA
+    expected_bar_out_pcs_0_ts_2_t_1.000000.vtu bar_out_pcs_0_ts_2_t_1.000000.vtu displacement displacement
+    expected_bar_out_pcs_0_ts_2_t_1.000000.vtu bar_out_pcs_0_ts_2_t_1.000000.vtu MaterialForces MaterialForces
+    expected_bar_out_pcs_0_ts_2_t_1.000000.vtu bar_out_pcs_0_ts_2_t_1.000000.vtu free_energy_density free_energy_density
+)
+
+# Mechanics; Small deformations, linear (SDL); Material forces
+AddTest(
+    NAME Mechanics_SDL_material_forces_bar_3D
+    PATH Mechanics/Linear/MaterialForces
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS bar_3D.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-14 RELTOL 1e-15
+    DIFF_DATA
+    expected_bar_3D_out_pcs_0_ts_2_t_1.000000.vtu bar_3D_out_pcs_0_ts_2_t_1.000000.vtu displacement displacement
+    expected_bar_3D_out_pcs_0_ts_2_t_1.000000.vtu bar_3D_out_pcs_0_ts_2_t_1.000000.vtu MaterialForces MaterialForces
+    expected_bar_3D_out_pcs_0_ts_2_t_1.000000.vtu bar_3D_out_pcs_0_ts_2_t_1.000000.vtu free_energy_density free_energy_density
+)
 
 # Mechanics; Small deformations, Burgers (SDB)
 AddTest(

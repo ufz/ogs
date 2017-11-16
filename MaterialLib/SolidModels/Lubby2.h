@@ -186,6 +186,35 @@ public:
     {
     }
 
+    double computeFreeEnergyDensity(
+        double const t,
+        ProcessLib::SpatialPosition const& x,
+        double const dt,
+        KelvinVector const& eps,
+        KelvinVector const& sigma,
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
+            material_state_variables) const override
+    {
+        assert(dynamic_cast<MaterialStateVariables const*>(
+                   &material_state_variables) != nullptr);
+        MaterialStateVariables state(static_cast<MaterialStateVariables const&>(
+            material_state_variables));
+
+        auto const& eps_K = state.eps_K_j;
+        auto const& eps_K_prev = state.eps_K_t;
+
+        auto const& eps_M = state.eps_M_j;
+
+        auto const local_lubby2_properties =
+            detail::LocalLubby2Properties<DisplacementDim>{t, x, _mp};
+        auto const& eta_K = local_lubby2_properties.etaK;
+
+        // This is specific to the backward Euler time scheme and needs to be
+        // updated if other time schemes are used.
+        return (eps - eps_K - eps_M).dot(sigma) / 2 +
+               eps_K.dot(sigma - eta_K * (eps_K - eps_K_prev) / dt) / 2;
+    }
+
     boost::optional<std::tuple<KelvinVector,
                                std::unique_ptr<typename MechanicsBase<
                                    DisplacementDim>::MaterialStateVariables>,
