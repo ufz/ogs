@@ -212,7 +212,7 @@ AddTest(
 
 # SMALL DEFORMATION TEST -- AXIALLY SYMMETRIC
 AddTest(
-    NAME LARGE_SmallDeformation_ring_plane_strain_axi
+    NAME SmallDeformation_ring_plane_strain_axi
     PATH Mechanics/Linear
     EXECUTABLE ogs
     EXECUTABLE_ARGS ring_plane_strain.prj
@@ -220,7 +220,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     ABSTOL 6e-4 RELTOL 0
     DIFF_DATA
-    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu u displacement
+    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement
     ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma
 )
 
