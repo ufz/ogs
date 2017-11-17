@@ -28,9 +28,8 @@ NodalSourceTerm::NodalSourceTerm(const NumLib::LocalToGlobalIndexMap& dof_table,
     DBUG("Create NodalSourceTerm.");
 }
 
-void NodalSourceTerm::integrateNodalSourceTerm(
-    const double t,
-    GlobalVector& b) const
+void NodalSourceTerm::integrateNodalSourceTerm(const double /*t*/,
+                                               GlobalVector& b) const
 {
     DBUG("Assemble NodalSourceTerm.");
 
