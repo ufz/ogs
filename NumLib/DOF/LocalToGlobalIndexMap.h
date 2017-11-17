@@ -110,7 +110,7 @@ public:
 
     int getNumberOfVariableComponents(int variable_id) const
     {
-        assert(static_cast<unsigned>(variable_id) < getNumberOfVariables());
+        assert(variable_id < getNumberOfVariables());
         return _variable_component_offsets[variable_id+1] - _variable_component_offsets[variable_id];
     }
 
