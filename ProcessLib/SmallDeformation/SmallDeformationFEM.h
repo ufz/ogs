@@ -353,63 +353,6 @@ public:
         return cache;
     }
 
-    // TODO remove the component-wise methods.
-    std::vector<double> const& getIntPtSigmaXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtSigma(cache, 0);
-    }
-
-    std::vector<double> const& getIntPtSigmaYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtSigma(cache, 1);
-    }
-
-    std::vector<double> const& getIntPtSigmaZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtSigma(cache, 2);
-    }
-
-    std::vector<double> const& getIntPtSigmaXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtSigma(cache, 3);
-    }
-
-    std::vector<double> const& getIntPtSigmaYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtSigma(cache, 4);
-    }
-
-    std::vector<double> const& getIntPtSigmaXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtSigma(cache, 5);
-    }
-
     virtual std::vector<double> const& getIntPtEpsilon(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
@@ -449,63 +392,6 @@ public:
         return cache;
     }
 
-    // TODO remove the component-wise methods
-    std::vector<double> const& getIntPtEpsilonXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 0);
-    }
-
-    std::vector<double> const& getIntPtEpsilonYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 1);
-    }
-
-    std::vector<double> const& getIntPtEpsilonZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 2);
-    }
-
-    std::vector<double> const& getIntPtEpsilonXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 3);
-    }
-
-    std::vector<double> const& getIntPtEpsilonYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtEpsilon(cache, 4);
-    }
-
-    std::vector<double> const& getIntPtEpsilonXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtEpsilon(cache, 5);
-    }
-
     unsigned getNumberOfIntegrationPoints() const override
     {
         return _integration_method.getNumberOfPoints();
@@ -519,40 +405,6 @@ public:
     }
 
 private:
-    std::vector<double> const& getIntPtSigma(std::vector<double>& cache,
-                                             std::size_t const component) const
-    {
-        cache.clear();
-        cache.reserve(_ip_data.size());
-
-        for (auto const& ip_data : _ip_data)
-        {
-            if (component < 3)  // xx, yy, zz components
-                cache.push_back(ip_data.sigma[component]);
-            else  // mixed xy, yz, xz components
-                cache.push_back(ip_data.sigma[component] / std::sqrt(2));
-        }
-
-        return cache;
-    }
-
-    std::vector<double> const& getIntPtEpsilon(
-        std::vector<double>& cache, std::size_t const component) const
-    {
-        cache.clear();
-        cache.reserve(_ip_data.size());
-
-        for (auto const& ip_data : _ip_data)
-        {
-            if (component < 3)  // xx, yy, zz components
-                cache.push_back(ip_data.eps[component]);
-            else  // mixed xy, yz, xz components
-                cache.push_back(ip_data.eps[component] / std::sqrt(2));
-        }
-
-        return cache;
-    }
-
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
     std::vector<

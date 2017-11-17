@@ -18,10 +18,7 @@
                 <process_variable>displacement</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="sigma_xx" output_name="sigma_rr"/>
-                <secondary_variable type="static" internal_name="sigma_yy" output_name="sigma_zz"/>
-                <secondary_variable type="static" internal_name="sigma_zz" output_name="sigma_ff"/>
-                <secondary_variable type="static" internal_name="sigma_xy" output_name="sigma_rz"/>
+                <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
             </secondary_variables>
         </process>
     </processes>
@@ -40,10 +37,7 @@
                 <output>
                     <variables>
                         <variable>displacement</variable>
-                        <variable>sigma_rr</variable>
-                        <variable>sigma_zz</variable>
-                        <variable>sigma_ff</variable>
-                        <variable>sigma_rz</variable>
+                        <variable>sigma</variable>
                     </variables>
                 </output>
                 <time_stepping>

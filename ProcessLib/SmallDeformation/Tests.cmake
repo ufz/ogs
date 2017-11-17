@@ -9,6 +9,7 @@ AddTest(
     ABSTOL 1e-16 RELTOL 1e-16
     DIFF_DATA
     square_1e0_expected_pcs_0_ts_4_t_1.000000.vtu square_1e0_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    square_1e0_expected_pcs_0_ts_4_t_1.000000.vtu square_1e0_pcs_0_ts_4_t_1.000000.vtu sigma sigma
 )
 AddTest(
     NAME Mechanics_SDL_square_1e2_tractionBC
@@ -17,9 +18,10 @@ AddTest(
     EXECUTABLE_ARGS square_1e2.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-16 RELTOL 1e-16
+    ABSTOL 1e-15 RELTOL 0
     DIFF_DATA
     square_1e2_expected_pcs_0_ts_4_t_1.000000.vtu square_1e2_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    square_1e2_expected_pcs_0_ts_4_t_1.000000.vtu square_1e2_pcs_0_ts_4_t_1.000000.vtu sigma sigma
 )
 AddTest(
     NAME LARGE_Mechanics_SDL_disc_with_hole
@@ -43,6 +45,7 @@ AddTest(
     ABSTOL 1e-16 RELTOL 1e-16
     DIFF_DATA
     square_1e5_expected_pcs_0_ts_4_t_1.000000.vtu square_1e5_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    square_1e5_expected_pcs_0_ts_4_t_1.000000.vtu square_1e5_pcs_0_ts_4_t_1.000000.vtu sigma sigma
 )
 AddTest(
     NAME Mechanics_SDL_square_1e2_quad8_traction_topBC
@@ -52,9 +55,10 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-14 RELTOL 1e-15
+    ABSTOL 2e-14 RELTOL 1e-15
     DIFF_DATA
     expected_square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    expected_square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu sigma sigma
 )
 # Mechanics; Small deformations, linear (SDL); Nodal forces
 AddTest(
@@ -69,6 +73,8 @@ AddTest(
     DIFF_DATA
     expected_cube_1e0_pcs_0_ts_4_t_1.000000.vtu cube_1e0_pcs_0_ts_4_t_1.000000.vtu displacement displacement
     expected_cube_1e0_pcs_0_ts_4_t_1.000000.vtu cube_1e0_pcs_0_ts_4_t_1.000000.vtu NodalForces NodalForces
+    expected_cube_1e0_pcs_0_ts_4_t_1.000000.vtu cube_1e0_pcs_0_ts_4_t_1.000000.vtu sigma sigma
+    expected_cube_1e0_pcs_0_ts_4_t_1.000000.vtu cube_1e0_pcs_0_ts_4_t_1.000000.vtu epsilon epsilon
 )
 AddTest(
     NAME Mechanics_SDL_cube_1e0_simple_shear_nodal_forces
@@ -82,6 +88,8 @@ AddTest(
     DIFF_DATA
     expected_cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu displacement displacement
     expected_cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu NodalForces NodalForces
+    expected_cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu sigma sigma
+    expected_cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu cube_1e0_simple_shear_pcs_0_ts_4_t_1.000000.vtu epsilon epsilon
 )
 
 # Mechanics; Small deformations, linear (SDL); Material forces
@@ -153,9 +161,9 @@ AddTest(
     ABSTOL 1e-15 RELTOL 1e-13
     DIFF_DATA
     expected_cube_1e0_pcs_0_ts_101_t_2.550000.vtu cube_1e0_pcs_0_ts_101_t_2.550000.vtu displacement displacement
-    expected_cube_1e0_pcs_0_ts_101_t_2.550000.vtu cube_1e0_pcs_0_ts_101_t_2.550000.vtu sigma_xx sigma_xx
+    expected_cube_1e0_pcs_0_ts_101_t_2.550000.vtu cube_1e0_pcs_0_ts_101_t_2.550000.vtu sigma sigma
     expected_cube_1e0_pcs_0_ts_203_t_5.100000.vtu cube_1e0_pcs_0_ts_203_t_5.100000.vtu displacement displacement
-    expected_cube_1e0_pcs_0_ts_203_t_5.100000.vtu cube_1e0_pcs_0_ts_203_t_5.100000.vtu sigma_xx sigma_xx
+    expected_cube_1e0_pcs_0_ts_203_t_5.100000.vtu cube_1e0_pcs_0_ts_203_t_5.100000.vtu sigma sigma
 )
 AddTest(
     NAME Mechanics_SDE_cube_1e1
@@ -164,12 +172,12 @@ AddTest(
     EXECUTABLE_ARGS cube_1e1.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-15 RELTOL 1e-13
+    ABSTOL 1e-11 RELTOL 0
     DIFF_DATA
     expected_cube_1e1_pcs_0_ts_101_t_2.550000.vtu cube_1e1_pcs_0_ts_101_t_2.550000.vtu displacement displacement
-    expected_cube_1e1_pcs_0_ts_101_t_2.550000.vtu cube_1e1_pcs_0_ts_101_t_2.550000.vtu sigma_xx sigma_xx
+    expected_cube_1e1_pcs_0_ts_101_t_2.550000.vtu cube_1e1_pcs_0_ts_101_t_2.550000.vtu sigma sigma
     expected_cube_1e1_pcs_0_ts_203_t_5.100000.vtu cube_1e1_pcs_0_ts_203_t_5.100000.vtu displacement displacement
-    expected_cube_1e1_pcs_0_ts_203_t_5.100000.vtu cube_1e1_pcs_0_ts_203_t_5.100000.vtu sigma_xx sigma_xx
+    expected_cube_1e1_pcs_0_ts_203_t_5.100000.vtu cube_1e1_pcs_0_ts_203_t_5.100000.vtu sigma sigma
 )
 AddTest(
     NAME LARGE_Mechanics_SDE_cube_1e3
@@ -181,9 +189,9 @@ AddTest(
     ABSTOL 3e-13 RELTOL 1e-16
     DIFF_DATA
     expected_cube_1e3_pcs_0_ts_101_t_2.550000.vtu cube_1e3_pcs_0_ts_101_t_2.550000.vtu displacement displacement
-    expected_cube_1e3_pcs_0_ts_101_t_2.550000.vtu cube_1e3_pcs_0_ts_101_t_2.550000.vtu sigma_xx sigma_xx
+    expected_cube_1e3_pcs_0_ts_101_t_2.550000.vtu cube_1e3_pcs_0_ts_101_t_2.550000.vtu sigma sigma
     expected_cube_1e3_pcs_0_ts_203_t_5.100000.vtu cube_1e3_pcs_0_ts_203_t_5.100000.vtu displacement displacement
-    expected_cube_1e3_pcs_0_ts_203_t_5.100000.vtu cube_1e3_pcs_0_ts_203_t_5.100000.vtu sigma_xx sigma_xx
+    expected_cube_1e3_pcs_0_ts_203_t_5.100000.vtu cube_1e3_pcs_0_ts_203_t_5.100000.vtu sigma sigma
 )
 
 # Mechanics; Small deformations, Drucker-Prager (SDE-DP)
@@ -194,26 +202,26 @@ AddTest(
     EXECUTABLE_ARGS cube_1e0_dp.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 5e-15 RELTOL 1e-13
+    ABSTOL 1e-14 RELTOL 0
     DIFF_DATA
     expected_cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu displacement displacement
-    expected_cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu sigma_xx sigma_xx
+    expected_cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu sigma sigma
+    expected_cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu epsilon epsilon
 )
 
 
 # SMALL DEFORMATION TEST -- AXIALLY SYMMETRIC
 AddTest(
-    NAME LARGE_SmallDeformation_ring_plane_strain_axi
+    NAME SmallDeformation_ring_plane_strain_axi
     PATH Mechanics/Linear
     EXECUTABLE ogs
     EXECUTABLE_ARGS ring_plane_strain.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 6e-4 RELTOL 1e-4
+    ABSTOL 6e-4 RELTOL 0
     DIFF_DATA
-    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu u displacement
-    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma_rr sigma_rr
-    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma_ff sigma_ff
+    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement
+    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma
 )
 
 # Mechanics; Small deformations, Ehlers-damage Uniaxial Tension (SDED)
@@ -224,12 +232,14 @@ AddTest(
     EXECUTABLE_ARGS data.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 5e-15 RELTOL 1e-13
+    ABSTOL 5e-13 RELTOL 0
     DIFF_DATA
     uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu displacement displacement
-    uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu sigma_yy sigma_yy
+    uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu sigma sigma
+    uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu epsilon epsilon
     uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu displacement displacement
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma_yy sigma_yy
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma sigma
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu epsilon epsilon
 )
 
 # Mechanics; Small deformations, Ehlers-damage Uniaxial Compression (SDED)
@@ -240,12 +250,14 @@ AddTest(
     EXECUTABLE_ARGS data.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 5e-15 RELTOL 1e-13
+    ABSTOL 1e-13 RELTOL 0
     DIFF_DATA
     uc_01_pcs_0_ts_3543_t_3.543000.vtu uc_01_pcs_0_ts_3543_t_3.543000.vtu displacement displacement
-    uc_01_pcs_0_ts_3543_t_3.543000.vtu uc_01_pcs_0_ts_3543_t_3.543000.vtu sigma_yy sigma_yy
+    uc_01_pcs_0_ts_3543_t_3.543000.vtu uc_01_pcs_0_ts_3543_t_3.543000.vtu sigma sigma
+    uc_01_pcs_0_ts_3543_t_3.543000.vtu uc_01_pcs_0_ts_3543_t_3.543000.vtu epsilon epsilon
     uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu displacement displacement
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma_yy sigma_yy
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma sigma
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu epsilon epsilon
 )
 
 # Mechanics; Small deformations, Ehlers-damage Triaxial Compression (SDED)
@@ -256,12 +268,14 @@ AddTest(
     EXECUTABLE_ARGS data.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 5e-15 RELTOL 1e-13
+    ABSTOL 1e-13 RELTOL 0
     DIFF_DATA
     uc_01_pcs_0_ts_2823_t_2.823000.vtu uc_01_pcs_0_ts_2823_t_2.823000.vtu displacement displacement
-    uc_01_pcs_0_ts_2823_t_2.823000.vtu uc_01_pcs_0_ts_2823_t_2.823000.vtu sigma_yy sigma_yy
+    uc_01_pcs_0_ts_2823_t_2.823000.vtu uc_01_pcs_0_ts_2823_t_2.823000.vtu sigma sigma
+    uc_01_pcs_0_ts_2823_t_2.823000.vtu uc_01_pcs_0_ts_2823_t_2.823000.vtu epsilon epsilon
     uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu displacement displacement
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma_yy sigma_yy
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma sigma
+    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu epsilon epsilon
 )
 
 #With PETSc
@@ -290,47 +304,41 @@ AddTest(
     ABSTOL 1e-15 RELTOL 0
     DIFF_DATA
     expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu displacement displacement
-    expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_xx sigma_xx
-    expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_yy sigma_yy
-    expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_zz sigma_zz
+    expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu sigma sigma
 )
 
 # Pressure boundary condition: elastic pipe plain strain
 AddTest(
     NAME SmallDeformation_PressureBC_elastic_pipe_plain_strain
-    PATH Mechanics/Linear/
+    PATH Mechanics/Linear
     EXECUTABLE ogs
     EXECUTABLE_ARGS plain_strain_pipe.prj
     TESTER vtkdiff
-    REQUIREMENTS OGS_USE_LIS
-    ABSTOL 1e-15 RELTOL 0
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 2e-11 RELTOL 0
     DIFF_DATA
     ref_plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu displacement displacement
-    ref_plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_xx sigma_xx
-    ref_plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_yy sigma_yy
-    ref_plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_zz sigma_zz
+    ref_plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu plain_strain_pipe_pcs_0_ts_1_t_1.000000.vtu sigma sigma
 )
 
 # Pressure boundary condition: elastic pipe axisymmetric
 AddTest(
     NAME SmallDeformation_PressureBC_elastic_pipe_axisymmetric
-    PATH Mechanics/Linear/
+    PATH Mechanics/Linear
     EXECUTABLE ogs
     EXECUTABLE_ARGS axisymmetric_pipe.prj
     TESTER vtkdiff
-    REQUIREMENTS OGS_USE_LIS
-    ABSTOL 1e-15 RELTOL 0
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-11 RELTOL 0
     DIFF_DATA
     ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu displacement displacement
-    ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_xx sigma_xx
-    ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_yy sigma_yy
-    ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu sigma_zz sigma_zz
+    ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu sigma sigma
 )
 
 # Pressure boundary condition: elastic sphere axisymmetric
 AddTest(
     NAME SmallDeformation_PressureBC_elastic_sphere_axisymmetric
-    PATH Mechanics/Linear/
+    PATH Mechanics/Linear
     EXECUTABLE ogs
     EXECUTABLE_ARGS axisymmetric_sphere.prj
     TESTER vtkdiff
@@ -338,15 +346,13 @@ AddTest(
     ABSTOL 1e-15 RELTOL 0
     DIFF_DATA
     ref_axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu displacement displacement
-    ref_axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_xx sigma_xx
-    ref_axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_yy sigma_yy
-    ref_axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu sigma_zz sigma_zz
+    ref_axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu axisymmteric_sphere_pcs_0_ts_1_t_1.000000.vtu sigma sigma
 )
 
 # Pressure boundary condition: plastic sphere axisymmetric
 AddTest(
     NAME SmallDeformation_PressureBC_plastic_sphere_axisymmetric
-    PATH Mechanics/Ehlers/
+    PATH Mechanics/Ehlers
     EXECUTABLE ogs
     EXECUTABLE_ARGS axisymmetric_sphere_pl.prj
     TESTER vtkdiff
@@ -354,19 +360,19 @@ AddTest(
     ABSTOL 1e-15 RELTOL 0
     DIFF_DATA
     ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu displacement displacement
-    ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu sigma_xx sigma_xx
-    ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu sigma_yy sigma_yy
-    ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu sigma_zz sigma_zz
+    ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu sigma sigma
 )
 
 # Two materials in gravity field
 AddTest(
-    NAME Parallel_Mechanics_SDL_two_material_gravity
+    NAME SmallDeformation_SDL_two_material_gravity
     PATH Mechanics/Linear
     EXECUTABLE_ARGS two_material_gravity.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-16 RELTOL 1e-16
+    ABSTOL 5e-14 RELTOL 0
     DIFF_DATA
     expected_two_material_gravity.vtu two_material_gravity_pcs_0_ts_1_t_1.000000.vtu displacement displacement
+    expected_two_material_gravity.vtu two_material_gravity_pcs_0_ts_1_t_1.000000.vtu sigma sigma
+    expected_two_material_gravity.vtu two_material_gravity_pcs_0_ts_1_t_1.000000.vtu epsilon epsilon
 )
