@@ -71,16 +71,16 @@ MeshLib::Mesh* RasterToMesh::convert(
 
     MathLib::Point3d const orig(std::array<double, 3>{ {origin[0], origin[1], origin[2]}});
     GeoLib::RasterHeader const header =
-    { static_cast<std::size_t>(dims[1]), static_cast<std::size_t>(dims[0]), static_cast<std::size_t>(dims[2]), orig, scalingFactor, -9999 };
+        { static_cast<std::size_t>(dims[0]), static_cast<std::size_t>(dims[1]), static_cast<std::size_t>(dims[2]), orig, scalingFactor, -9999 };
 
     double *pix = new double[header.n_cols * header.n_rows * header.n_depth];
     for (std::size_t k = 0; k < header.n_depth; k++)
     {
         std::size_t const layer_idx = (k*header.n_rows*header.n_cols);
-        for (std::size_t i = 0; i < header.n_cols; i++)
+        for (std::size_t i = 0; i < header.n_rows; i++)
         {
-            std::size_t const idx = i*header.n_rows + layer_idx;
-            for (std::size_t j = 0; j < header.n_rows; j++)
+            std::size_t const idx = i*header.n_cols + layer_idx;
+            for (std::size_t j = 0; j < header.n_cols; j++)
             {
                 double* colour = pixelData->GetTuple(idx + j);
                 bool const visible = (nTuple == 2 || nTuple == 4) ? (colour[nTuple - 1] != 0) : true;
@@ -132,16 +132,16 @@ MeshLib::Mesh* RasterToMesh::convert(
     MathLib::Point3d mesh_origin(
         { header.origin[0]-(header.cell_size / 2.0),
           header.origin[1]-(header.cell_size / 2.0),
-          header.origin[2]-(header.cell_size / 2.0) });
+          header.origin[2] });
     std::unique_ptr<MeshLib::Mesh> mesh (nullptr);
     if (elem_type == MeshElemType::TRIANGLE)
-        mesh.reset(MeshLib::MeshGenerator::generateRegularTriMesh(header.n_rows, header.n_cols, header.cell_size, mesh_origin, "RasterDataMesh"));
+        mesh.reset(MeshLib::MeshGenerator::generateRegularTriMesh(header.n_cols, header.n_rows, header.cell_size, mesh_origin, "RasterDataMesh"));
     else if (elem_type == MeshElemType::QUAD)
-        mesh.reset(MeshLib::MeshGenerator::generateRegularQuadMesh(header.n_rows, header.n_cols, header.cell_size, mesh_origin, "RasterDataMesh"));
+        mesh.reset(MeshLib::MeshGenerator::generateRegularQuadMesh(header.n_cols, header.n_rows, header.cell_size, mesh_origin, "RasterDataMesh"));
     else if (elem_type == MeshElemType::PRISM)
-        mesh.reset(MeshLib::MeshGenerator::generateRegularPrismMesh(header.n_rows, header.n_cols, header.n_depth, header.cell_size, mesh_origin, "RasterDataMesh"));
+        mesh.reset(MeshLib::MeshGenerator::generateRegularPrismMesh(header.n_cols, header.n_rows, header.n_depth, header.cell_size, mesh_origin, "RasterDataMesh"));
     else if (elem_type == MeshElemType::HEXAHEDRON)
-        mesh.reset(MeshLib::MeshGenerator::generateRegularHexMesh(header.n_rows, header.n_cols, header.n_depth, header.cell_size, mesh_origin, "RasterDataMesh"));
+        mesh.reset(MeshLib::MeshGenerator::generateRegularHexMesh(header.n_cols, header.n_rows, header.n_depth, header.cell_size, mesh_origin, "RasterDataMesh"));
 
     MeshLib::Mesh* new_mesh(nullptr);
     std::vector<std::size_t> elements_to_remove;

@@ -127,9 +127,8 @@ if(GEOTIFF_FOUND)
 endif() # GEOTIFF_FOUND
 
 target_link_libraries(VtkVis
-    PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase
+    PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase ${VTK_LIBRARIES} NetCdfDialogLib
     PRIVATE MathLib ApplicationsFileIO Qt5::Gui logog
-    INTERFACE ${VTK_LIBRARIES}
 )
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")
 

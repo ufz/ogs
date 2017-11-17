@@ -86,6 +86,8 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream &in, GeoLib::RasterHeader
         header.n_rows = atoi(value.c_str());
     } else return false;
 
+    header.n_depth = 1;
+
     in >> tag;
     if (tag == "xllcorner" || tag == "xllcenter")
     {
@@ -192,6 +194,7 @@ bool AsciiRasterInterface::readSurferHeader(
         ERR("Error in readSurferHeader() - Anisotropic cellsize detected.");
         return false;
     }
+    header.n_depth = 1;
     header.no_data = min - 1;
     in >> min >> max;
 
