@@ -45,15 +45,6 @@ builders['msvc'] = {
     // }
 // }
 
-if (helper.isRelease(this)) {
-    builders['msvc32'] = {
-        node('win && conan') {
-            dir('ogs') { checkout scm }
-            load 'ogs/scripts/jenkins/msvc32.groovy'
-        }
-    }
-}
-
 if (helper.isOriginMaster(this)) {
     builders['coverage'] = {
         node('docker') {

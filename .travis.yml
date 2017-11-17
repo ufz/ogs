@@ -1,6 +1,5 @@
 sudo: required
 dist: trusty
-
 language: cpp
 
 addons:
@@ -9,18 +8,11 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.9
-      - qtbase5-dev
-      - libqt5xmlpatterns5-dev
-      - libxt-dev
-      - libshp-dev
 
 cache:
   ccache: true
   directories:
     - $HOME/cmake-3.1.1-Linux-x86_64
-    - $HOME/VTK-Install-7.1
-    - $HOME/boost_1_56_0
-    - $HOME/eigen-eigen-dc6cfdf9bcec
     - $HOME/.conan
 
 git:
@@ -28,46 +20,23 @@ git:
 
 env:
   global:
-    - VTK_DIR=$HOME/VTK-Install-7.1/lib/cmake/vtk-7.1
-    - BOOST_ROOT=$HOME/boost_1_56_0
-    - EIGEN3_ROOT=$HOME/eigen-eigen-dc6cfdf9bcec
     - CCACHE_SLOPPINESS=pch_defines,time_macros
+    - PATH=$HOME/cmake-3.1.1-Linux-x86_64/bin:$PATH
 matrix:
   include:
     - compiler: gcc
-      env: CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
-    # - compiler: clang
-    #   env: CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
+      env: CASE=CLI CMAKE_ARGS="-DOGS_BUILD_UTILS=ON"
     - compiler: gcc
-      env: CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON"
-    # - compiler: clang
-    #   env: CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON"
-    # - compiler: gcc
-    #   env: CASE=CONAN CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON"
-    - compiler: gcc
-      env: CASE=CHECK
+      env: CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON"
 
 before_install:
-  - if [ "$CASE" != "CHECK" ]; then bash scripts/travis/cmake.sh; fi
-  - if [ "$CASE" != "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/boost.sh; fi
-  - if [ "$CASE" != "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/vtk.sh; fi
-  - if [ "$CASE" != "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/eigen.sh; fi
-  - if [ "$CASE" == "CONAN" ] && [ "$CASE" != "CHECK" ]; then bash scripts/travis/conan.sh; fi
-  - git lfs pull
-
-before_script:
-  - export PATH=$HOME/cmake-3.1.1-Linux-x86_64/bin:$PATH
-  - if [ "$CC" == "gcc" ]; then export CXX=g++-4.9 CC=gcc-4.9; fi
+  - bash scripts/travis/cmake.sh
+  - bash scripts/travis/conan.sh
+  - git lfs pull --exclude "web/**,Tests/lfs-data/**"
+  - git lfs pull --include "Tests/lfs-data/FileIO/**,Tests/lfs-data/MathLib/**"
 
 script:
-  - if [ "$CASE" == "CHECK" ]; then git config core.whitespace -blank-at-eof; git diff --check `git merge-base origin/master HEAD` HEAD; fi
-  - if [ "$CASE" != "CHECK" ]; then mkdir build; fi
-  - if [ "$CASE" != "CHECK" ]; then cd build; fi
-  - if [ "$CASE" != "CHECK" ]; then cmake $CMAKE_ARGS -DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System -DOGS_USE_PCH=OFF -DCMAKE_BUILD_TYPE=Debug ..; fi
-  - if [ "$CASE" != "CHECK" ]; then make -j 2; fi
-  - if [ "$CASE" != "CHECK" ]; then make tests; fi
-
-notifications:
-  hipchat:
-    rooms:
-      secure: kmLyt50IGFuK96xbD+VzWRRzF6UU6SdVpsn1bolKQaTCCj1rz4H1np1iUML0jeGn86DAkkHPWmFXaS2JN0EoX8L74HavJSkUfIa49cegk0je986fxucaUV1fnhFIRh6EGkpqvqE+uXs/wKHkzrkYbpHaRvJgmxQSV9kR4yRuAmw=
+  - mkdir build; cd build
+  - CC=gcc-4.9 CXX=g++-4.9 cmake $CMAKE_ARGS -DOGS_USE_CONAN=ON -DOGS_CONAN_BUILD=never -DOGS_USE_PCH=OFF -DCMAKE_BUILD_TYPE=Release ..
+  - make -j 2
+  - if [ "${CASE}" == "CLI" ]; then make tests; fi
