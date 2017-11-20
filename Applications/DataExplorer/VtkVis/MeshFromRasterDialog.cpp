@@ -68,7 +68,8 @@ void MeshFromRasterDialog::accept()
     }
     _element_selection = MeshLib::MeshElemType::TRIANGLE;
     if (this->quadButton->isChecked()) _element_selection = MeshLib::MeshElemType::QUAD;
-    else if (this->prismButton->isChecked()) _element_selection = MeshLib::MeshElemType::PRISM;
+    else if (this->prismButton->isChecked())
+        _element_selection = MeshLib::MeshElemType::PRISM;
     else if (this->hexButton->isChecked()) _element_selection = MeshLib::MeshElemType::HEXAHEDRON;
 
     this->done(QDialog::Accepted);
