@@ -17,7 +17,7 @@
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "HTProcess.h"
-#include "HTProcessData.h"
+#include "HTMaterialProperties.h"
 
 namespace ProcessLib
 {
@@ -134,7 +134,7 @@ std::unique_ptr<Process> createHTProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
-    HTProcessData process_data{std::move(porous_media_properties),
+    HTMaterialProperties process_data{std::move(porous_media_properties),
                                density_solid,
                                fluid_reference_density,
                                std::move(fluid_properties),

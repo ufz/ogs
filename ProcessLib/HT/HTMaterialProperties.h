@@ -22,9 +22,9 @@ struct Parameter;
 
 namespace HT
 {
-struct HTProcessData
+struct HTMaterialProperties
 {
-    HTProcessData(
+    HTMaterialProperties(
         MaterialLib::PorousMedium::PorousMediaProperties&&
             porous_media_properties_,
         ProcessLib::Parameter<double> const& density_solid_,
@@ -52,7 +52,7 @@ struct HTProcessData
     {
     }
 
-    HTProcessData(HTProcessData&& other)
+    HTMaterialProperties(HTMaterialProperties&& other)
         : porous_media_properties(std::move(other.porous_media_properties)),
           density_solid(other.density_solid),
           fluid_reference_density(other.fluid_reference_density),
@@ -70,13 +70,13 @@ struct HTProcessData
     }
 
     //! Copies are forbidden.
-    HTProcessData(HTProcessData const&) = delete;
+    HTMaterialProperties(HTMaterialProperties const&) = delete;
 
     //! Assignments are not needed.
-    void operator=(HTProcessData const&) = delete;
+    void operator=(HTMaterialProperties const&) = delete;
 
     //! Assignments are not needed.
-    void operator=(HTProcessData&&) = delete;
+    void operator=(HTMaterialProperties&&) = delete;
 
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties;
     Parameter<double> const& density_solid;
