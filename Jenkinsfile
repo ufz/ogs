@@ -233,7 +233,7 @@ pipeline {
     } // end stage Build
 
     // ***************************** Deploy ************************************
-    stage('Deploy') {
+    stage('Deploy Web') {
       when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
       steps {
         dir('web') { unstash web }
@@ -247,6 +247,63 @@ pipeline {
                'ogs/scripts/jenkins/known_hosts" . ' +
                'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
           }
+        }
+      }
+    }
+    stage('Deploy envinf1') {
+      when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
+      agent { label "envinf1"}
+      steps {
+        script {
+          configure {
+            cmakeOptions =
+              '-DOGS_BUILD_UTILS=ON ' +
+              '-DOGS_BUILD_METIS=ON ' +
+              '-DBUILD_SHARED_LIBS=ON ' +
+              '-DOGS_USE_PCH=OFF ' +
+              '-DCMAKE_INSTALL_PREFIX=${installPrefix}/standard ' +
+              '-DOGS_MODULEFILE=${modulePrefix}/standard ' +
+              '-DOGS_CPU_ARCHITECTURE=core-avx-i '
+            env = 'envinf1/cli.sh'
+          }
+          build {
+            env = 'envinf1/cli.sh'
+            target = 'install'
+          }
+        }
+      }
+      post {
+        always {
+          dir('build') { deleteDir() }
+        }
+      }
+    }
+    stage('Deploy envinf1 PETSc') {
+      when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
+      agent { label "envinf1"}
+      steps {
+        script {
+          configure {
+            cmakeOptions =
+              '-DOGS_USE_PETSC=ON ' +
+              '-DOGS_BUILD_UTILS=ON ' +
+              '-DOGS_BUILD_METIS=ON ' +
+              '-DBUILD_SHARED_LIBS=ON ' +
+              '-DOGS_USE_PCH=OFF ' +
+              '-DCMAKE_INSTALL_PREFIX=${installPrefix}/petsc ' +
+              '-DOGS_MODULEFILE=${modulePrefix}/petsc ' +
+              '-DOGS_CPU_ARCHITECTURE=core-avx-i '
+            env = 'envinf1/petsc.sh'
+          }
+          build {
+            env = 'envinf1/petsc.sh'
+            target = 'install'
+          }
+        }
+      }
+      post {
+        always {
+          dir('build') { deleteDir() }
         }
       }
     }
