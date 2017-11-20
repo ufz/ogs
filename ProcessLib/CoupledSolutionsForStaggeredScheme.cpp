@@ -5,19 +5,19 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   StaggeredCouplingTerm.cpp
+ * \file   CoupledSolutionsForStaggeredScheme.cpp
  *
  * Created on November 7, 2016, 12:14 PM
  */
 
-#include "StaggeredCouplingTerm.h"
+#include "CoupledSolutionsForStaggeredScheme.h"
 
 #include "MathLib/LinAlg/LinAlg.h"
 #include "Process.h"
 
 namespace ProcessLib
 {
-StaggeredCouplingTerm::StaggeredCouplingTerm(
+CoupledSolutionsForStaggeredScheme::CoupledSolutionsForStaggeredScheme(
     std::unordered_map<std::type_index, Process const&> const&
         coupled_processes_,
     std::unordered_map<std::type_index, GlobalVector const&> const& coupled_xs_,

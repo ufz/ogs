@@ -31,7 +31,7 @@
 
 namespace ProcessLib
 {
-struct StaggeredCouplingTerm;
+struct CoupledSolutionsForStaggeredScheme;
 
 namespace LiquidFlow
 {
@@ -43,13 +43,13 @@ class LiquidFlowLocalAssemblerInterface
 {
 public:
     LiquidFlowLocalAssemblerInterface(
-        StaggeredCouplingTerm* const coupling_term)
+        CoupledSolutionsForStaggeredScheme* const coupling_term)
         : _coupling_term(coupling_term)
     {
     }
 
-    void setStaggeredCouplingTerm(std::size_t const /*mesh_item_id*/,
-                                  StaggeredCouplingTerm* const coupling_term)
+    void setCoupledSolutionsForStaggeredScheme(std::size_t const /*mesh_item_id*/,
+                                  CoupledSolutionsForStaggeredScheme* const coupling_term)
     {
         _coupling_term = coupling_term;
     }
@@ -65,7 +65,7 @@ protected:
     // assembler class to a new class to make local assembler unique for each
     //process.
     /// Pointer that is set from a Process class.
-    StaggeredCouplingTerm* _coupling_term;
+    CoupledSolutionsForStaggeredScheme* _coupling_term;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -95,7 +95,7 @@ public:
         double const gravitational_acceleration,
         double const reference_temperature,
         LiquidFlowMaterialProperties const& material_propertries,
-        StaggeredCouplingTerm* coupling_term)
+        CoupledSolutionsForStaggeredScheme* coupling_term)
         : LiquidFlowLocalAssemblerInterface(coupling_term),
           _element(element),
           _integration_method(integration_order),
@@ -118,7 +118,7 @@ public:
         double const t, std::vector<double> const& local_x,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data,
-        LocalCouplingTerm const& coupled_term) override;
+        LocalCoupledSolutions const& coupled_term) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

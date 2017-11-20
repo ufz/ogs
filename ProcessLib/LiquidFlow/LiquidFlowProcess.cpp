@@ -111,11 +111,11 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
         _local_assemblers, *_local_to_global_index_map, t, x, _coupling_term);
 }
 
-void LiquidFlowProcess::setStaggeredCouplingTermToLocalAssemblers()
+void LiquidFlowProcess::setCoupledSolutionsForStaggeredSchemeToLocalAssemblers()
 {
     DBUG("Compute the velocity for LiquidFlowProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
-        &LiquidFlowLocalAssemblerInterface::setStaggeredCouplingTerm,
+        &LiquidFlowLocalAssemblerInterface::setCoupledSolutionsForStaggeredScheme,
         _local_assemblers, _coupling_term);
 }
 

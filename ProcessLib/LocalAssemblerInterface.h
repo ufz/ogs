@@ -23,8 +23,8 @@ class LocalToGlobalIndexMap;
 
 namespace ProcessLib
 {
-struct StaggeredCouplingTerm;
-struct LocalCouplingTerm;
+struct CoupledSolutionsForStaggeredScheme;
+struct LocalCoupledSolutions;
 
 /*! Common interface for local assemblers
  * NumLib::ODESystemTag::FirstOrderImplicitQuasilinear ODE systems.
@@ -46,7 +46,7 @@ public:
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
                                    std::vector<double>& local_b_data,
-                                   LocalCouplingTerm const& coupling_term);
+                                   LocalCoupledSolutions const& coupling_term);
 
     virtual void assembleWithJacobian(double const t,
                                       std::vector<double> const& local_x,
@@ -63,12 +63,12 @@ public:
         const double dx_dx, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data,
-        LocalCouplingTerm const& coupling_term);
+        LocalCoupledSolutions const& coupling_term);
 
     virtual void computeSecondaryVariable(std::size_t const mesh_item_id,
                               NumLib::LocalToGlobalIndexMap const& dof_table,
                               const double t, GlobalVector const& x,
-                              StaggeredCouplingTerm const* coupled_term);
+                              CoupledSolutionsForStaggeredScheme const* coupled_term);
 
     virtual void preTimestep(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,

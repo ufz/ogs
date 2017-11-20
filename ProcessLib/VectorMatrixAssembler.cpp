@@ -21,7 +21,7 @@ namespace ProcessLib
 {
 static std::unordered_map<std::type_index, const std::vector<double>>
 getPreviousLocalSolutionsOfCoupledProcesses(
-    const StaggeredCouplingTerm& coupling_term,
+    const CoupledSolutionsForStaggeredScheme& coupling_term,
     const std::vector<GlobalIndexType>& indices)
 {
     std::unordered_map<std::type_index, const std::vector<double>>
@@ -59,7 +59,7 @@ void VectorMatrixAssembler::assemble(
     const std::size_t mesh_item_id, LocalAssemblerInterface& local_assembler,
     const NumLib::LocalToGlobalIndexMap& dof_table, const double t,
     const GlobalVector& x, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    const StaggeredCouplingTerm* coupling_term)
+    const CoupledSolutionsForStaggeredScheme* coupling_term)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
@@ -87,7 +87,7 @@ void VectorMatrixAssembler::assemble(
         }
         else
         {
-            ProcessLib::LocalCouplingTerm local_coupling_term(
+            ProcessLib::LocalCoupledSolutions local_coupling_term(
                 coupling_term->dt, coupling_term->coupled_processes,
                 std::move(local_coupled_xs0), std::move(local_coupled_xs));
 
@@ -123,7 +123,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     NumLib::LocalToGlobalIndexMap const& dof_table, const double t,
     GlobalVector const& x, GlobalVector const& xdot, const double dxdot_dx,
     const double dx_dx, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    GlobalMatrix& Jac, const StaggeredCouplingTerm* coupling_term)
+    GlobalMatrix& Jac, const CoupledSolutionsForStaggeredScheme* coupling_term)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
@@ -154,7 +154,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
         }
         else
         {
-            ProcessLib::LocalCouplingTerm local_coupling_term(
+            ProcessLib::LocalCoupledSolutions local_coupling_term(
                 coupling_term->dt, coupling_term->coupled_processes,
                 std::move(local_coupled_xs0), std::move(local_coupled_xs));
 

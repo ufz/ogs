@@ -5,7 +5,7 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file   StaggeredCouplingTerm.h
+ * \file   CoupledSolutionsForStaggeredScheme.h
  *
  * Created on November 7, 2016, 12:14 PM
  */
@@ -29,9 +29,9 @@ class Process;
  *  and passed through interfaces to global and local assemblers for each
  *  process.
  */
-struct StaggeredCouplingTerm
+struct CoupledSolutionsForStaggeredScheme
 {
-    StaggeredCouplingTerm(
+    CoupledSolutionsForStaggeredScheme(
         std::unordered_map<std::type_index, Process const&> const&
             coupled_processes_,
         std::unordered_map<std::type_index, GlobalVector const&> const&
@@ -58,9 +58,9 @@ struct StaggeredCouplingTerm
  *  During the global assembly loop, an instance of this struct is created for
  *  each element and it is then passed to local assemblers.
  */
-struct LocalCouplingTerm
+struct LocalCoupledSolutions
 {
-    LocalCouplingTerm(
+    LocalCoupledSolutions(
         const double dt_,
         std::unordered_map<std::type_index, Process const&> const&
             coupled_processes_,

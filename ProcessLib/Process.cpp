@@ -15,7 +15,7 @@
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "GlobalVectorFromNamedFunction.h"
 #include "ProcessVariable.h"
-#include "StaggeredCouplingTerm.h"
+#include "CoupledSolutionsForStaggeredScheme.h"
 
 namespace ProcessLib
 {

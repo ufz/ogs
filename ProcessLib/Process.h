@@ -31,7 +31,7 @@ class Mesh;
 
 namespace ProcessLib
 {
-struct StaggeredCouplingTerm;
+struct CoupledSolutionsForStaggeredScheme;
 
 class Process
     : public NumLib::ODESystem<  // TODO: later on use a simpler ODE system
@@ -71,12 +71,12 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const final;
 
-    void setStaggeredCouplingTerm(StaggeredCouplingTerm* const coupling_term)
+    void setCoupledSolutionsForStaggeredScheme(CoupledSolutionsForStaggeredScheme* const coupling_term)
     {
         _coupling_term = coupling_term;
     }
 
-    virtual void setStaggeredCouplingTermToLocalAssemblers() {}
+    virtual void setCoupledSolutionsForStaggeredSchemeToLocalAssemblers() {}
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b) final;
 
@@ -202,10 +202,10 @@ protected:
 
     VectorMatrixAssembler _global_assembler;
 
-    /// Pointer to StaggeredCouplingTerm, which contains the references to the
+    /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the references to the
     /// coupled processes and the references to the solutions of the coupled
     /// processes.
-    StaggeredCouplingTerm* _coupling_term;
+    CoupledSolutionsForStaggeredScheme* _coupling_term;
 
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is
