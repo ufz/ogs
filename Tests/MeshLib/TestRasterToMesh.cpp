@@ -15,20 +15,20 @@
 
 #include "BaseLib/BuildInfo.h"
 
-#include "Applications/DataExplorer/VtkVis/VtkGeoImageSource.h"
-#include "Applications/DataExplorer/VtkVis/VtkRaster.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
-
-#include <vtkImageAlgorithm.h>
-#include <vtkImageData.h>
-#include <vtkSmartPointer.h>
-
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
+
+#ifdef OGS_BUILD_GUI
+#include "Applications/DataExplorer/VtkVis/VtkGeoImageSource.h"
+#include "Applications/DataExplorer/VtkVis/VtkRaster.h"
+
+#include <vtkImageData.h>
+#endif
 
 class RasterToMeshTest : public ::testing::Test
 {
@@ -270,20 +270,6 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
 #ifdef OGS_BUILD_GUI
 TEST_F(RasterToMeshTest, vtkImage)
 {
-    /*
-    vtkSmartPointer<VtkGeoImageSource> raster = VtkGeoImageSource::New();
-    bool read_ok = raster->readImage(QString::fromStdString(_file_name));
-    ASSERT_TRUE(read_ok);
-
-    double origin[3];
-    raster->GetOutput()->GetOrigin(origin);
-    double spacing[3];
-    raster->GetOutput()->GetSpacing(spacing);
-    GeoLib::RasterHeader const& header = _raster->getHeader();
-    raster->GetOutput()->SetDimensions(header.n_rows, header.n_cols,
-    header.n_depth);
-    */
-
     double x0, y0, spacing;
     vtkImageAlgorithm* raster =
         VtkRaster::loadImage(_file_name, x0, y0, spacing);
