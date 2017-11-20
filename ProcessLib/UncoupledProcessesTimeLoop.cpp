@@ -920,7 +920,8 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 spd->coupled_processes,
                 _solutions_of_coupled_processes[pcs_idx], dt);
 
-            spd->process.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
+            spd->process.setCoupledSolutionsForStaggeredScheme(
+                &coupled_solutions);
 
             const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
                 x, timestep_id, t, dt, *spd, *_output);
@@ -1038,7 +1039,8 @@ void UncoupledProcessesTimeLoop::outputSolutions(
                 spd->coupled_processes,
                 _solutions_of_coupled_processes[pcs_idx], 0.0);
 
-            spd->process.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
+            spd->process.setCoupledSolutionsForStaggeredScheme(
+                &coupled_solutions);
             spd->process
                 .setCoupledSolutionsForStaggeredSchemeToLocalAssemblers();
             (output_object.*output_class_member)(pcs, spd->process_output,

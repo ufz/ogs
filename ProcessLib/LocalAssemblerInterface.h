@@ -9,7 +9,6 @@
 
 #pragma once
 
-
 #include <unordered_map>
 #include <typeindex>
 
@@ -36,17 +35,18 @@ class LocalAssemblerInterface
 public:
     virtual ~LocalAssemblerInterface() = default;
 
-    virtual void assemble(
-        double const t, std::vector<double> const& local_x,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data) = 0;
+    virtual void assemble(double const t, std::vector<double> const& local_x,
+                          std::vector<double>& local_M_data,
+                          std::vector<double>& local_K_data,
+                          std::vector<double>& local_b_data) = 0;
 
-    virtual void assembleWithCoupledTerm(double const t,
-                                   std::vector<double> const& local_x,
-                                   std::vector<double>& local_M_data,
-                                   std::vector<double>& local_K_data,
-                                   std::vector<double>& local_b_data,
-                                   LocalCoupledSolutions const& coupled_solutions);
+    virtual void assembleWithCoupledTerm(
+        double const t,
+        std::vector<double> const& local_x,
+        std::vector<double>& local_M_data,
+        std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data,
+        LocalCoupledSolutions const& coupled_solutions);
 
     virtual void assembleWithJacobian(double const t,
                                       std::vector<double> const& local_x,
@@ -65,10 +65,11 @@ public:
         std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& coupled_solutions);
 
-    virtual void computeSecondaryVariable(std::size_t const mesh_item_id,
-                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                              const double t, GlobalVector const& x,
-                              CoupledSolutionsForStaggeredScheme const* coupled_term);
+    virtual void computeSecondaryVariable(
+        std::size_t const mesh_item_id,
+        NumLib::LocalToGlobalIndexMap const& dof_table, const double t,
+        GlobalVector const& x,
+        CoupledSolutionsForStaggeredScheme const* coupled_term);
 
     virtual void preTimestep(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -95,15 +96,17 @@ private:
     }
 
     virtual void postTimestepConcrete(std::vector<double> const& /*local_x*/) {}
+    virtual void computeSecondaryVariableConcrete(
+        double const /*t*/, std::vector<double> const& /*local_x*/)
+    {
+    }
 
-    virtual void computeSecondaryVariableConcrete
-                (double const /*t*/, std::vector<double> const& /*local_x*/) {}
-
-    virtual void computeSecondaryVariableWithCoupledProcessConcrete
-            (double const /*t*/, std::vector<double> const& /*local_x*/,
-             std::unordered_map<std::type_index,
-             const std::vector<double>> const&
-             /*coupled_local_solutions*/) {}
+    virtual void computeSecondaryVariableWithCoupledProcessConcrete(
+        double const /*t*/, std::vector<double> const& /*local_x*/,
+        std::unordered_map<std::type_index, const std::vector<double>> const&
+        /*coupled_local_solutions*/)
+    {
+    }
 };
 
-} // namespace ProcessLib
+}  // namespace ProcessLib

@@ -57,7 +57,8 @@ void LocalAssemblerInterface::assembleWithJacobianAndCoupling(
 void LocalAssemblerInterface::computeSecondaryVariable(
     std::size_t const mesh_item_id,
     NumLib::LocalToGlobalIndexMap const& dof_table, double const t,
-    GlobalVector const& x, CoupledSolutionsForStaggeredScheme const* coupled_term)
+    GlobalVector const& x,
+    CoupledSolutionsForStaggeredScheme const* coupled_term)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);

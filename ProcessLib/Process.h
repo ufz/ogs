@@ -71,7 +71,8 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const final;
 
-    void setCoupledSolutionsForStaggeredScheme(CoupledSolutionsForStaggeredScheme* const coupled_solutions)
+    void setCoupledSolutionsForStaggeredScheme(
+        CoupledSolutionsForStaggeredScheme* const coupled_solutions)
     {
         _coupled_solutions = coupled_solutions;
     }
@@ -202,7 +203,8 @@ protected:
 
     VectorMatrixAssembler _global_assembler;
 
-    /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the references to the
+    /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the
+    /// references to the
     /// coupled processes and the references to the solutions of the coupled
     /// processes.
     CoupledSolutionsForStaggeredScheme* _coupled_solutions;
