@@ -231,82 +231,6 @@ pipeline {
         }
       } // end parallel
     } // end stage Build
-
-    // ***************************** Deploy ************************************
-    stage('Deploy Web') {
-      when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
-      steps {
-        dir('web') { unstash web }
-        dir('doxygen') { unstash doxygen }
-        script {
-          sshagent(credentials: ['www-data_jenkins']) {
-            sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-               'ogs/scripts/jenkins/known_hosts" . ' +
-               'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
-            sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-               'ogs/scripts/jenkins/known_hosts" . ' +
-               'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
-          }
-        }
-      }
-    }
-    stage('Deploy envinf1') {
-      when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
-      agent { label "envinf1"}
-      steps {
-        script {
-          configure {
-            cmakeOptions =
-              '-DOGS_BUILD_UTILS=ON ' +
-              '-DOGS_BUILD_METIS=ON ' +
-              '-DBUILD_SHARED_LIBS=ON ' +
-              '-DOGS_USE_PCH=OFF ' +
-              '-DCMAKE_INSTALL_PREFIX=${installPrefix}/standard ' +
-              '-DOGS_MODULEFILE=${modulePrefix}/standard ' +
-              '-DOGS_CPU_ARCHITECTURE=core-avx-i '
-            env = 'envinf1/cli.sh'
-          }
-          build {
-            env = 'envinf1/cli.sh'
-            target = 'install'
-          }
-        }
-      }
-      post {
-        always {
-          dir('build') { deleteDir() }
-        }
-      }
-    }
-    stage('Deploy envinf1 PETSc') {
-      when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
-      agent { label "envinf1"}
-      steps {
-        script {
-          configure {
-            cmakeOptions =
-              '-DOGS_USE_PETSC=ON ' +
-              '-DOGS_BUILD_UTILS=ON ' +
-              '-DOGS_BUILD_METIS=ON ' +
-              '-DBUILD_SHARED_LIBS=ON ' +
-              '-DOGS_USE_PCH=OFF ' +
-              '-DCMAKE_INSTALL_PREFIX=${installPrefix}/petsc ' +
-              '-DOGS_MODULEFILE=${modulePrefix}/petsc ' +
-              '-DOGS_CPU_ARCHITECTURE=core-avx-i '
-            env = 'envinf1/petsc.sh'
-          }
-          build {
-            env = 'envinf1/petsc.sh'
-            target = 'install'
-          }
-        }
-      }
-      post {
-        always {
-          dir('build') { deleteDir() }
-        }
-      }
-    }
     // *************************** Log Parser **********************************
     stage('Log Parser') {
       agent any
@@ -323,64 +247,141 @@ pipeline {
         }
       }
     }
-    // **************************** Sanitizer **********************************
-    stage('Sanitizer') {
+    stage('Master') {
       when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
-      agent {
-        docker {
-          image 'ogs6/clang-base:latest'
-          label 'docker'
-          args '-v /home/jenkins/.ccache:/usr/src/.ccache'
-          alwaysPull true
-        }
-      }
-      steps {
-        script {
-          configure {
-            cmakeOptions =
-              '-DOGS_ADDRESS_SANITIZER=ON ' +
-              '-DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON ' +
-              '-DOGS_BUILD_UTILS=ON '
-          }
-          try {
-            build {
-              target = 'test'
-              cmd = 'UBSAN_OPTIONS=print_stacktrace=1 make -j $(nproc)'
+      parallel {
+        // ************************* Deploy Web ********************************
+        stage('Deploy Web') {
+          steps {
+            dir('web') { unstash web }
+            dir('doxygen') { unstash doxygen }
+            script {
+              sshagent(credentials: ['www-data_jenkins']) {
+                sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+                   'ogs/scripts/jenkins/known_hosts" . ' +
+                   'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
+                sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+                   'ogs/scripts/jenkins/known_hosts" . ' +
+                   'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
+              }
             }
           }
-          catch(err) { echo "Clang sanitizer for unit tests failed!" }
+        }
+        // *********************** Deploy envinf1 ******************************
+        stage('Deploy envinf1') {
+          agent { label "envinf1"}
+          steps {
+            script {
+              configure {
+                cmakeOptions =
+                  '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_BUILD_METIS=ON ' +
+                  '-DBUILD_SHARED_LIBS=ON ' +
+                  '-DOGS_USE_PCH=OFF ' +
+                  '-DCMAKE_INSTALL_PREFIX=${installPrefix}/standard ' +
+                  '-DOGS_MODULEFILE=${modulePrefix}/standard ' +
+                  '-DOGS_CPU_ARCHITECTURE=core-avx-i '
+                env = 'envinf1/cli.sh'
+              }
+              build {
+                env = 'envinf1/cli.sh'
+                target = 'install'
+              }
+            }
+          }
+          post {
+            always {
+              dir('build') { deleteDir() }
+            }
+          }
+        }
+        // ******************** Deploy envinf1 PETSc ***************************
+        stage('Deploy envinf1 PETSc') {
+          agent { label "envinf1"}
+          steps {
+            script {
+              configure {
+                cmakeOptions =
+                  '-DOGS_USE_PETSC=ON ' +
+                  '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_BUILD_METIS=ON ' +
+                  '-DBUILD_SHARED_LIBS=ON ' +
+                  '-DOGS_USE_PCH=OFF ' +
+                  '-DCMAKE_INSTALL_PREFIX=${installPrefix}/petsc ' +
+                  '-DOGS_MODULEFILE=${modulePrefix}/petsc ' +
+                  '-DOGS_CPU_ARCHITECTURE=core-avx-i '
+                env = 'envinf1/petsc.sh'
+              }
+              build {
+                env = 'envinf1/petsc.sh'
+                target = 'install'
+              }
+            }
+          }
+          post {
+            always {
+              dir('build') { deleteDir() }
+            }
+          }
+        }
+        // ************************** Sanitizer ********************************
+        stage('Sanitizer') {
+          agent {
+            docker {
+              image 'ogs6/clang-base:latest'
+              label 'docker'
+              args '-v /home/jenkins/.ccache:/usr/src/.ccache'
+              alwaysPull true
+            }
+          }
+          steps {
+            script {
+              configure {
+                cmakeOptions =
+                  '-DOGS_ADDRESS_SANITIZER=ON ' +
+                  '-DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON ' +
+                  '-DOGS_BUILD_UTILS=ON '
+              }
+              try {
+                build {
+                  target = 'test'
+                  cmd = 'UBSAN_OPTIONS=print_stacktrace=1 make -j $(nproc)'
+                }
+              }
+              catch(err) { echo "Clang sanitizer for unit tests failed!" }
 
-          try {
-            build {
-              target = 'ctest'
-              cmd = 'UBSAN_OPTIONS=print_stacktrace=1 make -j $(nproc)'
+              try {
+                build {
+                  target = 'ctest'
+                  cmd = 'UBSAN_OPTIONS=print_stacktrace=1 make -j $(nproc)'
+                }
+              }
+              catch(err) { echo "Clang sanitizer for end-to-end tests failed!" }
             }
           }
-          catch(err) { echo "Clang sanitizer for end-to-end tests failed!" }
-        }
-      }
-      post {
-        always {
-          dir('build') { deleteDir() }
-        }
-      }
-    }
-    // ***************************** Post **************************************
-    stage('Post') {
-      when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
-      agent any
-      steps {
-        script {
-          def helper = new ogs.helper()
-          checkout scm
-          def tag = helper.getTag()
-          if (tag != "") {
-            keepBuild()
-            currentBuild.displayName = tag
-            helper.notification(msg: "Marked build for ${tag}.", script: this)
+          post {
+            always {
+              dir('build') { deleteDir() }
+            }
           }
         }
-      }
-    }
+        // *************************** Post ************************************
+        stage('Post') {
+          agent any
+          steps {
+            script {
+              def helper = new ogs.helper()
+              checkout scm
+              def tag = helper.getTag()
+              if (tag != "") {
+                keepBuild()
+                currentBuild.displayName = tag
+                helper.notification(msg: "Marked build for ${tag}.", script: this)
+              }
+            }
+          }
+        }
+      } // end parallel
+    } // end stage master
   }
 }
