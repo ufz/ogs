@@ -71,9 +71,9 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const final;
 
-    void setCoupledSolutionsForStaggeredScheme(CoupledSolutionsForStaggeredScheme* const coupling_term)
+    void setCoupledSolutionsForStaggeredScheme(CoupledSolutionsForStaggeredScheme* const coupled_solutions)
     {
-        _coupling_term = coupling_term;
+        _coupled_solutions = coupled_solutions;
     }
 
     virtual void setCoupledSolutionsForStaggeredSchemeToLocalAssemblers() {}
@@ -205,7 +205,7 @@ protected:
     /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the references to the
     /// coupled processes and the references to the solutions of the coupled
     /// processes.
-    CoupledSolutionsForStaggeredScheme* _coupling_term;
+    CoupledSolutionsForStaggeredScheme* _coupled_solutions;
 
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is

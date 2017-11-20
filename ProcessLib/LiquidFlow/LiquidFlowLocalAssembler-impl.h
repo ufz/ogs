@@ -268,7 +268,7 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     //  the assert must be changed to perm.rows() == _element->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
-    if (!_coupling_term)
+    if (!_coupled_solutions)
     {
         computeDarcyVelocity(permeability, local_x, veloctiy_cache_vectors);
     }
@@ -276,7 +276,7 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     {
         auto const local_coupled_xs =
             getCurrentLocalSolutionsOfCoupledProcesses(
-                _coupling_term->coupled_xs, indices);
+                _coupled_solutions->coupled_xs, indices);
         if (local_coupled_xs.empty())
             computeDarcyVelocity(permeability, local_x, veloctiy_cache_vectors);
         else

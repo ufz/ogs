@@ -408,7 +408,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     GlobalExecutor::executeMemberOnDereferenced(
         &HydroMechanicsLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, *_local_to_global_index_map, t, x,
-        _coupling_term);
+        _coupled_solutions);
 
     // Copy displacement jumps in a solution vector to mesh property
     // Remark: the copy is required because mesh properties for primary

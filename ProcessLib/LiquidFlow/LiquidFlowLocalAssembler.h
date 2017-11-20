@@ -43,15 +43,16 @@ class LiquidFlowLocalAssemblerInterface
 {
 public:
     LiquidFlowLocalAssemblerInterface(
-        CoupledSolutionsForStaggeredScheme* const coupling_term)
-        : _coupling_term(coupling_term)
+        CoupledSolutionsForStaggeredScheme* const coupled_solutions)
+        : _coupled_solutions(coupled_solutions)
     {
     }
 
-    void setCoupledSolutionsForStaggeredScheme(std::size_t const /*mesh_item_id*/,
-                                  CoupledSolutionsForStaggeredScheme* const coupling_term)
+    void setCoupledSolutionsForStaggeredScheme(
+        std::size_t const /*mesh_item_id*/,
+        CoupledSolutionsForStaggeredScheme* const coupled_solutions)
     {
-        _coupling_term = coupling_term;
+        _coupled_solutions = coupled_solutions;
     }
 
     virtual std::vector<double> const& getIntPtDarcyVelocity(
@@ -61,11 +62,8 @@ public:
         std::vector<double>& /*cache*/) const = 0;
 
 protected:
-    // TODO: remove _coupling_term or move integration point data from local
-    // assembler class to a new class to make local assembler unique for each
-    //process.
     /// Pointer that is set from a Process class.
-    CoupledSolutionsForStaggeredScheme* _coupling_term;
+    CoupledSolutionsForStaggeredScheme* _coupled_solutions;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -95,8 +93,8 @@ public:
         double const gravitational_acceleration,
         double const reference_temperature,
         LiquidFlowMaterialProperties const& material_propertries,
-        CoupledSolutionsForStaggeredScheme* coupling_term)
-        : LiquidFlowLocalAssemblerInterface(coupling_term),
+        CoupledSolutionsForStaggeredScheme* coupled_solutions)
+        : LiquidFlowLocalAssemblerInterface(coupled_solutions),
           _element(element),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,

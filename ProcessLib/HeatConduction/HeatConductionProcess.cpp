@@ -95,7 +95,7 @@ void HeatConductionProcess::assembleConcreteProcess(const double t,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupling_term);
+        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
 }
 
 void HeatConductionProcess::assembleWithJacobianConcreteProcess(
@@ -109,7 +109,7 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupling_term);
+        dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
 void HeatConductionProcess::computeSecondaryVariableConcrete(
@@ -119,7 +119,7 @@ void HeatConductionProcess::computeSecondaryVariableConcrete(
     GlobalExecutor::executeMemberOnDereferenced(
             &HeatConductionLocalAssemblerInterface::computeSecondaryVariable,
             _local_assemblers, *_local_to_global_index_map, t, x,
-            _coupling_term);
+            _coupled_solutions);
 }
 
 }  // namespace HeatConduction

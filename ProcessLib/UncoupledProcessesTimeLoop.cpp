@@ -916,11 +916,11 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 spd->process.preTimestep(x, t, dt);
             }
 
-            CoupledSolutionsForStaggeredScheme coupling_term(
+            CoupledSolutionsForStaggeredScheme coupled_solutions(
                 spd->coupled_processes,
                 _solutions_of_coupled_processes[pcs_idx], dt);
 
-            spd->process.setCoupledSolutionsForStaggeredScheme(&coupling_term);
+            spd->process.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
 
             const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
                 x, timestep_id, t, dt, *spd, *_output);
@@ -1034,12 +1034,13 @@ void UncoupledProcessesTimeLoop::outputSolutions(
                             spd->timestepper->getTimeStep().dt());
         if (is_staggered_coupling)
         {
-            CoupledSolutionsForStaggeredScheme coupling_term(
+            CoupledSolutionsForStaggeredScheme coupled_solutions(
                 spd->coupled_processes,
                 _solutions_of_coupled_processes[pcs_idx], 0.0);
 
-            spd->process.setCoupledSolutionsForStaggeredScheme(&coupling_term);
-            spd->process.setCoupledSolutionsForStaggeredSchemeToLocalAssemblers();
+            spd->process.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
+            spd->process
+                .setCoupledSolutionsForStaggeredSchemeToLocalAssemblers();
             (output_object.*output_class_member)(pcs, spd->process_output,
                                                  timestep, t, x);
         }

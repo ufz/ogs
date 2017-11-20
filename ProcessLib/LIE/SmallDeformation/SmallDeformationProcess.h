@@ -73,7 +73,7 @@ private:
         GlobalExecutor::executeMemberDereferenced(
             _global_assembler, &VectorMatrixAssembler::assemble,
             _local_assemblers, *_local_to_global_index_map, t, x, M, K, b,
-            _coupling_term);
+            _coupled_solutions);
     }
 
     void assembleWithJacobianConcreteProcess(
@@ -87,7 +87,7 @@ private:
         GlobalExecutor::executeMemberDereferenced(
             _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
             _local_assemblers, *_local_to_global_index_map, t, x, xdot,
-            dxdot_dx, dx_dx, M, K, b, Jac, _coupling_term);
+            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
     }
 
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,

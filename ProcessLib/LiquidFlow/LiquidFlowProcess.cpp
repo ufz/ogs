@@ -66,7 +66,7 @@ void LiquidFlowProcess::initializeConcreteProcess(
         pv.getShapeFunctionOrder(), _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _gravitational_axis_id,
         _gravitational_acceleration, _reference_temperature,
-        *_material_properties, _coupling_term);
+        *_material_properties, _coupled_solutions);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
@@ -85,7 +85,7 @@ void LiquidFlowProcess::assembleConcreteProcess(const double t,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupling_term);
+        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
 }
 
 void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
@@ -99,7 +99,7 @@ void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupling_term);
+        dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
 void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
@@ -108,15 +108,16 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
     DBUG("Compute the velocity for LiquidFlowProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, *_local_to_global_index_map, t, x, _coupling_term);
+        _local_assemblers, *_local_to_global_index_map, t, x, _coupled_solutions);
 }
 
 void LiquidFlowProcess::setCoupledSolutionsForStaggeredSchemeToLocalAssemblers()
 {
     DBUG("Compute the velocity for LiquidFlowProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
-        &LiquidFlowLocalAssemblerInterface::setCoupledSolutionsForStaggeredScheme,
-        _local_assemblers, _coupling_term);
+        &LiquidFlowLocalAssemblerInterface::
+            setCoupledSolutionsForStaggeredScheme,
+        _local_assemblers, _coupled_solutions);
 }
 
 }  // end of namespace

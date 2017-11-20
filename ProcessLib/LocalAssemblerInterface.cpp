@@ -20,7 +20,7 @@ void LocalAssemblerInterface::assembleWithCoupledTerm(
     std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
     std::vector<double>& /*local_b_data*/,
-    LocalCoupledSolutions const& /*coupling_term*/)
+    LocalCoupledSolutions const& /*coupled_solutions*/)
 {
     OGS_FATAL(
         "The assembleWithCoupledTerm() function is not implemented in the "
@@ -47,7 +47,7 @@ void LocalAssemblerInterface::assembleWithJacobianAndCoupling(
     std::vector<double>& /*local_K_data*/,
     std::vector<double>& /*local_b_data*/,
     std::vector<double>& /*local_Jac_data*/,
-    LocalCoupledSolutions const& /*coupling_term*/)
+    LocalCoupledSolutions const& /*coupled_solutions*/)
 {
     OGS_FATAL(
         "The assembleWithJacobianAndCoupling() function is not implemented in"
