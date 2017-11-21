@@ -353,8 +353,8 @@ void NetCdfConfigureDialog::createDataObject()
     if (originLat > lastLat) // reverse lines in vertical direction if the original file has its origin in the northwest corner
         this->reverseNorthSouth(data_array, sizeLon, sizeLat);
 
-    GeoLib::RasterHeader header = {sizeLon, sizeLat,    1,
-                                   origin,  resolution, -9999};
+    GeoLib::RasterHeader const header = {sizeLon, sizeLat,    1,
+                                         origin,  resolution, -9999};
     if (this->radioMesh->isChecked())
     {
         MeshLib::MeshElemType meshElemType = MeshLib::MeshElemType::QUAD;

@@ -32,7 +32,6 @@ MeshLib::Mesh* RasterToMesh::convert(
     UseIntensityAs intensity_type,
     std::string const& array_name)
 {
-    //return convert(raster.begin(), raster.getHeader(), elem_type, intensity_type, array_name);
     return convert(raster.begin(), raster.getHeader(), elem_type, intensity_type, array_name);
 }
 
@@ -110,7 +109,7 @@ MeshLib::Mesh* RasterToMesh::convert(
     UseIntensityAs intensity_type,
     std::string const& array_name)
 {
-    if ((elem_type != MeshElemType::TRIANGLE) && 
+    if ((elem_type != MeshElemType::TRIANGLE) &&
         (elem_type != MeshElemType::QUAD) &&
         (elem_type != MeshElemType::HEXAHEDRON) &&
         (elem_type != MeshElemType::PRISM))
@@ -206,7 +205,7 @@ MeshLib::Mesh* RasterToMesh::convert(
     else
     {
         MeshLib::Properties &properties = mesh->getProperties();
-        MeshLib::ElementSearch ex(*mesh.get());
+        MeshLib::ElementSearch ex(*mesh);
         if (array_name == "MaterialIDs")
         {
             auto* const prop_vec = properties.createNewPropertyVector<int>(
@@ -224,7 +223,7 @@ MeshLib::Mesh* RasterToMesh::convert(
         elements_to_remove = ex.getSearchedElementIDs();
     }
     if (!elements_to_remove.empty())
-        new_mesh = MeshLib::removeElements(*mesh.get(), elements_to_remove, mesh->getName());
+        new_mesh = MeshLib::removeElements(*mesh, elements_to_remove, mesh->getName());
     else
         new_mesh = mesh.release();
 

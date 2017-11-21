@@ -73,10 +73,10 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshElevation)
     ASSERT_TRUE(names.empty());
 
     std::array<unsigned, 7> n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh.get());
+        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(2 * _n_pix, n_types[1]);
 
-    GeoLib::AABB aabb = MeshLib::MeshInformation::getBoundingBox(*mesh.get());
+    GeoLib::AABB aabb = MeshLib::MeshInformation::getBoundingBox(*mesh);
     ASSERT_NEAR(aabb.getMinPoint()[2], 0,
                 std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(aabb.getMaxPoint()[2], 0.07,
@@ -86,21 +86,19 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshElevation)
 TEST_F(RasterToMeshTest, convertRasterToQuadMeshElevation)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::RasterToMesh::convert(
-        *_raster.get(), MeshLib::MeshElemType::QUAD,
-        MeshLib::UseIntensityAs::ELEVATION, "test"));
+        *_raster, MeshLib::MeshElemType::QUAD,  MeshLib::UseIntensityAs::ELEVATION, "test"));
     ASSERT_TRUE(mesh != nullptr);
 
     ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
 
-    std::vector<std::string> names =
-        mesh->getProperties().getPropertyVectorNames();
+    std::vector<std::string> names = mesh->getProperties().getPropertyVectorNames();
     ASSERT_TRUE(names.empty());
 
     std::array<unsigned, 7> n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh.get());
+        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(_n_pix, n_types[2]);
 
-    GeoLib::AABB aabb = MeshLib::MeshInformation::getBoundingBox(*mesh.get());
+    GeoLib::AABB aabb = MeshLib::MeshInformation::getBoundingBox(*mesh);
     ASSERT_NEAR(aabb.getMinPoint()[2], 0,
                 std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(aabb.getMaxPoint()[2], 0.07,
@@ -138,7 +136,7 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
     ASSERT_EQ(2 * _n_pix, prop->size());
 
     std::pair<double, double> const& bounds =
-        MeshLib::MeshInformation::getValueBounds<double>(*mesh.get(), "test");
+        MeshLib::MeshInformation::getValueBounds<double>(*mesh, "test");
     ASSERT_NEAR(0, bounds.first, std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.07, bounds.second, std::numeric_limits<double>::epsilon());
 
@@ -147,7 +145,7 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
         ASSERT_NEAR(0, (*n)[2], std::numeric_limits<double>::epsilon());
 
     std::array<unsigned, 7> n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh.get());
+        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(2 * _n_pix, n_types[1]);
 }
 
@@ -169,7 +167,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
     ASSERT_EQ(_n_pix, prop->size());
 
     std::pair<double, double> const& bounds =
-        MeshLib::MeshInformation::getValueBounds<double>(*mesh.get(), "test");
+        MeshLib::MeshInformation::getValueBounds<double>(*mesh, "test");
     ASSERT_NEAR(0, bounds.first, std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.07, bounds.second, std::numeric_limits<double>::epsilon());
 
@@ -178,7 +176,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
         ASSERT_TRUE((*n)[2] == 0);
 
     std::array<unsigned, 7> n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh.get());
+        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(_n_pix, n_types[2]);
 }
 
@@ -200,7 +198,7 @@ TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
     ASSERT_EQ(2 * _n_pix, prop->size());
 
     std::pair<double, double> const& bounds =
-        MeshLib::MeshInformation::getValueBounds<double>(*mesh.get(), "test");
+        MeshLib::MeshInformation::getValueBounds<double>(*mesh, "test");
     ASSERT_NEAR(0, bounds.first, std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.07, bounds.second, std::numeric_limits<double>::epsilon());
 
@@ -209,7 +207,7 @@ TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
         ASSERT_TRUE(((*n)[2] == 0) || ((*n)[2] == _spacing));
 
     std::array<unsigned, 7> n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh.get());
+        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(2 * _n_pix, n_types[6]);
 }
 
@@ -231,8 +229,7 @@ TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
     ASSERT_EQ(_n_pix, prop->size());
 
     std::pair<int, int> const& bounds =
-        MeshLib::MeshInformation::getValueBounds<int>(*mesh.get(),
-                                                      "MaterialIDs");
+        MeshLib::MeshInformation::getValueBounds<int>(*mesh, "MaterialIDs");
     ASSERT_NEAR(0, bounds.first, std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0, bounds.second, std::numeric_limits<double>::epsilon());
 
@@ -241,7 +238,7 @@ TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
         ASSERT_TRUE(((*n)[2] == 0) || ((*n)[2] == _spacing));
 
     std::array<unsigned, 7> n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh.get());
+        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(_n_pix, n_types[4]);
 }
 
@@ -263,7 +260,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
         ASSERT_TRUE((*n)[2] == 0);
 
     std::array<unsigned, 7> n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh.get());
+        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(_n_pix, n_types[2]);
 }
 
@@ -292,7 +289,7 @@ TEST_F(RasterToMeshTest, vtkImage)
     ASSERT_EQ(2 * _n_pix, prop->size());
 
     std::pair<double, double> const& bounds =
-        MeshLib::MeshInformation::getValueBounds<double>(*mesh.get(), "test");
+        MeshLib::MeshInformation::getValueBounds<double>(*mesh, "test");
     ASSERT_NEAR(0, bounds.first, std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.07, bounds.second, std::numeric_limits<float>::epsilon());
 
@@ -301,7 +298,7 @@ TEST_F(RasterToMeshTest, vtkImage)
         ASSERT_TRUE((*n)[2] == 0);
 
     std::array<unsigned, 7> n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh.get());
+        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(2 * _n_pix, n_types[1]);
 }
 #endif

@@ -85,8 +85,8 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
         }
     }
 
-    RasterHeader header;
-    header = {std::size_t(n_cols), std::size_t(n_rows), 1, MathLib::Point3d(ll), cell_size, static_cast<double>(-9999)};
+    RasterHeader header = { std::size_t(n_cols),  std::size_t(n_rows), 1,
+        MathLib::Point3d(ll), cell_size, static_cast<double>(-9999) };
     return new Raster(header, z_vals, z_vals+n_cols*n_rows);
 }
 
