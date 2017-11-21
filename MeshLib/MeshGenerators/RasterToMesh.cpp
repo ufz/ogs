@@ -171,7 +171,7 @@ MeshLib::Mesh* RasterToMesh::convert(
     std::vector<std::size_t> elements_to_remove;
     if (intensity_type == UseIntensityAs::ELEVATION)
     {
-        std::vector<MeshLib::Node*> nodes(mesh->getNodes());
+        std::vector<MeshLib::Node*> const& nodes(mesh->getNodes());
         std::vector<MeshLib::Element*> const& elems(mesh->getElements());
         std::size_t const n_nodes(elems[0]->getNumberOfNodes());
         bool const double_idx = (elem_type == MeshElemType::TRIANGLE) || (elem_type == MeshElemType::PRISM);
