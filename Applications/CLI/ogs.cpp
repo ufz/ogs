@@ -41,7 +41,6 @@
 
 #include "NumLib/NumericsConfig.h"
 
-
 int main(int argc, char *argv[])
 {
     // Parse CLI arguments.
@@ -123,7 +122,6 @@ int main(int argc, char *argv[])
 #endif  // _WIN32
 
     BaseLib::RunTime run_time;
-    run_time.start();
 
     {
         auto const start_time = std::chrono::system_clock::now();
@@ -145,6 +143,8 @@ int main(int argc, char *argv[])
             controller->Initialize(&argc, &argv, 1);
             vtkMPIController::SetGlobalController(controller);
 #endif
+            run_time.start();
+
             auto project_config = BaseLib::makeConfigTree(
                 project_arg.getValue(), !nonfatal_arg.getValue(),
                 "OpenGeoSysProject");
@@ -189,6 +189,8 @@ int main(int argc, char *argv[])
             if (isInsituConfigured)
                 InSituLib::Finalize();
  #endif
+            INFO("[time] Execution took %g s.", run_time.elapsed());
+
 #if defined(USE_PETSC)
             controller->Finalize(1) ;
 #endif
@@ -209,8 +211,6 @@ int main(int argc, char *argv[])
         auto const time_str = BaseLib::formatDate(end_time);
         INFO("OGS terminated on %s.", time_str.c_str());
     }
-
-    INFO("[time] Execution took %g s.", run_time.elapsed());
 
     return ogs_status;
 }
