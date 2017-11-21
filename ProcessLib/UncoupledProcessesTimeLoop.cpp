@@ -839,7 +839,7 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
 
         auto& x = *_process_solutions[pcs_idx];
         auto& pcs = spd->process;
-        pcs.preTimestep(x, t, dt);
+        pcs.preTimestep(x, t, dt, pcs_idx);
 
         const auto nonlinear_solver_succeeded =
             solveOneTimeStepOneProcess(x, timestep_id, t, dt, *spd, *_output);
@@ -913,7 +913,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 // belongs to process. For some problems, both of the current
                 // solution and the solution of the previous time step are
                 // required for the coupling computation.
-                spd->process.preTimestep(x, t, dt);
+                spd->process.preTimestep(x, t, dt, pcs_idx);
             }
 
             CoupledSolutionsForStaggeredScheme coupled_solutions(
@@ -1032,7 +1032,7 @@ void UncoupledProcessesTimeLoop::outputSolutions(
 
         if (output_initial_condition)
             pcs.preTimestep(x, _start_time,
-                            spd->timestepper->getTimeStep().dt());
+                            spd->timestepper->getTimeStep().dt(), pcs_idx);
         if (is_staggered_coupling)
         {
             CoupledSolutionsForStaggeredScheme coupled_solutions(

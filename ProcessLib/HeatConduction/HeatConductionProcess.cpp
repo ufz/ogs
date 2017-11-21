@@ -35,7 +35,8 @@ HeatConductionProcess::HeatConductionProcess(
 
 void HeatConductionProcess::preTimestepConcreteProcess(GlobalVector const& x,
                                             const double /*t*/,
-                                            const double /*delta_t*/)
+                                            const double /*delta_t*/,
+                                            const int /*process_id*/)
 {
     if (!_x_previous_timestep)
     {

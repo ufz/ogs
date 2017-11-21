@@ -97,7 +97,8 @@ void ThermalTwoPhaseFlowWithPPProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 void ThermalTwoPhaseFlowWithPPProcess::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const delta_t)
+    GlobalVector const& x, double const t, double const delta_t,
+    const int /*process_id*/)
 {
     DBUG("PreTimestep ThermalTwoPhaseFlowWithPPProcess.");
 

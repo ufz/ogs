@@ -248,7 +248,8 @@ void TESProcess::assembleWithJacobianConcreteProcess(
 
 void TESProcess::preTimestepConcreteProcess(GlobalVector const& x,
                                             const double t,
-                                            const double delta_t)
+                                            const double delta_t,
+                                            const int /*process_id*/)
 {
     DBUG("new timestep");
 

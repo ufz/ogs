@@ -200,7 +200,8 @@ void HydroMechanicsProcess<DisplacementDim>::
 }
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt)
+    GlobalVector const& x, double const t, double const dt,
+    const int /*process_id*/)
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 

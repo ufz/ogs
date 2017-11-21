@@ -175,7 +175,8 @@ void SmallDeformationProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt)
+    GlobalVector const& x, double const t, double const dt,
+    const int /*process_id*/)
 {
     DBUG("PreTimestep SmallDeformationProcess.");
 

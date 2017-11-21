@@ -53,7 +53,7 @@ public:
 
     /// Preprocessing before starting assembly for new timestep.
     void preTimestep(GlobalVector const& x, const double t,
-                     const double delta_t);
+                     const double delta_t, const int process_id);
 
     /// Postprocessing after a complete timestep.
     void postTimestep(GlobalVector const& x);
@@ -153,7 +153,8 @@ private:
 
     virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
                                             const double /*t*/,
-                                            const double /*delta_t*/)
+                                            const double /*delta_t*/,
+                                            const int /*process_id*/)
     {
     }
 

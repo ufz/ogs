@@ -90,8 +90,9 @@ private:
             dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
     }
 
-    void preTimestepConcreteProcess(GlobalVector const& x, double const t,
-                     double const dt) override
+    void preTimestepConcreteProcess(
+        GlobalVector const& x, double const t, double const dt,
+        const int /*process_id*/) override
     {
         DBUG("PreTimestep SmallDeformationProcess.");
 

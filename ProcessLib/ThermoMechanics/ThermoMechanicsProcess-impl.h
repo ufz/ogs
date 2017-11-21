@@ -177,7 +177,8 @@ void ThermoMechanicsProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt)
+    GlobalVector const& x, double const t, double const dt,
+    const int /*process_id*/)
 {
     DBUG("PreTimestep ThermoMechanicsProcess.");
 

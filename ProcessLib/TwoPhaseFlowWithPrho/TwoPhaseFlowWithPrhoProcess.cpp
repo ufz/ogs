@@ -95,7 +95,8 @@ void TwoPhaseFlowWithPrhoProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 void TwoPhaseFlowWithPrhoProcess::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt)
+    GlobalVector const& x, double const t, double const dt,
+    const int /*process_id*/)
 {
     DBUG("PreTimestep TwoPhaseFlowWithPrhoProcess.");
 

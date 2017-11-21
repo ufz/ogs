@@ -254,7 +254,7 @@ void Process::computeSparsityPattern()
 }
 
 void Process::preTimestep(GlobalVector const& x, const double t,
-                          const double delta_t)
+                          const double delta_t, const int process_id)
 {
     for (auto& cached_var : _cached_secondary_variables)
     {
@@ -262,7 +262,7 @@ void Process::preTimestep(GlobalVector const& x, const double t,
     }
 
     MathLib::LinAlg::setLocalAccessibleVector(x);
-    preTimestepConcreteProcess(x, t, delta_t);
+    preTimestepConcreteProcess(x, t, delta_t, process_id);
 }
 
 void Process::postTimestep(GlobalVector const& x)
