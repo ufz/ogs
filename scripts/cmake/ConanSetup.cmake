@@ -80,12 +80,12 @@ endif()
 
 # Add conan-community remote
 if("${CONAN_REMOTES}" MATCHES ".*conan-community:.*")
-    execute_process(COMMAND ${CONAN_CMD} remote update -i 2 conan-community
+    execute_process(COMMAND ${CONAN_CMD} remote update -i 1 conan-community
         https://api.bintray.com/conan/conan-community/conan)
 else()
     message(STATUS "Conan adding community remote repositoy \
         (https://api.bintray.com/conan/conan-community/conan)")
-    execute_process(COMMAND ${CONAN_CMD} remote add -i 2 conan-community
+    execute_process(COMMAND ${CONAN_CMD} remote add -i 1 conan-community
         https://api.bintray.com/conan/conan-community/conan)
 endif()
 

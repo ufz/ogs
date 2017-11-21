@@ -235,11 +235,6 @@ if (OGS_FATAL_ABORT)
     add_definitions(-DOGS_FATAL_ABORT)
 endif()
 
-if(OGS_BUILD_TESTS)
-    set(Data_SOURCE_DIR ${PROJECT_SOURCE_DIR}/Tests/lfs-data CACHE INTERNAL "")
-    set(Data_BINARY_DIR ${PROJECT_BINARY_DIR}/Tests/lfs-data CACHE INTERNAL "")
-endif()
-
 # Logging level
 add_definitions(-DLOGOG_LEVEL=${OGS_LOG_LEVEL})
 
