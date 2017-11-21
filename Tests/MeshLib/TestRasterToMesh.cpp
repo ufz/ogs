@@ -108,7 +108,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshElevation)
 TEST_F(RasterToMeshTest, convertRasterTo3DMeshElevation)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::RasterToMesh::convert(
-        *_raster.get(), MeshLib::MeshElemType::PRISM,
+        *_raster, MeshLib::MeshElemType::PRISM,
         MeshLib::UseIntensityAs::ELEVATION, "test"));
     ASSERT_TRUE(mesh == nullptr);
 

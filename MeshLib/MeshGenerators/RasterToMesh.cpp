@@ -60,7 +60,8 @@ MeshLib::Mesh* RasterToMesh::convert(
         return nullptr;
     }
 
-    vtkSmartPointer<vtkDataArray> pixelData = vtkSmartPointer<vtkDataArray>(img->GetPointData()->GetScalars());
+    vtkSmartPointer<vtkDataArray> pixelData =
+        vtkSmartPointer<vtkDataArray>(img->GetPointData()->GetScalars());
     int nTuple = pixelData->GetNumberOfComponents();
     if (nTuple < 1 || nTuple > 4)
     {
@@ -76,7 +77,7 @@ MeshLib::Mesh* RasterToMesh::convert(
                                          scalingFactor,
                                          -9999};
 
-    double *pix = new double[header.n_cols * header.n_rows * header.n_depth];
+    std::vector<double> pix(header.n_cols * header.n_rows * header.n_depth, 0);
     for (std::size_t k = 0; k < header.n_depth; k++)
     {
         std::size_t const layer_idx = (k*header.n_rows*header.n_cols);
@@ -97,8 +98,7 @@ MeshLib::Mesh* RasterToMesh::convert(
         }
     }
 
-    MeshLib::Mesh* mesh = convert(pix, header, elem_type, intensity_type, array_name);
-    delete[] pix;
+    MeshLib::Mesh* mesh = convert(pix.data(), header, elem_type, intensity_type, array_name);
     return mesh;
 }
 
