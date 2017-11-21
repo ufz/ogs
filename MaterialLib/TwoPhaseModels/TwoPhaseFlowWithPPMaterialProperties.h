@@ -64,7 +64,7 @@ public:
             gas_density,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
             gas_viscosity,
-        std::vector<Eigen::MatrixXd>&&
+        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
             intrinsic_permeability_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
             porosity_models,
@@ -124,7 +124,8 @@ private:
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> const _gas_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> const _gas_viscosity;
 
-    std::vector<Eigen::MatrixXd> const _intrinsic_permeability_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>> const
+        _intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> const
         _porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> const

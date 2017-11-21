@@ -13,6 +13,7 @@
 #pragma once
 
 #include <memory>
+#include "ProcessLib/Parameter/Parameter.h"
 
 namespace BaseLib
 {
@@ -26,10 +27,13 @@ namespace PorousMedium
 class Porosity;
 
 /** Create a porosity model
- *  @param config  ConfigTree object has a tag of `<porosity>`
+ *  @param config  ConfigTree object has a tag of `<porosity>` that describes
+ *  the porosity relationsship and contains the name of the parameter
+ *  @param parameters a vector containing the available parameters
  */
 std::unique_ptr<Porosity> createPorosityModel(
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters);
 
 }  // end namespace
 }  // end namespace

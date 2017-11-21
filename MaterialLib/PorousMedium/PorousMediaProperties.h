@@ -16,7 +16,7 @@
 #include <Eigen/Dense>
 #include "BaseLib/reorderVector.h"
 
-
+#include "Permeability/Permeability.h"
 #include "Porosity/Porosity.h"
 #include "Storage/Storage.h"
 
@@ -33,7 +33,8 @@ public:
     PorousMediaProperties(
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
             porosity_models,
-        std::vector<Eigen::MatrixXd>&& intrinsic_permeability_models,
+        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
+            intrinsic_permeability_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
             specific_storage_models,
         std::vector<int>&& material_ids)
@@ -47,7 +48,8 @@ public:
 
     PorousMediaProperties(PorousMediaProperties&& other)
         : _porosity_models(std::move(other._porosity_models)),
-          _intrinsic_permeability_models(other._intrinsic_permeability_models),
+          _intrinsic_permeability_models(
+              std::move(other._intrinsic_permeability_models)),
           _specific_storage_models(std::move(other._specific_storage_models)),
           _material_ids(other._material_ids)
     {
@@ -56,7 +58,7 @@ public:
     MaterialLib::PorousMedium::Porosity const& getPorosity(
         double t, ProcessLib::SpatialPosition const& pos) const;
 
-    Eigen::MatrixXd const& getIntrinsicPermeability(
+    MaterialLib::PorousMedium::Permeability const& getIntrinsicPermeability(
         double t, ProcessLib::SpatialPosition const& pos) const;
 
     MaterialLib::PorousMedium::Storage const& getSpecificStorage(
@@ -67,7 +69,8 @@ private:
 private:
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         _porosity_models;
-    std::vector<Eigen::MatrixXd> _intrinsic_permeability_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
+        _intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
         _specific_storage_models;
     std::vector<int> _material_ids;

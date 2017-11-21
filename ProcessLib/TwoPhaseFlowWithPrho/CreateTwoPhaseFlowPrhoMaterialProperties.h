@@ -23,7 +23,8 @@ namespace TwoPhaseFlowWithPrho
 std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties>
 createTwoPhaseFlowPrhoMaterialProperties(
     BaseLib::ConfigTree const& config,
-    boost::optional<MeshLib::PropertyVector<int> const&> material_ids);
+    boost::optional<MeshLib::PropertyVector<int> const&> material_ids,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
 }  // end namespace
 }  // end namespace

@@ -303,3 +303,18 @@ AddTest(
     elder_pcs_0_ts_60_t_15778800.000000_reference.vtu elder_pcs_0_ts_60_t_15778800.000000.vtu conc conc
     elder_pcs_0_ts_80_t_21038400.000000_reference.vtu elder_pcs_0_ts_80_t_21038400.000000.vtu conc conc
 )
+
+AddTest(
+    NAME 2D_ComponentTransport_HeterogeneousPermeability
+    PATH Elliptic/square_100x100_ComponentTransport/
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e4_heterogeneity.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    ABSTOL 1e-7 RELTOL 1e-10
+    DIFF_DATA
+    square_100x100_quad_1e4_ComponentTransport_pcs_0_ts_1_t_1.000000.vtu square_100x100_quad_1e4_ComponentTransport_pcs_0_ts_1_t_1.000000.vtu pressure_expected pressure
+    square_100x100_quad_1e4_ComponentTransport_pcs_0_ts_1_t_1.000000.vtu square_100x100_quad_1e4_ComponentTransport_pcs_0_ts_1_t_1.000000.vtu darcy_velocity_expected darcy_velocity
+    VIS square_100x100_quad_1e4_ComponentTransport_pcs_0_ts_1_t_1.000000.vtu
+)

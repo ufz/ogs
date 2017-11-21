@@ -15,25 +15,33 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/ConfigTree.h"
 
+#include "ProcessLib/Utils/ProcessUtils.h"
+
 #include "Porosity.h"
-#include "ConstantPorosity.h"
 
 namespace MaterialLib
 {
 namespace PorousMedium
 {
-std::unique_ptr<Porosity> createPorosityModel(BaseLib::ConfigTree const& config)
+std::unique_ptr<Porosity> createPorosityModel(BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
 {
     //! \ogs_file_param{material__porous_medium__porosity__type}
     auto const type = config.getConfigParameter<std::string>("type");
 
     if (type == "Constant")
-        return std::make_unique<ConstantPorosity>(
-            //! \ogs_file_param{material__porous_medium__porosity__Constant__value}
-            config.getConfigParameter<double>("value"));
+    {
+        auto const& constant_porosity = ProcessLib::findParameter<double>(
+            config,
+            //! \ogs_file_param_special{material__porous_medium__porosity__porosity_parameter}
+            "porosity_parameter", parameters, 1);
+
+        return std::make_unique<Porosity>(constant_porosity);
+    }
 
     OGS_FATAL("The porosity type %s is unavailable.\n",
-              "The available type is \n\tConstant.", type.data());
+              "The available type is Constant.",
+              type.data());
 }
 
 }  // end namespace

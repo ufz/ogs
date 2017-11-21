@@ -24,7 +24,8 @@ namespace MaterialLib
 namespace PorousMedium
 {
 PorousMediaProperties createPorousMediaProperties(
-    MeshLib::Mesh& mesh, BaseLib::ConfigTree const& configs)
+    MeshLib::Mesh& mesh, BaseLib::ConfigTree const& configs,
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
 {
     DBUG("Create PorousMediaProperties.");
 
@@ -32,7 +33,8 @@ PorousMediaProperties createPorousMediaProperties(
         //! \ogs_file_param{material__porous_medium__porous_medium}
         configs.getConfigSubtree("porous_medium");
 
-    std::vector<Eigen::MatrixXd> intrinsic_permeability_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
+        intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
@@ -51,7 +53,8 @@ PorousMediaProperties createPorousMediaProperties(
             //! \ogs_file_param{material__porous_medium__porous_medium__porosity}
             porous_medium_config.getConfigSubtree("porosity");
         porosity_models.emplace_back(
-            MaterialLib::PorousMedium::createPorosityModel(porosity_config));
+            MaterialLib::PorousMedium::createPorosityModel(porosity_config,
+                                                           parameters));
 
         // Configuration for the intrinsic permeability (only one scalar per
         // element, i.e., the isotropic case is handled at the moment)
@@ -60,7 +63,7 @@ PorousMediaProperties createPorousMediaProperties(
             porous_medium_config.getConfigSubtree("permeability");
         intrinsic_permeability_models.emplace_back(
             MaterialLib::PorousMedium::createPermeabilityModel(
-                permeability_config));
+                permeability_config, parameters));
 
         // Configuration for the specific storage.
         auto const& storage_config =

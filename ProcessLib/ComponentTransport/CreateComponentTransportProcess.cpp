@@ -51,7 +51,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
 
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties{
         MaterialLib::PorousMedium::createPorousMediaProperties(
-            mesh, config)};
+            mesh, config, parameters)};
 
     //! \ogs_file_param{prj__processes__process__ComponentTransport__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");

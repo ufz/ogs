@@ -11,8 +11,9 @@
 
 #pragma once
 
-#include "BaseLib/ConfigTree.h"
 #include "PorousMediaProperties.h"
+#include "BaseLib/ConfigTree.h"
+#include "ProcessLib/Parameter/Parameter.h"
 
 namespace MeshLib
 {
@@ -24,6 +25,7 @@ namespace MaterialLib
 namespace PorousMedium
 {
 PorousMediaProperties createPorousMediaProperties(
-    MeshLib::Mesh& mesh, BaseLib::ConfigTree const& porous_media_config);
+    MeshLib::Mesh& mesh, BaseLib::ConfigTree const& porous_media_config,
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters);
 }
 }

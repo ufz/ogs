@@ -20,6 +20,7 @@
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
+#include "MaterialLib/PorousMedium/Permeability/Permeability.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 
 namespace MaterialLib
@@ -61,7 +62,8 @@ public:
 
     LiquidFlowMaterialProperties(
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
-        std::vector<Eigen::MatrixXd>&& intrinsic_permeability_models,
+        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
+            intrinsic_permeability_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
             porosity_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
@@ -121,10 +123,12 @@ public:
 
     double getThermalConductivity(const double p, const double T) const;
 
-    double getPorosity(const int material_id, const double porosity_variable,
-                       const double T) const
+    double getPorosity(const int material_id, const double t,
+                       const SpatialPosition& pos,
+                       const double porosity_variable, const double T) const
     {
-        return _porosity_models[material_id]->getValue(porosity_variable, T);
+        return _porosity_models[material_id]->getValue(t, pos,
+                                                       porosity_variable, T);
     }
 
     double getSolidThermalExpansion(const double t,
@@ -144,7 +148,8 @@ private:
     const std::unique_ptr<MaterialLib::Fluid::FluidProperties>
         _fluid_properties;
 
-    const std::vector<Eigen::MatrixXd> _intrinsic_permeability_models;
+    const std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
+        _intrinsic_permeability_models;
     const std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
         _porosity_models;
     const std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>

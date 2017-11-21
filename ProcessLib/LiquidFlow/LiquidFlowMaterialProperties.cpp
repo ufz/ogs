@@ -96,7 +96,7 @@ double LiquidFlowMaterialProperties::getThermalConductivity(
 }
 
 double LiquidFlowMaterialProperties::getMassCoefficient(
-    const int material_id, const double /*t*/, const SpatialPosition& /*pos*/,
+    const int material_id, const double t, const SpatialPosition& pos,
     const double p, const double T, const double porosity_variable,
     const double storage_variable) const
 {
@@ -111,17 +111,18 @@ double LiquidFlowMaterialProperties::getMassCoefficient(
     assert(rho > 0.);
 
     const double porosity =
-        _porosity_models[material_id]->getValue(porosity_variable, T);
+        _porosity_models[material_id]->getValue(t, pos, porosity_variable, T);
     const double storage =
         _storage_models[material_id]->getValue(storage_variable);
     return porosity * drho_dp / rho + storage;
 }
 
 Eigen::MatrixXd const& LiquidFlowMaterialProperties::getPermeability(
-    const int material_id, const double /*t*/, const SpatialPosition& /*pos*/,
+    const int material_id, const double t, const SpatialPosition& pos,
     const int /*dim*/) const
 {
-    return _intrinsic_permeability_models[material_id];
+    return _intrinsic_permeability_models[material_id]->getValue(t, pos, 0.0,
+                                                                 0.0);
 }
 
 double LiquidFlowMaterialProperties::getSolidThermalExpansion(

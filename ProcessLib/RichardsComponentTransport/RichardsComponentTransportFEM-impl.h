@@ -134,7 +134,7 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
         // porosity model
         auto const porosity =
             _process_data.porous_media_properties.getPorosity(t, pos).getValue(
-                0.0, C_int_pt);
+                t, pos, 0.0, C_int_pt);
 
         auto const retardation_factor =
             _process_data.retardation_factor(t, pos)[0];
@@ -155,9 +155,9 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
         auto const& molecular_diffusion_coefficient =
             _process_data.molecular_diffusion_coefficient(t, pos)[0];
 
-        auto const& K =
-            _process_data.porous_media_properties.getIntrinsicPermeability(t,
-                                                                           pos);
+        auto const& K = _process_data.porous_media_properties
+                            .getIntrinsicPermeability(t, pos)
+                            .getValue(t, pos, 0.0, 0.0);
         auto const& k_rel = _process_data.porous_media_properties
                                 .getRelativePermeability(t, pos)
                                 .getValue(Sw);
@@ -246,9 +246,9 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         pos.setIntegrationPoint(ip);
 
-        auto const& K =
-            _process_data.porous_media_properties.getIntrinsicPermeability(t,
-                                                                           pos);
+        auto const& K = _process_data.porous_media_properties
+                            .getIntrinsicPermeability(t, pos)
+                            .getValue(t, pos, 0.0, 0.0);
         auto const mu = _process_data.fluid_properties->getValue(
             MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
 

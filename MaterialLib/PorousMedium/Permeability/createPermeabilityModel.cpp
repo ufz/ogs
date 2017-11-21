@@ -18,39 +18,45 @@
 
 #include "BaseLib/Error.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "ProcessLib/Parameter/ConstantParameter.h"
+#include "ProcessLib/Parameter/SpatialPosition.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace MaterialLib
 {
 namespace PorousMedium
 {
-Eigen::MatrixXd createPermeabilityModel(BaseLib::ConfigTree const& config)
+std::unique_ptr<Permeability> createPermeabilityModel(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
 {
-    auto const values =
-        //! \ogs_file_param{material__porous_medium__permeability__values}
-        config.getConfigParameter<std::vector<double>>("values");
+    //! \ogs_file_param{material__porous_medium__permeability__type}
+    auto const type = config.getConfigParameter<std::string>("type");
 
-    auto const data_size = values.size();
-
-    int dim = -1;
-    switch (data_size)
+    if (type == "Constant")
     {
-        case 1:
-            dim = 1;
-            break;
-        case 4:
-            dim = 2;
-            break;
-        case 9:
-            dim = 3;
-            break;
-        default:
+        auto const& permeability_parameter = ProcessLib::findParameter<double>(
+            config,
+            //! \ogs_file_param_special{material__porous_medium__permeability__permeability_tensor_entries}
+            "permeability_tensor_entries", parameters, 0);
+
+        int dimension = static_cast<int>(
+            std::sqrt(permeability_parameter.getNumberOfComponents()));
+        if (permeability_parameter.getNumberOfComponents() !=
+            dimension * dimension)
         {
             OGS_FATAL(
-                "Number of values for permeability tensor must be 1, 4 or 9.");
+                "The given parameter has %d components, but the permeability "
+                "tensor is defined for a %d dimensional problem.",
+                permeability_parameter.getNumberOfComponents(), dimension);
         }
-    }
 
-    return MathLib::toMatrix(values, dim, dim);
+        return std::make_unique<Permeability>(
+            permeability_parameter, dimension);
+    }
+    OGS_FATAL("The permeability type '%s' is unavailable.\n",
+              "The available types are \n\tConstant.",
+              type.data());
 }
 
 }  // end of namespace

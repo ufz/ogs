@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>square_1x1_quad_1e3.vtu</mesh>
-    <geometry>square_1x1.gml</geometry>
+    <mesh>square_100x100_quad_1e4.vtu</mesh>
+    <geometry>square_100x100.gml</geometry>
     <processes>
         <process>
             <name>hc</name>
@@ -13,10 +13,8 @@
             </process_variables>
             <fluid>
                 <density>
-                    <type>ConcentrationDependent</type>
-                    <reference_density>1</reference_density>
-                    <reference_concentration>0</reference_concentration>
-                    <fluid_density_difference_ratio>0.026</fluid_density_difference_ratio>
+                    <type>Constant</type>
+                    <value>1e3</value>
                 </density>
                 <viscosity>
                     <type>Constant</type>
@@ -35,21 +33,7 @@
                     </porosity>
                     <storage>
                         <type>Constant</type>
-                        <value>1e-5</value>
-                    </storage>
-                </porous_medium>
-                <porous_medium id="1">
-                    <permeability>
-                        <permeability_tensor_entries>kappa2</permeability_tensor_entries>
-                        <type>Constant</type>
-                    </permeability>
-                    <porosity>
-                        <type>Constant</type>
-                        <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                    </porosity>
-                    <storage>
-                        <type>Constant</type>
-                        <value>1e-5</value>
+                        <value>0</value>
                     </storage>
                 </porous_medium>
             </porous_medium>
@@ -87,43 +71,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <t_end> 9e2 </t_end>
+                    <t_end> 1 </t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
-                            <delta_t>1e-2</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>40</repeat>
-                            <delta_t>4e-2</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>50</repeat>
-                            <delta_t>8e-2</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>50</repeat>
-                            <delta_t>2e-1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>50</repeat>
-                            <delta_t>4e-1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>50</repeat>
-                            <delta_t>8e-1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>200</repeat>
-                            <delta_t>16e-1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>100</repeat>
-                            <delta_t>20e-1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>500</repeat>
-                            <delta_t>25e-1</delta_t>
+                            <repeat>1</repeat>
+                            <delta_t>1</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -131,11 +83,11 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>DiffusionAndStorageAndAdvection</prefix>
+            <prefix>square_100x100_quad_1e4_ComponentTransport</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
-                    <each_steps>100</each_steps>
+                    <each_steps>1</each_steps>
                 </pair>
             </timesteps>
         </output>
@@ -164,12 +116,12 @@
         <parameter>
             <name>beta_l</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>1</value>
         </parameter>
         <parameter>
             <name>beta_t</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>0.1</value>
         </parameter>
         <parameter>
             <name>c0</name>
@@ -184,22 +136,12 @@
         <parameter>
             <name>p_Dirichlet_left</name>
             <type>Constant</type>
-            <value>1</value>
+            <value>98100</value>
         </parameter>
         <parameter>
             <name>p_Dirichlet_right</name>
             <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>c_Dirichlet_left</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>c_Dirichlet_right</name>
-            <type>Constant</type>
-            <value>0</value>
+            <value>88290</value>
         </parameter>
         <parameter>
             <name>constant_porosity_parameter</name>
@@ -208,13 +150,10 @@
         </parameter>
         <parameter>
             <name>kappa1</name>
-            <type>Constant</type>
-            <values>1.239e-7 0 0 1.239e-7</values>
-        </parameter>
-        <parameter>
-            <name>kappa2</name>
-            <type>Constant</type>
-            <values>1e-3 0 0 1e-3</values>
+            <type>MeshElement</type>
+            <field_name>permeability_tensor</field_name>
+            <!--type>Constant</type>
+            <values>1.239e-7 0 0 1.239e-7</values-->
         </parameter>
     </parameters>
     <process_variables>
@@ -228,13 +167,7 @@
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>left</geometry>
                     <type>Dirichlet</type>
-                    <parameter>c_Dirichlet_left</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>right</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>c_Dirichlet_right</parameter>
+                    <parameter>c0</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>

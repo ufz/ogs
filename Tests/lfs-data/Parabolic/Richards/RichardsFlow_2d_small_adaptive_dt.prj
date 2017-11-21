@@ -29,11 +29,12 @@
                 <porous_medium>
                     <porous_medium id="0">
                         <permeability>
-                            <values>4.46e-13</values>
+                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
+                            <type>Constant</type>
                         </permeability>
                         <porosity>
                             <type>Constant</type>
-                            <value> 0.38  </value>
+                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
                         </porosity>
                         <storage>
                             <type>Constant</type>
@@ -86,17 +87,17 @@
                         <variable>saturation</variable>
                     </variables>
                 </output>
-                 <time_stepping>
-                     <type>EvolutionaryPIDcontroller</type>
-                     <t_initial> 0.0 </t_initial>
-                     <t_end> 1600 </t_end>
-                     <dt_guess> 0.1 </dt_guess>
-                     <dt_min> 0.01 </dt_min>
-                     <dt_max> 2 </dt_max>
-                     <rel_dt_min> 0.01 </rel_dt_min>
-                     <rel_dt_max> 4 </rel_dt_max>
-                     <tol> 1.0 </tol>
-                 </time_stepping>
+                <time_stepping>
+                    <type>EvolutionaryPIDcontroller</type>
+                    <t_initial> 0.0 </t_initial>
+                    <t_end> 1600 </t_end>
+                    <dt_guess> 0.1 </dt_guess>
+                    <dt_min> 0.01 </dt_min>
+                    <dt_max> 2 </dt_max>
+                    <rel_dt_min> 0.01 </rel_dt_min>
+                    <rel_dt_max> 4 </rel_dt_max>
+                    <tol> 1.0 </tol>
+                </time_stepping>
             </process>
         </processes>
         <output>
@@ -131,6 +132,16 @@
             <name>temp</name>
             <type>Constant</type>
             <value>293.15</value>
+        </parameter>
+        <parameter>
+            <name>constant_porosity_parameter</name>
+            <type>Constant</type>
+            <value>0.38</value>
+        </parameter>
+        <parameter>
+            <name>kappa1</name>
+            <type>Constant</type>
+            <values>4.46e-13</values>
         </parameter>
     </parameters>
     <process_variables>

@@ -25,11 +25,12 @@
             <porous_medium>
                 <porous_medium id="0">
                     <permeability>
-                        <values>1.17420446658343E-10</values>
+                        <permeability_tensor_entries>kappa1</permeability_tensor_entries>
+                        <type>Constant</type>
                     </permeability>
                     <porosity>
                         <type>Constant</type>
-                        <value>0.45</value>
+                        <porosity_parameter>constant_porosity_parameter</porosity_parameter>
                     </porosity>
                     <storage>
                         <type>Constant</type>
@@ -176,6 +177,16 @@
             <name>q_top_NaCl6</name>
             <type>Constant</type>
             <value>6.46004E-06</value>
+        </parameter>
+        <parameter>
+            <name>constant_porosity_parameter</name>
+            <type>Constant</type>
+            <value>0.45</value>
+        </parameter>
+        <parameter>
+            <name>kappa1</name>
+            <type>Constant</type>
+            <values>1.17420446658343E-10</values>
         </parameter>
     </parameters>
     <process_variables>
