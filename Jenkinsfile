@@ -99,7 +99,7 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_CLI=OFF ' +
-                  '-DOGS_USE_PCH=OFF ' +
+                  '-DOGS_USE_PCH=OFF ' +     // see #1992
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_TESTS=OFF ' +
@@ -131,8 +131,7 @@ pipeline {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_METIS=ON ' +
-                  '-DBUILD_SHARED_LIBS=ON ' +
-                  '-DOGS_USE_PCH=OFF '
+                  '-DBUILD_SHARED_LIBS=ON '
                 env = 'envinf1/cli.sh'
               }
               build {
@@ -165,7 +164,6 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_METIS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
-                  '-DOGS_USE_PCH=OFF ' +
                   '-DOGS_USE_PETSC=ON '
                 env = 'envinf1/petsc.sh'
                 generator = 'Unix Makefiles'
@@ -283,7 +281,6 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_METIS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
-                  '-DOGS_USE_PCH=OFF ' +
                   '-DCMAKE_INSTALL_PREFIX=${installPrefix}/standard ' +
                   '-DOGS_MODULEFILE=${modulePrefix}/standard ' +
                   '-DOGS_CPU_ARCHITECTURE=core-avx-i '
@@ -313,7 +310,6 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_METIS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
-                  '-DOGS_USE_PCH=OFF ' +
                   '-DCMAKE_INSTALL_PREFIX=${installPrefix}/petsc ' +
                   '-DOGS_MODULEFILE=${modulePrefix}/petsc ' +
                   '-DOGS_CPU_ARCHITECTURE=core-avx-i '
