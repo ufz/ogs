@@ -18,7 +18,6 @@ namespace ProcessLib
 {
 namespace LIE
 {
-
 /// A tool for post-processing results from the LIE approach
 ///
 /// The tool creates a new mesh containing duplicated fracture nodes
@@ -29,7 +28,8 @@ public:
     PostProcessTool(
         MeshLib::Mesh const& org_mesh,
         std::vector<std::vector<MeshLib::Node*>> const& vec_vec_fracture_nodes,
-        std::vector<std::vector<MeshLib::Element*>> const& vec_vec_fracutre_matrix_elements);
+        std::vector<std::vector<MeshLib::Element*>> const&
+            vec_vec_fracutre_matrix_elements);
 
     MeshLib::Mesh const& getOutputMesh() const { return *_output_mesh; }
 

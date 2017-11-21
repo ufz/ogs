@@ -15,10 +15,8 @@ namespace ProcessLib
 {
 namespace LIE
 {
-
 namespace
 {
-
 // A class to check whether a node is located on a crack tip with
 // the following conditions:
 // - the number of connected fracture elements is one
@@ -27,7 +25,7 @@ class IsCrackTip
 {
 public:
     explicit IsCrackTip(MeshLib::Mesh const& mesh)
-        : _mesh(mesh), _fracture_element_dim(mesh.getDimension()-1)
+        : _mesh(mesh), _fracture_element_dim(mesh.getDimension() - 1)
     {
         _is_internal_node.resize(mesh.getNumberOfNodes(), true);
 
@@ -39,15 +37,14 @@ public:
 
     bool operator()(MeshLib::Node const& node) const
     {
-        if (!_is_internal_node[node.getID()]
-            || !_mesh.isBaseNode(node.getID()))
+        if (!_is_internal_node[node.getID()] || !_mesh.isBaseNode(node.getID()))
             return false;
 
         unsigned n_connected_fracture_elements = 0;
         for (MeshLib::Element const* e : node.getElements())
             if (e->getDimension() == _fracture_element_dim)
                 n_connected_fracture_elements++;
-        assert(n_connected_fracture_elements>0);
+        assert(n_connected_fracture_elements > 0);
 
         return (n_connected_fracture_elements == 1);
     }
@@ -58,18 +55,15 @@ private:
     std::vector<bool> _is_internal_node;
 };
 
-
-} // no named namespace
-
+}  // namespace
 
 void getFractureMatrixDataInMesh(
-        MeshLib::Mesh const& mesh,
-        std::vector<MeshLib::Element*>& vec_matrix_elements,
-        std::vector<int>& vec_fracture_mat_IDs,
-        std::vector<std::vector<MeshLib::Element*>>& vec_fracture_elements,
-        std::vector<std::vector<MeshLib::Element*>>& vec_fracture_matrix_elements,
-        std::vector<std::vector<MeshLib::Node*>>& vec_fracture_nodes
-        )
+    MeshLib::Mesh const& mesh,
+    std::vector<MeshLib::Element*>& vec_matrix_elements,
+    std::vector<int>& vec_fracture_mat_IDs,
+    std::vector<std::vector<MeshLib::Element*>>& vec_fracture_elements,
+    std::vector<std::vector<MeshLib::Element*>>& vec_fracture_matrix_elements,
+    std::vector<std::vector<MeshLib::Node*>>& vec_fracture_nodes)
 {
     IsCrackTip isCrackTip(mesh);
 
@@ -96,26 +90,28 @@ void getFractureMatrixDataInMesh(
 
     // create a vector of fracture elements for each group
     vec_fracture_elements.resize(vec_fracture_mat_IDs.size());
-    for (unsigned frac_id=0; frac_id<vec_fracture_mat_IDs.size(); frac_id++)
+    for (unsigned frac_id = 0; frac_id < vec_fracture_mat_IDs.size(); frac_id++)
     {
         const auto frac_mat_id = vec_fracture_mat_IDs[frac_id];
-        std::vector<MeshLib::Element*> &vec_elements = vec_fracture_elements[frac_id];
+        std::vector<MeshLib::Element*>& vec_elements =
+            vec_fracture_elements[frac_id];
         std::copy_if(all_fracture_elements.begin(), all_fracture_elements.end(),
                      std::back_inserter(vec_elements),
                      [&](MeshLib::Element* e) {
                          return (*opt_material_ids)[e->getID()] == frac_mat_id;
                      });
-        DBUG("-> found %d elements on the fracture %d", vec_elements.size(), frac_id);
+        DBUG("-> found %d elements on the fracture %d", vec_elements.size(),
+             frac_id);
     }
 
     // get a vector of fracture nodes
     vec_fracture_nodes.resize(vec_fracture_mat_IDs.size());
-    for (unsigned frac_id=0; frac_id<vec_fracture_mat_IDs.size(); frac_id++)
+    for (unsigned frac_id = 0; frac_id < vec_fracture_mat_IDs.size(); frac_id++)
     {
-        std::vector<MeshLib::Node*> &vec_nodes = vec_fracture_nodes[frac_id];
+        std::vector<MeshLib::Node*>& vec_nodes = vec_fracture_nodes[frac_id];
         for (MeshLib::Element* e : vec_fracture_elements[frac_id])
         {
-            for (unsigned i=0; i<e->getNumberOfNodes(); i++)
+            for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
             {
                 if (isCrackTip(*e->getNode(i)))
                     continue;
@@ -123,8 +119,7 @@ void getFractureMatrixDataInMesh(
             }
         }
         BaseLib::makeVectorUnique(
-            vec_nodes,
-            [](MeshLib::Node* node1, MeshLib::Node* node2) {
+            vec_nodes, [](MeshLib::Node* node1, MeshLib::Node* node2) {
                 return node1->getID() < node2->getID();
             });
         DBUG("-> found %d nodes on the fracture %d", vec_nodes.size(), frac_id);
@@ -136,7 +131,7 @@ void getFractureMatrixDataInMesh(
     {
         std::vector<MeshLib::Element*> vec_ele;
         // first, collect matrix elements
-        for (MeshLib::Element*e : fracture_elements)
+        for (MeshLib::Element* e : fracture_elements)
         {
             // it is sufficient to iterate over base nodes, because they are
             // already connected to all neighbours
@@ -145,18 +140,19 @@ void getFractureMatrixDataInMesh(
                 MeshLib::Node const* node = e->getNode(i);
                 if (isCrackTip(*node))
                     continue;
-                for (unsigned j=0; j<node->getNumberOfElements(); j++)
+                for (unsigned j = 0; j < node->getNumberOfElements(); j++)
                 {
                     // only matrix elements
-                    if (node->getElement(j)->getDimension() < mesh.getDimension())
+                    if (node->getElement(j)->getDimension() <
+                        mesh.getDimension())
                         continue;
-                    vec_ele.push_back(const_cast<MeshLib::Element*>(node->getElement(j)));
+                    vec_ele.push_back(
+                        const_cast<MeshLib::Element*>(node->getElement(j)));
                 }
             }
         }
         BaseLib::makeVectorUnique(
-            vec_ele,
-            [](MeshLib::Element* e1, MeshLib::Element* e2) {
+            vec_ele, [](MeshLib::Element* e1, MeshLib::Element* e2) {
                 return e1->getID() < e2->getID();
             });
 

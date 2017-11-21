@@ -30,8 +30,8 @@
 
 namespace
 {
-
-void postVTU(std::string const& int_vtu_filename, std::string const& out_vtu_filename)
+void postVTU(std::string const& int_vtu_filename,
+             std::string const& out_vtu_filename)
 {
     // read VTU with simulation results
     std::unique_ptr<MeshLib::Mesh const> mesh(
@@ -49,22 +49,23 @@ void postVTU(std::string const& int_vtu_filename, std::string const& out_vtu_fil
         *mesh, vec_matrix_elements, vec_fracture_mat_IDs, vec_fracture_elements,
         vec_fracture_matrix_elements, vec_fracture_nodes);
 
-    ProcessLib::LIE::PostProcessTool post(
-        *mesh, vec_fracture_nodes, vec_fracture_matrix_elements);
+    ProcessLib::LIE::PostProcessTool post(*mesh, vec_fracture_nodes,
+                                          vec_fracture_matrix_elements);
 
     // create a new VTU file
     INFO("create %s", out_vtu_filename.c_str());
     MeshLib::IO::writeMeshToFile(post.getOutputMesh(), out_vtu_filename);
 }
 
-
-void postPVD(std::string const& in_pvd_filename, std::string const& out_pvd_filename)
+void postPVD(std::string const& in_pvd_filename,
+             std::string const& out_pvd_filename)
 {
     auto const in_pvd_file_dir = BaseLib::extractPath(in_pvd_filename);
     auto const out_pvd_file_dir = BaseLib::extractPath(out_pvd_filename);
     INFO("start reading the PVD file %s", in_pvd_filename.c_str());
     boost::property_tree::ptree pt;
-    read_xml(in_pvd_filename, pt,  boost::property_tree::xml_parser::trim_whitespace);
+    read_xml(in_pvd_filename, pt,
+             boost::property_tree::xml_parser::trim_whitespace);
 
     for (auto& dataset : pt.get_child("VTKFile.Collection"))
     {
@@ -72,17 +73,21 @@ void postPVD(std::string const& in_pvd_filename, std::string const& out_pvd_file
             continue;
 
         // get VTU file name
-        auto const org_vtu_filename = dataset.second.get<std::string>("<xmlattr>.file");
-        auto const org_vtu_filebasename = BaseLib::extractBaseName(org_vtu_filename);
+        auto const org_vtu_filename =
+            dataset.second.get<std::string>("<xmlattr>.file");
+        auto const org_vtu_filebasename =
+            BaseLib::extractBaseName(org_vtu_filename);
         auto org_vtu_dir = BaseLib::extractPath(org_vtu_filename);
         if (org_vtu_dir.empty())
             org_vtu_dir = in_pvd_file_dir;
-        auto const org_vtu_filepath = BaseLib::joinPaths(org_vtu_dir, org_vtu_filebasename);
+        auto const org_vtu_filepath =
+            BaseLib::joinPaths(org_vtu_dir, org_vtu_filebasename);
         INFO("processing %s...", org_vtu_filepath.c_str());
 
         // post-process the VTU and save into the new file
         auto const dest_vtu_filename = "post_" + org_vtu_filebasename;
-        auto const dest_vtu_filepath = BaseLib::joinPaths(out_pvd_file_dir, dest_vtu_filename);
+        auto const dest_vtu_filepath =
+            BaseLib::joinPaths(out_pvd_file_dir, dest_vtu_filename);
         postVTU(org_vtu_filepath, dest_vtu_filepath);
 
         // create a new VTU file and update XML
@@ -95,22 +100,20 @@ void postPVD(std::string const& in_pvd_filename, std::string const& out_pvd_file
     write_xml(out_pvd_filename, pt, std::locale(), settings);
 }
 
-} // unnamed namespace
+}  // unnamed namespace
 
-
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Post-process results of the LIE approach",
-                       ' ', "0.1");
-    TCLAP::ValueArg<std::string> arg_out_file("o", "output-file",
-                                          "the name of the new PVD or VTU file", true,
-                                          "", "path");
+    TCLAP::CmdLine cmd("Post-process results of the LIE approach", ' ', "0.1");
+    TCLAP::ValueArg<std::string> arg_out_file(
+        "o", "output-file", "the name of the new PVD or VTU file", true, "",
+        "path");
     cmd.add(arg_out_file);
-    TCLAP::ValueArg<std::string> arg_in_file("i", "input-file",
-                                         "the original PVD or VTU file name", true,
-                                         "", "path");
+    TCLAP::ValueArg<std::string> arg_in_file(
+        "i", "input-file", "the original PVD or VTU file name", true, "",
+        "path");
     cmd.add(arg_in_file);
 
     cmd.parse(argc, argv);
@@ -121,7 +124,8 @@ int main (int argc, char* argv[])
     else if (in_file_ext == "vtu")
         postVTU(arg_in_file.getValue(), arg_out_file.getValue());
     else
-        OGS_FATAL("The given file type (%s) is not supported.", in_file_ext.c_str());
+        OGS_FATAL("The given file type (%s) is not supported.",
+                  in_file_ext.c_str());
 
     return EXIT_SUCCESS;
 }
