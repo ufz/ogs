@@ -252,7 +252,7 @@ pipeline {
       }
     }
     stage('Master') {
-      when { environment name: 'JOB_NAME', value: 'OpenGeoSys/ogs/master' }
+      when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
       parallel {
         // ************************* Deploy Web ********************************
         stage('Deploy Web') {
