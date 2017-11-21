@@ -256,6 +256,7 @@ pipeline {
       parallel {
         // ************************* Deploy Web ********************************
         stage('Deploy Web') {
+          agent any
           steps {
             dir('web') { unstash web }
             dir('doxygen') { unstash doxygen }
@@ -281,8 +282,8 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_METIS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
-                  '-DCMAKE_INSTALL_PREFIX=${installPrefix}/standard ' +
-                  '-DOGS_MODULEFILE=${modulePrefix}/standard ' +
+                  '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
+                  '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard ' +
                   '-DOGS_CPU_ARCHITECTURE=core-avx-i '
                 env = 'envinf1/cli.sh'
               }
@@ -310,8 +311,8 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_METIS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
-                  '-DCMAKE_INSTALL_PREFIX=${installPrefix}/petsc ' +
-                  '-DOGS_MODULEFILE=${modulePrefix}/petsc ' +
+                  '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
+                  '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc ' +
                   '-DOGS_CPU_ARCHITECTURE=core-avx-i '
                 env = 'envinf1/petsc.sh'
               }
