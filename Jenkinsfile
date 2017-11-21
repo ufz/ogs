@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@master') _
+@Library('jenkins-pipeline@1.0.9') _
 
 pipeline {
   agent none
@@ -135,7 +135,10 @@ pipeline {
                   '-DOGS_USE_PCH=OFF '
                 env = 'envinf1/cli.sh'
               }
-              build { env = 'envinf1/cli.sh' }
+              build {
+                env = 'envinf1/cli.sh'
+                cmd_args = '-l 30'
+              }
               build {
                 env = 'envinf1/cli.sh'
                 target = 'tests'
@@ -167,7 +170,10 @@ pipeline {
                 env = 'envinf1/petsc.sh'
                 generator = 'Unix Makefiles'
               }
-              build { env = 'envinf1/petsc.sh' }
+              build {
+                env = 'envinf1/petsc.sh'
+                cmd_args = '-l 30'
+              }
               build {
                 env = 'envinf1/petsc.sh'
                 target = 'tests'
@@ -286,6 +292,7 @@ pipeline {
               build {
                 env = 'envinf1/cli.sh'
                 target = 'install'
+                cmd_args = '-l 30'
               }
             }
           }
@@ -315,6 +322,7 @@ pipeline {
               build {
                 env = 'envinf1/petsc.sh'
                 target = 'install'
+                cmd_args = '-l 30'
               }
             }
           }
