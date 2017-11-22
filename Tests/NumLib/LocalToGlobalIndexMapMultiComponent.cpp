@@ -79,18 +79,18 @@ public:
             delete e;
     }
 
-    void initComponents(const unsigned num_components,
+    void initComponents(const int num_components,
                         const int selected_component,
                         const NL::ComponentOrder order)
     {
         assert(selected_component < static_cast<int>(num_components));
 
         std::vector<MeshLib::MeshSubsets> components;
-        for (unsigned i=0; i<num_components; ++i)
+        for (int i = 0; i < num_components; ++i)
         {
             components.emplace_back(mesh_items_all_nodes.get());
         }
-        std::vector<unsigned> vec_var_n_components(1, num_components);
+        std::vector<int> vec_var_n_components(1, num_components);
         dof_map = std::make_unique<NL::LocalToGlobalIndexMap>(
             std::move(components), vec_var_n_components, order);
 
@@ -104,18 +104,18 @@ public:
     }
 
     // Multi-component version.
-    void initComponents(unsigned const num_components,
+    void initComponents(int const num_components,
                         std::vector<int> const& selected_components,
                         NL::ComponentOrder const order)
     {
         assert(selected_components.size() <= num_components);
 
         std::vector<MeshLib::MeshSubsets> components;
-        for (unsigned i = 0; i < num_components; ++i)
+        for (int i = 0; i < num_components; ++i)
         {
             components.emplace_back(mesh_items_all_nodes.get());
         }
-        std::vector<unsigned> vec_var_n_components(1, num_components);
+        std::vector<int> vec_var_n_components(1, num_components);
         dof_map = std::make_unique<NL::LocalToGlobalIndexMap>(
             std::move(components), vec_var_n_components, order);
 
@@ -129,13 +129,13 @@ public:
     }
 
     template <NL::ComponentOrder order>
-    void test(const unsigned num_components, const unsigned selected_component,
+    void test(const int num_components, const int selected_component,
               std::function<std::size_t(std::size_t, std::size_t)> const&
                   compute_global_index);
 
     // Multicomponent version
     template <NL::ComponentOrder order>
-    void test(const unsigned num_components,
+    void test(const int num_components,
               std::vector<int> const& selected_component,
               std::function<std::size_t(std::size_t, std::size_t)> const&
                   compute_global_index);
@@ -175,11 +175,10 @@ struct ComputeGlobalIndexByLocation
     }
 };
 
-
 template <NL::ComponentOrder ComponentOrder>
 void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
-    const unsigned num_components,
-    const unsigned selected_component,
+    const int num_components,
+    const int selected_component,
     std::function<std::size_t(std::size_t, std::size_t)> const&
         compute_global_index)
 {
@@ -197,7 +196,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
         auto const element_nodes_size = mesh->getElement(e)->getNumberOfNodes();
         auto const ptr_element_nodes = mesh->getElement(e)->getNodes();
 
-        for (unsigned c=0; c<dof_map->getNumberOfComponents(); ++c)
+        for (int c = 0; c < dof_map->getNumberOfComponents(); ++c)
         {
             auto const& global_idcs = (*dof_map)(e, c).rows;
             ASSERT_EQ(element_nodes_size, global_idcs.size());
@@ -216,7 +215,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     {
         ASSERT_EQ(1, dof_map_boundary->getNumberOfComponents());
 
-        for (unsigned c=0; c<1; ++c)
+        for (int c = 0; c < 1; ++c)
         {
             auto const& global_idcs = (*dof_map_boundary)(e, c).rows;
 
@@ -239,7 +238,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
 // Multicomponent version
 template <NL::ComponentOrder ComponentOrder>
 void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
-    unsigned const num_components,
+    int const num_components,
     std::vector<int> const& selected_components,
     std::function<std::size_t(std::size_t, std::size_t)> const&
         compute_global_index)
@@ -259,7 +258,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
         auto const element_nodes_size = mesh->getElement(e)->getNumberOfNodes();
         auto const ptr_element_nodes = mesh->getElement(e)->getNodes();
 
-        for (unsigned c = 0; c < dof_map->getNumberOfComponents(); ++c)
+        for (int c = 0; c < dof_map->getNumberOfComponents(); ++c)
         {
             auto const& global_idcs = (*dof_map)(e, c).rows;
             ASSERT_EQ(element_nodes_size, global_idcs.size());
@@ -279,7 +278,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
         ASSERT_EQ(selected_components.size(),
                   dof_map_boundary->getNumberOfComponents());
 
-        for (unsigned c = 0; c < selected_components.size(); ++c)
+        for (int c = 0; c < static_cast<int>(selected_components.size()); ++c)
         {
             auto const& global_idcs = (*dof_map_boundary)(e, c).rows;
 
@@ -308,7 +307,7 @@ void assert_equal(NL::LocalToGlobalIndexMap const& dof1, NL::LocalToGlobalIndexM
 
     for (unsigned e=0; e<dof1.size(); ++e)
     {
-        for (unsigned c=0; c<dof1.getNumberOfComponents(); ++c)
+        for (int c = 0; c < dof1.getNumberOfComponents(); ++c)
         {
             EXPECT_EQ(dof1(e, c).rows, dof2(e, c).rows);
             EXPECT_EQ(dof1(e, c).columns, dof2(e, c).columns);
@@ -322,7 +321,7 @@ TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, Test1Comp)
 TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_Test1Comp)
 #endif
 {
-    unsigned const num_components = 1;
+    int const num_components = 1;
 
     test<NL::ComponentOrder::BY_LOCATION>(
         num_components, 0, ComputeGlobalIndexByComponent{num_components});
@@ -344,8 +343,8 @@ TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByComponent)
 TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByComponent)
 #endif
 {
-    unsigned const num_components = 5;
-    for (unsigned c = 0; c < num_components; ++c)
+    int const num_components = 5;
+    for (int c = 0; c < num_components; ++c)
         test<NL::ComponentOrder::BY_COMPONENT>(
             num_components, c, ComputeGlobalIndexByComponent{
                                    (mesh_subdivs + 1) * (mesh_subdivs + 1)});

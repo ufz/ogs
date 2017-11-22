@@ -108,7 +108,8 @@ void ConvergenceCriterionPerComponentResidual::setDOFTable(
     _dof_table = &dof_table;
     _mesh = &mesh;
 
-    if (_dof_table->getNumberOfComponents() != _abstols.size())
+    if (_dof_table->getNumberOfComponents() !=
+        static_cast<int>(_abstols.size()))
         OGS_FATAL(
             "The number of components in the DOF table and the number of "
             "tolerances given do not match.");

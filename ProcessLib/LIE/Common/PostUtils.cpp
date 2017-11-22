@@ -177,17 +177,17 @@ void PostProcessTool::copyProperties()
             // copy existing
             for (unsigned i = 0; i < _org_mesh.getNumberOfNodes(); i++)
             {
-                for (unsigned j = 0; j < n_src_comp; j++)
+                for (int j = 0; j < n_src_comp; j++)
                     (*dest_prop)[i * n_dest_comp + j] =
                         (*src_prop)[i * n_src_comp + j];
                 // set zero for components not existing in the original
-                for (unsigned j = n_src_comp; j < n_dest_comp; j++)
+                for (int j = n_src_comp; j < n_dest_comp; j++)
                     (*dest_prop)[i * n_dest_comp + j] = 0;
             }
             // copy duplicated
             for (auto itr : _map_dup_newNodeIDs)
             {
-                for (unsigned j = 0; j < n_dest_comp; j++)
+                for (int j = 0; j < n_dest_comp; j++)
                     (*dest_prop)[itr.second * n_dest_comp + j] =
                         (*dest_prop)[itr.first * n_dest_comp + j];
             }
@@ -218,7 +218,7 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures)
     total_u.resize(u.size());
     for (unsigned i = 0; i < _output_mesh->getNodes().size(); i++)
     {
-        for (unsigned j = 0; j < n_u_comp; j++)
+        for (int j = 0; j < n_u_comp; j++)
             total_u[i * n_u_comp + j] = u[i * n_u_comp + j];
     }
 
@@ -248,7 +248,7 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures)
                 "displacement_jump" + std::to_string(fracture_id + 1));
         for (unsigned i = 0; i < _output_mesh->getNodes().size(); i++)
         {
-            for (unsigned j = 0; j < n_u_comp; j++)
+            for (int j = 0; j < n_u_comp; j++)
                 total_u[i * n_u_comp + j] +=
                     nodal_levelset[i] * g[i * n_u_comp + j];
         }

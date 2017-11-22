@@ -35,9 +35,9 @@ struct ConstantParameter final : public Parameter<T>
 
     bool isTimeDependent() const override { return false; }
 
-    unsigned getNumberOfComponents() const override
+    int getNumberOfComponents() const override
     {
-        return static_cast<unsigned>(_values.size());
+        return static_cast<int>(_values.size());
     }
 
     std::vector<T> const& operator()(

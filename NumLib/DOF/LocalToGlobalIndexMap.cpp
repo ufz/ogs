@@ -31,11 +31,10 @@ std::vector<T> to_cumulative(std::vector<T> const& vec)
 } // no named namespace
 
 template <typename ElementIterator>
-void
-LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
+void LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
     ElementIterator first, ElementIterator last,
     std::vector<MeshLib::Node*> const& nodes, std::size_t const mesh_id,
-    const unsigned comp_id, const unsigned comp_id_write)
+    const int comp_id, const int comp_id_write)
 {
     std::unordered_set<MeshLib::Node*> const set_nodes(nodes.begin(), nodes.end());
 
@@ -62,12 +61,11 @@ LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
     }
 }
 
-
 template <typename ElementIterator>
 void LocalToGlobalIndexMap::findGlobalIndices(
     ElementIterator first, ElementIterator last,
     std::vector<MeshLib::Node*> const& nodes, std::size_t const mesh_id,
-    const unsigned comp_id, const unsigned comp_id_write)
+    const int comp_id, const int comp_id_write)
 {
     _rows.resize(std::distance(first, last), _mesh_subsets.size());
 
@@ -100,13 +98,14 @@ void LocalToGlobalIndexMap::findGlobalIndices(
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubsets>&& mesh_subsets,
     NumLib::ComponentOrder const order)
-    : LocalToGlobalIndexMap(std::move(mesh_subsets), std::vector<unsigned>(mesh_subsets.size(), 1), order)
+    : LocalToGlobalIndexMap(std::move(mesh_subsets),
+                            std::vector<int>(mesh_subsets.size(), 1), order)
 {
 }
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubsets>&& mesh_subsets,
-    std::vector<unsigned> const& vec_var_n_components,
+    std::vector<int> const& vec_var_n_components,
     NumLib::ComponentOrder const order)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(_mesh_subsets, order),
@@ -144,7 +143,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubsets>&& mesh_subsets,
-    std::vector<unsigned> const& vec_var_n_components,
+    std::vector<int> const& vec_var_n_components,
     std::vector<std::vector<MeshLib::Element*> const*> const& vec_var_elements,
     NumLib::ComponentOrder const order)
     : _mesh_subsets(std::move(mesh_subsets)),
@@ -200,7 +199,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(std::move(mesh_component_map)),
       _variable_component_offsets(
-          to_cumulative(std::vector<unsigned>(1, 1)))  // Single variable only.
+          to_cumulative(std::vector<int>(1, 1)))  // Single variable only.
 {
     // Each subset in the mesh_subsets represents a single component.
     if (_mesh_subsets.size() != global_component_ids.size())
@@ -272,8 +271,8 @@ LocalToGlobalIndexMap::size() const
     return _rows.rows();
 }
 
-LocalToGlobalIndexMap::RowColumnIndices
-LocalToGlobalIndexMap::operator()(std::size_t const mesh_item_id, const unsigned component_id) const
+LocalToGlobalIndexMap::RowColumnIndices LocalToGlobalIndexMap::operator()(
+    std::size_t const mesh_item_id, const int component_id) const
 {
     return RowColumnIndices(_rows(mesh_item_id, component_id),
                             _columns(mesh_item_id, component_id));
@@ -334,7 +333,7 @@ std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
     for (std::size_t e=0; e<map.size(); ++e)
     {
         os << "== e " << e << " ==\n";
-        for (std::size_t c=0; c<map.getNumberOfComponents(); ++c)
+        for (int c = 0; c < map.getNumberOfComponents(); ++c)
         {
             auto const& line = map._rows(e, c);
 

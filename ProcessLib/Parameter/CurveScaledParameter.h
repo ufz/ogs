@@ -38,7 +38,7 @@ struct CurveScaledParameter final : public Parameter<T> {
         _cache.resize(_parameter->getNumberOfComponents());
     }
 
-    unsigned getNumberOfComponents() const override
+    int getNumberOfComponents() const override
     {
         return _parameter->getNumberOfComponents();
     }
@@ -50,7 +50,8 @@ struct CurveScaledParameter final : public Parameter<T> {
         auto const scaling = _curve.getValue(t);
 
         auto const num_comp = _parameter->getNumberOfComponents();
-        for (std::size_t c = 0; c < num_comp; ++c) {
+        for (int c = 0; c < num_comp; ++c)
+        {
             _cache[c] = scaling * tup[c];
         }
         return _cache;

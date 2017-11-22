@@ -129,7 +129,7 @@ public:
             auto const bulk_flux =
                 bulk_process.getFlux(_bulk_element_id, bulk_element_point, x);
 
-            for (std::size_t component_id(0);
+            for (int component_id(0);
                  component_id < balance.getNumberOfComponents();
                  ++component_id)
             {

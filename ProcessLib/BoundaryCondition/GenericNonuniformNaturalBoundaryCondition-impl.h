@@ -75,7 +75,7 @@ void GenericNonuniformNaturalBoundaryCondition<
     std::vector<MeshLib::MeshSubsets> all_mesh_subsets{
         _mesh_subset_all_nodes.get()};
 
-    std::vector<unsigned> vec_var_n_components{1};
+    std::vector<int> vec_var_n_components{1};
 
     _dof_table_boundary = std::make_unique<NumLib::LocalToGlobalIndexMap>(
         std::move(all_mesh_subsets), vec_var_n_components,

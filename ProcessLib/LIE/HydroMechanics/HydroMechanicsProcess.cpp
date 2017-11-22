@@ -147,7 +147,7 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
 
     // Collect the mesh subsets in a vector.
     std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
-    std::vector<unsigned> vec_n_components;
+    std::vector<int> vec_n_components;
     std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
     // pressure
     vec_n_components.push_back(1);
