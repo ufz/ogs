@@ -56,6 +56,7 @@ pipeline {
             success {
                 dir('web/public') { stash(name: 'web') }
                 dir('build/docs') { stash(name: 'doxygen') }
+                dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
                 script {
                   publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                     keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
@@ -260,13 +261,14 @@ pipeline {
           steps {
             dir('web') { unstash 'web' }
             dir('doxygen') { unstash 'doxygen' }
+            unstash 'known_hosts'
             script {
               sshagent(credentials: ['www-data_jenkins']) {
                 sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-                   'ogs/scripts/jenkins/known_hosts" . ' +
+                   'known_hosts" . ' +
                    'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
                 sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-                   'ogs/scripts/jenkins/known_hosts" . ' +
+                   'known_hosts" . ' +
                    'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
               }
             }
@@ -343,6 +345,7 @@ pipeline {
             script {
               configure {
                 cmakeOptions =
+                  '-DOGS_USE_CONAN=ON ' +
                   '-DOGS_ADDRESS_SANITIZER=ON ' +
                   '-DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON ' +
                   '-DOGS_BUILD_UTILS=ON '
