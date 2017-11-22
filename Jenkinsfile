@@ -258,8 +258,8 @@ pipeline {
         stage('Deploy Web') {
           agent any
           steps {
-            dir('web') { unstash web }
-            dir('doxygen') { unstash doxygen }
+            dir('web') { unstash 'web' }
+            dir('doxygen') { unstash 'doxygen' }
             script {
               sshagent(credentials: ['www-data_jenkins']) {
                 sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
