@@ -113,7 +113,7 @@ TEST_F(RasterToMeshTest, convertRasterTo3DMeshElevation)
     ASSERT_TRUE(mesh == nullptr);
 
     std::unique_ptr<MeshLib::Mesh> mesh2(MeshLib::RasterToMesh::convert(
-        *_raster.get(), MeshLib::MeshElemType::HEXAHEDRON,
+        *_raster, MeshLib::MeshElemType::HEXAHEDRON,
         MeshLib::UseIntensityAs::ELEVATION, "test"));
     ASSERT_TRUE(mesh2 == nullptr);
 }
@@ -121,7 +121,7 @@ TEST_F(RasterToMeshTest, convertRasterTo3DMeshElevation)
 TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::RasterToMesh::convert(
-        *_raster.get(), MeshLib::MeshElemType::TRIANGLE,
+        *_raster, MeshLib::MeshElemType::TRIANGLE,
         MeshLib::UseIntensityAs::DATAVECTOR, "test"));
     ASSERT_TRUE(mesh != nullptr);
 
@@ -152,7 +152,7 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
 TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::RasterToMesh::convert(
-        *_raster.get(), MeshLib::MeshElemType::QUAD,
+        *_raster, MeshLib::MeshElemType::QUAD,
         MeshLib::UseIntensityAs::DATAVECTOR, "test"));
     ASSERT_TRUE(mesh != nullptr);
 
@@ -183,7 +183,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
 TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::RasterToMesh::convert(
-        *_raster.get(), MeshLib::MeshElemType::PRISM,
+        *_raster, MeshLib::MeshElemType::PRISM,
         MeshLib::UseIntensityAs::DATAVECTOR, "test"));
     ASSERT_TRUE(mesh != nullptr);
 
@@ -214,7 +214,7 @@ TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
 TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::RasterToMesh::convert(
-        *_raster.get(), MeshLib::MeshElemType::HEXAHEDRON,
+        *_raster, MeshLib::MeshElemType::HEXAHEDRON,
         MeshLib::UseIntensityAs::MATERIALS, "MaterialIDs"));
     ASSERT_TRUE(mesh != nullptr);
 
@@ -245,7 +245,7 @@ TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
 TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::RasterToMesh::convert(
-        *_raster.get(), MeshLib::MeshElemType::QUAD,
+        *_raster, MeshLib::MeshElemType::QUAD,
         MeshLib::UseIntensityAs::NONE, "test"));
     ASSERT_TRUE(mesh != nullptr);
 
