@@ -142,8 +142,8 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
                         [&]() { return MeshLib::MeshSubsets{ms.get()}; });
     }
 
-    std::vector<unsigned> const vec_n_components(
-        1 + _vec_fracture_mat_IDs.size(), DisplacementDim);
+    std::vector<int> const vec_n_components(1 + _vec_fracture_mat_IDs.size(),
+                                            DisplacementDim);
 
     std::vector<std::vector<MeshLib::Element*>const*> vec_var_elements;
     vec_var_elements.push_back(&_vec_matrix_elements);

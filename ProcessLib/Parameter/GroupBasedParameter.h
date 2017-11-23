@@ -51,9 +51,11 @@ struct GroupBasedParameter final
 
     bool isTimeDependent() const override { return false; }
 
-    unsigned getNumberOfComponents() const override
+    int getNumberOfComponents() const override
     {
-        return _vec_values.empty() ? 0 : _vec_values.front().size();
+        return _vec_values.empty()
+                   ? 0
+                   : static_cast<int>(_vec_values.front().size());
     }
 
     std::vector<T> const& operator()(double const /*t*/,

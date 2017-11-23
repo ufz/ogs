@@ -42,8 +42,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
       _elements(std::move(elements)),
       _integration_order(integration_order)
 {
-    assert(component_id <
-           static_cast<int>(dof_table_bulk.getNumberOfComponents()));
+    assert(component_id < dof_table_bulk.getNumberOfComponents());
 
     std::vector<MeshLib::Node*> nodes = MeshLib::getUniqueNodes(_elements);
     DBUG("Found %d nodes for Natural BCs for the variable %d and component %d",

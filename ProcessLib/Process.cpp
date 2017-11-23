@@ -183,7 +183,7 @@ void Process::constructDofTable()
     }
 
     // Create a vector of the number of variable components
-    std::vector<unsigned> vec_var_n_components;
+    std::vector<int> vec_var_n_components;
     for (ProcessVariable const& pv : _process_variables)
         vec_var_n_components.push_back(pv.getNumberOfComponents());
 

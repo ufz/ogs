@@ -95,7 +95,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
         // copy only base node values
         for (unsigned i=0; i<org_mesh.getNumberOfBaseNodes(); i++)
         {
-            for (unsigned j=0; j<n_src_comp; j++)
+            for (int j = 0; j < n_src_comp; j++)
                 (*new_prop)[i*n_src_comp+j] = (*src_prop)[i*n_src_comp+j];
         }
     }

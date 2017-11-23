@@ -33,7 +33,7 @@ public:
 
     MeshItemType getMeshItemType() const { return _mesh_item_type; }
     std::string const& getPropertyName() const { return _property_name; }
-    std::size_t getNumberOfComponents() const { return _n_components; }
+    int getNumberOfComponents() const { return _n_components; }
 
 protected:
     PropertyVectorBase(std::string property_name,
@@ -44,7 +44,7 @@ protected:
           _property_name(std::move(property_name))
     {}
 
-    std::size_t const _n_components;
+    int const _n_components;
     MeshItemType const _mesh_item_type;
     std::string const _property_name;
 };
@@ -174,7 +174,7 @@ public:
 
     void initPropertyValue(std::size_t group_id, std::vector<T> const& values)
     {
-        if (_n_components != values.size())
+        if (_n_components != static_cast<int>(values.size()))
             OGS_FATAL("The size of provided values in initPropertyValue() is "
                       "not same as the number of components in PropertyVector<T*>");
 

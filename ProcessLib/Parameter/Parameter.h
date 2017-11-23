@@ -67,7 +67,7 @@ struct Parameter : public ParameterBase
 
     //! Returns the number of components this Parameter has at every position and
     //! point in time.
-    virtual unsigned getNumberOfComponents() const = 0;
+    virtual int getNumberOfComponents() const = 0;
 
     //! Returns the parameter value at the given time and position.
     virtual std::vector<T> const& operator()(
