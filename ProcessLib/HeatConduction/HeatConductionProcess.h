@@ -42,7 +42,8 @@ public:
         double const t, GlobalVector const& x) override;
 
     void preTimestepConcreteProcess(GlobalVector const& x, const double t,
-                                    const double delta_t) override;
+                                    const double delta_t,
+                                    const int process_id) override;
 
     // Get the solution of the previous time step.
     GlobalVector* getPreviousTimeStepSolution() const override

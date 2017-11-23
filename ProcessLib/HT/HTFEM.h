@@ -13,7 +13,7 @@
 #include <vector>
 
 
-#include "HTProcessData.h"
+#include "HTMaterialProperties.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -87,7 +87,7 @@ public:
                        std::size_t const local_matrix_size,
                        bool is_axially_symmetric,
                        unsigned const integration_order,
-                       HTProcessData const& process_data)
+                       HTMaterialProperties const& process_data)
         : _element(element),
           _process_data(process_data),
           _integration_method(integration_order)
@@ -342,7 +342,7 @@ public:
 
 private:
     MeshLib::Element const& _element;
-    HTProcessData const& _process_data;
+    HTMaterialProperties const& _process_data;
 
     IntegrationMethod const _integration_method;
     std::vector<

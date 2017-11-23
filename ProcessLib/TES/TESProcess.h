@@ -41,7 +41,8 @@ public:
                BaseLib::ConfigTree const& config);
 
     void preTimestepConcreteProcess(GlobalVector const& x, const double t,
-                                    const double delta_t) override;
+                                    const double delta_t,
+                                    const int process_id) override;
     void preIterationConcreteProcess(const unsigned iter,
                                      GlobalVector const& x) override;
     NumLib::IterationResult postIterationConcreteProcess(

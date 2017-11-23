@@ -23,13 +23,13 @@ HTProcess::HTProcess(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
-    HTProcessData&& process_data,
+    std::unique_ptr<HTMaterialProperties>&& material_properties,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller)),
-      _process_data(std::move(process_data))
+      _material_properties(std::move(material_properties))
 {
 }
 
@@ -42,7 +42,7 @@ void HTProcess::initializeConcreteProcess(
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         pv.getShapeFunctionOrder(), _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        mesh.isAxiallySymmetric(), integration_order, *_material_properties);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
@@ -62,7 +62,7 @@ void HTProcess::assembleConcreteProcess(const double t,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupling_term);
+        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
 }
 
 void HTProcess::assembleWithJacobianConcreteProcess(
@@ -76,7 +76,7 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupling_term);
+        dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
 }  // namespace HT

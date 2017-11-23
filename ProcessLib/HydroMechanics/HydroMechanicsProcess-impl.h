@@ -180,7 +180,7 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupling_term);
+        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
 }
 
 template <int DisplacementDim>
@@ -196,11 +196,12 @@ void HydroMechanicsProcess<DisplacementDim>::
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupling_term);
+        dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt)
+    GlobalVector const& x, double const t, double const dt,
+    const int /*process_id*/)
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 

@@ -16,7 +16,7 @@
 
 #include "NumLib/Function/Interpolation.h"
 
-#include "ProcessLib/StaggeredCouplingTerm.h"
+#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 
 #include "ProcessLib/HeatConduction/HeatConductionProcess.h"
 
@@ -60,7 +60,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                             std::vector<double>& local_M_data,
                             std::vector<double>& local_K_data,
                             std::vector<double>& local_b_data,
-                            LocalCouplingTerm const& coupled_term)
+                            LocalCoupledSolutions const& coupled_term)
 {
     SpatialPosition pos;
     pos.setElementID(_element.getID());
@@ -268,7 +268,7 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     //  the assert must be changed to perm.rows() == _element->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
-    if (!_coupling_term)
+    if (!_coupled_solutions)
     {
         computeDarcyVelocity(permeability, local_x, veloctiy_cache_vectors);
     }
@@ -276,7 +276,7 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     {
         auto const local_coupled_xs =
             getCurrentLocalSolutionsOfCoupledProcesses(
-                _coupling_term->coupled_xs, indices);
+                _coupled_solutions->coupled_xs, indices);
         if (local_coupled_xs.empty())
             computeDarcyVelocity(permeability, local_x, veloctiy_cache_vectors);
         else

@@ -88,7 +88,7 @@ public:
         return _material_properties.get();
     }
 
-    void setStaggeredCouplingTermToLocalAssemblers() override;
+    void setCoupledSolutionsForStaggeredSchemeToLocalAssemblers() override;
 
 private:
     void initializeConcreteProcess(
