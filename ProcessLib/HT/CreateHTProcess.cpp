@@ -43,15 +43,14 @@ std::unique_ptr<Process> createHTProcess(
 
     auto process_variables = findProcessVariables(
         variables, pv_config,
-        {
-        //! \ogs_file_param_special{prj__processes__process__HT__process_variables__temperature}
-        "temperature",
-        //! \ogs_file_param_special{prj__processes__process__HT__process_variables__pressure}
-        "pressure"});
+        {//! \ogs_file_param_special{prj__processes__process__HT__process_variables__temperature}
+         "temperature",
+         //! \ogs_file_param_special{prj__processes__process__HT__process_variables__pressure}
+         "pressure"});
 
     MaterialLib::PorousMedium::PorousMediaProperties porous_media_properties{
-        MaterialLib::PorousMedium::createPorousMediaProperties(
-            mesh, config, parameters)};
+        MaterialLib::PorousMedium::createPorousMediaProperties(mesh, config,
+                                                               parameters)};
 
     //! \ogs_file_param{prj__processes__process__HT__fluid}
     auto const& fluid_config = config.getConfigSubtree("fluid");
@@ -59,7 +58,7 @@ std::unique_ptr<Process> createHTProcess(
         MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Parameter for the density of the fluid.
-    auto& fluid_reference_density= findParameter<double>(
+    auto& fluid_reference_density = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HT__fluid_reference_density}
         "fluid_reference_density", parameters, 1);
@@ -134,17 +133,19 @@ std::unique_ptr<Process> createHTProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
-    HTMaterialProperties process_data{std::move(porous_media_properties),
-                               density_solid,
-                               fluid_reference_density,
-                               std::move(fluid_properties),
-                               thermal_dispersivity_longitudinal,
-                               thermal_dispersivity_transversal,
-                               specific_heat_capacity_solid,
-                               thermal_conductivity_solid,
-                               thermal_conductivity_fluid,
-                               specific_body_force,
-                               has_gravity};
+    std::unique_ptr<HTMaterialProperties> material_properties =
+        std::make_unique<HTMaterialProperties>(
+            std::move(porous_media_properties),
+            density_solid,
+            fluid_reference_density,
+            std::move(fluid_properties),
+            thermal_dispersivity_longitudinal,
+            thermal_dispersivity_transversal,
+            specific_heat_capacity_solid,
+            thermal_conductivity_solid,
+            thermal_conductivity_fluid,
+            specific_body_force,
+            has_gravity);
 
     SecondaryVariableCollection secondary_variables;
 
@@ -156,7 +157,7 @@ std::unique_ptr<Process> createHTProcess(
 
     return std::make_unique<HTProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
-        std::move(process_variables), std::move(process_data),
+        std::move(process_variables), std::move(material_properties),
         std::move(secondary_variables), std::move(named_function_caller));
 }
 

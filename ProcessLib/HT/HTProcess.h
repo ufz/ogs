@@ -47,7 +47,7 @@ public:
               unsigned const integration_order,
               std::vector<std::reference_wrapper<ProcessVariable>>&&
                   process_variables,
-              HTMaterialProperties&& process_data,
+              std::unique_ptr<HTMaterialProperties>&& material_properties,
               SecondaryVariableCollection&& secondary_variables,
               NumLib::NamedFunctionCaller&& named_function_caller);
 
@@ -72,7 +72,7 @@ private:
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
-    HTMaterialProperties _process_data;
+    const std::unique_ptr<HTMaterialProperties> _material_properties;
 
     std::vector<std::unique_ptr<HTLocalAssemblerInterface>> _local_assemblers;
 };
