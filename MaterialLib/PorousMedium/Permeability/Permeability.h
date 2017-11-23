@@ -73,7 +73,7 @@ public:
 
 private:
     ProcessLib::Parameter<double> const& _permeability_parameter;
-    int const _dimension;
+    unsigned const _dimension;
     mutable Eigen::MatrixXd _intrinsic_permeability_tensor;
 };
 

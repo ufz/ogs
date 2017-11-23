@@ -40,7 +40,7 @@ std::unique_ptr<Permeability> createPermeabilityModel(
             //! \ogs_file_param_special{material__porous_medium__permeability__permeability_tensor_entries}
             "permeability_tensor_entries", parameters, 0);
 
-        int dimension = static_cast<int>(
+        unsigned dimension = static_cast<unsigned>(
             std::sqrt(permeability_parameter.getNumberOfComponents()));
         if (permeability_parameter.getNumberOfComponents() !=
             dimension * dimension)
