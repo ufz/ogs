@@ -265,10 +265,10 @@ pipeline {
             script {
               sshagent(credentials: ['www-data_jenkins']) {
                 sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-                   'known_hosts" . ' +
+                   'known_hosts" web/. ' +
                    'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
                 sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-                   'known_hosts" . ' +
+                   'known_hosts" doxygen/. ' +
                    'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
               }
             }
