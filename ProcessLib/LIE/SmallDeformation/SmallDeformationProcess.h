@@ -9,13 +9,8 @@
 
 #pragma once
 
-#include <cassert>
-
-#include "ProcessLib/Process.h"
-
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/CreateLocalAssemblers.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerInterface.h"
-
+#include "ProcessLib/Process.h"
 #include "SmallDeformationProcessData.h"
 
 namespace ProcessLib
@@ -49,8 +44,7 @@ public:
 
     //! \name ODESystem interface
     //! @{
-
-    bool isLinear() const override { return false; }
+    bool isLinear() const override;
     //! @}
 
 private:
@@ -65,44 +59,16 @@ private:
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
-                                 GlobalVector& b) override
-    {
-        DBUG("Assemble SmallDeformationProcess.");
-
-        // Call global assembler for each local assembly item.
-        GlobalExecutor::executeMemberDereferenced(
-            _global_assembler, &VectorMatrixAssembler::assemble,
-            _local_assemblers, *_local_to_global_index_map, t, x, M, K, b,
-            _coupled_solutions);
-    }
+                                 GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override
-    {
-        DBUG("AssembleWithJacobian SmallDeformationProcess.");
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
-        // Call global assembler for each local assembly item.
-        GlobalExecutor::executeMemberDereferenced(
-            _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-            _local_assemblers, *_local_to_global_index_map, t, x, xdot,
-            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
-    }
-
-    void preTimestepConcreteProcess(
-        GlobalVector const& x, double const t, double const dt,
-        const int /*process_id*/) override
-    {
-        DBUG("PreTimestep SmallDeformationProcess.");
-
-        _process_data.dt = dt;
-        _process_data.t = t;
-
-        GlobalExecutor::executeMemberOnDereferenced(
-            &SmallDeformationLocalAssemblerInterface::preTimestep,
-            _local_assemblers, *_local_to_global_index_map, x, t, dt);
-    }
+    void preTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                    double const dt,
+                                    const int /*process_id*/) override;
 
     void postTimestepConcreteProcess(GlobalVector const& x) override;
 
@@ -120,9 +86,13 @@ private:
     std::vector<std::vector<MeshLib::Element*>> _vec_fracture_matrix_elements;
     std::vector<std::vector<MeshLib::Node*>> _vec_fracture_nodes;
 
-    std::vector<std::unique_ptr<MeshLib::MeshSubset const>> _mesh_subset_fracture_nodes;
+    std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
+        _mesh_subset_fracture_nodes;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_matrix_nodes;
 };
+
+extern template class SmallDeformationProcess<2>;
+extern template class SmallDeformationProcess<3>;
 
 }  // namespace SmallDeformation
 }  // namespace LIE

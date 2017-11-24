@@ -8,17 +8,12 @@
 
 #include "Utils.h"
 
-#include <cmath>
-
-#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/FaceRule.h"
-#include "MeshLib/Node.h"
 
 namespace ProcessLib
 {
 namespace LIE
 {
-
 void computeNormalVector(MeshLib::Element const& e, unsigned const global_dim,
                          Eigen::Vector3d& element_normal)
 {
@@ -47,8 +42,7 @@ void computeRotationMatrix(MeshLib::Element const& e, Eigen::Vector3d const& n,
     if (global_dim == 2)
     {
         R.resize(2, 2);
-        R << n[1] , -n[0]
-           , n[0] ,  n[1];
+        R << n[1], -n[0], n[0], n[1];
     }
     else if (global_dim == 3)
     {
@@ -58,9 +52,7 @@ void computeRotationMatrix(MeshLib::Element const& e, Eigen::Vector3d const& n,
             MeshLib::FaceRule::getSecondSurfaceVector(&e).getNormalizedVector();
 
         R.resize(3, 3);
-        R << u[0] , u[1] , u[2]
-           , v[0] , v[1] , v[2]
-           , n[0] , n[1] , n[2];
+        R << u[0], u[1], u[2], v[0], v[1], v[2], n[0], n[1], n[2];
     }
 }
 

@@ -8,30 +8,23 @@
  */
 
 #include "HydroMechanicsProcess.h"
-#include "HydroMechanicsProcess-fwd.h"
-
-#include <algorithm>
-#include <cassert>
-#include <vector>
 
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/ElementStatus.h"
-#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshInformation.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 #include "ProcessLib/LIE/BoundaryCondition/BoundaryConditionBuilder.h"
-#include "ProcessLib/LIE/Common/LevelSetFunction.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
-#include "ProcessLib/LIE/Common/Utils.h"
-#include "ProcessLib/LIE/HydroMechanics/LocalAssembler/HydroMechanicsLocalAssemblerFracture.h"
-#include "ProcessLib/LIE/HydroMechanics/LocalAssembler/HydroMechanicsLocalAssemblerMatrix.h"
-#include "ProcessLib/LIE/HydroMechanics/LocalAssembler/HydroMechanicsLocalAssemblerMatrixNearFracture.h"
+
+#include "LocalAssembler/CreateLocalAssemblers.h"
+#include "LocalAssembler/HydroMechanicsLocalAssemblerFracture.h"
+#include "LocalAssembler/HydroMechanicsLocalAssemblerMatrix.h"
+#include "LocalAssembler/HydroMechanicsLocalAssemblerMatrixNearFracture.h"
 
 namespace ProcessLib
 {
@@ -39,7 +32,7 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <unsigned GlobalDim>
+template <int GlobalDim>
 HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
@@ -121,7 +114,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     }
 }
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::constructDofTable()
 {
     //------------------------------------------------------------
@@ -189,7 +182,7 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     DBUG("created %d DoF", _local_to_global_index_map->size());
 }
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
@@ -400,7 +393,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     }
 }
 
-template <unsigned GlobalDim>
+template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     const double t, GlobalVector const& x)
 {
@@ -471,11 +464,11 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     {
         auto const node_id = node->getID();
         g.setZero();
-        for (unsigned k = 0; k < GlobalDim; k++)
+        for (int k = 0; k < GlobalDim; k++)
             g[k] = mesh_prop_g[node_id * GlobalDim + k];
 
         w.noalias() = R * g;
-        for (unsigned k = 0; k < GlobalDim; k++)
+        for (int k = 0; k < GlobalDim; k++)
             vec_w[node_id * GlobalDim + k] = w[k];
 
         ProcessLib::SpatialPosition x;
@@ -483,6 +476,55 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
         vec_b[node_id] = w[GlobalDim == 2 ? 1 : 2] +
                          (*_process_data.fracture_property->aperture0)(0, x)[0];
     }
+}
+
+template <int GlobalDim>
+bool HydroMechanicsProcess<GlobalDim>::isLinear() const
+{
+    return false;
+}
+
+template <int GlobalDim>
+void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
+    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b)
+{
+    DBUG("Assemble HydroMechanicsProcess.");
+
+    // Call global assembler for each local assembly item.
+    GlobalExecutor::executeMemberDereferenced(
+        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
+}
+
+template <int GlobalDim>
+void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
+    const double t, GlobalVector const& x, GlobalVector const& xdot,
+    const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b, GlobalMatrix& Jac)
+{
+    DBUG("AssembleWithJacobian HydroMechanicsProcess.");
+
+    // Call global assembler for each local assembly item.
+    GlobalExecutor::executeMemberDereferenced(
+        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
+        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
+        dx_dx, M, K, b, Jac, _coupled_solutions);
+}
+
+template <int GlobalDim>
+void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
+    GlobalVector const& x, double const t,
+    double const dt, const int /*process_id*/)
+{
+    DBUG("PreTimestep HydroMechanicsProcess.");
+
+    _process_data.dt = dt;
+    _process_data.t = t;
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &HydroMechanicsLocalAssemblerInterface::preTimestep, _local_assemblers,
+        *_local_to_global_index_map, x, t, dt);
 }
 
 // ------------------------------------------------------------------------------------

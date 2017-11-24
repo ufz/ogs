@@ -13,7 +13,6 @@
 
 namespace ProcessLib
 {
-
 /// An implementation of H-Matrix policy using same matrix and vector types
 /// (fixed size or dynamic) as in the ShapeMatrixPolicyType.
 template <typename ShapeFunction, unsigned DisplacementDim>
@@ -28,8 +27,9 @@ private:
 
     /// Reusing the ShapeMatrixPolicy matrix type.
     template <int N, int M>
-    using MatrixType = typename ShapeMatrixPolicyType<
-        ShapeFunction, DisplacementDim>::template MatrixType<N, M>;
+    using MatrixType =
+        typename ShapeMatrixPolicyType<ShapeFunction, DisplacementDim>::
+            template MatrixType<N, M>;
 
     // Dimensions of specific H-matrix for n-points and displacement dimension.
     static int const _number_of_dof = ShapeFunction::NPOINTS * DisplacementDim;
@@ -44,9 +44,10 @@ public:
     using ForceVectorType = VectorType<DisplacementDim>;
 };
 
-
 /// Fills a H-matrix based on given shape function
-template <int DisplacementDim, int NPOINTS, typename N_Type,
+template <int DisplacementDim,
+          int NPOINTS,
+          typename N_Type,
           typename HMatrixType>
 void computeHMatrix(N_Type const& N, HMatrixType& H)
 {
@@ -56,8 +57,8 @@ void computeHMatrix(N_Type const& N, HMatrixType& H)
 
     H.setZero();
 
-    for (unsigned j=0; j<DisplacementDim; j++)
-        H.block(j, j*NPOINTS, 1, NPOINTS) = N;
+    for (unsigned j = 0; j < DisplacementDim; j++)
+        H.block(j, j * NPOINTS, 1, NPOINTS) = N;
 }
 
 }  // namespace ProcessLib

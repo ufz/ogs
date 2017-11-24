@@ -16,8 +16,8 @@
 #include "ProcessLib/LIE/Common/HMatrixUtils.h"
 #include "ProcessLib/LIE/HydroMechanics/HydroMechanicsProcessData.h"
 
-#include "IntegrationPointDataFracture.h"
 #include "HydroMechanicsLocalAssemblerInterface.h"
+#include "IntegrationPointDataFracture.h"
 
 namespace ProcessLib
 {
@@ -25,16 +25,18 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, unsigned GlobalDim>
+template <typename ShapeFunctionDisplacement,
+          typename ShapeFunctionPressure,
+          typename IntegrationMethod,
+          int GlobalDim>
 class HydroMechanicsLocalAssemblerFracture
     : public HydroMechanicsLocalAssemblerInterface
 {
 public:
-    HydroMechanicsLocalAssemblerFracture(HydroMechanicsLocalAssemblerFracture const&) =
-        delete;
-    HydroMechanicsLocalAssemblerFracture(HydroMechanicsLocalAssemblerFracture&&) = delete;
+    HydroMechanicsLocalAssemblerFracture(
+        HydroMechanicsLocalAssemblerFracture const&) = delete;
+    HydroMechanicsLocalAssemblerFracture(
+        HydroMechanicsLocalAssemblerFracture&&) = delete;
 
     HydroMechanicsLocalAssemblerFracture(
         MeshLib::Element const& e,
@@ -48,7 +50,7 @@ public:
                              double const /*t*/,
                              double const /*delta_t*/) override
     {
-        for (auto &data : _ip_data)
+        for (auto& data : _ip_data)
             data.pushBackState();
     }
 
@@ -65,12 +67,11 @@ public:
     }
 
 private:
-    void assembleWithJacobianConcrete(
-        double const t,
-        Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot,
-        Eigen::VectorXd& local_b,
-        Eigen::MatrixXd& local_J) override;
+    void assembleWithJacobianConcrete(double const t,
+                                      Eigen::VectorXd const& local_x,
+                                      Eigen::VectorXd const& local_xdot,
+                                      Eigen::VectorXd& local_b,
+                                      Eigen::MatrixXd& local_J) override;
 
     void assembleBlockMatricesWithJacobian(
         double const t,
@@ -78,17 +79,24 @@ private:
         Eigen::Ref<const Eigen::VectorXd> const& p_dot,
         Eigen::Ref<const Eigen::VectorXd> const& g,
         Eigen::Ref<const Eigen::VectorXd> const& g_dot,
-        Eigen::Ref<Eigen::VectorXd> rhs_p,
-        Eigen::Ref<Eigen::VectorXd> rhs_g,
-        Eigen::Ref<Eigen::MatrixXd> J_pp,
-        Eigen::Ref<Eigen::MatrixXd> J_pg,
-        Eigen::Ref<Eigen::MatrixXd> J_gg,
-        Eigen::Ref<Eigen::MatrixXd> J_gp);
+        Eigen::Ref<Eigen::VectorXd>
+            rhs_p,
+        Eigen::Ref<Eigen::VectorXd>
+            rhs_g,
+        Eigen::Ref<Eigen::MatrixXd>
+            J_pp,
+        Eigen::Ref<Eigen::MatrixXd>
+            J_pg,
+        Eigen::Ref<Eigen::MatrixXd>
+            J_gg,
+        Eigen::Ref<Eigen::MatrixXd>
+            J_gp);
 
     // Types for displacement.
     using ShapeMatricesTypeDisplacement =
         ShapeMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
-    using HMatricesType = HMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
+    using HMatricesType =
+        HMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
     using HMatrixType = typename HMatricesType::HMatrixType;
 
     // Types for pressure.
@@ -99,12 +107,14 @@ private:
     using IntegrationPointDataType =
         IntegrationPointDataFracture<HMatricesType,
                                      ShapeMatricesTypeDisplacement,
-                                     ShapeMatricesTypePressure, GlobalDim>;
+                                     ShapeMatricesTypePressure,
+                                     GlobalDim>;
 
     HydroMechanicsProcessData<GlobalDim>& _process_data;
 
     std::vector<IntegrationPointDataType,
-        Eigen::aligned_allocator<IntegrationPointDataType>> _ip_data;
+                Eigen::aligned_allocator<IntegrationPointDataType>>
+        _ip_data;
 
     static const int pressure_index = 0;
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;

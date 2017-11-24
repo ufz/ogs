@@ -12,7 +12,21 @@
 #include <memory>
 #include <vector>
 
-#include "ProcessLib/Process.h"
+namespace BaseLib
+{
+class ConfigTree;
+}  // namespace BaseLib
+namespace MeshLib
+{
+class Mesh;
+}  // namespace MeshLib
+namespace ProcessLib
+{
+class AbstractJacobianAssembler;
+struct ParameterBase;
+class Process;
+class ProcessVariable;
+}  // namespace ProcessLib
 
 namespace ProcessLib
 {
@@ -20,7 +34,6 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <int DisplacementDim>
 std::unique_ptr<Process> createSmallDeformationProcess(
     MeshLib::Mesh& mesh,

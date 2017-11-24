@@ -10,9 +10,13 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
+namespace MeshLib
+{
+class Node;
+}
 
 namespace ProcessLib
 {

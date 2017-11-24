@@ -11,9 +11,9 @@
 
 #include <cassert>
 
-#include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/CreateMohrCoulomb.h"
+#include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
@@ -27,16 +27,8 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-
 template <int DisplacementDim>
-class SmallDeformationProcess;
-
-extern template class SmallDeformationProcess<2>;
-extern template class SmallDeformationProcess<3>;
-
-template <int DisplacementDim>
-std::unique_ptr<Process>
-createSmallDeformationProcess(
+std::unique_ptr<Process> createSmallDeformationProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -57,17 +49,22 @@ createSmallDeformationProcess(
     std::vector<std::reference_wrapper<ProcessVariable>> process_variables;
     for (std::string const& pv_name : range)
     {
-        if (pv_name != "displacement"
-            && pv_name.find("displacement_jump") != 0)
-            OGS_FATAL("Found a process variable name '%s'. It should be 'displacement' or 'displacement_jumpN'");
-        auto variable = std::find_if(
-            variables.cbegin(), variables.cend(),
-            [&pv_name](ProcessVariable const& v) { return v.getName() == pv_name; });
+        if (pv_name != "displacement" && pv_name.find("displacement_jump") != 0)
+        {
+            OGS_FATAL(
+                "Found a process variable name '%s'. It should be "
+                "'displacement' or 'displacement_jumpN'");
+        }
+        auto variable = std::find_if(variables.cbegin(), variables.cend(),
+                                     [&pv_name](ProcessVariable const& v) {
+                                         return v.getName() == pv_name;
+                                     });
 
         if (variable == variables.end())
         {
             OGS_FATAL(
-                "Could not find process variable '%s' in the provided variables "
+                "Could not find process variable '%s' in the provided "
+                "variables "
                 "list for config tag <%s>.",
                 pv_name.c_str(), "process_variable");
         }
@@ -76,9 +73,11 @@ createSmallDeformationProcess(
 
         process_variables.emplace_back(const_cast<ProcessVariable&>(*variable));
     }
-    auto const n_fractures = process_variables.size()-1;
+    auto const n_fractures = process_variables.size() - 1;
     if (n_fractures < 1)
+    {
         OGS_FATAL("No displacement jump variables are specified");
+    }
 
     DBUG("Associate displacement with process variable \'%s\'.",
          process_variables.back().get().getName().c_str());
@@ -104,11 +103,13 @@ createSmallDeformationProcess(
         //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__constitutive_relation__type}
         constitutive_relation_config.peekConfigParameter<std::string>("type");
 
-    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>> material = nullptr;
+    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
+        material = nullptr;
     if (type == "LinearElasticIsotropic")
     {
-        material = MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
-            parameters, constitutive_relation_config);
+        material =
+            MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
+                parameters, constitutive_relation_config);
     }
     else
     {
@@ -127,7 +128,8 @@ createSmallDeformationProcess(
         //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_model__type}
         fracture_model_config.peekConfigParameter<std::string>("type");
 
-    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>> fracture_model = nullptr;
+    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>
+        fracture_model = nullptr;
     if (frac_type == "LinearElasticIsotropic")
     {
         fracture_model = MaterialLib::Fracture::createLinearElasticIsotropic<
@@ -142,14 +144,16 @@ createSmallDeformationProcess(
     else
     {
         OGS_FATAL(
-            "Cannot construct fracture constitutive relation of given type \'%s\'.",
+            "Cannot construct fracture constitutive relation of given type "
+            "\'%s\'.",
             frac_type.c_str());
     }
 
     // Fracture properties
     std::vector<std::unique_ptr<FractureProperty>> vec_fracture_property;
     //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties}
-    for (auto fracture_properties_config : config.getConfigSubtreeList("fracture_properties"))
+    for (auto fracture_properties_config :
+         config.getConfigSubtreeList("fracture_properties"))
     {
         auto& para_b0 = ProcessLib::findParameter<double>(
             //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__initial_aperture}
@@ -164,12 +168,16 @@ createSmallDeformationProcess(
     }
 
     if (n_fractures != vec_fracture_property.size())
+    {
         OGS_FATAL(
-            "The number of displacement jumps and the number of <fracture_properties> "
+            "The number of displacement jumps and the number of "
+            "<fracture_properties> "
             "are not consistent");
+    }
 
     SmallDeformationProcessData<DisplacementDim> process_data(
-        std::move(material), std::move(fracture_model), std::move(vec_fracture_property));
+        std::move(material), std::move(fracture_model),
+        std::move(vec_fracture_property));
 
     SecondaryVariableCollection secondary_variables;
 
@@ -185,9 +193,7 @@ createSmallDeformationProcess(
         std::move(secondary_variables), std::move(named_function_caller));
 }
 
-template
-std::unique_ptr<Process>
-createSmallDeformationProcess<2>(
+template std::unique_ptr<Process> createSmallDeformationProcess<2>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -206,4 +212,3 @@ template std::unique_ptr<Process> createSmallDeformationProcess<3>(
 }  // namespace SmallDeformation
 }  // namespace LIE
 }  // namespace ProcessLib
-

@@ -11,7 +11,14 @@
 
 #include "MeshLib/MeshSubset.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
-#include "ProcessLib/LIE/Common/FractureProperty.h"
+
+namespace ProcessLib
+{
+namespace LIE
+{
+struct FractureProperty;
+}
+}  // namespace ProcessLib
 
 namespace ProcessLib
 {
@@ -19,7 +26,6 @@ class GenericNaturalBoundaryConditionLocalAssemblerInterface;
 
 namespace LIE
 {
-
 template <typename BoundaryConditionData,
           template <typename, typename, unsigned>
           class LocalAssemblerImplementation>
@@ -35,13 +41,11 @@ public:
             std::is_same<typename std::decay<BoundaryConditionData>::type,
                          typename std::decay<Data>::type>::value,
             bool>::type is_axially_symmetric,
-        unsigned const integration_order,
-        unsigned const shapefunction_order,
+        unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
-        unsigned const global_dim,
-        std::vector<MeshLib::Element*>&& elements, Data&& data,
-        FractureProperty const& fracture_prop);
+        unsigned const global_dim, std::vector<MeshLib::Element*>&& elements,
+        Data&& data, FractureProperty const& fracture_prop);
 
     ~GenericNaturalBoundaryCondition() override;
 
@@ -75,7 +79,7 @@ private:
         _local_assemblers;
 };
 
-}  // LIE
-}  // ProcessLib
+}  // namespace LIE
+}  // namespace ProcessLib
 
 #include "GenericNaturalBoundaryCondition-impl.h"

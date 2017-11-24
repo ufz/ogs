@@ -24,7 +24,6 @@
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
-
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
@@ -86,8 +85,9 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
         auto const& sm = shape_matrices[ip];
         ip_data.N = sm.N;
         ip_data.dNdx = sm.dNdx;
-        ip_data._detJ = sm.detJ;
-        ip_data._integralMeasure = sm.integralMeasure;
+        ip_data.integration_weight =
+            _integration_method.getWeightedPoint(ip).getWeight() *
+            sm.integralMeasure * sm.detJ;
 
         // Initialize current time step values
         ip_data._sigma.setZero(KelvinVectorDimensions<DisplacementDim>::value);
@@ -106,30 +106,36 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
     }
 
     for (auto fid : process_data._vec_ele_connected_fractureIDs[e.getID()])
-        _fracture_props.push_back(_process_data._vec_fracture_property[fid].get());
+    {
+        _fracture_props.push_back(
+            _process_data._vec_fracture_property[fid].get());
+    }
 }
 
-
-template <typename ShapeFunction, typename IntegrationMethod,
+template <typename ShapeFunction,
+          typename IntegrationMethod,
           int DisplacementDim>
-void SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction, IntegrationMethod,
-                                    DisplacementDim>::
-assembleWithJacobian(
-    double const t,
-    Eigen::VectorXd const& local_u,
-    Eigen::VectorXd& local_b,
-    Eigen::MatrixXd& local_J)
+void SmallDeformationLocalAssemblerMatrixNearFracture<
+    ShapeFunction,
+    IntegrationMethod,
+    DisplacementDim>::assembleWithJacobian(double const t,
+                                           Eigen::VectorXd const& local_u,
+                                           Eigen::VectorXd& local_b,
+                                           Eigen::MatrixXd& local_J)
 {
-    assert (_element.getDimension() == DisplacementDim);
+    assert(_element.getDimension() == DisplacementDim);
 
     auto const N_DOF_PER_VAR = ShapeFunction::NPOINTS * DisplacementDim;
     auto const n_fractures = _fracture_props.size();
 
-    using BlockVectorType = typename Eigen::VectorXd::FixedSegmentReturnType<N_DOF_PER_VAR>::Type;
-    using BlockMatrixType = Eigen::Block<Eigen::MatrixXd,N_DOF_PER_VAR,N_DOF_PER_VAR>;
+    using BlockVectorType =
+        typename Eigen::VectorXd::FixedSegmentReturnType<N_DOF_PER_VAR>::Type;
+    using BlockMatrixType =
+        Eigen::Block<Eigen::MatrixXd, N_DOF_PER_VAR, N_DOF_PER_VAR>;
 
     //--------------------------------------------------------------------------------------
-    // prepare sub vectors, matrices for regular displacement (u) and displacement jumps (g)
+    // prepare sub vectors, matrices for regular displacement (u) and
+    // displacement jumps (g)
     //
     // example with two fractures:
     //     |b(u)|
@@ -142,34 +148,40 @@ assembleWithJacobian(
     //--------------------------------------------------------------------------------------
     auto local_b_u = local_b.segment<N_DOF_PER_VAR>(0);
     std::vector<BlockVectorType> vec_local_b_g;
-    for (unsigned i=0; i<n_fractures; i++)
-        vec_local_b_g.push_back(local_b.segment<N_DOF_PER_VAR>(N_DOF_PER_VAR*(i+1)));
+    for (unsigned i = 0; i < n_fractures; i++)
+    {
+        vec_local_b_g.push_back(
+            local_b.segment<N_DOF_PER_VAR>(N_DOF_PER_VAR * (i + 1)));
+    }
 
     auto local_J_uu = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(0, 0);
     std::vector<BlockMatrixType> vec_local_J_ug;
     std::vector<BlockMatrixType> vec_local_J_gu;
     std::vector<std::vector<BlockMatrixType>> vec_local_J_gg(n_fractures);
-    for (unsigned i=0; i<n_fractures; i++)
+    for (unsigned i = 0; i < n_fractures; i++)
     {
-        auto sub_ug = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(0, N_DOF_PER_VAR*(i+1));
+        auto sub_ug = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(
+            0, N_DOF_PER_VAR * (i + 1));
         vec_local_J_ug.push_back(sub_ug);
 
-        auto sub_gu = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(N_DOF_PER_VAR*(i+1), 0);
+        auto sub_gu = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(
+            N_DOF_PER_VAR * (i + 1), 0);
         vec_local_J_gu.push_back(sub_gu);
 
-        for (unsigned j=0; j<n_fractures; j++)
+        for (unsigned j = 0; j < n_fractures; j++)
         {
-            auto sub_gg =
-                local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(N_DOF_PER_VAR * (i + 1), N_DOF_PER_VAR * (j + 1));
+            auto sub_gg = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(
+                N_DOF_PER_VAR * (i + 1), N_DOF_PER_VAR * (j + 1));
             vec_local_J_gg[i].push_back(sub_gg);
         }
     }
 
     auto const nodal_u = local_u.segment<N_DOF_PER_VAR>(0);
     std::vector<BlockVectorType> vec_nodal_g;
-    for (unsigned i=0; i<n_fractures; i++)
+    for (unsigned i = 0; i < n_fractures; i++)
     {
-        auto sub = const_cast<Eigen::VectorXd&>(local_u).segment<N_DOF_PER_VAR>(N_DOF_PER_VAR*(i+1));
+        auto sub = const_cast<Eigen::VectorXd&>(local_u).segment<N_DOF_PER_VAR>(
+            N_DOF_PER_VAR * (i + 1));
         vec_nodal_g.push_back(sub);
     }
 
@@ -186,9 +198,8 @@ assembleWithJacobian(
     {
         x_position.setIntegrationPoint(ip);
 
-        auto &ip_data = _ip_data[ip];
-        auto const& wp = _integration_method.getWeightedPoint(ip);
-        auto const ip_factor = ip_data._detJ * wp.getWeight() * ip_data._integralMeasure;
+        auto& ip_data = _ip_data[ip];
+        auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
@@ -197,13 +208,17 @@ assembleWithJacobian(
         auto const ip_physical_coords = computePhysicalCoordinates(_element, N);
         std::vector<double> levelsets(n_fractures);
         for (unsigned i = 0; i < n_fractures; i++)
-            levelsets[i] = calculateLevelSetFunction(*_fracture_props[i],
-                                                     ip_physical_coords.getCoords());
+        {
+            levelsets[i] = calculateLevelSetFunction(
+                *_fracture_props[i], ip_physical_coords.getCoords());
+        }
 
         // nodal displacement = u^hat + sum_i(levelset_i(x) * [u]_i)
         NodalDisplacementVectorType nodal_total_u = nodal_u;
-        for (unsigned i=0; i<n_fractures; i++)
+        for (unsigned i = 0; i < n_fractures; i++)
+        {
             nodal_total_u += levelsets[i] * vec_nodal_g[i];
+        }
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
@@ -228,47 +243,52 @@ assembleWithJacobian(
             t, x_position, _process_data.dt, eps_prev, eps, sigma_prev, *state);
 
         if (!solution)
+        {
             OGS_FATAL("Computation of local constitutive relation failed.");
+        }
 
         KelvinMatrixType<DisplacementDim> C;
         std::tie(sigma, state, C) = std::move(*solution);
 
         // r_u = B^T * Sigma = B^T * C * B * (u+phi*[u])
         // r_[u] = (phi*B)^T * Sigma = (phi*B)^T * C * B * (u+phi*[u])
-        local_b_u.noalias() -= B.transpose() * sigma * ip_factor;
-        for (unsigned i=0; i<n_fractures; i++)
-            vec_local_b_g[i].noalias() -= levelsets[i] * B.transpose() * sigma * ip_factor;
+        local_b_u.noalias() -= B.transpose() * sigma * w;
+        for (unsigned i = 0; i < n_fractures; i++)
+        {
+            vec_local_b_g[i].noalias() -=
+                levelsets[i] * B.transpose() * sigma * w;
+        }
 
         // J_uu += B^T * C * B
-        local_J_uu.noalias() += B.transpose() * C * B * ip_factor;
+        local_J_uu.noalias() += B.transpose() * C * B * w;
 
-        for (unsigned i=0; i<n_fractures; i++)
+        for (unsigned i = 0; i < n_fractures; i++)
         {
             // J_u[u] += B^T * C * (levelset * B)
             vec_local_J_ug[i].noalias() +=
-                B.transpose() * C * (levelsets[i] * B) * ip_factor;
+                B.transpose() * C * (levelsets[i] * B) * w;
 
             // J_[u]u += (levelset * B)^T * C * B
             vec_local_J_gu[i].noalias() +=
-                (levelsets[i] * B.transpose()) * C * B * ip_factor;
+                (levelsets[i] * B.transpose()) * C * B * w;
 
-            for (unsigned j=0; j<n_fractures; j++)
+            for (unsigned j = 0; j < n_fractures; j++)
             {
                 // J_[u][u] += (levelset * B)^T * C * (levelset * B)
                 vec_local_J_gg[i][j].noalias() +=
-                    (levelsets[i] * B.transpose()) * C * (levelsets[j] * B) *
-                    ip_factor;
+                    (levelsets[i] * B.transpose()) * C * (levelsets[j] * B) * w;
             }
         }
     }
 }
 
-
-template <typename ShapeFunction, typename IntegrationMethod,
+template <typename ShapeFunction,
+          typename IntegrationMethod,
           int DisplacementDim>
-void SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction, IntegrationMethod,
-                                    DisplacementDim>::
-postTimestepConcrete(std::vector<double> const& /*local_x*/)
+void SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
+                                                      IntegrationMethod,
+                                                      DisplacementDim>::
+    postTimestepConcrete(std::vector<double> const& /*local_x*/)
 {
     // Compute average value per element
     const int n = DisplacementDim == 2 ? 4 : 6;

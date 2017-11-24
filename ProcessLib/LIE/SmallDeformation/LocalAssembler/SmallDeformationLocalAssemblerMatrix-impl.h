@@ -57,9 +57,9 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
     _secondary_data.N.resize(n_integration_points);
 
     auto const shape_matrices =
-        initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                          IntegrationMethod, DisplacementDim>(
-                e, is_axially_symmetric, _integration_method);
+        initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod,
+                          DisplacementDim>(e, is_axially_symmetric,
+                                           _integration_method);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -68,8 +68,9 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
         auto const& sm = shape_matrices[ip];
         ip_data.N = sm.N;
         ip_data.dNdx = sm.dNdx;
-        ip_data._detJ = sm.detJ;
-        ip_data._integralMeasure = sm.integralMeasure;
+        ip_data.integration_weight =
+            _integration_method.getWeightedPoint(ip).getWeight() *
+            sm.integralMeasure * sm.detJ;
 
         // Initialize current time step values
         ip_data._sigma.setZero(KelvinVectorDimensions<DisplacementDim>::value);
@@ -88,22 +89,19 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
     }
 }
 
-
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
-                                    DisplacementDim>::
-assembleWithJacobian(
-    double const t,
-    std::vector<double> const& local_x,
-    std::vector<double> const& /*local_xdot*/,
-    const double /*dxdot_dx*/, const double /*dx_dx*/,
-    std::vector<double>& /*local_M_data*/,
-    std::vector<double>& /*local_K_data*/,
-    std::vector<double>& local_b_data,
-    std::vector<double>& local_Jac_data)
+                                          DisplacementDim>::
+    assembleWithJacobian(double const t, std::vector<double> const& local_x,
+                         std::vector<double> const& /*local_xdot*/,
+                         const double /*dxdot_dx*/, const double /*dx_dx*/,
+                         std::vector<double>& /*local_M_data*/,
+                         std::vector<double>& /*local_K_data*/,
+                         std::vector<double>& local_b_data,
+                         std::vector<double>& local_Jac_data)
 {
-    assert (_element.getDimension() == DisplacementDim);
+    assert(_element.getDimension() == DisplacementDim);
 
     auto const local_matrix_size = local_x.size();
 
@@ -122,9 +120,7 @@ assembleWithJacobian(
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& wp = _integration_method.getWeightedPoint(ip);
-        auto const& detJ = _ip_data[ip]._detJ;
-        auto const& integralMeasure = _ip_data[ip]._integralMeasure;
+        auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
@@ -145,32 +141,30 @@ assembleWithJacobian(
         auto& state = _ip_data[ip]._material_state_variables;
 
         eps.noalias() =
-            B *
-            Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
-                local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
+            B * Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
+                    local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
         auto&& solution = _ip_data[ip]._solid_material.integrateStress(
             t, x_position, _process_data.dt, eps_prev, eps, sigma_prev, *state);
 
         if (!solution)
+        {
             OGS_FATAL("Computation of local constitutive relation failed.");
+        }
 
         KelvinMatrixType<DisplacementDim> C;
         std::tie(sigma, state, C) = std::move(*solution);
 
-        local_b.noalias() -=
-            B.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
-        local_Jac.noalias() +=
-            B.transpose() * C * B * detJ * wp.getWeight() * integralMeasure;
+        local_b.noalias() -= B.transpose() * sigma * w;
+        local_Jac.noalias() += B.transpose() * C * B * w;
     }
 }
-
 
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
-                                    DisplacementDim>::
-postTimestepConcrete(std::vector<double> const& /*local_x*/)
+                                          DisplacementDim>::
+    postTimestepConcrete(std::vector<double> const& /*local_x*/)
 {
     // Compute average value per element
     const int n = DisplacementDim == 2 ? 4 : 6;

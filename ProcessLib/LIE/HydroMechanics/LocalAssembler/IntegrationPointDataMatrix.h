@@ -21,7 +21,8 @@ namespace LIE
 namespace HydroMechanics
 {
 template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
-          typename ShapeMatrixTypePressure, unsigned GlobalDim, unsigned NPoints>
+          typename ShapeMatrixTypePressure, unsigned GlobalDim,
+          unsigned NPoints>
 struct IntegrationPointDataMatrix final
 {
     explicit IntegrationPointDataMatrix(
@@ -29,26 +30,6 @@ struct IntegrationPointDataMatrix final
         : solid_material(solid_material),
           material_state_variables(
               solid_material.createMaterialStateVariables())
-    {
-    }
-
-    // The default generated move-ctor is correctly generated for other
-    // compilers.
-    explicit IntegrationPointDataMatrix(IntegrationPointDataMatrix&& other)
-        : N_u(std::move(other.N_u)),
-          dNdx_u(std::move(other.dNdx_u)),
-          H_u(std::move(other.H_u)),
-          sigma_eff(std::move(other.sigma_eff)),
-          sigma_eff_prev(std::move(other.sigma_eff_prev)),
-          eps(std::move(other.eps)),
-          eps_prev(std::move(other.eps_prev)),
-          N_p(std::move(other.N_p)),
-          dNdx_p(std::move(other.dNdx_p)),
-          solid_material(other.solid_material),
-          material_state_variables(std::move(other.material_state_variables)),
-          C(std::move(other.C)),
-          integration_weight(std::move(other.integration_weight)),
-          darcy_velocity(std::move(other.darcy_velocity))
     {
     }
 

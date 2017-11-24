@@ -20,21 +20,18 @@ inline double Heaviside(double v)
     return (v < 0.0) ? 0.0 : 1.0;
 }
 
-} // no named namespace
+}  // namespace
 
 namespace ProcessLib
 {
 namespace LIE
 {
-
-double calculateLevelSetFunction(
-        FractureProperty const& frac, double const* x_)
+double calculateLevelSetFunction(FractureProperty const& frac, double const* x_)
 {
     Eigen::Map<Eigen::Vector3d const> x(x_, 3);
     return Heaviside(
-                boost::math::sign(
-                    frac.normal_vector.dot(x - frac.point_on_fracture)));
+        boost::math::sign(frac.normal_vector.dot(x - frac.point_on_fracture)));
 }
 
-} // LIE
-} // ProcessLib
+}  // namespace LIE
+}  // namespace ProcessLib

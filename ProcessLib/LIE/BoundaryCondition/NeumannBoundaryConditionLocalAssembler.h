@@ -11,8 +11,8 @@
 
 #include "NumLib/DOF/DOFTableUtil.h"
 
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/BoundaryCondition/GenericNaturalBoundaryConditionLocalAssembler.h"
+#include "ProcessLib/Parameter/Parameter.h"
 
 #include "ProcessLib/LIE/Common/LevelSetFunction.h"
 #include "ProcessLib/LIE/Common/Utils.h"
@@ -21,7 +21,6 @@ namespace ProcessLib
 {
 namespace LIE
 {
-
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class NeumannBoundaryConditionLocalAssembler final
@@ -71,12 +70,14 @@ public:
             auto const& wp = Base::_integration_method.getWeightedPoint(ip);
 
             // levelset functions
-            auto const ip_physical_coords = computePhysicalCoordinates(_element, sm.N);
-            double const levelsets = calculateLevelSetFunction(_fracture_prop, ip_physical_coords.getCoords());
+            auto const ip_physical_coords =
+                computePhysicalCoordinates(_element, sm.N);
+            double const levelsets = calculateLevelSetFunction(
+                _fracture_prop, ip_physical_coords.getCoords());
 
-            _local_rhs.noalias() += sm.N * levelsets * _neumann_bc_parameter(t, pos)[0] *
-                                    sm.detJ * wp.getWeight() *
-                                    sm.integralMeasure;
+            _local_rhs.noalias() += sm.N * levelsets *
+                                    _neumann_bc_parameter(t, pos)[0] * sm.detJ *
+                                    wp.getWeight() * sm.integralMeasure;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);
@@ -93,5 +94,5 @@ private:
     int const _variable_id;
 };
 
-}   // namespace LIE
-}   // namespace ProcessLib
+}  // namespace LIE
+}  // namespace ProcessLib

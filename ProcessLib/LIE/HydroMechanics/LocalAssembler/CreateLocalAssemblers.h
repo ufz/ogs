@@ -24,12 +24,12 @@ namespace HydroMechanics
 {
 namespace detail
 {
-template <unsigned GlobalDim,
-          template <typename, typename, typename, unsigned>
+template <int GlobalDim,
+          template <typename, typename, typename, int>
           class LocalAssemblerMatrixImplementation,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerMatrixNearFractureImplementation,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerFractureImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
@@ -40,12 +40,10 @@ void createLocalAssemblers(
     ExtraCtorArgs&&... extra_ctor_args)
 {
     // Shape matrices initializer
-    using LocalDataInitializer =
-        LocalDataInitializer<LocalAssemblerInterface,
-                             LocalAssemblerMatrixImplementation,
-                             LocalAssemblerMatrixNearFractureImplementation,
-                             LocalAssemblerFractureImplementation,
-                             GlobalDim, ExtraCtorArgs...>;
+    using LocalDataInitializer = LocalDataInitializer<
+        LocalAssemblerInterface, LocalAssemblerMatrixImplementation,
+        LocalAssemblerMatrixNearFractureImplementation,
+        LocalAssemblerFractureImplementation, GlobalDim, ExtraCtorArgs...>;
 
     DBUG("Create local assemblers for HydroMechanics with LIE.");
     // Populate the vector of local assemblers.
@@ -72,12 +70,12 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template <unsigned GlobalDim,
-          template <typename, typename, typename, unsigned>
+template <int GlobalDim,
+          template <typename, typename, typename, int>
           class LocalAssemblerMatrixImplementation,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerMatrixNearFractureImplementation,
-          template <typename, typename, typename, unsigned>
+          template <typename, typename, typename, int>
           class LocalAssemblerFractureImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
@@ -87,10 +85,10 @@ void createLocalAssemblers(
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
     ExtraCtorArgs&&... extra_ctor_args)
 {
-    detail::createLocalAssemblers<GlobalDim,
-                                  LocalAssemblerMatrixImplementation,
-                                  LocalAssemblerMatrixNearFractureImplementation,
-                                  LocalAssemblerFractureImplementation>(
+    detail::createLocalAssemblers<
+        GlobalDim, LocalAssemblerMatrixImplementation,
+        LocalAssemblerMatrixNearFractureImplementation,
+        LocalAssemblerFractureImplementation>(
         dof_table, shapefunction_order, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }

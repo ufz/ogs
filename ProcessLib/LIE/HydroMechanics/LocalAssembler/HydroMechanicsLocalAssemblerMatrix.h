@@ -25,31 +25,33 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, unsigned GlobalDim>
+template <typename ShapeFunctionDisplacement,
+          typename ShapeFunctionPressure,
+          typename IntegrationMethod,
+          int GlobalDim>
 class HydroMechanicsLocalAssemblerMatrix
     : public HydroMechanicsLocalAssemblerInterface
 {
 public:
-    HydroMechanicsLocalAssemblerMatrix(HydroMechanicsLocalAssemblerMatrix const&) =
+    HydroMechanicsLocalAssemblerMatrix(
+        HydroMechanicsLocalAssemblerMatrix const&) = delete;
+    HydroMechanicsLocalAssemblerMatrix(HydroMechanicsLocalAssemblerMatrix&&) =
         delete;
-    HydroMechanicsLocalAssemblerMatrix(HydroMechanicsLocalAssemblerMatrix&&) = delete;
 
     HydroMechanicsLocalAssemblerMatrix(
-            MeshLib::Element const& e,
-            std::size_t const n_variables,
-            std::size_t const local_matrix_size,
-            std::vector<unsigned> const& dofIndex_to_localIndex,
-            bool const is_axially_symmetric,
-            unsigned const integration_order,
-            HydroMechanicsProcessData<GlobalDim>& process_data);
+        MeshLib::Element const& e,
+        std::size_t const n_variables,
+        std::size_t const local_matrix_size,
+        std::vector<unsigned> const& dofIndex_to_localIndex,
+        bool const is_axially_symmetric,
+        unsigned const integration_order,
+        HydroMechanicsProcessData<GlobalDim>& process_data);
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/,
                              double const /*delta_t*/) override
     {
-        for (auto &data : _ip_data)
+        for (auto& data : _ip_data)
             data.pushBackState();
     }
 
@@ -75,12 +77,18 @@ protected:
         Eigen::Ref<const Eigen::VectorXd> const& p_dot,
         Eigen::Ref<const Eigen::VectorXd> const& u,
         Eigen::Ref<const Eigen::VectorXd> const& u_dot,
-        Eigen::Ref<Eigen::VectorXd> rhs_p,
-        Eigen::Ref<Eigen::VectorXd> rhs_u,
-        Eigen::Ref<Eigen::MatrixXd> J_pp,
-        Eigen::Ref<Eigen::MatrixXd> J_pu,
-        Eigen::Ref<Eigen::MatrixXd> J_uu,
-        Eigen::Ref<Eigen::MatrixXd> J_up);
+        Eigen::Ref<Eigen::VectorXd>
+            rhs_p,
+        Eigen::Ref<Eigen::VectorXd>
+            rhs_u,
+        Eigen::Ref<Eigen::MatrixXd>
+            J_pp,
+        Eigen::Ref<Eigen::MatrixXd>
+            J_pu,
+        Eigen::Ref<Eigen::MatrixXd>
+            J_uu,
+        Eigen::Ref<Eigen::MatrixXd>
+            J_up);
 
     void computeSecondaryVariableConcreteWithVector(
         double const t, Eigen::VectorXd const& local_x) override;
@@ -90,7 +98,8 @@ protected:
         Eigen::Ref<const Eigen::VectorXd> const& p,
         Eigen::Ref<const Eigen::VectorXd> const& u);
 
-    void setPressureOfInactiveNodes(double const t, Eigen::Ref<Eigen::VectorXd> p);
+    void setPressureOfInactiveNodes(
+        double const t, Eigen::Ref<Eigen::VectorXd> p);
     void setPressureDotOfInactiveNodes(Eigen::Ref<Eigen::VectorXd> p_dot);
 
     // Types for displacement.

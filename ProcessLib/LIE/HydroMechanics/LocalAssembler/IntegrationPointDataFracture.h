@@ -31,23 +31,6 @@ struct IntegrationPointDataFracture final
     {
     }
 
-    IntegrationPointDataFracture(IntegrationPointDataFracture&& other)
-        : H_u(std::move(other.H_u)),
-          sigma_eff(std::move(other.sigma_eff)),
-          sigma_eff_prev(std::move(other.sigma_eff_prev)),
-          w(std::move(other.w)),
-          w_prev(std::move(other.w_prev)),
-          N_p(std::move(other.N_p)),
-          dNdx_p(std::move(other.dNdx_p)),
-          aperture(std::move(other.aperture)),
-          aperture0(std::move(other.aperture0)),
-          fracture_material(other.fracture_material),
-          C(std::move(other.C)),
-          integration_weight(std::move(other.integration_weight)),
-          darcy_velocity(std::move(other.darcy_velocity))
-    {
-    }
-
     typename HMatricesType::HMatrixType H_u;
     typename HMatricesType::ForceVectorType sigma_eff, sigma_eff_prev;
     typename HMatricesType::ForceVectorType w, w_prev;

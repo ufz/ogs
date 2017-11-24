@@ -8,9 +8,6 @@
 
 #include "PostUtils.h"
 
-#include <map>
-#include <vector>
-
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
@@ -19,17 +16,6 @@ namespace ProcessLib
 {
 namespace LIE
 {
-namespace
-{
-template <typename T>
-inline void sort_unique(std::vector<T>& vec)
-{
-    std::sort(vec.begin(), vec.end());
-    vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
-}
-
-}  // namespace
-
 PostProcessTool::PostProcessTool(
     MeshLib::Mesh const& org_mesh,
     std::vector<std::vector<MeshLib::Node*>> const& vec_vec_fracture_nodes,
