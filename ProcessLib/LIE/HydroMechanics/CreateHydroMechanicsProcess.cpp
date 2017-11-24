@@ -225,8 +225,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     // Fracture properties
     std::unique_ptr<FractureProperty> frac_prop = nullptr;
-    //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties}
     auto opt_fracture_properties_config =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties}
         config.getConfigSubtreeOptional("fracture_properties");
     if (opt_fracture_properties_config)
     {
@@ -265,8 +265,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
          initial_fracture_effective_stress.name.c_str());
 
     // deactivation of matrix elements in flow
-    //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__deactivate_matrix_in_flow}
     auto opt_deactivate_matrix_in_flow =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__deactivate_matrix_in_flow}
         config.getConfigParameterOptional<bool>("deactivate_matrix_in_flow");
     bool const deactivate_matrix_in_flow =
         opt_deactivate_matrix_in_flow && *opt_deactivate_matrix_in_flow;
