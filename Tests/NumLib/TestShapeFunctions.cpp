@@ -105,8 +105,9 @@ TYPED_TEST_CASE(ShapeFunctionTest, ShapeFunctionTestTypes);
 // Access private members via this pointer or TestFixture:: for types
 TYPED_TEST(ShapeFunctionTest, PartitionOfUnity)
 {
-    auto isPartitionOfUnity = [this](
-        std::array<double, TypeParam::DIM>& natural_coordinates_point) -> bool {
+    auto isPartitionOfUnity =
+        [](std::array<double, TypeParam::DIM>& natural_coordinates_point)
+        -> bool {
 
         // compute shape functions
         std::array<double, TypeParam::NPOINTS> N;
@@ -125,8 +126,9 @@ TYPED_TEST(ShapeFunctionTest, PartitionOfUnity)
 
 TYPED_TEST(ShapeFunctionTest, SumOfGradientsIsZero)
 {
-    auto isSumOfGradientsZero = [this](
-        std::array<double, TypeParam::DIM>& natural_coordinates_point) -> bool {
+    auto isSumOfGradientsZero =
+        [](std::array<double, TypeParam::DIM>& natural_coordinates_point)
+        -> bool {
 
         // compute shape functions
         std::array<double, TypeParam::DIM * TypeParam::NPOINTS> dNdr;
