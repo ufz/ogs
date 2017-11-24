@@ -151,9 +151,10 @@ std::unique_ptr<Process> createSmallDeformationProcess(
 
     // Fracture properties
     std::vector<std::unique_ptr<FractureProperty>> vec_fracture_property;
-    //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties}
-    for (auto fracture_properties_config :
-         config.getConfigSubtreeList("fracture_properties"))
+    for (
+        auto fracture_properties_config :
+        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties}
+        config.getConfigSubtreeList("fracture_properties"))
     {
         auto& para_b0 = ProcessLib::findParameter<double>(
             //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__initial_aperture}

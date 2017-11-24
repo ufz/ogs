@@ -41,7 +41,7 @@ GlobalVector const& GlobalVectorFromNamedFunction::call(
     GlobalIndexType nnodes = _mesh.getNumberOfNodes();
 
     auto const n_args = _function_caller.getNumberOfUnboundArguments();
-    assert(dof_table.getNumberOfComponents() == n_args);
+    assert(dof_table.getNumberOfComponents() == static_cast<int>(n_args));
     std::vector<double> args(n_args);
 
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id) {
