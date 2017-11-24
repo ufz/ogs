@@ -63,8 +63,6 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshElevation)
                      "/MeshLib/testraster_selke.vtu");
     vtkio.writeToFile(name);
 
-    std::cout << mesh->getNodes().size() << ", " << mesh->getNumberOfNodes()
-              << std::endl;
     ASSERT_EQ(_n_nodes, mesh->getNodes().size());
     ASSERT_EQ(_n_nodes, mesh->getNumberOfNodes());
 
