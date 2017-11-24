@@ -46,8 +46,8 @@ detectHoles(MeshLib::Mesh const& mesh,
 TEST(MeshValidation, DetectHolesTri)
 {
     std::array<double, 12> pix = {{0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0}};
-    GeoLib::RasterHeader const header =
-        {4,3,MathLib::Point3d(std::array<double,3>{{0,0,0}}),1,-9999};
+    GeoLib::RasterHeader const header = {
+        4, 3, 1, MathLib::Point3d(std::array<double, 3>{{0, 0, 0}}), 1, -9999};
     GeoLib::Raster const raster(header ,pix.begin(), pix.end());
     std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::RasterToMesh::convert(
         raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION));

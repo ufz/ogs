@@ -126,6 +126,16 @@
        </widget>
       </item>
       <item>
+       <widget class="QRadioButton" name="prismButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>set of two prisms</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QRadioButton" name="hexButton">
         <property name="enabled">
          <bool>false</bool>

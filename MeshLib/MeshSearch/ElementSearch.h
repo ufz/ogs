@@ -45,17 +45,15 @@ public:
     template <typename PROPERTY_TYPE>
     std::size_t searchByPropertyValue(
         PROPERTY_TYPE const property_value,
-        std::string const& property_name = "MaterialIDs")
+        std::string const& property_name)
     {
-        if (!_mesh.getProperties().existsPropertyVector<PROPERTY_TYPE>(
-                property_name))
+        if (!_mesh.getProperties().existsPropertyVector<PROPERTY_TYPE>(property_name))
         {
             WARN("Property \"%s\" not found in mesh.", property_name.c_str());
             return 0;
         }
         auto const* const pv =
-            _mesh.getProperties().getPropertyVector<PROPERTY_TYPE>(
-                property_name);
+            _mesh.getProperties().getPropertyVector<PROPERTY_TYPE>(property_name);
 
         if (pv->getMeshItemType() != MeshLib::MeshItemType::Cell)
         {
@@ -65,7 +63,8 @@ public:
         }
 
         std::vector<std::size_t> matchedIDs;
-        for (std::size_t i(0); i < pv->getNumberOfTuples(); ++i) {
+        for (std::size_t i(0); i < pv->getNumberOfTuples(); ++i)
+        {
             if ((*pv)[i] == property_value)
                 matchedIDs.push_back(i);
         }

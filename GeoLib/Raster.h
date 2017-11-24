@@ -13,17 +13,19 @@
 
 #pragma once
 
+#include <array>
 #include <utility>
 
 #include "Surface.h"
 
 namespace GeoLib {
 
-/// Contains the relevant information when handling with geoscientific raster data
+/// Contains the relevant information when storing a geoscientific raster data
 struct RasterHeader
 {
     std::size_t n_cols; // width
     std::size_t n_rows; // height
+    std::size_t n_depth; // depth (for 3d image)
     MathLib::Point3d origin; // lower left corner
     double cell_size; // edge length of each pixel
     double no_data; // no data value

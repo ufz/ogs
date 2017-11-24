@@ -75,61 +75,36 @@ public:
      * \param array_name     mesh property name, defaults to "Colour" if not
      *                       given.
      */
-    static MeshLib::Mesh* convert(const double* img,
-                                  GeoLib::RasterHeader const& header,
-                                  MeshElemType elem_type,
-                                  UseIntensityAs intensity_type,
-                                  std::string const& array_name = "Colour");
+    static MeshLib::Mesh* convert(const double*const img,
+        GeoLib::RasterHeader const& header,
+        MeshElemType elem_type,
+        UseIntensityAs intensity_type,
+        std::string const& array_name = "Colour");
 
 private:
-    static MeshLib::Mesh* constructMesh(
-        std::vector<double> const& pix_val,
-        std::string const& array_name,
-        std::vector<bool> const& pix_vis,
-        GeoLib::RasterHeader const& header,
-        MeshLib::MeshElemType elem_type,
-        MeshLib::UseIntensityAs intensity_type);
-
-    static std::vector<MeshLib::Node*> createNodeVector(
-        std::vector<double> const& elevation,
-        std::vector<int> &node_idx_map,
-        GeoLib::RasterHeader const& header,
-        bool use_elevation);
-
-    static std::vector<MeshLib::Element*> createElementVector(
-        std::vector<bool> const& pix_vis,
-        std::vector<MeshLib::Node*> const& nodes,
-        std::vector<int> const& node_idx_map,
-        std::size_t const imgHeight,
-        std::size_t const imgWidth,
-        MeshElemType elem_type);
-
     template<typename T>
     static void fillPropertyVector(
         MeshLib::PropertyVector<T> &prop_vec,
-        std::vector<double> const& pix_val,
-        std::vector<bool> const& pix_vis,
-        const std::size_t &imgHeight,
-        const std::size_t &imgWidth,
+        double const*const img,
+        GeoLib::RasterHeader const& header,
         MeshElemType elem_type)
     {
-        for (std::size_t i = 0; i < imgHeight; i++)
-            for (std::size_t j = 0; j < imgWidth; j++)
+        for (std::size_t k = 0; k < header.n_depth; k++)
+        {
+            std::size_t const layer_idx = (k*header.n_rows*header.n_cols);
+            for (std::size_t i = 0; i < header.n_cols; i++)
             {
-                if (!pix_vis[i*imgWidth+j])
-                    continue;
-                auto val(static_cast<T>(pix_val[i * (imgWidth + 1) + j]));
-                if (elem_type == MeshElemType::TRIANGLE)
+                std::size_t idx(i * header.n_rows + layer_idx);
+                for (std::size_t j = 0; j < header.n_rows; j++)
                 {
+                    auto val(static_cast<T>(img[idx + j]));
                     prop_vec.push_back(val);
-                    prop_vec.push_back(val);
+                    if (elem_type == MeshElemType::TRIANGLE || elem_type == MeshElemType::PRISM)
+                        prop_vec.push_back(val); // because each pixel is represented by two cells
                 }
-                else if (elem_type == MeshElemType::QUAD)
-                    prop_vec.push_back(val);
             }
+        }
     }
-
-    static double getExistingValue(const double* img, std::size_t length);
 };
 
 } // end namespace MeshLib
