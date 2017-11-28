@@ -82,29 +82,31 @@ TEST(MeshLib, QuadraticOrderMesh_Quad)
             ASSERT_FALSE(mesh->isBaseNode(e->getNodeIndex(i)));
     }
 
-    auto isIn = [](MeshLib::Node const* node, std::initializer_list<std::size_t> list)
-    {
-        return list.end() != std::find(list.begin(), list.end(), node->getID());
-    };
+    auto const& mesh_nodes = mesh->getNodes();
 
-    for (MeshLib::Node const* node : mesh->getNodes())
-    {
-        if (isIn(node, {4}))
-        {
-            ASSERT_EQ(4u, node->getElements().size());
-            ASSERT_EQ(21u, node->getConnectedNodes().size());
-        }
-        else if (isIn(node, {0, 2, 6, 8, 9, 10, 11, 13, 15, 18, 19, 20}))
-        {
-            ASSERT_EQ(1u, node->getElements().size());
-            ASSERT_EQ(8u, node->getConnectedNodes().size());
-        }
-        else
-        {
-            ASSERT_EQ(2u, node->getElements().size());
-            ASSERT_EQ(13u, node->getConnectedNodes().size());
-        }
-    }
+    // Count nodes shared by four elements and also connected to all 21 other
+    // nodes.
+    ASSERT_EQ(1, std::count_if(mesh_nodes.begin(), mesh_nodes.end(),
+                               [](Node* const n) {
+                                   return (n->getElements().size() == 4) &&
+                                          (n->getConnectedNodes().size() == 21);
+                               }));
+
+    // Count nodes belonging to one element and also connected to all 8 other
+    // nodes of that corner element.
+    ASSERT_EQ(12, std::count_if(mesh_nodes.begin(), mesh_nodes.end(),
+                                [](Node* const n) {
+                                    return (n->getElements().size() == 1) &&
+                                           (n->getConnectedNodes().size() == 8);
+                                }));
+
+    // Count nodes shared by two elements and also connected to the 13 other
+    // nodes of the two elements.
+    ASSERT_EQ(8, std::count_if(mesh_nodes.begin(), mesh_nodes.end(),
+                               [](Node* const n) {
+                                   return (n->getElements().size() == 2) &&
+                                          (n->getConnectedNodes().size() == 13);
+                               }));
 }
 
 TEST(MeshLib, QuadraticOrderMesh_LineQuad)
@@ -159,32 +161,37 @@ TEST(MeshLib, QuadraticOrderMesh_LineQuad)
             ASSERT_FALSE(mesh->isBaseNode(e->getNodeIndex(i)));
     }
 
-    auto isIn = [](MeshLib::Node const* node, std::initializer_list<std::size_t> list)
-    {
-        return list.end() != std::find(list.begin(), list.end(), node->getID());
-    };
+    auto const& mesh_nodes = mesh->getNodes();
 
-    for (MeshLib::Node const* node : mesh->getNodes())
-    {
-        if (isIn(node, {4}))
-        {
-            ASSERT_EQ(6u, node->getElements().size());
-            ASSERT_EQ(21u, node->getConnectedNodes().size());
-        }
-        else if (isIn(node, {0, 2, 6, 8, 9, 10, 11, 13, 15, 18, 19, 20}))
-        {
-            ASSERT_EQ(1u, node->getElements().size());
-            ASSERT_EQ(8u, node->getConnectedNodes().size());
-        }
-        else if (isIn(node, {3, 5, 14, 16}))
-        {
-            ASSERT_EQ(3u, node->getElements().size());
-            ASSERT_EQ(13u, node->getConnectedNodes().size());
-        }
-        else
-        {
-            ASSERT_EQ(2u, node->getElements().size());
-            ASSERT_EQ(13u, node->getConnectedNodes().size());
-        }
-    }
+    // Count nodes shared by six elements and also connected to all 21 other
+    // nodes.
+    ASSERT_EQ(1, std::count_if(mesh_nodes.begin(), mesh_nodes.end(),
+                               [](Node* const n) {
+                                   return (n->getElements().size() == 6) &&
+                                          (n->getConnectedNodes().size() == 21);
+                               }));
+
+    // Count nodes belonging to one element and also connected to all 8 other
+    // nodes of that corner element.
+    ASSERT_EQ(12, std::count_if(mesh_nodes.begin(), mesh_nodes.end(),
+                                [](Node* const n) {
+                                    return (n->getElements().size() == 1) &&
+                                           (n->getConnectedNodes().size() == 8);
+                                }));
+
+    // Count nodes shared by three elements (quads and the line) and also
+    // connected to the 13 other nodes of the two elements.
+    ASSERT_EQ(4, std::count_if(mesh_nodes.begin(), mesh_nodes.end(),
+                               [](Node* const n) {
+                                   return (n->getElements().size() == 3) &&
+                                          (n->getConnectedNodes().size() == 13);
+                               }));
+
+    // Count nodes shared by two elements (quads) and also connected to the 13
+    // other nodes of the two elements.
+    ASSERT_EQ(4, std::count_if(mesh_nodes.begin(), mesh_nodes.end(),
+                               [](Node* const n) {
+                                   return (n->getElements().size() == 2) &&
+                                          (n->getConnectedNodes().size() == 13);
+                               }));
 }

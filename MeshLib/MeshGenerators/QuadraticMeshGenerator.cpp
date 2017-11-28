@@ -9,140 +9,133 @@
 
 #include "QuadraticMeshGenerator.h"
 
-#include "BaseLib/makeVectorUnique.h"
-
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/Elements/Line.h"
-#include "MeshLib/Elements/Tri.h"
-#include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tri.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
-#include "MeshLib/Properties.h"
-#include "MeshLib/PropertyVector.h"
+#include "MeshLib/Node.h"
+
+/// Given an (linear) element divide all its edges by inserting a point in the
+/// middle and return a new element.
+template <typename QuadraticElement>
+std::unique_ptr<QuadraticElement> convertLinearToQuadratic(
+    MeshLib::Element const& e)
+{
+    auto const n_all_nodes = QuadraticElement::n_all_nodes;
+    auto const n_base_nodes = QuadraticElement::n_base_nodes;
+    assert(n_base_nodes == e.getNumberOfBaseNodes());
+
+    // Copy base nodes of element to the quadratic element new nodes'.
+    std::array<MeshLib::Node*, n_all_nodes> nodes;
+    for (int i = 0; i < n_base_nodes; i++)
+        nodes[i] = const_cast<MeshLib::Node*>(e.getNode(i));
+
+    // For each edge create a middle node.
+    int const number_of_edges = e.getNumberOfEdges();
+    for (int i = 0; i < number_of_edges; i++)
+    {
+        auto const& a = *e.getEdgeNode(i, 0);
+        auto const& b = *e.getEdgeNode(i, 1);
+
+        nodes[n_base_nodes + i] = new MeshLib::Node(
+            (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2);
+    }
+
+    return std::make_unique<QuadraticElement>(nodes, e.getID());
+}
+
+/// Return a new quadratic element corresponding to the linear element's type.
+std::unique_ptr<MeshLib::Element> createQuadraticElement(
+    MeshLib::Element const& e)
+{
+    if (e.getCellType() == MeshLib::CellType::LINE2)
+    {
+        return convertLinearToQuadratic<MeshLib::Line3>(e);
+    }
+    if (e.getCellType() == MeshLib::CellType::TRI3)
+    {
+        return convertLinearToQuadratic<MeshLib::Tri6>(e);
+    }
+    if (e.getCellType() == MeshLib::CellType::QUAD4)
+    {
+        return convertLinearToQuadratic<MeshLib::Quad8>(e);
+    }
+    if (e.getCellType() == MeshLib::CellType::HEX8)
+    {
+        return convertLinearToQuadratic<MeshLib::Hex20>(e);
+    }
+
+    OGS_FATAL("Mesh element type %s is not supported",
+              MeshLib::CellType2String(e.getCellType()).c_str());
+}
+
+struct nodeByCoordinatesComparator
+{
+    bool operator()(MeshLib::Node* a, MeshLib::Node* b) const
+    {
+        return *a < *b;
+    }
+};
 
 namespace MeshLib
 {
-namespace
+std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh)
 {
+    // Clone the linear mesh nodes.
+    auto quadratic_mesh_nodes = MeshLib::copyNodeVector(linear_mesh.getNodes());
 
-struct Edge
-{
-    Edge(std::size_t id1, std::size_t id2)
-        : _id1(std::min(id1, id2)), _id2(std::max(id1, id2))
-    {}
+    // Temporary container for unique quadratic nodes with O(log(n)) search.
+    std::set<MeshLib::Node*, nodeByCoordinatesComparator> unique_nodes;
 
-    bool operator==(Edge const& r) const
+    // Create new elements with the quadratic nodes
+    std::vector<MeshLib::Element*> quadratic_elements;
+    auto const& linear_mesh_elements = linear_mesh.getElements();
+    for (MeshLib::Element const* e : linear_mesh_elements)
     {
-        return (_id1 == r._id1 && _id2 == r._id2);
+        auto quadratic_element = createQuadraticElement(*e);
+
+        // Replace the base nodes with cloned linear nodes.
+        int const number_base_nodes = quadratic_element->getNumberOfBaseNodes();
+        for (int i = 0; i < number_base_nodes; ++i)
+        {
+            quadratic_element->setNode(
+                i, quadratic_mesh_nodes[quadratic_element->getNodeIndex(i)]);
+        }
+
+        // Make the new (middle-edge) nodes unique.
+        int const number_all_nodes = quadratic_element->getNumberOfNodes();
+        for (int i = number_base_nodes; i < number_all_nodes; ++i)
+        {
+            Node* original_node =
+                const_cast<Node*>(quadratic_element->getNode(i));
+
+            auto it = unique_nodes.insert(original_node);
+            if (!it.second)  // same node was already inserted before, no
+                             // insertion
+            {
+                // Replace the element's node with the unique node.
+                quadratic_element->setNode(i, *it.first);
+                // And delete the original node
+                delete original_node;
+            }
+        }
+
+        quadratic_elements.push_back(quadratic_element.release());
     }
 
-    std::size_t _id1;
-    std::size_t _id2;
+    // Add the unique quadratic nodes to the cloned linear nodes.
+    quadratic_mesh_nodes.reserve(linear_mesh.getNodes().size() +
+                                 unique_nodes.size());
+    std::copy(unique_nodes.begin(), unique_nodes.end(),
+              std::back_inserter(quadratic_mesh_nodes));
 
-    std::size_t _edge_id = 0;
-};
-
-bool operator< (Edge const& l, Edge const& r)
-{
-    return (l._id1 != r._id1) ? (l._id1 < r._id1) : l._id2 < r._id2;
+    return std::make_unique<MeshLib::Mesh>(
+        linear_mesh.getName(), quadratic_mesh_nodes, quadratic_elements,
+        linear_mesh.getProperties().excludeCopyProperties(
+            std::vector<MeshLib::MeshItemType>(1, MeshLib::MeshItemType::Node)),
+        linear_mesh.getNumberOfNodes());
 }
 
-template <typename T_ELEMENT>
-T_ELEMENT* createQuadraticElement(
-    MeshLib::Element const* e, std::vector<Edge> const& vec_edges,
-    std::vector<MeshLib::Node*> const& vec_new_nodes,
-    const std::size_t n_mesh_base_nodes)
-{
-    auto const n_all_nodes = T_ELEMENT::n_all_nodes;
-    auto const n_base_nodes = T_ELEMENT::n_base_nodes;
-    auto** nodes = new MeshLib::Node*[n_all_nodes];
-    for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
-        nodes[i] =
-            const_cast<MeshLib::Node*>(vec_new_nodes[e->getNode(i)->getID()]);
-    for (unsigned i = 0; i < e->getNumberOfEdges(); i++)
-    {
-        auto itr = std::find(
-            vec_edges.begin(), vec_edges.end(),
-            Edge(e->getEdgeNode(i, 0)->getID(), e->getEdgeNode(i, 1)->getID()));
-        assert(itr != vec_edges.end());
-        nodes[n_base_nodes + i] =
-            vec_new_nodes[n_mesh_base_nodes + itr->_edge_id];
-    }
-    return new T_ELEMENT(nodes);
-}
-
-} // no named namespace
-
-std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& org_mesh)
-{
-    std::vector<MeshLib::Node*> vec_new_nodes = MeshLib::copyNodeVector(org_mesh.getNodes());
-
-    // collect edges
-    std::vector<Edge> vec_edges;
-    for (MeshLib::Element const* e : org_mesh.getElements())
-    {
-        for (unsigned i=0; i<e->getNumberOfEdges(); i++)
-        {
-            auto node0 = e->getEdgeNode(i, 0);
-            auto node1 = e->getEdgeNode(i, 1);
-            vec_edges.emplace_back(node0->getID(), node1->getID());
-        }
-    }
-    BaseLib::makeVectorUnique(vec_edges);
-    for (std::size_t i=0; i<vec_edges.size(); i++)
-         vec_edges[i]._edge_id = i;
-    INFO("Found %d edges in the mesh", vec_edges.size());
-
-    // create mid-point nodes
-    double coords[3];
-    for (Edge const& edge : vec_edges)
-    {
-        auto const& node0 = *vec_new_nodes[edge._id1];
-        auto const& node1 = *vec_new_nodes[edge._id2];
-        for (unsigned i=0; i<3; i++)
-            coords[i] = (node0[i] + node1[i]) * 0.5;
-        vec_new_nodes.push_back(new MeshLib::Node(coords));
-    }
-
-    // create new elements with the quadratic nodes
-    std::vector<MeshLib::Element*> vec_new_eles;
-    for (MeshLib::Element const* e : org_mesh.getElements())
-    {
-        if (e->getCellType() == MeshLib::CellType::LINE2)
-        {
-            vec_new_eles.push_back(createQuadraticElement<MeshLib::Line3>(
-                e, vec_edges, vec_new_nodes, org_mesh.getNumberOfNodes()));
-        }
-        else if (e->getCellType() == MeshLib::CellType::TRI3)
-        {
-            vec_new_eles.push_back(createQuadraticElement<MeshLib::Tri6>(
-                e, vec_edges, vec_new_nodes, org_mesh.getNumberOfNodes()));
-        }
-        else if (e->getCellType() == MeshLib::CellType::QUAD4)
-        {
-            vec_new_eles.push_back(createQuadraticElement<MeshLib::Quad8>(
-                e, vec_edges, vec_new_nodes, org_mesh.getNumberOfNodes()));
-        }
-        else if (e->getCellType() == MeshLib::CellType::HEX8)
-        {
-            vec_new_eles.push_back(createQuadraticElement<MeshLib::Hex20>(
-                e, vec_edges, vec_new_nodes, org_mesh.getNumberOfNodes()));
-        }
-        else
-        {
-            OGS_FATAL("Mesh element type %s is not supported", MeshLib::CellType2String(e->getCellType()).c_str());
-        }
-    }
-
-    std::unique_ptr<MeshLib::Mesh> new_mesh(
-        new MeshLib::Mesh(org_mesh.getName(), vec_new_nodes, vec_new_eles,
-                          org_mesh.getProperties().excludeCopyProperties(
-                              std::vector<MeshLib::MeshItemType>(
-                                  1, MeshLib::MeshItemType::Node)),
-                          org_mesh.getNumberOfNodes()));
-    return new_mesh;
-}
-
-} // namespace MeshLib
-
+}  // namespace MeshLib
