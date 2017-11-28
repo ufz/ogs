@@ -38,9 +38,9 @@ public:
     }
 
     void assembleWithJacobian(const double t, GlobalVector const& x_curr,
-                              GlobalVector const& /*xdot*/, const double dxdot_dx,
-                              const double dx_dx, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
+                              GlobalVector const& /*xdot*/,
+                              const double dxdot_dx, const double dx_dx,
+                              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
         namespace LinAlg = MathLib::LinAlg;
@@ -51,13 +51,15 @@ public:
         LinAlg::finalizeAssembly(M);
         LinAlg::copy(M, Jac);
         LinAlg::scale(Jac, dxdot_dx);
-        if (dx_dx != 0.0) {
+        if (dx_dx != 0.0)
+        {
             LinAlg::finalizeAssembly(K);
             LinAlg::axpy(Jac, dx_dx, K);
         }
     }
 
-    MathLib::MatrixSpecifications getMatrixSpecifications() const override
+    MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int /*equation_id*/) const override
     {
         return { N, N, nullptr, nullptr };
     }
@@ -140,7 +142,8 @@ public:
         }
     }
 
-    MathLib::MatrixSpecifications getMatrixSpecifications() const override
+    MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int /*equation_id*/) const override
     {
         return { N, N, nullptr, nullptr };
     }
@@ -266,7 +269,8 @@ public:
         // INFO("Det J: %e <<<", J.determinant());
     }
 
-    MathLib::MatrixSpecifications getMatrixSpecifications() const override
+    MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int /*equation_id*/) const override
     {
         return { N, N, nullptr, nullptr };
     }

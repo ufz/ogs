@@ -126,6 +126,8 @@ struct SingleProcessData
     //! cast of \c tdisc_ode_sys to NumLib::InternalMatrixStorage
     NumLib::InternalMatrixStorage* mat_strg = nullptr;
 
+    int equation_id = 0;
+
     Process& process;
     ProcessOutput process_output;
 };
@@ -183,7 +185,7 @@ void setTimeDiscretizedODESystem(
 
         spd.tdisc_ode_sys = std::make_unique<
             NumLib::TimeDiscretizedODESystem<ODETag, Tag::Picard>>(
-            ode_sys, *spd.time_disc);
+            spd.equation_id, ode_sys, *spd.time_disc);
     }
     else if (dynamic_cast<NonlinearSolverNewton*>(&spd.nonlinear_solver))
     {
@@ -194,7 +196,7 @@ void setTimeDiscretizedODESystem(
         {
             spd.tdisc_ode_sys = std::make_unique<
                 NumLib::TimeDiscretizedODESystem<ODETag, Tag::Newton>>(
-                *ode_newton, *spd.time_disc);
+                spd.equation_id, *ode_newton, *spd.time_disc);
         }
         else
         {
@@ -368,7 +370,7 @@ std::vector<GlobalVector*> setInitialConditions(
 {
     std::vector<GlobalVector*> process_solutions;
 
-    unsigned pcs_idx = 0;
+    int pcs_idx = 0;
     for (auto& spd : per_process_data)
     {
         auto& pcs = spd->process;
@@ -380,7 +382,7 @@ std::vector<GlobalVector*> setInitialConditions(
         // append a solution vector of suitable size
         process_solutions.emplace_back(
             &NumLib::GlobalVectorProvider::provider.getVector(
-                ode_sys.getMatrixSpecifications()));
+                ode_sys.getMatrixSpecifications(pcs_idx)));
 
         auto& x0 = *process_solutions[pcs_idx];
         pcs.setInitialConditions(pcs_idx, t0, x0);

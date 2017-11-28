@@ -19,7 +19,8 @@ namespace NumLib
 class MatrixSpecificationsProvider
 {
 public:
-    virtual MathLib::MatrixSpecifications getMatrixSpecifications() const = 0;
+    virtual MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int equation_id) const = 0;
 
     virtual ~MatrixSpecificationsProvider() = default;
 };

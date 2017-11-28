@@ -71,13 +71,13 @@ public:
     void setInitialConditions(const unsigned pcs_id, const double t,
                               GlobalVector& x);
 
-    MathLib::MatrixSpecifications getMatrixSpecifications() const final;
+    virtual MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int equation_id) const override;
 
     void setCoupledSolutionsForStaggeredScheme(
         CoupledSolutionsForStaggeredScheme* const coupled_solutions)
     {
         _coupled_solutions = coupled_solutions;
-
     }
 
     bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
@@ -236,9 +236,9 @@ protected:
     /// implemented in MathLib::GaussLegendre.
     unsigned const _integration_order;
 
-private:
     GlobalSparsityPattern _sparsity_pattern;
 
+private:
     /// Variables used by this process.  For the monolithic scheme or a
     /// single process, the size of the outer vector is one. For the
     /// staggered scheme, the size of the outer vector is the number of the
