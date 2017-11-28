@@ -23,8 +23,8 @@ template <typename QuadraticElement>
 std::unique_ptr<QuadraticElement> convertLinearToQuadratic(
     MeshLib::Element const& e)
 {
-    auto const n_all_nodes = QuadraticElement::n_all_nodes;
-    auto const n_base_nodes = QuadraticElement::n_base_nodes;
+    int const n_all_nodes = QuadraticElement::n_all_nodes;
+    int const n_base_nodes = QuadraticElement::n_base_nodes;
     assert(n_base_nodes == e.getNumberOfBaseNodes());
 
     // Copy base nodes of element to the quadratic element new nodes'.
