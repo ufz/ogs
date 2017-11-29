@@ -110,6 +110,10 @@ public:
     using ShapeMatricesTypePressure =
         ShapeMatrixPolicyType<ShapeFunctionPressure, DisplacementDim>;
 
+    static int const KelvinVectorSize =
+        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
+    using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
+
     HydroMechanicsLocalAssembler(HydroMechanicsLocalAssembler const&) = delete;
     HydroMechanicsLocalAssembler(HydroMechanicsLocalAssembler&&) = delete;
 
@@ -352,6 +356,13 @@ public:
             .noalias() += Kup * p;
     }
 
+    void assembleWithJacobianAndCoupling(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions) override;
+
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/,
                              double const /*delta_t*/) override
@@ -516,7 +527,8 @@ public:
 
         SpatialPosition x_position;
         x_position.setElementID(_element.getID());
-        for (unsigned ip = 0; ip < n_integration_points; ip++) {
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
             x_position.setIntegrationPoint(ip);
             double const K_over_mu =
                 _process_data.intrinsic_permeability(t, x_position)[0] /
@@ -566,6 +578,20 @@ private:
         return cache;
     }
 
+    void assembleWithJacobianForDeformationEquations(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions);
+
+    void assembleWithJacobianForPressureEquations(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions);
+
 private:
     HydroMechanicsProcessData<DisplacementDim>& _process_data;
 
@@ -595,3 +621,5 @@ private:
 
 }  // namespace HydroMechanics
 }  // namespace ProcessLib
+
+#include "HydroMechanicsFEM-impl.h"
