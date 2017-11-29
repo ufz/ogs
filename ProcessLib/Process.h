@@ -145,12 +145,21 @@ protected:
         return _extrapolator_data.getDOFTable();
     }
 
+    /// Initialize the boundary conditions for single PDE. It is called by
+    /// initializeBoundaryConditions().
+    void initializeBoundaryConditionPerPDE(
+        const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id);
+
 private:
     /// Process specific initialization called by initialize().
     virtual void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) = 0;
+
+    /// Member function to initialize the boundary conditions for all coupled
+    // PDEs. It is called by initialize().
+    virtual void initializeBoundaryConditions();
 
     virtual void preAssembleConcreteProcess(const double /*t*/,
                                             GlobalVector const& /*x*/)

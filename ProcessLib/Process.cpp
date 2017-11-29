@@ -51,6 +51,38 @@ Process::Process(
 {
 }
 
+/// Initialize the boundary conditions for single PDE
+void Process::initializeBoundaryConditionPerPDE(
+    const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id)
+{
+    auto const& per_process_variables = _process_variables[process_id];
+    auto& per_process_BCs = _boundary_conditions[process_id];
+
+    per_process_BCs.addBCsForProcessVariables(per_process_variables, dof_table,
+                                              _integration_order);
+
+    std::vector<std::unique_ptr<NodalSourceTerm>> per_process_source_terms;
+    for (std::size_t variable_id = 0;
+         variable_id < per_process_variables.size();
+         variable_id++)
+    {
+        ProcessVariable& pv = per_process_variables[variable_id];
+        auto sts = pv.createSourceTerms(dof_table, 0, _integration_order);
+
+        std::move(sts.begin(), sts.end(),
+                  std::back_inserter(per_process_source_terms));
+    }
+    _source_terms.push_back(std::move(per_process_source_terms));
+}
+
+void Process::initializeBoundaryConditions()
+{
+    for (std::size_t pcs_id = 0; pcs_id < _process_variables.size(); pcs_id++)
+    {
+        initializeBoundaryConditionPerPDE(*_local_to_global_index_map, pcs_id);
+    }
+}
+
 void Process::initialize()
 {
     DBUG("Initialize process.");
@@ -70,26 +102,7 @@ void Process::initialize()
     finishNamedFunctionsInitialization();
 
     DBUG("Initialize boundary conditions.");
-    for (std::size_t pcs_id = 0; pcs_id < _process_variables.size(); pcs_id++)
-    {
-        auto const& per_process_variables = _process_variables[pcs_id];
-        auto& per_process_BCs = _boundary_conditions[pcs_id];
-
-        per_process_BCs.addBCsForProcessVariables(per_process_variables,
-                                                  *_local_to_global_index_map,
-                                                  _integration_order);
-
-        std::vector<std::unique_ptr<NodalSourceTerm>> per_process_source_terms;
-        for (auto& pv : per_process_variables)
-        {
-            auto sts = pv.get().createSourceTerms(*_local_to_global_index_map,
-                                                  0, _integration_order);
-
-            std::move(sts.begin(), sts.end(),
-                      std::back_inserter(per_process_source_terms));
-        }
-        _source_terms.push_back(std::move(per_process_source_terms));
-    }
+    initializeBoundaryConditions();
 }
 
 void Process::setInitialConditions(const unsigned pcs_id, double const t,
