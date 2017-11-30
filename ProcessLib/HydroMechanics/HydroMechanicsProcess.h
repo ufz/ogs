@@ -48,6 +48,9 @@ public:
     bool isLinear() const override;
     //! @}
 
+    MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int equation_id) const override;
+
 private:
     void constructDofTable() override;
 
@@ -56,18 +59,20 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void assembleConcreteProcess(
-        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b) override;
+    void initializeBoundaryConditions() override;
+
+    void assembleConcreteProcess(const double t, GlobalVector const& x,
+                                 GlobalMatrix& M, GlobalMatrix& K,
+                                 GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
-    void preTimestepConcreteProcess(
-        GlobalVector const& x, double const t, double const dt,
-        const int process_id) override;
+    void preTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                    double const dt,
+                                    const int process_id) override;
 
     void postTimestepConcreteProcess(GlobalVector const& x) override;
 
@@ -80,6 +85,13 @@ private:
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
+
+    /// Sparsity pattern for the flow equation, and it is initialized only if
+    /// the staggered scheme is used.
+    GlobalSparsityPattern _sparsity_pattern_with_linear_element;
+
+    /// Solutions of the previous time step
+    std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
 };
 
 extern template class HydroMechanicsProcess<2>;

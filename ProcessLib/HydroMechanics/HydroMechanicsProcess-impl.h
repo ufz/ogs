@@ -12,6 +12,7 @@
 #include <cassert>
 
 #include "MeshLib/Elements/Utils.h"
+#include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/HydroMechanics/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
 
@@ -49,6 +50,27 @@ bool HydroMechanicsProcess<DisplacementDim>::isLinear() const
 }
 
 template <int DisplacementDim>
+MathLib::MatrixSpecifications
+HydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
+    const int equation_id) const
+{
+    // For the staggered scheme, equation_id == 1 indicates that the matrix
+    // specifications are for the momentum balance equation (deformation).
+    if (_use_monolithic_scheme || equation_id == 1)
+    {
+        auto const& l = *_local_to_global_index_map;
+        return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
+                &l.getGhostIndices(), &this->_sparsity_pattern};
+    }
+
+    // For staggered scheme and  the mass conservation balance equation
+    // (pressure).
+    auto const& l = *_local_to_global_index_map_single_component;
+    return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
+            &l.getGhostIndices(), &_sparsity_pattern_with_linear_element};
+}
+
+template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
@@ -61,22 +83,58 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 
     // Collect the mesh subsets in a vector.
 
-    // For pressure, which is the first
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
-    all_mesh_subsets.emplace_back(_mesh_subset_base_nodes.get());
+    if (_use_monolithic_scheme)
+    {
+        // For pressure, which is the first
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+        all_mesh_subsets.emplace_back(_mesh_subset_base_nodes.get());
 
-    // For displacement.
-    const int process_id = 0;
-    std::generate_n(
-        std::back_inserter(all_mesh_subsets),
-        getProcessVariables(process_id)[1].get().getNumberOfComponents(),
-        [&]() { return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}; });
+        // For displacement.
+        const int process_id = 0;
+        std::generate_n(
+            std::back_inserter(all_mesh_subsets),
+            getProcessVariables(process_id)[1].get().getNumberOfComponents(),
+            [&]() {
+                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
+            });
 
-    std::vector<int> const vec_n_components{1, DisplacementDim};
-    _local_to_global_index_map =
-        std::make_unique<NumLib::LocalToGlobalIndexMap>(
-            std::move(all_mesh_subsets), vec_n_components,
-            NumLib::ComponentOrder::BY_LOCATION);
+        std::vector<int> const vec_n_components{1, DisplacementDim};
+        _local_to_global_index_map =
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
+                std::move(all_mesh_subsets), vec_n_components,
+                NumLib::ComponentOrder::BY_LOCATION);
+    }
+    else
+    {
+        // For displacement.
+        const int process_id = 1;
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+        std::generate_n(
+            std::back_inserter(all_mesh_subsets),
+            getProcessVariables(process_id)[0].get().getNumberOfComponents(),
+            [&]() {
+                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
+            });
+
+        std::vector<int> const vec_n_components{DisplacementDim};
+        _local_to_global_index_map =
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
+                std::move(all_mesh_subsets), vec_n_components,
+                NumLib::ComponentOrder::BY_LOCATION);
+
+        // For pressure
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
+        all_mesh_subsets_single_component.emplace_back(
+            _mesh_subset_all_nodes.get());
+        _local_to_global_index_map_single_component =
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
+                std::move(all_mesh_subsets_single_component),
+                // by location order is needed for output
+                NumLib::ComponentOrder::BY_LOCATION);
+
+        _sparsity_pattern_with_linear_element = NumLib::computeSparsityPattern(
+            *_local_to_global_index_map_single_component, _mesh);
+    }
 }
 
 template <int DisplacementDim>
@@ -85,25 +143,29 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    const int process_id = 0;
+    const int mechinical_process_id = _use_monolithic_scheme ? 0 : 1;
+    const int deformation_variable_id = _use_monolithic_scheme ? 1 : 0;
     ProcessLib::HydroMechanics::createLocalAssemblers<
         DisplacementDim, HydroMechanicsLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         // use displacment process variable for shapefunction order
-        getProcessVariables(process_id)[1].get().getShapeFunctionOrder(),
+        getProcessVariables(mechinical_process_id)[deformation_variable_id].get().getShapeFunctionOrder(),
         _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
         _process_data);
 
-    // TODO move the two data members somewhere else.
-    // for extrapolation of secondary variables
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(
-        _mesh_subset_all_nodes.get());
-    _local_to_global_index_map_single_component =
-        std::make_unique<NumLib::LocalToGlobalIndexMap>(
-            std::move(all_mesh_subsets_single_component),
-            // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION);
+    if (_use_monolithic_scheme)
+    {
+        // TODO move the two data members somewhere else.
+        // for extrapolation of secondary variables.
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
+        all_mesh_subsets_single_component.emplace_back(
+            _mesh_subset_all_nodes.get());
+        _local_to_global_index_map_single_component =
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
+                std::move(all_mesh_subsets_single_component),
+                // by location order is needed for output
+                NumLib::ComponentOrder::BY_LOCATION);
+    }
 
     Base::_secondary_variables.addSecondaryVariable(
         "sigma_xx",
@@ -176,11 +238,36 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
+{
+    if (_use_monolithic_scheme)
+    {
+        const int equation_id_of_up = 0;
+        initializeBoundaryConditionPerPDE(*_local_to_global_index_map,
+                                          equation_id_of_up);
+        return;
+    }
+
+    // Staggered scheme:
+    // for the equations of pressure
+    const int equation_id_of_p = 0;
+    initializeBoundaryConditionPerPDE(
+        *_local_to_global_index_map_single_component, equation_id_of_p);
+
+    // for the equations of deformation.
+    const int equation_id_of_u = 1;
+    initializeBoundaryConditionPerPDE(*_local_to_global_index_map,
+                                      equation_id_of_u);
+}
+
+template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
     GlobalVector& b)
 {
-    DBUG("Assemble HydroMechanicsProcess.");
+    // Not available because that only the Newton-Raphson method is available
+    // for HydroMechanics
+    DBUG("Assemble the equations for HydroMechanics");
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
@@ -190,18 +277,51 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(
-        const double t, GlobalVector const& x, GlobalVector const& xdot,
-        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(const double t, GlobalVector const& x,
+                                        GlobalVector const& xdot,
+                                        const double dxdot_dx,
+                                        const double dx_dx, GlobalMatrix& M,
+                                        GlobalMatrix& K, GlobalVector& b,
+                                        GlobalMatrix& Jac)
 {
-    DBUG("AssembleJacobian HydroMechanicsProcess.");
+    // For the monolithic scheme
+    if (_use_monolithic_scheme)
+    {
+        DBUG(
+            "Assemble the Jacobian of HydroMechanics for the monolithic"
+            " scheme.");
+        // Call global assembler for each local assembly item.
+        GlobalExecutor::executeMemberDereferenced(
+            _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
+            _local_assemblers, *_local_to_global_index_map, t, x, xdot,
+            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        return;
+    }
 
-    // Call global assembler for each local assembly item.
+    // For the staggered scheme
+    setCoupledSolutionsOfPreviousTimeStep();
+    // For the equations of displacement
+    if (_coupled_solutions->process_id == 1)
+    {
+        DBUG(
+            "Assemble the Jacobian equations of mechanical process in "
+            "HydroMechanics for the staggered scheme.");
+
+        GlobalExecutor::executeMemberDereferenced(
+            _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
+            _local_assemblers, *_local_to_global_index_map, t, x, xdot,
+            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        return;
+    }
+
+    // For the equations of pressure
+    DBUG(
+        "Assemble the Jacobian equations of liquid fluid process in "
+        "HydroMechanics for the staggered scheme.");
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, *_local_to_global_index_map_single_component, t, x,
+        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
