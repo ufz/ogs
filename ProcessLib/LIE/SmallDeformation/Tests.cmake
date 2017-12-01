@@ -7,10 +7,9 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-16 RELTOL 1e-16
     DIFF_DATA
-    single_joint_3D_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_3D_pcs_0_ts_1_t_1.000000.vtu displacement displacement
-    single_joint_3D_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_3D_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1
+    single_joint_3D_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_3D_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    single_joint_3D_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_3D_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
 )
 
 AddTest(
@@ -21,10 +20,9 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-16 RELTOL 1e-16
     DIFF_DATA
-    single_joint_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_pcs_0_ts_1_t_1.000000.vtu displacement displacement
-    single_joint_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1
+    single_joint_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    single_joint_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
 )
 
 AddTest(
@@ -35,10 +33,9 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-16 RELTOL 1e-16
     DIFF_DATA
-    single_joint_inside_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_inside_pcs_0_ts_1_t_1.000000.vtu displacement displacement
-    single_joint_inside_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_inside_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1
+    single_joint_inside_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_inside_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    single_joint_inside_expected_pcs_0_ts_1_t_1.000000.vtu single_joint_inside_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
 )
 
 AddTest(
@@ -49,11 +46,10 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-16 RELTOL 1e-16
     DIFF_DATA
-    two_joints_expected_pcs_0_ts_1_t_1.000000.vtu two_joints_pcs_0_ts_1_t_1.000000.vtu displacement displacement
-    two_joints_expected_pcs_0_ts_1_t_1.000000.vtu two_joints_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1
-    two_joints_expected_pcs_0_ts_1_t_1.000000.vtu two_joints_pcs_0_ts_1_t_1.000000.vtu displacement_jump2 displacement_jump2
+    two_joints_expected_pcs_0_ts_1_t_1.000000.vtu two_joints_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    two_joints_expected_pcs_0_ts_1_t_1.000000.vtu two_joints_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
+    two_joints_expected_pcs_0_ts_1_t_1.000000.vtu two_joints_pcs_0_ts_1_t_1.000000.vtu displacement_jump2 displacement_jump2 1e-16 1e-16
 )
 
 AddTest(
@@ -64,11 +60,10 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-16 RELTOL 1e-16
     DIFF_DATA
-    expected_single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu displacement displacement
-    expected_single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1
-    expected_single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu aperture aperture
+    expected_single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    expected_single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
+    expected_single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu single_joint_negative_aperture_pcs_0_ts_1_t_1.000000.vtu aperture aperture 1e-16 1e-16
 )
 
 AddTest(
@@ -79,9 +74,8 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-16 RELTOL 1e-16
     DIFF_DATA
-    expected_single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu displacement displacement
-    expected_single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu displacement_jump1 displacement_jump1
-    expected_single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu aperture aperture
+    expected_single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    expected_single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
+    expected_single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu aperture aperture 1e-16 1e-16
 )

@@ -7,10 +7,9 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
-    sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticVec v
+    sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
+    sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticVec v 1e-8 1e-8
 )
 AddTest(
     NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
@@ -20,9 +19,8 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure
+    mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure 1e-8 1e-8
 )
 AddTest(
     NAME LiquidFlow_GravityDriven
@@ -32,10 +30,9 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
-    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu v_ref v
+    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
+    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu v_ref v 1e-8 1e-8
 )
 AddTest(
     NAME LiquidFlow_AxisymTheis
@@ -45,9 +42,8 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure
+    axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure 1e-8 1e-8
 )
 
 AddTest(
@@ -58,9 +54,8 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-6 RELTOL 1e-6
     DIFF_DATA
-    hex.vtu anisotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
+    hex.vtu anisotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure 1e-6 1e-6
 )
 
 AddTest(
@@ -71,9 +66,8 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1e-6 RELTOL 1e-6
     DIFF_DATA
-    hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure
+    hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure 1e-6 1e-6
 )
 
 # Coupling
@@ -85,11 +79,10 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1.1 RELTOL 1e-7
     DIFF_DATA
-    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu OGS5_PRESSURE1 pressure
-    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu OGS5_TEMPERATURE1 temperature
-    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu v_ref v
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu OGS5_PRESSURE1 pressure 1.1 1e-7
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu OGS5_TEMPERATURE1 temperature 1.1 1e-7
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300.000000.vtu v_ref v 1.1 1e-7
 )
 
 AddTest(
@@ -100,11 +93,10 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1.1 RELTOL 1e-6
     DIFF_DATA
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu OGS5_PRESSURE1 pressure
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu OGS5_TEMPERATURE1 temperature
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu v_ref v
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu OGS5_PRESSURE1 pressure 1.1 1e-6
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu OGS5_TEMPERATURE1 temperature 1.1 1e-6
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300.000000.vtu v_ref v 1.1 1e-6
 )
 
 AddTest(
@@ -115,10 +107,9 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1.e-3 RELTOL 1e-10
     DIFF_DATA
-    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000.000000.vtu  pressure pressure
-    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000.000000.vtu  temperature temperature
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000.000000.vtu  pressure pressure 1.e-3 1e-10
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000.000000.vtu  temperature temperature 1.e-3 1e-10
 )
 
 AddTest(
@@ -129,10 +120,9 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    ABSTOL 1.e-16 RELTOL 1e-9 ### increased RETOL for the case of lis solver
     DIFF_DATA
-    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  pressure pressure
-    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  temperature temperature
+    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  pressure pressure 1.e-16 1e-9
+    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  temperature temperature 1.e-16 1e-9
 )
 
 #===============================================================================
@@ -145,10 +135,9 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    sat1D.vtu sat_1D_pcs_0_ts_1_t_1_000000_0.vtu AnalyticPressure pressure
-#    sat1D.vtu sat_1D_pcs_0_ts_1_t_1_000000_0.vtu AnalyticVec v
+    sat1D.vtu sat_1D_pcs_0_ts_1_t_1_000000_0.vtu AnalyticPressure pressure 1e-8 1e-8
+#    sat1D.vtu sat_1D_pcs_0_ts_1_t_1_000000_0.vtu AnalyticVec v 1e-8 1e-8
 )
 AddTest(
     NAME LiquidFlow_GravityDriven
@@ -158,10 +147,9 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu AnalyticPressure pressure
-#    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu v_ref v
+    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu AnalyticPressure pressure 1e-8 1e-8
+#    mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1_000000_0.vtu v_ref v 1e-8 1e-8
 )
 AddTest(
     NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
@@ -171,9 +159,8 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1_000000_0.vtu OGS5_Results pressure
+    mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1_000000_0.vtu OGS5_Results pressure 1e-8 1e-8
 )
 AddTest(
     NAME LiquidFlow_AxisymTheis
@@ -183,9 +170,8 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-8 RELTOL 1e-8
     DIFF_DATA
-    axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728_000000_0.vtu OGS5_pressure pressure
+    axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728_000000_0.vtu OGS5_pressure pressure 1e-8 1e-8
 )
 AddTest(
     NAME LARGE_LiquidFlow_Anisotropic_GravityDriven3D
@@ -195,9 +181,8 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-6 RELTOL 1e-6
     DIFF_DATA
-    hex.vtu anisotropic_gravity_driven3D_pcs_0_ts_1_t_1_000000_0.vtu analytic_pressure pressure
+    hex.vtu anisotropic_gravity_driven3D_pcs_0_ts_1_t_1_000000_0.vtu analytic_pressure pressure 1e-6 1e-6
 )
 
 AddTest(
@@ -208,9 +193,8 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1e-6 RELTOL 1e-6
     DIFF_DATA
-    hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1_000000_0.vtu analytic_pressure pressure
+    hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1_000000_0.vtu analytic_pressure pressure 1e-6 1e-6
 )
 
 # Coupling
@@ -222,12 +206,11 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1.1 RELTOL 1e-7
     DIFF_DATA
-    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu OGS5_PRESSURE1  pressure
-    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu OGS5_TEMPERATURE1 temperature
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu OGS5_PRESSURE1  pressure 1.1 1e-7
+    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu OGS5_TEMPERATURE1 temperature 1.1 1e-7
 # To be activated when the output of velocity is correct under PETSc version.
-#    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu v_ref v
+#    mesh2D.vtu gravity_driven_pcs_1_ts_10_t_300_000000_0.vtu v_ref v 1.1 1e-7
 
 )
 
@@ -239,12 +222,11 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1.1 RELTOL 1e-7
     DIFF_DATA
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300_000000_0.vtu OGS5_PRESSURE1 pressure
-    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300_000000_0.vtu OGS5_TEMPERATURE1 temperature
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300_000000_0.vtu OGS5_PRESSURE1 pressure 1.1 1e-7
+    mesh2D.vtu gravity_driven_adaptive_dt_pcs_1_ts_10_t_300_000000_0.vtu OGS5_TEMPERATURE1 temperature 1.1 1e-7
 # To be activated when the output of velocity is correct under PETSc version.
-#    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_ref v
+#    mesh2D.vtu gravity_driven_pcs_1_ts_5_t_300_000000_0.vtu v_ref v 1.1 1e-7
 )
 AddTest(
     NAME Adaptive_dt_ThermalConvectionFlow2D
@@ -254,10 +236,9 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1.e-3 RELTOL 1e-10
     DIFF_DATA
-    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000_000000_0.vtu  pressure pressure
-    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000_000000_0.vtu  temperature temperature
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000_000000_0.vtu  pressure pressure 1.e-3 1e-10
+    ThermalConvection_pcs_1_ts_232_t_50000000000.000000_non_const_mu.vtu  ThermalConvection_pcs_1_ts_223_t_50000000000_000000_0.vtu  temperature temperature 1.e-3 1e-10
 )
 
 AddTest(
@@ -268,8 +249,7 @@ AddTest(
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
-    ABSTOL 1.e-9 RELTOL 1e-9
     DIFF_DATA
-    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000_000000_0.vtu  pressure pressure
-    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000_000000_0.vtu  temperature temperature
+    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000_000000_0.vtu  pressure pressure 1.e-9 1e-9
+    ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000.000000.vtu  ConstViscosityThermalConvection_pcs_1_ts_137_t_50000000000_000000_0.vtu  temperature temperature 1.e-9 1e-9
 )

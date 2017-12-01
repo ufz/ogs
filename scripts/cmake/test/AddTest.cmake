@@ -25,8 +25,9 @@
 #       # the given file is compared to a file with the same name from Tests/lfs-data
 #
 #   vtkdiff-tester
-#     - DIFF_DATA <vtk file> <data array a name> <data array b name>
-#       # the given data arrays in the vtk file are compared
+#     - DIFF_DATA <vtk file a> <vtk file b> <data array a name> <data array b name> <absolute tolerance> <relative tolerance>
+#       # the given data arrays in the vtk files are compared using the given
+#       absolute and relative tolerances.
 #
 
 function (AddTest)
@@ -49,12 +50,6 @@ function (AddTest)
     # set defaults
     if(NOT AddTest_EXECUTABLE)
         set(AddTest_EXECUTABLE ogs)
-    endif()
-    if (NOT AddTest_ABSTOL)
-        set (AddTest_ABSTOL 1e-16)
-    endif()
-    if (NOT AddTest_RELTOL)
-        set (AddTest_RELTOL 1e-16)
     endif()
     if (NOT AddTest_REQUIREMENTS)
         set (AddTest_REQUIREMENTS TRUE)
@@ -118,7 +113,6 @@ function (AddTest)
         set(TESTER_ARGS "-sbB")
     elseif(AddTest_TESTER STREQUAL "vtkdiff")
         set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:vtkdiff>)
-        set(TESTER_ARGS "--abs ${AddTest_ABSTOL} --rel ${AddTest_RELTOL}")
     endif()
 
     if(AddTest_TESTER STREQUAL "diff")
@@ -132,26 +126,62 @@ function (AddTest)
     elseif(AddTest_TESTER STREQUAL "vtkdiff")
         list(LENGTH AddTest_DIFF_DATA DiffDataLength)
         math(EXPR DiffDataLengthMod4 "${DiffDataLength} % 4")
-        if (NOT ${DiffDataLengthMod4} EQUAL 0)
-            message(FATAL_ERROR "For vtkdiff tester the number of diff data arguments must be a multiple of four.")
-        endif()
+        math(EXPR DiffDataLengthMod6 "${DiffDataLength} % 6")
+        if (${DiffDataLengthMod4} EQUAL 0 AND NOT ${DiffDataLengthMod6} EQUAL 0)
+            message(WARNING "DEPRECATED AddTest call with four arguments.\
+Use six arguments version of AddTest with absolute and relative tolerances")
+            if (NOT AddTest_ABSTOL)
+                set (AddTest_ABSTOL 1e-16)
+            endif()
+            if (NOT AddTest_RELTOL)
+                set (AddTest_RELTOL 1e-16)
+            endif()
+            set(TESTER_ARGS "--abs ${AddTest_ABSTOL} --rel ${AddTest_RELTOL}")
+            math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
+            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 4)
+                list(GET AddTest_DIFF_DATA "${DiffDataIndex}" REFERENCE_VTK_FILE)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_A)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+3")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_B)
 
-        math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
-        foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 4)
-            list(GET AddTest_DIFF_DATA "${DiffDataIndex}" REFERENCE_VTK_FILE)
-            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
-            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
-            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
-            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_A)
-            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+3")
-            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_B)
-
-            list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
+                list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
                 ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
                 ${AddTest_BINARY_PATH}/${VTK_FILE} \
                 -a ${NAME_A} -b ${NAME_B} \
                 ${TESTER_ARGS}")
-        endforeach()
+            endforeach()
+        elseif (${DiffDataLengthMod6} EQUAL 0)
+            if (${AddTest_ABSTOL} OR ${AddTest_RELTOL})
+                message(FATAL_ERROR "ABSTOL or RELTOL arguments must not be present.")
+            endif()
+            math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
+            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 6)
+                list(GET AddTest_DIFF_DATA "${DiffDataIndex}" REFERENCE_VTK_FILE)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_A)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+3")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_B)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+4")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOL)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+5")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
+
+                list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
+                ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
+                ${AddTest_BINARY_PATH}/${VTK_FILE} \
+                -a ${NAME_A} -b ${NAME_B} \
+                --abs ${ABS_TOL} --rel ${REL_TOL} \
+                ${TESTER_ARGS}")
+            endforeach()
+        else ()
+            message(FATAL_ERROR "For vtkdiff tester the number of diff data arguments must be a multiple of six.")
+        endif()
+
 
         string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
     elseif(tester STREQUAL "memcheck")
