@@ -86,12 +86,12 @@ public:
      * \param linear_solver the linear solver used by this nonlinear solver.
      * \param maxiter the maximum number of iterations used to solve the
      *                equation.
+     * \param damping \copydoc _damping
      */
-    explicit NonlinearSolver(
-        GlobalLinearSolver& linear_solver,
-        const unsigned maxiter)
-        : _linear_solver(linear_solver),
-          _maxiter(maxiter)
+    explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
+                             const unsigned maxiter,
+                             double const damping = 1.0)
+        : _linear_solver(linear_solver), _maxiter(maxiter), _damping(damping)
     {
     }
 
@@ -117,8 +117,11 @@ private:
     ConvergenceCriterion* _convergence_criterion = nullptr;
     const unsigned _maxiter;  //!< maximum number of iterations
 
-    double const _alpha =
-        1;  //!< Damping factor. \todo Add constructor parameter.
+    //! A positive damping factor. The default value 1.0 gives a non-damped
+    //! Newton method. Common values are in the range 0.5 to 0.7 for somewhat
+    //! conservative method and seldom become smaller than 0.2 for very
+    //! conservative approach.
+    double const _damping;
 
     std::size_t _res_id = 0u;            //!< ID of the residual vector.
     std::size_t _J_id = 0u;              //!< ID of the Jacobian matrix.
