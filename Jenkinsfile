@@ -399,6 +399,11 @@ pipeline {
           }
         }
       } // end parallel
+      post {
+        always {
+          step([$class: 'AnalysisPublisher', unstableNewAll: '1'])
+        }
+      }
     } // end stage master
   }
 }
