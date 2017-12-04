@@ -92,7 +92,9 @@ void doProcessOutput(std::string const& file_name,
         }
 
         if (output_variables.find(pv.getName()) == output_variables.cend())
+        {
             continue;
+        }
 
         already_output.insert(pv.getName());
 
@@ -225,7 +227,9 @@ void doProcessOutput(std::string const& file_name,
 #endif // USE_PETSC
 
     if (!make_output)
+    {
         return;
+    }
 
     // Write output file
     DBUG("Writing output to \'%s\'.", file_name.c_str());
@@ -233,4 +237,4 @@ void doProcessOutput(std::string const& file_name,
     vtu_interface.writeToFile(file_name);
 }
 
-} // ProcessLib
+}  // namespace ProcessLib

@@ -113,7 +113,9 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     DBUG("AssembleWithJacobian HTProcess.");
 
     if (!_use_monolithic_scheme)
+    {
         setCoupledSolutionsOfPreviousTimeStep();
+    }
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
@@ -130,7 +132,9 @@ void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
     assert(process_id < 2);
 
     if (_use_monolithic_scheme)
+    {
         return;
+    }
 
     if (!_xs_previous_timestep[process_id])
     {

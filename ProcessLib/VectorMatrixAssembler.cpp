@@ -49,7 +49,7 @@ void VectorMatrixAssembler::assemble(
     _local_K_data.clear();
     _local_b_data.clear();
 
-    if (!cpl_xs)
+    if (cpl_xs == nullptr)
     {
         auto const local_x = x.get(indices);
         local_assembler.assemble(t, local_x, _local_M_data, _local_K_data,
@@ -105,7 +105,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     _local_b_data.clear();
     _local_Jac_data.clear();
 
-    if (!cpl_xs)
+    if (cpl_xs == nullptr)
     {
         auto const local_x = x.get(indices);
         _jacobian_assembler->assembleWithJacobian(
@@ -160,4 +160,4 @@ void VectorMatrixAssembler::assembleWithJacobian(
     }
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

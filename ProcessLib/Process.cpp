@@ -172,7 +172,7 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
     assembleConcreteProcess(t, x, M, K, b);
 
     const auto pcs_id =
-        (_coupled_solutions) ? _coupled_solutions->process_id : 0;
+        (_coupled_solutions) != nullptr ? _coupled_solutions->process_id : 0;
     _boundary_conditions[pcs_id].applyNaturalBC(t, x, K, b);
 
     auto& source_terms_per_pcs = _source_terms[pcs_id];
@@ -194,9 +194,9 @@ void Process::assembleWithJacobian(const double t, GlobalVector const& x,
     assembleWithJacobianConcreteProcess(t, x, xdot, dxdot_dx, dx_dx, M, K, b,
                                         Jac);
 
-    // TODO apply BCs to Jacobian.
+    // TODO: apply BCs to Jacobian.
     const auto pcs_id =
-        (_coupled_solutions) ? _coupled_solutions->process_id : 0;
+        (_coupled_solutions) != nullptr ? _coupled_solutions->process_id : 0;
     _boundary_conditions[pcs_id].applyNaturalBC(t, x, K, b);
 }
 
@@ -226,7 +226,9 @@ void Process::constructDofTable()
 
         // Create a vector of the number of variable components
         for (ProcessVariable const& pv : _process_variables[0])
+        {
             vec_var_n_components.push_back(pv.getNumberOfComponents());
+        }
     }
     else  // for staggered scheme
     {
@@ -283,7 +285,7 @@ void Process::initializeExtrapolator()
         new NumLib::LocalLinearLeastSquaresExtrapolator(
             *dof_table_single_component));
 
-    // TODO Later on the DOF table can change during the simulation!
+    // TODO: Later on the DOF table can change during the simulation!
     _extrapolator_data = ExtrapolatorData(
         std::move(extrapolator), dof_table_single_component, manage_storage);
 }
@@ -365,7 +367,7 @@ void Process::setCoupledSolutionsOfPreviousTimeStep()
     for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
     {
         const auto x_t0 = getPreviousTimeStepSolution(i);
-        if (!x_t0)
+        if (x_t0 == nullptr)
         {
             OGS_FATAL(
                 "Memory is not allocated for the global vector "

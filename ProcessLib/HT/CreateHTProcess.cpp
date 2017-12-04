@@ -41,7 +41,7 @@ std::unique_ptr<Process> createHTProcess(
         //! \ogs_file_param{prj__processes__process__HT__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        (staggered_scheme && (*staggered_scheme == "staggered")) ? false : true;
+        !(staggered_scheme && (*staggered_scheme == "staggered"));
 
     // Process variable.
 
@@ -114,7 +114,7 @@ std::unique_ptr<Process> createHTProcess(
         //! \ogs_file_param{prj__processes__process__HT__thermal_dispersivity}
         config.getConfigSubtreeOptional("thermal_dispersivity");
     bool const has_fluid_thermal_dispersivity =
-        dispersion_config ? true : false;
+        static_cast<bool>(dispersion_config);
     if (dispersion_config)
     {
         thermal_dispersivity_longitudinal = &findParameter<double>(
@@ -157,12 +157,14 @@ std::unique_ptr<Process> createHTProcess(
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__HT__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
-    assert(b.size() > 0 && b.size() < 4);
+    assert(!b.empty() && b.size() < 4);
     if (b.size() < mesh.getDimension())
+    {
         OGS_FATAL(
             "specific body force (gravity vector) has %d components, mesh "
             "dimension is %d",
             b.size(), mesh.getDimension());
+    }
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
     if (has_gravity)
     {
@@ -181,7 +183,7 @@ std::unique_ptr<Process> createHTProcess(
     auto const solid_config =
         //! \ogs_file_param{prj__processes__process__HT__solid_thermal_expansion}
         config.getConfigSubtreeOptional("solid_thermal_expansion");
-    const bool has_fluid_thermal_expansion = solid_config ? true : false;
+    const bool has_fluid_thermal_expansion = static_cast<bool>(solid_config);
     if (solid_config)
     {
         solid_thermal_expansion = &findParameter<double>(

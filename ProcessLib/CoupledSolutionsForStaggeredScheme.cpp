@@ -60,4 +60,4 @@ std::vector<std::vector<double>> getCurrentLocalSolutions(
     return local_xs_t1;
 }
 
-}  // end of ProcessLib
+}  // namespace ProcessLib

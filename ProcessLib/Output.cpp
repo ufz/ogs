@@ -47,17 +47,23 @@ bool shallDoOutput(unsigned timestep, CountsSteps const& repeats_each_steps)
 int convertVtkDataMode(std::string const& data_mode)
 {
     if (data_mode == "Ascii")
+    {
         return 0;
+    }
     if (data_mode == "Binary")
+    {
         return 1;
+    }
     if (data_mode == "Appended")
+    {
         return 2;
+    }
     OGS_FATAL(
         "Unsupported vtk output file data mode \"%s\". Expected Ascii, "
         "Binary, or Appended.",
         data_mode.c_str());
 }
-}
+}  // namespace
 
 namespace ProcessLib
 {
@@ -174,9 +180,8 @@ void Output::doOutputAlways(Process const& process,
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
 
-    const bool make_out =
-        (process_index < _single_process_data.size() -1
-         && !(process.isMonolithicSchemeUsed())) ? false : true;
+    const bool make_out = !(process_index < _single_process_data.size() - 1 &&
+                            !(process.isMonolithicSchemeUsed()));
 
     if (make_out)
         DBUG("output to %s", output_file_path.c_str());
@@ -203,7 +208,9 @@ void Output::doOutput(Process const& process,
                       GlobalVector const& x)
 {
     if (shallDoOutput(timestep, _repeats_each_steps))
-        doOutputAlways(process, process_index,  process_output, timestep, t, x);
+    {
+        doOutputAlways(process, process_index, process_output, timestep, t, x);
+    }
 #ifdef USE_INSITU
     // Note: last time step may be output twice: here and in
     // doOutputLastTimestep() which throws a warning.
@@ -219,7 +226,9 @@ void Output::doOutputLastTimestep(Process const& process,
                                   GlobalVector const& x)
 {
     if (!shallDoOutput(timestep, _repeats_each_steps))
+    {
         doOutputAlways(process, process_index, process_output, timestep, t, x);
+    }
 #ifdef USE_INSITU
     InSituLib::CoProcess(process.getMesh(), t, timestep, true);
 #endif
@@ -232,7 +241,10 @@ void Output::doOutputNonlinearIteration(Process const& process,
                                         GlobalVector const& x,
                                         const unsigned iteration) const
 {
-    if (!_output_nonlinear_iteration_results) return;
+    if (!_output_nonlinear_iteration_results)
+    {
+        return;
+    }
 
     BaseLib::RunTime time_output;
     time_output.start();
@@ -247,9 +259,8 @@ void Output::doOutputNonlinearIteration(Process const& process,
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
     DBUG("output iteration results to %s", output_file_path.c_str());
-    const bool make_out =
-        (process_index < _single_process_data.size() -1
-         && !(process.isMonolithicSchemeUsed())) ? false : true;
+    const bool make_out = !(process_index < _single_process_data.size() - 1 &&
+                            !(process.isMonolithicSchemeUsed()));
     doProcessOutput(output_file_path, make_out, _output_file_compression,
                     _output_file_data_mode, t, x, process.getMesh(),
                     process.getDOFTable(), process.getProcessVariables(),
@@ -259,4 +270,4 @@ void Output::doOutputNonlinearIteration(Process const& process,
         INFO("[time] Output took %g s.", time_output.elapsed());
 }
 
-}
+}  // namespace ProcessLib
