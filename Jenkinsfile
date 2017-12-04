@@ -229,7 +229,8 @@ pipeline {
             always {
               publishReports { }
               warnings(canResolveRelativePaths: false,
-                  consoleParsers: [[parserName: 'MSBuild']])
+                  consoleParsers: [[parserName: 'MSBuild']],
+                  messagesPattern: '.*\\.conan.*')
             }
             failure {
                 dir('build') { deleteDir() }
