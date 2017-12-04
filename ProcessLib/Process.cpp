@@ -132,6 +132,11 @@ MathLib::MatrixSpecifications Process::getMatrixSpecifications() const
             &l.getGhostIndices(), &_sparsity_pattern};
 }
 
+void Process::preAssemble(const double t, GlobalVector const& x)
+{
+    preAssembleConcreteProcess(t, x);
+}
+
 void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                        GlobalMatrix& K, GlobalVector& b)
 {
