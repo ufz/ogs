@@ -36,10 +36,9 @@ std::vector<std::vector<double>> getPreviousLocalSolutions(
     std::vector<std::vector<double>> local_xs_t0;
     local_xs_t0.reserve(number_of_coupled_solutions);
 
-    for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
+    for (auto const& x_t0 : cpl_xs.coupled_xs_t0)
     {
-        auto const& x_t0 = *cpl_xs.coupled_xs_t0[i];
-        local_xs_t0.emplace_back(x_t0.get(indices));
+        local_xs_t0.emplace_back(x_t0->get(indices));
     }
     return local_xs_t0;
 }
@@ -52,10 +51,9 @@ std::vector<std::vector<double>> getCurrentLocalSolutions(
     std::vector<std::vector<double>> local_xs_t1;
     local_xs_t1.reserve(number_of_coupled_solutions);
 
-    for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
+    for (auto const& x_t1 : cpl_xs.coupled_xs)
     {
-        auto const& x_t1 = cpl_xs.coupled_xs[i].get();
-        local_xs_t1.emplace_back(x_t1.get(indices));
+        local_xs_t1.emplace_back(x_t1.get().get(indices));
     }
     return local_xs_t1;
 }

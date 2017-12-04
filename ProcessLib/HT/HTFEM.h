@@ -104,11 +104,10 @@ protected:
                                     const double fluid_density,
                                     const double specific_heat_capacity_fluid)
     {
-        auto const& material_properties = this->_material_properties;
         auto const specific_heat_capacity_solid =
-            material_properties.specific_heat_capacity_solid(t, pos)[0];
+            _material_properties.specific_heat_capacity_solid(t, pos)[0];
 
-        auto const solid_density = material_properties.density_solid(t, pos)[0];
+        auto const solid_density = _material_properties.density_solid(t, pos)[0];
 
         return solid_density * specific_heat_capacity_solid * (1 - porosity) +
                fluid_density * specific_heat_capacity_fluid * porosity;
@@ -119,23 +118,21 @@ protected:
         const double fluid_density, const double specific_heat_capacity_fluid,
         const GlobalDimVectorType& velocity, const GlobalDimMatrixType& I)
     {
-        auto const& material_properties = this->_material_properties;
-
         auto const thermal_conductivity_solid =
-            material_properties.thermal_conductivity_solid(t, pos)[0];
+            _material_properties.thermal_conductivity_solid(t, pos)[0];
         auto const thermal_conductivity_fluid =
-            material_properties.thermal_conductivity_fluid(t, pos)[0];
+            _material_properties.thermal_conductivity_fluid(t, pos)[0];
         double const thermal_conductivity =
             thermal_conductivity_solid * (1 - porosity) +
             thermal_conductivity_fluid * porosity;
 
-        if (!material_properties.has_fluid_thermal_dispersivity)
+        if (!_material_properties.has_fluid_thermal_dispersivity)
             return thermal_conductivity * I;
 
         double const thermal_dispersivity_longitudinal =
-            material_properties.thermal_dispersivity_longitudinal(t, pos)[0];
+            _material_properties.thermal_dispersivity_longitudinal(t, pos)[0];
         auto const thermal_dispersivity_transversal =
-            material_properties.thermal_dispersivity_transversal(t, pos)[0];
+            _material_properties.thermal_dispersivity_transversal(t, pos)[0];
 
         double const velocity_magnitude = velocity.norm();
         GlobalDimMatrixType const thermal_dispersivity =

@@ -108,7 +108,7 @@ public:
         unsigned const n_integration_points =
             this->_integration_method.getNumberOfPoints();
 
-        for (std::size_t ip(0); ip < n_integration_points; ip++)
+        for (unsigned ip(0); ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
 

@@ -37,7 +37,7 @@ Process::Process(
       _coupled_solutions(nullptr),
       _integration_order(integration_order),
       _process_variables(std::move(process_variables)),
-      _boundary_conditions([&](const size_t number_of_processes)
+      _boundary_conditions([&](const std::size_t number_of_processes)
                                -> std::vector<BoundaryConditionCollection> {
           std::vector<BoundaryConditionCollection> pcs_BCs;
           pcs_BCs.reserve(number_of_processes);
@@ -79,13 +79,10 @@ void Process::initialize()
                                                   _integration_order);
 
         std::vector<std::unique_ptr<NodalSourceTerm>> per_process_source_terms;
-        for (std::size_t variable_id = 0;
-             variable_id < per_process_variables.size();
-             variable_id++)
+        for (auto& pv : per_process_variables)
         {
-            ProcessVariable& pv = per_process_variables[variable_id];
-            auto sts = pv.createSourceTerms(*_local_to_global_index_map, 0,
-                                            _integration_order);
+            auto sts = pv.get().createSourceTerms(*_local_to_global_index_map,
+                                                  0, _integration_order);
 
             std::move(sts.begin(), sts.end(),
                       std::back_inserter(per_process_source_terms));

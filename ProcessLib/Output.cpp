@@ -123,17 +123,19 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
     return out;
 }
 
-void Output::addProcess(ProcessLib::Process const& process, const unsigned pcs_idx)
+void Output::addProcess(ProcessLib::Process const& process,
+                        const int process_id)
 {
     auto const filename =
-        BaseLib::joinPaths(_output_directory, _output_file_prefix + "_pcs_" + std::to_string(pcs_idx) + ".pvd");
+        BaseLib::joinPaths(_output_directory, _output_file_prefix + "_pcs_" +
+                            std::to_string(process_id) + ".pvd");
     _single_process_data.emplace(std::piecewise_construct,
                                  std::forward_as_tuple(&process),
                                  std::forward_as_tuple(filename));
 }
 
 Output::SingleProcessData Output::findSingleProcessData(
-    Process const& process, const unsigned process_index) const
+    Process const& process, const unsigned process_id) const
 {
     if (process.isMonolithicSchemeUsed())
     {
@@ -149,7 +151,7 @@ Output::SingleProcessData Output::findSingleProcessData(
     unsigned counter = 0;
     for (auto spd_it=spd_range.first; spd_it!=spd_range.second; ++spd_it)
     {
-        if(counter == process_index)
+        if(counter == process_id)
         {
             return spd_it->second;
         }
@@ -162,7 +164,7 @@ Output::SingleProcessData Output::findSingleProcessData(
 
 
 void Output::doOutputAlways(Process const& process,
-                            const unsigned process_index,
+                            const int process_id,
                             ProcessOutput const& process_output,
                             unsigned timestep,
                             const double t,
@@ -171,16 +173,16 @@ void Output::doOutputAlways(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    auto spd = findSingleProcessData(process, process_index);
+    auto spd = findSingleProcessData(process, process_id);
 
     std::string const output_file_name =
-            _output_file_prefix + "_pcs_" + std::to_string(process_index)
+            _output_file_prefix + "_pcs_" + std::to_string(process_id)
             + "_ts_" + std::to_string(timestep)
             + "_t_"  + std::to_string(t)
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
 
-    const bool make_out = !(process_index < _single_process_data.size() - 1 &&
+    const bool make_out = !(process_id < _single_process_data.size() - 1 &&
                             !(process.isMonolithicSchemeUsed()));
 
     if (make_out)
@@ -201,7 +203,7 @@ void Output::doOutputAlways(Process const& process,
 }
 
 void Output::doOutput(Process const& process,
-                      const unsigned process_index,
+                      const int process_id,
                       ProcessOutput const& process_output,
                       unsigned timestep,
                       const double t,
@@ -209,7 +211,7 @@ void Output::doOutput(Process const& process,
 {
     if (shallDoOutput(timestep, _repeats_each_steps))
     {
-        doOutputAlways(process, process_index, process_output, timestep, t, x);
+        doOutputAlways(process, process_id, process_output, timestep, t, x);
     }
 #ifdef USE_INSITU
     // Note: last time step may be output twice: here and in
@@ -219,7 +221,7 @@ void Output::doOutput(Process const& process,
 }
 
 void Output::doOutputLastTimestep(Process const& process,
-                                  const unsigned process_index,
+                                  const int process_id,
                                   ProcessOutput const& process_output,
                                   unsigned timestep,
                                   const double t,
@@ -227,7 +229,7 @@ void Output::doOutputLastTimestep(Process const& process,
 {
     if (!shallDoOutput(timestep, _repeats_each_steps))
     {
-        doOutputAlways(process, process_index, process_output, timestep, t, x);
+        doOutputAlways(process, process_id, process_output, timestep, t, x);
     }
 #ifdef USE_INSITU
     InSituLib::CoProcess(process.getMesh(), t, timestep, true);
@@ -235,7 +237,7 @@ void Output::doOutputLastTimestep(Process const& process,
 }
 
 void Output::doOutputNonlinearIteration(Process const& process,
-                                        const unsigned process_index,
+                                        const int process_id,
                                         ProcessOutput const& process_output,
                                         const unsigned timestep, const double t,
                                         GlobalVector const& x,
@@ -249,17 +251,17 @@ void Output::doOutputNonlinearIteration(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    findSingleProcessData(process, process_index);
+    findSingleProcessData(process, process_id);
 
     std::string const output_file_name =
-            _output_file_prefix + "_pcs_" + std::to_string(process_index)
+            _output_file_prefix + "_pcs_" + std::to_string(process_id)
             + "_ts_" + std::to_string(timestep)
             + "_t_"  + std::to_string(t)
             + "_nliter_" + std::to_string(iteration)
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
     DBUG("output iteration results to %s", output_file_path.c_str());
-    const bool make_out = !(process_index < _single_process_data.size() - 1 &&
+    const bool make_out = !(process_id < _single_process_data.size() - 1 &&
                             !(process.isMonolithicSchemeUsed()));
     doProcessOutput(output_file_path, make_out, _output_file_compression,
                     _output_file_data_mode, t, x, process.getMesh(),

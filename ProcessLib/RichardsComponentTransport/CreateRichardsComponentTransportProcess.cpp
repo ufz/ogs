@@ -62,14 +62,11 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     }
     else  // staggered scheme.
     {
-        std::array<std::string, 2> variable_names = {
-            {"concentration",
-             "pressure"}};  // double-braces required in C++11 (not in C++14)
-
-        for (int i = 0; i < 2; i++)
+        using namespace std::string_literals;
+        for (auto const& variable_name : {"concentration"s, "pressure"s})
         {
             auto per_process_variables =
-                findProcessVariables(variables, pv_config, {variable_names[i]});
+                findProcessVariables(variables, pv_config, {variable_name});
             process_variables.push_back(std::move(per_process_variables));
         }
     }
