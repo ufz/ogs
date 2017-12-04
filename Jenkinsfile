@@ -49,6 +49,10 @@ pipeline {
           post {
             always {
               publishReports { }
+              script {
+                warnings(canResolveRelativePaths: false,
+                  consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']])
+              }
             }
             failure {
                 dir('build') { deleteDir() }
@@ -224,6 +228,9 @@ pipeline {
           post {
             always {
               publishReports { }
+              warnings(canResolveRelativePaths: false,
+                  consoleParsers: [[parserName: 'MSBuild']],
+                  messagesPattern: '.*\\.conan.*')
             }
             failure {
                 dir('build') { deleteDir() }
@@ -370,6 +377,8 @@ pipeline {
           post {
             always {
               dir('build') { deleteDir() }
+              warnings(canResolveRelativePaths: false,
+                  consoleParsers: [[parserName: 'Clang (LLVM based)']])
             }
           }
         }
@@ -390,6 +399,11 @@ pipeline {
           }
         }
       } // end parallel
+      post {
+        always {
+          step([$class: 'AnalysisPublisher', unstableNewAll: '1'])
+        }
+      }
     } // end stage master
   }
 }
