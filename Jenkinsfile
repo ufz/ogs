@@ -230,7 +230,8 @@ pipeline {
               publishReports { }
               warnings(canResolveRelativePaths: false,
                   consoleParsers: [[parserName: 'MSBuild']],
-                  excludePattern: '.*\\.conan.*')
+                  excludePattern: '.*\\.conan.*',
+                  messagesPattern: '.*QVTK.*')
             }
             failure {
                 dir('build') { deleteDir() }
