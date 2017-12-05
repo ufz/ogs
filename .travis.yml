@@ -32,8 +32,8 @@ matrix:
 before_install:
   - bash scripts/travis/cmake.sh
   - bash scripts/travis/conan.sh
-  - git lfs pull --exclude "web/**,Tests/lfs-data/**"
-  - git lfs pull --include "Tests/lfs-data/FileIO/**,Tests/lfs-data/MathLib/**"
+  - git lfs pull --exclude "web/**,Tests/Data/**"
+  - git lfs pull --include "Tests/Data/FileIO/**,Tests/Data/MathLib/**"
 
 script:
   - mkdir build; cd build
