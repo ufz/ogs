@@ -13,6 +13,7 @@
 #include "HydroMechanicsLocalAssemblerFracture.h"
 
 #include "MaterialLib/FractureModels/FractureIdentity2.h"
+#include "MaterialLib/FractureModels/Permeability/CubicLawAfterShearSlip.h"
 
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
@@ -255,6 +256,20 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         mat.computeConstitutiveRelation(
             t, x_position, ip_data.aperture0, stress0, w_prev, w,
             effective_stress_prev, effective_stress, C, state);
+
+        if (ip_data.permeability_state != nullptr)
+        {
+            auto* cubic_law_after_shear_slip = dynamic_cast<
+                MaterialLib::Fracture::Permeability::CubicLawAfterShearSlip*>(
+                frac_prop.permeability_model.get());
+
+            if (cubic_law_after_shear_slip != nullptr)
+            {
+                cubic_law_after_shear_slip->setShearSlipState(
+                    *ip_data.permeability_state,
+                    state.getShearYieldFunctionValue() >= 0);
+            }
+        }
 
         auto& permeability = ip_data.permeability;
         permeability = frac_prop.permeability_model->permeability(
