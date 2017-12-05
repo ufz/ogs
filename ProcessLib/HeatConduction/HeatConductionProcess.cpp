@@ -22,7 +22,8 @@ HeatConductionProcess::HeatConductionProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
-    std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
+        process_variables,
     HeatConductionProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller)
@@ -31,23 +32,6 @@ HeatConductionProcess::HeatConductionProcess(
               std::move(secondary_variables), std::move(named_function_caller)),
       _process_data(std::move(process_data))
 {
-}
-
-void HeatConductionProcess::preTimestepConcreteProcess(GlobalVector const& x,
-                                            const double /*t*/,
-                                            const double /*delta_t*/,
-                                            const int /*process_id*/)
-{
-    if (!_x_previous_timestep)
-    {
-        _x_previous_timestep =
-            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
-    }
-    else
-    {
-        auto& x0 = *_x_previous_timestep;
-        MathLib::LinAlg::copy(x, x0);
-    }
 }
 
 void HeatConductionProcess::initializeConcreteProcess(

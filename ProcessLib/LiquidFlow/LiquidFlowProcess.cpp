@@ -20,6 +20,7 @@
 #include "LiquidFlowLocalAssembler.h"
 #include "LiquidFlowMaterialProperties.h"
 
+#include "MaterialLib/PorousMedium/Permeability/Permeability.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 
@@ -34,7 +35,8 @@ LiquidFlowProcess::LiquidFlowProcess(
     std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
-    std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
+        process_variables,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     MeshLib::PropertyVector<int> const& material_ids,
@@ -66,7 +68,7 @@ void LiquidFlowProcess::initializeConcreteProcess(
         pv.getShapeFunctionOrder(), _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _gravitational_axis_id,
         _gravitational_acceleration, _reference_temperature,
-        *_material_properties, _coupled_solutions);
+        *_material_properties);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
@@ -110,15 +112,6 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(const double t,
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, *_local_to_global_index_map, t, x,
         _coupled_solutions);
-}
-
-void LiquidFlowProcess::setCoupledSolutionsForStaggeredSchemeToLocalAssemblers()
-{
-    DBUG("Compute the velocity for LiquidFlowProcess.");
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LiquidFlowLocalAssemblerInterface::
-            setCoupledSolutionsForStaggeredScheme,
-        _local_assemblers, _coupled_solutions);
 }
 
 }  // end of namespace

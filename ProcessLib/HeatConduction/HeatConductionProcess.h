@@ -27,7 +27,7 @@ public:
             jacobian_assembler,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         unsigned const integration_order,
-        std::vector<std::reference_wrapper<ProcessVariable>>&&
+        std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         HeatConductionProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
@@ -40,16 +40,6 @@ public:
 
     void computeSecondaryVariableConcrete(
         double const t, GlobalVector const& x) override;
-
-    void preTimestepConcreteProcess(GlobalVector const& x, const double t,
-                                    const double delta_t,
-                                    const int process_id) override;
-
-    // Get the solution of the previous time step.
-    GlobalVector* getPreviousTimeStepSolution() const override
-    {
-        return _x_previous_timestep.get();
-    }
 
 private:
     void initializeConcreteProcess(

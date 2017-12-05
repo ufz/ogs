@@ -10,9 +10,7 @@
 #pragma once
 
 #include <memory>
-#include <unordered_map>
-#include <typeinfo>
-#include <typeindex>
+#include <functional>
 
 #include <logog/include/logog.hpp>
 
@@ -77,11 +75,11 @@ private:
     std::unique_ptr<NumLib::ConvergenceCriterion> _global_coupling_conv_crit;
 
     /**
-     *  Vector of solutions of coupled processes of processes.
+     *  Vector of solutions of the coupled processes.
      *  Each vector element stores the references of the solution vectors
      *  (stored in _process_solutions) of the coupled processes of a process.
      */
-    std::vector<std::unordered_map<std::type_index, GlobalVector const&>>
+    std::vector<std::reference_wrapper<GlobalVector const>>
         _solutions_of_coupled_processes;
 
     /// Solutions of the previous coupling iteration for the convergence

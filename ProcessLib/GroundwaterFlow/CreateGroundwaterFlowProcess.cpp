@@ -42,10 +42,13 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     //! \ogs_file_param{prj__processes__process__GROUNDWATER_FLOW__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
-    auto process_variables = findProcessVariables(
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        process_variables;
+    auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__GROUNDWATER_FLOW__process_variables__process_variable}
          "process_variable"});
+    process_variables.push_back(std::move(per_process_variables));
 
     // Hydraulic conductivity parameter.
     auto& hydraulic_conductivity = findParameter<double>(

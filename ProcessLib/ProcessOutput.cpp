@@ -41,6 +41,7 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
 }
 
 void doProcessOutput(std::string const& file_name,
+                     bool const make_output,
                      bool const compress_output,
                      int const data_mode,
                      const double t,
@@ -71,6 +72,7 @@ void doProcessOutput(std::string const& file_name,
     int global_component_offset = 0;
     int global_component_offset_next = 0;
 
+    const auto number_of_dof_variables = dof_table.getNumberOfVariables();
     // primary variables
     for (int variable_id = 0;
          variable_id < static_cast<int>(process_variables.size());
@@ -78,11 +80,21 @@ void doProcessOutput(std::string const& file_name,
     {
         ProcessVariable& pv = process_variables[variable_id];
         int const n_components = pv.getNumberOfComponents();
-        global_component_offset = global_component_offset_next;
-        global_component_offset_next += n_components;
+        // If (number_of_dof_variables==1), the case is either the staggered
+        // scheme being applied or a single PDE being solved.
+        const int sub_meshset_id
+            = (number_of_dof_variables==1) ? 0 : variable_id;
+
+        if (number_of_dof_variables > 1)
+        {
+            global_component_offset = global_component_offset_next;
+            global_component_offset_next += n_components;
+        }
 
         if (output_variables.find(pv.getName()) == output_variables.cend())
+        {
             continue;
+        }
 
         already_output.insert(pv.getName());
 
@@ -95,8 +107,7 @@ void doProcessOutput(std::string const& file_name,
         for (int component_id = 0; component_id < num_comp; ++component_id)
         {
             auto const& mesh_subsets =
-                dof_table.getMeshSubsets(variable_id,
-                                                           component_id);
+                dof_table.getMeshSubsets(sub_meshset_id, component_id);
             for (auto const& mesh_subset : mesh_subsets)
             {
                 auto const mesh_id = mesh_subset->getMeshID();
@@ -215,10 +226,15 @@ void doProcessOutput(std::string const& file_name,
     (void)t;
 #endif // USE_PETSC
 
+    if (!make_output)
+    {
+        return;
+    }
+
     // Write output file
     DBUG("Writing output to \'%s\'.", file_name.c_str());
     MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
     vtu_interface.writeToFile(file_name);
 }
 
-} // ProcessLib
+}  // namespace ProcessLib

@@ -13,6 +13,11 @@
 
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
+#include "HTMaterialProperties.h"
+
+#include "MonolithicHTFEM.h"
+#include "StaggeredHTFEM.h"
+
 namespace ProcessLib
 {
 namespace HT
@@ -22,13 +27,16 @@ HTProcess::HTProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
-    std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
+        process_variables,
     std::unique_ptr<HTMaterialProperties>&& material_properties,
     SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller)
+    NumLib::NamedFunctionCaller&& named_function_caller,
+    bool const use_monolithic_scheme)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller)),
+              std::move(secondary_variables), std::move(named_function_caller),
+              use_monolithic_scheme),
       _material_properties(std::move(material_properties))
 {
 }
@@ -39,10 +47,23 @@ void HTProcess::initializeConcreteProcess(
     unsigned const integration_order)
 {
     ProcessLib::ProcessVariable const& pv = getProcessVariables()[0];
-    ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        pv.getShapeFunctionOrder(), _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, *_material_properties);
+
+    if (_use_monolithic_scheme)
+    {
+        ProcessLib::createLocalAssemblers<MonolithicHTFEM>(
+            mesh.getDimension(), mesh.getElements(), dof_table,
+            pv.getShapeFunctionOrder(), _local_assemblers,
+            mesh.isAxiallySymmetric(), integration_order,
+            *_material_properties);
+    }
+    else
+    {
+        ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
+            mesh.getDimension(), mesh.getElements(), dof_table,
+            pv.getShapeFunctionOrder(), _local_assemblers,
+            mesh.isAxiallySymmetric(), integration_order,
+            *_material_properties);
+    }
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
@@ -57,7 +78,26 @@ void HTProcess::assembleConcreteProcess(const double t,
                                         GlobalMatrix& K,
                                         GlobalVector& b)
 {
-    DBUG("Assemble HTProcess.");
+    if (_use_monolithic_scheme)
+    {
+        DBUG("Assemble HTProcess.");
+    }
+    else
+    {
+        if (_coupled_solutions->process_id == 0)
+        {
+            DBUG(
+                "Assemble the equations of heat transport process within "
+                "HTProcess.");
+        }
+        else
+        {
+            DBUG(
+                "Assemble the equations of single phase fully saturated "
+                "fluid flow process within HTProcess.");
+        }
+        setCoupledSolutionsOfPreviousTimeStep();
+    }
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
@@ -72,6 +112,11 @@ void HTProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HTProcess.");
 
+    if (!_use_monolithic_scheme)
+    {
+        setCoupledSolutionsOfPreviousTimeStep();
+    }
+
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
@@ -79,6 +124,41 @@ void HTProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
+void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
+                                           const double /*t*/,
+                                           const double /*delta_t*/,
+                                           const int process_id)
+{
+    assert(process_id < 2);
+
+    if (_use_monolithic_scheme)
+    {
+        return;
+    }
+
+    if (!_xs_previous_timestep[process_id])
+    {
+        _xs_previous_timestep[process_id] =
+            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+    }
+    else
+    {
+        auto& x0 = *_xs_previous_timestep[process_id];
+        MathLib::LinAlg::copy(x, x0);
+    }
+
+    auto& x0 = *_xs_previous_timestep[process_id];
+    MathLib::LinAlg::setLocalAccessibleVector(x0);
+}
+
+void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers()
+{
+    DBUG("Set the coupled term for the staggered scheme to local assembers.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &HTLocalAssemblerInterface::setStaggeredCoupledSolutions,
+        _local_assemblers, _coupled_solutions);
+}
+
 }  // namespace HT
 }  // namespace ProcessLib
-

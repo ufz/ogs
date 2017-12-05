@@ -38,13 +38,15 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
-    std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&& process_variables,
     HydroMechanicsProcessData<GlobalDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller)
+    NumLib::NamedFunctionCaller&& named_function_caller,
+    bool const use_monolithic_scheme)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller)),
+              std::move(secondary_variables), std::move(named_function_caller),
+              use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
     INFO("[LIE/HM] looking for fracture elements in the given mesh");

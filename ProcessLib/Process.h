@@ -46,10 +46,11 @@ public:
             std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
             std::vector<std::unique_ptr<ParameterBase>> const& parameters,
             unsigned const integration_order,
-            std::vector<std::reference_wrapper<ProcessVariable>>&&
+            std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
                 process_variables,
             SecondaryVariableCollection&& secondary_variables,
-            NumLib::NamedFunctionCaller&& named_function_caller);
+            NumLib::NamedFunctionCaller&& named_function_caller,
+            const bool use_monolithic_scheme = true);
 
     /// Preprocessing before starting assembly for new timestep.
     void preTimestep(GlobalVector const& x, const double t,
@@ -67,7 +68,8 @@ public:
 
     void initialize();
 
-    void setInitialConditions(const double t, GlobalVector& x);
+    void setInitialConditions(const unsigned pcs_id, const double t,
+                              GlobalVector& x);
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const final;
 
@@ -75,11 +77,12 @@ public:
         CoupledSolutionsForStaggeredScheme* const coupled_solutions)
     {
         _coupled_solutions = coupled_solutions;
+
     }
 
+    bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
+    virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() {}
     void preAssemble(const double t, GlobalVector const& x) override final;
-
-    virtual void setCoupledSolutionsForStaggeredSchemeToLocalAssemblers() {}
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b) final;
 
@@ -92,7 +95,9 @@ public:
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const t) const final
     {
-        return _boundary_conditions.getKnownSolutions(t);
+        const auto pcs_id =
+            (_coupled_solutions) ? _coupled_solutions->process_id : 0;
+        return _boundary_conditions[pcs_id].getKnownSolutions(t);
     }
 
     NumLib::LocalToGlobalIndexMap const& getDOFTable() const
@@ -104,7 +109,9 @@ public:
     std::vector<std::reference_wrapper<ProcessVariable>> const&
     getProcessVariables() const
     {
-        return _process_variables;
+        const auto pcs_id =
+            (_coupled_solutions) ? _coupled_solutions->process_id : 0;
+        return _process_variables[pcs_id];
     }
 
     SecondaryVariableCollection const& getSecondaryVariables() const
@@ -113,12 +120,15 @@ public:
     }
 
     // Get the solution of the previous time step.
-    virtual GlobalVector* getPreviousTimeStepSolution() const
+
+    virtual GlobalVector* getPreviousTimeStepSolution(
+        const int /*process_id*/) const
     {
         return nullptr;
     }
 
     // Used as a call back for CalculateSurfaceFlux process.
+
     virtual std::vector<double> getFlux(std::size_t /*element_id*/,
                                         MathLib::Point3d const& /*p*/,
                                         GlobalVector const& /*x*/) const
@@ -211,11 +221,15 @@ protected:
 
     VectorMatrixAssembler _global_assembler;
 
+    const bool _use_monolithic_scheme;
+
     /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the
-    /// references to the
-    /// coupled processes and the references to the solutions of the coupled
-    /// processes.
+    /// references to the solutions of the coupled processes.
     CoupledSolutionsForStaggeredScheme* _coupled_solutions;
+
+    /// Set the solutions of the previous time step to the coupled term.
+    /// It only performs for the staggered scheme.
+    void setCoupledSolutionsOfPreviousTimeStep();
 
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is
@@ -225,11 +239,21 @@ protected:
 private:
     GlobalSparsityPattern _sparsity_pattern;
 
-    /// Variables used by this process.
-    std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
+    /// Variables used by this process.  For the monolithic scheme or a
+    /// single process, the size of the outer vector is one. For the
+    /// staggered scheme, the size of the outer vector is the number of the
+    /// coupled processes.
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        _process_variables;
 
-    BoundaryConditionCollection _boundary_conditions;
-    std::vector<std::unique_ptr<NodalSourceTerm>> _source_terms;
+    /// Vector for boundary conditions. For the monolithic scheme or a
+    /// single process, the size of the vector is one. For the staggered
+    /// scheme, the size of vector is the number of the coupled processes.
+    std::vector<BoundaryConditionCollection> _boundary_conditions;
+
+    /// Vector for nodal source terms. The outer vector is for processes,
+    /// which has the same size as that for boundary conditions.
+    std::vector<std::vector<std::unique_ptr<NodalSourceTerm>>> _source_terms;
 
     ExtrapolatorData _extrapolator_data;
 };

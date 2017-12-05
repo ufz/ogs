@@ -1,1 +1,0 @@
-Defines the coupled processes to a process.

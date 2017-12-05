@@ -31,7 +31,6 @@
 
 namespace ProcessLib
 {
-struct CoupledSolutionsForStaggeredScheme;
 
 namespace LiquidFlow
 {
@@ -42,28 +41,11 @@ class LiquidFlowLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    LiquidFlowLocalAssemblerInterface(
-        CoupledSolutionsForStaggeredScheme* const coupled_solutions)
-        : _coupled_solutions(coupled_solutions)
-    {
-    }
-
-    void setCoupledSolutionsForStaggeredScheme(
-        std::size_t const /*mesh_item_id*/,
-        CoupledSolutionsForStaggeredScheme* const coupled_solutions)
-    {
-        _coupled_solutions = coupled_solutions;
-    }
-
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
-
-protected:
-    /// Pointer that is set from a Process class.
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -92,10 +74,8 @@ public:
         int const gravitational_axis_id,
         double const gravitational_acceleration,
         double const reference_temperature,
-        LiquidFlowMaterialProperties const& material_propertries,
-        CoupledSolutionsForStaggeredScheme* coupled_solutions)
-        : LiquidFlowLocalAssemblerInterface(coupled_solutions),
-          _element(element),
+        LiquidFlowMaterialProperties const& material_propertries)
+        : _element(element),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
@@ -111,12 +91,6 @@ public:
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
-
-    void assembleWithCoupledTerm(
-        double const t, std::vector<double> const& local_x,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data,
-        LocalCoupledSolutions const& coupled_term) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
@@ -192,34 +166,8 @@ private:
                                  Eigen::MatrixXd const& permeability);
 
     template <typename LaplacianGravityVelocityCalculator>
-    void assembleWithCoupledWithHeatTransport(
-        const int material_id, double const t, double const dt,
-        std::vector<double> const& local_x, std::vector<double> const& local_T0,
-        std::vector<double> const& local_T1, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        SpatialPosition const& pos, Eigen::MatrixXd const& permeability);
-
-    void computeDarcyVelocity(
-        Eigen::MatrixXd const& permeability,
-        std::vector<double> const& local_x,
-        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
-
-    void computeDarcyVelocityWithCoupling(
-        Eigen::MatrixXd const& permeability, std::vector<double> const& local_x,
-        std::unordered_map<std::type_index, const std::vector<double>> const&
-            coupled_local_solutions,
-        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
-
-    template <typename LaplacianGravityVelocityCalculator>
     void computeDarcyVelocityLocal(
         std::vector<double> const& local_x,
-        Eigen::MatrixXd const& permeability,
-        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
-
-    template <typename LaplacianGravityVelocityCalculator>
-    void computeDarcyVelocityCoupledWithHeatTransportLocal(
-        std::vector<double> const& local_x,
-        std::vector<double> const& local_T,
         Eigen::MatrixXd const& permeability,
         MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
 

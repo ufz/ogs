@@ -21,6 +21,8 @@ class LocalToGlobalIndexMap;
 
 namespace ProcessLib
 {
+struct CoupledSolutionsForStaggeredScheme;
+
 class LocalAssemblerInterface;
 
 //! Utility class used to assemble global matrices and vectors.
@@ -45,7 +47,7 @@ public:
                   NumLib::LocalToGlobalIndexMap const& dof_table,
                   double const t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b,
-                  const CoupledSolutionsForStaggeredScheme* coupled_solutions);
+                  const CoupledSolutionsForStaggeredScheme* cpl_xs);
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
     //! \note The Jacobian must be assembled.
@@ -57,7 +59,7 @@ public:
                               const double dx_dx, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac,
-                              const CoupledSolutionsForStaggeredScheme* coupled_solutions);
+                              const CoupledSolutionsForStaggeredScheme* cpl_xs);
 
 private:
     // temporary data only stored here in order to avoid frequent memory

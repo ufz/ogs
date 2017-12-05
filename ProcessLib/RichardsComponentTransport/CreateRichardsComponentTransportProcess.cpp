@@ -36,18 +36,40 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
 
     DBUG("Create RichardsComponentTransportProcess.");
 
+    auto const staggered_scheme =
+        //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__coupling_scheme}
+        config.getConfigParameterOptional<std::string>("coupling_scheme");
+    const bool use_monolithic_scheme =
+        (staggered_scheme && (*staggered_scheme == "staggered")) ? false : true;
+
     // Process variable.
 
     //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
-    auto process_variables = findProcessVariables(
-        variables, pv_config,
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        process_variables;
+    if (use_monolithic_scheme)  // monolithic scheme.
+    {
+        auto per_process_variables = findProcessVariables(
+            variables, pv_config,
+            {
+            //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__concentration}
+            "concentration",
+            //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__pressure}
+            "pressure"});
+        process_variables.push_back(std::move(per_process_variables));
+    }
+    else  // staggered scheme.
+    {
+        using namespace std::string_literals;
+        for (auto const& variable_name : {"concentration"s, "pressure"s})
         {
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__concentration}
-        "concentration",
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__pressure}
-        "pressure"});
+            auto per_process_variables =
+                findProcessVariables(variables, pv_config, {variable_name});
+            process_variables.push_back(std::move(per_process_variables));
+        }
+    }
 
     auto const& porous_medium_configs =
         //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium}
@@ -146,7 +168,8 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     return std::make_unique<RichardsComponentTransportProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller));
+        std::move(secondary_variables), std::move(named_function_caller),
+        use_monolithic_scheme);
 }
 
 }  // namespace RichardsComponentTransport

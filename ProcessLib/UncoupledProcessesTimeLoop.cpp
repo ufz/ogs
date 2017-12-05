@@ -18,6 +18,7 @@
 #include "NumLib/TimeStepping/CreateTimeStepper.h"
 
 #include "MathLib/LinAlg/LinAlg.h"
+#include "CoupledSolutionsForStaggeredScheme.h"
 
 std::unique_ptr<ProcessLib::Output> createOutput(
     BaseLib::ConfigTree const& config, std::string const& output_directory)
@@ -109,8 +110,6 @@ struct SingleProcessData
         std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
         std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
         Process& process_,
-        std::unordered_map<std::type_index, Process const&>&&
-            coupled_processes_,
         ProcessOutput&& process_output_);
 
     SingleProcessData(SingleProcessData&& spd);
@@ -136,8 +135,6 @@ struct SingleProcessData
     NumLib::InternalMatrixStorage* mat_strg = nullptr;
 
     Process& process;
-    /// Coupled processes.
-    std::unordered_map<std::type_index, Process const&> const coupled_processes;
     ProcessOutput process_output;
 };
 
@@ -148,7 +145,6 @@ SingleProcessData::SingleProcessData(
     std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
     std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
     Process& process_,
-    std::unordered_map<std::type_index, Process const&>&& coupled_processes_,
     ProcessOutput&& process_output_)
     : timestepper(std::move(timestepper_)),
       nonlinear_solver_tag(NLTag),
@@ -157,7 +153,6 @@ SingleProcessData::SingleProcessData(
       conv_crit(std::move(conv_crit_)),
       time_disc(std::move(time_disc_)),
       process(process_),
-      coupled_processes(coupled_processes_),
       process_output(std::move(process_output_))
 {
 }
@@ -172,7 +167,6 @@ SingleProcessData::SingleProcessData(SingleProcessData&& spd)
       tdisc_ode_sys(std::move(spd.tdisc_ode_sys)),
       mat_strg(spd.mat_strg),
       process(spd.process),
-      coupled_processes(spd.coupled_processes),
       process_output(std::move(spd.process_output))
 {
     spd.mat_strg = nullptr;
@@ -237,7 +231,6 @@ std::unique_ptr<SingleProcessData> makeSingleProcessData(
     Process& process,
     std::unique_ptr<NumLib::TimeDiscretization>&& time_disc,
     std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit,
-    std::unordered_map<std::type_index, Process const&>&& coupled_processes,
     ProcessOutput&& process_output)
 {
     using Tag = NumLib::NonlinearSolverTag;
@@ -249,7 +242,7 @@ std::unique_ptr<SingleProcessData> makeSingleProcessData(
         return std::make_unique<SingleProcessData>(
             std::move(timestepper), *nonlinear_solver_picard,
             std::move(conv_crit), std::move(time_disc), process,
-            std::move(coupled_processes), std::move(process_output));
+            std::move(process_output));
     }
     if (auto* nonlinear_solver_newton =
             dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
@@ -258,7 +251,7 @@ std::unique_ptr<SingleProcessData> makeSingleProcessData(
         return std::make_unique<SingleProcessData>(
             std::move(timestepper), *nonlinear_solver_newton,
             std::move(conv_crit), std::move(time_disc), process,
-            std::move(coupled_processes), std::move(process_output));
+            std::move(process_output));
     }
 
     OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
@@ -300,45 +293,29 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
             //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion}
             pcs_config.getConfigSubtree("convergence_criterion"));
 
-        auto const& coupled_process_tree
-            //! \ogs_file_param{prj__time_loop__processes__process__coupled_processes}
-            = pcs_config.getConfigSubtreeOptional("coupled_processes");
-        std::unordered_map<std::type_index, Process const&> coupled_processes;
-        if (coupled_process_tree)
-        {
-            for (
-                auto const cpl_pcs_name :
-                //! \ogs_file_param{prj__time_loop__processes__process__coupled_processes__coupled_process}
-                coupled_process_tree->getConfigParameterList<std::string>(
-                    "coupled_process"))
-            {
-                auto const& coupled_process = *BaseLib::getOrError(
-                    processes, cpl_pcs_name,
-                    "A process with the given name has not been defined.");
-
-                auto const inserted = coupled_processes.emplace(
-                    std::type_index(typeid(coupled_process)), coupled_process);
-                if (!inserted.second)
-                {  // insertion failed, i.e., key already exists
-                    OGS_FATAL("Coupled process `%s' already exists.",
-                              cpl_pcs_name.data());
-                }
-            }
-        }
-
         //! \ogs_file_param{prj__time_loop__processes__process__output}
         ProcessOutput process_output{pcs_config.getConfigSubtree("output")};
 
         per_process_data.emplace_back(makeSingleProcessData(
             std::move(timestepper), nl_slv, pcs, std::move(time_disc),
-            std::move(conv_crit), std::move(coupled_processes),
-            std::move(process_output)));
+            std::move(conv_crit), std::move(process_output)));
     }
 
     if (per_process_data.size() != processes.size())
-        OGS_FATAL(
-            "Some processes have not been configured to be solved by this time "
-            "time loop.");
+    {
+        if (processes.size() > 1)
+        {
+            OGS_FATAL(
+                "Some processes have not been configured to be solved by this "
+                " time loop.");
+        }
+        else
+        {
+            INFO(
+                "The equations of the coupled processes will be solved by the "
+                "staggered scheme.")
+        }
+    }
 
     return per_process_data;
 }
@@ -413,7 +390,7 @@ std::vector<GlobalVector*> setInitialConditions(
                 ode_sys.getMatrixSpecifications()));
 
         auto& x0 = *process_solutions[pcs_idx];
-        pcs.setInitialConditions(t0, x0);
+        pcs.setInitialConditions(pcs_idx, t0, x0);
         MathLib::LinAlg::finalizeAssembly(x0);
 
         time_disc.setInitialState(t0, x0);  // push IC
@@ -427,7 +404,8 @@ std::vector<GlobalVector*> setInitialConditions(
             setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
             nonlinear_solver.assemble(x0);
             time_disc.pushState(
-                t0, x0, mat_strg);  // TODO: that might do duplicate work
+                t0, x0,
+                mat_strg);  // TODO: that might do duplicate work
         }
 
         ++pcs_idx;
@@ -436,7 +414,8 @@ std::vector<GlobalVector*> setInitialConditions(
     return process_solutions;
 }
 
-bool solveOneTimeStepOneProcess(GlobalVector& x, std::size_t const timestep,
+bool solveOneTimeStepOneProcess(const unsigned process_index,
+                                GlobalVector& x, std::size_t const timestep,
                                 double const t, double const delta_t,
                                 SingleProcessData& process_data,
                                 Output const& output_control)
@@ -462,7 +441,8 @@ bool solveOneTimeStepOneProcess(GlobalVector& x, std::size_t const timestep,
     auto const post_iteration_callback = [&](unsigned iteration,
                                              GlobalVector const& x) {
         output_control.doOutputNonlinearIteration(
-            process, process_data.process_output, timestep, t, x, iteration);
+            process, process_index, process_data.process_output, timestep, t,
+            x, iteration);
     };
 
     bool nonlinear_solver_succeeded =
@@ -488,56 +468,29 @@ UncoupledProcessesTimeLoop::UncoupledProcessesTimeLoop(
 
 bool UncoupledProcessesTimeLoop::setCoupledSolutions()
 {
-    // Do nothing if process are not coupled
-    if ((!_global_coupling_conv_crit) || _global_coupling_max_iterations == 1)
-        return false;
-
-    unsigned pcs_idx = 0;
-    _solutions_of_coupled_processes.reserve(_per_process_data.size());
-    for (auto& spd : _per_process_data)
+    // All _per_process_data share one process
+    const bool use_monolithic_scheme =
+        _per_process_data[0]->process.isMonolithicSchemeUsed();
+    if (use_monolithic_scheme)
     {
-        auto const& coupled_processes = spd->coupled_processes;
-        std::unordered_map<std::type_index, GlobalVector const&> coupled_xs;
-        for (auto const& coupled_process_pair : coupled_processes)
-        {
-            ProcessLib::Process const& coupled_process =
-                coupled_process_pair.second;
-            auto const found_item = std::find_if(
-                _per_process_data.begin(),
-                _per_process_data.end(),
-                [&coupled_process](
-                    std::unique_ptr<SingleProcessData> const& item) {
-                    auto const& item_process = item->process;
-                    return std::type_index(typeid(coupled_process)) ==
-                           std::type_index(typeid(item_process));
-                });
+        return false;
+    }
 
-            if (found_item != _per_process_data.end())
-            {
-                // Id of the coupled process:
-                const std::size_t c_id =
-                    std::distance(_per_process_data.begin(), found_item);
-
-                BaseLib::insertIfTypeIndexKeyUniqueElseError(
-                    coupled_xs, coupled_process_pair.first,
-                    *_process_solutions[c_id], "global_coupled_x");
-            }
-        }
-        _solutions_of_coupled_processes.emplace_back(coupled_xs);
-
+    _solutions_of_coupled_processes.reserve(_per_process_data.size());
+    for (unsigned pcs_idx = 0; pcs_idx < _per_process_data.size(); pcs_idx++)
+    {
         auto const& x = *_process_solutions[pcs_idx];
+        _solutions_of_coupled_processes.emplace_back(x);
 
         // Create a vector to store the solution of the last coupling iteration
-        auto& x_coupling0 = NumLib::GlobalVectorProvider::provider.getVector(x);
-        MathLib::LinAlg::copy(x, x_coupling0);
+        auto& x0 = NumLib::GlobalVectorProvider::provider.getVector(x);
+        MathLib::LinAlg::copy(x, x0);
 
         // append a solution vector of suitable size
-        _solutions_of_last_cpl_iteration.emplace_back(&x_coupling0);
+        _solutions_of_last_cpl_iteration.emplace_back(&x0);
+    }
 
-        ++pcs_idx;
-    }  // end of for (auto& spd : _per_process_data)
-
-    return true;
+    return true;  // use staggered scheme.
 }
 
 double UncoupledProcessesTimeLoop::computeTimeStepping(
@@ -575,7 +528,9 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
                 : 0.;
 
         if (!ppd.nonlinear_solver_converged)
+        {
             timestepper->setAcceptedOrNot(false);
+        }
 
         if (!timestepper->next(solution_error) &&
             // In case of FixedTimeStepping, which makes timestepper->next(...)
@@ -632,7 +587,9 @@ double UncoupledProcessesTimeLoop::computeTimeStepping(
         timestepper->resetCurrentTimeStep(dt);
 
         if (ppd.skip_time_stepping)
+        {
             continue;
+        }
 
         if (t == timestepper->begin())
         {
@@ -747,16 +704,20 @@ bool UncoupledProcessesTimeLoop::loop()
         const double prev_dt = dt;
 
         const std::size_t timesteps = accepted_steps + 1;
-        // TODO, input option for time unit.
+        // TODO(wenqing): , input option for time unit.
         INFO("=== Time stepping at step #%u and time %g with step size %g",
              timesteps, t, dt);
 
         if (is_staggered_coupling)
+        {
             nonlinear_solver_succeeded =
                 solveCoupledEquationSystemsByStaggeredScheme(t, dt, timesteps);
+        }
         else
+        {
             nonlinear_solver_succeeded =
                 solveUncoupledEquationSystems(t, dt, timesteps);
+        }
 
         INFO("[time] Time step #%u took %g s.", timesteps,
              time_timestep.elapsed());
@@ -765,7 +726,9 @@ bool UncoupledProcessesTimeLoop::loop()
 
         if (t + dt > _end_time ||
             t + std::numeric_limits<double>::epsilon() > _end_time)
+        {
             break;
+        }
 
         if (dt < std::numeric_limits<double>::epsilon())
         {
@@ -823,7 +786,7 @@ static std::string nonlinear_fixed_dt_fails_info =
 bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
     const double t, const double dt, const std::size_t timestep_id)
 {
-    // TODO use process name
+    // TODO(wenqing): use process name
     unsigned pcs_idx = 0;
     for (auto& spd : _per_process_data)
     {
@@ -842,7 +805,7 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
         pcs.preTimestep(x, t, dt, pcs_idx);
 
         const auto nonlinear_solver_succeeded =
-            solveOneTimeStepOneProcess(x, timestep_id, t, dt, *spd, *_output);
+            solveOneTimeStepOneProcess(pcs_idx, x, timestep_id, t, dt, *spd, *_output);
         spd->nonlinear_solver_converged = nonlinear_solver_succeeded;
         pcs.postTimestep(x);
         pcs.computeSecondaryVariable(t, x);
@@ -857,7 +820,7 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
                 timestep_id, t, pcs_idx);
 
             // save unsuccessful solution
-            _output->doOutputAlways(pcs, spd->process_output, timestep_id, t,
+            _output->doOutputAlways(pcs, pcs_idx, spd->process_output, timestep_id, t,
                                     x);
 
             if (!spd->timestepper->isSolutionErrorComputationNeeded())
@@ -868,7 +831,7 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
             return false;
         }
 
-        _output->doOutput(pcs, spd->process_output, timestep_id, t, x);
+        _output->doOutput(pcs, pcs_idx, spd->process_output, timestep_id, t, x);
 
         ++pcs_idx;
     }  // end of for (auto& spd : _per_process_data)
@@ -890,7 +853,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
          global_coupling_iteration < _global_coupling_max_iterations;
          global_coupling_iteration++, _global_coupling_conv_crit->reset())
     {
-        // TODO use process name
+        // TODO(wenqing): use process name
         bool nonlinear_solver_succeeded = true;
         coupling_iteration_converged = true;
         unsigned pcs_idx = 0;
@@ -917,14 +880,13 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             }
 
             CoupledSolutionsForStaggeredScheme coupled_solutions(
-                spd->coupled_processes,
-                _solutions_of_coupled_processes[pcs_idx], dt);
+                _solutions_of_coupled_processes, dt, pcs_idx);
 
             spd->process.setCoupledSolutionsForStaggeredScheme(
                 &coupled_solutions);
 
             const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
-                x, timestep_id, t, dt, *spd, *_output);
+                pcs_idx, x, timestep_id, t, dt, *spd, *_output);
             spd->nonlinear_solver_converged = nonlinear_solver_succeeded;
 
             INFO(
@@ -941,7 +903,8 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                     timestep_id, t, pcs_idx);
 
                 // save unsuccessful solution
-                _output->doOutputAlways(spd->process, spd->process_output,
+                _output->doOutputAlways(spd->process, pcs_idx,
+                                        spd->process_output,
                                         timestep_id, t, x);
 
                 if (!spd->timestepper->isSolutionErrorComputationNeeded())
@@ -960,15 +923,20 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 coupling_iteration_converged &&
                 _global_coupling_conv_crit->isSatisfied();
 
-            if (coupling_iteration_converged)
-                break;
             MathLib::LinAlg::copy(x, x_old);
+
+            if (coupling_iteration_converged)
+            {
+                break;
+            }
 
             ++pcs_idx;
         }  // end of for (auto& spd : _per_process_data)
 
         if (coupling_iteration_converged)
+        {
             break;
+        }
 
         if (!nonlinear_solver_succeeded)
         {
@@ -1031,24 +999,27 @@ void UncoupledProcessesTimeLoop::outputSolutions(
         auto const& x = *_process_solutions[pcs_idx];
 
         if (output_initial_condition)
+        {
             pcs.preTimestep(x, _start_time,
                             spd->timestepper->getTimeStep().dt(), pcs_idx);
+        }
         if (is_staggered_coupling)
         {
             CoupledSolutionsForStaggeredScheme coupled_solutions(
-                spd->coupled_processes,
-                _solutions_of_coupled_processes[pcs_idx], 0.0);
+                _solutions_of_coupled_processes, 0.0, pcs_idx);
 
             spd->process.setCoupledSolutionsForStaggeredScheme(
                 &coupled_solutions);
-            spd->process
-                .setCoupledSolutionsForStaggeredSchemeToLocalAssemblers();
-            (output_object.*output_class_member)(pcs, spd->process_output,
+            spd->process.setCoupledTermForTheStaggeredSchemeToLocalAssemblers();
+            (output_object.*output_class_member)(pcs, pcs_idx,
+                                                 spd->process_output,
                                                  timestep, t, x);
         }
         else
-            (output_object.*output_class_member)(pcs, spd->process_output,
-                                                 timestep, t, x);
+        {
+            (output_object.*output_class_member)(
+                pcs, pcs_idx, spd->process_output, timestep, t, x);
+        }
 
         ++pcs_idx;
     }
@@ -1057,10 +1028,14 @@ void UncoupledProcessesTimeLoop::outputSolutions(
 UncoupledProcessesTimeLoop::~UncoupledProcessesTimeLoop()
 {
     for (auto* x : _process_solutions)
+    {
         NumLib::GlobalVectorProvider::provider.releaseVector(*x);
+    }
 
     for (auto* x : _solutions_of_last_cpl_iteration)
+    {
         NumLib::GlobalVectorProvider::provider.releaseVector(*x);
+    }
 }
 
 }  // namespace ProcessLib

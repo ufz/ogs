@@ -36,41 +36,68 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     config.checkConfigParameter("type", "THERMO_MECHANICS");
     DBUG("Create ThermoMechanicsProcess.");
 
+     auto const staggered_scheme =
+        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__coupling_scheme}
+        config.getConfigParameterOptional<std::string>("coupling_scheme");
+    const bool use_monolithic_scheme =
+        (staggered_scheme && (*staggered_scheme == "staggered")) ? false : true;
+
     // Process variable.
 
     //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
-    auto process_variables = findProcessVariables(
-        variables, pv_config,
-        {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__temperature}
-         "temperature",
-         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__displacement}
-         "displacement"});
+    ProcessVariable* variable_T;
+    ProcessVariable* variable_u;
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
+        process_variables;
+    if (use_monolithic_scheme)  // monolithic scheme.
+    {
+        auto per_process_variables = findProcessVariables(
+            variables, pv_config,
+          {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__temperature}
+             "temperature",
+            //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__displacement}
+             "displacement"});
+        variable_T = &per_process_variables[0].get();
+        variable_u = &per_process_variables[1].get();
+        process_variables.push_back(std::move(per_process_variables));
+    }
+    else  // staggered scheme.
+    {
+        using namespace std::string_literals;
+        for (auto const& variable_name : {"temperature"s, "displacement"s})
+        {
+            auto per_process_variables =
+                findProcessVariables(variables, pv_config, {variable_name});
+            process_variables.push_back(std::move(per_process_variables));
+        }
+        variable_T = &process_variables[0][0].get();
+        variable_u = &process_variables[1][0].get();
+    }
 
     DBUG("Associate displacement with process variable \'%s\'.",
-         process_variables[1].get().getName().c_str());
+         variable_u->getName().c_str());
 
-    if (process_variables[1].get().getNumberOfComponents() != DisplacementDim)
+    if (variable_u->getNumberOfComponents() != DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '%s' is different "
             "from the displacement dimension: got %d, expected %d",
-            process_variables[1].get().getName().c_str(),
-            process_variables[1].get().getNumberOfComponents(),
+            variable_u->getName().c_str(),
+            variable_u->getNumberOfComponents(),
             DisplacementDim);
     }
 
     DBUG("Associate temperature with process variable \'%s\'.",
-         process_variables[0].get().getName().c_str());
-    if (process_variables[0].get().getNumberOfComponents() != 1)
+         variable_T->getName().c_str());
+    if (variable_T->getNumberOfComponents() != 1)
     {
         OGS_FATAL(
-            "Temperature process variable '%s' is not a scalar variable but has "
+            "Pressure process variable '%s' is not a scalar variable but has "
             "%d components.",
-            process_variables[0].get().getName().c_str(),
-            process_variables[0].get().getNumberOfComponents(),
-            DisplacementDim);
+            variable_T->getName().c_str(),
+            variable_T->getNumberOfComponents());
     }
 
     // Constitutive relation.
@@ -179,7 +206,8 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     return std::make_unique<ThermoMechanicsProcess<DisplacementDim>>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller));
+        std::move(secondary_variables), std::move(named_function_caller),
+        use_monolithic_scheme);
 }
 
 template std::unique_ptr<Process> createThermoMechanicsProcess<2>(
