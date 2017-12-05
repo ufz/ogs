@@ -102,3 +102,8 @@ conan_cmake_run(REQUIRES ${CONAN_REQUIRES}
                 UPDATE
                 BUILD ${OGS_CONAN_BUILD}
 )
+
+if(NOT ${OGS_CONAN_BUILD} MATCHES "never|always|missing")
+    message(STATUS "Warning: Resetting CMake variable OGS_CONAN_BUILD to its default value of 'missing'")
+    set(OGS_CONAN_BUILD "missing" CACHE INTERNAL "")
+endif()
