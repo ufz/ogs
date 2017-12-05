@@ -216,7 +216,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         auto const& w_prev = ip_data.w_prev;
         auto& C = ip_data.C;
         auto& state = *ip_data.material_state_variables;
-        auto& b = ip_data.aperture;
+        auto& b_m = ip_data.aperture;
         auto q = ip_data.darcy_velocity.head(GlobalDim);
 
         double const S = (*frac_prop.specific_storage)(t, x_position)[0];
@@ -228,12 +228,12 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         w.noalias() = R * H_g * nodal_g;
 
         // aperture
-        b = ip_data.aperture0 + w[index_normal];
-        if (b < 0.0)
+        b_m = ip_data.aperture0 + w[index_normal];
+        if (b_m < 0.0)
             OGS_FATAL(
                 "Element %d, gp %d: Fracture aperture is %g, but it must be "
                 "non-negative.",
-                _element.getID(), ip, b);
+                _element.getID(), ip, b_m);
 
         auto const initial_effective_stress =
             _process_data.initial_fracture_effective_stress(0, x_position);
@@ -247,13 +247,13 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             effective_stress_prev, effective_stress, C, state);
 
         // permeability
-        double const local_k = b * b / 12;
+        double const local_k = b_m * b_m / 12;
         ip_data.permeability = local_k;
         local_k_tensor.diagonal().head(GlobalDim - 1).setConstant(local_k);
         GlobalDimMatrix const k = R.transpose() * local_k_tensor * R;
 
         // derivative of permeability respect to aperture
-        double const local_dk_db = b / 6.;
+        double const local_dk_db = b_m / 6.;
         local_dk_db_tensor.diagonal()
             .head(GlobalDim - 1)
             .setConstant(local_dk_db);
@@ -280,10 +280,11 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         //
         // pressure equation, pressure part.
         //
-        storage_p.noalias() += N_p.transpose() * b * S * N_p * ip_w;
-        laplace_p.noalias() += dNdx_p.transpose() * b * k / mu * dNdx_p * ip_w;
+        storage_p.noalias() += N_p.transpose() * b_m * S * N_p * ip_w;
+        laplace_p.noalias() +=
+            dNdx_p.transpose() * b_m * k / mu * dNdx_p * ip_w;
         rhs_p.noalias() +=
-            dNdx_p.transpose() * b * k / mu * rho_fr * gravity_vec * ip_w;
+            dNdx_p.transpose() * b_m * k / mu * rho_fr * gravity_vec * ip_w;
 
         //
         // pressure equation, displacement jump part.
@@ -293,8 +294,8 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         J_pg.noalias() +=
             N_p.transpose() * S * N_p * nodal_p_dot * mT_R_Hg * ip_w;
         J_pg.noalias() += -dNdx_p.transpose() * q * mT_R_Hg * ip_w;
-        J_pg.noalias() += -dNdx_p.transpose() * b * (-dk_db / mu * grad_head) *
-                          mT_R_Hg * ip_w;
+        J_pg.noalias() += -dNdx_p.transpose() * b_m *
+                          (-dk_db / mu * grad_head) * mT_R_Hg * ip_w;
     }
 
     // displacement equation, pressure part
@@ -355,7 +356,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         auto const& w_prev = ip_data.w_prev;
         auto& C = ip_data.C;
         auto& state = *ip_data.material_state_variables;
-        auto& b = ip_data.aperture;
+        auto& b_m = ip_data.aperture;
         auto q = ip_data.darcy_velocity.head(GlobalDim);
         double const mu = _process_data.fluid_viscosity(t, x_position)[0];
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
@@ -364,12 +365,12 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         w.noalias() = R * H_g * nodal_g;
 
         // aperture
-        b = ip_data.aperture0 + w[index_normal];
-        if (b < 0.0)
+        b_m = ip_data.aperture0 + w[index_normal];
+        if (b_m < 0.0)
             OGS_FATAL(
                 "Element %d, gp %d: Fracture aperture is %g, but it must be "
                 "non-negative.",
-                _element.getID(), ip, b);
+                _element.getID(), ip, b_m);
 
         auto const initial_effective_stress =
             _process_data.initial_fracture_effective_stress(0, x_position);
@@ -383,7 +384,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             effective_stress_prev, effective_stress, C, state);
 
         // permeability
-        double const local_k = b * b / 12;
+        double const local_k = b_m * b_m / 12;
         ip_data.permeability = local_k;
         local_k_tensor.diagonal().head(GlobalDim - 1).setConstant(local_k);
         GlobalDimMatrix const k = R.transpose() * local_k_tensor * R;
