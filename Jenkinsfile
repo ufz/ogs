@@ -393,7 +393,7 @@ pipeline {
                     credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
                     url: 'https://github.com/ufz/ogs-data']]])
                 sh 'rsync -av --delete --exclude .git/ ../ogs/Tests/Data/ .'
-                sh "git add . && git commit -m 'Update'"
+                sh "git diff --quiet && git diff --staged --quiet || git commit -am 'Update'"
                 withCredentials([usernamePassword(
                   credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
                   passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
