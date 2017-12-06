@@ -42,7 +42,12 @@ if(DEFINED OGS_WEB_BASE_URL)
 endif()
 
 if(DEFINED ENV{JENKINS_URL})
-    set(HUGO_ARGS ${HUGO_ARGS} --canonifyURLs)
+    if($ENV{JOB_NAME} STREQUAL "ufz/ogs/master")
+        set(HUGO_BASE_URL "https://benchmarks.opengeosys.org")
+    else()
+        set(HUGO_BASE_URL "$ENV{JOB_URL}Web/")
+    endif()
+    set(HUGO_ARGS ${HUGO_ARGS} --baseURL ${HUGO_BASE_URL} --canonifyURLs)
 endif()
 
 add_custom_target(web

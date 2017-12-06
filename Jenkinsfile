@@ -35,10 +35,7 @@ pipeline {
                 sudo -H pip install -r requirements.txt
                 """.stripIndent())
 
-              configure { cmakeOptions =
-                '-DOGS_CPU_ARCHITECTURE=generic ' +
-                '-DOGS_WEB_BASE_URL=$JOB_URL"Web/" ' // TODO: or '-DOGS_WEB_BASE_URL=https://dev.opengeosys.org'
-              }
+              configure { cmakeOptions = '-DOGS_CPU_ARCHITECTURE=generic ' }
               build { }
               build { target="tests" }
               build { target="ctest" }
