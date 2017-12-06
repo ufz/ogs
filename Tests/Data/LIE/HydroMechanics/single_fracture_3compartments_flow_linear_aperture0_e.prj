@@ -39,6 +39,9 @@
                 <initial_aperture>aperture0</initial_aperture>
                 <specific_storage>S_f</specific_storage>
                 <biot_coefficient>biot_f</biot_coefficient>
+                <permeability_model>
+                    <type>CubicLaw</type>
+                </permeability_model>
             </fracture_properties>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
             <deactivate_matrix_in_flow>true</deactivate_matrix_in_flow>
