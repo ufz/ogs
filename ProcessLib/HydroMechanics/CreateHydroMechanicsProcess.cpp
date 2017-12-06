@@ -187,11 +187,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             config.getConfigParameter<std::vector<double>>(
                 "specific_body_force");
         if (b.size() != DisplacementDim)
+        {
             OGS_FATAL(
                 "The size of the specific body force vector does not match the "
                 "displacement dimension. Vector size is %d, displacement "
                 "dimension is %d",
                 b.size(), DisplacementDim);
+        }
 
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
