@@ -12,9 +12,9 @@
 #include <cassert>
 
 #include "MeshLib/Elements/Utils.h"
+#include "ProcessLib/HydroMechanics/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
 
-#include "CreateLocalAssemblers.h"
 #include "HydroMechanicsFEM.h"
 #include "HydroMechanicsProcessData.h"
 
@@ -66,9 +66,10 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
     all_mesh_subsets.emplace_back(_mesh_subset_base_nodes.get());
 
     // For displacement.
+    const int process_id = 0;
     std::generate_n(
         std::back_inserter(all_mesh_subsets),
-        getProcessVariables()[1].get().getNumberOfComponents(),
+        getProcessVariables(process_id)[1].get().getNumberOfComponents(),
         [&]() { return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}; });
 
     std::vector<int> const vec_n_components{1, DisplacementDim};
@@ -84,10 +85,12 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    createLocalAssemblers<DisplacementDim, HydroMechanicsLocalAssembler>(
+    const int process_id = 0;
+    ProcessLib::HydroMechanics::createLocalAssemblers<
+        DisplacementDim, HydroMechanicsLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         // use displacment process variable for shapefunction order
-        getProcessVariables()[1].get().getShapeFunctionOrder(),
+        getProcessVariables(process_id)[1].get().getShapeFunctionOrder(),
         _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
         _process_data);
 

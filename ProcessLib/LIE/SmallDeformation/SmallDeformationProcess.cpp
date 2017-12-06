@@ -99,7 +99,8 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
 
     // need to use a custom Neumann BC assembler for displacement jumps
     int pv_disp_jump_id = 0;
-    for (ProcessVariable& pv : getProcessVariables())
+    const int process_id = 0;
+    for (ProcessVariable& pv : getProcessVariables(process_id))
     {
         if (pv.getName().find("displacement_jump") == std::string::npos)
         {

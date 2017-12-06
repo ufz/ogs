@@ -107,11 +107,9 @@ public:
 
     MeshLib::Mesh& getMesh() const { return _mesh; }
     std::vector<std::reference_wrapper<ProcessVariable>> const&
-    getProcessVariables() const
+    getProcessVariables(const int process_id) const
     {
-        const auto pcs_id =
-            (_coupled_solutions) ? _coupled_solutions->process_id : 0;
-        return _process_variables[pcs_id];
+        return _process_variables[process_id];
     }
 
     SecondaryVariableCollection const& getSecondaryVariables() const

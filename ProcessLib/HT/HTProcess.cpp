@@ -46,7 +46,10 @@ void HTProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    ProcessLib::ProcessVariable const& pv = getProcessVariables()[0];
+    // For the staggered scheme, both processes are assumed to use the same
+    // element order.
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     if (_use_monolithic_scheme)
     {

@@ -69,9 +69,12 @@ public:
             MeshLib::addPropertyToMesh(*_balance_mesh, _balance_pv_name,
                                        MeshLib::MeshItemType::Cell, 1,
                                        init_values);
+            const int process_id = 0;
             auto balance = ProcessLib::CalculateSurfaceFlux(
                 *_balance_mesh,
-                getProcessVariables()[0].get().getNumberOfComponents(),
+                getProcessVariables(process_id)[0]
+                    .get()
+                    .getNumberOfComponents(),
                 _integration_order);
 
             auto* const balance_pv =

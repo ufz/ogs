@@ -81,7 +81,8 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     }
 
     // need to use a custom Neumann BC assembler for displacement jumps
-    for (ProcessVariable& pv : getProcessVariables())
+    const int process_id = 0;
+    for (ProcessVariable& pv : getProcessVariables(process_id))
     {
         if (pv.getName().find("displacement_jump") == std::string::npos)
             continue;
@@ -111,7 +112,8 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
             std::make_unique<MeshLib::ElementStatus>(&mesh,
                                                      vec_p_inactive_matIDs);
 
-        ProcessVariable const& pv_p = getProcessVariables()[0];
+        const int process_id = 0;
+        ProcessVariable const& pv_p = getProcessVariables(process_id)[0];
         _process_data.p0 = &pv_p.getInitialCondition();
     }
 }
@@ -192,13 +194,14 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 {
     assert(mesh.getDimension() == GlobalDim);
     INFO("[LIE/HM] creating local assemblers");
+    const int process_id = 0;
     ProcessLib::LIE::HydroMechanics::createLocalAssemblers<
         GlobalDim, HydroMechanicsLocalAssemblerMatrix,
         HydroMechanicsLocalAssemblerMatrixNearFracture,
         HydroMechanicsLocalAssemblerFracture>(
         mesh.getElements(), dof_table,
         // use displacment process variable for shapefunction order
-        getProcessVariables()[1].get().getShapeFunctionOrder(),
+        getProcessVariables(process_id)[1].get().getShapeFunctionOrder(),
         _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
         _process_data);
 
@@ -420,11 +423,15 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     {
         int global_component_offset_next = 0;
         int global_component_offset = 0;
+
+        const int process_id = 0;
         for (int variable_id = 0;
-             variable_id < static_cast<int>(this->getProcessVariables().size());
+             variable_id <
+             static_cast<int>(this->getProcessVariables(process_id).size());
              ++variable_id)
         {
-            ProcessVariable& pv = this->getProcessVariables()[variable_id];
+            ProcessVariable& pv =
+                this->getProcessVariables(process_id)[variable_id];
             int const n_components = pv.getNumberOfComponents();
             global_component_offset = global_component_offset_next;
             global_component_offset_next += n_components;
@@ -439,7 +446,9 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
 
     MathLib::LinAlg::setLocalAccessibleVector(x);
 
-    ProcessVariable& pv_g = this->getProcessVariables()[g_variable_id];
+    const int process_id = 0;
+    ProcessVariable& pv_g =
+        this->getProcessVariables(process_id)[g_variable_id];
     auto& mesh_prop_g = pv_g.getOrCreateMeshProperty();
     auto const num_comp = pv_g.getNumberOfComponents();
     for (int component_id = 0; component_id < num_comp; ++component_id)
