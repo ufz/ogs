@@ -61,7 +61,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                           IntegrationMethod, GlobalDim>(e, is_axially_symmetric,
                                                         integration_method);
 
-    auto const& frac_prop = *_process_data.fracture_property.get();
+    auto const& frac_prop = *_process_data.fracture_property;
 
     SpatialPosition x_position;
     x_position.setElementID(e.getID());
@@ -164,7 +164,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         Eigen::Ref<Eigen::MatrixXd>
             J_gp)
 {
-    FractureProperty const& frac_prop = *_process_data.fracture_property;
+    auto const& frac_prop = *_process_data.fracture_property;
     auto const& R = frac_prop.R;
     double const& dt = _process_data.dt;
 
@@ -326,7 +326,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     auto const nodal_p = local_x.segment(pressure_index, pressure_size);
     auto const nodal_g = local_x.segment(displacement_index, displacement_size);
 
-    FractureProperty const& frac_prop = *_process_data.fracture_property;
+    auto const& frac_prop = *_process_data.fracture_property;
     auto const& R = frac_prop.R;
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector

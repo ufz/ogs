@@ -36,6 +36,12 @@ struct FractureProperty
     Eigen::MatrixXd R;
     /// Initial aperture
     ProcessLib::Parameter<double> const* aperture0 = nullptr;
+
+    virtual ~FractureProperty() = default;
+};
+
+struct FracturePropertyHM : public FractureProperty
+{
     ProcessLib::Parameter<double> const* specific_storage = nullptr;
     ProcessLib::Parameter<double> const* biot_coefficient = nullptr;
 };

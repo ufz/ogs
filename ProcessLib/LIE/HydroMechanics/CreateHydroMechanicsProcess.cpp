@@ -257,7 +257,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     }
 
     // Fracture properties
-    std::unique_ptr<FractureProperty> frac_prop = nullptr;
+    std::unique_ptr<FracturePropertyHM> frac_prop = nullptr;
     auto opt_fracture_properties_config =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties}
         config.getConfigSubtreeOptional("fracture_properties");
@@ -265,7 +265,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     {
         auto& fracture_properties_config = *opt_fracture_properties_config;
 
-        frac_prop = std::make_unique<ProcessLib::LIE::FractureProperty>();
+        frac_prop = std::make_unique<ProcessLib::LIE::FracturePropertyHM>();
         frac_prop->mat_id =
             //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__material_id}
             fracture_properties_config.getConfigParameter<int>("material_id");
