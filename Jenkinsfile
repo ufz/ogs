@@ -380,6 +380,29 @@ pipeline {
             }
           }
         }
+        // ********************* Update ufz/ogs-data ***************************
+        stage('Update ogs-data') {
+          agent any
+          steps {
+            script {
+              dir('ogs') { checkout scm }
+              dir('ogs-data') {
+                checkout(changelog: false, poll: false, scm: [$class: 'GitSCM',
+                  extensions: [[$class: 'CloneOption', shallow: true]],
+                  userRemoteConfigs: [[
+                    credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
+                    url: 'https://github.com/ufz/ogs-data']]])
+                sh 'rsync -av --delete --exclude .git/ ../ogs/Tests/Data/ .'
+                sh "git add . && git commit -m 'Update'"
+                withCredentials([usernamePassword(
+                  credentialsId: '2719b702-1298-4e87-8464-5dfc62fbd923',
+                  passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                  sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ufz/ogs-data HEAD:master'
+                }
+              }
+            }
+          }
+        }
         // *************************** Post ************************************
         stage('Post') {
           agent any
