@@ -323,7 +323,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     computeSecondaryVariableConcreteWithVector(const double t,
                                                Eigen::VectorXd const& local_x)
 {
-    auto const nodal_p = local_x.segment(pressure_index, pressure_size);
     auto const nodal_g = local_x.segment(displacement_index, displacement_size);
 
     auto const& frac_prop = *_process_data.fracture_property;
@@ -331,12 +330,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector
     auto const index_normal = GlobalDim - 1;
-
-    using GlobalDimMatrix = Eigen::Matrix<double, GlobalDim, GlobalDim>;
-    using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
-    GlobalDimMatrix local_k_tensor = GlobalDimMatrix::Zero();
-
-    auto const& gravity_vec = _process_data.specific_body_force;
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -348,7 +341,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
         auto& ip_data = _ip_data[ip];
         auto const& H_g = ip_data.H_u;
-        auto const& dNdx_p = ip_data.dNdx_p;
         auto& mat = ip_data.fracture_material;
         auto& effective_stress = ip_data.sigma_eff;
         auto const& effective_stress_prev = ip_data.sigma_eff_prev;
@@ -357,9 +349,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         auto& C = ip_data.C;
         auto& state = *ip_data.material_state_variables;
         auto& b_m = ip_data.aperture;
-        auto q = ip_data.darcy_velocity.head(GlobalDim);
-        double const mu = _process_data.fluid_viscosity(t, x_position)[0];
-        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
 
         // displacement jumps in local coordinates
         w.noalias() = R * H_g * nodal_g;
@@ -382,16 +371,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         mat.computeConstitutiveRelation(
             t, x_position, ip_data.aperture0, stress0, w_prev, w,
             effective_stress_prev, effective_stress, C, state);
-
-        // permeability
-        double const local_k = ip_data.permeability;
-        local_k_tensor.diagonal().head(GlobalDim - 1).setConstant(local_k);
-        GlobalDimMatrix const k = R.transpose() * local_k_tensor * R;
-
-        // velocity
-        GlobalDimVector const grad_head =
-            dNdx_p * nodal_p + rho_fr * gravity_vec;
-        q.noalias() = -k / mu * grad_head;
     }
 
     double ele_b = 0;
