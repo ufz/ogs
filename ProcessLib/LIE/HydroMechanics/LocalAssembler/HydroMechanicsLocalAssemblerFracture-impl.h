@@ -384,8 +384,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             effective_stress_prev, effective_stress, C, state);
 
         // permeability
-        double const local_k = b_m * b_m / 12;
-        ip_data.permeability = local_k;
+        double const local_k = ip_data.permeability;
         local_k_tensor.diagonal().head(GlobalDim - 1).setConstant(local_k);
         GlobalDimMatrix const k = R.transpose() * local_k_tensor * R;
 
