@@ -14,6 +14,11 @@
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 
+namespace NumLib
+{
+class LocalToGlobalIndexMap;
+}
+
 namespace ProcessLib
 {
 namespace HT
@@ -89,6 +94,9 @@ private:
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,
                                     double const dt,
                                     const int process_id) override;
+
+    NumLib::LocalToGlobalIndexMap* getDOFTableForExtrapolatorData(
+        bool& manage_storage) const override;
 
     const std::unique_ptr<HTMaterialProperties> _material_properties;
 

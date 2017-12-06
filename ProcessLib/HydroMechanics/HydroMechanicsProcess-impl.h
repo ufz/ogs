@@ -18,6 +18,7 @@
 
 #include "HydroMechanicsFEM.h"
 #include "HydroMechanicsProcessData.h"
+#include "HydroMechanicsProcess.h"
 
 namespace ProcessLib
 {
@@ -82,6 +83,16 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
         std::make_unique<MeshLib::MeshSubset>(_mesh, &_base_nodes);
 
     // Collect the mesh subsets in a vector.
+    // For pressure equation in the monolithic scheme, or for the extrapolation
+    // calculation in the monolithic scheme.
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
+    all_mesh_subsets_single_component.emplace_back(
+        _mesh_subset_all_nodes.get());
+    _local_to_global_index_map_single_component =
+        std::make_unique<NumLib::LocalToGlobalIndexMap>(
+            std::move(all_mesh_subsets_single_component),
+            // by location order is needed for output
+            NumLib::ComponentOrder::BY_LOCATION);
 
     if (_use_monolithic_scheme)
     {
@@ -106,7 +117,7 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
     }
     else
     {
-        // For displacement.
+        // For displacement equation.
         const int process_id = 1;
         std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
         std::generate_n(
@@ -122,16 +133,7 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
                 std::move(all_mesh_subsets), vec_n_components,
                 NumLib::ComponentOrder::BY_LOCATION);
 
-        // For pressure
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-        all_mesh_subsets_single_component.emplace_back(
-            _mesh_subset_all_nodes.get());
-        _local_to_global_index_map_single_component =
-            std::make_unique<NumLib::LocalToGlobalIndexMap>(
-                std::move(all_mesh_subsets_single_component),
-                // by location order is needed for output
-                NumLib::ComponentOrder::BY_LOCATION);
-
+        // For pressure equation.
         _sparsity_pattern_with_linear_element = NumLib::computeSparsityPattern(
             *_local_to_global_index_map_single_component, _mesh);
     }
@@ -149,23 +151,11 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         DisplacementDim, HydroMechanicsLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         // use displacment process variable for shapefunction order
-        getProcessVariables(mechinical_process_id)[deformation_variable_id].get().getShapeFunctionOrder(),
+        getProcessVariables(mechinical_process_id)[deformation_variable_id]
+            .get()
+            .getShapeFunctionOrder(),
         _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
         _process_data);
-
-    if (_use_monolithic_scheme)
-    {
-        // TODO move the two data members somewhere else.
-        // for extrapolation of secondary variables.
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-        all_mesh_subsets_single_component.emplace_back(
-            _mesh_subset_all_nodes.get());
-        _local_to_global_index_map_single_component =
-            std::make_unique<NumLib::LocalToGlobalIndexMap>(
-                std::move(all_mesh_subsets_single_component),
-                // by location order is needed for output
-                NumLib::ComponentOrder::BY_LOCATION);
-    }
 
     Base::_secondary_variables.addSecondaryVariable(
         "sigma_xx",
@@ -349,5 +339,11 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
         *_local_to_global_index_map, x);
 }
 
+template <int DisplacementDim>
+NumLib::LocalToGlobalIndexMap* HydroMechanicsProcess<DisplacementDim>::
+    getDOFTableForExtrapolatorData(bool& manage_storage) const
+{
+    return _local_to_global_index_map_single_component.get();
+}
 }  // namespace HydroMechanics
 }  // namespace ProcessLib

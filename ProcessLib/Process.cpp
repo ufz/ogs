@@ -266,33 +266,36 @@ void Process::constructDofTable()
             NumLib::ComponentOrder::BY_LOCATION);
 }
 
-void Process::initializeExtrapolator()
+NumLib::LocalToGlobalIndexMap* Process::getDOFTableForExtrapolatorData(
+    bool& manage_storage) const
 {
-    NumLib::LocalToGlobalIndexMap const* dof_table_single_component;
-    bool manage_storage;
-
-    if (_local_to_global_index_map->getNumberOfComponents() == 1 ||
-        !_use_monolithic_scheme)
+    if (_local_to_global_index_map->getNumberOfComponents() == 1)
     {
         // For single-variable-single-component processes reuse the existing DOF
         // table.
-        dof_table_single_component = _local_to_global_index_map.get();
         manage_storage = false;
-    }
-    else
-    {
-        // Otherwise construct a new DOF table.
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-        all_mesh_subsets_single_component.emplace_back(
-            _mesh_subset_all_nodes.get());
-
-        dof_table_single_component = new NumLib::LocalToGlobalIndexMap(
-            std::move(all_mesh_subsets_single_component),
-            // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION);
-        manage_storage = true;
+        return _local_to_global_index_map.get();
     }
 
+    // Otherwise construct a new DOF table.
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
+    all_mesh_subsets_single_component.emplace_back(
+        _mesh_subset_all_nodes.get());
+
+    manage_storage = true;
+
+    return new NumLib::LocalToGlobalIndexMap(
+        std::move(all_mesh_subsets_single_component),
+        // by location order is needed for output
+        NumLib::ComponentOrder::BY_LOCATION);
+}
+
+void Process::initializeExtrapolator()
+{
+    bool manage_storage;
+
+    NumLib::LocalToGlobalIndexMap const* dof_table_single_component =
+        getDOFTableForExtrapolatorData(manage_storage);
     std::unique_ptr<NumLib::Extrapolator> extrapolator(
         new NumLib::LocalLinearLeastSquaresExtrapolator(
             *dof_table_single_component));

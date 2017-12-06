@@ -202,6 +202,9 @@ private:
 protected:
     virtual void constructDofTable();
 
+    virtual NumLib::LocalToGlobalIndexMap* getDOFTableForExtrapolatorData(
+        bool& manage_storage) const;
+
 private:
     void initializeExtrapolator();
 

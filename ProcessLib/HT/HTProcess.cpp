@@ -11,6 +11,8 @@
 
 #include <cassert>
 
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
+
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 #include "HTMaterialProperties.h"
@@ -161,6 +163,30 @@ void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers()
     GlobalExecutor::executeMemberOnDereferenced(
         &HTLocalAssemblerInterface::setStaggeredCoupledSolutions,
         _local_assemblers, _coupled_solutions);
+}
+
+NumLib::LocalToGlobalIndexMap* HTProcess::getDOFTableForExtrapolatorData(
+    bool& manage_storage) const
+{
+    if (!_use_monolithic_scheme)
+    {
+        // For single-variable-single-component processes reuse the existing DOF
+        // table.
+        manage_storage = false;
+        return _local_to_global_index_map.get();
+    }
+
+    // Otherwise construct a new DOF table.
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
+    all_mesh_subsets_single_component.emplace_back(
+        _mesh_subset_all_nodes.get());
+
+    manage_storage = true;
+
+    return new NumLib::LocalToGlobalIndexMap(
+        std::move(all_mesh_subsets_single_component),
+        // by location order is needed for output
+        NumLib::ComponentOrder::BY_LOCATION);
 }
 
 }  // namespace HT
