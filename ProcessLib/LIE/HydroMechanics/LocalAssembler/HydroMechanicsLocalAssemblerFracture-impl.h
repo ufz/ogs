@@ -188,7 +188,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
     using GlobalDimMatrix = Eigen::Matrix<double, GlobalDim, GlobalDim>;
     using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
-    GlobalDimMatrix local_k_tensor = GlobalDimMatrix::Zero();
     GlobalDimMatrix local_dk_db_tensor = GlobalDimMatrix::Zero();
 
     auto const& gravity_vec = _process_data.specific_body_force;
@@ -217,7 +216,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         auto& C = ip_data.C;
         auto& state = *ip_data.material_state_variables;
         auto& b_m = ip_data.aperture;
-        auto q = ip_data.darcy_velocity.head(GlobalDim);
 
         double const S = (*frac_prop.specific_storage)(t, x_position)[0];
         double const mu = _process_data.fluid_viscosity(t, x_position)[0];
@@ -249,8 +247,10 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         // permeability
         double const local_k = b_m * b_m / 12;
         ip_data.permeability = local_k;
-        local_k_tensor.diagonal().head(GlobalDim - 1).setConstant(local_k);
-        GlobalDimMatrix const k = R.transpose() * local_k_tensor * R;
+        GlobalDimVector local_k_tensor = GlobalDimVector::Zero();
+        local_k_tensor.head(GlobalDim - 1).setConstant(local_k);
+        GlobalDimMatrix const k =
+            R.transpose() * local_k_tensor.asDiagonal() * R;
 
         // derivative of permeability respect to aperture
         double const local_dk_db = b_m / 6.;
@@ -260,9 +260,8 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         GlobalDimMatrix const dk_db = R.transpose() * local_dk_db_tensor * R;
 
         // velocity
-        GlobalDimVector const grad_head =
-            dNdx_p * nodal_p + rho_fr * gravity_vec;
-        q.noalias() = -k / mu * grad_head;
+        GlobalDimVector const grad_head_over_mu =
+            (dNdx_p * nodal_p + rho_fr * gravity_vec) / mu;
 
         //
         // displacement equation, displacement jump part
@@ -293,9 +292,10 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             identity2.transpose() * R * H_g;
         J_pg.noalias() +=
             N_p.transpose() * S * N_p * nodal_p_dot * mT_R_Hg * ip_w;
-        J_pg.noalias() += -dNdx_p.transpose() * q * mT_R_Hg * ip_w;
-        J_pg.noalias() += -dNdx_p.transpose() * b_m *
-                          (-dk_db / mu * grad_head) * mT_R_Hg * ip_w;
+        J_pg.noalias() +=
+            dNdx_p.transpose() * k * grad_head_over_mu * mT_R_Hg * ip_w;
+        J_pg.noalias() += dNdx_p.transpose() * b_m * dk_db * grad_head_over_mu *
+                          mT_R_Hg * ip_w;
     }
 
     // displacement equation, pressure part
