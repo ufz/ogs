@@ -78,7 +78,7 @@ add_custom_target(
     DEPENDS ogs vtkdiff ctest-large-cleanup
 )
 set_directory_properties(PROPERTIES
-    ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_BINARY_DIR}/Tests/lfs-data
+    ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_BINARY_DIR}/Tests/Data
 )
 
 set_target_properties(ctest PROPERTIES FOLDER Testing)
