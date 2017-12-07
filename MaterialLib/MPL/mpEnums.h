@@ -15,6 +15,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/variant.hpp>
+#include <array>
 #include <cstddef>
 #include <string>
 #include "BaseLib/Error.h"
