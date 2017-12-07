@@ -118,14 +118,6 @@ public:
         return _secondary_variables;
     }
 
-    // Get the solution of the previous time step.
-
-    virtual GlobalVector* getPreviousTimeStepSolution(
-        const int /*process_id*/) const
-    {
-        return nullptr;
-    }
-
     // Used as a call back for CalculateSurfaceFlux process.
 
     virtual std::vector<double> getFlux(std::size_t /*element_id*/,
@@ -237,10 +229,6 @@ protected:
     /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the
     /// references to the solutions of the coupled processes.
     CoupledSolutionsForStaggeredScheme* _coupled_solutions;
-
-    /// Set the solutions of the previous time step to the coupled term.
-    /// It only performs for the staggered scheme.
-    void setCoupledSolutionsOfPreviousTimeStep();
 
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is

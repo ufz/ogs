@@ -67,13 +67,6 @@ public:
     bool isLinear() const override { return false; }
     //! @}
 
-    // Get the solution of the previous time step.
-    GlobalVector* getPreviousTimeStepSolution(
-        const int process_id) const override
-    {
-        return _xs_previous_timestep[process_id].get();
-    }
-
     void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() override;
 
 private:
@@ -94,6 +87,10 @@ private:
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,
                                     double const dt,
                                     const int process_id) override;
+
+    /// Set the solutions of the previous time step to the coupled term.
+    /// It only performs for the staggered scheme.
+    void setCoupledSolutionsOfPreviousTimeStep();
 
     NumLib::LocalToGlobalIndexMap* getDOFTableForExtrapolatorData(
         bool& manage_storage) const override;

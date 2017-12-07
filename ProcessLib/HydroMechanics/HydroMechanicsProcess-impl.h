@@ -289,7 +289,6 @@ void HydroMechanicsProcess<DisplacementDim>::
     }
 
     // For the staggered scheme
-    setCoupledSolutionsOfPreviousTimeStep();
     // For the equations of displacement
     if (_coupled_solutions->process_id == 1)
     {

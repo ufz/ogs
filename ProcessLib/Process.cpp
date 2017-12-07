@@ -375,27 +375,4 @@ NumLib::IterationResult Process::postIteration(const GlobalVector& x)
     return postIterationConcreteProcess(x);
 }
 
-void Process::setCoupledSolutionsOfPreviousTimeStep()
-{
-    const auto number_of_coupled_solutions =
-        _coupled_solutions->coupled_xs.size();
-    _coupled_solutions->coupled_xs_t0.reserve(number_of_coupled_solutions);
-    for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
-    {
-        const auto x_t0 = getPreviousTimeStepSolution(i);
-        if (x_t0 == nullptr)
-        {
-            OGS_FATAL(
-                "Memory is not allocated for the global vector "
-                "of the solution of the previous time step for the ."
-                "staggered scheme.\n It can be done by overloading "
-                "Process::preTimestepConcreteProcess"
-                "(ref. HTProcess::preTimestepConcreteProcess) ");
-        }
-
-        MathLib::LinAlg::setLocalAccessibleVector(*x_t0);
-        _coupled_solutions->coupled_xs_t0.emplace_back(x_t0);
-    }
-}
-
 }  // namespace ProcessLib
