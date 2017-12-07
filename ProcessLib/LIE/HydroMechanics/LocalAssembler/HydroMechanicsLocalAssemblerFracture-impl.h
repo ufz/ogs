@@ -170,7 +170,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector
-    auto const index_normal = GlobalDim - 1;
+    auto constexpr index_normal = GlobalDim - 1;
 
     typename ShapeMatricesTypePressure::NodalMatrixType laplace_p =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
@@ -329,7 +329,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     auto const& R = frac_prop.R;
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector
-    auto const index_normal = GlobalDim - 1;
+    auto constexpr index_normal = GlobalDim - 1;
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
