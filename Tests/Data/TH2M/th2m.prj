@@ -3,209 +3,209 @@
     <mesh>line_60_heat.vtu</mesh>
     <geometry>line_60_heat.gml</geometry>
     <media>
-    	<medium>  <!-- First (and in this example only) medium, i.e. the porous medium -->
-    		<phases>
-    			<phase>
-    			<!-- First solid phase. There are (there have to be?) as many solid phases 
-    				 as material groups!-->
-    				<name>solid</name> <!-- phase name is optional at the moment... -->
-    				<components>
-    					<!-- different solids within the same elements are realized via
-    					     components. -->
-    					<component>
-    						<!-- Components can have names, too. If no name is given, a 
-    							 custom (unspecified) component is created. All required 
-    							 properties have to be specified in the following subtree. -->
-    						<properties>
-    							<property>
-    								<!-- Properties must have names and types. Name in this 
-    									 context implies the sort of the property, such as
-    									 density, viscosity, and so on... -->
-    								<name>thermal_conductivity</name>
-    								<!-- The type of the property refers to the method which
-    									 is used to compute/obtain the property. This type is
-    									 either the name of a specific function or 'constant'.-->
-    								<type>constant</type>
-    								<!-- If the property type is set to 'constant', it is necessary
-    									 to supply a corresponding value. Otherwise, an error will 
-    									 be thrown -->
-    								<value>0.654</value>
-    							</property>
-    							<property>
-    								<name>density</name>
-    								<!-- In this case, density is computed using a bi-linear function
-    									 using the determinant of the deformation gradient and temp-
-    									 erature. Each property type must correspond to a special
-    									 class derived from base class Property. -->
-    								<type>LinearTemperature</type>
-    								<!-- A type other than 'constant' must not have any values. -->
-    							</property>
-									<property>
-										<name>reference_temperature</name>
-										<type>constant</type>
-										<value>333</value>
-									</property>
-									<property>
-										<name>drhodT</name>
-										<type>constant</type>
-										<value>-0.4</value>										
-									</property>
-									<property>
-										<name>reference_density</name>
-										<type>constant</type>
-										<value>2100.0</value>										
-									</property>									
-    							<property>
-    								<name>effective_stress</name>
-    								<type>LinearEpsilon</type>
-    							</property>
-    						</properties>
-    					</component>
-    					<!-- This was the definition of the first (and only) component of the solid 
-    						 phase. -->
-    				</components>
-    					<!-- The properties defined here correspond to phase, not to single components.
-    						 Phase properties may or may not refer to component properties, as shown in 
-    						 later examples. 
+      <medium>  <!-- First (and in this example only) medium, i.e. the porous medium -->
+        <phases>
+          <phase>
+          <!-- First solid phase. There are (there have to be?) as many solid phases
+             as material groups!-->
+            <name>solid</name> <!-- phase name is optional at the moment... -->
+            <components>
+              <!-- different solids within the same elements are realized via
+                   components. -->
+              <component>
+                <!-- Components can have names, too. If no name is given, a
+                   custom (unspecified) component is created. All required
+                   properties have to be specified in the following subtree. -->
+                <properties>
+                  <property>
+                    <!-- Properties must have names and types. Name in this
+                       context implies the sort of the property, such as
+                       density, viscosity, and so on... -->
+                    <name>thermal_conductivity</name>
+                    <!-- The type of the property refers to the method which
+                       is used to compute/obtain the property. This type is
+                       either the name of a specific function or 'constant'.-->
+                    <type>constant</type>
+                    <!-- If the property type is set to 'constant', it is necessary
+                       to supply a corresponding value. Otherwise, an error will
+                       be thrown -->
+                    <value>0.654</value>
+                  </property>
+                  <property>
+                    <name>density</name>
+                    <!-- In this case, density is computed using a bi-linear function
+                       using the determinant of the deformation gradient and temp-
+                       erature. Each property type must correspond to a special
+                       class derived from base class Property. -->
+                    <type>LinearTemperature</type>
+                    <!-- A type other than 'constant' must not have any values. -->
+                  </property>
+                  <property>
+                    <name>reference_temperature</name>
+                    <type>constant</type>
+                    <value>333</value>
+                  </property>
+                  <property>
+                    <name>drhodT</name>
+                    <type>constant</type>
+                    <value>-0.4</value>
+                  </property>
+                  <property>
+                    <name>reference_density</name>
+                    <type>constant</type>
+                    <value>2100.0</value>
+                  </property>
+                  <property>
+                    <name>effective_stress</name>
+                    <type>LinearEpsilon</type>
+                  </property>
+                </properties>
+              </component>
+              <!-- This was the definition of the first (and only) component of the solid
+                 phase. -->
+            </components>
+              <!-- The properties defined here correspond to phase, not to single components.
+                 Phase properties may or may not refer to component properties, as shown in
+                 later examples.
 
-    						 However, if (as in this case) there is only one component in the phase, it
-    						 is possible to omit the definition of phase properties. In such a case, the
-    						 necessary phase properties would directly match the properties of the only 
-    						 component. But, it is also possible to overwrite the properties of the com-
-    						 ponent.
-    						 
-    						 If the phase properties (of a single-component) phase are omitted in the
-    						 input file, they will be applied automatically by a default-implementation
-    						 (in which case the component properties serve for phase properties as well) -->
-    			</phase>
-    			<phase>
-    				<name>liquid</name> <!-- again, phase name is optional and has no effect-->
-    				<components>
-    					<component>
-    						<!-- If a component name is given, it must correspond to a known 
-    							 class which is derived from a base class Component. If this 
-    							 is not the case, an error is thrown.-->
-    						<name>Water</name> 
-    							<!-- If a component is specified by name, the predefined material
-    								 properties of that substance can be used. These properties
-    								 usually consist of generally known or accepted parameters
-    								 such as the molar volume or the critical density. 
-    								 However, each of the predefined material constants can be 
-    								 overwritten if necessary. -->
-    					</component>
-    					<component>
-    						<name>Salt</name>
-    					</component>
-    					<component>
-    						<name>CarbonDioxide</name>
-    					</component>
-    				</components>
-    				<properties> 
-    				<!-- These are the properties of the entire liquid phase. -->
-    							<property>
-    								<name>density</name>
-    								<type>Duan_2012</type>
-    								<!-- This type refers to an equation of state for the 
-    									 entire system water-co2-salt. It does not need to
-    									 know the individual densities of the specified
-    									 components. -->
-    							</property>
-    							<property>
-    								<name>viscosity</name>
-    								<type>Islam_Carlson_2012</type>
-    								<!-- A Viscosity correlation for the entire phase -->
-    							</property>
-    				<!-- all of the remaining properties are either not needed,
-    					 or they are computed by default implementations of the 
-    					 Property class. This default implementation (on the phase)
-    					 level) is (at the moment) an average function weighted by 
-    					 molar fraction -->
-    				</properties>
-    			</phase>
-    			<phase>
-    				<name>gas</name> <!-- Only purpose for assigning this name is for readability-->
-    				<components>
-    					<component>
-    						<name>Water</name>
-    						<properties>
-    							<property>
-    								<name>viscosity</name>
-    								<type>IAPWS_2008</type>
-    								<!-- The predefined implementation of the (vapour) viscosity is
-    									 a constant value, measured at standard conditions. In this
-    									 case, we need a more precise method to know the vapour vis-
-    									 cosity for our specific pressures and temperatures. 
-    									 Therefore, we overwrite the predefined constant value by 
-    									 this function. -->
-    							</property>
-    						</properties>
-    					</component>
-    					<component>
-    						<name>CarbonDioxide</name>
-    						<properties>
-    							<property>
-    								<name>viscosity</name>
-    								<type>Fenghour_1998</type>
-    							</property>
-    						</properties>
-    					</component>
-    				</components>
-    				<properties>
-    				<!-- These are the properties of the gas phase.-->
-    							<property>
-    								<name>density</name>
-    								<type>Peng_Robinson_1976</type>
-    								<!-- This type of EOS uses only individual material properties
-    									 (such as critical temperature) of the components (which
-    									 are predefined and specified by component name). It does 
-    									 NOT need to know the individual (or partial) densities of 
-    									 the components.
-    									 If one (ore more) components are not specified by name, 
-    									 the respective material properties (see manual for Peng-
-    									 robinson EOS) have to be provided (via property-type
-    									 'constant') individually-->
-    							</property>
-    							<property>
-    								<name>viscosity</name>
-    								<type>Buddenberg_Wilke_1949</type>
-    								<!-- Unlike for the Peng-Robinson EOS of the density property
-    									 this method is only a so-called mixing rule and needs to
-    									 know the individual component viscosities. That is why we 
-    									 have specified individual component viscosity correlations
-    									 in the components-subtree. This method takes those partial
-    									 viscosities (along with other properties such as diffusion 
-    									 coeffitients and partial densities) and returns a value 
-    									 valid for the entire phase.-->
-    							</property>
-    				</properties>
-    			</phase>
-    		</phases>
-    		<properties>
-    		<!-- Here we define the properties of the entire porous medium. This includes all properties
-    			 that are depending on all phases (for example effective thermal conductivity, which is
-    			 averaged over each phase volume fraction). -->
-    			<property>
-    				<name>permeability</name>
-    				<type>constant</type>
-    				<value>1.0e-12</value>
-    			</property>
-    			<property>
-    				<name>thermal_conductivity</name>
-    				<type>AverageVolumeFraction</type>
-  					<!-- This specification could be avioded if there is a default implementation for
-  						 that case. On the medium-level, this default could be the volume-fraction-
-  						 average. But, it doesn't hurt to provide that info.-->
-    			</property>
-    			<property>
-    				<name>saturation</name>
-    				<type>Brooks_Corey_1964</type>
-    			</property>
-    			<property>
-    				<name>relative_permeability</name>
-    				<type>Mualem_1978</type>
-	   			</property>
-    		</properties>
-    	</medium>	
+                 However, if (as in this case) there is only one component in the phase, it
+                 is possible to omit the definition of phase properties. In such a case, the
+                 necessary phase properties would directly match the properties of the only
+                 component. But, it is also possible to overwrite the properties of the com-
+                 ponent.
+
+                 If the phase properties (of a single-component) phase are omitted in the
+                 input file, they will be applied automatically by a default-implementation
+                 (in which case the component properties serve for phase properties as well) -->
+          </phase>
+          <phase>
+            <name>liquid</name> <!-- again, phase name is optional and has no effect-->
+            <components>
+              <component>
+                <!-- If a component name is given, it must correspond to a known
+                   class which is derived from a base class Component. If this
+                   is not the case, an error is thrown.-->
+                <name>Water</name>
+                  <!-- If a component is specified by name, the predefined material
+                     properties of that substance can be used. These properties
+                     usually consist of generally known or accepted parameters
+                     such as the molar volume or the critical density.
+                     However, each of the predefined material constants can be
+                     overwritten if necessary. -->
+              </component>
+              <component>
+                <name>Salt</name>
+              </component>
+              <component>
+                <name>CarbonDioxide</name>
+              </component>
+            </components>
+            <properties>
+            <!-- These are the properties of the entire liquid phase. -->
+                  <property>
+                    <name>density</name>
+                    <type>Duan_2012</type>
+                    <!-- This type refers to an equation of state for the
+                       entire system water-co2-salt. It does not need to
+                       know the individual densities of the specified
+                       components. -->
+                  </property>
+                  <property>
+                    <name>viscosity</name>
+                    <type>Islam_Carlson_2012</type>
+                    <!-- A Viscosity correlation for the entire phase -->
+                  </property>
+            <!-- all of the remaining properties are either not needed,
+               or they are computed by default implementations of the
+               Property class. This default implementation (on the phase)
+               level) is (at the moment) an average function weighted by
+               molar fraction -->
+            </properties>
+          </phase>
+          <phase>
+            <name>gas</name> <!-- Only purpose for assigning this name is for readability-->
+            <components>
+              <component>
+                <name>Water</name>
+                <properties>
+                  <property>
+                    <name>viscosity</name>
+                    <type>IAPWS_2008</type>
+                    <!-- The predefined implementation of the (vapour) viscosity is
+                       a constant value, measured at standard conditions. In this
+                       case, we need a more precise method to know the vapour vis-
+                       cosity for our specific pressures and temperatures.
+                       Therefore, we overwrite the predefined constant value by
+                       this function. -->
+                  </property>
+                </properties>
+              </component>
+              <component>
+                <name>CarbonDioxide</name>
+                <properties>
+                  <property>
+                    <name>viscosity</name>
+                    <type>Fenghour_1998</type>
+                  </property>
+                </properties>
+              </component>
+            </components>
+            <properties>
+            <!-- These are the properties of the gas phase.-->
+                  <property>
+                    <name>density</name>
+                    <type>Peng_Robinson_1976</type>
+                    <!-- This type of EOS uses only individual material properties
+                       (such as critical temperature) of the components (which
+                       are predefined and specified by component name). It does
+                       NOT need to know the individual (or partial) densities of
+                       the components.
+                       If one (ore more) components are not specified by name,
+                       the respective material properties (see manual for Peng-
+                       robinson EOS) have to be provided (via property-type
+                       'constant') individually-->
+                  </property>
+                  <property>
+                    <name>viscosity</name>
+                    <type>Buddenberg_Wilke_1949</type>
+                    <!-- Unlike for the Peng-Robinson EOS of the density property
+                       this method is only a so-called mixing rule and needs to
+                       know the individual component viscosities. That is why we
+                       have specified individual component viscosity correlations
+                       in the components-subtree. This method takes those partial
+                       viscosities (along with other properties such as diffusion
+                       coeffitients and partial densities) and returns a value
+                       valid for the entire phase.-->
+                  </property>
+            </properties>
+          </phase>
+        </phases>
+        <properties>
+        <!-- Here we define the properties of the entire porous medium. This includes all properties
+           that are depending on all phases (for example effective thermal conductivity, which is
+           averaged over each phase volume fraction). -->
+          <property>
+            <name>permeability</name>
+            <type>constant</type>
+            <value>1.0e-12</value>
+          </property>
+          <property>
+            <name>thermal_conductivity</name>
+            <type>AverageVolumeFraction</type>
+            <!-- This specification could be avioded if there is a default implementation for
+               that case. On the medium-level, this default could be the volume-fraction-
+               average. But, it doesn't hurt to provide that info.-->
+          </property>
+          <property>
+            <name>saturation</name>
+            <type>Brooks_Corey_1964</type>
+          </property>
+          <property>
+            <name>relative_permeability</name>
+            <type>Mualem_1978</type>
+          </property>
+        </properties>
+      </medium>
     </media>
     <processes>
         <process>
