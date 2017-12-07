@@ -146,23 +146,13 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                                           ShapeFunctionPressure,
                                           IntegrationMethod, GlobalDim>::
     assembleBlockMatricesWithJacobian(
-        double const t,
-        Eigen::Ref<const Eigen::VectorXd> const& nodal_p,
-        Eigen::Ref<const Eigen::VectorXd> const& nodal_p_dot,
-        Eigen::Ref<const Eigen::VectorXd> const& nodal_g,
-        Eigen::Ref<const Eigen::VectorXd> const& nodal_g_dot,
-        Eigen::Ref<Eigen::VectorXd>
-            rhs_p,
-        Eigen::Ref<Eigen::VectorXd>
-            rhs_g,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_pp,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_pg,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_gg,
-        Eigen::Ref<Eigen::MatrixXd>
-            J_gp)
+        double const t, Eigen::Ref<const Eigen::VectorXd> const& p,
+        Eigen::Ref<const Eigen::VectorXd> const& p_dot,
+        Eigen::Ref<const Eigen::VectorXd> const& g,
+        Eigen::Ref<const Eigen::VectorXd> const& g_dot,
+        Eigen::Ref<Eigen::VectorXd> rhs_p, Eigen::Ref<Eigen::VectorXd> rhs_g,
+        Eigen::Ref<Eigen::MatrixXd> J_pp, Eigen::Ref<Eigen::MatrixXd> J_pg,
+        Eigen::Ref<Eigen::MatrixXd> J_gg, Eigen::Ref<Eigen::MatrixXd> J_gp)
 {
     auto const& frac_prop = *_process_data.fracture_property;
     auto const& R = frac_prop.R;
@@ -223,7 +213,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
 
         // displacement jumps in local coordinates
-        w.noalias() = R * H_g * nodal_g;
+        w.noalias() = R * H_g * g;
 
         // aperture
         b_m = ip_data.aperture0 + w[index_normal];
@@ -261,7 +251,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
         // velocity
         GlobalDimVector const grad_head_over_mu =
-            (dNdx_p * nodal_p + rho_fr * gravity_vec) / mu;
+            (dNdx_p * p + rho_fr * gravity_vec) / mu;
 
         //
         // displacement equation, displacement jump part
@@ -290,8 +280,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         //
         Eigen::Matrix<double, 1, displacement_size> const mT_R_Hg =
             identity2.transpose() * R * H_g;
-        J_pg.noalias() +=
-            N_p.transpose() * S * N_p * nodal_p_dot * mT_R_Hg * ip_w;
+        J_pg.noalias() += N_p.transpose() * S * N_p * p_dot * mT_R_Hg * ip_w;
         J_pg.noalias() +=
             dNdx_p.transpose() * k * grad_head_over_mu * mT_R_Hg * ip_w;
         J_pg.noalias() += dNdx_p.transpose() * b_m * dk_db * grad_head_over_mu *
@@ -308,11 +297,11 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     J_pg.noalias() += Kgp.transpose() / dt;
 
     // pressure equation
-    rhs_p.noalias() -= laplace_p * nodal_p + storage_p * nodal_p_dot +
-                       Kgp.transpose() * nodal_g_dot;
+    rhs_p.noalias() -=
+        laplace_p * p + storage_p * p_dot + Kgp.transpose() * g_dot;
 
     // displacement equation
-    rhs_g.noalias() -= -Kgp * nodal_p;
+    rhs_g.noalias() -= -Kgp * p;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
