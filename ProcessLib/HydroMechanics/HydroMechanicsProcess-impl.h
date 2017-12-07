@@ -316,13 +316,16 @@ void HydroMechanicsProcess<DisplacementDim>::
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     GlobalVector const& x, double const t, double const dt,
-    const int /*process_id*/)
+    const int process_id)
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 
     _process_data.dt = dt;
     _process_data.t = t;
 
+    // If monolithic scheme is used or the equation of deformation is solved in
+    // the staggered scheme.
+    if (_use_monolithic_scheme || process_id == 1)
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
         *_local_to_global_index_map, x, t, dt);
@@ -345,5 +348,22 @@ NumLib::LocalToGlobalIndexMap* HydroMechanicsProcess<DisplacementDim>::
 {
     return _local_to_global_index_map_single_component.get();
 }
+
+template <int DisplacementDim>
+NumLib::LocalToGlobalIndexMap const&
+HydroMechanicsProcess<DisplacementDim>::getDOFTable(
+    const int process_id) const
+{
+    // If monolithic scheme is used or the equation of deformation is solved in
+    // the staggered scheme.
+    if (_use_monolithic_scheme || process_id == 1)
+    {
+        return *_local_to_global_index_map;
+    }
+
+    // For the equation of pressure
+    return *_local_to_global_index_map_single_component;
+}
+
 }  // namespace HydroMechanics
 }  // namespace ProcessLib

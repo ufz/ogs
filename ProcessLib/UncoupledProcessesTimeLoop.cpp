@@ -664,7 +664,7 @@ bool UncoupledProcessesTimeLoop::loop()
                     dynamic_cast<NumLib::ConvergenceCriterionPerComponent*>(
                         spd->conv_crit.get()))
             {
-                conv_crit->setDOFTable(pcs.getDOFTable(), pcs.getMesh());
+                conv_crit->setDOFTable(pcs.getDOFTable(pcs_idx), pcs.getMesh());
             }
 
             ++pcs_idx;

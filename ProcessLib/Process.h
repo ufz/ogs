@@ -68,7 +68,7 @@ public:
 
     void initialize();
 
-    void setInitialConditions(const unsigned pcs_id, const double t,
+    void setInitialConditions(const unsigned processs_id, const double t,
                               GlobalVector& x);
 
     virtual MathLib::MatrixSpecifications getMatrixSpecifications(
@@ -100,7 +100,8 @@ public:
         return _boundary_conditions[pcs_id].getKnownSolutions(t);
     }
 
-    NumLib::LocalToGlobalIndexMap const& getDOFTable() const
+    virtual NumLib::LocalToGlobalIndexMap const& getDOFTable(
+        const int /*process_id*/) const
     {
         return *_local_to_global_index_map;
     }

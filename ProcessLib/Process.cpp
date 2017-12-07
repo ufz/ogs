@@ -105,10 +105,13 @@ void Process::initialize()
     initializeBoundaryConditions();
 }
 
-void Process::setInitialConditions(const unsigned pcs_id, double const t,
+void Process::setInitialConditions(const unsigned processs_id, double const t,
                                    GlobalVector& x)
 {
-    auto const& per_process_variables = _process_variables[pcs_id];
+    // getDOFTableOfProcess can be overloaded by the specific process.
+    auto const dof_table_of_process = getDOFTable(processs_id);
+
+    auto const& per_process_variables = _process_variables[processs_id];
     for (std::size_t variable_id = 0;
          variable_id < per_process_variables.size();
          variable_id++)
@@ -117,18 +120,16 @@ void Process::setInitialConditions(const unsigned pcs_id, double const t,
 
         auto const& pv = per_process_variables[variable_id];
         DBUG("Set the initial condition of variable %s of process %d.",
-             pv.get().getName().data(), pcs_id);
+             pv.get().getName().data(), processs_id);
 
         auto const& ic = pv.get().getInitialCondition();
 
         auto const num_comp = pv.get().getNumberOfComponents();
 
-        const int mesh_subset_id = _use_monolithic_scheme ? variable_id : 0;
-
         for (int component_id = 0; component_id < num_comp; ++component_id)
         {
             auto const& mesh_subsets =
-                _local_to_global_index_map->getMeshSubsets(mesh_subset_id,
+                dof_table_of_process.getMeshSubsets(variable_id,
                                                            component_id);
             for (auto const& mesh_subset : mesh_subsets)
             {
@@ -142,8 +143,8 @@ void Process::setInitialConditions(const unsigned pcs_id, double const t,
                     auto const& ic_value = ic(t, pos);
 
                     auto global_index =
-                        std::abs(_local_to_global_index_map->getGlobalIndex(
-                            l, mesh_subset_id, component_id));
+                        std::abs(dof_table_of_process.getGlobalIndex(
+                            l, variable_id, component_id));
 #ifdef USE_PETSC
                     // The global indices of the ghost entries of the global
                     // matrix or the global vectors need to be set as negative

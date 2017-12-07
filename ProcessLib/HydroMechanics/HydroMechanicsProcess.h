@@ -76,6 +76,9 @@ private:
 
     void postTimestepConcreteProcess(GlobalVector const& x) override;
 
+    NumLib::LocalToGlobalIndexMap const& getDOFTable(
+        const int process_id) const override;
+
 private:
     std::vector<MeshLib::Node*> _base_nodes;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
@@ -95,6 +98,7 @@ private:
 
     NumLib::LocalToGlobalIndexMap* getDOFTableForExtrapolatorData(
         bool& manage_storage) const override;
+
 };
 
 extern template class HydroMechanicsProcess<2>;
