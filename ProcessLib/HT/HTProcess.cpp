@@ -193,6 +193,7 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
 {
     const auto number_of_coupled_solutions =
         _coupled_solutions->coupled_xs.size();
+    _coupled_solutions->coupled_xs_t0.clear();
     _coupled_solutions->coupled_xs_t0.reserve(number_of_coupled_solutions);
     const int process_id = _coupled_solutions->process_id;
     for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
