@@ -89,6 +89,11 @@ private:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
 
+    /// Local to global index mapping for base nodes, which is used for linear
+    /// interpolation for pressure in the staggered scheme.
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap>
+        _local_to_global_index_map_with_base_nodes;
+
     /// Sparsity pattern for the flow equation, and it is initialized only if
     /// the staggered scheme is used.
     GlobalSparsityPattern _sparsity_pattern_with_linear_element;

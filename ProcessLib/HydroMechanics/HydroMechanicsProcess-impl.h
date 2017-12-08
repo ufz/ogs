@@ -66,7 +66,7 @@ HydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
 
     // For staggered scheme and  the mass conservation balance equation
     // (pressure).
-    auto const& l = *_local_to_global_index_map_single_component;
+    auto const& l = *_local_to_global_index_map_with_base_nodes;
     return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
             &l.getGhostIndices(), &_sparsity_pattern_with_linear_element};
 }
@@ -82,9 +82,8 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
     _mesh_subset_base_nodes =
         std::make_unique<MeshLib::MeshSubset>(_mesh, &_base_nodes);
 
-    // Collect the mesh subsets in a vector.
-    // For pressure equation in the monolithic scheme, or for the extrapolation
-    // calculation in the monolithic scheme.
+    // TODO move the two data members somewhere else.
+    // for extrapolation of secondary variables of stress or strain
     std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
     all_mesh_subsets_single_component.emplace_back(
         _mesh_subset_all_nodes.get());
@@ -92,7 +91,7 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets_single_component),
             // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION);
+    NumLib::ComponentOrder::BY_LOCATION);
 
     if (_use_monolithic_scheme)
     {
@@ -134,8 +133,18 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
                 NumLib::ComponentOrder::BY_LOCATION);
 
         // For pressure equation.
+        // Collect the mesh subsets with base nodes in a vector.
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_base_nodes;
+        all_mesh_subsets_base_nodes.emplace_back(
+            _mesh_subset_base_nodes.get());
+        _local_to_global_index_map_with_base_nodes =
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
+                std::move(all_mesh_subsets_base_nodes),
+                // by location order is needed for output
+            NumLib::ComponentOrder::BY_LOCATION);
+
         _sparsity_pattern_with_linear_element = NumLib::computeSparsityPattern(
-            *_local_to_global_index_map_single_component, _mesh);
+            *_local_to_global_index_map_with_base_nodes, _mesh);
     }
 }
 
@@ -242,7 +251,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     // for the equations of pressure
     const int equation_id_of_p = 0;
     initializeBoundaryConditionPerPDE(
-        *_local_to_global_index_map_single_component, equation_id_of_p);
+        *_local_to_global_index_map_with_base_nodes, equation_id_of_p);
 
     // for the equations of deformation.
     const int equation_id_of_u = 1;
@@ -284,7 +293,7 @@ void HydroMechanicsProcess<DisplacementDim>::
         GlobalExecutor::executeMemberDereferenced(
             _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
             _local_assemblers, *_local_to_global_index_map, t, x, xdot,
-            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions, nullptr);
         return;
     }
 
@@ -299,7 +308,8 @@ void HydroMechanicsProcess<DisplacementDim>::
         GlobalExecutor::executeMemberDereferenced(
             _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
             _local_assemblers, *_local_to_global_index_map, t, x, xdot,
-            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions,
+            _local_to_global_index_map_with_base_nodes.get());
         return;
     }
 
@@ -309,8 +319,9 @@ void HydroMechanicsProcess<DisplacementDim>::
         "HydroMechanics for the staggered scheme.");
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, *_local_to_global_index_map_single_component, t, x,
-        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, *_local_to_global_index_map, t, x,
+        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions,
+        _local_to_global_index_map_with_base_nodes.get());
 }
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
@@ -361,7 +372,7 @@ HydroMechanicsProcess<DisplacementDim>::getDOFTable(
     }
 
     // For the equation of pressure
-    return *_local_to_global_index_map_single_component;
+    return *_local_to_global_index_map_with_base_nodes;
 }
 
 }  // namespace HydroMechanics
