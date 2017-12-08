@@ -526,7 +526,7 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        dx_dx, M, K, b, Jac, _coupled_solutions, nullptr);
 }
 
 template <int GlobalDim>

@@ -10,6 +10,7 @@
 #include "VectorMatrixAssembler.h"
 
 #include <cassert>
+#include <functional>  // for std::reference_wrapper.
 
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -57,8 +58,18 @@ void VectorMatrixAssembler::assemble(
     }
     else
     {
-        auto local_coupled_xs0 = getPreviousLocalSolutions(*cpl_xs, indices);
-        auto local_coupled_xs = getCurrentLocalSolutions(*cpl_xs, indices);
+        std::vector<std::reference_wrapper<const std::vector<GlobalIndexType>>>
+            indices_of_all_coupled_processes;
+        indices_of_all_coupled_processes.reserve(cpl_xs->coupled_xs.size());
+        for (std::size_t i = 0; i < cpl_xs->coupled_xs.size(); i++)
+        {
+            indices_of_all_coupled_processes.emplace_back(std::ref(indices));
+        }
+
+        auto local_coupled_xs0 = getPreviousLocalSolutions(
+            *cpl_xs, indices_of_all_coupled_processes);
+        auto local_coupled_xs =
+            getCurrentLocalSolutions(*cpl_xs, indices_of_all_coupled_processes);
 
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
             cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
@@ -95,9 +106,19 @@ void VectorMatrixAssembler::assembleWithJacobian(
     NumLib::LocalToGlobalIndexMap const& dof_table, const double t,
     GlobalVector const& x, GlobalVector const& xdot, const double dxdot_dx,
     const double dx_dx, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    GlobalMatrix& Jac, const CoupledSolutionsForStaggeredScheme* cpl_xs)
+    GlobalMatrix& Jac, const CoupledSolutionsForStaggeredScheme* cpl_xs,
+    NumLib::LocalToGlobalIndexMap const* base_dof_table)
 {
-    auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
+    // If base_dof_table != nullptr, then the coupled processes contains the
+    // mechanical process, which is alway placed in the end of the coupled
+    // process and always user higher order element than other process in the
+    // coupling.
+    auto const indices =
+        ((base_dof_table == nullptr) ||
+         (cpl_xs->process_id == cpl_xs->coupled_xs.size() - 1 &&
+          cpl_xs != nullptr))
+            ? NumLib::getIndices(mesh_item_id, dof_table)
+            : NumLib::getIndices(mesh_item_id, *base_dof_table);
     auto const local_xdot = xdot.get(indices);
 
     _local_M_data.clear();
@@ -114,8 +135,49 @@ void VectorMatrixAssembler::assembleWithJacobian(
     }
     else
     {
-        auto local_coupled_xs0 = getPreviousLocalSolutions(*cpl_xs, indices);
-        auto local_coupled_xs = getCurrentLocalSolutions(*cpl_xs, indices);
+        std::vector<std::reference_wrapper<const std::vector<GlobalIndexType>>>
+            indices_of_all_coupled_processes;
+        indices_of_all_coupled_processes.reserve(cpl_xs->coupled_xs.size());
+        if (base_dof_table == nullptr)
+        {
+            for (std::size_t i = 0; i < cpl_xs->coupled_xs.size(); i++)
+            {
+                indices_of_all_coupled_processes.emplace_back(
+                    std::ref(indices));
+            }
+        }
+        else
+        {
+            if (cpl_xs->process_id == cpl_xs->coupled_xs.size() - 1)
+            {
+                const auto base_indices =
+                    NumLib::getIndices(mesh_item_id, *base_dof_table);
+                for (std::size_t i = 0; i < cpl_xs->coupled_xs.size() - 1; i++)
+                {
+                    indices_of_all_coupled_processes.emplace_back(
+                        std::ref(base_indices));
+                }
+                indices_of_all_coupled_processes.emplace_back(
+                    std::ref(indices));
+            }
+            else
+            {
+                const auto full_indices =
+                    NumLib::getIndices(mesh_item_id, dof_table);
+                for (std::size_t i = 0; i < cpl_xs->coupled_xs.size() - 1; i++)
+                {
+                    indices_of_all_coupled_processes.emplace_back(
+                        std::ref(indices));
+                }
+                indices_of_all_coupled_processes.emplace_back(
+                    std::ref(full_indices));
+            }
+        }
+
+        auto local_coupled_xs0 = getPreviousLocalSolutions(
+            *cpl_xs, indices_of_all_coupled_processes);
+        auto local_coupled_xs =
+            getCurrentLocalSolutions(*cpl_xs, indices_of_all_coupled_processes);
 
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
             cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),

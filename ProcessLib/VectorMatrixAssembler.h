@@ -51,15 +51,14 @@ public:
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
     //! \note The Jacobian must be assembled.
-    void assembleWithJacobian(std::size_t const mesh_item_id,
-                              LocalAssemblerInterface& local_assembler,
-                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                              const double t, GlobalVector const& x,
-                              GlobalVector const& xdot, const double dxdot_dx,
-                              const double dx_dx, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
-                              GlobalMatrix& Jac,
-                              const CoupledSolutionsForStaggeredScheme* cpl_xs);
+    void assembleWithJacobian(
+        std::size_t const mesh_item_id,
+        LocalAssemblerInterface& local_assembler,
+        NumLib::LocalToGlobalIndexMap const& dof_table, const double t,
+        GlobalVector const& x, GlobalVector const& xdot, const double dxdot_dx,
+        const double dx_dx, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        GlobalMatrix& Jac, const CoupledSolutionsForStaggeredScheme* cpl_xs,
+        NumLib::LocalToGlobalIndexMap const* base_dof_table);
 
 private:
     // temporary data only stored here in order to avoid frequent memory
