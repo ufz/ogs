@@ -308,3 +308,17 @@ AddTest(
     square_100x100_quad_1e4_ComponentTransport_pcs_0_ts_1_t_1.000000.vtu square_100x100_quad_1e4_ComponentTransport_pcs_0_ts_1_t_1.000000.vtu darcy_velocity_expected darcy_velocity 1e-7 1e-10
     VIS square_100x100_quad_1e4_ComponentTransport_pcs_0_ts_1_t_1.000000.vtu
 )
+
+AddTest(
+    NAME 2D_ComponentTransport_HeterogeneousPermeability_Comparison_OGS5
+    PATH Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D/
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS ogs5_H_2d.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    2D1P-GWFlow_1_reference.vtu out_ogs5_H_pcs_0_ts_1_t_10000000.000000.vtu pressure_OGS5 pressure 1e-1 1e-3
+    #2D1P-GWFlow_1_reference.vtu out_ogs5_H_pcs_0_ts_1_t_10000000.000000.vtu NODAL_VELOCITY1 darcy_velocity 1e-1 1e-10
+    VIS out_ogs5_H_pcs_0_ts_10_t_100000000.000000.vtu
+)
