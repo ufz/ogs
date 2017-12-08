@@ -71,17 +71,11 @@ void LocalAssemblerInterface::computeSecondaryVariable(
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
 
-    if (coupled_xs == nullptr)
-    {
-        auto const local_x = x.get(indices);
-        computeSecondaryVariableConcrete(t, local_x);
-    }
-    else
-    {
-        auto const local_coupled_xs =
-            getCurrentLocalSolutions(*coupled_xs, indices);
-        computeSecondaryVariableWithCoupledProcessConcrete(t, local_coupled_xs);
-    }
+    if (coupled_xs != nullptr)
+        return;
+
+    auto const local_x = x.get(indices);
+    computeSecondaryVariableConcrete(t, local_x);
 }
 
 void LocalAssemblerInterface::preTimestep(

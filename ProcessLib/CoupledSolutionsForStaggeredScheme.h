@@ -76,9 +76,13 @@ struct LocalCoupledSolutions
 
 std::vector<std::vector<double>> getPreviousLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
-    const std::vector<GlobalIndexType>& indices);
+    const std::vector<
+        std::reference_wrapper<const std::vector<GlobalIndexType>>>&
+        indices);
 
 std::vector<std::vector<double>> getCurrentLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
-    const std::vector<GlobalIndexType>& indices);
+    const std::vector<
+        std::reference_wrapper<const std::vector<GlobalIndexType>>>&
+        indices);
 }  // end of ProcessLib

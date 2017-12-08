@@ -13,6 +13,8 @@
 
 #include "StaggeredHTFEM.h"
 
+#include <functional> // for std::reference_wrapper
+
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 
 namespace ProcessLib
@@ -277,8 +279,11 @@ StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     auto const indices = NumLib::getIndices(this->_element.getID(), dof_table);
     assert(!indices.empty());
-    auto const local_xs =
-        getCurrentLocalSolutions(*(this->_coupled_solutions), indices);
+    std::vector<std::reference_wrapper<const std::vector<GlobalIndexType>>>
+        indices_of_all_coupled_processes = {std::ref(indices),
+                                            std::ref(indices)};
+    auto const local_xs = getCurrentLocalSolutions(
+        *(this->_coupled_solutions), indices_of_all_coupled_processes);
 
     return this->getIntPtDarcyVelocityLocal(t, local_xs[0], local_xs[1], cache);
 }
