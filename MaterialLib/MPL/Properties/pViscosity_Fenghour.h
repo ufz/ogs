@@ -31,8 +31,6 @@ class ViscosityCO2Fenghour final : public Property
 {
 private:
     Component* _component;
-    std::array<double, 5> _a;
-    std::array<double, 5> _d;
 
 public:
     ViscosityCO2Fenghour(Medium*);

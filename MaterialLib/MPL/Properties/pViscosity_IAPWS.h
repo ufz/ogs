@@ -29,8 +29,6 @@ class ViscosityWaterIAPWS final : public Property
 {
 private:
     Component* _component;
-    std::array<double, 4> _H;
-    std::array<std::array<double, 7>, 6> _h;
 
 public:
     ViscosityWaterIAPWS(Medium*);
