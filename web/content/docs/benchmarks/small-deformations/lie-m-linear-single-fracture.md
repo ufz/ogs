@@ -11,7 +11,7 @@ title = "Linear; Single fracture"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Problem description
 

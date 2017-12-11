@@ -47,9 +47,11 @@ This fetches articles from the CMS to e.g. `ogs/web/data/news.json`.
 - [Hugo](https://gothugo.com) - Static site generator for technical documentation
 - [Contenful](https://www.contentful.com/) -  API-based CMS for news, articles, ..
 - [flexboxgrid](http://flexboxgrid.com/) - CSS grid
+- [Tachyons](http://tachyons.io) - CSS framework
 - [vtk.js](https://kitware.github.io/vtk-js/) - 3D Visualizations
 - [webpack](https://webpack.github.io/) - Packaging JavaScript
 - [gulp](http://gulpjs.com/) - Automation toolkit
+- [FontAwesome](https://fontawesome.com) - Icons, see [icon search](https://fontawesome.com/icons?d=gallery)
 
 ## How-Tos
 

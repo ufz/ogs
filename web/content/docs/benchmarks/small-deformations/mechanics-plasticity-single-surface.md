@@ -12,7 +12,7 @@ title = "Ehlers; Single-surface yield function"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Problem description
 

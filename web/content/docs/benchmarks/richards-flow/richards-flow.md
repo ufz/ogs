@@ -11,7 +11,7 @@ title = "Richards Flow"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Problem description
 

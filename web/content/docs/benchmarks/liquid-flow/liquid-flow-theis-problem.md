@@ -11,7 +11,7 @@ author = "Wenqing Wang"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Problem description
 

@@ -3,7 +3,7 @@ date = "2017-02-15T11:46:49+01:00"
 title = "Groundwater Flow (Robin)"
 project = "Elliptic/line_1_GroundWaterFlow/line_1e1_robin_left_picard.prj"
 author = "Dmitri Naumov"
-weight = 103
+weight = 104
 
 [menu]
 
@@ -13,7 +13,7 @@ weight = 103
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Equations
 

@@ -12,7 +12,7 @@ author = "Norihiro Watanabe"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Equations
 

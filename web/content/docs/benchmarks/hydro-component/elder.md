@@ -11,7 +11,7 @@ title = "Saturated Variable-Density Flow and Mass Transport (Elder)"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 
 ## Overview
@@ -32,7 +32,7 @@ A comparison of the numerical data is shown in the figure below. The numerical r
 
 {{< img src="../gif/elder.gif" title="Results for numerical (OGS-5 - green, OGS-6 - white) results together with concentration distribution in the domain and mesh resolution for different time steps.">}}
 
-[The project files are here. ](../../../../../Tests/Data/Parabolic/ComponentTransport/elder)
+{{< data-link >}}
 
 ## Literature
 

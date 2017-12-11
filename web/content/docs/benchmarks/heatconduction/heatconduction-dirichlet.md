@@ -11,7 +11,7 @@ project = "Parabolic/T/1D_dirichlet/line_60_heat.prj"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Equations
 

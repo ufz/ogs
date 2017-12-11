@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "gulp clean",
     "gulp": "gulp",
-    "hugo": "hugo server --disableRSS",
+    "hugo": "hugo server --disableKinds=RSS",
     "build": "webpack && gulp build && hugo",
     "build:release": "webpack --env=production && gulp build && hugo",
     "import": "cd import && python import.py",
@@ -162,6 +162,7 @@
     "gulp-size": "^2.1.0",
     "kw-web-suite": "^3.1.1",
     "merge-stream": "^1.0.1",
+    "node-sass": "^4.7.2",
     "normalize.css": "^7.0.0",
     "pygments-css": "^1.0.0",
     "string-replace-loader": "^1.3.0",

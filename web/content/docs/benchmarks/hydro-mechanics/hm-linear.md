@@ -11,7 +11,7 @@ author = "Dmitri Naumov"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Problem description
 
