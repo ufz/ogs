@@ -26,7 +26,7 @@ namespace LIE
 ///
 /// The tool creates a new mesh containing duplicated fracture nodes
 /// to represent geometric discontinuities in visualization.
-class PostProcessTool
+class PostProcessTool final
 {
 public:
     PostProcessTool(

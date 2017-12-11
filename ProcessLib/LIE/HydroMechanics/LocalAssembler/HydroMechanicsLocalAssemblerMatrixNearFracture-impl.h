@@ -81,7 +81,7 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
 
     if (ele_levelset == 0)
     {
-        // no DoF exists for displacement jumps. do the normal assebmly
+        // no DoF exists for displacement jumps. do the normal assembly
         Base::assembleBlockMatricesWithJacobian(t, p, p_dot, u, u_dot, rhs_p,
                                                 rhs_u, J_pp, J_pu, J_uu, J_up);
         return;
@@ -144,7 +144,7 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
 
     if (ele_levelset == 0)
     {
-        // no DoF exists for displacement jumps. do the normal assebmly
+        // no DoF exists for displacement jumps. do the normal assembly
         Base::computeSecondaryVariableConcreteWithBlockVectors(t, p, u);
         return;
     }

@@ -49,7 +49,7 @@ struct HydroMechanicsProcessData
             specific_body_force_,
         std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>&&
             fracture_model,
-        std::unique_ptr<FractureProperty>&& fracture_prop,
+        std::unique_ptr<FracturePropertyHM>&& fracture_prop,
         Parameter<double> const& initial_effective_stress_,
         Parameter<double> const& initial_fracture_effective_stress_,
         bool const deactivate_matrix_in_flow_)
@@ -113,8 +113,7 @@ struct HydroMechanicsProcessData
     Eigen::Matrix<double, GlobalDim, 1> const specific_body_force;
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>
         fracture_model;
-    std::unique_ptr<FractureProperty> fracture_property;
-
+    std::unique_ptr<FracturePropertyHM> fracture_property;
     Parameter<double> const& initial_effective_stress;
     Parameter<double> const& initial_fracture_effective_stress;
 
