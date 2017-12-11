@@ -182,8 +182,9 @@ void Output::doOutputAlways(Process const& process,
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
 
-    const bool make_out = !(process_id < _single_process_data.size() - 1 &&
-                            !(process.isMonolithicSchemeUsed()));
+    const bool make_out =
+        !(process_id < static_cast<int>(_single_process_data.size()) - 1 &&
+          !(process.isMonolithicSchemeUsed()));
 
     if (make_out)
         DBUG("output to %s", output_file_path.c_str());
@@ -261,8 +262,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
     DBUG("output iteration results to %s", output_file_path.c_str());
-    const bool make_out = !(process_id < _single_process_data.size() - 1 &&
-                            !(process.isMonolithicSchemeUsed()));
+    const bool make_out =
+        !(process_id < static_cast<int>(_single_process_data.size()) - 1 &&
+          !(process.isMonolithicSchemeUsed()));
     doProcessOutput(output_file_path, make_out, _output_file_compression,
                     _output_file_data_mode, t, x, process.getMesh(),
                     process.getDOFTable(), process.getProcessVariables(),
