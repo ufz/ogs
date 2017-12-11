@@ -43,7 +43,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        (staggered_scheme && (*staggered_scheme == "staggered")) ? false : true;
+        !(staggered_scheme && (*staggered_scheme == "staggered"));
 
     // Process variables
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__process_variables}
