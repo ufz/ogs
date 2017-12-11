@@ -40,7 +40,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        (staggered_scheme && (*staggered_scheme == "staggered")) ? false : true;
+        !(staggered_scheme && (*staggered_scheme == "staggered"));
 
     // Process variable.
 
