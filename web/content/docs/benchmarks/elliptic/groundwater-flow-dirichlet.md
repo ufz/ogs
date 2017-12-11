@@ -3,7 +3,7 @@ date = "2017-02-15T11:17:39+01:00"
 title = "Groundwater Flow (Dirichlet)"
 project = "Elliptic/square_1x1_GroundWaterFlow/square_1e2.prj"
 author = "Dmitri Naumov"
-weight = 101
+weight = 102
 
 aliases = [ "/docs/benchmarks/" ] # First benchmark page
 
@@ -13,7 +13,7 @@ aliases = [ "/docs/benchmarks/" ] # First benchmark page
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Equations
 

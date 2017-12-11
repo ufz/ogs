@@ -11,7 +11,7 @@ title = "Heat pipe problem"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Problem description
 

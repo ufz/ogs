@@ -11,7 +11,7 @@ weight = 111
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Equations
 

@@ -11,7 +11,7 @@ title = "Unsaturated Mass Transport"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 
 ## Overview
@@ -34,8 +34,8 @@ Saturated intrinsic permeability is calculated from given flux and pressure grad
 
 Initial conditions are $c = 0$ and hydrostatic pressure conditions with steady state flow for both scenarios.
 
-[The NaCl1 project file is here. ](../../../../../Tests/Data/Parabolic/RichardsComponentTransport/Padilla_NaCl1.prj)
-[The NaCl6 project file is here. ](../../../../../Tests/Data/Parabolic/RichardsComponentTransport/Padilla_NaCl6.prj)
+{{< data-link "The NaCl1 project file" "Parabolic/RichardsComponentTransport/Padilla_NaCl1.prj" >}}  
+{{< data-link "The NaCl6 project file" "Parabolic/RichardsComponentTransport/Padilla_NaCl6.prj" >}}
 
 
 ### Results
@@ -46,8 +46,9 @@ The figure below shows breakthrough curves vs experimental result at the bottom 
 
 It can be seen, that with decreasing saturation, breakthrough curves exhibit stronger dispersion through the decreased angle of the breakthrough curve. Both simulation results follow the experimental observations closely; deviations, especially in the unsaturated case, can be attributed to known tailing effects from secondary porosity.
 
-Here are digitized data from the [NaCl1](../../../../../Tests/Data/Parabolic/RichardsComponentTransport/Padilla_NaCl1_poreVolume-conc.csv) and [NaCl6](../../../../../Tests/Data/Parabolic/RichardsComponentTransport/Padilla_NaCl6_poreVolume-conc.csv) experiments and a [ParaView state file](../../../../../Tests/Data/Parabolic/RichardsComponentTransport/Padilla_state.pvsm) for comparison.
+Here is the [ParaView state file]({{< data-url "Parabolic/RichardsComponentTransport/Padilla/Padilla_state.pvsm" >}}) for comparison.
 
+{{< data-link "" "" >}}
 
 ## References
 

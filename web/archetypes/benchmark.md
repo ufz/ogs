@@ -8,7 +8,7 @@ weight = 101
     parent = "[TODO]"
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Problem description
 

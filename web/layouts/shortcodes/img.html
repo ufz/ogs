@@ -5,9 +5,9 @@
     {{ if .Get "link"}}</a>{{ end }}
     {{ if or (or (.Get "title") (.Get "caption")) (.Get "attr")}}
     <figcaption>{{ if isset .Params "title" }}
-        <h4>{{ .Get "title" }}</h4>{{ end }}
+        <h4>{{ .Get "title" | markdownify }}</h4>{{ end }}
         {{ if or (.Get "caption") (.Get "attr")}}<p>
-        {{ .Get "caption" }}
+        {{ .Get "caption" | markdownify }}
         {{ with .Get "attrlink"}}<a href="{{.}}"> {{ end }}
             {{ .Get "attr" }}
         {{ if .Get "attrlink"}}</a> {{ end }}

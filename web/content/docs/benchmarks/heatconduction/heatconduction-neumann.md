@@ -11,7 +11,7 @@ author = "Tianyuan Zheng"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Equations
 

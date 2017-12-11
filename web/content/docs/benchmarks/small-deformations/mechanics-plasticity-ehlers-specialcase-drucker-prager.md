@@ -11,7 +11,7 @@ author = "Xing-Yuan Miao"
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Problem description
 

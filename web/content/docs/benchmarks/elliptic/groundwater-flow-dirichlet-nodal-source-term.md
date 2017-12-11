@@ -13,7 +13,7 @@ aliases = [ "/docs/benchmarks/" ] # First benchmark page
 
 +++
 
-{{< project-link >}}
+{{< data-link >}}
 
 ## Equations
 
