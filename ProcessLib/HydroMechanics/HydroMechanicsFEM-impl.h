@@ -197,17 +197,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u);
 
-        local_Jac
-            .template block<displacement_size, displacement_size>(
-                displacement_index, displacement_index)
-            .noalias() += B.transpose() * C * B * w;
+        local_Jac.noalias() += B.transpose() * C * B * w;
 
         double p_at_xi = 0.;
         NumLib::shapeFunctionInterpolate(local_p, N_p, p_at_xi);
 
         double const rho = rho_sr * (1 - porosity) + porosity * rho_fr;
-        local_rhs.template segment<displacement_size>(displacement_index)
-            .noalias() -=
+        local_rhs.noalias() -=
             (B.transpose() * (sigma_eff - alpha * identity2 * p_at_xi) -
              N_u_op.transpose() * rho * b) *
             w;

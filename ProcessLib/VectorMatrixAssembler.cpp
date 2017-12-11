@@ -115,7 +115,8 @@ void VectorMatrixAssembler::assembleWithJacobian(
     // coupling.
     auto const indices =
         ((base_dof_table == nullptr) ||
-         (cpl_xs->process_id == cpl_xs->coupled_xs.size() - 1 &&
+         (cpl_xs->process_id ==
+              static_cast<int>(cpl_xs->coupled_xs.size()) - 1 &&
           cpl_xs != nullptr))
             ? NumLib::getIndices(mesh_item_id, dof_table)
             : NumLib::getIndices(mesh_item_id, *base_dof_table);
@@ -135,58 +136,32 @@ void VectorMatrixAssembler::assembleWithJacobian(
     }
     else
     {
-        std::vector<std::reference_wrapper<const std::vector<GlobalIndexType>>>
-            indices_of_all_coupled_processes;
-        indices_of_all_coupled_processes.reserve(cpl_xs->coupled_xs.size());
         if (base_dof_table == nullptr)
         {
-            for (std::size_t i = 0; i < cpl_xs->coupled_xs.size(); i++)
-            {
-                indices_of_all_coupled_processes.emplace_back(
-                    std::ref(indices));
-            }
+            localAssembleWithJacobianAndCoupling(t, indices, indices,
+                                                 local_xdot, local_assembler,
+                                                 dxdot_dx, dx_dx, cpl_xs);
         }
         else
         {
-            if (cpl_xs->process_id == cpl_xs->coupled_xs.size() - 1)
+            if (cpl_xs->process_id ==
+                static_cast<int>(cpl_xs->coupled_xs.size()) - 1)
             {
                 const auto base_indices =
                     NumLib::getIndices(mesh_item_id, *base_dof_table);
-                for (std::size_t i = 0; i < cpl_xs->coupled_xs.size() - 1; i++)
-                {
-                    indices_of_all_coupled_processes.emplace_back(
-                        std::ref(base_indices));
-                }
-                indices_of_all_coupled_processes.emplace_back(
-                    std::ref(indices));
+                localAssembleWithJacobianAndCoupling(
+                    t, base_indices, indices, local_xdot, local_assembler,
+                    dxdot_dx, dx_dx, cpl_xs);
             }
             else
             {
                 const auto full_indices =
                     NumLib::getIndices(mesh_item_id, dof_table);
-                for (std::size_t i = 0; i < cpl_xs->coupled_xs.size() - 1; i++)
-                {
-                    indices_of_all_coupled_processes.emplace_back(
-                        std::ref(indices));
-                }
-                indices_of_all_coupled_processes.emplace_back(
-                    std::ref(full_indices));
+                localAssembleWithJacobianAndCoupling(
+                    t, indices, full_indices, local_xdot, local_assembler,
+                    dxdot_dx, dx_dx, cpl_xs);
             }
         }
-
-        auto local_coupled_xs0 = getPreviousLocalSolutions(
-            *cpl_xs, indices_of_all_coupled_processes);
-        auto local_coupled_xs =
-            getCurrentLocalSolutions(*cpl_xs, indices_of_all_coupled_processes);
-
-        ProcessLib::LocalCoupledSolutions local_coupled_solutions(
-            cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
-            std::move(local_coupled_xs));
-
-        _jacobian_assembler->assembleWithJacobianAndCoupling(
-            local_assembler, t, local_xdot, dxdot_dx, dx_dx, _local_M_data,
-            _local_K_data, _local_b_data, _local_Jac_data,
-            local_coupled_solutions);
     }
 
     auto const num_r_c = indices.size();
@@ -220,6 +195,36 @@ void VectorMatrixAssembler::assembleWithJacobian(
             "No Jacobian has been assembled! This might be due to programming "
             "errors in the local assembler of the current process.");
     }
+}
+
+void VectorMatrixAssembler::localAssembleWithJacobianAndCoupling(
+    const double t, std::vector<GlobalIndexType> const& base_indices,
+    std::vector<GlobalIndexType> const& full_indices,
+    std::vector<double> const& local_xdot,
+    LocalAssemblerInterface& local_assembler, const double dxdot_dx,
+    const double dx_dx, CoupledSolutionsForStaggeredScheme const* cpl_xs)
+{
+    std::vector<std::reference_wrapper<const std::vector<GlobalIndexType>>>
+        indices_of_all_coupled_processes;
+    indices_of_all_coupled_processes.reserve(cpl_xs->coupled_xs.size());
+    for (std::size_t i = 0; i < cpl_xs->coupled_xs.size() - 1; i++)
+    {
+        indices_of_all_coupled_processes.emplace_back(std::ref(base_indices));
+    }
+    indices_of_all_coupled_processes.emplace_back(std::ref(full_indices));
+
+    auto local_coupled_xs0 =
+        getPreviousLocalSolutions(*cpl_xs, indices_of_all_coupled_processes);
+    auto local_coupled_xs =
+        getCurrentLocalSolutions(*cpl_xs, indices_of_all_coupled_processes);
+
+    ProcessLib::LocalCoupledSolutions local_coupled_solutions(
+        cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
+        std::move(local_coupled_xs));
+
+    _jacobian_assembler->assembleWithJacobianAndCoupling(
+        local_assembler, t, local_xdot, dxdot_dx, dx_dx, _local_M_data,
+        _local_K_data, _local_b_data, _local_Jac_data, local_coupled_solutions);
 }
 
 }  // namespace ProcessLib

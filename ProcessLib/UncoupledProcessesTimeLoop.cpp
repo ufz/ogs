@@ -658,6 +658,7 @@ bool UncoupledProcessesTimeLoop::loop()
             auto& pcs = spd->process;
             _output->addProcess(pcs, pcs_idx);
 
+            spd->equation_id = pcs_idx;
             setTimeDiscretizedODESystem(*spd);
 
             if (auto* conv_crit =

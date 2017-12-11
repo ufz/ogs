@@ -70,6 +70,13 @@ private:
 
     //! Used to assemble the Jacobian.
     std::unique_ptr<AbstractJacobianAssembler> _jacobian_assembler;
+
+    void localAssembleWithJacobianAndCoupling(
+        const double t, std::vector<GlobalIndexType> const& base_indices,
+        std::vector<GlobalIndexType> const& full_indices,
+        std::vector<double> const& local_xdot,
+        LocalAssemblerInterface& local_assembler, const double dxdot_dx,
+        const double dx_dx, CoupledSolutionsForStaggeredScheme const* cpl_xs);
 };
 
 }  // namespace ProcessLib

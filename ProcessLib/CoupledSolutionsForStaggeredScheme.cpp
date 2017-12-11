@@ -34,6 +34,9 @@ std::vector<std::vector<double>> getPreviousLocalSolutions(
         std::reference_wrapper<const std::vector<GlobalIndexType>>>&
         indices)
 {
+    if (cpl_xs.coupled_xs_t0.empty())
+        return {};
+
     const auto number_of_coupled_solutions = cpl_xs.coupled_xs.size();
     std::vector<std::vector<double>> local_xs_t0;
     local_xs_t0.reserve(number_of_coupled_solutions);
