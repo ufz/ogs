@@ -42,8 +42,8 @@ The mass transport simulation results (figures below) show an expected heterogen
 {{< img src="../heterogeneous/concentration_2d.png" title="Concentration distribution at simulation time $1e8$ s for the 2D setup.">}}
 {{< img src="../heterogeneous/concentration_3d.png" title="Concentration distribution at simulation time $1e8$ s for the 3D setup.">}}
 
-[The project files for the 2D setup are here.]({{< data-url "Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D.prj" >}})
-[The project files for the 3D setup are here.]({{< data-url "Parabolic/ComponentTransport/heterogeneous/ogs5_H_3D.prj" >}})
+[The project files for the 2D setup are here.]({{< data-url "Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D/ogs5_H_2D.prj" >}})  
+[The project files for the 3D setup are here.]({{< data-url "Parabolic/ComponentTransport/heterogeneous/ogs5_H_3D/ogs5_H_3D.prj" >}})
 
 
 ## Literature
