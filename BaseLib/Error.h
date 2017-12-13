@@ -19,7 +19,12 @@ namespace BaseLib
 namespace detail
 {
 template <typename Msg>
-[[noreturn]] bool error_impl(Msg&& msg)
+#if defined(_MSC_VER) && _MSC_VER < 1500
+__declspec(noreturn)
+#else
+[[noreturn]]
+#endif
+    bool error_impl(Msg&& msg)
 {
     ERR("%s", msg.data());
     std::abort();
@@ -38,7 +43,12 @@ namespace BaseLib
 namespace detail
 {
 template <typename Msg>
-[[noreturn]] bool error_impl(Msg&& msg)
+#if defined(_MSC_VER) && _MSC_VER < 1500
+__declspec(noreturn)
+#else
+[[noreturn]]
+#endif
+    bool error_impl(Msg&& msg)
 {
     throw std::runtime_error(std::forward<Msg>(msg));
 }

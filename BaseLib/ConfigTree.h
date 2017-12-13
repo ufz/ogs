@@ -526,7 +526,12 @@ private:
      *
      * This method only acts as a helper method and throws std::runtime_error.
      */
-    [[noreturn]] void error(std::string const& message) const;
+#if defined(_MSC_VER) && _MSC_VER < 1500
+    __declspec(noreturn)
+#else
+    [[noreturn]]
+#endif
+        void error(std::string const& message) const;
 
     //! Called for printing warning messages. Will call the warning callback.
     //! This method only acts as a helper method.
