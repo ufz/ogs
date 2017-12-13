@@ -803,7 +803,7 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
         const auto nonlinear_solver_succeeded =
             solveOneTimeStepOneProcess(pcs_idx, x, timestep_id, t, dt, *spd, *_output);
         spd->nonlinear_solver_converged = nonlinear_solver_succeeded;
-        pcs.postTimestep(x);
+        pcs.postTimestep(x, pcs_idx);
         pcs.computeSecondaryVariable(t, x);
 
         INFO("[time] Solving process #%u took %g s in time step #%u ", pcs_idx,
@@ -958,7 +958,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         }
         auto& pcs = spd->process;
         auto& x = *_process_solutions[pcs_idx];
-        pcs.postTimestep(x);
+        pcs.postTimestep(x, pcs_idx);
         pcs.computeSecondaryVariable(t, x);
 
         ++pcs_idx;

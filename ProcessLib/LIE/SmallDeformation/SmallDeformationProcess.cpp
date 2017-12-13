@@ -395,7 +395,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x)
+    GlobalVector const& x, int const /*process_id*/)
 {
     DBUG("PostTimestep SmallDeformationProcess.");
 

@@ -343,13 +343,12 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x)
+    GlobalVector const& x, const int process_id)
 {
     DBUG("PostTimestep HydroMechanicsProcess.");
-
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        *_local_to_global_index_map, x);
+        getDOFTable(process_id), x);
 }
 
 template <int DisplacementDim>

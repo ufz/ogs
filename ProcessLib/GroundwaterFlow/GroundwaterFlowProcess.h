@@ -60,7 +60,8 @@ public:
         return _local_assemblers[element_id]->getFlux(p, local_x);
     }
 
-    void postTimestepConcreteProcess(GlobalVector const& x) override
+    void postTimestepConcreteProcess(GlobalVector const& x,
+                                     int const /*process_id*/) override
     {
         if (_balance_mesh) // computing the balance is optional
         {
