@@ -298,31 +298,26 @@ void HydroMechanicsProcess<DisplacementDim>::
     }
 
     // For the staggered scheme
-    // For the equations of displacement
-    if (_coupled_solutions->process_id == 1)
+    if (_coupled_solutions->process_id == 0)
+    {
+        DBUG(
+            "Assemble the Jacobian equations of liquid fluid process in "
+             "HydroMechanics for the staggered scheme.");
+    }
+    else
     {
         DBUG(
             "Assemble the Jacobian equations of mechanical process in "
             "HydroMechanics for the staggered scheme.");
-
-        GlobalExecutor::executeMemberDereferenced(
-            _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-            _local_assemblers, *_local_to_global_index_map, t, x, xdot,
-            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions,
-            _local_to_global_index_map_with_base_nodes.get());
-        return;
     }
 
-    // For the equations of pressure
-    DBUG(
-        "Assemble the Jacobian equations of liquid fluid process in "
-        "HydroMechanics for the staggered scheme.");
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x,
         xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions,
         _local_to_global_index_map_with_base_nodes.get());
 }
+
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     GlobalVector const& x, double const t, double const dt,
