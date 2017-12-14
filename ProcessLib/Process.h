@@ -59,6 +59,9 @@ public:
     /// Postprocessing after a complete timestep.
     void postTimestep(GlobalVector const& x, int const process_id);
 
+    void postNonLinearSolver(GlobalVector const& x, const double t,
+                             int const process_id);
+
     void preIteration(const unsigned iter, GlobalVector const& x) final;
 
     /// compute secondary variables for the coupled equations or for output.
@@ -179,6 +182,13 @@ private:
                                              int const /*process_id*/)
     {
     }
+
+    virtual void postNonLinearSolverProcess(GlobalVector const& /*x*/,
+                                            const double /*t*/,
+                                            int const /*process_id*/)
+    {
+    }
+
     virtual void preIterationConcreteProcess(const unsigned /*iter*/,
                                              GlobalVector const& /*x*/)
     {

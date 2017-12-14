@@ -129,8 +129,7 @@ void Process::setInitialConditions(const int process_id, double const t,
         for (int component_id = 0; component_id < num_comp; ++component_id)
         {
             auto const& mesh_subsets =
-                dof_table_of_process.getMeshSubsets(variable_id,
-                                                           component_id);
+                dof_table_of_process.getMeshSubsets(variable_id, component_id);
             for (auto const& mesh_subset : mesh_subsets)
             {
                 auto const mesh_id = mesh_subset->getMeshID();
@@ -348,6 +347,13 @@ void Process::postTimestep(GlobalVector const& x, int const process_id)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
     postTimestepConcreteProcess(x, process_id);
+}
+
+void Process::postNonLinearSolver(GlobalVector const& x, const double t,
+                                  int const process_id)
+{
+    MathLib::LinAlg::setLocalAccessibleVector(x);
+    postNonLinearSolverProcess(x, t, process_id);
 }
 
 void Process::computeSecondaryVariable(const double t, GlobalVector const& x)

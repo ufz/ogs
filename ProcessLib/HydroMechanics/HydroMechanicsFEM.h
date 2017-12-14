@@ -376,6 +376,10 @@ public:
         }
     }
 
+    void postNonLinearSolverConcrete(std::vector<double> const& local_x,
+                                     double const t,
+                                     bool const use_monolithic_scheme) override;
+
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {

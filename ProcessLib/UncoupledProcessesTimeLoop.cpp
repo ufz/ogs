@@ -422,7 +422,7 @@ std::vector<GlobalVector*> setInitialConditions(
     return process_solutions;
 }
 
-bool solveOneTimeStepOneProcess(const unsigned process_index, GlobalVector& x,
+bool solveOneTimeStepOneProcess(int const process_id, GlobalVector& x,
                                 std::size_t const timestep, double const t,
                                 double const delta_t,
                                 SingleProcessData const& process_data,
@@ -448,13 +448,18 @@ bool solveOneTimeStepOneProcess(const unsigned process_index, GlobalVector& x,
 
     auto const post_iteration_callback = [&](unsigned iteration,
                                              GlobalVector const& x) {
-        output_control.doOutputNonlinearIteration(process, process_index,
+        output_control.doOutputNonlinearIteration(process, process_id,
                                                   process_data.process_output,
                                                   timestep, t, x, iteration);
     };
 
     bool nonlinear_solver_succeeded =
         nonlinear_solver.solve(x, post_iteration_callback);
+
+    if (nonlinear_solver_succeeded)
+    {
+        process.postNonLinearSolver(x, t, process_id);
+    }
 
     return nonlinear_solver_succeeded;
 }

@@ -77,6 +77,9 @@ private:
     void postTimestepConcreteProcess(GlobalVector const& x,
                                      int const process_id) override;
 
+    void postNonLinearSolverProcess(GlobalVector const& x, const double t,
+                                     int const process_id) override;
+
     NumLib::LocalToGlobalIndexMap const& getDOFTable(
         const int process_id) const override;
 

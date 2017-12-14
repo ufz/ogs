@@ -240,5 +240,49 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         t, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
         local_b_data, local_Jac_data, local_coupled_solutions);
 }
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
+                                  ShapeFunctionPressure, IntegrationMethod,
+                                  DisplacementDim>::
+    postNonLinearSolverConcrete(std::vector<double> const& local_x,
+                                double const t,
+                                bool const use_monolithic_scheme)
+{
+    const int offset = use_monolithic_scheme ? displacement_index : 0;
+
+    auto u =
+        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
+            displacement_size> const>(local_x.data() + offset,
+                                      displacement_size);
+    double const& dt = _process_data.dt;
+    SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    int const n_integration_points = _integration_method.getNumberOfPoints();
+    for (int ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+        auto const& N_u = _ip_data[ip].N_u;
+        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+
+        auto const x_coord =
+            interpolateXCoordinate<ShapeFunctionDisplacement,
+                                   ShapeMatricesTypeDisplacement>(_element,
+                                                                  N_u);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+
+        auto& eps = _ip_data[ip].eps;
+        eps.noalias() = B * u;
+
+        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u);
+    }
+}
+
 }  // namespace HydroMechanics
 }  // namespace ProcessLib
