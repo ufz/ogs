@@ -61,8 +61,8 @@ PropertyDataType ViscosityCO2Fenghour::value(VariableArray const& vars)
 
     const double eta_0 = 1.00697 * std::sqrt(T_red) / std::exp(psi);
     const double eta_d = d[0] * rho + d[1] * rho_pow_2 +
-                         d[2] * rho_pow_6 / T_red + d[3] * rho_pow_8 +
-                         d[4] * rho_pow_8 / T_red;
+                         d[2] * rho_pow_6 / T_red + ( d[3] +
+                         d[4] / T_red ) * rho_pow_8;
     const double eta = (eta_0 + eta_d) / 1.e6;  // conversion MPa*s in Pa*s
 
     _value = eta;
