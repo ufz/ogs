@@ -57,11 +57,20 @@
     <time_loop>
         <global_process_coupling>
             <max_iter> 6 </max_iter>
-            <convergence_criterion>
-                <type>Residual</type>
-                <norm_type>NORM2</norm_type>
-                <reltol>1.e-10</reltol>
-            </convergence_criterion>
+            <convergence_criteria>
+                <!-- convergence criterion for the first process -->
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1.e-14</reltol>
+                </convergence_criterion>
+                <!-- convergence criterion for the second process -->
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1.e-14</reltol>
+                </convergence_criterion>
+            </convergence_criteria>
         </global_process_coupling>
 
         <processes>

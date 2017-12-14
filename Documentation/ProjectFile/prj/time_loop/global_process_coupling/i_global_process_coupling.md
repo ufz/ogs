@@ -1,1 +1,1 @@
-Global convergence criteria of the coupling iterations.
+Defines global convergence controls of the coupling iterations.
