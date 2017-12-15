@@ -53,24 +53,32 @@ PropertyDataType ViscosityWaterIAPWS::value(VariableArray const& vars)
     const double rho = getScalar(_component->property(density), vars);
     const double rho_red = rho / rho_crit;
 
-    std::array<double, 3> sum{{0., 0., 0.}};
+    double eta_0 = H.back();
 
-    double H_over_T_red_i_sum = 0;
-    for (unsigned i = 0; i < 4; ++i)
-        H_over_T_red_i_sum += H[i] / std::pow(T_red, i);
+    for (int i = H.size()-2; i >= 0; --i)
+        eta_0 = eta_0/T_red + H[i];
 
-    for (unsigned i = 0; i < 6; ++i)
+    eta_0 = 100.*std::sqrt(T_red)/eta_0;
+
+    double A = 1/T_red - 1.;
+    double B = rho_red - 1.;
+
+    double eta_1 = 0;
+
+    const auto hi_max = h.size()-1;
+    const auto hj_max = h[0].size()-1;
+
+    for (int j=hj_max; j>=0; j--)
     {
-        for (unsigned j = 0; j < 7; ++j)
-        {
-            sum[2] += h[i][j] * std::pow(rho_red - 1., j);
-            sum[1] += (std::pow(1. / T_red - 1., i) * sum[2]);
-        }
-        sum[2] = 0;
+        double a = h[hi_max][j];
+        for (int i=hi_max-1; i>=0; i--)
+            a = h[i][j] + A*a;
+        eta_1 = a + B*eta_1;
     }
 
-    const double eta = 100. * std::sqrt(T_red) / H_over_T_red_i_sum *
-                       std::exp(rho_red * sum[1]) / 1.e6;
+    eta_1 = std::exp(rho_red*eta_1);
+
+    const double eta = eta_0 * eta_1 / 1.e6;
 
     _value = eta;
     return eta;
