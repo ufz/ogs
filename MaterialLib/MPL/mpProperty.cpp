@@ -138,8 +138,7 @@ std::unique_ptr<Property> selectProperty(BaseLib::ConfigTree const& config,
     }
     if (boost::iequals(property_type, "Fenghour_1998"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<Constant>(0);
+        return std::make_unique<ViscosityCO2Fenghour>(M);
     }
     if (boost::iequals(property_type, "Mualem_1978"))
     {
