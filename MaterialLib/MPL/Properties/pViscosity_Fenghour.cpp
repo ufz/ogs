@@ -53,11 +53,12 @@ PropertyDataType ViscosityCO2Fenghour::value(VariableArray const& vars)
     const double rho_pow_2 = rho * rho;
     const double rho_pow_6 = rho_pow_2 * rho_pow_2 * rho_pow_2;
     const double rho_pow_8 = rho_pow_6 * rho_pow_2;
+    const double log_T_red = std::log(T_red);
 
-    double psi(0.);
+    double psi = a.back();
 
-    for (std::size_t i = 0; i < a.size(); i++)
-        psi += a[i] * std::pow(std::log(T_red), i);
+    for (int i = a.size()-2; i >= 0; i--)
+            psi = a[i] + log_T_red * psi;
 
     const double eta_0 = 1.00697 * std::sqrt(T_red) / std::exp(psi);
     const double eta_d = d[0] * rho + d[1] * rho_pow_2 +
