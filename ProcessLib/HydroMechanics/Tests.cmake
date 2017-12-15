@@ -1,4 +1,6 @@
 # HydroMechanics; Small deformations, linear poroelastic (HML)
+
+### With monolithic scheme
 AddTest(
     NAME HydroMechanics_HML_square_1e2_quad8_confined_compression
     PATH HydroMechanics/Linear/Confined_Compression
@@ -83,4 +85,32 @@ AddTest(
     DIFF_DATA
     expected_square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu displacement displacement 1e-13 1e-16
     expected_square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu pressure pressure 1e-13 1e-16
+)
+
+## Test as the reference of InjectionProduction1D
+AddTest(
+    NAME MonolithicInjectionProduction1D
+    PATH HydroMechanics/StaggeredScheme/InjectionProduction1D/RerefenceSolutionByMonolithicScheme
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS InjectionProduction1DMono.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu displacement displacement 1e-11 1e-11
+    InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu pressure pressure 1e-11 1e-11
+)
+
+### With staggered scheme
+AddTest(
+    NAME StaggeredInjectionProduction1D
+    PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS InjectionProduction1D.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu displacement displacement 1e-11 1e-11
+    InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu pressure pressure 1e-11 1e-11
 )
