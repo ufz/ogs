@@ -300,7 +300,7 @@ TEST(Material, parseMaterials)
 
     // now we roam through all phases and components, finding their names
     // and storing them in the two vectors
-    for (size_t p = 0; p < m.numberOfPhases(); ++p)
+    for (std::size_t p = 0; p < m.numberOfPhases(); ++p)
     {
         const auto phase = m.phase(p);
         getNames(phase->property(MPL::name),
