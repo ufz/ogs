@@ -35,7 +35,10 @@ pipeline {
                 sudo -H pip install -r requirements.txt
                 """.stripIndent())
 
-              configure { cmakeOptions = '-DOGS_CPU_ARCHITECTURE=generic ' }
+              configure { cmakeOptions =
+                '-DOGS_CPU_ARCHITECTURE=generic ' +
+                '-DOGS_WEB_EMBED_DOXYGEN=ON '
+              }
               build { }
               build { target="tests" }
               build { target="ctest" }
@@ -56,12 +59,12 @@ pipeline {
             }
             success {
                 dir('web/public') { stash(name: 'web') }
-                dir('build/docs') { stash(name: 'doxygen') }
+                // dir('build/docs') { stash(name: 'doxygen') }
                 dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
                 script {
-                  publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
-                    keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
-                    reportName: 'Doxygen'])
+                  //publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
+                  //  keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
+                  //  reportName: 'Doxygen'])
                   publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                     keepAll: true, reportDir: 'web/public', reportFiles: 'index.html',
                     reportName: 'Web'])
@@ -265,7 +268,7 @@ pipeline {
           agent any
           steps {
             dir('web') { unstash 'web' }
-            dir('doxygen') { unstash 'doxygen' }
+            // dir('doxygen') { unstash 'doxygen' }
             unstash 'known_hosts'
             script {
               sshagent(credentials: ['www-data_jenkins']) {
