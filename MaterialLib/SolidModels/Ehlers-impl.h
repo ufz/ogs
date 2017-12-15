@@ -393,38 +393,6 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
     return jacobian;
 }
 
-/// Computes the damage internal material variable explicitly based on the
-/// results obtained from the local stress return algorithm.
-inline Damage calculateDamage(double const eps_p_V_diff,
-                              double const eps_p_eff_diff,
-                              double kappa_d,
-                              DamageProperties const& dp)
-{
-    // Default case of the rate problem. Updated below if volumetric plastic
-    // strain rate is positive (dilatancy).
-
-    // Compute damage current step
-    if (eps_p_V_diff > 0)
-    {
-        double const r_s = eps_p_eff_diff / eps_p_V_diff;
-
-        // Brittleness decrease with confinement for the nonlinear flow rule.
-        // ATTENTION: For linear flow rule -> constant brittleness.
-        double x_s = 0;
-        if (r_s < 1)
-        {
-            x_s = 1 + dp.h_d * r_s * r_s;
-        }
-        else
-        {
-            x_s = 1 - 3 * dp.h_d + 4 * dp.h_d * std::sqrt(r_s);
-        }
-        kappa_d += eps_p_eff_diff / x_s;
-    }
-
-    return {kappa_d, (1 - dp.beta_d) * (1 - std::exp(-kappa_d / dp.alpha_d))};
-}
-
 /// Calculates the derivative of the residuals with respect to total
 /// strain. Implementation fully implicit only.
 template <int DisplacementDim>
