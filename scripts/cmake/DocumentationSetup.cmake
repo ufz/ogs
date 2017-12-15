@@ -41,6 +41,23 @@ if(DOXYGEN_FOUND)
         set(OGS_DOXYGEN_LOGFILE "${PROJECT_BINARY_DIR}/DoxygenWarnings.log" CACHE INTERNAL "")
     endif()
 
+    set(DOXYGEN_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/docs CACHE INTERNAL "")
+
+    if(OGS_WEB_EMBED_DOXYGEN)
+        set(DOXYGEN_OUTPUT_DIRECTORY
+            ${PROJECT_SOURCE_DIR}/web/public/docs/doxygen
+            CACHE INTERNAL "")
+        set(DOXYGEN_HTML_HEADER
+            ${PROJECT_SOURCE_DIR}/web/public/docs/doxygen/header/index.html
+            CACHE INTERNAL "")
+        set(DOXYGEN_HTML_FOOTER
+            ${PROJECT_SOURCE_DIR}/web/public/docs/doxygen/footer/index.html
+            CACHE INTERNAL "")
+        set(DOXYGEN_HTML_EXTRA_STYLESHEET
+            ${PROJECT_SOURCE_DIR}/web/static/css/doxygen-extra.css)
+        add_dependencies(doc web)
+    endif()
+
     configure_file(Documentation/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
 
     if (BASH_TOOL_PATH AND PYTHON_EXECUTABLE)

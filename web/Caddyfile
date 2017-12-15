@@ -1,0 +1,5 @@
+# Local web server config (https://caddyserver.com) for testing
+localhost {
+    root public
+    tls off
+}

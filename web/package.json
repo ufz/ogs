@@ -7,6 +7,7 @@
   "license": "BSD-4-Clause",
   "scripts": {
     "clean": "gulp clean",
+    "clean-all": "gulp clean-all",
     "gulp": "gulp",
     "hugo": "hugo server --disableKinds=RSS",
     "build": "webpack && gulp build && hugo",

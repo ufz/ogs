@@ -175,6 +175,8 @@ option(OGS_ENABLE_ELEMENT_CUBOID  "Build FEM elements for cuboids (quads, hexahe
 option(OGS_ENABLE_ELEMENT_PRISM   "Build FEM elements for prisms." ON)
 option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
 
+option(OGS_WEB_EMBED_DOXYGEN "Embed Doxygen into web site." OFF)
+
 ###################
 ### Definitions ###
 ###################

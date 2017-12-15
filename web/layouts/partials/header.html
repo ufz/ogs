@@ -20,6 +20,16 @@
   </script>
   <script defer src="https://use.fontawesome.com/releases/v5.0.1/js/all.js"></script>
 
+  {{ if $.Param "doxygen" }}
+  <link href="$relpath^tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="$relpath^jquery.js"></script>
+  <script type="text/javascript" src="$relpath^dynsections.js"></script>
+  $treeview
+  $search
+  <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
+  $extrastylesheet
+  {{ end }}
+
   <title>{{ .Title }}</title>
 </head>
 

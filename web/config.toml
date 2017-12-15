@@ -7,7 +7,7 @@ pygmentsstyle = 'friendly'
 enableGitInfo = true
 
 [params]
-  alert = "Benchmarks only documentation; the Developer Guide can be found at <a href='https://docs.opengeosys.org'>docs.opengeosys.org</a>."
+  alert = "Benchmarks and source code only documentation; the Developer Guide can be found at <a href='https://docs.opengeosys.org'>docs.opengeosys.org</a>."
 
 [taxonomies]
 news = "news"

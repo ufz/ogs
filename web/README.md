@@ -42,6 +42,14 @@ In `ogs/web/import` run
 
 This fetches articles from the CMS to e.g. `ogs/web/data/news.json`.
 
+## Embedding Doxygen
+
+If Doxygen was found by the CMake run  in your build directory and the option
+`OGS_WEB_EMBED_DOXYGEN=ON` is set then `make doc` first runs Hugo, then Doxygen
+and embeds the Doxygen site into the Hugo site.
+
+To preview this run `caddy` (a web server) to serve the generated `public`-folder locally. 
+
 ## Used components
 
 - [Hugo](https://gothugo.com) - Static site generator for technical documentation
@@ -52,6 +60,7 @@ This fetches articles from the CMS to e.g. `ogs/web/data/news.json`.
 - [webpack](https://webpack.github.io/) - Packaging JavaScript
 - [gulp](http://gulpjs.com/) - Automation toolkit
 - [FontAwesome](https://fontawesome.com) - Icons, see [icon search](https://fontawesome.com/icons?d=gallery)
+- [Caddy](https://caddyserver.com) - Web server for local preview
 
 ## How-Tos
 
