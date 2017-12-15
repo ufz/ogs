@@ -161,6 +161,7 @@
     "gulp-load-plugins": "^1.4.0",
     "gulp-plumber": "^1.1.0",
     "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.6.1",
     "gulp-sass": "^3.1.0",
     "gulp-size": "^2.1.0",
     "kw-web-suite": "^3.1.1",

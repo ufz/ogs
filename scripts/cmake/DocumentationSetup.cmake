@@ -63,6 +63,12 @@ if(DOXYGEN_FOUND)
                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/web
                 COMMENT "Running grunt for prefix-ing doxygen css...")
         endif()
+        if(GULP)
+            add_custom_command(TARGET doc POST_BUILD
+                COMMAND ${GULP} fix-doxygen
+                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/web
+                COMMENT "Running grunt for prefix-ing doxygen css...")
+        endif()
     endif()
 
     configure_file(Documentation/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)

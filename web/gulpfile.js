@@ -67,6 +67,19 @@ gulp.task('clean-all', function() {
     ]);
 });
 
+var replace = require('gulp-replace');
+gulp.task('fix-doxygen', function() {
+    gulp.src(['public/docs/doxygen/resize.js'])
+    .pipe(replace('content.css({height:windowHeight + "px"});', ''))
+    .pipe(replace('navtree.css({height:windowHeight + "px"});', ''))
+    .pipe(replace('sidenav.css({height:windowHeight + "px"});', ''))
+    .pipe(gulp.dest('public/docs/doxygen/'));
+
+    gulp.src(['public/docs/doxygen/doxygen-prefixed.css'])
+    .pipe(replace('Roboto,sans-serif', 'avenir,sans-serif'))
+    .pipe(gulp.dest('public/docs/doxygen/'));
+});
+
 gulp.task('build', ['scss'])
 
 gulp.task('default', ['scss', 'watch'])

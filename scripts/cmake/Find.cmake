@@ -55,6 +55,7 @@ find_program(PIP pip)
 find_package(PythonInterp)
 find_program(PANDOC_CITEPROC pandoc-citeproc)
 find_program(GRUNT grunt)
+find_program(GULP gulp)
 
 find_program(MODULE_CMD modulecmd
     PATHS /usr/local/modules/3.2.10-1/Modules/3.2.10/bin)

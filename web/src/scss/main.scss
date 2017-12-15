@@ -96,6 +96,82 @@ ul.sidenav {
     }
 }
 
+// Doxygen
+#doxygen-content {
+    @extend .w-100;
+    @extend .pa2;
+
+    li {
+        @extend .f6;
+    }
+
+    a.el {
+        @extend .fw6;
+    }
+
+    #main-nav {
+        ul, .sm-dox a { /* links */
+            @extend .f6;
+            @extend .fw6;
+            background-image: unset;
+            text-shadow: unset;
+        }
+        .sm-dox a {
+            @extend .#{$text-font-family};
+        }
+        .sm-dox ul a { /* sub-links */
+            @extend .fw4;
+        }
+    }
+
+    #nav-tree, div.header, .navpath ul {
+        background-image: unset;
+        background-color: unset;
+    }
+
+    .navpath {
+        ul {
+            border: unset;
+            border-top: 1px solid;
+        }
+        li {
+            padding-left: 0;
+            padding-right: 0;
+            background-image: unset;
+            ::after {
+                content: "\00a0>\00a0";
+                @extend .fw6
+            }
+        }
+        li.navelem a {
+            @extend .f6;
+            @extend .fw4
+        }
+    }
+
+    hr.footer {
+        border: unset;
+        height: 0;
+        visibility: hidden;
+    }
+
+    .memtitle {
+        @extend .f4;
+        margin-top: 0;
+        visibility: hidden;
+        height: 0;
+        span.permalink {
+            visibility: hidden;
+            height: 0;
+        }
+    }
+
+    .memproto {
+        @extend .#{$code-font-family};
+        @extend .f6;
+    }
+}
+
 // Vis
 .vis {
     figcaption {
