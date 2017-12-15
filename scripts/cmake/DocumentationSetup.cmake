@@ -56,6 +56,13 @@ if(DOXYGEN_FOUND)
         set(DOXYGEN_HTML_EXTRA_STYLESHEET
             ${PROJECT_SOURCE_DIR}/web/static/css/doxygen-extra.css)
         add_dependencies(doc web)
+
+        if(NPM AND GRUNT)
+            add_custom_command(TARGET doc POST_BUILD
+                COMMAND ${GRUNT}
+                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/web
+                COMMENT "Running grunt for prefix-ing doxygen css...")
+        endif()
     endif()
 
     configure_file(Documentation/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
