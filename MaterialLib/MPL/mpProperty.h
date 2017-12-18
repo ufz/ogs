@@ -88,39 +88,39 @@ std::unique_ptr<Property> newProperty(BaseLib::ConfigTree const& config,
 
 /// This method returns a value of type double from the
 /// property value attribute
-inline double getScalar(Property* p)
+inline double getScalar(Property& p)
 {
-    return boost::get<double>(p->value());
+    return boost::get<double>(p.value());
 }
 
 /// This method forces the computation of a value of type double
 /// and returns it
-inline double getScalar(Property* p, VariableArray const& v)
+inline double getScalar(Property& p, VariableArray const& v)
 {
-    return boost::get<double>(p->value(v));
+    return boost::get<double>(p.value(v));
 }
 
 /// This method returns a value of type string from the
 /// property value attribute
-inline std::string getString(Property* p)
+inline std::string getString(Property const& p)
 {
-    return boost::get<std::string>(p->value());
+    return boost::get<std::string>(p.value());
 }
 
 /// This method returns the 0-based index of the variant
 /// data types. Can be enhanced by using enums.
-inline std::size_t getType(Property* p)
+inline std::size_t getType(Property const& p)
 {
-    return p->value().which();
+    return p.value().which();
 }
 
 /// This method returns a value of any valid type from
 /// the property value attribute. The data type is provided
 /// by the first parameter in the argument list.
 template <typename T>
-T getValue(T const&, Property* p)
+T getValue(T const&, Property const& p)
 {
-    return boost::get<T>(p->value());
+    return boost::get<T>(p.value());
 }
 
 }  // MaterialPropertyLib

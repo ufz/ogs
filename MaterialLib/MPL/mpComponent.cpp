@@ -63,9 +63,9 @@ void Component::createDefaultProperties(void)
         _properties[i] = std::make_unique<Constant>(0);
 }
 
-Property* Component::property(PropertyEnum const& p)
+Property& Component::property(PropertyEnum const& p) const
 {
-    return _properties[p].get();
+    return *_properties[p];
 }
 
 void Component::resetPropertyUpdateStatus(void)

@@ -41,7 +41,7 @@ public:
     /// The method for creating default properties.
     void createDefaultProperties(void);
     /// A get-function for retrieving a cartain property.
-    Property* property(PropertyEnum const&);
+    Property& property(PropertyEnum const&) const;
 
     void resetPropertyUpdateStatus(void);
 };

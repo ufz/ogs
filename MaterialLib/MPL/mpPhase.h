@@ -50,12 +50,12 @@ public:
 
     /// A simple get-function for a component. The argument refers to the
     /// Index of the component in the components vector.
-    Component* component(std::size_t const&);
+    Component& component(std::size_t const&) const;
     /// A get-function for a property. The argument refers to the
     /// name of the property.
-    Property* property(PropertyEnum const&);
+    Property& property(PropertyEnum const&) const;
     /// A get-function for retrieving the number of components in this phase
-    std::size_t numberOfComponents(void);
+    std::size_t numberOfComponents(void) const;
     void resetPropertyUpdateStatus(void);
 };
 

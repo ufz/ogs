@@ -106,17 +106,17 @@ void Phase::createDefaultProperties(void)
     // After this, other special properties can be set as default
 }
 
-Component* Phase::component(const std::size_t& index)
+Component& Phase::component(const std::size_t& index) const
 {
-    return _components[index].get();
+    return *_components[index];
 }
 
-Property* Phase::property(PropertyEnum const& p)
+Property& Phase::property(PropertyEnum const& p) const
 {
-    return _properties[p].get();
+    return *_properties[p];
 }
 
-std::size_t Phase::numberOfComponents(void)
+std::size_t Phase::numberOfComponents(void) const
 {
     return _components.size();
 }

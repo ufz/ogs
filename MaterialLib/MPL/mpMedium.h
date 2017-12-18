@@ -51,10 +51,10 @@ public:
 
     /// A get-function for a particular phase. The ul argument specifies
     /// the index within the _phases vector.
-    Phase* phase(std::size_t const);
+    Phase& phase(std::size_t const);
     /// A get-function for a property. The argument refers to the
     /// name of the property.
-    Property* property(PropertyEnum const&);
+    Property& property(PropertyEnum const&);
 
     /// A simple get-function for retrieving the number of phases the
     /// medium consists of.

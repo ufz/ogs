@@ -215,7 +215,7 @@ std::string makeMedium(Medium m)
 /// A method used to obtain the name of a medium, phase, or component of a
 /// material or of a specifier and to store them in two vectors for later
 /// comparison.
-void getNames(MPL::Property* observation, std::string expectation,
+void getNames(MPL::Property const& observation, std::string expectation,
               std::string defaultName, std::vector<std::string>* obs,
               std::vector<std::string>* exp)
 {
@@ -302,15 +302,15 @@ TEST(Material, parseMaterials)
     // and storing them in the two vectors
     for (std::size_t p = 0; p < m.numberOfPhases(); ++p)
     {
-        const auto phase = m.phase(p);
-        getNames(phase->property(MPL::name),
+        const auto& phase = m.phase(p);
+        getNames(phase.property(MPL::name),
                  medium.phases[p].property[MPL::name], "no_name", &observed,
                  &expected);
 
-        for (size_t c = 0; c < phase->numberOfComponents(); ++c)
+        for (std::size_t c = 0; c < phase.numberOfComponents(); ++c)
         {
-            const auto component = phase->component(c);
-            getNames(component->property(MPL::name),
+            const auto& component = phase.component(c);
+            getNames(component.property(MPL::name),
                      medium.phases[p].component[c].property[MPL::name],
                      "no_name", &observed, &expected);
         }

@@ -65,7 +65,7 @@ PropertyDataType PengRobinson::value(VariableArray const& v)
         // The number of relevant components is now narrowed down to
         // one or two components.
         for (int c = 0; c < nComponents; ++c)
-            temp_components.push_back(_phase->component(c));
+            temp_components.push_back(&_phase->component(c));
 
         M = getScalar(_phase->property(molar_mass));
         k_ij = getScalar(_phase->property(binary_interaction_coefficient));
