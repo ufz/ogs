@@ -116,17 +116,17 @@ void Medium::createDefaultProperties(void)
         this->_properties[i] = std::make_unique<AverageVolumeFraction>(this);
 }
 
-Phase& Medium::phase(std::size_t const index)
+Phase& Medium::phase(std::size_t const index) const
 {
     return *_phases[index];
 }
 
-Property& Medium::property(PropertyEnum const& p)
+Property& Medium::property(PropertyEnum const& p) const
 {
     return *_properties[p];
 }
 
-std::size_t Medium::numberOfPhases(void)
+std::size_t Medium::numberOfPhases(void) const
 {
     return _phases.size();
 }
