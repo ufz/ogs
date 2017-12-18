@@ -23,7 +23,7 @@ namespace MaterialPropertyLib
 {
 /// This constructor throws an error, since the property is not
 /// implemented on the medium scale.
-PengRobinson::PengRobinson(Medium* m) : _phase(0), _component(0)
+PengRobinson::PengRobinson(Medium*) : _phase(0), _component(0)
 {
     notImplemented("PengRobinson", "Medium");
 }
