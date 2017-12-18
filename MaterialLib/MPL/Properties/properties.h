@@ -16,4 +16,6 @@
 #include "pAverageVolumeFraction.h"
 #include "pConstant.h"
 #include "pLinearTemperature.h"
+#include "pPengRobinson.h"
 #include "pViscosity_Fenghour.h"
+#include "pViscosity_IAPWS.h"

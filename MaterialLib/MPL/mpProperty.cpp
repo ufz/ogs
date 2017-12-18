@@ -108,33 +108,27 @@ std::unique_ptr<Property> selectProperty(BaseLib::ConfigTree const& config,
     }
     if (boost::iequals(property_type, "LinearEpsilon"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<Constant>(0);
+        OGS_FATAL("TODO: Implementation of %s property!!", property_type.c_str());
     }
     if (boost::iequals(property_type, "AverageMolarMass"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<AverageMoleFraction>(M);
+        OGS_FATAL("TODO: Implementation of %s property!!", property_type.c_str());
     }
     if (boost::iequals(property_type, "AverageVolumeFraction"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<Constant>(0);
+        return std::make_unique<AverageMoleFraction>(M);
     }
     if (boost::iequals(property_type, "Duan_2012"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<Constant>(0);
+        OGS_FATAL("TODO: Implementation of %s property!!", property_type.c_str());
     }
     if (boost::iequals(property_type, "IAPWS_2008"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<Constant>(0);
+        return std::make_unique<ViscosityWaterIAPWS>(M);
     }
     if (boost::iequals(property_type, "Islam_Carlson_2012"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<Constant>(0);
+        OGS_FATAL("TODO: Implementation of %s property!!", property_type.c_str());
     }
     if (boost::iequals(property_type, "Fenghour_1998"))
     {
@@ -142,30 +136,26 @@ std::unique_ptr<Property> selectProperty(BaseLib::ConfigTree const& config,
     }
     if (boost::iequals(property_type, "Mualem_1978"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<Constant>(0);
+        OGS_FATAL("TODO: Implementation of %s property!!", property_type.c_str());
     }
     if (boost::iequals(property_type, "Buddenberg_Wilke_1949"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<Constant>(0);
+        OGS_FATAL("TODO: Implementation of %s property!!", property_type.c_str());
     }
     if (boost::iequals(property_type, "Peng_Robinson_1976"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<Constant>(0);
+        return std::make_unique<PengRobinson>(M);
     }
     if (boost::iequals(property_type, "Brooks_Corey_1964"))
     {
-        DBUG("TODO: Implementation of %s property!!", property_type.c_str());
-        return std::make_unique<Constant>(0);
+        OGS_FATAL("TODO: Implementation of %s property!!", property_type.c_str());
     }
     // If none of the above property types are found, OGS throws an error.
     OGS_FATAL(
         "The specified component property type \"%s\" was not "
         "recognized",
         property_type.c_str());
-    return nullptr;  // to avoid 'no return' warnings
+    //return nullptr;  // to avoid 'no return' warnings
 }
 
 }  // MaterialPropertyLib
