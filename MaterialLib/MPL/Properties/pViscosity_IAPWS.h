@@ -12,7 +12,7 @@
  */
 #pragma once
 
-#include "../mpProperty.h"
+#include "MaterialLib/MPL/mpProperty.h"
 
 namespace MaterialPropertyLib
 {
