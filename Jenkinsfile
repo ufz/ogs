@@ -216,7 +216,8 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_TESTS=OFF ' +
                   '-DOGS_BUILD_SWMM=ON ' +
-                  '-DOGS_BUILD_METIS=ON '
+                  '-DOGS_BUILD_METIS=ON ' +
+                  '-DOGS_PACKAGE_DEPENDENCIES=ON '
                   keepDir = true
               }
               build { }
