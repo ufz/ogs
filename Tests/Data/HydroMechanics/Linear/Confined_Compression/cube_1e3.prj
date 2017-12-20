@@ -241,12 +241,12 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i bicgstab -p ilu -tol 1e-16 -maxiter 10000</lis>
+            <lis>-i bicgstab -p ilu -tol 1e-10 -maxiter 10000</lis>
             <eigen>
                 <solver_type>BiCGSTAB</solver_type>
                 <precon_type>DIAGONAL</precon_type>
                 <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-16</error_tolerance>
+                <error_tolerance>1e-10</error_tolerance>
             </eigen>
         </linear_solver>
     </linear_solvers>
