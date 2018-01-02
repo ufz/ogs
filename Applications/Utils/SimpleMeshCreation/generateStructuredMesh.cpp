@@ -1,6 +1,6 @@
 /**
  * @copyright
- * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
@@ -61,14 +61,17 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Structured mesh generator.\n"
-            "OpenGeoSys-6 software.\n"
-            "Copyright (c) 2012-2017, OpenGeoSys Community "
-            "(http://www.opengeosys.org) "
-            "Distributed under a Modified BSD License. "
-            "See accompanying file LICENSE.txt or "
-            "http://www.opengeosys.org/project/license"
-            "The documentation is available at https://docs.opengeosys.org/docs/tools/meshing/structured-mesh-generation",
+    TCLAP::CmdLine cmd(
+        "Structured mesh generator.\n"
+        "OpenGeoSys-6 software.\n"
+        "Copyright (c) 2012-2018, OpenGeoSys Community "
+        "(http://www.opengeosys.org) "
+        "Distributed under a Modified BSD License. "
+        "See accompanying file LICENSE.txt or "
+        "http://www.opengeosys.org/project/license"
+        "The documentation is available at "
+        "https://docs.opengeosys.org/docs/tools/meshing/"
+        "structured-mesh-generation",
         ' ',
         BaseLib::BuildInfo::git_describe);
 

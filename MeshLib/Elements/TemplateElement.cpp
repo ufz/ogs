@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -19,7 +19,8 @@
 #include "MeshLib/Elements/Tri.h"
 
 #ifndef WIN32
-/// \todo Windows compiler does not accept this definition and issues a linking error.
+/// \todo Windows compiler does not accept this definition and issues a linking
+/// error.
 template <class ELEMENT_RULE>
 const unsigned MeshLib::TemplateElement<ELEMENT_RULE>::n_all_nodes;
 

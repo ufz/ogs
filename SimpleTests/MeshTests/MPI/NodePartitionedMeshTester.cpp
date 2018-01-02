@@ -2,10 +2,11 @@
   \file NodePartitionedMeshTester.cpp
   \author Wenqing Wang
   \date   2014.11
-  \brief  Test class readNodePartitionedMesh to read node-wise partitioned mesh with MPI functions.
+  \brief  Test class readNodePartitionedMesh to read node-wise partitioned mesh
+  with MPI functions.
 
   \copyright
-  Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
+  Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
              Distributed under a Modified BSD License.
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license

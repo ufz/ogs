@@ -2,18 +2,18 @@
  * \file ShapeStaticConsts.cpp
  *
  * \copyright
- * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
  * The purpose of this file is to prevent linker errors.
  *
- * The classes defined in the included headers each have <tt>static const</tt> members
- * \c DIM and \c NPOINTS. The compiler is allowed to optimize those symbols out.
- * Therefore the linker later on might not find those symbols anymore and raises errors.
- * The <tt>static const</tt> members are explicitly instantiated here in order to rule
- * such errors out.
+ * The classes defined in the included headers each have <tt>static const</tt>
+ * members \c DIM and \c NPOINTS. The compiler is allowed to optimize those
+ * symbols out. Therefore the linker later on might not find those symbols
+ * anymore and raises errors. The <tt>static const</tt> members are explicitly
+ * instantiated here in order to rule such errors out.
  *
  * Helper to generate that code:
  *

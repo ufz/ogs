@@ -1,16 +1,16 @@
 /**
-* \file
-* \author Lars Bilke
-* \date   2014-02-26
-* \brief  Unit tests for In-Situ data arrays
-*
-* \copyright
-* Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
-*            Distributed under a Modified BSD License.
-*              See accompanying file LICENSE.txt or
-*              http://www.opengeosys.org/project/license
-*
-*/
+ * \file
+ * \author Lars Bilke
+ * \date   2014-02-26
+ * \brief  Unit tests for In-Situ data arrays
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
 #include <numeric>
 
 #include <vtkDoubleArray.h>

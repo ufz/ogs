@@ -1,9 +1,10 @@
 /**
  * @file ComputeSurfaceNodeIDsInPolygonalRegion.cpp
- * @brief Computes mesh node ids of mesh nodes within a polygonal region, that resides on the surface.
+ * @brief Computes mesh node ids of mesh nodes within a polygonal region, that
+ * resides on the surface.
  *
  * @copyright
- * Copyright (c) 2012-2017, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/LICENSE.txt
