@@ -10,6 +10,9 @@
 #include "NaturalCoordinatesMapping.h"
 
 #include <cassert>
+#ifndef NDEBUG
+#include <iostream>
+#endif  // NDEBUG
 
 #include "BaseLib/Error.h"
 
@@ -96,25 +99,32 @@ computeMappingMatrices(
 {
 }
 
-static void checkJacobianDeterminant(const double detJ)
+static void checkJacobianDeterminant(const double detJ,
+                                     MeshLib::Element const& element)
 {
-    if (detJ <= .0)
-    {
-        if (detJ == .0)
-        {
-            OGS_FATAL(
-                "det J is zero. Please check whether:\n"
-                "\t element nodes may have the same coordinates,\n"
-                "\t or the coordinates of all nodes are not given in x "
-                "component for 1D problem,\n"
-                "\t or the coordinates of all nodes are not given in x-y "
-                "components for 2D problem,\n");
-        }
+    if (detJ > 0)  // The usual case
+        return;
 
+    if (detJ < 0)
+    {
+        ERR("det J = %g is negative for element %d.", detJ, element.getID());
+#ifndef NDEBUG
+        std::cerr << element << "\n";
+#endif  // NDEBUG
+        OGS_FATAL("Please check the node numbering of the element.");
+    }
+
+    if (detJ == 0)
+    {
+        ERR("det J is zero for element %d.", element.getID());
+#ifndef NDEBUG
+        std::cerr << element << "\n";
+#endif  // NDEBUG
         OGS_FATAL(
-            "det J = %g is negative. Please check the orientation of the "
-            "element node numbering\n",
-            detJ);
+            "Please check whether:\n"
+            "\t the element nodes may have the same coordinates,\n"
+            "\t or the coordinates of all nodes are not given on the x-axis "
+            "for a 1D problem or in the xy-plane in the 2D case.");
     }
 }
 
@@ -146,9 +156,9 @@ computeMappingMatrices(
     }
 
     shapemat.detJ = shapemat.J.determinant();
-
-    checkJacobianDeterminant(shapemat.detJ);
+    checkJacobianDeterminant(shapemat.detJ, ele);
 }
+
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline
 typename std::enable_if<T_SHAPE_FUNC::DIM==0>::type
@@ -189,8 +199,8 @@ computeMappingMatrices(
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
 
-    checkJacobianDeterminant(shapemat.detJ);
-    
+    checkJacobianDeterminant(shapemat.detJ, ele);
+
     //J^-1, dshape/dx
     shapemat.invJ.noalias() = shapemat.J.inverse();
 
