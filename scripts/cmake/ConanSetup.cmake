@@ -7,12 +7,6 @@ if(CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
         "using Conan. Specify CMAKE_BUILD_TYPE!")
 endif()
 
-set(OGS_QT_VERSION 5.6.2)
-if((${CMAKE_CXX_COMPILER_ID} STREQUAL AppleClang) AND
-    (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 8.3))
-    set(OGS_QT_VERSION 5.9.2)
-endif()
-
 if(DEFINED OGS_LIB_Boost)
     if(${OGS_LIB_Boost} STREQUAL "Default")
         cmake_minimum_required(VERSION 3.4) # Conan Boost package requires this
@@ -42,7 +36,7 @@ if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         Shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
-        Qt/${OGS_QT_VERSION}@osechet/stable
+        Qt/5.9.2@osechet/stable
     )
 endif()
 
