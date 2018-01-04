@@ -124,6 +124,36 @@ pipeline {
             }
           }
         }
+        // ******************### Docker-Conan-Debug #***************************
+        stage('Docker-Conan-Debug') {
+          agent {
+            docker {
+              image 'ogs6/gcc-conan:latest'
+              label 'docker'
+              args '-v /home/jenkins/.ccache:/usr/src/.ccache'
+              alwaysPull true
+            }
+          }
+          steps {
+            script {
+              configure {
+                cmakeOptions =
+                  '-DOGS_USE_CONAN=ON ' +
+                  '-DOGS_CONAN_BUILD=never ' +
+                  '-DOGS_CPU_ARCHITECTURE=generic '
+                config = 'Debug'
+              }
+              build { }
+              build { target = 'tests' }
+            }
+          }
+          post {
+            always {
+              publishReports { }
+              dir('build') { deleteDir() }
+            }
+          }
+        }
         // ************************** envinf1 **********************************
         stage('Envinf1 (serial)') {
           agent { label "envinf1"}
