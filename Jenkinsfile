@@ -79,11 +79,12 @@ pipeline {
         // ************************ Docker-Conan *******************************
         stage('Docker-Conan') {
           agent {
-            docker {
-              image 'ogs6/gcc-conan:latest'
+            dockerfile {
+              filename 'Dockerfile.gcc.minimal'
+              dir 'scripts/docker'
               label 'docker'
-              args '-v /home/jenkins/.ccache:/usr/src/.ccache'
-              alwaysPull true
+              args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
+              additionalBuildArgs '--pull'
             }
           }
           steps {
@@ -127,11 +128,12 @@ pipeline {
         // ******************### Docker-Conan-Debug #***************************
         stage('Docker-Conan-Debug') {
           agent {
-            docker {
-              image 'ogs6/gcc-conan:latest'
+            dockerfile {
+              filename 'Dockerfile.gcc.minimal'
+              dir 'scripts/docker'
               label 'docker'
-              args '-v /home/jenkins/.ccache:/usr/src/.ccache'
-              alwaysPull true
+              args '-v /home/jenkins/.ccache:/home/jenkins/.ccache'
+              additionalBuildArgs '--pull'
             }
           }
           steps {
