@@ -11,8 +11,9 @@
 
 #include <logog/include/logog.hpp>
 
-#include "MeshLib/Node.h"
+#include "BaseLib/makeVectorUnique.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib {
 
@@ -77,9 +78,8 @@ std::size_t ElementSearch::searchByNodeIDs(const std::vector<std::size_t> &nodes
             connected_elements.push_back(e->getID());
         }
     }
-    std::sort(connected_elements.begin(), connected_elements.end());
-    auto it = std::unique(connected_elements.begin(), connected_elements.end());
-    connected_elements.resize(std::distance(connected_elements.begin(),it));
+
+    BaseLib::makeVectorUnique(connected_elements);
 
     this->updateUnion(connected_elements);
     return connected_elements.size();
