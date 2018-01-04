@@ -12,9 +12,9 @@
 #include <cassert>
 
 #include "MeshLib/Elements/Utils.h"
-#include "ProcessLib/HydroMechanics/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
 
+#include "CreateLocalAssemblers.h"
 #include "HydroMechanicsFEM.h"
 #include "HydroMechanicsProcessData.h"
 
@@ -84,8 +84,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    ProcessLib::HydroMechanics::createLocalAssemblers<
-        DisplacementDim, HydroMechanicsLocalAssembler>(
+    createLocalAssemblers<DisplacementDim, HydroMechanicsLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         // use displacment process variable for shapefunction order
         getProcessVariables()[1].get().getShapeFunctionOrder(),
