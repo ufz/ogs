@@ -4,7 +4,7 @@ export MODULEPATH=$MODULEPATH:/global/apps/modulefiles
 module load cmake/3.1.3-1
 module load gcc/6.2.0-1
 module load ninja/1.8.2
-module load git/2.3.2-1
+module load git
 
 # Libraries
 module load boost/1.62.0-1
