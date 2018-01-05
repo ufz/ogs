@@ -90,11 +90,19 @@ foreach(LIB ${OGS_LIBS})
     endif()
 endforeach()
 
-conan_cmake_run(REQUIRES ${CONAN_REQUIRES}
-                OPTIONS ${CONAN_OPTIONS}
-                BASIC_SETUP
-                UPDATE
-                BUILD ${OGS_CONAN_BUILD}
+set(CONAN_IMPORTS "")
+if(APPLE)
+    set(CONAN_IMPORTS ${CONAN_IMPORTS} "lib, *.dylib* -> ./bin")
+endif()
+
+conan_cmake_run(
+    BASIC_SETUP
+    UPDATE
+    KEEP_RPATHS
+    REQUIRES ${CONAN_REQUIRES}
+    OPTIONS ${CONAN_OPTIONS}
+    BUILD ${OGS_CONAN_BUILD}
+    IMPORTS ${CONAN_IMPORTS}
 )
 
 if(NOT ${OGS_CONAN_BUILD} MATCHES "never|always|missing")

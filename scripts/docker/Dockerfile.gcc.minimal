@@ -31,8 +31,9 @@ RUN adduser --uid 500 --disabled-password --gecos "" jenkins \
   # Set password for the jenkins user (you may want to alter this).
   && echo "jenkins:jenkins" | chpasswd
 
-# Should be handled in VTK with x11=True
-# RUN apt-get -y install libsm-dev libx11-dev libxext-dev libxt-dev libglu1-mesa-dev
+# Is handled by VTK with x11=True but does not work when conan cache is shared
+# between container, see https://github.com/conan-io/conan/issues/2262
+RUN apt-get -y install libsm-dev libx11-dev libxext-dev libxt-dev libglu1-mesa-dev
 
 USER jenkins
 ENV CCACHE_DIR=/home/jenkins/cache/ccache

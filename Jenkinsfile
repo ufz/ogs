@@ -10,72 +10,6 @@ pipeline {
   stages {
     stage('Build') {
       parallel {
-        // ************************** Docker ***********************************
-        stage('Docker') {
-          agent {
-            docker {
-              image 'ogs6/gcc-gui:latest'
-              label 'docker'
-              args '-v /home/jenkins/.ccache:/usr/src/.ccache'
-              alwaysPull true
-            }
-          }
-          environment {
-            CONTENTFUL_ACCESS_TOKEN = credentials('CONTENTFUL_ACCESS_TOKEN')
-            CONTENTFUL_OGS_SPACE_ID = credentials('CONTENTFUL_OGS_SPACE_ID')
-          }
-          steps {
-            // Install web dependencies
-            script {
-              sh("""
-                cd web
-                yarn --ignore-engines --non-interactive
-                node node_modules/node-sass/scripts/install.js
-                npm rebuild node-sass
-                sudo -H pip install -r requirements.txt
-                """.stripIndent())
-
-              configure { cmakeOptions = '-DOGS_CPU_ARCHITECTURE=generic ' }
-              build { }
-              build { target="tests" }
-              build { target="ctest" }
-              build { target="web" }
-              build { target="doc" }
-            }
-          }
-          post {
-            always {
-              publishReports { }
-              script {
-                warnings(canResolveRelativePaths: false,
-                  consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)']])
-              }
-            }
-            failure {
-                dir('build') { deleteDir() }
-            }
-            success {
-                dir('web/public') { stash(name: 'web') }
-                dir('build/docs') { stash(name: 'doxygen') }
-                dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
-                script {
-                  publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
-                    keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
-                    reportName: 'Doxygen'])
-                  publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
-                    keepAll: true, reportDir: 'web/public', reportFiles: 'index.html',
-                    reportName: 'Web'])
-                  step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
-                    messagesPattern: """
-                      .*DOT_GRAPH_MAX_NODES.
-                      .*potential recursive class relation.*""",
-                    parserConfigurations: [[parserName: 'Doxygen', pattern:
-                    'build/DoxygenWarnings.log']], unstableTotalAll: '0'])
-                }
-                dir('build') { deleteDir() }
-            }
-          }
-        }
         // ************************ Docker-Conan *******************************
         stage('Docker-Conan') {
           agent {
@@ -125,7 +59,7 @@ pipeline {
             }
           }
         }
-        // ******************### Docker-Conan-Debug #***************************
+        // ********************* Docker-Conan-Debug ****************************
         stage('Docker-Conan-Debug') {
           agent {
             dockerfile {
@@ -268,6 +202,49 @@ pipeline {
             }
             success {
                 archiveArtifacts 'build/*.zip,build/conaninfo.txt'
+                dir('build') { deleteDir() }
+            }
+          }
+        }
+        // ****************************** Mac **********************************
+        stage('Mac') {
+          agent { label "mac"}
+          steps {
+            script {
+              configure {
+                cmakeOptions =
+                  '-DOGS_USE_CONAN=ON ' +
+                  '-DOGS_CONAN_BUILD=never ' +
+                  '-DOGS_CPU_ARCHITECTURE=core2 ' +
+                  '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
+                  '-DOGS_BUILD_GUI=ON ' +
+                  '-DOGS_BUILD_UTILS=ON ' +
+                  '-DOGS_BUILD_METIS=ON ' +
+                  '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" '
+              }
+              build {
+                target = 'tests'
+                cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
+              }
+              build {
+                target = 'ctest'
+                cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
+              }
+              build {
+                target = 'package'
+                cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
+              }
+            }
+          }
+          post {
+            always {
+              publishReports { }
+            }
+            failure {
+                dir('build') { deleteDir() }
+            }
+            success {
+                archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
                 dir('build') { deleteDir() }
             }
           }

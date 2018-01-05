@@ -13,6 +13,6 @@ set(CPACK_DMG_FORMAT "UDBZ")
 set(CPACK_DMG_BACKGROUND_IMAGE ${PROJECT_SOURCE_DIR}/Documentation/OpenGeoSys-Logo.png)
 set(CPACK_DMG_DS_STORE ${PROJECT_SOURCE_DIR}/scripts/packaging/.DS_Store)
 
-if(USE_CONAN)
+if(OGS_USE_CONAN)
     SET(CMAKE_INSTALL_RPATH "@executable_path")
 endif()
