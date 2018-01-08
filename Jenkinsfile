@@ -23,6 +23,8 @@ pipeline {
           }
           steps {
             script {
+              //conanClearSysreqs // see https://github.com/conan-io/conan/issues/2262
+              sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
