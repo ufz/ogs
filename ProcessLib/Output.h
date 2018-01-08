@@ -106,9 +106,6 @@ private:
     std::vector<PairRepeatEachSteps> _repeats_each_steps;
 
     std::multimap<Process const*, SingleProcessData> _single_process_data;
-
-    SingleProcessData findSingleProcessData(
-        Process const& process, const unsigned process_id) const;
 };
 
 }

@@ -134,35 +134,6 @@ void Output::addProcess(ProcessLib::Process const& process,
                                  std::forward_as_tuple(filename));
 }
 
-Output::SingleProcessData Output::findSingleProcessData(
-    Process const& process, const unsigned process_id) const
-{
-    if (process.isMonolithicSchemeUsed())
-    {
-        auto spd_it = _single_process_data.find(&process);
-        if (spd_it == _single_process_data.end()) {
-            OGS_FATAL("The given process is not contained in the output"
-                      " configuration. Aborting.");
-        }
-        return spd_it->second;
-    }
-
-    auto spd_range = _single_process_data.equal_range(&process);
-    unsigned counter = 0;
-    for (auto spd_it=spd_range.first; spd_it!=spd_range.second; ++spd_it)
-    {
-        if(counter == process_id)
-        {
-            return spd_it->second;
-        }
-        counter++;
-    }
-
-    OGS_FATAL("The given process is not contained in the output"
-                      " configuration. Aborting.");
-}
-
-
 void Output::doOutputAlways(Process const& process,
                             const int process_id,
                             ProcessOutput const& process_output,
@@ -170,10 +141,32 @@ void Output::doOutputAlways(Process const& process,
                             const double t,
                             GlobalVector const& x)
 {
+    const bool make_output =
+        !(process_id < static_cast<int>(_single_process_data.size()) - 1 &&
+          !(process.isMonolithicSchemeUsed()));
+    if (!make_output)
+        return;
+ 
     BaseLib::RunTime time_output;
     time_output.start();
 
-    auto spd = findSingleProcessData(process, process_id);
+    auto spd_range = _single_process_data.equal_range(&process);
+    int counter = 0;
+    SingleProcessData* spd_ptr = nullptr;
+    for (auto spd_it=spd_range.first; spd_it!=spd_range.second; ++spd_it)
+    {
+        if(counter == process_id)
+        {
+            spd_ptr = &spd_it->second;
+            break;
+        }
+        counter++;
+    }
+    if (spd_ptr == nullptr)
+    {
+        OGS_FATAL("The given process is not contained in the output"
+                  " configuration. Aborting.");
+    }
 
     std::string const output_file_name =
             _output_file_prefix + "_pcs_" + std::to_string(process_id)
@@ -182,25 +175,18 @@ void Output::doOutputAlways(Process const& process,
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
 
-    const bool make_out =
-        !(process_id < static_cast<int>(_single_process_data.size()) - 1 &&
-          !(process.isMonolithicSchemeUsed()));
 
-    if (make_out)
-        DBUG("output to %s", output_file_path.c_str());
+    DBUG("output to %s", output_file_path.c_str());
 
-    doProcessOutput(output_file_path, make_out, _output_file_compression,
+    doProcessOutput(output_file_path, make_output, _output_file_compression,
                     _output_file_data_mode, t, x, process.getMesh(),
                     process.getDOFTable(), process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);
 
-    if (make_out)
-    {
-        spd.pvd_file.addVTUFile(output_file_name, t);
+    spd_ptr->pvd_file.addVTUFile(output_file_name, t);
 
-        INFO("[time] Output of timestep %d took %g s.", timestep,
-             time_output.elapsed());
-    }
+    INFO("[time] Output of timestep %d took %g s.", timestep,
+         time_output.elapsed());
 }
 
 void Output::doOutput(Process const& process,
@@ -249,10 +235,32 @@ void Output::doOutputNonlinearIteration(Process const& process,
         return;
     }
 
+    const bool make_output =
+        !(process_id < static_cast<int>(_single_process_data.size()) - 1 &&
+          !(process.isMonolithicSchemeUsed()));
+    if (!make_output)
+        return;
+
     BaseLib::RunTime time_output;
     time_output.start();
 
-    findSingleProcessData(process, process_id);
+    auto spd_range = _single_process_data.equal_range(&process);
+    int counter = 0;
+    bool found_spd = false;
+    for (auto spd_it=spd_range.first; spd_it!=spd_range.second; ++spd_it)
+    {
+        if(counter == process_id)
+        {
+            found_spd = true;
+            break;
+        }
+        counter++;
+    }
+    if (!found_spd)
+    {
+        OGS_FATAL("The given process is not contained in the output"
+                  " configuration. Aborting.");
+    }
 
     std::string const output_file_name =
             _output_file_prefix + "_pcs_" + std::to_string(process_id)
@@ -262,16 +270,12 @@ void Output::doOutputNonlinearIteration(Process const& process,
             + ".vtu";
     std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
     DBUG("output iteration results to %s", output_file_path.c_str());
-    const bool make_out =
-        !(process_id < static_cast<int>(_single_process_data.size()) - 1 &&
-          !(process.isMonolithicSchemeUsed()));
-    doProcessOutput(output_file_path, make_out, _output_file_compression,
+    doProcessOutput(output_file_path, make_output, _output_file_compression,
                     _output_file_data_mode, t, x, process.getMesh(),
                     process.getDOFTable(), process.getProcessVariables(),
                     process.getSecondaryVariables(), process_output);
 
-    if (make_out)
-        INFO("[time] Output took %g s.", time_output.elapsed());
+    INFO("[time] Output took %g s.", time_output.elapsed());
 }
 
 }  // namespace ProcessLib
