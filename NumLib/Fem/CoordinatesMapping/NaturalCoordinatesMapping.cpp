@@ -10,6 +10,9 @@
 #include "NaturalCoordinatesMapping.h"
 
 #include <cassert>
+#ifndef NDEBUG
+#include <iostream>
+#endif  // NDEBUG
 
 #include "BaseLib/Error.h"
 
@@ -96,6 +99,35 @@ computeMappingMatrices(
 {
 }
 
+static void checkJacobianDeterminant(const double detJ,
+                                     MeshLib::Element const& element)
+{
+    if (detJ > 0)  // The usual case
+        return;
+
+    if (detJ < 0)
+    {
+        ERR("det J = %g is negative for element %d.", detJ, element.getID());
+#ifndef NDEBUG
+        std::cerr << element << "\n";
+#endif  // NDEBUG
+        OGS_FATAL("Please check the node numbering of the element.");
+    }
+
+    if (detJ == 0)
+    {
+        ERR("det J is zero for element %d.", element.getID());
+#ifndef NDEBUG
+        std::cerr << element << "\n";
+#endif  // NDEBUG
+        OGS_FATAL(
+            "Please check whether:\n"
+            "\t the element nodes may have the same coordinates,\n"
+            "\t or the coordinates of all nodes are not given on the x-axis "
+            "for a 1D problem or in the xy-plane in the 2D case.");
+    }
+}
+
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline
 typename std::enable_if<T_SHAPE_FUNC::DIM!=0>::type
@@ -124,10 +156,9 @@ computeMappingMatrices(
     }
 
     shapemat.detJ = shapemat.J.determinant();
-
-    if (shapemat.detJ<=.0)
-        OGS_FATAL("det J = %e is not positive.\n", shapemat.detJ);
+    checkJacobianDeterminant(shapemat.detJ, ele);
 }
+
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline
 typename std::enable_if<T_SHAPE_FUNC::DIM==0>::type
@@ -168,24 +199,22 @@ computeMappingMatrices(
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
 
-    if (shapemat.detJ > 0) {
-        //J^-1, dshape/dx
-        shapemat.invJ.noalias() = shapemat.J.inverse();
+    checkJacobianDeterminant(shapemat.detJ, ele);
 
-        auto const nnodes(shapemat.dNdr.cols());
-        auto const ele_dim(shapemat.dNdr.rows());
-        assert(shapemat.dNdr.rows()==ele.getDimension());
-        const unsigned global_dim = ele_local_coord.getGlobalDimension();
-        if (global_dim==ele_dim) {
-            shapemat.dNdx.topLeftCorner(ele_dim, nnodes).noalias() = shapemat.invJ * shapemat.dNdr;
-        } else {
-            auto const& matR = ele_local_coord.getRotationMatrixToGlobal(); // 3 x 3
-            auto invJ_dNdr = shapemat.invJ * shapemat.dNdr;
-            auto dshape_global = matR.topLeftCorner(3u, ele_dim) * invJ_dNdr; //3 x nnodes
-            shapemat.dNdx = dshape_global.topLeftCorner(global_dim, nnodes);;
-        }
+    //J^-1, dshape/dx
+    shapemat.invJ.noalias() = shapemat.J.inverse();
+
+    auto const nnodes(shapemat.dNdr.cols());
+    auto const ele_dim(shapemat.dNdr.rows());
+    assert(shapemat.dNdr.rows()==ele.getDimension());
+    const unsigned global_dim = ele_local_coord.getGlobalDimension();
+    if (global_dim==ele_dim) {
+        shapemat.dNdx.topLeftCorner(ele_dim, nnodes).noalias() = shapemat.invJ * shapemat.dNdr;
     } else {
-        OGS_FATAL("det J = %e is not positive.\n", shapemat.detJ);
+        auto const& matR = ele_local_coord.getRotationMatrixToGlobal(); // 3 x 3
+        auto invJ_dNdr = shapemat.invJ * shapemat.dNdr;
+        auto dshape_global = matR.topLeftCorner(3u, ele_dim) * invJ_dNdr; //3 x nnodes
+        shapemat.dNdx = dshape_global.topLeftCorner(global_dim, nnodes);;
     }
 }
 
