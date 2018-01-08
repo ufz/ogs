@@ -1,0 +1,41 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && apt-get install -y software-properties-common curl \
+  && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+  && curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
+  && apt-get update \
+  && apt-get -y install \
+    ccache \
+    gcc-4.9 g++-4.9 gcc-4.9-base \
+    git git-lfs \
+    python-pip \
+    sudo \
+    unzip
+
+ENV CC=gcc-4.9
+ENV CXX=g++-4.9
+
+RUN python -m pip install --upgrade pip \
+  && python -m pip install cmake conan
+
+# Ninja
+RUN curl -L -o ninja-linux.zip https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip \
+  && unzip ninja-linux.zip \
+  && mv ninja /usr/local/bin/ninja \
+  && rm ninja-linux.zip
+
+ # Add user jenkins to the image
+RUN adduser --uid 500 --disabled-password --gecos "" jenkins \
+  # Add user jenkins to sudoers with NOPASSWD
+  && echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+  # Set password for the jenkins user (you may want to alter this).
+  && echo "jenkins:jenkins" | chpasswd
+
+USER jenkins
+ENV CCACHE_DIR=/home/jenkins/cache/ccache
+RUN mkdir -p $CCACHE_DIR
+ENV CCACHE_MAXSIZE=15G
+ENV CCACHE_SLOPPINESS=pch_defines,time_macros
+ENV CONAN_USER_HOME=/home/jenkins/cache/conan
+WORKDIR /home/jenkins
+RUN conan user
