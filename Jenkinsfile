@@ -14,16 +14,28 @@ pipeline {
         stage('Docker-Conan') {
           agent {
             dockerfile {
-              filename 'Dockerfile.gcc.minimal'
+              filename 'Dockerfile.gcc.full'
               dir 'scripts/docker'
               label 'docker'
               args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
               additionalBuildArgs '--pull'
             }
           }
+          environment {
+            CONTENTFUL_ACCESS_TOKEN = credentials('CONTENTFUL_ACCESS_TOKEN')
+            CONTENTFUL_OGS_SPACE_ID = credentials('CONTENTFUL_OGS_SPACE_ID')
+          }
           steps {
             script {
-              //conanClearSysreqs // see https://github.com/conan-io/conan/issues/2262
+              // Install web dependencies
+              sh("""
+                cd web
+                yarn --ignore-engines --non-interactive
+                node node_modules/node-sass/scripts/install.js
+                npm rebuild node-sass
+                sudo -H pip install -r requirements.txt
+                """.stripIndent())
+
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
@@ -35,6 +47,8 @@ pipeline {
               build { }
               build { target="tests" }
               build { target="ctest" }
+              build { target="web" }
+              build { target="doc" }
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_CLI=OFF ' +
@@ -56,8 +70,25 @@ pipeline {
                 dir('build') { deleteDir() }
             }
             success {
+              dir('web/public') { stash(name: 'web') }
+              dir('build/docs') { stash(name: 'doxygen') }
+              dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
+              script {
+                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
+                  keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
+                  reportName: 'Doxygen'])
+                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
+                  keepAll: true, reportDir: 'web/public', reportFiles: 'index.html',
+                  reportName: 'Web'])
+                step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
+                  messagesPattern: """
+                    .*DOT_GRAPH_MAX_NODES.
+                    .*potential recursive class relation.*""",
+                  parserConfigurations: [[parserName: 'Doxygen', pattern:
+                  'build/DoxygenWarnings.log']], unstableTotalAll: '0'])
                 archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
                 dir('build') { deleteDir() }
+              }
             }
           }
         }
@@ -273,24 +304,24 @@ pipeline {
       when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
       parallel {
         // ************************* Deploy Web ********************************
-        // stage('Deploy Web') {
-        //   agent any
-        //   steps {
-        //     dir('web') { unstash 'web' }
-        //     dir('doxygen') { unstash 'doxygen' }
-        //     unstash 'known_hosts'
-        //     script {
-        //       sshagent(credentials: ['www-data_jenkins']) {
-        //         sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-        //            'known_hosts" web/. ' +
-        //            'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
-        //         sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-        //            'known_hosts" doxygen/. ' +
-        //            'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
-        //       }
-        //     }
-        //   }
-        // }
+        stage('Deploy Web') {
+          agent any
+          steps {
+            dir('web') { unstash 'web' }
+            dir('doxygen') { unstash 'doxygen' }
+            unstash 'known_hosts'
+            script {
+              sshagent(credentials: ['www-data_jenkins']) {
+                sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+                   'known_hosts" web/. ' +
+                   'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
+                sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+                   'known_hosts" doxygen/. ' +
+                   'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
+              }
+            }
+          }
+        }
         // *********************** Deploy envinf1 ******************************
         stage('Deploy envinf1') {
           agent { label "envinf1"}
