@@ -351,15 +351,17 @@ pipeline {
         // ************************** Sanitizer ********************************
         stage('Sanitizer') {
           agent {
-            docker {
-              image 'ogs6/clang-base:latest'
+            dockerfile {
+              filename 'Dockerfile.clang.minimal'
+              dir 'scripts/docker'
               label 'docker'
-              args '-v /home/jenkins/.ccache:/usr/src/.ccache'
-              alwaysPull true
+              args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
+              additionalBuildArgs '--pull'
             }
           }
           steps {
             script {
+              sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
