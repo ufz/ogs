@@ -36,6 +36,10 @@ if(OGS_USE_MPI)
     set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:mpi=True)
 endif()
 
+if(OGS_USE_PETSC)
+    set(CONAN_REQUIRES ${CONAN_REQUIRES} petsc/3.8.3@bilke/testing)
+endif()
+
 if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         Shapelib/1.3.0@bilke/stable
