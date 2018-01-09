@@ -33,6 +33,7 @@ struct ProcessOutput final
 /// See Output::_output_file_data_mode documentation for the data_mode
 /// parameter.
 void doProcessOutput(std::string const& file_name,
+                     bool const make_output,
                      bool const compress_output,
                      int const data_mode,
                      const double t,

@@ -41,6 +41,7 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
 }
 
 void doProcessOutput(std::string const& file_name,
+                     bool const make_output,
                      bool const compress_output,
                      int const data_mode,
                      const double t,
@@ -224,6 +225,11 @@ void doProcessOutput(std::string const& file_name,
     (void)secondary_variables;
     (void)t;
 #endif // USE_PETSC
+
+    if (!make_output)
+    {
+        return;
+    }
 
     // Write output file
     DBUG("Writing output to \'%s\'.", file_name.c_str());
