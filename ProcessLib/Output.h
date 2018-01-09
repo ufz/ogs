@@ -64,7 +64,7 @@ public:
                                     ProcessOutput const& process_output,
                                     const unsigned timestep, const double t,
                                     GlobalVector const& x,
-                                    const unsigned iteration) const;
+                                    const unsigned iteration);
 
     struct PairRepeatEachSteps
     {
@@ -106,6 +106,15 @@ private:
     std::vector<PairRepeatEachSteps> _repeats_each_steps;
 
     std::multimap<Process const*, SingleProcessData> _single_process_data;
+
+    /**
+     * Get the address of a SingleProcessData from _single_process_data.
+     * @param process    Process.
+     * @param process_id Process ID.
+     * @return Address of a SingleProcessData.
+     */
+    SingleProcessData* findSingleProcessData(
+        Process const& process, const int process_id);
 };
 
 }
