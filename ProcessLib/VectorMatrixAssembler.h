@@ -71,7 +71,7 @@ private:
     //! Used to assemble the Jacobian.
     std::unique_ptr<AbstractJacobianAssembler> _jacobian_assembler;
 
-    void localAssembleWithJacobianAndCoupling(
+    void local_assembleWithJacobianForStaggeredScheme(
         const double t, std::vector<GlobalIndexType> const& base_indices,
         std::vector<GlobalIndexType> const& full_indices,
         std::vector<double> const& local_xdot,

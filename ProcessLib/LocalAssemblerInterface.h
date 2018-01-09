@@ -40,7 +40,7 @@ public:
                           std::vector<double>& local_K_data,
                           std::vector<double>& local_b_data);
 
-    virtual void assembleWithCoupledTerm(
+    virtual void assembleForStaggeredScheme(
         double const t,
         std::vector<double>& local_M_data,
         std::vector<double>& local_K_data,
@@ -56,7 +56,7 @@ public:
                                       std::vector<double>& local_b_data,
                                       std::vector<double>& local_Jac_data);
 
-    virtual void assembleWithJacobianAndCoupling(
+    virtual void assembleWithJacobianForStaggeredScheme(
         double const t, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,

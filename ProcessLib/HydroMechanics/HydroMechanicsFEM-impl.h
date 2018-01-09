@@ -215,7 +215,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, IntegrationMethod,
                                   DisplacementDim>::
-    assembleWithJacobianAndCoupling(
+    assembleWithJacobianForStaggeredScheme(
         const double t,
         const std::vector<double>& local_xdot,
         const double dxdot_dx,

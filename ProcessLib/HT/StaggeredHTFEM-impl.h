@@ -24,7 +24,7 @@ namespace HT
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assembleWithCoupledTerm(double const t,
+    assembleForStaggeredScheme(double const t,
                             std::vector<double>& local_M_data,
                             std::vector<double>& local_K_data,
                             std::vector<double>& local_b_data,

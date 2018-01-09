@@ -75,9 +75,9 @@ void VectorMatrixAssembler::assemble(
             cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
             std::move(local_coupled_xs));
 
-        local_assembler.assembleWithCoupledTerm(t, _local_M_data, _local_K_data,
-                                                _local_b_data,
-                                                local_coupled_solutions);
+        local_assembler.assembleForStaggeredScheme(t, _local_M_data,
+                                                   _local_K_data, _local_b_data,
+                                                   local_coupled_solutions);
     }
 
     auto const num_r_c = indices.size();
@@ -138,9 +138,9 @@ void VectorMatrixAssembler::assembleWithJacobian(
     {
         if (base_dof_table == nullptr)
         {
-            localAssembleWithJacobianAndCoupling(t, indices, indices,
-                                                 local_xdot, local_assembler,
-                                                 dxdot_dx, dx_dx, cpl_xs);
+            local_assembleWithJacobianForStaggeredScheme(
+                t, indices, indices, local_xdot, local_assembler, dxdot_dx,
+                dx_dx, cpl_xs);
         }
         else
         {
@@ -149,7 +149,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
             {
                 const auto base_indices =
                     NumLib::getIndices(mesh_item_id, *base_dof_table);
-                localAssembleWithJacobianAndCoupling(
+                local_assembleWithJacobianForStaggeredScheme(
                     t, base_indices, indices, local_xdot, local_assembler,
                     dxdot_dx, dx_dx, cpl_xs);
             }
@@ -157,7 +157,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
             {
                 const auto full_indices =
                     NumLib::getIndices(mesh_item_id, dof_table);
-                localAssembleWithJacobianAndCoupling(
+                local_assembleWithJacobianForStaggeredScheme(
                     t, indices, full_indices, local_xdot, local_assembler,
                     dxdot_dx, dx_dx, cpl_xs);
             }
@@ -197,7 +197,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     }
 }
 
-void VectorMatrixAssembler::localAssembleWithJacobianAndCoupling(
+void VectorMatrixAssembler::local_assembleWithJacobianForStaggeredScheme(
     const double t, std::vector<GlobalIndexType> const& base_indices,
     std::vector<GlobalIndexType> const& full_indices,
     std::vector<double> const& local_xdot,
@@ -222,7 +222,7 @@ void VectorMatrixAssembler::localAssembleWithJacobianAndCoupling(
         cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
         std::move(local_coupled_xs));
 
-    _jacobian_assembler->assembleWithJacobianAndCoupling(
+    _jacobian_assembler->assembleWithJacobianForStaggeredScheme(
         local_assembler, t, local_xdot, dxdot_dx, dx_dx, _local_M_data,
         _local_K_data, _local_b_data, _local_Jac_data, local_coupled_solutions);
 }

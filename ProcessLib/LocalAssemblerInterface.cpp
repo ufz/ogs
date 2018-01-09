@@ -25,7 +25,7 @@ void LocalAssemblerInterface::assemble(double const /*t*/,
         "The assemble() function is not implemented in the local assembler.");
 }
 
-void LocalAssemblerInterface::assembleWithCoupledTerm(
+void LocalAssemblerInterface::assembleForStaggeredScheme(
     double const /*t*/,
     std::vector<double>& /*local_M_data*/,
     std::vector<double>& /*local_K_data*/,
@@ -33,7 +33,7 @@ void LocalAssemblerInterface::assembleWithCoupledTerm(
     LocalCoupledSolutions const& /*coupled_solutions*/)
 {
     OGS_FATAL(
-        "The assembleWithCoupledTerm() function is not implemented in the "
+        "The assembleForStaggeredScheme() function is not implemented in the "
         "local assembler.");
 }
 
@@ -50,7 +50,7 @@ void LocalAssemblerInterface::assembleWithJacobian(
         "assembler.");
 }
 
-void LocalAssemblerInterface::assembleWithJacobianAndCoupling(
+void LocalAssemblerInterface::assembleWithJacobianForStaggeredScheme(
     double const /*t*/, std::vector<double> const& /*local_xdot*/,
     const double /*dxdot_dx*/, const double /*dx_dx*/,
     std::vector<double>& /*local_M_data*/,
@@ -60,7 +60,7 @@ void LocalAssemblerInterface::assembleWithJacobianAndCoupling(
     LocalCoupledSolutions const& /*local_coupled_solutions*/)
 {
     OGS_FATAL(
-        "The assembleWithJacobianAndCoupling() function is not implemented in"
+        "The assembleWithJacobianForStaggeredScheme() function is not implemented in"
         " the local assembler.");
 }
 
