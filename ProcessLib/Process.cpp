@@ -266,15 +266,16 @@ void Process::constructDofTable()
             NumLib::ComponentOrder::BY_LOCATION);
 }
 
-NumLib::LocalToGlobalIndexMap* Process::getDOFTableForExtrapolatorData(
-    bool& manage_storage) const
+std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
+Process::getDOFTableForExtrapolatorData() const
 {
     if (_local_to_global_index_map->getNumberOfComponents() == 1)
     {
         // For single-variable-single-component processes reuse the existing DOF
         // table.
-        manage_storage = false;
-        return _local_to_global_index_map.get();
+        const bool manage_storage = false;
+        return std::make_tuple(_local_to_global_index_map.get(),
+                               manage_storage);
     }
 
     // Otherwise construct a new DOF table.
@@ -282,20 +283,23 @@ NumLib::LocalToGlobalIndexMap* Process::getDOFTableForExtrapolatorData(
     all_mesh_subsets_single_component.emplace_back(
         _mesh_subset_all_nodes.get());
 
-    manage_storage = true;
+    const bool manage_storage = true;
 
-    return new NumLib::LocalToGlobalIndexMap(
-        std::move(all_mesh_subsets_single_component),
-        // by location order is needed for output
-        NumLib::ComponentOrder::BY_LOCATION);
+    return std::make_tuple(new NumLib::LocalToGlobalIndexMap(
+                std::move(all_mesh_subsets_single_component),
+                // by location order is needed for output
+                NumLib::ComponentOrder::BY_LOCATION),
+            manage_storage);
 }
 
 void Process::initializeExtrapolator()
 {
+    NumLib::LocalToGlobalIndexMap* dof_table_single_component;
     bool manage_storage;
 
-    NumLib::LocalToGlobalIndexMap const* dof_table_single_component =
-        getDOFTableForExtrapolatorData(manage_storage);
+    std::tie(dof_table_single_component, manage_storage) =
+        getDOFTableForExtrapolatorData();
+
     std::unique_ptr<NumLib::Extrapolator> extrapolator(
         new NumLib::LocalLinearLeastSquaresExtrapolator(
             *dof_table_single_component));

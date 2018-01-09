@@ -92,8 +92,8 @@ private:
     /// It only performs for the staggered scheme.
     void setCoupledSolutionsOfPreviousTimeStep();
 
-    NumLib::LocalToGlobalIndexMap* getDOFTableForExtrapolatorData(
-        bool& manage_storage) const override;
+    std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
+        getDOFTableForExtrapolatorData() const override;
 
     const std::unique_ptr<HTMaterialProperties> _material_properties;
 

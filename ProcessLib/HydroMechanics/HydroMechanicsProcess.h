@@ -105,8 +105,8 @@ private:
     /// Solutions of the previous time step
     std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
 
-    NumLib::LocalToGlobalIndexMap* getDOFTableForExtrapolatorData(
-        bool& manage_storage) const override;
+    std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
+        getDOFTableForExtrapolatorData() const override;
 
 };
 

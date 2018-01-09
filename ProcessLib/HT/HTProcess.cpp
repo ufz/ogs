@@ -49,7 +49,9 @@ void HTProcess::initializeConcreteProcess(
     unsigned const integration_order)
 {
     // For the staggered scheme, both processes are assumed to use the same
-    // element order.
+    // element order. Therefore the order of shape function can be fetched from
+    // any set of the sets of process variables of the coupled processes. Here,
+    // we take the one from the first process by setting process_id = 0.
     const int process_id = 0;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
@@ -165,15 +167,16 @@ void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers()
         _local_assemblers, _coupled_solutions);
 }
 
-NumLib::LocalToGlobalIndexMap* HTProcess::getDOFTableForExtrapolatorData(
-    bool& manage_storage) const
+std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
+    HTProcess::getDOFTableForExtrapolatorData() const
 {
     if (!_use_monolithic_scheme)
     {
         // For single-variable-single-component processes reuse the existing DOF
         // table.
-        manage_storage = false;
-        return _local_to_global_index_map.get();
+        const bool manage_storage = false;
+        return std::make_tuple(_local_to_global_index_map.get(),
+                               manage_storage);
     }
 
     // Otherwise construct a new DOF table.
@@ -181,12 +184,11 @@ NumLib::LocalToGlobalIndexMap* HTProcess::getDOFTableForExtrapolatorData(
     all_mesh_subsets_single_component.emplace_back(
         _mesh_subset_all_nodes.get());
 
-    manage_storage = true;
-
-    return new NumLib::LocalToGlobalIndexMap(
+    const bool manage_storage = true;
+    return std::make_tuple(new NumLib::LocalToGlobalIndexMap(
         std::move(all_mesh_subsets_single_component),
         // by location order is needed for output
-        NumLib::ComponentOrder::BY_LOCATION);
+        NumLib::ComponentOrder::BY_LOCATION), manage_storage);
 }
 
 void HTProcess::setCoupledSolutionsOfPreviousTimeStep()

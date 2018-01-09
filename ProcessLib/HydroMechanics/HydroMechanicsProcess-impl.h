@@ -352,11 +352,12 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverProcess(
 }
 
 template <int DisplacementDim>
-NumLib::LocalToGlobalIndexMap*
-HydroMechanicsProcess<DisplacementDim>::getDOFTableForExtrapolatorData(
-    bool& manage_storage) const
+std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
+HydroMechanicsProcess<DisplacementDim>::getDOFTableForExtrapolatorData() const
 {
-    return _local_to_global_index_map_single_component.get();
+    const bool manage_storage = false;
+    return std::make_tuple(_local_to_global_index_map_single_component.get(),
+                           manage_storage);
 }
 
 template <int DisplacementDim>

@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <tuple>
+
 #include "NumLib/NamedFunctionCaller.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
@@ -208,8 +210,8 @@ private:
 protected:
     virtual void constructDofTable();
 
-    virtual NumLib::LocalToGlobalIndexMap* getDOFTableForExtrapolatorData(
-        bool& manage_storage) const;
+    virtual std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
+        getDOFTableForExtrapolatorData() const;
 
 private:
     void initializeExtrapolator();
