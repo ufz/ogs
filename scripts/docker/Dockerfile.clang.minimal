@@ -1,0 +1,77 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && apt-get install -y software-properties-common curl \
+  && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+  && curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
+  && apt-get update \
+  && apt-get -y install \
+    build-essential \
+    ccache \
+    git git-lfs \
+    python-pip \
+    sudo \
+    unzip \
+    xz-utils
+
+RUN python -m pip install --upgrade pip \
+  && python -m pip install cmake conan
+
+# Ninja
+RUN curl -L -o ninja-linux.zip https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip \
+  && unzip ninja-linux.zip \
+  && mv ninja /usr/local/bin/ninja \
+  && rm ninja-linux.zip
+
+# Install LLVM, see http://llvm.org/docs/CMake.html
+RUN curl -L -o llvm.tar.xz http://releases.llvm.org/3.9.0/llvm-3.9.0.src.tar.xz \
+  && tar -Jxf llvm.tar.xz \
+  && mkdir build-llvm && cd build-llvm \
+  && cmake ../llvm-3.9.0.src -DCMAKE_BUILD_TYPE=Release \
+  && make -j$(nproc) install \
+  && cd .. && rm -rf build-llvm llvm-3.9.0.src llvm.tar.xz
+
+# Clang
+RUN curl -L -o cfe-tar-xz http://releases.llvm.org/3.9.0/cfe-3.9.0.src.tar.xz \
+  && tar -Jxf cfe-tar-xz \
+  && mkdir build-cfe && cd build-cfe \
+  && cmake ../cfe-3.9.0.src -DCMAKE_BUILD_TYPE=Release -DLLVM_CONFIG_PATH=/usr/local/bin/llvm-config \
+  && make -j$(nproc) install \
+  && cd .. && rm -rf build-cfe cfe-3.9.0.src cfe-tar-xz
+
+ENV CC=clang
+ENV CXX=clang++
+
+# Compiler-rt
+RUN curl -L -o compiler-rt.tar.xz http://releases.llvm.org/3.9.0/compiler-rt-3.9.0.src.tar.xz \
+  && tar -Jxf compiler-rt.tar.xz \
+  && mkdir build-compiler-rt && cd build-compiler-rt \
+  && cmake ../compiler-rt-3.9.0.src -DCMAKE_BUILD_TYPE=Release -DLLVM_CONFIG_PATH=/usr/local/bin/llvm-config \
+  && make -j$(nproc) install \
+  && cd .. && rm -rf build-compiler-rt compiler-rt-3.9.0.src compiler-rt.tar.xz
+
+RUN mkdir /usr/local/lib/clang/3.9.0/lib
+RUN ln -s /usr/local/lib/linux /usr/local/lib/clang/3.9.0/lib/linux
+
+# Lis
+RUN curl -L -o lis.tar.gz http://www.ssisc.org/lis/dl/lis-1.7.9.tar.gz \
+  && tar xf lis.tar.gz \
+  && cd lis-1.7.9 \
+  && ./configure \
+  && make -j$(nproc) install \
+  && cd .. && rm -rf lis-1.7.9 lis.tar.gz
+
+ # Add user jenkins to the image
+RUN adduser --uid 500 --disabled-password --gecos "" jenkins \
+  # Add user jenkins to sudoers with NOPASSWD
+  && echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+  # Set password for the jenkins user (you may want to alter this).
+  && echo "jenkins:jenkins" | chpasswd
+
+USER jenkins
+ENV CCACHE_DIR=/home/jenkins/cache/ccache
+RUN mkdir -p $CCACHE_DIR
+ENV CCACHE_MAXSIZE=15G
+ENV CCACHE_SLOPPINESS=pch_defines,time_macros
+ENV CONAN_USER_HOME=/home/jenkins/cache/conan
+WORKDIR /home/jenkins
+RUN conan user

@@ -32,6 +32,10 @@ if(LINUX AND BUILD_SHARED_LIBS)
     set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:fPIC=True)
 endif()
 
+if(OGS_USE_MPI)
+    set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:mpi=True)
+endif()
+
 if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         Shapelib/1.3.0@bilke/stable
