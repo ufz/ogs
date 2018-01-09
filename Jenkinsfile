@@ -273,24 +273,24 @@ pipeline {
       when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
       parallel {
         // ************************* Deploy Web ********************************
-        stage('Deploy Web') {
-          agent any
-          steps {
-            dir('web') { unstash 'web' }
-            dir('doxygen') { unstash 'doxygen' }
-            unstash 'known_hosts'
-            script {
-              sshagent(credentials: ['www-data_jenkins']) {
-                sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-                   'known_hosts" web/. ' +
-                   'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
-                sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-                   'known_hosts" doxygen/. ' +
-                   'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
-              }
-            }
-          }
-        }
+        // stage('Deploy Web') {
+        //   agent any
+        //   steps {
+        //     dir('web') { unstash 'web' }
+        //     dir('doxygen') { unstash 'doxygen' }
+        //     unstash 'known_hosts'
+        //     script {
+        //       sshagent(credentials: ['www-data_jenkins']) {
+        //         sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+        //            'known_hosts" web/. ' +
+        //            'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
+        //         sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
+        //            'known_hosts" doxygen/. ' +
+        //            'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
+        //       }
+        //     }
+        //   }
+        // }
         // *********************** Deploy envinf1 ******************************
         stage('Deploy envinf1') {
           agent { label "envinf1"}
