@@ -370,18 +370,12 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON '
               }
               try {
-                build {
-                  target = 'test'
-                  cmd = 'UBSAN_OPTIONS=print_stacktrace=1 make -j $(nproc)'
-                }
+                build { cmd = 'UBSAN_OPTIONS=print_stacktrace=1 ninja test' }
               }
               catch(err) { echo "Clang sanitizer for unit tests failed!" }
 
               try {
-                build {
-                  target = 'ctest'
-                  cmd = 'UBSAN_OPTIONS=print_stacktrace=1 make -j $(nproc)'
-                }
+                build { cmd = 'UBSAN_OPTIONS=print_stacktrace=1 ninja ctest' }
               }
               catch(err) { echo "Clang sanitizer for end-to-end tests failed!" }
             }
