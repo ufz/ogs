@@ -31,6 +31,7 @@ std::unique_ptr<MeshGeoToolsLib::SearchLength> createSearchLengthAlgorithm(
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm__type}
     std::string const type = config->getConfigParameter<std::string>("type");
 
+    //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm__fixed}
     if (type == "fixed")
     {
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm__fixed__value}
@@ -40,6 +41,7 @@ std::unique_ptr<MeshGeoToolsLib::SearchLength> createSearchLengthAlgorithm(
     }
     if (type == "heuristic")
     {
+        //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm__heuristic}
         return std::unique_ptr<MeshGeoToolsLib::HeuristicSearchLength>{
             new MeshGeoToolsLib::HeuristicSearchLength(mesh)};
     }
