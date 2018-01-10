@@ -41,3 +41,5 @@ endif()
 if(OGS_USE_PCH)
     cotire(BaseLib)
 endif()
+
+check_header_compilation()
