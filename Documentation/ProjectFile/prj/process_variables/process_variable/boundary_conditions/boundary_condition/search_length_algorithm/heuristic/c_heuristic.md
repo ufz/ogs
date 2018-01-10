@@ -1,0 +1,1 @@
+\copydoc MeshGeoToolsLib::HeuristicSearchLength
