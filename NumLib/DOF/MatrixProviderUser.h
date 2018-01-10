@@ -20,7 +20,7 @@ class MatrixSpecificationsProvider
 {
 public:
     virtual MathLib::MatrixSpecifications getMatrixSpecifications(
-        const int equation_id) const = 0;
+        const int process_id) const = 0;
 
     virtual ~MatrixSpecificationsProvider() = default;
 };

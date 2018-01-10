@@ -59,7 +59,7 @@ public:
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications(
-        const int /*equation_id*/) const override
+        const int /*process_id*/) const override
     {
         return { N, N, nullptr, nullptr };
     }
@@ -143,7 +143,7 @@ public:
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications(
-        const int /*equation_id*/) const override
+        const int /*process_id*/) const override
     {
         return { N, N, nullptr, nullptr };
     }
@@ -270,7 +270,7 @@ public:
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications(
-        const int /*equation_id*/) const override
+        const int /*process_id*/) const override
     {
         return { N, N, nullptr, nullptr };
     }

@@ -79,7 +79,7 @@ public:
                               GlobalVector& x);
 
     virtual MathLib::MatrixSpecifications getMatrixSpecifications(
-        const int equation_id) const override;
+        const int process_id) const override;
 
     void setCoupledSolutionsForStaggeredScheme(
         CoupledSolutionsForStaggeredScheme* const coupled_solutions)

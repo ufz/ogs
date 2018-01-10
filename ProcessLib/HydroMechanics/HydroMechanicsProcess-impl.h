@@ -233,22 +233,22 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 {
     if (_use_monolithic_scheme)
     {
-        const int equation_id_of_up = 0;
+        const int process_id_of_up = 0;
         initializeProcessBoundaryCondition(*_local_to_global_index_map,
-                                          equation_id_of_up);
+                                          process_id_of_up);
         return;
     }
 
     // Staggered scheme:
     // for the equations of pressure
-    const int equation_id_of_p = 0;
+    const int process_id_of_p = 0;
     initializeProcessBoundaryCondition(
-        *_local_to_global_index_map_with_base_nodes, equation_id_of_p);
+        *_local_to_global_index_map_with_base_nodes, process_id_of_p);
 
     // for the equations of deformation.
-    const int equation_id_of_u = 1;
+    const int process_id_of_u = 1;
     initializeProcessBoundaryCondition(*_local_to_global_index_map,
-                                      equation_id_of_u);
+                                      process_id_of_u);
 }
 
 template <int DisplacementDim>

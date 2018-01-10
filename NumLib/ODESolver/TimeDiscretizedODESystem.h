@@ -73,11 +73,11 @@ public:
 
     /*! Constructs a new instance.
      *
-     * \param equation_id ID of the ODE to be solved.
+     * \param process_id ID of the ODE to be solved.
      * \param ode the ODE to be wrapped.
      * \param time_discretization the time discretization to be used.
      */
-    explicit TimeDiscretizedODESystem(const int equation_id, ODE& ode,
+    explicit TimeDiscretizedODESystem(const int process_id, ODE& ode,
                                       TimeDisc& time_discretization);
 
     ~TimeDiscretizedODESystem() override;
@@ -116,9 +116,9 @@ public:
 
     TimeDisc& getTimeDiscretization() override { return _time_disc; }
     MathLib::MatrixSpecifications getMatrixSpecifications(
-        const int equation_id) const override
+        const int process_id) const override
     {
-        return _ode.getMatrixSpecifications(equation_id);
+        return _ode.getMatrixSpecifications(process_id);
     }
 
 private:
@@ -171,7 +171,7 @@ public:
      * \param ode the ODE to be wrapped.
      * \param time_discretization the time discretization to be used.
      */
-    explicit TimeDiscretizedODESystem(const int equation_id, ODE& ode,
+    explicit TimeDiscretizedODESystem(const int process_id, ODE& ode,
                                       TimeDisc& time_discretization);
 
     ~TimeDiscretizedODESystem() override;
@@ -215,9 +215,9 @@ public:
 
     TimeDisc& getTimeDiscretization() override { return _time_disc; }
     MathLib::MatrixSpecifications getMatrixSpecifications(
-        const int equation_id) const override
+        const int process_id) const override
     {
-        return _ode.getMatrixSpecifications(equation_id);
+        return _ode.getMatrixSpecifications(process_id);
     }
 
 private:

@@ -40,20 +40,20 @@ namespace NumLib
 {
 TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                          NonlinearSolverTag::Newton>::
-    TimeDiscretizedODESystem(const int equation_id,
+    TimeDiscretizedODESystem(const int process_id,
                              ODE& ode, TimeDisc& time_discretization)
     : _ode(ode),
       _time_disc(time_discretization),
       _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
 {
     _Jac = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        _ode.getMatrixSpecifications(equation_id), _Jac_id);
+        _ode.getMatrixSpecifications(process_id), _Jac_id);
     _M = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        _ode.getMatrixSpecifications(equation_id), _M_id);
+        _ode.getMatrixSpecifications(process_id), _M_id);
     _K = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        _ode.getMatrixSpecifications(equation_id), _K_id);
+        _ode.getMatrixSpecifications(process_id), _K_id);
     _b = &NumLib::GlobalVectorProvider::provider.getVector(
-        _ode.getMatrixSpecifications(equation_id), _b_id);
+        _ode.getMatrixSpecifications(process_id), _b_id);
 }
 
 TimeDiscretizedODESystem<
@@ -153,18 +153,18 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
 TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                          NonlinearSolverTag::Picard>::
-    TimeDiscretizedODESystem(const int equation_id, ODE& ode,
+    TimeDiscretizedODESystem(const int process_id, ODE& ode,
                              TimeDisc& time_discretization)
     : _ode(ode),
       _time_disc(time_discretization),
       _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
 {
     _M = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        ode.getMatrixSpecifications(equation_id), _M_id);
+        ode.getMatrixSpecifications(process_id), _M_id);
     _K = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        ode.getMatrixSpecifications(equation_id), _K_id);
+        ode.getMatrixSpecifications(process_id), _K_id);
     _b = &NumLib::GlobalVectorProvider::provider.getVector(
-        ode.getMatrixSpecifications(equation_id), _b_id);
+        ode.getMatrixSpecifications(process_id), _b_id);
 }
 
 TimeDiscretizedODESystem<

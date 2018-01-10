@@ -68,9 +68,9 @@ public:
 
         Solution sol;
 
-        const int equation_id = 0; 
+        const int process_id = 0;
         NumLib::TimeDiscretizedODESystem<ODE_::ODETag, NLTag>
-                ode_sys(equation_id, ode, timeDisc);
+                ode_sys(process_id, ode, timeDisc);
 
         auto linear_solver = createLinearSolver();
         auto conv_crit = std::make_unique<NumLib::ConvergenceCriterionDeltaX>(
@@ -91,7 +91,7 @@ public:
              delta_t);
 
         // initial condition
-        GlobalVector x0(ode.getMatrixSpecifications(equation_id).nrows);
+        GlobalVector x0(ode.getMatrixSpecifications(process_id).nrows);
         ODET::setIC(x0);
 
         sol.ts.push_back(t0);
