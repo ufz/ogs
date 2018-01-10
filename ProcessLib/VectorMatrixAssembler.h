@@ -47,7 +47,7 @@ public:
                   NumLib::LocalToGlobalIndexMap const& dof_table,
                   double const t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b,
-                  const CoupledSolutionsForStaggeredScheme* cpl_xs);
+                  CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
     //! \note The Jacobian must be assembled.
@@ -57,8 +57,9 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table, const double t,
         GlobalVector const& x, GlobalVector const& xdot, const double dxdot_dx,
         const double dx_dx, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-        GlobalMatrix& Jac, const CoupledSolutionsForStaggeredScheme* cpl_xs,
-        NumLib::LocalToGlobalIndexMap const* base_dof_table);
+        GlobalMatrix& Jac,
+        CoupledSolutionsForStaggeredScheme const* const cpl_xs,
+        NumLib::LocalToGlobalIndexMap const* const base_dof_table);
 
 private:
     // temporary data only stored here in order to avoid frequent memory
@@ -76,7 +77,8 @@ private:
         std::vector<GlobalIndexType> const& full_indices,
         std::vector<double> const& local_xdot,
         LocalAssemblerInterface& local_assembler, const double dxdot_dx,
-        const double dx_dx, CoupledSolutionsForStaggeredScheme const* cpl_xs);
+        const double dx_dx,
+        CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 };
 
 }  // namespace ProcessLib

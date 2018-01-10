@@ -70,6 +70,7 @@ public:
             MeshLib::addPropertyToMesh(*_balance_mesh, _balance_pv_name,
                                        MeshLib::MeshItemType::Cell, 1,
                                        init_values);
+            //For this single process, process_id is always zero.
             const int process_id = 0;
             auto balance = ProcessLib::CalculateSurfaceFlux(
                 *_balance_mesh,

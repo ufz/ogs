@@ -61,6 +61,8 @@ public:
     /// Postprocessing after a complete timestep.
     void postTimestep(GlobalVector const& x, int const process_id);
 
+    /// Calculates secondary variables, e.g. stress and strain for deformation
+    /// analysis, only after nonlinear solver being successfully conducted.
     void postNonLinearSolver(GlobalVector const& x, const double t,
                              int const process_id);
 
@@ -143,9 +145,15 @@ protected:
         return _extrapolator_data.getDOFTable();
     }
 
-    /// Initialize the boundary conditions for single PDE. It is called by
-    /// initializeBoundaryConditions().
-    void initializeBoundaryConditionPerPDE(
+    /**
+     * Initialize the boundary conditions for a single process or coupled
+     * processes modelled by the monolithic scheme. It is called by
+     * initializeBoundaryConditions().
+     * 
+     * @param dof_table DOF table
+     * @param process_id Process ID
+     */
+    void initializeProcessBoundaryCondition(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id);
 
 private:
@@ -210,8 +218,16 @@ private:
 protected:
     virtual void constructDofTable();
 
+    /**
+     * Get the address of a LocalToGlobalIndexMap, and the status of its memory.
+     * If the LocalToGlobalIndexMap is created as new in this function, the
+     * function also returns a true boolean value to let Extrapolator manage
+     * the memory by the address returned by this function.
+     *
+     * @return Address of a LocalToGlobalIndexMap and its memory status.
+     */
     virtual std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
-        getDOFTableForExtrapolatorData() const;
+    getDOFTableForExtrapolatorData() const;
 
 private:
     void initializeExtrapolator();

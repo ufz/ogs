@@ -200,7 +200,7 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
     const int process_id = _coupled_solutions->process_id;
     for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
     {
-        const auto x_t0 = _xs_previous_timestep[process_id].get();
+        const auto& x_t0 = _xs_previous_timestep[process_id];
         if (x_t0 == nullptr)
         {
             OGS_FATAL(
@@ -212,7 +212,7 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
         }
 
         MathLib::LinAlg::setLocalAccessibleVector(*x_t0);
-        _coupled_solutions->coupled_xs_t0.emplace_back(x_t0);
+        _coupled_solutions->coupled_xs_t0.emplace_back(x_t0.get());
     }
 }
 

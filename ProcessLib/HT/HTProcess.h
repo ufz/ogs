@@ -92,6 +92,9 @@ private:
     /// It only performs for the staggered scheme.
     void setCoupledSolutionsOfPreviousTimeStep();
 
+    /**
+     * @copydoc ProcessLib::Process::getDOFTableForExtrapolatorData()
+     */
     std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
         getDOFTableForExtrapolatorData() const override;
 

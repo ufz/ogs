@@ -42,7 +42,7 @@ void VectorMatrixAssembler::assemble(
     const std::size_t mesh_item_id, LocalAssemblerInterface& local_assembler,
     const NumLib::LocalToGlobalIndexMap& dof_table, const double t,
     const GlobalVector& x, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    const CoupledSolutionsForStaggeredScheme* cpl_xs)
+    CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
 
@@ -58,6 +58,12 @@ void VectorMatrixAssembler::assemble(
     }
     else
     {
+        // Different processes in a staggered loop are allowed to use different
+        // orders of element. That means that the global indices can be
+        // different among different processes. The following vector stores the
+        // reference of the vectors of the global indices of all processes, and
+        // it is used to fetch the nodal solutions of all processes of the
+        // current element.
         std::vector<std::reference_wrapper<const std::vector<GlobalIndexType>>>
             indices_of_all_coupled_processes;
         indices_of_all_coupled_processes.reserve(cpl_xs->coupled_xs.size());
@@ -106,13 +112,12 @@ void VectorMatrixAssembler::assembleWithJacobian(
     NumLib::LocalToGlobalIndexMap const& dof_table, const double t,
     GlobalVector const& x, GlobalVector const& xdot, const double dxdot_dx,
     const double dx_dx, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    GlobalMatrix& Jac, const CoupledSolutionsForStaggeredScheme* cpl_xs,
-    NumLib::LocalToGlobalIndexMap const* base_dof_table)
+    GlobalMatrix& Jac, CoupledSolutionsForStaggeredScheme const* const cpl_xs,
+    NumLib::LocalToGlobalIndexMap const* const base_dof_table)
 {
-    // If base_dof_table != nullptr, then the coupled processes contains the
-    // mechanical process, which is alway placed in the end of the coupled
-    // process and always user higher order element than other process in the
-    // coupling.
+    // If base_dof_table != nullptr, it means that the staggered scheme is
+    // applied for coupling, meanwhile DOF tables of different are different
+    // as well.
     auto const indices =
         ((base_dof_table == nullptr) ||
          (cpl_xs->process_id ==
@@ -202,8 +207,10 @@ void VectorMatrixAssembler::local_assembleWithJacobianForStaggeredScheme(
     std::vector<GlobalIndexType> const& full_indices,
     std::vector<double> const& local_xdot,
     LocalAssemblerInterface& local_assembler, const double dxdot_dx,
-    const double dx_dx, CoupledSolutionsForStaggeredScheme const* cpl_xs)
+    const double dx_dx, CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
+    // The vector has the same purpose as that in assemble(..) in this file.
+    // For the detailed description, please see the comment inside assemble(..).
     std::vector<std::reference_wrapper<const std::vector<GlobalIndexType>>>
         indices_of_all_coupled_processes;
     indices_of_all_coupled_processes.reserve(cpl_xs->coupled_xs.size());

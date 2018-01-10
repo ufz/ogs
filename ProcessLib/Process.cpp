@@ -51,8 +51,7 @@ Process::Process(
 {
 }
 
-/// Initialize the boundary conditions for single PDE
-void Process::initializeBoundaryConditionPerPDE(
+void Process::initializeProcessBoundaryCondition(
     const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id)
 {
     auto const& per_process_variables = _process_variables[process_id];
@@ -77,9 +76,13 @@ void Process::initializeBoundaryConditionPerPDE(
 
 void Process::initializeBoundaryConditions()
 {
-    for (std::size_t pcs_id = 0; pcs_id < _process_variables.size(); pcs_id++)
+    // The number of processes is identical to the size of _process_variables,
+    // the vector contains variables for different processes. See the
+    // documentation of _process_variables.
+    const std::size_t number_of_processes = _process_variables.size();
+    for (std::size_t pcs_id = 0; pcs_id < number_of_processes; pcs_id++)
     {
-        initializeBoundaryConditionPerPDE(*_local_to_global_index_map, pcs_id);
+        initializeProcessBoundaryCondition(*_local_to_global_index_map, pcs_id);
     }
 }
 

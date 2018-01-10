@@ -112,6 +112,7 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets), vec_n_components,
                 NumLib::ComponentOrder::BY_LOCATION);
+        assert(_local_to_global_index_map);
     }
     else
     {
@@ -143,6 +144,9 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 
         _sparsity_pattern_with_linear_element = NumLib::computeSparsityPattern(
             *_local_to_global_index_map_with_base_nodes, _mesh);
+
+        assert(_local_to_global_index_map);
+        assert(_local_to_global_index_map_with_base_nodes);
     }
 }
 
@@ -230,7 +234,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     if (_use_monolithic_scheme)
     {
         const int equation_id_of_up = 0;
-        initializeBoundaryConditionPerPDE(*_local_to_global_index_map,
+        initializeProcessBoundaryCondition(*_local_to_global_index_map,
                                           equation_id_of_up);
         return;
     }
@@ -238,12 +242,12 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     // Staggered scheme:
     // for the equations of pressure
     const int equation_id_of_p = 0;
-    initializeBoundaryConditionPerPDE(
+    initializeProcessBoundaryCondition(
         *_local_to_global_index_map_with_base_nodes, equation_id_of_p);
 
     // for the equations of deformation.
     const int equation_id_of_u = 1;
-    initializeBoundaryConditionPerPDE(*_local_to_global_index_map,
+    initializeProcessBoundaryCondition(*_local_to_global_index_map,
                                       equation_id_of_u);
 }
 
@@ -301,6 +305,8 @@ void HydroMechanicsProcess<DisplacementDim>::
             "HydroMechanics for the staggered scheme.");
     }
 
+    // Note: _local_to_global_index_map_with_base_nodes is asserted in
+    //       constructDofTable().
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,

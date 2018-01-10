@@ -1,2 +1,1 @@
-Defines the convergence criteria of the global un-coupling loop of the staggered
- scheme for each individual process.
+Defines the convergence criterion for each weakly coupled process.

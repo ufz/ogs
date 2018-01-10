@@ -73,6 +73,7 @@ public:
 
     /*! Constructs a new instance.
      *
+     * \param equation_id ID of the ODE to be solved.
      * \param ode the ODE to be wrapped.
      * \param time_discretization the time discretization to be used.
      */

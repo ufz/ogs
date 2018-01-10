@@ -208,7 +208,7 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>oberburden</name>
+            <name>overburden</name>
             <type>Constant</type>
             <value>-2.125e6</value>
         </parameter>
@@ -252,7 +252,7 @@
                     <geometry>top</geometry>
                     <type>Neumann</type>
                     <component>1</component>
-                    <parameter>oberburden</parameter>
+                    <parameter>overburden</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>

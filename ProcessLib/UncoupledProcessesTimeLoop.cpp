@@ -126,6 +126,8 @@ struct SingleProcessData
     //! cast of \c tdisc_ode_sys to NumLib::InternalMatrixStorage
     NumLib::InternalMatrixStorage* mat_strg = nullptr;
 
+    /// Process ID. It is alway 0 when the monolithic scheme is used or
+    /// a single process is modelled.
     int equation_id = 0;
 
     Process& process;
@@ -326,7 +328,7 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
         = config.getConfigSubtreeOptional("global_process_coupling");
 
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
-        _global_coupling_conv_criteria;
+        global_coupling_conv_criteria;
     unsigned max_coupling_iterations = 1;
     if (coupling_config)
     {
@@ -344,7 +346,7 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
             coupling_convergence_criteria_config.getConfigSubtreeList(
                 "convergence_criterion"))
         {
-            _global_coupling_conv_criteria.push_back(
+            global_coupling_conv_criteria.push_back(
                 NumLib::createConvergenceCriterion(
                     coupling_convergence_criterion_config));
         }
@@ -374,7 +376,7 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
 
     return std::make_unique<UncoupledProcessesTimeLoop>(
         std::move(output), std::move(per_process_data), max_coupling_iterations,
-        std::move(_global_coupling_conv_criteria), start_time, end_time);
+        std::move(global_coupling_conv_criteria), start_time, end_time);
 }
 
 std::vector<GlobalVector*> setInitialConditions(
