@@ -48,8 +48,20 @@ public:
     bool isLinear() const override;
     //! @}
 
+    /**
+     * Get the size and the sparse pattern of the global matrix in order to
+     * create the global matrices and vectors for the system equations of this
+     * process.
+     *
+     * @param process_id Process ID. If the monolithic scheme is applied,
+     *                               process_id = 0. For the staggered scheme,
+     *                               process_id = 0 represents the
+     *                               hydraulic (H) process, while process_id = 1
+     *                               represents the mechanical (M) process.                         
+     * @return Matrix specifications including size and sparse pattern.
+     */
     MathLib::MatrixSpecifications getMatrixSpecifications(
-        const int equation_id) const override;
+        const int process_id) const override;
 
 private:
     void constructDofTable() override;
@@ -105,6 +117,9 @@ private:
     /// Solutions of the previous time step
     std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
 
+    /**
+     * @copydoc ProcessLib::Process::getDOFTableForExtrapolatorData()
+     */
     std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
         getDOFTableForExtrapolatorData() const override;
 

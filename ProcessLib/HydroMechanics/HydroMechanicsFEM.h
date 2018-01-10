@@ -326,6 +326,31 @@ private:
         return cache;
     }
 
+    /**
+     * Assemble local matrices and vectors arise from the linearized discretized
+     * weak form of the residual of the momentum balance equation,
+     *      \f[
+     *            \nabla (\sigma - \alpha_b p \mathrm{I}) = f
+     *      \f]
+     * where \f$ \sigma\f$ is the effective stress tensor, \f$p\f$ is the pore
+     * pressure, \f$\alpha_b\f$ is the Biots constant, \f$\mathrm{I}\f$ is the
+     * identity tensor, and \f$f\f$ is the body force.
+     *
+     * @param t               Time
+     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
+     * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
+     * @param dx_dx           Value of \f$ x \cdot dx\f$.
+     * @param local_M_data    Mass matrix of an element, which takes the form of
+     *                        \f$ \inta N^T N\mathrm{d}\Omega\f$. Not used.
+     * @param local_K_data    Lappacian matrix of an element, which takes the
+     *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
+     *                        Not used.
+     * @param local_b_data    Right hand side vector of an element.
+     * @param local_Jac_data  Element Jacobian matrix from the Newton-Raphson
+     *                        method.
+     * @param local_coupled_solutions Nodal values of solutions of the coupled
+     *                                processes of an element.
+     */
     void assembleWithJacobianForDeformationEquations(
         double const t, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
@@ -333,6 +358,34 @@ private:
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions);
 
+    /**
+     * Assemble local matrices and vectors arise from the linearized discretized
+     * weak form of the residual of the mass balance equation of single phase
+     * flow,
+     *      \f[
+     *          \alpha \cdot{p} - \nabla (K (\nabla p + \rho g \nabla z) +
+     *          \alpha_b \nabla \cdot \dot{u}  = Q
+     *      \f]
+     * where \f$ alpha\f$ is a coefficient may depend on storage or the fluid
+     * density change, \f$ \rho\f$ is the fluid density, \f$\g\f$ is the
+     * gravitational acceleration, \f$z\f$ is the vertical coordinate, \f$u\f$
+     * is the displacement, and \f$Q\f$ is the source/sink term.
+     *
+     * @param t               Time
+     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
+     * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
+     * @param dx_dx           Value of \f$ x \cdot dx\f$.
+     * @param local_M_data    Mass matrix of an element, which takes the form of
+     *                        \f$ \inta N^T N\mathrm{d}\Omega\f$. Not used.
+     * @param local_K_data    Lappacian matrix of an element, which takes the
+     *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
+     *                        Not used.
+     * @param local_b_data    Right hand side vector of an element.
+     * @param local_Jac_data  Element Jacobian matrix from the Newton-Raphson
+     *                        method.
+     * @param local_coupled_solutions Nodal values of solutions of the coupled
+     *                                processes of an element.
+     */
     void assembleWithJacobianForPressureEquations(
         double const t, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,

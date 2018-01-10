@@ -53,19 +53,18 @@ bool HydroMechanicsProcess<DisplacementDim>::isLinear() const
 template <int DisplacementDim>
 MathLib::MatrixSpecifications
 HydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
-    const int equation_id) const
+    const int process_id) const
 {
-    // For the staggered scheme, equation_id == 1 indicates that the matrix
-    // specifications are for the momentum balance equation (deformation).
-    if (_use_monolithic_scheme || equation_id == 1)
+    // For the monolithic scheme or the M process (deformation) in the staggered
+    // scheme.
+    if (_use_monolithic_scheme || process_id == 1)
     {
         auto const& l = *_local_to_global_index_map;
         return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
                 &l.getGhostIndices(), &this->_sparsity_pattern};
     }
 
-    // For staggered scheme and  the mass conservation balance equation
-    // (pressure).
+    // For staggered scheme and H process (pressure).
     auto const& l = *_local_to_global_index_map_with_base_nodes;
     return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
             &l.getGhostIndices(), &_sparsity_pattern_with_linear_element};
@@ -158,7 +157,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     ProcessLib::HydroMechanics::createLocalAssemblers<
         DisplacementDim, HydroMechanicsLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
-        // use displacment process variable for shapefunction order
+        // use displacement process variable to set shape function order
         getProcessVariables(mechinical_process_id)[deformation_variable_id]
             .get()
             .getShapeFunctionOrder(),
@@ -253,9 +252,11 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
     GlobalVector& b)
 {
-    // Not available because that only the Newton-Raphson method is available
-    // for HydroMechanics
     DBUG("Assemble the equations for HydroMechanics");
+
+    // Note: This assembly function is for the Picard nonlinear solver. Since
+    // only the Newton-Raphson method is employed to simulate coupled HM
+    // processes in this class, this function is actually not used so far.
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
