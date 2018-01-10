@@ -36,13 +36,15 @@ pipeline {
                 sudo -H pip install -r requirements.txt
                 """.stripIndent())
 
-              sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
-              configure {
-                cmakeOptions =
-                  '-DOGS_USE_CONAN=ON ' +
-                  '-DOGS_CONAN_BUILD=never ' +
-                  '-DOGS_CPU_ARCHITECTURE=generic ' +
-                  '-DOGS_PACKAGE_DEPENDENCIES=ON '
+              lock(resource: "conanCache-${env.NODE_NAME}") {
+                sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
+                configure {
+                  cmakeOptions =
+                    '-DOGS_USE_CONAN=ON ' +
+                    '-DOGS_CONAN_BUILD=never ' +
+                    '-DOGS_CPU_ARCHITECTURE=generic ' +
+                    '-DOGS_PACKAGE_DEPENDENCIES=ON '
+                }
               }
               build { }
               build { target="tests" }
@@ -99,18 +101,21 @@ pipeline {
               filename 'Dockerfile.gcc.minimal'
               dir 'scripts/docker'
               label 'docker'
-              args '-v /home/jenkins/.ccache:/home/jenkins/.ccache'
+              args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
               additionalBuildArgs '--pull'
             }
           }
           steps {
             script {
-              configure {
-                cmakeOptions =
-                  '-DOGS_USE_CONAN=ON ' +
-                  '-DOGS_CONAN_BUILD=never ' +
-                  '-DOGS_CPU_ARCHITECTURE=generic '
-                config = 'Debug'
+              lock(resource: "conanCache-${env.NODE_NAME}") {
+                sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
+                configure {
+                  cmakeOptions =
+                    '-DOGS_USE_CONAN=ON ' +
+                    '-DOGS_CONAN_BUILD=never ' +
+                    '-DOGS_CPU_ARCHITECTURE=generic '
+                  config = 'Debug'
+                }
               }
               build { }
               build { target = 'tests' }
