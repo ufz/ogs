@@ -392,6 +392,12 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             _process_data.mesh_prop_fracture_stress_shear2 =
                 mesh_prop_fracture_stress_shear2;
         }
+
+        auto mesh_prop_nodal_p = MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
+            MeshLib::MeshItemType::Node, 1);
+        mesh_prop_nodal_p->resize(mesh.getNumberOfNodes());
+        _process_data.mesh_prop_nodal_p = mesh_prop_nodal_p;
     }
 }
 
