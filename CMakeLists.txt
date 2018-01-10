@@ -38,6 +38,9 @@ option(OGS_USE_PCH "Should pre-compiled headers be used?" ON)
 option(OGS_USE_CONAN "Should Conan package manager be used?" OFF)
 set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
     never or list of libs to build" )
+if(OGS_USE_PETSC)
+    set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
+endif()
 
 ### CMake includes ###
 include(scripts/cmake/PreFind.cmake)
@@ -191,7 +194,6 @@ endif()
 
 if(OGS_USE_PETSC)
     add_definitions(-DUSE_PETSC)
-    set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
 endif()
 
 # Use MPI
