@@ -417,8 +417,8 @@ std::vector<GlobalVector*> setInitialConditions(
 bool solveOneTimeStepOneProcess(const unsigned process_index,
                                 GlobalVector& x, std::size_t const timestep,
                                 double const t, double const delta_t,
-                                SingleProcessData& process_data,
-                                Output const& output_control)
+                                SingleProcessData const& process_data,
+                                Output& output_control)
 {
     auto& process = process_data.process;
     auto& time_disc = *process_data.time_disc;
