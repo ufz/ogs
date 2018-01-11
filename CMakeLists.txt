@@ -296,5 +296,7 @@ endif() # OGS_BUILD_TESTS
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/BaseLib/BuildInfo.cpp.in"
     "${CMAKE_CURRENT_BINARY_DIR}/BaseLib/BuildInfo.cpp" @ONLY)
 
+check_header_compilation()
+
 include(scripts/cmake/MarkVariablesAdvanced.cmake)
 unset(PRE_INSTALL_RUN CACHE)
