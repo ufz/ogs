@@ -208,57 +208,6 @@ AddTest(
     ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma 6e-4 0
 )
 
-# Mechanics; Small deformations, Ehlers-damage Uniaxial Tension (SDED)
-AddTest(
-    NAME Mechanics_PlasticModel_SDED_Ehlers_Damage_UniaxialTension
-    PATH Mechanics/EhlersDamage/UniaxialTension
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS data.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu displacement displacement 5e-13 0
-    uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu sigma sigma 5e-13 0
-    uc_01_pcs_0_ts_3276_t_3.276000.vtu uc_01_pcs_0_ts_3276_t_3.276000.vtu epsilon epsilon 5e-13 0
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu displacement displacement 5e-13 0
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma sigma 5e-13 0
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu epsilon epsilon 5e-13 0
-)
-
-# Mechanics; Small deformations, Ehlers-damage Uniaxial Compression (SDED)
-AddTest(
-    NAME Mechanics_PlasticModel_SDED_Ehlers_Damage_UniaxialCompression
-    PATH Mechanics/EhlersDamage/UniaxialCompression
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS data.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    uc_01_pcs_0_ts_3543_t_3.543000.vtu uc_01_pcs_0_ts_3543_t_3.543000.vtu displacement displacement 1e-13 0
-    uc_01_pcs_0_ts_3543_t_3.543000.vtu uc_01_pcs_0_ts_3543_t_3.543000.vtu sigma sigma 1e-13 0
-    uc_01_pcs_0_ts_3543_t_3.543000.vtu uc_01_pcs_0_ts_3543_t_3.543000.vtu epsilon epsilon 1e-13 0
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu displacement displacement 1e-13 0
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma sigma 1e-13 0
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu epsilon epsilon 1e-13 0
-)
-
-# Mechanics; Small deformations, Ehlers-damage Triaxial Compression (SDED)
-AddTest(
-    NAME Mechanics_PlasticModel_SDED_Ehlers_Damage_TriaxialCompression
-    PATH Mechanics/EhlersDamage/TriaxialCompression
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS data.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    uc_01_pcs_0_ts_2823_t_2.823000.vtu uc_01_pcs_0_ts_2823_t_2.823000.vtu displacement displacement 1e-13 0
-    uc_01_pcs_0_ts_2823_t_2.823000.vtu uc_01_pcs_0_ts_2823_t_2.823000.vtu sigma sigma 1e-13 0
-    uc_01_pcs_0_ts_2823_t_2.823000.vtu uc_01_pcs_0_ts_2823_t_2.823000.vtu epsilon epsilon 1e-13 0
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu displacement displacement 1e-13 0
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu sigma sigma 1e-13 0
-    uc_01_pcs_0_ts_5000_t_5.000000.vtu uc_01_pcs_0_ts_5000_t_5.000000.vtu epsilon epsilon 1e-13 0
-)
-
 #With PETSc
 AddTest(
     NAME Parallel_Mechanics_SDL_disc_with_hole

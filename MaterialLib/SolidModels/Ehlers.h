@@ -99,6 +99,68 @@ struct DamagePropertiesParameters
     P const& h_d;
 };
 
+/// Evaluated MaterialPropertiesParameters container, see its documentation for
+/// details.
+struct MaterialProperties final
+{
+    MaterialProperties(double const t, ProcessLib::SpatialPosition const& x,
+                       MaterialPropertiesParameters const& mp)
+        : G(mp.G(t, x)[0]),
+          K(mp.K(t, x)[0]),
+          alpha(mp.alpha(t, x)[0]),
+          beta(mp.beta(t, x)[0]),
+          gamma(mp.gamma(t, x)[0]),
+          delta(mp.delta(t, x)[0]),
+          epsilon(mp.epsilon(t, x)[0]),
+          m(mp.m(t, x)[0]),
+          alpha_p(mp.alpha_p(t, x)[0]),
+          beta_p(mp.beta_p(t, x)[0]),
+          gamma_p(mp.gamma_p(t, x)[0]),
+          delta_p(mp.delta_p(t, x)[0]),
+          epsilon_p(mp.epsilon_p(t, x)[0]),
+          m_p(mp.m_p(t, x)[0]),
+          kappa(mp.kappa(t, x)[0]),
+          hardening_coefficient(mp.hardening_coefficient(t, x)[0])
+    {
+    }
+    double const G;
+    double const K;
+
+    double const alpha;
+    double const beta;
+    double const gamma;
+    double const delta;
+    double const epsilon;
+    double const m;
+
+    double const alpha_p;
+    double const beta_p;
+    double const gamma_p;
+    double const delta_p;
+    double const epsilon_p;
+    double const m_p;
+
+    double const kappa;
+    double const hardening_coefficient;
+};
+
+/// Evaluated DamagePropertiesParameters container, see its documentation for
+/// details.
+struct DamageProperties
+{
+    DamageProperties(double const t,
+                     ProcessLib::SpatialPosition const& x,
+                     DamagePropertiesParameters const& dp)
+        : alpha_d(dp.alpha_d(t, x)[0]),
+          beta_d(dp.beta_d(t, x)[0]),
+          h_d(dp.h_d(t, x)[0])
+    {
+    }
+    double const alpha_d;
+    double const beta_d;
+    double const h_d;
+};
+
 template <typename KelvinVector>
 struct PlasticStrain final
 {
@@ -261,6 +323,18 @@ public:
 
     std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
     getInternalVariables() const override;
+
+    MaterialProperties evaluatedMaterialProperties(
+        double const t, ProcessLib::SpatialPosition const& x) const
+    {
+        return MaterialProperties(t, x, _mp);
+    }
+
+    DamageProperties evaluatedDamageProperties(
+        double const t, ProcessLib::SpatialPosition const& x) const
+    {
+        return DamageProperties(t, x, *_damage_properties);
+    }
 
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
