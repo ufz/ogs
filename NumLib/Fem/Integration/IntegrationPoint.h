@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "MathLib/TemplateWeightedPoint.h"
+
 namespace NumLib
 {
 /// Integration rule for point elements.

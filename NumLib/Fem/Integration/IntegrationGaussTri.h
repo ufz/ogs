@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "MathLib/TemplateWeightedPoint.h"
 #include "MathLib/Integration/GaussLegendreTri.h"
 
 namespace NumLib
