@@ -40,12 +40,22 @@ void VectorMatrixAssembler::preAssemble(
 
 void VectorMatrixAssembler::assemble(
     const std::size_t mesh_item_id, LocalAssemblerInterface& local_assembler,
-    const NumLib::LocalToGlobalIndexMap& dof_table, const double t,
-    const GlobalVector& x, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    CoupledSolutionsForStaggeredScheme const* const cpl_xs)
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+        dof_tables,
+    const double t, const GlobalVector& x, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b, CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
-    auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
+    std::vector<std::vector<GlobalIndexType>> indices_of_processes;
+    indices_of_processes.reserve(dof_tables.size());
+    for (std::size_t i = 0; i < dof_tables.size(); i++)
+    {
+        indices_of_processes.emplace_back(
+            NumLib::getIndices(mesh_item_id, dof_tables[i].get()));
+    }
 
+    auto const& indices = (dof_tables.size() == 1 && cpl_xs == nullptr)
+                              ? indices_of_processes[0]
+                              : indices_of_processes[cpl_xs->process_id];
     _local_M_data.clear();
     _local_K_data.clear();
     _local_b_data.clear();
@@ -58,24 +68,10 @@ void VectorMatrixAssembler::assemble(
     }
     else
     {
-        // Different processes in a staggered loop are allowed to use different
-        // orders of element. That means that the global indices can be
-        // different among different processes. The following vector stores the
-        // reference of the vectors of the global indices of all processes, and
-        // it is used to fetch the nodal solutions of all processes of the
-        // current element.
-        std::vector<std::reference_wrapper<const std::vector<GlobalIndexType>>>
-            indices_of_all_coupled_processes;
-        indices_of_all_coupled_processes.reserve(cpl_xs->coupled_xs.size());
-        for (std::size_t i = 0; i < cpl_xs->coupled_xs.size(); i++)
-        {
-            indices_of_all_coupled_processes.emplace_back(std::ref(indices));
-        }
-
-        auto local_coupled_xs0 = getPreviousLocalSolutions(
-            *cpl_xs, indices_of_all_coupled_processes);
+        auto local_coupled_xs0 =
+            getPreviousLocalSolutions(*cpl_xs, indices_of_processes);
         auto local_coupled_xs =
-            getCurrentLocalSolutions(*cpl_xs, indices_of_all_coupled_processes);
+            getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
 
         ProcessLib::LocalCoupledSolutions local_coupled_solutions(
             cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
@@ -109,22 +105,24 @@ void VectorMatrixAssembler::assemble(
 
 void VectorMatrixAssembler::assembleWithJacobian(
     std::size_t const mesh_item_id, LocalAssemblerInterface& local_assembler,
-    NumLib::LocalToGlobalIndexMap const& dof_table, const double t,
-    GlobalVector const& x, GlobalVector const& xdot, const double dxdot_dx,
-    const double dx_dx, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    GlobalMatrix& Jac, CoupledSolutionsForStaggeredScheme const* const cpl_xs,
-    NumLib::LocalToGlobalIndexMap const* const base_dof_table)
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+        dof_tables,
+    const double t, GlobalVector const& x, GlobalVector const& xdot,
+    const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b, GlobalMatrix& Jac,
+    CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
-    // If base_dof_table != nullptr, it means that the staggered scheme is
-    // applied for coupling, meanwhile DOF tables of different are different
-    // as well.
-    auto const indices =
-        ((base_dof_table == nullptr) ||
-         (cpl_xs->process_id ==
-              static_cast<int>(cpl_xs->coupled_xs.size()) - 1 &&
-          cpl_xs != nullptr))
-            ? NumLib::getIndices(mesh_item_id, dof_table)
-            : NumLib::getIndices(mesh_item_id, *base_dof_table);
+    std::vector<std::vector<GlobalIndexType>> indices_of_processes;
+    indices_of_processes.reserve(dof_tables.size());
+    for (std::size_t i = 0; i < dof_tables.size(); i++)
+    {
+        indices_of_processes.emplace_back(
+            NumLib::getIndices(mesh_item_id, dof_tables[i].get()));
+    }
+
+    auto const& indices = (dof_tables.size() == 1 && cpl_xs == nullptr)
+                              ? indices_of_processes[0]
+                              : indices_of_processes[cpl_xs->process_id];
     auto const local_xdot = xdot.get(indices);
 
     _local_M_data.clear();
@@ -141,32 +139,19 @@ void VectorMatrixAssembler::assembleWithJacobian(
     }
     else
     {
-        if (base_dof_table == nullptr)
-        {
-            local_assembleWithJacobianForStaggeredScheme(
-                t, indices, indices, local_xdot, local_assembler, dxdot_dx,
-                dx_dx, cpl_xs);
-        }
-        else
-        {
-            if (cpl_xs->process_id ==
-                static_cast<int>(cpl_xs->coupled_xs.size()) - 1)
-            {
-                const auto base_indices =
-                    NumLib::getIndices(mesh_item_id, *base_dof_table);
-                local_assembleWithJacobianForStaggeredScheme(
-                    t, base_indices, indices, local_xdot, local_assembler,
-                    dxdot_dx, dx_dx, cpl_xs);
-            }
-            else
-            {
-                const auto full_indices =
-                    NumLib::getIndices(mesh_item_id, dof_table);
-                local_assembleWithJacobianForStaggeredScheme(
-                    t, indices, full_indices, local_xdot, local_assembler,
-                    dxdot_dx, dx_dx, cpl_xs);
-            }
-        }
+        auto local_coupled_xs0 =
+            getPreviousLocalSolutions(*cpl_xs, indices_of_processes);
+        auto local_coupled_xs =
+            getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
+
+        ProcessLib::LocalCoupledSolutions local_coupled_solutions(
+            cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
+            std::move(local_coupled_xs));
+
+        _jacobian_assembler->assembleWithJacobianForStaggeredScheme(
+            local_assembler, t, local_xdot, dxdot_dx, dx_dx, _local_M_data,
+            _local_K_data, _local_b_data, _local_Jac_data,
+            local_coupled_solutions);
     }
 
     auto const num_r_c = indices.size();
@@ -200,38 +185,6 @@ void VectorMatrixAssembler::assembleWithJacobian(
             "No Jacobian has been assembled! This might be due to programming "
             "errors in the local assembler of the current process.");
     }
-}
-
-void VectorMatrixAssembler::local_assembleWithJacobianForStaggeredScheme(
-    const double t, std::vector<GlobalIndexType> const& base_indices,
-    std::vector<GlobalIndexType> const& full_indices,
-    std::vector<double> const& local_xdot,
-    LocalAssemblerInterface& local_assembler, const double dxdot_dx,
-    const double dx_dx, CoupledSolutionsForStaggeredScheme const* const cpl_xs)
-{
-    // The vector has the same purpose as that in assemble(..) in this file.
-    // For the detailed description, please see the comment inside assemble(..).
-    std::vector<std::reference_wrapper<const std::vector<GlobalIndexType>>>
-        indices_of_all_coupled_processes;
-    indices_of_all_coupled_processes.reserve(cpl_xs->coupled_xs.size());
-    for (std::size_t i = 0; i < cpl_xs->coupled_xs.size() - 1; i++)
-    {
-        indices_of_all_coupled_processes.emplace_back(std::ref(base_indices));
-    }
-    indices_of_all_coupled_processes.emplace_back(std::ref(full_indices));
-
-    auto local_coupled_xs0 =
-        getPreviousLocalSolutions(*cpl_xs, indices_of_all_coupled_processes);
-    auto local_coupled_xs =
-        getCurrentLocalSolutions(*cpl_xs, indices_of_all_coupled_processes);
-
-    ProcessLib::LocalCoupledSolutions local_coupled_solutions(
-        cpl_xs->dt, cpl_xs->process_id, std::move(local_coupled_xs0),
-        std::move(local_coupled_xs));
-
-    _jacobian_assembler->assembleWithJacobianForStaggeredScheme(
-        local_assembler, t, local_xdot, dxdot_dx, dx_dx, _local_M_data,
-        _local_K_data, _local_b_data, _local_Jac_data, local_coupled_solutions);
 }
 
 }  // namespace ProcessLib

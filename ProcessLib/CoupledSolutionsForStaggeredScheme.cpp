@@ -30,9 +30,7 @@ CoupledSolutionsForStaggeredScheme::CoupledSolutionsForStaggeredScheme(
 
 std::vector<std::vector<double>> getPreviousLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
-    const std::vector<
-        std::reference_wrapper<const std::vector<GlobalIndexType>>>&
-        indices)
+    const std::vector<std::vector<GlobalIndexType>>& indices)
 {
     if (cpl_xs.coupled_xs_t0.empty())
         return {};
@@ -44,7 +42,7 @@ std::vector<std::vector<double>> getPreviousLocalSolutions(
     int coupling_id = 0;
     for (auto const& x_t0 : cpl_xs.coupled_xs_t0)
     {
-        local_xs_t0.emplace_back(x_t0->get(indices[coupling_id].get()));
+        local_xs_t0.emplace_back(x_t0->get(indices[coupling_id]));
         coupling_id++;
     }
     return local_xs_t0;
@@ -52,9 +50,7 @@ std::vector<std::vector<double>> getPreviousLocalSolutions(
 
 std::vector<std::vector<double>> getCurrentLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
-    const std::vector<
-        std::reference_wrapper<const std::vector<GlobalIndexType>>>&
-        indices)
+    const std::vector<std::vector<GlobalIndexType>>& indices)
 {
     const auto number_of_coupled_solutions = cpl_xs.coupled_xs.size();
     std::vector<std::vector<double>> local_xs_t1;
@@ -63,7 +59,7 @@ std::vector<std::vector<double>> getCurrentLocalSolutions(
     int coupling_id = 0;
     for (auto const& x_t1 : cpl_xs.coupled_xs)
     {
-        local_xs_t1.emplace_back(x_t1.get().get(indices[coupling_id].get()));
+        local_xs_t1.emplace_back(x_t1.get().get(indices[coupling_id]));
         coupling_id++;
     }
     return local_xs_t1;

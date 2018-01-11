@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <functional>
 #include <utility>
 #include <vector>
 
@@ -83,9 +82,7 @@ struct LocalCoupledSolutions
  */
 std::vector<std::vector<double>> getPreviousLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
-    const std::vector<
-        std::reference_wrapper<const std::vector<GlobalIndexType>>>&
-        indices);
+    const std::vector<std::vector<GlobalIndexType>>& indices);
 
 /**
  * Fetch the nodal solutions of all coupled processes of the current time step
@@ -96,7 +93,5 @@ std::vector<std::vector<double>> getPreviousLocalSolutions(
  */
 std::vector<std::vector<double>> getCurrentLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
-    const std::vector<
-        std::reference_wrapper<const std::vector<GlobalIndexType>>>&
-        indices);
+    const std::vector<std::vector<GlobalIndexType>>& indices);
 }  // end of ProcessLib

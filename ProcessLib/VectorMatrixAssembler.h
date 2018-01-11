@@ -44,7 +44,8 @@ public:
     //! \remark Jacobian is not assembled here, see assembleWithJacobian().
     void assemble(std::size_t const mesh_item_id,
                   LocalAssemblerInterface& local_assembler,
-                  NumLib::LocalToGlobalIndexMap const& dof_table,
+                  std::vector<std::reference_wrapper<
+                      NumLib::LocalToGlobalIndexMap>> const& dof_tables,
                   double const t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b,
                   CoupledSolutionsForStaggeredScheme const* const cpl_xs);
@@ -54,12 +55,13 @@ public:
     void assembleWithJacobian(
         std::size_t const mesh_item_id,
         LocalAssemblerInterface& local_assembler,
-        NumLib::LocalToGlobalIndexMap const& dof_table, const double t,
-        GlobalVector const& x, GlobalVector const& xdot, const double dxdot_dx,
-        const double dx_dx, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-        GlobalMatrix& Jac,
-        CoupledSolutionsForStaggeredScheme const* const cpl_xs,
-        NumLib::LocalToGlobalIndexMap const* const base_dof_table);
+        std::vector<
+            std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+            dof_tables,
+        const double t, GlobalVector const& x, GlobalVector const& xdot,
+        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
+        CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 
 private:
     // temporary data only stored here in order to avoid frequent memory
@@ -71,14 +73,6 @@ private:
 
     //! Used to assemble the Jacobian.
     std::unique_ptr<AbstractJacobianAssembler> _jacobian_assembler;
-
-    void local_assembleWithJacobianForStaggeredScheme(
-        const double t, std::vector<GlobalIndexType> const& base_indices,
-        std::vector<GlobalIndexType> const& full_indices,
-        std::vector<double> const& local_xdot,
-        LocalAssemblerInterface& local_assembler, const double dxdot_dx,
-        const double dx_dx,
-        CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 };
 
 }  // namespace ProcessLib

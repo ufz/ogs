@@ -154,10 +154,12 @@ void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 {
     DBUG("Assemble ThermoMechanicsProcess.");
 
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+       dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
+        dof_table, t, x, M, K, b, _coupled_solutions);
 }
 
 template <int DisplacementDim>
@@ -171,11 +173,13 @@ void ThermoMechanicsProcess<DisplacementDim>::
 {
     DBUG("AssembleJacobian ThermoMechanicsProcess.");
 
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+       dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions, nullptr);
+        _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
+        dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
 template <int DisplacementDim>

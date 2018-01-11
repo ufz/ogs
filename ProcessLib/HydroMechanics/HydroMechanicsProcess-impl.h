@@ -235,7 +235,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     {
         const int process_id_of_up = 0;
         initializeProcessBoundaryCondition(*_local_to_global_index_map,
-                                          process_id_of_up);
+                                           process_id_of_up);
         return;
     }
 
@@ -248,7 +248,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     // for the equations of deformation.
     const int process_id_of_u = 1;
     initializeProcessBoundaryCondition(*_local_to_global_index_map,
-                                      process_id_of_u);
+                                       process_id_of_u);
 }
 
 template <int DisplacementDim>
@@ -262,10 +262,12 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // only the Newton-Raphson method is employed to simulate coupled HM
     // processes in this class, this function is actually not used so far.
 
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
+        dof_table, t, x, M, K, b, _coupled_solutions);
 }
 
 template <int DisplacementDim>
@@ -283,11 +285,13 @@ void HydroMechanicsProcess<DisplacementDim>::
         DBUG(
             "Assemble the Jacobian of HydroMechanics for the monolithic"
             " scheme.");
+        std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+            dof_table = {std::ref(*_local_to_global_index_map)};
         // Call global assembler for each local assembly item.
         GlobalExecutor::executeMemberDereferenced(
             _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-            _local_assemblers, *_local_to_global_index_map, t, x, xdot,
-            dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions, nullptr);
+            _local_assemblers, dof_table, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
+            Jac, _coupled_solutions);
         return;
     }
 
@@ -305,13 +309,13 @@ void HydroMechanicsProcess<DisplacementDim>::
             "HydroMechanics for the staggered scheme.");
     }
 
-    // Note: _local_to_global_index_map_with_base_nodes is asserted in
-    //       constructDofTable().
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_tables = {std::ref(*_local_to_global_index_map_with_base_nodes),
+                      std::ref(*_local_to_global_index_map)};
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions,
-        _local_to_global_index_map_with_base_nodes.get());
+        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
+        Jac, _coupled_solutions);
 }
 
 template <int DisplacementDim>

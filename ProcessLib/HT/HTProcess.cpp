@@ -85,9 +85,12 @@ void HTProcess::assembleConcreteProcess(const double t,
                                         GlobalMatrix& K,
                                         GlobalVector& b)
 {
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_tables;
     if (_use_monolithic_scheme)
     {
         DBUG("Assemble HTProcess.");
+        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
     }
     else
     {
@@ -104,12 +107,14 @@ void HTProcess::assembleConcreteProcess(const double t,
                 "fluid flow process within HTProcess.");
         }
         setCoupledSolutionsOfPreviousTimeStep();
+        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
     }
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
+        dof_tables, t, x, M, K, b, _coupled_solutions);
 }
 
 void HTProcess::assembleWithJacobianConcreteProcess(
@@ -119,16 +124,24 @@ void HTProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HTProcess.");
 
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_tables;
     if (!_use_monolithic_scheme)
     {
         setCoupledSolutionsOfPreviousTimeStep();
+        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+    }
+    else
+    {
+        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
     }
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions, nullptr);
+        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx,
+        dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
 void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,

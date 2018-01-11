@@ -13,8 +13,6 @@
 
 #include "StaggeredHTFEM.h"
 
-#include <functional> // for std::reference_wrapper
-
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 
 namespace ProcessLib
@@ -25,10 +23,10 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleForStaggeredScheme(double const t,
-                            std::vector<double>& local_M_data,
-                            std::vector<double>& local_K_data,
-                            std::vector<double>& local_b_data,
-                            LocalCoupledSolutions const& coupled_xs)
+                               std::vector<double>& local_M_data,
+                               std::vector<double>& local_K_data,
+                               std::vector<double>& local_b_data,
+                               LocalCoupledSolutions const& coupled_xs)
 {
     if (coupled_xs.process_id == 0)
     {
@@ -279,9 +277,8 @@ StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     auto const indices = NumLib::getIndices(this->_element.getID(), dof_table);
     assert(!indices.empty());
-    std::vector<std::reference_wrapper<const std::vector<GlobalIndexType>>>
-        indices_of_all_coupled_processes = {std::ref(indices),
-                                            std::ref(indices)};
+    std::vector<std::vector<GlobalIndexType>> indices_of_all_coupled_processes =
+        {indices, indices};
     auto const local_xs = getCurrentLocalSolutions(
         *(this->_coupled_solutions), indices_of_all_coupled_processes);
 
