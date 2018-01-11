@@ -1,2 +1,2 @@
-Defines the convergence criteria of the global un-coupling loop of the staggered
+Defines the convergence criteria of all coupled processes in the staggered
  scheme.

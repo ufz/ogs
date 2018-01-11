@@ -1,1 +1,1 @@
-Defines the convergence criterion for each weakly coupled process.
+Defines the convergence criterion of each process in the staggered scheme.

@@ -4,7 +4,7 @@
     <geometry>bar.gml</geometry>
     <processes>
         <process>
-            <name>HM</name>
+            <name>InjectionProduction1D</name>
             <type>HYDRO_MECHANICS</type>
             <coupling_scheme>staggered</coupling_scheme>
             <integration_order>3</integration_order>
@@ -60,7 +60,7 @@
 
         <processes>
             <!--For the equations of pressure-->
-            <process ref="HM">
+            <process ref="InjectionProduction1D">
                 <nonlinear_solver>basic_newton_p</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
@@ -89,7 +89,7 @@
                 </time_stepping>
             </process>
             <!--For the equations of deformation-->
-            <process ref="HM">
+            <process ref="InjectionProduction1D">
                 <nonlinear_solver>basic_newton_u</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
@@ -274,7 +274,6 @@
     <linear_solvers>
         <linear_solver>
             <name>linear_solver_p</name>
-            <lis>-i bicg -p jacobi -tol 1e-10 -maxiter 10000</lis>
             <eigen>
                 <solver_type>CG</solver_type>
                 <precon_type>DIAGONAL</precon_type>
@@ -284,7 +283,6 @@
         </linear_solver>
         <linear_solver>
             <name>linear_solver_u</name>
-            <lis>-i bicg -p jacobi -tol 1e-16 -maxiter 10000</lis>
             <eigen>
                 <solver_type>BiCGSTAB</solver_type>
                 <precon_type>ILUT</precon_type>
