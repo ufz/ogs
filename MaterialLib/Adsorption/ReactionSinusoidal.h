@@ -13,6 +13,7 @@
 
 #include "Reaction.h"
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
 #include "BaseLib/StringTools.h"
 
 namespace Adsorption
