@@ -29,7 +29,6 @@ functionality from OGS-5.
 - Check your code against our [styleguide](http://ufz.github.io/styleguide/cppguide.xml)
 - Have a look at the [source code documentation][docs]
 - For the actual build status see the [Jenkins-CI server][jenkins-ci]
-- Actual Travis build status: [![Build Status](https://travis-ci.org/ufz/ogs.png)](https://travis-ci.org/ufz/ogs)
 
 ## License ##
 
