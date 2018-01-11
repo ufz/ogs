@@ -9,6 +9,11 @@
 
 #pragma once
 
+#include "ProcessLib/Parameter/Parameter.h"
+
+#include <memory>
+#include <utility>
+
 #include <Eigen/Dense>
 
 namespace MaterialLib

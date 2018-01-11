@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+
 namespace ProcessLib
 {
 /*! Provides a "global" context, e.g., for NamedFunction's.

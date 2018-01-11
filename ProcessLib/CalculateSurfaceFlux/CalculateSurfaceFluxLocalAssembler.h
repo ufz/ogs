@@ -12,8 +12,9 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "NumLib/DOF/DOFTableUtil.h"
-#include "ProcessLib/Parameter/Parameter.h"
 
+#include "ProcessLib/Process.h"
+#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "MapBulkElementPoint.h"

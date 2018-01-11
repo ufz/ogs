@@ -9,6 +9,11 @@
 
 #pragma once
 
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
+
+#include <cassert>
+#include <type_traits>
+
 namespace ProcessLib
 {
 
