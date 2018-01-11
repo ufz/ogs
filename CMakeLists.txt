@@ -181,6 +181,8 @@ option(OGS_ENABLE_ELEMENT_CUBOID  "Build FEM elements for cuboids (quads, hexahe
 option(OGS_ENABLE_ELEMENT_PRISM   "Build FEM elements for prisms." ON)
 option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
 
+option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation." OFF)
+
 ###################
 ### Definitions ###
 ###################

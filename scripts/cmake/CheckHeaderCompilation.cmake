@@ -6,6 +6,9 @@ set(CMAKE_REQUIRED_QUIET TRUE)
 
 # Checks header for standalone compilation
 function(check_header_compilation)
+    if(NOT OGS_CHECK_HEADER_COMPILATION)
+        return()
+    endif()
     string(REPLACE "${PROJECT_SOURCE_DIR}/" "" DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     message(STATUS "Checking header compilation for ${DIRECTORY} ...")
     include(CheckCXXSourceCompiles)
