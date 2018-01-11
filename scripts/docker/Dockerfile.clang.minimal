@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y software-properties-common curl \
     xz-utils
 
 RUN python -m pip install --upgrade pip \
-  && python -m pip install cmake conan
+  && python -m pip install cmake conan>=1.0.0
 
 # Ninja
 RUN curl -L -o ninja-linux.zip https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip \

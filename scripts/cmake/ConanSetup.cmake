@@ -56,7 +56,7 @@ endif()
 execute_process(COMMAND ${CONAN_CMD} --version
     OUTPUT_VARIABLE CONAN_VERSION_OUTPUT)
 string(REGEX MATCH ".*Conan version ([0-9]+\.[0-9]+\.[0-9]+)" FOO "${CONAN_VERSION_OUTPUT}")
-set(CONAN_VERSION_REQUIRED 0.26.0)
+set(CONAN_VERSION_REQUIRED 1.0.0)
 if(${CMAKE_MATCH_1} VERSION_LESS ${CONAN_VERSION_REQUIRED})
     message(FATAL_ERROR "Conan outdated. Installed: ${CONAN_VERSION}, \
         required: ${CONAN_VERSION_REQUIRED}. Consider updating via 'pip \

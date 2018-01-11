@@ -8,6 +8,9 @@ cmake_minimum_required(VERSION 3.1)
 # Set CMake policies
 cmake_policy(SET CMP0011 NEW)
 cmake_policy(SET CMP0054 NEW)
+if(${CMAKE_VERSION} VERSION_GREATER 3.9.6)
+    cmake_policy(SET CMP0071 NEW)
+endif()
 
 if(WIN32 AND
     NOT ${CMAKE_GENERATOR} STREQUAL Ninja AND
