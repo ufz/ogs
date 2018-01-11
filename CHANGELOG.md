@@ -1,28 +1,94 @@
-## Release notes
+# 6.1.0
 
-# 6.0.9 (In preparation)
+The changes since the prerelease 6.1.0-rc1 contain few bug fixes and
+improvements of the CI.
 
-### Features
+### Features:
 
-- Insitu visualization with ParaView Catalyst. [Presentation](https://github.com/ufz/ogs/files/867280/Insitu-Department.pdf). #1744
-  - VTK 7.1 now required.
-- Bennchmark docs are now part of the code (in `web/content`) and can contain
-  [interactive 3D visualizations](https://dev.opengeosys.org/docs/benchmarks/elliptic/groundwater-flow-neumann/#results-and-evaluation)
-  via [vtk.js](https://kitware.github.io/vtk-js/). #1706, #1714, #1723, #1729
-  - [git-lfs](https://git-lfs.github.com/) is now required. Check the
-    [docs](https://docs.opengeosys.org/docs/devguide/getting-started/prerequisites)
-    for installation instructions.
+#### New processes:
+- ComponentTransport https://github.com/ufz/ogs/pull/1758
+- PhaseField https://github.com/ufz/ogs/pull/1813 and https://github.com/ufz/ogs/pull/1895
+- RichardsComponentTransport https://github.com/ufz/ogs/pull/1929
+- ThermoMechanics https://github.com/ufz/ogs/pull/1800
+- TwoPhaseFlow p-rho https://github.com/ufz/ogs/pull/1613
 
-### Utilities
+#### Other process' changes:
+- New equation assembly approach for the staggered scheme. With that,  the
+  coupling assembly computations are  changed from  performing assembly across
+  the different Process classes for a coupling to a single Process class for
+  coupled processes, which was assumed only for the monolithic before. With the
+  changes, the original Process class that for monolithic scheme originally can
+  now handle both of the monolithic and staggered schemes.  So far,  HT classes
+  get the staggered scheme based on this new framework of  assembly.
+  https://github.com/ufz/ogs/pull/1970
+- Heterogeneous liquid flow properties  (https://github.com/ufz/ogs/pull/1979,
+  https://github.com/ufz/ogs/pull/2017)
+- New boundary conditions added: Nonuniform Dirichlet
+  (https://github.com/ufz/ogs/pull/1952) and Neumann
+  (https://github.com/ufz/ogs/pull/1891), and normal traction
+  (https://github.com/ufz/ogs/pull/1896)
+- Framework for time stepping and a first application of adaptive time stepping,
+  EvolutionaryPIDcontroller, and automatic time step control
+  (https://github.com/ufz/ogs/pull/1803).
+- Nodal source terms (https://github.com/ufz/ogs/pull/1977)
+- Fix deformation processes to work correctly with PETSc parallelization
+  (https://github.com/ufz/ogs/pull/1838).
+- Fix the access to local data of PETScVector (https://github.com/ufz/ogs/pull/1797).
+- Add damping factor to global Newton. https://github.com/ufz/ogs/pull/2004
+- Extend extrapolator to vectorial quantities and replace the component-wise
+  output of Darcy velocity and the stress/strain in mechanical processes with
+  single vectorial output.
 
-### Infrastructure
+#### Material model changes
+- Separate FractureModels in LIE https://github.com/ufz/ogs/pull/1971
+- Add material forces as published in
+  http://www.sciencedirect.com/science/article/pii/S0093641317303865
+  https://github.com/ufz/ogs/pull/1936
 
-- CMake option OGS_EIGEN_DYNAMIC_SHAPE_MATRICES defaults to OFF on Release
+#### Testing and documentation:
+- Insitu visualization with ParaView Catalyst. See
+  [presentation](https://github.com/ufz/ogs/files/867280/Insitu-Department.pdf).
+  #1744, #1732. As a consequence VTK 7.1 is now required.
+- Benchmark docs are now part of the code (in `web/content`) and can contain
+  [interactive 3D
+  visualizations](https://dev.opengeosys.org/docs/benchmarks/elliptic/groundwater-flow-neumann/#results-and-evaluation)
+  via [vtk.js](https://kitware.github.io/vtk-js/). #1706, #1714, #1723, #1729.
+- Migrated handling of test data files from *git-submodule* to *git-lfs*, see
+  [docs](https://docs.opengeosys.org/docs/devguide/testing/test-data). #1964,
+  #1982, #1984, #2010, #2012.  Now  [git-lfs](https://git-lfs.github.com/) is
+  required. Check the
+  [installation](https://docs.opengeosys.org/docs/devguide/getting-started/prerequisites)
+  instructions.
+
+### Infrastructure:
+- Fully moved to Conan for automatic third-party library handling. Can be
+  enabled with `OGS_USE_CONAN=ON`, see
+  [docs](https://docs.opengeosys.org/docs/devguide/advanced/conan-package-manager).
+  #1907
+- Conan version 1.0 is now required.
+- Dropped travis CI environment and added few new tests on Jenkins because of
+  simpler maintenance.
+
+#### CMake options changes:
+- `OGS_EIGEN_DYNAMIC_SHAPE_MATRICES` defaults to OFF on Release
   config, ON otherwise. Can be overridden by explicitly setting the option. #1673
-- PetSc config is tested on Jenkins (envinf1)
-- OGS binaries are provided as eve / envinf1 modules. See [docs](https://docs.opengeosys.org/docs/quickstart/basics/envinf1) for details. #1753
+- New `OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN` defaults to ON for easier spotting
+  of non-initialized matrices. When OFF, the Eigen's default initialization to 0
+  is skipped resulting in slightly faster execution.
+  https://github.com/ufz/ogs/pull/1917
+- Set default Eigen's cmake flag disabling vectorization since this lead to
+  several problems in different environments.
+  https://github.com/ufz/ogs/pull/1919 and the issue linked there
+  https://github.com/ufz/ogs/issues/1881
 
-### Fixes
+#### Other
+- PETSc config is tested on Jenkins (envinf1)
+- OGS binaries are provided as eve / envinf1 modules. See
+  [docs](https://docs.opengeosys.org/docs/quickstart/basics/envinf1) for
+  details. #1753
+- Migrated Data Explorer to Qt5. #1622, #1625
+- Windows builds are tested on MSVC 2017 on own hardware and on MS
+
 
 # 6.0.8
 
