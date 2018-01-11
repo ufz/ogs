@@ -17,8 +17,6 @@ namespace ProcessLib
 //! Holds information about which variables to write to output files.
 struct ProcessOutput final
 {
-    //! Constructs a new instance.
-    ProcessOutput(BaseLib::ConfigTree const& output_config);
 
     //! All variables that shall be output.
     std::set<std::string> output_variables;

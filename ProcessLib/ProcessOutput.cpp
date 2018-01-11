@@ -14,32 +14,6 @@
 
 namespace ProcessLib
 {
-
-ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
-{
-    //! \ogs_file_param{prj__time_loop__processes__process__output__variables}
-    auto const out_vars = output_config.getConfigSubtree("variables");
-
-    //! \ogs_file_param{prj__time_loop__processes__process__output__variables__variable}
-    for (auto out_var : out_vars.getConfigParameterList<std::string>("variable"))
-    {
-        if (output_variables.find(out_var) != output_variables.cend())
-        {
-            OGS_FATAL("output variable `%s' specified more than once.", out_var.c_str());
-        }
-
-        DBUG("adding output variable `%s'", out_var.c_str());
-        output_variables.insert(out_var);
-    }
-
-    if (auto out_resid =
-            //! \ogs_file_param{prj__time_loop__processes__process__output__output_extrapolation_residuals}
-            output_config.getConfigParameterOptional<bool>("output_extrapolation_residuals"))
-    {
-        output_residuals = *out_resid;
-    }
-}
-
 void processOutputData(
     const double t,
     GlobalVector const& x,

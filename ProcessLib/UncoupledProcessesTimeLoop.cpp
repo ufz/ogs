@@ -12,13 +12,14 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
 #include "BaseLib/uniqueInsert.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/TimeStepping/CreateTimeStepper.h"
 
-#include "MathLib/LinAlg/LinAlg.h"
 #include "CoupledSolutionsForStaggeredScheme.h"
+#include "CreateProcessOutput.h"
 
 std::unique_ptr<ProcessLib::Output> createOutput(
     BaseLib::ConfigTree const& config, std::string const& output_directory)
@@ -294,7 +295,8 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
             pcs_config.getConfigSubtree("convergence_criterion"));
 
         //! \ogs_file_param{prj__time_loop__processes__process__output}
-        ProcessOutput process_output{pcs_config.getConfigSubtree("output")};
+        ProcessOutput process_output =
+            createProcessOutput(pcs_config.getConfigSubtree("output"));
 
         per_process_data.emplace_back(makeSingleProcessData(
             std::move(timestepper), nl_slv, pcs, std::move(time_disc),
