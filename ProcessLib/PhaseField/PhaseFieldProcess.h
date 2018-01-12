@@ -69,8 +69,18 @@ public:
     bool isLinear() const override;
     //! @}
 
+    MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int process_id) const override;
+
+    NumLib::LocalToGlobalIndexMap const& getDOFTable(
+        const int process_id) const override;
+
 private:
     using LocalAssemblerInterface = PhaseFieldLocalAssemblerInterface;
+
+    void constructDofTable() override;
+
+    void initializeBoundaryConditions() override;
 
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -93,6 +103,9 @@ private:
     void postTimestepConcreteProcess(GlobalVector const& x,
                                      int const process_id) override;
 
+    void postNonLinearSolverConcreteProcess(GlobalVector const& x, const double t,
+                                     int const processs_id) override;
+
 private:
     PhaseFieldProcessData<DisplacementDim> _process_data;
 
@@ -100,6 +113,11 @@ private:
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
+
+    /// Sparsity pattern for the phase field equation, and it is initialized
+    //  only if the staggered scheme is used.
+    GlobalSparsityPattern _sparsity_pattern_with_single_component;
+    
 };
 
 extern template class PhaseFieldProcess<2>;
