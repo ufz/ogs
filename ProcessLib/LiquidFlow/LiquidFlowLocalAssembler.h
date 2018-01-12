@@ -17,6 +17,8 @@
 #include <vector>
 #include <typeindex>
 
+#include "MaterialLib/PorousMedium/Permeability/Permeability.h"
+#include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/DOF/DOFTableUtil.h"

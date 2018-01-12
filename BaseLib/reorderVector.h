@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <vector>
+
 namespace BaseLib
 {
 /**

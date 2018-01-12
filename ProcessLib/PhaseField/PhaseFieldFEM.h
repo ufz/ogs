@@ -18,6 +18,7 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
+#include "ProcessLib/Parameter/SpatialPosition.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "LocalAssemblerInterface.h"

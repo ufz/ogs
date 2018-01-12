@@ -307,6 +307,33 @@ pipeline {
     stage('Master') {
       when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
       parallel {
+        // ************************ Check-Header *******************************
+        stage('Check-Header') {
+          agent {
+            dockerfile {
+              filename 'Dockerfile.gcc.minimal'
+              dir 'scripts/docker'
+              label 'docker'
+              args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
+              additionalBuildArgs '--pull'
+            }
+          }
+          steps {
+            script {
+              lock(resource: "conanCache-${env.NODE_NAME}") {
+                sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
+                configure {
+                  cmakeOptions =
+                    '-DOGS_USE_CONAN=ON ' +
+                    '-DOGS_CONAN_BUILD=never '
+                  config = 'Debug'
+                }
+              }
+              build { target = 'check-header' }
+            }
+          }
+          post { always { dir('build') { deleteDir() } } }
+        }
         // ************************* Deploy Web ********************************
         stage('Deploy Web') {
           agent any

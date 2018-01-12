@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 

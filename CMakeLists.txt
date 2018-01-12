@@ -181,6 +181,8 @@ option(OGS_ENABLE_ELEMENT_CUBOID  "Build FEM elements for cuboids (quads, hexahe
 option(OGS_ENABLE_ELEMENT_PRISM   "Build FEM elements for prisms." ON)
 option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
 
+option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation." OFF)
+
 ###################
 ### Definitions ###
 ###################
@@ -263,6 +265,8 @@ include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/autocheck/inc
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include )
 include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vtkGUISupportQt)
 
+include(scripts/cmake/CheckHeaderCompilation.cmake)
+
 add_subdirectory( Applications )
 add_subdirectory( BaseLib )
 # TODO This is a hack but we have to make sure that Boost is built first
@@ -291,6 +295,8 @@ endif() # OGS_BUILD_TESTS
 # The configuration must be called from the source dir and not BaseLib/.
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/BaseLib/BuildInfo.cpp.in"
     "${CMAKE_CURRENT_BINARY_DIR}/BaseLib/BuildInfo.cpp" @ONLY)
+
+check_header_compilation()
 
 include(scripts/cmake/MarkVariablesAdvanced.cmake)
 unset(PRE_INSTALL_RUN CACHE)

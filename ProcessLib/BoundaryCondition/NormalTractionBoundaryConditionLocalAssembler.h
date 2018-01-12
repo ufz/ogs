@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "MeshLib/Elements/FaceRule.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Parameter/Parameter.h"

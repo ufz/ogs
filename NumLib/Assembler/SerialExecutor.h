@@ -12,6 +12,9 @@
 
 #pragma once
 
+#include <cstddef>
+#include <utility>
+
 namespace NumLib
 {
 

@@ -14,10 +14,11 @@
 
 #pragma once
 
+#include <cassert>
 #include <limits>
+#include <utility>
 
 #include <logog/include/logog.hpp>
-#include <utility>
 
 namespace GeoLib
 {

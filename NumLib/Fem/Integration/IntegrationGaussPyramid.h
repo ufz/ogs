@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "MathLib/TemplateWeightedPoint.h"
 #include "MathLib/Integration/GaussLegendrePyramid.h"
 
 namespace NumLib

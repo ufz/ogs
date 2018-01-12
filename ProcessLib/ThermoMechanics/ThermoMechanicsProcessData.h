@@ -9,6 +9,13 @@
 
 #pragma once
 
+#include <memory>
+#include <utility>
+
+#include <Eigen/Eigen>
+
+#include "ProcessLib/Parameter/Parameter.h"
+
 namespace MaterialLib
 {
 namespace Solids

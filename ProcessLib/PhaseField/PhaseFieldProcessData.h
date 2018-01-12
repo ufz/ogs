@@ -9,6 +9,11 @@
 
 #pragma once
 
+#include <Eigen/Eigen>
+
+#include <memory>
+#include <utility>
+
 namespace MaterialLib
 {
 namespace Solids

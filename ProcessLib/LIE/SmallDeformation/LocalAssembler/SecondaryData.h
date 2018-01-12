@@ -9,6 +9,12 @@
 
 #pragma once
 
+#include <vector>
+
+#include <Eigen/Eigen>
+
+#include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
+
 namespace ProcessLib
 {
 namespace LIE

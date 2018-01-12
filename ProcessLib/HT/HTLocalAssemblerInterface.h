@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
