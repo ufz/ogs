@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 
 namespace ProcessLib

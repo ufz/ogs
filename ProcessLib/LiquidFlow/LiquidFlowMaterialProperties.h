@@ -18,21 +18,9 @@
 
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
-
-namespace MaterialLib
-{
-namespace Fluid
-{
-class FluidProperties;
-}
-
-namespace PorousMedium
-{
-class Permeability;
-class Porosity;
-class Storage;
-}
-}
+#include "MaterialLib/PorousMedium/Permeability/Permeability.h"
+#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
+#include "MaterialLib/PorousMedium/Storage/Storage.h"
 
 namespace BaseLib
 {
