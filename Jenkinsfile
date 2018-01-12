@@ -172,7 +172,6 @@ pipeline {
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_USE_PETSC=ON '
                 env = 'envinf1/petsc.sh'
-                generator = 'Unix Makefiles'
               }
               build {
                 env = 'envinf1/petsc.sh'
