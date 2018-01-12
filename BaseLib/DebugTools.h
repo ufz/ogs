@@ -13,8 +13,9 @@
 
 #pragma once
 
-#include <ostream>
 #include <algorithm>
+#include <iterator>
+#include <ostream>
 #include <vector>
 
 template<typename T>
