@@ -14,7 +14,7 @@
 
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
-#include "MeshLib/Element.h"
+#include "MeshLib/Elements/Element.h"
 #include "TESAssemblyParams.h"
 #include "TESLocalAssemblerInner-fwd.h"
 
