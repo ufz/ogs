@@ -101,7 +101,6 @@ class PhaseFieldLocalAssembler : public PhaseFieldLocalAssemblerInterface
 public:
     using ShapeMatricesType =
         ShapeMatrixPolicyType<ShapeFunction, DisplacementDim>;
-
     // Types for displacement.
     // (Higher order elements = ShapeFunction).
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -363,6 +362,13 @@ public:
             .noalias() += Kdu;
     }
 
+    void assembleWithJacobianForStaggeredScheme(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions) override;
+
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/,
                              double const /*delta_t*/) override
@@ -532,6 +538,20 @@ private:
         return cache;
     }
 
+    void assembleWithJacobianPhaseFiledEquations(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions) const;
+
+    void assembleWithJacobianForDeformationEquations(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions) const;
+    
     PhaseFieldProcessData<DisplacementDim>& _process_data;
 
     std::vector<
@@ -556,3 +576,5 @@ private:
 
 }  // namespace PhaseField
 }  // namespace ProcessLib
+
+#include "PhaseFieldFEM-impl.h"
