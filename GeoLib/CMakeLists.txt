@@ -34,5 +34,3 @@ endif()
 
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/InstallXmlSchemaFiles.cmake)
 InstallXmlSchemaFiles("IO/XmlIO/*.xsd")
-
-#check_header_compilation(GeoLib)

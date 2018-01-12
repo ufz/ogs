@@ -1,6 +1,6 @@
 # Supply include directories and compiler flags
 get_directory_property(INCLUDE_DIRS INCLUDE_DIRECTORIES)
-set(CMAKE_REQUIRED_FLAGS "-std=gnu++14")
+set(CMAKE_REQUIRED_FLAGS "-c -std=gnu++14")
 set(CMAKE_REQUIRED_QUIET TRUE)
 
 # Checks header for standalone compilation
