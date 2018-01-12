@@ -117,6 +117,7 @@ pipeline {
                   config = 'Debug'
                 }
               }
+              build { target = 'check-header' }
               build { }
               build { target = 'tests' }
             }

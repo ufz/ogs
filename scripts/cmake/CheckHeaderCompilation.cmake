@@ -3,6 +3,16 @@ get_directory_property(INCLUDE_DIRS INCLUDE_DIRECTORIES)
 set(CMAKE_REQUIRED_FLAGS "-c -std=gnu++14")
 set(CMAKE_REQUIRED_QUIET TRUE)
 
+add_custom_target(check-header
+    COMMAND ${CMAKE_COMMAND} -E remove CMakeFiles/CMakeError.log
+    COMMAND ${CMAKE_COMMAND} . -DOGS_CHECK_HEADER_COMPILATION=ON
+    COMMAND ${CMAKE_COMMAND} . -DOGS_CHECK_HEADER_COMPILATION=OFF || true
+    COMMAND if [ -f CMakeFiles/CMakeError.log ]\; then cat CMakeFiles/CMakeError.log\; return 1\; else return 0\; fi\;
+    WORKING_DIRECTOY ${PROJECT_BINARY_DIR}
+    COMMENT "Checking header files"
+    USES_TERMINAL
+)
+
 # Checks header for standalone compilation
 function(_check_header_compilation TARGET)
 
@@ -80,6 +90,6 @@ function(check_header_compilation)
     _check_header_compilation(ProcessLib)
 
     if(HEADER_COMPILE_ERROR)
-        message(STATUS "... header compilation check failed, see CMakeFiles/CMakeError.log for details!")
+        message(FATAL_ERROR "... header compilation check failed, see CMakeFiles/CMakeError.log for details!")
     endif()
 endfunction()
