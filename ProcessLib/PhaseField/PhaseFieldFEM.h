@@ -57,6 +57,7 @@ struct IntegrationPointData final
     double integration_weight;
     double history_variable;
     double history_variable_prev;
+    double pressure;
 
     void pushBackState()
     {
@@ -165,6 +166,11 @@ public:
             ip_data.history_variable_prev =
                 _process_data.history_field(0, x_position)[0];
             ip_data.sigma_real.setZero(kelvin_vector_size);
+            ip_data.strain_energy_tensile = 0.0;
+
+            /// pressure is initialized with unity (=1.0) as the problem is
+            /// linearly scalable in post-process.
+            ip_data.pressure = 1.0;
 
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;
@@ -373,14 +379,14 @@ private:
         const double dxdot_dx, const double dx_dx,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions) const;
+        LocalCoupledSolutions const& local_coupled_solutions);
 
     void assembleWithJacobianForDeformationEquations(
         double const t, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions) const;
+        LocalCoupledSolutions const& local_coupled_solutions);
 
     PhaseFieldProcessData<DisplacementDim>& _process_data;
 

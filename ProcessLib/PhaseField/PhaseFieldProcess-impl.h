@@ -55,7 +55,7 @@ PhaseFieldProcess<DisplacementDim>::getMatrixSpecifications(
 {
     // For the monolithic scheme or the M process (deformation) in the staggered
     // scheme.
-    if (_use_monolithic_scheme || process_id == 1)
+    if (_use_monolithic_scheme || process_id == 0)
     {
         auto const& l = *_local_to_global_index_map;
         return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
@@ -74,12 +74,12 @@ PhaseFieldProcess<DisplacementDim>::getDOFTable(const int process_id) const
 {
     // If monolithic scheme is used or the equation of deformation is solved in
     // the staggered scheme.
-    if (_use_monolithic_scheme || process_id == 1)
+    if (_use_monolithic_scheme || process_id == 0)
     {
         return *_local_to_global_index_map;
     }
 
-    // For the equation of pressure
+    // For the equation of phasefield
     return *_local_to_global_index_map_single_component;
 }
 
@@ -125,7 +125,7 @@ void PhaseFieldProcess<DisplacementDim>::constructDofTable()
     else
     {
         // For displacement equation.
-        const int process_id = 1;
+        const int process_id = 0;
         std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
@@ -230,22 +230,21 @@ void PhaseFieldProcess<DisplacementDim>::initializeBoundaryConditions()
 {
     if (_use_monolithic_scheme)
     {
-        const int process_id_of_pf = 0;
+        const int process_id_of_phasefieldmechanics = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, process_id_of_pf);
+            *_local_to_global_index_map, process_id_of_phasefieldmechanics);
         return;
     }
 
     // Staggered scheme:
-    // for the phase field
-    const int process_id_of_pf = 0;
-    initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_single_component, process_id_of_pf);
-
     // for the equations of deformation.
-    const int process_id_of_u = 1;
+    const int mechanical_process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, process_id_of_u);
+        *_local_to_global_index_map, mechanical_process_id);
+    // for the phase field
+    const int phasefield_process_id = 1;
+    initializeProcessBoundaryConditionsAndSourceTerms(
+        *_local_to_global_index_map_single_component, phasefield_process_id);
 }
 
 template <int DisplacementDim>
@@ -307,7 +306,7 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     else
     {
         // For the staggered scheme
-        if (_coupled_solutions->process_id == 0)
+        if (_coupled_solutions->process_id == 1)
         {
             DBUG(
                 "Assemble the Jacobian equations of phase field in "
@@ -319,10 +318,11 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
                 "Assemble the Jacobian equations of deformation in "
                 "PhaseFieldProcess for the staggered scheme.");
         }
-        dof_tables.emplace_back(*_local_to_global_index_map_single_component);
         dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(*_local_to_global_index_map_single_component);
     }
     // Call global assembler for each local assembly item.
+
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
@@ -359,16 +359,12 @@ template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalVector const& x, const double t, const int process_id)
 {
-    if (!_use_monolithic_scheme && process_id == 0)
-    {
-        return;
-    }
-
     DBUG("PostNonLinearSolver PhaseFieldProcess.");
     // Calculate strain, stress or other internal variables of mechanics.
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
         getDOFTable(process_id), x, t, _use_monolithic_scheme);
 }
+
 }  // namespace PhaseField
 }  // namespace ProcessLib

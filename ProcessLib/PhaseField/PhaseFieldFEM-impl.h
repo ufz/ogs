@@ -207,7 +207,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         LocalCoupledSolutions const& local_coupled_solutions)
 {
     // For the equations with phase field.
-    if (local_coupled_solutions.process_id == 0)
+    if (local_coupled_solutions.process_id == 1)
     {
         assembleWithJacobianPhaseFiledEquations(
             t, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
@@ -230,12 +230,12 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         const double dxdot_dx, const double dx_dx,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions) const
+        LocalCoupledSolutions const& local_coupled_solutions)
 {
-    auto const& local_d = local_coupled_solutions.local_coupled_xs[0];
-    auto const& local_u = local_coupled_solutions.local_coupled_xs[1];
-    assert(local_d.size() == phasefield_size);
+    auto const& local_u = local_coupled_solutions.local_coupled_xs[0];
+    auto const& local_d = local_coupled_solutions.local_coupled_xs[1];
     assert(local_u.size() == displacement_size);
+    assert(local_d.size() == phasefield_size);
 
     auto const local_matrix_size = local_u.size();
     auto d = Eigen::Map<
@@ -245,26 +245,15 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
         displacement_size> const>(local_u.data(), displacement_size);
 
-    // May not needed: auto d_dot = Eigen::Map<
-    //    typename ShapeMatricesType::template VectorType<phasefield_size>
-    //    const>(
-    //    local_xdot.data(), phasefield_size);
-
     auto local_Jac = MathLib::createZeroedMatrix<JacobianMatrix>(
         local_Jac_data, local_matrix_size, local_matrix_size);
 
     auto local_rhs =
         MathLib::createZeroedVector<RhsVector>(local_b_data, local_matrix_size);
 
-    typename ShapeMatricesType::template MatrixType<displacement_size,
-                                                    phasefield_size>
-        Kud;
-    Kud.setZero(displacement_size, phasefield_size);
-
-    double const& dt = _process_data.dt;
-
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
+    double const& dt = _process_data.dt;
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -273,6 +262,52 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& w = _ip_data[ip].integration_weight;
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
+
+        auto const x_coord =
+            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
+                                                                     N);
+
+        auto const& B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunction::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx, N, x_coord, _is_axially_symmetric);
+
+        auto& eps = _ip_data[ip].eps;
+        eps.noalias() = B * u;
+        double const k = _process_data.residual_stiffness(t, x_position)[0];
+        double const d_ip = N.dot(d);
+        double const degradation = d_ip * d_ip * (1 - k) + k;
+        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+                                                degradation);
+
+        auto& sigma_real = _ip_data[ip].sigma_real;
+        auto const& C_tensile = _ip_data[ip].C_tensile;
+        auto const& C_compressive = _ip_data[ip].C_compressive;
+
+        typename ShapeMatricesType::template MatrixType<DisplacementDim,
+                                                        displacement_size>
+            N_u = ShapeMatricesType::template MatrixType<
+                DisplacementDim, displacement_size>::Zero(DisplacementDim,
+                                                          displacement_size);
+
+        for (int i = 0; i < DisplacementDim; ++i)
+            N_u.template block<1, displacement_size / DisplacementDim>(
+                   i, i * displacement_size / DisplacementDim)
+                .noalias() = N;
+
+        auto const rho_sr = _process_data.solid_density(t, x_position)[0];
+        auto const& b = _process_data.specific_body_force;
+
+        auto pressure = _ip_data[ip].pressure;
+
+        local_rhs.noalias() -=
+            (B.transpose() * sigma_real - N_u.transpose() * rho_sr * b -
+             pressure * N_u.transpose() * dNdx * d) *
+            w;
+
+        local_Jac.noalias() +=
+            B.transpose() * (degradation * C_tensile + C_compressive) * B * w;
     }
 }
 
@@ -285,12 +320,12 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         const double dxdot_dx, const double dx_dx,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions) const
+        LocalCoupledSolutions const& local_coupled_solutions)
 {
-    auto const& local_d = local_coupled_solutions.local_coupled_xs[0];
-    auto const& local_u = local_coupled_solutions.local_coupled_xs[1];
-    assert(local_d.size() == phasefield_size);
+    auto const& local_u = local_coupled_solutions.local_coupled_xs[0];
+    auto const& local_d = local_coupled_solutions.local_coupled_xs[1];
     assert(local_u.size() == displacement_size);
+    assert(local_d.size() == phasefield_size);
 
     auto const local_matrix_size = local_d.size();
     auto d = Eigen::Map<
@@ -300,28 +335,11 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
         displacement_size> const>(local_u.data(), displacement_size);
 
-    auto d_dot = Eigen::Map<
-        typename ShapeMatricesType::template VectorType<phasefield_size> const>(
-        local_xdot.data(), phasefield_size);
-
     auto local_Jac = MathLib::createZeroedMatrix<JacobianMatrix>(
         local_Jac_data, local_matrix_size, local_matrix_size);
 
     auto local_rhs =
         MathLib::createZeroedVector<RhsVector>(local_b_data, local_matrix_size);
-
-    typename ShapeMatricesType::template MatrixType<phasefield_size,
-                                                    displacement_size>
-        Kdu;
-    Kdu.setZero(phasefield_size, displacement_size);
-
-    typename ShapeMatricesType::NodalMatrixType Kdd;
-    Kdd.setZero(phasefield_size, phasefield_size);
-
-    typename ShapeMatricesType::NodalMatrixType Ddd;
-    Ddd.setZero(phasefield_size, phasefield_size);
-
-    double const& dt = _process_data.dt;
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -333,6 +351,38 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& w = _ip_data[ip].integration_weight;
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
+
+        double const gc = _process_data.crack_resistance(t, x_position)[0];
+        double const ls = _process_data.crack_length_scale(t, x_position)[0];
+        auto const& strain_energy_tensile = _ip_data[ip].strain_energy_tensile;
+
+        auto& ip_data = _ip_data[ip];
+        ip_data.strain_energy_tensile = strain_energy_tensile;
+
+        typename ShapeMatricesType::template MatrixType<DisplacementDim,
+                                                        displacement_size>
+            N_u = ShapeMatricesType::template MatrixType<
+                DisplacementDim, displacement_size>::Zero(DisplacementDim,
+                                                          displacement_size);
+
+        for (int i = 0; i < DisplacementDim; ++i)
+            N_u.template block<1, displacement_size / DisplacementDim>(
+                   i, i * displacement_size / DisplacementDim)
+                .noalias() = N;
+
+        auto pressure = _ip_data[ip].pressure;
+
+        local_Jac.noalias() +=
+            (2 * N.transpose() * N * strain_energy_tensile +
+             gc * (N.transpose() * N / ls + dNdx.transpose() * dNdx * ls)) *
+            w;
+
+        local_rhs.noalias() -=
+            (N.transpose() * N * d * 2 * strain_energy_tensile +
+             gc * ((N.transpose() * N / ls + dNdx.transpose() * dNdx * ls) * d -
+                   N.transpose() / ls) -
+             pressure * dNdx.transpose() * N_u * u) *
+            w;
     }
 }
 

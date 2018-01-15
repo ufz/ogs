@@ -18,7 +18,6 @@ namespace ProcessLib
 {
 namespace PhaseField
 {
-
 /**
  * \brief A class to simulate mechanical fracturing process
  * using phase-field approach in solids described by
@@ -87,25 +86,25 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void assembleConcreteProcess(
-        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b) override;
+    void assembleConcreteProcess(const double t, GlobalVector const& x,
+                                 GlobalMatrix& M, GlobalMatrix& K,
+                                 GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, GlobalVector const& x, GlobalVector const& xdot,
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
-    void preTimestepConcreteProcess(
-        GlobalVector const& x, double const t, double const dt,
-        const int process_id) override;
+    void preTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                    double const dt,
+                                    const int process_id) override;
 
     void postTimestepConcreteProcess(GlobalVector const& x,
                                      int const process_id) override;
 
     void postNonLinearSolverConcreteProcess(GlobalVector const& x,
                                             const double t,
-                                            int const processs_id) override;
+                                            int const process_id) override;
 
 private:
     PhaseFieldProcessData<DisplacementDim> _process_data;
@@ -116,8 +115,16 @@ private:
         _local_to_global_index_map_single_component;
 
     /// Sparsity pattern for the phase field equation, and it is initialized
-    //  only if the staggered scheme is used.
+    ///  only if the staggered scheme is used.
     GlobalSparsityPattern _sparsity_pattern_with_single_component;
+
+    /// Check whether the process represented by \c process_id is/has
+    /// mechanical process. In the present implementation, the mechanical
+    /// process has process_id == 0 in the staggered scheme.
+    bool hasMechanicalProcess(int const process_id) const
+    {
+        return _use_monolithic_scheme || process_id == 0;
+    }
 };
 
 extern template class PhaseFieldProcess<2>;
