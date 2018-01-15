@@ -239,6 +239,8 @@ void processOutputData(
     (void)secondary_variables;
     (void)t;
 #endif  // USE_PETSC
+
+    addIntegrationPointWriter(mesh, integration_point_writer);
 }
 
 void makeOutput(std::string const& file_name, MeshLib::Mesh& mesh,
