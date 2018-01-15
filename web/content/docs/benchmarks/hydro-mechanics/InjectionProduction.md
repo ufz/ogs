@@ -18,17 +18,20 @@ author = "Wenqing Wang"
 
 {{< img src="../InjectionProduction.png" >}}
 
-This benchmark is based on an example about injection and
-production well that is present by Kim et al. \cite kimTchJua2011, and it is used to verified the monolithic scheme
+Based on an example about injection and
+production well that is present by Kim et al. \cite kimTchJua2011, this benchmark
+ is used to verified the staggered scheme
 that is implemented in ogs 6 for modelling the coupled hydraulic
-mechanical (HM) processes in the porous media. The deformation is
-assumed as plane strain, and the problem is defined in a 10 x 150 m <span class="math inline"><em></em><sup>2</sup></span>
-domain (as shown in the figure). Initially, the pore pressure and the
+mechanical (HM) processes in the porous media. The problem of the example is defined
+ in a 10 x 150 m
+ <span class="math inline"><em></em><sup>2</sup></span>
+domain (as shown in the figure). The deformation is solved under the plane strain
+ assumption. Initially, the pore pressure and the
 initial stress are set to zero, respectively. All boundaries are
 assigned with no fluid flux for the hydraulic process. On the lateral
-and the bottom boundaries, no vertical displacement is prescribed. On
-the top surface, vertical traction boundary condition of 2.125 MP is
-applied. The gravity is neglected in both of the Darcy velocity and the
+and the bottom boundaries, no normal displacement is prescribed. On
+the top surface, a vertical traction boundary condition of 2.125 MP is
+applied. The gravity related term is neglected in both of the Darcy velocity and the
 momentum balance equation.
 
 The material properties are shown in the following table.
@@ -82,11 +85,11 @@ The material properties are shown in the following table.
 </tbody>
 </table>
 
-The time duration is 8.64 8.64 <span class="math inline">⋅10<sup>6</sup></span> s, and the time step size is
-8.64 <span class="math inline">⋅10<sup>4</sup></span> s. The example is also solved by the monolithic
-scheme for a reference solutions. The displacement solution at the last
+The time duration is 8.64 8.64 <span class="math inline">⋅10<sup>6</sup></span> s, 
+and the time step size is 8.64 <span class="math inline">⋅10<sup>4</sup></span> s.
+ For the verification, the example is also solved by the monolithic
+scheme. The displacement solution at the last
 time step is shown in the enclosed figure too.
-
 
 ## References
 
