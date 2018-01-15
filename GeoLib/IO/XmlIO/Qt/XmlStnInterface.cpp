@@ -242,9 +242,12 @@ bool XmlStnInterface::write()
         QString stationType =  (isBorehole) ? "borehole" : "station";
         QDomElement stationTag = doc.createElement(stationType);
         stationTag.setAttribute( "id", QString::number(i) );
-        stationTag.setAttribute( "x",  QString::number((*(*stations)[i])[0], 'f') );
-        stationTag.setAttribute( "y",  QString::number((*(*stations)[i])[1], 'f') );
-        stationTag.setAttribute( "z",  QString::number((*(*stations)[i])[2], 'f') );
+        stationTag.setAttribute( "x",  QString::number((*(*stations)[i])[0], 'f',
+            std::numeric_limits<double>::digits10));
+        stationTag.setAttribute( "y",  QString::number((*(*stations)[i])[1], 'f',
+            std::numeric_limits<double>::digits10));
+        stationTag.setAttribute( "z",  QString::number((*(*stations)[i])[2], 'f',
+            std::numeric_limits<double>::digits10));
         stationsTag.appendChild(stationTag);
 
         QDomElement stationNameTag = doc.createElement("name");
