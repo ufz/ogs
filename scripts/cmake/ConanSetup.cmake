@@ -102,6 +102,10 @@ set(CONAN_IMPORTS "")
 if(APPLE)
     set(CONAN_IMPORTS ${CONAN_IMPORTS} "lib, *.dylib* -> ./bin")
 endif()
+if(MSVC)
+    set(CONAN_IMPORTS ${CONAN_IMPORTS} "bin, *.dll* -> ./bin")
+    set(CONAN_IMPORTS ${CONAN_IMPORTS} "plugins/platforms, *.dll* -> ./bin/platforms")
+endif()
 
 conan_cmake_run(
     BASIC_SETUP
