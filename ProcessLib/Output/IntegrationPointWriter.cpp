@@ -71,6 +71,22 @@ static void addIntegrationPointMetaData(
               std::back_inserter(dictionary));
 }
 
+/// For the given json object and the name extract integration point meta data,
+/// or fail if no meta data was found for the given name.
+static ProcessLib::IntegrationPointMetaData extractIntegrationPointMetaData(
+    json const& meta_data, std::string const& name)
+{
+    for (auto const& md : meta_data["integration_point_arrays"])
+    {
+        if (md["name"] == name)
+        {
+            return {name, md["number_of_components"], md["integration_order"]};
+        }
+    }
+    OGS_FATAL("No integration point meta data with name \"%s\" found.",
+              name.c_str());
+}
+
 namespace ProcessLib
 {
 void addIntegrationPointWriter(
@@ -87,5 +103,37 @@ void addIntegrationPointWriter(
     {
         addIntegrationPointMetaData(mesh, meta_data);
     }
+}
+
+IntegrationPointMetaData getIntegrationPointMetaData(MeshLib::Mesh const& mesh,
+                                                     std::string const& name)
+{
+    if (!mesh.getProperties().existsPropertyVector<char>(
+            "IntegrationPointMetaData"))
+    {
+        OGS_FATAL(
+            "Integration point data '%s' is present in the vtk field "
+            "data but the required \"IntegrationPointMetaData\" array "
+            "is not available.",
+            name.c_str());
+    }
+    auto const& mesh_property_ip_meta_data =
+        *mesh.getProperties().template getPropertyVector<char>(
+            "IntegrationPointMetaData");
+
+    if (mesh_property_ip_meta_data.getMeshItemType() !=
+        MeshLib::MeshItemType::IntegrationPoint)
+    {
+        OGS_FATAL("IntegrationPointMetaData array must be field data.");
+    }
+
+    // Find the current integration point data entry and extract the
+    // meta data.
+    auto const ip_meta_data = extractIntegrationPointMetaData(
+        json::parse(mesh_property_ip_meta_data.begin(),
+                    mesh_property_ip_meta_data.end()),
+        name);
+
+    return ip_meta_data;
 }
 }  // namespace ProcessLib

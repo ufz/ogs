@@ -9,6 +9,7 @@
  *
  */
 #include <memory>
+#include <nlohmann/json_fwd.hpp>
 #include <vector>
 
 #pragma once
@@ -51,4 +52,9 @@ struct IntegrationPointMetaData
     int const integration_order;
 };
 
+/// Returns integration point meta data for the given field name.
+///
+/// The data is read from a JSON encoded string stored in field data array.
+IntegrationPointMetaData getIntegrationPointMetaData(MeshLib::Mesh const& mesh,
+                                                     std::string const& name);
 }  // namespace ProcessLib

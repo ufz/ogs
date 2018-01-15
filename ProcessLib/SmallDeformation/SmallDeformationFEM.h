@@ -151,6 +151,29 @@ public:
         }
     }
 
+    /// Returns number of read integration points.
+    std::size_t setIPDataInitialConditions(std::string const& name,
+                                           double const* values,
+                                           int const integration_order) override
+    {
+        if (integration_order !=
+            static_cast<int>(_integration_method.getIntegrationOrder()))
+        {
+            OGS_FATAL(
+                "Setting integration point initial conditions; The integration "
+                "order of the local assembler for element %d is different from "
+                "the integration order in the initial condition.",
+                _element.getID());
+        }
+
+        if (name == "sigma_ip")
+        {
+            return setSigma(values);
+        }
+
+        return 0;
+    }
+
     void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
@@ -312,6 +335,29 @@ public:
         }
 
         return cache;
+    }
+
+    std::size_t setSigma(double const* values)
+    {
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        auto const n_integration_points = _ip_data.size();
+
+        std::vector<double> ip_sigma_values;
+        auto sigma_values =
+            Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
+                                     Eigen::ColMajor> const>(
+                values, kelvin_vector_size, n_integration_points);
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            _ip_data[ip].sigma =
+                MathLib::KelvinVector::symmetricTensorToKelvinVector(
+                    sigma_values.col(ip));
+        }
+
+        return n_integration_points;
     }
 
     // TODO (naumov) This method is same as getIntPtSigma but for arguments and

@@ -10,6 +10,7 @@
 #pragma once
 
 #include <cassert>
+#include <nlohmann/json.hpp>
 
 #include "BaseLib/Functional.h"
 #include "ProcessLib/Process.h"
@@ -72,6 +73,8 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    using nlohmann::json;
+
     ProcessLib::SmallDeformation::createLocalAssemblers<
         DisplacementDim, SmallDeformationLocalAssembler>(
         mesh.getElements(), dof_table, _local_assemblers,
@@ -156,6 +159,56 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
                              _local_assemblers, std::move(getIntPtValues)));
+    }
+
+    // Set initial conditions for integration point data.
+    for (auto const& ip_writer : _integration_point_writer)
+    {
+        // Find the mesh property with integration point writer's name.
+        auto const& name = ip_writer->name();
+        if (!mesh.getProperties().existsPropertyVector<double>(name))
+        {
+            continue;
+        }
+        auto const& mesh_property =
+            *mesh.getProperties().template getPropertyVector<double>(name);
+
+        // The mesh property must be defined on integration points.
+        if (mesh_property.getMeshItemType() !=
+            MeshLib::MeshItemType::IntegrationPoint)
+        {
+            continue;
+        }
+
+        auto const ip_meta_data = getIntegrationPointMetaData(mesh, name);
+
+        // Check the number of components.
+        if (ip_meta_data.n_components != mesh_property.getNumberOfComponents())
+        {
+            OGS_FATAL(
+                "Different number of components in meta data (%d) than in "
+                "the integration point field data for \"%s\": %d.",
+                ip_meta_data.n_components, name.c_str(),
+                mesh_property.getNumberOfComponents());
+        }
+
+        // Now we have a properly named vtk's field data array and the
+        // corresponding meta data.
+        std::size_t position = 0;
+        for (auto& local_asm : _local_assemblers)
+        {
+            std::size_t const integration_points_read =
+                local_asm->setIPDataInitialConditions(
+                    name, &mesh_property[position],
+                    ip_meta_data.integration_order);
+            if (integration_points_read == 0)
+            {
+                OGS_FATAL(
+                    "No integration points read in the integration point "
+                    "initial conditions set function.");
+            }
+            position += integration_points_read * ip_meta_data.n_components;
+        }
     }
 }
 
