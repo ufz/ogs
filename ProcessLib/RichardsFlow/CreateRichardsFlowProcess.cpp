@@ -9,7 +9,7 @@
 
 #include "CreateRichardsFlowProcess.h"
 
-#include "ProcessLib/Output/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -55,8 +55,8 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"RichardsFlow_pressure"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
 
     // Specific body force
     std::vector<double> const b =

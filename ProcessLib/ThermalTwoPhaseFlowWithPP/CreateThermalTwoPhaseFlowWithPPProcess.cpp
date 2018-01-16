@@ -12,7 +12,7 @@
 
 #include "BaseLib/Functional.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "ProcessLib/Output/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/ThermalTwoPhaseFlowWithPP/CreateThermalTwoPhaseFlowWithPPMaterialProperties.h"
 #include "ProcessLib/ThermalTwoPhaseFlowWithPP/ThermalTwoPhaseFlowWithPPMaterialProperties.h"
@@ -60,8 +60,8 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"TwoPhaseFlow_pressure"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
     // Specific body force
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__specific_body_force}

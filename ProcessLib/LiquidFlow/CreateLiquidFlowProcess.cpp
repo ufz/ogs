@@ -16,7 +16,7 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 #include "MaterialLib/PhysicalConstant.h"
-#include "ProcessLib/Output/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "LiquidFlowProcess.h"
@@ -55,8 +55,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
 
     NumLib::NamedFunctionCaller named_function_caller({"LiquidFlow_pressure"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
 
     // Get the gravity vector for the Darcy velocity
     //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__darcy_gravity}

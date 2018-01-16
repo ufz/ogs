@@ -24,7 +24,7 @@ class NamedFunctionCaller;
 
 namespace ProcessLib
 {
-void parseSecondaryVariables(
+void createSecondaryVariables(
     BaseLib::ConfigTree const& config,
     SecondaryVariableCollection& secondary_variables,
     NumLib::NamedFunctionCaller& named_function_caller);

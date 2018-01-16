@@ -13,7 +13,7 @@
 #include "GroundwaterFlowProcess.h"
 #include "GroundwaterFlowProcessData.h"
 #include "ProcessLib/CalculateSurfaceFlux/ParseCalculateSurfaceFluxData.h"
-#include "ProcessLib/Output/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -67,8 +67,8 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"GWFlow_pressure"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
 
     std::string mesh_name;
     std::string balance_pv_name;
