@@ -72,61 +72,15 @@ namespace ProcessLib
 {
 Output::Output(std::string output_directory, std::string prefix,
                bool const compress_output, std::string const& data_mode,
-               bool const output_nonlinear_iteration_results)
+               bool const output_nonlinear_iteration_results,
+               std::vector<PairRepeatEachSteps> repeats_each_steps)
     : _output_directory(std::move(output_directory)),
       _output_file_prefix(std::move(prefix)),
       _output_file_compression(compress_output),
       _output_file_data_mode(convertVtkDataMode(data_mode)),
-      _output_nonlinear_iteration_results(output_nonlinear_iteration_results)
+      _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
+      _repeats_each_steps(std::move(repeats_each_steps))
 {
-}
-
-std::unique_ptr<Output> Output::newInstance(const BaseLib::ConfigTree& config,
-                                            std::string const& output_directory)
-{
-    auto const output_iteration_results =
-        //! \ogs_file_param{prj__time_loop__output__output_iteration_results}
-        config.getConfigParameterOptional<bool>("output_iteration_results");
-
-    std::unique_ptr<Output> out{new Output{
-        output_directory,
-        //! \ogs_file_param{prj__time_loop__output__prefix}
-        config.getConfigParameter<std::string>("prefix"),
-        //! \ogs_file_param{prj__time_loop__output__compress_output}
-        config.getConfigParameter("compress_output", true),
-        //! \ogs_file_param{prj__time_loop__output__data_mode}
-        config.getConfigParameter<std::string>("data_mode", "Binary"),
-        output_iteration_results ? *output_iteration_results : false}};
-
-    //! \ogs_file_param{prj__time_loop__output__timesteps}
-    if (auto const timesteps = config.getConfigSubtreeOptional("timesteps"))
-    {
-        //! \ogs_file_param{prj__time_loop__output__timesteps__pair}
-        for (auto pair : timesteps->getConfigSubtreeList("pair"))
-        {
-            //! \ogs_file_param{prj__time_loop__output__timesteps__pair__repeat}
-            auto repeat = pair.getConfigParameter<unsigned>("repeat");
-            //! \ogs_file_param{prj__time_loop__output__timesteps__pair__each_steps}
-            auto each_steps = pair.getConfigParameter<unsigned>("each_steps");
-
-            assert(repeat != 0 && each_steps != 0);
-            out->_repeats_each_steps.emplace_back(repeat, each_steps);
-        }
-
-        if (out->_repeats_each_steps.empty())
-        {
-            OGS_FATAL(
-                "You have not given any pair (<repeat/>, <each_steps/>) that "
-                "defines"
-                " at which timesteps output shall be written. Aborting.");
-        }
-    }
-    else
-    {
-        out->_repeats_each_steps.emplace_back(1, 1);
-    }
-
-    return out;
 }
 
 void Output::addProcess(ProcessLib::Process const& process,

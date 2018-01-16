@@ -17,19 +17,10 @@
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/TimeStepping/CreateTimeStepper.h"
+#include "ProcessLib/Output/CreateOutput.h"
 #include "ProcessLib/Output/CreateProcessOutput.h"
 
 #include "CoupledSolutionsForStaggeredScheme.h"
-
-std::unique_ptr<ProcessLib::Output> createOutput(
-    BaseLib::ConfigTree const& config, std::string const& output_directory)
-{
-    //! \ogs_file_param{prj__time_loop__output__type}
-    config.checkConfigParameter("type", "VTK");
-    DBUG("Parse output configuration:");
-
-    return ProcessLib::Output::newInstance(config, output_directory);
-}
 
 //! Sets the EquationSystem for the given nonlinear solver,
 //! which is Picard or Newton depending on the NLTag.
