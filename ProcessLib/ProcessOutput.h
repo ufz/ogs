@@ -14,7 +14,6 @@
 
 namespace ProcessLib
 {
-
 //! Holds information about which variables to write to output files.
 struct ProcessOutput final
 {
@@ -28,21 +27,23 @@ struct ProcessOutput final
     bool output_residuals = false;
 };
 
+///
+/// Prepare the output data, i.e. add the solution to vtu data structure.
+void processOutputData(
+    const double t,
+    GlobalVector const& x,
+    MeshLib::Mesh& mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
+        process_variables,
+    SecondaryVariableCollection secondary_variables,
+    ProcessOutput const& process_output);
+
 //! Writes output to the given \c file_name using the VTU file format.
 ///
 /// See Output::_output_file_data_mode documentation for the data_mode
 /// parameter.
-void doProcessOutput(std::string const& file_name,
-                     bool const make_output,
-                     bool const compress_output,
-                     int const data_mode,
-                     const double t,
-                     GlobalVector const& x,
-                     MeshLib::Mesh& mesh,
-                     NumLib::LocalToGlobalIndexMap const& dof_table,
-                     std::vector<std::reference_wrapper<ProcessVariable>> const&
-                         process_variables,
-                     SecondaryVariableCollection secondary_variables,
-                     ProcessOutput const& process_output);
+void makeOutput(std::string const& file_name, MeshLib::Mesh& mesh,
+                bool const compress_output, int const data_mode);
 
-} // ProcessLib
+}  // ProcessLib

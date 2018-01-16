@@ -168,39 +168,33 @@ void Output::doOutputAlways(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    SingleProcessData* spd_ptr = findSingleProcessData(process, process_id);
-
-    std::string const output_file_name =
-            _output_file_prefix + "_pcs_" + std::to_string(process_id)
-            + "_ts_" + std::to_string(timestep)
-            + "_t_"  + std::to_string(t)
-            + ".vtu";
-    std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
-
+    // Need to add variables of process to vtu even no output takes place.
+    processOutputData(t, x, process.getMesh(), process.getDOFTable(),
+                      process.getProcessVariables(),
+                      process.getSecondaryVariables(), process_output);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
     // output.
-    const bool make_output =
-        process_id == static_cast<int>(_single_process_data.size()) - 1 ||
-            process.isMonolithicSchemeUsed();
-    if (make_output)
-    {
-        DBUG("output to %s", output_file_path.c_str());
-    }
+    if (!(process_id == static_cast<int>(_single_process_data.size()) - 1 ||
+          process.isMonolithicSchemeUsed()))
+        return;
 
-    // Need to add variables of process to vtu even no output takes place.
-    doProcessOutput(output_file_path, make_output, _output_file_compression,
-                    _output_file_data_mode, t, x, process.getMesh(),
-                    process.getDOFTable(), process.getProcessVariables(),
-                    process.getSecondaryVariables(), process_output);
+    std::string const output_file_name =
+        _output_file_prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
+        std::to_string(timestep) + "_t_" + std::to_string(t) + ".vtu";
+    std::string const output_file_path =
+        BaseLib::joinPaths(_output_directory, output_file_name);
 
-    if (make_output)
-    {
-        spd_ptr->pvd_file.addVTUFile(output_file_name, t);
-        INFO("[time] Output of timestep %d took %g s.", timestep,
-             time_output.elapsed());
-    }
+    DBUG("output to %s", output_file_path.c_str());
+
+    SingleProcessData* spd_ptr = findSingleProcessData(process, process_id);
+    spd_ptr->pvd_file.addVTUFile(output_file_name, t);
+    INFO("[time] Output of timestep %d took %g s.", timestep,
+         time_output.elapsed());
+
+    makeOutput(output_file_path, process.getMesh(), _output_file_compression,
+               _output_file_data_mode);
 }
 
 void Output::doOutput(Process const& process,
@@ -252,37 +246,32 @@ void Output::doOutputNonlinearIteration(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    // Only check whether a process data is available for output.
-    findSingleProcessData(process, process_id);
-
-    std::string const output_file_name =
-            _output_file_prefix + "_pcs_" + std::to_string(process_id)
-            + "_ts_" + std::to_string(timestep)
-            + "_t_"  + std::to_string(t)
-            + "_nliter_" + std::to_string(iteration)
-            + ".vtu";
-    std::string const output_file_path = BaseLib::joinPaths(_output_directory, output_file_name);
+    processOutputData(t, x, process.getMesh(),
+                      process.getDOFTable(), process.getProcessVariables(),
+                      process.getSecondaryVariables(), process_output);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
     // output.
-    const bool make_output =
-        process_id == static_cast<int>(_single_process_data.size()) - 1 ||
-            process.isMonolithicSchemeUsed();
-    if (make_output)
-    {
-        DBUG("output iteration results to %s", output_file_path.c_str());
-    }
+    if (!(process_id == static_cast<int>(_single_process_data.size()) - 1 ||
+          process.isMonolithicSchemeUsed()))
+        return;
 
-    doProcessOutput(output_file_path, make_output, _output_file_compression,
-                    _output_file_data_mode, t, x, process.getMesh(),
-                    process.getDOFTable(), process.getProcessVariables(),
-                    process.getSecondaryVariables(), process_output);
+    // Only check whether a process data is available for output.
+    findSingleProcessData(process, process_id);
 
-    if (make_output)
-    {
-        INFO("[time] Output took %g s.", time_output.elapsed());
-    }
+    std::string const output_file_name =
+        _output_file_prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
+        std::to_string(timestep) + "_t_" + std::to_string(t) + "_nliter_" +
+        std::to_string(iteration) + ".vtu";
+    std::string const output_file_path =
+        BaseLib::joinPaths(_output_directory, output_file_name);
+
+    DBUG("output iteration results to %s", output_file_path.c_str());
+
+    INFO("[time] Output took %g s.", time_output.elapsed());
+
+    makeOutput(output_file_path, process.getMesh(), _output_file_compression,
+               _output_file_data_mode);
 }
-
 }  // namespace ProcessLib

@@ -40,20 +40,17 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
     }
 }
 
-void doProcessOutput(std::string const& file_name,
-                     bool const make_output,
-                     bool const compress_output,
-                     int const data_mode,
-                     const double t,
-                     GlobalVector const& x,
-                     MeshLib::Mesh& mesh,
-                     NumLib::LocalToGlobalIndexMap const& dof_table,
-                     std::vector<std::reference_wrapper<ProcessVariable>> const&
-                         process_variables,
-                     SecondaryVariableCollection secondary_variables,
-                     ProcessOutput const& process_output)
+void processOutputData(
+    const double t,
+    GlobalVector const& x,
+    MeshLib::Mesh& mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
+        process_variables,
+    SecondaryVariableCollection secondary_variables,
+    ProcessOutput const& process_output)
 {
-    DBUG("Process output.");
+    DBUG("Process output data.");
 
     // Copy result
 #ifdef USE_PETSC
@@ -226,11 +223,11 @@ void doProcessOutput(std::string const& file_name,
     (void)t;
 #endif // USE_PETSC
 
-    if (!make_output)
-    {
-        return;
-    }
+}
 
+void makeOutput(std::string const& file_name, MeshLib::Mesh& mesh,
+                bool const compress_output, int const data_mode)
+{
     // Write output file
     DBUG("Writing output to \'%s\'.", file_name.c_str());
     MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
