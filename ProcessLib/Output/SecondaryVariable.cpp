@@ -11,9 +11,8 @@
 
 namespace ProcessLib
 {
-
-void SecondaryVariableCollection::addNameMapping(std::string const& internal_name,
-                                                 std::string const& external_name)
+void SecondaryVariableCollection::addNameMapping(
+    std::string const& internal_name, std::string const& external_name)
 {
     _all_secondary_variables.insert(internal_name);
 
@@ -46,7 +45,8 @@ SecondaryVariable const& SecondaryVariableCollection::get(
 {
     auto const it = _map_external_to_internal.find(external_name);
 
-    if (it == _map_external_to_internal.cend()) {
+    if (it == _map_external_to_internal.cend())
+    {
         OGS_FATAL(
             "A secondary variable with external name `%s' has not been set up.",
             external_name.c_str());
@@ -55,8 +55,8 @@ SecondaryVariable const& SecondaryVariableCollection::get(
     auto const& internal_name = it->second;
     auto const it2 = _configured_secondary_variables.find(internal_name);
 
-    if (it2 == _configured_secondary_variables.end()) {
-
+    if (it2 == _configured_secondary_variables.end())
+    {
         OGS_FATAL(
             "A secondary variable with internal name `%s' has not been set up.",
             internal_name.c_str());
@@ -65,4 +65,4 @@ SecondaryVariable const& SecondaryVariableCollection::get(
     return it2->second;
 }
 
-} // namespace ProcessLib
+}  // namespace ProcessLib

@@ -12,7 +12,7 @@
 #include <cassert>
 
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/ParseSecondaryVariables.h"
 
 #include "HydroMechanicsProcess.h"
 #include "HydroMechanicsProcessData.h"

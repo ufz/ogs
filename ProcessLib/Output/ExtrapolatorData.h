@@ -40,16 +40,16 @@ public:
         std::unique_ptr<NumLib::Extrapolator>&& extrapolator,
         NumLib::LocalToGlobalIndexMap const* const dof_table_single_component,
         bool const manage_storage)
-        : _extrapolator(std::move(extrapolator))
-        , _dof_table_single_component(dof_table_single_component)
-        , _manage_storage(manage_storage)
+        : _extrapolator(std::move(extrapolator)),
+          _dof_table_single_component(dof_table_single_component),
+          _manage_storage(manage_storage)
     {
     }
 
     ExtrapolatorData(ExtrapolatorData&& other)
-        : _extrapolator(std::move(other._extrapolator))
-        , _dof_table_single_component(other._dof_table_single_component)
-        , _manage_storage(other._manage_storage)
+        : _extrapolator(std::move(other._extrapolator)),
+          _dof_table_single_component(other._dof_table_single_component),
+          _manage_storage(other._manage_storage)
     {
         other._manage_storage = false;
         other._dof_table_single_component = nullptr;
@@ -78,7 +78,8 @@ private:
     //! Deletes the d.o.f table if it is allowed to do so.
     void cleanup()
     {
-        if (_manage_storage) {
+        if (_manage_storage)
+        {
             delete _dof_table_single_component;
             _dof_table_single_component = nullptr;
         }
@@ -95,4 +96,4 @@ private:
     bool _manage_storage = false;
 };
 
-} // namespace ProcessLib
+}  // namespace ProcessLib

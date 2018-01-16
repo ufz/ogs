@@ -9,10 +9,10 @@
 
 #include "CreateHeatConductionProcess.h"
 
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
 #include "HeatConductionProcess.h"
 #include "HeatConductionProcessData.h"
+#include "ProcessLib/Output/ParseSecondaryVariables.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
 {

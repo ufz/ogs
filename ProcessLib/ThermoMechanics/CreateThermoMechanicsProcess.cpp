@@ -14,7 +14,7 @@
 #include "MaterialLib/SolidModels/CreateEhlers.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/CreateLubby2.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/ParseSecondaryVariables.h"
 
 #include "ThermoMechanicsProcess.h"
 #include "ThermoMechanicsProcessData.h"

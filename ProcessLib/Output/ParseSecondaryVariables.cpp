@@ -8,16 +8,17 @@
  */
 
 #include "ParseSecondaryVariables.h"
+
 #include "BaseLib/ConfigTree.h"
 #include "NumLib/NamedFunctionCaller.h"
-#include "ProcessLib/SecondaryVariable.h"
+
+#include "SecondaryVariable.h"
 
 namespace ProcessLib
 {
-void parseSecondaryVariables(
-    BaseLib::ConfigTree const& config,
-    SecondaryVariableCollection& secondary_variables,
-    NumLib::NamedFunctionCaller& named_function_caller)
+void parseSecondaryVariables(BaseLib::ConfigTree const& config,
+                             SecondaryVariableCollection& secondary_variables,
+                             NumLib::NamedFunctionCaller& named_function_caller)
 {
     auto sec_vars_config =
         //! \ogs_file_param{prj__processes__process__secondary_variables}
@@ -25,9 +26,10 @@ void parseSecondaryVariables(
     if (!sec_vars_config)
         return;
 
-    for (auto sec_var_config :
-         //! \ogs_file_param{prj__processes__process__secondary_variables__secondary_variable}
-         sec_vars_config->getConfigSubtreeList("secondary_variable"))
+    for (
+        auto sec_var_config :
+        //! \ogs_file_param{prj__processes__process__secondary_variables__secondary_variable}
+        sec_vars_config->getConfigSubtreeList("secondary_variable"))
     {
         auto const type =
             //! \ogs_file_attr{prj__processes__process__secondary_variables__secondary_variable__type}
@@ -42,14 +44,18 @@ void parseSecondaryVariables(
 
         secondary_variables.addNameMapping(internal_name, output_name);
 
-        if (type == "static") {
+        if (type == "static")
+        {
             // alright
-        } else if (type == "dynamic") {
+        }
+        else if (type == "dynamic")
+        {
             auto const& sink_fct = internal_name;
 
-            for (auto const plug :
-                 //! \ogs_file_param{prj__processes__process__secondary_variables__secondary_variable__plug}
-                 sec_var_config.getConfigParameterList("plug"))
+            for (
+                auto const plug :
+                //! \ogs_file_param{prj__processes__process__secondary_variables__secondary_variable__plug}
+                sec_var_config.getConfigParameterList("plug"))
             {
                 auto const sink_arg =
                     //! \ogs_file_attr{prj__processes__process__secondary_variables__secondary_variable__plug__sink_arg}

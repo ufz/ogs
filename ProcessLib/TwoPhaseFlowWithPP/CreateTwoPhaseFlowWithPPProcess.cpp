@@ -10,8 +10,8 @@
 #include <cassert>
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "ProcessLib/Output/ParseSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "CreateTwoPhaseFlowWithPPMaterialProperties.h"

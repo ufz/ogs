@@ -77,8 +77,8 @@ static void addSecondaryVariableResiduals(
         mesh.getNumberOfElements() * var.fcts.num_components)
     {
         OGS_FATAL(
-            "Cell property `%s' does not have the right number of "
-            "components. Expected: %d, actual: %d",
+            "Cell property `%s' does not have the right number of components. "
+            "Expected: %d, actual: %d",
             property_name_res.c_str(),
             mesh.getNumberOfElements() * var.fcts.num_components,
             residuals_mesh.size());
@@ -90,9 +90,8 @@ static void addSecondaryVariableResiduals(
     if (residuals_mesh.size() != static_cast<std::size_t>(residuals.size()))
     {
         OGS_FATAL(
-            "Thee residual of secondary variable `%s' did not evaluate "
-            "to the right number of components. Expected: %d, actual: "
-            "%d.",
+            "The residual of secondary variable `%s' did not evaluate to the "
+            "right number of components. Expected: %d, actual: %d.",
             var.name.c_str(), residuals_mesh.size(), residuals.size());
     }
 
@@ -145,8 +144,8 @@ void processOutputData(
         int const n_components = pv.getNumberOfComponents();
         // If (number_of_dof_variables==1), the case is either the staggered
         // scheme being applied or a single PDE being solved.
-        const int sub_meshset_id
-            = (number_of_dof_variables==1) ? 0 : variable_id;
+        const int sub_meshset_id =
+            (number_of_dof_variables == 1) ? 0 : variable_id;
 
         if (number_of_dof_variables > 1)
         {
@@ -179,13 +178,13 @@ void processOutputData(
                     MeshLib::Location const l(
                         mesh_id, MeshLib::MeshItemType::Node, node->getID());
 
-                auto const global_component_id = global_component_offset + component_id;
-                auto const index =
-                        dof_table.getLocalIndex(
-                            l, global_component_id, x.getRangeBegin(),
-                            x.getRangeEnd());
+                    auto const global_component_id =
+                        global_component_offset + component_id;
+                    auto const index = dof_table.getLocalIndex(
+                        l, global_component_id, x.getRangeBegin(),
+                        x.getRangeEnd());
 
-                output_data[node->getID() * n_components + component_id] =
+                    output_data[node->getID() * n_components + component_id] =
                         x_copy[index];
                 }
             }
@@ -197,7 +196,8 @@ void processOutputData(
     // Secondary variables output
     for (auto const& external_variable_name : output_variables)
     {
-        if (!already_output.insert(external_variable_name).second) {
+        if (!already_output.insert(external_variable_name).second)
+        {
             // no insertion took place, output already done
             continue;
         }
@@ -216,8 +216,7 @@ void processOutputData(
 #else
     (void)secondary_variables;
     (void)t;
-#endif // USE_PETSC
-
+#endif  // USE_PETSC
 }
 
 void makeOutput(std::string const& file_name, MeshLib::Mesh& mesh,

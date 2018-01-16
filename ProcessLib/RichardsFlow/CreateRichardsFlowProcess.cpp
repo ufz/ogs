@@ -9,8 +9,8 @@
 
 #include "CreateRichardsFlowProcess.h"
 
+#include "ProcessLib/Output/ParseSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "CreateRichardsFlowMaterialProperties.h"

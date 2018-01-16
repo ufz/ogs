@@ -9,9 +9,18 @@
 
 #pragma once
 
-namespace BaseLib { class ConfigTree; }
-namespace ProcessLib { class SecondaryVariableCollection; }
-namespace NumLib { class NamedFunctionCaller; }
+namespace BaseLib
+{
+class ConfigTree;
+}
+namespace ProcessLib
+{
+class SecondaryVariableCollection;
+}
+namespace NumLib
+{
+class NamedFunctionCaller;
+}
 
 namespace ProcessLib
 {
@@ -20,4 +29,4 @@ void parseSecondaryVariables(
     SecondaryVariableCollection& secondary_variables,
     NumLib::NamedFunctionCaller& named_function_caller);
 
-} // namespace ProcessLib
+}  // namespace ProcessLib

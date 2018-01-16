@@ -17,9 +17,9 @@
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/TimeStepping/CreateTimeStepper.h"
+#include "ProcessLib/Output/CreateProcessOutput.h"
 
 #include "CoupledSolutionsForStaggeredScheme.h"
-#include "CreateProcessOutput.h"
 
 std::unique_ptr<ProcessLib::Output> createOutput(
     BaseLib::ConfigTree const& config, std::string const& output_directory)

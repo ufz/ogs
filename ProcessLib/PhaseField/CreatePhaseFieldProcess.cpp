@@ -13,7 +13,7 @@
 
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/ParseSecondaryVariables.h"
 
 #include "PhaseFieldProcess.h"
 #include "PhaseFieldProcessData.h"

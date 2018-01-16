@@ -15,7 +15,7 @@
 #include "MaterialLib/FractureModels/CreateMohrCoulomb.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 
 #include "SmallDeformationProcess.h"

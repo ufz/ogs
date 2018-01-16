@@ -16,7 +16,7 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 #include "MaterialLib/PhysicalConstant.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "LiquidFlowProcess.h"

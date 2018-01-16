@@ -13,7 +13,8 @@
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
-#include "GlobalVectorFromNamedFunction.h"
+#include "ProcessLib/Output/GlobalVectorFromNamedFunction.h"
+
 #include "ProcessVariable.h"
 #include "CoupledSolutionsForStaggeredScheme.h"
 

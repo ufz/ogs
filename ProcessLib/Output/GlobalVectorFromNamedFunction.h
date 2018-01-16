@@ -11,8 +11,8 @@
 
 #include "MeshLib/Mesh.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "NumLib/NumericsConfig.h"
 #include "NumLib/NamedFunctionCaller.h"
+#include "NumLib/NumericsConfig.h"
 #include "SecondaryVariableContext.h"
 
 namespace ProcessLib
