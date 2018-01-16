@@ -61,12 +61,9 @@ void Process::initializeProcessBoundaryCondition(
                                               _integration_order);
 
     std::vector<std::unique_ptr<NodalSourceTerm>> per_process_source_terms;
-    for (std::size_t variable_id = 0;
-         variable_id < per_process_variables.size();
-         variable_id++)
+    for (auto& pv : per_process_variables)
     {
-        ProcessVariable& pv = per_process_variables[variable_id];
-        auto sts = pv.createSourceTerms(dof_table, 0, _integration_order);
+        auto sts = pv.get().createSourceTerms(dof_table, 0, _integration_order);
 
         std::move(sts.begin(), sts.end(),
                   std::back_inserter(per_process_source_terms));

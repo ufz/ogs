@@ -333,7 +333,7 @@ private:
      *            \nabla (\sigma - \alpha_b p \mathrm{I}) = f
      *      \f]
      * where \f$ \sigma\f$ is the effective stress tensor, \f$p\f$ is the pore
-     * pressure, \f$\alpha_b\f$ is the Biots constant, \f$\mathrm{I}\f$ is the
+     * pressure, \f$\alpha_b\f$ is the Biot constant, \f$\mathrm{I}\f$ is the
      * identity tensor, and \f$f\f$ is the body force.
      *
      * @param t               Time
@@ -342,11 +342,11 @@ private:
      * @param dx_dx           Value of \f$ x \cdot dx\f$.
      * @param local_M_data    Mass matrix of an element, which takes the form of
      *                        \f$ \inta N^T N\mathrm{d}\Omega\f$. Not used.
-     * @param local_K_data    Lappacian matrix of an element, which takes the
+     * @param local_K_data    Laplacian matrix of an element, which takes the
      *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
      *                        Not used.
      * @param local_b_data    Right hand side vector of an element.
-     * @param local_Jac_data  Element Jacobian matrix from the Newton-Raphson
+     * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
      *                        method.
      * @param local_coupled_solutions Nodal values of solutions of the coupled
      *                                processes of an element.
@@ -377,11 +377,11 @@ private:
      * @param dx_dx           Value of \f$ x \cdot dx\f$.
      * @param local_M_data    Mass matrix of an element, which takes the form of
      *                        \f$ \inta N^T N\mathrm{d}\Omega\f$. Not used.
-     * @param local_K_data    Lappacian matrix of an element, which takes the
+     * @param local_K_data    Laplacian matrix of an element, which takes the
      *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
      *                        Not used.
      * @param local_b_data    Right hand side vector of an element.
-     * @param local_Jac_data  Element Jacobian matrix from the Newton-Raphson
+     * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
      *                        method.
      * @param local_coupled_solutions Nodal values of solutions of the coupled
      *                                processes of an element.

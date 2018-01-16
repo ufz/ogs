@@ -99,10 +99,12 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
         all_mesh_subsets.emplace_back(_mesh_subset_base_nodes.get());
 
         // For displacement.
-        const int process_id = 0;
+        const int monolithic_process_id = 0;
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
-            getProcessVariables(process_id)[1].get().getNumberOfComponents(),
+            getProcessVariables(monolithic_process_id)[1]
+                .get()
+                .getNumberOfComponents(),
             [&]() {
                 return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
             });
@@ -156,13 +158,13 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    const int mechinical_process_id = _use_monolithic_scheme ? 0 : 1;
+    const int mechanical_process_id = _use_monolithic_scheme ? 0 : 1;
     const int deformation_variable_id = _use_monolithic_scheme ? 1 : 0;
     ProcessLib::HydroMechanics::createLocalAssemblers<
         DisplacementDim, HydroMechanicsLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         // use displacement process variable to set shape function order
-        getProcessVariables(mechinical_process_id)[deformation_variable_id]
+        getProcessVariables(mechanical_process_id)[deformation_variable_id]
             .get()
             .getShapeFunctionOrder(),
         _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
@@ -279,39 +281,36 @@ void HydroMechanicsProcess<DisplacementDim>::
                                         GlobalMatrix& K, GlobalVector& b,
                                         GlobalMatrix& Jac)
 {
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_tables;
     // For the monolithic scheme
     if (_use_monolithic_scheme)
     {
         DBUG(
             "Assemble the Jacobian of HydroMechanics for the monolithic"
             " scheme.");
-        std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-            dof_table = {std::ref(*_local_to_global_index_map)};
-        // Call global assembler for each local assembly item.
-        GlobalExecutor::executeMemberDereferenced(
-            _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-            _local_assemblers, dof_table, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
-            Jac, _coupled_solutions);
-        return;
-    }
-
-    // For the staggered scheme
-    if (_coupled_solutions->process_id == 0)
-    {
-        DBUG(
-            "Assemble the Jacobian equations of liquid fluid process in "
-            "HydroMechanics for the staggered scheme.");
+        dof_tables.push_back(std::ref(*_local_to_global_index_map));
     }
     else
     {
-        DBUG(
-            "Assemble the Jacobian equations of mechanical process in "
-            "HydroMechanics for the staggered scheme.");
+        // For the staggered scheme
+        if (_coupled_solutions->process_id == 0)
+        {
+            DBUG(
+                "Assemble the Jacobian equations of liquid fluid process in "
+                "HydroMechanics for the staggered scheme.");
+        }
+        else
+        {
+            DBUG(
+                "Assemble the Jacobian equations of mechanical process in "
+                "HydroMechanics for the staggered scheme.");
+        }
+        std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+            dof_tables = {std::ref(*_local_to_global_index_map_with_base_nodes),
+                          std::ref(*_local_to_global_index_map)};
     }
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables = {std::ref(*_local_to_global_index_map_with_base_nodes),
-                      std::ref(*_local_to_global_index_map)};
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,

@@ -149,9 +149,6 @@ protected:
      * Initialize the boundary conditions for a single process or coupled
      * processes modelled by the monolithic scheme. It is called by
      * initializeBoundaryConditions().
-     * 
-     * @param dof_table DOF table
-     * @param process_id Process ID
      */
     void initializeProcessBoundaryCondition(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id);
@@ -164,7 +161,7 @@ private:
         unsigned const integration_order) = 0;
 
     /// Member function to initialize the boundary conditions for all coupled
-    // PDEs. It is called by initialize().
+    /// processes. It is called by initialize().
     virtual void initializeBoundaryConditions();
 
     virtual void preAssembleConcreteProcess(const double /*t*/,
