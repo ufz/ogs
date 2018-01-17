@@ -16,10 +16,7 @@ TemplateLogogFormatterSuppressedGCC<T_SUPPPRESS_TOPIC_FLAG>
 {
     int rank = 0;
     MPI_Comm_rank(mpi_comm, &rank);
-    int size = 0;
-    MPI_Comm_size(mpi_comm, &size);
-    int digits = size/10 + 1;
-    _str_mpi_rank = "rank " + padLeft(std::to_string(rank), digits) + "| ";
+    _str_mpi_rank = "[" + std::to_string(rank) + "] ";
 }
 #endif
 
