@@ -22,7 +22,7 @@ struct ProcessOutput final
     std::set<std::string> output_variables;
 
     //! Tells if also to output extrapolation residuals.
-    bool output_residuals = false;
+    bool const output_residuals;
 };
 
 ///
