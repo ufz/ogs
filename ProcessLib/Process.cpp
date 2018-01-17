@@ -51,7 +51,7 @@ Process::Process(
 {
 }
 
-void Process::initializeProcessBoundaryCondition(
+void Process::initializeProcessBoundaryConditionsAndSourceTerms(
     const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id)
 {
     auto const& per_process_variables = _process_variables[process_id];
@@ -79,7 +79,8 @@ void Process::initializeBoundaryConditions()
     const std::size_t number_of_processes = _process_variables.size();
     for (std::size_t pcs_id = 0; pcs_id < number_of_processes; pcs_id++)
     {
-        initializeProcessBoundaryCondition(*_local_to_global_index_map, pcs_id);
+        initializeProcessBoundaryConditionsAndSourceTerms(
+            *_local_to_global_index_map, pcs_id);
     }
 }
 
@@ -109,7 +110,7 @@ void Process::setInitialConditions(const int process_id, double const t,
                                    GlobalVector& x)
 {
     // getDOFTableOfProcess can be overloaded by the specific process.
-    auto const dof_table_of_process = getDOFTable(process_id);
+    auto const& dof_table_of_process = getDOFTable(process_id);
 
     auto const& per_process_variables = _process_variables[process_id];
     for (std::size_t variable_id = 0;
@@ -286,10 +287,10 @@ Process::getDOFTableForExtrapolatorData() const
     const bool manage_storage = true;
 
     return std::make_tuple(new NumLib::LocalToGlobalIndexMap(
-                std::move(all_mesh_subsets_single_component),
-                // by location order is needed for output
-                NumLib::ComponentOrder::BY_LOCATION),
-            manage_storage);
+                               std::move(all_mesh_subsets_single_component),
+                               // by location order is needed for output
+                               NumLib::ComponentOrder::BY_LOCATION),
+                           manage_storage);
 }
 
 void Process::initializeExtrapolator()
@@ -357,7 +358,7 @@ void Process::postNonLinearSolver(GlobalVector const& x, const double t,
                                   int const process_id)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
-    postNonLinearSolverProcess(x, t, process_id);
+    postNonLinearSolverConcreteProcess(x, t, process_id);
 }
 
 void Process::computeSecondaryVariable(const double t, GlobalVector const& x)

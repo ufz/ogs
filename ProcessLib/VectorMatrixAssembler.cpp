@@ -53,7 +53,7 @@ void VectorMatrixAssembler::assemble(
             NumLib::getIndices(mesh_item_id, dof_tables[i].get()));
     }
 
-    auto const& indices = (dof_tables.size() == 1 && cpl_xs == nullptr)
+    auto const& indices = (cpl_xs == nullptr)
                               ? indices_of_processes[0]
                               : indices_of_processes[cpl_xs->process_id];
     _local_M_data.clear();
@@ -120,7 +120,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
             NumLib::getIndices(mesh_item_id, dof_tables[i].get()));
     }
 
-    auto const& indices = (dof_tables.size() == 1 && cpl_xs == nullptr)
+    auto const& indices = (cpl_xs == nullptr)
                               ? indices_of_processes[0]
                               : indices_of_processes[cpl_xs->process_id];
     auto const local_xdot = xdot.get(indices);

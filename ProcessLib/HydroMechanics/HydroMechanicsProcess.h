@@ -89,7 +89,7 @@ private:
     void postTimestepConcreteProcess(GlobalVector const& x,
                                      int const process_id) override;
 
-    void postNonLinearSolverProcess(GlobalVector const& x, const double t,
+    void postNonLinearSolverConcreteProcess(GlobalVector const& x, const double t,
                                      int const process_id) override;
 
     NumLib::LocalToGlobalIndexMap const& getDOFTable(
@@ -123,6 +123,13 @@ private:
     std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
         getDOFTableForExtrapolatorData() const override;
 
+    /// Check whether the process represented by \c process_id is/has
+    /// mechanical process. In the present implementation, the mechanical
+    /// process has process_id == 1 in the staggered scheme.
+    bool hasMechanicalProcess(int const process_id) const
+    {
+        return _use_monolithic_scheme || process_id == 1;
+    }
 };
 
 extern template class HydroMechanicsProcess<2>;

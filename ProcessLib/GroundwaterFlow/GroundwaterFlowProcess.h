@@ -61,8 +61,14 @@ public:
     }
 
     void postTimestepConcreteProcess(GlobalVector const& x,
-                                     int const /*process_id*/) override
+                                     int const process_id) override
     {
+        //For this single process, process_id is always zero.
+        if (process_id != 0)
+        {
+            OGS_FATAL("The condition of process_id = 0 must be satisfied for "
+                      "GroundwaterFlowProcess, which is a single process." );
+        }
         if (_balance_mesh) // computing the balance is optional
         {
             std::vector<double> init_values(
@@ -70,8 +76,6 @@ public:
             MeshLib::addPropertyToMesh(*_balance_mesh, _balance_pv_name,
                                        MeshLib::MeshItemType::Cell, 1,
                                        init_values);
-            //For this single process, process_id is always zero.
-            const int process_id = 0;
             auto balance = ProcessLib::CalculateSurfaceFlux(
                 *_balance_mesh,
                 getProcessVariables(process_id)[0]

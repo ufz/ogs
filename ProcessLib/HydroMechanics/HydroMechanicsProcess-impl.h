@@ -235,22 +235,22 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 {
     if (_use_monolithic_scheme)
     {
-        const int process_id_of_up = 0;
-        initializeProcessBoundaryCondition(*_local_to_global_index_map,
-                                           process_id_of_up);
+        const int process_id_of_hydromechancs = 0;
+        initializeProcessBoundaryConditionsAndSourceTerms(
+            *_local_to_global_index_map, process_id_of_hydromechancs);
         return;
     }
 
     // Staggered scheme:
     // for the equations of pressure
-    const int process_id_of_p = 0;
-    initializeProcessBoundaryCondition(
-        *_local_to_global_index_map_with_base_nodes, process_id_of_p);
+    const int hydraulic_process_id = 0;
+    initializeProcessBoundaryConditionsAndSourceTerms(
+        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id);
 
     // for the equations of deformation.
-    const int process_id_of_u = 1;
-    initializeProcessBoundaryCondition(*_local_to_global_index_map,
-                                       process_id_of_u);
+    const int mechanical_process_id = 1;
+    initializeProcessBoundaryConditionsAndSourceTerms(
+        *_local_to_global_index_map, mechanical_process_id);
 }
 
 template <int DisplacementDim>
@@ -289,7 +289,7 @@ void HydroMechanicsProcess<DisplacementDim>::
         DBUG(
             "Assemble the Jacobian of HydroMechanics for the monolithic"
             " scheme.");
-        dof_tables.push_back(std::ref(*_local_to_global_index_map));
+        dof_tables.emplace_back(*_local_to_global_index_map);
     }
     else
     {
@@ -306,9 +306,8 @@ void HydroMechanicsProcess<DisplacementDim>::
                 "Assemble the Jacobian equations of mechanical process in "
                 "HydroMechanics for the staggered scheme.");
         }
-        std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-            dof_tables = {std::ref(*_local_to_global_index_map_with_base_nodes),
-                          std::ref(*_local_to_global_index_map)};
+        dof_tables.emplace_back(*_local_to_global_index_map_with_base_nodes);
+        dof_tables.emplace_back(*_local_to_global_index_map);
     }
 
     GlobalExecutor::executeMemberDereferenced(
@@ -327,9 +326,7 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     _process_data.dt = dt;
     _process_data.t = t;
 
-    // If monolithic scheme is used or the equation of deformation is solved in
-    // the staggered scheme.
-    if (_use_monolithic_scheme || process_id == 1)
+    if (hasMechanicalProcess(process_id))
         GlobalExecutor::executeMemberOnDereferenced(
             &LocalAssemblerInterface::preTimestep, _local_assemblers,
             *_local_to_global_index_map, x, t, dt);
@@ -346,10 +343,10 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverProcess(
+void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalVector const& x, const double t, const int process_id)
 {
-    if (!_use_monolithic_scheme && process_id == 0)
+    if (!hasMechanicalProcess(process_id))
     {
         return;
     }
@@ -374,9 +371,7 @@ template <int DisplacementDim>
 NumLib::LocalToGlobalIndexMap const&
 HydroMechanicsProcess<DisplacementDim>::getDOFTable(const int process_id) const
 {
-    // If monolithic scheme is used or the equation of deformation is solved in
-    // the staggered scheme.
-    if (_use_monolithic_scheme || process_id == 1)
+    if (hasMechanicalProcess(process_id))
     {
         return *_local_to_global_index_map;
     }

@@ -360,6 +360,18 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
         //! \ogs_file_param{prj__time_loop__processes}
         config.getConfigSubtree("processes"), processes, nonlinear_solvers);
 
+    if (coupling_config)
+    {
+        if (global_coupling_conv_criteria.size() != per_process_data.size())
+        {
+            OGS_FATAL(
+                "The number of convergence criteria of the global staggered "
+                "coupling loop is not identical to the number of the "
+                "processes! Please check the element by tag "
+                "global_process_coupling in the project file.");
+        }
+    }
+
     const auto minmax_iter = std::minmax_element(
         per_process_data.begin(),
         per_process_data.end(),
@@ -955,11 +967,6 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                     _global_coupling_conv_crit[process_id]->isSatisfied();
             }
             MathLib::LinAlg::copy(x, x_old);
-
-            if (coupling_iteration_converged && global_coupling_iteration > 0)
-            {
-                break;
-            }
 
             ++process_id;
         }  // end of for (auto& spd : _per_process_data)

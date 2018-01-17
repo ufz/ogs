@@ -90,7 +90,7 @@ void HTProcess::assembleConcreteProcess(const double t,
     if (_use_monolithic_scheme)
     {
         DBUG("Assemble HTProcess.");
-        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+        dof_tables.emplace_back(*_local_to_global_index_map);
     }
     else
     {
@@ -107,8 +107,8 @@ void HTProcess::assembleConcreteProcess(const double t,
                 "fluid flow process within HTProcess.");
         }
         setCoupledSolutionsOfPreviousTimeStep();
-        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
-        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(*_local_to_global_index_map);
     }
 
     // Call global assembler for each local assembly item.
@@ -219,7 +219,7 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
             OGS_FATAL(
                 "Memory is not allocated for the global vector "
                 "of the solution of the previous time step for the ."
-                "staggered scheme.\n It can be done by overloading "
+                "staggered scheme.\n It can be done by overriding "
                 "Process::preTimestepConcreteProcess"
                 "(ref. HTProcess::preTimestepConcreteProcess) ");
         }

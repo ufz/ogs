@@ -78,10 +78,10 @@ public:
                               NumLib::LocalToGlobalIndexMap const& dof_table,
                               GlobalVector const& x);
 
-    virtual void postNonLinearSolver(std::size_t const mesh_item_id,
-                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                              GlobalVector const& x, double const t,
-                              bool const use_monolithic_scheme);
+    void postNonLinearSolver(std::size_t const mesh_item_id,
+                             NumLib::LocalToGlobalIndexMap const& dof_table,
+                             GlobalVector const& x, double const t,
+                             bool const use_monolithic_scheme);
 
     /// Computes the flux in the point \c p_local_coords that is given in local
     /// coordinates using the values from \c local_x.

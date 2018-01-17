@@ -150,7 +150,7 @@ protected:
      * processes modelled by the monolithic scheme. It is called by
      * initializeBoundaryConditions().
      */
-    void initializeProcessBoundaryCondition(
+    void initializeProcessBoundaryConditionsAndSourceTerms(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id);
 
 private:
@@ -190,9 +190,9 @@ private:
     {
     }
 
-    virtual void postNonLinearSolverProcess(GlobalVector const& /*x*/,
-                                            const double /*t*/,
-                                            int const /*process_id*/)
+    virtual void postNonLinearSolverConcreteProcess(GlobalVector const& /*x*/,
+                                                    const double /*t*/,
+                                                    int const /*process_id*/)
     {
     }
 
