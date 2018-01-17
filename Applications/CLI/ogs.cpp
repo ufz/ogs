@@ -32,6 +32,7 @@
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
+#include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
@@ -144,6 +145,11 @@ int main(int argc, char *argv[])
                 vtkSmartPointer<vtkMPIController>::New();
             controller->Initialize(&argc, &argv, 1);
             vtkMPIController::SetGlobalController(controller);
+
+            logog_setup.setFormatter(
+                std::make_unique<BaseLib::TemplateLogogFormatterSuppressedGCC<
+                    TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG |
+                    TOPIC_LINE_NUMBER_FLAG>>());
 #endif
             run_time.start();
 
