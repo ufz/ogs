@@ -18,6 +18,7 @@
 #include "NonuniformDirichletBoundaryCondition.h"
 #include "NonuniformNeumannBoundaryCondition.h"
 #include "NormalTractionBoundaryCondition.h"
+#include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
 
 namespace ProcessLib
@@ -62,13 +63,18 @@ BoundaryConditionBuilder::createBoundaryCondition(
             config, dof_table, mesh, variable_id, integration_order,
             shapefunction_order);
     }
-
     //
     // Special boundary conditions
     //
     if (type == "NormalTraction")
     {
         return createNormalTractionBoundaryCondition(
+            config, dof_table, mesh, variable_id, integration_order,
+            shapefunction_order, parameters);
+    }
+    if (type == "PhaseFieldIrreversibleDamageOracleBoundaryCondition")
+    {
+        return createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
             config, dof_table, mesh, variable_id, integration_order,
             shapefunction_order, parameters);
     }
@@ -228,6 +234,21 @@ BoundaryConditionBuilder::createNormalTractionBoundaryCondition(
             dof_table, variable_id, mesh.isAxiallySymmetric(),
             integration_order, shapefunction_order, mesh.getDimension(),
             parameters);
+}
+
+std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::
+    createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
+        const BoundaryConditionConfig& config,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
+        const MeshLib::Mesh& mesh, const int variable_id,
+        const unsigned /*integration_order*/,
+        const unsigned /*shapefunction_order*/,
+        const std::vector<
+            std::unique_ptr<ProcessLib::ParameterBase>>& /*parameters*/)
+{
+    return ProcessLib::
+        createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
+            config.config, dof_table, mesh, variable_id, *config.component_id);
 }
 
 std::vector<MeshLib::Element*> BoundaryConditionBuilder::getClonedElements(
