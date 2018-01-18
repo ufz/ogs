@@ -8,7 +8,7 @@
  */
 
 #include "CreateTESProcess.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "TESProcess.h"
 
@@ -50,8 +50,8 @@ std::unique_ptr<Process> createTESProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"TES_pressure", "TES_temperature", "TES_vapour_mass_fraction"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
 
     return std::make_unique<TESProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,

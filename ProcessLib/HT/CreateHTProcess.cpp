@@ -12,8 +12,8 @@
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
 
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "HTProcess.h"
@@ -216,8 +216,8 @@ std::unique_ptr<Process> createHTProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"HT_temperature_pressure"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
 
     return std::make_unique<HTProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,

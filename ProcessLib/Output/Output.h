@@ -9,16 +9,15 @@
 
 #pragma once
 
-#include <utility>
 #include <map>
+#include <utility>
 
-#include "BaseLib/ConfigTree.h"
 #include "MeshLib/IO/VtkIO/PVDFile.h"
-#include "Process.h"
 #include "ProcessOutput.h"
 
 namespace ProcessLib
 {
+class Process;
 
 /*! Manages writing the solution of processes to disk.
  *
@@ -28,9 +27,22 @@ namespace ProcessLib
 class Output
 {
 public:
-    static std::unique_ptr<Output>
-    newInstance(const BaseLib::ConfigTree& config,
-                const std::string& output_directory);
+    struct PairRepeatEachSteps
+    {
+        explicit PairRepeatEachSteps(unsigned c, unsigned e)
+            : repeat(c), each_steps(e)
+        {
+        }
+
+        const unsigned repeat;      //!< Apply \c each_steps \c repeat times.
+        const unsigned each_steps;  //!< Do output every \c each_steps timestep.
+    };
+
+public:
+    Output(std::string output_directory, std::string prefix,
+           bool const compress_output, std::string const& data_mode,
+           bool const output_nonlinear_iteration_results,
+           std::vector<PairRepeatEachSteps> repeats_each_steps);
 
     //! TODO doc. Opens a PVD file for each process.
     void addProcess(ProcessLib::Process const& process, const int process_id);
@@ -38,14 +50,13 @@ public:
     //! Writes output for the given \c process if it should be written in the
     //! given \c timestep.
     void doOutput(Process const& process, const int process_id,
-                  ProcessOutput const& process_output,
-                  unsigned timestep, const double t, GlobalVector const& x);
+                  ProcessOutput const& process_output, unsigned timestep,
+                  const double t, GlobalVector const& x);
 
     //! Writes output for the given \c process if it has not been written yet.
-    //! This method is intended for doing output after the last timestep in order
-    //! to make sure that its results are written.
-    void doOutputLastTimestep(Process const& process,
-                              const int process_id,
+    //! This method is intended for doing output after the last timestep in
+    //! order to make sure that its results are written.
+    void doOutputLastTimestep(Process const& process, const int process_id,
                               ProcessOutput const& process_output,
                               unsigned timestep, const double t,
                               GlobalVector const& x);
@@ -66,29 +77,13 @@ public:
                                     GlobalVector const& x,
                                     const unsigned iteration);
 
-    struct PairRepeatEachSteps
-    {
-        explicit PairRepeatEachSteps(unsigned c, unsigned e)
-            : repeat(c), each_steps(e)
-        {}
-
-        const unsigned repeat;     //!< Apply \c each_steps \c repeat times.
-        const unsigned each_steps; //!< Do output every \c each_steps timestep.
-    };
-
 private:
     struct SingleProcessData
     {
-        SingleProcessData(std::string const& filename)
-            : pvd_file(filename)
-        {}
+        SingleProcessData(std::string const& filename) : pvd_file(filename) {}
 
         MeshLib::IO::PVDFile pvd_file;
     };
-
-    Output(std::string output_directory, std::string prefix,
-           bool const compress_output, std::string const& data_mode,
-           bool const output_nonlinear_iteration_results);
 
     std::string const _output_directory;
     std::string const _output_file_prefix;
@@ -113,8 +108,8 @@ private:
      * @param process_id Process ID.
      * @return Address of a SingleProcessData.
      */
-    SingleProcessData* findSingleProcessData(
-        Process const& process, const int process_id);
+    SingleProcessData* findSingleProcessData(Process const& process,
+                                             const int process_id);
 };
 
-}
+}  // namespace ProcessLib

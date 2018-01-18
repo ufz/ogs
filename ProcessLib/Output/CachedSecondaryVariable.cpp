@@ -16,8 +16,7 @@ namespace ProcessLib
 std::vector<NumLib::NamedFunction> CachedSecondaryVariable::getNamedFunctions()
     const
 {
-    return {{_internal_variable_name,
-             std::vector<std::string>{},
+    return {{_internal_variable_name, std::vector<std::string>{},
              BaseLib::easyBind(&CachedSecondaryVariable::getValue, this)}};
 }
 
@@ -31,12 +30,12 @@ double CachedSecondaryVariable::getValue() const
 SecondaryVariableFunctions CachedSecondaryVariable::getExtrapolator()
 {
     // TODO copied from makeExtrapolator()
-    auto const eval_residuals = [this](
-        const double t,
-        GlobalVector const& x,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
-        std::unique_ptr<GlobalVector> & /*result_cache*/
-        ) -> GlobalVector const& {
+    auto const eval_residuals =
+        [this](const double t,
+               GlobalVector const& x,
+               NumLib::LocalToGlobalIndexMap const& dof_table,
+               std::unique_ptr<GlobalVector> & /*result_cache*/
+               ) -> GlobalVector const& {
         _extrapolator.calculateResiduals(1, *_extrapolatables, t, x, dof_table);
         return _extrapolator.getElementResiduals();
     };
@@ -58,7 +57,8 @@ GlobalVector const& CachedSecondaryVariable::evalField(
 
 GlobalVector const& CachedSecondaryVariable::evalFieldNoArgs() const
 {
-    if (!_needs_recomputation) {
+    if (!_needs_recomputation)
+    {
         DBUG("%s does not need to be recomputed. Returning cached values",
              _internal_variable_name.c_str());
         return _cached_nodal_values;

@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include "ProcessVariable.h"
+#include "ProcessLib/ProcessVariable.h"
+
 #include "SecondaryVariable.h"
 
 namespace ProcessLib
@@ -17,14 +18,11 @@ namespace ProcessLib
 //! Holds information about which variables to write to output files.
 struct ProcessOutput final
 {
-    //! Constructs a new instance.
-    ProcessOutput(BaseLib::ConfigTree const& output_config);
-
     //! All variables that shall be output.
     std::set<std::string> output_variables;
 
     //! Tells if also to output extrapolation residuals.
-    bool output_residuals = false;
+    bool const output_residuals;
 };
 
 ///
@@ -46,4 +44,4 @@ void processOutputData(
 void makeOutput(std::string const& file_name, MeshLib::Mesh& mesh,
                 bool const compress_output, int const data_mode);
 
-}  // ProcessLib
+}  // namespace ProcessLib

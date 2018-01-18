@@ -9,10 +9,9 @@
 
 #pragma once
 
-#include "BaseLib/ConfigTree.h"
 #include "BaseLib/uniqueInsert.h"
-#include "NumLib/Extrapolation/Extrapolator.h"
 #include "NumLib/Extrapolation/ExtrapolatableElementCollection.h"
+#include "NumLib/Extrapolation/Extrapolator.h"
 
 namespace NumLib
 {
@@ -21,7 +20,6 @@ class LocalToGlobalIndexMap;
 
 namespace ProcessLib
 {
-
 //! Holder for function objects that compute secondary variables,
 //! and (optionally) also the residuals (e.g., in case of extrapolation)
 struct SecondaryVariableFunctions final
@@ -31,10 +29,10 @@ struct SecondaryVariableFunctions final
      * \note The argument \c dof_table is the d.o.f. table of the process, i.e.
      * it possibly contains information about several process variables.
      *
-     * \remark The \c result_cache can be used to store the \c GlobalVector if it
-     * is computed on-the-fly. Then a reference to the result cache can be returned.
-     * Otherwise the \c Function must return a reference to a \c GlobalVector that
-     * is stored somewhere else.
+     * \remark The \c result_cache can be used to store the \c GlobalVector if
+     * it is computed on-the-fly. Then a reference to the result cache can be
+     * returned. Otherwise the \c Function must return a reference to a \c
+     * GlobalVector that is stored somewhere else.
      */
     using Function = std::function<GlobalVector const&(
         const double t,
@@ -103,7 +101,7 @@ struct SecondaryVariableFunctions final
 //! Stores information about a specific secondary variable
 struct SecondaryVariable final
 {
-    std::string const name;      //!< Name of the variable; used, e.g., for output.
+    std::string const name;  //!< Name of the variable; used, e.g., for output.
 
     //! Functions used for computing the secondary variable.
     SecondaryVariableFunctions fcts;
@@ -170,11 +168,11 @@ SecondaryVariableFunctions makeExtrapolator(
 {
     auto const eval_field = [num_components, &extrapolator, &local_assemblers,
                              integration_point_values_method](
-        const double t,
-        GlobalVector const& x,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
-        std::unique_ptr<GlobalVector> & /*result_cache*/
-        ) -> GlobalVector const& {
+                                const double t,
+                                GlobalVector const& x,
+                                NumLib::LocalToGlobalIndexMap const& dof_table,
+                                std::unique_ptr<GlobalVector> & /*result_cache*/
+                                ) -> GlobalVector const& {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
         extrapolator.extrapolate(num_components, extrapolatables, t, x,
@@ -182,14 +180,14 @@ SecondaryVariableFunctions makeExtrapolator(
         return extrapolator.getNodalValues();
     };
 
-    auto const eval_residuals = [num_components, &extrapolator,
-                                 &local_assemblers,
-                                 integration_point_values_method](
-        const double t,
-        GlobalVector const& x,
-        NumLib::LocalToGlobalIndexMap const& dof_table,
-        std::unique_ptr<GlobalVector> & /*result_cache*/
-        ) -> GlobalVector const& {
+    auto const eval_residuals =
+        [num_components, &extrapolator, &local_assemblers,
+         integration_point_values_method](
+            const double t,
+            GlobalVector const& x,
+            NumLib::LocalToGlobalIndexMap const& dof_table,
+            std::unique_ptr<GlobalVector> & /*result_cache*/
+            ) -> GlobalVector const& {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
         extrapolator.calculateResiduals(num_components, extrapolatables, t, x,

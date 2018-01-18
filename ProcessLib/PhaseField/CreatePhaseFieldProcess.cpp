@@ -13,7 +13,7 @@
 
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
 
 #include "PhaseFieldProcess.h"
 #include "PhaseFieldProcessData.h"
@@ -201,8 +201,8 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"PhaseField_displacement"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
 
     return std::make_unique<PhaseFieldProcess<DisplacementDim>>(
             mesh, std::move(jacobian_assembler), parameters, integration_order,

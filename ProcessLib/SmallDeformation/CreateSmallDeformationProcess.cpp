@@ -11,10 +11,10 @@
 
 #include <cassert>
 
+#include "MaterialLib/SolidModels/CreateEhlers.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/CreateLubby2.h"
-#include "MaterialLib/SolidModels/CreateEhlers.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
 
 #include "SmallDeformationProcess.h"
 #include "SmallDeformationProcessData.h"
@@ -132,8 +132,8 @@ createSmallDeformationProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"SmallDeformation_displacement"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
 
     return std::make_unique<SmallDeformationProcess<DisplacementDim>>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,

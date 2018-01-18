@@ -9,10 +9,10 @@
 
 #include "CreateHeatConductionProcess.h"
 
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
 #include "HeatConductionProcess.h"
 #include "HeatConductionProcessData.h"
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
 {
@@ -77,8 +77,8 @@ std::unique_ptr<Process> createHeatConductionProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"HeatConduction_temperature"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
 
     return std::make_unique<HeatConductionProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,

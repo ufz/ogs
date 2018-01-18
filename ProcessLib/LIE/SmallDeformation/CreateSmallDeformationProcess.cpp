@@ -15,7 +15,7 @@
 #include "MaterialLib/FractureModels/CreateMohrCoulomb.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 
 #include "SmallDeformationProcess.h"
@@ -189,8 +189,8 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"SmallDeformation_displacement"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
 
     return std::make_unique<SmallDeformationProcess<DisplacementDim>>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,

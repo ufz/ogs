@@ -12,8 +12,8 @@
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
 
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
-#include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "ComponentTransportProcess.h"
@@ -162,8 +162,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
     NumLib::NamedFunctionCaller named_function_caller(
         {"ComponentTransport_concentration_pressure"});
 
-    ProcessLib::parseSecondaryVariables(config, secondary_variables,
-                                        named_function_caller);
+    ProcessLib::createSecondaryVariables(config, secondary_variables,
+                                         named_function_caller);
 
     return std::make_unique<ComponentTransportProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,

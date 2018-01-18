@@ -19,10 +19,10 @@ GlobalVectorFromNamedFunction::GlobalVectorFromNamedFunction(
     MeshLib::Mesh const& mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_single,
     SecondaryVariableContext& context)
-    : _function_caller(std::move(function_caller))
-    , _mesh(mesh)
-    , _dof_table_single(dof_table_single)
-    , _context(context)
+    : _function_caller(std::move(function_caller)),
+      _mesh(mesh),
+      _dof_table_single(dof_table_single),
+      _context(context)
 {
     assert(dof_table_single.getNumberOfComponents() == 1);
 }
@@ -44,11 +44,13 @@ GlobalVector const& GlobalVectorFromNamedFunction::call(
     assert(dof_table.getNumberOfComponents() == static_cast<int>(n_args));
     std::vector<double> args(n_args);
 
-    for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id) {
-        // TODO maybe fill args via callback mechanism or remove this class entirely.
-        // Caution: The order of args will be the same as the order of the
-        // components in the global vector!
-        for (std::size_t i = 0; i < n_args; ++i) {
+    for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
+    {
+        // TODO maybe fill args via callback mechanism or remove this class
+        // entirely. Caution: The order of args will be the same as the order of
+        // the components in the global vector!
+        for (std::size_t i = 0; i < n_args; ++i)
+        {
             args[i] = NumLib::getNodalValue(x, _mesh, dof_table, node_id, i);
         }
 
