@@ -22,11 +22,11 @@ namespace HT
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assembleWithCoupledTerm(double const t,
-                            std::vector<double>& local_M_data,
-                            std::vector<double>& local_K_data,
-                            std::vector<double>& local_b_data,
-                            LocalCoupledSolutions const& coupled_xs)
+    assembleForStaggeredScheme(double const t,
+                               std::vector<double>& local_M_data,
+                               std::vector<double>& local_K_data,
+                               std::vector<double>& local_b_data,
+                               LocalCoupledSolutions const& coupled_xs)
 {
     if (coupled_xs.process_id == 0)
     {
@@ -277,8 +277,10 @@ StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 {
     auto const indices = NumLib::getIndices(this->_element.getID(), dof_table);
     assert(!indices.empty());
-    auto const local_xs =
-        getCurrentLocalSolutions(*(this->_coupled_solutions), indices);
+    std::vector<std::vector<GlobalIndexType>> indices_of_all_coupled_processes =
+        {indices, indices};
+    auto const local_xs = getCurrentLocalSolutions(
+        *(this->_coupled_solutions), indices_of_all_coupled_processes);
 
     return this->getIntPtDarcyVelocityLocal(t, local_xs[0], local_xs[1], cache);
 }

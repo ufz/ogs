@@ -11,6 +11,8 @@
 
 #include <cassert>
 
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
+
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 #include "HTMaterialProperties.h"
@@ -46,7 +48,12 @@ void HTProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    ProcessLib::ProcessVariable const& pv = getProcessVariables()[0];
+    // For the staggered scheme, both processes are assumed to use the same
+    // element order. Therefore the order of shape function can be fetched from
+    // any set of the sets of process variables of the coupled processes. Here,
+    // we take the one from the first process by setting process_id = 0.
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     if (_use_monolithic_scheme)
     {
@@ -78,9 +85,12 @@ void HTProcess::assembleConcreteProcess(const double t,
                                         GlobalMatrix& K,
                                         GlobalVector& b)
 {
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_tables;
     if (_use_monolithic_scheme)
     {
         DBUG("Assemble HTProcess.");
+        dof_tables.emplace_back(*_local_to_global_index_map);
     }
     else
     {
@@ -97,12 +107,14 @@ void HTProcess::assembleConcreteProcess(const double t,
                 "fluid flow process within HTProcess.");
         }
         setCoupledSolutionsOfPreviousTimeStep();
+        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(*_local_to_global_index_map);
     }
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
+        dof_tables, t, x, M, K, b, _coupled_solutions);
 }
 
 void HTProcess::assembleWithJacobianConcreteProcess(
@@ -112,15 +124,23 @@ void HTProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HTProcess.");
 
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_tables;
     if (!_use_monolithic_scheme)
     {
         setCoupledSolutionsOfPreviousTimeStep();
+        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+    }
+    else
+    {
+        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
     }
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
+        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx,
         dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
@@ -158,6 +178,55 @@ void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers()
     GlobalExecutor::executeMemberOnDereferenced(
         &HTLocalAssemblerInterface::setStaggeredCoupledSolutions,
         _local_assemblers, _coupled_solutions);
+}
+
+std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
+    HTProcess::getDOFTableForExtrapolatorData() const
+{
+    if (!_use_monolithic_scheme)
+    {
+        // For single-variable-single-component processes reuse the existing DOF
+        // table.
+        const bool manage_storage = false;
+        return std::make_tuple(_local_to_global_index_map.get(),
+                               manage_storage);
+    }
+
+    // Otherwise construct a new DOF table.
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
+    all_mesh_subsets_single_component.emplace_back(
+        _mesh_subset_all_nodes.get());
+
+    const bool manage_storage = true;
+    return std::make_tuple(new NumLib::LocalToGlobalIndexMap(
+        std::move(all_mesh_subsets_single_component),
+        // by location order is needed for output
+        NumLib::ComponentOrder::BY_LOCATION), manage_storage);
+}
+
+void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
+{
+    const auto number_of_coupled_solutions =
+        _coupled_solutions->coupled_xs.size();
+    _coupled_solutions->coupled_xs_t0.clear();
+    _coupled_solutions->coupled_xs_t0.reserve(number_of_coupled_solutions);
+    const int process_id = _coupled_solutions->process_id;
+    for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
+    {
+        const auto& x_t0 = _xs_previous_timestep[process_id];
+        if (x_t0 == nullptr)
+        {
+            OGS_FATAL(
+                "Memory is not allocated for the global vector "
+                "of the solution of the previous time step for the ."
+                "staggered scheme.\n It can be done by overriding "
+                "Process::preTimestepConcreteProcess"
+                "(ref. HTProcess::preTimestepConcreteProcess) ");
+        }
+
+        MathLib::LinAlg::setLocalAccessibleVector(*x_t0);
+        _coupled_solutions->coupled_xs_t0.emplace_back(x_t0.get());
+    }
 }
 
 }  // namespace HT

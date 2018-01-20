@@ -81,7 +81,8 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     }
 
     // need to use a custom Neumann BC assembler for displacement jumps
-    for (ProcessVariable& pv : getProcessVariables())
+    const int monolithic_process_id = 0;
+    for (ProcessVariable& pv : getProcessVariables(monolithic_process_id))
     {
         if (pv.getName().find("displacement_jump") == std::string::npos)
             continue;
@@ -111,7 +112,9 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
             std::make_unique<MeshLib::ElementStatus>(&mesh,
                                                      vec_p_inactive_matIDs);
 
-        ProcessVariable const& pv_p = getProcessVariables()[0];
+        const int monolithic_process_id = 0;
+        ProcessVariable const& pv_p =
+            getProcessVariables(monolithic_process_id)[0];
         _process_data.p0 = &pv_p.getInitialCondition();
     }
 }
@@ -192,15 +195,17 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 {
     assert(mesh.getDimension() == GlobalDim);
     INFO("[LIE/HM] creating local assemblers");
+    const int monolithic_process_id = 0;
     ProcessLib::LIE::HydroMechanics::createLocalAssemblers<
         GlobalDim, HydroMechanicsLocalAssemblerMatrix,
         HydroMechanicsLocalAssemblerMatrixNearFracture,
         HydroMechanicsLocalAssemblerFracture>(
         mesh.getElements(), dof_table,
         // use displacment process variable for shapefunction order
-        getProcessVariables()[1].get().getShapeFunctionOrder(),
-        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-        _process_data);
+        getProcessVariables(
+            monolithic_process_id)[1].get().getShapeFunctionOrder(),
+            _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
+            _process_data);
 
     auto mesh_prop_sigma_xx = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_xx",
@@ -420,11 +425,16 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     {
         int global_component_offset_next = 0;
         int global_component_offset = 0;
+
+        const int monolithic_process_id = 0;
         for (int variable_id = 0;
-             variable_id < static_cast<int>(this->getProcessVariables().size());
+             variable_id <
+             static_cast<int>(this->getProcessVariables(
+                              monolithic_process_id).size());
              ++variable_id)
         {
-            ProcessVariable& pv = this->getProcessVariables()[variable_id];
+            ProcessVariable& pv =
+                this->getProcessVariables(monolithic_process_id)[variable_id];
             int const n_components = pv.getNumberOfComponents();
             global_component_offset = global_component_offset_next;
             global_component_offset_next += n_components;
@@ -439,7 +449,9 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
 
     MathLib::LinAlg::setLocalAccessibleVector(x);
 
-    ProcessVariable& pv_g = this->getProcessVariables()[g_variable_id];
+    const int monolithic_process_id = 0;
+    ProcessVariable& pv_g =
+        this->getProcessVariables(monolithic_process_id)[g_variable_id];
     auto& mesh_prop_g = pv_g.getOrCreateMeshProperty();
     auto const num_comp = pv_g.getNumberOfComponents();
     for (int component_id = 0; component_id < num_comp; ++component_id)
@@ -499,10 +511,12 @@ void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
 {
     DBUG("Assemble HydroMechanicsProcess.");
 
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
+        dof_table, t, x, M, K, b, _coupled_solutions);
 }
 
 template <int GlobalDim>
@@ -514,9 +528,11 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
     DBUG("AssembleWithJacobian HydroMechanicsProcess.");
 
     // Call global assembler for each local assembly item.
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+       dof_table = {std::ref(*_local_to_global_index_map)};
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
+        _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
         dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 

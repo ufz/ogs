@@ -39,7 +39,7 @@ public:
         std::unique_ptr<Output>&& output,
         std::vector<std::unique_ptr<SingleProcessData>>&& per_process_data,
         const unsigned global_coupling_max_iterations,
-        std::unique_ptr<NumLib::ConvergenceCriterion>&&
+        std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
             global_coupling_conv_crit,
         const double start_time, const double end_time);
 
@@ -71,8 +71,9 @@ private:
 
     /// Maximum iterations of the global coupling.
     const unsigned _global_coupling_max_iterations;
-    /// Convergence criteria of the global coupling iterations.
-    std::unique_ptr<NumLib::ConvergenceCriterion> _global_coupling_conv_crit;
+    /// Convergence criteria of processes for the global coupling iterations.
+    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
+        _global_coupling_conv_crit;
 
     /**
      *  Vector of solutions of the coupled processes.

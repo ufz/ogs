@@ -18,6 +18,9 @@ class ConfigTree;
 
 namespace ProcessLib
 {
+
+struct LocalCoupledSolutions;
+
 //! Assembles the Jacobian matrix using a provided "analytical" method from the
 //! local assembler.
 class AnalyticalJacobianAssembler final : public AbstractJacobianAssembler
@@ -34,6 +37,14 @@ public:
         const double dx_dx, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data) override;
+
+    void assembleWithJacobianForStaggeredScheme(
+        LocalAssemblerInterface& local_assembler,
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions) override;
 };
 
 }  // ProcessLib

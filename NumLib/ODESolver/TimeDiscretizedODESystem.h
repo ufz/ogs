@@ -73,15 +73,16 @@ public:
 
     /*! Constructs a new instance.
      *
+     * \param process_id ID of the ODE to be solved.
      * \param ode the ODE to be wrapped.
      * \param time_discretization the time discretization to be used.
      */
-    explicit TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization);
+    explicit TimeDiscretizedODESystem(const int process_id, ODE& ode,
+                                      TimeDisc& time_discretization);
 
     ~TimeDiscretizedODESystem() override;
 
-    void assemble(const GlobalVector& x_new_timestep)
-                  override;
+    void assemble(const GlobalVector& x_new_timestep) override;
 
     void getResidual(GlobalVector const& x_new_timestep,
                      GlobalVector& res) const override;
@@ -114,9 +115,10 @@ public:
     }
 
     TimeDisc& getTimeDiscretization() override { return _time_disc; }
-    MathLib::MatrixSpecifications getMatrixSpecifications() const override
+    MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int process_id) const override
     {
-        return _ode.getMatrixSpecifications();
+        return _ode.getMatrixSpecifications(process_id);
     }
 
 private:
@@ -169,12 +171,12 @@ public:
      * \param ode the ODE to be wrapped.
      * \param time_discretization the time discretization to be used.
      */
-    explicit TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization);
+    explicit TimeDiscretizedODESystem(const int process_id, ODE& ode,
+                                      TimeDisc& time_discretization);
 
     ~TimeDiscretizedODESystem() override;
 
-    void assemble(const GlobalVector& x_new_timestep)
-                  override;
+    void assemble(const GlobalVector& x_new_timestep) override;
 
     void getA(GlobalMatrix& A) const override
     {
@@ -212,9 +214,10 @@ public:
     }
 
     TimeDisc& getTimeDiscretization() override { return _time_disc; }
-    MathLib::MatrixSpecifications getMatrixSpecifications() const override
+    MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int process_id) const override
     {
-        return _ode.getMatrixSpecifications();
+        return _ode.getMatrixSpecifications(process_id);
     }
 
 private:

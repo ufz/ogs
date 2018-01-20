@@ -1,1 +1,1 @@
-Global convergence criteria of the coupling iterations.
+Defines the global convergence controls for the staggered scheme.

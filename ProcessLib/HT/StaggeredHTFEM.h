@@ -62,7 +62,7 @@ public:
     {
     }
 
-    void assembleWithCoupledTerm(
+    void assembleForStaggeredScheme(
         double const t, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_xs) override;

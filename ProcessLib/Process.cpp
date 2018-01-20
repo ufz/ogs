@@ -51,6 +51,39 @@ Process::Process(
 {
 }
 
+void Process::initializeProcessBoundaryConditionsAndSourceTerms(
+    const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id)
+{
+    auto const& per_process_variables = _process_variables[process_id];
+    auto& per_process_BCs = _boundary_conditions[process_id];
+
+    per_process_BCs.addBCsForProcessVariables(per_process_variables, dof_table,
+                                              _integration_order);
+
+    std::vector<std::unique_ptr<NodalSourceTerm>> per_process_source_terms;
+    for (auto& pv : per_process_variables)
+    {
+        auto sts = pv.get().createSourceTerms(dof_table, 0, _integration_order);
+
+        std::move(sts.begin(), sts.end(),
+                  std::back_inserter(per_process_source_terms));
+    }
+    _source_terms.push_back(std::move(per_process_source_terms));
+}
+
+void Process::initializeBoundaryConditions()
+{
+    // The number of processes is identical to the size of _process_variables,
+    // the vector contains variables for different processes. See the
+    // documentation of _process_variables.
+    const std::size_t number_of_processes = _process_variables.size();
+    for (std::size_t pcs_id = 0; pcs_id < number_of_processes; pcs_id++)
+    {
+        initializeProcessBoundaryConditionsAndSourceTerms(
+            *_local_to_global_index_map, pcs_id);
+    }
+}
+
 void Process::initialize()
 {
     DBUG("Initialize process.");
@@ -70,32 +103,16 @@ void Process::initialize()
     finishNamedFunctionsInitialization();
 
     DBUG("Initialize boundary conditions.");
-    for (std::size_t pcs_id = 0; pcs_id < _process_variables.size(); pcs_id++)
-    {
-        auto const& per_process_variables = _process_variables[pcs_id];
-        auto& per_process_BCs = _boundary_conditions[pcs_id];
-
-        per_process_BCs.addBCsForProcessVariables(per_process_variables,
-                                                  *_local_to_global_index_map,
-                                                  _integration_order);
-
-        std::vector<std::unique_ptr<NodalSourceTerm>> per_process_source_terms;
-        for (auto& pv : per_process_variables)
-        {
-            auto sts = pv.get().createSourceTerms(*_local_to_global_index_map,
-                                                  0, _integration_order);
-
-            std::move(sts.begin(), sts.end(),
-                      std::back_inserter(per_process_source_terms));
-        }
-        _source_terms.push_back(std::move(per_process_source_terms));
-    }
+    initializeBoundaryConditions();
 }
 
-void Process::setInitialConditions(const unsigned pcs_id, double const t,
+void Process::setInitialConditions(const int process_id, double const t,
                                    GlobalVector& x)
 {
-    auto const& per_process_variables = _process_variables[pcs_id];
+    // getDOFTableOfProcess can be overloaded by the specific process.
+    auto const& dof_table_of_process = getDOFTable(process_id);
+
+    auto const& per_process_variables = _process_variables[process_id];
     for (std::size_t variable_id = 0;
          variable_id < per_process_variables.size();
          variable_id++)
@@ -104,19 +121,16 @@ void Process::setInitialConditions(const unsigned pcs_id, double const t,
 
         auto const& pv = per_process_variables[variable_id];
         DBUG("Set the initial condition of variable %s of process %d.",
-             pv.get().getName().data(), pcs_id);
+             pv.get().getName().data(), process_id);
 
         auto const& ic = pv.get().getInitialCondition();
 
         auto const num_comp = pv.get().getNumberOfComponents();
 
-        const int mesh_subset_id = _use_monolithic_scheme ? variable_id : 0;
-
         for (int component_id = 0; component_id < num_comp; ++component_id)
         {
             auto const& mesh_subsets =
-                _local_to_global_index_map->getMeshSubsets(mesh_subset_id,
-                                                           component_id);
+                dof_table_of_process.getMeshSubsets(variable_id, component_id);
             for (auto const& mesh_subset : mesh_subsets)
             {
                 auto const mesh_id = mesh_subset->getMeshID();
@@ -129,8 +143,8 @@ void Process::setInitialConditions(const unsigned pcs_id, double const t,
                     auto const& ic_value = ic(t, pos);
 
                     auto global_index =
-                        std::abs(_local_to_global_index_map->getGlobalIndex(
-                            l, mesh_subset_id, component_id));
+                        std::abs(dof_table_of_process.getGlobalIndex(
+                            l, variable_id, component_id));
 #ifdef USE_PETSC
                     // The global indices of the ghost entries of the global
                     // matrix or the global vectors need to be set as negative
@@ -150,7 +164,8 @@ void Process::setInitialConditions(const unsigned pcs_id, double const t,
     }
 }
 
-MathLib::MatrixSpecifications Process::getMatrixSpecifications() const
+MathLib::MatrixSpecifications Process::getMatrixSpecifications(
+    const int /*process_id*/) const
 {
     auto const& l = *_local_to_global_index_map;
     return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
@@ -252,32 +267,39 @@ void Process::constructDofTable()
             NumLib::ComponentOrder::BY_LOCATION);
 }
 
-void Process::initializeExtrapolator()
+std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
+Process::getDOFTableForExtrapolatorData() const
 {
-    NumLib::LocalToGlobalIndexMap const* dof_table_single_component;
-    bool manage_storage;
-
-    if (_local_to_global_index_map->getNumberOfComponents() == 1 ||
-        !_use_monolithic_scheme)
+    if (_local_to_global_index_map->getNumberOfComponents() == 1)
     {
         // For single-variable-single-component processes reuse the existing DOF
         // table.
-        dof_table_single_component = _local_to_global_index_map.get();
-        manage_storage = false;
+        const bool manage_storage = false;
+        return std::make_tuple(_local_to_global_index_map.get(),
+                               manage_storage);
     }
-    else
-    {
-        // Otherwise construct a new DOF table.
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-        all_mesh_subsets_single_component.emplace_back(
-            _mesh_subset_all_nodes.get());
 
-        dof_table_single_component = new NumLib::LocalToGlobalIndexMap(
-            std::move(all_mesh_subsets_single_component),
-            // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION);
-        manage_storage = true;
-    }
+    // Otherwise construct a new DOF table.
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
+    all_mesh_subsets_single_component.emplace_back(
+        _mesh_subset_all_nodes.get());
+
+    const bool manage_storage = true;
+
+    return std::make_tuple(new NumLib::LocalToGlobalIndexMap(
+                               std::move(all_mesh_subsets_single_component),
+                               // by location order is needed for output
+                               NumLib::ComponentOrder::BY_LOCATION),
+                           manage_storage);
+}
+
+void Process::initializeExtrapolator()
+{
+    NumLib::LocalToGlobalIndexMap* dof_table_single_component;
+    bool manage_storage;
+
+    std::tie(dof_table_single_component, manage_storage) =
+        getDOFTableForExtrapolatorData();
 
     std::unique_ptr<NumLib::Extrapolator> extrapolator(
         new NumLib::LocalLinearLeastSquaresExtrapolator(
@@ -326,10 +348,17 @@ void Process::preTimestep(GlobalVector const& x, const double t,
     preTimestepConcreteProcess(x, t, delta_t, process_id);
 }
 
-void Process::postTimestep(GlobalVector const& x)
+void Process::postTimestep(GlobalVector const& x, int const process_id)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
-    postTimestepConcreteProcess(x);
+    postTimestepConcreteProcess(x, process_id);
+}
+
+void Process::postNonLinearSolver(GlobalVector const& x, const double t,
+                                  int const process_id)
+{
+    MathLib::LinAlg::setLocalAccessibleVector(x);
+    postNonLinearSolverConcreteProcess(x, t, process_id);
 }
 
 void Process::computeSecondaryVariable(const double t, GlobalVector const& x)
@@ -355,29 +384,6 @@ NumLib::IterationResult Process::postIteration(const GlobalVector& x)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
     return postIterationConcreteProcess(x);
-}
-
-void Process::setCoupledSolutionsOfPreviousTimeStep()
-{
-    const auto number_of_coupled_solutions =
-        _coupled_solutions->coupled_xs.size();
-    _coupled_solutions->coupled_xs_t0.reserve(number_of_coupled_solutions);
-    for (std::size_t i = 0; i < number_of_coupled_solutions; i++)
-    {
-        const auto x_t0 = getPreviousTimeStepSolution(i);
-        if (x_t0 == nullptr)
-        {
-            OGS_FATAL(
-                "Memory is not allocated for the global vector "
-                "of the solution of the previous time step for the ."
-                "staggered scheme.\n It can be done by overloading "
-                "Process::preTimestepConcreteProcess"
-                "(ref. HTProcess::preTimestepConcreteProcess) ");
-        }
-
-        MathLib::LinAlg::setLocalAccessibleVector(*x_t0);
-        _coupled_solutions->coupled_xs_t0.emplace_back(x_t0);
-    }
 }
 
 }  // namespace ProcessLib

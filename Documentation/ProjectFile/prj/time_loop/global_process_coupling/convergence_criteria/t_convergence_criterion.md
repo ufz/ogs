@@ -1,0 +1,1 @@
+Defines the convergence criterion of each process in the staggered scheme.

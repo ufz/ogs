@@ -12,11 +12,13 @@
 #include <cassert>
 
 #include "MeshLib/Elements/Utils.h"
+#include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "ProcessLib/HydroMechanics/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
 
-#include "CreateLocalAssemblers.h"
 #include "HydroMechanicsFEM.h"
 #include "HydroMechanicsProcessData.h"
+#include "HydroMechanicsProcess.h"
 
 namespace ProcessLib
 {
@@ -49,6 +51,26 @@ bool HydroMechanicsProcess<DisplacementDim>::isLinear() const
 }
 
 template <int DisplacementDim>
+MathLib::MatrixSpecifications
+HydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
+    const int process_id) const
+{
+    // For the monolithic scheme or the M process (deformation) in the staggered
+    // scheme.
+    if (_use_monolithic_scheme || process_id == 1)
+    {
+        auto const& l = *_local_to_global_index_map;
+        return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
+                &l.getGhostIndices(), &this->_sparsity_pattern};
+    }
+
+    // For staggered scheme and H process (pressure).
+    auto const& l = *_local_to_global_index_map_with_base_nodes;
+    return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
+            &l.getGhostIndices(), &_sparsity_pattern_with_linear_element};
+}
+
+template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
@@ -59,40 +81,8 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
     _mesh_subset_base_nodes =
         std::make_unique<MeshLib::MeshSubset>(_mesh, &_base_nodes);
 
-    // Collect the mesh subsets in a vector.
-
-    // For pressure, which is the first
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
-    all_mesh_subsets.emplace_back(_mesh_subset_base_nodes.get());
-
-    // For displacement.
-    std::generate_n(
-        std::back_inserter(all_mesh_subsets),
-        getProcessVariables()[1].get().getNumberOfComponents(),
-        [&]() { return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}; });
-
-    std::vector<int> const vec_n_components{1, DisplacementDim};
-    _local_to_global_index_map =
-        std::make_unique<NumLib::LocalToGlobalIndexMap>(
-            std::move(all_mesh_subsets), vec_n_components,
-            NumLib::ComponentOrder::BY_LOCATION);
-}
-
-template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
-    NumLib::LocalToGlobalIndexMap const& dof_table,
-    MeshLib::Mesh const& mesh,
-    unsigned const integration_order)
-{
-    createLocalAssemblers<DisplacementDim, HydroMechanicsLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        // use displacment process variable for shapefunction order
-        getProcessVariables()[1].get().getShapeFunctionOrder(),
-        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-        _process_data);
-
     // TODO move the two data members somewhere else.
-    // for extrapolation of secondary variables
+    // for extrapolation of secondary variables of stress or strain
     std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
     all_mesh_subsets_single_component.emplace_back(
         _mesh_subset_all_nodes.get());
@@ -102,74 +92,165 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION);
 
+    if (_use_monolithic_scheme)
+    {
+        // For pressure, which is the first
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+        all_mesh_subsets.emplace_back(_mesh_subset_base_nodes.get());
+
+        // For displacement.
+        const int monolithic_process_id = 0;
+        std::generate_n(
+            std::back_inserter(all_mesh_subsets),
+            getProcessVariables(monolithic_process_id)[1]
+                .get()
+                .getNumberOfComponents(),
+            [&]() {
+                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
+            });
+
+        std::vector<int> const vec_n_components{1, DisplacementDim};
+        _local_to_global_index_map =
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
+                std::move(all_mesh_subsets), vec_n_components,
+                NumLib::ComponentOrder::BY_LOCATION);
+        assert(_local_to_global_index_map);
+    }
+    else
+    {
+        // For displacement equation.
+        const int process_id = 1;
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+        std::generate_n(
+            std::back_inserter(all_mesh_subsets),
+            getProcessVariables(process_id)[0].get().getNumberOfComponents(),
+            [&]() {
+                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
+            });
+
+        std::vector<int> const vec_n_components{DisplacementDim};
+        _local_to_global_index_map =
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
+                std::move(all_mesh_subsets), vec_n_components,
+                NumLib::ComponentOrder::BY_LOCATION);
+
+        // For pressure equation.
+        // Collect the mesh subsets with base nodes in a vector.
+        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_base_nodes;
+        all_mesh_subsets_base_nodes.emplace_back(_mesh_subset_base_nodes.get());
+        _local_to_global_index_map_with_base_nodes =
+            std::make_unique<NumLib::LocalToGlobalIndexMap>(
+                std::move(all_mesh_subsets_base_nodes),
+                // by location order is needed for output
+                NumLib::ComponentOrder::BY_LOCATION);
+
+        _sparsity_pattern_with_linear_element = NumLib::computeSparsityPattern(
+            *_local_to_global_index_map_with_base_nodes, _mesh);
+
+        assert(_local_to_global_index_map);
+        assert(_local_to_global_index_map_with_base_nodes);
+    }
+}
+
+template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    MeshLib::Mesh const& mesh,
+    unsigned const integration_order)
+{
+    const int mechanical_process_id = _use_monolithic_scheme ? 0 : 1;
+    const int deformation_variable_id = _use_monolithic_scheme ? 1 : 0;
+    ProcessLib::HydroMechanics::createLocalAssemblers<
+        DisplacementDim, HydroMechanicsLocalAssembler>(
+        mesh.getDimension(), mesh.getElements(), dof_table,
+        // use displacement process variable to set shape function order
+        getProcessVariables(mechanical_process_id)[deformation_variable_id]
+            .get()
+            .getShapeFunctionOrder(),
+        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
+        _process_data);
+
     Base::_secondary_variables.addSecondaryVariable(
         "sigma_xx",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtSigmaXX));
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtSigmaXX));
 
     Base::_secondary_variables.addSecondaryVariable(
         "sigma_yy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtSigmaYY));
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtSigmaYY));
 
     Base::_secondary_variables.addSecondaryVariable(
         "sigma_zz",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtSigmaZZ));
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtSigmaZZ));
 
     Base::_secondary_variables.addSecondaryVariable(
         "sigma_xy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtSigmaXY));
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtSigmaXY));
 
     if (DisplacementDim == 3)
     {
         Base::_secondary_variables.addSecondaryVariable(
             "sigma_xz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &LocalAssemblerInterface::getIntPtSigmaXZ));
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                             &LocalAssemblerInterface::getIntPtSigmaXZ));
 
         Base::_secondary_variables.addSecondaryVariable(
             "sigma_yz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &LocalAssemblerInterface::getIntPtSigmaYZ));
+            makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                             &LocalAssemblerInterface::getIntPtSigmaYZ));
     }
 
     Base::_secondary_variables.addSecondaryVariable(
         "epsilon_xx",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtEpsilonXX));
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtEpsilonXX));
 
     Base::_secondary_variables.addSecondaryVariable(
         "epsilon_yy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtEpsilonYY));
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtEpsilonYY));
 
     Base::_secondary_variables.addSecondaryVariable(
         "epsilon_zz",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtEpsilonZZ));
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtEpsilonZZ));
 
     Base::_secondary_variables.addSecondaryVariable(
         "epsilon_xy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtEpsilonXY));
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtEpsilonXY));
 
     Base::_secondary_variables.addSecondaryVariable(
         "velocity",
-        makeExtrapolator(
-            mesh.getDimension(), getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtDarcyVelocity));
+        makeExtrapolator(mesh.getDimension(), getExtrapolator(),
+                         _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtDarcyVelocity));
+}
+
+template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
+{
+    if (_use_monolithic_scheme)
+    {
+        const int process_id_of_hydromechancs = 0;
+        initializeProcessBoundaryConditionsAndSourceTerms(
+            *_local_to_global_index_map, process_id_of_hydromechancs);
+        return;
+    }
+
+    // Staggered scheme:
+    // for the equations of pressure
+    const int hydraulic_process_id = 0;
+    initializeProcessBoundaryConditionsAndSourceTerms(
+        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id);
+
+    // for the equations of deformation.
+    const int mechanical_process_id = 1;
+    initializeProcessBoundaryConditionsAndSourceTerms(
+        *_local_to_global_index_map, mechanical_process_id);
 }
 
 template <int DisplacementDim>
@@ -177,53 +258,126 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
     GlobalVector& b)
 {
-    DBUG("Assemble HydroMechanicsProcess.");
+    DBUG("Assemble the equations for HydroMechanics");
 
+    // Note: This assembly function is for the Picard nonlinear solver. Since
+    // only the Newton-Raphson method is employed to simulate coupled HM
+    // processes in this class, this function is actually not used so far.
+
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
+        dof_table, t, x, M, K, b, _coupled_solutions);
 }
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(
-        const double t, GlobalVector const& x, GlobalVector const& xdot,
-        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(const double t, GlobalVector const& x,
+                                        GlobalVector const& xdot,
+                                        const double dxdot_dx,
+                                        const double dx_dx, GlobalMatrix& M,
+                                        GlobalMatrix& K, GlobalVector& b,
+                                        GlobalMatrix& Jac)
 {
-    DBUG("AssembleJacobian HydroMechanicsProcess.");
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_tables;
+    // For the monolithic scheme
+    if (_use_monolithic_scheme)
+    {
+        DBUG(
+            "Assemble the Jacobian of HydroMechanics for the monolithic"
+            " scheme.");
+        dof_tables.emplace_back(*_local_to_global_index_map);
+    }
+    else
+    {
+        // For the staggered scheme
+        if (_coupled_solutions->process_id == 0)
+        {
+            DBUG(
+                "Assemble the Jacobian equations of liquid fluid process in "
+                "HydroMechanics for the staggered scheme.");
+        }
+        else
+        {
+            DBUG(
+                "Assemble the Jacobian equations of mechanical process in "
+                "HydroMechanics for the staggered scheme.");
+        }
+        dof_tables.emplace_back(*_local_to_global_index_map_with_base_nodes);
+        dof_tables.emplace_back(*_local_to_global_index_map);
+    }
 
-    // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
+        Jac, _coupled_solutions);
 }
+
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     GlobalVector const& x, double const t, double const dt,
-    const int /*process_id*/)
+    const int process_id)
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 
     _process_data.dt = dt;
     _process_data.t = t;
 
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        *_local_to_global_index_map, x, t, dt);
+    if (hasMechanicalProcess(process_id))
+        GlobalExecutor::executeMemberOnDereferenced(
+            &LocalAssemblerInterface::preTimestep, _local_assemblers,
+            *_local_to_global_index_map, x, t, dt);
 }
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x)
+    GlobalVector const& x, const int process_id)
 {
     DBUG("PostTimestep HydroMechanicsProcess.");
-
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        *_local_to_global_index_map, x);
+        getDOFTable(process_id), x);
+}
+
+template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
+    GlobalVector const& x, const double t, const int process_id)
+{
+    if (!hasMechanicalProcess(process_id))
+    {
+        return;
+    }
+
+    DBUG("PostNonLinearSolver HydroMechanicsProcess.");
+    // Calculate strain, stress or other internal variables of mechanics.
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
+        getDOFTable(process_id), x, t, _use_monolithic_scheme);
+}
+
+template <int DisplacementDim>
+std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
+HydroMechanicsProcess<DisplacementDim>::getDOFTableForExtrapolatorData() const
+{
+    const bool manage_storage = false;
+    return std::make_tuple(_local_to_global_index_map_single_component.get(),
+                           manage_storage);
+}
+
+template <int DisplacementDim>
+NumLib::LocalToGlobalIndexMap const&
+HydroMechanicsProcess<DisplacementDim>::getDOFTable(const int process_id) const
+{
+    if (hasMechanicalProcess(process_id))
+    {
+        return *_local_to_global_index_map;
+    }
+
+    // For the equation of pressure
+    return *_local_to_global_index_map_with_base_nodes;
 }
 
 }  // namespace HydroMechanics

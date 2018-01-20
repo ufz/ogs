@@ -60,8 +60,15 @@ public:
         return _local_assemblers[element_id]->getFlux(p, local_x);
     }
 
-    void postTimestepConcreteProcess(GlobalVector const& x) override
+    void postTimestepConcreteProcess(GlobalVector const& x,
+                                     int const process_id) override
     {
+        //For this single process, process_id is always zero.
+        if (process_id != 0)
+        {
+            OGS_FATAL("The condition of process_id = 0 must be satisfied for "
+                      "GroundwaterFlowProcess, which is a single process." );
+        }
         if (_balance_mesh) // computing the balance is optional
         {
             std::vector<double> init_values(
@@ -71,7 +78,9 @@ public:
                                        init_values);
             auto balance = ProcessLib::CalculateSurfaceFlux(
                 *_balance_mesh,
-                getProcessVariables()[0].get().getNumberOfComponents(),
+                getProcessVariables(process_id)[0]
+                    .get()
+                    .getNumberOfComponents(),
                 _integration_order);
 
             auto* const balance_pv =

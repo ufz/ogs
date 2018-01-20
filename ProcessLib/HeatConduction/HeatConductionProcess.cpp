@@ -39,7 +39,8 @@ void HeatConductionProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    ProcessLib::ProcessVariable const& pv = getProcessVariables()[0];
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         pv.getShapeFunctionOrder(), _local_assemblers,
@@ -77,10 +78,12 @@ void HeatConductionProcess::assembleConcreteProcess(const double t,
 {
     DBUG("Assemble HeatConductionProcess.");
 
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, x, M, K, b, _coupled_solutions);
+        dof_table, t, x, M, K, b, _coupled_solutions);
 }
 
 void HeatConductionProcess::assembleWithJacobianConcreteProcess(
@@ -90,10 +93,12 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HeatConductionProcess.");
 
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
+        _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
         dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 

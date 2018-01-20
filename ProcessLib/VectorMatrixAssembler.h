@@ -44,22 +44,24 @@ public:
     //! \remark Jacobian is not assembled here, see assembleWithJacobian().
     void assemble(std::size_t const mesh_item_id,
                   LocalAssemblerInterface& local_assembler,
-                  NumLib::LocalToGlobalIndexMap const& dof_table,
+                  std::vector<std::reference_wrapper<
+                      NumLib::LocalToGlobalIndexMap>> const& dof_tables,
                   double const t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b,
-                  const CoupledSolutionsForStaggeredScheme* cpl_xs);
+                  CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
     //! \note The Jacobian must be assembled.
-    void assembleWithJacobian(std::size_t const mesh_item_id,
-                              LocalAssemblerInterface& local_assembler,
-                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                              const double t, GlobalVector const& x,
-                              GlobalVector const& xdot, const double dxdot_dx,
-                              const double dx_dx, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
-                              GlobalMatrix& Jac,
-                              const CoupledSolutionsForStaggeredScheme* cpl_xs);
+    void assembleWithJacobian(
+        std::size_t const mesh_item_id,
+        LocalAssemblerInterface& local_assembler,
+        std::vector<
+            std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+            dof_tables,
+        const double t, GlobalVector const& x, GlobalVector const& xdot,
+        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
+        CoupledSolutionsForStaggeredScheme const* const cpl_xs);
 
 private:
     // temporary data only stored here in order to avoid frequent memory

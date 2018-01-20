@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <tuple>
+
 #include "NumLib/NamedFunctionCaller.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
@@ -57,7 +59,12 @@ public:
                      const double delta_t, const int process_id);
 
     /// Postprocessing after a complete timestep.
-    void postTimestep(GlobalVector const& x);
+    void postTimestep(GlobalVector const& x, int const process_id);
+
+    /// Calculates secondary variables, e.g. stress and strain for deformation
+    /// analysis, only after nonlinear solver being successfully conducted.
+    void postNonLinearSolver(GlobalVector const& x, const double t,
+                             int const process_id);
 
     void preIteration(const unsigned iter, GlobalVector const& x) final;
 
@@ -68,16 +75,16 @@ public:
 
     void initialize();
 
-    void setInitialConditions(const unsigned pcs_id, const double t,
+    void setInitialConditions(const int process_id, const double t,
                               GlobalVector& x);
 
-    MathLib::MatrixSpecifications getMatrixSpecifications() const final;
+    virtual MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int process_id) const override;
 
     void setCoupledSolutionsForStaggeredScheme(
         CoupledSolutionsForStaggeredScheme* const coupled_solutions)
     {
         _coupled_solutions = coupled_solutions;
-
     }
 
     bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
@@ -100,31 +107,22 @@ public:
         return _boundary_conditions[pcs_id].getKnownSolutions(t);
     }
 
-    NumLib::LocalToGlobalIndexMap const& getDOFTable() const
+    virtual NumLib::LocalToGlobalIndexMap const& getDOFTable(
+        const int /*process_id*/) const
     {
         return *_local_to_global_index_map;
     }
 
     MeshLib::Mesh& getMesh() const { return _mesh; }
     std::vector<std::reference_wrapper<ProcessVariable>> const&
-    getProcessVariables() const
+    getProcessVariables(const int process_id) const
     {
-        const auto pcs_id =
-            (_coupled_solutions) ? _coupled_solutions->process_id : 0;
-        return _process_variables[pcs_id];
+        return _process_variables[process_id];
     }
 
     SecondaryVariableCollection const& getSecondaryVariables() const
     {
         return _secondary_variables;
-    }
-
-    // Get the solution of the previous time step.
-
-    virtual GlobalVector* getPreviousTimeStepSolution(
-        const int /*process_id*/) const
-    {
-        return nullptr;
     }
 
     // Used as a call back for CalculateSurfaceFlux process.
@@ -147,12 +145,24 @@ protected:
         return _extrapolator_data.getDOFTable();
     }
 
+    /**
+     * Initialize the boundary conditions for a single process or coupled
+     * processes modelled by the monolithic scheme. It is called by
+     * initializeBoundaryConditions().
+     */
+    void initializeProcessBoundaryConditionsAndSourceTerms(
+        const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id);
+
 private:
     /// Process specific initialization called by initialize().
     virtual void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) = 0;
+
+    /// Member function to initialize the boundary conditions for all coupled
+    /// processes. It is called by initialize().
+    virtual void initializeBoundaryConditions();
 
     virtual void preAssembleConcreteProcess(const double /*t*/,
                                             GlobalVector const& /*x*/)
@@ -175,7 +185,17 @@ private:
     {
     }
 
-    virtual void postTimestepConcreteProcess(GlobalVector const& /*x*/) {}
+    virtual void postTimestepConcreteProcess(GlobalVector const& /*x*/,
+                                             int const /*process_id*/)
+    {
+    }
+
+    virtual void postNonLinearSolverConcreteProcess(GlobalVector const& /*x*/,
+                                                    const double /*t*/,
+                                                    int const /*process_id*/)
+    {
+    }
+
     virtual void preIterationConcreteProcess(const unsigned /*iter*/,
                                              GlobalVector const& /*x*/)
     {
@@ -194,6 +214,17 @@ private:
 
 protected:
     virtual void constructDofTable();
+
+    /**
+     * Get the address of a LocalToGlobalIndexMap, and the status of its memory.
+     * If the LocalToGlobalIndexMap is created as new in this function, the
+     * function also returns a true boolean value to let Extrapolator manage
+     * the memory by the address returned by this function.
+     *
+     * @return Address of a LocalToGlobalIndexMap and its memory status.
+     */
+    virtual std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
+    getDOFTableForExtrapolatorData() const;
 
 private:
     void initializeExtrapolator();
@@ -227,18 +258,14 @@ protected:
     /// references to the solutions of the coupled processes.
     CoupledSolutionsForStaggeredScheme* _coupled_solutions;
 
-    /// Set the solutions of the previous time step to the coupled term.
-    /// It only performs for the staggered scheme.
-    void setCoupledSolutionsOfPreviousTimeStep();
-
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is
     /// implemented in MathLib::GaussLegendre.
     unsigned const _integration_order;
 
-private:
     GlobalSparsityPattern _sparsity_pattern;
 
+private:
     /// Variables used by this process.  For the monolithic scheme or a
     /// single process, the size of the outer vector is one. For the
     /// staggered scheme, the size of the outer vector is the number of the
