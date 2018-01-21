@@ -484,7 +484,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
 
         ProcessLib::SpatialPosition x;
         x.setNodeID(node_id);
-        vec_b[node_id] = w[GlobalDim == 2 ? 1 : 2] +
+        vec_b[node_id] = w[GlobalDim - 1] +
                          (*_process_data.fracture_property->aperture0)(0, x)[0];
     }
 }
