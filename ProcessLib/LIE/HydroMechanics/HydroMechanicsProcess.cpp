@@ -421,30 +421,20 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     // variables are set during output and are not ready yet when this function
     // is called.
     int g_variable_id = 0;
-    int g_global_component_offset = 0;
     {
-        int global_component_offset_next = 0;
-        int global_component_offset = 0;
-
         const int monolithic_process_id = 0;
-        for (int variable_id = 0;
-             variable_id <
-             static_cast<int>(this->getProcessVariables(
-                              monolithic_process_id).size());
-             ++variable_id)
+        auto const& pvs = getProcessVariables(monolithic_process_id);
+        auto const it =
+            std::find_if(pvs.begin(), pvs.end(), [](ProcessVariable const& pv) {
+                return pv.getName() == "displacement_jump1";
+            });
+        if (it == pvs.end())
         {
-            ProcessVariable& pv =
-                this->getProcessVariables(monolithic_process_id)[variable_id];
-            int const n_components = pv.getNumberOfComponents();
-            global_component_offset = global_component_offset_next;
-            global_component_offset_next += n_components;
-            if (pv.getName() != "displacement_jump1")
-                continue;
-
-            g_variable_id = variable_id;
-            g_global_component_offset = global_component_offset;
-            break;
+            OGS_FATAL(
+                "Didn't find expected \"displacement_jump1\" process "
+                "variable.");
         }
+        g_variable_id = std::distance(pvs.begin(), it);
     }
 
     MathLib::LinAlg::setLocalAccessibleVector(x);
@@ -466,10 +456,11 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
                 MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
                                           node->getID());
 
-                auto const global_component_id =
-                    g_global_component_offset + component_id;
+                auto const global_index =
+                    _local_to_global_index_map->getGlobalIndex(l, g_variable_id,
+                                                               component_id);
                 mesh_prop_g[node->getID() * num_comp + component_id] =
-                    x[global_component_id];
+                    x[global_index];
             }
         }
     }
@@ -493,7 +484,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
 
         ProcessLib::SpatialPosition x;
         x.setNodeID(node_id);
-        vec_b[node_id] = w[GlobalDim == 2 ? 1 : 2] +
+        vec_b[node_id] = w[GlobalDim - 1] +
                          (*_process_data.fracture_property->aperture0)(0, x)[0];
     }
 }
