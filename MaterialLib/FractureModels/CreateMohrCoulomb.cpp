@@ -9,6 +9,7 @@
 
 #include "CreateMohrCoulomb.h"
 
+#include "MaterialLib/SolidModels/CreateNewtonRaphsonSolverParameters.h"
 #include "ParameterLib/Utils.h"
 
 #include "MohrCoulomb.h"
@@ -57,8 +58,16 @@ std::unique_ptr<FractureModelBase<DisplacementDim>> createMohrCoulomb(
     typename MohrCoulomb::MohrCoulomb<DisplacementDim>::MaterialProperties mp{
         Kn, Ks, friction_angle, dilatancy_angle, cohesion};
 
+    auto const& nonlinear_solver_config =
+        //! \ogs_file_param{material__fracture_model__MohrCoulomb__nonlinear_solver}
+        config.getConfigSubtree("nonlinear_solver");
+    auto const nonlinear_solver_parameters =
+        MaterialLib::createNewtonRaphsonSolverParameters(
+            nonlinear_solver_config);
+
     return std::make_unique<MohrCoulomb::MohrCoulomb<DisplacementDim>>(
-        penalty_aperture_cutoff, tension_cutoff, mp);
+        nonlinear_solver_parameters, penalty_aperture_cutoff, tension_cutoff,
+        mp);
 }
 
 template std::unique_ptr<FractureModelBase<2>> createMohrCoulomb(
