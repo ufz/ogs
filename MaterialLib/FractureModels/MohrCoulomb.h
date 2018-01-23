@@ -20,7 +20,8 @@ namespace MaterialLib
 {
 namespace Fracture
 {
-
+namespace MohrCoulomb
+{
 template <int DisplacementDim>
 class MohrCoulomb final : public FractureModelBase<DisplacementDim>
 {
@@ -129,6 +130,7 @@ private:
     MaterialProperties _mp;
 };
 
+}  // namespace MohrCoulomb
 }  // namespace Fracture
 }  // namespace MaterialLib
 
@@ -136,7 +138,10 @@ namespace MaterialLib
 {
 namespace Fracture
 {
+namespace MohrCoulomb
+{
 extern template class MohrCoulomb<2>;
 extern template class MohrCoulomb<3>;
+}  // namespace MohrCoulomb
 }  // namespace Fracture
 }  // namespace MaterialLib

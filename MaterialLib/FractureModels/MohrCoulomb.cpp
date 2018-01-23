@@ -17,7 +17,8 @@ namespace MaterialLib
 {
 namespace Fracture
 {
-
+namespace MohrCoulomb
+{
 namespace
 {
 
@@ -164,5 +165,6 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
 template class MohrCoulomb<2>;
 template class MohrCoulomb<3>;
 
-}   // namespace Fracture
+}  // namespace MohrCoulomb
+}  // namespace Fracture
 }  // namespace MaterialLib
