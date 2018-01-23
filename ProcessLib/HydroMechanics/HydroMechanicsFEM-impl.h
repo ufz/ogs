@@ -15,6 +15,7 @@
 
 #include "MaterialLib/SolidModels/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
+#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 
 namespace ProcessLib
 {
