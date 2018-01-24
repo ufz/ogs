@@ -432,7 +432,7 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON '
               }
               try {
-                build { cmd = 'UBSAN_OPTIONS=print_stacktrace=1 ninja test' }
+                build { cmd = 'UBSAN_OPTIONS=print_stacktrace=1 ninja tests' }
               }
               catch(err) { echo "Clang sanitizer for unit tests failed!" }
 
