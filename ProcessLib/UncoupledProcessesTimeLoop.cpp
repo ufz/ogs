@@ -736,6 +736,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         bool nonlinear_solver_succeeded = true;
         coupling_iteration_converged = true;
         int process_id = 0;
+        int const last_process_id = _per_process_data.size() - 1;
         for (auto& process_data : _per_process_data)
         {
             if (process_data->skip_time_stepping)
@@ -801,6 +802,10 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             if (global_coupling_iteration > 0)
             {
                 MathLib::LinAlg::axpy(x_old, -1.0, x);  // save dx to x_old
+                if (process_id == last_process_id)
+                    INFO(
+                        "------- Checking convergence criterion for coupled "
+                        "solution  -------");
                 _global_coupling_conv_crit[process_id]->checkDeltaX(x_old, x);
                 coupling_iteration_converged =
                     coupling_iteration_converged &&
