@@ -395,6 +395,31 @@ pipeline {
             }
           }
         }
+        // ************************* Tests-Large *******************************
+        stage('Tests-Large') {
+          agent {
+            docker {
+              image 'ogs6/gcc-gui:latest'
+              label 'envinf11w'
+              args '-v /home/jenkins/.ccache:/usr/src/.ccache'
+            }
+          }
+          steps {
+            script {
+              configure {
+                cmakeOptions = ' -DOGS_USE_LIS=ON '
+              }
+              build { }
+              build { target = 'ctest-large-serial' }
+            }
+          }
+          post {
+            always {
+              publishReports { }
+              dir('build') { deleteDir() }
+            }
+          }
+        }
       } // end parallel
     } // end stage Build
     stage('Master') {
