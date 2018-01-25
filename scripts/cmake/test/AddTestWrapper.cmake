@@ -21,9 +21,11 @@ execute_process(
     COMMAND ${WRAPPER_COMMAND} ${WRAPPER_ARGS} ${EXECUTABLE} ${EXECUTABLE_ARGS}
     WORKING_DIRECTORY ${case_path}
     RESULT_VARIABLE EXIT_CODE
-    OUTPUT_FILE ${STDOUT_FILE_PATH}
+    # OUTPUT_FILE ${STDOUT_FILE_PATH} # must be used exclusively
+    OUTPUT_VARIABLE OUTPUT
+    ERROR_VARIABLE OUTPUT
 )
 
 if(NOT EXIT_CODE STREQUAL "0")
-    message(FATAL_ERROR "Test wrapper exited with code: ${EXIT_CODE}")
+    message(FATAL_ERROR "Test wrapper exited with code: ${EXIT_CODE}\n${OUTPUT}")
 endif()

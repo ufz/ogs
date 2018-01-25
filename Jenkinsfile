@@ -407,7 +407,6 @@ pipeline {
           steps {
             script {
               configure { }
-              build { }
               build { target = 'ctest-large-serial' }
             }
           }

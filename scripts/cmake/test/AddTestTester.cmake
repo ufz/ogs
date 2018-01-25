@@ -36,6 +36,7 @@ foreach(CMD ${TESTER_COMMAND})
                 WORKING_DIRECTORY ${case_path}
                 RESULT_VARIABLE EXIT_CODE
                 OUTPUT_VARIABLE OUTPUT
+                ERROR_VARIABLE OUTPUT
             )
 
             if(NOT EXIT_CODE STREQUAL "0")
@@ -48,9 +49,10 @@ foreach(CMD ${TESTER_COMMAND})
             WORKING_DIRECTORY ${case_path}
             RESULT_VARIABLE EXIT_CODE
             OUTPUT_VARIABLE OUTPUT
+            ERROR_VARIABLE OUTPUT
         )
         if(NOT EXIT_CODE STREQUAL "0")
-            message(FATAL_ERROR "Error exit code: ${EXIT_CODE}")
+            message(FATAL_ERROR "Error exit code: ${EXIT_CODE}${OUTPUT}")
         endif()
     endif()
 endforeach()
