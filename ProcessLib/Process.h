@@ -16,6 +16,7 @@
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionCollection.h"
+#include "ProcessLib/SourceTerms/SourceTermCollection.h"
 #include "ProcessLib/Output/CachedSecondaryVariable.h"
 #include "ProcessLib/Output/ExtrapolatorData.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
@@ -278,9 +279,10 @@ private:
     /// scheme, the size of vector is the number of the coupled processes.
     std::vector<BoundaryConditionCollection> _boundary_conditions;
 
-    /// Vector for nodal source terms. The outer vector is for processes,
-    /// which has the same size as that for boundary conditions.
-    std::vector<std::vector<std::unique_ptr<NodalSourceTerm>>> _source_terms;
+    /// Vector for nodal source term collections. For the monolithic scheme
+    /// or a single process, the size of the vector is one. For the staggered
+    /// scheme, the size of vector is the number of the coupled processes.
+    std::vector<SourceTermCollection> _source_term_collections;
 
     ExtrapolatorData _extrapolator_data;
 };
