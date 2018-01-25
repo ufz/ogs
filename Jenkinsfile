@@ -406,9 +406,7 @@ pipeline {
           }
           steps {
             script {
-              configure {
-                cmakeOptions = ' -DOGS_USE_LIS=ON '
-              }
+              configure { }
               build { }
               build { target = 'ctest-large-serial' }
             }
