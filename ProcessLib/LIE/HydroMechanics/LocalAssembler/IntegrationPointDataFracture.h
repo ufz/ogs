@@ -56,6 +56,7 @@ struct IntegrationPointDataFracture final
     {
         w_prev = w;
         sigma_eff_prev = sigma_eff;
+        material_state_variables->pushBackState();
     }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
