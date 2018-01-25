@@ -18,7 +18,6 @@ namespace ProcessLib
 {
 namespace PhaseField
 {
-
 struct PhaseFieldLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
       public NumLib::ExtrapolatableElement
@@ -94,6 +93,15 @@ struct PhaseFieldLocalAssemblerInterface
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
+
+    virtual void computeCrackIntegral(
+        std::size_t mesh_item_id,
+        std::vector<
+            std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+            dof_tables,
+        GlobalVector const& x, double const t, double& crack_volume,
+        bool const use_monolithic_scheme,
+        CoupledSolutionsForStaggeredScheme const* const cpl_xs) = 0;
 };
 
 }  // namespace PhaseField

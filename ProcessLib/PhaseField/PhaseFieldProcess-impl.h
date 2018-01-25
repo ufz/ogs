@@ -370,12 +370,30 @@ template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalVector const& x, const double t, const int process_id)
 {
-    DBUG("PostNonLinearSolver PhaseFieldProcess.");
-    // Calculate strain, stress or other internal variables of mechanics.
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        getDOFTable(process_id), x, t, _use_monolithic_scheme);
-}
+    if (_use_monolithic_scheme)
+        return;
 
+    _process_data.crack_volume = 0.0;
+
+    if (!isPhaseFieldProcess(process_id))
+    {
+        double integral = 0;
+
+        std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+            dof_tables;
+
+        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(*_local_to_global_index_map_single_component);
+
+        DBUG("PostNonLinearSolver crack volume computation.");
+
+        GlobalExecutor::executeMemberOnDereferenced(
+            &LocalAssemblerInterface::computeCrackIntegral, _local_assemblers,
+            dof_tables, x, t, integral, _use_monolithic_scheme,
+            _coupled_solutions);
+
+        INFO("Integral of crack: %g", integral);
+    }
+}
 }  // namespace PhaseField
 }  // namespace ProcessLib

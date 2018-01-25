@@ -10,6 +10,9 @@
  */
 #pragma once
 
+#include "NumLib/DOF/DOFTableUtil.h"
+#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
+
 namespace ProcessLib
 {
 namespace PhaseField
@@ -26,6 +29,13 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                          std::vector<double>& local_rhs_data,
                          std::vector<double>& local_Jac_data)
 {
+    using RhsVector =
+        typename ShapeMatricesType::template VectorType<phasefield_size +
+                                                        displacement_size>;
+    using JacobianMatrix = typename ShapeMatricesType::template MatrixType<
+        phasefield_size + displacement_size,
+        phasefield_size + displacement_size>;
+
     auto const local_matrix_size = local_x.size();
     assert(local_matrix_size == phasefield_size + displacement_size);
 
@@ -226,30 +236,38 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
-        double const t, std::vector<double> const& local_xdot,
-        const double dxdot_dx, const double dx_dx,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        double const t, std::vector<double> const& /*local_xdot*/,
+        const double /*dxdot_dx*/, const double /*dx_dx*/,
+        std::vector<double>& /*local_M_data*/,
+        std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions)
 {
+    using DeformationVector =
+        typename ShapeMatricesType::template VectorType<displacement_size>;
+    using DeformationMatrix =
+        typename ShapeMatricesType::template MatrixType<displacement_size,
+                                                        displacement_size>;
+    using PhaseFieldVector =
+        typename ShapeMatricesType::template VectorType<phasefield_size>;
+
     auto const& local_u = local_coupled_solutions.local_coupled_xs[0];
     auto const& local_d = local_coupled_solutions.local_coupled_xs[1];
     assert(local_u.size() == displacement_size);
     assert(local_d.size() == phasefield_size);
 
     auto const local_matrix_size = local_u.size();
-    auto d = Eigen::Map<
-        typename ShapeMatricesType::template VectorType<phasefield_size> const>(
-        local_d.data(), phasefield_size);
+    auto d =
+        Eigen::Map<PhaseFieldVector const>(local_d.data(), phasefield_size);
 
-    auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
-        displacement_size> const>(local_u.data(), displacement_size);
+    auto u =
+        Eigen::Map<DeformationVector const>(local_u.data(), displacement_size);
 
-    auto local_Jac = MathLib::createZeroedMatrix<JacobianMatrix>(
+    auto local_Jac = MathLib::createZeroedMatrix<DeformationMatrix>(
         local_Jac_data, local_matrix_size, local_matrix_size);
 
-    auto local_rhs =
-        MathLib::createZeroedVector<RhsVector>(local_b_data, local_matrix_size);
+    auto local_rhs = MathLib::createZeroedVector<DeformationVector>(
+        local_b_data, local_matrix_size);
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -316,30 +334,36 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::
     assembleWithJacobianPhaseFiledEquations(
-        double const t, std::vector<double> const& local_xdot,
-        const double dxdot_dx, const double dx_dx,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        double const t, std::vector<double> const& /*local_xdot*/,
+        const double /*dxdot_dx*/, const double /*dx_dx*/,
+        std::vector<double>& /*local_M_data*/,
+        std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions)
 {
+    using DeformationVector =
+        typename ShapeMatricesType::template VectorType<displacement_size>;
+    using PhaseFieldVector =
+        typename ShapeMatricesType::template VectorType<phasefield_size>;
+    using PhaseFieldMatrix =
+        typename ShapeMatricesType::template MatrixType<phasefield_size,
+                                                        phasefield_size>;
+
     auto const& local_u = local_coupled_solutions.local_coupled_xs[0];
     auto const& local_d = local_coupled_solutions.local_coupled_xs[1];
     assert(local_u.size() == displacement_size);
     assert(local_d.size() == phasefield_size);
 
     auto const local_matrix_size = local_d.size();
-    auto d = Eigen::Map<
-        typename ShapeMatricesType::template VectorType<phasefield_size> const>(
-        local_d.data(), phasefield_size);
+    auto d =
+        Eigen::Map<PhaseFieldVector const>(local_d.data(), phasefield_size);
+    auto u =
+        Eigen::Map<DeformationVector const>(local_u.data(), displacement_size);
 
-    auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
-        displacement_size> const>(local_u.data(), displacement_size);
-
-    auto local_Jac = MathLib::createZeroedMatrix<JacobianMatrix>(
+    auto local_Jac = MathLib::createZeroedMatrix<PhaseFieldMatrix>(
         local_Jac_data, local_matrix_size, local_matrix_size);
-
-    auto local_rhs =
-        MathLib::createZeroedVector<RhsVector>(local_b_data, local_matrix_size);
+    auto local_rhs = MathLib::createZeroedVector<PhaseFieldVector>(
+        local_b_data, local_matrix_size);
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -386,5 +410,69 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     }
 }
 
+template <typename ShapeFunction, typename IntegrationMethod,
+          int DisplacementDim>
+void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
+                              DisplacementDim>::
+    computeCrackIntegral(std::size_t mesh_item_id,
+                         std::vector<std::reference_wrapper<
+                             NumLib::LocalToGlobalIndexMap>> const& dof_tables,
+                         GlobalVector const& /*x*/, double const /*t*/,
+                         double& crack_volume,
+                         bool const /*use_monolithic_scheme*/,
+                         CoupledSolutionsForStaggeredScheme const* const cpl_xs)
+{
+    assert(cpl_xs != nullptr);
+
+    std::vector<std::vector<GlobalIndexType>> indices_of_processes;
+    indices_of_processes.reserve(dof_tables.size());
+    std::transform(dof_tables.begin(), dof_tables.end(),
+                   std::back_inserter(indices_of_processes),
+                   [&](NumLib::LocalToGlobalIndexMap const& dof_table) {
+                       return NumLib::getIndices(mesh_item_id, dof_table);
+                   });
+
+    auto local_coupled_xs =
+        getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
+    assert(local_coupled_xs.size() == 2);
+
+    auto const& local_u = local_coupled_xs[0];
+    auto const& local_d = local_coupled_xs[1];
+
+    assert(local_u.size() == displacement_size);
+    assert(local_d.size() == phasefield_size);
+
+    auto d = Eigen::Map<
+        typename ShapeMatricesType::template VectorType<phasefield_size> const>(
+        local_d.data(), phasefield_size);
+
+    auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
+        displacement_size> const>(local_u.data(), displacement_size);
+
+    SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    int const n_integration_points = _integration_method.getNumberOfPoints();
+    for (int ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+        auto const& w = _ip_data[ip].integration_weight;
+        auto const& N = _ip_data[ip].N;
+        auto const& dNdx = _ip_data[ip].dNdx;
+
+        typename ShapeMatricesType::template MatrixType<DisplacementDim,
+                                                        displacement_size>
+            N_u = ShapeMatricesType::template MatrixType<
+                DisplacementDim, displacement_size>::Zero(DisplacementDim,
+                                                          displacement_size);
+
+        for (int i = 0; i < DisplacementDim; ++i)
+            N_u.template block<1, displacement_size / DisplacementDim>(
+                   i, i * displacement_size / DisplacementDim)
+                .noalias() = N;
+
+        crack_volume += (N_u * u).dot(dNdx * d) * w;
+    }
+}
 }  // namespace PhaseField
 }  // namespace ProcessLib

@@ -108,11 +108,6 @@ public:
     using BMatricesType = BMatrixPolicyType<ShapeFunction, DisplacementDim>;
 
     using NodalForceVectorType = typename BMatricesType::NodalForceVectorType;
-    using RhsVector = typename ShapeMatricesType::template VectorType<
-        ShapeFunction::NPOINTS + ShapeFunction::NPOINTS * DisplacementDim>;
-    using JacobianMatrix = typename ShapeMatricesType::template MatrixType<
-        ShapeFunction::NPOINTS + ShapeFunction::NPOINTS * DisplacementDim,
-        ShapeFunction::NPOINTS + ShapeFunction::NPOINTS * DisplacementDim>;
 
     PhaseFieldLocalAssembler(PhaseFieldLocalAssembler const&) = delete;
     PhaseFieldLocalAssembler(PhaseFieldLocalAssembler&&) = delete;
@@ -217,6 +212,15 @@ public:
             _ip_data[ip].pushBackState();
         }
     }
+
+    void computeCrackIntegral(
+        std::size_t mesh_item_id,
+        std::vector<
+            std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+            dof_tables,
+        GlobalVector const& x, double const t, double& crack_volume,
+        bool const use_monolithic_scheme,
+        CoupledSolutionsForStaggeredScheme const* const cpl_xs) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

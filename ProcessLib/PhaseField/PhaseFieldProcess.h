@@ -123,9 +123,9 @@ private:
     /// Check whether the process represented by \c process_id is/has
     /// mechanical process. In the present implementation, the mechanical
     /// process has process_id == 0 in the staggered scheme.
-    bool hasMechanicalProcess(int const process_id) const
+    bool isPhaseFieldProcess(int const process_id) const
     {
-        return _use_monolithic_scheme || process_id == 0;
+        return !_use_monolithic_scheme && process_id == 1;
     }
 };
 
