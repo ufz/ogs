@@ -382,7 +382,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_ThermalConvection_constviscosityStaggeredScheme
+    NAME Parallel_LARGE_2D_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme.prj
     WRAPPER mpirun
