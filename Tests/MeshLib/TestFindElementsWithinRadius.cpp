@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 #include <autocheck/autocheck.hpp>
+#include <memory>
 
 #include "BaseLib/makeVectorUnique.h"
 #include "MeshLib/Elements/Element.h"
@@ -29,7 +30,8 @@ struct MeshLibFindElementWithinRadius : public ::testing::Test
 // For zero radius only the starting element is alway returned.
 TEST_F(MeshLibFindElementWithinRadius, ZeroRadius)
 {
-    auto mesh = MeshGenerator::generateRegularQuadMesh(10., 10);
+    auto mesh =
+        std::unique_ptr<Mesh>(MeshGenerator::generateRegularQuadMesh(10., 10));
 
     auto same_element_returned = [&mesh](std::size_t& element_id) -> bool {
         auto result =
@@ -128,7 +130,8 @@ std::vector<std::size_t> bruteForceFindElementIdsWithinRadius(
 // expected.
 TEST_F(MeshLibFindElementWithinRadius, VerySmallRadius)
 {
-    auto mesh = MeshGenerator::generateRegularQuadMesh(10., 10);
+    auto mesh =
+        std::unique_ptr<Mesh>(MeshGenerator::generateRegularQuadMesh(10., 10));
 
     auto neighboring_elements_returned =
         [&mesh](std::size_t& element_id) -> bool {
@@ -153,14 +156,15 @@ TEST_F(MeshLibFindElementWithinRadius, VerySmallRadius)
 // expected to be found.
 TEST_F(MeshLibFindElementWithinRadius, VeryLargeRadius)
 {
-    auto mesh = *MeshGenerator::generateRegularQuadMesh(10., 10);
+    auto mesh =
+        std::unique_ptr<Mesh>(MeshGenerator::generateRegularQuadMesh(10., 10));
 
     auto all_elements_returned = [&mesh](std::size_t& element_id) -> bool {
         auto result =
-            findElementsWithinRadius(*mesh.getElement(element_id), 1e5);
+            findElementsWithinRadius(*mesh->getElement(element_id), 1e5);
         BaseLib::makeVectorUnique(result);
 
-        return result.size() == mesh.getNumberOfElements();
+        return result.size() == mesh->getNumberOfElements();
     };
 
     ac::check<std::size_t>(all_elements_returned, 100,
@@ -193,9 +197,10 @@ struct CompareToBruteForceSearch
 // algorithm.
 TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius2d)
 {
-    auto mesh = *MeshGenerator::generateRegularQuadMesh(10., 10);
+    auto mesh =
+        std::unique_ptr<Mesh>(MeshGenerator::generateRegularQuadMesh(10., 10));
 
-    auto const compare_to_brute_force_search = CompareToBruteForceSearch{mesh};
+    auto const compare_to_brute_force_search = CompareToBruteForceSearch{*mesh};
 
     ac::check<std::size_t, double>(
         compare_to_brute_force_search, 100,
@@ -210,9 +215,10 @@ TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius2d)
 // algorithm.
 TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius3d)
 {
-    auto mesh = *MeshGenerator::generateRegularHexMesh(10., 10);
+    auto mesh =
+        std::unique_ptr<Mesh>(MeshGenerator::generateRegularHexMesh(10., 10));
 
-    auto const compare_to_brute_force_search = CompareToBruteForceSearch{mesh};
+    auto const compare_to_brute_force_search = CompareToBruteForceSearch{*mesh};
 
     ac::check<std::size_t, double>(
         compare_to_brute_force_search, 100,
