@@ -803,13 +803,16 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             {
                 MathLib::LinAlg::axpy(x_old, -1.0, x);  // save dx to x_old
                 if (process_id == last_process_id)
+                {
                     INFO(
                         "------- Checking convergence criterion for coupled "
                         "solution  -------");
-                _global_coupling_conv_crit[process_id]->checkDeltaX(x_old, x);
-                coupling_iteration_converged =
-                    coupling_iteration_converged &&
-                    _global_coupling_conv_crit[process_id]->isSatisfied();
+                    _global_coupling_conv_crit[process_id]->checkDeltaX(x_old,
+                                                                        x);
+                    coupling_iteration_converged =
+                        coupling_iteration_converged &&
+                        _global_coupling_conv_crit[process_id]->isSatisfied();
+                }
             }
             MathLib::LinAlg::copy(x, x_old);
 
