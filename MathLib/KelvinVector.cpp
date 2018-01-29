@@ -9,6 +9,8 @@
 
 #include "KelvinVector.h"
 
+#include "BaseLib/Error.h"
+
 namespace MathLib
 {
 namespace KelvinVector
@@ -76,6 +78,51 @@ Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(
         v[1], v[4] / std::sqrt(2.), v[5] / std::sqrt(2.), v[4] / std::sqrt(2.),
         v[2];
     return m;
+}
+
+template <>
+Eigen::Matrix<double, 4, 1> kelvinVectorToSymmetricTensor(
+    Eigen::Matrix<double, 4, 1, Eigen::ColMajor, 4, 1> const& v)
+{
+    Eigen::Matrix<double, 4, 1> m;
+    m << v[0], v[1], v[2], v[3] / std::sqrt(2.);
+    return m;
+}
+
+template <>
+Eigen::Matrix<double, 6, 1> kelvinVectorToSymmetricTensor(
+    Eigen::Matrix<double, 6, 1, Eigen::ColMajor, 6, 1> const& v)
+{
+    Eigen::Matrix<double, 6, 1> m;
+    m << v[0], v[1], v[2], v[3] / std::sqrt(2.), v[4] / std::sqrt(2.),
+        v[5] / std::sqrt(2.);
+    return m;
+}
+
+template <>
+Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, Eigen::Dynamic, 1>
+kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
+                                            Eigen::Dynamic,
+                                            1,
+                                            Eigen::ColMajor,
+                                            Eigen::Dynamic,
+                                            1> const& v)
+{
+    if (v.size() == 4)
+    {
+        return kelvinVectorToSymmetricTensor<4>(v);
+    }
+    else if (v.size() == 6)
+    {
+        return kelvinVectorToSymmetricTensor<6>(v);
+    }
+    else
+    {
+        OGS_FATAL(
+            "Kelvin vector to tensor conversion expected an input vector of "
+            "size 4 or 6, but a vector of size %d was given.",
+            v.size());
+    }
 }
 
 }  // namespace KelvinVector

@@ -125,6 +125,24 @@ Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(Eigen::Matrix<double,
                                                                KelvinVectorSize,
                                                                1> const& v);
 
+/// Conversion of a Kelvin vector to a short vector representation of a
+/// symmetric 3x3 matrix.
+///
+/// In the 2D case the entries for the xx, yy, zz, and xy components are stored.
+/// In the 3D case the entries for the xx, yy, zz, xy, yz, and xz components in
+/// that particular order are stored.
+///
+/// Only implementations for KelvinVectorSize 4 and 6, and dynamic size vectors
+/// are provided.
+template <int KelvinVectorSize>
+Eigen::Matrix<double, KelvinVectorSize, 1, Eigen::ColMajor, KelvinVectorSize, 1>
+kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
+                                            KelvinVectorSize,
+                                            1,
+                                            Eigen::ColMajor,
+                                            KelvinVectorSize,
+                                            1> const& v);
+
 }  // namespace KelvinVector
 }  // namespace MathLib
 
