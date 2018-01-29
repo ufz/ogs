@@ -58,8 +58,8 @@ Eigen::Matrix<double, 6, 1, Eigen::ColMajor, 6, 1> inverse(
 }
 
 template <>
-Eigen::Matrix<double, 3, 3> kelvinToTensor(
-    Eigen::Matrix<double, 4, 1, Eigen::ColMajor> const& v)
+Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(
+    Eigen::Matrix<double, 4, 1, Eigen::ColMajor, 4, 1> const& v)
 {
     Eigen::Matrix<double, 3, 3> m;
     m << v[0], v[3] / std::sqrt(2.), 0, v[3] / std::sqrt(2.), v[1], 0, 0, 0,
@@ -68,8 +68,8 @@ Eigen::Matrix<double, 3, 3> kelvinToTensor(
 }
 
 template <>
-Eigen::Matrix<double, 3, 3> kelvinToTensor(
-    Eigen::Matrix<double, 6, 1, Eigen::ColMajor> const& v)
+Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(
+    Eigen::Matrix<double, 6, 1, Eigen::ColMajor, 6, 1> const& v)
 {
     Eigen::Matrix<double, 3, 3> m;
     m << v[0], v[3] / std::sqrt(2.), v[5] / std::sqrt(2.), v[3] / std::sqrt(2.),

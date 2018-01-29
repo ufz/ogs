@@ -118,8 +118,12 @@ inverse(Eigen::Matrix<double,
 /// Conversion of a Kelvin vector to a 3x3 matrix
 /// Only implementations for KelvinVectorSize 4 and 6 are provided.
 template <int KelvinVectorSize>
-Eigen::Matrix<double, 3, 3> kelvinToTensor(
-    Eigen::Matrix<double, KelvinVectorSize, 1, Eigen::ColMajor> const& v);
+Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(Eigen::Matrix<double,
+                                                               KelvinVectorSize,
+                                                               1,
+                                                               Eigen::ColMajor,
+                                                               KelvinVectorSize,
+                                                               1> const& v);
 
 }  // namespace KelvinVector
 }  // namespace MathLib
