@@ -9,9 +9,9 @@
 
 #include "KelvinVector.h"
 
-namespace MaterialLib
+namespace MathLib
 {
-namespace SolidModels
+namespace KelvinVector
 {
 template <>
 double Invariants<6>::determinant(Eigen::Matrix<double, 6, 1> const& v)
@@ -57,5 +57,26 @@ Eigen::Matrix<double, 6, 1, Eigen::ColMajor, 6, 1> inverse(
     return inv / Invariants<6>::determinant(v);
 }
 
-}  // namespace SolidModels
-}  // namespace MaterialLib
+template <>
+Eigen::Matrix<double, 3, 3> kelvinToTensor(
+    Eigen::Matrix<double, 4, 1, Eigen::ColMajor> const& v)
+{
+    Eigen::Matrix<double, 3, 3> m;
+    m << v[0], v[3] / std::sqrt(2.), 0, v[3] / std::sqrt(2.), v[1], 0, 0, 0,
+        v[2];
+    return m;
+}
+
+template <>
+Eigen::Matrix<double, 3, 3> kelvinToTensor(
+    Eigen::Matrix<double, 6, 1, Eigen::ColMajor> const& v)
+{
+    Eigen::Matrix<double, 3, 3> m;
+    m << v[0], v[3] / std::sqrt(2.), v[5] / std::sqrt(2.), v[3] / std::sqrt(2.),
+        v[1], v[4] / std::sqrt(2.), v[5] / std::sqrt(2.), v[4] / std::sqrt(2.),
+        v[2];
+    return m;
+}
+
+}  // namespace KelvinVector
+}  // namespace MathLib

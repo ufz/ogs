@@ -8,37 +8,15 @@
 
 #include <gtest/gtest.h>
 
-#include "MaterialLib/SolidModels/KelvinVector.h"
+#include "MathLib/KelvinVector.h"
 
 #include "Tests/AutoCheckTools.h"
 
-using namespace MaterialLib::SolidModels;
+using namespace MathLib::KelvinVector;
 namespace ac = autocheck;
 
 template <int Size>
 using KelvinVector = Eigen::Matrix<double, Size, 1, Eigen::ColMajor, Size, 1>;
-
-template <int Size>
-Eigen::Matrix<double, 3, 3> kelvinToTensor(KelvinVector<Size> const& v);
-
-template <>
-Eigen::Matrix<double, 3, 3> kelvinToTensor(KelvinVector<4> const& v)
-{
-    Eigen::Matrix<double, 3, 3> m;
-    m << v[0], v[3] / std::sqrt(2.), 0, v[3] / std::sqrt(2.), v[1], 0, 0, 0,
-        v[2];
-    return m;
-}
-
-template <>
-Eigen::Matrix<double, 3, 3> kelvinToTensor(KelvinVector<6> const& v)
-{
-    Eigen::Matrix<double, 3, 3> m;
-    m << v[0], v[3] / std::sqrt(2.), v[5] / std::sqrt(2.), v[3] / std::sqrt(2.),
-        v[1], v[4] / std::sqrt(2.), v[5] / std::sqrt(2.), v[4] / std::sqrt(2.),
-        v[2];
-    return m;
-}
 
 template <int Size>
 KelvinVector<Size> tensorToKelvin(Eigen::Matrix<double, 3, 3> const& m);

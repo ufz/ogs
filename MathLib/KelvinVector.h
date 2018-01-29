@@ -10,13 +10,53 @@
 
 #include <Eigen/Dense>
 
-namespace MaterialLib
+namespace MathLib
 {
 /// The invariants and the Kelving mapping are explained in detail in the
 /// article "On Advantages of the Kelvin Mapping in Finite Element
 /// Implementations of Deformation Processes" \cite Nagel2016.
-namespace SolidModels
+namespace KelvinVector
 {
+/// Kelvin vector dimensions for given displacement dimension.
+template <int DisplacementDim>
+struct KelvinVectorDimensions;
+
+template <>
+struct KelvinVectorDimensions<2>
+{
+    static int const value = 4;
+};
+
+template <>
+struct KelvinVectorDimensions<3>
+{
+    static int const value = 6;
+};
+
+//
+// Kelvin vector and matrix templates for given displacement dimension.
+//
+
+/// Kelvin vector type for given displacement dimension.
+/// \note The Eigen vector is always a fixed size vector in contrast to a shape
+/// matrix policy types like BMatrixPolicyType::KelvinVectorType.
+template <int DisplacementDim>
+using KelvinVectorType =
+    Eigen::Matrix<double,
+                  KelvinVectorDimensions<DisplacementDim>::value,
+                  1,
+                  Eigen::ColMajor>;
+
+/// Kelvin matrix type for given displacement dimension.
+/// \note The Eigen matrix is always a fixed size vector in contrast to a shape
+/// matrix policy types like BMatrixPolicyType::KelvinMatrixType.
+template <int DisplacementDim>
+using KelvinMatrixType =
+    Eigen::Matrix<double,
+                  KelvinVectorDimensions<DisplacementDim>::value,
+                  KelvinVectorDimensions<DisplacementDim>::value,
+                  Eigen::RowMajor>;
+
 /// Invariants used in mechanics, based on Kelvin representation of the vectors
 /// and matrices.
 /// The invariants are computed at process creation time.
@@ -75,7 +115,13 @@ inverse(Eigen::Matrix<double,
                       KelvinVectorSize,
                       1> const& v);
 
-}  // namespace SolidModels
-}  // namespace MaterialLib
+/// Conversion of a Kelvin vector to a 3x3 matrix
+/// Only implementations for KelvinVectorSize 4 and 6 are provided.
+template <int KelvinVectorSize>
+Eigen::Matrix<double, 3, 3> kelvinToTensor(
+    Eigen::Matrix<double, KelvinVectorSize, 1, Eigen::ColMajor> const& v);
+
+}  // namespace KelvinVector
+}  // namespace MathLib
 
 #include "KelvinVector-impl.h"
