@@ -34,6 +34,8 @@
 
 #include <boost/math/special_functions/pow.hpp>
 
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+
 namespace MaterialLib
 {
 namespace Solids
@@ -673,24 +675,12 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                         &state) != nullptr);
              auto const& ehlers_state =
                  static_cast<StateVariables<DisplacementDim> const&>(state);
-             auto const& D = ehlers_state.eps_p.D;
 
              cache.resize(KelvinVector::RowsAtCompileTime);
-
-             // TODO make a general implementation for converting KelvinVectors
-             // back to symmetric rank-2 tensors.
-             for (typename KelvinVector::Index component = 0;
-                  component < KelvinVector::RowsAtCompileTime && component < 3;
-                  ++component)
-             {  // xx, yy, zz components
-                 cache[component] = D[component];
-             }
-             for (typename KelvinVector::Index component = 3;
-                  component < KelvinVector::RowsAtCompileTime;
-                  ++component)
-             {  // mixed xy, yz, xz components
-                 cache[component] = D[component] / std::sqrt(2);
-             }
+             MathLib::toVector<KelvinVector>(cache,
+                                             KelvinVector::RowsAtCompileTime) =
+                 MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                     ehlers_state.eps_p.D);
 
              return cache;
          }},
