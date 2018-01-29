@@ -91,7 +91,7 @@ std::unique_ptr<NodalSourceTerm> SourceTermBuilder::createNodalSourceTerm(
     if (ids.size() != 1)
         OGS_FATAL(
             "Found %d nodes for nodal source term, but exactly one node is "
-            "required.");
+            "required.", ids.size());
 
     return ProcessLib::createNodalSourceTerm(
         config.config, dof_table, mesh.getID(), ids[0], variable_id,
