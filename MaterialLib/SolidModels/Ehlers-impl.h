@@ -47,16 +47,17 @@ namespace Ehlers
 /// negative, but the returned value is not negated. This has to do with \f$
 /// d(A^{-1})/dA = -A^{-1} \odot A^{-1} \f$.
 template <int DisplacementDim>
-ProcessLib::KelvinMatrixType<DisplacementDim> sOdotS(
-    ProcessLib::KelvinVectorType<DisplacementDim> const& v);
+MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> sOdotS(
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& v);
 
 template <int DisplacementDim>
 struct PhysicalStressWithInvariants final
 {
     static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-    using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
     explicit PhysicalStressWithInvariants(KelvinVector const& stress)
         : value{stress},
@@ -137,11 +138,11 @@ double yieldFunction(MaterialProperties const& mp,
 template <int DisplacementDim>
 typename SolidEhlers<DisplacementDim>::ResidualVectorType
 calculatePlasticResidual(
-    ProcessLib::KelvinVectorType<DisplacementDim> const& eps_D,
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& eps_D,
     double const eps_V,
     PhysicalStressWithInvariants<DisplacementDim> const& s,
-    ProcessLib::KelvinVectorType<DisplacementDim> const& eps_p_D,
-    ProcessLib::KelvinVectorType<DisplacementDim> const& eps_p_D_dot,
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& eps_p_D,
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& eps_p_D_dot,
     double const eps_p_V,
     double const eps_p_V_dot,
     double const eps_p_eff_dot,
@@ -150,9 +151,10 @@ calculatePlasticResidual(
     MaterialProperties const& mp)
 {
     static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-    using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
     auto const& P_dev = Invariants::deviatoric_projection;
     auto const& identity2 = Invariants::identity2;
@@ -167,7 +169,7 @@ calculatePlasticResidual(
 
     // deviatoric plastic strain
     KelvinVector const sigma_D_inverse_D =
-        P_dev * MaterialLib::SolidModels::inverse(s.D);
+        P_dev * MathLib::KelvinVector::inverse(s.D);
     KelvinVector const dtheta_dsigma =
         theta * sigma_D_inverse_D - 3. / 2. * theta / s.J_2 * s.D;
 
@@ -207,10 +209,12 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
     MaterialProperties const& mp)
 {
     static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-    using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-    using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
     auto const& P_dev = Invariants::deviatoric_projection;
     auto const& identity2 = Invariants::identity2;
@@ -224,7 +228,7 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
         OGS_FATAL("Determinant is zero. Matrix is non-invertable.");
     }
     // inverse of sigma_D
-    KelvinVector const sigma_D_inverse = MaterialLib::SolidModels::inverse(s.D);
+    KelvinVector const sigma_D_inverse = MathLib::KelvinVector::inverse(s.D);
     KelvinVector const sigma_D_inverse_D = P_dev * sigma_D_inverse;
 
     KelvinVector const dtheta_dsigma =
@@ -396,16 +400,17 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
 /// Calculates the derivative of the residuals with respect to total
 /// strain. Implementation fully implicit only.
 template <int DisplacementDim>
-ProcessLib::KelvinMatrixType<DisplacementDim> calculateDResidualDEps(
+MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> calculateDResidualDEps(
     double const K, double const G)
 {
     static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-    using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     auto const& P_dev = Invariants::deviatoric_projection;
     auto const& P_sph = Invariants::spherical_projection;
-    auto const& I = ProcessLib::KelvinMatrixType<DisplacementDim>::Identity();
+    auto const& I =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>::Identity();
 
     return -2. * I * P_dev - 3. * K / G * I * P_sph;
 }
@@ -426,8 +431,8 @@ typename SolidEhlers<DisplacementDim>::KelvinVector predict_sigma(
     double const eps_V)
 {
     static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-    using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
     auto const& P_dev = Invariants::deviatoric_projection;
 
     // dimensionless initial hydrostatic pressure
@@ -482,7 +487,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
             material_state_variables);
     state.setInitialConditions();
 
-    using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     // volumetric strain
     double const eps_V = Invariants::trace(eps);
@@ -523,8 +528,10 @@ SolidEhlers<DisplacementDim>::integrateStress(
 
         {
             static int const KelvinVectorSize =
-                ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-            using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
+                MathLib::KelvinVector::KelvinVectorDimensions<
+                    DisplacementDim>::value;
+            using KelvinVector =
+                MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
             using ResidualVectorType =
                 Eigen::Matrix<double, JacobianResidualSize, 1>;
             using JacobianMatrix =

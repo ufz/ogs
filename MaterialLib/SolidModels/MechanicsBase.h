@@ -59,8 +59,10 @@ struct MechanicsBase
     virtual std::unique_ptr<MaterialStateVariables>
     createMaterialStateVariables() = 0;
 
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-    using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
     /// Dynamic size Kelvin vector and matrix wrapper for the polymorphic
     /// constitutive relation compute function.

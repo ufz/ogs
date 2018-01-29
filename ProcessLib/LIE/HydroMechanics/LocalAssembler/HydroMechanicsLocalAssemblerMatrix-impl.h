@@ -11,7 +11,7 @@
 
 #include "HydroMechanicsLocalAssemblerMatrix.h"
 
-#include "MaterialLib/SolidModels/KelvinVector.h"
+#include "MathLib/KelvinVector.h"
 #include "MeshLib/ElementStatus.h"
 #include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
@@ -233,7 +233,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         double const rho = rho_sr * (1 - porosity) + porosity * rho_fr;
         auto const& identity2 =
-            MaterialLib::SolidModels::Invariants<kelvin_vector_size>::identity2;
+            MathLib::KelvinVector::Invariants<kelvin_vector_size>::identity2;
 
         eps.noalias() = B * u;
 
@@ -244,7 +244,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
 
-        KelvinMatrixType<GlobalDim> C;
+        MathLib::KelvinVector::KelvinMatrixType<GlobalDim> C;
         std::tie(sigma_eff, state, C) = std::move(*solution);
 
         q.noalias() = -k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
@@ -362,7 +362,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
 
-        KelvinMatrixType<GlobalDim> C;
+        MathLib::KelvinVector::KelvinMatrixType<GlobalDim> C;
         std::tie(sigma_eff, state, C) = std::move(*solution);
 
         q.noalias() = -k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);

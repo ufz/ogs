@@ -136,16 +136,16 @@ public:
             ip_data.N = sm.N;
             ip_data.dNdx = sm.dNdx;
 
+            static const int kelvin_vector_size =
+                MathLib::KelvinVector::KelvinVectorDimensions<
+                    DisplacementDim>::value;
             // Initialize current time step values
-            ip_data.sigma.setZero(
-                KelvinVectorDimensions<DisplacementDim>::value);
-            ip_data.eps.setZero(KelvinVectorDimensions<DisplacementDim>::value);
+            ip_data.sigma.setZero(kelvin_vector_size);
+            ip_data.eps.setZero(kelvin_vector_size);
 
             // Previous time step values are not initialized and are set later.
-            ip_data.sigma_prev.resize(
-                KelvinVectorDimensions<DisplacementDim>::value);
-            ip_data.eps_prev.resize(
-                KelvinVectorDimensions<DisplacementDim>::value);
+            ip_data.sigma_prev.resize(kelvin_vector_size);
+            ip_data.eps_prev.resize(kelvin_vector_size);
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
         }
@@ -230,7 +230,7 @@ public:
             if (!solution)
                 OGS_FATAL("Computation of local constitutive relation failed.");
 
-            KelvinMatrixType<DisplacementDim> C;
+            MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
             std::tie(sigma, state, C) = std::move(*solution);
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
@@ -321,8 +321,9 @@ public:
         std::vector<double>& cache) const override
     {
         using KelvinVectorType = typename BMatricesType::KelvinVectorType;
-        auto const kelvin_vector_size =
-            KelvinVectorDimensions<DisplacementDim>::value;
+        static const int kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
         auto const num_intpts = _ip_data.size();
 
         cache.clear();
@@ -361,7 +362,8 @@ public:
     {
         using KelvinVectorType = typename BMatricesType::KelvinVectorType;
         auto const kelvin_vector_size =
-            KelvinVectorDimensions<DisplacementDim>::value;
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
         auto const num_intpts = _ip_data.size();
 
         cache.clear();

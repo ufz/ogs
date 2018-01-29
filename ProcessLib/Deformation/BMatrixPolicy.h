@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "MathLib/KelvinVector.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 namespace ProcessLib
@@ -33,7 +34,7 @@ private:
     // Dimensions of specific b-matrix for n-points and displacement dimension.
     static int const _number_of_dof = ShapeFunction::NPOINTS * DisplacementDim;
     static int const _kelvin_vector_size =
-        KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
 
 public:
     using StiffnessMatrixType = MatrixType<_number_of_dof, _number_of_dof>;
@@ -42,11 +43,11 @@ public:
     using NodalForceVectorType = VectorType<_number_of_dof>;
 
     /// This type can be different (fixed vs. dynamic size) from the
-    /// ProcessLib::KelvinVectorType.
+    /// MathLib::KelvinVector::KelvinVectorType.
     using KelvinVectorType = VectorType<_kelvin_vector_size>;
 
     /// This type can be different (fixed vs. dynamic size) from the
-    /// ProcessLib::KelvinMatrixType.
+    /// MathLib::KelvinVector::KelvinMatrixType.
     using KelvinMatrixType =
         MatrixType<_kelvin_vector_size, _kelvin_vector_size>;
 

@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include "KelvinVector.h"
+#include "MathLib/KelvinVector.h"
+
 #include "LinearElasticIsotropic.h"
 #include "PhaseFieldExtension.h"
 
@@ -24,9 +25,11 @@ class LinearElasticIsotropicPhaseField final
 {
 public:
     static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-    using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
     explicit LinearElasticIsotropicPhaseField(
         typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties&&
@@ -93,8 +96,7 @@ public:
                                  KelvinVector& sigma_real,
                                  double const degradation) const override
     {
-        using Invariants =
-            MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
+        using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
         // calculation of deviatoric parts
         auto const& P_dev = Invariants::deviatoric_projection;
         KelvinVector const epsd_curr = P_dev * eps;
