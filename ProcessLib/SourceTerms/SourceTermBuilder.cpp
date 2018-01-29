@@ -95,7 +95,7 @@ std::unique_ptr<NodalSourceTerm> SourceTermBuilder::createNodalSourceTerm(
 
     return ProcessLib::createNodalSourceTerm(
         config.config, dof_table, mesh.getID(), ids[0], variable_id,
-        *config.component_id);
+        *config.component_id, parameters);
 }
 
 }  // ProcessLib

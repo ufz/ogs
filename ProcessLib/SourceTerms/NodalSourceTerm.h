@@ -10,6 +10,7 @@
 #pragma once
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "ProcessLib/Parameter/Parameter.h"
 
 namespace ProcessLib
 {
@@ -19,7 +20,7 @@ public:
     NodalSourceTerm(const NumLib::LocalToGlobalIndexMap& dof_table,
                     std::size_t const mesh_id, std::size_t const node_id,
                     const int variable_id, const int component_id,
-                    double value);
+                    Parameter<double> const& parameter);
 
     void integrateNodalSourceTerm(
         const double t,
@@ -31,7 +32,7 @@ private:
     std::size_t const _node_id;
     int const _variable_id;
     int const _component_id;
-    double const _value;
+    Parameter<double> const& _parameter;
 };
 
 }   // namespace ProcessLib
