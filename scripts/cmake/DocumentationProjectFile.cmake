@@ -1,3 +1,5 @@
+cmake_policy(SET CMP0009 NEW)
+
 # Moves an *.md file from the src directory to DocAux directory in the build
 # tree augmenting it with basic extra information, such as the list of child
 # pages and the page title.
