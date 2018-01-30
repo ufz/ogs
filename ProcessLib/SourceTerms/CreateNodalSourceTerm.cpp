@@ -25,7 +25,7 @@ std::unique_ptr<NodalSourceTerm> createNodalSourceTerm(
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
     config.checkConfigParameter("type", "Nodal");
 
-    //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__parameter}
+    //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__Nodal__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s as nodal source term.", param_name.c_str());
 
