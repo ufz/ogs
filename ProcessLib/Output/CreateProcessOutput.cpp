@@ -17,9 +17,10 @@ ProcessOutput createProcessOutput(BaseLib::ConfigTree const& output_config)
     auto const out_vars = output_config.getConfigSubtree("variables");
 
     std::set<std::string> output_variables;
-    //! \ogs_file_param{prj__time_loop__processes__process__output__variables__variable}
-    for (auto out_var :
-         out_vars.getConfigParameterList<std::string>("variable"))
+    for (
+        auto out_var :
+        //! \ogs_file_param{prj__time_loop__processes__process__output__variables__variable}
+        out_vars.getConfigParameterList<std::string>("variable"))
     {
         if (output_variables.find(out_var) != output_variables.cend())
         {

@@ -166,11 +166,7 @@ public:
     //! A shortcut for a general time discretization scheme
     using TimeDisc = TimeDiscretization;
 
-    /*! Constructs a new instance.
-     *
-     * \param ode the ODE to be wrapped.
-     * \param time_discretization the time discretization to be used.
-     */
+    //! Constructs a new instance.
     explicit TimeDiscretizedODESystem(const int process_id, ODE& ode,
                                       TimeDisc& time_discretization);
 

@@ -289,8 +289,8 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
             //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion}
             pcs_config.getConfigSubtree("convergence_criterion"));
 
-        //! \ogs_file_param{prj__time_loop__processes__process__output}
         ProcessOutput process_output =
+            //! \ogs_file_param{prj__time_loop__processes__process__output}
             createProcessOutput(pcs_config.getConfigSubtree("output"));
 
         per_process_data.emplace_back(makeSingleProcessData(
