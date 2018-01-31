@@ -434,7 +434,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
                 "Didn't find expected \"displacement_jump1\" process "
                 "variable.");
         }
-        g_variable_id = std::distance(pvs.begin(), it);
+        g_variable_id = static_cast<int>(std::distance(pvs.begin(), it));
     }
 
     MathLib::LinAlg::setLocalAccessibleVector(x);
