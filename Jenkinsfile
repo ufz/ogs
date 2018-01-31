@@ -435,12 +435,12 @@ pipeline {
               try {
                 build { cmd = 'UBSAN_OPTIONS=print_stacktrace=1 ninja tests' }
               }
-              catch(err) { echo "Clang sanitizer for unit tests failed!" }
+              catch(ignored) { echo "Clang sanitizer for unit tests failed!" }
 
               try {
                 build { cmd = 'UBSAN_OPTIONS=print_stacktrace=1 ninja ctest' }
               }
-              catch(err) { echo "Clang sanitizer for end-to-end tests failed!" }
+              catch(ignored) { echo "Clang sanitizer for end-to-end tests failed!" }
             }
           }
           post {
