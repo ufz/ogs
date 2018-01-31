@@ -21,7 +21,7 @@ namespace Solids
 template <int DisplacementDim>
 struct MechanicsBase;
 }
-}
+}  // namespace MaterialLib
 namespace ProcessLib
 {
 template <typename T>
@@ -87,6 +87,13 @@ struct PhaseFieldProcessData
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt = 0.0;
     double t = 0.0;
+    double const unity_pressure = 1.0;
+    double pressure = 0.0;
+    double pressure_old = 0.0;
+    double pressure_error = 0.0;
+    double injected_volume = 0.0;
+    double crack_volume = 0.0;
+    bool propagating_crack = true;
 };
 
 }  // namespace PhaseField

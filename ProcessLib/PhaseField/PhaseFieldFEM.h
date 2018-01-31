@@ -57,7 +57,6 @@ struct IntegrationPointData final
     double integration_weight;
     double history_variable;
     double history_variable_prev;
-    double pressure;
 
     void pushBackState()
     {
@@ -162,10 +161,6 @@ public:
                 _process_data.history_field(0, x_position)[0];
             ip_data.sigma_real.setZero(kelvin_vector_size);
             ip_data.strain_energy_tensile = 0.0;
-
-            /// pressure is initialized with unity (=1.0) as the problem is
-            /// linearly scalable in post-process.
-            ip_data.pressure = 1.0;
 
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;
