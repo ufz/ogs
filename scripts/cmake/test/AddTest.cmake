@@ -30,7 +30,7 @@
 #       absolute and relative tolerances.
 #
 
-function (AddTest)
+function(AddTest)
     if(NOT OGS_BUILD_TESTS)
         return()
     endif()
@@ -51,8 +51,8 @@ function (AddTest)
     if(NOT AddTest_EXECUTABLE)
         set(AddTest_EXECUTABLE ogs)
     endif()
-    if (NOT AddTest_REQUIREMENTS)
-        set (AddTest_REQUIREMENTS TRUE)
+    if(NOT AddTest_REQUIREMENTS)
+        set(AddTest_REQUIREMENTS TRUE)
     endif()
 
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
@@ -127,14 +127,14 @@ function (AddTest)
         list(LENGTH AddTest_DIFF_DATA DiffDataLength)
         math(EXPR DiffDataLengthMod4 "${DiffDataLength} % 4")
         math(EXPR DiffDataLengthMod6 "${DiffDataLength} % 6")
-        if (${DiffDataLengthMod4} EQUAL 0 AND NOT ${DiffDataLengthMod6} EQUAL 0)
+        if(${DiffDataLengthMod4} EQUAL 0 AND NOT ${DiffDataLengthMod6} EQUAL 0)
             message(WARNING "DEPRECATED AddTest call with four arguments.\
 Use six arguments version of AddTest with absolute and relative tolerances")
-            if (NOT AddTest_ABSTOL)
-                set (AddTest_ABSTOL 1e-16)
+            if(NOT AddTest_ABSTOL)
+                set(AddTest_ABSTOL 1e-16)
             endif()
-            if (NOT AddTest_RELTOL)
-                set (AddTest_RELTOL 1e-16)
+            if(NOT AddTest_RELTOL)
+                set(AddTest_RELTOL 1e-16)
             endif()
             set(TESTER_ARGS "--abs ${AddTest_ABSTOL} --rel ${AddTest_RELTOL}")
             math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
@@ -147,14 +147,21 @@ Use six arguments version of AddTest with absolute and relative tolerances")
                 math(EXPR DiffDataAuxIndex "${DiffDataIndex}+3")
                 list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_B)
 
+                if(${VTK_FILE} STREQUAL ${REFERENCE_VTK_FILE} AND
+                    ${NAME_A} STREQUAL ${NAME_B})
+                message(FATAL_ERROR "Error on definition of ${AddTest_NAME}: "
+                        "result and reference file cannot have the same filename "
+                        "if also the arrays have the same name!")
+                endif()
+
                 list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
                 ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
                 ${AddTest_BINARY_PATH}/${VTK_FILE} \
                 -a ${NAME_A} -b ${NAME_B} \
                 ${TESTER_ARGS}")
             endforeach()
-        elseif (${DiffDataLengthMod6} EQUAL 0)
-            if (${AddTest_ABSTOL} OR ${AddTest_RELTOL})
+        elseif(${DiffDataLengthMod6} EQUAL 0)
+            if(${AddTest_ABSTOL} OR ${AddTest_RELTOL})
                 message(FATAL_ERROR "ABSTOL or RELTOL arguments must not be present.")
             endif()
             math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
@@ -171,6 +178,13 @@ Use six arguments version of AddTest with absolute and relative tolerances")
                 math(EXPR DiffDataAuxIndex "${DiffDataIndex}+5")
                 list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
 
+                if(${VTK_FILE} STREQUAL ${REFERENCE_VTK_FILE} AND
+                    ${NAME_A} STREQUAL ${NAME_B})
+                message(FATAL_ERROR "Error on definition of ${AddTest_NAME}: "
+                        "result and reference file cannot have the same filename "
+                        "if also the arrays have the same name!")
+                endif()
+
                 list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
                 ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
                 ${AddTest_BINARY_PATH}/${VTK_FILE} \
@@ -178,7 +192,7 @@ Use six arguments version of AddTest with absolute and relative tolerances")
                 --abs ${ABS_TOL} --rel ${REL_TOL} \
                 ${TESTER_ARGS}")
             endforeach()
-        else ()
+        else()
             message(FATAL_ERROR "For vtkdiff tester the number of diff data arguments must be a multiple of six.")
         endif()
 
