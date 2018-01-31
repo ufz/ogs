@@ -124,6 +124,5 @@ kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
             v.size());
     }
 }
-
 }  // namespace KelvinVector
 }  // namespace MathLib

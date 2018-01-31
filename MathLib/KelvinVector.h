@@ -9,6 +9,7 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include "BaseLib/Error.h"
 
 namespace MathLib
 {
@@ -132,6 +133,8 @@ Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(Eigen::Matrix<double,
 /// In the 3D case the entries for the xx, yy, zz, xy, yz, and xz components in
 /// that particular order are stored.
 ///
+/// This is opposite of the symmetricTensorToKelvinVector()
+///
 /// Only implementations for KelvinVectorSize 4 and 6, and dynamic size vectors
 /// are provided.
 template <int KelvinVectorSize>
@@ -143,6 +146,37 @@ kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
                                             KelvinVectorSize,
                                             1> const& v);
 
+/// Conversion of a short vector representation of a
+/// symmetric 3x3 matrix to a Kelvin vector.
+///
+/// This is opposite of the kelvinVectorToSymmetricTensor()
+///
+/// Only implementations for KelvinVectorSize 4 and 6, and dynamic size vectors
+/// are provided.
+template <typename Derived>
+Eigen::Matrix<double, Eigen::MatrixBase<Derived>::RowsAtCompileTime, 1>
+symmetricTensorToKelvinVector(Eigen::MatrixBase<Derived> const& v)
+{
+    Eigen::Matrix<double, Eigen::MatrixBase<Derived>::RowsAtCompileTime, 1>
+        result;
+    if (v.size() == 4)
+    {
+        result << v[0], v[1], v[2], v[3] * std::sqrt(2.);
+    }
+    else if (v.size() == 6)
+    {
+        result << v[0], v[1], v[2], v[3] * std::sqrt(2.), v[4] * std::sqrt(2.),
+            v[5] * std::sqrt(2.);
+    }
+    else
+    {
+        OGS_FATAL(
+            "Symmetric tensor to Kelvin vector conversion expected an input "
+            "vector of size 4 or 6, but a vector of size %d was given.",
+            v.size());
+    }
+    return result;
+}
 }  // namespace KelvinVector
 }  // namespace MathLib
 
