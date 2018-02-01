@@ -21,6 +21,7 @@
 #include "ProcessLib/Output/CreateProcessOutput.h"
 
 #include "CoupledSolutionsForStaggeredScheme.h"
+#include "ProcessData.h"
 
 //! Sets the EquationSystem for the given nonlinear solver,
 //! which is Picard or Newton depending on the NLTag.
@@ -93,81 +94,6 @@ static void applyKnownSolutions(NumLib::EquationSystem const& eq_sys,
 
 namespace ProcessLib
 {
-struct SingleProcessData
-{
-    template <NumLib::NonlinearSolverTag NLTag>
-    SingleProcessData(
-        std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper_,
-        NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
-        std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
-        std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
-        Process& process_,
-        ProcessOutput&& process_output_);
-
-    SingleProcessData(SingleProcessData&& spd);
-
-    std::unique_ptr<NumLib::TimeStepAlgorithm> timestepper;
-
-    //! Flag of skiping time stepping. It is used in the modelling of
-    //! coupled processes. If the stepping of any process reaches a steady state
-    //! or the ending time, the flag is set to true.
-    bool skip_time_stepping = false;
-
-    //! Tag containing the missing type information necessary to cast the
-    //! other members of this struct to their concrety types.
-    NumLib::NonlinearSolverTag const nonlinear_solver_tag;
-    NumLib::NonlinearSolverBase& nonlinear_solver;
-    bool nonlinear_solver_converged;
-    std::unique_ptr<NumLib::ConvergenceCriterion> conv_crit;
-
-    std::unique_ptr<NumLib::TimeDiscretization> time_disc;
-    //! type-erased time-discretized ODE system
-    std::unique_ptr<NumLib::EquationSystem> tdisc_ode_sys;
-    //! cast of \c tdisc_ode_sys to NumLib::InternalMatrixStorage
-    NumLib::InternalMatrixStorage* mat_strg = nullptr;
-
-    /// Process ID. It is alway 0 when the monolithic scheme is used or
-    /// a single process is modelled.
-    int process_id = 0;
-
-    Process& process;
-    ProcessOutput process_output;
-};
-
-template <NumLib::NonlinearSolverTag NLTag>
-SingleProcessData::SingleProcessData(
-    std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper_,
-    NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
-    std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
-    std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
-    Process& process_,
-    ProcessOutput&& process_output_)
-    : timestepper(std::move(timestepper_)),
-      nonlinear_solver_tag(NLTag),
-      nonlinear_solver(nonlinear_solver),
-      nonlinear_solver_converged(true),
-      conv_crit(std::move(conv_crit_)),
-      time_disc(std::move(time_disc_)),
-      process(process_),
-      process_output(std::move(process_output_))
-{
-}
-
-SingleProcessData::SingleProcessData(SingleProcessData&& spd)
-    : timestepper(std::move(spd.timestepper)),
-      nonlinear_solver_tag(spd.nonlinear_solver_tag),
-      nonlinear_solver(spd.nonlinear_solver),
-      nonlinear_solver_converged(spd.nonlinear_solver_converged),
-      conv_crit(std::move(spd.conv_crit)),
-      time_disc(std::move(spd.time_disc)),
-      tdisc_ode_sys(std::move(spd.tdisc_ode_sys)),
-      mat_strg(spd.mat_strg),
-      process(spd.process),
-      process_output(std::move(spd.process_output))
-{
-    spd.mat_strg = nullptr;
-}
-
 template <NumLib::ODESystemTag ODETag>
 void setTimeDiscretizedODESystem(
     SingleProcessData& spd,
