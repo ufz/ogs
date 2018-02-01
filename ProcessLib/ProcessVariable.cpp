@@ -178,14 +178,15 @@ std::vector<std::unique_ptr<NodalSourceTerm>>
 ProcessVariable::createSourceTerms(
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const int variable_id,
-    unsigned const integration_order)
+    unsigned const integration_order,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     std::vector<std::unique_ptr<NodalSourceTerm>> source_terms;
 
     for (auto& config : _source_term_configs)
         source_terms.emplace_back(_source_term_builder->createSourceTerm(
             config, dof_table, _mesh, variable_id, integration_order,
-            _shapefunction_order));
+            _shapefunction_order, parameters));
 
     return source_terms;
 }

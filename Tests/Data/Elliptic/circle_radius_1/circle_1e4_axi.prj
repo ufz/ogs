@@ -84,6 +84,11 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
+        <parameter>
+            <name>pressure_source_term</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
     </parameters>
     <process_variables>
         <process_variable>
@@ -104,7 +109,7 @@
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>inner</geometry>
                     <type>Nodal</type>
-                    <value>1</value>
+                    <parameter>pressure_source_term</parameter>
                 </source_term>
             </source_terms>
         </process_variable>

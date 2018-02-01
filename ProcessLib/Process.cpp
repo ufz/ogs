@@ -47,6 +47,16 @@ Process::Process(
               pcs_BCs.emplace_back(BoundaryConditionCollection(parameters));
           }
           return pcs_BCs;
+      }(_process_variables.size())),
+      _source_term_collections([&](const std::size_t number_of_processes)
+                               -> std::vector<SourceTermCollection> {
+          std::vector<SourceTermCollection> pcs_sts;
+          pcs_sts.reserve(number_of_processes);
+          for (std::size_t i = 0; i < number_of_processes; i++)
+          {
+              pcs_sts.emplace_back(SourceTermCollection(parameters));
+          }
+          return pcs_sts;
       }(_process_variables.size()))
 {
 }
@@ -60,15 +70,9 @@ void Process::initializeProcessBoundaryConditionsAndSourceTerms(
     per_process_BCs.addBCsForProcessVariables(per_process_variables, dof_table,
                                               _integration_order);
 
-    std::vector<std::unique_ptr<NodalSourceTerm>> per_process_source_terms;
-    for (auto& pv : per_process_variables)
-    {
-        auto sts = pv.get().createSourceTerms(dof_table, 0, _integration_order);
-
-        std::move(sts.begin(), sts.end(),
-                  std::back_inserter(per_process_source_terms));
-    }
-    _source_terms.push_back(std::move(per_process_source_terms));
+    auto& per_process_sts = _source_term_collections[process_id];
+    per_process_sts.addSourceTermsForProcessVariables(
+        per_process_variables, dof_table, _integration_order);
 }
 
 void Process::initializeBoundaryConditions()
@@ -188,11 +192,7 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
         (_coupled_solutions) != nullptr ? _coupled_solutions->process_id : 0;
     _boundary_conditions[pcs_id].applyNaturalBC(t, x, K, b);
 
-    auto& source_terms_per_pcs = _source_terms[pcs_id];
-    for (auto& st : source_terms_per_pcs)
-    {
-        st->integrateNodalSourceTerm(t, b);
-    }
+    _source_term_collections[pcs_id].integrateNodalSourceTerms(t, b);
 }
 
 void Process::assembleWithJacobian(const double t, GlobalVector const& x,
