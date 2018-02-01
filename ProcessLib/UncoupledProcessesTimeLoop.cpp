@@ -898,7 +898,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         // TODO(wenqing): use process name
         bool nonlinear_solver_succeeded = true;
         coupling_iteration_converged = true;
-        unsigned process_id = 0;
+        int process_id = 0;
         for (auto& spd : _per_process_data)
         {
             if (spd->skip_time_stepping)
