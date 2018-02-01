@@ -27,7 +27,7 @@ class ConvergenceCriterion;
 
 namespace ProcessLib
 {
-struct SingleProcessData;
+struct ProcessData;
 
 /// Time loop capable of time-integrating several processes at once.
 /// TODO: Rename to, e.g., TimeLoop, since it is not for purely uncoupled stuff
@@ -37,7 +37,7 @@ class UncoupledProcessesTimeLoop
 public:
     explicit UncoupledProcessesTimeLoop(
         std::unique_ptr<Output>&& output,
-        std::vector<std::unique_ptr<SingleProcessData>>&& per_process_data,
+        std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
         const unsigned global_coupling_max_iterations,
         std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
             global_coupling_conv_crit,
@@ -62,7 +62,7 @@ public:
 private:
     std::vector<GlobalVector*> _process_solutions;
     std::unique_ptr<Output> _output;
-    std::vector<std::unique_ptr<SingleProcessData>> _per_process_data;
+    std::vector<std::unique_ptr<ProcessData>> _per_process_data;
 
     bool _last_step_rejected = false;
     int _repeating_times_of_rejected_step = 0;

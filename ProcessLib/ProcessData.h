@@ -25,16 +25,15 @@ class Process;
 
 namespace ProcessLib
 {
-struct SingleProcessData
+struct ProcessData
 {
     template <NumLib::NonlinearSolverTag NLTag>
-    SingleProcessData(
-        std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper_,
-        NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
-        std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
-        std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
-        Process& process_,
-        ProcessOutput&& process_output_)
+    ProcessData(std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper_,
+                NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
+                std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
+                std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
+                Process& process_,
+                ProcessOutput&& process_output_)
         : timestepper(std::move(timestepper_)),
           nonlinear_solver_tag(NLTag),
           nonlinear_solver(nonlinear_solver),
@@ -46,19 +45,19 @@ struct SingleProcessData
     {
     }
 
-    SingleProcessData(SingleProcessData&& spd)
-        : timestepper(std::move(spd.timestepper)),
-          nonlinear_solver_tag(spd.nonlinear_solver_tag),
-          nonlinear_solver(spd.nonlinear_solver),
-          nonlinear_solver_converged(spd.nonlinear_solver_converged),
-          conv_crit(std::move(spd.conv_crit)),
-          time_disc(std::move(spd.time_disc)),
-          tdisc_ode_sys(std::move(spd.tdisc_ode_sys)),
-          mat_strg(spd.mat_strg),
-          process(spd.process),
-          process_output(std::move(spd.process_output))
+    ProcessData(ProcessData&& pd)
+        : timestepper(std::move(pd.timestepper)),
+          nonlinear_solver_tag(pd.nonlinear_solver_tag),
+          nonlinear_solver(pd.nonlinear_solver),
+          nonlinear_solver_converged(pd.nonlinear_solver_converged),
+          conv_crit(std::move(pd.conv_crit)),
+          time_disc(std::move(pd.time_disc)),
+          tdisc_ode_sys(std::move(pd.tdisc_ode_sys)),
+          mat_strg(pd.mat_strg),
+          process(pd.process),
+          process_output(std::move(pd.process_output))
     {
-        spd.mat_strg = nullptr;
+        pd.mat_strg = nullptr;
     }
 
     std::unique_ptr<NumLib::TimeStepAlgorithm> timestepper;

@@ -13,7 +13,7 @@
 
 namespace ProcessLib
 {
-std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
+std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
     BaseLib::ConfigTree const& config,
     const std::map<std::string, std::unique_ptr<Process>>& processes,
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&

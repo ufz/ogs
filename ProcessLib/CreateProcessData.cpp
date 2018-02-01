@@ -15,7 +15,7 @@
 
 namespace ProcessLib
 {
-static std::unique_ptr<SingleProcessData> makeSingleProcessData(
+static std::unique_ptr<ProcessData> makeProcessData(
     std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper,
     NumLib::NonlinearSolverBase& nonlinear_solver,
     Process& process,
@@ -29,7 +29,7 @@ static std::unique_ptr<SingleProcessData> makeSingleProcessData(
             dynamic_cast<NumLib::NonlinearSolver<Tag::Picard>*>(
                 &nonlinear_solver))
     {
-        return std::make_unique<SingleProcessData>(
+        return std::make_unique<ProcessData>(
             std::move(timestepper), *nonlinear_solver_picard,
             std::move(conv_crit), std::move(time_disc), process,
             std::move(process_output));
@@ -38,7 +38,7 @@ static std::unique_ptr<SingleProcessData> makeSingleProcessData(
             dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
                 &nonlinear_solver))
     {
-        return std::make_unique<SingleProcessData>(
+        return std::make_unique<ProcessData>(
             std::move(timestepper), *nonlinear_solver_newton,
             std::move(conv_crit), std::move(time_disc), process,
             std::move(process_output));
@@ -47,13 +47,13 @@ static std::unique_ptr<SingleProcessData> makeSingleProcessData(
     OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
 }
 
-std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
+std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
     BaseLib::ConfigTree const& config,
     const std::map<std::string, std::unique_ptr<Process>>& processes,
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
         nonlinear_solvers)
 {
-    std::vector<std::unique_ptr<SingleProcessData>> per_process_data;
+    std::vector<std::unique_ptr<ProcessData>> per_process_data;
 
     //! \ogs_file_param{prj__time_loop__processes__process}
     for (auto pcs_config : config.getConfigSubtreeList("process"))
@@ -87,7 +87,7 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
             //! \ogs_file_param{prj__time_loop__processes__process__output}
             createProcessOutput(pcs_config.getConfigSubtree("output"));
 
-        per_process_data.emplace_back(makeSingleProcessData(
+        per_process_data.emplace_back(makeProcessData(
             std::move(timestepper), nl_slv, pcs, std::move(time_disc),
             std::move(conv_crit), std::move(process_output)));
     }

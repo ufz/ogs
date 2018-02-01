@@ -94,7 +94,7 @@ namespace ProcessLib
 {
 template <NumLib::ODESystemTag ODETag>
 void setTimeDiscretizedODESystem(
-    SingleProcessData& spd,
+    ProcessData& process_data,
     NumLib::ODESystem<ODETag, NumLib::NonlinearSolverTag::Picard>& ode_sys)
 {
     using Tag = NumLib::NonlinearSolverTag;
@@ -103,26 +103,27 @@ void setTimeDiscretizedODESystem(
     // A concrete Newton solver
     using NonlinearSolverNewton = NumLib::NonlinearSolver<Tag::Newton>;
 
-    if (dynamic_cast<NonlinearSolverPicard*>(&spd.nonlinear_solver))
+    if (dynamic_cast<NonlinearSolverPicard*>(&process_data.nonlinear_solver))
     {
         // The Picard solver can also work with a Newton-ready ODE,
         // because the Newton ODESystem derives from the Picard ODESystem.
         // So no further checks are needed here.
 
-        spd.tdisc_ode_sys = std::make_unique<
+        process_data.tdisc_ode_sys = std::make_unique<
             NumLib::TimeDiscretizedODESystem<ODETag, Tag::Picard>>(
-            spd.process_id, ode_sys, *spd.time_disc);
+            process_data.process_id, ode_sys, *process_data.time_disc);
     }
-    else if (dynamic_cast<NonlinearSolverNewton*>(&spd.nonlinear_solver))
+    else if (dynamic_cast<NonlinearSolverNewton*>(
+                 &process_data.nonlinear_solver))
     {
         // The Newton-Raphson method needs a Newton-ready ODE.
 
         using ODENewton = NumLib::ODESystem<ODETag, Tag::Newton>;
         if (auto* ode_newton = dynamic_cast<ODENewton*>(&ode_sys))
         {
-            spd.tdisc_ode_sys = std::make_unique<
+            process_data.tdisc_ode_sys = std::make_unique<
                 NumLib::TimeDiscretizedODESystem<ODETag, Tag::Newton>>(
-                spd.process_id, *ode_newton, *spd.time_disc);
+                process_data.process_id, *ode_newton, *process_data.time_disc);
         }
         else
         {
@@ -136,13 +137,13 @@ void setTimeDiscretizedODESystem(
         OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
     }
 
-    spd.mat_strg =
-        dynamic_cast<NumLib::InternalMatrixStorage*>(spd.tdisc_ode_sys.get());
+    process_data.mat_strg = dynamic_cast<NumLib::InternalMatrixStorage*>(
+        process_data.tdisc_ode_sys.get());
 }
 
-void setTimeDiscretizedODESystem(SingleProcessData& spd)
+void setTimeDiscretizedODESystem(ProcessData& process_data)
 {
-    setTimeDiscretizedODESystem(spd, spd.process);
+    setTimeDiscretizedODESystem(process_data, process_data.process);
 }
 
 std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
@@ -203,8 +204,8 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
     const auto minmax_iter = std::minmax_element(
         per_process_data.begin(),
         per_process_data.end(),
-        [](std::unique_ptr<SingleProcessData> const& a,
-           std::unique_ptr<SingleProcessData> const& b) {
+        [](std::unique_ptr<ProcessData> const& a,
+           std::unique_ptr<ProcessData> const& b) {
             return (a->timestepper->end() < b->timestepper->end());
         });
     const double start_time =
@@ -221,18 +222,18 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
 
 std::vector<GlobalVector*> setInitialConditions(
     double const t0,
-    std::vector<std::unique_ptr<SingleProcessData>> const& per_process_data)
+    std::vector<std::unique_ptr<ProcessData>> const& per_process_data)
 {
     std::vector<GlobalVector*> process_solutions;
 
     int process_id = 0;
-    for (auto& spd : per_process_data)
+    for (auto& process_data : per_process_data)
     {
-        auto& pcs = spd->process;
-        auto& time_disc = *spd->time_disc;
+        auto& pcs = process_data->process;
+        auto& time_disc = *process_data->time_disc;
 
-        auto& ode_sys = *spd->tdisc_ode_sys;
-        auto const nl_tag = spd->nonlinear_solver_tag;
+        auto& ode_sys = *process_data->tdisc_ode_sys;
+        auto const nl_tag = process_data->nonlinear_solver_tag;
 
         // append a solution vector of suitable size
         process_solutions.emplace_back(
@@ -247,9 +248,9 @@ std::vector<GlobalVector*> setInitialConditions(
 
         if (time_disc.needsPreload())
         {
-            auto& nonlinear_solver = spd->nonlinear_solver;
-            auto& mat_strg = *spd->mat_strg;
-            auto& conv_crit = *spd->conv_crit;
+            auto& nonlinear_solver = process_data->nonlinear_solver;
+            auto& mat_strg = *process_data->mat_strg;
+            auto& conv_crit = *process_data->conv_crit;
 
             setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
             nonlinear_solver.assemble(x0);
@@ -267,7 +268,7 @@ std::vector<GlobalVector*> setInitialConditions(
 bool solveOneTimeStepOneProcess(int const process_id, GlobalVector& x,
                                 std::size_t const timestep, double const t,
                                 double const delta_t,
-                                SingleProcessData const& process_data,
+                                ProcessData const& process_data,
                                 Output& output_control)
 {
     auto& process = process_data.process;
@@ -308,7 +309,7 @@ bool solveOneTimeStepOneProcess(int const process_id, GlobalVector& x,
 
 UncoupledProcessesTimeLoop::UncoupledProcessesTimeLoop(
     std::unique_ptr<Output>&& output,
-    std::vector<std::unique_ptr<SingleProcessData>>&& per_process_data,
+    std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
     const unsigned global_coupling_max_iterations,
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
         global_coupling_conv_crit,
@@ -515,17 +516,17 @@ bool UncoupledProcessesTimeLoop::loop()
     // initialize output, convergence criterion, etc.
     {
         unsigned process_id = 0;
-        for (auto& spd : _per_process_data)
+        for (auto& process_data : _per_process_data)
         {
-            auto& pcs = spd->process;
+            auto& pcs = process_data->process;
             _output->addProcess(pcs, process_id);
 
-            spd->process_id = process_id;
-            setTimeDiscretizedODESystem(*spd);
+            process_data->process_id = process_id;
+            setTimeDiscretizedODESystem(*process_data);
 
             if (auto* conv_crit =
                     dynamic_cast<NumLib::ConvergenceCriterionPerComponent*>(
-                        spd->conv_crit.get()))
+                        process_data->conv_crit.get()))
             {
                 conv_crit->setDOFTable(pcs.getDOFTable(process_id),
                                        pcs.getMesh());
@@ -647,9 +648,9 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
 {
     // TODO(wenqing): use process name
     unsigned process_id = 0;
-    for (auto& spd : _per_process_data)
+    for (auto& process_data : _per_process_data)
     {
-        if (spd->skip_time_stepping)
+        if (process_data->skip_time_stepping)
         {
             INFO("Process %u is skipped in the time stepping.", process_id);
             ++process_id;
@@ -660,12 +661,12 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
         time_timestep_process.start();
 
         auto& x = *_process_solutions[process_id];
-        auto& pcs = spd->process;
+        auto& pcs = process_data->process;
         pcs.preTimestep(x, t, dt, process_id);
 
         const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
-            process_id, x, timestep_id, t, dt, *spd, *_output);
-        spd->nonlinear_solver_converged = nonlinear_solver_succeeded;
+            process_id, x, timestep_id, t, dt, *process_data, *_output);
+        process_data->nonlinear_solver_converged = nonlinear_solver_succeeded;
         pcs.postTimestep(x, process_id);
         pcs.computeSecondaryVariable(t, x);
 
@@ -679,10 +680,11 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
                 timestep_id, t, process_id);
 
             // save unsuccessful solution
-            _output->doOutputAlways(pcs, process_id, spd->process_output,
-                                    timestep_id, t, x);
+            _output->doOutputAlways(pcs, process_id,
+                                    process_data->process_output, timestep_id,
+                                    t, x);
 
-            if (!spd->timestepper->isSolutionErrorComputationNeeded())
+            if (!process_data->timestepper->isSolutionErrorComputationNeeded())
             {
                 OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
             }
@@ -690,11 +692,11 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
             return false;
         }
 
-        _output->doOutput(pcs, process_id, spd->process_output, timestep_id, t,
-                          x);
+        _output->doOutput(pcs, process_id, process_data->process_output,
+                          timestep_id, t, x);
 
         ++process_id;
-    }  // end of for (auto& spd : _per_process_data)
+    }  // end of for (auto& process_data : _per_process_data)
 
     return true;
 }
@@ -727,9 +729,9 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         bool nonlinear_solver_succeeded = true;
         coupling_iteration_converged = true;
         int process_id = 0;
-        for (auto& spd : _per_process_data)
+        for (auto& process_data : _per_process_data)
         {
-            if (spd->skip_time_stepping)
+            if (process_data->skip_time_stepping)
             {
                 INFO("Process %u is skipped in the time stepping.", process_id);
                 ++process_id;
@@ -746,18 +748,19 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 // belongs to process. For some problems, both of the current
                 // solution and the solution of the previous time step are
                 // required for the coupling computation.
-                spd->process.preTimestep(x, t, dt, process_id);
+                process_data->process.preTimestep(x, t, dt, process_id);
             }
 
             CoupledSolutionsForStaggeredScheme coupled_solutions(
                 _solutions_of_coupled_processes, dt, process_id);
 
-            spd->process.setCoupledSolutionsForStaggeredScheme(
+            process_data->process.setCoupledSolutionsForStaggeredScheme(
                 &coupled_solutions);
 
             const auto nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
-                process_id, x, timestep_id, t, dt, *spd, *_output);
-            spd->nonlinear_solver_converged = nonlinear_solver_succeeded;
+                process_id, x, timestep_id, t, dt, *process_data, *_output);
+            process_data->nonlinear_solver_converged =
+                nonlinear_solver_succeeded;
 
             INFO(
                 "[time] Solving process #%u took %g s in time step #%u "
@@ -773,10 +776,12 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                     timestep_id, t, process_id);
 
                 // save unsuccessful solution
-                _output->doOutputAlways(spd->process, process_id,
-                                        spd->process_output, timestep_id, t, x);
+                _output->doOutputAlways(process_data->process, process_id,
+                                        process_data->process_output,
+                                        timestep_id, t, x);
 
-                if (!spd->timestepper->isSolutionErrorComputationNeeded())
+                if (!process_data->timestepper
+                         ->isSolutionErrorComputationNeeded())
                 {
                     OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
                 }
@@ -797,7 +802,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             MathLib::LinAlg::copy(x, x_old);
 
             ++process_id;
-        }  // end of for (auto& spd : _per_process_data)
+        }  // end of for (auto& process_data : _per_process_data)
 
         if (coupling_iteration_converged && global_coupling_iteration > 0)
         {
@@ -819,14 +824,14 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     }
 
     unsigned process_id = 0;
-    for (auto& spd : _per_process_data)
+    for (auto& process_data : _per_process_data)
     {
-        if (spd->skip_time_stepping)
+        if (process_data->skip_time_stepping)
         {
             ++process_id;
             continue;
         }
-        auto& pcs = spd->process;
+        auto& pcs = process_data->process;
         auto& x = *_process_solutions[process_id];
         pcs.postTimestep(x, process_id);
         pcs.computeSecondaryVariable(t, x);
@@ -851,12 +856,13 @@ void UncoupledProcessesTimeLoop::outputSolutions(
     OutputClassMember output_class_member) const
 {
     unsigned process_id = 0;
-    for (auto& spd : _per_process_data)
+    for (auto& process_data : _per_process_data)
     {
-        auto& pcs = spd->process;
+        auto& pcs = process_data->process;
         // If nonlinear solver diverged, the solution has already been
         // saved.
-        if ((!spd->nonlinear_solver_converged) || spd->skip_time_stepping)
+        if ((!process_data->nonlinear_solver_converged) ||
+            process_data->skip_time_stepping)
         {
             ++process_id;
             continue;
@@ -867,23 +873,25 @@ void UncoupledProcessesTimeLoop::outputSolutions(
         if (output_initial_condition)
         {
             pcs.preTimestep(x, _start_time,
-                            spd->timestepper->getTimeStep().dt(), process_id);
+                            process_data->timestepper->getTimeStep().dt(),
+                            process_id);
         }
         if (is_staggered_coupling)
         {
             CoupledSolutionsForStaggeredScheme coupled_solutions(
                 _solutions_of_coupled_processes, 0.0, process_id);
 
-            spd->process.setCoupledSolutionsForStaggeredScheme(
+            process_data->process.setCoupledSolutionsForStaggeredScheme(
                 &coupled_solutions);
-            spd->process.setCoupledTermForTheStaggeredSchemeToLocalAssemblers();
+            process_data->process
+                .setCoupledTermForTheStaggeredSchemeToLocalAssemblers();
             (output_object.*output_class_member)(
-                pcs, process_id, spd->process_output, timestep, t, x);
+                pcs, process_id, process_data->process_output, timestep, t, x);
         }
         else
         {
             (output_object.*output_class_member)(
-                pcs, process_id, spd->process_output, timestep, t, x);
+                pcs, process_id, process_data->process_output, timestep, t, x);
         }
 
         ++process_id;

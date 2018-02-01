@@ -89,34 +89,35 @@ void Output::addProcess(ProcessLib::Process const& process,
     auto const filename = BaseLib::joinPaths(
         _output_directory,
         _output_file_prefix + "_pcs_" + std::to_string(process_id) + ".pvd");
-    _single_process_data.emplace(std::piecewise_construct,
-                                 std::forward_as_tuple(&process),
-                                 std::forward_as_tuple(filename));
+    _process_to_process_data.emplace(std::piecewise_construct,
+                                     std::forward_as_tuple(&process),
+                                     std::forward_as_tuple(filename));
 }
 
-Output::SingleProcessData* Output::findSingleProcessData(Process const& process,
-                                                         const int process_id)
+// TODO return a reference.
+Output::ProcessData* Output::findProcessData(Process const& process,
+                                             const int process_id)
 {
-    auto spd_range = _single_process_data.equal_range(&process);
+    auto range = _process_to_process_data.equal_range(&process);
     int counter = 0;
-    SingleProcessData* spd_ptr = nullptr;
-    for (auto spd_it = spd_range.first; spd_it != spd_range.second; ++spd_it)
+    ProcessData* process_data = nullptr;
+    for (auto spd_it = range.first; spd_it != range.second; ++spd_it)
     {
         if (counter == process_id)
         {
-            spd_ptr = &spd_it->second;
+            process_data = &spd_it->second;
             break;
         }
         counter++;
     }
-    if (spd_ptr == nullptr)
+    if (process_data == nullptr)
     {
         OGS_FATAL(
             "The given process is not contained in the output"
             " configuration. Aborting.");
     }
 
-    return spd_ptr;
+    return process_data;
 }
 
 void Output::doOutputAlways(Process const& process,
@@ -137,7 +138,7 @@ void Output::doOutputAlways(Process const& process,
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
     // output.
-    if (!(process_id == static_cast<int>(_single_process_data.size()) - 1 ||
+    if (!(process_id == static_cast<int>(_process_to_process_data.size()) - 1 ||
           process.isMonolithicSchemeUsed()))
         return;
 
@@ -149,8 +150,8 @@ void Output::doOutputAlways(Process const& process,
 
     DBUG("output to %s", output_file_path.c_str());
 
-    SingleProcessData* spd_ptr = findSingleProcessData(process, process_id);
-    spd_ptr->pvd_file.addVTUFile(output_file_name, t);
+    ProcessData* process_data = findProcessData(process, process_id);
+    process_data->pvd_file.addVTUFile(output_file_name, t);
     INFO("[time] Output of timestep %d took %g s.", timestep,
          time_output.elapsed());
 
@@ -215,12 +216,12 @@ void Output::doOutputNonlinearIteration(Process const& process,
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
     // output.
-    if (!(process_id == static_cast<int>(_single_process_data.size()) - 1 ||
+    if (!(process_id == static_cast<int>(_process_to_process_data.size()) - 1 ||
           process.isMonolithicSchemeUsed()))
         return;
 
     // Only check whether a process data is available for output.
-    findSingleProcessData(process, process_id);
+    findProcessData(process, process_id);
 
     std::string const output_file_name =
         _output_file_prefix + "_pcs_" + std::to_string(process_id) + "_ts_" +
