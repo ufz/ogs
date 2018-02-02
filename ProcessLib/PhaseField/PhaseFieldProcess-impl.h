@@ -345,7 +345,7 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
     GlobalVector const& x, double const t, double const dt,
     const int process_id)
 {
-    DBUG("PreTimestep PhaseFieldProcess.");
+    DBUG("PreTimestep PhaseFieldProcess %d.", process_id);
 
     _process_data.dt = dt;
     _process_data.t = t;
@@ -359,7 +359,7 @@ template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
     GlobalVector const& x, int const process_id)
 {
-    DBUG("PostTimestep PhaseFieldProcess.");
+    DBUG("PostTimestep PhaseFieldProcess %d.", process_id);
 
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
