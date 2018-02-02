@@ -89,7 +89,7 @@ PorousMediaProperties createPorousMediaProperties(
     int const max_material_id =
         *std::max_element(material_ids.cbegin(), material_ids.cend());
 
-    if (max_material_id > mat_ids.size() - 1)
+    if (max_material_id > static_cast<int>(mat_ids.size() - 1))
         OGS_FATAL(
             "The maximum value of MaterialIDs in mesh is %d. As the "
             "given number of porous media definitions in the project "
@@ -97,7 +97,7 @@ PorousMediaProperties createPorousMediaProperties(
             "(index starts with zero).",
             max_material_id, mat_ids.size(), max_material_id - 1);
 
-    if (max_material_id < mat_ids.size() - 1)
+    if (max_material_id < static_cast<int>(mat_ids.size() - 1))
         WARN(
             "There are %d porous medium definitions in the project file but "
             "only %d different values in the MaterialIDs vector/data_array in "
