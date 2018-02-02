@@ -883,7 +883,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             conv_crit->preFirstIteration();
         }
     }
-    auto resetCouplingConvergenceCtiteria = [&]() {
+    auto resetCouplingConvergenceCriteria = [&]() {
         for (auto& conv_crit : _global_coupling_conv_crit)
         {
             conv_crit->reset();
@@ -893,7 +893,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     bool coupling_iteration_converged = true;
     for (unsigned global_coupling_iteration = 0;
          global_coupling_iteration < _global_coupling_max_iterations;
-         global_coupling_iteration++, resetCouplingConvergenceCtiteria())
+         global_coupling_iteration++, resetCouplingConvergenceCriteria())
     {
         // TODO(wenqing): use process name
         bool nonlinear_solver_succeeded = true;
