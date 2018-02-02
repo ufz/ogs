@@ -12,6 +12,7 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
+#ifndef USE_PETSC  // Not used in PETSc case
 static void addSecondaryVariableNodes(
     double const t,
     GlobalVector const& x,
@@ -102,6 +103,7 @@ static void addSecondaryVariableResiduals(
         residuals_mesh[i] = residuals[i];
     }
 }
+#endif  // USE_PETSC
 
 namespace ProcessLib
 {
@@ -214,6 +216,7 @@ void processOutputData(
         }
     }
 #else
+    (void)mesh;
     (void)secondary_variables;
     (void)t;
 #endif  // USE_PETSC
