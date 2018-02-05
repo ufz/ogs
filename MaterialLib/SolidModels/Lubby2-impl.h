@@ -40,7 +40,7 @@ calculatedGdEBurgers()
 }
 
 template <int DisplacementDim, typename LinearSolver>
-ProcessLib::KelvinMatrixType<DisplacementDim> tangentStiffnessA(
+MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> tangentStiffnessA(
     double const GM0, double const KM0, LinearSolver const& linear_solver)
 {
     // Calculate dGdE for time step
@@ -50,14 +50,15 @@ ProcessLib::KelvinMatrixType<DisplacementDim> tangentStiffnessA(
     // functionals.
     // Only the upper left block is relevant for the global tangent.
     static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-    using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
     KelvinMatrix const dzdE =
         linear_solver.solve(-dGdE)
             .template topLeftCorner<KelvinVectorSize, KelvinVectorSize>();
 
-    using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
     auto const& P_sph = Invariants::spherical_projection;
     auto const& P_dev = Invariants::deviatoric_projection;
 
@@ -80,7 +81,7 @@ Lubby2<DisplacementDim>::integrateStress(
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
         material_state_variables)
 {
-    using Invariants = MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     assert(dynamic_cast<MaterialStateVariables const*>(
                &material_state_variables) != nullptr);
@@ -150,7 +151,7 @@ Lubby2<DisplacementDim>::integrateStress(
                                                              2);
 
             // Calculate effective stress and update material properties
-            sig_eff = MaterialLib::SolidModels::Invariants<
+            sig_eff = MathLib::KelvinVector::Invariants<
                 KelvinVectorSize>::equivalentStress(sigd_j);
             local_lubby2_properties.update(sig_eff);
         };

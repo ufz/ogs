@@ -8,37 +8,15 @@
 
 #include <gtest/gtest.h>
 
-#include "MaterialLib/SolidModels/KelvinVector.h"
+#include "MathLib/KelvinVector.h"
 
 #include "Tests/AutoCheckTools.h"
 
-using namespace MaterialLib::SolidModels;
+using namespace MathLib::KelvinVector;
 namespace ac = autocheck;
 
 template <int Size>
 using KelvinVector = Eigen::Matrix<double, Size, 1, Eigen::ColMajor, Size, 1>;
-
-template <int Size>
-Eigen::Matrix<double, 3, 3> kelvinToTensor(KelvinVector<Size> const& v);
-
-template <>
-Eigen::Matrix<double, 3, 3> kelvinToTensor(KelvinVector<4> const& v)
-{
-    Eigen::Matrix<double, 3, 3> m;
-    m << v[0], v[3] / std::sqrt(2.), 0, v[3] / std::sqrt(2.), v[1], 0, 0, 0,
-        v[2];
-    return m;
-}
-
-template <>
-Eigen::Matrix<double, 3, 3> kelvinToTensor(KelvinVector<6> const& v)
-{
-    Eigen::Matrix<double, 3, 3> m;
-    m << v[0], v[3] / std::sqrt(2.), v[5] / std::sqrt(2.), v[3] / std::sqrt(2.),
-        v[1], v[4] / std::sqrt(2.), v[5] / std::sqrt(2.), v[4] / std::sqrt(2.),
-        v[2];
-    return m;
-}
 
 template <int Size>
 KelvinVector<Size> tensorToKelvin(Eigen::Matrix<double, 3, 3> const& m);
@@ -94,7 +72,7 @@ struct MaterialLibSolidsKelvinVector6 : public ::testing::Test
 TEST_F(MaterialLibSolidsKelvinVector4, SelfTestMappingKelvinToTensor)
 {
     auto f = [](KelvinVector<4> const& v) {
-        return (v - tensorToKelvin<4>(kelvinToTensor(v))).norm() <=
+        return (v - tensorToKelvin<4>(kelvinVectorToTensor(v))).norm() <=
                2 * std::numeric_limits<double>::epsilon() * v.norm();
     };
 
@@ -105,7 +83,7 @@ TEST_F(MaterialLibSolidsKelvinVector4, SelfTestMappingKelvinToTensor)
 TEST_F(MaterialLibSolidsKelvinVector6, SelfTestMappingKelvinToTensor)
 {
     auto f = [](KelvinVector<6> const& v) {
-        return (v - tensorToKelvin<6>(kelvinToTensor(v))).norm() <=
+        return (v - tensorToKelvin<6>(kelvinVectorToTensor(v))).norm() <=
                1.5 * std::numeric_limits<double>::epsilon() * v.norm();
     };
 
@@ -121,7 +99,7 @@ TEST_F(MaterialLibSolidsKelvinVector4, Determinant)
 {
     auto f = [](KelvinVector<4> const& v) {
         return std::abs(Invariants<4>::determinant(v) -
-                        kelvinToTensor(v).determinant()) <=
+                        kelvinVectorToTensor(v).determinant()) <=
                std::numeric_limits<double>::epsilon() *
                    std::pow(v.norm(), 3.07);
     };
@@ -134,7 +112,7 @@ TEST_F(MaterialLibSolidsKelvinVector6, Determinant)
 {
     auto f = [](KelvinVector<6> const& v) {
         return std::abs(Invariants<6>::determinant(v) -
-                        kelvinToTensor(v).determinant()) <=
+                        kelvinVectorToTensor(v).determinant()) <=
                std::numeric_limits<double>::epsilon() *
                    std::pow(v.norm(), 3.07);
     };
@@ -151,7 +129,7 @@ TEST_F(MaterialLibSolidsKelvinVector4, Inverse)
 {
     auto f = [](KelvinVector<4> const& v) {
         auto const error =
-            (inverse(v) - tensorToKelvin<4>(kelvinToTensor(v).inverse()))
+            (inverse(v) - tensorToKelvin<4>(kelvinVectorToTensor(v).inverse()))
                 .norm();
         // The error is only weekly depending on the input vector norm.
         return error < 1e-6 && error < 1e-8 * std::pow(v.norm(), 1.4);
@@ -162,7 +140,7 @@ TEST_F(MaterialLibSolidsKelvinVector4, Inverse)
         ac::make_arbitrary(kelvinVectorGenerator)
             .discard_if([](KelvinVector<4> const& v) {
                 // only invertable matrices
-                return (std::abs(kelvinToTensor(v).determinant()) == 0);
+                return (std::abs(kelvinVectorToTensor(v).determinant()) == 0);
             }),
         gtest_reporter);
 }
@@ -171,7 +149,7 @@ TEST_F(MaterialLibSolidsKelvinVector6, Inverse)
 {
     auto f = [](KelvinVector<6> const& v) {
         auto const error =
-            (inverse(v) - tensorToKelvin<6>(kelvinToTensor(v).inverse()))
+            (inverse(v) - tensorToKelvin<6>(kelvinVectorToTensor(v).inverse()))
                 .norm();
         // The error is only weekly depending on the input vector norm.
         return error < 1e-6 && error < 1e-8 * std::pow(v.norm(), 1.4);
@@ -182,7 +160,7 @@ TEST_F(MaterialLibSolidsKelvinVector6, Inverse)
         ac::make_arbitrary(kelvinVectorGenerator)
             .discard_if([](KelvinVector<6> const& v) {
                 // only invertable matrices
-                return (std::abs(kelvinToTensor(v).determinant()) == 0);
+                return (std::abs(kelvinVectorToTensor(v).determinant()) == 0);
             }),
         gtest_reporter);
 }

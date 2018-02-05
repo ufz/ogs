@@ -151,6 +151,9 @@ public:
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
 
+            static const int kelvin_vector_size =
+                MathLib::KelvinVector::KelvinVectorDimensions<
+                    DisplacementDim>::value;
             ip_data.eps.setZero(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
             ip_data.C_tensile.setZero(kelvin_vector_size, kelvin_vector_size);
@@ -550,8 +553,6 @@ private:
     static const int displacement_index = ShapeFunction::NPOINTS;
     static const int displacement_size =
         ShapeFunction::NPOINTS * DisplacementDim;
-    static const int kelvin_vector_size =
-        KelvinVectorDimensions<DisplacementDim>::value;
 };
 
 }  // namespace PhaseField

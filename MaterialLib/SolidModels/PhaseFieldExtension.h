@@ -19,8 +19,10 @@ namespace Solids
 template <int DisplacementDim>
 struct PhaseFieldExtension : public MechanicsBase<DisplacementDim>
 {
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-    using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
     virtual bool calculateDegradedStress(double const t,
                                          ProcessLib::SpatialPosition const& x,
                                          KelvinVector const& eps,

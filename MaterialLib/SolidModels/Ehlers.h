@@ -23,10 +23,10 @@
 #endif
 
 #include "BaseLib/Error.h"
+#include "MathLib/KelvinVector.h"
 #include "NumLib/NewtonRaphson.h"
 #include "ProcessLib/Parameter/Parameter.h"
 
-#include "KelvinVector.h"
 #include "MechanicsBase.h"
 
 namespace MaterialLib
@@ -218,7 +218,8 @@ struct StateVariables
         damage_prev = damage;
     }
 
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
     PlasticStrain<KelvinVector> eps_p;  ///< plastic part of the state.
     Damage damage;                      ///< damage part of the state.
@@ -253,7 +254,7 @@ class SolidEhlers final : public MechanicsBase<DisplacementDim>
 {
 public:
     static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     static int const JacobianResidualSize =
         2 * KelvinVectorSize + 3;  // 2 is the number of components in the
                                    // jacobian/residual, not the space
@@ -272,8 +273,10 @@ public:
     }
 
 public:
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-    using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
 public:
     explicit SolidEhlers(
@@ -301,8 +304,7 @@ public:
         auto const& eps_p = static_cast<StateVariables<DisplacementDim> const&>(
                                 material_state_variables)
                                 .eps_p;
-        using Invariants =
-            MaterialLib::SolidModels::Invariants<KelvinVectorSize>;
+        using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
         auto const& identity2 = Invariants::identity2;
         return (eps - eps_p.D - eps_p.V / 3 * identity2).dot(sigma) / 2;
     }

@@ -7,9 +7,9 @@
  *
  */
 
-namespace MaterialLib
+namespace MathLib
 {
-namespace SolidModels
+namespace KelvinVector
 {
 template <int KelvinVectorSize>
 double Invariants<KelvinVectorSize>::equivalentStress(
@@ -99,8 +99,9 @@ Eigen::Matrix<double, KelvinVectorSize, KelvinVectorSize> const
         detail::initSphericalProjection<KelvinVectorSize>();
 
 template <int KelvinVectorSize>
-const Eigen::Matrix<double, KelvinVectorSize, 1> Invariants<
-    KelvinVectorSize>::identity2 = detail::initIdentity2<KelvinVectorSize>();
+const Eigen::Matrix<double, KelvinVectorSize, 1>
+    Invariants<KelvinVectorSize>::identity2 =
+        detail::initIdentity2<KelvinVectorSize>();
 
-}  // namespace SolidModels
-}  // namespace MaterialLib
+}  // namespace KelvinVector
+}  // namespace MathLib

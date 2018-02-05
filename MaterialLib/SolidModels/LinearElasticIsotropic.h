@@ -85,9 +85,11 @@ public:
 
 public:
     static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-    using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
     explicit LinearElasticIsotropic(MaterialProperties material_properties)
         : _mp(std::move(material_properties))

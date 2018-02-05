@@ -20,10 +20,10 @@ template class SolidEhlers<2>;
 template class SolidEhlers<3>;
 
 template <>
-ProcessLib::KelvinMatrixType<3> sOdotS<3>(
-    ProcessLib::KelvinVectorType<3> const& v)
+MathLib::KelvinVector::KelvinMatrixType<3> sOdotS<3>(
+    MathLib::KelvinVector::KelvinVectorType<3> const& v)
 {
-    ProcessLib::KelvinMatrixType<3> result;
+    MathLib::KelvinVector::KelvinMatrixType<3> result;
 
     result(0, 0) = v(0) * v(0);
     result(0, 1) = result(1, 0) = v(3) * v(3) / 2.;
@@ -58,10 +58,10 @@ ProcessLib::KelvinMatrixType<3> sOdotS<3>(
 }
 
 template <>
-ProcessLib::KelvinMatrixType<2> sOdotS<2>(
-    ProcessLib::KelvinVectorType<2> const& v)
+MathLib::KelvinVector::KelvinMatrixType<2> sOdotS<2>(
+    MathLib::KelvinVector::KelvinVectorType<2> const& v)
 {
-    ProcessLib::KelvinMatrixType<2> result;
+    MathLib::KelvinVector::KelvinMatrixType<2> result;
 
     result(0, 0) = v(0) * v(0);
     result(0, 1) = result(1, 0) = v(3) * v(3) / 2.;

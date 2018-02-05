@@ -77,18 +77,17 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 
     Base::_secondary_variables.addSecondaryVariable(
         "sigma",
-        makeExtrapolator(
-            ProcessLib::KelvinVectorType<DisplacementDim>::RowsAtCompileTime,
-            getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtSigma));
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtSigma));
 
     Base::_secondary_variables.addSecondaryVariable(
         "epsilon",
-        makeExtrapolator(
-            ProcessLib::KelvinVectorType<DisplacementDim>::RowsAtCompileTime,
-            getExtrapolator(), _local_assemblers,
-            &LocalAssemblerInterface::getIntPtEpsilon));
-
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtEpsilon));
 
     // enable output of internal variables defined by material models
     auto const internal_variables =

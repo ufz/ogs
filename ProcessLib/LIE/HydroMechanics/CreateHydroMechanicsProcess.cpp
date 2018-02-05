@@ -285,7 +285,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__initial_effective_stress}
         "initial_effective_stress", parameters,
-        ProcessLib::KelvinVectorDimensions<GlobalDim>::value);
+        MathLib::KelvinVector::KelvinVectorDimensions<GlobalDim>::value);
     DBUG("Use \'%s\' as initial effective stress parameter.",
          initial_effective_stress.name.c_str());
 

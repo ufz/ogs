@@ -136,16 +136,16 @@ public:
             ip_data.N = sm.N;
             ip_data.dNdx = sm.dNdx;
 
+            static const int kelvin_vector_size =
+                MathLib::KelvinVector::KelvinVectorDimensions<
+                    DisplacementDim>::value;
             // Initialize current time step values
-            ip_data.sigma.setZero(
-                KelvinVectorDimensions<DisplacementDim>::value);
-            ip_data.eps.setZero(KelvinVectorDimensions<DisplacementDim>::value);
+            ip_data.sigma.setZero(kelvin_vector_size);
+            ip_data.eps.setZero(kelvin_vector_size);
 
             // Previous time step values are not initialized and are set later.
-            ip_data.sigma_prev.resize(
-                KelvinVectorDimensions<DisplacementDim>::value);
-            ip_data.eps_prev.resize(
-                KelvinVectorDimensions<DisplacementDim>::value);
+            ip_data.sigma_prev.resize(kelvin_vector_size);
+            ip_data.eps_prev.resize(kelvin_vector_size);
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
         }
@@ -230,7 +230,7 @@ public:
             if (!solution)
                 OGS_FATAL("Computation of local constitutive relation failed.");
 
-            KelvinMatrixType<DisplacementDim> C;
+            MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
             std::tie(sigma, state, C) = std::move(*solution);
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
@@ -320,9 +320,9 @@ public:
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
-        using KelvinVectorType = typename BMatricesType::KelvinVectorType;
-        auto const kelvin_vector_size =
-            KelvinVectorDimensions<DisplacementDim>::value;
+        static const int kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
         auto const num_intpts = _ip_data.size();
 
         cache.clear();
@@ -330,24 +330,11 @@ public:
             double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, kelvin_vector_size, num_intpts);
 
-        // TODO make a general implementation for converting KelvinVectors
-        // back to symmetric rank-2 tensors.
         for (unsigned ip = 0; ip < num_intpts; ++ip)
         {
             auto const& sigma = _ip_data[ip].sigma;
-
-            for (typename KelvinVectorType::Index component = 0;
-                 component < kelvin_vector_size && component < 3;
-                 ++component)
-            {  // xx, yy, zz components
-                cache_mat(component, ip) = sigma[component];
-            }
-            for (typename KelvinVectorType::Index component = 3;
-                 component < kelvin_vector_size;
-                 ++component)
-            {  // mixed xy, yz, xz components
-                cache_mat(component, ip) = sigma[component] / std::sqrt(2);
-            }
+            cache_mat.col(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
         }
 
         return cache;
@@ -359,9 +346,9 @@ public:
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
-        using KelvinVectorType = typename BMatricesType::KelvinVectorType;
         auto const kelvin_vector_size =
-            KelvinVectorDimensions<DisplacementDim>::value;
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
         auto const num_intpts = _ip_data.size();
 
         cache.clear();
@@ -369,24 +356,11 @@ public:
             double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, kelvin_vector_size, num_intpts);
 
-        // TODO make a general implementation for converting KelvinVectors
-        // back to symmetric rank-2 tensors.
         for (unsigned ip = 0; ip < num_intpts; ++ip)
         {
             auto const& eps = _ip_data[ip].eps;
-
-            for (typename KelvinVectorType::Index component = 0;
-                 component < kelvin_vector_size && component < 3;
-                 ++component)
-            {  // xx, yy, zz components
-                cache_mat(component, ip) = eps[component];
-            }
-            for (typename KelvinVectorType::Index component = 3;
-                 component < kelvin_vector_size;
-                 ++component)
-            {  // mixed xy, yz, xz components
-                cache_mat(component, ip) = eps[component] / std::sqrt(2);
-            }
+            cache_mat.col(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
         }
 
         return cache;

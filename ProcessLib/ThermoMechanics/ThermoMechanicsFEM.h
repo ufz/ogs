@@ -12,8 +12,8 @@
 #include <memory>
 #include <vector>
 
-#include "MaterialLib/SolidModels/KelvinVector.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -129,6 +129,9 @@ public:
                 _integration_method.getWeightedPoint(ip).getWeight() *
                 shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
 
+            static const int kelvin_vector_size =
+                MathLib::KelvinVector::KelvinVectorDimensions<
+                    DisplacementDim>::value;
             ip_data.sigma.setZero(kelvin_vector_size);
             ip_data.sigma_prev.setZero(kelvin_vector_size);
             ip_data.eps.setZero(kelvin_vector_size);
@@ -238,8 +241,9 @@ public:
             //
             eps.noalias() = B * u;
 
-            using Invariants =
-                MaterialLib::SolidModels::Invariants<kelvin_vector_size>;
+            using Invariants = MathLib::KelvinVector::Invariants<
+                MathLib::KelvinVector::KelvinVectorDimensions<
+                    DisplacementDim>::value>;
 
             // assume isotropic thermal expansion
             eps_m.noalias() =
@@ -250,7 +254,7 @@ public:
             if (!solution)
                 OGS_FATAL("Computation of local constitutive relation failed.");
 
-            KelvinMatrixType<DisplacementDim> C;
+            MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
             std::tie(sigma, state, C) = std::move(*solution);
 
             local_Jac
@@ -501,8 +505,6 @@ private:
     static const int displacement_index = ShapeFunction::NPOINTS;
     static const int displacement_size =
         ShapeFunction::NPOINTS * DisplacementDim;
-    static const int kelvin_vector_size =
-        KelvinVectorDimensions<DisplacementDim>::value;
 };
 
 }  // namespace ThermoMechanics

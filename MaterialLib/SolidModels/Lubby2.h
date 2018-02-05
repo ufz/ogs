@@ -9,10 +9,10 @@
 
 #pragma once
 
+#include "MathLib/KelvinVector.h"
 #include "NumLib/NewtonRaphson.h"
 #include "ProcessLib/Parameter/Parameter.h"
 
-#include "KelvinVector.h"
 #include "MechanicsBase.h"
 
 namespace MaterialLib
@@ -139,8 +139,10 @@ public:
             eps_M_t = eps_M_j;
         }
 
-        using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-        using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
+        using KelvinVector =
+            MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+        using KelvinMatrix =
+            MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
         /// Deviatoric strain in the viscous kelvin element during the current
         /// iteration
         KelvinVector eps_K_t;
@@ -164,9 +166,11 @@ public:
 
 public:
     static int const KelvinVectorSize =
-        ProcessLib::KelvinVectorDimensions<DisplacementDim>::value;
-    using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
-    using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
     static int const JacobianResidualSize =
         3 * KelvinVectorSize;  // Three is the number of components in the

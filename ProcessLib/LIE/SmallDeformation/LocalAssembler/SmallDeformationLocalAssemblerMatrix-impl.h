@@ -73,17 +73,17 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
             sm.integralMeasure * sm.detJ;
 
         // Initialize current time step values
-        ip_data._sigma.setZero(KelvinVectorDimensions<DisplacementDim>::value);
-        ip_data._eps.setZero(KelvinVectorDimensions<DisplacementDim>::value);
+        static const int kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        ip_data._sigma.setZero(kelvin_vector_size);
+        ip_data._eps.setZero(kelvin_vector_size);
 
         // Previous time step values are not initialized and are set later.
-        ip_data._sigma_prev.resize(
-            KelvinVectorDimensions<DisplacementDim>::value);
-        ip_data._eps_prev.resize(
-            KelvinVectorDimensions<DisplacementDim>::value);
+        ip_data._sigma_prev.resize(kelvin_vector_size);
+        ip_data._eps_prev.resize(kelvin_vector_size);
 
-        ip_data._C.resize(KelvinVectorDimensions<DisplacementDim>::value,
-                          KelvinVectorDimensions<DisplacementDim>::value);
+        ip_data._C.resize(kelvin_vector_size, kelvin_vector_size);
 
         _secondary_data.N[ip] = sm.N;
     }
@@ -152,7 +152,7 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
             OGS_FATAL("Computation of local constitutive relation failed.");
         }
 
-        KelvinMatrixType<DisplacementDim> C;
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
         std::tie(sigma, state, C) = std::move(*solution);
 
         local_b.noalias() -= B.transpose() * sigma * w;
