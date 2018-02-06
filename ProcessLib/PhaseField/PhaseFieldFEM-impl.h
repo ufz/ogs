@@ -273,7 +273,9 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     x_position.setElementID(_element.getID());
     double const& dt = _process_data.dt;
 
-    auto local_pressure = _process_data.unity_pressure;
+    auto local_pressure = 0.0;
+    if (_process_data.crack_pressure)
+        local_pressure = _process_data.unity_pressure;
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -369,8 +371,10 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     x_position.setElementID(_element.getID());
     double const& dt = _process_data.dt;
 
-    auto local_pressure = _process_data.unity_pressure;
-    if (_process_data.propagating_crack)
+    auto local_pressure = 0.0;
+    if (_process_data.crack_pressure)
+        local_pressure = _process_data.unity_pressure;
+    else if (_process_data.propagating_crack)
         local_pressure = _process_data.pressure;
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
