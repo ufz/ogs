@@ -78,9 +78,9 @@ public:
                                     const unsigned iteration);
 
 private:
-    struct SingleProcessData
+    struct ProcessData
     {
-        SingleProcessData(std::string const& filename) : pvd_file(filename) {}
+        ProcessData(std::string const& filename) : pvd_file(filename) {}
 
         MeshLib::IO::PVDFile pvd_file;
     };
@@ -100,16 +100,15 @@ private:
     //! Describes after which timesteps to write output.
     std::vector<PairRepeatEachSteps> _repeats_each_steps;
 
-    std::multimap<Process const*, SingleProcessData> _single_process_data;
+    std::multimap<Process const*, ProcessData> _process_to_process_data;
 
     /**
-     * Get the address of a SingleProcessData from _single_process_data.
+     * Get the address of a ProcessData from corresponding to the given process.
      * @param process    Process.
      * @param process_id Process ID.
-     * @return Address of a SingleProcessData.
+     * @return Address of a ProcessData.
      */
-    SingleProcessData* findSingleProcessData(Process const& process,
-                                             const int process_id);
+    ProcessData* findProcessData(Process const& process, const int process_id);
 };
 
 }  // namespace ProcessLib
