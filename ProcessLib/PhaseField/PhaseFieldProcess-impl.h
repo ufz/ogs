@@ -360,11 +360,30 @@ template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
     GlobalVector const& x, int const process_id)
 {
-    DBUG("PostTimestep PhaseFieldProcess %d.", process_id);
+    if (isPhaseFieldProcess(process_id))
+    {
+        DBUG("PostTimestep PhaseFieldProcess.");
 
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        getDOFTable(process_id), x);
+        _process_data.elastic_energy = 0.0;
+        _process_data.surface_energy = 0.0;
+        _process_data.pressure_work = 0.0;
+
+        std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+            dof_tables;
+
+        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(*_local_to_global_index_map_single_component);
+
+        GlobalExecutor::executeMemberOnDereferenced(
+            &LocalAssemblerInterface::computeEnergy, _local_assemblers,
+            dof_tables, x, _process_data.t, _process_data.elastic_energy,
+            _process_data.surface_energy, _process_data.pressure_work,
+            _use_monolithic_scheme, _coupled_solutions);
+
+        INFO("Elastic energy: %g Surface energy: %g Pressure work: %g ",
+             _process_data.elastic_energy, _process_data.surface_energy,
+             _process_data.pressure_work);
+    }
 }
 
 template <int DisplacementDim>

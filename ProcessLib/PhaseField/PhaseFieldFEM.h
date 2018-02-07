@@ -46,7 +46,7 @@ struct IntegrationPointData final
 
     typename BMatricesType::KelvinVectorType sigma_tensile, sigma_compressive,
         sigma_real_prev, sigma_real;
-    double strain_energy_tensile;
+    double strain_energy_tensile, elastic_energy;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
@@ -81,7 +81,7 @@ struct IntegrationPointData final
             .calculateDegradedStress(t, x_position, eps, strain_energy_tensile,
                                      sigma_tensile, sigma_compressive,
                                      C_tensile, C_compressive, sigma_real,
-                                     degradation);
+                                     degradation, elastic_energy);
     }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
@@ -161,6 +161,7 @@ public:
                 _process_data.history_field(0, x_position)[0];
             ip_data.sigma_real.setZero(kelvin_vector_size);
             ip_data.strain_energy_tensile = 0.0;
+            ip_data.elastic_energy = 0.0;
 
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;
@@ -214,6 +215,16 @@ public:
             std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
             dof_tables,
         GlobalVector const& x, double const t, double& crack_volume,
+        bool const use_monolithic_scheme,
+        CoupledSolutionsForStaggeredScheme const* const cpl_xs) override;
+
+    void computeEnergy(
+        std::size_t mesh_item_id,
+        std::vector<
+            std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+            dof_tables,
+        GlobalVector const& x, double const t, double& elastic_energy,
+        double& surface_energy, double& pressure_work,
         bool const use_monolithic_scheme,
         CoupledSolutionsForStaggeredScheme const* const cpl_xs) override;
 

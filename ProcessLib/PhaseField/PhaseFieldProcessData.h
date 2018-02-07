@@ -98,6 +98,9 @@ struct PhaseFieldProcessData
     double pressure_error = 0.0;
     double injected_volume = 0.0;
     double crack_volume = 0.0;
+    double elastic_energy = 0.0;
+    double surface_energy = 0.0;
+    double pressure_work = 0.0;
     bool propagating_crack = false;
     bool crack_pressure = false;
 };

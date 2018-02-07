@@ -502,5 +502,84 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         crack_volume += (N_u * u).dot(dNdx * d) * w;
     }
 }
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          int DisplacementDim>
+void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
+                              DisplacementDim>::
+    computeEnergy(std::size_t mesh_item_id,
+                  std::vector<std::reference_wrapper<
+                      NumLib::LocalToGlobalIndexMap>> const& dof_tables,
+                  GlobalVector const& /*x*/, double const t,
+                  double& elastic_energy, double& surface_energy,
+                  double& pressure_work, bool const /*use_monolithic_scheme*/,
+                  CoupledSolutionsForStaggeredScheme const* const cpl_xs)
+{
+    assert(cpl_xs != nullptr);
+
+    std::vector<std::vector<GlobalIndexType>> indices_of_processes;
+    indices_of_processes.reserve(dof_tables.size());
+    std::transform(dof_tables.begin(), dof_tables.end(),
+                   std::back_inserter(indices_of_processes),
+                   [&](NumLib::LocalToGlobalIndexMap const& dof_table) {
+                       return NumLib::getIndices(mesh_item_id, dof_table);
+                   });
+
+    auto local_coupled_xs =
+        getCurrentLocalSolutions(*cpl_xs, indices_of_processes);
+    assert(local_coupled_xs.size() == 2);
+
+    auto const& local_u = local_coupled_xs[0];
+    auto const& local_d = local_coupled_xs[1];
+
+    assert(local_u.size() == displacement_size);
+    assert(local_d.size() == phasefield_size);
+
+    auto d = Eigen::Map<
+        typename ShapeMatricesType::template VectorType<phasefield_size> const>(
+        local_d.data(), phasefield_size);
+
+    auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
+        displacement_size> const>(local_u.data(), displacement_size);
+
+    SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    int const n_integration_points = _integration_method.getNumberOfPoints();
+    for (int ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+        auto const& w = _ip_data[ip].integration_weight;
+        auto const& N = _ip_data[ip].N;
+        auto const& dNdx = _ip_data[ip].dNdx;
+        double const d_ip = N.dot(d);
+        auto pressure_ip = _process_data.pressure;
+        auto u_corrected = pressure_ip * u;
+        double const gc = _process_data.crack_resistance(t, x_position)[0];
+        double const ls = _process_data.crack_length_scale(t, x_position)[0];
+
+        typename ShapeMatricesType::template MatrixType<DisplacementDim,
+                                                        displacement_size>
+            N_u = ShapeMatricesType::template MatrixType<
+                DisplacementDim, displacement_size>::Zero(DisplacementDim,
+                                                          displacement_size);
+
+        for (int i = 0; i < DisplacementDim; ++i)
+            N_u.template block<1, displacement_size / DisplacementDim>(
+                   i, i * displacement_size / DisplacementDim)
+                .noalias() = N;
+
+        elastic_energy += _ip_data[ip].elastic_energy * w;
+
+        surface_energy +=
+            0.5 * gc *
+            ((1 - d_ip) * (1 - d_ip) / ls + (dNdx * d).dot((dNdx * d)) * ls) *
+            w;
+
+        if (_process_data.crack_pressure)
+            pressure_work +=
+                pressure_ip * (N_u * u_corrected).dot(dNdx * d) * w;
+    }
+}
 }  // namespace PhaseField
 }  // namespace ProcessLib

@@ -94,7 +94,8 @@ public:
                                  KelvinMatrix& C_tensile,
                                  KelvinMatrix& C_compressive,
                                  KelvinVector& sigma_real,
-                                 double const degradation) const override
+                                 double const degradation,
+                                 double& elastic_energy) const override
     {
         using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
         // calculation of deviatoric parts
@@ -120,6 +121,7 @@ public:
             sigma_compressive.noalias() = KelvinVector::Zero();
             C_tensile.template topLeftCorner<3, 3>().setConstant(K);
             C_tensile.noalias() += 2 * mu * P_dev * KelvinMatrix::Identity();
+            elastic_energy = degradation * strain_energy_tensile;
         }
         else
         {
@@ -129,6 +131,8 @@ public:
                 K * eps_curr_trace * Invariants::identity2;
             C_tensile.noalias() = 2 * mu * P_dev * KelvinMatrix::Identity();
             C_compressive.template topLeftCorner<3, 3>().setConstant(K);
+            elastic_energy = K / 2 * eps_curr_trace * eps_curr_trace +
+                             mu * epsd_curr.transpose() * epsd_curr;
         }
 
         sigma_real.noalias() = degradation * sigma_tensile + sigma_compressive;
