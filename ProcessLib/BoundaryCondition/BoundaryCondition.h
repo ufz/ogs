@@ -62,6 +62,11 @@ public:
         // Therefore there is nothing to do here.
     }
 
+    virtual void preTimestep(const double /*t*/, GlobalVector const& /*x*/)
+    {
+        // A hook added for solution dependent dirichlet
+    }
+
     virtual ~BoundaryCondition() = default;
 };
 
