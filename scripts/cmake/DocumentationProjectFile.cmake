@@ -131,7 +131,8 @@ if (IS_DIRECTORY ${DocumentationProjectFileBuildDir})
 endif()
 
 # traverse input file hierarchy
-file(GLOB_RECURSE input_paths ${DocumentationProjectFileInputDir}/c_* ${DocumentationProjectFileInputDir}/i_*)
+file(GLOB_RECURSE input_paths FOLLOW_SYMLINKS
+    ${DocumentationProjectFileInputDir}/c_* ${DocumentationProjectFileInputDir}/i_*)
 
 foreach(p ${input_paths})
     message("directory index file ${p}")
