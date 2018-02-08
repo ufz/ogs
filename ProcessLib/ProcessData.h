@@ -22,16 +22,16 @@ namespace ProcessLib
 {
 struct ProcessData
 {
-    template <NumLib::NonlinearSolverTag NLTag>
     ProcessData(std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper_,
-                NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
+                NumLib::NonlinearSolverTag const nonlinear_solver_tag_,
+                NumLib::NonlinearSolverBase& nonlinear_solver_,
                 std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
                 std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
                 int const process_id_,
                 Process& process_)
         : timestepper(std::move(timestepper_)),
-          nonlinear_solver_tag(NLTag),
-          nonlinear_solver(nonlinear_solver),
+          nonlinear_solver_tag(nonlinear_solver_tag_),
+          nonlinear_solver(nonlinear_solver_),
           nonlinear_solver_status{true, 0},
           conv_crit(std::move(conv_crit_)),
           time_disc(std::move(time_disc_)),
