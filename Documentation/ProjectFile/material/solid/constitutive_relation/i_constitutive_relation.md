@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Description of the solid properties using constitutive relations.
