@@ -36,7 +36,9 @@ void ConvergenceCriterionDeltaX::checkDeltaX(const GlobalVector& minus_delta_x,
     auto norm_x = MathLib::LinAlg::norm(x, _norm_type);
 
     INFO("Convergence criterion: |dx|=%.4e, |x|=%.4e, |dx|/|x|=%.4e", error_dx,
-         norm_x, error_dx / norm_x);
+         norm_x,
+         (norm_x == 0. ? std::numeric_limits<double>::quiet_NaN()
+                       : (error_dx / norm_x)));
 
     bool satisfied_abs = false;
     bool satisfied_rel = false;
