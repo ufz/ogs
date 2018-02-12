@@ -107,9 +107,20 @@ if(MSVC)
     set(CONAN_IMPORTS ${CONAN_IMPORTS} "plugins/platforms, *.dll* -> ./bin/platforms")
 endif()
 
+file(TIMESTAMP ${PROJECT_BINARY_DIR}/conan_install_timestamp.txt file_timestamp "%Y.%m.%d")
+string(TIMESTAMP timestamp "%Y.%m.%d")
+
+# Run conan install update only once a day
+if("${file_timestamp}" VERSION_LESS ${timestamp})
+    file(WRITE ${PROJECT_BINARY_DIR}/conan_install_timestamp.txt "${timestamp}\n")
+    set(CONAN_UPDATE UPDATE)
+else()
+    message(STATUS "Conan: Skipping update step.")
+endif()
+
 conan_cmake_run(
     BASIC_SETUP
-    UPDATE
+    ${CONAN_UPDATE}
     KEEP_RPATHS
     REQUIRES ${CONAN_REQUIRES}
     OPTIONS ${CONAN_OPTIONS}
