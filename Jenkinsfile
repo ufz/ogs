@@ -320,7 +320,7 @@ pipeline {
         stage('Check-Header') {
           agent {
             dockerfile {
-              filename 'Dockerfile.gcc.minimal'
+              filename 'Dockerfile.gcc.full'
               dir 'scripts/docker'
               label 'docker'
               args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
@@ -334,11 +334,13 @@ pipeline {
                 configure {
                   cmakeOptions =
                     '-DOGS_USE_CONAN=ON ' +
-                    '-DOGS_CONAN_BUILD=never '
+                    '-DOGS_CONAN_BUILD=never ' +
+                    '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=/usr/local/bin/include-what-you-use;--transitive_includes_only" '
                   config = 'Debug'
                 }
               }
               build { target = 'check-header' }
+              build { }
             }
           }
           post { always { dir('build') { deleteDir() } } }
