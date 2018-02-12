@@ -8,6 +8,14 @@ pipeline {
     timestamps()
   }
   stages {
+     // *************************** Git Check **********************************
+    stage('Git Check') {
+      agent any
+      steps {
+        sh "git config core.whitespace -blank-at-eof"
+        sh "git diff --check `git merge-base origin/master HEAD` HEAD"
+      }
+    }
     stage('Build') {
       parallel {
         // ************************ Docker-Conan *******************************
