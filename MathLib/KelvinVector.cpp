@@ -81,6 +81,37 @@ Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(
 }
 
 template <>
+KelvinVectorType<2> tensorToKelvin<2>(Eigen::Matrix<double, 3, 3> const& m)
+{
+    assert(std::abs(m(0, 1) - m(1, 0)) <
+           std::numeric_limits<double>::epsilon());
+    assert(m(0, 2) == 0);
+    assert(m(1, 2) == 0);
+    assert(m(2, 0) == 0);
+    assert(m(2, 1) == 0);
+
+    KelvinVectorType<2> v;
+    v << m(0, 0), m(1, 1), m(2, 2), m(0, 1) * std::sqrt(2.);
+    return v;
+}
+
+template <>
+KelvinVectorType<3> tensorToKelvin<3>(Eigen::Matrix<double, 3, 3> const& m)
+{
+    assert(std::abs(m(0, 1) - m(1, 0)) <
+           std::numeric_limits<double>::epsilon());
+    assert(std::abs(m(1, 2) - m(2, 1)) <
+           std::numeric_limits<double>::epsilon());
+    assert(std::abs(m(0, 2) - m(2, 0)) <
+           std::numeric_limits<double>::epsilon());
+
+    KelvinVectorType<3> v;
+    v << m(0, 0), m(1, 1), m(2, 2), m(0, 1) * std::sqrt(2.),
+        m(1, 2) * std::sqrt(2.), m(0, 2) * std::sqrt(2.);
+    return v;
+}
+
+template <>
 Eigen::Matrix<double, 4, 1> kelvinVectorToSymmetricTensor(
     Eigen::Matrix<double, 4, 1, Eigen::ColMajor, 4, 1> const& v)
 {

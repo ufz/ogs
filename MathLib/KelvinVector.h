@@ -126,6 +126,12 @@ Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(Eigen::Matrix<double,
                                                                KelvinVectorSize,
                                                                1> const& v);
 
+/// Conversion of a 3x3 matrix to a Kelvin vector.
+/// Only implementations for KelvinVectorSize 4 and 6 are provided.
+template <int DisplacementDim>
+KelvinVectorType<DisplacementDim> tensorToKelvin(
+    Eigen::Matrix<double, 3, 3> const& m);
+
 /// Conversion of a Kelvin vector to a short vector representation of a
 /// symmetric 3x3 matrix.
 ///
