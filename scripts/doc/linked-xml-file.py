@@ -38,8 +38,6 @@ outdir = os.path.join(docauxdir, "dox", "CTestProjectFiles")
 # "prj__processes__process": "process",
 # See the expansion table in the append-xml-tags.py too.
 tag_path_expansion_table = {
-        "prj__processes__process__constitutive_relation" : "material__solid__constitutive_relation",
-        "prj__processes__process__material_property" : "material",
         "material__porous_medium__porous_medium" : "material__porous_medium",
         }
 

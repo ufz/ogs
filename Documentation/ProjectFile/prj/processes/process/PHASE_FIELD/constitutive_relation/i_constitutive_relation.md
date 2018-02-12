@@ -1,1 +1,0 @@
-The constitutive relation for the brittle fracture.
