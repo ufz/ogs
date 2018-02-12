@@ -58,32 +58,6 @@ TEST_F(MaterialLibSolidsKelvinVector6, SelfTestMappingKelvinToTensor)
         f, 1000, ac::make_arbitrary(kelvinVectorGenerator), gtest_reporter);
 }
 
-TEST_F(MaterialLibSolidsKelvinVector4, SelfTestMappingKelvinToSymmetricTensor)
-{
-    auto f = [](KelvinVectorType<2> const& v) {
-        return (v -
-                symmetricTensorToKelvinVector(kelvinVectorToSymmetricTensor(v)))
-                   .norm() <=
-               1.5 * std::numeric_limits<double>::epsilon() * v.norm();
-    };
-
-    ac::check<KelvinVectorType<2>>(
-        f, 1000, ac::make_arbitrary(kelvinVectorGenerator), gtest_reporter);
-}
-
-TEST_F(MaterialLibSolidsKelvinVector6, SelfTestMappingKelvinToSymmetricTensor)
-{
-    auto f = [](KelvinVectorType<3> const& v) {
-        return (v -
-                symmetricTensorToKelvinVector(kelvinVectorToSymmetricTensor(v)))
-                   .norm() <=
-               1.5 * std::numeric_limits<double>::epsilon() * v.norm();
-    };
-
-    ac::check<KelvinVectorType<3>>(
-        f, 1000, ac::make_arbitrary(kelvinVectorGenerator), gtest_reporter);
-}
-
 //
 // Determinants of a Kelvin vector and corresponding Eigen::Matrix are equal.
 //
