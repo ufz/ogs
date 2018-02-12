@@ -102,7 +102,7 @@ cpack_add_component(ogs_docs
     GROUP Utilities
 )
 
-if(USE_CONAN)
+if(OGS_USE_CONAN)
     # Install shared libraries, copied to bin-dir
     foreach(PATTERN "*.dll" "*.dylib")
         file(GLOB MATCHED_FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PATTERN})

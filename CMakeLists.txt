@@ -163,7 +163,6 @@ option(OGS_SYNC_SUBMODULES "Sync git submodules on CMake run. Overwrites custom 
 
 # Packaging
 option(OGS_DOWNLOAD_ADDITIONAL_CONTENT "Should additional content such as manuals be downloaded and packaged?" OFF)
-option(OGS_PACKAGE_DEPENDENCIES "Packages shared libraries when enabled." OFF)
 include(scripts/cmake/packaging/Pack.cmake)
 
 # Third-party libraries, names come from Conan package names
