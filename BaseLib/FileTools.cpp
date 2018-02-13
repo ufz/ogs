@@ -25,7 +25,7 @@ namespace BaseLib
  */
 bool IsFileExisting(const std::string &strFilename)
 {
-    struct stat buffer;
+    struct stat buffer {};
     return (stat (strFilename.c_str(), &buffer) == 0);
 }
 
@@ -35,7 +35,7 @@ double swapEndianness(double const& v)
     {
         double v;
         char c[sizeof(double)];
-    } a, b;
+    } a {}, b {};
 
     a.v = v;
     for (unsigned short i = 0; i < sizeof(double)/2; i++)
