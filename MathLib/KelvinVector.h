@@ -178,10 +178,12 @@ symmetricTensorToKelvinVector(Eigen::MatrixBase<Derived> const& v)
         result;
     if (v.rows() == 4)
     {
+        result.resize(4, 1);
         result << v[0], v[1], v[2], v[3] * std::sqrt(2.);
     }
     else if (v.rows() == 6)
     {
+        result.resize(6, 1);
         result << v[0], v[1], v[2], v[3] * std::sqrt(2.), v[4] * std::sqrt(2.),
             v[5] * std::sqrt(2.);
     }
