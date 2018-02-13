@@ -163,13 +163,24 @@ template <typename Derived>
 Eigen::Matrix<double, Eigen::MatrixBase<Derived>::RowsAtCompileTime, 1>
 symmetricTensorToKelvinVector(Eigen::MatrixBase<Derived> const& v)
 {
+    static_assert(
+        (Eigen::MatrixBase<Derived>::ColsAtCompileTime == 1) ||
+            (Eigen::MatrixBase<Derived>::ColsAtCompileTime == Eigen::Dynamic),
+        "KelvinVector must be a column vector");
+    if (v.cols() != 1)
+    {
+        OGS_FATAL(
+            "KelvinVector must be a column vector, but input has %d columns.",
+            v.cols());
+    }
+
     Eigen::Matrix<double, Eigen::MatrixBase<Derived>::RowsAtCompileTime, 1>
         result;
-    if (v.size() == 4)
+    if (v.rows() == 4)
     {
         result << v[0], v[1], v[2], v[3] * std::sqrt(2.);
     }
-    else if (v.size() == 6)
+    else if (v.rows() == 6)
     {
         result << v[0], v[1], v[2], v[3] * std::sqrt(2.), v[4] * std::sqrt(2.),
             v[5] * std::sqrt(2.);
