@@ -5,15 +5,14 @@ RUN apt-get update && apt-get install -y software-properties-common curl \
   && curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
   && apt-get update \
   && apt-get -y install \
+    build-essential \
     ccache \
-    gcc-4.9 g++-4.9 gcc-4.9-base \
+    clang-3.9 \
     git git-lfs \
     python-pip \
     sudo \
-    unzip
-
-ENV CC=gcc-4.9
-ENV CXX=g++-4.9
+    unzip \
+    xz-utils
 
 RUN python -m pip install --upgrade pip \
   && python -m pip install cmake conan>=1.0.0
@@ -24,7 +23,18 @@ RUN curl -L -o ninja-linux.zip https://github.com/ninja-build/ninja/releases/dow
   && mv ninja /usr/local/bin/ninja \
   && rm ninja-linux.zip
 
- # Add user jenkins to the image
+ENV CC=clang-3.9
+ENV CXX=clang++-3.9
+
+# Lis
+RUN curl -L -o lis.tar.gz http://www.ssisc.org/lis/dl/lis-1.7.9.tar.gz \
+  && tar xf lis.tar.gz \
+  && cd lis-1.7.9 \
+  && ./configure \
+  && make -j$(nproc) install \
+  && cd .. && rm -rf lis-1.7.9 lis.tar.gz
+
+# Add user jenkins to the image
 RUN adduser --uid 500 --disabled-password --gecos "" jenkins \
   # Add user jenkins to sudoers with NOPASSWD
   && echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
@@ -40,7 +50,7 @@ ENV CONAN_USER_HOME=/home/jenkins/cache/conan
 WORKDIR /home/jenkins
 RUN conan user
 
-### END gcc.minimal ###
+### END clang.minimal ###
 USER root
 
 RUN apt-get update \
@@ -51,7 +61,7 @@ RUN apt-get update \
   && curl -s https://deb.nodesource.com/setup_8.x | bash \
   && apt-get update && apt-get install -y \
     biber \
-    clang-tidy \
+    clang-tidy-3.9 \
     cppcheck \
     doxygen \
     graphviz \

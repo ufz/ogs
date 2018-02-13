@@ -11,11 +11,9 @@ if(Qt5XmlPatterns_FOUND)
 endif()
 
 # Create the library
-add_library(GeoLib ${SOURCES}
-    ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/tetgen/predicates.cxx
-)
+add_library(GeoLib ${SOURCES})
 
-target_link_libraries(GeoLib PUBLIC BaseLib MathLib logog)
+target_link_libraries(GeoLib PUBLIC BaseLib MathLib logog PRIVATE tet)
 
 if(Qt5XmlPatterns_FOUND)
     target_link_libraries(GeoLib PUBLIC Qt5::Xml Qt5::XmlPatterns)

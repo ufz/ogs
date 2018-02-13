@@ -1,0 +1,3 @@
+---
+# Disable all checks, one check has to be enabled (hack)
+Checks: '-*,boost-use-to-string'

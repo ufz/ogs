@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y software-properties-common curl \
   && apt-get -y install \
     build-essential \
     ccache \
+    clang-3.9 \
     git git-lfs \
     python-pip \
     sudo \
@@ -22,35 +23,8 @@ RUN curl -L -o ninja-linux.zip https://github.com/ninja-build/ninja/releases/dow
   && mv ninja /usr/local/bin/ninja \
   && rm ninja-linux.zip
 
-# Install LLVM, see http://llvm.org/docs/CMake.html
-RUN curl -L -o llvm.tar.xz http://releases.llvm.org/3.9.0/llvm-3.9.0.src.tar.xz \
-  && tar -Jxf llvm.tar.xz \
-  && mkdir build-llvm && cd build-llvm \
-  && cmake ../llvm-3.9.0.src -DCMAKE_BUILD_TYPE=Release \
-  && make -j$(nproc) install \
-  && cd .. && rm -rf build-llvm llvm-3.9.0.src llvm.tar.xz
-
-# Clang
-RUN curl -L -o cfe-tar-xz http://releases.llvm.org/3.9.0/cfe-3.9.0.src.tar.xz \
-  && tar -Jxf cfe-tar-xz \
-  && mkdir build-cfe && cd build-cfe \
-  && cmake ../cfe-3.9.0.src -DCMAKE_BUILD_TYPE=Release -DLLVM_CONFIG_PATH=/usr/local/bin/llvm-config \
-  && make -j$(nproc) install \
-  && cd .. && rm -rf build-cfe cfe-3.9.0.src cfe-tar-xz
-
-ENV CC=clang
-ENV CXX=clang++
-
-# Compiler-rt
-RUN curl -L -o compiler-rt.tar.xz http://releases.llvm.org/3.9.0/compiler-rt-3.9.0.src.tar.xz \
-  && tar -Jxf compiler-rt.tar.xz \
-  && mkdir build-compiler-rt && cd build-compiler-rt \
-  && cmake ../compiler-rt-3.9.0.src -DCMAKE_BUILD_TYPE=Release -DLLVM_CONFIG_PATH=/usr/local/bin/llvm-config \
-  && make -j$(nproc) install \
-  && cd .. && rm -rf build-compiler-rt compiler-rt-3.9.0.src compiler-rt.tar.xz
-
-RUN mkdir /usr/local/lib/clang/3.9.0/lib
-RUN ln -s /usr/local/lib/linux /usr/local/lib/clang/3.9.0/lib/linux
+ENV CC=clang-3.9
+ENV CXX=clang++-3.9
 
 # Lis
 RUN curl -L -o lis.tar.gz http://www.ssisc.org/lis/dl/lis-1.7.9.tar.gz \
@@ -60,7 +34,7 @@ RUN curl -L -o lis.tar.gz http://www.ssisc.org/lis/dl/lis-1.7.9.tar.gz \
   && make -j$(nproc) install \
   && cd .. && rm -rf lis-1.7.9 lis.tar.gz
 
- # Add user jenkins to the image
+# Add user jenkins to the image
 RUN adduser --uid 500 --disabled-password --gecos "" jenkins \
   # Add user jenkins to sudoers with NOPASSWD
   && echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
