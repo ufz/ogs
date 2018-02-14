@@ -26,14 +26,6 @@ RUN curl -L -o ninja-linux.zip https://github.com/ninja-build/ninja/releases/dow
 ENV CC=clang-3.9
 ENV CXX=clang++-3.9
 
-# Lis
-RUN curl -L -o lis.tar.gz http://www.ssisc.org/lis/dl/lis-1.7.9.tar.gz \
-  && tar xf lis.tar.gz \
-  && cd lis-1.7.9 \
-  && ./configure \
-  && make -j$(nproc) install \
-  && cd .. && rm -rf lis-1.7.9 lis.tar.gz
-
 # Add user jenkins to the image
 RUN adduser --uid 500 --disabled-password --gecos "" jenkins \
   # Add user jenkins to sudoers with NOPASSWD
