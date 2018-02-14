@@ -1,3 +1,6 @@
 ---
-# Disable all checks, one check has to be enabled (hack)
+# Disable all checks, one check has to be enabled.
+# Hack: if there is no enabled check clang-tidy (at least in the way it is
+# invoked by CMake) prints out its own usage instructions. I have chosen an
+# arbitrary check here.
 Checks: '-*,boost-use-to-string'
