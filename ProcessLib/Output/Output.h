@@ -42,7 +42,8 @@ public:
     Output(std::string output_directory, std::string prefix,
            bool const compress_output, std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
-           std::vector<PairRepeatEachSteps> repeats_each_steps);
+           std::vector<PairRepeatEachSteps> repeats_each_steps,
+           const std::vector<double>&& specific_times);
 
     //! TODO doc. Opens a PVD file for each process.
     void addProcess(ProcessLib::Process const& process, const int process_id);
@@ -77,6 +78,8 @@ public:
                                     GlobalVector const& x,
                                     const unsigned iteration);
 
+    std::vector<double> getSpecificTimes() {return _specific_times;}
+
 private:
     struct ProcessData
     {
@@ -99,6 +102,9 @@ private:
 
     //! Describes after which timesteps to write output.
     std::vector<PairRepeatEachSteps> _repeats_each_steps;
+
+    //! Given times that steps have to reach.
+    std::vector<double> _specific_times;
 
     std::multimap<Process const*, ProcessData> _process_to_process_data;
 

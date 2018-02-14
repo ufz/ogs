@@ -73,13 +73,15 @@ namespace ProcessLib
 Output::Output(std::string output_directory, std::string prefix,
                bool const compress_output, std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
-               std::vector<PairRepeatEachSteps> repeats_each_steps)
+               std::vector<PairRepeatEachSteps> repeats_each_steps,
+               const std::vector<double>&& specific_times)
     : _output_directory(std::move(output_directory)),
       _output_file_prefix(std::move(prefix)),
       _output_file_compression(compress_output),
       _output_file_data_mode(convertVtkDataMode(data_mode)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
-      _repeats_each_steps(std::move(repeats_each_steps))
+      _repeats_each_steps(std::move(repeats_each_steps)),
+      _specific_times(std::move(specific_times))
 {
 }
 
