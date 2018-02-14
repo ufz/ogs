@@ -15,39 +15,6 @@
 using namespace MathLib::KelvinVector;
 namespace ac = autocheck;
 
-template <int Size>
-using KelvinVector = Eigen::Matrix<double, Size, 1, Eigen::ColMajor, Size, 1>;
-
-template <int Size>
-KelvinVector<Size> tensorToKelvin(Eigen::Matrix<double, 3, 3> const& m);
-
-template <>
-KelvinVector<4> tensorToKelvin(Eigen::Matrix<double, 3, 3> const& m)
-{
-    EXPECT_NEAR(m(0, 1), m(1, 0), std::numeric_limits<double>::epsilon());
-    EXPECT_EQ(m(0, 2), 0);
-    EXPECT_EQ(m(1, 2), 0);
-    EXPECT_EQ(m(2, 0), 0);
-    EXPECT_EQ(m(2, 1), 0);
-
-    KelvinVector<4> v;
-    v << m(0, 0), m(1, 1), m(2, 2), m(0, 1) * std::sqrt(2.);
-    return v;
-}
-
-template <>
-KelvinVector<6> tensorToKelvin(Eigen::Matrix<double, 3, 3> const& m)
-{
-    EXPECT_NEAR(m(0, 1), m(1, 0), std::numeric_limits<double>::epsilon());
-    EXPECT_NEAR(m(1, 2), m(2, 1), std::numeric_limits<double>::epsilon());
-    EXPECT_NEAR(m(0, 2), m(2, 0), std::numeric_limits<double>::epsilon());
-
-    KelvinVector<6> v;
-    v << m(0, 0), m(1, 1), m(2, 2), m(0, 1) * std::sqrt(2.),
-        m(1, 2) * std::sqrt(2.), m(0, 2) * std::sqrt(2.);
-    return v;
-}
-
 struct MaterialLibSolidsKelvinVector4 : public ::testing::Test
 {
     static const int size = 4;
@@ -71,23 +38,23 @@ struct MaterialLibSolidsKelvinVector6 : public ::testing::Test
 
 TEST_F(MaterialLibSolidsKelvinVector4, SelfTestMappingKelvinToTensor)
 {
-    auto f = [](KelvinVector<4> const& v) {
-        return (v - tensorToKelvin<4>(kelvinVectorToTensor(v))).norm() <=
+    auto f = [](KelvinVectorType<2> const& v) {
+        return (v - tensorToKelvin<2>(kelvinVectorToTensor(v))).norm() <=
                2 * std::numeric_limits<double>::epsilon() * v.norm();
     };
 
-    ac::check<KelvinVector<4>>(
+    ac::check<KelvinVectorType<2>>(
         f, 1000, ac::make_arbitrary(kelvinVectorGenerator), gtest_reporter);
 }
 
 TEST_F(MaterialLibSolidsKelvinVector6, SelfTestMappingKelvinToTensor)
 {
-    auto f = [](KelvinVector<6> const& v) {
-        return (v - tensorToKelvin<6>(kelvinVectorToTensor(v))).norm() <=
+    auto f = [](KelvinVectorType<3> const& v) {
+        return (v - tensorToKelvin<3>(kelvinVectorToTensor(v))).norm() <=
                1.5 * std::numeric_limits<double>::epsilon() * v.norm();
     };
 
-    ac::check<KelvinVector<6>>(
+    ac::check<KelvinVectorType<3>>(
         f, 1000, ac::make_arbitrary(kelvinVectorGenerator), gtest_reporter);
 }
 
@@ -97,27 +64,27 @@ TEST_F(MaterialLibSolidsKelvinVector6, SelfTestMappingKelvinToTensor)
 
 TEST_F(MaterialLibSolidsKelvinVector4, Determinant)
 {
-    auto f = [](KelvinVector<4> const& v) {
+    auto f = [](KelvinVectorType<2> const& v) {
         return std::abs(Invariants<4>::determinant(v) -
                         kelvinVectorToTensor(v).determinant()) <=
                std::numeric_limits<double>::epsilon() *
                    std::pow(v.norm(), 3.07);
     };
 
-    ac::check<KelvinVector<4>>(
+    ac::check<KelvinVectorType<2>>(
         f, 1000, ac::make_arbitrary(kelvinVectorGenerator), gtest_reporter);
 }
 
 TEST_F(MaterialLibSolidsKelvinVector6, Determinant)
 {
-    auto f = [](KelvinVector<6> const& v) {
+    auto f = [](KelvinVectorType<3> const& v) {
         return std::abs(Invariants<6>::determinant(v) -
                         kelvinVectorToTensor(v).determinant()) <=
                std::numeric_limits<double>::epsilon() *
                    std::pow(v.norm(), 3.07);
     };
 
-    ac::check<KelvinVector<6>>(
+    ac::check<KelvinVectorType<3>>(
         f, 1000, ac::make_arbitrary(kelvinVectorGenerator), gtest_reporter);
 }
 
@@ -127,18 +94,18 @@ TEST_F(MaterialLibSolidsKelvinVector6, Determinant)
 
 TEST_F(MaterialLibSolidsKelvinVector4, Inverse)
 {
-    auto f = [](KelvinVector<4> const& v) {
+    auto f = [](KelvinVectorType<2> const& v) {
         auto const error =
-            (inverse(v) - tensorToKelvin<4>(kelvinVectorToTensor(v).inverse()))
+            (inverse(v) - tensorToKelvin<2>(kelvinVectorToTensor(v).inverse()))
                 .norm();
         // The error is only weekly depending on the input vector norm.
         return error < 1e-6 && error < 1e-8 * std::pow(v.norm(), 1.4);
     };
 
-    ac::check<KelvinVector<4>>(
+    ac::check<KelvinVectorType<2>>(
         f, 1000,
         ac::make_arbitrary(kelvinVectorGenerator)
-            .discard_if([](KelvinVector<4> const& v) {
+            .discard_if([](KelvinVectorType<2> const& v) {
                 // only invertable matrices
                 return (std::abs(kelvinVectorToTensor(v).determinant()) == 0);
             }),
@@ -147,18 +114,18 @@ TEST_F(MaterialLibSolidsKelvinVector4, Inverse)
 
 TEST_F(MaterialLibSolidsKelvinVector6, Inverse)
 {
-    auto f = [](KelvinVector<6> const& v) {
+    auto f = [](KelvinVectorType<3> const& v) {
         auto const error =
-            (inverse(v) - tensorToKelvin<6>(kelvinVectorToTensor(v).inverse()))
+            (inverse(v) - tensorToKelvin<3>(kelvinVectorToTensor(v).inverse()))
                 .norm();
         // The error is only weekly depending on the input vector norm.
         return error < 1e-6 && error < 1e-8 * std::pow(v.norm(), 1.4);
     };
 
-    ac::check<KelvinVector<6>>(
+    ac::check<KelvinVectorType<3>>(
         f, 1000,
         ac::make_arbitrary(kelvinVectorGenerator)
-            .discard_if([](KelvinVector<6> const& v) {
+            .discard_if([](KelvinVectorType<3> const& v) {
                 // only invertable matrices
                 return (std::abs(kelvinVectorToTensor(v).determinant()) == 0);
             }),
