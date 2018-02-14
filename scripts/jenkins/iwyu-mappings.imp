@@ -1,0 +1,4 @@
+[
+    { include: ["<logog/include/macro.hpp>", "private", "<logog/include/logog.hpp>", "public"] },
+    { include: ["<logog/include/message.hpp>", "private", "<logog/include/logog.hpp>", "public"] }
+]
