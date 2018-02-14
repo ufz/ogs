@@ -85,6 +85,12 @@ public:
     /// Get a flag to indicate whether this algorithm needs to compute
     /// solution error. The default return value is false.
     virtual bool isSolutionErrorComputationNeeded() { return false; }
+
+    /// Add specific times
+    virtual void addSpecificTimes(std::vector<double> const& /*specific_times*/)
+    {
+    }
+
 protected:
     /// initial time
     const double _t_initial;

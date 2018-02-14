@@ -91,6 +91,10 @@ public:
     /// Get a flag to indicate that this algorithm need to compute
     /// solution error.
     bool isSolutionErrorComputationNeeded() override { return true; }
+    /// Add specific times
+    void addSpecificTimes(
+        std::vector<double> const& extra_specific_times) override;
+
 private:
     const double _kP = 0.075;  ///< Parameter. \see EvolutionaryPIDcontroller
     const double _kI = 0.175;  ///< Parameter. \see EvolutionaryPIDcontroller

@@ -13,10 +13,11 @@
 #include <functional>
 #include <limits>
 #include <vector>
+#include <logog/include/logog.hpp>
+
+#include "BaseLib/makeVectorUnique.h"
 
 #include "EvolutionaryPIDcontroller.h"
-
-#include <logog/include/logog.hpp>
 
 namespace NumLib
 {
@@ -156,4 +157,18 @@ double EvolutionaryPIDcontroller::checkSpecificTimeReached(const double h_new)
 
     return h_new;
 }
+
+void EvolutionaryPIDcontroller::addSpecificTimes(
+    std::vector<double> const& extra_specific_times)
+{
+    _specific_times.insert(_specific_times.end(), extra_specific_times.begin(),
+                           extra_specific_times.end());
+
+    // Sort again in the descending order.
+    std::sort(
+        _specific_times.begin(), _specific_times.end(), std::greater<double>());
+    // Remove possible duplicated elements.
+    BaseLib::makeVectorUnique(_specific_times);
+}
+
 }  // end of namespace NumLib
