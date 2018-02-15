@@ -31,3 +31,8 @@ Google testing framework for unit tests. Is integrated directly.
 ## autocheck ##
 
 Is integrated as a submodule.
+
+## nlohmann/json ##
+
+Header only c++ json parser. Directly integrated because the benchmarks and
+tests are too large.
