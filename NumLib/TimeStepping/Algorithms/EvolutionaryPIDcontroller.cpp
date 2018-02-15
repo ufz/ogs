@@ -164,11 +164,8 @@ void EvolutionaryPIDcontroller::addSpecificTimes(
     _specific_times.insert(_specific_times.end(), extra_specific_times.begin(),
                            extra_specific_times.end());
 
-    // Sort again in the descending order.
-    std::sort(
-        _specific_times.begin(), _specific_times.end(), std::greater<double>());
-    // Remove possible duplicated elements.
-    BaseLib::makeVectorUnique(_specific_times);
+    // Remove possible duplicated elements and sort in descending order.
+    BaseLib::makeVectorUnique(_specific_times, std::greater<double>());
 }
 
 }  // end of namespace NumLib

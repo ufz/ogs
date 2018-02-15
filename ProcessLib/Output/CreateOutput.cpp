@@ -68,25 +68,21 @@ std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
                 "defines"
                 " at which timesteps output shall be written. Aborting.");
         }
-
-        auto specific_times_ptr =
-            //! \ogs_file_param{prj__time_loop__output__timesteps__specific_times}
-            config.getConfigParameterOptional<std::vector<double>>(
-                "specific_times");
-        if (specific_times_ptr)
-        {
-            specific_times = std::move(*specific_times_ptr);
-            // Sort in descending order.
-            std::sort(specific_times.begin(),
-                      specific_times.end(),
-                      std::greater<double>());
-            // Remove possible duplicated elements.
-            BaseLib::makeVectorUnique(specific_times);
-        }
     }
     else
     {
         repeats_each_steps.emplace_back(1, 1);
+    }
+
+    auto specific_times_ptr =
+        //! \ogs_file_param{prj__time_loop__output__specific_times}
+        config.getConfigParameterOptional<std::vector<double>>(
+            "specific_times");
+    if (specific_times_ptr)
+    {
+        specific_times = std::move(*specific_times_ptr);
+        // Remove possible duplicated elements and sort in descending order.
+        BaseLib::makeVectorUnique(specific_times, std::greater<double>());
     }
 
     bool const output_iteration_results =
