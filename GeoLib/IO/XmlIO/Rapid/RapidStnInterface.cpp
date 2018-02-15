@@ -29,7 +29,6 @@ namespace IO
 
 std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::string &fileName)
 {
-    auto* stations = new std::vector<GeoLib::Point*>;
     std::ifstream in(fileName.c_str());
     if (in.fail())
     {
@@ -54,6 +53,8 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
         ERR("XmlStnInterface::readFile() - Unexpected XML root.");
         return nullptr;
     }
+
+    auto* stations = new std::vector<GeoLib::Point*>;
 
     // iterate over all station lists
     for (rapidxml::xml_node<>* station_list = doc.first_node()->first_node(); station_list; station_list = station_list->next_sibling())

@@ -316,11 +316,11 @@ pipeline {
     stage('Master') {
       when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
       parallel {
-        // ************************ Check-Header *******************************
-        stage('Check-Header') {
+        // ************************* Analyzers *********************************
+        stage('Analyzers') {
           agent {
             dockerfile {
-              filename 'Dockerfile.gcc.minimal'
+              filename 'Dockerfile.clang.full'
               dir 'scripts/docker'
               label 'docker'
               args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
@@ -334,11 +334,16 @@ pipeline {
                 configure {
                   cmakeOptions =
                     '-DOGS_USE_CONAN=ON ' +
-                    '-DOGS_CONAN_BUILD=never '
-                  config = 'Debug'
+                    '-DOGS_CONAN_BUILD=never ' +
+                    '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use;-Xiwyu;--mapping_file=../scripts/jenkins/iwyu-mappings.imp" ' +
+                    '-DCMAKE_LINK_WHAT_YOU_USE=ON ' +
+                    '"-DCMAKE_CXX_CPPCHECK=cppcheck;--std=c++11;--language=c++;--suppress=syntaxError;--suppress=preprocessorErrorDirective:*/ThirdParty/*;--suppress=preprocessorErrorDirective:*conan*/package/*" ' +
+                    '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-3.9 '
+                  config = 'Release'
                 }
               }
               build { target = 'check-header' }
+              build { }
             }
           }
           post { always { dir('build') { deleteDir() } } }

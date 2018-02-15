@@ -41,3 +41,38 @@ ENV CCACHE_SLOPPINESS=pch_defines,time_macros
 ENV CONAN_USER_HOME=/home/jenkins/cache/conan
 WORKDIR /home/jenkins
 RUN conan user
+
+### END clang.minimal ###
+USER root
+
+RUN apt-get update \
+  && apt-get -y install apt-transport-https curl \
+  && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+  && echo "deb https://dl.yarnpkg.com/debian/ stable main" \
+     | tee /etc/apt/sources.list.d/yarn.list \
+  && curl -s https://deb.nodesource.com/setup_8.x | bash \
+  && apt-get update && apt-get install -y \
+    biber \
+    clang-tidy-3.9 \
+    cppcheck \
+    doxygen \
+    graphviz \
+    libxml2-utils \
+    nodejs \
+    pandoc-citeproc \
+    yarn
+
+RUN update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+
+# Hugo
+RUN curl -L -o hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v0.32.3/hugo_0.32.3_Linux-64bit.tar.gz \
+  && tar xf hugo.tar.gz \
+  && mv hugo /usr/local/bin/hugo \
+  && rm -rf hugo.tar.gz LICENSE.md README.md
+
+# Include-what-you-use
+RUN curl https://include-what-you-use.org/downloads/include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -O \
+  && tar xf include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -C /usr/ --strip-components=1 \
+  && rm include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz
+
+USER jenkins

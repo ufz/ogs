@@ -51,6 +51,8 @@ RUN apt-get update \
   && curl -s https://deb.nodesource.com/setup_8.x | bash \
   && apt-get update && apt-get install -y \
     biber \
+    clang-tidy \
+    cppcheck \
     doxygen \
     graphviz \
     libxml2-utils \
@@ -65,5 +67,10 @@ RUN curl -L -o hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v0
   && tar xf hugo.tar.gz \
   && mv hugo /usr/local/bin/hugo \
   && rm -rf hugo.tar.gz LICENSE.md README.md
+
+# Include-what-you-use
+RUN curl https://include-what-you-use.org/downloads/include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -O \
+  && tar xf include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -C /usr/ --strip-components=1 \
+  && rm include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz
 
 USER jenkins
