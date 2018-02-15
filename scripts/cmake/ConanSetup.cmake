@@ -51,9 +51,6 @@ if(OGS_BUILD_GUI)
         Qt/5.11@bincrafters/stable
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:qt=True)
-    if(UNIX AND NOT APPLE)
-        set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:x11=True)
-    endif()
 endif()
 
 # Find Conan and do version check

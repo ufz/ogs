@@ -11,7 +11,7 @@ endif()
 if(OGS_BUILD_GUI)
     set(VTK_MODULES ${VTK_MODULES}
         vtkRenderingCore
-        vtknetcdf
+        vtknetcdfcpp
         vtkIOLegacy
         vtkIOImage
         vtkRenderingAnnotation

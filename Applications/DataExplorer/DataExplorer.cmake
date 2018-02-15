@@ -64,6 +64,7 @@ target_link_libraries(DataExplorer
     Qt5::Xml
     Qt5::Network
     logog
+    ${VTK_LIBRARIES}
 )
 
 # Workaround for Windows conan tiff-package
@@ -78,10 +79,6 @@ if(CMAKE_CROSSCOMPILING)
         ${QT_GUI_DEPS_LIBRARIES}
         ${QT_NETWORK_DEPS_LIBRARIES}
     )
-endif()
-
-if(VTK_NETCDF_FOUND)
-    target_link_libraries(DataExplorer vtkNetCDF vtkNetCDF_cxx )
 endif()
 
 if(GEOTIFF_FOUND)

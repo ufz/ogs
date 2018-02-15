@@ -225,8 +225,8 @@ void NetCdfConfigureDialog::getDimEdges(int dimId, unsigned &size, double &first
         {
             int sizeOfDim = tmpVarOfDim->get_dim(0)->size();
             size = sizeOfDim;
-            double arrayOfDimStart[1] = {0};
-            std::size_t edgeOfArray[1] = {1};
+            double *arrayOfDimStart = new double[1]; //[1] = {0};
+            long edgeOfArray = 1; //[1] = {1};
             long edgeOrigin[1] = {0};
             tmpVarOfDim->set_cur(edgeOrigin);
             tmpVarOfDim->get(arrayOfDimStart,edgeOfArray);
@@ -306,7 +306,7 @@ double NetCdfConfigureDialog::getResolution()
 
 void NetCdfConfigureDialog::createDataObject()
 {
-    auto* length = new std::size_t[_currentVar->num_dims()];
+    auto* length = new long[_currentVar->num_dims()];
     double originLon = 0, originLat = 0;
     double lastLon = 0, lastLat = 0;
     unsigned sizeLon = 0, sizeLat = 0;
