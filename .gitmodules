@@ -13,9 +13,6 @@
 [submodule "ThirdParty/autocheck"]
 	path = ThirdParty/autocheck
 	url = https://github.com/thejohnfreeman/autocheck.git
-[submodule "ThirdParty/vtkGUISupportQt"]
-	path = ThirdParty/vtkGUISupportQt
-	url = https://github.com/ufz/vtkGUISupportQt.git
 [submodule "ThirdParty/metis"]
 	path = ThirdParty/metis
 	url = https://github.com/scibuilder/metis.git
