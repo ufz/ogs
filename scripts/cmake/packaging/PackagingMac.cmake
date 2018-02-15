@@ -16,3 +16,11 @@ set(CPACK_DMG_DS_STORE ${PROJECT_SOURCE_DIR}/scripts/packaging/.DS_Store)
 if(OGS_USE_CONAN)
     SET(CMAKE_INSTALL_RPATH "@executable_path")
 endif()
+
+if(OGS_BUILD_GUI)
+    install_qt5_plugin("Qt5::QCocoaIntegrationPlugin" QT_PLUGINS)
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
+        "[Paths]\nPlugins = ../${_qt_plugin_dir}\n")
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
+        DESTINATION bin COMPONENT ogs_gui)
+endif()
