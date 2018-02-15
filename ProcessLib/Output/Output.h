@@ -115,6 +115,11 @@ private:
      * @return Address of a ProcessData.
      */
     ProcessData* findProcessData(Process const& process, const int process_id);
+
+    //! Determines if there should be output at the given \c timestep or \c t.
+    bool shallDoOutput(unsigned timestep, double const t);
 };
+
+
 
 }  // namespace ProcessLib

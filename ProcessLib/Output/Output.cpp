@@ -22,29 +22,6 @@
 
 namespace
 {
-//! Determines if there should be output at the given \c timestep.
-template <typename CountsSteps>
-bool shallDoOutput(unsigned timestep, CountsSteps const& repeats_each_steps)
-{
-    unsigned each_steps = 1;
-
-    for (auto const& pair : repeats_each_steps)
-    {
-        each_steps = pair.each_steps;
-
-        if (timestep > pair.repeat * each_steps)
-        {
-            timestep -= pair.repeat * each_steps;
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    return timestep % each_steps == 0;
-}
-
 //! Converts a vtkXMLWriter's data mode string to an int. See
 /// Output::_output_file_data_mode.
 int convertVtkDataMode(std::string const& data_mode)
@@ -70,6 +47,40 @@ int convertVtkDataMode(std::string const& data_mode)
 
 namespace ProcessLib
 {
+bool Output::shallDoOutput(unsigned timestep, double const t)
+{
+    unsigned each_steps = 1;
+
+    for (auto const& pair : _repeats_each_steps)
+    {
+        each_steps = pair.each_steps;
+
+        if (timestep > pair.repeat * each_steps)
+        {
+            timestep -= pair.repeat * each_steps;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    bool make_output = timestep % each_steps == 0;
+
+    if (_specific_times.empty())
+        return make_output;
+
+    const double specific_time = _specific_times.back();
+    const double zero_threshold = std::numeric_limits<double>::epsilon();
+    if (std::fabs(specific_time - t) < zero_threshold)
+    {
+        _specific_times.pop_back();
+        make_output = true;
+    }
+
+    return make_output;
+}
+
 Output::Output(std::string output_directory, std::string prefix,
                bool const compress_output, std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
@@ -170,7 +181,7 @@ void Output::doOutput(Process const& process,
                       const double t,
                       GlobalVector const& x)
 {
-    if (shallDoOutput(timestep, _repeats_each_steps))
+    if (shallDoOutput(timestep, t))
     {
         doOutputAlways(process, process_id, process_output, timestep, t, x);
     }
@@ -188,7 +199,7 @@ void Output::doOutputLastTimestep(Process const& process,
                                   const double t,
                                   GlobalVector const& x)
 {
-    if (!shallDoOutput(timestep, _repeats_each_steps))
+    if (!shallDoOutput(timestep, t))
     {
         doOutputAlways(process, process_id, process_output, timestep, t, x);
     }
