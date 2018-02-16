@@ -147,9 +147,8 @@ double EvolutionaryPIDcontroller::checkSpecificTimeReached(const double h_new)
         return h_new;
 
     const double specific_time = _specified_times.back();
-    const double zero_threshold = std::numeric_limits<double>::epsilon();
     if ((specific_time > _ts_current.current()) &&
-        (_ts_current.current() + h_new - specific_time > zero_threshold))
+        (_ts_current.current() + h_new - specific_time > 0.0))
     {
         _specified_times.pop_back();
         return specific_time - _ts_current.current();

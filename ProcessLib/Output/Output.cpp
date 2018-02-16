@@ -71,7 +71,7 @@ bool Output::shallDoOutput(unsigned timestep, double const t)
         return make_output;
 
     const double specific_time = _specified_times.back();
-    const double zero_threshold = std::numeric_limits<double>::epsilon();
+    const double zero_threshold = std::numeric_limits<double>::min();
     if (std::fabs(specific_time - t) < zero_threshold)
     {
         _specified_times.pop_back();
@@ -85,7 +85,7 @@ Output::Output(std::string output_directory, std::string prefix,
                bool const compress_output, std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
-               const std::vector<double>&& specified_times)
+               std::vector<double>&& specified_times)
     : _output_directory(std::move(output_directory)),
       _output_file_prefix(std::move(prefix)),
       _output_file_compression(compress_output),

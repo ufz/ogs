@@ -43,7 +43,7 @@ public:
            bool const compress_output, std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
            std::vector<PairRepeatEachSteps> repeats_each_steps,
-           const std::vector<double>&& specified_times);
+           std::vector<double>&& specified_times);
 
     //! TODO doc. Opens a PVD file for each process.
     void addProcess(ProcessLib::Process const& process, const int process_id);
