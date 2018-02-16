@@ -537,7 +537,7 @@ bool UncoupledProcessesTimeLoop::loop()
             // these times. Note: only the adaptive time steppers can have the
             // the specific times.
             auto& timestepper = process_data->timestepper;
-            timestepper->addSpecificTimes(_output->getSpecificTimes());
+            timestepper->addSpecifiedTimes(_output->getSpecifiedTimes());
 
             ++process_id;
         }

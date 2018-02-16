@@ -87,7 +87,7 @@ public:
     virtual bool isSolutionErrorComputationNeeded() { return false; }
 
     /// Add specific times
-    virtual void addSpecificTimes(std::vector<double> const& /*specific_times*/)
+    virtual void addSpecifiedTimes(std::vector<double> const& /*specified_times*/)
     {
     }
 

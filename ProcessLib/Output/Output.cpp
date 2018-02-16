@@ -67,14 +67,14 @@ bool Output::shallDoOutput(unsigned timestep, double const t)
 
     bool make_output = timestep % each_steps == 0;
 
-    if (_specific_times.empty())
+    if (_specified_times.empty())
         return make_output;
 
-    const double specific_time = _specific_times.back();
+    const double specific_time = _specified_times.back();
     const double zero_threshold = std::numeric_limits<double>::epsilon();
     if (std::fabs(specific_time - t) < zero_threshold)
     {
-        _specific_times.pop_back();
+        _specified_times.pop_back();
         make_output = true;
     }
 
@@ -85,14 +85,14 @@ Output::Output(std::string output_directory, std::string prefix,
                bool const compress_output, std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
-               const std::vector<double>&& specific_times)
+               const std::vector<double>&& specified_times)
     : _output_directory(std::move(output_directory)),
       _output_file_prefix(std::move(prefix)),
       _output_file_compression(compress_output),
       _output_file_data_mode(convertVtkDataMode(data_mode)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _repeats_each_steps(std::move(repeats_each_steps)),
-      _specific_times(std::move(specific_times))
+      _specified_times(std::move(specified_times))
 {
 }
 
