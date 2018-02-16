@@ -91,7 +91,8 @@ public:
     /// Get a flag to indicate that this algorithm need to compute
     /// solution error.
     bool isSolutionErrorComputationNeeded() override { return true; }
-    /// Add specific times
+
+    /// \copydoc NumLib::TimeStepAlgorithm::addSpecifiedTimes
     void addSpecifiedTimes(
         std::vector<double> const& extra_specified_times) override;
 
