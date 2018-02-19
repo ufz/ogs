@@ -10,6 +10,7 @@
 #include "ProcessOutput.h"
 
 #include "BaseLib/BuildInfo.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
@@ -27,7 +28,6 @@ static void addOgsVersion(MeshLib::Mesh& mesh)
                              BaseLib::BuildInfo::ogs_version.end());
 }
 
-#ifndef USE_PETSC  // Not used in PETSc case
 static void addSecondaryVariableNodes(
     double const t,
     GlobalVector const& x,
@@ -55,21 +55,22 @@ static void addSecondaryVariableNodes(
     std::unique_ptr<GlobalVector> result_cache;
     auto const& nodal_values =
         var.fcts.eval_field(t, x, dof_table, result_cache);
-    if (nodal_values_mesh.size() !=
-        static_cast<std::size_t>(nodal_values.size()))
+#ifdef USE_PETSC
+    std::size_t const global_vector_size =
+        nodal_values.getLocalSize() + nodal_values.getGhostSize();
+#else
+    std::size_t const global_vector_size = nodal_values.size();
+#endif
+    if (nodal_values_mesh.size() != global_vector_size)
     {
         OGS_FATAL(
             "Secondary variable `%s' did not evaluate to the right "
             "number of components. Expected: %d, actual: %d.",
-            var.name.c_str(), nodal_values_mesh.size(), nodal_values.size());
+            var.name.c_str(), nodal_values_mesh.size(), global_vector_size);
     }
 
     // Copy result
-    for (GlobalIndexType i = 0; i < nodal_values.size(); ++i)
-    {
-        assert(!std::isnan(nodal_values[i]));
-        nodal_values_mesh[i] = nodal_values[i];
-    }
+    nodal_values.copyValues(nodal_values_mesh);
 }
 
 static void addSecondaryVariableResiduals(
@@ -103,22 +104,23 @@ static void addSecondaryVariableResiduals(
     std::unique_ptr<GlobalVector> result_cache;
     auto const& residuals =
         var.fcts.eval_residuals(t, x, dof_table, result_cache);
-    if (residuals_mesh.size() != static_cast<std::size_t>(residuals.size()))
+#ifdef USE_PETSC
+    std::size_t const global_vector_size =
+        residuals.getLocalSize() + residuals.getGhostSize();
+#else
+    std::size_t const global_vector_size = residuals.size();
+#endif
+    if (residuals_mesh.size() != global_vector_size)
     {
         OGS_FATAL(
             "The residual of secondary variable `%s' did not evaluate to the "
             "right number of components. Expected: %d, actual: %d.",
-            var.name.c_str(), residuals_mesh.size(), residuals.size());
+            var.name.c_str(), residuals_mesh.size(), global_vector_size);
     }
 
     // Copy result
-    for (GlobalIndexType i = 0; i < residuals.size(); ++i)
-    {
-        assert(!std::isnan(residuals[i]));
-        residuals_mesh[i] = residuals[i];
-    }
+    residuals.copyValues(residuals_mesh);
 }
-#endif  // USE_PETSC
 
 namespace ProcessLib
 {
@@ -212,8 +214,6 @@ void processOutputData(
         }
     }
 
-#ifndef USE_PETSC
-
     // Secondary variables output
     for (auto const& external_variable_name : output_variables)
     {
@@ -234,11 +234,6 @@ void processOutputData(
                 external_variable_name, mesh);
         }
     }
-#else
-    (void)mesh;
-    (void)secondary_variables;
-    (void)t;
-#endif  // USE_PETSC
 
     addIntegrationPointWriter(mesh, integration_point_writer);
 }
