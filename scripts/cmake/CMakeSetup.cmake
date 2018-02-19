@@ -28,3 +28,8 @@ endif()
 
 # Get the hostname
 site_name(HOSTNAME)
+
+# Check if we are running under CI
+if(DEFINED ENV{JENKINS_URL} OR DEFINED ENV{CI})
+    set(IS_CI ON CACHE INTERNAL "")
+endif()

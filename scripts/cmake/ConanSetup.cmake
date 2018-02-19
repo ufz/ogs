@@ -115,7 +115,7 @@ file(TIMESTAMP ${PROJECT_BINARY_DIR}/conan_install_timestamp.txt file_timestamp 
 string(TIMESTAMP timestamp "%Y.%m.%d")
 
 # Run conan install update only once a day
-if("${file_timestamp}" VERSION_LESS ${timestamp})
+if("${file_timestamp}" VERSION_LESS ${timestamp} OR IS_CI)
     file(WRITE ${PROJECT_BINARY_DIR}/conan_install_timestamp.txt "${timestamp}\n")
     set(CONAN_UPDATE UPDATE)
 else()
