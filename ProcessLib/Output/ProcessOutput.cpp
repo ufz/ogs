@@ -9,8 +9,20 @@
 
 #include "ProcessOutput.h"
 
+#include "BaseLib/BuildInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+
+/// Copies the ogs_version string containing the release number and the git
+/// hash.
+static void addOgsVersion(MeshLib::Mesh& mesh)
+{
+    auto& ogs_version_field = *MeshLib::getOrCreateMeshProperty<char>(
+        mesh, "OGS_VERSION", MeshLib::MeshItemType::IntegrationPoint, 1);
+
+    ogs_version_field.assign(BaseLib::BuildInfo::ogs_version.begin(),
+                             BaseLib::BuildInfo::ogs_version.end());
+}
 
 #ifndef USE_PETSC  // Not used in PETSc case
 static void addSecondaryVariableNodes(
@@ -118,6 +130,8 @@ void processOutputData(
     ProcessOutput const& process_output)
 {
     DBUG("Process output data.");
+
+    addOgsVersion(mesh);
 
     // Copy result
 #ifdef USE_PETSC
