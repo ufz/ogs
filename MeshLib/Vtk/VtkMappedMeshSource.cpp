@@ -163,4 +163,34 @@ int VtkMappedMeshSource::RequestInformation(vtkInformation*,
     return 1;
 }
 
+template <typename T>
+bool VtkMappedMeshSource::addProperty(MeshLib::Properties const& properties,
+                                      std::string const& prop_name) const
+{
+    if (!properties.existsPropertyVector<T>(prop_name))
+        return false;
+    // TODO: Hack removing const
+    auto* propertyVector = const_cast<MeshLib::PropertyVector<T>*>(
+        properties.getPropertyVector<T>(prop_name));
+    if (!propertyVector)
+        return false;
+
+    vtkNew<vtkAOSDataArrayTemplate<T>> dataArray;
+    const bool hasArrayOwnership = false;
+    dataArray->SetArray(propertyVector->data(),
+                        static_cast<vtkIdType>(propertyVector->size()),
+                        static_cast<int>(!hasArrayOwnership));
+    dataArray->SetNumberOfComponents(propertyVector->getNumberOfComponents());
+    dataArray->SetName(prop_name.c_str());
+
+    if (propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
+        this->PointData->AddArray(dataArray.GetPointer());
+    else if (propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+        this->CellData->AddArray(dataArray.GetPointer());
+    else if (propertyVector->getMeshItemType() ==
+             MeshLib::MeshItemType::IntegrationPoint)
+        this->FieldData->AddArray(dataArray.GetPointer());
+
+    return true;
+}
 }  // Namespace MeshLib
