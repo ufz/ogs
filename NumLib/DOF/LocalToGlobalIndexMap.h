@@ -96,25 +96,15 @@ public:
     /// Returns total number of local degrees of freedom of the present rank,
     /// which does not count the unknowns associated with ghost nodes (for DDC
     /// with node-wise mesh partitioning).
-    std::size_t dofSizeWithoutGhosts() const
-    {
-        return _mesh_component_map.dofSizeWithoutGhosts();
-    }
+    std::size_t dofSizeWithoutGhosts() const;
 
     std::size_t size() const;
 
-    int getNumberOfVariables() const
-    {
-        return static_cast<int>(_variable_component_offsets.size()) - 1;
-    }
+    int getNumberOfVariables() const;
 
-    int getNumberOfVariableComponents(int variable_id) const
-    {
-        assert(variable_id < getNumberOfVariables());
-        return _variable_component_offsets[variable_id+1] - _variable_component_offsets[variable_id];
-    }
+    int getNumberOfVariableComponents(int variable_id) const;
 
-    int getNumberOfComponents() const { return _mesh_subsets.size(); }
+    int getNumberOfComponents() const;
 
     RowColumnIndices operator()(std::size_t const mesh_item_id,
                                 const int component_id) const;
@@ -128,50 +118,30 @@ public:
 
     GlobalIndexType getGlobalIndex(MeshLib::Location const& l,
                                    int const variable_id,
-                                   int const component_id) const
-    {
-        auto const c = getGlobalComponent(variable_id, component_id);
-        return _mesh_component_map.getGlobalIndex(l, c);
-    }
+                                   int const component_id) const;
 
     GlobalIndexType getGlobalIndex(MeshLib::Location const& l,
-                                   int const global_component_id) const
-    {
-        return _mesh_component_map.getGlobalIndex(l, global_component_id);
-    }
+                                   int const global_component_id) const;
 
     /// Forwards the respective method from MeshComponentMap.
-    std::vector<GlobalIndexType> getGlobalIndices(const MeshLib::Location &l) const
-    {
-        return _mesh_component_map.getGlobalIndices(l);
-    }
+    std::vector<GlobalIndexType> getGlobalIndices(
+        const MeshLib::Location& l) const;
 
     /// Get ghost indices, forwarded from MeshComponentMap.
-    std::vector<GlobalIndexType> const& getGhostIndices() const
-    {
-        return _mesh_component_map.getGhostIndices();
-    }
+    std::vector<GlobalIndexType> const& getGhostIndices() const;
 
     /// Computes the index in a local (for DDC) vector for a given location and
     /// component; forwarded from MeshComponentMap.
-    GlobalIndexType getLocalIndex(MeshLib::Location const& l, std::size_t const comp_id,
+    GlobalIndexType getLocalIndex(MeshLib::Location const& l,
+                                  std::size_t const comp_id,
                                   std::size_t const range_begin,
-                                  std::size_t const range_end) const
-    {
-        return _mesh_component_map.getLocalIndex(l, comp_id, range_begin,
-                                                 range_end);
-    }
+                                  std::size_t const range_end) const;
 
     MeshLib::MeshSubsets const& getMeshSubsets(int const variable_id,
-                                               int const component_id) const
-    {
-        return getMeshSubsets(getGlobalComponent(variable_id, component_id));
-    }
+                                               int const component_id) const;
 
-    MeshLib::MeshSubsets const& getMeshSubsets(int const global_component_id) const
-    {
-        return _mesh_subsets[global_component_id];
-    }
+    MeshLib::MeshSubsets const& getMeshSubsets(
+        int const global_component_id) const;
 
 private:
     /// Private constructor used by internally created local-to-global index
@@ -199,10 +169,7 @@ private:
 
     /// The global component id for the specific variable (like velocity) and a
     /// component (like x, or y, or z).
-    int getGlobalComponent(int const variable_id, int const component_id) const
-    {
-        return _variable_component_offsets[variable_id] + component_id;
-    }
+    int getGlobalComponent(int const variable_id, int const component_id) const;
 
 private:
     /// A vector of mesh subsets for each process variables' components.
