@@ -68,6 +68,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolate(
         extrapolateElement(i, num_components, extrapolatables, t,
                            current_solution, dof_table, *counts);
     }
+    MathLib::LinAlg::finalizeAssembly(*_nodal_values);
 
     MathLib::LinAlg::componentwiseDivide(*_nodal_values, *_nodal_values,
                                          *counts);
@@ -104,6 +105,7 @@ void LocalLinearLeastSquaresExtrapolator::calculateResiduals(
         calculateResidualElement(i, num_components, extrapolatables, t,
                                  current_solution, dof_table);
     }
+    MathLib::LinAlg::finalizeAssembly(*_residuals);
 }
 
 void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
@@ -272,6 +274,8 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
     auto const int_pt_vals_mat =
         MathLib::toMatrix(int_pt_vals, num_components, num_int_pts);
 
+    MathLib::LinAlg::setLocalAccessibleVector(
+        *_nodal_values);  // For access in the for-loop.
     for (unsigned comp = 0; comp < num_components; ++comp)
     {
         // filter nodal values of the current element
@@ -279,7 +283,7 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
         {
             // TODO PETSc negative indices?
             auto const idx = num_components * global_indices[i] + comp;
-            nodal_vals_element[i] = (*_nodal_values)[idx];
+            nodal_vals_element[i] = _nodal_values->get(idx);
         }
 
         double const residual = (interpolation_matrix * nodal_vals_element -
