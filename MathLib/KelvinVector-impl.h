@@ -16,7 +16,7 @@ double Invariants<KelvinVectorSize>::equivalentStress(
     Eigen::Matrix<double, KelvinVectorSize, 1> const& deviatoric_v)
 {
     assert(std::abs(trace(deviatoric_v)) <=
-           1e-16 * std::abs(deviatoric_v.squaredNorm()));
+           5e-14 * diagonal(deviatoric_v).norm());
     return std::sqrt(3 * J2(deviatoric_v));
 }
 
@@ -25,7 +25,7 @@ double Invariants<KelvinVectorSize>::J2(
     Eigen::Matrix<double, KelvinVectorSize, 1> const& deviatoric_v)
 {
     assert(std::abs(trace(deviatoric_v)) <=
-           1e-16 * std::abs(deviatoric_v.squaredNorm()));
+           5e-14 * diagonal(deviatoric_v).norm());
     return 0.5 * deviatoric_v.transpose() * deviatoric_v;
 }
 
@@ -36,8 +36,15 @@ double Invariants<KelvinVectorSize>::J3(
     Eigen::Matrix<double, KelvinVectorSize, 1> const& deviatoric_v)
 {
     assert(std::abs(trace(deviatoric_v)) <=
-           1e-16 * std::abs(deviatoric_v.squaredNorm()));
+           5e-14 * diagonal(deviatoric_v).norm());
     return determinant(deviatoric_v);
+}
+
+template <int KelvinVectorSize>
+Eigen::Vector3d Invariants<KelvinVectorSize>::diagonal(
+    Eigen::Matrix<double, KelvinVectorSize, 1> const& v)
+{
+    return v.template topLeftCorner<3, 1>();
 }
 
 /// Trace of the corresponding tensor.
@@ -45,7 +52,7 @@ template <int KelvinVectorSize>
 double Invariants<KelvinVectorSize>::trace(
     Eigen::Matrix<double, KelvinVectorSize, 1> const& v)
 {
-    return v.template topLeftCorner<3, 1>().sum();
+    return diagonal(v).sum();
 }
 
 //

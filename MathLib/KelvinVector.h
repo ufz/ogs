@@ -99,6 +99,11 @@ struct Invariants final
 
     /// Trace of the corresponding tensor.
     static double trace(Eigen::Matrix<double, KelvinVectorSize, 1> const& v);
+
+    /// Diagonal of the corresponding tensor which is always of length 3 in 2D
+    /// and 3D cases.
+    static Eigen::Vector3d diagonal(
+        Eigen::Matrix<double, KelvinVectorSize, 1> const& v);
 };
 
 //
