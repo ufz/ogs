@@ -42,3 +42,16 @@ AddTest(
 #      EXECUTABLE ogs
 #      EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
 # )
+
+# The 25 BHE array benchmark
+# test results are compared to 2D simulation result
+AddTest(
+    NAME BHE_Array_2D
+    PATH Parabolic/T/2D_BHE_array
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS bhe2d.prj
+    TESTER vtkdiff
+    DIFF_DATA
+    standard_solution_bhe2d_pcs_0_ts_840_t_72576000.000000.vtu bhe2d_pcs_0_ts_840_t_72576000.000000.vtu temperature temperature 1e-12 0.0
+    REQUIREMENTS NOT OGS_USE_MPI
+)
