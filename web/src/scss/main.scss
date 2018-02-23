@@ -28,6 +28,12 @@ p, li {
 // Code
 code, pre {
   @extend .lh-solid;
+  @extend .f6;
+}
+
+pre {
+  @extend .bg-near-white;
+  @extend .pa2;
 }
 
 // Nav
