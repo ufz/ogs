@@ -25,7 +25,8 @@ GaussLegendreTet<2>::X = {{ {{1./4., 1./4., 1./4.}},
                             {{1./6., 1./6., 1./2.}} }};
 double const GaussLegendreTet<2>::W[5] = {-2./15., 0.075, 0.075, 0.075, 0.075};
 
-std::array<std::array<double, 3>, GaussLegendreTet<3>::NPoints> initGLTet3X()
+static std::array<std::array<double, 3>, GaussLegendreTet<3>::NPoints>
+initGLTet3X()
 {
     // Cf. Gellert, M., Harbord, R., 1991. Moderate degree cubature formulas for
     // 3-D tetrahedral finite-element approximations. Communications in Applied
