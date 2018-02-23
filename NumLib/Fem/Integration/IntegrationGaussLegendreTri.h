@@ -14,19 +14,18 @@
 
 #pragma once
 
-#include "MathLib/TemplateWeightedPoint.h"
 #include "MathLib/Integration/GaussLegendreTri.h"
+#include "MathLib/TemplateWeightedPoint.h"
 
 namespace NumLib
 {
-
 /**
- * \brief Gauss quadrature rule for triangles
+ * \brief Gauss-Legendre quadrature rule for triangles
  *
- * Gauss quadrature rule for triangles is originally given as
+ * Gauss-Legendre quadrature rule for triangles is originally given as
  * \f[
- *    \int F(x,y) dx dy = \int F(x(r, s), y(r, s)) j(r,s) dr ds \approx \frac{1}{2} \sum_i ( F(x(r_i, s_i), y(r_i, s_i)) w_i )
- * \f]
+ *    \int F(x,y) dx dy = \int F(x(r, s), y(r, s)) j(r,s) dr ds \approx
+ * \frac{1}{2} \sum_i ( F(x(r_i, s_i), y(r_i, s_i)) w_i ) \f]
  *
  * To make it consistent with other elements, we rewrite the above formula as
  * \f[
@@ -34,7 +33,7 @@ namespace NumLib
  * \f]
  * by defining the new weight \f$ w'=\frac{1}{2} w \f$.
  */
-class IntegrationGaussTri
+class IntegrationGaussLegendreTri
 {
     using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 2>;
 
@@ -44,8 +43,8 @@ public:
      *
      * @param order     integration order (default 2)
      */
-    explicit IntegrationGaussTri(unsigned order = 2)
-    : _order(order), _n_sampl_pt(0)
+    explicit IntegrationGaussLegendreTri(unsigned order = 2)
+        : _order(order), _n_sampl_pt(0)
     {
         this->setIntegrationOrder(order);
     }
@@ -58,10 +57,10 @@ public:
     }
 
     /// return current integration order.
-    unsigned getIntegrationOrder() const {return _order;}
+    unsigned getIntegrationOrder() const { return _order; }
 
     /// return the number of sampling points
-    unsigned getNumberOfPoints() const {return _n_sampl_pt;}
+    unsigned getNumberOfPoints() const { return _n_sampl_pt; }
 
     /**
      * get coordinates of a integration point
@@ -81,25 +80,25 @@ public:
      * @param igp      the sampling point id
      * @return weight
      */
-    static WeightedPoint
-    getWeightedPoint(unsigned order, unsigned igp)
+    static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
     {
         switch (order)
         {
-            case 1: return getWeightedPoint<MathLib::GaussLegendreTri<1> >(igp);
-            case 2: return getWeightedPoint<MathLib::GaussLegendreTri<2> >(igp);
-            case 3: return getWeightedPoint<MathLib::GaussLegendreTri<3> >(igp);
+            case 1:
+                return getWeightedPoint<MathLib::GaussLegendreTri<1>>(igp);
+            case 2:
+                return getWeightedPoint<MathLib::GaussLegendreTri<2>>(igp);
+            case 3:
+                return getWeightedPoint<MathLib::GaussLegendreTri<3>>(igp);
         }
         return WeightedPoint(std::array<double, 2>(), 0);
     }
 
     template <typename Method>
-    static WeightedPoint
-    getWeightedPoint(unsigned igp)
+    static WeightedPoint getWeightedPoint(unsigned igp)
     {
         return WeightedPoint(Method::X[igp], 0.5 * Method::W[igp]);
     }
-
 
     /**
      * get the number of integration points
@@ -107,14 +106,16 @@ public:
      * @param order    the number of integration points
      * @return the number of points
      */
-    static unsigned
-    getNumberOfPoints(unsigned order)
+    static unsigned getNumberOfPoints(unsigned order)
     {
         switch (order)
         {
-            case 1: return MathLib::GaussLegendreTri<1>::NPoints;
-            case 2: return MathLib::GaussLegendreTri<2>::NPoints;
-            case 3: return MathLib::GaussLegendreTri<3>::NPoints;
+            case 1:
+                return MathLib::GaussLegendreTri<1>::NPoints;
+            case 2:
+                return MathLib::GaussLegendreTri<2>::NPoints;
+            case 3:
+                return MathLib::GaussLegendreTri<3>::NPoints;
         }
         return 0;
     }
@@ -124,4 +125,4 @@ private:
     unsigned _n_sampl_pt;
 };
 
-}
+}  // namespace NumLib
