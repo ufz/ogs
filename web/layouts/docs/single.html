@@ -23,6 +23,9 @@
   </div>
   <div class="col-xs-9">
     <h1>{{ .Title }}</h1>
+    {{ if eq $subsection "devguide"}}
+    Select OS: <a id="btn-win">Windows</a> <a id="btn-linux">Linux</a> <a id="btn-mac">macOS</a>
+    {{ end }}
 
     {{ .Content }}
 
@@ -31,5 +34,46 @@
 
   </div>
   {{ partial "page-info" . }}
+
+{{ end }}
+
+{{ define "footer" }}
+
+  {{ $segments := split .RelPermalink "/" }}
+  {{ $subsection := index $segments 2 }}
+  {{ if eq $subsection "devguide"}}
+  <script>
+    $("#btn-win").click(function(){
+      $(".win").show();
+      $(".linux").hide();
+      $(".mac").hide();
+      $("#btn-win").addClass("active");
+      $("#btn-linux").removeClass("active");
+      $("#btn-mac").removeClass("active");
+    });
+
+    $("#btn-linux").click(function(){
+      $(".win").hide();
+      $(".linux").show();
+      $(".mac").hide();
+      $("#btn-win").removeClass("active");
+      $("#btn-linux").addClass("active");
+      $("#btn-mac").removeClass("active");
+    });
+
+    $("#btn-mac").click(function(){
+      $(".win").hide();
+      $(".linux").hide();
+      $(".mac").show();
+      $("#btn-win").removeClass("active");
+      $("#btn-linux").removeClass("active");
+      $("#btn-mac").addClass("active");
+    });
+
+    $( document ).ready(function() {
+      $("#btn-win").click();
+    });
+  </script>
+  {{ end }}
 
 {{ end }}

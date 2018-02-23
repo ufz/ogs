@@ -6,7 +6,7 @@ $code-font-family: code;
 
 // Fonts
 h1, h2, h3, h4, h5, h6 { @extend .#{$header-font-family}; }
-body { @extend .#{$text-font-family}; }
+body, p { @extend .#{$text-font-family}; }
 code, pre { @extend .#{$code-font-family}; }
 
 // Header
@@ -21,7 +21,6 @@ a {
 }
 
 p, li {
-  @extend .measure-wide;
   @extend .lh-copy;
   @extend .f5;
 }
@@ -60,6 +59,30 @@ img {
 }
 
 // Docs
+
+// OS selector
+#btn-win, #btn-linux, #btn-mac {
+    @extend .f6;
+    @extend .link;
+    @extend .dim;
+    @extend .ba;
+    @extend .bw1;
+    @extend .ph3;
+    @extend .pv1;
+    @extend .mb2;
+    @extend .dib;
+    @extend .black;
+}
+
+#btn-win.active, #btn-linux.active, #btn-mac.active {
+    @extend .orange;
+}
+
+.note {
+    @extend .pv1;
+    @extend .ph4;
+    @extend .bg-washed-yellow;
+}
 
 // Side nav
 ul.sidenav {
