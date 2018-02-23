@@ -74,6 +74,7 @@ struct NaturalPointGenerator
                                [](double const& v) { return 1. - v; });
             return mapped_tuple;
         }
+        OGS_FATAL("NaturalPointGenerator: Unknown shape function type.");
     }
 
     result_type operator()(std::size_t /*size*/ = 0)

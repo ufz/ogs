@@ -30,6 +30,12 @@ std::vector<T> to_cumulative(std::vector<T> const& vec)
 
 } // no named namespace
 
+int LocalToGlobalIndexMap::getGlobalComponent(int const variable_id,
+                                              int const component_id) const
+{
+    return _variable_component_offsets[variable_id] + component_id;
+}
+
 template <typename ElementIterator>
 void LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
     ElementIterator first, ElementIterator last,
@@ -259,14 +265,34 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
                                      std::move(mesh_component_map));
 }
 
-std::size_t
-LocalToGlobalIndexMap::dofSizeWithGhosts() const
+std::size_t LocalToGlobalIndexMap::dofSizeWithGhosts() const
 {
     return _mesh_component_map.dofSizeWithGhosts();
 }
 
-std::size_t
-LocalToGlobalIndexMap::size() const
+std::size_t LocalToGlobalIndexMap::dofSizeWithoutGhosts() const
+{
+    return _mesh_component_map.dofSizeWithoutGhosts();
+}
+
+int LocalToGlobalIndexMap::getNumberOfVariables() const
+{
+    return static_cast<int>(_variable_component_offsets.size()) - 1;
+}
+
+int LocalToGlobalIndexMap::getNumberOfVariableComponents(int variable_id) const
+{
+    assert(variable_id < getNumberOfVariables());
+    return _variable_component_offsets[variable_id + 1] -
+           _variable_component_offsets[variable_id];
+}
+
+int LocalToGlobalIndexMap::getNumberOfComponents() const
+{
+    return _mesh_subsets.size();
+}
+
+std::size_t LocalToGlobalIndexMap::size() const
 {
     return _rows.rows();
 }
@@ -320,6 +346,57 @@ std::vector<int> LocalToGlobalIndexMap::getElementVariableIDs(
     vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
 
     return vec;
+}
+
+GlobalIndexType LocalToGlobalIndexMap::getGlobalIndex(
+    MeshLib::Location const& l,
+    int const variable_id,
+    int const component_id) const
+{
+    auto const c = getGlobalComponent(variable_id, component_id);
+    return _mesh_component_map.getGlobalIndex(l, c);
+}
+
+GlobalIndexType LocalToGlobalIndexMap::getGlobalIndex(
+    MeshLib::Location const& l, int const global_component_id) const
+{
+    return _mesh_component_map.getGlobalIndex(l, global_component_id);
+}
+
+/// Forwards the respective method from MeshComponentMap.
+std::vector<GlobalIndexType> LocalToGlobalIndexMap::getGlobalIndices(
+    const MeshLib::Location& l) const
+{
+    return _mesh_component_map.getGlobalIndices(l);
+}
+
+/// Get ghost indices, forwarded from MeshComponentMap.
+std::vector<GlobalIndexType> const& LocalToGlobalIndexMap::getGhostIndices()
+    const
+{
+    return _mesh_component_map.getGhostIndices();
+}
+
+/// Computes the index in a local (for DDC) vector for a given location and
+/// component; forwarded from MeshComponentMap.
+GlobalIndexType LocalToGlobalIndexMap::getLocalIndex(
+    MeshLib::Location const& l, std::size_t const comp_id,
+    std::size_t const range_begin, std::size_t const range_end) const
+{
+    return _mesh_component_map.getLocalIndex(l, comp_id, range_begin,
+                                             range_end);
+}
+
+MeshLib::MeshSubsets const& LocalToGlobalIndexMap::getMeshSubsets(
+    int const variable_id, int const component_id) const
+{
+    return getMeshSubsets(getGlobalComponent(variable_id, component_id));
+}
+
+MeshLib::MeshSubsets const& LocalToGlobalIndexMap::getMeshSubsets(
+    int const global_component_id) const
+{
+    return _mesh_subsets[global_component_id];
 }
 
 #ifndef NDEBUG
