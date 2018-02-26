@@ -1,0 +1,76 @@
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "Working on envinf1"
+author = "Lars Bilke"
+weight = 1036
+
+[menu]
+  [menu.devguide]
+    parent = "advanced"
++++
+
+## Introduction
+
+Members of the Department Environmental Informatics of the Helmholtz Centre for Environmental Research - UFZ can use the `envinf1`-machine which is tightly connected to the Eve cluster system.
+
+## Build OGS-6
+
+Load required modules by sourcing the environment script:
+
+```bash
+$ source scripts/env/envinf1/cli.sh
+```
+
+Then do the [build configuration]({{< relref "build-configuration.pandoc" >}}) and [build]({{< relref "build.pandoc" >}}) the project.
+
+## Build the Data Explorer
+
+Load required modules by sourcing the environment script:
+
+```bash
+$ source scripts/env/envinf1/gui.sh
+```
+
+Then do the [build configuration]({{< relref "build-configuration.pandoc" >}}) and [build]({{< relref "build.pandoc" >}}) the project.
+
+## Install and use Conan
+
+Follow the instructions on using Python's `virtualenv` [on the Eve-wiki](https://wiki.ufz.de/eve/index.php/Python#virtualenv) for setting up a local Python environment. Then you can `pip install conan` and use Conan.
+
+## Additional Features
+
+[Doxygen]({entry:devguide/generating-documentation:url}) documentation:
+
+```bash
+$ module load doxygen/1.8.7-1_gcc_4.8.1_CentOS6
+```
+
+You can {entry:devguide/build-with-ninja:link}:
+
+```bash
+$ module load ninja/1.4.0-1_gcc_4.8.1_CentOS6
+```
+
+## Build OGS-5
+
+```bash
+$ module load cmake/2.8.12.2-1_gcc_4.8.1_CentOS6
+$ module load gcc/4.8.1-3_CentOS6
+```
+
+## Use ParaView
+
+On `envinf1` start ParaView-server with e.g. 4 cores:
+
+```bash
+module load paraview/5.0.0-egl
+mpirun -np 4 pvserver
+```
+
+This starts the server on port 11111. If another user has already started the server you need to start your server on another port with e.g.:
+
+```bash
+mpirun -np 4 pvserver --server-port=11112
+```
+
+On your local PC start ParaView (you have to use the same version, 5.0.0 in this case). And connect to the server on `envinf1.eve.ufz.de:11111` (or specify another port here).

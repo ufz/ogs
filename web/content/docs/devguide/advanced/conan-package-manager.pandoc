@@ -1,0 +1,27 @@
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "Conan package manager"
+author = "Lars Bilke"
+weight = 1032
+
+[menu]
+  [menu.devguide]
+    parent = "advanced"
++++
+
+::: {.note}
+### <i class="fas fa-exclamation-triangle"></i> Conan 1.0.0 required
+
+As of OpenGeoSys 6.1.0 Conan version 1.0.0 is required! Please update Conan by running `pip install --upgrade conan` or by downloading the Windows installer.
+:::
+
+The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. See [Setup pre-requisites](../../getting-started/prerequisites) for installation instructions. Set the CMake option `OGS_USE_CONAN=ON` to enable Conan.
+
+## Advanced usage
+
+Per default when Conan is enabled (`OGS_USE_CONAN=ON`) it will try to fetch prebuilt binaries from the [OGS Conan repository](https://ogs.jfrog.io/ogs/conan/) at https://ogs.jfrog.io/ogs/api/conan/conan. With the CMake option `OGS_CONAN_BUILD` you define what gets build locally. This option can be set to:
+
+- `missing` - Default, only builds packages which are not available as a prebuilt binary for the current configuration
+- `all` - Builds all packages locally
+- `never` - Builds no package locally
+- `[a list of libraries to build]`, e.g. `"Eigen3;Boost"`. For names see [ConanSetup.cmake](https://github.com/ufz/ogs/blob/master/scripts/cmake/ConanSetup.cmake). Make sure to set this back to 'never' after the libs have been built. Otherwise it would rebuild the libs on the next CMake run.
