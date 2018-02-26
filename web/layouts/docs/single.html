@@ -24,16 +24,16 @@
   <div class="col-xs-9">
     <h1>{{ .Title }}</h1>
     {{ if eq $subsection "devguide"}}
-    <div id="os-selector">Select OS: <a id="btn-win">Windows</a> <a id="btn-linux">Linux</a> <a id="btn-mac">macOS</a></div>
+    <div id="os-selector">Select OS: <a id="btn-win"><i class="fab fa-windows"></i> Windows</a> <a id="btn-linux"><i class="fab fa-linux"></i> Linux</a> <a id="btn-mac"><i class="fab fa-apple"></i> macOS</a></div>
     {{ end }}
 
     {{ .Content }}
 
+    {{ partial "page-info" . }}
     <hr>
     {{ partial "footer-nav.html" . }}
 
   </div>
-  {{ partial "page-info" . }}
 
 {{ end }}
 

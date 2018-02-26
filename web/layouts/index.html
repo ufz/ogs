@@ -4,7 +4,9 @@
     <h2>Content</h2>
     <ul>
     {{ range .Site.Sections }}
-        <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+        {{ if not (eq .Title "Internals")}}
+            <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+        {{ end }}
     {{ end }}
     {{ range .Data.Pages }}
       {{ if eq .Type "page" }}

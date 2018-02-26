@@ -88,6 +88,10 @@ img {
     @extend .pv1;
     @extend .ph4;
     @extend .bg-washed-yellow;
+
+    h1, h2, h3, h4 {
+        @extend .orange;
+    }
 }
 
 // Side nav
@@ -100,13 +104,14 @@ ul.sidenav {
     li.category {
         @extend .#{$header-font-family};
         @extend .small-caps;
-        @extend .mt1;
+        @extend .f4;
+        @extend .mt2;
     }
     a {
         @extend .nav-a-style;
         @extend .f6;
     }
-    a.active {
+    a.active, a:hover {
         @extend .orange;
     }
 }
@@ -121,7 +126,14 @@ ul.sidenav {
 .page-info {
     p {
         @extend .f6;
-        max-width: 100%;
+        @extend .gray;
+
+        a {
+            @extend .light-blue;
+        }
+        a:hover {
+            @extend .light-red;
+        }
     }
 }
 
