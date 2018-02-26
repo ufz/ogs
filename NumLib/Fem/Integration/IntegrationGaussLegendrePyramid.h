@@ -1,4 +1,6 @@
 /**
+ * \file
+ *
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -9,16 +11,15 @@
 
 #pragma once
 
+#include "MathLib/Integration/GaussLegendrePyramid.h"
 #include "MathLib/TemplateWeightedPoint.h"
-#include "MathLib/Integration/GaussLegendreTet.h"
 
 namespace NumLib
 {
-
 /**
- * \brief Gauss quadrature rule for tetrahedrals
+ * \brief Gauss-Legendre quadrature rule for pyramid
  */
-class IntegrationGaussTet
+class IntegrationGaussLegendrePyramid
 {
     using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 3>;
 
@@ -28,8 +29,8 @@ public:
      *
      * @param order     integration order (default 2)
      */
-    explicit IntegrationGaussTet(unsigned order = 2)
-    : _order(order), _n_sampl_pt(0)
+    explicit IntegrationGaussLegendrePyramid(unsigned order = 2)
+        : _order(order), _n_sampl_pt(0)
     {
         this->setIntegrationOrder(order);
     }
@@ -38,14 +39,14 @@ public:
     void setIntegrationOrder(unsigned order)
     {
         _order = order;
-        _n_sampl_pt = getNumberOfPoints(order);
+        _n_sampl_pt = getNumberOfPoints(_order);
     }
 
     /// return current integration order.
-    unsigned getIntegrationOrder() const {return _order;}
+    unsigned getIntegrationOrder() const { return _order; }
 
     /// return the number of sampling points
-    unsigned getNumberOfPoints() const {return _n_sampl_pt;}
+    unsigned getNumberOfPoints() const { return _n_sampl_pt; }
 
     /**
      * get coordinates of a integration point
@@ -65,25 +66,25 @@ public:
      * @param igp      the sampling point id
      * @return weight
      */
-    static WeightedPoint
-    getWeightedPoint(unsigned order, unsigned igp)
+    static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
     {
         switch (order)
         {
-            case 1: return getWeightedPoint<MathLib::GaussLegendreTet<1> >(igp);
-            case 2: return getWeightedPoint<MathLib::GaussLegendreTet<2> >(igp);
-            case 3: return getWeightedPoint<MathLib::GaussLegendreTet<3> >(igp);
+            case 1:
+                return getWeightedPoint<MathLib::GaussLegendrePyramid<1>>(igp);
+            case 2:
+                return getWeightedPoint<MathLib::GaussLegendrePyramid<2>>(igp);
+            case 3:
+                return getWeightedPoint<MathLib::GaussLegendrePyramid<3>>(igp);
         }
         return WeightedPoint(std::array<double, 3>(), 0);
     }
 
     template <typename Method>
-    static WeightedPoint
-    getWeightedPoint(unsigned igp)
+    static WeightedPoint getWeightedPoint(unsigned igp)
     {
         return WeightedPoint(Method::X[igp], Method::W[igp]);
     }
-
 
     /**
      * get the number of integration points
@@ -91,14 +92,16 @@ public:
      * @param order    the number of integration points
      * @return the number of points
      */
-    static unsigned
-    getNumberOfPoints(unsigned order)
+    static unsigned getNumberOfPoints(unsigned order)
     {
         switch (order)
         {
-            case 1: return MathLib::GaussLegendreTet<1>::NPoints;
-            case 2: return MathLib::GaussLegendreTet<2>::NPoints;
-            case 3: return MathLib::GaussLegendreTet<3>::NPoints;
+            case 1:
+                return MathLib::GaussLegendrePyramid<1>::NPoints;
+            case 2:
+                return MathLib::GaussLegendrePyramid<2>::NPoints;
+            case 3:
+                return MathLib::GaussLegendrePyramid<3>::NPoints;
         }
         return 0;
     }
@@ -108,4 +111,4 @@ private:
     unsigned _n_sampl_pt;
 };
 
-}
+}  // namespace NumLib

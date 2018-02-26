@@ -18,7 +18,7 @@
 
 #include "MeshLib/Elements/Elements.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
+#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 
 #ifndef OGS_MAX_ELEMENT_DIM
 static_assert(false, "The macro OGS_MAX_ELEMENT_DIM is undefined.");
@@ -303,7 +303,7 @@ private:
         ConstructorArgs&&...)>;
 
     template <typename ShapeFunction>
-    using IntegrationMethod = typename NumLib::GaussIntegrationPolicy<
+    using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
         typename ShapeFunction::MeshElement>::IntegrationMethod;
 
     template <typename ShapeFunction>

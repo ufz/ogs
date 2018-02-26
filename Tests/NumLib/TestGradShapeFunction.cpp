@@ -24,7 +24,7 @@
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
-#include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
+#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "FeTestData/TestFeLINE2.h"
@@ -122,7 +122,7 @@ public:
     static const unsigned n_sample_pt_order2 = TestFeType::n_sample_pt_order2;
     static const unsigned n_sample_pt_order3 = TestFeType::n_sample_pt_order3;
 
-    using IntegrationMethod = typename NumLib::GaussIntegrationPolicy<
+    using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
         MeshElementType>::IntegrationMethod;
 
 public:

@@ -1,4 +1,6 @@
 /**
+ * \file
+ *
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -44,13 +46,13 @@ public:
         return 1;
     }
 
-    /// \copydoc IntegrationGaussRegular::getWeightedPoint(unsigned) const
+    /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
     WeightedPoint getWeightedPoint(unsigned igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
 
-    /// \copydoc IntegrationGaussRegular::getWeightedPoint(unsigned, unsigned)
+    /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned, unsigned)
     static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
     {
         (void)order;

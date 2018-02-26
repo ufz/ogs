@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Norihiro Watanabe
  * \date   2013-08-13
  *
@@ -12,32 +13,31 @@
 
 #pragma once
 
-#include <cmath>
 #include <array>
+#include <cmath>
 
 #include "MathLib/Integration/GaussLegendre.h"
 #include "MathLib/TemplateWeightedPoint.h"
 
-
 namespace NumLib
 {
-
-/// Gauss quadrature rule for regular shape elements: line, quad and hex.
+/// Gauss-Legendre quadrature rule for regular shape elements: line, quad and
+/// hex.
 ///
 /// \tparam N_DIM    Spatial dimension
 template <unsigned N_DIM>
-class IntegrationGaussRegular
+class IntegrationGaussLegendreRegular
 {
     using WeightedPoint =
         typename MathLib::TemplateWeightedPoint<double, double, N_DIM>;
 
 public:
-    /// Create IntegrationGaussRegular of the given Gauss-Legendre integration
-    /// order.
+    /// Create IntegrationGaussLegendreRegular of the given Gauss-Legendre
+    /// integration order.
     ///
     /// @param order     integration order (default 2)
-    explicit IntegrationGaussRegular(unsigned order = 2)
-    : _order(order), _n_sampl_pt(0)
+    explicit IntegrationGaussLegendreRegular(unsigned order = 2)
+        : _order(order), _n_sampl_pt(0)
     {
         this->setIntegrationOrder(order);
     }
@@ -50,17 +50,16 @@ public:
     }
 
     /// return current integration order.
-    unsigned getIntegrationOrder() const {return _order;}
+    unsigned getIntegrationOrder() const { return _order; }
 
     /// return the number of sampling points
-    unsigned getNumberOfPoints() const {return _n_sampl_pt;}
+    unsigned getNumberOfPoints() const { return _n_sampl_pt; }
 
     /// Get coordinates of the integration point.
     ///
     /// @param igp       The integration point index
     /// @return a weighted point
-    WeightedPoint
-    getWeightedPoint(unsigned igp) const
+    WeightedPoint getWeightedPoint(unsigned igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -70,15 +69,15 @@ public:
     /// @param order     The number of integration points
     /// @param igp       The integration point index
     /// @return  a tuple of position indexes
-    static std::array<unsigned, N_DIM> getPositionIndices(unsigned order, unsigned igp);
+    static std::array<unsigned, N_DIM> getPositionIndices(unsigned order,
+                                                          unsigned igp);
 
     /// Get coordinates of the integration point.
     ///
     /// @param order     The number of integration points
     /// @param igp       The integration point index
     /// @return a weighted point
-    static WeightedPoint
-    getWeightedPoint(unsigned order, unsigned igp);
+    static WeightedPoint getWeightedPoint(unsigned order, unsigned igp);
 
 private:
     /// Computes weighted point using given integration method.
@@ -86,15 +85,14 @@ private:
     /// \tparam Method  Integration method to use.
     /// \param  pos     Point indices computed by getPositionIndices.
     template <typename Method>
-    static
-    WeightedPoint
-    getWeightedPoint(std::array<unsigned, N_DIM> const& pos);
+    static WeightedPoint getWeightedPoint(
+        std::array<unsigned, N_DIM> const& pos);
 
 private:
     unsigned _order;
     unsigned _n_sampl_pt;
 };
 
-} // NumLib
+}  // namespace NumLib
 
-#include "IntegrationGaussRegular-impl.h"
+#include "IntegrationGaussLegendreRegular-impl.h"

@@ -19,8 +19,7 @@
 
 #include "MeshLib/Elements/Element.h"
 
-#include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
-
+#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 
 TEST(NumLibFunctionInterpolationTest, TwoVariablesTwoNodes)
 {
@@ -50,7 +49,7 @@ TEST(NumLibFunctionInterpolationTest, Linear1DElement)
 
     using FemType = NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
 
-    using IntegrationMethod = NumLib::GaussIntegrationPolicy<
+    using IntegrationMethod = NumLib::GaussLegendreIntegrationPolicy<
         ShapeFunction::MeshElement>::IntegrationMethod;
 
     // set up mesh element

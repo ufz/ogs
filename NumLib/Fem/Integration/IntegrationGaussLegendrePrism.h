@@ -1,4 +1,6 @@
 /**
+ * \file
+ *
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -9,17 +11,16 @@
 
 #pragma once
 
-#include "MathLib/TemplateWeightedPoint.h"
 #include "MathLib/Integration/GaussLegendre.h"
 #include "MathLib/Integration/GaussLegendreTri.h"
+#include "MathLib/TemplateWeightedPoint.h"
 
 namespace NumLib
 {
-
 /**
- * \brief Gauss quadrature rule for prisms
+ * \brief Gauss-Legendre quadrature rule for prisms
  */
-class IntegrationGaussPrism
+class IntegrationGaussLegendrePrism
 {
     using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 3>;
 
@@ -29,8 +30,8 @@ public:
      *
      * @param order     integration order (default 2)
      */
-    explicit IntegrationGaussPrism(unsigned order = 2)
-    : _order(2), _n_sampl_pt(0)
+    explicit IntegrationGaussLegendrePrism(unsigned order = 2)
+        : _order(2), _n_sampl_pt(0)
     {
         this->setIntegrationOrder(order);
     }
@@ -38,25 +39,24 @@ public:
     /// Change the integration order.
     void setIntegrationOrder(unsigned /*order*/)
     {
-        _order = 2; // fixed
+        _order = 2;  // fixed
         _n_sampl_pt = getNumberOfPoints(_order);
     }
 
     /// return current integration order.
-    unsigned getIntegrationOrder() const {return _order;}
+    unsigned getIntegrationOrder() const { return _order; }
 
     /// return the number of sampling points
-    unsigned getNumberOfPoints() const {return _n_sampl_pt;}
+    unsigned getNumberOfPoints() const { return _n_sampl_pt; }
 
-    /// \copydoc IntegrationGaussRegular::getWeightedPoint(unsigned) const
+    /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
     WeightedPoint getWeightedPoint(unsigned igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
 
-    /// \copydoc IntegrationGaussRegular::getWeightedPoint(unsigned, unsigned)
-    static WeightedPoint
-    getWeightedPoint(unsigned order, unsigned igp)
+    /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned, unsigned)
+    static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
     {
         (void)order;
         const unsigned gp_r = igp % 3;
@@ -65,17 +65,16 @@ public:
         rst[0] = MathLib::GaussLegendreTri<2>::X[gp_r][0];
         rst[1] = MathLib::GaussLegendreTri<2>::X[gp_r][1];
         rst[2] = MathLib::GaussLegendre<2>::X[gp_t];
-        double w = MathLib::GaussLegendreTri<2>::W[gp_r] * 0.5 * MathLib::GaussLegendre<2>::W[gp_t];
+        double w = MathLib::GaussLegendreTri<2>::W[gp_r] * 0.5 *
+                   MathLib::GaussLegendre<2>::W[gp_t];
         return WeightedPoint(rst, w);
     }
 
     template <typename Method>
-    static WeightedPoint
-    getWeightedPoint(unsigned igp)
+    static WeightedPoint getWeightedPoint(unsigned igp)
     {
         return WeightedPoint(Method::X[igp], Method::W[igp]);
     }
-
 
     /**
      * get the number of integration points
@@ -83,10 +82,10 @@ public:
      * @param order    the number of integration points
      * @return the number of points
      */
-    static unsigned
-    getNumberOfPoints(unsigned order)
+    static unsigned getNumberOfPoints(unsigned order)
     {
-        if (order==2) return 6;
+        if (order == 2)
+            return 6;
         return 0;
     }
 
@@ -95,4 +94,4 @@ private:
     unsigned _n_sampl_pt;
 };
 
-}
+}  // namespace NumLib
