@@ -1,0 +1,18 @@
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "CMake"
+author = "Lars Bilke"
+weight = 1041
+
+[menu]
+  [menu.devguide]
+    parent = "troubleshooting"
++++
+
+## <i class="fas fa-exclamation-triangle"></i> General advice
+
+If something goes when running CMake please try again with an **empty** or newly created build-directory! This is very first thing you should try!
+
+Please read the CMake output carefully. Often it will tell you what went wrong.
+
+Check also [Conans troubleshooting page]({{< relref "conan.pandoc" >}}) if you use Conan for dependencies.
