@@ -31,7 +31,7 @@ It is preferred to use Conan package manager to install required third-party lib
 Add `-DOGS_USE_CONAN=ON` to the CMake-run (see below).
 
 ::: {.note}
-### Multi-configuration with Conan and Visual Studio
+### <i class="fas fa-exclamation-triangle"></i> Multi-configuration with Conan and Visual Studio
 
 With Conan one build directory corresponds to one configuration. If you want to have e.g. a release and a debug build you need to create two build directories. This is nothing new new to Linux / GCC user but differs to Visual Studios default behavior having just one build-folder / project with different configurations. A typical Visual Studio setup with both Release and Debug configs would be initialized as follows:
 

@@ -168,7 +168,7 @@ $ git lfs install
 :::
 
 ::: {.note}
-### Git LFS installation without admin rights
+### <i class="fas fa-info-circle"></i> Git LFS installation without admin rights
 
 If you do not have rights to install a system package (e.g. on cluster systems) you can [download](https://github.com/git-lfs/git-lfs/releases/latest) a precompiled `git-lfs` executable. Simply put it into your `PATH` and everything should work (remember to run `git lfs install` once!). See also: <https://github.com/git-lfs/git-lfs/wiki/Installation#other>
 :::
