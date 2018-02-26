@@ -56,4 +56,23 @@ The master-branch of the the UFZ repository as well as all pull requests on that
 
 ![](../Jenkins-PR-Overview.png)
 
-Automatic testing can be easily setup for all your branches on your clone of OGS. See [the Continuous Integration page](../../getting-started/continuous-integration) for the procedure.
+### Automatic testing for own repository
+
+This assumes you have your own clone/fork of OGS on GitHub.
+
+- Tell me your GitHub user name
+- I setup a *multibranch* project on Jenkins
+ 
+This project will test all branches ending with `_j` on your repository and will be available at `jenkins.opengeosys.org/job/User/job/[your account name]`
+
+To automatically trigger new Jenkins builds when you push changes to your repository you have to setup a GitHub trigger:
+
+- Go to `github.com/[your account name]/ogs/settings/hooks`
+- Click **Add webhook**
+- Under **Payload URL** enter `https://jenkins.opengeosys.org/github-webhook/`
+- Click green button **Add webhook**
+
+To optionally let Jenkins set the result of job as the the commit status (small icons on commit list view):
+
+- Go to `github.com/[your account name]/ogs/settings/collaboration`
+- Type in `ogsbot` and click **Add collaborator**

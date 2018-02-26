@@ -16,10 +16,10 @@ weight = 1013
 So for every proposed change to the source code the following is done automatically:
 
 - Compilation of the changed code merged with the official source code is tested on a variety of platforms (Windows, Linux, Mac OS, different compilers)
-- A comprehensive [test suite](TODO: link unit testing) checks validity of the proposed changes
+- A comprehensive [test suite]({{< relref "unit-testing.pandoc" >}}) checks validity of the proposed changes
 - Additional checks regarding code formatting and documentation help in maintaining a good software quality and structure
 
-After the system is done with all these tasks the developer can view build reports highlighting occurred errors and problems. We are using [Jenkins](TODO: link) as our CI system.
+After the system is done with all these tasks the developer can view build reports highlighting occurred errors and problems. We are using [Jenkins]({{< relref "jenkins.pandoc" >}}) as our CI system.
 
 ## CI on OGS
 
@@ -31,5 +31,5 @@ Click on the *Details* link to find out the reason for a failed check. If you ad
 
 # Enable CI on your fork
 
-You can have the CI system testing all your branches in your fork of OGS even before creating a pull request. Just contact us and provide your GitHub user name.
+You can have the CI system testing all your branches in your fork of OGS even before creating a pull request. See the page on [Jenkins]({{< relref "jenkins.pandoc#automatic-testing-for-own-repository" >}}) for further information.
 
