@@ -97,10 +97,18 @@ void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
     //
     // Continue with fracture opening.
     //
-
-    state.damage = computeDamage(state.damage_prev, w_n, mp.w_np, mp.w_nf);
-    const double degradation = ((1 - state.damage) * mp.w_np) /
-                               (mp.w_np + state.damage * (mp.w_nf - mp.w_np));
+    double degradation = 0.0;
+    if (mp.w_nf == 0.0)
+    {
+        state.damage_prev = 1.0;
+        state.damage = 1.0;
+    }
+    else
+    {
+        state.damage = computeDamage(state.damage_prev, w_n, mp.w_np, mp.w_nf);
+        degradation = ((1 - state.damage) * mp.w_np) /
+                                   (mp.w_np + state.damage * (mp.w_nf - mp.w_np));
+    }
 
     // Degrade stiffness tensor in tension.
     C = C * degradation;
