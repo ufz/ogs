@@ -194,10 +194,10 @@ module.exports = {
 
   fonts: {
     'sans': [
+      'Roboto',
       '-apple-system',
       'BlinkMacSystemFont',
       'Segoe UI',
-      'Roboto',
       'Oxygen',
       'Ubuntu',
       'Cantarell',
@@ -207,6 +207,7 @@ module.exports = {
       'sans-serif',
     ],
     'serif': [
+      'Spectral',
       'Constantia',
       'Lucida Bright',
       'Lucidabright',
@@ -217,6 +218,12 @@ module.exports = {
       'Liberation Serif',
       'Georgia',
       'serif',
+    ],
+    'serif-caps': [
+      'Spectral SC',
+      'Spectral',
+      'serif'
+
     ],
     'mono': [
       'Menlo',
