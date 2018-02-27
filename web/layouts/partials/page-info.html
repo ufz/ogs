@@ -1,4 +1,13 @@
 <div class="page-info">
-  <p>This article was written by {{ .Params.Author }}. If you are missing something or you find an error please <a href="mailto:ogs-devs@googlegroups.com">let us know</a>. <br>
-  Last revision: {{ .Lastmod.Format "January 2, 2006" }}{{ if .IsPage }}<em>{{ with .GitInfo }}| {{ .Subject }} | <a href="https://github.com/ufz/ogs/commit/{{ .AbbreviatedHash }}">{{ .AbbreviatedHash }}</a>{{ end }}{{if .GitInfo}} | <a href="https://github.com/ufz/ogs/edit/master/web/content/{{ .File.Path }}">Edit this page</a>{{ end }}</em>{{ end }}</p>
+    <p>This article was written by {{ .Params.Author }}. If you are missing something or you find an error please <a href="mailto:ogs-devs@googlegroups.com">let us know</a>.
+        <br> Generated with <a href="https://gohugo.com">Hugo</a> {{ .Hugo.Version }}. Last revision: {{ .Lastmod.Format "January 2, 2006" }} {{ if .IsPage }}<em>
+            {{ with .GitInfo }}
+                <br>
+                Commit: {{ .Subject }} <a href="https://github.com/ufz/ogs/commit/{{ .AbbreviatedHash }}">{{ .AbbreviatedHash }}</a>
+            {{ end }}
+            {{if .GitInfo}}
+                &nbsp;| <a href="https://github.com/ufz/ogs/edit/master/web/content/{{ .File.Path }}">Edit this page on <i class="fab fa-github"></i></a>
+            {{ end }}
+            </em> {{ end }}
+    </p>
 </div>
