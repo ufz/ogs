@@ -52,6 +52,9 @@ std::vector<std::vector<double>> getCurrentLocalSolutions(
     const CoupledSolutionsForStaggeredScheme& cpl_xs,
     const std::vector<std::vector<GlobalIndexType>>& indices)
 {
+    if (cpl_xs.coupled_xs.empty())
+        return {};
+
     const auto number_of_coupled_solutions = cpl_xs.coupled_xs.size();
     std::vector<std::vector<double>> local_xs_t1;
     local_xs_t1.reserve(number_of_coupled_solutions);
