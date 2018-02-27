@@ -11,7 +11,7 @@ weight = 1041
 
 ## <i class="fas fa-exclamation-triangle"></i> General advice
 
-If something goes when running CMake please try again with an **empty** or newly created build-directory! This is very first thing you should try!
+If something goes wrong when running CMake please try again with an **empty** or newly created build-directory! This is very first thing you should try!
 
 Please read the CMake output carefully. Often it will tell you what went wrong.
 
