@@ -34,7 +34,7 @@
         {{ $currentPage := . }}
         <div class="w-1/2 flex justify-center">
           {{ range .Site.Menus.main }}
-          <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent "main" . }}class="active"{{end}} class="mr-8">{{ .Name }}</a>
+          <a href="{{ .URL }}" class="mr-8{{if or ($currentPage.IsMenuCurrent "main" .) ($currentPage.HasMenuCurrent "main" .) }} active{{end}}">{{ .Name }}</a>
           {{ end }}
         </div>
         <div class="w-1/4 text-right">

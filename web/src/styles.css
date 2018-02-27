@@ -26,6 +26,10 @@ p, ul, pre {
   @apply .mb-4;
 }
 
+hr {
+  @apply .border;
+}
+
 /* ------------------------------- Components ------------------------------- */
 .btn {
   @apply .px-2;
@@ -50,3 +54,5 @@ p, ul, pre {
 }
 
 @tailwind utilities;
+
+@import 'css/pandoc-highlighting.css'
