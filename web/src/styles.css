@@ -1,3 +1,24 @@
 @tailwind preflight;
 
+a {
+  @apply .text-grey-darkest;
+  text-decoration: none;
+}
+a.active {
+  @apply .text-orange;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply .font-serif;
+  @apply .mb-4;
+}
+
+p, ul {
+  @apply .leading-normal;
+}
+
+p, ul, pre {
+  @apply .mb-4;
+}
+
 @tailwind utilities;

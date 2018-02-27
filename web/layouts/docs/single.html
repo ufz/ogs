@@ -1,10 +1,10 @@
 {{ define "main" }}
-
-  <div class="col-xs-3">
+  <div class="flex">
+  <div class="w-1/4">
     {{ $segments := split .RelPermalink "/" }}
     {{ $subsection := index $segments 2 }}
     <h3>
-      <a href="/docs/">Docs</a> / <span class="orange">
+      <a href="/docs/">Docs</a> / <span class="text-orange">
       {{ if eq $subsection "devguide"}}Developer Guide{{ end }}
       {{ if eq $subsection "benchmarks"}}Benchmarks{{ end }}
       {{ if eq $subsection "quickstart"}}Quickstart{{ end }}
@@ -12,20 +12,20 @@
       </span>
     </h3>
     <hr>
-    <ul class="sidenav">
+    <ul class="list-reset text-sm">
       {{ $currentPage := . }}
       {{ $currentMenu := index .Site.Menus $subsection }}
       {{ range $currentMenu }}
         {{ if .HasChildren }}
-          <li class="category">{{ .Name }}</li>
+          <li class="font-serif uppercase tracking-wide mt-4">{{ .Name }}</li>
           {{ range .Children }}
-            <li><a href="{{ .URL }}"{{if $currentPage.IsMenuCurrent $subsection . }} class="active"{{end}}>{{ .Name }}</a></li>
+            <li class="m-1"><a href="{{ .URL }}"{{if $currentPage.IsMenuCurrent $subsection . }} class="active"{{end}}>{{ .Name }}</a></li>
           {{ end }}
         {{ end }}
       {{ end }}
     </ul>
   </div>
-  <div class="col-xs-9">
+  <div class="w-3/4">
     <h1>{{ .Title }}</h1>
     {{ if or (eq $subsection "devguide") (eq $subsection "quickstart") }}
     <div id="os-selector">Select OS: <a id="btn-win"><i class="fab fa-windows"></i> Windows</a> <a id="btn-linux"><i class="fab fa-linux"></i> Linux</a> <a id="btn-mac"><i class="fab fa-apple"></i> macOS</a></div>
@@ -84,5 +84,5 @@
     });
   </script>
   {{ end }}
-
+  </div>
 {{ end }}

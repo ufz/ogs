@@ -24,19 +24,29 @@
   <title>{{ .Title }}</title>
 </head>
 
-<body>
-  <div class="container mx-auto">
-    <nav class="flex">
-      <a href="/" class="m-2 no-underline">{{ .Site.Title }}</a>
-      {{ $currentPage := . }}
-      {{ range .Site.Menus.main }}
-        <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent "main" . }}class="active"{{end}} class="m-2">{{ .Name }}</a>
+<body class="font-sans">
+  <header class="bg-light">
+    <div class="container mx-auto">
+      <div class="flex border-b py-4">
+        <div class="w-1/4">
+          <a href="/" class="no-underline">{{ .Site.Title }}</a>
+        </div>
+        {{ $currentPage := . }}
+        <div class="w-1/2 flex justify-center">
+          {{ range .Site.Menus.main }}
+          <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent "main" . }}class="active"{{end}} class="mr-8">{{ .Name }}</a>
+          {{ end }}
+        </div>
+        <div class="w-1/4 text-right">
+          Search-bar here
+        </div>
+      </div>
+      {{ if .Site.Params.alert }}
+      <div class="text-sm flex justify-center p-2 bg-blue-lightest text-blue-darker rounded">
+        <i class="fas fa-exclamation-triangle"></i>&nbsp;
+        <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
+      </div>
       {{ end }}
-    </nav>
-    {{ if .Site.Params.alert }}
-    <div class="text-sm flex justify-center p-2 bg-blue-lightest text-blue-darker rounded">
-      <i class="fas fa-exclamation-triangle"></i>&nbsp;
-      <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
     </div>
-    {{ end }}
-    <div class="row">
+  </header>
+  <div class="container mx-auto bg-grey-lightest p-2">
