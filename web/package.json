@@ -65,7 +65,8 @@
   "globs": {
     "distCss": [
       "./node_modules/normalize.css/normalize.css",
-      "./node_modules/flexboxgrid/dist/flexboxgrid.min.css"
+      "./node_modules/flexboxgrid/dist/flexboxgrid.min.css",
+      "./src/css/pandoc-highlighting.css"
     ],
     "img": [
       "./public/img/"
