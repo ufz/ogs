@@ -7,7 +7,7 @@
   <meta name="description" content="OpenGeoSys">
   <meta name="author" content="OpenGeoSys Community">
 
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
   <script type="text/x-mathjax-config">
@@ -25,17 +25,17 @@
 </head>
 
 <body>
-  <div class="container">
-    <nav>
-      <a href="/" class="black b">benchmarks.opengeosys.org</a>
+  <div class="container mx-auto">
+    <nav class="flex">
+      <a href="/" class="m-2 no-underline">{{ .Site.Title }}</a>
       {{ $currentPage := . }}
       {{ range .Site.Menus.main }}
-        <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent "main" . }} class="active"{{end}}>{{ .Name }}</a>
+        <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent "main" . }}class="active"{{end}} class="m-2">{{ .Name }}</a>
       {{ end }}
     </nav>
     {{ if .Site.Params.alert }}
-    <div class="f6 flex items-center justify-center pa2 bg-lightest-blue navy">
-      <i class="fas fa-exclamation-triangle"></i>
+    <div class="text-sm flex justify-center p-2 bg-blue-lightest text-blue-darker rounded">
+      <i class="fas fa-exclamation-triangle"></i>&nbsp;
       <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
     </div>
     {{ end }}
