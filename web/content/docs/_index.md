@@ -16,4 +16,9 @@ name = "Selected Benchmarks"
 slug = "benchmarks"
 text = "Basic benchmarks are explained and input files are provided to get you started in using OGS."
 
+[[sections]]
+name = "Tools"
+slug = "tools"
+text = "Helpful tools for pre- and postprocessing."
+
 +++

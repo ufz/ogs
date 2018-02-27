@@ -1,0 +1,40 @@
++++
+date = "2018-02-27T11:00:13+01:00"
+title = "AddTopLayer"
+author = "Thomas Fischer"
+
+[menu]
+  [menu.tools]
+    parent = "meshing"
++++
+
+## Introduction
+
+The tool `AddTopLayer` adds one layer of elements with a specified thickness `thickness` on top of an existing mesh `input-mesh` and returns the newly generated mesh `output-mesh` that has an new top layer.
+
+One might want to take care that the material groups are reduced, eg. material groups should not be [0,2,5], but [0,1,2]. The new layer will have the material group number of the highest material group +1.
+
+The tool requires the [OGS-6 node ordering](http://doxygen.opengeosys.org/index.html) in the elements. A different node ordering may lead to unexpected results. In case one might try to change the ordering using the tool [NodeReordering](NodeReordering).
+
+The tool is part of the official [OpenGeoSys git repository](https://github.com/ufz/ogs).
+
+## Usage
+
+```bash
+AddTopLayer -i <input-mesh> -o <output-mesh> [-t <thickness>]
+```
+
+## Simple example
+
+![](./SimpleQuadExample_1.png){ width=49% }
+![](./SimpleQuadExampleWithNewTopLayer_1.png){ width=49% }
+*Left*: A simple cube mesh with one material group (red). *Right*: The updated mesh where an additional layer (blue) was added on top of the domain with a second material group.
+
+Usage for example:
+```
+AddTopLayer -i quad.vtu -o quad_with_new_top_layer.vtu -t 1
+```
+
+## Application
+
+The tool was used to add a "soil" layer to the hydro-geological model of the Unstrut catchment within the INFLUINS project, see reference [GO2OGS].
