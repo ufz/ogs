@@ -6,9 +6,7 @@ author = "Dmitri Naumov"
 weight = 104
 
 [menu]
-
   [menu.benchmarks]
-    #weight = 103
     parent = "elliptic"
 
 +++
