@@ -251,7 +251,8 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::vector<double>& cache) const override
     {
-        auto const num_intpts = _shape_matrices.size();
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
         auto const indices = NumLib::getIndices(
             _element.getID(), dof_table);
@@ -261,7 +262,7 @@ public:
         cache.clear();
         auto cache_vec = MathLib::createZeroedMatrix<
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, GlobalDim, num_intpts);
+            cache, GlobalDim, n_integration_points);
 
         SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -277,9 +278,6 @@ public:
             permeability = perm;
         else if (perm.rows() == 1)
             permeability.diagonal().setConstant(perm(0, 0));
-
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
 
         auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[0], ShapeFunction::NPOINTS);
@@ -320,8 +318,6 @@ private:
     RichardsFlowProcessData const& _process_data;
 
     IntegrationMethod const _integration_method;
-    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType,
                              NodalMatrixType>,
