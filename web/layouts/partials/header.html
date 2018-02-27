@@ -29,7 +29,7 @@
     <div class="container mx-auto">
       <div class="flex border-b py-4">
         <div class="w-1/4">
-          <a href="/" class="">{{ .Site.Title }}</a>
+          <a href="/" class="font-serif-caps">{{ .Site.Title }}</a>
         </div>
         {{ $currentPage := . }}
         <div class="w-1/2 flex justify-center">
@@ -42,11 +42,11 @@
         </div>
       </div>
       {{ if .Site.Params.alert }}
-      <div class="text-sm flex justify-center p-2 bg-blue-lightest text-blue-darker rounded">
+      <div class="text-sm flex justify-center m-2 p-2 bg-blue-lightest text-blue-darker rounded">
         <i class="fas fa-exclamation-triangle"></i>&nbsp;
         <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
       </div>
       {{ end }}
     </div>
   </header>
-  <div class="container mx-auto bg-grey-lightest p-2">
+  <div class="container mx-auto py-2">

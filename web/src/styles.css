@@ -14,6 +14,7 @@ a.active {
 
 h1, h2, h3, h4, h5, h6 {
   @apply .font-serif;
+  @apply .pt-2;
   @apply .mb-4;
 }
 
@@ -23,6 +24,29 @@ p, ul {
 
 p, ul, pre {
   @apply .mb-4;
+}
+
+/* ------------------------------- Components ------------------------------- */
+.btn {
+  @apply .px-2;
+  @apply .py-1;
+  @apply .border-2;
+  @apply .rounded-lg;
+}
+
+.btn.active {
+  @apply .border-orange;
+}
+
+.note {
+  @apply .bg-orange-lightest;
+  @apply .px-4;
+  @apply .py-1;
+  @apply .mb-4;
+}
+
+.note h3 {
+  @apply .text-orange;
 }
 
 @tailwind utilities;

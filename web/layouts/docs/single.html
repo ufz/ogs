@@ -3,15 +3,14 @@
   <div class="w-1/4">
     {{ $segments := split .RelPermalink "/" }}
     {{ $subsection := index $segments 2 }}
-    <h3>
+    <div class="text-xs font-serif-caps">
       <a href="/docs/">Docs</a> / <span class="text-orange">
       {{ if eq $subsection "devguide"}}Developer Guide{{ end }}
       {{ if eq $subsection "benchmarks"}}Benchmarks{{ end }}
       {{ if eq $subsection "quickstart"}}Quickstart{{ end }}
       {{ if eq $subsection "tools"}}Tools{{ end }}
       </span>
-    </h3>
-    <hr>
+    </div>
     <ul class="list-reset text-sm">
       {{ $currentPage := . }}
       {{ $currentMenu := index .Site.Menus $subsection }}
@@ -26,9 +25,13 @@
     </ul>
   </div>
   <div class="w-3/4">
-    <h1>{{ .Title }}</h1>
+    <h1 class="font-serif-caps">{{ .Title }}</h1>
     {{ if or (eq $subsection "devguide") (eq $subsection "quickstart") }}
-    <div id="os-selector">Select OS: <a id="btn-win"><i class="fab fa-windows"></i> Windows</a> <a id="btn-linux"><i class="fab fa-linux"></i> Linux</a> <a id="btn-mac"><i class="fab fa-apple"></i> macOS</a></div>
+    <div class="mb-4" id="os-selector">Select OS:
+      <a class="btn" id="btn-win"><i class="fab fa-windows"></i> Windows</a>
+      <a class="btn" id="btn-linux"><i class="fab fa-linux"></i> Linux</a>
+      <a class="btn" id="btn-mac"><i class="fab fa-apple"></i> macOS</a>
+    </div>
     {{ end }}
 
     {{ .Content }}
