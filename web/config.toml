@@ -5,6 +5,7 @@ baseURL = "http://localhost:1313"
 buildDrafts = true
 pygmentsstyle = 'friendly'
 enableGitInfo = true
+canonifyURLs = true
 
 [params]
   # alert = "Benchmarks only documentation; the Developer Guide can be found at <a href='https://docs.opengeosys.org'>docs.opengeosys.org</a>."

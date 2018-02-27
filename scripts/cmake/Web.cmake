@@ -47,7 +47,7 @@ if(DEFINED ENV{JENKINS_URL})
     else()
         set(HUGO_BASE_URL "$ENV{JOB_URL}Web/")
     endif()
-    set(HUGO_ARGS ${HUGO_ARGS} --baseURL ${HUGO_BASE_URL} --canonifyURLs)
+    set(HUGO_ARGS ${HUGO_ARGS} --baseURL ${HUGO_BASE_URL})
 endif()
 
 add_custom_target(web
