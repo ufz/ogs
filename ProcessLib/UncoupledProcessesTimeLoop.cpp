@@ -838,6 +838,12 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             ++process_id;
             continue;
         }
+        CoupledSolutionsForStaggeredScheme coupled_solutions(
+            _solutions_of_coupled_processes, dt, process_id);
+
+        process_data->process.setCoupledSolutionsForStaggeredScheme(
+            &coupled_solutions);
+
         auto& pcs = process_data->process;
         auto& x = *_process_solutions[process_id];
         pcs.postTimestep(x, process_id);
