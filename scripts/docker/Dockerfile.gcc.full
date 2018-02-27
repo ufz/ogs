@@ -57,13 +57,14 @@ RUN apt-get update \
     graphviz \
     libxml2-utils \
     nodejs \
+    pandoc \
     pandoc-citeproc \
     yarn
 
 RUN update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 
 # Hugo
-RUN curl -L -o hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v0.32.3/hugo_0.32.3_Linux-64bit.tar.gz \
+RUN curl -L -o hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v0.36.1/hugo_0.36.1_Linux-64bit.tar.gz \
   && tar xf hugo.tar.gz \
   && mv hugo /usr/local/bin/hugo \
   && rm -rf hugo.tar.gz LICENSE.md README.md
