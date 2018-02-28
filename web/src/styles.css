@@ -4,14 +4,25 @@
 @import url('https://fonts.googleapis.com/css?family=Spectral+SC');
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,400i,700');
 
+/* -- Links -- */
 a {
   @apply .text-grey-darkest;
-  text-decoration: none;
+  @apply .no-underline;
+}
+a:hover {
+  @apply .underline;
 }
 a.active {
   @apply .text-orange;
 }
 
+nav a.active {
+  @apply text-grey-darkest;
+  @apply .border-b-2;
+  @apply .border-orange;
+}
+
+/* -- Typography -- */
 h1, h2, h3, h4, h5, h6 {
   @apply .font-serif;
   @apply .pt-2;
@@ -25,6 +36,8 @@ p, ul {
 p, ul, pre {
   @apply .mb-4;
 }
+
+/* -- Misc -- */
 
 hr {
   @apply .border;
@@ -47,10 +60,13 @@ hr {
   @apply .px-4;
   @apply .py-1;
   @apply .mb-4;
+  @apply .border-l-4;
+  @apply .border-orange;
 }
 
 .note h3 {
   @apply .text-orange;
+  @apply .mb-2;
 }
 
 /* -------------------------------- Algolia---------------------------------- */

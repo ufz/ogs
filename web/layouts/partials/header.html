@@ -26,22 +26,25 @@
 <body class="font-sans">
   <header class="bg-light">
     <div class="container mx-auto">
-      <div class="flex border-b py-4">
+      <nav class="flex border-b py-4">
         <div class="w-1/4">
           <a href="/" class="font-serif-caps">{{ .Site.Title }}</a>
         </div>
         {{ $currentPage := . }}
+        {{ $segments := split .RelPermalink "/" }}
+        {{ $section := index $segments 1 }}
         <div class="w-1/2 flex justify-center">
           {{ range .Site.Menus.main }}
-          <a href="{{ .URL }}" class="mr-8{{if or ($currentPage.IsMenuCurrent "main" .) ($currentPage.HasMenuCurrent "main" .) }} active{{end}}">{{ .Name }}</a>
+          {{ $url_trimmed := trim .URL "/" }}
+          <a href="{{ .URL }}" class="mr-8{{if (eq $section $url_trimmed) }} active{{end}}">{{ .Name }}</a>
           {{ end }}
         </div>
         <div class="w-1/4">
           {{ partial "site-search.html" . }}
         </div>
-      </div>
+      </nav>
       {{ if .Site.Params.alert }}
-      <div class="text-sm flex justify-center m-2 p-2 bg-blue-lightest text-blue-darker rounded">
+      <div class="text-sm flex justify-center my-2 p-2 bg-blue-lightest text-blue-darker border-l-4 border-blue">
         <i class="fas fa-exclamation-triangle"></i>&nbsp;
         <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
       </div>
