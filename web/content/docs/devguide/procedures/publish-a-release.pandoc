@@ -1,0 +1,69 @@
+---
+date: "2018-02-26T11:00:13+01:00"
+title: "Publish a release"
+author: "Lars Bilke"
+weight: 1051
+
+menu:
+  devguide:
+    parent: procedures
+---
+
+## Write a changelog
+
+Update the [changelog](https://github.com/ufz/ogs/blob/master/CHANGELOG.md) with a short summary of your merged pull requests.
+
+To get a list of your PRs since the last tag:
+
+```bash
+$ git log --merges 6.0.5.. --oneline | grep bilke
+```
+
+where `6.0.5` is the last tag and `bilke` is to be substituted by your GitHub user name. This outputs:
+
+```
+0447b58 Merge pull request #1234 from bilke/remove-osg-converter
+a26da79 Merge pull request #1230 from bilke/disallow-win-32bit
+6db9bf6 Merge pull request #1231 from bilke/ctest-large
+...
+```
+
+To find out more about a PR use `git show`:
+
+```bash
+$ git show a26da79
+
+commit a26da79c84fe281a2f61a542d1fd18aa47b8d425
+Merge: 6db9bf6 5f78991
+Author: Lars Bilke <xxx>
+Date:   Wed Jun 1 17:06:03 2016 +0200
+
+    Merge pull request #1230 from bilke/disallow-win-32bit
+
+    Disallow 32-bit Windows builds.
+```
+
+And use `git log` with the second hash after `Merge:`:
+
+```bash
+$ git log 5f78991
+ommit 5f78991528e240d75fd341e1915213e030d4d2a2
+Author: Lars Bilke <xxx>
+Date:   Wed Jun 1 13:46:36 2016 +0200
+
+    Disallow 32-bit Windows builds.
+
+    Can be forced by setting OGS_32_BIT=ON
+...
+```
+
+## Publish to website
+
+- Tag the release commit as an annotated tag (`git tag -a 6.0.8 -m "OpenGeoSys Release 6.0.8"`)
+- Create a [new release on GitHub](https://github.com/ufz/ogs/releases)
+- Fill in the release notes
+- Start the `ufz/master` Jenkins job manually and check that it ran successfully! (Do not push to `master` until job ran successfully!)
+- Copy release binaries from Jenkins job to website
+- Create a new [release on the website](/admin/entries/releases/new)
+  - Use the git tag name for the entry title
+  - Add the binaries to the files table

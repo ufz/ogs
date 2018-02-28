@@ -13,7 +13,7 @@ pipeline {
       agent any
       steps {
         sh "git config core.whitespace -blank-at-eof"
-        sh "git diff --check `git merge-base origin/master HEAD` HEAD"
+        sh "git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc'"
       }
     }
     stage('Build') {

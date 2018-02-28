@@ -1,0 +1,83 @@
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "Docker"
+author = "Lars Bilke"
+weight = 1034
+
+[menu]
+  [menu.devguide]
+    parent = "advanced"
++++
+
+## Introduction
+
+> [Docker](https://www.docker.com/whatisdocker) containers wrap up a piece of software in a complete filesystem that contains everything it needs to run: code, runtime, system tools, system libraries – anything you can install on a server. This guarantees that it will always run the same, regardless of the environment it is running in.
+
+See the [docs](https://docs.docker.com) for installation instructions.
+
+## Images
+
+Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions can be found at the [ufz/dockerfiles](https://github.com/ufz/dockerfiles)-repo. Built images can be found at [Docker Hub](https://registry.hub.docker.com/repos/ogs6/).
+
+To build an image by yourself create a Dockerfile:
+
+```
+FROM ubuntu:14.04
+MAINTAINER Jon Doe <jon.doe@foo.com>
+
+RUN ...
+```
+
+Run the `build` command:
+
+```bash
+$ docker build -t repo/image_name path/to/directory
+```
+
+- `-t` specifies a name for the image, can be arbitrary chosen (but should match the corresponding image on Docker Hub if there is one)
+- The path should specify the directory where the Dockerfile is located
+
+Now you can see your build image with `$ docker images`.
+
+## Run a container
+
+To run commands inside a container:
+
+```bash
+$ docker run -t image_name command_to_run
+```
+
+To run an interactive shell add the `-i`-switch:
+
+```bash
+$ docker run -i -t image_name /bin/bash
+```
+
+It is useful to mount folders from the host operating system in the Docker container, e.g. to edit source code on your host with your favorite editor:
+
+```bash
+$ docker run -i -t -v /host/directory:/container/directory image_name /bin/bash
+```
+
+## Prebuilt OGS-6 Docker images
+
+There are docker images provided on [Docker Hub](https://hub.docker.com/u/ogs6/) which include everything necessary to build OGS-6.
+
+There are images for `gcc`, `clang` and `mingw`. For every compiler there is one basic image with the compiler ready (`-dev-essentials`), one image with all dependencies for the OGS simulator (`-base`) and maybe an image for Data Explorer development (`-gui`).
+
+E.g. to start developing OGS:
+
+```bash
+docker pull ogs6/gcc-base
+docker run -t -i -v /path/to/ogs/source/on/host:/usr/src/ogs ogs6/gcc-base /bin/bash
+```
+
+You are now in the Docker container the ogs source code from your host computer mounted at `/usr/src/ogs`. Now you can build and run OGS:
+
+```bash
+mkdir build; cd build
+cmake ../ogs
+make ogs
+./bin/ogs
+```
+

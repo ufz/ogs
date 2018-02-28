@@ -1,0 +1,241 @@
++++
+date = "2017-01-14T22:56:13+01:00"
+title = "Set Up Prerequisites"
+author = "Lars Bilke"
+weight = 1002
+
+[menu]
+  [menu.devguide]
+    parent = "getting-started"
++++
+
+## Minimum requirements
+
+The minimum prerequisites to build OGS are:
+
+- An 64-bit operating system (Linux, Windows 7 and up, macOS)
+- Git (version control tool, at least version 1.7.x)
+- CMake (build configuration tool, at least version 3.1)
+- A compiler with [C++11](http://en.wikipedia.org/wiki/C%2B%2B11)-support
+- [Conan package manager](https://www.conan.io/) **OR** install [required libraries]({{< relref "third-party-libraries.pandoc" >}}) manually (for advanced users only!)
+
+## Step: Install a compiler
+
+::: {.win}
+As we use lots of features of the C++11-standard we support **Visual Studio 2015** and up. Therefore you will need at least **Windows 7** (64-bit recommended). It is perfectly fine to use the free Community Edition of Visual Studio.
+
+- Download and install [Visual Studio Community 2017](https://www.visualstudio.com/de/thank-you-downloading-visual-studio/?sku=Community&rel=15)
+  - Select the *workload* `Desktop Development with C++`
+  - You can uncheck everything else
+- When installation finished please start Visual Studio once (when asked for credentials enter your Microsoft account or click on **Skip for now**)
+:::
+
+::: {.linux}
+If you have a recent linux distribution you should also have a recent gcc. Please check that you have at least **gcc 4.9**:
+
+```bash
+$ gcc --version
+gcc (GCC) 4.9.1
+```
+:::
+
+::: {.mac}
+Please install Xcode from the App Store. Then please run the following command in the terminal to install the command line tools:
+
+```bash
+$ xcode-select --install
+```
+
+Open Xcode one time to install some other Xcode stuff.
+
+Now also install the [Homebrew](http://brew.sh) package manager:
+
+```bash
+$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+$ brew doctor
+```
+
+The Homebrew package manager is needed for installing other libraries and packages. It is just like a linux package manager.
+:::
+
+## Step: Install Git
+
+Git is a powerful and distributed version control system. OGS source code is hosted on [GitHub](https://github.com/ufz/ogs). See the developer guide page on {entry:devguide/github:link} for more info on how OGS uses GitHub for collaborative development.
+
+::: {.win}
+Download and install git from the [git homepage](http://git-scm.com/download/win). The default installer options are fine. This install a new command line called *Git Bash* which should be used for all git operations.
+
+Let Git know who you are:
+
+```bash
+$ git config --global user.name "Your Name Here"
+$ git config --global user.email "your_email@example.com"
+```
+
+In some corporate environments you may have to use a proxy server. In this case tell git about it:
+
+```bash
+git config --global http.proxy http://yourproxy.example.com
+```
+:::
+
+::: {.linux}
+Please check if Git is already installed:
+
+```bash
+$ git --version
+git version 1.7.4.1
+```
+
+Otherwise please install Git with your favourite package manager:
+
+```bash
+$ sudo yum install git      // RPM-based systems
+$ sudo apt-get install git  // Debian-based systems
+```
+
+Let Git know who you are:
+
+```bash
+$ git config --global user.name "Your Name Here"
+$ git config --global user.email "your_email@example.com"
+```
+
+Optionally enable password storing when interacting with a remote server:
+
+```bash
+$ git config --global credential.helper store
+```
+
+In some corporate environments you may have to use a proxy server. In this case tell git about it:
+
+```bash
+git config --global http.proxy http://yourproxy.example.com
+```
+:::
+
+::: {.mac}
+Install Git with Homebrew:
+
+```bash
+$ brew install git
+```
+
+Let Git know who you are:
+
+```bash
+$ git config --global user.name "Your Name Here"
+$ git config --global user.email "your_email@example.com"
+```
+
+The [graphical GitHub client](http://mac.github.com/) is also maybe worth a look. See the page on {entry:devguide/github:link} for more info on GitHub.
+
+In some corporate environments you may have to use a proxy server. In this case tell git about it:
+
+```bash
+git config --global http.proxy http://yourproxy.example.com
+```
+:::
+
+
+## Step: Install Git LFS
+
+[Git LFS](https://git-lfs.github.com/) (large file storage) is a git extension dealing with large binary files such as images and is used for the documentation. You don't need to worry about anything but you need to install the extension as it is not a part of standard git.
+
+::: {.win}
+- If you have at least Git version 2.14 you can skip the following step:
+  - Go to the [git-lfs release page](https://github.com/git-lfs/git-lfs/releases/latest) and download the file called **Windows Installer**. Install the file.
+- In the command line run: `git lfs install`
+:::
+
+::: {.linux}
+Install via [PackageCloud](https://packagecloud.io/):
+
+```bash
+$ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+$ sudo apt-get install git-lfs
+$ git lfs install
+```
+:::
+
+::: {.mac}
+Install with Homebrew:
+
+```bash
+$ brew install git-lfs
+$ git lfs install
+```
+:::
+
+::: {.note}
+### <i class="fas fa-info-circle"></i> Git LFS installation without admin rights
+
+If you do not have rights to install a system package (e.g. on cluster systems) you can [download](https://github.com/git-lfs/git-lfs/releases/latest) a precompiled `git-lfs` executable. Simply put it into your `PATH` and everything should work (remember to run `git lfs install` once!). See also: <https://github.com/git-lfs/git-lfs/wiki/Installation#other>
+:::
+
+
+## Step: Install CMake
+
+::: {.win}
+- Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
+- Execute the installer, please check the **Add CMake to the system path for all users**-option
+:::
+
+::: {.linux}
+Install CMake with your favourite package manager (the two graphical user interfaces are optional):
+
+```bash
+$ sudo apt-get install cmake cmake-qt-gui cmake-curses-gui
+```
+:::
+
+::: {.mac}
+Install CMake with Homebrew:
+
+```bash
+$ brew install cmake
+```
+:::
+
+## Step: Install Conan package manager
+
+The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. If you prefer you can also [install libraries manually]({entry:81:url}) instead.
+
+Go to [Conans download page](https://www.conan.io/downloads) and see platform-specific instructions:
+
+::: {.win}
+Just use the provided Windows installer and make sure to add conan to your path environment as asked by the installer.
+
+Check on a newly opened command line if Conan was installed succesfully:
+
+```
+$ conan --version
+Conan version 1.0.4
+```
+:::
+
+::: {.linux}
+Use either the provided deb-package or install via Pythons `pip`.
+
+Check on a newly opened command line if Conan was installed succesfully:
+
+```
+$ conan --version
+Conan version 1.0.4
+```
+:::
+
+::: {.mac}
+Use Homebrew:
+
+```
+brew install conan
+```
+
+Check on a newly opened command line if Conan was installed succesfully:
+
+```
+$ conan --version
+Conan version 1.0.4
+```
+:::

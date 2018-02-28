@@ -1,0 +1,112 @@
++++
+date = "2018-02-23T15:28:13+01:00"
+title = "Build"
+author = "Lars Bilke"
+weight = 1005
+
+[menu]
+  [menu.devguide]
+    parent = "getting-started"
++++
+
+## Build the project
+
+::: {.win}
+# Step: Build with Visual Studio
+
+Open the OGS.sln either by double-clicking it in the file browser or opening in Visual Studio via **File / Open / Project**.
+
+On the project explorer right-click on **ogs** or **ogs-gui** and choose **Set as startup project**. Then press <kbd>F5</kbd> or click the green arrow to build and start the project.
+
+## About Visual Studio startup projects
+
+The reason for this is that you can have only one sub-project of your Visual Studio Solution activated for debugging (e.g. by pressing <kbd>F5</kbd>). Per default this is the first sub-project (in the case of a CMake-generated project this is `ALL_BUILD`). This must be manually set to a sub-project which generates an executable (a library sub-project cannot be started). And because this setting is stored in user specific project file it cannot be set via CMake.
+
+# How to work with CMake and Visual Studio
+
+You can work normally in Visual Studio but remember that you have to make project changes in the `CMakeLists.txt`-file and not inside Visual Studio. So you can add a new source file within Visual Studios File menu but you have to add that file also to the CMake file. Every time you change a `CMakeLists.txt` and you build the project a new CMake run is automatically invoked. After that Visual Studio informs you that the project files were changed and it reloads them.
+:::
+
+::: {.linux}
+# Option: Make
+
+To build with the `make` tool on the shell go to your previously created build directory and type `make`:
+
+```bash
+$ cd build
+$ make
+```
+
+To speedup the compilation process append the number of cores of your cpu to the make command. E.g. for 8 cores:
+
+```bash
+$ make -j 8
+```
+
+# Option: Eclipse
+
+To let CMake generate the Eclipse project files change the generator argument to the CMake run:
+
+```bash
+$ cmake [your configuration options] -G"Eclipse CDT4 - Unix Makefiles" ../sources
+```
+
+Or with ccmake
+
+```bash
+$ ccmake -G"Eclipse CDT4 - Unix Makefiles" ../sources
+```
+
+Start the Eclipse ide. From the menu choose **File / Import**. In the import dialog choose **General / Existing projects into workspace** and click **Next**. In **Select root directory** select your build directory and make sure that **Copy project into workspace** is unchecked. Click **Finish**.
+:::
+
+::: {.mac}
+# Option: Make
+
+To build with the `make` tool on the shell go to your previously created build directory and type `make`:
+
+```bash
+$ cd build
+$ make
+```
+
+To speedup the compilation process append the number of cores of your cpu to the make command. E.g. for 8 cores:
+
+```bash
+$ make -j 8
+```
+
+# Option: Xcode
+
+To let CMake generate the Xcode project files change the generator argument on the CMake run:
+
+```bash
+$ cmake [your configuration options] -G Xcode ../sources
+```
+
+Or with ccmake
+
+```bash
+$ ccmake -G Xcode ../sources
+```
+
+Then load the generated project file by either clicking the **OGS.xcodeproj** or via
+
+```bash
+$ open OGS.xcodeproj
+```
+
+In Xcode choose `ogs` or `ogs-gui` from the drop-down menu on the top right and then hit the Run-button.
+:::
+
+
+## Waiting
+
+So now the build process is running... This can take some time because maybe there are external libraries which get automatically downloaded and compiled. This step is only done once per build directory, so subsequent builds will be much faster. See {entry:devguide/third-party-libraries:link} for more.
+
+
+## Finished!
+
+Congratulations you have finished the **Getting Started**-section!
+
+Have a look at the other sections of this guide. Maybe check out {entry:devguide/development-workflows:link} if you are interested in actively contributing to the project. The {entry:devguide/configuration-options:link}-page shows you all available build customizations. Or do you want to build the {entry:devguide/data-explorer:link}? Go ahead!

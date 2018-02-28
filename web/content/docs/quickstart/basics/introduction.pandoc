@@ -1,0 +1,82 @@
++++
+date = "2018-02-27T11:00:13+01:00"
+title = "Introduction"
+author = "Lars Bilke"
+weight = 1
+
+aliases = [ "/docs/quickstart/" ]
+
+[menu]
+  [menu.quickstart]
+    parent = "basics"
++++
+
+## Download
+
+Download the latest release of OpenGeoSys from the [Download](https://docs.opengeosys.org/download)-page. Be sure to pick the correct file for your operating system.
+
+## Installation
+
+OGS itself is a simple executable file so you can put it anywhere you like. For convenience you may put into a location which is in your `PATH`-environment variable which allows you to start the executable without specifying its full file path.
+
+## Download benchmarks
+
+Download the latest benchmark files from [GitHub as a .zip-package](https://github.com/ufz/ogs-data/archive/master.zip). Unzip it. See [the Benchmarks section](/docs/benchmarks/) for more information.
+
+## Running
+
+OGS is a command line application and requires the path to a `.prj`-file as an argument.
+
+::: {.win}
+To run it open a new command line shell (called *cmd.exe*). Now simply type `ogs` (if the executable is in your `PATH`-environment variable) or specify its full path (e.g.: `C:\Users\MyUserName\Downloads\ogs.exe`) and hit `ENTER`.
+
+OGS prints out its usage instructions:
+
+```
+PARSE ERROR:
+             Required argument missing: project-file
+
+Brief USAGE:
+   ogs  [--] [--version] [-h] <PROJECT FILE>
+
+For complete USAGE and HELP type:
+   ogs --help
+```
+
+You can see that there is the project-file missing.
+
+Then simply supply the path to a project file as an argument to the OGS executable:
+
+```
+$ ogs .\Path\to\BenchmarkName.prj
+```
+:::
+
+::: {.linux}
+To run it open a new command line shell (*Terminal*). Now simply type `ogs` (if the executable is in your `PATH`-environment variable) or specify its full path (e.g.: `./path/to/ogs`) and hit `ENTER`.
+
+OGS prints out its usage instructions:
+
+```
+PARSE ERROR:
+             Required argument missing: project-file
+
+Brief USAGE:
+   ogs  [--] [--version] [-h] <PROJECT FILE>
+
+For complete USAGE and HELP type:
+   ogs --help
+```
+
+You can see that there is the project-file missing.
+
+Then simply supply the path to a project file as an argument to the OGS executable:
+
+```
+$ ogs ./path/to/BenchmarkName.prj
+```
+:::
+
+::: {.mac}
+See Linux tab!
+:::

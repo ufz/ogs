@@ -6,7 +6,7 @@ $code-font-family: code;
 
 // Fonts
 h1, h2, h3, h4, h5, h6 { @extend .#{$header-font-family}; }
-body { @extend .#{$text-font-family}; }
+body, p { @extend .#{$text-font-family}; }
 code, pre { @extend .#{$code-font-family}; }
 
 // Header
@@ -21,7 +21,6 @@ a {
 }
 
 p, li {
-  @extend .measure-wide;
   @extend .lh-copy;
   @extend .f5;
 }
@@ -29,6 +28,12 @@ p, li {
 // Code
 code, pre {
   @extend .lh-solid;
+  @extend .f6;
+}
+
+pre {
+  @extend .bg-near-white;
+  @extend .pa2;
 }
 
 // Nav
@@ -61,6 +66,34 @@ img {
 
 // Docs
 
+// OS selector
+#btn-win, #btn-linux, #btn-mac {
+    @extend .f6;
+    @extend .link;
+    @extend .dim;
+    @extend .ba;
+    @extend .bw1;
+    @extend .ph3;
+    @extend .pv1;
+    @extend .mb2;
+    @extend .dib;
+    @extend .black;
+}
+
+#btn-win.active, #btn-linux.active, #btn-mac.active {
+    @extend .orange;
+}
+
+.note {
+    @extend .pv1;
+    @extend .ph4;
+    @extend .bg-washed-yellow;
+
+    h1, h2, h3, h4 {
+        @extend .orange;
+    }
+}
+
 // Side nav
 ul.sidenav {
     @extend .list;
@@ -71,13 +104,14 @@ ul.sidenav {
     li.category {
         @extend .#{$header-font-family};
         @extend .small-caps;
-        @extend .mt1;
+        @extend .f4;
+        @extend .mt2;
     }
     a {
         @extend .nav-a-style;
         @extend .f6;
     }
-    a.active {
+    a.active, a:hover {
         @extend .orange;
     }
 }
@@ -92,7 +126,14 @@ ul.sidenav {
 .page-info {
     p {
         @extend .f6;
-        max-width: 100%;
+        @extend .gray;
+
+        a {
+            @extend .light-blue;
+        }
+        a:hover {
+            @extend .light-red;
+        }
     }
 }
 

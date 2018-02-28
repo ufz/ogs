@@ -1,0 +1,21 @@
+---
+date: "2018-02-26T11:00:13+01:00"
+title: "Build"
+author: "Lars Bilke"
+weight: 1043
+
+menu:
+  devguide:
+    parent: troubleshooting
+    identifier: build-troubleshooting
+---
+
+## Cotire-related (pre-compiled headers)
+
+If you get some error during build which mentions `cotire` or `*.prefix.hxx.gch` you can try to clean the pre-compiled headers with:
+
+```bash
+make clean_cotire
+```
+
+This may occur after updating the compiler or system libraries. Related to configurations with `OGS_USE_PCH=ON` only.

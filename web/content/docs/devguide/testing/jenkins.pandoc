@@ -1,0 +1,78 @@
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "Jenkins"
+author = "Lars Bilke"
+weight = 1022
+
+[menu]
+  [menu.devguide]
+    parent = "testing"
++++
+
+## Introduction
+
+[Jenkins](https://jenkins.io/) is a self-hosted powerful [Continuous Integration](../../development-workflows/continuous-integration) server. Our server is available at <https://jenkins.opengeosys.org>.
+
+To configure the tasks of the CI system we mainly use [Jenkins Pipeline](https://jenkins.io/doc/pipeline) jobs which are defined in a [script inside the OGS source code](https://github.com/ufz/ogs/tree/master/Jenkinsfile). Scripting and versioning the configuration together with the source code is very powerful, e.g. if you introduce a new OGS CMake configuration in a pull request even the change of the CI jobs configuration can be part of the pull request.
+
+## Jenkins Pipeline
+
+In the [Jenkinsfile](https://github.com/ufz/ogs/tree/master/Jenkinsfile) you can see lots of `stage`-blocks. Each stage is a test sub-job running on different test nodes. Inside each stage there are `steps` doing things such as configuring the build with CMake and building specific targets:
+
+```java
+stage('Win') {
+  agent {label 'win && conan' }  // Runs on a Windows node with Conan installed
+  environment {
+    MSVC_VERSION = '2017'        // Sets Visual Studio version
+  }
+  steps {
+    script {
+      configure {                // Runs CMake with options
+        cmakeOptions = '-DOGS_USE_CONAN=ON '
+      }
+      build { }                  // Builds the project
+      build { target="tests" }   // Runs unit tests
+      build { target="ctest" }   // Runs benchmark tests
+    }
+  }
+}
+```
+
+Functions such as `configure` and `build` are defined in a separate [Pipeline library](https://github.com/ufz/jenkins-pipeline-library).
+
+Each pipeline run is visualized as follows:
+
+![](../Jenkins-Pipeline.png)
+
+The status of all stages are shown. You can select one stage (e.g. *Win*) and you will see all steps inside that stage at the bottom list. You can expand the log output of a specific step by clicking the small arrow on the left.
+
+On the *Artefacts*-tab in the top navigation bar are links to the compiled binaries and generated websites (*Doxygen* code documentation and the *Web* site containing also the benchmark documentation).
+
+All of this is part of the modern Jenkins UI called *Blue Ocean*. You can always switch to the classic more comprehensive UI by clicking the arrow inside square button in the top navigation bar.
+
+## Automatic testing
+
+The master-branch of the the UFZ repository as well as all pull requests on that repo are automatically tested. See [this page](https://jenkins.opengeosys.org/blue/organizations/jenkins/ufz%2Fogs/pr) for all currently tested PRs:
+
+![](../Jenkins-PR-Overview.png)
+
+### Automatic testing for own repository
+
+This assumes you have your own clone/fork of OGS on GitHub.
+
+- Tell me your GitHub user name
+- I setup a *multibranch* project on Jenkins
+ 
+This project will test all branches ending with `_j` on your repository and will be available at `jenkins.opengeosys.org/job/User/job/[your account name]`
+
+To automatically trigger new Jenkins builds when you push changes to your repository you have to setup a GitHub trigger:
+
+- Go to `github.com/[your account name]/ogs/settings/hooks`
+- Click **Add webhook**
+- Under **Payload URL** enter `https://jenkins.opengeosys.org/github-webhook/`
+- Click green button **Add webhook**
+
+To optionally let Jenkins set the result of job as the the commit status (small icons on commit list view):
+
+- Go to `github.com/[your account name]/ogs/settings/collaboration`
+- Type in `ogsbot` and click **Add collaborator**

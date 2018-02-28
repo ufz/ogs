@@ -1,0 +1,32 @@
+---
+date: "2018-02-26T11:00:13+01:00"
+title: "Third-party libraries"
+author: "Lars Bilke"
+weight: 1049
+
+menu:
+  devguide:
+    parent: advanced
+---
+
+::: {.note}
+### <i class="fas fa-exclamation-triangle"></i> Attention!
+
+We strongly recommend to simply use [Conan]({{< relref "conan.pandoc" >}}) for handling required third-party libraries.
+:::
+
+## Introduction
+
+The following libraries are required:
+
+- [Boost](http://www.boost.org/) >= 1.56.0
+- [Eigen](http://eigen.tuxfamily.org/) >= 3.2.9
+- [VTK](https://www.vtk.org/) >= 7.1.0
+
+If you want to build the Data Explorer you need these too:
+
+- [Qt](https://www.qt.io/) >= 5.9.2
+- [Shapelib](http://shapelib.maptools.org) >= 1.3.0
+- [libgeotiff](https://trac.osgeo.org/geotiff/) >= 1.4.2
+
+Please refer to the library documentation on how to build. If you struggle consider using [Conan]({{< relref "conan.pandoc" >}})! Once built CMake tries its best to find the libraries.

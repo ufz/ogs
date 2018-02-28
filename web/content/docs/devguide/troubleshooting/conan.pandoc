@@ -1,0 +1,33 @@
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "Conan"
+author = "Lars Bilke"
+weight = 1042
+
+[menu]
+  [menu.devguide]
+    parent = "troubleshooting"
++++
+
+## Something went wrong during CMake run
+
+When CMake is run Conan will download library packages. You can see under `Requirements` in the CMake output from where the packages will be downloaded. Most packages will come `from ogs`:
+
+```bash
+$ cmake ../ogs -DOGS_USE_CONAN=ON
+...
+-- Conan executing: conan install . -g cmake -s build_type=Release -s os=Macos -s compiler=apple-clang -s compiler.version=9.0 -s compiler.libcxx=libc++ --build=missing --update
+PROJECT: Installing /Users/bilke/code/ogs6/build-n/conanfile.txt
+Requirements
+    Boost/1.64.0@conan/stable from conan-community
+    Eigen3/3.2.9@bilke/stable from ogs
+    Qt/5.9.2@osechet/stable from ogs
+    Shapelib/1.3.0@bilke/stable from ogs
+    VTK/7.1.0@bilke/stable from ogs
+    libgeotiff/1.4.2@bilke/stable from ogs
+    libtiff/4.0.6@bilke/stable from ogs
+    proj/4.9.2@bilke/stable from ogs
+    zlib/1.2.11@conan/stable from conan-center
+```
+
+You can always delete the Conan cache directory in `$HOME/.conan` to start fresh. This can fix errors.

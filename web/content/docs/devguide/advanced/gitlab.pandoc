@@ -1,0 +1,26 @@
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "GitLab"
+author = "Lars Bilke"
+weight = 1038
+
+[menu]
+  [menu.devguide]
+    parent = "advanced"
++++
+
+## Introduction
+
+[GitLab](https://gitlab.com) is a web-based Git repository manager similar to [GitHub](https://github.com). GitLab can be self-hosted and we do just that with <https://gitlab.opengeosys.org>. For the moment all OGS repositories are still hosted at [github.com/ufz](https://github.com/ufz) but we store benchmark data files on our own GitLab because of storage limits on GitHub.
+
+To submit a PR containing also new benchmark files (or in general: containing files tracked by `git-lfs`) you need an account on our GitLab server.
+
+## Setup an account
+
+- Creating a GitLab account can be done by simply using your existing GitHub account: click the GitHub logo (octocat) on the [Gitlab sign-in page](https://gitlab.opengeosys.org/users/sign_in)
+  ![](../gitlab-login.png)
+  - You will be redirected to GitHub (please login there) and asked for authorization.
+  - Your new user account will be blocked at first, please let us know we will unblock it
+- Once unblocked, on the [ogs group page](https://gitlab.opengeosys.org/ogs) click the button `Request access`. We will then give access to the repo. If the button is not there we already gave you access.
+- Create a [GitLab personal access token](https://gitlab.opengeosys.org/profile/personal_access_tokens), enable the following scopes: `api`, `read_user`. This is the password you have to use when pushing a PR which also contains `git-lfs`-tracked files. Your user name is the same as your GitHub user name.
+- For caching credentials you may want to use a [git credential helper](https://docs.gitlab.com/ee/workflow/lfs/manage_large_binaries_with_git_lfs.html#credentials-are-always-required-when-pushing-an-object).

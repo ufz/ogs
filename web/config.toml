@@ -5,9 +5,10 @@ baseURL = "http://localhost:1313"
 buildDrafts = true
 pygmentsstyle = 'friendly'
 enableGitInfo = true
+canonifyURLs = true
 
 [params]
-  alert = "Benchmarks only documentation; the Developer Guide can be found at <a href='https://docs.opengeosys.org'>docs.opengeosys.org</a>."
+  alert = "Documentation site under construction; more docs can be found at <a href='https://docs.opengeosys.org'>docs.opengeosys.org</a>."
 
 [taxonomies]
 news = "news"
@@ -28,6 +29,32 @@ news = "news"
 [[menu.devguide]]
   name = "Getting Started"
   identifier = "getting-started"
+  weight = 1
+
+[[menu.devguide]]
+  name = "Development Workflows"
+  identifier = "development-workflows"
+  weight = 2
+
+[[menu.devguide]]
+  name = "Testing"
+  identifier = "testing"
+  weight = 3
+
+[[menu.devguide]]
+  name = "Advanced"
+  identifier = "advanced"
+  weight = 4
+
+[[menu.devguide]]
+  name = "Troubleshooting"
+  identifier = "troubleshooting"
+  weight = 5
+
+[[menu.devguide]]
+  name = "Procedures"
+  identifier = "procedures"
+  weight = 6
 
 # Benchmarks sidebar top-level categories
 [[menu.benchmarks]]
@@ -62,3 +89,9 @@ news = "news"
   name = "Two-phase Flow"
   identifier = "two-phase-flow"
   weight = 8
+
+# Quickstart sidebar top-level categories
+[[menu.quickstart]]
+  name = "Basics"
+  identifier = "basics"
+  weight = 1

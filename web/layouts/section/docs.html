@@ -2,17 +2,22 @@
 
   <div class="col-xs-12">
     <h1>OpenGeoSys Documentation</h1>
+    {{ .Content }}
     <div class="row">
+      <div class="flex flex-wrap">
       {{ range .Params.sections }}
-        <article class="fl w-33 ma2 bg-white br3 pa4 pa4-ns mv3 ba b--black-10">
-          <div class="tc">
-            <h1 class="f4"><a href="/docs/{{ .slug }}">{{ .name }}</a></h1>
-            <hr class="mw3 bb bw1 b--black-10">
+        <div class="w-third pa2 mv3">
+          <div class="pa2 ba br3 b--black-10">
+            <div class="tc">
+              <h1 class="f4"><a href="/docs/{{ .slug }}">{{ .name }}</a></h1>
+              <hr class="mw3 bb bw1 b--black-10">
+            </div>
+            <p class="1h-copy measure center f6 black-70">{{ .text }}</p>
           </div>
-          <p class="1h-copy measure center f6 black-70">{{ .text }}</p>
-        </article>
+        </div>
 
       {{ end }}
+      </div>
     </div>
   </div>
 
