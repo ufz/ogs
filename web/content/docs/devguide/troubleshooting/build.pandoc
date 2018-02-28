@@ -1,14 +1,14 @@
----
-date: "2018-02-26T11:00:13+01:00"
-title: "Build"
-author: "Lars Bilke"
-weight: 1043
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "Build"
+author = "Lars Bilke"
+weight = 1043
 
-menu:
-  devguide:
-    parent: troubleshooting
-    identifier: build-troubleshooting
----
+[menu]
+  [menu.devguide]
+    parent = "troubleshooting"
+    identifier = "build-troubleshooting"
++++
 
 ## Cotire-related (pre-compiled headers)
 

@@ -1,13 +1,13 @@
----
-date: "2018-02-26T11:00:13+01:00"
-title: "Third-party libraries"
-author: "Lars Bilke"
-weight: 1049
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "Third-party libraries"
+author = "Lars Bilke"
+weight = 1049
 
-menu:
-  devguide:
-    parent: advanced
----
+[menu]
+  [menu.devguide]
+    parent = "advanced"
++++
 
 ::: {.note}
 ### <i class="fas fa-exclamation-triangle"></i> Attention!
