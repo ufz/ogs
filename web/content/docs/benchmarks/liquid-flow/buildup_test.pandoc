@@ -41,7 +41,7 @@ the porosity of the reservoir), which yields a specific storage
 coefficient of $S_0=\rho gnc_t=6.21\times 10^{-4}\ \mathrm{m^{-1}}$. The
 observed pressure readings during the buildup test are cited from
 Chapter 6 of the book *Geothermal Power Generation*
-[@horne2016characterization], and the data is archived in the Appendix.
+[1], and the data is archived in the Appendix.
 
 The permeability of the reservoir can be estimated by means of a Horner
 plot, in which the pressure $p$ is plotted against
@@ -53,12 +53,8 @@ increases in the opposite direction of the *X*-axis. Therefore, the
 linear section appears at the left side of the diagram.
 
 \centering
-![Horner plot ($p$ vs $(t_p+\Delta t)/\Delta t$) for buildup test
-showing the inferred Horner straight
-line.
-
-[]{label="fig:horner"}](horner.png){width="\textwidth"}
-
+![label="fig:horner"](./horner.png)
+*Horner plot ($p$ vs $(t_p+\Delta t)/\Delta t$) for buildup test showing the inferred Horner straight line.*
 
 The slope $m$ of the Horner straight line is expressed as:
 $$m=0.1832\frac{Q\mu}{\kappa b}$$ in which $Q\  \mathrm{[L^3/T]}\ (Q>0)$
@@ -114,12 +110,13 @@ error between the analytical and numerical solution is depicted in
 Figure [\[fig:error\]](#fig:error){reference-type="ref"
 reference="fig:error"}.
 
+\centering
+![label="fig:compare"](./comparison.png)
+*OGS 6 result compared with analytical solution*
 
-![OGS 6 result compared with analytical
-solution[]{label="fig:compare"}](comparison.png){width="\textwidth"}
-
-
-![Absolute and relative error[]{label="fig:error"}](error.png){width="\textwidth"}
+\centering
+![label="fig:error"](./error.png)
+*Absolute and relative error*
 
 References {#references .unnumbered .unnumbered}
 ========
