@@ -8,7 +8,6 @@
   <meta name="author" content="OpenGeoSys Community">
 
   <link rel="stylesheet" href="/styles.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
@@ -37,8 +36,8 @@
           <a href="{{ .URL }}" class="mr-8{{if or ($currentPage.IsMenuCurrent "main" .) ($currentPage.HasMenuCurrent "main" .) }} active{{end}}">{{ .Name }}</a>
           {{ end }}
         </div>
-        <div class="w-1/4 text-right">
-          Search-bar here
+        <div class="w-1/4">
+          {{ partial "site-search.html" . }}
         </div>
       </div>
       {{ if .Site.Params.alert }}

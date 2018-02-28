@@ -1,11 +1,12 @@
+var webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const path = require('path')
 
 module.exports = {
-  entry: './index.js',
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'styles.css',
+    filename: 'bundle.js',
   },
   module: {
     rules: [
@@ -22,6 +23,11 @@ module.exports = {
     ]
   },
   plugins: [
-    new ExtractTextPlugin('styles.css')
-  ]
+    new ExtractTextPlugin('styles.css'),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery"
+    })
+  ],
+  devtool: 'source-map'
 }

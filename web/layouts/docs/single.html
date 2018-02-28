@@ -41,51 +41,5 @@
     {{ partial "footer-nav.html" . }}
 
   </div>
-
-{{ end }}
-
-{{ define "footer" }}
-
-  {{ $segments := split .RelPermalink "/" }}
-  {{ $subsection := index $segments 2 }}
-  {{ if or (eq $subsection "devguide") (eq $subsection "quickstart") }}
-  <script>
-    $("#btn-win").click(function(){
-      $(".win").show();
-      $(".linux").hide();
-      $(".mac").hide();
-      $("#btn-win").addClass("active");
-      $("#btn-linux").removeClass("active");
-      $("#btn-mac").removeClass("active");
-    });
-
-    $("#btn-linux").click(function(){
-      $(".win").hide();
-      $(".linux").show();
-      $(".mac").hide();
-      $("#btn-win").removeClass("active");
-      $("#btn-linux").addClass("active");
-      $("#btn-mac").removeClass("active");
-    });
-
-    $("#btn-mac").click(function(){
-      $(".win").hide();
-      $(".linux").hide();
-      $(".mac").show();
-      $("#btn-win").removeClass("active");
-      $("#btn-linux").removeClass("active");
-      $("#btn-mac").addClass("active");
-    });
-
-    $( document ).ready(function() {
-      if ($(".win").length == 0) {
-        $("#os-selector").hide();
-      }
-      else {
-        $("#btn-win").click();
-      }
-    });
-  </script>
-  {{ end }}
-  </div>
+</div>
 {{ end }}

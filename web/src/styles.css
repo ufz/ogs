@@ -53,6 +53,31 @@ hr {
   @apply .text-orange;
 }
 
+/* -------------------------------- Algolia---------------------------------- */
+.algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
+  /*width: 100%;*/
+}
+.algolia-autocomplete .aa-hint {
+  color: #999;
+}
+.algolia-autocomplete .aa-dropdown-menu {
+  @apply .bg-grey-lightest;
+  @apply .border-2;
+  @apply .p-1;
+  @apply .text-sm;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+  @apply .cursor-pointer;
+  @apply .p-1;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+  @apply .bg-blue-lighter;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+  @apply .font-bold;
+  @apply .text-orange;
+}
+
 @tailwind utilities;
 
 @import 'css/pandoc-highlighting.css'

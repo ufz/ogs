@@ -1,0 +1,8 @@
+---
+# This file should not be necessary.
+# Workaround for https://github.com/10Dimensional/hugo-algolia/issues/7
+algolia:
+  index: "docs.opengeosys.org"
+  # key supplied via $ALGOLIA_WRITE_KEY
+  appID: "4AHEU3QJQG"
+---
