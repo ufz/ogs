@@ -1,6 +1,7 @@
 import styles from './styles.css'
 
 // os-selector
+var selectedOS;
 $("#btn-win").click(function(){
   $(".win").show();
   $(".linux").hide();
@@ -8,6 +9,7 @@ $("#btn-win").click(function(){
   $("#btn-win").addClass("active");
   $("#btn-linux").removeClass("active");
   $("#btn-mac").removeClass("active");
+  window.localStorage.setItem("selectedOS","win");
 });
 
 $("#btn-linux").click(function(){
@@ -17,6 +19,7 @@ $("#btn-linux").click(function(){
   $("#btn-win").removeClass("active");
   $("#btn-linux").addClass("active");
   $("#btn-mac").removeClass("active");
+  window.localStorage.setItem("selectedOS","linux");
 });
 
 $("#btn-mac").click(function(){
@@ -26,6 +29,7 @@ $("#btn-mac").click(function(){
   $("#btn-win").removeClass("active");
   $("#btn-linux").removeClass("active");
   $("#btn-mac").addClass("active");
+  window.localStorage.setItem("selectedOS","mac");
 });
 
 $( document ).ready(function() {
@@ -33,7 +37,14 @@ $( document ).ready(function() {
     $("#os-selector").hide();
   }
   else {
-    $("#btn-win").click();
+    var os = window.localStorage.getItem("selectedOS");
+    console.log(os);
+    if (os) {
+      $("#btn-" + os).click();
+    }
+    else {
+      $("#btn-win").click();
+    }
   }
 });
 
