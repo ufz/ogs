@@ -147,6 +147,12 @@ This json-file is then used by the shortcode.
 
 This fetches articles from the CMS to e.g. `ogs/web/data/news.json`.
 
+### Update search index
+
+```bash
+ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
+```
+
 ### Used components
 
 - [Hugo](https://gothugo.com) - Web site generator
