@@ -15,6 +15,10 @@
 
 #include "MeshLib/Mesh.h"
 
+#include "Applications/DataHolderLib/BoundaryCondition.h"
+
+#include "Applications/DataHolderLib/SourceTerm.h"
+
 //namespace MeshLib {
 //    class Mesh;
 //}
@@ -59,6 +63,14 @@ public:
     /// false otherwise.
     bool removeMesh(const std::string &name);
 
+    void addBoundaryCondition(BoundaryCondition bc) { _boundary_conditions.push_back(bc); }
+
+    std::vector<BoundaryCondition> const getBoundaryConditions() const { return _boundary_conditions; }
+
+    void addSourceTerm(SourceTerm bc) { _source_terms.push_back(bc); }
+
+    std::vector<SourceTerm> const getSourceTerms() const { return _source_terms; }
+
 private:
     /// Checks if a mesh with the same name exists and provides a unique name in
     /// case of already existing mesh. Returns true if the mesh name is unique.
@@ -77,6 +89,10 @@ private:
 
     GeoLib::GEOObjects _geoObjects;
     std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
+
+    std::vector<BoundaryCondition> _boundary_conditions;
+
+    std::vector<SourceTerm> _source_terms;
 };
 
 } // namespace
