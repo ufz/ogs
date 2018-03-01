@@ -32,13 +32,13 @@ Model Setup {#model-setup .unnumbered .unnumbered}
 This benchmark represents a scenario in which the well had been
 producing geothermal brine for $118\ \mathrm{h}$ at a rate of
 $78\ t/\mathrm{h}$ and was then shut in for a buildup test. At the given
-reservoir temperature (260) and pressure ($47\ \mathrm{bar}$), the
+reservoir temperature (260^\circ$C) and pressure ($47\ \mathrm{bar}$), the
 density and viscosity of the water and steam mixture were calculated as
 $\rho=78.68\ \mathrm{kg/m^3}$ and
 $\mu=1.295\times10^{-4}\ \mathrm{Pa\ s}$. The compressibility of the
 mixture was estimated as $nc_t=0.0805\ \mathrm{bar^{-1}}$ ($n$ refers to
 the porosity of the reservoir), which yields a specific storage
-coefficient of $S_0=\rho gnc_t=6.21\times 10^{-4}\ \mathrm{m^{-1}}$. The
+coefficient of $S=\rho gnc_t=6.21\times 10^{-4}\ \mathrm{m^{-1}}$. The
 observed pressure readings during the buildup test are cited from
 Chapter 6 of the book *Geothermal Power Generation*
 [1], and the data is archived in the Appendix.
@@ -65,20 +65,22 @@ the aquifer thickness. From the Horner plot, we can infer a Horner
 straight line with a slope of $m=0.79$. Therefore the transmissivity of
 the aquifer can be calculated as $$\begin{aligned}
 \kappa b&=&0.1832\frac{Q\mu}{m}=0.1832\frac{((78000/3600)/78.68)\times1.295\times10^{-4}}{7.09\times10^5}\\&=&9.2\times10^{-12}\ \mathrm{m^3}\end{aligned}$$
-In addition, the Horner plot can be extracted to a Horner time of 1,
-which corresponds to infinite shut-in time $(\Delta t)$. This leads to
+In addition, the straight line in the Horner plot can be extracted to a Horner time of 1,
+which corresponds to the infinite shut-in time $(\Delta t)$. This leads to
 an extrapolated pressure $p_0$ of $67.5~\mathrm{kPa}$, which is the
 undisturbed reservoir pressure .
 
 Input files {#input-files .unnumbered .unnumbered}
 ===========
 
-The main project file is 'buildup\_test.prj'. It defines the process to
+The benchmark project is defined in the input file 'buildup\_test.prj'. It defines the process to
 be solved as "LiquidFlow" and the primary variable is hence pressure.
 The initial condition is set to $p_0=67.5\ \mathrm{bar}$ and the
 undisturbed boundary is achieved by a large domain size
-$(r=1000\ \mathrm{m})$. The time-dependent source term is applied at
-$r=0$. The geometries used to specify the model domain, boundary
+$(r=1000\ \mathrm{m})$. The time-dependent source term is applied in this
+benchmark. From the beginning until $t=424800$ sec, the pumping rate was
+maintained at a constant rate. Afterwards, the well is shut-in and pressure
+starts to build up. The geometries used to specify the model domain, boundary
 conditions, and source term can be found in 'line\_1000\_axi.gml' file.
 The mesh is specified in 'line\_1000\_axi.vtu', which is stored in the
 VTK format and can be directly visualized in Paraview.
