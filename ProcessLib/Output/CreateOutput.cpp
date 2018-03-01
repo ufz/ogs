@@ -15,6 +15,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/makeVectorUnique.h"
 
 #include "Output.h"
 
@@ -42,6 +43,8 @@ std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
 
     // Construction of output times
     std::vector<Output::PairRepeatEachSteps> repeats_each_steps;
+
+    std::vector<double> fixed_output_times;
 
     //! \ogs_file_param{prj__time_loop__output__timesteps}
     if (auto const timesteps = config.getConfigSubtreeOptional("timesteps"))
@@ -71,13 +74,25 @@ std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
         repeats_each_steps.emplace_back(1, 1);
     }
 
+    auto fixed_output_times_ptr =
+        //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
+        config.getConfigParameterOptional<std::vector<double>>(
+            "fixed_output_times");
+    if (fixed_output_times_ptr)
+    {
+        fixed_output_times = std::move(*fixed_output_times_ptr);
+        // Remove possible duplicated elements and sort in descending order.
+        BaseLib::makeVectorUnique(fixed_output_times, std::greater<double>());
+    }
+
     bool const output_iteration_results =
         //! \ogs_file_param{prj__time_loop__output__output_iteration_results}
         config.getConfigParameter<bool>("output_iteration_results", false);
 
     return std::make_unique<Output>(output_directory, prefix, compress_output,
                                     data_mode, output_iteration_results,
-                                    std::move(repeats_each_steps));
+                                    std::move(repeats_each_steps),
+                                    std::move(fixed_output_times));
 }
 
 }  // namespace ProcessLib

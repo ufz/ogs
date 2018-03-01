@@ -109,6 +109,7 @@
                     <each_steps>100000000</each_steps>
                 </pair>
             </timesteps>
+            <fixed_output_times> 50.0 100.0 500.</fixed_output_times>
             <output_iteration_results>false</output_iteration_results>
         </output>
     </time_loop>

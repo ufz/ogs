@@ -515,7 +515,7 @@ bool UncoupledProcessesTimeLoop::loop()
 {
     // initialize output, convergence criterion, etc.
     {
-        unsigned process_id = 0;
+        int process_id = 0;
         for (auto& process_data : _per_process_data)
         {
             auto& pcs = process_data->process;
@@ -531,6 +531,13 @@ bool UncoupledProcessesTimeLoop::loop()
                 conv_crit->setDOFTable(pcs.getDOFTable(process_id),
                                        pcs.getMesh());
             }
+
+            // Add the fixed times of output to time stepper in order that
+            // the time stepping is performed and the results are output at
+            // these times. Note: only the adaptive time steppers can have the
+            // the fixed times.
+            auto& timestepper = process_data->timestepper;
+            timestepper->addFixedOutputTimes(_output->getFixedOutputTimes());
 
             ++process_id;
         }

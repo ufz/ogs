@@ -85,6 +85,19 @@ public:
     /// Get a flag to indicate whether this algorithm needs to compute
     /// solution error. The default return value is false.
     virtual bool isSolutionErrorComputationNeeded() { return false; }
+
+    /**
+     * Add specified times to the existing vector of the specified times.
+     * If there are specified times, they will be used as constraints in the
+     * computing of time step size such that the time step can exactly reach at
+     * the specified times. The function is mainly used to accept the specified
+     * times from the configuration of output.
+     */
+    virtual void addFixedOutputTimes(
+        std::vector<double> const& /*fixed_output_times*/)
+    {
+    }
+
 protected:
     /// initial time
     const double _t_initial;
