@@ -6,16 +6,20 @@
 
 /* -- Links -- */
 a {
-  @apply .text-grey-darkest;
+  @apply .text-blue;
   @apply .no-underline;
 }
 a:hover {
-  @apply .underline;
+  @apply .border-b-2;
+  @apply .border-orange;
+  @apply .border-dotted;
 }
 a.active {
   @apply .text-orange;
 }
-
+nav a {
+  @apply text-grey-darkest;
+}
 nav a.active {
   @apply text-grey-darkest;
   @apply .border-b-2;
@@ -37,18 +41,65 @@ p, ul, pre {
   @apply .mb-4;
 }
 
-/* -- Misc -- */
+/* -- OS selector -- */
+.os-div {
+  @apply .-ml-4;
+  @apply .pl-4;
+  @apply .border-l-2;
+}
 
+.win {
+  @apply .os-div;
+  @apply .border-green-lighter;
+}
+
+.linux {
+  @apply .os-div;
+  @apply .border-orange-lighter;
+}
+
+.mac {
+  @apply .os-div;
+  @apply .border-blue-lighter;
+}
+
+#btn-win.active {
+  @apply .text-green;
+  @apply .border-green;
+}
+
+#btn-linux.active {
+  @apply .text-orange;
+  @apply .border-orange;
+}
+
+#btn-mac.active {
+  @apply .text-blue;
+  @apply .border-blue;
+}
+
+#btn-win:hover {
+  @apply .border-green;
+}
+#btn-linux:hover {
+  @apply .border-orange;
+}
+#btn-mac:hover {
+  @apply .border-blue;
+}
+
+/* -- Misc -- */
 hr {
   @apply .border;
 }
 
 /* ------------------------------- Components ------------------------------- */
 .btn {
+  @apply text-grey-darkest;
   @apply .px-2;
   @apply .py-1;
-  @apply .border-2;
-  @apply .rounded-lg;
+  @apply .border-b-2;
+  @apply .cursor-pointer;
 }
 
 .btn.active {
@@ -62,6 +113,7 @@ hr {
   @apply .mb-4;
   @apply .border-l-4;
   @apply .border-orange;
+  @apply .-ml-4;
 }
 
 .note h3 {
