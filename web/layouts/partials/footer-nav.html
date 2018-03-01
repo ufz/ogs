@@ -8,12 +8,12 @@
     {{ if .NextInSection }}
       {{ $nextSubsection := index (split .NextInSection.RelPermalink "/") 2 }}
       {{ if eq $nextSubsection $subsection }}
-        <a href="{{ .NextInSection.Permalink }}" title="{{ .NextInSection.Permalink }}">
           <div class="mb-1"><i class="fas fa-arrow-left"></i> Previous</div>
           <div class="italic">
-            {{ .NextInSection.Title }}
+            <a href="{{ .NextInSection.Permalink }}" title="{{ .NextInSection.Permalink }}">
+              {{ .NextInSection.Title }}
+            </a>
           </div>
-        </a>
       {{ end }}
     {{ end }}
   </div>
@@ -21,14 +21,14 @@
     {{ if .PrevInSection }}
       {{ $prevSubsection := index (split .PrevInSection.RelPermalink "/") 2 }}
       {{ if eq $prevSubsection $subsection }}
-        <span class="tr">
-          <a href="{{ .PrevInSection.Permalink }}" title="{{ .PrevInSection.Permalink }}">
+        <div class="tr">
             <div class="mb-1">Next <i class="fas fa-arrow-right"></i></div>
             <div class="italic">
-            {{ .PrevInSection.Title   }}
+              <a href="{{ .PrevInSection.Permalink }}" title="{{ .PrevInSection.Permalink }}">
+                {{ .PrevInSection.Title   }}
+              </a>
           </div>
-          </a>
-        </span>
+        </div>
         {{ end }}
     {{ end }}
   </div>
