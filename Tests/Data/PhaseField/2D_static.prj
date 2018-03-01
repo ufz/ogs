@@ -7,6 +7,7 @@
             <name>PhaseField</name>
             <type>PHASE_FIELD</type>
             <coupling_scheme>staggered</coupling_scheme>
+            <hydro_crack_scheme>static</hydro_crack_scheme>
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
