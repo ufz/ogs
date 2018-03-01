@@ -19,5 +19,5 @@ $('#search-input').autocomplete({
   }
 ]).on('autocomplete:selected', function(event, suggestion, dataset) {
   // console.log(suggestion, dataset);
-  window.location = "/" + suggestion.uri;
+  window.location = "/" + suggestion.uri.toLowerCase();
 });
