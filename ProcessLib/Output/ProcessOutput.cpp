@@ -13,6 +13,9 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
+#include "IntegrationPointWriter.h"
+
+
 /// Copies the ogs_version string containing the release number and the git
 /// hash.
 static void addOgsVersion(MeshLib::Mesh& mesh)
@@ -127,6 +130,8 @@ void processOutputData(
     std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
     SecondaryVariableCollection secondary_variables,
+    std::vector<std::unique_ptr<IntegrationPointWriter>> const&
+        integration_point_writer,
     ProcessOutput const& process_output)
 {
     DBUG("Process output data.");
@@ -234,6 +239,8 @@ void processOutputData(
     (void)secondary_variables;
     (void)t;
 #endif  // USE_PETSC
+
+    addIntegrationPointWriter(mesh, integration_point_writer);
 }
 
 void makeOutput(std::string const& file_name, MeshLib::Mesh& mesh,
