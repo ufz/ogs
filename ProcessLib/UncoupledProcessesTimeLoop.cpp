@@ -532,12 +532,12 @@ bool UncoupledProcessesTimeLoop::loop()
                                        pcs.getMesh());
             }
 
-            // Add the specific times of output to time stepper in order that
+            // Add the fixed times of output to time stepper in order that
             // the time stepping is performed and the results are output at
             // these times. Note: only the adaptive time steppers can have the
-            // the specific times.
+            // the fixed times.
             auto& timestepper = process_data->timestepper;
-            timestepper->addSpecifiedTimes(_output->getSpecifiedTimes());
+            timestepper->addFixedOutputTimes(_output->getFixedOutputTimes());
 
             ++process_id;
         }

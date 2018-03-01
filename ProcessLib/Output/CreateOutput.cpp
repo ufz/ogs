@@ -44,7 +44,7 @@ std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
     // Construction of output times
     std::vector<Output::PairRepeatEachSteps> repeats_each_steps;
 
-    std::vector<double> specified_times;
+    std::vector<double> fixed_output_times;
 
     //! \ogs_file_param{prj__time_loop__output__timesteps}
     if (auto const timesteps = config.getConfigSubtreeOptional("timesteps"))
@@ -74,15 +74,15 @@ std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
         repeats_each_steps.emplace_back(1, 1);
     }
 
-    auto specified_times_ptr =
-        //! \ogs_file_param{prj__time_loop__output__specified_times}
+    auto fixed_output_times_ptr =
+        //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
         config.getConfigParameterOptional<std::vector<double>>(
-            "specified_times");
-    if (specified_times_ptr)
+            "fixed_output_times");
+    if (fixed_output_times_ptr)
     {
-        specified_times = std::move(*specified_times_ptr);
+        fixed_output_times = std::move(*fixed_output_times_ptr);
         // Remove possible duplicated elements and sort in descending order.
-        BaseLib::makeVectorUnique(specified_times, std::greater<double>());
+        BaseLib::makeVectorUnique(fixed_output_times, std::greater<double>());
     }
 
     bool const output_iteration_results =
@@ -92,7 +92,7 @@ std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
     return std::make_unique<Output>(output_directory, prefix, compress_output,
                                     data_mode, output_iteration_results,
                                     std::move(repeats_each_steps),
-                                    std::move(specified_times));
+                                    std::move(fixed_output_times));
 }
 
 }  // namespace ProcessLib

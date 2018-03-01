@@ -42,14 +42,14 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__rel_dt_max}
     auto const rel_h_max = config.getConfigParameter<double>("rel_dt_max");
 
-    auto specified_times =
-        //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__specified_times}
-        config.getConfigParameter<std::vector<double>>("specified_times",
+    auto fixed_output_times =
+        //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__fixed_output_times}
+        config.getConfigParameter<std::vector<double>>("fixed_output_times",
                                                        std::vector<double>{});
-    if (!specified_times.empty())
+    if (!fixed_output_times.empty())
     {
         // Remove possible duplicated elements and sort in descending order.
-        BaseLib::makeVectorUnique(specified_times, std::greater<double>());
+        BaseLib::makeVectorUnique(fixed_output_times, std::greater<double>());
     }
 
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__tol}
@@ -57,6 +57,6 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
 
     return std::make_unique<EvolutionaryPIDcontroller>(
         t0, t_end, h0, h_min, h_max, rel_h_min, rel_h_max,
-        std::move(specified_times), tol);
+        std::move(fixed_output_times), tol);
 }
 }  // end of namespace NumLib

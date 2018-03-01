@@ -93,7 +93,8 @@ public:
      * the specified times. The function is mainly used to accept the specified
      * times from the configuration of output.
      */
-    virtual void addSpecifiedTimes(std::vector<double> const& /*specified_times*/)
+    virtual void addFixedOutputTimes(
+        std::vector<double> const& /*fixed_output_times*/)
     {
     }
 

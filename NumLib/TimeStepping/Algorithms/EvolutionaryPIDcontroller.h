@@ -55,7 +55,7 @@ public:
                               const double h0, const double h_min,
                               const double h_max, const double rel_h_min,
                               const double rel_h_max,
-                              const std::vector<double>&& specified_times,
+                              const std::vector<double>&& fixed_output_times,
                               const double tol)
         : TimeStepAlgorithm(t0, t_end),
           _h0(h0),
@@ -63,7 +63,7 @@ public:
           _h_max(h_max),
           _rel_h_min(rel_h_min),
           _rel_h_max(rel_h_max),
-          _specified_times(std::move(specified_times)),
+          _fixed_output_times(std::move(fixed_output_times)),
           _tol(tol),
           _e_n_minus1(0.),
           _e_n_minus2(0.),
@@ -92,9 +92,9 @@ public:
     /// solution error.
     bool isSolutionErrorComputationNeeded() override { return true; }
 
-    /// \copydoc NumLib::TimeStepAlgorithm::addSpecifiedTimes
-    void addSpecifiedTimes(
-        std::vector<double> const& extra_specified_times) override;
+    /// \copydoc NumLib::TimeStepAlgorithm::addFixedOutputTimes
+    void addFixedOutputTimes(
+        std::vector<double> const& extra_fixed_output_times) override;
 
 private:
     const double _kP = 0.075;  ///< Parameter. \see EvolutionaryPIDcontroller
@@ -111,7 +111,7 @@ private:
     const double _rel_h_max;
 
     // Given times that steps have to reach.
-    std::vector<double> _specified_times;
+    std::vector<double> _fixed_output_times;
 
     const double _tol;
 

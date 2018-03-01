@@ -143,28 +143,28 @@ double EvolutionaryPIDcontroller::limitStepSize(
 
 double EvolutionaryPIDcontroller::checkSpecificTimeReached(const double h_new)
 {
-    if (_specified_times.empty())
+    if (_fixed_output_times.empty())
         return h_new;
 
-    const double specific_time = _specified_times.back();
+    const double specific_time = _fixed_output_times.back();
     if ((specific_time > _ts_current.current()) &&
         (_ts_current.current() + h_new - specific_time > 0.0))
     {
-        _specified_times.pop_back();
+        _fixed_output_times.pop_back();
         return specific_time - _ts_current.current();
     }
 
     return h_new;
 }
 
-void EvolutionaryPIDcontroller::addSpecifiedTimes(
-    std::vector<double> const& extra_specified_times)
+void EvolutionaryPIDcontroller::addFixedOutputTimes(
+    std::vector<double> const& extra_fixed_output_times)
 {
-    _specified_times.insert(_specified_times.end(), extra_specified_times.begin(),
-                           extra_specified_times.end());
+    _fixed_output_times.insert(_fixed_output_times.end(),
+                               extra_fixed_output_times.begin(),
+                               extra_fixed_output_times.end());
 
     // Remove possible duplicated elements and sort in descending order.
-    BaseLib::makeVectorUnique(_specified_times, std::greater<double>());
+    BaseLib::makeVectorUnique(_fixed_output_times, std::greater<double>());
 }
-
 }  // end of namespace NumLib
