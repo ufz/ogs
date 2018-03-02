@@ -1,3 +1,6 @@
+// Roughly based on https://github.com/algolia/autocomplete.js#jquery
+// https://github.com/algolia/autocomplete.js/blob/master/LICENSE
+
 import algoliasearch from 'algoliasearch/lite';
 var autocomplete = require('autocomplete.js/dist/autocomplete.jquery.js')
 
@@ -18,6 +21,5 @@ $('#search-input').autocomplete({
     }
   }
 ]).on('autocomplete:selected', function(event, suggestion, dataset) {
-  // console.log(suggestion, dataset);
   window.location = "/" + suggestion.uri.toLowerCase();
 });
