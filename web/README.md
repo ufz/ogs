@@ -8,6 +8,7 @@
 ## Requirements
 
 - Download [Hugo](https://gohugo.io/#action) and put it in your `PATH`
+- [Install Pandoc](https://pandoc.org/installing.html)
 
 ## Getting started
 
@@ -24,7 +25,7 @@ As you make modifications to the site it will be rebuild and the page in the bro
 By using `hugo new` you can create a new page with the correct frontmatter for that kind of page:
 
 ```bash
-hugo new --kind benchmark docs/benchmarks/elliptic/groundwater-flow-dirichlet.pandoc
+hugo new docs/benchmarks/elliptic/groundwater-flow-dirichlet.pandoc
 ```
 
 - `--kind` is one the `archetypes/*`
