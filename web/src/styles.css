@@ -29,16 +29,26 @@ nav a.active {
 /* -- Typography -- */
 h1, h2, h3, h4, h5, h6 {
   @apply .font-serif;
-  @apply .pt-2;
+  /*@apply .pt-2;*/
+  @apply .mt-6;
   @apply .mb-4;
 }
 
-p, ul {
-  @apply .leading-normal;
+h1 {
+  @apply .mt-0;
 }
 
 p, ul, pre {
   @apply .mb-4;
+}
+
+/* -- Navigation -- */
+.nav-item {
+  @apply .mr-8;
+
+  &:last-child {
+    @apply .mr-0;
+  }
 }
 
 /* -- OS selector -- */
