@@ -22,6 +22,8 @@ See [this PDF](../Circular_hole.pdf) for detailed problem description.
 
 ## Results and evaluation
 
-Result showing the displacement field and ten-fold overscaled distortion:
+Result showing the displacement field:
 
-{{< vis path="Mechanics/Linear/disc_with_hole_pcs_0_ts_4_t_1.000000.vtu" >}}
+![](../disc_with_hole_pcs_0_ts_4_t_1.000000.png)
+
+<!-- {{< vis path="Mechanics/Linear/disc_with_hole_pcs_0_ts_4_t_1.000000.vtu" >}} -->

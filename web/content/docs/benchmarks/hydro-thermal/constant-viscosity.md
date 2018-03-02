@@ -29,7 +29,7 @@ TODO 3 images
 - The further parameter specification can be found in the project file linked at the top of this page.
 - The steady state temperature is shown in the following on the right figure. The left figure shows the resulting temperature minus the initial gradient. The resulting temperatures are in good accordance with the FEFLOW results and with results from the OGS version < 6.
 
-{{< vis path="Parabolic/HT/ConstViscosity/ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000.000000.vtu" >}}
+<!-- {{< vis path="Parabolic/HT/ConstViscosity/ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000.000000.vtu" >}} -->
 
 ## Comparison with FEFlow solution
 

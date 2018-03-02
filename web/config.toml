@@ -2,10 +2,11 @@ languageCode = "en-us"
 title = "OpenGeoSys-6"
 theme = "ogs"
 baseURL = "http://localhost:1313"
-buildDrafts = true
+buildDrafts = false
 pygmentsstyle = 'friendly'
 enableGitInfo = true
 canonifyURLs = true
+staticDir = ["dist", "static"]
 
 [params]
   alert = "Documentation site under construction; more docs can be found at <a href='https://docs.opengeosys.org'>docs.opengeosys.org</a>."

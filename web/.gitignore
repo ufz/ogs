@@ -2,6 +2,7 @@ node_modules/
 .bundle/
 bin/
 public/
+dist/
 themes/ogs/static
 import/secret.py
 static/

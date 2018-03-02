@@ -7,8 +7,7 @@
   <meta name="description" content="OpenGeoSys">
   <meta name="author" content="OpenGeoSys Community">
 
-  <link rel="stylesheet" href="/css/main.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="/styles.css">
 
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
@@ -16,27 +15,40 @@
       TeX: { equationNumbers: { autoNumber: "AMS" } }
     });
   </script>
-  <script type="text/javascript" async
+  <script async
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
   </script>
-  <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
   <title>{{ .Title }}</title>
 </head>
 
-<body>
-  <div class="container">
-    <nav>
-      <a href="/" class="black b">benchmarks.opengeosys.org</a>
-      {{ $currentPage := . }}
-      {{ range .Site.Menus.main }}
-        <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent "main" . }} class="active"{{end}}>{{ .Name }}</a>
+<body class="font-sans leading-normal">
+  <header class="bg-light">
+    <div class="container mx-auto">
+      <nav class="flex border-b py-4">
+        <div class="w-1/4">
+          <a href="/" class="font-serif-caps">{{ .Site.Title }}</a>
+        </div>
+        {{ $currentPage := . }}
+        {{ $segments := split .RelPermalink "/" }}
+        {{ $section := index $segments 1 }}
+        <div class="w-1/2 flex justify-center">
+          {{ range .Site.Menus.main }}
+          {{ $url_trimmed := trim .URL "/" }}
+          <a href="{{ .URL }}" class="nav-item{{if (eq $section $url_trimmed) }} active{{end}}">{{ .Name }}</a>
+          {{ end }}
+        </div>
+        <div class="w-1/4">
+          {{ partial "site-search.html" . }}
+        </div>
+      </nav>
+      {{ if .Site.Params.alert }}
+      <div class="text-sm flex justify-center my-2 p-2 bg-blue-lightest text-blue-darker border-l-4 border-blue">
+        <i class="fas fa-exclamation-triangle"></i>&nbsp;
+        <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
+      </div>
       {{ end }}
-    </nav>
-    {{ if .Site.Params.alert }}
-    <div class="f6 flex items-center justify-center pa2 bg-lightest-blue navy">
-      <i class="fas fa-exclamation-triangle"></i>
-      <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
     </div>
-    {{ end }}
-    <div class="row">
+  </header>
+  <div class="container mx-auto py-2">

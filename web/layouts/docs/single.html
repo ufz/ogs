@@ -1,33 +1,37 @@
 {{ define "main" }}
-
-  <div class="col-xs-3">
+  <div class="flex">
+  <nav class="w-1/4">
     {{ $segments := split .RelPermalink "/" }}
     {{ $subsection := index $segments 2 }}
-    <h3>
-      <a href="/docs/">Docs</a> / <span class="orange">
+    <div class="text-xs font-serif-caps">
+      <a href="/docs/">Docs</a> / <span class="text-orange">
       {{ if eq $subsection "devguide"}}Developer Guide{{ end }}
       {{ if eq $subsection "benchmarks"}}Benchmarks{{ end }}
       {{ if eq $subsection "quickstart"}}Quickstart{{ end }}
+      {{ if eq $subsection "tools"}}Tools{{ end }}
       </span>
-    </h3>
-    <hr>
-    <ul class="sidenav">
+    </div>
+    <ul class="list-reset text-sm">
       {{ $currentPage := . }}
       {{ $currentMenu := index .Site.Menus $subsection }}
       {{ range $currentMenu }}
         {{ if .HasChildren }}
-          <li class="category">{{ .Name }}</li>
+          <li class="font-serif-caps tracking-wide mt-4">{{ .Name }}</li>
           {{ range .Children }}
-            <li><a href="{{ .URL }}"{{if $currentPage.IsMenuCurrent $subsection . }} class="active"{{end}}>{{ .Name }}</a></li>
+            <li class="m-1"><a href="{{ .URL }}"{{if $currentPage.IsMenuCurrent $subsection . }} class="active"{{end}}>{{ .Name }}</a></li>
           {{ end }}
         {{ end }}
       {{ end }}
     </ul>
-  </div>
-  <div class="col-xs-9">
-    <h1>{{ .Title }}</h1>
+  </nav>
+  <div class="w-3/4 ml-4">
+    <h1 class="font-serif-caps">{{ .Title }}</h1>
     {{ if or (eq $subsection "devguide") (eq $subsection "quickstart") }}
-    <div id="os-selector">Select OS: <a id="btn-win"><i class="fab fa-windows"></i> Windows</a> <a id="btn-linux"><i class="fab fa-linux"></i> Linux</a> <a id="btn-mac"><i class="fab fa-apple"></i> macOS</a></div>
+    <div class="invisible mb-4" id="os-selector">Select OS:
+      <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i> Windows</a>
+      <a class="btn mx-1" id="btn-linux"><i class="fab fa-linux"></i> Linux</a>
+      <a class="btn mx-1" id="btn-mac"><i class="fab fa-apple"></i> macOS</a>
+    </div>
     {{ end }}
 
     {{ .Content }}
@@ -37,51 +41,5 @@
     {{ partial "footer-nav.html" . }}
 
   </div>
-
-{{ end }}
-
-{{ define "footer" }}
-
-  {{ $segments := split .RelPermalink "/" }}
-  {{ $subsection := index $segments 2 }}
-  {{ if or (eq $subsection "devguide") (eq $subsection "quickstart") }}
-  <script>
-    $("#btn-win").click(function(){
-      $(".win").show();
-      $(".linux").hide();
-      $(".mac").hide();
-      $("#btn-win").addClass("active");
-      $("#btn-linux").removeClass("active");
-      $("#btn-mac").removeClass("active");
-    });
-
-    $("#btn-linux").click(function(){
-      $(".win").hide();
-      $(".linux").show();
-      $(".mac").hide();
-      $("#btn-win").removeClass("active");
-      $("#btn-linux").addClass("active");
-      $("#btn-mac").removeClass("active");
-    });
-
-    $("#btn-mac").click(function(){
-      $(".win").hide();
-      $(".linux").hide();
-      $(".mac").show();
-      $("#btn-win").removeClass("active");
-      $("#btn-linux").removeClass("active");
-      $("#btn-mac").addClass("active");
-    });
-
-    $( document ).ready(function() {
-      if ($(".win").length == 0) {
-        $("#os-selector").hide();
-      }
-      else {
-        $("#btn-win").click();
-      }
-    });
-  </script>
-  {{ end }}
-
+</div>
 {{ end }}

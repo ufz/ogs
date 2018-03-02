@@ -12,23 +12,23 @@ weight = 1005
 ## Build the project
 
 ::: {.win}
-# Step: Build with Visual Studio
+### Step: Build with Visual Studio
 
 Open the OGS.sln either by double-clicking it in the file browser or opening in Visual Studio via **File / Open / Project**.
 
 On the project explorer right-click on **ogs** or **ogs-gui** and choose **Set as startup project**. Then press <kbd>F5</kbd> or click the green arrow to build and start the project.
 
-## About Visual Studio startup projects
+#### About Visual Studio startup projects
 
 The reason for this is that you can have only one sub-project of your Visual Studio Solution activated for debugging (e.g. by pressing <kbd>F5</kbd>). Per default this is the first sub-project (in the case of a CMake-generated project this is `ALL_BUILD`). This must be manually set to a sub-project which generates an executable (a library sub-project cannot be started). And because this setting is stored in user specific project file it cannot be set via CMake.
 
-# How to work with CMake and Visual Studio
+### How to work with CMake and Visual Studio
 
 You can work normally in Visual Studio but remember that you have to make project changes in the `CMakeLists.txt`-file and not inside Visual Studio. So you can add a new source file within Visual Studios File menu but you have to add that file also to the CMake file. Every time you change a `CMakeLists.txt` and you build the project a new CMake run is automatically invoked. After that Visual Studio informs you that the project files were changed and it reloads them.
 :::
 
 ::: {.linux}
-# Option: Make
+### Option: Make
 
 To build with the `make` tool on the shell go to your previously created build directory and type `make`:
 
@@ -43,7 +43,7 @@ To speedup the compilation process append the number of cores of your cpu to the
 $ make -j 8
 ```
 
-# Option: Eclipse
+### Option: Eclipse
 
 To let CMake generate the Eclipse project files change the generator argument to the CMake run:
 
@@ -61,7 +61,7 @@ Start the Eclipse ide. From the menu choose **File / Import**. In the import dia
 :::
 
 ::: {.mac}
-# Option: Make
+### Option: Make
 
 To build with the `make` tool on the shell go to your previously created build directory and type `make`:
 
@@ -76,7 +76,7 @@ To speedup the compilation process append the number of cores of your cpu to the
 $ make -j 8
 ```
 
-# Option: Xcode
+### Option: Xcode
 
 To let CMake generate the Xcode project files change the generator argument on the CMake run:
 

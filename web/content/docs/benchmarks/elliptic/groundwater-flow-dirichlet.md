@@ -98,7 +98,9 @@ A major part of the output was produced by the linear equation solver (LIS in th
 
 ## Results and evaluation
 
-{{< vis path="Elliptic/square_1x1_GroundWaterFlow/square_1e2_pcs_0_ts_1_t_1.000000.vtu" >}}
+<!-- {{< vis path="Elliptic/square_1x1_GroundWaterFlow/square_1e2_pcs_0_ts_1_t_1.000000.vtu" >}} -->
+
+![](../square_1e2_pcs_0_ts_1_t_1.000000.png)
 
 The result, written in the `square_1e2_result.dat`, can be visualized with Paraview, for example, by including the values into the `square_1x1_quad_1e2.vtu` file in the `PointData` section:
 ```

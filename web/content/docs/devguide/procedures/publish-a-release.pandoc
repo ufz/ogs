@@ -1,13 +1,13 @@
----
-date: "2018-02-26T11:00:13+01:00"
-title: "Publish a release"
-author: "Lars Bilke"
-weight: 1051
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "Publish a release"
+author = "Lars Bilke"
+weight = 1051
 
-menu:
-  devguide:
-    parent: procedures
----
+[menu]
+  [menu.devguide]
+    parent = "procedures"
++++
 
 ## Write a changelog
 

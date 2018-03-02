@@ -29,18 +29,12 @@ pipeline {
               additionalBuildArgs '--pull'
             }
           }
-          environment {
-            CONTENTFUL_ACCESS_TOKEN = credentials('CONTENTFUL_ACCESS_TOKEN')
-            CONTENTFUL_OGS_SPACE_ID = credentials('CONTENTFUL_OGS_SPACE_ID')
-          }
           steps {
             script {
               // Install web dependencies
               sh("""
                 cd web
                 yarn --ignore-engines --non-interactive
-                node node_modules/node-sass/scripts/install.js
-                npm rebuild node-sass
                 sudo -H pip install -r requirements.txt
                 """.stripIndent())
 
@@ -58,7 +52,6 @@ pipeline {
               build { }
               build { target="tests" }
               build { target="ctest" }
-              build { target="web" }
               build { target="doc" }
               configure {
                 cmakeOptions =
@@ -81,16 +74,12 @@ pipeline {
                 dir('build') { deleteDir() }
             }
             success {
-              dir('web/public') { stash(name: 'web') }
               dir('build/docs') { stash(name: 'doxygen') }
               dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
               script {
                 publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                   keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
                   reportName: 'Doxygen'])
-                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
-                  keepAll: true, reportDir: 'web/public', reportFiles: 'index.html',
-                  reportName: 'Web'])
                 step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
                   messagesPattern: """
                     .*DOT_GRAPH_MAX_NODES.
@@ -292,6 +281,49 @@ pipeline {
             success {
                 archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
                 dir('build') { deleteDir() }
+            }
+          }
+        }
+        // **************************** Web ************************************
+        stage('Web') {
+          agent {
+            dockerfile {
+              filename 'Dockerfile.gcc.full'
+              dir 'scripts/docker'
+              label 'docker'
+              additionalBuildArgs '--pull'
+            }
+          }
+          environment {
+            CONTENTFUL_ACCESS_TOKEN = credentials('CONTENTFUL_ACCESS_TOKEN')
+            CONTENTFUL_OGS_SPACE_ID = credentials('CONTENTFUL_OGS_SPACE_ID')
+            ALGOLIA_WRITE_KEY = credentials('ALGOLIA_WRITE_KEY')
+          }
+          steps {
+            dir ('web') {
+              sh "yarn --ignore-engines --ignore-optional --non-interactive"
+              sh "sudo -H pip install -r requirements.txt"
+              sh "(cd import && python import.py)"
+              sh "pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json"
+              sh "node_modules/.bin/webpack -p"
+              script {
+                if (env.JOB_NAME == 'ufz/ogs/master') {
+                  sh "hugo --baseURL https://benchmarks.opengeosys.org"
+                } else {
+                  sh ("hugo --baseURL " + env.JOB_URL + "Web/")
+                  sh ("node_modules/.bin/hugo-algolia --toml -s")
+                }
+              }
+            }
+          }
+          post {
+            success {
+              dir('web/public') { stash(name: 'web') }
+              script {
+                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
+                  keepAll: true, reportDir: 'web/public', reportFiles: 'index.html',
+                  reportName: 'Web'])
+              }
             }
           }
         }

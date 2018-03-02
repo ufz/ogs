@@ -1,16 +1,13 @@
 {{ define "main" }}
-
-  <div class="col-xs-12">
     <h1>OpenGeoSys Documentation</h1>
     {{ .Content }}
-    <div class="row">
       <div class="flex flex-wrap">
       {{ range .Params.sections }}
-        <div class="w-third pa2 mv3">
-          <div class="pa2 ba br3 b--black-10">
+        <div class="w-1/3 p-2 my-3">
+          <div class="p-2">
             <div class="tc">
-              <h1 class="f4"><a href="/docs/{{ .slug }}">{{ .name }}</a></h1>
-              <hr class="mw3 bb bw1 b--black-10">
+              <h2 class="text-center"><a href="/docs/{{ .slug }}">{{ .name }}</a></h1>
+              <hr>
             </div>
             <p class="1h-copy measure center f6 black-70">{{ .text }}</p>
           </div>
@@ -18,7 +15,5 @@
 
       {{ end }}
       </div>
-    </div>
-  </div>
 
 {{ end }}

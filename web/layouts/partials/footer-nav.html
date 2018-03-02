@@ -3,37 +3,34 @@
 {{ $segments := split .RelPermalink "/" }}
 {{ $subsection := index $segments 2 }}
 
-<div class="footer-nav">
-  <div class="row between-xs">
-    <div class="col-xs-6">
-      {{ if .NextInSection }}
-        {{ $nextSubsection := index (split .NextInSection.RelPermalink "/") 2 }}
-        {{ if eq $nextSubsection $subsection }}
-          <a href="{{ .NextInSection.Permalink }}" title="{{ .NextInSection.Permalink }}">
-            <span>Previous</span>
-            <div class="nav-title">
+<div class="flex text-sm mb-4">
+  <div class="w-1/2">
+    {{ if .NextInSection }}
+      {{ $nextSubsection := index (split .NextInSection.RelPermalink "/") 2 }}
+      {{ if eq $nextSubsection $subsection }}
+          <div class="mb-1"><i class="fas fa-arrow-left"></i> Previous</div>
+          <div class="italic">
+            <a href="{{ .NextInSection.Permalink }}" title="{{ .NextInSection.Permalink }}">
               {{ .NextInSection.Title }}
-            </div>
-          </a>
-        {{ end }}
-      {{ end }}
-    </div>
-    <div class="col-xs-6">
-      {{ if .PrevInSection }}
-        {{ $prevSubsection := index (split .PrevInSection.RelPermalink "/") 2 }}
-        {{ if eq $prevSubsection $subsection }}
-          <span class="tr">
-            <a href="{{ .PrevInSection.Permalink }}" title="{{ .PrevInSection.Permalink }}">
-              <div>Next</div>
-              <div class="nav-titl  e">
-              {{ .PrevInSection.Title   }}
-            </div>
             </a>
-          </span>
-          {{ end }}
+          </div>
       {{ end }}
-    </div>
+    {{ end }}
+  </div>
+  <div class="w-1/2 text-right">
+    {{ if .PrevInSection }}
+      {{ $prevSubsection := index (split .PrevInSection.RelPermalink "/") 2 }}
+      {{ if eq $prevSubsection $subsection }}
+        <div class="tr">
+            <div class="mb-1">Next <i class="fas fa-arrow-right"></i></div>
+            <div class="italic">
+              <a href="{{ .PrevInSection.Permalink }}" title="{{ .PrevInSection.Permalink }}">
+                {{ .PrevInSection.Title   }}
+              </a>
+          </div>
+        </div>
+        {{ end }}
+    {{ end }}
   </div>
 </div>
-<br>
 {{ end }}

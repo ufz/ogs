@@ -1,175 +1,24 @@
 {
-  "name": "opengeosys.org",
-  "version": "0.0.1",
-  "main": "src/js/app.js",
-  "repository": "https://github.com/ufz/ogs",
-  "author": "Lars Bilke",
-  "license": "BSD-4-Clause",
-  "scripts": {
-    "clean": "gulp clean",
-    "gulp": "gulp",
-    "hugo": "hugo server --disableKinds=RSS",
-    "build": "webpack && gulp build && hugo",
-    "build:release": "webpack --env=production && gulp build && hugo",
-    "import": "cd import && python import.py",
-    "convert": "vtkDataConverter",
-    "webpack": "webpack",
-    "webpack-watch": "webpack --watch",
-    "webpack-production": "webpack --env=production"
-  },
-  "paths": {
-    "src": {
-      "base": "./src/",
-      "css": "./src/css/",
-      "fontello": "./src/fontello/",
-      "fonts": "./src/fonts/",
-      "json": "./src/json/",
-      "js": "./src/js/",
-      "img": "./src/img/",
-      "scss": "./src/scss/"
+    "private": true,
+    "scripts": {
+        "dev": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=webpack.config.js",
+        "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=webpack.config.js",
+        "prod": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=webpack.config.js",
+        "index": "hugo-algolia -toml",
+        "index-and-send": "hugo-algolia -toml -s"
     },
-    "dist": {
-      "base": "./static/",
-      "css": "./static/css/",
-      "js": "./static/js/",
-      "fonts": "./static/fonts/",
-      "img": "./static/img/"
-    },
-    "build": {
-      "base": "./build/",
-      "css": "./build/css/",
-      "fontello": "./build/fonts/fontello/",
-      "fonts": "./build/fonts/",
-      "js": "./build/js/",
-      "html": "./build/html/",
-      "img": "./build/img/"
-    },
-    "favicon": {
-      "src": "./src/img/favicon_src.png",
-      "dest": "./themes/ogs/static/img/site/",
-      "path": "/img/site/"
-    },
-    "scss": [],
-    "templates": "./craft/templates/"
-  },
-  "urls": {
-    "live": "https://opengeosys.org/",
-    "local": "https://opengeosys.dev/",
-    "critical": "https://opengeosys.org/"
-  },
-  "vars": {
-    "siteCssName": "site.combined.min.css",
-    "scssName": "main.scss",
-    "cssName": "main.css"
-  },
-  "globs": {
-    "distCss": [
-      "./node_modules/normalize.css/normalize.css",
-      "./node_modules/flexboxgrid/dist/flexboxgrid.min.css",
-      "./src/css/pandoc-highlighting.css"
-    ],
-    "img": [
-      "./public/img/"
-    ],
-    "components": [
-      "./src/components/**/*.vue"
-    ],
-    "fonts": [
-      "./build/fonts/fontello/font/*.{eot,ttf,woff,woff2}",
-      "./src/fonts/*.{eot,ttf,woff,woff2}"
-    ],
-    "critical": [
-      {
-        "url": "",
-        "template": "index"
-      },
-      {
-        "url": "blog/stop-using-htaccess-files-no-really",
-        "template": "blog/_entry"
-      },
-      {
-        "url": "blog/stop-using-htaccess-files-no-really",
-        "template": "blog/_amp_entry"
-      },
-      {
-        "url": "blog",
-        "template": "blog/index"
-      },
-      {
-        "url": "blog",
-        "template": "blog/amp_index"
-      },
-      {
-        "url": "wordpress",
-        "template": "wordpress"
-      },
-      {
-        "url": "404",
-        "template": "404"
-      }
-    ],
-    "distJs": [
-      "./build/js/*.js",
-      "./node_modules/lazysizes/lazysizes.min.js",
-      "./node_modules/lazysizes/plugins/bgset/ls.bgset.min.js",
-      "./node_modules/picturefill/dist/picturefill.min.js",
-      "./node_modules/vue/dist/vue.min.js",
-      "./node_modules/vue-resource/dist/vue-resource.min.js"
-    ],
-    "prismJs": [
-      "./node_modules/prismjs/prism.js",
-      "./node_modules/prismjs/components/prism-markup.js",
-      "./node_modules/prismjs/components/prism-apacheconf.js",
-      "./node_modules/prismjs/components/prism-css.js",
-      "./node_modules/prismjs/components/prism-json.js",
-      "./node_modules/prismjs/components/prism-twig.js",
-      "./node_modules/prismjs/components/prism-php.js",
-      "./node_modules/prismjs/components/prism-bash.js",
-      "./node_modules/prismjs/components/prism-javascript.js",
-      "./node_modules/prismjs/plugins/line-numbers/prism-line-numbers.min.js"
-    ],
-    "systemJs": [
-      "./node_modules/systemjs/dist/system-polyfills.js",
-      "./node_modules/systemjs/dist/system.js",
-      "./src/js/system-config.js"
-    ],
-    "babelJs": [
-      "./src/js/*.js"
-    ],
-    "inlineJs": [
-      "./node_modules/fg-loadcss/src/loadCSS.js",
-      "./node_modules/fg-loadcss/src/cssrelpreload.js",
-      "./node_modules/fontfaceobserver/fontfaceobserver.js",
-      "./src/js/asyncload-blog-fonts.js",
-      "./src/js/asyncload-site-fonts.js"
-    ],
-    "siteIcon": "./public/img/site/favicon.*"
-  },
-  "devDependencies": {
-    "babel-loader": "^7.1.2",
-    "del": "^3.0.0",
-    "fancy-log": "^1.3.0",
-    "flexboxgrid": "^6.3.1",
-    "gulp": "^3.9.1",
-    "gulp-add-src": "^0.2.0",
-    "gulp-autoprefixer": "^4.0.0",
-    "gulp-cached": "^1.1.1",
-    "gulp-clean-css": "^3.0.3",
-    "gulp-concat": "^2.6.1",
-    "gulp-load-plugins": "^1.4.0",
-    "gulp-plumber": "^1.1.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^3.1.0",
-    "gulp-size": "^2.1.0",
-    "kw-web-suite": "^3.1.1",
-    "merge-stream": "^1.0.1",
-    "node-sass": "^4.7.2",
-    "normalize.css": "^7.0.0",
-    "pygments-css": "^1.0.0",
-    "string-replace-loader": "^1.3.0",
-    "tachyons-sass": "^4.7.1",
-    "vtk.js": "^4.0.0",
-    "webpack": "^3.6.0",
-    "webpack-merge": "^4.1.0"
-  }
+    "devDependencies": {
+        "algoliasearch": "^3.24.11",
+        "autocomplete.js": "^0.29.0",
+        "cross-env": "^5.1",
+        "css-loader": "^0.28.7",
+        "extract-text-webpack-plugin": "^3.0.2",
+        "hugo-algolia": "^1.2.13",
+        "jquery": "^3.3.1",
+        "postcss": "^6.0.14",
+        "postcss-loader": "^2.0.8",
+        "style-loader": "^0.19.0",
+        "tailwindcss": "^0.4.0",
+        "webpack": "^3.8.1"
+    }
 }
