@@ -111,7 +111,7 @@ A last major part of the output was produced by the linear equation solver (LIS 
 
 ## Results and evaluation
 
-{{< vis path="Elliptic/square_1x1_GroundWaterFlow/square_1e2_neumann_pcs_0_ts_1_t_1.000000.vtu" >}}
+<!-- {{< vis path="Elliptic/square_1x1_GroundWaterFlow/square_1e2_neumann_pcs_0_ts_1_t_1.000000.vtu" >}} -->
 
 Compared to the analytical solution presented above the results are very good but in a single point:
 
