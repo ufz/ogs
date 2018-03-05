@@ -1,0 +1,29 @@
+{{ define "main" }}
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+
+    {{ $urlPre := "https://api.github.com" }}
+    {{ $releases := getJSON $urlPre "/repos/ufz/ogs/releases" }}
+    {{ $latest := index $releases 0 }}
+
+    <h2>Latest Release: {{ $latest.tag_name }}: {{ $latest.name }}</h2>
+    <div>
+      <p>Released on {{ dateFormat "Monday, Jan 2, 2006" $latest.published_at }}</p>
+      {{ $latest.body | markdownify }}
+    </div>
+
+    <h2>Older releases</h2>
+    <ul>
+
+      {{ range $index, $element := $releases }}
+        {{ if not (eq $index 0) }}
+          {{ if not .draft }}
+            <li><a href="{{ .html_url }}" target="_blank">{{ .tag_name }}: {{ .name }}</a>
+              <!-- <br><p>{{ .body | truncate 200 | markdownify }}</p> -->
+            </li>
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    </ul>
+
+{{ end }}

@@ -308,9 +308,9 @@ pipeline {
               sh "node_modules/.bin/webpack -p"
               script {
                 if (env.JOB_NAME == 'ufz/ogs/master') {
-                  sh "hugo --baseURL https://benchmarks.opengeosys.org"
+                  sh "hugo --ignoreCache --baseURL https://benchmarks.opengeosys.org"
                 } else {
-                  sh ("hugo --baseURL " + env.JOB_URL + "Web/")
+                  sh ("hugo --ignoreCache --baseURL " + env.JOB_URL + "Web/")
                   sh ("node_modules/.bin/hugo-algolia --toml -s")
                 }
               }

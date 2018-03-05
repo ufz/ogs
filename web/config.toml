@@ -26,10 +26,15 @@ news = "news"
   identifier = "books"
   weight = 2
 [[menu.main]]
+  name = "Releases"
+  url = "/releases/"
+  identifier = "releases"
+  weight = 3
+[[menu.main]]
   name = "Docs"
   url = "/docs/"
   identifier = "docs"
-  weight = 3
+  weight = 4
 
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]
