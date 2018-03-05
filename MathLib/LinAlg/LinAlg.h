@@ -98,11 +98,8 @@ double norm(MatrixOrVector const& x, MathLib::VecNormType type)
     }
 }
 
-template<typename Matrix>
-void finalizeAssembly(Matrix& /*A*/)
-{
-    // By default do nothing.
-}
+template <typename Matrix>
+void finalizeAssembly(Matrix& /*A*/);
 
 // Matrix and Vector
 
@@ -260,6 +257,7 @@ void matMultAdd(EigenMatrix const& A, EigenVector const& v1,
                 EigenVector const& v2, EigenVector& v3);
 
 void finalizeAssembly(EigenMatrix& A);
+void finalizeAssembly(EigenVector& A);
 
 } // namespace LinAlg
 

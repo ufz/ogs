@@ -68,6 +68,9 @@ GlobalVector const& CachedSecondaryVariable::evalFieldNoArgs() const
         1, *_extrapolatables, _t, *_current_solution, *_dof_table);
     auto const& nodal_values = _extrapolator.getNodalValues();
     MathLib::LinAlg::copy(nodal_values, _cached_nodal_values);
+
+    MathLib::LinAlg::setLocalAccessibleVector(
+        _cached_nodal_values);  // For access in the getValue()
     _needs_recomputation = false;
     return nodal_values;
 }
