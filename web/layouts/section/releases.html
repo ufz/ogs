@@ -6,15 +6,36 @@
     {{ $releases := getJSON $urlPre "/repos/ufz/ogs/releases" }}
     {{ $latest := index $releases 0 }}
 
-    <h2>Latest Release: {{ $latest.tag_name }}: {{ $latest.name }}</h2>
+    <div class="note float-right border-r-4 border-l-0 ml-2">
+    {{ $jenkinsBuildArtifacts := getJSON "https://jenkins.opengeosys.org/job/ufz/job/ogs/job/master/api/json?pretty=true&tree=builds[displayName,url,keepLog,artifacts[relativePath]]&xpath=/workflowJob/build[displayName='6.1.0']" }}
+    {{ $jenkinsReleaseArtifacts := where $jenkinsBuildArtifacts.builds "displayName" "==" $latest.tag_name }}
+    {{ range $index, $element := $jenkinsReleaseArtifacts }}
+      {{ $url := .url }}
+        <h3 class="border-b"><i class="fas fa-download"></i> Downloads</h3>
+        <ul class="list-reset text-sm">
+        {{ range .artifacts }}
+          <li><a href="{{ $url }}artifact/{{ .relativePath }}"><i class="fas fa-archive"></i> {{ strings.TrimLeft "build/ogs-" .relativePath }}</a></li>
+        {{ end }}
+        <li><a href="{{ $url }}"><i class="fab fa-jenkins"></i> Jenkins Build</a></li>
+        </ul>
+    {{ end }}
+      </div>
+
+    <h2>Current Release: {{ $latest.tag_name }}</h2>
     <div>
+      <i>{{ $latest.name }}</i>
       <p>Released on {{ dateFormat "Monday, Jan 2, 2006" $latest.published_at }}</p>
       {{ $latest.body | markdownify }}
     </div>
 
+    <!-- TODO
+      - Tag ogs-data as well and link to corresponding data zip
+      - Jenkins Link to Artifacts on older release
+      - Downloads here or on own page?
+    -->
+
     <h2>Older releases</h2>
     <ul>
-
       {{ range $index, $element := $releases }}
         {{ if not (eq $index 0) }}
           {{ if not .draft }}
