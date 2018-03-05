@@ -40,8 +40,12 @@ PhaseFieldProcess<DisplacementDim>::PhaseFieldProcess(
               use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
-    _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
+    // Disable nodal forces for monolithic scheme.
+    if (!_use_monolithic_scheme)
+    {
+        _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
+            mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
+    }
 }
 
 template <int DisplacementDim>
@@ -159,8 +163,6 @@ void PhaseFieldProcess<DisplacementDim>::initializeConcreteProcess(
         DisplacementDim, PhaseFieldLocalAssembler>(
         mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
-
-    _nodal_forces->resize(DisplacementDim * mesh.getNumberOfNodes());
 
     Base::_secondary_variables.addSecondaryVariable(
         "sigma_xx",
@@ -332,7 +334,7 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
         _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
         Jac, _coupled_solutions);
 
-    if (_use_monolithic_scheme || (_coupled_solutions->process_id == 0))
+    if (!_use_monolithic_scheme && (_coupled_solutions->process_id == 0))
     {
         b.copyValues(*_nodal_forces);
         std::transform(_nodal_forces->begin(), _nodal_forces->end(),
