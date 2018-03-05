@@ -21,6 +21,11 @@ news = "news"
   weight = 1
 # Menu entry defined in about.md
 [[menu.main]]
+  name = "Books"
+  url = "/books/"
+  identifier = "books"
+  weight = 2
+[[menu.main]]
   name = "Docs"
   url = "/docs/"
   identifier = "docs"
@@ -96,3 +101,14 @@ news = "news"
   name = "Basics"
   identifier = "basics"
   weight = 1
+
+# Tools sidebar top-level categories
+[[menu.tools]]
+  name = "Getting Started"
+  identifier = "getting-started"
+  weight = 1
+
+[[menu.tools]]
+  name = "Meshing"
+  identifier = "meshing"
+  weight = 2
