@@ -63,7 +63,32 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
 
         if (t_curr <= t_end)
         {
-            timesteps.resize(timesteps.size() + repeat, delta_t);
+            auto const new_size = timesteps.size() + repeat;
+            try
+            {
+                timesteps.resize(new_size, delta_t);
+            }
+            catch (std::length_error const& e)
+            {
+                OGS_FATAL(
+                    "Resize of the time steps vector failed for the requested "
+                    "new size %u. Probably there is not enough memory (%g GiB "
+                    "requested).\n"
+                    "Thrown exception: %s",
+                    new_size,
+                    new_size * sizeof(double) / 1024. / 1024. / 1024.,
+                    e.what());
+            }
+            catch (std::bad_alloc const& e)
+            {
+                OGS_FATAL(
+                    "Resize of the time steps vector failed for the requested "
+                    "new size %u. Probably there is not enough memory (%g GiB "
+                    "requested).\n"
+                    "Thrown exception: %s",
+                    new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
+                    e.what());
+            }
 
             t_curr += repeat * delta_t;
         }
@@ -74,7 +99,32 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     {
         auto const repeat =
             static_cast<std::size_t>(std::ceil((t_end - t_curr) / delta_t));
-        timesteps.resize(timesteps.size() + repeat, delta_t);
+        auto const new_size = timesteps.size() + repeat;
+        try
+        {
+            timesteps.resize(new_size, delta_t);
+        }
+        catch (std::length_error const& e)
+        {
+            OGS_FATAL(
+                "Resize of the time steps vector failed for the requested new "
+                "size %u. Probably there is not enough memory (%g GiB "
+                "requested).\n"
+                "Thrown exception: %s",
+                new_size,
+                new_size * sizeof(double) / 1024. / 1024. / 1024.,
+                e.what());
+        }
+        catch (std::bad_alloc const& e)
+        {
+            OGS_FATAL(
+                "Resize of the time steps vector failed for the requested new "
+                "size %u. Probably there is not enough memory (%g GiB "
+                "requested).\n"
+                "Thrown exception: %s",
+                new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
+                e.what());
+        }
     }
 
     return std::make_unique<FixedTimeStepping>(t_initial, t_end, timesteps);
