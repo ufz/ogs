@@ -14,6 +14,7 @@
 #include <cmath>
 #include <vector>
 
+#include "BaseLib/Error.h"
 #include "NumLib/TimeStepping/TimeStep.h"
 
 namespace NumLib
@@ -31,12 +32,35 @@ public:
     }
 
     TimeStepAlgorithm(const double t0, const double t_end, const double dt)
-        : _t_initial(t0),
-          _t_end(t_end),
-          _ts_prev(t0),
-          _ts_current(t0),
-          _dt_vector(static_cast<std::size_t>(std::ceil((t_end - t0) / dt)), dt)
+        : _t_initial(t0), _t_end(t_end), _ts_prev(t0), _ts_current(t0)
     {
+        auto const new_size =
+            static_cast<std::size_t>(std::ceil((t_end - t0) / dt));
+        try
+        {
+            _dt_vector = std::vector<double>(new_size, dt);
+        }
+        catch (std::length_error const& e)
+        {
+            OGS_FATAL(
+                "Resize of the time steps vector failed for the requested new "
+                "size %u. Probably there is not enough memory (%g GiB "
+                "requested).\n"
+                "Thrown exception: %s",
+                new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
+                e.what());
+        }
+        catch (std::bad_alloc const& e)
+        {
+            OGS_FATAL(
+                "Allocation of the time steps vector failed for the requested "
+                "size %u. Probably there is not enough memory (%d GiB "
+                "requested).\n"
+                "Thrown exception: %s",
+                new_size,
+                new_size * sizeof(double) / 1024. / 1024. / 1024.,
+                e.what());
+        }
     }
 
     TimeStepAlgorithm(const double t0, const double t_end,
