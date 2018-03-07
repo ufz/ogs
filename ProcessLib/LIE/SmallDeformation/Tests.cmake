@@ -77,7 +77,7 @@ AddTest(
     DIFF_DATA
     expected_single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu displacement displacement 1e-16 0
     expected_single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 0
-    expected_single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu aperture aperture 1e-16 1e-16
+    expected_single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu single_joint_displacement_controlled_pcs_0_ts_10_t_1.000000.vtu aperture aperture 1e-16 0
 )
 
 AddTest(
