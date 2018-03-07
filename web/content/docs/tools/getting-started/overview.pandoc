@@ -11,7 +11,7 @@ aliases = [ "/docs/tools/" ]
     parent = "getting-started"
 +++
 
-Here is an overview of the currently available tools, that might help you to construct your OpenGeoSys model. You'll find examples and applications of the tools. Choose the appropriate tool to the left. Ready to use binaries can be downloaded on the [OGS download website](https://docs.opengeosys.org/download). The second possibility to obtain the tools is to check out OGS sources and compile the tools.
+Here is an overview of the currently available tools, that might help you to construct your OpenGeoSys model. You'll find examples and applications of the tools. Choose the appropriate tool to the left. Ready to use binaries can be downloaded on the [Releases](/releases)-page. The second possibility to obtain the tools is to check out OGS sources and compile the tools.
 
 Feel free to get in touch with us if you have any issues with any tool.
 
@@ -22,41 +22,3 @@ At the beginning of the modeling often external data have to be converted into O
 This data can be used to create meshes approximating geometrically the domain of interest. Despite some simple mesh creator tools OGS offers some functionality to analyze meshes. Furthermore there are some tools for cleanup the mesh, adding a layer at the top or moving the mesh.
 
 The next important step creating a simulation model is the parametrization of the model, i.e., material parameters, boundary conditions and source terms have to be assigned to the model.
-
-## Data conversion tools
-
-- GocadSGridReader (not yet documented)
-- Shape file converter (not yet documented)
-- OGSFileConverter (not yet documented)
-- NodeReordering (not yet documented)
-- FEFLOW2OGS (not yet documented)
-- GMSH2OGS (not yet documented)
-- TIN2VTK (not yet documented)
-- VTK2TIN (not yet documented)
-- VTK2OGS (not yet documented)
-
-## Mesh tools
-
-- [generateStructuredMesh](https://docs.opengeosys.org/docs/tools/meshing/structured-mesh-generation)
-- GMSH interface (GUI, not yet documented)
-- TetGen interface (GUI, not yet documented)
-- checkMesh (not yet documented)
-- queryMesh (not yet documented)
-- {entry:300:link}
-- reviseMesh (not yet documented)
-- [removeMeshElements](https://docs.opengeosys.org/docs/tools/meshing/remove-mesh-elements)
-- moveMeshNodes (not yet documented)
-- [Extract surface](https://docs.opengeosys.org/docs/tools/meshing/extract-surface)
-
-## Model preparation tools
-
-- editMaterialIDs (not yet documented)
-- [set material properties in polygonal region](https://docs.opengeosys.org/docs/tools/model-preparation/set-properties-in-polygonal-region)
-- [map geometric objects to the surface of a mesh](https://docs.opengeosys.org/docs/tools/model-preparation/map-geometric-object-to-the-surface-of-a-mesh)
-- [create boundary conditions along a polyline](https://docs.opengeosys.org/docs/tools/model-preparation/create-boundary-conditions-along-a-polyline)
-- [Workflow: Compute surface node IDs in polygonal region](https://docs.opengeosys.org/docs/tools/model-preparation/computesurfacenodeidsinpolygonalregion)
-- generateMatPropsFromMatID (not yet documented)
-- [Compute Node Areas From Surface Mesh](https://docs.opengeosys.org/docs/tools/model-preparation/computenodeareasfromsurfacemesh)
-- ? ConvertPolylineToVerticalPolygon ?
-- ? CreateNeumannBCsOnSurface ?
-- [Workflow: Create a simple parallel model](https://docs.opengeosys.org/docs/tools/model-preparation/create-a-simple-parallel-model)

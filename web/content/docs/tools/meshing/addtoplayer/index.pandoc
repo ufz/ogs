@@ -37,4 +37,6 @@ AddTopLayer -i quad.vtu -o quad_with_new_top_layer.vtu -t 1
 
 ## Application
 
-The tool was used to add a "soil" layer to the hydro-geological model of the Unstrut catchment within the INFLUINS project, see reference [GO2OGS].
+The tool was used to add a "soil" layer to the hydro-geological model of the Unstrut catchment within the INFLUINS project:
+
+{{< bib id="Fischer:2015" >}}

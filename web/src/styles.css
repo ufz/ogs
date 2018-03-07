@@ -103,6 +103,14 @@ hr {
   @apply .border;
 }
 
+a.anchorjs-link {
+  @apply .border-0;
+}
+
+table {
+  @apply .w-full;
+}
+
 /* ------------------------------- Components ------------------------------- */
 .btn {
   @apply text-grey-darkest;

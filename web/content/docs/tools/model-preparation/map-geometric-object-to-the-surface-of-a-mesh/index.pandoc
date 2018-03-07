@@ -1,0 +1,52 @@
++++
+date = "2018-03-07T15:56:57+01:00"
+title = "Map geometric object to the surface of a mesh"
+author = "Thomas Fischer"
+
+[menu]
+  [menu.tools]
+    parent = "model-preparation"
++++
+
+## General
+
+The tool ```MapGeometryToMeshSurface``` adjusts the z-coordinates of geometric points from a given geometry file ```my_geometry.gml``` such that they are located on the surface of a given mesh ```my_mesh.vtu``` and returns an updated geometry file ```my_mapped_geometry.gml```.
+
+*MW: does the tool add points if necessary?*
+
+*MW: what happens, if the geometry is spreading above the boundary of the mesh or not even close to the mesh?*
+
+## Usage
+
+```
+MapGeometryToMeshSurface -m [my_mesh.vtu] -i [my_geometry.gml] -o [my_mapped_geometry.gml]
+```
+
+## Simple application example
+
+Often, the mesh resolution and the resolution of the geometric objects like polylines are different.
+
+*MW: so, what happens then?*
+
+![](MapGeometryToMeshSurface-before.png)
+![](MapGeometryToMeshSurface-result.png)
+
+In the first figure such a situation is depicted. In the second figure the result of the application of the algorithm is shown.	
+
+Usage for the example:
+```
+MapGeometryToMeshSurface -m SubsurfaceMesh.vtu -i TestPolyline.gml -o TestMappedPolyline.gml
+```
+
+## References
+
+Karsten Rink, Lars Bilke, Olaf Kolditz: Visualisation Strategies for Environmental Modelling Data. Environmental Earth Sciences, 2014.
+DOI:10.1007/s12665-013-2970-2 [download](http://link.springer.com/article/10.1007%2Fs12665-013-2970-2)
+
+*MW: the citation is not used in the description*
+
+::: {.note}
+### Example Files
+[SubsufaceMesh.vtu](SubsufaceMesh.vtu)  
+[TestPolyline.gml](TestPolyline.gml)  
+:::

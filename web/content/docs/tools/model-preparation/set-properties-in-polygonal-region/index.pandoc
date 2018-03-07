@@ -1,0 +1,54 @@
++++
+date = "2018-03-07T15:56:57+01:00"
+title = "Set Properties in Polygonal Region"
+author = "Thomas Fischer"
+
+[menu]
+  [menu.tools]
+    parent = "model-preparation"
++++
+
+## General
+
+The tool `ResetPropertiesInPolygonalRegion` changes the property values of all elements of a mesh `mesh` in which at least one node of the element lies within the cylindrical volume defined through a given polygon `polygon_name` within the geometry `geometry` to a new value. 
+
+The new value must be of one of the types, either integer (`new_int_value`), character (`new_character_value`), or boolean (`new_boolean_value`). The new value must fit the the chosen property type of `name_of_property`. 
+
+The polygon must be located within a plane. A node is located in the cylindrical volume iff (ie. if and only if) the node's orthogonal projection to the plane of the polygon lies in the polygon, ie. the plane can be defined in any arbitrary direction in 3d space.
+
+In combination with a threshold filter the tool can also be used to cut out some region of the mesh. The tool can be also used in combination with the tool [removeMeshElements]({{< relref "remove-mesh-elements" >}}).
+
+The tool writes a new mesh `modified_mesh`.
+
+## Usage
+
+```
+ResetPropertiesInPolygonalRegion -m [mesh] -n [name_of_property, default MaterialIDs] -i [new_int_value, optional] -c [new_character_value, optional] -b [new_boolean_value, optional] -g [geometry] -p [polygon_name] -o [modified_mesh.vtu]
+```
+
+## Example
+
+![](ResetPropertiesInPolygonalRegion-before.png)
+![](ResetPropertiesInPolygonalRegion-result.png)
+
+The first figure shows the input mesh with the material ID 0 (red). Furthermore, the input polygon is sketched.
+
+The second figure shows the result. The material ids for the mesh cells have at least one node within the polygonal region changed to the value 1 and are colored now in blue.
+
+Example usage:
+```
+ResetPropertiesInPolygonalRegion -m TestCube.vtu -n ValidCells -c B -g TestPolylines.gml -p Back -o TestCube-BackPolylinePropertyChange.vtu
+```
+Creates a new property "ValidCells" and sets the value for the property of elements in the polygonal region "Back" to "B".
+
+## Application
+
+This workflow was successful used in the INFLUINS project cutting out the Unstrut catchment from a 3d geological structure model:
+
+{{< bib id="Fischer:2015" >}}
+
+::: {.note}
+### Example Files
+[TestCube.vtu](TestCube.vtu)  
+[TestPolylines.gml](TestPolylines.gml)
+:::
