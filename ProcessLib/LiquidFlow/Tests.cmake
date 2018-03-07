@@ -45,6 +45,18 @@ AddTest(
     DIFF_DATA
     axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure 1e-8 1e-8
 )
+AddTest(
+    NAME LiquidFlow_BuildupTest
+    PATH Parabolic/LiquidFlow/BuildupTest
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS buildup_test.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    standard_solution_buildup_test_pcs_0_ts_107_t_424800.000000.vtu buildup_test_pcs_0_ts_107_t_424800.000000.vtu pressure pressure 1e-12 0.0
+	standard_solution_buildup_test_pcs_0_ts_211_t_720000.000000.vtu buildup_test_pcs_0_ts_211_t_720000.000000.vtu pressure pressure 1e-12 0.0
+)
 
 AddTest(
     NAME LARGE_LiquidFlow_Anisotropic_GravityDriven3D
