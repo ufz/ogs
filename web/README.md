@@ -28,7 +28,6 @@ By using `hugo new` you can create a new page with the correct frontmatter for t
 hugo new docs/benchmarks/elliptic/groundwater-flow-dirichlet.pandoc
 ```
 
-- `--kind` is one the `archetypes/*`
 - path is relative to `content/` and determines the URL of the page
 
 Or you can simply create a new `.pandoc`-file in the correct location and fill it by yourself.
@@ -103,6 +102,10 @@ Run `npm run convert` to get a list of possible arguments.
 #### Equations
 
 Equations can be set with typical LaTeX syntax by using [MathJax](https://www.mathjax.org/). Blocks are defined by `$$` at the beginning and `$$` at the end of the block. Inline math uses one `$` as the delimiter. For more usage instructions see the [MathJax LaTeX help](http://docs.mathjax.org/en/latest/tex.html).
+
+#### Files and Downloads
+
+Files belonging directly to a page (e.g. images shown on that same page) should be added directly (they are stored by git lfs). Other stuff such as linked PDF files, book chapter input files should be uploaded elsewhere and linked to. You can ask @bilke to host these files for you (on Azure cloud storage).
 
 #### Bibliography references
 
