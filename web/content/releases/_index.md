@@ -1,3 +1,5 @@
 +++
 Title = "Releases"
+
+aliases = ["/downloads"]
 +++
