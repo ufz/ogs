@@ -346,6 +346,8 @@ void Process::preTimestep(GlobalVector const& x, const double t,
 
     MathLib::LinAlg::setLocalAccessibleVector(x);
     preTimestepConcreteProcess(x, t, delta_t, process_id);
+
+    _boundary_conditions[process_id].preTimestep(t, x);
 }
 
 void Process::postTimestep(GlobalVector const& x, int const process_id)

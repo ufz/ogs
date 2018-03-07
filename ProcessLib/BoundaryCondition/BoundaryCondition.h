@@ -62,6 +62,11 @@ public:
         // Therefore there is nothing to do here.
     }
 
+    virtual void preTimestep(const double /*t*/, GlobalVector const& /*x*/)
+    {
+        // A hook added for solution dependent dirichlet
+    }
+
     virtual ~BoundaryCondition() = default;
 };
 
@@ -126,6 +131,16 @@ protected:
         const unsigned integration_order, const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
             parameters);
+
+    virtual std::unique_ptr<BoundaryCondition>
+    createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
+        const BoundaryConditionConfig& config,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
+        const MeshLib::Mesh& mesh, const int variable_id,
+        const unsigned /*integration_order*/,
+        const unsigned /*shapefunction_order*/,
+        const std::vector<
+            std::unique_ptr<ProcessLib::ParameterBase>>& /*parameters*/);
 
     static std::vector<MeshLib::Element*> getClonedElements(
         MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,

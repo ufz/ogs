@@ -165,11 +165,15 @@ ProcessVariable::createBoundaryConditions(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     std::vector<std::unique_ptr<BoundaryCondition>> bcs;
+    bcs.reserve(_bc_configs.size());
 
     for (auto& config : _bc_configs)
-        bcs.emplace_back(_bc_builder->createBoundaryCondition(
+    {
+        auto bc = _bc_builder->createBoundaryCondition(
             config, dof_table, _mesh, variable_id, integration_order,
-            _shapefunction_order, parameters));
+            _shapefunction_order, parameters);
+        bcs.push_back(std::move(bc));
+    }
 
     return bcs;
 }

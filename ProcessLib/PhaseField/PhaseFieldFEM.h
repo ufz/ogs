@@ -46,7 +46,7 @@ struct IntegrationPointData final
 
     typename BMatricesType::KelvinVectorType sigma_tensile, sigma_compressive,
         sigma_real_prev, sigma_real;
-    double strain_energy_tensile;
+    double strain_energy_tensile, elastic_energy;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
@@ -81,7 +81,7 @@ struct IntegrationPointData final
             .calculateDegradedStress(t, x_position, eps, strain_energy_tensile,
                                      sigma_tensile, sigma_compressive,
                                      C_tensile, C_compressive, sigma_real,
-                                     degradation);
+                                     degradation, elastic_energy);
     }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
@@ -101,18 +101,12 @@ class PhaseFieldLocalAssembler : public PhaseFieldLocalAssemblerInterface
 public:
     using ShapeMatricesType =
         ShapeMatrixPolicyType<ShapeFunction, DisplacementDim>;
-
     // Types for displacement.
     // (Higher order elements = ShapeFunction).
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
     using BMatricesType = BMatrixPolicyType<ShapeFunction, DisplacementDim>;
 
     using NodalForceVectorType = typename BMatricesType::NodalForceVectorType;
-    using RhsVector = typename ShapeMatricesType::template VectorType<
-        ShapeFunction::NPOINTS + ShapeFunction::NPOINTS * DisplacementDim>;
-    using JacobianMatrix = typename ShapeMatricesType::template MatrixType<
-        ShapeFunction::NPOINTS + ShapeFunction::NPOINTS * DisplacementDim,
-        ShapeFunction::NPOINTS + ShapeFunction::NPOINTS * DisplacementDim>;
 
     PhaseFieldLocalAssembler(PhaseFieldLocalAssembler const&) = delete;
     PhaseFieldLocalAssembler(PhaseFieldLocalAssembler&&) = delete;
@@ -166,6 +160,8 @@ public:
             ip_data.history_variable_prev =
                 _process_data.history_field(0, x_position)[0];
             ip_data.sigma_real.setZero(kelvin_vector_size);
+            ip_data.strain_energy_tensile = 0.0;
+            ip_data.elastic_energy = 0.0;
 
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;
@@ -191,180 +187,14 @@ public:
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
-                              std::vector<double>& local_Jac_data) override
-    {
-        auto const local_matrix_size = local_x.size();
-        assert(local_matrix_size == phasefield_size + displacement_size);
+                              std::vector<double>& local_Jac_data) override;
 
-        auto d = Eigen::Map<typename ShapeMatricesType::template VectorType<
-            phasefield_size> const>(local_x.data() + phasefield_index,
-                                    phasefield_size);
-
-        auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
-            displacement_size> const>(local_x.data() + displacement_index,
-                                      displacement_size);
-
-        auto d_dot = Eigen::Map<typename ShapeMatricesType::template VectorType<
-            phasefield_size> const>(local_xdot.data() + phasefield_index,
-                                    phasefield_size);
-
-        auto local_Jac = MathLib::createZeroedMatrix<JacobianMatrix>(
-            local_Jac_data, local_matrix_size, local_matrix_size);
-
-        auto local_rhs = MathLib::createZeroedVector<RhsVector>(
-            local_rhs_data, local_matrix_size);
-
-        typename ShapeMatricesType::template MatrixType<displacement_size,
-                                                        phasefield_size>
-            Kud;
-        Kud.setZero(displacement_size, phasefield_size);
-
-        typename ShapeMatricesType::template MatrixType<phasefield_size,
-                                                        displacement_size>
-            Kdu;
-        Kdu.setZero(phasefield_size, displacement_size);
-
-        typename ShapeMatricesType::NodalMatrixType Kdd;
-        Kdd.setZero(phasefield_size, phasefield_size);
-
-        typename ShapeMatricesType::NodalMatrixType Ddd;
-        Ddd.setZero(phasefield_size, phasefield_size);
-
-        double const& dt = _process_data.dt;
-
-        SpatialPosition x_position;
-        x_position.setElementID(_element.getID());
-
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            x_position.setIntegrationPoint(ip);
-            auto const& w = _ip_data[ip].integration_weight;
-            auto const& N = _ip_data[ip].N;
-            auto const& dNdx = _ip_data[ip].dNdx;
-
-            auto const x_coord =
-                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                    _element, N);
-            auto const& B = LinearBMatrix::computeBMatrix<
-                DisplacementDim, ShapeFunction::NPOINTS,
-                typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
-                                                     _is_axially_symmetric);
-
-            auto const& C_tensile = _ip_data[ip].C_tensile;
-            auto const& C_compressive = _ip_data[ip].C_compressive;
-
-            auto& eps = _ip_data[ip].eps;
-            auto const& strain_energy_tensile =
-                _ip_data[ip].strain_energy_tensile;
-            auto const& sigma_tensile = _ip_data[ip].sigma_tensile;
-
-            auto& history_variable = _ip_data[ip].history_variable;
-            auto& history_variable_prev = _ip_data[ip].history_variable_prev;
-
-            auto const& sigma_real = _ip_data[ip].sigma_real;
-
-            // Kdd_1 defines one term which both used in Kdd and local_rhs for
-            // phase field
-            double const gc = _process_data.crack_resistance(t, x_position)[0];
-            double const ls =
-                _process_data.crack_length_scale(t, x_position)[0];
-            typename ShapeMatricesType::NodalMatrixType const Kdd_1 =
-                dNdx.transpose() * 2 * gc * ls * dNdx;
-
-            //
-            // displacement equation, displacement part
-            //
-            double const k = _process_data.residual_stiffness(t, x_position)[0];
-            double const d_ip = N.dot(d);
-            double const degradation = d_ip * d_ip * (1 - k) + k;
-            eps.noalias() = B * u;
-            _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
-                                                    degradation);
-
-            local_Jac
-                .template block<displacement_size, displacement_size>(
-                    displacement_index, displacement_index)
-                .noalias() += B.transpose() *
-                              (degradation * C_tensile + C_compressive) * B * w;
-
-            typename ShapeMatricesType::template MatrixType<DisplacementDim,
-                                                            displacement_size>
-                N_u = ShapeMatricesType::template MatrixType<
-                    DisplacementDim,
-                    displacement_size>::Zero(DisplacementDim,
-                                             displacement_size);
-
-            for (int i = 0; i < DisplacementDim; ++i)
-                N_u.template block<1, displacement_size / DisplacementDim>(
-                       i, i * displacement_size / DisplacementDim)
-                    .noalias() = N;
-
-            auto const rho_sr = _process_data.solid_density(t, x_position)[0];
-            auto const& b = _process_data.specific_body_force;
-            local_rhs
-                .template block<displacement_size, 1>(displacement_index, 0)
-                .noalias() -=
-                (B.transpose() * sigma_real - N_u.transpose() * rho_sr * b) * w;
-
-            //
-            // displacement equation, phasefield part
-            //
-
-            // Temporary storage used in the Kud and for potential reuse in the
-            // Kdu matrix.
-            auto const Kud_ip_contribution =
-                (B.transpose() * 2 * d_ip * sigma_tensile * N * w).eval();
-
-            Kud.noalias() += Kud_ip_contribution;
-
-            if (history_variable_prev < strain_energy_tensile)
-            {
-                history_variable = strain_energy_tensile;
-                Kdu.noalias() += Kud_ip_contribution.transpose();
-            }
-            else
-            {
-                history_variable = history_variable_prev;
-            }
-
-            //
-            // phasefield equation, phasefield part.
-            //
-            Kdd.noalias() += (Kdd_1 + N.transpose() * 2 * history_variable * N +
-                              N.transpose() * 0.5 * gc / ls * N) *
-                             w;
-            double const M =
-                _process_data.kinetic_coefficient(t, x_position)[0];
-            double const d_dot_ip = N.dot(d_dot);
-
-            local_rhs.template segment<phasefield_size>(phasefield_index)
-                .noalias() -= (N.transpose() * d_dot_ip / M + Kdd_1 * d +
-                               N.transpose() * d_ip * 2 * history_variable -
-                               N.transpose() * 0.5 * gc / ls * (1 - d_ip)) *
-                              w;
-
-            Ddd.noalias() += N.transpose() / M * N * w;
-        }
-        // displacement equation, phasefield part
-        local_Jac
-            .template block<displacement_size, phasefield_size>(
-                displacement_index, phasefield_index)
-            .noalias() += Kud;
-
-        // phasefield equation, phasefield part.
-        local_Jac
-            .template block<phasefield_size, phasefield_size>(phasefield_index,
-                                                              phasefield_index)
-            .noalias() += Kdd + Ddd / dt;
-
-        // phasefield equation, displacement part.
-        local_Jac
-            .template block<phasefield_size, displacement_size>(
-                phasefield_index, displacement_index)
-            .noalias() += Kdu;
-    }
+    void assembleWithJacobianForStaggeredScheme(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions) override;
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/,
@@ -379,6 +209,25 @@ public:
         }
     }
 
+    void computeCrackIntegral(
+        std::size_t mesh_item_id,
+        std::vector<
+            std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+            dof_tables,
+        GlobalVector const& x, double const t, double& crack_volume,
+        bool const use_monolithic_scheme,
+        CoupledSolutionsForStaggeredScheme const* const cpl_xs) override;
+
+    void computeEnergy(
+        std::size_t mesh_item_id,
+        std::vector<
+            std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+            dof_tables,
+        GlobalVector const& x, double const t, double& elastic_energy,
+        double& surface_energy, double& pressure_work,
+        bool const use_monolithic_scheme,
+        CoupledSolutionsForStaggeredScheme const* const cpl_xs) override;
+
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
@@ -388,152 +237,72 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
-    std::vector<double> const& getIntPtSigmaXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtSigma(cache, 0);
-    }
-
-    std::vector<double> const& getIntPtSigmaYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtSigma(cache, 1);
-    }
-
-    std::vector<double> const& getIntPtSigmaZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtSigma(cache, 2);
-    }
-
-    std::vector<double> const& getIntPtSigmaXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtSigma(cache, 3);
-    }
-
-    std::vector<double> const& getIntPtSigmaYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtSigma(cache, 4);
-    }
-
-    std::vector<double> const& getIntPtSigmaXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtSigma(cache, 5);
-    }
-
-    std::vector<double> const& getIntPtEpsilonXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 0);
-    }
-
-    std::vector<double> const& getIntPtEpsilonYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 1);
-    }
-
-    std::vector<double> const& getIntPtEpsilonZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 2);
-    }
-
-    std::vector<double> const& getIntPtEpsilonXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 3);
-    }
-
-    std::vector<double> const& getIntPtEpsilonYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtEpsilon(cache, 4);
-    }
-
-    std::vector<double> const& getIntPtEpsilonXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtEpsilon(cache, 5);
-    }
-
 private:
-    std::vector<double> const& getIntPtSigma(std::vector<double>& cache,
-                                             std::size_t const component) const
+    std::vector<double> const& getIntPtSigma(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& cache) const override
     {
-        cache.clear();
-        cache.reserve(_ip_data.size());
+        static const int kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        auto const num_intpts = _ip_data.size();
 
-        for (auto const& ip_data : _ip_data)
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, kelvin_vector_size, num_intpts);
+
+        for (unsigned ip = 0; ip < num_intpts; ++ip)
         {
-            if (component < 3)  // xx, yy, zz components
-                cache.push_back(ip_data.sigma_real[component]);
-            else  // mixed xy, yz, xz components
-                cache.push_back(ip_data.sigma_real[component] / std::sqrt(2));
+            auto const& sigma = _ip_data[ip].sigma_real;
+            cache_mat.col(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
         }
 
         return cache;
     }
 
-    std::vector<double> const& getIntPtEpsilon(
-        std::vector<double>& cache, std::size_t const component) const
+    virtual std::vector<double> const& getIntPtEpsilon(
+        const double /*t*/,
+        GlobalVector const& /*current_solution*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::vector<double>& cache) const override
     {
-        cache.clear();
-        cache.reserve(_ip_data.size());
+        auto const kelvin_vector_size =
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value;
+        auto const num_intpts = _ip_data.size();
 
-        for (auto const& ip_data : _ip_data)
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, kelvin_vector_size, num_intpts);
+
+        for (unsigned ip = 0; ip < num_intpts; ++ip)
         {
-            if (component < 3)  // xx, yy, zz components
-                cache.push_back(ip_data.eps[component]);
-            else  // mixed xy, yz, xz components
-                cache.push_back(ip_data.eps[component] / std::sqrt(2));
+            auto const& eps = _ip_data[ip].eps;
+            cache_mat.col(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
         }
 
         return cache;
     }
+
+    void assembleWithJacobianPhaseFiledEquations(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions);
+
+    void assembleWithJacobianForDeformationEquations(
+        double const t, std::vector<double> const& local_xdot,
+        const double dxdot_dx, const double dx_dx,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+        LocalCoupledSolutions const& local_coupled_solutions);
 
     PhaseFieldProcessData<DisplacementDim>& _process_data;
 
@@ -557,3 +326,5 @@ private:
 
 }  // namespace PhaseField
 }  // namespace ProcessLib
+
+#include "PhaseFieldFEM-impl.h"
