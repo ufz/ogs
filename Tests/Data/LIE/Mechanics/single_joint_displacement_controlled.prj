@@ -26,6 +26,10 @@
                 <cohesion>cohesion</cohesion>
                 <penalty_aperture_cutoff>1e-7</penalty_aperture_cutoff>
                 <tension_cutoff>1</tension_cutoff>
+                <nonlinear_solver>
+                    <maximum_iterations>1000</maximum_iterations>
+                    <error_tolerance>1e-12</error_tolerance>
+                </nonlinear_solver>
             </fracture_model>
             <fracture_properties>
                 <material_id>1</material_id>
