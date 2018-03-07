@@ -44,10 +44,18 @@ p, ul, pre {
 
 /* -- Navigation -- */
 .nav-item {
-  @apply .mr-8;
+  @apply .mr-4;
+  @apply .text-sm;
 
   &:last-child {
     @apply .mr-0;
+  }
+}
+
+@screen md {
+  .nav-item {
+    @apply .mr-8;
+    @apply .text-base;
   }
 }
 
