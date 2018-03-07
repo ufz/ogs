@@ -174,7 +174,7 @@
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
-                    <each_steps> 1 </each_steps>
+                    <each_steps> 107 </each_steps>
                 </pair>
             </timesteps>
         </output>

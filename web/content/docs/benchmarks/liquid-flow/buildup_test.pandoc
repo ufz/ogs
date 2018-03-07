@@ -32,7 +32,7 @@ Model Setup {#model-setup .unnumbered .unnumbered}
 This benchmark represents a scenario in which the well had been
 producing geothermal brine for $118\ \mathrm{h}$ at a rate of
 $78\ t/\mathrm{h}$ and was then shut in for a buildup test. At the given
-reservoir temperature (260^\circ$C) and pressure ($47\ \mathrm{bar}$), the
+reservoir temperature (260$^\circ$C) and pressure ($47\ \mathrm{bar}$), the
 density and viscosity of the water and steam mixture were calculated as
 $\rho=78.68\ \mathrm{kg/m^3}$ and
 $\mu=1.295\times10^{-4}\ \mathrm{Pa\ s}$. The compressibility of the
