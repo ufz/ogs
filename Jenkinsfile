@@ -302,8 +302,6 @@ pipeline {
           steps {
             dir ('web') {
               sh "yarn --ignore-engines --ignore-optional --non-interactive"
-              sh "sudo -H pip install -r requirements.txt"
-              sh "(cd import && python import.py)"
               sh "pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json"
               sh "node_modules/.bin/webpack -p"
               script {

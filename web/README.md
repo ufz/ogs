@@ -2,7 +2,6 @@
 
 - Development related content such as developer guide, benchmark documentation, tools description, ... will be simple Markdown files in e.g. [/web/content/docs](https://github.com/bilke/ogs/blob/web-hugo/web/content/docs/benchmarks/elliptic/groundwater-flow-neumann.md)
 - You can preview documentation locally with [Hugo](https://gohugo.io) – a static site generator
-- Other content such as news, blog posts, articles can be authored in a graphical environment and is not part of the code but hosted with a content management system (currently a prototypical implementation uses [Contenful](https://www.contentful.com/) but maybe we can even stick to the current system [Craft CMS](https://craftcms.com/) once version 3 is released). This will lower barriers for non-technical people to contribute to the site. The content gets imported automatically on Jenkins or locally (see [web/README.md](https://github.com/bilke/ogs/blob/web-hugo/web/README.md) for details)
 - You can [mark](https://github.com/bilke/ogs/blob/web-hugo/ProcessLib/GroundwaterFlow/CMakeLists.txt#L80) benchmarks to be automatically and interactively visualized [in the documentation](https://github.com/bilke/ogs/commit/d4fc7d94a3821a6b4483a1d7aeaabd6ee391c449#diff-2f5b1ac2a759aa09b2d3f5cc1ece45ceR108) inside your [browser](https://dev.opengeosys.org/docs/benchmarks/elliptic/groundwater-flow-neumann/#results-and-evaluation) via [vtk.js](https://kitware.github.io/vtk-js/)! 🍻 CURRENTLY DISABLED!
 
 ## Requirements
@@ -131,7 +130,6 @@ This json-file is then used by the shortcode.
 ### Optional requirements
 
 - Install [Yarn](https://yarnpkg.com/en/docs/install); for downloading required JavaScript & CSS development packages
-- Install Python and `pip`; for getting content from [Contentful](https://contentful.com)
 - Install [ParaView](http://www.paraview.org/download/); for converting VTK output files to vtk.js-format for interactive web visualization, check if `pvpython` is either in the `PATH` or ParaView is installed in `/Applications/` on macOS or `/usr/local/opt/paraview` on Linux. CURRENTLY DISABLED!
 
 ### CSS & JavaScript development
@@ -143,14 +141,6 @@ This json-file is then used by the shortcode.
     - Re-run CMake and build the `ctest`-target, *OPTIONAL* for benchmark visualizations
   - Run `npm run build` to build the site which is created in `public/`
 
-### Importing CMS content (Optional)
-
-- Install Python packages with `pip install -r requirements.txt`
-- In `ogs/web/import` rename `secret_example.py` to `secret.py` and fill in `accessToken`.
-- In `ogs/web/import` run `python import.py`
-
-This fetches articles from the CMS to e.g. `ogs/web/data/news.json`.
-
 ### Update search index
 
 ```bash
@@ -160,7 +150,6 @@ ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
 ### Used components
 
 - [Hugo](https://gothugo.com) - Web site generator
-- [Contenful](https://www.contentful.com/) -  API-based CMS for news, articles, ..
 - [Tailwind](https://tailwindcss.com/docs/what-is-tailwind) - CSS framework
 - [vtk.js](https://kitware.github.io/vtk-js/) - 3D Visualizations, CURRENTLY DISABLED!
 - [webpack](https://webpack.github.io/) - Packaging JavaScript & CSS

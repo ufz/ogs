@@ -11,15 +11,7 @@ staticDir = ["dist", "static"]
 [params]
   alert = ""
 
-[taxonomies]
-news = "news"
-
 # Main menu
-[[menu.main]]
-  name = "News"
-  url = "/news/"
-  weight = 1
-# Menu entry defined in about.md
 [[menu.main]]
   name = "Books"
   url = "/books/"
