@@ -8,36 +8,36 @@
  *
  */
 
-#include "Condition.h"
+#include "FemCondition.h"
 
 namespace DataHolderLib
 {
 
-Condition::Condition(std::string const process_var, std::string const param_name, ConditionType type)
+FemCondition::FemCondition(std::string const process_var, std::string const param_name, ConditionType type)
 : _type(type), _process_var(process_var), _param_name(param_name)
 {};
 
-Condition::Condition(Condition const& c)
+FemCondition::FemCondition(FemCondition const& c)
 : _base_type(c.getBaseObjType()), _type(c.getType()),
   _process_var(c.getProcessVarName()), _param_name(c.getParamName()),
   _base_obj_name(c.getBaseObjName()), _obj_name(c.getObjName())
 {}
 
-void Condition::setMesh(std::string const mesh_name)
+void FemCondition::setMesh(std::string const mesh_name)
 {
     _base_type = BaseObjType::MESH;
     _base_obj_name = mesh_name;
     _obj_name = "";
 }
 
-void Condition::setGeoObject(std::string geo_name, std::string obj_name)
+void FemCondition::setGeoObject(std::string geo_name, std::string obj_name)
 {
     _base_type = BaseObjType::GEOMETRY;
     _base_obj_name = geo_name;
     _obj_name = obj_name;
 }
 
-ConditionType Condition::convertStringToType(std::string const& str)
+ConditionType FemCondition::convertStringToType(std::string const& str)
 {
     if ( str == "Dirichlet")
         return ConditionType::DIRICHLET;
@@ -53,7 +53,7 @@ ConditionType Condition::convertStringToType(std::string const& str)
     return ConditionType::NONE;
 }
 
-std::string Condition::convertTypeToString(ConditionType type)
+std::string FemCondition::convertTypeToString(ConditionType type)
 {
     if (type == ConditionType::DIRICHLET)
         return "Dirichlet";

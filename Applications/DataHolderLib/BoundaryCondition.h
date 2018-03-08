@@ -9,16 +9,16 @@
  */
 
 #pragma once
-#include "Applications/DataHolderLib/Condition.h"
+#include "Applications/DataHolderLib/FemCondition.h"
 
 namespace DataHolderLib
 {
 
-class BoundaryCondition : public DataHolderLib::Condition
+class BoundaryCondition : public DataHolderLib::FemCondition
 {
 public:
     BoundaryCondition(std::string const process_var, std::string const param_name, ConditionType type)
-    : Condition(process_var, param_name, type)
+    : FemCondition(process_var, param_name, type)
     {}
 
 private:

@@ -38,14 +38,14 @@ enum class ParameterType
     FUNCTION
 };
 
-class Condition
+class FemCondition
 {
 public:
-    Condition(std::string const process_var, std::string const param_name, ConditionType type);
+    FemCondition(std::string const process_var, std::string const param_name, ConditionType type);
 
-    Condition(Condition const& c);
+    FemCondition(FemCondition const& c);
 
-    ~Condition() {};
+    ~FemCondition() {};
 
     /// Returns the name of the associated process variable
     std::string const getProcessVarName() const { return _process_var; }
