@@ -28,12 +28,12 @@ text = "Manual for the graphical user interface for OpenGeoSys, the Data Explore
 
 [[sections]]
 name = "Source code documentation"
-url = "http://doxygen.opengeosys.org/"
+url = "https://doxygen.opengeosys.org/"
 text = "The OGS source code documentation is automatically generated right from the code itself via Doxygen and is nice reference while coding."
 
 [[sections]]
 name = "Styleguide"
-url = "http://ufz.github.io/styleguide/cppguide.xml"
+url = "https://ufz.github.io/styleguide/cppguide.xml"
 text = "OpenGeoSys C++ Style Guide"
 
 [[sections]]
