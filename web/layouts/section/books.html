@@ -1,0 +1,16 @@
+{{ define "main" }}
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+    {{ range .Data.Pages }}
+      <div class="mb-8 border-b">
+        <div class="w-1/6 float-left mr-4 mb-2">
+          <img src="/books/{{ .Params.book_cover }}" alt="Cover">
+        </div>
+        <p class="text-sm text-grey-dark mb-1">{{ .Params.book_type }}</p>
+        <a class="text-black font-bold text-xl mb-2" href="{{ .Permalink }}">{{ .Title }}</a> <span class="text-sm text-grey-dark">{{ .Params.subtitle }}</span>
+        <p class="text-grey-darker text-sm">{{ .Content | truncate 500 }}</p>
+        <p><a href="{{.Permalink}}">Show details <i class="fas fa-arrow-right"></i></a></p>
+        <div style="clear: both; font-size: 0;">&nbsp;</div>
+      </div>
+    {{ end }}
+{{ end }}

@@ -1,0 +1,52 @@
++++
+date = "2018-03-07T15:59:57+01:00"
+title = "Remove Mesh Elements"
+author = "Thomas Fischer"
+
+[menu]
+  [menu.tools]
+    parent = "meshing"
++++
+
+## General
+
+The tool `removeMeshElements` removes those elements from a given input mesh that fulfills a user specified criterion. The resulting mesh will be written to the specified output file. The user can choose between 4 different removal criterions:
+ 1. Remove elements by assigned properties, for instance material ids.
+ 2. Remove elements by element type, for instance remove line elements.
+ 3. Remove elements that have zero volume.
+ 4. Remove elements by axis aligned bounding box criterion.
+
+One possible application is to cut out a smaller mesh out of a bigger one by marking the inner/outer region using the tool [SetPropertiesInPolygonalRegion]({{< relref "set-properties-in-polygonal-region" >}}).
+
+Another application is to cut out patches of a (top) surface (tool [ExtractSurface]({{< relref "extract-surface" >}})) for assigning boundary conditions.
+
+## Usage
+
+```
+removeMeshElements -i <input-mesh> -o <output-mesh>
+	[-n <property_name>] [--int-property-value <number value>] ...
+	[--element-type <element type>] ...
+	[--zero-volume]
+    [--x-min <value>] [--x-max <value>] [--y-min <value>] [--y-max <value>] [--z-min <value>] [--z-max <value>]
+```
+Each particular line with optional arguments refere to one of the different removal criterions mentioned in the general section.
+
+## Examples
+
+![](ExampleRemoveElements-Input.png)
+![](ExampleRemoveElements-Output.png)
+
+The left figure above is the result of the repeated application of [SetPropertiesInPolygonalRegion]({{< relref "set-properties-in-polygonal-region" >}}). It contains material ids 0 (red), 1 (yellow), 2 (turquoise) and 3 (blue). On the right figure the result of the following command line input is depicted: 
+```
+removeMeshElements -i TestCube-ResetPropertiesInPolygonalRegion.vtu -o TestCube-removeMeshElements.vtu -n MaterialIDs --int-property-value 1 --int-property-value 2 --int-property-value 3
+```
+
+## Applications
+
+The tool was used to cut the Unstrut catchment out of the Thuringian syncline model and to remove some geological units not necessary for the modeling within the INFLUINS project, see reference [GO2OGS].
+
+::: {.note}
+### Example Files
+[TestCube-removeMeshElements.vtu](TestCube-removeMeshElements.vtu)  
+[TestCube-ResetPropertiesInPolygonalRegion](TestCube-ResetPropertiesInPolygonalRegion.vtu)  
+:::

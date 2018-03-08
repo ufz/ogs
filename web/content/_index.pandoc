@@ -1,14 +1,9 @@
 +++
-title = "Documentation Site Under Construction"
+title = "OpenGeoSys"
 author = "Lars Bilke"
 date = "2017-01-13T14:24:23+01:00"
 +++
 
-For the moment this site contains just the following documentations for [OpenGeoSys-6](https://github.com/ufz/ogs6):
+OpenGeoSys (OGS) is a scientific [open source project](https://github.com/ufz/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. OGS is implemented in C++, it is object-oriented with an focus on the numerical solution of coupled multi-field problems (multi-physics). Parallel versions of OGS are available relying on both MPI and OpenMP concepts. Application areas of OGS are currently $CO_2$ sequestration, geothermal energy, water resources management, hydrology and waste deposition. OGS is comprised of the THMC-simulator (simply referred to as *OGS*) and a visualization tool (*Data Explorer*).
 
-- [Quickstart](./docs/quickstart)
-- [Developer Guide](./docs/devguide)
-- [Benchmarks](./docs/benchmarks)
-- [Tools](./docs/tools)
-
-See [docs.opengeosys.org](https://docs.opengeosys.org/docs) for more documentation!
+OGS is developed by the *OpenGeoSys Community*.

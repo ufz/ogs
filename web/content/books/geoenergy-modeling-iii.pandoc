@@ -1,0 +1,30 @@
++++
+title = "Geoenergy Modeling III"
+subtitle = "Enhanced Geothermal Systems"
+date = 2018-03-07T15:13:52+01:00
+author = "Lars Bilke"
+
+book_type = "Tutorial"
+book_cover = "geoenergy-modeling-iii.png"
+
++++
+
+[<i class="fas fa-file-pdf"></i> Download this book as PDF](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-III/GeoenergyModelingIII-EGS.pdf) 
+
+This tutorial presents the introduction of the open-source software OpenGeoSys for enhanced geothermal reservoir modeling. There are various commercial software tools available to solve complex scientific questions in geothermics. This book will introduce the user to an open source numerical software code for geothermal modeling which can even be adapted and extended based on the needs of the researcher. 
+
+The book explains basic mathematical equations and numerical methods to modeling flow and heat transport in fractured porous rock formations. In order to help readers gain a system-level understanding of the necessary analysis, the authors include two benchmark examples and two case studies of real deep geothermal test-sites located in Germany and France. 
+
+::: {.clearfix}
+:::
+
+::: {.note}
+### <i class="fas fa-download"></i> Downloads
+- [<i class="fas fa-file-archive"></i> Input Files Linux](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-III/GeoEnergyModelingIII_input-files_unix.zip)  
+- [<i class="fas fa-file-archive"></i> Input Files Windows](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-III/GeoEnergyModelingIII_input-files_windows.zip)  
+:::
+
+::: {.note}
+### <i class="fas fa-book"></i> Bibliography
+{{< bib id="Watanabe:2016" >}}
+:::

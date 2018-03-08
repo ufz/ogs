@@ -2,8 +2,9 @@
 	<p>
 		{{ $id := .Get "id" }}
 		{{ range where .Site.Data.bibliography "id" $id }}
-			{{ range .author }}
-				{{ .family }}, {{ .given}}
+      {{ $len := (len .author) }}
+			{{ range $index, $element := .author }}
+				{{ $element.family }}, {{ $element.given}} {{ if ne (add $index 1) $len }}and{{ end }}
 			{{ end }}
 			({{ range .issued }}
 				{{ range . }}
@@ -18,6 +19,8 @@
 			{{ if isset . "issue" }}{{ .issue }},{{ end }}
 			{{ if isset . "volume" }}vol. {{ .volume }},{{ end }}
 			{{ if isset . "page" }}p. {{ .page }},{{ end }}
+      {{ if isset . "DOI" }}DOI: <a href="https://doi.org/{{ .DOI }}">{{ .DOI }}</a>,{{ end }}
+      {{ if isset . "ISBN" }}ISBN: {{ .ISBN }},{{ end }}
 			{{ .publisher }}
 		{{ end }}
 	</p>

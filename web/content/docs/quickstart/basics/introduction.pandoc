@@ -13,7 +13,7 @@ aliases = [ "/docs/quickstart/" ]
 
 ## Download
 
-Download the latest release of OpenGeoSys from the [Download](https://docs.opengeosys.org/download)-page. Be sure to pick the correct file for your operating system.
+Download the latest release of OpenGeoSys from the [Releases](/releases)-page. Be sure to pick the correct file for your operating system.
 
 ## Installation
 

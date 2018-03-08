@@ -1,0 +1,79 @@
+{{ define "main" }}
+    <!-- <h1>{{ .Title }}</h1> -->
+    {{ .Content }}
+
+    {{ $urlPre := "https://api.github.com" }}
+    {{ $releases := getJSON $urlPre "/repos/ufz/ogs/releases" }}
+    {{ $latest := getJSON $urlPre "/repos/ufz/ogs/releases/latest" }}
+    {{ $statuses := getJSON $urlPre "/repos/ufz/ogs/commits/" $latest.tag_name "/statuses" }}
+
+    <div class="note float-right border-r-4 border-l-0 ml-2">
+      <h3 class="border-b"><i class="fas fa-download"></i> Downloads</h3>
+      <ul class="list-reset text-sm">
+      {{ range $latest.assets }}
+        <li><a href="{{ .browser_download_url }}"><i class="fas fa-archive"></i>&nbsp;
+          {{ strings.TrimLeft (print "ogs-" $latest.tag_name) .name }}</a></li>
+      {{ end }}
+      <li>
+        <a href="https://github.com/ufz/ogs-data/archive/{{ $latest.tag_name }}.zip">
+          <i class="fas fa-file"></i> Benchmark Input Files
+        </a>
+      </li>
+      </ul>
+      <h3 class="border-b">Links</h3>
+      <ul class="list-reset text-sm">
+        {{ range first 1 (where (where $statuses ".state" "success") ".context" "continuous-integration/jenkins/branch") }}
+          <li><a href="{{ .target_url }}"><i class="fab fa-jenkins"></i> Jenkins Build</a></li>
+        {{ end }}
+
+        <li><a href="{{ $latest.html_url }}"><i class="fab fa-github"></i> GitHub Release</a></li>
+      </ul>
+    </div>
+
+    <h2 class="mt-0">Current Release: {{ $latest.tag_name }}</h2>
+    <div>
+        {{ if not (eq $latest.tag_name $latest.name)}}<i>{{ $latest.name }}</i>{{ end }}
+      <p>Released on {{ dateFormat "Monday, Jan 2, 2006" $latest.published_at }}</p>
+      {{ $latest.body | markdownify }}
+    </div>
+
+    <h2><i class="fas fa-wrench"></i> Latest development version</h2>
+    {{ $head := getJSON $urlPre "/repos/ufz/ogs/git/refs/heads/master" }}
+    {{ $head_commit := getJSON $urlPre "/repos/ufz/ogs/commits/" $head.object.sha }}
+    {{ $head_statuses := getJSON $urlPre "/repos/ufz/ogs/commits/" $head.object.sha "/statuses" }}
+
+    <p>
+      Here you can find the latest version of OpenGeoSys. But be warned: although this version was
+      successfully tested by the continuous integration system it may be unstable or incomplete...
+    </p>
+
+    <div class="note">
+      <h3>Commit Info</h3>
+      <p>{{ dateFormat "Monday, Jan 2, 2006" $head_commit.commit.author.date }} by
+        <a href="{{$head_commit.author.html_url }}">{{ $head_commit.commit.author.name }}</a>:
+      </p>
+      <p class="max-w-md"><i>{{ $head_commit.commit.message }}</i> <a href="{{ $head_commit.html_url }}"><i class="fab fa-github"></i> GitHub Commit Link</a></p>
+      <p>
+          {{ range first 1 (where $head_statuses ".context" "continuous-integration/jenkins/branch") }}
+          <a href="{{ .target_url }}"><i class="fab fa-jenkins"></i> Jenkins Build with Downloads</a> <span class="text-sm text-grey-dark">(Select the <i>Artifacts</i>-tab!)</span>
+          {{ end }}
+      </p>
+    </div>
+
+    <h2>Older releases</h2>
+    <ul>
+      {{ range $index, $element := $releases }}
+        {{ if not (eq $index 0) }}
+          {{ if and (not .draft) (not .prerelease) }}
+            <li>
+              <a href="{{ .html_url }}" target="_blank">
+                  <i class="fab fa-github"></i> {{ .tag_name }}
+              </a>
+              {{ if not (eq .tag_name .name)}}: {{ .name }}{{ end }}
+            </li>
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    </ul>
+
+{{ end }}

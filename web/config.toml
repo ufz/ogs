@@ -9,22 +9,24 @@ canonifyURLs = true
 staticDir = ["dist", "static"]
 
 [params]
-  alert = "Documentation site under construction; more docs can be found at <a href='https://docs.opengeosys.org'>docs.opengeosys.org</a>."
-
-[taxonomies]
-news = "news"
+  alert = ""
 
 # Main menu
 [[menu.main]]
-  name = "News"
-  url = "/news/"
-  weight = 1
-# Menu entry defined in about.md
+  name = "Books"
+  url = "/books/"
+  identifier = "books"
+  weight = 2
+[[menu.main]]
+  name = "Releases"
+  url = "/releases/"
+  identifier = "releases"
+  weight = 3
 [[menu.main]]
   name = "Docs"
   url = "/docs/"
   identifier = "docs"
-  weight = 3
+  weight = 4
 
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]
@@ -96,3 +98,24 @@ news = "news"
   name = "Basics"
   identifier = "basics"
   weight = 1
+
+# Tools sidebar top-level categories
+[[menu.tools]]
+  name = "Getting Started"
+  identifier = "getting-started"
+  weight = 1
+
+[[menu.tools]]
+  name = "Meshing"
+  identifier = "meshing"
+  weight = 2
+
+[[menu.tools]]
+  name = "Model Preparation"
+  identifier = "model-preparation"
+  weight = 3
+
+[[menu.tools]]
+  name = "Workflows"
+  identifier = "workflows"
+  weight = 4

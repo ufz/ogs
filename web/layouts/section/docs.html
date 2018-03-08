@@ -3,17 +3,19 @@
     {{ .Content }}
       <div class="flex flex-wrap">
       {{ range .Params.sections }}
-        <div class="w-1/3 p-2 my-3">
-          <div class="p-2">
-            <div class="tc">
-              <h2 class="text-center"><a href="/docs/{{ .slug }}">{{ .name }}</a></h1>
-              <hr>
-            </div>
-            <p class="1h-copy measure center f6 black-70">{{ .text }}</p>
-          </div>
+        <div class="w-full sm:w-1/2 lg:w-1/3 p-3 my-3">
+          <h2 class="mb-2 text-center text-base md:text-lg lg:text-xl xl:text-2xl">
+            <a href="{{ .url }}">
+              {{ .name }}
+              {{ $url_first_char := substr .url 0 1 }}
+              {{ if not (eq $url_first_char "/") }}
+                <i class="text-xs align-top fas fa-external-link-alt"></i>
+              {{ end }}
+            </a>
+          </h2>
+          <hr>
+          <p class="text-grey-darker">{{ .text }}</p>
         </div>
-
       {{ end }}
       </div>
-
 {{ end }}

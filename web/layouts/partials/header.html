@@ -27,13 +27,13 @@
   <header class="bg-light">
     <div class="container mx-auto">
       <nav class="flex border-b py-4">
-        <div class="w-1/4">
+        <div class="hidden sm:block w-1/4">
           <a href="/" class="font-serif-caps">{{ .Site.Title }}</a>
         </div>
         {{ $currentPage := . }}
         {{ $segments := split .RelPermalink "/" }}
         {{ $section := index $segments 1 }}
-        <div class="w-1/2 flex justify-center">
+        <div class="w-3/4 sm:w-1/2 flex justify-center">
           {{ range .Site.Menus.main }}
           {{ $url_trimmed := trim .URL "/" }}
           <a href="{{ .URL }}" class="nav-item{{if (eq $section $url_trimmed) }} active{{end}}">{{ .Name }}</a>

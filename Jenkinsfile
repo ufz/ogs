@@ -302,16 +302,14 @@ pipeline {
           steps {
             dir ('web') {
               sh "yarn --ignore-engines --ignore-optional --non-interactive"
-              sh "sudo -H pip install -r requirements.txt"
-              sh "(cd import && python import.py)"
               sh "pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json"
               sh "node_modules/.bin/webpack -p"
               script {
                 if (env.JOB_NAME == 'ufz/ogs/master') {
-                  sh "hugo --baseURL https://benchmarks.opengeosys.org"
-                } else {
-                  sh ("hugo --baseURL " + env.JOB_URL + "Web/")
+                  sh "hugo --ignoreCache --baseURL https://benchmarks.opengeosys.org"
                   sh ("node_modules/.bin/hugo-algolia --toml -s")
+                } else {
+                  sh ("hugo --ignoreCache --baseURL " + env.JOB_URL + "Web/")
                 }
               }
             }

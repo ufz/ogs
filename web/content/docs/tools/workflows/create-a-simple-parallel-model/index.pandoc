@@ -1,0 +1,66 @@
++++
+date = "2018-03-07T15:56:57+01:00"
+title = "Create a simple parallel model"
+author = "Thomas Fischer"
+
+[menu]
+  [menu.tools]
+    parent = "workflows"
++++
+
+## Software Modules and Compilation on EVE
+
+- Modules to load:
+  - `module load gcc/4.8.1-3`
+  - `module load boost`
+  - `module load vtk/7.1.0_openmpi-1.8.4-1`
+- Checkout the OGS-6 source code
+- Build utils with metis enable to 
+  - Create the binary for generation of the structured mesh
+  - Cretae the binary for the partioner
+  - `cmake <path_to_source> -DOGS_BUILD_METIS=ON -DOGS_BUILD_UTILS=ON && make`
+- Build OGS for parallel usage:
+  - `module load petsc/3.7.2_maint_petsc_maint_3.7.2_gcc_openmpi_1.8.4-2`
+  - `cmake <path_to_source> -DOGS_USE_PETSC=ON && make -j`
+
+
+## Create a structured mesh
+
+In order to discretize the domain of a unit cube do
+`bin/generateStructuredMesh -o cube_1x1x1_hex_axbxc.vtu -e hex --lx 1 --ly 1 --lz 1 --nx a --ny b --nz c`
+where `a`, `b`, and `c` should be choosen according to the needs. 
+
+|  `a`  |  `b`  |  `c`  | #cells in 10^6 | compute cores | success |
+|  ---: |  ---: |  ---: | ---: | ---: | :---: |
+|  150  |  150  |  150  | ~ 3.38 | 20 | yes |
+|  175  |  175  |  175  | ~ 5.36 | 20 | yes |
+|  190  |  190  |  190  | ~ 6.86 | 20 | yes |
+|  196  |  196  |  196  | ~ 7.59 | 20 | no |
+|  216  |  216  |  216  | ~ 10.08 | 40 | yes |
+|  236  |  236  |  236  | ~ 13.14 | 40 | yes |
+|  292  |  292  |  292  | ~ 24.90 | 80 | yes |
+|  368  |  368  |  368  | ~ 49.84 | 160 | yes |
+|  422  |  422  |  422  | ~ 75.15 | 240 | yes |
+|  465  |  465  |  465  | ~ 100.54 | 320 | |
+
+## Partition the mesh
+
+Convert vtu mesh into metis input mesh
+```bin/partmesh -i cube_1x1x1_hex_axbxc.vtu --ogs2metis```
+=> results in a file cube_1x1x1_hex_axbxc.mesh
+```bin/partmesh -n number_of_partitions -m -i cube_1x1x1_hex_axbxc```
+
+## Deciding the part to benchmark
+
+- Usually, for solving elliptic problems (for instance, the steady state groundwater flow) the time for the linear solver is the main part of the simulation.
+- The hydro-thermal process can be used for testing of the IO capabilities.
+- In the mechanics process large parts of the computational resources are spent for the assembly.
+
+## ToDo
+
+- script to create models and partitions
+- submit script to cluster
+- Metrics to take into account could be
+  - weak scaling (problem size increases as the number of processors increases)
+  - strong scaling (fixed problem size, use increasing number of processors => speedup and parallel efficiency)
+  - fixed number of processors, increasing problem size
