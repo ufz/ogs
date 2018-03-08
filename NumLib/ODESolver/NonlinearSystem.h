@@ -71,6 +71,10 @@ public:
     virtual void applyKnownSolutionsNewton(
         GlobalMatrix& Jac, GlobalVector& res,
         GlobalVector& minus_delta_x) const = 0;
+
+    virtual void updateConstraints(GlobalVector& /*lower*/,
+                                   GlobalVector& /*upper*/,
+                                   int /*process_id*/) = 0;
 };
 
 /*! A System of nonlinear equations to be solved with the Picard fixpoint

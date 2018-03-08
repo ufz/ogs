@@ -66,6 +66,10 @@ public:
     {
         return nullptr;  // by default there are no known solutions
     }
+
+    virtual void updateConstraints(GlobalVector& /*lower*/,
+                                   GlobalVector& /*upper*/,
+                                   int const /*process_id*/){};
 };
 
 /*! Interface for a first-order implicit quasi-linear ODE.

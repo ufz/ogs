@@ -156,6 +156,29 @@ NonlinearSolverStatus PETScNonlinearSolver::solve(
     SNESSetJacobian(_snes_solver, J_snes.getRawMatrix(), J_snes.getRawMatrix(),
                     updateJacobian, &petsc_context);
 
+    std::unique_ptr<GlobalVector> xl = nullptr;
+    std::unique_ptr<GlobalVector> xu = nullptr;
+
+    SNESType snes_type;
+    SNESGetType(_snes_solver, &snes_type);
+    if ((std::strcmp(snes_type, SNESVINEWTONRSLS) == 0) ||
+        (std::strcmp(snes_type, SNESVINEWTONSSLS) == 0))
+    {
+        // Set optional constraints via callback.
+        DBUG("PETScNonlinearSolver: set constraints");
+        xl = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+            system->getMatrixSpecifications(process_id));
+        xu = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+            system->getMatrixSpecifications(process_id));
+
+        system->updateConstraints(*xl, *xu, process_id);
+        MathLib::finalizeVectorAssembly(*xl);
+        MathLib::finalizeVectorAssembly(*xu);
+
+        SNESVISetVariableBounds(_snes_solver, xl->getRawVector(),
+                                xu->getRawVector());
+    }
+
     DBUG("PETScNonlinearSolver: call SNESSolve");
     SNESSolve(_snes_solver, nullptr, x_snes.getRawVector());
 

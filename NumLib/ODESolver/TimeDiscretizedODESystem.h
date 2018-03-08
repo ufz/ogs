@@ -100,6 +100,12 @@ public:
     void applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
                                    GlobalVector& minus_delta_x) const override;
 
+    void updateConstraints(GlobalVector& lower, GlobalVector& upper,
+                           int const process_id) override
+    {
+        _ode.updateConstraints(lower, upper, process_id);
+    }
+
     bool isLinear() const override { return _ode.isLinear(); }
 
     void preIteration(const unsigned iter, GlobalVector const& x) override
