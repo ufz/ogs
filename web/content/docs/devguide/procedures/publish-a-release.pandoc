@@ -63,7 +63,4 @@ Date:   Wed Jun 1 13:46:36 2016 +0200
 - Create a [new release on GitHub](https://github.com/ufz/ogs/releases)
 - Fill in the release notes
 - Start the `ufz/master` Jenkins job manually and check that it ran successfully! (Do not push to `master` until job ran successfully!)
-- Copy release binaries from Jenkins job to website
-- Create a new [release on the website](/admin/entries/releases/new)
-  - Use the git tag name for the entry title
-  - Add the binaries to the files table
+- Copy release binaries from Jenkins job to GitHub release page
