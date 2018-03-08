@@ -309,9 +309,9 @@ pipeline {
               script {
                 if (env.JOB_NAME == 'ufz/ogs/master') {
                   sh "hugo --ignoreCache --baseURL https://benchmarks.opengeosys.org"
+                  // sh ("node_modules/.bin/hugo-algolia --toml -s")
                 } else {
                   sh ("hugo --ignoreCache --baseURL " + env.JOB_URL + "Web/")
-                  sh ("node_modules/.bin/hugo-algolia --toml -s")
                 }
               }
             }
