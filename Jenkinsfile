@@ -1,6 +1,8 @@
 #!/usr/bin/env groovy
 @Library('jenkins-pipeline@1.0.9') _
 
+def stage_required = [web: false, build: false, data: false, full: false]
+
 pipeline {
   agent none
   options {
@@ -14,12 +16,52 @@ pipeline {
       steps {
         sh "git config core.whitespace -blank-at-eof"
         sh "git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc'"
+
+        // ********* Check changesets for conditional stage execution **********
+        script {
+          if (currentBuild.number == 1) {
+            stage_required.full = true
+            return true
+          }
+          if (env.JOB_NAME == "ufz/ogs/master") {
+            stage_required.web = true
+          }
+          def changeLogSets = currentBuild.changeSets
+          for (int i = 0; i < changeLogSets.size(); i++) {
+            def entries = changeLogSets[i].items
+            for (int j = 0; j < entries.length; j++) {
+              def paths = new ArrayList(entries[j].affectedPaths)
+              for (int p = 0; p < paths.size(); p++) {
+                def path = paths[p]
+                if (path.matches("Jenkinsfile")) {
+                  stage_required.full = true
+                  echo "Doing full build."
+                  return true
+                }
+                if (path.startsWith("web") && !stage_required.web) {
+                  stage_required.web = true
+                  echo "Doing web build."
+                }
+                if (path.matches("^(CMakeLists.txt|scripts|Applications|BaseLib|FileIO|GeoLib|MaterialLib|MathLib|MeshGeoToolsLib|MeshLib|NumLib|ProcessLib|SimpleTests|Tests).*")
+                  && !stage_required.build) {
+                  stage_required.build = true
+                  echo "Doing regular build."
+                }
+                if (path.startsWith("Tests/Data") && !stage_required.data) {
+                  stage_required.data = true
+                  echo "Updating Tests/Data."
+                }
+              }
+            }
+          }
+        }
       }
     }
     stage('Build') {
       parallel {
         // ************************ Docker-Conan *******************************
         stage('Docker-Conan') {
+          when { expression { return stage_required.build || stage_required.full } }
           agent {
             dockerfile {
               filename 'Dockerfile.gcc.full'
@@ -94,6 +136,7 @@ pipeline {
         }
         // ********************* Docker-Conan-Debug ****************************
         stage('Docker-Conan-Debug') {
+          when { expression { return stage_required.build || stage_required.full } }
           agent {
             dockerfile {
               filename 'Dockerfile.gcc.minimal'
@@ -128,6 +171,7 @@ pipeline {
         }
         // ************************** envinf1 **********************************
         stage('Envinf1 (serial)') {
+          when { expression { return stage_required.build || stage_required.full } }
           agent { label "envinf1"}
           steps {
             script {
@@ -160,6 +204,7 @@ pipeline {
           }
         }
         stage('Envinf1 (parallel)') {
+          when { expression { return stage_required.build || stage_required.full } }
           agent { label "envinf1"}
           steps {
             script {
@@ -194,6 +239,7 @@ pipeline {
         }
         // ************************** Windows **********************************
         stage('Win') {
+          when { expression { return stage_required.build || stage_required.full } }
           agent {label 'win && conan' }
           environment {
             MSVC_NUMBER = '15'
@@ -243,6 +289,7 @@ pipeline {
         }
         // ****************************** Mac **********************************
         stage('Mac') {
+          when { expression { return stage_required.build || stage_required.full } }
           agent { label "mac"}
           steps {
             script {
@@ -286,6 +333,7 @@ pipeline {
         }
         // **************************** Web ************************************
         stage('Web') {
+          when { expression { return stage_required.web || stage_required.full } }
           agent {
             dockerfile {
               filename 'Dockerfile.gcc.full'
@@ -348,6 +396,7 @@ pipeline {
       parallel {
         // ************************* Analyzers *********************************
         stage('Analyzers') {
+          when { expression { return stage_required.build || stage_required.full } }
           agent {
             dockerfile {
               filename 'Dockerfile.clang.full'
@@ -380,16 +429,28 @@ pipeline {
         }
         // ************************* Deploy Web ********************************
         stage('Deploy Web') {
+          when { expression { return stage_required.web || stage_required.full } }
           agent any
           steps {
             dir('web') { unstash 'web' }
-            dir('doxygen') { unstash 'doxygen' }
             unstash 'known_hosts'
             script {
               sshagent(credentials: ['www-data_jenkins']) {
                 sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
                    'known_hosts" web/. ' +
                    'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
+              }
+            }
+          }
+        }
+        stage('Deploy Doxygen') {
+          when { expression { return stage_required.build || stage_required.full } }
+          agent any
+          steps {
+            dir('doxygen') { unstash 'doxygen' }
+            unstash 'known_hosts'
+            script {
+              sshagent(credentials: ['www-data_jenkins']) {
                 sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
                    'known_hosts" doxygen/. ' +
                    'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
@@ -399,6 +460,7 @@ pipeline {
         }
         // *********************** Deploy envinf1 ******************************
         stage('Deploy envinf1') {
+          when { expression { return stage_required.build || stage_required.full } }
           agent { label "envinf1"}
           steps {
             script {
@@ -427,6 +489,7 @@ pipeline {
         }
         // ******************** Deploy envinf1 PETSc ***************************
         stage('Deploy envinf1 PETSc') {
+          when { expression { return stage_required.build || stage_required.full } }
           agent { label "envinf1"}
           steps {
             script {
@@ -456,6 +519,7 @@ pipeline {
         }
         // ************************** Sanitizer ********************************
         stage('Sanitizer') {
+          when { expression { return stage_required.build || stage_required.full } }
           agent {
             dockerfile {
               filename 'Dockerfile.clang.minimal'
@@ -496,6 +560,7 @@ pipeline {
         }
         // ********************* Update ufz/ogs-data ***************************
         stage('Update ogs-data') {
+          when { expression { return stage_required.data } }
           agent any
           steps {
             script {
