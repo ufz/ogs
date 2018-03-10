@@ -40,6 +40,12 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
         !(staggered_scheme && (*staggered_scheme == "staggered"));
+    if (!(staggered_scheme && (*staggered_scheme == "staggered")))
+    {
+        OGS_FATAL(
+            "Monolithic scheme for thermo-mechanical coupled "
+            "phase field process is currently not available.");
+    }
 
     // Process variable.
 
