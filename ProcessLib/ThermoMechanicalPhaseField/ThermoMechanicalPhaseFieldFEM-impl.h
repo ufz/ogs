@@ -166,9 +166,9 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         double const rho_s = rho_sr * (1 - 3 * alpha * delta_T);
         // calculate thermally induced strain
 
-        // Kdd_1 defines one term which both used in Kdd and local_rhs for phase
+        // Kdd_component defines one term which both used in Kdd and local_rhs for phase
         // field
-        typename ShapeMatricesType::NodalMatrixType const Kdd_1 =
+        typename ShapeMatricesType::NodalMatrixType const Kdd_component =
             dNdx.transpose() * 2 * gc * ls * dNdx;
 
         //
@@ -241,7 +241,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         // phasefield equation, phasefield part
         //
 
-        Kdd.noalias() += (Kdd_1 + N.transpose() * 2 * history_variable * N +
+        Kdd.noalias() += (Kdd_component + N.transpose() * 2 * history_variable * N +
                           N.transpose() * 0.5 * gc / ls * N) *
                          w;
 
@@ -276,7 +276,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         double const d_dot_ip = N.dot(d_dot);
 
         local_rhs.template block<phasefield_size, 1>(phasefield_index, 0)
-            .noalias() -= (N.transpose() * d_dot_ip / M + Kdd_1 * d +
+            .noalias() -= (N.transpose() * d_dot_ip / M + Kdd_component * d +
                            N.transpose() * d_ip * 2 * history_variable -
                            N.transpose() * 0.5 * gc / ls * (1 - d_ip)) *
                           w;
