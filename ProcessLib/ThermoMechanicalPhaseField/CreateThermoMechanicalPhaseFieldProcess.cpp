@@ -36,7 +36,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     DBUG("Create ThermoMechanicalPhaseFieldProcess.");
 
     auto const staggered_scheme =
-        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__coupling_scheme}
+        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
         !(staggered_scheme && (*staggered_scheme == "staggered"));
