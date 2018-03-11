@@ -26,7 +26,7 @@
 	    <specific_heat_capacity>cs</specific_heat_capacity>
 	    <thermal_conductivity>lambda</thermal_conductivity>
             <residual_thermal_conductivity>lambda_res</residual_thermal_conductivity>
-	    <reference_temperature>500</reference_temperature>
+	    <reference_temperature>20</reference_temperature>
 
             <process_variables>
 		<temperature>temperature</temperature>
@@ -94,10 +94,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>100</t_end>
+                    <t_end>10</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
+                            <repeat>1</repeat>
                             <delta_t>10</delta_t>
                         </pair>
                     </timesteps>
@@ -129,10 +129,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>100</t_end>
+                    <t_end>10</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
+                            <repeat>1</repeat>
                             <delta_t>10</delta_t>
                         </pair>
                     </timesteps>
@@ -156,10 +156,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>100</t_end>
+                    <t_end>10</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
+                            <repeat>1</repeat>
                             <delta_t>10</delta_t>
                         </pair>
                     </timesteps>
@@ -168,18 +168,18 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>beam3d_tms</prefix>
+            <prefix>beam3d</prefix>
             <timesteps>
                 <pair>
-                    <repeat>10</repeat>
+                    <repeat>1</repeat>
                     <each_steps>1</each_steps>
                 </pair>
                 <pair>
-                    <repeat>10</repeat>
+                    <repeat>1</repeat>
                     <each_steps>1</each_steps>
                 </pair>
                 <pair>
-                    <repeat>10</repeat>
+                    <repeat>1</repeat>
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
@@ -282,8 +282,8 @@
     <curves>
         <curve>
             <name>Dirichlet_temporal</name>
-            <coords>0 10 100</coords>
-            <values>200 0 0</values>
+            <coords>0 10</coords>
+            <values>20 0</values>
         </curve>
     </curves>
 
