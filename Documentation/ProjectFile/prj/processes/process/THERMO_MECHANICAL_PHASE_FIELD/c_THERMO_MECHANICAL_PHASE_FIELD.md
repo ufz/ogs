@@ -1,0 +1,1 @@
+Thermo-mechanical phase-field modelling for brittle fracture. It is implemented in staggered scheme. The monolithic scheme is currently not verified.
