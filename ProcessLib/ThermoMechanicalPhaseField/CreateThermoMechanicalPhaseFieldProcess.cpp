@@ -198,7 +198,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     // History field
     auto& history_field = findParameter<double>(
         config,
-        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__history_field}
+        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__history_field}
         "history_field", parameters, 1);
     DBUG("Use \'%s\' as history field.", history_field.name.c_str());
 
