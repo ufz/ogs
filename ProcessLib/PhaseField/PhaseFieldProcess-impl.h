@@ -166,12 +166,16 @@ void PhaseFieldProcess<DisplacementDim>::initializeConcreteProcess(
 
     Base::_secondary_variables.addSecondaryVariable(
         "sigma",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
                          &LocalAssemblerInterface::getIntPtSigma));
 
     Base::_secondary_variables.addSecondaryVariable(
         "epsilon",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
                          &LocalAssemblerInterface::getIntPtEpsilon));
 }
 
