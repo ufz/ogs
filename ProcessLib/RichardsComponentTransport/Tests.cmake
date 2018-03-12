@@ -1,6 +1,6 @@
 AddTest(
     NAME RichardsComponentTransport_1D_Padilla_NaCl1
-    PATH Parabolic/RichardsComponentTransport/Padilla/
+    PATH Parabolic/RichardsComponentTransport/Padilla
     EXECUTABLE ogs
     EXECUTABLE_ARGS Padilla_NaCl1.prj
     WRAPPER time
@@ -151,7 +151,7 @@ AddTest(
 
 AddTest(
     NAME RichardsComponentTransport_1D_Padilla_NaCl6
-    PATH Parabolic/RichardsComponentTransport/Padilla/
+    PATH Parabolic/RichardsComponentTransport/Padilla
     EXECUTABLE ogs
     EXECUTABLE_ARGS Padilla_NaCl6.prj
     WRAPPER time
