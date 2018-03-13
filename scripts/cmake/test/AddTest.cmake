@@ -22,13 +22,19 @@
 #
 #   diff-tester
 #     - DIFF_DATA <list of files to diff>
-#       # the given file is compared to a file with the same name from Tests/Data
+#         the given file is compared to a file with the same name from Tests/Data
 #
 #   vtkdiff-tester
-#     - DIFF_DATA <vtk file a> <vtk file b> <data array a name> <data array b name> <absolute tolerance> <relative tolerance>
-#       # the given data arrays in the vtk files are compared using the given
-#       absolute and relative tolerances.
-#
+#     - DIFF_DATA
+#         <vtk file a> <vtk file b> <data array a name> <data array b name> <absolute tolerance> <relative tolerance>
+#         Can be given multiple times; the given data arrays in the vtk files are
+#         compared using the given absolute and relative tolerances.
+#       OR
+#     - DIFF_DATA
+#         GLOB <globbing expression, e.g. xyz*.vtu> <data array a name> <data array b name> <absolute tolerance> <relative tolerance>
+#         Searches for all matching files in the working directory (PATH).
+#         Matched files are then compared against files with the same name in
+#         the benchmark output directory.
 
 function (AddTest)
     if(NOT OGS_BUILD_TESTS)
@@ -185,12 +191,17 @@ Use six arguments version of AddTest with absolute and relative tolerances")
                 math(EXPR DiffDataAuxIndex "${DiffDataIndex}+5")
                 list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
 
-                list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
-                ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
-                ${AddTest_BINARY_PATH}/${VTK_FILE} \
-                -a ${NAME_A} -b ${NAME_B} \
-                --abs ${ABS_TOL} --rel ${REL_TOL} \
-                ${TESTER_ARGS}")
+                if("${REFERENCE_VTK_FILE}" STREQUAL "GLOB")
+                    list(APPEND TESTER_COMMAND "${VTK_FILE} ${NAME_A} ${NAME_B} ${ABS_TOL} ${REL_TOL}")
+                    set(GLOB_MODE TRUE)
+                else()
+                    list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
+                    ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
+                    ${AddTest_BINARY_PATH}/${VTK_FILE} \
+                    -a ${NAME_A} -b ${NAME_B} \
+                    --abs ${ABS_TOL} --rel ${REL_TOL} \
+                    ${TESTER_ARGS}")
+                endif()
             endforeach()
         else ()
             message(FATAL_ERROR "For vtkdiff tester the number of diff data arguments must be a multiple of six.")
@@ -223,8 +234,8 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         NAME ${TEST_NAME}
         COMMAND ${CMAKE_COMMAND}
         -DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
-        "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}"
-        -Dcase_path=${AddTest_SOURCE_PATH}
+        "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}" # Quoted because passed as list
+        -Dcase_path=${AddTest_SOURCE_PATH}             # see https://stackoverflow.com/a/33248574/80480
         -DBINARY_PATH=${AddTest_BINARY_PATH}
         -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
         "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
@@ -248,12 +259,17 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         NAME ${TESTER_NAME}
         COMMAND ${CMAKE_COMMAND}
         -Dcase_path=${AddTest_SOURCE_PATH}
-        -DTESTER_COMMAND=${TESTER_COMMAND}
+        -DBINARY_PATH=${${AddTest_BINARY_PATH}}
+        -DSELECTED_DIFF_TOOL_PATH=${SELECTED_DIFF_TOOL_PATH}
+        "-DTESTER_COMMAND=${TESTER_COMMAND}"
         -DVTKJS_CONVERTER=${VTKJS_CONVERTER}
         -DBINARY_PATH=${AddTest_BINARY_PATH}
         -DVTKJS_OUTPUT_PATH=${PROJECT_SOURCE_DIR}/web/static/vis/${AddTest_PATH}
         "-DVIS_FILES=${AddTest_VIS}"
+        -DGLOB_MODE=${GLOB_MODE}
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
+        --debug-output
+        WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
     )
     set_tests_properties(${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME})
 

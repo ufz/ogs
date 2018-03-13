@@ -8,7 +8,7 @@ if(VIS_FILES AND VTKJS_CONVERTER)
     endforeach()
 endif()
 
-message(STATUS "running command checking test results: cd ${case_path} && ${TESTER_COMMAND}")
+message(STATUS "running tester (glob mode: ${GLOB_MODE}): ${TESTER_COMMAND}")
 
 if(WIN32)
     set(TERMINAL_CMD cmd /C)
@@ -16,7 +16,25 @@ else()
     set(TERMINAL_CMD bash -c)
 endif()
 foreach(CMD ${TESTER_COMMAND})
-    set(COMBINED_COMMAND ${COMBINED_COMMAND} COMMAND ${TERMINAL_CMD} ${CMD})
+    if(GLOB_MODE)
+        separate_arguments(CMD)
+        list(GET CMD 0 GLOB)
+        list(GET CMD 1 NAME_A)
+        list(GET CMD 2 NAME_B)
+        list(GET CMD 3 ABS_TOL)
+        list(GET CMD 4 REL_TOL)
+        file(GLOB FILES RELATIVE ${case_path} ${GLOB})
+        list(LENGTH FILES length)
+        message(STATUS "Glob expression '${GLOB}' (${NAME_A}) found ${length} files.")
+        foreach(FILE ${FILES})
+            set(COMBINED_COMMAND ${COMBINED_COMMAND} COMMAND ${TERMINAL_CMD}
+                "${SELECTED_DIFF_TOOL_PATH} \
+                 ${case_path}/${FILE} ${BINARY_PATH}/${FILE} \
+                 -a ${NAME_A} -b ${NAME_B} --abs ${ABS_TOL} --rel ${REL_TOL}")
+        endforeach()
+    else()
+        set(COMBINED_COMMAND ${COMBINED_COMMAND} COMMAND ${TERMINAL_CMD} ${CMD})
+    endif()
 endforeach()
 
 execute_process(
