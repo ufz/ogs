@@ -189,9 +189,6 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         else ()
             message(FATAL_ERROR "For vtkdiff tester the number of diff data arguments must be a multiple of six.")
         endif()
-
-
-        string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
     elseif(tester STREQUAL "memcheck")
         set(TESTER_COMMAND "! ${GREP_TOOL_PATH} definitely ${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.log")
     endif()
