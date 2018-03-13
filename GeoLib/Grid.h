@@ -179,7 +179,6 @@ private:
 
     std::array<std::size_t,3> _n_steps;
     std::array<double, 3> _step_sizes;
-    std::array<double, 3> _inverse_step_sizes;
     /**
      * This is an array that stores pointers to POINT objects.
      */
@@ -189,10 +188,11 @@ private:
 template <typename POINT>
 template <typename InputIterator>
 Grid<POINT>::Grid(InputIterator first, InputIterator last,
-    std::size_t max_num_per_grid_cell)
-    : GeoLib::AABB(first, last), _n_steps({{1,1,1}}),
-        _step_sizes({{0.0,0.0,0.0}}), _inverse_step_sizes({{0.0,0.0,0.0}}),
-        _grid_cell_nodes_map(nullptr)
+                  std::size_t max_num_per_grid_cell)
+    : GeoLib::AABB(first, last),
+      _n_steps({{1, 1, 1}}),
+      _step_sizes({{0.0, 0.0, 0.0}}),
+      _grid_cell_nodes_map(nullptr)
 {
     auto const n_pnts(std::distance(first,last));
 
@@ -216,7 +216,6 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last,
             delta[k] = std::numeric_limits<double>::epsilon();
         }
         _step_sizes[k] = delta[k] / _n_steps[k];
-        _inverse_step_sizes[k] = 1.0 / _step_sizes[k];
     }
 
     // fill the grid vectors
@@ -377,16 +376,24 @@ template <typename T>
 std::array<std::size_t,3> Grid<POINT>::getGridCoords(T const& pnt) const
 {
     std::array<std::size_t,3> coords;
-    for (std::size_t k(0); k<3; k++) {
-        if (pnt[k] < _min_pnt[k]) {
+    for (std::size_t k(0); k < 3; k++)
+    {
+        if (pnt[k] < _min_pnt[k])
+        {
             coords[k] = 0;
-        } else {
-            if (pnt[k] > _max_pnt[k]) {
-                coords[k] = _n_steps[k]-1;
-            } else {
+        }
+        else
+        {
+            if (pnt[k] >= _max_pnt[k])
+            {
+                coords[k] = _n_steps[k] - 1;
+            }
+            else
+            {
                 coords[k] = static_cast<std::size_t>(
-                    std::floor((pnt[k] - _min_pnt[k])) *
-                    _inverse_step_sizes[k]);
+                    std::floor((pnt[k] - _min_pnt[k])) /
+                    std::nextafter(_step_sizes[k],
+                                   std::numeric_limits<double>::max()));
             }
         }
     }
