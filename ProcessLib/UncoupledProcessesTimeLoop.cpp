@@ -591,6 +591,13 @@ bool UncoupledProcessesTimeLoop::loop()
 
         dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
 
+        if (!_last_step_rejected)
+        {
+            const bool output_initial_condition = false;
+            outputSolutions(output_initial_condition, is_staggered_coupling,
+                            timesteps, t, *_output, &Output::doOutput);
+        }
+
         if (t + dt > _end_time ||
             t + std::numeric_limits<double>::epsilon() > _end_time)
         {
@@ -698,9 +705,6 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
 
             return false;
         }
-
-        _output->doOutput(pcs, process_id, process_data->process_output,
-                          timestep_id, t, x);
 
         ++process_id;
     }  // end of for (auto& process_data : _per_process_data)
@@ -858,13 +862,6 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         pcs.computeSecondaryVariable(t, x);
 
         ++process_id;
-    }
-
-    {
-        const bool output_initial_condition = false;
-        const bool is_staggered_coupling = true;
-        outputSolutions(output_initial_condition, is_staggered_coupling,
-                        timestep_id, t, *_output, &Output::doOutput);
     }
 
     return true;
