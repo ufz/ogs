@@ -41,7 +41,7 @@ AddTest(
 
 AddTest(
     NAME HT_a_DECOVALEX_THMC_based_Example
-    PATH Parabolic/HT//StaggeredCoupling/ADecovalexTHMCBasedHTExample
+    PATH Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
     EXECUTABLE ogs
     EXECUTABLE_ARGS th_decovalex.prj
     WRAPPER time
@@ -103,7 +103,7 @@ AddTest(
 
 AddTest(
     NAME HT_a_DECOVALEX_THMC_based_Example
-    PATH Parabolic/HT//StaggeredCoupling/ADecovalexTHMCBasedHTExample
+    PATH Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
     EXECUTABLE_ARGS th_decovalex.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1
