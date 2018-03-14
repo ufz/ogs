@@ -20,7 +20,40 @@ namespace ProcessLib
 namespace ThermoMechanicalPhaseField
 {
 struct ThermoMechanicalPhaseFieldLocalAssemblerInterface;
-
+/**
+ * \brief A class to simulate thermo-mechanical fracturing process
+ * using phase-field approach in solids described by
+ *
+ * \f[
+ *     \mathrm{div} \left[ \left(d^2 + k \right) \boldsymbol{\sigma}_0^+
+ *      + \boldsymbol{\sigma}_0^- \right] +
+ *        \varrho \boldsymbol{b} = \boldsymbol{0}
+ * \f]
+ * \f[
+ *     2d \psi^+(\boldsymbol{\epsilon}_\mathrm{el})
+ *      - \frac{1 - d}{2 \varepsilon} g_\mathrm{c}
+ *      - 2 \varepsilon g_\mathrm{c} \mathrm{div}(\mathrm{grad} d) = 0
+ * \f]
+ * \f[
+ *     (\varrho c_\mathrm{p})_\mathrm{eff} \dfrac{\partial \vartheta}{\partial t}
+ *      - \mathrm{div} \left(\boldsymbol{\kappa}_\mathrm{eff} \mathrm{grad}\,\vartheta \right) = 0
+ * \f]
+ * where
+ *    \f{eqnarray*}{
+ *       &d:&                    \mbox{order parameter,}\\
+ *       &\varrho:&              \mbox{density,}\\
+ *       &g_\mathrm{c}:&         \mbox{fracture energy,}\\
+ *       &\varepsilon:&          \mbox{length scale}\\
+ *       &\c_\mathrm{p}:&        \mbox{specific heat capacity in constant pressure}\\
+ *       &\kappa_\mathrm{eff}:&  \mbox{effectiev thermal conductivity}\\
+ *    \f}
+ *
+ * Detailed model description can refer
+ * the latest published benchmark book
+ * "Thermo-Hydro-Mechanical-Chemical Processes in Fractured Porous Media:
+ * Modelling and Benchmarking"
+ * (Chapter 9.7 -- A Phase-Field Model for Brittle Fracturing of Thermo-Elastic Solids)
+ */
 template <int DisplacementDim>
 class ThermoMechanicalPhaseFieldProcess final : public Process
 {
