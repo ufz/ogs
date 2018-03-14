@@ -186,81 +186,20 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::initializeConcreteProce
         _heat_conduction_process_id);
 
     Base::_secondary_variables.addSecondaryVariable(
-        "sigma_xx",
+        "sigma",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtSigmaXX));
+            MathLib::KelvinVector::KelvinVectorType<
+                    DisplacementDim>::RowsAtCompileTime,
+            getExtrapolator(), _local_assemblers,
+            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtSigma));
 
     Base::_secondary_variables.addSecondaryVariable(
-        "sigma_yy",
+        "epsilon",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtSigmaYY));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "sigma_zz",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtSigmaZZ));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "sigma_xy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtSigmaXY));
-
-    if (DisplacementDim == 3)
-    {
-        Base::_secondary_variables.addSecondaryVariable(
-            "sigma_xz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtSigmaXZ));
-
-        Base::_secondary_variables.addSecondaryVariable(
-            "sigma_yz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtSigmaYZ));
-    }
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_xx",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtEpsilonXX));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_yy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtEpsilonYY));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_zz",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtEpsilonZZ));
-
-    Base::_secondary_variables.addSecondaryVariable(
-        "epsilon_xy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtEpsilonXY));
-    if (DisplacementDim == 3)
-    {
-        Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_yz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtEpsilonYZ));
-
-        Base::_secondary_variables.addSecondaryVariable(
-            "epsilon_xz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtEpsilonXZ));
-    }
+            MathLib::KelvinVector::KelvinVectorType<
+                    DisplacementDim>::RowsAtCompileTime,
+            getExtrapolator(), _local_assemblers,
+            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtEpsilon));
 
     Base::_secondary_variables.addSecondaryVariable(
         "heat_flux",
