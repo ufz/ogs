@@ -1,7 +1,7 @@
 module () { eval `/usr/local/modules/3.2.10-1/Modules/3.2.10/bin/modulecmd sh $*`; }
 export MODULEPATH=$MODULEPATH:/global/apps/modulefiles
 
-module load cmake/3.1.3-1
+module load cmake
 module load gcc/6.2.0-1
 module load ninja/1.8.2
 module load git

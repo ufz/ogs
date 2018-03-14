@@ -48,8 +48,10 @@ add_custom_target(
     --force-new-ctest-process
     --output-on-failure --output-log Tests/ctest.log
     --exclude-regex LARGE
-    ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_PROCESSORS} --test-action test
+    ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_PROCESSORS}
+    --timeout 900 # 15 minutes
     DEPENDS ogs vtkdiff ctest-cleanup
+    USES_TERMINAL
 )
 add_custom_target(
     ctest-serial
@@ -57,8 +59,10 @@ add_custom_target(
     --force-new-ctest-process
     --output-on-failure --output-log Tests/ctest.log
     --exclude-regex LARGE
-    ${CONFIG_PARAMETER} --test-action test
+    ${CONFIG_PARAMETER}
+    --timeout 900 # 15 minutes
     DEPENDS ogs vtkdiff ctest-cleanup
+    USES_TERMINAL
 )
 add_custom_target(ctest-large-cleanup ${CMAKE_COMMAND} -E remove Tests/ctest-large.log)
 add_custom_target(
@@ -66,16 +70,18 @@ add_custom_target(
     COMMAND ${CMAKE_CTEST_COMMAND} -T Test
     --force-new-ctest-process
     --output-on-failure --output-log Tests/ctest-large.log
-    ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_PROCESSORS} --test-action test
+    ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_PROCESSORS}
     DEPENDS ogs vtkdiff ctest-large-cleanup
+    USES_TERMINAL
 )
 add_custom_target(
     ctest-large-serial
     COMMAND ${CMAKE_CTEST_COMMAND} -T Test
     --force-new-ctest-process
     --output-on-failure --output-log Tests/ctest-large.log
-    ${CONFIG_PARAMETER} --test-action test
+    ${CONFIG_PARAMETER}
     DEPENDS ogs vtkdiff ctest-large-cleanup
+    USES_TERMINAL
 )
 set_directory_properties(PROPERTIES
     ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_BINARY_DIR}/Tests/Data
