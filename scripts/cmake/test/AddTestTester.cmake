@@ -27,23 +27,28 @@ foreach(CMD ${TESTER_COMMAND})
         list(LENGTH FILES length)
         message(STATUS "Glob expression '${GLOB}' (${NAME_A}) found ${length} files.")
         foreach(FILE ${FILES})
-            set(COMBINED_COMMAND ${COMBINED_COMMAND} COMMAND ${TERMINAL_CMD}
-                "${SELECTED_DIFF_TOOL_PATH} \
-                 ${case_path}/${FILE} ${BINARY_PATH}/${FILE} \
-                 -a ${NAME_A} -b ${NAME_B} --abs ${ABS_TOL} --rel ${REL_TOL}")
+            execute_process(
+                COMMAND ${SELECTED_DIFF_TOOL_PATH} ${case_path}/${FILE} ${BINARY_PATH}/${FILE} -a ${NAME_A} -b ${NAME_B} --abs ${ABS_TOL} --rel ${REL_TOL}
+                WORKING_DIRECTORY ${case_path}
+                RESULT_VARIABLE EXIT_CODE
+                OUTPUT_VARIABLE OUTPUT
+            )
+
+            if(NOT EXIT_CODE STREQUAL "0")
+                message(FATAL_ERROR "Error exit code: ${EXIT_CODE}\n${OUTPUT}")
+            endif()
         endforeach()
     else()
-        set(COMBINED_COMMAND ${COMBINED_COMMAND} COMMAND ${TERMINAL_CMD} ${CMD})
+        execute_process(
+            COMMAND ${TERMINAL_CMD} "${CMD}"
+            WORKING_DIRECTORY ${case_path}
+            RESULT_VARIABLE EXIT_CODE
+            OUTPUT_VARIABLE OUTPUT
+        )
+        if(NOT EXIT_CODE STREQUAL "0")
+            message(FATAL_ERROR "Error exit code: ${EXIT_CODE}")
+        endif()
     endif()
 endforeach()
 
-execute_process(
-    ${COMBINED_COMMAND}
-    WORKING_DIRECTORY ${case_path}
-    RESULT_VARIABLE EXIT_CODE
-    OUTPUT_VARIABLE OUTPUT
-)
 
-if(NOT EXIT_CODE STREQUAL "0")
-    message(FATAL_ERROR "Error exit code: ${EXIT_CODE}")
-endif()
