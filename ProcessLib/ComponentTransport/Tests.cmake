@@ -1,6 +1,6 @@
 AddTest(
     NAME 2D_ComponentTransport_ConcentrationDiffusionOnly
-    PATH Parabolic/ComponentTransport/SimpleSynthetics/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
     EXECUTABLE_ARGS ConcentrationDiffusionOnly.prj
     WRAPPER time
@@ -15,7 +15,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_ConcentrationDiffusionAndStorage
-    PATH Parabolic/ComponentTransport/SimpleSynthetics/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
     EXECUTABLE_ARGS ConcentrationDiffusionAndStorage.prj
     WRAPPER time
@@ -33,7 +33,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvection
-    PATH Parabolic/ComponentTransport/SimpleSynthetics/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvection.prj
     WRAPPER time
@@ -66,7 +66,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndGravityAndDispersionHalf
-    PATH Parabolic/ComponentTransport/SimpleSynthetics/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndGravityAndDispersionHalf.prj
     WRAPPER time
@@ -99,7 +99,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDispersion
-    PATH Parabolic/ComponentTransport/SimpleSynthetics/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersion.prj
     WRAPPER time
@@ -132,7 +132,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDecay
-    PATH Parabolic/ComponentTransport/SimpleSynthetics/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDecay.prj
     WRAPPER time
@@ -165,7 +165,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDispersionHalf
-    PATH Parabolic/ComponentTransport/SimpleSynthetics/
+    PATH Parabolic/ComponentTransport/SimpleSynthetics
     EXECUTABLE ogs
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersionHalf.prj
     WRAPPER time
@@ -198,7 +198,7 @@ AddTest(
 
 AddTest(
     NAME LARGE_2D_ComponentTransport_Goswami
-    PATH Parabolic/ComponentTransport/goswami/
+    PATH Parabolic/ComponentTransport/goswami
     EXECUTABLE ogs
     EXECUTABLE_ARGS goswami_input.prj
     WRAPPER time
@@ -234,7 +234,7 @@ AddTest(
 
 AddTest(
     NAME LARGE_2D_ComponentTransport_Elder
-    PATH Parabolic/ComponentTransport/elder/
+    PATH Parabolic/ComponentTransport/elder
     EXECUTABLE ogs
     EXECUTABLE_ARGS elder.prj
     WRAPPER time
@@ -297,7 +297,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_HeterogeneousPermeability
-    PATH Elliptic/square_100x100_ComponentTransport/
+    PATH Elliptic/square_100x100_ComponentTransport
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e4_heterogeneity.prj
     WRAPPER time
@@ -311,7 +311,7 @@ AddTest(
 
 AddTest(
     NAME 2D_ComponentTransport_HeterogeneousPermeability_Comparison_OGS5
-    PATH Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D/
+    PATH Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D
     EXECUTABLE ogs
     EXECUTABLE_ARGS ogs5_H_2d.prj
     WRAPPER time
@@ -325,7 +325,7 @@ AddTest(
 
 AddTest(
     NAME 3D_ComponentTransport_HeterogeneousPermeability_Comparison_OGS5
-    PATH Parabolic/ComponentTransport/heterogeneous/ogs5_H_3D/
+    PATH Parabolic/ComponentTransport/heterogeneous/ogs5_H_3D
     EXECUTABLE ogs
     EXECUTABLE_ARGS ogs5_H_3d.prj
     WRAPPER time

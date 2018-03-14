@@ -9,7 +9,7 @@
 #   PATH <working directory> # relative to SourceDir/Tests/Data
 #   EXECUTABLE <executable target> # optional, defaults to ogs
 #   EXECUTABLE_ARGS <arguments>
-#   WRAPPER <time|memcheck|callgrind> # optional
+#   WRAPPER <time|memcheck|callgrind|mpirun> # optional
 #   WRAPPER_ARGS <arguments> # optional
 #   TESTER <diff|vtkdiff|memcheck> # optional
 #   REQUIREMENTS # optional simple boolean expression which has to be true to
@@ -22,13 +22,19 @@
 #
 #   diff-tester
 #     - DIFF_DATA <list of files to diff>
-#       # the given file is compared to a file with the same name from Tests/Data
+#         the given file is compared to a file with the same name from Tests/Data
 #
 #   vtkdiff-tester
-#     - DIFF_DATA <vtk file a> <vtk file b> <data array a name> <data array b name> <absolute tolerance> <relative tolerance>
-#       # the given data arrays in the vtk files are compared using the given
-#       absolute and relative tolerances.
-#
+#     - DIFF_DATA
+#         <vtk file a> <vtk file b> <data array a name> <data array b name> <absolute tolerance> <relative tolerance>
+#         Can be given multiple times; the given data arrays in the vtk files are
+#         compared using the given absolute and relative tolerances.
+#       OR
+#     - DIFF_DATA
+#         GLOB <globbing expression, e.g. xyz*.vtu> <data array a name> <data array b name> <absolute tolerance> <relative tolerance>
+#         Searches for all matching files in the working directory (PATH).
+#         Matched files are then compared against files with the same name in
+#         the benchmark output directory.
 
 function (AddTest)
     if(NOT OGS_BUILD_TESTS)
@@ -67,29 +73,37 @@ function (AddTest)
         message(STATUS "Requirement ${AddTest_REQUIREMENTS} not met! Disabling test ${AddTest_NAME}.")
         return()
     endif()
-    if(AddTest_WRAPPER STREQUAL "time" AND NOT TIME_TOOL_PATH)
-        return()
-    endif()
-    if(AddTest_WRAPPER STREQUAL "memcheck" AND NOT VALGRIND_TOOL_PATH)
-        return()
-    endif()
-    if(AddTest_WRAPPER STREQUAL "callgrind" AND NOT VALGRIND_TOOL_PATH)
-        return()
-    endif()
-    if(AddTest_WRAPPER STREQUAL "mpirun" AND NOT MPIRUN_TOOL_PATH)
-        return()
-    endif()
 
     if(AddTest_WRAPPER STREQUAL "time")
-        set(WRAPPER_COMMAND time)
-    elseif(AddTest_WRAPPER STREQUAL "memcheck" AND VALGRIND_TOOL_PATH)
-        set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=memcheck --log-file=${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.log -v --leak-check=full --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xff")
-        set(tester memcheck)
-    elseif(AddTest_WRAPPER STREQUAL "callgrind" AND VALGRIND_TOOL_PATH)
-        set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=callgrind --branch-sim=yes --cache-sim=yes --dump-instr=yes --collect-jumps=yes")
-        unset(tester)
+        if(TIME_TOOL_PATH)
+            set(WRAPPER_COMMAND time)
+        else()
+            message(STATUS "WARNING: Disabling time wrapper for ${AddTest_NAME} as time exe was not found!")
+            set(AddTest_WRAPPER_ARGS "")
+        endif()
+    elseif(AddTest_WRAPPER STREQUAL "memcheck")
+        if(VALGRIND_TOOL_PATH)
+            set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=memcheck --log-file=${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.log -v --leak-check=full --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xff")
+            set(tester memcheck)
+        else()
+            message(STATUS "WARNING: Disabling memcheck wrapper for ${AddTest_NAME} as memcheck exe was not found!")
+            set(AddTest_WRAPPER_ARGS "")
+        endif()
+    elseif(AddTest_WRAPPER STREQUAL "callgrind")
+        if(VALGRIND_TOOL_PATH)
+            set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=callgrind --branch-sim=yes --cache-sim=yes --dump-instr=yes --collect-jumps=yes")
+            unset(tester)
+        else()
+            message(STATUS "WARNING: Disabling callgrind wrapper for ${AddTest_NAME} as callgrind exe was not found!")
+            set(AddTest_WRAPPER_ARGS "")
+        endif()
     elseif(AddTest_WRAPPER STREQUAL "mpirun")
-        set(WRAPPER_COMMAND ${MPIRUN_TOOL_PATH})
+        if(MPIRUN_TOOL_PATH)
+            set(WRAPPER_COMMAND ${MPIRUN_TOOL_PATH})
+        else()
+            message(STATUS "ERROR: mpirun was not found but is required for ${AddTest_NAME}!")
+            return()
+        endif()
     endif()
 
     # --- Implement testers ---
@@ -102,6 +116,13 @@ function (AddTest)
     endif()
     if(AddTest_TESTER STREQUAL "memcheck" AND NOT GREP_TOOL_PATH)
         return()
+    endif()
+
+    if(AddTest_DIFF_DATA)
+        string(LENGTH "${AddTest_DIFF_DATA}" DIFF_DATA_LENGTH)
+        if(${DIFF_DATA_LENGTH} GREATER 7500)
+            message(FATAL_ERROR "${AddTest_NAME}: DIFF_DATA to long! Consider using regex-syntax: TODO")
+        endif()
     endif()
 
     if((AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "vtkdiff") AND NOT AddTest_DIFF_DATA)
@@ -122,7 +143,6 @@ function (AddTest)
                 ${TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
                 ${AddTest_BINARY_PATH}/${FILE}")
         endforeach()
-        string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
     elseif(AddTest_TESTER STREQUAL "vtkdiff")
         list(LENGTH AddTest_DIFF_DATA DiffDataLength)
         math(EXPR DiffDataLengthMod4 "${DiffDataLength} % 4")
@@ -171,19 +191,21 @@ Use six arguments version of AddTest with absolute and relative tolerances")
                 math(EXPR DiffDataAuxIndex "${DiffDataIndex}+5")
                 list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
 
-                list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
-                ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
-                ${AddTest_BINARY_PATH}/${VTK_FILE} \
-                -a ${NAME_A} -b ${NAME_B} \
-                --abs ${ABS_TOL} --rel ${REL_TOL} \
-                ${TESTER_ARGS}")
+                if("${REFERENCE_VTK_FILE}" STREQUAL "GLOB")
+                    list(APPEND TESTER_COMMAND "${VTK_FILE} ${NAME_A} ${NAME_B} ${ABS_TOL} ${REL_TOL}")
+                    set(GLOB_MODE TRUE)
+                else()
+                    list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
+                    ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
+                    ${AddTest_BINARY_PATH}/${VTK_FILE} \
+                    -a ${NAME_A} -b ${NAME_B} \
+                    --abs ${ABS_TOL} --rel ${REL_TOL} \
+                    ${TESTER_ARGS}")
+                endif()
             endforeach()
         else ()
             message(FATAL_ERROR "For vtkdiff tester the number of diff data arguments must be a multiple of six.")
         endif()
-
-
-        string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
     elseif(tester STREQUAL "memcheck")
         set(TESTER_COMMAND "! ${GREP_TOOL_PATH} definitely ${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.log")
     endif()
@@ -212,8 +234,8 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         NAME ${TEST_NAME}
         COMMAND ${CMAKE_COMMAND}
         -DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
-        "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}"
-        -Dcase_path=${AddTest_SOURCE_PATH}
+        "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}" # Quoted because passed as list
+        -Dcase_path=${AddTest_SOURCE_PATH}             # see https://stackoverflow.com/a/33248574/80480
         -DBINARY_PATH=${AddTest_BINARY_PATH}
         -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
         "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
@@ -237,12 +259,17 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         NAME ${TESTER_NAME}
         COMMAND ${CMAKE_COMMAND}
         -Dcase_path=${AddTest_SOURCE_PATH}
-        -DTESTER_COMMAND=${TESTER_COMMAND}
+        -DBINARY_PATH=${${AddTest_BINARY_PATH}}
+        -DSELECTED_DIFF_TOOL_PATH=${SELECTED_DIFF_TOOL_PATH}
+        "-DTESTER_COMMAND=${TESTER_COMMAND}"
         -DVTKJS_CONVERTER=${VTKJS_CONVERTER}
         -DBINARY_PATH=${AddTest_BINARY_PATH}
         -DVTKJS_OUTPUT_PATH=${PROJECT_SOURCE_DIR}/web/static/vis/${AddTest_PATH}
         "-DVIS_FILES=${AddTest_VIS}"
+        -DGLOB_MODE=${GLOB_MODE}
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
+        --debug-output
+        WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
     )
     set_tests_properties(${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME})
 

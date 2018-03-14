@@ -87,7 +87,6 @@ pipeline {
                     '-DOGS_USE_CONAN=ON ' +
                     '-DOGS_CONAN_BUILD=never ' +
                     '-DOGS_CPU_ARCHITECTURE=generic ' +
-                    '-DOGS_PACKAGE_DEPENDENCIES=ON ' +
                     '-DDOCS_GENERATE_LOGFILE=ON ' // redirects to build/DoxygenWarnings.log
                 }
               }
@@ -263,8 +262,7 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_TESTS=OFF ' +
                   '-DOGS_BUILD_SWMM=ON ' +
-                  '-DOGS_BUILD_METIS=ON ' +
-                  '-DOGS_PACKAGE_DEPENDENCIES=ON '
+                  '-DOGS_BUILD_METIS=ON '
                   keepDir = true
               }
               build { }

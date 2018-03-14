@@ -1,7 +1,7 @@
 
 AddTest(
     NAME MapGeometryToMeshSurface_Ammer
-    PATH MeshGeoToolsLib/Ammer/
+    PATH MeshGeoToolsLib/Ammer
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m Ammer-Homogen100m-Final-TopSurface.vtu -i Ammer-Rivers.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/Ammer-Rivers-Mapped.gml
     TESTER diff
@@ -11,7 +11,7 @@ AddTest(
 
 AddTest(
     NAME LARGE_MapGeometryToMeshSurface_Bode
-    PATH MeshGeoToolsLib/Bode/
+    PATH MeshGeoToolsLib/Bode
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m BodeComplex.msh -i BodeEZG_Fliessgewaesser.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Bode/BodeEZG_Fliessgewaesser-Mapped.gml
     REQUIREMENTS NOT OGS_USE_MPI
