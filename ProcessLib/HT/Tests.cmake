@@ -178,7 +178,7 @@ AddTest(
 
 # Staggered scheme
 AddTest(
-    NAME LARGE_2D_ThermalConvection_constviscosityStaggeredScheme
+    NAME 2D_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme.prj
@@ -193,7 +193,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme
+    NAME 2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme_adaptive_dt.prj
