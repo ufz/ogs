@@ -25,7 +25,7 @@ AddTest(
    )
 
 AddTest(
-    NAME PhaseField_3D_beam_LARGE
+    NAME PhaseField_3D_beam
     PATH PhaseField
     EXECUTABLE ogs
     EXECUTABLE_ARGS beam3d_stag_1pcs.prj

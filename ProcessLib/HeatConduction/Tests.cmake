@@ -46,7 +46,7 @@ AddTest(
 # The 25 BHE array benchmark
 # test results are compared to 2D simulation result
 AddTest(
-    NAME BHE_Array_2D
+    NAME LARGE_BHE_Array_2D
     PATH Parabolic/T/2D_BHE_array
     EXECUTABLE ogs
     EXECUTABLE_ARGS bhe2d.prj

@@ -22,7 +22,7 @@ AddTest(
     square_1e2_expected_pcs_0_ts_4_t_1.000000.vtu square_1e2_pcs_0_ts_4_t_1.000000.vtu sigma sigma 1e-15 0
 )
 AddTest(
-    NAME LARGE_Mechanics_SDL_disc_with_hole
+    NAME Mechanics_SDL_disc_with_hole
     PATH Mechanics/Linear
     EXECUTABLE ogs
     EXECUTABLE_ARGS disc_with_hole.prj

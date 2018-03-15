@@ -35,8 +35,11 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
 endforeach()
 
 foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
+    if("${mesh_size}" STREQUAL "1e6")
+        set(benchmark_type LARGE_)
+    endif()
     AddTest(
-        NAME LARGE_GroundWaterFlowProcess_cube_1x1x1_${mesh_size}
+        NAME ${benchmark_type}GroundWaterFlowProcess_cube_1x1x1_${mesh_size}
         PATH Elliptic/cube_1x1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_${mesh_size}.prj
@@ -47,7 +50,7 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
     )
 
     AddTest(
-        NAME LARGE_GroundWaterFlowProcess_cube_1x1x1_Neumann_${mesh_size}
+        NAME ${benchmark_type}GroundWaterFlowProcess_cube_1x1x1_Neumann_${mesh_size}
         PATH Elliptic/cube_1x1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
@@ -98,8 +101,11 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
 endforeach()
 
 foreach(mesh_size 1e5 1e6)
+    if("${mesh_size}" STREQUAL "1e6")
+        set(benchmark_type LARGE_)
+    endif()
     AddTest(
-        NAME LARGE_GroundWaterFlowProcess_square_1x1_Neumann_${mesh_size}
+        NAME ${benchmark_type}GroundWaterFlowProcess_square_1x1_Neumann_${mesh_size}
         PATH Elliptic/square_1x1_GroundWaterFlow
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
@@ -425,7 +431,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
     )
 endforeach()
 
-
+# TODO: Parallel LARGE tests not tested!
 foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
     AddTest(
         NAME LARGE_GroundWaterFlowProcess_cube_1x1x1_${mesh_size}
@@ -611,7 +617,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_GroundWaterFlowProcess_NodalSourceTerm_circle_1e5
+    NAME GroundWaterFlowProcess_NodalSourceTerm_circle_1e5
     PATH Elliptic/circle_radius_1
     EXECUTABLE ogs
     EXECUTABLE_ARGS circle_1e5_axi.prj
