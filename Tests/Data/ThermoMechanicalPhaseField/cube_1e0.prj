@@ -33,11 +33,6 @@
                 <displacement>displacement</displacement>
                 <phasefield>phasefield</phasefield>
             </process_variables>
-            <secondary_variables>
-                <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
-                <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable type="static" internal_name="heat_flux" output_name="heat_flux"/>
-            </secondary_variables>
 	    <specific_body_force>0 0 0</specific_body_force>
         </process>
     </processes>
@@ -82,7 +77,6 @@
                 <output>
                     <variables>
                         <variable>temperature</variable>
-                        <variable>heat_flux</variable>
                     </variables>
                 </output>
                 <time_stepping>
@@ -110,8 +104,6 @@
                 <output>
                     <variables>
                         <variable>displacement</variable>
-                        <variable>sigma</variable>
-                        <variable>epsilon</variable>
                     </variables>
                 </output>
                 <time_stepping>
@@ -289,9 +281,9 @@
 	                    <geometry>top</geometry>
 	                    <type>Dirichlet</type>
 	                    <parameter>temperature_bc</parameter>
-	                </boundary_condition>        
-	            </boundary_conditions>
-	    </process_variable>
+                    </boundary_condition>
+                </boundary_conditions>
+        </process_variable>
 
         <process_variable>
             <name>displacement</name>

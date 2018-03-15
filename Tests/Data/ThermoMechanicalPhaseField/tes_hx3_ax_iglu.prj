@@ -388,7 +388,7 @@
 	            </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>temperature_bc</parameter>
-            	</boundary_condition>
+                </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>rightm</geometry>
@@ -409,12 +409,6 @@
                     <type>Dirichlet</type>
                     <parameter>temperature_bc</parameter>
                 </boundary_condition>
-               <!-- <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>temperature_bc</parameter>
-            	</boundary_condition>-->
             </boundary_conditions>
         </process_variable>
 
