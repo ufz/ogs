@@ -74,8 +74,7 @@ struct IntegrationPointData final
     }
 
     using Invariants = MathLib::KelvinVector::Invariants<
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value>;
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>;
 
     template <typename DisplacementVectorType>
     void updateConstitutiveRelation(double const t,
@@ -88,13 +87,12 @@ struct IntegrationPointData final
     {
         eps_m.noalias() = eps - alpha * delta_T * Invariants::identity2;
 
-        static_cast<
-            MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>&>(
+        static_cast<MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>&>(
             solid_material)
-            .calculateDegradedStress(t, x_position, eps_m, strain_energy_tensile,
-                                     sigma_tensile, sigma_compressive,
-                                     C_tensile, C_compressive, sigma_real,
-                                     degradation, elastic_energy);
+            .calculateDegradedStress(
+                t, x_position, eps_m, strain_energy_tensile, sigma_tensile,
+                sigma_compressive, C_tensile, C_compressive, sigma_real,
+                degradation, elastic_energy);
     }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
@@ -109,7 +107,8 @@ struct SecondaryData
 
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
-class ThermoMechanicalPhaseFieldLocalAssembler : public ThermoMechanicalPhaseFieldLocalAssemblerInterface
+class ThermoMechanicalPhaseFieldLocalAssembler
+    : public ThermoMechanicalPhaseFieldLocalAssemblerInterface
 {
 public:
     using ShapeMatricesType =
@@ -123,8 +122,10 @@ public:
 
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
 
-    ThermoMechanicalPhaseFieldLocalAssembler(ThermoMechanicalPhaseFieldLocalAssembler const&) = delete;
-    ThermoMechanicalPhaseFieldLocalAssembler(ThermoMechanicalPhaseFieldLocalAssembler&&) = delete;
+    ThermoMechanicalPhaseFieldLocalAssembler(
+        ThermoMechanicalPhaseFieldLocalAssembler const&) = delete;
+    ThermoMechanicalPhaseFieldLocalAssembler(
+        ThermoMechanicalPhaseFieldLocalAssembler&&) = delete;
 
     ThermoMechanicalPhaseFieldLocalAssembler(
         MeshLib::Element const& e,
@@ -178,8 +179,8 @@ public:
                                           kelvin_vector_size);
             ip_data.sigma_tensile.setZero(kelvin_vector_size);
             ip_data.sigma_compressive.setZero(kelvin_vector_size);
-            ip_data.heatflux.setZero();
-            ip_data.heatflux_prev.setZero();
+            ip_data.heatflux.setZero(DisplacementDim);
+            ip_data.heatflux_prev.setZero(DisplacementDim);
             ip_data.history_variable =
                 process_data.history_field(0, x_position)[0];
             ip_data.history_variable_prev =
@@ -201,8 +202,8 @@ public:
                   std::vector<double>& /*local_rhs_data*/) override
     {
         OGS_FATAL(
-            "ThermoMechanicalPhaseFieldLocalAssembler: assembly without jacobian is not "
-            "implemented.");
+            "ThermoMechanicalPhaseFieldLocalAssembler: assembly without "
+            "Jacobian is not implemented.");
     }
 
     void assembleWithJacobian(double const t,
