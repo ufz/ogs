@@ -16,17 +16,21 @@
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
 
-            <residual_stiffness>k</residual_stiffness>
-            <crack_resistance>gc</crack_resistance>
-            <crack_length_scale>ls</crack_length_scale>
-            <kinetic_coefficient>M</kinetic_coefficient>
-            <history_field>H</history_field>
+            <phasefield_parameters>
+                <residual_stiffness>k</residual_stiffness>
+                <crack_resistance>gc</crack_resistance>
+                <crack_length_scale>ls</crack_length_scale>
+                <kinetic_coefficient>M</kinetic_coefficient>
+                <history_field>H</history_field>
+            </phasefield_parameters>
             <solid_density>rho_sr</solid_density>
-	    <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
-	    <specific_heat_capacity>cs</specific_heat_capacity>
-	    <thermal_conductivity>lambda</thermal_conductivity>
-            <residual_thermal_conductivity>lambda_res</residual_thermal_conductivity>
-	    <reference_temperature>1000</reference_temperature>
+			<thermal_parameters>
+	            <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
+	            <specific_heat_capacity>cs</specific_heat_capacity>
+	            <thermal_conductivity>lambda</thermal_conductivity>
+                <residual_thermal_conductivity>lambda_res</residual_thermal_conductivity>
+			</thermal_parameters>
+	        <reference_temperature>1000</reference_temperature>
             <process_variables>
 			    <temperature>temperature</temperature>
                 <displacement>displacement</displacement>
