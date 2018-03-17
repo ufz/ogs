@@ -106,7 +106,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto& history_variable = _ip_data[ip].history_variable;
         auto& history_variable_prev = _ip_data[ip].history_variable_prev;
 
-        auto const& sigma_real = _ip_data[ip].sigma_real;
+        auto const& sigma = _ip_data[ip].sigma;
 
         // Kdd_1 defines one term which both used in Kdd and local_rhs for
         // phase field
@@ -146,7 +146,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& b = _process_data.specific_body_force;
         local_rhs.template block<displacement_size, 1>(displacement_index, 0)
             .noalias() -=
-            (B.transpose() * sigma_real - N_u.transpose() * rho_sr * b) * w;
+            (B.transpose() * sigma - N_u.transpose() * rho_sr * b) * w;
 
         //
         // displacement equation, phasefield part
@@ -303,7 +303,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                 degradation);
 
-        auto& sigma_real = _ip_data[ip].sigma_real;
+        auto& sigma = _ip_data[ip].sigma;
         auto const& C_tensile = _ip_data[ip].C_tensile;
         auto const& C_compressive = _ip_data[ip].C_compressive;
 
@@ -322,7 +322,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& b = _process_data.specific_body_force;
 
         local_rhs.noalias() -=
-            (B.transpose() * sigma_real - N_u.transpose() * rho_sr * b -
+            (B.transpose() * sigma - N_u.transpose() * rho_sr * b -
              local_pressure * N_u.transpose() * dNdx * d) *
             w;
 
