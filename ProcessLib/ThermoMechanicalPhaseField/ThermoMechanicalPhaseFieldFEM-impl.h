@@ -256,8 +256,8 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         using Invariants = MathLib::KelvinVector::Invariants<
                 MathLib::KelvinVector::KelvinVectorDimensions<
                     DisplacementDim>::value>;
-        double const epsm_trace = Invariants::trace(eps_m);
-        if (epsm_trace >= 0)
+        double const eps_m_trace = Invariants::trace(eps_m);
+        if (eps_m_trace >= 0)
         {
             KTT.noalias() +=
                 dNdx.transpose() *
@@ -560,8 +560,8 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                 MathLib::KelvinVector::KelvinVectorDimensions<
                     DisplacementDim>::value>;
 
-        double const epsm_trace = Invariants::trace(eps_m);
-        if (epsm_trace >= 0)
+        double const eps_m_trace = Invariants::trace(eps_m);
+        if (eps_m_trace >= 0)
         {
             local_Jac.noalias() +=
                 (dNdx.transpose() * lambda_eff * dNdx +
