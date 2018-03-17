@@ -55,15 +55,12 @@ struct IntegrationPointData final
 
     typename BMatricesType::KelvinMatrixType C_tensile, C_compressive;
     double integration_weight;
-    double history_variable;
-    double history_variable_prev;
+    double history_variable, history_variable_prev;
 
     void pushBackState()
     {
-        if (history_variable_prev < history_variable)
-        {
-            history_variable_prev = history_variable;
-        }
+        history_variable_prev =
+            std::max(history_variable_prev, history_variable);
         eps_prev = eps;
         material_state_variables->pushBackState();
     }
