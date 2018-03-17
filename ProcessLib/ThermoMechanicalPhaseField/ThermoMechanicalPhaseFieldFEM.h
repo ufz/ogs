@@ -171,7 +171,7 @@ public:
                 MathLib::KelvinVector::KelvinVectorDimensions<
                     DisplacementDim>::value;
             ip_data.eps.setZero(kelvin_vector_size);
-            ip_data.eps_prev.setZero(kelvin_vector_size);
+            ip_data.eps_prev.resize(kelvin_vector_size);
             ip_data.eps_m.setZero(kelvin_vector_size);
             ip_data.eps_m_prev.setZero(kelvin_vector_size);
             ip_data.C_tensile.setZero(kelvin_vector_size, kelvin_vector_size);
