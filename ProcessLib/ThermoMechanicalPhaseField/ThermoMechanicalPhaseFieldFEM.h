@@ -43,7 +43,7 @@ struct IntegrationPointData final
     typename ShapeMatrixType::GlobalDimNodalMatrixType dNdx;
 
     typename BMatricesType::KelvinVectorType eps, eps_prev;
-    typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
+    typename BMatricesType::KelvinVectorType eps_m;
 
     typename BMatricesType::KelvinVectorType sigma_tensile, sigma_compressive,
         sigma_real_prev, sigma_real;
@@ -67,7 +67,6 @@ struct IntegrationPointData final
             history_variable_prev = history_variable;
         }
         heatflux_prev = heatflux;
-        eps_m_prev = eps_m;
         eps_prev = eps;
         sigma_real_prev = sigma_real;
         material_state_variables->pushBackState();
@@ -173,7 +172,6 @@ public:
             ip_data.eps.setZero(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
             ip_data.eps_m.setZero(kelvin_vector_size);
-            ip_data.eps_m_prev.setZero(kelvin_vector_size);
             ip_data.C_tensile.setZero(kelvin_vector_size, kelvin_vector_size);
             ip_data.C_compressive.setZero(kelvin_vector_size,
                                           kelvin_vector_size);

@@ -174,7 +174,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         //
         // displacement equation, displacement part
         //
-        // auto const d_prev = d - d_dot*dt;
 
         double const d_ip = N.dot(d);
 
@@ -493,13 +492,10 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 {
     auto const& local_d =
         local_coupled_solutions.local_coupled_xs[_phase_field_process_id];
-    auto const& local_u =
-        local_coupled_solutions.local_coupled_xs[_mechanics_related_process_id];
     auto const& local_T =
         local_coupled_solutions.local_coupled_xs[_heat_conduction_process_id];
     assert(local_T.size() == temperature_size);
     assert(local_d.size() == phasefield_size);
-    assert(local_u.size() == displacement_size);
 
     auto d = Eigen::Map<
         typename ShapeMatricesType::template VectorType<phasefield_size> const>(
@@ -598,13 +594,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 {
     auto const& local_d =
         local_coupled_solutions.local_coupled_xs[_phase_field_process_id];
-    auto const& local_u =
-        local_coupled_solutions.local_coupled_xs[_mechanics_related_process_id];
-    auto const& local_T =
-        local_coupled_solutions.local_coupled_xs[_heat_conduction_process_id];
-    assert(local_T.size() == temperature_size);
     assert(local_d.size() == phasefield_size);
-    assert(local_u.size() == displacement_size);
 
     auto d = Eigen::Map<
         typename ShapeMatricesType::template VectorType<phasefield_size> const>(
