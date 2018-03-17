@@ -45,7 +45,7 @@ struct IntegrationPointData final
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 
     typename BMatricesType::KelvinVectorType sigma_tensile, sigma_compressive,
-        sigma_real_prev, sigma_real;
+        sigma_real;
     double strain_energy_tensile, elastic_energy;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
@@ -65,7 +65,6 @@ struct IntegrationPointData final
             history_variable_prev = history_variable;
         }
         eps_prev = eps;
-        sigma_real_prev = sigma_real;
         material_state_variables->pushBackState();
     }
 
