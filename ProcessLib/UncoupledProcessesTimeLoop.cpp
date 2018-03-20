@@ -591,6 +591,13 @@ bool UncoupledProcessesTimeLoop::loop()
 
         dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
 
+        if (!_last_step_rejected)
+        {
+            const bool output_initial_condition = false;
+            outputSolutions(output_initial_condition, is_staggered_coupling,
+                            timesteps, t, *_output, &Output::doOutput);
+        }
+
         if (t + dt > _end_time ||
             t + std::numeric_limits<double>::epsilon() > _end_time)
         {
@@ -686,21 +693,17 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
                 "s for process #%u.",
                 timestep_id, t, process_id);
 
-            // save unsuccessful solution
-            _output->doOutputAlways(pcs, process_id,
-                                    process_data->process_output, timestep_id,
-                                    t, x);
-
             if (!process_data->timestepper->isSolutionErrorComputationNeeded())
             {
+                // save unsuccessful solution
+                _output->doOutputAlways(pcs, process_id,
+                                        process_data->process_output,
+                                        timestep_id, t, x);
                 OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
             }
 
             return false;
         }
-
-        _output->doOutput(pcs, process_id, process_data->process_output,
-                          timestep_id, t, x);
 
         ++process_id;
     }  // end of for (auto& process_data : _per_process_data)
@@ -783,17 +786,15 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                     " for process #%u.",
                     timestep_id, t, process_id);
 
-                // save unsuccessful solution
-                _output->doOutputAlways(process_data->process, process_id,
-                                        process_data->process_output,
-                                        timestep_id, t, x);
-
                 if (!process_data->timestepper
                          ->isSolutionErrorComputationNeeded())
                 {
+                    // save unsuccessful solution
+                    _output->doOutputAlways(process_data->process, process_id,
+                                            process_data->process_output,
+                                            timestep_id, t, x);
                     OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
                 }
-
                 break;
             }
 
@@ -858,13 +859,6 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         pcs.computeSecondaryVariable(t, x);
 
         ++process_id;
-    }
-
-    {
-        const bool output_initial_condition = false;
-        const bool is_staggered_coupling = true;
-        outputSolutions(output_initial_condition, is_staggered_coupling,
-                        timestep_id, t, *_output, &Output::doOutput);
     }
 
     return true;
