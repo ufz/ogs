@@ -13,6 +13,7 @@
 #include "ThermoMechanicalPhaseFieldFEM.h"
 
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 
 namespace ProcessLib
 {
@@ -143,8 +144,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
         auto const& sigma_real = _ip_data[ip].sigma_real;
 
-        // auto const [&](member){ return _process_data.member(t,
-        // x_position); };
         auto const k = _process_data.residual_stiffness(t, x_position)[0];
         auto const gc = _process_data.crack_resistance(t, x_position)[0];
         auto const ls = _process_data.crack_length_scale(t, x_position)[0];
@@ -164,7 +163,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         double const delta_T = T_ip - T0;
         // calculate real density
         double const rho_s = rho_sr * (1 - 3 * alpha * delta_T);
-        // calculate thermally induced strain
 
         // Kdd_component defines one term which both used in Kdd and local_rhs for phase
         // field
@@ -432,8 +430,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
         auto const& sigma_real = _ip_data[ip].sigma_real;
 
-        // auto const [&](member){ return _process_data.member(t,
-        // x_position); };
         auto const k = _process_data.residual_stiffness(t, x_position)[0];
         auto rho_sr = _process_data.solid_density(t, x_position)[0];
         auto const alpha = _process_data.linear_thermal_expansion_coefficient(
@@ -445,7 +441,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         double const delta_T = T_ip - T0;
         // calculate real density
         double const rho_s = rho_sr * (1 - 3 * alpha * delta_T);
-        // calculate thermally induced strain
 
         double const d_ip = N.dot(d);
         double const degradation = d_ip * d_ip * (1 - k) + k;
@@ -549,6 +544,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         double const delta_T = T_ip - T0;
         // calculate real density
         double const rho_s = rho_sr * (1 - 3 * alpha * delta_T);
+        // calculate effective thermal conductivity
         auto const lambda_eff = d_ip * d_ip * lambda +
                                 (1 - d_ip) * (1 - d_ip) * lambda_res;
 
@@ -621,7 +617,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
 
-        // auto const& sigma_tensile = _ip_data[ip].sigma_tensile;
         auto const& strain_energy_tensile = _ip_data[ip].strain_energy_tensile;
 
         auto const gc = _process_data.crack_resistance(t, x_position)[0];
