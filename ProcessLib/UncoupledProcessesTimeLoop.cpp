@@ -693,13 +693,12 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
                 "s for process #%u.",
                 timestep_id, t, process_id);
 
-            // save unsuccessful solution
-            _output->doOutputAlways(pcs, process_id,
-                                    process_data->process_output, timestep_id,
-                                    t, x);
-
             if (!process_data->timestepper->isSolutionErrorComputationNeeded())
             {
+                // save unsuccessful solution
+                _output->doOutputAlways(pcs, process_id,
+                                        process_data->process_output,
+                                        timestep_id, t, x);
                 OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
             }
 
@@ -787,17 +786,15 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                     " for process #%u.",
                     timestep_id, t, process_id);
 
-                // save unsuccessful solution
-                _output->doOutputAlways(process_data->process, process_id,
-                                        process_data->process_output,
-                                        timestep_id, t, x);
-
                 if (!process_data->timestepper
                          ->isSolutionErrorComputationNeeded())
                 {
+                    // save unsuccessful solution
+                    _output->doOutputAlways(process_data->process, process_id,
+                                            process_data->process_output,
+                                            timestep_id, t, x);
                     OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
                 }
-
                 break;
             }
 
