@@ -9,8 +9,6 @@
 
 #include "CreateThermoMechanicalPhaseFieldProcess.h"
 
-#include <cassert>
-
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"

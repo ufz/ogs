@@ -11,8 +11,6 @@
 
 #include <cassert>
 
-#include "BaseLib/Functional.h"
-#include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
