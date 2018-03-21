@@ -56,6 +56,10 @@ std::unique_ptr<CubicLawAfterShearSlip> createCubicLawAfterShearSlip(
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "CubicLawAfterShearSlip");
 
+    auto const initial_creation_aperture =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__initial_creation_aperture}
+        config.getConfigParameter<double>("initial_creation_aperture");
+
     auto const minimum_permeability =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__minimum_permeability}
         config.getConfigParameter<double>("minimum_permeability");
@@ -66,7 +70,8 @@ std::unique_ptr<CubicLawAfterShearSlip> createCubicLawAfterShearSlip(
             "value %g.",
             minimum_permeability);
 
-    return std::make_unique<CubicLawAfterShearSlip>(minimum_permeability);
+    return std::make_unique<CubicLawAfterShearSlip>(initial_creation_aperture,
+                                                    minimum_permeability);
 }
 }  // namespace Fracture
 }  // namespace MaterialLib

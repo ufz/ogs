@@ -148,8 +148,10 @@ struct CubicLawAfterShearSlipState : public PermeabilityState
 class CubicLawAfterShearSlip final : public Permeability
 {
 public:
-    explicit CubicLawAfterShearSlip(double const minimum_permeability)
-        : _minimum_permeability(minimum_permeability)
+    explicit CubicLawAfterShearSlip(double const initial_creation_aperture,
+                                    double const minimum_permeability)
+        : _initial_creation_aperture(initial_creation_aperture),
+          _minimum_permeability(minimum_permeability)
     {
     }
 
@@ -165,7 +167,8 @@ private:
                         double const /*aperture0*/,
                         double const aperture_m) const override
     {
-        return shearSlipOccured(state) ? aperture_m * aperture_m / 12
+        double const aperture = aperture_m + _initial_creation_aperture;
+        return shearSlipOccured(state) ? aperture * aperture / 12
                                        : _minimum_permeability;
     }
 
@@ -173,7 +176,8 @@ private:
                                    double const /*aperture0*/,
                                    double const aperture_m) const override
     {
-        return shearSlipOccured(state) ? aperture_m / 6 : 0;
+        double const aperture = aperture_m + _initial_creation_aperture;
+        return shearSlipOccured(state) ? aperture / 6 : 0;
     }
 
     std::unique_ptr<PermeabilityState> getNewState() const override
@@ -182,6 +186,10 @@ private:
     }
 
 private:
+    /// An induced initial creation aperture. As soon as shear- or tensile-
+    /// failure occur, an induced creation aperture is added.
+    double const _initial_creation_aperture;
+
     double const _minimum_permeability = 1e-16;
 };
 
