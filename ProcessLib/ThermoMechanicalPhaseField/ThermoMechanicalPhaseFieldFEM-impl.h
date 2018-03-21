@@ -142,7 +142,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto& history_variable = _ip_data[ip].history_variable;
         auto& history_variable_prev = _ip_data[ip].history_variable_prev;
 
-        auto const& sigma_real = _ip_data[ip].sigma_real;
+        auto const& sigma = _ip_data[ip].sigma;
 
         auto const k = _process_data.residual_stiffness(t, x_position)[0];
         auto const gc = _process_data.crack_resistance(t, x_position)[0];
@@ -204,7 +204,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
         local_rhs.template block<displacement_size, 1>(displacement_index, 0)
             .noalias() -=
-            (B.transpose() * sigma_real - N_u.transpose() * rho_s * b) * w;
+            (B.transpose() * sigma - N_u.transpose() * rho_s * b) * w;
 
         //
         // displacement equation, temperature part
@@ -428,7 +428,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& C_tensile = _ip_data[ip].C_tensile;
         auto const& C_compressive = _ip_data[ip].C_compressive;
 
-        auto const& sigma_real = _ip_data[ip].sigma_real;
+        auto const& sigma = _ip_data[ip].sigma;
 
         auto const k = _process_data.residual_stiffness(t, x_position)[0];
         auto rho_sr = _process_data.solid_density(t, x_position)[0];
@@ -469,7 +469,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
             B.transpose() * C_eff * B * w;
 
         local_rhs.noalias() -=
-            (B.transpose() * sigma_real - N_u.transpose() * rho_s * b) * w;
+            (B.transpose() * sigma - N_u.transpose() * rho_s * b) * w;
 
     }
 }
