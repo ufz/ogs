@@ -45,7 +45,7 @@ struct IntegrationPointData final
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 
     typename BMatricesType::KelvinVectorType sigma_tensile, sigma_compressive,
-        sigma_real_prev, sigma_real;
+        sigma;
     double strain_energy_tensile, elastic_energy;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
@@ -55,17 +55,13 @@ struct IntegrationPointData final
 
     typename BMatricesType::KelvinMatrixType C_tensile, C_compressive;
     double integration_weight;
-    double history_variable;
-    double history_variable_prev;
+    double history_variable, history_variable_prev;
 
     void pushBackState()
     {
-        if (history_variable_prev < history_variable)
-        {
-            history_variable_prev = history_variable;
-        }
+        history_variable_prev =
+            std::max(history_variable_prev, history_variable);
         eps_prev = eps;
-        sigma_real_prev = sigma_real;
         material_state_variables->pushBackState();
     }
 
@@ -80,7 +76,7 @@ struct IntegrationPointData final
             solid_material)
             .calculateDegradedStress(t, x_position, eps, strain_energy_tensile,
                                      sigma_tensile, sigma_compressive,
-                                     C_tensile, C_compressive, sigma_real,
+                                     C_tensile, C_compressive, sigma,
                                      degradation, elastic_energy);
     }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
@@ -159,7 +155,7 @@ public:
                 _process_data.history_field(0, x_position)[0];
             ip_data.history_variable_prev =
                 _process_data.history_field(0, x_position)[0];
-            ip_data.sigma_real.setZero(kelvin_vector_size);
+            ip_data.sigma.setZero(kelvin_vector_size);
             ip_data.strain_energy_tensile = 0.0;
             ip_data.elastic_energy = 0.0;
 
@@ -256,7 +252,7 @@ private:
 
         for (unsigned ip = 0; ip < num_intpts; ++ip)
         {
-            auto const& sigma = _ip_data[ip].sigma_real;
+            auto const& sigma = _ip_data[ip].sigma;
             cache_mat.col(ip) =
                 MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma);
         }

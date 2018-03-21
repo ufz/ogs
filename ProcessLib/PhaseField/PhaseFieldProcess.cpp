@@ -370,7 +370,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
             _process_data.pressure =
                 _process_data.injected_volume / _process_data.crack_volume;
             _process_data.pressure_error =
-                abs(_process_data.pressure_old - _process_data.pressure) /
+                std::fabs(_process_data.pressure_old - _process_data.pressure) /
                 _process_data.pressure;
             INFO("Internal pressure: %g and Pressure error: %.4e",
                  _process_data.pressure, _process_data.pressure_error);
