@@ -43,6 +43,7 @@
                 <biot_coefficient>biot_f</biot_coefficient>
                 <permeability_model>
                     <type>CubicLawAfterShearSlip</type>
+                    <initial_creation_aperture>0</initial_creation_aperture>
                     <minimum_permeability>1e-16</minimum_permeability>
                 </permeability_model>
             </fracture_properties>
