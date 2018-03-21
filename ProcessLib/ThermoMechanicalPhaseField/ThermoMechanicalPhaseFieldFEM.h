@@ -62,10 +62,8 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        if (history_variable_prev < history_variable)
-        {
-            history_variable_prev = history_variable;
-        }
+        history_variable_prev =
+            std::max(history_variable_prev, history_variable);
         heatflux_prev = heatflux;
         eps_prev = eps;
         sigma_real_prev = sigma_real;
