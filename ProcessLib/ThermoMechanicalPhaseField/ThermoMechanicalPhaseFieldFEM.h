@@ -48,7 +48,7 @@ struct IntegrationPointData final
     typename BMatricesType::KelvinVectorType sigma_tensile, sigma_compressive,
         sigma;
     double strain_energy_tensile, elastic_energy;
-    typename ShapeMatrixType::GlobalDimVectorType heatflux, heatflux_prev;
+    typename ShapeMatrixType::GlobalDimVectorType heatflux;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
@@ -57,16 +57,13 @@ struct IntegrationPointData final
 
     typename BMatricesType::KelvinMatrixType C_tensile, C_compressive;
     double integration_weight;
-    double history_variable;
-    double history_variable_prev;
+    double history_variable, history_variable_prev;
 
     void pushBackState()
     {
         history_variable_prev =
             std::max(history_variable_prev, history_variable);
-        heatflux_prev = heatflux;
         eps_prev = eps;
-        sigma_real_prev = sigma_real;
         material_state_variables->pushBackState();
     }
 
@@ -176,7 +173,6 @@ public:
             ip_data.sigma_tensile.setZero(kelvin_vector_size);
             ip_data.sigma_compressive.setZero(kelvin_vector_size);
             ip_data.heatflux.setZero(DisplacementDim);
-            ip_data.heatflux_prev.setZero(DisplacementDim);
             ip_data.history_variable =
                 process_data.history_field(0, x_position)[0];
             ip_data.history_variable_prev =
