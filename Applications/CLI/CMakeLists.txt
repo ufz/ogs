@@ -2,7 +2,7 @@
 add_executable(ogs ogs.cpp)
 
 target_link_libraries(ogs
-    PRIVATE BaseLib ApplicationsLib NumLib ProcessLib
+    PRIVATE BaseLib ApplicationsLib
 )
 
 if(OGS_USE_PETSC)
