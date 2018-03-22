@@ -198,15 +198,6 @@ public:
             "Jacobian is not implemented.");
     }
 
-    void assembleWithJacobian(double const t,
-                              std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
-                              const double /*dxdot_dx*/, const double /*dx_dx*/,
-                              std::vector<double>& /*local_M_data*/,
-                              std::vector<double>& /*local_K_data*/,
-                              std::vector<double>& local_rhs_data,
-                              std::vector<double>& local_Jac_data) override;
-
     void assembleWithJacobianForStaggeredScheme(
         double const t, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
