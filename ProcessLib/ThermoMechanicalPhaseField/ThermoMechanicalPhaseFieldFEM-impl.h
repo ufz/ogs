@@ -221,8 +221,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
         if (history_variable_prev < strain_energy_tensile)
         {
-            // INFO("History variable %g:", history_variable);
-            // INFO("History variable previous %g:", history_variable_prev);
             history_variable = strain_energy_tensile;
             Kdu.noalias() +=
                 N.transpose() * 2 * d_ip * sigma_tensile.transpose() * B * w;
