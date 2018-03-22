@@ -9,15 +9,15 @@
 
 #pragma once
 
+#include "ThermoMechanicalPhaseFieldFEM.h"
+#include "ThermoMechanicalPhaseFieldProcessData.h"
+#include "ThermoMechanicalPhaseFieldProcess.h"
+
 #include <cassert>
 
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
-
-#include "ThermoMechanicalPhaseFieldFEM.h"
-#include "ThermoMechanicalPhaseFieldProcessData.h"
-#include "ThermoMechanicalPhaseFieldProcess.h"
 
 namespace ProcessLib
 {

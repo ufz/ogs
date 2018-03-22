@@ -7,8 +7,8 @@
  *
  */
 
-#include "ThermoMechanicalPhaseFieldProcess-impl.h"
 #include "ThermoMechanicalPhaseFieldProcess.h"
+#include "ThermoMechanicalPhaseFieldProcess-impl.h"
 
 namespace ProcessLib
 {
