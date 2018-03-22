@@ -32,11 +32,12 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                          std::vector<double>& local_Jac_data)
 {
     using RhsVector =
-        typename ShapeMatricesType::template VectorType<phasefield_size +
+        typename ShapeMatricesType::template VectorType<temperature_size +
+                                                        phasefield_size +
                                                         displacement_size>;
     using JacobianMatrix = typename ShapeMatricesType::template MatrixType<
-        phasefield_size + displacement_size,
-        phasefield_size + displacement_size>;
+        temperature_size + phasefield_size + displacement_size,
+        temperature_size + phasefield_size + displacement_size>;
 
     auto const local_matrix_size = local_x.size();
     assert(local_matrix_size ==
