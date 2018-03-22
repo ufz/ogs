@@ -1,5 +1,41 @@
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
+add_subdirectory(ComponentTransport)
+add_subdirectory(GroundwaterFlow)
+add_subdirectory(HT)
+add_subdirectory(HeatConduction)
+add_subdirectory(HydroMechanics)
+add_subdirectory(LiquidFlow)
+add_subdirectory(LIE)
+add_subdirectory(PhaseField)
+add_subdirectory(RichardsComponentTransport)
+add_subdirectory(RichardsFlow)
+add_subdirectory(SmallDeformation)
+add_subdirectory(TES)
+add_subdirectory(ThermalTwoPhaseFlowWithPP)
+add_subdirectory(ThermoMechanics)
+add_subdirectory(TwoPhaseFlowWithPP)
+add_subdirectory(TwoPhaseFlowWithPrho)
+
+add_library(Processes INTERFACE)
+target_link_libraries(Processes INTERFACE
+    ComponentTransport
+    GroundwaterFlow
+    HT
+    HeatConduction
+    HydroMechanics
+    LiquidFlow
+    LIE
+    PhaseField
+    RichardsComponentTransport
+    RichardsFlow
+    SmallDeformation
+    TES
+    ThermalTwoPhaseFlowWithPP
+    ThermoMechanics
+    TwoPhaseFlowWithPP
+    TwoPhaseFlowWithPrho)
+
 APPEND_SOURCE_FILES(SOURCES)
 APPEND_SOURCE_FILES(SOURCES BoundaryCondition)
 APPEND_SOURCE_FILES(SOURCES CalculateSurfaceFlux)
@@ -7,29 +43,6 @@ APPEND_SOURCE_FILES(SOURCES Output)
 APPEND_SOURCE_FILES(SOURCES Parameter)
 APPEND_SOURCE_FILES(SOURCES SourceTerms)
 APPEND_SOURCE_FILES(SOURCES Utils)
-
-APPEND_SOURCE_FILES(SOURCES ComponentTransport)
-APPEND_SOURCE_FILES(SOURCES Deformation)
-APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
-APPEND_SOURCE_FILES(SOURCES HT)
-APPEND_SOURCE_FILES(SOURCES HeatConduction)
-APPEND_SOURCE_FILES(SOURCES HydroMechanics)
-APPEND_SOURCE_FILES(SOURCES LIE/BoundaryCondition)
-APPEND_SOURCE_FILES(SOURCES LIE/Common)
-APPEND_SOURCE_FILES(SOURCES LIE/HydroMechanics)
-APPEND_SOURCE_FILES(SOURCES LIE/HydroMechanics/LocalAssembler)
-APPEND_SOURCE_FILES(SOURCES LIE/SmallDeformation)
-APPEND_SOURCE_FILES(SOURCES LIE/SmallDeformation/LocalAssembler)
-APPEND_SOURCE_FILES(SOURCES LiquidFlow)
-APPEND_SOURCE_FILES(SOURCES PhaseField)
-APPEND_SOURCE_FILES(SOURCES RichardsComponentTransport)
-APPEND_SOURCE_FILES(SOURCES RichardsFlow)
-APPEND_SOURCE_FILES(SOURCES SmallDeformation)
-APPEND_SOURCE_FILES(SOURCES TES)
-APPEND_SOURCE_FILES(SOURCES ThermalTwoPhaseFlowWithPP)
-APPEND_SOURCE_FILES(SOURCES ThermoMechanics)
-APPEND_SOURCE_FILES(SOURCES TwoPhaseFlowWithPP)
-APPEND_SOURCE_FILES(SOURCES TwoPhaseFlowWithPrho)
 
 add_library(ProcessLib ${SOURCES})
 
@@ -51,22 +64,3 @@ endif()
 if(OGS_USE_PCH)
     cotire(ProcessLib)
 endif()
-
-### Tests ###
-include(ComponentTransport/Tests.cmake)
-include(GroundwaterFlow/Tests.cmake)
-include(HeatConduction/Tests.cmake)
-include(HT/Tests.cmake)
-include(HydroMechanics/Tests.cmake)
-include(LIE/HydroMechanics/Tests.cmake)
-include(LIE/SmallDeformation/Tests.cmake)
-include(LiquidFlow/Tests.cmake)
-include(PhaseField/Tests.cmake)
-include(RichardsFlow/Tests.cmake)
-include(RichardsComponentTransport/Tests.cmake)
-include(SmallDeformation/Tests.cmake)
-include(TES/Tests.cmake)
-include(ThermoMechanics/Tests.cmake)
-include(TwoPhaseFlowWithPP/Tests.cmake)
-include(TwoPhaseFlowWithPrho/Tests.cmake)
-include(ThermalTwoPhaseFlowWithPP/Tests.cmake)

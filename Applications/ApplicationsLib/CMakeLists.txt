@@ -6,7 +6,7 @@ set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
 add_library(ApplicationsLib ${LIB_SOURCES})
 
 target_link_libraries(ApplicationsLib
-    PUBLIC BaseLib GeoLib NumLib ProcessLib logog
+    PUBLIC BaseLib GeoLib Processes logog
     PRIVATE MathLib MeshLib
 )
 

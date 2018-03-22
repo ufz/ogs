@@ -1,6 +1,6 @@
 
 add_executable(postLIE postLIE.cpp)
-target_link_libraries(postLIE MeshLib ProcessLib)
+target_link_libraries(postLIE MeshLib LIE)
 set_target_properties(postLIE PROPERTIES FOLDER Utilities)
 
 ####################
