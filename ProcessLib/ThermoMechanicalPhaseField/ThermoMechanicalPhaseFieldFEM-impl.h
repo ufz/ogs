@@ -439,7 +439,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         double const T_ip = N.dot(T);
         double const delta_T = T_ip - T0;
         // calculate real density
-        double const rho_s = rho_sr * (1 - 3 * alpha * delta_T);
+        double const rho_s = rho_sr / (1 + 3 * alpha * delta_T);
 
         double const d_ip = N.dot(d);
         double const degradation = d_ip * d_ip * (1 - k) + k;
