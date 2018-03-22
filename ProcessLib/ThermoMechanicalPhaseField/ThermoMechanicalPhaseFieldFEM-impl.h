@@ -460,10 +460,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                    i, i * displacement_size / DisplacementDim)
                 .noalias() = N;
 
-        using Invariants = MathLib::KelvinVector::Invariants<
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value>;
-
         local_Jac.noalias() +=
             B.transpose() * C_eff * B * w;
 
@@ -622,10 +618,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const ls = _process_data.crack_length_scale(t, x_position)[0];
 
         double const d_ip = N.dot(d);
-
-        using Invariants = MathLib::KelvinVector::Invariants<
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value>;
 
         local_Jac.noalias() +=
                 (dNdx.transpose() * gc * ls * dNdx +
