@@ -47,7 +47,11 @@ std::unique_ptr<CubicLaw> createCubicLaw(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "CubicLaw");
 
-    return std::make_unique<CubicLaw>();
+    auto const permeability_threshold =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__permeability_threshold}
+        config.getConfigParameter<double>("permeability_threshold");
+
+    return std::make_unique<CubicLaw>(permeability_threshold);
 }
 
 std::unique_ptr<CubicLawAfterShearSlip> createCubicLawAfterShearSlip(
@@ -64,6 +68,10 @@ std::unique_ptr<CubicLawAfterShearSlip> createCubicLawAfterShearSlip(
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__minimum_permeability}
         config.getConfigParameter<double>("minimum_permeability");
 
+    auto const permeability_threshold =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__permeability_threshold}
+        config.getConfigParameter<double>("permeability_threshold");
+
     if (minimum_permeability < 0)
         OGS_FATAL(
             "The minimum_permeability parameter must be non-negative. Given "
@@ -71,7 +79,8 @@ std::unique_ptr<CubicLawAfterShearSlip> createCubicLawAfterShearSlip(
             minimum_permeability);
 
     return std::make_unique<CubicLawAfterShearSlip>(initial_creation_aperture,
-                                                    minimum_permeability);
+                                                    minimum_permeability,
+                                                    permeability_threshold);
 }
 }  // namespace Fracture
 }  // namespace MaterialLib
