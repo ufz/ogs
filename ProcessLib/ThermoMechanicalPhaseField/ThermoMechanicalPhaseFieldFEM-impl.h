@@ -271,7 +271,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
         double const d_dot_ip = N.dot(d_dot);
 
-        local_rhs.template block<phasefield_size, 1>(phasefield_index, 0)
+        local_rhs.template segment<phasefield_size>(phasefield_index)
             .noalias() -= (N.transpose() * d_dot_ip / M + Kdd_component * d +
                            N.transpose() * d_ip * 2 * history_variable -
                            N.transpose() * 0.5 * gc / ls * (1 - d_ip)) *
