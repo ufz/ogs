@@ -43,6 +43,7 @@
                 <biot_coefficient>biot_f</biot_coefficient>
                 <permeability_model>
                     <type>CubicLaw</type>
+                    <permeability_threshold>0</permeability_threshold>
                 </permeability_model>
             </fracture_properties>
             <secondary_variables>

@@ -45,6 +45,7 @@
                     <type>CubicLawAfterShearSlip</type>
                     <initial_creation_aperture>0</initial_creation_aperture>
                     <minimum_permeability>1e-16</minimum_permeability>
+                    <permeability_threshold>0</permeability_threshold>
                 </permeability_model>
             </fracture_properties>
             <secondary_variables>
