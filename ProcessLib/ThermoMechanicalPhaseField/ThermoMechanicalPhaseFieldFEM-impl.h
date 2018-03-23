@@ -231,7 +231,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         double const T_dot_ip = N.dot(T_dot);
         double const delta_T = T_ip - T0;
         // calculate real density
-        double const rho_s = rho_sr * (1 - 3 * alpha * delta_T);
+        double const rho_s = rho_sr / (1 + 3 * alpha * delta_T);
         // calculate effective thermal conductivity
         auto const lambda_eff = d_ip * d_ip * lambda +
                                 (1 - d_ip) * (1 - d_ip) * lambda_res;
