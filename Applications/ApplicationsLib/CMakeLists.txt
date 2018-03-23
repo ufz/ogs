@@ -10,6 +10,15 @@ target_link_libraries(ApplicationsLib
     PRIVATE MathLib MeshLib
 )
 
+# Set cpp definitions if the cmake option is enabled for the given process.
+foreach(process ${ProcessesList})
+    if(OGS_BUILD_PROCESS_${process})
+        string(TOUPPER "OGS_BUILD_PROCESS_${process}" EnableProcess)
+        set_property(SOURCE ProjectData.cpp APPEND PROPERTY COMPILE_DEFINITIONS
+            ${EnableProcess})
+    endif()
+endforeach()
+
 if(TARGET Eigen)
     add_dependencies(ApplicationsLib Eigen)
 endif()

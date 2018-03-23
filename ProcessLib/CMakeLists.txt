@@ -1,40 +1,15 @@
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
-add_subdirectory(ComponentTransport)
-add_subdirectory(GroundwaterFlow)
-add_subdirectory(HT)
-add_subdirectory(HeatConduction)
-add_subdirectory(HydroMechanics)
-add_subdirectory(LiquidFlow)
-add_subdirectory(LIE)
-add_subdirectory(PhaseField)
-add_subdirectory(RichardsComponentTransport)
-add_subdirectory(RichardsFlow)
-add_subdirectory(SmallDeformation)
-add_subdirectory(TES)
-add_subdirectory(ThermalTwoPhaseFlowWithPP)
-add_subdirectory(ThermoMechanics)
-add_subdirectory(TwoPhaseFlowWithPP)
-add_subdirectory(TwoPhaseFlowWithPrho)
-
+# Collect the process libraries in interface library
 add_library(Processes INTERFACE)
-target_link_libraries(Processes INTERFACE
-    ComponentTransport
-    GroundwaterFlow
-    HT
-    HeatConduction
-    HydroMechanics
-    LiquidFlow
-    LIE
-    PhaseField
-    RichardsComponentTransport
-    RichardsFlow
-    SmallDeformation
-    TES
-    ThermalTwoPhaseFlowWithPP
-    ThermoMechanics
-    TwoPhaseFlowWithPP
-    TwoPhaseFlowWithPrho)
+
+foreach(process ${ProcessesList})
+    if(OGS_BUILD_PROCESS_${process})
+        add_subdirectory(${process})
+        target_link_libraries(Processes INTERFACE ${process})
+    endif()
+endforeach()
+
 
 APPEND_SOURCE_FILES(SOURCES)
 APPEND_SOURCE_FILES(SOURCES BoundaryCondition)
