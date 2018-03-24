@@ -277,7 +277,7 @@ public:
             // calculate real density
             auto const rho_sr =
                 _process_data.reference_solid_density(t, x_position)[0];
-            double const rho_s = rho_sr * (1 - 3 * linear_thermal_strain);
+            double const rho_s = rho_sr / (1 + 3 * linear_thermal_strain);
 
             auto const& b = _process_data.specific_body_force;
             local_rhs
