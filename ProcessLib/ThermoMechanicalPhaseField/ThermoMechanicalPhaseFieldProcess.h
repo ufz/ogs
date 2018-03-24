@@ -47,11 +47,7 @@ struct ThermoMechanicalPhaseFieldLocalAssemblerInterface;
  *       &\kappa_\mathrm{eff}:&  \mbox{effectiev thermal conductivity}\\
  *    \f}
  *
- * Detailed model description can refer
- * the latest published benchmark book
- * "Thermo-Hydro-Mechanical-Chemical Processes in Fractured Porous Media:
- * Modelling and Benchmarking"
- * (Chapter 9.7 -- A Phase-Field Model for Brittle Fracturing of Thermo-Elastic Solids)
+ * Detailed model description can refer \cite Kolditz:2018.
  */
 template <int DisplacementDim>
 class ThermoMechanicalPhaseFieldProcess final : public Process
