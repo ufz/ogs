@@ -38,7 +38,6 @@ target_link_libraries(testrunner
     ApplicationsLib
     ApplicationsFileIO
     GTest
-    LIE
     MeshGeoToolsLib
     MaterialLib
     MeshLib
@@ -46,6 +45,10 @@ target_link_libraries(testrunner
     ProcessLib
     Threads::Threads
 )
+
+if(OGS_BUILD_PROCESS_LIE)
+    target_link_libraries(testrunner LIE)
+endif()
 
 if(OGS_USE_PETSC)
     target_link_libraries(testrunner ${PETSC_LIBRARIES})
