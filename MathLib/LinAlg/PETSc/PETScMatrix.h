@@ -127,11 +127,30 @@ public:
         MatSetValue(_A, i, j, value, ADD_VALUES);
     }
 
-    /// Add sub-matrix at positions given by \c indices.
+    /*!
+       \brief Add sub-matrix at positions given by global \c indices, in which
+       negative index indicates ghost entry.
+
+       In order to use MatZeroRows to apply Dirichlet boundary condition,
+       entries in the rows with the negative global indices are skipped to added
+       to the global matrix, meanwhile entries in the columns with the negative
+       global indices are added the global matrix. By using MatZeroRows to apply
+       Dirichlet boundary condition, the off diagonal entries in ghost rows of
+       the global matrix are set to zero, while the off diagonal entries in
+       ghost rows of the global matrix are assembled and kept for linear solver.
+
+       For the setting of Dirichlet boundary condition
+       in PETSc, please refer to
+       <a href="http://www.mcs.anl.gov/petsc/documentation/faq.html#redistribute">PETSc:Documentation:FAQ</a>
+     */
     template <class T_DENSE_MATRIX>
     void add(RowColumnIndices<PetscInt> const& indices,
              const T_DENSE_MATRIX& sub_matrix)
     {
+        // Set global column indices to positive to allow all entries of columns
+        // to be added to the global matrix. For the ghost columns, only the
+        // off diagonal entries are added due to the negative indices of the
+        // corresponding rows.
         std::vector<PetscInt> cols;
         cols.reserve(indices.columns.size());
         for (auto col : indices.columns)

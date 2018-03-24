@@ -38,7 +38,7 @@ PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
         if (auto const subtree = option->getConfigSubtreeOptional("petsc"))
         {
             if (auto const parameters =
-                //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc__parameters}
+                    //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc__parameters}
                 subtree->getConfigParameterOptional<std::string>("parameters"))
             {
                 petsc_options = *parameters;
@@ -46,7 +46,7 @@ PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
 
             if (auto const pre =
                     //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc__prefix}
-                    subtree->getConfigParameterOptional<std::string>("prefix"))
+                subtree->getConfigParameterOptional<std::string>("prefix"))
             {
                 if (!pre->empty())
                     prefix = *pre + "_";
@@ -118,7 +118,7 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
                 PetscPrintf(PETSC_COMM_WORLD,
                             " (relative convergence criterion fulfilled).");
                 break;
-            case  KSP_CONVERGED_ATOL:
+            case KSP_CONVERGED_ATOL:
                 PetscPrintf(PETSC_COMM_WORLD,
                             " (absolute convergence criterion fulfilled).");
                 break;
