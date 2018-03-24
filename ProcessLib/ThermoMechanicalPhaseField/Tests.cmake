@@ -39,3 +39,15 @@ AddTest(
     expected_tes_hx3_pcs_2_ts_1_t_20.000000.vtu tes_hx3_pcs_2_ts_1_t_20.000000.vtu phasefield phasefield 1e-6 0
     expected_tes_hx3_pcs_2_ts_1_t_20.000000.vtu tes_hx3_pcs_2_ts_1_t_20.000000.vtu heat_flux heat_flux 1e-4 0
    )
+
+AddTest(
+    NAME ThermoMechanicalPhaseField_THERMAL_SHOCK_LARGE
+    PATH ThermoMechanicalPhaseField
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS slab_5.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    expected_slab_5_pcs_2_ts_1_t_1.000000.vtu slab_5_pcs_2_ts_1_t_1.000000 phasefield phasefield 1e-6 0
+   )

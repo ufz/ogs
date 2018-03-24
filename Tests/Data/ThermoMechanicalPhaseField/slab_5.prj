@@ -5,8 +5,8 @@
 
     <processes>
         <process>
-            <name>TMPhaseField</name>
-            <type>TMPHASE_FIELD</type>
+            <name>ThermoMechanicalPhaseField</name>
+            <type>THERMO_MECHANICAL_PHASE_FIELD</type>
             <coupling_scheme>staggered</coupling_scheme>
             <integration_order>3</integration_order>
 
@@ -30,7 +30,7 @@
 	            <thermal_conductivity>lambda</thermal_conductivity>
                 <residual_thermal_conductivity>lambda_res</residual_thermal_conductivity>
 			</thermal_parameters>
-	        <reference_temperature>1000</reference_temperature>
+	        <reference_temperature>600</reference_temperature>
             <process_variables>
 			    <temperature>temperature</temperature>
                 <displacement>displacement</displacement>
@@ -72,7 +72,7 @@
             </convergence_criteria>
         </global_process_coupling>
         <processes>
-            <process ref="TMPhaseField">
+            <process ref="ThermoMechanicalPhaseField">
                 <nonlinear_solver>basic_newton_T</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
@@ -91,16 +91,16 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>2000</t_end>
+                    <t_end>3</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>2000</repeat>
-                            <delta_t>1e-2</delta_t>
+                            <repeat>3</repeat>
+                            <delta_t>1</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
             </process>
-            <process ref="TMPhaseField">
+            <process ref="ThermoMechanicalPhaseField">
                 <nonlinear_solver>basic_newton_u</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
@@ -120,16 +120,16 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>2000</t_end>
+                    <t_end>3</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>2000</repeat>
-                            <delta_t>1e-2</delta_t>
+                            <repeat>3</repeat>
+                            <delta_t>1</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
             </process>
-            <process ref="TMPhaseField">
+            <process ref="ThermoMechanicalPhaseField">
                 <nonlinear_solver>basic_newton_d</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
@@ -147,11 +147,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>2000</t_end>
+                    <t_end>3</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>2000</repeat>
-                            <delta_t>1e-2</delta_t>
+                            <repeat>3</repeat>
+                            <delta_t>1</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -159,18 +159,18 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>slab_5_h2_g</prefix>
+            <prefix>slab_5</prefix>
             <timesteps>
                 <pair>
-                    <repeat>500</repeat>
+                    <repeat>3</repeat>
                     <each_steps>1</each_steps>
                 </pair>
                 <pair>
-                    <repeat>500</repeat>
+                    <repeat>3</repeat>
                     <each_steps>1</each_steps>
                 </pair>
                 <pair>
-                    <repeat>500</repeat>
+                    <repeat>3</repeat>
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
@@ -241,7 +241,7 @@
 	<parameter>
             <name>temperature_ic</name>
             <type>Constant</type>
-            <value>1000</value>
+            <value>600</value>
         </parameter>
 
         <parameter>
@@ -282,7 +282,7 @@
     <curves>
         <curve>
             <name>Dirichlet_temporal</name>
-            <coords>0 2000</coords>
+            <coords>0 3</coords>
             <values>200 200</values>
         </curve>
     </curves>
@@ -299,10 +299,6 @@
 		<boundary_condition>
                     <geometrical_set>plate3d_geometry</geometrical_set>
                     <geometry>top</geometry>
-                    <!--<search_length_algorithm>
-                        <type>fixed</type>
-                        <value>1e-6</value>
-	                    </search_length_algorithm>-->
                     <type>Dirichlet</type>
                     <parameter>temperature_bc</parameter>
                 </boundary_condition>
@@ -349,16 +345,10 @@
             <initial_condition>phasefield_ic</initial_condition>
 
             <boundary_conditions>
-		        <!--<boundary_condition>
-                    <geometrical_set>plate3d_geometry</geometrical_set>
-                    <geometry>bottom</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>phasefield_bc</parameter>
-                </boundary_condition>-->
 		<boundary_condition>
 		    <geometrical_set>plate3d_geometry</geometrical_set>
                     <geometry>bottom</geometry>
-		    <type>SolutionDependentDirichlet</type>
+		    <type>PhaseFieldIrreversibleDamageOracleBoundaryCondition</type>
 		    <component>0</component>
 	       </boundary_condition>
             </boundary_conditions>
@@ -391,28 +381,19 @@
         <linear_solver>
             <name>linear_solver_T</name>
             <eigen>
-                <solver_type>BiCGSTAB</solver_type>
-                <precon_type>ILUT</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-14</error_tolerance>
+                <solver_type>SparseLU</solver_type>
             </eigen>
         </linear_solver>
         <linear_solver>
             <name>linear_solver_u</name>
             <eigen>
-                <solver_type>BiCGSTAB</solver_type>
-                <precon_type>ILUT</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-14</error_tolerance>
+                <solver_type>SparseLU</solver_type>
             </eigen>
         </linear_solver>
         <linear_solver>
             <name>linear_solver_d</name>
             <eigen>
-                <solver_type>BiCGSTAB</solver_type>
-                <precon_type>ILUT</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-14</error_tolerance>
+                <solver_type>SparseLU</solver_type>
             </eigen>
         </linear_solver>
     </linear_solvers>
