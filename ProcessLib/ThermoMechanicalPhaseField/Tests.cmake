@@ -26,3 +26,16 @@ AddTest(
     expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_pcs_2_ts_1_t_10.000000.vtu phasefield phasefield 1e-6 0
     expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_pcs_2_ts_1_t_10.000000.vtu temperature temperature 1e-6 0
    )
+
+AddTest(
+    NAME ThermoMechanicalPhaseField_TES_IGLU_LARGE
+    PATH ThermoMechanicalPhaseField
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tes_hx3_iglu.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    expected_tes_hx3_pcs_2_ts_1_t_20.000000.vtu tes_hx3_pcs_2_ts_1_t_20.000000.vtu phasefield phasefield 1e-6 0
+    expected_tes_hx3_pcs_2_ts_1_t_20.000000.vtu tes_hx3_pcs_2_ts_1_t_20.000000.vtu heat_flux heat_flux 1e-4 0
+   )

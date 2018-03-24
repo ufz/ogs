@@ -160,7 +160,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tes_hx3_ax</prefix>
+            <prefix>tes_hx3</prefix>
             <timesteps>
                 <pair>
                     <repeat>6</repeat>
