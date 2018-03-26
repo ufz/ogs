@@ -41,6 +41,9 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
+    _material_forces = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "MaterialForces", MeshLib::MeshItemType::Node, DisplacementDim);
+
     _integration_point_writer.emplace_back(
         std::make_unique<SigmaIntegrationPointWriter>(
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
@@ -91,6 +94,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION);
     _nodal_forces->resize(DisplacementDim * mesh.getNumberOfNodes());
+    _material_forces->resize(DisplacementDim * mesh.getNumberOfNodes());
 
     Base::_secondary_variables.addSecondaryVariable(
         "free_energy_density",
@@ -274,12 +278,11 @@ void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
         *_local_to_global_index_map, x);
 
+    std::unique_ptr<GlobalVector> material_forces;
     ProcessLib::SmallDeformation::writeMaterialForces(
-        _material_forces, _local_assemblers, *_local_to_global_index_map, x);
+        material_forces, _local_assemblers, *_local_to_global_index_map, x);
 
-    auto material_forces_property = MeshLib::getOrCreateMeshProperty<double>(
-        _mesh, "MaterialForces", MeshLib::MeshItemType::Node, DisplacementDim);
-    _material_forces->copyValues(*material_forces_property);
+    material_forces->copyValues(*_material_forces);
 }
 
 }  // namespace SmallDeformation
