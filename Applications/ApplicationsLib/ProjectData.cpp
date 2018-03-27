@@ -34,23 +34,55 @@
 
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
+#ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_GROUNDWATERFLOW
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_HT
 #include "ProcessLib/HT/CreateHTProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_HEATCONDUCTION
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_HYDROMECHANICS
 #include "ProcessLib/HydroMechanics/CreateHydroMechanicsProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_LIE
 #include "ProcessLib/LIE/HydroMechanics/CreateHydroMechanicsProcess.h"
 #include "ProcessLib/LIE/SmallDeformation/CreateSmallDeformationProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_LIQUIDFLOW
 #include "ProcessLib/LiquidFlow/CreateLiquidFlowProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_PHASEFIELD
 #include "ProcessLib/PhaseField/CreatePhaseFieldProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_RICHARDSCOMPONENTTRANSPORT
 #include "ProcessLib/RichardsComponentTransport/CreateRichardsComponentTransportProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_RICHARDSFLOW
 #include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_SMALLDEFORMATION
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_TES
 #include "ProcessLib/TES/CreateTESProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_THERMALTWOPHASEFLOWWITHPP
 #include "ProcessLib/ThermalTwoPhaseFlowWithPP/CreateThermalTwoPhaseFlowWithPPProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_THERMOMECHANICS
 #include "ProcessLib/ThermoMechanics/CreateThermoMechanicsProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPP
 #include "ProcessLib/TwoPhaseFlowWithPP/CreateTwoPhaseFlowWithPPProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPRHO
 #include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowWithPrhoProcess.h"
+#endif
 
 namespace detail
 {
@@ -303,6 +335,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             //! \ogs_file_param{prj__processes__process__jacobian_assembler}
             process_config.getConfigSubtreeOptional("jacobian_assembler"));
 
+#ifdef OGS_BUILD_PROCESS_GROUNDWATERFLOW
         if (type == "GROUNDWATER_FLOW")
         {
             // The existence check of the in the configuration referenced
@@ -315,28 +348,40 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 _process_variables, _parameters, integration_order,
                 process_config, project_directory, output_directory);
         }
-        else if (type == "LIQUID_FLOW")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_LIQUIDFLOW
+            if (type == "LIQUID_FLOW")
         {
             process = ProcessLib::LiquidFlow::createLiquidFlowProcess(
                 *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config);
         }
-        else if (type == "TES")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_TES
+            if (type == "TES")
         {
             process = ProcessLib::TES::createTESProcess(
                 *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config);
         }
-        else if (type == "HEAT_CONDUCTION")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_HEATCONDUCTION
+            if (type == "HEAT_CONDUCTION")
         {
             process = ProcessLib::HeatConduction::createHeatConductionProcess(
                 *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config);
         }
-        else if (type == "HYDRO_MECHANICS")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_HYDROMECHANICS
+            if (type == "HYDRO_MECHANICS")
         {
             //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
@@ -361,7 +406,10 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                         "dimension");
             }
         }
-        else if (type == "HYDRO_MECHANICS_WITH_LIE")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_LIE
+            if (type == "HYDRO_MECHANICS_WITH_LIE")
         {
             //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
@@ -386,14 +434,20 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                         "given dimension");
             }
         }
-        else if (type == "HT")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_HT
+            if (type == "HT")
         {
             process = ProcessLib::HT::createHTProcess(
                 *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config);
         }
-        else if (type == "ComponentTransport")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
+            if (type == "ComponentTransport")
         {
             process =
                 ProcessLib::ComponentTransport::createComponentTransportProcess(
@@ -401,7 +455,10 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     _process_variables, _parameters, integration_order,
                     process_config);
         }
-        else if (type == "PHASE_FIELD")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_PHASEFIELD
+            if (type == "PHASE_FIELD")
         {
             switch (_mesh_vec[0]->getDimension())
             {
@@ -421,7 +478,10 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     break;
             }
         }
-        else if (type == "RichardsComponentTransport")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_RICHARDSCOMPONENTTRANSPORT
+            if (type == "RichardsComponentTransport")
         {
             process = ProcessLib::RichardsComponentTransport::
                 createRichardsComponentTransportProcess(
@@ -429,7 +489,10 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     _process_variables, _parameters, integration_order,
                     process_config);
         }
-        else if (type == "SMALL_DEFORMATION")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_SMALLDEFORMATION
+            if (type == "SMALL_DEFORMATION")
         {
             switch (_mesh_vec[0]->getDimension())
             {
@@ -453,7 +516,10 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                         "given dimension");
             }
         }
-        else if (type == "SMALL_DEFORMATION_WITH_LIE")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_LIE
+            if (type == "SMALL_DEFORMATION_WITH_LIE")
         {
             //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
@@ -478,7 +544,10 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                         "given dimension");
             }
         }
-        else if (type == "THERMO_MECHANICS")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_THERMOMECHANICS
+            if (type == "THERMO_MECHANICS")
         {
             switch (_mesh_vec[0]->getDimension())
             {
@@ -498,15 +567,20 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     break;
             }
         }
-        else if (type == "RICHARDS_FLOW")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_RICHARDSFLOW
+            if (type == "RICHARDS_FLOW")
         {
             process = ProcessLib::RichardsFlow::createRichardsFlowProcess(
                 *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config, _curves);
         }
-
-        else if (type == "TWOPHASE_FLOW_PP")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPP
+            if (type == "TWOPHASE_FLOW_PP")
         {
             process =
                 ProcessLib::TwoPhaseFlowWithPP::createTwoPhaseFlowWithPPProcess(
@@ -514,8 +588,10 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     _process_variables, _parameters, integration_order,
                     process_config, _curves);
         }
-
-        else if (type == "TWOPHASE_FLOW_PRHO")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPRHO
+            if (type == "TWOPHASE_FLOW_PRHO")
         {
             process = ProcessLib::TwoPhaseFlowWithPrho::
                 createTwoPhaseFlowWithPrhoProcess(
@@ -523,8 +599,10 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     _process_variables, _parameters, integration_order,
                     process_config, _curves);
         }
-
-        else if (type == "THERMAL_TWOPHASE_WITH_PP")
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_THERMALTWOPHASEFLOWWITHPP
+            if (type == "THERMAL_TWOPHASE_WITH_PP")
         {
             process = ProcessLib::ThermalTwoPhaseFlowWithPP::
                 createThermalTwoPhaseFlowWithPPProcess(
@@ -532,8 +610,8 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     _process_variables, _parameters, integration_order,
                     process_config, _curves);
         }
-
         else
+#endif
         {
             OGS_FATAL("Unknown process type: %s", type.c_str());
         }

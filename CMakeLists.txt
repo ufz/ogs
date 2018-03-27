@@ -85,6 +85,32 @@ if(OGS_BUILD_GUI)
 endif()
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
+
+# A list of processes to be build. Also used in the ProcessLib to select
+# processes to be build.
+set(ProcessesList
+    ComponentTransport
+    GroundwaterFlow
+    HT
+    HeatConduction
+    HydroMechanics
+    LiquidFlow
+    LIE
+    PhaseField
+    RichardsComponentTransport
+    RichardsFlow
+    SmallDeformation
+    TES
+    ThermalTwoPhaseFlowWithPP
+    ThermoMechanics
+    TwoPhaseFlowWithPP
+    TwoPhaseFlowWithPrho)
+
+# Add a cmake option for each process.
+foreach(process ${ProcessesList})
+    option(OGS_BUILD_PROCESS_${process} "Build the ${process} process." ON)
+endforeach()
+
 if(WIN32)
     option(OGS_BUILD_SWMM "Should the SWMM interface be built?" OFF)
 endif()

@@ -27,6 +27,10 @@ if(OGS_BUILD_SWMM)
     APPEND_SOURCE_FILES(TEST_SOURCES FileIO_SWMM)
 endif()
 
+if(OGS_BUILD_PROCESS_LIE)
+    APPEND_SOURCE_FILES(TEST_SOURCES ProcessLib/LIE)
+endif()
+
 if(OGS_USE_PETSC)
     list(REMOVE_ITEM TEST_SOURCES NumLib/TestSerialLinearSolver.cpp)
 endif()
@@ -45,6 +49,10 @@ target_link_libraries(testrunner
     ProcessLib
     Threads::Threads
 )
+
+if(OGS_BUILD_PROCESS_LIE)
+    target_link_libraries(testrunner LIE)
+endif()
 
 if(OGS_USE_PETSC)
     target_link_libraries(testrunner ${PETSC_LIBRARIES})
