@@ -54,8 +54,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    standard_solution_buildup_test_pcs_0_ts_107_t_424800.000000.vtu buildup_test_pcs_0_ts_107_t_424800.000000.vtu pressure pressure 1e-6 0.0
-    standard_solution_buildup_test_pcs_0_ts_211_t_720000.000000.vtu buildup_test_pcs_0_ts_211_t_720000.000000.vtu pressure pressure 1e-5 0.0
+    standard_solution_buildup_test_pcs_0_ts_107_t_424800.000000.vtu buildup_test_pcs_0_ts_107_t_424800.000000.vtu pressure pressure 5e-6 0.0
+    standard_solution_buildup_test_pcs_0_ts_211_t_720000.000000.vtu buildup_test_pcs_0_ts_211_t_720000.000000.vtu pressure pressure 5e-5 0.0
 )
 
 AddTest(

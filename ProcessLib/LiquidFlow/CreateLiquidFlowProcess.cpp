@@ -64,11 +64,21 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     const auto gravity_axis_id_input =
         //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__darcy_gravity__axis_id}
         darcy_g_config.getConfigParameter<int>("axis_id");
-    assert(gravity_axis_id_input < static_cast<int>(mesh.getDimension()));
+    if (gravity_axis_id_input >= static_cast<int>(mesh.getDimension()))
+    {
+        OGS_FATAL(
+            "The gravity axis must be a number between 0 and one less than the "
+            "mesh dimension, which is %d. Read gravity axis %d from input "
+            "file.",
+            mesh.getDimension(), gravity_axis_id_input);
+    }
     const auto g =
         //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__darcy_gravity__g}
         darcy_g_config.getConfigParameter<double>("g");
-    assert(g >= 0.);
+    if (g < 0.)
+    {
+        OGS_FATAL("Gravity magnitude must be non-negative.");
+    }
     const int gravity_axis_id = (g == 0.) ? -1 : gravity_axis_id_input;
 
     auto const& refT =
