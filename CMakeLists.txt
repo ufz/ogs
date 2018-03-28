@@ -90,6 +90,7 @@ set(ProcessesList
     GroundwaterFlow
     HT
     HeatConduction
+    HeatTransportBHE
     HydroMechanics
     LiquidFlow
     LIE
