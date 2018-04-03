@@ -110,13 +110,13 @@ pipeline {
           post {
             always {
               publishReports { }
+              dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
+              dir('build/docs') { stash(name: 'doxygen') }
             }
             failure {
                 dir('build') { deleteDir() }
             }
             success {
-              dir('build/docs') { stash(name: 'doxygen') }
-              dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
               script {
                 publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                   keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
