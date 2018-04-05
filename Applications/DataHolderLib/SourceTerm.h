@@ -14,16 +14,37 @@
 namespace DataHolderLib
 {
 
-    class SourceTerm : public DataHolderLib::FemCondition
+/// Managing data associated with a source term
+class SourceTerm : public DataHolderLib::FemCondition
+{
+
+public:
+    enum ConditionType
     {
-    public:
-        SourceTerm(std::string const process_var, std::string const param_name, ConditionType type)
-        : FemCondition(process_var, param_name, type)
-        {}
-
-    private:
-
+        NONE = 0,
+        NODAL,
+        VOLUME
     };
+
+    SourceTerm(ProcessVariable const& process_var, std::string const& param_name, ConditionType type);
+
+    ~SourceTerm() {}
+
+    std::string const getConditionClassStr() const { return "Source Term"; }
+
+    /// Returns the type of source term this is
+    ConditionType getType() const { return _type; }
+
+    /// Converts the type enum into a string
+    static std::string convertTypeToString(ConditionType type);
+
+    /// Converts a string specifying the type into an enum
+    static ConditionType convertStringToType(std::string const& str);
+
+private:
+    ConditionType _type;
+
+};
 
 
 } // namespace

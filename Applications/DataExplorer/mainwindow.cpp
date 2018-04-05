@@ -38,7 +38,7 @@
 #include "Applications/FileIO/Legacy/OGSIOVer4.h"
 #include "Applications/FileIO/PetrelInterface.h"
 #include "Applications/FileIO/TetGenInterface.h"
-#include "Applications/FileIO/XmlIO/Qt/XmlGspInterface.h"
+#include "Applications/FileIO/XmlIO/Qt/XmlPrjInterface.h"
 #include "Applications/Utils/OGSFileConverter/OGSFileConverter.h"
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
@@ -75,6 +75,8 @@
 #include "SetNameDialog.h"
 #include "VtkAddFilterDialog.h"
 
+#include "ElementTreeModel.h"
+#include "FemConditionModel.h"
 #include "GeoTreeModel.h"
 #include "LastSavedFileDirectory.h"
 #include "OGSError.h"
@@ -94,16 +96,18 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
     setupUi(this);
 
     // Setup various models
+    _geo_model = std::make_unique<GEOModels>(_project.getGEOObjects());
     _meshModel = std::make_unique<MshModel>(_project);
     _elementModel = std::make_unique<ElementTreeModel>();
-    _processModel = std::make_unique<TreeModel>();
+    _processModel = std::make_unique<ProcessModel>(_project);
+    _conditionModel = std::make_unique<FemConditionModel>();
 
-    _geo_model = std::make_unique<GEOModels>(_project.getGEOObjects());
     geoTabWidget->treeView->setModel(_geo_model->getGeoModel());
     stationTabWidget->treeView->setModel(_geo_model->getStationModel());
     mshTabWidget->treeView->setModel(_meshModel.get());
     mshTabWidget->elementView->setModel(_elementModel.get());
     modellingTabWidget->treeView->setModel(_processModel.get());
+    modellingTabWidget->conditionView->setModel(_conditionModel.get());
 
     // vtk visualization pipeline
     _vtkVisPipeline =
@@ -151,8 +155,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
     connect(stationTabWidget->treeView, SIGNAL(removeGeoItemSelection()),
             _vtkVisPipeline.get(), SLOT(removeHighlightedGeoObject()));
 
-
-
     // Setup connections for mesh models to GUI
     connect(mshTabWidget->treeView, SIGNAL(openMeshFile(int)),
         this, SLOT(open(int)));
@@ -186,6 +188,18 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
             _vtkVisPipeline.get(), SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
     connect(mshTabWidget->elementView, SIGNAL(removeSelectedMeshComponent()),
             _vtkVisPipeline.get(), SLOT(removeHighlightedMeshComponent()));
+
+    // Connection for process model to GUI
+    connect(modellingTabWidget->treeView, SIGNAL(processVarRemoved(QString const&)),
+        _processModel.get(), SLOT(removeProcessVariable(QString const&)));
+    connect(modellingTabWidget->treeView, SIGNAL(conditionRemoved(QString const&, QString const&)),
+        _processModel.get(), SLOT(removeCondition(QString const&, QString const&)));
+    connect(modellingTabWidget->treeView, SIGNAL(clearConditionView()),
+            _conditionModel.get(), SLOT(clearView()));
+    connect(modellingTabWidget->treeView, SIGNAL(processVarSelected()),
+            _conditionModel.get(), SLOT(setProcessVariable()));
+    connect(modellingTabWidget->treeView, SIGNAL(conditionSelected(DataHolderLib::FemCondition*)),
+            _conditionModel.get(), SLOT(setFemCondition(DataHolderLib::FemCondition*)));
 
     // VisPipeline Connects
     connect(_geo_model.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
@@ -394,7 +408,7 @@ void MainWindow::save()
             this,
             "Save data as",
             LastSavedFileDirectory::getDir(),
-            "GeoSys project (*.gsp);;GMSH geometry files (*.geo)");
+            "GeoSys project (*.prj);;GMSH geometry files (*.geo)");
 
     if (fileName.isEmpty())
     {
@@ -405,9 +419,9 @@ void MainWindow::save()
     QFileInfo fi(fileName);
     LastSavedFileDirectory::setDir(fileName);
 
-    if (fi.suffix().toLower() == "gsp")
+    if (fi.suffix().toLower() == "prj")
     {
-        XmlGspInterface xml(_project);
+        XmlPrjInterface xml(_project);
         xml.writeToFile(fileName.toStdString());
     }
     else if (fi.suffix().toLower() == "geo")
@@ -458,12 +472,13 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
                     OGSError::box(QString::fromStdString(error));
             }
         }
-        else if (fi.suffix().toLower() == "gsp")
+        else if (fi.suffix().toLower() == "prj")
         {
-            XmlGspInterface xml(_project);
+            XmlPrjInterface xml(_project);
             if (xml.readFile(fileName))
             {
                 _meshModel->updateModel();
+                _processModel->updateModel();
             }
             else
                 OGSError::box("Failed to load project file.\n Please see console for details.");

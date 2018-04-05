@@ -17,12 +17,33 @@ namespace DataHolderLib
 class BoundaryCondition : public DataHolderLib::FemCondition
 {
 public:
-    BoundaryCondition(std::string const process_var, std::string const param_name, ConditionType type)
-    : FemCondition(process_var, param_name, type)
-    {}
+    enum ConditionType
+    {
+        NONE = 0,
+        DIRICHLET,
+        NONUNIFORMDIRICHLET,
+        NEUMANN,
+        NONUNIFORMNEUMANN,
+        ROBIN
+    };
+
+    BoundaryCondition(ProcessVariable const& process_var, std::string const& param_name, ConditionType type);
+
+    ~BoundaryCondition() {};
+
+    std::string const getConditionClassStr() const { return "Boundary Condition"; }
+
+    /// Returns the type of boundary condition this is
+    ConditionType getType() const { return _type; }
+
+    /// Converts the type enum into a string
+    static ConditionType convertStringToType(std::string const& str);
+
+    /// Converts a string specifying the type into an enum
+    static std::string convertTypeToString(ConditionType type);
 
 private:
-
+    ConditionType _type;
 };
 
 

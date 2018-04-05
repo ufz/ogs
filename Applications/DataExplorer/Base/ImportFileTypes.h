@@ -83,7 +83,7 @@ public:
         if (t == ImportFileType::NETCDF)
             return "NetCDF files (*.nc)";
         if (t == ImportFileType::OGS)
-            return "OpenGeosys files (*.gsp *.gml *.vtu *.stn);;GeoSys legacy "
+            return "OpenGeosys files (*.prj *.gml *.vtu *.stn);;GeoSys legacy "
                    "files (*.gli *.msh);;All files (* *.*)";
         if (t == ImportFileType::OGS_GEO)
             return "OpenGeosys files (*.gml *.gli)";

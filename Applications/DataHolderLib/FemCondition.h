@@ -15,44 +15,48 @@
 namespace DataHolderLib
 {
 
+struct ProcessVariable
+{
+    std::string name;
+    std::size_t order;
+    std::size_t components;
+};
+
 enum class BaseObjType
 {
     MESH = 0,
     GEOMETRY = 1
 };
 
-enum class ConditionType
-{
-    NONE = 0,
-    DIRICHLET,
-    NONLINEARDIRICHLET,
-    NEUMANN,
-    NONLINEARNEUMANN,
-    ROBIN
-};
-
 enum class ParameterType
 {
-    NONE,
+    NONE = 0,
     CONSTANT,
     FUNCTION
 };
 
+/// Base class for boundary conditions, initial conditions and source terms.
 class FemCondition
 {
+
 public:
-    FemCondition(std::string const process_var, std::string const param_name, ConditionType type);
-
-    FemCondition(FemCondition const& c);
-
-    ~FemCondition() {};
+    FemCondition(ProcessVariable const& process_var, std::string const& param_name);
+    
+    ~FemCondition() {}
 
     /// Returns the name of the associated process variable
-    std::string const getProcessVarName() const { return _process_var; }
+    std::string const getProcessVarName() const { return _process_var.name; }
 
+    /// Returns the numerical order of the process vairable
+    std::size_t const getProcessVarOrder() const { return _process_var.order; }
+
+    /// Returns the number of components of the process variable
+    std::size_t const getProcessVarComponents() const { return _process_var.components; }
+
+    /// Returns the name of the parameter associated with the condition
     std::string const getParamName() const { return _param_name; }
 
-    /// Is the condition set a geometry or on a mesh
+    /// Specifies if the condition is set a geometry or on a mesh
     BaseObjType getBaseObjType() const { return _base_type; }
 
     ///Returns the name of the base object (i.e. geometry or mesh)
@@ -61,23 +65,21 @@ public:
     ///Returns the name of the geometric object
     std::string const getObjName() const { return _obj_name; }
 
-    ConditionType getType() const { return _type; }
-
+    /// Sets a mesh as corresponding object for the condition
     void setMesh(std::string const mesh_name);
 
+    /// Sets a geometric object as corresponding object for the condition
     virtual void setGeoObject(std::string geo_name, std::string obj_name);
 
-    static std::string convertTypeToString(ConditionType type);
-
-    static ConditionType convertStringToType(std::string const& type_str);
+    /// Returns the type of condition for displaying purposes
+    virtual std::string const getConditionClassStr() const = 0;
 
 private:
     BaseObjType _base_type;
-    ConditionType _type;
-    std::string _process_var;
     std::string _param_name;
     std::string _base_obj_name;
     std::string _obj_name;
+    ProcessVariable _process_var;
 };
 
 } // namespace

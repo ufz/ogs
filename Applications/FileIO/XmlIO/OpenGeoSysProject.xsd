@@ -26,36 +26,56 @@
 
   <xs:complexType name="conditionType">
     <xs:sequence>
-      <xs:element name="geometrical_set" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:element name="geometry" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:element name="field_name" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="mesh" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="parameter" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="geometrical_set" type="xs:string" minOccurs="0" />
+      <xs:element name="geometry" type="xs:string" minOccurs="0" />
+      <xs:element name="type" type="xs:string" />
+      <xs:element name="field_name" type="xs:string" minOccurs="0" />
+      <xs:element name="mesh" type="xs:string" minOccurs="0" />
+      <xs:element name="parameter" type="xs:string" minOccurs="0" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="conditionListType">
+  <xs:complexType name="bcListType">
     <xs:sequence>
-      <xs:element name="boundary_condition" type="conditionType" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="boundary_condition" type="conditionType" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="stListType">
+    <xs:sequence>
+      <xs:element name="source_term" type="conditionType" minOccurs="1" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="pvariableType">
     <xs:sequence>
       <xs:element ref="name"/>
-	  <xs:element name="components" type="xs:nonNegativeInteger" minOccurs="1" maxOccurs="1" />
-	  <xs:element name="order" type="xs:nonNegativeInteger" minOccurs="1" maxOccurs="1" />
+      <xs:element name="components" minOccurs="1" maxOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:nonNegativeInteger">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="3"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="order" minOccurs="1" maxOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:nonNegativeInteger">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="2"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
       <xs:element name="initial_condition" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="boundary_conditions" type="conditionListType" minOccurs="0" maxOccurs="1" />
-	  <xs:element name="source_terms" type="conditionListType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="boundary_conditions" type="bcListType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="source_terms" type="stListType" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
-  
+
   <!-- definition of file content -->
   <xs:element name="OpenGeoSysProject">
     <xs:complexType>
-      <xs:all>
+      <xs:sequence>
         <xs:element name="mesh" minOccurs="0">
           <xs:complexType>
             <xs:simpleContent>
@@ -84,7 +104,7 @@
         </xs:element>
         <xs:element name="nonlinear_solvers" minOccurs="0"/> <!--ignore-->
         <xs:element name="linear_solvers" minOccurs="0"/> <!--ignore-->
-      </xs:all>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
 
