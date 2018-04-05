@@ -403,6 +403,27 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             MeshLib::MeshItemType::Node, 1);
         mesh_prop_nodal_p->resize(mesh.getNumberOfNodes());
         _process_data.mesh_prop_nodal_p = mesh_prop_nodal_p;
+
+        _process_data.mesh_prop_nodal_forces =
+            MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh), "NodalForces",
+                MeshLib::MeshItemType::Node, GlobalDim);
+        assert(_process_data.mesh_prop_nodal_forces->size() ==
+               GlobalDim * mesh.getNumberOfNodes());
+
+        _process_data.mesh_prop_nodal_forces_jump =
+            MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh), "NodalForcesJump",
+                MeshLib::MeshItemType::Node, GlobalDim);
+        assert(_process_data.mesh_prop_nodal_forces_jump->size() ==
+               GlobalDim * mesh.getNumberOfNodes());
+
+        _process_data.mesh_prop_hydraulic_flow =
+            MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh), "HydraulicFlow",
+                MeshLib::MeshItemType::Node, 1);
+        assert(_process_data.mesh_prop_hydraulic_flow->size() ==
+               mesh.getNumberOfNodes());
     }
 }
 
@@ -525,6 +546,40 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
         dx_dx, M, K, b, Jac, _coupled_solutions);
+
+    auto copy_variable_from_global_vector = [this, &b](int const variable_id,
+                                                       int const n_components,
+                                                       auto& output_vector) {
+        std::fill(output_vector.begin(), output_vector.end(),
+                  std::numeric_limits<double>::quiet_NaN());
+        for (int component = 0; component < n_components; ++component)
+        {
+            auto const& mesh_subsets =
+                _local_to_global_index_map->getMeshSubsets(variable_id,
+                                                           component);
+            for (auto const& ms : mesh_subsets)
+            {
+                auto const mesh_id = _mesh.getID();
+                assert(ms->getMeshID() ==
+                       mesh_id);  // Multiple meshes not supported.
+                for (auto const& node : ms->getNodes())
+                {
+                    auto const node_id = node->getID();
+                    MeshLib::Location const l(
+                        mesh_id, MeshLib::MeshItemType::Node, node_id);
+                    output_vector.getComponent(node_id, component) =
+                        -b[_local_to_global_index_map->getGlobalIndex(
+                            l, variable_id, component)];
+                }
+            }
+        }
+    };
+    copy_variable_from_global_vector(0, 1,
+                                     *_process_data.mesh_prop_hydraulic_flow);
+    copy_variable_from_global_vector(1, GlobalDim,
+                                     *_process_data.mesh_prop_nodal_forces);
+    copy_variable_from_global_vector(
+        2, GlobalDim, *_process_data.mesh_prop_nodal_forces_jump);
 }
 
 template <int GlobalDim>
