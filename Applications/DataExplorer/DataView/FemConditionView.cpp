@@ -10,20 +10,17 @@
 
 #include "FemConditionView.h"
 
-#include "FemConditionModel.h"
 #include "CondItem.h"
+#include "FemConditionModel.h"
 
 #include <QModelIndex>
 
-FemConditionView::FemConditionView( QWidget* parent)
-: QTreeView(parent)
-{
-}
+FemConditionView::FemConditionView(QWidget* parent) : QTreeView(parent) {}
 
 void FemConditionView::updateView()
 {
     setAlternatingRowColors(true);
-    setColumnWidth(0,125);
+    setColumnWidth(0, 125);
     std::size_t nColumns =
         (this->model() != nullptr) ? this->model()->columnCount() : 0;
     for (std::size_t i = 1; i < nColumns; i++)
@@ -31,9 +28,8 @@ void FemConditionView::updateView()
     this->expandAll();
 }
 
-void FemConditionView::selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )
+void FemConditionView::selectionChanged(const QItemSelection& selected,
+                                        const QItemSelection& deselected)
 {
     Q_UNUSED(deselected);
-
-
 }

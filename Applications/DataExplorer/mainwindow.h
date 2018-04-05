@@ -19,8 +19,8 @@
 #include "GEOModels.h"
 #include "MshModel.h"
 #include "ProcessModel.h"
-#include "VtkVisPipeline.h"
 #include "VisPrefsDialog.h"
+#include "VtkVisPipeline.h"
 
 class TreeModel;
 class ElementTreeModel;

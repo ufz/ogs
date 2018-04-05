@@ -9,23 +9,22 @@
 
 #pragma once
 
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include <QString>
 #include <QtXml/QDomNode>
 
-#include "BaseLib/IO/XmlIO/XMLInterface.h"
 #include "BaseLib/IO/XmlIO/Qt/XMLQtInterface.h"
+#include "BaseLib/IO/XmlIO/XMLInterface.h"
 
-#include "Applications/DataHolderLib/Project.h"
 #include "Applications/DataHolderLib/BoundaryCondition.h"
+#include "Applications/DataHolderLib/Project.h"
 #include "Applications/DataHolderLib/SourceTerm.h"
 
 namespace FileIO
 {
-
 /**
  * Data Explorer XML interface for project files
  */
@@ -33,7 +32,7 @@ class XmlPrjInterface : public BaseLib::IO::XMLInterface,
                         public BaseLib::IO::XMLQtInterface
 {
 public:
-    XmlPrjInterface(DataHolderLib::Project &project);
+    XmlPrjInterface(DataHolderLib::Project& project);
 
     ~XmlPrjInterface() override = default;
 
@@ -60,10 +59,13 @@ private:
     void readConditions(QDomNode const& node, QDomNode const& param_root);
 
     /// Reading all boundary conditions
-    void readBoundaryConditions(QDomNode const& bc_root, QDomNode const& param_root, DataHolderLib::ProcessVariable const& pvar);
+    void readBoundaryConditions(QDomNode const& bc_root,
+                                QDomNode const& param_root,
+                                DataHolderLib::ProcessVariable const& pvar);
 
     /// Reading all source terms
-    void readSourceTerms(QDomNode const& st_root, QDomNode const& param_root, DataHolderLib::ProcessVariable const& pvar);
+    void readSourceTerms(QDomNode const& st_root, QDomNode const& param_root,
+                         DataHolderLib::ProcessVariable const& pvar);
 
     /// Writes information on process variables
     void writeProcessVariables(QDomDocument& doc, QDomElement& root) const;
@@ -73,20 +75,24 @@ private:
 
     /// Writes one specific condition
     template <typename T>
-    void writeCondition(QDomDocument& doc, QDomElement& tag, DataHolderLib::FemCondition const& cond) const;
+    void writeCondition(QDomDocument& doc, QDomElement& tag,
+                        DataHolderLib::FemCondition const& cond) const;
 
     /// Writes a list of boundary conditions
-    void writeBoundaryConditions(QDomDocument& doc, QDomElement& bc_list_tag, std::string const& name) const;
+    void writeBoundaryConditions(QDomDocument& doc, QDomElement& bc_list_tag,
+                                 std::string const& name) const;
 
     /// Writes a list of source terms
-    void writeSourceTerms(QDomDocument& doc, QDomElement& bc_list_tag, std::string const& name) const;
+    void writeSourceTerms(QDomDocument& doc, QDomElement& bc_list_tag,
+                          std::string const& name) const;
 
     /// Parsing one specific condition
     template <typename T>
-    T* parseCondition(QDomNode const& st_root, QDomNode const& param_root, DataHolderLib::ProcessVariable const& pvar) const;
+    T* parseCondition(QDomNode const& st_root, QDomNode const& param_root,
+                      DataHolderLib::ProcessVariable const& pvar) const;
 
     std::string _filename;
     DataHolderLib::Project& _project;
 };
 
-} // end namespace FileIO
+}  // end namespace FileIO

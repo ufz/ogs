@@ -9,12 +9,12 @@
 
 #pragma once
 
-#include "TreeModel.h"
 #include "Applications/DataHolderLib/FemCondition.h"
+#include "TreeModel.h"
 
 /**
- * \brief A model for the display of information from boundary conditions and source terms.
- * \sa TreeModel, FemConditionView, TreeItem
+ * \brief A model for the display of information from boundary conditions and
+ * source terms. \sa TreeModel, FemConditionView, TreeItem
  */
 class FemConditionModel : public TreeModel
 {

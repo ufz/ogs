@@ -1,23 +1,25 @@
 /**
-* \copyright
-* Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
-*            Distributed under a Modified BSD License.
-*              See accompanying file LICENSE.txt or
-*              http://www.opengeosys.org/project/license
-*
-*
-*/
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ *
+ */
 
 #include "SourceTerm.h"
 
 namespace DataHolderLib
 {
+SourceTerm::SourceTerm(ProcessVariable const& process_var,
+                       std::string const& param_name, ConditionType type)
+    : FemCondition(process_var, param_name), _type(type)
+{
+}
 
-SourceTerm::SourceTerm(ProcessVariable const& process_var, std::string const& param_name, ConditionType type)
-: FemCondition(process_var, param_name), _type(type)
-{}
-
-SourceTerm::ConditionType SourceTerm::convertStringToType(std::string const& str)
+SourceTerm::ConditionType SourceTerm::convertStringToType(
+    std::string const& str)
 {
     if (str == "Nodal")
         return ConditionType::NODAL;
@@ -37,4 +39,4 @@ std::string SourceTerm::convertTypeToString(ConditionType type)
     return "";
 }
 
-} // namespace
+}  // namespace

@@ -12,7 +12,7 @@
 
 #include "Applications/DataHolderLib/FemCondition.h"
 
-//class vtkUnstructuredGridAlgorithm;
+// class vtkUnstructuredGridAlgorithm;
 
 /**
  *    A TreeView to display information of FEM conditions.

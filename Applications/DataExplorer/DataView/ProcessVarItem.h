@@ -20,8 +20,8 @@ class ProcessVarItem : public TreeItem
 {
 public:
     /// Constructor
-    ProcessVarItem(const QList<QVariant> &data, TreeItem* parent)
-    : TreeItem(data, parent)
+    ProcessVarItem(const QList<QVariant>& data, TreeItem* parent)
+        : TreeItem(data, parent)
     {
     }
 
@@ -30,4 +30,4 @@ public:
     QString const& getName() const { return data(0).toString(); }
 };
 
-#endif //PROCESSITEM_H
+#endif  // PROCESSITEM_H

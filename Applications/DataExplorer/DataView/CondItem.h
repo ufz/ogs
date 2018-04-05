@@ -30,8 +30,9 @@ class CondItem : public TreeItem
 {
 public:
     /// Constructor
-    CondItem(const QList<QVariant> &data, TreeItem* parent, DataHolderLib::FemCondition* cond)
-        : TreeItem(data, parent), _cond (cond)
+    CondItem(const QList<QVariant>& data, TreeItem* parent,
+             DataHolderLib::FemCondition* cond)
+        : TreeItem(data, parent), _cond(cond)
     {
     }
 

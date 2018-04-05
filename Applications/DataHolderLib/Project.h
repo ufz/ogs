@@ -64,25 +64,40 @@ public:
     bool removeMesh(const std::string &name);
 
     /// Adds a boundary condition to the project
-    void addBoundaryCondition(std::unique_ptr<BoundaryCondition> bc) { _boundary_conditions.push_back(std::move(bc)); }
+    void addBoundaryCondition(std::unique_ptr<BoundaryCondition> bc)
+    {
+        _boundary_conditions.push_back(std::move(bc));
+    }
 
     /// Adds a source term to the project
-    void addSourceTerm(std::unique_ptr<SourceTerm> st) { _source_terms.push_back(std::move(st)); }
+    void addSourceTerm(std::unique_ptr<SourceTerm> st)
+    {
+        _source_terms.push_back(std::move(st));
+    }
 
     /// Returns the vector of boundary conditions
-    std::vector<std::unique_ptr<BoundaryCondition>> const& getBoundaryConditions() const { return _boundary_conditions; }
+    std::vector<std::unique_ptr<BoundaryCondition>> const&
+    getBoundaryConditions() const
+    {
+        return _boundary_conditions;
+    }
 
     /// Returns the vector of source terms
-    std::vector<std::unique_ptr<SourceTerm>> const& getSourceTerms() const { return _source_terms; }
+    std::vector<std::unique_ptr<SourceTerm>> const& getSourceTerms() const
+    {
+        return _source_terms;
+    }
 
     /// Removes a primary variable incl. all associated conditions
     void removePrimaryVariable(std::string const primary_var_name);
 
     /// Removes one boundary condition
-    void removeBoundaryCondition(std::string const primary_var_name, std::string const& param_name);
+    void removeBoundaryCondition(std::string const primary_var_name,
+                                 std::string const& param_name);
 
-    ///Remove one source term
-    void removeSourceTerm(std::string const primary_var_name, std::string const& param_name);
+    /// Remove one source term
+    void removeSourceTerm(std::string const primary_var_name,
+                          std::string const& param_name);
 
 private:
     /// Checks if a mesh with the same name exists and provides a unique name in

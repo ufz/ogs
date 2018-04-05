@@ -1,23 +1,21 @@
 /**
-* \copyright
-* Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
-*            Distributed under a Modified BSD License.
-*              See accompanying file LICENSE.txt or
-*              http://www.opengeosys.org/project/license
-*
-*
-*/
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ *
+ */
 
 #pragma once
 #include "Applications/DataHolderLib/FemCondition.h"
 
 namespace DataHolderLib
 {
-
 /// Managing data associated with a source term
 class SourceTerm : public DataHolderLib::FemCondition
 {
-
 public:
     enum ConditionType
     {
@@ -26,7 +24,8 @@ public:
         VOLUME
     };
 
-    SourceTerm(ProcessVariable const& process_var, std::string const& param_name, ConditionType type);
+    SourceTerm(ProcessVariable const& process_var,
+               std::string const& param_name, ConditionType type);
 
     ~SourceTerm() {}
 
@@ -43,8 +42,6 @@ public:
 
 private:
     ConditionType _type;
-
 };
 
-
-} // namespace
+}  // namespace

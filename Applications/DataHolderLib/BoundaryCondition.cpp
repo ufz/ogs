@@ -13,15 +13,18 @@
 
 namespace DataHolderLib
 {
-
 /// Managing data associated with a boundary condition
-BoundaryCondition::BoundaryCondition(ProcessVariable const& process_var, std::string const& param_name, ConditionType type)
-: FemCondition(process_var, param_name), _type(type)
-{}
-
-BoundaryCondition::ConditionType BoundaryCondition::convertStringToType(std::string const& str)
+BoundaryCondition::BoundaryCondition(ProcessVariable const& process_var,
+                                     std::string const& param_name,
+                                     ConditionType type)
+    : FemCondition(process_var, param_name), _type(type)
 {
-    if ( str == "Dirichlet")
+}
+
+BoundaryCondition::ConditionType BoundaryCondition::convertStringToType(
+    std::string const& str)
+{
+    if (str == "Dirichlet")
         return ConditionType::DIRICHLET;
     else if (str == "NonuniformDirichlet")
         return ConditionType::NONUNIFORMDIRICHLET;
@@ -51,4 +54,4 @@ std::string BoundaryCondition::convertTypeToString(ConditionType type)
     return "";
 }
 
-} // namespace
+}  // namespace

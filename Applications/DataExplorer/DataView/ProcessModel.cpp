@@ -18,43 +18,46 @@
 #include "logog/include/logog.hpp"
 
 // ** INCLUDES **
+#include "Applications/DataHolderLib/FemCondition.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/GeoObject.h"
-#include "Applications/DataHolderLib/FemCondition.h"
 
-#include "ProcessVarItem.h"
 #include "CondItem.h"
 #include "GeoType.h"
+#include "ProcessVarItem.h"
 
-#include <QFileInfo>
 #include <vtkPolyDataAlgorithm.h>
+#include <QFileInfo>
 
-ProcessModel::ProcessModel(DataHolderLib::Project &project, QObject* parent)
-: TreeModel(parent), _project(project)
+ProcessModel::ProcessModel(DataHolderLib::Project& project, QObject* parent)
+    : TreeModel(parent), _project(project)
 {
-	QList<QVariant> rootData;
-	delete _rootItem;
-	rootData << "Name" << "Value" << "" << "" << "";
-	_rootItem = new TreeItem(rootData, nullptr);
+    QList<QVariant> rootData;
+    delete _rootItem;
+    rootData << "Name"
+             << "Value"
+             << ""
+             << ""
+             << "";
+    _rootItem = new TreeItem(rootData, nullptr);
 }
 
-ProcessModel::~ProcessModel()
-{
-}
+ProcessModel::~ProcessModel() {}
 
 int ProcessModel::columnCount(QModelIndex const& parent) const
 {
-	Q_UNUSED(parent)
+    Q_UNUSED(parent)
 
-	return 2;
+    return 2;
 }
 
-void ProcessModel::addConditionItem(DataHolderLib::FemCondition* cond, ProcessVarItem* parent)
+void ProcessModel::addConditionItem(DataHolderLib::FemCondition* cond,
+                                    ProcessVarItem* parent)
 {
     QList<QVariant> item_data;
 
     item_data << QString::fromStdString(cond->getParamName())
-                << QString::fromStdString(cond->getConditionClassStr());
+              << QString::fromStdString(cond->getConditionClassStr());
 
     CondItem* cond_item = new CondItem(item_data, parent, cond);
     parent->appendChild(cond_item);
@@ -63,19 +66,22 @@ void ProcessModel::addConditionItem(DataHolderLib::FemCondition* cond, ProcessVa
 void ProcessModel::addCondition(DataHolderLib::FemCondition* condition)
 {
     QString name(QString::fromStdString(condition->getProcessVarName()));
-    ProcessVarItem* process_var (getProcessVarItem(name));
+    ProcessVarItem* process_var(getProcessVarItem(name));
     if (process_var == nullptr)
         process_var = addProcessVar(name);
-        addConditionItem(condition, process_var);
+    addConditionItem(condition, process_var);
 }
 
-void ProcessModel::addBoundaryConditions(std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const& conditions)
+void ProcessModel::addBoundaryConditions(
+    std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const&
+        conditions)
 {
     for (size_t i = 0; i < conditions.size(); i++)
         addCondition(conditions[i].get());
 }
 
-void ProcessModel::addSourceTerms(std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const& conditions)
+void ProcessModel::addSourceTerms(
+    std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const& conditions)
 {
     for (size_t i = 0; i < conditions.size(); i++)
         addCondition(conditions[i].get());
@@ -86,7 +92,8 @@ ProcessVarItem* ProcessModel::addProcessVar(QString const& name)
     beginResetModel();
     QList<QVariant> process_var_data;
     process_var_data << QVariant(name) << "";
-    ProcessVarItem* process_var = new ProcessVarItem(process_var_data, _rootItem);
+    ProcessVarItem* process_var =
+        new ProcessVarItem(process_var_data, _rootItem);
     _rootItem->appendChild(process_var);
     endResetModel();
     return process_var;
@@ -94,22 +101,25 @@ ProcessVarItem* ProcessModel::addProcessVar(QString const& name)
 
 ProcessVarItem* ProcessModel::getProcessVarItem(QString const& name) const
 {
-    int n_children (_rootItem->childCount());
-    for (int i=0; i<n_children; ++i)
+    int n_children(_rootItem->childCount());
+    for (int i = 0; i < n_children; ++i)
     {
-        ProcessVarItem* item (dynamic_cast<ProcessVarItem*>(_rootItem->child(i)));
+        ProcessVarItem* item(
+            dynamic_cast<ProcessVarItem*>(_rootItem->child(i)));
         if (item != nullptr && item->getName() == name)
             return item;
     }
     return nullptr;
 }
 
-void ProcessModel::removeCondition(ProcessVarItem* process_var, QString const& param_name)
+void ProcessModel::removeCondition(ProcessVarItem* process_var,
+                                   QString const& param_name)
 {
     int n_conditions = process_var->childCount();
-    for (int i = 0; i<n_conditions; ++i)
+    for (int i = 0; i < n_conditions; ++i)
     {
-        CondItem const*const cond = dynamic_cast<CondItem*>(process_var->child(i));
+        CondItem const* const cond =
+            dynamic_cast<CondItem*>(process_var->child(i));
         if (cond->getCondition()->getParamName() != param_name.toStdString())
             continue;
 
@@ -118,7 +128,8 @@ void ProcessModel::removeCondition(ProcessVarItem* process_var, QString const& p
     }
 }
 
-void ProcessModel::removeCondition(QString const& process_var, QString const& param)
+void ProcessModel::removeCondition(QString const& process_var,
+                                   QString const& param)
 {
     beginResetModel();
     ProcessVarItem* pv_item(getProcessVarItem(process_var));
@@ -126,7 +137,8 @@ void ProcessModel::removeCondition(QString const& process_var, QString const& pa
         return;
 
     removeCondition(pv_item, param);
-    _project.removeBoundaryCondition(process_var.toStdString(), param.toStdString());
+    _project.removeBoundaryCondition(process_var.toStdString(),
+                                     param.toStdString());
     _project.removeSourceTerm(process_var.toStdString(), param.toStdString());
     endResetModel();
 }
@@ -134,13 +146,14 @@ void ProcessModel::removeCondition(QString const& process_var, QString const& pa
 void ProcessModel::removeProcessVariable(QString const& name)
 {
     beginResetModel();
-    ProcessVarItem* pv_item (getProcessVarItem(name));
+    ProcessVarItem* pv_item(getProcessVarItem(name));
     if (pv_item == nullptr)
         return;
 
     int n_conds = pv_item->childCount();
-    for (int i=n_conds-1; i>=0; --i)
-        removeCondition(pv_item, static_cast<CondItem*>(pv_item->child(i))->getName());
+    for (int i = n_conds - 1; i >= 0; --i)
+        removeCondition(pv_item,
+                        static_cast<CondItem*>(pv_item->child(i))->getName());
 
     _project.removePrimaryVariable(name.toStdString());
     int idx = pv_item->row();
@@ -151,9 +164,10 @@ void ProcessModel::removeProcessVariable(QString const& name)
 void ProcessModel::clearModel()
 {
     int n_process_vars = _rootItem->childCount();
-    for (int i = n_process_vars; i>=0; --i)
+    for (int i = n_process_vars; i >= 0; --i)
     {
-        ProcessVarItem* pv_item = dynamic_cast<ProcessVarItem*>(_rootItem->child(i));
+        ProcessVarItem* pv_item =
+            dynamic_cast<ProcessVarItem*>(_rootItem->child(i));
         removeProcessVariable(pv_item->getName());
     }
 }
@@ -163,4 +177,3 @@ void ProcessModel::updateModel()
     addBoundaryConditions(_project.getBoundaryConditions());
     addSourceTerms(_project.getSourceTerms());
 }
-

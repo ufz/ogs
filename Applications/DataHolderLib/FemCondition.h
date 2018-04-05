@@ -14,7 +14,6 @@
 
 namespace DataHolderLib
 {
-
 struct ProcessVariable
 {
     std::string name;
@@ -38,10 +37,10 @@ enum class ParameterType
 /// Base class for boundary conditions, initial conditions and source terms.
 class FemCondition
 {
-
 public:
-    FemCondition(ProcessVariable const& process_var, std::string const& param_name);
-    
+    FemCondition(ProcessVariable const& process_var,
+                 std::string const& param_name);
+
     ~FemCondition() {}
 
     /// Returns the name of the associated process variable
@@ -51,7 +50,10 @@ public:
     std::size_t const getProcessVarOrder() const { return _process_var.order; }
 
     /// Returns the number of components of the process variable
-    std::size_t const getProcessVarComponents() const { return _process_var.components; }
+    std::size_t const getProcessVarComponents() const
+    {
+        return _process_var.components;
+    }
 
     /// Returns the name of the parameter associated with the condition
     std::string const getParamName() const { return _param_name; }
@@ -59,10 +61,10 @@ public:
     /// Specifies if the condition is set a geometry or on a mesh
     BaseObjType getBaseObjType() const { return _base_type; }
 
-    ///Returns the name of the base object (i.e. geometry or mesh)
+    /// Returns the name of the base object (i.e. geometry or mesh)
     std::string getBaseObjName() const { return _base_obj_name; }
 
-    ///Returns the name of the geometric object
+    /// Returns the name of the geometric object
     std::string const getObjName() const { return _obj_name; }
 
     /// Sets a mesh as corresponding object for the condition
@@ -82,4 +84,4 @@ private:
     ProcessVariable _process_var;
 };
 
-} // namespace
+}  // namespace

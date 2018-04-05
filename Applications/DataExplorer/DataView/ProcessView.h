@@ -23,9 +23,9 @@
 class ConditionModel;
 
 /**
- * \brief A view for FEM-Conditions (Initial- & Boundary Conditions / Source Terms) with a number of additional
- * information such as Process Type, Distribution, etc.
- * \sa ConditionModel, CondItem
+ * \brief A view for FEM-Conditions (Initial- & Boundary Conditions / Source
+ * Terms) with a number of additional information such as Process Type,
+ * Distribution, etc. \sa ConditionModel, CondItem
  */
 class ProcessView : public QTreeView
 {
@@ -40,32 +40,33 @@ public:
 
 protected slots:
     /// Instructions if the selection of items in the view has changed.
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void selectionChanged(const QItemSelection& selected,
+                          const QItemSelection& deselected);
 
 private:
-    /// Actions to be taken after a right mouse click is performed in the station view.
-    void contextMenuEvent( QContextMenuEvent* e );
-    bool isProcessVarItem(const QModelIndex &idx) const;
-    bool isConditionItem(const QModelIndex &idx) const;
+    /// Actions to be taken after a right mouse click is performed in the
+    /// station view.
+    void contextMenuEvent(QContextMenuEvent* e);
+    bool isProcessVarItem(const QModelIndex& idx) const;
+    bool isConditionItem(const QModelIndex& idx) const;
 
 private slots:
     void on_Clicked(QModelIndex idx);
-    //void editCondition();
+    // void editCondition();
     void removeCondition();
     void removeProcessVar();
-    //void replaceCondition(std::vector<FEMCondition*> conditions);
-    //void saveConditions();
+    // void replaceCondition(std::vector<FEMCondition*> conditions);
+    // void saveConditions();
 
 signals:
-    //void itemSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+    // void itemSelectionChanged(const QItemSelection & selected, const
+    // QItemSelection & deselected);
     void conditionRemoved(QString const&, QString const&);
     void processVarRemoved(QString const&);
-    //void saveConditionsRequested();
+    // void saveConditionsRequested();
     void clearConditionView();
     void processVarSelected();
     void conditionSelected(DataHolderLib::FemCondition* cond);
-
 };
 
-#endif //PROCESSVIEW_H
-
+#endif  // PROCESSVIEW_H

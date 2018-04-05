@@ -13,7 +13,6 @@
 
 namespace DataHolderLib
 {
-
 class BoundaryCondition : public DataHolderLib::FemCondition
 {
 public:
@@ -27,11 +26,15 @@ public:
         ROBIN
     };
 
-    BoundaryCondition(ProcessVariable const& process_var, std::string const& param_name, ConditionType type);
+    BoundaryCondition(ProcessVariable const& process_var,
+                      std::string const& param_name, ConditionType type);
 
-    ~BoundaryCondition() {};
+    ~BoundaryCondition(){};
 
-    std::string const getConditionClassStr() const { return "Boundary Condition"; }
+    std::string const getConditionClassStr() const
+    {
+        return "Boundary Condition";
+    }
 
     /// Returns the type of boundary condition this is
     ConditionType getType() const { return _type; }
@@ -46,5 +49,4 @@ private:
     ConditionType _type;
 };
 
-
-} // namespace
+}  // namespace

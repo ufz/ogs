@@ -102,36 +102,40 @@ bool Project::getUniqueName(std::string &name) const
 void Project::removePrimaryVariable(std::string const primary_var_name)
 {
     std::size_t n_bc(_boundary_conditions.size());
-    for (std::size_t i = 0; i<n_bc; ++i)
+    for (std::size_t i = 0; i < n_bc; ++i)
         if (_boundary_conditions[i]->getProcessVarName() == primary_var_name)
-            removeBoundaryCondition(primary_var_name, _boundary_conditions[i]->getParamName());
+            removeBoundaryCondition(primary_var_name,
+                                    _boundary_conditions[i]->getParamName());
 
     std::size_t n_st(_source_terms.size());
-    for (std::size_t i = 0; i<n_bc; ++i)
+    for (std::size_t i = 0; i < n_bc; ++i)
         if (_source_terms[i]->getProcessVarName() == primary_var_name)
-            removeSourceTerm(primary_var_name, _source_terms[i]->getParamName());
+            removeSourceTerm(primary_var_name,
+                             _source_terms[i]->getParamName());
 }
 
-void Project::removeBoundaryCondition(std::string const primary_var_name, std::string const& param_name)
+void Project::removeBoundaryCondition(std::string const primary_var_name,
+                                      std::string const& param_name)
 {
-    std::size_t n_bc (_boundary_conditions.size());
-    for (std::size_t i=0; i<n_bc; ++i)
+    std::size_t n_bc(_boundary_conditions.size());
+    for (std::size_t i = 0; i < n_bc; ++i)
     {
         if (_boundary_conditions[i]->getProcessVarName() == primary_var_name &&
             _boundary_conditions[i]->getParamName() == param_name)
         {
             BoundaryCondition* bc = _boundary_conditions[i].release();
             delete bc;
-            _boundary_conditions.erase(_boundary_conditions.begin()+i);
+            _boundary_conditions.erase(_boundary_conditions.begin() + i);
             return;
         }
     }
 }
 
-void Project::removeSourceTerm(std::string const primary_var_name, std::string const& param_name)
+void Project::removeSourceTerm(std::string const primary_var_name,
+                               std::string const& param_name)
 {
     std::size_t n_st(_source_terms.size());
-    for (std::size_t i = 0; i<n_st; ++i)
+    for (std::size_t i = 0; i < n_st; ++i)
     {
         if (_source_terms[i]->getProcessVarName() == primary_var_name &&
             _source_terms[i]->getParamName() == param_name)

@@ -12,14 +12,14 @@
 #include <iostream>
 #include <vector>
 
-#include <logog/include/logog.hpp>
 #include <QFile>
 #include <QFileInfo>
 #include <QtXml/QDomDocument>
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/BuildInfo.h"
-#include "BaseLib/FileTools.h"
 #include "BaseLib/FileFinder.h"
+#include "BaseLib/FileTools.h"
 #include "BaseLib/IO/Writer.h"
 
 #include "Applications/DataHolderLib/FemCondition.h"
@@ -33,30 +33,31 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 
-
 namespace FileIO
 {
-
 XmlPrjInterface::XmlPrjInterface(DataHolderLib::Project& project)
-: XMLInterface(),
-  XMLQtInterface(BaseLib::FileFinder({BaseLib::BuildInfo::app_xml_schema_path}).getPath("OpenGeoSysProject.xsd")),
-  _project(project)
+    : XMLInterface(),
+      XMLQtInterface(
+          BaseLib::FileFinder({BaseLib::BuildInfo::app_xml_schema_path})
+              .getPath("OpenGeoSysProject.xsd")),
+      _project(project)
 {
 }
 
-int XmlPrjInterface::readFile(const QString &fileName)
+int XmlPrjInterface::readFile(const QString& fileName)
 {
-    if(XMLQtInterface::readFile(fileName) == 0)
+    if (XMLQtInterface::readFile(fileName) == 0)
         return 0;
 
     QFileInfo fi(fileName);
-    QString path = (fi.path().length() > 3) ? QString(fi.path() + "/") : fi.path();
+    QString path =
+        (fi.path().length() > 3) ? QString(fi.path() + "/") : fi.path();
 
     QDomNode param_root = QDomNode();
-    QDomNode pvar_root= QDomNode();
+    QDomNode pvar_root = QDomNode();
     QDomDocument doc("OGS-PROJECT-DOM");
     doc.setContent(_fileData);
-    QDomElement docElement = doc.documentElement(); //OpenGeoSysProject
+    QDomElement docElement = doc.documentElement();  // OpenGeoSysProject
     if (docElement.nodeName().compare("OpenGeoSysProject"))
     {
         ERR("XmlPrjInterface::readFile(): Unexpected XML root.");
@@ -65,11 +66,11 @@ int XmlPrjInterface::readFile(const QString &fileName)
 
     QDomNodeList fileList = docElement.childNodes();
 
-    for(int i = 0; i < fileList.count(); i++)
+    for (int i = 0; i < fileList.count(); i++)
     {
         QDomNode const node(fileList.at(i));
         QString const node_name(node.nodeName());
-        QString const file_name (node.toElement().text().trimmed());
+        QString const file_name(node.toElement().text().trimmed());
         if (file_name.isEmpty())
             continue;
 
@@ -85,17 +86,17 @@ int XmlPrjInterface::readFile(const QString &fileName)
         }
         else if (node_name == "mesh")
         {
-            QString const mesh_str (path + file_name);
-            std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::IO::readMeshFromFile(mesh_str.toStdString()));
+            QString const mesh_str(path + file_name);
+            std::unique_ptr<MeshLib::Mesh> mesh(
+                MeshLib::IO::readMeshFromFile(mesh_str.toStdString()));
             if (mesh)
                 _project.addMesh(std::move(mesh));
         }
-        
+
         else if (node_name == "parameters")
             param_root = node;
         else if (node_name == "process_variables")
             pvar_root = node;
-        
     }
 
     if (param_root != QDomNode() && pvar_root != QDomNode())
@@ -106,7 +107,8 @@ int XmlPrjInterface::readFile(const QString &fileName)
     return 1;
 }
 
-QDomNode XmlPrjInterface::findParam(QDomNode const& param_root, QString const& param_name) const
+QDomNode XmlPrjInterface::findParam(QDomNode const& param_root,
+                                    QString const& param_name) const
 {
     QDomNode param = param_root.firstChild();
 
@@ -116,8 +118,10 @@ QDomNode XmlPrjInterface::findParam(QDomNode const& param_root, QString const& p
         for (int i = 0; i < nodeList.count(); i++)
         {
             QDomNode node = nodeList.at(i);
-            //std::cout << node.nodeName().toStdString() << node.toElement().text().toStdString() << std::endl;
-            if (node.nodeName() == "name" &&  node.toElement().text() == param_name)
+            // std::cout << node.nodeName().toStdString() <<
+            // node.toElement().text().toStdString() << std::endl;
+            if (node.nodeName() == "name" &&
+                node.toElement().text() == param_name)
                 return node;
         }
         param = param.nextSibling();
@@ -125,7 +129,8 @@ QDomNode XmlPrjInterface::findParam(QDomNode const& param_root, QString const& p
     return QDomNode();
 }
 
-void XmlPrjInterface::readConditions(QDomNode const& pvar_root, QDomNode const& param_root)
+void XmlPrjInterface::readConditions(QDomNode const& pvar_root,
+                                     QDomNode const& param_root)
 {
     QDomNode pvar = pvar_root.firstChild();
     while (pvar != QDomNode())
@@ -159,25 +164,34 @@ void XmlPrjInterface::readConditions(QDomNode const& pvar_root, QDomNode const& 
         ERR("not found");
 }
 
-void XmlPrjInterface::readBoundaryConditions(QDomNode const& bc_root, QDomNode const& param_root, DataHolderLib::ProcessVariable const& pvar)
+void XmlPrjInterface::readBoundaryConditions(
+    QDomNode const& bc_root,
+    QDomNode const& param_root,
+    DataHolderLib::ProcessVariable const& pvar)
 {
     QDomNode bc = bc_root.firstChild();
     while (bc != QDomNode())
     {
-        std::unique_ptr<DataHolderLib::BoundaryCondition> cond (parseCondition<DataHolderLib::BoundaryCondition>(bc, param_root, pvar));
+        std::unique_ptr<DataHolderLib::BoundaryCondition> cond(
+            parseCondition<DataHolderLib::BoundaryCondition>(
+                bc, param_root, pvar));
         if (cond->getType() != DataHolderLib::BoundaryCondition::NONE)
             _project.addBoundaryCondition(std::move(cond));
-        
+
         bc = bc.nextSibling();
     }
 }
 
-void XmlPrjInterface::readSourceTerms(QDomNode const& st_root, QDomNode const& param_root, DataHolderLib::ProcessVariable const& pvar)
+void XmlPrjInterface::readSourceTerms(
+    QDomNode const& st_root,
+    QDomNode const& param_root,
+    DataHolderLib::ProcessVariable const& pvar)
 {
     QDomNode st = st_root.firstChild();
     while (st != QDomNode())
     {
-        std::unique_ptr<DataHolderLib::SourceTerm> cond (parseCondition<DataHolderLib::SourceTerm>(st, param_root, pvar));
+        std::unique_ptr<DataHolderLib::SourceTerm> cond(
+            parseCondition<DataHolderLib::SourceTerm>(st, param_root, pvar));
         if (cond->getType() != DataHolderLib::SourceTerm::NONE)
             _project.addSourceTerm(std::move(cond));
         st = st.nextSibling();
@@ -185,9 +199,13 @@ void XmlPrjInterface::readSourceTerms(QDomNode const& st_root, QDomNode const& p
 }
 
 template <typename T>
-T* XmlPrjInterface::parseCondition(QDomNode const& node, QDomNode const& param_root, DataHolderLib::ProcessVariable const& pvar) const
+T* XmlPrjInterface::parseCondition(
+    QDomNode const& node,
+    QDomNode const& param_root,
+    DataHolderLib::ProcessVariable const& pvar) const
 {
-    DataHolderLib::BaseObjType base_obj_type = DataHolderLib::BaseObjType::GEOMETRY;
+    DataHolderLib::BaseObjType base_obj_type =
+        DataHolderLib::BaseObjType::GEOMETRY;
     T::ConditionType type = T::NONE;
     std::string base_obj_name(""), obj_name(""), param_name("");
     QDomNode param_node = QDomNode();
@@ -196,9 +214,11 @@ T* XmlPrjInterface::parseCondition(QDomNode const& node, QDomNode const& param_r
     {
         QString const node_name = nodeList.at(i).nodeName();
         QString const content = nodeList.at(i).toElement().text().trimmed();
-        if (node_name == "geometrical_set" && base_obj_type != DataHolderLib::BaseObjType::MESH)
+        if (node_name == "geometrical_set" &&
+            base_obj_type != DataHolderLib::BaseObjType::MESH)
             base_obj_name = content.toStdString();
-        else if (node_name == "geometry" && base_obj_type != DataHolderLib::BaseObjType::MESH)
+        else if (node_name == "geometry" &&
+                 base_obj_type != DataHolderLib::BaseObjType::MESH)
             obj_name = content.toStdString();
         else if (node_name == "type")
             type = T::convertStringToType(content.toStdString());
@@ -245,15 +265,18 @@ bool XmlPrjInterface::write()
     QFileInfo fi(QString::fromStdString(_filename));
     std::string path((fi.absolutePath()).toStdString() + "/");
 
-    _out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"; // xml definition
-    _out << "<?xml-stylesheet type=\"text/xsl\" href=\"OpenGeoSysProject.xsl\"?>\n\n"; // stylefile definition
+    _out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";  // xml
+                                                                  // definition
+    _out << "<?xml-stylesheet type=\"text/xsl\" "
+            "href=\"OpenGeoSysProject.xsl\"?>\n\n";  // stylefile definition
 
     QDomDocument doc("OGS-PROJECT-DOM");
     QDomElement root = doc.createElement("OpenGeoSysProject");
-    root.setAttribute( "xmlns:ogs", "http://www.opengeosys.org" );
-    root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-    root.setAttribute( "xsi:noNamespaceSchemaLocation",
-                       "http://www.opengeosys.org/images/xsd/OpenGeoSysProject.xsd" );
+    root.setAttribute("xmlns:ogs", "http://www.opengeosys.org");
+    root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+    root.setAttribute(
+        "xsi:noNamespaceSchemaLocation",
+        "http://www.opengeosys.org/images/xsd/OpenGeoSysProject.xsd");
 
     doc.appendChild(root);
 
@@ -267,14 +290,17 @@ bool XmlPrjInterface::write()
         // write entry in project file
         QDomElement mesh_tag = doc.createElement("mesh");
         root.appendChild(mesh_tag);
-        QDomText filename_text = doc.createTextNode(QString::fromStdString(mesh->getName()));
+        QDomText filename_text =
+            doc.createTextNode(QString::fromStdString(mesh->getName()));
         mesh_tag.appendChild(filename_text);
     }
 
     // geometries
     std::vector<std::string> geo_names;
     geo_objects.getGeometryNames(geo_names);
-    for (std::vector<std::string>::const_iterator it(geo_names.begin()); it != geo_names.end(); ++it)
+    for (std::vector<std::string>::const_iterator it(geo_names.begin());
+         it != geo_names.end();
+         ++it)
     {
         // write gml file
         GeoLib::IO::XmlGmlInterface gml(geo_objects);
@@ -286,7 +312,7 @@ bool XmlPrjInterface::write()
             QDomElement geo_tag = doc.createElement("geometry");
             root.appendChild(geo_tag);
             QDomText filename_text =
-                    doc.createTextNode(QString::fromStdString(name + ".gml"));
+                doc.createTextNode(QString::fromStdString(name + ".gml"));
             geo_tag.appendChild(filename_text);
         }
     }
@@ -294,7 +320,9 @@ bool XmlPrjInterface::write()
     // stations
     std::vector<std::string> stnNames;
     geo_objects.getStationVectorNames(stnNames);
-    for (std::vector<std::string>::const_iterator it(stnNames.begin()); it != stnNames.end(); ++it)
+    for (std::vector<std::string>::const_iterator it(stnNames.begin());
+         it != stnNames.end();
+         ++it)
     {
         // write station file
         GeoLib::IO::XmlStnInterface stn(geo_objects);
@@ -307,16 +335,18 @@ bool XmlPrjInterface::write()
             QDomElement stn_tag = doc.createElement("stations");
             root.appendChild(stn_tag);
             QDomText filename_text =
-                    doc.createTextNode(QString::fromStdString(name + ".stn"));
+                doc.createTextNode(QString::fromStdString(name + ".stn"));
             stn_tag.appendChild(filename_text);
         }
         else
-            ERR("XmlStnInterface::writeFile(): Error writing stn-file \"%s\".", name.c_str());
+            ERR("XmlStnInterface::writeFile(): Error writing stn-file \"%s\".",
+                name.c_str());
     }
 
-    if (_project.getBoundaryConditions().size() > 0 || _project.getSourceTerms().size() > 0)
+    if (_project.getBoundaryConditions().size() > 0 ||
+        _project.getSourceTerms().size() > 0)
     {
-        //parameters
+        // parameters
         writeProcessVariables(doc, root);
     }
 
@@ -325,7 +355,10 @@ bool XmlPrjInterface::write()
     return true;
 }
 
-void addTextNode(QDomDocument& doc, QDomElement& parent, QString const& node_name, QString const& content)
+void addTextNode(QDomDocument& doc,
+                 QDomElement& parent,
+                 QString const& node_name,
+                 QString const& content)
 {
     QDomElement tag = doc.createElement(node_name);
     parent.appendChild(tag);
@@ -333,19 +366,23 @@ void addTextNode(QDomDocument& doc, QDomElement& parent, QString const& node_nam
     tag.appendChild(order_text);
 }
 
-bool PVarExists(std::string const& name, std::vector<DataHolderLib::ProcessVariable> const& p_vars)
+bool PVarExists(std::string const& name,
+                std::vector<DataHolderLib::ProcessVariable> const& p_vars)
 {
-    std::size_t const n_vars (p_vars.size());
+    std::size_t const n_vars(p_vars.size());
     for (DataHolderLib::ProcessVariable const p_var : p_vars)
         if (p_var.name == name)
             return true;
     return false;
 }
 
-std::vector<DataHolderLib::ProcessVariable> XmlPrjInterface::getPrimaryVariableVec() const
+std::vector<DataHolderLib::ProcessVariable>
+XmlPrjInterface::getPrimaryVariableVec() const
 {
-    std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const& boundary_conditions = _project.getBoundaryConditions();
-    std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const& source_terms = _project.getSourceTerms();
+    std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const&
+        boundary_conditions = _project.getBoundaryConditions();
+    std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const&
+        source_terms = _project.getSourceTerms();
 
     std::vector<DataHolderLib::ProcessVariable> p_vars;
     std::size_t const n_bc(boundary_conditions.size());
@@ -353,7 +390,8 @@ std::vector<DataHolderLib::ProcessVariable> XmlPrjInterface::getPrimaryVariableV
     {
         std::string p_var_name = bc->getProcessVarName();
         if (!PVarExists(p_var_name, p_vars))
-            p_vars.push_back({p_var_name, bc->getProcessVarOrder(), bc->getProcessVarComponents()});
+            p_vars.push_back({p_var_name, bc->getProcessVarOrder(),
+                              bc->getProcessVarComponents()});
     }
 
     std::size_t const n_st(source_terms.size());
@@ -361,33 +399,56 @@ std::vector<DataHolderLib::ProcessVariable> XmlPrjInterface::getPrimaryVariableV
     {
         std::string p_var_name = st->getProcessVarName();
         if (!PVarExists(p_var_name, p_vars))
-            p_vars.push_back({ p_var_name, st->getProcessVarOrder(), st->getProcessVarComponents() });
+            p_vars.push_back({p_var_name, st->getProcessVarOrder(),
+                              st->getProcessVarComponents()});
     }
     return p_vars;
 }
 
 template <typename T>
-void XmlPrjInterface::writeCondition(QDomDocument& doc, QDomElement& tag, DataHolderLib::FemCondition const& cond) const
+void XmlPrjInterface::writeCondition(
+    QDomDocument& doc,
+    QDomElement& tag,
+    DataHolderLib::FemCondition const& cond) const
 {
     if (cond.getBaseObjType() == DataHolderLib::BaseObjType::GEOMETRY)
     {
-        addTextNode(doc, tag, "geometrical_set", QString::fromStdString(cond.getBaseObjName()));
-        addTextNode(doc, tag, "geometry", QString::fromStdString(cond.getObjName()));
-        addTextNode(doc, tag, "type", QString::fromStdString(T::convertTypeToString(static_cast<T const&>(cond).getType())));
-        addTextNode(doc, tag, "parameter", QString::fromStdString(cond.getParamName()));
+        addTextNode(doc,
+                    tag,
+                    "geometrical_set",
+                    QString::fromStdString(cond.getBaseObjName()));
+        addTextNode(
+            doc, tag, "geometry", QString::fromStdString(cond.getObjName()));
+        addTextNode(doc,
+                    tag,
+                    "type",
+                    QString::fromStdString(T::convertTypeToString(
+                        static_cast<T const&>(cond).getType())));
+        addTextNode(
+            doc, tag, "parameter", QString::fromStdString(cond.getParamName()));
     }
     else if (cond.getBaseObjType() == DataHolderLib::BaseObjType::MESH)
     {
-        addTextNode(doc, tag, "type", QString::fromStdString(T::convertTypeToString(static_cast<T const&>(cond).getType())));
-        addTextNode(doc, tag, "mesh", QString::fromStdString(cond.getBaseObjName()));
-        addTextNode(doc, tag, "field_name", QString::fromStdString(cond.getParamName()));
+        addTextNode(doc,
+                    tag,
+                    "type",
+                    QString::fromStdString(T::convertTypeToString(
+                        static_cast<T const&>(cond).getType())));
+        addTextNode(
+            doc, tag, "mesh", QString::fromStdString(cond.getBaseObjName()));
+        addTextNode(doc,
+                    tag,
+                    "field_name",
+                    QString::fromStdString(cond.getParamName()));
     }
 }
 
-
-void XmlPrjInterface::writeBoundaryConditions(QDomDocument& doc, QDomElement& bc_list_tag, std::string const& name) const
+void XmlPrjInterface::writeBoundaryConditions(QDomDocument& doc,
+                                              QDomElement& bc_list_tag,
+                                              std::string const& name) const
 {
-    std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const& boundary_conditions = _project.getBoundaryConditions();
+    std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const&
+        boundary_conditions = _project.getBoundaryConditions();
     std::size_t const n_bc(boundary_conditions.size());
     for (auto& bc : boundary_conditions)
     {
@@ -399,9 +460,12 @@ void XmlPrjInterface::writeBoundaryConditions(QDomDocument& doc, QDomElement& bc
     }
 }
 
-void XmlPrjInterface::writeSourceTerms(QDomDocument& doc, QDomElement& st_list_tag, std::string const& name) const
+void XmlPrjInterface::writeSourceTerms(QDomDocument& doc,
+                                       QDomElement& st_list_tag,
+                                       std::string const& name) const
 {
-    std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const& source_terms = _project.getSourceTerms();
+    std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const&
+        source_terms = _project.getSourceTerms();
     std::size_t const n_st(source_terms.size());
     for (auto& st : source_terms)
     {
@@ -413,9 +477,11 @@ void XmlPrjInterface::writeSourceTerms(QDomDocument& doc, QDomElement& st_list_t
     }
 }
 
-void XmlPrjInterface::writeProcessVariables(QDomDocument& doc, QDomElement& root) const
+void XmlPrjInterface::writeProcessVariables(QDomDocument& doc,
+                                            QDomElement& root) const
 {
-    std::vector<DataHolderLib::ProcessVariable> const p_vars (getPrimaryVariableVec());
+    std::vector<DataHolderLib::ProcessVariable> const p_vars(
+        getPrimaryVariableVec());
 
     QDomElement param_list_tag = doc.createElement("parameters");
     root.appendChild(param_list_tag);
@@ -423,14 +489,15 @@ void XmlPrjInterface::writeProcessVariables(QDomDocument& doc, QDomElement& root
     QDomElement pvar_list_tag = doc.createElement("process_variables");
     root.appendChild(pvar_list_tag);
 
-    std::size_t const n_p_vars (p_vars.size());
+    std::size_t const n_p_vars(p_vars.size());
     for (DataHolderLib::ProcessVariable const p_var : p_vars)
     {
         QDomElement pvar_tag = doc.createElement("process_variable");
         pvar_list_tag.appendChild(pvar_tag);
         addTextNode(doc, pvar_tag, "name", QString::fromStdString(p_var.name));
         addTextNode(doc, pvar_tag, "order", QString::number(p_var.order));
-        addTextNode(doc, pvar_tag, "components", QString::number(p_var.components));
+        addTextNode(
+            doc, pvar_tag, "components", QString::number(p_var.components));
         QDomElement bc_list_tag = doc.createElement("boundary_conditions");
         pvar_tag.appendChild(bc_list_tag);
         writeBoundaryConditions(doc, bc_list_tag, p_var.name);
@@ -439,5 +506,4 @@ void XmlPrjInterface::writeProcessVariables(QDomDocument& doc, QDomElement& root
         writeSourceTerms(doc, st_list_tag, p_var.name);
     }
 }
-
 }

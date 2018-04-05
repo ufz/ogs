@@ -190,16 +190,21 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
             _vtkVisPipeline.get(), SLOT(removeHighlightedMeshComponent()));
 
     // Connection for process model to GUI
-    connect(modellingTabWidget->treeView, SIGNAL(processVarRemoved(QString const&)),
-        _processModel.get(), SLOT(removeProcessVariable(QString const&)));
-    connect(modellingTabWidget->treeView, SIGNAL(conditionRemoved(QString const&, QString const&)),
-        _processModel.get(), SLOT(removeCondition(QString const&, QString const&)));
+    connect(modellingTabWidget->treeView,
+            SIGNAL(processVarRemoved(QString const&)), _processModel.get(),
+            SLOT(removeProcessVariable(QString const&)));
+    connect(modellingTabWidget->treeView,
+            SIGNAL(conditionRemoved(QString const&, QString const&)),
+            _processModel.get(),
+            SLOT(removeCondition(QString const&, QString const&)));
     connect(modellingTabWidget->treeView, SIGNAL(clearConditionView()),
             _conditionModel.get(), SLOT(clearView()));
     connect(modellingTabWidget->treeView, SIGNAL(processVarSelected()),
             _conditionModel.get(), SLOT(setProcessVariable()));
-    connect(modellingTabWidget->treeView, SIGNAL(conditionSelected(DataHolderLib::FemCondition*)),
-            _conditionModel.get(), SLOT(setFemCondition(DataHolderLib::FemCondition*)));
+    connect(modellingTabWidget->treeView,
+            SIGNAL(conditionSelected(DataHolderLib::FemCondition*)),
+            _conditionModel.get(),
+            SLOT(setFemCondition(DataHolderLib::FemCondition*)));
 
     // VisPipeline Connects
     connect(_geo_model.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
@@ -405,10 +410,10 @@ void MainWindow::openRecentFile()
 void MainWindow::save()
 {
     QString fileName = QFileDialog::getSaveFileName(
-            this,
-            "Save data as",
-            LastSavedFileDirectory::getDir(),
-            "GeoSys project (*.prj);;GMSH geometry files (*.geo)");
+        this,
+        "Save data as",
+        LastSavedFileDirectory::getDir(),
+        "GeoSys project (*.prj);;GMSH geometry files (*.geo)");
 
     if (fileName.isEmpty())
     {
