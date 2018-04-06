@@ -77,6 +77,31 @@ void FemConditionModel::setFemCondition(DataHolderLib::FemCondition* cond)
     endResetModel();
 }
 
+void FemConditionModel::setProcessVariable(DataHolderLib::FemCondition* cond)
+{
+    beginResetModel();
+    this->clearView();
+
+    DataHolderLib::ProcessVariable const& var (cond->getProcessVar());
+
+    QList<QVariant> pvar_data;
+    pvar_data << "Process variable:" << QString::fromStdString(var.name);
+    TreeItem* pvar_item = new TreeItem(pvar_data, _rootItem);
+    _rootItem->appendChild(pvar_item);
+
+    QList<QVariant> order_data;
+    order_data << "Order:" << QString::number(var.order);
+    TreeItem* order_item = new TreeItem(order_data, pvar_item);
+    pvar_item->appendChild(order_item);
+
+    QList<QVariant> comp_data;
+    comp_data << "Number of components:" << QString::number(var.components);
+    TreeItem* comp_item = new TreeItem(comp_data, pvar_item);
+    pvar_item->appendChild(comp_item);
+
+    endResetModel();
+}
+
 void FemConditionModel::clearView()
 {
     beginResetModel();
@@ -84,11 +109,3 @@ void FemConditionModel::clearView()
     endResetModel();
 }
 
-void FemConditionModel::setProcessVariable()
-{
-    beginResetModel();
-
-    this->clearView();
-
-    endResetModel();
-}

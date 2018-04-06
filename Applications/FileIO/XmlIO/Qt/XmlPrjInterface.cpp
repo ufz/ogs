@@ -388,19 +388,17 @@ XmlPrjInterface::getPrimaryVariableVec() const
     std::size_t const n_bc(boundary_conditions.size());
     for (auto& bc : boundary_conditions)
     {
-        std::string p_var_name = bc->getProcessVarName();
-        if (!PVarExists(p_var_name, p_vars))
-            p_vars.push_back({p_var_name, bc->getProcessVarOrder(),
-                              bc->getProcessVarComponents()});
+        DataHolderLib::ProcessVariable const& pvar (bc->getProcessVar());
+        if (!PVarExists(pvar.name, p_vars))
+            p_vars.push_back(pvar);
     }
 
     std::size_t const n_st(source_terms.size());
     for (auto& st : source_terms)
     {
-        std::string p_var_name = st->getProcessVarName();
-        if (!PVarExists(p_var_name, p_vars))
-            p_vars.push_back({p_var_name, st->getProcessVarOrder(),
-                              st->getProcessVarComponents()});
+        DataHolderLib::ProcessVariable const& pvar(st->getProcessVar());
+        if (!PVarExists(pvar.name, p_vars))
+            p_vars.push_back(pvar);
     }
     return p_vars;
 }

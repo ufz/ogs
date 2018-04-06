@@ -59,13 +59,13 @@ private slots:
     // void saveConditions();
 
 signals:
-    // void itemSelectionChanged(const QItemSelection & selected, const
-    // QItemSelection & deselected);
+    void itemSelectionChanged(QItemSelection const& selected,
+        QItemSelection const& deselected);
     void conditionRemoved(QString const&, QString const&);
     void processVarRemoved(QString const&);
     // void saveConditionsRequested();
     void clearConditionView();
-    void processVarSelected();
+    void processVarSelected(DataHolderLib::FemCondition* cond);
     void conditionSelected(DataHolderLib::FemCondition* cond);
 };
 

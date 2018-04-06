@@ -34,7 +34,7 @@ public slots:
     void setFemCondition(DataHolderLib::FemCondition* cond);
 
     /// Displays information on a process variable
-    void setProcessVariable();
+    void setProcessVariable(DataHolderLib::FemCondition* cond);
 
 private:
 };

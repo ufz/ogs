@@ -49,14 +49,20 @@ void ProcessView::selectionChanged(const QItemSelection& selected,
 
         if (idx.parent().isValid())  // not root node
         {
-            CondItem const* const item = dynamic_cast<CondItem*>(
+            CondItem const*const item = dynamic_cast<CondItem*>(
                 static_cast<ProcessModel*>(this->model())->getItem(idx));
             if (item != nullptr)
                 emit conditionSelected(item->getCondition());
         }
+        else
+        {
+            CondItem const*const item = dynamic_cast<CondItem*>(static_cast<ProcessModel*>(this->model())->getItem(idx)->child(0));
+            if (item != nullptr)
+                emit processVarSelected(item->getCondition());
+        }
     }
-    // emit itemSelectionChanged(selected, deselected);
-    // QTreeView::selectionChanged(selected, deselected);
+    emit itemSelectionChanged(selected, deselected);
+    QTreeView::selectionChanged(selected, deselected);
 }
 
 void ProcessView::contextMenuEvent(QContextMenuEvent* event)

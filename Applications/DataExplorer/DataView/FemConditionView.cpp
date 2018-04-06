@@ -20,7 +20,7 @@ FemConditionView::FemConditionView(QWidget* parent) : QTreeView(parent) {}
 void FemConditionView::updateView()
 {
     setAlternatingRowColors(true);
-    setColumnWidth(0, 125);
+    setColumnWidth(0, 200);
     std::size_t nColumns =
         (this->model() != nullptr) ? this->model()->columnCount() : 0;
     for (std::size_t i = 1; i < nColumns; i++)

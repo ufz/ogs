@@ -190,21 +190,20 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
             _vtkVisPipeline.get(), SLOT(removeHighlightedMeshComponent()));
 
     // Connection for process model to GUI
-    connect(modellingTabWidget->treeView,
-            SIGNAL(processVarRemoved(QString const&)), _processModel.get(),
-            SLOT(removeProcessVariable(QString const&)));
-    connect(modellingTabWidget->treeView,
-            SIGNAL(conditionRemoved(QString const&, QString const&)),
-            _processModel.get(),
-            SLOT(removeCondition(QString const&, QString const&)));
+    connect(modellingTabWidget->treeView, SIGNAL(processVarRemoved(QString const&)),
+            _processModel.get(), SLOT(removeProcessVariable(QString const&)));
+    connect(modellingTabWidget->treeView, SIGNAL(conditionRemoved(QString const&, QString const&)),
+            _processModel.get(), SLOT(removeCondition(QString const&, QString const&)));
     connect(modellingTabWidget->treeView, SIGNAL(clearConditionView()),
             _conditionModel.get(), SLOT(clearView()));
-    connect(modellingTabWidget->treeView, SIGNAL(processVarSelected()),
-            _conditionModel.get(), SLOT(setProcessVariable()));
-    connect(modellingTabWidget->treeView,
-            SIGNAL(conditionSelected(DataHolderLib::FemCondition*)),
-            _conditionModel.get(),
-            SLOT(setFemCondition(DataHolderLib::FemCondition*)));
+    connect(modellingTabWidget->treeView, SIGNAL(processVarSelected(DataHolderLib::FemCondition*)),
+            _conditionModel.get(), SLOT(setProcessVariable(DataHolderLib::FemCondition*)));
+    connect(modellingTabWidget->treeView, SIGNAL(conditionSelected(DataHolderLib::FemCondition*)),
+            _conditionModel.get(), SLOT(setFemCondition(DataHolderLib::FemCondition*)));
+    connect(modellingTabWidget->treeView, SIGNAL(processVarSelected(DataHolderLib::FemCondition*)),
+        modellingTabWidget->conditionView, SLOT(updateView()));
+    connect(modellingTabWidget->treeView, SIGNAL(conditionSelected(DataHolderLib::FemCondition*)),
+        modellingTabWidget->conditionView, SLOT(updateView()));
 
     // VisPipeline Connects
     connect(_geo_model.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),

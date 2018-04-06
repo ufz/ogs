@@ -47,13 +47,7 @@ public:
     std::string const getProcessVarName() const { return _process_var.name; }
 
     /// Returns the numerical order of the process vairable
-    std::size_t const getProcessVarOrder() const { return _process_var.order; }
-
-    /// Returns the number of components of the process variable
-    std::size_t const getProcessVarComponents() const
-    {
-        return _process_var.components;
-    }
+    ProcessVariable const& getProcessVar() const { return _process_var; }
 
     /// Returns the name of the parameter associated with the condition
     std::string const getParamName() const { return _param_name; }
