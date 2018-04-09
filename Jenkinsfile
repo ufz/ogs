@@ -16,6 +16,7 @@ pipeline {
       steps {
         sh "git config core.whitespace -blank-at-eof"
         sh "git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc'"
+        dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
 
         // ********* Check changesets for conditional stage execution **********
         script {
@@ -110,7 +111,6 @@ pipeline {
           post {
             always {
               publishReports { }
-              dir('scripts/jenkins') { stash(name: 'known_hosts', includes: 'known_hosts') }
               dir('build/docs') { stash(name: 'doxygen') }
             }
             failure {
