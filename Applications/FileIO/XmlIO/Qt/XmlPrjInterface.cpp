@@ -41,6 +41,7 @@ XmlPrjInterface::XmlPrjInterface(DataHolderLib::Project& project)
       XMLQtInterface(
           BaseLib::FileFinder({BaseLib::BuildInfo::app_xml_schema_path})
               .getPath("OpenGeoSysProject.xsd")),
+      _filename(""),
       _project(project)
 {
 }
@@ -155,14 +156,6 @@ void XmlPrjInterface::readConditions(QDomNode const& pvar_root,
         }
         pvar = pvar.nextSibling();
     }
-
-    QDomNode val = findParam(param_root, "p_outlet");
-    if (val != QDomNode())
-    {
-        ERR("reading conditions");
-    }
-    else
-        ERR("not found");
 }
 
 void XmlPrjInterface::readBoundaryConditions(
@@ -176,7 +169,7 @@ void XmlPrjInterface::readBoundaryConditions(
         std::unique_ptr<DataHolderLib::BoundaryCondition> cond(
             parseCondition<DataHolderLib::BoundaryCondition>(
                 bc, param_root, pvar));
-        if (cond->getType() != DataHolderLib::BoundaryCondition::NONE)
+        if (cond->getType() != DataHolderLib::BoundaryCondition::ConditionType::NONE)
             _project.addBoundaryCondition(std::move(cond));
 
         bc = bc.nextSibling();
@@ -193,7 +186,7 @@ void XmlPrjInterface::readSourceTerms(
     {
         std::unique_ptr<DataHolderLib::SourceTerm> cond(
             parseCondition<DataHolderLib::SourceTerm>(st, param_root, pvar));
-        if (cond->getType() != DataHolderLib::SourceTerm::NONE)
+        if (cond->getType() != DataHolderLib::SourceTerm::ConditionType::NONE)
             _project.addSourceTerm(std::move(cond));
         st = st.nextSibling();
     }
@@ -207,7 +200,7 @@ T* XmlPrjInterface::parseCondition(
 {
     DataHolderLib::BaseObjType base_obj_type =
         DataHolderLib::BaseObjType::GEOMETRY;
-    T::ConditionType type = T::NONE;
+    T::ConditionType type = T::ConditionType::NONE;
     std::string base_obj_name(""), obj_name(""), param_name("");
     QDomNode param_node = QDomNode();
     QDomNodeList nodeList = node.childNodes();
@@ -251,7 +244,7 @@ T* XmlPrjInterface::parseCondition(
 
         return cond;
     }
-    return new T({"", 0, 0}, "", T::NONE);
+    return new T({"", 0, 0}, "", T::ConditionType::NONE);
 }
 
 int XmlPrjInterface::writeToFile(const std::string& filename)
@@ -299,13 +292,11 @@ bool XmlPrjInterface::write()
     // geometries
     std::vector<std::string> geo_names;
     geo_objects.getGeometryNames(geo_names);
-    for (std::vector<std::string>::const_iterator it(geo_names.begin());
-         it != geo_names.end();
-         ++it)
+    for (std::string const name : geo_names)
     {
         // write gml file
         GeoLib::IO::XmlGmlInterface gml(geo_objects);
-        std::string name(*it);
+        std::string name(name);
         gml.setNameForExport(name);
         if (gml.writeToFile(std::string(path + name + ".gml")))
         {
@@ -319,15 +310,13 @@ bool XmlPrjInterface::write()
     }
 
     // stations
-    std::vector<std::string> stnNames;
-    geo_objects.getStationVectorNames(stnNames);
-    for (std::vector<std::string>::const_iterator it(stnNames.begin());
-         it != stnNames.end();
-         ++it)
+    std::vector<std::string> stn_names;
+    geo_objects.getStationVectorNames(stn_names);
+    for (std::string const name : stn_names)
     {
         // write station file
         GeoLib::IO::XmlStnInterface stn(geo_objects);
-        std::string name(*it);
+        std::string name(name);
         stn.setNameForExport(name);
 
         if (stn.writeToFile(path + name + ".stn"))

@@ -18,9 +18,9 @@ namespace DataHolderLib
 class SourceTerm final : public DataHolderLib::FemCondition
 {
 public:
-    enum ConditionType
+    enum class ConditionType
     {
-        NONE = 0,
+        NONE,
         NODAL,
         VOLUME
     };

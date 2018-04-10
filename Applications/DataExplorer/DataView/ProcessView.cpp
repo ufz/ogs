@@ -68,25 +68,21 @@ void ProcessView::contextMenuEvent(QContextMenuEvent* event)
     const QModelIndex idx(this->selectionModel()->currentIndex());
     QMenu menu;
 
-    if (this->isProcessVarItem(idx))
+    if (isProcessVarItem(idx))
     {
         // QAction* saveCondAction  = menu.addAction("Save FEM Conditions...");
         QAction* removeProcessVarAction =
             menu.addAction("Remove process variable");
         // connect(saveCondAction, SIGNAL(triggered()), this,
         // SLOT(saveConditions()));
-        connect(removeProcessVarAction,
-                SIGNAL(triggered()),
-                this,
-                SLOT(removeProcessVar()));
+        connect(removeProcessVarAction, SIGNAL(triggered()),
+                this, SLOT(removeProcessVar()));
     }
-    else if (this->isConditionItem(idx))
+    else if (isConditionItem(idx))
     {
         QAction* removeCondAction = menu.addAction("Remove condition");
-        connect(removeCondAction,
-                SIGNAL(triggered()),
-                this,
-                SLOT(removeCondition()));
+        connect(removeCondAction, SIGNAL(triggered()),
+                this, SLOT(removeCondition()));
         // QAction* editCondAction = menu.addAction("Edit condition");
         // connect(editCondAction, SIGNAL(triggered()), this,
         // SLOT(editCondition()));  else  editCondAction->setEnabled(false);
@@ -147,18 +143,12 @@ void ProcessView::saveConditions()
 */
 bool ProcessView::isProcessVarItem(const QModelIndex& idx) const
 {
-    ProcessVarItem* item = dynamic_cast<ProcessVarItem*>(
-        static_cast<ProcessModel*>(this->model())->getItem(idx));
-    if (item != nullptr)
-        return true;
-    return false;
+    return (dynamic_cast<ProcessVarItem*>(
+        static_cast<ProcessModel*>(this->model())->getItem(idx)) != nullptr);
 }
 
 bool ProcessView::isConditionItem(const QModelIndex& idx) const
 {
-    CondItem* item = dynamic_cast<CondItem*>(
-        static_cast<ProcessModel*>(this->model())->getItem(idx));
-    if (item != nullptr)
-        return true;
-    return false;
+    return (dynamic_cast<CondItem*>(
+        static_cast<ProcessModel*>(this->model())->getItem(idx)) != nullptr);
 }

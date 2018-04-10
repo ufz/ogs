@@ -142,8 +142,7 @@ void ProcessModel::removeProcessVariable(QString const& name)
 
     int const n_conds = pv_item->childCount();
     for (int i = n_conds - 1; i >= 0; --i)
-        removeCondition(pv_item,
-                        static_cast<CondItem*>(pv_item->child(i))->getName());
+        removeCondition(pv_item, static_cast<CondItem*>(pv_item->child(i))->getName());
 
     _project.removePrimaryVariable(name.toStdString());
     int const idx = pv_item->row();
