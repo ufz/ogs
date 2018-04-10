@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef PROCESSITEM_H
-#define PROCESSITEM_H
+#pragma once
 
 #include "TreeItem.h"
 
@@ -17,7 +16,7 @@
  * \brief A TreeItem representing process variable information.
  * \sa TreeItem
  */
-class ProcessVarItem : public TreeItem
+class ProcessVarItem final : public TreeItem
 {
 public:
     /// Constructor
@@ -30,5 +29,3 @@ public:
 
     QString getName() const { return data(0).toString(); }
 };
-
-#endif  // PROCESSITEM_H

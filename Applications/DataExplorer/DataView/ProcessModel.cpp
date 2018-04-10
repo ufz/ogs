@@ -37,8 +37,6 @@ ProcessModel::ProcessModel(DataHolderLib::Project& project, QObject* parent)
     _rootItem = new TreeItem(rootData, nullptr);
 }
 
-ProcessModel::~ProcessModel() {}
-
 int ProcessModel::columnCount(QModelIndex const& parent) const
 {
     Q_UNUSED(parent)

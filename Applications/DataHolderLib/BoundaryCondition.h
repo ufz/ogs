@@ -14,7 +14,7 @@
 
 namespace DataHolderLib
 {
-class BoundaryCondition : public DataHolderLib::FemCondition
+class BoundaryCondition final : public DataHolderLib::FemCondition
 {
 public:
     enum ConditionType
@@ -30,7 +30,7 @@ public:
     BoundaryCondition(ProcessVariable const& process_var,
                       std::string const& param_name, ConditionType type);
 
-    ~BoundaryCondition(){};
+    ~BoundaryCondition() = default;
 
     std::string const getConditionClassStr() const
     {

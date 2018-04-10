@@ -12,10 +12,8 @@
  *
  */
 
-#ifndef PROCESSMODEL_H
-#define PROCESSMODEL_H
+#pragma once
 
-// ** INCLUDES **
 #include "Applications/DataHolderLib/Project.h"
 #include "TreeModel.h"
 
@@ -34,13 +32,13 @@ class GeoObject;
  * such as process types, FEM-Conditions (BCs, ICs, STs), etc. as a
  * double-linked list. \sa TreeModel, ProcessView, TreeItem, CondObjectListItem
  */
-class ProcessModel : public TreeModel
+class ProcessModel final : public TreeModel
 {
     Q_OBJECT
 
 public:
     ProcessModel(DataHolderLib::Project& project, QObject* parent = nullptr);
-    ~ProcessModel();
+    ~ProcessModel() = default;
 
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
@@ -92,5 +90,3 @@ private:
 
 signals:
 };
-
-#endif  // PROCESSMODEL_H

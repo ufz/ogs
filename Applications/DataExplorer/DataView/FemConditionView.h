@@ -18,13 +18,14 @@
 /**
  *    A TreeView to display information of FEM conditions.
  */
-class FemConditionView : public QTreeView
+class FemConditionView final : public QTreeView
 {
     Q_OBJECT
 
 public:
     /// Constructor
     FemConditionView(QWidget* parent = nullptr);
+    ~FemConditionView() = default;
 
 public slots:
     void updateView();

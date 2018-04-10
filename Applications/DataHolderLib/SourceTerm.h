@@ -15,7 +15,7 @@
 namespace DataHolderLib
 {
 /// Managing data associated with a source term
-class SourceTerm : public DataHolderLib::FemCondition
+class SourceTerm final : public DataHolderLib::FemCondition
 {
 public:
     enum ConditionType
@@ -27,8 +27,7 @@ public:
 
     SourceTerm(ProcessVariable const& process_var,
                std::string const& param_name, ConditionType type);
-
-    ~SourceTerm() {}
+    ~SourceTerm() = default;
 
     std::string const getConditionClassStr() const { return "Source Term"; }
 

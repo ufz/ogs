@@ -41,8 +41,7 @@ class FemCondition
 public:
     FemCondition(ProcessVariable const& process_var,
                  std::string const& param_name);
-
-    ~FemCondition() {}
+    virtual ~FemCondition() {};
 
     /// Returns the name of the associated process variable
     std::string const getProcessVarName() const { return _process_var.name; }

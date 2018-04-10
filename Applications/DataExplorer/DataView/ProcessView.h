@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef PROCESSVIEW_H
-#define PROCESSVIEW_H
+#pragma once
 
 #include <QContextMenuEvent>
 #include <QTreeView>
@@ -27,13 +26,14 @@ class ConditionModel;
  * Terms) with a number of additional information such as Process Type,
  * Distribution, etc. \sa ConditionModel, CondItem
  */
-class ProcessView : public QTreeView
+class ProcessView final : public QTreeView
 {
     Q_OBJECT
 
 public:
     /// Constructor
-    ProcessView(QWidget* parent = 0);
+    ProcessView(QWidget* parent = nullptr);
+    ~ProcessView() = default;
 
     /// Update the view to visualise changes made to the underlying data
     void updateView();
@@ -68,5 +68,3 @@ signals:
     void processVarSelected(DataHolderLib::FemCondition* cond);
     void conditionSelected(DataHolderLib::FemCondition* cond);
 };
-
-#endif  // PROCESSVIEW_H
