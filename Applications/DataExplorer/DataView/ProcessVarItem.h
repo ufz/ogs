@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -25,9 +26,9 @@ public:
     {
     }
 
-    ~ProcessVarItem() {}
+    ~ProcessVarItem() = default;
 
-    QString const& getName() const { return data(0).toString(); }
+    QString getName() const { return data(0).toString(); }
 };
 
 #endif  // PROCESSITEM_H

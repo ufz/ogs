@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -369,11 +370,8 @@ void addTextNode(QDomDocument& doc,
 bool PVarExists(std::string const& name,
                 std::vector<DataHolderLib::ProcessVariable> const& p_vars)
 {
-    std::size_t const n_vars(p_vars.size());
-    for (DataHolderLib::ProcessVariable const p_var : p_vars)
-        if (p_var.name == name)
-            return true;
-    return false;
+    return std::any_of(p_vars.begin(), p_vars.end(),
+        [&](auto const& p_var) { return p_var.name == name; });
 }
 
 std::vector<DataHolderLib::ProcessVariable>

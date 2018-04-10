@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -92,11 +93,11 @@ public:
     void removePrimaryVariable(std::string const primary_var_name);
 
     /// Removes one boundary condition
-    void removeBoundaryCondition(std::string const primary_var_name,
+    void removeBoundaryCondition(std::string const& primary_var_name,
                                  std::string const& param_name);
 
     /// Remove one source term
-    void removeSourceTerm(std::string const primary_var_name,
+    void removeSourceTerm(std::string const& primary_var_name,
                           std::string const& param_name);
 
 private:

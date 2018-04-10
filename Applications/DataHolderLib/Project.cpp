@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -101,47 +102,45 @@ bool Project::getUniqueName(std::string &name) const
 
 void Project::removePrimaryVariable(std::string const primary_var_name)
 {
-    std::size_t n_bc(_boundary_conditions.size());
+    std::size_t const n_bc(_boundary_conditions.size());
     for (std::size_t i = 0; i < n_bc; ++i)
         if (_boundary_conditions[i]->getProcessVarName() == primary_var_name)
             removeBoundaryCondition(primary_var_name,
                                     _boundary_conditions[i]->getParamName());
 
-    std::size_t n_st(_source_terms.size());
+    std::size_t const n_st(_source_terms.size());
     for (std::size_t i = 0; i < n_bc; ++i)
         if (_source_terms[i]->getProcessVarName() == primary_var_name)
             removeSourceTerm(primary_var_name,
                              _source_terms[i]->getParamName());
 }
 
-void Project::removeBoundaryCondition(std::string const primary_var_name,
+void Project::removeBoundaryCondition(std::string const& primary_var_name,
                                       std::string const& param_name)
 {
-    std::size_t n_bc(_boundary_conditions.size());
+    std::size_t const n_bc(_boundary_conditions.size());
     for (std::size_t i = 0; i < n_bc; ++i)
     {
         if (_boundary_conditions[i]->getProcessVarName() == primary_var_name &&
             _boundary_conditions[i]->getParamName() == param_name)
         {
-            BoundaryCondition* bc = _boundary_conditions[i].release();
-            delete bc;
+            _boundary_conditions[i].reset();
             _boundary_conditions.erase(_boundary_conditions.begin() + i);
             return;
         }
     }
 }
 
-void Project::removeSourceTerm(std::string const primary_var_name,
+void Project::removeSourceTerm(std::string const& primary_var_name,
                                std::string const& param_name)
 {
-    std::size_t n_st(_source_terms.size());
+    std::size_t const n_st(_source_terms.size());
     for (std::size_t i = 0; i < n_st; ++i)
     {
         if (_source_terms[i]->getProcessVarName() == primary_var_name &&
             _source_terms[i]->getParamName() == param_name)
         {
-            SourceTerm* st = _source_terms[i].release();
-            delete st;
+            _source_terms[i].reset();
             _source_terms.erase(_source_terms.begin() + i);
             return;
         }

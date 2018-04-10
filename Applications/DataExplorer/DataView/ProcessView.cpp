@@ -1,11 +1,7 @@
 /**
  * \file
- * \author Karsten Rink
- * \date   2010-12-13
- * \brief  Implementation of the ProcessView class.
- *
  * \copyright
- * Copyright (c) 2013, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
