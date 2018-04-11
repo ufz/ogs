@@ -1,1 +1,0 @@
-A damage-driving history field which is associated with the maximum local tensile strain energy. It is only used in monolithic scheme.

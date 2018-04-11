@@ -40,7 +40,6 @@ struct ThermoMechanicalPhaseFieldProcessData
         Parameter<double> const& crack_length_scale_,
         Parameter<double> const& kinetic_coefficient_,
         Parameter<double> const& solid_density_,
-        Parameter<double>& history_field_,
         Parameter<double> const& linear_thermal_expansion_coefficient_,
         Parameter<double> const& specific_heat_capacity_,
         Parameter<double> const& thermal_conductivity_,
@@ -53,7 +52,6 @@ struct ThermoMechanicalPhaseFieldProcessData
           crack_length_scale(crack_length_scale_),
           kinetic_coefficient(kinetic_coefficient_),
           solid_density(solid_density_),
-          history_field(history_field_),
           linear_thermal_expansion_coefficient(linear_thermal_expansion_coefficient_),
           specific_heat_capacity(specific_heat_capacity_),
           thermal_conductivity(thermal_conductivity_),
@@ -70,7 +68,6 @@ struct ThermoMechanicalPhaseFieldProcessData
           crack_length_scale(other.crack_length_scale),
           kinetic_coefficient(other.kinetic_coefficient),
           solid_density(other.solid_density),
-          history_field(other.history_field),
           linear_thermal_expansion_coefficient(other.linear_thermal_expansion_coefficient),
           specific_heat_capacity(other.specific_heat_capacity),
           thermal_conductivity(other.thermal_conductivity),
@@ -98,7 +95,6 @@ struct ThermoMechanicalPhaseFieldProcessData
     Parameter<double> const& crack_length_scale;
     Parameter<double> const& kinetic_coefficient;
     Parameter<double> const& solid_density;
-    Parameter<double>& history_field;
     Parameter<double> const& linear_thermal_expansion_coefficient;
     Parameter<double> const& specific_heat_capacity;
     Parameter<double> const& thermal_conductivity;

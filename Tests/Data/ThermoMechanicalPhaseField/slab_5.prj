@@ -21,7 +21,6 @@
                 <crack_resistance>gc</crack_resistance>
                 <crack_length_scale>ls</crack_length_scale>
                 <kinetic_coefficient>M</kinetic_coefficient>
-                <history_field>H</history_field>
             </phasefield_parameters>
             <solid_density>rho_sr</solid_density>
 			<thermal_parameters>
@@ -212,11 +211,6 @@
             <name>M</name>
             <type>Constant</type>
             <value>1e6</value>
-        </parameter>
-        <parameter>
-            <name>H</name>
-            <type>Constant</type>
-            <value>0</value>
         </parameter>
 	<parameter>
             <name>alpha</name>

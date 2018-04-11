@@ -57,12 +57,9 @@ struct IntegrationPointData final
 
     typename BMatricesType::KelvinMatrixType C_tensile, C_compressive;
     double integration_weight;
-    double history_variable, history_variable_prev;
 
     void pushBackState()
     {
-        history_variable_prev =
-            std::max(history_variable_prev, history_variable);
         eps_prev = eps;
         material_state_variables->pushBackState();
     }
@@ -173,10 +170,6 @@ public:
             ip_data.sigma_tensile.setZero(kelvin_vector_size);
             ip_data.sigma_compressive.setZero(kelvin_vector_size);
             ip_data.heatflux.setZero(DisplacementDim);
-            ip_data.history_variable =
-                process_data.history_field(0, x_position)[0];
-            ip_data.history_variable_prev =
-                process_data.history_field(0, x_position)[0];
             ip_data.sigma.setZero(kelvin_vector_size);
             ip_data.strain_energy_tensile = 0.0;
             ip_data.elastic_energy = 0.0;

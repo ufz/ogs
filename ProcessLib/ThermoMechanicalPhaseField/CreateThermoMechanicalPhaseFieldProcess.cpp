@@ -201,13 +201,6 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         "solid_density", parameters, 1);
     DBUG("Use \'%s\' as solid density parameter.", solid_density.name.c_str());
 
-    // History field
-    auto& history_field = findParameter<double>(
-        phasefield_parameters_config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters__history_field}
-        "history_field", parameters, 1);
-    DBUG("Use \'%s\' as history field.", history_field.name.c_str());
-
     // Linear thermal expansion coefficient
     auto& linear_thermal_expansion_coefficient = findParameter<double>(
         thermal_parameters_config,
@@ -267,7 +260,6 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         crack_length_scale,
         kinetic_coefficient,
         solid_density,
-        history_field,
         linear_thermal_expansion_coefficient,
         specific_heat_capacity,
         thermal_conductivity,
