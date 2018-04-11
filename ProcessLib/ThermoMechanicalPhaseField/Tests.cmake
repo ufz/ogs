@@ -49,5 +49,5 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    expected_slab_5_pcs_2_ts_1_t_1.000000.vtu slab_5_pcs_2_ts_1_t_1.000000 phasefield phasefield 1e-6 0
+    expected_slab_5_pcs_2_ts_1_t_1.000000.vtu slab_5_pcs_2_ts_1_t_1.000000.vtu phasefield phasefield 1e-6 0
    )
