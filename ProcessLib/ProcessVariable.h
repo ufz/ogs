@@ -26,7 +26,7 @@ namespace ProcessLib
 class BoundaryConditionBuilder;
 
 /// A named process variable. Its properties includes the mesh, and the initial
-/// and boundary conditions.
+/// and boundary conditions as well as the source terms.
 class ProcessVariable
 {
 public:
