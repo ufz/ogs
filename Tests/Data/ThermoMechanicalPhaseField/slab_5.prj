@@ -7,7 +7,6 @@
         <process>
             <name>ThermoMechanicalPhaseField</name>
             <type>THERMO_MECHANICAL_PHASE_FIELD</type>
-            <coupling_scheme>staggered</coupling_scheme>
             <integration_order>3</integration_order>
 
             <constitutive_relation>

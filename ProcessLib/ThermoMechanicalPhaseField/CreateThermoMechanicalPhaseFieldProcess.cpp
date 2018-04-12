@@ -33,17 +33,8 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     config.checkConfigParameter("type", "THERMO_MECHANICAL_PHASE_FIELD");
     DBUG("Create ThermoMechanicalPhaseFieldProcess.");
 
-    auto const staggered_scheme =
-        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__coupling_scheme}
-        config.getConfigParameterOptional<std::string>("coupling_scheme");
-    const bool use_monolithic_scheme =
-        !(staggered_scheme && (*staggered_scheme == "staggered"));
-    if (!(staggered_scheme && (*staggered_scheme == "staggered")))
-    {
-        OGS_FATAL(
-            "Monolithic scheme for thermo-mechanical coupled "
-            "phase field process is currently not available.");
-    }
+    INFO("Solve the coupling with the staggered scheme,"
+         "which is the only option for TM-Phasefield in the current code");
 
     // Process variable.
 
@@ -57,31 +48,17 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     int mechanics_related_process_id = 0;
     int phase_field_process_id = 0;
     int heat_conduction_process_id = 0;
-    if (use_monolithic_scheme)  // monolithic scheme.
-    {
-        auto per_process_variables = findProcessVariables(
-            variables, pv_config,
-            {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__temperature}
-             "temperature",
-             //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__phasefield}
-             "phasefield",
-             //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__displacement}
-             "displacement"});
-        variable_T = &per_process_variables[0].get();
-        variable_ph = &per_process_variables[1].get();
-        variable_u = &per_process_variables[2].get();
+
+    auto per_process_variables = findProcessVariables(
+        variables, pv_config,
+        {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__temperature}
+         "temperature",
+         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__phasefield}
+         "phasefield",
+         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__displacement}
+         "displacement"});
         process_variables.push_back(std::move(per_process_variables));
-    }
-    else  // staggered scheme.
-    {
-        using namespace std::string_literals;
-        for (auto const& variable_name :
-             {"temperature"s, "displacement"s, "phasefield"s})
-        {
-            auto per_process_variables =
-                findProcessVariables(variables, pv_config, {variable_name});
-            process_variables.push_back(std::move(per_process_variables));
-        }
+
         heat_conduction_process_id = 0;
         mechanics_related_process_id = 1;
         phase_field_process_id = 2;
@@ -89,7 +66,6 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         variable_T = &process_variables[heat_conduction_process_id][0].get();
         variable_u = &process_variables[mechanics_related_process_id][0].get();
         variable_ph = &process_variables[phase_field_process_id][0].get();
-    }
 
     DBUG("Associate displacement with process variable \'%s\'.",
          variable_u->getName().c_str());
@@ -279,7 +255,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        use_monolithic_scheme, mechanics_related_process_id,
+        mechanics_related_process_id,
         phase_field_process_id, heat_conduction_process_id);
 }
 
