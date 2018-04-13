@@ -275,6 +275,9 @@ public:
                     .noalias() = N;
 
             // calculate real density
+            // rho_s * (V_0 + dV) = rho_sr * V_0
+            // dV = 3 * alpha * dT * V_0
+            // rho_s = rho_sr / (1 + 3 * alpha * dT )
             auto const rho_sr =
                 _process_data.reference_solid_density(t, x_position)[0];
             double const rho_s = rho_sr / (1 + 3 * linear_thermal_strain);

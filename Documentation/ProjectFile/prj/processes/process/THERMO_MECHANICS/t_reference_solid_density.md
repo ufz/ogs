@@ -1,1 +1,1 @@
-Reference solid density. The density changes from this reference value.
+Reference solid density. The real density is expressed as: rho_s = rho_sr / (1 + 3 * alpha * dT ) under the assumption of incompressible solid, i.e. for an incompressible solid: dV / dp --> 0 (cf. Tykodi, R. J. (1991). Thermodynamics of an incompressible solid and a thermodynamic functional determinant. Journal of Chemical Education, 68(10), 830.).
