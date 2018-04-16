@@ -68,7 +68,7 @@ pipeline {
               filename 'Dockerfile.gcc.full'
               dir 'scripts/docker'
               label 'docker'
-              args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
+              args '-v /datadrive/cache:/home/jenkins/cache'
               additionalBuildArgs '--pull'
             }
           }
@@ -141,7 +141,7 @@ pipeline {
               filename 'Dockerfile.gcc.minimal'
               dir 'scripts/docker'
               label 'docker'
-              args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
+              args '-v /datadrive/cache:/home/jenkins/cache'
               additionalBuildArgs '--pull'
             }
           }
@@ -400,7 +400,7 @@ pipeline {
               filename 'Dockerfile.clang.full'
               dir 'scripts/docker'
               label 'docker'
-              args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
+              args '-v /datadrive/cache:/home/jenkins/cache'
               additionalBuildArgs '--pull'
             }
           }
@@ -523,7 +523,7 @@ pipeline {
               filename 'Dockerfile.clang.minimal'
               dir 'scripts/docker'
               label 'docker'
-              args '-v ccache:/home/jenkins/cache/ccache -v conan-cache:/home/jenkins/cache/conan'
+              args '-v /datadrive/cache:/home/jenkins/cache'
               additionalBuildArgs '--pull'
             }
           }
