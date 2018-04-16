@@ -296,7 +296,6 @@ bool XmlPrjInterface::write()
     {
         // write gml file
         GeoLib::IO::XmlGmlInterface gml(geo_objects);
-        std::string name(name);
         gml.setNameForExport(name);
         if (gml.writeToFile(std::string(path + name + ".gml")))
         {
@@ -307,6 +306,8 @@ bool XmlPrjInterface::write()
                 doc.createTextNode(QString::fromStdString(name + ".gml"));
             geo_tag.appendChild(filename_text);
         }
+        else
+            ERR("XmlGmlInterface::writeFile(): Error writing gml-file \"%s\".", name.c_str());
     }
 
     // stations
@@ -316,7 +317,6 @@ bool XmlPrjInterface::write()
     {
         // write station file
         GeoLib::IO::XmlStnInterface stn(geo_objects);
-        std::string name(name);
         stn.setNameForExport(name);
 
         if (stn.writeToFile(path + name + ".stn"))
@@ -329,8 +329,7 @@ bool XmlPrjInterface::write()
             stn_tag.appendChild(filename_text);
         }
         else
-            ERR("XmlStnInterface::writeFile(): Error writing stn-file \"%s\".",
-                name.c_str());
+            ERR("XmlStnInterface::writeFile(): Error writing stn-file \"%s\".", name.c_str());
     }
 
     if (_project.getBoundaryConditions().size() > 0 ||
