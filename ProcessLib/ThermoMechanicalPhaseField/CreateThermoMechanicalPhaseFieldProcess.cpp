@@ -33,39 +33,42 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     config.checkConfigParameter("type", "THERMO_MECHANICAL_PHASE_FIELD");
     DBUG("Create ThermoMechanicalPhaseFieldProcess.");
 
-    INFO("Solve the coupling with the staggered scheme,"
-         "which is the only option for TM-Phasefield in the current code");
+    INFO(
+        "Solve the coupling with the staggered scheme,"
+        "which is the only option for TM-Phasefield in the current code");
 
     // Process variable.
 
     //! \ogs_file_param{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
-    ProcessVariable* variable_T;
-    ProcessVariable* variable_ph;
-    ProcessVariable* variable_u;
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
-    int mechanics_related_process_id = 0;
-    int phase_field_process_id = 0;
     int heat_conduction_process_id = 0;
+    int mechanics_related_process_id = 1;
+    int phase_field_process_id = 2;
 
-    auto per_process_variables = findProcessVariables(
+    auto process_variable_T = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__temperature}
-         "temperature",
-         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__phasefield}
-         "phasefield",
-         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__displacement}
+         "temperature"});
+    process_variables.push_back(std::move(process_variable_T));
+    ProcessVariable* variable_T =
+        &process_variables[process_variables.size() - 1][0].get();
+
+    auto process_variable_u = findProcessVariables(
+        variables, pv_config,
+        {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__displacement}
          "displacement"});
-        process_variables.push_back(std::move(per_process_variables));
-
-        heat_conduction_process_id = 0;
-        mechanics_related_process_id = 1;
-        phase_field_process_id = 2;
-
-        variable_T = &process_variables[heat_conduction_process_id][0].get();
-        variable_u = &process_variables[mechanics_related_process_id][0].get();
-        variable_ph = &process_variables[phase_field_process_id][0].get();
+    process_variables.push_back(std::move(process_variable_u));
+    ProcessVariable* variable_u =
+        &process_variables[process_variables.size() - 1][0].get();
+    auto process_variable_ph = findProcessVariables(
+        variables, pv_config,
+        {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__phasefield}
+         "phasefield"});
+    process_variables.push_back(std::move(process_variable_ph));
+    ProcessVariable* variable_ph =
+        &process_variables[process_variables.size() - 1][0].get();
 
     DBUG("Associate displacement with process variable \'%s\'.",
          variable_u->getName().c_str());
@@ -255,8 +258,8 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        mechanics_related_process_id,
-        phase_field_process_id, heat_conduction_process_id);
+        mechanics_related_process_id, phase_field_process_id,
+        heat_conduction_process_id);
 }
 
 template std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess<2>(
