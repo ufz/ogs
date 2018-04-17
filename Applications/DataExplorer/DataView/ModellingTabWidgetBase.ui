@@ -56,7 +56,7 @@
   <customwidget>
    <class>FemConditionView</class>
    <extends>QTreeView</extends>
-   <header location="global">femconditionview.h</header>
+   <header location="global">FemConditionView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
