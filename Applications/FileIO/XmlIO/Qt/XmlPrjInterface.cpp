@@ -371,7 +371,6 @@ XmlPrjInterface::getPrimaryVariableVec() const
         source_terms = _project.getSourceTerms();
 
     std::vector<DataHolderLib::ProcessVariable> p_vars;
-    std::size_t const n_bc(boundary_conditions.size());
     for (auto& bc : boundary_conditions)
     {
         DataHolderLib::ProcessVariable const& pvar (bc->getProcessVar());
@@ -379,7 +378,6 @@ XmlPrjInterface::getPrimaryVariableVec() const
             p_vars.push_back(pvar);
     }
 
-    std::size_t const n_st(source_terms.size());
     for (auto& st : source_terms)
     {
         DataHolderLib::ProcessVariable const& pvar(st->getProcessVar());
@@ -433,7 +431,6 @@ void XmlPrjInterface::writeBoundaryConditions(QDomDocument& doc,
 {
     std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const&
         boundary_conditions = _project.getBoundaryConditions();
-    std::size_t const n_bc(boundary_conditions.size());
     for (auto& bc : boundary_conditions)
     {
         if (bc->getProcessVarName() != name)
@@ -450,7 +447,6 @@ void XmlPrjInterface::writeSourceTerms(QDomDocument& doc,
 {
     std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const&
         source_terms = _project.getSourceTerms();
-    std::size_t const n_st(source_terms.size());
     for (auto& st : source_terms)
     {
         if (st->getProcessVarName() != name)
@@ -473,7 +469,6 @@ void XmlPrjInterface::writeProcessVariables(QDomDocument& doc,
     QDomElement pvar_list_tag = doc.createElement("process_variables");
     root.appendChild(pvar_list_tag);
 
-    std::size_t const n_p_vars(p_vars.size());
     for (DataHolderLib::ProcessVariable const p_var : p_vars)
     {
         QDomElement pvar_tag = doc.createElement("process_variable");
