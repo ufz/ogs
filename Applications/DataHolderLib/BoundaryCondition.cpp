@@ -9,7 +9,6 @@
  *
  */
 
-#pragma once
 #include "BoundaryCondition.h"
 
 namespace DataHolderLib

@@ -72,10 +72,10 @@ public:
 
 private:
     BaseObjType _base_type;
+    ProcessVariable _process_var;
     std::string _param_name;
     std::string _base_obj_name;
     std::string _obj_name;
-    ProcessVariable _process_var;
 };
 
 }  // namespace

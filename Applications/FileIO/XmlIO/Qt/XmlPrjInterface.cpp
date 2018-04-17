@@ -200,7 +200,7 @@ T* XmlPrjInterface::parseCondition(
 {
     DataHolderLib::BaseObjType base_obj_type =
         DataHolderLib::BaseObjType::GEOMETRY;
-    T::ConditionType type = T::ConditionType::NONE;
+    typename T::ConditionType type = T::ConditionType::NONE;
     std::string base_obj_name(""), obj_name(""), param_name("");
     QDomNode param_node = QDomNode();
     QDomNodeList nodeList = node.childNodes();
