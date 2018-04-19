@@ -75,8 +75,6 @@
 #include "SetNameDialog.h"
 #include "VtkAddFilterDialog.h"
 
-#include "ElementTreeModel.h"
-#include "FemConditionModel.h"
 #include "GeoTreeModel.h"
 #include "LastSavedFileDirectory.h"
 #include "OGSError.h"

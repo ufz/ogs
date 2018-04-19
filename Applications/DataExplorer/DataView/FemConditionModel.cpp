@@ -27,6 +27,8 @@ FemConditionModel::FemConditionModel(QObject* parent) : TreeModel(parent)
     _rootItem = new TreeItem(root_data, nullptr);
 }
 
+FemConditionModel::~FemConditionModel() = default;
+
 void FemConditionModel::setFemCondition(DataHolderLib::FemCondition* cond)
 {
     beginResetModel();
