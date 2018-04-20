@@ -23,7 +23,7 @@
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
-
+/// Returns the value for the given parameter name (i.e. for "x = 3" it returns "3")
 std::string getValue(std::string const& line, std::string const& val_name, bool is_string)
 {
     std::string value;
@@ -53,11 +53,13 @@ std::string getValue(std::string const& line, std::string const& val_name, bool 
     return value;
 }
 
+/// Returns the name/title from the "Zone"-description
 std::string getName(std::string const& line)
 {
     return getValue(line, "T=", true);
 }
 
+/// Returns raster dimensions from the "Zone"-description
 std::pair<std::size_t, std::size_t> getDimensions(std::string const& line)
 {
     std::pair<std::size_t, std::size_t> dims;
@@ -68,6 +70,7 @@ std::pair<std::size_t, std::size_t> getDimensions(std::string const& line)
     return dims;
 }
 
+/// Trims a substring containing a variable-name
 std::string trimVariable(std::string& var)
 {
     std::size_t const start = var.find_first_not_of("\"");
@@ -76,6 +79,7 @@ std::string trimVariable(std::string& var)
     return var.substr(0, end);
 }
 
+/// Returns an vector of variable names from the "Variables"-description
 std::vector<std::string> getVariables(std::string const& line)
 {
     std::string const var_str ("VARIABLES");
@@ -99,6 +103,7 @@ std::vector<std::string> getVariables(std::string const& line)
     return variables;
 }
 
+/// Tests if the number of read values equals the number of expected values
 bool dataCountError(std::string const& name, ::size_t const& current, std::size_t const& total)
 {
     if (current != total)
@@ -109,6 +114,7 @@ bool dataCountError(std::string const& name, ::size_t const& current, std::size_
     return false;
 }
 
+/// Tests if the number of read values equals the number of expected values and closes the stream
 bool dataCountError(std::ofstream& out,
                     std::string const& name,
                     std::size_t const& current,
@@ -122,6 +128,7 @@ bool dataCountError(std::ofstream& out,
     return false;
 }
 
+/// Resets all data structures after a new "Variables"-description is found
 void resetDataStructures(std::size_t const& n_scalars,
                          std::vector< std::vector<double> >& scalars,
                          std::size_t& val_count)
@@ -133,6 +140,7 @@ void resetDataStructures(std::size_t const& n_scalars,
     val_count = 0;
 }
 
+/// Writes one section/zone into a seperate TecPlot file
 void writeTecPlotSection(std::ofstream& out,
                          std::string const& file_name,
                          std::size_t& write_count,
@@ -153,6 +161,7 @@ void writeTecPlotSection(std::ofstream& out,
     }
 }
 
+/// Writes one section/zone into a seperate OGS-mesh
 int writeDataToMesh(std::string const& file_name,
                     std::size_t& write_count,
                     std::vector<std::string> const& vec_names,
@@ -208,6 +217,7 @@ int writeDataToMesh(std::string const& file_name,
     return 0;
 }
 
+/// If a geometry-section is encountered, it is currently ignored
 void skipGeometrySection(std::ifstream& in, std::string& line)
 {
     while (getline(in, line))
@@ -219,6 +229,7 @@ void skipGeometrySection(std::ifstream& in, std::string& line)
     }
 }
 
+/// Splits a TecPlot file containing multiple sections/zones into seperate files
 int splitFile(std::ifstream& in, std::string file_name)
 {
     std::ofstream out;
@@ -266,6 +277,7 @@ int splitFile(std::ifstream& in, std::string file_name)
     return 0;
 }
 
+/// Converts a TecPlot file into one or more OGS-meshes (one mesh per section/zone)
 int convertFile(std::ifstream& in, std::string file_name)
 {
     std::string line(""), name("");
