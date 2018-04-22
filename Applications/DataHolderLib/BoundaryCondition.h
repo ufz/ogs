@@ -30,7 +30,7 @@ public:
     BoundaryCondition(ProcessVariable const& process_var,
                       std::string const& param_name, ConditionType type);
 
-    std::string const getConditionClassStr() const
+    std::string const getConditionClassStr() const override
     {
         return "Boundary Condition";
     }

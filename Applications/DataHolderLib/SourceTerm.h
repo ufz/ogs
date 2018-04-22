@@ -28,7 +28,10 @@ public:
     SourceTerm(ProcessVariable const& process_var,
                std::string const& param_name, ConditionType type);
 
-    std::string const getConditionClassStr() const { return "Source Term"; }
+    std::string const getConditionClassStr() const override
+    {
+        return "Source Term";
+    }
 
     /// Returns the type of source term this is
     ConditionType getType() const { return _type; }
