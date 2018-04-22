@@ -10,12 +10,12 @@
  */
 
 #pragma once
-#include "Applications/DataHolderLib/FemCondition.h"
+#include "FemCondition.h"
 
 namespace DataHolderLib
 {
 /// Managing data associated with a source term
-class SourceTerm final : public DataHolderLib::FemCondition
+class SourceTerm final : public FemCondition
 {
 public:
     enum class ConditionType

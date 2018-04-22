@@ -10,11 +10,11 @@
  */
 
 #pragma once
-#include "Applications/DataHolderLib/FemCondition.h"
+#include "FemCondition.h"
 
 namespace DataHolderLib
 {
-class BoundaryCondition final : public DataHolderLib::FemCondition
+class BoundaryCondition final : public FemCondition
 {
 public:
     enum class ConditionType
