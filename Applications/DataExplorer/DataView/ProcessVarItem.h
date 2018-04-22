@@ -25,7 +25,5 @@ public:
     {
     }
 
-    ~ProcessVarItem() = default;
-
     QString getName() const { return data(0).toString(); }
 };

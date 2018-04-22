@@ -33,7 +33,6 @@ class ProcessView final : public QTreeView
 public:
     /// Constructor
     ProcessView(QWidget* parent = nullptr);
-    ~ProcessView() = default;
 
     /// Update the view to visualise changes made to the underlying data
     void updateView();

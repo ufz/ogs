@@ -25,7 +25,6 @@ class FemConditionView final : public QTreeView
 public:
     /// Constructor
     FemConditionView(QWidget* parent = nullptr);
-    ~FemConditionView() = default;
 
 public slots:
     void updateView();

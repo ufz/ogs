@@ -30,8 +30,6 @@ public:
     BoundaryCondition(ProcessVariable const& process_var,
                       std::string const& param_name, ConditionType type);
 
-    ~BoundaryCondition() = default;
-
     std::string const getConditionClassStr() const
     {
         return "Boundary Condition";

@@ -32,8 +32,6 @@ public:
     {
     }
 
-    ~CondItem() = default;
-
     /// Returns the FEM Condition associated with the item.
     DataHolderLib::FemCondition* getCondition() const { return _cond; }
 
