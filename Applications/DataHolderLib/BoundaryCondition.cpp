@@ -54,4 +54,4 @@ std::string BoundaryCondition::convertTypeToString(ConditionType type)
     return "";
 }
 
-}  // namespace
+}  // namespace DataHolderLib

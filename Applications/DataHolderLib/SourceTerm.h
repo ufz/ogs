@@ -44,4 +44,4 @@ private:
     ConditionType _type;
 };
 
-}  // namespace
+}  // namespace DataHolderLib

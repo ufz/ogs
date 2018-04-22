@@ -40,4 +40,4 @@ Color const getColor(const std::string& id,
 /// Convenience function to use the getColor method with numbers as identifiers.
 Color const getColor(double id,
                      std::map<std::string, DataHolderLib::Color>& colors);
-}  // namespace
+}  // namespace DataHolderLib

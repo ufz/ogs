@@ -83,7 +83,7 @@ void FemConditionModel::setProcessVariable(DataHolderLib::FemCondition* cond)
     beginResetModel();
     this->clearView();
 
-    DataHolderLib::ProcessVariable const& var (cond->getProcessVar());
+    DataHolderLib::ProcessVariable const& var(cond->getProcessVar());
 
     QList<QVariant> pvar_data;
     pvar_data << "Process variable:" << QString::fromStdString(var.name);
@@ -109,4 +109,3 @@ void FemConditionModel::clearView()
     _rootItem->removeChildren(0, _rootItem->childCount());
     endResetModel();
 }
-

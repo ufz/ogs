@@ -103,14 +103,16 @@ bool Project::getUniqueName(std::string &name) const
 void Project::removePrimaryVariable(std::string const primary_var_name)
 {
     std::size_t const n_bc(_boundary_conditions.size());
-    for (int i = n_bc-1; i >=0; --i)
+    for (int i = n_bc - 1; i >= 0; --i)
         if (_boundary_conditions[i]->getProcessVarName() == primary_var_name)
-            removeBoundaryCondition(primary_var_name, _boundary_conditions[i]->getParamName());
+            removeBoundaryCondition(primary_var_name,
+                                    _boundary_conditions[i]->getParamName());
 
     std::size_t const n_st(_source_terms.size());
-    for (int i = n_st-1; i >=0; --i)
+    for (int i = n_st - 1; i >= 0; --i)
         if (_source_terms[i]->getProcessVarName() == primary_var_name)
-            removeSourceTerm(primary_var_name, _source_terms[i]->getParamName());
+            removeSourceTerm(primary_var_name,
+                             _source_terms[i]->getParamName());
 }
 
 void Project::removeBoundaryCondition(std::string const& primary_var_name,

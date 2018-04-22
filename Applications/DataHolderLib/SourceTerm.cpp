@@ -40,4 +40,4 @@ std::string SourceTerm::convertTypeToString(ConditionType type)
     return "";
 }
 
-}  // namespace
+}  // namespace DataHolderLib

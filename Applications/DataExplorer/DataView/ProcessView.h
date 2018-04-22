@@ -60,7 +60,7 @@ private slots:
 
 signals:
     void itemSelectionChanged(QItemSelection const& selected,
-        QItemSelection const& deselected);
+                              QItemSelection const& deselected);
     void conditionRemoved(QString const&, QString const&);
     void processVarRemoved(QString const&);
     // void saveConditionsRequested();

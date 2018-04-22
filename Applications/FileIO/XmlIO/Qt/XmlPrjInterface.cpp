@@ -167,9 +167,10 @@ void XmlPrjInterface::readBoundaryConditions(
     while (bc != QDomNode())
     {
         std::unique_ptr<DataHolderLib::BoundaryCondition> cond(
-            parseCondition<DataHolderLib::BoundaryCondition>(
-                bc, param_root, pvar));
-        if (cond->getType() != DataHolderLib::BoundaryCondition::ConditionType::NONE)
+            parseCondition<DataHolderLib::BoundaryCondition>(bc, param_root,
+                                                             pvar));
+        if (cond->getType() !=
+            DataHolderLib::BoundaryCondition::ConditionType::NONE)
             _project.addBoundaryCondition(std::move(cond));
 
         bc = bc.nextSibling();
@@ -307,7 +308,8 @@ bool XmlPrjInterface::write()
             geo_tag.appendChild(filename_text);
         }
         else
-            ERR("XmlGmlInterface::writeFile(): Error writing gml-file \"%s\".", name.c_str());
+            ERR("XmlGmlInterface::writeFile(): Error writing gml-file \"%s\".",
+                name.c_str());
     }
 
     // stations
@@ -329,7 +331,8 @@ bool XmlPrjInterface::write()
             stn_tag.appendChild(filename_text);
         }
         else
-            ERR("XmlStnInterface::writeFile(): Error writing stn-file \"%s\".", name.c_str());
+            ERR("XmlStnInterface::writeFile(): Error writing stn-file \"%s\".",
+                name.c_str());
     }
 
     if (_project.getBoundaryConditions().size() > 0 ||
@@ -359,7 +362,7 @@ bool PVarExists(std::string const& name,
                 std::vector<DataHolderLib::ProcessVariable> const& p_vars)
 {
     return std::any_of(p_vars.begin(), p_vars.end(),
-        [&](auto const& p_var) { return p_var.name == name; });
+                       [&](auto const& p_var) { return p_var.name == name; });
 }
 
 std::vector<DataHolderLib::ProcessVariable>
@@ -373,7 +376,7 @@ XmlPrjInterface::getPrimaryVariableVec() const
     std::vector<DataHolderLib::ProcessVariable> p_vars;
     for (auto& bc : boundary_conditions)
     {
-        DataHolderLib::ProcessVariable const& pvar (bc->getProcessVar());
+        DataHolderLib::ProcessVariable const& pvar(bc->getProcessVar());
         if (!PVarExists(pvar.name, p_vars))
             p_vars.push_back(pvar);
     }
@@ -399,15 +402,15 @@ void XmlPrjInterface::writeCondition(
                     tag,
                     "geometrical_set",
                     QString::fromStdString(cond.getBaseObjName()));
-        addTextNode(
-            doc, tag, "geometry", QString::fromStdString(cond.getObjName()));
+        addTextNode(doc, tag, "geometry",
+                    QString::fromStdString(cond.getObjName()));
         addTextNode(doc,
                     tag,
                     "type",
                     QString::fromStdString(T::convertTypeToString(
                         static_cast<T const&>(cond).getType())));
-        addTextNode(
-            doc, tag, "parameter", QString::fromStdString(cond.getParamName()));
+        addTextNode(doc, tag, "parameter",
+                    QString::fromStdString(cond.getParamName()));
     }
     else if (cond.getBaseObjType() == DataHolderLib::BaseObjType::MESH)
     {
@@ -416,8 +419,8 @@ void XmlPrjInterface::writeCondition(
                     "type",
                     QString::fromStdString(T::convertTypeToString(
                         static_cast<T const&>(cond).getType())));
-        addTextNode(
-            doc, tag, "mesh", QString::fromStdString(cond.getBaseObjName()));
+        addTextNode(doc, tag, "mesh",
+                    QString::fromStdString(cond.getBaseObjName()));
         addTextNode(doc,
                     tag,
                     "field_name",
@@ -475,8 +478,8 @@ void XmlPrjInterface::writeProcessVariables(QDomDocument& doc,
         pvar_list_tag.appendChild(pvar_tag);
         addTextNode(doc, pvar_tag, "name", QString::fromStdString(p_var.name));
         addTextNode(doc, pvar_tag, "order", QString::number(p_var.order));
-        addTextNode(
-            doc, pvar_tag, "components", QString::number(p_var.components));
+        addTextNode(doc, pvar_tag, "components",
+                    QString::number(p_var.components));
         QDomElement bc_list_tag = doc.createElement("boundary_conditions");
         pvar_tag.appendChild(bc_list_tag);
         writeBoundaryConditions(doc, bc_list_tag, p_var.name);
@@ -485,4 +488,4 @@ void XmlPrjInterface::writeProcessVariables(QDomDocument& doc,
         writeSourceTerms(doc, st_list_tag, p_var.name);
     }
 }
-}
+}  // namespace FileIO

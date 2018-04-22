@@ -66,7 +66,8 @@ void ProcessModel::addCondition(DataHolderLib::FemCondition* condition)
 }
 
 void ProcessModel::addBoundaryConditions(
-    std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const& conditions)
+    std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const&
+        conditions)
 {
     for (auto& cond : conditions)
         addCondition(cond.get());
@@ -75,7 +76,7 @@ void ProcessModel::addBoundaryConditions(
 void ProcessModel::addSourceTerms(
     std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const& conditions)
 {
-    for (auto& cond: conditions)
+    for (auto& cond : conditions)
         addCondition(cond.get());
 }
 
@@ -84,7 +85,8 @@ ProcessVarItem* ProcessModel::addProcessVar(QString const& name)
     beginResetModel();
     QList<QVariant> process_var_data;
     process_var_data << QVariant(name) << "";
-    ProcessVarItem* process_var = new ProcessVarItem(process_var_data, _rootItem);
+    ProcessVarItem* process_var =
+        new ProcessVarItem(process_var_data, _rootItem);
     _rootItem->appendChild(process_var);
     endResetModel();
     return process_var;
@@ -95,7 +97,8 @@ ProcessVarItem* ProcessModel::getProcessVarItem(QString const& name) const
     int const n_children(_rootItem->childCount());
     for (int i = 0; i < n_children; ++i)
     {
-        ProcessVarItem* item(dynamic_cast<ProcessVarItem*>(_rootItem->child(i)));
+        ProcessVarItem* item(
+            dynamic_cast<ProcessVarItem*>(_rootItem->child(i)));
         if (item != nullptr && item->getName() == name)
             return item;
     }
@@ -142,7 +145,8 @@ void ProcessModel::removeProcessVariable(QString const& name)
 
     int const n_conds = pv_item->childCount();
     for (int i = n_conds - 1; i >= 0; --i)
-        removeCondition(pv_item, static_cast<CondItem*>(pv_item->child(i))->getName());
+        removeCondition(pv_item,
+                        static_cast<CondItem*>(pv_item->child(i))->getName());
 
     _project.removePrimaryVariable(name.toStdString());
     int const idx = pv_item->row();

@@ -31,4 +31,4 @@ void FemCondition::setGeoObject(std::string geo_name, std::string obj_name)
     _obj_name = obj_name;
 }
 
-}  // namespace
+}  // namespace DataHolderLib

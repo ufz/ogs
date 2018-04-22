@@ -29,8 +29,8 @@ namespace FileIO
 /**
  * Data Explorer XML interface for project files
  */
-class XmlPrjInterface final :
-    public BaseLib::IO::XMLInterface, public BaseLib::IO::XMLQtInterface
+class XmlPrjInterface final : public BaseLib::IO::XMLInterface,
+                              public BaseLib::IO::XMLQtInterface
 {
 public:
     XmlPrjInterface(DataHolderLib::Project& project);

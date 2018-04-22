@@ -45,14 +45,17 @@ void ProcessView::selectionChanged(const QItemSelection& selected,
 
         if (idx.parent().isValid())  // not root node
         {
-            CondItem const*const item = dynamic_cast<CondItem*>(
+            CondItem const* const item = dynamic_cast<CondItem*>(
                 static_cast<ProcessModel*>(this->model())->getItem(idx));
             if (item != nullptr)
                 emit conditionSelected(item->getCondition());
         }
         else
         {
-            CondItem const*const item = dynamic_cast<CondItem*>(static_cast<ProcessModel*>(this->model())->getItem(idx)->child(0));
+            CondItem const* const item = dynamic_cast<CondItem*>(
+                static_cast<ProcessModel*>(this->model())
+                    ->getItem(idx)
+                    ->child(0));
             if (item != nullptr)
                 emit processVarSelected(item->getCondition());
         }
@@ -75,14 +78,14 @@ void ProcessView::contextMenuEvent(QContextMenuEvent* event)
             menu.addAction("Remove process variable");
         // connect(saveCondAction, SIGNAL(triggered()), this,
         // SLOT(saveConditions()));
-        connect(removeProcessVarAction, SIGNAL(triggered()),
-                this, SLOT(removeProcessVar()));
+        connect(removeProcessVarAction, SIGNAL(triggered()), this,
+                SLOT(removeProcessVar()));
     }
     else if (isConditionItem(idx))
     {
         QAction* removeCondAction = menu.addAction("Remove condition");
-        connect(removeCondAction, SIGNAL(triggered()),
-                this, SLOT(removeCondition()));
+        connect(removeCondAction, SIGNAL(triggered()), this,
+                SLOT(removeCondition()));
         // QAction* editCondAction = menu.addAction("Edit condition");
         // connect(editCondAction, SIGNAL(triggered()), this,
         // SLOT(editCondition()));  else  editCondAction->setEnabled(false);
@@ -144,11 +147,13 @@ void ProcessView::saveConditions()
 bool ProcessView::isProcessVarItem(const QModelIndex& idx) const
 {
     return (dynamic_cast<ProcessVarItem*>(
-        static_cast<ProcessModel*>(this->model())->getItem(idx)) != nullptr);
+                static_cast<ProcessModel*>(this->model())->getItem(idx)) !=
+            nullptr);
 }
 
 bool ProcessView::isConditionItem(const QModelIndex& idx) const
 {
     return (dynamic_cast<CondItem*>(
-        static_cast<ProcessModel*>(this->model())->getItem(idx)) != nullptr);
+                static_cast<ProcessModel*>(this->model())->getItem(idx)) !=
+            nullptr);
 }

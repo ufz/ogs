@@ -53,14 +53,16 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
         EXPECT_EQ(test_files[i].n_geo, geo_names.size());
         EXPECT_EQ(test_files[i].n_mesh, project.getMeshObjects().size());
 
-        std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const& bcs =
-            project.getBoundaryConditions();
+        std::vector<std::unique_ptr<DataHolderLib::BoundaryCondition>> const&
+            bcs = project.getBoundaryConditions();
         EXPECT_EQ(test_files[i].n_bc, bcs.size());
         for (auto& bc : bcs)
         {
             EXPECT_FALSE(bc->getProcessVarName().empty());
             EXPECT_FALSE(bc->getParamName().empty());
-            EXPECT_FALSE(DataHolderLib::BoundaryCondition::ConditionType::NONE == bc->getType());
+            EXPECT_FALSE(
+                DataHolderLib::BoundaryCondition::ConditionType::NONE ==
+                bc->getType());
             EXPECT_FALSE(bc->getBaseObjName().empty());
             if (bc->getBaseObjType() == DataHolderLib::BaseObjType::GEOMETRY)
                 EXPECT_FALSE(bc->getObjName().empty());
@@ -73,7 +75,8 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
         {
             EXPECT_FALSE(st->getProcessVarName().empty());
             EXPECT_FALSE(st->getParamName().empty());
-            EXPECT_FALSE(DataHolderLib::SourceTerm::ConditionType::NONE == st->getType());
+            EXPECT_FALSE(DataHolderLib::SourceTerm::ConditionType::NONE ==
+                         st->getType());
             EXPECT_FALSE(st->getBaseObjName().empty());
             if (st->getBaseObjType() == DataHolderLib::BaseObjType::GEOMETRY)
                 EXPECT_FALSE(st->getObjName().empty());

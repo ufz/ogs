@@ -17,11 +17,11 @@
 #include "ImportFileTypes.h"
 #include "ui_mainwindow.h"
 
+#include "ElementTreeModel.h"
+#include "FemConditionModel.h"
 #include "GEOModels.h"
 #include "MshModel.h"
 #include "ProcessModel.h"
-#include "ElementTreeModel.h"
-#include "FemConditionModel.h"
 #include "VisPrefsDialog.h"
 #include "VtkVisPipeline.h"
 
