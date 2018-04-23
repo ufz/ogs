@@ -56,6 +56,9 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElements(GeoLib::GeoObject const& geoObj);
 
+    std::vector<std::pair<std::size_t, unsigned>> const& getBulkIDs(
+        GeoLib::GeoObject const& geometry);
+
     /**
      * generate boundary elements at the given point.
      * @param point Search the mesh for given point
@@ -63,6 +66,9 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsAtPoint(
         GeoLib::Point const& point);
+    std::vector<std::pair<std::size_t, unsigned>> const& getBulkIDsAtPoint(
+        GeoLib::Point const& point);
+
     /**
      * generate boundary elements on the given polyline.
      * @param ply the GeoLib::Polyline the nearest mesh nodes are searched for
@@ -70,6 +76,8 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsAlongPolyline(
         GeoLib::Polyline const& ply);
+    std::vector<std::pair<std::size_t, unsigned>> const&
+    getBulkIDsAlongPolyline(GeoLib::Polyline const& ply);
 
     /**
      * generate boundary elements on the given surface.
@@ -78,6 +86,8 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsOnSurface(
         GeoLib::Surface const& sfc);
+    std::vector<std::pair<std::size_t, unsigned>> const&
+    getBulkIDsOnSurface(GeoLib::Surface const& sfc);
 
 private:
     MeshLib::Mesh const& _mesh;
