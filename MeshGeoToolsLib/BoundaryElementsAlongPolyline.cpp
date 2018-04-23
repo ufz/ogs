@@ -48,8 +48,12 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
             auto* edge = e->getEdge(i);
             // check if all edge nodes are along the polyline (if yes, store a distance)
             std::vector<std::size_t> edge_node_distances_along_ply;
-            if (includesAllEdgeNodeIDs(node_ids_on_poly, *edge, edge_node_distances_along_ply)) {
-                auto* new_edge = modifyEdgeNodeOrdering(*edge, ply, edge_node_distances_along_ply, node_ids_on_poly);
+            if (includesAllEdgeNodeIDs(node_ids_on_poly, *edge,
+                                       edge_node_distances_along_ply))
+            {
+                auto* new_edge = modifyEdgeNodeOrdering(
+                    *edge, ply, edge_node_distances_along_ply,
+                    node_ids_on_poly);
                 if (edge != new_edge)
                     delete edge;
                 _boundary_elements.push_back(new_edge);
