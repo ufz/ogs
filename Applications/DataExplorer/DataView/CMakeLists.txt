@@ -8,6 +8,8 @@ set(SOURCES
     DirectConditionGenerator.cpp
     ElementTreeModel.cpp
     ElementTreeView.cpp
+    FemConditionModel.cpp
+    FemConditionView.cpp
     GEOModels.cpp
     GeoOnMeshMappingDialog.cpp
     GeoTabWidget.cpp
@@ -30,6 +32,8 @@ set(SOURCES
     MshModel.cpp
     MshTabWidget.cpp
     MshView.cpp
+    ProcessModel.cpp
+    ProcessView.cpp
     SaveMeshDialog.cpp
     SelectMeshDialog.cpp
     SetNameDialog.cpp
@@ -47,12 +51,13 @@ set(HEADERS
     ColorTableView.h
     CondFromRasterDialog.h
     CondItem.h
-    CondObjectListItem.h
     CreateStructuredGridDialog.h
     DataExplorerSettingsDialog.h
     DirectConditionGenerator.h
     ElementTreeModel.h
     ElementTreeView.h
+    FemConditionModel.h
+    FemConditionView.h
     GEOModels.h
     GeoObjectListItem.h
     GeoOnMeshMappingDialog.h
@@ -77,6 +82,9 @@ set(HEADERS
     MshModel.h
     MshTabWidget.h
     MshView.h
+    ProcessModel.h
+    ProcessVarItem.h
+    ProcessView.h
     SaveMeshDialog.h
     SelectMeshDialog.h
     SetNameDialog.h

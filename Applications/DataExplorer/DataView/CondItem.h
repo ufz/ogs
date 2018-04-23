@@ -1,9 +1,5 @@
 /**
  * \file
- * \author Karsten Rink
- * \date   2010-10-20
- * \brief  Definition of the CondItem class.
- *
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -14,30 +10,33 @@
 
 #pragma once
 
-#include "FEMCondition.h"
+#include <memory>
+
+#include "Applications/DataHolderLib/FemCondition.h"
 #include "TreeItem.h"
 
+#include <QList>
+#include <QVariant>
+
 /**
- * \brief A TreeItem containing a condition of a FEM (BC, IC or ST).
+ * \brief A TreeItem containing a boundary condition or source term
  * \sa TreeItem
  */
 class CondItem : public TreeItem
 {
 public:
     /// Constructor
-    CondItem(const QList<QVariant> &data, TreeItem* parent, const FEMCondition* cond)
-        : TreeItem(data, parent), _item(cond)
+    CondItem(const QList<QVariant>& data, TreeItem* parent,
+             DataHolderLib::FemCondition* cond)
+        : TreeItem(data, parent), _cond(cond)
     {
     }
 
-    ~CondItem() {}
-
     /// Returns the FEM Condition associated with the item.
-    const FEMCondition* getItem() { return _item; }
+    DataHolderLib::FemCondition* getCondition() const { return _cond; }
 
-    /// Returns the geo-object on which the condition is placed.
-    const GeoLib::GeoObject* getGeoObject() { return this->getGeoObject(); }
+    QString const getName() const { return data(0).toString(); }
 
 private:
-    const FEMCondition* _item;
+    DataHolderLib::FemCondition* _cond;
 };

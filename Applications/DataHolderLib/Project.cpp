@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -97,6 +98,53 @@ bool Project::getUniqueName(std::string &name) const
         name = cpName;
     }
     return isUnique;
+}
+
+void Project::removePrimaryVariable(std::string const primary_var_name)
+{
+    std::size_t const n_bc(_boundary_conditions.size());
+    for (int i = n_bc - 1; i >= 0; --i)
+        if (_boundary_conditions[i]->getProcessVarName() == primary_var_name)
+            removeBoundaryCondition(primary_var_name,
+                                    _boundary_conditions[i]->getParamName());
+
+    std::size_t const n_st(_source_terms.size());
+    for (int i = n_st - 1; i >= 0; --i)
+        if (_source_terms[i]->getProcessVarName() == primary_var_name)
+            removeSourceTerm(primary_var_name,
+                             _source_terms[i]->getParamName());
+}
+
+void Project::removeBoundaryCondition(std::string const& primary_var_name,
+                                      std::string const& param_name)
+{
+    std::size_t const n_bc(_boundary_conditions.size());
+    for (std::size_t i = 0; i < n_bc; ++i)
+    {
+        if (_boundary_conditions[i]->getProcessVarName() == primary_var_name &&
+            _boundary_conditions[i]->getParamName() == param_name)
+        {
+            _boundary_conditions[i].reset();
+            _boundary_conditions.erase(_boundary_conditions.begin() + i);
+            return;
+        }
+    }
+}
+
+void Project::removeSourceTerm(std::string const& primary_var_name,
+                               std::string const& param_name)
+{
+    std::size_t const n_st(_source_terms.size());
+    for (std::size_t i = 0; i < n_st; ++i)
+    {
+        if (_source_terms[i]->getProcessVarName() == primary_var_name &&
+            _source_terms[i]->getParamName() == param_name)
+        {
+            _source_terms[i].reset();
+            _source_terms.erase(_source_terms.begin() + i);
+            return;
+        }
+    }
 }
 
 } //namespace

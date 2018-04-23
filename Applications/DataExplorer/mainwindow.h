@@ -1,9 +1,5 @@
 /**
  * \file
- * \author Lars Bilke
- * \date   2009-11-04
- * \brief  Definition of the MainWindow class.
- *
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.net)
  *            Distributed under a Modified BSD License.
@@ -22,13 +18,14 @@
 #include "ui_mainwindow.h"
 
 #include "ElementTreeModel.h"
+#include "FemConditionModel.h"
 #include "GEOModels.h"
 #include "MshModel.h"
-#include "VtkVisPipeline.h"
+#include "ProcessModel.h"
 #include "VisPrefsDialog.h"
+#include "VtkVisPipeline.h"
 
 class TreeModel;
-class ProcessModel;
 
 namespace MeshLib
 {
@@ -128,7 +125,8 @@ private:
     DataHolderLib::Project _project;
     std::unique_ptr<MshModel> _meshModel;
     std::unique_ptr<ElementTreeModel> _elementModel;
-    std::unique_ptr<TreeModel> _processModel;
+    std::unique_ptr<ProcessModel> _processModel;
+    std::unique_ptr<FemConditionModel> _conditionModel;
     std::unique_ptr<VtkVisPipeline> _vtkVisPipeline;
     QList<QRect> _screenGeometries;
     std::unique_ptr<QWidget> _vtkWidget;

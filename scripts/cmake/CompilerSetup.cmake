@@ -135,6 +135,7 @@ if(WIN32)
             /wd4267 /wd4996 /bigobj")
         set(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} \
             /ZI /Od /Ob0")
+        set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}  /ignore:4099")
 
         DisableCompilerFlag(DEBUG /RTC1)
     # cygwin

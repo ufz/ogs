@@ -14,32 +14,51 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
     <number>2</number>
    </property>
    <item>
-    <widget class="QTreeView" name="treeView"/>
+    <widget class="ProcessView" name="treeView"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="addProcessButton">
-       <property name="text">
-        <string>Add process...</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="deleteAllButton">
-       <property name="text">
-        <string>Remove All</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QLabel" name="propertyLabel">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Properties:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="FemConditionView" name="conditionView"/>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ProcessView</class>
+   <extends>QTreeView</extends>
+   <header>ProcessView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>FemConditionView</class>
+   <extends>QTreeView</extends>
+   <header location="global">FemConditionView.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
