@@ -60,6 +60,9 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElements() const {return _boundary_elements; }
 
+    /// \copybrief BoundaryElementsSearcher::getBulkIDs()
+    std::vector<std::pair<std::size_t, unsigned>> const& getBulkIDs() const;
+
 private:
     /**
      * Check if a vector of node IDs includes all nodes of a given element
@@ -83,6 +86,8 @@ private:
     MeshLib::Mesh const& _mesh;
     GeoLib::Polyline const& _ply;
     std::vector<MeshLib::Element*> _boundary_elements;
+    /// @copydoc BoundaryElementsAtPoint::_bulk_ids
+    std::vector<std::pair<std::size_t, unsigned>> _bulk_ids;
 };
 
 } // end namespace MeshGeoToolsLib

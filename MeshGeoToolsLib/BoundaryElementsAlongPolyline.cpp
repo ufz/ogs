@@ -57,22 +57,52 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
                 if (edge != new_edge)
                     delete edge;
                 _boundary_elements.push_back(new_edge);
+                _bulk_ids.emplace_back(e->getID(), i);
             } else {
                 delete edge;
             }
         }
     }
 
-    // sort picked edges according to a distance of their first node along the polyline
-    std::sort(_boundary_elements.begin(), _boundary_elements.end(),
-            [&](MeshLib::Element*e1, MeshLib::Element*e2)
-            {
-                std::size_t dist1 = std::distance(node_ids_on_poly.begin(),
-                    std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(), e1->getNodeIndex(0)));
-                std::size_t dist2 = std::distance(node_ids_on_poly.begin(),
-                    std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(), e2->getNodeIndex(0)));
-                return (dist1 < dist2);
-            });
+    // zip _boundary_elements and _bulk_element_ids
+    std::vector<std::pair<MeshLib::Element*, std::pair<std::size_t, unsigned>>>
+        zipped_data;
+    zipped_data.reserve(_boundary_elements.size());
+    std::transform(_boundary_elements.cbegin(), _boundary_elements.cend(),
+                   _bulk_ids.cbegin(), std::back_inserter(zipped_data),
+                   [](MeshLib::Element* boundary_element,
+                      std::pair<std::size_t, unsigned> const& bulk_ids) {
+                       return std::make_pair(boundary_element, bulk_ids);
+                   });
+
+    // The sort was necessary in OGS-5 for some reason. I'm not sure if it is
+    // needed anymore in OGS-6.
+    // sort picked edges according to a distance of their first node along the
+    // polyline
+    std::sort(zipped_data.begin(), zipped_data.end(),
+              [&](std::pair<MeshLib::Element*,
+                            std::pair<std::size_t, unsigned>> const& a,
+                  std::pair<MeshLib::Element*,
+                            std::pair<std::size_t, unsigned>> const& b) {
+                  auto const* const e1 = a.first;
+                  auto const* const e2 = b.first;
+                  std::size_t dist1 = std::distance(
+                      node_ids_on_poly.begin(),
+                      std::find(node_ids_on_poly.begin(),
+                                node_ids_on_poly.end(), e1->getNodeIndex(0)));
+                  std::size_t dist2 = std::distance(
+                      node_ids_on_poly.begin(),
+                      std::find(node_ids_on_poly.begin(),
+                                node_ids_on_poly.end(), e2->getNodeIndex(0)));
+                  return (dist1 < dist2);
+              });
+
+    // unzip the sorted data
+    for (std::size_t k = 0; k < zipped_data.size(); ++k)
+    {
+        _boundary_elements[k] = zipped_data[k].first;
+        _bulk_ids[k] = zipped_data[k].second;
+    }
 }
 
 BoundaryElementsAlongPolyline::~BoundaryElementsAlongPolyline()
@@ -126,6 +156,12 @@ MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(
 
     // Return the original edge otherwise.
     return const_cast<MeshLib::Element*>(&edge);
+}
+
+std::vector<std::pair<std::size_t, unsigned>> const&
+BoundaryElementsAlongPolyline::getBulkIDs() const
+{
+    return _bulk_ids;
 }
 
 } // end namespace MeshGeoToolsLib
