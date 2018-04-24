@@ -157,7 +157,7 @@ void writeTecPlotSection(std::ofstream& out,
         val_total = 0;
         INFO("Writing section #%i", write_count);
         out.close();
-        out = std::ofstream(base_name + std::to_string(write_count++) + extension);
+        out.open(base_name + std::to_string(write_count++) + extension);
     }
 }
 
@@ -220,7 +220,7 @@ int writeDataToMesh(std::string const& file_name,
 /// If a geometry-section is encountered, it is currently ignored
 void skipGeometrySection(std::ifstream& in, std::string& line)
 {
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         if ((line.find("TITLE") != std::string::npos) ||
             (line.find("VARIABLES") != std::string::npos) ||
@@ -233,12 +233,10 @@ void skipGeometrySection(std::ifstream& in, std::string& line)
 int splitFile(std::ifstream& in, std::string file_name)
 {
     std::ofstream out;
-    std::string line("");
-    std::string name;
-    std::pair<std::size_t, std::size_t> dims(0,0);
+    std::string line, name;
     std::size_t val_count(0), val_total(0);
     std::size_t write_count(0);
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         if (line.find("TITLE") != std::string::npos)
         {
@@ -260,7 +258,7 @@ int splitFile(std::ifstream& in, std::string file_name)
             writeTecPlotSection(out, file_name, write_count, val_count, val_total);
             out << line << "\n";
             name = getName(line);
-            dims = getDimensions(line);
+            std::pair<std::size_t, std::size_t> dims = getDimensions(line);
             val_total = dims.first * dims.second;
             val_count = 0;
             continue;
@@ -280,13 +278,13 @@ int splitFile(std::ifstream& in, std::string file_name)
 /// Converts a TecPlot file into one or more OGS-meshes (one mesh per section/zone)
 int convertFile(std::ifstream& in, std::string file_name)
 {
-    std::string line(""), name("");
+    std::string line, name;
     std::pair<std::size_t, std::size_t> dims(0,0);
     std::vector<std::string> var_names;
     std::vector< std::vector<double> > scalars;
     std::size_t val_count(0), val_total(0);
     std::size_t write_count(0);
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         if (line.find("GEOMETRY") != std::string::npos)
             skipGeometrySection(in, line);
@@ -398,7 +396,6 @@ int main(int argc, char *argv[])
     }
 
     std::string const filename = (output_arg.isSet()) ? output_arg.getValue() : input_arg.getValue();
-    bool const convert (convert_arg.getValue());
     int return_val (0);
     if (split_arg.getValue())
         return_val = splitFile(in, filename);
