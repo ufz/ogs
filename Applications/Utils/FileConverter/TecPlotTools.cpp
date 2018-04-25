@@ -19,12 +19,14 @@
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/StringTools.h"
 
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 /// Returns the value for the given parameter name (i.e. for "x = 3" it returns "3")
-std::string getValue(std::string const& line, std::string const& val_name, bool is_string)
+std::string getValue(std::string const& line,
+                     std::string const& val_name,
+                     bool is_string)
 {
     std::string value;
     std::size_t start(line.find(val_name));
@@ -82,9 +84,9 @@ std::string trimVariable(std::string& var)
 /// Returns an vector of variable names from the "Variables"-description
 std::vector<std::string> getVariables(std::string const& line)
 {
-    std::string const var_str ("VARIABLES");
+    std::string const var_str("VARIABLES");
     std::size_t start(line.find(var_str));
-    std::string all_vars = line.substr(start+var_str.length(), std::string::npos);
+    std::string all_vars = line.substr(start + var_str.length(), std::string::npos);
     start = all_vars.find("=");
     all_vars = all_vars.substr(start + 1, std::string::npos);
     BaseLib::trim(all_vars);
@@ -96,7 +98,7 @@ std::vector<std::string> getVariables(std::string const& line)
         end = all_vars.find_first_of(" ");
         std::string var = all_vars.substr(0, end);
         variables.push_back(trimVariable(var));
-        all_vars = all_vars.substr(end+1, std::string::npos);
+        all_vars = all_vars.substr(end + 1, std::string::npos);
         BaseLib::trim(all_vars);
     }
 
@@ -104,7 +106,9 @@ std::vector<std::string> getVariables(std::string const& line)
 }
 
 /// Tests if the number of read values equals the number of expected values
-bool dataCountError(std::string const& name, ::size_t const& current, std::size_t const& total)
+bool dataCountError(std::string const& name,
+                    std::size_t const& current,
+                    std::size_t const& total)
 {
     if (current != total)
     {
@@ -114,7 +118,8 @@ bool dataCountError(std::string const& name, ::size_t const& current, std::size_
     return false;
 }
 
-/// Tests if the number of read values equals the number of expected values and closes the stream
+/// Tests if the number of read values equals the number of expected values and
+/// closes the stream
 bool dataCountError(std::ofstream& out,
                     std::string const& name,
                     std::size_t const& current,
@@ -130,12 +135,12 @@ bool dataCountError(std::ofstream& out,
 
 /// Resets all data structures after a new "Variables"-description is found
 void resetDataStructures(std::size_t const& n_scalars,
-                         std::vector< std::vector<double> >& scalars,
+                         std::vector<std::vector<double>>& scalars,
                          std::size_t& val_count)
 {
     scalars.clear();
     scalars.reserve(n_scalars);
-    for (std::size_t i = 0; i<n_scalars; ++i)
+    for (std::size_t i = 0; i < n_scalars; ++i)
         scalars.push_back(std::vector<double>(0));
     val_count = 0;
 }
@@ -150,7 +155,7 @@ void writeTecPlotSection(std::ofstream& out,
     if (write_count == 0 || val_total != 0)
     {
         std::size_t const delim_pos(file_name.find_last_of("."));
-        std::string const base_name(file_name.substr(0, delim_pos+1));
+        std::string const base_name(file_name.substr(0, delim_pos + 1));
         std::string const extension(file_name.substr(delim_pos, std::string::npos));
 
         val_count = 0;
@@ -165,11 +170,11 @@ void writeTecPlotSection(std::ofstream& out,
 int writeDataToMesh(std::string const& file_name,
                     std::size_t& write_count,
                     std::vector<std::string> const& vec_names,
-                    std::vector< std::vector<double> > const& scalars,
+                    std::vector<std::vector<double>> const& scalars,
                     std::pair<std::size_t, std::size_t> const& dims)
 {
     double cellsize = 0;
-    for (std::size_t i=0; i<vec_names.size(); ++i)
+    for (std::size_t i = 0; i < vec_names.size(); ++i)
     {
         if (vec_names[i] == "x" || vec_names[i] == "X")
         {
@@ -180,21 +185,21 @@ int writeDataToMesh(std::string const& file_name,
 
     if (cellsize == 0)
     {
-        ERR ("Cell size not found. Aborting...");
+        ERR("Cell size not found. Aborting...");
         return -4;
     }
 
-    GeoLib::Point origin (0, 0, 0);
-    GeoLib::RasterHeader header { dims.first, dims.second, 1, origin, cellsize, -9999 };
+    GeoLib::Point origin(0, 0, 0);
+    GeoLib::RasterHeader header{dims.first, dims.second, 1, origin,     cellsize,    -9999};
 
-    std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::RasterToMesh::convert(
-        scalars[0].data(),
-        header,
-        MeshLib::MeshElemType::QUAD,
-        MeshLib::UseIntensityAs::DATAVECTOR,
-        vec_names[0]));
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::RasterToMesh::convert(scalars[0].data(),
+                                       header,
+                                       MeshLib::MeshElemType::QUAD,
+                                       MeshLib::UseIntensityAs::DATAVECTOR,
+                                       vec_names[0]));
     MeshLib::Properties& properties = mesh->getProperties();
-    for (std::size_t i=1; i<vec_names.size(); ++i)
+    for (std::size_t i = 1; i < vec_names.size(); ++i)
     {
         auto* const prop = properties.createNewPropertyVector<double>(
             vec_names[i], MeshLib::MeshItemType::Cell, 1);
@@ -240,21 +245,24 @@ int splitFile(std::ifstream& in, std::string file_name)
     {
         if (line.find("TITLE") != std::string::npos)
         {
-            if (dataCountError(out, name, val_count, val_total)) return -3;
+            if (dataCountError(out, name, val_count, val_total))
+                return -3;
             writeTecPlotSection(out, file_name, write_count, val_count, val_total);
             out << line << "\n";
             continue;
         }
         else if (line.find("VARIABLES") != std::string::npos)
         {
-            if (dataCountError(out, name, val_count, val_total)) return -3;
+            if (dataCountError(out, name, val_count, val_total))
+                return -3;
             writeTecPlotSection(out, file_name, write_count, val_count, val_total);
             out << line << "\n";
             continue;
         }
         else if (line.find("ZONE") != std::string::npos)
         {
-            if (dataCountError(out, name, val_count, val_total)) return -3;
+            if (dataCountError(out, name, val_count, val_total))
+                return -3;
             writeTecPlotSection(out, file_name, write_count, val_count, val_total);
             out << line << "\n";
             name = getName(line);
@@ -279,9 +287,9 @@ int splitFile(std::ifstream& in, std::string file_name)
 int convertFile(std::ifstream& in, std::string file_name)
 {
     std::string line, name;
-    std::pair<std::size_t, std::size_t> dims(0,0);
+    std::pair<std::size_t, std::size_t> dims(0, 0);
     std::vector<std::string> var_names;
-    std::vector< std::vector<double> > scalars;
+    std::vector<std::vector<double>> scalars;
     std::size_t val_count(0), val_total(0);
     std::size_t write_count(0);
     while (std::getline(in, line))
@@ -293,7 +301,8 @@ int convertFile(std::ifstream& in, std::string file_name)
             continue;
         else if (line.find("TITLE") != std::string::npos)
         {
-            if (dataCountError(name, val_count, val_total)) return -3;
+            if (dataCountError(name, val_count, val_total))
+                return -3;
             if (val_count != 0)
             {
                 writeDataToMesh(file_name, write_count, var_names, scalars, dims);
@@ -305,7 +314,8 @@ int convertFile(std::ifstream& in, std::string file_name)
         {
             if (val_count != 0)
             {
-                if (dataCountError(name, val_count, val_total)) return -3;
+                if (dataCountError(name, val_count, val_total))
+                    return -3;
                 writeDataToMesh(file_name, write_count, var_names, scalars, dims);
             }
             var_names.clear();
@@ -317,7 +327,8 @@ int convertFile(std::ifstream& in, std::string file_name)
         {
             if (val_count != 0)
             {
-                if (dataCountError(name, val_count, val_total)) return -3;
+                if (dataCountError(name, val_count, val_total))
+                    return -3;
                 writeDataToMesh(file_name, write_count, var_names, scalars, dims);
                 resetDataStructures(var_names.size(), scalars, val_count);
             }
@@ -331,10 +342,10 @@ int convertFile(std::ifstream& in, std::string file_name)
         double x;
         std::stringstream iss(line);
         std::size_t i(0);
-        std::size_t const n_scalars (scalars.size());
+        std::size_t const n_scalars(scalars.size());
         while (iss >> x)
         {
-            if (i > n_scalars-1)
+            if (i > n_scalars - 1)
             {
                 ERR("Too much data for existing scalar arrays");
                 return -3;
@@ -355,20 +366,31 @@ int convertFile(std::ifstream& in, std::string file_name)
     return 0;
 }
 
-int main(int argc, char *argv[])
+/**
+ * Small collection of scripts to handle TecPlot files.
+ *
+ * Return codes:
+ *      0 : no errors
+ *     -1 : missing arguments
+ *     -2 : file I/O error
+ *     -3 : index error
+ *     -4 : error interpreting data
+ *     -5 : error creating data structures
+ */
+int main(int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
     TCLAP::CmdLine cmd("TecPlot Parser", ' ', BaseLib::BuildInfo::git_describe);
-    TCLAP::ValueArg<std::string> input_arg("i", "input-file","TecPlot input file",true,"","string");
-    cmd.add( input_arg );
-    TCLAP::ValueArg<std::string> output_arg("o", "output-file","output mesh file",false,"","string");
-    cmd.add( output_arg );
-    TCLAP::SwitchArg split_arg("s","split","split time steps into seperate files");
+    TCLAP::ValueArg<std::string> input_arg("i", "input-file", "TecPlot input file", true, "", "string");
+    cmd.add(input_arg);
+    TCLAP::ValueArg<std::string> output_arg("o", "output-file", "output mesh file", false, "", "string");
+    cmd.add(output_arg);
+    TCLAP::SwitchArg split_arg("s", "split", "split time steps into seperate files");
     cmd.add(split_arg);
-    TCLAP::SwitchArg convert_arg("c", "convert","convert TecPlot data into OGS meshes");
+    TCLAP::SwitchArg convert_arg("c", "convert", "convert TecPlot data into OGS meshes");
     cmd.add(convert_arg);
-    cmd.parse( argc, argv );
+    cmd.parse(argc, argv);
 
     if (!input_arg.isSet())
     {
@@ -395,8 +417,9 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    std::string const filename = (output_arg.isSet()) ? output_arg.getValue() : input_arg.getValue();
-    int return_val (0);
+    std::string const filename = (output_arg.isSet()) ?
+        output_arg.getValue() : input_arg.getValue();
+    int return_val(0);
     if (split_arg.getValue())
         return_val = splitFile(in, filename);
     else if (convert_arg.getValue())
