@@ -39,6 +39,11 @@ add_executable(TIN2VTK TIN2VTK.cpp)
 set_target_properties(TIN2VTK PROPERTIES FOLDER Utilities)
 target_link_libraries(TIN2VTK MeshLib)
 
+add_executable(TecPlotTools TecPlotTools.cpp)
+set_target_properties(TecPlotTools PROPERTIES FOLDER Utilities)
+target_link_libraries(TecPlotTools GeoLib MeshLib)
+
+
 ####################
 ### Installation ###
 ####################
