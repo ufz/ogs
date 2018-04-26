@@ -17,8 +17,7 @@
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
-#include "MapBulkElementPoint.h"
-
+#include "MeshLib/Elements/MapBulkElementPoint.h"
 #include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Elements/Elements.h"
 
