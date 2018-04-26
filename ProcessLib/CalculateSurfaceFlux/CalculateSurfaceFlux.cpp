@@ -54,14 +54,14 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(
 }
 
 void CalculateSurfaceFlux::integrate(GlobalVector const& x,
-                               MeshLib::PropertyVector<double>& balance,
-                               Process const& bulk_process)
+                                     MeshLib::PropertyVector<double>& balance,
+                                     Process const& bulk_process)
 {
     DBUG("Integrate CalculateSurfaceFlux.");
 
     GlobalExecutor::executeMemberOnDereferenced(
-        &CalculateSurfaceFluxLocalAssemblerInterface::integrate, _local_assemblers, x,
-        balance, bulk_process);
+        &CalculateSurfaceFluxLocalAssemblerInterface::integrate,
+        _local_assemblers, x, balance, bulk_process);
 }
 
 }  // namespace ProcessLib
