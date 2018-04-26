@@ -14,25 +14,29 @@
 
 #include "MeshElementRemovalDialog.h"
 
-#include <algorithm>
 #include <QList>
 #include <QListWidgetItem>
+#include <algorithm>
 
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "Applications/DataHolderLib/Project.h"
 #include "Elements/Element.h"
 #include "GeoLib/AABB.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Properties.h"
-#include "MeshLib/PropertyVector.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Properties.h"
+#include "MeshLib/PropertyVector.h"
 
 /// Constructor
-MeshElementRemovalDialog::MeshElementRemovalDialog(DataHolderLib::Project const& project, QDialog* parent)
-: QDialog(parent), _project(project), _currentIndex(0), _aabbIndex(std::numeric_limits<unsigned>::max()),
-  _scalarIndex(std::numeric_limits<unsigned>::max())
+MeshElementRemovalDialog::MeshElementRemovalDialog(
+    DataHolderLib::Project const& project, QDialog* parent)
+    : QDialog(parent),
+      _project(project),
+      _currentIndex(0),
+      _aabbIndex(std::numeric_limits<unsigned>::max()),
+      _scalarIndex(std::numeric_limits<unsigned>::max())
 {
     setupUi(this);
 
@@ -240,7 +244,8 @@ void MeshElementRemovalDialog::on_scalarArrayCheckBox_toggled(bool is_checked)
         return;
     }
 
-    MeshLib::Mesh const*const mesh = _project.getMesh(meshNameComboBox->currentText().toStdString());
+    MeshLib::Mesh const* const mesh =
+        _project.getMesh(meshNameComboBox->currentText().toStdString());
     if (addScalarArrays(*mesh) > 0)
         enableScalarArrayWidgets(true);
     else
@@ -262,23 +267,27 @@ void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
     this->outsideScalarMaxEdit->setText("");
     this->insideScalarMinEdit->setText("");
     this->insideScalarMaxEdit->setText("");
-    if (this->scalarArrayCheckBox->isChecked()) on_scalarArrayCheckBox_toggled(true);
-    if (this->boundingBoxCheckBox->isChecked()) on_boundingBoxCheckBox_toggled(true);
+    if (this->scalarArrayCheckBox->isChecked())
+        on_scalarArrayCheckBox_toggled(true);
+    if (this->boundingBoxCheckBox->isChecked())
+        on_boundingBoxCheckBox_toggled(true);
 }
 
 void MeshElementRemovalDialog::on_scalarArrayComboBox_currentIndexChanged(int idx)
 {
     Q_UNUSED(idx);
-    MeshLib::Mesh const*const mesh = _project.getMesh(meshNameComboBox->currentText().toStdString());
+    MeshLib::Mesh const* const mesh =
+        _project.getMesh(meshNameComboBox->currentText().toStdString());
     MeshLib::Properties const& properties = mesh->getProperties();
 
-    std::string const vec_name (scalarArrayComboBox->currentText().toStdString());
+    std::string const vec_name(scalarArrayComboBox->currentText().toStdString());
     if (vec_name == "")
         return;
 
     if (properties.existsPropertyVector<int>(vec_name))
     {
-        MeshLib::PropertyVector<int> const& vec = *properties.getPropertyVector<int>(vec_name);
+        MeshLib::PropertyVector<int> const& vec =
+            *properties.getPropertyVector<int>(vec_name);
         auto min = std::min_element(vec.cbegin(), vec.cend());
         auto max = std::max_element(vec.cbegin(), vec.cend());
         this->outsideScalarMinEdit->setText(QString::number(*min));
@@ -288,7 +297,8 @@ void MeshElementRemovalDialog::on_scalarArrayComboBox_currentIndexChanged(int id
     }
     else if (properties.existsPropertyVector<double>(vec_name))
     {
-        MeshLib::PropertyVector<double> const& vec = *properties.getPropertyVector<double>(vec_name);
+        MeshLib::PropertyVector<double> const& vec =
+            *properties.getPropertyVector<double>(vec_name);
         auto min = std::min_element(vec.cbegin(), vec.cend());
         auto max = std::max_element(vec.cbegin(), vec.cend());
         this->outsideScalarMinEdit->setText(QString::number(*min));
