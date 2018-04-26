@@ -34,7 +34,7 @@ void searchByProperty(std::string const& property_name,
 {
     for (auto const& property_value : property_values) {
         const std::size_t n_marked_elements =
-            searcher.searchByPropertyValue(property_value, property_name);
+            searcher.searchByPropertyValue(property_name, property_value);
         INFO("%d elements with property value %s found.", n_marked_elements,
              std::to_string(property_value).c_str());
     }

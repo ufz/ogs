@@ -43,8 +43,10 @@ public:
 private slots:
     void on_boundingBoxCheckBox_toggled(bool is_checked);
     void on_elementTypeCheckBox_toggled(bool is_checked);
-    void on_materialIDCheckBox_toggled(bool is_checked);
+    void on_scalarArrayCheckBox_toggled(bool is_checked);
+    void on_insideButton_toggled(bool is_checked);
     void on_meshNameComboBox_currentIndexChanged(int idx);
+    void on_scalarArrayComboBox_currentIndexChanged(int idx);
     void on_xMinEdit_textChanged() { aabb_edits[0] = true; }
     void on_xMaxEdit_textChanged() { aabb_edits[1] = true; }
     void on_yMinEdit_textChanged() { aabb_edits[2] = true; }
@@ -55,8 +57,12 @@ private slots:
     void reject() override;
 
 private:
+    std::size_t addScalarArrays(MeshLib::Mesh const& mesh) const;
+    void enableScalarArrayWidgets(bool enable) const;
+    void toggleScalarEdits(bool outside) const;
+
     DataHolderLib::Project const& _project;
-    unsigned _currentIndex, _aabbIndex, _matIDIndex;
+    unsigned _currentIndex, _aabbIndex, _scalarIndex;
     std::array<bool, 6> aabb_edits;
 
 signals:
