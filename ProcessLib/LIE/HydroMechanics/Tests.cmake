@@ -247,7 +247,7 @@ AddTest(
     GLOB TaskB_slip_pcs_0_ts_*.vtu strain_xy strain_xy 1e-16 0
     GLOB TaskB_slip_pcs_0_ts_*.vtu strain_zz strain_zz 1e-16 0
     GLOB TaskB_slip_pcs_0_ts_*.vtu stress_xx stress_xx 1e-16 1e-15
-    GLOB TaskB_slip_pcs_0_ts_*.vtu stress_yy stress_yy 1e-16 1e-15
+    GLOB TaskB_slip_pcs_0_ts_*.vtu stress_yy stress_yy 8e-9 1e-15
     GLOB TaskB_slip_pcs_0_ts_*.vtu stress_xy stress_xy 5e-9 0
     GLOB TaskB_slip_pcs_0_ts_*.vtu stress_zz stress_zz 5e-9 0
     GLOB TaskB_slip_pcs_0_ts_*.vtu velocity velocity 1e-16 0
