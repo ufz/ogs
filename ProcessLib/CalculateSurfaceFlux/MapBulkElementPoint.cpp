@@ -11,7 +11,7 @@
 
 #include "MapBulkElementPoint.h"
 
-namespace ProcessLib
+namespace MeshLib
 {
 MathLib::Point3d getBulkElementPoint(MeshLib::Quad const& /*quad*/,
                                      std::size_t const face_id,
