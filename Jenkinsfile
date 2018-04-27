@@ -24,6 +24,14 @@ pipeline {
             stage_required.full = true
             return true
           }
+          def causes = currentBuild.rawBuild.getCauses()
+          for(cause in causes) {
+            if (cause.class.toString().contains("UserIdCause")) {
+              echo "Doing full build because job was started by user."
+              stage_required.full = true
+              return true
+            }
+          }
           if (env.JOB_NAME == "ufz/ogs/master") {
             stage_required.web = true
           }
