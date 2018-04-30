@@ -436,7 +436,7 @@ pipeline {
               sshagent(credentials: ['www-data_jenkins']) {
                 sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
                    'known_hosts" web/. ' +
-                   'www-data@jenkins.opengeosys.org:/var/www/dev.opengeosys.org'
+                   'www-data@jenkins:/var/www/dev.opengeosys.org'
               }
             }
           }
@@ -451,7 +451,7 @@ pipeline {
               sshagent(credentials: ['www-data_jenkins']) {
                 sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
                    'known_hosts" doxygen/. ' +
-                   'www-data@jenkins.opengeosys.org:/var/www/doxygen.opengeosys.org'
+                   'www-data@jenkins:/var/www/doxygen.opengeosys.org'
               }
             }
           }
