@@ -43,7 +43,7 @@ endif()
 
 if(DEFINED ENV{JENKINS_URL})
     if($ENV{JOB_NAME} STREQUAL "ufz/ogs/master")
-        set(HUGO_BASE_URL "https://benchmarks.opengeosys.org")
+        set(HUGO_BASE_URL "https://docs.opengeosys.org")
     else()
         set(HUGO_BASE_URL "$ENV{JOB_URL}Web/")
     endif()
