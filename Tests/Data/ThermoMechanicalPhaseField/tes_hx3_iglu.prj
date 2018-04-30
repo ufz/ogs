@@ -51,8 +51,8 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1.e-4</abstol>
-                    <reltol>1.e-6</reltol>
+                    <abstol>1.e-8</abstol>
+                    <reltol>1.e-10</reltol>
                 </convergence_criterion>
                 <!-- convergence criterion for the second process -->
                 <convergence_criterion>
@@ -65,8 +65,8 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1.e-4</abstol>
-                    <reltol>1.e-6</reltol>
+                    <abstol>1.e-8</abstol>
+                    <reltol>1.e-10</reltol>
                 </convergence_criterion>
             </convergence_criteria>
         </global_process_coupling>
@@ -76,7 +76,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltol>1.e-4</reltol>
+                    <reltol>1.e-8</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -90,10 +90,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>120</t_end>
+                    <t_end>100</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>6</repeat>
+                            <repeat>5</repeat>
                             <delta_t>20</delta_t>
                         </pair>
                     </timesteps>
@@ -119,10 +119,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>120</t_end>
+                    <t_end>100</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>6</repeat>
+                            <repeat>5</repeat>
                             <delta_t>20</delta_t>
                         </pair>
                     </timesteps>
@@ -133,7 +133,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltol>1.e-4</reltol>
+                    <reltol>1.e-8</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -146,10 +146,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>120</t_end>
+                    <t_end>100</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>6</repeat>
+                            <repeat>5</repeat>
                             <delta_t>20</delta_t>
                         </pair>
                     </timesteps>
@@ -161,15 +161,15 @@
             <prefix>tes_hx3</prefix>
             <timesteps>
                 <pair>
-                    <repeat>6</repeat>
+                    <repeat>5</repeat>
                     <each_steps>1</each_steps>
                 </pair>
                 <pair>
-                    <repeat>6</repeat>
+                    <repeat>5</repeat>
                     <each_steps>1</each_steps>
                 </pair>
                 <pair>
-                    <repeat>6</repeat>
+                    <repeat>5</repeat>
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
@@ -362,8 +362,8 @@
     <curves>
         <curve>
             <name>Dirichlet_temporal</name>
-            <coords>0 120</coords>
-            <values>0 18</values>
+            <coords>0 100</coords>
+            <values>0 15</values>
         </curve>
     </curves>
 
