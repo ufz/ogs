@@ -490,6 +490,8 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
         g_variable_id = static_cast<int>(std::distance(pvs.begin(), it));
     }
 
+    // TODO (naumov) Is this call needed? setLocalAccessibleVector was already
+    // called in the Process::computeSecondaryVariableConcrete().
     MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
 
     const int monolithic_process_id = 0;
