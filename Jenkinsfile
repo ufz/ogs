@@ -82,6 +82,7 @@ pipeline {
                 """.stripIndent())
 
               lock(resource: "conanCache-${env.NODE_NAME}") {
+                sh 'conan user'
                 sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
                 configure {
                   cmakeOptions =
@@ -148,6 +149,7 @@ pipeline {
           steps {
             script {
               lock(resource: "conanCache-${env.NODE_NAME}") {
+                sh 'conan user'
                 sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
                 configure {
                   cmakeOptions =
@@ -407,6 +409,7 @@ pipeline {
           steps {
             script {
               lock(resource: "conanCache-${env.NODE_NAME}") {
+                sh 'conan user'
                 sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
                 configure {
                   cmakeOptions =
@@ -529,6 +532,7 @@ pipeline {
           }
           steps {
             script {
+              sh 'conan user'
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
