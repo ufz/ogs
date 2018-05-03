@@ -308,7 +308,7 @@ void finalizeAssembly(EigenMatrix& x)
     x.getRawMatrix().makeCompressed();
 }
 
-void finalizeAssembly(EigenVector& x) {}
+void finalizeAssembly(EigenVector& /*x*/) {}
 
 } // namespace LinAlg
 

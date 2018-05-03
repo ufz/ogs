@@ -117,15 +117,15 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     getIntPtDarcyVelocity(const double t,
                           GlobalVector const& current_solution,
                           NumLib::LocalToGlobalIndexMap const& dof_table,
-                          std::vector<double>& veloctiy_cache) const
+                          std::vector<double>& velocity_cache) const
 {
     auto const indices = NumLib::getIndices(_element.getID(), dof_table);
     auto const local_x = current_solution.get(indices);
     auto const num_intpts = _integration_method.getNumberOfPoints();
-    veloctiy_cache.clear();
-    auto veloctiy_cache_vectors = MathLib::createZeroedMatrix<
+    velocity_cache.clear();
+    auto velocity_cache_vectors = MathLib::createZeroedMatrix<
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-        veloctiy_cache, GlobalDim, num_intpts);
+        velocity_cache, GlobalDim, num_intpts);
 
     SpatialPosition pos;
     pos.setElementID(_element.getID());
@@ -139,11 +139,11 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     if (permeability.size() == 1)  // isotropic or 1D problem.
         computeDarcyVelocityLocal<IsotropicCalculator>(local_x, permeability,
-                                                       veloctiy_cache_vectors);
+                                                       velocity_cache_vectors);
     else
         computeDarcyVelocityLocal<AnisotropicCalculator>(
-            local_x, permeability, veloctiy_cache_vectors);
-    return veloctiy_cache;
+            local_x, permeability, velocity_cache_vectors);
+    return velocity_cache;
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,

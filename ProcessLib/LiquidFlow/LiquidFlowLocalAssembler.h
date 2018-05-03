@@ -107,7 +107,7 @@ public:
         const double t,
         GlobalVector const& current_solution,
         NumLib::LocalToGlobalIndexMap const& dof_table,
-        std::vector<double>& veloctiy_cache) const override;
+        std::vector<double>& velocity_cache) const override;
 
 private:
     MeshLib::Element const& _element;
