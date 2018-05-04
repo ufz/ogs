@@ -20,6 +20,7 @@
 
 #include "ProcessLib/LIE/BoundaryCondition/BoundaryConditionBuilder.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
+#include "ProcessLib/Utils/GlobalVectorUtils.h"
 
 #include "LocalAssembler/CreateLocalAssemblers.h"
 #include "LocalAssembler/HydroMechanicsLocalAssemblerFracture.h"
@@ -547,45 +548,20 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
         _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
         dx_dx, M, K, b, Jac, _coupled_solutions);
 
-    auto copy_variable_from_global_vector = [this, &b](int const variable_id,
-                                                       int const n_components,
-                                                       auto& output_vector) {
-        std::fill(output_vector.begin(), output_vector.end(),
-                  std::numeric_limits<double>::quiet_NaN());
-        for (int component = 0; component < n_components; ++component)
-        {
-            auto const& mesh_subsets =
-                _local_to_global_index_map->getMeshSubsets(variable_id,
-                                                           component);
-            for (auto const& ms : mesh_subsets)
-            {
-                auto const mesh_id = _mesh.getID();
-                assert(ms->getMeshID() ==
-                       mesh_id);  // Multiple meshes not supported.
-                for (auto const& node : ms->getNodes())
-                {
-                    auto const node_id = node->getID();
-                    MeshLib::Location const l(
-                        mesh_id, MeshLib::MeshItemType::Node, node_id);
-                    output_vector.getComponent(node_id, component) =
-                        -b[_local_to_global_index_map->getGlobalIndex(
-                            l, variable_id, component)];
-                }
-            }
-        }
+    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+        transformVariableFromGlobalVector(b, variable_id,
+                                          *_local_to_global_index_map,
+                                          output_vector, std::negate<double>());
     };
-    copy_variable_from_global_vector(0, 1,
-                                     *_process_data.mesh_prop_hydraulic_flow);
-    copy_variable_from_global_vector(1, GlobalDim,
-                                     *_process_data.mesh_prop_nodal_forces);
-    copy_variable_from_global_vector(
-        2, GlobalDim, *_process_data.mesh_prop_nodal_forces_jump);
+    copyRhs(0, *_process_data.mesh_prop_hydraulic_flow);
+    copyRhs(1, *_process_data.mesh_prop_nodal_forces);
+    copyRhs(2, *_process_data.mesh_prop_nodal_forces_jump);
 }
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t,
-    double const dt, const int /*process_id*/)
+    GlobalVector const& x, double const t, double const dt,
+    const int /*process_id*/)
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 
