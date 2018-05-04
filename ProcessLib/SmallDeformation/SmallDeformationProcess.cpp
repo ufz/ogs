@@ -15,6 +15,7 @@
 #include "BaseLib/Functional.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/GlobalVectorUtils.h"
 
 #include "SmallDeformationFEM.h"
 
@@ -93,8 +94,6 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             std::move(all_mesh_subsets_single_component),
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION);
-    _nodal_forces->resize(DisplacementDim * mesh.getNumberOfNodes());
-    _material_forces->resize(DisplacementDim * mesh.getNumberOfNodes());
 
     Base::_secondary_variables.addSecondaryVariable(
         "free_energy_density",
@@ -249,9 +248,8 @@ void SmallDeformationProcess<DisplacementDim>::
         _local_assemblers, dof_table, t, x, xdot, dxdot_dx, dx_dx, M, K, b, Jac,
         _coupled_solutions);
 
-    b.copyValues(*_nodal_forces);
-    std::transform(_nodal_forces->begin(), _nodal_forces->end(),
-                   _nodal_forces->begin(), [](double val) { return -val; });
+    transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
+                                      *_nodal_forces, std::negate<double>());
 }
 
 template <int DisplacementDim>
