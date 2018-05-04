@@ -15,6 +15,7 @@
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/HydroMechanics/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Utils/GlobalVectorUtils.h"
 
 #include "HydroMechanicsFEM.h"
 #include "HydroMechanicsProcessData.h"
@@ -41,6 +42,11 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
               use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
+    _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
+
+    _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
 }
 
 template <int DisplacementDim>
@@ -313,6 +319,14 @@ void HydroMechanicsProcess<DisplacementDim>::
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
         Jac, _coupled_solutions);
+
+    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+        transformVariableFromGlobalVector(b, variable_id,
+                                          *_local_to_global_index_map,
+                                          output_vector, std::negate<double>());
+    };
+    copyRhs(0, *_hydraulic_flow);
+    copyRhs(1, *_nodal_forces);
 }
 
 template <int DisplacementDim>
