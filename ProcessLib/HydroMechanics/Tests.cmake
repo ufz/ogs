@@ -10,18 +10,11 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_square_1e2_pcs_0_ts_1_t_5.000000.vtu square_1e2_pcs_0_ts_1_t_5.000000.vtu displacement displacement 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_20_t_100.000000.vtu square_1e2_pcs_0_ts_20_t_100.000000.vtu displacement displacement 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_120_t_1000.000000.vtu square_1e2_pcs_0_ts_120_t_1000.000000.vtu displacement displacement 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_420_t_4000.000000.vtu square_1e2_pcs_0_ts_420_t_4000.000000.vtu displacement displacement 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_1_t_5.000000.vtu square_1e2_pcs_0_ts_1_t_5.000000.vtu pressure pressure 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_20_t_100.000000.vtu square_1e2_pcs_0_ts_20_t_100.000000.vtu pressure pressure 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_120_t_1000.000000.vtu square_1e2_pcs_0_ts_120_t_1000.000000.vtu pressure pressure 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_420_t_4000.000000.vtu square_1e2_pcs_0_ts_420_t_4000.000000.vtu pressure pressure 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_1_t_5.000000.vtu square_1e2_pcs_0_ts_1_t_5.000000.vtu velocity velocity 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_20_t_100.000000.vtu square_1e2_pcs_0_ts_20_t_100.000000.vtu velocity velocity 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_120_t_1000.000000.vtu square_1e2_pcs_0_ts_120_t_1000.000000.vtu velocity velocity 1e-15 1e-15
-    expected_square_1e2_pcs_0_ts_420_t_4000.000000.vtu square_1e2_pcs_0_ts_420_t_4000.000000.vtu velocity velocity 1e-15 1e-15
+    GLOB square_1e2_pcs_0_ts_*.vtu displacement displacement 1e-15 1e-15
+    GLOB square_1e2_pcs_0_ts_*.vtu pressure pressure 1e-15 1e-15
+    GLOB square_1e2_pcs_0_ts_*.vtu velocity velocity 1e-15 1e-15
+    GLOB square_1e2_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-15 1e-15
+    GLOB square_1e2_pcs_0_ts_*.vtu NodalForces NodalForces 1e-15 1e-15
 )
 AddTest(
     NAME HydroMechanics_HML_square_1e2_quad9_confined_compression
