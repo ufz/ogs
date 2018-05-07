@@ -27,6 +27,7 @@
 #include "VtkCompositeTextureOnSurfaceFilter.h"
 #include "VtkCompositeThresholdFilter.h"
 #include "VtkImageDataToLinePolyDataFilter.h"
+#include "VtkCompositeImageToPointCloudFilter.h"
 
 #include <vtkDataSetSurfaceFilter.h>
 
@@ -83,6 +84,12 @@ const QVector<VtkFilterInfo> VtkFilterFactory::GetFilterList()
                                  "Visualisation of contour-lines/-planes within dense scalar fields.",
                                  VTK_UNSTRUCTURED_GRID, VTK_UNSTRUCTURED_GRID));
 
+    filterList.push_back(VtkFilterInfo(
+                                 "VtkCompositeImageToPointCloudFilter",
+                                 "Image to point cloud",
+                                 "This filter creates point clouds with a density based on the first component of pixel values.",
+                                 VTK_IMAGE_DATA, VTK_POLY_DATA));
+
     // Simple filters
     filterList.push_back(VtkFilterInfo(
                                  "VtkImageDataToLinePolyDataFilter",
@@ -131,6 +138,8 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type,
         return new VtkCompositeContourFilter(inputAlgorithm);
     if (type.compare(QString("VtkCompositeGeoObjectFilter")) == 0)
         return new VtkCompositeGeoObjectFilter(inputAlgorithm);
+    if (type.compare(QString("VtkCompositeImageToPointCloudFilter")) == 0)
+        return new VtkCompositeImageToPointCloudFilter(inputAlgorithm);
 
     return nullptr;
 }

@@ -19,15 +19,19 @@ set(SOURCES
     VtkCompositeElementSelectionFilter.cpp
     VtkCompositeGeoObjectFilter.cpp
     VtkCompositeImageToCylindersFilter.cpp
+    VtkCompositeImageToPointCloudFilter.cpp
     VtkCompositeLineToTubeFilter.cpp
     VtkCompositeNodeSelectionFilter.cpp
     VtkCompositePointToGlyphFilter.cpp
     VtkCompositeTextureOnSurfaceFilter.cpp
     VtkCompositeThresholdFilter.cpp
     VtkConsoleOutputWindow.cpp
+    VtkCustomInteractorStyle.cpp
     VtkFilterFactory.cpp
     VtkGeoImageSource.cpp
     VtkImageDataToLinePolyDataFilter.cpp
+    VtkImageDataToPointCloudFilter.cpp
+    VtkPickCallback.cpp
     VtkPolylinesSource.cpp
     VtkPointsSource.cpp
     VtkRaster.cpp
@@ -41,11 +45,18 @@ set(SOURCES
     VtkVisPipelineView.cpp
     VtkVisPointSetItem.cpp
     VtkVisTabWidget.cpp
-    VtkPickCallback.cpp
-    VtkCustomInteractorStyle.cpp
 )
 
 set(HEADERS
+    MeshFromRasterDialog.h
+    QVtkDataSetMapper.h
+    VisPrefsDialog.h
+    VisualizationWidget.h
+    VtkAddFilterDialog.h
+    VtkAlgorithmProperties.h
+    VtkAlgorithmPropertyLineEdit.h
+    VtkAlgorithmPropertyCheckbox.h
+    VtkAlgorithmPropertyVectorEdit.h
     VtkAppendArrayFilter.h
     VtkBGImageSource.h
     VtkColorByHeightFilter.h
@@ -57,14 +68,19 @@ set(HEADERS
     VtkCompositeElementSelectionFilter.h
     VtkCompositeGeoObjectFilter.h
     VtkCompositeImageToCylindersFilter.h
+    VtkCompositeImageToPointCloudFilter.h
     VtkCompositeLineToTubeFilter.h
     VtkCompositeNodeSelectionFilter.h
     VtkCompositePointToGlyphFilter.h
     VtkCompositeTextureOnSurfaceFilter.h
     VtkCompositeThresholdFilter.h
+    VtkConsoleOutputWindow.h
+    VtkCustomInteractorStyle.h
     VtkFilterFactory.h
     VtkGeoImageSource.h
     VtkImageDataToLinePolyDataFilter.h
+    VtkImageDataToPointCloudFilter.h
+    VtkPickCallback.h
     VtkPolylinesSource.h
     VtkPointsSource.h
     VtkRaster.h
@@ -73,23 +89,11 @@ set(HEADERS
     VtkTextureOnSurfaceFilter.h
     VtkVisHelper.h
     VtkVisImageItem.h
-    VtkVisPipelineItem.h
-    VtkVisPointSetItem.h
-    MeshFromRasterDialog.h
-    QVtkDataSetMapper.h
-    VisPrefsDialog.h
-    VisualizationWidget.h
-    VtkAddFilterDialog.h
-    VtkAlgorithmProperties.h
-    VtkAlgorithmPropertyLineEdit.h
-    VtkAlgorithmPropertyCheckbox.h
-    VtkAlgorithmPropertyVectorEdit.h
     VtkVisPipeline.h
+    VtkVisPipelineItem.h
     VtkVisPipelineView.h
+    VtkVisPointSetItem.h
     VtkVisTabWidget.h
-    VtkConsoleOutputWindow.h
-    VtkPickCallback.h
-    VtkCustomInteractorStyle.h
 )
 
 # Visual Studio folder
