@@ -321,12 +321,27 @@ void HydroMechanicsProcess<DisplacementDim>::
         Jac, _coupled_solutions);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
-        transformVariableFromGlobalVector(b, variable_id,
-                                          *_local_to_global_index_map,
-                                          output_vector, std::negate<double>());
+        if (_use_monolithic_scheme)
+        {
+            transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
+                                              output_vector,
+                                              std::negate<double>());
+        }
+        else
+        {
+            transformVariableFromGlobalVector(
+                b, 0, dof_tables[_coupled_solutions->process_id], output_vector,
+                std::negate<double>());
+        }
     };
-    copyRhs(0, *_hydraulic_flow);
-    copyRhs(1, *_nodal_forces);
+    if (_use_monolithic_scheme || _coupled_solutions->process_id == 0)
+    {
+        copyRhs(0, *_hydraulic_flow);
+    }
+    if (_use_monolithic_scheme || _coupled_solutions->process_id == 1)
+    {
+        copyRhs(1, *_nodal_forces);
+    }
 }
 
 template <int DisplacementDim>
