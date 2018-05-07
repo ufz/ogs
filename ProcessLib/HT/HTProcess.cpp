@@ -11,6 +11,7 @@
 
 #include <cassert>
 
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
@@ -227,6 +228,19 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
         MathLib::LinAlg::setLocalAccessibleVector(*x_t0);
         _coupled_solutions->coupled_xs_t0.emplace_back(x_t0.get());
     }
+}
+
+std::vector<double> HTProcess::getFlux(std::size_t element_id,
+                                       MathLib::Point3d const& p,
+                                       GlobalVector const& x) const
+{
+    // fetch local_x from primary variable
+    std::vector<GlobalIndexType> indices_cache;
+    auto const r_c_indices = NumLib::getRowColumnIndices(
+        element_id, *_local_to_global_index_map, indices_cache);
+    std::vector<double> local_x(x.get(r_c_indices.rows));
+
+    return _local_assemblers[element_id]->getFlux(p, local_x);
 }
 
 }  // namespace HT
