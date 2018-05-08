@@ -8,6 +8,7 @@ pipeline {
   options {
     ansiColor('xterm')
     timestamps()
+    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '10'))
   }
   stages {
      // *************************** Git Check **********************************
@@ -122,9 +123,6 @@ pipeline {
               publishReports { }
               dir('build/docs') { stash(name: 'doxygen') }
             }
-            failure {
-                dir('build') { deleteDir() }
-            }
             success {
               script {
                 publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
@@ -137,7 +135,6 @@ pipeline {
                   parserConfigurations: [[parserName: 'Doxygen', pattern:
                   'build/DoxygenWarnings.log']], unstableTotalAll: '0'])
                 archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
-                dir('build') { deleteDir() }
               }
             }
           }
@@ -172,10 +169,7 @@ pipeline {
             }
           }
           post {
-            always {
-              publishReports { }
-              dir('build') { deleteDir() }
-            }
+            always { publishReports { } }
           }
         }
         // ************************** envinf1 **********************************
@@ -206,10 +200,7 @@ pipeline {
             }
           }
           post {
-            always {
-              publishReports { }
-              dir('build') { deleteDir() }
-            }
+            always { publishReports { } }
           }
         }
         stage('Envinf1 (parallel)') {
@@ -240,10 +231,7 @@ pipeline {
             }
           }
           post {
-            always {
-              publishReports { }
-              dir('build') { deleteDir() }
-            }
+            always { publishReports { } }
           }
         }
         // ************************** Windows **********************************
@@ -286,13 +274,7 @@ pipeline {
                   excludePattern: '.*\\.conan.*',
                   messagesPattern: '.*QVTK.*')
             }
-            failure {
-                dir('build') { deleteDir() }
-            }
-            success {
-                archiveArtifacts 'build/*.zip,build/conaninfo.txt'
-                dir('build') { deleteDir() }
-            }
+            success { archiveArtifacts 'build/*.zip,build/conaninfo.txt' }
           }
         }
         // ****************************** Mac **********************************
@@ -330,13 +312,7 @@ pipeline {
             always {
               publishReports { }
             }
-            failure {
-                dir('build') { deleteDir() }
-            }
-            success {
-                archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
-                dir('build') { deleteDir() }
-            }
+            success { archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt' }
           }
         }
         // **************************** Web ************************************
@@ -434,7 +410,6 @@ pipeline {
               build { }
             }
           }
-          post { always { dir('build') { deleteDir() } } }
         }
         // ************************* Deploy Web ********************************
         stage('Deploy Web') {
@@ -490,11 +465,6 @@ pipeline {
               }
             }
           }
-          post {
-            always {
-              dir('build') { deleteDir() }
-            }
-          }
         }
         // ******************** Deploy envinf1 PETSc ***************************
         stage('Deploy envinf1 PETSc') {
@@ -518,11 +488,6 @@ pipeline {
                 target = 'install'
                 cmd_args = '-l 30'
               }
-            }
-          }
-          post {
-            always {
-              dir('build') { deleteDir() }
             }
           }
         }
@@ -562,7 +527,6 @@ pipeline {
           }
           post {
             always {
-              dir('build') { deleteDir() }
               warnings(canResolveRelativePaths: false,
                   consoleParsers: [[parserName: 'Clang (LLVM based)']])
             }
@@ -609,11 +573,6 @@ pipeline {
           }
         }
       } // end parallel
-      // post {
-      //   always {
-      //     step([$class: 'AnalysisPublisher', unstableNewAll: '1'])
-      //   }
-      // }
     } // end stage master
   }
 }
