@@ -41,7 +41,7 @@ set(NUM_CTEST_PROCESSORS 3)
 if(CMAKE_CONFIGURATION_TYPES)
     set(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
 endif()
-add_custom_target(ctest-cleanup ${CMAKE_COMMAND} -E remove Tests/ctest.log)
+add_custom_target(ctest-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest.log)
 add_custom_target(
     ctest
     COMMAND ${CMAKE_CTEST_COMMAND} -T Test
@@ -64,7 +64,7 @@ add_custom_target(
     DEPENDS ogs vtkdiff ctest-cleanup
     USES_TERMINAL
 )
-add_custom_target(ctest-large-cleanup ${CMAKE_COMMAND} -E remove Tests/ctest-large.log)
+add_custom_target(ctest-large-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest-large.log)
 add_custom_target(
     ctest-large
     COMMAND ${CMAKE_CTEST_COMMAND} -T Test

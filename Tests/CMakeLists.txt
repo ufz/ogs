@@ -93,7 +93,7 @@ set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
     -l warn
     --gtest_output=xml:./testrunner.xml)
 
-add_custom_target(tests-cleanup ${CMAKE_COMMAND} -E remove testrunner.xml)
+add_custom_target(tests-cleanup ${CMAKE_COMMAND} -E remove -f testrunner.xml)
 set_target_properties(tests-cleanup PROPERTIES FOLDER Testing)
 
 if(OGS_USE_PETSC)

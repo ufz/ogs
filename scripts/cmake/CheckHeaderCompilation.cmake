@@ -4,7 +4,7 @@ set(CMAKE_REQUIRED_FLAGS "-c -std=gnu++14")
 set(CMAKE_REQUIRED_QUIET TRUE)
 
 add_custom_target(check-header
-    COMMAND ${CMAKE_COMMAND} -E remove CMakeFiles/CMakeError.log
+    COMMAND ${CMAKE_COMMAND} -E remove -f CMakeFiles/CMakeError.log
     COMMAND ${CMAKE_COMMAND} . -DOGS_CHECK_HEADER_COMPILATION=ON
     COMMAND ${CMAKE_COMMAND} . -DOGS_CHECK_HEADER_COMPILATION=OFF || true
     COMMAND if [ -f CMakeFiles/CMakeError.log ]\; then cat CMakeFiles/CMakeError.log\; return 1\; else return 0\; fi\;
