@@ -184,59 +184,6 @@ public:
         }
     }
 
-    /// Computes the flux in the point \c pnt_local_coords that is given in
-    /// local coordinates using the values from \c local_x.
-    // TODO add time dependency
-    std::vector<double> getFlux(
-        MathLib::Point3d const& pnt_local_coords,
-        std::vector<double> const& local_x) const override
-    {
-        // eval dNdx and invJ at given point
-        using FemType =
-            NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
-
-        FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(
-            &_element));
-
-        typename ShapeMatricesType::ShapeMatrices shape_matrices(
-            ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
-
-        // Note: Axial symmetry is set to false here, because we only need dNdx
-        // here, which is not affected by axial symmetry.
-        fe.computeShapeFunctions(pnt_local_coords.getCoords(), shape_matrices,
-                                 GlobalDim, false);
-        std::vector<double> flux;
-        flux.resize(3);
-
-        // fetch permeability, viscosity, density
-        SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
-        MaterialLib::Fluid::FluidProperty::ArrayType vars;
-        double T_int_pt = 0.0;
-        double p_int_pt = 0.0;
-
-        // local_p, local_T?
-        NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
-        NumLib::shapeFunctionInterpolate(local_T, N, T_int_pt);
-
-        // set the values into array vars
-        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] =
-            T_int_pt;
-        vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] =
-            p_int_pt;
-
-        // TODO remove following line if time dependency is implemented
-        double const t = 0.0;
-        auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
-
-        Eigen::Map<Eigen::RowVectorXd>(flux.data(), flux.size()) =
-            -k * shape_matrices.dNdx *
-            Eigen::Map<const Eigen::VectorXd>(local_x.data(), local_x.size());
-
-        return flux;
-    }
-
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
         GlobalVector const& current_solution,

@@ -59,6 +59,10 @@ public:
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
+    virtual std::vector<double> getFlux(
+        MathLib::Point3d const& pnt_local_coords,
+        std::vector<double> const& local_x) const = 0;
+
 protected:
     // TODO: remove _coupled_solutions or move integration point data from
     // local assembler class to a new class to make local assembler unique
