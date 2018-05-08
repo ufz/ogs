@@ -12,9 +12,12 @@
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
 
+#include "MeshLib/IO/readMeshFromFile.h"
+
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
+#include "ProcessLib/CalculateSurfaceFlux/ParseCalculateSurfaceFluxData.h"
 
 #include "HTProcess.h"
 #include "HTMaterialProperties.h"
@@ -30,7 +33,9 @@ std::unique_ptr<Process> createHTProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::string const& project_directory,
+    std::string const& output_directory)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HT");
@@ -192,6 +197,33 @@ std::unique_ptr<Process> createHTProcess(
             //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__biot_constant}
             *solid_config, "biot_constant", parameters, 1);
         DBUG("Use \'%s\' as Biot's constant.", biot_constant->name.c_str());
+    }
+
+    // for the balance
+    std::string mesh_name; // surface mesh the balance will computed on
+    std::string balance_pv_name;
+    std::string balance_out_fname;
+    std::unique_ptr<MeshLib::Mesh> surface_mesh;
+    ProcessLib::parseCalculateSurfaceFluxData(
+        config, mesh_name, balance_pv_name, balance_out_fname);
+
+    if (!mesh_name.empty())  // balance is optional
+    {
+        mesh_name = BaseLib::copyPathToFileName(mesh_name, project_directory);
+
+        balance_out_fname =
+            BaseLib::copyPathToFileName(balance_out_fname, output_directory);
+
+        surface_mesh.reset(MeshLib::IO::readMeshFromFile(mesh_name));
+
+        DBUG(
+            "read balance meta data:\n\tbalance mesh:\"%s\"\n\tproperty name: "
+            "\"%s\"\n\toutput to: \"%s\"",
+            mesh_name.c_str(), balance_pv_name.c_str(),
+            balance_out_fname.c_str());
+
+        // Surface mesh and bulk mesh must have equal axial symmetry flags!
+        surface_mesh->setAxiallySymmetric(mesh.isAxiallySymmetric());
     }
 
     std::unique_ptr<HTMaterialProperties> material_properties =
