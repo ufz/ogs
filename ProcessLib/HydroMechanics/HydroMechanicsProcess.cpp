@@ -15,7 +15,6 @@
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/HydroMechanics/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/Utils/GlobalVectorUtils.h"
 
 #include "HydroMechanicsFEM.h"
 #include "HydroMechanicsProcessData.h"

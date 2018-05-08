@@ -16,11 +16,11 @@
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/Properties.h"
 
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 #include "ProcessLib/LIE/BoundaryCondition/BoundaryConditionBuilder.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
-#include "ProcessLib/Utils/GlobalVectorUtils.h"
 
 #include "LocalAssembler/CreateLocalAssemblers.h"
 #include "LocalAssembler/HydroMechanicsLocalAssemblerFracture.h"

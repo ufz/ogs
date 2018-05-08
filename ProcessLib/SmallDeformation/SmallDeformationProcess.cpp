@@ -15,7 +15,6 @@
 #include "BaseLib/Functional.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
-#include "ProcessLib/Utils/GlobalVectorUtils.h"
 
 #include "SmallDeformationFEM.h"
 
