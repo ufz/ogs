@@ -141,8 +141,8 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
+        Jac, _coupled_solutions);
 }
 
 void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
@@ -182,7 +182,7 @@ void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers()
 }
 
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
-    HTProcess::getDOFTableForExtrapolatorData() const
+HTProcess::getDOFTableForExtrapolatorData() const
 {
     if (!_use_monolithic_scheme)
     {
@@ -200,9 +200,10 @@ std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
 
     const bool manage_storage = true;
     return std::make_tuple(new NumLib::LocalToGlobalIndexMap(
-        std::move(all_mesh_subsets_single_component),
-        // by location order is needed for output
-        NumLib::ComponentOrder::BY_LOCATION), manage_storage);
+                               std::move(all_mesh_subsets_single_component),
+                               // by location order is needed for output
+                               NumLib::ComponentOrder::BY_LOCATION),
+                           manage_storage);
 }
 
 void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
