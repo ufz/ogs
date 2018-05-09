@@ -13,6 +13,7 @@
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
@@ -57,6 +58,10 @@ std::unique_ptr<MeshLib::Element> createQuadraticElement(
     if (e.getCellType() == MeshLib::CellType::TRI3)
     {
         return convertLinearToQuadratic<MeshLib::Tri6>(e);
+    }
+    if (e.getCellType() == MeshLib::CellType::TET4)
+    {
+        return convertLinearToQuadratic<MeshLib::Tet10>(e);
     }
     if (e.getCellType() == MeshLib::CellType::QUAD4)
     {
