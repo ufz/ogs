@@ -31,7 +31,7 @@ public:
     /// return marked elements
     const std::vector<std::size_t>& getSearchedElementIDs() const { return _marked_elements; }
 
-    /// @tparam PROPERTY_TYPE integral type of the property
+    /// @tparam PROPERTY_TYPE type of the property
     /// Different properties can be assigned to the elements of the mesh. These
     /// properties can be accessed by the name of the property. The method marks
     /// all elements of the mesh for the property \c property_name with  a
@@ -49,7 +49,7 @@ public:
             property_name, property_value, property_value, false);
     }
 
-    /// @tparam PROPERTY_TYPE integral type of the property
+    /// @tparam PROPERTY_TYPE type of the property
     /// Different properties can be assigned to the elements of the mesh. These
     /// properties can be accessed by the name of the property. The method marks
     /// all elements of the mesh for the property \c property_name with  a
@@ -62,7 +62,7 @@ public:
     /// @param max_property_value maximum value of the given property for the
     /// element not to be marked
     /// @param outside_of if true, all values outside of the given range or
-    /// markedc, if false, all values inside the given range are marked
+    /// marked, if false, all values inside the given range are marked
     /// @return The number of marked elements will be returned. The concrete
     /// element ids can be requested by getSearchedElementIDs().
     template <typename PROPERTY_TYPE>
@@ -70,7 +70,7 @@ public:
         std::string const& property_name,
         PROPERTY_TYPE const min_property_value,
         PROPERTY_TYPE const max_property_value,
-        bool outside_of = true)
+        bool outside_of)
     {
         if (!_mesh.getProperties().existsPropertyVector<PROPERTY_TYPE>(property_name))
         {
@@ -84,6 +84,12 @@ public:
         {
             WARN("The property \"%s\" is not assigned to mesh elements.",
                  property_name.c_str());
+            return 0;
+        }
+
+        if (pv->getNumberOfComponents() != 1)
+        {
+            WARN("Value-based element removal currently only works for scalars.");
             return 0;
         }
 

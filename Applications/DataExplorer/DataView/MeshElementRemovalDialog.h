@@ -19,6 +19,9 @@
 #include <QDialog>
 #include <array>
 
+#include "MeshLib/PropertyVector.h"
+
+
 namespace DataHolderLib
 {
 class Project;
@@ -59,6 +62,10 @@ private slots:
 private:
     std::size_t addScalarArrays(MeshLib::Mesh const& mesh) const;
     void enableScalarArrayWidgets(bool enable) const;
+
+    template <typename T>
+    void setRangeValues(MeshLib::PropertyVector<T> const& vec);
+
     void toggleScalarEdits(bool outside) const;
 
     DataHolderLib::Project const& _project;

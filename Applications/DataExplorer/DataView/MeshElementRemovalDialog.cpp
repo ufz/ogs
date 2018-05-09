@@ -27,7 +27,6 @@
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
-#include "MeshLib/PropertyVector.h"
 
 /// Constructor
 MeshElementRemovalDialog::MeshElementRemovalDialog(
@@ -93,8 +92,15 @@ void MeshElementRemovalDialog::accept()
             min_val = this->insideScalarMinEdit->text().toDouble();
             max_val = this->insideScalarMaxEdit->text().toDouble();
         }
-        ex.searchByPropertyValueRange(array_name, min_val, max_val, outside);
-        anything_checked = true;
+        std::size_t n_marked_elements =
+            ex.searchByPropertyValueRange<double>(array_name, min_val, max_val, outside);
+
+        if (n_marked_elements == 0)
+            n_marked_elements =
+                ex.searchByPropertyValueRange<int>(array_name, min_val, max_val, outside);
+
+        if (n_marked_elements > 0)
+            anything_checked = true;
     }
     if (this->boundingBoxCheckBox->isChecked())
     {
@@ -157,11 +163,11 @@ std::size_t MeshElementRemovalDialog::addScalarArrays(MeshLib::Mesh const& mesh)
 {
     MeshLib::Properties const& properties = mesh.getProperties();
     std::vector<std::string> const& names = properties.getPropertyVectorNames();
-    for (auto name : names)
+    for (auto const& name : names)
     {
         if (properties.existsPropertyVector<int>(name))
         {
-            auto const p = properties.getPropertyVector<int>(name);
+            auto const& p = properties.getPropertyVector<int>(name);
             if (p->getMeshItemType() == MeshLib::MeshItemType::Cell)
             {
                 this->scalarArrayComboBox->addItem(QString::fromStdString(name));
@@ -170,7 +176,7 @@ std::size_t MeshElementRemovalDialog::addScalarArrays(MeshLib::Mesh const& mesh)
         }
         if (properties.existsPropertyVector<double>(name))
         {
-            auto const p = properties.getPropertyVector<double>(name);
+            auto const& p = properties.getPropertyVector<double>(name);
             if (p->getMeshItemType() == MeshLib::MeshItemType::Cell)
             {
                 this->scalarArrayComboBox->addItem(QString::fromStdString(name));
@@ -202,10 +208,7 @@ void MeshElementRemovalDialog::toggleScalarEdits(bool outside) const
 
 void MeshElementRemovalDialog::on_insideButton_toggled(bool is_checked)
 {
-    if (this->insideButton->isChecked())
-        toggleScalarEdits(false);
-    else
-        toggleScalarEdits(true);
+    toggleScalarEdits(!this->insideButton->isChecked());
 }
 
 void MeshElementRemovalDialog::on_boundingBoxCheckBox_toggled(bool is_checked)
@@ -267,43 +270,36 @@ void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
     this->outsideScalarMaxEdit->setText("");
     this->insideScalarMinEdit->setText("");
     this->insideScalarMaxEdit->setText("");
-    if (this->scalarArrayCheckBox->isChecked())
-        on_scalarArrayCheckBox_toggled(true);
-    if (this->boundingBoxCheckBox->isChecked())
-        on_boundingBoxCheckBox_toggled(true);
+    on_scalarArrayCheckBox_toggled(this->scalarArrayCheckBox->isChecked());
+    on_boundingBoxCheckBox_toggled(this->boundingBoxCheckBox->isChecked());
 }
 
 void MeshElementRemovalDialog::on_scalarArrayComboBox_currentIndexChanged(int idx)
 {
     Q_UNUSED(idx);
-    MeshLib::Mesh const* const mesh =
-        _project.getMesh(meshNameComboBox->currentText().toStdString());
-    MeshLib::Properties const& properties = mesh->getProperties();
-
     std::string const vec_name(scalarArrayComboBox->currentText().toStdString());
-    if (vec_name == "")
+    if (vec_name.empty())
         return;
 
+    MeshLib::Mesh const* const mesh =
+        _project.getMesh(meshNameComboBox->currentText().toStdString());
+    if (mesh == nullptr)
+        return;
+    MeshLib::Properties const& properties = mesh->getProperties();
+
     if (properties.existsPropertyVector<int>(vec_name))
-    {
-        MeshLib::PropertyVector<int> const& vec =
-            *properties.getPropertyVector<int>(vec_name);
-        auto min = std::min_element(vec.cbegin(), vec.cend());
-        auto max = std::max_element(vec.cbegin(), vec.cend());
-        this->outsideScalarMinEdit->setText(QString::number(*min));
-        this->outsideScalarMaxEdit->setText(QString::number(*max));
-        this->insideScalarMinEdit->setText(QString::number(*min));
-        this->insideScalarMaxEdit->setText(QString::number(*max));
-    }
+        setRangeValues<int>(*properties.getPropertyVector<int>(vec_name));
     else if (properties.existsPropertyVector<double>(vec_name))
-    {
-        MeshLib::PropertyVector<double> const& vec =
-            *properties.getPropertyVector<double>(vec_name);
-        auto min = std::min_element(vec.cbegin(), vec.cend());
-        auto max = std::max_element(vec.cbegin(), vec.cend());
-        this->outsideScalarMinEdit->setText(QString::number(*min));
-        this->outsideScalarMaxEdit->setText(QString::number(*max));
-        this->insideScalarMinEdit->setText(QString::number(*min));
-        this->insideScalarMaxEdit->setText(QString::number(*max));
-    }
+        setRangeValues<double>(*properties.getPropertyVector<double>(vec_name));
+}
+
+template <typename T>
+void MeshElementRemovalDialog::setRangeValues(MeshLib::PropertyVector<T> const& vec)
+{
+    auto min = std::min_element(vec.cbegin(), vec.cend());
+    auto max = std::max_element(vec.cbegin(), vec.cend());
+    this->outsideScalarMinEdit->setText(QString::number(*min));
+    this->outsideScalarMaxEdit->setText(QString::number(*max));
+    this->insideScalarMinEdit->setText(QString::number(*min));
+    this->insideScalarMaxEdit->setText(QString::number(*max));
 }

@@ -37,8 +37,9 @@ void searchByPropertyValue(std::string const& property_name,
         std::size_t n_marked_elements = searcher.searchByPropertyValue<double>(
             property_name, property_value);
         if (n_marked_elements == 0)
-            std::size_t n_marked_elements = searcher.searchByPropertyValue<int>(
+            n_marked_elements = searcher.searchByPropertyValue<int>(
                 property_name, property_value);
+
         INFO("%d elements with property value %s found.", n_marked_elements,
              std::to_string(property_value).c_str());
     }
@@ -56,6 +57,8 @@ void searchByPropertyRange(std::string const& property_name,
         n_marked_elements = searcher.searchByPropertyValueRange<int>(
             property_name, static_cast<int>(min_value),
             static_cast<int>(max_value), outside);
+
+    // add checks for other data types here (if n_marked_elements remains 0)
 
     INFO("%d elements in range [%s, %s] found.", n_marked_elements,
          std::to_string(min_value).c_str(), std::to_string(max_value).c_str());
@@ -192,10 +195,7 @@ int main (int argc, char* argv[])
                 return EXIT_FAILURE;
             }
 
-            bool outside = false;
-            if (outside_property_arg.isSet())
-                outside = true;
-
+            bool const outside = outside_property_arg.isSet();
             searchByPropertyRange(
                 property_name_arg.getValue(), min_property_arg.getValue(),
                 max_property_arg.getValue(), outside, searcher);
