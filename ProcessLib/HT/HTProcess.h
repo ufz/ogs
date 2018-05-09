@@ -59,7 +59,9 @@ public:
         std::unique_ptr<HTMaterialProperties>&& material_properties,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
-        bool const use_monolithic_scheme);
+        bool const use_monolithic_scheme,
+        std::unique_ptr<MeshLib::Mesh>&& balance_mesh,
+        std::string&& balance_pv_name, std::string&& balance_out_frame);
 
     //! \name ODESystem interface
     //! @{
@@ -72,6 +74,9 @@ public:
                                 GlobalVector const& x) const override;
 
     void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() override;
+
+    void postTimestepConcreteProcess(GlobalVector const& x,
+                                     int const process_id) override;
 
 private:
     void initializeConcreteProcess(
@@ -108,6 +113,10 @@ private:
 
     /// Solutions of the previous time step
     std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
+
+    std::unique_ptr<MeshLib::Mesh> _balance_mesh;
+    std::string const _balance_pv_name;
+    std::string const _balance_out_fname;
 };
 
 }  // namespace HT

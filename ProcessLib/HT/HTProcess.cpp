@@ -11,9 +11,13 @@
 
 #include <cassert>
 
+// TODO used for output, if output classes are ready this has to be changed
+#include "MeshLib/IO/writeMeshToFile.h"
+
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
+#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 #include "HTMaterialProperties.h"
@@ -35,12 +39,17 @@ HTProcess::HTProcess(
     std::unique_ptr<HTMaterialProperties>&& material_properties,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme,
+    std::unique_ptr<MeshLib::Mesh>&& balance_mesh,
+    std::string&& balance_pv_name, std::string&& balance_out_fname)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),
-      _material_properties(std::move(material_properties))
+      _material_properties(std::move(material_properties)),
+      _balance_mesh(std::move(balance_mesh)),
+      _balance_pv_name(std::move(balance_pv_name)),
+      _balance_out_fname(std::move(balance_out_fname))
 {
 }
 
@@ -242,6 +251,46 @@ std::vector<double> HTProcess::getFlux(std::size_t element_id,
     std::vector<double> local_x(x.get(r_c_indices.rows));
 
     return _local_assemblers[element_id]->getFlux(p, local_x);
+}
+
+// this is almost a copy of the implemention in the GroundwaterFlow
+void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
+                                            int const process_id)
+{
+    // For the monolithic scheme, process_id is always zero.
+    if (_use_monolithic_scheme && process_id != 0)
+    {
+        OGS_FATAL(
+            "The condition of process_id = 0 must be satisfied for "
+            "monolithic HTProcess, which is a single process.");
+    }
+    if (!_use_monolithic_scheme && process_id != 1)
+    {
+        DBUG("This is the thermal part of the staggered HTProcess.");
+        return;
+    }
+    if (_balance_mesh)  // computing the balance is optional
+    {
+        std::vector<double> init_values(_balance_mesh->getNumberOfElements(),
+                                        0.0);
+        MeshLib::addPropertyToMesh(*_balance_mesh, _balance_pv_name,
+                                   MeshLib::MeshItemType::Cell, 1, init_values);
+        auto balance = ProcessLib::CalculateSurfaceFlux(
+            *_balance_mesh,
+            getProcessVariables(process_id)[0].get().getNumberOfComponents(),
+            _integration_order);
+
+        auto* const balance_pv =
+            _balance_mesh->getProperties().template getPropertyVector<double>(
+                _balance_pv_name);
+
+        balance.integrate(x, *balance_pv, *this);
+        // post: surface_mesh has vectorial element property
+
+        // TODO output, if output classes are ready this has to be
+        // changed
+        MeshLib::IO::writeMeshToFile(*_balance_mesh, _balance_out_fname);
+    }
 }
 
 }  // namespace HT

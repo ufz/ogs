@@ -255,7 +255,8 @@ std::unique_ptr<Process> createHTProcess(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(material_properties),
         std::move(secondary_variables), std::move(named_function_caller),
-        use_monolithic_scheme);
+        use_monolithic_scheme, std::move(surface_mesh),
+        std::move(balance_pv_name), std::move(balance_out_fname));
 }
 
 }  // namespace HT
