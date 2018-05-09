@@ -107,3 +107,7 @@ if(NOT ${OGS_CONAN_BUILD} MATCHES "never|always|missing")
     message(STATUS "Warning: Resetting CMake variable OGS_CONAN_BUILD to its default value of 'missing'")
     set(OGS_CONAN_BUILD "missing" CACHE INTERNAL "")
 endif()
+
+if(OGS_USE_PETSC)
+    set(PETSC_DIR ${CONAN_PETSC_ROOT} CACHE INTERNAL "")
+endif()
