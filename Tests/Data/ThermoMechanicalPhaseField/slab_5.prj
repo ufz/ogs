@@ -2,19 +2,16 @@
 <OpenGeoSysProject>
     <mesh>slab_5.vtu</mesh>
     <geometry>slab_5.gml</geometry>
-
     <processes>
         <process>
             <name>ThermoMechanicalPhaseField</name>
             <type>THERMO_MECHANICAL_PHASE_FIELD</type>
             <integration_order>3</integration_order>
-
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-
             <phasefield_parameters>
                 <residual_stiffness>k</residual_stiffness>
                 <crack_resistance>gc</crack_resistance>
@@ -22,22 +19,22 @@
                 <kinetic_coefficient>M</kinetic_coefficient>
             </phasefield_parameters>
             <solid_density>rho_sr</solid_density>
-			<thermal_parameters>
-	            <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
-	            <specific_heat_capacity>cs</specific_heat_capacity>
-	            <thermal_conductivity>lambda</thermal_conductivity>
+            <thermal_parameters>
+                <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
+                <specific_heat_capacity>cs</specific_heat_capacity>
+                <thermal_conductivity>lambda</thermal_conductivity>
                 <residual_thermal_conductivity>lambda_res</residual_thermal_conductivity>
-			</thermal_parameters>
-	        <reference_temperature>600</reference_temperature>
+            </thermal_parameters>
+            <reference_temperature>600</reference_temperature>
             <process_variables>
-			    <temperature>temperature</temperature>
+                <temperature>temperature</temperature>
                 <displacement>displacement</displacement>
                 <phasefield>phasefield</phasefield>
             </process_variables>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
                 <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
-		        <secondary_variable type="static" internal_name="heat_flux" output_name="heat_flux"/>
+                <secondary_variable type="static" internal_name="heat_flux" output_name="heat_flux"/>
             </secondary_variables>
             <specific_body_force>0 0 0</specific_body_force>
         </process>
@@ -83,7 +80,7 @@
                 <output>
                     <variables>
                         <variable>temperature</variable>
-			            <variable>heat_flux</variable>
+                        <variable>heat_flux</variable>
                     </variables>
                 </output>
                 <time_stepping>
@@ -191,58 +188,56 @@
             <type>Constant</type>
             <value>1.2e-6</value>
         </parameter>
-	<parameter>
+        <parameter>
             <name>k</name>
             <type>Constant</type>
             <value>1e-6</value>
         </parameter>
-	<parameter>
+        <parameter>
             <name>gc</name>
             <type>Constant</type>
             <value>4.247e-2</value>
         </parameter>
-	<parameter>
+        <parameter>
             <name>ls</name>
             <type>Constant</type>
             <value>0.025</value>
         </parameter>
-	<parameter>
+        <parameter>
             <name>M</name>
             <type>Constant</type>
             <value>1e6</value>
         </parameter>
-	<parameter>
+        <parameter>
             <name>alpha</name>
             <type>Constant</type>
             <value>8e-6</value>
         </parameter>
-	<parameter>
+        <parameter>
             <name>cs</name>
             <type>Constant</type>
             <value>2000</value>
         </parameter>
-	<parameter>
+        <parameter>
             <name>lambda</name>
             <type>Constant</type>
             <value>2e-5</value>
         </parameter>
-         <parameter>
+        <parameter>
             <name>lambda_res</name>
             <type>Constant</type>
             <value>2.4e-6</value>
         </parameter>
-	<parameter>
+        <parameter>
             <name>temperature_ic</name>
             <type>Constant</type>
             <value>600</value>
         </parameter>
-
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0 0</values>
         </parameter>
-
         <parameter>
             <name>phasefield_ic</name>
             <type>Constant</type>
@@ -253,7 +248,6 @@
             <type>Constant</type>
             <value>1</value>
         </parameter>
-
         <parameter>
             <name>dirichlet0</name>
             <type>Constant</type>
@@ -271,7 +265,6 @@
             <parameter>Dirichlet_spatial</parameter>
         </parameter>
     </parameters>
-
     <curves>
         <curve>
             <name>Dirichlet_temporal</name>
@@ -279,17 +272,14 @@
             <values>200 200</values>
         </curve>
     </curves>
-
     <process_variables>
-	<process_variable>
+        <process_variable>
             <name>temperature</name>
             <components>1</components>
             <order>1</order>
-
             <initial_condition>temperature_ic</initial_condition>
-
             <boundary_conditions>
-		<boundary_condition>
+                <boundary_condition>
                     <geometrical_set>plate3d_geometry</geometrical_set>
                     <geometry>top</geometry>
                     <type>Dirichlet</type>
@@ -297,14 +287,11 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-
         <process_variable>
             <name>displacement</name>
             <components>3</components>
             <order>1</order>
-
             <initial_condition>displacement0</initial_condition>
-
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>plate3d_geometry</geometrical_set>
@@ -312,15 +299,15 @@
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
-	            </boundary_condition>
-	            <boundary_condition>
+                </boundary_condition>
+                <boundary_condition>
                     <geometrical_set>plate3d_geometry</geometrical_set>
                     <geometry>bottom</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
-	            <boundary_condition>
+                <boundary_condition>
                     <geometrical_set>plate3d_geometry</geometrical_set>
                     <geometry>bottom</geometry>
                     <type>Dirichlet</type>
@@ -329,26 +316,21 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-
         <process_variable>
             <name>phasefield</name>
             <components>1</components>
             <order>1</order>
-
             <initial_condition>phasefield_ic</initial_condition>
-
             <boundary_conditions>
-		<boundary_condition>
-		    <geometrical_set>plate3d_geometry</geometrical_set>
+                <boundary_condition>
+                    <geometrical_set>plate3d_geometry</geometrical_set>
                     <geometry>bottom</geometry>
-		    <type>PhaseFieldIrreversibleDamageOracleBoundaryCondition</type>
-		    <component>0</component>
-	       </boundary_condition>
+                    <type>PhaseFieldIrreversibleDamageOracleBoundaryCondition</type>
+                    <component>0</component>
+                </boundary_condition>
             </boundary_conditions>
-
         </process_variable>
     </process_variables>
-
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_newton_T</name>
@@ -369,7 +351,6 @@
             <linear_solver>linear_solver_d</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
-
     <linear_solvers>
         <linear_solver>
             <name>linear_solver_T</name>

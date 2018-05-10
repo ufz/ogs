@@ -2,19 +2,16 @@
 <OpenGeoSysProject>
     <mesh axially_symmetric="true">tes_hx3.vtu</mesh>
     <geometry>tes_hx3.gml</geometry>
-
     <processes>
         <process>
             <name>ThermoMechanicalPhaseField</name>
             <type>THERMO_MECHANICAL_PHASE_FIELD</type>
             <integration_order>3</integration_order>
-
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-
             <phasefield_parameters>
                 <residual_stiffness>k</residual_stiffness>
                 <crack_resistance>gc</crack_resistance>
@@ -22,16 +19,15 @@
                 <kinetic_coefficient>M</kinetic_coefficient>
             </phasefield_parameters>
             <solid_density>rho_sr</solid_density>
-			<thermal_parameters>
-	            <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
-	            <specific_heat_capacity>cs</specific_heat_capacity>
-	            <thermal_conductivity>lambda</thermal_conductivity>
+            <thermal_parameters>
+                <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
+                <specific_heat_capacity>cs</specific_heat_capacity>
+                <thermal_conductivity>lambda</thermal_conductivity>
                 <residual_thermal_conductivity>lambda_res</residual_thermal_conductivity>
-			</thermal_parameters>
-	        <reference_temperature>0</reference_temperature>
-
+            </thermal_parameters>
+            <reference_temperature>0</reference_temperature>
             <process_variables>
-		<temperature>temperature</temperature>
+                <temperature>temperature</temperature>
                 <displacement>displacement</displacement>
                 <phasefield>phasefield</phasefield>
             </process_variables>
@@ -40,7 +36,7 @@
                 <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
                 <secondary_variable type="static" internal_name="heat_flux" output_name="heat_flux"/>
             </secondary_variables>
-	    <specific_body_force>0 0</specific_body_force>
+            <specific_body_force>0 0</specific_body_force>
         </process>
     </processes>
     <time_loop>
@@ -179,152 +175,152 @@
         <parameter>
             <name>E</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>1.911e3</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>68.9e3</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>1.911e3</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>68.9e3</value>
+            </index_values>
         </parameter>
         <parameter>
             <name>nu</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>0.17</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>0.4</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>0.17</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>0.4</value>
+            </index_values>
         </parameter>
-	<parameter>
+        <parameter>
             <name>rho_sr</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>1.583e-6</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>1.825e-6</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>1.583e-6</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>1.825e-6</value>
+            </index_values>
         </parameter>
-	<parameter>
+        <parameter>
             <name>alpha</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>1.069e-5</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>3e-5</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>1.069e-5</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>3e-5</value>
+            </index_values>
         </parameter>
-	<parameter>
+        <parameter>
             <name>cs</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>2083.4</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>1261</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>2083.4</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>1261</value>
+            </index_values>
         </parameter>
-	<parameter>
+        <parameter>
             <name>lambda</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>0.96e-3</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>0.4e-3</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>0.96e-3</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>0.4e-3</value>
+            </index_values>
         </parameter>
         <parameter>
             <name>lambda_res</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>0.6e-3</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>0.024e-3</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>0.6e-3</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>0.024e-3</value>
+            </index_values>
         </parameter>
         <parameter>
             <name>k</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>1e-6</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>1e-6</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>1e-6</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>1e-6</value>
+            </index_values>
         </parameter>
         <parameter>
             <name>gc</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>0.0006757</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>8</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>0.0006757</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>8</value>
+            </index_values>
         </parameter>
         <parameter>
             <name>ls</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>3</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>3</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>3</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>3</value>
+            </index_values>
         </parameter>
         <parameter>
             <name>M</name>
             <type>Group</type>
-	    <group_id_property>MaterialIDs</group_id_property>
-	    <index_values>
-	    <index>0</index>
-	    <value>1e6</value>
-	    </index_values>
-	    <index_values>
-	    <index>1</index>
-	    <value>1e6</value>
-	    </index_values>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+                <index>0</index>
+                <value>1e6</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>1e6</value>
+            </index_values>
         </parameter>
-	<parameter>
+        <parameter>
             <name>temperature_ic</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>
-	<parameter>
+        <parameter>
             <name>temperature_bc</name>
             <type>CurveScaled</type>
             <curve>Dirichlet_temporal</curve>
@@ -335,13 +331,11 @@
             <type>Constant</type>
             <values>0 0</values>
         </parameter>
-
         <parameter>
             <name>phasefield_ic</name>
             <type>Constant</type>
             <value>1</value>
         </parameter>
-
         <parameter>
             <name>dirichlet0</name>
             <type>Constant</type>
@@ -358,7 +352,6 @@
             <value>1</value>
         </parameter>
     </parameters>
-
     <curves>
         <curve>
             <name>Dirichlet_temporal</name>
@@ -366,15 +359,12 @@
             <values>0 15</values>
         </curve>
     </curves>
-
     <process_variables>
-	<process_variable>
+        <process_variable>
             <name>temperature</name>
             <components>1</components>
             <order>1</order>
-
             <initial_condition>temperature_ic</initial_condition>
-
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
@@ -382,7 +372,7 @@
                     <search_length_algorithm>
                         <type>fixed</type>
                         <value>1e-6</value>
-	            </search_length_algorithm>
+                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>temperature_bc</parameter>
                 </boundary_condition>
@@ -392,7 +382,7 @@
                     <search_length_algorithm>
                         <type>fixed</type>
                         <value>1e-6</value>
-	            </search_length_algorithm>
+                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>temperature_bc</parameter>
                 </boundary_condition>
@@ -402,20 +392,17 @@
                     <search_length_algorithm>
                         <type>fixed</type>
                         <value>1e-6</value>
-	            </search_length_algorithm>
+                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>temperature_bc</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-
         <process_variable>
             <name>displacement</name>
             <components>2</components>
             <order>1</order>
-
             <initial_condition>displacement0</initial_condition>
-
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
@@ -433,25 +420,21 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-
         <process_variable>
             <name>phasefield</name>
             <components>1</components>
             <order>1</order>
-
             <initial_condition>phasefield_ic</initial_condition>
-
             <boundary_conditions>
-		        <boundary_condition>
-		            <geometrical_set>square_1x1_geometry</geometrical_set>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>bottom</geometry>
-	                <type>PhaseFieldIrreversibleDamageOracleBoundaryCondition</type>
-	                <component>0</component>
-		       </boundary_condition>
+                    <type>PhaseFieldIrreversibleDamageOracleBoundaryCondition</type>
+                    <component>0</component>
+                </boundary_condition>
             </boundary_conditions>
         </process_variable>
     </process_variables>
-
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_newton_T</name>
@@ -472,7 +455,6 @@
             <linear_solver>linear_solver_d</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
-
     <linear_solvers>
         <linear_solver>
             <name>linear_solver_T</name>
