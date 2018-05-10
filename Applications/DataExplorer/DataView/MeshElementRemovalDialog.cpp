@@ -16,6 +16,7 @@
 
 #include <QList>
 #include <QListWidgetItem>
+#include <algorithm>
 
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "Applications/DataHolderLib/Project.h"
@@ -25,10 +26,16 @@
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Properties.h"
 
 /// Constructor
-MeshElementRemovalDialog::MeshElementRemovalDialog(DataHolderLib::Project const& project, QDialog* parent)
-    : QDialog(parent), _project(project), _currentIndex(0), _aabbIndex(std::numeric_limits<unsigned>::max()), _matIDIndex(std::numeric_limits<unsigned>::max())
+MeshElementRemovalDialog::MeshElementRemovalDialog(
+    DataHolderLib::Project const& project, QDialog* parent)
+    : QDialog(parent),
+      _project(project),
+      _currentIndex(0),
+      _aabbIndex(std::numeric_limits<unsigned>::max()),
+      _scalarIndex(std::numeric_limits<unsigned>::max())
 {
     setupUi(this);
 
@@ -70,12 +77,30 @@ void MeshElementRemovalDialog::accept()
                 MeshLib::String2MeshElemType(item->text().toStdString()));
         anything_checked = true;
     }
-    if (this->materialIDCheckBox->isChecked())
+    if (this->scalarArrayCheckBox->isChecked())
     {
-        QList<QListWidgetItem*> items = this->materialListWidget->selectedItems();
-        for (auto& item : items)
-            ex.searchByPropertyValue(item->text().toInt(), "MaterialIDs");
-        anything_checked = true;
+        std::string const array_name = this->scalarArrayComboBox->currentText().toStdString();
+        double min_val, max_val;
+        bool outside = this->outsideButton->isChecked();
+        if (outside)
+        {
+            min_val = this->outsideScalarMinEdit->text().toDouble();
+            max_val = this->outsideScalarMaxEdit->text().toDouble();
+        }
+        else
+        {
+            min_val = this->insideScalarMinEdit->text().toDouble();
+            max_val = this->insideScalarMaxEdit->text().toDouble();
+        }
+        std::size_t n_marked_elements =
+            ex.searchByPropertyValueRange<double>(array_name, min_val, max_val, outside);
+
+        if (n_marked_elements == 0)
+            n_marked_elements =
+                ex.searchByPropertyValueRange<int>(array_name, min_val, max_val, outside);
+
+        if (n_marked_elements > 0)
+            anything_checked = true;
     }
     if (this->boundingBoxCheckBox->isChecked())
     {
@@ -134,6 +159,58 @@ void MeshElementRemovalDialog::reject()
     this->done(QDialog::Rejected);
 }
 
+std::size_t MeshElementRemovalDialog::addScalarArrays(MeshLib::Mesh const& mesh) const
+{
+    MeshLib::Properties const& properties = mesh.getProperties();
+    std::vector<std::string> const& names = properties.getPropertyVectorNames();
+    for (auto const& name : names)
+    {
+        if (properties.existsPropertyVector<int>(name))
+        {
+            auto const& p = properties.getPropertyVector<int>(name);
+            if (p->getMeshItemType() == MeshLib::MeshItemType::Cell)
+            {
+                this->scalarArrayComboBox->addItem(QString::fromStdString(name));
+                enableScalarArrayWidgets(true);
+            }
+        }
+        if (properties.existsPropertyVector<double>(name))
+        {
+            auto const& p = properties.getPropertyVector<double>(name);
+            if (p->getMeshItemType() == MeshLib::MeshItemType::Cell)
+            {
+                this->scalarArrayComboBox->addItem(QString::fromStdString(name));
+                enableScalarArrayWidgets(true);
+            }
+        }
+    }
+    return this->scalarArrayComboBox->count();
+}
+
+void MeshElementRemovalDialog::enableScalarArrayWidgets(bool enable) const
+{
+    this->scalarArrayComboBox->setEnabled(enable);
+    this->outsideButton->setEnabled(enable);
+    this->insideButton->setEnabled(enable);
+    this->outsideScalarMinEdit->setEnabled(enable && this->outsideButton->isChecked());
+    this->outsideScalarMaxEdit->setEnabled(enable && this->outsideButton->isChecked());
+    this->insideScalarMinEdit->setEnabled(enable && this->insideButton->isChecked());
+    this->insideScalarMaxEdit->setEnabled(enable && this->insideButton->isChecked());
+}
+
+void MeshElementRemovalDialog::toggleScalarEdits(bool outside) const
+{
+    this->outsideScalarMinEdit->setEnabled(outside);
+    this->outsideScalarMaxEdit->setEnabled(outside);
+    this->insideScalarMinEdit->setEnabled(!outside);
+    this->insideScalarMaxEdit->setEnabled(!outside);
+}
+
+void MeshElementRemovalDialog::on_insideButton_toggled(bool is_checked)
+{
+    toggleScalarEdits(!this->insideButton->isChecked());
+}
+
 void MeshElementRemovalDialog::on_boundingBoxCheckBox_toggled(bool is_checked)
 {
     this->xMinEdit->setEnabled(is_checked); this->xMaxEdit->setEnabled(is_checked);
@@ -162,37 +239,23 @@ void MeshElementRemovalDialog::on_elementTypeCheckBox_toggled(bool is_checked)
     this->elementTypeListWidget->setEnabled(is_checked);
 }
 
-void MeshElementRemovalDialog::on_materialIDCheckBox_toggled(bool is_checked)
+void MeshElementRemovalDialog::on_scalarArrayCheckBox_toggled(bool is_checked)
 {
-    materialListWidget->setEnabled(is_checked);
-
-    if (is_checked && (_currentIndex != _matIDIndex))
+    if (!is_checked)
     {
-        materialListWidget->clear();
-        _matIDIndex = _currentIndex;
-        auto mesh = _project.getMesh(meshNameComboBox->currentText().toStdString());
-        if (!mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
-        {
-            INFO("Properties \"MaterialIDs\" not found in the mesh \"%s\".",
-                mesh->getName().c_str());
-            return;
-        }
-        auto const* const mat_ids =
-            mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-        if (mat_ids->size() != mesh->getNumberOfElements())
-        {
-            INFO(
-                "Size mismatch: Properties \"MaterialIDs\" contains %u values,"
-                " the mesh \"%s\" contains %u elements.",
-                mat_ids->size(), mesh->getName().c_str(),
-                mesh->getNumberOfElements());
-            return;
-        }
-        auto max_material =
-            std::max_element(mat_ids->cbegin(), mat_ids->cend());
+        enableScalarArrayWidgets(false);
+        return;
+    }
 
-        for (unsigned i=0; i <= static_cast<unsigned>(*max_material); ++i)
-            materialListWidget->addItem(QString::number(i));
+    MeshLib::Mesh const* const mesh =
+        _project.getMesh(meshNameComboBox->currentText().toStdString());
+    if (addScalarArrays(*mesh) > 0)
+        enableScalarArrayWidgets(true);
+    else
+    {
+        enableScalarArrayWidgets(false);
+        OGSError::box("No scalar arrays found");
+        on_scalarArrayCheckBox_toggled(false);
     }
 }
 
@@ -202,24 +265,41 @@ void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
     this->_currentIndex = this->meshNameComboBox->currentIndex();
     this->newMeshNameEdit->setText(this->meshNameComboBox->currentText() + "_new");
     this->elementTypeListWidget->clearSelection();
-    this->materialListWidget->clearSelection();
-    if (this->boundingBoxCheckBox->isChecked()) this->on_boundingBoxCheckBox_toggled(true);
-    auto mesh = _project.getMesh(meshNameComboBox->currentText().toStdString());
-    if (mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
-    {
-        auto const* const materialIds =
-            mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-        if (materialIds->size() != mesh->getNumberOfElements())
-        {
-            ERR ("Incorrect mesh structure: Number of Material IDs does not match number of mesh elements.");
-            OGSError::box("Incorrect mesh structure detected.\n Number of Material IDs does not match number of mesh elements");
-            QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
-        }
+    this->scalarArrayComboBox->clear();
+    this->outsideScalarMinEdit->setText("");
+    this->outsideScalarMaxEdit->setText("");
+    this->insideScalarMinEdit->setText("");
+    this->insideScalarMaxEdit->setText("");
+    on_scalarArrayCheckBox_toggled(this->scalarArrayCheckBox->isChecked());
+    on_boundingBoxCheckBox_toggled(this->boundingBoxCheckBox->isChecked());
+}
 
-        materialIDCheckBox->setEnabled(true);
-        if (materialIDCheckBox->isChecked())
-            on_materialIDCheckBox_toggled(true);
-    }
-    else
-        materialIDCheckBox->setEnabled(false);
+void MeshElementRemovalDialog::on_scalarArrayComboBox_currentIndexChanged(int idx)
+{
+    Q_UNUSED(idx);
+    std::string const vec_name(scalarArrayComboBox->currentText().toStdString());
+    if (vec_name.empty())
+        return;
+
+    MeshLib::Mesh const* const mesh =
+        _project.getMesh(meshNameComboBox->currentText().toStdString());
+    if (mesh == nullptr)
+        return;
+    MeshLib::Properties const& properties = mesh->getProperties();
+
+    if (properties.existsPropertyVector<int>(vec_name))
+        setRangeValues<int>(*properties.getPropertyVector<int>(vec_name));
+    else if (properties.existsPropertyVector<double>(vec_name))
+        setRangeValues<double>(*properties.getPropertyVector<double>(vec_name));
+}
+
+template <typename T>
+void MeshElementRemovalDialog::setRangeValues(MeshLib::PropertyVector<T> const& vec)
+{
+    auto min = std::min_element(vec.cbegin(), vec.cend());
+    auto max = std::max_element(vec.cbegin(), vec.cend());
+    this->outsideScalarMinEdit->setText(QString::number(*min));
+    this->outsideScalarMaxEdit->setText(QString::number(*max));
+    this->insideScalarMinEdit->setText(QString::number(*min));
+    this->insideScalarMaxEdit->setText(QString::number(*max));
 }
