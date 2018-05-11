@@ -20,6 +20,7 @@ set(SOURCES
     VtkCompositeGeoObjectFilter.cpp
     VtkCompositeImageToCylindersFilter.cpp
     VtkCompositeImageToPointCloudFilter.cpp
+    VtkCompositeImageToSurfacePointsFilter.cpp
     VtkCompositeLineToTubeFilter.cpp
     VtkCompositeNodeSelectionFilter.cpp
     VtkCompositePointToGlyphFilter.cpp
@@ -31,6 +32,7 @@ set(SOURCES
     VtkGeoImageSource.cpp
     VtkImageDataToLinePolyDataFilter.cpp
     VtkImageDataToPointCloudFilter.cpp
+    VtkImageDataToSurfacePointsFilter.cpp
     VtkPickCallback.cpp
     VtkPolylinesSource.cpp
     VtkPointsSource.cpp
@@ -69,6 +71,7 @@ set(HEADERS
     VtkCompositeGeoObjectFilter.h
     VtkCompositeImageToCylindersFilter.h
     VtkCompositeImageToPointCloudFilter.h
+    VtkCompositeImageToSurfacePointsFilter.h
     VtkCompositeLineToTubeFilter.h
     VtkCompositeNodeSelectionFilter.h
     VtkCompositePointToGlyphFilter.h
@@ -80,6 +83,7 @@ set(HEADERS
     VtkGeoImageSource.h
     VtkImageDataToLinePolyDataFilter.h
     VtkImageDataToPointCloudFilter.h
+    VtkImageDataToSurfacePointsFilter.h
     VtkPickCallback.h
     VtkPolylinesSource.h
     VtkPointsSource.h
