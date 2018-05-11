@@ -18,7 +18,8 @@
 class vtkInformation;
 class vtkInformationVector;
 
-/// A VTK Filter that will create a point cloud with local densities based on pixel values.
+/// A VTK Filter that will create a point cloud with local densities based on
+/// pixel values.
 class VtkImageDataToPointCloudFilter : public vtkPolyDataAlgorithm
 {
 public:
@@ -31,7 +32,11 @@ public:
     void PrintSelf(ostream& os, vtkIndent indent) override;
 
     void useLinearInterpolation() { SetIsLinear(true); }
-    void useLogarithmicInterpolation(double gamma) { SetIsLinear(false); SetGamma(gamma); }
+    void useLogarithmicInterpolation(double gamma)
+    {
+        SetIsLinear(false);
+        SetGamma(gamma);
+    }
 
     vtkGetMacro(IsLinear, bool);
     vtkSetMacro(IsLinear, bool);
@@ -74,11 +79,14 @@ protected:
     double MaxHeight;
 
 private:
-    VtkImageDataToPointCloudFilter(const VtkImageDataToPointCloudFilter&) = delete; 
+    VtkImageDataToPointCloudFilter(const VtkImageDataToPointCloudFilter&) = delete;
     void operator=(const VtkImageDataToPointCloudFilter&) = delete;
 
     /// Creates the point objects based on the parameters set by the user
-    void createPoints(vtkSmartPointer<vtkPoints> &points, vtkSmartPointer<vtkCellArray> &cells, std::size_t pnt_idx, std::size_t n_points, MathLib::Point3d const& min_pnt, MathLib::Point3d const& max_pnt) const;
+    void createPoints(vtkSmartPointer<vtkPoints>& points,
+                      vtkSmartPointer<vtkCellArray>& cells, std::size_t pnt_idx,
+                      std::size_t n_points, MathLib::Point3d const& min_pnt,
+                      MathLib::Point3d const& max_pnt) const;
 
     /// Returns a random number in [min, max]
     double getRandomNumber(double const& min, double const& max) const;

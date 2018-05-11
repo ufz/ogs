@@ -24,7 +24,4 @@ public:
     void SetUserProperty(QString name, QVariant value) override;
 
     void SetUserVectorProperty(QString name, QList<QVariant> values) override;
-
-private:
-    //VtkImageDataToPointCloudFilter* _point_cloud_filter;
 };

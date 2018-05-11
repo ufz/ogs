@@ -11,8 +11,8 @@
 // ** INCLUDES **
 #include "VtkImageDataToSurfacePointsFilter.h"
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
 #include <vtkIdList.h>
 #include <vtkImageData.h>
@@ -27,7 +27,7 @@
 vtkStandardNewMacro(VtkImageDataToSurfacePointsFilter);
 
 VtkImageDataToSurfacePointsFilter::VtkImageDataToSurfacePointsFilter()
-: PointsPerPixel(20)
+    : PointsPerPixel(20)
 {
 }
 
@@ -44,16 +44,19 @@ int VtkImageDataToSurfacePointsFilter::FillInputPortInformation(int, vtkInformat
     return 1;
 }
 
-int VtkImageDataToSurfacePointsFilter::RequestData(vtkInformation*,
-                                                vtkInformationVector** inputVector,
-                                                vtkInformationVector* outputVector)
+int VtkImageDataToSurfacePointsFilter::RequestData(
+    vtkInformation*,
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector)
 {
     vtkDebugMacro(<< "Executing VtkImageDataToSurfacePointsFilter");
 
     vtkInformation* input_info = inputVector[0]->GetInformationObject(0);
     vtkInformation* output_info = outputVector->GetInformationObject(0);
-    vtkImageData* input = vtkImageData::SafeDownCast(input_info->Get(vtkDataObject::DATA_OBJECT()));
-    vtkPolyData* output = vtkPolyData::SafeDownCast(output_info->Get(vtkDataObject::DATA_OBJECT()));
+    vtkImageData* input = vtkImageData::SafeDownCast(
+        input_info->Get(vtkDataObject::DATA_OBJECT()));
+    vtkPolyData* output = vtkPolyData::SafeDownCast(
+        output_info->Get(vtkDataObject::DATA_OBJECT()));
 
     void* pixvals = input->GetScalarPointer();
     int n_comp = input->GetNumberOfScalarComponents();
@@ -75,18 +78,22 @@ int VtkImageDataToSurfacePointsFilter::RequestData(vtkInformation*,
     input->GetDimensions(dimensions);
     double origin[3];
     input->GetOrigin(origin);
-    MathLib::Point3d const ll(std::array<double, 3>{ {origin[0], origin[1], origin[2]}});
-    GeoLib::RasterHeader const header = { static_cast<std::size_t>(dimensions[0]), static_cast<std::size_t>(dimensions[1]), 1, ll,  spacing[0], -9999 };
+    MathLib::Point3d const ll(std::array<double, 3>{{origin[0], origin[1], origin[2]}});
+    GeoLib::RasterHeader const header = {
+        static_cast<std::size_t>(dimensions[0]),
+        static_cast<std::size_t>(dimensions[1]),
+        1, ll, spacing[0], -9999};
     std::vector<double> pixels;
     pixels.reserve(n_points);
-    for (std::size_t i = 0; i<n_points; ++i)
+    for (std::size_t i = 0; i < n_points; ++i)
     {
-        if ((n_comp == 2 || n_comp == 4) && (((float*)pixvals)[(i + 1) * n_comp - 1] < 0.00000001f))
+        if ((n_comp == 2 || n_comp == 4) &&
+            (((float*)pixvals)[(i + 1) * n_comp - 1] < 0.00000001f))
             pixels.push_back(-9999);
         else
             pixels.push_back(((float*)pixvals)[i * n_comp]);
     }
-    GeoLib::Raster const*const raster(new GeoLib::Raster(header, pixels.begin(), pixels.end()));
+    GeoLib::Raster const* const raster(new GeoLib::Raster(header, pixels.begin(), pixels.end()));
 
     vtkSmartPointer<vtkPoints> new_points = vtkSmartPointer<vtkPoints>::New();
     new_points->SetNumberOfPoints(PointsPerPixel * n_points);
@@ -96,7 +103,7 @@ int VtkImageDataToSurfacePointsFilter::RequestData(vtkInformation*,
     vtkPointData* output_data = output->GetPointData();
     double const half_cellsize(spacing[0] / 2.0);
     std::size_t pnt_idx(0);
-    for (std::size_t i = 0; i<static_cast<std::size_t>(n_points); ++i)
+    for (std::size_t i = 0; i < static_cast<std::size_t>(n_points); ++i)
     {
         // Skip transparent pixels
         if (n_comp == 2 || n_comp == 4)
@@ -107,11 +114,12 @@ int VtkImageDataToSurfacePointsFilter::RequestData(vtkInformation*,
 
         double p[3];
         input->GetPoint(i, p);
-        MathLib::Point3d min_pnt{
-            std::array<double,3>{ {p[0] - half_cellsize, p[1] - half_cellsize, 0}} };
-        MathLib::Point3d max_pnt{
-            std::array<double,3>{ {p[0] + half_cellsize, p[1] + half_cellsize, 0}} };
-        createPointSurface(new_points, cells, pnt_idx, min_pnt, max_pnt, *raster);
+        MathLib::Point3d min_pnt{std::array<double, 3>{
+            {p[0] - half_cellsize, p[1] - half_cellsize, 0}}};
+        MathLib::Point3d max_pnt{std::array<double, 3>{
+            {p[0] + half_cellsize, p[1] + half_cellsize, 0}}};
+        createPointSurface(
+            new_points, cells, pnt_idx, min_pnt, max_pnt, *raster);
         pnt_idx += PointsPerPixel;
     }
 
@@ -123,15 +131,21 @@ int VtkImageDataToSurfacePointsFilter::RequestData(vtkInformation*,
     return 1;
 }
 
-void VtkImageDataToSurfacePointsFilter::createPointSurface(vtkSmartPointer<vtkPoints> &points, vtkSmartPointer<vtkCellArray> &cells, std::size_t pnt_idx,  MathLib::Point3d const& min_pnt, MathLib::Point3d const& max_pnt, GeoLib::Raster const& raster)
+void VtkImageDataToSurfacePointsFilter::createPointSurface(
+    vtkSmartPointer<vtkPoints>& points,
+    vtkSmartPointer<vtkCellArray>& cells,
+    std::size_t pnt_idx,
+    MathLib::Point3d const& min_pnt,
+    MathLib::Point3d const& max_pnt,
+    GeoLib::Raster const& raster)
 {
-	std::size_t const n_points (static_cast<std::size_t>(this->GetPointsPerPixel()));
-    for (std::size_t i = 0; i<n_points; ++i)
+    std::size_t const n_points(static_cast<std::size_t>(this->GetPointsPerPixel()));
+    for (std::size_t i = 0; i < n_points; ++i)
     {
         double p[3];
         p[0] = getRandomNumber(min_pnt[0], max_pnt[0]);
         p[1] = getRandomNumber(min_pnt[1], max_pnt[1]);
-        p[2] = raster.interpolateValueAtPoint(MathLib::Point3d( {p[0], p[1], 0 }));
+        p[2] = raster.interpolateValueAtPoint(MathLib::Point3d({p[0], p[1], 0}));
         points->SetPoint(pnt_idx + i, p);
         cells->InsertNextCell(1);
         cells->InsertCellPoint(pnt_idx + i);
@@ -142,4 +156,3 @@ double VtkImageDataToSurfacePointsFilter::getRandomNumber(double const& min, dou
 {
     return ((double)rand() / RAND_MAX) * (max - min) + min;
 }
-

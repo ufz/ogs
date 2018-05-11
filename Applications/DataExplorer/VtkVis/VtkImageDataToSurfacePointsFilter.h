@@ -18,7 +18,8 @@
 class vtkInformation;
 class vtkInformationVector;
 
-/// A VTK filter that creates a point cloud representing a surface defined by pixel values
+/// A VTK filter that creates a point cloud representing a surface defined by
+/// pixel values
 class VtkImageDataToSurfacePointsFilter : public vtkPolyDataAlgorithm
 {
 public:
@@ -49,10 +50,15 @@ private:
     void operator=(const VtkImageDataToSurfacePointsFilter&) = delete;
 
     /// Returns a random number in [min, max]
-    void createPointSurface(vtkSmartPointer<vtkPoints> &points, vtkSmartPointer<vtkCellArray> &cells, std::size_t pnt_idx, MathLib::Point3d const& min_pnt, MathLib::Point3d const& max_pnt, GeoLib::Raster const& raster);
+    void createPointSurface(vtkSmartPointer<vtkPoints>& points,
+                            vtkSmartPointer<vtkCellArray>& cells,
+                            std::size_t pnt_idx,
+                            MathLib::Point3d const& min_pnt,
+                            MathLib::Point3d const& max_pnt,
+                            GeoLib::Raster const& raster);
 
     /// Returns a random number in [min, max]
     double getRandomNumber(double const& min, double const& max) const;
 
-	vtkIdType PointsPerPixel;
+    vtkIdType PointsPerPixel;
 };
