@@ -224,28 +224,32 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::assembleWithJacobianCon
             DBUG(
                 "Assemble the Jacobian equations of "
                 "temperature-deformation in "
-                "ThermoMechanicalPhaseFieldProcess for the staggered scheme.");
+                "ThermoMechanicalPhaseFieldProcess for "
+                "the staggered scheme.");
         }
 
         if (_coupled_solutions->process_id == _phase_field_process_id)
         {
             DBUG(
-                "Assemble the Jacobian equations of phase field in "
-                "ThermoMechanicalPhaseFieldProcess for the staggered scheme.");
+                "Assemble the Jacobian equations of"
+                "phase field in "
+                "ThermoMechanicalPhaseFieldProcess for "
+                "the staggered scheme.");
         }
         else
         {
             DBUG(
                 "Assemble the Jacobian equations of "
                 "heat conduction in "
-                "ThermoMechanicalPhaseFieldProcess for the staggered scheme.");
+                "ThermoMechanicalPhaseFieldProcess for "
+                "the staggered scheme.");
         }
         dof_tables.emplace_back(
-            getDOFTableByProcessID(_heat_conduction_process_id));
+                    getDOFTableByProcessID(_heat_conduction_process_id));
         dof_tables.emplace_back(
-            getDOFTableByProcessID(_mechanics_related_process_id));
+                    getDOFTableByProcessID(_mechanics_related_process_id));
         dof_tables.emplace_back(
-            getDOFTableByProcessID(_phase_field_process_id));
+                    getDOFTableByProcessID(_phase_field_process_id));
 
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
