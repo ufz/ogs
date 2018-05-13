@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/LinAlgEnums.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
@@ -60,6 +61,8 @@ void transformVariableFromGlobalVector(
     NumLib::LocalToGlobalIndexMap const& local_to_global_index_map,
     MeshLib::PropertyVector<double>& output_vector, Functor mapFunction)
 {
+    MathLib::LinAlg::setLocalAccessibleVector(input_vector);
+
     std::fill(begin(output_vector), end(output_vector),
               std::numeric_limits<double>::quiet_NaN());
 
