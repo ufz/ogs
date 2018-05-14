@@ -61,7 +61,8 @@ public:
                      const double delta_t, const int process_id);
 
     /// Postprocessing after a complete timestep.
-    void postTimestep(GlobalVector const& x, int const process_id);
+    void postTimestep(GlobalVector const& x, const double t,
+                      const double delta_t, int const process_id);
 
     /// Calculates secondary variables, e.g. stress and strain for deformation
     /// analysis, only after nonlinear solver being successfully conducted.
@@ -194,6 +195,8 @@ private:
     }
 
     virtual void postTimestepConcreteProcess(GlobalVector const& /*x*/,
+                                             const double /*t*/,
+                                             const double /*delta_t*/,
                                              int const /*process_id*/)
     {
     }

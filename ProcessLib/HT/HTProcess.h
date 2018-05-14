@@ -76,6 +76,8 @@ public:
     void setCoupledTermForTheStaggeredSchemeToLocalAssemblers() override;
 
     void postTimestepConcreteProcess(GlobalVector const& x,
+                                     const double t,
+                                     const double delta_t,
                                      int const process_id) override;
 
 private:

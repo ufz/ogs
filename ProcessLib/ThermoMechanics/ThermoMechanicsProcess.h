@@ -63,7 +63,8 @@ private:
         GlobalVector const& x, double const t, double const dt,
         const int process_id) override;
 
-    void postTimestepConcreteProcess(GlobalVector const& x,
+    void postTimestepConcreteProcess(GlobalVector const& x, const double t,
+                                     const double delta_t,
                                      int const process_id) override;
 
 private:

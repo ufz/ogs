@@ -61,6 +61,8 @@ public:
     }
 
     void postTimestepConcreteProcess(GlobalVector const& x,
+                                     const double /*t*/,
+                                     const double /*delta_t*/,
                                      int const process_id) override
     {
         //For this single process, process_id is always zero.

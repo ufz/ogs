@@ -361,7 +361,8 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, const int process_id)
+    GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
+    const int process_id)
 {
     DBUG("PostTimestep HydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
