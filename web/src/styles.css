@@ -1,5 +1,7 @@
 @tailwind preflight;
 
+@tailwind components;
+
 @import url('https://fonts.googleapis.com/css?family=Spectral');
 @import url('https://fonts.googleapis.com/css?family=Spectral+SC');
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,400i,700');
