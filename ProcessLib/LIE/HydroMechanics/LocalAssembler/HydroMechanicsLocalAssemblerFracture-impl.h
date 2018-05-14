@@ -249,10 +249,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             .setConstant(local_dk_db);
         GlobalDimMatrix const dk_db = R.transpose() * local_dk_db_tensor * R;
 
-        // velocity
-        GlobalDimVector const grad_head_over_mu =
-            (dNdx_p * p + rho_fr * gravity_vec) / mu;
-
         //
         // displacement equation, displacement jump part
         //
@@ -278,8 +274,13 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         //
         // pressure equation, displacement jump part.
         //
+        GlobalDimVector const grad_head_over_mu =
+            (dNdx_p * p + rho_fr * gravity_vec) / mu;
         Eigen::Matrix<double, 1, displacement_size> const mT_R_Hg =
             identity2.transpose() * R * H_g;
+        // velocity in global coordinates
+        ip_data.darcy_velocity.head(GlobalDim).noalias() =
+            -R.transpose() * k * grad_head_over_mu;
         J_pg.noalias() += N_p.transpose() * S * N_p * p_dot * mT_R_Hg * ip_w;
         J_pg.noalias() +=
             dNdx_p.transpose() * k * grad_head_over_mu * mT_R_Hg * ip_w;
@@ -369,6 +370,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     typename HMatricesType::ForceVectorType ele_w =
         HMatricesType::ForceVectorType::Zero(GlobalDim);
     double ele_Fs = -std::numeric_limits<double>::max();
+    Eigen::Vector3d ele_velocity = Eigen::Vector3d::Zero();
     for (auto const& ip : _ip_data)
     {
         ele_b += ip.aperture;
@@ -377,11 +379,13 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         ele_sigma_eff += ip.sigma_eff;
         ele_Fs = std::max(
             ele_Fs, ip.material_state_variables->getShearYieldFunctionValue());
+        ele_velocity += ip.darcy_velocity;
     }
     ele_b /= static_cast<double>(n_integration_points);
     ele_k /= static_cast<double>(n_integration_points);
     ele_w /= static_cast<double>(n_integration_points);
     ele_sigma_eff /= static_cast<double>(n_integration_points);
+    ele_velocity /= static_cast<double>(n_integration_points);
     auto const element_id = _element.getID();
     (*_process_data.mesh_prop_b)[element_id] = ele_b;
     (*_process_data.mesh_prop_k_f)[element_id] = ele_k;
@@ -399,6 +403,10 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         (*_process_data.mesh_prop_fracture_stress_shear2)[element_id] =
             ele_sigma_eff[1];
     }
+
+    for (unsigned i = 0; i < 3; i++)
+        (*_process_data.mesh_prop_velocity)[element_id * 3 + i] =
+            ele_velocity[i];
 }
 
 }  // namespace HydroMechanics
