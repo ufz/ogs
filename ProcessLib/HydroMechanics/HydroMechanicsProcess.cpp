@@ -41,6 +41,11 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
               use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
+    _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
+
+    _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
 }
 
 template <int DisplacementDim>
@@ -313,6 +318,29 @@ void HydroMechanicsProcess<DisplacementDim>::
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
         Jac, _coupled_solutions);
+
+    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+        if (_use_monolithic_scheme)
+        {
+            transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
+                                              output_vector,
+                                              std::negate<double>());
+        }
+        else
+        {
+            transformVariableFromGlobalVector(
+                b, 0, dof_tables[_coupled_solutions->process_id], output_vector,
+                std::negate<double>());
+        }
+    };
+    if (_use_monolithic_scheme || _coupled_solutions->process_id == 0)
+    {
+        copyRhs(0, *_hydraulic_flow);
+    }
+    if (_use_monolithic_scheme || _coupled_solutions->process_id == 1)
+    {
+        copyRhs(1, *_nodal_forces);
+    }
 }
 
 template <int DisplacementDim>

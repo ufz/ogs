@@ -16,6 +16,7 @@
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/Properties.h"
 
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 #include "ProcessLib/LIE/BoundaryCondition/BoundaryConditionBuilder.h"
@@ -403,6 +404,27 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             MeshLib::MeshItemType::Node, 1);
         mesh_prop_nodal_p->resize(mesh.getNumberOfNodes());
         _process_data.mesh_prop_nodal_p = mesh_prop_nodal_p;
+
+        _process_data.mesh_prop_nodal_forces =
+            MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh), "NodalForces",
+                MeshLib::MeshItemType::Node, GlobalDim);
+        assert(_process_data.mesh_prop_nodal_forces->size() ==
+               GlobalDim * mesh.getNumberOfNodes());
+
+        _process_data.mesh_prop_nodal_forces_jump =
+            MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh), "NodalForcesJump",
+                MeshLib::MeshItemType::Node, GlobalDim);
+        assert(_process_data.mesh_prop_nodal_forces_jump->size() ==
+               GlobalDim * mesh.getNumberOfNodes());
+
+        _process_data.mesh_prop_hydraulic_flow =
+            MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh), "HydraulicFlow",
+                MeshLib::MeshItemType::Node, 1);
+        assert(_process_data.mesh_prop_hydraulic_flow->size() ==
+               mesh.getNumberOfNodes());
     }
 }
 
@@ -525,12 +547,21 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
         dx_dx, M, K, b, Jac, _coupled_solutions);
+
+    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+        transformVariableFromGlobalVector(b, variable_id,
+                                          *_local_to_global_index_map,
+                                          output_vector, std::negate<double>());
+    };
+    copyRhs(0, *_process_data.mesh_prop_hydraulic_flow);
+    copyRhs(1, *_process_data.mesh_prop_nodal_forces);
+    copyRhs(2, *_process_data.mesh_prop_nodal_forces_jump);
 }
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t,
-    double const dt, const int /*process_id*/)
+    GlobalVector const& x, double const t, double const dt,
+    const int /*process_id*/)
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 

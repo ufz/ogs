@@ -151,6 +151,10 @@ struct HydroMechanicsProcessData
     MeshLib::PropertyVector<double>* mesh_prop_nodal_b = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_nodal_p = nullptr;
 
+    MeshLib::PropertyVector<double>* mesh_prop_nodal_forces = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_nodal_forces_jump = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_hydraulic_flow = nullptr;
+
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 

@@ -130,6 +130,9 @@ private:
     {
         return _use_monolithic_scheme || process_id == 1;
     }
+
+    MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
+    MeshLib::PropertyVector<double>* _hydraulic_flow = nullptr;
 };
 
 extern template class HydroMechanicsProcess<2>;

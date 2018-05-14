@@ -20,6 +20,9 @@ AddTest(
     expected_single_fracture_pcs_0_ts_10_t_100.000000.vtu single_fracture_pcs_0_ts_10_t_100.000000.vtu stress_xx stress_xx 1e-12 1e-12
     expected_single_fracture_pcs_0_ts_10_t_100.000000.vtu single_fracture_pcs_0_ts_10_t_100.000000.vtu stress_yy stress_yy 1e-12 1e-12
     expected_single_fracture_pcs_0_ts_10_t_100.000000.vtu single_fracture_pcs_0_ts_10_t_100.000000.vtu velocity velocity 1e-12 1e-12
+    expected_single_fracture_pcs_0_ts_10_t_100.000000.vtu single_fracture_pcs_0_ts_10_t_100.000000.vtu HydraulicFlow HydraulicFlow 1e-12 0
+    expected_single_fracture_pcs_0_ts_10_t_100.000000.vtu single_fracture_pcs_0_ts_10_t_100.000000.vtu NodalForces NodalForces 5e-6 0
+    expected_single_fracture_pcs_0_ts_10_t_100.000000.vtu single_fracture_pcs_0_ts_10_t_100.000000.vtu NodalForcesJump NodalForcesJump 3e-7 0
 )
 
 AddTest(
