@@ -2,9 +2,8 @@
 
 @tailwind components;
 
-@import url('https://fonts.googleapis.com/css?family=Spectral');
-@import url('https://fonts.googleapis.com/css?family=Spectral+SC');
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,400i,700');
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700');
 
 /* -- Links -- */
 a {
@@ -31,9 +30,14 @@ nav a.active {
 /* -- Typography -- */
 h1, h2, h3, h4, h5, h6 {
   @apply .font-serif;
-  /*@apply .pt-2;*/
+  @apply .font-medium;
   @apply .mt-6;
   @apply .mb-4;
+  color: config('mycolors.text')
+}
+
+h2, h3 {
+  @apply .border-b .border-grey-dark;
 }
 
 h1 {
@@ -41,7 +45,13 @@ h1 {
 }
 
 p, ul, pre {
+  color: config('mycolors.text');
   @apply .mb-4;
+}
+
+.inverse {
+  color: config('mycolors.text-inverse');
+  background-color: config('mycolors.bg-inverse');
 }
 
 /* -- Navigation -- */
