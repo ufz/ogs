@@ -27,17 +27,15 @@
 vtkStandardNewMacro(VtkImageDataToPointCloudFilter);
 
 VtkImageDataToPointCloudFilter::VtkImageDataToPointCloudFilter()
-    : IsLinear(true),
-      MinNumberOfPointsPerCell(1),
-      MaxNumberOfPointsPerCell(20),
-      Gamma(1.0),
+    : Gamma(1.0),
       PointScaleFactor(1.0),
       MinHeight(0),
-      MaxHeight(1000)
+      MaxHeight(1000),
+      MinNumberOfPointsPerCell(1),
+      MaxNumberOfPointsPerCell(20),
+      IsLinear(true)
 {
 }
-
-VtkImageDataToPointCloudFilter::~VtkImageDataToPointCloudFilter() = default;
 
 void VtkImageDataToPointCloudFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
@@ -160,7 +158,7 @@ void VtkImageDataToPointCloudFilter::createPoints(
 /// Creates the point objects based on the parameters set by the user
 double VtkImageDataToPointCloudFilter::getRandomNumber(double const& min, double const& max) const
 {
-    return ((double)rand() / RAND_MAX) * (max - min) + min;
+    return ((double)std::rand() / RAND_MAX) * (max - min) + min;
 }
 
 std::size_t VtkImageDataToPointCloudFilter::interpolate(double low,
@@ -171,6 +169,6 @@ std::size_t VtkImageDataToPointCloudFilter::interpolate(double low,
     assert(p >= low && p <= high);
     double const r = (p - low) / (high - low);
     return static_cast<std::size_t>(
-        (MaxNumberOfPointsPerCell - MinNumberOfPointsPerCell) * pow(r, gamma) +
+        (MaxNumberOfPointsPerCell - MinNumberOfPointsPerCell) * std::pow(r, gamma) +
          MinNumberOfPointsPerCell);
 }

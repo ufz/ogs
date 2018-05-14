@@ -61,7 +61,7 @@ public:
 
 protected:
     VtkImageDataToPointCloudFilter();
-    ~VtkImageDataToPointCloudFilter() override;
+    ~VtkImageDataToPointCloudFilter() = default;
 
     /// Sets input port to vtkImageData.
     int FillInputPortInformation(int port, vtkInformation* info) override;
@@ -70,18 +70,16 @@ protected:
     int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
                     vtkInformationVector* outputVector) override;
 
-    bool IsLinear;
-    vtkIdType MinNumberOfPointsPerCell;
-    vtkIdType MaxNumberOfPointsPerCell;
     double Gamma;
     double PointScaleFactor;
     double MinHeight;
     double MaxHeight;
+    vtkIdType MinNumberOfPointsPerCell;
+    vtkIdType MaxNumberOfPointsPerCell;
+    bool IsLinear;
+
 
 private:
-    VtkImageDataToPointCloudFilter(const VtkImageDataToPointCloudFilter&) = delete;
-    void operator=(const VtkImageDataToPointCloudFilter&) = delete;
-
     /// Creates the point objects based on the parameters set by the user
     void createPoints(vtkSmartPointer<vtkPoints>& points,
                       vtkSmartPointer<vtkCellArray>& cells, std::size_t pnt_idx,
@@ -91,6 +89,9 @@ private:
     /// Returns a random number in [min, max]
     double getRandomNumber(double const& min, double const& max) const;
 
-    /// Interpolates the required number of points
+    /// Interpolates the required number of points. Using gamma = 1 this is a linear
+    /// interpolation, for values smaller/greater than 1 the curve becomes
+    /// logarithmic/exponential, resulting in a smaller/larger difference of point
+    /// densities given the same input values.
     std::size_t interpolate(double low, double high, double p, double gamma) const;
 };

@@ -25,8 +25,6 @@ VtkCompositeImageToSurfacePointsFilter::VtkCompositeImageToSurfacePointsFilter(
     init();
 }
 
-VtkCompositeImageToSurfacePointsFilter::~VtkCompositeImageToSurfacePointsFilter() = default;
-
 void VtkCompositeImageToSurfacePointsFilter::init()
 {
     _inputDataObjectType = VTK_IMAGE_DATA;

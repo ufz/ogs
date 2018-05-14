@@ -31,8 +31,6 @@ VtkImageDataToSurfacePointsFilter::VtkImageDataToSurfacePointsFilter()
 {
 }
 
-VtkImageDataToSurfacePointsFilter::~VtkImageDataToSurfacePointsFilter() = default;
-
 void VtkImageDataToSurfacePointsFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
     this->Superclass::PrintSelf(os, indent);
@@ -154,5 +152,5 @@ void VtkImageDataToSurfacePointsFilter::createPointSurface(
 
 double VtkImageDataToSurfacePointsFilter::getRandomNumber(double const& min, double const& max) const
 {
-    return ((double)rand() / RAND_MAX) * (max - min) + min;
+    return ((double)std::rand() / RAND_MAX) * (max - min) + min;
 }

@@ -36,7 +36,7 @@ public:
 
 protected:
     VtkImageDataToSurfacePointsFilter();
-    ~VtkImageDataToSurfacePointsFilter() override;
+    ~VtkImageDataToSurfacePointsFilter() = default;
 
     /// Sets input port to vtkImageData.
     int FillInputPortInformation(int port, vtkInformation* info) override;
@@ -46,9 +46,6 @@ protected:
                     vtkInformationVector* outputVector) override;
 
 private:
-    VtkImageDataToSurfacePointsFilter(const VtkImageDataToSurfacePointsFilter&) = delete;
-    void operator=(const VtkImageDataToSurfacePointsFilter&) = delete;
-
     /// Returns a random number in [min, max]
     void createPointSurface(vtkSmartPointer<vtkPoints>& points,
                             vtkSmartPointer<vtkCellArray>& cells,

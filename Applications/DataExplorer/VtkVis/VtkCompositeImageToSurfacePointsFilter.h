@@ -17,7 +17,7 @@ class VtkCompositeImageToSurfacePointsFilter : public VtkCompositeFilter
 {
 public:
     VtkCompositeImageToSurfacePointsFilter(vtkAlgorithm* inputAlgorithm);
-    ~VtkCompositeImageToSurfacePointsFilter() override;
+    ~VtkCompositeImageToSurfacePointsFilter() = default;
 
     void init() override;
 

@@ -24,8 +24,6 @@ VtkCompositeImageToPointCloudFilter::VtkCompositeImageToPointCloudFilter(vtkAlgo
     init();
 }
 
-VtkCompositeImageToPointCloudFilter::~VtkCompositeImageToPointCloudFilter() = default;
-
 void VtkCompositeImageToPointCloudFilter::init()
 {
     _inputDataObjectType = VTK_IMAGE_DATA;
