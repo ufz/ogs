@@ -21,6 +21,7 @@
 
 #include "ProcessLib/LIE/BoundaryCondition/BoundaryConditionBuilder.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
+#include "ProcessLib/Parameter/MeshElementParameter.h"
 
 #include "LocalAssembler/CreateLocalAssemblers.h"
 #include "LocalAssembler/HydroMechanicsLocalAssemblerFracture.h"
@@ -489,8 +490,21 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
 
     // compute nodal w and aperture
     auto const& R = _process_data.fracture_property->R;
+    auto* const b0 = _process_data.fracture_property->aperture0;
     MeshLib::PropertyVector<double>& vec_w = *_process_data.mesh_prop_nodal_w;
     MeshLib::PropertyVector<double>& vec_b = *_process_data.mesh_prop_nodal_b;
+
+    auto compute_nodal_aperture = [&](std::size_t const node_id,
+                                      double const w_n) {
+        // skip aperture computation for element-wise defined b0 because there
+        // are jumps on the nodes between the element's values.
+        if (dynamic_cast<MeshElementParameter<double> const*>(b0))
+            return std::numeric_limits<double>::quiet_NaN();
+
+        ProcessLib::SpatialPosition x;
+        x.setNodeID(node_id);
+        return w_n + (*b0)(0, x)[0];
+    };
 
     Eigen::VectorXd g(GlobalDim), w(GlobalDim);
     for (MeshLib::Node const* node : _vec_fracture_nodes)
@@ -504,10 +518,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
         for (int k = 0; k < GlobalDim; k++)
             vec_w[node_id * GlobalDim + k] = w[k];
 
-        ProcessLib::SpatialPosition x;
-        x.setNodeID(node_id);
-        vec_b[node_id] = w[GlobalDim - 1] +
-                         (*_process_data.fracture_property->aperture0)(0, x)[0];
+        vec_b[node_id] = compute_nodal_aperture(node_id, w[GlobalDim - 1]);
     }
 }
 

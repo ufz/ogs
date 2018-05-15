@@ -63,6 +63,12 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
     auto const& frac_prop = *_process_data.fracture_property;
 
+    // Get element nodes for aperture0 interpolation from nodes to integration
+    // point.
+    typename ShapeMatricesTypeDisplacement::NodalVectorType
+        aperture0_node_values =
+            frac_prop.aperture0->getNodalValuesOnElement(e, 0);
+
     SpatialPosition x_position;
     x_position.setElementID(e.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -96,7 +102,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
         ip_data.C.resize(GlobalDim, GlobalDim);
 
-        ip_data.aperture0 = (*frac_prop.aperture0)(0, x_position)[0];
+        ip_data.aperture0 = aperture0_node_values.dot(sm_u.N);
         ip_data.aperture = ip_data.aperture0;
 
         auto const initial_effective_stress =
