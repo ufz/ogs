@@ -21,6 +21,8 @@
 #include "VtkCompositeElementSelectionFilter.h"
 #include "VtkCompositeGeoObjectFilter.h"
 #include "VtkCompositeImageToCylindersFilter.h"
+#include "VtkCompositeImageToPointCloudFilter.h"
+#include "VtkCompositeImageToSurfacePointsFilter.h"
 #include "VtkCompositeLineToTubeFilter.h"
 #include "VtkCompositeNodeSelectionFilter.h"
 #include "VtkCompositePointToGlyphFilter.h"
@@ -83,6 +85,18 @@ const QVector<VtkFilterInfo> VtkFilterFactory::GetFilterList()
                                  "Visualisation of contour-lines/-planes within dense scalar fields.",
                                  VTK_UNSTRUCTURED_GRID, VTK_UNSTRUCTURED_GRID));
 
+    filterList.push_back(VtkFilterInfo(
+        "VtkCompositeImageToPointCloudFilter", "Image to point cloud",
+        "This filter creates a point cloud with a density based on the first "
+        "component of pixel values.",
+        VTK_IMAGE_DATA, VTK_POLY_DATA));
+
+    filterList.push_back(VtkFilterInfo(
+        "VtkCompositeImageToSurfacePointsFilter", "Image to surface points",
+        "This filter creates a point cloud representing a surface based on the "
+        "first component of pixel values.",
+        VTK_IMAGE_DATA, VTK_POLY_DATA));
+
     // Simple filters
     filterList.push_back(VtkFilterInfo(
                                  "VtkImageDataToLinePolyDataFilter",
@@ -131,6 +145,10 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type,
         return new VtkCompositeContourFilter(inputAlgorithm);
     if (type.compare(QString("VtkCompositeGeoObjectFilter")) == 0)
         return new VtkCompositeGeoObjectFilter(inputAlgorithm);
+    if (type.compare(QString("VtkCompositeImageToPointCloudFilter")) == 0)
+        return new VtkCompositeImageToPointCloudFilter(inputAlgorithm);
+    if (type.compare(QString("VtkCompositeImageToSurfacePointsFilter")) == 0)
+        return new VtkCompositeImageToSurfacePointsFilter(inputAlgorithm);
 
     return nullptr;
 }
