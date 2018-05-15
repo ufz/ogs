@@ -1,9 +1,8 @@
-{{- if and .headline .textline -}}
-  <div class="pl-4 py-6">
-    <div class="container">
-      <h1>{{ markdownify .headline }}</h1>
-      <div>{{ markdownify .textline }}</div>
-    </div>
+<div class="pl-4 py-6">
+  <div class="container">
+    <h1 class="uppercase">{{ markdownify .headline }}</h1>
+    <div>{{ markdownify .textline }}</div>
   </div>
-{{- end -}}
+</div>
+
 

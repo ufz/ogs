@@ -26,17 +26,22 @@ View the full documentation at https://tailwindcss.com.
 
 let defaultConfig = require('tailwindcss/defaultConfig')()
 
+let primaryColor = "#104EB2";
+let accentColor = "#f6993f";
+let textColor = "#333333";
+let textInverseColor = "#f8fafc"
+
 let mycolors = {
   'bg-primary': 'transparent',
   'bg-secondary': 'var(--color-bg-secondary)',
   'bg-default': 'var(--color-bg-default)',
-  'bg-inverse': '#3d4852',
+  'bg-inverse': primaryColor,
 
-  'text-primary': '#3d4852',
-  'text-secondary': 'var(--color-text-secondary)',
-  'text-default': 'var(--color-text-default)',
+  'text-primary': primaryColor,
+  'text-accent': accentColor,
+  'text-default': textColor,
   'text-default-soft': 'var(--color-text-default-soft)',
-  'text-inverse': '#f8fafc',
+  'text-inverse': textInverseColor,
   'text-inverse-soft': 'var(--color-text-inverse-soft)',
 }
 

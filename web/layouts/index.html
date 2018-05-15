@@ -1,8 +1,6 @@
 {{ define "main" }}
   {{- partial "components/hero" .Params.hero }}
   {{- range .Params.features -}}
-    {{- partial "components/feature" (dict "pg" $ "feature" .) -}}
+    {{- partial "components/feature" . -}}
   {{- end -}}
-  <!-- <h1>{{ .Title }}</h1> -->
-  <!-- {{.Content}} -->
 {{ end }}

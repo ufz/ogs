@@ -1,8 +1,68 @@
-+++
-title = "OpenGeoSys"
-author = "Lars Bilke"
-date = "2017-01-13T14:24:23+01:00"
-+++
+---
+title: OpenGeoSys
+authors: 
+  - Lars Bilke
+
+date: 2017-01-13T14:24:23+01:00
+
+hero:
+  headline: Open-source multi-physics
+  textline: OpenGeoSys (OGS) is a scientific [open source project](https://github.com/ufz/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. It has been successfully applied in the fields of contaminant hydrology, water resources and waste management, geotechnical applications, geothermal energy systems and energy storage.
+
+features:
+- headline: Comprehensive Pre-Processing Tools
+  textline: |
+    A wide range of helper tools exist to get your model up and running with OpenGeoSys.
+    
+    Convert your existing data sets into appropriate OGS data formats and structures.
+
+    Create meshes approximating geometrically the domain of interest. Analyze mesh quality, cleanup the mesh or adding layers to it.
+
+    Parametrize the model with material parameters, boundary conditions and source terms.
+  visual:
+    permalink: "/docs/tools/meshing/extract-surface/TopBottomSideSurface.png"
+    alt: Extracted surfaces
+  links:
+    - text: See Docs
+      url: "/docs/tools"
+  layout: left
+- headline: Transparent development workflows
+  textline: |
+    Write front-end code with Jekyll or Hugo and push to your Git repo. Forestry will pull in your commits and update the CMS.
+
+    Invite your team to create content in a rich UI. Their updates get committed back without merge conflicts.
+  subfeatures:
+    - headline: Setup a development environment
+      textline: |
+        [Learn how to](/docs/devguide) obtain the source code, how to install required other software (e.g. compilers, code libraries), how to configure the software and how to generate the application binary.
+
+        We even provide [ready-to-use Docker images](/docs/devguide/advanced/docker/#prebuilt-ogs-6-docker-images) to get you started in seconds.
+    - headline: Contribute code
+      textline: |
+        Implement your new feature and [let the CI system](/docs/devguide/development-workflows/continuous-integration) run sophisticated tests automatically for you incorporating multiple computing platforms, a magnitude of software configurations and a whole array of CPU intensive complex test simulation runs.
+    - headline: Get help from core developers
+      textline: |
+        Once your feature is ready the [code review process](/docs/devguide/development-workflows/code-reviews/) starts. A helpful [core developer](https://github.com/ufz/ogs/graphs/contributors) checks the proposed change for general acceptance and may give hints for improvement (of e.g. the computational performance or the code structure). Once the iterative feedback loop between you, code reviewer(s) and the automated test system satisfies all aspects the proposed change is merged into the main development line.
+  visual:
+    permalink: "/features/OGS-Software-Engineering-Small.png"
+    alt: Dev workflow
+  layout: right
+  
+- headline: Get started
+  textline: |
+  subfeatures:
+    - headline: Using OpenGeoSys
+      textline: |
+        Start using OpenGeoSys by [downloading](/downloads) a prebuilt package.
+    - headline: Developing OpenGeoSys
+      textline: |
+        Getting started developing OpenGeoSys at the [Developer Guide](/docs/devguide).
+    - headline: Become part of the Community
+      textline: |
+        Get in touch with the OpenGeoSys Community via the [Mailing List](https://groups.google.com/forum/#!forum/ogs-users), [GitHub](https://github.com/ufz/ogs) or by [email](mailto:info@opengeosys.org).
+  layout: vertical
+  class: inverse
+---
 
 OpenGeoSys (OGS) is a scientific [open source project](https://github.com/ufz/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. OGS is implemented in C++, it is object-oriented with an focus on the numerical solution of coupled multi-field problems (multi-physics). Parallel versions of OGS are available relying on both MPI and OpenMP concepts. Application areas of OGS are currently $CO_2$ sequestration, geothermal energy, water resources management, hydrology and waste deposition. OGS is comprised of the THMC-simulator (simply referred to as *OGS*) and a visualization tool (*Data Explorer*).
 
