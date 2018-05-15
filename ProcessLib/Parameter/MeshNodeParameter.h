@@ -11,6 +11,8 @@
 
 #include "Parameter.h"
 
+#include "BaseLib/Error.h"
+
 namespace MeshLib
 {
 template <typename T>
@@ -41,7 +43,12 @@ struct MeshNodeParameter final : public Parameter<T> {
                                      SpatialPosition const& pos) const override
     {
         auto const n = pos.getNodeID();
-        assert(n);
+        if (!n)
+        {
+            OGS_FATAL(
+                "Trying to access a MeshNodeParameter but the node id is not "
+                "specified.");
+        }
         auto const num_comp = _property.getNumberOfComponents();
         for (int c = 0; c < num_comp; ++c)
         {
