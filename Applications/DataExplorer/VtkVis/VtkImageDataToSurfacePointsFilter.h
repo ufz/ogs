@@ -46,7 +46,7 @@ protected:
                     vtkInformationVector* outputVector) override;
 
 private:
-    /// Returns a random number in [min, max]
+    /// Creates the point objects based on the parameters set by the user
     void createPointSurface(vtkSmartPointer<vtkPoints>& points,
                             vtkSmartPointer<vtkCellArray>& cells,
                             std::size_t pnt_idx,

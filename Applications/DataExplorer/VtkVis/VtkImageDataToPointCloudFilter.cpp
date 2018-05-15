@@ -155,7 +155,6 @@ void VtkImageDataToPointCloudFilter::createPoints(
     }
 }
 
-/// Creates the point objects based on the parameters set by the user
 double VtkImageDataToPointCloudFilter::getRandomNumber(double const& min, double const& max) const
 {
     return ((double)std::rand() / RAND_MAX) * (max - min) + min;
