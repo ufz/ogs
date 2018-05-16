@@ -195,13 +195,13 @@ public:
         assert(!indices.empty());
         auto local_x = current_solution.get(indices);
 
-        std::vector<double> local_T(
+        std::vector<double> local_p(
             std::make_move_iterator(local_x.begin() + local_x.size() / 2),
             std::make_move_iterator(local_x.end()));
-        // only p is kept in local_x
+        // only T is kept in local_x
         local_x.erase(local_x.begin() + local_x.size() / 2, local_x.end());
 
-        return this->getIntPtDarcyVelocityLocal(t, local_x, local_T, cache);
+        return this->getIntPtDarcyVelocityLocal(t, local_p, local_x, cache);
     }
 };
 
