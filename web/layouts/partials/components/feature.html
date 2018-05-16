@@ -1,44 +1,43 @@
-<div class="py-8 {{ .direction | default " left "}} {{ .class }}">
+<div class="py-8 {{ .feature.direction | default " left "}} {{ .feature.class }}">
   <div class="container">
 
-    {{- if or (eq .layout "left") (eq .layout "right") -}}
-    <div class="flex flex-wrap items-center -mx-4{{ if eq .layout "right" }} flex-row-reverse{{ end }}">
+    {{ if or (eq .feature.layout "left") (eq .feature.layout "right") }}
+    <div class="flex flex-wrap items-center -mx-4{{ if eq .feature.layout "right" }} flex-row-reverse{{ end }}">
       <div class="w-full md:w-1/2 md:px-4">
-        <h2 class="uppercase">{{ markdownify .headline }}</h2>
+        <h2 class="uppercase">{{ markdownify .feature.headline }}</h2>
         <div>
-          {{ markdownify .textline }}
+          {{ markdownify .feature.textline }}
         </div>
         <div class="flex my-4">
-        {{- range .links -}}
-        <!-- <div class="w-1/2"> -->
-          <a class="button mr-2 btn-{{ .class }}" href="{{ .url }}">{{ .text }}</a>
-        <!-- </div> -->
-        {{- end -}}
+        {{ range .feature.links }}
+          <a class="button mr-2 btn-{{ .feature.class }}" href="{{ .feature.url }}">{{ .text }}</a>
+        {{ end }}
         </div>
       </div>
       <div class="w-full md:w-1/2 md:px-4">
-        <img src="{{ .visual.permalink }}">
+        <img src="{{ .feature.visual.permalink }}">
       </div>
-      {{- partial "components/subfeatures" .subfeatures }}
+      {{ partial "components/subfeatures" .feature.subfeatures }}
     </div>
-    {{- end -}}
-    {{- if eq .layout "vertical" -}}
+    {{ end }}
+    {{ if eq .feature.layout "vertical" }}
     <div class="flex flex-wrap text-center">
       <div class="w-full">
-        <h2 class="border-0 uppercase">{{ markdownify .headline }}</h2>
+        <h2 class="border-0 uppercase">{{ markdownify .feature.headline }}</h2>
         <div>
-          {{ markdownify .textline }}
+          {{ markdownify .feature.textline }}
         </div>
       </div>
       <div class="w-full">
-        {{- partial "components/subfeatures" .subfeatures }}
+        {{ partial "components/subfeatures" .feature.subfeatures }}
       </div>
       <div class="w-full">
-        <img src="{{ .visual.permalink }}">
+        <img src="{{ .feature.visual.permalink }}">
       </div>
     </div>
-    {{- end -}}
-
+    {{ end }}
+    {{ if .feature.gallery }}
+      {{ partial "components/gallery" (dict "gallery" .feature.gallery "page" .page) }}
+    {{ end }}
   </div>
-</div>
 </div>

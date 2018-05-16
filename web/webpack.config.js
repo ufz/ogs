@@ -20,6 +20,26 @@ module.exports = {
             'postcss-loader'
           ]
         })
+      },
+      {
+        test: /\.(gif|jpe?g|png|svg|tiff)(\?.*)?$/,
+        use: [
+          {
+            loader: 'sharp-loader',
+            query: {
+              context: path.join(__dirname, 'content'),
+              name: '[path][name].[ext].[preset]',
+              cacheDirectory: true,
+              presets: {
+                thumbnail: {
+                  width: 320,
+                  height: 200,
+                  quality: 70,
+                }
+              }
+            },
+          }
+        ]
       }
     ]
   },
@@ -27,7 +47,8 @@ module.exports = {
     new ExtractTextPlugin('styles.css'),
     new webpack.ProvidePlugin({
       $: "jquery",
-      jQuery: "jquery"
+      jQuery: "jquery",
+      'window.jQuery': 'jquery'
     })
   ],
   devtool: 'source-map'

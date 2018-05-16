@@ -1,0 +1,12 @@
+{{ .page.Scratch.Add "numGalleries" 1}}
+{{ $i := .page.Scratch.Get "numGalleries" }}
+<div class="flex flex-wrap -mx-4">
+  {{ $length := len .gallery }}
+  {{ range .gallery }}
+  <div class="w-1/{{ $length }} px-4">
+    <a href="{{ .permalink }}" data-fancybox="gallery-{{ $i }}" data-caption="{{ .caption | default ""}}">
+      <img class="rounded shadow-lg" src="{{ .permalink }}.thumbnail" alt="{{ .caption | default ""}}" />
+    </a>
+  </div>
+  {{ end }}
+</div>

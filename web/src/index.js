@@ -1,3 +1,5 @@
 import styles from './styles.css'
 import './js/osselector.js'
 import './js/sitesearch.js'
+import './js/fancybox.js'
+import './js/sharp.js'
