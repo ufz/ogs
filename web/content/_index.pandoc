@@ -10,6 +10,22 @@ hero:
   textline: OpenGeoSys (OGS) is a scientific [open source project](https://github.com/ufz/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. It has been successfully applied in the fields of contaminant hydrology, water resources and waste management, geotechnical applications, geothermal energy systems and energy storage.
 
 features:
+- headline: High performance computing
+  textline: |
+    High performance computing (HPC) has became a necessity in the modelling of environmental and geotechnical problems for better characterization of the complexity of geo-systems as well as predicting their evolution in time. Parallel computing is the most efficient method in the high performance computing. In OGS, the parallalization of the finite element (FE) computation is based on the domain decomposition method (DDC).
+
+    Decomposed global matricies and vectors are handled by PETSc and the system of linear equations are solved by the performant PETSc solver. PETSc builds upon the Message Passing Interface (MPI) suitable for a wide variety of parallel computing architectures.
+
+    Parallelization is implemented for single processes as well problems with coupled processes which are using the same order of element for each process.
+  visual:
+    permalink: "/features/HPC-DDC.png"
+    alt: Domain decomposition for parallel processing
+    rounded: true
+  links:
+    - text: Learn more
+      url: "/features/hpc"
+  layout: left
+
 - headline: Comprehensive Pre-Processing Tools
   textline: |
     A wide range of helper tools exist to get your model up and running with OpenGeoSys.

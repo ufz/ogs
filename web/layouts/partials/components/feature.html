@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="w-full md:w-1/2 md:px-4">
-        <img src="{{ .feature.visual.permalink }}">
+        <img class="{{ if .feature.visual.rounded }}rounded shadow-lg{{ end }}" src="{{ .feature.visual.permalink }}">
       </div>
       {{ partial "components/subfeatures" .feature.subfeatures }}
     </div>
