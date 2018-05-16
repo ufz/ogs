@@ -1,7 +1,7 @@
 <div class="py-8 {{ .feature.direction | default " left "}} {{ .feature.class }}">
   <div class="container">
 
-    {{ if or (eq .feature.layout "left") (eq .feature.layout "right") }}
+    {{ if or ( not .feature.layout ) ( or (eq .feature.layout "left") (eq .feature.layout "right") ) }}
     <div class="flex flex-wrap items-center -mx-4{{ if eq .feature.layout "right" }} flex-row-reverse{{ end }}">
       <div class="w-full md:w-1/2 md:px-4">
         <h2 class="uppercase">{{ markdownify .feature.headline }}</h2>
