@@ -189,6 +189,32 @@ a.btn-inverse:hover {
   @apply .mb-2;
 }
 
+/* ----------------------------- Slick Carousel ----------------------------- */
+/* Import here to override values */
+@import '../node_modules/slick-carousel/slick/slick-theme.css';
+.slick-prev:before,
+.slick-next:before {
+  font-size: 24px;
+  color: config('mycolors.text-primary');
+}
+
+.slick-dots li button:before,
+.slick-dots li.slick-active button:before {
+  font-size: 8px;
+  color: config('mycolors.text-primary');
+}
+
+.inverse .slick-prev:before,
+.inverse .slick-next:before {
+  color: config('mycolors.text-inverse');
+}
+
+/* Vertically center images */
+.slick-initialized .slick-track {
+  display: flex;
+  align-items: center;
+}
+
 /* -------------------------------- Algolia---------------------------------- */
 .algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
   /*width: 100%;*/
@@ -216,4 +242,4 @@ a.btn-inverse:hover {
 
 @tailwind utilities;
 
-@import 'css/pandoc-highlighting.css'
+@import 'css/pandoc-highlighting.css';

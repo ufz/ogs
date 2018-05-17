@@ -4,7 +4,7 @@
     {{ if or ( not .feature.layout ) ( or (eq .feature.layout "left") (eq .feature.layout "right") ) }}
     <div class="flex flex-wrap items-center -mx-4{{ if eq .feature.layout "right" }} flex-row-reverse{{ end }}">
       <div class="w-full md:w-1/2 md:px-4">
-        <h2 class="uppercase">{{ markdownify .feature.headline }}</h2>
+        <h2 class="uppercase">{{ if .feature.anchor }}<a id="{{ .feature.anchor }}"></a>{{ end}}{{ markdownify .feature.headline }}</h2>
         <div>
           {{ markdownify .feature.textline }}
         </div>
@@ -15,7 +15,14 @@
         </div>
       </div>
       <div class="w-full md:w-1/2 md:px-4">
-        <img class="{{ if .feature.visual.rounded }}rounded shadow-lg{{ end }}" src="{{ .feature.visual.permalink }}">
+        {{ if .feature.visual }}
+          <a data-fancybox data-caption="{{ .feature.visual.alt | default ""}}" href="{{ .feature.visual.permalink }}">
+            <img class="{{ if .feature.visual.rounded }}rounded shadow-lg{{ end }}" src="{{ .feature.visual.permalink }}" alt="{{ .feature.visual.alt }}">
+          </a>
+        {{ end }}
+        {{ if .feature.carousel }}
+          {{ partial "components/carousel" (dict "carousel" .feature.carousel "page" .page) }}
+        {{ end }}
       </div>
       {{ partial "components/subfeatures" .feature.subfeatures }}
     </div>
@@ -35,6 +42,9 @@
         <img src="{{ .feature.visual.permalink }}">
       </div>
     </div>
+    {{ if .feature.carousel }}
+      {{ partial "components/carousel" (dict "carousel" .feature.carousel "page" .page) }}
+    {{ end }}
     {{ end }}
     {{ if .feature.gallery }}
       {{ partial "components/gallery" (dict "gallery" .feature.gallery "page" .page) }}

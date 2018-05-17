@@ -1,6 +1,8 @@
 var webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const path = require('path')
+const path = require('path');
+
+const sharp = require('sharp');
 
 module.exports = {
   mode: 'development',
@@ -22,7 +24,7 @@ module.exports = {
         })
       },
       {
-        test: /\.(gif|jpe?g|png|svg|tiff)(\?.*)?$/,
+        test: /\.(gif|jpe?g|png|tiff)(\?.*)?$/,
         use: [
           {
             loader: 'sharp-loader',
@@ -38,6 +40,15 @@ module.exports = {
                 }
               }
             },
+          }
+        ]
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {}
           }
         ]
       }

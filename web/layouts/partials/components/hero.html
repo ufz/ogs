@@ -2,6 +2,16 @@
   <div class="container">
     <h1 class="uppercase">{{ markdownify .headline }}</h1>
     <div>{{ markdownify .textline }}</div>
+
+    <div class="text-center py-4 lg:px-4">
+      <div class="p-2 bg-indigo-darker items-center text-indigo-lightest leading-none lg:rounded-full flex lg:inline-flex" role="alert">
+        <span class="font-semibold mr-2 text-left flex-auto">Quicklinks</span>
+        {{ range .quicklinks}}
+          <span class="inverse flex rounded-full bg-indigo uppercase px-2 py-1 text-xs font-bold mr-3"><a href="#{{ .anchor }}">{{ .name }}</a></span>
+        {{ end }}
+      </div>
+    </div>
+
   </div>
 </div>
 

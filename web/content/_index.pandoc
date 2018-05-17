@@ -8,8 +8,45 @@ date: 2017-01-13T14:24:23+01:00
 hero:
   headline: Open-source multi-physics
   textline: OpenGeoSys (OGS) is a scientific [open source project](https://github.com/ufz/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. It has been successfully applied in the fields of contaminant hydrology, water resources and waste management, geotechnical applications, geothermal energy systems and energy storage.
+  quicklinks:
+    - name: HPC
+      anchor: hpc
+    - name: Vis
+      anchor: vis
+    - name: Tools
+      anchor: tools
 
 features:
+- headline: Visualize results
+  textline: |
+    By leveraging VTK data formats visualizing simulation result data sets becomes an easy task. The de-facto standard software for scientific visualtions [ParaView](https://www.paraview.org) can be used to explore and analyze complex data in a visual way.
+
+    [Virtual reality enabled visualization](https://www.ufz.de/vislab) brings your data onto the large screen for intuitive exploration and assessment.
+  layout: left
+  carousel:
+    slides:
+      - permalink: /features/vis/layeredview2.png
+        caption: Bar
+      - permalink: /features/vis/vislab.png
+        caption: Interactive exploration of river flow phenomenae at the TESSIN VISLab of the Helmholtz Centre for Environmental Research – UFZ
+      - permalink: /features/vis/contours2-bw.png
+    play: true
+  anchor: vis
+- headline: Data integration
+  textline: |
+    Integrate and visualize data sets for OpenGeoSys by using the OpenGeoSys Data Explorer. It provides functionality to visually assess the data and see possible artefacts, inconsistencies between data sets or missing information.
+  layout: right
+  carousel:
+    slides:
+      - permalink: /features/vis/chaohu_paper_mesh.png
+        caption: Foo
+      - permalink: /features/vis/ogsgui.png
+        caption: Bar
+      - permalink: /features/vis/DEMSelke3D.png
+    play: false
+  links:
+    - text: "Learn More: Data Explorer"
+      url: "/features/data-explorer"
 - headline: High performance computing
   textline: |
     High performance computing (HPC) has became a necessity in the modelling of environmental and geotechnical problems for better characterization of the complexity of geo-systems as well as predicting their evolution in time. Parallel computing is the most efficient method in the high performance computing. In OGS, the parallalization of the finite element (FE) computation is based on the domain decomposition method (DDC).
@@ -24,7 +61,7 @@ features:
   links:
     - text: Learn more
       url: "/features/hpc"
-  layout: left
+  anchor: hpc
 
 - headline: Comprehensive Pre-Processing Tools
   textline: |
@@ -42,6 +79,7 @@ features:
     - text: See Docs
       url: "/docs/tools"
   layout: left
+  anchor: tools
 - headline: Transparent development workflows
   textline: |
     Write front-end code with Jekyll or Hugo and push to your Git repo. Forestry will pull in your commits and update the CMS.
@@ -63,6 +101,7 @@ features:
     permalink: "/features/OGS-Software-Engineering-Small.png"
     alt: Dev workflow
   layout: right
+#   class: inverse
   
 - headline: Get started
   textline: |
