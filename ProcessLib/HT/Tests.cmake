@@ -24,6 +24,7 @@ AddTest(
     DIFF_DATA
     square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu T_ref T 1e-16  1.e-16
     square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu p_ref p  1e-16  1.e-16
+    square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu darcy_velocity_ref darcy_velocity  1e-16  1.e-16
     VIS ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000.vtu
 )
 
@@ -36,9 +37,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_135_t_50000000000.000000.vtu T_ref T 1e-3  1.e-3
-    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_135_t_50000000000.000000.vtu p_ref p  1e-3  1.e-3
-    VIS ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_135_t_50000000000.000000.vtu
+    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000.000000.vtu T_ref T 1e-3  1.e-3
+    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000.000000.vtu p_ref p  1e-3  1.e-3
+    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000.000000.vtu darcy_velocity_ref darcy_velocity  1e-3  1.e-3
+    VIS ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000.000000.vtu
 )
 
 AddTest(
@@ -98,9 +100,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_135_t_50000000000_000000_0.vtu T_ref T 1e-3  1.e-3
-    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_135_t_50000000000_000000_0.vtu p_ref p  1e-3  1.e-3
-    VIS ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_135_t_50000000000_000000_0.vtu
+    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000_000000_0.vtu T_ref T 1e-3  1.e-3
+    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000_000000_0.vtu p_ref p  1e-3  1.e-3
+    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000_000000_0.vtu darcy_velocity_ref darcy_velocity  1e-3  1.e-3
+    VIS ConstViscosityThermalConvectionStaggeredAdaptive_dt_pcs_1_ts_141_t_50000000000_000000_0.vtu
 )
 
 AddTest(
