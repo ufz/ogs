@@ -28,19 +28,12 @@ Results show phase-field evolution in the thermo-mechanical case can follow the 
 {{< img src="../therm_exp_bc.png" >}}
 {{< img src="../t_pf.png" >}}
 
-The analytical solution is:
-
-$$
-\begin{equation}
-d = \frac{g_\textrm{c}}{g_\textrm{c} + 4\epsilon \psi^+_\textrm{e}}
-\end{equation}
-$$
-
+The analytical solution is: $$d = \dfrac{G\textrm{c}}{G\textrm{c}+4\epsilon \psi_\textrm{e}^+}$$
 where due to negative (elastic) volume strains only the deviatoric energy drives the phase field. 
 
 $$
 \begin{equation}
-\psi^+_\textrm{e} = \mu\, \boldsymbol{\epsilon}^\textrm{D} : \boldsymbol{\epsilon}^\textrm{D} = \frac{2\mu}{3} \left( \frac{u(1+\nu)}{L} \right)^2
+\psi_\textrm{e}^+ = \mu \mathbf{\epsilon}^\textrm{D} : \mathbf{\epsilon}^\textrm{D} = \frac{2\mu}{3} \left(\frac{u(1+\nu)}{L} \right)^2
 \end{equation}
 $$
 
@@ -48,7 +41,7 @@ for mechanical case, and
 
 $$
 \begin{equation}
-\psi^+_\textrm{e} = \mu\, \boldsymbol{\epsilon}_\textrm{el}^\textrm{D} : \boldsymbol{\epsilon}_\textrm{el}^\textrm{D} = \frac{2\mu}{3} \left(\alpha \Delta T (1+\nu) \right)^2
+\psi_\textrm{e}^+ = \mu \mathbf{\epsilon}^\textrm{D} : \mathbf{\epsilon}^\textrm{D} = \frac{2\mu}{3} [\alpha \Delta T(1+\nu)]^2
 \end{equation}
 $$
 
