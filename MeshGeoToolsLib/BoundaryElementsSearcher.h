@@ -56,6 +56,13 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElements(GeoLib::GeoObject const& geoObj);
 
+    /// For each boundary element found the corresponding bulk element id and
+    /// bulk element face id are returned.
+    ///
+    /// @param geometry The boundary elements, bulk element ids and  bulk
+    /// element face ids will be extracted for the given geometry (point,
+    /// polyline or surface).
+    /// @return @copydoc BoundaryElementsAtPoint::_bulk_ids
     std::vector<std::pair<std::size_t, unsigned>> const& getBulkIDs(
         GeoLib::GeoObject const& geometry);
 
@@ -66,6 +73,9 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsAtPoint(
         GeoLib::Point const& point);
+    /// @copybrief BoundaryElementsSearcher::getBulkIDs()
+    /// @param point The given point the boundary element will be searched for.
+    /// @return @copydoc BoundaryElementsAtPoint::_bulk_ids
     std::vector<std::pair<std::size_t, unsigned>> const& getBulkIDsAtPoint(
         GeoLib::Point const& point);
 
@@ -76,6 +86,9 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsAlongPolyline(
         GeoLib::Polyline const& ply);
+    /// @copybrief BoundaryElementsSearcher::getBulkIDs()
+    /// @param ply The given polyline the boundary element will be searched for.
+    /// @return @copydoc BoundaryElementsAlongPolyline::_bulk_ids
     std::vector<std::pair<std::size_t, unsigned>> const&
     getBulkIDsAlongPolyline(GeoLib::Polyline const& ply);
 
@@ -86,6 +99,10 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElementsOnSurface(
         GeoLib::Surface const& sfc);
+    /// @copybrief BoundaryElementsSearcher::getBulkIDs()
+    /// @param sfc The given surface the boundary element will be searched
+    /// for.
+    /// @return @copydoc BoundaryElementsOnSurface::_bulk_ids
     std::vector<std::pair<std::size_t, unsigned>> const&
     getBulkIDsOnSurface(GeoLib::Surface const& sfc);
 
