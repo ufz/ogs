@@ -114,3 +114,33 @@ AddTest(
     th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18_000000_0.vtu p_ref p 1e-10  1.e-10
     VIS th_decovalex_pcs_1_ts_78_t_1000_000000_0.vtu
 )
+
+AddTest(
+    NAME HT_SimpleSynthetics_IsothermalFluidFlow
+    PATH Parabolic/HT/SimpleSynthetics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS IsothermalFluidFlow.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_pcs_0_ts_1_t_1.000000.vtu T T 1e-10 1e-16
+    IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_pcs_0_ts_1_t_1.000000.vtu p p 1e-10 1e-16
+    IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_pcs_0_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    VIS IsothermalFluidFlow_pcs_0_ts_1_t_1.000000.vtu
+)
+
+AddTest(
+    NAME HT_SimpleSynthetics_IsothermalFluidFlowWithGravity
+    PATH Parabolic/HT/SimpleSynthetics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS IsothermalFluidFlowWithGravity.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_pcs_0_ts_1_t_1.000000.vtu T T 1e-10 1e-16
+    IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_pcs_0_ts_1_t_1.000000.vtu p p 1e-10 1e-16
+    IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_pcs_0_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    VIS IsothermalFluidFlow_pcs_0_ts_1_t_1.000000.vtu
+)
