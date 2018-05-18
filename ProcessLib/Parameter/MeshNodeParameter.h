@@ -12,6 +12,8 @@
 #include "Parameter.h"
 
 #include "BaseLib/Error.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {
@@ -55,6 +57,27 @@ struct MeshNodeParameter final : public Parameter<T> {
             _cache[c] = _property.getComponent(*n, c);
         }
         return _cache;
+    }
+
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> getNodalValuesOnElement(
+        MeshLib::Element const& element, double const t) const override
+    {
+        auto const n_nodes = element.getNumberOfNodes();
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(
+            n_nodes, getNumberOfComponents());
+
+        SpatialPosition x_position;
+        auto const nodes = element.getNodes();
+        for (unsigned i = 0; i < n_nodes; ++i)
+        {
+            x_position.setNodeID(nodes[i]->getID());
+            auto const& values = this->operator()(t, x_position);
+            result.row(i) =
+                Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> const>(
+                    values.data(), values.size());
+        }
+
+        return result;
     }
 
 private:
