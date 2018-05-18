@@ -19,10 +19,12 @@
 #include "Tests/TestTools.h"
 
 #include "MeshLib/Mesh.h"
-#include "MeshLib/PropertyVector.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/PropertyVector.h"
 
 #include "ProcessLib/Parameter/GroupBasedParameter.h"
+#include "ProcessLib/Parameter/CurveScaledParameter.h"
 
 using namespace ProcessLib;
 
@@ -107,3 +109,150 @@ TEST_F(ProcessLibParameter, GroupBasedParameterNode)
     ASSERT_ANY_THROW((*parameter)(t, x));
 }
 
+bool testNodalValuesOfElement(
+    std::vector<MeshLib::Element*> const& elements,
+    std::function<double(MeshLib::Element* const e,
+                         std::size_t const local_node_id)>
+        get_expected_value,
+    Parameter<double> const& parameter,
+    double const t)
+{
+    return std::all_of(
+        begin(elements), end(elements), [&](MeshLib::Element* const e) {
+            // scalar values, 2 nodes.
+            Eigen::Matrix<double, 2, 1> const nodal_values =
+                parameter.getNodalValuesOnElement(*e, t);
+            if (nodal_values.cols() != 1)
+            {
+                ERR("Expected scalar nodal values.");
+                return false;
+            }
+            if (nodal_values.rows() != static_cast<int>(e->getNumberOfNodes()))
+            {
+                ERR("Expected equal number of element nodes and the nodal "
+                    "values.");
+                return false;
+            }
+            for (std::size_t i = 0; i < e->getNumberOfNodes(); ++i)
+            {
+                double const expected_value = get_expected_value(e, i);
+                if (expected_value != nodal_values(i, 0))
+                {
+                    ERR("Mismatch for element %d, node %d; Expected %g, got "
+                        "%g.",
+                        e->getID(), i, expected_value, nodal_values(i, 0));
+                    return false;
+                }
+            }
+            return true;
+        });
+}
+
+// For all elements all nodes have a constant value.
+TEST_F(ProcessLibParameter, GetNodalValuesOnElement_constant)
+{
+
+    auto const parameter = constructParameterFromString(
+        "<name>parameter</name>"
+        "<type>Constant</type>"
+        "<value>42.23</value>",
+        {mesh.get()});
+
+    double const t = 0;
+    auto expected_value = [](MeshLib::Element* const /*e*/,
+                              std::size_t const /*local_node_id*/) {
+        return 42.23;
+    };
+
+    ASSERT_TRUE(testNodalValuesOfElement(mesh->getElements(), expected_value,
+                                         *parameter, t));
+}
+
+TEST_F(ProcessLibParameter, GetNodalValuesOnElement_node)
+{
+    std::vector<double> node_ids({0, 1, 2, 3, 4});
+    MeshLib::addPropertyToMesh(*mesh, "NodeIDs", MeshLib::MeshItemType::Node, 1,
+                               node_ids);
+
+    auto const parameter = constructParameterFromString(
+        "<name>parameter</name>"
+        "<type>MeshNode</type>"
+        "<field_name>NodeIDs</field_name>",
+        {mesh.get()});
+
+    double const t = 0;
+
+    // For all elements all nodes have the value of the node id.
+    auto expected_value = [](MeshLib::Element* const e,
+                              std::size_t const local_node_id) {
+        return static_cast<double>(e->getNode(local_node_id)->getID());
+    };
+
+    ASSERT_TRUE(testNodalValuesOfElement(mesh->getElements(), expected_value,
+                                         *parameter, t));
+}
+
+TEST_F(ProcessLibParameter, GetNodalValuesOnElement_element)
+{
+    std::vector<double> element_ids({0, 1, 2, 3});
+    MeshLib::addPropertyToMesh(*mesh, "ElementIDs", MeshLib::MeshItemType::Cell,
+                               1, element_ids);
+
+    auto const parameter = constructParameterFromString(
+        "<name>parameter</name>"
+        "<type>MeshElement</type>"
+        "<field_name>ElementIDs</field_name>",
+        {mesh.get()});
+
+    double const t = 0;
+
+    // For all elements all nodes have the value of the element id.
+    auto expected_value = [](MeshLib::Element* const e,
+                             std::size_t const /*local_node_id*/) {
+        return static_cast<double>(e->getID());
+    };
+
+    ASSERT_TRUE(testNodalValuesOfElement(mesh->getElements(), expected_value,
+                                         *parameter, t));
+}
+
+TEST_F(ProcessLibParameter, GetNodalValuesOnElement_curveScaledNode)
+{
+    std::vector<double> node_ids({0, 1, 2, 3, 4});
+    MeshLib::addPropertyToMesh(*mesh, "NodeIDs", MeshLib::MeshItemType::Node, 1,
+                               node_ids);
+
+    std::vector<std::unique_ptr<ParameterBase>> parameters;
+    parameters.emplace_back(
+        constructParameterFromString("<name>NodeIDs</name>"
+                                     "<type>MeshNode</type>"
+                                     "<field_name>NodeIDs</field_name>",
+                                     {mesh.get()}));
+
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
+        curves;
+    curves["linear_curve"] =
+        std::make_unique<MathLib::PiecewiseLinearInterpolation>(
+            std::vector<double>{0, 1}, std::vector<double>{0, 1}, true);
+
+    auto const parameter = constructParameterFromString(
+        "<name>parameter</name>"
+        "<type>CurveScaled</type>"
+        "<curve>linear_curve</curve>"
+        "<parameter>NodeIDs</parameter>",
+        {mesh.get()}, curves);
+
+    parameter->initialize(parameters);
+
+    double const t = 0.5;
+
+    // For all elements all nodes have the value of the node id times the time.
+    auto expected_value = [&t](MeshLib::Element* const e,
+                              std::size_t const local_node_id) {
+        return static_cast<double>(e->getNode(local_node_id)->getID()) * t;
+    };
+
+    ASSERT_TRUE(testNodalValuesOfElement(mesh->getElements(), expected_value,
+                                         *parameter, t));
+}
