@@ -9,14 +9,12 @@
 
 #pragma once
 
-#include <array>
-
 #include "MathLib/TemplateWeightedPoint.h"
 
 #include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Elements/Elements.h"
 
-namespace ProcessLib
+namespace MeshLib
 {
 /// Maps the given lower dimensional boundary point \c wp of a line, i.e. the 1d
 /// gauss point given in local coordinates of a line, to higher dimensional

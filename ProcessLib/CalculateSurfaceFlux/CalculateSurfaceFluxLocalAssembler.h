@@ -17,8 +17,7 @@
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
-#include "MapBulkElementPoint.h"
-
+#include "MeshLib/Elements/MapBulkElementPoint.h"
 #include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Elements/Elements.h"
 
@@ -125,7 +124,7 @@ public:
         {
             auto const& wp = _integration_method.getWeightedPoint(ip);
 
-            auto const bulk_element_point = getBulkElementPoint(
+            auto const bulk_element_point = MeshLib::getBulkElementPoint(
                 bulk_process.getMesh(), _bulk_element_id, _bulk_face_id, wp);
             auto const bulk_flux =
                 bulk_process.getFlux(_bulk_element_id, bulk_element_point, x);
