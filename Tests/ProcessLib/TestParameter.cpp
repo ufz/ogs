@@ -24,32 +24,47 @@
 
 #include "ProcessLib/Parameter/GroupBasedParameter.h"
 
-TEST(ProcessLib_Parameter, GroupBasedParameterElement)
-{
-    const char xml[] =
-            "<parameter>"
-            "<type>Group</type>"
-            "<group_id_property>MaterialIDs</group_id_property>"
-            "<index_values><index>0</index><value>0</value></index_values>"
-            "<index_values><index>1</index><value>100</value></index_values>"
-            "<index_values><index>3</index><value>300</value></index_values>"
-            "</parameter>";
-    auto const ptree = readXml(xml);
+using namespace ProcessLib;
 
-    std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateLineMesh(4u, 1.0));
+std::unique_ptr<Parameter<double>> constructParameterFromString(
+    std::string const& xml, std::vector<MeshLib::Mesh*> const meshes,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves = {})
+{
+    auto const xml_ptree = readXml(xml.c_str());
+    BaseLib::ConfigTree config_tree(xml_ptree, "", BaseLib::ConfigTree::onerror,
+                                    BaseLib::ConfigTree::onwarning);
+    auto parameter_base = createParameter(config_tree, meshes, curves);
+    return std::unique_ptr<Parameter<double>>(
+        static_cast<Parameter<double>*>(parameter_base.release()));
+}
+
+struct ProcessLibParameter : public ::testing::Test
+{
+    void SetUp() override
+    {
+        // A mesh with four elements, five points.
+        mesh.reset(MeshLib::MeshGenerator::generateLineMesh(4u, 1.0));
+    }
+    std::unique_ptr<MeshLib::Mesh> mesh;
+};
+
+TEST_F(ProcessLibParameter, GroupBasedParameterElement)
+{
     std::vector<int> mat_ids({0, 1, 2, 3});
     MeshLib::addPropertyToMesh(*mesh, "MaterialIDs",
                                MeshLib::MeshItemType::Cell, 1, mat_ids);
 
-    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
-                             BaseLib::ConfigTree::onwarning);
-    std::unique_ptr<ProcessLib::ParameterBase> parameter_base =
-        ProcessLib::createGroupBasedParameter(
-            "", conf.getConfigSubtree("parameter"), *mesh);
+    auto parameter = constructParameterFromString(
+        "<name>parameter</name>"
+        "<type>Group</type>"
+        "<group_id_property>MaterialIDs</group_id_property>"
+        "<index_values><index>0</index><value>0</value></index_values>"
+        "<index_values><index>1</index><value>100</value></index_values>"
+        "<index_values><index>3</index><value>300</value></index_values>",
+        {mesh.get()});
 
-    auto parameter =
-        dynamic_cast<ProcessLib::Parameter<double>*>(parameter_base.get());
     double t = 0;
     ProcessLib::SpatialPosition x;
     x.setElementID(0);
@@ -63,32 +78,21 @@ TEST(ProcessLib_Parameter, GroupBasedParameterElement)
 
 }
 
-TEST(ProcessLib_Parameter, GroupBasedParameterNode)
+TEST_F(ProcessLibParameter, GroupBasedParameterNode)
 {
-    const char xml[] =
-            "<parameter>"
-            "<type>Group</type>"
-            "<group_id_property>PointGroupIDs</group_id_property>"
-            "<index_values><index>0</index><value>0</value></index_values>"
-            "<index_values><index>1</index><value>100</value></index_values>"
-            "<index_values><index>3</index><value>300</value></index_values>"
-            "</parameter>";
-    auto const ptree = readXml(xml);
-
-    std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateLineMesh(4u, 1.0));
     std::vector<int> group_ids({0, 1, 2, 3, 4});
     MeshLib::addPropertyToMesh(*mesh, "PointGroupIDs",
                                MeshLib::MeshItemType::Node, 1, group_ids);
 
-    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
-                             BaseLib::ConfigTree::onwarning);
-    std::unique_ptr<ProcessLib::ParameterBase> parameter_base =
-        ProcessLib::createGroupBasedParameter(
-            "", conf.getConfigSubtree("parameter"), *mesh);
+    auto parameter = constructParameterFromString(
+        "<name>parameter</name>"
+        "<type>Group</type>"
+        "<group_id_property>PointGroupIDs</group_id_property>"
+        "<index_values><index>0</index><value>0</value></index_values>"
+        "<index_values><index>1</index><value>100</value></index_values>"
+        "<index_values><index>3</index><value>300</value></index_values>",
+        {mesh.get()});
 
-    auto parameter =
-        dynamic_cast<ProcessLib::Parameter<double>*>(parameter_base.get());
     double t = 0;
     ProcessLib::SpatialPosition x;
     x.setNodeID(0);
