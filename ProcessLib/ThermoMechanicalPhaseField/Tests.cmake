@@ -1,5 +1,5 @@
 AddTest(
-    NAME ThermoMechanicalPhaseField_3D_non-isothermal
+    NAME ThermoMechanicalPhaseField_3D_isothermal
     PATH ThermoMechanicalPhaseField
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e0.prj
