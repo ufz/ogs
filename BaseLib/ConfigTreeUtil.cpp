@@ -54,13 +54,16 @@ makeConfigTree(const std::string& filepath, const bool be_ruthless,
 
     // note: Trimming whitespace and ignoring comments is crucial in order
     //       for our configuration tree implementation to work!
-    try {
+    try
+    {
         read_xml(filepath, ptree,
                  boost::property_tree::xml_parser::no_comments |
-                 boost::property_tree::xml_parser::trim_whitespace);
-    } catch (boost::property_tree::xml_parser_error e) {
+                     boost::property_tree::xml_parser::trim_whitespace);
+    }
+    catch (boost::property_tree::xml_parser_error const& e)
+    {
         OGS_FATAL("Error while parsing XML file `%s' at line %lu: %s.",
-            e.filename().c_str(), e.line(), e.message().c_str());
+                  e.filename().c_str(), e.line(), e.message().c_str());
     }
 
     DBUG("Project configuration from file \'%s\' read.", filepath.c_str());
