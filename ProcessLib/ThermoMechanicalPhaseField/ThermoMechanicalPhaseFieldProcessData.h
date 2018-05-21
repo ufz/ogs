@@ -21,7 +21,7 @@ namespace Solids
 template <int DisplacementDim>
 struct MechanicsBase;
 }
-}
+}  // namespace MaterialLib
 namespace ProcessLib
 {
 template <typename T>
@@ -52,7 +52,8 @@ struct ThermoMechanicalPhaseFieldProcessData
           crack_length_scale(crack_length_scale_),
           kinetic_coefficient(kinetic_coefficient_),
           solid_density(solid_density_),
-          linear_thermal_expansion_coefficient(linear_thermal_expansion_coefficient_),
+          linear_thermal_expansion_coefficient(
+              linear_thermal_expansion_coefficient_),
           specific_heat_capacity(specific_heat_capacity_),
           thermal_conductivity(thermal_conductivity_),
           residual_thermal_conductivity(residual_thermal_conductivity_),
@@ -61,14 +62,16 @@ struct ThermoMechanicalPhaseFieldProcessData
     {
     }
 
-    ThermoMechanicalPhaseFieldProcessData(ThermoMechanicalPhaseFieldProcessData&& other)
+    ThermoMechanicalPhaseFieldProcessData(
+        ThermoMechanicalPhaseFieldProcessData&& other)
         : material{std::move(other.material)},
           residual_stiffness(other.residual_stiffness),
           crack_resistance(other.crack_resistance),
           crack_length_scale(other.crack_length_scale),
           kinetic_coefficient(other.kinetic_coefficient),
           solid_density(other.solid_density),
-          linear_thermal_expansion_coefficient(other.linear_thermal_expansion_coefficient),
+          linear_thermal_expansion_coefficient(
+              other.linear_thermal_expansion_coefficient),
           specific_heat_capacity(other.specific_heat_capacity),
           thermal_conductivity(other.thermal_conductivity),
           residual_thermal_conductivity(other.residual_thermal_conductivity),
@@ -80,7 +83,8 @@ struct ThermoMechanicalPhaseFieldProcessData
     }
 
     //! Copies are forbidden.
-    ThermoMechanicalPhaseFieldProcessData(ThermoMechanicalPhaseFieldProcessData const&) = delete;
+    ThermoMechanicalPhaseFieldProcessData(
+        ThermoMechanicalPhaseFieldProcessData const&) = delete;
 
     //! Assignments are not needed.
     void operator=(ThermoMechanicalPhaseFieldProcessData const&) = delete;

@@ -14,9 +14,8 @@ namespace ProcessLib
 {
 namespace ThermoMechanicalPhaseField
 {
-
 template class ThermoMechanicalPhaseFieldProcess<2>;
 template class ThermoMechanicalPhaseFieldProcess<3>;
 
-}   // namespace ThermoMechanicalPhaseField
-}   // namespace ProcessLib
+}  // namespace ThermoMechanicalPhaseField
+}  // namespace ProcessLib

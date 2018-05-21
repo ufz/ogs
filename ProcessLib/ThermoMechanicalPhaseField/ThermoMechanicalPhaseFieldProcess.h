@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "ProcessLib/Process.h"
 #include "LocalAssemblerInterface.h"
+#include "ProcessLib/Process.h"
 
 #include "ThermoMechanicalPhaseFieldProcessData.h"
 
@@ -34,16 +34,16 @@ struct ThermoMechanicalPhaseFieldLocalAssemblerInterface;
  *      - 2 \varepsilon g_\mathrm{c} \mathrm{div}(\mathrm{grad} d) = 0
  * \f]
  * \f[
- *     (\varrho c_\mathrm{p})_\mathrm{eff} \dfrac{\partial \vartheta}{\partial t}
- *      - \mathrm{div} \left(\boldsymbol{\kappa}_\mathrm{eff} \mathrm{grad}\,\vartheta \right) = 0
- * \f]
- * where
- *    \f{eqnarray*}{
+ *     (\varrho c_\mathrm{p})_\mathrm{eff} \dfrac{\partial \vartheta}{\partial
+ * t}
+ *      - \mathrm{div} \left(\boldsymbol{\kappa}_\mathrm{eff}
+ * \mathrm{grad}\,\vartheta \right) = 0 \f] where \f{eqnarray*}{
  *       &d:&                    \mbox{order parameter,}\\
  *       &\varrho:&              \mbox{density,}\\
  *       &g_\mathrm{c}:&         \mbox{fracture energy,}\\
  *       &\varepsilon:&          \mbox{length scale}\\
- *       &\c_\mathrm{p}:&        \mbox{specific heat capacity in constant pressure}\\
+ *       &\c_\mathrm{p}:&        \mbox{specific heat capacity in constant
+ * pressure}\\
  *       &\kappa_\mathrm{eff}:&  \mbox{effectiev thermal conductivity}\\
  *    \f}
  *
@@ -118,7 +118,8 @@ private:
 private:
     ThermoMechanicalPhaseFieldProcessData<DisplacementDim> _process_data;
 
-    std::vector<std::unique_ptr<ThermoMechanicalPhaseFieldLocalAssemblerInterface>>
+    std::vector<
+        std::unique_ptr<ThermoMechanicalPhaseFieldLocalAssemblerInterface>>
         _local_assemblers;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>

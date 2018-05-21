@@ -10,36 +10,39 @@
 #pragma once
 
 #include "ThermoMechanicalPhaseFieldFEM.h"
-#include "ThermoMechanicalPhaseFieldProcessData.h"
 #include "ThermoMechanicalPhaseFieldProcess.h"
+#include "ThermoMechanicalPhaseFieldProcessData.h"
 
 #include <cassert>
 
 #include "NumLib/DOF/ComputeSparsityPattern.h"
-#include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 
 namespace ProcessLib
 {
 namespace ThermoMechanicalPhaseField
 {
 template <int DisplacementDim>
-ThermoMechanicalPhaseFieldProcess<DisplacementDim>::ThermoMechanicalPhaseFieldProcess(
-    MeshLib::Mesh& mesh,
-    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    unsigned const integration_order,
-    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
-        process_variables,
-    ThermoMechanicalPhaseFieldProcessData<DisplacementDim>&& process_data,
-    SecondaryVariableCollection&& secondary_variables,
-    NumLib::NamedFunctionCaller&& named_function_caller,
-    int const mechanics_related_process_id,
-    int const phase_field_process_id,
-    int const heat_conduction_process_id)
+ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
+    ThermoMechanicalPhaseFieldProcess(
+        MeshLib::Mesh& mesh,
+        std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
+            jacobian_assembler,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+        unsigned const integration_order,
+        std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
+            process_variables,
+        ThermoMechanicalPhaseFieldProcessData<DisplacementDim>&& process_data,
+        SecondaryVariableCollection&& secondary_variables,
+        NumLib::NamedFunctionCaller&& named_function_caller,
+        int const mechanics_related_process_id,
+        int const phase_field_process_id,
+        int const heat_conduction_process_id)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller), false),
+              std::move(secondary_variables), std::move(named_function_caller),
+              false),
       _process_data(std::move(process_data)),
       _mechanics_related_process_id(mechanics_related_process_id),
       _phase_field_process_id(phase_field_process_id),
@@ -73,7 +76,8 @@ ThermoMechanicalPhaseFieldProcess<DisplacementDim>::getMatrixSpecifications(
 
 template <int DisplacementDim>
 NumLib::LocalToGlobalIndexMap const&
-ThermoMechanicalPhaseFieldProcess<DisplacementDim>::getDOFTable(const int process_id) const
+ThermoMechanicalPhaseFieldProcess<DisplacementDim>::getDOFTable(
+    const int process_id) const
 {
     if (process_id == _mechanics_related_process_id)
     {
@@ -118,34 +122,31 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::constructDofTable()
 
     assert(_local_to_global_index_map_single_component);
 
-        // For displacement equation.
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
-        std::generate_n(
-            std::back_inserter(all_mesh_subsets),
-            getProcessVariables(_mechanics_related_process_id)[0]
-                .get()
-                .getNumberOfComponents(),
-            [&]() {
-                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
-            });
+    // For displacement equation.
+    std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+    std::generate_n(
+        std::back_inserter(all_mesh_subsets),
+        getProcessVariables(_mechanics_related_process_id)[0]
+            .get()
+            .getNumberOfComponents(),
+        [&]() { return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}; });
 
-        std::vector<int> const vec_n_components{DisplacementDim};
-        _local_to_global_index_map =
-            std::make_unique<NumLib::LocalToGlobalIndexMap>(
-                std::move(all_mesh_subsets), vec_n_components,
-                NumLib::ComponentOrder::BY_LOCATION);
+    std::vector<int> const vec_n_components{DisplacementDim};
+    _local_to_global_index_map =
+        std::make_unique<NumLib::LocalToGlobalIndexMap>(
+            std::move(all_mesh_subsets), vec_n_components,
+            NumLib::ComponentOrder::BY_LOCATION);
 
-        // For phase field equation or the heat conduction.
-        _sparsity_pattern_with_single_component =
-            NumLib::computeSparsityPattern(
-                *_local_to_global_index_map_single_component, _mesh);
+    // For phase field equation or the heat conduction.
+    _sparsity_pattern_with_single_component = NumLib::computeSparsityPattern(
+        *_local_to_global_index_map_single_component, _mesh);
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::initializeConcreteProcess(
-    NumLib::LocalToGlobalIndexMap const& dof_table,
-    MeshLib::Mesh const& mesh,
-    unsigned const integration_order)
+void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
+    initializeConcreteProcess(NumLib::LocalToGlobalIndexMap const& dof_table,
+                              MeshLib::Mesh const& mesh,
+                              unsigned const integration_order)
 {
     ProcessLib::SmallDeformation::createLocalAssemblers<
         DisplacementDim, ThermoMechanicalPhaseFieldLocalAssembler>(
@@ -158,27 +159,29 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::initializeConcreteProce
         "sigma",
         makeExtrapolator(
             MathLib::KelvinVector::KelvinVectorType<
-                    DisplacementDim>::RowsAtCompileTime,
+                DisplacementDim>::RowsAtCompileTime,
             getExtrapolator(), _local_assemblers,
             &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtSigma));
 
     Base::_secondary_variables.addSecondaryVariable(
         "epsilon",
-        makeExtrapolator(
-            MathLib::KelvinVector::KelvinVectorType<
-                    DisplacementDim>::RowsAtCompileTime,
-            getExtrapolator(), _local_assemblers,
-            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtEpsilon));
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
+                         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::
+                             getIntPtEpsilon));
 
     Base::_secondary_variables.addSecondaryVariable(
         "heat_flux",
-        makeExtrapolator(
-            mesh.getDimension(), getExtrapolator(), _local_assemblers,
-            &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtHeatFlux));
+        makeExtrapolator(mesh.getDimension(), getExtrapolator(),
+                         _local_assemblers,
+                         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::
+                             getIntPtHeatFlux));
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::initializeBoundaryConditions()
+void ThermoMechanicalPhaseFieldProcess<
+    DisplacementDim>::initializeBoundaryConditions()
 {
     // Staggered scheme:
     // for the equations of temperature-deformation.
@@ -196,9 +199,11 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::initializeBoundaryCondi
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b)
+void ThermoMechanicalPhaseFieldProcess<
+    DisplacementDim>::assembleConcreteProcess(const double t,
+                                              GlobalVector const& x,
+                                              GlobalMatrix& M, GlobalMatrix& K,
+                                              GlobalVector& b)
 {
     DBUG("Assemble the equations for ThermoMechanicalPhaseFieldProcess.");
 
@@ -211,10 +216,13 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::assembleConcreteProcess
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
-    const double t, GlobalVector const& x, GlobalVector const& xdot,
-    const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, GlobalMatrix& Jac)
+void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
+    assembleWithJacobianConcreteProcess(const double t, GlobalVector const& x,
+                                        GlobalVector const& xdot,
+                                        const double dxdot_dx,
+                                        const double dx_dx, GlobalMatrix& M,
+                                        GlobalMatrix& K, GlobalVector& b,
+                                        GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
@@ -245,11 +253,10 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::assembleWithJacobianCon
             "the staggered scheme.");
     }
     dof_tables.emplace_back(
-                getDOFTableByProcessID(_heat_conduction_process_id));
+        getDOFTableByProcessID(_heat_conduction_process_id));
     dof_tables.emplace_back(
-                getDOFTableByProcessID(_mechanics_related_process_id));
-    dof_tables.emplace_back(
-                getDOFTableByProcessID(_phase_field_process_id));
+        getDOFTableByProcessID(_mechanics_related_process_id));
+    dof_tables.emplace_back(getDOFTableByProcessID(_phase_field_process_id));
 
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
@@ -258,9 +265,11 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::assembleWithJacobianCon
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
-    GlobalVector const& x, double const t, double const dt,
-    const int process_id)
+void ThermoMechanicalPhaseFieldProcess<
+    DisplacementDim>::preTimestepConcreteProcess(GlobalVector const& x,
+                                                 double const t,
+                                                 double const dt,
+                                                 const int process_id)
 {
     DBUG("PreTimestep ThermoMechanicalPhaseFieldProcess.");
 
@@ -272,24 +281,27 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::preTimestepConcreteProc
         return;
     }
     GlobalExecutor::executeMemberOnDereferenced(
-        &ThermoMechanicalPhaseFieldLocalAssemblerInterface::preTimestep, _local_assemblers,
-        getDOFTable(process_id), x, t, dt);
+        &ThermoMechanicalPhaseFieldLocalAssemblerInterface::preTimestep,
+        _local_assemblers, getDOFTable(process_id), x, t, dt);
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, int const process_id)
+void ThermoMechanicalPhaseFieldProcess<
+    DisplacementDim>::postTimestepConcreteProcess(GlobalVector const& x,
+                                                  int const process_id)
 {
     DBUG("PostTimestep ThermoMechanicalPhaseFieldProcess.");
 
     GlobalExecutor::executeMemberOnDereferenced(
-        &ThermoMechanicalPhaseFieldLocalAssemblerInterface::postTimestep, _local_assemblers,
-        getDOFTable(process_id), x);
+        &ThermoMechanicalPhaseFieldLocalAssemblerInterface::postTimestep,
+        _local_assemblers, getDOFTable(process_id), x);
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
-    GlobalVector const& x, const double t, const int process_id)
+void ThermoMechanicalPhaseFieldProcess<
+    DisplacementDim>::postNonLinearSolverConcreteProcess(GlobalVector const& x,
+                                                         const double t,
+                                                         const int process_id)
 {
     if (process_id != _mechanics_related_process_id)
     {
@@ -300,8 +312,8 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::postNonLinearSolverConc
     // Calculate strain, stress or other internal variables of mechanics.
     const bool use_monolithic_scheme = false;
     GlobalExecutor::executeMemberOnDereferenced(
-             &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-            getDOFTable(process_id), x, t, use_monolithic_scheme);
+        &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
+        getDOFTable(process_id), x, t, use_monolithic_scheme);
 }
 
 }  // namespace ThermoMechanicalPhaseField

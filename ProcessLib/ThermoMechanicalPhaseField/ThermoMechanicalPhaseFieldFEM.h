@@ -82,8 +82,8 @@ struct IntegrationPointData final
             solid_material)
             .calculateDegradedStress(
                 t, x_position, eps_m, strain_energy_tensile, sigma_tensile,
-                sigma_compressive, C_tensile, C_compressive, sigma,
-                degradation, elastic_energy);
+                sigma_compressive, C_tensile, C_compressive, sigma, degradation,
+                elastic_energy);
     }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

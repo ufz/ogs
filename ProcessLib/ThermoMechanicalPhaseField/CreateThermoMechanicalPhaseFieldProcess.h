@@ -26,7 +26,7 @@ class AbstractJacobianAssembler;
 struct ParameterBase;
 class Process;
 class ProcessVariable;
-}
+}  // namespace ProcessLib
 
 namespace ProcessLib
 {
@@ -41,7 +41,8 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
-extern template std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess<2>(
+extern template std::unique_ptr<Process>
+createThermoMechanicalPhaseFieldProcess<2>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -49,7 +50,8 @@ extern template std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
-extern template std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess<3>(
+extern template std::unique_ptr<Process>
+createThermoMechanicalPhaseFieldProcess<3>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

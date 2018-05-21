@@ -22,7 +22,7 @@ namespace ThermoMechanicalPhaseField
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                DisplacementDim>::
+                                              DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, std::vector<double> const& local_xdot,
         const double dxdot_dx, const double dx_dx,
@@ -55,11 +55,12 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                DisplacementDim>::
+                                              DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         double const t, std::vector<double> const& /*local_xdot*/,
         const double /*dxdot_dx*/, const double /*dx_dx*/,
-        std::vector<double>& /*local_M_data*/, std::vector<double>& /*local_K_data*/,
+        std::vector<double>& /*local_M_data*/,
+        std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions)
 {
@@ -84,14 +85,13 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         temperature_size> const>(local_T.data(), temperature_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
-        typename ShapeMatricesType::template MatrixType<
-            displacement_size, displacement_size>>(
+        typename ShapeMatricesType::template MatrixType<displacement_size,
+                                                        displacement_size>>(
         local_Jac_data, displacement_size, displacement_size);
 
-    auto local_rhs =
-        MathLib::createZeroedVector<typename ShapeMatricesType::
-                                        template VectorType<displacement_size>>(
-            local_b_data, displacement_size);
+    auto local_rhs = MathLib::createZeroedVector<
+        typename ShapeMatricesType::template VectorType<displacement_size>>(
+        local_b_data, displacement_size);
 
     double const& dt = _process_data.dt;
 
@@ -153,23 +153,22 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                    i, i * displacement_size / DisplacementDim)
                 .noalias() = N;
 
-        local_Jac.noalias() +=
-            B.transpose() * C_eff * B * w;
+        local_Jac.noalias() += B.transpose() * C_eff * B * w;
 
         local_rhs.noalias() -=
             (B.transpose() * sigma - N_u.transpose() * rho_s * b) * w;
-
     }
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                DisplacementDim>::
+                                              DisplacementDim>::
     assembleWithJacobianForHeatConductionEquations(
         double const t, std::vector<double> const& local_xdot,
         const double /*dxdot_dx*/, const double /*dx_dx*/,
-        std::vector<double>& /*local_M_data*/, std::vector<double>& /*local_K_data*/,
+        std::vector<double>& /*local_M_data*/,
+        std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions)
 {
@@ -191,14 +190,13 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         temperature_size> const>(local_xdot.data(), temperature_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
-        typename ShapeMatricesType::template MatrixType<
-            temperature_size, temperature_size>>(
+        typename ShapeMatricesType::template MatrixType<temperature_size,
+                                                        temperature_size>>(
         local_Jac_data, temperature_size, temperature_size);
 
-    auto local_rhs =
-        MathLib::createZeroedVector<typename ShapeMatricesType::
-                                        template VectorType<temperature_size>>(
-            local_b_data, temperature_size);
+    auto local_rhs = MathLib::createZeroedVector<
+        typename ShapeMatricesType::template VectorType<temperature_size>>(
+        local_b_data, temperature_size);
 
     double const& dt = _process_data.dt;
 
@@ -233,34 +231,37 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         // calculate real density
         double const rho_s = rho_sr / (1 + 3 * alpha * delta_T);
         // calculate effective thermal conductivity
-        auto const lambda_eff = d_ip * d_ip * lambda +
-                                (1 - d_ip) * (1 - d_ip) * lambda_res;
+        auto const lambda_eff =
+            d_ip * d_ip * lambda + (1 - d_ip) * (1 - d_ip) * lambda_res;
 
         using Invariants = MathLib::KelvinVector::Invariants<
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value>;
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value>;
 
         double const eps_m_trace = Invariants::trace(eps_m);
         if (eps_m_trace >= 0)
         {
-            local_Jac.noalias() +=
-                (dNdx.transpose() * lambda_eff * dNdx +
-                 N.transpose() * rho_s * c * N / dt) * w;
+            local_Jac.noalias() += (dNdx.transpose() * lambda_eff * dNdx +
+                                    N.transpose() * rho_s * c * N / dt) *
+                                   w;
 
             local_rhs.noalias() -= (N.transpose() * rho_s * c * T_dot_ip +
-                    dNdx.transpose() * lambda_eff * dNdx * T) * w;
+                                    dNdx.transpose() * lambda_eff * dNdx * T) *
+                                   w;
 
-            heatflux.noalias() = - (lambda_eff * dNdx * T) * w;
+            heatflux.noalias() = -(lambda_eff * dNdx * T) * w;
         }
         else
         {
             local_Jac.noalias() += (dNdx.transpose() * lambda * dNdx +
-                                    N.transpose() * rho_s * c * N / dt) * w;
+                                    N.transpose() * rho_s * c * N / dt) *
+                                   w;
 
             local_rhs.noalias() -= (N.transpose() * rho_s * c * T_dot_ip +
-                    dNdx.transpose() * lambda * dNdx * T) * w;
+                                    dNdx.transpose() * lambda * dNdx * T) *
+                                   w;
 
-            heatflux.noalias() = - (lambda * dNdx * T) * w;
+            heatflux.noalias() = -(lambda * dNdx * T) * w;
         }
     }
 }
@@ -268,11 +269,12 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                DisplacementDim>::
+                                              DisplacementDim>::
     assembleWithJacobianForPhaseFieldEquations(
         double const t, std::vector<double> const& /*local_xdot*/,
         const double /*dxdot_dx*/, const double /*dx_dx*/,
-        std::vector<double>& /*local_M_data*/, std::vector<double>& /*local_K_data*/,
+        std::vector<double>& /*local_M_data*/,
+        std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& local_coupled_solutions)
 {
@@ -285,14 +287,13 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         local_d.data(), phasefield_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
-        typename ShapeMatricesType::template MatrixType<
-            phasefield_size, phasefield_size>>(
+        typename ShapeMatricesType::template MatrixType<phasefield_size,
+                                                        phasefield_size>>(
         local_Jac_data, phasefield_size, phasefield_size);
 
-    auto local_rhs =
-        MathLib::createZeroedVector<typename ShapeMatricesType::
-                                        template VectorType<phasefield_size>>(
-            local_b_data, phasefield_size);
+    auto local_rhs = MathLib::createZeroedVector<
+        typename ShapeMatricesType::template VectorType<phasefield_size>>(
+        local_b_data, phasefield_size);
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -312,15 +313,16 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
         double const d_ip = N.dot(d);
 
-        local_Jac.noalias() +=
-                (dNdx.transpose() * gc * ls * dNdx +
-                 N.transpose() * 2 * strain_energy_tensile * N +
-                 N.transpose() * gc / ls * N) * w;
+        local_Jac.noalias() += (dNdx.transpose() * gc * ls * dNdx +
+                                N.transpose() * 2 * strain_energy_tensile * N +
+                                N.transpose() * gc / ls * N) *
+                               w;
 
-        local_rhs.noalias() -= (dNdx.transpose() * gc * ls * dNdx * d +
-                        N.transpose() * d_ip * 2 * strain_energy_tensile -
-                        N.transpose() * gc / ls * (1 - d_ip)) * w;
-
+        local_rhs.noalias() -=
+            (dNdx.transpose() * gc * ls * dNdx * d +
+             N.transpose() * d_ip * 2 * strain_energy_tensile -
+             N.transpose() * gc / ls * (1 - d_ip)) *
+            w;
     }
 }
 
