@@ -82,7 +82,7 @@ struct MeshNodeParameter final : public Parameter<T> {
 
 private:
     MeshLib::PropertyVector<T> const& _property;
-    mutable std::vector<double> _cache;
+    mutable std::vector<T> _cache;
 };
 
 std::unique_ptr<ParameterBase> createMeshNodeParameter(
