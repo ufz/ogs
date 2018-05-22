@@ -74,6 +74,9 @@
 #ifdef OGS_BUILD_PROCESS_THERMALTWOPHASEFLOWWITHPP
 #include "ProcessLib/ThermalTwoPhaseFlowWithPP/CreateThermalTwoPhaseFlowWithPPProcess.h"
 #endif
+#ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
+#include "ProcessLib/ThermoMechanicalPhaseField/CreateThermoMechanicalPhaseFieldProcess.h"
+#endif
 #ifdef OGS_BUILD_PROCESS_THERMOMECHANICS
 #include "ProcessLib/ThermoMechanics/CreateThermoMechanicsProcess.h"
 #endif
@@ -542,6 +545,29 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     OGS_FATAL(
                         "SMALL_DEFORMATION_WITH_LIE process does not support "
                         "given dimension");
+            }
+        }
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
+            if (type == "THERMO_MECHANICAL_PHASE_FIELD")
+        {
+            switch (_mesh_vec[0]->getDimension())
+            {
+                case 2:
+                    process = ProcessLib::ThermoMechanicalPhaseField::
+                        createThermoMechanicalPhaseFieldProcess<2>(
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, integration_order,
+                            process_config);
+                    break;
+                case 3:
+                    process = ProcessLib::ThermoMechanicalPhaseField::
+                        createThermoMechanicalPhaseFieldProcess<3>(
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, integration_order,
+                            process_config);
+                    break;
             }
         }
         else
