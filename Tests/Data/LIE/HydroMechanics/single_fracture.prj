@@ -52,7 +52,7 @@
                 <convergence_criterion>
                     <type>PerComponentResidual</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-18 1e-7 1e-5 1e-8 1e-6</abstols>
+                    <abstols>1e-17 1e-6 1e-4 1e-7 1e-5</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
