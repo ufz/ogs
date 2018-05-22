@@ -131,6 +131,21 @@ AddTest(
 )
 
 AddTest(
+    NAME HT_SimpleSynthetics_PressureDiffusionTemperatureDiffusion
+    PATH Parabolic/HT/SimpleSynthetics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS PressureDiffusionTemperatureDiffusion.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_pcs_0_ts_1_t_1.000000.vtu linear_top2_to_bottom1 T 1e-10 1e-16
+    PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 p 1e-10 1e-16
+    PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_pcs_0_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    VIS PressureDiffusionTemperatureDiffusion_pcs_0_ts_1_t_1.000000.vtu
+)
+
+AddTest(
     NAME HT_SimpleSynthetics_IsothermalFluidFlowWithGravity
     PATH Parabolic/HT/SimpleSynthetics
     EXECUTABLE ogs
