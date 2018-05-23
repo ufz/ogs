@@ -64,10 +64,10 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     auto const& frac_prop = *_process_data.fracture_property;
 
     // Get element nodes for aperture0 interpolation from nodes to integration
-    // point.
+    // point. The aperture0 parameter is time-independent.
     typename ShapeMatricesTypeDisplacement::NodalVectorType
-        aperture0_node_values =
-            frac_prop.aperture0->getNodalValuesOnElement(e, 0);
+        aperture0_node_values = frac_prop.aperture0->getNodalValuesOnElement(
+            e, /*time independent*/ 0);
 
     SpatialPosition x_position;
     x_position.setElementID(e.getID());

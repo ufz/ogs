@@ -272,6 +272,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         frac_prop->aperture0 = &ProcessLib::findParameter<double>(
             //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__initial_aperture}
             fracture_properties_config, "initial_aperture", parameters, 1);
+        if (frac_prop->aperture0->isTimeDependent())
+        {
+            OGS_FATAL(
+                "The initial aperture parameter '%s' must not be "
+                "time-dependent.",
+                frac_prop->aperture0->name.c_str());
+        }
         frac_prop->specific_storage = &ProcessLib::findParameter<double>(
             //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__specific_storage}
             fracture_properties_config, "specific_storage", parameters, 1);

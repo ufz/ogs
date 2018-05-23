@@ -503,7 +503,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
 
         ProcessLib::SpatialPosition x;
         x.setNodeID(node_id);
-        return w_n + (*b0)(0, x)[0];
+        return w_n + (*b0)(/*time independent*/ 0, x)[0];
     };
 
     Eigen::VectorXd g(GlobalDim), w(GlobalDim);
