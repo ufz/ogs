@@ -19,11 +19,10 @@
 
 namespace BaseLib
 {
-
 /// @pre {first1 <= last1 and the second iterator can be incremented
 /// distance(first1, last1) times}
-template <typename It1, typename It2>
-void quicksort(It1 first1, It1 last1, It2 first2)
+template <typename It1, typename It2, typename Comparator>
+void quicksort(It1 first1, It1 last1, It2 first2, Comparator compare)
 {
     using T1 = typename std::iterator_traits<It1>::value_type;
     using T2 = typename std::iterator_traits<It2>::value_type;
@@ -35,10 +34,7 @@ void quicksort(It1 first1, It1 last1, It2 first2)
         [](T1 const& t1, T2 const& t2) { return std::make_pair(t1, t2); });
 
     // Sort data using first element of the pair.
-    std::sort(begin(data), end(data),
-              [](std::pair<T1, T2> const& a, std::pair<T1, T2> const& b) {
-                  return (a.first < b.first);
-              });
+    std::sort(begin(data), end(data), compare);
 
     // Unzip sorted data.
     for (auto const& pair : data)
@@ -48,6 +44,19 @@ void quicksort(It1 first1, It1 last1, It2 first2)
         ++first1;
         ++first2;
     }
+}
+/// @pre {first1 <= last1 and the second iterator can be incremented
+/// distance(first1, last1) times}
+template <typename It1, typename It2>
+void quicksort(It1 first1, It1 last1, It2 first2)
+{
+    using T1 = typename std::iterator_traits<It1>::value_type;
+    using T2 = typename std::iterator_traits<It2>::value_type;
+
+    quicksort(first1, last1, first2,
+              [](std::pair<T1, T2> const& a, std::pair<T1, T2> const& b) {
+                  return a.first < b.first;
+              });
 }
 
 /// @pre {end<=array.size() and perm.size()==array.size()}
