@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <typeinfo>
 
+#include "BaseLib/quicksort.h"
 #include "GeoLib/Polyline.h"
 
 #include "MeshLib/Mesh.h"
@@ -48,27 +49,44 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
             auto* edge = e->getEdge(i);
             // check if all edge nodes are along the polyline (if yes, store a distance)
             std::vector<std::size_t> edge_node_distances_along_ply;
-            if (includesAllEdgeNodeIDs(node_ids_on_poly, *edge, edge_node_distances_along_ply)) {
-                auto* new_edge = modifyEdgeNodeOrdering(*edge, ply, edge_node_distances_along_ply, node_ids_on_poly);
+            if (includesAllEdgeNodeIDs(node_ids_on_poly, *edge,
+                                       edge_node_distances_along_ply))
+            {
+                auto* new_edge = modifyEdgeNodeOrdering(
+                    *edge, ply, edge_node_distances_along_ply,
+                    node_ids_on_poly);
                 if (edge != new_edge)
                     delete edge;
                 _boundary_elements.push_back(new_edge);
+                _bulk_ids.emplace_back(e->getID(), i);
             } else {
                 delete edge;
             }
         }
     }
 
-    // sort picked edges according to a distance of their first node along the polyline
-    std::sort(_boundary_elements.begin(), _boundary_elements.end(),
-            [&](MeshLib::Element*e1, MeshLib::Element*e2)
-            {
-                std::size_t dist1 = std::distance(node_ids_on_poly.begin(),
-                    std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(), e1->getNodeIndex(0)));
-                std::size_t dist2 = std::distance(node_ids_on_poly.begin(),
-                    std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(), e2->getNodeIndex(0)));
-                return (dist1 < dist2);
-            });
+    // The sort was necessary in OGS-5 for some reason. I'm not sure if it is
+    // needed anymore in OGS-6.
+    // sort picked edges according to a distance of their first node along the
+    // polyline
+    BaseLib::quicksort(
+        begin(_boundary_elements), end(_boundary_elements), begin(_bulk_ids),
+        [&](std::pair<MeshLib::Element*,
+                      std::pair<std::size_t, unsigned>> const& a,
+            std::pair<MeshLib::Element*,
+                      std::pair<std::size_t, unsigned>> const& b) {
+            auto const* const e1 = a.first;
+            auto const* const e2 = b.first;
+            std::size_t dist1 = std::distance(
+                node_ids_on_poly.begin(),
+                std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(),
+                          e1->getNodeIndex(0)));
+            std::size_t dist2 = std::distance(
+                node_ids_on_poly.begin(),
+                std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(),
+                          e2->getNodeIndex(0)));
+            return (dist1 < dist2);
+        });
 }
 
 BoundaryElementsAlongPolyline::~BoundaryElementsAlongPolyline()
@@ -122,6 +140,12 @@ MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(
 
     // Return the original edge otherwise.
     return const_cast<MeshLib::Element*>(&edge);
+}
+
+std::vector<std::pair<std::size_t, unsigned>> const&
+BoundaryElementsAlongPolyline::getBulkIDs() const
+{
+    return _bulk_ids;
 }
 
 } // end namespace MeshGeoToolsLib

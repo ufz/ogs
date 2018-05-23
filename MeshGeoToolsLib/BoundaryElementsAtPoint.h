@@ -56,10 +56,16 @@ public:
         return _boundary_elements;
     }
 
+    /// \copybrief BoundaryElementsSearcher::getBulkIDs()
+    std::vector<std::pair<std::size_t, unsigned>> const& getBulkIDs() const;
+
 private:
     MeshLib::Mesh const& _mesh;
     GeoLib::Point const& _point;
     std::vector<MeshLib::Element*> _boundary_elements;
+    /// a vector of id pairs. The first item of each pair is the bulk element id
+    /// and the second item is the face id of the corresponding bulk element.
+    std::vector<std::pair<std::size_t, unsigned>> _bulk_ids;
 };
 
 }  // end namespace MeshGeoToolsLib
