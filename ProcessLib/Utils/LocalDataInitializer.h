@@ -241,6 +241,11 @@ public:
         else if (shapefunction_order == 2)
         {
 // /// Lines and points ///////////////////////////////////
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 0 && OGS_MAX_ELEMENT_ORDER >= 1
+            _builder[std::type_index(typeid(MeshLib::Point))] =
+                makeLocalAssemblerBuilder<NumLib::ShapePoint1>();
+#endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 1 && OGS_MAX_ELEMENT_ORDER >= 2
