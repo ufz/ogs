@@ -9,7 +9,6 @@
 
 #include "MeshNodeParameter.h"
 #include "BaseLib/ConfigTree.h"
-#include "BaseLib/Error.h"
 #include "MeshLib/Mesh.h"
 
 namespace ProcessLib

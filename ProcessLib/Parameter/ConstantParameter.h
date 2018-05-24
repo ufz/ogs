@@ -46,6 +46,24 @@ struct ConstantParameter final : public Parameter<T>
         return _values;
     }
 
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> getNodalValuesOnElement(
+        MeshLib::Element const& element, double const /*t*/) const override
+    {
+        auto const n_nodes = element.getNumberOfNodes();
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(
+            n_nodes, getNumberOfComponents());
+
+        // Column vector of values, copied for each node.
+        auto const row_values =
+            Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> const>(
+                _values.data(), _values.size());
+        for (unsigned i = 0; i < n_nodes; ++i)
+        {
+            result.row(i) = row_values;
+        }
+        return result;
+    }
+
 private:
     std::vector<T> const _values;
 };

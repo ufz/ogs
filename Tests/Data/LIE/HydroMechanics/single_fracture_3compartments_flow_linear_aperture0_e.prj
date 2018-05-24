@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>single_fracture.vtu</mesh>
-    <geometry>single_fracture.gml</geometry>
+    <mesh>single_fracture_linear_aperture_e.vtu</mesh>
+    <geometry>single_fracture_2x2.gml</geometry>
     <processes>
         <process>
             <name>HM</name>
@@ -31,7 +31,7 @@
                 <type>LinearElasticIsotropic</type>
                 <normal_stiffness>Kn</normal_stiffness>
                 <shear_stiffness>Ks</shear_stiffness>
-                <penalty_aperture_cutoff>1e-5</penalty_aperture_cutoff>
+                <penalty_aperture_cutoff>0</penalty_aperture_cutoff>
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
@@ -41,6 +41,7 @@
                 <biot_coefficient>biot_f</biot_coefficient>
             </fracture_properties>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
+            <deactivate_matrix_in_flow>true</deactivate_matrix_in_flow>
             <secondary_variables>
             </secondary_variables>
         </process>
@@ -52,7 +53,7 @@
                 <convergence_criterion>
                     <type>PerComponentResidual</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-17 1e-6 1e-4 1e-7 1e-5</abstols>
+                    <abstols>1e-18 1e-7 1e-5 1e-8 1e-6</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -67,11 +68,19 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>100</t_end>
+                    <t_end>10000</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
-                            <delta_t>10.0</delta_t>
+                            <repeat>100</repeat>
+                            <delta_t>0.1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>9</repeat>
+                            <delta_t>1.0</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>10</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -79,11 +88,11 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>single_fracture</prefix>
+            <prefix>single_fracture_3compartments_flow_linear_aperture0_e</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
-                    <each_steps>10</each_steps>
+                    <each_steps>10000</each_steps>
                 </pair>
             </timesteps>
         </output>
@@ -115,12 +124,12 @@
         <parameter>
             <name>k</name>
             <type>Constant</type>
-            <value>1e-21</value>
+            <value>1e-11</value>
         </parameter>
         <parameter>
             <name>S</name>
             <type>Constant</type>
-            <value>1e-10</value>
+            <value>1</value>
         </parameter>
         <parameter>
             <name>biot_m</name>
@@ -130,7 +139,7 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>60e9</value>
+            <value>1e100</value>
         </parameter>
         <parameter>
             <name>nu</name>
@@ -140,13 +149,13 @@
         <!-- Fracture properties -->
         <parameter>
             <name>aperture0</name>
-            <type>Constant</type>
-            <value>1e-5</value>
+            <type>MeshElement</type>
+            <field_name>aperture0</field_name>
         </parameter>
         <parameter>
             <name>S_f</name>
             <type>Constant</type>
-            <value>1e-12</value>
+            <value>0</value>
         </parameter>
         <parameter>
             <name>biot_f</name>
@@ -156,28 +165,28 @@
         <parameter>
             <name>Kn</name>
             <type>Constant</type>
-            <value>1e11</value>
+            <value>1e100</value>
         </parameter>
         <parameter>
             <name>Ks</name>
             <type>Constant</type>
-            <value>1e11</value>
+            <value>0</value>
         </parameter>
         <!-- Flow properties -->
         <parameter>
             <name>p0</name>
             <type>Constant</type>
-            <values>11e6</values>
+            <values>0</values>
         </parameter>
         <parameter>
             <name>p_in</name>
             <type>Constant</type>
-            <values>11.9e6</values>
+            <values>25</values>
         </parameter>
         <parameter>
             <name>p_out</name>
             <type>Constant</type>
-            <values>11e6</values>
+            <values>0</values>
         </parameter>
         <!-- Mechancis properties -->
         <parameter>
@@ -188,12 +197,12 @@
         <parameter>
             <name>effective_stress0</name>
             <type>Constant</type>
-            <values>-13e6 -39e6 0 0</values>
+            <values>0 0 0 0</values>
         </parameter>
         <parameter>
             <name>fracture_effective_stress0</name>
             <type>Constant</type>
-            <values>0 -39e6</values>
+            <values>0 0</values>
         </parameter>
         <parameter>
             <name>zero_u</name>
@@ -201,9 +210,14 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>load</name>
+            <name>load_top</name>
             <type>Constant</type>
-            <value>-50e6</value>
+            <value>-1e5</value>
+        </parameter>
+        <parameter>
+            <name>load_bottom</name>
+            <type>Constant</type>
+            <value>1e5</value>
         </parameter>
     </parameters>
     <process_variables>
@@ -215,14 +229,14 @@
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
-                    <geometry>POINT4</geometry>
+                    <geometry>PLY_EAST</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>p_in</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
-                    <geometry>POINT5</geometry>
+                    <geometry>PLY_WEST</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>p_out</parameter>
@@ -252,16 +266,16 @@
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>PLY_EAST</geometry>
-                    <type>Dirichlet</type>
+                    <type>Neumann</type>
                     <component>0</component>
-                    <parameter>zero_u</parameter>
+                    <parameter>p_in</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>PLY_NORTH</geometry>
-                    <type>Neumann</type>
+                    <type>Dirichlet</type>
                     <component>1</component>
-                    <parameter>load</parameter>
+                    <parameter>zero_u</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -271,20 +285,6 @@
             <order>2</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
-                <boundary_condition>
-                    <geometrical_set>single_fracture</geometrical_set>
-                    <geometry>PLY_EAST</geometry>
-                    <type>Dirichlet</type>
-                    <component>0</component>
-                    <parameter>zero_u</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <geometrical_set>single_fracture</geometrical_set>
-                    <geometry>PLY_WEST</geometry>
-                    <type>Dirichlet</type>
-                    <component>0</component>
-                    <parameter>zero_u</parameter>
-                </boundary_condition>
             </boundary_conditions>
         </process_variable>
     </process_variables>
@@ -305,13 +305,9 @@
             <eigen>
                 <!--
                 <solver_type>PardisoLU</solver_type>
-                <precon_type>NONE</precon_type>
                 -->
                 <solver_type>SparseLU</solver_type>
-                <precon_type>ILUT</precon_type>
                 <scaling>1</scaling>
-                <max_iteration_step>3000</max_iteration_step>
-                <error_tolerance>1e-12</error_tolerance>
             </eigen>
         </linear_solver>
     </linear_solvers>

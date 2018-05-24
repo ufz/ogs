@@ -13,6 +13,13 @@
 #include <memory>
 #include <utility>
 #include <vector>
+
+#include <Eigen/Dense>
+
+#include "BaseLib/Error.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Node.h"
+
 #include "SpatialPosition.h"
 
 namespace BaseLib
@@ -72,6 +79,41 @@ struct Parameter : public ParameterBase
     //! Returns the parameter value at the given time and position.
     virtual std::vector<T> const& operator()(
         double const t, SpatialPosition const& pos) const = 0;
+
+    //! Returns a matrix of values for all nodes of the given element.
+    //
+    // The matrix is of the shape NxC, where N is the number of nodes and C is
+    // the number of components, such that subsequent multiplication with shape
+    // functions matrix from left (which is a row vector) results in a row
+    // vector of length C.
+    //
+    // The default implementation covers all cases, but the derived classes may
+    // provide faster implementations.
+    virtual Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+    getNodalValuesOnElement(MeshLib::Element const& element,
+                            double const t) const
+    {
+        auto const n_nodes = static_cast<int>(element.getNumberOfNodes());
+        auto const n_components = getNumberOfComponents();
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(n_nodes,
+                                                                n_components);
+
+        // Column vector of values, copied for each node.
+        SpatialPosition x_position;
+        auto const nodes = element.getNodes();
+        for (int i = 0; i < n_nodes; ++i)
+        {
+            x_position.setAll(
+                nodes[i]->getID(), element.getID(), boost::none, boost::none);
+            auto const& values = this->operator()(t, x_position);
+            auto const row_values =
+                Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> const>(
+                    values.data(), values.size());
+            result.row(i) = row_values;
+        }
+
+        return result;
+    }
 };
 
 //! Constructs a new ParameterBase from the given configuration.
