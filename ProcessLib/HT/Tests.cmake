@@ -244,3 +244,37 @@ AddTest(
     CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_10_t_1.000000.vtu p p 1e-10 1e-16
     CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_10_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
 )
+
+AddTest(
+    NAME HT_Balance
+    PATH Parabolic/HT/SimpleSynthetics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS balance_ht_cube_1e3.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    flux_1e3_t_0.000000_expected.vtu flux_1e3_t_0.000000.vtu flux flux 1e-10 1e-16
+    flux_1e3_t_0.000010_expected.vtu flux_1e3_t_0.000010.vtu flux flux 1e-10 1e-16
+    flux_1e3_t_0.001010_expected.vtu flux_1e3_t_0.001010.vtu flux flux 1e-10 1e-16
+    flux_1e3_t_0.101010_expected.vtu flux_1e3_t_0.101010.vtu flux flux 1e-10 1e-16
+    flux_1e3_t_1.101010_expected.vtu flux_1e3_t_1.101010.vtu flux flux 1e-10 1e-16
+    flux_1e3_t_10.000000_expected.vtu flux_1e3_t_10.000000.vtu flux flux 1e-10 1e-16
+)
+
+AddTest(
+    NAME LARGE_HT_Balance
+    PATH Parabolic/HT/SimpleSynthetics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS balance_ht_cube_1e4.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    flux_1e4_t_0.000000_expected.vtu flux_1e4_t_0.000000.vtu flux flux 1e-10 1e-16
+    flux_1e4_t_0.000010_expected.vtu flux_1e4_t_0.000010.vtu flux flux 1e-10 1e-16
+    flux_1e4_t_0.001010_expected.vtu flux_1e4_t_0.001010.vtu flux flux 1e-10 1e-16
+    flux_1e4_t_0.101010_expected.vtu flux_1e4_t_0.101010.vtu flux flux 1e-10 1e-16
+    flux_1e4_t_1.101010_expected.vtu flux_1e4_t_1.101010.vtu flux flux 1e-10 1e-16
+    flux_1e4_t_10.000000_expected.vtu flux_1e4_t_10.000000.vtu flux flux 1e-10 1e-16
+)
