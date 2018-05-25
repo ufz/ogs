@@ -3,8 +3,6 @@
 module-whatis OpenGeoSys @OGS_VERSION@
 conflict ogs
 
-append-path MODULEPATH /global/apps/modulefiles/
-
 @MODULE_LOAD_STRING@
 
 prepend-path PATH @CMAKE_INSTALL_PREFIX@/bin
