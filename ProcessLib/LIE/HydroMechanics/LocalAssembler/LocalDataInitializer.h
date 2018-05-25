@@ -171,6 +171,29 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeTri6>();
 #endif
 
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
+        _builder[std::type_index(typeid(MeshLib::Tet10))] =
+            makeLocalAssemblerBuilder<NumLib::ShapeTet10>();
+#endif
+
+        // /// Prisms ////////////////////////////////////////////////////
+
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
+        _builder[std::type_index(typeid(MeshLib::Prism15))] =
+            makeLocalAssemblerBuilder<NumLib::ShapePrism15>();
+#endif
+
+        // /// Pyramids //////////////////////////////////////////////////
+
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
+        _builder[std::type_index(typeid(MeshLib::Pyramid13))] =
+            makeLocalAssemblerBuilder<NumLib::ShapePyra13>();
+#endif
+        // /// Lines ///////////////////////////////////
+
 // /// Lines ///////////////////////////////////
 #if OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Line3))] =
