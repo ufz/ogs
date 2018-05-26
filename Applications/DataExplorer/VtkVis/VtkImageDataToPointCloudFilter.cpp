@@ -65,9 +65,14 @@ int VtkImageDataToPointCloudFilter::RequestData(
     void* pixvals = input->GetScalarPointer();
     int const n_comp = input->GetNumberOfScalarComponents();
     if (n_comp < 1)
+    {
         vtkDebugMacro("Error reading number of components.");
+    }
     if (n_comp > 2)
-        vtkDebugMacro("RGB colours detected. Using only first channel for computation.");
+    {
+        vtkDebugMacro(
+            "RGB colours detected. Using only first channel for computation.");
+    }
 
     vtkIdType const n_points = input->GetNumberOfPoints();
     if (n_points == 0)
