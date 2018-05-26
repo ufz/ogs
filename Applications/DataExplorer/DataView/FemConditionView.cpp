@@ -32,5 +32,6 @@ void FemConditionView::updateView()
 void FemConditionView::selectionChanged(const QItemSelection& selected,
                                         const QItemSelection& deselected)
 {
+    Q_UNUSED(selected);
     Q_UNUSED(deselected);
 }

@@ -98,7 +98,6 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
     vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
     cells->Allocate(PointsPerPixel * n_points);
 
-    vtkPointData* output_data = output->GetPointData();
     double const half_cellsize(spacing[0] / 2.0);
     std::size_t pnt_idx(0);
     for (std::size_t i = 0; i < static_cast<std::size_t>(n_points); ++i)
