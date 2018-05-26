@@ -163,7 +163,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
     // number of integration points in the element
     const auto num_int_pts = num_values / num_components;
 
-    if (num_int_pts < static_cast<decltype(num_int_pts)>(num_nodes))
+    if (num_int_pts < num_nodes)
         OGS_FATAL(
             "Least squares is not possible if there are more nodes than"
             "integration points.");
