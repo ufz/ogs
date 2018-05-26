@@ -316,6 +316,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                                  std::string const& project_directory,
                                  std::string const& output_directory)
 {
+    (void)project_directory; // to avoid compilation warning
+    (void)output_directory; // to avoid compilation warning
+
     DBUG("Reading processes:");
     //! \ogs_file_param{prj__processes__process}
     for (auto process_config : processes_config.getConfigSubtreeList("process"))

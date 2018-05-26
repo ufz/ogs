@@ -120,14 +120,20 @@ peekConfigParameter(std::string const& param) const
 {
     checkKeyname(param);
 
-    if (auto p =_tree->get_child_optional(param)) {
-        try {
+    if (auto p = _tree->get_child_optional(param))
+    {
+        try
+        {
             return p->get_value<T>();
-        } catch (boost::property_tree::ptree_bad_data) {
-            error("Value for key <" + param + "> `" + shortString(p->data())
-                  + "' not convertible to the desired type.");
         }
-    } else {
+        catch (boost::property_tree::ptree_bad_data const&)
+        {
+            error("Value for key <" + param + "> `" + shortString(p->data()) +
+                  "' not convertible to the desired type.");
+        }
+    }
+    else
+    {
         error("Key <" + param + "> has not been found");
     }
 }

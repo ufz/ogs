@@ -65,9 +65,14 @@ int VtkImageDataToPointCloudFilter::RequestData(
     void* pixvals = input->GetScalarPointer();
     int const n_comp = input->GetNumberOfScalarComponents();
     if (n_comp < 1)
+    {
         vtkDebugMacro("Error reading number of components.");
+    }
     if (n_comp > 2)
-        vtkDebugMacro("RGB colours detected. Using only first channel for computation.");
+    {
+        vtkDebugMacro(
+            "RGB colours detected. Using only first channel for computation.");
+    }
 
     vtkIdType const n_points = input->GetNumberOfPoints();
     if (n_points == 0)
@@ -109,7 +114,6 @@ int VtkImageDataToPointCloudFilter::RequestData(
     vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
     cells->Allocate(sum);
 
-    vtkPointData* output_data = output->GetPointData();
     double const half_cellsize(spacing[0] / 2.0);
     std::size_t pnt_idx(0);
     for (std::size_t i = 0; i < static_cast<std::size_t>(n_points); ++i)

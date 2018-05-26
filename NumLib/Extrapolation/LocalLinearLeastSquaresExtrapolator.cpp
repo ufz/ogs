@@ -70,12 +70,11 @@ void LocalLinearLeastSquaresExtrapolator::extrapolate(
 
     if (!_nodal_values ||
 #ifdef USE_PETSC
-        static_cast<std::size_t>(_nodal_values->getLocalSize() +
-                                 _nodal_values->getGhostSize())
+        _nodal_values->getLocalSize() + _nodal_values->getGhostSize()
 #else
         _nodal_values->size()
 #endif
-            != num_nodal_dof_result)
+            != static_cast<GlobalIndexType>(num_nodal_dof_result))
     {
         _nodal_values = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
             {num_nodal_dof_result, num_nodal_dof_result, &ghost_indices,
@@ -164,7 +163,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
     // number of integration points in the element
     const auto num_int_pts = num_values / num_components;
 
-    if (num_int_pts < static_cast<decltype(num_int_pts)>(num_nodes))
+    if (num_int_pts < num_nodes)
         OGS_FATAL(
             "Least squares is not possible if there are more nodes than"
             "integration points.");

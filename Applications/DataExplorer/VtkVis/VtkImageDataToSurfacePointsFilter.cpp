@@ -59,9 +59,14 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
     void* pixvals = input->GetScalarPointer();
     int n_comp = input->GetNumberOfScalarComponents();
     if (n_comp < 1)
+    {
         vtkDebugMacro("Error reading number of components.");
+    }
     if (n_comp > 2)
-        vtkDebugMacro("RGB colours detected. Using only first channel for computation.");
+    {
+        vtkDebugMacro(
+            "RGB colours detected. Using only first channel for computation.");
+    }
 
     std::size_t const n_points = static_cast<std::size_t>(input->GetNumberOfPoints());
     if (n_points == 0)
@@ -98,7 +103,6 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
     vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
     cells->Allocate(PointsPerPixel * n_points);
 
-    vtkPointData* output_data = output->GetPointData();
     double const half_cellsize(spacing[0] / 2.0);
     std::size_t pnt_idx(0);
     for (std::size_t i = 0; i < static_cast<std::size_t>(n_points); ++i)
