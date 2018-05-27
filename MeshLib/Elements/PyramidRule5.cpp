@@ -52,9 +52,9 @@ const Element* PyramidRule5::getFace(const Element* e, unsigned i)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 
         if (i < 4)
-            return new Tri(nodes);
+            return new Tri(nodes, e->getID());
 
-        return new Quad(nodes);
+        return new Quad(nodes, e->getID());
     }
     ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
     return nullptr;

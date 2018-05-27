@@ -51,7 +51,7 @@ const Element* PrismRule15::getFace(const Element* e, unsigned i)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
 
         if (i == 0 || i == 4)
-            return new Tri6(nodes);
+            return new Tri6(nodes, e->getID());
 
         return new Quad8(nodes);
     }
