@@ -41,4 +41,7 @@ namespace MeshLib
     template <typename E>
     MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes);
 
+    /// Clones a vector of elements using the Element::clone() function.
+    std::vector<MeshLib::Element*> cloneElements(
+        std::vector<MeshLib::Element*> const& elements);
 } // end namespace MeshLib

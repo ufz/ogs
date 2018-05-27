@@ -70,4 +70,15 @@ MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::v
     return new E(new_nodes);
 }
 
+std::vector<MeshLib::Element*> cloneElements(
+    std::vector<MeshLib::Element*> const& elements)
+{
+    std::vector<MeshLib::Element*> cloned_elements;
+    cloned_elements.reserve(elements.size());
+    std::transform(begin(elements), end(elements),
+                   std::back_inserter(cloned_elements),
+                   [](MeshLib::Element* const e) { return e->clone(); });
+    return cloned_elements;
+}
+
 } // namespace MeshLib
