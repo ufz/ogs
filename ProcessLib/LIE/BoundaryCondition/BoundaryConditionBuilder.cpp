@@ -9,11 +9,7 @@
 
 #include "BoundaryConditionBuilder.h"
 
-#include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
-#include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 
 #include "NeumannBoundaryCondition.h"
@@ -30,22 +26,10 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
     const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
-    auto search_length_strategy =
-        std::make_unique<MeshGeoToolsLib::SearchLength>();
-    MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
-        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-            mesh, std::move(search_length_strategy));
-
-    MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
-        mesh, mesh_node_searcher);
-
     return ProcessLib::LIE::createNeumannBoundaryCondition(
-        config.config,
-        MeshLib::cloneElements(
-            boundary_element_searcher.getBoundaryElements(config.geometry)),
-        dof_table, variable_id, *config.component_id, mesh.isAxiallySymmetric(),
-        integration_order, shapefunction_order, mesh.getDimension(), parameters,
-        _fracture_prop);
+        config.config, config.mesh, dof_table, variable_id,
+        *config.component_id, mesh.isAxiallySymmetric(), integration_order,
+        shapefunction_order, mesh.getDimension(), parameters, _fracture_prop);
 }
 
 }  // namespace LIE
