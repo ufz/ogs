@@ -58,10 +58,9 @@ before_build:
 
 build_script:
   - mkdir build & cd build
-  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF -DOGS_USE_CONAN=ON # -DOGS_BUILD_GUI=ON
-  - cmake --build . --config %configuration%
-  - cmake --build . --config %configuration% --target tests
-  - cmake --build . --config %configuration% --target ctest
+  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF -DOGS_USE_CONAN=ON -DOGS_BUILD_PROCESS_ComponentTransport:BOOL=OFF -DOGS_BUILD_PROCESS_GroundwaterFlow:BOOL=OFF -DOGS_BUILD_PROCESS_HT:BOOL=OFF -DOGS_BUILD_PROCESS_HeatConduction:BOOL=OFF -DOGS_BUILD_PROCESS_HydroMechanics:BOOL=OFF -DOGS_BUILD_PROCESS_LIE:BOOL=ON -DOGS_BUILD_PROCESS_LiquidFlow:BOOL=OFF -DOGS_BUILD_PROCESS_PhaseField:BOOL=OFF -DOGS_BUILD_PROCESS_RichardsComponentTransport:BOOL=OFF -DOGS_BUILD_PROCESS_RichardsFlow:BOOL=OFF -DOGS_BUILD_PROCESS_SmallDeformation:BOOL=OFF -DOGS_BUILD_PROCESS_SmallDeformationNonlocal:BOOL=OFF -DOGS_BUILD_PROCESS_TES:BOOL=OFF -DOGS_BUILD_PROCESS_ThermalTwoPhaseFlowWithPP:BOOL=OFF -DOGS_BUILD_PROCESS_ThermoMechanicalPhaseField:BOOL=OFF -DOGS_BUILD_PROCESS_ThermoMechanics:BOOL=OFF -DOGS_BUILD_PROCESS_TwoPhaseFlowWithPP:BOOL=OFF -DOGS_BUILD_PROCESS_TwoPhaseFlowWithPrho:BOOL=OFF # -DOGS_BUILD_GUI=ON
+  - cmake --build . --config %configuration% --target ogs
+  - bin\ogs ..\Tests\Data\LIE\HydroMechanics\single_fracture.prj
   # - cmake . -DOGS_BUILD_GUI=ON
   # - cmake --build . --config %configuration% --target DataExplorer
 
