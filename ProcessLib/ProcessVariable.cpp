@@ -12,19 +12,19 @@
 #include <utility>
 #include <logog/include/logog.hpp>
 
-#include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
 {
 ProcessVariable::ProcessVariable(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
-    GeoLib::GEOObjects const& geometries,
+    BaseLib::ConfigTree const& config,
+    std::vector<MeshLib::Mesh*> const& meshes,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
     :  //! \ogs_file_param{prj__process_variables__process_variable__name}
       _name(config.getConfigParameter<std::string>("name")),
-      _mesh(mesh),
+      _mesh(*meshes[0]),  // Using the first mesh as the main mesh.
+                          // TODO (naumov) potentially extend to named meshes.
       //! \ogs_file_param{prj__process_variables__process_variable__components}
       _n_components(config.getConfigParameter<int>("components")),
       //! \ogs_file_param{prj__process_variables__process_variable__order}
@@ -56,18 +56,23 @@ ProcessVariable::ProcessVariable(
                     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometry}
                     bc_config.getConfigParameter<std::string>("geometry");
 
-            GeoLib::GeoObject const* const geometry =
-                geometries.getGeoObject(geometrical_set_name, geometry_name);
+            auto const full_geometry_name =
+                geometrical_set_name + "_" + geometry_name;
+            auto const mesh_it =
+                std::find_if(begin(meshes), end(meshes),
+                             [&full_geometry_name](MeshLib::Mesh* const mesh) {
+                                 assert(mesh != nullptr);
+                                 return mesh->getName() == full_geometry_name;
+                             });
+            if (mesh_it == end(meshes))
+            {
+                OGS_FATAL("Required mesh with name '%s' not found.",
+                          full_geometry_name.c_str());
+            }
+            MeshLib::Mesh& bc_mesh = **mesh_it;
 
-            if (! geometry)
-                OGS_FATAL(
-                    "No geometry with name `%s' has been found in the "
-                    "geometrical set `%s'.",
-                    geometry_name.c_str(), geometrical_set_name.c_str());
-
-            DBUG(
-                "Found geometry type \"%s\"",
-                GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
+            DBUG("Found mesh '%s' with id %d.", bc_mesh.getName().c_str(),
+                 bc_mesh.getID());
 
             auto component_id =
                 //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__component}
@@ -77,7 +82,7 @@ ProcessVariable::ProcessVariable(
                 // default value for single component vars.
                 component_id = 0;
 
-            _bc_configs.emplace_back(std::move(bc_config), *geometry,
+            _bc_configs.emplace_back(std::move(bc_config), bc_mesh,
                                      component_id);
         }
     } else {
@@ -92,6 +97,7 @@ ProcessVariable::ProcessVariable(
              //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term}
              sts_config->getConfigSubtreeList("source_term"))
         {
+            // TODO (naumov) Remove code duplication with the bc_config parsing.
             auto const geometrical_set_name =
                     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometrical_set}
                    st_config.getConfigParameter<std::string>("geometrical_set");
@@ -99,18 +105,23 @@ ProcessVariable::ProcessVariable(
                     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometry}
                     st_config.getConfigParameter<std::string>("geometry");
 
-            GeoLib::GeoObject const* const geometry =
-                geometries.getGeoObject(geometrical_set_name, geometry_name);
+            auto const full_geometry_name =
+                geometrical_set_name + "_" + geometry_name;
+            auto const mesh_it =
+                std::find_if(begin(meshes), end(meshes),
+                             [&full_geometry_name](MeshLib::Mesh* const mesh) {
+                                 assert(mesh != nullptr);
+                                 return mesh->getName() == full_geometry_name;
+                             });
+            if (mesh_it == end(meshes))
+            {
+                OGS_FATAL("Required mesh with name '%s' not found.",
+                          full_geometry_name.c_str());
+            }
+            MeshLib::Mesh& bc_mesh = **mesh_it;
 
-            if (! geometry)
-                OGS_FATAL(
-                    "No geometry with name `%s' has been found in the "
-                    "geometrical set `%s'.",
-                    geometry_name.c_str(), geometrical_set_name.c_str());
-
-            DBUG(
-                "Found geometry type \"%s\"",
-                GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
+            DBUG("Found mesh '%s' with id %d.", bc_mesh.getName().c_str(),
+                 bc_mesh.getID());
 
             auto component_id =
                 //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__component}
@@ -120,7 +131,7 @@ ProcessVariable::ProcessVariable(
                 // default value for single component vars.
                 component_id = 0;
 
-            _source_term_configs.emplace_back(std::move(st_config), *geometry,
+            _source_term_configs.emplace_back(std::move(st_config), bc_mesh,
                                               component_id);
         }
     } else {

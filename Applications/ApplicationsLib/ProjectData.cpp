@@ -265,16 +265,7 @@ void ProjectData::parseProcessVariables(
     BaseLib::ConfigTree const& process_variables_config)
 {
     DBUG("Parse process variables:")
-    if (_geoObjects == nullptr)
-    {
-        ERR("Geometric objects are required to define process variables.");
-        ERR("No geometric objects present.");
-        return;
-    }
 
-    // TODO at the moment we have only one mesh, later there
-    // can be several meshes. Then we have to check for correct mesh here and
-    // assign the referenced mesh below.
     if (_mesh_vec.empty() || _mesh_vec[0] == nullptr)
     {
         ERR("A mesh is required to define process variables.");
@@ -287,9 +278,8 @@ void ProjectData::parseProcessVariables(
          //! \ogs_file_param{prj__process_variables__process_variable}
          : process_variables_config.getConfigSubtreeList("process_variable"))
     {
-        // TODO Extend to referenced meshes.
-        auto pv = ProcessLib::ProcessVariable{var_config, *_mesh_vec[0],
-                                              *_geoObjects, _parameters};
+        auto pv =
+            ProcessLib::ProcessVariable{var_config, _mesh_vec, _parameters};
         if (!names.insert(pv.getName()).second)
             OGS_FATAL("A process variable with name `%s' already exists.",
                       pv.getName().c_str());
