@@ -23,6 +23,7 @@
 
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshLib/Mesh.h"
 
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
@@ -132,6 +133,15 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         }
         _mesh_vec.push_back(mesh);
     }
+
+    auto additional_meshes =
+        MeshGeoToolsLib::constructAdditionalMeshesFromGeoObjects(*_geoObjects,
+                                                                 *_mesh_vec[0]);
+    // release the unique_ptr's while copying to the raw pointers storage.
+    // TODO (naumov) Store unique_ptr's in _mesh_vec.
+    std::transform(begin(additional_meshes), end(additional_meshes),
+                   std::back_inserter(_mesh_vec),
+                   [](auto&& mesh) { return mesh.release(); });
 
     //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfigSubtreeOptional("curves"));
