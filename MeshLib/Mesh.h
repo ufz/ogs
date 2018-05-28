@@ -15,6 +15,7 @@
 #pragma once
 
 #include <cstdlib>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -284,5 +285,12 @@ PropertyVector<T>* getOrCreateMeshProperty(Mesh& mesh,
     result->resize(numberOfMeshItems() * number_of_components);
     return result;
 }
+
+/// Creates a new mesh from a vector of elements.
+///
+/// \note The elements are owned by the returned mesh object as well as the
+/// nodes and will be destructed together with the mesh.
+std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
+    std::string mesh_name, std::vector<MeshLib::Element*> const& elements);
 
 } /* namespace */
