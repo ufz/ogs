@@ -30,47 +30,33 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
         unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, unsigned const global_dim,
-        std::vector<MeshLib::Element*>&& elements,
-        Parameter<double> const& pressure)
-    : _elements(std::move(elements)),
+        MeshLib::Mesh& bc_mesh, Parameter<double> const& pressure)
+    : _bc_mesh(bc_mesh),
       _integration_order(integration_order),
       _pressure(pressure)
 {
-    std::vector<MeshLib::Node*> const nodes =
-        MeshLib::getUniqueNodes(_elements);
-    DBUG("Found %d nodes for Natural BCs for the variable %d", nodes.size(),
-         variable_id);
-
-    // Assume that the mesh subsets are equal for all components of the
-    // variable.
-    auto const& mesh_subset = dof_table_bulk.getMeshSubset(variable_id, 0);
-
-    _nodes_subset = nodesNodesIntersection(mesh_subset.getNodes(), nodes);
-    MeshLib::MeshSubset bc_mesh_subset(mesh_subset.getMesh(), _nodes_subset);
-
     // Create component ids vector for the current variable.
     auto const& number_of_components =
         dof_table_bulk.getNumberOfVariableComponents(variable_id);
     std::vector<int> component_ids(number_of_components);
     std::iota(std::begin(component_ids), std::end(component_ids), 0);
 
-    // Create local DOF table from intersected mesh subsets for the given
-    // variable and component ids.
+    // BC mesh subset creation
+    std::vector<MeshLib::Node*> const bc_nodes = _bc_mesh.getNodes();
+    DBUG("Found %d nodes for Natural BCs for the variable %d", bc_nodes.size(),
+         variable_id);
+
+    MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
+
+    // Create local DOF table from the bc mesh subset for the given variable and
+    // component ids.
     _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
-        variable_id, component_ids, std::move(bc_mesh_subset), _elements));
+        variable_id, component_ids, std::move(bc_mesh_subset)));
 
     createLocalAssemblers<LocalAssemblerImplementation>(
-        global_dim, _elements, *_dof_table_boundary, shapefunction_order,
-        _local_assemblers, is_axially_symmetric, _integration_order, _pressure);
-}
-
-template <template <typename, typename, unsigned>
-          class LocalAssemblerImplementation>
-NormalTractionBoundaryCondition<
-    LocalAssemblerImplementation>::~NormalTractionBoundaryCondition()
-{
-    for (auto e : _elements)
-        delete e;
+        global_dim, _bc_mesh.getElements(), *_dof_table_boundary,
+        shapefunction_order, _local_assemblers, is_axially_symmetric,
+        _integration_order, _pressure);
 }
 
 template <template <typename, typename, unsigned>
@@ -89,8 +75,7 @@ void NormalTractionBoundaryCondition<
 std::unique_ptr<NormalTractionBoundaryCondition<
     NormalTractionBoundaryConditionLocalAssembler>>
 createNormalTractionBoundaryCondition(
-    BaseLib::ConfigTree const& config,
-    std::vector<MeshLib::Element*>&& elements,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     bool is_axially_symmetric, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,
@@ -109,7 +94,7 @@ createNormalTractionBoundaryCondition(
     return std::make_unique<NormalTractionBoundaryCondition<
         NormalTractionBoundaryConditionLocalAssembler>>(
         is_axially_symmetric, integration_order, shapefunction_order, dof_table,
-        variable_id, global_dim, std::move(elements), pressure);
+        variable_id, global_dim, bc_mesh, pressure);
 }
 
 }  // namespace NormalTractionBoundaryCondition

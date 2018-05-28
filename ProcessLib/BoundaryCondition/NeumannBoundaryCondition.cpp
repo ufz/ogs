@@ -13,12 +13,10 @@
 namespace ProcessLib
 {
 std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
-    BaseLib::ConfigTree const& config,
-    std::vector<MeshLib::Element*>&& elements,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, bool is_axially_symmetric,
-    unsigned const integration_order,
-    unsigned const shapefunction_order,
+    unsigned const integration_order, unsigned const shapefunction_order,
     unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
@@ -34,7 +32,7 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
 
     return std::make_unique<NeumannBoundaryCondition>(
         is_axially_symmetric, integration_order, shapefunction_order, dof_table,
-        variable_id, component_id, global_dim, std::move(elements), param);
+        variable_id, component_id, global_dim, bc_mesh, param);
 }
 
 }  // ProcessLib

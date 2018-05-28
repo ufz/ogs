@@ -10,31 +10,28 @@
 #pragma once
 
 #include "BaseLib/ConfigTree.h"
-#include "GeoLib/GEOObjects.h"
+#include "MeshLib/Mesh.h"
 
 namespace ProcessLib
 {
-
 struct BoundaryConditionConfig final
 {
     BoundaryConditionConfig(BaseLib::ConfigTree&& config_,
-                            GeoLib::GeoObject const& geometry_,
+                            MeshLib::Mesh& mesh_,
                             boost::optional<int> const component_id_)
-        : config(std::move(config_)),
-          geometry(geometry_),
-          component_id(component_id_)
+        : config(std::move(config_)), mesh(mesh_), component_id(component_id_)
     {
     }
 
     BoundaryConditionConfig(BoundaryConditionConfig&& other)
         : config(std::move(other.config)),
-          geometry(other.geometry),
+          mesh(other.mesh),
           component_id(other.component_id)
     {
     }
 
     BaseLib::ConfigTree config;
-    GeoLib::GeoObject const& geometry;
+    MeshLib::Mesh& mesh;
     boost::optional<int> const component_id;
 };
 

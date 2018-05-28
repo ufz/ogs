@@ -11,22 +11,9 @@
 
 #include "NumLib/NumericsConfig.h"
 
-namespace GeoLib
-{
-class GeoObject;
-}
-
 namespace MeshLib
 {
-class Element;
 class Mesh;
-}
-
-namespace MeshGeoToolsLib
-{
-class SearchLength;
-class MeshNodeSearcher;
-class BoundaryElementsSearcher;
 }
 
 namespace NumLib

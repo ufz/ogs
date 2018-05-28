@@ -40,10 +40,7 @@ public:
         unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, unsigned const global_dim,
-        std::vector<MeshLib::Element*>&& elements,
-        Parameter<double> const& pressure);
-
-    ~NormalTractionBoundaryCondition() override;
+        MeshLib::Mesh& bc_mesh, Parameter<double> const& pressure);
 
     /// Calls local assemblers which calculate their contributions to the global
     /// matrix and the right-hand-side.
@@ -53,9 +50,7 @@ public:
                         GlobalVector& b) override;
 
 private:
-    /// Vector of lower-dimensional elements on which the boundary condition is
-    /// defined.
-    std::vector<MeshLib::Element*> _elements;
+    MeshLib::Mesh& _bc_mesh;
 
     /// Intersection of boundary nodes and bulk mesh subset for the
     /// variable_id/component_id pair.
@@ -81,8 +76,7 @@ private:
 std::unique_ptr<NormalTractionBoundaryCondition<
     NormalTractionBoundaryConditionLocalAssembler>>
 createNormalTractionBoundaryCondition(
-    BaseLib::ConfigTree const& config,
-    std::vector<MeshLib::Element*>&& elements,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     bool is_axially_symmetric, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,
