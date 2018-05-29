@@ -9,6 +9,7 @@ environment:
   PYTHON_VERSION: "2.7.11"
   PYTHON_ARCH: "64"
   CONAN_USER_HOME: "C:\\projects\\deps\\conan"
+  OMP_NUM_THREADS: "1"
 
 platform:
   - x64
