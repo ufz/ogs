@@ -116,21 +116,65 @@ MeshComponentMap::MeshComponentMap(
 #endif // end of USE_PETSC
 
 MeshComponentMap MeshComponentMap::getSubset(
-    std::vector<int> const& component_ids,
-    MeshLib::MeshSubset const& mesh_subset) const
+    std::vector<MeshLib::MeshSubset> const& bulk_mesh_subsets,
+    MeshLib::MeshSubset const& new_mesh_subset,
+    std::vector<int> const& new_global_component_ids) const
 {
+    {  // Testing first an assumption met later in the code that the meshes for
+       // the all bulk_mesh_subsets are equal.
+        auto const first_mismatch =
+            std::adjacent_find(begin(bulk_mesh_subsets), end(bulk_mesh_subsets),
+                               [](auto const& a, auto const& b) {
+                                   return a.getMeshID() != b.getMeshID();
+                               });
+        if (first_mismatch != end(bulk_mesh_subsets))
+        {
+            OGS_FATAL(
+                "Assumption in the MeshComponentMap violated. Expecting "
+                "all of mesh ids to be the same, but it is not true for "
+                "the mesh '%s' with id %d.",
+                first_mismatch->getMesh().getName().c_str(),
+                first_mismatch->getMeshID());
+        }
+    }
+
+    // Mapping of the nodes in the new_mesh_subset to the bulk mesh nodes
+    auto const& new_mesh_properties = new_mesh_subset.getMesh().getProperties();
+    if (!new_mesh_properties.template existsPropertyVector<std::size_t>(
+            "bulk_node_ids"))
+    {
+        OGS_FATAL(
+            "Bulk node ids map expected in the construction of the mesh "
+            "subset.");
+    }
+    auto const& bulk_node_ids_map =
+        *new_mesh_properties.template getPropertyVector<std::size_t>(
+            "bulk_node_ids");
+
     // New dictionary for the subset.
     ComponentGlobalIndexDict subset_dict;
 
-    std::size_t const mesh_id = mesh_subset.getMeshID();
+    std::size_t const new_mesh_id = new_mesh_subset.getMeshID();
     // Lookup the locations in the current mesh component map and
-    // insert the full lines into the subset dictionary.
-    for (std::size_t j = 0; j < mesh_subset.getNumberOfNodes(); j++)
-        for (auto component_id : component_ids)
-            subset_dict.insert(
-                getLine(Location(mesh_id, MeshLib::MeshItemType::Node,
-                                 mesh_subset.getNodeID(j)),
-                        component_id));
+    // insert the full lines into the new subset dictionary.
+    for (auto* const node : new_mesh_subset.getNodes())
+    {
+        auto const node_id = node->getID();
+
+        MeshLib::Location const new_location{
+            new_mesh_id, MeshLib::MeshItemType::Node, node_id};
+
+        // Assuming the meshes for the all bulk_mesh_subsets are equal.
+        MeshLib::Location const bulk_location{
+            bulk_mesh_subsets.front().getMeshID(), MeshLib::MeshItemType::Node,
+            bulk_node_ids_map[node_id]};
+
+        for (auto component_id : new_global_component_ids)
+        {
+            subset_dict.insert({new_location, component_id,
+                                getGlobalIndex(bulk_location, component_id)});
+        }
+    }
 
     return MeshComponentMap(subset_dict);
 }

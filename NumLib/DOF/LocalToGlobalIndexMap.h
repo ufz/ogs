@@ -82,16 +82,13 @@ public:
             vec_var_elements,
         NumLib::ComponentOrder const order);
 
-    /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
-    /// elements. A new mesh component map will be constructed using the passed
-    /// mesh_subsets for the given variable and component ids.
-    ///
-    /// \note The elements are not necessarily those used in the mesh_subsets.
+    /// Derive a LocalToGlobalIndexMap constrained to the mesh subset and mesh
+    /// subset's elements. A new mesh component map will be constructed using
+    /// the passed mesh_subset for the given variable and component ids.
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
         int const variable_id,
         std::vector<int> const& component_ids,
-        MeshLib::MeshSubset&& mesh_subset,
-        std::vector<MeshLib::Element*> const& elements) const;
+        MeshLib::MeshSubset&& mesh_subset) const;
 
     /// Returns total number of degrees of freedom including those located in
     /// the ghost nodes.

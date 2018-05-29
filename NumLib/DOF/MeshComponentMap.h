@@ -44,12 +44,18 @@ public:
     /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the
     /// current map.
     ///
-    /// \note For each component the same mesh_subset will be used.
+    /// \attention For each component the same new_mesh_subset will be used.
     ///
-    /// \param component_ids  The vector of global components id.
-    /// \param components components that should remain in the created subset
-    MeshComponentMap getSubset(std::vector<int> const& component_ids,
-                               MeshLib::MeshSubset const& mesh_subset) const;
+    /// \param bulk_mesh_subsets components that should remain in the created
+    /// subset, one for each global component.
+    /// \param new_mesh_subset The constraining mesh subset with a mapping of
+    /// node ids to the bulk mesh nodes.
+    /// \param new_global_component_ids The components for which the
+    /// bulk_mesh_subsets should be intersected with the new_mesh_subset.
+    MeshComponentMap getSubset(
+        std::vector<MeshLib::MeshSubset> const& bulk_mesh_subsets,
+        MeshLib::MeshSubset const& new_mesh_subset,
+        std::vector<int> const& new_global_component_ids) const;
 
     /// The number of dofs including the those located in the ghost nodes.
     std::size_t dofSizeWithGhosts() const
