@@ -271,27 +271,27 @@ void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
         DBUG("This is the thermal part of the staggered HTProcess.");
         return;
     }
-    if (_balance_mesh)  // computing the balance is optional
+    if (!_balance_mesh)  // computing the balance is optional
     {
-        auto* const balance_pv = MeshLib::getOrCreateMeshProperty<double>(
-            *_balance_mesh, _balance_pv_name, MeshLib::MeshItemType::Cell, 1);
-        // initialise the PropertyVector pv with zero values
-        std::fill(balance_pv->begin(), balance_pv->end(), 0.0);
-        auto balance = ProcessLib::CalculateSurfaceFlux(
-            *_balance_mesh,
-            getProcessVariables(process_id)[0].get().getNumberOfComponents(),
-            _integration_order);
-
-        balance.integrate(x, *balance_pv, *this);
-        // post: surface_mesh has scalar element property
-
-        // TODO output, if output classes are ready this has to be
-        // changed
-        std::string const fname =
-            BaseLib::dropFileExtension(_balance_out_fname) + "_t_" +
-            std::to_string(t) + ".vtu";
-        MeshLib::IO::writeMeshToFile(*_balance_mesh, fname);
+        return;
     }
+    auto* const balance_pv = MeshLib::getOrCreateMeshProperty<double>(
+        *_balance_mesh, _balance_pv_name, MeshLib::MeshItemType::Cell, 1);
+    // initialise the PropertyVector pv with zero values
+    std::fill(balance_pv->begin(), balance_pv->end(), 0.0);
+    auto balance = ProcessLib::CalculateSurfaceFlux(
+        *_balance_mesh,
+        getProcessVariables(process_id)[0].get().getNumberOfComponents(),
+        _integration_order);
+
+    balance.integrate(x, *balance_pv, *this);
+    // post: surface_mesh has scalar element property
+
+    // TODO output, if output classes are ready this has to be
+    // changed
+    std::string const fname = BaseLib::dropFileExtension(_balance_out_fname) +
+                              "_t_" + std::to_string(t) + ".vtu";
+    MeshLib::IO::writeMeshToFile(*_balance_mesh, fname);
 }
 
 }  // namespace HT
