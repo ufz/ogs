@@ -31,6 +31,7 @@ public:
     virtual void integrate(std::size_t element_id,
                            GlobalVector const& x,
                            MeshLib::PropertyVector<double>& balance,
+                           double const t,
                            Process const& bulk_process) = 0;
 };
 
@@ -101,11 +102,13 @@ public:
     /// @param balance PropertyVector the integration result will be stored
     /// into, where balance has the same number of entries like mesh elements
     /// exists.
+    /// @param t The integration is performed at the time t.
     /// @param bulk_process Reference to the bulk process is used to compute the
     /// flux.
     void integrate(std::size_t element_id,
                    GlobalVector const& x,
                    MeshLib::PropertyVector<double>& balance,
+                   double const t,
                    Process const& bulk_process) override
     {
         auto surface_element_normal =
@@ -126,8 +129,8 @@ public:
 
             auto const bulk_element_point = MeshLib::getBulkElementPoint(
                 bulk_process.getMesh(), _bulk_element_id, _bulk_face_id, wp);
-            auto const bulk_flux =
-                bulk_process.getFlux(_bulk_element_id, bulk_element_point, x);
+            auto const bulk_flux = bulk_process.getFlux(
+                _bulk_element_id, bulk_element_point, t, x);
 
             for (int component_id(0);
                  component_id < balance.getNumberOfComponents();

@@ -242,6 +242,7 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
 
 Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
                                    MathLib::Point3d const& p,
+                                   double const t,
                                    GlobalVector const& x) const
 {
     // fetch local_x from primary variable
@@ -250,7 +251,7 @@ Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
         element_id, *_local_to_global_index_map, indices_cache);
     std::vector<double> local_x(x.get(r_c_indices.rows));
 
-    return _local_assemblers[element_id]->getFlux(p, local_x);
+    return _local_assemblers[element_id]->getFlux(p, t, local_x);
 }
 
 // this is almost a copy of the implemention in the GroundwaterFlow
@@ -284,7 +285,7 @@ void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
         getProcessVariables(process_id)[0].get().getNumberOfComponents(),
         _integration_order);
 
-    balance.integrate(x, *balance_pv, *this);
+    balance.integrate(x, *balance_pv, t, *this);
     // post: surface_mesh has scalar element property
 
     // TODO output, if output classes are ready this has to be

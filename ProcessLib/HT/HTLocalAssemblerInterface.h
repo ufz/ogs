@@ -61,6 +61,7 @@ public:
 
     virtual Eigen::Vector3d getFlux(
         MathLib::Point3d const& pnt_local_coords,
+        double const t,
         std::vector<double> const& local_x) const = 0;
 
 protected:

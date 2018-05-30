@@ -48,8 +48,9 @@ public:
     //! @}
 
     Eigen::Vector3d getFlux(std::size_t element_id,
-                                MathLib::Point3d const& p,
-                                GlobalVector const& x) const override
+                            MathLib::Point3d const& p,
+                            double const t,
+                            GlobalVector const& x) const override
     {
         // fetch local_x from primary variable
         std::vector<GlobalIndexType> indices_cache;
@@ -57,11 +58,11 @@ public:
             element_id, *_local_to_global_index_map, indices_cache);
         std::vector<double> local_x(x.get(r_c_indices.rows));
 
-        return _local_assemblers[element_id]->getFlux(p, local_x);
+        return _local_assemblers[element_id]->getFlux(p, t, local_x);
     }
 
     void postTimestepConcreteProcess(GlobalVector const& x,
-                                     const double /*t*/,
+                                     const double t,
                                      const double /*delta_t*/,
                                      int const process_id) override
     {
@@ -89,7 +90,7 @@ public:
                 _balance_mesh->getProperties()
                     .template getPropertyVector<double>(_balance_pv_name);
 
-            balance.integrate(x, *balance_pv, *this);
+            balance.integrate(x, *balance_pv, t, *this);
             // post: surface_mesh has vectorial element property
 
             // TODO output, if output classes are ready this has to be

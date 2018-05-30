@@ -104,10 +104,9 @@ public:
 
     /// Computes the flux in the point \c p_local_coords that is given in local
     /// coordinates using the values from \c local_x.
-    // TODO add time dependency
-    Eigen::Vector3d getFlux(
-        MathLib::Point3d const& p_local_coords,
-        std::vector<double> const& local_x) const override
+    Eigen::Vector3d getFlux(MathLib::Point3d const& p_local_coords,
+                            double const t,
+                            std::vector<double> const& local_x) const override
     {
         // eval dNdx and invJ at p
         using FemType =
@@ -127,8 +126,6 @@ public:
         // fetch hydraulic conductivity
         SpatialPosition pos;
         pos.setElementID(_element.getID());
-        // TODO remove follwing line if time dependency is implemented
-        double const t = 0.0;
         auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
 
         Eigen::Vector3d flux;

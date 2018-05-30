@@ -90,9 +90,9 @@ public:
 
     /// Computes the flux in the point \c pnt_local_coords that is given in
     /// local coordinates using the values from \c local_x.
-    // TODO add time dependency
     Eigen::Vector3d getFlux(
         MathLib::Point3d const& pnt_local_coords,
+        double const t,
         std::vector<double> const& local_x) const override
     {
         // eval dNdx and invJ at given point
@@ -123,8 +123,6 @@ public:
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::p)]);
 
-        // TODO remove following line if time dependency is implemented
-        double const t = 0.0;
         auto const K =
             this->_material_properties.porous_media_properties
                 .getIntrinsicPermeability(t, pos)

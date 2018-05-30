@@ -29,10 +29,12 @@ public:
     /// Executes for each element of the mesh the local intergration procedure.
     /// @param x The global solution the intergration values will be fetched of.
     /// @param balance The vector the integration results will be stored in.
+    /// @param t The balance will be computed at the time t.
     /// @param bulk_process Stores the variable that is used for the
     /// integration.
     void integrate(GlobalVector const& x,
                    MeshLib::PropertyVector<double>& balance,
+                   double const t,
                    Process const& bulk_process);
 
 private:

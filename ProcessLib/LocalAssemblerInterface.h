@@ -87,6 +87,7 @@ public:
     /// coordinates using the values from \c local_x.
     virtual Eigen::Vector3d getFlux(
         MathLib::Point3d const& /*p_local_coords*/,
+        double const /*t*/,
         std::vector<double> const& /*local_x*/) const
     {
         return Eigen::Vector3d{};
