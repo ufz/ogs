@@ -69,7 +69,7 @@ public:
     bool isLinear() const override { return false; }
     //! @}
 
-    std::vector<double> getFlux(std::size_t element_id,
+    Eigen::Vector3d getFlux(std::size_t element_id,
                                 MathLib::Point3d const& p,
                                 GlobalVector const& x) const override;
 

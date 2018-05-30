@@ -240,9 +240,9 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
     }
 }
 
-std::vector<double> HTProcess::getFlux(std::size_t element_id,
-                                       MathLib::Point3d const& p,
-                                       GlobalVector const& x) const
+Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
+                                   MathLib::Point3d const& p,
+                                   GlobalVector const& x) const
 {
     // fetch local_x from primary variable
     std::vector<GlobalIndexType> indices_cache;

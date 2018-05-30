@@ -105,7 +105,7 @@ public:
     /// Computes the flux in the point \c p_local_coords that is given in local
     /// coordinates using the values from \c local_x.
     // TODO add time dependency
-    std::vector<double> getFlux(
+    Eigen::Vector3d getFlux(
         MathLib::Point3d const& p_local_coords,
         std::vector<double> const& local_x) const override
     {
@@ -123,8 +123,6 @@ public:
         // here, which is not affected by axial symmetry.
         fe.computeShapeFunctions(p_local_coords.getCoords(), shape_matrices,
                                  GlobalDim, false);
-        std::vector<double> flux;
-        flux.resize(3);
 
         // fetch hydraulic conductivity
         SpatialPosition pos;
@@ -133,9 +131,10 @@ public:
         double const t = 0.0;
         auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
 
-        Eigen::Map<Eigen::RowVectorXd>(flux.data(), flux.size()) =
+        Eigen::Vector3d flux;
+        flux.head<GlobalDim>() =
             -k * shape_matrices.dNdx *
-            Eigen::Map<const Eigen::VectorXd>(local_x.data(), local_x.size());
+            Eigen::Map<const NodalVectorType>(local_x.data(), local_x.size());
 
         return flux;
     }

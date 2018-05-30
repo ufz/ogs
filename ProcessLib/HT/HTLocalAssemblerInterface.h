@@ -59,7 +59,7 @@ public:
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& /*cache*/) const = 0;
 
-    virtual std::vector<double> getFlux(
+    virtual Eigen::Vector3d getFlux(
         MathLib::Point3d const& pnt_local_coords,
         std::vector<double> const& local_x) const = 0;
 

@@ -91,7 +91,7 @@ public:
     /// Computes the flux in the point \c pnt_local_coords that is given in
     /// local coordinates using the values from \c local_x.
     // TODO add time dependency
-    std::vector<double> getFlux(
+    Eigen::Vector3d getFlux(
         MathLib::Point3d const& pnt_local_coords,
         std::vector<double> const& local_x) const override
     {
@@ -149,10 +149,9 @@ public:
             auto const b = this->_material_properties.specific_body_force;
             q += K_over_mu * rho_w * b;
         }
-        std::vector<double> flux;
-        flux.resize(3);
-        Eigen::Map<GlobalDimVectorType>(flux.data(), flux.size()) = q;
 
+        Eigen::Vector3d flux;
+        flux.head<GlobalDim>() = q;
         return flux;
     }
 
