@@ -118,7 +118,7 @@ public:
 
         std::size_t const n_integration_points =
             _integration_method.getNumberOfPoints();
-        // balance[id_of_element] =
+        // balance[id_of_element] +=
         //   int_{\Gamma_e} \alpha \cdot flux \cdot normal \d \Gamma
         for (std::size_t ip(0); ip < n_integration_points; ip++)
         {
