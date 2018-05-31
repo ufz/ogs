@@ -25,15 +25,14 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(
     _local_assemblers.resize(boundary_mesh.getElements().size());
 
     // needed to create dof table
-    auto mesh_subset_all_nodes = std::make_unique<MeshLib::MeshSubset const>(
+    auto mesh_subset_all_nodes = std::make_unique<MeshLib::MeshSubset>(
         boundary_mesh, &boundary_mesh.getNodes());
 
     // Collect the mesh subsets in a vector.
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
-    std::generate_n(
-        std::back_inserter(all_mesh_subsets),
-        bulk_property_number_of_components,
-        [&]() { return MeshLib::MeshSubsets{mesh_subset_all_nodes.get()}; });
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets;
+    std::generate_n(std::back_inserter(all_mesh_subsets),
+                    bulk_property_number_of_components,
+                    [&]() { return *mesh_subset_all_nodes; });
 
     // needed for creation of local assemblers
     auto dof_table = std::make_unique<NumLib::LocalToGlobalIndexMap const>(

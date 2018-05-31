@@ -111,9 +111,8 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::constructDofTable()
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(
-        _mesh_subset_all_nodes.get());
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
+        *_mesh_subset_all_nodes};
     _local_to_global_index_map_single_component =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets_single_component),
@@ -123,13 +122,12 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::constructDofTable()
     assert(_local_to_global_index_map_single_component);
 
     // For displacement equation.
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
-    std::generate_n(
-        std::back_inserter(all_mesh_subsets),
-        getProcessVariables(_mechanics_related_process_id)[0]
-            .get()
-            .getNumberOfComponents(),
-        [&]() { return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}; });
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets;
+    std::generate_n(std::back_inserter(all_mesh_subsets),
+                    getProcessVariables(_mechanics_related_process_id)[0]
+                        .get()
+                        .getNumberOfComponents(),
+                    [&]() { return *_mesh_subset_all_nodes; });
 
     std::vector<int> const vec_n_components{DisplacementDim};
     _local_to_global_index_map =
