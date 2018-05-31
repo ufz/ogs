@@ -41,13 +41,9 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
 
     // Assume that the mesh subsets are equal for all components of the
     // variable.
-    auto const& mesh_subsets = dof_table_bulk.getMeshSubsets(variable_id, 0);
+    auto const& mesh_subset = dof_table_bulk.getMeshSubset(variable_id, 0);
 
-    // TODO extend the node intersection to all parts of mesh_subsets, i.e.
-    // to each of the MeshSubset in the mesh_subsets.
-    _mesh_subset_all_nodes.reset(
-        mesh_subsets.getMeshSubset(0).getIntersectionByNodes(nodes));
-    MeshLib::MeshSubsets all_mesh_subsets{_mesh_subset_all_nodes.get()};
+    auto bc_mesh_subset = mesh_subset.getIntersectionByNodes(nodes);
 
     // Create component ids vector for the current variable.
     auto const& number_of_components =
@@ -58,7 +54,7 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
     // Create local DOF table from intersected mesh subsets for the given
     // variable and component ids.
     _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
-        variable_id, component_ids, std::move(all_mesh_subsets), _elements));
+        variable_id, component_ids, std::move(bc_mesh_subset), _elements));
 
     createLocalAssemblers<LocalAssemblerImplementation>(
         global_dim, _elements, *_dof_table_boundary, shapefunction_order,

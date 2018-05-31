@@ -55,8 +55,6 @@ private:
     /// defined.
     std::vector<MeshLib::Element*> _elements;
 
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
-
     /// Local dof table, a subset of the global one restricted to the
     /// participating #_elements of the boundary condition.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;

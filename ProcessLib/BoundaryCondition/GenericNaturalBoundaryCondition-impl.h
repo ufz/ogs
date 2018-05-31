@@ -52,19 +52,16 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
     DBUG("Found %d nodes for Natural BCs for the variable %d and component %d",
          nodes.size(), variable_id, component_id);
 
-    auto const& mesh_subsets =
-        dof_table_bulk.getMeshSubsets(variable_id, component_id);
+    auto const& mesh_subset =
+        dof_table_bulk.getMeshSubset(variable_id, component_id);
 
-    // TODO extend the node intersection to all parts of mesh_subsets, i.e.
-    // to each of the MeshSubset in the mesh_subsets.
-    _mesh_subset_all_nodes.reset(
-        mesh_subsets.getMeshSubset(0).getIntersectionByNodes(nodes));
-    MeshLib::MeshSubsets all_mesh_subsets{_mesh_subset_all_nodes.get()};
+    MeshLib::MeshSubset bc_mesh_subset =
+        mesh_subset.getIntersectionByNodes(nodes);
 
     // Create local DOF table from intersected mesh subsets for the given
     // variable and component ids.
     _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
-        variable_id, {component_id}, std::move(all_mesh_subsets), _elements));
+        variable_id, {component_id}, std::move(bc_mesh_subset), _elements));
 
     createLocalAssemblers<LocalAssemblerImplementation>(
         global_dim, _elements, *_dof_table_boundary, shapefunction_order,
