@@ -26,8 +26,8 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Location.h"
-#include "MeshLib/MeshSubsets.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshSubset.h"
 #include "MeshLib/Node.h"
 
 #include "NumLib/NumericsConfig.h"
@@ -45,17 +45,15 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     //--------------------------------------------------------------------------
     // Prepare mesh items where data are assigned
     //--------------------------------------------------------------------------
-    const MeshLib::MeshSubset mesh_items_all_nodes(*ex1.msh,
-                                                          &ex1.msh->getNodes());
+    MeshLib::MeshSubset const mesh_items_all_nodes{*ex1.msh,
+                                                   &ex1.msh->getNodes()};
 
     //--------------------------------------------------------------------------
     // Allocate a coefficient matrix, RHS and solution vectors
     //--------------------------------------------------------------------------
     // define a mesh item composition in a vector
-    std::vector<MeshLib::MeshSubsets> vec_comp_dis;
-    vec_comp_dis.emplace_back(&mesh_items_all_nodes);
     NumLib::LocalToGlobalIndexMap local_to_global_index_map(
-        std::move(vec_comp_dis), NumLib::ComponentOrder::BY_COMPONENT);
+        {mesh_items_all_nodes}, NumLib::ComponentOrder::BY_COMPONENT);
 
     //--------------------------------------------------------------------------
     // Construct a linear system

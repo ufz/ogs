@@ -17,7 +17,7 @@
 #include "NumLib/DOF/MeshComponentMap.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshSubsets.h"
+#include "MeshLib/MeshSubset.h"
 
 class NumLibMeshComponentMapTest : public ::testing::Test
 {
@@ -27,32 +27,29 @@ class NumLibMeshComponentMapTest : public ::testing::Test
         using MeshComponentMap = NumLib::MeshComponentMap;
 
     public:
-    NumLibMeshComponentMapTest()
-        : mesh(nullptr), nodesSubset(nullptr), cmap(nullptr)
-    {
-        mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
-        nodesSubset = new MeshLib::MeshSubset(*mesh, &mesh->getNodes());
+        NumLibMeshComponentMapTest() : mesh(nullptr), cmap(nullptr)
+        {
+            mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
+            MeshLib::MeshSubset nodesSubset{*mesh, &mesh->getNodes()};
 
-        // Add two components both based on the same nodesSubset.
-        components.emplace_back(nodesSubset);
-        components.emplace_back(nodesSubset);
+            // Add two components both based on the same nodesSubset.
+            components.emplace_back(nodesSubset);
+            components.emplace_back(nodesSubset);
     }
 
     ~NumLibMeshComponentMapTest() override
     {
         delete cmap;
-        delete nodesSubset;
         delete mesh;
     }
 
     static std::size_t const mesh_size = 9;
     MeshLib::Mesh const* mesh;
-    MeshLib::MeshSubset const* nodesSubset;
 
     //data component 0 and 1 are assigned to all nodes in the mesh
     static std::size_t const comp0_id = 0;
     static std::size_t const comp1_id = 1;
-    std::vector<MeshLib::MeshSubsets> components;
+    std::vector<MeshLib::MeshSubset> components;
     MeshComponentMap const* cmap;
 
     //
@@ -157,8 +154,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
     for (std::size_t id : ids)
         some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
 
-    MeshLib::MeshSubset const some_nodes_mesh_subset(*mesh, &some_nodes);
-    MeshLib::MeshSubsets const selected_component{&some_nodes_mesh_subset};
+    MeshLib::MeshSubset const selected_component(*mesh, &some_nodes);
 
     int const selected_component_id = 1;
 
@@ -193,8 +189,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
     for (std::size_t id : ids)
         some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
 
-    MeshLib::MeshSubset const some_nodes_mesh_subset(*mesh, &some_nodes);
-    MeshLib::MeshSubsets const selected_component{&some_nodes_mesh_subset};
+    MeshLib::MeshSubset const selected_component(*mesh, &some_nodes);
 
     int const selected_component_id = 1;
 
@@ -229,8 +224,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_MulticomponentVariable)
     for (std::size_t id : ids)
         some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
 
-    MeshLib::MeshSubset const some_nodes_mesh_subset(*mesh, &some_nodes);
-    MeshLib::MeshSubsets const selected_component{&some_nodes_mesh_subset};
+    MeshLib::MeshSubset const selected_component(*mesh, &some_nodes);
 
     // Subset the original cmap.
     std::vector<int> const selected_component_ids = {0, 1};
@@ -267,8 +261,7 @@ TEST_F(NumLibMeshComponentMapTest,
     for (std::size_t id : ids)
         some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
 
-    MeshLib::MeshSubset const some_nodes_mesh_subset(*mesh, &some_nodes);
-    MeshLib::MeshSubsets const selected_component{&some_nodes_mesh_subset};
+    MeshLib::MeshSubset const selected_component(*mesh, &some_nodes);
 
     // Subset the original cmap.
     std::vector<int> const selected_component_ids = {1};

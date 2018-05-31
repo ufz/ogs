@@ -15,10 +15,9 @@
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
-#include "MeshLib/MeshSearch/NodeSearch.h"
-#include "MeshLib/MeshSubsets.h"
 #include "MeshLib/Mesh.h"
-
+#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshLib/MeshSubset.h"
 
 class NumLibLocalToGlobalIndexMapTest : public ::testing::Test
 {
@@ -31,8 +30,8 @@ public:
             std::make_unique<MeshLib::MeshSubset>(*mesh, &mesh->getNodes());
 
         // Add two components both based on the same nodesSubset.
-        components.emplace_back(nodesSubset.get());
-        components.emplace_back(nodesSubset.get());
+        components.emplace_back(*nodesSubset);
+        components.emplace_back(*nodesSubset);
     }
 
 protected:
@@ -43,7 +42,7 @@ protected:
     //data component 0 and 1 are assigned to all nodes in the mesh
     static int const comp0_id = 0;
     static int const comp1_id = 1;
-    std::vector<MeshLib::MeshSubsets> components;
+    std::vector<MeshLib::MeshSubset> components;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap const> dof_map;
 };
@@ -102,9 +101,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
     // Find unique node ids of the selected elements for testing.
     std::vector<MeshLib::Node*> selected_nodes = MeshLib::getUniqueNodes(some_elements);
 
-    auto const selected_subset = std::unique_ptr<MeshLib::MeshSubset const>{
-        nodesSubset->getIntersectionByNodes(selected_nodes)};
-    MeshLib::MeshSubsets selected_component{selected_subset.get()};
+    auto selected_component =
+        nodesSubset->getIntersectionByNodes(selected_nodes);
 
     auto dof_map_subset = std::unique_ptr<NumLib::LocalToGlobalIndexMap>{
         dof_map->deriveBoundaryConstrainedMap(1,    // variable id
@@ -124,7 +122,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
 #endif
 {
     // test 2 variables (1st variable with 1 component, 2nd variable with 2 components)
-    components.emplace_back(nodesSubset.get());
+    components.emplace_back(*nodesSubset);
 
     std::vector<int> vec_var_n_components{1, 2};
 
@@ -153,7 +151,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
 #endif
 {
     // test 2 variables (1st variable with 2 component, 2nd variable with 1 components)
-    components.emplace_back(nodesSubset.get());
+    components.emplace_back(*nodesSubset);
 
     std::vector<int> vec_var_n_components{2, 1};
 
@@ -186,9 +184,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     // - 1st variable with 2 components for all nodes, elements
     // - 2nd variable with 1 component for nodes of element id 1
     std::vector<MeshLib::Node*> var2_nodes{const_cast<MeshLib::Node*>(mesh->getNode(1)), const_cast<MeshLib::Node*>(mesh->getNode(2))};
-    auto var2_subset =
-        std::make_unique<MeshLib::MeshSubset>(*mesh, &var2_nodes);
-    components.emplace_back(var2_subset.get());
+    MeshLib::MeshSubset var2_subset{*mesh, &var2_nodes};
+    components.emplace_back(var2_subset);
 
     std::vector<int> vec_var_n_components{2, 1};
     std::vector<std::vector<MeshLib::Element*>const*> vec_var_elements;
@@ -239,9 +236,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     // - 1st variable with 2 components for all nodes, elements
     // - 2nd variable with 1 component for 1st node of element id 1
     std::vector<MeshLib::Node*> var2_nodes{const_cast<MeshLib::Node*>(mesh->getNode(1))};
-    auto var2_subset =
-        std::make_unique<MeshLib::MeshSubset>(*mesh, &var2_nodes);
-    components.emplace_back(var2_subset.get());
+    MeshLib::MeshSubset var2_subset = {*mesh, &var2_nodes};
+    components.emplace_back(var2_subset);
 
     std::vector<int> vec_var_n_components{2, 1};
     std::vector<std::vector<MeshLib::Element*>const*> vec_var_elements;
