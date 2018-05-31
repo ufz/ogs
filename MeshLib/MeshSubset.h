@@ -134,13 +134,12 @@ public:
     /// nodes and the provided vector of nodes.
     /// An empty mesh subset may be returned, not a nullptr, in case of empty
     /// intersection or empty input vector.
-    MeshSubset*
-    getIntersectionByNodes(std::vector<Node*> const& nodes) const
+    MeshSubset getIntersectionByNodes(std::vector<Node*> const& nodes) const
     {
         auto* active_nodes = new std::vector<Node*>;
 
         if (_nodes == nullptr || _nodes->empty())
-            return new MeshSubset(_msh, active_nodes);   // Empty mesh subset
+            return MeshSubset(_msh, active_nodes);  // Empty mesh subset
 
         for (auto n : nodes)
         {
@@ -152,7 +151,12 @@ public:
 
         // Transfer the ownership of active_nodes to the new MeshSubset, which
         // deletes the pointer itself.
-        return new MeshSubset(_msh, active_nodes, true);
+        return MeshSubset(_msh, active_nodes,
+                          false);  // This causes a memory leak of the non
+                                   // deleted active_nodes vector.
+                                   // Calling ctor with 'true', causes double
+                                   // free of the nodes vector, when MS is
+                                   // copied multiple times.
     }
 
     Mesh const& getMesh() const
