@@ -24,20 +24,14 @@ double norm(GlobalVector const& x, unsigned const global_component,
 #endif
 
     double res = 0.0;
-    MeshLib::MeshSubsets const& mss =
-        dof_table.getMeshSubsets(global_component);
+    auto const& ms = dof_table.getMeshSubset(global_component);
 
-    for (unsigned i = 0; i < mss.size(); i++)
+    assert(ms.getMeshID() == mesh.getID());
+    for (MeshLib::Node const* node : ms.getNodes())
     {
-        MeshLib::MeshSubset const& ms = mss.getMeshSubset(i);
-        if (ms.getMeshID() != mesh.getID())
-            continue;
-        for (MeshLib::Node const* node : ms.getNodes())
-        {
-            auto const value = getNonGhostNodalValue(
-                x, mesh, dof_table, node->getID(), global_component);
-            res = calculate_norm(res, value);
-        }
+        auto const value = getNonGhostNodalValue(
+            x, mesh, dof_table, node->getID(), global_component);
+        res = calculate_norm(res, value);
     }
     return res;
 }

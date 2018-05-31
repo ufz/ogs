@@ -14,12 +14,9 @@
 
 #include "numlib_export.h"
 
-#include "ComponentGlobalIndexDict.h"
+#include "MeshLib/MeshSubset.h"
 
-namespace MeshLib
-{
-    class MeshSubsets;
-}
+#include "ComponentGlobalIndexDict.h"
 
 namespace NumLib
 {
@@ -40,19 +37,19 @@ public:
 public:
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector
-    MeshComponentMap(std::vector<MeshLib::MeshSubsets> const& components,
+    MeshComponentMap(std::vector<MeshLib::MeshSubset> const& components,
                      ComponentOrder order);
 
     /// Creates a multi-component subset of the current mesh component map.
     /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the
     /// current map.
     ///
-    /// \note For each component the given MeshSubsets object will be used.
+    /// \note For each component the same mesh_subset will be used.
     ///
     /// \param component_ids  The vector of global components id.
     /// \param components components that should remain in the created subset
     MeshComponentMap getSubset(std::vector<int> const& component_ids,
-                               MeshLib::MeshSubsets const& components) const;
+                               MeshLib::MeshSubset const& mesh_subset) const;
 
     /// The number of dofs including the those located in the ghost nodes.
     std::size_t dofSizeWithGhosts() const
