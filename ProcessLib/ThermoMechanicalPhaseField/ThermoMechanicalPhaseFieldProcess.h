@@ -104,7 +104,8 @@ private:
                                     double const dt,
                                     const int process_id) override;
 
-    void postTimestepConcreteProcess(GlobalVector const& x,
+    void postTimestepConcreteProcess(GlobalVector const& x, double const t,
+                                     double const dt,
                                      int const process_id) override;
 
     void postNonLinearSolverConcreteProcess(GlobalVector const& x,

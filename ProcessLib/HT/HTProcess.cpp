@@ -11,8 +11,13 @@
 
 #include <cassert>
 
+// TODO used for output, if output classes are ready this has to be changed
+#include "MeshLib/IO/writeMeshToFile.h"
+
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
+#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 #include "HTMaterialProperties.h"
@@ -34,12 +39,17 @@ HTProcess::HTProcess(
     std::unique_ptr<HTMaterialProperties>&& material_properties,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme,
+    std::unique_ptr<MeshLib::Mesh>&& balance_mesh,
+    std::string&& balance_pv_name, std::string&& balance_out_fname)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),
-      _material_properties(std::move(material_properties))
+      _material_properties(std::move(material_properties)),
+      _balance_mesh(std::move(balance_mesh)),
+      _balance_pv_name(std::move(balance_pv_name)),
+      _balance_out_fname(std::move(balance_out_fname))
 {
 }
 
@@ -140,8 +150,8 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
+        Jac, _coupled_solutions);
 }
 
 void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
@@ -181,7 +191,7 @@ void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers()
 }
 
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
-    HTProcess::getDOFTableForExtrapolatorData() const
+HTProcess::getDOFTableForExtrapolatorData() const
 {
     if (!_use_monolithic_scheme)
     {
@@ -199,9 +209,10 @@ std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
 
     const bool manage_storage = true;
     return std::make_tuple(new NumLib::LocalToGlobalIndexMap(
-        std::move(all_mesh_subsets_single_component),
-        // by location order is needed for output
-        NumLib::ComponentOrder::BY_LOCATION), manage_storage);
+                               std::move(all_mesh_subsets_single_component),
+                               // by location order is needed for output
+                               NumLib::ComponentOrder::BY_LOCATION),
+                           manage_storage);
 }
 
 void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
@@ -227,6 +238,61 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
         MathLib::LinAlg::setLocalAccessibleVector(*x_t0);
         _coupled_solutions->coupled_xs_t0.emplace_back(x_t0.get());
     }
+}
+
+Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
+                                   MathLib::Point3d const& p,
+                                   double const t,
+                                   GlobalVector const& x) const
+{
+    // fetch local_x from primary variable
+    std::vector<GlobalIndexType> indices_cache;
+    auto const r_c_indices = NumLib::getRowColumnIndices(
+        element_id, *_local_to_global_index_map, indices_cache);
+    std::vector<double> local_x(x.get(r_c_indices.rows));
+
+    return _local_assemblers[element_id]->getFlux(p, t, local_x);
+}
+
+// this is almost a copy of the implemention in the GroundwaterFlow
+void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
+                                            const double t,
+                                            const double delta_t,
+                                            int const process_id)
+{
+    // For the monolithic scheme, process_id is always zero.
+    if (_use_monolithic_scheme && process_id != 0)
+    {
+        OGS_FATAL(
+            "The condition of process_id = 0 must be satisfied for "
+            "monolithic HTProcess, which is a single process.");
+    }
+    if (!_use_monolithic_scheme && process_id != 1)
+    {
+        DBUG("This is the thermal part of the staggered HTProcess.");
+        return;
+    }
+    if (!_balance_mesh)  // computing the balance is optional
+    {
+        return;
+    }
+    auto* const balance_pv = MeshLib::getOrCreateMeshProperty<double>(
+        *_balance_mesh, _balance_pv_name, MeshLib::MeshItemType::Cell, 1);
+    // initialise the PropertyVector pv with zero values
+    std::fill(balance_pv->begin(), balance_pv->end(), 0.0);
+    auto balance = ProcessLib::CalculateSurfaceFlux(
+        *_balance_mesh,
+        getProcessVariables(process_id)[0].get().getNumberOfComponents(),
+        _integration_order);
+
+    balance.integrate(x, *balance_pv, t, *this);
+    // post: surface_mesh has scalar element property
+
+    // TODO output, if output classes are ready this has to be
+    // changed
+    std::string const fname = BaseLib::dropFileExtension(_balance_out_fname) +
+                              "_t_" + std::to_string(t) + ".vtu";
+    MeshLib::IO::writeMeshToFile(*_balance_mesh, fname);
 }
 
 }  // namespace HT

@@ -350,10 +350,11 @@ void Process::preTimestep(GlobalVector const& x, const double t,
     _boundary_conditions[process_id].preTimestep(t, x);
 }
 
-void Process::postTimestep(GlobalVector const& x, int const process_id)
+void Process::postTimestep(GlobalVector const& x, const double t,
+                           const double delta_t, int const process_id)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
-    postTimestepConcreteProcess(x, process_id);
+    postTimestepConcreteProcess(x, t, delta_t, process_id);
 }
 
 void Process::postNonLinearSolver(GlobalVector const& x, const double t,
