@@ -1,7 +1,7 @@
 languageCode = "en-us"
 title = "OpenGeoSys"
 theme = "ogs"
-baseURL = "http://localhost:1313"
+baseURL = "https://www.opengeosys.org"
 buildDrafts = false
 pygmentsstyle = 'friendly'
 enableGitInfo = true
