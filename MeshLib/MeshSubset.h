@@ -51,23 +51,15 @@ public:
     /// Construct a mesh subset from vector of nodes on the given mesh.
     /// \param msh Mesh
     /// \param vec_items Vector of Node pointers.
-    /// \param delete_ptr Deletes the vector of Node pointers if true.
-    /// \note When delete_ptr is set only the vector is deleted, not the
-    /// elements of the vector.
-    MeshSubset(const Mesh& msh, std::vector<Node*> const* vec_items,
-        bool const delete_ptr = false)
-        : _msh(msh), _nodes(vec_items), _eles(nullptr), _delete_ptr(delete_ptr)
+    MeshSubset(const Mesh& msh, std::vector<Node*> const* vec_items)
+        : _msh(msh), _nodes(vec_items), _eles(nullptr)
     {}
 
     /// Construct a mesh subset from vector of elements on the given mesh.
     /// \param msh Mesh
     /// \param vec_items Vector of Element pointers.
-    /// \param delete_ptr Deletes the vector of Element pointers if true.
-    /// \note When delete_ptr is set only the vector is deleted, not the
-    /// elements of the vector.
-    MeshSubset(const Mesh& msh, std::vector<Element*> const* vec_items,
-        bool const delete_ptr = false)
-        : _msh(msh), _nodes(nullptr), _eles(vec_items), _delete_ptr(delete_ptr)
+    MeshSubset(const Mesh& msh, std::vector<Element*> const* vec_items)
+        : _msh(msh), _nodes(nullptr), _eles(vec_items)
     {}
 
     /// construct from both nodes and elements
@@ -76,22 +68,10 @@ public:
     /// \param msh Mesh
     /// \param vec_nodes Vector of Node pointers.
     /// \param vec_eles Vector of Element pointers.
-    /// \param delete_ptr Deletes the vector of Node pointers if true.
-    /// \note When delete_ptr is set only the vectors are deleted, not the
-    /// elements of the vectors.
     MeshSubset(const Mesh& msh, std::vector<Node*> const* vec_nodes,
-        std::vector<Element*> const* vec_eles, bool const delete_ptr = false)
-        : _msh(msh), _nodes(vec_nodes), _eles(vec_eles), _delete_ptr(delete_ptr)
+               std::vector<Element*> const* vec_eles)
+        : _msh(msh), _nodes(vec_nodes), _eles(vec_eles)
     {}
-
-    ~MeshSubset()
-    {
-        if (_delete_ptr)
-        {
-            delete _nodes;
-            delete _eles;
-        }
-    }
 
     /// return the total number of mesh items
     std::size_t getNumberOfTotalItems() const
@@ -160,7 +140,5 @@ private:
     Mesh const& _msh;
     std::vector<Node*> const* _nodes;
     std::vector<Element*> const* _eles;
-    bool const _delete_ptr = false;
-
 };
 }   // namespace MeshLib
