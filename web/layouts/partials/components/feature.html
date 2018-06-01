@@ -1,4 +1,4 @@
-<div class="py-8 {{ .feature.direction | default " left "}} {{ .feature.class }}">
+<div class="px-8 py-8 {{ .feature.direction | default " left "}} {{ .feature.class }}">
   <div class="container">
 
     {{ if or ( not .feature.layout ) ( or (eq .feature.layout "left") (eq .feature.layout "right") ) }}
@@ -10,7 +10,7 @@
         </div>
         <div class="flex my-4">
         {{ range .feature.links }}
-          <a class="button mr-2 btn-{{ .feature.class }}" href="{{ .feature.url }}">{{ .text }}</a>
+          <a class="button mr-2 btn-{{ .feature.class }}" href="{{ .url }}">{{ markdownify .text }}</a>
         {{ end }}
         </div>
       </div>

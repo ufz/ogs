@@ -144,7 +144,7 @@ table {
 
 /* -- Buttons -- */
 a.button {
-  @apply .bg-white .text-grey-darkest .py-4 .px-8 .border .border-grey-light .shadow;
+  @apply .bg-white .text-grey-darkest .py-4 .px-8 .border .border-grey-light .shadow .rounded-lg;
   @apply .font-serif .font-medium .uppercase;
   color: config('mycolors.text-primary');
 }

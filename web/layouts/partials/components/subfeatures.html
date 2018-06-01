@@ -2,9 +2,12 @@
   {{- range . -}}
   <div class="w-full md:w-1/3 md:px-4">
     <h4>{{ markdownify .headline }}</h4>
-    <div>
+    <div class="mb-8">
       {{ markdownify .textline }}
     </div>
+    {{ range .links }}
+      <a class="button mt-16 mr-2 btn-{{ .feature.class }}" href="{{ .url }}">{{ markdownify .text }}</a>
+    {{ end }}
   </div>
   {{- end -}}
 </div>
