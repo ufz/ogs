@@ -69,8 +69,10 @@ public:
 
         std::vector<MeL::Node*> nodes = MeL::getUniqueNodes(boundary_elements);
 
+        nodes_subset =
+            nodesNodesIntersection(mesh_items_all_nodes->getNodes(), nodes);
         mesh_items_boundary = std::make_unique<MeshLib::MeshSubset>(
-            mesh_items_all_nodes->getIntersectionByNodes(nodes));
+            mesh_items_all_nodes->getMesh(), &nodes_subset);
     }
 
     ~NumLibLocalToGlobalIndexMapMultiDOFTest() override
@@ -150,6 +152,9 @@ public:
 
     std::unique_ptr<MeL::MeshSubset const> mesh_items_boundary;
     std::vector<MeL::Element*> boundary_elements;
+
+    /// Intersection of boundary nodes and bulk mesh subset.
+    std::vector<MeshLib::Node*> nodes_subset;
 };
 
 

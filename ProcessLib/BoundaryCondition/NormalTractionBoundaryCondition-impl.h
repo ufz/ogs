@@ -43,7 +43,8 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
     // variable.
     auto const& mesh_subset = dof_table_bulk.getMeshSubset(variable_id, 0);
 
-    auto bc_mesh_subset = mesh_subset.getIntersectionByNodes(nodes);
+    _nodes_subset = nodesNodesIntersection(mesh_subset.getNodes(), nodes);
+    MeshLib::MeshSubset bc_mesh_subset(mesh_subset.getMesh(), &_nodes_subset);
 
     // Create component ids vector for the current variable.
     auto const& number_of_components =

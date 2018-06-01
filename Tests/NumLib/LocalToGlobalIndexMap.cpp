@@ -101,8 +101,10 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
     // Find unique node ids of the selected elements for testing.
     std::vector<MeshLib::Node*> selected_nodes = MeshLib::getUniqueNodes(some_elements);
 
-    auto selected_component =
-        nodesSubset->getIntersectionByNodes(selected_nodes);
+    std::vector<MeshLib::Node*> nodes_intersection =
+        nodesNodesIntersection(nodesSubset->getNodes(), selected_nodes);
+    MeshLib::MeshSubset selected_component(nodesSubset->getMesh(),
+                                           &nodes_intersection);
 
     auto dof_map_subset = std::unique_ptr<NumLib::LocalToGlobalIndexMap>{
         dof_map->deriveBoundaryConstrainedMap(1,    // variable id
