@@ -349,6 +349,18 @@ AddTest(
     CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolicStaggered_pcs_1_ts_10_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
 )
 
+AddTest(
+    NAME HT_SimpleSynthetics_constraint_dirichlet_bc
+    PATH Parabolic/HT/SimpleSynthetics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS constraint_bc_1e3.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB ConstViscosityThermalConvection_pcs_0_ts_*.vtu T T 1e-14 1e-13
+    GLOB ConstViscosityThermalConvection_pcs_0_ts_*.vtu p p 1e-15 1e-14
+)
+
 # MPI/PETSc tests
 AddTest(
     NAME Parallel_LARGE_2D_ThermalConvection_constviscosity
