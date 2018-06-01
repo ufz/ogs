@@ -1,5 +1,5 @@
 languageCode = "en-us"
-title = "OpenGeoSys-6"
+title = "OpenGeoSys"
 theme = "ogs"
 baseURL = "http://localhost:1313"
 buildDrafts = false

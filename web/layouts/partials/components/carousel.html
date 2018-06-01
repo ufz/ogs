@@ -1,0 +1,12 @@
+{{ .page.Scratch.Add "numGalleries" 1}}
+{{ $i := .page.Scratch.Get "numGalleries" }}
+{{ $length := len .carousel }}
+<div class="px-2 mx-4 carousel{{ if .carousel.play }} carousel-play{{ end }}">
+{{ range .carousel.slides }}
+  <div>
+    <a href="{{ .permalink }}" data-fancybox="gallery-{{ $i }}" data-caption="{{ .caption | default ""}}">
+      <img class="rounded" src="{{ .permalink }}" alt="{{ .caption | default ""}}" />
+    </a>
+  </div>
+{{ end }}
+</div>

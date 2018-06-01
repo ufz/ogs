@@ -1,9 +1,9 @@
 {{ define "main" }}
-  <div class="flex">
+  <div class="container flex">
   <nav class="w-1/4">
     {{ $segments := split .RelPermalink "/" }}
     {{ $subsection := index $segments 2 }}
-    <div class="text-xs font-serif-caps">
+    <div class="text-xs">
       <a href="/docs/">Docs</a> / <span class="text-orange">
       {{ if eq $subsection "devguide"}}Developer Guide{{ end }}
       {{ if eq $subsection "benchmarks"}}Benchmarks{{ end }}
@@ -16,7 +16,7 @@
       {{ $currentMenu := index .Site.Menus $subsection }}
       {{ range $currentMenu }}
         {{ if .HasChildren }}
-          <li class="font-serif-caps tracking-wide mt-4">{{ .Name }}</li>
+          <li class="tracking-wide font-serif mt-4">{{ .Name }}</li>
           {{ range .Children }}
             <li class="m-1"><a href="{{ .URL }}"{{if $currentPage.IsMenuCurrent $subsection . }} class="active"{{end}}>{{ .Name }}</a></li>
           {{ end }}
@@ -25,7 +25,7 @@
     </ul>
   </nav>
   <div class="w-3/4 ml-4">
-    <h1 class="font-serif-caps">{{ .Title }}</h1>
+    <h1>{{ .Title }}</h1>
     {{ if or (eq $subsection "devguide") (eq $subsection "quickstart") }}
     <div class="invisible mb-4" id="os-selector">Select OS:
       <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i> Windows</a>

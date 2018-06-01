@@ -335,10 +335,10 @@ pipeline {
             dir ('web') {
               sh "yarn --ignore-engines --ignore-optional --non-interactive"
               sh "pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json"
-              sh "node_modules/.bin/webpack -p"
+              sh "node_modules/.bin/webpack -p --mode=production"
               script {
                 if (env.JOB_NAME == 'ufz/ogs/master') {
-                  sh "hugo --ignoreCache --baseURL https://benchmarks.opengeosys.org"
+                  sh "hugo --ignoreCache"
                   sh ("node_modules/.bin/hugo-algolia --toml -s")
                 } else {
                   sh ("hugo --ignoreCache --baseURL " + env.JOB_URL + "Web/")

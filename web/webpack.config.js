@@ -1,8 +1,11 @@
 var webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const path = require('path')
+const path = require('path');
+
+const sharp = require('sharp');
 
 module.exports = {
+  mode: 'development',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -19,6 +22,35 @@ module.exports = {
             'postcss-loader'
           ]
         })
+      },
+      {
+        test: /\.(gif|jpe?g|png|tiff)(\?.*)?$/,
+        use: [
+          {
+            loader: 'sharp-loader',
+            query: {
+              context: path.join(__dirname, 'content'),
+              name: '[path][name].[ext].[preset]',
+              cacheDirectory: true,
+              presets: {
+                thumbnail: {
+                  width: 320,
+                  height: 200,
+                  quality: 70,
+                }
+              }
+            },
+          }
+        ]
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {}
+          }
+        ]
       }
     ]
   },
@@ -26,7 +58,8 @@ module.exports = {
     new ExtractTextPlugin('styles.css'),
     new webpack.ProvidePlugin({
       $: "jquery",
-      jQuery: "jquery"
+      jQuery: "jquery",
+      'window.jQuery': 'jquery'
     })
   ],
   devtool: 'source-map'

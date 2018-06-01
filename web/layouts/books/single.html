@@ -1,8 +1,8 @@
 {{ define "main" }}
+  <div class="container">
+    <h1>{{ .Title }} {{ if .Params.subtitle }}<span class="text-regular text-grey-dark">– {{ .Params.subtitle }}</span>{{ end }}</h1>
 
-  <h1>{{ .Title }} {{ if .Params.subtitle }}<span class="text-regular text-grey-dark">– {{ .Params.subtitle }}</span>{{ end }}</h1>
-
-  <img class="w-1/6 float-left mr-4 mb-2 shadow-md" src="../{{ .Params.book_cover }}" alt="">
-  {{ .Content }}
-
+    <img class="w-1/6 float-left mr-4 mb-2 shadow-md" src="../{{ .Params.book_cover }}" alt="">
+    {{ .Content }}
+  </div>
 {{ end }}

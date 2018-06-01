@@ -1,37 +1,45 @@
 @tailwind preflight;
 
-@import url('https://fonts.googleapis.com/css?family=Spectral');
-@import url('https://fonts.googleapis.com/css?family=Spectral+SC');
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,400i,700');
+@tailwind components;
 
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700');
+
+body {
+  color: config('mycolors.text-default');
+}
 /* -- Links -- */
 a {
-  @apply .text-blue;
+  color: config('mycolors.text-primary');
   @apply .no-underline;
 }
 a:hover {
-  @apply .border-b-2;
-  @apply .border-orange;
-  @apply .border-dotted;
+  color: config('mycolors.text-accent');
 }
 a.active {
-  @apply .text-orange;
+  color: config('mycolors.text-accent');
 }
 nav a {
-  @apply text-grey-darkest;
+  color: config('mycolors.text-default');
 }
 nav a.active {
-  @apply text-grey-darkest;
+  color: config('mycolors.text-default');
   @apply .border-b-2;
-  @apply .border-orange;
+  /* @apply .border-orange; */
+  border-color: config('mycolors.text-accent');
 }
 
 /* -- Typography -- */
 h1, h2, h3, h4, h5, h6 {
   @apply .font-serif;
-  /*@apply .pt-2;*/
+  @apply .font-medium;
   @apply .mt-6;
   @apply .mb-4;
+
+}
+
+h2, h3 {
+  @apply .border-b .border-grey-dark;
 }
 
 h1 {
@@ -40,6 +48,21 @@ h1 {
 
 p, ul, pre {
   @apply .mb-4;
+}
+
+.inverse {
+  color: config('mycolors.text-inverse');
+  background-color: config('mycolors.bg-inverse');
+}
+
+.inverse a {
+  color: config('mycolors.text-inverse');
+  @apply .border-b;
+  border-color: config('mycolors.text-accent');
+}
+.inverse a:hover {
+  border-color: config('mycolors.text-inverse');
+  color: config('mycolors.text-accent');
 }
 
 /* -- Navigation -- */
@@ -119,6 +142,25 @@ table {
   @apply .w-full;
 }
 
+/* -- Buttons -- */
+a.button {
+  @apply .bg-white .text-grey-darkest .py-4 .px-8 .border .border-grey-light .shadow .rounded-lg;
+  @apply .font-serif .font-medium .uppercase;
+  color: config('mycolors.text-primary');
+}
+a.button:hover {
+  @apply .bg-grey-lightest;
+}
+
+a.btn-inverse {
+  background: config('mycolors.bg-inverse');
+  color: config('mycolors.text-inverse');
+}
+a.btn-inverse:hover {
+  background: config('mycolors.bg-default');
+  color: config('mycolors.text-accent');
+}
+
 /* ------------------------------- Components ------------------------------- */
 .btn {
   @apply text-grey-darkest;
@@ -145,6 +187,32 @@ table {
 .note h3 {
   @apply .text-orange;
   @apply .mb-2;
+}
+
+/* ----------------------------- Slick Carousel ----------------------------- */
+/* Import here to override values */
+@import '../node_modules/slick-carousel/slick/slick-theme.css';
+.slick-prev:before,
+.slick-next:before {
+  font-size: 24px;
+  color: config('mycolors.text-primary');
+}
+
+.slick-dots li button:before,
+.slick-dots li.slick-active button:before {
+  font-size: 8px;
+  color: config('mycolors.text-primary');
+}
+
+.inverse .slick-prev:before,
+.inverse .slick-next:before {
+  color: config('mycolors.text-inverse');
+}
+
+/* Vertically center images */
+.slick-initialized .slick-track {
+  display: flex;
+  align-items: center;
 }
 
 /* -------------------------------- Algolia---------------------------------- */
@@ -174,4 +242,4 @@ table {
 
 @tailwind utilities;
 
-@import 'css/pandoc-highlighting.css'
+@import 'css/pandoc-highlighting.css';

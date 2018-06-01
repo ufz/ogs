@@ -1,4 +1,6 @@
 {{ define "main" }}
-  <h1>{{ .Title }}</h1>
-  {{.Content}}
+  {{ partial "components/hero" .Params.hero }}
+  {{ range .Params.features }}
+    {{ partial "components/feature" (dict "page" $ "feature" .) }}
+  {{ end }}
 {{ end }}

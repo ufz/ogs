@@ -25,10 +25,10 @@
 
 <body class="font-sans leading-normal">
   <header class="bg-light">
-    <div class="container mx-auto">
+    <div class="container">
       <nav class="flex border-b py-4">
         <div class="hidden sm:block w-1/4">
-          <a href="/" class="font-serif-caps">{{ .Site.Title }}</a>
+          <a href="/">{{ .Site.Title }}</a>
         </div>
         {{ $currentPage := . }}
         {{ $segments := split .RelPermalink "/" }}
@@ -51,4 +51,4 @@
       {{ end }}
     </div>
   </header>
-  <div class="container mx-auto py-2">
+  <div class="py-2">
