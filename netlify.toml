@@ -2,4 +2,9 @@
 [build]
   base    = "web"
   publish = "web/public"
-  command = "git lfs fetch && npm run import && npm run build:release"
+  command = "git lfs fetch && yarn --ignore-engines --ignore-optional --non-interactive && yarn prod"
+
+[context.production.environment]
+  HUGO_VERSION = "0.41"
+[context.deploy-preview.environment]
+  HUGO_VERSION = "0.41"
