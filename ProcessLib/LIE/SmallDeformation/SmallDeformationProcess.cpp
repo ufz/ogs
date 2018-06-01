@@ -192,25 +192,25 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION);
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "sigma_xx",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXX));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "sigma_yy",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtSigmaYY));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "sigma_zz",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtSigmaZZ));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "sigma_xy",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
@@ -218,38 +218,38 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 
     if (DisplacementDim == 3)
     {
-        Base::_secondary_variables.addSecondaryVariable(
+        _secondary_variables.addSecondaryVariable(
             "sigma_xz",
             makeExtrapolator(
                 1, getExtrapolator(), _local_assemblers,
                 &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXZ));
 
-        Base::_secondary_variables.addSecondaryVariable(
+        _secondary_variables.addSecondaryVariable(
             "sigma_yz",
             makeExtrapolator(
                 1, getExtrapolator(), _local_assemblers,
                 &SmallDeformationLocalAssemblerInterface::getIntPtSigmaYZ));
     }
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "epsilon_xx",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonXX));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "epsilon_yy",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonYY));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "epsilon_zz",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonZZ));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "epsilon_xy",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
@@ -257,13 +257,13 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 
     if (DisplacementDim == 3)
     {
-        Base::_secondary_variables.addSecondaryVariable(
+        _secondary_variables.addSecondaryVariable(
             "epsilon_xz",
             makeExtrapolator(
                 1, getExtrapolator(), _local_assemblers,
                 &SmallDeformationLocalAssemblerInterface::getIntPtEpsilonXZ));
 
-        Base::_secondary_variables.addSecondaryVariable(
+        _secondary_variables.addSecondaryVariable(
             "epsilon_yz",
             makeExtrapolator(
                 1, getExtrapolator(), _local_assemblers,

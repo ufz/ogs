@@ -155,7 +155,7 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
         _mechanics_related_process_id, _phase_field_process_id,
         _heat_conduction_process_id);
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "sigma",
         makeExtrapolator(
             MathLib::KelvinVector::KelvinVectorType<
@@ -163,7 +163,7 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
             getExtrapolator(), _local_assemblers,
             &ThermoMechanicalPhaseFieldLocalAssemblerInterface::getIntPtSigma));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "epsilon",
         makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
                              DisplacementDim>::RowsAtCompileTime,
@@ -171,7 +171,7 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
                          &ThermoMechanicalPhaseFieldLocalAssemblerInterface::
                              getIntPtEpsilon));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "heat_flux",
         makeExtrapolator(mesh.getDimension(), getExtrapolator(),
                          _local_assemblers,
