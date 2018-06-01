@@ -22,6 +22,27 @@
 
 namespace MeshLib
 {
+inline std::vector<Node*> nodesNodesIntersection(
+    std::vector<Node*> const& nodes_a, std::vector<Node*> const& nodes_b)
+{
+    if (nodes_a.empty() || nodes_b.empty())
+    {
+        return {};
+    }
+
+    std::vector<Node*> active_nodes;
+
+    for (auto const& n_a : nodes_a)
+    {
+        auto it = std::find(begin(nodes_b), end(nodes_b), n_a);
+        if (it != end(nodes_b))
+        {
+            active_nodes.push_back(n_a);
+        }
+    }
+
+    return active_nodes;
+}
 
 /// A subset of nodes or elements on a single mesh.
 class MeshSubset
@@ -138,16 +159,12 @@ public:
     {
         auto* active_nodes = new std::vector<Node*>;
 
-        if (_nodes == nullptr || _nodes->empty())
-            return MeshSubset(_msh, active_nodes);  // Empty mesh subset
-
-        for (auto n : nodes)
+        if (_nodes == nullptr)
         {
-            auto it = std::find(_nodes->cbegin(), _nodes->cend(), n);
-            if (it == _nodes->cend())
-                continue;
-            active_nodes->push_back(n);
+            return MeshSubset(_msh, active_nodes);  // Empty mesh subset
         }
+
+        *active_nodes = nodesNodesIntersection(*_nodes, nodes);
 
         // Transfer the ownership of active_nodes to the new MeshSubset, which
         // deletes the pointer itself.
@@ -171,5 +188,4 @@ private:
     bool const _delete_ptr = false;
 
 };
-
 }   // namespace MeshLib
