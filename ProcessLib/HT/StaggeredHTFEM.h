@@ -55,10 +55,14 @@ public:
                    std::size_t const local_matrix_size,
                    bool is_axially_symmetric,
                    unsigned const integration_order,
-                   HTMaterialProperties const& material_properties)
+                   HTMaterialProperties const& material_properties,
+                   const int heat_transport_process_id,
+                   const int hydraulic_process_id)
         : HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>(
               element, local_matrix_size, is_axially_symmetric,
-              integration_order, material_properties, 1)
+              integration_order, material_properties, 1),
+        _heat_transport_process_id(heat_transport_process_id),
+        _hydraulic_process_id(hydraulic_process_id)
     {
     }
 
@@ -84,6 +88,8 @@ private:
         double const t, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_xs);
+    const int _heat_transport_process_id;
+    const int _hydraulic_process_id;
 };
 
 }  // namespace HT

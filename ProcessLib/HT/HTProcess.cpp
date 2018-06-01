@@ -75,11 +75,14 @@ void HTProcess::initializeConcreteProcess(
     }
     else
     {
+        const int heat_transport_process_id = 0;
+        const int hydraulic_process_id = 1;
+
         ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
             pv.getShapeFunctionOrder(), _local_assemblers,
-            mesh.isAxiallySymmetric(), integration_order,
-            *_material_properties);
+            mesh.isAxiallySymmetric(), integration_order, *_material_properties,
+            heat_transport_process_id, hydraulic_process_id);
     }
 
     _secondary_variables.addSecondaryVariable(
