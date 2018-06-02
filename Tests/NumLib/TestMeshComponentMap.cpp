@@ -30,7 +30,7 @@ class NumLibMeshComponentMapTest : public ::testing::Test
         NumLibMeshComponentMapTest() : mesh(nullptr), cmap(nullptr)
         {
             mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
-            MeshLib::MeshSubset nodesSubset{*mesh, &mesh->getNodes()};
+            MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
             // Add two components both based on the same nodesSubset.
             components.emplace_back(nodesSubset);
@@ -154,7 +154,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
     for (std::size_t id : ids)
         some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
 
-    MeshLib::MeshSubset const selected_component(*mesh, &some_nodes);
+    MeshLib::MeshSubset const selected_component(*mesh, some_nodes);
 
     int const selected_component_id = 1;
 
@@ -189,7 +189,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
     for (std::size_t id : ids)
         some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
 
-    MeshLib::MeshSubset const selected_component(*mesh, &some_nodes);
+    MeshLib::MeshSubset const selected_component(*mesh, some_nodes);
 
     int const selected_component_id = 1;
 
@@ -224,7 +224,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_MulticomponentVariable)
     for (std::size_t id : ids)
         some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
 
-    MeshLib::MeshSubset const selected_component(*mesh, &some_nodes);
+    MeshLib::MeshSubset const selected_component(*mesh, some_nodes);
 
     // Subset the original cmap.
     std::vector<int> const selected_component_ids = {0, 1};
@@ -261,7 +261,7 @@ TEST_F(NumLibMeshComponentMapTest,
     for (std::size_t id : ids)
         some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
 
-    MeshLib::MeshSubset const selected_component(*mesh, &some_nodes);
+    MeshLib::MeshSubset const selected_component(*mesh, some_nodes);
 
     // Subset the original cmap.
     std::vector<int> const selected_component_ids = {1};

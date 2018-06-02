@@ -35,7 +35,7 @@ public:
     {
         mesh.reset(MeL::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs));
         mesh_items_all_nodes =
-            std::make_unique<MeL::MeshSubset>(*mesh, &mesh->getNodes());
+            std::make_unique<MeL::MeshSubset>(*mesh, mesh->getNodes());
 
         auto ply_pnts = std::make_unique<std::vector<GeoLib::Point*>>();
         ply_pnts->push_back(new GeoLib::Point(0.0, 0.0, 0.0));
@@ -72,7 +72,7 @@ public:
         nodes_subset =
             nodesNodesIntersection(mesh_items_all_nodes->getNodes(), nodes);
         mesh_items_boundary = std::make_unique<MeshLib::MeshSubset>(
-            mesh_items_all_nodes->getMesh(), &nodes_subset);
+            mesh_items_all_nodes->getMesh(), nodes_subset);
     }
 
     ~NumLibLocalToGlobalIndexMapMultiDOFTest() override

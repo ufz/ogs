@@ -107,7 +107,7 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
     _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain

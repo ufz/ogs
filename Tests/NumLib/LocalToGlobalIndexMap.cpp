@@ -27,7 +27,7 @@ public:
     {
         mesh.reset(MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size));
         nodesSubset =
-            std::make_unique<MeshLib::MeshSubset>(*mesh, &mesh->getNodes());
+            std::make_unique<MeshLib::MeshSubset>(*mesh, mesh->getNodes());
 
         // Add two components both based on the same nodesSubset.
         components.emplace_back(*nodesSubset);
@@ -104,7 +104,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
     std::vector<MeshLib::Node*> nodes_intersection =
         nodesNodesIntersection(nodesSubset->getNodes(), selected_nodes);
     MeshLib::MeshSubset selected_component(nodesSubset->getMesh(),
-                                           &nodes_intersection);
+                                           nodes_intersection);
 
     auto dof_map_subset = std::unique_ptr<NumLib::LocalToGlobalIndexMap>{
         dof_map->deriveBoundaryConstrainedMap(1,    // variable id
@@ -186,7 +186,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     // - 1st variable with 2 components for all nodes, elements
     // - 2nd variable with 1 component for nodes of element id 1
     std::vector<MeshLib::Node*> var2_nodes{const_cast<MeshLib::Node*>(mesh->getNode(1)), const_cast<MeshLib::Node*>(mesh->getNode(2))};
-    MeshLib::MeshSubset var2_subset{*mesh, &var2_nodes};
+    MeshLib::MeshSubset var2_subset{*mesh, var2_nodes};
     components.emplace_back(var2_subset);
 
     std::vector<int> vec_var_n_components{2, 1};
@@ -238,7 +238,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     // - 1st variable with 2 components for all nodes, elements
     // - 2nd variable with 1 component for 1st node of element id 1
     std::vector<MeshLib::Node*> var2_nodes{const_cast<MeshLib::Node*>(mesh->getNode(1))};
-    MeshLib::MeshSubset var2_subset = {*mesh, &var2_nodes};
+    MeshLib::MeshSubset var2_subset = {*mesh, var2_nodes};
     components.emplace_back(var2_subset);
 
     std::vector<int> vec_var_n_components{2, 1};

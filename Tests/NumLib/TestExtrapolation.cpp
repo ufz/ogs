@@ -149,7 +149,7 @@ public:
     ExtrapolationTestProcess(MeshLib::Mesh const& mesh,
                              unsigned const integration_order)
         : _integration_order(integration_order),
-          _mesh_subset_all_nodes(mesh, &mesh.getNodes())
+          _mesh_subset_all_nodes(mesh, mesh.getNodes())
     {
         std::vector<MeshLib::MeshSubset> all_mesh_subsets{
             _mesh_subset_all_nodes};

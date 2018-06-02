@@ -56,7 +56,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         dof_table_bulk.getMeshSubset(variable_id, component_id);
 
     _nodes_subset = nodesNodesIntersection(mesh_subset.getNodes(), nodes);
-    MeshLib::MeshSubset bc_mesh_subset(mesh_subset.getMesh(), &_nodes_subset);
+    MeshLib::MeshSubset bc_mesh_subset(mesh_subset.getMesh(), _nodes_subset);
 
     // Create local DOF table from intersected mesh subsets for the given
     // variable and component ids.

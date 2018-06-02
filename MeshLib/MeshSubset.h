@@ -51,7 +51,7 @@ public:
     /// Construct a mesh subset from vector of nodes on the given mesh.
     /// \param msh Mesh
     /// \param vec_items Vector of Node pointers.
-    MeshSubset(const Mesh& msh, std::vector<Node*> const* vec_items)
+    MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_items)
         : _msh(msh), _nodes(vec_items)
     {}
 
@@ -64,16 +64,16 @@ public:
     /// return the number of registered nodes
     std::size_t getNumberOfNodes() const
     {
-        return (_nodes==nullptr) ? 0 : _nodes->size();
+        return _nodes.size();
     }
 
     /// Returns the global node id Node::getID() of i-th node in the mesh
     /// subset.
-    /// \pre The _nodes must be a valid pointer to a vector of size > i.
+    /// \pre The _nodes vector must be of size > i.
     std::size_t getNodeID(std::size_t const i) const
     {
-        assert(_nodes && i < _nodes->size());
-        return (*_nodes)[i]->getID();
+        assert(i < _nodes.size());
+        return _nodes[i]->getID();
     }
 
     std::vector<Element*>::const_iterator elementsBegin() const
@@ -88,8 +88,7 @@ public:
 
     std::vector<Node*> const& getNodes() const
     {
-        assert(_nodes);
-        return *_nodes;
+        return _nodes;
     }
 
     Mesh const& getMesh() const
@@ -99,6 +98,6 @@ public:
 
 private:
     Mesh const& _msh;
-    std::vector<Node*> const* _nodes;
+    std::vector<Node*> const& _nodes;
 };
 }   // namespace MeshLib

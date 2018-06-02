@@ -26,7 +26,7 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(
 
     // needed to create dof table
     auto mesh_subset_all_nodes = std::make_unique<MeshLib::MeshSubset>(
-        boundary_mesh, &boundary_mesh.getNodes());
+        boundary_mesh, boundary_mesh.getNodes());
 
     // Collect the mesh subsets in a vector.
     std::vector<MeshLib::MeshSubset> all_mesh_subsets;

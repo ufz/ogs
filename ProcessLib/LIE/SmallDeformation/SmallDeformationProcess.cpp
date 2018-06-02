@@ -125,16 +125,16 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     //------------------------------------------------------------
     // for extrapolation
     _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
     // regular u
     _mesh_subset_matrix_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
     // u jump
     for (unsigned i = 0; i < _vec_fracture_nodes.size(); i++)
     {
         _mesh_subset_fracture_nodes.push_back(
             std::make_unique<MeshLib::MeshSubset const>(
-                _mesh, &_vec_fracture_nodes[i]));
+                _mesh, _vec_fracture_nodes[i]));
     }
 
     // Collect the mesh subsets in a vector.

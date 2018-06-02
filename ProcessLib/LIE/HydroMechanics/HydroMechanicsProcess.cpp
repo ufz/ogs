@@ -129,20 +129,20 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     //------------------------------------------------------------
     // for extrapolation
     _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
     // pressure
     _mesh_nodes_p = MeshLib::getBaseNodes(
         _process_data.p_element_status->getActiveElements());
     _mesh_subset_nodes_p =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh_nodes_p);
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh_nodes_p);
     // regular u
     _mesh_subset_matrix_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
     if (!_vec_fracture_nodes.empty())
     {
         // u jump
         _mesh_subset_fracture_nodes =
-            std::make_unique<MeshLib::MeshSubset>(_mesh, &_vec_fracture_nodes);
+            std::make_unique<MeshLib::MeshSubset>(_mesh, _vec_fracture_nodes);
     }
 
     // Collect the mesh subsets in a vector.

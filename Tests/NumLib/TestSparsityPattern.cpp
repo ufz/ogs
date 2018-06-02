@@ -26,7 +26,7 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentLinearMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
-    MeshLib::MeshSubset nodesSubset{*mesh, &mesh->getNodes()};
+    MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
     std::vector<MeshLib::MeshSubset> components{nodesSubset};
     NumLib::LocalToGlobalIndexMap dof_map(
@@ -53,7 +53,7 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::createQuadraticOrderMesh(*linear_mesh));
-    MeshLib::MeshSubset nodesSubset{*mesh, &mesh->getNodes()};
+    MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
     std::vector<MeshLib::MeshSubset> components{nodesSubset};
     NumLib::LocalToGlobalIndexMap dof_map(
@@ -81,7 +81,7 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
-    MeshLib::MeshSubset nodesSubset{*mesh, &mesh->getNodes()};
+    MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
     std::vector<MeshLib::MeshSubset> components{nodesSubset, nodesSubset};
     NumLib::LocalToGlobalIndexMap dof_map(
@@ -113,9 +113,9 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearQuadraticMesh)
         MeshLib::createQuadraticOrderMesh(*linear_mesh));
     auto base_nodes = MeshLib::getBaseNodes(mesh->getElements());
     auto baseNodesSubset =
-        std::make_unique<MeshLib::MeshSubset const>(*mesh, &base_nodes);
+        std::make_unique<MeshLib::MeshSubset const>(*mesh, base_nodes);
     auto allNodesSubset =
-        std::make_unique<MeshLib::MeshSubset const>(*mesh, &mesh->getNodes());
+        std::make_unique<MeshLib::MeshSubset const>(*mesh, mesh->getNodes());
 
     std::vector<MeshLib::MeshSubset> components{*baseNodesSubset,
                                                 *allNodesSubset};

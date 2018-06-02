@@ -49,7 +49,7 @@ struct DOFTableData
         : mesh(MeshLib::MeshGenerator::generateRegularHexMesh(
               mesh_length, mesh_elements_in_each_direction)),
 #endif
-          mesh_subset_all_nodes(*mesh, &mesh->getNodes()),
+          mesh_subset_all_nodes(*mesh, mesh->getNodes()),
           dof_table(createMeshSubsets(mesh_subset_all_nodes, num_components),
                     order)
     {

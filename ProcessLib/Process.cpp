@@ -214,7 +214,7 @@ void Process::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
     _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
 
     // Vector of mesh subsets.
     std::vector<MeshLib::MeshSubset> all_mesh_subsets;
