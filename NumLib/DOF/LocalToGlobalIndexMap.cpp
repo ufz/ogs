@@ -10,6 +10,7 @@
 #include "LocalToGlobalIndexMap.h"
 
 #include <algorithm>
+#include <numeric>
 #include <unordered_set>
 
 namespace NumLib

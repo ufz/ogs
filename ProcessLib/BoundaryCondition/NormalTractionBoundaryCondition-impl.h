@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <numeric>
+
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
