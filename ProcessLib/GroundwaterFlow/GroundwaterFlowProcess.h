@@ -24,8 +24,6 @@ namespace GroundwaterFlow
 {
 class GroundwaterFlowProcess final : public Process
 {
-    using Base = Process;
-
 public:
     GroundwaterFlowProcess(
         MeshLib::Mesh& mesh,

@@ -23,8 +23,6 @@ struct ThermoMechanicsLocalAssemblerInterface;
 template <int DisplacementDim>
 class ThermoMechanicsProcess final : public Process
 {
-    using Base = Process;
-
 public:
     ThermoMechanicsProcess(
         MeshLib::Mesh& mesh,

@@ -55,8 +55,6 @@ private:
 template <int DisplacementDim>
 class SmallDeformationProcess final : public Process
 {
-    using Base = Process;
-
 public:
     SmallDeformationProcess(
         MeshLib::Mesh& mesh,
