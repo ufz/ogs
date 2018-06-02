@@ -87,13 +87,6 @@ MeshComponentMap::MeshComponentMap(
                               comp_id, global_id));
         }
 
-        // Note: If the cells are really used (e.g. for the mixed FEM),
-        // the following global cell index must be reconsidered
-        // according to the employed cell indexing method.
-        for (std::size_t j = 0; j < mesh_subset.getNumberOfElements(); j++)
-            _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell, j),
-                              comp_id, cell_index++));
-
         _num_global_dof += mesh.getNumberOfGlobalNodes();
         comp_id++;
     }
@@ -112,10 +105,6 @@ MeshComponentMap::MeshComponentMap(
         for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
             _dict.insert(Line(
                 Location(mesh_id, MeshLib::MeshItemType::Node, c.getNodeID(j)),
-                              comp_id, global_index++));
-        for (std::size_t j = 0; j < c.getNumberOfElements(); j++)
-            _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell,
-                                       c.getElementID(j)),
                 comp_id, global_index++));
         comp_id++;
     }
@@ -141,12 +130,6 @@ MeshComponentMap MeshComponentMap::getSubset(
             subset_dict.insert(
                 getLine(Location(mesh_id, MeshLib::MeshItemType::Node,
                                  mesh_subset.getNodeID(j)),
-                        component_id));
-    for (std::size_t j = 0; j < mesh_subset.getNumberOfElements(); j++)
-        for (auto component_id : component_ids)
-            subset_dict.insert(
-                getLine(Location(mesh_id, MeshLib::MeshItemType::Cell,
-                                 mesh_subset.getElementID(j)),
                         component_id));
 
     return MeshComponentMap(subset_dict);

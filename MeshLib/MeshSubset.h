@@ -44,7 +44,7 @@ inline std::vector<Node*> nodesNodesIntersection(
     return active_nodes;
 }
 
-/// A subset of nodes or elements on a single mesh.
+/// A subset of nodes on a single mesh.
 class MeshSubset
 {
 public:
@@ -52,32 +52,8 @@ public:
     /// \param msh Mesh
     /// \param vec_items Vector of Node pointers.
     MeshSubset(const Mesh& msh, std::vector<Node*> const* vec_items)
-        : _msh(msh), _nodes(vec_items), _eles(nullptr)
+        : _msh(msh), _nodes(vec_items)
     {}
-
-    /// Construct a mesh subset from vector of elements on the given mesh.
-    /// \param msh Mesh
-    /// \param vec_items Vector of Element pointers.
-    MeshSubset(const Mesh& msh, std::vector<Element*> const* vec_items)
-        : _msh(msh), _nodes(nullptr), _eles(vec_items)
-    {}
-
-    /// construct from both nodes and elements
-    /// Construct a mesh subset from vector of nodes and a vector of elements on
-    /// the given mesh.
-    /// \param msh Mesh
-    /// \param vec_nodes Vector of Node pointers.
-    /// \param vec_eles Vector of Element pointers.
-    MeshSubset(const Mesh& msh, std::vector<Node*> const* vec_nodes,
-               std::vector<Element*> const* vec_eles)
-        : _msh(msh), _nodes(vec_nodes), _eles(vec_eles)
-    {}
-
-    /// return the total number of mesh items
-    std::size_t getNumberOfTotalItems() const
-    {
-        return getNumberOfNodes() + getNumberOfElements();
-    }
 
     /// return this mesh ID
     std::size_t getMeshID() const
@@ -98,21 +74,6 @@ public:
     {
         assert(_nodes && i < _nodes->size());
         return (*_nodes)[i]->getID();
-    }
-
-    /// return the number of registered elements
-    std::size_t getNumberOfElements() const
-    {
-        return (_eles==nullptr) ? 0 : _eles->size();
-    }
-
-    /// Returns the global element id Element::getID() of i-th element in the
-    /// mesh subset.
-    /// \pre The _eles must be a valid pointer to a vector of size > i.
-    std::size_t getElementID(std::size_t const i) const
-    {
-        assert(_eles && i < _eles->size());
-        return (*_eles)[i]->getID();
     }
 
     std::vector<Element*>::const_iterator elementsBegin() const
@@ -139,6 +100,5 @@ public:
 private:
     Mesh const& _msh;
     std::vector<Node*> const* _nodes;
-    std::vector<Element*> const* _eles;
 };
 }   // namespace MeshLib
