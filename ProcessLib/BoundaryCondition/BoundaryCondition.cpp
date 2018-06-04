@@ -10,6 +10,7 @@
 #include "BoundaryCondition.h"
 #include "BoundaryConditionConfig.h"
 #include "DirichletBoundaryCondition.h"
+#include "ConstraintDirichletBoundaryCondition.h"
 #include "NeumannBoundaryCondition.h"
 #include "NonuniformDirichletBoundaryCondition.h"
 #include "NonuniformNeumannBoundaryCondition.h"
@@ -88,6 +89,19 @@ BoundaryConditionBuilder::createDirichletBoundaryCondition(
     return ProcessLib::createDirichletBoundaryCondition(
         config.config, config.mesh, dof_table, mesh.getID(), variable_id,
         *config.component_id, parameters);
+}
+
+std::unique_ptr<BoundaryCondition>
+BoundaryConditionBuilder::createConstraintDirichletBoundaryCondition(
+    const BoundaryConditionConfig& config,
+    const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
+    const int variable_id, const unsigned integration_order,
+    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
+    Process const& process)
+{
+    return ProcessLib::createConstraintDirichletBoundaryCondition(
+        config.config, config.mesh, dof_table, variable_id, integration_order,
+        *config.component_id, parameters, process);
 }
 
 std::unique_ptr<BoundaryCondition>
