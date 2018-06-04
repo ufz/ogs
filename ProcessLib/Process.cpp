@@ -38,11 +38,11 @@ Process::Process(
       _coupled_solutions(nullptr),
       _integration_order(integration_order),
       _process_variables(std::move(process_variables)),
-      _boundary_conditions([&](const std::size_t number_of_processes)
+      _boundary_conditions([&](const std::size_t number_of_process_variables)
                                -> std::vector<BoundaryConditionCollection> {
           std::vector<BoundaryConditionCollection> pcs_BCs;
-          pcs_BCs.reserve(number_of_processes);
-          for (std::size_t i = 0; i < number_of_processes; i++)
+          pcs_BCs.reserve(number_of_process_variables);
+          for (std::size_t i = 0; i < number_of_process_variables; i++)
           {
               pcs_BCs.emplace_back(BoundaryConditionCollection(parameters));
           }
@@ -68,7 +68,7 @@ void Process::initializeProcessBoundaryConditionsAndSourceTerms(
     auto& per_process_BCs = _boundary_conditions[process_id];
 
     per_process_BCs.addBCsForProcessVariables(per_process_variables, dof_table,
-                                              _integration_order);
+                                              _integration_order, *this);
 
     auto& per_process_sts = _source_term_collections[process_id];
     per_process_sts.addSourceTermsForProcessVariables(

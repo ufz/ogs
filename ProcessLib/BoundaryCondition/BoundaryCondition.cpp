@@ -16,6 +16,7 @@
 #include "NonuniformNeumannBoundaryCondition.h"
 #include "NormalTractionBoundaryCondition.h"
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
+#include "ProcessLib/Process.h"
 #include "RobinBoundaryCondition.h"
 
 namespace ProcessLib
@@ -26,11 +27,18 @@ BoundaryConditionBuilder::createBoundaryCondition(
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned integration_order,
     const unsigned shapefunction_order,
-    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
+    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
+    Process const& process)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
 
+    if (type == "ConstraintDirichlet")
+    {
+        return createConstraintDirichletBoundaryCondition(
+            config, dof_table, mesh, variable_id, integration_order,
+            parameters, process);
+    }
     if (type == "Dirichlet")
     {
         return createDirichletBoundaryCondition(

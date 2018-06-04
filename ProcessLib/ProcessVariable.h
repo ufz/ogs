@@ -53,7 +53,8 @@ public:
     std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryConditions(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
         unsigned const integration_order,
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters);
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+        Process const& process);
 
     std::vector<std::unique_ptr<NodalSourceTerm>> createSourceTerms(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
