@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<!-- OpenGeoSysNum schema; initial implementation: Karsten Rink -->
+
+  <xs:simpleType name="LibraryType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LIS" />
+      <xs:enumeration value="PETSc" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NonLinearType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Newton" />
+      <xs:enumeration value="Picard" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- definition of file content -->
+  <xs:element name="OGSNonlinearSolverSetup">
+    <xs:complexType>
+      <xs:sequence>
+
+        <!-- definition of non-linear solver -->
+        <xs:element name="Type" type="NonLinearType" maxOccurs="1" />
+
+        <!-- definition of linear solver -->
+    <xs:element name="LinearSolver" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Type" type="xs:string" maxOccurs="1" />
+              <xs:element name="Preconditioner" type="xs:string" minOccurs="0" maxOccurs="1" />
+              <!-- add more parameters here -->
+            </xs:sequence>
+            <xs:attribute name="Library" type="LibraryType" use="required" />
+          </xs:complexType>
+        </xs:element>
+
+        <!-- definition of temporal discretization -->
+        <xs:element name="IterationScheme" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="MaxIterations" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1" />
+              <xs:element name="FixedStepSize" type="xs:double" minOccurs="0" maxOccurs="1" />
+              <!-- add more parameters here -->
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- definition of convergence criteria -->
+        <xs:element name="Convergence" minOccurs="0" maxOccurs="1">
+      <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Method" type="xs:string" minOccurs="0" maxOccurs="1" />
+              <xs:element name="ErrorThreshold" type="xs:double" minOccurs="0" maxOccurs="1" />
+              <!-- add more parameters here -->
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
