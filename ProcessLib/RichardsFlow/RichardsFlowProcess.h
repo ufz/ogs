@@ -21,8 +21,6 @@ namespace RichardsFlow
 {
 class RichardsFlowProcess final : public Process
 {
-    using Base = Process;
-
 public:
     RichardsFlowProcess(
         MeshLib::Mesh& mesh,

@@ -68,25 +68,25 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "sigma_xx",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXX));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "sigma_yy",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaYY));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "sigma_zz",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaZZ));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "sigma_xy",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
@@ -94,50 +94,50 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     if (DisplacementDim == 3)
     {
-        Base::_secondary_variables.addSecondaryVariable(
+        _secondary_variables.addSecondaryVariable(
             "sigma_xz",
             makeExtrapolator(
                 1, getExtrapolator(), _local_assemblers,
                 &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXZ));
 
-        Base::_secondary_variables.addSecondaryVariable(
+        _secondary_variables.addSecondaryVariable(
             "sigma_yz",
             makeExtrapolator(
                 1, getExtrapolator(), _local_assemblers,
                 &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaYZ));
     }
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "epsilon_xx",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXX));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "epsilon_yy",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonYY));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "epsilon_zz",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonZZ));
 
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "epsilon_xy",
         makeExtrapolator(
             1, getExtrapolator(), _local_assemblers,
             &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXY));
     if (DisplacementDim == 3)
     {
-        Base::_secondary_variables.addSecondaryVariable(
+        _secondary_variables.addSecondaryVariable(
             "epsilon_yz",
             makeExtrapolator(
                 1, getExtrapolator(), _local_assemblers,
                 &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonYZ));
 
-        Base::_secondary_variables.addSecondaryVariable(
+        _secondary_variables.addSecondaryVariable(
             "epsilon_xz",
             makeExtrapolator(
                 1, getExtrapolator(), _local_assemblers,

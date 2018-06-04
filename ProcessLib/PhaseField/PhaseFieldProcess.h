@@ -47,8 +47,6 @@ namespace PhaseField
 template <int DisplacementDim>
 class PhaseFieldProcess final : public Process
 {
-    using Base = Process;
-
 public:
     PhaseFieldProcess(
         MeshLib::Mesh& mesh,

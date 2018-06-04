@@ -25,8 +25,6 @@ class HydroMechanicsLocalAssemblerInterface;
 template <int GlobalDim>
 class HydroMechanicsProcess final : public Process
 {
-    using Base = Process;
-
     static_assert(GlobalDim == 2 || GlobalDim == 3,
                   "Currently LIE::HydroMechanicsProcess "
                   "supports only 2D or 3D.");

@@ -26,8 +26,6 @@ struct LocalAssemblerInterface;
 template <int DisplacementDim>
 class HydroMechanicsProcess final : public Process
 {
-    using Base = Process;
-
 public:
     HydroMechanicsProcess(
         MeshLib::Mesh& mesh,

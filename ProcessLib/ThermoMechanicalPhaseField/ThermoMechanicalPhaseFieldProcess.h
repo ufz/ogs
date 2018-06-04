@@ -52,8 +52,6 @@ struct ThermoMechanicalPhaseFieldLocalAssemblerInterface;
 template <int DisplacementDim>
 class ThermoMechanicalPhaseFieldProcess final : public Process
 {
-    using Base = Process;
-
 public:
     ThermoMechanicalPhaseFieldProcess(
         MeshLib::Mesh& mesh,
