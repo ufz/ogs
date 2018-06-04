@@ -53,16 +53,20 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(
         *bulk_element_ids, *bulk_face_ids);
 }
 
-void CalculateSurfaceFlux::integrate(GlobalVector const& x,
-                                     MeshLib::PropertyVector<double>& balance,
-                                     double const t,
-                                     Process const& bulk_process)
+void CalculateSurfaceFlux::integrate(
+    GlobalVector const& x,
+    MeshLib::PropertyVector<double>& balance,
+    double const t,
+    MeshLib::Mesh const& bulk_mesh,
+    std::function<Eigen::Vector3d(std::size_t const, MathLib::Point3d const&,
+                                  double const, GlobalVector const&)> const&
+        getFlux)
 {
     DBUG("Integrate CalculateSurfaceFlux.");
 
     GlobalExecutor::executeMemberOnDereferenced(
         &CalculateSurfaceFluxLocalAssemblerInterface::integrate,
-        _local_assemblers, x, balance, t, bulk_process);
+        _local_assemblers, x, balance, t, bulk_mesh, getFlux);
 }
 
 }  // namespace ProcessLib

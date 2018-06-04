@@ -88,8 +88,13 @@ public:
                 _balance_mesh->getProperties()
                     .template getPropertyVector<double>(_balance_pv_name);
 
-            balance.integrate(x, *balance_pv, t, *this);
-            // post: surface_mesh has vectorial element property
+            balance.integrate(x, *balance_pv, t, _mesh,
+                              [this](std::size_t const element_id,
+                                     MathLib::Point3d const& pnt,
+                                     double const t, GlobalVector const& x) {
+                                  return getFlux(element_id, pnt, t, x);
+                              });
+            // post: surface_mesh has scalar element property
 
             // TODO output, if output classes are ready this has to be
             // changed
