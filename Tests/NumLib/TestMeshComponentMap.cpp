@@ -84,7 +84,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_CheckOrderByComponent)
         ASSERT_EQ(mesh_size + 1 + i, giAtNodeForComponent(i, comp1_id));
 
         // Test component ids of the node.
-        std::vector<std::size_t> const vecCompIDs = cmap->getComponentIDs(
+        std::vector<int> const vecCompIDs = cmap->getComponentIDs(
             Location(mesh->getID(), MeshItemType::Node, i));
         ASSERT_EQ(2u, vecCompIDs.size());
         ASSERT_EQ(0u, vecCompIDs[0]);
@@ -112,7 +112,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_CheckOrderByLocation)
         ASSERT_EQ(2 * i + 1, giAtNodeForComponent(i, comp1_id));
 
         // Test component ids of the node.
-        std::vector<std::size_t> const vecCompIDs = cmap->getComponentIDs(
+        std::vector<int> const vecCompIDs = cmap->getComponentIDs(
             Location(mesh->getID(), MeshItemType::Node, i));
         ASSERT_EQ(2u, vecCompIDs.size());
         ASSERT_EQ(0u, vecCompIDs[0]);

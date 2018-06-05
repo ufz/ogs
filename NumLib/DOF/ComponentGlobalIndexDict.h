@@ -35,16 +35,16 @@ struct Line
     MeshLib::Location location;
 
     // Physical component
-    std::size_t comp_id;
+    int comp_id;
 
     // Position in global matrix or vector
     GlobalIndexType global_index;
 
-    Line(MeshLib::Location l, std::size_t c, GlobalIndexType i)
+    Line(MeshLib::Location l, int c, GlobalIndexType i)
         : location(std::move(l)), comp_id(c), global_index(i)
     {}
 
-    Line(MeshLib::Location l, std::size_t c)
+    Line(MeshLib::Location l, int c)
         : location(std::move(l)),
           comp_id(c),
           global_index(std::numeric_limits<GlobalIndexType>::max())
@@ -52,7 +52,7 @@ struct Line
 
     explicit Line(MeshLib::Location l)
         : location(std::move(l)),
-          comp_id(std::numeric_limits<std::size_t>::max()),
+          comp_id(std::numeric_limits<int>::max()),
           global_index(std::numeric_limits<GlobalIndexType>::max())
     {}
 
@@ -90,22 +90,21 @@ struct ByComponent {};
 struct ByGlobalIndex {};
 
 using ComponentGlobalIndexDict = boost::multi_index::multi_index_container<
-    Line,
-    boost::multi_index::indexed_by<
-        boost::multi_index::ordered_unique<
-            boost::multi_index::tag<ByLocationAndComponent>,
-            boost::multi_index::identity<Line>,
-            LineByLocationAndComponentComparator>,
-        boost::multi_index::ordered_non_unique<
-            boost::multi_index::tag<ByLocation>,
-            boost::multi_index::identity<Line>, LineByLocationComparator>,
-        boost::multi_index::ordered_non_unique<
-            boost::multi_index::tag<ByComponent>,
-            boost::multi_index::member<Line, std::size_t, &Line::comp_id>>,
-        boost::multi_index::ordered_non_unique<
-            boost::multi_index::tag<ByGlobalIndex>,
-            boost::multi_index::member<Line, GlobalIndexType,
-                                       &Line::global_index>>>>;
+    Line, boost::multi_index::indexed_by<
+              boost::multi_index::ordered_unique<
+                  boost::multi_index::tag<ByLocationAndComponent>,
+                  boost::multi_index::identity<Line>,
+                  LineByLocationAndComponentComparator>,
+              boost::multi_index::ordered_non_unique<
+                  boost::multi_index::tag<ByLocation>,
+                  boost::multi_index::identity<Line>, LineByLocationComparator>,
+              boost::multi_index::ordered_non_unique<
+                  boost::multi_index::tag<ByComponent>,
+                  boost::multi_index::member<Line, int, &Line::comp_id>>,
+              boost::multi_index::ordered_non_unique<
+                  boost::multi_index::tag<ByGlobalIndex>,
+                  boost::multi_index::member<Line, GlobalIndexType,
+                                             &Line::global_index>>>>;
 
 }    // namespace detail
 }    // namespace NumLib

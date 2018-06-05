@@ -43,7 +43,7 @@ MeshComponentMap::MeshComponentMap(
 
     // construct dict (and here we number global_index by component type)
     std::size_t cell_index = 0;
-    std::size_t comp_id = 0;
+    int comp_id = 0;
     _num_global_dof = 0;
     _num_local_dof = 0;
     for (auto const& c : components)
@@ -97,7 +97,7 @@ MeshComponentMap::MeshComponentMap(
 {
     // construct dict (and here we number global_index by component type)
     GlobalIndexType global_index = 0;
-    std::size_t comp_id = 0;
+    int comp_id = 0;
     for (auto const& c : components)
     {
         std::size_t const mesh_id = c.getMeshID();
@@ -148,18 +148,17 @@ void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
     }
 }
 
-std::vector<std::size_t> MeshComponentMap::getComponentIDs(const Location &l) const
+std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
 {
     auto const &m = _dict.get<ByLocation>();
     auto const p = m.equal_range(Line(l));
-    std::vector<std::size_t> vec_compID;
+    std::vector<int> vec_compID;
     for (auto itr=p.first; itr!=p.second; ++itr)
         vec_compID.push_back(itr->comp_id);
     return vec_compID;
 }
 
-Line MeshComponentMap::getLine(Location const& l,
-    std::size_t const comp_id) const
+Line MeshComponentMap::getLine(Location const& l, int const comp_id) const
 {
     auto const &m = _dict.get<ByLocationAndComponent>();
     auto const itr = m.find(Line(l, comp_id));
@@ -168,7 +167,7 @@ Line MeshComponentMap::getLine(Location const& l,
 }
 
 GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
-    std::size_t const comp_id) const
+                                                 int const comp_id) const
 {
     auto const &m = _dict.get<ByLocationAndComponent>();
     auto const itr = m.find(Line(l, comp_id));
@@ -209,7 +208,7 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
     std::vector<Location> const& ls) const
 {
     // vector of (Component, global Index) pairs.
-    using CIPair = std::pair<std::size_t, GlobalIndexType>;
+    using CIPair = std::pair<int, GlobalIndexType>;
     std::vector<CIPair> pairs;
     pairs.reserve(ls.size());
 
@@ -241,7 +240,7 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
 
 GlobalIndexType MeshComponentMap::getLocalIndex(
     Location const& l,
-    std::size_t const comp_id,
+    int const comp_id,
     std::size_t const range_begin,
     std::size_t const range_end) const
 {
