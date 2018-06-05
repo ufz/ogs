@@ -12,20 +12,9 @@
 #include "NodalSourceTerm.h"
 #include "ProcessLib/Parameter/Parameter.h"
 
-namespace GeoLib
-{
-class GeoObject;
-}
-
 namespace MeshLib
 {
-class Element;
 class Mesh;
-}
-
-namespace MeshGeoToolsLib
-{
-class BoundaryElementsSearcher;
 }
 
 namespace NumLib
