@@ -30,12 +30,18 @@ public:
     /// @param x The global solution the intergration values will be fetched of.
     /// @param balance The vector the integration results will be stored in.
     /// @param t The balance will be computed at the time t.
-    /// @param bulk_process Stores the variable that is used for the
-    /// integration.
+    /// @param bulk_mesh Stores a reference to the bulk mesh that is needed to
+    /// fetch the information for the integration over the surface mesh.
+    /// @param getFlux function that calculates the flux in the integration
+    /// points of the face elements of the bulk element that belongs to the
+    /// surface.
     void integrate(GlobalVector const& x,
                    MeshLib::PropertyVector<double>& balance,
                    double const t,
-                   Process const& bulk_process);
+                   MeshLib::Mesh const& bulk_mesh,
+                   std::function<Eigen::Vector3d(
+                       std::size_t const, MathLib::Point3d const&, double const,
+                       GlobalVector const&)> const& getFlux);
 
 private:
     // the local assemblers for each element of the mesh

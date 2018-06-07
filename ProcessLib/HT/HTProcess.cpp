@@ -288,7 +288,12 @@ void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
         getProcessVariables(process_id)[0].get().getNumberOfComponents(),
         _integration_order);
 
-    balance.integrate(x, *balance_pv, t, *this);
+    balance.integrate(
+        x, *balance_pv, t, _mesh,
+        [this](std::size_t const element_id, MathLib::Point3d const& pnt,
+               double const t, GlobalVector const& x) {
+            return getFlux(element_id, pnt, t, x);
+        });
     // post: surface_mesh has scalar element property
 
     // TODO output, if output classes are ready this has to be
