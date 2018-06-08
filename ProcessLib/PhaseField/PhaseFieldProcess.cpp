@@ -96,13 +96,12 @@ void PhaseFieldProcess<DisplacementDim>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
     _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(
-        _mesh_subset_all_nodes.get());
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
+        *_mesh_subset_all_nodes};
     _local_to_global_index_map_single_component =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets_single_component),
@@ -114,14 +113,12 @@ void PhaseFieldProcess<DisplacementDim>::constructDofTable()
     if (_use_monolithic_scheme)
     {
         const int process_id = 0;  // Only one process in the monolithic scheme.
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+        std::vector<MeshLib::MeshSubset> all_mesh_subsets;
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
             getProcessVariables(process_id)[1].get().getNumberOfComponents() +
                 1,
-            [&]() {
-                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
-            });
+            [&]() { return *_mesh_subset_all_nodes; });
 
         std::vector<int> const vec_n_components{1, DisplacementDim};
         _local_to_global_index_map =
@@ -134,13 +131,11 @@ void PhaseFieldProcess<DisplacementDim>::constructDofTable()
     {
         // For displacement equation.
         const int process_id = 0;
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+        std::vector<MeshLib::MeshSubset> all_mesh_subsets;
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
             getProcessVariables(process_id)[0].get().getNumberOfComponents(),
-            [&]() {
-                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
-            });
+            [&]() { return *_mesh_subset_all_nodes; });
 
         std::vector<int> const vec_n_components{DisplacementDim};
         _local_to_global_index_map =

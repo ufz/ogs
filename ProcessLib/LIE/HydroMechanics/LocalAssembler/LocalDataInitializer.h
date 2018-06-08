@@ -232,9 +232,8 @@ public:
             auto const n_var_element_nodes = vec_n_element_nodes[i];
             for (int var_comp_id = 0; var_comp_id < n_var_comp; var_comp_id++)
             {
-                auto& mss = _dof_table.getMeshSubsets(var_id, var_comp_id);
-                assert(mss.size() == 1);
-                auto mesh_id = mss.getMeshSubset(0).getMeshID();
+                auto const& ms = _dof_table.getMeshSubset(var_id, var_comp_id);
+                auto const mesh_id = ms.getMeshID();
                 for (unsigned k = 0; k < n_var_element_nodes; k++)
                 {
                     MeshLib::Location l(mesh_id,

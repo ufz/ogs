@@ -270,9 +270,8 @@ public:
                 for (int j = 0; j < _dof_table.getNumberOfVariableComponents(i);
                      j++)
                 {
-                    auto& mss = _dof_table.getMeshSubsets(i, j);
-                    assert(mss.size() == 1);
-                    auto mesh_id = mss.getMeshSubset(0).getMeshID();
+                    auto const& ms = _dof_table.getMeshSubset(i, j);
+                    auto const mesh_id = ms.getMeshID();
                     for (unsigned k = 0; k < mesh_item.getNumberOfNodes(); k++)
                     {
                         MeshLib::Location l(mesh_id,

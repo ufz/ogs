@@ -70,10 +70,9 @@ void GenericNonuniformNaturalBoundaryCondition<
 {
     // construct one-component DOF-table for the surface mesh
     _mesh_subset_all_nodes.reset(
-        new MeshLib::MeshSubset(*_boundary_mesh, &_boundary_mesh->getNodes()));
+        new MeshLib::MeshSubset(*_boundary_mesh, _boundary_mesh->getNodes()));
 
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets{
-        _mesh_subset_all_nodes.get()};
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets{*_mesh_subset_all_nodes};
 
     std::vector<int> vec_var_n_components{1};
 

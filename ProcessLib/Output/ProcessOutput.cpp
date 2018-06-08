@@ -191,25 +191,21 @@ void processOutputData(
 
         for (int component_id = 0; component_id < num_comp; ++component_id)
         {
-            auto const& mesh_subsets =
-                dof_table.getMeshSubsets(sub_meshset_id, component_id);
-            for (auto const& mesh_subset : mesh_subsets)
+            auto const& mesh_subset =
+                dof_table.getMeshSubset(sub_meshset_id, component_id);
+            auto const mesh_id = mesh_subset.getMeshID();
+            for (auto const* node : mesh_subset.getNodes())
             {
-                auto const mesh_id = mesh_subset->getMeshID();
-                for (auto const* node : mesh_subset->getNodes())
-                {
-                    MeshLib::Location const l(
-                        mesh_id, MeshLib::MeshItemType::Node, node->getID());
+                MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
+                                          node->getID());
 
-                    auto const global_component_id =
-                        global_component_offset + component_id;
-                    auto const index = dof_table.getLocalIndex(
-                        l, global_component_id, x.getRangeBegin(),
-                        x.getRangeEnd());
+                auto const global_component_id =
+                    global_component_offset + component_id;
+                auto const index = dof_table.getLocalIndex(
+                    l, global_component_id, x.getRangeBegin(), x.getRangeEnd());
 
-                    output_data[node->getID() * n_components + component_id] =
-                        x_copy[index];
-                }
+                output_data[node->getID() * n_components + component_id] =
+                    x_copy[index];
             }
         }
     }

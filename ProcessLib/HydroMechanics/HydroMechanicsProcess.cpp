@@ -79,17 +79,16 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
     _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
     // Create single component dof in the mesh's base nodes.
     _base_nodes = MeshLib::getBaseNodes(_mesh.getElements());
     _mesh_subset_base_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_base_nodes);
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _base_nodes);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(
-        _mesh_subset_all_nodes.get());
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
+        *_mesh_subset_all_nodes};
     _local_to_global_index_map_single_component =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets_single_component),
@@ -99,19 +98,16 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
     if (_use_monolithic_scheme)
     {
         // For pressure, which is the first
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
-        all_mesh_subsets.emplace_back(_mesh_subset_base_nodes.get());
+        std::vector<MeshLib::MeshSubset> all_mesh_subsets{
+            *_mesh_subset_base_nodes};
 
         // For displacement.
         const int monolithic_process_id = 0;
-        std::generate_n(
-            std::back_inserter(all_mesh_subsets),
-            getProcessVariables(monolithic_process_id)[1]
-                .get()
-                .getNumberOfComponents(),
-            [&]() {
-                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
-            });
+        std::generate_n(std::back_inserter(all_mesh_subsets),
+                        getProcessVariables(monolithic_process_id)[1]
+                            .get()
+                            .getNumberOfComponents(),
+                        [&]() { return *_mesh_subset_all_nodes; });
 
         std::vector<int> const vec_n_components{1, DisplacementDim};
         _local_to_global_index_map =
@@ -124,13 +120,11 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
     {
         // For displacement equation.
         const int process_id = 1;
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+        std::vector<MeshLib::MeshSubset> all_mesh_subsets;
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
             getProcessVariables(process_id)[0].get().getNumberOfComponents(),
-            [&]() {
-                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
-            });
+            [&]() { return *_mesh_subset_all_nodes; });
 
         std::vector<int> const vec_n_components{DisplacementDim};
         _local_to_global_index_map =
@@ -140,8 +134,8 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 
         // For pressure equation.
         // Collect the mesh subsets with base nodes in a vector.
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets_base_nodes;
-        all_mesh_subsets_base_nodes.emplace_back(_mesh_subset_base_nodes.get());
+        std::vector<MeshLib::MeshSubset> all_mesh_subsets_base_nodes{
+            *_mesh_subset_base_nodes};
         _local_to_global_index_map_with_base_nodes =
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets_base_nodes),

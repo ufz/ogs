@@ -57,6 +57,10 @@ private:
     /// defined.
     std::vector<MeshLib::Element*> _elements;
 
+    /// Intersection of boundary nodes and bulk mesh subset for the
+    /// variable_id/component_id pair.
+    std::vector<MeshLib::Node*> _nodes_subset;
+
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 
     /// Local dof table, a subset of the global one restricted to the

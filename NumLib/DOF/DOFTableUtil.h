@@ -70,22 +70,17 @@ void transformVariableFromGlobalVector(
         local_to_global_index_map.getNumberOfVariableComponents(variable_id);
     for (int component = 0; component < n_components; ++component)
     {
-        auto const& mesh_subsets =
-            local_to_global_index_map.getMeshSubsets(variable_id, component);
-        assert(mesh_subsets.size() ==
-               1);  // Multiple meshes are not supported by the output_vector.
-        for (auto const& ms : mesh_subsets)
+        auto const& mesh_subset =
+            local_to_global_index_map.getMeshSubset(variable_id, component);
+        auto const mesh_id = mesh_subset.getMeshID();
+        for (auto const& node : mesh_subset.getNodes())
         {
-            auto const mesh_id = ms->getMeshID();
-            for (auto const& node : ms->getNodes())
-            {
-                auto const node_id = node->getID();
-                MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
-                                          node_id);
-                output_vector.getComponent(node_id, component) = mapFunction(
-                    input_vector[local_to_global_index_map.getGlobalIndex(
-                        l, variable_id, component)]);
-            }
+            auto const node_id = node->getID();
+            MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
+                                      node_id);
+            output_vector.getComponent(node_id, component) = mapFunction(
+                input_vector[local_to_global_index_map.getGlobalIndex(
+                    l, variable_id, component)]);
         }
     }
 }

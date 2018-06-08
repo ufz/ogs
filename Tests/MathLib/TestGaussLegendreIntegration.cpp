@@ -17,7 +17,7 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "MeshLib/MeshSubsets.h"
+#include "MeshLib/MeshSubset.h"
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -121,10 +121,10 @@ public:
     IntegrationTestProcess(MeshLib::Mesh const& mesh,
                            unsigned const integration_order)
         : _integration_order(integration_order),
-          _mesh_subset_all_nodes(mesh, &mesh.getNodes())
+          _mesh_subset_all_nodes(mesh, mesh.getNodes())
     {
-        std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
-        all_mesh_subsets.emplace_back(&_mesh_subset_all_nodes);
+        std::vector<MeshLib::MeshSubset> all_mesh_subsets{
+            _mesh_subset_all_nodes};
 
         _dof_table = std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_COMPONENT);

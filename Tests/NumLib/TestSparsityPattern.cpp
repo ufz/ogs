@@ -26,11 +26,9 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentLinearMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
-    auto nodesSubset =
-        std::make_unique<MeshLib::MeshSubset const>(*mesh, &mesh->getNodes());
+    MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
-    std::vector<MeshLib::MeshSubsets> components;
-    components.emplace_back(nodesSubset.get());
+    std::vector<MeshLib::MeshSubset> components{nodesSubset};
     NumLib::LocalToGlobalIndexMap dof_map(
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
@@ -55,11 +53,9 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::createQuadraticOrderMesh(*linear_mesh));
-    auto nodesSubset =
-        std::make_unique<MeshLib::MeshSubset const>(*mesh, &mesh->getNodes());
+    MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
-    std::vector<MeshLib::MeshSubsets> components;
-    components.emplace_back(nodesSubset.get());
+    std::vector<MeshLib::MeshSubset> components{nodesSubset};
     NumLib::LocalToGlobalIndexMap dof_map(
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
@@ -85,12 +81,9 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
-    auto nodesSubset =
-        std::make_unique<MeshLib::MeshSubset const>(*mesh, &mesh->getNodes());
+    MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
-    std::vector<MeshLib::MeshSubsets> components;
-    components.emplace_back(nodesSubset.get());
-    components.emplace_back(nodesSubset.get());
+    std::vector<MeshLib::MeshSubset> components{nodesSubset, nodesSubset};
     NumLib::LocalToGlobalIndexMap dof_map(
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);
@@ -120,13 +113,12 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearQuadraticMesh)
         MeshLib::createQuadraticOrderMesh(*linear_mesh));
     auto base_nodes = MeshLib::getBaseNodes(mesh->getElements());
     auto baseNodesSubset =
-        std::make_unique<MeshLib::MeshSubset const>(*mesh, &base_nodes);
+        std::make_unique<MeshLib::MeshSubset const>(*mesh, base_nodes);
     auto allNodesSubset =
-        std::make_unique<MeshLib::MeshSubset const>(*mesh, &mesh->getNodes());
+        std::make_unique<MeshLib::MeshSubset const>(*mesh, mesh->getNodes());
 
-    std::vector<MeshLib::MeshSubsets> components;
-    components.emplace_back(baseNodesSubset.get());
-    components.emplace_back(allNodesSubset.get());
+    std::vector<MeshLib::MeshSubset> components{*baseNodesSubset,
+                                                *allNodesSubset};
     NumLib::LocalToGlobalIndexMap dof_map(
                       std::move(components),
                       NumLib::ComponentOrder::BY_COMPONENT);

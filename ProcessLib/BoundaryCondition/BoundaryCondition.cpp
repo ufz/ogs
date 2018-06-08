@@ -106,16 +106,13 @@ BoundaryConditionBuilder::createDirichletBoundaryCondition(
     // Sorted ids of all mesh_subsets.
     std::vector<std::size_t> sorted_nodes_ids;
 
-    auto const& mesh_subsets =
-        dof_table.getMeshSubsets(variable_id, *config.component_id);
-    for (auto const& mesh_subset : mesh_subsets)
-    {
-        auto const& nodes = mesh_subset->getNodes();
-        sorted_nodes_ids.reserve(sorted_nodes_ids.size() + nodes.size());
-        std::transform(std::begin(nodes), std::end(nodes),
-                       std::back_inserter(sorted_nodes_ids),
-                       [](MeshLib::Node* const n) { return n->getID(); });
-    }
+    auto const& mesh_subset =
+        dof_table.getMeshSubset(variable_id, *config.component_id);
+    auto const& nodes = mesh_subset.getNodes();
+    sorted_nodes_ids.reserve(sorted_nodes_ids.size() + nodes.size());
+    std::transform(std::begin(nodes), std::end(nodes),
+                   std::back_inserter(sorted_nodes_ids),
+                   [](MeshLib::Node* const n) { return n->getID(); });
     std::sort(std::begin(sorted_nodes_ids), std::end(sorted_nodes_ids));
 
     auto ids_new_end_iterator = std::end(ids);

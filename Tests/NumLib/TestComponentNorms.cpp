@@ -27,12 +27,12 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "Tests/VectorUtils.h"
 
-static std::vector<MeshLib::MeshSubsets> createMeshSubsets(
+static std::vector<MeshLib::MeshSubset> createMeshSubsets(
     MeshLib::MeshSubset const& mesh_subset, unsigned const num_components)
 {
-    std::vector<MeshLib::MeshSubsets> mesh_subsets;
+    std::vector<MeshLib::MeshSubset> mesh_subsets;
     for (unsigned i=0; i<num_components; ++i)
-        mesh_subsets.emplace_back(&mesh_subset);
+        mesh_subsets.emplace_back(mesh_subset);
 
     return mesh_subsets;
 }
@@ -49,7 +49,7 @@ struct DOFTableData
         : mesh(MeshLib::MeshGenerator::generateRegularHexMesh(
               mesh_length, mesh_elements_in_each_direction)),
 #endif
-          mesh_subset_all_nodes(*mesh, &mesh->getNodes()),
+          mesh_subset_all_nodes(*mesh, mesh->getNodes()),
           dof_table(createMeshSubsets(mesh_subset_all_nodes, num_components),
                     order)
     {

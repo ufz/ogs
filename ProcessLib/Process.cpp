@@ -133,36 +133,33 @@ void Process::setInitialConditions(const int process_id, double const t,
 
         for (int component_id = 0; component_id < num_comp; ++component_id)
         {
-            auto const& mesh_subsets =
-                dof_table_of_process.getMeshSubsets(variable_id, component_id);
-            for (auto const& mesh_subset : mesh_subsets)
+            auto const& mesh_subset =
+                dof_table_of_process.getMeshSubset(variable_id, component_id);
+            auto const mesh_id = mesh_subset.getMeshID();
+            for (auto const* node : mesh_subset.getNodes())
             {
-                auto const mesh_id = mesh_subset->getMeshID();
-                for (auto const* node : mesh_subset->getNodes())
-                {
-                    MeshLib::Location const l(
-                        mesh_id, MeshLib::MeshItemType::Node, node->getID());
+                MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
+                                          node->getID());
 
-                    pos.setNodeID(node->getID());
-                    auto const& ic_value = ic(t, pos);
+                pos.setNodeID(node->getID());
+                auto const& ic_value = ic(t, pos);
 
-                    auto global_index =
-                        std::abs(dof_table_of_process.getGlobalIndex(
-                            l, variable_id, component_id));
+                auto global_index =
+                    std::abs(dof_table_of_process.getGlobalIndex(l, variable_id,
+                                                                 component_id));
 #ifdef USE_PETSC
-                    // The global indices of the ghost entries of the global
-                    // matrix or the global vectors need to be set as negative
-                    // values for equation assembly, however the global indices
-                    // start from zero. Therefore, any ghost entry with zero
-                    // index is assigned an negative value of the vector size
-                    // or the matrix dimension. To assign the initial value for
-                    // the ghost entries, the negative indices of the ghost
-                    // entries are restored to zero.
-                    if (global_index == x.size())
-                        global_index = 0;
+                // The global indices of the ghost entries of the global
+                // matrix or the global vectors need to be set as negative
+                // values for equation assembly, however the global indices
+                // start from zero. Therefore, any ghost entry with zero
+                // index is assigned an negative value of the vector size
+                // or the matrix dimension. To assign the initial value for
+                // the ghost entries, the negative indices of the ghost
+                // entries are restored to zero.
+                if (global_index == x.size())
+                    global_index = 0;
 #endif
-                    x.set(global_index, ic_value[component_id]);
-                }
+                x.set(global_index, ic_value[component_id]);
             }
         }
     }
@@ -217,24 +214,21 @@ void Process::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
     _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, &_mesh.getNodes());
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
 
     // Vector of mesh subsets.
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets;
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets;
 
     // Vector of the number of variable components
     std::vector<int> vec_var_n_components;
     if (_use_monolithic_scheme)
     {
-        // Collect the mesh subsets in a vector.
+        // Collect the mesh subsets in a vector for each variables' components.
         for (ProcessVariable const& pv : _process_variables[0])
         {
-            std::generate_n(
-                std::back_inserter(all_mesh_subsets),
-                pv.getNumberOfComponents(),
-                [&]() {
-                    return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
-                });
+            std::generate_n(std::back_inserter(all_mesh_subsets),
+                            pv.getNumberOfComponents(),
+                            [&]() { return *_mesh_subset_all_nodes; });
         }
 
         // Create a vector of the number of variable components
@@ -249,13 +243,10 @@ void Process::constructDofTable()
         // element order. Other cases can be considered by overloading this
         // member function in the derived class.
 
-        // Collect the mesh subsets in a vector.
-        std::generate_n(
-            std::back_inserter(all_mesh_subsets),
-            _process_variables[0][0].get().getNumberOfComponents(),
-            [&]() {
-                return MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()};
-            });
+        // Collect the mesh subsets in a vector for each variables' components.
+        std::generate_n(std::back_inserter(all_mesh_subsets),
+                        _process_variables[0][0].get().getNumberOfComponents(),
+                        [&]() { return *_mesh_subset_all_nodes; });
 
         // Create a vector of the number of variable components.
         vec_var_n_components.push_back(
@@ -280,9 +271,8 @@ Process::getDOFTableForExtrapolatorData() const
     }
 
     // Otherwise construct a new DOF table.
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(
-        _mesh_subset_all_nodes.get());
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component;
+    all_mesh_subsets_single_component.emplace_back(*_mesh_subset_all_nodes);
 
     const bool manage_storage = true;
 

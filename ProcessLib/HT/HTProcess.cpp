@@ -206,9 +206,8 @@ HTProcess::getDOFTableForExtrapolatorData() const
     }
 
     // Otherwise construct a new DOF table.
-    std::vector<MeshLib::MeshSubsets> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(
-        _mesh_subset_all_nodes.get());
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
+        *_mesh_subset_all_nodes};
 
     const bool manage_storage = true;
     return std::make_tuple(new NumLib::LocalToGlobalIndexMap(

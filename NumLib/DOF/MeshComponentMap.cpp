@@ -13,7 +13,7 @@
 #include "MeshComponentMap.h"
 
 #include "BaseLib/Error.h"
-#include "MeshLib/MeshSubsets.h"
+#include "MeshLib/MeshSubset.h"
 
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
@@ -29,23 +29,16 @@ GlobalIndexType const MeshComponentMap::nop =
 
 #ifdef USE_PETSC
 MeshComponentMap::MeshComponentMap(
-    const std::vector<MeshLib::MeshSubsets>& components, ComponentOrder order)
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
     // get number of unknows
     GlobalIndexType num_unknowns = 0;
     for (auto const& c : components)
     {
-        for (unsigned mesh_subset_index = 0; mesh_subset_index < c.size();
-             mesh_subset_index++)
-        {
-            MeshLib::MeshSubset const& mesh_subset =
-                c.getMeshSubset(mesh_subset_index);
             // PETSc always works with MeshLib::NodePartitionedMesh.
             const MeshLib::NodePartitionedMesh& mesh =
-                static_cast<const MeshLib::NodePartitionedMesh&>(
-                    mesh_subset.getMesh());
+                static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
             num_unknowns += mesh.getNumberOfGlobalNodes();
-        }
     }
 
     // construct dict (and here we number global_index by component type)
@@ -55,84 +48,64 @@ MeshComponentMap::MeshComponentMap(
     _num_local_dof = 0;
     for (auto const& c : components)
     {
-        for (unsigned mesh_subset_index = 0; mesh_subset_index < c.size();
-             mesh_subset_index++)
+        assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(
+                   &c.getMesh()) != nullptr);
+        std::size_t const mesh_id = c.getMeshID();
+        const MeshLib::NodePartitionedMesh& mesh =
+            static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
+
+        // mesh items are ordered first by node, cell, ....
+        for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
         {
-            MeshLib::MeshSubset const& mesh_subset =
-                c.getMeshSubset(mesh_subset_index);
-            assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(
-                       &mesh_subset.getMesh()) != nullptr);
-            std::size_t const mesh_id = mesh_subset.getMeshID();
-            const MeshLib::NodePartitionedMesh& mesh =
-                static_cast<const MeshLib::NodePartitionedMesh&>(
-                    mesh_subset.getMesh());
-
-            // mesh items are ordered first by node, cell, ....
-            for (std::size_t j = 0; j < mesh_subset.getNumberOfNodes(); j++)
+            GlobalIndexType global_id = 0;
+            if (order != ComponentOrder::BY_LOCATION)
             {
-                GlobalIndexType global_id = 0;
-                if (order != ComponentOrder::BY_LOCATION)
-                {
-                    // Deactivated since this case is not suitable to
-                    // arrange non ghost entries of a partition within
-                    // a rank in the parallel computing.
-                    OGS_FATAL("Global index in the system of equations"
-                              " can only be numbered by the order type"
-                              " of ComponentOrder::BY_LOCATION");
-                }
-                global_id = static_cast<GlobalIndexType>(
-                    components.size() * mesh.getGlobalNodeID(j)
-                        + comp_id);
-                const bool is_ghost =
-                    mesh.isGhostNode(mesh.getNode(j)->getID());
-                if (is_ghost)
-                {
-                    _ghosts_indices.push_back(global_id);
-                    global_id = -global_id;
-                    // If the ghost entry has an index of 0,
-                    // its index is set to the negative value of unknowns.
-                    if (global_id == 0) global_id = -num_unknowns;
-                }
-                else
-                    _num_local_dof++;
-
-                _dict.insert(
-                    Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
-                         comp_id, global_id));
+                // Deactivated since this case is not suitable to
+                // arrange non ghost entries of a partition within
+                // a rank in the parallel computing.
+                OGS_FATAL(
+                    "Global index in the system of equations"
+                    " can only be numbered by the order type"
+                    " of ComponentOrder::BY_LOCATION");
             }
+            global_id = static_cast<GlobalIndexType>(
+                components.size() * mesh.getGlobalNodeID(j) + comp_id);
+            const bool is_ghost = mesh.isGhostNode(mesh.getNode(j)->getID());
+            if (is_ghost)
+            {
+                _ghosts_indices.push_back(global_id);
+                global_id = -global_id;
+                // If the ghost entry has an index of 0,
+                // its index is set to the negative value of unknowns.
+                if (global_id == 0)
+                    global_id = -num_unknowns;
+            }
+            else
+                _num_local_dof++;
 
-            // Note: If the cells are really used (e.g. for the mixed FEM),
-            // the following global cell index must be reconsidered
-            // according to the employed cell indexing method.
-            for (std::size_t j = 0; j < mesh_subset.getNumberOfElements(); j++)
-                _dict.insert(
-                    Line(Location(mesh_id, MeshLib::MeshItemType::Cell, j),
-                         comp_id, cell_index++));
-
-            _num_global_dof += mesh.getNumberOfGlobalNodes();
+            _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
+                              comp_id, global_id));
         }
+
+        _num_global_dof += mesh.getNumberOfGlobalNodes();
         comp_id++;
     }
 }
 #else
 MeshComponentMap::MeshComponentMap(
-    const std::vector<MeshLib::MeshSubsets>& components, ComponentOrder order)
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
     // construct dict (and here we number global_index by component type)
     GlobalIndexType global_index = 0;
     std::size_t comp_id = 0;
     for (auto const& c : components)
     {
-        for (std::size_t mesh_subset_index = 0; mesh_subset_index < c.size(); mesh_subset_index++)
-        {
-            MeshLib::MeshSubset const& mesh_subset = c.getMeshSubset(mesh_subset_index);
-            std::size_t const mesh_id = mesh_subset.getMeshID();
-            // mesh items are ordered first by node, cell, ....
-            for (std::size_t j=0; j<mesh_subset.getNumberOfNodes(); j++)
-                _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, mesh_subset.getNodeID(j)), comp_id, global_index++));
-            for (std::size_t j=0; j<mesh_subset.getNumberOfElements(); j++)
-                _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell, mesh_subset.getElementID(j)), comp_id, global_index++));
-        }
+        std::size_t const mesh_id = c.getMeshID();
+        // mesh items are ordered first by node, cell, ....
+        for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
+            _dict.insert(Line(
+                Location(mesh_id, MeshLib::MeshItemType::Node, c.getNodeID(j)),
+                comp_id, global_index++));
         comp_id++;
     }
     _num_local_dof = _dict.size();
@@ -144,29 +117,20 @@ MeshComponentMap::MeshComponentMap(
 
 MeshComponentMap MeshComponentMap::getSubset(
     std::vector<int> const& component_ids,
-    MeshLib::MeshSubsets const& mesh_subsets) const
+    MeshLib::MeshSubset const& mesh_subset) const
 {
     // New dictionary for the subset.
     ComponentGlobalIndexDict subset_dict;
 
-    for (auto const& mesh_subset : mesh_subsets)
-    {
-        std::size_t const mesh_id = mesh_subset->getMeshID();
-        // Lookup the locations in the current mesh component map and
-        // insert the full lines into the subset dictionary.
-        for (std::size_t j = 0; j < mesh_subset->getNumberOfNodes(); j++)
-            for (auto component_id : component_ids)
-                subset_dict.insert(
-                    getLine(Location(mesh_id, MeshLib::MeshItemType::Node,
-                                     mesh_subset->getNodeID(j)),
-                            component_id));
-        for (std::size_t j = 0; j < mesh_subset->getNumberOfElements(); j++)
-            for (auto component_id : component_ids)
-                subset_dict.insert(
-                    getLine(Location(mesh_id, MeshLib::MeshItemType::Cell,
-                                     mesh_subset->getElementID(j)),
-                            component_id));
-    }
+    std::size_t const mesh_id = mesh_subset.getMeshID();
+    // Lookup the locations in the current mesh component map and
+    // insert the full lines into the subset dictionary.
+    for (std::size_t j = 0; j < mesh_subset.getNumberOfNodes(); j++)
+        for (auto component_id : component_ids)
+            subset_dict.insert(
+                getLine(Location(mesh_id, MeshLib::MeshItemType::Node,
+                                 mesh_subset.getNodeID(j)),
+                        component_id));
 
     return MeshComponentMap(subset_dict);
 }
