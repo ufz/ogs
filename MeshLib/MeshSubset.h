@@ -22,28 +22,6 @@
 
 namespace MeshLib
 {
-inline std::vector<Node*> nodesNodesIntersection(
-    std::vector<Node*> const& nodes_a, std::vector<Node*> const& nodes_b)
-{
-    if (nodes_a.empty() || nodes_b.empty())
-    {
-        return {};
-    }
-
-    std::vector<Node*> active_nodes;
-
-    for (auto const& n_a : nodes_a)
-    {
-        auto it = std::find(begin(nodes_b), end(nodes_b), n_a);
-        if (it != end(nodes_b))
-        {
-            active_nodes.push_back(n_a);
-        }
-    }
-
-    return active_nodes;
-}
-
 /// A subset of nodes on a single mesh.
 class MeshSubset
 {
