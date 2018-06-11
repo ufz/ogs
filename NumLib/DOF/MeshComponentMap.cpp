@@ -171,8 +171,10 @@ MeshComponentMap MeshComponentMap::getSubset(
 
         for (auto component_id : new_global_component_ids)
         {
-            subset_dict.insert({new_location, component_id,
-                                getGlobalIndex(bulk_location, component_id)});
+            auto const global_index =
+                getGlobalIndex(bulk_location, component_id);
+            assert (global_index != nop);
+            subset_dict.insert({new_location, component_id, global_index});
         }
     }
 
