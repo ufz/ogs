@@ -19,7 +19,6 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
-#include "ProcessLib/LIE/BoundaryCondition/BoundaryConditionBuilder.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/Parameter/MeshElementParameter.h"
 
@@ -82,16 +81,12 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
                             *_process_data.fracture_property.get());
     }
 
-    // need to use a custom Neumann BC assembler for displacement jumps
-    const int monolithic_process_id = 0;
-    for (ProcessVariable& pv : getProcessVariables(monolithic_process_id))
-    {
-        if (pv.getName().find("displacement_jump") == std::string::npos)
-            continue;
-        pv.setBoundaryConditionBuilder(
-            std::make_unique<BoundaryConditionBuilder>(
-                *_process_data.fracture_property.get()));
-    }
+    //
+    // If Neumann BCs for the displacement_jump variable are required they need
+    // special treatment because of the levelset function. The implementation
+    // exists in the version 6.1.0 (e54815cc07ee89c81f953a4955b1c788595dd725)
+    // and was removed due to lack of applications.
+    //
 
     if (!_process_data.deactivate_matrix_in_flow)
     {
