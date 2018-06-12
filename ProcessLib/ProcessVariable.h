@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/SourceTerms/SourceTermConfig.h"
@@ -20,11 +19,20 @@ namespace MeshLib
 class Mesh;
 template <typename T> class PropertyVector;
 }
+namespace NumLib
+{
+class LocalToGlobalIndexMap;
+}
 
 namespace ProcessLib
 {
-class BoundaryConditionBuilder;
+class NodalSourceTerm;
+class BoundaryCondition;
+class Process;
+}  // namespace ProcessLib
 
+namespace ProcessLib
+{
 /// A named process variable. Its properties includes the mesh, and the initial
 /// and boundary conditions as well as the source terms.
 class ProcessVariable
@@ -44,11 +52,6 @@ public:
 
     /// Returns the number of components of the process variable.
     int getNumberOfComponents() const { return _n_components; }
-
-    void setBoundaryConditionBuilder(std::unique_ptr<BoundaryConditionBuilder> bc_builder)
-    {
-        _bc_builder = std::move(bc_builder);
-    }
 
     std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryConditions(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
@@ -94,7 +97,6 @@ private:
     Parameter<double> const& _initial_condition;
 
     std::vector<BoundaryConditionConfig> _bc_configs;
-    std::unique_ptr<BoundaryConditionBuilder> _bc_builder;
     std::vector<SourceTermConfig> _source_term_configs;
     std::unique_ptr<SourceTermBuilder> _source_term_builder;
 };

@@ -13,6 +13,8 @@
 #include <logog/include/logog.hpp>
 
 #include "MeshLib/Mesh.h"
+#include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
+#include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
@@ -33,7 +35,6 @@ ProcessVariable::ProcessVariable(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
           parameters, _n_components)),
-      _bc_builder(std::make_unique<BoundaryConditionBuilder>()),
       _source_term_builder(std::make_unique<SourceTermBuilder>())
 {
     DBUG("Constructing process variable %s", _name.c_str());
@@ -146,7 +147,6 @@ ProcessVariable::ProcessVariable(ProcessVariable&& other)
       _shapefunction_order(other._shapefunction_order),
       _initial_condition(std::move(other._initial_condition)),
       _bc_configs(std::move(other._bc_configs)),
-      _bc_builder(std::move(other._bc_builder)),
       _source_term_configs(std::move(other._source_term_configs)),
       _source_term_builder(std::move(other._source_term_builder))
 {
@@ -181,9 +181,10 @@ ProcessVariable::createBoundaryConditions(
 
     for (auto& config : _bc_configs)
     {
-        auto bc = _bc_builder->createBoundaryCondition(
-            config, dof_table, _mesh, variable_id, integration_order,
-            _shapefunction_order, parameters, process);
+        auto bc = createBoundaryCondition(config, dof_table, _mesh, variable_id,
+                                          integration_order,
+                                          _shapefunction_order, parameters,
+                                          process);
         bcs.push_back(std::move(bc));
     }
 
