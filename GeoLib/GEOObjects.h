@@ -278,6 +278,13 @@ public:
     /// Checks if the point vector with the given name is referenced in a polyline- or surface vector.
     bool isPntVecUsed (const std::string &name) const;
 
+    /// Read access to points w/o using a name.
+    std::vector<PointVec*> const& getPoints() const { return _pnt_vecs; }
+    /// Read access to polylines w/o using a name.
+    std::vector<PolylineVec*> const& getPolylines() const { return _ply_vecs; }
+    /// Read access to surfaces w/o using a name.
+    std::vector<SurfaceVec*> const& getSurfaces() const { return _sfc_vecs; }
+
     /**
      * vector manages pointers to PointVec objects
      */

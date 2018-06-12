@@ -141,10 +141,6 @@ protected:
         const unsigned /*shapefunction_order*/,
         const std::vector<
             std::unique_ptr<ProcessLib::ParameterBase>>& /*parameters*/);
-
-    static std::vector<MeshLib::Element*> getClonedElements(
-        MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,
-        GeoLib::GeoObject const& geometry);
 };
 
 }  // ProcessLib

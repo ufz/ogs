@@ -46,6 +46,16 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
     _boundary_elements.push_back(new MeshLib::Point{nodes, node_ids[0]});
     for (auto const* bulk_element : _mesh.getNode(node_ids[0])->getElements())
     {
+        // Special treatment of the non-line elements because the identifyFace
+        // implementation expects three valid node pointers in the call. We can
+        // guarantee only one valid node, and calling the identifyFace would
+        // most likely lead to a SEGV.
+        if (bulk_element->getGeomType() != MeshLib::MeshElemType::LINE)
+        {
+            _bulk_ids.emplace_back(bulk_element->getID(), -1);
+            continue;
+        }
+
         _bulk_ids.emplace_back(
             bulk_element->getID(),
             bulk_element->identifyFace(mesh_nodes.data() + node_ids[0]));

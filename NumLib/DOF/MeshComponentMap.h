@@ -64,14 +64,14 @@ public:
     /// | l        | comp_id_1   |
     /// | l        |  ...        |
     /// | l        | comp_id_n   |
-    std::vector<std::size_t> getComponentIDs(const Location &l) const;
+    std::vector<int> getComponentIDs(const Location& l) const;
 
     /// Global index of the given component id at given location \c l.
     ///
     /// | Location | ComponentID | GlobalIndex |
     /// | -------- | ----------- | ----------- |
     /// | l        | comp_id     | gi          |
-    GlobalIndexType getGlobalIndex(Location const &l, std::size_t const comp_id) const;
+    GlobalIndexType getGlobalIndex(Location const& l, int const comp_id) const;
 
     /// Global indices for all components at the given location \c l.
     ///
@@ -134,7 +134,7 @@ public:
     /// When domain decomposition is not used, it is equal to getGlobalIndex().
     /// The range is needed to compute the offset for non-ghost locations and
     /// also to map ghost locations.
-    GlobalIndexType getLocalIndex(Location const& l, std::size_t const comp_id,
+    GlobalIndexType getLocalIndex(Location const& l, int const comp_id,
                                   std::size_t const range_begin,
                                   std::size_t const range_end) const;
 
@@ -167,7 +167,7 @@ private:
     /// \attention The line for the location l and component id must exist,
     /// the behaviour is undefined otherwise.
     /// \return a copy of the line.
-    detail::Line getLine(Location const& l, std::size_t const component_id) const;
+    detail::Line getLine(Location const& l, int const component_id) const;
 
     void renumberByLocation(GlobalIndexType offset=0);
 

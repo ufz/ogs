@@ -44,7 +44,7 @@ const Element* TetRule10::getFace(const Element* e, unsigned i)
         std::array<Node*,6> nodes;
         for (unsigned j=0; j<6; j++)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
-        return new Tri6(nodes);
+        return new Tri6(nodes, e->getID());
     }
     ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
     return nullptr;

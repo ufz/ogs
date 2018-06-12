@@ -14,6 +14,7 @@
 #include "MeshGeoToolsLib/CreateSearchLength.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/SearchLength.h"
+#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "NeumannBoundaryCondition.h"
 #include "NonuniformDirichletBoundaryCondition.h"
 #include "NonuniformNeumannBoundaryCondition.h"
@@ -152,9 +153,10 @@ BoundaryConditionBuilder::createNeumannBoundaryCondition(
 
     return ProcessLib::createNeumannBoundaryCondition(
         config.config,
-        getClonedElements(boundary_element_searcher, config.geometry),
-        dof_table, variable_id, *config.component_id,
-        mesh.isAxiallySymmetric(), integration_order, shapefunction_order, mesh.getDimension(),
+        MeshLib::cloneElements(
+            boundary_element_searcher.getBoundaryElements(config.geometry)),
+        dof_table, variable_id, *config.component_id, mesh.isAxiallySymmetric(),
+        integration_order, shapefunction_order, mesh.getDimension(),
         parameters);
 }
 
@@ -178,9 +180,10 @@ BoundaryConditionBuilder::createRobinBoundaryCondition(
 
     return ProcessLib::createRobinBoundaryCondition(
         config.config,
-        getClonedElements(boundary_element_searcher, config.geometry),
-        dof_table, variable_id, *config.component_id,
-        mesh.isAxiallySymmetric(), integration_order, shapefunction_order, mesh.getDimension(),
+        MeshLib::cloneElements(
+            boundary_element_searcher.getBoundaryElements(config.geometry)),
+        dof_table, variable_id, *config.component_id, mesh.isAxiallySymmetric(),
+        integration_order, shapefunction_order, mesh.getDimension(),
         parameters);
 }
 
@@ -227,7 +230,8 @@ BoundaryConditionBuilder::createNormalTractionBoundaryCondition(
     return ProcessLib::NormalTractionBoundaryCondition::
         createNormalTractionBoundaryCondition(
             config.config,
-            getClonedElements(boundary_element_searcher, config.geometry),
+            MeshLib::cloneElements(
+                boundary_element_searcher.getBoundaryElements(config.geometry)),
             dof_table, variable_id, mesh.isAxiallySymmetric(),
             integration_order, shapefunction_order, mesh.getDimension(),
             parameters);
@@ -248,20 +252,4 @@ std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::
             config.config, dof_table, mesh, variable_id, *config.component_id);
 }
 
-std::vector<MeshLib::Element*> BoundaryConditionBuilder::getClonedElements(
-    MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,
-    GeoLib::GeoObject const& geometry)
-{
-    std::vector<MeshLib::Element*> elements =
-        boundary_element_searcher.getBoundaryElements(geometry);
-
-    // Deep copy all the elements, because the searcher might destroy the
-    // originals. Store pointers to the copies in the elements vector (i.e.,
-    // in-place modification).
-    for (auto& e : elements)
-        e = e->clone();
-
-    return elements;
-}
-
-}  // ProcessLib
+}  // namespace ProcessLib

@@ -54,7 +54,7 @@ const Element* HexRule8::getFace(const Element* e, unsigned i)
         std::array<Node*, 4> nodes;
         for (unsigned j=0; j<4; j++)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
-        return new Quad(nodes);
+        return new Quad(nodes, e->getID());
     }
     ERR("Error in MeshLib::Element::getFace() - Index %d does not exist.", i);
     return nullptr;

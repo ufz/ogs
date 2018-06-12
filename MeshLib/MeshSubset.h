@@ -53,7 +53,41 @@ public:
     /// \param vec_items Vector of Node pointers.
     MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_items)
         : _msh(msh), _nodes(vec_items)
-    {}
+    {
+        // If the mesh nodes and the given nodes point to the same vector, they
+        // must be equal.
+        if (&_msh.getNodes() == &_nodes)
+        {
+            return;
+        }
+
+        //
+        // Testing if the given nodes belong to the mesh.
+        //
+        {
+            // Need sorted version of the large vector.
+            auto sorted_nodes = _msh.getNodes();  // full copy of pointers.
+            sort(begin(sorted_nodes), end(sorted_nodes));
+
+            // Then proceed with the search function.
+            auto node_is_part_of_mesh = [& mesh_nodes = sorted_nodes](
+                                            MeshLib::Node* const& n) {
+                auto it = lower_bound(begin(mesh_nodes), end(mesh_nodes), n);
+                if (it == end(mesh_nodes))
+                {
+                    ERR("A node %d (%g, %g, %g) in mesh subset is not a part "
+                        "of the mesh.",
+                        n->getID(), (*n)[0], (*n)[1], (*n)[2]);
+                    return false;
+                }
+                return true;
+            };
+            if (!std::all_of(begin(_nodes), end(_nodes), node_is_part_of_mesh))
+            {
+                OGS_FATAL("The mesh subset construction failed.");
+            }
+        }
+    }
 
     /// return this mesh ID
     std::size_t getMeshID() const

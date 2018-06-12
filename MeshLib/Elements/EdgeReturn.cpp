@@ -25,7 +25,7 @@ const Element* LinearEdgeReturn::getEdge(const Element* e, unsigned i)
         auto** nodes = new Node*[2];
         nodes[0] = const_cast<Node*>(e->getEdgeNode(i,0));
         nodes[1] = const_cast<Node*>(e->getEdgeNode(i,1));
-        return new Line(nodes);
+        return new Line(nodes, e->getID());
     }
     ERR("Error in MeshLib::Element::getEdge() - Index does not exist.");
     return nullptr;
@@ -39,7 +39,7 @@ const Element* QuadraticEdgeReturn::getEdge(const Element* e, unsigned i)
         nodes[0] = const_cast<Node*>(e->getEdgeNode(i,0));
         nodes[1] = const_cast<Node*>(e->getEdgeNode(i,1));
         nodes[2] = const_cast<Node*>(e->getEdgeNode(i,2));
-        return new Line3(nodes);
+        return new Line3(nodes, e->getID());
     }
     ERR("Error in MeshLib::Element::getEdge() - Index does not exist.");
     return nullptr;
