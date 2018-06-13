@@ -42,7 +42,6 @@ MeshComponentMap::MeshComponentMap(
     }
 
     // construct dict (and here we number global_index by component type)
-    std::size_t cell_index = 0;
     int comp_id = 0;
     _num_global_dof = 0;
     _num_local_dof = 0;
