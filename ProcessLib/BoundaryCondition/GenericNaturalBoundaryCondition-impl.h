@@ -27,7 +27,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
-        unsigned const global_dim, MeshLib::Mesh& bc_mesh, Data&& data)
+        unsigned const global_dim, MeshLib::Mesh const& bc_mesh, Data&& data)
     : _data(std::forward<Data>(data)),
       _bc_mesh(bc_mesh),
       _integration_order(integration_order)

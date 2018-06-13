@@ -15,7 +15,7 @@ namespace ProcessLib
 {
 NodalSourceTerm::NodalSourceTerm(const NumLib::LocalToGlobalIndexMap& dof_table,
                                  std::size_t const bulk_mesh_id,
-                                 MeshLib::Mesh& st_mesh,
+                                 MeshLib::Mesh const& st_mesh,
                                  const int variable_id,
                                  const int component_id,
                                  Parameter<double> const& parameter)

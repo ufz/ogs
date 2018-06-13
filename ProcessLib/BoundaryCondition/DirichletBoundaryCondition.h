@@ -25,7 +25,7 @@ class DirichletBoundaryCondition final : public BoundaryCondition
 {
 public:
     DirichletBoundaryCondition(Parameter<double> const& parameter,
-                               MeshLib::Mesh& bc_mesh,
+                               MeshLib::Mesh const& bc_mesh,
                                NumLib::LocalToGlobalIndexMap const& dof_table,
                                std::size_t const bulk_mesh_id,
                                int const variable_id, int const component_id)
@@ -64,7 +64,7 @@ public:
 private:
     Parameter<double> const& _parameter;
 
-    MeshLib::Mesh& _bc_mesh;
+    MeshLib::Mesh const& _bc_mesh;
     NumLib::LocalToGlobalIndexMap const& _dof_table;
     std::size_t const _bulk_mesh_id;
     int const _variable_id;
@@ -72,7 +72,7 @@ private:
 };
 
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh& bc_mesh,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, std::size_t const mesh_id,
     int const variable_id, int const component_id,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters);

@@ -30,7 +30,7 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
         unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, unsigned const global_dim,
-        MeshLib::Mesh& bc_mesh, Parameter<double> const& pressure)
+        MeshLib::Mesh const& bc_mesh, Parameter<double> const& pressure)
     : _bc_mesh(bc_mesh),
       _integration_order(integration_order),
       _pressure(pressure)
@@ -75,7 +75,7 @@ void NormalTractionBoundaryCondition<
 std::unique_ptr<NormalTractionBoundaryCondition<
     NormalTractionBoundaryConditionLocalAssembler>>
 createNormalTractionBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh& bc_mesh,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     bool is_axially_symmetric, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,

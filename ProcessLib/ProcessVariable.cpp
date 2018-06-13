@@ -69,7 +69,7 @@ ProcessVariable::ProcessVariable(
                 OGS_FATAL("Required mesh with name '%s' not found.",
                           full_geometry_name.c_str());
             }
-            MeshLib::Mesh& bc_mesh = **mesh_it;
+            MeshLib::Mesh const& bc_mesh = **mesh_it;
 
             DBUG("Found mesh '%s' with id %d.", bc_mesh.getName().c_str(),
                  bc_mesh.getID());
@@ -118,7 +118,7 @@ ProcessVariable::ProcessVariable(
                 OGS_FATAL("Required mesh with name '%s' not found.",
                           full_geometry_name.c_str());
             }
-            MeshLib::Mesh& bc_mesh = **mesh_it;
+            MeshLib::Mesh const& bc_mesh = **mesh_it;
 
             DBUG("Found mesh '%s' with id %d.", bc_mesh.getName().c_str(),
                  bc_mesh.getID());

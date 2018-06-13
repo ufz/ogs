@@ -30,7 +30,7 @@ using RobinBoundaryCondition = GenericNaturalBoundaryCondition<
  * integrand in the boundary integral for the variable \f$ u \f$.
  */
 std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh& bc_mesh,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, bool is_axially_symmetric,
     unsigned const integration_order, unsigned const shapefunction_order,

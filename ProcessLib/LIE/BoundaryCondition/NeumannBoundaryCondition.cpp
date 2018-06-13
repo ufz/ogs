@@ -23,7 +23,7 @@ using NeumannBoundaryCondition =
                                     NeumannBoundaryConditionLocalAssembler>;
 
 std::unique_ptr<BoundaryCondition> createNeumannBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, bool is_axially_symmetric,
     unsigned const integration_order, unsigned const shapefunction_order,

@@ -44,7 +44,7 @@ public:
         unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
-        unsigned const global_dim, MeshLib::Mesh& mesh, Data&& data,
+        unsigned const global_dim, MeshLib::Mesh const& mesh, Data&& data,
         FractureProperty const& fracture_prop);
 
     /// Calls local assemblers which calculate their contributions to the global
@@ -59,7 +59,7 @@ private:
     BoundaryConditionData _data;
 
     /// A lower-dimensional mesh on which the boundary condition is defined.
-    MeshLib::Mesh& _bc_mesh;
+    MeshLib::Mesh const& _bc_mesh;
 
     /// Local dof table, a subset of the global one restricted to the
     /// participating #_elements of the boundary condition.

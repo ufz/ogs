@@ -56,7 +56,7 @@ void DirichletBoundaryCondition::getEssentialBCValues(
 }
 
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh& bc_mesh,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::size_t const bulk_mesh_id, int const variable_id,
     int const component_id,
