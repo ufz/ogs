@@ -51,13 +51,13 @@ private:
     MeshLib::Mesh const& _bc_mesh;
 
     /// Local dof table, a subset of the global one restricted to the
-    /// participating #_elements of the boundary condition.
+    /// participating number of _elements of the boundary condition.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
 
     /// Integration order for integration over the lower-dimensional elements
     unsigned const _integration_order;
 
-    /// Local assemblers for each element of #_elements.
+    /// Local assemblers for each element of number of _elements.
     std::vector<
         std::unique_ptr<GenericNaturalBoundaryConditionLocalAssemblerInterface>>
         _local_assemblers;
