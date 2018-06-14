@@ -21,29 +21,28 @@ std::unique_ptr<MeshGeoToolsLib::SearchLength> createSearchLengthAlgorithm(
     BaseLib::ConfigTree const& external_config, MeshLib::Mesh const& mesh)
 {
     boost::optional<BaseLib::ConfigTree> config =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm}
+        //! \ogs_file_param{prj__search_length_algorithm}
         external_config.getConfigSubtreeOptional("search_length_algorithm");
 
     if (!config)
-        return std::unique_ptr<MeshGeoToolsLib::SearchLength>{
-            new MeshGeoToolsLib::SearchLength()};
+    {
+        return std::make_unique<MeshGeoToolsLib::SearchLength>();
+    }
 
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm__type}
+    //! \ogs_file_param{prj__search_length_algorithm__type}
     std::string const type = config->getConfigParameter<std::string>("type");
 
-    //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm__fixed}
+    //! \ogs_file_param_special{prj__search_length_algorithm__fixed}
     if (type == "fixed")
     {
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm__fixed__value}
+        //! \ogs_file_param{prj__search_length_algorithm__fixed__value}
         double const length = config->getConfigParameter<double>("value");
-        return std::unique_ptr<MeshGeoToolsLib::SearchLength>{
-            new MeshGeoToolsLib::SearchLength(length)};
+        return std::make_unique<MeshGeoToolsLib::SearchLength>(length);
     }
     if (type == "heuristic")
     {
-        //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__search_length_algorithm__heuristic}
-        return std::unique_ptr<MeshGeoToolsLib::HeuristicSearchLength>{
-            new MeshGeoToolsLib::HeuristicSearchLength(mesh)};
+        //! \ogs_file_param_special{prj__search_length_algorithm__heuristic}
+        return std::make_unique<HeuristicSearchLength>(mesh);
     }
     OGS_FATAL("Unknown search length algorithm type '%s'.", type.c_str());
 }

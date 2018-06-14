@@ -65,13 +65,11 @@ constructAdditionalMeshesFromGeometries(
 
 std::vector<std::unique_ptr<MeshLib::Mesh>>
 constructAdditionalMeshesFromGeoObjects(GeoLib::GEOObjects const& geo_objects,
-                                        MeshLib::Mesh const& mesh)
+                                        MeshLib::Mesh const& mesh,
+                                        std::unique_ptr<SearchLength>
+                                            search_length_algorithm)
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> additional_meshes;
-
-    // TODO (naumov) add config for search length algorithms.
-    auto search_length_algorithm =
-        std::make_unique<MeshGeoToolsLib::SearchLength>();
 
     auto const& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(

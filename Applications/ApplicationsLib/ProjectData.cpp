@@ -24,6 +24,8 @@
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
+#include "MeshGeoToolsLib/CreateSearchLength.h"
+#include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/Mesh.h"
 
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
@@ -134,9 +136,13 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         _mesh_vec.push_back(mesh);
     }
 
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
+        MeshGeoToolsLib::createSearchLengthAlgorithm(project_config,
+                                                     *_mesh_vec[0]);
     auto additional_meshes =
-        MeshGeoToolsLib::constructAdditionalMeshesFromGeoObjects(*_geoObjects,
-                                                                 *_mesh_vec[0]);
+        MeshGeoToolsLib::constructAdditionalMeshesFromGeoObjects(
+            *_geoObjects, *_mesh_vec[0], std::move(search_length_algorithm));
+
     // release the unique_ptr's while copying to the raw pointers storage.
     // TODO (naumov) Store unique_ptr's in _mesh_vec.
     std::transform(begin(additional_meshes), end(additional_meshes),
