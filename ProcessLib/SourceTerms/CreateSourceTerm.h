@@ -9,33 +9,34 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
+#include <memory>
 
-namespace BaseLib
-{
-class ConfigTree;
-}
+#include "ProcessLib/Parameter/Parameter.h"
+
 namespace MeshLib
 {
 class Mesh;
 }
+
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
-}
+}  // namespace NumLib
+
 namespace ProcessLib
 {
 class NodalSourceTerm;
-struct ParameterBase;
+struct SourceTermConfig;
 }  // namespace ProcessLib
 
 namespace ProcessLib
 {
-std::unique_ptr<NodalSourceTerm> createNodalSourceTerm(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& st_mesh,
-    const NumLib::LocalToGlobalIndexMap& dof_table, std::size_t mesh_id,
-    const int variable_id, const int component_id,
+std::unique_ptr<NodalSourceTerm> createSourceTerm(
+    const SourceTermConfig& config,
+    const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
+    const int variable_id, const unsigned integration_order,
+    const unsigned shapefunction_order,
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters);
 
-}   // namespace ProcessLib
+}  // namespace ProcessLib

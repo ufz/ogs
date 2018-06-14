@@ -9,8 +9,11 @@
 
 #include "CreateNodalSourceTerm.h"
 
-#include "BaseLib/FileTools.h"
+#include <logog/include/logog.hpp>
+
+#include "BaseLib/ConfigTree.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
+
 #include "NodalSourceTerm.h"
 
 namespace ProcessLib

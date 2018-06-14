@@ -12,7 +12,6 @@
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/SourceTerms/SourceTermConfig.h"
-#include "ProcessLib/SourceTerms/SourceTermBuilder.h"
 
 namespace MeshLib
 {
@@ -98,7 +97,6 @@ private:
 
     std::vector<BoundaryConditionConfig> _bc_configs;
     std::vector<SourceTermConfig> _source_term_configs;
-    std::unique_ptr<SourceTermBuilder> _source_term_builder;
 };
 
 }  // namespace ProcessLib
