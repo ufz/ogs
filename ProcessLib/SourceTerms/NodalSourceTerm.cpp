@@ -14,18 +14,26 @@
 namespace ProcessLib
 {
 NodalSourceTerm::NodalSourceTerm(const NumLib::LocalToGlobalIndexMap& dof_table,
-                                 std::size_t const mesh_id,
-                                 std::size_t const node_id,
-                                 const int variable_id, const int component_id,
+                                 std::size_t const bulk_mesh_id,
+                                 MeshLib::Mesh const& st_mesh,
+                                 const int variable_id,
+                                 const int component_id,
                                  Parameter<double> const& parameter)
     : _dof_table(dof_table),
-      _mesh_id(mesh_id),
-      _node_id(node_id),
+      _bulk_mesh_id(bulk_mesh_id),
+      _st_mesh(st_mesh),
       _variable_id(variable_id),
       _component_id(component_id),
       _parameter(parameter)
 {
     DBUG("Create NodalSourceTerm.");
+    if (!_st_mesh.getProperties().template existsPropertyVector<std::size_t>(
+            "bulk_node_ids"))
+    {
+        OGS_FATAL(
+            "Required mesh property \"bulk_node_ids\" does not exists on the "
+            "source term mesh.");
+    }
 }
 
 void NodalSourceTerm::integrateNodalSourceTerm(const double t,
@@ -33,14 +41,22 @@ void NodalSourceTerm::integrateNodalSourceTerm(const double t,
 {
     DBUG("Assemble NodalSourceTerm.");
 
-    MeshLib::Location const l{_mesh_id, MeshLib::MeshItemType::Node, _node_id};
-    auto const index =
-        _dof_table.getGlobalIndex(l, _variable_id, _component_id);
+    auto const& bulk_node_ids_map =
+        *_st_mesh.getProperties().template getPropertyVector<std::size_t>(
+            "bulk_node_ids");
+    for (MeshLib::Node const* const node : _st_mesh.getNodes())
+    {
+        auto const node_id = node->getID();
+        MeshLib::Location const l{_bulk_mesh_id, MeshLib::MeshItemType::Node,
+                                  bulk_node_ids_map[node_id]};
+        auto const index =
+            _dof_table.getGlobalIndex(l, _variable_id, _component_id);
 
-    SpatialPosition pos;
-    pos.setNodeID(_node_id);
+        SpatialPosition pos;
+        pos.setNodeID(node_id);
 
-    b.add(index, _parameter(t, pos).front());
+        b.add(index, _parameter(t, pos).front());
+    }
 }
 
 }  // namespace ProcessLib

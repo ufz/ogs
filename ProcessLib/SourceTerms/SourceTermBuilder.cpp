@@ -11,10 +11,6 @@
 #include "SourceTermConfig.h"
 #include "CreateNodalSourceTerm.h"
 #include "NodalSourceTerm.h"
-#include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
-#include "MeshGeoToolsLib/CreateSearchLength.h"
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
-#include "MeshGeoToolsLib/SearchLength.h"
 
 namespace ProcessLib
 {
@@ -45,53 +41,8 @@ std::unique_ptr<NodalSourceTerm> SourceTermBuilder::createNodalSourceTerm(
     const unsigned /*shapefunction_order*/,
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
 {
-    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
-        MeshGeoToolsLib::createSearchLengthAlgorithm(config.config, mesh);
-
-    MeshGeoToolsLib::MeshNodeSearcher const& mesh_node_searcher =
-        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-            mesh, std::move(search_length_algorithm));
-
-    // Find nodes' ids on the given mesh on which this source term is defined.
-    std::vector<std::size_t> ids =
-        mesh_node_searcher.getMeshNodeIDs(config.geometry);
-
-    // Filter out ids, which are not part of mesh subsets corresponding to
-    // the variable_id and component_id.
-
-    // Sorted ids of all mesh_subsets.
-    std::vector<std::size_t> sorted_nodes_ids;
-
-    auto const& mesh_subset =
-        dof_table.getMeshSubset(variable_id, *config.component_id);
-    auto const& nodes = mesh_subset.getNodes();
-    sorted_nodes_ids.reserve(sorted_nodes_ids.size() + nodes.size());
-    std::transform(std::begin(nodes), std::end(nodes),
-                   std::back_inserter(sorted_nodes_ids),
-                   [](MeshLib::Node* const n) { return n->getID(); });
-    std::sort(std::begin(sorted_nodes_ids), std::end(sorted_nodes_ids));
-
-    auto ids_new_end_iterator = std::end(ids);
-    ids_new_end_iterator = std::remove_if(
-        std::begin(ids), ids_new_end_iterator,
-        [&sorted_nodes_ids](std::size_t const node_id) {
-            return !std::binary_search(std::begin(sorted_nodes_ids),
-                                       std::end(sorted_nodes_ids), node_id);
-        });
-    ids.erase(ids_new_end_iterator, std::end(ids));
-
-    DBUG(
-        "Found %d nodes for nodal source term for the variable %d and "
-        "component %d",
-        ids.size(), variable_id, *config.component_id);
-
-    if (ids.size() != 1)
-        OGS_FATAL(
-            "Found %d nodes for nodal source term, but exactly one node is "
-            "required.", ids.size());
-
     return ProcessLib::createNodalSourceTerm(
-        config.config, dof_table, mesh.getID(), ids[0], variable_id,
+        config.config, config.mesh, dof_table, mesh.getID(), variable_id,
         *config.component_id, parameters);
 }
 

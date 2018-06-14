@@ -15,6 +15,7 @@
 #include "Mesh.h"
 
 #include <memory>
+#include <unordered_map>
 #include <utility>
 
 #include "BaseLib/RunTime.h"
@@ -337,4 +338,66 @@ void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
         v *= factor;
 }
 
+std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
+    std::string mesh_name, std::vector<MeshLib::Element*> const& elements)
+{
+    DBUG("Found %d elements in the mesh", elements.size());
+
+    // Store bulk element ids for each of the new elements.
+    std::vector<std::size_t> bulk_element_ids;
+    bulk_element_ids.reserve(elements.size());
+    std::transform(begin(elements), end(elements),
+                   std::back_inserter(bulk_element_ids),
+                   [&](auto const& e) { return e->getID(); });
+
+    // original node pointers to newly created nodes.
+    std::unordered_map<const MeshLib::Node*, MeshLib::Node*> nodes_map;
+    nodes_map.reserve(
+        elements.size());  // There will be at least one node per element.
+
+    for (auto& e : elements)
+    {
+        // For each node find a cloned node in map or create if there is none.
+        unsigned const n_nodes = e->getNumberOfNodes();
+        for (unsigned i = 0; i < n_nodes; ++i)
+        {
+            const MeshLib::Node* n = e->getNode(i);
+            auto const it = nodes_map.find(n);
+            if (it == nodes_map.end())
+            {
+                auto new_node_in_map = nodes_map[n] = new MeshLib::Node(*n);
+                e->setNode(i, new_node_in_map);
+            }
+            else
+            {
+                e->setNode(i, it->second);
+            }
+        }
+    }
+
+    // Copy the unique nodes pointers.
+    std::vector<MeshLib::Node*> element_nodes;
+    element_nodes.reserve(nodes_map.size());
+    std::transform(begin(nodes_map), end(nodes_map),
+                   std::back_inserter(element_nodes),
+                   [](auto const& pair) { return pair.second; });
+
+    // Store bulk node ids for each of the new nodes.
+    std::vector<std::size_t> bulk_node_ids;
+    bulk_node_ids.reserve(nodes_map.size());
+    std::transform(begin(nodes_map), end(nodes_map),
+                   std::back_inserter(bulk_node_ids),
+                   [](auto const& pair) { return pair.first->getID(); });
+
+    auto mesh = std::make_unique<MeshLib::Mesh>(
+        std::move(mesh_name), std::move(element_nodes), std::move(elements));
+    assert(mesh != nullptr);
+
+    addPropertyToMesh(*mesh, "bulk_element_ids", MeshLib::MeshItemType::Cell, 1,
+                      bulk_element_ids);
+    addPropertyToMesh(*mesh, "bulk_node_ids", MeshLib::MeshItemType::Node, 1,
+                      bulk_node_ids);
+
+    return mesh;
+}
 }

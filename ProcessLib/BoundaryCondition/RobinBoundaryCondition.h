@@ -12,11 +12,6 @@
 #include "GenericNaturalBoundaryCondition.h"
 #include "RobinBoundaryConditionLocalAssembler.h"
 
-namespace MeshGeoToolsLib
-{
-class BoundaryElementsSearcher;
-}
-
 namespace ProcessLib
 {
 using RobinBoundaryCondition = GenericNaturalBoundaryCondition<
@@ -35,12 +30,10 @@ using RobinBoundaryCondition = GenericNaturalBoundaryCondition<
  * integrand in the boundary integral for the variable \f$ u \f$.
  */
 std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
-    BaseLib::ConfigTree const& config,
-    std::vector<MeshLib::Element*>&& elements,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, bool is_axially_symmetric,
-    unsigned const integration_order,
-    unsigned const shapefunction_order,
+    unsigned const integration_order, unsigned const shapefunction_order,
     unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 

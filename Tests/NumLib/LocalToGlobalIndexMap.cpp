@@ -96,25 +96,23 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
     std::array<std::size_t, 3> const ids = {{ 0, 5, 8 }};
     std::vector<MeshLib::Element*> some_elements;
     for (std::size_t id : ids)
-        some_elements.push_back(const_cast<MeshLib::Element*>(mesh->getElement(id)));
+        some_elements.push_back(mesh->getElement(id)->clone());
 
-    // Find unique node ids of the selected elements for testing.
-    std::vector<MeshLib::Node*> selected_nodes = MeshLib::getUniqueNodes(some_elements);
+    auto boundary_mesh =
+        MeshLib::createMeshFromElementSelection("boundary_mesh", some_elements);
 
-    std::vector<MeshLib::Node*> nodes_intersection =
-        nodesNodesIntersection(nodesSubset->getNodes(), selected_nodes);
-    MeshLib::MeshSubset selected_component(nodesSubset->getMesh(),
-                                           nodes_intersection);
+    MeshLib::MeshSubset selected_component(*boundary_mesh,
+                                           boundary_mesh->getNodes());
 
     auto dof_map_subset = std::unique_ptr<NumLib::LocalToGlobalIndexMap>{
         dof_map->deriveBoundaryConstrainedMap(1,    // variable id
                                               {0},  // component id
-                                              std::move(selected_component),
-                                              some_elements)};
+                                              std::move(selected_component))};
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(selected_nodes.size(), dof_map_subset->dofSizeWithGhosts());
+    ASSERT_EQ(boundary_mesh->getNodes().size(),
+              dof_map_subset->dofSizeWithGhosts());
 }
 
 #ifndef USE_PETSC

@@ -21,16 +21,22 @@ void DirichletBoundaryCondition::getEssentialBCValues(
 {
     SpatialPosition pos;
 
+    auto const& bulk_node_ids_map =
+        *_bc_mesh.getProperties().getPropertyVector<std::size_t>(
+            "bulk_node_ids");
+
     bc_values.ids.clear();
     bc_values.values.clear();
 
     // convert mesh node ids to global index for the given component
-    bc_values.ids.reserve(bc_values.ids.size() + _mesh_node_ids.size());
-    bc_values.values.reserve(bc_values.values.size() + _mesh_node_ids.size());
-    for (auto const id : _mesh_node_ids)
+    bc_values.ids.reserve(bc_values.ids.size() + _bc_mesh.getNumberOfNodes());
+    bc_values.values.reserve(bc_values.values.size() +
+                             _bc_mesh.getNumberOfNodes());
+    for (auto const* const node : _bc_mesh.getNodes())
     {
+        auto const id = bulk_node_ids_map[node->getID()];
         pos.setNodeID(id);
-        MeshLib::Location l(_mesh_id, MeshLib::MeshItemType::Node, id);
+        MeshLib::Location l(_bulk_mesh_id, MeshLib::MeshItemType::Node, id);
         // TODO: that might be slow, but only done once
         const auto g_idx =
             _dof_table.getGlobalIndex(l, _variable_id, _component_id);
@@ -50,9 +56,10 @@ void DirichletBoundaryCondition::getEssentialBCValues(
 }
 
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, std::vector<std::size_t>&& mesh_node_ids,
-    NumLib::LocalToGlobalIndexMap const& dof_table, std::size_t const mesh_id,
-    int const variable_id, int const component_id,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::size_t const bulk_mesh_id, int const variable_id,
+    int const component_id,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
     DBUG("Constructing DirichletBoundaryCondition from config.");
@@ -66,8 +73,7 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
     auto& param = findParameter<double>(param_name, parameters, 1);
 
     return std::make_unique<DirichletBoundaryCondition>(
-        param, std::move(mesh_node_ids), dof_table, mesh_id, variable_id,
-        component_id);
+        param, bc_mesh, dof_table, bulk_mesh_id, variable_id, component_id);
 }
 
 }  // namespace ProcessLib

@@ -25,14 +25,14 @@ class DirichletBoundaryCondition final : public BoundaryCondition
 {
 public:
     DirichletBoundaryCondition(Parameter<double> const& parameter,
-                               std::vector<std::size_t>&& mesh_node_ids,
+                               MeshLib::Mesh const& bc_mesh,
                                NumLib::LocalToGlobalIndexMap const& dof_table,
-                               std::size_t const mesh_id, int const variable_id,
-                               int const component_id)
+                               std::size_t const bulk_mesh_id,
+                               int const variable_id, int const component_id)
         : _parameter(parameter),
-          _mesh_node_ids(std::move(mesh_node_ids)),
+          _bc_mesh(bc_mesh),
           _dof_table(dof_table),
-          _mesh_id(mesh_id),
+          _bulk_mesh_id(bulk_mesh_id),
           _variable_id(variable_id),
           _component_id(component_id)
     {
@@ -47,6 +47,14 @@ public:
                 variable_id, component_id, dof_table.getNumberOfVariables(),
                 dof_table.getNumberOfVariableComponents(variable_id));
         }
+
+        if (!_bc_mesh.getProperties().existsPropertyVector<std::size_t>(
+                "bulk_node_ids"))
+        {
+            OGS_FATAL(
+                "The required bulk node ids map does not exist in the boundary "
+                "mesh.");
+        }
     }
 
     void getEssentialBCValues(
@@ -56,15 +64,15 @@ public:
 private:
     Parameter<double> const& _parameter;
 
-    std::vector<std::size_t> _mesh_node_ids;
+    MeshLib::Mesh const& _bc_mesh;
     NumLib::LocalToGlobalIndexMap const& _dof_table;
-    std::size_t const _mesh_id;
+    std::size_t const _bulk_mesh_id;
     int const _variable_id;
     int const _component_id;
 };
 
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, std::vector<std::size_t>&& mesh_node_ids,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, std::size_t const mesh_id,
     int const variable_id, int const component_id,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters);

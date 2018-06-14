@@ -44,10 +44,8 @@ public:
         unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
-        unsigned const global_dim, std::vector<MeshLib::Element*>&& elements,
-        Data&& data, FractureProperty const& fracture_prop);
-
-    ~GenericNaturalBoundaryCondition() override;
+        unsigned const global_dim, MeshLib::Mesh const& mesh, Data&& data,
+        FractureProperty const& fracture_prop);
 
     /// Calls local assemblers which calculate their contributions to the global
     /// matrix and the right-hand-side.
@@ -60,20 +58,17 @@ private:
     /// Data used in the assembly of the specific boundary condition.
     BoundaryConditionData _data;
 
-    /// Vector of lower-dimensional elements on which the boundary condition is
-    /// defined.
-    std::vector<MeshLib::Element*> _elements;
-
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
+    /// A lower-dimensional mesh on which the boundary condition is defined.
+    MeshLib::Mesh const& _bc_mesh;
 
     /// Local dof table, a subset of the global one restricted to the
-    /// participating #_elements of the boundary condition.
+    /// participating number of _elements of the boundary condition.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
 
     /// Integration order for integration over the lower-dimensional elements
     unsigned const _integration_order;
 
-    /// Local assemblers for each element of #_elements.
+    /// Local assemblers for each element of number of _elements.
     std::vector<
         std::unique_ptr<GenericNaturalBoundaryConditionLocalAssemblerInterface>>
         _local_assemblers;
