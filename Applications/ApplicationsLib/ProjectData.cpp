@@ -90,18 +90,15 @@
 #include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowWithPrhoProcess.h"
 #endif
 
-namespace detail
+namespace
 {
-static void readGeometry(std::string const& fname,
-                         GeoLib::GEOObjects& geo_objects)
+void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects)
 {
     DBUG("Reading geometry file \'%s\'.", fname.c_str());
     GeoLib::IO::BoostXmlGmlInterface gml_reader(geo_objects);
     gml_reader.readFile(fname);
 }
 
-static std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
-    BaseLib::ConfigTree const& config, std::string const& project_directory)
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
 
@@ -126,13 +123,15 @@ static std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
         mesh->setAxiallySymmetric(*axially_symmetric);
     }
     meshes.push_back(std::move(mesh));
+std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
+    BaseLib::ConfigTree const& config, std::string const& project_directory)
 
     std::string const geometry_file = BaseLib::copyPathToFileName(
         //! \ogs_file_param{prj__geometry}
         config.getConfigParameter<std::string>("geometry"),
         project_directory);
     GeoLib::GEOObjects geoObjects;
-    detail::readGeometry(geometry_file, geoObjects);
+    readGeometry(geometry_file, geoObjects);
 
     std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
         MeshGeoToolsLib::createSearchLengthAlgorithm(config, *meshes[0]);
@@ -145,7 +144,7 @@ static std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 
     return meshes;
 }
-}  // namespace detail
+}  // namespace
 
 ProjectData::ProjectData() = default;
 
@@ -153,7 +152,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                          std::string const& project_directory,
                          std::string const& output_directory)
 {
-    _mesh_vec = detail::readMeshes(project_config, project_directory);
+    _mesh_vec = readMeshes(project_config, project_directory);
 
     //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfigSubtreeOptional("curves"));
