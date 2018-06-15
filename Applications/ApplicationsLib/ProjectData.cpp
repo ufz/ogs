@@ -99,14 +99,12 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects)
     gml_reader.readFile(fname);
 }
 
+std::unique_ptr<MeshLib::Mesh> readSingleMesh(
+    BaseLib::ConfigTree const& mesh_config_parameter,
+    std::string const& project_directory)
 {
-    std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
-
-    //! \ogs_file_param{prj__mesh}
-    auto const mesh_param = config.getConfigParameter("mesh");
-
     std::string const mesh_file = BaseLib::copyPathToFileName(
-        mesh_param.getValue<std::string>(), project_directory);
+        mesh_config_parameter.getValue<std::string>(), project_directory);
 
     auto mesh = std::unique_ptr<MeshLib::Mesh>(
         MeshLib::IO::readMeshFromFile(mesh_file));
@@ -118,13 +116,23 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects)
 
     if (auto const axially_symmetric =
             //! \ogs_file_attr{prj__mesh__axially_symmetric}
-        mesh_param.getConfigAttributeOptional<bool>("axially_symmetric"))
+        mesh_config_parameter.getConfigAttributeOptional<bool>(
+            "axially_symmetric"))
     {
         mesh->setAxiallySymmetric(*axially_symmetric);
     }
-    meshes.push_back(std::move(mesh));
+
+    return mesh;
+}
+
 std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
     BaseLib::ConfigTree const& config, std::string const& project_directory)
+{
+    std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
+
+    //! \ogs_file_param{prj__mesh}
+    meshes.push_back(
+        readSingleMesh(config.getConfigParameter("mesh"), project_directory));
 
     std::string const geometry_file = BaseLib::copyPathToFileName(
         //! \ogs_file_param{prj__geometry}
