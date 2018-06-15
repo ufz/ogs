@@ -21,7 +21,7 @@ namespace ProcessLib
 {
 std::unique_ptr<ParameterBase> createParameter(
     BaseLib::ConfigTree const& config,
-    std::vector<MeshLib::Mesh*> const& meshes,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)

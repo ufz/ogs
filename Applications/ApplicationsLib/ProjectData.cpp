@@ -120,7 +120,8 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         std::string const mesh_file = BaseLib::copyPathToFileName(
             mesh_param.getValue<std::string>(), project_directory);
 
-        MeshLib::Mesh* const mesh = MeshLib::IO::readMeshFromFile(mesh_file);
+        auto mesh = std::unique_ptr<MeshLib::Mesh>(
+            MeshLib::IO::readMeshFromFile(mesh_file));
         if (!mesh)
         {
             OGS_FATAL("Could not read mesh from \'%s\' file. No mesh added.",
@@ -133,7 +134,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         {
             mesh->setAxiallySymmetric(*axially_symmetric);
         }
-        _mesh_vec.push_back(mesh);
+        _mesh_vec.push_back(std::move(mesh));
     }
 
     std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
@@ -143,11 +144,8 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         MeshGeoToolsLib::constructAdditionalMeshesFromGeoObjects(
             *_geoObjects, *_mesh_vec[0], std::move(search_length_algorithm));
 
-    // release the unique_ptr's while copying to the raw pointers storage.
-    // TODO (naumov) Store unique_ptr's in _mesh_vec.
-    std::transform(begin(additional_meshes), end(additional_meshes),
-                   std::back_inserter(_mesh_vec),
-                   [](auto&& mesh) { return mesh.release(); });
+    std::move(begin(additional_meshes), end(additional_meshes),
+              std::back_inserter(_mesh_vec));
 
     //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfigSubtreeOptional("curves"));
@@ -176,9 +174,6 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 ProjectData::~ProjectData()
 {
     delete _geoObjects;
-
-    for (MeshLib::Mesh* m : _mesh_vec)
-        delete m;
 }
 
 void ProjectData::parseProcessVariables(

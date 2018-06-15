@@ -23,7 +23,7 @@ namespace ProcessLib
 {
 ProcessVariable::ProcessVariable(
     BaseLib::ConfigTree const& config,
-    std::vector<MeshLib::Mesh*> const& meshes,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
     :  //! \ogs_file_param{prj__process_variables__process_variable__name}
       _name(config.getConfigParameter<std::string>("name")),
@@ -62,7 +62,7 @@ ProcessVariable::ProcessVariable(
                 geometrical_set_name + "_" + geometry_name;
             auto const mesh_it =
                 std::find_if(begin(meshes), end(meshes),
-                             [&full_geometry_name](MeshLib::Mesh* const mesh) {
+                             [&full_geometry_name](auto const& mesh) {
                                  assert(mesh != nullptr);
                                  return mesh->getName() == full_geometry_name;
                              });
@@ -111,7 +111,7 @@ ProcessVariable::ProcessVariable(
                 geometrical_set_name + "_" + geometry_name;
             auto const mesh_it =
                 std::find_if(begin(meshes), end(meshes),
-                             [&full_geometry_name](MeshLib::Mesh* const mesh) {
+                             [&full_geometry_name](auto const& mesh) {
                                  assert(mesh != nullptr);
                                  return mesh->getName() == full_geometry_name;
                              });

@@ -39,7 +39,7 @@ class ProcessVariable
 public:
     ProcessVariable(
         BaseLib::ConfigTree const& config,
-        std::vector<MeshLib::Mesh*> const& meshes,
+        std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
     ProcessVariable(ProcessVariable&&);

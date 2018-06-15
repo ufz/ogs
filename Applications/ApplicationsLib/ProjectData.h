@@ -117,7 +117,7 @@ private:
     void parseCurves(boost::optional<BaseLib::ConfigTree> const& config);
 
     GeoLib::GEOObjects* _geoObjects = new GeoLib::GEOObjects();
-    std::vector<MeshLib::Mesh*> _mesh_vec;
+    std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
     std::map<std::string, std::unique_ptr<ProcessLib::Process>> _processes;
     std::vector<ProcessLib::ProcessVariable> _process_variables;
 
