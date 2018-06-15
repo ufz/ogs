@@ -23,12 +23,12 @@ namespace ProcessLib
 {
 ProcessVariable::ProcessVariable(
     BaseLib::ConfigTree const& config,
+    MeshLib::Mesh& mesh,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
     :  //! \ogs_file_param{prj__process_variables__process_variable__name}
       _name(config.getConfigParameter<std::string>("name")),
-      _mesh(*meshes[0]),  // Using the first mesh as the main mesh.
-                          // TODO (naumov) potentially extend to named meshes.
+      _mesh(mesh),
       //! \ogs_file_param{prj__process_variables__process_variable__components}
       _n_components(config.getConfigParameter<int>("components")),
       //! \ogs_file_param{prj__process_variables__process_variable__order}

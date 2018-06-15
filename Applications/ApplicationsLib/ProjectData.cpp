@@ -112,6 +112,7 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
 {
     std::string const mesh_file = BaseLib::copyPathToFileName(
         mesh_config_parameter.getValue<std::string>(), project_directory);
+    DBUG("Reading mesh file \'%s\'.", mesh_file.c_str());
 
     auto mesh = std::unique_ptr<MeshLib::Mesh>(
         MeshLib::IO::readMeshFromFile(mesh_file));
@@ -137,26 +138,45 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
 
-    meshes.push_back(
+    //! \ogs_file_param{prj__meshes}
+    auto optional_meshes = config.getConfigSubtreeOptional("meshes");
+    if (optional_meshes)
+    {
+        DBUG("Reading multiple meshes.");
+        for (auto mesh_config :
+             //! \ogs_file_param{prj__meshes__mesh}
+             optional_meshes->getConfigParameterList("mesh"))
+        {
+            meshes.push_back(readSingleMesh(mesh_config, project_directory));
+        }
+    }
+    else
+    {  // Read single mesh with geometry.
+        WARN(
+            "Consider switching from mesh and geometry input to multiple "
+            "meshes input. See "
+            "https://www.opengeosys.org/docs/tools/model-preparation/"
+            "constructmeshesfromgeometry/ tool for conversion.");
         //! \ogs_file_param{prj__mesh}
-        readSingleMesh(config.getConfigParameter("mesh"), project_directory));
+        meshes.push_back(readSingleMesh(config.getConfigParameter("mesh"),
+                                        project_directory));
 
-    std::string const geometry_file = BaseLib::copyPathToFileName(
-        //! \ogs_file_param{prj__geometry}
-        config.getConfigParameter<std::string>("geometry"),
-        project_directory);
-    GeoLib::GEOObjects geoObjects;
-    readGeometry(geometry_file, geoObjects);
+        std::string const geometry_file = BaseLib::copyPathToFileName(
+            //! \ogs_file_param{prj__geometry}
+            config.getConfigParameter<std::string>("geometry"),
+            project_directory);
+        GeoLib::GEOObjects geoObjects;
+        readGeometry(geometry_file, geoObjects);
 
-    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
-        MeshGeoToolsLib::createSearchLengthAlgorithm(config, *meshes[0]);
-    auto additional_meshes =
-        MeshGeoToolsLib::constructAdditionalMeshesFromGeoObjects(
-            geoObjects, *meshes[0], std::move(search_length_algorithm));
+        std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
+            MeshGeoToolsLib::createSearchLengthAlgorithm(config, *meshes[0]);
+        auto additional_meshes =
+            MeshGeoToolsLib::constructAdditionalMeshesFromGeoObjects(
+                geoObjects, *meshes[0], std::move(search_length_algorithm));
 
-    std::move(begin(additional_meshes), end(additional_meshes),
-              std::back_inserter(meshes));
-
+        std::move(begin(additional_meshes), end(additional_meshes),
+                  std::back_inserter(meshes));
+    }
     return meshes;
 }
 }  // namespace
@@ -215,20 +235,26 @@ void ProjectData::parseProcessVariables(
 {
     DBUG("Parse process variables:");
 
-    if (_mesh_vec.empty() || _mesh_vec[0] == nullptr)
-    {
-        ERR("A mesh is required to define process variables.");
-        return;
-    }
-
     std::set<std::string> names;
 
     for (auto var_config
          //! \ogs_file_param{prj__process_variables__process_variable}
          : process_variables_config.getConfigSubtreeList("process_variable"))
     {
-        auto pv =
-            ProcessLib::ProcessVariable{var_config, _mesh_vec, _parameters};
+        // Either the mesh name is given, or the first mesh's name will be
+        // taken. Taking the first mesh's value is deprecated.
+        auto const mesh_name =
+            //! \ogs_file_param{prj__process_variables__process_variable__mesh}
+            var_config.getConfigParameter<std::string>("mesh",
+                                                       _mesh_vec[0]->getName());
+
+        auto& mesh = *BaseLib::findElementOrError(
+            begin(_mesh_vec), end(_mesh_vec),
+            [&mesh_name](auto const& m) { return m->getName() == mesh_name; },
+            "Expected to find a mesh named " + mesh_name + ".");
+
+        auto pv = ProcessLib::ProcessVariable{var_config, mesh, _mesh_vec,
+                                              _parameters};
         if (!names.insert(pv.getName()).second)
             OGS_FATAL("A process variable with name `%s' already exists.",
                       pv.getName().c_str());
