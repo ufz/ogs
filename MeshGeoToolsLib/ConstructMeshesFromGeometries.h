@@ -19,11 +19,16 @@ class GEOObjects;
 
 namespace MeshGeoToolsLib
 {
+class SearchLength;
+}
+namespace MeshGeoToolsLib
+{
 /// For each named geometry in the give geo_objects (defined on the given \c
 /// mesh) constructs a mesh corresponding to the geometry with mappings to the
 /// bulk mesh elements and nodes.
 std::vector<std::unique_ptr<MeshLib::Mesh>>
 constructAdditionalMeshesFromGeoObjects(GeoLib::GEOObjects const& geo_objects,
-                                        MeshLib::Mesh const& mesh);
-
+                                        MeshLib::Mesh const& mesh,
+                                        std::unique_ptr<SearchLength>
+                                            search_length_algorithm);
 }  // namespace MeshGeoToolsLib

@@ -2,6 +2,11 @@
 <OpenGeoSysProject>
     <mesh>square_1x1_quad_1e3.vtu</mesh>
     <geometry>square_1x1.gml</geometry>
+    <!-- Just for testing the search length algorithm -->
+    <search_length_algorithm>
+        <type>fixed</type>
+        <value>1e-16</value>
+    </search_length_algorithm>
     <processes>
         <process>
             <name>GW23</name>
