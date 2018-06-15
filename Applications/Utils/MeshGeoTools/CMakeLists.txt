@@ -1,6 +1,6 @@
-ADD_EXECUTABLE( ComputeSurfaceNodeIDsInPolygonalRegion ComputeSurfaceNodeIDsInPolygonalRegion.cpp )
-SET_TARGET_PROPERTIES( ComputeSurfaceNodeIDsInPolygonalRegion PROPERTIES FOLDER Utilities)
-TARGET_LINK_LIBRARIES( ComputeSurfaceNodeIDsInPolygonalRegion
+add_executable( ComputeSurfaceNodeIDsInPolygonalRegion ComputeSurfaceNodeIDsInPolygonalRegion.cpp )
+set_target_properties( ComputeSurfaceNodeIDsInPolygonalRegion PROPERTIES FOLDER Utilities)
+target_link_libraries( ComputeSurfaceNodeIDsInPolygonalRegion
     MeshLib
     GeoLib
     MathLib
