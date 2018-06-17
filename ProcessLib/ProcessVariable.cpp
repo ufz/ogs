@@ -51,25 +51,37 @@ ProcessVariable::ProcessVariable(
              //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition}
              bcs_config->getConfigSubtreeList("boundary_condition"))
         {
-            auto const geometrical_set_name =
+            std::string
+                bc_mesh_name;  // Either given directly in <mesh> or constructed
+                               // from <geometrical_set>_<geometry>.
+            auto optional_bc_mesh_name =
+                bc_config.getConfigParameterOptional<std::string>("mesh");
+            if (optional_bc_mesh_name)
+            {
+                bc_mesh_name = *optional_bc_mesh_name;
+            }
+            else
+            {
+                // Looking for the mesh created before for the given geometry.
+                auto const geometrical_set_name =
                     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometrical_set}
-                    bc_config.getConfigParameter<std::string>("geometrical_set");
-            auto const geometry_name =
+                    bc_config.getConfigParameter<std::string>(
+                        "geometrical_set");
+                auto const geometry_name =
                     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometry}
                     bc_config.getConfigParameter<std::string>("geometry");
 
-            auto const full_geometry_name =
-                geometrical_set_name + "_" + geometry_name;
-            auto const mesh_it =
-                std::find_if(begin(meshes), end(meshes),
-                             [&full_geometry_name](auto const& mesh) {
-                                 assert(mesh != nullptr);
-                                 return mesh->getName() == full_geometry_name;
-                             });
+                bc_mesh_name = geometrical_set_name + "_" + geometry_name;
+            }
+            auto const mesh_it = std::find_if(
+                begin(meshes), end(meshes), [&bc_mesh_name](auto const& mesh) {
+                    assert(mesh != nullptr);
+                    return mesh->getName() == bc_mesh_name;
+                });
             if (mesh_it == end(meshes))
             {
                 OGS_FATAL("Required mesh with name '%s' not found.",
-                          full_geometry_name.c_str());
+                          bc_mesh_name.c_str());
             }
             MeshLib::Mesh const& bc_mesh = **mesh_it;
 
