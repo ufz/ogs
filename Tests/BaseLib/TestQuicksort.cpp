@@ -155,7 +155,7 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
     auto reverse = [](std::vector<int>&& xs, std::size_t) -> std::vector<int>
     {
         std::reverse(xs.begin(), xs.end());
-        return xs;
+        return std::move(xs);
     };
 
     auto gen =
@@ -187,7 +187,7 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverseWithPointer)
     auto reverse = [](std::vector<int>&& xs, std::size_t) -> std::vector<int>
     {
         std::reverse(xs.begin(), xs.end());
-        return xs;
+        return std::move(xs);
     };
 
     auto gen =
