@@ -53,7 +53,7 @@ public:
         {
             OGS_FATAL(
                 "The required bulk node ids map does not exist in the boundary "
-                "mesh.");
+                "mesh '%s'.", _bc_mesh.getName().c_str());
         }
     }
 

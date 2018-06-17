@@ -32,7 +32,7 @@ NodalSourceTerm::NodalSourceTerm(const NumLib::LocalToGlobalIndexMap& dof_table,
     {
         OGS_FATAL(
             "Required mesh property \"bulk_node_ids\" does not exists on the "
-            "source term mesh.");
+            "source term mesh '%s'.", _st_mesh.getName().c_str());
     }
 }
 
