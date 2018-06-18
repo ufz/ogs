@@ -36,8 +36,7 @@ public:
     /// DOF-table, and a mesh subset for a given variable and its component.
     /// A local DOF-table, a subset of the given one, is constructed.
     NormalTractionBoundaryCondition(
-        bool const is_axially_symmetric, unsigned const integration_order,
-        unsigned const shapefunction_order,
+        unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, unsigned const global_dim,
         MeshLib::Mesh const& bc_mesh, Parameter<double> const& pressure);
@@ -76,8 +75,8 @@ std::unique_ptr<NormalTractionBoundaryCondition<
 createNormalTractionBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
-    bool is_axially_symmetric, unsigned const integration_order,
-    unsigned const shapefunction_order, unsigned const global_dim,
+    unsigned const integration_order, unsigned const shapefunction_order,
+    unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
 }  // namespace NormalTractionBoundaryCondition

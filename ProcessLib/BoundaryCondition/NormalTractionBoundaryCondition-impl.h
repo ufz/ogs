@@ -26,8 +26,7 @@ template <template <typename, typename, unsigned>
           class LocalAssemblerImplementation>
 NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
     NormalTractionBoundaryCondition(
-        bool const is_axially_symmetric, unsigned const integration_order,
-        unsigned const shapefunction_order,
+        unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, unsigned const global_dim,
         MeshLib::Mesh const& bc_mesh, Parameter<double> const& pressure)
@@ -55,7 +54,7 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
 
     createLocalAssemblers<LocalAssemblerImplementation>(
         global_dim, _bc_mesh.getElements(), *_dof_table_boundary,
-        shapefunction_order, _local_assemblers, is_axially_symmetric,
+        shapefunction_order, _local_assemblers, _bc_mesh.isAxiallySymmetric(),
         _integration_order, _pressure);
 }
 
@@ -78,8 +77,8 @@ std::unique_ptr<NormalTractionBoundaryCondition<
 createNormalTractionBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
-    bool is_axially_symmetric, unsigned const integration_order,
-    unsigned const shapefunction_order, unsigned const global_dim,
+    unsigned const integration_order, unsigned const shapefunction_order,
+    unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     DBUG("Constructing NormalTractionBoundaryCondition from config.");
@@ -94,8 +93,8 @@ createNormalTractionBoundaryCondition(
     auto const& pressure = findParameter<double>(parameter_name, parameters, 1);
     return std::make_unique<NormalTractionBoundaryCondition<
         NormalTractionBoundaryConditionLocalAssembler>>(
-        is_axially_symmetric, integration_order, shapefunction_order, dof_table,
-        variable_id, global_dim, bc_mesh, pressure);
+        integration_order, shapefunction_order, dof_table, variable_id,
+        global_dim, bc_mesh, pressure);
 }
 
 }  // namespace NormalTractionBoundaryCondition

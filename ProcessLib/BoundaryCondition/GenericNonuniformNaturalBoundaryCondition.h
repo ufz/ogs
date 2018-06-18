@@ -28,8 +28,9 @@ public:
     template <typename Data>
     GenericNonuniformNaturalBoundaryCondition(
         unsigned const integration_order, unsigned const shapefunction_order,
-        unsigned const global_dim,
-        std::unique_ptr<MeshLib::Mesh>&& boundary_mesh, Data&& data);
+        NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
+        int const variable_id, int const component_id,
+        unsigned const global_dim, MeshLib::Mesh const& bc_mesh, Data&& data);
 
     /// Calls local assemblers which calculate their contributions to the global
     /// matrix and the right-hand-side.
@@ -37,16 +38,14 @@ public:
                         GlobalVector& b, GlobalMatrix* Jac) override;
 
 private:
-    void constructDofTable();
-
     /// Data used in the assembly of the specific boundary condition.
     BoundaryConditionData _data;
 
-    std::unique_ptr<MeshLib::Mesh> _boundary_mesh;
+    /// A lower-dimensional mesh on which the boundary condition is defined.
+    MeshLib::Mesh const& _bc_mesh;
 
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
-
-    /// DOF-table (one single-component variable) of the boundary mesh.
+    /// Local dof table, a subset of the global one restricted to the
+    /// participating number of _elements of the boundary condition.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
 
     /// Local assemblers for each element of the boundary mesh.

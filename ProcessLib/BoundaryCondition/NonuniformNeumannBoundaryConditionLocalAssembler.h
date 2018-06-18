@@ -12,6 +12,7 @@
 #include "MeshLib/PropertyVector.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Function/Interpolation.h"
+#include "ProcessLib/Parameter/MeshNodeParameter.h"
 
 #include "GenericNonuniformNaturalBoundaryConditionLocalAssembler.h"
 
@@ -38,6 +39,7 @@ class NonuniformNeumannBoundaryConditionLocalAssembler final
 {
     using Base = GenericNonuniformNaturalBoundaryConditionLocalAssembler<
         ShapeFunction, IntegrationMethod, GlobalDim>;
+    using NodalVectorType = typename Base::NodalVectorType;
 
 public:
     /// The neumann_bc_value factor is directly integrated into the local
@@ -45,7 +47,7 @@ public:
     NonuniformNeumannBoundaryConditionLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
-        bool is_axially_symmetric,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
         NonuniformNeumannBoundaryConditionData const& data)
         : Base(e, is_axially_symmetric, integration_order),
@@ -56,53 +58,35 @@ public:
 
     void assemble(std::size_t const id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
-                  double const /*t*/, const GlobalVector& /*x*/,
+                  double const t, const GlobalVector& /*x*/,
                   GlobalMatrix& /*K*/, GlobalVector& b,
                   GlobalMatrix* /*Jac*/) override
     {
         _local_rhs.setZero();
 
-        auto indices = NumLib::getIndices(id, dof_table_boundary);
+        MeshNodeParameter<double> neumann_values{"NeumannValues", _data.values};
+        // Get element nodes for the interpolation from nodes to
+        // integration point.
+        NodalVectorType parameter_node_values =
+            neumann_values.getNodalValuesOnElement(Base::_element, t);
 
-        // TODO lots of heap allocations.
-        std::vector<double> neumann_param_nodal_values_local;
-        neumann_param_nodal_values_local.reserve(indices.size());
-        for (auto i : indices)
-        {
-            neumann_param_nodal_values_local.push_back(
-                _data.values.getComponent(i, 0));
-        }
-
-        auto const n_integration_points = Base::_ns_and_weights.size();
+        unsigned const n_integration_points =
+            Base::_integration_method.getNumberOfPoints();
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto const& n_and_weight = Base::_ns_and_weights[ip];
-            double flux;
-            NumLib::shapeFunctionInterpolate(neumann_param_nodal_values_local,
-                                             n_and_weight.N, flux);
-            _local_rhs.noalias() +=
-                n_and_weight.N * (n_and_weight.weight * flux);
+            auto const& N = n_and_weight.N;
+            auto const& w = n_and_weight.weight;
+            _local_rhs.noalias() += N * parameter_node_values.dot(N) * w;
         }
 
-        // map boundary dof indices to bulk dof indices
-        for (auto& i : indices)
-        {
-            auto const bulk_node_id =
-                _data.mapping_to_bulk_nodes.getComponent(i, 0);
-
-            MeshLib::Location const l{
-                _data.bulk_mesh_id, MeshLib::MeshItemType::Node, bulk_node_id};
-
-            i = _data.dof_table_bulk.getGlobalIndex(l, _data.variable_id_bulk,
-                                                    _data.component_id_bulk);
-            assert(i != NumLib::MeshComponentMap::nop);
-        }
+        auto const indices = NumLib::getIndices(id, dof_table_boundary);
         b.add(indices, _local_rhs);
     }
 
 private:
     NonuniformNeumannBoundaryConditionData const& _data;
-    typename Base::NodalVectorType _local_rhs;
+    NodalVectorType _local_rhs;
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;

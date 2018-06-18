@@ -22,7 +22,7 @@ using NonuniformNeumannBoundaryCondition =
 
 std::unique_ptr<NonuniformNeumannBoundaryCondition>
 createNonuniformNeumannBoundaryCondition(
-    BaseLib::ConfigTree const& config,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, const MeshLib::Mesh& bulk_mesh);

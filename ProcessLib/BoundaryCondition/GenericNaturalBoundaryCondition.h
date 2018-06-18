@@ -27,10 +27,6 @@ public:
     /// A local DOF-table, a subset of the given one, is constructed.
     template <typename Data>
     GenericNaturalBoundaryCondition(
-        typename std::enable_if<
-            std::is_same<typename std::decay<BoundaryConditionData>::type,
-                         typename std::decay<Data>::type>::value,
-            bool>::type is_axially_symmetric,
         unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
@@ -51,9 +47,6 @@ private:
     /// Local dof table, a subset of the global one restricted to the
     /// participating number of _elements of the boundary condition.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
-
-    /// Integration order for integration over the lower-dimensional elements
-    unsigned const _integration_order;
 
     /// Local assemblers for each element of number of _elements.
     std::vector<

@@ -7,9 +7,8 @@
  *
  */
 
-#include "GenericNaturalBoundaryCondition.h"
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
+#include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib
 {
@@ -20,18 +19,16 @@ template <typename Data>
 GenericNaturalBoundaryCondition<BoundaryConditionData,
                                 LocalAssemblerImplementation>::
     GenericNaturalBoundaryCondition(
-        typename std::enable_if<
-            std::is_same<typename std::decay<BoundaryConditionData>::type,
-                         typename std::decay<Data>::type>::value,
-            bool>::type is_axially_symmetric,
         unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
         unsigned const global_dim, MeshLib::Mesh const& bc_mesh, Data&& data)
-    : _data(std::forward<Data>(data)),
-      _bc_mesh(bc_mesh),
-      _integration_order(integration_order)
+    : _data(std::forward<Data>(data)), _bc_mesh(bc_mesh)
 {
+    static_assert(std::is_same<typename std::decay<BoundaryConditionData>::type,
+                               typename std::decay<Data>::type>::value,
+                  "Type mismatch between declared and passed BC data.");
+
     // check basic data consistency
     if (variable_id >=
             static_cast<int>(dof_table_bulk.getNumberOfVariables()) ||
@@ -43,6 +40,23 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
             "maximum values: (%d, %d).",
             variable_id, component_id, dof_table_bulk.getNumberOfVariables(),
             dof_table_bulk.getNumberOfVariableComponents(variable_id));
+    }
+
+    if (_bc_mesh.getDimension() + 1 != global_dim)
+    {
+        OGS_FATAL(
+            "The dimension of the given boundary mesh (%d) is not by one lower "
+            "than the bulk dimension (%d).",
+            _bc_mesh.getDimension(), global_dim);
+    }
+
+    if (!_bc_mesh.getProperties().template existsPropertyVector<std::size_t>(
+            "bulk_node_ids"))
+    {
+        OGS_FATAL(
+            "The required bulk node ids map does not exist in the boundary "
+            "mesh '%s'.",
+            _bc_mesh.getName().c_str());
     }
 
     std::vector<MeshLib::Node*> const& bc_nodes = _bc_mesh.getNodes();
@@ -58,8 +72,8 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
 
     createLocalAssemblers<LocalAssemblerImplementation>(
         global_dim, _bc_mesh.getElements(), *_dof_table_boundary,
-        shapefunction_order, _local_assemblers, is_axially_symmetric,
-        _integration_order, _data);
+        shapefunction_order, _local_assemblers, _bc_mesh.isAxiallySymmetric(),
+        integration_order, _data);
 }
 
 template <typename BoundaryConditionData,
