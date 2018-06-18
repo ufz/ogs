@@ -247,6 +247,7 @@ createConstraintDirichletBoundaryCondition(
     config.checkConfigParameter("type", "ConstraintDirichlet");
 
     auto const constraint_type =
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_type}
         config.getConfigParameter<std::string>("constraint_type");
     if (constraint_type != "Flux")
     {
@@ -255,6 +256,7 @@ createConstraintDirichletBoundaryCondition(
     }
 
     auto const constraining_process_variable =
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraining_process_variable}
         config.getConfigParameter<std::string>("constraining_process_variable");
 
     if (!constraining_process.isMonolithicSchemeUsed())
@@ -284,9 +286,11 @@ createConstraintDirichletBoundaryCondition(
     }
 
     auto const constraint_threshold =
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_threshold}
         config.getConfigParameter<double>("constraint_threshold");
 
     auto const constraint_direction_string =
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_direction}
         config.getConfigParameter<std::string>("constraint_direction");
     if (constraint_direction_string != "greater" &&
         constraint_direction_string != "lower")
@@ -299,7 +303,7 @@ createConstraintDirichletBoundaryCondition(
     bool const lower = constraint_direction_string == "lower";
 
 
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__parameter}
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", param_name.c_str());
 
