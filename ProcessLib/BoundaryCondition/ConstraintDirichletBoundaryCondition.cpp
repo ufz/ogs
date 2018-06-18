@@ -255,6 +255,8 @@ createConstraintDirichletBoundaryCondition(
                   constraint_type.c_str());
     }
 
+    // Todo (TF) Open question: How to specify which getFlux function should be
+    // used for the constraint calculation?
     auto const constraining_process_variable =
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraining_process_variable}
         config.getConfigParameter<std::string>("constraining_process_variable");
