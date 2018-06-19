@@ -2,9 +2,13 @@
 [build]
   base    = "web"
   publish = "web/public"
-  command = "git lfs fetch && yarn --ignore-engines --ignore-optional --non-interactive && yarn prod"
+  command = """
+    git lfs fetch
+    yarn --ignore-engines --ignore-optional --non-interactive &&
+    node_modules/.bin/webpack -p --mode=production &&
+    hugo -b $DEPLOY_PRIME_URL"""
 
 [context.production.environment]
-  HUGO_VERSION = "0.41"
+  HUGO_VERSION = "0.42.1"
 [context.deploy-preview.environment]
-  HUGO_VERSION = "0.41"
+  HUGO_VERSION = "0.42.1"

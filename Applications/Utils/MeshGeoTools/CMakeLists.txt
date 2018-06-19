@@ -1,6 +1,6 @@
-ADD_EXECUTABLE( ComputeSurfaceNodeIDsInPolygonalRegion ComputeSurfaceNodeIDsInPolygonalRegion.cpp )
-SET_TARGET_PROPERTIES( ComputeSurfaceNodeIDsInPolygonalRegion PROPERTIES FOLDER Utilities)
-TARGET_LINK_LIBRARIES( ComputeSurfaceNodeIDsInPolygonalRegion
+add_executable( ComputeSurfaceNodeIDsInPolygonalRegion ComputeSurfaceNodeIDsInPolygonalRegion.cpp )
+set_target_properties( ComputeSurfaceNodeIDsInPolygonalRegion PROPERTIES FOLDER Utilities)
+target_link_libraries( ComputeSurfaceNodeIDsInPolygonalRegion
     MeshLib
     GeoLib
     MathLib
@@ -8,3 +8,10 @@ TARGET_LINK_LIBRARIES( ComputeSurfaceNodeIDsInPolygonalRegion
     ${OGS_VTK_REQUIRED_LIBS}
 )
 
+add_executable(constructMeshesFromGeometry ConstructMeshesFromGeometry.cpp )
+set_target_properties(constructMeshesFromGeometry PROPERTIES FOLDER Utilities)
+target_link_libraries(constructMeshesFromGeometry
+    MeshGeoToolsLib
+    ApplicationsFileIO
+    ${OGS_VTK_REQUIRED_LIBS}
+)
