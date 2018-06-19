@@ -25,12 +25,6 @@ target_link_libraries(ProcessLib
     PUBLIC BaseLib MaterialLib MathLib MeshLib NumLib logog
 )
 
-if(TARGET Eigen)
-    add_dependencies(ProcessLib Eigen)
-endif()
-if(TARGET Boost)
-    add_dependencies(ProcessLib Boost)
-endif()
 if(OGS_INSITU)
     target_link_libraries(ProcessLib InSituLib)
 endif()

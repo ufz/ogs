@@ -31,13 +31,6 @@ if(Qt5XmlPatterns_FOUND)
     endif()
 endif()
 
-if(TARGET Eigen)
-    add_dependencies(BaseLib Eigen)
-endif()
-if(TARGET Boost)
-    add_dependencies(BaseLib Boost)
-endif()
-
 if(OGS_USE_PCH)
     cotire(BaseLib)
 endif()

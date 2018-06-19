@@ -19,13 +19,6 @@ foreach(process ${ProcessesList})
     endif()
 endforeach()
 
-if(TARGET Eigen)
-    add_dependencies(ApplicationsLib Eigen)
-endif()
-if(TARGET Boost)
-    add_dependencies(ApplicationsLib Boost)
-endif()
-
 if(OGS_USE_PCH)
     cotire(ApplicationsLib)
 endif()

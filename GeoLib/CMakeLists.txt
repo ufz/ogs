@@ -22,10 +22,6 @@ if(Qt5XmlPatterns_FOUND)
     endif()
 endif()
 
-if(TARGET Boost)
-    add_dependencies(GeoLib Boost)
-endif()
-
 if(OGS_USE_PCH)
     cotire(GeoLib)
 endif()

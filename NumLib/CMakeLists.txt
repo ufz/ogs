@@ -27,13 +27,6 @@ target_link_libraries(NumLib
     PRIVATE MeshGeoToolsLib
 )
 
-if(TARGET Eigen)
-    add_dependencies(NumLib Eigen)
-endif()
-if(TARGET Boost)
-    add_dependencies(NumLib Boost)
-endif()
-
 if(OGS_USE_PCH)
     cotire(NumLib)
 endif()

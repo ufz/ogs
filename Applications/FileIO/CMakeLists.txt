@@ -33,14 +33,6 @@ if(OGS_BUILD_SWMM)
     target_link_libraries(ApplicationsFileIO PRIVATE SwmmInterface)
 endif()
 
-if(TARGET Eigen)
-    add_dependencies(ApplicationsFileIO Eigen)
-endif()
-
-if(TARGET Boost)
-    add_dependencies(ApplicationsFileIO Boost)
-endif()
-
 if(OGS_USE_PCH)
     cotire(ApplicationsFileIO)
 endif()

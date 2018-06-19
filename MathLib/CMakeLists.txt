@@ -53,13 +53,6 @@ if (OGS_USE_PETSC)
     target_link_libraries(MathLib PUBLIC ${PETSC_LIBRARIES})
 endif()
 
-if(TARGET Boost)
-    add_dependencies(MathLib Boost)
-endif()
-if(TARGET Eigen)
-    add_dependencies(MathLib Eigen)
-endif()
-
 if(OGS_USE_PCH)
     cotire(MathLib)
 endif()
