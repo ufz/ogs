@@ -112,18 +112,20 @@ int main(int argc, char *argv[])
         auto vec_bounds (MeshLib::MeshInformation::getValueBounds<int>(*mesh, vec_name));
         if (vec_bounds.second != std::numeric_limits<int>::max())
         {
-            INFO("\t%s: [%d, %d]", vec_name.c_str(), vec_bounds.first, vec_bounds.second)
+            INFO("\t%s: [%d, %d]", vec_name.c_str(), vec_bounds.first,
+                 vec_bounds.second);
         }
         else
         {
             auto vec_bounds (MeshLib::MeshInformation::getValueBounds<double>(*mesh, vec_name));
             if (vec_bounds.second != std::numeric_limits<double>::max())
             {
-                INFO("\t%s: [%g, %g]", vec_name.c_str(), vec_bounds.first, vec_bounds.second)
+                INFO("\t%s: [%g, %g]", vec_name.c_str(), vec_bounds.first,
+                     vec_bounds.second);
             }
             else
             {
-                INFO("\t%s: Unknown properties", vec_name.c_str())
+                INFO("\t%s: Unknown properties", vec_name.c_str());
             }
         }
     }

@@ -44,7 +44,7 @@ VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode, bool compres
     _mesh(mesh), _data_mode(dataMode), _use_compressor(compress)
 {
     if(_data_mode == vtkXMLWriter::Ascii && compress)
-        WARN("Ascii data cannot be compressed, ignoring compression flag.")
+        WARN("Ascii data cannot be compressed, ignoring compression flag.");
 }
 
 MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)

@@ -121,7 +121,7 @@ MeshLib::Properties constructProperties(MeshLib::Properties const& props,
 
 MeshLib::Mesh* constructMesh(MeshLib::Mesh const& mesh)
 {
-    INFO("Splitting nodes...")
+    INFO("Splitting nodes...");
     std::vector<MeshLib::Element*> const& elems = mesh.getElements();
     std::vector<MeshLib::Node*> new_nodes;
     std::vector<MeshLib::Element*> new_elems;
@@ -183,7 +183,7 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     INFO("done.\n");
 
-    INFO("Checking for line elements...")
+    INFO("Checking for line elements...");
     std::array<unsigned, 7> const& n_element_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
     std::unique_ptr<MeshLib::Mesh> result;

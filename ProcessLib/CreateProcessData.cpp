@@ -104,7 +104,7 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
         {
             INFO(
                 "The equations of the coupled processes will be solved by the "
-                "staggered scheme.")
+                "staggered scheme.");
         }
     }
 

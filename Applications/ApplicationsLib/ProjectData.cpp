@@ -270,7 +270,7 @@ bool ProjectData::isMeshNameUniqueAndProvideUniqueName(std::string& name) const
 void ProjectData::parseProcessVariables(
     BaseLib::ConfigTree const& process_variables_config)
 {
-    DBUG("Parse process variables:")
+    DBUG("Parse process variables:");
 
     if (_mesh_vec.empty() || _mesh_vec[0] == nullptr)
     {

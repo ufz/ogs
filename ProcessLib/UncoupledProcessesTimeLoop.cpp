@@ -638,7 +638,7 @@ bool UncoupledProcessesTimeLoop::loop()
     INFO(
         "The whole computation of the time stepping took %u steps, in which\n"
         "\t the accepted steps are %u, and the rejected steps are %u.\n",
-        accepted_steps + rejected_steps, accepted_steps, rejected_steps)
+        accepted_steps + rejected_steps, accepted_steps, rejected_steps);
 
     // output last time step
     if (nonlinear_solver_succeeded)
