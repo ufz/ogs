@@ -16,8 +16,6 @@ include(GenerateExportHeader)
 generate_export_header(BaseLib)
 target_include_directories(BaseLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-set_target_properties(BaseLib PROPERTIES LINKER_LANGUAGE CXX)
-
 target_link_libraries(BaseLib PUBLIC logog)
 
 if(MSVC)
