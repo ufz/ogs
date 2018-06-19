@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <Eigen/Dense>
+
 #include "NumLib/NumericsConfig.h"
 #include "MathLib/Point3d.h"
 
