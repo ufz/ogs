@@ -48,7 +48,7 @@ if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         Shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
-        Qt/5.9.2@osechet/stable
+        Qt/5.11@bincrafters/stable
     )
 endif()
 
