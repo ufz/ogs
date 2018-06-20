@@ -34,7 +34,7 @@ namespace GeoLib
 namespace IO
 {
 XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs) :
-XMLInterface(), XMLQtInterface(BaseLib::FileFinder({BaseLib::BuildInfo::geo_xml_schema_path}).getPath("OpenGeoSysSTN.xsd")), _geo_objs(geo_objs)
+XMLInterface(), XMLQtInterface("OpenGeoSysSTN.xsd"), _geo_objs(geo_objs)
 {
 }
 
@@ -208,7 +208,7 @@ bool XmlStnInterface::write()
     QDomElement root = doc.createElement("OpenGeoSysSTN");
     root.setAttribute( "xmlns:ogs", "http://www.opengeosys.org" );
     root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-    root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysSTN.xsd" );
+    root.setAttribute( "xsi:noNamespaceSchemaLocation", "https://www.opengeosys.org/images/xsd/OpenGeoSysSTN.xsd" );
 
     const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_exportName));
     bool isBorehole = static_cast<GeoLib::Station*>((*stations)[0])->type() ==

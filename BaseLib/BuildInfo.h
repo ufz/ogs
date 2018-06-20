@@ -34,8 +34,6 @@ namespace BuildInfo
     extern BASELIB_EXPORT const std::string ogs_version;
 
     extern BASELIB_EXPORT const std::string source_path;
-    extern BASELIB_EXPORT const std::string geo_xml_schema_path;
-    extern BASELIB_EXPORT const std::string app_xml_schema_path;
     extern BASELIB_EXPORT const std::string data_path;
     extern BASELIB_EXPORT const std::string data_binary_path;
     extern BASELIB_EXPORT const std::string tests_tmp_path;

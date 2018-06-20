@@ -37,5 +37,13 @@ if(OGS_USE_PCH)
     cotire(ApplicationsFileIO)
 endif()
 
-include(${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/InstallXmlSchemaFiles.cmake)
-InstallXmlSchemaFiles("XmlIO/*.xsd")
+
+configure_file(XmlIO/OpenGeoSysCND.xsd ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysCND.xsd COPYONLY)
+configure_file(XmlIO/OpenGeoSysNum.xsd ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysNum.xsd COPYONLY)
+configure_file(XmlIO/OpenGeoSysProject.xsd ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysProject.xsd COPYONLY)
+install(FILES
+    XmlIO/OpenGeoSysCND.xsd
+    XmlIO/OpenGeoSysNum.xsd
+    XmlIO/OpenGeoSysProject.xsd
+    DESTINATION bin COMPONENT ogs_cli
+)

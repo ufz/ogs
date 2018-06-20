@@ -55,7 +55,7 @@ namespace GeoLib
 namespace IO
 {
 XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
-XMLInterface(), XMLQtInterface(BaseLib::FileFinder({BaseLib::BuildInfo::geo_xml_schema_path}).getPath("OpenGeoSysGLI.xsd")), _geo_objs(geo_objs)
+XMLInterface(), XMLQtInterface("OpenGeoSysGLI.xsd"), _geo_objs(geo_objs)
 {
 }
 
@@ -256,7 +256,7 @@ bool XmlGmlInterface::write()
     QDomElement root = doc.createElement("OpenGeoSysGLI");
     root.setAttribute( "xmlns:ogs", "http://www.opengeosys.org" );
     root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-    root.setAttribute( "xsi:noNamespaceSchemaLocation", "http://www.opengeosys.org/images/xsd/OpenGeoSysGLI.xsd" );
+    root.setAttribute( "xsi:noNamespaceSchemaLocation", "https://www.opengeosys.org/images/xsd/OpenGeoSysGLI.xsd" );
 
     doc.appendChild(root);
 

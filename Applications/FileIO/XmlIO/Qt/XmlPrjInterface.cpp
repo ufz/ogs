@@ -38,11 +38,7 @@ namespace FileIO
 {
 XmlPrjInterface::XmlPrjInterface(DataHolderLib::Project& project)
     : XMLInterface(),
-      XMLQtInterface(
-          BaseLib::FileFinder({BaseLib::BuildInfo::app_xml_schema_path})
-              .getPath("OpenGeoSysProject.xsd")),
-      _filename(""),
-      _project(project)
+      XMLQtInterface("OpenGeoSysProject.xsd"), _filename(""), _project(project)
 {
 }
 
@@ -271,7 +267,7 @@ bool XmlPrjInterface::write()
     root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
     root.setAttribute(
         "xsi:noNamespaceSchemaLocation",
-        "http://www.opengeosys.org/images/xsd/OpenGeoSysProject.xsd");
+        "https://www.opengeosys.org/images/xsd/OpenGeoSysProject.xsd");
 
     doc.appendChild(root);
 
