@@ -25,3 +25,10 @@ Per default when Conan is enabled (`OGS_USE_CONAN=ON`) it will try to fetch preb
 - `all` - Builds all packages locally
 - `never` - Builds no package locally
 - `[a list of libraries to build]`, e.g. `"Eigen3;Boost"`. For names see [ConanSetup.cmake](https://github.com/ufz/ogs/blob/master/scripts/cmake/ConanSetup.cmake). Make sure to set this back to 'never' after the libs have been built. Otherwise it would rebuild the libs on the next CMake run.
+
+## Further information
+
+- [Conan Blog](https://blog.conan.io)
+- [Conan Documentation](https://docs.conan.io/en/latest/)
+- [Bincrafters Blog](https://bincrafters.github.io/tag/conan/), a blog from a group of active Conan package developers
+- [Bincrafters Documentation](https://bincrafters.readthedocs.io/en/latest/introduction_to_conan.html)
