@@ -36,7 +36,6 @@ ENV CCACHE_DIR=/home/jenkins/cache/ccache
 RUN mkdir -p $CCACHE_DIR
 ENV CCACHE_MAXSIZE=15G
 ENV CCACHE_SLOPPINESS=pch_defines,time_macros
-ENV CONAN_USER_HOME=/home/jenkins/cache/conan
 WORKDIR /home/jenkins
 RUN conan user
 

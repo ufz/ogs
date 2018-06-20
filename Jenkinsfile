@@ -90,22 +90,18 @@ pipeline {
                 sudo -H pip install -r requirements.txt
                 """.stripIndent())
 
-              lock(resource: "conanCache-${env.NODE_NAME}") {
-                sh 'conan user'
-                sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
-                configure {
-                  cmakeOptions =
-                    '-DOGS_USE_CONAN=ON ' +
-                    '-DOGS_CONAN_BUILD=never ' +
-                    '-DOGS_CPU_ARCHITECTURE=generic ' +
-                    '-DDOCS_GENERATE_LOGFILE=ON ' // redirects to build/DoxygenWarnings.log
-                }
+              sh 'conan user'
+              configure {
+                cmakeOptions =
+                  '-DOGS_USE_CONAN=ON ' +
+                  '-DOGS_CONAN_BUILD=never ' +
+                  '-DOGS_CPU_ARCHITECTURE=generic ' +
+                  '-DDOCS_GENERATE_LOGFILE=ON ' // redirects to build/DoxygenWarnings.log
               }
               build { }
               build { target="tests" }
               build { target="ctest" }
               build { target="doc" }
-              sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_CLI=OFF ' +
