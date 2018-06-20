@@ -259,7 +259,7 @@
             <name>general_linear_solver</name>
             <lis>-i bicgstab -p ilu -tol 1e-18 -maxiter 10000</lis>
             <eigen>
-                <solver_type>BiCGSTAB</solver_type>
+                <solver_type>SparseLU</solver_type>
                 <precon_type>ILUT</precon_type>
                 <max_iteration_step>10000</max_iteration_step>
                 <error_tolerance>1e-18</error_tolerance>
