@@ -22,13 +22,10 @@ if(Qt5XmlPatterns_FOUND)
     endif()
 endif()
 
-if(TARGET Boost)
-    add_dependencies(GeoLib Boost)
-endif()
-
 if(OGS_USE_PCH)
     cotire(GeoLib)
 endif()
 
-include(${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/InstallXmlSchemaFiles.cmake)
-InstallXmlSchemaFiles("IO/XmlIO/*.xsd")
+configure_file(IO/XmlIO/OpenGeoSysGLI.xsd ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysGLI.xsd COPYONLY)
+configure_file(IO/XmlIO/OpenGeoSysSTN.xsd ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysSTN.xsd COPYONLY)
+install(FILES IO/XmlIO/OpenGeoSysGLI.xsd IO/XmlIO/OpenGeoSysSTN.xsd DESTINATION bin COMPONENT ogs_cli)

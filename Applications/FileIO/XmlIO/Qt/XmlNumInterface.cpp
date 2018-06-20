@@ -27,7 +27,7 @@
 namespace FileIO
 {
 XmlNumInterface::XmlNumInterface() :
-XMLInterface(), XMLQtInterface(BaseLib::FileFinder({BaseLib::BuildInfo::app_xml_schema_path}).getPath("OpenGeoSysNUM.xsd"))
+XMLInterface(), XMLQtInterface("OpenGeoSysNUM.xsd")
 {
 }
 

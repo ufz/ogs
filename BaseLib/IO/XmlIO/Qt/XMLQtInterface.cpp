@@ -15,12 +15,14 @@
 
 #include <fstream>
 
-#include <QXmlStreamReader>
+#include <QByteArray>
+#include <QCoreApplication>
+#include <QCryptographicHash>
+#include <QDir>
+#include <QFileInfo>
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
-#include <QFileInfo>
-#include <QByteArray>
-#include <QCryptographicHash>
+#include <QXmlStreamReader>
 
 #include <logog/include/logog.hpp>
 #include <utility>
@@ -29,8 +31,8 @@ namespace BaseLib
 {
 namespace IO
 {
-XMLQtInterface::XMLQtInterface(std::string schemaFile)
-    : _schemaName(std::move(schemaFile))
+XMLQtInterface::XMLQtInterface(const QString &schemaFile)
+    : _schemaFile(schemaFile)
 {}
 
 int XMLQtInterface::readFile(const QString &fileName)
@@ -54,9 +56,12 @@ int XMLQtInterface::readFile(const QString &fileName)
 int XMLQtInterface::isValid() const
 {
     QXmlSchema schema;
-    if(_schemaName.length() > 0)
-        schema.load( QUrl::fromLocalFile((QString::fromStdString(_schemaName))) );
-
+    if(_schemaFile.length() > 0)
+    {
+        auto path = QDir(QCoreApplication::applicationDirPath()).filePath(_schemaFile);
+        auto url = QUrl::fromLocalFile(path);
+        schema.load(url);
+    }
     if ( schema.isValid() )
     {
         QXmlSchemaValidator validator( schema );
@@ -66,7 +71,7 @@ int XMLQtInterface::isValid() const
         INFO(
             "XMLQtInterface::isValid(): XML file %s is invalid (in reference "
             "to schema %s).",
-            _fileName.toStdString().c_str(), _schemaName.c_str());
+            _fileName.toStdString().c_str(), _schemaFile.toStdString().c_str());
     }
     else
     {

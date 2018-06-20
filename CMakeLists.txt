@@ -299,10 +299,6 @@ include(scripts/cmake/CheckHeaderCompilation.cmake)
 
 add_subdirectory( Applications )
 add_subdirectory( BaseLib )
-# TODO This is a hack but we have to make sure that Boost is built first
-if(TARGET Boost)
-    add_dependencies(BaseLib Boost)
-endif()
 add_subdirectory( GeoLib )
 add_subdirectory( MathLib )
 add_subdirectory( MeshLib )

@@ -30,7 +30,7 @@ namespace IO
 class XMLQtInterface
 {
 public:
-    XMLQtInterface(std::string schemaFile = "");
+    XMLQtInterface(const QString &schemaFile = "");
     virtual ~XMLQtInterface() = default;
 
     /// As QXMLStreamWriter seems currently unable to include style-file links into xml-files, this method will workaround this issue and include the stylefile link.
@@ -52,7 +52,7 @@ protected:
     /// Checks if the given file is conform to the given hash.
     bool isHashGood(const QByteArray &hash) const;
 
-    std::string _schemaName;
+    QString _schemaFile;
 
     /// Caches the actual file contents when reading.
     QByteArray _fileData;

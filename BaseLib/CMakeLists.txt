@@ -16,8 +16,6 @@ include(GenerateExportHeader)
 generate_export_header(BaseLib)
 target_include_directories(BaseLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-set_target_properties(BaseLib PROPERTIES LINKER_LANGUAGE CXX)
-
 target_link_libraries(BaseLib PUBLIC logog)
 
 if(MSVC)
@@ -29,13 +27,6 @@ if(Qt5XmlPatterns_FOUND)
     if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
         target_link_libraries(BaseLib PUBLIC Qt5::Network ${OPENSSL_LIBRARIES} ws2_32)
     endif()
-endif()
-
-if(TARGET Eigen)
-    add_dependencies(BaseLib Eigen)
-endif()
-if(TARGET Boost)
-    add_dependencies(BaseLib Boost)
 endif()
 
 if(OGS_USE_PCH)

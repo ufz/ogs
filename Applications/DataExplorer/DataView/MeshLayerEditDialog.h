@@ -16,6 +16,7 @@
 
 #include "ui_MeshLayerEdit.h"
 #include <QDialog>
+#include <QLineEdit>
 
 #include "MeshGenerators/MeshLayerMapper.h"
 

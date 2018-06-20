@@ -9,10 +9,6 @@ target_link_libraries(MeshGeoToolsLib
     PRIVATE BaseLib MeshLib logog
 )
 
-if(TARGET Boost)
-    add_dependencies(MeshGeoToolsLib Boost)
-endif()
-
 if(OGS_USE_PCH)
     cotire(MeshGeoToolsLib)
 endif()

@@ -35,11 +35,3 @@ if(OGS_USE_MPI)
         PUBLIC vtkIOParallelXML vtkParallelMPI
     )
 endif()
-
-if(TARGET Eigen)
-    add_dependencies(MeshLib Eigen)
-endif()
-
-if(TARGET Boost)
-    add_dependencies(MeshLib Boost)
-endif()

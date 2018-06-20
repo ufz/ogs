@@ -7,7 +7,7 @@ add_library(ApplicationsLib ${LIB_SOURCES})
 
 target_link_libraries(ApplicationsLib
     PUBLIC BaseLib GeoLib Processes logog
-    PRIVATE MathLib MeshLib
+    PRIVATE MathLib MeshLib NumLib
 )
 
 # Set cpp definitions if the cmake option is enabled for the given process.
@@ -18,13 +18,6 @@ foreach(process ${ProcessesList})
             ${EnableProcess})
     endif()
 endforeach()
-
-if(TARGET Eigen)
-    add_dependencies(ApplicationsLib Eigen)
-endif()
-if(TARGET Boost)
-    add_dependencies(ApplicationsLib Boost)
-endif()
 
 if(OGS_USE_PCH)
     cotire(ApplicationsLib)

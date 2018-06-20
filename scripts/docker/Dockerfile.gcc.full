@@ -36,7 +36,6 @@ ENV CCACHE_DIR=/home/jenkins/cache/ccache
 RUN mkdir -p $CCACHE_DIR
 ENV CCACHE_MAXSIZE=15G
 ENV CCACHE_SLOPPINESS=pch_defines,time_macros
-ENV CONAN_USER_HOME=/home/jenkins/cache/conan
 WORKDIR /home/jenkins
 RUN conan user
 
@@ -76,5 +75,7 @@ RUN curl -L -o pandoc.deb https://github.com/jgm/pandoc/releases/download/2.1.1/
 RUN curl https://include-what-you-use.org/downloads/include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -O \
   && tar xf include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -C /usr/ --strip-components=1 \
   && rm include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz
+
+RUN apt-get install -y mesa-common-dev
 
 USER jenkins
