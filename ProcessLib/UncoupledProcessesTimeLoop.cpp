@@ -652,9 +652,9 @@ bool UncoupledProcessesTimeLoop::loop()
     return nonlinear_solver_succeeded;
 }
 
-static std::string nonlinear_fixed_dt_fails_info =
-    "Nonlinear solver fails. Because of the time stepper"
-    " of FixedTimeStepping is used, the program has to be"
+static std::string const nonlinear_fixed_dt_fails_info =
+    "Nonlinear solver fails. Because the time stepper"
+    " FixedTimeStepping is used, the program has to be"
     " terminated ";
 
 bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
