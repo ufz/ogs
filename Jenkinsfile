@@ -105,6 +105,7 @@ pipeline {
               build { target="tests" }
               build { target="ctest" }
               build { target="doc" }
+              sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_CLI=OFF ' +
