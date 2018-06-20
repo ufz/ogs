@@ -76,8 +76,11 @@ static std::vector<bool> markNodesOutSideOfPolygon(
 }
 
 template <typename PT>
-void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
-    std::string const& property_name, PT new_property_value)
+void resetMeshElementProperty(MeshLib::Mesh& mesh,
+                              GeoLib::Polygon const& polygon,
+                              std::string const& property_name,
+                              PT new_property_value,
+                              int restrict_to_material_id)
 {
     auto* const pv = MeshLib::getOrCreateMeshProperty<PT>(
         mesh, property_name, MeshLib::MeshItemType::Cell, 1);
@@ -88,20 +91,40 @@ void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygo
         return;
     }
 
-    std::vector<bool> outside(markNodesOutSideOfPolygon(mesh.getNodes(),
-        polygon));
+    std::vector<bool> outside(
+        markNodesOutSideOfPolygon(mesh.getNodes(), polygon));
 
-    for(std::size_t j(0); j<mesh.getElements().size(); ++j) {
-        bool elem_out(true);
-        MeshLib::Element const*const elem(mesh.getElements()[j]);
-        for (auto k = decltype(elem->getNumberOfNodes()){0};
-             k < elem->getNumberOfNodes() && elem_out; ++k)
+    auto const* material_ids =
+        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+
+    auto hasElementRequiredMaterialID = [&](int const element_id) {
+        if (restrict_to_material_id == -1)
+            return true;
+        if (!material_ids)
         {
-            if (! outside[elem->getNode(k)->getID()]) {
+            OGS_FATAL(
+                "Restriction of reseting a property in a polygonal region "
+                "requires that a MaterialIDs data array is available in the "
+                "mesh.");
+        }
+        return (*material_ids)[element_id] == restrict_to_material_id;
+    };
+
+    for (std::size_t j(0); j < mesh.getElements().size(); ++j)
+    {
+        bool elem_out(true);
+        MeshLib::Element const* const elem(mesh.getElements()[j]);
+        for (auto k = decltype(elem->getNumberOfNodes()){0};
+             k < elem->getNumberOfNodes() && elem_out;
+             ++k)
+        {
+            if (!outside[elem->getNode(k)->getID()])
+            {
                 elem_out = false;
             }
         }
-        if (!elem_out) {
+        if (!elem_out && hasElementRequiredMaterialID(elem->getID()))
+        {
             (*pv)[j] = new_property_value;
         }
     }
@@ -140,6 +163,11 @@ int main (int argc, char* argv[])
     TCLAP::ValueArg<std::string> property_name_arg("n", "property-name",
         "name of property in the mesh", false, "MaterialIDs", "string");
     cmd.add(property_name_arg);
+    TCLAP::ValueArg<int> restrict_arg(
+        "r", "restrict-to-MaterialID",
+        "Restrict reseting the property to the material id", false, -1,
+        "MaterialID");
+    cmd.add(restrict_arg);
     TCLAP::ValueArg<std::string> mesh_in("m", "mesh-input-file",
         "the name of the file containing the input mesh", true,
         "", "file name");
@@ -193,17 +221,20 @@ int main (int argc, char* argv[])
 
     if (char_property_arg.isSet()) {
         resetMeshElementProperty(*mesh, polygon, property_name,
-                                 char_property_arg.getValue());
+                                 char_property_arg.getValue(),
+                                 restrict_arg.getValue());
     }
 
     if (int_property_arg.isSet()) {
         resetMeshElementProperty(*mesh, polygon, property_name,
-                                 int_property_arg.getValue());
+                                 int_property_arg.getValue(),
+                                 restrict_arg.getValue());
     }
 
     if (bool_property_arg.isSet()) {
         resetMeshElementProperty(*mesh, polygon, property_name,
-                                 bool_property_arg.getValue());
+                                 bool_property_arg.getValue(),
+                                 restrict_arg.getValue());
     }
 
     std::vector<std::string> property_names(
