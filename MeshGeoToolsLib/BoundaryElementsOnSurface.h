@@ -59,15 +59,10 @@ public:
      */
     std::vector<MeshLib::Element*> const& getBoundaryElements() const {return _boundary_elements;}
 
-    /// \copybrief BoundaryElementsSearcher::getBulkIDs()
-    std::vector<std::pair<std::size_t, unsigned>> const& getBulkIDs() const;
-
 private:
     MeshLib::Mesh const& _mesh;
     GeoLib::Surface const& _sfc;
     std::vector<MeshLib::Element*> _boundary_elements;
-    /// @copydoc BoundaryElementsAtPoint::_bulk_ids
-    std::vector<std::pair<std::size_t, unsigned>> _bulk_ids;
 };
 
 } // end namespace MeshGeoToolsLib
