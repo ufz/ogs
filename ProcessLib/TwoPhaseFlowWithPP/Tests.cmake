@@ -42,7 +42,7 @@ AddTest(
 )
 AddTest(
     NAME 1D_TwoPhase_PP_mcwt_1
-    PATH Parabolic/TwoPhaseFlowPP/McWorts
+    PATH Parabolic/TwoPhaseFlowPP/McWhorter
     EXECUTABLE ogs
     EXECUTABLE_ARGS TwoPhase_mcwt_line.prj
     TESTER vtkdiff
@@ -52,7 +52,7 @@ AddTest(
 )
 AddTest(
     NAME 1D_TwoPhase_PP_mcwt_2
-    PATH Parabolic/TwoPhaseFlowPP/McWorts
+    PATH Parabolic/TwoPhaseFlowPP/McWhorter
     EXECUTABLE ogs
     EXECUTABLE_ARGS TwoPhase_mcwt_line.prj
     TESTER vtkdiff
