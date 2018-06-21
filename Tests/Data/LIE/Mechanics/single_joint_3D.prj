@@ -2,6 +2,11 @@
 <OpenGeoSysProject>
     <mesh>single_joint_beta50_3D.vtu</mesh>
     <geometry>single_joint_3D.gml</geometry>
+    <search_length_algorithm>
+        <type>fixed</type>
+        <value>1e-8</value>
+    </search_length_algorithm>
+
     <processes>
         <process>
             <name>SD</name>
@@ -199,14 +204,14 @@
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>single_joint_3D</geometrical_set>
-                    <geometry>front</geometry>
+                    <geometry>fracture_front</geometry>
                     <type>Dirichlet</type>
                     <component>2</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_joint_3D</geometrical_set>
-                    <geometry>back</geometry>
+                    <geometry>fracture_back</geometry>
                     <type>Dirichlet</type>
                     <component>2</component>
                     <parameter>zero_u</parameter>
