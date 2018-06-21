@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>3D_HGW_1.vtu</mesh>
-    <geometry>ogs5_H_3d.gml</geometry>
+    <meshes>
+        <mesh>3D_HGW_1.vtu</mesh>
+        <mesh>3D_HGW_1_l.vtu</mesh>
+        <mesh>3D_HGW_1_r.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>hc</name>
@@ -174,14 +177,12 @@
             <initial_condition>c0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>3D_HGW_1_l</mesh>
                     <type>Dirichlet</type>
                     <parameter>c1</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>3D_HGW_1_r</mesh>
                     <type>Dirichlet</type>
                     <parameter>c0</parameter>
                 </boundary_condition>
@@ -194,17 +195,13 @@
             <initial_condition>p_ini</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>left</geometry>
                     <type>NonuniformDirichlet</type>
-                    <mesh>3D_HGW_1_l.vtu</mesh>
+                    <mesh>3D_HGW_1_l</mesh>
                     <field_name>p_bc</field_name>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>right</geometry>
                     <type>NonuniformDirichlet</type>
-                    <mesh>3D_HGW_1_r.vtu</mesh>
+                    <mesh>3D_HGW_1_r</mesh>
                     <field_name>p_bc</field_name>
                 </boundary_condition>
             </boundary_conditions>
