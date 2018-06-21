@@ -650,7 +650,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
                     const unsigned k = this->lutPrismThirdNode(i,j);
                     if (k == std::numeric_limits<unsigned>::max())
                     {
-                        ERR ("Unexpected error during prism reduction.")
+                        ERR("Unexpected error during prism reduction.");
                         return 0;
                     }
                     const unsigned k_offset = (i>2) ? k-3 : k+3;

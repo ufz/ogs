@@ -572,7 +572,7 @@ const GeoLib::GeoObject* GEOObjects::getGeoObject(const std::string &geo_name,
         break;
     }
     default:
-        ERR("GEOObjects::getGeoObject(): geometric type not handled.")
+        ERR("GEOObjects::getGeoObject(): geometric type not handled.");
         return nullptr;
     };
 

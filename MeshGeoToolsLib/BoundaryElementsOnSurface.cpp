@@ -50,7 +50,6 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(
             if (cnt_match==face->getNumberOfBaseNodes())
             {
                 _boundary_elements.push_back(const_cast<MeshLib::Element*>(face));
-                _bulk_ids.emplace_back(e->getID(), i);
             }
             else
                 delete face;
@@ -62,12 +61,6 @@ BoundaryElementsOnSurface::~BoundaryElementsOnSurface()
 {
     for (auto p : _boundary_elements)
         delete p;
-}
-
-std::vector<std::pair<std::size_t, unsigned>> const&
-BoundaryElementsOnSurface::getBulkIDs() const
-{
-    return _bulk_ids;
 }
 
 } // end namespace MeshGeoToolsLib

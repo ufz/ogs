@@ -37,29 +37,10 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
             "one is expected.",
             node_ids.size(), _point[0], _point[1], _point[2]);
 
-    auto& mesh_nodes =
-        const_cast<std::vector<MeshLib::Node*>&>(_mesh.getNodes());
-
     std::array<MeshLib::Node*, 1> const nodes = {{
         const_cast<MeshLib::Node*>(_mesh.getNode(node_ids[0]))}};
 
     _boundary_elements.push_back(new MeshLib::Point{nodes, node_ids[0]});
-    for (auto const* bulk_element : _mesh.getNode(node_ids[0])->getElements())
-    {
-        // Special treatment of the non-line elements because the identifyFace
-        // implementation expects three valid node pointers in the call. We can
-        // guarantee only one valid node, and calling the identifyFace would
-        // most likely lead to a SEGV.
-        if (bulk_element->getGeomType() != MeshLib::MeshElemType::LINE)
-        {
-            _bulk_ids.emplace_back(bulk_element->getID(), -1);
-            continue;
-        }
-
-        _bulk_ids.emplace_back(
-            bulk_element->getID(),
-            bulk_element->identifyFace(mesh_nodes.data() + node_ids[0]));
-    }
 }
 
 BoundaryElementsAtPoint::~BoundaryElementsAtPoint()
@@ -67,11 +48,4 @@ BoundaryElementsAtPoint::~BoundaryElementsAtPoint()
     for (auto p : _boundary_elements)
         delete p;
 }
-
-std::vector<std::pair<std::size_t, unsigned>> const&
-BoundaryElementsAtPoint::getBulkIDs() const
-{
-    return _bulk_ids;
-}
-
 }  // MeshGeoToolsLib

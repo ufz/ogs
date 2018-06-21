@@ -638,7 +638,7 @@ bool UncoupledProcessesTimeLoop::loop()
     INFO(
         "The whole computation of the time stepping took %u steps, in which\n"
         "\t the accepted steps are %u, and the rejected steps are %u.\n",
-        accepted_steps + rejected_steps, accepted_steps, rejected_steps)
+        accepted_steps + rejected_steps, accepted_steps, rejected_steps);
 
     // output last time step
     if (nonlinear_solver_succeeded)
@@ -652,9 +652,9 @@ bool UncoupledProcessesTimeLoop::loop()
     return nonlinear_solver_succeeded;
 }
 
-static std::string nonlinear_fixed_dt_fails_info =
-    "Nonlinear solver fails. Because of the time stepper"
-    " of FixedTimeStepping is used, the program has to be"
+static std::string const nonlinear_fixed_dt_fails_info =
+    "Nonlinear solver fails. Because the time stepper"
+    " FixedTimeStepping is used, the program has to be"
     " terminated ";
 
 bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(

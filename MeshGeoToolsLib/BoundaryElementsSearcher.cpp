@@ -58,28 +58,6 @@ std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryEleme
     }
 }
 
-std::vector<std::pair<std::size_t, unsigned>> const&
-BoundaryElementsSearcher::getBulkIDs(GeoLib::GeoObject const& geometry)
-{
-    switch (geometry.getGeoType()) {
-    case GeoLib::GEOTYPE::POINT:
-        return getBulkIDsAtPoint(
-            *dynamic_cast<const GeoLib::Point*>(&geometry));
-        break;
-    case GeoLib::GEOTYPE::POLYLINE:
-        return getBulkIDsAlongPolyline(
-            *dynamic_cast<const GeoLib::Polyline*>(&geometry));
-        break;
-    case GeoLib::GEOTYPE::SURFACE:
-        return getBulkIDsOnSurface(
-            *dynamic_cast<const GeoLib::Surface*>(&geometry));
-        break;
-    default:
-        const static std::vector<std::pair<std::size_t, unsigned>> dummy;
-        return dummy;
-    }
-}
-
 std::vector<MeshLib::Element*> const&
 BoundaryElementsSearcher::getBoundaryElementsAtPoint(GeoLib::Point const& point)
 {
@@ -94,22 +72,6 @@ BoundaryElementsSearcher::getBoundaryElementsAtPoint(GeoLib::Point const& point)
     _boundary_elements_at_point.push_back(
         new BoundaryElementsAtPoint(_mesh, _mshNodeSearcher, point));
     return _boundary_elements_at_point.back()->getBoundaryElements();
-}
-
-std::vector<std::pair<std::size_t, unsigned>> const&
-BoundaryElementsSearcher::getBulkIDsAtPoint(GeoLib::Point const& point)
-{
-    // Look for already saved points and return if found.
-    for (auto const& boundary_elements : _boundary_elements_at_point)
-    {
-        if (boundary_elements->getPoint() == point)
-            return boundary_elements->getBulkIDs();
-    }
-
-    // Create new BoundaryElementsAtPoint object.
-    _boundary_elements_at_point.push_back(
-        new BoundaryElementsAtPoint(_mesh, _mshNodeSearcher, point));
-    return _boundary_elements_at_point.back()->getBulkIDs();
 }
 
 std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryElementsAlongPolyline(GeoLib::Polyline const& ply)
@@ -127,23 +89,6 @@ std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryEleme
     return _boundary_elements_along_polylines.back()->getBoundaryElements();
 }
 
-std::vector<std::pair<std::size_t, unsigned>> const&
-BoundaryElementsSearcher::getBulkIDsAlongPolyline(
-    GeoLib::Polyline const& ply)
-{
-    // Look for already saved polylines and return if found.
-    for (auto const& boundary_elements : _boundary_elements_along_polylines)
-    {
-        if (boundary_elements->getPolyline() == ply)
-            return boundary_elements->getBulkIDs();
-    }
-
-    // Create new BoundaryElementsAtPolyline object.
-    _boundary_elements_along_polylines.push_back(
-        new BoundaryElementsAlongPolyline(_mesh, _mshNodeSearcher, ply));
-    return _boundary_elements_along_polylines.back()->getBulkIDs();
-}
-
 std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryElementsOnSurface(GeoLib::Surface const& sfc)
 {
     std::vector<BoundaryElementsOnSurface*>::const_iterator it(_boundary_elements_along_surfaces.begin());
@@ -157,22 +102,6 @@ std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryEleme
     _boundary_elements_along_surfaces.push_back(
             new BoundaryElementsOnSurface(_mesh, _mshNodeSearcher, sfc));
     return _boundary_elements_along_surfaces.back()->getBoundaryElements();
-}
-
-std::vector<std::pair<std::size_t, unsigned>> const&
-BoundaryElementsSearcher::getBulkIDsOnSurface(GeoLib::Surface const& sfc)
-{
-    // Look for already saved surface and return if found.
-    for (auto const& boundary_elements : _boundary_elements_along_surfaces)
-    {
-        if (&boundary_elements->getSurface() == &sfc)
-            return boundary_elements->getBulkIDs();
-    }
-
-    // Create new BoundaryElementsOnSurface object.
-    _boundary_elements_along_surfaces.push_back(
-        new BoundaryElementsOnSurface(_mesh, _mshNodeSearcher, sfc));
-    return _boundary_elements_along_surfaces.back()->getBulkIDs();
 }
 
 } // end namespace MeshGeoToolsLib

@@ -58,7 +58,6 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
                 if (edge != new_edge)
                     delete edge;
                 _boundary_elements.push_back(new_edge);
-                _bulk_ids.emplace_back(e->getID(), i);
             } else {
                 delete edge;
             }
@@ -69,14 +68,9 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
     // needed anymore in OGS-6.
     // sort picked edges according to a distance of their first node along the
     // polyline
-    BaseLib::quicksort(
-        begin(_boundary_elements), end(_boundary_elements), begin(_bulk_ids),
-        [&](std::pair<MeshLib::Element*,
-                      std::pair<std::size_t, unsigned>> const& a,
-            std::pair<MeshLib::Element*,
-                      std::pair<std::size_t, unsigned>> const& b) {
-            auto const* const e1 = a.first;
-            auto const* const e2 = b.first;
+    std::sort(
+        begin(_boundary_elements), end(_boundary_elements),
+        [&](MeshLib::Element* e1, MeshLib::Element* e2) {
             std::size_t dist1 = std::distance(
                 node_ids_on_poly.begin(),
                 std::find(node_ids_on_poly.begin(), node_ids_on_poly.end(),
@@ -141,12 +135,5 @@ MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(
     // Return the original edge otherwise.
     return const_cast<MeshLib::Element*>(&edge);
 }
-
-std::vector<std::pair<std::size_t, unsigned>> const&
-BoundaryElementsAlongPolyline::getBulkIDs() const
-{
-    return _bulk_ids;
-}
-
 } // end namespace MeshGeoToolsLib
 

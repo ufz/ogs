@@ -211,6 +211,6 @@ int main (int argc, char* argv[])
     if (MeshLib::IO::writeMeshToFile(*mesh, new_mesh_name) != 0)
         return EXIT_FAILURE;
 
-    INFO ("Result successfully written.")
+    INFO("Result successfully written.");
     return EXIT_SUCCESS;
 }
