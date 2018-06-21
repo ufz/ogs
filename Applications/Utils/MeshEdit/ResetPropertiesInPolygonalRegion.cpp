@@ -21,114 +21,12 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 
-#include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
 
-#include "MathLib/Vector3.h"
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
+#include "MeshGeoToolsLib/MeshEditing/ResetMeshElementProperty.h"
 
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/Elements/Element.h"
-
-static std::vector<bool> markNodesOutSideOfPolygon(
-    std::vector<MeshLib::Node*> const& nodes, GeoLib::Polygon const& polygon)
-{
-    // *** rotate polygon to xy_plane
-    MathLib::Vector3 normal;
-    GeoLib::Polygon rot_polygon(GeoLib::rotatePolygonToXY(polygon, normal));
-
-    // *** rotate mesh nodes to xy-plane
-    // 1 copy all mesh nodes to GeoLib::Points
-    std::vector<GeoLib::Point*> rotated_nodes;
-    for (auto node : nodes)
-        rotated_nodes.push_back(new GeoLib::Point(*node, node->getID()));
-    // 2 rotate the Points
-    MathLib::DenseMatrix<double> rot_mat(3,3);
-    GeoLib::computeRotationMatrixToXY(normal, rot_mat);
-    GeoLib::rotatePoints(rot_mat, rotated_nodes);
-    // 3 set z coord to zero
-    std::for_each(rotated_nodes.begin(), rotated_nodes.end(),
-        [] (GeoLib::Point* p) { (*p)[2] = 0.0; }
-    );
-
-    // *** mark rotated nodes
-    std::vector<bool> outside(rotated_nodes.size(), true);
-    for (std::size_t k(0); k<rotated_nodes.size(); k++) {
-        if (rot_polygon.isPntInPolygon(*(rotated_nodes[k]))) {
-            outside[k] = false;
-        }
-    }
-
-    for (auto & rotated_node : rotated_nodes)
-        delete rotated_node;
-
-    std::vector<GeoLib::Point*> & rot_polygon_pnts(
-        const_cast<std::vector<GeoLib::Point*> &>(
-            rot_polygon.getPointsVec()
-        )
-    );
-    for (auto & rot_polygon_pnt : rot_polygon_pnts)
-        delete rot_polygon_pnt;
-
-    return outside;
-}
-
-template <typename PT>
-void resetMeshElementProperty(MeshLib::Mesh& mesh,
-                              GeoLib::Polygon const& polygon,
-                              std::string const& property_name,
-                              PT new_property_value,
-                              int restrict_to_material_id)
-{
-    auto* const pv = MeshLib::getOrCreateMeshProperty<PT>(
-        mesh, property_name, MeshLib::MeshItemType::Cell, 1);
-
-    if (pv->getMeshItemType() != MeshLib::MeshItemType::Cell)
-    {
-        ERR("Values of the PropertyVector are not assigned to cells.");
-        return;
-    }
-
-    std::vector<bool> outside(
-        markNodesOutSideOfPolygon(mesh.getNodes(), polygon));
-
-    auto const* material_ids =
-        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-
-    auto hasElementRequiredMaterialID = [&](int const element_id) {
-        if (restrict_to_material_id == -1)
-            return true;
-        if (!material_ids)
-        {
-            OGS_FATAL(
-                "Restriction of reseting a property in a polygonal region "
-                "requires that a MaterialIDs data array is available in the "
-                "mesh.");
-        }
-        return (*material_ids)[element_id] == restrict_to_material_id;
-    };
-
-    for (std::size_t j(0); j < mesh.getElements().size(); ++j)
-    {
-        bool elem_out(true);
-        MeshLib::Element const* const elem(mesh.getElements()[j]);
-        for (auto k = decltype(elem->getNumberOfNodes()){0};
-             k < elem->getNumberOfNodes() && elem_out;
-             ++k)
-        {
-            if (!outside[elem->getNode(k)->getID()])
-            {
-                elem_out = false;
-            }
-        }
-        if (!elem_out && hasElementRequiredMaterialID(elem->getID()))
-        {
-            (*pv)[j] = new_property_value;
-        }
-    }
-}
 
 int main (int argc, char* argv[])
 {
@@ -220,21 +118,21 @@ int main (int argc, char* argv[])
     std::string const& property_name(property_name_arg.getValue());
 
     if (char_property_arg.isSet()) {
-        resetMeshElementProperty(*mesh, polygon, property_name,
-                                 char_property_arg.getValue(),
-                                 restrict_arg.getValue());
+        MeshGeoToolsLib::resetMeshElementProperty(*mesh, polygon, property_name,
+                                                  char_property_arg.getValue(),
+                                                  restrict_arg.getValue());
     }
 
     if (int_property_arg.isSet()) {
-        resetMeshElementProperty(*mesh, polygon, property_name,
-                                 int_property_arg.getValue(),
-                                 restrict_arg.getValue());
+        MeshGeoToolsLib::resetMeshElementProperty(*mesh, polygon, property_name,
+                                                  int_property_arg.getValue(),
+                                                  restrict_arg.getValue());
     }
 
     if (bool_property_arg.isSet()) {
-        resetMeshElementProperty(*mesh, polygon, property_name,
-                                 bool_property_arg.getValue(),
-                                 restrict_arg.getValue());
+        MeshGeoToolsLib::resetMeshElementProperty(*mesh, polygon, property_name,
+                                                  bool_property_arg.getValue(),
+                                                  restrict_arg.getValue());
     }
 
     std::vector<std::string> property_names(
