@@ -72,7 +72,10 @@ pipeline {
       parallel {
         // ************************ Docker-Conan *******************************
         stage('Docker-Conan') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {
             dockerfile {
               filename 'Dockerfile.gcc.full'
@@ -139,7 +142,10 @@ pipeline {
         }
         // ********************* Docker-Conan-Debug ****************************
         stage('Docker-Conan-Debug') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {
             dockerfile {
               filename 'Dockerfile.gcc.minimal'
@@ -172,7 +178,10 @@ pipeline {
         }
         // ************************** envinf1 **********************************
         stage('Envinf1 (serial)') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent { label "envinf1"}
           steps {
             script {
@@ -202,7 +211,10 @@ pipeline {
           }
         }
         stage('Envinf1 (parallel)') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent { label "envinf1"}
           steps {
             script {
@@ -234,7 +246,10 @@ pipeline {
         }
         // ************************** Windows **********************************
         stage('Win') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {label 'win && conan' }
           environment {
             MSVC_NUMBER = '15'
@@ -277,7 +292,10 @@ pipeline {
         }
         // ****************************** Mac **********************************
         stage('Mac') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent { label "mac"}
           steps {
             script {
@@ -315,7 +333,10 @@ pipeline {
         }
         // **************************** Web ************************************
         stage('Web') {
-          when { expression { return stage_required.web || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.web || stage_required.full }
+          }
           agent {
             dockerfile {
               filename 'Dockerfile.gcc.full'
@@ -378,7 +399,10 @@ pipeline {
       parallel {
         // ************************* Analyzers *********************************
         stage('Analyzers') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {
             dockerfile {
               filename 'Dockerfile.clang.full'
@@ -411,7 +435,10 @@ pipeline {
         }
         // ************************* Deploy Web ********************************
         stage('Deploy Web') {
-          when { expression { return stage_required.web || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.web || stage_required.full }
+          }
           agent any
           steps {
             dir('web') { unstash 'web' }
@@ -442,7 +469,10 @@ pipeline {
         }
         // *********************** Deploy envinf1 ******************************
         stage('Deploy envinf1') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent { label "envinf1"}
           steps {
             script {
@@ -466,7 +496,10 @@ pipeline {
         }
         // ******************** Deploy envinf1 PETSc ***************************
         stage('Deploy envinf1 PETSc') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent { label "envinf1"}
           steps {
             script {
@@ -491,7 +524,10 @@ pipeline {
         }
         // ************************** Sanitizer ********************************
         stage('Sanitizer') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {
             dockerfile {
               filename 'Dockerfile.clang.minimal'
@@ -532,7 +568,10 @@ pipeline {
         }
         // ********************* Update ufz/ogs-data ***************************
         stage('Update ogs-data') {
-          when { expression { return stage_required.data } }
+          when {
+            beforeAgent true
+            expression { return stage_required.data }
+          }
           agent any
           steps {
             script {
