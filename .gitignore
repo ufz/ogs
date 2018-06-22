@@ -17,3 +17,5 @@ conaninfo.txt
 CMakeLists.txt.user*
 
 *.pyc
+
+Tests/**/*.md5
