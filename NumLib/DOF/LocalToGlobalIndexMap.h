@@ -153,6 +153,7 @@ private:
     explicit LocalToGlobalIndexMap(
         std::vector<MeshLib::MeshSubset>&& mesh_subsets,
         std::vector<int> const& global_component_ids,
+        std::vector<int> const& variable_component_offsets,
         std::vector<MeshLib::Element*> const& elements,
         NumLib::MeshComponentMap&& mesh_component_map);
 

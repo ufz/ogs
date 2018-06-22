@@ -189,12 +189,12 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubset>&& mesh_subsets,
     std::vector<int> const& global_component_ids,
+    std::vector<int> const& variable_component_offsets,
     std::vector<MeshLib::Element*> const& elements,
     NumLib::MeshComponentMap&& mesh_component_map)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(std::move(mesh_component_map)),
-      _variable_component_offsets(
-          to_cumulative(std::vector<int>(1, 1)))  // Single variable only.
+      _variable_component_offsets(variable_component_offsets)
 {
     // Each subset in the mesh_subsets represents a single component.
     if (_mesh_subsets.size() != global_component_ids.size())
@@ -247,9 +247,9 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
         all_mesh_subsets.emplace_back(new_mesh_subset);
     all_mesh_subsets.emplace_back(std::move(new_mesh_subset));
 
-    return new LocalToGlobalIndexMap(std::move(all_mesh_subsets),
-                                     global_component_ids, elements,
-                                     std::move(mesh_component_map));
+    return new LocalToGlobalIndexMap(
+        std::move(all_mesh_subsets), global_component_ids,
+        _variable_component_offsets, elements, std::move(mesh_component_map));
 }
 
 std::size_t LocalToGlobalIndexMap::dofSizeWithGhosts() const
