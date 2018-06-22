@@ -9,6 +9,7 @@ pipeline {
     ansiColor('xterm')
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '10'))
+    timeout(time: 3, unit: 'HOURS')
   }
   stages {
      // *************************** Git Check **********************************
