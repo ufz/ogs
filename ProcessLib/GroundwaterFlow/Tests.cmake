@@ -645,7 +645,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    square_1x1_quad_1e6_nodal_sources_expected.vtu square_1e6_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1.41 1e-16
-    VIS square_1e6_pcs_0_ts_1_t_1.000000.vtu
+    square_1x1_quad_1e6_nodal_sources_expected.vtu square_1e6__with_nodal_sources_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1.41 1e-16
+    VIS square_1e6__nodal_sources_expected_pcs_0_ts_1_t_1.000000.vtu
 )
 

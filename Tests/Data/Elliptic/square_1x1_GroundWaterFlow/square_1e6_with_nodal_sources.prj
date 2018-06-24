@@ -41,7 +41,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e6</prefix>
+            <prefix>square_1e6_with_nodal_sources</prefix>
         </output>
     </time_loop>
     <parameters>
