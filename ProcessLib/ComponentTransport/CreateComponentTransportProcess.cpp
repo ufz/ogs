@@ -201,7 +201,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        use_monolithic_scheme);
+        use_monolithic_scheme, std::move(surface_mesh),
+        std::move(balance_pv_name), std::move(balance_out_fname));
 }
 
 }  // namespace ComponentTransport

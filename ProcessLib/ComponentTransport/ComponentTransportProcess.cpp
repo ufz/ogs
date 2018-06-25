@@ -27,12 +27,17 @@ ComponentTransportProcess::ComponentTransportProcess(
     ComponentTransportProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme,
+    std::unique_ptr<MeshLib::Mesh>&& balance_mesh,
+    std::string&& balance_pv_name, std::string&& balance_out_fname)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),
-      _process_data(std::move(process_data))
+      _process_data(std::move(process_data)),
+      _balance_mesh(std::move(balance_mesh)),
+      _balance_pv_name(std::move(balance_pv_name)),
+      _balance_out_fname(std::move(balance_out_fname))
 {
 }
 
