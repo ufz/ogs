@@ -29,7 +29,9 @@ std::unique_ptr<Process> createComponentTransportProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::string const& project_directory,
+    std::string const& output_directory)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "ComponentTransport");

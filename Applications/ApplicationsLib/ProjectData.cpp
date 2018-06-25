@@ -465,7 +465,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 ProcessLib::ComponentTransport::createComponentTransportProcess(
                     *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
-                    process_config);
+                    process_config, project_directory, output_directory);
         }
         else
 #endif
