@@ -23,8 +23,8 @@ public:
     /// variable has.
     /// @param integration_order Integration order used in local assembly.
     SurfaceFlux(MeshLib::Mesh& boundary_mesh,
-                         std::size_t bulk_property_number_of_components,
-                         unsigned const integration_order);
+                std::size_t bulk_property_number_of_components,
+                unsigned const integration_order);
 
     /// Executes for each element of the mesh the local intergration procedure.
     /// @param x The global solution the intergration values will be fetched of.

@@ -105,6 +105,10 @@ public:
     bool isLinear() const override { return false; }
     //! @}
 
+    Eigen::Vector3d getFlux(std::size_t const element_id,
+                            MathLib::Point3d const& p, double const t,
+                            GlobalVector const& x) const override;
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,

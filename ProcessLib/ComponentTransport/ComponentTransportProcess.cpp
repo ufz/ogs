@@ -88,6 +88,18 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
+Eigen::Vector3d ComponentTransportProcess::getFlux(std::size_t const element_id,
+                                                   MathLib::Point3d const& p,
+                                                   double const t,
+                                                   GlobalVector const& x) const
+{
+    std::vector<GlobalIndexType> indices_cache;
+    auto const r_c_indices = NumLib::getRowColumnIndices(
+        element_id, *_local_to_global_index_map, indices_cache);
+    std::vector<double> local_x(x.get(r_c_indices.rows));
+    return _local_assemblers[element_id]->getFlux(p, t, local_x);
+}
+
 }  // namespace ComponentTransport
 }  // namespace ProcessLib
 
