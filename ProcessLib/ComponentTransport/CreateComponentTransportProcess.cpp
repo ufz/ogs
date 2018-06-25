@@ -12,6 +12,9 @@
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
 
+#include "MeshLib/IO/readMeshFromFile.h"
+
+#include "ProcessLib/CalculateSurfaceFlux/ParseCalculateSurfaceFluxData.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -166,6 +169,33 @@ std::unique_ptr<Process> createComponentTransportProcess(
 
     ProcessLib::createSecondaryVariables(config, secondary_variables,
                                          named_function_caller);
+
+    // for the balance
+    std::string mesh_name; // surface mesh the balance will computed on
+    std::string balance_pv_name;
+    std::string balance_out_fname;
+    std::unique_ptr<MeshLib::Mesh> surface_mesh;
+    ProcessLib::parseCalculateSurfaceFluxData(
+        config, mesh_name, balance_pv_name, balance_out_fname);
+
+    if (!mesh_name.empty())  // balance is optional
+    {
+        mesh_name = BaseLib::copyPathToFileName(mesh_name, project_directory);
+
+        balance_out_fname =
+            BaseLib::copyPathToFileName(balance_out_fname, output_directory);
+
+        surface_mesh.reset(MeshLib::IO::readMeshFromFile(mesh_name));
+
+        DBUG(
+            "read balance meta data:\n\tbalance mesh:\"%s\"\n\tproperty name: "
+            "\"%s\"\n\toutput to: \"%s\"",
+            mesh_name.c_str(), balance_pv_name.c_str(),
+            balance_out_fname.c_str());
+
+        // Surface mesh and bulk mesh must have equal axial symmetry flags!
+        surface_mesh->setAxiallySymmetric(mesh.isAxiallySymmetric());
+    }
 
     return std::make_unique<ComponentTransportProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
