@@ -11,6 +11,11 @@
 
 #include <cassert>
 
+// TODO used for output, if output classes are ready this has to be changed
+#include "MeshLib/IO/writeMeshToFile.h"
+
+#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
+
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib
@@ -103,6 +108,54 @@ Eigen::Vector3d ComponentTransportProcess::getFlux(std::size_t const element_id,
         element_id, *_local_to_global_index_map, indices_cache);
     std::vector<double> local_x(x.get(r_c_indices.rows));
     return _local_assemblers[element_id]->getFlux(p, t, local_x);
+}
+
+void ComponentTransportProcess::postTimestepConcreteProcess(
+    GlobalVector const& x,
+    const double t,
+    const double /*delta_t*/,
+    int const process_id)
+{
+    // For the monolithic scheme, process_id is always zero.
+    if (_use_monolithic_scheme && process_id != 0)
+    {
+        OGS_FATAL(
+            "The condition of process_id = 0 must be satisfied for "
+            "monolithic ComponentTransportProcess, which is a single process.");
+    }
+    if (!_use_monolithic_scheme && process_id != 1)
+    {
+        DBUG(
+            "This is the transport part of the staggered "
+            "ComponentTransportProcess.");
+        return;
+    }
+    if (!_balance_mesh)  // computing the balance is optional
+    {
+        return;
+    }
+    auto* const balance_pv = MeshLib::getOrCreateMeshProperty<double>(
+        *_balance_mesh, _balance_pv_name, MeshLib::MeshItemType::Cell, 1);
+    // initialise the PropertyVector pv with zero values
+    std::fill(balance_pv->begin(), balance_pv->end(), 0.0);
+    auto balance = ProcessLib::CalculateSurfaceFlux(
+        *_balance_mesh,
+        getProcessVariables(process_id)[0].get().getNumberOfComponents(),
+        _integration_order);
+
+    balance.integrate(
+        x, *balance_pv, t, _mesh,
+        [this](std::size_t const element_id, MathLib::Point3d const& pnt,
+               double const t, GlobalVector const& x) {
+            return getFlux(element_id, pnt, t, x);
+        });
+    // post: surface_mesh has scalar element property
+
+    // TODO output, if output classes are ready this has to be
+    // changed
+    std::string const fname = BaseLib::dropFileExtension(_balance_out_fname) +
+                              "_t_" + std::to_string(t) + ".vtu";
+    MeshLib::IO::writeMeshToFile(*_balance_mesh, fname);
 }
 
 }  // namespace ComponentTransport
