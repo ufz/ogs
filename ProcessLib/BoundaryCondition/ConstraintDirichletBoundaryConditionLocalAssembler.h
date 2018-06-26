@@ -18,8 +18,8 @@
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
 #include "MeshLib/Elements/MapBulkElementPoint.h"
-#include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Elements/Elements.h"
+#include "MeshLib/Elements/Utils.h"
 
 namespace ProcessLib
 {
@@ -78,38 +78,17 @@ public:
     /// @param bulk_ids Pairs of bulk element ids and bulk element face ids.
     ConstraintDirichletBoundaryConditionLocalAssembler(
         MeshLib::Element const& surface_element,
-        std::size_t const local_matrix_size,
-        bool const is_axially_symmetric, unsigned const integration_order,
-        MeshLib::Mesh const& bulk_mesh,
+        std::size_t const local_matrix_size, bool const is_axially_symmetric,
+        unsigned const integration_order, MeshLib::Mesh const& bulk_mesh,
         std::vector<std::pair<std::size_t, unsigned>> bulk_ids)
         : _surface_element(surface_element),
           _integration_method(integration_order),
-          _bulk_element_id(bulk_ids[_surface_element.getID()].first)
+          _bulk_element_id(bulk_ids[_surface_element.getID()].first),
+          _surface_element_normal(MeshLib::calculateNormalizedSurfaceNormal(
+              _surface_element, *(bulk_mesh.getElements()[_bulk_element_id])))
     {
         (void)local_matrix_size; // unused, but needed for the interface
 
-        if (_surface_element.getDimension() < 2)
-        {
-            auto const bulk_element_normal =
-                MeshLib::FaceRule::getSurfaceNormal(
-                    bulk_mesh.getElement(_bulk_element_id));
-            MathLib::Vector3 const edge_vector(*_surface_element.getNode(0),
-                                               *_surface_element.getNode(1));
-            _surface_element_normal =
-                MathLib::crossProduct(bulk_element_normal, edge_vector);
-        }
-        else
-        {
-            _surface_element_normal =
-                MeshLib::FaceRule::getSurfaceNormal(&_surface_element);
-        }
-
-        _surface_element_normal.normalize();
-        // At the moment (2018-04-26) the surface normal is not oriented
-        // according to the right hand rule
-        // for correct results it is necessary to multiply the normal with
-        // -1
-        _surface_element_normal *= -1;
 
         using FemType =
             NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
@@ -188,7 +167,7 @@ private:
 
     IntegrationMethod const _integration_method;
     std::size_t const _bulk_element_id;
-    MathLib::Vector3 _surface_element_normal;
+    MathLib::Vector3 const _surface_element_normal;
 };
 
 }  // ProcessLib
