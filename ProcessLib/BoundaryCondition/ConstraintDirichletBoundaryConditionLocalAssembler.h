@@ -23,6 +23,21 @@
 
 namespace ProcessLib
 {
+struct IntegrationPointData final
+{
+    IntegrationPointData(double const& detJ,
+                         double const& integral_measure,
+                         double const& integration_weight)
+        : detJ_times_integralMeasure_times_weight(detJ * integral_measure *
+                                                  integration_weight)
+    {
+    }
+
+    double const detJ_times_integralMeasure_times_weight;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+};
+
 class ConstraintDirichletBoundaryConditionLocalAssemblerInterface
 {
 public:
@@ -81,7 +96,7 @@ public:
             Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
             shape_matrices;
         shape_matrices.reserve(n_integration_points);
-        _detJ_times_integralMeasure_times_weight.reserve(n_integration_points);
+        _ip_data.reserve(n_integration_points);
         for (std::size_t ip = 0; ip < n_integration_points; ++ip)
         {
             shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
@@ -90,9 +105,9 @@ public:
                 _integration_method.getWeightedPoint(ip).getCoords(),
                 shape_matrices[ip], GlobalDim, is_axially_symmetric);
             auto const& wp = _integration_method.getWeightedPoint(ip);
-            _detJ_times_integralMeasure_times_weight.push_back(
-                shape_matrices[ip].detJ * shape_matrices[ip].integralMeasure *
-                wp.getWeight());
+            _ip_data.emplace_back(shape_matrices[ip].detJ,
+                                  shape_matrices[ip].integralMeasure,
+                                  wp.getWeight());
         }
     }
 
@@ -150,8 +165,9 @@ public:
                     .dot(Eigen::Map<Eigen::RowVectorXd const>(
                         surface_element_normal.getCoords(), 3)));
 
-            integrated_value += bulk_grad_times_normal *
-                                _detJ_times_integralMeasure_times_weight[ip];
+            integrated_value +=
+                bulk_grad_times_normal *
+                _ip_data[ip].detJ_times_integralMeasure_times_weight;
         }
         return integrated_value;
     }
@@ -159,7 +175,7 @@ public:
 private:
     MeshLib::Element const& _surface_element;
 
-    std::vector<double> _detJ_times_integralMeasure_times_weight;
+    std::vector<IntegrationPointData> _ip_data;
 
     IntegrationMethod const _integration_method;
     std::size_t const _bulk_element_id;
