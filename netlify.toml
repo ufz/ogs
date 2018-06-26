@@ -6,9 +6,29 @@
     git lfs fetch
     yarn --ignore-engines --ignore-optional --non-interactive &&
     node_modules/.bin/webpack -p --mode=production &&
-    hugo -b $DEPLOY_PRIME_URL"""
+    hugo"""
 
 [context.production.environment]
   HUGO_VERSION = "0.42.1"
+  HUGO_ENV = "production"
+  HUGO_ENABLEGITINFO = "true"
+
+[context.deploy-preview]
+  command = """
+    git lfs fetch
+    yarn --ignore-engines --ignore-optional --non-interactive &&
+    node_modules/.bin/webpack -p --mode=production &&
+    hugo -b $DEPLOY_PRIME_URL"""
+
 [context.deploy-preview.environment]
+  HUGO_VERSION = "0.42.1"
+
+[context.branch-deploy]
+  command = """
+    git lfs fetch
+    yarn --ignore-engines --ignore-optional --non-interactive &&
+    node_modules/.bin/webpack -p --mode=production &&
+    hugo -b $DEPLOY_PRIME_URL"""
+
+[context.branch-deploy.environment]
   HUGO_VERSION = "0.42.1"
