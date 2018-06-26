@@ -23,6 +23,7 @@
 
 namespace ProcessLib
 {
+
 struct IntegrationPointData final
 {
     IntegrationPointData(double const& detJ,
@@ -70,11 +71,13 @@ public:
     /// @param is_axially_symmetric Corrects integration measure for cylinder
     /// coordinates.
     /// @param integration_order The order of the integration.
+    /// @param bulk_mesh The bulk mesh the process is defined on.
     /// @param bulk_ids Pairs of bulk element ids and bulk element face ids.
     ConstraintDirichletBoundaryConditionLocalAssembler(
         MeshLib::Element const& surface_element,
         std::size_t const local_matrix_size,
         bool const is_axially_symmetric, unsigned const integration_order,
+        MeshLib::Mesh const& bulk_mesh,
         std::vector<std::pair<std::size_t, unsigned>> bulk_ids)
         : _surface_element(surface_element),
           _integration_method(integration_order),
@@ -82,6 +85,30 @@ public:
           _bulk_face_id(bulk_ids[_surface_element.getID()].second)
     {
         (void)local_matrix_size; // unused, but needed for the interface
+
+        if (_surface_element.getDimension() < 2)
+        {
+            auto const bulk_element_normal =
+                MeshLib::FaceRule::getSurfaceNormal(
+                    bulk_mesh.getElement(_bulk_element_id));
+            MathLib::Vector3 const edge_vector(*_surface_element.getNode(0),
+                                               *_surface_element.getNode(1));
+            _surface_element_normal =
+                MathLib::crossProduct(bulk_element_normal, edge_vector);
+        }
+        else
+        {
+            _surface_element_normal =
+                MeshLib::FaceRule::getSurfaceNormal(&_surface_element);
+        }
+
+        _surface_element_normal.normalize();
+        // At the moment (2018-04-26) the surface normal is not oriented
+        // according to the right hand rule
+        // for correct results it is necessary to multiply the normal with
+        // -1
+        _surface_element_normal *= -1;
+
         using FemType =
             NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
 
@@ -104,6 +131,7 @@ public:
             fe.template computeShapeFunctions<NumLib::ShapeMatrixType::N_J>(
                 _integration_method.getWeightedPoint(ip).getCoords(),
                 shape_matrices[ip], GlobalDim, is_axially_symmetric);
+
             auto const& wp = _integration_method.getWeightedPoint(ip);
             _ip_data.emplace_back(shape_matrices[ip].detJ,
                                   shape_matrices[ip].integralMeasure,
@@ -124,27 +152,6 @@ public:
             std::size_t const, MathLib::Point3d const&, double const,
             GlobalVector const&)> const& getFlux) override
     {
-        MathLib::Vector3 surface_element_normal;
-        if (_surface_element.getDimension() < 2)
-        {
-            auto const bulk_element_normal =
-                MeshLib::FaceRule::getSurfaceNormal(
-                    bulk_mesh.getElement(_bulk_element_id));
-            MathLib::Vector3 const edge_vector(*_surface_element.getNode(0),
-                                               *_surface_element.getNode(1));
-            surface_element_normal =
-                MathLib::crossProduct(bulk_element_normal, edge_vector);
-        } else {
-            surface_element_normal =
-                MeshLib::FaceRule::getSurfaceNormal(&_surface_element);
-        }
-
-        surface_element_normal.normalize();
-        // At the moment (2018-04-26) the surface normal is not oriented
-        // according to the right hand rule
-        // for correct results it is necessary to multiply the normal with -1
-        surface_element_normal *= -1;
-
         auto const n_integration_points =
             _integration_method.getNumberOfPoints();
         // integrated_value +=
@@ -163,7 +170,7 @@ public:
                 Eigen::Map<Eigen::RowVectorXd const>(bulk_flux.data(),
                                                      bulk_flux.size())
                     .dot(Eigen::Map<Eigen::RowVectorXd const>(
-                        surface_element_normal.getCoords(), 3)));
+                        _surface_element_normal.getCoords(), 3)));
 
             integrated_value +=
                 bulk_grad_times_normal *
@@ -180,6 +187,7 @@ private:
     IntegrationMethod const _integration_method;
     std::size_t const _bulk_element_id;
     unsigned const _bulk_face_id;
+    MathLib::Vector3 _surface_element_normal;
 };
 
 }  // ProcessLib

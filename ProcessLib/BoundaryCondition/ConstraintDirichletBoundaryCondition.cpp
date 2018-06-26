@@ -116,7 +116,7 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
         ConstraintDirichletBoundaryConditionLocalAssembler>(
         _bulk_mesh.getDimension(), _bc_mesh.getElements(), *_dof_table_boundary,
         shape_function_order, _local_assemblers, _bc_mesh.isAxiallySymmetric(),
-        _integration_order, _bulk_ids);
+        _integration_order, bulk_mesh, _bulk_ids);
 }
 
 void ConstraintDirichletBoundaryCondition::preTimestep(double t,
