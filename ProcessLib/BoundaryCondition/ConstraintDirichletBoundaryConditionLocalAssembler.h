@@ -28,13 +28,16 @@ struct IntegrationPointData final
 {
     IntegrationPointData(double const& detJ,
                          double const& integral_measure,
-                         double const& integration_weight)
+                         double const& integration_weight,
+                         MathLib::Point3d&& bulk_element_point_)
         : detJ_times_integralMeasure_times_weight(detJ * integral_measure *
-                                                  integration_weight)
+                                                  integration_weight),
+          bulk_element_point(bulk_element_point_)
     {
     }
 
     double const detJ_times_integralMeasure_times_weight;
+    MathLib::Point3d bulk_element_point;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
@@ -133,9 +136,12 @@ public:
                 shape_matrices[ip], GlobalDim, is_axially_symmetric);
 
             auto const& wp = _integration_method.getWeightedPoint(ip);
+            auto bulk_element_point = MeshLib::getBulkElementPoint(
+                bulk_mesh, _bulk_element_id, _bulk_face_id, wp);
             _ip_data.emplace_back(shape_matrices[ip].detJ,
                                   shape_matrices[ip].integralMeasure,
-                                  wp.getWeight());
+                                  wp.getWeight(),
+                                  std::move(bulk_element_point));
         }
     }
 
@@ -159,11 +165,8 @@ public:
         double integrated_value = 0;
         for (auto ip(0); ip < n_integration_points; ip++)
         {
-            auto const& wp = _integration_method.getWeightedPoint(ip);
-            auto const bulk_element_point = MeshLib::getBulkElementPoint(
-                bulk_mesh, _bulk_element_id, _bulk_face_id, wp);
-            auto const bulk_flux =
-                getFlux(_bulk_element_id, bulk_element_point, t, x);
+            auto const bulk_flux = getFlux(
+                _bulk_element_id, _ip_data[ip].bulk_element_point, t, x);
 
             // TODO find solution for 2d case
             double const bulk_grad_times_normal(
