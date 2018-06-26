@@ -84,8 +84,7 @@ public:
         std::vector<std::pair<std::size_t, unsigned>> bulk_ids)
         : _surface_element(surface_element),
           _integration_method(integration_order),
-          _bulk_element_id(bulk_ids[_surface_element.getID()].first),
-          _bulk_face_id(bulk_ids[_surface_element.getID()].second)
+          _bulk_element_id(bulk_ids[_surface_element.getID()].first)
     {
         (void)local_matrix_size; // unused, but needed for the interface
 
@@ -121,6 +120,7 @@ public:
         std::size_t const n_integration_points =
             _integration_method.getNumberOfPoints();
 
+        auto const bulk_face_id = bulk_ids[_surface_element.getID()].second;
         std::vector<
             typename ShapeMatricesType::ShapeMatrices,
             Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
@@ -137,7 +137,7 @@ public:
 
             auto const& wp = _integration_method.getWeightedPoint(ip);
             auto bulk_element_point = MeshLib::getBulkElementPoint(
-                bulk_mesh, _bulk_element_id, _bulk_face_id, wp);
+                bulk_mesh, _bulk_element_id, bulk_face_id, wp);
             _ip_data.emplace_back(shape_matrices[ip].detJ,
                                   shape_matrices[ip].integralMeasure,
                                   wp.getWeight(),
@@ -188,7 +188,6 @@ private:
 
     IntegrationMethod const _integration_method;
     std::size_t const _bulk_element_id;
-    unsigned const _bulk_face_id;
     MathLib::Vector3 _surface_element_normal;
 };
 
