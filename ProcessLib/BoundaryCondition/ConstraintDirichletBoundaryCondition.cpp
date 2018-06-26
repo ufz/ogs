@@ -129,7 +129,7 @@ void ConstraintDirichletBoundaryCondition::preTimestep(double t,
     {
         _flux_values[boundary_element->getID()] =
             _local_assemblers[boundary_element->getID()]->integrate(
-                x, t, _bulk_mesh,
+                x, t,
                 [this](std::size_t const element_id,
                        MathLib::Point3d const& pnt, double const t,
                        GlobalVector const& x) {

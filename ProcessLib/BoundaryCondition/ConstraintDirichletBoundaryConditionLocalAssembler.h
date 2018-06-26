@@ -49,7 +49,7 @@ public:
         default;
 
     virtual double integrate(
-        GlobalVector const& x, double const t, MeshLib::Mesh const& bulk_mesh,
+        GlobalVector const& x, double const t,
         std::function<Eigen::Vector3d(std::size_t const,
                                       MathLib::Point3d const&, double const,
                                       GlobalVector const&)> const& getFlux) = 0;
@@ -149,11 +149,10 @@ public:
     /// @param x The global vector containing the values for numerical
     /// integration.
     /// @param t The point in time the the integration will be performed.
-    /// @param bulk_mesh The bulk mesh the process is defined on.
     /// @param getFlux The function of the constraining process used to
     /// calculate the flux.
     double integrate(
-        GlobalVector const& x, double const t, MeshLib::Mesh const& bulk_mesh,
+        GlobalVector const& x, double const t,
         std::function<Eigen::Vector3d(
             std::size_t const, MathLib::Point3d const&, double const,
             GlobalVector const&)> const& getFlux) override
