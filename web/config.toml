@@ -29,6 +29,12 @@ staticDir = ["dist", "static"]
   identifier = "docs"
   weight = 4
 
+[[menu.main]]
+  name = "OGS-5"
+  url = "/ogs-5/"
+  identifier = "ogs-5"
+  weight = 5
+
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]
   name = "Getting Started"
