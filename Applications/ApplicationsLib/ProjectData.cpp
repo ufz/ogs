@@ -72,6 +72,9 @@
 #ifdef OGS_BUILD_PROCESS_RICHARDSFLOW
 #include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
 #endif
+#ifdef OGS_BUILD_PROCESS_RICHARDSMECHANICS
+#include "ProcessLib/RichardsMechanics/CreateRichardsMechanicsProcess.h"
+#endif
 #ifdef OGS_BUILD_PROCESS_SMALLDEFORMATION
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #endif
@@ -551,6 +554,30 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config, _curves);
+        }
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_RICHARDSMECHANICS
+            if (type == "RICHARDS_MECHANICS")
+        {
+            //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__dimension}
+            switch (process_config.getConfigParameter<int>("dimension"))
+            {
+                case 2:
+                    process = ProcessLib::RichardsMechanics::
+                        createRichardsMechanicsProcess<2>(
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, integration_order,
+                            process_config);
+                    break;
+                case 3:
+                    process = ProcessLib::RichardsMechanics::
+                        createRichardsMechanicsProcess<3>(
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, integration_order,
+                            process_config);
+                    break;
+            }
         }
         else
 #endif
