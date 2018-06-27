@@ -26,7 +26,7 @@ namespace ProcessLib
 class BoundaryConditionBuilder;
 
 /// A named process variable. Its properties includes the mesh, and the initial
-/// and boundary conditions.
+/// and boundary conditions as well as the source terms.
 class ProcessVariable
 {
 public:
@@ -53,7 +53,8 @@ public:
     std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryConditions(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
         unsigned const integration_order,
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters);
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+        Process const& process);
 
     std::vector<std::unique_ptr<NodalSourceTerm>> createSourceTerms(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,

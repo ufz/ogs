@@ -27,6 +27,7 @@ namespace ProcessLib
 {
 struct BoundaryConditionConfig;
 struct ParameterBase;
+class Process;
 
 class BoundaryCondition
 {
@@ -65,11 +66,11 @@ public:
     virtual std::unique_ptr<BoundaryCondition> createBoundaryCondition(
         const BoundaryConditionConfig& config,
         const NumLib::LocalToGlobalIndexMap& dof_table,
-        const MeshLib::Mesh& mesh,
-        const int variable_id, const unsigned integration_order,
-        const unsigned shapefunction_order,
+        const MeshLib::Mesh& mesh, const int variable_id,
+        const unsigned integration_order, const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
-            parameters);
+            parameters,
+        Process const& process);
 
 protected:
     virtual std::unique_ptr<BoundaryCondition> createDirichletBoundaryCondition(
@@ -80,6 +81,16 @@ protected:
         const unsigned shapefunction_order,
         const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
             parameters);
+
+    virtual std::unique_ptr<BoundaryCondition>
+    createConstraintDirichletBoundaryCondition(
+        const BoundaryConditionConfig& config,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
+        const MeshLib::Mesh& mesh, const int variable_id,
+        const unsigned integration_order,
+        const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>&
+            parameters,
+        Process const& process);
 
     virtual std::unique_ptr<BoundaryCondition> createNeumannBoundaryCondition(
         const BoundaryConditionConfig& config,
