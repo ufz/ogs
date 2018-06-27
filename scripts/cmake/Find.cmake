@@ -66,7 +66,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 include(VtkModules)
 #find_package(VTK COMPONENTS ${VTK_MODULES} REQUIRED)
-find_package(VTK 8.0.0 REQUIRED)
+find_package(VTK 8.1.0 REQUIRED)
 include(${VTK_USE_FILE})
 
 find_package(Eigen3 3.2.9 REQUIRED)

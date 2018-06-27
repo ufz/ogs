@@ -18,13 +18,13 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 set(CONAN_REQUIRES
     Boost/1.64.0@conan/stable
     Eigen3/3.2.9@bilke/stable
-    VTK/8.1.0@bilke/testing
+    VTK/8.1.0@bilke/stable
     CACHE INTERNAL ""
 )
 
 set(CONAN_OPTIONS
     Boost:header_only=True
-    Qt:xmlpatterns=True
+    Qt:qtxmlpatterns=True
     CACHE INTERNAL ""
 )
 
@@ -48,7 +48,7 @@ if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         Shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
-        Qt/5.11@bincrafters/stable
+        Qt/5.11.0@bilke/stable
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:qt=True)
 endif()
