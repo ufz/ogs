@@ -1,5 +1,5 @@
 languageCode = "en-us"
-title = "OpenGeoSys"
+title = "OpenGeoSys-6"
 theme = "ogs"
 baseURL = "https://www.opengeosys.org"
 buildDrafts = false
@@ -30,7 +30,7 @@ staticDir = ["dist", "static"]
   weight = 4
 
 [[menu.main]]
-  name = "OGS-5"
+  name = "OpenGeoSys-5"
   url = "/ogs-5/"
   identifier = "ogs-5"
   weight = 5
