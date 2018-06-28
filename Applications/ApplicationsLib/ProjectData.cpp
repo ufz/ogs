@@ -21,8 +21,8 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/uniqueInsert.h"
 
+#include "GeoLib/GEOObjects.h"
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshGeoToolsLib/CreateSearchLength.h"
 #include "MeshGeoToolsLib/SearchLength.h"
@@ -90,16 +90,69 @@
 #include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowWithPrhoProcess.h"
 #endif
 
-namespace detail
+namespace
 {
-static void readGeometry(std::string const& fname,
-                         GeoLib::GEOObjects& geo_objects)
+void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects)
 {
     DBUG("Reading geometry file \'%s\'.", fname.c_str());
     GeoLib::IO::BoostXmlGmlInterface gml_reader(geo_objects);
     gml_reader.readFile(fname);
 }
+
+std::unique_ptr<MeshLib::Mesh> readSingleMesh(
+    BaseLib::ConfigTree const& mesh_config_parameter,
+    std::string const& project_directory)
+{
+    std::string const mesh_file = BaseLib::copyPathToFileName(
+        mesh_config_parameter.getValue<std::string>(), project_directory);
+
+    auto mesh = std::unique_ptr<MeshLib::Mesh>(
+        MeshLib::IO::readMeshFromFile(mesh_file));
+    if (!mesh)
+    {
+        OGS_FATAL("Could not read mesh from \'%s\' file. No mesh added.",
+                  mesh_file.c_str());
+    }
+
+    if (auto const axially_symmetric =
+            //! \ogs_file_attr{prj__mesh__axially_symmetric}
+        mesh_config_parameter.getConfigAttributeOptional<bool>(
+            "axially_symmetric"))
+    {
+        mesh->setAxiallySymmetric(*axially_symmetric);
+    }
+
+    return mesh;
 }
+
+std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
+    BaseLib::ConfigTree const& config, std::string const& project_directory)
+{
+    std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
+
+    //! \ogs_file_param{prj__mesh}
+    meshes.push_back(
+        readSingleMesh(config.getConfigParameter("mesh"), project_directory));
+
+    std::string const geometry_file = BaseLib::copyPathToFileName(
+        //! \ogs_file_param{prj__geometry}
+        config.getConfigParameter<std::string>("geometry"),
+        project_directory);
+    GeoLib::GEOObjects geoObjects;
+    readGeometry(geometry_file, geoObjects);
+
+    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
+        MeshGeoToolsLib::createSearchLengthAlgorithm(config, *meshes[0]);
+    auto additional_meshes =
+        MeshGeoToolsLib::constructAdditionalMeshesFromGeoObjects(
+            geoObjects, *meshes[0], std::move(search_length_algorithm));
+
+    std::move(begin(additional_meshes), end(additional_meshes),
+              std::back_inserter(meshes));
+
+    return meshes;
+}
+}  // namespace
 
 ProjectData::ProjectData() = default;
 
@@ -107,47 +160,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                          std::string const& project_directory,
                          std::string const& output_directory)
 {
-    std::string const geometry_file = BaseLib::copyPathToFileName(
-        //! \ogs_file_param{prj__geometry}
-        project_config.getConfigParameter<std::string>("geometry"),
-        project_directory);
-    detail::readGeometry(geometry_file, *_geoObjects);
-
-    {
-        //! \ogs_file_param{prj__mesh}
-        auto const mesh_param = project_config.getConfigParameter("mesh");
-
-        std::string const mesh_file = BaseLib::copyPathToFileName(
-            mesh_param.getValue<std::string>(), project_directory);
-
-        MeshLib::Mesh* const mesh = MeshLib::IO::readMeshFromFile(mesh_file);
-        if (!mesh)
-        {
-            OGS_FATAL("Could not read mesh from \'%s\' file. No mesh added.",
-                      mesh_file.c_str());
-        }
-
-        if (auto const axially_symmetric =
-                //! \ogs_file_attr{prj__mesh__axially_symmetric}
-            mesh_param.getConfigAttributeOptional<bool>("axially_symmetric"))
-        {
-            mesh->setAxiallySymmetric(*axially_symmetric);
-        }
-        _mesh_vec.push_back(mesh);
-    }
-
-    std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
-        MeshGeoToolsLib::createSearchLengthAlgorithm(project_config,
-                                                     *_mesh_vec[0]);
-    auto additional_meshes =
-        MeshGeoToolsLib::constructAdditionalMeshesFromGeoObjects(
-            *_geoObjects, *_mesh_vec[0], std::move(search_length_algorithm));
-
-    // release the unique_ptr's while copying to the raw pointers storage.
-    // TODO (naumov) Store unique_ptr's in _mesh_vec.
-    std::transform(begin(additional_meshes), end(additional_meshes),
-                   std::back_inserter(_mesh_vec),
-                   [](auto&& mesh) { return mesh.release(); });
+    _mesh_vec = readMeshes(project_config, project_directory);
 
     //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfigSubtreeOptional("curves"));
@@ -171,14 +184,6 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     //! \ogs_file_param{prj__time_loop}
     parseTimeLoop(project_config.getConfigSubtree("time_loop"),
                   output_directory);
-}
-
-ProjectData::~ProjectData()
-{
-    delete _geoObjects;
-
-    for (MeshLib::Mesh* m : _mesh_vec)
-        delete m;
 }
 
 void ProjectData::parseProcessVariables(

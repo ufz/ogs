@@ -18,17 +18,11 @@
 #include <string>
 
 #include "BaseLib/ConfigTree.h"
-
-#include "GeoLib/GEOObjects.h"
-
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessVariable.h"
 
-namespace MathLib
-{
-class PiecewiseLinearInterpolation;
-}
 namespace MeshLib
 {
 class Mesh;
@@ -71,10 +65,6 @@ public:
 
     ProjectData(ProjectData&) = delete;
 
-    ~ProjectData();
-
-    /// Returns the GEOObjects containing all points, polylines and surfaces.
-    GeoLib::GEOObjects* getGEOObjects() { return _geoObjects; }
 
     //
     // Process interface
@@ -116,8 +106,7 @@ private:
 
     void parseCurves(boost::optional<BaseLib::ConfigTree> const& config);
 
-    GeoLib::GEOObjects* _geoObjects = new GeoLib::GEOObjects();
-    std::vector<MeshLib::Mesh*> _mesh_vec;
+    std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
     std::map<std::string, std::unique_ptr<ProcessLib::Process>> _processes;
     std::vector<ProcessLib::ProcessVariable> _process_variables;
 

@@ -37,6 +37,16 @@ int main(int argc, char* argv[])
         ' ',
         "0.1");
 
+    TCLAP::ValueArg<double> search_length_arg(
+        "s",
+        "searchlength",
+        "search length determining radius for the node search algorithm. "
+        "Non-negative floating point number (default 1e-16) ",
+        false,
+        1e-16,
+        "float");
+    cmd.add(search_length_arg);
+
     TCLAP::ValueArg<std::string> geometry_arg("g",
                                               "geometry",
                                               "the file name the geometry",
@@ -60,8 +70,12 @@ int main(int argc, char* argv[])
 
     auto const geo_objects = readGeometry(geometry_arg.getValue());
 
+    double const search_length = search_length_arg.getValue();
+
     auto const extracted_meshes = constructAdditionalMeshesFromGeoObjects(
-        *geo_objects, *mesh, std::make_unique<MeshGeoToolsLib::SearchLength>());
+        *geo_objects,
+        *mesh,
+        std::make_unique<MeshGeoToolsLib::SearchLength>(search_length));
 
     for (auto const& m_ptr : extracted_meshes)
     {

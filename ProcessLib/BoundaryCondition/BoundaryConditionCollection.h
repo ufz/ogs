@@ -12,6 +12,8 @@
 #include "NumLib/IndexValueVector.h"
 #include "ProcessLib/ProcessVariable.h"
 
+#include "BoundaryCondition.h"
+
 namespace ProcessLib
 {
 class BoundaryConditionCollection final

@@ -121,7 +121,7 @@ struct Parameter : public ParameterBase
 //! The \c meshes vector is used to set up parameters from mesh input data.
 std::unique_ptr<ParameterBase> createParameter(
     BaseLib::ConfigTree const& config,
-    const std::vector<MeshLib::Mesh*>& meshes,
+    const std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);

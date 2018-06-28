@@ -106,6 +106,12 @@ constructAdditionalMeshesFromGeoObjects(GeoLib::GEOObjects const& geo_objects,
                   std::back_inserter(additional_meshes));
     }
 
+    // Set axial symmetry for the additional meshes to the same value as the
+    // "bulk" mesh.
+    std::for_each(begin(additional_meshes), end(additional_meshes),
+                  [axial_symmetry = mesh.isAxiallySymmetric()](auto& m) {
+                      m->setAxiallySymmetric(axial_symmetry);
+                  });
     return additional_meshes;
 }
 }  // namespace MeshGeoToolsLib

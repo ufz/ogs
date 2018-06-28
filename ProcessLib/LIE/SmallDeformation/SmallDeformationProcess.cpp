@@ -15,7 +15,6 @@
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
-#include "ProcessLib/LIE/BoundaryCondition/BoundaryConditionBuilder.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/CreateLocalAssemblers.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerFracture.h"
@@ -97,20 +96,12 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
             *fracture_prop.get());
     }
 
-    // need to use a custom Neumann BC assembler for displacement jumps
-    int pv_disp_jump_id = 0;
-    const int process_id = 0;
-    for (ProcessVariable& pv : getProcessVariables(process_id))
-    {
-        if (pv.getName().find("displacement_jump") == std::string::npos)
-        {
-            continue;
-        }
-        pv.setBoundaryConditionBuilder(
-            std::make_unique<BoundaryConditionBuilder>(
-                *_process_data._vec_fracture_property[pv_disp_jump_id].get()));
-        pv_disp_jump_id++;
-    }
+    //
+    // If Neumann BCs for the displacement_jump variable are required they need
+    // special treatment because of the levelset function. The implementation
+    // exists in the version 6.1.0 (e54815cc07ee89c81f953a4955b1c788595dd725)
+    // and was removed due to lack of applications.
+    //
 
     MeshLib::PropertyVector<int> const* material_ids(
         mesh.getProperties().getPropertyVector<int>("MaterialIDs"));
