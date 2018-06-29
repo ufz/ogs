@@ -111,7 +111,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>ConstViscosityThermalConvection</prefix>
+            <prefix>constraint_bc_1e3</prefix>
             <timesteps>
                 <pair>
                     <repeat> 10 </repeat>
