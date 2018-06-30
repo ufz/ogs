@@ -122,6 +122,11 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
                   mesh_file.c_str());
     }
 
+#ifdef DOXYGEN_DOCU_ONLY
+    //! \ogs_file_attr{prj__meshes__mesh__axially_symmetric}
+    mesh_config_parameter.getConfigAttributeOptional<bool>("axially_symmetric");
+#endif  // DOXYGEN_DOCU_ONLY
+
     if (auto const axially_symmetric =
             //! \ogs_file_attr{prj__mesh__axially_symmetric}
         mesh_config_parameter.getConfigAttributeOptional<bool>(

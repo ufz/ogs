@@ -30,6 +30,12 @@ MeshLib::Mesh const& findMeshInConfig(
     //
     std::string mesh_name;  // Either given directly in <mesh> or constructed
                             // from <geometrical_set>_<geometry>.
+
+#ifdef DOXYGEN_DOCU_ONLY
+    //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__mesh}
+    config.getConfigParameterOptional<std::string>("mesh");
+#endif  // DOXYGEN_DOCU_ONLY
+
     auto optional_mesh_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__mesh}
         config.getConfigParameterOptional<std::string>("mesh");
@@ -40,6 +46,14 @@ MeshLib::Mesh const& findMeshInConfig(
     else
     {
         // Looking for the mesh created before for the given geometry.
+
+#ifdef DOXYGEN_DOCU_ONLY
+        //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometrical_set}
+        config.getConfigParameterOptional<std::string>("geometrical_set");
+        //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometry}
+        config.getConfigParameter<std::string>("geometry");
+#endif  // DOXYGEN_DOCU_ONLY
+
         auto const geometrical_set_name =
             //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometrical_set}
             config.getConfigParameter<std::string>("geometrical_set");
