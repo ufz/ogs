@@ -2,6 +2,10 @@
 <OpenGeoSysProject>
     <mesh>tm_q_quad.vtu</mesh>
     <geometry>quarter_group.gml</geometry>
+    <search_length_algorithm>
+        <type>fixed</type>
+        <value>1e-6</value>
+    </search_length_algorithm>
     <processes>
         <process>
             <name>ThermoMechanics</name>
@@ -216,10 +220,6 @@
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>in</geometry>
-                    <search_length_algorithm>
-                        <type>fixed</type>
-                        <value>1e-6</value>
-                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>temperature_bc</parameter>

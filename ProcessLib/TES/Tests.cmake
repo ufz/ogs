@@ -14,7 +14,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_TES_zeolite_discharge
+    NAME TES_zeolite_discharge
     PATH Parabolic/TES/1D
     EXECUTABLE ogs
     EXECUTABLE_ARGS tes-1D-zeolite-discharge-large.prj
@@ -28,7 +28,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_TES_zeolite_discharge_Newton
+    NAME TES_zeolite_discharge_Newton
     PATH Parabolic/TES/1D
     EXECUTABLE ogs
     EXECUTABLE_ARGS tes-1D-zeolite-discharge-small-newton.prj
@@ -45,7 +45,7 @@ AddTest(
 # SQUARE 1x1 TES TEST -- AXIALLY SYMMETRIC
 # test results are compared to 3D simulation on a wedge-shaped domain
 AddTest(
-    NAME LARGE_TES_inert_axi
+    NAME TES_inert_axi
     PATH Parabolic/TES/2D
     EXECUTABLE ogs
     EXECUTABLE_ARGS tes-inert-axi.prj

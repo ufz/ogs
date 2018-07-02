@@ -2,6 +2,10 @@
 <OpenGeoSysProject>
     <mesh>goswami_input_xy_tri_kappa_ini_MatID.vtu</mesh>
     <geometry>goswami_input.gml</geometry>
+    <search_length_algorithm>
+        <type>fixed</type>
+        <value>1e-3</value>
+    </search_length_algorithm>
     <processes>
         <process>
             <name>ComponentTransport</name>
@@ -221,20 +225,12 @@
                 <boundary_condition>
                     <geometrical_set>goswami_mesh</geometrical_set>
                     <geometry>left</geometry>
-                    <search_length_algorithm>
-                        <type>fixed</type>
-                        <value>1e-3</value>
-                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>c_Dirichlet_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>goswami_mesh</geometrical_set>
                     <geometry>right</geometry>
-                    <search_length_algorithm>
-                        <type>fixed</type>
-                        <value>1e-3</value>
-                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>c_Dirichlet_right</parameter>
                 </boundary_condition>
@@ -249,20 +245,12 @@
                 <boundary_condition>
                     <geometrical_set>goswami_mesh</geometrical_set>
                     <geometry>topleft</geometry>
-                    <search_length_algorithm>
-                        <type>fixed</type>
-                        <value>1e-3</value>
-                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_topleft</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>goswami_mesh</geometrical_set>
                     <geometry>topright</geometry>
-                    <search_length_algorithm>
-                        <type>fixed</type>
-                        <value>1e-3</value>
-                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_topright</parameter>
                 </boundary_condition>

@@ -22,7 +22,7 @@ AddTest(
     square_1e2_expected_pcs_0_ts_4_t_1.000000.vtu square_1e2_pcs_0_ts_4_t_1.000000.vtu sigma sigma 1e-15 0
 )
 AddTest(
-    NAME LARGE_Mechanics_SDL_disc_with_hole
+    NAME Mechanics_SDL_disc_with_hole
     PATH Mechanics/Linear
     EXECUTABLE ogs
     EXECUTABLE_ARGS disc_with_hole.prj
@@ -40,8 +40,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    square_1e5_expected_pcs_0_ts_4_t_1.000000.vtu square_1e5_pcs_0_ts_4_t_1.000000.vtu displacement displacement 1e-16 1e-16
-    square_1e5_expected_pcs_0_ts_4_t_1.000000.vtu square_1e5_pcs_0_ts_4_t_1.000000.vtu sigma sigma 1e-16 1e-16
+    square_1e5_expected_pcs_0_ts_4_t_1.000000.vtu square_1e5_pcs_0_ts_4_t_1.000000.vtu displacement displacement 1e-15 0
+    square_1e5_expected_pcs_0_ts_4_t_1.000000.vtu square_1e5_pcs_0_ts_4_t_1.000000.vtu sigma sigma 1e-13 0
 )
 AddTest(
     NAME Mechanics_SDL_square_1e2_quad8_traction_topBC

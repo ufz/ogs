@@ -2,6 +2,10 @@
 <OpenGeoSysProject>
     <mesh axially_symmetric="true">tes_hx3.vtu</mesh>
     <geometry>tes_hx3.gml</geometry>
+    <search_length_algorithm>
+        <type>fixed</type>
+        <value>1e-6</value>
+    </search_length_algorithm>
     <processes>
         <process>
             <name>ThermoMechanicalPhaseField</name>
@@ -369,30 +373,18 @@
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>rightl</geometry>
-                    <search_length_algorithm>
-                        <type>fixed</type>
-                        <value>1e-6</value>
-                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>temperature_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>rightm</geometry>
-                    <search_length_algorithm>
-                        <type>fixed</type>
-                        <value>1e-6</value>
-                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>temperature_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>rightu</geometry>
-                    <search_length_algorithm>
-                        <type>fixed</type>
-                        <value>1e-6</value>
-                    </search_length_algorithm>
                     <type>Dirichlet</type>
                     <parameter>temperature_bc</parameter>
                 </boundary_condition>

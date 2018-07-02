@@ -357,8 +357,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    GLOB ConstViscosityThermalConvection_pcs_0_ts_*.vtu T T 1e-14 1e-13
-    GLOB ConstViscosityThermalConvection_pcs_0_ts_*.vtu p p 1e-15 1e-14
+    GLOB constraint_bc_1e3_pcs_0_ts_*.vtu T T 1e-14 1e-13
+    GLOB constraint_bc_1e3_pcs_0_ts_*.vtu p p 1e-15 1e-14
 )
 
 # MPI/PETSc tests
@@ -382,7 +382,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_ThermalConvection_constviscosityStaggeredScheme
+    NAME Parallel_LARGE_2D_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme.prj
     WRAPPER mpirun

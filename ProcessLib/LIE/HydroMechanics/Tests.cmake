@@ -53,7 +53,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LIE_HM_TaskB
+    NAME LARGE_LIE_HM_TaskB
     PATH LIE/HydroMechanics
     EXECUTABLE ogs
     EXECUTABLE_ARGS TaskB.prj

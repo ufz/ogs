@@ -10,7 +10,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_MapGeometryToMeshSurface_Bode
+    NAME MapGeometryToMeshSurface_Bode
     PATH MeshGeoToolsLib/Bode
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m BodeComplex.msh -i BodeEZG_Fliessgewaesser.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Bode/BodeEZG_Fliessgewaesser-Mapped.gml
@@ -20,7 +20,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_MapGeometryToMeshSurface_Naegelstedt
+    NAME MapGeometryToMeshSurface_Naegelstedt
     PATH MeshGeoToolsLib/Naegelstedt
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m SmallTest.vtu -i RiverNetwork.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Naegelstedt/RiverNetwork-Mapped.gml
