@@ -156,15 +156,17 @@ pipeline {
             }
           }
           steps {
-            sh 'conan user'
-            configure {
-              cmakeOptions =
-                '-DOGS_USE_CONAN=ON ' +
-                '-DOGS_CPU_ARCHITECTURE=generic '
-              config = 'Debug'
+            script {
+              sh 'conan user'
+              configure {
+                cmakeOptions =
+                  '-DOGS_USE_CONAN=ON ' +
+                  '-DOGS_CPU_ARCHITECTURE=generic '
+                config = 'Debug'
+              }
+              build { }
+              build { target = 'tests' }
             }
-            build { }
-            build { target = 'tests' }
           }
           post {
             always { publishReports { } }
