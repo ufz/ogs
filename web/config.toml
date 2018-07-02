@@ -1,5 +1,5 @@
 languageCode = "en-us"
-title = "OpenGeoSys-6"
+title = "OpenGeoSys"
 theme = "ogs"
 baseURL = "https://www.opengeosys.org"
 buildDrafts = false
@@ -28,12 +28,6 @@ staticDir = ["dist", "static"]
   url = "/docs/"
   identifier = "docs"
   weight = 4
-
-[[menu.main]]
-  name = "OpenGeoSys-5"
-  url = "/ogs-5/"
-  identifier = "ogs-5"
-  weight = 5
 
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]

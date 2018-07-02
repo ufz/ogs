@@ -28,3 +28,8 @@ The book explains basic mathematical equations and numerical methods to modeling
 ### <i class="fas fa-book"></i> Bibliography
 {{< bib id="Watanabe:2016" >}}
 :::
+
+::: {.note}
+### <i class="fas fa-code-branch"></i> OpenGeoSys Version Info
+This book requires [OpenGeoSys-5](/ogs-5/).
+:::

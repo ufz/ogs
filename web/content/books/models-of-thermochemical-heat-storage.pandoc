@@ -23,3 +23,8 @@ This book is intended primarily for graduate students and applied scientists wor
 ### <i class="fas fa-book"></i> Bibliography
 {{< bib id="Lehmann:2018" >}}
 :::
+
+::: {.note}
+### <i class="fas fa-code-branch"></i> OpenGeoSys Version Info
+This book requires OpenGeoSys-6.
+:::

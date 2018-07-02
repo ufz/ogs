@@ -28,3 +28,8 @@ This book is dedicated to the numerical modeling of shallow geothermal systems. 
 ### <i class="fas fa-book"></i> Bibliography
 {{< bib id="Shao:2016" >}}
 :::
+
+::: {.note}
+### <i class="fas fa-code-branch"></i> OpenGeoSys Version Info
+This book requires [OpenGeoSys-5](/ogs-5/).
+:::

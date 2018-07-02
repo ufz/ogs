@@ -29,3 +29,8 @@ This book is intended primarily for graduate students and applied scientists who
 ### <i class="fas fa-book"></i> Bibliography
 {{< bib id="Sachse:2015" >}}
 :::
+
+::: {.note}
+### <i class="fas fa-code-branch"></i> OpenGeoSys Version Info
+This book requires [OpenGeoSys-5](/ogs-5/).
+:::
