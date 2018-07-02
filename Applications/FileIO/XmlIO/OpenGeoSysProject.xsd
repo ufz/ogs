@@ -86,6 +86,21 @@
           </xs:complexType>
         </xs:element>
         <xs:element name="geometry" type="xs:string" minOccurs="0"/>
+        <xs:element name="meshes" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="mesh" minOccurs="0">
+                        <xs:complexType>
+                            <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                    <xs:attribute name="axially_symmetric" type="xs:boolean"/>
+                                </xs:extension>
+                            </xs:simpleContent>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
         <xs:element name="processes" minOccurs="0"/> <!--ignore-->
         <xs:element name="time_loop" minOccurs="0"/> <!--ignore-->
         <xs:element name="parameters" minOccurs="0">
