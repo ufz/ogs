@@ -98,7 +98,6 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
-                  '-DOGS_CONAN_BUILD=never ' +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DDOCS_GENERATE_LOGFILE=ON ' // redirects to build/DoxygenWarnings.log
               }
@@ -137,6 +136,7 @@ pipeline {
                   'build/DoxygenWarnings.log']], unstableTotalAll: '0'])
                 archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
               }
+              sh 'conan upload "*" --all -r ogs --retry 3 --retry-wait 30'
             }
           }
         }
@@ -163,7 +163,6 @@ pipeline {
                 configure {
                   cmakeOptions =
                     '-DOGS_USE_CONAN=ON ' +
-                    '-DOGS_CONAN_BUILD=never ' +
                     '-DOGS_CPU_ARCHITECTURE=generic '
                   config = 'Debug'
                 }
@@ -174,6 +173,9 @@ pipeline {
           }
           post {
             always { publishReports { } }
+            success {
+              sh 'conan upload "*" --all -r ogs --retry 3 --retry-wait 30'
+            }
           }
         }
         // ************************** envinf1 **********************************
@@ -287,7 +289,10 @@ pipeline {
                   excludePattern: '.*\\.conan.*',
                   messagesPattern: '.*QVTK.*')
             }
-            success { archiveArtifacts 'build/*.zip,build/conaninfo.txt' }
+            success {
+              archiveArtifacts 'build/*.zip,build/conaninfo.txt'
+              sh 'conan upload "*" --all -r ogs --retry 3 --retry-wait 30'
+            }
           }
         }
         // ****************************** Mac **********************************
@@ -302,7 +307,6 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
-                  '-DOGS_CONAN_BUILD=never ' +
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
@@ -328,7 +332,10 @@ pipeline {
             always {
               publishReports { }
             }
-            success { archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt' }
+            success {
+              archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
+              sh 'conan upload "*" --all -r ogs --retry 3 --retry-wait 30'
+            }
           }
         }
         // **************************** Web ************************************
@@ -420,7 +427,6 @@ pipeline {
                 configure {
                   cmakeOptions =
                     '-DOGS_USE_CONAN=ON ' +
-                    '-DOGS_CONAN_BUILD=never ' +
                     '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use;-Xiwyu;--mapping_file=../scripts/jenkins/iwyu-mappings.imp" ' +
                     '-DCMAKE_LINK_WHAT_YOU_USE=ON ' +
                     '"-DCMAKE_CXX_CPPCHECK=cppcheck;--std=c++11;--language=c++;--suppress=syntaxError;--suppress=preprocessorErrorDirective:*/ThirdParty/*;--suppress=preprocessorErrorDirective:*conan*/package/*" ' +
