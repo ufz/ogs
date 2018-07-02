@@ -57,7 +57,6 @@ target_link_libraries(DataExplorer
     QtDiagramView
     VtkVis
     Threads::Threads
-    vtkGUISupportQt
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
