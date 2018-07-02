@@ -25,3 +25,8 @@ This introduction to geothermal modeling deals with flow and heat transport proc
 ### <i class="fas fa-book"></i> Bibliography
 {{< bib id="Boettcher:2016" >}}
 :::
+
+::: {.note}
+### <i class="fas fa-code-branch"></i> OpenGeoSys Version Info
+This book requires [OpenGeoSys-5](/ogs-5/).
+:::

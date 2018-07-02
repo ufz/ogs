@@ -7,7 +7,7 @@ date: 2017-01-13T14:24:23+01:00
 
 hero:
   headline: Open-source multi-physics
-  textline: OpenGeoSys (OGS) is a scientific [open source project](https://github.com/ufz/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. It has been successfully applied in the fields of contaminant hydrology, water resources and waste management, geotechnical applications, geothermal energy systems and energy storage.
+  textline: OpenGeoSys (OGS) is a scientific [open source project](https://github.com/ufz/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. Current version is OpenGeoSys-6 which is documented on this page. For information about OpenGeoSys-5, see [its dedicated section](/ogs-5). OGS been successfully applied in the fields of contaminant hydrology, water resources and waste management, geotechnical applications, geothermal energy systems and energy storage.
   quicklinks:
     - name: Tools
       anchor: tools
@@ -61,7 +61,7 @@ features:
 
 - headline: Visualize results
   textline: |
-    By leveraging VTK data formats visualizing simulation result data sets becomes an easy task. The de-facto standard software for scientific visualtions [ParaView](https://www.paraview.org) can be used to explore and analyze complex data in a visual way.
+    By using VTK data formats visualizing simulation result data sets becomes an easy task. The de-facto standard software for scientific visualtions [ParaView](https://www.paraview.org) can be used to explore and analyze complex data in a visual way.
 
     [Virtual reality enabled visualization](https://www.ufz.de/vislab) brings your data onto the large screen for intuitive exploration and assessment.
   layout: right

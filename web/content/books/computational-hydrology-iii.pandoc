@@ -27,3 +27,8 @@ The tutorial book is intended primarily for graduate students and applied scient
 ### <i class="fas fa-book"></i> Bibliography
 {{< bib id="Jang:2018" >}}
 :::
+
+::: {.note}
+### <i class="fas fa-code-branch"></i> OpenGeoSys Version Info
+This book requires [OpenGeoSys-5](/ogs-5/).
+:::

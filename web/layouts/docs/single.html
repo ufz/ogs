@@ -16,7 +16,7 @@
       {{ $currentMenu := index .Site.Menus $subsection }}
       {{ range $currentMenu }}
         {{ if .HasChildren }}
-          <li class="tracking-wide font-serif mt-4">{{ .Name }}</li>
+          <li class="tracking-wide font-bold mt-4">{{ .Name }}</li>
           {{ range .Children }}
             <li class="m-1"><a href="{{ .URL }}"{{if $currentPage.IsMenuCurrent $subsection . }} class="active"{{end}}>{{ .Name }}</a></li>
           {{ end }}

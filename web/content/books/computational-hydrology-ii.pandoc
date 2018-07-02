@@ -26,3 +26,8 @@ This book explores the application of the open-source software OpenGeoSys (OGS) 
 ### <i class="fas fa-book"></i> Bibliography
 {{< bib id="Sachse:2017" >}}
 :::
+
+::: {.note}
+### <i class="fas fa-code-branch"></i> OpenGeoSys Version Info
+This book requires [OpenGeoSys-5](/ogs-5/).
+:::

@@ -9,6 +9,12 @@
     {{ $statuses := getJSON $urlPre "/repos/ufz/ogs/commits/" $latest.tag_name "/statuses" }}
 
     <div class="note float-right border-r-4 border-l-0 ml-2">
+      <h3>Content</h3>
+      <ul class="list-reset text-sm">
+        <li><a href="#current">Current Release: {{ $latest.tag_name }}</a></li>
+        <li><a href="#latest">Latest development version</a></li>
+        <li><a href="#old">Older releases & OpenGeoSys-5</a></li>
+      </ul>
       <h3 class="border-b"><i class="fas fa-download"></i> Downloads</h3>
       <ul class="list-reset text-sm">
       {{ range $latest.assets }}
@@ -31,14 +37,14 @@
       </ul>
     </div>
 
-    <h2 class="mt-0">Current Release: {{ $latest.tag_name }}</h2>
+    <h2 class="mt-0" id="current">Current Release: {{ $latest.tag_name }}</h2>
     <div>
         {{ if not (eq $latest.tag_name $latest.name)}}<i>{{ $latest.name }}</i>{{ end }}
       <p>Released on {{ dateFormat "Monday, Jan 2, 2006" $latest.published_at }}</p>
       {{ $latest.body | markdownify }}
     </div>
 
-    <h2><i class="fas fa-wrench"></i> Latest development version</h2>
+    <h2 id="latest"><i class="fas fa-wrench"></i> Latest development version</h2>
     {{ $head := getJSON $urlPre "/repos/ufz/ogs/git/refs/heads/master" }}
     {{ $head_commit := getJSON $urlPre "/repos/ufz/ogs/commits/" $head.object.sha }}
     {{ $head_statuses := getJSON $urlPre "/repos/ufz/ogs/commits/" $head.object.sha "/statuses" }}
@@ -61,7 +67,7 @@
       </p>
     </div>
 
-    <h2>Older releases</h2>
+    <h2 id="old">Older releases</h2>
     <ul>
       {{ range $index, $element := $releases }}
         {{ if not (eq $index 0) }}
@@ -76,5 +82,6 @@
         {{ end }}
       {{ end }}
     </ul>
+    <p>We also provide binaries for <a href="/ogs-5/"><i class="fab fa-exclamation-triangle"></i>OpenGeoSys-5</a>!</p>
   </div>
 {{ end }}
