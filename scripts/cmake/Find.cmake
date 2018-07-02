@@ -52,7 +52,6 @@ find_program(HUGO hugo)
 find_program(NPM npm)
 find_program(YARN yarn)
 find_program(PIP pip)
-find_package(PythonInterp)
 find_program(PANDOC_CITEPROC pandoc-citeproc)
 
 find_program(MODULE_CMD modulecmd
@@ -64,8 +63,6 @@ find_program(MODULE_CMD modulecmd
 find_package(Boost REQUIRED)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
-include(VtkModules)
-#find_package(VTK COMPONENTS ${VTK_MODULES} REQUIRED)
 find_package(VTK 8.1.0 REQUIRED)
 include(${VTK_USE_FILE})
 

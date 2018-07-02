@@ -156,20 +156,15 @@ pipeline {
             }
           }
           steps {
-            script {
-              lock(resource: "conanCache-${env.NODE_NAME}") {
-                sh 'conan user'
-                sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
-                configure {
-                  cmakeOptions =
-                    '-DOGS_USE_CONAN=ON ' +
-                    '-DOGS_CPU_ARCHITECTURE=generic '
-                  config = 'Debug'
-                }
-              }
-              build { }
-              build { target = 'tests' }
+            sh 'conan user'
+            configure {
+              cmakeOptions =
+                '-DOGS_USE_CONAN=ON ' +
+                '-DOGS_CPU_ARCHITECTURE=generic '
+              config = 'Debug'
             }
+            build { }
+            build { target = 'tests' }
           }
           post {
             always { publishReports { } }
