@@ -62,10 +62,21 @@ struct MaterialPropertiesParameters
     /// Shear stiffness given in units of stress per length.
     P const& shear_stiffness;
 
-    /// Fracture toughness/critical energy release rate given in of stress
-    /// times lengths.
+    /// Fracture toughness/critical energy release rate given in of stress times
+    /// lengths.
+    ///
+    /// The fracture toughness \f$G_{c}\f$ denotes the total energy dissipation
+    /// to resist a fracture. Graphically, its value equals to the total area
+    /// below the bilinear curve.
     P const& fracture_toughness;
-    /// Peak normal traction given in units of stress.
+    /// Peak normal traction given in units of stress per length.
+    ///
+    /// The peak tensile normal traction \f$t_{n,p}\f$ denotes the maximum
+    /// normal traction in the linear elastic phase. The corresponding normal
+    /// fracture opening \f$w_{n,p}\f$ then comes out according to the Hooke's
+    /// law. With the proceeding of delamination over this opening threshold,
+    /// damage takes place so that the bearing loading of the material linearly
+    /// drops down.
     P const& peak_normal_traction;
 };
 
@@ -106,6 +117,11 @@ struct StateVariables
     double damage_prev;  ///< \copydoc damage
 };
 
+/// The cohesive zone delamination model for mode I fracture introduced herein
+/// follows a bilinear traction-separation law which is characterized by four
+/// basic parameters: the initial normal and shear stiffness \f$K_n\f$,
+/// \f$K_s\f$, the fracture toughness \f$G_c\f$ (also referred to as critical
+/// energy release rate), and the peak tensile normal traction \f$t_{n,p}\f$.
 template <int DisplacementDim>
 class CohesiveZoneModeI final : public FractureModelBase<DisplacementDim>
 {
@@ -129,7 +145,8 @@ public:
     }
 
     /**
-     * Computation of the constitutive relation for the Mohr-Coulomb model.
+     * Computation of the constitutive relation for the Cohesive Zone Mode I
+     * model.
      *
      * @param t           current time
      * @param x           current position in space
