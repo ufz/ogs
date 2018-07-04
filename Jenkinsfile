@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 @Library('jenkins-pipeline@1.0.9') _
 
-def stage_required = [web: false, build: false, data: false, full: false]
+def stage_required = [build: false, data: false, full: false]
 
 pipeline {
   agent none
@@ -34,9 +34,6 @@ pipeline {
               return true
             }
           }
-          if (env.JOB_NAME == "ufz/ogs/master") {
-            stage_required.web = true
-          }
           def changeLogSets = currentBuild.changeSets
           for (int i = 0; i < changeLogSets.size(); i++) {
             def entries = changeLogSets[i].items
@@ -48,10 +45,6 @@ pipeline {
                   stage_required.full = true
                   echo "Doing full build."
                   return true
-                }
-                if (path.startsWith("web") && !stage_required.web) {
-                  stage_required.web = true
-                  echo "Doing web build."
                 }
                 if (path.matches("^(CMakeLists.txt|scripts|Applications|BaseLib|FileIO|GeoLib|MaterialLib|MathLib|MeshGeoToolsLib|MeshLib|NumLib|ProcessLib|SimpleTests|Tests).*")
                   && !stage_required.build) {
@@ -87,13 +80,6 @@ pipeline {
           }
           steps {
             script {
-              // Install web dependencies
-              sh("""
-                cd web
-                yarn --ignore-engines --non-interactive
-                sudo -H pip install -r requirements.txt
-                """.stripIndent())
-
               sh 'conan user'
               configure {
                 cmakeOptions =
@@ -336,51 +322,6 @@ pipeline {
             }
           }
         }
-        // **************************** Web ************************************
-        stage('Web') {
-          when {
-            beforeAgent true
-            expression { return stage_required.web || stage_required.full }
-          }
-          agent {
-            dockerfile {
-              filename 'Dockerfile.gcc.full'
-              dir 'scripts/docker'
-              label 'docker'
-              additionalBuildArgs '--pull'
-            }
-          }
-          environment {
-            CONTENTFUL_ACCESS_TOKEN = credentials('CONTENTFUL_ACCESS_TOKEN')
-            CONTENTFUL_OGS_SPACE_ID = credentials('CONTENTFUL_OGS_SPACE_ID')
-            ALGOLIA_WRITE_KEY = credentials('ALGOLIA_WRITE_KEY')
-          }
-          steps {
-            dir ('web') {
-              sh "yarn --ignore-engines --ignore-optional --non-interactive"
-              sh "pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json"
-              sh "node_modules/.bin/webpack -p --mode=production"
-              script {
-                if (env.JOB_NAME == 'ufz/ogs/master') {
-                  sh "hugo --ignoreCache"
-                  sh ("node_modules/.bin/hugo-algolia --toml -s")
-                } else {
-                  sh ("hugo --ignoreCache --baseURL " + env.JOB_URL + "Web/")
-                }
-              }
-            }
-          }
-          post {
-            success {
-              dir('web/public') { stash(name: 'web') }
-              script {
-                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
-                  keepAll: true, reportDir: 'web/public', reportFiles: 'index.html',
-                  reportName: 'Web'])
-              }
-            }
-          }
-        }
       } // end parallel
     } // end stage Build
     // *************************** Log Parser **********************************
@@ -437,25 +378,7 @@ pipeline {
             }
           }
         }
-        // ************************* Deploy Web ********************************
-        stage('Deploy Web') {
-          when {
-            beforeAgent true
-            expression { return stage_required.web || stage_required.full }
-          }
-          agent any
-          steps {
-            dir('web') { unstash 'web' }
-            unstash 'known_hosts'
-            script {
-              sshagent(credentials: ['www-data_jenkins']) {
-                sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-                   'known_hosts" web/. ' +
-                   'www-data@jenkins:/var/www/dev.opengeosys.org'
-              }
-            }
-          }
-        }
+        // *********************** Deploy Doxygen ******************************
         stage('Deploy Doxygen') {
           when { expression { return stage_required.build || stage_required.full } }
           agent any
