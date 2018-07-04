@@ -257,6 +257,7 @@ pipeline {
           steps {
             script {
               // CLI
+              bat 'conan remove --locks'
               configure {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
