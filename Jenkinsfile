@@ -122,7 +122,6 @@ pipeline {
                   'build/DoxygenWarnings.log']], unstableTotalAll: '0'])
                 archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
               }
-              sh 'conan upload "*" --all -r ogs --retry 3 --retry-wait 30'
             }
           }
         }
@@ -156,9 +155,6 @@ pipeline {
           }
           post {
             always { publishReports { } }
-            success {
-              sh 'conan upload "*" --all -r ogs --retry 3 --retry-wait 30'
-            }
           }
         }
         // ************************** envinf1 **********************************
@@ -275,7 +271,6 @@ pipeline {
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'
-              sh 'conan upload "*" --all -r ogs --retry 3 --retry-wait 30'
             }
           }
         }
@@ -318,7 +313,6 @@ pipeline {
             }
             success {
               archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
-              sh 'conan upload "*" --all -r ogs --retry 3 --retry-wait 30'
             }
           }
         }
