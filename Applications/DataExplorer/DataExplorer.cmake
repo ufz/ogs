@@ -66,6 +66,11 @@ target_link_libraries(DataExplorer
     ${VTK_LIBRARIES}
 )
 
+if(NOT APPLE AND OGS_USE_CONAN)
+    # HACK for unresolved external
+    target_link_libraries(DataExplorer vtkGUISupportQt-8.1)
+endif()
+
 # Workaround for Windows conan tiff-package
 if(OGS_USE_CONAN AND WIN32)
     find_package(ZLIB REQUIRED)
