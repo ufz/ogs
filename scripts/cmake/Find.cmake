@@ -97,7 +97,11 @@ find_package(Metis QUIET)
 
 ## Qt5 library ##
 if(OGS_BUILD_GUI)
-    find_package(Qt5 5.2 REQUIRED Gui Widgets Xml XmlPatterns)
+    set(QT_MODULES Gui Widgets Xml XmlPatterns)
+    if(OGS_USE_CONAN AND UNIX AND NOT APPLE)
+        set(QT_MODULES ${QT_MODULES} X11Extras)
+    endif()
+    find_package(Qt5 5.2 REQUIRED ${QT_MODULES})
     cmake_policy(SET CMP0020 NEW)
     set(CMAKE_AUTOMOC TRUE)
     set(CMAKE_AUTOUIC TRUE)
