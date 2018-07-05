@@ -11,6 +11,7 @@
 
 #include <cassert>
 
+#include "MaterialLib/FractureModels/CreateCohesiveZoneModeI.h"
 #include "MaterialLib/FractureModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/CreateMohrCoulomb.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
@@ -144,6 +145,12 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         fracture_model =
             MaterialLib::Fracture::createMohrCoulomb<DisplacementDim>(
                 parameters, fracture_model_config);
+    }
+    else if (frac_type == "CohesiveZoneModeI")
+    {
+        fracture_model =
+            MaterialLib::Fracture::CohesiveZoneModeI::createCohesiveZoneModeI<
+                DisplacementDim>(parameters, fracture_model_config);
     }
     else
     {
