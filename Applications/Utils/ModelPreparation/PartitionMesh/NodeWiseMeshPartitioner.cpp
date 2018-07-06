@@ -156,20 +156,14 @@ void NodeWiseMeshPartitioner::splitOffHigherOrderNode(
     std::vector<MeshLib::Node*>& base_nodes,
     std::vector<MeshLib::Node*>& extra_nodes)
 {
-    if (is_mixed_high_order_linear_elems)
+    auto const n_base_nodes = _mesh->getNumberOfBaseNodes();
+    if (!is_mixed_high_order_linear_elems || node_id > n_base_nodes)
     {
-        if (node_id < _mesh->getNumberOfBaseNodes())
-        {
-            base_nodes.push_back(nodes[node_id]);
-        }
-        else
-        {
-            extra_nodes.push_back(nodes[node_id]);
-        }
+        base_nodes.push_back(nodes[node_id]);
     }
     else
     {
-        base_nodes.push_back(nodes[node_id]);
+        extra_nodes.push_back(nodes[node_id]);
     }
 }
 
