@@ -309,20 +309,6 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
     }
 }
 
-NodeWiseMeshPartitioner::IntegerType
-NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
-    const std::vector<const MeshLib::Element*>& elements) const
-{
-    // Element ID, element type, and number of the nodes of
-    // an element of all elements in the current partition.
-    IntegerType nmb_element_idxs = 3 * elements.size();
-    for (const auto* elem : elements)
-    {
-        nmb_element_idxs += elem->getNumberOfNodes();
-    }
-    return nmb_element_idxs;
-}
-
 void NodeWiseMeshPartitioner::writeNodePropertiesBinary(
     const std::string& file_name_base) const
 {
@@ -440,6 +426,21 @@ void NodeWiseMeshPartitioner::writeCellPropertiesBinary(
         offset += pvpmd.number_of_tuples;
     }
     out.close();
+}
+
+
+/// Calculate the total number of integer variables of an element vector. Each
+/// element has three integer variables for element ID, element type, number of
+/// nodes of the element. Therefore the total number of the integers in an
+/// element vector is 3 * vector size + sum (number of nodes of each element)
+NodeWiseMeshPartitioner::IntegerType getNumberOfIntegerVariablesOfElements(
+    std::vector<const MeshLib::Element*> const& elements)
+{
+    return 3 * elements.size() +
+           std::accumulate(begin(elements), end(elements), 0,
+                           [](auto const nnodes, auto const* e) {
+                               return nnodes + e->getNumberOfNodes();
+                           });
 }
 
 std::tuple<std::vector<NodeWiseMeshPartitioner::IntegerType>,
