@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>cube_1x1x1_hex_1e3.vtu</mesh>
-    <geometry>cube_1x1x1.gml</geometry>
+    <meshes>
+        <mesh>cube_1x1x1_hex_1e3.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e3_back.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e3_bottom.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e3_front.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e3_left.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e3_right.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e3_top.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>GW23</name>
@@ -69,25 +76,23 @@
     <process_variables>
         <process_variable>
             <name>pressure</name>
+            <mesh>cube_1x1x1_hex_1e3</mesh>
             <components>1</components>
             <order>1</order>
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>cube_1x1x1_hex_1e3_left</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
-                    <geometry>front</geometry>
+                    <mesh>cube_1x1x1_hex_1e3_front</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>cube_1x1x1_hex_1e3_right</mesh>
                     <type>Neumann</type>
                     <parameter>p_neumann</parameter>
                 </boundary_condition>
