@@ -339,32 +339,6 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
     }
 }
 
-void NodeWiseMeshPartitioner::writeMETIS(const std::string& file_name)
-{
-    std::ofstream os(file_name, std::ios::trunc);
-    if (!os.is_open())
-    {
-        OGS_FATAL("Error: cannot open file %s.", file_name.data());
-    }
-
-    if (!os.good())
-    {
-        OGS_FATAL("Error: Cannot write in file %s.", file_name.data());
-    }
-
-    std::vector<MeshLib::Element*> const& elements = _mesh->getElements();
-    os << elements.size() << " \n";
-    for (const auto* elem : elements)
-    {
-        os << elem->getNodeIndex(0) + 1;
-        for (unsigned j = 1; j < elem->getNumberOfNodes(); j++)
-        {
-            os << " " << elem->getNodeIndex(j) + 1;
-        }
-        os << "\n";
-    }
-}
-
 NodeWiseMeshPartitioner::IntegerType
 NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
     const std::vector<const MeshLib::Element*>& elements) const

@@ -71,10 +71,6 @@ public:
     /// \param file_name_base The prefix of the file name.
     void readMetisData(const std::string& file_name_base);
 
-    /// Write mesh to METIS input file
-    /// \param file_name File name with an extension of mesh.
-    void writeMETIS(const std::string& file_name);
-
     /// Write the partitions into ASCII files
     /// \param file_name_base The prefix of the file name.
     void writeASCII(const std::string& file_name_base);
