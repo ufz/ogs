@@ -15,6 +15,16 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="meshType">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="axially_symmetric" type="xs:boolean"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:complexType>
+
   <xs:complexType name="parameterType">
     <xs:sequence>
       <xs:element ref="name"  minOccurs="1" maxOccurs="1" />
@@ -76,30 +86,14 @@
   <xs:element name="OpenGeoSysProject">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="mesh" minOccurs="0">
-          <xs:complexType>
-            <xs:simpleContent>
-              <xs:extension base="xs:string">
-                <xs:attribute name="axially_symmetric" type="xs:boolean"/>
-              </xs:extension>
-            </xs:simpleContent>
-          </xs:complexType>
-        </xs:element>
+        <xs:element name="mesh" type="meshType" minOccurs="0"/>
         <xs:element name="geometry" type="xs:string" minOccurs="0"/>
         <xs:element name="meshes" minOccurs="0" maxOccurs="1">
-            <xs:complexType>
-                <xs:sequence>
-                    <xs:element name="mesh" minOccurs="0">
-                        <xs:complexType>
-                            <xs:simpleContent>
-                                <xs:extension base="xs:string">
-                                    <xs:attribute name="axially_symmetric" type="xs:boolean"/>
-                                </xs:extension>
-                            </xs:simpleContent>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:complexType>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="mesh" type="meshType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
         </xs:element>
         <xs:element name="processes" minOccurs="0"/> <!--ignore-->
         <xs:element name="time_loop" minOccurs="0"/> <!--ignore-->
