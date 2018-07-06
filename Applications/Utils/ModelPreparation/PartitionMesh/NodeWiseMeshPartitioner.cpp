@@ -16,6 +16,7 @@
 
 #include <cstdio>  // for binary output
 #include <iomanip>
+#include <iostream>
 #include <limits>
 #include <numeric>
 
@@ -29,11 +30,35 @@ namespace ApplicationUtils
 {
 struct NodeStruct
 {
+    NodeStruct(NodeWiseMeshPartitioner::IntegerType const id_,
+               double const x_,
+               double const y_,
+               double const z_)
+        : id(id_), x(x_), y(y_), z(z_)
+    {
+    }
+
     NodeWiseMeshPartitioner::IntegerType id;
     double x;
     double y;
     double z;
 };
+
+std::ostream& Partition::writeNodesBinary(
+    std::ostream& os, std::vector<std::size_t> const& global_node_ids) const
+{
+    std::vector<NodeStruct> nodes_buffer;
+    nodes_buffer.reserve(nodes.size());
+
+    for (const auto* node : nodes)
+    {
+        double const* coords = node->getCoords();
+        nodes_buffer.emplace_back(global_node_ids[node->getID()], coords[0],
+                                  coords[1], coords[2]);
+    }
+    return os.write(reinterpret_cast<const char*>(nodes_buffer.data()),
+                    sizeof(NodeStruct) * nodes_buffer.size());
+}
 
 void NodeWiseMeshPartitioner::findNonGhostNodesInPartition(
     std::size_t const part_id,
@@ -549,32 +574,27 @@ void NodeWiseMeshPartitioner::writeElementsBinary(
     fclose(of_bin_ele_g);
 }
 
-void NodeWiseMeshPartitioner::writeNodesBinary(
-    const std::string& file_name_base)
+/// Write the nodes of all partitions into a binary file.
+/// \param file_name_base The prefix of the file name.
+/// \param partitions the list of partitions
+/// \param global_node_ids global numbering of nodes
+void writeNodesBinary(const std::string& file_name_base,
+                      std::vector<Partition> const& partitions,
+                      std::vector<std::size_t> const& global_node_ids)
 {
     const std::string fname = file_name_base + "_partitioned_msh_nod" +
-                              std::to_string(_npartitions) + ".bin";
-    FILE* of_bin_nod = fopen(fname.c_str(), "wb");
+                              std::to_string(partitions.size()) + ".bin";
 
-    for (const auto& partition : _partitions)
+    std::ofstream os(fname, std::ios::binary | std::ios::out);
+    if (!os)
     {
-        std::vector<NodeStruct> nodes_buffer;
-        nodes_buffer.reserve(partition.nodes.size());
-
-        for (const auto* node : partition.nodes)
-        {
-            double const* coords = node->getCoords();
-            NodeStruct node_struct{};
-            node_struct.id = _nodes_global_ids[node->getID()];
-            node_struct.x = coords[0];
-            node_struct.y = coords[1];
-            node_struct.z = coords[2];
-            nodes_buffer.emplace_back(node_struct);
-        }
-        fwrite(nodes_buffer.data(), sizeof(NodeStruct), partition.nodes.size(),
-               of_bin_nod);
+        OGS_FATAL("Could not open file '%s' for output.", fname.c_str());
     }
-    fclose(of_bin_nod);
+
+    for (const auto& partition : partitions)
+    {
+        partition.writeNodesBinary(os, global_node_ids);
+    }
 }
 
 void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
@@ -589,7 +609,7 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
         std::get<1>(elem_integers);
     writeElementsBinary(file_name_base, num_elem_integers, num_g_elem_integers);
 
-    writeNodesBinary(file_name_base);
+    writeNodesBinary(file_name_base, _partitions, _nodes_global_ids);
 }
 
 void NodeWiseMeshPartitioner::writeConfigDataASCII(

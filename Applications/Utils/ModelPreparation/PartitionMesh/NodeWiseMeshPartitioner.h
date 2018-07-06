@@ -37,6 +37,10 @@ struct Partition
     /// Non ghost elements
     std::vector<const MeshLib::Element*> regular_elements;
     std::vector<const MeshLib::Element*> ghost_elements;
+
+    std::ostream& writeNodesBinary(
+        std::ostream& os,
+        std::vector<std::size_t> const& global_node_ids) const;
 };
 
 /// Mesh partitioner.
@@ -293,10 +297,6 @@ private:
         const std::string& file_name_base,
         const std::vector<IntegerType>& num_elem_integers,
         const std::vector<IntegerType>& num_g_elem_integers);
-
-    ///  Write the nodes of all partitions into a binary file.
-    ///  \param file_name_base The prefix of the file name.
-    void writeNodesBinary(const std::string& file_name_base);
 
     /// Write the configuration data of the partition data in ASCII files.
     /// \param file_name_base The prefix of the file name.
