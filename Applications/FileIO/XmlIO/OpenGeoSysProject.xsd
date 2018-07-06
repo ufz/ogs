@@ -39,8 +39,8 @@
       <xs:element name="geometrical_set" type="xs:string" minOccurs="0" />
       <xs:element name="geometry" type="xs:string" minOccurs="0" />
       <xs:element name="type" type="xs:string" />
-      <xs:element name="field_name" type="xs:string" minOccurs="0" />
       <xs:element name="mesh" type="xs:string" minOccurs="0" />
+      <xs:element name="field_name" type="xs:string" minOccurs="0" />
       <xs:element name="parameter" type="xs:string" minOccurs="0" />
     </xs:sequence>
   </xs:complexType>
@@ -60,6 +60,7 @@
   <xs:complexType name="pvariableType">
     <xs:sequence>
       <xs:element ref="name"/>
+      <xs:element name="mesh" type="xs:string" minOccurs="0"/>
       <xs:element name="components" minOccurs="1" maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:nonNegativeInteger">
