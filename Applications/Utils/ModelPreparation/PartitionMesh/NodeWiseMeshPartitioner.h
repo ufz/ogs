@@ -67,10 +67,6 @@ public:
     /// interpolation
     void partitionByMETIS(const bool is_mixed_high_order_linear_elems);
 
-    /// Read metis data
-    /// \param file_name_base The prefix of the file name.
-    void readMetisData(const std::string& file_name_base);
-
     /// Write the partitions into ASCII files
     /// \param file_name_base The prefix of the file name.
     void writeASCII(const std::string& file_name_base);
@@ -78,6 +74,14 @@ public:
     /// Write the partitions into binary files
     /// \param file_name_base The prefix of the file name.
     void writeBinary(const std::string& file_name_base);
+
+    void resetPartitionIdsForNodes(
+        std::vector<std::size_t>&& node_partition_ids)
+    {
+        _nodes_partition_ids = std::move(node_partition_ids);
+    }
+
+    MeshLib::Mesh const& mesh() const { return *_mesh; }
 
 private:
     /// Number of partitions.

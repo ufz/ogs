@@ -30,6 +30,8 @@
 #include "NodeWiseMeshPartitioner.h"
 #include "Metis.h"
 
+using namespace ApplicationUtils;
+
 int main(int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
@@ -146,7 +148,11 @@ int main(int argc, char* argv[])
         writePartitionFile(".mesh.epart.1", number_of_elements);
     }
 
-    mesh_partitioner.readMetisData(file_name_base);
+    mesh_partitioner.resetPartitionIdsForNodes(readMetisData(
+        file_name_base, num_partitions,
+        mesh_partitioner.mesh().getNumberOfNodes()));
+
+    removeMetisPartitioningFiles(file_name_base, num_partitions);
 
     INFO("Partitioning the mesh in the node wise way ...");
     mesh_partitioner.partitionByMETIS(lh_elems_flag.getValue());

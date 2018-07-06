@@ -27,4 +27,18 @@ namespace ApplicationUtils
 void writeMETIS(std::vector<MeshLib::Element*> const& elements,
                 const std::string& file_name);
 
+/// Read metis data
+/// \param file_name_base The prefix of the filename.
+/// \param number_of_partitions The number is used to compose the full filename
+///                             and forms the postfix.
+/// \param number_of_nodes Expected/required number of nodes to be read.
+std::vector<std::size_t> readMetisData(const std::string& file_name_base,
+                                       long number_of_partitions,
+                                       std::size_t number_of_nodes);
+
+/// Removes the F.mesh.npart.P and F.mesh.epart.P files, where F is file name
+/// base and P is the number of partitions.
+void removeMetisPartitioningFiles(std::string const& file_name_base,
+                                  long number_of_partitions);
+
 }  // namespace ApplicationUtils

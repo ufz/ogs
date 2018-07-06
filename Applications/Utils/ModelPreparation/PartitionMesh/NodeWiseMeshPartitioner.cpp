@@ -35,55 +35,6 @@ struct NodeStruct
     double z;
 };
 
-void NodeWiseMeshPartitioner::readMetisData(const std::string& file_name_base)
-{
-    const std::string npartitions_str = std::to_string(_npartitions);
-
-    // Read partitioned mesh data from METIS
-    const std::string fname_parts =
-        file_name_base + ".mesh.npart." + npartitions_str;
-
-    std::ifstream npart_in(fname_parts);
-    if (!npart_in.is_open())
-    {
-        OGS_FATAL(
-            "Error: cannot open file %s. It may not exist!\n"
-            "Run mpmetis beforehand or use option -m",
-            fname_parts.data());
-    }
-
-    const std::size_t nnodes = _mesh->getNumberOfNodes();
-
-    std::size_t counter = 0;
-    while (!npart_in.eof())
-    {
-        npart_in >> _nodes_partition_ids[counter++] >> std::ws;
-        if (counter == nnodes)
-        {
-            break;
-        }
-    }
-
-    if (npart_in.bad())
-    {
-        OGS_FATAL("Error while reading file %s.", fname_parts.data());
-    }
-
-    npart_in.close();
-
-    if (counter != nnodes)
-    {
-        OGS_FATAL("Error: data in %s are less than expected.",
-                  fname_parts.data());
-    }
-
-    // remove metis files.
-    std::remove(fname_parts.c_str());
-    const std::string fname_eparts =
-        file_name_base + ".mesh.epart." + npartitions_str;
-    std::remove(fname_eparts.c_str());
-}
-
 void NodeWiseMeshPartitioner::findNonGhostNodesInPartition(
     std::size_t const part_id,
     const bool is_mixed_high_order_linear_elems,
