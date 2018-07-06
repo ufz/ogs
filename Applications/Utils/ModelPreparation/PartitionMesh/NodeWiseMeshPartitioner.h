@@ -14,16 +14,16 @@
 
 #pragma once
 
+#include <fstream>
 #include <memory>
+#include <string>
 #include <tuple>
 #include <vector>
-#include <string>
-#include <fstream>
 
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 namespace ApplicationUtils
 {
@@ -126,10 +126,11 @@ private:
                                 element definitions
          \param counter         Recorder of the number of integer variables.
     */
-    void getElementIntegerVariables(const MeshLib::Element& elem,
-                                    const std::vector<IntegerType>& local_node_ids,
-                                    std::vector<IntegerType>& elem_info,
-                                    IntegerType& counter);
+    void getElementIntegerVariables(
+        const MeshLib::Element& elem,
+        const std::vector<IntegerType>& local_node_ids,
+        std::vector<IntegerType>& elem_info,
+        IntegerType& counter);
 
     void writeNodePropertiesBinary(std::string const& file_name_base) const;
     void writeCellPropertiesBinary(std::string const& file_name_base) const;
@@ -170,7 +171,7 @@ private:
 
     template <typename T>
     bool copyNodePropertyVector(std::string const& name,
-                            std::size_t const total_number_of_tuples)
+                                std::size_t const total_number_of_tuples)
     {
         auto const& original_properties(_mesh->getProperties());
         if (!original_properties.existsPropertyVector<T>(name))
@@ -265,7 +266,7 @@ private:
         writePropertyVectorValuesBinary(out_val, *pv);
         MeshLib::IO::writePropertyVectorMetaDataBinary(out_meta, pvmd);
         return true;
-     }
+    }
 
     /*!
          \brief Write the configuration data of the partition data in
@@ -288,14 +289,14 @@ private:
          \param num_g_elem_integers The numbers of all ghost element
                                     integer variables of each partitions.
     */
-    void writeElementsBinary(const std::string& file_name_base,
-                      const std::vector<IntegerType>& num_elem_integers,
-                      const std::vector<IntegerType>& num_g_elem_integers);
+    void writeElementsBinary(
+        const std::string& file_name_base,
+        const std::vector<IntegerType>& num_elem_integers,
+        const std::vector<IntegerType>& num_g_elem_integers);
 
     ///  Write the nodes of all partitions into a binary file.
     ///  \param file_name_base The prefix of the file name.
     void writeNodesBinary(const std::string& file_name_base);
-
 
     /// Write the configuration data of the partition data in ASCII files.
     /// \param file_name_base The prefix of the file name.
@@ -322,4 +323,4 @@ private:
         const std::vector<IntegerType>& local_node_ids);
 };
 
-}  // namespace MeshLib
+}  // namespace ApplicationUtils

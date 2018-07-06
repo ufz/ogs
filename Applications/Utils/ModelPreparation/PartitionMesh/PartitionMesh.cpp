@@ -21,8 +21,8 @@
 #endif
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-#include "BaseLib/FileTools.h"
 #include "BaseLib/CPUTime.h"
+#include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -127,16 +127,18 @@ int main(int argc, char* argv[])
             // The mpmetis tool can not be used for 'partitioning' in only one
             // domain. For this reason the according files are written for just
             // one domain in the metis output format in the following.
-            auto writePartitionFile = [&file_name_base](
-                std::string const& file_name_extension, std::size_t number) {
-                std::string const name(file_name_base + file_name_extension);
-                std::ofstream os(name);
-                if (!os)
-                    OGS_FATAL("Couldn't open file '%s' for writing.",
-                              name.c_str());
-                for (std::size_t n(0); n < number; ++n)
-                    os << "0\n";
-            };
+            auto writePartitionFile =
+                [&file_name_base](std::string const& file_name_extension,
+                                  std::size_t number) {
+                    std::string const name(file_name_base +
+                                           file_name_extension);
+                    std::ofstream os(name);
+                    if (!os)
+                        OGS_FATAL("Couldn't open file '%s' for writing.",
+                                  name.c_str());
+                    for (std::size_t n(0); n < number; ++n)
+                        os << "0\n";
+                };
 
             writePartitionFile(".mesh.npart.1", number_of_nodes);
             writePartitionFile(".mesh.epart.1", number_of_elements);

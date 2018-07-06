@@ -14,9 +14,9 @@
 
 #include "NodeWiseMeshPartitioner.h"
 
-#include <limits>
-#include <iomanip>
 #include <cstdio>  // for binary output
+#include <iomanip>
+#include <limits>
 #include <numeric>
 
 #include <logog/include/logog.hpp>
@@ -40,7 +40,8 @@ void NodeWiseMeshPartitioner::readMetisData(const std::string& file_name_base)
     const std::string npartitions_str = std::to_string(_npartitions);
 
     // Read partitioned mesh data from METIS
-    const std::string fname_parts = file_name_base + ".mesh.npart." + npartitions_str;
+    const std::string fname_parts =
+        file_name_base + ".mesh.npart." + npartitions_str;
 
     std::ifstream npart_in(fname_parts);
     if (!npart_in.is_open())
@@ -58,27 +59,28 @@ void NodeWiseMeshPartitioner::readMetisData(const std::string& file_name_base)
     {
         npart_in >> _nodes_partition_ids[counter++] >> std::ws;
         if (counter == nnodes)
-          break;
+        {
+            break;
+        }
     }
 
     if (npart_in.bad())
     {
-        OGS_FATAL(
-            "Error while reading file %s.", fname_parts.data());
+        OGS_FATAL("Error while reading file %s.", fname_parts.data());
     }
 
     npart_in.close();
 
-    if( counter != nnodes)
+    if (counter != nnodes)
     {
-        OGS_FATAL(
-            "Error: data in %s are less than expected.", fname_parts.data());
+        OGS_FATAL("Error: data in %s are less than expected.",
+                  fname_parts.data());
     }
 
     // remove metis files.
     std::remove(fname_parts.c_str());
-    const std::string fname_eparts = file_name_base + ".mesh.epart."
-                                     + npartitions_str;
+    const std::string fname_eparts =
+        file_name_base + ".mesh.epart." + npartitions_str;
     std::remove(fname_eparts.c_str());
 }
 
@@ -94,8 +96,8 @@ void NodeWiseMeshPartitioner::findNonGhostNodesInPartition(
     {
         if (_nodes_partition_ids[i] == part_id)
         {
-            splitOfHigherOrderNode(nodes, is_mixed_high_order_linear_elems,
-                                   i, partition.nodes, extra_nodes);
+            splitOfHigherOrderNode(nodes, is_mixed_high_order_linear_elems, i,
+                                   partition.nodes, extra_nodes);
         }
     }
     partition.number_of_non_ghost_base_nodes = partition.nodes.size();
@@ -113,7 +115,9 @@ void NodeWiseMeshPartitioner::findElementsInPartition(std::size_t const part_id)
     {
         const auto* elem = elements[elem_id];
         if (_is_regular_element[elem_id])
+        {
             continue;
+        }
 
         std::size_t non_ghost_node_number = 0;
         for (unsigned i = 0; i < elem->getNumberOfNodes(); i++)
@@ -125,7 +129,9 @@ void NodeWiseMeshPartitioner::findElementsInPartition(std::size_t const part_id)
         }
 
         if (non_ghost_node_number == 0)
+        {
             continue;
+        }
 
         if (non_ghost_node_number == elem->getNumberOfNodes())
         {
@@ -153,7 +159,9 @@ void NodeWiseMeshPartitioner::findGhostNodesInPartition(
         {
             const unsigned node_id = ghost_elem->getNodeIndex(i);
             if (nodes_reserved[node_id])
+            {
                 continue;
+            }
 
             if (_nodes_partition_ids[node_id] != part_id)
             {
@@ -175,9 +183,13 @@ void NodeWiseMeshPartitioner::splitOfHigherOrderNode(
     if (is_mixed_high_order_linear_elems)
     {
         if (node_id < _mesh->getNumberOfBaseNodes())
+        {
             base_nodes.push_back(nodes[node_id]);
+        }
         else
+        {
             extra_nodes.push_back(nodes[node_id]);
+        }
     }
     else
     {
@@ -185,8 +197,8 @@ void NodeWiseMeshPartitioner::splitOfHigherOrderNode(
     }
 }
 
-void NodeWiseMeshPartitioner::processPartition(std::size_t const part_id,
-    const bool is_mixed_high_order_linear_elems)
+void NodeWiseMeshPartitioner::processPartition(
+    std::size_t const part_id, const bool is_mixed_high_order_linear_elems)
 {
     std::vector<MeshLib::Node*> extra_nodes;
     findNonGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
@@ -199,8 +211,10 @@ void NodeWiseMeshPartitioner::processPartition(std::size_t const part_id,
     partition.number_of_base_nodes = partition.nodes.size();
 
     if (is_mixed_high_order_linear_elems)
+    {
         partition.nodes.insert(partition.nodes.end(), extra_nodes.begin(),
                                extra_nodes.end());
+    }
 }
 
 void NodeWiseMeshPartitioner::processNodeProperties()
@@ -306,7 +320,9 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
     }
 
     if (!is_mixed_high_order_linear_elems)
+    {
         return;
+    }
 
     // -- Nodes for high order elements.
     for (auto& partition : _partitions)
@@ -328,8 +344,7 @@ void NodeWiseMeshPartitioner::writeMETIS(const std::string& file_name)
     std::ofstream os(file_name, std::ios::trunc);
     if (!os.is_open())
     {
-        OGS_FATAL("Error: cannot open file %s.",
-                  file_name.data());
+        OGS_FATAL("Error: cannot open file %s.", file_name.data());
     }
 
     if (!os.good())
@@ -370,7 +385,9 @@ void NodeWiseMeshPartitioner::writeNodePropertiesBinary(
     auto const& property_names(_partitioned_properties.getPropertyVectorNames(
         MeshLib::MeshItemType::Node));
     if (property_names.empty())
+    {
         return;
+    }
 
     std::size_t const number_of_properties(property_names.size());
 
@@ -397,16 +414,18 @@ void NodeWiseMeshPartitioner::writeNodePropertiesBinary(
             writePropertyVectorBinary<unsigned long>(name, out_val, out) ||
             writePropertyVectorBinary<std::size_t>(name, out_val, out);
         if (!success)
+        {
             OGS_FATAL(
                 "writeNodePropertiesBinary: Could not write PropertyVector "
                 "'%s'.",
                 name.c_str());
+        }
     }
     out_val.close();
     unsigned long offset = 0;
     for (const auto& partition : _partitions)
     {
-        MeshLib::IO::PropertyVectorPartitionMetaData pvpmd;
+        MeshLib::IO::PropertyVectorPartitionMetaData pvpmd{};
         pvpmd.offset = offset;
         pvpmd.number_of_tuples = partition.nodes.size();
         DBUG(
@@ -425,7 +444,9 @@ void NodeWiseMeshPartitioner::writeCellPropertiesBinary(
     auto const& property_names(_partitioned_properties.getPropertyVectorNames(
         MeshLib::MeshItemType::Cell));
     if (property_names.empty())
+    {
         return;
+    }
 
     std::size_t const number_of_properties(property_names.size());
 
@@ -452,16 +473,18 @@ void NodeWiseMeshPartitioner::writeCellPropertiesBinary(
             writePropertyVectorBinary<unsigned long>(name, out_val, out) ||
             writePropertyVectorBinary<std::size_t>(name, out_val, out);
         if (!success)
+        {
             OGS_FATAL(
                 "writeCellPropertiesBinary: Could not write PropertyVector "
                 "'%s'.",
                 name.c_str());
+        }
     }
     out_val.close();
     unsigned long offset = 0;
     for (const auto& partition : _partitions)
     {
-        MeshLib::IO::PropertyVectorPartitionMetaData pvpmd;
+        MeshLib::IO::PropertyVectorPartitionMetaData pvpmd{};
         pvpmd.offset = offset;
         pvpmd.number_of_tuples =
             partition.regular_elements.size() + partition.ghost_elements.size();
@@ -480,8 +503,8 @@ std::tuple<std::vector<NodeWiseMeshPartitioner::IntegerType>,
 NodeWiseMeshPartitioner::writeConfigDataBinary(
     const std::string& file_name_base)
 {
-    const std::string fname = file_name_base + "_partitioned_msh_cfg"
-                              + std::to_string(_npartitions) + ".bin";
+    const std::string fname = file_name_base + "_partitioned_msh_cfg" +
+                              std::to_string(_npartitions) + ".bin";
     FILE* of_bin_cfg = fopen(fname.c_str(), "wb");
 
     const IntegerType num_config_data = 14;
@@ -512,7 +535,8 @@ NodeWiseMeshPartitioner::writeConfigDataBinary(
         config_data[9] =
             getNumberOfIntegerVariablesOfElements(partition.ghost_elements);
 
-        fwrite(config_data, 1, num_config_data * sizeof(IntegerType), of_bin_cfg);
+        fwrite(config_data, 1, num_config_data * sizeof(IntegerType),
+               of_bin_cfg);
 
         config_data[10] += config_data[0] * sizeof(NodeStruct);
 
@@ -533,17 +557,17 @@ NodeWiseMeshPartitioner::writeConfigDataBinary(
 
     fclose(of_bin_cfg);
 
-    return  std::make_tuple(num_elem_integers, num_g_elem_integers);
+    return std::make_tuple(num_elem_integers, num_g_elem_integers);
 }
 
-void NodeWiseMeshPartitioner::writeElementsBinary
-                     (const std::string& file_name_base,
-                      const std::vector<IntegerType>& num_elem_integers,
-                      const std::vector<IntegerType>& num_g_elem_integers)
+void NodeWiseMeshPartitioner::writeElementsBinary(
+    const std::string& file_name_base,
+    const std::vector<IntegerType>& num_elem_integers,
+    const std::vector<IntegerType>& num_g_elem_integers)
 {
     const std::string npartitions_str = std::to_string(_npartitions);
-    std::string fname = file_name_base + "_partitioned_msh_ele"
-                              + npartitions_str + ".bin";
+    std::string fname =
+        file_name_base + "_partitioned_msh_ele" + npartitions_str + ".bin";
     FILE* of_bin_ele = fopen(fname.c_str(), "wb");
     fname =
         file_name_base + "_partitioned_msh_ele_g" + npartitions_str + ".bin";
@@ -592,18 +616,19 @@ void NodeWiseMeshPartitioner::writeElementsBinary
                                        counter);
         }
         // Write vector data of ghost elements
-        fwrite(ele_info.data(), 1, (num_g_elem_integers[i]) * sizeof(IntegerType),
-               of_bin_ele_g);
+        fwrite(ele_info.data(), 1,
+               (num_g_elem_integers[i]) * sizeof(IntegerType), of_bin_ele_g);
     }
 
     fclose(of_bin_ele);
     fclose(of_bin_ele_g);
 }
 
-void NodeWiseMeshPartitioner::writeNodesBinary(const std::string& file_name_base)
+void NodeWiseMeshPartitioner::writeNodesBinary(
+    const std::string& file_name_base)
 {
-    const std::string fname = file_name_base + "_partitioned_msh_nod"
-                              + std::to_string(_npartitions) + ".bin";
+    const std::string fname = file_name_base + "_partitioned_msh_nod" +
+                              std::to_string(_npartitions) + ".bin";
     FILE* of_bin_nod = fopen(fname.c_str(), "wb");
 
     for (const auto& partition : _partitions)
@@ -614,7 +639,7 @@ void NodeWiseMeshPartitioner::writeNodesBinary(const std::string& file_name_base
         for (const auto* node : partition.nodes)
         {
             double const* coords = node->getCoords();
-            NodeStruct node_struct;
+            NodeStruct node_struct{};
             node_struct.id = _nodes_global_ids[node->getID()];
             node_struct.x = coords[0];
             node_struct.y = coords[1];
@@ -633,22 +658,20 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
     writeCellPropertiesBinary(file_name_base);
     const auto elem_integers = writeConfigDataBinary(file_name_base);
 
-    const std::vector<IntegerType>& num_elem_integers
-                                         = std::get<0>(elem_integers);
-    const std::vector<IntegerType>& num_g_elem_integers
-                                         = std::get<1>(elem_integers);
-    writeElementsBinary(file_name_base, num_elem_integers,
-                        num_g_elem_integers);
+    const std::vector<IntegerType>& num_elem_integers =
+        std::get<0>(elem_integers);
+    const std::vector<IntegerType>& num_g_elem_integers =
+        std::get<1>(elem_integers);
+    writeElementsBinary(file_name_base, num_elem_integers, num_g_elem_integers);
 
     writeNodesBinary(file_name_base);
 }
 
-void NodeWiseMeshPartitioner::writeConfigDataASCII
-                                    (const std::string& file_name_base)
+void NodeWiseMeshPartitioner::writeConfigDataASCII(
+    const std::string& file_name_base)
 {
-    const std::string fname =
-                              file_name_base + "_partitioned_cfg"
-                              + std::to_string(_npartitions) + ".msh";
+    const std::string fname = file_name_base + "_partitioned_cfg" +
+                              std::to_string(_npartitions) + ".msh";
     std::fstream os_subd_head(fname, std::ios::out | std::ios::trunc);
     const std::string mesh_info =
         "Subdomain mesh ("
@@ -672,18 +695,21 @@ void NodeWiseMeshPartitioner::writeConfigDataASCII
         os_subd_head << " " << partition.number_of_non_ghost_nodes;
         os_subd_head << " " << _mesh->getNumberOfBaseNodes();
         os_subd_head << " " << _mesh->getNumberOfNodes();
-        os_subd_head << " " << getNumberOfIntegerVariablesOfElements(
-                                   partition.regular_elements);
-        os_subd_head << " " << getNumberOfIntegerVariablesOfElements(
-                                   partition.ghost_elements)
+        os_subd_head << " "
+                     << getNumberOfIntegerVariablesOfElements(
+                            partition.regular_elements);
+        os_subd_head << " "
+                     << getNumberOfIntegerVariablesOfElements(
+                            partition.ghost_elements)
                      << " 0\n";
     }
 }
 
-void NodeWiseMeshPartitioner::writeElementsASCII(const std::string& file_name_base)
+void NodeWiseMeshPartitioner::writeElementsASCII(
+    const std::string& file_name_base)
 {
-    const std::string fname = file_name_base + "_partitioned_elems_"
-                              + std::to_string(_npartitions) + ".msh";
+    const std::string fname = file_name_base + "_partitioned_elems_" +
+                              std::to_string(_npartitions) + ".msh";
     std::fstream os_subd(fname, std::ios::out | std::ios::trunc);
     for (const auto& partition : _partitions)
     {
@@ -710,8 +736,8 @@ void NodeWiseMeshPartitioner::writeElementsASCII(const std::string& file_name_ba
 
 void NodeWiseMeshPartitioner::writeNodesASCII(const std::string& file_name_base)
 {
-    const std::string fname = file_name_base + "_partitioned_nodes_"
-                              + std::to_string(_npartitions) + ".msh";
+    const std::string fname = file_name_base + "_partitioned_nodes_" +
+                              std::to_string(_npartitions) + ".msh";
     std::fstream os_subd_node(fname, std::ios::out | std::ios::trunc);
     os_subd_node.precision(std::numeric_limits<double>::digits10);
     os_subd_node.setf(std::ios::scientific);
@@ -759,8 +785,8 @@ void NodeWiseMeshPartitioner::writeLocalElementNodeIndices(
     const std::vector<IntegerType>& local_node_ids)
 {
     unsigned mat_id = 0;  // TODO: Material ID to be set from the mesh data
-    os << mat_id << " " << static_cast<unsigned>(elem.getCellType())
-       << " " << elem.getNumberOfNodes() << " ";
+    os << mat_id << " " << static_cast<unsigned>(elem.getCellType()) << " "
+       << elem.getNumberOfNodes() << " ";
     for (unsigned i = 0; i < elem.getNumberOfNodes(); i++)
     {
         os << " " << local_node_ids[elem.getNodeIndex(i)];
@@ -768,4 +794,4 @@ void NodeWiseMeshPartitioner::writeLocalElementNodeIndices(
     os << "\n";
 }
 
-}  // namespace MeshLib
+}  // namespace ApplicationUtils
