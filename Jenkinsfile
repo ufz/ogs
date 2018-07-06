@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 @Library('jenkins-pipeline@1.0.9') _
 
-def stage_required = [web: false, build: false, data: false, full: false]
+def stage_required = [build: false, data: false, full: false]
 
 pipeline {
   agent none
@@ -9,6 +9,7 @@ pipeline {
     ansiColor('xterm')
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '10'))
+    timeout(time: 3, unit: 'HOURS')
   }
   stages {
      // *************************** Git Check **********************************
@@ -33,9 +34,6 @@ pipeline {
               return true
             }
           }
-          if (env.JOB_NAME == "ufz/ogs/master") {
-            stage_required.web = true
-          }
           def changeLogSets = currentBuild.changeSets
           for (int i = 0; i < changeLogSets.size(); i++) {
             def entries = changeLogSets[i].items
@@ -47,10 +45,6 @@ pipeline {
                   stage_required.full = true
                   echo "Doing full build."
                   return true
-                }
-                if (path.startsWith("web") && !stage_required.web) {
-                  stage_required.web = true
-                  echo "Doing web build."
                 }
                 if (path.matches("^(CMakeLists.txt|scripts|Applications|BaseLib|FileIO|GeoLib|MaterialLib|MathLib|MeshGeoToolsLib|MeshLib|NumLib|ProcessLib|SimpleTests|Tests).*")
                   && !stage_required.build) {
@@ -71,7 +65,10 @@ pipeline {
       parallel {
         // ************************ Docker-Conan *******************************
         stage('Docker-Conan') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {
             dockerfile {
               filename 'Dockerfile.gcc.full'
@@ -83,18 +80,10 @@ pipeline {
           }
           steps {
             script {
-              // Install web dependencies
-              sh("""
-                cd web
-                yarn --ignore-engines --non-interactive
-                sudo -H pip install -r requirements.txt
-                """.stripIndent())
-
               sh 'conan user'
               configure {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
-                  '-DOGS_CONAN_BUILD=never ' +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DDOCS_GENERATE_LOGFILE=ON ' // redirects to build/DoxygenWarnings.log
               }
@@ -138,7 +127,10 @@ pipeline {
         }
         // ********************* Docker-Conan-Debug ****************************
         stage('Docker-Conan-Debug') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {
             dockerfile {
               filename 'Dockerfile.gcc.minimal'
@@ -150,16 +142,12 @@ pipeline {
           }
           steps {
             script {
-              lock(resource: "conanCache-${env.NODE_NAME}") {
-                sh 'conan user'
-                sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
-                configure {
-                  cmakeOptions =
-                    '-DOGS_USE_CONAN=ON ' +
-                    '-DOGS_CONAN_BUILD=never ' +
-                    '-DOGS_CPU_ARCHITECTURE=generic '
-                  config = 'Debug'
-                }
+              sh 'conan user'
+              configure {
+                cmakeOptions =
+                  '-DOGS_USE_CONAN=ON ' +
+                  '-DOGS_CPU_ARCHITECTURE=generic '
+                config = 'Debug'
               }
               build { }
               build { target = 'tests' }
@@ -171,7 +159,10 @@ pipeline {
         }
         // ************************** envinf1 **********************************
         stage('Envinf1 (serial)') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent { label "envinf1"}
           steps {
             script {
@@ -201,7 +192,10 @@ pipeline {
           }
         }
         stage('Envinf1 (parallel)') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent { label "envinf1"}
           steps {
             script {
@@ -233,7 +227,10 @@ pipeline {
         }
         // ************************** Windows **********************************
         stage('Win') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {label 'win && conan' }
           environment {
             MSVC_NUMBER = '15'
@@ -242,6 +239,7 @@ pipeline {
           steps {
             script {
               // CLI
+              bat 'conan remove --locks'
               configure {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
@@ -271,19 +269,23 @@ pipeline {
                   excludePattern: '.*\\.conan.*',
                   messagesPattern: '.*QVTK.*')
             }
-            success { archiveArtifacts 'build/*.zip,build/conaninfo.txt' }
+            success {
+              archiveArtifacts 'build/*.zip,build/conaninfo.txt'
+            }
           }
         }
         // ****************************** Mac **********************************
         stage('Mac') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent { label "mac"}
           steps {
             script {
               configure {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
-                  '-DOGS_CONAN_BUILD=never ' +
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
@@ -309,48 +311,8 @@ pipeline {
             always {
               publishReports { }
             }
-            success { archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt' }
-          }
-        }
-        // **************************** Web ************************************
-        stage('Web') {
-          when { expression { return stage_required.web || stage_required.full } }
-          agent {
-            dockerfile {
-              filename 'Dockerfile.gcc.full'
-              dir 'scripts/docker'
-              label 'docker'
-              additionalBuildArgs '--pull'
-            }
-          }
-          environment {
-            CONTENTFUL_ACCESS_TOKEN = credentials('CONTENTFUL_ACCESS_TOKEN')
-            CONTENTFUL_OGS_SPACE_ID = credentials('CONTENTFUL_OGS_SPACE_ID')
-            ALGOLIA_WRITE_KEY = credentials('ALGOLIA_WRITE_KEY')
-          }
-          steps {
-            dir ('web') {
-              sh "yarn --ignore-engines --ignore-optional --non-interactive"
-              sh "pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json"
-              sh "node_modules/.bin/webpack -p --mode=production"
-              script {
-                if (env.JOB_NAME == 'ufz/ogs/master') {
-                  sh "hugo --ignoreCache"
-                  sh ("node_modules/.bin/hugo-algolia --toml -s")
-                } else {
-                  sh ("hugo --ignoreCache --baseURL " + env.JOB_URL + "Web/")
-                }
-              }
-            }
-          }
-          post {
             success {
-              dir('web/public') { stash(name: 'web') }
-              script {
-                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
-                  keepAll: true, reportDir: 'web/public', reportFiles: 'index.html',
-                  reportName: 'Web'])
-              }
+              archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
             }
           }
         }
@@ -377,7 +339,10 @@ pipeline {
       parallel {
         // ************************* Analyzers *********************************
         stage('Analyzers') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {
             dockerfile {
               filename 'Dockerfile.clang.full'
@@ -395,7 +360,6 @@ pipeline {
                 configure {
                   cmakeOptions =
                     '-DOGS_USE_CONAN=ON ' +
-                    '-DOGS_CONAN_BUILD=never ' +
                     '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use;-Xiwyu;--mapping_file=../scripts/jenkins/iwyu-mappings.imp" ' +
                     '-DCMAKE_LINK_WHAT_YOU_USE=ON ' +
                     '"-DCMAKE_CXX_CPPCHECK=cppcheck;--std=c++11;--language=c++;--suppress=syntaxError;--suppress=preprocessorErrorDirective:*/ThirdParty/*;--suppress=preprocessorErrorDirective:*conan*/package/*" ' +
@@ -408,22 +372,7 @@ pipeline {
             }
           }
         }
-        // ************************* Deploy Web ********************************
-        stage('Deploy Web') {
-          when { expression { return stage_required.web || stage_required.full } }
-          agent any
-          steps {
-            dir('web') { unstash 'web' }
-            unstash 'known_hosts'
-            script {
-              sshagent(credentials: ['www-data_jenkins']) {
-                sh 'rsync -a --delete --stats -e "ssh -o UserKnownHostsFile=' +
-                   'known_hosts" web/. ' +
-                   'www-data@jenkins:/var/www/dev.opengeosys.org'
-              }
-            }
-          }
-        }
+        // *********************** Deploy Doxygen ******************************
         stage('Deploy Doxygen') {
           when { expression { return stage_required.build || stage_required.full } }
           agent any
@@ -441,7 +390,10 @@ pipeline {
         }
         // *********************** Deploy envinf1 ******************************
         stage('Deploy envinf1') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent { label "envinf1"}
           steps {
             script {
@@ -465,7 +417,10 @@ pipeline {
         }
         // ******************** Deploy envinf1 PETSc ***************************
         stage('Deploy envinf1 PETSc') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent { label "envinf1"}
           steps {
             script {
@@ -490,7 +445,10 @@ pipeline {
         }
         // ************************** Sanitizer ********************************
         stage('Sanitizer') {
-          when { expression { return stage_required.build || stage_required.full } }
+          when {
+            beforeAgent true
+            expression { return stage_required.build || stage_required.full }
+          }
           agent {
             dockerfile {
               filename 'Dockerfile.clang.minimal'
@@ -531,7 +489,10 @@ pipeline {
         }
         // ********************* Update ufz/ogs-data ***************************
         stage('Update ogs-data') {
-          when { expression { return stage_required.data } }
+          when {
+            beforeAgent true
+            expression { return stage_required.data }
+          }
           agent any
           steps {
             script {

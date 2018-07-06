@@ -16,7 +16,7 @@ ENV CC=gcc-4.9
 ENV CXX=g++-4.9
 
 RUN python -m pip install --upgrade pip \
-  && python -m pip install cmake conan>=1.2.3
+  && python -m pip install cmake conan>=1.5.1
 
 # Ninja
 RUN curl -L -o ninja-linux.zip https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip \
@@ -76,6 +76,6 @@ RUN curl https://include-what-you-use.org/downloads/include-what-you-use-0.8-x86
   && tar xf include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -C /usr/ --strip-components=1 \
   && rm include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz
 
-RUN apt-get install -y mesa-common-dev
+RUN apt-get install -y mesa-common-dev wget
 
 USER jenkins

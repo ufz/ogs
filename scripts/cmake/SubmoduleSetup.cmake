@@ -12,9 +12,6 @@ set(REQUIRED_SUBMODULES
     ThirdParty/tetgen
     ${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
-if(OGS_BUILD_GUI)
-    list(APPEND REQUIRED_SUBMODULES ThirdParty/vtkGUISupportQt)
-endif()
 if(OGS_BUILD_METIS)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/metis)
 endif()

@@ -225,8 +225,8 @@ void NetCdfConfigureDialog::getDimEdges(int dimId, unsigned &size, double &first
         {
             int sizeOfDim = tmpVarOfDim->get_dim(0)->size();
             size = sizeOfDim;
-            double arrayOfDimStart[1] = {0};
-            std::size_t edgeOfArray[1] = {1};
+            double *arrayOfDimStart = new double[1]; //[1] = {0};
+            long edgeOfArray = 1; //[1] = {1};
             long edgeOrigin[1] = {0};
             tmpVarOfDim->set_cur(edgeOrigin);
             tmpVarOfDim->get(arrayOfDimStart,edgeOfArray);

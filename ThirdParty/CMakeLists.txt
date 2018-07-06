@@ -40,15 +40,6 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vtkdiff/CMakeLists.txt AND OGS_BUILD_TESTS
     install (PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
 endif()
 
-if(NOT TARGET vtkGUISupportQt AND OGS_BUILD_GUI)
-    set(VTK_QT_VERSION 5 CACHE INTERNAL "")
-    include_directories(SYSTEM ${VTK_INCLUDE_DIRS})
-    add_subdirectory(vtkGUISupportQt)
-    if(MSVC)
-        set_target_properties(vtkGUISupportQt PROPERTIES COMPILE_FLAGS /W0)
-    endif()
-endif()
-
 if(OGS_BUILD_SWMM)
     add_subdirectory(SWMMInterface)
     set_target_properties(SWMM SwmmInterface PROPERTIES COMPILE_FLAGS /W0)
