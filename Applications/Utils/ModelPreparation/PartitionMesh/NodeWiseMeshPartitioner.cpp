@@ -72,8 +72,8 @@ void NodeWiseMeshPartitioner::findNonGhostNodesInPartition(
     {
         if (_nodes_partition_ids[i] == part_id)
         {
-            splitOfHigherOrderNode(nodes, is_mixed_high_order_linear_elems, i,
-                                   partition.nodes, extra_nodes);
+            splitOffHigherOrderNode(nodes, is_mixed_high_order_linear_elems, i,
+                                    partition.nodes, extra_nodes);
         }
     }
     partition.number_of_non_ghost_base_nodes = partition.nodes.size();
@@ -141,15 +141,15 @@ void NodeWiseMeshPartitioner::findGhostNodesInPartition(
 
             if (_nodes_partition_ids[node_id] != part_id)
             {
-                splitOfHigherOrderNode(nodes, is_mixed_high_order_linear_elems,
-                                       node_id, partition.nodes, extra_nodes);
+                splitOffHigherOrderNode(nodes, is_mixed_high_order_linear_elems,
+                                        node_id, partition.nodes, extra_nodes);
                 nodes_reserved[node_id] = true;
             }
         }
     }
 }
 
-void NodeWiseMeshPartitioner::splitOfHigherOrderNode(
+void NodeWiseMeshPartitioner::splitOffHigherOrderNode(
     std::vector<MeshLib::Node*> const& nodes,
     bool const is_mixed_high_order_linear_elems,
     unsigned const node_id,
