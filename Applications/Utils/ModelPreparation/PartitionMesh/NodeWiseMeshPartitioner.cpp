@@ -58,6 +58,41 @@ std::ostream& Partition::writeNodesBinary(
                     sizeof(NodeStruct) * nodes_buffer.size());
 }
 
+/// Calculate the total number of integer variables of an element vector. Each
+/// element has three integer variables for element ID, element type, number of
+/// nodes of the element. Therefore the total number of the integers in
+/// \c elements is 3 * elements.size() + sum (number of nodes of each element).
+NodeWiseMeshPartitioner::IntegerType getNumberOfIntegerVariablesOfElements(
+    std::vector<const MeshLib::Element*> const& elements)
+{
+    return 3 * elements.size() +
+           std::accumulate(begin(elements), end(elements), 0,
+                           [](auto const nnodes, auto const* e) {
+                               return nnodes + e->getNumberOfNodes();
+                           });
+}
+
+std::ostream& Partition::writeConfigBinary(std::ostream& os) const
+{
+    long const data[] = {
+        static_cast<long>(nodes.size()),
+        static_cast<long>(number_of_base_nodes),
+        static_cast<long>(regular_elements.size()),
+        static_cast<long>(ghost_elements.size()),
+        static_cast<long>(number_of_non_ghost_base_nodes),
+        static_cast<long>(number_of_non_ghost_nodes),
+        static_cast<long>(number_of_mesh_base_nodes),
+        static_cast<long>(number_of_mesh_all_nodes),
+        static_cast<long>(
+            getNumberOfIntegerVariablesOfElements(regular_elements)),
+        static_cast<long>(
+            getNumberOfIntegerVariablesOfElements(ghost_elements)),
+    };
+
+    return os.write(reinterpret_cast<const char*>(data),
+                    sizeof(data));
+}
+
 void NodeWiseMeshPartitioner::findNonGhostNodesInPartition(
     std::size_t const part_id,
     const bool is_mixed_high_order_linear_elems,
@@ -183,6 +218,10 @@ void NodeWiseMeshPartitioner::processPartition(
         partition.nodes.insert(partition.nodes.end(), extra_nodes.begin(),
                                extra_nodes.end());
     }
+
+    // Set the node numbers of base and all mesh nodes.
+    partition.number_of_mesh_base_nodes = _mesh->getNumberOfBaseNodes();
+    partition.number_of_mesh_all_nodes = _mesh->getNumberOfNodes();
 }
 
 void NodeWiseMeshPartitioner::processNodeProperties()
@@ -420,20 +459,59 @@ void NodeWiseMeshPartitioner::writeCellPropertiesBinary(
     }
 }
 
-/// Calculate the total number of integer variables of an element vector. Each
-/// element has three integer variables for element ID, element type, number of
-/// nodes of the element. Therefore the total number of the integers in an
-/// element vector is 3 * vector size + sum (number of nodes of each element)
-NodeWiseMeshPartitioner::IntegerType getNumberOfIntegerVariablesOfElements(
-    std::vector<const MeshLib::Element*> const& elements)
+struct ConfigOffsets
 {
-    return 3 * elements.size() +
-           std::accumulate(begin(elements), end(elements), 0,
-                           [](auto const nnodes, auto const* e) {
-                               return nnodes + e->getNumberOfNodes();
-                           });
+    long node_rank_offset;
+    long element_rank_offset;
+    long ghost_element_rank_offset;
+
+    std::ostream& writeConfigBinary(std::ostream& os) const;
+};
+
+std::ostream& ConfigOffsets::writeConfigBinary(std::ostream& os) const
+{
+    os.write(reinterpret_cast<const char*>(this), sizeof(ConfigOffsets));
+
+    static long reserved = 0;  // Value reserved in the binary format, not used
+                               // in the partitioning process.
+    return os.write(reinterpret_cast<const char*>(&reserved), sizeof(long));
 }
 
+struct PartitionOffsets
+{
+    long node;
+    long regular_elements;
+    long ghost_elements;
+};
+
+PartitionOffsets
+computePartitionElementOffsets(Partition const& partition)
+{
+    return {static_cast<long>(partition.nodes.size()),
+            static_cast<long>(partition.regular_elements.size() +
+                              getNumberOfIntegerVariablesOfElements(
+                                  partition.regular_elements)),
+            static_cast<long>(partition.ghost_elements.size() +
+                              getNumberOfIntegerVariablesOfElements(
+                                  partition.ghost_elements))};
+}
+
+ConfigOffsets incrementConfigOffsets(ConfigOffsets const& oldConfig,
+                                     PartitionOffsets const& offsets)
+{
+    return {
+        static_cast<long>(oldConfig.node_rank_offset +
+                          offsets.node * sizeof(NodeStruct)),
+        // Offset the ending entry of the element integer variales of
+        // the non-ghost elements of this partition in the vector of elem_info.
+        static_cast<long>(oldConfig.element_rank_offset +
+                          offsets.regular_elements * sizeof(long)),
+
+        // Offset the ending entry of the element integer variales of
+        // the ghost elements of this partition in the vector of elem_info.
+        static_cast<long>(oldConfig.ghost_element_rank_offset +
+                          offsets.ghost_elements * sizeof(long))};
+}
 
 /// Write the configuration data of the partition data in binary files.
 /// \return a pair of vectors for:
@@ -442,60 +520,28 @@ NodeWiseMeshPartitioner::IntegerType getNumberOfIntegerVariablesOfElements(
 ///  2. The number of all ghost element integer variables for each partition.
 std::tuple<std::vector<long>, std::vector<long>> writeConfigDataBinary(
     const std::string& file_name_base,
-    std::size_t const number_of_mesh_base_nodes,
-    std::size_t const number_of_mesh_all_nodes,
     std::vector<Partition> const& partitions)
 {
     std::ofstream of_bin_cfg =
         BaseLib::createBinaryFile(file_name_base + "_partitioned_msh_cfg" +
                                   std::to_string(partitions.size()) + ".bin");
 
-    const long num_config_data = 14;
-    long config_data[num_config_data];
-    // node rank offset
-    config_data[10] = 0;
-    // element rank offset
-    config_data[11] = 0;
-    // ghost element rank offset
-    config_data[12] = 0;
-    // Reserved
-    config_data[13] = 0;
-    std::vector<long> num_elem_integers(partitions.size());
-    std::vector<long> num_g_elem_integers(partitions.size());
-    std::size_t loop_id = 0;
+    std::vector<long> num_elem_integers;
+    num_elem_integers.reserve(partitions.size());
+    std::vector<long> num_g_elem_integers;
+    num_g_elem_integers.reserve(partitions.size());
+
+    ConfigOffsets config_offsets = {0, 0, 0};  // 0 for first partition.
     for (const auto& partition : partitions)
     {
-        config_data[0] = partition.nodes.size();
-        config_data[1] = partition.number_of_base_nodes;
-        config_data[2] = partition.regular_elements.size();
-        config_data[3] = partition.ghost_elements.size();
-        config_data[4] = partition.number_of_non_ghost_base_nodes;
-        config_data[5] = partition.number_of_non_ghost_nodes;
-        config_data[6] = number_of_mesh_base_nodes;
-        config_data[7] = number_of_mesh_all_nodes;
-        config_data[8] =
-            getNumberOfIntegerVariablesOfElements(partition.regular_elements);
-        config_data[9] =
-            getNumberOfIntegerVariablesOfElements(partition.ghost_elements);
+        partition.writeConfigBinary(of_bin_cfg);
 
-        of_bin_cfg.write(reinterpret_cast<const char*>(config_data),
-                         num_config_data * sizeof(long));
+        config_offsets.writeConfigBinary(of_bin_cfg);
+        auto const& new_offsets = computePartitionElementOffsets(partition);
+        config_offsets = incrementConfigOffsets(config_offsets, new_offsets);
 
-        config_data[10] += config_data[0] * sizeof(NodeStruct);
-
-        // Update offsets
-        num_elem_integers[loop_id] =
-            partition.regular_elements.size() + config_data[8];
-        // Offset the ending entry of the element integer variales of
-        // the non-ghost elements of this partition in the vector of elem_info.
-        config_data[11] += num_elem_integers[loop_id] * sizeof(long);
-        // Offset the ending entry of the element integer variales of
-        // the ghost elements of this partition in the vector of elem_info.
-        num_g_elem_integers[loop_id] =
-            partition.ghost_elements.size() + config_data[9];
-        config_data[12] += num_g_elem_integers[loop_id] * sizeof(long);
-
-        loop_id++;
+        num_elem_integers.push_back(new_offsets.regular_elements);
+        num_g_elem_integers.push_back(new_offsets.ghost_elements);
     }
 
     return std::make_tuple(num_elem_integers, num_g_elem_integers);
@@ -623,9 +669,9 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 {
     writeNodePropertiesBinary(file_name_base);
     writeCellPropertiesBinary(file_name_base);
+
     const auto elem_integers =
-        writeConfigDataBinary(file_name_base, _mesh->getNumberOfBaseNodes(),
-                              _mesh->getNumberOfNodes(), _partitions);
+        writeConfigDataBinary(file_name_base, _partitions);
 
     const std::vector<IntegerType>& num_elem_integers =
         std::get<0>(elem_integers);

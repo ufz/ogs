@@ -33,6 +33,8 @@ struct Partition
     std::size_t number_of_non_ghost_base_nodes;
     std::size_t number_of_non_ghost_nodes;
     std::size_t number_of_base_nodes;
+    std::size_t number_of_mesh_base_nodes;
+    std::size_t number_of_mesh_all_nodes;
     /// Non ghost elements
     std::vector<const MeshLib::Element*> regular_elements;
     std::vector<const MeshLib::Element*> ghost_elements;
@@ -40,6 +42,8 @@ struct Partition
     std::ostream& writeNodesBinary(
         std::ostream& os,
         std::vector<std::size_t> const& global_node_ids) const;
+
+    std::ostream& writeConfigBinary(std::ostream& os) const;
 };
 
 /// Mesh partitioner.
