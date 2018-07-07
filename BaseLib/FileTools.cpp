@@ -13,6 +13,7 @@
  */
 
 #include "FileTools.h"
+#include "Error.h"
 #include "StringTools.h"
 
 #include <sys/stat.h>
@@ -54,6 +55,16 @@ void truncateFile( std::string const& filename)
 {
     std::ofstream ofs(filename.c_str(), std::ios_base::trunc);
     ofs.close();
+}
+
+std::ofstream createBinaryFile(std::string const& file_name)
+{
+    std::ofstream os(file_name, std::ios::binary);
+    if (!os)
+    {
+        OGS_FATAL("Could not open file '%s' for output.", file_name.c_str());
+    }
+    return os;
 }
 
 namespace
