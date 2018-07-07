@@ -505,6 +505,30 @@ NodeWiseMeshPartitioner::writeConfigDataBinary(
     return std::make_tuple(num_elem_integers, num_g_elem_integers);
 }
 
+/// Get integer variables, which are used to define an element
+///
+/// \param elem            Element
+/// \param local_node_ids  Local node indices of a partition
+/// \param elem_info       A vector holds all integer variables of
+///                        element definitions
+/// \param counter         Recorder of the number of integer variables.
+void getElementIntegerVariables(const MeshLib::Element& elem,
+                                const std::vector<long>& local_node_ids,
+                                std::vector<long>& elem_info,
+                                long& counter)
+{
+    unsigned mat_id = 0;  // TODO: Material ID to be set from the mesh data
+    const long nn = elem.getNumberOfNodes();
+    elem_info[counter++] = mat_id;
+    elem_info[counter++] = static_cast<long>(elem.getCellType());
+    elem_info[counter++] = nn;
+
+    for (long i = 0; i < nn; i++)
+    {
+        elem_info[counter++] = local_node_ids[elem.getNodeIndex(i)];
+    }
+}
+
 void NodeWiseMeshPartitioner::writeElementsBinary(
     const std::string& file_name_base,
     const std::vector<IntegerType>& num_elem_integers,
@@ -699,24 +723,6 @@ void NodeWiseMeshPartitioner::writeASCII(const std::string& file_name_base)
     writeConfigDataASCII(file_name_base);
     writeElementsASCII(file_name_base);
     writeNodesASCII(file_name_base);
-}
-
-void NodeWiseMeshPartitioner::getElementIntegerVariables(
-    const MeshLib::Element& elem,
-    const std::vector<IntegerType>& local_node_ids,
-    std::vector<IntegerType>& elem_info,
-    IntegerType& counter)
-{
-    unsigned mat_id = 0;  // TODO: Material ID to be set from the mesh data
-    const IntegerType nn = elem.getNumberOfNodes();
-    elem_info[counter++] = mat_id;
-    elem_info[counter++] = static_cast<unsigned>(elem.getCellType());
-    elem_info[counter++] = nn;
-
-    for (IntegerType i = 0; i < nn; i++)
-    {
-        elem_info[counter++] = local_node_ids[elem.getNodeIndex(i)];
-    }
 }
 
 void NodeWiseMeshPartitioner::writeLocalElementNodeIndices(

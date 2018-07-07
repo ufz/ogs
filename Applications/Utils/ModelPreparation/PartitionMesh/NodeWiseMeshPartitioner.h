@@ -112,20 +112,6 @@ private:
     /// interpolation
     void renumberNodeIndices(const bool is_mixed_high_order_linear_elems);
 
-    /*!
-         \brief Get integer variables, which are used to define an element
-         \param elem            Element
-         \param local_node_ids  Local node indices of a partition
-         \param elem_info       A vector holds all integer variables of
-                                element definitions
-         \param counter         Recorder of the number of integer variables.
-    */
-    void getElementIntegerVariables(
-        const MeshLib::Element& elem,
-        const std::vector<IntegerType>& local_node_ids,
-        std::vector<IntegerType>& elem_info,
-        IntegerType& counter);
-
     void writeNodePropertiesBinary(std::string const& file_name_base) const;
     void writeCellPropertiesBinary(std::string const& file_name_base) const;
 
