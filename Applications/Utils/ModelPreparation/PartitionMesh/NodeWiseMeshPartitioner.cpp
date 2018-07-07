@@ -16,6 +16,7 @@
 
 #include <limits>
 #include <numeric>
+#include <unordered_map>
 
 #include <logog/include/logog.hpp>
 
@@ -419,7 +420,6 @@ void NodeWiseMeshPartitioner::writeCellPropertiesBinary(
     }
 }
 
-
 /// Calculate the total number of integer variables of an element vector. Each
 /// element has three integer variables for element ID, element type, number of
 /// nodes of the element. Therefore the total number of the integers in an
@@ -501,10 +501,11 @@ NodeWiseMeshPartitioner::writeConfigDataBinary(
 /// \param elem_info       A vector holds all integer variables of
 ///                        element definitions
 /// \param counter         Recorder of the number of integer variables.
-void getElementIntegerVariables(const MeshLib::Element& elem,
-                                const std::vector<long>& local_node_ids,
-                                std::vector<long>& elem_info,
-                                long& counter)
+void getElementIntegerVariables(
+    const MeshLib::Element& elem,
+    const std::unordered_map<std::size_t, long>& local_node_ids,
+    std::vector<long>& elem_info,
+    long& counter)
 {
     unsigned mat_id = 0;  // TODO: Material ID to be set from the mesh data
     const long nn = elem.getNumberOfNodes();
@@ -514,52 +515,65 @@ void getElementIntegerVariables(const MeshLib::Element& elem,
 
     for (long i = 0; i < nn; i++)
     {
-        elem_info[counter++] = local_node_ids[elem.getNodeIndex(i)];
+        elem_info[counter++] = local_node_ids.at(elem.getNodeIndex(i));
     }
 }
 
-void NodeWiseMeshPartitioner::writeElementsBinary(
-    const std::string& file_name_base,
-    const std::vector<IntegerType>& num_elem_integers,
-    const std::vector<IntegerType>& num_g_elem_integers)
+/// Generates a mapping of given node ids to a new local (renumbered) node ids.
+std::unordered_map<std::size_t, long> enumerateLocalNodeIds(
+    std::vector<MeshLib::Node*> const& nodes)
 {
-    const std::string npartitions_str = std::to_string(_npartitions);
+    std::unordered_map<std::size_t, long> local_ids;
+    local_ids.reserve(nodes.size());
+
+    long local_node_id = 0;
+    for (const auto* node : nodes)
+    {
+        local_ids[node->getID()] = local_node_id++;
+    }
+    return local_ids;
+}
+
+/// Write the element integer variables of all partitions into binary files.
+/// \param file_name_base       The prefix of the file name.
+/// \param partitions           Partitions vector.
+/// \param num_elem_integers    The numbers of all non-ghost element
+///                             integer variables of each partitions.
+/// \param num_g_elem_integers  The numbers of all ghost element
+void writeElementsBinary(std::string const& file_name_base,
+                         std::vector<Partition> const& partitions,
+                         std::vector<long> const& num_elem_integers,
+                         std::vector<long> const& num_g_elem_integers)
+{
+    const std::string npartitions_str = std::to_string(partitions.size());
 
     std::ofstream element_info_os = BaseLib::createBinaryFile(
         file_name_base + "_partitioned_msh_ele" + npartitions_str + ".bin");
     std::ofstream ghost_element_info_os = BaseLib::createBinaryFile(
         file_name_base + "_partitioned_msh_ele_g" + npartitions_str + ".bin");
 
-    for (std::size_t i = 0; i < _partitions.size(); i++)
+    for (std::size_t i = 0; i < partitions.size(); i++)
     {
-        const auto& partition = _partitions[i];
-
-        // Set the local node indices of the current partition.
-        IntegerType node_local_id_offset = 0;
-        std::vector<IntegerType> nodes_local_ids(_mesh->getNumberOfNodes(), -1);
-        for (const auto* node : partition.nodes)
-        {
-            nodes_local_ids[node->getID()] = node_local_id_offset;
-            node_local_id_offset++;
-        }
+        const auto& partition = partitions[i];
+        auto const local_node_ids = enumerateLocalNodeIds(partition.nodes);
 
         // A vector contians all element integer variables of
         // the non-ghost elements of this partition
-        std::vector<IntegerType> ele_info(num_elem_integers[i]);
+        std::vector<long> ele_info(num_elem_integers[i]);
 
         // Non-ghost elements.
-        IntegerType counter = partition.regular_elements.size();
+        long counter = partition.regular_elements.size();
 
         for (std::size_t j = 0; j < partition.regular_elements.size(); j++)
         {
             const auto* elem = partition.regular_elements[j];
             ele_info[j] = counter;
-            getElementIntegerVariables(*elem, nodes_local_ids, ele_info,
+            getElementIntegerVariables(*elem, local_node_ids, ele_info,
                                        counter);
         }
         // Write vector data of non-ghost elements
         element_info_os.write(reinterpret_cast<const char*>(ele_info.data()),
-                              num_elem_integers[i] * sizeof(IntegerType));
+                              ele_info.size() * sizeof(long));
 
         // Ghost elements
         ele_info.resize(num_g_elem_integers[i]);
@@ -570,13 +584,13 @@ void NodeWiseMeshPartitioner::writeElementsBinary(
         {
             const auto* elem = partition.ghost_elements[j];
             ele_info[j] = counter;
-            getElementIntegerVariables(*elem, nodes_local_ids, ele_info,
+            getElementIntegerVariables(*elem, local_node_ids, ele_info,
                                        counter);
         }
         // Write vector data of ghost elements
         ghost_element_info_os.write(
             reinterpret_cast<const char*>(ele_info.data()),
-            num_g_elem_integers[i] * sizeof(IntegerType));
+            ele_info.size() * sizeof(long));
     }
 }
 
@@ -608,7 +622,8 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
         std::get<0>(elem_integers);
     const std::vector<IntegerType>& num_g_elem_integers =
         std::get<1>(elem_integers);
-    writeElementsBinary(file_name_base, num_elem_integers, num_g_elem_integers);
+    writeElementsBinary(file_name_base, _partitions, num_elem_integers,
+                        num_g_elem_integers);
 
     writeNodesBinary(file_name_base, _partitions, _nodes_global_ids);
 }

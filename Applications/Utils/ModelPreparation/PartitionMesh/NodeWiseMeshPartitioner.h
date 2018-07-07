@@ -259,20 +259,6 @@ private:
     std::tuple<std::vector<IntegerType>, std::vector<IntegerType>>
     writeConfigDataBinary(const std::string& file_name_base);
 
-    /*!
-         \brief Write the element integer variables of all partitions
-                into binary files.
-         \param file_name_base      The prefix of the file name.
-         \param num_elem_integers   The numbers of all non-ghost element
-                                    integer variables of each partitions.
-         \param num_g_elem_integers The numbers of all ghost element
-                                    integer variables of each partitions.
-    */
-    void writeElementsBinary(
-        const std::string& file_name_base,
-        const std::vector<IntegerType>& num_elem_integers,
-        const std::vector<IntegerType>& num_g_elem_integers);
-
     /// Write the configuration data of the partition data in ASCII files.
     /// \param file_name_base The prefix of the file name.
     void writeConfigDataASCII(const std::string& file_name_base);
