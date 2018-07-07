@@ -247,18 +247,6 @@ private:
         return true;
     }
 
-    /*!
-         \brief Write the configuration data of the partition data in
-                binary files.
-         \param file_name_base The prefix of the file name.
-         \return element 1: The numbers of all non-ghost element integer
-                            variables of each partitions.
-                 element 2: The numbers of all ghost element integer
-                            variables of each partitions.
-    */
-    std::tuple<std::vector<IntegerType>, std::vector<IntegerType>>
-    writeConfigDataBinary(const std::string& file_name_base);
-
     /// Write the configuration data of the partition data in ASCII files.
     /// \param file_name_base The prefix of the file name.
     void writeConfigDataASCII(const std::string& file_name_base);

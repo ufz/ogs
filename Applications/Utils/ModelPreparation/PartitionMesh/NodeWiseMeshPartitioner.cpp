@@ -434,17 +434,24 @@ NodeWiseMeshPartitioner::IntegerType getNumberOfIntegerVariablesOfElements(
                            });
 }
 
-std::tuple<std::vector<NodeWiseMeshPartitioner::IntegerType>,
-           std::vector<NodeWiseMeshPartitioner::IntegerType>>
-NodeWiseMeshPartitioner::writeConfigDataBinary(
-    const std::string& file_name_base)
+
+/// Write the configuration data of the partition data in binary files.
+/// \return a pair of vectors for:
+///  1. The number of all non-ghost element integer variables for each
+///     partition.
+///  2. The number of all ghost element integer variables for each partition.
+std::tuple<std::vector<long>, std::vector<long>> writeConfigDataBinary(
+    const std::string& file_name_base,
+    std::size_t const number_of_mesh_base_nodes,
+    std::size_t const number_of_mesh_all_nodes,
+    std::vector<Partition> const& partitions)
 {
     std::ofstream of_bin_cfg =
         BaseLib::createBinaryFile(file_name_base + "_partitioned_msh_cfg" +
-                                  std::to_string(_npartitions) + ".bin");
+                                  std::to_string(partitions.size()) + ".bin");
 
-    const IntegerType num_config_data = 14;
-    IntegerType config_data[num_config_data];
+    const long num_config_data = 14;
+    long config_data[num_config_data];
     // node rank offset
     config_data[10] = 0;
     // element rank offset
@@ -453,10 +460,10 @@ NodeWiseMeshPartitioner::writeConfigDataBinary(
     config_data[12] = 0;
     // Reserved
     config_data[13] = 0;
-    std::vector<IntegerType> num_elem_integers(_partitions.size());
-    std::vector<IntegerType> num_g_elem_integers(_partitions.size());
+    std::vector<long> num_elem_integers(partitions.size());
+    std::vector<long> num_g_elem_integers(partitions.size());
     std::size_t loop_id = 0;
-    for (const auto& partition : _partitions)
+    for (const auto& partition : partitions)
     {
         config_data[0] = partition.nodes.size();
         config_data[1] = partition.number_of_base_nodes;
@@ -464,15 +471,15 @@ NodeWiseMeshPartitioner::writeConfigDataBinary(
         config_data[3] = partition.ghost_elements.size();
         config_data[4] = partition.number_of_non_ghost_base_nodes;
         config_data[5] = partition.number_of_non_ghost_nodes;
-        config_data[6] = _mesh->getNumberOfBaseNodes();
-        config_data[7] = _mesh->getNumberOfNodes();
+        config_data[6] = number_of_mesh_base_nodes;
+        config_data[7] = number_of_mesh_all_nodes;
         config_data[8] =
             getNumberOfIntegerVariablesOfElements(partition.regular_elements);
         config_data[9] =
             getNumberOfIntegerVariablesOfElements(partition.ghost_elements);
 
         of_bin_cfg.write(reinterpret_cast<const char*>(config_data),
-                         num_config_data * sizeof(IntegerType));
+                         num_config_data * sizeof(long));
 
         config_data[10] += config_data[0] * sizeof(NodeStruct);
 
@@ -481,12 +488,12 @@ NodeWiseMeshPartitioner::writeConfigDataBinary(
             partition.regular_elements.size() + config_data[8];
         // Offset the ending entry of the element integer variales of
         // the non-ghost elements of this partition in the vector of elem_info.
-        config_data[11] += num_elem_integers[loop_id] * sizeof(IntegerType);
+        config_data[11] += num_elem_integers[loop_id] * sizeof(long);
         // Offset the ending entry of the element integer variales of
         // the ghost elements of this partition in the vector of elem_info.
         num_g_elem_integers[loop_id] =
             partition.ghost_elements.size() + config_data[9];
-        config_data[12] += num_g_elem_integers[loop_id] * sizeof(IntegerType);
+        config_data[12] += num_g_elem_integers[loop_id] * sizeof(long);
 
         loop_id++;
     }
@@ -616,7 +623,9 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 {
     writeNodePropertiesBinary(file_name_base);
     writeCellPropertiesBinary(file_name_base);
-    const auto elem_integers = writeConfigDataBinary(file_name_base);
+    const auto elem_integers =
+        writeConfigDataBinary(file_name_base, _mesh->getNumberOfBaseNodes(),
+                              _mesh->getNumberOfNodes(), _partitions);
 
     const std::vector<IntegerType>& num_elem_integers =
         std::get<0>(elem_integers);
