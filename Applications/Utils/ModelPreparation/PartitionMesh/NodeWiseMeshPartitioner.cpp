@@ -585,7 +585,7 @@ void NodeWiseMeshPartitioner::writeElementsBinary(
             node_local_id_offset++;
         }
 
-        // A vector contians all element integer variales of
+        // A vector contians all element integer variables of
         // the non-ghost elements of this partition
         std::vector<IntegerType> ele_info(num_elem_integers[i]);
 
