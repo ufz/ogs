@@ -115,9 +115,6 @@ private:
     /// interpolation
     void renumberNodeIndices(const bool is_mixed_high_order_linear_elems);
 
-    void writeNodePropertiesBinary(std::string const& file_name_base) const;
-    void writeCellPropertiesBinary(std::string const& file_name_base) const;
-
     /// 1 copy pointers to nodes belonging to the partition part_id
     /// 2 collect non-linear element nodes belonging to the partition part_id in
     /// extra_nodes
@@ -151,105 +148,6 @@ private:
 
     void processNodeProperties();
     void processCellProperties();
-
-    template <typename T>
-    bool copyNodePropertyVector(std::string const& name,
-                                std::size_t const total_number_of_tuples)
-    {
-        auto const& original_properties(_mesh->getProperties());
-        if (!original_properties.existsPropertyVector<T>(name))
-            return false;
-
-        auto const& pv(original_properties.getPropertyVector<T>(name));
-        auto partitioned_pv =
-            _partitioned_properties.createNewPropertyVector<T>(
-                name, pv->getMeshItemType(), pv->getNumberOfComponents());
-        partitioned_pv->resize(total_number_of_tuples *
-                               pv->getNumberOfComponents());
-        std::size_t position_offset(0);
-        for (auto p : _partitions)
-        {
-            for (std::size_t i = 0; i < p.nodes.size(); ++i)
-            {
-                const auto global_id = p.nodes[i]->getID();
-                (*partitioned_pv)[position_offset + i] = (*pv)[global_id];
-            }
-            position_offset += p.nodes.size();
-        }
-        return true;
-    }
-
-    template <typename T>
-    bool copyCellPropertyVector(std::string const& name,
-                                std::size_t const total_number_of_tuples)
-    {
-        auto const& original_properties(_mesh->getProperties());
-        if (!original_properties.existsPropertyVector<T>(name))
-            return false;
-
-        auto const& pv(original_properties.getPropertyVector<T>(name));
-        auto partitioned_pv =
-            _partitioned_properties.createNewPropertyVector<T>(
-                name, pv->getMeshItemType(), pv->getNumberOfComponents());
-        partitioned_pv->resize(total_number_of_tuples *
-                               pv->getNumberOfComponents());
-        std::size_t position_offset(0);
-        for (auto const& p : _partitions)
-        {
-            std::size_t const n_regular(p.regular_elements.size());
-            for (std::size_t i = 0; i < n_regular; ++i)
-            {
-                const auto id = p.regular_elements[i]->getID();
-                (*partitioned_pv)[position_offset + i] = (*pv)[id];
-            }
-            position_offset += n_regular;
-            std::size_t const n_ghost(p.ghost_elements.size());
-            for (std::size_t i = 0; i < n_ghost; ++i)
-            {
-                const auto id = p.ghost_elements[i]->getID();
-                (*partitioned_pv)[position_offset + i] = (*pv)[id];
-            }
-            position_offset += n_ghost;
-        }
-        return true;
-    }
-
-    template <typename T>
-    void writePropertyVectorValuesBinary(
-        std::ostream& os, MeshLib::PropertyVector<T> const& pv) const
-    {
-        std::size_t number_of_components(pv.getNumberOfComponents());
-        std::size_t number_of_tuples(pv.getNumberOfTuples());
-        std::vector<T> property_vector_buffer;
-        property_vector_buffer.resize(number_of_tuples * number_of_components);
-        for (std::size_t i = 0; i < pv.getNumberOfTuples(); ++i)
-        {
-            for (std::size_t c(0); c < number_of_components; ++c)
-                property_vector_buffer[i * number_of_components + c] =
-                    pv.getComponent(i, c);
-        }
-        os.write(reinterpret_cast<char*>(property_vector_buffer.data()),
-                 number_of_components * number_of_tuples * sizeof(T));
-    }
-
-    template <typename T>
-    bool writePropertyVectorBinary(std::string const& name,
-                                   std::ostream& out_val,
-                                   std::ostream& out_meta) const
-    {
-        if (!_partitioned_properties.existsPropertyVector<T>(name))
-            return false;
-
-        MeshLib::IO::PropertyVectorMetaData pvmd;
-        pvmd.property_name = name;
-        auto* pv = _partitioned_properties.getPropertyVector<T>(name);
-        pvmd.fillPropertyVectorMetaDataTypeInfo<T>();
-        pvmd.number_of_components = pv->getNumberOfComponents();
-        pvmd.number_of_tuples = pv->getNumberOfTuples();
-        writePropertyVectorValuesBinary(out_val, *pv);
-        MeshLib::IO::writePropertyVectorMetaDataBinary(out_meta, pvmd);
-        return true;
-    }
 
     /// Write the configuration data of the partition data in ASCII files.
     /// \param file_name_base The prefix of the file name.

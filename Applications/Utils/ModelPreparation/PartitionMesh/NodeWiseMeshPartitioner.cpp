@@ -224,6 +224,70 @@ void NodeWiseMeshPartitioner::processPartition(
     partition.number_of_mesh_all_nodes = _mesh->getNumberOfNodes();
 }
 
+template <typename T>
+bool copyNodePropertyVector(MeshLib::Properties const& original_properties,
+                            MeshLib::Properties& partitioned_properties,
+                            std::vector<Partition> const& partitions,
+                            std::string const& name,
+                            std::size_t const total_number_of_tuples)
+{
+    if (!original_properties.existsPropertyVector<T>(name))
+        return false;
+
+    auto const& pv = original_properties.getPropertyVector<T>(name);
+    auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
+        name, pv->getMeshItemType(), pv->getNumberOfComponents());
+    partitioned_pv->resize(total_number_of_tuples *
+                           pv->getNumberOfComponents());
+    std::size_t position_offset(0);
+    for (auto p : partitions)
+    {
+        for (std::size_t i = 0; i < p.nodes.size(); ++i)
+        {
+            const auto global_id = p.nodes[i]->getID();
+            (*partitioned_pv)[position_offset + i] = (*pv)[global_id];
+        }
+        position_offset += p.nodes.size();
+    }
+    return true;
+}
+
+template <typename T>
+bool copyCellPropertyVector(MeshLib::Properties const& original_properties,
+                            MeshLib::Properties& partitioned_properties,
+                            std::vector<Partition> const& partitions,
+                            std::string const& name,
+                            std::size_t const total_number_of_tuples)
+{
+    if (!original_properties.existsPropertyVector<T>(name))
+        return false;
+
+    auto const& pv = original_properties.getPropertyVector<T>(name);
+    auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
+        name, pv->getMeshItemType(), pv->getNumberOfComponents());
+    partitioned_pv->resize(total_number_of_tuples *
+                           pv->getNumberOfComponents());
+    std::size_t position_offset(0);
+    for (auto const& p : partitions)
+    {
+        std::size_t const n_regular(p.regular_elements.size());
+        for (std::size_t i = 0; i < n_regular; ++i)
+        {
+            const auto id = p.regular_elements[i]->getID();
+            (*partitioned_pv)[position_offset + i] = (*pv)[id];
+        }
+        position_offset += n_regular;
+        std::size_t const n_ghost(p.ghost_elements.size());
+        for (std::size_t i = 0; i < n_ghost; ++i)
+        {
+            const auto id = p.ghost_elements[i]->getID();
+            (*partitioned_pv)[position_offset + i] = (*pv)[id];
+        }
+        position_offset += n_ghost;
+    }
+    return true;
+}
+
 void NodeWiseMeshPartitioner::processNodeProperties()
 {
     std::size_t const total_number_of_tuples =
@@ -243,14 +307,27 @@ void NodeWiseMeshPartitioner::processNodeProperties()
     for (auto const& name : property_names)
     {
         bool success =
-            copyNodePropertyVector<double>(name, total_number_of_tuples) ||
-            copyNodePropertyVector<float>(name, total_number_of_tuples) ||
-            copyNodePropertyVector<int>(name, total_number_of_tuples) ||
-            copyNodePropertyVector<long>(name, total_number_of_tuples) ||
-            copyNodePropertyVector<unsigned>(name, total_number_of_tuples) ||
-            copyNodePropertyVector<unsigned long>(name,
-                                                  total_number_of_tuples) ||
-            copyNodePropertyVector<std::size_t>(name, total_number_of_tuples);
+            copyNodePropertyVector<double>(original_properties,
+                                           _partitioned_properties, _partitions,
+                                           name, total_number_of_tuples) ||
+            copyNodePropertyVector<float>(original_properties,
+                                          _partitioned_properties, _partitions,
+                                          name, total_number_of_tuples) ||
+            copyNodePropertyVector<int>(original_properties,
+                                        _partitioned_properties, _partitions,
+                                        name, total_number_of_tuples) ||
+            copyNodePropertyVector<long>(original_properties,
+                                         _partitioned_properties, _partitions,
+                                         name, total_number_of_tuples) ||
+            copyNodePropertyVector<unsigned>(
+                original_properties, _partitioned_properties, _partitions, name,
+                total_number_of_tuples) ||
+            copyNodePropertyVector<unsigned long>(
+                original_properties, _partitioned_properties, _partitions, name,
+                total_number_of_tuples) ||
+            copyNodePropertyVector<std::size_t>(
+                original_properties, _partitioned_properties, _partitions, name,
+                total_number_of_tuples);
         if (!success)
             WARN(
                 "processNodeProperties: Could not create partitioned "
@@ -278,14 +355,27 @@ void NodeWiseMeshPartitioner::processCellProperties()
     for (auto const& name : property_names)
     {
         bool success =
-            copyCellPropertyVector<double>(name, total_number_of_tuples) ||
-            copyCellPropertyVector<float>(name, total_number_of_tuples) ||
-            copyCellPropertyVector<int>(name, total_number_of_tuples) ||
-            copyCellPropertyVector<long>(name, total_number_of_tuples) ||
-            copyCellPropertyVector<unsigned>(name, total_number_of_tuples) ||
-            copyCellPropertyVector<unsigned long>(name,
-                                                  total_number_of_tuples) ||
-            copyCellPropertyVector<std::size_t>(name, total_number_of_tuples);
+            copyCellPropertyVector<double>(original_properties,
+                                           _partitioned_properties, _partitions,
+                                           name, total_number_of_tuples) ||
+            copyCellPropertyVector<float>(original_properties,
+                                          _partitioned_properties, _partitions,
+                                          name, total_number_of_tuples) ||
+            copyCellPropertyVector<int>(original_properties,
+                                        _partitioned_properties, _partitions,
+                                        name, total_number_of_tuples) ||
+            copyCellPropertyVector<long>(original_properties,
+                                         _partitioned_properties, _partitions,
+                                         name, total_number_of_tuples) ||
+            copyCellPropertyVector<unsigned>(
+                original_properties, _partitioned_properties, _partitions, name,
+                total_number_of_tuples) ||
+            copyCellPropertyVector<unsigned long>(
+                original_properties, _partitioned_properties, _partitions, name,
+                total_number_of_tuples) ||
+            copyCellPropertyVector<std::size_t>(
+                original_properties, _partitioned_properties, _partitions, name,
+                total_number_of_tuples);
         if (!success)
             WARN(
                 "processCellProperties: Could not create partitioned "
@@ -346,11 +436,40 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
     }
 }
 
-void NodeWiseMeshPartitioner::writeNodePropertiesBinary(
-    const std::string& file_name_base) const
+template <typename T>
+void writePropertyVectorValuesBinary(std::ostream& os,
+                                     MeshLib::PropertyVector<T> const& pv)
 {
-    auto const& property_names(_partitioned_properties.getPropertyVectorNames(
-        MeshLib::MeshItemType::Node));
+    os.write(reinterpret_cast<const char*>(pv.data()),
+            pv.size() * sizeof(T));
+}
+
+template <typename T>
+bool writePropertyVectorBinary(
+    MeshLib::Properties const& partitioned_properties, std::string const& name,
+    std::ostream& out_val, std::ostream& out_meta)
+{
+    if (!partitioned_properties.existsPropertyVector<T>(name))
+        return false;
+
+    MeshLib::IO::PropertyVectorMetaData pvmd;
+    pvmd.property_name = name;
+    auto* pv = partitioned_properties.getPropertyVector<T>(name);
+    pvmd.fillPropertyVectorMetaDataTypeInfo<T>();
+    pvmd.number_of_components = pv->getNumberOfComponents();
+    pvmd.number_of_tuples = pv->getNumberOfTuples();
+    writePropertyVectorValuesBinary(out_val, *pv);
+    MeshLib::IO::writePropertyVectorMetaDataBinary(out_meta, pvmd);
+    return true;
+}
+
+void writeNodePropertiesBinary(
+    const std::string& file_name_base,
+    MeshLib::Properties const& partitioned_properties,
+    std::vector<Partition> const& partitions)
+{
+    auto const& property_names = partitioned_properties.getPropertyVectorNames(
+        MeshLib::MeshItemType::Node);
     if (property_names.empty())
     {
         return;
@@ -360,24 +479,30 @@ void NodeWiseMeshPartitioner::writeNodePropertiesBinary(
 
     std::ofstream out = BaseLib::createBinaryFile(
         file_name_base + "_partitioned_node_properties_cfg" +
-        std::to_string(_npartitions) + ".bin");
+        std::to_string(partitions.size()) + ".bin");
 
     std::ofstream out_val = BaseLib::createBinaryFile(
         file_name_base + "_partitioned_node_properties_val" +
-        std::to_string(_npartitions) + ".bin");
+        std::to_string(partitions.size()) + ".bin");
 
     out.write(reinterpret_cast<const char*>(&number_of_properties),
               sizeof(number_of_properties));
     for (auto const& name : property_names)
     {
-        bool success =
-            writePropertyVectorBinary<double>(name, out_val, out) ||
-            writePropertyVectorBinary<float>(name, out_val, out) ||
-            writePropertyVectorBinary<int>(name, out_val, out) ||
-            writePropertyVectorBinary<long>(name, out_val, out) ||
-            writePropertyVectorBinary<unsigned>(name, out_val, out) ||
-            writePropertyVectorBinary<unsigned long>(name, out_val, out) ||
-            writePropertyVectorBinary<std::size_t>(name, out_val, out);
+        bool success = writePropertyVectorBinary<double>(partitioned_properties,
+                                                         name, out_val, out) ||
+                       writePropertyVectorBinary<float>(partitioned_properties,
+                                                        name, out_val, out) ||
+                       writePropertyVectorBinary<int>(partitioned_properties,
+                                                      name, out_val, out) ||
+                       writePropertyVectorBinary<long>(partitioned_properties,
+                                                       name, out_val, out) ||
+                       writePropertyVectorBinary<unsigned>(
+                           partitioned_properties, name, out_val, out) ||
+                       writePropertyVectorBinary<unsigned long>(
+                           partitioned_properties, name, out_val, out) ||
+                       writePropertyVectorBinary<std::size_t>(
+                           partitioned_properties, name, out_val, out);
         if (!success)
         {
             OGS_FATAL(
@@ -388,7 +513,7 @@ void NodeWiseMeshPartitioner::writeNodePropertiesBinary(
     }
 
     unsigned long offset = 0;
-    for (const auto& partition : _partitions)
+    for (const auto& partition : partitions)
     {
         MeshLib::IO::PropertyVectorPartitionMetaData pvpmd{};
         pvpmd.offset = offset;
@@ -402,11 +527,13 @@ void NodeWiseMeshPartitioner::writeNodePropertiesBinary(
     }
 }
 
-void NodeWiseMeshPartitioner::writeCellPropertiesBinary(
-    const std::string& file_name_base) const
+void writeCellPropertiesBinary(
+    const std::string& file_name_base,
+    MeshLib::Properties const& partitioned_properties,
+    std::vector<Partition> const& partitions)
 {
-    auto const& property_names(_partitioned_properties.getPropertyVectorNames(
-        MeshLib::MeshItemType::Cell));
+    auto const& property_names = partitioned_properties.getPropertyVectorNames(
+        MeshLib::MeshItemType::Cell);
     if (property_names.empty())
     {
         return;
@@ -416,24 +543,30 @@ void NodeWiseMeshPartitioner::writeCellPropertiesBinary(
 
     std::ofstream out = BaseLib::createBinaryFile(
         file_name_base + "_partitioned_cell_properties_cfg" +
-        std::to_string(_npartitions) + ".bin");
+        std::to_string(partitions.size()) + ".bin");
 
     std::ofstream out_val = BaseLib::createBinaryFile(
         file_name_base + "_partitioned_cell_properties_val" +
-        std::to_string(_npartitions) + ".bin");
+        std::to_string(partitions.size()) + ".bin");
 
     out.write(reinterpret_cast<const char*>(&number_of_properties),
               sizeof(number_of_properties));
     for (auto const& name : property_names)
     {
-        bool success =
-            writePropertyVectorBinary<double>(name, out_val, out) ||
-            writePropertyVectorBinary<float>(name, out_val, out) ||
-            writePropertyVectorBinary<int>(name, out_val, out) ||
-            writePropertyVectorBinary<long>(name, out_val, out) ||
-            writePropertyVectorBinary<unsigned>(name, out_val, out) ||
-            writePropertyVectorBinary<unsigned long>(name, out_val, out) ||
-            writePropertyVectorBinary<std::size_t>(name, out_val, out);
+        bool success = writePropertyVectorBinary<double>(partitioned_properties,
+                                                         name, out_val, out) ||
+                       writePropertyVectorBinary<float>(partitioned_properties,
+                                                        name, out_val, out) ||
+                       writePropertyVectorBinary<int>(partitioned_properties,
+                                                      name, out_val, out) ||
+                       writePropertyVectorBinary<long>(partitioned_properties,
+                                                       name, out_val, out) ||
+                       writePropertyVectorBinary<unsigned>(
+                           partitioned_properties, name, out_val, out) ||
+                       writePropertyVectorBinary<unsigned long>(
+                           partitioned_properties, name, out_val, out) ||
+                       writePropertyVectorBinary<std::size_t>(
+                           partitioned_properties, name, out_val, out);
         if (!success)
         {
             OGS_FATAL(
@@ -444,7 +577,7 @@ void NodeWiseMeshPartitioner::writeCellPropertiesBinary(
     }
 
     unsigned long offset = 0;
-    for (const auto& partition : _partitions)
+    for (const auto& partition : partitions)
     {
         MeshLib::IO::PropertyVectorPartitionMetaData pvpmd{};
         pvpmd.offset = offset;
@@ -667,8 +800,10 @@ void writeNodesBinary(const std::string& file_name_base,
 
 void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 {
-    writeNodePropertiesBinary(file_name_base);
-    writeCellPropertiesBinary(file_name_base);
+    writeNodePropertiesBinary(file_name_base, _partitioned_properties,
+                              _partitions);
+    writeCellPropertiesBinary(file_name_base, _partitioned_properties,
+                              _partitions);
 
     const auto elem_integers =
         writeConfigDataBinary(file_name_base, _partitions);
