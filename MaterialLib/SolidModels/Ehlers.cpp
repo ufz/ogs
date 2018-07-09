@@ -480,7 +480,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
     KelvinVector const& eps,
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-        material_state_variables)
+        material_state_variables, double const /*T*/, double const /*p*/)
 {
     assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                &material_state_variables) != nullptr);

@@ -20,6 +20,9 @@ namespace PhysicalConstant
 /// Zero degrees Celsius in Kelvin
 const double CelsiusZeroInKelvin = 273.15;
 
+/// Room temperature, which is used as a reference temperature.
+const double RoomTemperature = CelsiusZeroInKelvin + 20.0;
+
 /**
   Ideal gas constant in SI standard units (J \per{mol} \per{K})
 

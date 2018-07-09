@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 
+#include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -248,7 +249,7 @@ public:
 
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
                 t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
-                *state);
+                *state, MaterialLib::PhysicalConstant::RoomTemperature, 0.);
 
             if (!solution)
                 OGS_FATAL("Computation of local constitutive relation failed.");
