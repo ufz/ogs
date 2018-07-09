@@ -461,129 +461,45 @@ bool writePropertyVectorBinary(
     return true;
 }
 
-void writeNodePropertiesBinary(
-    const std::string& file_name_base,
-    MeshLib::Properties const& partitioned_properties,
-    std::vector<Partition> const& partitions)
+void writePropertiesBinary(const std::string& file_name_base,
+                           MeshLib::Properties const& partitioned_properties,
+                           std::vector<Partition> const& partitions,
+                           MeshLib::MeshItemType const mesh_item_type)
 {
-    auto const& property_names = partitioned_properties.getPropertyVectorNames(
-        MeshLib::MeshItemType::Node);
+    auto const& property_names =
+        partitioned_properties.getPropertyVectorNames(mesh_item_type);
     if (property_names.empty())
     {
         return;
     }
 
-    std::size_t const number_of_properties(property_names.size());
+    auto const file_name_infix = toString(mesh_item_type);
 
     std::ofstream out = BaseLib::createBinaryFile(
-        file_name_base + "_partitioned_node_properties_cfg" +
+        file_name_base + "_partitioned_" + file_name_infix + "_properties_cfg" +
         std::to_string(partitions.size()) + ".bin");
 
     std::ofstream out_val = BaseLib::createBinaryFile(
-        file_name_base + "_partitioned_node_properties_val" +
+        file_name_base + "_partitioned_" + file_name_infix + "_properties_val" +
         std::to_string(partitions.size()) + ".bin");
 
-    out.write(reinterpret_cast<const char*>(&number_of_properties),
-              sizeof(number_of_properties));
-    for (auto const& name : property_names)
-    {
-        bool success = writePropertyVectorBinary<double>(partitioned_properties,
-                                                         name, out_val, out) ||
-                       writePropertyVectorBinary<float>(partitioned_properties,
-                                                        name, out_val, out) ||
-                       writePropertyVectorBinary<int>(partitioned_properties,
-                                                      name, out_val, out) ||
-                       writePropertyVectorBinary<long>(partitioned_properties,
-                                                       name, out_val, out) ||
-                       writePropertyVectorBinary<unsigned>(
-                           partitioned_properties, name, out_val, out) ||
-                       writePropertyVectorBinary<unsigned long>(
-                           partitioned_properties, name, out_val, out) ||
-                       writePropertyVectorBinary<std::size_t>(
-                           partitioned_properties, name, out_val, out);
-        if (!success)
-        {
-            OGS_FATAL(
-                "writeNodePropertiesBinary: Could not write PropertyVector "
-                "'%s'.",
-                name.c_str());
-        }
-    }
+    std::size_t const number_of_properties(property_names.size());
+    BaseLib::writeValueBinary(out, number_of_properties);
+
+    applyPropertyVectors(property_names,
+                         [&](auto type, std::string const& name) {
+                             return writePropertyVectorBinary<decltype(type)>(
+                                 partitioned_properties, name, out_val, out);
+                         });
 
     unsigned long offset = 0;
     for (const auto& partition : partitions)
     {
-        MeshLib::IO::PropertyVectorPartitionMetaData pvpmd{};
-        pvpmd.offset = offset;
-        pvpmd.number_of_tuples =
-            partition.numberOfMeshItems(MeshLib::MeshItemType::Node);
+        MeshLib::IO::PropertyVectorPartitionMetaData pvpmd{
+            offset, static_cast<unsigned long>(
+                        partition.numberOfMeshItems(mesh_item_type))};
         DBUG(
             "Write meta data for node-based PropertyVector: global offset %d, "
-            "number of tuples %d",
-            pvpmd.offset, pvpmd.number_of_tuples);
-        MeshLib::IO::writePropertyVectorPartitionMetaData(out, pvpmd);
-        offset += pvpmd.number_of_tuples;
-    }
-}
-
-void writeCellPropertiesBinary(
-    const std::string& file_name_base,
-    MeshLib::Properties const& partitioned_properties,
-    std::vector<Partition> const& partitions)
-{
-    auto const& property_names = partitioned_properties.getPropertyVectorNames(
-        MeshLib::MeshItemType::Cell);
-    if (property_names.empty())
-    {
-        return;
-    }
-
-    std::size_t const number_of_properties(property_names.size());
-
-    std::ofstream out = BaseLib::createBinaryFile(
-        file_name_base + "_partitioned_cell_properties_cfg" +
-        std::to_string(partitions.size()) + ".bin");
-
-    std::ofstream out_val = BaseLib::createBinaryFile(
-        file_name_base + "_partitioned_cell_properties_val" +
-        std::to_string(partitions.size()) + ".bin");
-
-    out.write(reinterpret_cast<const char*>(&number_of_properties),
-              sizeof(number_of_properties));
-    for (auto const& name : property_names)
-    {
-        bool success = writePropertyVectorBinary<double>(partitioned_properties,
-                                                         name, out_val, out) ||
-                       writePropertyVectorBinary<float>(partitioned_properties,
-                                                        name, out_val, out) ||
-                       writePropertyVectorBinary<int>(partitioned_properties,
-                                                      name, out_val, out) ||
-                       writePropertyVectorBinary<long>(partitioned_properties,
-                                                       name, out_val, out) ||
-                       writePropertyVectorBinary<unsigned>(
-                           partitioned_properties, name, out_val, out) ||
-                       writePropertyVectorBinary<unsigned long>(
-                           partitioned_properties, name, out_val, out) ||
-                       writePropertyVectorBinary<std::size_t>(
-                           partitioned_properties, name, out_val, out);
-        if (!success)
-        {
-            OGS_FATAL(
-                "writeCellPropertiesBinary: Could not write PropertyVector "
-                "'%s'.",
-                name.c_str());
-        }
-    }
-
-    unsigned long offset = 0;
-    for (const auto& partition : partitions)
-    {
-        MeshLib::IO::PropertyVectorPartitionMetaData pvpmd{};
-        pvpmd.offset = offset;
-        pvpmd.number_of_tuples =
-            partition.numberOfMeshItems(MeshLib::MeshItemType::Cell);
-        DBUG(
-            "Write meta data for cell-based PropertyVector: global offset %d, "
             "number of tuples %d",
             pvpmd.offset, pvpmd.number_of_tuples);
         MeshLib::IO::writePropertyVectorPartitionMetaData(out, pvpmd);
@@ -799,10 +715,10 @@ void writeNodesBinary(const std::string& file_name_base,
 
 void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 {
-    writeNodePropertiesBinary(file_name_base, _partitioned_properties,
-                              _partitions);
-    writeCellPropertiesBinary(file_name_base, _partitioned_properties,
-                              _partitions);
+    writePropertiesBinary(file_name_base, _partitioned_properties, _partitions,
+                          MeshLib::MeshItemType::Node);
+    writePropertiesBinary(file_name_base, _partitioned_properties, _partitions,
+                          MeshLib::MeshItemType::Cell);
 
     const auto elem_integers =
         writeConfigDataBinary(file_name_base, _partitions);
