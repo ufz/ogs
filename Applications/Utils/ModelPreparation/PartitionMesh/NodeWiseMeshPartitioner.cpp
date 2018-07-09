@@ -42,6 +42,21 @@ struct NodeStruct
     double z;
 };
 
+std::size_t Partition::numberOfMeshItems(
+    MeshLib::MeshItemType const item_type) const
+{
+    if (item_type == MeshLib::MeshItemType::Node)
+    {
+        return nodes.size();
+    }
+
+    if (item_type == MeshLib::MeshItemType::Cell)
+    {
+        return regular_elements.size() + ghost_elements.size();
+    }
+    OGS_FATAL("Mesh items other than nodes and cells are not supported.");
+}
+
 std::ostream& Partition::writeNodesBinary(
     std::ostream& os, std::vector<std::size_t> const& global_node_ids) const
 {
@@ -311,68 +326,55 @@ bool copyPropertyVector(MeshLib::Properties const& original_properties,
     return true;
 }
 
+/// Applies a function of the form f(type, name) -> bool for each of the
+/// properties names.
+/// The type argument is used to call f<decltype(type)>(name).
+/// At least one of the functions must return the 'true' value, but at most one
+/// is executed.
 template <typename Function>
-void copyPropertyVectors(std::vector<std::string> const& property_names,
-                         Function copy_property_vector)
+void applyPropertyVectors(std::vector<std::string> const& property_names,
+                          Function f)
 {
     for (auto const& name : property_names)
     {
-        bool success = copy_property_vector(double{}, name) ||
-                       copy_property_vector(float{}, name) ||
-                       copy_property_vector(int{}, name) ||
-                       copy_property_vector(long{}, name) ||
-                       copy_property_vector(unsigned{}, name) ||
-                       copy_property_vector((unsigned long){}, name) ||
-                       copy_property_vector(std::size_t{}, name);
+        // Open question, why is the 'unsigned long' case not compiling giving
+        // an error "expected '(' for function-style cast or type construction"
+        // with clang-7, and "error C4576: a parenthesized type followed by an
+        // initializer list is a non-standard explicit type conversion syntax"
+        // with MSVC-15.
+        bool success =
+            f(double{}, name) || f(float{}, name) || f(int{}, name) ||
+            f(long{}, name) || f(unsigned{}, name) ||
+            f(static_cast<unsigned long>(0), name) || f(std::size_t{}, name);
         if (!success)
         {
-            OGS_FATAL("Could not create partitioned PropertyVector '%s'.",
+            OGS_FATAL("Could not apply function to PropertyVector '%s'.",
                       name.c_str());
         }
     }
 }
 
-void NodeWiseMeshPartitioner::processNodeProperties()
+void NodeWiseMeshPartitioner::processProperties(
+    MeshLib::MeshItemType const mesh_item_type)
 {
     std::size_t const total_number_of_tuples =
         std::accumulate(std::begin(_partitions), std::end(_partitions), 0,
-                        [](std::size_t const sum, Partition const& p) {
-                            return sum + p.nodes.size();
+                        [&](std::size_t const sum, Partition const& p) {
+                            return sum + p.numberOfMeshItems(mesh_item_type);
                         });
 
-    DBUG("total number of node-based tuples after partitioning: %d ",
-         total_number_of_tuples);
+    DBUG(
+        "total number of tuples define on mesh item type '%d' after "
+        "partitioning: %d ",
+        mesh_item_type, total_number_of_tuples);
+
     // 1 create new PV
     // 2 resize the PV with total_number_of_tuples
     // 3 copy the values according to the partition info
     auto const& original_properties(_mesh->getProperties());
 
-    copyPropertyVectors(
-        original_properties.getPropertyVectorNames(MeshLib::MeshItemType::Node),
-        [&](auto type, std::string const& name) {
-            return copyPropertyVector<decltype(type)>(
-                original_properties, _partitioned_properties, _partitions, name,
-                total_number_of_tuples);
-        });
-}
-
-void NodeWiseMeshPartitioner::processCellProperties()
-{
-    std::size_t const total_number_of_tuples = std::accumulate(
-        std::begin(_partitions), std::end(_partitions), 0,
-        [](std::size_t const sum, Partition const& p) {
-            return sum + p.regular_elements.size() + p.ghost_elements.size();
-        });
-
-    DBUG("total number of cell-based tuples after partitioning: %d ",
-         total_number_of_tuples);
-    // 1 create new PV
-    // 2 resize the PV with total_number_of_tuples
-    // 3 copy the values according to the partition info
-    auto const& original_properties(_mesh->getProperties());
-
-    copyPropertyVectors(
-        original_properties.getPropertyVectorNames(MeshLib::MeshItemType::Cell),
+    applyPropertyVectors(
+        original_properties.getPropertyVectorNames(mesh_item_type),
         [&](auto type, std::string const& name) {
             return copyPropertyVector<decltype(type)>(
                 original_properties, _partitioned_properties, _partitions, name,
@@ -391,8 +393,8 @@ void NodeWiseMeshPartitioner::partitionByMETIS(
 
     renumberNodeIndices(is_mixed_high_order_linear_elems);
 
-    processNodeProperties();
-    processCellProperties();
+    processProperties(MeshLib::MeshItemType::Node);
+    processProperties(MeshLib::MeshItemType::Cell);
 }
 
 void NodeWiseMeshPartitioner::renumberNodeIndices(
@@ -513,7 +515,8 @@ void writeNodePropertiesBinary(
     {
         MeshLib::IO::PropertyVectorPartitionMetaData pvpmd{};
         pvpmd.offset = offset;
-        pvpmd.number_of_tuples = partition.nodes.size();
+        pvpmd.number_of_tuples =
+            partition.numberOfMeshItems(MeshLib::MeshItemType::Node);
         DBUG(
             "Write meta data for node-based PropertyVector: global offset %d, "
             "number of tuples %d",
@@ -578,7 +581,7 @@ void writeCellPropertiesBinary(
         MeshLib::IO::PropertyVectorPartitionMetaData pvpmd{};
         pvpmd.offset = offset;
         pvpmd.number_of_tuples =
-            partition.regular_elements.size() + partition.ghost_elements.size();
+            partition.numberOfMeshItems(MeshLib::MeshItemType::Cell);
         DBUG(
             "Write meta data for cell-based PropertyVector: global offset %d, "
             "number of tuples %d",

@@ -39,6 +39,8 @@ struct Partition
     std::vector<const MeshLib::Element*> regular_elements;
     std::vector<const MeshLib::Element*> ghost_elements;
 
+    std::size_t numberOfMeshItems(MeshLib::MeshItemType const item_type) const;
+
     std::ostream& writeNodesBinary(
         std::ostream& os,
         std::vector<std::size_t> const& global_node_ids) const;
@@ -146,8 +148,7 @@ private:
     void processPartition(std::size_t const part_id,
                           const bool is_mixed_high_order_linear_elems);
 
-    void processNodeProperties();
-    void processCellProperties();
+    void processProperties(MeshLib::MeshItemType const mesh_item_type);
 
     /// Write the configuration data of the partition data in ASCII files.
     /// \param file_name_base The prefix of the file name.
