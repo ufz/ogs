@@ -63,7 +63,6 @@ public:
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
         void pushBackState() override {}
-
         MaterialStateVariables& operator=(MaterialStateVariables const&) =
             default;
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
@@ -123,8 +122,12 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables, double const T) override;
 
-    MaterialProperties getMaterialProperties() {return _mp;}
+    KelvinMatrix getElasticTensor(double const t,
+                                  ProcessLib::SpatialPosition const& x,
+                                  double const T) const;
 
+
+    MaterialProperties getMaterialProperties() { return _mp; }
 protected:
     MaterialProperties _mp;
 };
