@@ -224,12 +224,57 @@ void NodeWiseMeshPartitioner::processPartition(
     partition.number_of_mesh_all_nodes = _mesh->getNumberOfNodes();
 }
 
+/// Copies the properties from global property vector \c pv to the
+/// partition-local one \c partitioned_pv.
 template <typename T>
-bool copyNodePropertyVector(MeshLib::Properties const& original_properties,
-                            MeshLib::Properties& partitioned_properties,
-                            std::vector<Partition> const& partitions,
-                            std::string const& name,
-                            std::size_t const total_number_of_tuples)
+std::size_t copyNodePropertyVectorValues(
+    Partition const& p,
+    std::size_t const offset,
+    MeshLib::PropertyVector<T> const& pv,
+    MeshLib::PropertyVector<T>& partitioned_pv)
+{
+    auto const& nodes = p.nodes;
+    auto const nnodes = nodes.size();
+    for (std::size_t i = 0; i < nnodes; ++i)
+    {
+        const auto global_id = nodes[i]->getID();
+        partitioned_pv[offset + i] = pv[global_id];
+    }
+    return nnodes;
+}
+
+/// Copies the properties from global property vector \c pv to the
+/// partition-local one \c partitioned_pv. Regular elements' and ghost elements'
+/// values are copied.
+template <typename T>
+std::size_t copyCellPropertyVectorValues(
+    Partition const& p,
+    std::size_t const offset,
+    MeshLib::PropertyVector<T> const& pv,
+    MeshLib::PropertyVector<T>& partitioned_pv)
+{
+    std::size_t const n_regular(p.regular_elements.size());
+    for (std::size_t i = 0; i < n_regular; ++i)
+    {
+        const auto id = p.regular_elements[i]->getID();
+        partitioned_pv[offset + i] = pv[id];
+    }
+
+    std::size_t const n_ghost(p.ghost_elements.size());
+    for (std::size_t i = 0; i < n_ghost; ++i)
+    {
+        const auto id = p.ghost_elements[i]->getID();
+        partitioned_pv[offset + n_regular + i] = pv[id];
+    }
+    return n_regular + n_ghost;
+}
+
+template <typename T>
+bool copyPropertyVector(MeshLib::Properties const& original_properties,
+                        MeshLib::Properties& partitioned_properties,
+                        std::vector<Partition> const& partitions,
+                        std::string const& name,
+                        std::size_t const total_number_of_tuples)
 {
     if (!original_properties.existsPropertyVector<T>(name))
         return false;
@@ -239,53 +284,52 @@ bool copyNodePropertyVector(MeshLib::Properties const& original_properties,
         name, pv->getMeshItemType(), pv->getNumberOfComponents());
     partitioned_pv->resize(total_number_of_tuples *
                            pv->getNumberOfComponents());
+
+    auto copy_property_vector_values = [&](Partition const& p,
+                                           std::size_t offset) {
+        if (pv->getMeshItemType() == MeshLib::MeshItemType::Node)
+        {
+            return copyNodePropertyVectorValues(p, offset, *pv,
+                                                *partitioned_pv);
+        }
+        if (pv->getMeshItemType() == MeshLib::MeshItemType::Cell)
+        {
+            return copyCellPropertyVectorValues(p, offset, *pv,
+                                                *partitioned_pv);
+        }
+        OGS_FATAL(
+            "Copying of property vector values for mesh item type %s is "
+            "not implemented.",
+            pv->getMeshItemType());
+    };
+
     std::size_t position_offset(0);
     for (auto p : partitions)
     {
-        for (std::size_t i = 0; i < p.nodes.size(); ++i)
-        {
-            const auto global_id = p.nodes[i]->getID();
-            (*partitioned_pv)[position_offset + i] = (*pv)[global_id];
-        }
-        position_offset += p.nodes.size();
+        position_offset += copy_property_vector_values(p, position_offset);
     }
     return true;
 }
 
-template <typename T>
-bool copyCellPropertyVector(MeshLib::Properties const& original_properties,
-                            MeshLib::Properties& partitioned_properties,
-                            std::vector<Partition> const& partitions,
-                            std::string const& name,
-                            std::size_t const total_number_of_tuples)
+template <typename Function>
+void copyPropertyVectors(std::vector<std::string> const& property_names,
+                         Function copy_property_vector)
 {
-    if (!original_properties.existsPropertyVector<T>(name))
-        return false;
-
-    auto const& pv = original_properties.getPropertyVector<T>(name);
-    auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
-        name, pv->getMeshItemType(), pv->getNumberOfComponents());
-    partitioned_pv->resize(total_number_of_tuples *
-                           pv->getNumberOfComponents());
-    std::size_t position_offset(0);
-    for (auto const& p : partitions)
+    for (auto const& name : property_names)
     {
-        std::size_t const n_regular(p.regular_elements.size());
-        for (std::size_t i = 0; i < n_regular; ++i)
+        bool success = copy_property_vector(double{}, name) ||
+                       copy_property_vector(float{}, name) ||
+                       copy_property_vector(int{}, name) ||
+                       copy_property_vector(long{}, name) ||
+                       copy_property_vector(unsigned{}, name) ||
+                       copy_property_vector((unsigned long){}, name) ||
+                       copy_property_vector(std::size_t{}, name);
+        if (!success)
         {
-            const auto id = p.regular_elements[i]->getID();
-            (*partitioned_pv)[position_offset + i] = (*pv)[id];
+            OGS_FATAL("Could not create partitioned PropertyVector '%s'.",
+                      name.c_str());
         }
-        position_offset += n_regular;
-        std::size_t const n_ghost(p.ghost_elements.size());
-        for (std::size_t i = 0; i < n_ghost; ++i)
-        {
-            const auto id = p.ghost_elements[i]->getID();
-            (*partitioned_pv)[position_offset + i] = (*pv)[id];
-        }
-        position_offset += n_ghost;
     }
-    return true;
 }
 
 void NodeWiseMeshPartitioner::processNodeProperties()
@@ -302,38 +346,14 @@ void NodeWiseMeshPartitioner::processNodeProperties()
     // 2 resize the PV with total_number_of_tuples
     // 3 copy the values according to the partition info
     auto const& original_properties(_mesh->getProperties());
-    auto const property_names =
-        original_properties.getPropertyVectorNames(MeshLib::MeshItemType::Node);
-    for (auto const& name : property_names)
-    {
-        bool success =
-            copyNodePropertyVector<double>(original_properties,
-                                           _partitioned_properties, _partitions,
-                                           name, total_number_of_tuples) ||
-            copyNodePropertyVector<float>(original_properties,
-                                          _partitioned_properties, _partitions,
-                                          name, total_number_of_tuples) ||
-            copyNodePropertyVector<int>(original_properties,
-                                        _partitioned_properties, _partitions,
-                                        name, total_number_of_tuples) ||
-            copyNodePropertyVector<long>(original_properties,
-                                         _partitioned_properties, _partitions,
-                                         name, total_number_of_tuples) ||
-            copyNodePropertyVector<unsigned>(
-                original_properties, _partitioned_properties, _partitions, name,
-                total_number_of_tuples) ||
-            copyNodePropertyVector<unsigned long>(
-                original_properties, _partitioned_properties, _partitions, name,
-                total_number_of_tuples) ||
-            copyNodePropertyVector<std::size_t>(
+
+    copyPropertyVectors(
+        original_properties.getPropertyVectorNames(MeshLib::MeshItemType::Node),
+        [&](auto type, std::string const& name) {
+            return copyPropertyVector<decltype(type)>(
                 original_properties, _partitioned_properties, _partitions, name,
                 total_number_of_tuples);
-        if (!success)
-            WARN(
-                "processNodeProperties: Could not create partitioned "
-                "PropertyVector '%s'.",
-                name.c_str());
-    }
+        });
 }
 
 void NodeWiseMeshPartitioner::processCellProperties()
@@ -350,38 +370,14 @@ void NodeWiseMeshPartitioner::processCellProperties()
     // 2 resize the PV with total_number_of_tuples
     // 3 copy the values according to the partition info
     auto const& original_properties(_mesh->getProperties());
-    auto const property_names =
-        original_properties.getPropertyVectorNames(MeshLib::MeshItemType::Cell);
-    for (auto const& name : property_names)
-    {
-        bool success =
-            copyCellPropertyVector<double>(original_properties,
-                                           _partitioned_properties, _partitions,
-                                           name, total_number_of_tuples) ||
-            copyCellPropertyVector<float>(original_properties,
-                                          _partitioned_properties, _partitions,
-                                          name, total_number_of_tuples) ||
-            copyCellPropertyVector<int>(original_properties,
-                                        _partitioned_properties, _partitions,
-                                        name, total_number_of_tuples) ||
-            copyCellPropertyVector<long>(original_properties,
-                                         _partitioned_properties, _partitions,
-                                         name, total_number_of_tuples) ||
-            copyCellPropertyVector<unsigned>(
-                original_properties, _partitioned_properties, _partitions, name,
-                total_number_of_tuples) ||
-            copyCellPropertyVector<unsigned long>(
-                original_properties, _partitioned_properties, _partitions, name,
-                total_number_of_tuples) ||
-            copyCellPropertyVector<std::size_t>(
+
+    copyPropertyVectors(
+        original_properties.getPropertyVectorNames(MeshLib::MeshItemType::Cell),
+        [&](auto type, std::string const& name) {
+            return copyPropertyVector<decltype(type)>(
                 original_properties, _partitioned_properties, _partitions, name,
                 total_number_of_tuples);
-        if (!success)
-            WARN(
-                "processCellProperties: Could not create partitioned "
-                "PropertyVector '%s'.",
-                name.c_str());
-    }
+        });
 }
 
 void NodeWiseMeshPartitioner::partitionByMETIS(
