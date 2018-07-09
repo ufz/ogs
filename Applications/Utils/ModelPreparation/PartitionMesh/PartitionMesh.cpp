@@ -53,6 +53,12 @@ int main(int argc, char* argv[])
         "the name of the file containing the input mesh", true, "",
         "file name of input mesh");
     cmd.add(mesh_input);
+
+    TCLAP::ValueArg<std::string> output_directory_arg(
+        "o", "output", "directory name for the output files", false, "",
+        "directory");
+    cmd.add(output_directory_arg);
+
     TCLAP::ValueArg<int> nparts("n", "np", "the number of partitions", false, 2,
                                 "integer");
     cmd.add(nparts);
@@ -81,10 +87,10 @@ int main(int argc, char* argv[])
     BaseLib::CPUTime CPU_timer;
     CPU_timer.start();
 
-    const std::string ifile_name = mesh_input.getValue();
-    const std::string file_name_base = BaseLib::dropFileExtension(ifile_name);
+    const std::string input_file_name_wo_extension =
+        BaseLib::dropFileExtension(mesh_input.getValue());
     std::unique_ptr<MeshLib::Mesh> mesh_ptr(
-        MeshLib::IO::readMeshFromFile(file_name_base + ".vtu"));
+        MeshLib::IO::readMeshFromFile(input_file_name_wo_extension + ".vtu"));
     INFO("Mesh read: %d nodes, %d elements.",
          mesh_ptr->getNumberOfNodes(),
          mesh_ptr->getNumberOfElements());
@@ -93,7 +99,7 @@ int main(int argc, char* argv[])
     {
         INFO("Write the mesh into METIS input file.");
         ApplicationUtils::writeMETIS(mesh_ptr->getElements(),
-                   BaseLib::dropFileExtension(ifile_name) + ".mesh");
+                                     input_file_name_wo_extension + ".mesh");
         INFO("Total runtime: %g s.", run_timer.elapsed());
         INFO("Total CPU time: %g s.", CPU_timer.elapsed());
 
@@ -106,6 +112,9 @@ int main(int argc, char* argv[])
     ApplicationUtils::NodeWiseMeshPartitioner mesh_partitioner(
         nparts.getValue(), std::move(mesh_ptr));
 
+    std::string const output_file_name_wo_extension = BaseLib::joinPaths(
+        output_directory_arg.getValue(),
+        BaseLib::extractBaseNameWithoutExtension(mesh_input.getValue()));
     const int num_partitions = nparts.getValue();
 
     // Execute mpmetis via system(...)
@@ -117,8 +126,9 @@ int main(int argc, char* argv[])
         INFO("Path to mpmetis is: \n\t%s", exe_path.c_str());
 
         const std::string mpmetis_com =
-            exe_path + "/mpmetis " + " -gtype=nodal " + file_name_base +
-            ".mesh " + std::to_string(nparts.getValue());
+            exe_path + "/mpmetis " + " -gtype=nodal " +
+            input_file_name_wo_extension + ".mesh " +
+            std::to_string(nparts.getValue());
 
         const int status = system(mpmetis_com.c_str());
         if (status != 0)
@@ -133,10 +143,11 @@ int main(int argc, char* argv[])
         // The mpmetis tool can not be used for 'partitioning' in only one
         // domain. For this reason the according files are written for just
         // one domain in the metis output format in the following.
-        auto writePartitionFile = [&file_name_base](
+        auto writePartitionFile = [&output_file_name_wo_extension](
                                       std::string const& file_name_extension,
                                       std::size_t number) {
-            std::string const name(file_name_base + file_name_extension);
+            std::string const name(output_file_name_wo_extension +
+                                   file_name_extension);
             std::ofstream os(name);
             if (!os)
                 OGS_FATAL("Couldn't open file '%s' for writing.", name.c_str());
@@ -148,23 +159,23 @@ int main(int argc, char* argv[])
         writePartitionFile(".mesh.epart.1", number_of_elements);
     }
 
-    mesh_partitioner.resetPartitionIdsForNodes(readMetisData(
-        file_name_base, num_partitions,
-        mesh_partitioner.mesh().getNumberOfNodes()));
+    mesh_partitioner.resetPartitionIdsForNodes(
+        readMetisData(input_file_name_wo_extension, num_partitions,
+                      mesh_partitioner.mesh().getNumberOfNodes()));
 
-    removeMetisPartitioningFiles(file_name_base, num_partitions);
+    removeMetisPartitioningFiles(input_file_name_wo_extension, num_partitions);
 
     INFO("Partitioning the mesh in the node wise way ...");
     mesh_partitioner.partitionByMETIS(lh_elems_flag.getValue());
     if (ascii_flag.getValue())
     {
         INFO("Write the data of partitions into ASCII files ...");
-        mesh_partitioner.writeASCII(file_name_base);
+        mesh_partitioner.writeASCII(output_file_name_wo_extension);
     }
     else
     {
         INFO("Write the data of partitions into binary files ...");
-        mesh_partitioner.writeBinary(file_name_base);
+        mesh_partitioner.writeBinary(output_file_name_wo_extension);
     }
 
     INFO("Total runtime: %g s.", run_timer.elapsed());
