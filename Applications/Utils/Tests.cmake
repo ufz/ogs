@@ -39,3 +39,36 @@ AddTest(
     DIFF_DATA
     expected_post_single_joint_pcs_0_ts_1_t_1.000000.vtu post_single_joint_pcs_0_ts_1_t_1.000000.vtu u u 1e-14 1e-14
 )
+
+# Mac is producing slightly different partitioning, so the results are not
+# comparable.
+AddTest(
+    NAME partmesh_2Dmesh_3partitions_ascii
+    PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -a -m -n 3 -i 2Dmesh.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions
+    REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
+    TESTER diff
+    DIFF_DATA 2Dmesh_partitioned_elems_3.msh
+              2Dmesh_partitioned_cfg3.msh
+              2Dmesh_partitioned_nodes_3.msh
+)
+
+# Mac is producing slightly different partitioning, so the results are not
+# comparable.
+AddTest(
+    NAME partmesh_2Dmesh_3partitions_binary
+    PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 3 -i 2Dmesh.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions
+    REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
+    TESTER diff
+    DIFF_DATA 2Dmesh_partitioned_node_properties_val3.bin
+              2Dmesh_partitioned_node_properties_cfg3.bin
+              2Dmesh_partitioned_msh_cfg3.bin
+              2Dmesh_partitioned_cell_properties_val3.bin
+              2Dmesh_partitioned_cell_properties_cfg3.bin
+              2Dmesh_partitioned_msh_ele_g3.bin
+              2Dmesh_partitioned_msh_ele3.bin
+              2Dmesh_partitioned_msh_nod3.bin
+)
