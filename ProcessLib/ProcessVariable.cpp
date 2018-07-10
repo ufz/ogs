@@ -12,6 +12,7 @@
 #include <utility>
 #include <logog/include/logog.hpp>
 
+#include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshLib/Mesh.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
@@ -61,7 +62,8 @@ MeshLib::Mesh const& findMeshInConfig(
             //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometry}
             config.getConfigParameter<std::string>("geometry");
 
-        mesh_name = geometrical_set_name + "_" + geometry_name;
+        mesh_name = MeshGeoToolsLib::meshNameFromGeometry(geometrical_set_name,
+                                                          geometry_name);
     }
 
     //
