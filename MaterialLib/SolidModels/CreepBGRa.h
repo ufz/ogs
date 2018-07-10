@@ -12,6 +12,7 @@
 #pragma once
 
 #include <memory>
+#include <cmath>
 
 #include "LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
@@ -64,7 +65,7 @@ public:
           _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
           _A(A),
           _n(n),
-          _sigma0(sigma0),
+          _coef(std::pow(1.5, 0.5*_n+1) / std::pow(sigma0, _n)),
           _Q(Q)
     {
     }
@@ -78,14 +79,14 @@ public:
         KelvinVector const& eps_prev, KelvinVector const& eps,
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables, double const T, double const p) override;
+            material_state_variables, double const T) override;
 
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
 
     const double _A;
     const double _n;
-    const double _sigma0;
+    const double _coef; /// $f\left(\frac{3}{2}\right)^{n/2+1}/\sigma_{eff}^n $f
     const double _Q;
 };
 
