@@ -332,8 +332,8 @@ bool copyPropertyVector(MeshLib::Properties const& original_properties,
 /// At least one of the functions must return the 'true' value, but at most one
 /// is executed.
 template <typename Function>
-void applyPropertyVectors(std::vector<std::string> const& property_names,
-                          Function f)
+void applyToPropertyVectors(std::vector<std::string> const& property_names,
+                            Function f)
 {
     for (auto const& name : property_names)
     {
@@ -373,7 +373,7 @@ void NodeWiseMeshPartitioner::processProperties(
     // 3 copy the values according to the partition info
     auto const& original_properties(_mesh->getProperties());
 
-    applyPropertyVectors(
+    applyToPropertyVectors(
         original_properties.getPropertyVectorNames(mesh_item_type),
         [&](auto type, std::string const& name) {
             return copyPropertyVector<decltype(type)>(
@@ -486,7 +486,7 @@ void writePropertiesBinary(const std::string& file_name_base,
     std::size_t const number_of_properties(property_names.size());
     BaseLib::writeValueBinary(out, number_of_properties);
 
-    applyPropertyVectors(property_names,
+    applyToPropertyVectors(property_names,
                          [&](auto type, std::string const& name) {
                              return writePropertyVectorBinary<decltype(type)>(
                                  partitioned_properties, name, out_val, out);
