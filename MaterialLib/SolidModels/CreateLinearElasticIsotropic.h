@@ -16,16 +16,18 @@ namespace MaterialLib
 {
 namespace Solids
 {
-
 template <int DisplacementDim>
 std::unique_ptr<LinearElasticIsotropic<DisplacementDim>>
 createLinearElasticIsotropic(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config, const bool skip_type_checking)
 {
-    //! \ogs_file_param{material__solid__constitutive_relation__type}
-    config.checkConfigParameter("type", "LinearElasticIsotropic");
-    DBUG("Create LinearElasticIsotropic material");
+    if (!skip_type_checking)
+    {
+        //! \ogs_file_param{material__solid__constitutive_relation__type}
+        config.checkConfigParameter("type", "LinearElasticIsotropic");
+        DBUG("Create LinearElasticIsotropic material");
+    }
 
     // Youngs modulus
     auto& youngs_modulus = ProcessLib::findParameter<double>(

@@ -46,8 +46,10 @@ createConstitutiveRelation(
     }
     else if (type == "LinearElasticIsotropic")
     {
+        const bool skip_type_checking = false;
         return MaterialLib::Solids::createLinearElasticIsotropic<
-            DisplacementDim>(parameters, constitutive_relation_config);
+            DisplacementDim>(
+            parameters, constitutive_relation_config, skip_type_checking);
     }
     else if (type == "Lubby2")
     {
