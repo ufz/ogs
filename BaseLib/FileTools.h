@@ -98,13 +98,6 @@ std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
 }
 
 /**
- * Create a binary file for output.
- *
- * Wrapper around the std::ofstream constructor with error checking.
- */
-std::ofstream createBinaryFile(std::string const& file_name);
-
-/**
  * \brief truncate a file
  *
  * \param file_path         the file name

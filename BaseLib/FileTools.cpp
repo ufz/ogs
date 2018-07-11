@@ -57,16 +57,6 @@ void truncateFile( std::string const& filename)
     ofs.close();
 }
 
-std::ofstream createBinaryFile(std::string const& file_name)
-{
-    std::ofstream os(file_name, std::ios::binary);
-    if (!os)
-    {
-        OGS_FATAL("Could not open file '%s' for output.", file_name.c_str());
-    }
-    return os;
-}
-
 namespace
 {
 

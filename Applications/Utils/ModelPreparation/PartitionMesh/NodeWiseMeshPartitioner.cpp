@@ -475,13 +475,25 @@ void writePropertiesBinary(const std::string& file_name_base,
 
     auto const file_name_infix = toString(mesh_item_type);
 
-    std::ofstream out = BaseLib::createBinaryFile(
-        file_name_base + "_partitioned_" + file_name_infix + "_properties_cfg" +
-        std::to_string(partitions.size()) + ".bin");
+    auto const file_name_cfg = file_name_base + "_partitioned_" +
+                               file_name_infix + "_properties_cfg" +
+                               std::to_string(partitions.size()) + ".bin";
+    std::ofstream out(file_name_cfg, std::ios::binary);
+    if (!out)
+    {
+        OGS_FATAL("Could not open file '%s' for output.",
+                  file_name_cfg.c_str());
+    }
 
-    std::ofstream out_val = BaseLib::createBinaryFile(
-        file_name_base + "_partitioned_" + file_name_infix + "_properties_val" +
-        std::to_string(partitions.size()) + ".bin");
+    auto const file_name_val = file_name_base + "_partitioned_" +
+                               file_name_infix + "_properties_val" +
+                               std::to_string(partitions.size()) + ".bin";
+    std::ofstream out_val(file_name_val, std::ios::binary);
+    if (!out_val)
+    {
+        OGS_FATAL("Could not open file '%s' for output.",
+                  file_name_val.c_str());
+    }
 
     std::size_t const number_of_properties(property_names.size());
     BaseLib::writeValueBinary(out, number_of_properties);
@@ -570,9 +582,14 @@ std::tuple<std::vector<long>, std::vector<long>> writeConfigDataBinary(
     const std::string& file_name_base,
     std::vector<Partition> const& partitions)
 {
-    std::ofstream of_bin_cfg =
-        BaseLib::createBinaryFile(file_name_base + "_partitioned_msh_cfg" +
-                                  std::to_string(partitions.size()) + ".bin");
+    auto const file_name_cfg = file_name_base + "_partitioned_msh_cfg" +
+                               std::to_string(partitions.size()) + ".bin";
+    std::ofstream of_bin_cfg(file_name_cfg, std::ios::binary);
+    if (!of_bin_cfg)
+    {
+        OGS_FATAL("Could not open file '%s' for output.",
+                  file_name_cfg.c_str());
+    }
 
     std::vector<long> num_elem_integers;
     num_elem_integers.reserve(partitions.size());
@@ -648,10 +665,23 @@ void writeElementsBinary(std::string const& file_name_base,
 {
     const std::string npartitions_str = std::to_string(partitions.size());
 
-    std::ofstream element_info_os = BaseLib::createBinaryFile(
-        file_name_base + "_partitioned_msh_ele" + npartitions_str + ".bin");
-    std::ofstream ghost_element_info_os = BaseLib::createBinaryFile(
-        file_name_base + "_partitioned_msh_ele_g" + npartitions_str + ".bin");
+    auto const file_name_ele =
+        file_name_base + "_partitioned_msh_ele" + npartitions_str + ".bin";
+    std::ofstream element_info_os(file_name_ele, std::ios::binary);
+    if (!element_info_os)
+    {
+        OGS_FATAL("Could not open file '%s' for output.",
+                  file_name_ele.c_str());
+    }
+
+    auto const file_name_ele_g =
+        file_name_base + "_partitioned_msh_ele_g" + npartitions_str + ".bin";
+    std::ofstream ghost_element_info_os(file_name_ele_g, std::ios::binary);
+    if (!ghost_element_info_os)
+    {
+        OGS_FATAL("Could not open file '%s' for output.",
+                  file_name_ele_g.c_str());
+    }
 
     for (std::size_t i = 0; i < partitions.size(); i++)
     {
@@ -703,9 +733,13 @@ void writeNodesBinary(const std::string& file_name_base,
                       std::vector<Partition> const& partitions,
                       std::vector<std::size_t> const& global_node_ids)
 {
-    std::ofstream os =
-        BaseLib::createBinaryFile(file_name_base + "_partitioned_msh_nod" +
-                                  std::to_string(partitions.size()) + ".bin");
+    auto const file_name = file_name_base + "_partitioned_msh_nod" +
+                           std::to_string(partitions.size()) + ".bin";
+    std::ofstream os(file_name, std::ios::binary);
+    if (!os)
+    {
+        OGS_FATAL("Could not open file '%s' for output.", file_name.c_str());
+    }
 
     for (const auto& partition : partitions)
     {
