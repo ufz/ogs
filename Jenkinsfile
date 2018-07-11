@@ -97,8 +97,7 @@ pipeline {
                   '-DOGS_USE_PCH=OFF ' +     // see #1992
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_BUILD_TESTS=OFF ' +
-                  '-DOGS_BUILD_METIS=ON '
+                  '-DOGS_BUILD_TESTS=OFF '
                 keepDir = true
               }
               build { }
@@ -169,7 +168,6 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_BUILD_METIS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON '
                 env = 'envinf1/cli.sh'
               }
@@ -202,7 +200,6 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_BUILD_METIS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DOGS_USE_PETSC=ON '
                 env = 'envinf1/petsc.sh'
@@ -254,8 +251,7 @@ pipeline {
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_TESTS=OFF ' +
-                  '-DOGS_BUILD_SWMM=ON ' +
-                  '-DOGS_BUILD_METIS=ON '
+                  '-DOGS_BUILD_SWMM=ON '
                   keepDir = true
               }
               build { }
@@ -290,7 +286,6 @@ pipeline {
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_BUILD_METIS=ON ' +
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" '
               }
               build {
@@ -400,7 +395,6 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_BUILD_METIS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/standard ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/standard ' +
@@ -428,7 +422,6 @@ pipeline {
                 cmakeOptions =
                   '-DOGS_USE_PETSC=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
-                  '-DOGS_BUILD_METIS=ON ' +
                   '-DBUILD_SHARED_LIBS=ON ' +
                   '-DCMAKE_INSTALL_PREFIX=/global/apps/ogs/head/petsc ' +
                   '-DOGS_MODULEFILE=/global/apps/modulefiles/ogs/head/petsc ' +

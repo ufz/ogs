@@ -12,7 +12,8 @@ set(REQUIRED_SUBMODULES
     ThirdParty/tetgen
     ${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
-if(OGS_BUILD_METIS)
+if(OGS_BUILD_UTILS)
+    # Required by the partmesh tool, which is build with utils only.
     list(APPEND REQUIRED_SUBMODULES ThirdParty/metis)
 endif()
 if(OGS_BUILD_SWMM)

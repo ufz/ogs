@@ -10,18 +10,16 @@ author = "Thomas Fischer"
 
 ## Software Modules and Compilation on EVE
 
-- Modules to load:
-  - `module load gcc/4.8.1-3`
-  - `module load boost`
-  - `module load vtk/7.1.0_openmpi-1.8.4-1`
 - Checkout the OGS-6 source code
-- Build utils with metis enable to 
+  - Source the environment scripts `scripts/env/envinf1/cli.sh`
+- Configure with utils enabled to:
   - Create the binary for generation of the structured mesh
-  - Cretae the binary for the partioner
-  - `cmake <path_to_source> -DOGS_BUILD_METIS=ON -DOGS_BUILD_UTILS=ON && make`
-- Build OGS for parallel usage:
-  - `module load petsc/3.7.2_maint_petsc_maint_3.7.2_gcc_openmpi_1.8.4-2`
-  - `cmake <path_to_source> -DOGS_USE_PETSC=ON && make -j`
+  - Create the binary for the mesh partioner tool `partmesh`
+  - `cmake <path_to_source> -DOGS_BUILD_UTILS=ON`
+- Configure OGS for parallel usage with PETSc:
+  - Source the environment scripts `scripts/env/envinf1/petsc.sh`
+  - `cmake <path_to_source> -DOGS_USE_PETSC=ON`
+- Build the source code with `make`
 
 
 ## Create a structured mesh

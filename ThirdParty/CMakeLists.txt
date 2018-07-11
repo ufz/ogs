@@ -45,6 +45,6 @@ if(OGS_BUILD_SWMM)
     set_target_properties(SWMM SwmmInterface PROPERTIES COMPILE_FLAGS /W0)
 endif()
 
-if(OGS_BUILD_METIS)
+if(OGS_BUILD_UTILS)
     include(${PROJECT_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)
 endif()
