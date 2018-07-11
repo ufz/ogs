@@ -53,6 +53,10 @@ add_custom_target(
     DEPENDS ogs vtkdiff ctest-cleanup
     USES_TERMINAL
 )
+if(OGS_BUILD_UTILS)
+    add_dependencies(ctest partmesh MapGeometryToMeshSurface)
+endif()
+
 add_custom_target(
     ctest-serial
     COMMAND ${CMAKE_CTEST_COMMAND} -T Test
@@ -64,6 +68,10 @@ add_custom_target(
     DEPENDS ogs vtkdiff ctest-cleanup
     USES_TERMINAL
 )
+if(OGS_BUILD_UTILS)
+    add_dependencies(ctest-serial partmesh MapGeometryToMeshSurface)
+endif()
+
 add_custom_target(ctest-large-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest-large.log)
 add_custom_target(
     ctest-large
@@ -74,6 +82,10 @@ add_custom_target(
     DEPENDS ogs vtkdiff ctest-large-cleanup
     USES_TERMINAL
 )
+if(OGS_BUILD_UTILS)
+    add_dependencies(ctest-large partmesh MapGeometryToMeshSurface)
+endif()
+
 add_custom_target(
     ctest-large-serial
     COMMAND ${CMAKE_CTEST_COMMAND} -T Test
@@ -83,6 +95,9 @@ add_custom_target(
     DEPENDS ogs vtkdiff ctest-large-cleanup
     USES_TERMINAL
 )
+if(OGS_BUILD_UTILS)
+    add_dependencies(ctest-large-serial partmesh MapGeometryToMeshSurface)
+endif()
 set_directory_properties(PROPERTIES
     ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_BINARY_DIR}/Tests/Data
 )
