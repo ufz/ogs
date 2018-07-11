@@ -11,10 +11,10 @@
 
 #include <cassert>
 
-#include "MaterialLib/SolidModels/CreateEhlers.h"
-#include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
-#include "MaterialLib/SolidModels/CreateLubby2.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "ThermoMechanicsProcess.h"
 #include "ThermoMechanicsProcessData.h"
@@ -101,39 +101,9 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     }
 
     // Constitutive relation.
-    // read type;
-    auto const constitutive_relation_config =
-        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__constitutive_relation}
-        config.getConfigSubtree("constitutive_relation");
-
-    auto const type =
-        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__constitutive_relation__type}
-        constitutive_relation_config.peekConfigParameter<std::string>("type");
-
-    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
-        material = nullptr;
-    if (type == "Ehlers")
-    {
-        material = MaterialLib::Solids::Ehlers::createEhlers<DisplacementDim>(
-            parameters, constitutive_relation_config);
-    }
-    else if (type == "LinearElasticIsotropic")
-    {
-        material =
-            MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
-                parameters, constitutive_relation_config);
-    }
-    else if (type == "Lubby2")
-    {
-        material = MaterialLib::Solids::Lubby2::createLubby2<DisplacementDim>(
-            parameters, constitutive_relation_config);
-    }
-    else
-    {
-        OGS_FATAL(
-            "Cannot construct constitutive relation of given type \'%s\'.",
-            type.c_str());
-    }
+    auto material =
+        MaterialLib::Solids::createConstitutiveRelation<DisplacementDim>(
+            parameters, config);
 
     // Reference solid density
     auto& reference_solid_density = findParameter<double>(
