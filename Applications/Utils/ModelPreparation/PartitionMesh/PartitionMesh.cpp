@@ -106,9 +106,6 @@ int main(int argc, char* argv[])
         return EXIT_SUCCESS;
     }
 
-    std::size_t const number_of_nodes(mesh_ptr->getNumberOfNodes());
-    std::size_t const number_of_elements(mesh_ptr->getNumberOfElements());
-
     ApplicationUtils::NodeWiseMeshPartitioner mesh_partitioner(
         nparts.getValue(), std::move(mesh_ptr));
 
@@ -117,8 +114,21 @@ int main(int argc, char* argv[])
         BaseLib::extractBaseNameWithoutExtension(mesh_input.getValue()));
     const int num_partitions = nparts.getValue();
 
+    if (num_partitions < 1)
+    {
+        OGS_FATAL("Number of partitions must be positive.");
+    }
+
+    if (num_partitions == 1)
+    {
+        OGS_FATAL(
+            "Partitioning the mesh into one domain is unnecessary because OGS "
+            "reads vtu mesh data directly when called with 'mpirun bin/ogs "
+            "-np=1'.");
+    }
+
     // Execute mpmetis via system(...)
-    if (num_partitions > 1 && exe_metis_flag.getValue())
+    if (exe_metis_flag.getValue())
     {
         INFO("METIS is running ...");
         const std::string exe_name = argv[0];
@@ -138,27 +148,6 @@ int main(int argc, char* argv[])
             return EXIT_FAILURE;
         }
     }
-    else if (num_partitions == 1 && exe_metis_flag.getValue())
-    {
-        // The mpmetis tool can not be used for 'partitioning' in only one
-        // domain. For this reason the according files are written for just
-        // one domain in the metis output format in the following.
-        auto writePartitionFile = [&output_file_name_wo_extension](
-                                      std::string const& file_name_extension,
-                                      std::size_t number) {
-            std::string const name(output_file_name_wo_extension +
-                                   file_name_extension);
-            std::ofstream os(name);
-            if (!os)
-                OGS_FATAL("Couldn't open file '%s' for writing.", name.c_str());
-            for (std::size_t n(0); n < number; ++n)
-                os << "0\n";
-        };
-
-        writePartitionFile(".mesh.npart.1", number_of_nodes);
-        writePartitionFile(".mesh.epart.1", number_of_elements);
-    }
-
     mesh_partitioner.resetPartitionIdsForNodes(
         readMetisData(input_file_name_wo_extension, num_partitions,
                       mesh_partitioner.mesh().getNumberOfNodes()));
