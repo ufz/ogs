@@ -12,7 +12,6 @@
 #include <logog/include/logog.hpp>
 #include <tuple>
 
-#include "BaseLib/reorderVector.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/Fluid/SpecificHeatCapacity/CreateSpecificFluidHeatCapacityModel.h"
 #include "MaterialLib/Fluid/ThermalConductivity/CreateFluidThermalConductivityModel.h"

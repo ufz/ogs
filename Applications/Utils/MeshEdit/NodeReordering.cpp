@@ -18,7 +18,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "BaseLib/makeVectorUnique.h"
+#include "BaseLib/Algorithm.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"

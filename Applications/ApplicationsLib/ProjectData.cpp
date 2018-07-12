@@ -18,8 +18,8 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/uniqueInsert.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"

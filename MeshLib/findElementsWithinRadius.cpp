@@ -14,7 +14,6 @@
 #include <vector>
 #include <unordered_set>
 
-#include "BaseLib/uniqueInsert.h"
 #include "MathLib/MathTools.h"
 
 #include "Elements/Element.h"

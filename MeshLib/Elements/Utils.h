@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "BaseLib/makeVectorUnique.h"
+#include "BaseLib/Algorithm.h"
 #include "MeshLib/Node.h"
 
 #include "Element.h"

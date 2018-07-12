@@ -11,13 +11,12 @@
 
 #include "CreatePorousMediaProperties.h"
 
-#include "BaseLib/reorderVector.h"
+#include "BaseLib/Algorithm.h"
+#include "MeshLib/Mesh.h"
 
 #include "Permeability/createPermeabilityModel.h"
 #include "Porosity/createPorosityModel.h"
 #include "Storage/createStorageModel.h"
-
-#include "MeshLib/Mesh.h"
 
 namespace MaterialLib
 {

@@ -11,7 +11,7 @@
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/makeVectorUnique.h"
+#include "BaseLib/Algorithm.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 

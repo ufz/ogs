@@ -8,7 +8,7 @@
  */
 
 #include "NamedFunction.h"
-#include "BaseLib/TMPUtil.h"
+#include "BaseLib/Functional.h"
 
 //! Helper struct used in conjunction with BaseLib::IntegerSequence to get a
 //! sequence of types, where each type is double.

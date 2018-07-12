@@ -9,15 +9,14 @@
  *  Created on March 31, 2017, 4:13 PM
  */
 
-#include <algorithm>
+#include "EvolutionaryPIDcontroller.h"
+
 #include <functional>
 #include <limits>
 #include <vector>
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/makeVectorUnique.h"
-
-#include "EvolutionaryPIDcontroller.h"
+#include "BaseLib/Algorithm.h"
 
 namespace NumLib
 {

@@ -11,8 +11,7 @@
 
 #include "CreatePorousMediaProperties.h"
 
-#include "BaseLib/reorderVector.h"
-
+#include "BaseLib/Algorithm.h"
 #include "MaterialLib/PorousMedium/Permeability/createPermeabilityModel.h"
 #include "MaterialLib/PorousMedium/Porosity/createPorosityModel.h"
 #include "MaterialLib/PorousMedium/Storage/createStorageModel.h"

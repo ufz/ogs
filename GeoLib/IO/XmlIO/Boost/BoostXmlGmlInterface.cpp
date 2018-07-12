@@ -17,8 +17,8 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
-#include "BaseLib/uniqueInsert.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/PointVec.h"

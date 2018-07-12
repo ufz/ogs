@@ -20,8 +20,7 @@
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/makeVectorUnique.h"
-#include "BaseLib/Error.h"
+#include "BaseLib/Algorithm.h"
 
 #include "GeoLib/AABB.h"
 #include "GeoLib/AnalyticalGeometry.h"

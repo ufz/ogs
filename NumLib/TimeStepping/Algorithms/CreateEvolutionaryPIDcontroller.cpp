@@ -11,8 +11,8 @@
 
 #include "CreateEvolutionaryPIDcontroller.h"
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
-#include "BaseLib/makeVectorUnique.h"
 
 #include "EvolutionaryPIDcontroller.h"
 #include "TimeStepAlgorithm.h"

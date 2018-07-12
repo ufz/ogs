@@ -10,7 +10,7 @@
 #include <autocheck/autocheck.hpp>
 #include <memory>
 
-#include "BaseLib/makeVectorUnique.h"
+#include "BaseLib/Algorithm.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"

@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 
-#include "BaseLib/reorderVector.h"
+#include "BaseLib/Algorithm.h"
 
 TEST(BaseLib_reorderVector, testreorderVector)
 {

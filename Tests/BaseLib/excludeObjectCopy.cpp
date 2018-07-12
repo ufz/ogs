@@ -18,7 +18,7 @@
 
 #include "gtest/gtest.h"
 
-#include "BaseLib/excludeObjectCopy.h"
+#include "BaseLib/Algorithm.h"
 
 TEST(BaseLib, excludeObjectCopy)
 {

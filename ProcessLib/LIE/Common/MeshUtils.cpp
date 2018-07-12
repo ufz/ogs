@@ -8,7 +8,7 @@
 
 #include "MeshUtils.h"
 
-#include "BaseLib/makeVectorUnique.h"
+#include "BaseLib/Algorithm.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
