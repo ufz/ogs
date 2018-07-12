@@ -11,7 +11,6 @@
 
 #include <functional>
 #include "baselib_export.h"
-#include "BaseLib/TMPUtil.h"
 
 namespace BaseLib
 {
@@ -139,6 +138,35 @@ struct FunctionTraits<ReturnType (Object::*)(Args...) const> {
 
 }  // namespace detail
 
+//! Has sequence of integers as template parameters
+template <int...>
+struct IntegerSequence {
+};
+
+//! Generates an IntegerSequence.
+//!
+//! \see http://stackoverflow.com/a/7858971
+template <int N, int... S>
+struct GenerateIntegerSequence {
+    // effectively pushes N-1 from the left to the list int... S of integers.
+    using type = typename GenerateIntegerSequence<N - 1, N - 1, S...>::type;
+};
+
+template <int... S>
+struct GenerateIntegerSequence<0, S...> {
+    using type = IntegerSequence<S...>;
+};
+
+/* The template metaprogram proceeds in the following way:
+ *
+ * GenerateIntegerSequence<sizeof...(Args)>::type
+ *
+ * Assume sizeof...(Args) == 3. Let GIS := GenerateIntegerSequence
+ * GIS<3, []>
+ * -> GIS<2, [2]>
+ * -> GIS<1, [1, 2]>
+ * -> GIS<0, [0, 1, 2], which has member typedef IntegerSequence<0, 1, 2>
+ */
 /*! Convenience wrapper for std::bind().
  *
  * This function binds the member function pointer \c member of class \c Object
