@@ -11,8 +11,9 @@
 
 #pragma once
 
-#include <memory>
 #include <cmath>
+#include <memory>
+#include <tuple>
 
 #include "LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
@@ -59,13 +60,13 @@ public:
 
     CreepBGRa(
         typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp,
-            NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
+        NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
         const double A, const double n, const double sigma0, const double Q)
-        :  LinearElasticIsotropic<DisplacementDim>(std::move(mp)),
+        : LinearElasticIsotropic<DisplacementDim>(std::move(mp)),
           _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
           _A(A),
           _n(n),
-          _coef(std::pow(1.5, 0.5*_n+1) / std::pow(sigma0, _n)),
+          _coef(std::pow(1.5, 0.5 * _n + 1) / std::pow(sigma0, _n)),
           _Q(Q)
     {
     }
@@ -86,7 +87,8 @@ private:
 
     const double _A;
     const double _n;
-    const double _coef; /// $f\left(\frac{3}{2}\right)^{n/2+1}/\sigma_{eff}^n $f
+    /// $f\left(\frac{3}{2}\right)^{n/2+1}/\sigma_{eff}^n $f
+    const double _coef;
     const double _Q;
 };
 
