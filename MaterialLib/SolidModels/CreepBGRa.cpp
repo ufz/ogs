@@ -90,6 +90,16 @@ CreepBGRa<DisplacementDim>::integrateStress(
                             tangentStiffness)};
 }
 
+template <int DisplacementDim>
+double CreepBGRa<DisplacementDim>::getTemperatureRelatedCoefficient(
+    double const t, double const dt, ProcessLib::SpatialPosition const& x,
+    double const T, double const deviatoric_stress_norm) const
+{
+    return 2.0 * _coef * this->_mp.mu(t, x) *
+           std::pow(deviatoric_stress_norm, _n - 1) * dt * _Q /
+           (MaterialLib::PhysicalConstant::IdealGasConstant * T * T);
+}
+
 template class CreepBGRa<2>;
 template class CreepBGRa<3>;
 

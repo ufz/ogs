@@ -82,6 +82,15 @@ public:
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables, double const T) override;
 
+    ConstitutiveModel getConstitutiveModel() const override
+    {
+        return ConstitutiveModel::CreepBGRa;
+    }
+
+    double getTemperatureRelatedCoefficient(
+        double const t, double const dt, ProcessLib::SpatialPosition const& x,
+        double const T, double const deviatoric_stress_norm) const override;
+
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
 
