@@ -32,6 +32,15 @@ namespace MaterialLib
 {
 namespace Solids
 {
+enum class ConstitutiveModel
+{
+    Ehlers,
+    LinearElasticIsotropic,
+    Lubby2,
+    CreepBGRa,
+    Invalid
+};
+
 /// Interface for mechanical solid material models. Provides updates of the
 /// stress for a given current state and also a tangent at that position. If the
 /// implemented material model stores an internal state, the nested
@@ -133,6 +142,22 @@ struct MechanicsBase
     virtual std::vector<InternalVariable> getInternalVariables() const
     {
         return {};
+    }
+
+    /// Gets the type of constitutive model
+    virtual ConstitutiveModel getConstitutiveModel() const
+    {
+        return ConstitutiveModel::Invalid;
+    }
+
+    /// Get temperature related coefficient for the global assembly if there is
+    /// one.
+    virtual double getTemperatureRelatedCoefficient(
+        double const /*t*/, double const /*dt*/,
+        ProcessLib::SpatialPosition const& /*x*/, double const /*T*/,
+        double const /*deviatoric_stress_norm*/) const
+    {
+        return 0.0;
     }
 
     virtual double computeFreeEnergyDensity(
