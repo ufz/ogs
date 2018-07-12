@@ -1,6 +1,8 @@
-add_executable(partmesh PartitionMesh.cpp NodeWiseMeshPartitioner.h NodeWiseMeshPartitioner.cpp)
+add_executable(partmesh PartitionMesh.cpp Metis.cpp NodeWiseMeshPartitioner.cpp)
+
 set_target_properties(partmesh PROPERTIES FOLDER Utilities)
 target_link_libraries(partmesh MeshLib)
+add_dependencies(partmesh mpmetis)
 
 ####################
 ### Installation ###

@@ -119,8 +119,6 @@ if(NOT WIN32 AND OGS_BUILD_SWMM)
     message(FATAL_ERROR "OGS_BUILD_SWMM requires Windows!")
 endif()
 
-option(OGS_BUILD_METIS "Should metis and the partmesh util be built?" OFF)
-
 option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 option(OGS_INSITU "Builds OGS with insitu visualization capabilities." OFF)

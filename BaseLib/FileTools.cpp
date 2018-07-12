@@ -13,6 +13,7 @@
  */
 
 #include "FileTools.h"
+#include "Error.h"
 #include "StringTools.h"
 
 #include <sys/stat.h>
