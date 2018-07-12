@@ -295,6 +295,18 @@ public:
             //
             KuT.noalias() +=
                 B.transpose() * C * alpha * Invariants::identity2 * N * w;
+            if (_process_data.material->getConstitutiveModel() ==
+                MaterialLib::Solids::ConstitutiveModel::CreepBGRa)
+            {
+                auto const s = Invariants::deviatoric_projection * sigma;
+                // ||s_{n+1}|| = sqrt(2.0 * J2)
+                double const norm_s = std::sqrt(2.0 * Invariants::J2(s));
+                const double creep_coefficient =
+                    _process_data.material->getTemperatureRelatedCoefficient(
+                        t, dt, x_position,
+                        delta_T + _process_data.reference_temperature, norm_s);
+                KuT.noalias() += creep_coefficient * B.transpose() * s * N * w;
+            }
 
             //
             // temperature equation, temperature part;
@@ -307,6 +319,7 @@ public:
                 _process_data.specific_heat_capacity(t, x_position)[0];
             DTT.noalias() += N.transpose() * rho_s * c * N * w;
         }
+
         // temperature equation, temperature part
         local_Jac
             .template block<temperature_size, temperature_size>(
