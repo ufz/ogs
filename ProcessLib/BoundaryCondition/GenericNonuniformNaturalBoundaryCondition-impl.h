@@ -56,7 +56,7 @@ GenericNonuniformNaturalBoundaryCondition<BoundaryConditionData,
 
     MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
 
-    // Create local DOF table from the bc mesh subset for the given variable and
+    // Create local DOF table from the BC mesh subset for the given variable and
     // component id.
     _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
         variable_id, {component_id}, std::move(bc_mesh_subset)));

@@ -47,7 +47,7 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
 
     MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
 
-    // Create local DOF table from the bc mesh subset for the given variable and
+    // Create local DOF table from the BC mesh subset for the given variable and
     // component ids.
     _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
         variable_id, component_ids, std::move(bc_mesh_subset)));

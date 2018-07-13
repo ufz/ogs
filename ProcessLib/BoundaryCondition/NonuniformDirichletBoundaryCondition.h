@@ -68,7 +68,7 @@ public:
 
         MeshLib::MeshSubset boundary_mesh_subset(_boundary_mesh, bc_nodes);
 
-        // Create local DOF table from the bc mesh subset for the given variable
+        // Create local DOF table from the BC mesh subset for the given variable
         // and component id.
         _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
             variable_id, {component_id}, std::move(boundary_mesh_subset)));
