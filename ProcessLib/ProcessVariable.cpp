@@ -12,6 +12,7 @@
 #include <utility>
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Algorithm.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshLib/Mesh.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
@@ -69,19 +70,13 @@ MeshLib::Mesh const& findMeshInConfig(
     //
     // Find and extract mesh from the list of meshes.
     //
-    auto const mesh_it = std::find_if(
-        begin(meshes), end(meshes), [&mesh_name](auto const& mesh) {
+    auto const& mesh = *BaseLib::findElementOrError(
+        begin(meshes), end(meshes),
+        [&mesh_name](auto const& mesh) {
             assert(mesh != nullptr);
             return mesh->getName() == mesh_name;
-        });
-    if (mesh_it == end(meshes))
-    {
-        OGS_FATAL("Required mesh with name '%s' not found.",
-                  mesh_name.c_str());
-    }
-
-    auto const& mesh = **mesh_it;
-
+        },
+        "Required mesh with name '" + mesh_name + "' not found.");
     DBUG("Found mesh '%s' with id %d.", mesh.getName().c_str(), mesh.getID());
 
     return mesh;
