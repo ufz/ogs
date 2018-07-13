@@ -100,7 +100,7 @@ template <int... Indices, typename Object, typename MethodClass,
           typename ReturnType, typename... Args>
 std::function<ReturnType(Args...)> easyBind_inner(
     ReturnType (MethodClass::*method)(Args...), Object&& obj,
-    IntegerSequence<Indices...>)
+    std::integer_sequence<int, Indices...>)
 {
     return easyBind_innermost<Indices...>(method, std::forward<Object>(obj));
 }
@@ -109,7 +109,7 @@ template <int... Indices, typename Object, typename MethodClass,
           typename ReturnType, typename... Args>
 std::function<ReturnType(Args...)> easyBind_inner(
     ReturnType (MethodClass::*method)(Args...) const, Object&& obj,
-    IntegerSequence<Indices...>)
+    std::integer_sequence<int, Indices...>)
 {
     return easyBind_innermost<Indices...>(method, std::forward<Object>(obj));
 }
@@ -138,35 +138,6 @@ struct FunctionTraits<ReturnType (Object::*)(Args...) const> {
 
 }  // namespace detail
 
-//! Has sequence of integers as template parameters
-template <int...>
-struct IntegerSequence {
-};
-
-//! Generates an IntegerSequence.
-//!
-//! \see http://stackoverflow.com/a/7858971
-template <int N, int... S>
-struct GenerateIntegerSequence {
-    // effectively pushes N-1 from the left to the list int... S of integers.
-    using type = typename GenerateIntegerSequence<N - 1, N - 1, S...>::type;
-};
-
-template <int... S>
-struct GenerateIntegerSequence<0, S...> {
-    using type = IntegerSequence<S...>;
-};
-
-/* The template metaprogram proceeds in the following way:
- *
- * GenerateIntegerSequence<sizeof...(Args)>::type
- *
- * Assume sizeof...(Args) == 3. Let GIS := GenerateIntegerSequence
- * GIS<3, []>
- * -> GIS<2, [2]>
- * -> GIS<1, [1, 2]>
- * -> GIS<0, [0, 1, 2], which has member typedef IntegerSequence<0, 1, 2>
- */
 /*! Convenience wrapper for std::bind().
  *
  * This function binds the member function pointer \c member of class \c Object
@@ -210,7 +181,7 @@ easyBind(ReturnType (MethodClass::*method)(Args...), Object&& obj)
 {
     return detail::easyBind_inner(
         method, std::forward<Object>(obj),
-        typename GenerateIntegerSequence<sizeof...(Args)>::type{});
+        std::make_integer_sequence<int, sizeof...(Args)>{});
 }
 
 //! \overload
@@ -225,7 +196,7 @@ easyBind(ReturnType (MethodClass::*method)(Args...) const, Object&& obj)
 {
     return detail::easyBind_inner(
         method, std::forward<Object>(obj),
-        typename GenerateIntegerSequence<sizeof...(Args)>::type{});
+        std::make_integer_sequence<int, sizeof...(Args)>{});
 }
 
 //! Wraps a callable object in a std::function.
