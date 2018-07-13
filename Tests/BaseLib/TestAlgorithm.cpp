@@ -54,7 +54,7 @@ TEST(BaseLibAlgorithm, excludeObjectCopy)
     // do not copy element 0, 2, 4, 6, 8, 10, 12, 14, 16, 18
     std::transform(ex_positions.begin(), ex_positions.end(),
                    ex_positions.begin(),
-                   std::bind1st(std::multiplies<std::size_t>(), 2));
+                   [](std::size_t const& x) { return x * 2; });
 
     std::vector<std::size_t> c2(BaseLib::excludeObjectCopy(v, ex_positions));
     ASSERT_EQ(size - ex_positions.size(), c2.size());
