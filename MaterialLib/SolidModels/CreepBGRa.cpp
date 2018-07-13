@@ -52,7 +52,7 @@ CreepBGRa<DisplacementDim>::integrateStress(
     KelvinVector s_n1;
     auto const update_jacobian = [&](JacobianMatrix& jacobian) {
         s_n1 = deviatoric_matrix * solution;
-        double const norm_s_n1 = std::sqrt(2.0 * Invariants::J2(s_n1));
+        double const norm_s_n1 = Invariants::Norm(s_n1);
         pow_norm_s_n1_n_minus_one_2b_G =
             2.0 * b * this->_mp.mu(t, x) * std::pow(norm_s_n1, _n - 1);
         jacobian =
@@ -84,7 +84,11 @@ CreepBGRa<DisplacementDim>::integrateStress(
     if (!success_iterations)
         return {};
 
-    KelvinMatrix tangentStiffness = linear_solver.solve(C);
+    // If *success_iterations>0, tangentStiffness = J_(sigma)^{-1}C
+    // where J_(sigma) is the Jacobian of the last local Newton-Raphson
+    // iteration, which is already LU decomposed.
+    KelvinMatrix tangentStiffness =
+        (*success_iterations == 0) ? C : linear_solver.solve(C);
 
     return {std::make_tuple(solution, createMaterialStateVariables(),
                             tangentStiffness)};

@@ -299,8 +299,7 @@ public:
                 MaterialLib::Solids::ConstitutiveModel::CreepBGRa)
             {
                 auto const s = Invariants::deviatoric_projection * sigma;
-                // ||s_{n+1}|| = sqrt(2.0 * J2)
-                double const norm_s = std::sqrt(2.0 * Invariants::J2(s));
+                double const norm_s = Invariants::Norm(s);
                 const double creep_coefficient =
                     _process_data.material->getTemperatureRelatedCoefficient(
                         t, dt, x_position,
