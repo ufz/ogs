@@ -47,23 +47,23 @@ CreepBGRa<DisplacementDim>::integrateStress(
         std::exp(-_Q / (MaterialLib::PhysicalConstant::IdealGasConstant * T));
     auto const& deviatoric_matrix = Invariants::deviatoric_projection;
 
-    auto const update_residual = [&](ResidualVectorType& r) {
+    double pow_norm_s_n1_n_minus_one_2b_G = 0.;
 
-        auto const s_n1 = deviatoric_matrix * solution;
-        // ||s_{n+1}|| = sqrt(2.0 * J2)
-        double const norm_s_n1 = std::sqrt(2.0 * Invariants::J2(s_n1));
-        r = solution - sigma_try +
-            2.0 * b * this->_mp.mu(t, x) * std::pow(norm_s_n1, _n - 1) * s_n1;
-    };
-
+    KelvinVector s_n1;
     auto const update_jacobian = [&](JacobianMatrix& jacobian) {
-        auto const s_n1 = deviatoric_matrix * solution;
+        s_n1 = deviatoric_matrix * solution;
         double const norm_s_n1 = std::sqrt(2.0 * Invariants::J2(s_n1));
+        pow_norm_s_n1_n_minus_one_2b_G =
+            2.0 * b * this->_mp.mu(t, x) * std::pow(norm_s_n1, _n - 1);
         jacobian =
             KelvinMatrix::Identity() +
-            2.0 * b * this->_mp.mu(t, x) * std::pow(norm_s_n1, _n - 1) *
+            pow_norm_s_n1_n_minus_one_2b_G *
                 (deviatoric_matrix +
                  (_n - 1) * std::pow(norm_s_n1, -2) * s_n1 * s_n1.transpose());
+    };
+
+    auto const update_residual = [&](ResidualVectorType& r) {
+        r = solution - sigma_try + pow_norm_s_n1_n_minus_one_2b_G * s_n1;
     };
 
     auto const update_solution = [&](ResidualVectorType const& increment) {
