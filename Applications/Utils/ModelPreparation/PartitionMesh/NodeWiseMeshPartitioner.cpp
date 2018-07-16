@@ -129,19 +129,27 @@ void splitOffHigherOrderNode(std::vector<MeshLib::Node*> const& nodes,
 /// vector, and
 /// 2 collect non-linear element nodes belonging to the partition part_id in
 /// extra nodes vector.
+/// If \c node_id_mapping is given, it will be used to map the mesh node ids to
+/// other ids; used by boundary meshes, for example.
 /// \return a pair of base node and extra nodes.
 std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
-findNonGhostNodesInPartition(std::size_t const part_id,
-                             const bool is_mixed_high_order_linear_elems,
-                             std::size_t const n_base_nodes,
-                             std::vector<MeshLib::Node*> const& nodes,
-                             std::vector<std::size_t> const& partition_ids)
+findNonGhostNodesInPartition(
+    std::size_t const part_id,
+    const bool is_mixed_high_order_linear_elems,
+    std::size_t const n_base_nodes,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::vector<std::size_t> const& partition_ids,
+    std::vector<std::size_t> const* node_id_mapping = nullptr)
 {
+    auto node_id = [&node_id_mapping](MeshLib::Node const* const n) {
+        return node_id_mapping ? (*node_id_mapping)[n->getID()] : n->getID();
+    };
+
     // Find nodes belonging to a given partition id.
     std::vector<MeshLib::Node*> partition_nodes;
     copy_if(
         begin(nodes), end(nodes), std::back_inserter(partition_nodes),
-        [&](auto const& n) { return partition_ids[n->getID()] == part_id; });
+        [&](auto const& n) { return partition_ids[node_id(n)] == part_id; });
 
     // Space for resulting vectors.
     std::vector<MeshLib::Node*> base_nodes;
@@ -160,7 +168,7 @@ findNonGhostNodesInPartition(std::size_t const part_id,
                    std::back_inserter(extra_nodes),
                    [&](MeshLib::Node* const n) {
                        return !is_mixed_high_order_linear_elems ||
-                              n->getID() > n_base_nodes;
+                              node_id(n) > n_base_nodes;
                    });
 
     return {base_nodes, extra_nodes};
