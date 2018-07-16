@@ -137,18 +137,31 @@ findNonGhostNodesInPartition(std::size_t const part_id,
                              std::vector<MeshLib::Node*> const& nodes,
                              std::vector<std::size_t> const& partition_ids)
 {
-    auto const n_nodes = nodes.size();
+    // Find nodes belonging to a given partition id.
+    std::vector<MeshLib::Node*> partition_nodes;
+    copy_if(
+        begin(nodes), end(nodes), std::back_inserter(partition_nodes),
+        [&](auto const& n) { return partition_ids[n->getID()] == part_id; });
 
+    // Space for resulting vectors.
     std::vector<MeshLib::Node*> base_nodes;
+    base_nodes.reserve(partition_nodes.size() /
+                       2);  // if linear mesh, then one reallocation, no realloc
+                            // for higher order elements meshes.
     std::vector<MeshLib::Node*> extra_nodes;
-    for (std::size_t i = 0; i < n_nodes; i++)
-    {
-        if (partition_ids[i] == part_id)
-        {
-            splitOffHigherOrderNode(nodes, is_mixed_high_order_linear_elems, i,
-                                    n_base_nodes, base_nodes, extra_nodes);
-        }
-    }
+    extra_nodes.reserve(
+        partition_nodes.size() /
+        2);  // if linear mesh, then wasted space, good estimate for quadratic
+             // order mesh, and realloc needed for higher order element meshes.
+
+    // Split the nodes into base nodes and extra nodes.
+    partition_copy(begin(partition_nodes), end(partition_nodes),
+                   std::back_inserter(base_nodes),
+                   std::back_inserter(extra_nodes),
+                   [&](MeshLib::Node* const n) {
+                       return !is_mixed_high_order_linear_elems ||
+                              n->getID() > n_base_nodes;
+                   });
 
     return {base_nodes, extra_nodes};
 }
