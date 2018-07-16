@@ -108,6 +108,23 @@ std::ostream& Partition::writeConfigBinary(std::ostream& os) const
                     sizeof(data));
 }
 
+void splitOffHigherOrderNode(std::vector<MeshLib::Node*> const& nodes,
+                             bool const is_mixed_high_order_linear_elems,
+                             unsigned const node_id,
+                             unsigned const n_base_nodes,
+                             std::vector<MeshLib::Node*>& base_nodes,
+                             std::vector<MeshLib::Node*>& extra_nodes)
+{
+    if (!is_mixed_high_order_linear_elems || node_id > n_base_nodes)
+    {
+        base_nodes.push_back(nodes[node_id]);
+    }
+    else
+    {
+        extra_nodes.push_back(nodes[node_id]);
+    }
+}
+
 void NodeWiseMeshPartitioner::findNonGhostNodesInPartition(
     std::size_t const part_id,
     const bool is_mixed_high_order_linear_elems,
@@ -121,6 +138,7 @@ void NodeWiseMeshPartitioner::findNonGhostNodesInPartition(
         if (_nodes_partition_ids[i] == part_id)
         {
             splitOffHigherOrderNode(nodes, is_mixed_high_order_linear_elems, i,
+                                    _mesh->getNumberOfBaseNodes(),
                                     partition.nodes, extra_nodes);
         }
     }
@@ -190,28 +208,11 @@ void NodeWiseMeshPartitioner::findGhostNodesInPartition(
             if (_nodes_partition_ids[node_id] != part_id)
             {
                 splitOffHigherOrderNode(nodes, is_mixed_high_order_linear_elems,
-                                        node_id, partition.nodes, extra_nodes);
+                                        node_id, _mesh->getNumberOfBaseNodes(),
+                                        partition.nodes, extra_nodes);
                 nodes_reserved[node_id] = true;
             }
         }
-    }
-}
-
-void NodeWiseMeshPartitioner::splitOffHigherOrderNode(
-    std::vector<MeshLib::Node*> const& nodes,
-    bool const is_mixed_high_order_linear_elems,
-    unsigned const node_id,
-    std::vector<MeshLib::Node*>& base_nodes,
-    std::vector<MeshLib::Node*>& extra_nodes)
-{
-    auto const n_base_nodes = _mesh->getNumberOfBaseNodes();
-    if (!is_mixed_high_order_linear_elems || node_id > n_base_nodes)
-    {
-        base_nodes.push_back(nodes[node_id]);
-    }
-    else
-    {
-        extra_nodes.push_back(nodes[node_id]);
     }
 }
 
