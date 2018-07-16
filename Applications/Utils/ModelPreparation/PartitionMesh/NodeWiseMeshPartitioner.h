@@ -76,6 +76,10 @@ public:
     /// interpolation
     void partitionByMETIS(const bool is_mixed_high_order_linear_elems);
 
+    std::vector<Partition> partitionOtherMesh(
+        MeshLib::Mesh const& mesh,
+        bool const is_mixed_high_order_linear_elems) const;
+
     /// Write the partitions into ASCII files
     /// \param file_name_base The prefix of the file name.
     void writeASCII(const std::string& file_name_base);
@@ -83,6 +87,9 @@ public:
     /// Write the partitions into binary files
     /// \param file_name_base The prefix of the file name.
     void writeBinary(const std::string& file_name_base);
+
+    void writeOtherMesh(std::string const& output_filename_base,
+                        std::vector<Partition> const& partitions) const;
 
     void resetPartitionIdsForNodes(
         std::vector<std::size_t>&& node_partition_ids)
