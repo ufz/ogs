@@ -252,16 +252,18 @@ findElementsInPartition(
 /// findElementsInPartition).
 /// Finds ghost nodes and non-linear element ghost nodes by walking over
 /// ghost elements.
-void findGhostNodesInPartition(
+std::tuple<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
+findGhostNodesInPartition(
     std::size_t const part_id,
     const bool is_mixed_high_order_linear_elems,
     std::size_t const number_of_base_nodes,
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<MeshLib::Element const*> const& ghost_elements,
-    std::vector<std::size_t> const& partition_ids,
-    std::vector<MeshLib::Node*>& partition_nodes,
-    std::vector<MeshLib::Node*>& extra_nodes)
+    std::vector<std::size_t> const& partition_ids)
 {
+    std::vector<MeshLib::Node*> base_nodes;
+    std::vector<MeshLib::Node*> ghost_nodes;
+
     std::vector<bool> nodes_reserved(nodes.size(), false);
     for (const auto* ghost_elem : ghost_elements)
     {
@@ -277,11 +279,13 @@ void findGhostNodesInPartition(
             {
                 splitOffHigherOrderNode(nodes, is_mixed_high_order_linear_elems,
                                         node_id, number_of_base_nodes,
-                                        partition_nodes, extra_nodes);
+                                        base_nodes, ghost_nodes);
                 nodes_reserved[node_id] = true;
             }
         }
     }
+    return std::tuple<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>{
+        base_nodes, ghost_nodes};
 }
 
 void NodeWiseMeshPartitioner::processPartition(
@@ -303,18 +307,26 @@ void NodeWiseMeshPartitioner::processPartition(
              _partitions[part_id].ghost_elements) =
         findElementsInPartition(part_id, _mesh->getElements(),
                                 _nodes_partition_ids);
-    findGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
-                              _mesh->getNumberOfBaseNodes(), _mesh->getNodes(),
-                              _partitions[part_id].ghost_elements,
-                              _nodes_partition_ids, _partitions[part_id].nodes,
-                              extra_nodes);
-    auto& partition = _partitions[part_id];
+    std::vector<MeshLib::Node*> base_ghost_nodes;
+    std::vector<MeshLib::Node*> higher_order_ghost_nodes;
+    std::tie(base_ghost_nodes, higher_order_ghost_nodes) =
+        findGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
+                                  _mesh->getNumberOfBaseNodes(),
+                                  _mesh->getNodes(), partition.ghost_elements,
+                                  _nodes_partition_ids);
+
+    std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
+              std::back_inserter(partition.nodes));
+
     partition.number_of_base_nodes = partition.nodes.size();
 
     if (is_mixed_high_order_linear_elems)
     {
         partition.nodes.insert(partition.nodes.end(), extra_nodes.begin(),
                                extra_nodes.end());
+        std::copy(begin(higher_order_ghost_nodes),
+                  end(higher_order_ghost_nodes),
+                  std::back_inserter(partition.nodes));
     }
 
     // Set the node numbers of base and all mesh nodes.
