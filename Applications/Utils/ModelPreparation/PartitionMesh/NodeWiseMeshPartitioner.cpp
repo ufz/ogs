@@ -174,6 +174,15 @@ findNonGhostNodesInPartition(
     return {base_nodes, extra_nodes};
 }
 
+int numberOfRegularNodes(MeshLib::Element const& e, std::size_t const part_id,
+                         std::vector<std::size_t> const& partition_ids)
+{
+    return std::count_if(e.getNodes(), e.getNodes() + e.getNumberOfNodes(),
+                         [&](MeshLib::Node* const n) {
+                             return partition_ids[n->getID()] == part_id;
+                         });
+}
+
 /// 1 find elements belonging to the partition part_id:
 /// fills vector partition.regular_elements
 /// 2 find ghost elements belonging to the partition part_id
@@ -184,36 +193,24 @@ findElementsInPartition(std::size_t const part_id,
                         std::vector<MeshLib::Element*> const& elements,
                         std::vector<std::size_t> const& partition_ids)
 {
-    std::vector<bool> is_regular_element(elements.size(), false);
     std::vector<MeshLib::Element const*> regular_elements;
     std::vector<MeshLib::Element const*> ghost_elements;
 
     for (std::size_t elem_id = 0; elem_id < elements.size(); elem_id++)
     {
         const auto* elem = elements[elem_id];
-        if (is_regular_element[elem_id])
+
+        auto const regular_nodes = numberOfRegularNodes(
+            *elem, part_id, partition_ids, node_id_mapping);
+
+        if (regular_nodes == 0)
         {
             continue;
         }
 
-        std::size_t non_ghost_node_number = 0;
-        for (unsigned i = 0; i < elem->getNumberOfNodes(); i++)
-        {
-            if (partition_ids[elem->getNodeIndex(i)] == part_id)
-            {
-                non_ghost_node_number++;
-            }
-        }
-
-        if (non_ghost_node_number == 0)
-        {
-            continue;
-        }
-
-        if (non_ghost_node_number == elem->getNumberOfNodes())
+        if (regular_nodes == static_cast<int>(elem->getNumberOfNodes()))
         {
             regular_elements.push_back(elem);
-            is_regular_element[elem_id] = true;
         }
         else
         {
