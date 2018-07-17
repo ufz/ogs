@@ -113,7 +113,7 @@ void splitOffHigherOrderNode(std::vector<MeshLib::Node*> const& nodes,
                              unsigned const node_id,
                              unsigned const n_base_nodes,
                              std::vector<MeshLib::Node*>& base_nodes,
-                             std::vector<MeshLib::Node*>& extra_nodes)
+                             std::vector<MeshLib::Node*>& higher_order_nodes)
 {
     if (!is_mixed_high_order_linear_elems || node_id > n_base_nodes)
     {
@@ -121,7 +121,7 @@ void splitOffHigherOrderNode(std::vector<MeshLib::Node*> const& nodes,
     }
     else
     {
-        extra_nodes.push_back(nodes[node_id]);
+        higher_order_nodes.push_back(nodes[node_id]);
     }
 }
 
@@ -177,8 +177,8 @@ findNonGhostNodesInPartition(
     base_nodes.reserve(partition_nodes.size() /
                        2);  // if linear mesh, then one reallocation, no realloc
                             // for higher order elements meshes.
-    std::vector<MeshLib::Node*> extra_nodes;
-    extra_nodes.reserve(
+    std::vector<MeshLib::Node*> higher_order_nodes;
+    higher_order_nodes.reserve(
         partition_nodes.size() /
         2);  // if linear mesh, then wasted space, good estimate for quadratic
              // order mesh, and realloc needed for higher order element meshes.
@@ -186,13 +186,13 @@ findNonGhostNodesInPartition(
     // Split the nodes into base nodes and extra nodes.
     partition_copy(begin(partition_nodes), end(partition_nodes),
                    std::back_inserter(base_nodes),
-                   std::back_inserter(extra_nodes),
+                   std::back_inserter(higher_order_nodes),
                    [&](MeshLib::Node* const n) {
                        return !is_mixed_high_order_linear_elems ||
                               node_id(*n) > n_base_nodes;
                    });
 
-    return {base_nodes, extra_nodes};
+    return {base_nodes, higher_order_nodes};
 }
 
 int numberOfRegularNodes(
