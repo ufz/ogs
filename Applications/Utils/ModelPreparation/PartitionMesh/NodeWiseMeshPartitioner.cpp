@@ -259,8 +259,13 @@ findGhostNodesInPartition(
     std::size_t const number_of_base_nodes,
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<MeshLib::Element const*> const& ghost_elements,
-    std::vector<std::size_t> const& partition_ids)
+    std::vector<std::size_t> const& partition_ids,
+    std::vector<std::size_t> const* node_id_mapping = nullptr)
 {
+    auto node_id = [&node_id_mapping](MeshLib::Node const& n) {
+        return nodeIdBulkMesh(n, node_id_mapping);
+    };
+
     std::vector<MeshLib::Node*> base_nodes;
     std::vector<MeshLib::Node*> ghost_nodes;
 
@@ -269,18 +274,24 @@ findGhostNodesInPartition(
     {
         for (unsigned i = 0; i < ghost_elem->getNumberOfNodes(); i++)
         {
-            const unsigned node_id = ghost_elem->getNodeIndex(i);
-            if (nodes_reserved[node_id])
+            auto const& n = ghost_elem->getNode(i);
+            if (nodes_reserved[n->getID()])
             {
                 continue;
             }
 
-            if (partition_ids[node_id] != part_id)
+            if (partitionLookup(*n, partition_ids, node_id_mapping) != part_id)
             {
-                splitOffHigherOrderNode(nodes, is_mixed_high_order_linear_elems,
-                                        node_id, number_of_base_nodes,
-                                        base_nodes, ghost_nodes);
-                nodes_reserved[node_id] = true;
+                if (!is_mixed_high_order_linear_elems ||
+                    node_id(*n) > number_of_base_nodes)
+                {
+                    base_nodes.push_back(nodes[n->getID()]);
+                }
+                else
+                {
+                    ghost_nodes.push_back(nodes[n->getID()]);
+                }
+                nodes_reserved[n->getID()] = true;
             }
         }
     }
