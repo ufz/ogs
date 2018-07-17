@@ -2,7 +2,7 @@ version: 6.0.8.{build}
 clone_depth: 100
 
 image:
-  - Visual Studio 2015
+  - Visual Studio 2017
 
 environment:
   PYTHON: "C:\\Python27-x64"
@@ -52,14 +52,13 @@ clone_script:
       }
 
 before_build:
-  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\vsdevcmd" -arch=x64
   - cd %APPVEYOR_BUILD_FOLDER%
   - echo %APPVEYOR_BUILD_FOLDER%
 
 build_script:
   - mkdir build & cd build
-  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF -DOGS_USE_CONAN=ON # -DOGS_BUILD_GUI=ON
+  - cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_SHARED_LIBS=OFF -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON -DOGS_USE_PCH=OFF -DOGS_USE_CONAN=ON -DOGS_CONAN_BUILD=never # -DOGS_BUILD_GUI=ON
   - cmake --build . --config %configuration%
   - cmake --build . --config %configuration% --target tests
   - cmake --build . --config %configuration% --target ctest
