@@ -17,8 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "BaseLib/Error.h"
-#include "BaseLib/excludeObjectCopy.h"
+#include "BaseLib/Algorithm.h"
 #include "Location.h"
 
 namespace MeshLib

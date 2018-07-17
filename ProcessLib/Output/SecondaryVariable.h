@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "BaseLib/uniqueInsert.h"
+#include "BaseLib/Algorithm.h"
 #include "NumLib/Extrapolation/ExtrapolatableElementCollection.h"
 #include "NumLib/Extrapolation/Extrapolator.h"
 

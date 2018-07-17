@@ -13,9 +13,9 @@
 #include <memory>
 #include <tuple>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/makeVectorUnique.h"
 
 #include "Output.h"
 

@@ -11,7 +11,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/reorderVector.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"

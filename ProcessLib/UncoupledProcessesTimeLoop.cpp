@@ -11,7 +11,6 @@
 
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
-#include "BaseLib/uniqueInsert.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"

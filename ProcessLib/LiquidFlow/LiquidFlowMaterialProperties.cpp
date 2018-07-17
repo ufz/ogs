@@ -14,7 +14,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/reorderVector.h"
 
 #include "MeshLib/PropertyVector.h"
 

@@ -8,10 +8,10 @@
  */
 
 #include "NamedFunction.h"
-#include "BaseLib/TMPUtil.h"
+#include "BaseLib/Functional.h"
 
-//! Helper struct used in conjunction with BaseLib::IntegerSequence to get a
-//! sequence of types, where each type is double.
+//! Helper struct used in conjunction with std::integer_sequence<int, ...> to
+//! get a sequence of types, where each type is double.
 template <int>
 struct Double
 {
@@ -38,7 +38,7 @@ using CallerFunction = double (*)(void*, const std::vector<double>&);
 //! Helps instantiating the call_() function.
 template <int... Indices>
 CallerFunction generateCallerFromIntegerSequence(
-    BaseLib::IntegerSequence<Indices...>)
+    std::integer_sequence<int, Indices...>)
 {
     return call_<Indices...>;
 }
@@ -48,7 +48,7 @@ template <int NumArguments>
 CallerFunction generateCaller()
 {
     return generateCallerFromIntegerSequence(
-        typename BaseLib::GenerateIntegerSequence<NumArguments>::type{});
+        std::make_integer_sequence<int, NumArguments>{});
 }
 
 //! Holds instantiations of the call_() function for various numbers of
@@ -87,7 +87,7 @@ using DeleterFunction = void (*)(void*);
 //! Helps instantiating the delete_() function.
 template <int... Indices>
 DeleterFunction generateDeleterFromIntegerSequence(
-    BaseLib::IntegerSequence<Indices...>)
+    std::integer_sequence<int, Indices...>)
 {
     return delete_<Indices...>;
 }
@@ -97,7 +97,7 @@ template <int NumArguments>
 DeleterFunction generateDeleter()
 {
     return generateDeleterFromIntegerSequence(
-        typename BaseLib::GenerateIntegerSequence<NumArguments>::type{});
+        std::make_integer_sequence<int, NumArguments>{});
 }
 
 //! Holds instantiations of the delete_() function for various numbers of
@@ -136,7 +136,7 @@ using CopierFunction = void* (*)(void*);
 //! Helps instantiating the copy_() function.
 template <int... Indices>
 CopierFunction generateCopierFromIntegerSequence(
-    BaseLib::IntegerSequence<Indices...>)
+    std::integer_sequence<int, Indices...>)
 {
     return copy_<Indices...>;
 }
@@ -146,7 +146,7 @@ template <int NumArguments>
 CopierFunction generateCopier()
 {
     return generateCopierFromIntegerSequence(
-        typename BaseLib::GenerateIntegerSequence<NumArguments>::type{});
+        std::make_integer_sequence<int, NumArguments>{});
 }
 
 //! Holds instantiations of the copy_() function for various numbers of

@@ -10,7 +10,6 @@
 #include "TwoPhaseFlowWithPPMaterialProperties.h"
 #include <logog/include/logog.hpp>
 #include <utility>
-#include "BaseLib/reorderVector.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"

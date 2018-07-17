@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 #include <Eigen/Dense>
-#include "BaseLib/reorderVector.h"
 
 #include "Permeability/Permeability.h"
 #include "Porosity/Porosity.h"

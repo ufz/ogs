@@ -11,7 +11,6 @@
 
 #include <functional>
 #include "baselib_export.h"
-#include "BaseLib/TMPUtil.h"
 
 namespace BaseLib
 {
@@ -101,7 +100,7 @@ template <int... Indices, typename Object, typename MethodClass,
           typename ReturnType, typename... Args>
 std::function<ReturnType(Args...)> easyBind_inner(
     ReturnType (MethodClass::*method)(Args...), Object&& obj,
-    IntegerSequence<Indices...>)
+    std::integer_sequence<int, Indices...>)
 {
     return easyBind_innermost<Indices...>(method, std::forward<Object>(obj));
 }
@@ -110,7 +109,7 @@ template <int... Indices, typename Object, typename MethodClass,
           typename ReturnType, typename... Args>
 std::function<ReturnType(Args...)> easyBind_inner(
     ReturnType (MethodClass::*method)(Args...) const, Object&& obj,
-    IntegerSequence<Indices...>)
+    std::integer_sequence<int, Indices...>)
 {
     return easyBind_innermost<Indices...>(method, std::forward<Object>(obj));
 }
@@ -182,7 +181,7 @@ easyBind(ReturnType (MethodClass::*method)(Args...), Object&& obj)
 {
     return detail::easyBind_inner(
         method, std::forward<Object>(obj),
-        typename GenerateIntegerSequence<sizeof...(Args)>::type{});
+        std::make_integer_sequence<int, sizeof...(Args)>{});
 }
 
 //! \overload
@@ -197,7 +196,7 @@ easyBind(ReturnType (MethodClass::*method)(Args...) const, Object&& obj)
 {
     return detail::easyBind_inner(
         method, std::forward<Object>(obj),
-        typename GenerateIntegerSequence<sizeof...(Args)>::type{});
+        std::make_integer_sequence<int, sizeof...(Args)>{});
 }
 
 //! Wraps a callable object in a std::function.

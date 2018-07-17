@@ -11,12 +11,10 @@
 #include "Project.h"
 
 #include <algorithm>
-
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/uniqueInsert.h"
-
 #include "MeshLib/Mesh.h"
 
 namespace DataHolderLib

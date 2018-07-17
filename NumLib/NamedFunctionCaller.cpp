@@ -11,8 +11,7 @@
 
 #include <algorithm>
 
-#include "BaseLib/uniqueInsert.h"
-#include "BaseLib/Error.h"
+#include "BaseLib/Algorithm.h"
 
 /// To understand the working of the algorithm the following two lemmata are
 /// useful:

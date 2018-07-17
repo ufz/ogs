@@ -16,7 +16,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/DebugTools.h"
 #include "NumLib/TimeStepping/TimeStep.h"
 #include "NumLib/TimeStepping/Algorithms/IterationNumberBasedAdaptiveTimeStepping.h"
 
@@ -115,7 +114,6 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
         void operator()(NumLib::IterationNumberBasedAdaptiveTimeStepping &obj)
         {
             std::size_t n = (i<_nr_iterations.size()) ? _nr_iterations[i++] : 0;
-            //INFO("-> NR-iterations=%d", n);
             obj.setIterationNumber(n);
         }
     };
@@ -124,7 +122,6 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
     IterationNumberUpdate update(nr_iterations, counter);
 
     std::vector<double> vec_t = timeStepping(alg, &update);
-    //std::cout << vec_t;
 
     ASSERT_EQ(expected_vec_t.size(), vec_t.size());
     ASSERT_EQ(1u, alg.getNumberOfRepeatedSteps());
