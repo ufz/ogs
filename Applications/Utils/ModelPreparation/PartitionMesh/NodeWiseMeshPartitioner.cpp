@@ -174,16 +174,24 @@ findNonGhostNodesInPartition(
     return {base_nodes, extra_nodes};
 }
 
-void NodeWiseMeshPartitioner::findElementsInPartition(std::size_t const part_id)
+/// 1 find elements belonging to the partition part_id:
+/// fills vector partition.regular_elements
+/// 2 find ghost elements belonging to the partition part_id
+/// fills vector partition.ghost_elements
+std::tuple<std::vector<MeshLib::Element const*>,
+           std::vector<MeshLib::Element const*>>
+findElementsInPartition(std::size_t const part_id,
+                        std::vector<MeshLib::Element*> const& elements,
+                        std::vector<std::size_t> const& partition_ids)
 {
-    auto& partition = _partitions[part_id];
-    std::vector<MeshLib::Element*> const& elements = _mesh->getElements();
-    std::vector<bool> _is_regular_element(elements.size(), false);
+    std::vector<bool> is_regular_element(elements.size(), false);
+    std::vector<MeshLib::Element const*> regular_elements;
+    std::vector<MeshLib::Element const*> ghost_elements;
 
     for (std::size_t elem_id = 0; elem_id < elements.size(); elem_id++)
     {
         const auto* elem = elements[elem_id];
-        if (_is_regular_element[elem_id])
+        if (is_regular_element[elem_id])
         {
             continue;
         }
@@ -191,7 +199,7 @@ void NodeWiseMeshPartitioner::findElementsInPartition(std::size_t const part_id)
         std::size_t non_ghost_node_number = 0;
         for (unsigned i = 0; i < elem->getNumberOfNodes(); i++)
         {
-            if (_nodes_partition_ids[elem->getNodeIndex(i)] == part_id)
+            if (partition_ids[elem->getNodeIndex(i)] == part_id)
             {
                 non_ghost_node_number++;
             }
@@ -204,14 +212,17 @@ void NodeWiseMeshPartitioner::findElementsInPartition(std::size_t const part_id)
 
         if (non_ghost_node_number == elem->getNumberOfNodes())
         {
-            partition.regular_elements.push_back(elem);
-            _is_regular_element[elem_id] = true;
+            regular_elements.push_back(elem);
+            is_regular_element[elem_id] = true;
         }
         else
         {
-            partition.ghost_elements.push_back(elem);
+            ghost_elements.push_back(elem);
         }
     }
+    return std::tuple<std::vector<MeshLib::Element const*>,
+                      std::vector<MeshLib::Element const*>>{regular_elements,
+                                                            ghost_elements};
 }
 
 void NodeWiseMeshPartitioner::findGhostNodesInPartition(
@@ -258,7 +269,10 @@ void NodeWiseMeshPartitioner::processPartition(
         _partitions[part_id].number_of_non_ghost_base_nodes +
         extra_nodes.size();
 
-    findElementsInPartition(part_id);
+    std::tie(_partitions[part_id].regular_elements,
+             _partitions[part_id].ghost_elements) =
+        findElementsInPartition(part_id, _mesh->getElements(),
+                                _nodes_partition_ids);
     findGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
                               extra_nodes);
     auto& partition = _partitions[part_id];

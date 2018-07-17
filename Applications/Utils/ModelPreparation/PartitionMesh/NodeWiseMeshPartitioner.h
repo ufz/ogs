@@ -117,12 +117,6 @@ private:
     /// interpolation
     void renumberNodeIndices(const bool is_mixed_high_order_linear_elems);
 
-    /// 1 find elements belonging to the partition part_id:
-    /// fills vector partition.regular_elements
-    /// 2 find ghost elements belonging to the partition part_id
-    /// fills vector partition.ghost_elements
-    void findElementsInPartition(std::size_t const part_id);
-
     /// Prerequisite: the ghost elements has to be found (using
     /// findElementsInPartition).
     /// Finds ghost nodes and non-linear element ghost nodes by walking over
