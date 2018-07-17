@@ -291,20 +291,19 @@ findGhostNodesInPartition(
 void NodeWiseMeshPartitioner::processPartition(
     std::size_t const part_id, const bool is_mixed_high_order_linear_elems)
 {
-    std::vector<MeshLib::Node*> extra_nodes;
-    std::tie(_partitions[part_id].nodes, extra_nodes) =
+    auto& partition = _partitions[part_id];
+    std::vector<MeshLib::Node*> higher_order_regular_nodes;
+    std::tie(partition.nodes, higher_order_regular_nodes) =
         findNonGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
                                      _mesh->getNumberOfBaseNodes(),
                                      _mesh->getNodes(), _nodes_partition_ids);
 
-    _partitions[part_id].number_of_non_ghost_base_nodes =
-        _partitions[part_id].nodes.size();
-    _partitions[part_id].number_of_non_ghost_nodes =
-        _partitions[part_id].number_of_non_ghost_base_nodes +
-        extra_nodes.size();
+    partition.number_of_non_ghost_base_nodes = partition.nodes.size();
+    partition.number_of_non_ghost_nodes =
+        partition.number_of_non_ghost_base_nodes +
+        higher_order_regular_nodes.size();
 
-    std::tie(_partitions[part_id].regular_elements,
-             _partitions[part_id].ghost_elements) =
+    std::tie(partition.regular_elements, partition.ghost_elements) =
         findElementsInPartition(part_id, _mesh->getElements(),
                                 _nodes_partition_ids);
     std::vector<MeshLib::Node*> base_ghost_nodes;
@@ -322,8 +321,9 @@ void NodeWiseMeshPartitioner::processPartition(
 
     if (is_mixed_high_order_linear_elems)
     {
-        partition.nodes.insert(partition.nodes.end(), extra_nodes.begin(),
-                               extra_nodes.end());
+        std::copy(begin(higher_order_regular_nodes),
+                  end(higher_order_regular_nodes),
+                  std::back_inserter(partition.nodes));
         std::copy(begin(higher_order_ghost_nodes),
                   end(higher_order_ghost_nodes),
                   std::back_inserter(partition.nodes));
