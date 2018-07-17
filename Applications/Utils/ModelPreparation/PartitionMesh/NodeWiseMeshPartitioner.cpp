@@ -125,6 +125,25 @@ void splitOffHigherOrderNode(std::vector<MeshLib::Node*> const& nodes,
     }
 }
 
+std::size_t nodeIdBulkMesh(
+    MeshLib::Node const& node,
+    std::vector<std::size_t> const* node_id_mapping = nullptr)
+{
+    return node_id_mapping ? (*node_id_mapping)[node.getID()] : node.getID();
+}
+
+std::size_t partitionLookup(
+    MeshLib::Node const& node,
+    std::vector<std::size_t> const& partition_ids,
+    std::vector<std::size_t> const* node_id_mapping = nullptr)
+{
+    auto node_id = [&node_id_mapping](MeshLib::Node const& n) {
+        return nodeIdBulkMesh(n, node_id_mapping);
+    };
+
+    return partition_ids[node_id(node)];
+}
+
 /// 1 copy pointers to nodes belonging to the partition part_id into base nodes
 /// vector, and
 /// 2 collect non-linear element nodes belonging to the partition part_id in
@@ -141,15 +160,17 @@ findNonGhostNodesInPartition(
     std::vector<std::size_t> const& partition_ids,
     std::vector<std::size_t> const* node_id_mapping = nullptr)
 {
-    auto node_id = [&node_id_mapping](MeshLib::Node const* const n) {
-        return node_id_mapping ? (*node_id_mapping)[n->getID()] : n->getID();
+    auto node_id = [&node_id_mapping](MeshLib::Node const& n) {
+        return nodeIdBulkMesh(n, node_id_mapping);
     };
 
     // Find nodes belonging to a given partition id.
     std::vector<MeshLib::Node*> partition_nodes;
-    copy_if(
-        begin(nodes), end(nodes), std::back_inserter(partition_nodes),
-        [&](auto const& n) { return partition_ids[node_id(n)] == part_id; });
+    copy_if(begin(nodes), end(nodes), std::back_inserter(partition_nodes),
+            [&](auto const& n) {
+                return partitionLookup(*n, partition_ids, node_id_mapping) ==
+                       part_id;
+            });
 
     // Space for resulting vectors.
     std::vector<MeshLib::Node*> base_nodes;
@@ -168,7 +189,7 @@ findNonGhostNodesInPartition(
                    std::back_inserter(extra_nodes),
                    [&](MeshLib::Node* const n) {
                        return !is_mixed_high_order_linear_elems ||
-                              node_id(n) > n_base_nodes;
+                              node_id(*n) > n_base_nodes;
                    });
 
     return {base_nodes, extra_nodes};
