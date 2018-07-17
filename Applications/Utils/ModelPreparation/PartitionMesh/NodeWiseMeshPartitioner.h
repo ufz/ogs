@@ -117,14 +117,6 @@ private:
     /// interpolation
     void renumberNodeIndices(const bool is_mixed_high_order_linear_elems);
 
-    /// Prerequisite: the ghost elements has to be found (using
-    /// findElementsInPartition).
-    /// Finds ghost nodes and non-linear element ghost nodes by walking over
-    /// ghost elements.
-    void findGhostNodesInPartition(std::size_t const part_id,
-                                   const bool is_mixed_high_order_linear_elems,
-                                   std::vector<MeshLib::Node*>& extra_nodes);
-
     void processPartition(std::size_t const part_id,
                           const bool is_mixed_high_order_linear_elems);
 
