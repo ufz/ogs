@@ -77,3 +77,28 @@ AddTest(
     expected_tm_a_quad_pcs_0_ts_20_t_20000.000000.vtu tm_a_quad_pcs_0_ts_20_t_20000.000000.vtu sigma_yy sigma_yy 5e-10 1e-15
     expected_tm_a_quad_pcs_0_ts_20_t_20000.000000.vtu tm_a_quad_pcs_0_ts_20_t_20000.000000.vtu sigma_zz sigma_zz 5e-10 1e-15
 )
+
+AddTest(
+    NAME ThermoMechanics_CreepBGRa_SimpleAxisymmetricCreep
+    PATH ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS SimpleAxisymmetricCreep.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    expected_SimpleAxisymmetricCreep_pcs_0_ts_370_t_360.000000.vtu  SimpleAxisymmetricCreep_pcs_0_ts_370_t_360.000000.vtu displacement displacement 1e-16 1e-10
+    expected_SimpleAxisymmetricCreep_pcs_0_ts_370_t_360.000000.vtu  SimpleAxisymmetricCreep_pcs_0_ts_370_t_360.000000.vtu sigma_yy sigma_yy 1e-16 1e-10
+)
+
+AddTest(
+    NAME ThermoMechanics_CreepBGRa_SimpleAxisymmetricCreepWithAnalyticSolution
+    PATH ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS SimpleAxisymmetricCreepWithAnalyticSolution.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    SimpleAxisymmetricCreepWithAnalyticSolution.vtu SimpleAxisymmetricCreepWithAnalyticalSolution_pcs_0_ts_1000_t_100.000000.vtu   analytic_strain_yy  epsilon_yy 1e-10 1e-4
+)
