@@ -195,12 +195,15 @@ findNonGhostNodesInPartition(
     return {base_nodes, extra_nodes};
 }
 
-int numberOfRegularNodes(MeshLib::Element const& e, std::size_t const part_id,
-                         std::vector<std::size_t> const& partition_ids)
+int numberOfRegularNodes(
+    MeshLib::Element const& e, std::size_t const part_id,
+    std::vector<std::size_t> const& partition_ids,
+    std::vector<std::size_t> const* node_id_mapping = nullptr)
 {
     return std::count_if(e.getNodes(), e.getNodes() + e.getNumberOfNodes(),
                          [&](MeshLib::Node* const n) {
-                             return partition_ids[n->getID()] == part_id;
+                             return partitionLookup(*n, partition_ids,
+                                                    node_id_mapping) == part_id;
                          });
 }
 
@@ -210,9 +213,11 @@ int numberOfRegularNodes(MeshLib::Element const& e, std::size_t const part_id,
 /// fills vector partition.ghost_elements
 std::tuple<std::vector<MeshLib::Element const*>,
            std::vector<MeshLib::Element const*>>
-findElementsInPartition(std::size_t const part_id,
-                        std::vector<MeshLib::Element*> const& elements,
-                        std::vector<std::size_t> const& partition_ids)
+findElementsInPartition(
+    std::size_t const part_id,
+    std::vector<MeshLib::Element*> const& elements,
+    std::vector<std::size_t> const& partition_ids,
+    std::vector<std::size_t> const* node_id_mapping = nullptr)
 {
     std::vector<MeshLib::Element const*> regular_elements;
     std::vector<MeshLib::Element const*> ghost_elements;
