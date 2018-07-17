@@ -64,9 +64,8 @@ public:
         const double A, const double n, const double sigma0, const double Q)
         : LinearElasticIsotropic<DisplacementDim>(std::move(mp)),
           _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
-          _A(A),
           _n(n),
-          _coef(std::pow(1.5, 0.5 * _n + 1) / std::pow(sigma0, _n)),
+          _coef(A * std::pow(1.5, 0.5 * (1 + _n)) / std::pow(sigma0, _n)),
           _Q(Q)
     {
     }
@@ -94,9 +93,8 @@ public:
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
 
-    const double _A;
     const double _n;
-    /// $f\left(\frac{3}{2}\right)^{n/2+1}/\sigma_{eff}^n $f
+    /// $fA\left(\frac{3}{2}\right)^{n/2+1}/\sigma_{eff}^n $f
     const double _coef;
     const double _Q;
 };
