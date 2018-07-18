@@ -180,6 +180,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    // Reference temperature
+    const auto& reference_temperature =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__reference_temperature}
+        config.getConfigParameterOptional<double>("reference_temperature");
+
     HydroMechanicsProcessData<DisplacementDim> process_data{
         std::move(material),
         intrinsic_permeability,
@@ -189,7 +194,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         biot_coefficient,
         porosity,
         solid_density,
-        specific_body_force};
+        specific_body_force,
+        *reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

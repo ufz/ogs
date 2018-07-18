@@ -73,12 +73,12 @@ struct IntegrationPointData final
         double const t,
         SpatialPosition const& x_position,
         double const dt,
-        DisplacementVectorType const& /*u*/)
+        DisplacementVectorType const& /*u*/,
+        double const T)
     {
         auto&& solution = solid_material.integrateStress(
             t, x_position, dt, eps_prev, eps, sigma_eff_prev,
-            *material_state_variables,
-            MaterialLib::PhysicalConstant::RoomTemperature);
+            *material_state_variables, T);
 
         if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
