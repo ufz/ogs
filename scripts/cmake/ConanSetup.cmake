@@ -53,48 +53,14 @@ if(OGS_BUILD_GUI)
     set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:qt=True)
 endif()
 
-# Find Conan and do version check
-find_program(CONAN_CMD conan)
-if(NOT CONAN_CMD)
-    message(FATAL_ERROR "Conan executable not found!")
-endif()
-execute_process(COMMAND ${CONAN_CMD} --version
-    OUTPUT_VARIABLE CONAN_VERSION_OUTPUT)
-string(REGEX MATCH ".*Conan version ([0-9]+\.[0-9]+\.[0-9]+)" FOO "${CONAN_VERSION_OUTPUT}")
-set(CONAN_VERSION_REQUIRED 1.0.0)
-if(${CMAKE_MATCH_1} VERSION_LESS ${CONAN_VERSION_REQUIRED})
-    message(FATAL_ERROR "Conan outdated. Installed: ${CONAN_VERSION}, \
-        required: ${CONAN_VERSION_REQUIRED}. Consider updating via 'pip \
-        install conan --upgrade'.")
-endif()
+conan_check(VERSION 1.0.0 REQUIRED)
+conan_add_remote(NAME ogs INDEX 0
+    URL https://ogs.jfrog.io/ogs/api/conan/conan)
+conan_add_remote(NAME conan-community INDEX 1
+    URL https://api.bintray.com/conan/conan-community/conan)
+conan_add_remote(NAME bincrafters INDEX 2
+    URL https://api.bintray.com/conan/bincrafters/public-conan)
 
-execute_process(COMMAND ${CONAN_CMD} remote list OUTPUT_VARIABLE CONAN_REMOTES)
-
-# Add ogs remote
-if("${CONAN_REMOTES}" MATCHES ".*ogs:.*")
-    # Make sure ogs repo is first
-    execute_process(COMMAND ${CONAN_CMD} remote update -i 0 ogs
-        https://ogs.jfrog.io/ogs/api/conan/conan)
-else()
-    # Add ogs repo as first
-    message(STATUS "Conan adding ogs remote repositoy \
-        (https://ogs.jfrog.io/ogs/api/conan/conan)")
-    execute_process(COMMAND ${CONAN_CMD} remote add -i 0 ogs
-        https://ogs.jfrog.io/ogs/api/conan/conan)
-endif()
-
-# Add conan-community remote
-if("${CONAN_REMOTES}" MATCHES ".*conan-community:.*")
-    execute_process(COMMAND ${CONAN_CMD} remote update -i 1 conan-community
-        https://api.bintray.com/conan/conan-community/conan)
-else()
-    message(STATUS "Conan adding community remote repositoy \
-        (https://api.bintray.com/conan/conan-community/conan)")
-    execute_process(COMMAND ${CONAN_CMD} remote add -i 1 conan-community
-        https://api.bintray.com/conan/conan-community/conan)
-endif()
-
-# Remove libraries from Conan which are set to "System"
 message(STATUS "Third-party libraries:")
 foreach(LIB ${OGS_LIBS})
     message("  - OGS_LIB_${LIB} = ${OGS_LIB_${LIB}}")
