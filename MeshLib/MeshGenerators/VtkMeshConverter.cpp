@@ -79,6 +79,12 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
         int cell_type = grid->GetCellType(i);
         switch (cell_type)
         {
+            case VTK_VERTEX:
+            {
+                elem = detail::createElementWithSameNodeOrder<MeshLib::Point>(
+                    nodes, node_ids);
+                break;
+            }
         case VTK_LINE: {
             elem = detail::createElementWithSameNodeOrder<MeshLib::Line>(nodes, node_ids);
             break;
