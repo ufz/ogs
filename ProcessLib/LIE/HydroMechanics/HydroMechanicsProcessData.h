@@ -52,7 +52,8 @@ struct HydroMechanicsProcessData
         std::unique_ptr<FracturePropertyHM>&& fracture_prop,
         Parameter<double> const& initial_effective_stress_,
         Parameter<double> const& initial_fracture_effective_stress_,
-        bool const deactivate_matrix_in_flow_)
+        bool const deactivate_matrix_in_flow_,
+        double const reference_temperature_)
         : material{std::move(material_)},
           intrinsic_permeability(intrinsic_permeability_),
           specific_storage(specific_storage_),
@@ -66,7 +67,8 @@ struct HydroMechanicsProcessData
           fracture_property{std::move(fracture_prop)},
           initial_effective_stress(initial_effective_stress_),
           initial_fracture_effective_stress(initial_fracture_effective_stress_),
-          deactivate_matrix_in_flow(deactivate_matrix_in_flow_)
+          deactivate_matrix_in_flow(deactivate_matrix_in_flow_),
+          reference_temperature(reference_temperature_)
     {
     }
 
@@ -89,7 +91,8 @@ struct HydroMechanicsProcessData
           p_element_status(std::move(other.p_element_status)),
           p0(other.p0),
           dt(other.dt),
-          t(other.t)
+          t(other.t),
+          reference_temperature(other.reference_temperature)
     {
     }
 
@@ -154,6 +157,8 @@ struct HydroMechanicsProcessData
     MeshLib::PropertyVector<double>* mesh_prop_nodal_forces = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_nodal_forces_jump = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_hydraulic_flow = nullptr;
+
+    double const reference_temperature;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

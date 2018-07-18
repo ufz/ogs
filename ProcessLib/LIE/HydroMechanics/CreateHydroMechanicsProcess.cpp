@@ -302,6 +302,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     if (deactivate_matrix_in_flow)
         INFO("Deactivate matrix elements in flow calculation.");
 
+    // Reference temperature
+    const auto& reference_temperature =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__reference_temperature}
+        config.getConfigParameterOptional<double>("reference_temperature");
+
     HydroMechanicsProcessData<GlobalDim> process_data{
         std::move(material),
         intrinsic_permeability,
@@ -316,7 +321,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         std::move(frac_prop),
         initial_effective_stress,
         initial_fracture_effective_stress,
-        deactivate_matrix_in_flow};
+        deactivate_matrix_in_flow,
+        *reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

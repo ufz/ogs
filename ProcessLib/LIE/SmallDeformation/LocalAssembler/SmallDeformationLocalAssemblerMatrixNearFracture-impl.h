@@ -244,7 +244,7 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
 
         auto&& solution = _ip_data[ip]._solid_material.integrateStress(
             t, x_position, _process_data.dt, eps_prev, eps, sigma_prev, *state,
-            MaterialLib::PhysicalConstant::RoomTemperature);
+            _process_data._reference_temperature);
 
         if (!solution)
         {

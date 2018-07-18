@@ -236,7 +236,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
             t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
-            *state, MaterialLib::PhysicalConstant::RoomTemperature);
+            *state, _process_data.reference_temperature);
 
         if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
@@ -354,7 +354,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
             t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
-            *state, MaterialLib::PhysicalConstant::RoomTemperature);
+            *state, _process_data.reference_temperature);
 
         if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");
