@@ -60,7 +60,14 @@ AddTest(
     NAME partmesh_2Dmesh_3partitions_binary
     PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions
     EXECUTABLE partmesh
-    EXECUTABLE_ARGS -m -n 3 -i 2Dmesh.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions
+    EXECUTABLE_ARGS -m -n 3 -i 2Dmesh.vtu
+                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions --
+                    2Dmesh_PLY_EAST.vtu
+                    2Dmesh_PLY_WEST.vtu
+                    2Dmesh_PLY_NORTH.vtu
+                    2Dmesh_PLY_SOUTH.vtu
+                    2Dmesh_POINT4.vtu
+                    2Dmesh_POINT5.vtu
     REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
     TESTER diff
     DIFF_DATA 2Dmesh_partitioned_node_properties_val3.bin
@@ -71,4 +78,28 @@ AddTest(
               2Dmesh_partitioned_msh_ele_g3.bin
               2Dmesh_partitioned_msh_ele3.bin
               2Dmesh_partitioned_msh_nod3.bin
+              2Dmesh_PLY_EAST_partitioned_msh_cfg3.bin
+              2Dmesh_PLY_EAST_partitioned_msh_ele3.bin
+              2Dmesh_PLY_EAST_partitioned_msh_ele_g3.bin
+              2Dmesh_PLY_EAST_partitioned_msh_nod3.bin
+              2Dmesh_PLY_NORTH_partitioned_msh_cfg3.bin
+              2Dmesh_PLY_NORTH_partitioned_msh_ele3.bin
+              #2Dmesh_PLY_NORTH_partitioned_msh_ele_g3.bin   empty
+              2Dmesh_PLY_NORTH_partitioned_msh_nod3.bin
+              2Dmesh_PLY_SOUTH_partitioned_msh_cfg3.bin
+              2Dmesh_PLY_SOUTH_partitioned_msh_ele3.bin
+              #2Dmesh_PLY_SOUTH_partitioned_msh_ele_g3.bin   empty
+              2Dmesh_PLY_SOUTH_partitioned_msh_nod3.bin
+              2Dmesh_PLY_WEST_partitioned_msh_cfg3.bin
+              2Dmesh_PLY_WEST_partitioned_msh_ele3.bin
+              2Dmesh_PLY_WEST_partitioned_msh_ele_g3.bin
+              2Dmesh_PLY_WEST_partitioned_msh_nod3.bin
+              2Dmesh_POINT4_partitioned_msh_cfg3.bin
+              2Dmesh_POINT4_partitioned_msh_ele3.bin
+              #2Dmesh_PLY_POINT4_partitioned_msh_ele_g3.bin   empty
+              2Dmesh_POINT4_partitioned_msh_nod3.bin
+              2Dmesh_POINT5_partitioned_msh_cfg3.bin
+              2Dmesh_POINT5_partitioned_msh_ele3.bin
+              #2Dmesh_PLY_POINT5_partitioned_msh_ele_g3.bin   empty
+              2Dmesh_POINT5_partitioned_msh_nod3.bin
 )
