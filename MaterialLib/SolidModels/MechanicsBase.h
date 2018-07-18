@@ -78,7 +78,7 @@ struct MechanicsBase
                     Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps,
                     Eigen::Matrix<double, Eigen::Dynamic, 1> const& sigma_prev,
                     MaterialStateVariables const& material_state_variables,
-                    double const T, double const p)
+                    double const T)
     {
         // TODO Avoid copies of data:
         // Using MatrixBase<Derived> not possible because template functions
@@ -91,7 +91,7 @@ struct MechanicsBase
 
         return integrateStress(
             t, x, dt, eps_prev_, eps_, sigma_prev_, material_state_variables,
-            T, p);
+            T);
     }
 
     /// Computation of the constitutive relation for specific material model.
@@ -110,7 +110,7 @@ struct MechanicsBase
                     KelvinVector const& eps,
                     KelvinVector const& sigma_prev,
                     MaterialStateVariables const& material_state_variables,
-                    double const T, double const p) = 0;
+                    double const T) = 0;
 
     /// Helper type for providing access to internal variables.
     struct InternalVariable

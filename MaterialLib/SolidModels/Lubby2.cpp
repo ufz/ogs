@@ -80,7 +80,7 @@ Lubby2<DisplacementDim>::integrateStress(
     KelvinVector const& eps,
     KelvinVector const& /*sigma_prev*/,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-        material_state_variables, double const /*T*/, double const /*p*/)
+        material_state_variables, double const /*T*/)
 {
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 

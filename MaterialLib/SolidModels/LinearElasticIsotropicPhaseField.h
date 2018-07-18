@@ -59,11 +59,10 @@ public:
         KelvinVector const& eps,
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables, double const T, double const p) override
+            material_state_variables, double const T) override
     {
         return LinearElasticIsotropic<DisplacementDim>::integrateStress(
-            t, x, dt, eps_prev, eps, sigma_prev, material_state_variables,
-            T, p);
+            t, x, dt, eps_prev, eps, sigma_prev, material_state_variables, T);
     }
 
     double computeFreeEnergyDensity(

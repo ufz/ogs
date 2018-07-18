@@ -231,7 +231,7 @@ public:
         KelvinVector const& eps,
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables, double const T, double const p) override;
+            material_state_variables, double const T) override;
 
 private:
     /// Calculates the 18x1 residual vector.

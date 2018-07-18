@@ -249,7 +249,7 @@ public:
 
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
                 t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
-                *state, MaterialLib::PhysicalConstant::RoomTemperature, 0.);
+                *state, MaterialLib::PhysicalConstant::RoomTemperature);
 
             if (!solution)
                 OGS_FATAL("Computation of local constitutive relation failed.");
