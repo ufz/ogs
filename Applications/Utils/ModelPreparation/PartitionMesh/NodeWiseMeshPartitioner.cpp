@@ -109,23 +109,6 @@ std::ostream& Partition::writeConfigBinary(std::ostream& os) const
                     sizeof(data));
 }
 
-void splitOffHigherOrderNode(std::vector<MeshLib::Node*> const& nodes,
-                             bool const is_mixed_high_order_linear_elems,
-                             unsigned const node_id,
-                             unsigned const n_base_nodes,
-                             std::vector<MeshLib::Node*>& base_nodes,
-                             std::vector<MeshLib::Node*>& higher_order_nodes)
-{
-    if (!is_mixed_high_order_linear_elems || node_id > n_base_nodes)
-    {
-        base_nodes.push_back(nodes[node_id]);
-    }
-    else
-    {
-        higher_order_nodes.push_back(nodes[node_id]);
-    }
-}
-
 std::size_t nodeIdBulkMesh(
     MeshLib::Node const& node,
     std::vector<std::size_t> const* node_id_mapping = nullptr)
