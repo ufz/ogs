@@ -30,7 +30,8 @@ CreepBGRa<DisplacementDim>::integrateStress(
     KelvinVector const& eps_prev, KelvinVector const& eps,
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-    /*material_state_variables*/,  double const T)
+    /*material_state_variables*/,
+    double const T)
 {
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
@@ -58,8 +59,8 @@ CreepBGRa<DisplacementDim>::integrateStress(
         jacobian =
             KelvinMatrix::Identity() +
             pow_norm_s_n1_n_minus_one_2b_G *
-                (deviatoric_matrix +
-                 (_n - 1) * std::pow(norm_s_n1, -2) * s_n1 * s_n1.transpose());
+                (deviatoric_matrix + ((_n - 1) / (norm_s_n1 * norm_s_n1)) *
+                                         s_n1 * s_n1.transpose());
     };
 
     auto const update_residual = [&](ResidualVectorType& r) {
