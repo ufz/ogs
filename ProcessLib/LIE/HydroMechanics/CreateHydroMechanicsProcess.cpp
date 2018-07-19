@@ -305,7 +305,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Reference temperature
     const auto& reference_temperature =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__reference_temperature}
-        config.getConfigParameterOptional<double>("reference_temperature");
+        config.getConfigParameter<double>(
+            "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
     HydroMechanicsProcessData<GlobalDim> process_data{
         std::move(material),
@@ -322,7 +323,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         initial_effective_stress,
         initial_fracture_effective_stress,
         deactivate_matrix_in_flow,
-        *reference_temperature};
+        reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

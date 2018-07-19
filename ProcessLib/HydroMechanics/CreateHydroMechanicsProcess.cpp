@@ -183,7 +183,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // Reference temperature
     const auto& reference_temperature =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__reference_temperature}
-        config.getConfigParameterOptional<double>("reference_temperature");
+        config.getConfigParameter<double>(
+            "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
     HydroMechanicsProcessData<DisplacementDim> process_data{
         std::move(material),
@@ -195,7 +196,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         porosity,
         solid_density,
         specific_body_force,
-        *reference_temperature};
+        reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 
