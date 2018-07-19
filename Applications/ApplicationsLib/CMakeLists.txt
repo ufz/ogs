@@ -7,7 +7,7 @@ add_library(ApplicationsLib ${LIB_SOURCES})
 
 target_link_libraries(ApplicationsLib
     PUBLIC BaseLib GeoLib Processes logog
-    PRIVATE MathLib MeshLib NumLib
+    PRIVATE MathLib MeshLib MeshGeoToolsLib NumLib
 )
 
 # Set cpp definitions if the cmake option is enabled for the given process.
