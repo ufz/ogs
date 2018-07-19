@@ -97,6 +97,7 @@ conan_cmake_run(
     OPTIONS ${CONAN_OPTIONS}
     BUILD ${OGS_CONAN_BUILD}
     IMPORTS ${CONAN_IMPORTS}
+    GENERATORS virtualrunenv
 )
 
 if(NOT ${OGS_CONAN_BUILD} MATCHES "never|always|missing")
