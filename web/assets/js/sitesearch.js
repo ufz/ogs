@@ -1,9 +1,6 @@
 // Roughly based on https://github.com/algolia/autocomplete.js#jquery
 // https://github.com/algolia/autocomplete.js/blob/master/LICENSE
 
-import algoliasearch from 'algoliasearch/lite';
-var autocomplete = require('autocomplete.js/dist/autocomplete.jquery.js')
-
 var client = algoliasearch('4AHEU3QJQG', 'cda2754fe35733ffa31994a177725640')
 var index = client.initIndex('docs.opengeosys.org');
 $('#search-input').autocomplete({

@@ -1,30 +1,16 @@
 {
     "private": true,
     "scripts": {
-        "dev": "cross-env NODE_ENV=development node_modules/.bin/webpack --progress --hide-modules",
-        "watch": "cross-env NODE_ENV=development node_modules/.bin/webpack --watch --progress --hide-modules",
-        "prod": "node_modules/.bin/webpack -p --mode=production && hugo",
+        "build": "hugo",
         "index": "hugo-algolia -toml",
         "index-and-send": "hugo-algolia -toml -s"
     },
-    "devDependencies": {
-        "@fancyapps/fancybox": "^3.3.5",
-        "algoliasearch": "^3.24.11",
-        "autocomplete.js": "^0.30.0",
-        "cross-env": "^5.1",
-        "css-loader": "^0.28.7",
-        "extract-text-webpack-plugin": "^4.0.0-beta.0",
-        "file-loader": "^1.1.11",
+    "devDependencies": {},
+    "dependencies": {
+        "autoprefixer": "^9.0.0",
         "hugo-algolia": "^1.2.13",
-        "jquery": "^3.3.1",
-        "postcss": "^6.0.14",
-        "postcss-loader": "^2.0.8",
-        "sharp": "^0.20.2",
-        "sharp-loader": "^1.1.0",
-        "slick-carousel": "^1.8.1",
-        "style-loader": "^0.21.0",
-        "tailwindcss": "^0.5.3",
-        "webpack": "^4.8.3",
-        "webpack-cli": "^2.1.3"
+        "postcss-cli": "^5.0.1",
+        "postcss-import": "^11.1.0",
+        "tailwindcss": "^0.6.4"
     }
 }
