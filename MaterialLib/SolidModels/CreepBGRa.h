@@ -52,7 +52,7 @@ public:
 
     std::unique_ptr<
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-    createMaterialStateVariables() override
+    createMaterialStateVariables()
     {
         return LinearElasticIsotropic<
             DisplacementDim>::createMaterialStateVariables();
@@ -66,7 +66,7 @@ public:
           _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
           _n(n),
           _coef(A * std::pow(1.5, 0.5 * (1 + _n)) / std::pow(sigma0, _n)),
-          _Q(Q)
+          _q(Q)
     {
     }
 
@@ -93,10 +93,10 @@ public:
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
 
-    const double _n;
+    const double _n; /// parameter determined by experiments.
     /// $fA\left(\frac{3}{2}\right)^{n/2+1}/\sigma_{eff}^n $f
     const double _coef;
-    const double _Q;
+    const double _q; /// Activation energy
 };
 
 extern template class CreepBGRa<2>;

@@ -45,7 +45,7 @@ CreepBGRa<DisplacementDim>::integrateStress(
 
     const double b =
         dt * _coef *
-        std::exp(-_Q / (MaterialLib::PhysicalConstant::IdealGasConstant * T));
+        std::exp(-_q / (MaterialLib::PhysicalConstant::IdealGasConstant * T));
     auto const& deviatoric_matrix = Invariants::deviatoric_projection;
 
     double pow_norm_s_n1_n_minus_one_2b_G = 0.;
@@ -101,10 +101,10 @@ double CreepBGRa<DisplacementDim>::getTemperatureRelatedCoefficient(
     double const T, double const deviatoric_stress_norm) const
 {
     return 2.0 * _coef *
-           std::exp(-_Q /
+           std::exp(-_q /
                     (MaterialLib::PhysicalConstant::IdealGasConstant * T)) *
            this->_mp.mu(t, x) * std::pow(deviatoric_stress_norm, _n - 1) * dt *
-           _Q / (MaterialLib::PhysicalConstant::IdealGasConstant * T * T);
+           _q / (MaterialLib::PhysicalConstant::IdealGasConstant * T * T);
 }
 
 template class CreepBGRa<2>;

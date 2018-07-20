@@ -1,1 +1,1 @@
-Parameter Q.
+Activation energy. Its unit is J/mol.

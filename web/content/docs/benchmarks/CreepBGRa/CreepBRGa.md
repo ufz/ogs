@@ -72,10 +72,10 @@ $$\begin{gathered}
 where
 $\mathbf{C}:= \lambda \mathcal{J} + 2G \mathbf I \otimes \mathbf I  $ 
 with $\mathcal{J}$ the forth order identity, $\mathbf I$ the second order identity,
-$\lambda$ the Lame constant,  $G$ the shear module, and $\otimes$  the tensor
+$\lambda$ the Lamé constant,  $G$ the shear modulus, and $\otimes$  the tensor
 product notation.
 
-is a forth order tensor. Substituting equation and the expression of $C$
+is a fourth order tensor. Substituting equation and the expression of $C$
 into the stress rate expression, equation , we have
  $$\begin{gathered}
 \dot { \mathbf \sigma}=  \mathbf{C} \dot { \mathbf \epsilon}- 2bG {\left\Vert{\mathbf s}\right\Vert}^{m-1} 
