@@ -36,10 +36,12 @@ struct SmallDeformationProcessData
             material,
         Parameter<double> const& solid_density_,
         Eigen::Matrix<double, DisplacementDim, 1>
-            specific_body_force_)
+            specific_body_force_,
+        double const reference_temperature_)
         : material{std::move(material)},
           solid_density(solid_density_),
-          specific_body_force(std::move(specific_body_force_))
+          specific_body_force(std::move(specific_body_force_)),
+          reference_temperature(reference_temperature_)
     {
     }
 
@@ -48,7 +50,8 @@ struct SmallDeformationProcessData
           solid_density(other.solid_density),
           specific_body_force(other.specific_body_force),
           dt{other.dt},
-          t{other.t}
+          t{other.t},
+          reference_temperature(other.reference_temperature)
     {
     }
 
@@ -71,6 +74,7 @@ struct SmallDeformationProcessData
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt = 0;
     double t = 0;
+    double const reference_temperature;
 };
 
 }  // namespace SmallDeformation

@@ -16,6 +16,8 @@
 
 #include <Eigen/Eigen>
 
+#include "MaterialLib/PhysicalConstant.h"
+
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MathLib/Point3d.h"
@@ -241,7 +243,8 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         eps.noalias() = B * nodal_total_u;
 
         auto&& solution = _ip_data[ip]._solid_material.integrateStress(
-            t, x_position, _process_data.dt, eps_prev, eps, sigma_prev, *state);
+            t, x_position, _process_data.dt, eps_prev, eps, sigma_prev, *state,
+            _process_data._reference_temperature);
 
         if (!solution)
         {

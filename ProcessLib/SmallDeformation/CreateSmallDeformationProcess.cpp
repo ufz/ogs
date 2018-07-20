@@ -93,8 +93,15 @@ createSmallDeformationProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    // Reference temperature
+    const auto& reference_temperature =
+        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__reference_temperature}
+        config.getConfigParameter<double>(
+            "reference_temperature", std::numeric_limits<double>::quiet_NaN());
+
     SmallDeformationProcessData<DisplacementDim> process_data{
-        std::move(material), solid_density, specific_body_force};
+        std::move(material), solid_density, specific_body_force,
+        reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

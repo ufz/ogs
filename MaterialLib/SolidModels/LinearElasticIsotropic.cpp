@@ -27,7 +27,7 @@ LinearElasticIsotropic<DisplacementDim>::integrateStress(
     KelvinVector const& eps,
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-        material_state_variables)
+        material_state_variables, double const /*T*/)
 {
     KelvinMatrix C = KelvinMatrix::Zero();
 

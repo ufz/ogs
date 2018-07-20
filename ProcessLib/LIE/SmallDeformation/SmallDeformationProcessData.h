@@ -38,17 +38,20 @@ struct SmallDeformationProcessData
         std::unique_ptr<
             MaterialLib::Fracture::FractureModelBase<DisplacementDim>>&&
             fracture_model,
-        std::vector<std::unique_ptr<FractureProperty>>&& vec_fracture_prop)
+        std::vector<std::unique_ptr<FractureProperty>>&& vec_fracture_prop,
+        double const reference_temperature)
         : _material{std::move(material)},
           _fracture_model{std::move(fracture_model)},
-          _vec_fracture_property(std::move(vec_fracture_prop))
+          _vec_fracture_property(std::move(vec_fracture_prop)),
+          _reference_temperature(reference_temperature)
     {
     }
 
     SmallDeformationProcessData(SmallDeformationProcessData&& other)
         : _material{std::move(other._material)},
           _fracture_model{std::move(other._fracture_model)},
-          _vec_fracture_property(std::move(other._vec_fracture_property))
+          _vec_fracture_property(std::move(other._vec_fracture_property)),
+          _reference_temperature(other._reference_temperature)
     {
     }
 
@@ -94,6 +97,8 @@ struct SmallDeformationProcessData
 
     // mesh property for fracture aperture
     MeshLib::PropertyVector<double>* _mesh_prop_b = nullptr;
+
+    double const _reference_temperature;
 };
 
 }  // namespace SmallDeformation

@@ -42,7 +42,8 @@ struct HydroMechanicsProcessData
         Parameter<double> const& porosity_,
         Parameter<double> const& solid_density_,
         Eigen::Matrix<double, DisplacementDim, 1>
-            specific_body_force_)
+            specific_body_force_,
+        double const reference_temperature_)
         : material{std::move(material_)},
           intrinsic_permeability(intrinsic_permeability_),
           specific_storage(specific_storage_),
@@ -51,7 +52,8 @@ struct HydroMechanicsProcessData
           biot_coefficient(biot_coefficient_),
           porosity(porosity_),
           solid_density(solid_density_),
-          specific_body_force(std::move(specific_body_force_))
+          specific_body_force(std::move(specific_body_force_)),
+          reference_temperature(reference_temperature_)
     {
     }
 
@@ -66,7 +68,8 @@ struct HydroMechanicsProcessData
           solid_density(other.solid_density),
           specific_body_force(other.specific_body_force),
           dt(other.dt),
-          t(other.t)
+          t(other.t),
+          reference_temperature(other.reference_temperature)
     {
     }
 
@@ -104,6 +107,8 @@ struct HydroMechanicsProcessData
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     double dt = 0.0;
     double t = 0.0;
+
+    double const reference_temperature;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

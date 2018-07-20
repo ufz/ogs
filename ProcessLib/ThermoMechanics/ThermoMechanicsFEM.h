@@ -249,7 +249,8 @@ public:
             eps_m.noalias() =
                 eps - linear_thermal_strain * Invariants::identity2;
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
-                t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state);
+                t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state,
+                delta_T + _process_data.reference_temperature);
 
             if (!solution)
                 OGS_FATAL("Computation of local constitutive relation failed.");

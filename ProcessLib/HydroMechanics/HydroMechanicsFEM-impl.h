@@ -202,7 +202,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         eps.noalias() = B * u;
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u);
+        auto C = _ip_data[ip].updateConstitutiveRelation(
+            t, x_position, dt, u, _process_data.reference_temperature);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -488,7 +489,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u);
+        auto C = _ip_data[ip].updateConstitutiveRelation(
+            t, x_position, dt, u, _process_data.reference_temperature);
 
         local_Jac.noalias() += B.transpose() * C * B * w;
 
@@ -574,7 +576,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
 
-        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u);
+        _ip_data[ip].updateConstitutiveRelation(
+            t, x_position, dt, u, _process_data.reference_temperature);
     }
 }
 
