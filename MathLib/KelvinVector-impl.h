@@ -23,7 +23,7 @@ double Invariants<KelvinVectorSize>::equivalentStress(
 }
 
 template <int KelvinVectorSize>
-double Invariants<KelvinVectorSize>::Norm(
+double Invariants<KelvinVectorSize>::FrobeniusNorm(
     Eigen::Matrix<double, KelvinVectorSize, 1> const& deviatoric_v)
 {
     return std::sqrt(deviatoric_v.transpose() * deviatoric_v);

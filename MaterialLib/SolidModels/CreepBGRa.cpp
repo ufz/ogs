@@ -53,7 +53,7 @@ CreepBGRa<DisplacementDim>::integrateStress(
     KelvinVector s_n1;
     auto const update_jacobian = [&](JacobianMatrix& jacobian) {
         s_n1 = deviatoric_matrix * solution;
-        double const norm_s_n1 = Invariants::Norm(s_n1);
+        double const norm_s_n1 = Invariants::FrobeniusNorm(s_n1);
         pow_norm_s_n1_n_minus_one_2b_G =
             2.0 * b * this->_mp.mu(t, x) * std::pow(norm_s_n1, _n - 1);
         jacobian =
