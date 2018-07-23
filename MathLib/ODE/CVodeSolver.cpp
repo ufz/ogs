@@ -6,9 +6,6 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-
-#ifdef CVODE_FOUND
-
 #include "CVodeSolver.h"
 
 #include <cassert>
@@ -362,5 +359,3 @@ CVodeSolver::~CVodeSolver() = default;
 
 }  // namespace ODE
 }  // namespace MathLib
-
-#endif  // CVODE_FOUND
