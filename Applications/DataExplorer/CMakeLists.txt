@@ -29,6 +29,10 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/NetCdfDialog/NetCdfDialogLib_autogen/include
 )
 
+set(CMAKE_AUTOMOC TRUE)
+set(CMAKE_AUTOUIC TRUE)
+set(CMAKE_AUTORCC TRUE)
+
 # Add subprojects
 add_subdirectory(Base)
 add_subdirectory(DataView/StratView)

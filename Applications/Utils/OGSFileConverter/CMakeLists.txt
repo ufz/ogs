@@ -11,13 +11,9 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/OGSFileConverterLib_autogen/include
 )
 
-file(GLOB_RECURSE UIS *.ui)
-source_group("UI Files" FILES ${UIS})
-
 add_library(OGSFileConverterLib
     ${SOURCES}
     ${HEADERS}
-    ${UIS}
 )
 target_link_libraries(OGSFileConverterLib
     PUBLIC QtBase MathLib
@@ -31,7 +27,12 @@ target_link_libraries(OGSFileConverter
     ApplicationsFileIO
 )
 
-set_property(TARGET OGSFileConverter PROPERTY FOLDER "Utilities")
+set_target_properties(OGSFileConverter OGSFileConverterLib
+    PROPERTIES
+    FOLDER "Utilities"
+    AUTOMOC ON
+    AUTOUIC ON
+)
 
 if(OGS_USE_PCH)
     cotire(OGSFileConverter)
