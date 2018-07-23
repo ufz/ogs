@@ -20,7 +20,7 @@ set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
 set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 
 if(COMPILER_IS_CLANG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Qunused-arguments")
+    add_compile_options(-Qunused-arguments)
 endif()
 
 if($ENV{TRAVIS})
