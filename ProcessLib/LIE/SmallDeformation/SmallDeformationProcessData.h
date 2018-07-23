@@ -97,6 +97,11 @@ struct SmallDeformationProcessData
 
     // mesh property for fracture aperture
     MeshLib::PropertyVector<double>* _mesh_prop_b = nullptr;
+    MeshLib::PropertyVector<double>* _mesh_prop_w_n = nullptr;
+    MeshLib::PropertyVector<double>* _mesh_prop_w_s = nullptr;
+    MeshLib::PropertyVector<double>* _mesh_prop_fracture_stress_shear = nullptr;
+    MeshLib::PropertyVector<double>* _mesh_prop_fracture_stress_normal =
+        nullptr;
 
     double const _reference_temperature;
 };

@@ -356,6 +356,18 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         }
     }
 
+    auto mesh_prop_w_n = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "w_n", MeshLib::MeshItemType::Cell,
+        1);
+    mesh_prop_w_n->resize(mesh.getNumberOfElements());
+    _process_data._mesh_prop_w_n = mesh_prop_w_n;
+
+    auto mesh_prop_w_s = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "w_s", MeshLib::MeshItemType::Cell,
+        1);
+    mesh_prop_w_s->resize(mesh.getNumberOfElements());
+    _process_data._mesh_prop_w_s = mesh_prop_w_s;
+
     auto mesh_prop_b = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "aperture",
         MeshLib::MeshItemType::Cell, 1);
@@ -379,6 +391,22 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         }
     }
     _process_data._mesh_prop_b = mesh_prop_b;
+
+    auto mesh_prop_fracture_stress_shear =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "f_stress_s",
+            MeshLib::MeshItemType::Cell, 1);
+    mesh_prop_fracture_stress_shear->resize(mesh.getNumberOfElements());
+    _process_data._mesh_prop_fracture_stress_shear =
+        mesh_prop_fracture_stress_shear;
+
+    auto mesh_prop_fracture_stress_normal =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "f_stress_n",
+            MeshLib::MeshItemType::Cell, 1);
+    mesh_prop_fracture_stress_normal->resize(mesh.getNumberOfElements());
+    _process_data._mesh_prop_fracture_stress_normal =
+        mesh_prop_fracture_stress_normal;
 }
 
 template <int DisplacementDim>
