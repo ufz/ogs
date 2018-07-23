@@ -90,6 +90,19 @@ public:
             "is not implemented");
     }
 
+    void computeSecondaryVariableConcrete(
+        const double t, std::vector<double> const& local_x_) override
+    {
+        if (!_dofIndex_to_localIndex.empty())
+        {
+            _local_u.setZero();
+            for (std::size_t i = 0; i < local_x_.size(); i++)
+                _local_u[_dofIndex_to_localIndex[i]] = local_x_[i];
+        }
+
+        computeSecondaryVariableConcreteWithVector(t, _local_u);
+    }
+
     virtual std::vector<double> const& getIntPtSigmaXX(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
@@ -161,6 +174,10 @@ public:
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
+
+protected:
+    virtual void computeSecondaryVariableConcreteWithVector(
+        double const t, Eigen::VectorXd const& local_u) = 0;
 
 private:
     Eigen::VectorXd _local_u;

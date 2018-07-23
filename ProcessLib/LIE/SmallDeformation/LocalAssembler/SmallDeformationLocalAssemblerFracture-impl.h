@@ -161,7 +161,8 @@ template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
                                             DisplacementDim>::
-    postTimestepConcrete(std::vector<double> const& /*local_x*/)
+    computeSecondaryVariableConcreteWithVector(const double t,
+                                               Eigen::VectorXd const& local_x)
 {
     double ele_b = 0;
     unsigned const n_integration_points =

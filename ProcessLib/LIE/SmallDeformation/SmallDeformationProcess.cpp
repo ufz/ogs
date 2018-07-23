@@ -382,15 +382,15 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
-    GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
-    int const /*process_id*/)
+void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
+    const double t, GlobalVector const& x)
 {
-    DBUG("PostTimestep SmallDeformationProcess.");
+    DBUG("Compute the secondary variables for SmallDeformationProcess.");
 
     GlobalExecutor::executeMemberOnDereferenced(
-        &SmallDeformationLocalAssemblerInterface::postTimestep,
-        _local_assemblers, *_local_to_global_index_map, x);
+        &SmallDeformationLocalAssemblerInterface::computeSecondaryVariable,
+        _local_assemblers, *_local_to_global_index_map, t, x,
+        _coupled_solutions);
 }
 
 template <int DisplacementDim>
