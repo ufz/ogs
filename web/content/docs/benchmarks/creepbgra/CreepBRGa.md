@@ -63,11 +63,13 @@ $$b={\left(\dfrac{3}{2}\right)^{(m+1)/2}} \dfrac{Ae^{-Q/R_uT}}{{{ \sigma}_f}^m}$
 
 The strain rate under creeping condition can be expressed as
 $$\begin{gathered}
-\dot { \mathbf \epsilon}= \dot { \mathbf \epsilon}^e + \dot { \mathbf \epsilon}^c
+\dot { \mathbf \epsilon}= \dot { \mathbf \epsilon}^e + \dot { \mathbf \epsilon}^T
+                       + \dot { \mathbf \epsilon}^c
 \end{gathered}$$ Due to Hook’s law, the stress rate is
 given by 
 $$\begin{gathered}
-\dot { \mathbf \sigma}= \mathbf{C} \dot { \mathbf \epsilon}^e = \mathbf{C} (\dot { \mathbf \epsilon}- \dot { \mathbf \epsilon}^c) 
+\dot { \mathbf \sigma}= \mathbf{C} \dot { \mathbf \epsilon}^e = \mathbf{C}
+ (\dot { \mathbf \epsilon}- \dot { \mathbf \epsilon}^T- \dot { \mathbf \epsilon}^c)
 \end{gathered}$$ 
 where
 $\mathbf{C}:= \lambda \mathcal{J} + 2G \mathbf I \otimes \mathbf I  $ 
@@ -78,21 +80,24 @@ product notation.
 is a fourth order tensor. Substituting equation and the expression of $C$
 into the stress rate expression, equation , we have
  $$\begin{gathered}
-\dot { \mathbf \sigma}=  \mathbf{C} \dot { \mathbf \epsilon}- 2bG {\left\Vert{\mathbf s}\right\Vert}^{m-1} 
+\dot { \mathbf \sigma}=  \mathbf{C} (\dot { \mathbf \epsilon}- \dot { \mathbf \epsilon}^T)- 2bG {\left\Vert{\mathbf s}\right\Vert}^{m-1} 
 {\mathbf s}
 \end{gathered}$$
 
 The stress of the present time step, $n+1$, is then can be expressed as
 $$\begin{gathered}
- { \mathbf \sigma}^{n+1} = { \mathbf \sigma}^{n} + \mathbf{C} \Delta { \mathbf \epsilon}-
+ { \mathbf \sigma}^{n+1} = { \mathbf \sigma}^{n} + \mathbf{C}
+  (\Delta { \mathbf \epsilon} - \alpha_T \Delta T \mathbf I)-
  2bG \Delta t {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1} {\mathbf s}^{n+1}
 \end{gathered}$$
+with $\alpha_T$ the linear thermal expansion.
+
  To solve the stress, the
 Newton-Raphson is applied to .
  Let $$\begin{gathered}
  \mathbf{r}= { \mathbf \sigma}^{n+1} -
- { \mathbf \sigma}^{n} - \mathbf{C} \Delta
- { \mathbf \epsilon}+ 2bG \Delta t {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}
+ { \mathbf \sigma}^{n} - \mathbf{C} (\Delta { \mathbf \epsilon} - \alpha_T \Delta T \mathbf I)
+ + 2bG \Delta t {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}
  {\mathbf s}^{n+1}
 \end{gathered}$$ 
 
