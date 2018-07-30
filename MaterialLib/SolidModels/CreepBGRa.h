@@ -93,7 +93,7 @@ public:
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
 
-    const double _n; /// parameter determined by experiments.
+    const double _n; /// Creep rate exponent n.
     /// $fA\left(\frac{3}{2}\right)^{n/2+1}/\sigma_{eff}^n $f
     const double _coef;
     const double _q; /// Activation energy

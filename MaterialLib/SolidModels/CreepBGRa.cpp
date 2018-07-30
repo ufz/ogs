@@ -48,19 +48,29 @@ CreepBGRa<DisplacementDim>::integrateStress(
         std::exp(-_q / (MaterialLib::PhysicalConstant::IdealGasConstant * T));
     auto const& deviatoric_matrix = Invariants::deviatoric_projection;
 
+    // In newton_solver.solve(), the Jacobian is calculated first, and then
+    // then comes the assembly of the residue vector. In order to save
+    // computation time, the following two variables are set visible in this
+    // function. The two variables keep the computation results of the
+    // norm of the deviatoric stress and 2bG||s_{n+1}||^{n-1} in
+    // update_jacobian, and then they are directly used in update_residual
+    // without repeating the computation. Of course, update_jacobian is not a
+    // pure function anymore, but has side effects.
     double pow_norm_s_n1_n_minus_one_2b_G = 0.;
 
     KelvinVector s_n1;
     auto const update_jacobian = [&](JacobianMatrix& jacobian) {
+        // side effect
         s_n1 = deviatoric_matrix * solution;
         double const norm_s_n1 = Invariants::FrobeniusNorm(s_n1);
+        // side effect
         pow_norm_s_n1_n_minus_one_2b_G =
             2.0 * b * this->_mp.mu(t, x) * std::pow(norm_s_n1, _n - 1);
-        jacobian =
-            KelvinMatrix::Identity() +
-            pow_norm_s_n1_n_minus_one_2b_G *
-                (deviatoric_matrix + ((_n - 1) / (norm_s_n1 * norm_s_n1)) *
-                                         s_n1 * s_n1.transpose());
+        jacobian = KelvinMatrix::Identity() +
+                   pow_norm_s_n1_n_minus_one_2b_G *
+                       (deviatoric_matrix +
+                        ((_n - 1) / (norm_s_n1 * norm_s_n1)) * s_n1 *
+                            s_n1.transpose());
     };
 
     auto const update_residual = [&](ResidualVectorType& r) {
