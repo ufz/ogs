@@ -26,13 +26,13 @@ namespace Solids
 namespace Creep
 {
 /**
- * \Brief A class for computing the BGRa creep model, which reads
+ * \brief A class for computing the BGRa creep model, which reads
  * \f[
- * \dot \mathbf{\epsilon}^{cr}=\frac{3}{2}A \mathrm{e}^{-\frac{Q}{RT}}
- * \left(\dfrac{\sigma_{eff}}{sigma_0}\right)\dfrac{\mathbf{s}}{||\mathbf{s}||}
+ * \dot {\mathbf{\epsilon}}^{cr}=\sqrt{\frac{3}{2}}A \mathrm{e}^{-\frac{Q}{RT}}
+ * \left(\frac{\sigma_{eff}}{\sigma_0}\right)^n\frac{\mathbf{s}}{||\mathbf{s}||}
  * \f]
- * where $f\sigma_{eff}=\sqrt{\frac{3}{2}}||\mathbf{s}|$f, $fA, sigma_0, n, Q$f
- * are parameter, and $fR$f is the gas constant.
+ * where \f$\sigma_{eff}=\sqrt{\frac{3}{2}}||\mathbf{s}||\f$, \f$A, \sigma_0, n,
+ * Q\f$ are parameter, and \f$R\f$ is the gas constant.
  *
  */
 template <int DisplacementDim>
@@ -70,16 +70,17 @@ public:
     {
     }
 
-    boost::optional<
-        std::tuple<KelvinVector, std::unique_ptr<typename MechanicsBase<
-                                     DisplacementDim>::MaterialStateVariables>,
-                   KelvinMatrix>>
+    boost::optional<std::tuple<KelvinVector,
+                               std::unique_ptr<typename MechanicsBase<
+                                   DisplacementDim>::MaterialStateVariables>,
+                               KelvinMatrix>>
     integrateStress(
         double const t, ProcessLib::SpatialPosition const& x, double const dt,
         KelvinVector const& eps_prev, KelvinVector const& eps,
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables, double const T) override;
+            material_state_variables,
+        double const T) override;
 
     ConstitutiveModel getConstitutiveModel() const override
     {
@@ -93,10 +94,10 @@ public:
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
 
-    const double _n; /// Creep rate exponent n.
-    /// $fA\left(\frac{3}{2}\right)^{n/2+1}/\sigma_{eff}^n $f
+    const double _n;  /// Creep rate exponent n.
+    /// \f$A\left(\frac{3}{2}\right)^{n/2+1}/\sigma_{eff}^n \f$
     const double _coef;
-    const double _q; /// Activation energy
+    const double _q;  /// Activation energy
 };
 
 extern template class CreepBGRa<2>;
@@ -104,4 +105,4 @@ extern template class CreepBGRa<3>;
 
 }  // end of namespace Creep
 }  // end of namespace Solids
-}  // end of namespace CreepBGRa
+}  // namespace MaterialLib
