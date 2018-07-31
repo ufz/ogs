@@ -134,10 +134,6 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         "thermal_conductivity", parameters, 1);
     DBUG("Use \'%s\' as thermal conductivity parameter.",
          thermal_conductivity.name.c_str());
-    // Reference temperature
-    const double reference_temperature =
-        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICS__reference_temperature}
-        config.getConfigParameter<double>("reference_temperature");
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
@@ -162,7 +158,6 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         linear_thermal_expansion_coefficient,
         specific_heat_capacity,
         thermal_conductivity,
-        reference_temperature,
         specific_body_force};
 
     SecondaryVariableCollection secondary_variables;
