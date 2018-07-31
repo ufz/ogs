@@ -60,11 +60,9 @@ public:
     }
 
     void getEssentialBCValues(
-        const double /*t*/,
+        const double /*t*/, GlobalVector const& /*x*/,
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override
     {
-        SpatialPosition pos;
-
         bc_values.ids.clear();
         bc_values.values.clear();
 

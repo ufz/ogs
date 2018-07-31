@@ -65,11 +65,12 @@ void NormalTractionBoundaryCondition<
     LocalAssemblerImplementation>::applyNaturalBC(const double t,
                                                   const GlobalVector& x,
                                                   GlobalMatrix& K,
-                                                  GlobalVector& b)
+                                                  GlobalVector& b,
+                                                  GlobalMatrix* Jac)
 {
     GlobalExecutor::executeMemberOnDereferenced(
         &NormalTractionBoundaryConditionLocalAssemblerInterface::assemble,
-        _local_assemblers, *_dof_table_boundary, t, x, K, b);
+        _local_assemblers, *_dof_table_boundary, t, x, K, b, Jac);
 }
 
 std::unique_ptr<NormalTractionBoundaryCondition<
@@ -98,4 +99,4 @@ createNormalTractionBoundaryCondition(
 }
 
 }  // namespace NormalTractionBoundaryCondition
-}  // ProcessLib
+}  // namespace ProcessLib

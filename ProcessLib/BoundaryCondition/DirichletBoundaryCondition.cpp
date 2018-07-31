@@ -10,14 +10,15 @@
 #include "DirichletBoundaryCondition.h"
 
 #include <algorithm>
-#include <vector>
 #include <logog/include/logog.hpp>
+#include <vector>
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
 {
 void DirichletBoundaryCondition::getEssentialBCValues(
-    const double t, NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
+    const double t, GlobalVector const& /*x*/,
+    NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
     SpatialPosition pos;
 
@@ -48,7 +49,8 @@ void DirichletBoundaryCondition::getEssentialBCValues(
         // and MatZeroRowsColumns, which are called to apply the Dirichlet BC,
         // the negative index is not accepted like other matrix or vector
         // PETSc routines. Therefore, the following if-condition is applied.
-        if (g_idx >= 0) {
+        if (g_idx >= 0)
+        {
             bc_values.ids.emplace_back(g_idx);
             bc_values.values.emplace_back(_parameter(t, pos).front());
         }

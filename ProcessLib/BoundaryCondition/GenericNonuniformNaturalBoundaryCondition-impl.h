@@ -89,12 +89,13 @@ void GenericNonuniformNaturalBoundaryCondition<
     LocalAssemblerImplementation>::applyNaturalBC(const double t,
                                                   const GlobalVector& x,
                                                   GlobalMatrix& K,
-                                                  GlobalVector& b)
+                                                  GlobalVector& b,
+                                                  GlobalMatrix* Jac)
 {
     GlobalExecutor::executeMemberOnDereferenced(
         &GenericNonuniformNaturalBoundaryConditionLocalAssemblerInterface::
             assemble,
-        _local_assemblers, *_dof_table_boundary, t, x, K, b);
+        _local_assemblers, *_dof_table_boundary, t, x, K, b, Jac);
 }
 
-}  // ProcessLib
+}  // namespace ProcessLib

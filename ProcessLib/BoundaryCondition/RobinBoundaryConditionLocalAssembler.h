@@ -46,7 +46,7 @@ public:
     void assemble(std::size_t const id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
                   double const t, const GlobalVector& /*x*/, GlobalMatrix& K,
-                  GlobalVector& b) override
+                  GlobalVector& b, GlobalMatrix* /*Jac*/) override
     {
         _local_K.setZero();
         _local_rhs.setZero();
