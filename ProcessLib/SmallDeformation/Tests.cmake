@@ -316,3 +316,20 @@ AddTest(
     ref_piston_pcs_0_ts_10_t_10.000000.vtu piston_pcs_0_ts_10_t_10.000000.vtu epsilon epsilon 1e-13 0
     ref_piston_pcs_0_ts_10_t_10.000000.vtu piston_pcs_0_ts_10_t_10.000000.vtu sigma sigma 1e-7 0
 )
+
+AddTest(
+    NAME LARGE_PythonBCSmallDeformationHertzContact
+    PATH Mechanics/Linear/PythonHertzContact
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS hertz_contact.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
+    DIFF_DATA
+    ref_hertz_contact_ts_5.vtu  hertz_pcs_0_ts_5_t_5.000000.vtu  displacement displacement 1e-16 0
+    ref_hertz_contact_ts_5.vtu  hertz_pcs_0_ts_5_t_5.000000.vtu  epsilon epsilon 1e-16 0
+    ref_hertz_contact_ts_5.vtu  hertz_pcs_0_ts_5_t_5.000000.vtu  sigma sigma 1e-16 0
+    ref_hertz_contact_ts_10.vtu hertz_pcs_0_ts_10_t_10.000000.vtu displacement displacement 1e-16 0
+    ref_hertz_contact_ts_10.vtu hertz_pcs_0_ts_10_t_10.000000.vtu epsilon epsilon 1e-16 0
+    ref_hertz_contact_ts_10.vtu hertz_pcs_0_ts_10_t_10.000000.vtu sigma sigma 1e-16 0
+)
