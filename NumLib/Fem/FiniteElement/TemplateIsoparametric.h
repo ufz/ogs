@@ -12,25 +12,21 @@
 
 #pragma once
 
-#include <cassert>
 #include <boost/math/constants/constants.hpp>
+#include <cassert>
 
-#include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
+#include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 
 namespace NumLib
 {
-
 /**
  * \brief Template class for isoparametric elements
  *
  * \tparam ShapeFunctionType_   The shape function type.
  * \tparam ShapeMatrixTypes_    An aggregate of shape matrix types.
  */
-template <
-    class ShapeFunctionType_,
-    class ShapeMatrixTypes_
-    >
+template <class ShapeFunctionType_, class ShapeMatrixTypes_>
 class TemplateIsoparametric
 {
 public:
@@ -44,36 +40,29 @@ public:
 
     /// Natural coordinates mapping tools specialization for specific
     /// MeshElement and ShapeFunction types.
-    using NaturalCoordsMappingType = NaturalCoordinatesMapping<
-            MeshElementType, ShapeFunctionType, ShapeMatrices>;
+    using NaturalCoordsMappingType =
+        NaturalCoordinatesMapping<MeshElementType, ShapeFunctionType,
+                                  ShapeMatrices>;
 
     /**
-     * Constructor without specifying a mesh element. setMeshElement() must be called afterwards.
+     * Constructor without specifying a mesh element. setMeshElement() must be
+     * called afterwards.
      */
-    TemplateIsoparametric()
-    : _ele(nullptr)
-    {
-    }
+    TemplateIsoparametric() : _ele(nullptr) {}
 
     /**
      * Construct this object for the given mesh element.
      *
      * @param e                      Mesh element object
      */
-    TemplateIsoparametric(const MeshElementType &e)
-    : _ele(&e)
-    {
-    }
+    TemplateIsoparametric(const MeshElementType& e) : _ele(&e) {}
     ~TemplateIsoparametric() = default;
 
     /// return current mesh element
-    const MeshElementType* getMeshElement() const {return _ele;}
+    const MeshElementType* getMeshElement() const { return _ele; }
 
     /// Sets the mesh element
-    void setMeshElement(const MeshElementType &e)
-    {
-        this->_ele = &e;
-    }
+    void setMeshElement(const MeshElementType& e) { this->_ele = &e; }
     /**
      * compute shape functions
      *
@@ -112,23 +101,45 @@ public:
         computeIntegralMeasure(is_axially_symmetric, shape);
     }
 
+    /// Interpolates the x coordinate of the element with the given shape
+    /// matrix.
     double interpolateZerothCoordinate(
         typename ShapeMatrices::ShapeType const& N) const
     {
         auto* nodes = _ele->getNodes();
         typename ShapeMatrices::ShapeType rs(N.size());
-        for (int i=0; i<rs.size(); ++i) {
+        for (int i = 0; i < rs.size(); ++i)
+        {
             rs[i] = (*nodes[i])[0];
         }
         auto const r = N.dot(rs);
         return r;
     }
 
+    /// Interpolates the coordinates of the element with the given shape matrix.
+    std::array<double, 3> interpolateCoordinates(
+        typename ShapeMatrices::ShapeType const& N) const
+    {
+        auto* nodes = _ele->getNodes();
+        typename ShapeMatrices::ShapeType rs(N.size());
+        std::array<double, 3> interpolated_coords;
+        for (int d = 0; d < 3; ++d)
+        {
+            for (int i = 0; i < rs.size(); ++i)
+            {
+                rs[i] = (*nodes[i])[d];
+            }
+            interpolated_coords[d] = N.dot(rs);
+        }
+        return interpolated_coords;
+    }
+
 private:
     void computeIntegralMeasure(bool is_axially_symmetric,
                                 ShapeMatrices& shape) const
     {
-        if (!is_axially_symmetric) {
+        if (!is_axially_symmetric)
+        {
             shape.integralMeasure = 1.0;
             return;
         }
@@ -140,11 +151,10 @@ private:
         // located at edge of the unit triangle, it is possible that
         // r becomes zero.
         auto const r = interpolateZerothCoordinate(shape.N);
-        shape.integralMeasure =
-            boost::math::constants::two_pi<double>() * r;
+        shape.integralMeasure = boost::math::constants::two_pi<double>() * r;
     }
 
     const MeshElementType* _ele;
 };
 
-} // NumLib
+}  // namespace NumLib
