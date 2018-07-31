@@ -59,7 +59,8 @@ public:
     //! Apply known solutions to the linearized equation system
     //! \f$ \mathit{Jac} \cdot (-\Delta x) = \mathit{res} \f$.
     virtual void applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
-                                           GlobalVector& minus_delta_x) = 0;
+                                           GlobalVector& minus_delta_x,
+                                           GlobalVector& x) = 0;
 };
 
 /*! A System of nonlinear equations to be solved with the Picard fixpoint
