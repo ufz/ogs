@@ -25,6 +25,11 @@ target_link_libraries(ProcessLib
     PUBLIC BaseLib MaterialLib MathLib MeshLib NumLib logog
 )
 
+if(OGS_USE_PYTHON)
+    target_link_libraries(ProcessLib PRIVATE pybind11::module)
+    target_include_directories(ProcessLib PRIVATE ${PYTHON_INCLUDE_DIRS})
+endif()
+
 if(OGS_INSITU)
     target_link_libraries(ProcessLib InSituLib)
 endif()
