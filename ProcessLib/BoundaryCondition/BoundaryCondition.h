@@ -35,7 +35,8 @@ public:
     //! Applies natural BCs (i.e. non-Dirichlet BCs) to the stiffness matrix
     //! \c K and the vector \c b.
     virtual void applyNaturalBC(const double /*t*/, GlobalVector const& /*x*/,
-                                GlobalMatrix& /*K*/, GlobalVector& /*b*/)
+                                GlobalMatrix& /*K*/, GlobalVector& /*b*/,
+                                GlobalMatrix* /*Jac*/)
     {
         // By default it is assumed that the BC is not a natural BC. Therefore
         // there is nothing to do here.
@@ -43,7 +44,7 @@ public:
 
     //! Writes the values of essential BCs to \c bc_values.
     virtual void getEssentialBCValues(
-        const double /*t*/,
+        const double /*t*/, GlobalVector const& /*x*/,
         NumLib::IndexValueVector<GlobalIndexType>& /*bc_values*/) const
     {
         // By default it is assumed that the BC is not an essential BC.
