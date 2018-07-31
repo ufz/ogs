@@ -10,6 +10,10 @@ target_link_libraries(ApplicationsLib
     PRIVATE MathLib MeshLib MeshGeoToolsLib NumLib
 )
 
+if(OGS_USE_PYTHON)
+    target_include_directories(ApplicationsLib PRIVATE ${PYTHON_INCLUDE_DIRS})
+endif()
+
 # Set cpp definitions if the cmake option is enabled for the given process.
 foreach(process ${ProcessesList})
     if(OGS_BUILD_PROCESS_${process})

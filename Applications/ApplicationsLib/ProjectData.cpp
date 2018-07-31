@@ -18,6 +18,10 @@
 
 #include <logog/include/logog.hpp>
 
+#ifdef OGS_USE_PYTHON
+#include <pybind11/eval.h>
+#endif
+
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/FileTools.h"
 
@@ -161,6 +165,21 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                          std::string const& output_directory)
 {
     _mesh_vec = readMeshes(project_config, project_directory);
+
+#ifdef OGS_USE_PYTHON
+    if (auto const python_script =
+            project_config.getConfigParameterOptional<std::string>(
+                "python_script"))
+    {
+        namespace py = pybind11;
+        auto const script_path =
+            BaseLib::copyPathToFileName(*python_script, project_directory);
+
+        // Evaluate in scope of main module
+        py::object scope = py::module::import("__main__").attr("__dict__");
+        py::eval_file(script_path, scope);
+    }
+#endif  // OGS_USE_PYTHON
 
     //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfigSubtreeOptional("curves"));

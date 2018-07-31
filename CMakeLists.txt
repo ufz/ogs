@@ -210,6 +210,8 @@ option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
 
 option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation." OFF)
 
+option(OGS_USE_PYTHON "Interface with python" OFF)
+
 ###################
 ### Definitions ###
 ###################
@@ -259,11 +261,15 @@ if(OGS_USE_EIGEN)
         add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
     endif()
 endif()
-
 if(MSVC AND OGS_32_BIT)
     add_definitions(-DEIGEN_MAX_ALIGN_BYTES=0 -DEIGEN_DONT_ALIGN)
 endif()
 # End Eigen
+
+if(OGS_USE_PYTHON)
+    add_definitions(-DOGS_USE_PYTHON)
+    find_package(pybind11 REQUIRED)
+endif()
 
 if (OGS_FATAL_ABORT)
     add_definitions(-DOGS_FATAL_ABORT)
