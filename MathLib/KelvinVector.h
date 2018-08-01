@@ -87,6 +87,10 @@ struct Invariants final
     static double equivalentStress(
         Eigen::Matrix<double, KelvinVectorSize, 1> const& deviatoric_v);
 
+    /// Get the norm of the deviatoric stress.
+    static double FrobeniusNorm(
+        Eigen::Matrix<double, KelvinVectorSize, 1> const& deviatoric_v);
+
     /// Second invariant of deviatoric tensor.
     /// \note The input vector must have trace equal zero.
     static double J2(

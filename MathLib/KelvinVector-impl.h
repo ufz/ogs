@@ -7,6 +7,8 @@
  *
  */
 
+#include <cmath>
+
 namespace MathLib
 {
 namespace KelvinVector
@@ -18,6 +20,13 @@ double Invariants<KelvinVectorSize>::equivalentStress(
     assert(std::abs(trace(deviatoric_v)) <=
            5e-14 * diagonal(deviatoric_v).norm());
     return std::sqrt(3 * J2(deviatoric_v));
+}
+
+template <int KelvinVectorSize>
+double Invariants<KelvinVectorSize>::FrobeniusNorm(
+    Eigen::Matrix<double, KelvinVectorSize, 1> const& deviatoric_v)
+{
+    return std::sqrt(deviatoric_v.transpose() * deviatoric_v);
 }
 
 template <int KelvinVectorSize>

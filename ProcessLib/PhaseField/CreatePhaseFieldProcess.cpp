@@ -117,9 +117,10 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         material = nullptr;
     if (type == "LinearElasticIsotropic")
     {
+        const bool skip_type_checking = false;
         auto elastic_model =
             MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
-                parameters, constitutive_relation_config);
+                parameters, constitutive_relation_config, skip_type_checking);
         material = std::make_unique<
             MaterialLib::Solids::LinearElasticIsotropicPhaseField<
                 DisplacementDim>>(

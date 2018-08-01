@@ -27,12 +27,9 @@ LinearElasticIsotropic<DisplacementDim>::integrateStress(
     KelvinVector const& eps,
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-        material_state_variables, double const /*T*/)
+        material_state_variables, double const T)
 {
-    KelvinMatrix C = KelvinMatrix::Zero();
-
-    C.template topLeftCorner<3, 3>().setConstant(_mp.lambda(t, x));
-    C.noalias() += 2 * _mp.mu(t, x) * KelvinMatrix::Identity();
+    KelvinMatrix C = getElasticTensor(t, x, T);
 
     KelvinVector sigma = sigma_prev + C * (eps - eps_prev);
 
@@ -44,6 +41,20 @@ LinearElasticIsotropic<DisplacementDim>::integrateStress(
                 static_cast<MaterialStateVariables const&>(
                     material_state_variables)}},
         C)};
+}
+
+template <int DisplacementDim>
+typename LinearElasticIsotropic<DisplacementDim>::KelvinMatrix
+LinearElasticIsotropic<DisplacementDim>::getElasticTensor(
+    double const t, ProcessLib::SpatialPosition const& x,
+    double const /*T*/) const
+{
+    KelvinMatrix C = KelvinMatrix::Zero();
+
+    C.template topLeftCorner<3, 3>().setConstant(_mp.lambda(t, x));
+    C.noalias() += 2 * _mp.mu(t, x) * KelvinMatrix::Identity();
+
+    return C;
 }
 
 template class LinearElasticIsotropic<2>;
