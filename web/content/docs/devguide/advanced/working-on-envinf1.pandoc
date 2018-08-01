@@ -21,7 +21,7 @@ Load required modules by sourcing the environment script:
 $ source scripts/env/envinf1/cli.sh
 ```
 
-Then do the [build configuration]({{< relref "build-configuration.pandoc" >}}) and [build]({{< relref "build.pandoc" >}}) the project.
+Then do the [build configuration]({{< relref "build-configuration.pandoc" >}}) and [build]({{< relref "/docs/devguide/getting-started/build.pandoc" >}}) the project.
 
 ## Build the Data Explorer
 
@@ -31,7 +31,7 @@ Load required modules by sourcing the environment script:
 $ source scripts/env/envinf1/gui.sh
 ```
 
-Then do the [build configuration]({{< relref "build-configuration.pandoc" >}}) and [build]({{< relref "build.pandoc" >}}) the project.
+Then do the [build configuration]({{< relref "build-configuration.pandoc" >}}) and [build]({{< relref "/docs/devguide/getting-started/build.pandoc" >}}) the project.
 
 ## Install and use Conan
 
