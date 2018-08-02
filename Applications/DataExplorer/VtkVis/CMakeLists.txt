@@ -138,6 +138,10 @@ target_link_libraries(VtkVis
     PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase vtkIOImage
     PRIVATE MathLib ApplicationsFileIO Qt5::Gui logog NetCdfDialogLib
 )
+if(NOT APPLE AND OGS_USE_CONAN)
+    # HACK for unresolved external
+    target_link_libraries(VtkVis PUBLIC vtkGUISupportQt)
+endif()
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")
 
 if(OGS_USE_PCH)
