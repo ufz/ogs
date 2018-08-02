@@ -107,6 +107,10 @@ public:
 
     /// Adds a point at (x,y) to the list
     void addNextPoint(float x, float y) { _coords.emplace_back(x, y); }
+
+    /// cut list entries not within the given range
+    void truncateToRange(QDateTime const& start, QDateTime const& end);
+
     /// Sets the start date (i.e. the min-value of the x-axis).
     void setStartDate(QDateTime date) { _startDate = date; }
 
@@ -142,6 +146,9 @@ public:
     /// Returns the width of the bounding box of all data points within the list.
     double width() const { return _maxX - _minX; }
 
+    /// Converts string into QDateTime-format
+    static QDateTime getDateTime(QString s);
+
 private:
     /// Returns the minimum x-value of all the data points.
     float calcMinXValue();
@@ -154,9 +161,7 @@ private:
 
     /// Returns the maximum y-value of all the data points.
     float calcMaxYValue();
-
-    static QDateTime getDateTime(QString s);
-
+    
     /**
      * Reads an ASCII file containing the coordinates in the following format:
      *        date (tab) value

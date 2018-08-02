@@ -25,7 +25,7 @@
  * \param pen The pen for drawing the arrow
  * \param parent The parent QGraphicsItem.
  */
-QArrow::QArrow(float l, float a, float hl, float hw, QPen &pen,
+QArrow::QArrow(qreal l, qreal a, qreal hl, qreal hw, QPen& pen,
                QGraphicsItem* parent) : QGraphicsItem(parent)
 {
     _arrowLength = l;
@@ -42,7 +42,8 @@ QArrow::QArrow(float l, float a, float hl, float hw, QPen &pen,
  * \param pen The pen for drawing the arrow
  * \param parent The parent QGraphicsItem.
  */
-QArrow::QArrow(float l, float a, QPen &pen, QGraphicsItem* parent) : QGraphicsItem(parent)
+QArrow::QArrow(qreal l, qreal a, QPen& pen, QGraphicsItem* parent)
+    : QGraphicsItem(parent)
 {
     _arrowLength = l;
     _arrowAngle  = a;
@@ -116,13 +117,13 @@ void QArrow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
 }
 
 /// Changes orientation of the arrow.
-void QArrow::setAngle(double a)
+void QArrow::setAngle(float a)
 {
     _arrowAngle = a;
 }
 
 /// Changes the length of the arrow.
-void QArrow::setLength(double l)
+void QArrow::setLength(qreal l)
 {
     _arrowLength = l;
 }
