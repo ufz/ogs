@@ -35,7 +35,7 @@ public:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget) override;
     QRectF boundingRect() const override;
-    void setAngle(float a);
+    void setAngle(qreal a);
     void setLength(qreal l);
 
 private:

@@ -304,8 +304,11 @@ void DiagramList::truncateToRange(QDateTime const& start, QDateTime const& end)
     update();
 }
 
-void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)
+void DiagramList::setList(std::vector<std::pair<QDateTime, float>> const& coords)
 {
+    if (coords.empty())
+        return;
+
     this->_startDate = coords[0].first;
     _coords.emplace_back(0.0f, coords[0].second);
 
@@ -320,8 +323,11 @@ void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)
     update();
 }
 
-void DiagramList::setList(std::vector< std::pair<float, float> > coords)
+void DiagramList::setList(std::vector< std::pair<float, float> > const& coords)
 {
+    if (coords.empty())
+        return;
+
     this->_startDate = QDateTime();
     std::size_t nCoords = coords.size();
     for (std::size_t i = 0; i < nCoords; i++)

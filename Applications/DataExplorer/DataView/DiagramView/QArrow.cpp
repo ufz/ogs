@@ -117,7 +117,7 @@ void QArrow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QW
 }
 
 /// Changes orientation of the arrow.
-void QArrow::setAngle(float a)
+void QArrow::setAngle(qreal a)
 {
     _arrowAngle = a;
 }

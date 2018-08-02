@@ -77,7 +77,8 @@ void DiagramPrefsDialog::accept()
         return;
     }
 
-    // data has been loaded
+    // Data has been loaded.
+    // If loading the other lists fails at least nothing terrible will happen.
     if (_list[0]->size() > 0)
     {
         bool window_is_empty(false);
