@@ -50,7 +50,8 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
-    double solid_density_current, solid_density_prev;
+    double solid_density;
+    double solid_density_prev;
 
     double integration_weight;
     typename ShapeMatricesType::NodalRowVectorType N;
@@ -60,7 +61,7 @@ struct IntegrationPointData final
     {
         eps_m_prev = eps_m;
         sigma_prev = sigma;
-        solid_density_prev = solid_density_current;
+        solid_density_prev = solid_density;
         material_state_variables->pushBackState();
     }
 
@@ -142,9 +143,9 @@ public:
 
             SpatialPosition x_position;
             x_position.setElementID(_element.getID());
-            ip_data.solid_density_current =
+            ip_data.solid_density =
                 _process_data.reference_solid_density(0, x_position)[0];
-            ip_data.solid_density_prev = ip_data.solid_density_current;
+            ip_data.solid_density_prev = ip_data.solid_density;
 
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;
@@ -241,7 +242,7 @@ public:
             auto const alpha =
                 _process_data.linear_thermal_expansion_coefficient(
                     t, x_position)[0];
-            double const linear_thermal_strain = alpha * dT;
+            double const linear_thermal_strain_increment = alpha * dT;
 
             //
             // displacement equation, displacement part
@@ -255,7 +256,7 @@ public:
             // assume isotropic thermal expansion
             const double T_ip = N.dot(T);  // T at integration point
             eps_m.noalias() =
-                eps - linear_thermal_strain * Invariants::identity2;
+                eps - linear_thermal_strain_increment * Invariants::identity2;
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
                 t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
             eps_m.noalias() = eps;
@@ -288,9 +289,9 @@ public:
             // dV = 3 * alpha * dT * V_0
             // rho_s_{n+1} = rho_s_n / (1 + 3 * alpha * dT )
             // see reference solid density description for details.
-            double const rho_s = _ip_data[ip].solid_density_prev /
-                                 (1 + 3 * linear_thermal_strain);
-            _ip_data[ip].solid_density_current = rho_s;
+            auto& rho_s = _ip_data[ip].solid_density;
+            rho_s = _ip_data[ip].solid_density_prev /
+                                 (1 + 3 * linear_thermal_strain_increment);
 
             auto const& b = _process_data.specific_body_force;
             local_rhs
