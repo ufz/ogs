@@ -141,7 +141,7 @@ public:
         // integrated_value +=
         //   int_{\Gamma_e} \alpha \cdot flux \cdot normal \d \Gamma
         double integrated_value = 0;
-        for (auto ip(0); ip < n_integration_points; ip++)
+        for (unsigned ip(0); ip < n_integration_points; ip++)
         {
             auto const bulk_flux = getFlux(
                 _bulk_element_id, _ip_data[ip].bulk_element_point, t, x);

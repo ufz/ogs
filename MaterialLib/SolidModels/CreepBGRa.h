@@ -52,7 +52,7 @@ public:
 
     std::unique_ptr<
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-    createMaterialStateVariables()
+    createMaterialStateVariables() override
     {
         return LinearElasticIsotropic<
             DisplacementDim>::createMaterialStateVariables();
