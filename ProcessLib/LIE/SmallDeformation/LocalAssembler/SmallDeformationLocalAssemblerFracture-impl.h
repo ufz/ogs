@@ -161,17 +161,81 @@ template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
                                             DisplacementDim>::
-    postTimestepConcrete(std::vector<double> const& /*local_x*/)
+    computeSecondaryVariableConcreteWithVector(const double t,
+                                               Eigen::VectorXd const& local_x)
 {
-    double ele_b = 0;
+    auto const& nodal_jump = local_x;
+
+    auto const& R = _fracture_property->R;
+
+    // the index of a normal (normal to a fracture plane) component
+    // in a displacement vector
+    int const index_normal = DisplacementDim - 1;
+
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
+
+    SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+
+        auto& ip_data = _ip_data[ip];
+        auto const& H = ip_data._h_matrices;
+        auto& mat = ip_data._fracture_material;
+        auto& sigma = ip_data._sigma;
+        auto const& sigma_prev = ip_data._sigma_prev;
+        auto& w = ip_data._w;
+        auto const& w_prev = ip_data._w_prev;
+        auto& C = ip_data._C;
+        auto& state = *ip_data._material_state_variables;
+        auto& b_m = ip_data._aperture;
+
+        // displacement jumps in local coordinates
+        w.noalias() = R * H * nodal_jump;
+
+        // aperture
+        b_m = ip_data._aperture0 + w[index_normal];
+        if (b_m < 0.0)
+            OGS_FATAL(
+                "Element %d, gp %d: Fracture aperture is %g, but it must be "
+                "non-negative.",
+                _element.getID(), ip, b_m);
+
+        // local C, local stress
+        mat.computeConstitutiveRelation(
+            t, x_position, ip_data._aperture0,
+            Eigen::Matrix<double, DisplacementDim, 1>::Zero(),  // TODO (naumov)
+                                                                // Replace with
+                                                                // initial
+                                                                // stress values
+            w_prev, w, sigma_prev, sigma, C, state);
+    }
+
+    double ele_b = 0;
+    typename HMatricesType::ForceVectorType ele_sigma =
+        HMatricesType::ForceVectorType::Zero(DisplacementDim);
+    typename HMatricesType::ForceVectorType ele_w =
+        HMatricesType::ForceVectorType::Zero(DisplacementDim);
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         ele_b += _ip_data[ip]._aperture;
+        ele_w += _ip_data[ip]._w;
+        ele_sigma += _ip_data[ip]._sigma;
     }
     ele_b /= n_integration_points;
+    ele_w /= n_integration_points;
+    ele_sigma /= n_integration_points;
     (*_process_data._mesh_prop_b)[_element.getID()] = ele_b;
+    (*_process_data._mesh_prop_w_n)[_element.getID()] = ele_w[index_normal];
+    (*_process_data._mesh_prop_w_s)[_element.getID()] = ele_w[0];
+    (*_process_data._mesh_prop_fracture_stress_normal)[_element.getID()] =
+        ele_sigma[index_normal];
+    (*_process_data._mesh_prop_fracture_stress_shear)[_element.getID()] =
+        ele_sigma[0];
 }
 
 }  // namespace SmallDeformation

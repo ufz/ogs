@@ -166,7 +166,8 @@ template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
                                           DisplacementDim>::
-    postTimestepConcrete(std::vector<double> const& /*local_x*/)
+    computeSecondaryVariableConcreteWithVector(
+        double const /*t*/, Eigen::VectorXd const& /*local_x*/)
 {
     // Compute average value per element
     const int n = DisplacementDim == 2 ? 4 : 6;
