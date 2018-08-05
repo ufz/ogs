@@ -50,6 +50,8 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
+    double solid_density;
+    double solid_density_prev;
 
     double integration_weight;
     typename ShapeMatricesType::NodalRowVectorType N;
@@ -59,6 +61,7 @@ struct IntegrationPointData final
     {
         eps_m_prev = eps_m;
         sigma_prev = sigma;
+        solid_density_prev = solid_density;
         material_state_variables->pushBackState();
     }
 
@@ -137,6 +140,12 @@ public:
             ip_data.eps.setZero(kelvin_vector_size);
             ip_data.eps_m.setZero(kelvin_vector_size);
             ip_data.eps_m_prev.setZero(kelvin_vector_size);
+
+            SpatialPosition x_position;
+            x_position.setElementID(_element.getID());
+            ip_data.solid_density =
+                _process_data.reference_solid_density(0, x_position)[0];
+            ip_data.solid_density_prev = ip_data.solid_density;
 
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;
@@ -227,14 +236,13 @@ public:
             auto& eps_m_prev = _ip_data[ip].eps_m_prev;
             auto& state = _ip_data[ip].material_state_variables;
 
-            double const delta_T =
-                N.dot(T) - _process_data.reference_temperature;
+            double const dT = N.dot(T_dot) * dt;
             // calculate thermally induced strain
             // assume isotropic thermal expansion
             auto const alpha =
                 _process_data.linear_thermal_expansion_coefficient(
                     t, x_position)[0];
-            double const linear_thermal_strain = alpha * delta_T;
+            double const linear_thermal_strain_increment = alpha * dT;
 
             //
             // displacement equation, displacement part
@@ -246,11 +254,12 @@ public:
                     DisplacementDim>::value>;
 
             // assume isotropic thermal expansion
+            const double T_ip = N.dot(T);  // T at integration point
             eps_m.noalias() =
-                eps - linear_thermal_strain * Invariants::identity2;
+                eps - linear_thermal_strain_increment * Invariants::identity2;
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
-                t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state,
-                delta_T + _process_data.reference_temperature);
+                t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
+            eps_m.noalias() = eps;
 
             if (!solution)
                 OGS_FATAL("Computation of local constitutive relation failed.");
@@ -276,13 +285,13 @@ public:
                     .noalias() = N;
 
             // calculate real density
-            // rho_s * (V_0 + dV) = rho_sr * V_0
+            // rho_s_{n+1} * (V_{n} + dV) = rho_s_n * V_n
             // dV = 3 * alpha * dT * V_0
-            // rho_s = rho_sr / (1 + 3 * alpha * dT )
+            // rho_s_{n+1} = rho_s_n / (1 + 3 * alpha * dT )
             // see reference solid density description for details.
-            auto const rho_sr =
-                _process_data.reference_solid_density(t, x_position)[0];
-            double const rho_s = rho_sr / (1 + 3 * linear_thermal_strain);
+            auto& rho_s = _ip_data[ip].solid_density;
+            rho_s = _ip_data[ip].solid_density_prev /
+                                 (1 + 3 * linear_thermal_strain_increment);
 
             auto const& b = _process_data.specific_body_force;
             local_rhs
@@ -302,8 +311,7 @@ public:
                 double const norm_s = Invariants::FrobeniusNorm(s);
                 const double creep_coefficient =
                     _process_data.material->getTemperatureRelatedCoefficient(
-                        t, dt, x_position,
-                        delta_T + _process_data.reference_temperature, norm_s);
+                        t, dt, x_position, T_ip, norm_s);
                 KuT.noalias() += creep_coefficient * B.transpose() * s * N * w;
             }
 

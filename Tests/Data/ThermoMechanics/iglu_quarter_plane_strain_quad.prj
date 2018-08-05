@@ -20,7 +20,6 @@
             <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
             <specific_heat_capacity>cs</specific_heat_capacity>
             <thermal_conductivity>lambda</thermal_conductivity>
-            <reference_temperature>283.15</reference_temperature>
             <process_variables>
                 <displacement>displacement</displacement>
                 <temperature>temperature</temperature>
