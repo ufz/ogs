@@ -25,6 +25,8 @@ set(CONAN_REQUIRES
 set(CONAN_OPTIONS
     Boost:header_only=True
     Qt:qtxmlpatterns=True
+    VTK:minimal=True
+    VTK:ioxml=True
     CACHE INTERNAL ""
 )
 
@@ -33,7 +35,7 @@ if((UNIX AND NOT APPLE) AND BUILD_SHARED_LIBS)
 endif()
 
 if(OGS_USE_MPI)
-    set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:mpi=True)
+    set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:mpi_minimal=True)
 endif()
 
 if(OGS_USE_PETSC)
@@ -50,7 +52,10 @@ if(OGS_BUILD_GUI)
         libgeotiff/1.4.2@bilke/stable
         Qt/5.11.0@bilke/stable
     )
-    set(CONAN_OPTIONS ${CONAN_OPTIONS} VTK:qt=True)
+    set(CONAN_OPTIONS ${CONAN_OPTIONS}
+        VTK:minimal=False
+        VTK:qt=True
+    )
 endif()
 
 conan_check(VERSION 1.0.0 REQUIRED)
