@@ -268,7 +268,7 @@ endif()
 
 if(OGS_USE_PYTHON)
     add_definitions(-DOGS_USE_PYTHON)
-    find_package(pybind11 REQUIRED)
+    add_subdirectory(ThirdParty/pybind11)
 endif()
 
 if (OGS_FATAL_ABORT)
