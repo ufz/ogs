@@ -40,6 +40,9 @@ endif()
 
 if(OGS_USE_PETSC)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} petsc/3.8.3@bilke/testing)
+    if(OGS_CONAN_USE_SYSTEM_OPENMPI)
+        set(CONAN_OPTIONS ${CONAN_OPTIONS} petsc:skip_install_openmpi=True)
+    endif()
 endif()
 
 if(OGS_USE_LIS)
