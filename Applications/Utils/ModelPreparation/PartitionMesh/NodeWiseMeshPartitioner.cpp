@@ -105,8 +105,7 @@ std::ostream& Partition::writeConfigBinary(std::ostream& os) const
             getNumberOfIntegerVariablesOfElements(ghost_elements)),
     };
 
-    return os.write(reinterpret_cast<const char*>(data),
-                    sizeof(data));
+    return os.write(reinterpret_cast<const char*>(data), sizeof(data));
 }
 
 std::size_t nodeIdBulkMesh(
@@ -590,8 +589,7 @@ template <typename T>
 void writePropertyVectorValuesBinary(std::ostream& os,
                                      MeshLib::PropertyVector<T> const& pv)
 {
-    os.write(reinterpret_cast<const char*>(pv.data()),
-            pv.size() * sizeof(T));
+    os.write(reinterpret_cast<const char*>(pv.data()), pv.size() * sizeof(T));
 }
 
 template <typename T>
@@ -651,10 +649,10 @@ void writePropertiesBinary(const std::string& file_name_base,
     BaseLib::writeValueBinary(out, number_of_properties);
 
     applyToPropertyVectors(property_names,
-                         [&](auto type, std::string const& name) {
-                             return writePropertyVectorBinary<decltype(type)>(
-                                 partitioned_properties, name, out_val, out);
-                         });
+                           [&](auto type, std::string const& name) {
+                               return writePropertyVectorBinary<decltype(type)>(
+                                   partitioned_properties, name, out_val, out);
+                           });
 
     unsigned long offset = 0;
     for (const auto& partition : partitions)
@@ -696,8 +694,7 @@ struct PartitionOffsets
     long ghost_elements;
 };
 
-PartitionOffsets
-computePartitionElementOffsets(Partition const& partition)
+PartitionOffsets computePartitionElementOffsets(Partition const& partition)
 {
     return {static_cast<long>(partition.nodes.size()),
             static_cast<long>(partition.regular_elements.size() +
@@ -731,8 +728,7 @@ ConfigOffsets incrementConfigOffsets(ConfigOffsets const& oldConfig,
 ///     partition.
 ///  2. The number of all ghost element integer variables for each partition.
 std::tuple<std::vector<long>, std::vector<long>> writeConfigDataBinary(
-    const std::string& file_name_base,
-    std::vector<Partition> const& partitions)
+    const std::string& file_name_base, std::vector<Partition> const& partitions)
 {
     auto const file_name_cfg = file_name_base + "_partitioned_msh_cfg" +
                                std::to_string(partitions.size()) + ".bin";
