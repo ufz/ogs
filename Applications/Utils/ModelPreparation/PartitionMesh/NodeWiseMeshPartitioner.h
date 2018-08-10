@@ -48,6 +48,11 @@ struct Partition
     std::ostream& writeConfigBinary(std::ostream& os) const;
 };
 
+/// Creates partitioned mesh properties for nodes and cells.
+MeshLib::Properties partitionProperties(
+    MeshLib::Properties const& properties,
+    std::vector<Partition> const& partitions);
+
 /// Mesh partitioner.
 class NodeWiseMeshPartitioner
 {

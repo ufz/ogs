@@ -470,6 +470,18 @@ void processProperties(MeshLib::Properties const& properties,
                            });
 }
 
+MeshLib::Properties partitionProperties(
+    MeshLib::Properties const& properties,
+    std::vector<Partition> const& partitions)
+{
+    MeshLib::Properties partitioned_properties;
+    processProperties(properties, MeshLib::MeshItemType::Node, partitions,
+                      partitioned_properties);
+    processProperties(properties, MeshLib::MeshItemType::Cell, partitions,
+                      partitioned_properties);
+    return partitioned_properties;
+}
+
 void NodeWiseMeshPartitioner::partitionByMETIS(
     const bool is_mixed_high_order_linear_elems)
 {
