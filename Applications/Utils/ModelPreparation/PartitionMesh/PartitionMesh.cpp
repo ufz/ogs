@@ -182,8 +182,11 @@ int main(int argc, char* argv[])
             BaseLib::extractBaseNameWithoutExtension(filename));
         auto const partitions = mesh_partitioner.partitionOtherMesh(
             *mesh, is_mixed_high_order_linear_elems);
+
+        auto const partitioned_properties =
+            partitionProperties(mesh->getProperties(), partitions);
         mesh_partitioner.writeOtherMesh(output_file_name_wo_extension,
-                                        partitions);
+                                        partitions, partitioned_properties);
     }
 
     if (ascii_flag.getValue())

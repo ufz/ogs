@@ -929,7 +929,8 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 
 void NodeWiseMeshPartitioner::writeOtherMesh(
     std::string const& output_filename_base,
-    std::vector<Partition> const& partitions) const
+    std::vector<Partition> const& partitions,
+    MeshLib::Properties const& partitioned_properties) const
 {
     writeNodesBinary(output_filename_base, partitions, _nodes_global_ids);
 
@@ -942,6 +943,11 @@ void NodeWiseMeshPartitioner::writeOtherMesh(
         std::get<1>(elem_integers);
     writeElementsBinary(output_filename_base, partitions, num_elem_integers,
                         num_g_elem_integers);
+
+    writePropertiesBinary(output_filename_base, partitioned_properties,
+                          partitions, MeshLib::MeshItemType::Node);
+    writePropertiesBinary(output_filename_base, partitioned_properties,
+                          partitions, MeshLib::MeshItemType::Cell);
 }
 
 void NodeWiseMeshPartitioner::writeConfigDataASCII(

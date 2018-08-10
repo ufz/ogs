@@ -93,8 +93,10 @@ public:
     /// \param file_name_base The prefix of the file name.
     void writeBinary(const std::string& file_name_base);
 
-    void writeOtherMesh(std::string const& output_filename_base,
-                        std::vector<Partition> const& partitions) const;
+    void writeOtherMesh(
+        std::string const& output_filename_base,
+        std::vector<Partition> const& partitions,
+        MeshLib::Properties const& partitioned_properties) const;
 
     void resetPartitionIdsForNodes(
         std::vector<std::size_t>&& node_partition_ids)
