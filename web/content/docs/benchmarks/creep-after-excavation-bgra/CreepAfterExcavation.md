@@ -123,5 +123,5 @@ For the automatic benchmarking, the time duration of creep is reduced to 50 days
  If one wants to test this benchmark for 1000 days' creep, please change the end time in the tag of `<t_end> `
 in the project file as
  ```
-<t_end>1000</t_end>
+<t_end>86400.0e+3</t_end>
 ```
