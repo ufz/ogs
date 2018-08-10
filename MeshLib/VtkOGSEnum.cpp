@@ -9,6 +9,8 @@
 
 #include "VtkOGSEnum.h"
 
+#include "BaseLib/Error.h"
+
 #include <vtkCellType.h>
 
 MeshLib::CellType VtkCellTypeToOGS(int type)
@@ -50,7 +52,10 @@ MeshLib::CellType VtkCellTypeToOGS(int type)
         case VTK_QUADRATIC_PYRAMID:
             return MeshLib::CellType::PYRAMID13;
         default:
-            return MeshLib::CellType::INVALID;
+            OGS_FATAL(
+                "Unknown cell type in conversion from VTK to OGS. Given cell "
+                "type value is %d.",
+                type);
     }
 }
 
@@ -58,6 +63,8 @@ int OGSToVtkCellType(MeshLib::CellType ogs)
 {
     switch (ogs)
     {
+        case MeshLib::CellType::POINT1:
+            return VTK_VERTEX;
         case MeshLib::CellType::LINE2:
             return VTK_LINE;
         case MeshLib::CellType::LINE3:
@@ -95,7 +102,10 @@ int OGSToVtkCellType(MeshLib::CellType ogs)
         case MeshLib::CellType::INVALID:
             return -1;
         default:
-            return -1;
+            OGS_FATAL(
+                "Unknown cell type in conversion from OGS to VTK. Given cell "
+                "type value is %d.",
+                ogs);
     }
 }
 
