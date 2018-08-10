@@ -123,6 +123,9 @@ public:
     Properties() = default;
 
     Properties(Properties const& properties);
+    Properties(Properties&& properties) = default;
+    Properties& operator=(Properties const& properties);
+    Properties& operator=(Properties&& properties) = default;
 
     ~Properties();
 
