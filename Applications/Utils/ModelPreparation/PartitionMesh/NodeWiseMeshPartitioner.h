@@ -127,8 +127,6 @@ private:
     void processPartition(std::size_t const part_id,
                           const bool is_mixed_high_order_linear_elems);
 
-    void processProperties(MeshLib::MeshItemType const mesh_item_type);
-
     /// Write the configuration data of the partition data in ASCII files.
     /// \param file_name_base The prefix of the file name.
     void writeConfigDataASCII(const std::string& file_name_base);

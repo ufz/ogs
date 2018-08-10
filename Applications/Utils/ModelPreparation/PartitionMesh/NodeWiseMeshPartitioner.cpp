@@ -443,11 +443,13 @@ void applyToPropertyVectors(std::vector<std::string> const& property_names,
     }
 }
 
-void NodeWiseMeshPartitioner::processProperties(
-    MeshLib::MeshItemType const mesh_item_type)
+void processProperties(MeshLib::Properties const& properties,
+                       MeshLib::MeshItemType const mesh_item_type,
+                       std::vector<Partition> const& partitions,
+                       MeshLib::Properties& partitioned_properties)
 {
     std::size_t const total_number_of_tuples =
-        std::accumulate(std::begin(_partitions), std::end(_partitions), 0,
+        std::accumulate(begin(partitions), end(partitions), 0,
                         [&](std::size_t const sum, Partition const& p) {
                             return sum + p.numberOfMeshItems(mesh_item_type);
                         });
@@ -460,15 +462,12 @@ void NodeWiseMeshPartitioner::processProperties(
     // 1 create new PV
     // 2 resize the PV with total_number_of_tuples
     // 3 copy the values according to the partition info
-    auto const& original_properties(_mesh->getProperties());
-
-    applyToPropertyVectors(
-        original_properties.getPropertyVectorNames(mesh_item_type),
-        [&](auto type, std::string const& name) {
-            return copyPropertyVector<decltype(type)>(
-                original_properties, _partitioned_properties, _partitions, name,
-                total_number_of_tuples);
-        });
+    applyToPropertyVectors(properties.getPropertyVectorNames(mesh_item_type),
+                           [&](auto type, std::string const& name) {
+                               return copyPropertyVector<decltype(type)>(
+                                   properties, partitioned_properties,
+                                   partitions, name, total_number_of_tuples);
+                           });
 }
 
 void NodeWiseMeshPartitioner::partitionByMETIS(
@@ -482,8 +481,8 @@ void NodeWiseMeshPartitioner::partitionByMETIS(
 
     renumberNodeIndices(is_mixed_high_order_linear_elems);
 
-    processProperties(MeshLib::MeshItemType::Node);
-    processProperties(MeshLib::MeshItemType::Cell);
+    _partitioned_properties =
+        partitionProperties(_mesh->getProperties(), _partitions);
 }
 
 std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
