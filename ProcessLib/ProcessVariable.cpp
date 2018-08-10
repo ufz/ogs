@@ -199,6 +199,12 @@ ProcessVariable::createBoundaryConditions(
                                           integration_order,
                                           _shapefunction_order, parameters,
                                           process);
+#ifdef USE_PETSC
+        if (bc == nullptr)
+        {
+            continue;
+        }
+#endif  // USE_PETSC
         bcs.push_back(std::move(bc));
     }
 
