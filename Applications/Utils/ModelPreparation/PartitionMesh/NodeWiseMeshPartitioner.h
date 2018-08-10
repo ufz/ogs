@@ -85,6 +85,12 @@ public:
         MeshLib::Mesh const& mesh,
         bool const is_mixed_high_order_linear_elems) const;
 
+    /// Renumber the bulk_node_ids property for each partition to match the
+    /// partitioned bulk mesh nodes.
+    void renumberBulkNodeIdsProperty(
+        MeshLib::PropertyVector<std::size_t>* const bulk_node_ids,
+        std::vector<Partition> const& local_partitions) const;
+
     /// Write the partitions into ASCII files
     /// \param file_name_base The prefix of the file name.
     void writeASCII(const std::string& file_name_base);

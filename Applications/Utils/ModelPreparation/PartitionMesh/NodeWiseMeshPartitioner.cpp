@@ -497,6 +497,48 @@ void NodeWiseMeshPartitioner::partitionByMETIS(
         partitionProperties(_mesh->getProperties(), _partitions);
 }
 
+void NodeWiseMeshPartitioner::renumberBulkNodeIdsProperty(
+    MeshLib::PropertyVector<std::size_t>* const bulk_node_ids_pv,
+    std::vector<Partition> const& local_partitions) const
+{
+    if (bulk_node_ids_pv == nullptr)
+    {
+        return;
+    }
+
+    auto& bulk_node_ids = *bulk_node_ids_pv;
+
+    std::size_t offset = 0;  // offset in property vector for current partition
+
+    assert(_partitions.size() == local_partitions.size());
+    int const n_partitions = static_cast<int>(_partitions.size());
+    for (int partition_id = 0; partition_id < n_partitions; ++partition_id)
+    {
+        auto const& bulk_partition = _partitions[partition_id];
+        auto const& local_partition = local_partitions[partition_id];
+
+        // Create global-to-local node id mapping for the bulk partition.
+        auto const& bulk_nodes = bulk_partition.nodes;
+        auto const n_bulk_nodes = bulk_nodes.size();
+        std::map<std::size_t, std::size_t> global_to_local;
+        for (std::size_t local_node_id = 0; local_node_id < n_bulk_nodes;
+             ++local_node_id)
+        {
+            global_to_local[bulk_nodes[local_node_id]->getID()] = local_node_id;
+        }
+
+        auto const& local_nodes = local_partition.nodes;
+        auto const n_local_nodes = local_nodes.size();
+        for (std::size_t local_node_id = 0; local_node_id < n_local_nodes;
+             ++local_node_id)
+        {
+            bulk_node_ids[offset + local_node_id] =
+                global_to_local[bulk_node_ids[offset + local_node_id]];
+        }
+        offset += n_local_nodes;
+    }
+}
+
 std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
     MeshLib::Mesh const& mesh,
     bool const is_mixed_high_order_linear_elems) const

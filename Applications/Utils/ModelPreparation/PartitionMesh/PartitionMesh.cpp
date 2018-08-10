@@ -183,8 +183,12 @@ int main(int argc, char* argv[])
         auto const partitions = mesh_partitioner.partitionOtherMesh(
             *mesh, is_mixed_high_order_linear_elems);
 
-        auto const partitioned_properties =
+        auto partitioned_properties =
             partitionProperties(mesh->getProperties(), partitions);
+        mesh_partitioner.renumberBulkNodeIdsProperty(
+            partitioned_properties.getPropertyVector<std::size_t>(
+                "bulk_node_ids"),
+            partitions);
         mesh_partitioner.writeOtherMesh(output_file_name_wo_extension,
                                         partitions, partitioned_properties);
     }
