@@ -12,9 +12,10 @@
  *
  */
 
+#include "DiagramPrefsDialog.h"
 #include "DetailWindow.h"
 #include "DiagramList.h"
-#include "DiagramPrefsDialog.h"
+#include "getDateTime.h"
 #include "OGSError.h"
 #include "Station.h"
 
@@ -67,8 +68,8 @@ DiagramPrefsDialog::~DiagramPrefsDialog()
 
 void DiagramPrefsDialog::accept()
 {
-    QDateTime start_date(DiagramList::getDateTime(fromDateLine->text()));
-    QDateTime end_date(DiagramList::getDateTime(toDateLine->text()));
+    QDateTime start_date(getDateTime(fromDateLine->text()));
+    QDateTime end_date(getDateTime(toDateLine->text()));
 
     if (start_date == QDateTime() || end_date == QDateTime() ||
         start_date > end_date || _list.empty())
@@ -77,42 +78,40 @@ void DiagramPrefsDialog::accept()
         return;
     }
 
-    // Data has been loaded.
-    // If loading the other lists fails at least nothing terrible will happen.
-    if (_list[0]->size() > 0)
-    {
-        bool window_is_empty(false);
-        if (_window == nullptr)
-        {
-            _window = new DetailWindow();
-            _window->setAttribute(Qt::WA_DeleteOnClose);
-            window_is_empty = true;
-        }
-
-        for (std::size_t i = 0; i < _list.size(); i++)
-            if (_visability[i]->isChecked())
-            {
-                _list[i]->truncateToRange(start_date, end_date);
-                _window->addList(_list[i]);
-                window_is_empty = false;
-            }
-
-        if (!window_is_empty)
-        {
-            _window->show();
-            this->done(QDialog::Accepted);
-        }
-        else
-        {
-            delete _window;
-            _window = nullptr;
-            OGSError::box("No dataset selected.");
-        }
-    }
-    else
+    if (_list[0]->size() == 0)
     {
         OGSError::box("Invalid station data.");
         this->done(QDialog::Rejected);
+    }
+
+    // Data has been loaded.
+    // If loading lists beyond the first one fails at least nothing terrible will happen.
+    bool window_is_empty(false);
+    if (_window == nullptr)
+    {
+        _window = new DetailWindow();
+        _window->setAttribute(Qt::WA_DeleteOnClose);
+        window_is_empty = true;
+    }
+
+    for (std::size_t i = 0; i < _list.size(); i++)
+        if (_visability[i]->isChecked())
+        {
+            _list[i]->truncateToRange(start_date, end_date);
+            _window->addList(_list[i]);
+            window_is_empty = false;
+        }
+
+    if (!window_is_empty)
+    {
+        _window->show();
+        this->done(QDialog::Accepted);
+    }
+    else
+    {
+        delete _window;
+        _window = nullptr;
+        OGSError::box("No dataset selected.");
     }
 }
 

@@ -146,9 +146,6 @@ public:
     /// Returns the width of the bounding box of all data points within the list.
     double width() const { return _maxX - _minX; }
 
-    /// Converts string into QDateTime-format
-    static QDateTime getDateTime(QString s);
-
 private:
     /// Returns the minimum x-value of all the data points.
     float calcMinXValue();
@@ -161,7 +158,7 @@ private:
 
     /// Returns the maximum y-value of all the data points.
     float calcMaxYValue();
-    
+
     /**
      * Reads an ASCII file containing the coordinates in the following format:
      *        date (tab) value

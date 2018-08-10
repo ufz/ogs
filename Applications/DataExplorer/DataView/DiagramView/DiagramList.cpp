@@ -13,6 +13,7 @@
  */
 
 #include "DiagramList.h"
+#include "getDateTime.h"
 
 #include <logog/include/logog.hpp>
 
@@ -260,12 +261,12 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
         if (is_date)
         {
             l->setXUnit("day");
-            QDateTime startDate(getDateTime(QString::fromStdString(BaseLib::int2date(time_steps[0]))));
+            QDateTime const startDate(getDateTime(BaseLib::int2date(time_steps[0])));
             lists[i]->setStartDate(startDate);
             for (std::size_t j = 0; j < nValues; j++)
             {
-                QString const data_str = QString::fromStdString(BaseLib::int2date(time_steps[j]));
-                float numberOfSecs = static_cast<float>(startDate.secsTo(getDateTime(data_str)));
+                QDateTime const currentDate(getDateTime(BaseLib::int2date(time_steps[j])));
+                float numberOfSecs = static_cast<float>(startDate.secsTo(currentDate));
                 lists[i]->addNextPoint(numberOfSecs, (*time_series)[j]);
             }
         }
@@ -352,13 +353,4 @@ void DiagramList::update()
     _maxY = calcMaxYValue();
 }
 
-QDateTime DiagramList::getDateTime(QString stringDate)
-{
-    if (stringDate.length() == 10)
-        return QDateTime::fromString(stringDate, "dd.MM.yyyy");
 
-    if (stringDate.length() == 19)
-        return QDateTime::fromString(stringDate, "dd.MM.yyyy.HH.mm.ss");
-
-    return QDateTime();
-}

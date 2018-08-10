@@ -142,8 +142,8 @@ void DiagramScene::adjustAxis(qreal& min, qreal& max, int& numberOfTicks)
     numberOfTicks = int(ceil(max / step) - std::floor(min / step));
     if (numberOfTicks < MinTicks)
         numberOfTicks = MinTicks;
-    min = (std::floor(min / step) * step);
-    max = (ceil(max / step) * step);
+    min = std::floor(min / step) * step;
+    max = ceil(max / step) * step;
 }
 
 ///Calculates scaling factors to set coordinate system and graphs to default window size
