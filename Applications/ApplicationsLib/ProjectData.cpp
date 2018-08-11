@@ -130,8 +130,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
 
-    //! \ogs_file_param{prj__mesh}
     meshes.push_back(
+        //! \ogs_file_param{prj__mesh}
         readSingleMesh(config.getConfigParameter("mesh"), project_directory));
 
     std::string const geometry_file = BaseLib::copyPathToFileName(
