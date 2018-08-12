@@ -403,6 +403,21 @@ AddTest(
     cube_1e3_neumann_pcs_0_ts_1_t_1_000000_2.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_2.vtu D1_left_front_N1_right pressure 1e-2 1e-2
 )
 
+AddTest(
+    NAME ParallelFEM_GroundWaterFlow2D_NeumannBC
+    PATH EllipticPETSc
+    EXECUTABLE_ARGS square_1e1_neumann.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_bottom_N1_right pressure 1e-2 0
+    square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu D1_left_bottom_N1_right pressure 1e-2 0
+    square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure 1e-14 0
+    square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu pressure pressure 1e-14 0
+)
+
 # Single core
 # CUBE 1x1x1 GROUNDWATER FLOW TESTS
 foreach(mesh_size 1e0 1e1 1e2 1e3)
