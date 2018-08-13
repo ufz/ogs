@@ -15,10 +15,10 @@
                 <type>CreepBGRa</type>
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
-                <a>2.0833333333333334e-06</a>
-                <n>4.9</n>
-                <sigma0>1e6</sigma0>
-                <q>54000</q>
+                <a>A</a>
+                <n>n</n>
+                <sigma0>sigma_f</sigma0>
+                <q>Q</q>
                 <nonlinear_solver>
                     <maximum_iterations>1000</maximum_iterations>
                     <error_tolerance>2e-8</error_tolerance>
@@ -109,6 +109,27 @@
     </time_loop>
 
     <parameters>
+        <parameter>
+            <name>A</name>
+            <type>Constant</type>
+            <value>2.0833333333333334e-06</value>
+        </parameter>
+        <parameter>
+            <name>n</name>
+            <type>Constant</type>
+            <value>4.9</value>
+        </parameter>
+        <parameter>
+            <name>sigma_f</name>
+            <type>Constant</type>
+            <value>1.0e+6</value>
+        </parameter>
+        <parameter>
+            <name>Q</name>
+            <type>Constant</type>
+            <value>54000</value>
+        </parameter>
+
         <parameter>
             <name>E</name>
             <type>MeshElement</type>

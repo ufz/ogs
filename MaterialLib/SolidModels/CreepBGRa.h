@@ -18,6 +18,7 @@
 #include "LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/NewtonRaphson.h"
+#include "ProcessLib/Parameter/Parameter.h"
 
 namespace MaterialLib
 {
@@ -50,6 +51,8 @@ public:
     using KelvinMatrix =
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
+    using Parameter = ProcessLib::Parameter<double>;
+
     std::unique_ptr<
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
     createMaterialStateVariables() override
@@ -61,19 +64,21 @@ public:
     CreepBGRa(
         typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp,
         NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
-        const double A, const double n, const double sigma0, const double Q)
+        Parameter const& A, Parameter const& n, Parameter const& sigma_f,
+        Parameter const& Q)
         : LinearElasticIsotropic<DisplacementDim>(std::move(mp)),
           _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
+          _a(A),
           _n(n),
-          _coef(A * std::pow(1.5, 0.5 * (1 + _n)) / std::pow(sigma0, _n)),
+          _sigma_f(sigma_f),
           _q(Q)
     {
     }
 
-    boost::optional<std::tuple<KelvinVector,
-                               std::unique_ptr<typename MechanicsBase<
-                                   DisplacementDim>::MaterialStateVariables>,
-                               KelvinMatrix>>
+    boost::optional<
+        std::tuple<KelvinVector, std::unique_ptr<typename MechanicsBase<
+                                     DisplacementDim>::MaterialStateVariables>,
+                   KelvinMatrix>>
     integrateStress(
         double const t, ProcessLib::SpatialPosition const& x, double const dt,
         KelvinVector const& eps_prev, KelvinVector const& eps,
@@ -94,10 +99,10 @@ public:
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;
 
-    const double _n;  /// Creep rate exponent n.
-    /// \f$A\left(\frac{3}{2}\right)^{n/2+1}/\sigma_{eff}^n \f$
-    const double _coef;
-    const double _q;  /// Activation energy
+    Parameter const& _a;        /// A parameter determined by experiment.
+    Parameter const& _n;        /// Creep rate exponent n.
+    Parameter const& _sigma_f;  /// A stress scaling factor.
+    Parameter const& _q;        /// Activation energy
 };
 
 extern template class CreepBGRa<2>;

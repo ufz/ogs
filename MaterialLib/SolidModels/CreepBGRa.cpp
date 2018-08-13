@@ -43,9 +43,16 @@ CreepBGRa<DisplacementDim>::integrateStress(
     KelvinVector sigma_try = sigma_prev + C * (eps - eps_prev);
     ResidualVectorType solution = sigma_try;
 
+    const double A = _a(t, x)[0];
+    const double n = _n(t, x)[0];
+    const double sigma0 = _sigma_f(t, x)[0];
+    const double Q = _q(t, x)[0];
+
+    const double coef = A * std::pow(1.5, 0.5 * (1 + n)) / std::pow(sigma0, n);
+
     const double b =
-        dt * _coef *
-        std::exp(-_q / (MaterialLib::PhysicalConstant::IdealGasConstant * T));
+        dt * coef *
+        std::exp(-Q / (MaterialLib::PhysicalConstant::IdealGasConstant * T));
     auto const& deviatoric_matrix = Invariants::deviatoric_projection;
 
     // In newton_solver.solve(), the Jacobian is calculated first, and then
@@ -65,12 +72,12 @@ CreepBGRa<DisplacementDim>::integrateStress(
         double const norm_s_n1 = Invariants::FrobeniusNorm(s_n1);
         // side effect
         pow_norm_s_n1_n_minus_one_2b_G =
-            2.0 * b * this->_mp.mu(t, x) * std::pow(norm_s_n1, _n - 1);
-        jacobian = KelvinMatrix::Identity() +
-                   pow_norm_s_n1_n_minus_one_2b_G *
-                       (deviatoric_matrix +
-                        ((_n - 1) / (norm_s_n1 * norm_s_n1)) * s_n1 *
-                            s_n1.transpose());
+            2.0 * b * this->_mp.mu(t, x) * std::pow(norm_s_n1, n - 1);
+        jacobian =
+            KelvinMatrix::Identity() +
+            pow_norm_s_n1_n_minus_one_2b_G *
+                (deviatoric_matrix +
+                 ((n - 1) / (norm_s_n1 * norm_s_n1)) * s_n1 * s_n1.transpose());
     };
 
     auto const update_residual = [&](ResidualVectorType& r) {
@@ -110,11 +117,17 @@ double CreepBGRa<DisplacementDim>::getTemperatureRelatedCoefficient(
     double const t, double const dt, ProcessLib::SpatialPosition const& x,
     double const T, double const deviatoric_stress_norm) const
 {
-    return 2.0 * _coef *
-           std::exp(-_q /
+    const double A = _a(t, x)[0];
+    const double n = _n(t, x)[0];
+    const double sigma0 = _sigma_f(t, x)[0];
+    const double Q = _q(t, x)[0];
+
+    const double coef = A * std::pow(1.5, 0.5 * (1 + n)) / std::pow(sigma0, n);
+    return 2.0 * coef *
+           std::exp(-Q /
                     (MaterialLib::PhysicalConstant::IdealGasConstant * T)) *
-           this->_mp.mu(t, x) * std::pow(deviatoric_stress_norm, _n - 1) * dt *
-           _q / (MaterialLib::PhysicalConstant::IdealGasConstant * T * T);
+           this->_mp.mu(t, x) * std::pow(deviatoric_stress_norm, n - 1) * dt *
+           Q / (MaterialLib::PhysicalConstant::IdealGasConstant * T * T);
 }
 
 template class CreepBGRa<2>;
