@@ -68,7 +68,7 @@ DiagramScene::~DiagramScene()
 }
 
 /// Adds an arrow object to the diagram which might be used as a coordinate axis, etc.
-QArrow* DiagramScene::addArrow(float length, float angle, QPen &pen)
+QArrow* DiagramScene::addArrow(qreal length, qreal angle, QPen &pen)
 {
     auto* arrow = new QArrow(length, angle, 8, 5, pen);
     addItem(arrow);
@@ -130,7 +130,7 @@ QNonScalableGraphicsTextItem* DiagramScene::addNonScalableText(const QString &te
 }
 
 /// Resizes a given axis to "nice" dimensions and calculates an adequate number of ticks to be placed on it
-void DiagramScene::adjustAxis(float &min, float &max, int &numberOfTicks)
+void DiagramScene::adjustAxis(qreal& min, qreal& max, int& numberOfTicks)
 {
     const int MinTicks = 4;
     double grossStep = (max - min) / MinTicks;
@@ -151,8 +151,8 @@ void DiagramScene::adjustScaling()
 {
     if ( (_unscaledBounds.width() > 0) && (_unscaledBounds.height() > 0))
     {
-        _scaleX = DEFAULTX / (_unscaledBounds.width());
-        _scaleY = DEFAULTY / (_unscaledBounds.height());
+        _scaleX = DEFAULTX / static_cast<float>(_unscaledBounds.width());
+        _scaleY = DEFAULTY / static_cast<float>(_unscaledBounds.height());
     }
 }
 
@@ -184,10 +184,10 @@ void DiagramScene::constructGrid()
 {
     // be very careful with scaling parameters here!
     int numXTicks, numYTicks;
-    float xMin = _unscaledBounds.left();
-    float yMin = _unscaledBounds.top();
-    float xMax = _unscaledBounds.right();
-    float yMax = _unscaledBounds.bottom();
+    qreal xMin = _unscaledBounds.left();
+    qreal yMin = _unscaledBounds.top();
+    qreal xMax = _unscaledBounds.right();
+    qreal yMax = _unscaledBounds.bottom();
 
     adjustAxis(xMin, xMax, numXTicks);
     adjustAxis(yMin, yMax, numYTicks);
@@ -229,9 +229,9 @@ void DiagramScene::constructGrid()
 
     for (int j = 0; j <= numYTicks; ++j)
     {
-        float y     = _bounds.bottom() / _scaleY -
+        qreal y     = _bounds.bottom() / _scaleY -
                       (j * (_bounds.height() / _scaleY) / numYTicks);
-        float label = _bounds.top()   / _scaleY +
+        qreal label = _bounds.top()   / _scaleY +
                       (j * (_bounds.height() / _scaleY) / numYTicks);
         _yTicksText.push_back(addNonScalableText(QString::number(label)));
         _yTicksText.last()->setPos(_bounds.left() - MARGIN / 2, y * _scaleY);
@@ -284,7 +284,7 @@ int DiagramScene::getYAxisOffset()
 /// calculates axes-lengths, offsets, etc.
 void DiagramScene::initialize()
 {
-    QPen pen(Qt::black, 2, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
+    QPen pen(Qt::black, 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
     pen.setCosmetic(true);
 
     setXAxis(addArrow(_bounds.width(),  0, pen));

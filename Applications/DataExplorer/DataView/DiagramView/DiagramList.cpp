@@ -13,6 +13,7 @@
  */
 
 #include "DiagramList.h"
+#include "GetDateTime.h"
 
 #include <logog/include/logog.hpp>
 
@@ -171,9 +172,6 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
         }
 
         bool first_loop(true);
-        int numberOfSecs(0);
-        double value(0);
-        QString stringDate("");
         QDateTime startDate, currentDate;
         unsigned line_count (1);
 
@@ -184,7 +182,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
             fields = line.split('\t');
             if (fields.size() >= (nLists + 1))
             {
-                stringDate = fields.takeFirst();
+                QString const stringDate = fields.takeFirst();
                 currentDate = getDateTime(stringDate);
                 if (first_loop)
                 {
@@ -194,15 +192,12 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
                     first_loop = false;
                 }
 
-                numberOfSecs = startDate.secsTo(currentDate);
-
+                float const numberOfSecs = static_cast<float>(startDate.secsTo(currentDate));
                 for (int i = 0; i < nLists; i++)
                 {
-                    value =
-                        strtod(BaseLib::replaceString(
-                                   ",", ".", fields.takeFirst().toStdString())
-                                   .c_str(),
-                               nullptr);
+                    float const value = static_cast<float>(strtod(
+                        BaseLib::replaceString(",", ".", fields.takeFirst().toStdString()).c_str(),
+                        nullptr));
                     lists[i]->addNextPoint(numberOfSecs,value);
                 }
             }
@@ -266,12 +261,12 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
         if (is_date)
         {
             l->setXUnit("day");
-            QDateTime startDate(getDateTime(QString::fromStdString(BaseLib::int2date(time_steps[0]))));
+            QDateTime const startDate(getDateTime(BaseLib::int2date(time_steps[0])));
             lists[i]->setStartDate(startDate);
-            int numberOfSecs(0);
             for (std::size_t j = 0; j < nValues; j++)
             {
-                numberOfSecs = startDate.secsTo(getDateTime(QString::fromStdString(BaseLib::int2date(time_steps[j]))));
+                QDateTime const currentDate(getDateTime(BaseLib::int2date(time_steps[j])));
+                float numberOfSecs = static_cast<float>(startDate.secsTo(currentDate));
                 lists[i]->addNextPoint(numberOfSecs, (*time_series)[j]);
             }
         }
@@ -279,7 +274,8 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
         {
             l->setXUnit("time step");
             for (std::size_t j = 0; j < nValues; j++)
-                lists[i]->addNextPoint(time_steps[j], (*time_series)[j]);
+                lists[i]->addNextPoint(static_cast<float>(time_steps[j]),
+                                       (*time_series)[j]);
         }
 
         lists[i]->update();
@@ -288,9 +284,31 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
     return nLists;
 }
 
-void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)
+void DiagramList::truncateToRange(QDateTime const& start, QDateTime const& end)
 {
-    int numberOfDays;
+    float start_secs = static_cast<float>(_startDate.secsTo(start));
+    if (start_secs < 0)
+        start_secs = 0;
+    float end_secs = static_cast<float>(_startDate.secsTo(end));
+    if (end_secs < start_secs)
+        end_secs = _coords.back().first;
+
+    if (start_secs == 0 && end_secs == _coords.back().first)
+        return;
+
+    _coords.erase(std::remove_if(_coords.begin(), _coords.end(),
+        [&](std::pair<float, float> const& c){return (c.first<start_secs || c.first>end_secs);}),
+        _coords.end());
+    _startDate = start;
+    for (auto& c : _coords)
+        c.first -= start_secs;
+    update();
+}
+
+void DiagramList::setList(std::vector<std::pair<QDateTime, float>> const& coords)
+{
+    if (coords.empty())
+        return;
 
     this->_startDate = coords[0].first;
     _coords.emplace_back(0.0f, coords[0].second);
@@ -298,16 +316,19 @@ void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)
     std::size_t nCoords = coords.size();
     for (std::size_t i = 1; i < nCoords; i++)
     {
-        numberOfDays = this->_startDate.daysTo(coords[i].first);
-        _coords.emplace_back(static_cast<float>(numberOfDays),
-                             coords[i].second);
+        _coords.emplace_back(
+            static_cast<float>(_startDate.daysTo(coords[i].first)),
+            coords[i].second);
     }
 
     update();
 }
 
-void DiagramList::setList(std::vector< std::pair<float, float> > coords)
+void DiagramList::setList(std::vector< std::pair<float, float> > const& coords)
 {
+    if (coords.empty())
+        return;
+
     this->_startDate = QDateTime();
     std::size_t nCoords = coords.size();
     for (std::size_t i = 0; i < nCoords; i++)
@@ -332,10 +353,4 @@ void DiagramList::update()
     _maxY = calcMaxYValue();
 }
 
-QDateTime DiagramList::getDateTime(QString stringDate)
-{
-    if (stringDate.length() <= 10)
-        return QDateTime::fromString(stringDate, "dd.MM.yyyy");
 
-    return QDateTime::fromString(stringDate, "dd.MM.yyyy.HH.mm.ss");
-}

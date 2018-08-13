@@ -12,9 +12,10 @@
  *
  */
 
+#include "DiagramPrefsDialog.h"
 #include "DetailWindow.h"
 #include "DiagramList.h"
-#include "DiagramPrefsDialog.h"
+#include "GetDateTime.h"
 #include "OGSError.h"
 #include "Station.h"
 
@@ -67,47 +68,51 @@ DiagramPrefsDialog::~DiagramPrefsDialog()
 
 void DiagramPrefsDialog::accept()
 {
-    if ((fromDateLine->text().length() > 0) && (toDateLine->text().length() > 0) &&
-        (!_list.empty()))
+    QDateTime start_date(getDateTime(fromDateLine->text()));
+    QDateTime end_date(getDateTime(toDateLine->text()));
+
+    if (start_date == QDateTime() || end_date == QDateTime() ||
+        start_date > end_date || _list.empty())
     {
-        // data has been loaded
-        if (_list[0]->size() > 0)
-        {
-            bool window_is_empty(false);
-            if (_window == nullptr)
-            {
-                _window = new DetailWindow();
-                _window->setAttribute(Qt::WA_DeleteOnClose);
-                window_is_empty = true;
-            }
+        OGSError::box("No data found...");
+        return;
+    }
 
-            for (std::size_t i = 0; i < _list.size(); i++)
-                if (this->_visability[i]->isChecked())
-                {
-                    _window->addList(_list[i]);
-                    window_is_empty = false;
-                }
+    if (_list[0]->size() == 0)
+    {
+        OGSError::box("Invalid station data.");
+        this->done(QDialog::Rejected);
+    }
 
-            if (!window_is_empty)
-            {
-                _window->show();
-                this->done(QDialog::Accepted);
-            }
-            else
-            {
-                delete _window;
-                _window = nullptr;
-                OGSError::box("No dataset selected.");
-            }
-        }
-        else
+    // Data has been loaded.
+    // If loading lists beyond the first one fails at least nothing terrible will happen.
+    bool window_is_empty(false);
+    if (_window == nullptr)
+    {
+        _window = new DetailWindow();
+        _window->setAttribute(Qt::WA_DeleteOnClose);
+        window_is_empty = true;
+    }
+
+    for (std::size_t i = 0; i < _list.size(); i++)
+        if (_visability[i]->isChecked())
         {
-            OGSError::box("Invalid station data.");
-            this->done(QDialog::Rejected);
+            _list[i]->truncateToRange(start_date, end_date);
+            _window->addList(_list[i]);
+            window_is_empty = false;
         }
+
+    if (!window_is_empty)
+    {
+        _window->show();
+        this->done(QDialog::Accepted);
     }
     else
-        OGSError::box("No data found...");
+    {
+        delete _window;
+        _window = nullptr;
+        OGSError::box("No dataset selected.");
+    }
 }
 
 void DiagramPrefsDialog::reject()
@@ -139,10 +144,9 @@ int DiagramPrefsDialog::loadFile(const QString &filename)
             // item->setYUnit("metres");
             item->setColor(QColor(Qt::red));
         }
-        fromDateLine->setText(_list[0]->getStartDate().toString("dd.MM.yyyy")); //QString::number(_list[0]->minXValue()));
-        QDateTime endDate =
-                _list[0]->getStartDate().addSecs(static_cast<int>(_list[0]->maxXValue()));
-        toDateLine->setText(endDate.toString("dd.MM.yyyy")); //QString::number(_list[0]->maxXValue()));
+        fromDateLine->setText(_list[0]->getStartDate().toString("dd.MM.yyyy"));
+        QDateTime endDate = _list[0]->getStartDate().addSecs(static_cast<int>(_list[0]->maxXValue()));
+        toDateLine->setText(endDate.toString("dd.MM.yyyy"));
         this->createVisibilityCheckboxes();
         return 1;
     }

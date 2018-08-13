@@ -107,6 +107,10 @@ public:
 
     /// Adds a point at (x,y) to the list
     void addNextPoint(float x, float y) { _coords.emplace_back(x, y); }
+
+    /// cut list entries not within the given range
+    void truncateToRange(QDateTime const& start, QDateTime const& end);
+
     /// Sets the start date (i.e. the min-value of the x-axis).
     void setStartDate(QDateTime date) { _startDate = date; }
 
@@ -120,7 +124,7 @@ public:
      * Sets the list of x/y-coordinates.
      * \param coords List of coordinates.
      */
-    void setList(std::vector< std::pair<float, float> > coords);
+    void setList(std::vector< std::pair<float, float> > const& coords);
 
     /**
      * Sets the list of x/y-coordinates.
@@ -128,7 +132,7 @@ public:
      * days from the first date (which is set as day 0)
      * \param coords List of coordinates.
      */
-    void setList(std::vector< std::pair<QDateTime, float> > coords);
+    void setList(std::vector< std::pair<QDateTime, float> > const& coords);
 
     /// Specifies the unit of the x Axis.
     void setXUnit(QString unit) { _xUnit = unit; }
@@ -154,8 +158,6 @@ private:
 
     /// Returns the maximum y-value of all the data points.
     float calcMaxYValue();
-
-    static QDateTime getDateTime(QString s);
 
     /**
      * Reads an ASCII file containing the coordinates in the following format:

@@ -25,9 +25,9 @@ const double PI = 3.14159265;
 class QArrow : public QGraphicsItem
 {
 public:
-    QArrow(float l, float a, float hl, float hw, QPen& pen,
+    QArrow(qreal l, qreal a, qreal hl, qreal hw, QPen& pen,
            QGraphicsItem* parent = nullptr);
-    QArrow(float l, float a, QPen& pen, QGraphicsItem* parent = nullptr);
+    QArrow(qreal l, qreal a, QPen& pen, QGraphicsItem* parent = nullptr);
     ~QArrow() override;
 
     double getLength();
@@ -35,16 +35,16 @@ public:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget) override;
     QRectF boundingRect() const override;
-    void setAngle(double a);
-    void setLength(double l);
+    void setAngle(qreal a);
+    void setLength(qreal l);
 
 private:
     double calcCos(double angle);
     double calcSin(double angle);
 
-    float _arrowLength;
-    float _arrowAngle;
-    float _headLength;
-    float _headWidth;
+    qreal _arrowLength;
+    qreal _arrowAngle;
+    qreal _headLength;
+    qreal _headWidth;
     QPen _arrowPen;
 };

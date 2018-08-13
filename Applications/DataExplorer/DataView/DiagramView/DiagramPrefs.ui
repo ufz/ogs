@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>267</width>
-    <height>236</height>
+    <width>317</width>
+    <height>244</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,7 +45,16 @@
    </item>
    <item>
     <layout class="QGridLayout" name="DateBoundsLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
       <number>10</number>
      </property>
      <property name="spacing">

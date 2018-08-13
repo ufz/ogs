@@ -32,7 +32,7 @@ public:
     DiagramScene(DiagramList* list, QObject* parent = nullptr);
     ~DiagramScene() override;
 
-    QArrow* addArrow(float length, float angle, QPen &pen);
+    QArrow* addArrow(qreal length, qreal angle, QPen &pen);
     void addGraph(DiagramList* list);
     QGraphicsGrid* addGrid(const QRectF &rect, int xTicks, int yTicks, const QPen &pen);
 
@@ -42,7 +42,7 @@ private:
     void addCaption(const QString &name, QPen &pen);
     QNonScalableGraphicsTextItem* addNonScalableText(const QString &text,
                                                      const QFont &font = QFont());
-    void adjustAxis(float &min, float &max, int &numberOfTicks);
+    void adjustAxis(qreal& min, qreal& max, int& numberOfTicks);
     void adjustScaling();
     void clearGrid();
     void constructGrid();
