@@ -10,7 +10,7 @@ set(SOURCES
 
 set(HEADERS
     DiagramList.h
-    getDateTime.h
+    GetDateTime.h
     QArrow.h
     QGraphicsGrid.h
     DiagramScene.h

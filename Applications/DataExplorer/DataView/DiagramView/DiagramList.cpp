@@ -13,7 +13,7 @@
  */
 
 #include "DiagramList.h"
-#include "getDateTime.h"
+#include "GetDateTime.h"
 
 #include <logog/include/logog.hpp>
 

@@ -15,7 +15,7 @@
 #include "DiagramPrefsDialog.h"
 #include "DetailWindow.h"
 #include "DiagramList.h"
-#include "getDateTime.h"
+#include "GetDateTime.h"
 #include "OGSError.h"
 #include "Station.h"
 
