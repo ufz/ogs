@@ -85,7 +85,8 @@ void DiagramPrefsDialog::accept()
     }
 
     // Data has been loaded.
-    // If loading lists beyond the first one fails at least nothing terrible will happen.
+    // If loading lists beyond the first one fails at least nothing terrible
+    // will happen.
     bool window_is_empty(false);
     if (_window == nullptr)
     {
@@ -145,7 +146,8 @@ int DiagramPrefsDialog::loadFile(const QString &filename)
             item->setColor(QColor(Qt::red));
         }
         fromDateLine->setText(_list[0]->getStartDate().toString("dd.MM.yyyy"));
-        QDateTime endDate = _list[0]->getStartDate().addSecs(static_cast<int>(_list[0]->maxXValue()));
+        QDateTime endDate = _list[0]->getStartDate().addSecs(
+            static_cast<int>(_list[0]->maxXValue()));
         toDateLine->setText(endDate.toString("dd.MM.yyyy"));
         this->createVisibilityCheckboxes();
         return 1;

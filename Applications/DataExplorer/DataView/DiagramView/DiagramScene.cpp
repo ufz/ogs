@@ -68,7 +68,7 @@ DiagramScene::~DiagramScene()
 }
 
 /// Adds an arrow object to the diagram which might be used as a coordinate axis, etc.
-QArrow* DiagramScene::addArrow(qreal length, qreal angle, QPen &pen)
+QArrow* DiagramScene::addArrow(qreal length, qreal angle, QPen& pen)
 {
     auto* arrow = new QArrow(length, angle, 8, 5, pen);
     addItem(arrow);
@@ -229,9 +229,9 @@ void DiagramScene::constructGrid()
 
     for (int j = 0; j <= numYTicks; ++j)
     {
-        qreal y     = _bounds.bottom() / _scaleY -
-                      (j * (_bounds.height() / _scaleY) / numYTicks);
-        qreal label = _bounds.top()   / _scaleY +
+        qreal y = _bounds.bottom() / _scaleY -
+                  (j * (_bounds.height() / _scaleY) / numYTicks);
+        qreal label = _bounds.top() / _scaleY +
                       (j * (_bounds.height() / _scaleY) / numYTicks);
         _yTicksText.push_back(addNonScalableText(QString::number(label)));
         _yTicksText.last()->setPos(_bounds.left() - MARGIN / 2, y * _scaleY);

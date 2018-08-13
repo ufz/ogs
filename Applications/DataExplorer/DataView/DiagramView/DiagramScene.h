@@ -32,7 +32,7 @@ public:
     DiagramScene(DiagramList* list, QObject* parent = nullptr);
     ~DiagramScene() override;
 
-    QArrow* addArrow(qreal length, qreal angle, QPen &pen);
+    QArrow* addArrow(qreal length, qreal angle, QPen& pen);
     void addGraph(DiagramList* list);
     QGraphicsGrid* addGrid(const QRectF &rect, int xTicks, int yTicks, const QPen &pen);
 

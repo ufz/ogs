@@ -124,7 +124,7 @@ public:
      * Sets the list of x/y-coordinates.
      * \param coords List of coordinates.
      */
-    void setList(std::vector< std::pair<float, float> > const& coords);
+    void setList(std::vector<std::pair<float, float>> const& coords);
 
     /**
      * Sets the list of x/y-coordinates.
@@ -132,7 +132,7 @@ public:
      * days from the first date (which is set as day 0)
      * \param coords List of coordinates.
      */
-    void setList(std::vector< std::pair<QDateTime, float> > const& coords);
+    void setList(std::vector<std::pair<QDateTime, float>> const& coords);
 
     /// Specifies the unit of the x Axis.
     void setXUnit(QString unit) { _xUnit = unit; }

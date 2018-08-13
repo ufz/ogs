@@ -26,7 +26,8 @@
  * \param parent The parent QGraphicsItem.
  */
 QArrow::QArrow(qreal l, qreal a, qreal hl, qreal hw, QPen& pen,
-               QGraphicsItem* parent) : QGraphicsItem(parent)
+               QGraphicsItem* parent)
+    : QGraphicsItem(parent)
 {
     _arrowLength = l;
     _arrowAngle  = a;
