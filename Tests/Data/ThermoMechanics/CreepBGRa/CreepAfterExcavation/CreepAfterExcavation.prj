@@ -111,8 +111,8 @@
     <parameters>
         <parameter>
             <name>A</name>
-            <type>Constant</type>
-            <value>2.0833333333333334e-06</value>
+            <type>MeshElement</type>
+            <field_name>A</field_name>
         </parameter>
         <parameter>
             <name>n</name>

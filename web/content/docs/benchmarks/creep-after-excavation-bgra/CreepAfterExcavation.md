@@ -40,7 +40,7 @@ material group is for rock salt. The material properties of the rocks are given 
 ---------------------- ---------- ----------- ------------
 
 The parameters of the BGRa creep model are $A=0.18\, \mbox{d}^{-1}$,
-$m=5$, $Q=54 \mbox{ kJ/mol}$.
+$m=5$, $Q=54 \mbox{ kJ/mol}$ for the rock salt. For the cap rock, $A$ is set to zero.
 
 
 The width
@@ -53,7 +53,7 @@ assume a steady state of stress and temperature of excavation at the
 beginning of the current simulation. For this assumption, the boundary
 conditions are given as:
 
--   top boundary: $\tau_x = \sigma_x=0$, $\tau_y=\sigma_y=70$ MPa,
+-   top boundary: $\tau_x =$$\sigma_x$$_y=0$, $\tau_y=\sigma_y=-10$ MPa,
     $T=310$ K.
 
 -   two lateral boundaries: normal displacement is fixed, and no heat
