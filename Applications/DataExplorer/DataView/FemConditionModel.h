@@ -24,7 +24,7 @@ class FemConditionModel : public TreeModel
 public:
     FemConditionModel(QObject* parent = nullptr);
 
-    int columnCount() const { return 2; }
+    int columnCount(const QModelIndex& /*parent*/ = QModelIndex()) const { return 2; }
 
 public slots:
     /// Clears the tree.
