@@ -20,6 +20,12 @@ namespace Solids
 {
 namespace Creep
 {
+double getCreepConstantCoefficient(const double A, const double n,
+                                   const double sigma0)
+{
+    return A * std::pow(1.5, 0.5 * (1 + n)) / std::pow(sigma0, n);
+}
+
 template <int DisplacementDim>
 boost::optional<std::tuple<typename CreepBGRa<DisplacementDim>::KelvinVector,
                            std::unique_ptr<typename MechanicsBase<
@@ -48,10 +54,11 @@ CreepBGRa<DisplacementDim>::integrateStress(
     const double sigma0 = _sigma_f(t, x)[0];
     const double Q = _q(t, x)[0];
 
-    const double coef = A * std::pow(1.5, 0.5 * (1 + n)) / std::pow(sigma0, n);
+    const double constant_coefficient =
+        getCreepConstantCoefficient(A, n, sigma0);
 
     const double b =
-        dt * coef *
+        dt * constant_coefficient *
         std::exp(-Q / (MaterialLib::PhysicalConstant::IdealGasConstant * T));
     auto const& deviatoric_matrix = Invariants::deviatoric_projection;
 
@@ -122,8 +129,10 @@ double CreepBGRa<DisplacementDim>::getTemperatureRelatedCoefficient(
     const double sigma0 = _sigma_f(t, x)[0];
     const double Q = _q(t, x)[0];
 
-    const double coef = A * std::pow(1.5, 0.5 * (1 + n)) / std::pow(sigma0, n);
-    return 2.0 * coef *
+    const double constant_coefficient =
+        getCreepConstantCoefficient(A, n, sigma0);
+
+    return 2.0 * constant_coefficient *
            std::exp(-Q /
                     (MaterialLib::PhysicalConstant::IdealGasConstant * T)) *
            this->_mp.mu(t, x) * std::pow(deviatoric_stress_norm, n - 1) * dt *
