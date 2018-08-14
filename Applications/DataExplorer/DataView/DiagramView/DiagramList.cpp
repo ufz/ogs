@@ -30,16 +30,12 @@ DiagramList::~DiagramList() = default;
 
 float DiagramList::calcMinXValue()
 {
-    float min = std::numeric_limits<float>::max();
-    std::size_t nCoords = _coords.size();
-    for (std::size_t i = 0; i < nCoords; i++)
-    {
-        if (_coords[i].first < min)
-        {
-            min = _coords[i].first;
-        }
-    }
-    return min;
+    auto min = std::min_element(
+        _coords.begin(), _coords.end(),
+        [](auto const& c0, auto const& c1) { return c0.first < c1.first; });
+    if (min != _coords.end())
+        return min->first;
+    return std::numeric_limits<float>::max();
 }
 
 float DiagramList::calcMaxXValue()
