@@ -15,9 +15,9 @@ author = "Wenqing Wang"
 
 The BGRa stationary creep model defines the uniaxial creep strain
 increment as
-$$\Delta{ \epsilon}^c=Ae^{-Q/R_uT}\left(\dfrac{{ \sigma}}{{ \sigma}_f}\right)^m \Delta t
+$$\Delta{ \epsilon}^c=Ae^{-Q/R_uT}\left(\dfrac{{ \sigma_1}}{{ \sigma}_f}\right)^m \Delta t
 $$
- where $A$, $m$ and $Q$ are parameters determined
+ where $\sigma_1$ is the stress, $A$, $m$ and $Q$ are parameters determined
 by experiments, $Q$ is called activation energy,
 $R_u=8.314472 \mbox{J/(Kmol)}$ is the universal gas constant, and
 ${ \sigma}_f$ is a stress scaling factor.
@@ -27,24 +27,30 @@ Creep potential and creep strain
 
 Assume there is a creep potential $g^c$ and the creep induced strain
 rate is given by the flow rule
-$$\dot { \mathbf \epsilon}^c ({ \sigma})= \frac{2}{3}{\dfrac{\partial g^c}{\partial { \mathbf \sigma}}}
-$$ where ${ \sigma}$ is the equivalence stress
-defined by
-${ \sigma}={\sqrt{{\frac{3}{2}}}}{\left\Vert{\mathbf s}\right\Vert}$
-with ${\mathbf s}= { \mathbf \sigma}-\frac{1}{3}{ \sigma}{\mathbf I}$,
-the deviatoric stress. The creep strain rate is then expressed as
+$$\dot { \mathbf \epsilon}^c ({ \mathbf \sigma})= {\dfrac{\partial g^c}{\partial { \mathbf \sigma}}}
+$$ where ${ \mathbf\sigma}$ is the stress tensor.
+To establish equivalence between the three-dimensional and the uniaxial formulation given above,
+ we use the effective stress defined by
+${ \bar\sigma}={\sqrt{{\frac{3}{2}}}}{\left\Vert{\mathbf s}\right\Vert}$
+with ${\mathbf s}= { \mathbf \sigma}-\frac{1}{3}{ \mathrm{tr}(\mathbf\sigma}){\mathbf I}$,
+the deviatoric stress. 
+The creep strain rate is then expressed as
 $$\begin{gathered}
-\dot { \mathbf \epsilon}^c ({ \sigma})= \frac{2}{3} {\dfrac{\partial g^c}{\partial { \sigma}}}{\dfrac{\partial { \sigma}}{\partial { \mathbf \sigma}}}=\sqrt{{\frac{2}{3}}}{\dfrac{\partial g^c}{\partial { \sigma}}}\dfrac{{\mathbf s}}{{\left\Vert{\mathbf s}\right\Vert}}={\dfrac{\partial g^c}{\partial { \sigma}}}\dfrac{{\mathbf s}}{\sigma}
+\dot { \mathbf \epsilon}^c ({ \sigma})=  {\dfrac{\partial g^c}{\partial {\bar\sigma}}}
+{\dfrac{\partial { \bar\sigma}}{\partial { \mathbf \sigma}}}
+=\sqrt{{\frac{2}{3}}}{\dfrac{\partial g^c}{\partial {\bar \sigma}}}\dfrac{{\mathbf s}}{{\left\Vert{\mathbf s}\right\Vert}}
 \end{gathered}$$
  The above creep strain rate expression
-must be valid for the problems with different dimension. Applying
-the creep rate equation to one dimensional leads to
+must be valid for problems independent from the Euclidean dimension. Applying
+the creep rate equation to a uniaxial stress state ${\mathbf \sigma} = \mathrm{diag}[\sigma_1, 0, 0]$,
+ which gives ${\mathbf s} = \mathrm{diag}[\frac{2}{3}\sigma_1, -\frac{2}{3}\sigma_1, -\frac{2}{3}\sigma_1]$,
+ we have
  $$\begin{gathered}
-\dot { \epsilon}^c = {\dfrac{\partial g^c}{\partial { \sigma}}}{\color{red} {\frac{2}{3}}}=Ae^{-Q/R_uT}\left(\dfrac{{ \sigma}}{{ \sigma}_f}\right)^m
-\end{gathered}$$ which says 
-
+\dot { \epsilon_1}^c = {\dfrac{\partial g^c}{\partial { \bar\sigma}}}=Ae^{-Q/R_uT}\left(\dfrac{{ \sigma_1}}{{ \sigma}_f}\right)^m
+\end{gathered}$$
+which says 
 $$\begin{gathered}
- {\dfrac{\partial g^c}{\partial { \sigma}}}={\color{red}{\frac{3}{2}}}Ae^{-Q/R_u T}\left(\dfrac{{ \sigma}}{{ \sigma}_f}\right)^m
+ {\dfrac{\partial g^c}{\partial { \bar\sigma}}}=Ae^{-Q/R_u T}\left(\dfrac{{ \sigma_1}}{{ \sigma}_f}\right)^m
 \end{gathered}$$
 
 Therefore, the creep strain rate for multi-dimensional problems can be

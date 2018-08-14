@@ -22,6 +22,7 @@
 #include "BaseLib/Error.h"
 
 #include "ProcessLib/Parameter/Parameter.h"
+#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 
 namespace MaterialLib
 {
@@ -39,27 +40,27 @@ createCreepBGRa(
     config.checkConfigParameter("type", "CreepBGRa");
     DBUG("Create CreepBGRa material");
 
-    // Read elastic data frist.
+    // Read elastic data first.
     const bool skip_type_checking = true;
     auto elastic_data =
         MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
             parameters, config, skip_type_checking);
 
-    //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__a}
-    const auto A = config.getConfigParameter<double>("a");
-    DBUG("CreepBGRa parameter A=%g", A);
+    auto& A = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__a}
+        config, "a", parameters, 1);
 
-    //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__n}
-    const auto n = config.getConfigParameter<double>("n");
-    DBUG("CreepBGRa parameter n=%g", n);
+    auto& n = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__n}
+        config, "n", parameters, 1);
 
-    //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__sigma0}
-    const auto sigma0 = config.getConfigParameter<double>("sigma0");
-    DBUG("CreepBGRa parameter sigma0=%g", sigma0);
+    auto& sigma0 = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__sigma0}
+        config, "sigma0", parameters, 1);
 
-    //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__q}
-    const auto Q = config.getConfigParameter<double>("q");
-    DBUG("CreepBGRa parameter Q=%g", Q);
+    auto& Q = ProcessLib::findParameter<double>(
+        //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__q}
+        config, "q", parameters, 1);
 
     auto const nonlinear_solver_parameters =
         createNewtonRaphsonSolverParameters(config);
