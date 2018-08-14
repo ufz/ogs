@@ -76,6 +76,10 @@ public:
     /// interpolation
     void partitionByMETIS(const bool is_mixed_high_order_linear_elems);
 
+    std::vector<Partition> partitionOtherMesh(
+        MeshLib::Mesh const& mesh,
+        bool const is_mixed_high_order_linear_elems) const;
+
     /// Write the partitions into ASCII files
     /// \param file_name_base The prefix of the file name.
     void writeASCII(const std::string& file_name_base);
@@ -83,6 +87,9 @@ public:
     /// Write the partitions into binary files
     /// \param file_name_base The prefix of the file name.
     void writeBinary(const std::string& file_name_base);
+
+    void writeOtherMesh(std::string const& output_filename_base,
+                        std::vector<Partition> const& partitions) const;
 
     void resetPartitionIdsForNodes(
         std::vector<std::size_t>&& node_partition_ids)
@@ -116,34 +123,6 @@ private:
     /// elements of a mesh can be used for both linear and high order
     /// interpolation
     void renumberNodeIndices(const bool is_mixed_high_order_linear_elems);
-
-    /// 1 copy pointers to nodes belonging to the partition part_id
-    /// 2 collect non-linear element nodes belonging to the partition part_id in
-    /// extra_nodes
-    void findNonGhostNodesInPartition(
-        std::size_t const part_id,
-        const bool is_mixed_high_order_linear_elems,
-        std::vector<MeshLib::Node*>& extra_nodes);
-
-    /// 1 find elements belonging to the partition part_id:
-    /// fills vector partition.regular_elements
-    /// 2 find ghost elements belonging to the partition part_id
-    /// fills vector partition.ghost_elements
-    void findElementsInPartition(std::size_t const part_id);
-
-    /// Prerequisite: the ghost elements has to be found (using
-    /// findElementsInPartition).
-    /// Finds ghost nodes and non-linear element ghost nodes by walking over
-    /// ghost elements.
-    void findGhostNodesInPartition(std::size_t const part_id,
-                                   const bool is_mixed_high_order_linear_elems,
-                                   std::vector<MeshLib::Node*>& extra_nodes);
-
-    void splitOffHigherOrderNode(std::vector<MeshLib::Node*> const& nodes,
-                                 bool const is_mixed_high_order_linear_elems,
-                                 unsigned const node_id,
-                                 std::vector<MeshLib::Node*>& base_nodes,
-                                 std::vector<MeshLib::Node*>& extra_nodes);
 
     void processPartition(std::size_t const part_id,
                           const bool is_mixed_high_order_linear_elems);

@@ -27,8 +27,8 @@
 
 #include "MeshLib/IO/readMeshFromFile.h"
 
-#include "NodeWiseMeshPartitioner.h"
 #include "Metis.h"
+#include "NodeWiseMeshPartitioner.h"
 
 using namespace ApplicationUtils;
 
@@ -79,6 +79,12 @@ int main(int argc, char* argv[])
 
     TCLAP::SwitchArg ascii_flag("a", "ascii", "Enable ASCII output.", false);
     cmd.add(ascii_flag);
+
+    // All the remaining arguments are used as file names for boundary/subdomain
+    // meshes.
+    TCLAP::UnlabeledMultiArg<std::string> other_meshes_filenames_arg(
+        "other_meshes_filenames", "mesh file names.", false, "file");
+    cmd.add(other_meshes_filenames_arg);
 
     cmd.parse(argc, argv);
 
@@ -155,7 +161,27 @@ int main(int argc, char* argv[])
     removeMetisPartitioningFiles(input_file_name_wo_extension, num_partitions);
 
     INFO("Partitioning the mesh in the node wise way ...");
-    mesh_partitioner.partitionByMETIS(lh_elems_flag.getValue());
+    bool const is_mixed_high_order_linear_elems = lh_elems_flag.getValue();
+    mesh_partitioner.partitionByMETIS(is_mixed_high_order_linear_elems);
+
+    INFO("Partitioning other meshes according to the main mesh partitions.");
+    for (auto const& filename : other_meshes_filenames_arg.getValue())
+    {
+        std::unique_ptr<MeshLib::Mesh> mesh(
+            MeshLib::IO::readMeshFromFile(filename));
+        INFO("Mesh read: %d nodes, %d elements.",
+             mesh->getNumberOfNodes(),
+             mesh->getNumberOfElements());
+
+        std::string const output_file_name_wo_extension = BaseLib::joinPaths(
+            output_directory_arg.getValue(),
+            BaseLib::extractBaseNameWithoutExtension(filename));
+        auto const partitions = mesh_partitioner.partitionOtherMesh(
+            *mesh, is_mixed_high_order_linear_elems);
+        mesh_partitioner.writeOtherMesh(output_file_name_wo_extension,
+                                        partitions);
+    }
+
     if (ascii_flag.getValue())
     {
         INFO("Write the data of partitions into ASCII files ...");
