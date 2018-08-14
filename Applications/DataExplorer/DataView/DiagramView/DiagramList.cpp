@@ -355,16 +355,13 @@ void DiagramList::setList(
         return;
     }
 
-    this->_startDate = coords[0].first;
-    _coords.emplace_back(0.0f, coords[0].second);
-
-    std::size_t nCoords = coords.size();
-    for (std::size_t i = 1; i < nCoords; i++)
-    {
-        _coords.emplace_back(
-            static_cast<float>(_startDate.daysTo(coords[i].first)),
-            coords[i].second);
-    }
+    _startDate = coords[0].first;
+    std::transform(coords.begin(), coords.end(), std::back_inserter(_coords),
+                   [this](auto const& p) {
+                       return std::make_pair(
+                           static_cast<float>(_startDate.daysTo(p.first)),
+                           p.second);
+                   });
 
     update();
 }
