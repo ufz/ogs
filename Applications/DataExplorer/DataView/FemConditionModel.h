@@ -11,7 +11,7 @@
 #pragma once
 
 #include "Applications/DataHolderLib/FemCondition.h"
-#include "TreeModel.h"
+#include "Applications/DataExplorer/Base/TreeModel.h"
 
 /**
  * \brief A model for the display of information from boundary conditions and
