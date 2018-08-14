@@ -346,10 +346,7 @@ void DiagramList::setList(std::vector<std::pair<float, float>> const& coords)
 
 std::size_t DiagramList::size() const
 {
-    if (!(_coords.empty()))
-        return _coords.size();
-
-    return 0;
+    return _coords.size();
 }
 
 void DiagramList::update()
