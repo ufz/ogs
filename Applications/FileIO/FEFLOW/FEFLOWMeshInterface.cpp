@@ -454,7 +454,7 @@ MeshLib::Element* FEFLOWMeshInterface::readElement(
     ss >> ele_type;
 
     MeshLib::MeshElemType elem_type;
-    int n_nodes_of_element;
+    std::size_t n_nodes_of_element;
     switch (ele_type)
     {
         case 6:
