@@ -200,9 +200,27 @@ void XmlGmlInterface::readPolylines(
         }
 
         QDomElement point = polyline.firstChildElement();
+        auto accessOrError =
+            [this, &polyline](auto pt_idx) {
+                auto search = _idx_map.find(pt_idx);
+                if (search == _idx_map.end())
+                {
+                    std::string polyline_name;
+                    if (polyline.hasAttribute("name"))
+                        polyline_name =
+                            polyline.attribute("name").toStdString();
+                    OGS_FATAL(
+                        "Polyline `%s' contains the point id `%d', but the "
+                        "id is not in the point list.",
+                        polyline_name.c_str(), pt_idx);
+                }
+                return search->second;
+            };
+
         while (!point.isNull())
         {
-            (*polylines)[idx]->addPoint(pnt_id_map[_idx_map[point.text().toInt()]]);
+            (*polylines)[idx]->addPoint(
+                pnt_id_map[accessOrError(point.text().toInt())]);
             point = point.nextSiblingElement();
         }
 
@@ -226,12 +244,32 @@ void XmlGmlInterface::readSurfaces(
             sfc_names->insert( std::pair<std::string, std::size_t>( surface.attribute("name").toStdString(),
                                                                     surfaces->size()-1) );
 
+        auto accessOrError =
+            [this, &surface](auto pt_idx) {
+                auto search = _idx_map.find(pt_idx);
+                if (search == _idx_map.end())
+                {
+                    std::string surface_name;
+                    if (surface.hasAttribute("name"))
+                        surface_name =
+                            surface.attribute("name").toStdString();
+                    OGS_FATAL(
+                        "Surface `%s' contains the point id `%d', but the "
+                        "id is not in the point list.",
+                        surface_name.c_str(), pt_idx);
+                }
+                return search->second;
+            };
+
         QDomElement element = surface.firstChildElement();
         while (!element.isNull())
         {
-            std::size_t p1 = pnt_id_map[_idx_map[element.attribute("p1").toInt()]];
-            std::size_t p2 = pnt_id_map[_idx_map[element.attribute("p2").toInt()]];
-            std::size_t p3 = pnt_id_map[_idx_map[element.attribute("p3").toInt()]];
+            std::size_t p1 =
+                pnt_id_map[accessOrError(element.attribute("p1").toInt())];
+            std::size_t p2 =
+                pnt_id_map[accessOrError(element.attribute("p2").toInt())];
+            std::size_t p3 =
+                pnt_id_map[accessOrError(element.attribute("p3").toInt())];
             surfaces->back()->addTriangle(p1,p2,p3);
             element = element.nextSiblingElement();
         }
