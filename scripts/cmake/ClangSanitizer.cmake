@@ -11,7 +11,7 @@ if(OGS_ADDRESS_SANITIZER)
 endif()
 
 if(OGS_UNDEFINED_BEHAVIOR_SANITIZER)
-    set(SANITIZE_FLAG_VALUE "${SANITIZE_FLAG_VALUE},undefined,integer -fsanitize-blacklist=${CMAKE_CURRENT_SOURCE_DIR}/scripts/test/clang_sanitizer_blacklist.txt")
+    set(SANITIZE_FLAG_VALUE "${SANITIZE_FLAG_VALUE},undefined,integer;-fsanitize-blacklist=${CMAKE_CURRENT_SOURCE_DIR}/scripts/test/clang_sanitizer_blacklist.txt")
 endif()
 
 if(DEFINED SANITIZE_FLAG_VALUE)
