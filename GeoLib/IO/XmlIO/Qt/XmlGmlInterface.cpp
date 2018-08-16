@@ -113,10 +113,19 @@ int XmlGmlInterface::readFile(const QString &fileName)
         }
         else if (nodeName.compare("polylines") == 0)
         {
-            readPolylines(
-                type_node, polylines.get(), *_geo_objs.getPointVec(gliName),
-                _geo_objs.getPointVecObj(gliName)->getIDMap(), ply_names.get());
-
+            try
+            {
+                readPolylines(type_node, polylines.get(),
+                              *_geo_objs.getPointVec(gliName),
+                              _geo_objs.getPointVecObj(gliName)->getIDMap(),
+                              ply_names.get());
+            }
+            catch (std::runtime_error const& err)
+            {
+                // further reading is aborted and it is necessary to clean up
+                _geo_objs.removePointVec(gliName);
+                throw;
+            }
             // if names-map is empty, set it to nullptr because it is not needed
             if (ply_names->empty())
             {
@@ -125,9 +134,20 @@ int XmlGmlInterface::readFile(const QString &fileName)
         }
         else if (nodeName.compare("surfaces") == 0)
         {
-            readSurfaces(
-                type_node, surfaces.get(), *_geo_objs.getPointVec(gliName),
-                _geo_objs.getPointVecObj(gliName)->getIDMap(), sfc_names.get());
+            try
+            {
+                readSurfaces(type_node, surfaces.get(),
+                             *_geo_objs.getPointVec(gliName),
+                             _geo_objs.getPointVecObj(gliName)->getIDMap(),
+                             sfc_names.get());
+            }
+            catch (std::runtime_error const& err)
+            {
+                // further reading is aborted and it is necessary to clean up
+                _geo_objs.removePointVec(gliName);
+                _geo_objs.removePolylineVec(gliName);
+                throw;
+            }
 
             // if names-map is empty, set it to nullptr because it is not needed
             if (sfc_names->empty())
