@@ -20,7 +20,7 @@
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
 #ifdef OGS_USE_PYTHON
-#include "PythonBoundaryCondition.h"
+#include "Python/PythonBoundaryCondition.h"
 #endif
 
 namespace ProcessLib

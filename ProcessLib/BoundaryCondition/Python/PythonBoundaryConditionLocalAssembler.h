@@ -13,12 +13,18 @@
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "ProcessLib/BoundaryCondition/GenericNaturalBoundaryConditionLocalAssembler.h"
 
-#include "GenericNaturalBoundaryConditionLocalAssembler.h"
-#include "PythonBoundaryConditionDetail.h"
+#include "PythonBoundaryConditionPythonSideInterface.h"
 
 namespace ProcessLib
 {
+//! Can be thrown to indicate that a member function is not overridden in a
+//! derived class (in particular, if a Python class inherits from a C++ class).
+struct MethodNotOverriddenInDerivedClassException
+{
+};
+
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class PythonBoundaryConditionLocalAssembler final
@@ -78,7 +84,7 @@ public:
                 for (unsigned element_node_id = 0; element_node_id < num_nodes;
                      ++element_node_id)
                 {
-                    auto* node = _element.getNode(element_node_id);
+                    auto const* const node = _element.getNode(element_node_id);
                     auto const boundary_node_id = node->getID();
                     auto const bulk_node_id =
                         bulk_node_ids_map[boundary_node_id];
@@ -89,7 +95,7 @@ public:
                         _data.dof_table_bulk.getGlobalIndex(loc, var, comp);
                     if (dof_idx == NumLib::MeshComponentMap::nop)
                     {
-                        // TODO extend Python BC to mixed FEM
+                        // TODO extend Python BC to mixed FEM ansatz functions
                         OGS_FATAL(
                             "No d.o.f. found for (node=%d, var=%d, comp=%d).  "
                             "That might be due to the use of mixed FEM ansatz "

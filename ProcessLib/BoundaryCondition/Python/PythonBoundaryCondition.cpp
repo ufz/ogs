@@ -7,11 +7,9 @@
  *
  */
 
-#ifdef OGS_USE_PYTHON
-
 #include "PythonBoundaryCondition.h"
 
-#include <pybind11/eval.h>
+#include <pybind11/pybind11.h>
 #include <iostream>
 
 #include "MeshLib/MeshSearch/NodeSearch.h"
@@ -83,6 +81,7 @@ void PythonBoundaryCondition::getEssentialBCValues(
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
     FlushStdoutGuard guard(_flush_stdout);
+    (void)guard;
 
     auto const nodes = _bc_data.boundary_mesh.getNodes();
 
@@ -120,7 +119,7 @@ void PythonBoundaryCondition::getEssentialBCValues(
 
                 if (dof_idx == NumLib::MeshComponentMap::nop)
                 {
-                    // TODO extend Python BC to mixed FEM
+                    // TODO extend Python BC to mixed FEM ansatz functions
                     OGS_FATAL(
                         "No d.o.f. found for (node=%d, var=%d, comp=%d).  "
                         "That might be due to the use of mixed FEM ansatz "
@@ -146,14 +145,17 @@ void PythonBoundaryCondition::getEssentialBCValues(
         }
 
         if (!pair_flag_value.first)
-            return;
+            continue;
 
         MeshLib::Location l(_bc_data.bulk_mesh_id, MeshLib::MeshItemType::Node,
                             bulk_node_id);
         const auto dof_idx = _bc_data.dof_table_bulk.getGlobalIndex(
             l, _bc_data.global_component_id);
         if (dof_idx == NumLib::MeshComponentMap::nop)
-            continue;
+            OGS_FATAL(
+                "Logic error. This error should already have occured while "
+                "gathering primary variables. Something nasty is going on!");
+
         // For the DDC approach (e.g. with PETSc option), the negative
         // index of g_idx means that the entry by that index is a ghost
         // one, which should be dropped. Especially for PETSc routines
@@ -235,5 +237,3 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
 }
 
 }  // namespace ProcessLib
-
-#endif  // OGS_USE_PYTHON

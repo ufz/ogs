@@ -26,8 +26,9 @@ target_link_libraries(ProcessLib
 )
 
 if(OGS_USE_PYTHON)
-    target_link_libraries(ProcessLib PRIVATE pybind11::module)
-    target_include_directories(ProcessLib PRIVATE ${PYTHON_INCLUDE_DIRS})
+    add_subdirectory(BoundaryCondition/Python)
+    target_link_libraries(ProcessLib
+        PUBLIC ProcessLibBoundaryConditionPython)
 endif()
 
 if(OGS_INSITU)

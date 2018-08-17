@@ -9,19 +9,15 @@
 
 #pragma once
 
-#ifdef OGS_USE_PYTHON
-
-#include <pybind11/pybind11.h>
-#include "BoundaryCondition.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/IndexValueVector.h"
+#include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
+#include "ProcessLib/BoundaryCondition/GenericNaturalBoundaryConditionLocalAssembler.h"
 
-#include "GenericNaturalBoundaryConditionLocalAssembler.h"
+#include "PythonBoundaryConditionPythonSideInterface.h"
 
 namespace ProcessLib
 {
-class PythonBoundaryConditionPythonSideInterface;
-
 //! Groups data used by essential and natural BCs, in particular by the
 //! local assemblers of the latter.
 struct PythonBoundaryConditionData
@@ -87,5 +83,3 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
     unsigned const global_dim);
 
 }  // namespace ProcessLib
-
-#endif
