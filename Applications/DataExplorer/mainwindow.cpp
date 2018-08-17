@@ -497,8 +497,18 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
         else if (fi.suffix().toLower() == "gml")
         {
             GeoLib::IO::XmlGmlInterface xml(_project.getGEOObjects());
-            if (!xml.readFile(fileName))
-                OGSError::box("Failed to load geometry.\n Please see console for details.");
+            try
+            {
+                if (!xml.readFile(fileName))
+                    OGSError::box(
+                        "Failed to load geometry.\n Please see console for "
+                        "details.");
+            }
+            catch (std::runtime_error const& err)
+            {
+                OGSError::box(err.what(),
+                              "Failed to read file `" + fileName + "'");
+            }
         }
         // OpenGeoSys observation station files (incl. boreholes)
         else if (fi.suffix().toLower() == "stn")

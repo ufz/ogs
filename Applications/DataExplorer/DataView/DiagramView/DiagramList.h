@@ -141,7 +141,7 @@ public:
     void setYUnit(QString unit) { _yUnit = unit; }
 
     /// Returns the number of data points.
-    std::size_t size();
+    std::size_t size() const;
 
     /// Returns the width of the bounding box of all data points within the list.
     double width() const { return _maxX - _minX; }

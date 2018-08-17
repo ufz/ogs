@@ -11,7 +11,7 @@
 #pragma once
 
 #include "Applications/DataHolderLib/FemCondition.h"
-#include "TreeModel.h"
+#include "Applications/DataExplorer/Base/TreeModel.h"
 
 /**
  * \brief A model for the display of information from boundary conditions and
@@ -24,7 +24,7 @@ class FemConditionModel : public TreeModel
 public:
     FemConditionModel(QObject* parent = nullptr);
 
-    int columnCount() const { return 2; }
+    int columnCount(const QModelIndex& /*parent*/ = QModelIndex()) const { return 2; }
 
 public slots:
     /// Clears the tree.

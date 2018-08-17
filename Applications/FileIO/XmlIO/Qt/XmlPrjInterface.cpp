@@ -18,12 +18,13 @@
 #include <QtXml/QDomDocument>
 #include <logog/include/logog.hpp>
 
+#include "Applications/DataExplorer/Base/OGSError.h"
+#include "Applications/DataHolderLib/FemCondition.h"
+
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileFinder.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/IO/Writer.h"
-
-#include "Applications/DataHolderLib/FemCondition.h"
 
 #include "GeoLib/GEOObjects.h"
 
@@ -75,7 +76,15 @@ int XmlPrjInterface::readFile(const QString& fileName)
         if (node_name == "geometry")
         {
             GeoLib::IO::XmlGmlInterface gml(_project.getGEOObjects());
-            gml.readFile(QString(path + file_name));
+            try
+            {
+                gml.readFile(QString(path + file_name));
+            }
+            catch (std::runtime_error const& err)
+            {
+                OGSError::box(err.what(),
+                              "Failed to read file `" + fileName + "'");
+            }
         }
         else if (node_name == "stations")
         {

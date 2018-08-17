@@ -56,9 +56,18 @@ int main(int argc, char *argv[])
 
     GeoLib::GEOObjects geo_objects;
     GeoLib::IO::XmlGmlInterface xml(geo_objects);
-    if (!xml.readFile(file_name))
+    try
     {
-        ERR ("Failed to load geometry file.");
+        if (!xml.readFile(file_name))
+        {
+            ERR("Failed to load geometry file.");
+            return EXIT_FAILURE;
+        }
+    }
+    catch (std::runtime_error const& err)
+    {
+        ERR("Failed to read file `%s'.", file_name.c_str());
+        ERR("%s", err.what());
         return EXIT_FAILURE;
     }
 

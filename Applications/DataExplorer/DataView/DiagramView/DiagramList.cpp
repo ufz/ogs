@@ -340,19 +340,13 @@ void DiagramList::setList(std::vector<std::pair<float, float>> const& coords)
         return;
 
     this->_startDate = QDateTime();
-    std::size_t nCoords = coords.size();
-    for (std::size_t i = 0; i < nCoords; i++)
-        _coords.push_back(coords[i]);
-
+    std::copy(coords.begin(), coords.end(), std::back_inserter(_coords));
     update();
 }
 
-std::size_t DiagramList::size()
+std::size_t DiagramList::size() const
 {
-    if (!(_coords.empty()))
-        return _coords.size();
-
-    return 0;
+    return _coords.size();
 }
 
 void DiagramList::update()

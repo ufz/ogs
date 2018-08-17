@@ -164,9 +164,22 @@ void BoostXmlGmlInterface::readPolylines(
             BaseLib::insertIfKeyUniqueElseError(ply_names, *p_name, polylines.size()-1,
                 "The polyline name is not unique.");
 
+            auto accessOrError = [this, &p_name](auto pt_idx) {
+                auto search = _idx_map.find(pt_idx);
+                if (search == _idx_map.end())
+                {
+                    OGS_FATAL(
+                        "Polyline `%s' contains the point id `%d', but the "
+                        "id is not in the point list.",
+                        p_name->c_str(), pt_idx);
+                }
+                return search->second;
+            };
+
             //! \ogs_file_param{gml__polylines__polyline__pnt}
-            for (auto const pt : pl.getConfigParameterList<std::size_t>("pnt")) {
-                polylines.back()->addPoint(pnt_id_map[_idx_map[pt]]);
+            for (auto const pt : pl.getConfigParameterList<std::size_t>("pnt"))
+            {
+                polylines.back()->addPoint(pnt_id_map[accessOrError(pt)]);
             }
         }
         else
@@ -213,9 +226,21 @@ void BoostXmlGmlInterface::readSurfaces(
                 //! \ogs_file_attr{gml__surfaces__surface__element__p3}
                 auto const p3_attr = element.getConfigAttribute<std::size_t>("p3");
 
-                auto const p1 = pnt_id_map[_idx_map[p1_attr]];
-                auto const p2 = pnt_id_map[_idx_map[p2_attr]];
-                auto const p3 = pnt_id_map[_idx_map[p3_attr]];
+                auto accessOrError = [this, &s_name](std::size_t pt_idx) {
+                    auto search = _idx_map.find(pt_idx);
+                    if (search == _idx_map.end())
+                    {
+                        OGS_FATAL(
+                            "The element list of the surface `%s' contains the "
+                            "invalid point id `%d'.",
+                            s_name->c_str(), pt_idx);
+                    }
+                    return search->second;
+                };
+
+                auto const p1 = pnt_id_map[accessOrError(p1_attr)];
+                auto const p2 = pnt_id_map[accessOrError(p2_attr)];
+                auto const p3 = pnt_id_map[accessOrError(p3_attr)];
                 surfaces.back()->addTriangle(p1,p2,p3);
             }
         }

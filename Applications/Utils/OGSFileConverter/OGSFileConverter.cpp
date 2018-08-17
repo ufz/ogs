@@ -53,11 +53,21 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
         if (fileExists(output_str))
             continue;
 
-        if (!xml.readFile(input_string))
+        try
         {
-            OGSError::box("Error reading geometry " + fi.fileName());
+            if (!xml.readFile(input_string))
+            {
+                OGSError::box("Error reading geometry " + fi.fileName());
+                continue;
+            }
+        }
+        catch (std::runtime_error const& err)
+        {
+            OGSError::box(err.what(),
+                          "Failed to read file `" + input_string + "'");
             continue;
         }
+
         std::vector<std::string> geo_names;
         geo_objects.getGeometryNames(geo_names);
         FileIO::Legacy::writeGLIFileV4(output_str, geo_names[0], geo_objects);
