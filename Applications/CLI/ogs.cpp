@@ -42,7 +42,9 @@
 
 #include "NumLib/NumericsConfig.h"
 
-#include "ogs_python_bindings.h"
+#ifdef OGS_USE_PYTHON
+#include "ogs_embedded_python.h"
+#endif
 
 int main(int argc, char* argv[])
 {

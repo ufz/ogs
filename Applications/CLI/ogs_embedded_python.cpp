@@ -1,11 +1,27 @@
-#ifdef OGS_USE_PYTHON
+/**
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
 
 #include <pybind11/embed.h>
+#include <logog/include/logog.hpp>
 
-#include "ogs_python_bindings.h"
+#include "ogs_embedded_python.h"
+
+#include "ProcessLib/BoundaryCondition/Python/PythonBoundaryConditionModule.h"
+
+PYBIND11_EMBEDDED_MODULE(OpenGeoSys, m)
+{
+    DBUG("Binding Python module OpenGeoSys.");
+
+    ProcessLib::pythonBindBoundaryCondition(m);
+}
 
 #ifndef OGS_BUILD_SHARED_LIBS
-extern "C" PyObject* pybind11_init_impl_OpenGeoSys();
 
 // Hackish trick that hopefully ensures that the linker won't strip the symbol
 // pointed to by p from the library being built.
@@ -34,5 +50,3 @@ pybind11::scoped_interpreter setupEmbeddedPython()
 }
 
 }  // namespace ApplicationsLib
-
-#endif  // OGS_USE_PYTHON

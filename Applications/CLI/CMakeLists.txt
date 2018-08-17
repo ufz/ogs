@@ -7,7 +7,7 @@ target_link_libraries(ogs
 
 if(OGS_USE_PYTHON)
     # Troubleshooting:
-    # If you get linker errors, such as   ogs.cpp:(.text+0xb4): Warnung: undefinierter Verweis auf »_Py_ZeroStruct«
+    # If you get linker errors, such as   ogs.cpp:(.text+0xb4): undefined reference to `_Py_ZeroStruct'
     # it could be that OGS is compiled with the wrong Python version.
     # I (Ch. Leh.) observed the following: The symbol _Py_ZeroStruct could not be found in /usr/lib/libpython3.6m.so (I intended to compile OGS with Python3).
     # It's apparently a Python2 symbol (present in /usr/lib/libpython2.7.so)
@@ -22,7 +22,11 @@ if(OGS_USE_PYTHON)
     # I assume (this is only a guess!) that VTK pulls in Python2 dependencies (on my system).
     # I assume that this is related to https://github.com/ufz/ogs/pull/2158.
     # Workaround: Always make sure that OGS is compiled with the same Python version as VTK.
-    # TODO: Find out how to properly address the issue.
+    # The error described above should be detected automatically by cmake and an
+    # appropriate message should be presented. The note is kept for the case
+    # that the automatic detection does not work due to whatever reason.
+
+    add_library(ogs_embedded_python STATIC ogs_embedded_python.cpp)
 
     # Performance warning from
     # https://github.com/pybind/pybind11/blob/master/docs/compiling.rst:
@@ -32,16 +36,17 @@ if(OGS_USE_PYTHON)
     # minimal set of parameters to ensure that the code using pybind11 compiles, but
     # it does not pass these extra compiler flags (i.e. this is up to you).
     # TODO: Enable further compiler/linker flags.
-    target_link_libraries(ogs PRIVATE pybind11::embed)
+    target_link_libraries(ogs_embedded_python PUBLIC pybind11::embed)
+    target_compile_definitions(ogs_embedded_python PUBLIC OGS_USE_PYTHON)
+    target_link_libraries(ogs_embedded_python PRIVATE
+        ProcessLibBoundaryConditionPythonModule)
 
-    add_library(ogs_python_bindings STATIC ogs_python_bindings.cpp)
-    target_link_libraries(ogs_python_bindings PRIVATE pybind11::embed)
-    target_include_directories(ogs_python_bindings PRIVATE ${PYTHON_INCLUDE_DIRS})
-
-    target_link_libraries(ogs PRIVATE ogs_python_bindings)
+    target_link_libraries(ogs PRIVATE ogs_embedded_python)
 
     if(BUILD_SHARED_LIBS)
-        target_compile_definitions(ogs_python_bindings OGS_BUILD_SHARED_LIBS)
+        # Add macro definition, because static libs make special handling necessary
+        # s.t. the embedded OpenGeoSys Python module won't be removed by the linker.
+        target_compile_definitions(ogs_embedded_python OGS_BUILD_SHARED_LIBS)
     endif()
 endif()
 
