@@ -299,3 +299,20 @@ AddTest(
     expected_two_material_gravity.vtu two_material_gravity_pcs_0_ts_1_t_1.000000.vtu sigma sigma 5e-14 0
     expected_two_material_gravity.vtu two_material_gravity_pcs_0_ts_1_t_1.000000.vtu epsilon epsilon 5e-14 0
 )
+
+AddTest(
+    NAME PythonBCSmallDeformationPiston
+    PATH Mechanics/Linear/PythonPiston
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS piston.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
+    DIFF_DATA
+    ref_piston_pcs_0_ts_5_t_5.000000.vtu   piston_pcs_0_ts_5_t_5.000000.vtu  displacement displacement 1e-16 0
+    ref_piston_pcs_0_ts_5_t_5.000000.vtu   piston_pcs_0_ts_5_t_5.000000.vtu  epsilon epsilon 1e-14 0
+    ref_piston_pcs_0_ts_5_t_5.000000.vtu   piston_pcs_0_ts_5_t_5.000000.vtu  sigma sigma 1e-8 0
+    ref_piston_pcs_0_ts_10_t_10.000000.vtu piston_pcs_0_ts_10_t_10.000000.vtu displacement displacement 1e-16 0
+    ref_piston_pcs_0_ts_10_t_10.000000.vtu piston_pcs_0_ts_10_t_10.000000.vtu epsilon epsilon 1e-13 0
+    ref_piston_pcs_0_ts_10_t_10.000000.vtu piston_pcs_0_ts_10_t_10.000000.vtu sigma sigma 1e-7 0
+)
