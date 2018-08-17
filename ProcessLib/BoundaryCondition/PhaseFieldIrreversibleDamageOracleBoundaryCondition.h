@@ -43,7 +43,7 @@ public:
     }
 
     void getEssentialBCValues(
-        const double t,
+        const double t, const GlobalVector& x,
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
     void preTimestep(const double t, const GlobalVector& x) override;

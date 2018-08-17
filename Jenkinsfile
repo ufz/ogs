@@ -85,7 +85,8 @@ pipeline {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
-                  '-DDOCS_GENERATE_LOGFILE=ON ' // redirects to build/DoxygenWarnings.log
+                  '-DDOCS_GENERATE_LOGFILE=ON ' + // redirects to build/DoxygenWarnings.log
+                  '-DOGS_USE_PYTHON=ON '
               }
               build { }
               build { target="tests" }
@@ -240,7 +241,8 @@ pipeline {
               configure {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
-                  '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON '
+                  '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
+                  '-DOGS_USE_PYTHON=ON '
               }
               build { }
               build { target="tests" }

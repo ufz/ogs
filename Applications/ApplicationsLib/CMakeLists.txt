@@ -22,3 +22,7 @@ endforeach()
 if(OGS_USE_PCH)
     cotire(ApplicationsLib)
 endif()
+
+if(OGS_USE_PYTHON)
+    target_link_libraries(ApplicationsLib PRIVATE pybind11::pybind11)
+endif()

@@ -9,9 +9,9 @@
 
 #pragma once
 
+#include "GenericNaturalBoundaryConditionLocalAssembler.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Parameter/Parameter.h"
-#include "GenericNaturalBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
@@ -42,7 +42,8 @@ public:
     void assemble(std::size_t const id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
                   double const t, const GlobalVector& /*x*/,
-                  GlobalMatrix& /*K*/, GlobalVector& b) override
+                  GlobalMatrix& /*K*/, GlobalVector& b,
+                  GlobalMatrix* /*Jac*/) override
     {
         _local_rhs.setZero();
 
@@ -74,4 +75,4 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
-}   // namespace ProcessLib
+}  // namespace ProcessLib

@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "MeshLib/MeshSubset.h"
 #include "BoundaryCondition.h"
+#include "MeshLib/MeshSubset.h"
 
 namespace ProcessLib
 {
@@ -38,10 +38,8 @@ public:
 
     /// Calls local assemblers which calculate their contributions to the global
     /// matrix and the right-hand-side.
-    void applyNaturalBC(const double t,
-                        GlobalVector const& x,
-                        GlobalMatrix& K,
-                        GlobalVector& b) override;
+    void applyNaturalBC(const double t, GlobalVector const& x, GlobalMatrix& K,
+                        GlobalVector& b, GlobalMatrix* Jac) override;
 
 private:
     /// Data used in the assembly of the specific boundary condition.
@@ -63,6 +61,6 @@ private:
         _local_assemblers;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib
 
 #include "GenericNaturalBoundaryCondition-impl.h"

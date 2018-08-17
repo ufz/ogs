@@ -48,18 +48,19 @@ public:
     virtual void preAssemble(const double t, GlobalVector const& x) = 0;
 
     //! Assemble \c M, \c K and \c b at the provided state (\c t, \c x).
-    virtual void assemble(
-        const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-        GlobalVector& b) = 0;
+    virtual void assemble(const double t, GlobalVector const& x,
+                          GlobalMatrix& M, GlobalMatrix& K,
+                          GlobalVector& b) = 0;
 
     using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
 
     //! Provides known solutions (Dirichlet boundary conditions) vector for
     //! the ode system at the given time \c t.
     virtual std::vector<NumLib::IndexValueVector<Index>> const*
-    getKnownSolutions(double const t) const
+    getKnownSolutions(double const t, GlobalVector const& x) const
     {
         (void)t;
+        (void)x;
         return nullptr;  // by default there are no known solutions
     }
 };
@@ -76,7 +77,6 @@ class ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                        NonlinearSolverTag::Picard>
 {
 public:
-
     //! Calls process' pre-assembly with the provided state (\c t, \c x).
     virtual void preAssemble(const double t, GlobalVector const& x) = 0;
 
@@ -124,11 +124,12 @@ public:
      * \mathtt{Jac} \f$.
      * \endparblock
      */
-    virtual void assembleWithJacobian(
-        const double t, GlobalVector const& x, GlobalVector const& xdot,
-        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) = 0;
+    virtual void assembleWithJacobian(const double t, GlobalVector const& x,
+                                      GlobalVector const& xdot,
+                                      const double dxdot_dx, const double dx_dx,
+                                      GlobalMatrix& M, GlobalMatrix& K,
+                                      GlobalVector& b, GlobalMatrix& Jac) = 0;
 };
 
 //! @}
-}
+}  // namespace NumLib

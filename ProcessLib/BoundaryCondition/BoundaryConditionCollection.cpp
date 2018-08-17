@@ -14,10 +14,11 @@ namespace ProcessLib
 void BoundaryConditionCollection::applyNaturalBC(const double t,
                                                  GlobalVector const& x,
                                                  GlobalMatrix& K,
-                                                 GlobalVector& b)
+                                                 GlobalVector& b,
+                                                 GlobalMatrix* Jac)
 {
     for (auto const& bc : _boundary_conditions)
-        bc->applyNaturalBC(t, x, K, b);
+        bc->applyNaturalBC(t, x, K, b, Jac);
 }
 
 void BoundaryConditionCollection::addBCsForProcessVariables(
@@ -43,4 +44,4 @@ void BoundaryConditionCollection::addBCsForProcessVariables(
     // object if needed.
     _dirichlet_bcs.resize(_boundary_conditions.size());
 }
-}
+}  // namespace ProcessLib

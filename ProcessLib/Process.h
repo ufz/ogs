@@ -16,13 +16,13 @@
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionCollection.h"
-#include "ProcessLib/SourceTerms/SourceTermCollection.h"
 #include "ProcessLib/Output/CachedSecondaryVariable.h"
 #include "ProcessLib/Output/ExtrapolatorData.h"
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/SourceTerms/NodalSourceTerm.h"
+#include "ProcessLib/SourceTerms/SourceTermCollection.h"
 
 #include "AbstractJacobianAssembler.h"
 #include "ProcessVariable.h"
@@ -103,11 +103,11 @@ public:
                               GlobalMatrix& Jac) final;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
-    getKnownSolutions(double const t) const final
+    getKnownSolutions(double const t, GlobalVector const& x) const final
     {
         const auto pcs_id =
             (_coupled_solutions) ? _coupled_solutions->process_id : 0;
-        return _boundary_conditions[pcs_id].getKnownSolutions(t);
+        return _boundary_conditions[pcs_id].getKnownSolutions(t, x);
     }
 
     virtual NumLib::LocalToGlobalIndexMap const& getDOFTable(

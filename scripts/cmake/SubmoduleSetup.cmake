@@ -19,6 +19,9 @@ endif()
 if(OGS_BUILD_SWMM)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/SwmmInterface)
 endif()
+if(OGS_USE_PYTHON)
+    list(APPEND REQUIRED_SUBMODULES ThirdParty/pybind11)
+endif()
 
 # Sync submodules, which is required when a submodule changed its URL
 if(OGS_SYNC_SUBMODULES)

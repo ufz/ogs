@@ -17,7 +17,7 @@
 namespace ProcessLib
 {
 void PhaseFieldIrreversibleDamageOracleBoundaryCondition::getEssentialBCValues(
-    const double /*t*/,
+    const double /*t*/, GlobalVector const& /*x*/,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
     SpatialPosition pos;

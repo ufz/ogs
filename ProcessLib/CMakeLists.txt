@@ -25,6 +25,12 @@ target_link_libraries(ProcessLib
     PUBLIC BaseLib MaterialLib MathLib MeshLib NumLib logog
 )
 
+if(OGS_USE_PYTHON)
+    add_subdirectory(BoundaryCondition/Python)
+    target_link_libraries(ProcessLib
+        PUBLIC ProcessLibBoundaryConditionPython)
+endif()
+
 if(OGS_INSITU)
     target_link_libraries(ProcessLib InSituLib)
 endif()

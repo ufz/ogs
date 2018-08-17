@@ -93,6 +93,10 @@ staticDir = ["dist", "static"]
   name = "Two-phase Flow"
   identifier = "two-phase-flow"
   weight = 8
+[[menu.benchmarks]]
+  name = "Python Boundary Conditions"
+  identifier = "python-bc"
+  weight = 9
 
 # Quickstart sidebar top-level categories
 [[menu.quickstart]]

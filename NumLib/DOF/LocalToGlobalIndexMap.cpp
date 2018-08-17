@@ -191,7 +191,8 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<int> const& global_component_ids,
     std::vector<int> const& variable_component_offsets,
     std::vector<MeshLib::Element*> const& elements,
-    NumLib::MeshComponentMap&& mesh_component_map)
+    NumLib::MeshComponentMap&& mesh_component_map,
+    LocalToGlobalIndexMap::ConstructorTag)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(std::move(mesh_component_map)),
       _variable_component_offsets(variable_component_offsets)
@@ -249,7 +250,42 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
 
     return new LocalToGlobalIndexMap(
         std::move(all_mesh_subsets), global_component_ids,
-        _variable_component_offsets, elements, std::move(mesh_component_map));
+        _variable_component_offsets, elements, std::move(mesh_component_map),
+        ConstructorTag{});
+}
+
+std::unique_ptr<LocalToGlobalIndexMap>
+LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
+    MeshLib::MeshSubset&& new_mesh_subset) const
+{
+    DBUG("Construct reduced local to global index map.");
+
+    // Create a subset of the current mesh component map.
+    std::vector<int> global_component_ids;
+
+    for (int i = 0; i < getNumberOfComponents(); ++i)
+    {
+        global_component_ids.push_back(i);
+    }
+
+    // Elements of the new_mesh_subset's mesh.
+    std::vector<MeshLib::Element*> const& elements =
+        new_mesh_subset.getMesh().getElements();
+
+    auto mesh_component_map = _mesh_component_map.getSubset(
+        _mesh_subsets, new_mesh_subset, global_component_ids);
+
+    // Create copies of the new_mesh_subset for each of the global components.
+    // The last component is moved after the for-loop.
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets;
+    for (int i = 0; i < static_cast<int>(global_component_ids.size()) - 1; ++i)
+        all_mesh_subsets.emplace_back(new_mesh_subset);
+    all_mesh_subsets.emplace_back(std::move(new_mesh_subset));
+
+    return std::make_unique<LocalToGlobalIndexMap>(
+        std::move(all_mesh_subsets), global_component_ids,
+        _variable_component_offsets, elements, std::move(mesh_component_map),
+        ConstructorTag{});
 }
 
 std::size_t LocalToGlobalIndexMap::dofSizeWithGhosts() const

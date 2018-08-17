@@ -139,7 +139,8 @@ void ConstraintDirichletBoundaryCondition::preTimestep(double t,
 }
 
 void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
-    const double t, NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
+    const double t, const GlobalVector& /*x*/,
+    NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
     SpatialPosition pos;
 

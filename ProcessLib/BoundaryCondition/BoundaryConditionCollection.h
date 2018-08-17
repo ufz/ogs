@@ -26,16 +26,16 @@ public:
     }
 
     void applyNaturalBC(const double t, GlobalVector const& x, GlobalMatrix& K,
-                        GlobalVector& b);
+                        GlobalVector& b, GlobalMatrix* Jac);
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
-    getKnownSolutions(double const t) const
+    getKnownSolutions(double const t, GlobalVector const& x) const
     {
         auto const n_bcs = _boundary_conditions.size();
         for (std::size_t i=0; i<n_bcs; ++i) {
             auto const& bc = *_boundary_conditions[i];
             auto& dirichlet_storage = _dirichlet_bcs[i];
-            bc.getEssentialBCValues(t, dirichlet_storage);
+            bc.getEssentialBCValues(t, x, dirichlet_storage);
         }
         return &_dirichlet_bcs;
     }
