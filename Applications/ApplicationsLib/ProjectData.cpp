@@ -166,11 +166,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 {
     _mesh_vec = readMeshes(project_config, project_directory);
 
-#ifdef OGS_USE_PYTHON
     if (auto const python_script =
-            project_config.getConfigParameterOptional<std::string>(
-                "python_script"))
+            //! \ogs_file_param{prj__python_script}
+        project_config.getConfigParameterOptional<std::string>("python_script"))
     {
+#ifdef OGS_USE_PYTHON
         namespace py = pybind11;
         auto const script_path =
             BaseLib::copyPathToFileName(*python_script, project_directory);
@@ -178,8 +178,10 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         // Evaluate in scope of main module
         py::object scope = py::module::import("__main__").attr("__dict__");
         py::eval_file(script_path, scope);
-    }
+#else
+        OGS_FATAL("OpenGeoSys has not been built with Python support.");
 #endif  // OGS_USE_PYTHON
+    }
 
     //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfigSubtreeOptional("curves"));
