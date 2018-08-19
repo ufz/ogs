@@ -10,6 +10,7 @@
 #include "RichardsFlowMaterialProperties.h"
 
 #include <logog/include/logog.hpp>
+#include <boost/math/special_functions/pow.hpp>
 
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
@@ -118,6 +119,13 @@ double RichardsFlowMaterialProperties::getRelativePermeability(
     return _relative_permeability_models[0]->getValue(saturation);
 }
 
+double RichardsFlowMaterialProperties::getRelativePermeabilityDerivative(
+    const double /*t*/, const ProcessLib::SpatialPosition& /*pos*/,
+    const double /*p*/, const double /*T*/, const double saturation) const
+{
+    return _relative_permeability_models[0]->getdValue(saturation);
+}
+
 double RichardsFlowMaterialProperties::getSaturation(
     const int material_id, const double /*t*/,
     const ProcessLib::SpatialPosition& /*pos*/, const double /*p*/,
@@ -125,6 +133,7 @@ double RichardsFlowMaterialProperties::getSaturation(
 {
     return _capillary_pressure_models[material_id]->getSaturation(pc);
 }
+
 double RichardsFlowMaterialProperties::getSaturationDerivative(
     const int material_id, const double /*t*/,
     const ProcessLib::SpatialPosition& /*pos*/, const double /*p*/,
@@ -133,6 +142,18 @@ double RichardsFlowMaterialProperties::getSaturationDerivative(
     const double dpcdsw =
         _capillary_pressure_models[material_id]->getdPcdS(saturation);
     return 1 / dpcdsw;
+}
+
+double RichardsFlowMaterialProperties::getSaturationDerivative2(
+    const int material_id, const double /*t*/,
+    const ProcessLib::SpatialPosition& /*pos*/, const double /*p*/,
+    const double /*T*/, const double saturation) const
+{
+    const double dpcdsw =
+        _capillary_pressure_models[material_id]->getdPcdS(saturation);
+    const double d2pcdsw2 =
+        _capillary_pressure_models[material_id]->getd2PcdS2(saturation);
+    return -d2pcdsw2 / boost::math::pow<3>(dpcdsw);
 }
 }  // end of namespace
 }  // end of namespace
