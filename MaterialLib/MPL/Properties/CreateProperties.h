@@ -20,3 +20,4 @@
 #include "CreateRelPermLiakopoulos.h"
 #include "CreateSaturationBrooksCorey.h"
 #include "CreateSaturationLiakopoulos.h"
+#include "CreateSaturationVanGenuchten.h"
