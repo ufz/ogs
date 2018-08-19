@@ -91,6 +91,8 @@ public:
     /// Get the derivative of the capillary pressure with respect to saturation
     double getdPcdS(const double saturation) const override;
 
+    double getd2PcdS2(const double saturation) const override;
+
 private:
     const double _pb;             ///< Entry pressure.
     const double _m;              ///< Exponent m, m in [0,1]. n=1/(1-m).

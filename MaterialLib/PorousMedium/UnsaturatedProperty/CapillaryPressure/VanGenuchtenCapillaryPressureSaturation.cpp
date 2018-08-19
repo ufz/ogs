@@ -15,6 +15,7 @@
 #include <cmath>
 
 #include "MathLib/MathTools.h"
+#include "BaseLib/Error.h"
 
 namespace MaterialLib
 {
@@ -84,6 +85,30 @@ double VanGenuchtenCapillaryPressureSaturation::getdPcdS(
         ((S - _saturation_r) / (_saturation_max - _saturation_r)), -1.0 / _m);
     const double val2 = std::pow(val1 - 1.0, -_m);
     return _pb * (_m - 1.0) * val1 * val2 / (_m * (S - _saturation_r));
+}
+
+double VanGenuchtenCapillaryPressureSaturation::getd2PcdS2(
+    const double saturation) const
+{
+    if (_has_regularized)
+    {
+        OGS_FATAL(
+            "Second derivative of regularized van-Genuchten saturation "
+            "pressure relation is not implemented.");
+    }
+    if (saturation < _saturation_r)
+        return 0;
+    if (saturation > _saturation_max)
+        return 0;
+
+    const double S =
+        MathLib::limitValueInInterval(saturation, _saturation_r + _minor_offset,
+                                      _saturation_max - _minor_offset);
+    const double val1 = std::pow(
+        ((S - _saturation_r) / (_saturation_max - _saturation_r)), 1.0 / _m);
+    return -_pb / (_m * _m * (S - _saturation_r) * (S - _saturation_r)) *
+           std::pow(1 - val1, -_m - 1) * std::pow(val1, _m - 1) *
+           ((1 - _m * _m) * val1 + _m - 1);
 }
 /// Regularized van Genuchten capillary pressure-saturation Model
 double VanGenuchtenCapillaryPressureSaturation::getPcBarvGSg(double Sg) const

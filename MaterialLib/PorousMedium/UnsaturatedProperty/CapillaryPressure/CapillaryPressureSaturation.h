@@ -49,6 +49,10 @@ public:
     /// Get the derivative of the capillary pressure with respect to saturation
     virtual double getdPcdS(const double saturation) const = 0;
 
+    /// Get the second derivative of the capillary pressure with respect to
+    /// saturation
+    virtual double getd2PcdS2(const double saturation) const = 0;
+
 protected:
     const double _saturation_r;         ///< Residual saturation.
     const double _saturation_nonwet_r;  ///< Residual saturation of nonwetting

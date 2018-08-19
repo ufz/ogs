@@ -16,6 +16,8 @@
 
 #include "CapillaryPressureSaturation.h"
 
+#include "BaseLib/Error.h"
+
 namespace MaterialLib
 {
 namespace PorousMedium
@@ -70,6 +72,15 @@ public:
 
     /// Get the derivative of the capillary pressure with respect to saturation
     double getdPcdS(const double saturation) const override;
+
+    /// Get the second derivative of the capillary pressure with respect to
+    /// saturation
+    double getd2PcdS2(const double /*saturation*/) const override
+    {
+        OGS_FATAL(
+            "Second derivative of BrooksCorey d^2p_cap / dS^2 is not "
+            "implemented.");
+    }
 
 private:
     const double _pb;  ///< Entry pressure.
