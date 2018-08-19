@@ -172,18 +172,13 @@ public:
 
             double const pc_int_pt = -p_int_pt;
 
-            double const Sw =
-                (pc_int_pt > 0)
-                    ? _process_data.material->getSaturation(
-                          material_id, t, pos, p_int_pt, temperature, pc_int_pt)
-                    : 1.0;
+            double const Sw = _process_data.material->getSaturation(
+                material_id, t, pos, p_int_pt, temperature, pc_int_pt);
             _saturation[ip] = Sw;
 
             double const dSw_dpc =
-                (pc_int_pt > 0)
-                    ? _process_data.material->getSaturationDerivative(
-                          material_id, t, pos, p_int_pt, temperature, Sw)
-                    : 0.;
+                _process_data.material->getSaturationDerivative(
+                    material_id, t, pos, p_int_pt, temperature, Sw);
 
             // \TODO Extend to pressure dependent density.
             double const drhow_dp(0.0);
