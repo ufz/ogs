@@ -31,7 +31,7 @@ public:
 
     /// Get variable, x, or abscissa, by a given value \c y, the ordinate.
     /// If this curve is not monotonic, this function gives a fatal error.
-    double getInversVariable(const double y) const;
+    double getInverseVariable(const double y) const;
 
 private:
     /**

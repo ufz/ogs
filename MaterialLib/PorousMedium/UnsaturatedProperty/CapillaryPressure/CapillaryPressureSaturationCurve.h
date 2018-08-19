@@ -59,7 +59,7 @@ public:
     {
         const double pc = MathLib::limitValueInInterval(capillary_pressure,
                                                         _minor_offset, _pc_max);
-        return _curve_data->getInversVariable(pc);
+        return _curve_data->getInverseVariable(pc);
     }
 
     /// Get the derivative of the capillary pressure with respect to saturation

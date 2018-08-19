@@ -43,7 +43,7 @@ bool PiecewiseLinearMonotonicCurve::isStrongMonotonic() const
                         });
 }
 
-double PiecewiseLinearMonotonicCurve::getInversVariable(const double y) const
+double PiecewiseLinearMonotonicCurve::getInverseVariable(const double y) const
 {
     std::size_t interval_idx = 0;
     if (_values_at_supp_pnts.front() < _values_at_supp_pnts.back())
