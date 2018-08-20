@@ -87,7 +87,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    expected_SimpleAxisymmetricCreep_pcs_0_ts_370_t_360.000000.vtu  SimpleAxisymmetricCreep_pcs_0_ts_370_t_360.000000.vtu displacement displacement 1e-16 1e-10
+    expected_SimpleAxisymmetricCreep_pcs_0_ts_370_t_360.000000.vtu  SimpleAxisymmetricCreep_pcs_0_ts_370_t_360.000000.vtu displacement displacement 1e-14 1e-10
     expected_SimpleAxisymmetricCreep_pcs_0_ts_370_t_360.000000.vtu  SimpleAxisymmetricCreep_pcs_0_ts_370_t_360.000000.vtu sigma_yy sigma_yy 1e-16 1e-10
 )
 

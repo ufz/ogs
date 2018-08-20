@@ -11,6 +11,8 @@
 
 #include "CreepBGRa.h"
 
+#include <limits>
+
 #include "BaseLib/Error.h"
 #include "MaterialLib/PhysicalConstant.h"
 
@@ -47,6 +49,18 @@ CreepBGRa<DisplacementDim>::integrateStress(
 
     const auto C = this->getElasticTensor(t, x, T);
     KelvinVector sigma_try = sigma_prev + C * (eps - eps_prev);
+
+    auto const& deviatoric_matrix = Invariants::deviatoric_projection;
+
+    KelvinVector s_try = deviatoric_matrix * sigma_try;
+    double const norm_s_try = Invariants::FrobeniusNorm(s_try);
+
+    // In case |s_{try}| is zero and _n < 3 (rare case).
+    if (norm_s_try < std::numeric_limits<double>::epsilon() * C(0, 0))
+    {
+        return {std::make_tuple(sigma_prev, createMaterialStateVariables(), C)};
+    }
+
     ResidualVectorType solution = sigma_try;
 
     const double A = _a(t, x)[0];
@@ -60,7 +74,6 @@ CreepBGRa<DisplacementDim>::integrateStress(
     const double b =
         dt * constant_coefficient *
         std::exp(-Q / (MaterialLib::PhysicalConstant::IdealGasConstant * T));
-    auto const& deviatoric_matrix = Invariants::deviatoric_projection;
 
     // In newton_solver.solve(), the Jacobian is calculated first, and then
     // then comes the assembly of the residue vector. In order to save
@@ -77,14 +90,13 @@ CreepBGRa<DisplacementDim>::integrateStress(
         // side effect
         s_n1 = deviatoric_matrix * solution;
         double const norm_s_n1 = Invariants::FrobeniusNorm(s_n1);
+        double const G2b = 2.0 * b * this->_mp.mu(t, x);
         // side effect
-        pow_norm_s_n1_n_minus_one_2b_G =
-            2.0 * b * this->_mp.mu(t, x) * std::pow(norm_s_n1, n - 1);
-        jacobian =
-            KelvinMatrix::Identity() +
-            pow_norm_s_n1_n_minus_one_2b_G *
-                (deviatoric_matrix +
-                 ((n - 1) / (norm_s_n1 * norm_s_n1)) * s_n1 * s_n1.transpose());
+        pow_norm_s_n1_n_minus_one_2b_G = G2b * std::pow(norm_s_n1, n - 1);
+        jacobian = KelvinMatrix::Identity() +
+                   (pow_norm_s_n1_n_minus_one_2b_G * deviatoric_matrix +
+                    (n - 1) * G2b * std::pow(norm_s_n1, n - 3) * s_n1 *
+                        s_n1.transpose());
     };
 
     auto const update_residual = [&](ResidualVectorType& r) {
