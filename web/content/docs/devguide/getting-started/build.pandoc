@@ -102,11 +102,11 @@ In Xcode choose `ogs` or `ogs-gui` from the drop-down menu on the top right and 
 
 ## Waiting
 
-So now the build process is running... This can take some time because maybe there are external libraries which get automatically downloaded and compiled. This step is only done once per build directory, so subsequent builds will be much faster. See {entry:devguide/third-party-libraries:link} for more.
+So now the build process is running... This can take some time because maybe there are external libraries which get automatically downloaded and compiled. This step is only done once per build directory, so subsequent builds will be much faster. See [this]({{< ref "third-party-libraries" >}}) for more.
 
 
 ## Finished!
 
 Congratulations you have finished the **Getting Started**-section!
 
-Have a look at the other sections of this guide. Maybe check out {entry:devguide/development-workflows:link} if you are interested in actively contributing to the project. The {entry:devguide/configuration-options:link}-page shows you all available build customizations. Or do you want to build the {entry:devguide/data-explorer:link}? Go ahead!
+Have a look at the other sections of this guide. Maybe check out [Development Workflows]({{< ref "branching-model" >}}) if you are interested in actively contributing to the project. The [Configuration Options]({{< ref "configuration-options" >}})-page shows you all available build customizations. Go ahead!

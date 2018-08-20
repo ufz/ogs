@@ -53,7 +53,7 @@ See Linux-tab!
 
 Try to use static libraries as much as possible. For OGS itself use `BUILD_SHARED_LIBS=OFF`, which already defaults to `OFF`.
 
-Third-party libraries installed via the systems package package manager are often provided as shared libraries. You may want to use [Conan]({entry:674:url}) which provides lots of libraries (e.g. VTK) as static libs.
+Third-party libraries installed via the systems package package manager are often provided as shared libraries. You may want to use [Conan]({{< ref "conan-package-manager.pandoc" >}}) which provides lots of libraries (e.g. VTK) as static libs.
 
 ## Package the build
 

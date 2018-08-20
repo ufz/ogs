@@ -60,7 +60,7 @@ The Homebrew package manager is needed for installing other libraries and packag
 
 ## Step: Install Git
 
-Git is a powerful and distributed version control system. OGS source code is hosted on [GitHub](https://github.com/ufz/ogs). See the developer guide page on {entry:devguide/github:link} for more info on how OGS uses GitHub for collaborative development.
+Git is a powerful and distributed version control system. OGS source code is hosted on [GitHub](https://github.com/ufz/ogs). See the developer guide page on [Code Reviews]({{< ref "code-reviews" >}}) for more info on how OGS uses GitHub for collaborative development.
 
 ::: {.win}
 Download and install git from the [git homepage](http://git-scm.com/download/win). The default installer options are fine. This install a new command line called *Git Bash* which should be used for all git operations.
@@ -128,7 +128,7 @@ $ git config --global user.name "Your Name Here"
 $ git config --global user.email "your_email@example.com"
 ```
 
-The [graphical GitHub client](http://mac.github.com/) is also maybe worth a look. See the page on {entry:devguide/github:link} for more info on GitHub.
+The [graphical GitHub client](http://mac.github.com/) is also maybe worth a look.
 
 In some corporate environments you may have to use a proxy server. In this case tell git about it:
 
@@ -199,7 +199,7 @@ $ brew install cmake
 
 ## Step: Install Conan package manager
 
-The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. If you prefer you can also [install libraries manually]({entry:81:url}) instead.
+The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. If you prefer you can also [install libraries manually]({{< ref "third-party-libraries.pandoc" >}}) instead.
 
 Go to [Conans download page](https://www.conan.io/downloads) and see platform-specific instructions:
 

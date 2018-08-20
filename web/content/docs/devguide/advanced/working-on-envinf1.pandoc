@@ -39,13 +39,13 @@ Follow the instructions on using Python's `virtualenv` [on the Eve-wiki](https:/
 
 ## Additional Features
 
-[Doxygen]({entry:devguide/generating-documentation:url}) documentation:
+Generating Doxygen documentation:
 
 ```bash
 $ module load doxygen/1.8.7-1_gcc_4.8.1_CentOS6
 ```
 
-You can {entry:devguide/build-with-ninja:link}:
+You can [build with Ninja]({{< ref "build-with-ninja" >}}):
 
 ```bash
 $ module load ninja/1.4.0-1_gcc_4.8.1_CentOS6
