@@ -15,4 +15,4 @@ If something goes wrong when running CMake please try again with an **empty** or
 
 Please read the CMake output carefully. Often it will tell you what went wrong.
 
-Check also [Conans troubleshooting page]({{< relref "conan.pandoc" >}}) if you use Conan for dependencies.
+Check also [Conans troubleshooting page]({{< ref "conan.pandoc" >}}) if you use Conan for dependencies.

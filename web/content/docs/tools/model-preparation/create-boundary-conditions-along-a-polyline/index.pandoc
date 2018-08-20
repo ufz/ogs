@@ -16,7 +16,7 @@ The user has to provide the input mesh `mesh` and the geometry `geometry` that m
 
 The tool will output a OGS-5 boundary condition file (.bc) and a geometry file (.gli) containing the points the boundary conditions refer to. The original geometry will not be altered. Additional, it is possible to write the geometry in the gml format by setting the switch `gml` to 1.
 
-The polylines should be in the vicinity of the mesh nodes, where the user wants to set the boundary conditions. The tool will generate boundary conditions at every node which lies within the search radius `search_radius`. Idealy, the geometry should be mapped as close as possible to the area the user wants to set boundary conditions (for this, also see tool [MapGeometryToSurface]({{< relref "map-geometric-object-to-the-surface-of-a-mesh" >}})).
+The polylines should be in the vicinity of the mesh nodes, where the user wants to set the boundary conditions. The tool will generate boundary conditions at every node which lies within the search radius `search_radius`. Idealy, the geometry should be mapped as close as possible to the area the user wants to set boundary conditions (for this, also see tool [MapGeometryToSurface]({{< ref "map-geometric-object-to-the-surface-of-a-mesh" >}})).
 
 ## Usage
 

@@ -12,22 +12,22 @@ author = "Thomas Fischer"
 
 In order to create boundary conditions in a polygonal region the following workflow can be used:
 
-1. Extract surface using [ExtractSurface]({{< relref "extract-surface" >}}) (a: Original subsurface mesh; b: Extracted surface)
+1. Extract surface using [ExtractSurface]({{< ref "extract-surface" >}}) (a: Original subsurface mesh; b: Extracted surface)
     
     ![](01-SubSurfaceMesh_web.png)
     ![](02-ExtractSurface_Web.png)
 
-2. Mark the mesh elements within the polygonal region deploying the tool [ResetPropertiesInPolygonalRegions]({{< relref "set-properties-in-polygonal-region" >}}) (a: Surface and polygon; b: Marked elements in polygonal region are colored yellow; c: Marked regions visualized by different colors)
+2. Mark the mesh elements within the polygonal region deploying the tool [ResetPropertiesInPolygonalRegions]({{< ref "set-properties-in-polygonal-region" >}}) (a: Surface and polygon; b: Marked elements in polygonal region are colored yellow; c: Marked regions visualized by different colors)
 
     ![](03a-MarkedRegionsAtSurface_Web.png)
     ![](03b-MarkedRegionsAtSurface_Web.png)
     ![](03c-MarkedRegionsAtSurface_Web.png)
 
-3. Remove marked/unmarked mesh elements deploying tool [removeMeshElements]({{< relref "remove-mesh-elements" >}}) (Resulting patches visualized by different colors and z-translations)
+3. Remove marked/unmarked mesh elements deploying tool [removeMeshElements]({{< ref "remove-mesh-elements" >}}) (Resulting patches visualized by different colors and z-translations)
 
     ![](04-ExtractedRegionPatches_Web.png)
 
-4. Compute the associated area for the nodes of the surface mesh deploying tool [ComputeNodeAreasFromSurfaceMesh]({{< relref "compute-node-areas-from-surface-mesh" >}})
+4. Compute the associated area for the nodes of the surface mesh deploying tool [ComputeNodeAreasFromSurfaceMesh]({{< ref "compute-node-areas-from-surface-mesh" >}})
 
 The surface mesh patches (created until step 3) can be used as input for OGS-6 simulations. For OGS-5 simulations only the additional step 4 has to be performed.
 
