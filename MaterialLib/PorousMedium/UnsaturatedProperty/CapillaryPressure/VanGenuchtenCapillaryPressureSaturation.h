@@ -68,7 +68,7 @@ public:
                                             const double Sg_r,
                                             const double Smax, const double m,
                                             const double Pc_max,
-                                            bool has_regularized)
+                                            const bool has_regularized)
         : CapillaryPressureSaturation(Sr, Sg_r, Smax, Pc_max),
           _pb(pb),
           _m(m),
@@ -90,6 +90,8 @@ public:
 
     /// Get the derivative of the capillary pressure with respect to saturation
     double getdPcdS(const double saturation) const override;
+
+    double getd2PcdS2(const double saturation) const override;
 
 private:
     const double _pb;             ///< Entry pressure.

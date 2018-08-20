@@ -86,6 +86,10 @@ public:
                                    const double p, const double T,
                                    const double saturation) const;
 
+    double getRelativePermeabilityDerivative(
+        const double t, const ProcessLib::SpatialPosition& pos, const double p,
+        const double T, const double saturation) const;
+
     double getSaturation(const int material_id, const double t,
                          const ProcessLib::SpatialPosition& pos, const double p,
                          const double T, const double pc) const;
@@ -93,6 +97,10 @@ public:
                                    const ProcessLib::SpatialPosition& pos,
                                    const double p, const double T,
                                    const double saturation) const;
+    double getSaturationDerivative2(const int material_id, const double t,
+                                    const ProcessLib::SpatialPosition& pos,
+                                    const double p, const double T,
+                                    const double saturation) const;
     double getFluidDensity(const double p, const double T) const;
     double getFluidViscosity(const double p, const double T) const;
 

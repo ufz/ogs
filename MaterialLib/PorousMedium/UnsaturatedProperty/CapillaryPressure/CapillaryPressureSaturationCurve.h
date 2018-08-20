@@ -59,7 +59,7 @@ public:
     {
         const double pc = MathLib::limitValueInInterval(capillary_pressure,
                                                         _minor_offset, _pc_max);
-        return _curve_data->getInversVariable(pc);
+        return _curve_data->getInverseVariable(pc);
     }
 
     /// Get the derivative of the capillary pressure with respect to saturation
@@ -71,6 +71,11 @@ public:
 
         return _curve_data->getDerivative(S);
     }
+
+    /// Get the second derivative of the capillary pressure with respect to
+    /// saturation
+    /// In the case of piecewise linear curves, it is always zero.
+    double getd2PcdS2(const double /*saturation*/) const override { return 0; }
 
 private:
     std::unique_ptr<MathLib::PiecewiseLinearMonotonicCurve> _curve_data;

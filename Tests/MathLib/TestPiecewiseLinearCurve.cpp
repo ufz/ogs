@@ -51,7 +51,7 @@ TEST(MathLibCurve, PiecewiseLinearCurveParsing)
     {
         ASSERT_NEAR(y[i], curve->getValue(x[i]),
                     std::numeric_limits<double>::epsilon());
-        ASSERT_NEAR(x[i], curve->getInversVariable(y[i]),
+        ASSERT_NEAR(x[i], curve->getInverseVariable(y[i]),
                     std::numeric_limits<double>::epsilon());
     }
 }
@@ -82,7 +82,7 @@ TEST(MathLibCurve, MonotonicIncreasePiecewiseLinearCurve)
     // Get inverse values and compare them
     for (std::size_t i = 0; i < size; ++i)
     {
-        ASSERT_NEAR(x[i], curve.getInversVariable(y[i]),
+        ASSERT_NEAR(x[i], curve.getInverseVariable(y[i]),
                     std::numeric_limits<double>::epsilon());
     }
 }
@@ -113,7 +113,7 @@ TEST(MathLibCurve, MonotonicDecreasePiecewiseLinearCurve)
     // Get inverse values and compare them
     for (std::size_t i = 0; i < size; ++i)
     {
-        ASSERT_NEAR(x[i], curve.getInversVariable(y[i]),
+        ASSERT_NEAR(x[i], curve.getInverseVariable(y[i]),
                     std::numeric_limits<double>::epsilon());
     }
 }

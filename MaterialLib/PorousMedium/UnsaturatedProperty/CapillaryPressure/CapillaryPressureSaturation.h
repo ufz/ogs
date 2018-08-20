@@ -44,17 +44,21 @@ public:
     /// Get capillary pressure.
     virtual double getCapillaryPressure(const double saturation) const = 0;
     /// Get saturation.
-    virtual double getSaturation(const double capillary_ressure) const = 0;
+    virtual double getSaturation(const double capillary_pressure) const = 0;
 
     /// Get the derivative of the capillary pressure with respect to saturation
     virtual double getdPcdS(const double saturation) const = 0;
+
+    /// Get the second derivative of the capillary pressure with respect to
+    /// saturation
+    virtual double getd2PcdS2(const double saturation) const = 0;
 
 protected:
     const double _saturation_r;         ///< Residual saturation.
     const double _saturation_nonwet_r;  ///< Residual saturation of nonwetting
                                         ///phase (optional).
     const double _saturation_max;       ///< Maximum saturation.
-    const double _pc_max;               ///< Maximum capillaray pressure
+    const double _pc_max;               ///< Maximum capillary pressure
 
     /** A small number for an offset:
      *  1. to set the bound of S, the saturation, such that
