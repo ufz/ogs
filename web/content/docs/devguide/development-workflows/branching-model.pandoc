@@ -13,14 +13,14 @@ weight = 1011
 
 Git is very flexible in organizing a distributed development team. We use a so called **Forking workflow**.
 
-The following explanation is taken from an [in-depth article](https://www.atlassian.com/git/workflows#!workflow-forking) on that model:
+The following explanation is taken from an [in-depth article](https://www.atlassian.com/git/tutorials/comparing-workflows#!workflow-forking) on that model:
 
 > Instead of using a single server-side repository to act as the *central* codebase, it gives every developer a server-side repository. This means that each contributor has not one, but two Git repositories: a private local one and a public server-side one.
 >
 > The main advantage of the Forking Workflow is that contributions can be integrated without the need for everybody to push to a single central repository. Developers push to their own server-side repositories, and only the project maintainer can push to the official repository. This allows the maintainer to accept commits from any developer without giving them write access to the official codebase.
 >
 > The result is a distributed workflow that provides a flexible way for large, organic teams (including untrusted third-parties) to collaborate securely. This also makes it an ideal workflow for open source projects.
-> <cite> https://www.atlassian.com/git/workflows#!workflow-forking </cite>
+> <cite> https://www.atlassian.com/git/tutorials/comparing-workflows#!workflow-forking </cite>
 >
 
 The workflow is summarized in the following image from the [GitHub blog](https://github.com/blog/2042-git-2-5-including-multiple-worktrees-and-triangular-workflows):
@@ -29,7 +29,7 @@ The workflow is summarized in the following image from the [GitHub blog](https:/
 
 You always **fetch** changes from official repository (called **upstream**), develop on your **local** repository and **push** changes to your server-side repository (called **origin**).
 
-First thing to do when you start working on your local repository is to create a topic branch (based on the current master branch of the official repository) specific to a well defined feature or bugfix you are about to implement. **Never** work on the **master**-branch (it is reserved for the official version)! See also [this tutorial](https://www.atlassian.com/git/tutorial/git-branches#!overview) on branching.
+First thing to do when you start working on your local repository is to create a topic branch (based on the current master branch of the official repository) specific to a well defined feature or bugfix you are about to implement. **Never** work on the **master**-branch (it is reserved for the official version)! See also [this tutorial](https://www.atlassian.com/git/tutorials/using-branches) on branching.
 
 Start committing changes in logical chunks. After you are happy with your implementation push your topic branch to your forked repository on GitHub.
 
