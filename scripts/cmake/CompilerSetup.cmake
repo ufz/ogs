@@ -61,21 +61,28 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
             message(STATUS "When using profiling you should set CMAKE_BUILD_TYPE \
                 to Release.")
         endif()
-        set(PROFILE_FLAGS "-pg -fno-omit-frame-pointer -O2 -DNDEBUG")
+        set(PROFILE_FLAGS
+            -pg
+            -fno-omit-frame-pointer
+            -O2
+            -DNDEBUG
+        )
         # clang compiler does not know the following flags
         if(NOT COMPILER_IS_CLANG)
-            set(PROFILE_FLAGS "${PROFILE_FLAGS} -fno-inline-functions-called-once \
-                -fno-optimize-sibling-calls")
+            set(PROFILE_FLAGS ${PROFILE_FLAGS}
+                -fno-inline-functions-called-once
+                -fno-optimize-sibling-calls
+            )
         endif()
         add_compile_options(${PROFILE_ARGS})
     endif()
 
     if(OGS_ENABLE_AVX2)
-        set(CPU_FLAGS "-mavx2 -march=core-avx2")
+        set(CPU_FLAGS -mavx2 -march=core-avx2)
     elseif(OGS_CPU_ARCHITECTURE STREQUAL "generic")
-        set(CPU_FLAGS "-mtune=generic")
+        set(CPU_FLAGS -mtune=generic)
     else()
-        set(CPU_FLAGS "-march=${OGS_CPU_ARCHITECTURE}")
+        set(CPU_FLAGS -march=${OGS_CPU_ARCHITECTURE})
     endif()
 
     if(COMPILER_IS_GCC)
@@ -102,12 +109,12 @@ endif()
 
 if(MSVC)
     if(OGS_CPU_ARCHITECTURE STREQUAL "native")
-        set(CPU_FLAGS "/favor:blend")
+        set(CPU_FLAGS /favor:blend)
     else()
-        set(CPU_FLAGS "/favor:${OGS_CPU_ARCHITECTURE}")
+        set(CPU_FLAGS /favor:${OGS_CPU_ARCHITECTURE})
     endif()
     if(OGS_ENABLE_AVX2)
-        set(CPU_FLAGS "${CPU_FLAGS} /arch:AVX2")
+        set(CPU_FLAGS ${CPU_FLAGS} /arch:AVX2)
     endif()
     add_compile_options(
         /MP # multi-core compilation
