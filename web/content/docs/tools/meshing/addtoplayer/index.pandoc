@@ -14,7 +14,7 @@ The tool `AddTopLayer` adds one layer of elements with a specified thickness `th
 
 One might want to take care that the material groups are reduced, eg. material groups should not be [0,2,5], but [0,1,2]. The new layer will have the material group number of the highest material group +1.
 
-The tool requires the [OGS-6 node ordering](http://doxygen.opengeosys.org/index.html) in the elements. A different node ordering may lead to unexpected results. In case one might try to change the ordering using the tool [NodeReordering](NodeReordering).
+The tool requires the [OGS-6 node ordering](http://doxygen.opengeosys.org/index.html) in the elements. A different node ordering may lead to unexpected results. In case one might try to change the ordering using the tool `NodeReordering`.
 
 The tool is part of the official [OpenGeoSys git repository](https://github.com/ufz/ogs).
 

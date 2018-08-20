@@ -1,10 +1,10 @@
   {{ partial "global-footer-nav.html" . }}
   </div> <!-- container -->
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearchLite.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearchLite.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
   {{ $scripts := slice (resources.Get "js/header-anchor.js") (resources.Get "js/osselector.js") (resources.Get "js/sitesearch.js") (resources.Get "js/fancybox.js") | resources.Concat "bundle.js" | minify | fingerprint }}
   <script type="text/javascript" src="{{ $scripts.Permalink }}" integrity="{{ $scripts.Data.Integrity }}" media="screen"></script>
