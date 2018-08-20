@@ -17,7 +17,7 @@ The minimum prerequisites to build OGS are:
 - Git (version control tool, at least version 1.7.x)
 - CMake (build configuration tool, at least version 3.1)
 - A compiler with [C++11](http://en.wikipedia.org/wiki/C%2B%2B11)-support
-- [Conan package manager](https://www.conan.io/) **OR** install [required libraries]({{< relref "third-party-libraries.pandoc" >}}) manually (for advanced users only!)
+- [Conan package manager](https://www.conan.io/) **OR** install [required libraries]({{< ref "third-party-libraries.pandoc" >}}) manually (for advanced users only!)
 
 ## Step: Install a compiler
 
@@ -60,7 +60,7 @@ The Homebrew package manager is needed for installing other libraries and packag
 
 ## Step: Install Git
 
-Git is a powerful and distributed version control system. OGS source code is hosted on [GitHub](https://github.com/ufz/ogs). See the developer guide page on {entry:devguide/github:link} for more info on how OGS uses GitHub for collaborative development.
+Git is a powerful and distributed version control system. OGS source code is hosted on [GitHub](https://github.com/ufz/ogs). See the developer guide page on [Code Reviews]({{< ref "code-reviews" >}}) for more info on how OGS uses GitHub for collaborative development.
 
 ::: {.win}
 Download and install git from the [git homepage](http://git-scm.com/download/win). The default installer options are fine. This install a new command line called *Git Bash* which should be used for all git operations.
@@ -87,7 +87,7 @@ $ git --version
 git version 1.7.4.1
 ```
 
-Otherwise please install Git with your favourite package manager:
+Otherwise please install Git with your favorite package manager:
 
 ```bash
 $ sudo yum install git      // RPM-based systems
@@ -128,7 +128,7 @@ $ git config --global user.name "Your Name Here"
 $ git config --global user.email "your_email@example.com"
 ```
 
-The [graphical GitHub client](http://mac.github.com/) is also maybe worth a look. See the page on {entry:devguide/github:link} for more info on GitHub.
+The [graphical GitHub client](http://mac.github.com/) is also maybe worth a look.
 
 In some corporate environments you may have to use a proxy server. In this case tell git about it:
 
@@ -199,14 +199,14 @@ $ brew install cmake
 
 ## Step: Install Conan package manager
 
-The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. If you prefer you can also [install libraries manually]({entry:81:url}) instead.
+The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. If you prefer you can also [install libraries manually]({{< ref "third-party-libraries.pandoc" >}}) instead.
 
 Go to [Conans download page](https://www.conan.io/downloads) and see platform-specific instructions:
 
 ::: {.win}
 Just use the provided Windows installer and make sure to add conan to your path environment as asked by the installer.
 
-Check on a newly opened command line if Conan was installed succesfully:
+Check on a newly opened command line if Conan was installed successfully:
 
 ```
 $ conan --version
@@ -217,7 +217,7 @@ Conan version 1.0.4
 ::: {.linux}
 Use either the provided deb-package or install via Pythons `pip`.
 
-Check on a newly opened command line if Conan was installed succesfully:
+Check on a newly opened command line if Conan was installed successfully:
 
 ```
 $ conan --version
@@ -232,7 +232,7 @@ Use Homebrew:
 brew install conan
 ```
 
-Check on a newly opened command line if Conan was installed succesfully:
+Check on a newly opened command line if Conan was installed successfully:
 
 ```
 $ conan --version

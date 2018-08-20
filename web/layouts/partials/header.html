@@ -3,11 +3,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{ .Hugo.Generator }}
 
   <meta name="description" content="OpenGeoSys">
   <meta name="author" content="OpenGeoSys Community">
+  <title>{{ .Title }}</title>
 
-  <link rel="stylesheet" href="/styles.css">
+  <!-- <link rel="stylesheet" href="/styles.css"> -->
+  {{ if .Site.IsServer }}
+  {{ $styles := resources.Get "scss/main.scss" | resources.ToCSS (dict "targetPath" "main.css" "enableSourceMap" true ) | resources.PostCSS }}
+  <link rel="stylesheet" href="{{ $styles.RelPermalink }}" media="screen">
+  {{ else }}
+  {{ $styles := resources.Get "scss/main.scss" | resources.ToCSS (dict "targetPath" "main.css" ) | resources.PostCSS | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $styles.Permalink }}" integrity="{{ $styles.Data.Integrity }}" media="screen">
+  {{ end }}
 
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
@@ -20,7 +30,6 @@
   </script>
   <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
-  <title>{{ .Title }}</title>
 </head>
 
 <body class="font-sans leading-normal">

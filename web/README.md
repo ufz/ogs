@@ -136,8 +136,6 @@ This json-file is then used by the shortcode.
 
 - Inside the source-directory `ogs/web`:
   - Install packages with `yarn`
-  - Run `webpack --watch`
-
     - Re-run CMake and build the `ctest`-target, *OPTIONAL* for benchmark visualizations
   - Run `npm run build` to build the site which is created in `public/`
 
@@ -152,5 +150,6 @@ ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
 - [Hugo](https://gothugo.com) - Web site generator
 - [Tailwind](https://tailwindcss.com/docs/what-is-tailwind) - CSS framework
 - [vtk.js](https://kitware.github.io/vtk-js/) - 3D Visualizations, CURRENTLY DISABLED!
-- [webpack](https://webpack.github.io/) - Packaging JavaScript & CSS
 - [FontAwesome](https://fontawesome.com) - Icons, see [icon search](https://fontawesome.com/icons?d=gallery)
+- [Slick Carousel](http://kenwheeler.github.io/slick/) & [FancyBox](https://fancyapps.com/fancybox/3/) for image galleries
+- [Algolia](https://github.com/algolia/algoliasearch-client-javascript) for site search

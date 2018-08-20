@@ -20,5 +20,4 @@
 *.bin filter=lfs diff=lfs merge=lfs -text
 *.pvtu* filter=lfs diff=lfs merge=lfs -text
 *.gif filter=lfs diff=lfs merge=lfs -text
-web/dist/bundle.js filter=lfs diff=lfs merge=lfs -text
-web/dist/styles.css filter=lfs diff=lfs merge=lfs -text
+web/resources/_gen/scss/*.content filter=lfs diff=lfs merge=lfs -text

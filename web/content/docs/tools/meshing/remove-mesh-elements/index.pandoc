@@ -16,9 +16,9 @@ The tool `removeMeshElements` removes those elements from a given input mesh tha
  3. Remove elements that have zero volume.
  4. Remove elements by axis aligned bounding box criterion.
 
-One possible application is to cut out a smaller mesh out of a bigger one by marking the inner/outer region using the tool [SetPropertiesInPolygonalRegion]({{< relref "set-properties-in-polygonal-region" >}}).
+One possible application is to cut out a smaller mesh out of a bigger one by marking the inner/outer region using the tool [SetPropertiesInPolygonalRegion]({{< ref "set-properties-in-polygonal-region" >}}).
 
-Another application is to cut out patches of a (top) surface (tool [ExtractSurface]({{< relref "extract-surface" >}})) for assigning boundary conditions.
+Another application is to cut out patches of a (top) surface (tool [ExtractSurface]({{< ref "extract-surface" >}})) for assigning boundary conditions.
 
 ## Usage
 
@@ -36,7 +36,7 @@ Each particular line with optional arguments refere to one of the different remo
 ![](ExampleRemoveElements-Input.png)
 ![](ExampleRemoveElements-Output.png)
 
-The left figure above is the result of the repeated application of [SetPropertiesInPolygonalRegion]({{< relref "set-properties-in-polygonal-region" >}}). It contains material ids 0 (red), 1 (yellow), 2 (turquoise) and 3 (blue). On the right figure the result of the following command line input is depicted: 
+The left figure above is the result of the repeated application of [SetPropertiesInPolygonalRegion]({{< ref "set-properties-in-polygonal-region" >}}). It contains material ids 0 (red), 1 (yellow), 2 (turquoise) and 3 (blue). On the right figure the result of the following command line input is depicted: 
 ```
 removeMeshElements -i TestCube-ResetPropertiesInPolygonalRegion.vtu -o TestCube-removeMeshElements.vtu -n MaterialIDs --int-property-value 1 --int-property-value 2 --int-property-value 3
 ```

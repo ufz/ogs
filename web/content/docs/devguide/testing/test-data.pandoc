@@ -37,6 +37,6 @@ In the OGS-cli outputting to `[build-dir]/Tests/Data` is already handled (via th
 
 In code `BaseLib::BuildInfo::data_path` (from `BuildInfo.h`) references the data source directory and `BaseLib::BuildInfo::data_binary_path` references the data output directory.
 
-For adding new data files make sure you have [setup git lfs](../../getting-started/prerequisites) already. Then simply commit the new files as usual. For pushing you need to have [setup an account]({{< relref "gitlab.pandoc" >}}) on our own GitLab server as the lfs files are stored there (due to bandwidth limitations on GitHub). When asked for GitLab credentials on pushing use your GitLab account name (should be the same as the GitHub account name) and your created GitLab personal access token ([see the GitLab Setup page]({{< relref "gitlab.pandoc" >}})).
+For adding new data files make sure you have [setup git lfs](../../getting-started/prerequisites) already. Then simply commit the new files as usual. For pushing you need to have [setup an account]({{< ref "gitlab.pandoc" >}}) on our own GitLab server as the lfs files are stored there (due to bandwidth limitations on GitHub). When asked for GitLab credentials on pushing use your GitLab account name (should be the same as the GitHub account name) and your created GitLab personal access token ([see the GitLab Setup page]({{< ref "gitlab.pandoc" >}})).
 
 Check this [in-depth tutorial](https://www.atlassian.com/git/tutorials/git-lfs) to learn more about git lfs.

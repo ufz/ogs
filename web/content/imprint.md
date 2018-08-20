@@ -30,7 +30,7 @@ This website uses a number of external projects:
 - [Hugo](https://gohugo.io/) static website generator together with [Pandoc](https://pandoc.org).
 - [jQuery](https://jquery.org/) JavaScript library, distributed under the [jQuery License](https://jquery.org/license/).
 - [TailwindCSS](https://tailwindcss.com) framework, distributed under the [MIT License](https://github.com/tailwindcss/tailwindcss/blob/master/LICENSE).
-- [Font Awesome](https://fontawesome.com), distributed under the [SIL Open Font License 1.1](https://scripts.sil.org/OFL) and the [MIT License](https://opensource.org/licenses/MIT).
+- [Font Awesome](https://fontawesome.com), distributed under [this license](https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt).
 - [Roboto font](https://fonts.google.com/specimen/Roboto) and [Open Sans font](https://fonts.google.com/specimen/Open+Sans), both distributed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 - [Slick Carousel](http://kenwheeler.github.io/slick) JavaScript library, distributed under the [MIT license](https://github.com/kenwheeler/slick/blob/master/LICENSE).
 - [Fancybox](https://fancyapps.com/fancybox/3/) JavaScript library, distributed under the [GPLv3 license](http://choosealicense.com/licenses/gpl-3.0).

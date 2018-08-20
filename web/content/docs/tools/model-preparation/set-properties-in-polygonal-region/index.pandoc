@@ -16,7 +16,7 @@ The new value must be of one of the data types, either [integer](https://en.wiki
 
 The polygon must be located within a plane. A node is located in the cylindrical volume iff (ie. if and only if) the node's orthogonal projection to the plane of the polygon lies in the polygon, ie. the plane can be defined in any arbitrary direction in 3d space.
 
-In combination with a threshold filter the tool can also be used to cut out some region of the mesh. The tool can be also used in combination with the tool [removeMeshElements]({{< relref "remove-mesh-elements" >}}).
+In combination with a threshold filter the tool can also be used to cut out some region of the mesh. The tool can be also used in combination with the tool [removeMeshElements]({{< ref "remove-mesh-elements" >}}).
 
 The tool writes a new mesh `modified_mesh`.
 

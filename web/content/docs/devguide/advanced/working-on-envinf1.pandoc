@@ -21,7 +21,7 @@ Load required modules by sourcing the environment script:
 $ source scripts/env/envinf1/cli.sh
 ```
 
-Then do the [build configuration]({{< relref "build-configuration.pandoc" >}}) and [build]({{< relref "/docs/devguide/getting-started/build.pandoc" >}}) the project.
+Then do the [build configuration]({{< ref "build-configuration.pandoc" >}}) and [build]({{< ref "/docs/devguide/getting-started/build.pandoc" >}}) the project.
 
 ## Build the Data Explorer
 
@@ -31,7 +31,7 @@ Load required modules by sourcing the environment script:
 $ source scripts/env/envinf1/gui.sh
 ```
 
-Then do the [build configuration]({{< relref "build-configuration.pandoc" >}}) and [build]({{< relref "/docs/devguide/getting-started/build.pandoc" >}}) the project.
+Then do the [build configuration]({{< ref "build-configuration.pandoc" >}}) and [build]({{< ref "/docs/devguide/getting-started/build.pandoc" >}}) the project.
 
 ## Install and use Conan
 
@@ -39,13 +39,13 @@ Follow the instructions on using Python's `virtualenv` [on the Eve-wiki](https:/
 
 ## Additional Features
 
-[Doxygen]({entry:devguide/generating-documentation:url}) documentation:
+Generating Doxygen documentation:
 
 ```bash
 $ module load doxygen/1.8.7-1_gcc_4.8.1_CentOS6
 ```
 
-You can {entry:devguide/build-with-ninja:link}:
+You can [build with Ninja]({{< ref "build-with-ninja" >}}):
 
 ```bash
 $ module load ninja/1.4.0-1_gcc_4.8.1_CentOS6

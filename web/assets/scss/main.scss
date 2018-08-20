@@ -46,6 +46,21 @@ h1 {
   @apply .mt-0;
 }
 
+// Anchor links
+h2 > .headerlink,
+h3 > .headerlink,
+h4 > .headerlink {
+    visibility: hidden;
+}
+
+.section-docs {
+  h2:hover > .headerlink,
+  h3:hover > .headerlink,
+  h4:hover > .headerlink {
+    visibility: visible;
+  }
+}
+
 p, ul, pre {
   @apply .mb-4;
 }
@@ -190,8 +205,8 @@ a.btn-inverse:hover {
 }
 
 /* ----------------------------- Slick Carousel ----------------------------- */
-/* Import here to override values */
-@import '../node_modules/slick-carousel/slick/slick-theme.css';
+@import url("//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css");
+@import url("//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css");
 .slick-prev:before,
 .slick-next:before {
   font-size: 24px;
@@ -242,4 +257,5 @@ a.btn-inverse:hover {
 
 @tailwind utilities;
 
-@import 'css/pandoc-highlighting.css';
+@import 'pandoc-highlighting';
+@import url("https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css");

@@ -23,9 +23,9 @@ So just go ahead and create a build-directory along your source code directory.
 
 ## Install required libraries with Conan
 
-It is preferred to use Conan package manager to install required third-party libraries. To use Conan add the CMake option `OGS_USE_CONAN=ON` to the CMake run (see below). This will run Conan automatically downloading either prebuilt binaries of required libraries or building them locally if a binary for your setup (operating system, compiler, ..) is not available. [Check this]({entry:674:url}) for advanced Conan usage.
+It is preferred to use Conan package manager to install required third-party libraries. To use Conan add the CMake option `OGS_USE_CONAN=ON` to the CMake run (see below). This will run Conan automatically downloading either prebuilt binaries of required libraries or building them locally if a binary for your setup (operating system, compiler, ..) is not available. [Check this]({{< ref "conan-package-manager.pandoc" >}}) for advanced Conan usage.
 
-*Note:* Instead of using Conan you can optionally [install the required libraries manually]({entry:81:url}).
+*Note:* Instead of using Conan you can optionally [install the required libraries manually]({{< ref "third-party-libraries.pandoc" >}}).
 
 ::: {.win}
 Add `-DOGS_USE_CONAN=ON` to the CMake-run (see below).
@@ -67,7 +67,7 @@ Because of the separation of the source code and all stuff that is generated as 
 
 When you want to start over with a new configuration simply delete the build-directory, create a new one and reconfigure.
 
-For a list of available options see the {entry:devguide/configuration-options:link}.
+[See this]({{< ref "configuration-options" >}}) for a list of available options.
 
 ## Option: Configure from the command line
 
