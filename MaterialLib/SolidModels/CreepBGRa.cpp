@@ -52,9 +52,8 @@ CreepBGRa<DisplacementDim>::integrateStress(
 
     auto const& deviatoric_matrix = Invariants::deviatoric_projection;
 
-    KelvinVector s_try = deviatoric_matrix * sigma_try;
-    double const norm_s_try = Invariants::FrobeniusNorm(s_try);
-
+    double const norm_s_try =
+        Invariants::FrobeniusNorm(deviatoric_matrix * sigma_try);
     // In case |s_{try}| is zero and _n < 3 (rare case).
     if (norm_s_try < std::numeric_limits<double>::epsilon() * C(0, 0))
     {
