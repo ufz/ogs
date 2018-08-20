@@ -46,6 +46,21 @@ h1 {
   @apply .mt-0;
 }
 
+// Anchor links
+h2 > .headerlink,
+h3 > .headerlink,
+h4 > .headerlink {
+    visibility: hidden;
+}
+
+.section-docs {
+  h2:hover > .headerlink,
+  h3:hover > .headerlink,
+  h4:hover > .headerlink {
+    visibility: visible;
+  }
+}
+
 p, ul, pre {
   @apply .mb-4;
 }

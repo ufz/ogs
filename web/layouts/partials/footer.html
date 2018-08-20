@@ -6,7 +6,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
 
-  {{ $scripts := slice (resources.Get "js/osselector.js") (resources.Get "js/sitesearch.js") (resources.Get "js/fancybox.js") | resources.Concat "bundle.js" | minify | fingerprint }}
+  {{ $scripts := slice (resources.Get "js/header-anchor.js") (resources.Get "js/osselector.js") (resources.Get "js/sitesearch.js") (resources.Get "js/fancybox.js") | resources.Concat "bundle.js" | minify | fingerprint }}
   <script type="text/javascript" src="{{ $scripts.Permalink }}" integrity="{{ $scripts.Data.Integrity }}" media="screen"></script>
 </body>
 </html>
