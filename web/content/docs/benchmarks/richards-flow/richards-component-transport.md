@@ -1,7 +1,7 @@
 +++
 author = "Marc Walther"
 weight = 142
-project = "Parabolic/RichardsComponentTransport/Padilla_NaCl6/Padilla_NaCl6.prj"
+project = "Parabolic/RichardsComponentTransport/Padilla/Padilla_NaCl6/Padilla_NaCl6.prj"
 date = "2017-08-25T14:41:09+01:00"
 title = "Unsaturated Mass Transport"
 
@@ -34,8 +34,8 @@ Saturated intrinsic permeability is calculated from given flux and pressure grad
 
 Initial conditions are $c = 0$ and hydrostatic pressure conditions with steady state flow for both scenarios.
 
-{{< data-link "The NaCl1 project file" "Parabolic/RichardsComponentTransport/Padilla_NaCl1/Padilla_NaCl1.prj" >}}  
-{{< data-link "The NaCl6 project file" "Parabolic/RichardsComponentTransport/Padilla_NaCl6/Padilla_NaCl6.prj" >}}
+{{< data-link "The NaCl1 project file" "Parabolic/RichardsComponentTransport/Padilla/Padilla_NaCl1/Padilla_NaCl1.prj" >}}  
+{{< data-link "The NaCl6 project file" "Parabolic/RichardsComponentTransport/Padilla/Padilla_NaCl6/Padilla_NaCl6.prj" >}}
 
 
 ### Results
