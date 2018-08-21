@@ -1,5 +1,5 @@
 +++
-project = "https://github.com/ufz/ogs-data/blob/master/HydroMechanics/Linear/Unconfined_Compression_early/square_1e2_UC_early.prj"
+project = "HydroMechanics/Linear/Unconfined_Compression_early/square_1e2_UC_early.prj"
 author = "Tianyuan Zheng"
 date = "2017-02-16T15:10:33+01:00"
 title = "Unconfined compression"

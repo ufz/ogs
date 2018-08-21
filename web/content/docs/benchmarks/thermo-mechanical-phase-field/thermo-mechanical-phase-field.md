@@ -1,5 +1,5 @@
 +++
-project = "https://github.com/ufz/ogs-data/blob/master/ThermoMechanicalPhaseField/cube_1e0.prj"
+project = "ThermoMechanicalPhaseField/cube_1e0.prj"
 author = "Xing-Yuan Miao"
 date = "2018-03-11T09:10:33+01:00"
 title = "Non-isothermal test"
