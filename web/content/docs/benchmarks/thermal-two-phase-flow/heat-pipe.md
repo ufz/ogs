@@ -1,7 +1,7 @@
 +++
 author = "Yonghui Huang"
 weight = 141
-project = "Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/Twophase_HeatPipe_quad_curve.prj.prj"
+project = "Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/Twophase_HeatPipe_quad_curve_small.prj"
 date = "2017-04-16T14:41:09+01:00"
 title = "Heat pipe problem"
 

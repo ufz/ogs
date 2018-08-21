@@ -2,7 +2,7 @@
 date = "2017-02-16T14:59:01+01:00"
 title = "Linear"
 weight = 151
-project = "HydroMechanics/Linear/square_1e2.prj"
+project = "HydroMechanics/Linear/Confined_Compression/square_1e2.prj"
 author = "Dmitri Naumov"
 
 [menu]

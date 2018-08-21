@@ -1,5 +1,5 @@
 +++
-project = "https://github.com/ufz/ogs-data/blob/master/PhaseField/beam3d.prj"
+project = "PhaseField/beam3d.prj"
 author = "Xing-Yuan Miao"
 date = "2017-05-19T09:10:33+01:00"
 title = "Crack beam under tension"

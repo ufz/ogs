@@ -2,7 +2,7 @@
 date = "2017-02-16T15:03:28+01:00"
 title = "Linear, single fracture"
 weight = 152
-project = "https://github.com/ufz/ogs-data/blob/master/LIE/HydroMechanics/single_fracture.prj"
+project = "LIE/HydroMechanics/single_fracture.prj"
 author = "Norihiro Watanabe"
 
 [menu]
@@ -38,4 +38,6 @@ shown in the following figure.
 
 Comparison with 2D setup yields identical results (up to numerical differences
 in order of 1e-15):
-{{< img src="../single_fracture_3D_vs_2D.png" >}}
+TODO: Image missing!
+
+<!-- {{< img src="../single_fracture_3D_vs_2D.png" >}} -->

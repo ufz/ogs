@@ -1,5 +1,5 @@
 +++
-project = "https://github.com/ufz/ogs-data/blob/master/ThermoMechanics/cube_1e3.prj"
+project = "hermoMechanics/cube_1e3.prj"
 author = "Xing-Yuan Miao"
 date = "2017-05-08T15:10:33+01:00"
 title = "Thermoelastic Stress"
