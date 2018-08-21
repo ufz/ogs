@@ -306,9 +306,10 @@ void Mesh::checkNonlinearNodeIDs() const
             if (e->getNodeIndex(i) >= getNumberOfBaseNodes())
                 continue;
 
-            ERR("Found a nonlinear node whose ID (%d) is smaller than the "
-                "number of base node IDs (%d)."
-                "Some functions may not work properly.",
+            WARN(
+                "Found a nonlinear node whose ID (%d) is smaller than the "
+                "number of base node IDs (%d). Some functions may not work "
+                "properly.",
                 e->getNodeIndex(i), getNumberOfBaseNodes());
             return;
         }
