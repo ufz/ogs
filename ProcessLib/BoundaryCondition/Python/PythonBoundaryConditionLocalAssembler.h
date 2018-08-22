@@ -67,8 +67,8 @@ public:
             _data.dof_table_bulk.getNumberOfComponents();
 
         auto const& bulk_node_ids_map =
-            *_data.boundary_mesh.getProperties().getPropertyVector<std::size_t>(
-                "bulk_node_ids");
+            *_data.boundary_mesh.getProperties()
+                 .template getPropertyVector<std::size_t>("bulk_node_ids");
 
         // gather primary variables
         Eigen::MatrixXd primary_variables_mat(num_nodes, num_comp_total);
