@@ -889,6 +889,9 @@ void UncoupledProcessesTimeLoop::outputSolutions(
             pcs.preTimestep(x, _start_time,
                             process_data->timestepper->getTimeStep().dt(),
                             process_id);
+            // Update secondary variables, which might be uninitialized, before
+            // output.
+            pcs.computeSecondaryVariable(_start_time, x);
         }
         if (is_staggered_coupling)
         {

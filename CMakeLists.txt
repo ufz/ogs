@@ -99,6 +99,7 @@ set(ProcessesList
     PhaseField
     RichardsComponentTransport
     RichardsFlow
+    RichardsMechanics
     SmallDeformation
     TES
     ThermalTwoPhaseFlowWithPP
