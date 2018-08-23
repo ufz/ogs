@@ -25,16 +25,6 @@ createNonuniformNeumannBoundaryCondition(
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "NonuniformNeumann");
 
-    // Surface mesh and bulk mesh must have equal axial symmetry flags!
-    if (boundary_mesh.isAxiallySymmetric() != bulk_mesh.isAxiallySymmetric())
-    {
-        OGS_FATAL(
-            "The boundary mesh %s axially symmetric but the bulk mesh %s. Both "
-            "must have an equal axial symmetry property.",
-            boundary_mesh.isAxiallySymmetric() ? "is" : "is not",
-            bulk_mesh.isAxiallySymmetric() ? "is" : "is not");
-    }
-
     // TODO finally use ProcessLib::Parameter here
     auto const field_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformNeumann__field_name}

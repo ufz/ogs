@@ -33,6 +33,17 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters,
     const Process& process)
 {
+    // Surface mesh and bulk mesh must have equal axial symmetry flags!
+    if (config.boundary_mesh.isAxiallySymmetric() !=
+        bulk_mesh.isAxiallySymmetric())
+    {
+        OGS_FATAL(
+            "The boundary mesh %s axially symmetric but the bulk mesh %s. Both "
+            "must have an equal axial symmetry property.",
+            config.boundary_mesh.isAxiallySymmetric() ? "is" : "is not",
+            bulk_mesh.isAxiallySymmetric() ? "is" : "is not");
+    }
+
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
 
