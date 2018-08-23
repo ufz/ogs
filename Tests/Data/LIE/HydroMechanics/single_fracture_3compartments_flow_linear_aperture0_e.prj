@@ -229,14 +229,14 @@
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
-                    <geometry>PLY_EAST</geometry>
+                    <geometry>InjectionPoint</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>p_in</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
-                    <geometry>PLY_WEST</geometry>
+                    <geometry>OutletPoint</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>p_out</parameter>

@@ -238,14 +238,14 @@
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>TaskB</geometrical_set>
-                    <geometry>PLY_TOP</geometry>
+                    <geometry>FRACTURE_TOP</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>p0</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>TaskB</geometrical_set>
-                    <geometry>PLY_BOTTOM</geometry>
+                    <geometry>FRACTURE_BOTTOM</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>p0</parameter>
@@ -296,14 +296,14 @@
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>TaskB</geometrical_set>
-                    <geometry>PLY_TOP</geometry>
+                    <geometry>FRACTURE_TOP</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>TaskB</geometrical_set>
-                    <geometry>PLY_BOTTOM</geometry>
+                    <geometry>FRACTURE_BOTTOM</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>zero_u</parameter>

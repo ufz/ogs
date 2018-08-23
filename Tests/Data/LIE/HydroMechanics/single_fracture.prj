@@ -273,14 +273,14 @@
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
-                    <geometry>PLY_EAST</geometry>
+                    <geometry>POINT5</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
-                    <geometry>PLY_WEST</geometry>
+                    <geometry>POINT4</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>zero_u</parameter>

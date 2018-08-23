@@ -287,28 +287,28 @@
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>single_fracture_3D</geometrical_set>
-                    <geometry>left</geometry>
+                    <geometry>inlet</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture_3D</geometrical_set>
-                    <geometry>right</geometry>
+                    <geometry>outlet</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture_3D</geometrical_set>
-                    <geometry>front</geometry>
+                    <geometry>fracture_front</geometry>
                     <type>Dirichlet</type>
                     <component>2</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture_3D</geometrical_set>
-                    <geometry>back</geometry>
+                    <geometry>fracture_back</geometry>
                     <type>Dirichlet</type>
                     <component>2</component>
                     <parameter>zero_u</parameter>
