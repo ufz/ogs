@@ -139,6 +139,15 @@ NonlinearSolverStatus PETScNonlinearSolver::solve(
     // during the SNES' solve call.
     auto& J_snes = NumLib::GlobalMatrixProvider::provider.getMatrix(
         system->getMatrixSpecifications(process_id), _petsc_jacobian_id);
+    BaseLib::RunTime timer_dirichlet;
+    double time_dirichlet = 0.0;
+
+    timer_dirichlet.start();
+    system->computeKnownSolutions(*x[process_id], process_id);
+    system->applyKnownSolutions(*x[process_id]);
+    time_dirichlet += timer_dirichlet.elapsed();
+    INFO("[time] Applying Dirichlet BCs took {} s.", time_dirichlet);
+
     auto& r_snes = NumLib::GlobalVectorProvider::provider.getVector(
         system->getMatrixSpecifications(process_id), _petsc_residual_id);
     auto& x_snes = NumLib::GlobalVectorProvider::provider.getVector(
