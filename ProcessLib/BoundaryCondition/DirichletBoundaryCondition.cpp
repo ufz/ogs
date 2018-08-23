@@ -22,10 +22,6 @@ void DirichletBoundaryCondition::getEssentialBCValues(
 {
     SpatialPosition pos;
 
-    auto const& bulk_node_ids_map =
-        *_bc_mesh.getProperties().getPropertyVector<std::size_t>(
-            "bulk_node_ids");
-
     bc_values.ids.clear();
     bc_values.values.clear();
 
@@ -35,23 +31,24 @@ void DirichletBoundaryCondition::getEssentialBCValues(
                              _bc_mesh.getNumberOfNodes());
     for (auto const* const node : _bc_mesh.getNodes())
     {
-        auto const id = bulk_node_ids_map[node->getID()];
-        pos.setNodeID(id);
-        MeshLib::Location l(_bulk_mesh_id, MeshLib::MeshItemType::Node, id);
+        auto const id = node->getID();
+        pos.setNodeID(node->getID());
         // TODO: that might be slow, but only done once
-        const auto g_idx =
-            _dof_table.getGlobalIndex(l, _variable_id, _component_id);
-        if (g_idx == NumLib::MeshComponentMap::nop)
+        auto const global_index = _dof_table_boundary->getGlobalIndex(
+            {_bc_mesh.getID(), MeshLib::MeshItemType::Node, id}, _variable_id,
+            _component_id);
+        if (global_index == NumLib::MeshComponentMap::nop)
             continue;
         // For the DDC approach (e.g. with PETSc option), the negative
-        // index of g_idx means that the entry by that index is a ghost one,
-        // which should be dropped. Especially for PETSc routines MatZeroRows
-        // and MatZeroRowsColumns, which are called to apply the Dirichlet BC,
-        // the negative index is not accepted like other matrix or vector
-        // PETSc routines. Therefore, the following if-condition is applied.
-        if (g_idx >= 0)
+        // index of global_index means that the entry by that index is a ghost
+        // one, which should be dropped. Especially for PETSc routines
+        // MatZeroRows and MatZeroRowsColumns, which are called to apply the
+        // Dirichlet BC, the negative index is not accepted like other matrix or
+        // vector PETSc routines. Therefore, the following if-condition is
+        // applied.
+        if (global_index >= 0)
         {
-            bc_values.ids.emplace_back(g_idx);
+            bc_values.ids.emplace_back(global_index);
             bc_values.values.emplace_back(_parameter(t, pos).front());
         }
     }
@@ -59,8 +56,7 @@ void DirichletBoundaryCondition::getEssentialBCValues(
 
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
-    std::size_t const bulk_mesh_id, int const variable_id,
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
@@ -74,8 +70,22 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
 
     auto& param = findParameter<double>(param_name, parameters, 1);
 
+    // In case of partitioned mesh the boundary could be empty, i.e. there is no
+    // boundary condition.
+#ifdef USE_PETSC
+    // This can be extracted to createBoundaryCondition() but then the config
+    // parameters are not read and will cause an error.
+    // TODO (naumov): Add a function to ConfigTree for skipping the tags of the
+    // subtree and move the code up in createBoundaryCondition().
+    if (bc_mesh.getDimension() == 0 && bc_mesh.getNumberOfNodes() == 0 &&
+        bc_mesh.getNumberOfElements() == 0)
+    {
+        return nullptr;
+    }
+#endif  // USE_PETSC
+
     return std::make_unique<DirichletBoundaryCondition>(
-        param, bc_mesh, dof_table, bulk_mesh_id, variable_id, component_id);
+        param, bc_mesh, dof_table_bulk, variable_id, component_id);
 }
 
 }  // namespace ProcessLib

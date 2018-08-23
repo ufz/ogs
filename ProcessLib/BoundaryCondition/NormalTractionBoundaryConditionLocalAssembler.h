@@ -65,7 +65,7 @@ public:
     NormalTractionBoundaryConditionLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
-        bool is_axially_symmetric,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
         Parameter<double> const& pressure)
         : _integration_method(integration_order), _pressure(pressure)

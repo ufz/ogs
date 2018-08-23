@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true"> inhomogeneous_permeability.vtu </mesh>
-    <geometry>inhomogeneous_permeability.gml</geometry>
+    <meshes>
+        <mesh>square_1x1_quad_1e3.vtu</mesh>
+        <mesh>square_1x1_left.vtu</mesh>
+        <mesh>square_1x1_right.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>GW23</name>
             <type>GROUNDWATER_FLOW</type>
             <integration_order>2</integration_order>
-            <hydraulic_conductivity>K_rho_over_mu__eff</hydraulic_conductivity>
+            <hydraulic_conductivity>K</hydraulic_conductivity>
             <process_variables>
                 <process_variable>pressure</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="darcy_velocity" output_name="mass_flux"/>
+                <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>
         </process>
     </processes>
@@ -23,15 +26,15 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1.e-6</abstol>
+                    <abstol>1e-15</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <output>
                     <variables>
-                        <variable> pressure  </variable>
-                        <variable> mass_flux </variable>
+                        <variable> pressure </variable>
+                        <variable> darcy_velocity </variable>
                     </variables>
                 </output>
                 <time_stepping>
@@ -46,44 +49,38 @@
     </time_loop>
     <parameters>
         <parameter>
-            <name>K_rho_over_mu__eff</name>
-            <type>MeshElement</type>
-            <field_name>K_rho_over_mu__eff</field_name>
+            <name>K</name>
+            <type>Constant</type>
+            <value>1</value>
         </parameter>
         <parameter>
-            <name>p_initial</name>
+            <name>p0</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>
         <parameter>
-            <name>p_outlet</name>
+            <name>p_Dirichlet_right</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>-1</value>
         </parameter>
     </parameters>
     <process_variables>
         <process_variable>
             <name>pressure</name>
+            <mesh>square_1x1_quad_1e3</mesh>
             <components>1</components>
             <order>1</order>
-            <initial_condition>p_initial</initial_condition>
+            <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <!-- dummy values -->
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
-                    <!-- end dummy values -->
-
                     <type>NonuniformNeumann</type>
-                    <field_name>mass_flux</field_name>
-                    <mesh>inhomogeneous_mass_flux.vtu</mesh>
+                    <mesh>square_1x1_left</mesh>
+                    <field_name>cosY</field_name>
                 </boundary_condition>
-
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>bottom</geometry>
                     <type>Dirichlet</type>
-                    <parameter>p_outlet</parameter>
+                    <mesh>square_1x1_right</mesh>
+                    <parameter>p_Dirichlet_right</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>

@@ -228,6 +228,20 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
             dof_table.getNumberOfVariableComponents(variable_id));
     }
 
+    // In case of partitioned mesh the boundary could be empty, i.e. there is no
+    // boundary condition.
+#ifdef USE_PETSC
+    // This can be extracted to createBoundaryCondition() but then the config
+    // parameters are not read and will cause an error.
+    // TODO (naumov): Add a function to ConfigTree for skipping the tags of the
+    // subtree and move the code up in createBoundaryCondition().
+    if (bc_mesh.getDimension() == 0 && bc_mesh.getNumberOfNodes() == 0 &&
+        bc_mesh.getNumberOfElements() == 0)
+    {
+        return nullptr;
+    }
+#endif  // USE_PETSC
+
     return std::make_unique<PythonBoundaryCondition>(
         PythonBoundaryConditionData{
             bc, dof_table, bulk_mesh_id,

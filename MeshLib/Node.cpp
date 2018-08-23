@@ -49,5 +49,18 @@ void Node::updateCoordinates(double x, double y, double z)
         _elements[i]->computeVolume();
 }
 
+bool isBaseNode(Node const& node)
+{
+    // Check if node is connected.
+    if (node.getNumberOfElements() == 0)
+        return true;
+
+    // In a mesh a node always belongs to at least one element.
+    auto const e = node.getElement(0);
+
+    auto const n_base_nodes = e->getNumberOfBaseNodes();
+    auto const local_index = e->getNodeIDinElement(&node);
+    return local_index < n_base_nodes;
+}
 }
 

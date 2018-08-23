@@ -31,4 +31,7 @@ constructAdditionalMeshesFromGeoObjects(GeoLib::GEOObjects const& geo_objects,
                                         MeshLib::Mesh const& mesh,
                                         std::unique_ptr<SearchLength>
                                             search_length_algorithm);
+
+std::string meshNameFromGeometry(std::string const& geometrical_set_name,
+                                 std::string const& geometry_name);
 }  // namespace MeshGeoToolsLib

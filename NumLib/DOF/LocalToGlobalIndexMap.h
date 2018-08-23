@@ -96,7 +96,7 @@ public:
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
         int const variable_id,
         std::vector<int> const& component_ids,
-        MeshLib::MeshSubset&& mesh_subset) const;
+        MeshLib::MeshSubset&& new_mesh_subset) const;
 
     /// Derive a LocalToGlobalIndexMap constrained to the mesh subset and mesh
     /// subset's elements. A new mesh component map will be constructed using

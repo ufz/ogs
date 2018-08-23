@@ -20,6 +20,12 @@
 
 namespace MeshGeoToolsLib
 {
+std::string meshNameFromGeometry(std::string const& geometrical_set_name,
+                                 std::string const& geometry_name)
+{
+    return geometrical_set_name + "_" + geometry_name;
+}
+
 template <typename GeometryVec>
 std::vector<std::unique_ptr<MeshLib::Mesh>>
 constructAdditionalMeshesFromGeometries(
@@ -55,7 +61,7 @@ constructAdditionalMeshesFromGeometries(
                  geometry_name.c_str());
 
             additional_meshes.emplace_back(createMeshFromElementSelection(
-                vec_name + "_" + geometry_name,
+                meshNameFromGeometry(vec_name, geometry_name),
                 MeshLib::cloneElements(
                     boundary_element_searcher.getBoundaryElements(geometry))));
         }

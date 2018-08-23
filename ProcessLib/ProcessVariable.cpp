@@ -12,6 +12,8 @@
 #include <utility>
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Algorithm.h"
+#include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshLib/Mesh.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
@@ -19,16 +21,78 @@
 #include "ProcessLib/SourceTerms/NodalSourceTerm.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
+namespace
+{
+MeshLib::Mesh const& findMeshInConfig(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+{
+    //
+    // Get the mesh name from the config.
+    //
+    std::string mesh_name;  // Either given directly in <mesh> or constructed
+                            // from <geometrical_set>_<geometry>.
+
+#ifdef DOXYGEN_DOCU_ONLY
+    //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__mesh}
+    config.getConfigParameterOptional<std::string>("mesh");
+#endif  // DOXYGEN_DOCU_ONLY
+
+    auto optional_mesh_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__mesh}
+        config.getConfigParameterOptional<std::string>("mesh");
+    if (optional_mesh_name)
+    {
+        mesh_name = *optional_mesh_name;
+    }
+    else
+    {
+        // Looking for the mesh created before for the given geometry.
+
+#ifdef DOXYGEN_DOCU_ONLY
+        //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometrical_set}
+        config.getConfigParameterOptional<std::string>("geometrical_set");
+        //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometry}
+        config.getConfigParameter<std::string>("geometry");
+#endif  // DOXYGEN_DOCU_ONLY
+
+        auto const geometrical_set_name =
+            //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometrical_set}
+            config.getConfigParameter<std::string>("geometrical_set");
+        auto const geometry_name =
+            //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometry}
+            config.getConfigParameter<std::string>("geometry");
+
+        mesh_name = MeshGeoToolsLib::meshNameFromGeometry(geometrical_set_name,
+                                                          geometry_name);
+    }
+
+    //
+    // Find and extract mesh from the list of meshes.
+    //
+    auto const& mesh = *BaseLib::findElementOrError(
+        begin(meshes), end(meshes),
+        [&mesh_name](auto const& mesh) {
+            assert(mesh != nullptr);
+            return mesh->getName() == mesh_name;
+        },
+        "Required mesh with name '" + mesh_name + "' not found.");
+    DBUG("Found mesh '%s' with id %d.", mesh.getName().c_str(), mesh.getID());
+
+    return mesh;
+}
+}  // namespace
+
 namespace ProcessLib
 {
 ProcessVariable::ProcessVariable(
     BaseLib::ConfigTree const& config,
+    MeshLib::Mesh& mesh,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
     :  //! \ogs_file_param{prj__process_variables__process_variable__name}
       _name(config.getConfigParameter<std::string>("name")),
-      _mesh(*meshes[0]),  // Using the first mesh as the main mesh.
-                          // TODO (naumov) potentially extend to named meshes.
+      _mesh(mesh),
       //! \ogs_file_param{prj__process_variables__process_variable__components}
       _n_components(config.getConfigParameter<int>("components")),
       //! \ogs_file_param{prj__process_variables__process_variable__order}
@@ -51,31 +115,7 @@ ProcessVariable::ProcessVariable(
              //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition}
              bcs_config->getConfigSubtreeList("boundary_condition"))
         {
-            auto const geometrical_set_name =
-                    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometrical_set}
-                    bc_config.getConfigParameter<std::string>("geometrical_set");
-            auto const geometry_name =
-                    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometry}
-                    bc_config.getConfigParameter<std::string>("geometry");
-
-            auto const full_geometry_name =
-                geometrical_set_name + "_" + geometry_name;
-            auto const mesh_it =
-                std::find_if(begin(meshes), end(meshes),
-                             [&full_geometry_name](auto const& mesh) {
-                                 assert(mesh != nullptr);
-                                 return mesh->getName() == full_geometry_name;
-                             });
-            if (mesh_it == end(meshes))
-            {
-                OGS_FATAL("Required mesh with name '%s' not found.",
-                          full_geometry_name.c_str());
-            }
-            MeshLib::Mesh const& bc_mesh = **mesh_it;
-
-            DBUG("Found mesh '%s' with id %d.", bc_mesh.getName().c_str(),
-                 bc_mesh.getID());
-
+            auto const& mesh = findMeshInConfig(bc_config, meshes);
             auto component_id =
                 //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__component}
                 bc_config.getConfigParameterOptional<int>("component");
@@ -84,8 +124,7 @@ ProcessVariable::ProcessVariable(
                 // default value for single component vars.
                 component_id = 0;
 
-            _bc_configs.emplace_back(std::move(bc_config), bc_mesh,
-                                     component_id);
+            _bc_configs.emplace_back(std::move(bc_config), mesh, component_id);
         }
     } else {
         INFO("No boundary conditions found.");
@@ -99,32 +138,7 @@ ProcessVariable::ProcessVariable(
              //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term}
              sts_config->getConfigSubtreeList("source_term"))
         {
-            // TODO (naumov) Remove code duplication with the bc_config parsing.
-            auto const geometrical_set_name =
-                    //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometrical_set}
-                   st_config.getConfigParameter<std::string>("geometrical_set");
-            auto const geometry_name =
-                    //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometry}
-                    st_config.getConfigParameter<std::string>("geometry");
-
-            auto const full_geometry_name =
-                geometrical_set_name + "_" + geometry_name;
-            auto const mesh_it =
-                std::find_if(begin(meshes), end(meshes),
-                             [&full_geometry_name](auto const& mesh) {
-                                 assert(mesh != nullptr);
-                                 return mesh->getName() == full_geometry_name;
-                             });
-            if (mesh_it == end(meshes))
-            {
-                OGS_FATAL("Required mesh with name '%s' not found.",
-                          full_geometry_name.c_str());
-            }
-            MeshLib::Mesh const& bc_mesh = **mesh_it;
-
-            DBUG("Found mesh '%s' with id %d.", bc_mesh.getName().c_str(),
-                 bc_mesh.getID());
-
+            MeshLib::Mesh const& mesh = findMeshInConfig(st_config, meshes);
             auto component_id =
                 //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__component}
                 st_config.getConfigParameterOptional<int>("component");
@@ -133,7 +147,7 @@ ProcessVariable::ProcessVariable(
                 // default value for single component vars.
                 component_id = 0;
 
-            _source_term_configs.emplace_back(std::move(st_config), bc_mesh,
+            _source_term_configs.emplace_back(std::move(st_config), mesh,
                                               component_id);
         }
     } else {
@@ -185,6 +199,12 @@ ProcessVariable::createBoundaryConditions(
                                           integration_order,
                                           _shapefunction_order, parameters,
                                           process);
+#ifdef USE_PETSC
+        if (bc == nullptr)
+        {
+            continue;
+        }
+#endif  // USE_PETSC
         bcs.push_back(std::move(bc));
     }
 

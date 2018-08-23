@@ -102,4 +102,8 @@ protected:
     std::vector<Element*> _elements;
 }; /* class */
 
+/// Returns true if the given node is a base node of a (first) element, or if it
+/// is not connected to any element i.e. an unconnected node.
+bool isBaseNode(Node const& node);
+
 } /* namespace */

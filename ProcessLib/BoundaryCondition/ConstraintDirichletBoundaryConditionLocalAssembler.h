@@ -96,7 +96,7 @@ public:
         FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(
             &_surface_element));
 
-        std::size_t const n_integration_points =
+        auto const n_integration_points =
             _integration_method.getNumberOfPoints();
 
         auto const bulk_face_id = bulk_ids[_surface_element.getID()].second;
@@ -106,7 +106,7 @@ public:
             shape_matrices;
         shape_matrices.reserve(n_integration_points);
         _ip_data.reserve(n_integration_points);
-        for (std::size_t ip = 0; ip < n_integration_points; ++ip)
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
                                         ShapeFunction::NPOINTS);
@@ -141,7 +141,7 @@ public:
         // integrated_value +=
         //   int_{\Gamma_e} \alpha \cdot flux \cdot normal \d \Gamma
         double integrated_value = 0;
-        for (unsigned ip(0); ip < n_integration_points; ip++)
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto const bulk_flux = getFlux(
                 _bulk_element_id, _ip_data[ip].bulk_element_point, t, x);

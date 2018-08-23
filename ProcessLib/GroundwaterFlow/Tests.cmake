@@ -403,6 +403,21 @@ AddTest(
     cube_1e3_neumann_pcs_0_ts_1_t_1_000000_2.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_2.vtu D1_left_front_N1_right pressure 1e-2 1e-2
 )
 
+AddTest(
+    NAME ParallelFEM_GroundWaterFlow2D_NeumannBC
+    PATH EllipticPETSc
+    EXECUTABLE_ARGS square_1e1_neumann.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_bottom_N1_right pressure 1e-2 0
+    square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu D1_left_bottom_N1_right pressure 1e-2 0
+    square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure 1e-14 0
+    square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu pressure pressure 1e-14 0
+)
+
 # Single core
 # CUBE 1x1x1 GROUNDWATER FLOW TESTS
 foreach(mesh_size 1e0 1e1 1e2 1e3)
@@ -539,25 +554,37 @@ foreach(mesh_size 1e1)
 endforeach()
 
 AddTest(
-    NAME GroundWaterFlowProcess_Neumann_nonuniform
+    NAME GroundWaterFlowProcess_Inhomogeneous_permeability
+    PATH Elliptic/nonuniform_bc_Groundwaterflow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS inhomogeneous_permeability.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    inhomogeneous_permeability.vtu inhomogeneous_permeability_pcs_0_ts_1_t_1.000000.vtu mass_flux_ref mass_flux 4e-2 1e-16
+)
+
+AddTest(
+    NAME GroundWaterFlowProcess_Neumann_nonuniform_cosY
     PATH Elliptic/nonuniform_bc_Groundwaterflow
     EXECUTABLE ogs
     EXECUTABLE_ARGS neumann_nonuniform.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    inhomogeneous_permeability.vtu neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu mass_flux_ref mass_flux 4e-2 1e-16
+    expected_neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-14 0
+    expected_neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-12 0
 )
 
 AddTest(
-    NAME GroundWaterFlowProcess_Dirichlet_nonuniform
+    NAME GroundWaterFlowProcess_Dirichlet_nonuniform_linearY
     PATH Elliptic/nonuniform_bc_Groundwaterflow
     EXECUTABLE ogs
     EXECUTABLE_ARGS dirichlet_nonuniform.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_dirichlet_nonuniform_pcs_0_ts_1_t_1.000000.vtu dirichlet_nonuniform_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-16
+    expected_dirichlet_nonuniform_pcs_0_ts_1_t_1.000000.vtu dirichlet_nonuniform_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-14 0
 )
 
 # tests for nodal source term implementation
@@ -651,7 +678,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    square_1x1_quad_1e6_nodal_sources_expected.vtu square_1e6__with_nodal_sources_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1.41 1e-16
+    square_1x1_quad_1e6_nodal_sources_expected.vtu square_1e6_with_nodal_sources_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1.41 1e-16
     VIS square_1e6__nodal_sources_expected_pcs_0_ts_1_t_1.000000.vtu
 )
 

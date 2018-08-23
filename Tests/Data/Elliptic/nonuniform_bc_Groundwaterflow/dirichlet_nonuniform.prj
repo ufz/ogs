@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>dirichlet_nonuniform.vtu</mesh>
-    <geometry>square_1x1.gml</geometry>
+    <meshes>
+        <mesh>square_1x1_quad_1e3.vtu</mesh>
+        <mesh>square_1x1_left.vtu</mesh>
+        <mesh>square_1x1_right.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>GW23</name>
@@ -62,22 +65,18 @@
     <process_variables>
         <process_variable>
             <name>pressure</name>
+            <mesh>square_1x1_quad_1e3</mesh>
             <components>1</components>
             <order>1</order>
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <!-- dummy values -->
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
-                    <!-- end dummy values -->
                     <type>NonuniformDirichlet</type>
-                    <mesh>dirichlet_nonuniform_left_1e3.vtu</mesh>
-                    <field_name>value</field_name>
+                    <mesh>square_1x1_left</mesh>
+                    <field_name>linearY</field_name>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>square_1x1_right</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_right</parameter>
                 </boundary_condition>

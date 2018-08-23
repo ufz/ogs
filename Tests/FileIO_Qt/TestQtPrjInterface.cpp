@@ -35,17 +35,16 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
     std::string name =
         BaseLib::BuildInfo::data_path +
         "/Elliptic/nonuniform_bc_Groundwaterflow/neumann_nonuniform.prj";
-    test_files.push_back({name, 1, 1, 2, 0});
+    test_files.push_back({name, 0, 3, 2, 0});
     name = BaseLib::BuildInfo::data_path +
            "/Elliptic/nonuniform_bc_Groundwaterflow/neumann_nonuniform.prj";
-    test_files.push_back({name, 1, 1, 2, 0});
+    test_files.push_back({name, 0, 3, 2, 0});
 
     for (std::size_t i = 0; i < test_files.size(); ++i)
     {
         DataHolderLib::Project project;
         FileIO::XmlPrjInterface xml(project);
-        int result =
-            xml.readFile(QString::fromStdString(test_files[i].file_name));
+        int result = xml.readFile(test_files[i].file_name);
         EXPECT_EQ(1, result);
 
         std::vector<std::string> geo_names;
