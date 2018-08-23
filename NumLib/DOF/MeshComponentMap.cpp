@@ -159,6 +159,7 @@ MeshComponentMap MeshComponentMap::getSubset(
     for (auto* const node : new_mesh_subset.getNodes())
     {
         auto const node_id = node->getID();
+        bool const is_base_node = isBaseNode(*node);
 
         MeshLib::Location const new_location{
             new_mesh_id, MeshLib::MeshItemType::Node, node_id};
@@ -174,18 +175,22 @@ MeshComponentMap MeshComponentMap::getSubset(
                 getGlobalIndex(bulk_location, component_id);
             if (global_index == nop)
             {
-                OGS_FATAL(
-                    "Could not find a global index for global component %d for "
-                    "the mesh '%s', node %d, in the corresponding bulk mesh "
-                    "'%s' and node %d. This happens because the boundary mesh "
-                    "is larger then the definition region of the bulk "
-                    "component, usually because the geometry for the boundary "
-                    "condition is too large.",
-                    component_id,
-                    new_mesh_subset.getMesh().getName().c_str(),
-                    node_id,
-                    bulk_mesh_subsets.front().getMesh().getName().c_str(),
-                    bulk_node_ids_map[node_id]);
+                if (is_base_node)
+                {
+                    OGS_FATAL(
+                        "Could not find a global index for global component %d "
+                        "for the mesh '%s', node %d, in the corresponding bulk "
+                        "mesh '%s' and node %d. This happens because the "
+                        "boundary mesh is larger then the definition region of "
+                        "the bulk component, usually because the geometry for "
+                        "the boundary condition is too large.",
+                        component_id,
+                        new_mesh_subset.getMesh().getName().c_str(),
+                        node_id,
+                        bulk_mesh_subsets.front().getMesh().getName().c_str(),
+                        bulk_node_ids_map[node_id]);
+                }
+                continue;
             }
             subset_dict.insert({new_location, component_id, global_index});
         }
