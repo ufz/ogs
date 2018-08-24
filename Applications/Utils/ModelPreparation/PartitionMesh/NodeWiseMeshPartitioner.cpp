@@ -539,6 +539,62 @@ void NodeWiseMeshPartitioner::renumberBulkNodeIdsProperty(
     }
 }
 
+void NodeWiseMeshPartitioner::renumberBulkElementIdsProperty(
+    MeshLib::PropertyVector<std::size_t>* const bulk_element_ids_pv,
+    std::vector<Partition> const& local_partitions) const
+{
+    if (bulk_element_ids_pv == nullptr)
+    {
+        return;
+    }
+
+    auto& bulk_element_ids = *bulk_element_ids_pv;
+
+    std::size_t offset = 0;  // offset in property vector for current partition
+
+    assert(_partitions.size() == local_partitions.size());
+    int const n_partitions = static_cast<int>(_partitions.size());
+    for (int partition_id = 0; partition_id < n_partitions; ++partition_id)
+    {
+        auto const& bulk_partition = _partitions[partition_id];
+        auto const& local_partition = local_partitions[partition_id];
+
+        // Create global-to-local element id mapping for the bulk partition.
+        std::map<std::size_t, std::size_t> global_to_local;
+        auto map_elements =
+            [&global_to_local](
+                std::vector<MeshLib::Element const*> const& elements,
+                std::size_t const offset) {
+                auto const n_elements = elements.size();
+                for (std::size_t e = 0; e < n_elements; ++e)
+                {
+                    global_to_local[elements[e]->getID()] = offset + e;
+                }
+            };
+
+        map_elements(bulk_partition.regular_elements, 0);
+        map_elements(bulk_partition.ghost_elements,
+                     bulk_partition.regular_elements.size());
+
+        // Renumber the local bulk_element_ids map.
+        auto renumber_elements =
+            [&bulk_element_ids, &global_to_local](
+                std::vector<MeshLib::Element const*> const& elements,
+                std::size_t const offset) {
+                auto const n_elements = elements.size();
+                for (std::size_t e = 0; e < n_elements; ++e)
+                {
+                    bulk_element_ids[offset + e] =
+                        global_to_local[bulk_element_ids[offset + e]];
+                }
+                return n_elements;
+            };
+
+        offset += renumber_elements(local_partition.regular_elements, offset);
+        offset += renumber_elements(local_partition.ghost_elements, offset);
+    }
+}
+
 std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
     MeshLib::Mesh const& mesh,
     bool const is_mixed_high_order_linear_elems) const

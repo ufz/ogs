@@ -189,6 +189,10 @@ int main(int argc, char* argv[])
             partitioned_properties.getPropertyVector<std::size_t>(
                 "bulk_node_ids"),
             partitions);
+        mesh_partitioner.renumberBulkElementIdsProperty(
+            partitioned_properties.getPropertyVector<std::size_t>(
+                "bulk_element_ids"),
+            partitions);
         mesh_partitioner.writeOtherMesh(output_file_name_wo_extension,
                                         partitions, partitioned_properties);
     }

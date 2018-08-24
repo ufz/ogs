@@ -91,6 +91,12 @@ public:
         MeshLib::PropertyVector<std::size_t>* const bulk_node_ids,
         std::vector<Partition> const& local_partitions) const;
 
+    /// Renumber the bulk_element_ids property for each partition to match the
+    /// partitioned bulk mesh elements.
+    void renumberBulkElementIdsProperty(
+        MeshLib::PropertyVector<std::size_t>* const bulk_element_ids_pv,
+        std::vector<Partition> const& local_partitions) const;
+
     /// Write the partitions into ASCII files
     /// \param file_name_base The prefix of the file name.
     void writeASCII(const std::string& file_name_base);
