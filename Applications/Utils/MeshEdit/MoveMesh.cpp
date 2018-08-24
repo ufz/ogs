@@ -13,25 +13,31 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
-#include "BaseLib/StringTools.h"
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
-
+#include "BaseLib/StringTools.h"
+#include "GeoLib/AABB.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-
-#include "GeoLib/AABB.h"
-
-#include "MeshLib/Node.h"
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshEditing/moveMeshNodes.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/moveMeshNodes.h"
+#include "MeshLib/Node.h"
 
 int main(int argc, char *argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Moves the mesh nodes using the given displacement vector or if no displacement vector is given, moves the mesh nodes such that the centroid of the given mesh is in the origin.", ' ', "0.1");
+    TCLAP::CmdLine cmd(
+        "Moves the mesh nodes using the given displacement vector or if no "
+        "displacement vector is given, moves the mesh nodes such that the "
+        "centroid of the given mesh is in the origin.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     // Define a value argument and add it to the command line.
     // A value arg defines a flag and a type of value that it expects,
     // such as "-m meshfile".

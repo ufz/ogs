@@ -63,17 +63,15 @@ int main (int argc, char* argv[])
 
     TCLAP::CmdLine cmd(
         "Structured mesh generator.\n"
-        "OpenGeoSys-6 software.\n"
-        "Copyright (c) 2012-2018, OpenGeoSys Community "
-        "(http://www.opengeosys.org) "
-        "Distributed under a Modified BSD License. "
-        "See accompanying file LICENSE.txt or "
-        "http://www.opengeosys.org/project/license"
         "The documentation is available at "
         "https://docs.opengeosys.org/docs/tools/meshing/"
-        "structured-mesh-generation",
-        ' ',
-        BaseLib::BuildInfo::git_describe);
+        "structured-mesh-generation.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
 
     auto tclapOutput = std::make_unique<BaseLib::TCLAPCustomOutput>();
     cmd.setOutput(tclapOutput.get());

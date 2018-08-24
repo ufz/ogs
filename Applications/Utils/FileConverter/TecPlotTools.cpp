@@ -381,7 +381,14 @@ int main(int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("TecPlot Parser", ' ', BaseLib::BuildInfo::git_describe);
+    TCLAP::CmdLine cmd(
+        "TecPlot Parser\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> input_arg("i", "input-file", "TecPlot input file", true, "", "string");
     cmd.add(input_arg);
     TCLAP::ValueArg<std::string> output_arg("o", "output-file", "output mesh file", false, "", "string");

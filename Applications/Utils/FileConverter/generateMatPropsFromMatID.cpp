@@ -18,6 +18,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -31,9 +32,14 @@ int main (int argc, char* argv[])
     ApplicationsLib::LogogSetup logog_setup;
 
     TCLAP::CmdLine cmd(
-            "Creates a new file for material properties and sets the material ids in the msh-file to 0",
-            ' ',
-            "0.1");
+        "Creates a new file for material properties and sets the material ids "
+        "in the msh-file to 0\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
 
     TCLAP::ValueArg<std::string> mesh_arg("m",
                                               "mesh",

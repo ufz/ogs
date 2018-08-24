@@ -22,6 +22,7 @@
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
 // BaseLib
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 #ifndef WIN32
@@ -39,7 +40,16 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Converting meshes in gmsh file format (ASCII, version 2.2) to a vtk unstructured grid file (new OGS file format) or to the old OGS file format - see options.", ' ', "0.1");
+    TCLAP::CmdLine cmd(
+        "Converting meshes in gmsh file format (ASCII, version 2.2) to a vtk "
+        "unstructured grid file (new OGS file format) or to the old OGS file "
+        "format - see options.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
 
     TCLAP::ValueArg<std::string> ogs_mesh_arg(
         "o",

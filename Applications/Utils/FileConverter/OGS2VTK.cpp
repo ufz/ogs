@@ -17,7 +17,7 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
+#include "BaseLib/BuildInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
@@ -26,7 +26,14 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Converts OGS mesh into VTK mesh.", ' ', "0.1");
+    TCLAP::CmdLine cmd(
+        "Converts OGS mesh into VTK mesh.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
                                          "the name of the file containing the input mesh", true,
                                          "", "file name of input mesh");

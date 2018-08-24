@@ -24,9 +24,16 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Converts OGS geometry file into another file format. "
-                       "Currently *.gml (OGS6 XML-based format) and *.gli (OGS5 format) formats are supported.",
-                       ' ', BaseLib::BuildInfo::git_describe);
+    TCLAP::CmdLine cmd(
+        "Converts OGS geometry file into another file format. "
+        "Currently *.gml (OGS6 XML-based format) and *.gli (OGS5 format) "
+        "formats are supported.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> argInputFileName("i", "input-file",
                                          "the name of the geometry file to be converted", true,
                                          "", "file name");

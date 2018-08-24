@@ -28,7 +28,14 @@ int main(int argc, char *argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Query mesh information", ' ', BaseLib::BuildInfo::git_describe);
+    TCLAP::CmdLine cmd(
+        "Query mesh information.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::UnlabeledValueArg<std::string> mesh_arg("mesh-file","input mesh file",true,"","string");
     cmd.add( mesh_arg );
     TCLAP::MultiArg<std::size_t> eleId_arg("e","element-id","element ID",false,"number");

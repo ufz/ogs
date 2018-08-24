@@ -10,6 +10,7 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
+#include "BaseLib/BuildInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
@@ -33,9 +34,13 @@ int main(int argc, char* argv[])
     ApplicationsLib::LogogSetup logo_setup;
 
     TCLAP::CmdLine cmd(
-        "Converts a geometry defined on a given mesh to distinct meshes.",
-        ' ',
-        "0.1");
+        "Converts a geometry defined on a given mesh to distinct meshes.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
 
     TCLAP::ValueArg<double> search_length_arg(
         "s",

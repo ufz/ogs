@@ -19,17 +19,16 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/readGeometryFromFile.h"
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
-#include "MeshLib/IO/readMeshFromFile.h"
-
 #include "MathLib/Vector3.h"
-
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/Node.h"
 
 void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
     std::vector<std::pair<std::size_t, double>> const& ids_and_areas,
@@ -65,13 +64,19 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Computes ids of mesh nodes that are in polygonal "
-        "regions and resides on the top surface. The polygonal regions have to "
-        "be given in a gml- or gli-file. The found mesh nodes and the associated"
-        " area are written as txt and csv data."
-        "The documentation is available at https://docs.opengeosys.org/docs/tools/model-preparation/computesurfacenodeidsinpolygonalregion",
-        ' ',
-        "0.1");
+    TCLAP::CmdLine cmd(
+        "Computes ids of mesh nodes that are in polygonal regions and resides "
+        "on the top surface. The polygonal regions have to be given in a gml- "
+        "or gli-file. The found mesh nodes and the associated area are written "
+        "as txt and csv data. The documentation is available at "
+        "https://docs.opengeosys.org/docs/tools/model-preparation/"
+        "computesurfacenodeidsinpolygonalregion.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> mesh_in("m", "mesh-input-file",
         "the name of the file containing the input mesh", true,
         "", "file name of input mesh");

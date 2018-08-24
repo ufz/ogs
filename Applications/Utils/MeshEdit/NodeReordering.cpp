@@ -17,14 +17,12 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
 #include "BaseLib/Algorithm.h"
-
+#include "BaseLib/BuildInfo.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 
 /// Re-ordering mesh elements to correct Data Explorer 5 meshes to work with Data Explorer 6.
@@ -131,11 +129,19 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logo_setup;
 
-    TCLAP::CmdLine cmd("Reordering of mesh nodes to make OGS Data Explorer 5 meshes compatible with OGS6.\n" \
-                       "Method 1 is the re-ordering between DataExplorer 5 and DataExplorer 6 meshes,\n" \
-                       "Method 2 is the re-ordering with and without InSitu-Lib in OGS6.\n" \
-                       "Method 3 is the re-ordering of nonlinear nodes.",
-                       ' ', "0.1");
+    TCLAP::CmdLine cmd(
+        "Reordering of mesh nodes to make OGS Data Explorer 5 meshes "
+        "compatible with OGS6.\n"
+        "Method 1 is the re-ordering between DataExplorer 5 and DataExplorer 6 "
+        "meshes,\n"
+        "Method 2 is the re-ordering with and without InSitu-Lib in OGS6.\n"
+        "Method 3 is the re-ordering of nonlinear nodes.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::UnlabeledValueArg<std::string> input_mesh_arg("input_mesh",
                                                          "the name of the input mesh file",
                                                          true, "", "oldmesh.msh");

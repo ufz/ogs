@@ -16,16 +16,15 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
+#include "BaseLib/BuildInfo.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/Node.h"
 
 template <typename PROPERTY_TYPE>
 void searchByPropertyValue(std::string const& property_name,
@@ -68,9 +67,17 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Removes mesh elements based on element type, element volume, scalar "
+    TCLAP::CmdLine cmd(
+        "Removes mesh elements based on element type, element volume, scalar "
         "arrays, or bounding box . The documentation is available at "
-        "https://docs.opengeosys.org/docs/tools/meshing/remove-mesh-elements.", ' ', "0.1");
+        "https://docs.opengeosys.org/docs/tools/meshing/"
+        "remove-mesh-elements.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
 
     // Bounding box params
     TCLAP::ValueArg<double> zLargeArg("", "z-max", "largest allowed extent in z-dimension",
