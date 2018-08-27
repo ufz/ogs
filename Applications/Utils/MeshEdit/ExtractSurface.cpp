@@ -79,7 +79,7 @@ int main (int argc, char* argv[])
         "f", "face-property-name",
         "the name of the data array the surface face id of the subsurface/bulk "
         "element will be stored to",
-        false, "OriginalFaceIDs", "string");
+        false, "bulk_face_ids", "string");
     cmd.add(face_prop_name);
 
     TCLAP::ValueArg<double> angle_arg(

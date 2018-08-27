@@ -43,7 +43,7 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(
             "bulk_element_ids");
     auto const bulk_face_ids =
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "OriginalFaceIDs");
+            "bulk_face_ids");
 
     ProcessLib::createLocalAssemblers<CalculateSurfaceFluxLocalAssembler>(
         boundary_mesh.getDimension() + 1,  // or bulk_mesh.getDimension()?
