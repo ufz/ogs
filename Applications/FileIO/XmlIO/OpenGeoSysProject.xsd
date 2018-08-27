@@ -16,13 +16,11 @@
   </xs:complexType>
 
   <xs:complexType name="meshType">
-    <xs:complexType>
-      <xs:simpleContent>
-        <xs:extension base="xs:string">
-          <xs:attribute name="axially_symmetric" type="xs:boolean"/>
-        </xs:extension>
-      </xs:simpleContent>
-    </xs:complexType>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="axially_symmetric" type="xs:boolean"/>
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
 
   <xs:complexType name="parameterType">
