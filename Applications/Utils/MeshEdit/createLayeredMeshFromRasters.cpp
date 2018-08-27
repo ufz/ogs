@@ -20,6 +20,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -60,10 +61,13 @@ int main (int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Creates a layered 3D OGS mesh from an existing 2D OGS mesh and raster "
         "files representing subsurface layers. Supported raster formats are "
-        "ArcGIS ascii rasters (*.asc) and Surfer Grids (*.grd)."
-        "",
-        ' ',
-        "1.0");
+        "ArcGIS ascii rasters (*.asc) and Surfer Grids (*.grd).\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
 
     TCLAP::ValueArg<std::string> mesh_arg("i", "input-mesh-file",
         "The name of the file containing the 2D input mesh.", true, "", "input file name");

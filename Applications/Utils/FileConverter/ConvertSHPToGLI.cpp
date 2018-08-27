@@ -22,10 +22,10 @@
 #include <shapefil.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
+#include "BaseLib/BuildInfo.h"
+#include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
-#include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Station.h"
 
@@ -134,7 +134,14 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Converts points contained in shape file", ' ', "0.1");
+    TCLAP::CmdLine cmd(
+        "Converts points contained in shape file\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> shapefile_arg("s",
                                                "shape-file",
                                                "the name of the shape file ",

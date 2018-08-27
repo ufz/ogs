@@ -17,24 +17,20 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
-#include "BaseLib/quicksort.h"
+#include "Applications/FileIO/AsciiRasterInterface.h"
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
-
+#include "BaseLib/quicksort.h"
+#include "GeoLib/Raster.h"
+#include "MathLib/MathTools.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-#include "Applications/FileIO/AsciiRasterInterface.h"
-
-#include "GeoLib/Raster.h"
-
-#include "MathLib/MathTools.h"
-
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
-#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/Mesh2MeshPropertyInterpolation.h"
 #include "MeshLib/MeshEnums.h"
+#include "MeshLib/MeshGenerators/RasterToMesh.h"
+#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 
 int main(int argc, char* argv[])
 {
@@ -42,9 +38,13 @@ int main(int argc, char* argv[])
 
     TCLAP::CmdLine cmd(
         "Generates properties for mesh elements of an input mesh deploying a "
-        "ASC raster file",
-        ' ',
-        "0.1");
+        "ASC raster file.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
 
     TCLAP::ValueArg<std::string> out_mesh_arg(
         "o",

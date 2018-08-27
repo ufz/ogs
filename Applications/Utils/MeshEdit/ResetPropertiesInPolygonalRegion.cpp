@@ -17,27 +17,30 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/FileIO/readGeometryFromFile.h"
-
-#include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/IO/writeMeshToFile.h"
-
+#include "BaseLib/BuildInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
-
 #include "MeshGeoToolsLib/MeshEditing/ResetMeshElementProperty.h"
-
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 
 int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Sets the property value of a mesh element to a given new "
-        "value iff at least one node of the element is within a polygonal region "
-        "that is given by a polygon."
-        "The documentation is available at https://docs.opengeosys.org/docs/tools/model-preparation/set-properties-in-polygonal-region", 
-        ' ', 
-        "0.1");
+    TCLAP::CmdLine cmd(
+        "Sets the property value of a mesh element to a given new value iff at "
+        "least one node of the element is within a polygonal region that is "
+        "given by a polygon. The documentation is available at "
+        "https://docs.opengeosys.org/docs/tools/model-preparation/"
+        "set-properties-in-polygonal-region.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
         "the name of the file the mesh will be written to, format depends on "
         "the given file name extension", true, "", "file name");

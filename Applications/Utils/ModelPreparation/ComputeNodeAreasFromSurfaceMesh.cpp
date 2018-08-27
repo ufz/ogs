@@ -17,15 +17,13 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
-
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/Node.h"
 
 static
 void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
@@ -59,8 +57,15 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("The tool computes the area per node of the surface mesh"
-        " and writes the information as txt and csv data.", ' ', "0.1");
+    TCLAP::CmdLine cmd(
+        "The tool computes the area per node of the surface mesh and writes "
+        "the information as txt and csv data.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
         "the name of the file containing the input mesh", true,
         "", "file name of input mesh");

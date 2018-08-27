@@ -21,10 +21,10 @@
 #endif
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
 
 #include "Metis.h"
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    const std::string m_str =
+    TCLAP::CmdLine cmd(
         "Partition a mesh for parallel computing."
         "The tasks of this tool are in twofold:\n"
         "1. Convert mesh file to the input file of the partitioning tool,\n"
@@ -45,9 +45,13 @@ int main(int argc, char* argv[])
         "\trenumber the node indices of each partition,\n"
         "\tand output the results for parallel computing.\n"
         "Note: If this tool is installed as a system command,\n"
-        "\tthe command must be run with its full path.";
-
-    TCLAP::CmdLine cmd(m_str, ' ', "0.1");
+        "\tthe command must be run with its full path.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> mesh_input(
         "i", "mesh-input-file",
         "the name of the file containing the input mesh", true, "",

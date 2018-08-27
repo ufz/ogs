@@ -14,12 +14,10 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/AddLayerToMesh.h"
 
@@ -29,10 +27,14 @@ int main (int argc, char* argv[])
 
     TCLAP::CmdLine cmd(
         "Adds a top layer to an existing mesh"
-        "The documentation is available at https://docs.opengeosys.org/docs/tools/meshing/addtoplayer ",
-        ' ',
-        "0.1");
-
+        "The documentation is available at "
+        "https://docs.opengeosys.org/docs/tools/meshing/addtoplayer.\n\n"
+        "OpenGeoSys-6 software, version " +
+            BaseLib::BuildInfo::git_describe +
+            ".\n"
+            "Copyright (c) 2012-2018, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> mesh_arg("i", "input-mesh-file",
         "the name of the file containing the mesh", true,
         "", "file name");
