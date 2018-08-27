@@ -106,8 +106,6 @@ public:
             {
                 bc_values.ids.emplace_back(global_index);
                 bc_values.values.push_back(_values[node_id]);
-                DBUG("global index %d, value %g", global_index,
-                     _values[node_id]);
             }
         }
     }
