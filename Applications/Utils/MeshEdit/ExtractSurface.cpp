@@ -73,7 +73,7 @@ int main (int argc, char* argv[])
         "e", "element-property-name",
         "the name of the data array the subsurface/bulk element id will be "
         "stored to",
-        false, "OriginalSubsurfaceElementIDs", "string");
+        false, "bulk_element_ids", "string");
     cmd.add(element_prop_name);
     TCLAP::ValueArg<std::string> face_prop_name(
         "f", "face-property-name",

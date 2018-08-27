@@ -40,7 +40,7 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(
 
     auto const bulk_element_ids =
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "OriginalSubsurfaceElementIDs");
+            "bulk_element_ids");
     auto const bulk_face_ids =
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
             "OriginalFaceIDs");
