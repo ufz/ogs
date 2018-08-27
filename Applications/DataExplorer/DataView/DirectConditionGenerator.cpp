@@ -86,7 +86,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
 
     MathLib::Vector3 const dir(0.0, 0.0, -1.0);
     double const angle(90);
-    std::string const prop_name("OriginalSubsurfaceNodeIDs");
+    std::string const prop_name("bulk_node_ids");
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::MeshSurfaceExtraction::getMeshSurface(
             mesh, dir, angle, prop_name));

@@ -100,7 +100,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     double const angle(90);
     std::unique_ptr<MeshLib::Mesh> sfc_mesh (nullptr);
 
-    std::string const prop_name("OriginalSubsurfaceNodeIDs");
+    std::string const prop_name("bulk_node_ids");
 
     if (mesh.getDimension() == 3)
         sfc_mesh.reset(MeshLib::MeshSurfaceExtraction::getMeshSurface(

@@ -67,7 +67,7 @@ int main (int argc, char* argv[])
         "n", "node-property-name",
         "the name of the data array the subsurface/bulk node id will be stored "
         "to",
-        false, "OriginalSubsurfaceNodeIDs", "string");
+        false, "bulk_node_ids", "string");
     cmd.add(node_prop_name);
     TCLAP::ValueArg<std::string> element_prop_name(
         "e", "element-property-name",

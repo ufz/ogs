@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Integrates the given element property and outputs an OGS-5 direct "
         "Neumann boundary condition. The mesh has to contain a property "
-        "\"OriginalSubsurfaceNodeIDs\" that stores the original subsurface "
+        "\"bulk_node_ids\" that stores the original subsurface "
         "mesh node ids. Such surface meshes can be created using the OGS-6 "
         "tool ExtractSurface.\n\n"
         "OpenGeoSys-6 software, version " +
@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::IO::readMeshFromFile(in_mesh.getValue()));
 
-    std::string const prop_name("OriginalSubsurfaceNodeIDs");
+    std::string const prop_name("bulk_node_ids");
     auto const* const node_id_pv =
         surface_mesh->getProperties().getPropertyVector<std::size_t>(prop_name);
     if (!node_id_pv)
