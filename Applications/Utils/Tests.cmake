@@ -102,4 +102,30 @@ AddTest(
               2Dmesh_POINT5_partitioned_msh_ele3.bin
               #2Dmesh_PLY_POINT5_partitioned_msh_ele_g3.bin   empty
               2Dmesh_POINT5_partitioned_msh_nod3.bin
+
+              2Dmesh_PLY_EAST_partitioned_cell_properties_cfg3.bin
+              2Dmesh_PLY_EAST_partitioned_cell_properties_val3.bin
+              2Dmesh_PLY_NORTH_partitioned_cell_properties_cfg3.bin
+              2Dmesh_PLY_NORTH_partitioned_cell_properties_val3.bin
+              2Dmesh_PLY_SOUTH_partitioned_cell_properties_cfg3.bin
+              2Dmesh_PLY_SOUTH_partitioned_cell_properties_val3.bin
+              2Dmesh_PLY_WEST_partitioned_cell_properties_cfg3.bin
+              2Dmesh_PLY_WEST_partitioned_cell_properties_val3.bin
+              2Dmesh_POINT4_partitioned_cell_properties_cfg3.bin
+              2Dmesh_POINT4_partitioned_cell_properties_val3.bin
+              2Dmesh_POINT5_partitioned_cell_properties_cfg3.bin
+              2Dmesh_POINT5_partitioned_cell_properties_val3.bin
+
+              2Dmesh_PLY_EAST_partitioned_node_properties_cfg3.bin
+              2Dmesh_PLY_EAST_partitioned_node_properties_val3.bin
+              2Dmesh_PLY_NORTH_partitioned_node_properties_cfg3.bin
+              2Dmesh_PLY_NORTH_partitioned_node_properties_val3.bin
+              2Dmesh_PLY_SOUTH_partitioned_node_properties_cfg3.bin
+              2Dmesh_PLY_SOUTH_partitioned_node_properties_val3.bin
+              2Dmesh_PLY_WEST_partitioned_node_properties_cfg3.bin
+              2Dmesh_PLY_WEST_partitioned_node_properties_val3.bin
+              2Dmesh_POINT4_partitioned_node_properties_cfg3.bin
+              2Dmesh_POINT4_partitioned_node_properties_val3.bin
+              2Dmesh_POINT5_partitioned_node_properties_cfg3.bin
+              2Dmesh_POINT5_partitioned_node_properties_val3.bin
 )
