@@ -24,35 +24,35 @@ struct IntegrationPointDataFracture final
 {
     explicit IntegrationPointDataFracture(
         MaterialLib::Fracture::FractureModelBase<DisplacementDim>&
-            fracture_material)
-        : _fracture_material(fracture_material),
-          _material_state_variables(
-              _fracture_material.createMaterialStateVariables())
+            fracture_material_)
+        : fracture_material(fracture_material_),
+          material_state_variables(
+              fracture_material.createMaterialStateVariables())
     {
     }
 
-    typename HMatricesType::HMatrixType _h_matrices;
-    typename HMatricesType::ForceVectorType _sigma, _sigma_prev;
-    typename HMatricesType::ForceVectorType _w, _w_prev;
-    double _aperture = 0.0;
-    double _aperture_prev = 0.0;
-    double _aperture0 = 0.0;
+    typename HMatricesType::HMatrixType h_matrices;
+    typename HMatricesType::ForceVectorType sigma, sigma_prev;
+    typename HMatricesType::ForceVectorType w, w_prev;
+    double aperture = 0.0;
+    double aperture_prev = 0.0;
+    double aperture0 = 0.0;
 
     MaterialLib::Fracture::FractureModelBase<DisplacementDim>&
-        _fracture_material;
+        fracture_material;
     std::unique_ptr<typename MaterialLib::Fracture::FractureModelBase<
         DisplacementDim>::MaterialStateVariables>
-        _material_state_variables;
+        material_state_variables;
 
-    Eigen::MatrixXd _C;
+    Eigen::MatrixXd C;
     double integration_weight;
 
     void pushBackState()
     {
-        _w_prev = _w;
-        _sigma_prev = _sigma;
-        _aperture_prev = _aperture;
-        _material_state_variables->pushBackState();
+        w_prev = w;
+        sigma_prev = sigma;
+        aperture_prev = aperture;
+        material_state_variables->pushBackState();
     }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
