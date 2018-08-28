@@ -99,8 +99,11 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
         maxwell_viscosity,        dependency_parameter_mK,
         dependency_parameter_mvK, dependency_parameter_mvM};
 
+    auto const& nonlinear_solver_config =
+        //! \ogs_file_param{material__solid__constitutive_relation__Lubby2__nonlinear_solver}
+        config.getConfigSubtree("nonlinear_solver");
     auto const nonlinear_solver_parameters =
-        createNewtonRaphsonSolverParameters(config);
+        createNewtonRaphsonSolverParameters(nonlinear_solver_config);
 
     return std::unique_ptr<Lubby2<DisplacementDim>>{
         new Lubby2<DisplacementDim>{nonlinear_solver_parameters, mp}};
