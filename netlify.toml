@@ -1,32 +1,31 @@
-# Netlify settings
 [build]
   base    = "web"
   publish = "web/public"
   command = """
-    git lfs fetch
+    git lfs install
+    git lfs pull
     yarn --ignore-engines --ignore-optional --non-interactive
     hugo
     node_modules/.bin/hugo-algolia --toml -s"""
 
+[build.environment] # global variables
+  HUGO_VERSION = "0.47.1"
+  GIT_LFS_ENABLED = "true"
+
 [context.production.environment]
-  HUGO_VERSION = "0.47"
   HUGO_ENV = "production"
   HUGO_ENABLEGITINFO = "true"
 
 [context.deploy-preview]
   command = """
-    git lfs fetch
+    git lfs install
+    git lfs pull
     yarn --ignore-engines --ignore-optional --non-interactive
     hugo -b $DEPLOY_PRIME_URL"""
-
-[context.deploy-preview.environment]
-  HUGO_VERSION = "0.47"
 
 [context.branch-deploy]
   command = """
-    git lfs fetch
+    git lfs install
+    git lfs pull
     yarn --ignore-engines --ignore-optional --non-interactive
     hugo -b $DEPLOY_PRIME_URL"""
-
-[context.branch-deploy.environment]
-  HUGO_VERSION = "0.47"

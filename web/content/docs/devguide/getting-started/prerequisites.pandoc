@@ -208,7 +208,7 @@ Just use the provided Windows installer and make sure to add conan to your path 
 
 Check on a newly opened command line if Conan was installed successfully:
 
-```
+```bash
 $ conan --version
 Conan version 1.0.4
 ```
@@ -219,7 +219,7 @@ Use either the provided deb-package or install via Pythons `pip`.
 
 Check on a newly opened command line if Conan was installed successfully:
 
-```
+```bash
 $ conan --version
 Conan version 1.0.4
 ```
@@ -228,13 +228,13 @@ Conan version 1.0.4
 ::: {.mac}
 Use Homebrew:
 
-```
+```bash
 brew install conan
 ```
 
 Check on a newly opened command line if Conan was installed successfully:
 
-```
+```bash
 $ conan --version
 Conan version 1.0.4
 ```

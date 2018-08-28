@@ -61,6 +61,22 @@ h4 > .headerlink {
   }
 }
 
+// Inline code and blocks
+code {
+  @apply .p-px;
+  @apply .bg-grey-lighter;
+  @apply .rounded-sm;
+}
+
+pre {
+  @apply .-ml-2;
+  @apply .pl-2;
+  @apply .border-l-8;
+}
+pre > code {
+  @apply .bg-transparent;
+}
+
 p, ul, pre {
   @apply .mb-4;
 }
