@@ -70,9 +70,10 @@ int main (int argc, char* argv[])
         "the name of the file containing the input mesh", true,
         "", "file name of input mesh");
     cmd.add(mesh_in);
-    TCLAP::ValueArg<std::string> id_prop_name("", "id-prop-name",
+    TCLAP::ValueArg<std::string> id_prop_name(
+        "", "id-prop-name",
         "the name of the property containing the id information", false,
-        "OriginalSubsurfaceNodeIDs", "property name");
+        "bulk_node_ids", "property name");
     cmd.add(id_prop_name);
     TCLAP::ValueArg<std::string> out_base_fname("p", "output-base-name",
         "the path and base file name the output will be written to", false,
