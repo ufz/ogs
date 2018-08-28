@@ -46,6 +46,7 @@ target_link_libraries(testrunner
     NumLib
     ProcessLib
     Threads::Threads
+    ${VTK_LIBRARIES}
 )
 
 if(OGS_BUILD_PROCESS_LIE)

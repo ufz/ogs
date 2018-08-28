@@ -92,14 +92,17 @@ pipeline {
               build { target="tests" }
               build { target="ctest" }
               build { target="doc" }
+              dir('build/docs') { stash(name: 'doxygen') }
               configure {
                 cmakeOptions =
+                  '-DOGS_USE_CONAN=ON ' +
+                  '-DOGS_CPU_ARCHITECTURE=generic ' +
+                  '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_CLI=OFF ' +
                   '-DOGS_USE_PCH=OFF ' +     // see #1992
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_TESTS=OFF '
-                keepDir = true
               }
               build { }
             }
@@ -107,7 +110,6 @@ pipeline {
           post {
             always {
               publishReports { }
-              dir('build/docs') { stash(name: 'doxygen') }
             }
             success {
               script {
@@ -250,11 +252,13 @@ pipeline {
               // GUI
               configure {
                 cmakeOptions =
+                  '-DOGS_USE_CONAN=ON ' +
+                  '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
+                  '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_TESTS=OFF ' +
                   '-DOGS_BUILD_SWMM=ON '
-                  keepDir = true
               }
               build { }
             }
