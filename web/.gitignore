@@ -2,7 +2,8 @@ node_modules/
 public/
 dist/
 themes/ogs/static
-static/
+static
+!static/images/xsd
 test.md
 test.jpg
 npm-debug.log
