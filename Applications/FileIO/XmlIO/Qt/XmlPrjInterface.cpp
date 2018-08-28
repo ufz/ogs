@@ -313,9 +313,6 @@ bool XmlPrjInterface::write()
     QDomElement root = doc.createElement("OpenGeoSysProject");
     root.setAttribute("xmlns:ogs", "http://www.opengeosys.org");
     root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-    root.setAttribute(
-        "xsi:noNamespaceSchemaLocation",
-        "https://www.opengeosys.org/images/xsd/OpenGeoSysProject.xsd");
 
     doc.appendChild(root);
 

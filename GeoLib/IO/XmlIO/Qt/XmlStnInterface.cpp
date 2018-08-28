@@ -208,7 +208,6 @@ bool XmlStnInterface::write()
     QDomElement root = doc.createElement("OpenGeoSysSTN");
     root.setAttribute( "xmlns:ogs", "http://www.opengeosys.org" );
     root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-    root.setAttribute( "xsi:noNamespaceSchemaLocation", "https://www.opengeosys.org/images/xsd/OpenGeoSysSTN.xsd" );
 
     const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_exportName));
     bool isBorehole = static_cast<GeoLib::Station*>((*stations)[0])->type() ==
