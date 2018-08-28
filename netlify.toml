@@ -3,10 +3,11 @@
   base    = "web"
   publish = "web/public"
   command = """
-    git lfs fetch
     yarn --ignore-engines --ignore-optional --non-interactive
     hugo
     node_modules/.bin/hugo-algolia --toml -s"""
+[build.environment]
+  GIT_LFS_ENABLED = "true"
 
 [context.production.environment]
   HUGO_VERSION = "0.47.1"
@@ -15,7 +16,6 @@
 
 [context.deploy-preview]
   command = """
-    git lfs fetch
     yarn --ignore-engines --ignore-optional --non-interactive
     hugo -b $DEPLOY_PRIME_URL"""
 
@@ -24,7 +24,6 @@
 
 [context.branch-deploy]
   command = """
-    git lfs fetch
     yarn --ignore-engines --ignore-optional --non-interactive
     hugo -b $DEPLOY_PRIME_URL"""
 
