@@ -1,7 +1,3 @@
-$('h2,h3,h4').each(function(){$('<a class="headerlink"> <i class="fas fa-link"></i></a>').attr('href','#'+this.id).appendTo(this);});jQuery.fn.visible=function(){return this.css('visibility','visible');};jQuery.fn.invisible=function(){return this.css('visibility','hidden');};$("#btn-win").click(function(){selectOS("win");});$("#btn-linux").click(function(){selectOS("linux");});$("#btn-mac").click(function(){selectOS("mac");});function selectOS(os){var os_list=['win','linux','mac'];for(var i=0;i<os_list.length;i++){var current_os=os_list[i];if(current_os==os){$("."+current_os).show();$("#btn-"+current_os).addClass("active");}
-else{$("."+current_os).hide();$("#btn-"+current_os).removeClass("active");}}
-window.localStorage.setItem("selectedOS",os);}
-if($(".win").length>0){$("#os-selector").visible();var os=window.localStorage.getItem("selectedOS");if(os){$("#btn-"+os).click();}
-else{$("#btn-win").click();}}
-var client=algoliasearch('4AHEU3QJQG','cda2754fe35733ffa31994a177725640')
-var index=client.initIndex('docs.opengeosys.org');$('#search-input').autocomplete({autoselect:true,hint:false,keyboardShortcuts:['s']},[{source:$.fn.autocomplete.sources.hits(index,{hitsPerPage:5}),displayKey:'title',templates:{suggestion:function(suggestion){return suggestion._highlightResult.title.value;}}}]).on('autocomplete:selected',function(event,suggestion,dataset){window.location="/"+suggestion.uri.toLowerCase();});$(document).ready(function(){$('.carousel').slick({dots:true,infinite:true,fade:true,cssEase:'linear',autoplaySpeed:3000,});$('.carousel-play').slick('slickPlay');});
+version https://git-lfs.github.com/spec/v1
+oid sha256:d712775b6b120899c85c469544ffea38f7262cab1224aab89b2b1d7e0e35032c
+size 1585

@@ -9,7 +9,7 @@
     node_modules/.bin/hugo-algolia --toml -s"""
 
 [context.production.environment]
-  HUGO_VERSION = "0.47"
+  HUGO_VERSION = "0.47.1"
   HUGO_ENV = "production"
   HUGO_ENABLEGITINFO = "true"
 
@@ -20,7 +20,7 @@
     hugo -b $DEPLOY_PRIME_URL"""
 
 [context.deploy-preview.environment]
-  HUGO_VERSION = "0.47"
+  HUGO_VERSION = "0.47.1"
 
 [context.branch-deploy]
   command = """
@@ -29,4 +29,4 @@
     hugo -b $DEPLOY_PRIME_URL"""
 
 [context.branch-deploy.environment]
-  HUGO_VERSION = "0.47"
+  HUGO_VERSION = "0.47.1"
