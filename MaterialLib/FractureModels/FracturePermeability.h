@@ -163,10 +163,10 @@ class CubicLawAfterShearSlip final : public Permeability
 public:
     explicit CubicLawAfterShearSlip(double const initial_creation_aperture,
                                     double const minimum_permeability,
-                                    double const permeability_threshold)
+                                    double const aperture_threshold)
         : _initial_creation_aperture(initial_creation_aperture),
           _minimum_permeability(minimum_permeability),
-          _permeability_threshold(permeability_threshold)
+          _aperture_threshold(aperture_threshold)
     {
     }
 
@@ -179,28 +179,40 @@ private:
     }
 
     double permeability(PermeabilityState const* const state,
-                        double const /*aperture0*/,
+                        double const aperture0,
                         double const aperture_m) const override
     {
-        if (aperture_m < _permeability_threshold || !shearSlipOccured(state))
-        {
-            return _minimum_permeability;
-        }
+        double const aperture = std::max(
+            0.,
+            shearSlipOccured(state)
+                ? aperture_m + _initial_creation_aperture - _aperture_threshold
+                : aperture0 - _aperture_threshold);
 
-        double const aperture = aperture_m + _initial_creation_aperture;
-        return aperture * aperture / 12;
+        return std::max(_minimum_permeability, aperture * aperture / 12);
     }
 
     double dpermeability_daperture(PermeabilityState const* const state,
                                    double const /*aperture0*/,
                                    double const aperture_m) const override
     {
-        if (aperture_m < _permeability_threshold || !shearSlipOccured(state))
+        if (!shearSlipOccured(state))
         {
             return 0;
         }
 
-        double const aperture = aperture_m + _initial_creation_aperture;
+        double const aperture =
+            aperture_m + _initial_creation_aperture - _aperture_threshold;
+        if (aperture <= 0)
+        {
+            return 0;
+        }
+
+        double const k = aperture * aperture / 12;
+        if (k <= _minimum_permeability)
+        {
+            return 0;
+        }
+
         return aperture / 6;
     }
 
@@ -216,8 +228,8 @@ private:
 
     double const _minimum_permeability;
 
-    /// Zero permeability below the threshold value.
-    double const _permeability_threshold;
+    /// Aperture with no hydraulic effect.
+    double const _aperture_threshold;
 };
 
 std::unique_ptr<CubicLawAfterShearSlip> createCubicLawAfterShearSlip(
