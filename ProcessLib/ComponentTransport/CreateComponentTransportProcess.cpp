@@ -33,7 +33,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::string const& project_directory,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::string const& output_directory)
 {
     //! \ogs_file_param{prj__processes__process__type}
@@ -171,26 +171,31 @@ std::unique_ptr<Process> createComponentTransportProcess(
                                          named_function_caller);
 
     // for the balance
-    std::string mesh_name; // surface mesh the balance will computed on
+    std::string balance_mesh_name; // surface mesh the balance will computed on
     std::string balance_pv_name;
     std::string balance_out_fname;
     std::unique_ptr<MeshLib::Mesh> surface_mesh;
     ProcessLib::parseCalculateSurfaceFluxData(
-        config, mesh_name, balance_pv_name, balance_out_fname);
+        config, balance_mesh_name, balance_pv_name, balance_out_fname);
 
     if (!mesh_name.empty())  // balance is optional
     {
-        mesh_name = BaseLib::copyPathToFileName(mesh_name, project_directory);
+        // find the mesh for the specified mesh_name
+        auto balance_mesh = BaseLib::findElementOrError(
+            meshes.begin(), meshes.end(),
+            [&balance_mesh_name](auto const& m) {
+                return balance_mesh_name == m->getName();
+            },
+            "Expected to find o mesh named " + balance_mesh_name +
+                " for balance calculation.");
 
         balance_out_fname =
             BaseLib::copyPathToFileName(balance_out_fname, output_directory);
 
-        surface_mesh.reset(MeshLib::IO::readMeshFromFile(mesh_name));
-
         DBUG(
             "read balance meta data:\n\tbalance mesh:\"%s\"\n\tproperty name: "
             "\"%s\"\n\toutput to: \"%s\"",
-            mesh_name.c_str(), balance_pv_name.c_str(),
+            balance_mesh_name.c_str(), balance_pv_name.c_str(),
             balance_out_fname.c_str());
 
         // Surface mesh and bulk mesh must have equal axial symmetry flags!
