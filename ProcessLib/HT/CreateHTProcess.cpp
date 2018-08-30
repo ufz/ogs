@@ -218,7 +218,7 @@ std::unique_ptr<Process> createHTProcess(
                                               std::move(balance_out_fname)));
 
         // Surface mesh and bulk mesh must have equal axial symmetry flags!
-        balance->surface_mesh->setAxiallySymmetric(mesh.isAxiallySymmetric());
+        balance->surface_mesh.setAxiallySymmetric(mesh.isAxiallySymmetric());
     }
 
     std::unique_ptr<HTMaterialProperties> material_properties =

@@ -273,12 +273,12 @@ void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
         return;
     }
     auto* const balance_pv = MeshLib::getOrCreateMeshProperty<double>(
-        *(_balance->surface_mesh), _balance->property_vector_name,
+        _balance->surface_mesh, _balance->property_vector_name,
         MeshLib::MeshItemType::Cell, 1);
     // initialise the PropertyVector pv with zero values
     std::fill(balance_pv->begin(), balance_pv->end(), 0.0);
     auto balance = ProcessLib::CalculateSurfaceFlux(
-        *(_balance->surface_mesh),
+        _balance->surface_mesh,
         getProcessVariables(process_id)[0].get().getNumberOfComponents(),
         _integration_order);
 
