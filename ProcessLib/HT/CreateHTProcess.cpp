@@ -35,7 +35,7 @@ std::unique_ptr<Process> createHTProcess(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::string const& project_directory,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::string const& output_directory)
 {
     //! \ogs_file_param{prj__processes__process__type}
@@ -210,12 +210,10 @@ std::unique_ptr<Process> createHTProcess(
 
     if (!mesh_name.empty())  // balance is optional
     {
-        mesh_name = BaseLib::copyPathToFileName(mesh_name, project_directory);
-
         balance_out_fname =
             BaseLib::copyPathToFileName(balance_out_fname, output_directory);
 
-        balance.reset(new ProcessLib::Balance(std::move(mesh_name),
+        balance.reset(new ProcessLib::Balance(std::move(mesh_name), meshes,
                                               std::move(balance_pv_name),
                                               std::move(balance_out_fname)));
 

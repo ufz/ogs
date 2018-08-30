@@ -428,7 +428,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             process = ProcessLib::HT::createHTProcess(
                 *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
-                process_config, project_directory, output_directory);
+                process_config, _mesh_vec, output_directory);
         }
         else
 #endif

@@ -23,6 +23,7 @@ namespace ProcessLib
 struct Balance
 {
     Balance(std::string&& balance_mesh_name,
+            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
             std::string&& balance_property_vector_name,
             std::string&& balance_output_mesh_file_name)
         : mesh_name(std::move(balance_mesh_name)),

@@ -23,7 +23,7 @@ std::unique_ptr<Process> createHTProcess(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::string const& project_directory,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::string const& output_directory);
 
 }  // namespace HT
