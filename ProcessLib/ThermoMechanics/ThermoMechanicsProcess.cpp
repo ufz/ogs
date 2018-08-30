@@ -86,80 +86,20 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             NumLib::ComponentOrder::BY_LOCATION));
 
     _secondary_variables.addSecondaryVariable(
-        "sigma_xx",
+        "sigma",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXX));
+            MathLib::KelvinVector::KelvinVectorType<
+                DisplacementDim>::RowsAtCompileTime,
+            getExtrapolator(), _local_assemblers,
+            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigma));
 
     _secondary_variables.addSecondaryVariable(
-        "sigma_yy",
+        "epsilon",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaYY));
-
-    _secondary_variables.addSecondaryVariable(
-        "sigma_zz",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaZZ));
-
-    _secondary_variables.addSecondaryVariable(
-        "sigma_xy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXY));
-
-    if (DisplacementDim == 3)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "sigma_xz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXZ));
-
-        _secondary_variables.addSecondaryVariable(
-            "sigma_yz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaYZ));
-    }
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_xx",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXX));
-
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_yy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonYY));
-
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_zz",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonZZ));
-
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_xy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXY));
-    if (DisplacementDim == 3)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "epsilon_yz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonYZ));
-
-        _secondary_variables.addSecondaryVariable(
-            "epsilon_xz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXZ));
-    }
+            MathLib::KelvinVector::KelvinVectorType<
+                DisplacementDim>::RowsAtCompileTime,
+            getExtrapolator(), _local_assemblers,
+            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilon));
 
     // Set initial conditions for integration point data.
     for (auto const& ip_writer : _integration_point_writer)

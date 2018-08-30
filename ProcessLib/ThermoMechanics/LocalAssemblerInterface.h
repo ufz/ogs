@@ -28,77 +28,18 @@ struct ThermoMechanicsLocalAssemblerInterface
 
     virtual std::vector<double> getSigma() const = 0;
 
-    virtual std::vector<double> const& getIntPtSigmaXX(
+    virtual std::vector<double> const& getIntPtSigma(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
-    virtual std::vector<double> const& getIntPtSigmaYY(
+    virtual std::vector<double> const& getIntPtEpsilon(
         const double /*t*/,
         GlobalVector const& /*current_solution*/,
         NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
 
-    virtual std::vector<double> const& getIntPtSigmaZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtSigmaYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXX(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonYY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonZZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXY(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonXZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilonYZ(
-        const double /*t*/,
-        GlobalVector const& /*current_solution*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
 };
 
 }  // namespace ThermoMechanics
