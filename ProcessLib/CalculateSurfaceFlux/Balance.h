@@ -18,6 +18,8 @@
 // TODO used for output, if output classes are ready this has to be changed
 #include "MeshLib/IO/writeMeshToFile.h"
 
+#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
+
 namespace ProcessLib
 {
 struct Balance
@@ -44,6 +46,26 @@ struct Balance
             output_mesh_file_name.c_str());
     }
 
+    void integrate(GlobalVector const& x, double const t, Process const& p,
+                   int const process_id, int const integration_order,
+                   MeshLib::Mesh const& bulk_mesh)
+    {
+        auto* const balance_pv = MeshLib::getOrCreateMeshProperty<double>(
+            surface_mesh, property_vector_name, MeshLib::MeshItemType::Cell, 1);
+        // initialise the PropertyVector pv with zero values
+        std::fill(balance_pv->begin(), balance_pv->end(), 0.0);
+        auto balance = ProcessLib::CalculateSurfaceFlux(
+            surface_mesh,
+            p.getProcessVariables(process_id)[0].get().getNumberOfComponents(),
+            integration_order);
+
+        balance.integrate(
+            x, *balance_pv, t, bulk_mesh,
+            [&p](std::size_t const element_id, MathLib::Point3d const& pnt,
+                 double const t, GlobalVector const& x) {
+                return p.getFlux(element_id, pnt, t, x);
+            });
+    }
     void save(double const t) const
     {
         // TODO (TomFischer) output, if output classes are ready this has to be

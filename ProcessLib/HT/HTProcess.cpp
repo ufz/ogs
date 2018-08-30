@@ -14,7 +14,6 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
-#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 #include "HTMaterialProperties.h"
@@ -272,23 +271,7 @@ void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
     {
         return;
     }
-    auto* const balance_pv = MeshLib::getOrCreateMeshProperty<double>(
-        _balance->surface_mesh, _balance->property_vector_name,
-        MeshLib::MeshItemType::Cell, 1);
-    // initialise the PropertyVector pv with zero values
-    std::fill(balance_pv->begin(), balance_pv->end(), 0.0);
-    auto balance = ProcessLib::CalculateSurfaceFlux(
-        _balance->surface_mesh,
-        getProcessVariables(process_id)[0].get().getNumberOfComponents(),
-        _integration_order);
-
-    balance.integrate(
-        x, *balance_pv, t, _mesh,
-        [this](std::size_t const element_id, MathLib::Point3d const& pnt,
-               double const t, GlobalVector const& x) {
-            return getFlux(element_id, pnt, t, x);
-        });
-    // post: surface_mesh has scalar element property
+    _balance->integrate(x, t, *this, process_id, _integration_order, _mesh);
     _balance->save(t);
 }
 
