@@ -29,14 +29,8 @@
                 <temperature>temperature</temperature>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="sigma_xx" output_name="sigma_xx"/>
-                <secondary_variable type="static" internal_name="sigma_yy" output_name="sigma_yy"/>
-                <secondary_variable type="static" internal_name="sigma_zz" output_name="sigma_zz"/>
-                <secondary_variable type="static" internal_name="sigma_xy" output_name="sigma_xy"/>
-                <secondary_variable type="static" internal_name="epsilon_xx" output_name="epsilon_xx"/>
-                <secondary_variable type="static" internal_name="epsilon_yy" output_name="epsilon_yy"/>
-                <secondary_variable type="static" internal_name="epsilon_zz" output_name="epsilon_zz"/>
-                <secondary_variable type="static" internal_name="epsilon_xy" output_name="epsilon_xy"/>
+                <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
+                <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
         </process>
@@ -57,14 +51,8 @@
                     <variables>
                         <variable>displacement</variable>
                         <variable>temperature</variable>
-                        <variable>sigma_xx</variable>
-                        <variable>sigma_yy</variable>
-                        <variable>sigma_zz</variable>
-                        <variable>sigma_xy</variable>
-                        <variable>epsilon_xx</variable>
-                        <variable>epsilon_yy</variable>
-                        <variable>epsilon_zz</variable>
-                        <variable>epsilon_xy</variable>
+                        <variable>sigma</variable>
+                        <variable>epsilon</variable>
                     </variables>
                 </output>
                 <time_stepping>
