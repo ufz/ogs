@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>cube_1x1x1_hex_1e4.vtu</mesh>
-    <geometry>cube_1x1x1.gml</geometry>
+    <meshes>
+        <mesh>cube_1x1x1_hex_1e4.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e4_complete_surface.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e4_left.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e4_right.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>SimpleThermalConvection</name>
@@ -56,7 +60,7 @@
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>
             <calculatesurfaceflux>
-                <mesh>cube_1x1x1_hex_1e4_complete_surface.vtu</mesh>
+                <mesh>cube_1x1x1_hex_1e4_complete_surface</mesh>
                 <property_name>flux</property_name>
                 <output_mesh>flux_1e4.vtu</output_mesh>
             </calculatesurfaceflux>
@@ -210,14 +214,12 @@
             <initial_condition>T0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>cube_1x1x1_hex_1e4_left</mesh>
                     <type>Dirichlet</type>
                     <parameter>t_Dirichlet_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>cube_1x1x1_hex_1e4_right</mesh>
                     <type>Dirichlet</type>
                     <parameter>t_Dirichlet_right</parameter>
                 </boundary_condition>
@@ -230,14 +232,12 @@
             <initial_condition>P0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>cube_1x1x1_hex_1e4_left</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>cube_1x1x1_hex_1e4_right</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_right</parameter>
                 </boundary_condition>
