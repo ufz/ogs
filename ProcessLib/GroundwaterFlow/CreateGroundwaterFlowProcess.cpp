@@ -29,7 +29,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::string const& project_directory,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::string const& output_directory)
 {
     //! \ogs_file_param{prj__processes__process__type}
@@ -70,6 +70,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     ProcessLib::createSecondaryVariables(config, secondary_variables,
                                          named_function_caller);
 
+    std::unique_ptr<ProcessLib::Balance> balance;
     std::string mesh_name;
     std::string balance_pv_name;
     std::string balance_out_fname;
@@ -79,29 +80,22 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
 
     if (!mesh_name.empty())  // balance is optional
     {
-        mesh_name = BaseLib::copyPathToFileName(mesh_name, project_directory);
-
         balance_out_fname =
             BaseLib::copyPathToFileName(balance_out_fname, output_directory);
 
-        surface_mesh.reset(MeshLib::IO::readMeshFromFile(mesh_name));
-
-        DBUG(
-            "read balance meta data:\n\tbalance mesh:\"%s\"\n\tproperty name: "
-            "\"%s\"\n\toutput to: \"%s\"",
-            mesh_name.c_str(), balance_pv_name.c_str(),
-            balance_out_fname.c_str());
+        balance.reset(new ProcessLib::Balance(std::move(mesh_name), meshes,
+                                              std::move(balance_pv_name),
+                                              std::move(balance_out_fname)));
 
         // Surface mesh and bulk mesh must have equal axial symmetry flags!
-        surface_mesh->setAxiallySymmetric(mesh.isAxiallySymmetric());
+        balance->surface_mesh.setAxiallySymmetric(mesh.isAxiallySymmetric());
     }
 
     return std::make_unique<GroundwaterFlowProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        surface_mesh.release(), std::move(balance_pv_name),
-        std::move(balance_out_fname));
+        std::move(balance));
 }
 
 }  // namespace GroundwaterFlow
