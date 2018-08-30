@@ -74,10 +74,10 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     std::string balance_pv_name;
     std::string balance_out_fname;
     std::unique_ptr<MeshLib::Mesh> surface_mesh;
-    ProcessLib::parseCalculateSurfaceFluxData(config, mesh_name, balance_pv_name,
-                                        balance_out_fname);
+    ProcessLib::parseCalculateSurfaceFluxData(
+        config, mesh_name, balance_pv_name, balance_out_fname);
 
-    if (! mesh_name.empty()) // balance is optional
+    if (!mesh_name.empty())  // balance is optional
     {
         mesh_name = BaseLib::copyPathToFileName(mesh_name, project_directory);
 

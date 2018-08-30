@@ -12,6 +12,7 @@
 #include <array>
 
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
+#include "ProcessLib/CalculateSurfaceFlux/Balance.h"
 #include "ProcessLib/Process.h"
 
 namespace NumLib
@@ -60,8 +61,7 @@ public:
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
         bool const use_monolithic_scheme,
-        std::unique_ptr<MeshLib::Mesh>&& balance_mesh,
-        std::string&& balance_pv_name, std::string&& balance_out_frame);
+        std::unique_ptr<ProcessLib::Balance>&& balance);
 
     //! \name ODESystem interface
     //! @{
@@ -117,9 +117,7 @@ private:
     /// Solutions of the previous time step
     std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
 
-    std::unique_ptr<MeshLib::Mesh> _balance_mesh;
-    std::string const _balance_pv_name;
-    std::string const _balance_out_fname;
+    std::unique_ptr<ProcessLib::Balance> _balance;
 };
 
 }  // namespace HT

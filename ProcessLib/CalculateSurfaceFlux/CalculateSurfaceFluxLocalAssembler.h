@@ -13,13 +13,13 @@
 
 #include "NumLib/DOF/DOFTableUtil.h"
 
-#include "ProcessLib/Process.h"
 #include "ProcessLib/Parameter/Parameter.h"
+#include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
-#include "MeshLib/Elements/MapBulkElementPoint.h"
-#include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Elements/Elements.h"
+#include "MeshLib/Elements/FaceRule.h"
+#include "MeshLib/Elements/MapBulkElementPoint.h"
 
 namespace ProcessLib
 {
@@ -149,7 +149,7 @@ public:
                 // TODO find solution for 2d case
                 double const bulk_grad_times_normal(
                     Eigen::Map<Eigen::RowVectorXd const>(bulk_flux.data(),
-                                                   bulk_flux.size())
+                                                         bulk_flux.size())
                         .dot(Eigen::Map<Eigen::RowVectorXd const>(
                             surface_element_normal.getCoords(), 3)));
 
@@ -170,4 +170,4 @@ private:
     std::size_t _bulk_face_id;
 };
 
-}  // ProcessLib
+}  // namespace ProcessLib

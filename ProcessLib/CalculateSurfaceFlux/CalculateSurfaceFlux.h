@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "ProcessLib/Process.h"
 #include "CalculateSurfaceFluxLocalAssembler.h"
+#include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
@@ -49,4 +49,4 @@ private:
         _local_assemblers;
 };
 
-}   // namespace ProcessLib
+}  // namespace ProcessLib

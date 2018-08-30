@@ -43,8 +43,8 @@ struct Balance
         // TODO (TomFischer) output, if output classes are ready this has to be
         // changed
         std::string const fname =
-            BaseLib::dropFileExtension(output_mesh_file_name) +
-            "_t_" + std::to_string(t) + ".vtu";
+            BaseLib::dropFileExtension(output_mesh_file_name) + "_t_" +
+            std::to_string(t) + ".vtu";
         MeshLib::IO::writeMeshToFile(*surface_mesh, fname);
     }
 

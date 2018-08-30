@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/Process.h"
 #include "GroundwaterFlowFEM.h"
 #include "GroundwaterFlowProcessData.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
+#include "ProcessLib/Process.h"
 
 // TODO used for output, if output classes are ready this has to be changed
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -70,7 +70,7 @@ public:
             OGS_FATAL("The condition of process_id = 0 must be satisfied for "
                       "GroundwaterFlowProcess, which is a single process." );
         }
-        if (_balance_mesh) // computing the balance is optional
+        if (_balance_mesh)  // computing the balance is optional
         {
             std::vector<double> init_values(
                 _balance_mesh->getNumberOfElements(), 0.0);
