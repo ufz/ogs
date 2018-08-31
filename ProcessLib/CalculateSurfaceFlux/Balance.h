@@ -19,7 +19,6 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 
 #include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
-#include "ProcessLib/CalculateSurfaceFlux/ParseCalculateSurfaceFluxData.h"
 
 namespace ProcessLib
 {
@@ -52,11 +51,24 @@ struct Balance
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
         std::string const& output_directory)
     {
-        std::string mesh_name;  // surface mesh the balance will computed on
-        std::string balance_pv_name;
-        std::string balance_out_fname;
-        ProcessLib::parseCalculateSurfaceFluxData(
-            config, mesh_name, balance_pv_name, balance_out_fname);
+        auto calculatesurfaceflux_config =
+            //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}
+            config.getConfigSubtreeOptional("calculatesurfaceflux");
+        if (!calculatesurfaceflux_config)
+            return std::unique_ptr<Balance>(nullptr);
+
+        std::string mesh_name =
+            //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__mesh}
+            calculatesurfaceflux_config->getConfigParameter<std::string>(
+                "mesh");
+        std::string balance_pv_name =
+            //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__property_name}
+            calculatesurfaceflux_config->getConfigParameter<std::string>(
+                "property_name");
+        std::string balance_out_fname =
+            //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__output_mesh}
+            calculatesurfaceflux_config->getConfigParameter<std::string>(
+                "output_mesh");
 
         if (mesh_name.empty())
         {
