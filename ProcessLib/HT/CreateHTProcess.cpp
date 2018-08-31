@@ -15,7 +15,6 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 
 #include "ProcessLib/CalculateSurfaceFlux/Balance.h"
-#include "ProcessLib/CalculateSurfaceFlux/ParseCalculateSurfaceFluxData.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -200,26 +199,8 @@ std::unique_ptr<Process> createHTProcess(
         DBUG("Use \'%s\' as Biot's constant.", biot_constant->name.c_str());
     }
 
-    // for the balance
-    std::unique_ptr<ProcessLib::Balance> balance;
-    std::string mesh_name;  // surface mesh the balance will computed on
-    std::string balance_pv_name;
-    std::string balance_out_fname;
-    ProcessLib::parseCalculateSurfaceFluxData(
-        config, mesh_name, balance_pv_name, balance_out_fname);
-
-    if (!mesh_name.empty())  // balance is optional
-    {
-        balance_out_fname =
-            BaseLib::copyPathToFileName(balance_out_fname, output_directory);
-
-        balance.reset(new ProcessLib::Balance(std::move(mesh_name), meshes,
-                                              std::move(balance_pv_name),
-                                              std::move(balance_out_fname)));
-
-        // Surface mesh and bulk mesh must have equal axial symmetry flags!
-        balance->surface_mesh.setAxiallySymmetric(mesh.isAxiallySymmetric());
-    }
+    std::unique_ptr<ProcessLib::Balance> balance =
+        ProcessLib::Balance::createBalance(config, meshes, output_directory);
 
     std::unique_ptr<HTMaterialProperties> material_properties =
         std::make_unique<HTMaterialProperties>(

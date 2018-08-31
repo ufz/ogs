@@ -70,26 +70,8 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     ProcessLib::createSecondaryVariables(config, secondary_variables,
                                          named_function_caller);
 
-    std::unique_ptr<ProcessLib::Balance> balance;
-    std::string mesh_name;
-    std::string balance_pv_name;
-    std::string balance_out_fname;
-    std::unique_ptr<MeshLib::Mesh> surface_mesh;
-    ProcessLib::parseCalculateSurfaceFluxData(
-        config, mesh_name, balance_pv_name, balance_out_fname);
-
-    if (!mesh_name.empty())  // balance is optional
-    {
-        balance_out_fname =
-            BaseLib::copyPathToFileName(balance_out_fname, output_directory);
-
-        balance.reset(new ProcessLib::Balance(std::move(mesh_name), meshes,
-                                              std::move(balance_pv_name),
-                                              std::move(balance_out_fname)));
-
-        // Surface mesh and bulk mesh must have equal axial symmetry flags!
-        balance->surface_mesh.setAxiallySymmetric(mesh.isAxiallySymmetric());
-    }
+    std::unique_ptr<ProcessLib::Balance> balance =
+        ProcessLib::Balance::createBalance(config, meshes, output_directory);
 
     return std::make_unique<GroundwaterFlowProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
