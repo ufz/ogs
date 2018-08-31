@@ -19,6 +19,7 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 
 #include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
+#include "ProcessLib/CalculateSurfaceFlux/ParseCalculateSurfaceFluxData.h"
 
 namespace ProcessLib
 {
@@ -44,6 +45,28 @@ struct Balance
             "\"%s\"\n\toutput to: \"%s\"",
             mesh_name.c_str(), property_vector_name.c_str(),
             output_mesh_file_name.c_str());
+    }
+
+    static std::unique_ptr<Balance> createBalance(
+        BaseLib::ConfigTree const& config,
+        std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+        std::string const& output_directory)
+    {
+        std::string mesh_name;  // surface mesh the balance will computed on
+        std::string balance_pv_name;
+        std::string balance_out_fname;
+        ProcessLib::parseCalculateSurfaceFluxData(
+            config, mesh_name, balance_pv_name, balance_out_fname);
+
+        if (mesh_name.empty())
+        {
+            return std::unique_ptr<ProcessLib::Balance>(nullptr);
+        }
+        balance_out_fname =
+            BaseLib::copyPathToFileName(balance_out_fname, output_directory);
+        return std::make_unique<Balance>(std::move(mesh_name), meshes,
+                                         std::move(balance_pv_name),
+                                         std::move(balance_out_fname));
     }
 
     void integrate(GlobalVector const& x, double const t, Process const& p,
@@ -76,6 +99,7 @@ struct Balance
         MeshLib::IO::writeMeshToFile(surface_mesh, fname);
     }
 
+private:
     MeshLib::Mesh& surface_mesh;
     std::string const mesh_name;
     std::string const property_vector_name;
