@@ -15,6 +15,7 @@
 
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
+#include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 
@@ -832,6 +833,47 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     saturation_avg /= n_integration_points;
 
     (*_process_data.element_saturation)[_element.getID()] = saturation_avg;
+
+    // For each higher order node evaluate the shape matrices for the lower
+    // order element (the base nodes)
+    // TODO (naumov) Extract this method to be useful for other processes.
+    auto interpolate_p = [&]() {
+        using FemType =
+            NumLib::TemplateIsoparametric<ShapeFunctionPressure,
+                                          ShapeMatricesTypePressure>;
+
+        FemType fe(
+            *static_cast<const typename ShapeFunctionPressure::MeshElement*>(
+                &_element));
+        int const number_base_nodes = _element.getNumberOfBaseNodes();
+        int const number_all_nodes = _element.getNumberOfNodes();
+
+        for (int n = 0; n < number_base_nodes; ++n)
+        {
+            std::size_t const global_index = _element.getNodeIndex(n);
+            (*_process_data.pressure_interpolated)[global_index] = p_L[n];
+        }
+
+        for (int n = number_base_nodes; n < number_all_nodes; ++n)
+        {
+            // Evaluated at higher order nodes' coordinates.
+            typename ShapeMatricesTypePressure::ShapeMatrices shape_matrices_p{
+                ShapeFunctionPressure::DIM, DisplacementDim,
+                ShapeFunctionPressure::NPOINTS};
+
+            fe.computeShapeFunctions(
+                NumLib::NaturalCoordinates<typename ShapeFunctionDisplacement::
+                                               MeshElement>::coordinates[n]
+                    .data(),
+                shape_matrices_p, DisplacementDim, _is_axially_symmetric);
+
+            auto const& N_p = shape_matrices_p.N;
+
+            std::size_t const global_index = _element.getNodeIndex(n);
+            (*_process_data.pressure_interpolated)[global_index] = N_p * p_L;
+        }
+    };
+    interpolate_p();
 }
 
 }  // namespace RichardsMechanics

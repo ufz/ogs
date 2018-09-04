@@ -104,6 +104,7 @@ struct RichardsMechanicsProcessData
     double t = 0.0;
 
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
+    MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
