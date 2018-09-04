@@ -57,7 +57,7 @@ CreepBGRa<DisplacementDim>::integrateStress(
     // In case |s_{try}| is zero and _n < 3 (rare case).
     if (norm_s_try < std::numeric_limits<double>::epsilon() * C(0, 0))
     {
-        return {std::make_tuple(sigma_prev, createMaterialStateVariables(), C)};
+        return {std::make_tuple(sigma_try, createMaterialStateVariables(), C)};
     }
 
     ResidualVectorType solution = sigma_try;
