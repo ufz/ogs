@@ -376,7 +376,7 @@ pipeline {
         // *********************** Deploy Doxygen ******************************
         stage('Deploy Doxygen') {
           when { expression { return stage_required.build || stage_required.full } }
-          agent any
+          agent { label "master" }
           steps {
             dir('doxygen') { unstash 'doxygen' }
             unstash 'known_hosts'
