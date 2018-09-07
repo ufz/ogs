@@ -93,6 +93,9 @@ pipeline {
               build { target="ctest" }
               build { target="doc" }
               dir('build/docs') { stash(name: 'doxygen') }
+              publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
+                  keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
+                  reportName: 'Doxygen'])
               configure {
                 cmakeOptions =
                   '-DOGS_USE_CONAN=ON ' +
@@ -113,9 +116,6 @@ pipeline {
             }
             success {
               script {
-                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
-                  keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
-                  reportName: 'Doxygen'])
                 step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
                   messagesPattern: """
                     .*DOT_GRAPH_MAX_NODES.
