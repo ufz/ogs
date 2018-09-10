@@ -1,5 +1,5 @@
 AddTest(
-    NAME 3D_ThermoElastic_Stress_Analysis
+    NAME ThermoMechanics_3D_ThermoElastic_Stress_Analysis
     PATH ThermoMechanics
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3.prj
@@ -15,7 +15,7 @@ AddTest(
 )
 
 AddTest(
-    NAME 2D_ThermoElastic_IGLU_Plane_Strain
+    NAME ThermoMechanics_2D_ThermoElastic_IGLU_Plane_Strain
     PATH ThermoMechanics
     EXECUTABLE ogs
     EXECUTABLE_ARGS iglu_quarter_plane_strain.prj
@@ -31,7 +31,7 @@ AddTest(
 )
 
 AddTest(
-    NAME 2D_ThermoElastic_IGLU_Axisymmetric_Plane_Strain
+    NAME ThermoMechanics_2D_ThermoElastic_IGLU_Axisymmetric_Plane_Strain
     PATH ThermoMechanics
     EXECUTABLE ogs
     EXECUTABLE_ARGS iglu_axisymmetric_plane_strain.prj
@@ -47,7 +47,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_ThermoElastic_IGLU_Plane_Strain_Quadratic_Mesh
+    NAME ThermoMechanics_LARGE_2D_ThermoElastic_IGLU_Plane_Strain_Quadratic_Mesh
     PATH ThermoMechanics
     EXECUTABLE ogs
     EXECUTABLE_ARGS iglu_quarter_plane_strain_quad.prj
@@ -63,7 +63,7 @@ AddTest(
 )
 
 AddTest(
-    NAME 2D_ThermoElastic_IGLU_Axisymmetric_Plane_Strain_Quadratic_Mesh
+    NAME ThermoMechanics_2D_ThermoElastic_IGLU_Axisymmetric_Plane_Strain_Quadratic_Mesh
     PATH ThermoMechanics
     EXECUTABLE ogs
     EXECUTABLE_ARGS iglu_axisymmetric_plane_strain_quad.prj
