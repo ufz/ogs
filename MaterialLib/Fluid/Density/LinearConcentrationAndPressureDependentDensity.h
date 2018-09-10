@@ -42,8 +42,8 @@ public:
      */
     explicit LinearConcentrationAndPressureDependentDensity(
         const double reference_density, double reference_concentration,
-        double reference_pressure,
         const double fluid_density_concentration_difference_ratio,
+        double reference_pressure,
         const double fluid_density_pressure_difference_ratio)
         : _reference_density(reference_density),
           _reference_concentration(reference_concentration),

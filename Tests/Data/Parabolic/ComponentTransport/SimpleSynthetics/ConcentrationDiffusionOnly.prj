@@ -16,7 +16,7 @@
                     <type>ConcentrationDependent</type>
                     <reference_density>1</reference_density>
                     <reference_concentration>0</reference_concentration>
-                    <fluid_density_difference_ratio>0.026</fluid_density_difference_ratio>
+                    <fluid_density_difference_ratio>0.0</fluid_density_difference_ratio>
                 </density>
                 <viscosity>
                     <type>Constant</type>
@@ -49,7 +49,7 @@
                     </porosity>
                     <storage>
                         <type>Constant</type>
-                        <value>1e-5</value>
+                        <value>0</value>
                     </storage>
                 </porous_medium>
             </porous_medium>
