@@ -34,7 +34,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-10</abstol>
+                    <reltol>1e-15</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -70,7 +70,7 @@
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
-                    <each_steps>1</each_steps>
+                    <each_steps>100000</each_steps>
                 </pair>
             </timesteps>
         </output>
@@ -216,7 +216,7 @@
                 <solver_type>BiCGSTAB</solver_type>
                 <precon_type>DIAGONAL</precon_type>
                 <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-11</error_tolerance>
+                <error_tolerance>1e-16</error_tolerance>
             </eigen>
         </linear_solver>
     </linear_solvers>
