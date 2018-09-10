@@ -111,6 +111,25 @@ Properties::Properties(Properties const& properties)
     }
 }
 
+Properties& Properties::operator=(Properties const& properties)
+{
+    if (&properties == this)
+    {
+        return *this;
+    }
+
+    _properties = properties._properties;
+    std::vector<std::size_t> exclude_positions;
+    for (auto& name_vector_pair : _properties)
+    {
+        PropertyVectorBase* t(
+            name_vector_pair.second->clone(exclude_positions));
+        name_vector_pair.second = t;
+    }
+
+    return *this;
+}
+
 Properties::~Properties()
 {
     for (auto name_vector_pair : _properties)

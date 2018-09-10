@@ -443,11 +443,13 @@ void applyToPropertyVectors(std::vector<std::string> const& property_names,
     }
 }
 
-void NodeWiseMeshPartitioner::processProperties(
-    MeshLib::MeshItemType const mesh_item_type)
+void processProperties(MeshLib::Properties const& properties,
+                       MeshLib::MeshItemType const mesh_item_type,
+                       std::vector<Partition> const& partitions,
+                       MeshLib::Properties& partitioned_properties)
 {
     std::size_t const total_number_of_tuples =
-        std::accumulate(std::begin(_partitions), std::end(_partitions), 0,
+        std::accumulate(begin(partitions), end(partitions), 0,
                         [&](std::size_t const sum, Partition const& p) {
                             return sum + p.numberOfMeshItems(mesh_item_type);
                         });
@@ -460,15 +462,24 @@ void NodeWiseMeshPartitioner::processProperties(
     // 1 create new PV
     // 2 resize the PV with total_number_of_tuples
     // 3 copy the values according to the partition info
-    auto const& original_properties(_mesh->getProperties());
+    applyToPropertyVectors(properties.getPropertyVectorNames(mesh_item_type),
+                           [&](auto type, std::string const& name) {
+                               return copyPropertyVector<decltype(type)>(
+                                   properties, partitioned_properties,
+                                   partitions, name, total_number_of_tuples);
+                           });
+}
 
-    applyToPropertyVectors(
-        original_properties.getPropertyVectorNames(mesh_item_type),
-        [&](auto type, std::string const& name) {
-            return copyPropertyVector<decltype(type)>(
-                original_properties, _partitioned_properties, _partitions, name,
-                total_number_of_tuples);
-        });
+MeshLib::Properties partitionProperties(
+    MeshLib::Properties const& properties,
+    std::vector<Partition> const& partitions)
+{
+    MeshLib::Properties partitioned_properties;
+    processProperties(properties, MeshLib::MeshItemType::Node, partitions,
+                      partitioned_properties);
+    processProperties(properties, MeshLib::MeshItemType::Cell, partitions,
+                      partitioned_properties);
+    return partitioned_properties;
 }
 
 void NodeWiseMeshPartitioner::partitionByMETIS(
@@ -482,8 +493,106 @@ void NodeWiseMeshPartitioner::partitionByMETIS(
 
     renumberNodeIndices(is_mixed_high_order_linear_elems);
 
-    processProperties(MeshLib::MeshItemType::Node);
-    processProperties(MeshLib::MeshItemType::Cell);
+    _partitioned_properties =
+        partitionProperties(_mesh->getProperties(), _partitions);
+}
+
+void NodeWiseMeshPartitioner::renumberBulkNodeIdsProperty(
+    MeshLib::PropertyVector<std::size_t>* const bulk_node_ids_pv,
+    std::vector<Partition> const& local_partitions) const
+{
+    if (bulk_node_ids_pv == nullptr)
+    {
+        return;
+    }
+
+    auto& bulk_node_ids = *bulk_node_ids_pv;
+
+    std::size_t offset = 0;  // offset in property vector for current partition
+
+    assert(_partitions.size() == local_partitions.size());
+    int const n_partitions = static_cast<int>(_partitions.size());
+    for (int partition_id = 0; partition_id < n_partitions; ++partition_id)
+    {
+        auto const& bulk_partition = _partitions[partition_id];
+        auto const& local_partition = local_partitions[partition_id];
+
+        // Create global-to-local node id mapping for the bulk partition.
+        auto const& bulk_nodes = bulk_partition.nodes;
+        auto const n_bulk_nodes = bulk_nodes.size();
+        std::map<std::size_t, std::size_t> global_to_local;
+        for (std::size_t local_node_id = 0; local_node_id < n_bulk_nodes;
+             ++local_node_id)
+        {
+            global_to_local[bulk_nodes[local_node_id]->getID()] = local_node_id;
+        }
+
+        auto const& local_nodes = local_partition.nodes;
+        auto const n_local_nodes = local_nodes.size();
+        for (std::size_t local_node_id = 0; local_node_id < n_local_nodes;
+             ++local_node_id)
+        {
+            bulk_node_ids[offset + local_node_id] =
+                global_to_local[bulk_node_ids[offset + local_node_id]];
+        }
+        offset += n_local_nodes;
+    }
+}
+
+void NodeWiseMeshPartitioner::renumberBulkElementIdsProperty(
+    MeshLib::PropertyVector<std::size_t>* const bulk_element_ids_pv,
+    std::vector<Partition> const& local_partitions) const
+{
+    if (bulk_element_ids_pv == nullptr)
+    {
+        return;
+    }
+
+    auto& bulk_element_ids = *bulk_element_ids_pv;
+
+    std::size_t offset = 0;  // offset in property vector for current partition
+
+    assert(_partitions.size() == local_partitions.size());
+    int const n_partitions = static_cast<int>(_partitions.size());
+    for (int partition_id = 0; partition_id < n_partitions; ++partition_id)
+    {
+        auto const& bulk_partition = _partitions[partition_id];
+        auto const& local_partition = local_partitions[partition_id];
+
+        // Create global-to-local element id mapping for the bulk partition.
+        std::map<std::size_t, std::size_t> global_to_local;
+        auto map_elements =
+            [&global_to_local](
+                std::vector<MeshLib::Element const*> const& elements,
+                std::size_t const offset) {
+                auto const n_elements = elements.size();
+                for (std::size_t e = 0; e < n_elements; ++e)
+                {
+                    global_to_local[elements[e]->getID()] = offset + e;
+                }
+            };
+
+        map_elements(bulk_partition.regular_elements, 0);
+        map_elements(bulk_partition.ghost_elements,
+                     bulk_partition.regular_elements.size());
+
+        // Renumber the local bulk_element_ids map.
+        auto renumber_elements =
+            [&bulk_element_ids, &global_to_local](
+                std::vector<MeshLib::Element const*> const& elements,
+                std::size_t const offset) {
+                auto const n_elements = elements.size();
+                for (std::size_t e = 0; e < n_elements; ++e)
+                {
+                    bulk_element_ids[offset + e] =
+                        global_to_local[bulk_element_ids[offset + e]];
+                }
+                return n_elements;
+            };
+
+        offset += renumber_elements(local_partition.regular_elements, offset);
+        offset += renumber_elements(local_partition.ghost_elements, offset);
+    }
 }
 
 std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
@@ -918,7 +1027,8 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 
 void NodeWiseMeshPartitioner::writeOtherMesh(
     std::string const& output_filename_base,
-    std::vector<Partition> const& partitions) const
+    std::vector<Partition> const& partitions,
+    MeshLib::Properties const& partitioned_properties) const
 {
     writeNodesBinary(output_filename_base, partitions, _nodes_global_ids);
 
@@ -931,6 +1041,11 @@ void NodeWiseMeshPartitioner::writeOtherMesh(
         std::get<1>(elem_integers);
     writeElementsBinary(output_filename_base, partitions, num_elem_integers,
                         num_g_elem_integers);
+
+    writePropertiesBinary(output_filename_base, partitioned_properties,
+                          partitions, MeshLib::MeshItemType::Node);
+    writePropertiesBinary(output_filename_base, partitioned_properties,
+                          partitions, MeshLib::MeshItemType::Cell);
 }
 
 void NodeWiseMeshPartitioner::writeConfigDataASCII(

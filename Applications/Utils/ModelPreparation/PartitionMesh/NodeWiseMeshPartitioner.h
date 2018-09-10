@@ -48,6 +48,11 @@ struct Partition
     std::ostream& writeConfigBinary(std::ostream& os) const;
 };
 
+/// Creates partitioned mesh properties for nodes and cells.
+MeshLib::Properties partitionProperties(
+    MeshLib::Properties const& properties,
+    std::vector<Partition> const& partitions);
+
 /// Mesh partitioner.
 class NodeWiseMeshPartitioner
 {
@@ -80,6 +85,18 @@ public:
         MeshLib::Mesh const& mesh,
         bool const is_mixed_high_order_linear_elems) const;
 
+    /// Renumber the bulk_node_ids property for each partition to match the
+    /// partitioned bulk mesh nodes.
+    void renumberBulkNodeIdsProperty(
+        MeshLib::PropertyVector<std::size_t>* const bulk_node_ids,
+        std::vector<Partition> const& local_partitions) const;
+
+    /// Renumber the bulk_element_ids property for each partition to match the
+    /// partitioned bulk mesh elements.
+    void renumberBulkElementIdsProperty(
+        MeshLib::PropertyVector<std::size_t>* const bulk_element_ids_pv,
+        std::vector<Partition> const& local_partitions) const;
+
     /// Write the partitions into ASCII files
     /// \param file_name_base The prefix of the file name.
     void writeASCII(const std::string& file_name_base);
@@ -88,8 +105,10 @@ public:
     /// \param file_name_base The prefix of the file name.
     void writeBinary(const std::string& file_name_base);
 
-    void writeOtherMesh(std::string const& output_filename_base,
-                        std::vector<Partition> const& partitions) const;
+    void writeOtherMesh(
+        std::string const& output_filename_base,
+        std::vector<Partition> const& partitions,
+        MeshLib::Properties const& partitioned_properties) const;
 
     void resetPartitionIdsForNodes(
         std::vector<std::size_t>&& node_partition_ids)
@@ -126,8 +145,6 @@ private:
 
     void processPartition(std::size_t const part_id,
                           const bool is_mixed_high_order_linear_elems);
-
-    void processProperties(MeshLib::MeshItemType const mesh_item_type);
 
     /// Write the configuration data of the partition data in ASCII files.
     /// \param file_name_base The prefix of the file name.
