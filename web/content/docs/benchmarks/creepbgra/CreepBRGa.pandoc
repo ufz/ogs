@@ -84,7 +84,7 @@ $\lambda$ the Lamé constant,  $G$ the shear modulus, and $\otimes$  the tensor
 product notation.
 
 is a fourth order tensor. Substituting equation and the expression of $C$
-into the stress rate expression, equation , we have
+into the stress rate expression, equation, we have
  $$\begin{gathered}
 \dot { \mathbf \sigma}=  \mathbf{C} (\dot { \mathbf \epsilon}- \dot { \mathbf \epsilon}^T)- 2bG {\left\Vert{\mathbf s}\right\Vert}^{m-1} 
 {\mathbf s}
@@ -183,3 +183,49 @@ $$\begin{gathered}
 obtained by the present multidimensional scheme with the analytical
 solution is shown in the following figure:
 {{< img src="../bgra0.png" >}}
+
+
+Python code
+-----------
+A short python snippet, to compute the values.
+<details>
+<summary>
+Insert this into Paraview's ProgrammableFilter:
+</summary>
+```python
+A = self.GetInputDataObject(0, 0)
+numPoints = A.GetNumberOfPoints()
+outSxx = vtk.vtkDoubleArray()
+outSxx.SetName('analytic_strain_xx')
+outSyy = vtk.vtkDoubleArray()
+outSyy.SetName('analytic_strain_yy')
+outSzz = vtk.vtkDoubleArray()
+outSzz.SetName('analytic_strain_zz')
+outSxy = vtk.vtkDoubleArray()
+outSxy.SetName('analytic_strain_xy')
+sigma0=5.0
+A=0.18
+m=5
+Q=54000
+E=25000
+R=8.314472
+sf=1.
+t=100
+e0=-sigma0/E
+c=-A*exp(-Q/(R*373.15))*pow(sigma0,m)
+strain_zz=e0+c*t
+nv=0.27
+G=0.5*E/(1+nv)
+strain_rr=strain_zz + 0.5*sigma0/G+1.5*A*exp(-Q/(R*373.15))*pow(sigma0, m)*t
+for i in range(0, numPoints):
+    outSxx.InsertNextValue(strain_rr)
+    outSyy.InsertNextValue(strain_zz)
+    outSzz.InsertNextValue(strain_rr)
+    outSxy.InsertNextValue(0) 
+output = self.GetOutput()
+output.GetPointData().AddArray(outSxx)
+output.GetPointData().AddArray(outSyy)
+output.GetPointData().AddArray(outSzz)
+output.GetPointData().AddArray(outSxy)
+```
+</details>
