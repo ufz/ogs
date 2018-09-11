@@ -122,26 +122,29 @@ void TimeDiscretizedODESystem<
 
 void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
+    NonlinearSolverTag::Newton>::computeKnownSolutions(GlobalVector const& x)
+{
+    _known_solutions = _ode.getKnownSolutions(_time_disc.getCurrentTime(), x);
+}
+
+void TimeDiscretizedODESystem<
+    ODESystemTag::FirstOrderImplicitQuasilinear,
     NonlinearSolverTag::Newton>::applyKnownSolutions(GlobalVector& x) const
 {
-    ::detail::applyKnownSolutions(
-        _ode.getKnownSolutions(_time_disc.getCurrentTime(), x), x);
+    ::detail::applyKnownSolutions(_known_solutions, x);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Newton>::
     applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
-                              GlobalVector& minus_delta_x, GlobalVector& x)
+                              GlobalVector& minus_delta_x) const
 {
-    auto const* known_solutions =
-        _ode.getKnownSolutions(_time_disc.getCurrentTime(), x);
-
-    if (!known_solutions || known_solutions->empty())
+    if (!_known_solutions || _known_solutions->empty())
         return;
 
     using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
     std::vector<IndexType> ids;
-    for (auto const& bc : *known_solutions)
+    for (auto const& bc : *_known_solutions)
     {
         std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
     }
@@ -149,8 +152,6 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     // For the Newton method the values must be zero
     std::vector<double> values(ids.size(), 0);
     MathLib::applyKnownSolution(Jac, res, minus_delta_x, ids, values);
-
-    ::detail::applyKnownSolutions(known_solutions, x);
 }
 
 TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -201,34 +202,37 @@ void TimeDiscretizedODESystem<
 
 void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Picard>::applyKnownSolutions(GlobalVector& x) const
+    NonlinearSolverTag::Picard>::computeKnownSolutions(GlobalVector const& x)
 {
-    ::detail::applyKnownSolutions(
-        _ode.getKnownSolutions(_time_disc.getCurrentTime(), x), x);
+    _known_solutions = _ode.getKnownSolutions(_time_disc.getCurrentTime(), x);
 }
 
 void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Picard>::applyKnownSolutionsPicard(GlobalMatrix& A,
-                                                           GlobalVector& rhs,
-                                                           GlobalVector& x)
+    NonlinearSolverTag::Picard>::applyKnownSolutions(GlobalVector& x) const
 {
-    auto const* known_solutions =
-        _ode.getKnownSolutions(_time_disc.getCurrentTime(), x);
+    ::detail::applyKnownSolutions(_known_solutions, x);
+}
 
-    if (known_solutions)
+void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                              NonlinearSolverTag::Picard>::
+    applyKnownSolutionsPicard(GlobalMatrix& A,
+                              GlobalVector& rhs,
+                              GlobalVector& x) const
+{
+    if (!_known_solutions || _known_solutions->empty())
+        return;
+
+    using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
+    std::vector<IndexType> ids;
+    std::vector<double> values;
+    for (auto const& bc : *_known_solutions)
     {
-        using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
-        std::vector<IndexType> ids;
-        std::vector<double> values;
-        for (auto const& bc : *known_solutions)
-        {
-            std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
-            std::copy(bc.values.cbegin(), bc.values.cend(),
-                      std::back_inserter(values));
+        std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
+        std::copy(bc.values.cbegin(), bc.values.cend(),
+                  std::back_inserter(values));
         }
         MathLib::applyKnownSolution(A, rhs, x, ids, values);
-    }
 }
 
 }  // namespace NumLib

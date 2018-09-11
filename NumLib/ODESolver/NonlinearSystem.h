@@ -53,14 +53,19 @@ public:
      */
     virtual void getJacobian(GlobalMatrix& Jac) const = 0;
 
+    //! Pre-compute known solutions and possibly store them internally.
+    virtual void computeKnownSolutions(GlobalVector const& x) = 0;
+
     //! Apply known solutions to the solution vector \c x.
+    //! \pre computeKnownSolutions() must have been called before.
     virtual void applyKnownSolutions(GlobalVector& x) const = 0;
 
     //! Apply known solutions to the linearized equation system
     //! \f$ \mathit{Jac} \cdot (-\Delta x) = \mathit{res} \f$.
-    virtual void applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
-                                           GlobalVector& minus_delta_x,
-                                           GlobalVector& x) = 0;
+    //! \pre computeKnownSolutions() must have been called before.
+    virtual void applyKnownSolutionsNewton(
+        GlobalMatrix& Jac, GlobalVector& res,
+        GlobalVector& minus_delta_x) const = 0;
 };
 
 /*! A System of nonlinear equations to be solved with the Picard fixpoint
@@ -86,13 +91,18 @@ public:
     //! \pre assemble() must have been called before.
     virtual void getRhs(GlobalVector& rhs) const = 0;
 
+    //! Pre-compute known solutions and possibly store them internally.
+    virtual void computeKnownSolutions(GlobalVector const& x) = 0;
+
     //! Apply known solutions to the solution vector \c x.
+    //! \pre computeKnownSolutions() must have been called before.
     virtual void applyKnownSolutions(GlobalVector& x) const = 0;
 
     //! Apply known solutions to the linearized equation system
     //! \f$ A \cdot x = \mathit{rhs} \f$.
+    //! \pre computeKnownSolutions() must have been called before.
     virtual void applyKnownSolutionsPicard(GlobalMatrix& A, GlobalVector& rhs,
-                                           GlobalVector& x) = 0;
+                                           GlobalVector& x) const = 0;
 };
 
 //! @}
