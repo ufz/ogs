@@ -58,37 +58,6 @@ static void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
     }
 }
 
-//! Applies known solutions to the solution vector \c x, transparently
-//! for equation systems linearized with either the Picard or Newton method.
-template <NumLib::NonlinearSolverTag NLTag>
-static void applyKnownSolutions(NumLib::EquationSystem const& eq_sys,
-                                GlobalVector& x)
-{
-    using EqSys = NumLib::NonlinearSystem<NLTag>;
-    assert(dynamic_cast<EqSys const*>(&eq_sys) != nullptr);
-    auto& eq_sys_ = static_cast<EqSys const&>(eq_sys);
-
-    eq_sys_.applyKnownSolutions(x);
-}
-
-//! Applies known solutions to the solution vector \c x, transparently
-//! for equation systems linearized with either the Picard or Newton method.
-static void applyKnownSolutions(NumLib::EquationSystem const& eq_sys,
-                                NumLib::NonlinearSolverTag const nl_tag,
-                                GlobalVector& x)
-{
-    using Tag = NumLib::NonlinearSolverTag;
-    switch (nl_tag)
-    {
-        case Tag::Picard:
-            applyKnownSolutions<Tag::Picard>(eq_sys, x);
-            break;
-        case Tag::Newton:
-            applyKnownSolutions<Tag::Newton>(eq_sys, x);
-            break;
-    }
-}
-
 namespace ProcessLib
 {
 template <NumLib::ODESystemTag ODETag>
@@ -285,8 +254,6 @@ bool solveOneTimeStepOneProcess(int const process_id, GlobalVector& x,
     // preTimestep() hook.
 
     time_disc.nextTimestep(t, delta_t);
-
-    applyKnownSolutions(ode_sys, nl_tag, x);
 
     auto const post_iteration_callback = [&](unsigned iteration,
                                              GlobalVector const& x) {
