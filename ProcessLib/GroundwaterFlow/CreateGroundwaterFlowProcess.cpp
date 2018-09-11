@@ -69,21 +69,22 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     ProcessLib::createSecondaryVariables(config, secondary_variables,
                                          named_function_caller);
 
-    std::unique_ptr<ProcessLib::Balance> balance;
+    std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
     auto calculatesurfaceflux_config =
         //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}
         config.getConfigSubtreeOptional("calculatesurfaceflux");
     if (calculatesurfaceflux_config)
     {
-        balance = ProcessLib::Balance::createBalance(
-            *calculatesurfaceflux_config, meshes, output_directory);
+        surfaceflux = ProcessLib::SurfaceFluxData::
+            createSurfaceFluxData(*calculatesurfaceflux_config, meshes,
+                                           output_directory);
     }
 
     return std::make_unique<GroundwaterFlowProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        std::move(balance));
+        std::move(surfaceflux));
 }
 
 }  // namespace GroundwaterFlow

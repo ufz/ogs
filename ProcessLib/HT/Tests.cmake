@@ -143,10 +143,10 @@ AddTest(
 )
 
 AddTest(
-    NAME HT_Balance
+    NAME HT_calculatesurfaceflux
     PATH Parabolic/HT/SimpleSynthetics
     EXECUTABLE ogs
-    EXECUTABLE_ARGS balance_ht_cube_1e3.prj
+    EXECUTABLE_ARGS calculatesurfaceflux_ht_cube_1e3.prj
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
@@ -160,10 +160,10 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_HT_Balance
+    NAME LARGE_HT_calculatesurfaceflux
     PATH Parabolic/HT/SimpleSynthetics
     EXECUTABLE ogs
-    EXECUTABLE_ARGS balance_ht_cube_1e4.prj
+    EXECUTABLE_ARGS calculatesurfaceflux_ht_cube_1e4.prj
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI

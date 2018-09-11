@@ -9,11 +9,11 @@
 
 #pragma once
 
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "ProcessLib/Process.h"
 #include "GroundwaterFlowFEM.h"
 #include "GroundwaterFlowProcessData.h"
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFluxData.h"
-#include "ProcessLib/Process.h"
+#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 
 // TODO used for output, if output classes are ready this has to be changed
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -36,7 +36,7 @@ public:
         GroundwaterFlowProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
-        std::unique_ptr<ProcessLib::Balance>&& balance);
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
     //! \name ODESystem interface
     //! @{
@@ -69,12 +69,13 @@ public:
             OGS_FATAL("The condition of process_id = 0 must be satisfied for "
                       "GroundwaterFlowProcess, which is a single process." );
         }
-        if (!_balance)  // computing the balance is optional
+        if (!_surfaceflux) // computing the surfaceflux is optional
         {
             return;
         }
-        _balance->integrate(x, t, *this, process_id, _integration_order, _mesh);
-        _balance->save(t);
+        _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
+                                _mesh);
+        _surfaceflux->save(t);
     }
 
 private:
@@ -97,7 +98,7 @@ private:
     std::vector<std::unique_ptr<GroundwaterFlowLocalAssemblerInterface>>
         _local_assemblers;
 
-    std::unique_ptr<ProcessLib::Balance> _balance;
+    std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 };
 
 }   // namespace GroundwaterFlow

@@ -13,20 +13,20 @@
 
 #include "NumLib/DOF/DOFTableUtil.h"
 
-#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
-#include "MeshLib/Elements/Elements.h"
-#include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Elements/MapBulkElementPoint.h"
+#include "MeshLib/Elements/FaceRule.h"
+#include "MeshLib/Elements/Elements.h"
 
 namespace ProcessLib
 {
-class CalculateSurfaceFluxLocalAssemblerInterface
+class SurfaceFluxLocalAssemblerInterface
 {
 public:
-    virtual ~CalculateSurfaceFluxLocalAssemblerInterface() = default;
+    virtual ~SurfaceFluxLocalAssemblerInterface() = default;
 
     virtual void integrate(std::size_t const element_id,
                            GlobalVector const& x,
@@ -40,8 +40,8 @@ public:
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-class CalculateSurfaceFluxLocalAssembler final
-    : public CalculateSurfaceFluxLocalAssemblerInterface
+class SurfaceFluxLocalAssembler final
+    : public SurfaceFluxLocalAssemblerInterface
 {
 protected:
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
@@ -59,7 +59,7 @@ public:
     /// @param bulk_face_ids The id of the corresponding face in the bulk
     /// element.
     /// @param integration_order the order of the integration
-    CalculateSurfaceFluxLocalAssembler(
+    SurfaceFluxLocalAssembler(
         MeshLib::Element const& surface_element,
         std::size_t /*const local_matrix_size*/,
         bool const is_axially_symmetric,
@@ -149,7 +149,7 @@ public:
                 // TODO find solution for 2d case
                 double const bulk_grad_times_normal(
                     Eigen::Map<Eigen::RowVectorXd const>(bulk_flux.data(),
-                                                         bulk_flux.size())
+                                                   bulk_flux.size())
                         .dot(Eigen::Map<Eigen::RowVectorXd const>(
                             surface_element_normal.getCoords(), 3)));
 
@@ -170,4 +170,4 @@ private:
     std::size_t _bulk_face_id;
 };
 
-}  // namespace ProcessLib
+}  // ProcessLib

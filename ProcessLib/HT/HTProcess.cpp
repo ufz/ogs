@@ -36,13 +36,13 @@ HTProcess::HTProcess(
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     bool const use_monolithic_scheme,
-    std::unique_ptr<ProcessLib::Balance>&& balance)
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),
       _material_properties(std::move(material_properties)),
-      _balance(std::move(balance))
+      _surfaceflux(std::move(surfaceflux))
 {
 }
 
@@ -267,12 +267,12 @@ void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
         DBUG("This is the thermal part of the staggered HTProcess.");
         return;
     }
-    if (!_balance)  // computing the balance is optional
+    if (!_surfaceflux)  // computing the surfaceflux is optional
     {
         return;
     }
-    _balance->integrate(x, t, *this, process_id, _integration_order, _mesh);
-    _balance->save(t);
+    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh);
+    _surfaceflux->save(t);
 }
 
 }  // namespace HT

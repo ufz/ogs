@@ -18,35 +18,38 @@
 // TODO used for output, if output classes are ready this has to be changed
 #include "MeshLib/IO/writeMeshToFile.h"
 
-#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
+#include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 
 namespace ProcessLib
 {
-struct Balance
+struct SurfaceFluxData
 {
-    Balance(std::string&& balance_mesh_name,
-            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-            std::string&& balance_property_vector_name,
-            std::string&& balance_output_mesh_file_name)
+    SurfaceFluxData(
+        std::string&& surfaceflux_mesh_name,
+        std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+        std::string&& surfaceflux_property_vector_name,
+        std::string&& surfaceflux_output_mesh_file_name)
         : surface_mesh(*BaseLib::findElementOrError(
               meshes.begin(), meshes.end(),
-              [&balance_mesh_name](auto const& m) {
-                  return balance_mesh_name == m->getName();
+              [&surfaceflux_mesh_name](auto const& m) {
+                  return surfaceflux_mesh_name == m->getName();
               },
-              "Expected to find a mesh named " + balance_mesh_name +
-                  " for the balance calculation.")),
-          mesh_name(std::move(balance_mesh_name)),
-          property_vector_name(std::move(balance_property_vector_name)),
-          output_mesh_file_name(std::move(balance_output_mesh_file_name))
+              "Expected to find a mesh named " + surfaceflux_mesh_name +
+                  " for the surfaceflux calculation.")),
+          mesh_name(std::move(surfaceflux_mesh_name)),
+          property_vector_name(std::move(surfaceflux_property_vector_name)),
+          output_mesh_file_name(std::move(surfaceflux_output_mesh_file_name))
     {
         DBUG(
-            "read balance meta data:\n\tbalance mesh:\"%s\"\n\tproperty name: "
+            "read surfaceflux meta data:\n\tsurfaceflux "
+            "mesh:\"%s\"\n\tproperty name: "
             "\"%s\"\n\toutput to: \"%s\"",
             mesh_name.c_str(), property_vector_name.c_str(),
             output_mesh_file_name.c_str());
     }
 
-    static std::unique_ptr<ProcessLib::Balance> createBalance(
+    static std::unique_ptr<ProcessLib::SurfaceFluxData>
+    createSurfaceFluxData(
         BaseLib::ConfigTree const& calculatesurfaceflux_config,
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
         std::string const& output_directory)
@@ -54,46 +57,48 @@ struct Balance
         std::string mesh_name =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__mesh}
             calculatesurfaceflux_config.getConfigParameter<std::string>("mesh");
-        std::string balance_pv_name =
+        std::string surfaceflux_pv_name =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__property_name}
             calculatesurfaceflux_config.getConfigParameter<std::string>(
                 "property_name");
-        std::string balance_out_fname =
+        std::string surfaceflux_out_fname =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__output_mesh}
             calculatesurfaceflux_config.getConfigParameter<std::string>(
                 "output_mesh");
 
         if (mesh_name.empty())
         {
-            return std::unique_ptr<ProcessLib::Balance>(nullptr);
+            return std::unique_ptr<ProcessLib::SurfaceFluxData>(
+                nullptr);
         }
-        balance_out_fname =
-            BaseLib::copyPathToFileName(balance_out_fname, output_directory);
-        return std::make_unique<Balance>(std::move(mesh_name), meshes,
-                                         std::move(balance_pv_name),
-                                         std::move(balance_out_fname));
+        surfaceflux_out_fname = BaseLib::copyPathToFileName(
+            surfaceflux_out_fname, output_directory);
+        return std::make_unique<SurfaceFluxData>(
+            std::move(mesh_name), meshes, std::move(surfaceflux_pv_name),
+            std::move(surfaceflux_out_fname));
     }
 
     void integrate(GlobalVector const& x, double const t, Process const& p,
                    int const process_id, int const integration_order,
                    MeshLib::Mesh const& bulk_mesh)
     {
-        auto* const balance_pv = MeshLib::getOrCreateMeshProperty<double>(
+        auto* const surfaceflux_pv = MeshLib::getOrCreateMeshProperty<double>(
             surface_mesh, property_vector_name, MeshLib::MeshItemType::Cell, 1);
         // initialise the PropertyVector pv with zero values
-        std::fill(balance_pv->begin(), balance_pv->end(), 0.0);
-        auto balance = ProcessLib::CalculateSurfaceFlux(
+        std::fill(surfaceflux_pv->begin(), surfaceflux_pv->end(), 0.0);
+        auto surfaceflux_process = ProcessLib::SurfaceFlux(
             surface_mesh,
             p.getProcessVariables(process_id)[0].get().getNumberOfComponents(),
             integration_order);
 
-        balance.integrate(
-            x, *balance_pv, t, bulk_mesh,
+        surfaceflux_process.integrate(
+            x, *surfaceflux_pv, t, bulk_mesh,
             [&p](std::size_t const element_id, MathLib::Point3d const& pnt,
                  double const t, GlobalVector const& x) {
                 return p.getFlux(element_id, pnt, t, x);
             });
     }
+
     void save(double const t) const
     {
         // TODO (TomFischer) output, if output classes are ready this has to be

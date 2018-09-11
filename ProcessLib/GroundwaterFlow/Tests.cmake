@@ -255,7 +255,7 @@ AddTest(
     cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_newton_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
 )
 
-# test CalculateSurfaceFlux
+# test SurfaceFlux
 AddTest(
     NAME GroundWaterFlowProcess_cube_1x1x1_1e3_dirichlet_calculatesurfaceflux
     PATH Elliptic/cube_1x1x1_GroundWaterFlow

@@ -27,12 +27,12 @@ GroundwaterFlowProcess::GroundwaterFlowProcess(
     GroundwaterFlowProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
-    std::unique_ptr<ProcessLib::Balance>&& balance)
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller)),
       _process_data(std::move(process_data)),
-      _balance(std::move(balance))
+      _surfaceflux(std::move(surfaceflux))
 {
 }
 
