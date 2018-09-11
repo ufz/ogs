@@ -17,7 +17,7 @@
                 <q>Q</q>
                 <nonlinear_solver>
                     <maximum_iterations>1000</maximum_iterations>
-                    <error_tolerance>1e-8</error_tolerance>
+                    <error_tolerance>1e-15</error_tolerance>
                 </nonlinear_solver>
             </constitutive_relation>
             <reference_solid_density>rho_sr</reference_solid_density>
@@ -40,9 +40,9 @@
             <process ref="ThermoMechanics">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>DeltaX</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-10</abstol>
+                    <abstols>5e-12 1e-16 1e-16</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -225,7 +225,7 @@
                 <solver_type>BiCGSTAB</solver_type>
                 <precon_type>DIAGONAL</precon_type>
                 <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-11</error_tolerance>
+                <error_tolerance>1e-17</error_tolerance>
             </eigen>
         </linear_solver>
     </linear_solvers>
