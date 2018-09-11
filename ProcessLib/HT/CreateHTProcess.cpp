@@ -14,7 +14,7 @@
 
 #include "MeshLib/IO/readMeshFromFile.h"
 
-#include "ProcessLib/CalculateSurfaceFlux/Balance.h"
+#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFluxData.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"

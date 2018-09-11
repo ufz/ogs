@@ -12,7 +12,7 @@
 #include <array>
 
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
-#include "ProcessLib/CalculateSurfaceFlux/Balance.h"
+#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFluxData.h"
 #include "ProcessLib/Process.h"
 
 namespace NumLib

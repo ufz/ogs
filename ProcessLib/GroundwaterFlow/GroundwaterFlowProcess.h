@@ -12,7 +12,7 @@
 #include "GroundwaterFlowFEM.h"
 #include "GroundwaterFlowProcessData.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/CalculateSurfaceFlux/Balance.h"
+#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFluxData.h"
 #include "ProcessLib/Process.h"
 
 // TODO used for output, if output classes are ready this has to be changed
