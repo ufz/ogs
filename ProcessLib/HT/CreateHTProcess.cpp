@@ -199,8 +199,15 @@ std::unique_ptr<Process> createHTProcess(
         DBUG("Use \'%s\' as Biot's constant.", biot_constant->name.c_str());
     }
 
-    std::unique_ptr<ProcessLib::Balance> balance =
-        ProcessLib::Balance::createBalance(config, meshes, output_directory);
+    std::unique_ptr<ProcessLib::Balance> balance;
+    auto calculatesurfaceflux_config =
+        //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}
+        config.getConfigSubtreeOptional("calculatesurfaceflux");
+    if (calculatesurfaceflux_config)
+    {
+        balance = ProcessLib::Balance::createBalance(
+            *calculatesurfaceflux_config, meshes, output_directory);
+    }
 
     std::unique_ptr<HTMaterialProperties> material_properties =
         std::make_unique<HTMaterialProperties>(

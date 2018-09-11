@@ -69,8 +69,15 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     ProcessLib::createSecondaryVariables(config, secondary_variables,
                                          named_function_caller);
 
-    std::unique_ptr<ProcessLib::Balance> balance =
-        ProcessLib::Balance::createBalance(config, meshes, output_directory);
+    std::unique_ptr<ProcessLib::Balance> balance;
+    auto calculatesurfaceflux_config =
+        //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}
+        config.getConfigSubtreeOptional("calculatesurfaceflux");
+    if (calculatesurfaceflux_config)
+    {
+        balance = ProcessLib::Balance::createBalance(
+            *calculatesurfaceflux_config, meshes, output_directory);
+    }
 
     return std::make_unique<GroundwaterFlowProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,

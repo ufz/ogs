@@ -46,28 +46,21 @@ struct Balance
             output_mesh_file_name.c_str());
     }
 
-    static std::unique_ptr<Balance> createBalance(
-        BaseLib::ConfigTree const& config,
+    static std::unique_ptr<ProcessLib::Balance> createBalance(
+        BaseLib::ConfigTree const& calculatesurfaceflux_config,
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
         std::string const& output_directory)
     {
-        auto calculatesurfaceflux_config =
-            //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}
-            config.getConfigSubtreeOptional("calculatesurfaceflux");
-        if (!calculatesurfaceflux_config)
-            return std::unique_ptr<Balance>(nullptr);
-
         std::string mesh_name =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__mesh}
-            calculatesurfaceflux_config->getConfigParameter<std::string>(
-                "mesh");
+            calculatesurfaceflux_config.getConfigParameter<std::string>("mesh");
         std::string balance_pv_name =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__property_name}
-            calculatesurfaceflux_config->getConfigParameter<std::string>(
+            calculatesurfaceflux_config.getConfigParameter<std::string>(
                 "property_name");
         std::string balance_out_fname =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__output_mesh}
-            calculatesurfaceflux_config->getConfigParameter<std::string>(
+            calculatesurfaceflux_config.getConfigParameter<std::string>(
                 "output_mesh");
 
         if (mesh_name.empty())
