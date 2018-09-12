@@ -108,6 +108,7 @@ pipeline {
                   '-DOGS_BUILD_TESTS=OFF '
               }
               build { }
+              build { target="doc" }
             }
           }
           post {
@@ -115,6 +116,7 @@ pipeline {
               publishReports { }
             }
             success {
+              dir('build/docs') { stash(name: 'doxygen') }
               script {
                 step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
                   messagesPattern: """
