@@ -151,8 +151,34 @@ straightforward as
 $$\begin{gathered}
 { \epsilon}=-\dfrac{{ \sigma}_0}{E}-Ae^{-Q/RT}{ \sigma}_0^m t
 \end{gathered}$$
- The comparison of the results
+
+The problem is solved as axisymmterical one. Therefore
+$$\begin{gathered}
+{ \epsilon_z}=-\dfrac{{ \sigma}_0}{E}-Ae^{-Q/RT}{ \sigma}_0^m t
+\end{gathered}$$
+
+Because of
+$$\begin{gathered}
+\lambda\epsilon_v^e+2G\epsilon_r^e=\lambda\epsilon_v^e+2G\epsilon_t^e=0
+\end{gathered}$$
+ we have
+$$\begin{gathered}
+\epsilon_r^e=\epsilon_t^e
+\end{gathered}$$
+  and
+$$\begin{gathered}
+\sigma_z=2G(\epsilon_z^e-\epsilon_r^e)=2G(\epsilon_z^e-\epsilon_t^e)
+\end{gathered}$$
+where superscript $e$ means elasticity and $c$ means creep. With the creep strain
+formulas that are presented in the above context, the analytical solutions
+of the other main strains are
+
+$$\begin{gathered}
+{ \epsilon_r}={ \epsilon_t}=\frac{\sigma_0}{2G}+\epsilon_z+
+\frac{3}{2}A e^{-Q/RT}\sigma_0^m t
+\end{gathered}$$
+
+ The comparison of the result of $\epsilon_z$
 obtained by the present multidimensional scheme with the analytical
 solution is shown in the following figure:
 {{< img src="../bgra0.png" >}}
-
