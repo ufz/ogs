@@ -25,7 +25,7 @@ The aim of this test is:
 ## Problem description
 
 Two elastic spheres of same radius $R$ are brought into contact.
-The sphere centers are displaced towards each other by $w\_0$, with increasing
+The sphere centers are displaced towards each other by $w_0$, with increasing
 values in every load step.
 Due to symmetry reasons a flat circular contact area of radius $a$ forms.
 
@@ -35,7 +35,7 @@ The contact between the two spheres is modelled as a Dirichlet BC
 on a varying boundary. The exact boundary and Dirichlet values for the
 $y$ displacements are determined in a Python script.
 Compared to the sketch above the prescribed $y$ displacements correspond
-to $w\_0/2$, because due to symmetry only half of the system (a section of the
+to $w_0/2$, because due to symmetry only half of the system (a section of the
 lower sphere) is simulated.
 
 
@@ -47,7 +47,7 @@ in [this book (in German)](http://www.uni-magdeburg.de/ifme/l-festigkeit/pdf/Ber
 The radius of the contact area is given by
 $$
 \begin{equation}
-a = \sqrt{\frac{w\_0 R}{2}}
+a = \sqrt{\frac{w_0 R}{2}}
 \end{equation}
 $$
 
