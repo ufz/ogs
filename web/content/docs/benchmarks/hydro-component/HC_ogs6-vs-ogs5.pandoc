@@ -23,7 +23,7 @@ We extended the setup to show mass transport in the heterogeneous medium for tes
 
 ## Problem description
 
-The setups are steady-state for flow, with an extent of a $100$ m x $100$ m horizontal plane for the 2D setup and a $100$ m x $100$ m x $50$ m cube for the 3D setup. Mesh elements have side lengths of $1$ m. The initial conditions are hydrostatic and concentration $c=0$. The boundary conditions are translated into equivalent hydrostatic pressure values from hydraulic heads $h\_{left}=10$ m and $h\_{right}=9$ m and for concentration $c\_{left}=1$, $c\_{right}=0$ for left and right sides, respectively. All other sides are defined as no-flow (Zero-Neumann).
+The setups are steady-state for flow, with an extent of a $100$ m x $100$ m horizontal plane for the 2D setup and a $100$ m x $100$ m x $50$ m cube for the 3D setup. Mesh elements have side lengths of $1$ m. The initial conditions are hydrostatic and concentration $c=0$. The boundary conditions are translated into equivalent hydrostatic pressure values from hydraulic heads $h_{left}=10$ m and $h_{right}=9$ m and for concentration $c_{left}=1$, $c_{right}=0$ for left and right sides, respectively. All other sides are defined as no-flow (Zero-Neumann).
 
 Porosity is $0.01$, specific storage is $0$, fluid density is $1000$ kg$\cdot$m$^3$, dynamic viscosity is $10^{-3}$ Pa$\cdot$s, molecular diffusion coefficient is $2\cdot 10^{-9}$ m$\cdot$s$^{-2}$, dispersivities are longitudinal $1$ m and transverse $0.1$ m. The heterogeneous parameter fields of intrinsic permeability are shown in the figures below; creation of the tensor field is documented [here](https://github.com/ufz/ogs-utils/tree/master/post/merge-scalar-data-arrays).
 
@@ -42,7 +42,7 @@ The mass transport simulation results (figures below) show an expected heterogen
 {{< img src="../heterogeneous/concentration_2d.png" title="Concentration distribution at simulation time $1e8$ s for the 2D setup.">}}
 {{< img src="../heterogeneous/concentration_3d.png" title="Concentration distribution at simulation time $1e8$ s for the 3D setup.">}}
 
-[The project files for the 2D setup are here.]({{< data-url "Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D/ogs5_H_2d.prj" >}})  
+[The project files for the 2D setup are here.]({{< data-url "Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D/ogs5_H_2d.prj" >}})
 [The project files for the 3D setup are here.]({{< data-url "Parabolic/ComponentTransport/heterogeneous/ogs5_H_3D/ogs5_H_3d.prj" >}})
 
 
