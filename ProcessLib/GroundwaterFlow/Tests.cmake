@@ -682,3 +682,15 @@ AddTest(
     VIS square_1e6__nodal_sources_expected_pcs_0_ts_1_t_1.000000.vtu
 )
 
+AddTest(
+    NAME PythonBCGroundWaterFlowProcessLaplaceEqDirichletNeumann
+    PATH Elliptic/square_1x1_GroundWaterFlow_Python
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e3_laplace_eq.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_PYTHON AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    python_laplace_eq_ref.vtu square_1e3_neumann_pcs_0_ts_1_t_1.000000.vtu pressure_expected pressure 4e-4 1e-16
+)
+
