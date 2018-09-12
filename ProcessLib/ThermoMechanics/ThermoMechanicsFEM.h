@@ -394,7 +394,8 @@ private:
         auto const kelvin_vector_size =
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value;
-        auto const n_integration_points = _ip_data.size();
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
         std::vector<double> ip_sigma_values;
         auto sigma_values =
@@ -420,7 +421,8 @@ private:
         auto const kelvin_vector_size =
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value;
-        auto const n_integration_points = _ip_data.size();
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
         std::vector<double> ip_sigma_values;
         auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -446,14 +448,15 @@ private:
         static const int kelvin_vector_size =
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value;
-        auto const num_intpts = _ip_data.size();
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
         cache.clear();
         auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
             double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, kelvin_vector_size, num_intpts);
+            cache, kelvin_vector_size, n_integration_points);
 
-        for (unsigned ip = 0; ip < num_intpts; ++ip)
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             auto const& sigma = _ip_data[ip].sigma;
             cache_mat.col(ip) =
@@ -472,14 +475,15 @@ private:
         auto const kelvin_vector_size =
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value;
-        auto const num_intpts = _ip_data.size();
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
         cache.clear();
         auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
             double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
-            cache, kelvin_vector_size, num_intpts);
+            cache, kelvin_vector_size, n_integration_points);
 
-        for (unsigned ip = 0; ip < num_intpts; ++ip)
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             auto const& eps = _ip_data[ip].eps;
             cache_mat.col(ip) =
