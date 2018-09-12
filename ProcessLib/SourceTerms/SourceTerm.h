@@ -17,7 +17,8 @@ namespace ProcessLib
 class SourceTerm
 {
 public:
-    SourceTerm(const NumLib::LocalToGlobalIndexMap& source_term_dof_table)
+    explicit SourceTerm(
+        const NumLib::LocalToGlobalIndexMap& source_term_dof_table)
         : _source_term_dof_table(source_term_dof_table)
     {
     }
@@ -25,6 +26,7 @@ public:
     virtual void integrate(const double t, GlobalVector& b) const = 0;
 
     virtual ~SourceTerm() = default;
+
 protected:
     NumLib::LocalToGlobalIndexMap const& _source_term_dof_table;
 };
