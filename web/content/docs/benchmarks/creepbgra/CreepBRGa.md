@@ -169,6 +169,7 @@ $$\begin{gathered}
 $$\begin{gathered}
 \sigma_z=2G(\epsilon_z^e-\epsilon_r^e)=2G(\epsilon_z^e-\epsilon_t^e)
 \end{gathered}$$
+with $\epsilon^e=\epsilon-\epsilon^c$,
 where superscript $e$ means elasticity and $c$ means creep. With the creep strain
 formulas that are presented in the above context, the analytical solutions
 of the other main strains are
