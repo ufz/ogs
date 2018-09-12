@@ -33,7 +33,7 @@ To establish equivalence between the three-dimensional and the uniaxial formulat
  we use the effective stress defined by
 ${ \bar\sigma}={\sqrt{{\frac{3}{2}}}}{\left\Vert{\mathbf s}\right\Vert}$
 with ${\mathbf s}= { \mathbf \sigma}-\frac{1}{3}{ \mathrm{tr}(\mathbf\sigma}){\mathbf I}$,
-the deviatoric stress. 
+the deviatoric stress.
 The creep strain rate is then expressed as
 $$\begin{gathered}
 \dot { \mathbf \epsilon}^c ({ \sigma})=  {\dfrac{\partial g^c}{\partial {\bar\sigma}}}
@@ -48,7 +48,7 @@ the creep rate equation to a uniaxial stress state ${\mathbf \sigma} = \mathrm{d
  $$\begin{gathered}
 \dot { \epsilon_1}^c = {\dfrac{\partial g^c}{\partial { \bar\sigma}}}=Ae^{-Q/R_uT}\left(\dfrac{{ \sigma_1}}{{ \sigma}_f}\right)^m
 \end{gathered}$$
-which says 
+which says
 $$\begin{gathered}
  {\dfrac{\partial g^c}{\partial { \bar\sigma}}}=Ae^{-Q/R_u T}\left(\dfrac{{ \sigma_1}}{{ \sigma}_f}\right)^m
 \end{gathered}$$
@@ -72,13 +72,13 @@ $$\begin{gathered}
 \dot { \mathbf \epsilon}= \dot { \mathbf \epsilon}^e + \dot { \mathbf \epsilon}^T
                        + \dot { \mathbf \epsilon}^c
 \end{gathered}$$ Due to Hook’s law, the stress rate is
-given by 
+given by
 $$\begin{gathered}
 \dot { \mathbf \sigma}= \mathbf{C} \dot { \mathbf \epsilon}^e = \mathbf{C}
  (\dot { \mathbf \epsilon}- \dot { \mathbf \epsilon}^T- \dot { \mathbf \epsilon}^c)
-\end{gathered}$$ 
+\end{gathered}$$
 where
-$\mathbf{C}:= \lambda \mathcal{J} + 2G \mathbf I \otimes \mathbf I  $ 
+$\mathbf{C}:= \lambda \mathcal{J} + 2G \mathbf I \otimes \mathbf I  $
 with $\mathcal{J}$ the forth order identity, $\mathbf I$ the second order identity,
 $\lambda$ the Lamé constant,  $G$ the shear modulus, and $\otimes$  the tensor
 product notation.
@@ -86,7 +86,7 @@ product notation.
 is a fourth order tensor. Substituting equation and the expression of $C$
 into the stress rate expression, equation, we have
  $$\begin{gathered}
-\dot { \mathbf \sigma}=  \mathbf{C} (\dot { \mathbf \epsilon}- \dot { \mathbf \epsilon}^T)- 2bG {\left\Vert{\mathbf s}\right\Vert}^{m-1} 
+\dot { \mathbf \sigma}=  \mathbf{C} (\dot { \mathbf \epsilon}- \dot { \mathbf \epsilon}^T)- 2bG {\left\Vert{\mathbf s}\right\Vert}^{m-1}
 {\mathbf s}
 \end{gathered}$$
 
@@ -105,12 +105,12 @@ Newton-Raphson is applied to .
  { \mathbf \sigma}^{n} - \mathbf{C} (\Delta { \mathbf \epsilon} - \alpha_T \Delta T \mathbf I)
  + 2bG \Delta t {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}
  {\mathbf s}^{n+1}
-\end{gathered}$$ 
+\end{gathered}$$
 
 be the residual. The Jacobian
 of is derived as
  $$\begin{gathered}
- \mathbf{J}_{{ \mathbf \sigma}}= {\dfrac{\partial \mathbf{r}}{\partial { \mathbf \sigma}^{n+1}}}  =  \mathcal{I}  + 2bG\Delta t {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1} 
+ \mathbf{J}_{{ \mathbf \sigma}}= {\dfrac{\partial \mathbf{r}}{\partial { \mathbf \sigma}^{n+1}}}  =  \mathcal{I}  + 2bG\Delta t {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}
  \left(\mathcal{I} - \frac{1}{3} \mathbf{I} \otimes \mathbf{I} + (m-1){\left\Vert{\mathbf s}^{n+1}\right\Vert}^{-2} {\mathbf s}^{n+1}\otimes {\mathbf s}^{n+1}\right)
 \end{gathered}$$
 
@@ -120,10 +120,10 @@ Consistent tangent
 Once the converged stress integration is obtained, the tangential of
 stress with respect to strain can be obtained straightforwardly by
 applying the partial derivative to equation with respect to strain
-increment as 
+increment as
 $$\begin{aligned}
   {\dfrac{\partial { \mathbf \sigma}^{n+1}}{\partial \Delta { \mathbf \epsilon}}} =   \mathbf{C}  - {\dfrac{\partial \left(2bG \Delta t {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1} {\mathbf s}^{n+1}\right)}{\partial \Delta { \mathbf \epsilon}}}
- \end{aligned}$$ 
+ \end{aligned}$$
 We see that $$\begin{aligned}
   {\dfrac{\partial { \mathbf \sigma}^{n+1}}{\partial { \mathbf \epsilon}^{n+1}}}  = \mathbf{J}_{{ \mathbf \sigma}}^{-1} \mathbf{C}
   \end{aligned}$$
@@ -136,7 +136,7 @@ of the global Jacobian can be derived as
  \end{aligned}$$
 
 *Note*: The above rate form of stress integration is implemented in ogs6.
- Alternatively, one can use a absolute stress integration form, which can be found in the attached 
+ Alternatively, one can use a absolute stress integration form, which can be found in the attached
  [PDF](../doku_BGRa.pdf).
 
 Example
@@ -147,7 +147,7 @@ pressure of ${ \sigma}_0=5 ~\mbox{MPa}$. The values of the parameters are
 given as $A=0.18 \mbox{d}^{-1}$, $m=5$, $Q=54 ~\mbox{kJ/mol}$,
 $E=25000 ~\mbox{MPa}$, and the temperature is constant everywhere of
 100 $^{\circ}\mbox{C}$. The analytical solution of the strain is given
-straightforward as 
+straightforward as
 $$\begin{gathered}
 { \epsilon}=-\dfrac{{ \sigma}_0}{E}-Ae^{-Q/RT}{ \sigma}_0^m t
 \end{gathered}$$
@@ -221,7 +221,7 @@ for i in range(0, numPoints):
     outSxx.InsertNextValue(strain_rr)
     outSyy.InsertNextValue(strain_zz)
     outSzz.InsertNextValue(strain_rr)
-    outSxy.InsertNextValue(0) 
+    outSxy.InsertNextValue(0)
 output = self.GetOutput()
 output.GetPointData().AddArray(outSxx)
 output.GetPointData().AddArray(outSyy)
