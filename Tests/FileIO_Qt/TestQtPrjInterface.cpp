@@ -64,7 +64,9 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
                 bc->getType());
             EXPECT_FALSE(bc->getBaseObjName().empty());
             if (bc->getBaseObjType() == DataHolderLib::BaseObjType::GEOMETRY)
+            {
                 EXPECT_FALSE(bc->getObjName().empty());
+            }
         }
 
         std::vector<std::unique_ptr<DataHolderLib::SourceTerm>> const& sts =
@@ -78,7 +80,9 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
                          st->getType());
             EXPECT_FALSE(st->getBaseObjName().empty());
             if (st->getBaseObjType() == DataHolderLib::BaseObjType::GEOMETRY)
+            {
                 EXPECT_FALSE(st->getObjName().empty());
+            }
         }
     }
 }
