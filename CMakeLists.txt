@@ -41,7 +41,7 @@ option(OGS_USE_PCH "Should pre-compiled headers be used?" ON)
 if(DEFINED CMAKE_CXX_CLANG_TIDY)
     set(OGS_USE_PCH OFF CACHE INTERNAL "")
 endif()
-option(OGS_USE_CONAN "Should Conan package manager be used?" OFF)
+option(OGS_USE_CONAN "Should Conan package manager be used?" ON)
 set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
     never or list of libs to build" )
 if(OGS_USE_PETSC)
