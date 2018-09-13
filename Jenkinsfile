@@ -91,6 +91,9 @@ pipeline {
               build { target="tests" }
               build { target="ctest" }
               build { target="doc" }
+              // TODO: .*DOT_GRAPH_MAX_NODES.
+              //       .*potential recursive class relation.*
+              recordIssues tools: [[pattern: 'build/DoxygenWarnings.log', tool: [$class: 'Doxygen']]], unstableTotalAll: 0
               dir('build/docs') { stash(name: 'doxygen') }
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                   keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
@@ -112,18 +115,13 @@ pipeline {
           post {
             always {
               publishReports { }
+              recordIssues enabledForFailure: true, filters: [
+                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
+                tools: [[name: 'GCC', tool: [$class: 'GnuMakeGcc']]]
             }
             success {
               dir('build/docs') { stash(name: 'doxygen') }
-              script {
-                step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
-                  messagesPattern: """
-                    .*DOT_GRAPH_MAX_NODES.
-                    .*potential recursive class relation.*""",
-                  parserConfigurations: [[parserName: 'Doxygen', pattern:
-                  'build/DoxygenWarnings.log']], unstableTotalAll: '0'])
-                archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
-              }
+              archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
             }
           }
         }
@@ -263,10 +261,11 @@ pipeline {
           post {
             always {
               publishReports { }
-              warnings(canResolveRelativePaths: false,
-                  consoleParsers: [[parserName: 'MSBuild']],
-                  excludePattern: '.*\\.conan.*',
-                  messagesPattern: '.*QVTK.*')
+              // messagesPattern: '.*QVTK.*'
+              recordIssues enabledForFailure: true, filters: [
+                excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
+                excludeFile('.*thread.hpp')],
+                tools: [[name: 'MSVC', tool: [$class: 'MsBuild']]]
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'
@@ -477,8 +476,7 @@ pipeline {
           }
           post {
             always {
-              warnings(canResolveRelativePaths: false,
-                  consoleParsers: [[parserName: 'Clang (LLVM based)']])
+              recordIssues enabledForFailure: true, tools: [[tool: [$class: 'Clang']]]
             }
           }
         }
