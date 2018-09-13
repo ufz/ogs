@@ -33,6 +33,7 @@
 #include <vtkMath.h>
 #include <vtkOrientationMarkerWidget.h>
 #include <vtkPNGWriter.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 #include <vtkWindowToImageFilter.h>
 
