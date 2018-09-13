@@ -21,24 +21,26 @@ namespace Fluid
 {
 /// Linear concentration dependent density model.
 /// \f[ \varrho = \varrho_{\text{ref}}
-/// (1 + \bar \alpha (C - C_{\text{ref}}) + \bar \beta (p - p_{\text{ref}}) ) \f]
-/// where
+/// (1 + \bar \alpha (C - C_{\text{ref}}) + \bar \beta (p - p_{\text{ref}}) )
+/// \f] where
 /// - \f$ \varrho_{\text{ref}}\f$ is the reference density
 /// - \f$ \bar \alpha\f$ is the fluid density concentration difference ratio
 /// - \f$ C_{\text{ref}}\f$ is the reference concentration
 /// - \f$ \bar \beta\f$ is the fluid density pressure difference ratio
 /// - \f$ p_{\text{ref}}\f$ is the reference pressure
-class LinearConcentrationAndPressureDependentDensity final : public FluidProperty
+class LinearConcentrationAndPressureDependentDensity final
+    : public FluidProperty
 {
 public:
     /**
      * @param reference_density  \f$\rho_0\f$
      * @param reference_concentration \f$C_0\f$
-     * @param fluid_density_concentration_difference_ratio  \f$ \bar \alpha \f$ in reference
+     * @param fluid_density_concentration_difference_ratio  \f$ \bar \alpha \f$
+     * in reference
      * @param reference_pressure \f$p_0\f$
-     * @param fluid_density_pressure_difference_ratio  \f$ \bar \beta \f$ in reference
-     * Coupled groundwater flow and transport: 2. Thermohaline and 3D convection
-     * systems
+     * @param fluid_density_pressure_difference_ratio  \f$ \bar \beta \f$ in
+     * reference Coupled groundwater flow and transport: 2. Thermohaline and 3D
+     * convection systems
      */
     explicit LinearConcentrationAndPressureDependentDensity(
         const double reference_density, double reference_concentration,
@@ -47,9 +49,11 @@ public:
         const double fluid_density_pressure_difference_ratio)
         : _reference_density(reference_density),
           _reference_concentration(reference_concentration),
-          _fluid_density_concentration_difference_ratio(fluid_density_concentration_difference_ratio),
+          _fluid_density_concentration_difference_ratio(
+              fluid_density_concentration_difference_ratio),
           _reference_pressure(reference_pressure),
-          _fluid_density_pressure_difference_ratio(fluid_density_pressure_difference_ratio)
+          _fluid_density_pressure_difference_ratio(
+              fluid_density_pressure_difference_ratio)
     {
     }
 
@@ -66,11 +70,12 @@ public:
     {
         const double C = var_vals[static_cast<int>(PropertyVariableType::C)];
         const double p = var_vals[static_cast<int>(PropertyVariableType::p)];
-        return _reference_density * (1 +
-                                     _fluid_density_concentration_difference_ratio *
-                                         (C - _reference_concentration)+
-                                    _fluid_density_pressure_difference_ratio *
-                                         (p - _reference_pressure));
+        return _reference_density *
+               (1 +
+                _fluid_density_concentration_difference_ratio *
+                    (C - _reference_concentration) +
+                _fluid_density_pressure_difference_ratio *
+                    (p - _reference_pressure));
     }
 
     /// Get the partial differential of the density with respect to
@@ -81,11 +86,20 @@ public:
     double getdValue(const ArrayType& /*var_vals*/,
                      const PropertyVariableType var) const override
     {
-        if (var == PropertyVariableType::C){
-            return _reference_density * _fluid_density_concentration_difference_ratio;}
-        else if (var == PropertyVariableType::p){
-            return _reference_density * _fluid_density_pressure_difference_ratio;}
-        else{return 0;}
+        if (var == PropertyVariableType::C)
+        {
+            return _reference_density *
+                   _fluid_density_concentration_difference_ratio;
+        }
+        else if (var == PropertyVariableType::p)
+        {
+            return _reference_density *
+                   _fluid_density_pressure_difference_ratio;
+        }
+        else
+        {
+            return 0;
+        }
     }
 
 private:
@@ -96,5 +110,5 @@ private:
     const double _fluid_density_pressure_difference_ratio;
 };
 
-}  // end namespace
-}  // end namespace
+}  // namespace Fluid
+}  // namespace MaterialLib
