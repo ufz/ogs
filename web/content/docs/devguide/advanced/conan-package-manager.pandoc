@@ -15,11 +15,11 @@ weight = 1032
 As of OpenGeoSys 6.1.0 Conan version 1.0.0 is required! Please update Conan by running `pip install --upgrade conan` or by downloading the Windows installer.
 :::
 
-The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. See [Setup pre-requisites](../../getting-started/prerequisites) for installation instructions. Set the CMake option `OGS_USE_CONAN=ON` to enable Conan.
+The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. See [Setup pre-requisites](../../getting-started/prerequisites) for installation instructions. If the Conan executable is found Conan is used for third-party library handling. Set the CMake option `OGS_USE_CONAN=OFF` to disable Conan.
 
 ## Advanced usage
 
-Per default when Conan is enabled (`OGS_USE_CONAN=ON`) it will try to fetch prebuilt binaries from the [OGS Conan repository](https://ogs.jfrog.io/ogs/conan/) at https://ogs.jfrog.io/ogs/api/conan/conan. With the CMake option `OGS_CONAN_BUILD` you define what gets build locally. This option can be set to:
+Per default when Conan is enabled it will try to fetch prebuilt binaries from the [OGS Conan repository](https://ogs.jfrog.io/ogs/conan/) at https://ogs.jfrog.io/ogs/api/conan/conan. With the CMake option `OGS_CONAN_BUILD` you define what gets build locally. This option can be set to:
 
 - `missing` - Default, only builds packages which are not available as a prebuilt binary for the current configuration
 - `all` - Builds all packages locally

@@ -23,13 +23,11 @@ So just go ahead and create a build-directory along your source code directory.
 
 ## Install required libraries with Conan
 
-It is preferred to use Conan package manager to install required third-party libraries. To use Conan add the CMake option `OGS_USE_CONAN=ON` to the CMake run (see below). This will run Conan automatically downloading either prebuilt binaries of required libraries or building them locally if a binary for your setup (operating system, compiler, ..) is not available. [Check this]({{< ref "conan-package-manager.pandoc" >}}) for advanced Conan usage.
+It is preferred to use Conan package manager to install required third-party libraries. If [Conan is installed]({{< ref "prerequisites" >}}#step-install-conan-package-manager) it will automatically download either prebuilt binaries of required libraries or build them locally if a binary for your setup (operating system, compiler, ..) is not available. [Check this]({{< ref "conan-package-manager.pandoc" >}}) for advanced Conan usage.
 
 *Note:* Instead of using Conan you can optionally [install the required libraries manually]({{< ref "third-party-libraries.pandoc" >}}).
 
 ::: {.win}
-Add `-DOGS_USE_CONAN=ON` to the CMake-run (see below).
-
 ::: {.note}
 ### <i class="fas fa-exclamation-triangle"></i> Multi-configuration with Conan and Visual Studio
 
@@ -48,14 +46,6 @@ $ cmake ../../ogs -G "Visual Studio 14 2015 Win64" -DOGS_USE_CONAN=ON -DCMAKE_BU
 
 Please also note that in Visual Studio you have to choose the correct configuration (i.e. when opening the solution-file in the release-folder you have to switch the Visual Studio configuration to **Release**)!
 :::
-:::
-
-::: {.linux}
-Add `-DOGS_USE_CONAN=ON` to the CMake-run (see below).
-:::
-
-::: {.mac}
-Add `-DOGS_USE_CONAN=ON` to the CMake-run (see below).
 :::
 
 
