@@ -38,6 +38,24 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
               use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
+    _integration_point_writer.emplace_back(
+        std::make_unique<SigmaIntegrationPointWriter>(
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            2 /*integration order*/, [this]() {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+
+                    result[i] = local_asm.getSigma();
+                }
+
+                return result;
+            }));
 }
 
 template <int DisplacementDim>
@@ -68,79 +86,69 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             NumLib::ComponentOrder::BY_LOCATION));
 
     _secondary_variables.addSecondaryVariable(
-        "sigma_xx",
+        "sigma",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXX));
+            MathLib::KelvinVector::KelvinVectorType<
+                DisplacementDim>::RowsAtCompileTime,
+            getExtrapolator(), _local_assemblers,
+            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigma));
 
     _secondary_variables.addSecondaryVariable(
-        "sigma_yy",
+        "epsilon",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaYY));
+            MathLib::KelvinVector::KelvinVectorType<
+                DisplacementDim>::RowsAtCompileTime,
+            getExtrapolator(), _local_assemblers,
+            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilon));
 
-    _secondary_variables.addSecondaryVariable(
-        "sigma_zz",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaZZ));
-
-    _secondary_variables.addSecondaryVariable(
-        "sigma_xy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXY));
-
-    if (DisplacementDim == 3)
+    // Set initial conditions for integration point data.
+    for (auto const& ip_writer : _integration_point_writer)
     {
-        _secondary_variables.addSecondaryVariable(
-            "sigma_xz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaXZ));
+        // Find the mesh property with integration point writer's name.
+        auto const& name = ip_writer->name();
+        if (!mesh.getProperties().existsPropertyVector<double>(name))
+        {
+            continue;
+        }
+        auto const& mesh_property =
+            *mesh.getProperties().template getPropertyVector<double>(name);
 
-        _secondary_variables.addSecondaryVariable(
-            "sigma_yz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicsLocalAssemblerInterface::getIntPtSigmaYZ));
-    }
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_xx",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXX));
+        // The mesh property must be defined on integration points.
+        if (mesh_property.getMeshItemType() !=
+            MeshLib::MeshItemType::IntegrationPoint)
+        {
+            continue;
+        }
 
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_yy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonYY));
+        auto const ip_meta_data = getIntegrationPointMetaData(mesh, name);
 
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_zz",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonZZ));
+        // Check the number of components.
+        if (ip_meta_data.n_components != mesh_property.getNumberOfComponents())
+        {
+            OGS_FATAL(
+                "Different number of components in meta data (%d) than in "
+                "the integration point field data for \"%s\": %d.",
+                ip_meta_data.n_components, name.c_str(),
+                mesh_property.getNumberOfComponents());
+        }
 
-    _secondary_variables.addSecondaryVariable(
-        "epsilon_xy",
-        makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXY));
-    if (DisplacementDim == 3)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "epsilon_yz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonYZ));
-
-        _secondary_variables.addSecondaryVariable(
-            "epsilon_xz",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &ThermoMechanicsLocalAssemblerInterface::getIntPtEpsilonXZ));
+        // Now we have a properly named vtk's field data array and the
+        // corresponding meta data.
+        std::size_t position = 0;
+        for (auto& local_asm : _local_assemblers)
+        {
+            std::size_t const integration_points_read =
+                local_asm->setIPDataInitialConditions(
+                    name, &mesh_property[position],
+                    ip_meta_data.integration_order);
+            if (integration_points_read == 0)
+            {
+                OGS_FATAL(
+                    "No integration points read in the integration point "
+                    "initial conditions set function.");
+            }
+            position += integration_points_read * ip_meta_data.n_components;
+        }
     }
 }
 

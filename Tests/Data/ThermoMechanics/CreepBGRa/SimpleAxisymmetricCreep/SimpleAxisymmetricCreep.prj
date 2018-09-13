@@ -17,7 +17,7 @@
                 <q>Q</q>
                 <nonlinear_solver>
                     <maximum_iterations>1000</maximum_iterations>
-                    <error_tolerance>1e-8</error_tolerance>
+                    <error_tolerance>1e-15</error_tolerance>
                 </nonlinear_solver>
             </constitutive_relation>
             <reference_solid_density>rho_sr</reference_solid_density>
@@ -29,14 +29,8 @@
                 <temperature>temperature</temperature>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="sigma_xx" output_name="sigma_xx"/>
-                <secondary_variable type="static" internal_name="sigma_yy" output_name="sigma_yy"/>
-                <secondary_variable type="static" internal_name="sigma_zz" output_name="sigma_zz"/>
-                <secondary_variable type="static" internal_name="sigma_xy" output_name="sigma_xy"/>
-                <secondary_variable type="static" internal_name="epsilon_xx" output_name="epsilon_xx"/>
-                <secondary_variable type="static" internal_name="epsilon_yy" output_name="epsilon_yy"/>
-                <secondary_variable type="static" internal_name="epsilon_zz" output_name="epsilon_zz"/>
-                <secondary_variable type="static" internal_name="epsilon_xy" output_name="epsilon_xy"/>
+                <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
+                <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
         </process>
@@ -46,9 +40,9 @@
             <process ref="ThermoMechanics">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>DeltaX</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-10</abstol>
+                    <abstols>5e-12 1e-16 1e-16</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -57,14 +51,8 @@
                     <variables>
                         <variable>displacement</variable>
                         <variable>temperature</variable>
-                        <variable>sigma_xx</variable>
-                        <variable>sigma_yy</variable>
-                        <variable>sigma_zz</variable>
-                        <variable>sigma_xy</variable>
-                        <variable>epsilon_xx</variable>
-                        <variable>epsilon_yy</variable>
-                        <variable>epsilon_zz</variable>
-                        <variable>epsilon_xy</variable>
+                        <variable>sigma</variable>
+                        <variable>epsilon</variable>
                     </variables>
                 </output>
                 <time_stepping>
@@ -237,7 +225,7 @@
                 <solver_type>BiCGSTAB</solver_type>
                 <precon_type>DIAGONAL</precon_type>
                 <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-11</error_tolerance>
+                <error_tolerance>1e-17</error_tolerance>
             </eigen>
         </linear_solver>
     </linear_solvers>
