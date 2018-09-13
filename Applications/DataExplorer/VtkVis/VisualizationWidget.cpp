@@ -193,7 +193,7 @@ void VisualizationWidget::screenshot(QString filename, int magnification)
     windowToImageFilter->SetInput(vtkWidget->GetRenderWindow());
     // Set the resolution of the output image
     // magnification times the current resolution of vtk render window
-    windowToImageFilter->SetMagnification(magnification);
+    windowToImageFilter->SetScale(magnification);
     // Also record the alpha (transparency) channel
     windowToImageFilter->SetInputBufferTypeToRGBA();
     windowToImageFilter->Update();
