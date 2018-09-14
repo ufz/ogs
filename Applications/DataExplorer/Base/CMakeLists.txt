@@ -35,6 +35,9 @@ add_library(QtBase
     ${SOURCES}
     ${HEADERS}
 )
+if(BUILD_SHARED_LIBS)
+    install(TARGETS QtBase LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
 
 target_link_libraries(QtBase Qt5::Widgets)
 

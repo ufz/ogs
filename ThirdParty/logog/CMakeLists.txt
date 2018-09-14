@@ -53,5 +53,9 @@ if (CMAKE_PROJECT_NAME STREQUAL logog)
 		add_custom_target (logog-doc ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/doxyfile
 			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 			COMMENT "Generating source code documentation with Doxygen." VERBATIM)
-	endif() # DOXYGEN_FOUND
+    endif() # DOXYGEN_FOUND
+else()
+    if(BUILD_SHARED_LIBS)
+        install(TARGETS logog LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    endif()
 endif () # CMAKE_PROJECT_NAME = logog

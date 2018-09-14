@@ -30,6 +30,9 @@ add_library(QtStratView
     ${HEADERS}
     ${UIS}
 )
+if(BUILD_SHARED_LIBS)
+    install(TARGETS QtStratView LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
 
 target_link_libraries(QtStratView
     PRIVATE BaseLib GeoLib DataHolderLib QtBase Qt5::Gui
