@@ -120,7 +120,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
                               _geo_objs.getPointVecObj(gliName)->getIDMap(),
                               ply_names.get());
             }
-            catch (std::runtime_error const& err)
+            catch (std::runtime_error const&)
             {
                 // further reading is aborted and it is necessary to clean up
                 _geo_objs.removePointVec(gliName);
@@ -141,7 +141,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
                              _geo_objs.getPointVecObj(gliName)->getIDMap(),
                              sfc_names.get());
             }
-            catch (std::runtime_error const& err)
+            catch (std::runtime_error const&)
             {
                 // further reading is aborted and it is necessary to clean up
                 _geo_objs.removePointVec(gliName);
