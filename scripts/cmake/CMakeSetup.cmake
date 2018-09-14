@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 include(UseBackportedModules)
 include(OptionRequires)
 include(CppcheckTargets)
+include(GNUInstallDirs)
 
 include(ProcessorCount)
 ProcessorCount(NUM_PROCESSORS)
