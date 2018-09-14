@@ -10,11 +10,11 @@
 #pragma once
 
 #include "ProcessLib/Process.h"
-#include "CalculateSurfaceFluxLocalAssembler.h"
+#include "SurfaceFluxLocalAssembler.h"
 
 namespace ProcessLib
 {
-class CalculateSurfaceFlux final
+class SurfaceFlux final
 {
 public:
     /// Constructs an object that is able to compute a balance.
@@ -22,7 +22,7 @@ public:
     /// @param bulk_property_number_of_components The number of components the
     /// variable has.
     /// @param integration_order Integration order used in local assembly.
-    CalculateSurfaceFlux(MeshLib::Mesh& boundary_mesh,
+    SurfaceFlux(MeshLib::Mesh& boundary_mesh,
                          std::size_t bulk_property_number_of_components,
                          unsigned const integration_order);
 
@@ -45,7 +45,7 @@ public:
 
 private:
     // the local assemblers for each element of the mesh
-    std::vector<std::unique_ptr<CalculateSurfaceFluxLocalAssemblerInterface>>
+    std::vector<std::unique_ptr<SurfaceFluxLocalAssemblerInterface>>
         _local_assemblers;
 };
 

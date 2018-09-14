@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>wedge_1x1x1_1e3_prism.vtu</mesh>
-    <geometry>wedge_1x1x1.gml</geometry>
+    <meshes>
+        <mesh>wedge_1x1x1_1e3_prism.vtu</mesh>
+        <mesh>wedge_1x1x1_1e3_prism_complete_surface.vtu</mesh>
+        <mesh>wedge_1x1x1_1e3_prism_left-front-top-bottom.vtu</mesh>
+        <mesh>wedge_1x1x1_1e3_prism_diagonal-left-front--right-back.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>GW23</name>
@@ -15,7 +19,7 @@
                 <secondary_variable type="static" internal_name="darcy_velocity" output_name="v"/>
             </secondary_variables>
             <calculatesurfaceflux>
-                <mesh>wedge_1x1x1_1e3_prism_complete_surface.vtu</mesh>
+                <mesh>wedge_1x1x1_1e3_prism_complete_surface</mesh>
                 <property_name>surfaceflux</property_name>
                 <output_mesh>wedge_1x1x1_1e3_prism_complete_surface_surfaceflux.vtu</output_mesh>
             </calculatesurfaceflux>
@@ -79,14 +83,12 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>wedge_1x1x1_geometry</geometrical_set>
-                    <geometry>left-front-top-bottom</geometry>
+                    <mesh>wedge_1x1x1_1e3_prism_left-front-top-bottom</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_line</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>wedge_1x1x1_geometry</geometrical_set>
-                    <geometry>diagonal-left-front--right-back</geometry>
+                    <mesh>wedge_1x1x1_1e3_prism_diagonal-left-front--right-back</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_diagonal_surface</parameter>
                 </boundary_condition>

@@ -23,10 +23,10 @@
 
 namespace ProcessLib
 {
-class CalculateSurfaceFluxLocalAssemblerInterface
+class SurfaceFluxLocalAssemblerInterface
 {
 public:
-    virtual ~CalculateSurfaceFluxLocalAssemblerInterface() = default;
+    virtual ~SurfaceFluxLocalAssemblerInterface() = default;
 
     virtual void integrate(std::size_t const element_id,
                            GlobalVector const& x,
@@ -40,8 +40,8 @@ public:
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-class CalculateSurfaceFluxLocalAssembler final
-    : public CalculateSurfaceFluxLocalAssemblerInterface
+class SurfaceFluxLocalAssembler final
+    : public SurfaceFluxLocalAssemblerInterface
 {
 protected:
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
@@ -59,7 +59,7 @@ public:
     /// @param bulk_face_ids The id of the corresponding face in the bulk
     /// element.
     /// @param integration_order the order of the integration
-    CalculateSurfaceFluxLocalAssembler(
+    SurfaceFluxLocalAssembler(
         MeshLib::Element const& surface_element,
         std::size_t /*const local_matrix_size*/,
         bool const is_axially_symmetric,

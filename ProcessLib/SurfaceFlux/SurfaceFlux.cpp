@@ -7,7 +7,7 @@
  *
  */
 
-#include "CalculateSurfaceFlux.h"
+#include "SurfaceFlux.h"
 
 #include <cassert>
 
@@ -15,7 +15,7 @@
 
 namespace ProcessLib
 {
-CalculateSurfaceFlux::CalculateSurfaceFlux(
+SurfaceFlux::SurfaceFlux(
     MeshLib::Mesh& boundary_mesh,
     std::size_t bulk_property_number_of_components,
     unsigned const integration_order)
@@ -45,14 +45,14 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
             "bulk_face_ids");
 
-    ProcessLib::createLocalAssemblers<CalculateSurfaceFluxLocalAssembler>(
+    ProcessLib::createLocalAssemblers<SurfaceFluxLocalAssembler>(
         boundary_mesh.getDimension() + 1,  // or bulk_mesh.getDimension()?
         boundary_mesh.getElements(), *dof_table, 1, _local_assemblers,
         boundary_mesh.isAxiallySymmetric(), integration_order,
         *bulk_element_ids, *bulk_face_ids);
 }
 
-void CalculateSurfaceFlux::integrate(
+void SurfaceFlux::integrate(
     GlobalVector const& x,
     MeshLib::PropertyVector<double>& balance,
     double const t,
@@ -61,10 +61,10 @@ void CalculateSurfaceFlux::integrate(
                                   double const, GlobalVector const&)> const&
         getFlux)
 {
-    DBUG("Integrate CalculateSurfaceFlux.");
+    DBUG("Integrate SurfaceFlux.");
 
     GlobalExecutor::executeMemberOnDereferenced(
-        &CalculateSurfaceFluxLocalAssemblerInterface::integrate,
+        &SurfaceFluxLocalAssemblerInterface::integrate,
         _local_assemblers, x, balance, t, bulk_mesh, getFlux);
 }
 

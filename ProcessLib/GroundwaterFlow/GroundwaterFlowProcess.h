@@ -13,7 +13,7 @@
 #include "ProcessLib/Process.h"
 #include "GroundwaterFlowFEM.h"
 #include "GroundwaterFlowProcessData.h"
-#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
+#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 
 // TODO used for output, if output classes are ready this has to be changed
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -36,8 +36,7 @@ public:
         GroundwaterFlowProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
-        MeshLib::Mesh* balance_mesh, std::string&& balance_pv_name,
-        std::string&& balance_out_fname);
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
     //! \name ODESystem interface
     //! @{
@@ -70,36 +69,13 @@ public:
             OGS_FATAL("The condition of process_id = 0 must be satisfied for "
                       "GroundwaterFlowProcess, which is a single process." );
         }
-        if (_balance_mesh) // computing the balance is optional
+        if (!_surfaceflux) // computing the surfaceflux is optional
         {
-            std::vector<double> init_values(
-                _balance_mesh->getNumberOfElements(), 0.0);
-            MeshLib::addPropertyToMesh(*_balance_mesh, _balance_pv_name,
-                                       MeshLib::MeshItemType::Cell, 1,
-                                       init_values);
-            auto balance = ProcessLib::CalculateSurfaceFlux(
-                *_balance_mesh,
-                getProcessVariables(process_id)[0]
-                    .get()
-                    .getNumberOfComponents(),
-                _integration_order);
-
-            auto* const balance_pv =
-                _balance_mesh->getProperties()
-                    .template getPropertyVector<double>(_balance_pv_name);
-
-            balance.integrate(x, *balance_pv, t, _mesh,
-                              [this](std::size_t const element_id,
-                                     MathLib::Point3d const& pnt,
-                                     double const t, GlobalVector const& x) {
-                                  return getFlux(element_id, pnt, t, x);
-                              });
-            // post: surface_mesh has scalar element property
-
-            // TODO output, if output classes are ready this has to be
-            // changed
-            MeshLib::IO::writeMeshToFile(*_balance_mesh, _balance_out_fname);
+            return;
         }
+        _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
+                                _mesh);
+        _surfaceflux->save(t);
     }
 
 private:
@@ -122,9 +98,7 @@ private:
     std::vector<std::unique_ptr<GroundwaterFlowLocalAssemblerInterface>>
         _local_assemblers;
 
-    std::unique_ptr<MeshLib::Mesh> _balance_mesh;
-    std::string const _balance_pv_name;
-    std::string const _balance_out_fname;
+    std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 };
 
 }   // namespace GroundwaterFlow
