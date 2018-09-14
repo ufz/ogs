@@ -147,7 +147,8 @@ void VtkImageDataToSurfacePointsFilter::createPointSurface(
         double p[3];
         p[0] = getRandomNumber(min_pnt[0], max_pnt[0]);
         p[1] = getRandomNumber(min_pnt[1], max_pnt[1]);
-        p[2] = raster.interpolateValueAtPoint(MathLib::Point3d({p[0], p[1], 0}));
+        p[2] = raster.interpolateValueAtPoint(
+            MathLib::Point3d(std::array<double, 3>{{p[0], p[1], 0}}));
         points->SetPoint(pnt_idx + i, p);
         cells->InsertNextCell(1);
         cells->InsertCellPoint(pnt_idx + i);
