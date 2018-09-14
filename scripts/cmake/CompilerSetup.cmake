@@ -49,11 +49,6 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         -Wextra
         -DOPENMP_LOOP_TYPE=unsigned
     )
-    if(NOT COMPILER_IS_INTEL)
-        add_compile_options(
-            -Wno-c++98-compat-pedantic
-        )
-    endif()
 
     # Profiling
     if(OGS_PROFILE)
