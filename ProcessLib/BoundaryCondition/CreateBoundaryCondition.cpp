@@ -71,7 +71,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     {
         return ProcessLib::createNonuniformDirichletBoundaryCondition(
             config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, bulk_mesh);
+            *config.component_id);
     }
     if (type == "NonuniformNeumann")
     {
