@@ -1,6 +1,15 @@
 if(NOT OGS_USE_CONAN)
     return()
 endif()
+find_program(CONAN_CMD conan)
+if(NOT CONAN_CMD)
+    message(WARNING "conan executable not found. Consider installing Conan for "
+        "automatic third-party library handling. https://www.opengeosys.org/doc"
+        "s/devguide/getting-started/prerequisites/#step-install-conan-package-m"
+        "anager OR disable this warning with OGS_USE_CONAN=OFF")
+    return()
+endif()
+
 
 if(CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
     message(FATAL_ERROR "Multi-config generators are not yet supported when "
@@ -61,7 +70,7 @@ if(OGS_BUILD_GUI)
     )
 endif()
 
-conan_check(VERSION 1.0.0 REQUIRED)
+conan_check(VERSION 1.0.0)
 conan_add_remote(NAME ogs INDEX 0
     URL https://ogs.jfrog.io/ogs/api/conan/conan)
 conan_add_remote(NAME conan-community INDEX 1

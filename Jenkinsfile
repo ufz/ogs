@@ -83,7 +83,6 @@ pipeline {
               sh 'conan user'
               configure {
                 cmakeOptions =
-                  '-DOGS_USE_CONAN=ON ' +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DDOCS_GENERATE_LOGFILE=ON ' + // redirects to build/DoxygenWarnings.log
                   '-DOGS_USE_PYTHON=ON '
@@ -98,7 +97,6 @@ pipeline {
                   reportName: 'Doxygen'])
               configure {
                 cmakeOptions =
-                  '-DOGS_USE_CONAN=ON ' +
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_CLI=OFF ' +
@@ -149,7 +147,6 @@ pipeline {
               sh 'conan user'
               configure {
                 cmakeOptions =
-                  '-DOGS_USE_CONAN=ON ' +
                   '-DOGS_CPU_ARCHITECTURE=generic '
                 config = 'Debug'
               }
@@ -244,7 +241,6 @@ pipeline {
               bat 'conan remove --locks'
               configure {
                 cmakeOptions =
-                  '-DOGS_USE_CONAN=ON ' +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_USE_PYTHON=ON '
               }
@@ -254,7 +250,6 @@ pipeline {
               // GUI
               configure {
                 cmakeOptions =
-                  '-DOGS_USE_CONAN=ON ' +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
@@ -289,7 +284,6 @@ pipeline {
             script {
               configure {
                 cmakeOptions =
-                  '-DOGS_USE_CONAN=ON ' +
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
@@ -362,7 +356,6 @@ pipeline {
                 sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
                 configure {
                   cmakeOptions =
-                    '-DOGS_USE_CONAN=ON ' +
                     '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use;-Xiwyu;--mapping_file=../scripts/jenkins/iwyu-mappings.imp" ' +
                     '-DCMAKE_LINK_WHAT_YOU_USE=ON ' +
                     '"-DCMAKE_CXX_CPPCHECK=cppcheck;--std=c++11;--language=c++;--suppress=syntaxError;--suppress=preprocessorErrorDirective:*/ThirdParty/*;--suppress=preprocessorErrorDirective:*conan*/package/*" ' +
@@ -465,7 +458,6 @@ pipeline {
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               configure {
                 cmakeOptions =
-                  '-DOGS_USE_CONAN=ON ' +
                   '-DOGS_ADDRESS_SANITIZER=ON ' +
                   '-DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON ' +
                   '-DOGS_BUILD_UTILS=ON '

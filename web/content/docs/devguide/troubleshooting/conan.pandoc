@@ -14,7 +14,7 @@ weight = 1042
 When CMake is run Conan will download library packages. You can see under `Requirements` in the CMake output from where the packages will be downloaded. Most packages will come `from ogs`:
 
 ```bash
-$ cmake ../ogs -DOGS_USE_CONAN=ON
+$ cmake ../ogs
 ...
 -- Conan executing: conan install . -g cmake -s build_type=Release -s os=Macos -s compiler=apple-clang -s compiler.version=9.0 -s compiler.libcxx=libc++ --build=missing --update
 PROJECT: Installing /Users/bilke/code/ogs6/build-n/conanfile.txt
