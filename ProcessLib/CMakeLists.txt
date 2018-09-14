@@ -22,7 +22,7 @@ APPEND_SOURCE_FILES(SOURCES Utils)
 add_library(ProcessLib ${SOURCES})
 
 target_link_libraries(ProcessLib
-    PUBLIC BaseLib MaterialLib MathLib MeshLib NumLib logog
+    PUBLIC BaseLib MaterialLib MathLib MeshLib NumLib logog MeshGeoToolsLib
 )
 
 if(OGS_USE_PYTHON)
