@@ -393,6 +393,7 @@ pipeline {
           agent { label "envinf1"}
           steps {
             script {
+              sh 'rm -rf /global/apps/ogs/head/standard'
               configure {
                 cmakeOptions =
                   '-DOGS_BUILD_UTILS=ON ' +
@@ -419,6 +420,7 @@ pipeline {
           agent { label "envinf1"}
           steps {
             script {
+              sh 'rm -rf /global/apps/ogs/head/petsc'
               configure {
                 cmakeOptions =
                   '-DOGS_USE_PETSC=ON ' +
