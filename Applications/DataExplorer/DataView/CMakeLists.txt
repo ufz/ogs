@@ -129,6 +129,9 @@ add_library(QtDataView
     ${HEADERS}
     ${UIS}
 )
+if(BUILD_SHARED_LIBS)
+    install(TARGETS QtDataView LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
 
 target_link_libraries(QtDataView
     PUBLIC GeoLib MeshGeoToolsLib MeshLib QtBase VtkVis

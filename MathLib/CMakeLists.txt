@@ -26,6 +26,9 @@ endif()
 
 # Create the library
 add_library(MathLib ${SOURCES})
+if(BUILD_SHARED_LIBS)
+    install(TARGETS MathLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
 
 include(GenerateExportHeader)
 generate_export_header(MathLib)
@@ -33,7 +36,7 @@ target_include_directories(MathLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(MathLib PUBLIC BaseLib logog)
+target_link_libraries(MathLib PUBLIC BaseLib logog ${OpenMP_CXX_LIBRARIES})
 
 if (CVODE_FOUND)
     target_link_libraries(MathLib PUBLIC ${CVODE_LIBRARIES})

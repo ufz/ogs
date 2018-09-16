@@ -80,7 +80,7 @@ conan_add_remote(NAME bincrafters INDEX 2
 
 message(STATUS "Third-party libraries:")
 foreach(LIB ${OGS_LIBS})
-    message("  - OGS_LIB_${LIB} = ${OGS_LIB_${LIB}}")
+    message(STATUS "  - OGS_LIB_${LIB} = ${OGS_LIB_${LIB}}")
     if("${OGS_LIB_${LIB}}" STREQUAL System)
         list(FILTER CONAN_REQUIRES EXCLUDE REGEX ${LIB})
     endif()

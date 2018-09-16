@@ -37,9 +37,9 @@ With Conan one build directory corresponds to one configuration. If you want to 
 $ [assuming you are at the same directory where the source code directory is located]
 $ mkdir ogs-build && cd ogs-build
 $ mkdir debug && cd debug
-$ cmake ../../ogs -G "Visual Studio 14 2015 Win64" -DOGS_USE_CONAN=ON -DCMAKE_BUILD_TYPE=Debug
+$ cmake ../../ogs -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Debug
 $ cd .. && mkdir release && cd release
-$ cmake ../../ogs -G "Visual Studio 14 2015 Win64" -DOGS_USE_CONAN=ON -DCMAKE_BUILD_TYPE=Release
+$ cmake ../../ogs -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
 ```
 
 `..\..\ogs` represents the relative path to the source code (please adapt if you have a different directory layout).

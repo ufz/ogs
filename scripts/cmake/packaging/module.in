@@ -1,8 +1,23 @@
-#%Module1.0
+help([==[
 
-module-whatis OpenGeoSys @OGS_VERSION@
-conflict ogs
+Description
+===========
+OpenGeoSys (OGS) is a scientific open source project for the development of
+ numerical methods for the simulation of thermo-hydro-mechanical-chemical
+ (THMC) processes in porous and fractured media.
+
+
+More information
+================
+ - Homepage: https://opengeosys.org
+]==])
+whatis([==[Name: OpenGeoSys]==])
+whatis([==[Version: @OGS_VERSION@]==])
+
+conflict("ogs")
 
 @MODULE_LOAD_STRING@
 
-prepend-path PATH @CMAKE_INSTALL_PREFIX@/bin
+local root = "@CMAKE_INSTALL_PREFIX@"
+
+prepend_path("PATH", pathJoin(root, "bin"))

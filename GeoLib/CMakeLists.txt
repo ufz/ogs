@@ -12,6 +12,9 @@ endif()
 
 # Create the library
 add_library(GeoLib ${SOURCES})
+if(BUILD_SHARED_LIBS)
+    install(TARGETS GeoLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
 
 target_link_libraries(GeoLib PUBLIC BaseLib MathLib logog PRIVATE tet)
 

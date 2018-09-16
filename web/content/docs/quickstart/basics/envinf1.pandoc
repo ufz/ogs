@@ -18,7 +18,7 @@ Members of the Department Environmental Informatics of the Helmholtz Centre for 
 You select an OGS version by loading a module:
 
 ```bash
-export MODULEPATH=$MODULEPATH:/global/apps/modulefiles
+module use /global/apps/modulefiles
 
 # Examples:
 module load ogs            # Loads latest (maybe unstable) ogs in standard config

@@ -4,6 +4,9 @@ set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
 
 # Library
 add_library(ApplicationsLib ${LIB_SOURCES})
+if(BUILD_SHARED_LIBS)
+    install(TARGETS ApplicationsLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
 
 target_link_libraries(ApplicationsLib
     PUBLIC BaseLib GeoLib Processes logog
