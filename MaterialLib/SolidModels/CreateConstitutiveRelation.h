@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -32,18 +33,21 @@ template <int DisplacementDim>
 struct MechanicsBase;
 
 template <int DisplacementDim>
-std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
-createConstitutiveRelation(
+std::map<int,
+         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+createConstitutiveRelations(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
-extern template std::unique_ptr<MaterialLib::Solids::MechanicsBase<2>>
-createConstitutiveRelation<2>(
+extern template std::map<int,
+                         std::unique_ptr<MaterialLib::Solids::MechanicsBase<2>>>
+createConstitutiveRelations<2>(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
-extern template std::unique_ptr<MaterialLib::Solids::MechanicsBase<3>>
-createConstitutiveRelation<3>(
+extern template std::map<int,
+                         std::unique_ptr<MaterialLib::Solids::MechanicsBase<3>>>
+createConstitutiveRelations<3>(
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 }
