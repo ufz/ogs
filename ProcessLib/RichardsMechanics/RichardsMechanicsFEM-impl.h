@@ -15,7 +15,6 @@
 
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
-#include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 
@@ -23,53 +22,6 @@ namespace ProcessLib
 {
 namespace RichardsMechanics
 {
-/// For each higher order node evaluate the shape matrices for the lower order
-/// element (the base nodes)
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int DisplacementDim, typename EigenMatrixType>
-void interpolate_p(MeshLib::Element const& element,
-                   bool const is_axially_symmetric,
-                   Eigen::MatrixBase<EigenMatrixType> const& p_L,
-                   MeshLib::PropertyVector<double>& pressure_interpolated)
-{
-    using ShapeMatricesTypePressure =
-        ShapeMatrixPolicyType<ShapeFunctionPressure, DisplacementDim>;
-    using FemType = NumLib::TemplateIsoparametric<ShapeFunctionPressure,
-                                                  ShapeMatricesTypePressure>;
-
-    FemType fe(*static_cast<const typename ShapeFunctionPressure::MeshElement*>(
-        &element));
-    int const number_base_nodes = element.getNumberOfBaseNodes();
-    int const number_all_nodes = element.getNumberOfNodes();
-
-    // Copy the values for linear nodes.
-    for (int n = 0; n < number_base_nodes; ++n)
-    {
-        std::size_t const global_index = element.getNodeIndex(n);
-        pressure_interpolated[global_index] = p_L[n];
-    }
-
-    // Interpolate values for higher order nodes.
-    for (int n = number_base_nodes; n < number_all_nodes; ++n)
-    {
-        // Evaluated at higher order nodes' coordinates.
-        typename ShapeMatricesTypePressure::ShapeMatrices shape_matrices_p{
-            ShapeFunctionPressure::DIM, DisplacementDim,
-            ShapeFunctionPressure::NPOINTS};
-
-        fe.template computeShapeFunctions<NumLib::ShapeMatrixType::N>(
-            NumLib::NaturalCoordinates<
-                typename ShapeFunctionDisplacement::MeshElement>::coordinates[n]
-                .data(),
-            shape_matrices_p, DisplacementDim, is_axially_symmetric);
-
-        auto const& N_p = shape_matrices_p.N;
-
-        std::size_t const global_index = element.getNodeIndex(n);
-        pressure_interpolated[global_index] = N_p * p_L;
-    }
-}
-
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
@@ -881,9 +833,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     (*_process_data.element_saturation)[_element.getID()] = saturation_avg;
 
-    interpolate_p<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                  DisplacementDim>(_element, _is_axially_symmetric, p_L,
-                                   *_process_data.pressure_interpolated);
+    NumLib::interpolateToHigherOrderNodes<
+        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
+        DisplacementDim>(_element, _is_axially_symmetric, p_L,
+                         *_process_data.pressure_interpolated);
 }
 
 }  // namespace RichardsMechanics
