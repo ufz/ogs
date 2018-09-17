@@ -10,11 +10,12 @@
 #pragma once
 
 #include <pybind11/embed.h>
+#include "BaseLib/ExportSymbol.h"
 
 namespace ApplicationsLib
 {
 /// Sets up an embedded Python interpreter and makes sure that the OpenGeoSys
 /// Python module is not removed by the linker.
-pybind11::scoped_interpreter setupEmbeddedPython();
+OGS_EXPORT_SYMBOL pybind11::scoped_interpreter setupEmbeddedPython();
 
 }  // namespace ApplicationsLib

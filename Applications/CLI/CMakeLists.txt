@@ -26,7 +26,7 @@ if(OGS_USE_PYTHON)
     # appropriate message should be presented. The note is kept for the case
     # that the automatic detection does not work due to whatever reason.
 
-    add_library(ogs_embedded_python STATIC ogs_embedded_python.cpp)
+    add_library(ogs_embedded_python ogs_embedded_python.cpp)
 
     # Performance warning from
     # https://github.com/pybind/pybind11/blob/master/docs/compiling.rst:
