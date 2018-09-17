@@ -101,9 +101,8 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
             variable_p->getNumberOfComponents());
     }
 
-    // Constitutive relation.
-    auto solid_material =
-        MaterialLib::Solids::createConstitutiveRelation<DisplacementDim>(
+    auto solid_constitutive_relations =
+        MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, config);
 
     // Intrinsic permeability
@@ -174,14 +173,15 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__material_property}
         config.getConfigSubtree("material_property");
 
-    boost::optional<MeshLib::PropertyVector<int> const&> material_ids;
-    if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
+    auto const material_ids =
+        mesh.getProperties().existsPropertyVector<int>("MaterialIDs")
+            ? mesh.getProperties().getPropertyVector<int>("MaterialIDs")
+            : nullptr;
+    if (material_ids != nullptr)
     {
         INFO(
             "MaterialIDs vector found; the Richards flow is in heterogeneous "
             "porous media.");
-        material_ids =
-            *mesh.getProperties().getPropertyVector<int>("MaterialIDs");
     }
     else
     {
@@ -194,8 +194,9 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
             flow_material_config, material_ids, parameters);
 
     RichardsMechanicsProcessData<DisplacementDim> process_data{
+        material_ids,
         std::move(flow_material),
-        std::move(solid_material),
+        std::move(solid_constitutive_relations),
         intrinsic_permeability,
         fluid_bulk_modulus,
         biot_coefficient,
