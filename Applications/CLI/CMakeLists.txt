@@ -46,7 +46,7 @@ if(OGS_USE_PYTHON)
     if(BUILD_SHARED_LIBS)
         # Add macro definition, because static libs make special handling necessary
         # s.t. the embedded OpenGeoSys Python module won't be removed by the linker.
-        target_compile_definitions(ogs_embedded_python OGS_BUILD_SHARED_LIBS)
+        target_compile_definitions(ogs_embedded_python PRIVATE OGS_BUILD_SHARED_LIBS)
     endif()
 endif()
 
