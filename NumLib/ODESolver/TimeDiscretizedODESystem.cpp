@@ -139,7 +139,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
                               GlobalVector& minus_delta_x) const
 {
-    if (!_known_solutions || _known_solutions->empty())
+    if (!_known_solutions)
         return;
 
     using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
@@ -220,7 +220,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               GlobalVector& rhs,
                               GlobalVector& x) const
 {
-    if (!_known_solutions || _known_solutions->empty())
+    if (!_known_solutions)
         return;
 
     using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
@@ -231,8 +231,8 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
         std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
         std::copy(bc.values.cbegin(), bc.values.cend(),
                   std::back_inserter(values));
-        }
-        MathLib::applyKnownSolution(A, rhs, x, ids, values);
+    }
+    MathLib::applyKnownSolution(A, rhs, x, ids, values);
 }
 
 }  // namespace NumLib
