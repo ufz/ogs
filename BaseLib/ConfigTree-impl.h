@@ -187,6 +187,16 @@ getConfigAttribute(std::string const& attr) const
     error("Did not find XML attribute with name \"" + attr + "\".");
 }
 
+template <typename T>
+T ConfigTree::getConfigAttribute(std::string const& attr,
+                                 T const& default_value) const
+{
+    if (auto a = getConfigAttributeOptional<T>(attr))
+        return *a;
+
+    return default_value;
+}
+
 template<typename T>
 boost::optional<T>
 ConfigTree::
