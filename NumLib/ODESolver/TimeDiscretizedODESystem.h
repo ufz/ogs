@@ -89,11 +89,12 @@ public:
 
     void getJacobian(GlobalMatrix& Jac) const override;
 
+    void computeKnownSolutions(GlobalVector const& x) override;
+
     void applyKnownSolutions(GlobalVector& x) const override;
 
     void applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
-                                   GlobalVector& minus_delta_x,
-                                   GlobalVector& x) override;
+                                   GlobalVector& minus_delta_x) const override;
 
     bool isLinear() const override
     {
@@ -128,6 +129,10 @@ private:
 
     //! the object used to compute the matrix/vector for the nonlinear solver
     std::unique_ptr<MatTrans> _mat_trans;
+
+    using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
+    std::vector<NumLib::IndexValueVector<Index>> const* _known_solutions =
+        nullptr;  //!< stores precomputed values for known solutions
 
     GlobalMatrix* _Jac;  //!< the Jacobian of the residual
     GlobalMatrix* _M;    //!< Matrix \f$ M \f$.
@@ -185,10 +190,12 @@ public:
         _mat_trans->computeRhs(*_M, *_K, *_b, rhs);
     }
 
+    void computeKnownSolutions(GlobalVector const& x) override;
+
     void applyKnownSolutions(GlobalVector& x) const override;
 
     void applyKnownSolutionsPicard(GlobalMatrix& A, GlobalVector& rhs,
-                                   GlobalVector& x) override;
+                                   GlobalVector& x) const override;
 
     bool isLinear() const override
     {
@@ -223,6 +230,10 @@ private:
 
     //! the object used to compute the matrix/vector for the nonlinear solver
     std::unique_ptr<MatTrans> _mat_trans;
+
+    using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
+    std::vector<NumLib::IndexValueVector<Index>> const* _known_solutions =
+        nullptr;  //!< stores precomputed values for known solutions
 
     GlobalMatrix* _M;  //!< Matrix \f$ M \f$.
     GlobalMatrix* _K;  //!< Matrix \f$ K \f$.

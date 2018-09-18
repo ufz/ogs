@@ -37,13 +37,11 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
     auto& rhs = NumLib::GlobalVectorProvider::provider.getVector(
         _rhs_id);
-    auto& x_new =
-        NumLib::GlobalVectorProvider::provider.getVector(
-            _x_new_id);
+    auto& x_new = NumLib::GlobalVectorProvider::provider.getVector(_x_new_id);
 
     bool error_norms_met = false;
 
-    LinAlg::copy(x, x_new);  // set initial guess, TODO save the copy
+    LinAlg::copy(x, x_new);  // set initial guess
 
     _convergence_criterion->preFirstIteration();
 
@@ -51,27 +49,34 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     for (; iteration <= _maxiter;
          ++iteration, _convergence_criterion->reset())
     {
+        BaseLib::RunTime timer_dirichlet;
+        double time_dirichlet = 0.0;
+
         BaseLib::RunTime time_iteration;
         time_iteration.start();
 
-        sys.preIteration(iteration, x);
+        timer_dirichlet.start();
+        sys.computeKnownSolutions(x_new);
+        sys.applyKnownSolutions(x_new);
+        time_dirichlet += timer_dirichlet.elapsed();
+
+        sys.preIteration(iteration, x_new);
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assemble(x);
+        sys.assemble(x_new);
         sys.getA(A);
         sys.getRhs(rhs);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
 
-        BaseLib::RunTime time_dirichlet;
-        time_dirichlet.start();
-        // Here _x_new has to be used and it has to be equal to x!
+        timer_dirichlet.start();
         sys.applyKnownSolutionsPicard(A, rhs, x_new);
-        INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
+        time_dirichlet += timer_dirichlet.elapsed();
+        INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet);
 
         if (!sys.isLinear() && _convergence_criterion->hasResidualCheck()) {
             GlobalVector res;
-            LinAlg::matMult(A, x_new, res); // res = A * x_new
+            LinAlg::matMult(A, x_new, res);  // res = A * x_new
             LinAlg::axpy(res, -1.0, rhs);   // res -= rhs
             _convergence_criterion->checkResidual(res);
         }
@@ -90,7 +95,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             if (postIterationCallback)
                 postIterationCallback(iteration, x_new);
 
-            switch(sys.postIteration(x_new))
+            switch (sys.postIteration(x_new))
             {
                 case IterationResult::SUCCESS:
                     // Don't copy here. The old x might still be used further
@@ -109,7 +114,8 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                     INFO(
                         "Picard: The postIteration() hook decided that this "
                         "iteration has to be repeated.");
-                    continue;  // That throws the iteration result away.
+                    LinAlg::copy(x, x_new);  // throw the iteration result away
+                    continue;
             }
         }
 
@@ -184,7 +190,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     bool error_norms_met = false;
 
     // TODO be more efficient
-    // init _minus_delta_x to the right size and 0.0
+    // init minus_delta_x to the right size
     LinAlg::copy(x, minus_delta_x);
 
     _convergence_criterion->preFirstIteration();
@@ -193,8 +199,16 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     for (; iteration <= _maxiter;
          ++iteration, _convergence_criterion->reset())
     {
+        BaseLib::RunTime timer_dirichlet;
+        double time_dirichlet = 0.0;
+
         BaseLib::RunTime time_iteration;
         time_iteration.start();
+
+        timer_dirichlet.start();
+        sys.computeKnownSolutions(x);
+        sys.applyKnownSolutions(x);
+        time_dirichlet += timer_dirichlet.elapsed();
 
         sys.preIteration(iteration, x);
 
@@ -207,10 +221,10 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         minus_delta_x.setZero();
 
-        BaseLib::RunTime time_dirichlet;
-        time_dirichlet.start();
-        sys.applyKnownSolutionsNewton(J, res, minus_delta_x, x);
-        INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
+        timer_dirichlet.start();
+        sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
+        time_dirichlet += timer_dirichlet.elapsed();
+        INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet);
 
         if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
             _convergence_criterion->checkResidual(res);
@@ -255,8 +269,6 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                     continue;  // That throws the iteration result away.
             }
 
-            // TODO could be done via swap. Note: that also requires swapping
-            // the ids. Same for the Picard scheme.
             LinAlg::copy(x_new, x);  // copy new solution to x
             NumLib::GlobalVectorProvider::provider.releaseVector(x_new);
         }

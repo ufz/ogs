@@ -235,8 +235,9 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
     // parameters are not read and will cause an error.
     // TODO (naumov): Add a function to ConfigTree for skipping the tags of the
     // subtree and move the code up in createBoundaryCondition().
-    if (bc_mesh.getDimension() == 0 && bc_mesh.getNumberOfNodes() == 0 &&
-        bc_mesh.getNumberOfElements() == 0)
+    if (boundary_mesh.getDimension() == 0 &&
+        boundary_mesh.getNumberOfNodes() == 0 &&
+        boundary_mesh.getNumberOfElements() == 0)
     {
         return nullptr;
     }

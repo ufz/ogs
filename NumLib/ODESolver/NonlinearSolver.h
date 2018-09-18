@@ -179,7 +179,7 @@ private:
     std::size_t _A_id = 0u;      //!< ID of the \f$ A \f$ matrix.
     std::size_t _rhs_id = 0u;    //!< ID of the right-hand side vector.
     std::size_t _x_new_id = 0u;  //!< ID of the vector storing the solution of
-                                 //!the linearized equation.
+                                 //! the linearized equation.
 };
 
 /*! Creates a new nonlinear solver from the given configuration.
