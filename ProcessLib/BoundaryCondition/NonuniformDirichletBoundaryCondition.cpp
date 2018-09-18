@@ -20,7 +20,7 @@ std::unique_ptr<NonuniformDirichletBoundaryCondition>
 createNonuniformDirichletBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
-    int const component_id, MeshLib::Mesh const& bulk_mesh)
+    int const component_id)
 {
     DBUG("Constructing NonuniformDirichlet BC from config.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}

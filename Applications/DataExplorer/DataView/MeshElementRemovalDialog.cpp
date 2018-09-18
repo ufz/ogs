@@ -206,7 +206,7 @@ void MeshElementRemovalDialog::toggleScalarEdits(bool outside) const
     this->insideScalarMaxEdit->setEnabled(!outside);
 }
 
-void MeshElementRemovalDialog::on_insideButton_toggled(bool is_checked)
+void MeshElementRemovalDialog::on_insideButton_toggled(bool /*is_checked*/)
 {
     toggleScalarEdits(!this->insideButton->isChecked());
 }

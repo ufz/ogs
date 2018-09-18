@@ -28,7 +28,7 @@ PYBIND11_EMBEDDED_MODULE(OpenGeoSys, m)
 template <typename T>
 void mark_used(T p)
 {
-    volatile T vp = (volatile T)p;
+    volatile T vp = p;
     vp = vp;
 }
 

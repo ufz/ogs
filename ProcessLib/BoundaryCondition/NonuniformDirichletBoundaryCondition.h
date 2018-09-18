@@ -122,6 +122,6 @@ std::unique_ptr<NonuniformDirichletBoundaryCondition>
 createNonuniformDirichletBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
-    int const component_id, const MeshLib::Mesh& bulk_mesh);
+    int const component_id);
 
 }  // ProcessLib
