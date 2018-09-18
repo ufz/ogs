@@ -25,7 +25,7 @@ class LocalToGlobalIndexMap;
 
 namespace ProcessLib
 {
-class NodalSourceTerm;
+class SourceTerm;
 class BoundaryCondition;
 class Process;
 }  // namespace ProcessLib
@@ -59,7 +59,7 @@ public:
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         Process const& process);
 
-    std::vector<std::unique_ptr<NodalSourceTerm>> createSourceTerms(
+    std::vector<std::unique_ptr<SourceTerm>> createSourceTerms(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
         unsigned const integration_order,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters);

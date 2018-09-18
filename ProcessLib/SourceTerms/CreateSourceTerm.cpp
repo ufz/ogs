@@ -10,12 +10,12 @@
 #include "CreateSourceTerm.h"
 
 #include "CreateNodalSourceTerm.h"
-#include "NodalSourceTerm.h"
+#include "SourceTerm.h"
 #include "SourceTermConfig.h"
 
 namespace ProcessLib
 {
-std::unique_ptr<NodalSourceTerm> createSourceTerm(
+std::unique_ptr<SourceTerm> createSourceTerm(
     const SourceTermConfig& config,
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned /*integration_order*/,

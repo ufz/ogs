@@ -26,13 +26,14 @@ class LocalToGlobalIndexMap;
 
 namespace ProcessLib
 {
+class SourceTerm;
 class NodalSourceTerm;
 struct SourceTermConfig;
 }  // namespace ProcessLib
 
 namespace ProcessLib
 {
-std::unique_ptr<NodalSourceTerm> createSourceTerm(
+std::unique_ptr<SourceTerm> createSourceTerm(
     const SourceTermConfig& config,
     const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
     const int variable_id, const unsigned integration_order,
