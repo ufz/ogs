@@ -80,9 +80,6 @@ public:
 
     /// Get the partial differential of the density with respect to
     /// concentration or pressure.
-    /// \param var_vals  Variable values  in an array. The order of its elements
-    ///                   is given in enum class PropertyVariableType.
-    /// \param var       Variable type.
     double getdValue(const ArrayType& /*var_vals*/,
                      const PropertyVariableType var) const override
     {

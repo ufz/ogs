@@ -32,7 +32,7 @@ namespace ComponentTransport
  *     + Q_p = 0,
  * \f]
  * where the storage \f$S\f$ has been substituted by
- *      \phi \frac{\partial \rho}{\partial p},
+ *      \f$\phi \frac{\partial \rho}{\partial p}\f$,
  * \f$\phi\f$ is the porosity,
  * \f$C\f$ is the concentration,
  * \f$p\f$ is the pressure,
