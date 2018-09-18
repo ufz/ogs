@@ -81,9 +81,12 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
     _ip_data.reserve(n_integration_points);
     _secondary_data.N.resize(n_integration_points);
 
+    auto const material_id = _process_data.material_ids == nullptr
+                                 ? 0
+                                 : (*_process_data.material_ids)[e.getID()];
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        _ip_data.emplace_back(*_process_data._material);
+        _ip_data.emplace_back(*_process_data.solid_materials[material_id]);
         auto& ip_data = _ip_data[ip];
         auto const& sm = shape_matrices[ip];
         ip_data.N = sm.N;
