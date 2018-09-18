@@ -23,6 +23,7 @@ endif()
 project( OGS-6 )
 
 include(scripts/cmake/CMakeSetup.cmake)
+include(ParseCMakeArgs)
 
 ###########################
 ### Preliminary Options ###
