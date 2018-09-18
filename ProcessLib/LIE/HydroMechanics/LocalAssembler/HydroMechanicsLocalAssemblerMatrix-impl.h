@@ -61,13 +61,17 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                           IntegrationMethod, GlobalDim>(e, is_axially_symmetric,
                                                         integration_method);
 
+    auto const material_id = _process_data.material_ids == nullptr
+                                 ? 0
+                                 : (*_process_data.material_ids)[e.getID()];
+
     SpatialPosition x_position;
     x_position.setElementID(e.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
 
-        _ip_data.emplace_back(*_process_data.material);
+        _ip_data.emplace_back(*_process_data.solid_materials[material_id]);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
         auto const& sm_p = shape_matrices_p[ip];
