@@ -21,7 +21,6 @@
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
 #include "ProcessLib/Parameter/Parameter.h"
-#include "ProcessLib/SourceTerms/NodalSourceTerm.h"
 #include "ProcessLib/SourceTerms/SourceTermCollection.h"
 
 #include "AbstractJacobianAssembler.h"
