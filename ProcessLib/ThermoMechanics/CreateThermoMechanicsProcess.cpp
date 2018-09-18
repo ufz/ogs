@@ -100,9 +100,8 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
             variable_T->getNumberOfComponents());
     }
 
-    // Constitutive relation.
-    auto material =
-        MaterialLib::Solids::createConstitutiveRelation<DisplacementDim>(
+    auto solid_constitutive_relations =
+        MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, config);
 
     // Reference solid density
@@ -153,11 +152,9 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     }
 
     ThermoMechanicsProcessData<DisplacementDim> process_data{
-        std::move(material),
-        reference_solid_density,
-        linear_thermal_expansion_coefficient,
-        specific_heat_capacity,
-        thermal_conductivity,
+        materialIDs(mesh),       std::move(solid_constitutive_relations),
+        reference_solid_density, linear_thermal_expansion_coefficient,
+        specific_heat_capacity,  thermal_conductivity,
         specific_body_force};
 
     SecondaryVariableCollection secondary_variables;

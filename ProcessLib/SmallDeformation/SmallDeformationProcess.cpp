@@ -112,9 +112,24 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                          getExtrapolator(), _local_assemblers,
                          &LocalAssemblerInterface::getIntPtEpsilon));
 
+    //
     // enable output of internal variables defined by material models
-    auto const internal_variables =
-        _process_data.material->getInternalVariables();
+    //
+
+    // Collect the internal variables for all solid materials.
+    std::vector<typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::InternalVariable>
+        internal_variables;
+    for (auto const& material_id__solid_material :
+         _process_data.solid_materials)
+    {
+        auto const variables =
+            material_id__solid_material.second->getInternalVariables();
+        copy(begin(variables), end(variables),
+             back_inserter(internal_variables));
+    }
+
+    // Register the internal variables.
     for (auto const& internal_variable : internal_variables)
     {
         auto const& name = internal_variable.name;
