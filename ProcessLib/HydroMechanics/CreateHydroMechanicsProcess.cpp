@@ -101,9 +101,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             variable_p->getNumberOfComponents());
     }
 
-    // Constitutive relation.
-    auto material =
-        MaterialLib::Solids::createConstitutiveRelation<DisplacementDim>(
+    auto const material_ids =
+        mesh.getProperties().existsPropertyVector<int>("MaterialIDs")
+            ? mesh.getProperties().getPropertyVector<int>("MaterialIDs")
+            : nullptr;
+
+    auto solid_constitutive_relations =
+        MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, config);
 
     // Intrinsic permeability
@@ -187,15 +191,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
     HydroMechanicsProcessData<DisplacementDim> process_data{
-        std::move(material),
-        intrinsic_permeability,
-        specific_storage,
-        fluid_viscosity,
-        fluid_density,
-        biot_coefficient,
-        porosity,
-        solid_density,
-        specific_body_force,
+        material_ids,           std::move(solid_constitutive_relations),
+        intrinsic_permeability, specific_storage,
+        fluid_viscosity,        fluid_density,
+        biot_coefficient,       porosity,
+        solid_density,          specific_body_force,
         reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
