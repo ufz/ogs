@@ -16,6 +16,7 @@
 #include "BaseLib/Error.h"
 
 #include "IdealGasLaw.h"
+#include "LinearConcentrationAndPressureDependentDensity.h"
 #include "LinearConcentrationDependentDensity.h"
 #include "LinearTemperatureDependentDensity.h"
 #include "LiquidDensity.h"
@@ -91,6 +92,37 @@ static std::unique_ptr<FluidProperty> createLinearConcentrationDependentDensity(
         reference_concentration,
         fluid_density_difference_ratio);
 }
+static std::unique_ptr<FluidProperty>
+createLinearConcentrationAndPressureDependentDensity(
+    BaseLib::ConfigTree const& config)
+{
+    //! \ogs_file_param{material__fluid__density__type}
+    config.checkConfigParameter("type", "ConcentrationAndPressureDependent");
+
+    const double reference_density =
+        //! \ogs_file_param{material__fluid__density__ConcentrationAndPressureDependent__reference_density}
+        config.getConfigParameter<double>("reference_density");
+    const double reference_concentration =
+        //! \ogs_file_param{material__fluid__density__ConcentrationAndPressureDependent__reference_concentration}
+        config.getConfigParameter<double>("reference_concentration");
+    const double fluid_density_concentration_difference_ratio =
+        //! \ogs_file_param{material__fluid__density__ConcentrationAndPressureDependent__fluid_density_concentration_difference_ratio}
+        config.getConfigParameter<double>(
+            "fluid_density_concentration_difference_ratio");
+    const double reference_pressure =
+        //! \ogs_file_param{material__fluid__density__ConcentrationAndPressureDependent__reference_pressure}
+        config.getConfigParameter<double>("reference_pressure");
+    const double fluid_density_pressure_difference_ratio =
+        //! \ogs_file_param{material__fluid__density__ConcentrationAndPressureDependent__fluid_density_pressure_difference_ratio}
+        config.getConfigParameter<double>(
+            "fluid_density_pressure_difference_ratio");
+    return std::make_unique<LinearConcentrationAndPressureDependentDensity>(
+        reference_density,
+        reference_concentration,
+        fluid_density_concentration_difference_ratio,
+        reference_pressure,
+        fluid_density_pressure_difference_ratio);
+}
 
 std::unique_ptr<FluidProperty> createFluidDensityModel(
     BaseLib::ConfigTree const& config)
@@ -112,6 +144,8 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
         return createLinearTemperatureDependentDensity(config);
     if (type == "ConcentrationDependent")
         return createLinearConcentrationDependentDensity(config);
+    if (type == "ConcentrationAndPressureDependent")
+        return createLinearConcentrationAndPressureDependentDensity(config);
     if (type == "IdealGasLaw")
     {
         //! \ogs_file_param{material__fluid__density__type}

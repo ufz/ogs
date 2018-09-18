@@ -12,7 +12,6 @@
 #include <Eigen/Dense>
 #include <vector>
 
-
 #include "ComponentTransportProcessData.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -141,7 +140,8 @@ public:
         auto const num_nodes = ShapeFunction::NPOINTS;
         auto p_nodal_values =
             Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
-
+        auto C_nodal_values =
+            Eigen::Map<const NodalVectorType>(&local_x[0], num_nodes);
         auto const& b = _process_data.specific_body_force;
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
@@ -151,21 +151,18 @@ public:
 
         auto KCC = local_K.template block<num_nodes, num_nodes>(0, 0);
         auto MCC = local_M.template block<num_nodes, num_nodes>(0, 0);
+        auto MCp = local_M.template block<num_nodes, num_nodes>(0, num_nodes);
         auto Kpp =
             local_K.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
         auto Mpp =
             local_M.template block<num_nodes, num_nodes>(num_nodes, num_nodes);
+        auto MpC = local_M.template block<num_nodes, num_nodes>(num_nodes, 0);
         auto Bp = local_b.template block<num_nodes, 1>(num_nodes, 0);
 
         for (std::size_t ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
 
-            // \todo the argument to getValue() has to be changed for non
-            // constant storage model
-            auto const specific_storage =
-                _process_data.porous_media_properties.getSpecificStorage(t, pos)
-                    .getValue(0.0);
 
             auto const& ip_data = _ip_data[ip];
             auto const& N = ip_data.N;
@@ -177,7 +174,6 @@ public:
             // Order matters: First C, then p!
             NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt, p_int_pt);
 
-            // \todo the first argument has to be changed for non constant
             // porosity model
             auto const porosity =
                 _process_data.porous_media_properties.getPorosity(t, pos)
@@ -210,13 +206,21 @@ public:
                 MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
 
             GlobalDimMatrixType const K_over_mu = K / mu;
-
             GlobalDimVectorType const velocity =
                 _process_data.has_gravity
                     ? GlobalDimVectorType(-K_over_mu *
                                           (dNdx * p_nodal_values - density * b))
                     : GlobalDimVectorType(-K_over_mu * dNdx * p_nodal_values);
 
+            const double drho_dp = _process_data.fluid_properties->getdValue(
+                MaterialLib::Fluid::FluidPropertyType::Density,
+                vars,
+                MaterialLib::Fluid::PropertyVariableType::p);
+
+            const double drho_dC = _process_data.fluid_properties->getdValue(
+                MaterialLib::Fluid::FluidPropertyType::Density,
+                vars,
+                MaterialLib::Fluid::PropertyVariableType::C);
             double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const hydrodynamic_dispersion =
                 velocity_magnitude != 0.0
@@ -236,20 +240,25 @@ public:
                           I);
 
             // matrix assembly
+            MCp.noalias() += w * N.transpose() * N * C_nodal_values *
+                             retardation_factor * porosity * drho_dp * N;
+            MCC.noalias() += w * N.transpose() * retardation_factor * porosity *
+                                 density * N +
+                             w * N.transpose() * retardation_factor * porosity *
+                                 N * C_nodal_values * drho_dC * N;
+
             KCC.noalias() +=
-                (dNdx.transpose() * hydrodynamic_dispersion * dNdx +
-                 N.transpose() * velocity.transpose() * dNdx +
+                (-dNdx.transpose() * velocity * density * N +
+                 dNdx.transpose() * density * hydrodynamic_dispersion * dNdx +
                  N.transpose() * decay_rate * porosity * retardation_factor *
-                     N) *
+                     density * N) *
                 w;
-            MCC.noalias() +=
-                w * N.transpose() * porosity * retardation_factor * N;
-            Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
-            Mpp.noalias() += w * N.transpose() * specific_storage * N;
+
+            Mpp.noalias() += w * N.transpose() * porosity * drho_dp * N;
+            MpC.noalias() += w * N.transpose() * porosity * drho_dC * N;
+            Kpp.noalias() += w * dNdx.transpose() * density * K_over_mu * dNdx;
             if (_process_data.has_gravity)
-                Bp += w * density * dNdx.transpose() * K_over_mu * b;
-            /* with Oberbeck-Boussing assumption density difference only exists
-             * in buoyancy effects */
+                Bp += w * density * density * dNdx.transpose() * K_over_mu * b;
         }
     }
 
@@ -275,9 +284,9 @@ public:
         pos.setElementID(_element.getID());
 
         MaterialLib::Fluid::FluidProperty::ArrayType vars;
-
-        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
-            &local_x[ShapeFunction::NPOINTS], ShapeFunction::NPOINTS);
+        auto const num_nodes = ShapeFunction::NPOINTS;
+        auto const p_nodal_values =
+            Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {

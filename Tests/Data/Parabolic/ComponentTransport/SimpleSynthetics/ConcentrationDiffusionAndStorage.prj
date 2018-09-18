@@ -13,10 +13,12 @@
             </process_variables>
             <fluid>
                 <density>
-                    <type>ConcentrationDependent</type>
+                    <type>ConcentrationAndPressureDependent</type>
                     <reference_density>1</reference_density>
                     <reference_concentration>0</reference_concentration>
-                    <fluid_density_difference_ratio>0.026</fluid_density_difference_ratio>
+                    <fluid_density_concentration_difference_ratio>0.0</fluid_density_concentration_difference_ratio>
+                    <reference_pressure>0</reference_pressure>
+                    <fluid_density_pressure_difference_ratio>5e-5</fluid_density_pressure_difference_ratio>
                 </density>
                 <viscosity>
                     <type>Constant</type>

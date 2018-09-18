@@ -72,3 +72,8 @@ Left side boundary conditions for this setup are pressure $p=1$ and concentratio
 {{< data-link "The *Diffusion, Storage, Advection, and Decay* project file" "Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndAdvectionAndDecay.prj" >}}
 
 {{< img src="../gif/DiffusionAndStorageAndAdvectionAndDecay.gif" title="*Diffusion, Storage, Advection, and Decay*">}}
+
+
+#### Changes With Inclusion of Non Boussinesq-Effects ####
+The changes to the original setup are described in [this PDF](../HC-NonBoussinesq.pdf).
+

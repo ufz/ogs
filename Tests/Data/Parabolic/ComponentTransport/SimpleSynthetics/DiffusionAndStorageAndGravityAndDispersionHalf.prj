@@ -13,10 +13,12 @@
             </process_variables>
             <fluid>
                 <density>
-                    <type>ConcentrationDependent</type>
+                    <type>ConcentrationAndPressureDependent</type>
                     <reference_density>1</reference_density>
                     <reference_concentration>0</reference_concentration>
-                    <fluid_density_difference_ratio>1</fluid_density_difference_ratio>
+                    <fluid_density_concentration_difference_ratio>1</fluid_density_concentration_difference_ratio>
+                    <reference_pressure>0</reference_pressure>
+                    <fluid_density_pressure_difference_ratio>5e-5</fluid_density_pressure_difference_ratio>
                 </density>
                 <viscosity>
                     <type>Constant</type>
@@ -87,43 +89,15 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <t_end> 9e2 </t_end>
+                    <t_end> 15e3 </t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
-                            <delta_t>1e-2</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>40</repeat>
-                            <delta_t>4e-2</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>50</repeat>
-                            <delta_t>8e-2</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>50</repeat>
-                            <delta_t>2e-1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>50</repeat>
-                            <delta_t>4e-1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>50</repeat>
-                            <delta_t>8e-1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>200</repeat>
-                            <delta_t>16e-1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>100</repeat>
-                            <delta_t>20e-1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>500</repeat>
+                            <repeat>1000</repeat>
                             <delta_t>25e-1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1000</repeat>
+                            <delta_t>25e0</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -133,6 +107,10 @@
             <type>VTK</type>
             <prefix>DiffusionAndStorageAndGravityAndDispersionHalf</prefix>
             <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>1000</each_steps>
+                </pair>
                 <pair>
                     <repeat>1</repeat>
                     <each_steps>100</each_steps>
@@ -192,9 +170,9 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>c_Dirichlet_left</name>
+            <name>c_Neumann_left</name>
             <type>Constant</type>
-            <value>1</value>
+            <value>1e-6</value>
         </parameter>
         <parameter>
             <name>c_Dirichlet_right</name>
@@ -227,8 +205,8 @@
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>left_half</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>c_Dirichlet_left</parameter>
+                    <type>Neumann</type>
+                    <parameter>c_Neumann_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>

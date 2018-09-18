@@ -25,11 +25,17 @@ namespace ComponentTransport
  *
  * The flow process is described by
  * \f[
- * S \frac{\partial p}{\partial t}
- *     - \nabla \cdot \left[\frac{\kappa}{\mu(C)} \nabla \left( p + \rho g z \right)\right]
- *     - Q_p = 0,
+ * \phi \frac{\partial \rho}{\partial p} \frac{\partial p}{\partial t}
+ *     + \phi \frac{\partial \rho}{\partial C} \frac{\partial C}{\partial t}
+ *     - \nabla \cdot \left[\frac{\kappa}{\mu(C)} \rho \nabla \left( p + \rho g
+ * z \right)\right]
+ *     + Q_p = 0,
  * \f]
- * where \f$S\f$ is the storage, \f$p\f$ is the pressure,
+ * where the storage \f$S\f$ has been substituted by
+ *      \f$\phi \frac{\partial \rho}{\partial p}\f$,
+ * \f$\phi\f$ is the porosity,
+ * \f$C\f$ is the concentration,
+ * \f$p\f$ is the pressure,
  * \f$\kappa\f$ is permeability,
  * \f$\mu\f$ is viscosity of the fluid,
  * \f$\rho\f$ is the density of the fluid, and
@@ -37,14 +43,17 @@ namespace ComponentTransport
  *
  * The mass transport process is described by
  * \f[
- * \phi R \frac{\partial C}{\partial t}
-    + \nabla \cdot \left(\vec{q} C - D \nabla C \right)
-        + \phi R \vartheta C - Q_C = 0
+ * \phi R C \frac{\partial \rho}{\partial p} \frac{\partial p}{\partial t}
+ *     + \phi R \left(\rho + C \frac{\partial \rho}{\partial C}\right)
+ * \frac{\partial C}{\partial t}
+ *     - \nabla \cdot \left[\frac{\kappa}{\mu(C)} \rho C \nabla \left( p + \rho
+ * g z \right)
+ *          + \rho D \nabla C\right]
+ *     + Q_C + R \vartheta \phi \rho C = 0,
+ *
  * \f]
- * where \f$\phi\f$ is the porosity,
- * \f$R\f$ is the retardation factor,
- * \f$C\f$ is the concentration,
- * \f$\vec{q} = \frac{\kappa}{\mu(C)} \nabla \left( p + \rho g z \right)\f$
+ * where \f$R\f$ is the retardation factor,
+ * \f$\vec{q} = -\frac{\kappa}{\mu(C)} \nabla \left( p + \rho g z \right)\f$
  *      is the Darcy velocity,
  * \f$D\f$ is the hydrodynamic dispersion tensor,
  * \f$\vartheta\f$ is the decay rate.
@@ -70,9 +79,9 @@ namespace ComponentTransport
  * flow couples the H process to the C process.
  *
  * \note At the moment there is not any coupling by source or sink terms, i.e.,
- * the coupling is implemented only by density changes due to concentration
- * changes in the buoyance term in the groundwater flow. This coupling schema is
- * referred to as the Boussinesq approximation.
+ * the coupling is implemented only by density and viscosity changes due to
+ * concentration changes as well as by the temporal derivatives of each
+ * variable.
  * */
 class ComponentTransportProcess final : public Process
 {
