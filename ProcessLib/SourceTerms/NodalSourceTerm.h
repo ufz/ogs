@@ -17,15 +17,16 @@ namespace ProcessLib
 class NodalSourceTerm final
 {
 public:
-    NodalSourceTerm(const NumLib::LocalToGlobalIndexMap& dof_table,
-                    std::size_t const bulk_mesh_id,
-                    MeshLib::Mesh const& st_mesh, const int variable_id,
-                    const int component_id, Parameter<double> const& parameter);
+    explicit NodalSourceTerm(
+        const NumLib::LocalToGlobalIndexMap& source_term_dof_table,
+        std::size_t const bulk_mesh_id, MeshLib::Mesh const& st_mesh,
+        const int variable_id, const int component_id,
+        Parameter<double> const& parameter);
 
-    void integrateNodalSourceTerm(const double t, GlobalVector& b) const;
+    void integrate(const double t, GlobalVector& b) const;
 
 private:
-    NumLib::LocalToGlobalIndexMap const& _dof_table;
+    NumLib::LocalToGlobalIndexMap const& _source_term_dof_table;
     std::size_t const _bulk_mesh_id;
     MeshLib::Mesh const& _st_mesh;
     int const _variable_id;

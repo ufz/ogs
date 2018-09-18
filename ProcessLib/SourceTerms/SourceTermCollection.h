@@ -23,7 +23,7 @@ public:
     {
     }
 
-    void integrateNodalSourceTerms(const double t, GlobalVector& b) const;
+    void integrate(const double t, GlobalVector& b) const;
 
     void addSourceTermsForProcessVariables(
         std::vector<std::reference_wrapper<ProcessVariable>> const&

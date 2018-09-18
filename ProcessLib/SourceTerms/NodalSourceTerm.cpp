@@ -13,13 +13,14 @@
 
 namespace ProcessLib
 {
-NodalSourceTerm::NodalSourceTerm(const NumLib::LocalToGlobalIndexMap& dof_table,
-                                 std::size_t const bulk_mesh_id,
-                                 MeshLib::Mesh const& st_mesh,
-                                 const int variable_id,
-                                 const int component_id,
-                                 Parameter<double> const& parameter)
-    : _dof_table(dof_table),
+NodalSourceTerm::NodalSourceTerm(
+    const NumLib::LocalToGlobalIndexMap& source_term_dof_table,
+    std::size_t const bulk_mesh_id,
+    MeshLib::Mesh const& st_mesh,
+    const int variable_id,
+    const int component_id,
+    Parameter<double> const& parameter)
+    : _source_term_dof_table(source_term_dof_table),
       _bulk_mesh_id(bulk_mesh_id),
       _st_mesh(st_mesh),
       _variable_id(variable_id),
@@ -36,8 +37,7 @@ NodalSourceTerm::NodalSourceTerm(const NumLib::LocalToGlobalIndexMap& dof_table,
     }
 }
 
-void NodalSourceTerm::integrateNodalSourceTerm(const double t,
-                                               GlobalVector& b) const
+void NodalSourceTerm::integrate(const double t, GlobalVector& b) const
 {
     DBUG("Assemble NodalSourceTerm.");
 
@@ -49,8 +49,8 @@ void NodalSourceTerm::integrateNodalSourceTerm(const double t,
         auto const node_id = node->getID();
         MeshLib::Location const l{_bulk_mesh_id, MeshLib::MeshItemType::Node,
                                   bulk_node_ids_map[node_id]};
-        auto const index =
-            _dof_table.getGlobalIndex(l, _variable_id, _component_id);
+        auto const index = _source_term_dof_table.getGlobalIndex(
+            l, _variable_id, _component_id);
 
         SpatialPosition pos;
         pos.setNodeID(node_id);
