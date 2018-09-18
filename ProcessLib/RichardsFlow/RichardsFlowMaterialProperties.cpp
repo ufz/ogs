@@ -29,7 +29,7 @@ namespace ProcessLib
 namespace RichardsFlow
 {
 RichardsFlowMaterialProperties::RichardsFlowMaterialProperties(
-    boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
+    MeshLib::PropertyVector<int> const* const material_ids,
     std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
         intrinsic_permeability_models,

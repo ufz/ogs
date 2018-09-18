@@ -49,7 +49,7 @@ public:
     using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
 
     RichardsFlowMaterialProperties(
-        boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
+        MeshLib::PropertyVector<int> const* const material_ids,
         std::unique_ptr<MaterialLib::Fluid::FluidProperties>&& fluid_properties,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
             intrinsic_permeability_models,
@@ -108,7 +108,7 @@ private:
     /**
     *  Material IDs must be given as mesh element properties.
     */
-    boost::optional<MeshLib::PropertyVector<int> const&> const _material_ids;
+    MeshLib::PropertyVector<int> const* const _material_ids;
 
     const std::unique_ptr<MaterialLib::Fluid::FluidProperties>
         _fluid_properties;
