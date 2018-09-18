@@ -26,10 +26,21 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
 {
     auto const node_ids = mshNodeSearcher.getMeshNodeIDs(_point);
     if (node_ids.empty())
+    {
+        #ifndef USE_PETSC
         OGS_FATAL(
             "BoundaryElementsAtPoint: the mesh node searcher was unable to "
             "locate the point (%f, %f, %f) in the mesh.",
             _point[0], _point[1], _point[2]);
+        #else
+        DBUG(
+            "BoundaryElementsAtPoint: the mesh node searcher was unable to "
+            "locate the point (%f, %f, %f) in the current domain of the "
+            "partitioned mesh.",
+            _point[0], _point[1], _point[2]);
+            return;
+        #endif
+    }
     if (node_ids.size() > 1)
         OGS_FATAL(
             "BoundaryElementsAtPoint: the mesh node searcher found %d points "
