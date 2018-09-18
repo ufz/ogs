@@ -20,7 +20,7 @@ NodalSourceTerm::NodalSourceTerm(
     const int variable_id,
     const int component_id,
     Parameter<double> const& parameter)
-    : _source_term_dof_table(source_term_dof_table),
+    : SourceTerm(source_term_dof_table),
       _bulk_mesh_id(bulk_mesh_id),
       _st_mesh(st_mesh),
       _variable_id(variable_id),
