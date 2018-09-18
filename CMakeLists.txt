@@ -22,10 +22,7 @@ endif()
 # Project name
 project( OGS-6 )
 
-list(APPEND CMAKE_PREFIX_PATH
-    $ENV{HOMEBREW_ROOT}             # Homebrew package manager on Mac OS
-    $ENV{CMAKE_LIBRARY_SEARCH_PATH} # Environment variable, Windows
-    ${CMAKE_LIBRARY_SEARCH_PATH})   # CMake option, Windows
+include(scripts/cmake/CMakeSetup.cmake)
 
 ###########################
 ### Preliminary Options ###
@@ -49,22 +46,21 @@ if(OGS_USE_PETSC)
 endif()
 
 ### CMake includes ###
-include(scripts/cmake/PreFind.cmake)
-include(scripts/cmake/CheckTypeSizes.cmake)
-include(scripts/cmake/Functions.cmake)
-include(scripts/cmake/SubmoduleSetup.cmake)
-include(scripts/cmake/CMakeSetup.cmake)
-include(scripts/cmake/ConanSetup.cmake)
-include(scripts/cmake/CompilerSetup.cmake)
-include(scripts/cmake/Find.cmake)
-include(scripts/cmake/CCacheSetup.cmake)
-include(scripts/cmake/ProjectSetup.cmake)
-include(scripts/cmake/DocumentationSetup.cmake)
-include(scripts/cmake/test/Test.cmake)
+include(PreFind)
+include(CheckTypeSizes)
+include(Functions)
+include(SubmoduleSetup)
+include(ConanSetup)
+include(CompilerSetup)
+include(Find)
+include(CCacheSetup)
+include(ProjectSetup)
+include(DocumentationSetup)
+include(test/Test)
 if(OGS_COVERAGE AND NOT IS_SUBPROJECT)
-    include(scripts/cmake/Coverage.cmake)
+    include(Coverage)
 endif()
-include(scripts/cmake/Web.cmake)
+include(Web)
 
 ####################
 ### More Options ###
