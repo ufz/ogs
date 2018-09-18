@@ -93,7 +93,9 @@ pipeline {
               build { target="doc" }
               // TODO: .*DOT_GRAPH_MAX_NODES.
               //       .*potential recursive class relation.*
-              recordIssues tools: [[pattern: 'build/DoxygenWarnings.log', tool: [$class: 'Doxygen']]], unstableTotalAll: 0
+              recordIssues tools: [[pattern: 'build/DoxygenWarnings.log',
+                tool: [$class: 'Doxygen']]],
+                unstableTotalAll: 23
               dir('build/docs') { stash(name: 'doxygen') }
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                   keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
@@ -117,7 +119,8 @@ pipeline {
               publishReports { }
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
-                tools: [[name: 'GCC', tool: [$class: 'GnuMakeGcc']]]
+                tools: [[name: 'GCC', tool: [$class: 'GnuMakeGcc']]],
+                unstableTotalAll: 24
             }
             success {
               dir('build/docs') { stash(name: 'doxygen') }
@@ -261,11 +264,11 @@ pipeline {
           post {
             always {
               publishReports { }
-              // messagesPattern: '.*QVTK.*'
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
                 excludeFile('.*thread.hpp')],
-                tools: [[name: 'MSVC', tool: [$class: 'MsBuild']]]
+                tools: [[name: 'MSVC', tool: [$class: 'MsBuild']]],
+                unstableTotalAll: 6
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'
