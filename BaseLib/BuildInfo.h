@@ -32,6 +32,7 @@ namespace BuildInfo
 
     extern BASELIB_EXPORT const std::string git_describe;
     extern BASELIB_EXPORT const std::string ogs_version;
+    extern BASELIB_EXPORT const std::string cmake_args;
 
     extern BASELIB_EXPORT const std::string source_path;
     extern BASELIB_EXPORT const std::string data_path;

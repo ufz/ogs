@@ -57,7 +57,9 @@ int main(int argc, char* argv[])
         "See accompanying file LICENSE.txt or "
         "http://www.opengeosys.org/project/license\n"
         "version: " +
-            BaseLib::BuildInfo::git_describe,
+            BaseLib::BuildInfo::git_describe + "\n" +
+        "CMake arguments: " +
+            BaseLib::BuildInfo::cmake_args,
         ' ',
         BaseLib::BuildInfo::git_describe);
 
