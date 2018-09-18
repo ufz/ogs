@@ -173,8 +173,8 @@ int main(int argc, char* argv[])
             //! \ogs_file_param{prj__insitu}
             if (auto t = project_config->getConfigSubtreeOptional("insitu"))
             {
-                //! \ogs_file_param{prj__insitu__scripts}
                 InSituLib::Initialize(
+                    //! \ogs_file_param{prj__insitu__scripts}
                     t->getConfigSubtree("scripts"),
                     BaseLib::extractPath(project_arg.getValue()));
                 isInsituConfigured = true;
