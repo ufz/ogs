@@ -29,6 +29,7 @@ namespace BuildInfo
 
     const std::string git_describe("@GIT_DESCRIBE@");
     const std::string ogs_version("@OGS_VERSION@");
+    const std::string cmake_args("@CMAKE_ARGS_ESCAPED@");
 
     const std::string source_path("@CMAKE_CURRENT_SOURCE_DIR@");
     const std::string data_path("@Data_SOURCE_DIR@");

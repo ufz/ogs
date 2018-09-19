@@ -1,14 +1,23 @@
+# Disallow in-source builds as the git project cluttered with generated files
+# probably confuses people. source/build* is still allowed!
+if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+   message(FATAL_ERROR "In-source builds are not allowed!\n"
+    "Make sure to remove CMakeCache.txt and CMakeFiles/ "
+    "from the source directory!")
+endif()
+
 # Set additional CMake modules path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
   "${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake"
   "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/cmake-modules")
 
-# Load addional modules
-include(UseBackportedModules)
-include(OptionRequires)
-include(CppcheckTargets)
-include(GNUInstallDirs)
+list(APPEND CMAKE_PREFIX_PATH
+  $ENV{HOMEBREW_ROOT}             # Homebrew package manager on Mac OS
+  $ENV{CMAKE_LIBRARY_SEARCH_PATH} # Environment variable, Windows
+  ${CMAKE_LIBRARY_SEARCH_PATH})   # CMake option, Windows
 
+# Load addional modules
+include(GNUInstallDirs)
 include(ProcessorCount)
 ProcessorCount(NUM_PROCESSORS)
 set(NUM_PROCESSORS ${NUM_PROCESSORS} CACHE STRING "Processor count")
