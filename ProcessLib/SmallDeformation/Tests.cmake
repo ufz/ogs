@@ -287,9 +287,9 @@ AddTest(
     ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu sigma sigma 1e-15 0
 )
 
-# Two materials in gravity field
+# Two materials in gravity field variation of density
 AddTest(
-    NAME SmallDeformation_SDL_two_material_gravity
+    NAME SmallDeformation_SDL_two_material_gravity_density
     PATH Mechanics/Linear
     EXECUTABLE_ARGS two_material_gravity.prj
     TESTER vtkdiff
@@ -300,6 +300,18 @@ AddTest(
     expected_two_material_gravity.vtu two_material_gravity_pcs_0_ts_1_t_1.000000.vtu epsilon epsilon 5e-14 0
 )
 
+# Two materials in gravity field variation of modulus of elasticity
+AddTest(
+    NAME SmallDeformation_SDL_two_material_gravity_Emodulus
+    PATH Mechanics/Linear
+    EXECUTABLE_ARGS two_material_gravity_Emodulus.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_two_material_gravity_Emodulus.vtu two_material_gravity_Emodulus_pcs_0_ts_1_t_1.000000.vtu displacement displacement 5e-14 0
+    expected_two_material_gravity_Emodulus.vtu two_material_gravity_Emodulus_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-13 0
+    expected_two_material_gravity_Emodulus.vtu two_material_gravity_Emodulus_pcs_0_ts_1_t_1.000000.vtu epsilon epsilon 5e-14 0
+)
 AddTest(
     NAME PythonBCSmallDeformationPiston
     PATH Mechanics/Linear/PythonPiston
