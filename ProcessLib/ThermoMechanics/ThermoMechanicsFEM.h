@@ -12,7 +12,7 @@
 #include <memory>
 #include <vector>
 
-#include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -123,12 +123,15 @@ public:
                               IntegrationMethod, DisplacementDim>(
                 e, is_axially_symmetric, _integration_method);
 
-        auto const material_id = _process_data.material_ids == nullptr
-                                     ? 0
-                                     : (*_process_data.material_ids)[e.getID()];
+        auto& solid_material =
+            MaterialLib::Solids::selectSolidConstitutiveRelation(
+                _process_data.solid_materials,
+                _process_data.material_ids,
+                e.getID());
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(*_process_data.solid_materials[material_id]);
+            _ip_data.emplace_back(solid_material);
             auto& ip_data = _ip_data[ip];
             ip_data.integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *
