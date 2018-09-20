@@ -135,14 +135,13 @@ bool MeshLayerMapper::createRasterLayers(
         return false;
     }
 
-    auto* top(new MeshLib::Mesh(mesh));
+    auto top = std::make_unique<MeshLib::Mesh>(mesh);
     if (!layerMapping(*top, *rasters.back(), noDataReplacementValue))
         return false;
 
-    auto* bottom(new MeshLib::Mesh(mesh));
+    auto bottom = std::make_unique<MeshLib::Mesh>(mesh);
     if (!layerMapping(*bottom, *rasters[0], 0))
     {
-        delete top;
         return false;
     }
 
@@ -161,13 +160,11 @@ bool MeshLayerMapper::createRasterLayers(
     std::vector<MeshLib::Node*> const& nodes = bottom->getNodes();
     for (MeshLib::Node* node : nodes)
         _nodes.push_back(new MeshLib::Node(*node));
-    delete bottom;
 
     // add the other layers
     for (std::size_t i=0; i<nLayers-1; ++i)
         addLayerToMesh(*top, i, *rasters[i+1]);
 
-    delete top;
     return true;
 }
 
