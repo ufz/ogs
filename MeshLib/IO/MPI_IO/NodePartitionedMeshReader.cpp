@@ -628,29 +628,45 @@ void NodePartitionedMeshReader::setElements(
 
         // The element types below are defined by the mesh_partition tool
         // available at https://github.com/ufz/mesh_partition .
-        switch(e_type)
+        switch (e_type)
         {
-        case 2:
-            mesh_elems[i + id_offset_ghost] = new MeshLib::Line(elem_nodes, mat_idx);
-            break;
-        case 6:
-            mesh_elems[i + id_offset_ghost] = new MeshLib::Quad(elem_nodes, mat_idx);
-            break;
-        case 11:
-            mesh_elems[i + id_offset_ghost] = new MeshLib::Hex(elem_nodes, mat_idx);
-            break;
-        case 4:
-            mesh_elems[i + id_offset_ghost] = new MeshLib::Tri(elem_nodes, mat_idx);
-            break;
-        case 9:
-            mesh_elems[i + id_offset_ghost] = new MeshLib::Tet(elem_nodes, mat_idx);
-            break;
-        case 14:
-            mesh_elems[i + id_offset_ghost] = new MeshLib::Prism(elem_nodes, mat_idx);
-            break;
-        case 17:
-            mesh_elems[i + id_offset_ghost] = new MeshLib::Pyramid(elem_nodes, mat_idx);
-            break;
+            case 1:
+                mesh_elems[i + id_offset_ghost] =
+                    new MeshLib::Point(elem_nodes, mat_idx);
+                break;
+            case 2:
+                mesh_elems[i + id_offset_ghost] =
+                    new MeshLib::Line(elem_nodes, mat_idx);
+                break;
+            case 6:
+                mesh_elems[i + id_offset_ghost] =
+                    new MeshLib::Quad(elem_nodes, mat_idx);
+                break;
+            case 11:
+                mesh_elems[i + id_offset_ghost] =
+                    new MeshLib::Hex(elem_nodes, mat_idx);
+                break;
+            case 4:
+                mesh_elems[i + id_offset_ghost] =
+                    new MeshLib::Tri(elem_nodes, mat_idx);
+                break;
+            case 9:
+                mesh_elems[i + id_offset_ghost] =
+                    new MeshLib::Tet(elem_nodes, mat_idx);
+                break;
+            case 14:
+                mesh_elems[i + id_offset_ghost] =
+                    new MeshLib::Prism(elem_nodes, mat_idx);
+                break;
+            case 17:
+                mesh_elems[i + id_offset_ghost] =
+                    new MeshLib::Pyramid(elem_nodes, mat_idx);
+                break;
+            default:
+                OGS_FATAL(
+                    "NodePartitionedMeshReader: construction of element type "
+                    "%d is not implemented.",
+                    e_type);
         }
     }
 }
