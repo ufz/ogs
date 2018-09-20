@@ -46,29 +46,25 @@ createConstitutiveRelation(
         return MaterialLib::Solids::Ehlers::createEhlers<DisplacementDim>(
             parameters, constitutive_relation_config);
     }
-    else if (type == "LinearElasticIsotropic")
+    if (type == "LinearElasticIsotropic")
     {
         const bool skip_type_checking = false;
         return MaterialLib::Solids::createLinearElasticIsotropic<
             DisplacementDim>(
             parameters, constitutive_relation_config, skip_type_checking);
     }
-    else if (type == "Lubby2")
+    if (type == "Lubby2")
     {
         return MaterialLib::Solids::Lubby2::createLubby2<DisplacementDim>(
             parameters, constitutive_relation_config);
     }
-    else if (type == "CreepBGRa")
+    if (type == "CreepBGRa")
     {
         return MaterialLib::Solids::Creep::createCreepBGRa<DisplacementDim>(
             parameters, constitutive_relation_config);
     }
-    else
-    {
-        OGS_FATAL(
-            "Cannot construct constitutive relation of given type \'%s\'.",
-            type.c_str());
-    }
+    OGS_FATAL("Cannot construct constitutive relation of given type \'%s\'.",
+              type.c_str());
 }
 
 template std::unique_ptr<MaterialLib::Solids::MechanicsBase<2>>

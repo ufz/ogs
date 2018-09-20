@@ -283,10 +283,12 @@ public:
     template<typename T> T
     getConfigParameter(std::string const& param) const;
 
-    /*! Get parameter \c param of type \c T from the configuration tree or the \c default_value.
+    /*! Get parameter \c param of type \c T from the configuration tree or the
+     * \c default_value.
      *
-     * This method has a similar behaviour as getConfigParameter(std::string const&) except in case
-     * of errors the \c default_value is returned.
+     * This method has a similar behaviour as getConfigParameter(std::string
+     * const&) except the \c default_value is returned if the attribute has not
+     * been found.
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
@@ -364,18 +366,33 @@ public:
 
     /*! Get XML attribute \c attr of type \c T for the current parameter.
      *
-     * \return the requested attribute
+     * \return the requested attribute's value.
      *
-     * \pre \c param must not have been read before from this ConfigTree.
+     * \pre \c attr must not have been read before from the current parameter.
      */
     template<typename T> T
     getConfigAttribute(std::string const& attr) const;
 
-    /*! Get XML attribute \c attr of type \c T for the current parameter if present.
+    /*! Get XML attribute \c attr of type \c T for the current parameter or the
+     * \c default_value.
      *
-     * \return the requested attribute
+     * This method has a similar behaviour as getConfigAttribute(std::string
+     * const&) except the \c default_value is returned if the attribute has not
+     * been found.
      *
-     * \pre \c param must not have been read before from this ConfigTree.
+     * \return the requested attribute's value.
+     *
+     * \pre \c attr must not have been read before from the current parameter.
+     */
+    template <typename T>
+    T getConfigAttribute(std::string const& attr, T const& default_value) const;
+
+    /*! Get XML attribute \c attr of type \c T for the current parameter if
+     * present.
+     *
+     * \return the requested attribute's value.
+     *
+     * \pre \c attr must not have been read before from the current parameter.
      */
     template<typename T> boost::optional<T>
     getConfigAttributeOptional(std::string const& attr) const;
