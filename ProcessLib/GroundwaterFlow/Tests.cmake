@@ -683,6 +683,18 @@ AddTest(
 )
 
 AddTest(
+    NAME GroundWaterFlowProcess_VolumetricSourceTerm_square_1e2
+    PATH Elliptic/square_1x1_GroundWaterFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e2_volumetricsourceterm.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    square_1x1_quad_1e2_volumetricsourceterm_analytical_solution.vtu square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1e-14 1e-16
+)
+
+AddTest(
     NAME PythonBCGroundWaterFlowProcessLaplaceEqDirichletNeumann
     PATH Elliptic/square_1x1_GroundWaterFlow_Python
     EXECUTABLE ogs
