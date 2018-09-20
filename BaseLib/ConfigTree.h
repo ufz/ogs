@@ -283,10 +283,12 @@ public:
     template<typename T> T
     getConfigParameter(std::string const& param) const;
 
-    /*! Get parameter \c param of type \c T from the configuration tree or the \c default_value.
+    /*! Get parameter \c param of type \c T from the configuration tree or the
+     * \c default_value.
      *
-     * This method has a similar behaviour as getConfigParameter(std::string const&) except in case
-     * of errors the \c default_value is returned.
+     * This method has a similar behaviour as getConfigParameter(std::string
+     * const&) except the \c default_value is returned if the attribute has not
+     * been found.
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
@@ -375,7 +377,8 @@ public:
      * \c default_value.
      *
      * This method has a similar behaviour as getConfigAttribute(std::string
-     * const&) except in case of errors the \c default_value is returned.
+     * const&) except the \c default_value is returned if the attribute has not
+     * been found.
      *
      * \return the requested attribute's value.
      *
