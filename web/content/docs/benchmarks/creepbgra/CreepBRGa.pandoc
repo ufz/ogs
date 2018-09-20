@@ -78,7 +78,7 @@ $$\begin{gathered}
  (\dot { \mathbf \epsilon}- \dot { \mathbf \epsilon}^T- \dot { \mathbf \epsilon}^c)
 \end{gathered}$$
 where
-$\mathbf{C}:= \lambda \mathcal{J} + 2G \mathbf I \otimes \mathbf I  $
+$\mathbf{C} = \lambda  \mathcal{J} + 2G \mathbf I \otimes \mathbf I$
 with $\mathcal{J}$ the forth order identity, $\mathbf I$ the second order identity,
 $\lambda$ the Lamé constant,  $G$ the shear modulus, and $\otimes$  the tensor
 product notation.

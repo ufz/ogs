@@ -31,6 +31,7 @@ top part of the domain represents a cap rock type, while the other
 material group is for rock salt. The material properties of the rocks are given in the following table:
 
 ---------------------- ---------- ----------- ------------
+
 |         |Cap rock |  Rock salt|   Unit|
 | --- |:---------:| -----:|----:|
 |Density            |    2000   |    2170 |       kg/m$^{3}$|
