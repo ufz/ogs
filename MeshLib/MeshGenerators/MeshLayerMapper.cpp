@@ -102,12 +102,20 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
                 e_nodes[j] = new_nodes[node_id+nNodes];
                 e_nodes[j+nElemNodes] = new_nodes[node_id];
             }
-            // extrude triangles to prism
             if (sfc_elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
-                new_elems.push_back (new MeshLib::Prism(e_nodes));
-            // extrude quads to hexes
+            {
+                // extrude triangles to prism
+                new_elems.push_back(new MeshLib::Prism(e_nodes));
+            }
             else if (sfc_elem->getGeomType() == MeshLib::MeshElemType::QUAD)
-                new_elems.push_back (new MeshLib::Hex(e_nodes));
+            {
+                // extrude quads to hexes
+                new_elems.push_back(new MeshLib::Hex(e_nodes));
+            }
+            else
+            {
+                OGS_FATAL("MeshLayerMapper: Unknown element type to extrude.");
+            }
             materials->push_back(mat_id);
         }
     }
