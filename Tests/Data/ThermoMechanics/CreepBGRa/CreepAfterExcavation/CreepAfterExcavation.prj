@@ -11,10 +11,15 @@
             <name>ThermoMechanics</name>
             <type>THERMO_MECHANICS</type>
             <integration_order>2</integration_order>
-            <constitutive_relation>
+            <constitutive_relation id="0">
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>E0</youngs_modulus>
+                <poissons_ratio>nu0</poissons_ratio>
+            </constitutive_relation>
+            <constitutive_relation id="1">
                 <type>CreepBGRa</type>
-                <youngs_modulus>E</youngs_modulus>
-                <poissons_ratio>nu</poissons_ratio>
+                <youngs_modulus>E1</youngs_modulus>
+                <poissons_ratio>nu1</poissons_ratio>
                 <a>A</a>
                 <n>n</n>
                 <sigma0>sigma_f</sigma0>
@@ -99,8 +104,8 @@
     <parameters>
         <parameter>
             <name>A</name>
-            <type>MeshElement</type>
-            <field_name>A</field_name>
+            <type>Constant</type>
+            <value>2.0833333333333333e-6</value>
         </parameter>
         <parameter>
             <name>n</name>
@@ -119,14 +124,24 @@
         </parameter>
 
         <parameter>
-            <name>E</name>
-            <type>MeshElement</type>
-            <field_name>E</field_name>
+            <name>E1</name>
+            <type>Constant</type>
+            <value>7.65e9</value>
         </parameter>
         <parameter>
-            <name>nu</name>
-            <type>MeshElement</type>
-            <field_name>nu</field_name>
+            <name>nu1</name>
+            <type>Constant</type>
+            <value>0.27</value>
+        </parameter>
+        <parameter>
+            <name>nu0</name>
+            <type>Constant</type>
+            <value>0.3</value>
+        </parameter>
+        <parameter>
+            <name>E0</name>
+            <type>Constant</type>
+            <value>7e9</value>
         </parameter>
         <parameter>
             <name>rho_sr</name>
