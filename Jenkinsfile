@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.9') _
+@Library('jenkins-pipeline@1.0.12') _
 
 def stage_required = [build: false, data: false, full: false]
 
@@ -109,7 +109,7 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_TESTS=OFF '
               }
-              build { }
+              build { log="build.log" }
               build { target="doc" }
             }
           }
@@ -118,7 +118,8 @@ pipeline {
               publishReports { }
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
-                tools: [[name: 'GCC', tool: [$class: 'GnuMakeGcc']]],
+                tools: [[pattern: 'build/build.log', name: 'GCC',
+                  tool: [$class: 'GnuMakeGcc']]],
                 unstableTotalAll: 24
             }
             success {
@@ -257,7 +258,7 @@ pipeline {
                   '-DOGS_BUILD_TESTS=OFF ' +
                   '-DOGS_BUILD_SWMM=ON '
               }
-              build { }
+              build { log="build.log" }
             }
           }
           post {
@@ -266,7 +267,8 @@ pipeline {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
                 excludeFile('.*thread.hpp')],
-                tools: [[name: 'MSVC', tool: [$class: 'MsBuild']]],
+                tools: [[pattern: 'build/build.log', name: 'MSVC',
+                  tool: [$class: 'MsBuild']]],
                 unstableTotalAll: 6
             }
             success {
