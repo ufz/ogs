@@ -38,7 +38,8 @@ template <typename BMatricesType, typename ShapeMatricesType,
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material)
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material)
         : solid_material(solid_material),
           material_state_variables(
               solid_material.createMaterialStateVariables())
@@ -49,7 +50,7 @@ struct IntegrationPointData final
     typename BMatricesType::KelvinVectorType eps, eps_prev;
     double free_energy_density = 0;
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;

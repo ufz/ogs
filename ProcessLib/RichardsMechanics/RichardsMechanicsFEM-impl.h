@@ -55,8 +55,10 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                           IntegrationMethod, DisplacementDim>(
             e, is_axially_symmetric, _integration_method);
 
-    auto& solid_material = MaterialLib::Solids::selectSolidConstitutiveRelation(
-        _process_data.solid_materials, _process_data.material_ids, e.getID());
+    auto const& solid_material =
+        MaterialLib::Solids::selectSolidConstitutiveRelation(
+            _process_data.solid_materials, _process_data.material_ids,
+            e.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
