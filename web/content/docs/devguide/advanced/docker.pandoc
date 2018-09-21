@@ -81,3 +81,9 @@ make ogs
 ./bin/ogs
 ```
 
+## OGS-6 images used by Jenkins
+
+The following images are used by Jenkins:
+
+- `ogs6/gcc`, defined in [scripts/docker/Dockerfile.gcc.full](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.gcc.full)
+- `ogs6/clang`, defined in [scripts/docker/Dockerfile.clang.full](scripts/docker/Dockerfile.clang.full)

@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 @Library('jenkins-pipeline@1.0.9') _
 
-def stage_required = [build: false, data: false, full: false]
+def stage_required = [build: false, data: false, full: false, docker: false]
 
 pipeline {
   agent none
@@ -54,6 +54,10 @@ pipeline {
                 if (path.startsWith("Tests/Data") && !stage_required.data) {
                   stage_required.data = true
                   echo "Updating Tests/Data."
+                }
+                if (path.startsWith("scripts/docker") && !stage_required.docker) {
+                  stage_required.docker = true
+                  echo "Doing Docker images build."
                 }
               }
             }
@@ -335,6 +339,26 @@ pipeline {
     stage('Master') {
       when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
       parallel {
+        // ********************* Push Docker Images ****************************
+        stage('Push Docker Images') {
+          when {
+            beforeAgent true
+            expression { return stage_required.docker || stage_required.full }
+          }
+          agent { label 'docker' }
+          steps {
+            script {
+              dir('scripts/docker') {
+                def gccImage = docker.build("ogs6/gcc:latest", "-f Dockerfile.gcc.full .")
+                def clangImage = docker.build("ogs6/clang:latest", "-f Dockerfile.clang.full .")
+                docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                  gccImage.push()
+                  clangImage.push()
+                }
+              }
+            }
+          }
+        }
         // ************************* Analyzers *********************************
         stage('Analyzers') {
           when {
