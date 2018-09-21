@@ -157,7 +157,7 @@ public:
 
     std::unique_ptr<
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-    createMaterialStateVariables() override
+    createMaterialStateVariables() const override
     {
         return std::unique_ptr<
             typename MechanicsBase<DisplacementDim>::MaterialStateVariables>{
@@ -224,14 +224,12 @@ public:
                                    DisplacementDim>::MaterialStateVariables>,
                                KelvinMatrix>>
     integrateStress(
-        double const t,
-        ProcessLib::SpatialPosition const& x,
-        double const dt,
-        KelvinVector const& eps_prev,
-        KelvinVector const& eps,
+        double const t, ProcessLib::SpatialPosition const& x, double const dt,
+        KelvinVector const& eps_prev, KelvinVector const& eps,
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables, double const T) override;
+            material_state_variables,
+        double const T) const override;
 
 private:
     /// Calculates the 18x1 residual vector.
@@ -244,7 +242,7 @@ private:
         KelvinVector& strain_Max_curr,
         const KelvinVector& strain_Max_t,
         ResidualVector& res,
-        detail::LocalLubby2Properties<DisplacementDim> const& properties);
+        detail::LocalLubby2Properties<DisplacementDim> const& properties) const;
 
     /// Calculates the 18x18 Jacobian.
     void calculateJacobianBurgers(
@@ -255,7 +253,7 @@ private:
         double s_eff,
         const KelvinVector& sig_i,
         const KelvinVector& eps_K_i,
-        detail::LocalLubby2Properties<DisplacementDim> const& properties);
+        detail::LocalLubby2Properties<DisplacementDim> const& properties) const;
 
 private:
     NumLib::NewtonRaphsonSolverParameters const _nonlinear_solver_parameters;

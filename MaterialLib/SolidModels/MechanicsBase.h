@@ -66,7 +66,7 @@ struct MechanicsBase
     /// Polymorphic creator for MaterialStateVariables objects specific for a
     /// material model.
     virtual std::unique_ptr<MaterialStateVariables>
-    createMaterialStateVariables() = 0;
+    createMaterialStateVariables() const = 0;
 
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
@@ -77,9 +77,8 @@ struct MechanicsBase
     /// constitutive relation compute function.
     /// Returns nothing in case of errors in the computation if Newton
     /// iterations did not converge, for example.
-    boost::optional<std::tuple<KelvinVector,
-                               std::unique_ptr<MaterialStateVariables>,
-                               KelvinMatrix>>
+    boost::optional<std::tuple<
+        KelvinVector, std::unique_ptr<MaterialStateVariables>, KelvinMatrix>>
     integrateStress(double const t,
                     ProcessLib::SpatialPosition const& x,
                     double const dt,
@@ -87,7 +86,7 @@ struct MechanicsBase
                     Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps,
                     Eigen::Matrix<double, Eigen::Dynamic, 1> const& sigma_prev,
                     MaterialStateVariables const& material_state_variables,
-                    double const T)
+                    double const T) const
     {
         // TODO Avoid copies of data:
         // Using MatrixBase<Derived> not possible because template functions
@@ -109,9 +108,8 @@ struct MechanicsBase
     /// wrapper function.
     /// Returns nothing in case of errors in the computation if Newton
     /// iterations did not converge, for example.
-    virtual boost::optional<std::tuple<KelvinVector,
-                                       std::unique_ptr<MaterialStateVariables>,
-                                       KelvinMatrix>>
+    virtual boost::optional<std::tuple<
+        KelvinVector, std::unique_ptr<MaterialStateVariables>, KelvinMatrix>>
     integrateStress(double const t,
                     ProcessLib::SpatialPosition const& x,
                     double const dt,
@@ -119,7 +117,7 @@ struct MechanicsBase
                     KelvinVector const& eps,
                     KelvinVector const& sigma_prev,
                     MaterialStateVariables const& material_state_variables,
-                    double const T) = 0;
+                    double const T) const = 0;
 
     /// Helper type for providing access to internal variables.
     struct InternalVariable

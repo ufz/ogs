@@ -55,7 +55,7 @@ public:
 
     std::unique_ptr<
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-    createMaterialStateVariables() override
+    createMaterialStateVariables() const override
     {
         return LinearElasticIsotropic<
             DisplacementDim>::createMaterialStateVariables();
@@ -75,17 +75,17 @@ public:
     {
     }
 
-    boost::optional<
-        std::tuple<KelvinVector, std::unique_ptr<typename MechanicsBase<
-                                     DisplacementDim>::MaterialStateVariables>,
-                   KelvinMatrix>>
+    boost::optional<std::tuple<KelvinVector,
+                               std::unique_ptr<typename MechanicsBase<
+                                   DisplacementDim>::MaterialStateVariables>,
+                               KelvinMatrix>>
     integrateStress(
         double const t, ProcessLib::SpatialPosition const& x, double const dt,
         KelvinVector const& eps_prev, KelvinVector const& eps,
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
             material_state_variables,
-        double const T) override;
+        double const T) const override;
 
     ConstitutiveModel getConstitutiveModel() const override
     {

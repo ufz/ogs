@@ -267,7 +267,7 @@ public:
 public:
     std::unique_ptr<
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-    createMaterialStateVariables() override
+    createMaterialStateVariables() const override
     {
         return std::make_unique<StateVariables<DisplacementDim>>();
     }
@@ -309,19 +309,17 @@ public:
         return (eps - eps_p.D - eps_p.V / 3 * identity2).dot(sigma) / 2;
     }
 
-    boost::optional<
-        std::tuple<KelvinVector, std::unique_ptr<typename MechanicsBase<
-                                     DisplacementDim>::MaterialStateVariables>,
-                   KelvinMatrix>>
+    boost::optional<std::tuple<KelvinVector,
+                               std::unique_ptr<typename MechanicsBase<
+                                   DisplacementDim>::MaterialStateVariables>,
+                               KelvinMatrix>>
     integrateStress(
-        double const t,
-        ProcessLib::SpatialPosition const& x,
-        double const dt,
-        KelvinVector const& eps_prev,
-        KelvinVector const& eps,
+        double const t, ProcessLib::SpatialPosition const& x, double const dt,
+        KelvinVector const& eps_prev, KelvinVector const& eps,
         KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables, double const T) override;
+            material_state_variables,
+        double const T) const override;
 
     std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
     getInternalVariables() const override;

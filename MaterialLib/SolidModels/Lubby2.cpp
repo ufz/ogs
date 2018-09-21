@@ -73,14 +73,12 @@ boost::optional<std::tuple<typename Lubby2<DisplacementDim>::KelvinVector,
                                DisplacementDim>::MaterialStateVariables>,
                            typename Lubby2<DisplacementDim>::KelvinMatrix>>
 Lubby2<DisplacementDim>::integrateStress(
-    double const t,
-    ProcessLib::SpatialPosition const& x,
-    double const dt,
-    KelvinVector const& /*eps_prev*/,
-    KelvinVector const& eps,
+    double const t, ProcessLib::SpatialPosition const& x, double const dt,
+    KelvinVector const& /*eps_prev*/, KelvinVector const& eps,
     KelvinVector const& /*sigma_prev*/,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-        material_state_variables, double const /*T*/)
+        material_state_variables,
+    double const /*T*/) const
 {
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
@@ -204,7 +202,7 @@ void Lubby2<DisplacementDim>::calculateResidualBurgers(
     KelvinVector& strain_Max_curr,
     const KelvinVector& strain_Max_t,
     ResidualVector& res,
-    detail::LocalLubby2Properties<DisplacementDim> const& properties)
+    detail::LocalLubby2Properties<DisplacementDim> const& properties) const
 {
     // calculate stress residual
     res.template segment<KelvinVectorSize>(0).noalias() =
@@ -231,7 +229,7 @@ void Lubby2<DisplacementDim>::calculateJacobianBurgers(
     double s_eff,
     const KelvinVector& sig_i,
     const KelvinVector& eps_K_i,
-    detail::LocalLubby2Properties<DisplacementDim> const& properties)
+    detail::LocalLubby2Properties<DisplacementDim> const& properties) const
 {
     Jac.setZero();
 
