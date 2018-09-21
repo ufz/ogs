@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-@Library('jenkins-pipeline@1.0.9') _
+@Library('jenkins-pipeline@1.0.12') _
 
 def stage_required = [build: false, data: false, full: false]
 
@@ -109,7 +109,7 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_TESTS=OFF '
               }
-              build { }
+              build { log="build.log" }
               build { target="doc" }
             }
           }
@@ -118,8 +118,9 @@ pipeline {
               publishReports { }
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
-                tools: [[name: 'GCC', tool: [$class: 'GnuMakeGcc']]],
-                unstableTotalAll: 24
+                tools: [[pattern: 'build/build.log', name: 'GCC',
+                  tool: [$class: 'GnuMakeGcc']]],
+                unstableTotalAll: 19
             }
             success {
               dir('build/docs') { stash(name: 'doxygen') }
@@ -257,7 +258,7 @@ pipeline {
                   '-DOGS_BUILD_TESTS=OFF ' +
                   '-DOGS_BUILD_SWMM=ON '
               }
-              build { }
+              build { log="build.log" }
             }
           }
           post {
@@ -266,8 +267,9 @@ pipeline {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*\\.conan.*'), excludeFile('.*ThirdParty.*'),
                 excludeFile('.*thread.hpp')],
-                tools: [[name: 'MSVC', tool: [$class: 'MsBuild']]],
-                unstableTotalAll: 6
+                tools: [[pattern: 'build/build.log', name: 'MSVC',
+                  tool: [$class: 'MsBuild']]],
+                unstableTotalAll: 4
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'
@@ -292,6 +294,10 @@ pipeline {
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" '
               }
               build {
+                log = "build.log"
+                cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
+              }
+              build {
                 target = 'tests'
                 cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
               }
@@ -299,15 +305,16 @@ pipeline {
                 target = 'ctest'
                 cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
               }
-              build {
-                target = 'package'
-                cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
-              }
             }
           }
           post {
             always {
               publishReports { }
+              recordIssues enabledForFailure: true, filters: [
+                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
+                tools: [[pattern: 'build/build.log', name: 'Clang (macOS)',
+                  tool: [$class: 'Clang']]],
+                unstableTotalAll: 3
             }
             success {
               archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
@@ -316,22 +323,6 @@ pipeline {
         }
       } // end parallel
     } // end stage Build
-    // *************************** Log Parser **********************************
-    stage('Log Parser') {
-      agent any
-      steps {
-        script {
-          checkout scm
-          step([$class: 'LogParserPublisher',
-              failBuildOnError: true,
-              projectRulePath: "scripts/jenkins/all-log-parser.rules",
-              showGraphs: true,
-              unstableOnWarning: false,
-              useProjectRule: true
-          ])
-        }
-      }
-    }
     stage('Master') {
       when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
       parallel {
