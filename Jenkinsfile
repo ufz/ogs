@@ -120,7 +120,7 @@ pipeline {
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
                 tools: [[pattern: 'build/build.log', name: 'GCC',
                   tool: [$class: 'GnuMakeGcc']]],
-                unstableTotalAll: 24
+                unstableTotalAll: 19
             }
             success {
               dir('build/docs') { stash(name: 'doxygen') }
@@ -294,6 +294,10 @@ pipeline {
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" '
               }
               build {
+                log = "build.log"
+                cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
+              }
+              build {
                 target = 'tests'
                 cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
               }
@@ -301,15 +305,16 @@ pipeline {
                 target = 'ctest'
                 cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
               }
-              build {
-                target = 'package'
-                cmd_args = '-j $(( `sysctl -n hw.ncpu` - 2 ))'
-              }
             }
           }
           post {
             always {
               publishReports { }
+              recordIssues enabledForFailure: true, filters: [
+                excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
+                tools: [[pattern: 'build/build.log', name: 'Clang (macOS)',
+                  tool: [$class: 'Clang']]],
+                unstableTotalAll: 3
             }
             success {
               archiveArtifacts 'build/*.tar.gz,build/*.dmg,build/conaninfo.txt'
