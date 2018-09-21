@@ -104,7 +104,6 @@ pipeline {
                 cmakeOptions =
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DOGS_USE_PYTHON=ON ' +
-                  '-DOGS_BUILD_CLI=OFF ' +
                   '-DOGS_USE_PCH=OFF ' +     // see #1992
                   '-DOGS_BUILD_GUI=ON ' +
                   '-DOGS_BUILD_UTILS=ON ' +
