@@ -269,7 +269,7 @@ pipeline {
                 excludeFile('.*thread.hpp')],
                 tools: [[pattern: 'build/build.log', name: 'MSVC',
                   tool: [$class: 'MsBuild']]],
-                unstableTotalAll: 6
+                unstableTotalAll: 4
             }
             success {
               archiveArtifacts 'build/*.zip,build/conaninfo.txt'
@@ -323,22 +323,6 @@ pipeline {
         }
       } // end parallel
     } // end stage Build
-    // *************************** Log Parser **********************************
-    stage('Log Parser') {
-      agent any
-      steps {
-        script {
-          checkout scm
-          step([$class: 'LogParserPublisher',
-              failBuildOnError: true,
-              projectRulePath: "scripts/jenkins/all-log-parser.rules",
-              showGraphs: true,
-              unstableOnWarning: false,
-              useProjectRule: true
-          ])
-        }
-      }
-    }
     stage('Master') {
       when { environment name: 'JOB_NAME', value: 'ufz/ogs/master' }
       parallel {
