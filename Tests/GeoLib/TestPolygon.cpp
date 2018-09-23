@@ -85,14 +85,14 @@ TEST_F(PolygonTest, isPntInPolygonCheckCorners)
 TEST_F(PolygonTest, isPntInPolygonCheckPointsRestOnPolygonEdges)
 {
     for (std::size_t k(0); k<_pnts.size()-1; k++) {
-        for (double t(0.0); t<1.0; t+=0.001) {
-            EXPECT_TRUE(_polygon->isPntInPolygon(
-                GeoLib::Point(
-                    (*_pnts[k])[0] + t*((*_pnts[k+1])[0]-(*_pnts[k])[0]),
-                    (*_pnts[k])[1] + t*((*_pnts[k+1])[1]-(*_pnts[k])[1]),
-                    (*_pnts[k])[2] + t*((*_pnts[k+1])[2]-(*_pnts[k])[2])
-                ))
-            );
+        double t = 0;
+        while (t < 1.0)
+        {
+            EXPECT_TRUE(_polygon->isPntInPolygon(GeoLib::Point(
+                (*_pnts[k])[0] + t * ((*_pnts[k + 1])[0] - (*_pnts[k])[0]),
+                (*_pnts[k])[1] + t * ((*_pnts[k + 1])[1] - (*_pnts[k])[1]),
+                (*_pnts[k])[2] + t * ((*_pnts[k + 1])[2] - (*_pnts[k])[2]))));
+            t += 0.001;
         }
     }
 }
