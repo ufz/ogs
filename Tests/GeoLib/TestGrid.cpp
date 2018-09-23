@@ -82,6 +82,7 @@ TEST(GeoLib, SearchNearestPointInGrid)
     pnts.push_back(new GeoLib::Point(0.0,0.0,0.0));
     GeoLib::Grid<GeoLib::Point> *grid(nullptr);
     ASSERT_NO_THROW(grid = new GeoLib::Grid<GeoLib::Point>(pnts.begin(), pnts.end()));
+    ASSERT_NE(grid, nullptr);
 
     GeoLib::Point p0(0,10,10);
     GeoLib::Point* res(grid->getNearestPoint(p0));
