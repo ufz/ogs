@@ -430,8 +430,8 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
                                     bool region_attribute) const
 {
     std::string line;
-    auto* ids(static_cast<std::size_t*>(
-        alloca(sizeof(std::size_t) * n_nodes_per_tet)));
+    std::vector<std::size_t> ids(n_nodes_per_tet);
+
     elements.reserve(n_tets);
     materials.reserve(n_tets);
 
