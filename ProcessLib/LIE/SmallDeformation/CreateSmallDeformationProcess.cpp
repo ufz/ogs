@@ -98,11 +98,6 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         process_variables;
     process_variables.push_back(std::move(per_process_variables));
 
-    auto const material_ids =
-        mesh.getProperties().existsPropertyVector<int>("MaterialIDs")
-            ? mesh.getProperties().getPropertyVector<int>("MaterialIDs")
-            : nullptr;
-
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, config);
@@ -178,7 +173,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
     SmallDeformationProcessData<DisplacementDim> process_data(
-        material_ids, std::move(solid_constitutive_relations),
+        materialIDs(mesh), std::move(solid_constitutive_relations),
         std::move(fracture_model), std::move(vec_fracture_property),
         reference_temperature);
 

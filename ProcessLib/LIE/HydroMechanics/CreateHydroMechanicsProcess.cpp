@@ -123,8 +123,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     else
         process_variables.push_back(std::move(p_u_process_variables));
 
-    auto const material_ids =
-        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<GlobalDim>(parameters,
                                                                     config);
@@ -309,7 +307,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
     HydroMechanicsProcessData<GlobalDim> process_data{
-        material_ids,
+        materialIDs(mesh),
         std::move(solid_constitutive_relations),
         intrinsic_permeability,
         specific_storage,
