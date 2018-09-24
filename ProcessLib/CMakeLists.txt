@@ -32,6 +32,10 @@ if(OGS_USE_PYTHON)
     add_subdirectory(BoundaryCondition/Python)
     target_link_libraries(ProcessLib
         PUBLIC ProcessLibBoundaryConditionPython)
+
+    add_subdirectory(SourceTerms/Python)
+    target_link_libraries(ProcessLib
+        PUBLIC ProcessLibSourceTermPython)
 endif()
 
 if(OGS_INSITU)

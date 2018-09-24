@@ -39,7 +39,7 @@ if(OGS_USE_PYTHON)
     target_link_libraries(ogs_embedded_python PUBLIC pybind11::embed)
     target_compile_definitions(ogs_embedded_python PUBLIC OGS_USE_PYTHON)
     target_link_libraries(ogs_embedded_python PRIVATE
-        ProcessLibBoundaryConditionPythonModule)
+        ProcessLibBoundaryConditionPythonModule ProcessLibSourceTermPythonModule)
 
     target_link_libraries(ogs PRIVATE ogs_embedded_python)
 

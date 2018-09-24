@@ -11,6 +11,9 @@
 
 #include "CreateNodalSourceTerm.h"
 #include "CreateVolumetricSourceTerm.h"
+#ifdef OGS_USE_PYTHON
+#include "Python/CreatePythonSourceTerm.h"
+#endif
 #include "SourceTerm.h"
 #include "SourceTermConfig.h"
 
@@ -39,6 +42,18 @@ std::unique_ptr<SourceTerm> createSourceTerm(
             config.config, config.mesh, dof_table, parameters,
             integration_order, shapefunction_order, variable_id,
             *config.component_id);
+    }
+
+    if (type == "Python")
+    {
+#ifdef OGS_USE_PYTHON
+        return ProcessLib::createPythonSourceTerm(
+            config.config, config.mesh, dof_table, mesh.getID(), variable_id,
+            *config.component_id, integration_order, shapefunction_order,
+            mesh.getDimension());
+#else
+        OGS_FATAL("OpenGeoSys has not been built with Python support.");
+#endif
     }
 
     OGS_FATAL("Unknown source term type: `%s'.", type.c_str());
