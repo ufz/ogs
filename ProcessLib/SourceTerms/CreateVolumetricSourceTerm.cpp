@@ -33,7 +33,7 @@ std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
 
     // source term field name
     auto const& volumetric_source_term_parameter_name =
-        //! \ogs_file_param{prj__process_variables__process_variable_source_terms__volumetric_source_term__parameter}
+        //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__Volumetric__parameter}
         config.getConfigParameter<std::string>("parameter");
     auto& volumetric_source_term = findParameter<double>(
         volumetric_source_term_parameter_name, parameters, 1);
