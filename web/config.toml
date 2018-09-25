@@ -74,6 +74,10 @@ staticDir = ["dist", "static"]
   identifier = "heatconduction"
   weight = 3
 [[menu.benchmarks]]
+  name = "Heat Transport BHE"
+  identifier = "heat-transport-bhe"
+  weight = 10
+[[menu.benchmarks]]
   name = "Richards Flow"
   identifier = "richards-flow"
   weight = 4
