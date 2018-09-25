@@ -16,4 +16,5 @@ endif()
 
 if(DEFINED SANITIZE_FLAG_VALUE)
     add_compile_options(-fsanitize=${SANITIZE_FLAG_VALUE} ${ADDITIONAL_FLAGS})
+    link_libraries(-fsanitize=${SANITIZE_FLAG_VALUE} ${ADDITIONAL_FLAGS})
 endif()
