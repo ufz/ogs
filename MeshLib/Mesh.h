@@ -286,6 +286,13 @@ PropertyVector<T>* getOrCreateMeshProperty(Mesh& mesh,
     return result;
 }
 
+/// Returns the material ids property vector defined on the mesh.
+///
+/// The material ids are always an \c int property named "MaterialIDs".
+/// If the property does not exists (or is of different type), a nullptr is
+/// returned.
+PropertyVector<int> const* materialIDs(Mesh const& mesh);
+
 /// Creates a new mesh from a vector of elements.
 ///
 /// \note The elements are owned by the returned mesh object as well as the

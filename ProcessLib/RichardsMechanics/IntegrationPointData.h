@@ -24,7 +24,8 @@ template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material)
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material)
         : solid_material(solid_material),
           material_state_variables(
               solid_material.createMaterialStateVariables())
@@ -55,7 +56,7 @@ struct IntegrationPointData final
 
     double saturation;
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;

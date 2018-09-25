@@ -32,14 +32,18 @@ template <int DisplacementDim>
 struct ThermoMechanicsProcessData
 {
     ThermoMechanicsProcessData(
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&&
-            material_,
+        MeshLib::PropertyVector<int> const* const material_ids_,
+        std::map<int,
+                 std::unique_ptr<
+                     MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
+            solid_materials_,
         Parameter<double> const& reference_solid_density_,
         Parameter<double> const& linear_thermal_expansion_coefficient_,
         Parameter<double> const& specific_heat_capacity_,
         Parameter<double> const& thermal_conductivity_,
         Eigen::Matrix<double, DisplacementDim, 1> const& specific_body_force_)
-        : material{std::move(material_)},
+        : material_ids(material_ids_),
+          solid_materials{std::move(solid_materials_)},
           reference_solid_density(reference_solid_density_),
           linear_thermal_expansion_coefficient(
               linear_thermal_expansion_coefficient_),
@@ -49,18 +53,7 @@ struct ThermoMechanicsProcessData
     {
     }
 
-    ThermoMechanicsProcessData(ThermoMechanicsProcessData&& other)
-        : material{std::move(other.material)},
-          reference_solid_density(other.reference_solid_density),
-          linear_thermal_expansion_coefficient(
-              other.linear_thermal_expansion_coefficient),
-          specific_heat_capacity(other.specific_heat_capacity),
-          thermal_conductivity(other.thermal_conductivity),
-          specific_body_force(other.specific_body_force),
-          dt(other.dt),
-          t(other.t)
-    {
-    }
+    ThermoMechanicsProcessData(ThermoMechanicsProcessData&& other) = default;
 
     //! Copies are forbidden.
     ThermoMechanicsProcessData(ThermoMechanicsProcessData const&) = delete;
@@ -71,8 +64,14 @@ struct ThermoMechanicsProcessData
     //! Assignments are not needed.
     void operator=(ThermoMechanicsProcessData&&) = delete;
 
-    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
-        material;
+    MeshLib::PropertyVector<int> const* const material_ids;
+
+    /// The constitutive relation for the mechanical part.
+    std::map<
+        int,
+        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+        solid_materials;
+
     Parameter<double> const& reference_solid_density;
     Parameter<double> const& linear_thermal_expansion_coefficient;
     Parameter<double> const& specific_heat_capacity;

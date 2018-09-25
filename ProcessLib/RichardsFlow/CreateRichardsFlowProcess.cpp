@@ -80,12 +80,11 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     //! \ogs_file_param{prj__processes__process__RICHARDS_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
-    boost::optional<MeshLib::PropertyVector<int> const&> material_ids;
-    if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
+    auto const material_ids =
+        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+    if (material_ids != nullptr)
     {
         INFO("The Richards flow is in heterogeneous porous media.");
-        material_ids =
-            *mesh.getProperties().getPropertyVector<int>("MaterialIDs");
     }
     else
     {

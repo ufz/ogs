@@ -64,9 +64,8 @@ createSmallDeformationProcess(
         process_variables;
     process_variables.push_back(std::move(per_process_variables));
 
-    // Constitutive relation.
-    auto material =
-        MaterialLib::Solids::createConstitutiveRelation<DisplacementDim>(
+    auto solid_constitutive_relations =
+        MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, config);
 
     // Solid density
@@ -100,8 +99,8 @@ createSmallDeformationProcess(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
     SmallDeformationProcessData<DisplacementDim> process_data{
-        std::move(material), solid_density, specific_body_force,
-        reference_temperature};
+        materialIDs(mesh), std::move(solid_constitutive_relations),
+        solid_density, specific_body_force, reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

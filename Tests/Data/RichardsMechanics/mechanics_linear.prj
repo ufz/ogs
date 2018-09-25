@@ -21,7 +21,7 @@
                 <relative_epsilons>1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8</relative_epsilons>
             </jacobian_assembler>
             -->
-            <constitutive_relation>
+            <constitutive_relation id="0">
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>

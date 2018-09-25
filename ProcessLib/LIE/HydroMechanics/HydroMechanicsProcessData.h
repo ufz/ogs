@@ -36,8 +36,11 @@ template <unsigned GlobalDim>
 struct HydroMechanicsProcessData
 {
     HydroMechanicsProcessData(
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>&&
-            material_,
+        MeshLib::PropertyVector<int> const* const material_ids_,
+        std::map<
+            int,
+            std::unique_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>>&&
+            solid_materials_,
         Parameter<double> const& intrinsic_permeability_,
         Parameter<double> const& specific_storage_,
         Parameter<double> const& fluid_viscosity_,
@@ -54,7 +57,8 @@ struct HydroMechanicsProcessData
         Parameter<double> const& initial_fracture_effective_stress_,
         bool const deactivate_matrix_in_flow_,
         double const reference_temperature_)
-        : material{std::move(material_)},
+        : material_ids(material_ids_),
+          solid_materials{std::move(solid_materials_)},
           intrinsic_permeability(intrinsic_permeability_),
           specific_storage(specific_storage_),
           fluid_viscosity(fluid_viscosity_),
@@ -72,29 +76,7 @@ struct HydroMechanicsProcessData
     {
     }
 
-    HydroMechanicsProcessData(HydroMechanicsProcessData&& other)
-        : material{std::move(other.material)},
-          intrinsic_permeability(other.intrinsic_permeability),
-          specific_storage(other.specific_storage),
-          fluid_viscosity(other.fluid_viscosity),
-          fluid_density(other.fluid_density),
-          biot_coefficient(other.biot_coefficient),
-          porosity(other.porosity),
-          solid_density(other.solid_density),
-          specific_body_force(other.specific_body_force),
-          fracture_model{std::move(other.fracture_model)},
-          fracture_property{std::move(other.fracture_property)},
-          initial_effective_stress(other.initial_effective_stress),
-          initial_fracture_effective_stress(
-              other.initial_fracture_effective_stress),
-          deactivate_matrix_in_flow(other.deactivate_matrix_in_flow),
-          p_element_status(std::move(other.p_element_status)),
-          p0(other.p0),
-          dt(other.dt),
-          t(other.t),
-          reference_temperature(other.reference_temperature)
-    {
-    }
+    HydroMechanicsProcessData(HydroMechanicsProcessData&& other) = default;
 
     //! Copies are forbidden.
     HydroMechanicsProcessData(HydroMechanicsProcessData const&) = delete;
@@ -105,7 +87,10 @@ struct HydroMechanicsProcessData
     //! Assignments are not needed.
     void operator=(HydroMechanicsProcessData&&) = delete;
 
-    std::unique_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>> material;
+    MeshLib::PropertyVector<int> const* const material_ids;
+    std::map<int,
+             std::unique_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>>
+        solid_materials;
     Parameter<double> const& intrinsic_permeability;
     Parameter<double> const& specific_storage;
     Parameter<double> const& fluid_viscosity;

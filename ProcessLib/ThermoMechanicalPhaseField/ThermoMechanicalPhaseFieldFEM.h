@@ -32,7 +32,8 @@ template <typename BMatricesType, typename ShapeMatrixType, int DisplacementDim>
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material)
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material)
         : solid_material(solid_material),
           material_state_variables(
               solid_material.createMaterialStateVariables())
@@ -50,7 +51,7 @@ struct IntegrationPointData final
     double strain_energy_tensile, elastic_energy;
     typename ShapeMatrixType::GlobalDimVectorType heatflux;
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
@@ -78,7 +79,8 @@ struct IntegrationPointData final
     {
         eps_m.noalias() = eps - alpha * delta_T * Invariants::identity2;
 
-        static_cast<MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>&>(
+        static_cast<
+            MaterialLib::Solids::PhaseFieldExtension<DisplacementDim> const&>(
             solid_material)
             .calculateDegradedStress(
                 t, x_position, eps_m, strain_energy_tensile, sigma_tensile,

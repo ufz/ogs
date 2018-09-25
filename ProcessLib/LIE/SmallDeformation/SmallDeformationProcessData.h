@@ -33,27 +33,25 @@ template <int DisplacementDim>
 struct SmallDeformationProcessData
 {
     SmallDeformationProcessData(
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&&
-            material,
+        MeshLib::PropertyVector<int> const* const material_ids_,
+        std::map<int,
+                 std::unique_ptr<
+                     MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
+            solid_materials_,
         std::unique_ptr<
             MaterialLib::Fracture::FractureModelBase<DisplacementDim>>&&
             fracture_model,
         std::vector<std::unique_ptr<FractureProperty>>&& vec_fracture_prop,
         double const reference_temperature)
-        : _material{std::move(material)},
+        : material_ids(material_ids_),
+          solid_materials{std::move(solid_materials_)},
           _fracture_model{std::move(fracture_model)},
           _vec_fracture_property(std::move(vec_fracture_prop)),
           _reference_temperature(reference_temperature)
     {
     }
 
-    SmallDeformationProcessData(SmallDeformationProcessData&& other)
-        : _material{std::move(other._material)},
-          _fracture_model{std::move(other._fracture_model)},
-          _vec_fracture_property(std::move(other._vec_fracture_property)),
-          _reference_temperature(other._reference_temperature)
-    {
-    }
+    SmallDeformationProcessData(SmallDeformationProcessData&& other) = default;
 
     //! Copies are forbidden.
     SmallDeformationProcessData(SmallDeformationProcessData const&) = delete;
@@ -64,8 +62,14 @@ struct SmallDeformationProcessData
     //! Assignments are not needed.
     void operator=(SmallDeformationProcessData&&) = delete;
 
-    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
-        _material;
+    MeshLib::PropertyVector<int> const* const material_ids;
+
+    /// The constitutive relation for the mechanical part.
+    std::map<
+        int,
+        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+        solid_materials;
+
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>
         _fracture_model;
     std::vector<std::unique_ptr<FractureProperty>> _vec_fracture_property;

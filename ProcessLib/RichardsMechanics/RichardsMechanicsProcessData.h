@@ -34,11 +34,14 @@ template <int DisplacementDim>
 struct RichardsMechanicsProcessData
 {
     RichardsMechanicsProcessData(
+        MeshLib::PropertyVector<int> const* const material_ids_,
         std::unique_ptr<
             ProcessLib::RichardsFlow::RichardsFlowMaterialProperties>&&
             flow_material_,
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&&
-            solid_material_,
+        std::map<int,
+                 std::unique_ptr<
+                     MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
+            solid_materials_,
         Parameter<double> const& intrinsic_permeability_,
         Parameter<double> const& fluid_bulk_modulus_,
         Parameter<double> const& biot_coefficient_,
@@ -47,8 +50,9 @@ struct RichardsMechanicsProcessData
         Parameter<double> const& temperature_,
         Eigen::Matrix<double, DisplacementDim, 1>
             specific_body_force_)
-        : flow_material{std::move(flow_material_)},
-          solid_material{std::move(solid_material_)},
+        : material_ids(material_ids_),
+          flow_material{std::move(flow_material_)},
+          solid_materials{std::move(solid_materials_)},
           intrinsic_permeability(intrinsic_permeability_),
           fluid_bulk_modulus(fluid_bulk_modulus_),
           biot_coefficient(biot_coefficient_),
@@ -69,12 +73,16 @@ struct RichardsMechanicsProcessData
     void operator=(RichardsMechanicsProcessData const&) = delete;
     void operator=(RichardsMechanicsProcessData&&) = delete;
 
+    MeshLib::PropertyVector<int> const* const material_ids;
+
     std::unique_ptr<ProcessLib::RichardsFlow::RichardsFlowMaterialProperties>
         flow_material;
 
     /// The constitutive relation for the mechanical part.
-    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
-        solid_material;
+    std::map<
+        int,
+        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+        solid_materials;
     /// Permeability of the solid. A scalar quantity, Parameter<double>.
     Parameter<double> const& intrinsic_permeability;
     /// Fluid's bulk modulus. A scalar quantity, Parameter<double>.

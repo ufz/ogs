@@ -20,14 +20,12 @@ boost::optional<
                    DisplacementDim>::MaterialStateVariables>,
                typename LinearElasticIsotropic<DisplacementDim>::KelvinMatrix>>
 LinearElasticIsotropic<DisplacementDim>::integrateStress(
-    double const t,
-    ProcessLib::SpatialPosition const& x,
-    double const /*dt*/,
-    KelvinVector const& eps_prev,
-    KelvinVector const& eps,
+    double const t, ProcessLib::SpatialPosition const& x, double const /*dt*/,
+    KelvinVector const& eps_prev, KelvinVector const& eps,
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-        material_state_variables, double const T)
+        material_state_variables,
+    double const T) const
 {
     KelvinMatrix C = getElasticTensor(t, x, T);
 

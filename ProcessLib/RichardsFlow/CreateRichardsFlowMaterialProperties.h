@@ -22,8 +22,7 @@ namespace RichardsFlow
 std::unique_ptr<RichardsFlowMaterialProperties>
 createRichardsFlowMaterialProperties(
     BaseLib::ConfigTree const& config,
-    boost::optional<MeshLib::PropertyVector<int> const&>
-        material_ids,
+    MeshLib::PropertyVector<int> const* material_ids,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
 }  // end namespace

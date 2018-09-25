@@ -11,8 +11,9 @@
 
 #include "HydroMechanicsLocalAssemblerMatrix.h"
 
-#include "MathLib/KelvinVector.h"
 #include "MaterialLib/PhysicalConstant.h"
+#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
+#include "MathLib/KelvinVector.h"
 #include "MeshLib/ElementStatus.h"
 #include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
@@ -61,13 +62,16 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                           IntegrationMethod, GlobalDim>(e, is_axially_symmetric,
                                                         integration_method);
 
+    auto& solid_material = MaterialLib::Solids::selectSolidConstitutiveRelation(
+        _process_data.solid_materials, _process_data.material_ids, e.getID());
+
     SpatialPosition x_position;
     x_position.setElementID(e.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
 
-        _ip_data.emplace_back(*_process_data.material);
+        _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
         auto const& sm_p = shape_matrices_p[ip];

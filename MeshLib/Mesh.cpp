@@ -339,6 +339,14 @@ void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
         v *= factor;
 }
 
+PropertyVector<int> const* materialIDs(Mesh const& mesh)
+{
+    auto const& properties = mesh.getProperties();
+    return properties.existsPropertyVector<int>("MaterialIDs")
+               ? properties.getPropertyVector<int>("MaterialIDs")
+               : nullptr;
+}
+
 std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
     std::string mesh_name, std::vector<MeshLib::Element*> const& elements)
 {

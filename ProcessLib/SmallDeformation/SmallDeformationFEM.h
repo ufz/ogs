@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "MaterialLib/PhysicalConstant.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -38,7 +38,8 @@ template <typename BMatricesType, typename ShapeMatricesType,
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material)
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material)
         : solid_material(solid_material),
           material_state_variables(
               solid_material.createMaterialStateVariables())
@@ -49,7 +50,7 @@ struct IntegrationPointData final
     typename BMatricesType::KelvinVectorType eps, eps_prev;
     double free_energy_density = 0;
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
@@ -125,9 +126,15 @@ public:
                               IntegrationMethod, DisplacementDim>(
                 e, is_axially_symmetric, _integration_method);
 
+        auto& solid_material =
+            MaterialLib::Solids::selectSolidConstitutiveRelation(
+                _process_data.solid_materials,
+                _process_data.material_ids,
+                e.getID());
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(*_process_data.material);
+            _ip_data.emplace_back(solid_material);
             auto& ip_data = _ip_data[ip];
             auto const& sm = shape_matrices[ip];
             _ip_data[ip].integration_weight =
