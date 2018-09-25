@@ -487,6 +487,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
                 prism_nodes[3] = nodes[org_elem->getNode(this->lutHexDiametralNode(org_elem->getNodeIDinElement(face->getNode(1))))->getID()];
                 prism_nodes[4] = nodes[org_elem->getNode(this->lutHexDiametralNode(org_elem->getNodeIDinElement(face->getNode(2))))->getID()];
                 prism_nodes[5] = nodes[org_elem->getNode(org_elem->getNodeIDinElement(face->getNode(0)))->getID()];
+                new_elements.push_back(new MeshLib::Prism(prism_nodes));
                 delete face;
                 return 1;
             }

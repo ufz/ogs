@@ -23,13 +23,14 @@ TEST(MeshLib, UniqueMeshId)
     //
     // Test mesh counter increments.
     //
-    Mesh* m1 = new Mesh("second", std::vector<Node*>(), std::vector<Element*>());
+    auto m1 = std::make_unique<Mesh>("second", std::vector<Node*>(),
+                                     std::vector<Element*>());
     ASSERT_EQ(counter_value + std::size_t(1), m1->getID());
 
     Mesh m2("third", std::vector<Node*>(), std::vector<Element*>());
     ASSERT_EQ(counter_value + std::size_t(2), m2.getID());
 
-    delete m1;
+    m1.reset();
     ASSERT_EQ(counter_value + std::size_t(2), m2.getID());
 
     Mesh m3("fourth", std::vector<Node*>(), std::vector<Element*>());

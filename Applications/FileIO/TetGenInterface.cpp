@@ -430,8 +430,8 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
                                     bool region_attribute) const
 {
     std::string line;
-    auto* ids(static_cast<std::size_t*>(
-        alloca(sizeof(std::size_t) * n_nodes_per_tet)));
+    std::vector<std::size_t> ids(n_nodes_per_tet);
+
     elements.reserve(n_tets);
     materials.reserve(n_tets);
 
@@ -492,8 +492,9 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
         }
         // insert new element into vector
         auto** tet_nodes = new MeshLib::Node*[4];
-        for (unsigned k(0); k<4; k++) {
-            tet_nodes[k] = nodes[ids[k]];
+        for (int n = 0; n < 4; n++)
+        {
+            tet_nodes[n] = nodes[ids[n]];
         }
         elements.push_back (new MeshLib::Tet(tet_nodes));
         materials.push_back(region);

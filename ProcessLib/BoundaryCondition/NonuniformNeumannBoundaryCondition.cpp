@@ -57,9 +57,10 @@ createNonuniformNeumannBoundaryCondition(
         boundary_mesh.getProperties().getPropertyVector<std::size_t>(
             mapping_to_bulk_nodes_property);
 
-    if (!(mapping_to_bulk_nodes && mapping_to_bulk_nodes->getMeshItemType() ==
-                                       MeshLib::MeshItemType::Node) &&
-        mapping_to_bulk_nodes->getNumberOfComponents() == 1)
+    if (mapping_to_bulk_nodes == nullptr ||
+        mapping_to_bulk_nodes->getMeshItemType() !=
+            MeshLib::MeshItemType::Node ||
+        mapping_to_bulk_nodes->getNumberOfComponents() != 1)
     {
         OGS_FATAL("Field `%s' is not set up properly.",
                   mapping_to_bulk_nodes_property.c_str());
