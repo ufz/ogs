@@ -9,6 +9,10 @@
 
 #pragma once
 
+#include <map>
+
+#include "MeshLib/PropertyVector.h"
+
 #include "MechanicsBase.h"
 
 namespace MaterialLib
