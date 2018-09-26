@@ -28,17 +28,10 @@ template<typename T, int N> inline
 T scalarProduct(T const * const v0, T const * const v1)
 {
     T res (v0[0] * v1[0]);
-#ifdef _OPENMP
-    OPENMP_LOOP_TYPE k;
 
 #pragma omp parallel for reduction (+:res)
-    for (k = 1; k<N; k++) {
+    for (int k = 1; k < N; k++)
         res += v0[k] * v1[k];
-    }
-#else
-    for (std::size_t k(1); k < N; k++)
-        res += v0[k] * v1[k];
-#endif
     return res;
 }
 
@@ -51,28 +44,14 @@ double scalarProduct<double,3>(double const * const v0, double const * const v1)
     return res;
 }
 
-template<typename T> inline
-T scalarProduct(T const * const v0, T const * const v1, unsigned n)
+template <typename T>
+inline T scalarProduct(T const* const v0, T const* const v1, int const n)
 {
     T res (v0[0] * v1[0]);
-#ifdef _OPENMP
-    OPENMP_LOOP_TYPE k;
 
 #pragma omp parallel for reduction (+:res)
-#ifdef WIN32
-#pragma warning ( push )
-#pragma warning ( disable: 4018 )
-#endif
-    for (k = 1; k<n; k++) {
+    for (int k = 1; k < n; k++)
         res += v0[k] * v1[k];
-    }
-#ifdef WIN32
-#pragma warning ( pop )
-#endif
-#else
-    for (std::size_t k(1); k < n; k++)
-        res += v0[k] * v1[k];
-#endif
     return res;
 }
 
