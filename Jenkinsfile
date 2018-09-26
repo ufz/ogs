@@ -472,7 +472,7 @@ pipeline {
           }
           environment {
             UBSAN_OPTIONS = 'print_stacktrace=1'
-            LSAN_OPTIONS = 'suppressions=scripts/test/leak_sanitizer.suppressions'
+            LSAN_OPTIONS = 'suppressions=$WORKSPACE/scripts/test/leak_sanitizer.suppressions'
           }
           steps {
             script {
