@@ -70,7 +70,7 @@ if(OGS_BUILD_GUI)
     )
 endif()
 
-conan_check(VERSION 1.0.0)
+conan_check(VERSION 1.3.0)
 conan_add_remote(NAME ogs INDEX 0
     URL https://ogs.jfrog.io/ogs/api/conan/conan)
 conan_add_remote(NAME conan-community INDEX 1
