@@ -317,7 +317,7 @@ pipeline {
               recordIssues enabledForFailure: true, filters: [
                 excludeFile('.*qrc_icons\\.cpp.*'), excludeFile('.*QVTKWidget.*')],
                 tools: [[pattern: 'build/build.log', name: 'Clang (macOS)',
-                  tool: [$class: 'Clang']]],
+                   id: 'clang-mac', tool: [$class: 'Clang']]],
                 unstableTotalAll: 3
             }
             success {
