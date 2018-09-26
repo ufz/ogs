@@ -47,7 +47,6 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
     add_compile_options(
         -Wall
         -Wextra
-        -DOPENMP_LOOP_TYPE=unsigned
     )
 
     # Profiling
@@ -116,7 +115,6 @@ if(MSVC)
         /W3
         /wd4290 /wd4267 /wd4996
         /bigobj
-        -DOPENMP_LOOP_TYPE=int # Missing OpenMP 3.0 implementation fix for Windows, this fixes #6
         -D_CRT_SECURE_NO_WARNINGS
         -D_CRT_NONSTDC_NO_WARNINGS
         -D_CRT_XNONSTDC_NO_WARNINGS
