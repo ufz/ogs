@@ -470,6 +470,10 @@ pipeline {
               additionalBuildArgs '--pull'
             }
           }
+          environment {
+            UBSAN_OPTIONS = 'print_stacktrace=1'
+            LSAN_OPTIONS = 'suppressions=scripts/test/leak_sanitizer.suppressions'
+          }
           steps {
             script {
               sh 'conan user'
@@ -481,12 +485,12 @@ pipeline {
                   '-DOGS_BUILD_UTILS=ON '
               }
               try {
-                build { cmd = 'UBSAN_OPTIONS=print_stacktrace=1 ninja tests' }
+                build { target = 'tests' }
               }
               catch(err) { echo "Clang sanitizer for unit tests failed!" }
 
               try {
-                build { cmd = 'UBSAN_OPTIONS=print_stacktrace=1 ninja ctest' }
+                build { target = 'ctest' }
               }
               catch(err) { echo "Clang sanitizer for end-to-end tests failed!" }
             }
