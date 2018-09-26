@@ -105,7 +105,7 @@ cpack_add_component(ogs_docs
 if(OGS_USE_CONAN)
     # Install shared libraries, copied to bin-dir
     foreach(PATTERN "*.dll" "*.dylib*")
-        file(GLOB MATCHED_FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PATTERN})
+        file(GLOB LIST_DIRECTORIES false MATCHED_FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PATTERN})
         install(FILES ${MATCHED_FILES} DESTINATION bin)
     endforeach()
 
