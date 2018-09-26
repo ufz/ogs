@@ -497,7 +497,9 @@ pipeline {
           }
           post {
             always {
-              recordIssues enabledForFailure: true, tools: [[tool: [$class: 'Clang']]]
+              recordIssues enabledForFailure : true,
+                filters: [includeCategory('clang-analyzer.*')],
+                tools: [[name:'Clang (StaticAnalyzer)', tool:[$class:'Clang']]]
             }
           }
         }
