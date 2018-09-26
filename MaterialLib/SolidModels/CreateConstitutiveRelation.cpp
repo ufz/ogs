@@ -80,6 +80,7 @@ createConstitutiveRelations(
          constitutive_relation_configs)
     {
         int const material_id =
+            //! \ogs_file_attr{material__solid__constitutive_relation__id}
             constitutive_relation_config.getConfigAttribute<int>("id", 0);
 
         if (constitutive_relations.find(material_id) !=
