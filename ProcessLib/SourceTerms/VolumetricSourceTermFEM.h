@@ -20,6 +20,20 @@
 
 namespace ProcessLib
 {
+template <typename NodalRowVectorType>
+struct IntegrationPointData final
+{
+    IntegrationPointData(NodalRowVectorType const& N_,
+                         double const& integration_weight_)
+        : integration_weight_times_N(N_ * integration_weight_)
+    {}
+
+    NodalRowVectorType const integration_weight_times_N;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+};
+
+
 class VolumetricSourceTermLocalAssemblerInterface
 {
 public:
@@ -38,14 +52,12 @@ class VolumetricSourceTermLocalAssembler final
     : public VolumetricSourceTermLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
-    using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
     using LocalAssemblerTraits = ProcessLib::LocalAssemblerTraits<
         ShapeMatricesType, ShapeFunction::NPOINTS, NUM_NODAL_DOF, GlobalDim>;
 
-    using NodalMatrixType = typename LocalAssemblerTraits::LocalMatrix;
     using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
-    using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
+    using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
 
 public:
     VolumetricSourceTermLocalAssembler(
@@ -56,11 +68,24 @@ public:
         Parameter<double> const& volumetric_source_term)
         : _volumetric_source_term(volumetric_source_term),
           _integration_method(integration_order),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                            IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method)),
           _local_rhs(local_matrix_size)
     {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        auto const shape_matrices =
+                       initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                         IntegrationMethod, GlobalDim>(
+                           element, is_axially_symmetric, _integration_method);
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data.emplace_back(
+                shape_matrices[ip].N,
+                _integration_method.getWeightedPoint(ip).getWeight() *
+                    shape_matrices[ip].integralMeasure *
+                    shape_matrices[ip].detJ);
+        }
     }
 
     void integrate(std::size_t const id,
@@ -78,12 +103,10 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
-            auto const& sm = _shape_matrices[ip];
-            auto const& wp = _integration_method.getWeightedPoint(ip);
             auto const st_val = _volumetric_source_term(t, pos)[0];
 
             _local_rhs.noalias() +=
-                sm.N * st_val * sm.detJ * sm.integralMeasure * wp.getWeight();
+                st_val * _ip_data[ip].integration_weight_times_N;
         }
         auto const indices = NumLib::getIndices(id, source_term_dof_table);
         b.add(indices, _local_rhs);
@@ -93,8 +116,10 @@ private:
     Parameter<double> const& _volumetric_source_term;
 
     IntegrationMethod const _integration_method;
-    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
+    std::vector<
+        IntegrationPointData<NodalRowVectorType>,
+        Eigen::aligned_allocator<IntegrationPointData<NodalRowVectorType>>>
+        _ip_data;
     NodalVectorType _local_rhs;
 };
 
