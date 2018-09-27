@@ -18,7 +18,7 @@
 
 namespace ProcessLib
 {
-std::unique_ptr<NodalSourceTerm> createNodalSourceTerm(
+std::unique_ptr<SourceTerm> createNodalSourceTerm(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& st_mesh,
     const NumLib::LocalToGlobalIndexMap& dof_table,
     std::size_t const bulk_mesh_id, const int variable_id,

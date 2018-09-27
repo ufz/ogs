@@ -189,7 +189,7 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
         (_coupled_solutions) != nullptr ? _coupled_solutions->process_id : 0;
     _boundary_conditions[pcs_id].applyNaturalBC(t, x, K, b, nullptr);
 
-    _source_term_collections[pcs_id].integrateNodalSourceTerms(t, b);
+    _source_term_collections[pcs_id].integrate(t, b);
 }
 
 void Process::assembleWithJacobian(const double t, GlobalVector const& x,

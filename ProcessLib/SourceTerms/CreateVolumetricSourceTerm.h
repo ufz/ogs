@@ -16,26 +16,28 @@ namespace BaseLib
 {
 class ConfigTree;
 }
+
 namespace MeshLib
 {
 class Mesh;
 }
+
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
 }
-namespace ProcessLib
-{
-class SourceTerm;
-struct ParameterBase;
-}  // namespace ProcessLib
 
 namespace ProcessLib
 {
-std::unique_ptr<SourceTerm> createNodalSourceTerm(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& st_mesh,
-    const NumLib::LocalToGlobalIndexMap& dof_table, std::size_t mesh_id,
-    const int variable_id, const int component_id,
-    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters);
+struct ParameterBase;
+class SourceTerm;
+
+std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
+    BaseLib::ConfigTree const& config,
+    MeshLib::Mesh const& source_term_mesh,
+    NumLib::LocalToGlobalIndexMap const& source_term_dof_table,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const integration_order, unsigned const shapefunction_order,
+    int const variable_id, int const component_id);
 
 }   // namespace ProcessLib

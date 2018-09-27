@@ -9,23 +9,22 @@
 
 #pragma once
 
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/Parameter/Parameter.h"
+#include "SourceTerm.h"
 
 namespace ProcessLib
 {
-class NodalSourceTerm final
+class NodalSourceTerm final : public SourceTerm
 {
 public:
-    NodalSourceTerm(const NumLib::LocalToGlobalIndexMap& dof_table,
-                    std::size_t const bulk_mesh_id,
-                    MeshLib::Mesh const& st_mesh, const int variable_id,
-                    const int component_id, Parameter<double> const& parameter);
+    explicit NodalSourceTerm(
+        const NumLib::LocalToGlobalIndexMap& source_term_dof_table,
+        std::size_t const bulk_mesh_id, MeshLib::Mesh const& st_mesh,
+        const int variable_id, const int component_id,
+        Parameter<double> const& parameter);
 
-    void integrateNodalSourceTerm(const double t, GlobalVector& b) const;
+    void integrate(const double t, GlobalVector& b) const override;
 
 private:
-    NumLib::LocalToGlobalIndexMap const& _dof_table;
     std::size_t const _bulk_mesh_id;
     MeshLib::Mesh const& _st_mesh;
     int const _variable_id;

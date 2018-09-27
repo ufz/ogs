@@ -18,7 +18,7 @@
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
 #include "ProcessLib/SourceTerms/CreateSourceTerm.h"
-#include "ProcessLib/SourceTerms/NodalSourceTerm.h"
+#include "ProcessLib/SourceTerms/SourceTerm.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace
@@ -211,14 +211,14 @@ ProcessVariable::createBoundaryConditions(
     return bcs;
 }
 
-std::vector<std::unique_ptr<NodalSourceTerm>>
+std::vector<std::unique_ptr<SourceTerm>>
 ProcessVariable::createSourceTerms(
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const int variable_id,
     unsigned const integration_order,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
-    std::vector<std::unique_ptr<NodalSourceTerm>> source_terms;
+    std::vector<std::unique_ptr<SourceTerm>> source_terms;
 
     for (auto& config : _source_term_configs)
         source_terms.emplace_back(createSourceTerm(

@@ -29,11 +29,10 @@ void SourceTermCollection::addSourceTermsForProcessVariables(
     }
 }
 
-void SourceTermCollection::integrateNodalSourceTerms(const double t,
-                                                     GlobalVector& b) const
+void SourceTermCollection::integrate(const double t, GlobalVector& b) const
 {
     for (auto const& st : _source_terms)
-        st->integrateNodalSourceTerm(t, b);
+        st->integrate(t, b);
 }
 
 }

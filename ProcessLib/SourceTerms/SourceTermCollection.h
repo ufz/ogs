@@ -10,7 +10,7 @@
 #pragma once
 
 #include "ProcessLib/ProcessVariable.h"
-#include "ProcessLib/SourceTerms/NodalSourceTerm.h"
+#include "ProcessLib/SourceTerms/SourceTerm.h"
 
 namespace ProcessLib
 {
@@ -23,7 +23,7 @@ public:
     {
     }
 
-    void integrateNodalSourceTerms(const double t, GlobalVector& b) const;
+    void integrate(const double t, GlobalVector& b) const;
 
     void addSourceTermsForProcessVariables(
         std::vector<std::reference_wrapper<ProcessVariable>> const&
@@ -32,7 +32,7 @@ public:
         unsigned const integration_order);
 
 private:
-    std::vector<std::unique_ptr<NodalSourceTerm>> _source_terms;
+    std::vector<std::unique_ptr<SourceTerm>> _source_terms;
     std::vector<std::unique_ptr<ParameterBase>> const& _parameters;
 };
 
