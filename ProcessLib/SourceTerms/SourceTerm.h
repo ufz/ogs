@@ -23,7 +23,8 @@ public:
     {
     }
 
-    virtual void integrate(const double t, GlobalVector& b) const = 0;
+    virtual void integrate(const double t, GlobalVector const& x,
+                           GlobalVector& b, GlobalMatrix* jac) const = 0;
 
     virtual ~SourceTerm() = default;
 

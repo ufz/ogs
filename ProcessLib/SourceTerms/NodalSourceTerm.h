@@ -22,7 +22,8 @@ public:
         const int variable_id, const int component_id,
         Parameter<double> const& parameter);
 
-    void integrate(const double t, GlobalVector& b) const override;
+    void integrate(const double t, GlobalVector const& x, GlobalVector& b,
+                   GlobalMatrix* jac) const override;
 
 private:
     std::size_t const _bulk_mesh_id;

@@ -23,7 +23,8 @@ public:
     {
     }
 
-    void integrate(const double t, GlobalVector& b) const;
+    void integrate(const double t, GlobalVector const& x, GlobalVector& b,
+                   GlobalMatrix* jac) const;
 
     void addSourceTermsForProcessVariables(
         std::vector<std::reference_wrapper<ProcessVariable>> const&

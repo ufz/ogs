@@ -37,7 +37,8 @@ NodalSourceTerm::NodalSourceTerm(
     }
 }
 
-void NodalSourceTerm::integrate(const double t, GlobalVector& b) const
+void NodalSourceTerm::integrate(const double t, GlobalVector const& /*x*/,
+                                GlobalVector& b, GlobalMatrix* /*jac*/) const
 {
     DBUG("Assemble NodalSourceTerm.");
 
