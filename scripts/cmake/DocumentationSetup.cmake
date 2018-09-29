@@ -1,41 +1,77 @@
-IF(DOXYGEN_EXECUTABLE)
+if(DOXYGEN_FOUND)
 
-	OPTION(DOCS_GENERATE_DIAGRAMS "Use the DOT tool to generate class diagrams." OFF)
-	OPTION(DOCS_GENERATE_CALL_GRAPHS "Generate call dependency graphs." OFF)
-	OPTION(DOCS_GENERATE_COLLABORATION_GRAPHS "Generate collaboration graphs." OFF)
-	IF(APPLE)
-		OPTION(DOCS_GENERATE_DOCSET "Generate Apple Docsets." OFF)
-	ENDIF() # APPLE
+    option(DOCS_GENERATE_DOCSET "Generate Dash Docsets." OFF)
+    option(DOCS_GENERATE_LOGFILE "Outputs Doxygen warnings to a file in the build directory." OFF)
 
-	IF(NOT DOT_TOOL_PATH AND (DOCS_GENERATE_DIAGRAMS OR DOCS_GENERATE_CALL_GRAPHS OR
-		DOCS_GENERATE_COLLABORATION_GRAPHS))
-		MESSAGE(WARNING "The DOT tool was not found but is needed for generating doxygen diagrams!")
-	ENDIF() # DOT_TOOL_PATH AND (DOCS_GENERATE_DIAGRAMS OR ...)
+    set(DOT_FOUND "NO")
+    if(DOXYGEN_DOT_FOUND)
+        set(DOT_FOUND "YES")
+    endif()
 
-	IF(DOCS_GENERATE_CALL_GRAPHS)
-		SET(DOCS_GENERATE_CALL_GRAPHS_STRING "YES" CACHE INTERNAL "")
-	ENDIF() # DOCS_GENERATE_CALL_GRAPHS
+    add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        COMMENT "Generating source code documentation with Doxygen." VERBATIM)
 
-	IF(DOCS_GENERATE_COLLABORATION_GRAPHS)
-		SET(DOCS_GENERATE_COLLABORATION_GRAPHS_STRING "YES" CACHE INTERNAL "")
-	ENDIF() # DOCS_GENERATE_COLLABORATION_GRAPHS
+    # Defaults
+    set(DOCS_GENERATE_TREEVIEW_STRING "YES" CACHE INTERNAL "")
+    set(DOCS_DISABLE_INDEX_STRING "NO" CACHE INTERNAL "")
+    set(DOCS_GENERATE_DOCSET_STRING "NO" CACHE INTERNAL "")
+    set(DOCS_SEARCHENGINE_STRING "YES" CACHE INTERNAL "")
 
-	# GET_FILENAME_COMPONENT(DOT_TOOL_PATH_ONLY ${DOT_TOOL_PATH} PATH)
-	CONFIGURE_FILE(scripts/docs/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
-	ADD_CUSTOM_TARGET(doc ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
-		WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-		COMMENT "Generating source code documentation with Doxygen." VERBATIM)
+    # Dash Docsets
+    if(DOCS_GENERATE_DOCSET)
+        find_program(DOCSETUTIL_TOOLPATH docsetutil
+            PATH /Applications/Xcode.app/Contents/Developer/usr/bin)
+        if(NOT DOCSETUTIL_TOOLPATH)
+            message(FATAL_ERROR "docsetutil required for Docset-generation!")
+        endif()
+        set(DOCS_GENERATE_TREEVIEW_STRING "NO" CACHE INTERNAL "")
+        set(DOCS_DISABLE_INDEX_STRING "YES" CACHE INTERNAL "")
+        set(DOCS_GENERATE_DOCSET_STRING "YES" CACHE INTERNAL "")
+        set(DOCS_SEARCHENGINE_STRING "NO" CACHE INTERNAL "")
+        add_custom_command(TARGET doc POST_BUILD
+            COMMAND make
+            COMMAND mv org.doxygen.Project.docset ogs6.docset
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/docs
+            COMMENT "Generating docset ...")
+        configure_file(Documentation/DocsetFeed.xml.in ${PROJECT_BINARY_DIR}/docs/ogs6.xml)
+    endif()
 
-	SET(DOCS_GENERATE_TREEVIEW_STRING "YES" CACHE INTERNAL "")
-	SET(DOCS_DISABLE_INDEX_STRING "NO" CACHE INTERNAL "")
-	IF(DOCS_GENERATE_DOCSET)
-		SET(DOCS_GENERATE_TREEVIEW_STRING "NO" CACHE INTERNAL "" FORCE)
-		SET(DOCS_DISABLE_INDEX_STRING "YES" CACHE INTERNAL "" FORCE)
-		SET(DOCS_GENERATE_DOCSET_STRING "YES" CACHE INTERNAL "")
-		ADD_CUSTOM_COMMAND(TARGET doc POST_BUILD
-			COMMAND make WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/docs
-			COMMENT "Generating docset ...")
-	ENDIF() # DOCS_GENERATE_DOCSET
+    if(DOCS_GENERATE_LOGFILE)
+        set(OGS_DOXYGEN_LOGFILE "${PROJECT_BINARY_DIR}/DoxygenWarnings.log" CACHE INTERNAL "")
+    endif()
 
+    configure_file(Documentation/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
 
-ENDIF() # DOXYGEN_EXECUTABLE
+    if (BASH_TOOL_PATH AND PYTHON_EXECUTABLE)
+        set(doc_use_external_tools TRUE)
+    else()
+        set(doc_use_external_tools FALSE)
+    endif()
+
+    # TODO that will always transform all of the input files no matter if they changed
+    # maybe this behaviour can be changed to on-demand processing
+    add_custom_target(internal_pre_doc
+        ${CMAKE_COMMAND}
+        -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
+        -DPROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+        -Ddoc_use_external_tools=${doc_use_external_tools}
+        -P ${PROJECT_SOURCE_DIR}/scripts/cmake/DocumentationProjectFile.cmake
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        COMMENT "Generating project file documentation hierarchy." VERBATIM)
+    add_dependencies(doc internal_pre_doc)
+
+    if (doc_use_external_tools)
+        set(data_dir "${Data_SOURCE_DIR}")
+        add_custom_target(internal_pre_doc_qa_page
+            ${BASH_TOOL_PATH}
+            "${PROJECT_SOURCE_DIR}/scripts/doc/generate-project-file-doc-qa.sh"
+            ${PROJECT_SOURCE_DIR}
+            ${PROJECT_BINARY_DIR}
+            ${data_dir}
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            COMMENT "Generating project file documentation quality assurance pages." VERBATIM)
+        add_dependencies(doc internal_pre_doc_qa_page)
+        add_dependencies(internal_pre_doc_qa_page internal_pre_doc)
+    endif()
+endif()

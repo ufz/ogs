@@ -1,23 +1,37 @@
-# Source files
-
 GET_SOURCE_FILES(SOURCES)
+APPEND_SOURCE_FILES(SOURCES IO)
+
+APPEND_SOURCE_FILES(SOURCES IO/XmlIO)
+
+if(Qt5XmlPatterns_FOUND)
+    APPEND_SOURCE_FILES(SOURCES IO/XmlIO/Qt)
+endif()
+
+list(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/BuildInfo.cpp" BuildInfo.h)
 
 # Create the library
-ADD_LIBRARY( BaseLib STATIC ${SOURCES})
+add_library(BaseLib ${SOURCES})
+if(BUILD_SHARED_LIBS)
+    install(TARGETS BaseLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
 
-SET_TARGET_PROPERTIES(BaseLib PROPERTIES LINKER_LANGUAGE CXX)
+include(GenerateExportHeader)
+generate_export_header(BaseLib)
+target_include_directories(BaseLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-INCLUDE_DIRECTORIES(
-	${CMAKE_SOURCE_DIR}/GeoLib
-	${CMAKE_SOURCE_DIR}/MathLib
-	.
-)
+target_link_libraries(BaseLib PUBLIC logog)
 
-# Add logog subdirectory and group its targets in a Visual Studio folder
-ADD_SUBDIRECTORY(logog)
-SET_PROPERTY(TARGET Continuous PROPERTY FOLDER "logog")
-SET_PROPERTY(TARGET logog PROPERTY FOLDER "logog")
-SET_PROPERTY(TARGET test-logog PROPERTY FOLDER "logog")
+if(MSVC)
+    target_link_libraries(BaseLib PUBLIC WinMM) # needed for timeGetTime
+endif()
 
-# zlib
-ADD_SUBDIRECTORY(zlib)
+if(Qt5XmlPatterns_FOUND)
+    target_link_libraries(BaseLib PUBLIC Qt5::Xml Qt5::XmlPatterns)
+    if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
+        target_link_libraries(BaseLib PUBLIC Qt5::Network ${OPENSSL_LIBRARIES} ws2_32)
+    endif()
+endif()
+
+if(OGS_USE_PCH)
+    cotire(BaseLib)
+endif()

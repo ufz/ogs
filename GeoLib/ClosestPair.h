@@ -1,17 +1,18 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * \file
+ * \author Thomas Fischer
+ * \date   2011-01-25
+ * \brief  Definition of the ClosestPair class.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file ClosestPair.h
- *
- * Created on 2011-01-25 by Thomas Fischer
  */
 
-#ifndef CLOSESTPAIR_H_
-#define CLOSESTPAIR_H_
+#pragma once
 
 // STL
 #include <vector>
@@ -24,16 +25,14 @@ namespace GeoLib {
 class ClosestPair
 {
 public:
-	ClosestPair (std::vector<GeoLib::Point*> const & pnts, std::size_t id0, std::size_t id1) :
-		_pnts (pnts), _id0 (id0), _id1 (id1)
-	{}
+    ClosestPair (std::vector<GeoLib::Point*> const & pnts, std::size_t id0, std::size_t id1) :
+        _pnts (pnts), _id0 (id0), _id1 (id1)
+    {}
 
 protected:
-	std::vector<GeoLib::Point*> const & _pnts;
-	std::size_t _id0;
-	std::size_t _id1;
+    std::vector<GeoLib::Point*> const & _pnts;
+    std::size_t _id0;
+    std::size_t _id1;
 };
 
 } // end namespace GeoLib
-
-#endif /* CLOSESTPAIR_H_ */

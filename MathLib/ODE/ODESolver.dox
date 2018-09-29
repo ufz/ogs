@@ -1,0 +1,26 @@
+/*! \defgroup ExternalODESolverInterface Interface to external ODE Solver Libraries
+
+The purpose of these classes and functions is to provide a general interface to
+external ODE solver libraries. The interface is designed s.t. it can be used
+without having to know which particular external library will be used to solve
+the ODE. Furthermore all user-side (or OGS6-side) computations are done using
+Eigen types. These types are convenient to use and provide bounds checking, even
+at compile-time.
+
+The inheritance and cooperation between the classes involved when solving an ODE
+is depicted in the image below. The user side is at the top, the external
+library side at the bottom. Sundials' CVode solver has been chosen as an example
+since it is the first external solver we use.
+
+The path on the left side is essentially the way data coming from the user takes
+towards the ODE solver backend. On that way Eigen types are stripped to raw
+pointers (<tt>double*</tt>).
+
+The path on the right side is the way data coming from the ODE solver backend
+takes towards the functions provided by the user. On that way raw pointers are
+wrapped into some <tt>Eigen::Map<></tt>s.
+
+\image html  external-ode-solver-concept.png "Inheritance/Cooperation between different classes, and data flow when computing y_dot = f(t,y)."
+\image latex external-ode-solver-concept.pdf "Inheritance/Cooperation between different classes, and data flow when computing y_dot = f(t,y)."
+
+*/

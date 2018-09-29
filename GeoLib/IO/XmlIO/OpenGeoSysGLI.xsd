@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<!-- OpenGeoSysGLI schema; initial implementation: Karsten Rink -->
+
+
+  <!-- definition of points -->
+  <xs:complexType name="pointType">
+    <xs:attribute name="id" type="xs:nonNegativeInteger" use="required" />
+    <xs:attribute name="x" type="xs:decimal" use="required" />
+    <xs:attribute name="y" type="xs:decimal" use="required" />
+    <xs:attribute name="z" type="xs:decimal" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+  </xs:complexType>
+
+
+  <!-- definition of polylines -->
+  <xs:complexType name="plyType">
+    <xs:sequence>
+      <xs:element name="pnt" type="xs:nonNegativeInteger" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:nonNegativeInteger" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+  </xs:complexType>
+
+
+  <!-- definition of surfaces -->
+  <xs:complexType name="surfaceType">
+    <xs:sequence>
+      <xs:element name="element" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="p1" type="xs:nonNegativeInteger" use="required" />
+          <xs:attribute name="p2" type="xs:nonNegativeInteger" use="required" />
+          <xs:attribute name="p3" type="xs:nonNegativeInteger" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:nonNegativeInteger" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+  </xs:complexType>
+
+  <!-- definition of volumes -->
+  <xs:complexType name="volumeType">
+    <xs:sequence>
+      <xs:element name="sfc" type="xs:nonNegativeInteger" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:nonNegativeInteger" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+  </xs:complexType>
+
+  <!-- definition of file content -->
+  <xs:element name="OpenGeoSysGLI">
+    <xs:complexType>
+      <xs:sequence>
+    <xs:element name="name" type="xs:string" maxOccurs="1" />
+
+        <!-- definition of points -->
+    <xs:element name="points" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="point" type="pointType" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- definition of polylines -->
+        <xs:element name="polylines" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="polyline" type="plyType" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- definition of surfaces -->
+        <xs:element name="surfaces" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="surface" type="surfaceType" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- definition of volumes -->
+        <xs:element name="volumes" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="volume" type="volumeType" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

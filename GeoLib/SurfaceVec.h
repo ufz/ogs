@@ -1,18 +1,18 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-02-09
+ * \brief  Definition of the SurfaceVec class.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file SurfaceVec.h
- *
- * Created on 2010-02-09 by Thomas Fischer
  */
 
-
-#ifndef SURFACEVEC_H_
-#define SURFACEVEC_H_
+#pragma once
 
 #include "TemplateVec.h"
 #include "Surface.h"
@@ -24,8 +24,6 @@ namespace GeoLib {
  * and a name.
  * */
 
-typedef TemplateVec<Surface> SurfaceVec;
+using SurfaceVec = TemplateVec<GeoLib::Surface>;
 
 } // end namespace
-
-#endif /* SURFACEVEC_H_ */

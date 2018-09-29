@@ -1,237 +1,113 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * \brief  Definition of the quicksort function.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file quicksort.h
- *
- * Created on 2010-05-26 by Thomas Fischer
  */
 
-#ifndef QUICKSORT_H_
-#define QUICKSORT_H_
+#pragma once
 
-// STL
+#include <algorithm>
+#include <cassert>
 #include <cstddef>
-
-// Base
-#include "swap.h"
-
-namespace BaseLib {
-
-template <class T>
-unsigned partition_(T* array, unsigned beg, unsigned end)
-{
-  unsigned i = beg+1;
-  unsigned j = end-1;
-  T m = array[beg];
-
-  for (;;) {
-    while ((i<end) && (array[i] < m)) i++;
-    while ((j>beg) && !(array[j] < m)) j--;
-
-    if (i >= j) break;
-    BaseLib::swap(array[i], array[j]);
-  }
-
-  BaseLib::swap(array[beg], array[j]);
-  return j;
-}
-
-template <class T>
-void quickSort(T* array, unsigned beg, unsigned end)
-{
-  if (beg < end) {
-    unsigned p = partition_(array, beg, end);
-    quickSort(array, beg, p);
-    quickSort(array, p+1, end);
-  }
-}
-
-/**
- * Permutes the entries of a part of an array such that all entries that are smaller
- * than a certain value are at the beginning of the array and all entries that are
- * bigger are at the end of the array. This version of partition_ permutes a second
- * array second_array according to the sorting.
- * @param array array to sort
- * @param beg beginning index in array for sorting
- * @param end end-1 is the last index in array for sorting
- * @param second_array the second array is permuted according to the sort process of array
- * @return
- */
-template <typename T1, typename T2>
-std::size_t partition_(T1* array, std::size_t beg, std::size_t end, T2 *second_array)
-{
-	std::size_t i = beg + 1;
-	std::size_t j = end - 1;
-	T1 m = array[beg];
-
-	for (;;) {
-		while ((i < end) && (array[i] <= m))
-			i++;
-		while ((j > beg) && !(array[j] <= m))
-			j--;
-
-		if (i >= j) break;
-
-		BaseLib::swap(array[i], array[j]);
-		BaseLib::swap(second_array[i], second_array[j]);
-	}
-
-	BaseLib::swap(array[beg], array[j]);
-	BaseLib::swap(second_array[beg], second_array[j]);
-
-	return j;
-}
-
-/**
- * version of quickSort that permutes the entries of a second array
- * according to the permutation of the first array
- * @param array array to sort
- * @param beg beginning index in array for sorting
- * @param end end-1 is the last index in array for sorting
- * @param second_array the second array is permuted according to the sort process of array
- */
-template <typename T1, typename T2>
-void quicksort(T1* array, std::size_t beg, std::size_t end, T2* second_array)
-{
-	if (beg < end) {
-		std::size_t p = partition_(array, beg, end, second_array);
-		quicksort(array, beg, p, second_array);
-		quicksort(array, p+1, end, second_array);
-	}
-}
-
-} // end namespace BaseLib
-
-// STL
+#include <iterator>
 #include <vector>
 
-namespace BaseLib {
+namespace BaseLib
+{
+/// @pre {first1 <= last1 and the second iterator can be incremented
+/// distance(first1, last1) times}
+template <typename It1, typename It2, typename Comparator>
+void quicksort(It1 first1, It1 last1, It2 first2, Comparator compare)
+{
+    using T1 = typename std::iterator_traits<It1>::value_type;
+    using T2 = typename std::iterator_traits<It2>::value_type;
 
-template <typename T>
-class Quicksort {
-public:
-	Quicksort (std::vector<T>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
-	{
-		quicksort (array, beg, end, perm);
-	}
-private:
-	std::size_t partition_(std::vector<T>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
-	{
-		std::size_t i = beg + 1;
-		std::size_t j = end - 1;
-		T m = array[beg];
+    std::vector<std::pair<T1, T2>> data;
+    data.reserve(std::distance(first1, last1));
+    std::transform(
+        first1, last1, first2, std::back_inserter(data),
+        [](T1 const& t1, T2 const& t2) { return std::make_pair(t1, t2); });
 
-		for (;;) {
-			while ((i < end) && (array[i] <= m))
-				i++;
-			while ((j > beg) && !(array[j] <= m))
-				j--;
+    // Sort data using first element of the pair.
+    std::sort(begin(data), end(data), compare);
 
-			if (i >= j)
-				break;
-			BaseLib::swap(array[i], array[j]);
-			BaseLib::swap(perm[i], perm[j]);
-		}
+    // Unzip sorted data.
+    for (auto const& pair : data)
+    {
+        *first1 = pair.first;
+        *first2 = pair.second;
+        ++first1;
+        ++first2;
+    }
+}
+/// @pre {first1 <= last1 and the second iterator can be incremented
+/// distance(first1, last1) times}
+template <typename It1, typename It2>
+void quicksort(It1 first1, It1 last1, It2 first2)
+{
+    using T1 = typename std::iterator_traits<It1>::value_type;
+    using T2 = typename std::iterator_traits<It2>::value_type;
 
-		BaseLib::swap(array[beg], array[j]);
-		BaseLib::swap(perm[beg], perm[j]);
-		return j;
-	}
+    quicksort(first1, last1, first2,
+              [](std::pair<T1, T2> const& a, std::pair<T1, T2> const& b) {
+                  return a.first < b.first;
+              });
+}
 
-	void quicksort(std::vector<T>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
-	{
-		if (beg < end) {
-			std::size_t p = partition_(array, beg, end, perm);
-			quicksort(array, beg, p, perm);
-			quicksort(array, p+1, end, perm);
-		}
-	}
-};
+/// @pre {end<=array.size() and perm.size()==array.size()}
+template <typename T1, typename T2 = std::size_t>
+void quicksort(T1* array, std::size_t beg, std::size_t end, T2* perm)
+{
+    assert(beg <= end);
 
-// specialization for pointer types
-template <typename T>
-class Quicksort <T *> {
-public:
-	Quicksort (std::vector<T*>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
-	{
-		quicksort (array, beg, end, perm);
-	}
+    quicksort(array + beg, array + end, perm + beg);
+}
 
-	Quicksort (std::vector<std::size_t>& perm, std::size_t beg, std::size_t end, std::vector<T*>& array)
-	{
-		quicksort (perm, beg, end, array);
-	}
+template <typename T1, typename T2 = std::size_t>
+void quicksort(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
+{
+    assert (beg<=end);
+    assert (end<=array.size());
+    assert (perm.size()==array.size());
 
-private:
-	std::size_t partition_(std::vector<T*>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
-	{
-		std::size_t i = beg + 1;
-		std::size_t j = end - 1;
-		T* m = array[beg];
+    quicksort(array.data(), beg, end, perm.data());
+}
 
-		for (;;) {
-			while ((i < end) && (*array[i] <= *m))
-				i++;
-			while ((j > beg) && !(*array[j] <= *m))
-				j--;
+template <typename T1, typename T2 = std::size_t>
+void quicksort(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
+{
+    assert (beg<=end);
+    assert (end<=array.size());
+    assert (perm.size()==array.size());
 
-			if (i >= j)
-				break;
-			BaseLib::swap(array[i], array[j]);
-			BaseLib::swap(perm[i], perm[j]);
-		}
+    // Zip input arrays.
+    std::vector<std::pair<T1*, T2>> data;
+    data.reserve(end-beg);
+    std::transform(array.begin()+beg, array.begin()+end, perm.begin()+beg,
+        std::back_inserter(data),
+        [](T1* const& t1, T2 const& t2)
+        {
+            return std::make_pair(t1, t2);
+        });
 
-		BaseLib::swap(array[beg], array[j]);
-		BaseLib::swap(perm[beg], perm[j]);
-		return j;
-	}
+    // Sort data using first element of the pair.
+    std::sort(data.begin(), data.end(),
+        [](std::pair<T1*, T2> const& a, std::pair<T1*, T2> const& b)
+        {
+            return (*a.first < *b.first);
+        });
 
-	void quicksort(std::vector<T*>& array, std::size_t beg, std::size_t end, std::vector<std::size_t>& perm)
-	{
-		if (beg < end) {
-			std::size_t p = partition_(array, beg, end, perm);
-			quicksort(array, beg, p, perm);
-			quicksort(array, p+1, end, perm);
-		}
-	}
-
-	std::size_t partition_(std::vector<std::size_t> &perm, std::size_t beg, std::size_t end, std::vector<T*>& array)
-	{
-		std::size_t i = beg + 1;
-		std::size_t j = end - 1;
-		std::size_t m = perm[beg];
-
-		for (;;) {
-			while ((i < end) && (perm[i] <= m))
-				i++;
-			while ((j > beg) && !(perm[j] <= m))
-				j--;
-
-			if (i >= j)
-				break;
-			BaseLib::swap(perm[i], perm[j]);
-			BaseLib::swap(array[i], array[j]);
-		}
-
-		BaseLib::swap(perm[beg], perm[j]);
-		BaseLib::swap(array[beg], array[j]);
-		return j;
-	}
-
-	void quicksort(std::vector<std::size_t>& perm, std::size_t beg, std::size_t end, std::vector<T*>& array)
-	{
-		if (beg < end) {
-			std::size_t p = partition_(perm, beg, end, array);
-			quicksort(perm, beg, p, array);
-			quicksort(perm, p+1, end, array);
-		}
-	}
-};
+    // Unzip sorted data.
+    for (std::size_t i = 0; i < data.size(); i++)
+    {
+        array[beg+i] = data[i].first;
+        perm[beg+i] = data[i].second;
+    }
+}
 
 } // end namespace BaseLib
-
-#endif /* QUICKSORT_H_ */

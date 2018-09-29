@@ -1,0 +1,27 @@
++++
+title = "{{ replace .Name "-" " " | title }}"
+subtitle = "[OPTIONAL]"
+date = {{ .Date }}
+author = "[TODO]"
+
+book_type = "[Book | Tutorial]"
+book_cover = "[TODO]"
+
++++
+
+[<i class="fas fa-file-pdf"></i> Download this book as PDF](https://ogsstorage.blob.core.windows.net/web/Books/TODO-DONWLOAD-LINK.pdf) 
+
+TODO DESCRIPTION
+
+::: {.clearfix}
+:::
+
+::: {.note}
+### <i class="fas fa-download"></i> Downloads
+- [<i class="fas fa-file-archive"></i> TODO LINK DESCRIPTION](https://ogsstorage.blob.core.windows.net/web/Books/TODO-DOWNLOAD-LINK)  
+:::
+
+::: {.note}
+### <i class="fas fa-book"></i> Bibliography
+{{< bib id="TODO-BIB-ID" >}}
+:::

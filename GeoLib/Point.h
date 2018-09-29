@@ -1,57 +1,63 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-01-12
+ * \brief  Definition of the Point class.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file Point.h
- *
- * Created on 2010-01-12 by Thomas Fischer
  */
 
-#ifndef POINT_H_
-#define POINT_H_
+#pragma once
 
-#include "TemplatePoint.h"
+// GeoLib
+#include "GeoObject.h"
 
-namespace GeoLib {
+// MathLib
+#include "MathLib/Point3dWithID.h"
 
+namespace GeoLib
+{
 /**
  * \ingroup GeoLib
  */
 
-typedef TemplatePoint<double> Point;
+// forward declaration
+class PointVec;
 
-/**
- * comparison based on the x coordinate
- * @param p0 first point
- * @param p1 second point
- * @return true if the x coordinate of p0 is smaller equal the x coordinate of p1, else false
- */
-bool lessX (Point const & p0, Point const & p1);
+class Point : public MathLib::Point3dWithID, public GeoLib::GeoObject
+{
+public:
+    Point(double x1, double x2, double x3,
+        std::size_t id = std::numeric_limits<std::size_t>::max()) :
+        MathLib::Point3dWithID(std::array<double,3>({{x1, x2, x3}}), id),
+        GeoLib::GeoObject()
+    {}
 
-/**
- * comparison based on the y coordinate
- * @param p0 first point
- * @param p1 second point
- * @return true if the y coordinate of p0 is smaller equal the y coordinate of p1, else false
- */
-bool lessY (Point const & p0, Point const & p1);
+    Point() :
+        MathLib::Point3dWithID(), GeoLib::GeoObject()
+    {}
 
-/**
- * comparison based on the z coordinate
- * @param p0 first point
- * @param p1 second point
- * @return true if the z coordinate of p0 is smaller equal the z coordinate of p1, else false
- */
-bool lessZ (Point const & p0, Point const & p1);
+    Point(MathLib::Point3d const& x, std::size_t id) :
+        MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
+    {}
 
-/**
- * lexicographic comparison of points
- */
-bool operator<= (GeoLib::Point const & p0, GeoLib::Point const & p1);
+    Point(std::array<double,3> const& x,
+        std::size_t id = std::numeric_limits<std::size_t>::max()) :
+        MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
+    {}
+
+    /// return a geometry type
+    GEOTYPE getGeoType() const override { return GEOTYPE::POINT; }
+
+protected:
+    friend PointVec;
+    /// Resets the id.
+    void setID(std::size_t id) { _id = id; }
+};
+
 }
-
-
-#endif /* POINT_H_ */

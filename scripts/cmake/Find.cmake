@@ -1,125 +1,174 @@
-############################
-### Find OGS directories ###
-############################
-
-# Compiled libraries (for Windows)
-FIND_PATH(OGS_LIBS_DIR_FOUND geotiff.lib
-	PATHS $ENV{OGS_LIBS} ${OGS_LIBS_DIR} ${PROJECT_SOURCE_DIR}/../Libs C:/OGS_Libs
-	PATH_SUFFIXES libgeotiff)
-IF(OGS_LIBS_DIR_FOUND)
-	SET(OGS_LIBS_DIR ${OGS_LIBS_DIR_FOUND}/..)
-ENDIF()
-
 ######################
 ### Find tools     ###
 ######################
 
-# Find dot tool from graphviz
-FIND_PROGRAM(DOT_TOOL_PATH dot DOC "Dot tool from graphviz")
-
 # Find doxygen
-FIND_PACKAGE(Doxygen)
+if(WIN32)
+    find_program(DOXYGEN_DOT_EXECUTABLE NAMES dot
+        PATHS "$ENV{ProgramFiles}/Graphviz*/bin")
+    find_package(Doxygen QUIET)
+    if(DOXYGEN_DOT_PATH)
+        file(TO_NATIVE_PATH ${DOXYGEN_DOT_PATH} DOXYGEN_DOT_PATH)
+        set(DOXYGEN_DOT_PATH "\"${DOXYGEN_DOT_PATH}\"")
+    endif()
+else()
+    find_package(Doxygen QUIET)
+endif()
 
 # Find gnu profiler gprof
-FIND_PROGRAM(GPROF_PATH gprof DOC "GNU profiler gprof")
+find_program(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
 
-FIND_PACKAGE(cppcheck)
+find_package(cppcheck QUIET)
 
-FIND_PACKAGE(PythonInterp)
+find_package(PythonInterp QUIET)
+
+# Find bash itself ...
+find_program(BASH_TOOL_PATH bash
+    HINTS ${GITHUB_BIN_DIR} DOC "The bash executable")
+
+# Dumpbin is a windows dependency analaysis tool required for packaging.
+# Variable has to be named gp_cmd to override the outdated find routines
+# of the GetPrerequisites CMake-module.
+if(WIN32)
+    include(MSVCPaths)
+    find_program(gp_cmd dumpbin DOC "Windows dependency analysis tool"
+        PATHS ${MSVC_INSTALL_PATHS} PATH_SUFFIXES VC/bin)
+    if(gp_cmd)
+        get_filename_component(dir ${gp_cmd} PATH)
+        set(ENV{PATH} "${dir}/../../../Common7/IDE;$ENV{PATH}")
+    endif()
+endif()
+
+find_program(CURL_TOOL_PATH curl DOC "The curl-tool")
+
+find_program(S3CMD_TOOL_PATH s3cmd DOC "S3cmd tool for uploading to Amazon S3")
+
+find_program(CCACHE_TOOL_PATH ccache)
+
+# Tools for web
+find_program(VTKJS_CONVERTER vtkDataConverter
+    PATHS ${PROJECT_SOURCE_DIR}/web/node_modules/.bin)
+find_program(HUGO hugo)
+find_program(NPM npm)
+find_program(YARN yarn)
+find_program(PIP pip)
+find_program(PANDOC_CITEPROC pandoc-citeproc)
+
+find_program(MODULE_CMD modulecmd
+    PATHS /usr/local/modules/3.2.10-1/Modules/3.2.10/bin)
 
 ######################
 ### Find libraries ###
 ######################
+find_package(Boost REQUIRED)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
-# Clang does not have OpenMP support atm, see https://github.com/ufz/ogs/issues/8
-IF(NOT COMPILER_IS_CLANG)
-	FIND_PACKAGE(OpenMP)
-ENDIF () # !clang
-IF(OPENMP_FOUND)
-	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-ENDIF()
+find_package(VTK 8.1.0 REQUIRED)
+include(${VTK_USE_FILE})
 
-FIND_PACKAGE(Metis)
+find_package(Eigen3 3.2.9 REQUIRED)
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
-## Qt4 library ##
-IF(NOT OGS_DONT_USE_QT)
-	FIND_PACKAGE( Qt4 4.7)
-ENDIF(NOT OGS_DONT_USE_QT)
+## pthread, is a requirement of logog ##
+if(CMAKE_CROSSCOMPILING)
+    set(THREADS_PTHREAD_ARG 0 CACHE STRING "Result from TRY_RUN" FORCE)
+endif()
+set(CMAKE_THREAD_PREFER_PTHREAD ON)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+if(CMAKE_USE_PTHREADS_INIT)
+    set(HAVE_PTHREADS TRUE)
+    add_definitions(-DHAVE_PTHREADS)
+endif()
 
-IF ( QT4_FOUND )
-	# Enable more modules
-	SET(QT_USE_QTOPENGL TRUE)
-	SET(QT_USE_QTSQL TRUE)
-	SET(QT_USE_QTTEST TRUE)
-	SET(QT_USE_QTXML TRUE)
-	SET(QT_USE_QTXMLPATTERNS TRUE)
-	INCLUDE( ${QT_USE_FILE} )
-	ADD_DEFINITIONS(${QT_DEFINITIONS})
-ENDIF (QT4_FOUND )
+# Do not search for libs if this option is set
+if(OGS_NO_EXTERNAL_LIBS)
+    return()
+endif() # OGS_NO_EXTERNAL_LIBS
 
-## pthread ##
-SET ( CMAKE_THREAD_PREFER_PTHREAD ON )
-FIND_PACKAGE ( Threads )
-IF ( CMAKE_USE_PTHREADS_INIT )
-	SET (HAVE_PTHREADS TRUE)
-	ADD_DEFINITIONS(-DHAVE_PTHREADS)
-ENDIF (CMAKE_USE_PTHREADS_INIT )
+find_package(OpenMP)
+if(OPENMP_FOUND)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+endif()
 
-# blas
-FIND_PACKAGE ( BLAS )
+find_package(Metis QUIET)
+
+## Qt5 library ##
+if(OGS_BUILD_GUI)
+    set(QT_MODULES Gui Widgets Xml XmlPatterns)
+    if(OGS_USE_CONAN AND UNIX AND NOT APPLE)
+        set(QT_MODULES ${QT_MODULES} X11Extras)
+    endif()
+    find_package(Qt5 5.2 REQUIRED ${QT_MODULES})
+    cmake_policy(SET CMP0020 NEW)
+    if(CMAKE_CROSSCOMPILING)
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(QT_XML_DEPS REQUIRED Xml)
+        list(REMOVE_ITEM QT_XML_DEPS_LIBRARIES Xml Core)
+        pkg_check_modules(QT_GUI_DEPS REQUIRED Gui)
+        list(REMOVE_ITEM QT_GUI_DEPS_LIBRARIES Gui Core)
+        pkg_check_modules(QT_NETWORK_DEPS REQUIRED Network)
+        list(REMOVE_ITEM QT_NETWORK_DEPS_LIBRARIES Network Core)
+    endif()
+endif()
 
 # lapack
-FIND_PACKAGE ( LAPACK )
-
-## VTK ##
-IF (OGS_LIBS_DIR_FOUND)
-	SET (VTK_DIR ${OGS_LIBS_DIR}/VTK/build)
-ENDIF () # OGS_LIBS_DIR_FOUND
-IF(NOT OGS_DONT_USE_VTK)
-	FIND_PACKAGE( VTK )
-ENDIF()
-IF(VTK_FOUND)
-	ADD_DEFINITIONS(-DVTK_FOUND)
-	FIND_PACKAGE(QVTK)
-	IF(NOT QVTK_FOUND AND OGS_BUILD_GUI)
-		MESSAGE(FATAL_ERROR "QVTK was not found but is required for OGS_BUILD_GUI! On Ubuntu it can be installed via 'sudo apt-get install libvtk5-qt4-dev'")
-	ENDIF()
-ENDIF()
-
-## NetCDF ##
-IF("${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}.${VTK_PATCH_VERSION}" VERSION_GREATER 5.6)
-	FIND_PATH(VTK_NETCDF_FOUND netcdf.h
-		PATHS ${VTK_INCLUDE_DIRS}/vtknetcdf ${VTK_SOURCE_DIR}/Utilities/vtknetcdf
-		PATH_SUFFIXES include
-		NO_DEFAULT_PATH)
-ENDIF()
-
-IF(VTK_NETCDF_FOUND)
-	MESSAGE(STATUS "VTKs NetCDF found.")
-	ADD_DEFINITIONS(-DVTK_NETCDF_FOUND)
-	INCLUDE_DIRECTORIES(
-		${VTK_NETCDF_FOUND} ${VTK_DIR}/Utilities ${VTK_NETCDF_FOUND}/..
-		${VTK_NETCDF_FOUND}/../.. ${VTK_NETCDF_FOUND}/../cxx)
-ELSE()
-	SET(NETCDF_CXX TRUE)
-	FIND_PACKAGE(NetCDF)
-	IF(NOT NETCDF_FOUND AND OGS_BUILD_GUI)
-		MESSAGE(FATAL_ERROR "NetCDF was not found but is required for OGS_BUILD_GUI!")
-	ENDIF()
-ENDIF()
+find_package(LAPACK QUIET)
 
 ## geotiff ##
-IF(NOT MSVC)
-	FIND_PACKAGE( LibTiff )
-ENDIF() # NOT MSVC
-FIND_PACKAGE( LibGeoTiff )
-IF(libgeotiff_FOUND)
-	ADD_DEFINITIONS(-Dlibgeotiff_FOUND)
-ENDIF() # libgeotiff_FOUND
+find_package(LibGeoTiff)
+if(GEOTIFF_FOUND)
+    add_definitions(-DGEOTIFF_FOUND)
+endif() # GEOTIFF_FOUND
 
-## shapelib ##
-FIND_PACKAGE( Shapelib )
-IF(Shapelib_FOUND)
-	ADD_DEFINITIONS(-DShapelib_FOUND)
-ENDIF() # Shapelib_FOUND
+## lis ##
+if(OGS_USE_LIS)
+    find_package( LIS REQUIRED )
+endif()
+
+if(OGS_USE_MKL)
+    find_package( MKL REQUIRED )
+endif()
+
+if(OGS_USE_PETSC)
+    message(STATUS "Configuring for PETSc")
+
+    option(FORCE_PETSC_EXECUTABLE_RUNS
+        "Force CMake to accept a given PETSc configuration" ON)
+
+    # Force CMake to accept a given PETSc configuration in case the failure of
+    # MPI tests. This may cause the compilation broken.
+    if(FORCE_PETSC_EXECUTABLE_RUNS)
+        set(PETSC_EXECUTABLE_RUNS YES)
+    endif()
+
+    find_package(PETSc REQUIRED)
+
+    include_directories(SYSTEM ${PETSC_INCLUDES})
+
+    add_definitions(-DPETSC_VERSION_NUMBER=PETSC_VERSION_MAJOR*1000+PETSC_VERSION_MINOR*10)
+
+endif()
+
+find_package(OpenSSL)
+
+## Check MPI package
+if(OGS_USE_MPI)
+    find_package(MPI REQUIRED)
+    include_directories(SYSTEM ${MPI_CXX_INCLUDE_PATH})
+endif()
+
+find_package(Shapelib)
+if(Shapelib_FOUND)
+    include_directories(SYSTEM ${Shapelib_INCLUDE_DIRS})
+elseif(OGS_BUILD_GUI)
+    message(FATAL_ERROR "Shapelib not found but it is required for OGS_BUILD_GUI!")
+endif()
+
+## Sundials cvode ode-solver library
+find_package(CVODE)
+if(CVODE_FOUND)
+    add_definitions(-DCVODE_FOUND)
+endif() # CVODE_FOUND

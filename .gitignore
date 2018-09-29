@@ -1,2 +1,21 @@
 *.bak*
-*.orig
+build*/
+*.sw[op]
+tags
+.ExternalData_*
+
+# CLion IDE project files
+*.iml
+.idea
+
+# Visual Studio Code project files
+.vscode
+
+# Conan package manager
+conanbuildinfo.cmake
+conaninfo.txt
+CMakeLists.txt.user*
+
+*.pyc
+
+Tests/**/*.md5

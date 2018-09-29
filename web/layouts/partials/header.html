@@ -1,0 +1,63 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{ .Hugo.Generator }}
+
+  <meta name="description" content="OpenGeoSys">
+  <meta name="author" content="OpenGeoSys Community">
+  <title>{{ .Title }}</title>
+
+  <!-- <link rel="stylesheet" href="/styles.css"> -->
+  {{ if .Site.IsServer }}
+  {{ $styles := resources.Get "scss/main.scss" | resources.ToCSS (dict "targetPath" "main.css" "enableSourceMap" true ) | resources.PostCSS }}
+  <link rel="stylesheet" href="{{ $styles.Permalink }}" media="screen">
+  {{ else }}
+  {{ $styles := resources.Get "scss/main.scss" | resources.ToCSS (dict "targetPath" "main.css" ) | resources.PostCSS | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $styles.Permalink }}" media="screen"> <!-- integrity attribute did not work with netlify deploy previews -->
+  {{ end }}
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      TeX: { equationNumbers: { autoNumber: "AMS" } }
+    });
+  </script>
+  <script async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+
+</head>
+
+<body class="font-sans leading-normal">
+  <header class="bg-light">
+    <div class="container">
+      <nav class="flex border-b py-4">
+        <div class="hidden sm:block w-1/4">
+          <a href="/">{{ .Site.Title }}</a>
+        </div>
+        {{ $currentPage := . }}
+        {{ $segments := split .RelPermalink "/" }}
+        {{ $section := index $segments 1 }}
+        <div class="w-3/4 sm:w-1/2 flex justify-center">
+          {{ range .Site.Menus.main }}
+          {{ $url_trimmed := trim .URL "/" }}
+          <a href="{{ .URL }}" class="nav-item{{if (eq $section $url_trimmed) }} active{{end}}">{{ .Name }}</a>
+          {{ end }}
+        </div>
+        <div class="w-1/4">
+          {{ partial "site-search.html" . }}
+        </div>
+      </nav>
+      {{ if .Site.Params.alert }}
+      <div class="text-sm flex justify-center my-2 p-2 bg-blue-lightest text-blue-darker border-l-4 border-blue">
+        <i class="fas fa-exclamation-triangle"></i>&nbsp;
+        <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
+      </div>
+      {{ end }}
+    </div>
+  </header>
+  <div class="py-2">

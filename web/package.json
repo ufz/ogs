@@ -1,0 +1,16 @@
+{
+    "private": true,
+    "scripts": {
+        "build": "hugo",
+        "index": "hugo-algolia -toml",
+        "index-and-send": "hugo-algolia -toml -s"
+    },
+    "devDependencies": {},
+    "dependencies": {
+        "autoprefixer": "^9.0.0",
+        "hugo-algolia": "^1.2.13",
+        "postcss-cli": "^5.0.1",
+        "postcss-import": "^11.1.0",
+        "tailwindcss": "^0.6.4"
+    }
+}

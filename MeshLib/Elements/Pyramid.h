@@ -1,23 +1,27 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Thomas Fischer
+ * \date   Sep 27, 2012
+ * \brief  Definition of the Pyramid class.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file Pyramid.h
- *
- *  Created on  Sep 27, 2012 by Thomas Fischer
  */
 
-#ifndef PYRAMID_H_
-#define PYRAMID_H_
+#pragma once
 
-#include "TemplatePyramid.h"
+#include "TemplateElement.h"
+#include "PyramidRule5.h"
+#include "PyramidRule13.h"
+
+extern template class MeshLib::TemplateElement<MeshLib::PyramidRule13>;
+extern template class MeshLib::TemplateElement<MeshLib::PyramidRule5>;
 
 namespace MeshLib {
-
-typedef TemplatePyramid<5,FEMElemType::PYRAMID5> Pyramid;
-
+using Pyramid = TemplateElement<MeshLib::PyramidRule5>;
+using Pyramid13 = TemplateElement<MeshLib::PyramidRule13>;
 }
-
-#endif /* PYRAMID_H_ */

@@ -1,21 +1,27 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Thomas Fischer
+ * \date   Sep 27, 2012
+ * \brief  Definition of the Hex class.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file Hex.h
- *
- *  Created on  Sep 27, 2012 by Thomas Fischer
  */
 
-#ifndef HEX_H_
-#define HEX_H_
+#pragma once
 
-#include "TemplateHex.h"
+#include "TemplateElement.h"
+#include "HexRule8.h"
+#include "HexRule20.h"
+
+extern template class MeshLib::TemplateElement<MeshLib::HexRule20>;
+extern template class MeshLib::TemplateElement<MeshLib::HexRule8>;
 
 namespace MeshLib {
-typedef TemplateHex<8, FEMElemType::HEX8> Hex;
+using Hex = TemplateElement<MeshLib::HexRule8>;
+using Hex20 = TemplateElement<MeshLib::HexRule20>;
 }
-
-#endif /* HEX_H_ */

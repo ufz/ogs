@@ -1,31 +1,39 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-06-16
+ * \brief  Definition of string helper functions.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file StringTools.h
- *
- * Created on 2010-06-16 by Thomas Fischer
  */
 
-#ifndef STRINGTOOLS_H
-#define STRINGTOOLS_H
+#pragma once
 
 #include <string>
 #include <list>
 #include <sstream>
-#include <fstream>
-#include <iostream>
-#include <ctype.h>
+#include <vector>
 
+namespace BaseLib {
+/**
+ *  Splits a string into a vector of strings. This method only works for string
+ *  separation recognised by the std::stringstream iterator such as ' ' or
+ * '\\t'.
+ *  \param str String to be splitted
+ *  \return Vector of strings
+ */
+std::vector<std::string> splitString(std::string const& str);
 
 /**
  *   Splits a string into a list of strings.
  *  \param str String to be splitted
  *  \param delim Character indicating that the string should be splitted
- *  \return
+ *  \return List of strings
  */
 std::list<std::string> splitString(const std::string &str, char delim);
 
@@ -39,18 +47,6 @@ std::list<std::string> splitString(const std::string &str, char delim);
 std::string replaceString(const std::string &searchString, const std::string &replaceString, std::string stringToReplace);
 
 /**
- *   Converts a number (double, float, int, ...) into a string
- *  \param d The number to be converted
- *  \return The number as string
- */
-template<typename T> std::string number2str(T d)
-{
-	std::stringstream out;
-	out << d;
-	return out.str();
-}
-
-/**
  *   Converts a string into a number (double, float, int, ...)
  *  Example: std::size_t number (str2number<std::size_t> (str));
  *  \param str string to be converted
@@ -58,47 +54,39 @@ template<typename T> std::string number2str(T d)
  */
 template<typename T> T str2number (const std::string &str)
 {
-	std::stringstream strs (str, std::stringstream::in | std::stringstream::out);
-	T v;
-	strs >> v;
-	return v;
+    std::stringstream strs (str, std::stringstream::in | std::stringstream::out);
+    T v;
+    strs >> v;
+    return v;
 }
 
 /**
  * Strip whitespace (or other characters) from the beginning and end of a string.
+ * Equivalent functionality to Qt::QString::trim().
  */
 void trim(std::string &str, char ch=' ');
 
-namespace BaseLib {
+/**
+ * Removes multiple whitespaces (or other characters) from within a string.
+ * Equivalent functionality to Qt::QString::simplify().
+ */
+void simplify(std::string &str);
 
 /**
- * Extract the filename from a path
+ * Returns the string which is right aligned with padding on the left.
  */
-std::string getFileNameFromPath(const std::string &str, bool with_extension = false);
-
-/**
- * Extract the file type / suffix from a path
- */
-std::string getSuffixFromPath(const std::string &str);
+std::string padLeft(std::string const& str, int maxlen, char ch=' ');
 
 
-/**
- * Checks if file_name already contains a qualified path and if not copies the path from source.
- */
-std::string copyPathToFileName(const std::string &file_name, const std::string &source);
+//! Method for handling conversion to string uniformly across all types and std::string; see std::string overload below.
+template<typename T> std::string tostring(T const& value)
+{
+    return std::to_string(value);
+}
+//! \overload
+std::string const& tostring(std::string const& value);
 
-/**
- * extracts the path of a fully qualified path name of the file
- * @param fname [input] the fully qualified path name of the file
- * @param path [output] the path of the fully qualified path name of the file
- */
-void extractPath (std::string const& fname, std::string& path);
-
+//! returns printf-like formatted string
+std::string format(const char* format_string, ... );
 
 } // end namespace BaseLib
-
-#ifdef MSVC
-void correctScientificNotation(std::string filename, std::size_t precision = 0);
-#endif
-
-#endif //STRINGTOOLS_H

@@ -1,0 +1,22 @@
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "Unit Testing"
+author = "Lars Bilke"
+weight = 1021
+
+[menu]
+  [menu.devguide]
+    parent = "testing"
++++
+
+## Introdution
+
+[Unit testing](http://en.wikipedia.org/wiki/Unit_testing) can be used for testing small pieces of functionality. We use [googletest](https://code.google.com/p/googletest/wiki/V1_6_Primer) as our test framework.
+
+## Running Tests
+
+Googletest is already included in the OGS source code. Running tests is as simple as building the `tests`-target.
+
+## Writing Tests
+
+All tests are located inside the *Tests*-directory in library-specific subfolders. To write a new test you simply create a new *.cpp*-file and use the googletest macros.

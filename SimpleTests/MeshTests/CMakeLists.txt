@@ -1,68 +1,29 @@
-IF (WIN32)
-	SET ( ADDITIONAL_LIBS Winmm.lib )
-ENDIF()
-
-INCLUDE_DIRECTORIES(
-        .
-	${CMAKE_SOURCE_DIR}/BaseLib/
-	${CMAKE_SOURCE_DIR}/BaseLib/logog/include
-	${CMAKE_SOURCE_DIR}/FileIO/
-	${CMAKE_SOURCE_DIR}/GeoLib/
-	${CMAKE_SOURCE_DIR}/MathLib/
-	${CMAKE_SOURCE_DIR}/MeshLib/
+# Create the executable
+add_executable(MeshRead
+    MeshRead.cpp
+    ${SOURCES}
+    ${HEADERS}
 )
 
-IF(VTK_FOUND)
-	INCLUDE( ${VTK_USE_FILE} )
-
-	# Create the executable
-	ADD_EXECUTABLE( MeshRead
-	        MeshRead.cpp
-        	${SOURCES}
-	        ${HEADERS}
-	)
-
-	TARGET_LINK_LIBRARIES ( MeshRead
-		MeshLib
-		FileIO
-		MathLib
-		BaseLib
-		GeoLib
-		logog
-		${ADDITIONAL_LIBS}
-	)
-ENDIF()
-
-# Create CollapseMeshNodes executable
-ADD_EXECUTABLE( CollapseMeshNodes
-        CollapseMeshNodes.cpp
-        ${SOURCES}
-        ${HEADERS}
-)
-
-TARGET_LINK_LIBRARIES ( CollapseMeshNodes
-	MeshLib
-	FileIO
-	MathLib
-	BaseLib
-	GeoLib
-	logog
+target_link_libraries(MeshRead
+    MeshLib
+    MathLib
+    BaseLib
+    GeoLib
+    ${BOOST_LIBRARIES}
 )
 
 # Create MeshSearchTest executable
-ADD_EXECUTABLE( MeshSearchTest
-        MeshSearchTest.cpp
-        ${SOURCES}
-        ${HEADERS}
+add_executable(MeshSearchTest
+    MeshSearchTest.cpp
+    ${SOURCES}
+    ${HEADERS}
 )
 
-TARGET_LINK_LIBRARIES ( MeshSearchTest
-	MeshLib
-	FileIO
-	MathLib
-	BaseLib
-	GeoLib
-	logog
-	${ADDITIONAL_LIBS}
+target_link_libraries(MeshSearchTest
+    MeshLib
+    MathLib
+    BaseLib
+    GeoLib
+    ${BOOST_LIBRARIES}
 )
-

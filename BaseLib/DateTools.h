@@ -1,22 +1,24 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * \file
+ * \author Karsten Rink
+ * \date   2010-01-22
+ * \brief  Definition of date helper functions.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file DateTools.h
- *
- * Created on 2010-01-22 by Karsten Rink
  */
 
-#ifndef DATETOOLS_H
-#define DATETOOLS_H
+#pragma once
 
-#include "StringTools.h"
+#include <chrono>
 #include <string>
 
-namespace BaseLib {
+namespace BaseLib
+{
 
 /**
  * Converts three integers representing a date into a double.
@@ -54,6 +56,13 @@ int strDate2int(const std::string &s);
  */
 int xmlDate2int(const std::string &s);
 
-} // namespace BaseLib
+/**
+ * Formats the given time point according to RFC 3339 (cf. man-page of the unix
+ * date utility).
+ *
+ * Example: 2006-08-14 02:34:56-06:00
+ */
+std::string formatDate(
+    std::chrono::time_point<std::chrono::system_clock> const& time);
 
-#endif //DATETOOLS_H
+} // namespace BaseLib

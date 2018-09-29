@@ -1,32 +1,32 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-08-27
+ * \brief  Base class for classes Point, Polyline, Surface.
+ * \ingroup GeoLib
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file GeoObject.h
- *
- * Created on 2010-08-27 by Thomas Fischer
  */
 
-#ifndef GEOOBJECT_H_
-#define GEOOBJECT_H_
+#pragma once
 
-namespace GeoLib {
+#include "GeoType.h"
 
-/**
- * \ingroup GeoLib
- *
- * \brief Base class for classes Point, Polyline, Surface.
- */
-
-class GeoObject {
+namespace GeoLib
+{
+class GeoObject
+{
 public:
-	GeoObject() {};
-	virtual ~GeoObject() {};
+    GeoObject() = default;
+    GeoObject(GeoObject const&) = default;
+    GeoObject& operator=(GeoObject const&) = default;
+    virtual ~GeoObject() = default;
+    /// return a geometry type
+    virtual GEOTYPE getGeoType() const = 0;
 };
-
 } // end namespace GeoLib
-
-#endif /* GEOOBJECT_H_ */

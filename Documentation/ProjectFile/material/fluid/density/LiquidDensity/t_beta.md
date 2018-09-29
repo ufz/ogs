@@ -1,0 +1,1 @@
+\copydoc MaterialLib::Fluid::LiquidDensity::_beta

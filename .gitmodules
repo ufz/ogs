@@ -1,0 +1,27 @@
+[submodule "ThirdParty/VtkFbxConverter"]
+	path = ThirdParty/VtkFbxConverter
+	url = https://github.com/ufz-vislab/VtkFbxConverter.git
+[submodule "ThirdParty/tetgen"]
+	path = ThirdParty/tetgen
+	url = https://github.com/ufz/tetgen.git
+[submodule "vtkdiff"]
+	path = ThirdParty/vtkdiff
+	url = https://github.com/ufz/vtkdiff.git
+[submodule "ThirdParty/tclap"]
+	path = ThirdParty/tclap
+	url = https://github.com/ufz/tclap.git
+[submodule "ThirdParty/autocheck"]
+	path = ThirdParty/autocheck
+	url = https://github.com/thejohnfreeman/autocheck.git
+[submodule "ThirdParty/metis"]
+	path = ThirdParty/metis
+	url = https://github.com/scibuilder/metis.git
+[submodule "ThirdParty/SwmmInterface"]
+	path = ThirdParty/SwmmInterface
+	url = https://github.com/ufz/SwmmInterface.git
+[submodule "ThirdParty/cmake-modules"]
+	path = ThirdParty/cmake-modules
+	url = https://github.com/bilke/cmake-modules.git
+[submodule "ThirdParty/pybind11"]
+	path = ThirdParty/pybind11
+	url = https://github.com/pybind/pybind11.git

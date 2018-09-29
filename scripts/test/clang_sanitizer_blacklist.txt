@@ -1,0 +1,35 @@
+# Eigen is calling memcpy with source equal nullptr for a SparseMatrix without
+# any space allocated. memcpy with source equal to 0 is undefined behaviour.
+# Eigen-3.2.5: Eigen::internal::smart_copy_helper<double, true>::run
+fun:*smart_copy_helper*
+
+# Computation of ios_fmt_flags relies on some bit-wise operations.
+# STL gcc-4.8: std::operator&=(std::_Ios_Fmtflags&, std::_Ios_Fmtflags)
+fun:*Ios_Fmtflags*
+fun:_ZStaNRSt13_Ios_FmtflagsS_
+src:*/include/c\+\+/4.8/bits/ios_base.h
+src:/usr/lib/gcc/x86_64-linux-gnu/4.8/../../../../include/c\+\+/4.8/bits/ios_base.h
+
+# Comparing a string with a shorter one causes an integer subtraction overflow.
+# STL gcc-5.3: std::string::_S_compare(unsigned long, unsigned long)
+fun:_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_S_compareEmm
+# STL gcc-4.8: std::string::_S_compare(unsigned long, unsigned long)
+fun:_ZNSs10_S_compareEmm
+fun:*_S_compare*
+
+# When looking for a last occurence of a string in another string the algorithm
+# an integer subtraction overflow happens.
+# STL gcc-5.3: std::string::find_last_of(...) const
+fun:_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12find_last_ofEPKcmm
+# STL gcc-4.8: std::string::find_last_of(char const*, unsigned long, unsigned long)
+fun:_ZNKSs12find_last_ofEPKcmm
+
+# Integer subtraction overflow in mersenne_twister_engine
+# STL gcc-5.3:
+fun:_ZNSt23mersenne_twister_engineImLm32ELm624ELm397ELm31ELm2567483615ELm11ELm4294967295ELm7ELm2636928640ELm15ELm4022730752ELm18ELm1812433253EE11_M_gen_randEv
+fun:_ZNSt24uniform_int_distributionIiEclISt23mersenne_twister_engineImLm32ELm624ELm397ELm31ELm2567483615ELm11ELm4294967295ELm7ELm2636928640ELm15ELm4022730752ELm18ELm1812433253EEEEiRT_
+fun:_ZNSt24uniform_int_distributionIiEclISt23mersenne_twister_engineImLm32ELm624ELm397ELm31ELm2567483615ELm11ELm4294967295ELm7ELm2636928640ELm15ELm4022730752ELm18ELm1812433253EEEEiRT_RKNS0_10param_typeE
+
+# valarray fill loop is counting down and reaching integer subtraction overflow
+# STL gcc-5.3: called from operator=(double)
+fun:_ZSt15__valarray_fillIdEvPT_mRKS0_

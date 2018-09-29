@@ -1,68 +1,134 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-09-07
+ * \brief  Implementation of the PiecewiseLinearInterpolation class.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file PiecewiseLinearInterpolation.cpp
- *
- * Created on 2010-09-07 by Thomas Fischer
  */
+#include <cmath>
+#include <limits>
+#include <utility>
+
+#include "BaseLib/Error.h"
+#include "BaseLib/quicksort.h"
 
 #include "PiecewiseLinearInterpolation.h"
-#include "binarySearch.h"
-#include "swap.h"
-
-#include <iostream>
 
 namespace MathLib
 {
-PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<double>& supporting_points,
-                                         const std::vector<double>& values_at_supp_pnts)
-	: _supporting_points (supporting_points), _values_at_supp_pnts (values_at_supp_pnts)
-{}
-
-PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<double>& supporting_points,
-                                         const std::vector<double>& values_at_supp_pnts,
-                                         const std::vector<double>& points_to_interpolate,
-                                         std::vector<double>& values_at_interpol_pnts)
-	: _supporting_points (supporting_points), _values_at_supp_pnts (values_at_supp_pnts)
+PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
+    std::vector<double>&& supporting_points,
+    std::vector<double>&& values_at_supp_pnts,
+    bool supp_pnts_sorted)
+    : _supp_pnts(std::move(supporting_points)),
+      _values_at_supp_pnts(std::move(values_at_supp_pnts))
 {
-//	std::cout << "PiecewiseLinearInterpolation::PiecewiseLinearInterpolation support_points, values_at_supp_pnts: " << std::endl;
-//	for (size_t k(0); k<supporting_points.size(); k++) {
-//		std::cout << supporting_points[k] << " " << values_at_supp_pnts[k] << std::endl;
-//	}
-//	std::cout << std::endl;
-	values_at_interpol_pnts.clear();
-	for (size_t k(0); k < points_to_interpolate.size(); k++)
-		values_at_interpol_pnts.push_back (this->getValue (points_to_interpolate[k]));
+    if (!supp_pnts_sorted)
+    {
+        BaseLib::quicksort<double, double>(
+            _supp_pnts, static_cast<std::size_t>(0), _supp_pnts.size(),
+            _values_at_supp_pnts);
+    }
+
+    const auto it = std::adjacent_find(_supp_pnts.begin(), _supp_pnts.end());
+    if (it != _supp_pnts.end())
+    {
+        const std::size_t i = std::distance(_supp_pnts.begin(), it);
+        OGS_FATAL(
+            "Variable %d and variable %d are the same. "
+            "Piecewise linear interpolation is not possible\n",
+            i, i + 1);
+    }
 }
 
-PiecewiseLinearInterpolation::~PiecewiseLinearInterpolation()
-{}
-
-double PiecewiseLinearInterpolation::getValue ( double pnt_to_interpolate )
+double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
 {
-	// search interval that has the point inside
-	size_t interval_idx (std::numeric_limits<size_t>::max());
-	for (size_t k(1);
-	     k < _supporting_points.size() && interval_idx == std::numeric_limits<size_t>::max();
-	     k++)
-		if (_supporting_points[k - 1] <= pnt_to_interpolate && pnt_to_interpolate <=
-		    _supporting_points[k])
-			interval_idx = k - 1;
+    // search interval that has the point inside
+    if (pnt_to_interpolate <= _supp_pnts.front())
+    {
+        return _values_at_supp_pnts[0];
+    }
 
-	// compute linear interpolation polynom: y = m * x + n
-	long double m (
-	        (_values_at_supp_pnts[interval_idx +
-	                              1] -
-	        _values_at_supp_pnts[interval_idx]) /
-	        (_supporting_points[interval_idx + 1] - _supporting_points[interval_idx]));
-//	double m ((_values_at_supp_pnts[interval_idx] - _values_at_supp_pnts[interval_idx+1]) / (_supporting_points[interval_idx] - _supporting_points[interval_idx+1]));
-//	double n (_values_at_supp_pnts[interval_idx+1] - m * _supporting_points[interval_idx+1]);
-	long double n (_values_at_supp_pnts[interval_idx] - m * _supporting_points[interval_idx]);
+    if (_supp_pnts.back() <= pnt_to_interpolate)
+    {
+        return _values_at_supp_pnts[_supp_pnts.size() - 1];
+    }
 
-	return m * pnt_to_interpolate + n;
+    auto const& it(std::lower_bound(_supp_pnts.begin(), _supp_pnts.end(),
+                                    pnt_to_interpolate));
+    std::size_t const interval_idx = std::distance(_supp_pnts.begin(), it) - 1;
+
+    // support points.
+    double const x = _supp_pnts[interval_idx];
+    double const x_r = _supp_pnts[interval_idx + 1];
+
+    // values.
+    double const f = _values_at_supp_pnts[interval_idx];
+    double const f_r = _values_at_supp_pnts[interval_idx + 1];
+
+    // compute linear interpolation polynom: y = m * (x - support[i]) + value[i]
+    const double m = (f_r - f) / (x_r - x);
+
+    return m * (pnt_to_interpolate - x) + f;
 }
-} // end MathLib
+
+double PiecewiseLinearInterpolation::getDerivative(
+    double const pnt_to_interpolate) const
+{
+    if (pnt_to_interpolate < _supp_pnts.front() ||
+        _supp_pnts.back() < pnt_to_interpolate)
+    {
+        return 0;
+    }
+
+    auto const& it(std::lower_bound(_supp_pnts.begin(), _supp_pnts.end(),
+                                    pnt_to_interpolate));
+    std::size_t interval_idx = std::distance(_supp_pnts.begin(), it);
+
+    if (pnt_to_interpolate == _supp_pnts.front())
+    {
+        interval_idx = 1;
+    }
+
+    if (interval_idx > 1 && interval_idx < _supp_pnts.size() - 2)
+    {
+        // left and right support points.
+        double const x_ll = _supp_pnts[interval_idx - 2];
+        double const x_l = _supp_pnts[interval_idx - 1];
+        double const x = _supp_pnts[interval_idx];
+        double const x_r = _supp_pnts[interval_idx + 1];
+
+        // left and right values.
+        double const f_ll = _values_at_supp_pnts[interval_idx - 2];
+        double const f_l = _values_at_supp_pnts[interval_idx - 1];
+        double const f = _values_at_supp_pnts[interval_idx];
+        double const f_r = _values_at_supp_pnts[interval_idx + 1];
+
+        double const tangent_right = (f_l - f_r) / (x_l - x_r);
+        double const tangent_left = (f_ll - f) / (x_ll - x);
+        double const w = (pnt_to_interpolate - x) / (x_l - x);
+        return (1. - w) * tangent_right + w * tangent_left;
+    }
+
+    return (_values_at_supp_pnts[interval_idx] -
+            _values_at_supp_pnts[interval_idx - 1]) /
+           (_supp_pnts[interval_idx] - _supp_pnts[interval_idx - 1]);
+}
+
+double PiecewiseLinearInterpolation::getSupportMax() const
+{
+    assert(!_supp_pnts.empty());
+    return _supp_pnts.back();
+}
+double PiecewiseLinearInterpolation::getSupportMin() const
+{
+    assert(!_supp_pnts.empty());
+    return _supp_pnts.front();
+}
+}  // end MathLib

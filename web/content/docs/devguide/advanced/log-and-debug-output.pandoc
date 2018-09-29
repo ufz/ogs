@@ -1,0 +1,33 @@
++++
+date = "2018-02-26T11:00:13+01:00"
+title = "Log and Debug Output"
+author = "Lars Bilke"
+weight = 1035
+
+[menu]
+  [menu.devguide]
+    parent = "advanced"
++++
+
+## Introduction
+
+For application output we use [Logog](http://johnwbyrd.github.com/logog) which is already integrated in OGS. Logog provides several verbosity levels which can be used with simple macro calls:
+
+```cpp
+ERR("An error message!")
+WARN("A warning message.")
+INFO("An information message...")
+```
+
+As arguments you can use the same functionality as in [sprintf](http://www.cplusplus.com/reference/cstdio/sprintf/):
+
+```cpp
+int foo = 9001;
+int maxfoo = 9000;
+if (foo > maxfoo)
+    WARN("Foo is over %d!  Current value is %d.", maxfoo, foo );
+```
+
+For more information see the [Logog documentation](http://johnwbyrd.github.com/logog/quickstart.html).
+
+On release builds the log level is `LOGOG_LEVEL_INFO`, on debug it is `LOGOG_LEVEL_DEBUG` and it can be overriden with the CMake option `OGS_LOG_LEVEL`. You can completely disable logging with the CMake-option `OGS_DISABLE_LOGGING` set to `ON`.

@@ -1,23 +1,27 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.net)
+ * \file
+ * \author Thomas Fischer
+ * \date   Sep 27, 2012
+ * \brief  Definition of the Tet class.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/LICENSE.txt
+ *              http://www.opengeosys.org/project/license
  *
- * \file Tet.h
- *
- *  Created on  Sep 27, 2012 by Thomas Fischer
  */
 
-#ifndef TET_H_
-#define TET_H_
+#pragma once
 
-#include "TemplateTet.h"
+#include "TemplateElement.h"
+#include "TetRule4.h"
+#include "TetRule10.h"
+
+extern template class MeshLib::TemplateElement<MeshLib::TetRule10>;
+extern template class MeshLib::TemplateElement<MeshLib::TetRule4>;
 
 namespace MeshLib {
-
-typedef TemplateTet<4,FEMElemType::TET4> Tet;
-
+using Tet = TemplateElement<MeshLib::TetRule4>;
+using Tet10 = TemplateElement<MeshLib::TetRule10>;
 }
-
-#endif /* TET_H_ */

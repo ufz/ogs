@@ -1,171 +1,108 @@
 /**
- * Copyright (c) 2012, OpenGeoSys Community (http://www.opengeosys.org)
+ * \file
+ * \author Thomas Fischer
+ * \date   2010-06-16
+ * \brief  Implementation of string helper functions.
+ *
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *
- * \file StringTools.cpp
- *
- * Created on 2010-06-16 by Thomas Fischer
  */
 
 #include "StringTools.h"
 
+#include <algorithm>
+#include <cctype>
+#include <cstdarg>
+#include <cstdio>
+#include <iomanip>
+
+#include <logog/include/logog.hpp>
+#include <boost/algorithm/string/replace.hpp>
+
+namespace BaseLib
+{
+std::vector<std::string> splitString(std::string const& str)
+{
+    std::istringstream str_stream(str);
+    std::vector<std::string> items;
+    std::copy(std::istream_iterator<std::string>(str_stream),
+        std::istream_iterator<std::string>(),
+        std::back_inserter(items));
+    return items;
+}
+
 std::list<std::string> splitString(const std::string &str, char delim)
 {
-	std::list<std::string> strList;
-	std::stringstream ss(str);
+    std::list<std::string> strList;
+    std::stringstream ss(str);
     std::string item;
-    while(getline(ss, item, delim)) {
+    while(getline(ss, item, delim))
         strList.push_back(item);
-    }
     return strList;
 }
 
-std::string replaceString(const std::string &searchString, const std::string &replaceString, std::string stringToReplace)
- {
-	std::string::size_type pos = stringToReplace.find(searchString, 0);
-	int intLengthSearch = searchString.length();
-
-	while (std::string::npos != pos) {
-		stringToReplace.replace(pos, intLengthSearch, replaceString);
-		pos = stringToReplace.find(searchString, 0);
-	}
-	return stringToReplace;
+std::string replaceString(const std::string &searchString,
+                          const std::string &replaceString,
+                          std::string stringToReplace)
+{
+    boost::replace_all(stringToReplace, searchString, replaceString);
+    return stringToReplace;
 }
 
 void trim(std::string &str, char ch)
 {
-  std::string::size_type pos = str.find_last_not_of(ch);
-  if(pos != std::string::npos)
-  {
-    str.erase(pos + 1);
-    pos = str.find_first_not_of(ch);
-    if(pos != std::string::npos) str.erase(0, pos);
-  }
-  else str.erase(str.begin(), str.end());
+    std::string::size_type pos = str.find_last_not_of(ch);
+    if(pos != std::string::npos)
+    {
+        str.erase(pos + 1);
+        pos = str.find_first_not_of(ch);
+        if(pos != std::string::npos)
+            str.erase(0, pos);
+    }
+    else
+        str.erase(str.begin(), str.end());
 }
 
-namespace BaseLib {
-
-std::string getFileNameFromPath(const std::string &str, bool with_extension)
+void simplify(std::string &str)
 {
-	std::string::size_type beg1 = str.find_last_of('/');
-	std::string::size_type beg2 = str.find_last_of('\\');
-	std::string::size_type beg;
-	if (beg1 == std::string::npos && beg2 == std::string::npos) beg = -1;
-	else if (beg1 == std::string::npos) beg = beg2;
-	else if (beg2 == std::string::npos) beg = beg1;
-	else beg = (beg1<beg2) ? beg2 : beg1;
-	std::string file ( str.substr(beg+1) );
-	if (with_extension) return file;
-	// cut extension
-	std::string::size_type end  = file.find_last_of('.');
-	return file.substr(0,end);
+    trim (str);
+    str.erase(
+        std::unique(str.begin(), str.end(), [](char a, char b) { return a == ' ' && b == ' '; }),
+        str.end()
+    );
 }
 
-std::string getSuffixFromPath(const std::string &str)
+std::string padLeft(std::string const& str, int maxlen, char ch)
 {
-	std::string::size_type beg (str.find_last_of('.'));
-	return str.substr(beg+1, str.length()-beg-1);
+    std::stringstream ss(str);
+    ss << std::right << std::setw(maxlen) << std::setfill(ch) << str;
+    return ss.str();
 }
 
-std::string copyPathToFileName(const std::string &file_name, const std::string &source)
+std::string const& tostring(std::string const& value)
 {
-	// check if file_name already contains a full path
-	size_t pos(file_name.rfind("/")); // linux, mac delimiter
-	if (pos == std::string::npos)
-	{
-		pos = file_name.rfind("\\"); // windows delimiter
-		if (pos == std::string::npos)
-		{
-			std::string path;
-			BaseLib::extractPath(source, path);
-			return path.append(file_name);
-		}
-		else return std::string(file_name);
-	}
-	else return std::string(file_name);
+    return value;
 }
 
-
-void extractPath (std::string const& fname, std::string& path)
+std::string format(const char* format_str, ... )
 {
-	// extract path for reading external files
-	size_t pos(fname.rfind("/")); // linux, mac delimiter
-	if (pos == std::string::npos) {
-		pos = fname.rfind("\\"); // windows delimiter
-		if (pos == std::string::npos)
-			pos = 0;
-	}
-	path = fname.substr(0, pos==0 ? pos : pos + 1);
+    va_list args;
+    va_start(args, format_str);
+    // get the number of chars to write
+    va_list args_tmp;
+    va_copy(args_tmp, args);
+    int char_length = std::vsnprintf(nullptr, 0, format_str, args_tmp);
+    va_end(args_tmp);
+    // allocate buffer and store formatted output there
+    std::vector<char> buffer(char_length + 1); // note +1 for null terminator
+    vsnprintf(buffer.data(), buffer.size(), format_str, args);
+    va_end(args);
+
+    return std::string(buffer.data());
 }
 
 } // end namespace BaseLib
-
-
-#ifdef MSVC
-void correctScientificNotation(std::string filename, size_t precision)
-{
-	std::ifstream stream;
-	std::ofstream outputStream;
-
-	stream.open(filename.c_str());
-	std::string tmpFilename = filename + ".tmp";
-	outputStream.open(tmpFilename.c_str());
-
-	if (!stream)
-	{
-		std::cout << "correctScientificNotation: fstream is not open" << std::endl;
-		return;
-	}
-
-	std::string line;
-
-	// Iterate over lines in stream
-	while (getline(stream, line))
-	{
-		std::string word;
-		std::istringstream iss(line);
-		// Iterate over all words in line
-		while (iss >> word)
-		{
-			// Search for e+0
-			std::size_t exponentPosition = word.find("e+0", precision);
-			if (exponentPosition == std::string::npos)
-				// If not found search for e-0
-				exponentPosition = word.find("e-0", precision);
-			if (exponentPosition != std::string::npos)
-			{
-				std::size_t wordSize = word.size();
-				std::size_t exponentSize = wordSize - exponentPosition;
-
-				if(exponentSize > 4)
-				{
-					// Erase the leading zero considering trailing characters
-					int i = wordSize - 1;
-					while (!isdigit(word[i]))
-						--i;
-
-					size_t erasePos = wordSize - 3 - (wordSize - 1 - i);
-					std::string eraseString = word.substr(erasePos, 1);
-					if (eraseString.find("0") != std::string::npos)
-						word.erase(erasePos, 1);
-				}
-			}
-
-			outputStream << word << " ";
-		}
-		outputStream << std::endl;
-	}
-
-	stream.close();
-	outputStream.close();
-
-	remove(filename.c_str());
-	rename(tmpFilename.c_str(), filename.c_str());
-}
-#endif
-
-

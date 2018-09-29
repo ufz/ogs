@@ -1,47 +1,52 @@
-/*
- * PolylineWithSegmentMarker.cpp
+/**
+ * \file
+ * \author Thomas Fischer
+ * \date   Apr 3, 2012
+ * \brief  Implementation of the PolylineWithSegmentMarker class.
  *
- *  Created on: Apr 3, 2012
- *      Author: fischeth
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
  */
 
 #include "PolylineWithSegmentMarker.h"
 
 namespace GeoLib {
-
-PolylineWithSegmentMarker::PolylineWithSegmentMarker(GeoLib::Polyline const& polyline)
-	: GeoLib::Polyline(polyline)
+PolylineWithSegmentMarker::PolylineWithSegmentMarker(
+    GeoLib::Polyline const& polyline)
+    : GeoLib::Polyline(polyline), _marker(polyline.getNumberOfSegments(), false)
 {
-	const size_t n_pnts(getNumberOfPoints());
-	_marker.resize(n_pnts);
-	for (size_t k(0); k<n_pnts; k++) {
-		_marker[k] = false;
-	}
 }
 
-PolylineWithSegmentMarker::~PolylineWithSegmentMarker()
-{}
-
-
-void PolylineWithSegmentMarker::markSegment(size_t seg_num, bool mark_val)
+void PolylineWithSegmentMarker::markSegment(std::size_t seg_num, bool mark_val)
 {
-	_marker[seg_num] = mark_val;
-}
-bool PolylineWithSegmentMarker::isSegmentMarked(size_t seg_num) const
-{
-	return _marker[seg_num];
+    _marker[seg_num] = mark_val;
 }
 
-void PolylineWithSegmentMarker::addPoint(size_t pnt_id)
+bool PolylineWithSegmentMarker::isSegmentMarked(std::size_t seg_num) const
 {
-	Polyline::addPoint(pnt_id);
-	_marker.push_back(false);
+    return _marker[seg_num];
 }
 
-void PolylineWithSegmentMarker::insertPoint(size_t pos, size_t pnt_id)
+bool PolylineWithSegmentMarker::addPoint(std::size_t pnt_id)
 {
-	Polyline::insertPoint(pos, pnt_id);
-	_marker.insert(_marker.begin()+pos, _marker[pos]);
+    if (Polyline::addPoint(pnt_id)) {
+        _marker.push_back(false);
+        return true;
+    }
+    return false;
+}
+
+bool PolylineWithSegmentMarker::insertPoint(std::size_t pos, std::size_t pnt_id)
+{
+    if (Polyline::insertPoint(pos, pnt_id)) {
+        _marker.insert(_marker.begin()+pos, _marker[pos]);
+        return true;
+    }
+    return false;
 }
 
 } // end GeoLib

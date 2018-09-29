@@ -1,0 +1,34 @@
+[build]
+  base    = "web"
+  publish = "web/public"
+  command = """
+    git lfs install
+    git lfs pull
+    yarn --ignore-engines --ignore-optional --non-interactive
+    pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
+    hugo
+    node_modules/.bin/hugo-algolia --toml -s"""
+
+[build.environment] # global variables
+  HUGO_VERSION = "0.47.1"
+  GIT_LFS_ENABLED = "true"
+
+[context.production.environment]
+  HUGO_ENV = "production"
+  HUGO_ENABLEGITINFO = "true"
+
+[context.deploy-preview]
+  command = """
+    git lfs install
+    git lfs pull
+    yarn --ignore-engines --ignore-optional --non-interactive
+    pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
+    hugo -b $DEPLOY_PRIME_URL"""
+
+[context.branch-deploy]
+  command = """
+    git lfs install
+    git lfs pull
+    yarn --ignore-engines --ignore-optional --non-interactive
+    pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
+    hugo -b $DEPLOY_PRIME_URL"""

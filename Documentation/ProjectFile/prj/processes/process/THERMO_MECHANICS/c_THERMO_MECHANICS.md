@@ -1,0 +1,1 @@
+Coupled thermo-mechanical process. It is implemented monolithically.

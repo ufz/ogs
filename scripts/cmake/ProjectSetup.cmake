@@ -1,29 +1,53 @@
+# Check requirements / supported configurations
+if(MSVC AND NOT HAVE_64_BIT AND NOT OGS_32_BIT)
+    message(FATAL_ERROR "Building OGS on Windows with 32-bit is not supported! \
+Either use the correct generator, e.g. 'Visual Studio 14 2015 Win64' or define \
+'-DOGS_32_BIT=ON' if you know what you are doing.")
+endif()
+
 # Set build directories
-SET( EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin )
-SET( LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib )
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+if(OGS_USE_CONAN AND MSVC)
+    foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+        string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+        set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+    endforeach(OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES)
+endif()
 
-# Logging level
-IF(OGS_DISABLE_LOGGING)
-	SET(OGS_LOG_LEVEL LOGOG_LEVEL_NONE)
-ENDIF()
-
-IF(NOT DEFINED OGS_LOG_LEVEL)
-	IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-		ADD_DEFINITIONS(-DLOGOG_LEVEL=LOGOG_LEVEL_DEBUG)
-	ELSE()
-		ADD_DEFINITIONS(-DLOGOG_LEVEL=LOGOG_LEVEL_INFO)
-	ENDIF() # CMAKE_BUILD_TYPE = Debug
-ELSE()
-	ADD_DEFINITIONS(-DLOGOG_LEVEL=${OGS_LOG_LEVEL})
-ENDIF() # NOT DEFINED OGS_LOG_LEVEL
-
-INCLUDE_DIRECTORIES (
-	${CMAKE_SOURCE_DIR}/BaseLib/logog/include
-)
-
+set(Data_SOURCE_DIR ${PROJECT_SOURCE_DIR}/Tests/Data CACHE INTERNAL "")
+set(Data_BINARY_DIR ${PROJECT_BINARY_DIR}/Tests/Data CACHE INTERNAL "")
 
 # Enable Visual Studio project folder grouping
-SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# Testing
-ENABLE_TESTING()
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+set(CMAKE_MACOSX_RPATH 1)
+
+include(GetGitRevisionDescription)
+GET_GIT_HEAD_REVISION(GIT_REFSPEC GIT_SHA1)
+string(SUBSTRING ${GIT_SHA1} 0 8 GIT_SHA1_SHORT)
+
+if(IS_SUBPROJECT)
+    set(OGS_VERSION x.x.x)
+else()
+    GIT_GET_TAG(GIT_DESCRIBE)
+    if(GIT_DESCRIBE)
+        string(REGEX MATCH ^[0-9|\\.]+ GIT_TAG ${GIT_DESCRIBE})
+        set(OGS_VERSION ${GIT_DESCRIBE})
+
+        if(GIT_DESCRIBE MATCHES ".*-.*-.*")
+            # Commit is not a tag
+            string(REGEX MATCH "-([0-9]+)-" GIT_COMMITS_AFTER_TAG ${GIT_DESCRIBE})
+        else()
+            set(OGS_VERSION ${GIT_TAG})
+        endif()
+        message(STATUS "OGS version: ${OGS_VERSION}")
+    else()
+        message(WARNING "Git repository contains no tags! Please run: git fetch --tags")
+    endif()
+endif()

@@ -1,0 +1,1 @@
+Thermal conductivity is the property of a material to conduct heat.

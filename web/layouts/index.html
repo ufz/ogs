@@ -1,0 +1,6 @@
+{{ define "main" }}
+  {{ partial "components/hero" .Params.hero }}
+  {{ range .Params.features }}
+    {{ partial "components/feature" (dict "page" $ "feature" .) }}
+  {{ end }}
+{{ end }}

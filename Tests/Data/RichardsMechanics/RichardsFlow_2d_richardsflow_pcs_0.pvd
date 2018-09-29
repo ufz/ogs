@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_0_t_0.000000.vtu"/>
+    <DataSet timestep="1" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_1_t_1.000000.vtu"/>
+    <DataSet timestep="3" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_2_t_3.000000.vtu"/>
+    <DataSet timestep="5" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_3_t_5.000000.vtu"/>
+    <DataSet timestep="10" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_4_t_10.000000.vtu"/>
+    <DataSet timestep="20" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_5_t_20.000000.vtu"/>
+    <DataSet timestep="40" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_6_t_40.000000.vtu"/>
+    <DataSet timestep="60" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_7_t_60.000000.vtu"/>
+    <DataSet timestep="80" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_8_t_80.000000.vtu"/>
+    <DataSet timestep="100" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_9_t_100.000000.vtu"/>
+    <DataSet timestep="300" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_19_t_300.000000.vtu"/>
+    <DataSet timestep="500" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_29_t_500.000000.vtu"/>
+    <DataSet timestep="700" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_39_t_700.000000.vtu"/>
+    <DataSet timestep="900" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_49_t_900.000000.vtu"/>
+    <DataSet timestep="1100" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_59_t_1100.000000.vtu"/>
+    <DataSet timestep="1300" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_69_t_1300.000000.vtu"/>
+    <DataSet timestep="1500" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_79_t_1500.000000.vtu"/>
+    <DataSet timestep="1700" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_89_t_1700.000000.vtu"/>
+    <DataSet timestep="1900" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu"/>
+    <DataSet timestep="2000" group="" part="0" file="RichardsFlow_2d_richardsflow_pcs_0_ts_104_t_2000.000000.vtu"/>
+  </Collection>
+</VTKFile>
