@@ -586,5 +586,22 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     }
 }
 
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
+                                  ShapeFunctionPressure, IntegrationMethod,
+                                  DisplacementDim>::
+    computeSecondaryVariableConcrete(double const /*t*/,
+                                     std::vector<double> const& local_x)
+{
+    auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+        pressure_size> const>(local_x.data() + pressure_index, pressure_size);
+
+    NumLib::interpolateToHigherOrderNodes<
+        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
+        DisplacementDim>(_element, _is_axially_symmetric, p,
+                         *_process_data.pressure_interpolated);
+}
+
 }  // namespace HydroMechanics
 }  // namespace ProcessLib
