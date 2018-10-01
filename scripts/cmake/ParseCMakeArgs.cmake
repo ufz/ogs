@@ -36,5 +36,6 @@ foreach(CACHE_VAR ${CACHE_VARS})
   endif()
 endforeach()
 
+set(CMAKE_ARGS "${CMAKE_ARGS} -DCMAKE_BUILD_TYPE=\"${CMAKE_BUILD_TYPE}\"")
 string(REPLACE "\"" "\\\"" CMAKE_ARGS_ESCAPED ${CMAKE_ARGS})
 file(WRITE ${PROJECT_BINARY_DIR}/cmake-args "${CMAKE_ARGS}\n")
