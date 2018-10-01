@@ -21,7 +21,9 @@ CMake switches to enable / disable parts of OGS.
 - `OGS_BUILD_GUI` - Builds the Data Explorer. *Defaults* to *OFF*.
 - `OGS_BUILD_TESTS` - Builds the test executables. *Defaults* to *ON*.
 - `OGS_BUILD_UTILS` - Builds several utilities.
-- `OGS_NO_EXTERNAL_LIBS` - Disables all external dependencies.
+- `OGS_NO_EXTERNAL_LIBS` - Disables all external optional dependencies.
+- `OGS_BUILD_PROCESS_X=OFF` - For disabling compilation of process `X`.
+  Run the CMake-Gui to see a list of processes.
  
 #### Debugging
  
@@ -44,7 +46,6 @@ CMake switches to enable / disable parts of OGS.
  
 #### Advanced options
  
-- `Boost_USE_STATIC_LIBS` - Set this to ON to search for statically linked Boost libraries. Defaults to ON on Windows, to OFF otherwise.
 - `OGS_CXX_FLAGS` - Appends user-given compiler flags. Note that existing (CMake-given) flags are not replaced.
 - `OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT` - Specifies optional submodules which are checked out at CMake-time. This is intended to be used by Jenkins.
 - `OGS_PACKAGE_ADDITIONAL_BINARIES` - Package additional binaries (given as a `;`-separated list with relative paths to `CMAKE_BINARY_DIR`) into redistributables. Is used for bundling the OGS File Converter with the Data Explorer.

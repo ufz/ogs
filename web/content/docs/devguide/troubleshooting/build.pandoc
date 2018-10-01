@@ -10,6 +10,21 @@ weight = 1043
     identifier = "build-troubleshooting"
 +++
 
+## Visual Studio out-of-heap or stackoverflow errors
+
+The compilation especially of the processes in Release-config can be very memory hungry. You should have at least 8 GB of RAM and even this can be not enough when compiling on multiple cores (which is the default). To build on only one core run the following in your build-directory:
+
+```
+cmake --build . --config Release -- /m:1 /p:CL_MPCount=1
+```
+
+If this still fails you can disable building of the failing processes, e.g.:
+
+```
+cmake . -DOGS_BUILD_PROCESS_HT=OFF
+cmake --build . --config Release -- /m:1 /p:CL_MPCount=1
+```
+
 ## Cotire-related (pre-compiled headers)
 
 If you get some error during build which mentions `cotire` or `*.prefix.hxx.gch` you can try to clean the pre-compiled headers with:
