@@ -88,8 +88,8 @@ void shapeFunctionInterpolate(
                                         interpolated_values...);
 }
 
-/// Interpolates \c node_values given in lower order element nodes (e.g. the
-/// base nodes) to higher order element's nodes (e.g. quadratic nodes) and
+/// Interpolates scalar \c node_values given in lower order element nodes (e.g.
+/// the base nodes) to higher order element's nodes (e.g. quadratic nodes) and
 /// writes the result into the global property vector.
 ///
 /// The base nodes' values are copied.  For each higher order node the shape
@@ -102,6 +102,9 @@ void interpolateToHigherOrderNodes(
     Eigen::MatrixBase<EigenMatrixType> const& node_values,
     MeshLib::PropertyVector<double>& interpolated_values_global_vector)
 {
+    assert(dynamic_cast<HigherOrderMeshElementType const*>(&element));
+    assert(node_values.cols() == 1);  // Scalar quantity only.
+
     using SF = LowerOrderShapeFunction;
     using ShapeMatricesType = ShapeMatrixPolicyType<SF, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
