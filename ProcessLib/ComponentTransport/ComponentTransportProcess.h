@@ -16,6 +16,7 @@
 
 namespace ProcessLib
 {
+struct SurfaceFluxData;
 
 namespace ComponentTransport
 {
@@ -99,8 +100,7 @@ public:
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
         bool const use_monolithic_scheme,
-        std::unique_ptr<MeshLib::Mesh>&& balance_mesh,
-        std::string&& balance_pv_name, std::string&& balance_out_frame);
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
     //! \name ODESystem interface
     //! @{
@@ -137,9 +137,7 @@ private:
     std::vector<std::unique_ptr<ComponentTransportLocalAssemblerInterface>>
         _local_assemblers;
 
-    std::unique_ptr<MeshLib::Mesh> _balance_mesh;
-    std::string const _balance_pv_name;
-    std::string const _balance_out_fname;
+    std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 };
 
 }  // namespace ComponentTransport

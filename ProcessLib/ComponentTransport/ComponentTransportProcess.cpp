@@ -11,11 +11,8 @@
 
 #include <cassert>
 
-// TODO used for output, if output classes are ready this has to be changed
-#include "MeshLib/IO/writeMeshToFile.h"
-
-#include "ProcessLib/CalculateSurfaceFlux/CalculateSurfaceFlux.h"
-
+#include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
+#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib
@@ -33,16 +30,13 @@ ComponentTransportProcess::ComponentTransportProcess(
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     bool const use_monolithic_scheme,
-    std::unique_ptr<MeshLib::Mesh>&& balance_mesh,
-    std::string&& balance_pv_name, std::string&& balance_out_fname)
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),
       _process_data(std::move(process_data)),
-      _balance_mesh(std::move(balance_mesh)),
-      _balance_pv_name(std::move(balance_pv_name)),
-      _balance_out_fname(std::move(balance_out_fname))
+      _surfaceflux(std::move(surfaceflux))
 {
 }
 
@@ -130,32 +124,12 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
             "ComponentTransportProcess.");
         return;
     }
-    if (!_balance_mesh)  // computing the balance is optional
+    if (!_surfaceflux)  // computing the surfaceflux is optional
     {
         return;
     }
-    auto* const balance_pv = MeshLib::getOrCreateMeshProperty<double>(
-        *_balance_mesh, _balance_pv_name, MeshLib::MeshItemType::Cell, 1);
-    // initialise the PropertyVector pv with zero values
-    std::fill(balance_pv->begin(), balance_pv->end(), 0.0);
-    auto balance = ProcessLib::CalculateSurfaceFlux(
-        *_balance_mesh,
-        getProcessVariables(process_id)[0].get().getNumberOfComponents(),
-        _integration_order);
-
-    balance.integrate(
-        x, *balance_pv, t, _mesh,
-        [this](std::size_t const element_id, MathLib::Point3d const& pnt,
-               double const t, GlobalVector const& x) {
-            return getFlux(element_id, pnt, t, x);
-        });
-    // post: surface_mesh has scalar element property
-
-    // TODO output, if output classes are ready this has to be
-    // changed
-    std::string const fname = BaseLib::dropFileExtension(_balance_out_fname) +
-                              "_t_" + std::to_string(t) + ".vtu";
-    MeshLib::IO::writeMeshToFile(*_balance_mesh, fname);
+    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh);
+    _surfaceflux->save(t);
 }
 
 }  // namespace ComponentTransport

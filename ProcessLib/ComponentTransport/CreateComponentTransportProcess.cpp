@@ -14,7 +14,7 @@
 
 #include "MeshLib/IO/readMeshFromFile.h"
 
-#include "ProcessLib/CalculateSurfaceFlux/ParseCalculateSurfaceFluxData.h"
+#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -170,44 +170,21 @@ std::unique_ptr<Process> createComponentTransportProcess(
     ProcessLib::createSecondaryVariables(config, secondary_variables,
                                          named_function_caller);
 
-    // for the balance
-    std::string balance_mesh_name; // surface mesh the balance will computed on
-    std::string balance_pv_name;
-    std::string balance_out_fname;
-    std::unique_ptr<MeshLib::Mesh> surface_mesh;
-    ProcessLib::parseCalculateSurfaceFluxData(
-        config, balance_mesh_name, balance_pv_name, balance_out_fname);
-
-    if (!mesh_name.empty())  // balance is optional
+    std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
+    auto surfaceflux_config =
+        //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}
+        config.getConfigSubtreeOptional("calculatesurfaceflux");
+    if (surfaceflux_config)
     {
-        // find the mesh for the specified mesh_name
-        auto balance_mesh = BaseLib::findElementOrError(
-            meshes.begin(), meshes.end(),
-            [&balance_mesh_name](auto const& m) {
-                return balance_mesh_name == m->getName();
-            },
-            "Expected to find o mesh named " + balance_mesh_name +
-                " for balance calculation.");
-
-        balance_out_fname =
-            BaseLib::copyPathToFileName(balance_out_fname, output_directory);
-
-        DBUG(
-            "read balance meta data:\n\tbalance mesh:\"%s\"\n\tproperty name: "
-            "\"%s\"\n\toutput to: \"%s\"",
-            balance_mesh_name.c_str(), balance_pv_name.c_str(),
-            balance_out_fname.c_str());
-
-        // Surface mesh and bulk mesh must have equal axial symmetry flags!
-        surface_mesh->setAxiallySymmetric(mesh.isAxiallySymmetric());
+        surfaceflux = ProcessLib::SurfaceFluxData::createSurfaceFluxData(
+            *surfaceflux_config, meshes, output_directory);
     }
 
     return std::make_unique<ComponentTransportProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        use_monolithic_scheme, std::move(surface_mesh),
-        std::move(balance_pv_name), std::move(balance_out_fname));
+        use_monolithic_scheme, std::move(surfaceflux));
 }
 
 }  // namespace ComponentTransport
