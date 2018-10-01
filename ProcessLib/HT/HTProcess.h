@@ -11,8 +11,6 @@
 
 #include <array>
 
-#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
-#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Process.h"
 
 namespace NumLib
@@ -22,6 +20,8 @@ class LocalToGlobalIndexMap;
 
 namespace ProcessLib
 {
+struct SurfaceFluxData;
+
 namespace HT
 {
 class HTLocalAssemblerInterface;
