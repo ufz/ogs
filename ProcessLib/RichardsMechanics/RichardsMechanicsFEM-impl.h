@@ -832,6 +832,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     saturation_avg /= n_integration_points;
 
     (*_process_data.element_saturation)[_element.getID()] = saturation_avg;
+
+    NumLib::interpolateToHigherOrderNodes<
+        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
+        DisplacementDim>(_element, _is_axially_symmetric, p_L,
+                         *_process_data.pressure_interpolated);
 }
 
 }  // namespace RichardsMechanics

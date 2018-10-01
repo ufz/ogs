@@ -27,8 +27,8 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     GLOB mechanics_linear_pcs_0_ts_*.vtu displacement displacement 1e-15 0
-    GLOB mechanics_linear_pcs_0_ts_*.vtu sigma sigma 1e-15 0
-    GLOB mechanics_linear_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
+    GLOB mechanics_linear_pcs_0_ts_*.vtu sigma sigma 5e-15 0
+    GLOB mechanics_linear_pcs_0_ts_*.vtu epsilon epsilon 5e-15 0
     GLOB mechanics_linear_pcs_0_ts_*.vtu pressure pressure 1e-15 1e-15
     GLOB mechanics_linear_pcs_0_ts_*.vtu velocity velocity 1e-15 1e-15
     GLOB mechanics_linear_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-15 0
@@ -84,6 +84,7 @@ AddTest(
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu sigma sigma 1e-8 0
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu epsilon epsilon 1e-15 0
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu pressure pressure 1e-7 1e-15
+    GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu pressure_interpolated pressure_interpolated 1e-7 1e-15
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu saturation saturation 1e-11 1e-15
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu saturation_avg saturation_avg 1e-11 1e-15
     GLOB RichardsFlow_2d_small_pcs_0_ts_*.vtu velocity velocity 1e-15 1e-15
@@ -118,6 +119,6 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu pressure pressure 1e-11 1e-15
+    GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu pressure pressure 5e-11 1e-15
     GLOB RichardsFlow_2d_richardsflow_pcs_0_ts_*.vtu saturation saturation 1e-14 1e-15
 )

@@ -12,6 +12,9 @@
 #include<array>
 #include<cassert>
 
+#include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
+#include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+
 namespace NumLib
 {
 
@@ -83,6 +86,57 @@ void shapeFunctionInterpolate(
 
     detail::shapeFunctionInterpolate<0>(nodal_values, shape_matrix_N, interpolated_value,
                                         interpolated_values...);
+}
+
+/// Interpolates scalar \c node_values given in lower order element nodes (e.g.
+/// the base nodes) to higher order element's nodes (e.g. quadratic nodes) and
+/// writes the result into the global property vector.
+///
+/// The base nodes' values are copied.  For each higher order node the shape
+/// matrices are evaluated for the lower order element (the base nodes), and
+/// used for the the scalar quantity interpolation.
+template <typename LowerOrderShapeFunction, typename HigherOrderMeshElementType,
+          int GlobalDim, typename EigenMatrixType>
+void interpolateToHigherOrderNodes(
+    MeshLib::Element const& element, bool const is_axially_symmetric,
+    Eigen::MatrixBase<EigenMatrixType> const& node_values,
+    MeshLib::PropertyVector<double>& interpolated_values_global_vector)
+{
+    assert(dynamic_cast<HigherOrderMeshElementType const*>(&element));
+    assert(node_values.cols() == 1);  // Scalar quantity only.
+
+    using SF = LowerOrderShapeFunction;
+    using ShapeMatricesType = ShapeMatrixPolicyType<SF, GlobalDim>;
+    using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
+    using FemType = TemplateIsoparametric<SF, ShapeMatricesType>;
+
+    FemType fe(*static_cast<const typename SF::MeshElement*>(&element));
+    int const number_base_nodes = element.getNumberOfBaseNodes();
+    int const number_all_nodes = element.getNumberOfNodes();
+
+    // Copy the values for linear nodes.
+    for (int n = 0; n < number_base_nodes; ++n)
+    {
+        std::size_t const global_index = element.getNodeIndex(n);
+        interpolated_values_global_vector[global_index] = node_values[n];
+    }
+
+    // Shape matrices storage reused in the interpolation loop.
+    ShapeMatrices shape_matrices{SF::DIM, GlobalDim, SF::NPOINTS};
+
+    // Interpolate values for higher order nodes.
+    for (int n = number_base_nodes; n < number_all_nodes; ++n)
+    {
+        // Evaluated at higher order nodes' coordinates.
+        fe.template computeShapeFunctions<ShapeMatrixType::N>(
+            NaturalCoordinates<HigherOrderMeshElementType>::coordinates[n]
+                .data(),
+            shape_matrices, GlobalDim, is_axially_symmetric);
+
+        std::size_t const global_index = element.getNodeIndex(n);
+        interpolated_values_global_vector[global_index] =
+            shape_matrices.N * node_values;
+    }
 }
 
 } // namespace NumLib

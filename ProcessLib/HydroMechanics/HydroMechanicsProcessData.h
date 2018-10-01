@@ -104,6 +104,8 @@ struct HydroMechanicsProcessData
 
     double const reference_temperature;
 
+    MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
+
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 

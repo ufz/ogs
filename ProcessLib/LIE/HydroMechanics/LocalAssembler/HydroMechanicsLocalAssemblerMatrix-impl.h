@@ -15,7 +15,7 @@
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
 #include "MeshLib/ElementStatus.h"
-#include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
+#include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
@@ -422,46 +422,10 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         (*_process_data.mesh_prop_velocity)[element_id * 3 + i] =
             ele_velocity[i];
 
-    // For each higher order node evaluate the shape matrices for the lower
-    // order element (the base nodes)
-    // TODO (naumov) Extract this method to be useful for other processes.
-    auto interpolate_p = [&]() {
-        using FemType =
-            NumLib::TemplateIsoparametric<ShapeFunctionPressure,
-                                          ShapeMatricesTypePressure>;
-
-        FemType fe(
-            *static_cast<const typename ShapeFunctionPressure::MeshElement*>(
-                &_element));
-        int const number_base_nodes = _element.getNumberOfBaseNodes();
-        int const number_all_nodes = _element.getNumberOfNodes();
-
-        for (int n = 0; n < number_base_nodes; ++n)
-        {
-            std::size_t const global_index = _element.getNodeIndex(n);
-            (*_process_data.mesh_prop_nodal_p)[global_index] = p[n];
-        }
-
-        for (int n = number_base_nodes; n < number_all_nodes; ++n)
-        {
-            // Evaluated at higher order nodes' coordinates.
-            typename ShapeMatricesTypePressure::ShapeMatrices shape_matrices_p{
-                ShapeFunctionPressure::DIM, GlobalDim,
-                ShapeFunctionPressure::NPOINTS};
-
-            fe.computeShapeFunctions(
-                NumLib::NaturalCoordinates<typename ShapeFunctionDisplacement::
-                                               MeshElement>::coordinates[n]
-                    .data(),
-                shape_matrices_p, GlobalDim, _is_axially_symmetric);
-
-            auto const& N_p = shape_matrices_p.N;
-
-            std::size_t const global_index = _element.getNodeIndex(n);
-            (*_process_data.mesh_prop_nodal_p)[global_index] = N_p * p;
-        }
-    };
-    interpolate_p();
+    NumLib::interpolateToHigherOrderNodes<
+        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
+        GlobalDim>(_element, _is_axially_symmetric, p,
+                   *_process_data.mesh_prop_nodal_p);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

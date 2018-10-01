@@ -195,6 +195,11 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
         MeshLib::MeshItemType::Cell, 1);
+
+    _process_data.pressure_interpolated =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
+            MeshLib::MeshItemType::Node, 1);
 }
 
 template <int DisplacementDim>

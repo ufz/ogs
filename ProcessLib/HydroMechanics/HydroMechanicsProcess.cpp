@@ -226,6 +226,11 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         makeExtrapolator(mesh.getDimension(), getExtrapolator(),
                          _local_assemblers,
                          &LocalAssemblerInterface::getIntPtDarcyVelocity));
+
+    _process_data.pressure_interpolated =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
+            MeshLib::MeshItemType::Node, 1);
 }
 
 template <int DisplacementDim>
@@ -378,6 +383,16 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
         getDOFTable(process_id), x, t, _use_monolithic_scheme);
+}
+
+template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
+    const double t, GlobalVector const& x)
+{
+    DBUG("Compute the secondary variables for HydroMechanicsProcess.");
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
+        *_local_to_global_index_map, t, x, _coupled_solutions);
 }
 
 template <int DisplacementDim>
