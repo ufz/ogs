@@ -99,7 +99,7 @@ pipeline {
               //       .*potential recursive class relation.*
               recordIssues tools: [[pattern: 'build/DoxygenWarnings.log',
                 tool: [$class: 'Doxygen']]],
-                unstableTotalAll: 23
+                unstableTotalAll: 24
               dir('build/docs') { stash(name: 'doxygen') }
               publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: true,
                   keepAll: true, reportDir: 'build/docs', reportFiles: 'index.html',
