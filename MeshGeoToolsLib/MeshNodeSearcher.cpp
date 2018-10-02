@@ -76,6 +76,41 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
     return vec_nodes;
 }
 
+std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
+    std::vector<MathLib::Point3dWithID*> const& points) const
+{
+    double const epsilon_radius = _search_length_algorithm->getSearchLength();
+
+    std::vector<std::size_t> node_ids;
+    node_ids.reserve(points.size());
+
+    for (auto const* const p_ptr : points)
+    {
+        auto const& p = *p_ptr;
+        std::vector<std::size_t> const ids =
+            _mesh_grid.getPointsInEpsilonEnvironment(p, epsilon_radius);
+        if (ids.empty())
+        {
+            OGS_FATAL(
+                "No nodes could be found in the mesh for point %d : (%g, %g, "
+                "%g) in %g epsilon radius in the mesh '%s'",
+                p.getID(), p[0], p[1], p[2], epsilon_radius,
+                _mesh.getName().c_str());
+        }
+        if (ids.size() != 1)
+        {
+            OGS_FATAL(
+                "Found %d nodes in the mesh for point %d : (%g, %g, %g) in %g "
+                "epsilon radius in the mesh '%s'. Expected to find exactly one "
+                "node.",
+                ids.size(), p.getID(), p[0], p[1], p[2], epsilon_radius,
+                _mesh.getName().c_str());
+        }
+        node_ids.push_back(ids.front());
+    }
+    return node_ids;
+}
+
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsForPoint(
     GeoLib::Point const& pnt) const
 {

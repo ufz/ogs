@@ -77,6 +77,14 @@ public:
         GeoLib::GeoObject const& geoObj) const;
 
     /**
+     * Finds unique mesh nodes of each of the input points.
+     *
+     * \return a vector of mesh node ids.
+     */
+    std::vector<std::size_t> getMeshNodeIDs(
+        std::vector<MathLib::Point3dWithID*> const& points) const;
+
+    /**
      * Searches for the node nearest by the given point. If there are two nodes
      * with the same distance the id of the one that was first found will be
      * returned. The algorithm for the search is using GeoLib::Grid data

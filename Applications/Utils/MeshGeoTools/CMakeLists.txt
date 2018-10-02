@@ -15,3 +15,11 @@ target_link_libraries(constructMeshesFromGeometry
     ApplicationsFileIO
     ${OGS_VTK_REQUIRED_LIBS}
 )
+
+add_executable(identifySubdomains IdentifySubdomains.cpp )
+set_target_properties(identifySubdomains PROPERTIES FOLDER Utilities)
+target_link_libraries(identifySubdomains
+    MeshGeoToolsLib
+    ApplicationsFileIO
+    ${OGS_VTK_REQUIRED_LIBS}
+)

@@ -40,6 +40,34 @@ AddTest(
     expected_post_single_joint_pcs_0_ts_1_t_1.000000.vtu post_single_joint_pcs_0_ts_1_t_1.000000.vtu u u 1e-14 1e-14
 )
 
+AddTest(
+    NAME identifySubdomains_2D_Create
+    PATH MeshGeoToolsLib/IdentifySubdomains
+    EXECUTABLE identifySubdomains
+    EXECUTABLE_ARGS -m 2D_mesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/new_ -- 2D_mesh_top_boundary.vtu 2D_mesh_bottom_boundary.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    2D_mesh_top.vtu new_2D_mesh_top_boundary.vtu bulk_node_ids bulk_node_ids 0 0
+    2D_mesh_top.vtu new_2D_mesh_top_boundary.vtu bulk_element_ids bulk_element_ids 0 0
+    2D_mesh_bottom.vtu new_2D_mesh_bottom_boundary.vtu bulk_node_ids bulk_node_ids 0 0
+    2D_mesh_bottom.vtu new_2D_mesh_bottom_boundary.vtu bulk_element_ids bulk_element_ids 0 0
+)
+
+AddTest(
+    NAME identifySubdomains_2D_Check
+    PATH MeshGeoToolsLib/IdentifySubdomains
+    EXECUTABLE identifySubdomains
+    EXECUTABLE_ARGS -m 2D_mesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/check_ -- 2D_mesh_top.vtu 2D_mesh_bottom.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    2D_mesh_top.vtu check_2D_mesh_top.vtu bulk_node_ids bulk_node_ids 0 0
+    2D_mesh_top.vtu check_2D_mesh_top.vtu bulk_element_ids bulk_element_ids 0 0
+    2D_mesh_bottom.vtu check_2D_mesh_bottom.vtu bulk_node_ids bulk_node_ids 0 0
+    2D_mesh_bottom.vtu check_2D_mesh_bottom.vtu bulk_element_ids bulk_element_ids 0 0
+)
+
 # Mac is producing slightly different partitioning, so the results are not
 # comparable.
 AddTest(
