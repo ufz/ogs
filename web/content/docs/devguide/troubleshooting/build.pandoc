@@ -12,7 +12,13 @@ weight = 1043
 
 ## Visual Studio out-of-heap or stackoverflow errors
 
-The compilation especially of the processes in Release-config can be very memory hungry. You should have at least 8 GB of RAM and even this can be not enough when compiling on multiple cores (which is the default). To build on only one core run the following in your build-directory:
+The compilation especially of the processes in Release-config can be very memory hungry. Using dynamic Eigen shape matrices can reduce memory usage:
+
+```
+cmake . -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON
+```
+
+You should also have at least 8 GB of RAM and even this can be not enough when compiling on multiple cores (which is the default). To build on only one core run the following in your build-directory:
 
 ```
 cmake --build . --config Release -- /m:1 /p:CL_MPCount=1
