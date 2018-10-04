@@ -26,6 +26,10 @@ foreach(CMD ${TESTER_COMMAND})
         file(GLOB FILES RELATIVE ${case_path} ${GLOB})
         list(LENGTH FILES length)
         message(STATUS "Glob expression '${GLOB}' (${NAME_A}) found ${length} files.")
+        if(${length} EQUAL 0)
+            message(FATAL_ERROR "DIFF_DATA glob expression '${GLOB}' "
+                "did not match any files!")
+        endif()
         foreach(FILE ${FILES})
             execute_process(
                 COMMAND ${SELECTED_DIFF_TOOL_PATH} ${case_path}/${FILE} ${BINARY_PATH}/${FILE} -a ${NAME_A} -b ${NAME_B} --abs ${ABS_TOL} --rel ${REL_TOL}
