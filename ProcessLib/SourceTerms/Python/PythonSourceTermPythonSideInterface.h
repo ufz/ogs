@@ -28,11 +28,14 @@ public:
      * \return flux Flux of the source term at that node and derivative of the
      * flux w.r.t. all primary variables.
      */
-    virtual std::pair<double, std::array<double, 3>> getFlux(
-        double /*t*/, std::array<double, 3> /*x*/,
+    virtual std::pair<double, std::vector<double>> getFlux(
+        double /*t*/, std::array<double, 3> const& /*x*/,
         std::vector<double> const& /*primary_variables*/) const
     {
-        return {std::numeric_limits<double>::quiet_NaN(), {}};
+        return {std::numeric_limits<double>::quiet_NaN(),
+                std::vector<double>{std::numeric_limits<double>::quiet_NaN(),
+                                    std::numeric_limits<double>::quiet_NaN(),
+                                    std::numeric_limits<double>::quiet_NaN()}};
     }
 
     //! Tells if getFlux() has been overridden in the derived class in Python.

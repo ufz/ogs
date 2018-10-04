@@ -29,11 +29,11 @@ public:
     using PythonSourceTermPythonSideInterface::
         PythonSourceTermPythonSideInterface;
 
-    std::pair<double, std::array<double, 3>> getFlux(
-        double t, std::array<double, 3> x,
+    std::pair<double, std::vector<double>> getFlux(
+        double t, std::array<double, 3> const& x,
         std::vector<double> const& primary_variables) const override
     {
-        using Ret = std::pair<double, std::array<double, 3>>;
+        using Ret = std::pair<double, std::vector<double>>;
         PYBIND11_OVERLOAD(Ret, PythonSourceTermPythonSideInterface,
                           getFlux, t, x, primary_variables);
     }
