@@ -37,6 +37,7 @@
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
+#include "Applications/ApplicationsLib/TestDefinition.h"
 #include "Applications/InSituLib/Adaptor.h"
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
@@ -62,6 +63,13 @@ int main(int argc, char* argv[])
             BaseLib::BuildInfo::cmake_args,
         ' ',
         BaseLib::BuildInfo::git_describe);
+
+    TCLAP::ValueArg<std::string> reference_path_arg(
+        "r", "reference",
+        "Run output result comparison after successful simulation comparing to "
+        "all files in the given path.",
+        false, "", "PATH");
+    cmd.add(reference_path_arg);
 
     TCLAP::UnlabeledValueArg<std::string> project_arg(
         "project-file",
@@ -141,6 +149,7 @@ int main(int argc, char* argv[])
         INFO("OGS started on %s.", time_str.c_str());
     }
 
+    std::unique_ptr<ApplicationsLib::TestDefinition> test_definition;
     auto ogs_status = EXIT_SUCCESS;
 
     try
@@ -173,6 +182,21 @@ int main(int argc, char* argv[])
                                 BaseLib::getProjectDirectory(),
                                 outdir_arg.getValue());
 
+            if (!reference_path_arg.isSet())
+            {  // Ignore the test_definition section.
+                project_config->ignoreConfigParameter("test_definition");
+            }
+            else
+            {
+                test_definition =
+                    std::make_unique<ApplicationsLib::TestDefinition>(
+                        project_config->getConfigSubtree("test_definition"),
+                        reference_path_arg.getValue(),
+                        outdir_arg.getValue());
+
+                INFO("Cleanup possible output files before running ogs.");
+                BaseLib::removeFiles(test_definition->getOutputFiles());
+            }
 #ifdef USE_INSITU
             auto isInsituConfigured = false;
             //! \ogs_file_param{prj__insitu}
@@ -236,5 +260,27 @@ int main(int argc, char* argv[])
         INFO("OGS terminated on %s.", time_str.c_str());
     }
 
-    return ogs_status;
+    if (ogs_status == EXIT_FAILURE)
+    {
+        ERR("OGS terminated with error.");
+        return EXIT_FAILURE;
+    }
+
+    if (test_definition == nullptr)
+    {
+        // There are no tests, so just exit;
+        return ogs_status;
+    }
+
+    INFO("");
+    INFO("##########################################");
+    INFO("# Running tests                          #");
+    INFO("##########################################");
+    INFO("");
+    if (!test_definition->runTests())
+    {
+        ERR("One of the tests failed.");
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
 }
