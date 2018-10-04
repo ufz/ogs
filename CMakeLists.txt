@@ -112,6 +112,12 @@ endforeach()
 
 set(OGS_BUILD_PROCESSES "" CACHE STRING "Semicolon-separated list of processes to build")
 if(NOT "${OGS_BUILD_PROCESSES}" STREQUAL "")
+    foreach(process ${OGS_BUILD_PROCESSES})
+        if(NOT "${process}" IN_LIST ProcessesList)
+            message(FATAL_ERROR "${process} given in OGS_BUILD_PROCESSES is "
+                "not a valid process name! Valid names are ${ProcessesList}")
+        endif()
+    endforeach()
     message(STATUS "Enabled processes:")
     foreach(process ${ProcessesList})
         if("${process}" IN_LIST OGS_BUILD_PROCESSES)
