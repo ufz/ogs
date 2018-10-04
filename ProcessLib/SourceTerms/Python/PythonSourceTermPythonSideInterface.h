@@ -38,13 +38,12 @@ public:
     //! Tells if getFlux() has been overridden in the derived class in Python.
     //!
     //! \pre getFlux() must already have been called once.
-    bool isOverriddenGetFlux() const { return _overridden_get_flux; }
+    bool isOverriddenGetFlux() const
+    {
+        return _overridden_get_flux;
+    }
 
     virtual ~PythonSourceTermPythonSideInterface() = default;
-
-private:
-    //! Tells if getFlux() has been overridden in the derived class in Python.
-    mutable bool _overridden_get_flux = true;
 };
 }  // namespace Python
 }  // namespace SourceTerms

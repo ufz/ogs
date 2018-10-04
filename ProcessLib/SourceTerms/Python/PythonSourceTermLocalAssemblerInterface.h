@@ -16,6 +16,7 @@ namespace SourceTerms
 {
 namespace Python
 {
+
 class PythonSourceTermLocalAssemblerInterface
 {
 public:

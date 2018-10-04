@@ -31,7 +31,7 @@ std::unique_ptr<SourceTerm> createPythonSourceTerm(
     config.checkConfigParameter("type", "Python");
 
     auto const source_term_object =
-        //! \ogs_file_param{prj__process_variables__process_variable__source_term__source_term__Python__source_term_object}
+    //! \ogs_file_param{prj__process_variables__process_variable__source_term__source_term__Python__source_term_object}
         config.getConfigParameter<std::string>("source_term_object");
     //! \ogs_file_param{prj__process_variables__process_variable__source_term__source_term__Python__flush_stdout}
     auto const flush_stdout = config.getConfigParameter("flush_stdout", false);
@@ -60,8 +60,8 @@ std::unique_ptr<SourceTerm> createPythonSourceTerm(
             dof_table.getNumberOfVariableComponents(variable_id));
     }
 
-    // In case of partitioned mesh the source_term could be empty, i.e. there is
-    // no source_term condition.
+    // In case of partitioned mesh the source_term could be empty, i.e. there is no
+    // source_term condition.
 #ifdef USE_PETSC
     // This can be extracted to createSourceTerm() but then the config
     // parameters are not read and will cause an error.

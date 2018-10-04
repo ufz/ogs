@@ -13,12 +13,14 @@
 #include "ogs_embedded_python.h"
 
 #include "ProcessLib/BoundaryCondition/Python/PythonBoundaryConditionModule.h"
+#include "ProcessLib/SourceTerms/Python/PythonSourceTermModule.h"
 
 PYBIND11_EMBEDDED_MODULE(OpenGeoSys, m)
 {
     DBUG("Binding Python module OpenGeoSys.");
 
     ProcessLib::pythonBindBoundaryCondition(m);
+    ProcessLib::SourceTerms::Python::pythonBindSourceTerm(m);
 }
 
 #ifndef OGS_BUILD_SHARED_LIBS

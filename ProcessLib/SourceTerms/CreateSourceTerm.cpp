@@ -56,6 +56,7 @@ std::unique_ptr<SourceTerm> createSourceTerm(
 #endif
     }
 
+
     OGS_FATAL("Unknown source term type: `%s'.", type.c_str());
 }
 }  // namespace ProcessLib

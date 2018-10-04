@@ -13,8 +13,8 @@
 #include "NumLib/IndexValueVector.h"
 #include "ProcessLib/SourceTerms/SourceTerm.h"
 
-#include "PythonSourceTermLocalAssemblerInterface.h"
 #include "PythonSourceTermPythonSideInterface.h"
+#include "PythonSourceTermLocalAssemblerInterface.h"
 
 namespace ProcessLib
 {
