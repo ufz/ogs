@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh  axially_symmetric="true">axisymmetric_sphere_pl.vtu</mesh>
+    <mesh axially_symmetric="true">axisymmetric_sphere_pl.vtu</mesh>
     <geometry>axisymmetric_sphere_pl.gml</geometry>
     <processes>
         <process>
@@ -242,7 +242,7 @@
             </boundary_conditions>
         </process_variable>
     </process_variables>
- <nonlinear_solvers>
+    <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_newton</name>
             <type>Newton</type>
@@ -266,4 +266,18 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>2e-5</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
