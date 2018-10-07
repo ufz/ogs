@@ -39,7 +39,7 @@ public:
         }
     }
 
-    ~Permeability() = default;
+    virtual ~Permeability() = default;
 
     /**
      *  Get property value.
@@ -48,10 +48,10 @@ public:
      *  @param variable    A variable with any double type value.
      *  @param temperature Temperature with any double type value.
      */
-    Eigen::MatrixXd getValue(const double t,
-                             ParameterLib::SpatialPosition const& pos,
-                             const double variable,
-                             const double temperature) const
+    virtual Eigen::MatrixXd getValue(const double t,
+                                     ParameterLib::SpatialPosition const& pos,
+                                     const double variable,
+                                     const double temperature) const
     {
         (void)variable;
         (void)temperature;
