@@ -10,6 +10,7 @@
 #pragma once
 
 #include "HeatTransportBHEProcessData.h"
+#include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/HeatTransportBHEProcessAssemblerInterface.h"
 #include "ProcessLib/Process.h"
 
@@ -17,6 +18,8 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
+struct BHEMeshData;
+
 class HeatTransportBHEProcess final : public Process
 {
 public:
@@ -64,35 +67,18 @@ private:
     std::vector<std::unique_ptr<HeatTransportBHELocalAssemblerInterface>>
         _local_assemblers;
 
-    /**
-     * These are the elements that are representing BHEs
-     */
-    std::vector<std::vector<MeshLib::Element*>> _vec_BHE_elements;
-
-    /**
-     * These are the elements that are not connected with any BHE
-     */
-    std::vector<MeshLib::Element*> _vec_pure_soil_elements;
-
-    /**
-     * These are the soil nodes that are not connected with a BHE
-     */
-    std::vector<MeshLib::Node*> _vec_pure_soil_nodes;
-
-    /**
-     * Mesh nodes that are located on any BHE
-     * ordered according to each BHE
-     */
-    std::vector<std::vector<MeshLib::Node*>> _vec_BHE_nodes;
-
     std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
         _mesh_subset_BHE_nodes;
+
     std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
         _mesh_subset_BHE_soil_nodes;
+
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_pure_soil_nodes;
+
     std::unique_ptr<MeshLib::MeshSubset const>
         _mesh_subset_soil_nodes_connected_with_BHE;
-    std::vector<int> _vec_BHE_mat_IDs;
+
+    const BHEMeshData _bheMeshData;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

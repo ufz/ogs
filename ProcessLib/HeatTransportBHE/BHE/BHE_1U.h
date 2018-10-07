@@ -76,6 +76,7 @@ public:
     {
         _u = Eigen::Vector2d::Zero();
         _Nu = Eigen::Vector2d::Zero();
+        // 1U type of BHE has 2 pipes
 
         Q_r = my_Qr;
 
@@ -162,6 +163,8 @@ public:
      */
     std::size_t getNumUnknowns() const { return 4; }
 
+    void initialize();
+
     void updateFlowRateFromCurve(double current_time)
     {
         if (use_flowrate_curve)
@@ -176,26 +179,6 @@ public:
      * calculate thermal resistance
      */
     void calcThermalResistances();
-
-    /**
-     * Nusselt number calculation
-     */
-    void calcNusseltNum();
-
-    /**
-     * Renolds number calculation
-     */
-    void calcRenoldsNum();
-
-    /**
-     * Prandtl number calculation
-     */
-    void calcPrandtlNum();
-
-    /**
-     * flow velocity inside the pipeline
-     */
-    void calcPipeFlowVelocity();
 
     /**
      * calculate heat transfer coefficient
@@ -247,6 +230,12 @@ public:
      */
     double getTinByTout(double T_out, double current_time);
 
+    std::vector<std::pair<int, int>> const& inflowOutflowBcComponentIds()
+        const override
+    {
+        return _inflow_outflow_bc_component_ids;
+    }
+
     /**
      * required by eigen library,
      * to make sure the dynamically allocated class has
@@ -255,6 +244,9 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:
+    std::vector<std::pair<int, int>> const _inflow_outflow_bc_component_ids = {
+        {0, 1}};
+
     /**
      * thermal resistances
      */
@@ -296,30 +288,6 @@ private:
     double _PHI_fig, _PHI_fog, _PHI_gg, _PHI_gs;
 
     /**
-     * Reynolds number
-     */
-    double _Re;
-
-    /**
-     * Prandtl number
-     */
-    double _Pr;
-
-    /**
-     * Nusselt number
-     */
-    Eigen::Vector2d _Nu;
-
-    /**
-     * flow velocity inside the pipeline
-     */
-    Eigen::Vector2d _u;
-
-    /**
-     * pipe distance
-     */
-    double omega;
-    /**
      * specific exchange surfaces S
      */
     double S_i, S_o, S_g1, S_gs;
@@ -327,6 +295,14 @@ private:
      * cross section area
      */
     double CSA_i, CSA_o, CSA_g1, CSA_g2;
+    /**
+     * Nusselt number
+     */
+    Eigen::Vector2d _Nu;
+    /**
+     * flow velocity inside the pipeline
+     */
+    Eigen::Vector2d _u;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

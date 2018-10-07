@@ -26,38 +26,20 @@ class HeatTransportBHELocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    HeatTransportBHELocalAssemblerInterface() : _dofIndex_to_localIndex{} {}
-    HeatTransportBHELocalAssemblerInterface(
-        std::size_t n_local_size, std::vector<unsigned> dofIndex_to_localIndex)
+    // The following function is necessary, because the BHE or Soil assemblers
+    // create their local_x memory based on the passed on dofIndex_to_localIndex
+    // Please keep it unchanged.
+    HeatTransportBHELocalAssemblerInterface(std::size_t /*n_local_size*/,
+                                            std::vector<unsigned>
+                                                dofIndex_to_localIndex)
         : _dofIndex_to_localIndex(std::move(dofIndex_to_localIndex))
     {
     }
 
-    void assembleWithJacobian(double const /*t*/,
-                              std::vector<double> const& /*local_x_*/,
-                              std::vector<double> const& /*local_xdot*/,
-                              const double /*dxdot_dx*/, const double /*dx_dx*/,
-                              std::vector<double>& /*local_M_data*/,
-                              std::vector<double>& /*local_K_data*/,
-                              std::vector<double>& /*local_b_data*/,
-                              std::vector<double>& /*local_Jac_data*/) override
-    {
-        OGS_FATAL(
-            "HeatTransportBHELocalAssemblerInterface::assembleWithJacobian() "
-            "is not implemented");
-    }
-
-    virtual void assembleWithJacobian(double const /*t*/,
-                                      Eigen::VectorXd const& /*local_T*/,
-                                      Eigen::VectorXd& /*local_b*/,
-                                      Eigen::MatrixXd& /*local_A*/)
-    {
-        OGS_FATAL(
-            "HeatTransportBHELocalAssemblerInterface::assembleWithJacobian() "
-            "is not implemented");
-    }
-
 private:
+    // this dofTalbe must be kept here.
+    // When initializing the assembler, this will be needed to
+    // initialize the memory for local assemblers.
     std::vector<unsigned> const _dofIndex_to_localIndex;
 };
 }  // namespace HeatTransportBHE

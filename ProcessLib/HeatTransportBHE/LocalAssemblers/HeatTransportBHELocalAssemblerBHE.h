@@ -42,7 +42,6 @@ public:
 
     HeatTransportBHELocalAssemblerBHE(
         MeshLib::Element const& e,
-        std::size_t const local_matrix_size,
         std::vector<unsigned> const& dofIndex_to_localIndex,
         bool const is_axially_symmetric,
         unsigned const integration_order,
@@ -52,16 +51,6 @@ public:
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_b_data*/) override;
-
-    void assembleWithJacobian(double const /*t*/,
-                              Eigen::VectorXd const& /*local_u*/,
-                              Eigen::VectorXd& /*local_b*/,
-                              Eigen::MatrixXd& /*local_J*/) override
-    {
-        OGS_FATAL(
-            "HeatTransportBHELocalAssembler: assembly with jacobian is not "
-            "implemented.");
-    }
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/,

@@ -35,6 +35,11 @@
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "boost/math/constants/constants.hpp"
 
+#include "BoreholeGeometry.h"
+#include "GroutParameters.h"
+#include "PipeParameters.h"
+#include "RefrigerantParameters.h"
+
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -76,127 +81,6 @@ enum class BHE_DISCHARGE_TYPE
 class BHEAbstract
 {
 public:
-    struct BoreholeGeometry
-    {
-        /**
-         * length/depth of the BHE
-         * unit is m
-         */
-        double length;
-
-        /**
-         * diameter of the BHE
-         * unit is m
-         */
-        double diameter;
-    };
-
-    struct PipeParameters
-    {
-        /**
-         * radius of the pipline inner side
-         * unit is m
-         */
-        double r_inner;
-
-        /**
-         * radius of the pipline outer side
-         * unit is m
-         */
-        double r_outer;
-
-        /**
-         * pipe-in wall thickness
-         * unit is m
-         */
-        double b_in;
-
-        /**
-         * pipe-out wall thickness
-         * unit is m
-         */
-        double b_out;
-
-        /**
-         * thermal conductivity of the pipe wall
-         * unit is kg m sec^-3 K^-1
-         */
-
-        double lambda_p;
-
-        /**
-         * thermal conductivity of the inner pipe wall
-         * unit is kg m sec^-3 K^-1
-         */
-        double lambda_p_i;
-
-        /**
-         * thermal conductivity of the outer pipe wall
-         * unit is kg m sec^-3 K^-1
-         */
-        double lambda_p_o;
-    };
-
-    struct RefrigerantParameters
-    {
-        /**
-         * dynamics viscosity of the refrigerant
-         * unit is kg m-1 sec-1
-         */
-        double mu_r;
-
-        /**
-         * density of the refrigerant
-         * unit is kg m-3
-         */
-        double rho_r;
-
-        /**
-         * thermal conductivity of the refrigerant
-         * unit is kg m sec^-3 K^-1
-         */
-        double lambda_r;
-
-        /**
-         * specific heat capacity of the refrigerant
-         * unit is m^2 sec^-2 K^-1
-         */
-        double heat_cap_r;
-
-        /**
-         * longitudinal dispersivity of the
-         * referigerant flow in the pipeline
-         */
-        double alpha_L;
-    };
-
-    struct GroutParameters
-    {
-        /**
-         * density of the grout
-         * unit is kg m-3
-         */
-        double rho_g;
-
-        /**
-         * porosity of the grout
-         * unit is [-]
-         */
-        double porosity_g;
-
-        /**
-         * specific heat capacity of the grout
-         * unit is m^2 sec^-2 K^-1
-         */
-        double heat_cap_g;
-
-        /**
-         * thermal conductivity of the grout
-         * unit is kg m sec^-3 K^-1
-         */
-        double lambda_g;
-    };
-
     struct ExternallyDefinedRaRb
     {
         /**
@@ -300,15 +184,7 @@ public:
      * initialization calcultion,
      * need to be overwritten.
      */
-    virtual void initialize()
-    {
-        calcPipeFlowVelocity();
-        calcRenoldsNum();
-        calcPrandtlNum();
-        calcNusseltNum();
-        calcThermalResistances();
-        calcHeatTransferCoefficients();
-    };
+    virtual void initialize() = 0;
 
     /**
      * update all parameters based on the new flow rate
@@ -317,12 +193,7 @@ public:
     virtual void updateFlowRate(double new_flow_rate)
     {
         Q_r = new_flow_rate;
-        calcPipeFlowVelocity();
-        calcRenoldsNum();
-        calcPrandtlNum();
-        calcNusseltNum();
-        calcThermalResistances();
-        calcHeatTransferCoefficients();
+        initialize();
     };
 
     virtual void updateFlowRateFromCurve(double current_time) = 0;
@@ -334,28 +205,61 @@ public:
     virtual void calcThermalResistances() = 0;
 
     /**
-     * Nusselt number calculation,
-     * need to be overwritten.
-     */
-    virtual void calcNusseltNum() = 0;
-
-    /**
-     * Renolds number calculation,
-     * need to be overwritten.
-     */
-    virtual void calcRenoldsNum() = 0;
-
-    /**
-     * Prandtl number calculation,
-     * need to be overwritten.
-     */
-    virtual void calcPrandtlNum() = 0;
-
-    /**
      * flow velocity inside the pipeline
-     * need to be overwritten.
      */
-    virtual void calcPipeFlowVelocity() = 0;
+    double calcPipeFlowVelocity(double const& flow_rate,
+                                double const& pipe_diameter)
+    {
+        return 4.0 * flow_rate / (PI * pipe_diameter * pipe_diameter);
+    }
+
+    double calcPrandtlNumber(double const& viscosity,
+                             double const& heat_capacity,
+                             double const& heat_conductivity)
+    {
+        return viscosity * heat_capacity / heat_conductivity;
+    }
+
+    double calcRenoldsNumber(double const velocity_norm,
+                             double const pipe_diameter,
+                             double const viscosity,
+                             double const density)
+    {
+        return velocity_norm * pipe_diameter / (viscosity / density);
+    };
+    double calcNusseltNumber(double const pipe_diameter,
+                             double const pipe_length)
+    {
+        double tmp_Nu(0.0);
+        double gamma(0.0), xi(0.0);
+
+        if (Re < 2300.0)
+        {
+            tmp_Nu = 4.364;
+        }
+        else if (Re >= 2300.0 && Re < 10000.0)
+        {
+            gamma = (Re - 2300) / (10000 - 2300);
+
+            tmp_Nu = (1.0 - gamma) * 4.364;
+            tmp_Nu +=
+                gamma *
+                ((0.0308 / 8.0 * 1.0e4 * Pr) /
+                 (1.0 + 12.7 * std::sqrt(0.0308 / 8.0) *
+                            (std::pow(Pr, 2.0 / 3.0) - 1.0)) *
+                 (1.0 + std::pow(pipe_diameter / pipe_length, 2.0 / 3.0)));
+        }
+        else if (Re > 10000.0)
+        {
+            xi = pow(1.8 * std::log10(Re) - 1.5, -2.0);
+            tmp_Nu = (xi / 8.0 * Re * Re) /
+                     (1.0 + 12.7 * std::sqrt(xi / 8.0) *
+                                (std::pow(Pr, 2.0 / 3.0) - 1.0)) *
+                     (1.0 + std::pow(pipe_diameter / pipe_length, 2.0 / 3.0));
+        }
+
+        return tmp_Nu;
+    };
 
     /**
      * heat transfer coefficient,
@@ -408,6 +312,9 @@ public:
             R_pi_s_matrix,
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>&
             R_s_matrix) const = 0;
+
+    virtual std::vector<std::pair<int, int>> const&
+    inflowOutflowBcComponentIds() const = 0;
 
 public:
     /**
@@ -530,6 +437,21 @@ protected:
     double Q_r;
 
     const double PI;
+
+    /**
+     * Reynolds number
+     */
+    double Re;
+
+    /**
+     * Prandtl number
+     */
+    double Pr;
+
+    /**
+     * pipe distance
+     */
+    double omega;
 };
 }  // end of namespace BHE
 }  // end of namespace HeatTransportBHE

@@ -253,17 +253,17 @@ public:
                 type_idx.name());
         }
 
-        auto varIDs = _dof_table.getElementVariableIDs(id);
-        auto n_local_dof = _dof_table.getNumberOfElementDOF(id);
         std::vector<unsigned> dofIndex_to_localIndex;
 
-        if (mesh_item.getDimension() < GlobalDim)
+        // Create customed dof table when it is a BHE element.
+        if (mesh_item.getDimension() == 1)
         {
             // this is a BHE element
+            auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
             dofIndex_to_localIndex.resize(n_local_dof);
             unsigned dof_id = 0;
             unsigned local_id = 0;
-            for (auto i : varIDs)
+            for (auto const i : _dof_table.getElementVariableIDs(id))
             {
                 auto const n_global_components =
                     _dof_table.getNumberOfElementComponents(i);
@@ -276,7 +276,8 @@ public:
                         MeshLib::Location l(mesh_id,
                                             MeshLib::MeshItemType::Node,
                                             mesh_item.getNodeIndex(k));
-                        auto global_index = _dof_table.getGlobalIndex(l, i, j);
+                        auto const global_index =
+                            _dof_table.getGlobalIndex(l, i, j);
                         if (global_index != NumLib::MeshComponentMap::nop)
                         {
                             dofIndex_to_localIndex[dof_id++] = local_id;
@@ -287,16 +288,13 @@ public:
             }
         }
 
-        data_ptr = it->second(mesh_item, varIDs.size(), n_local_dof,
-                              dofIndex_to_localIndex,
+        data_ptr = it->second(mesh_item, dofIndex_to_localIndex,
                               std::forward<ConstructorArgs>(args)...);
     }
 
 private:
     using LADataBuilder = std::function<LADataIntfPtr(
         MeshLib::Element const& e,
-        std::size_t const n_variables,
-        std::size_t const local_matrix_size,
         std::vector<unsigned> const& dofIndex_to_localIndex,
         ConstructorArgs&&...)>;
 
@@ -340,20 +338,43 @@ private:
     static LADataBuilder makeLocalAssemblerBuilder(std::true_type*)
     {
         return [](MeshLib::Element const& e,
-                  std::size_t const /*n_variables*/,
-                  std::size_t const local_matrix_size,
                   std::vector<unsigned> const& dofIndex_to_localIndex,
-                  ConstructorArgs&&... args) {
+                  ConstructorArgs&&... args) -> LADataIntfPtr {
             if (e.getDimension() == GlobalDim)  // soil elements
             {
                 return LADataIntfPtr{new LADataSoil<ShapeFunction>{
-                    e, local_matrix_size, dofIndex_to_localIndex,
+                    e, dofIndex_to_localIndex,
                     std::forward<ConstructorArgs>(args)...}};
             }
 
-            return LADataIntfPtr{new LADataBHE<ShapeFunction>{
+            return nullptr;
+        };
+    }
+
+    template <>
+    static LADataBuilder makeLocalAssemblerBuilder<NumLib::ShapeLine2>(
+        std::true_type*)
+    {
+        return [](MeshLib::Element const& e,
+                  std::vector<unsigned> const& dofIndex_to_localIndex,
+                  ConstructorArgs&&... args) -> LADataIntfPtr {
+            return LADataIntfPtr{new LADataBHE<NumLib::ShapeLine2>{
                 // BHE elements
-                e, local_matrix_size, dofIndex_to_localIndex,
+                e, dofIndex_to_localIndex,
+                std::forward<ConstructorArgs>(args)...}};
+        };
+    }
+
+    template <>
+    static LADataBuilder makeLocalAssemblerBuilder<NumLib::ShapeLine3>(
+        std::true_type*)
+    {
+        return [](MeshLib::Element const& e,
+                  std::vector<unsigned> const& dofIndex_to_localIndex,
+                  ConstructorArgs&&... args) -> LADataIntfPtr {
+            return LADataIntfPtr{new LADataBHE<NumLib::ShapeLine3>{
+                // BHE elements
+                e, dofIndex_to_localIndex,
                 std::forward<ConstructorArgs>(args)...}};
         };
     }

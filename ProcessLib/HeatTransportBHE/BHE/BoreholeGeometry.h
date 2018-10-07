@@ -1,4 +1,6 @@
 /**
+ * \file
+ *
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -9,20 +11,26 @@
 
 #pragma once
 
-#include <memory>
-#include <vector>
-
 namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-template <typename NodalMatrixType>
-struct IntegrationPointDataSoil final
+namespace BHE
 {
-    NodalMatrixType NTN_product_times_w;
-    NodalMatrixType dNdxTdNdx_product_times_w;
+struct BoreholeGeometry
+{
+    /**
+     * length/depth of the BHE
+     * unit is m
+     */
+    double const length;
 
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+    /**
+     * diameter of the BHE
+     * unit is m
+     */
+    double const diameter;
 };
+}  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

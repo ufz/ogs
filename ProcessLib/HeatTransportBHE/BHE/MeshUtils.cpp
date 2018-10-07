@@ -18,42 +18,40 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-void getBHEDataInMesh(
-    MeshLib::Mesh const& mesh,
-    std::vector<MeshLib::Element*>& vec_soil_elements,
-    std::vector<int>& vec_BHE_mat_IDs,
-    std::vector<std::vector<MeshLib::Element*>>& vec_BHE_elements,
-    std::vector<MeshLib::Node*>& vec_soil_nodes,
-    std::vector<std::vector<MeshLib::Node*>>& vec_BHE_nodes)
+BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
 {
-    // get vectors of matrix elements and BHE elements
-    vec_soil_elements.reserve(mesh.getNumberOfElements());
+    BHEMeshData bheMeshData;
+    // partition all the mesh elements, and copy them into
+    // two seperate vectors, one with only matrix elements
+    // and the other only BHE elements
+    bheMeshData.soil_elements.reserve(mesh.getNumberOfElements());
     std::vector<MeshLib::Element*> all_BHE_elements;
-    for (MeshLib::Element* e : mesh.getElements())
-    {
-        // As for the first step, all elements are counted as a soil element
-        // first. Those elements connected with a BHE will picked up and
-        // reorganized into a seperate vector at the end of the function.
-        if (e->getDimension() == mesh.getDimension())
-            vec_soil_elements.push_back(e);
-        else if (e->getDimension() == (unsigned int)1)
-            all_BHE_elements.push_back(e);
-    }
+    auto& all_mesh_elements = mesh.getElements();
+    std::partition_copy(
+        std::begin(all_mesh_elements),
+        std::end(all_mesh_elements),
+        std::back_inserter(all_BHE_elements),
+        std::back_inserter(bheMeshData.soil_elements),
+        [](MeshLib::Element* e) { return e->getDimension() == 1; });
 
     // get BHE material IDs
-    auto opt_material_ids(
-        mesh.getProperties().getPropertyVector<int>("MaterialIDs"));
+    auto opt_material_ids = MeshLib::materialIDs(mesh);
+    if (opt_material_ids == nullptr)
+    {
+        OGS_FATAL("Not able to get material IDs! ");
+    }
     for (MeshLib::Element* e : all_BHE_elements)
-        vec_BHE_mat_IDs.push_back((*opt_material_ids)[e->getID()]);
-    BaseLib::makeVectorUnique(vec_BHE_mat_IDs);
-    DBUG("-> found %d BHE material groups", vec_BHE_mat_IDs.size());
+        bheMeshData.BHE_mat_IDs.push_back((*opt_material_ids)[e->getID()]);
+    BaseLib::makeVectorUnique(bheMeshData.BHE_mat_IDs);
+    DBUG("-> found %d BHE material groups", bheMeshData.BHE_mat_IDs.size());
 
     // create a vector of BHE elements for each group
-    vec_BHE_elements.resize(vec_BHE_mat_IDs.size());
-    for (unsigned bhe_id = 0; bhe_id < vec_BHE_mat_IDs.size(); bhe_id++)
+    bheMeshData.BHE_elements.resize(bheMeshData.BHE_mat_IDs.size());
+    for (unsigned bhe_id = 0; bhe_id < bheMeshData.BHE_mat_IDs.size(); bhe_id++)
     {
-        const auto bhe_mat_id = vec_BHE_mat_IDs[bhe_id];
-        std::vector<MeshLib::Element*>& vec_elements = vec_BHE_elements[bhe_id];
+        const auto bhe_mat_id = bheMeshData.BHE_mat_IDs[bhe_id];
+        std::vector<MeshLib::Element*>& vec_elements =
+            bheMeshData.BHE_elements[bhe_id];
         std::copy_if(all_BHE_elements.begin(), all_BHE_elements.end(),
                      std::back_inserter(vec_elements),
                      [&](MeshLib::Element* e) {
@@ -63,11 +61,11 @@ void getBHEDataInMesh(
     }
 
     // get a vector of BHE nodes
-    vec_BHE_nodes.resize(vec_BHE_mat_IDs.size());
-    for (unsigned bhe_id = 0; bhe_id < vec_BHE_mat_IDs.size(); bhe_id++)
+    bheMeshData.BHE_nodes.resize(bheMeshData.BHE_mat_IDs.size());
+    for (unsigned bhe_id = 0; bhe_id < bheMeshData.BHE_mat_IDs.size(); bhe_id++)
     {
-        std::vector<MeshLib::Node*>& vec_nodes = vec_BHE_nodes[bhe_id];
-        for (MeshLib::Element* e : vec_BHE_elements[bhe_id])
+        std::vector<MeshLib::Node*>& vec_nodes = bheMeshData.BHE_nodes[bhe_id];
+        for (MeshLib::Element* e : bheMeshData.BHE_elements[bhe_id])
         {
             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
             {
@@ -82,20 +80,20 @@ void getBHEDataInMesh(
     }
 
     // get all the nodes into the pure soil nodes vector
-    vec_soil_nodes.reserve(mesh.getNumberOfNodes());
+    bheMeshData.soil_nodes.reserve(mesh.getNumberOfNodes());
     for (MeshLib::Node* n : mesh.getNodes())
     {
         // All elements are counted as a soil element
-        vec_soil_nodes.push_back(n);
+        bheMeshData.soil_nodes.push_back(n);
     }
 
-    // final count of 3 types of elements
-    // They are
-    // (i)  soil,
-    // (ii) BHE
+    // finalLy counting two types of elements
+    // They are (i) soil, and (ii) BHE type of elements
     DBUG("-> found total %d soil elements and %d BHE elements",
-         vec_soil_elements.size(),
-         all_BHE_elements.size());
+         bheMeshData.soil_elements.size(),
+         bheMeshData.BHE_elements.size());
+
+    return bheMeshData;
 }
 }  // end of namespace HeatTransportBHE
 }  // namespace ProcessLib

@@ -26,8 +26,6 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-const unsigned NUM_NODAL_DOF_SOIL = 1;
-
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class HeatTransportBHELocalAssemblerSoil
     : public HeatTransportBHELocalAssemblerInterface
@@ -45,7 +43,6 @@ public:
 
     HeatTransportBHELocalAssemblerSoil(
         MeshLib::Element const& e,
-        std::size_t const local_matrix_size,
         std::vector<unsigned> const& dofIndex_to_localIndex,
         bool is_axially_symmetric,
         unsigned const integration_order,
@@ -55,29 +52,6 @@ public:
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_b_data*/) override;
-
-    void assembleWithJacobian(double const /*t*/,
-                              std::vector<double> const& /*local_x*/,
-                              std::vector<double> const& /*local_xdot*/,
-                              const double /*dxdot_dx*/, const double /*dx_dx*/,
-                              std::vector<double>& /*local_M_data*/,
-                              std::vector<double>& /*local_K_data*/,
-                              std::vector<double>& /*local_b_data*/,
-                              std::vector<double>& /*local_Jac_data*/) override
-    {
-        OGS_FATAL(
-            "HeatTransportBHELocalAssemblerMatrix: assembly with jacobian is "
-            "not "
-            "implemented.");
-    }
-
-    void preTimestepConcrete(std::vector<double> const& /*local_x*/,
-                             double const /*t*/,
-                             double const /*delta_t*/) override
-    {
-    }
-
-    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
@@ -92,8 +66,8 @@ private:
     HeatTransportBHEProcessData& _process_data;
 
     std::vector<
-        IntegrationPointDataSoil<ShapeMatricesType>,
-        Eigen::aligned_allocator<IntegrationPointDataSoil<ShapeMatricesType>>>
+        IntegrationPointDataSoil<NodalMatrixType>,
+        Eigen::aligned_allocator<IntegrationPointDataSoil<NodalMatrixType>>>
         _ip_data;
 
     IntegrationMethod const _integration_method;

@@ -25,7 +25,6 @@ template <typename ShapeFunction, typename IntegrationMethod, int BHE_Dim>
 HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHE_Dim>::
     HeatTransportBHELocalAssemblerBHE(
         MeshLib::Element const& e,
-        std::size_t const /*local_matrix_size*/,
         std::vector<unsigned> const& dofIndex_to_localIndex,
         bool const is_axially_symmetric,
         unsigned const integration_order,
@@ -62,9 +61,8 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHE_Dim>::
     {
         x_position.setIntegrationPoint(ip);
 
-        IntegrationPointDataBHE<ShapeMatricesType> int_Point_Data_BHE(
-            *(_process_data._vec_BHE_property[BHE_id]));
-        _ip_data.emplace_back(int_Point_Data_BHE);
+        // create the class IntegrationPointDataBHE in place
+        _ip_data.emplace_back(*(_process_data._vec_BHE_property[BHE_id]));
         auto const& sm = shape_matrices[ip];
         auto& ip_data = _ip_data[ip];
         ip_data.integration_weight =
@@ -109,7 +107,6 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHE_Dim>::
         _process_data._vec_BHE_property[BHE_id]->setRMatrices(
             idx_bhe_unknowns, ShapeFunction::NPOINTS, matBHE_loc_R, _R_matrix,
             _R_pi_s_matrix, _R_s_matrix);
-
     }  // end of loop over BHE unknowns
 
     // debugging

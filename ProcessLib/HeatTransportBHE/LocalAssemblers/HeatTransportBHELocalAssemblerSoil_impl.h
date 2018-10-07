@@ -37,7 +37,6 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction,
                                    GlobalDim>::
     HeatTransportBHELocalAssemblerSoil(
         MeshLib::Element const& e,
-        std::size_t const /*local_matrix_size*/,
         std::vector<unsigned> const& dofIndex_to_localIndex,
         bool const is_axially_symmetric,
         unsigned const integration_order,
@@ -60,6 +59,26 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction,
                                         IntegrationMethod,
                                         GlobalDim>(
         e, is_axially_symmetric, _integration_method);
+
+    SpatialPosition x_position;
+    x_position.setElementID(element_id);
+
+    // ip data initialization
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        x_position.setIntegrationPoint(ip);
+
+        // create the class IntegrationPointDataBHE in place
+        _ip_data.emplace_back();
+        auto const& sm = _shape_matrices[ip];
+        auto& ip_data = _ip_data[ip];
+        double const w = _integration_method.getWeightedPoint(ip).getWeight() *
+                         sm.integralMeasure * sm.detJ;
+        ip_data.NTN_product_times_w = sm.N.transpose() * sm.N * w;
+        ip_data.dNdxTdNdx_product_times_w = sm.dNdx.transpose() * sm.dNdx * w;
+
+        _secondary_data.N[ip] = sm.N;
+    }
 }
 
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
@@ -72,14 +91,13 @@ void HeatTransportBHELocalAssemblerSoil<
                          std::vector<double>& local_K_data,
                          std::vector<double>& /*local_b_data*/)
 {
-    auto const local_matrix_size = local_x.size();
-
-    assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF_SOIL);
+    assert(local_x.size() == ShapeFunction::NPOINTS);
+    (void)local_x;  // Avoid unused arg warning.
 
     auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
-        local_M_data, local_matrix_size, local_matrix_size);
+        local_M_data, ShapeFunction::NPOINTS, ShapeFunction::NPOINTS);
     auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
-        local_K_data, local_matrix_size, local_matrix_size);
+        local_K_data, ShapeFunction::NPOINTS, ShapeFunction::NPOINTS);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -90,8 +108,9 @@ void HeatTransportBHELocalAssemblerSoil<
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         pos.setIntegrationPoint(ip);
-        auto const& sm = _shape_matrices[ip];
-        auto const& wp = _integration_method.getWeightedPoint(ip);
+        auto& ip_data = _ip_data[ip];
+        auto const& M_ip = ip_data.NTN_product_times_w;
+        auto const& K_ip = ip_data.dNdxTdNdx_product_times_w;
 
         // auto const k_f = _process_data.thermal_conductivity_fluid(t, pos)[0];
         // auto const k_g = _process_data.thermal_conductivity_gas(t, pos)[0];
@@ -110,13 +129,10 @@ void HeatTransportBHELocalAssemblerSoil<
         // for now only using the solid phase parameters
 
         // assemble Conductance matrix
-        local_K.noalias() += sm.dNdx.transpose() * k_s * sm.dNdx * sm.detJ *
-                             wp.getWeight() * sm.integralMeasure;
+        local_K.noalias() += K_ip * k_s;
 
         // assemble Mass matrix
-        local_M.noalias() += sm.N.transpose() * density_s * heat_capacity_s *
-                             sm.N * sm.detJ * wp.getWeight() *
-                             sm.integralMeasure;
+        local_M.noalias() += M_ip * density_s * heat_capacity_s;
     }
 
     // debugging
@@ -124,14 +140,6 @@ void HeatTransportBHELocalAssemblerSoil<
     // Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
     // std::cout << local_K.format(CleanFmt) << sep;
     // std::cout << local_M.format(CleanFmt) << sep;
-}
-
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void HeatTransportBHELocalAssemblerSoil<
-    ShapeFunction,
-    IntegrationMethod,
-    GlobalDim>::postTimestepConcrete(std::vector<double> const& /*local_x*/)
-{
 }
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
