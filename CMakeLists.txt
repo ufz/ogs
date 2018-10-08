@@ -3,7 +3,7 @@
 #####################
 
 # Specify minimum CMake version
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.3)
 
 # Set CMake policies
 cmake_policy(SET CMP0011 NEW)
@@ -109,6 +109,26 @@ set(ProcessesList
 foreach(process ${ProcessesList})
     option(OGS_BUILD_PROCESS_${process} "Build the ${process} process." ON)
 endforeach()
+
+set(OGS_BUILD_PROCESSES "" CACHE STRING "Semicolon-separated list of processes to build")
+if(NOT "${OGS_BUILD_PROCESSES}" STREQUAL "")
+    foreach(process ${OGS_BUILD_PROCESSES})
+        if(NOT "${process}" IN_LIST ProcessesList)
+            message(FATAL_ERROR "${process} given in OGS_BUILD_PROCESSES is "
+                "not a valid process name! Valid names are ${ProcessesList}")
+        endif()
+    endforeach()
+    message(STATUS "Enabled processes:")
+    foreach(process ${ProcessesList})
+        if("${process}" IN_LIST OGS_BUILD_PROCESSES)
+            set(OGS_BUILD_PROCESS_${process} ON CACHE BOOL "" FORCE)
+            message(STATUS "  ${process}")
+        else()
+            set(OGS_BUILD_PROCESS_${process} OFF CACHE BOOL "" FORCE)
+        endif()
+    endforeach()
+
+endif()
 
 if(WIN32)
     option(OGS_BUILD_SWMM "Should the SWMM interface be built?" OFF)
