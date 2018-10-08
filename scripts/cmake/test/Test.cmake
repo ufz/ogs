@@ -35,6 +35,7 @@ configure_file(
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
 
 set(NUM_CTEST_PROCESSORS 3)
 
