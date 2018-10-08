@@ -31,13 +31,14 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
                                        DisplacementDim>::
     SmallDeformationLocalAssemblerFracture(
         MeshLib::Element const& e,
+        std::size_t const n_variables,
         std::size_t const /*local_matrix_size*/,
         std::vector<unsigned> const& dofIndex_to_localIndex,
         bool const is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
     : SmallDeformationLocalAssemblerInterface(
-          ShapeFunction::NPOINTS * DisplacementDim,  // no intersection
+          n_variables * ShapeFunction::NPOINTS * DisplacementDim,
           dofIndex_to_localIndex),
       _process_data(process_data),
       _integration_method(integration_order),
@@ -57,6 +58,18 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
     auto mat_id = (*_process_data._mesh_prop_materialIDs)[e.getID()];
     auto frac_id = _process_data._map_materialID_to_fractureID[mat_id];
     _fracture_property = _process_data._vec_fracture_property[frac_id].get();
+    for (auto fid : process_data._vec_ele_connected_fractureIDs[e.getID()])
+    {
+        _fracID_to_local.insert({fid, _fracture_props.size()});
+        _fracture_props.push_back(
+            _process_data._vec_fracture_property[fid].get());
+    }
+
+    for (auto jid : process_data._vec_ele_connected_junctionIDs[e.getID()])
+    {
+        _junction_props.push_back(
+            _process_data._vec_junction_property[jid].get());
+    }
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -103,19 +116,72 @@ void SmallDeformationLocalAssemblerFracture<
                                            Eigen::VectorXd& local_b,
                                            Eigen::MatrixXd& local_J)
 {
-    auto const& nodal_jump = local_u;
+    auto const N_DOF_PER_VAR = ShapeFunction::NPOINTS * DisplacementDim;
+    auto const n_fractures = _fracture_props.size();
+    auto const n_junctions = _junction_props.size();
+    auto const n_enrich_var = n_fractures + n_junctions;
 
-    auto const& R = _fracture_property->R;
+    //--------------------------------------------------------------------------------------
+    // prepare sub vectors, matrices for regular displacement (u) and
+    // displacement jumps (g)
+    //
+    // example with two fractures with one intersection:
+    // b = |b(g1)|
+    //     |b(g2)|
+    //
+    // J = |J(g1,g1) J(g1,g2)|
+    //     |J(g2,g1) J(g2,g2)|
+    //--------------------------------------------------------------------------------------
 
+    using BlockVectorType =
+        typename Eigen::VectorXd::FixedSegmentReturnType<N_DOF_PER_VAR>::Type;
+    using BlockMatrixType =
+        Eigen::Block<Eigen::MatrixXd, N_DOF_PER_VAR, N_DOF_PER_VAR>;
+
+    std::vector<BlockVectorType> vec_local_b_g;
+    for (unsigned i = 0; i < n_enrich_var; i++)
+    {
+        vec_local_b_g.push_back(
+            local_b.segment<N_DOF_PER_VAR>(N_DOF_PER_VAR * i));
+    }
+    std::vector<std::vector<BlockMatrixType>> vec_local_J_gg(n_enrich_var);
+    for (unsigned i = 0; i < n_enrich_var; i++)
+    {
+        for (unsigned j = 0; j < n_enrich_var; j++)
+        {
+            auto sub_gg = local_J.block<N_DOF_PER_VAR, N_DOF_PER_VAR>(
+                N_DOF_PER_VAR * i, N_DOF_PER_VAR * j);
+            vec_local_J_gg[i].push_back(sub_gg);
+        }
+    }
+
+    std::vector<Eigen::VectorXd> vec_nodal_g;
+    for (unsigned i = 0; i < n_enrich_var; i++)
+    {
+        auto sub = const_cast<Eigen::VectorXd&>(local_u).segment<N_DOF_PER_VAR>(
+            N_DOF_PER_VAR * i);
+        vec_nodal_g.push_back(sub);
+    }
+
+
+    //------------------------------------------------
+    // integration
+    //------------------------------------------------
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector
     int const index_normal = DisplacementDim - 1;
+    auto const& R = _fracture_property->R;
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
+
+    std::size_t this_frac_local_index = 0;
+    for (; this_frac_local_index<_fracture_props.size(); this_frac_local_index++)
+        if (_fracture_props[this_frac_local_index] == _fracture_property)
+            break;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -131,9 +197,24 @@ void SmallDeformationLocalAssemblerFracture<
         auto const& w_prev = ip_data._w_prev;
         auto& C = ip_data._C;
         auto& state = *ip_data._material_state_variables;
+        auto& N = _secondary_data.N[ip];
+
+        Eigen::Vector3d const ip_physical_coords(
+            computePhysicalCoordinates(_element, N).getCoords());
+        std::vector<double> const levelsets(du_global_enrichments(
+            _fracture_property->fracture_id, _fracture_props, _junction_props,
+            _fracID_to_local, ip_physical_coords));
+
+        // du = du^hat + sum_i(enrich^br_i(x) * [u]_i) + sum_i(enrich^junc_i(x) * [u]_i)
+        Eigen::VectorXd nodal_gap(N_DOF_PER_VAR);
+        nodal_gap.setZero();
+        for (unsigned i = 0; i < n_enrich_var; i++)
+        {
+            nodal_gap += levelsets[i] * vec_nodal_g[i];
+        }
 
         // displacement jumps
-        w.noalias() = R * H * nodal_jump;
+        w.noalias() = R * H * nodal_gap;
 
         // total aperture
         ip_data._aperture = ip_data._aperture0 + w[index_normal];
@@ -148,12 +229,22 @@ void SmallDeformationLocalAssemblerFracture<
             w_prev, w, sigma_prev, sigma, C, state);
 
         // r_[u] += H^T*Stress
-        local_b.noalias() -=
-            H.transpose() * R.transpose() * sigma * integration_weight;
+        for (unsigned i = 0; i < n_enrich_var; i++)
+        {
+            vec_local_b_g[i].noalias() -=
+                levelsets[i] * H.transpose() * R.transpose() * sigma * integration_weight;
+        }
 
         // J_[u][u] += H^T*C*H
-        local_J.noalias() +=
-            H.transpose() * R.transpose() * C * R * H * integration_weight;
+        for (unsigned i = 0; i < n_enrich_var; i++)
+        {
+            for (unsigned j = 0; j < n_enrich_var; j++)
+            {
+                // J_[u][u] += (levelset * B)^T * C * (levelset * B)
+                vec_local_J_gg[i][j].noalias() +=
+                    (levelsets[i] * H.transpose() * R.transpose()) * C * (levelsets[j] * R * H) * integration_weight;
+            }
+        }
     }
 }
 
@@ -162,9 +253,12 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
                                             DisplacementDim>::
     computeSecondaryVariableConcreteWithVector(const double t,
-                                               Eigen::VectorXd const& local_x)
+                                               Eigen::VectorXd const& local_u)
 {
-    auto const& nodal_jump = local_x;
+    auto const N_DOF_PER_VAR = ShapeFunction::NPOINTS * DisplacementDim;
+    auto const n_fractures = _fracture_props.size();
+    auto const n_junctions = _junction_props.size();
+    auto const n_enrich_var = n_fractures + n_junctions;
 
     auto const& R = _fracture_property->R;
 
@@ -177,6 +271,20 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
 
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
+
+    std::vector<Eigen::VectorXd> vec_nodal_g;
+    for (unsigned i = 0; i < n_enrich_var; i++)
+    {
+        auto sub = const_cast<Eigen::VectorXd&>(local_u).segment<N_DOF_PER_VAR>(
+            N_DOF_PER_VAR * i);
+        vec_nodal_g.push_back(sub);
+    }
+
+    std::size_t this_frac_local_index = 0;
+    for (; this_frac_local_index<_fracture_props.size(); this_frac_local_index++)
+        if (_fracture_props[this_frac_local_index] == _fracture_property)
+            break;
+
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -192,9 +300,24 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         auto& C = ip_data._C;
         auto& state = *ip_data._material_state_variables;
         auto& b_m = ip_data._aperture;
+        auto& N = _secondary_data.N[ip];
+
+        Eigen::Vector3d const ip_physical_coords(
+            computePhysicalCoordinates(_element, N).getCoords());
+        std::vector<double> const levelsets(du_global_enrichments(
+            _fracture_property->fracture_id, _fracture_props, _junction_props,
+            _fracID_to_local, ip_physical_coords));
+
+        // du = du^hat + sum_i(enrich^br_i(x) * [u]_i) + sum_i(enrich^junc_i(x) * [u]_i)
+        Eigen::VectorXd nodal_gap(N_DOF_PER_VAR);
+        nodal_gap.setZero();
+        for (unsigned i = 0; i < n_enrich_var; i++)
+        {
+            nodal_gap += levelsets[i] * vec_nodal_g[i];
+        }
 
         // displacement jumps in local coordinates
-        w.noalias() = R * H * nodal_jump;
+        w.noalias() = R * H * nodal_gap;
 
         // aperture
         b_m = ip_data._aperture0 + w[index_normal];

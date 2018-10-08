@@ -15,6 +15,7 @@
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
+#include "ProcessLib/LIE/Common/BranchProperty.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/CreateLocalAssemblers.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerFracture.h"
@@ -46,12 +47,15 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
               std::move(named_function_caller)),
       _process_data(std::move(process_data))
 {
+    std::vector<std::pair<std::size_t,std::vector<int>>> vec_branch_nodeID_matIDs;
+    std::vector<std::pair<std::size_t,std::vector<int>>> vec_junction_nodeID_matIDs;
     getFractureMatrixDataInMesh(mesh,
                                 _vec_matrix_elements,
                                 _vec_fracture_mat_IDs,
                                 _vec_fracture_elements,
                                 _vec_fracture_matrix_elements,
-                                _vec_fracture_nodes);
+                                _vec_fracture_nodes,
+                                vec_branch_nodeID_matIDs, vec_junction_nodeID_matIDs);
 
     if (_vec_fracture_mat_IDs.size() !=
         _process_data._vec_fracture_property.size())
@@ -96,6 +100,73 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
             *fracture_prop.get());
     }
 
+    // set branches
+    for (std::size_t i=0; i<vec_branch_nodeID_matIDs.size(); i++)
+    {
+        auto master_matId = vec_branch_nodeID_matIDs[i].second[0];
+        auto slave_matId = vec_branch_nodeID_matIDs[i].second[1];
+        auto& master_frac =
+            *_process_data._vec_fracture_property
+                 [_process_data._map_materialID_to_fractureID[master_matId]];
+        auto& slave_frac =
+            *_process_data._vec_fracture_property
+                 [_process_data._map_materialID_to_fractureID[slave_matId]];
+
+        BranchProperty* branch = new BranchProperty();
+        setBranchProperty(*mesh.getNode(vec_branch_nodeID_matIDs[i].first),
+                          master_frac, slave_frac, *branch);
+
+        master_frac.branches_master.emplace_back(branch);
+
+        BranchProperty* branch2 = new BranchProperty();
+        setBranchProperty(*mesh.getNode(vec_branch_nodeID_matIDs[i].first),
+                          master_frac, slave_frac, *branch2);
+        slave_frac.branches_slave.emplace_back(branch2);
+    }
+
+    // set junctions
+    for (std::size_t i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
+    {
+        _vec_junction_nodes.push_back(
+            const_cast<MeshLib::Node*>(_mesh.getNode(vec_junction_nodeID_matIDs[i].first)));
+    }
+    for (std::size_t i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
+    {
+        JunctionProperty* junction = new JunctionProperty();
+        std::vector<int> fracIDs;
+        for (auto matid : vec_junction_nodeID_matIDs[i].second)
+            fracIDs.push_back(_process_data._map_materialID_to_fractureID[matid]);
+        setJunctionProperty(i, *mesh.getNode(vec_junction_nodeID_matIDs[i].first), fracIDs,
+                            *junction);
+
+        _process_data._vec_junction_property.emplace_back(junction);
+    }
+
+    // create a table of connected junction IDs for each element
+    _process_data._vec_ele_connected_junctionIDs.resize(
+        mesh.getNumberOfElements());
+    for (unsigned i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
+    {
+        auto node = mesh.getNode(vec_junction_nodeID_matIDs[i].first);
+        for (auto e : node->getElements())
+        {
+            _process_data._vec_ele_connected_junctionIDs[e->getID()].push_back(
+                i);
+        }
+    }
+
+    // create a table of junction node and connected elements
+    _vec_junction_fracture_matrix_elements.resize(
+        vec_junction_nodeID_matIDs.size());
+    for (unsigned i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
+    {
+        auto node = mesh.getNode(vec_junction_nodeID_matIDs[i].first);
+        for (auto e : node->getElements())
+        {
+            _vec_junction_fracture_matrix_elements[i].push_back(e);
+        }
+    }
+
     //
     // If Neumann BCs for the displacement_jump variable are required they need
     // special treatment because of the levelset function. The implementation
@@ -127,6 +198,9 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
             std::make_unique<MeshLib::MeshSubset const>(
                 _mesh, _vec_fracture_nodes[i]));
     }
+    // enrichment for junctions
+    _mesh_subset_junction_nodes =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _vec_junction_nodes);
 
     // Collect the mesh subsets in a vector.
     std::vector<MeshLib::MeshSubset> all_mesh_subsets;
@@ -138,8 +212,11 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
                         DisplacementDim,
                         [&]() { return *ms; });
     }
+    std::generate_n(std::back_inserter(all_mesh_subsets),
+                    DisplacementDim,
+                    [&]() { return *_mesh_subset_junction_nodes; });
 
-    std::vector<int> const vec_n_components(1 + _vec_fracture_mat_IDs.size(),
+    std::vector<int> const vec_n_components(1 + _vec_fracture_mat_IDs.size() + _vec_junction_nodes.size(),
                                             DisplacementDim);
 
     std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
@@ -147,6 +224,10 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     for (unsigned i = 0; i < _vec_fracture_matrix_elements.size(); i++)
     {
         vec_var_elements.push_back(&_vec_fracture_matrix_elements[i]);
+    }
+    for (unsigned i = 0; i < _vec_junction_fracture_matrix_elements.size(); i++)
+    {
+        vec_var_elements.push_back(&_vec_junction_fracture_matrix_elements[i]);
     }
 
     _local_to_global_index_map =
@@ -336,25 +417,58 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         _process_data._mesh_prop_strain_yz = mesh_prop_epsilon_yz;
     }
 
-    for (auto const& fracture_prop : _process_data._vec_fracture_property)
+    for (MeshLib::Element const* e : _mesh.getElements())
     {
-        auto mesh_prop_levelset = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh),
-            "levelset" + std::to_string(fracture_prop->fracture_id + 1),
-            MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_levelset->resize(mesh.getNumberOfElements());
-        for (MeshLib::Element const* e : _mesh.getElements())
-        {
-            if (e->getDimension() < DisplacementDim)
-            {
-                continue;
-            }
+        if (e->getDimension() < DisplacementDim)
+            continue;
 
-            double const levelsets = calculateLevelSetFunction(
-                *fracture_prop, e->getCenterOfGravity().getCoords());
-            (*mesh_prop_levelset)[e->getID()] = levelsets;
+        Eigen::Vector3d const pt(e->getCenterOfGravity().getCoords());
+        std::vector<FractureProperty*> e_fracture_props;
+        std::unordered_map<int,int> e_fracID_to_local;
+        unsigned tmpi = 0;
+        for (auto fid : _process_data._vec_ele_connected_fractureIDs[e->getID()])
+        {
+            e_fracture_props.push_back(_process_data
+                    ._vec_fracture_property[fid].get());
+            e_fracID_to_local.insert({fid, tmpi++});
+        }
+        std::vector<JunctionProperty*> e_junction_props;
+        std::unordered_map<int,int> e_juncID_to_local;
+        tmpi = 0;
+        for (auto fid : _process_data._vec_ele_connected_junctionIDs[e->getID()])
+        {
+            e_junction_props.push_back(
+                _process_data._vec_junction_property[fid].get());
+            e_juncID_to_local.insert({fid, tmpi++});
+        }
+        std::vector<double> const levelsets(
+            u_global_enrichments(e_fracture_props, e_junction_props,
+                                 e_fracID_to_local, pt));
+
+        for (unsigned i = 0; i < e_fracture_props.size(); i++)
+        {
+            auto mesh_prop_levelset = MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh),
+                "levelset" +
+                    std::to_string(e_fracture_props[i]->fracture_id + 1),
+                MeshLib::MeshItemType::Cell, 1);
+            mesh_prop_levelset->resize(mesh.getNumberOfElements());
+            (*mesh_prop_levelset)[e->getID()] = levelsets[i];
+        }
+        for (unsigned i = 0; i < e_junction_props.size(); i++)
+        {
+            auto mesh_prop_levelset = MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh),
+                "levelset" +
+                    std::to_string(e_junction_props[i]->junction_id + 1 +
+                                   _process_data._vec_fracture_property.size()),
+                MeshLib::MeshItemType::Cell, 1);
+            mesh_prop_levelset->resize(mesh.getNumberOfElements());
+            (*mesh_prop_levelset)[e->getID()] =
+                levelsets[i + e_fracture_props.size()];
         }
     }
+
 
     auto mesh_prop_w_n = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "w_n", MeshLib::MeshItemType::Cell,

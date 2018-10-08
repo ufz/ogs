@@ -14,6 +14,8 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "ProcessLib/LIE/Common/HMatrixUtils.h"
+#include "ProcessLib/LIE/Common/FractureProperty.h"
+#include "ProcessLib/LIE/Common/JunctionProperty.h"
 #include "ProcessLib/LIE/SmallDeformation/SmallDeformationProcessData.h"
 
 #include "IntegrationPointDataFracture.h"
@@ -54,6 +56,7 @@ public:
 
     SmallDeformationLocalAssemblerFracture(
         MeshLib::Element const& e,
+        std::size_t const n_variables,
         std::size_t const local_matrix_size,
         std::vector<unsigned> const& dofIndex_to_localIndex,
         bool const is_axially_symmetric,
@@ -230,6 +233,9 @@ private:
     }
 
     SmallDeformationProcessData<DisplacementDim>& _process_data;
+    std::vector<FractureProperty*> _fracture_props;
+    std::vector<JunctionProperty*> _junction_props;
+    std::unordered_map<int,int> _fracID_to_local;
     FractureProperty const* _fracture_property = nullptr;
 
     std::vector<IntegrationPointDataFracture<HMatricesType, DisplacementDim>,
