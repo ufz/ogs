@@ -19,6 +19,8 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
+#include "ProcessLib/LIE/Common/BranchProperty.h"
+#include "ProcessLib/LIE/Common/JunctionProperty.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/Parameter/MeshElementParameter.h"
 
@@ -56,12 +58,15 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     std::vector<std::vector<MeshLib::Element*>>
         vec_vec_fracture_matrix_elements;
     std::vector<std::vector<MeshLib::Node*>> vec_vec_fracture_nodes;
+    std::vector<std::pair<std::size_t,std::vector<int>>> vec_branch_nodeID_matIDs;
+    std::vector<std::pair<std::size_t,std::vector<int>>> vec_junction_nodeID_matIDs;
     getFractureMatrixDataInMesh(mesh,
                                 _vec_matrix_elements,
                                 vec_fracture_mat_IDs,
                                 vec_vec_fracture_elements,
                                 vec_vec_fracture_matrix_elements,
-                                vec_vec_fracture_nodes);
+                                vec_vec_fracture_nodes,
+                                vec_branch_nodeID_matIDs, vec_junction_nodeID_matIDs);
     _vec_fracture_elements.insert(_vec_fracture_elements.begin(),
                                   vec_vec_fracture_elements[0].begin(),
                                   vec_vec_fracture_elements[0].end());
@@ -297,10 +302,12 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             if (e->getDimension() < GlobalDim)
                 continue;
 
-            double const levelsets =
-                calculateLevelSetFunction(*_process_data.fracture_property,
-                                          e->getCenterOfGravity().getCoords());
-            (*mesh_prop_levelset)[e->getID()] = levelsets;
+            std::vector<FractureProperty*> fracture_props({_process_data.fracture_property.get()});
+            std::vector<JunctionProperty*> junction_props;
+            std::unordered_map<int,int> fracID_to_local({{0,0}});
+            std::vector<double> levelsets = u_global_enrichments(
+                fracture_props, junction_props, fracID_to_local, Eigen::Vector3d(e->getCenterOfGravity().getCoords()));
+            (*mesh_prop_levelset)[e->getID()] = levelsets[0];
         }
 
         auto mesh_prop_w_n = MeshLib::getOrCreateMeshProperty<double>(
