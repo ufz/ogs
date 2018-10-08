@@ -33,7 +33,9 @@ public:
         MeshLib::Mesh const& org_mesh,
         std::vector<std::vector<MeshLib::Node*>> const& vec_vec_fracture_nodes,
         std::vector<std::vector<MeshLib::Element*>> const&
-            vec_vec_fracutre_matrix_elements);
+            vec_vec_fracutre_matrix_elements,
+        std::vector<std::pair<std::size_t, std::vector<int>>> const&
+            vec_junction_nodeID_matIDs);
 
     MeshLib::Mesh const& getOutputMesh() const { return *_output_mesh; }
 
@@ -42,11 +44,12 @@ private:
     void createProperties();
     template <typename T>
     void copyProperties();
-    void calculateTotalDisplacement(unsigned const n_fractures);
+    void calculateTotalDisplacement(unsigned const n_fractures,
+                                    unsigned const n_junctions);
 
     MeshLib::Mesh const& _org_mesh;
     std::unique_ptr<MeshLib::Mesh> _output_mesh;
-    std::map<std::size_t, std::size_t> _map_dup_newNodeIDs;
+    std::map<std::size_t, std::vector<std::size_t>> _map_dup_newNodeIDs;
 };
 
 }  // namespace LIE
