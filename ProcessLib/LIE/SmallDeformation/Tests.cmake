@@ -97,3 +97,40 @@ AddTest(
     GLOB cohesive_zone_load_path_pcs_0_ts_*.vtu sigma_xy sigma_xy 1e-6 0
     GLOB cohesive_zone_load_path_pcs_0_ts_*.vtu f_stress_n_analytical f_stress_n 5e2 5e-6
 )
+
+AddTest(
+    NAME LIE_M_two_cracks_branch_pull
+    PATH LIE/Mechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS two_cracks_branch_pull.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    expected_two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
+    expected_two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu displacement_jump2 displacement_jump2 1e-16 1e-16
+    expected_two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu sigma_xx sigma_xx 1e-6 1e-6
+    expected_two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
+    expected_two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu sigma_xy sigma_xy 1e-6 1e-6
+    expected_two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_branch_pull_pcs_0_ts_1_t_1.000000.vtu f_stress_n f_stress_n 1e-6 5e-6
+)
+
+AddTest(
+    NAME LIE_M_two_cracks_junction_pull
+    PATH LIE/Mechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS two_cracks_junction_pull.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    expected_two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
+    expected_two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu displacement_jump2 displacement_jump2 1e-16 1e-16
+    expected_two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu displacement_jump3 displacement_jump3 1e-16 1e-16
+    expected_two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu sigma_xx sigma_xx 1e-6 1e-6
+    expected_two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
+    expected_two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu sigma_xy sigma_xy 1e-6 1e-6
+    expected_two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu f_stress_n f_stress_n 1e-6 5e-6
+)
