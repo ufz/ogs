@@ -30,6 +30,9 @@ public:
     /// Constant: The FEM type of the element
     static const CellType cell_type = CellType::LINE3;
 
+    /// Constant: Local node index table for edge
+    static const unsigned edge_nodes[1][3];
+
     /// Edge rule
     using EdgeReturn = MeshLib::QuadraticEdgeReturn;
 }; /* class */
