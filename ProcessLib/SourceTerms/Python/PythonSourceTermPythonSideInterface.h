@@ -30,21 +30,7 @@ public:
      */
     virtual std::pair<double, std::vector<double>> getFlux(
         double /*t*/, std::array<double, 3> const& /*x*/,
-        std::vector<double> const& /*primary_variables*/) const
-    {
-        return {std::numeric_limits<double>::quiet_NaN(),
-                std::vector<double>{std::numeric_limits<double>::quiet_NaN(),
-                                    std::numeric_limits<double>::quiet_NaN(),
-                                    std::numeric_limits<double>::quiet_NaN()}};
-    }
-
-    //! Tells if getFlux() has been overridden in the derived class in Python.
-    //!
-    //! \pre getFlux() must already have been called once.
-    bool isOverriddenGetFlux() const
-    {
-        return _overridden_get_flux;
-    }
+        std::vector<double> const& /*primary_variables*/) const = 0;
 
     virtual ~PythonSourceTermPythonSideInterface() = default;
 };

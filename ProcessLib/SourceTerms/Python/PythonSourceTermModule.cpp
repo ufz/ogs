@@ -34,8 +34,8 @@ public:
         std::vector<double> const& primary_variables) const override
     {
         using Ret = std::pair<double, std::vector<double>>;
-        PYBIND11_OVERLOAD(Ret, PythonSourceTermPythonSideInterface,
-                          getFlux, t, x, primary_variables);
+        PYBIND11_OVERLOAD_PURE(Ret, PythonSourceTermPythonSideInterface,
+                               getFlux, t, x, primary_variables);
     }
 };
 
