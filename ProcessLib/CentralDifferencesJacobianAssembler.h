@@ -20,7 +20,8 @@ class ConfigTree;
 namespace ProcessLib
 {
 //! Assembles the Jacobian matrix using central differences.
-class CentralDifferencesJacobianAssembler : public AbstractJacobianAssembler
+class CentralDifferencesJacobianAssembler final
+    : public AbstractJacobianAssembler
 {
 public:
     //! Constructs a new instance.
