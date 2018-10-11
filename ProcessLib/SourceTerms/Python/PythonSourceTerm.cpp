@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "MeshLib/MeshSearch/NodeSearch.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "PythonSourceTermLocalAssembler.h"

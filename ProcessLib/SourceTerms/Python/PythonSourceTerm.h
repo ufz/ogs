@@ -9,12 +9,14 @@
 
 #pragma once
 
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "NumLib/IndexValueVector.h"
 #include "ProcessLib/SourceTerms/SourceTerm.h"
-
-#include "PythonSourceTermPythonSideInterface.h"
 #include "PythonSourceTermLocalAssemblerInterface.h"
+#include "PythonSourceTermPythonSideInterface.h"
+
+namespace ProcessLib
+{
+class LocalToGlobalIndexMap;
+}
 
 namespace ProcessLib
 {
