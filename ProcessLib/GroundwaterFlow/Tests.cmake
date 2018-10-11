@@ -707,6 +707,20 @@ AddTest(
 )
 
 AddTest(
+    NAME GroundWaterFlowProcess_VolumetricSourceTerm_sin_x_sin_y_square_1e3
+    PATH Elliptic/square_1x1_GroundWaterFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e3_volumetricsourcetermdataarray.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    # the analytical solution is: sin(2*Pi*x-Pi/2)*sin(2*Pi*y-Pi/2)
+    # the source term in the data array was set to: -2*(2*Pi)^2 * sin(2*Pi*x-Pi/2)*sin(2*Pi*y-Pi/2)
+    DIFF_DATA
+    square_1x1_quad_1e3_volumetricsourcetermdataarray.vtu square_1e3_volumetricsourcetermdataarray_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 2e-2 1e-16
+)
+
+AddTest(
     NAME PythonBCGroundWaterFlowProcessLaplaceEqDirichletNeumann
     PATH Elliptic/square_1x1_GroundWaterFlow_Python
     EXECUTABLE ogs
