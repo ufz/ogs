@@ -85,12 +85,12 @@
         <parameter>
             <name>p_Dirichlet_left</name>
             <type>Constant</type>
-            <value>2</value>
+            <value>1</value>
         </parameter>
         <parameter>
             <name>p_Dirichlet_right</name>
             <type>Constant</type>
-            <value>1</value>
+            <value>0</value>
         </parameter>
         <parameter>
             <name>volumetric_source_term_parameter</name>
