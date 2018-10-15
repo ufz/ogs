@@ -59,10 +59,14 @@ if(OGS_USE_LIS)
 endif()
 
 if(OGS_BUILD_GUI)
+    set(QT_VERSION 5.11.0)
+    if(MSVC)
+        set(QT_VERSION 5.11.2)
+    endif()
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         Shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
-        Qt/5.11.0@bilke/stable
+        Qt/${QT_VERSION}@bilke/stable
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         VTK:minimal=False
