@@ -293,7 +293,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
         _log_file << "# Jacobian_2 - Jacobian_1\n";
         dump_py(_log_file, "abs_diff", abs_diff);
-        _log_file << "# componentwise: 2 * abs_diff / (|Jacobian_1| + "
+        _log_file << "# Componentwise: 2 * abs_diff / (|Jacobian_1| + "
                      "|Jacobian_2|)\n";
         dump_py(_log_file, "rel_diff", rel_diff);
 
