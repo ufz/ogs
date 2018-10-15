@@ -176,9 +176,16 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
                         (local_Jac1.cwiseAbs() + local_Jac2.cwiseAbs()).array())
             .eval();
 
-    // the !(... <= ...) construct handles NaN correctly.
-    auto const abs_diff_mask = (!(abs_diff.cwiseAbs() <= _abs_tol)).eval();
-    auto const rel_diff_mask = (!(rel_diff.cwiseAbs() <= _rel_tol)).eval();
+    auto const abs_diff_mask =
+        (abs_diff.abs() <= _abs_tol)
+            .select(decltype(abs_diff)::Zero(abs_diff.rows(), abs_diff.cols()),
+                    decltype(abs_diff)::Ones(abs_diff.rows(), abs_diff.cols()))
+            .eval();
+    auto const rel_diff_mask =
+        (rel_diff.abs() <= _rel_tol)
+            .select(decltype(rel_diff)::Zero(rel_diff.rows(), rel_diff.cols()),
+                    decltype(rel_diff)::Ones(rel_diff.rows(), rel_diff.cols()))
+            .eval();
 
     auto const abs_diff_OK = !abs_diff_mask.any();
     auto const rel_diff_OK = !rel_diff_mask.any();
