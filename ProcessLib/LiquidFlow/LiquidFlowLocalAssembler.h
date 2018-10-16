@@ -36,6 +36,23 @@ namespace ProcessLib
 
 namespace LiquidFlow
 {
+
+template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
+struct IntegrationPointData final
+{
+    IntegrationPointData(NodalRowVectorType const& N_,
+                         GlobalDimNodalMatrixType const& dNdx_,
+                         double const& integration_weight_)
+        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+    {}
+
+    NodalRowVectorType const N;
+    GlobalDimNodalMatrixType const dNdx;
+    double const integration_weight;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+};
+
 const unsigned NUM_NODAL_DOF = 1;
 
 class LiquidFlowLocalAssemblerInterface
@@ -62,7 +79,9 @@ class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
 
     using NodalMatrixType = typename LocalAssemblerTraits::LocalMatrix;
     using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
-    using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
+    using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
+    using GlobalDimNodalMatrixType =
+        typename ShapeMatricesType::GlobalDimNodalMatrixType;
 
     using MatrixOfVelocityAtIntegrationPoints = Eigen::Map<
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>;
@@ -94,6 +113,7 @@ public:
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
 
+
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
@@ -113,6 +133,11 @@ private:
     MeshLib::Element const& _element;
 
     IntegrationMethod const _integration_method;
+    std::vector<
+        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
+        Eigen::aligned_allocator<
+            IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
+        _ip_data;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
 
