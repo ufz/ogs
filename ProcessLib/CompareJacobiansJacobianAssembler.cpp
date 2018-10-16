@@ -219,6 +219,10 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
     // basic consistency check if something went terribly wrong
     auto check_equality = [&fatal_error](auto mat_or_vec1, auto mat_or_vec2) {
+        if (mat_or_vec1.size() == 0 || mat_or_vec2.size() == 0)
+        {
+            return;
+        }
         if (mat_or_vec1.rows() != mat_or_vec2.rows() ||
             mat_or_vec1.cols() != mat_or_vec2.cols())
         {
@@ -231,9 +235,40 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
             fatal_error = true;
         }
     };
+
     check_equality(local_M1, local_M2);
     check_equality(local_K1, local_K2);
     check_equality(local_b1, local_b2);
+
+    Eigen::VectorXd res1 = Eigen::VectorXd::Zero(num_dof);
+    if (local_M1.size() != 0)
+    {
+        res1.noalias() += local_M1 * MathLib::toVector(local_xdot);
+    }
+    if (local_K1.size() != 0)
+    {
+        res1.noalias() += local_K1 * MathLib::toVector(local_x);
+    }
+    if (local_b1.size() != 0)
+    {
+        res1.noalias() -= local_b1;
+    }
+
+    Eigen::VectorXd res2 = Eigen::VectorXd::Zero(num_dof);
+    if (local_M2.size() != 0)
+    {
+        res2.noalias() += local_M2 * MathLib::toVector(local_xdot);
+    }
+    if (local_K2.size() != 0)
+    {
+        res2.noalias() += local_K2 * MathLib::toVector(local_x);
+    }
+    if (local_b2.size() != 0)
+    {
+        res2.noalias() -= local_b2;
+    }
+
+    check_equality(res1, res2);
 
     if (tol_exceeded)
     {
@@ -307,7 +342,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
         dump_py(_log_file, "M_1", local_M1);
         dump_py(_log_file, "M_2", local_M2);
-        if (fatal_error)
+        if (fatal_error && local_M1.size() == local_M2.size())
         {
             dump_py(_log_file, "delta_M", local_M2 - local_M1);
             _log_file << '\n';
@@ -315,7 +350,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
         dump_py(_log_file, "K_1", local_K1);
         dump_py(_log_file, "K_2", local_K2);
-        if (fatal_error)
+        if (fatal_error && local_K1.size() == local_K2.size())
         {
             dump_py(_log_file, "delta_K", local_K2 - local_K1);
             _log_file << '\n';
@@ -323,9 +358,17 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
         dump_py(_log_file, "b_1", local_b_data);
         dump_py(_log_file, "b_2", local_b_data2);
-        if (fatal_error)
+        if (fatal_error && local_b1.size() == local_b2.size())
         {
             dump_py(_log_file, "delta_b", local_b2 - local_b1);
+            _log_file << '\n';
+        }
+
+        dump_py(_log_file, "res_1", res1);
+        dump_py(_log_file, "res_2", res2);
+        if (fatal_error)
+        {
+            dump_py(_log_file, "delta_res", res2 - res1);
         }
 
         _log_file << '\n';
