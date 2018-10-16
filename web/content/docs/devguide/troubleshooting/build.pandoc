@@ -24,6 +24,12 @@ You should also have at least 8 GB of RAM and even this can be not enough when c
 cmake --build . --config Release -- /m:1 /p:CL_MPCount=1
 ```
 
+**OR** if you have [CMake >= 3.12](https://cmake.org/cmake/help/v3.12/manual/cmake.1.html#build-tool-mode) you can simply use `-j 1`:
+
+```
+cmake --build . --config Release -j 1
+```
+
 If this still fails you can disable building of the failing processes, e.g.:
 
 ```
