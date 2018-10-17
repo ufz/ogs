@@ -24,12 +24,12 @@
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
-#include "HydroMechanicsProcessData.h"
+#include "ThermoHydroMechanicsProcessData.h"
 #include "LocalAssemblerInterface.h"
 
 namespace ProcessLib
 {
-namespace HydroMechanics
+namespace ThermoHydroMechanics
 {
 template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
           typename ShapeMatricesTypePressure, int DisplacementDim, int NPoints>
@@ -49,6 +49,7 @@ struct IntegrationPointData final
         N_u_op;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
+    typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
@@ -90,6 +91,34 @@ struct IntegrationPointData final
         return C;
     }
 
+    template <typename DisplacementVectorType>
+    typename BMatricesType::KelvinMatrixType updateConstitutiveRelationThermal(
+        double const t,
+        SpatialPosition const& x_position,
+        double const dt,
+        DisplacementVectorType const& /*u*/,
+        double const T,
+        double const thermal_strain)
+    {
+        auto const& identity2 = MathLib::KelvinVector::Invariants<
+            MathLib::KelvinVector::KelvinVectorDimensions<
+                DisplacementDim>::value>::identity2;
+
+        // assume isotropic thermal expansion
+        eps.noalias() = eps - thermal_strain * identity2;
+        auto&& solution = solid_material.integrateStress(
+            t, x_position, dt, eps_prev, eps, sigma_eff_prev,
+            *material_state_variables, T);
+
+        if (!solution)
+            OGS_FATAL("Computation of local constitutive relation failed.");
+
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
+        std::tie(sigma_eff, material_state_variables, C) = std::move(*solution);
+
+        return C;
+    }
+
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
@@ -103,7 +132,7 @@ struct SecondaryData
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
-class HydroMechanicsLocalAssembler : public LocalAssemblerInterface
+class ThermoHydroMechanicsLocalAssembler : public LocalAssemblerInterface
 {
 public:
     using ShapeMatricesTypeDisplacement =
@@ -117,15 +146,15 @@ public:
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
-    HydroMechanicsLocalAssembler(HydroMechanicsLocalAssembler const&) = delete;
-    HydroMechanicsLocalAssembler(HydroMechanicsLocalAssembler&&) = delete;
+    ThermoHydroMechanicsLocalAssembler(ThermoHydroMechanicsLocalAssembler const&) = delete;
+    ThermoHydroMechanicsLocalAssembler(ThermoHydroMechanicsLocalAssembler&&) = delete;
 
-    HydroMechanicsLocalAssembler(
+    ThermoHydroMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
         bool const is_axially_symmetric,
         unsigned const integration_order,
-        HydroMechanicsProcessData<DisplacementDim>& process_data);
+        ThermoHydroMechanicsProcessData<DisplacementDim>& process_data);
 
     void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
                   std::vector<double>& /*local_M_data*/,
@@ -133,7 +162,7 @@ public:
                   std::vector<double>& /*local_rhs_data*/) override
     {
         OGS_FATAL(
-            "HydroMechanicsLocalAssembler: assembly without jacobian is not "
+            "ThermoHydroMechanicsLocalAssembler: assembly without jacobian is not "
             "implemented.");
     }
 
@@ -399,7 +428,7 @@ private:
         LocalCoupledSolutions const& local_coupled_solutions);
 
 private:
-    HydroMechanicsProcessData<DisplacementDim>& _process_data;
+    ThermoHydroMechanicsProcessData<DisplacementDim>& _process_data;
 
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
@@ -416,14 +445,16 @@ private:
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         _secondary_data;
 
-    static const int pressure_index = 0;
-    static const int pressure_size = ShapeFunctionPressure::NPOINTS;
-    static const int displacement_index = ShapeFunctionPressure::NPOINTS;
-    static const int displacement_size =
-        ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
+    static const int temperature_index = 0;
+     static const int temperature_size = ShapeFunctionPressure::NPOINTS;
+     static const int pressure_index = ShapeFunctionPressure::NPOINTS;
+     static const int pressure_size = ShapeFunctionPressure::NPOINTS;
+     static const int displacement_index = ShapeFunctionPressure::NPOINTS*2;
+     static const int displacement_size =
+         ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
 };
 
-}  // namespace HydroMechanics
+}  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib
 
-#include "HydroMechanicsFEM-impl.h"
+#include "ThermoHydroMechanicsFEM-impl.h"

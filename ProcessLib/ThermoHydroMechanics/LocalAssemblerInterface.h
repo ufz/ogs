@@ -14,7 +14,7 @@
 
 namespace ProcessLib
 {
-namespace HydroMechanics
+namespace ThermoHydroMechanics
 {
 struct LocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
@@ -99,5 +99,5 @@ struct LocalAssemblerInterface
         std::vector<double>& cache) const = 0;
 };
 
-}  // namespace HydroMechanics
+}  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib

@@ -105,7 +105,7 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
 
 namespace ProcessLib
 {
-namespace HydroMechanics
+namespace ThermoHydroMechanics
 {
 /// The LocalDataInitializer is a functor creating a local assembler data with
 /// corresponding to the mesh element type shape functions and calling
@@ -118,7 +118,7 @@ namespace HydroMechanics
 /// order 2.
 template <typename LocalAssemblerInterface,
           template <typename, typename, typename, int>
-          class HydroMechanicsLocalAssembler,
+          class ThermoHydroMechanicsLocalAssembler,
           int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
@@ -223,7 +223,7 @@ private:
 
     template <typename ShapeFunctionDisplacement,
               typename ShapeFunctionPressure>
-    using LAData = HydroMechanicsLocalAssembler<
+    using LAData = ThermoHydroMechanicsLocalAssembler<
         ShapeFunctionDisplacement, ShapeFunctionPressure,
         IntegrationMethod<ShapeFunctionDisplacement>, GlobalDim>;
 
@@ -277,7 +277,7 @@ private:
     }
 };
 
-}  // namespace HydroMechanics
+}  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib
 
 #undef ENABLED_ELEMENT_TYPE_SIMPLEX

@@ -96,7 +96,7 @@
 #ifdef OGS_BUILD_PROCESS_THERMALTWOPHASEFLOWWITHPP
 #include "ProcessLib/ThermalTwoPhaseFlowWithPP/CreateThermalTwoPhaseFlowWithPPProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_THERHYDROMOMECHANICS
+#ifdef OGS_BUILD_PROCESS_THERMOHYDROMECHANICS
 #include "ProcessLib/ThermoHydroMechanics/CreateThermoHydroMechanicsProcess.h"
 #endif
 #ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
@@ -747,7 +747,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
 #ifdef OGS_BUILD_PROCESS_THERMOHYDROMECHANICS
             if (type == "THERMO_HYDRO_MECHANICS")
         {
-            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__dimension}
+            //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:

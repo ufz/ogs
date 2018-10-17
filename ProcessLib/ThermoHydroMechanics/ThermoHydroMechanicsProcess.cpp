@@ -7,31 +7,31 @@
  *
  */
 
-#include "HydroMechanicsProcess.h"
+#include "ThermoHydroMechanicsProcess.h"
 
 #include <cassert>
 
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
-#include "ProcessLib/HydroMechanics/CreateLocalAssemblers.h"
+#include "ProcessLib/ThermoHydroMechanics/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
 
-#include "HydroMechanicsFEM.h"
-#include "HydroMechanicsProcessData.h"
+#include "ThermoHydroMechanicsFEM.h"
+#include "ThermoHydroMechanicsProcessData.h"
 
 namespace ProcessLib
 {
-namespace HydroMechanics
+namespace ThermoHydroMechanics
 {
 template <int DisplacementDim>
-HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
+ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
-    HydroMechanicsProcessData<DisplacementDim>&& process_data,
+    ThermoHydroMechanicsProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     bool const use_monolithic_scheme)
@@ -49,19 +49,19 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
 }
 
 template <int DisplacementDim>
-bool HydroMechanicsProcess<DisplacementDim>::isLinear() const
+bool ThermoHydroMechanicsProcess<DisplacementDim>::isLinear() const
 {
     return false;
 }
 
 template <int DisplacementDim>
 MathLib::MatrixSpecifications
-HydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
+ThermoHydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
     const int process_id) const
 {
     // For the monolithic scheme or the M process (deformation) in the staggered
     // scheme.
-    if (_use_monolithic_scheme || process_id == 1)
+    if (_use_monolithic_scheme || process_id == 2)
     {
         auto const& l = *_local_to_global_index_map;
         return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
@@ -75,7 +75,7 @@ HydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
+void ThermoHydroMechanicsProcess<DisplacementDim>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
     _mesh_subset_all_nodes =
@@ -97,19 +97,21 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 
     if (_use_monolithic_scheme)
     {
-        // For pressure, which is the first
-        std::vector<MeshLib::MeshSubset> all_mesh_subsets{
-            *_mesh_subset_base_nodes};
+        // For temperature, which is the first
+        std::vector<MeshLib::MeshSubset> all_mesh_subsets{*_mesh_subset_base_nodes};
 
-        // For displacement.
-        const int monolithic_process_id = 0;
+        // For pressure, which is the second
+        all_mesh_subsets.push_back(*_mesh_subset_base_nodes);
+
+      // For displacement.
+      const int monolithic_process_id = 0;
         std::generate_n(std::back_inserter(all_mesh_subsets),
-                        getProcessVariables(monolithic_process_id)[1]
+                        getProcessVariables(monolithic_process_id)[2]
                             .get()
                             .getNumberOfComponents(),
                         [&]() { return *_mesh_subset_all_nodes; });
 
-        std::vector<int> const vec_n_components{1, DisplacementDim};
+        std::vector<int> const vec_n_components{1, 1, DisplacementDim};
         _local_to_global_index_map =
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets), vec_n_components,
@@ -151,15 +153,15 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
+void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
     const int mechanical_process_id = _use_monolithic_scheme ? 0 : 1;
-    const int deformation_variable_id = _use_monolithic_scheme ? 1 : 0;
-    ProcessLib::HydroMechanics::createLocalAssemblers<
-        DisplacementDim, HydroMechanicsLocalAssembler>(
+    const int deformation_variable_id = _use_monolithic_scheme ? 2 : 0;
+    ProcessLib::ThermoHydroMechanics::createLocalAssemblers<
+        DisplacementDim, ThermoHydroMechanicsLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         // use displacement process variable to set shape function order
         getProcessVariables(mechanical_process_id)[deformation_variable_id]
@@ -234,13 +236,13 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
+void ThermoHydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 {
     if (_use_monolithic_scheme)
     {
-        const int process_id_of_hydromechancs = 0;
+        const int process_id_of_thermohydromechancs = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, process_id_of_hydromechancs);
+            *_local_to_global_index_map, process_id_of_thermohydromechancs);
         return;
     }
 
@@ -257,11 +259,11 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
+void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
     GlobalVector& b)
 {
-    DBUG("Assemble the equations for HydroMechanics");
+    DBUG("Assemble the equations for ThermoHydroMechanics");
 
     // Note: This assembly function is for the Picard nonlinear solver. Since
     // only the Newton-Raphson method is employed to simulate coupled HM
@@ -276,7 +278,7 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::
+void ThermoHydroMechanicsProcess<DisplacementDim>::
     assembleWithJacobianConcreteProcess(const double t, GlobalVector const& x,
                                         GlobalVector const& xdot,
                                         const double dxdot_dx,
@@ -290,7 +292,7 @@ void HydroMechanicsProcess<DisplacementDim>::
     if (_use_monolithic_scheme)
     {
         DBUG(
-            "Assemble the Jacobian of HydroMechanics for the monolithic"
+            "Assemble the Jacobian of ThermoHydroMechanics for the monolithic"
             " scheme.");
         dof_tables.emplace_back(*_local_to_global_index_map);
     }
@@ -301,13 +303,13 @@ void HydroMechanicsProcess<DisplacementDim>::
         {
             DBUG(
                 "Assemble the Jacobian equations of liquid fluid process in "
-                "HydroMechanics for the staggered scheme.");
+                "ThermoHydroMechanics for the staggered scheme.");
         }
         else
         {
             DBUG(
                 "Assemble the Jacobian equations of mechanical process in "
-                "HydroMechanics for the staggered scheme.");
+                "ThermoHydroMechanics for the staggered scheme.");
         }
         dof_tables.emplace_back(*_local_to_global_index_map_with_base_nodes);
         dof_tables.emplace_back(*_local_to_global_index_map);
@@ -332,22 +334,22 @@ void HydroMechanicsProcess<DisplacementDim>::
                 std::negate<double>());
         }
     };
-    if (_use_monolithic_scheme || _coupled_solutions->process_id == 0)
+    if (_use_monolithic_scheme || _coupled_solutions->process_id == 1)
     {
         copyRhs(0, *_hydraulic_flow);
     }
-    if (_use_monolithic_scheme || _coupled_solutions->process_id == 1)
+    if (_use_monolithic_scheme || _coupled_solutions->process_id == 2)
     {
         copyRhs(1, *_nodal_forces);
     }
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
+void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     GlobalVector const& x, double const t, double const dt,
     const int process_id)
 {
-    DBUG("PreTimestep HydroMechanicsProcess.");
+    DBUG("PreTimestep ThermoHydroMechanicsProcess.");
 
     _process_data.dt = dt;
     _process_data.t = t;
@@ -359,18 +361,18 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
+void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
     const int process_id)
 {
-    DBUG("PostTimestep HydroMechanicsProcess.");
+    DBUG("PostTimestep ThermoHydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
         getDOFTable(process_id), x);
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
+void ThermoHydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalVector const& x, const double t, const int process_id)
 {
     if (!hasMechanicalProcess(process_id))
@@ -386,7 +388,7 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
+void ThermoHydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     const double t, GlobalVector const& x)
 {
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
@@ -397,7 +399,7 @@ void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 
 template <int DisplacementDim>
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
-HydroMechanicsProcess<DisplacementDim>::getDOFTableForExtrapolatorData() const
+ThermoHydroMechanicsProcess<DisplacementDim>::getDOFTableForExtrapolatorData() const
 {
     const bool manage_storage = false;
     return std::make_tuple(_local_to_global_index_map_single_component.get(),
@@ -406,7 +408,7 @@ HydroMechanicsProcess<DisplacementDim>::getDOFTableForExtrapolatorData() const
 
 template <int DisplacementDim>
 NumLib::LocalToGlobalIndexMap const&
-HydroMechanicsProcess<DisplacementDim>::getDOFTable(const int process_id) const
+ThermoHydroMechanicsProcess<DisplacementDim>::getDOFTable(const int process_id) const
 {
     if (hasMechanicalProcess(process_id))
     {
@@ -417,8 +419,8 @@ HydroMechanicsProcess<DisplacementDim>::getDOFTable(const int process_id) const
     return *_local_to_global_index_map_with_base_nodes;
 }
 
-template class HydroMechanicsProcess<2>;
-template class HydroMechanicsProcess<3>;
+template class ThermoHydroMechanicsProcess<2>;
+template class ThermoHydroMechanicsProcess<3>;
 
-}  // namespace HydroMechanics
+}  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib

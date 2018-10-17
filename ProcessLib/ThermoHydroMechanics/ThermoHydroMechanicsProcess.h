@@ -10,12 +10,12 @@
 #pragma once
 
 #include "ProcessLib/Process.h"
-#include "HydroMechanicsProcessData.h"
+#include "ThermoHydroMechanicsProcessData.h"
 #include "LocalAssemblerInterface.h"
 
 namespace ProcessLib
 {
-namespace HydroMechanics
+namespace ThermoHydroMechanics
 {
 struct LocalAssemblerInterface;
 
@@ -24,10 +24,10 @@ struct LocalAssemblerInterface;
 /// The mixture momentum balance and the mixture mass balance are solved under
 /// fully saturated conditions.
 template <int DisplacementDim>
-class HydroMechanicsProcess final : public Process
+class ThermoHydroMechanicsProcess final : public Process
 {
 public:
-    HydroMechanicsProcess(
+    ThermoHydroMechanicsProcess(
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
@@ -35,7 +35,7 @@ public:
         unsigned const integration_order,
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
-        HydroMechanicsProcessData<DisplacementDim>&& process_data,
+        ThermoHydroMechanicsProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
         bool const use_monolithic_scheme);
@@ -97,7 +97,7 @@ private:
 private:
     std::vector<MeshLib::Node*> _base_nodes;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
-    HydroMechanicsProcessData<DisplacementDim> _process_data;
+    ThermoHydroMechanicsProcessData<DisplacementDim> _process_data;
 
     std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
 
@@ -136,8 +136,8 @@ private:
     MeshLib::PropertyVector<double>* _hydraulic_flow = nullptr;
 };
 
-extern template class HydroMechanicsProcess<2>;
-extern template class HydroMechanicsProcess<3>;
+extern template class ThermoHydroMechanicsProcess<2>;
+extern template class ThermoHydroMechanicsProcess<3>;
 
-}  // namespace HydroMechanics
+}  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib

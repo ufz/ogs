@@ -1,118 +1,81 @@
-# HydroMechanics; Small deformations, linear poroelastic (HML)
-
-### With monolithic scheme
+# ThermoHydroMechanics; Small deformation, linear poroelastic, homogeneous
 AddTest(
-    NAME HydroMechanics_HML_square_1e2_quad8_confined_compression
-    PATH HydroMechanics/Linear/Confined_Compression
+    NAME ThermoHydroMechanics_square_1e0
+    PATH ThermoHydroMechanics/Linear/Square_sealed_homogeneous
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e0.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu displacement displacement
+    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu pressure pressure
+    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu temperature temperature
+    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu epsilon_xx epsilon_xx
+    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu epsilon_yy epsilon_yy
+)
+
+AddTest(
+    NAME ThermoHydroMechanics_square_1e0_analyitcal
+    PATH ThermoHydroMechanics/Linear/Square_sealed_homogeneous
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e0.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu pressure_ana pressure
+    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu sigma_xx_ana sigma_xx
+    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu sigma_yy_ana sigma_yy
+)
+
+# ThermoHydroMechanics; Small deformation, linear poroelastic, sealed, bimaterial
+AddTest(
+    NAME ThermoHydroMechanics_square_1e2_sealed_bimaterial
+    PATH ThermoHydroMechanics/Linear/Beam_sealed_bimaterial
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e2.prj
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    GLOB square_1e2_pcs_0_ts_*.vtu displacement displacement 1e-15 1e-15
-    GLOB square_1e2_pcs_0_ts_*.vtu pressure pressure 1e-15 1e-15
-    GLOB square_1e2_pcs_0_ts_*.vtu pressure_interpolated pressure_interpolated 1e-15 1e-15
-    GLOB square_1e2_pcs_0_ts_*.vtu velocity velocity 1e-15 1e-15
-    GLOB square_1e2_pcs_0_ts_*.vtu HydraulicFlow HydraulicFlow 1e-15 1e-15
-    GLOB square_1e2_pcs_0_ts_*.vtu NodalForces NodalForces 1e-15 1e-15
-)
-AddTest(
-    NAME HydroMechanics_HML_square_1e2_quad9_confined_compression
-    PATH HydroMechanics/Linear/Confined_Compression
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e2_quad9.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    expected_square_1e2_quad9_pcs_0_ts_1_t_5.000000.vtu square_1e2_quad9_pcs_0_ts_1_t_5.000000.vtu displacement displacement 1e-15 1e-15
-    expected_square_1e2_quad9_pcs_0_ts_1_t_5.000000.vtu square_1e2_quad9_pcs_0_ts_1_t_5.000000.vtu pressure pressure 1e-15 1e-15
-)
-AddTest(
-    NAME HydroMechanics_HML_square_1e2_tri6_confined_compression
-    PATH HydroMechanics/Linear/Confined_Compression
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e2_tri.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    expected_square_1e2_tri_pcs_0_ts_1_t_5.000000.vtu square_1e2_tri_pcs_0_ts_1_t_5.000000.vtu displacement displacement 1e-15 1e-15
-    expected_square_1e2_tri_pcs_0_ts_1_t_5.000000.vtu square_1e2_tri_pcs_0_ts_1_t_5.000000.vtu pressure pressure 1e-15 1e-15
-)
-AddTest(
-    NAME HydroMechanics_HML_cube_1e3_hex20_confined_compression
-    PATH HydroMechanics/Linear/Confined_Compression
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e3.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    expected_cube_1e3_pcs_0_ts_1_t_5.000000.vtu cube_1e3_pcs_0_ts_1_t_5.000000.vtu displacement displacement 1e-15 1e-15
-    expected_cube_1e3_pcs_0_ts_1_t_5.000000.vtu cube_1e3_pcs_0_ts_1_t_5.000000.vtu pressure pressure 1e-15 1e-15
+    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu displacement displacement
+    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu pressure pressure
+    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu temperature temperature
+    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu sigma_xx sigma_xx
+    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu sigma_yy sigma_yy
 )
 
-# HydroMechanics; Small deformation, linear poroelastic (unconfined compression early) The drainage process is ongoing and the displacement behaviour is related to water pressure and solid properties.
+# ThermoHydroMechanics; Small deformation, linear poroelastic, unsealed, bimaterial
 AddTest(
-    NAME HydroMechanics_HML_square_1e2_unconfined_compression_early
-    PATH HydroMechanics/Linear/Unconfined_Compression_early
+    NAME ThermoHydroMechanics_square_1e2_unsealed_bimaterial
+    PATH ThermoHydroMechanics/Linear/Beam_unsealed_bimaterial
     EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e2_UC_early.prj
+    EXECUTABLE_ARGS square_1e2.prj
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_square_1e2_UC_early_pcs_0_ts_10_t_1.000000.vtu square_1e2_UC_early_pcs_0_ts_10_t_1.000000.vtu displacement displacement 1e-11 1e-16
-    expected_square_1e2_UC_early_pcs_0_ts_10_t_1.000000.vtu square_1e2_UC_early_pcs_0_ts_10_t_1.000000.vtu pressure pressure 1e-11 1e-16
-)
-# HydroMechanics; Small deformation, linear poroelastic (unconfined compression late) the drainage process is finished and the displacement of the porous media is only a result of solid properties.
-AddTest(
-    NAME HydroMechanics_HML_square_1e2_unconfined_compression_late
-    PATH HydroMechanics/Linear/Unconfined_Compression_late
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e2_UC_late.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    expected_square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu displacement displacement 1e-13 1e-16
-    expected_square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu square_1e2_UC_late_pcs_0_ts_10_t_1000.000000.vtu pressure pressure 1e-13 1e-16
+    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu displacement displacement
+    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu pressure pressure
+    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu temperature temperature
+    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu sigma_xx sigma_xx
+    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu sigma_yy sigma_yy
 )
 
-## Test as the reference of InjectionProduction1D
+# ThermoHydroMechanics; Small deformation, linear poroelastic, point heat source consolidation
 AddTest(
-    NAME MonolithicInjectionProduction1D
-    PATH HydroMechanics/StaggeredScheme/InjectionProduction1D/RerefenceSolutionByMonolithicScheme
+    NAME ThermoHydroMechanics_square_1e2_point_heat_injection
+    PATH ThermoHydroMechanics/Linear/Point_injection
     EXECUTABLE ogs
-    EXECUTABLE_ARGS InjectionProduction1DMono.prj
+    EXECUTABLE_ARGS square_1e2.prj
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu displacement displacement 1e-11 1e-11
-    InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu pressure pressure 1e-11 1e-11
-    InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu velocity velocity 1e-11 1e-11
-    InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu epsilon_yy epsilon_yy 1e-11 1e-11
-    InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu sigma_yy sigma_yy 1e-11 1e-11
-)
-
-### With staggered scheme
-AddTest(
-    NAME StaggeredInjectionProduction1D
-    PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS InjectionProduction1D.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu displacement displacement 1e-11 1e-11
-    InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu pressure pressure 1e-11 1e-11
-    InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu velocity velocity 1e-11 1e-11
-    InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu epsilon_yy epsilon_yy 1e-11 1e-11
-    InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu sigma_yy sigma_yy 1e-11 1e-11
-    InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu HydraulicFlow HydraulicFlow 1e-11 0
-    InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu NodalForces NodalForces 2e-7 0
+    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu displacement displacement
+    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu pressure pressure
+    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu temperature temperature
+    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu sigma_xx sigma_xx
+    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu sigma_yy sigma_yy
 )

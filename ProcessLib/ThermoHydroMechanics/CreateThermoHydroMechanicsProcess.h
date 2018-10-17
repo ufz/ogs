@@ -30,10 +30,10 @@ class ProcessVariable;
 
 namespace ProcessLib
 {
-namespace HydroMechanics
+namespace ThermoHydroMechanics
 {
 template <int DisplacementDim>
-std::unique_ptr<Process> createHydroMechanicsProcess(
+std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -41,7 +41,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
-extern template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
+extern template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -49,12 +49,12 @@ extern template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
 
-extern template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
+extern template std::unique_ptr<Process> createThermoHydroMechanicsProcess<3>(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config);
-}  // namespace HydroMechanics
+}  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib
