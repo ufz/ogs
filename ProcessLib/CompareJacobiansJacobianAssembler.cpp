@@ -29,7 +29,7 @@ void dump_py(std::ofstream& fh, std::string const& var, std::size_t const val)
     fh << var << " = " << val << '\n';
 }
 
-//! Dumps an Eigen vector as a Python script snippet.
+//! Dumps an arbitrary vector as a Python script snippet.
 template <typename Vec>
 void dump_py_vec(std::ofstream& fh, std::string const& var, Vec const& val)
 {
@@ -61,6 +61,7 @@ void dump_py(std::ofstream& fh, std::string const& var,
     dump_py_vec(fh, var, val);
 }
 
+//! Dumps an Eigen vector (array with 1 column) as a Python script snippet.
 template <typename Derived>
 void dump_py(std::ofstream& fh, std::string const& var,
              Eigen::ArrayBase<Derived> const& val,
@@ -69,6 +70,7 @@ void dump_py(std::ofstream& fh, std::string const& var,
     dump_py_vec(fh, var, val);
 }
 
+//! Dumps an Eigen array as a Python script snippet.
 template <typename Derived, int ColsAtCompileTime>
 void dump_py(std::ofstream& fh, std::string const& var,
              Eigen::ArrayBase<Derived> const& val,

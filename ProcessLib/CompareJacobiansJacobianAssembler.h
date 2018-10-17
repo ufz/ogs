@@ -75,7 +75,7 @@ private:
     //! about exceeded tolerances and assembled local matrices.
     std::ofstream _log_file;
 
-    //! Counter used for identifying blocks in the \c _log_file. Is be
+    //! Counter used for identifying blocks in the \c _log_file. It is
     //! incremented upon each call of the assembly routine, i.e., for each
     //! element in each iteration etc.
     std::size_t _counter = 0;
