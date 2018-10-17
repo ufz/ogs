@@ -33,10 +33,8 @@
 
 namespace ProcessLib
 {
-
 namespace LiquidFlow
 {
-
 template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
@@ -100,9 +98,6 @@ public:
         LiquidFlowMaterialProperties const& material_propertries)
         : _element(element),
           _integration_method(integration_order),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                            IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method)),
           _gravitational_axis_id(gravitational_axis_id),
           _gravitational_acceleration(gravitational_acceleration),
           _reference_temperature(reference_temperature),
@@ -112,20 +107,18 @@ public:
             _integration_method.getNumberOfPoints();
         _ip_data.reserve(n_integration_points);
 
-        /*
         auto const& shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, GlobalDim>(
                 element, is_axially_symmetric, _integration_method);
-        */
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
-                _shape_matrices[ip].N, _shape_matrices[ip].dNdx,
+                shape_matrices[ip].N, shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
-                    _shape_matrices[ip].integralMeasure *
-                    _shape_matrices[ip].detJ);
+                    shape_matrices[ip].integralMeasure *
+                    shape_matrices[ip].detJ);
         }
     }
 
@@ -138,7 +131,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _shape_matrices[integration_point].N;
+        auto const& N = _ip_data[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -159,8 +152,6 @@ private:
         Eigen::aligned_allocator<
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
-    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
 
     /**
      *  Calculator of the Laplacian and the gravity term for anisotropic
@@ -170,16 +161,18 @@ private:
     {
         static void calculateLaplacianAndGravityTerm(
             Eigen::Map<NodalMatrixType>& local_K,
-            Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
-            Eigen::MatrixXd const& permeability,
-            double const integration_factor, double const mu,
+            Eigen::Map<NodalVectorType>& local_b,
+            IntegrationPointData<NodalRowVectorType,
+                                 GlobalDimNodalMatrixType> const& ip_data,
+            Eigen::MatrixXd const& permeability, double const mu,
             double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
             unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
-            ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-            double const mu, double const rho_g,
-            int const gravitational_axis_id,
+            IntegrationPointData<NodalRowVectorType,
+                                 GlobalDimNodalMatrixType> const& ip_data,
+            Eigen::MatrixXd const& permeability, double const mu,
+            double const rho_g, int const gravitational_axis_id,
             MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips);
     };
 
@@ -191,16 +184,18 @@ private:
     {
         static void calculateLaplacianAndGravityTerm(
             Eigen::Map<NodalMatrixType>& local_K,
-            Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
-            Eigen::MatrixXd const& permeability,
-            double const integration_factor, double const mu,
+            Eigen::Map<NodalVectorType>& local_b,
+            IntegrationPointData<NodalRowVectorType,
+                                 GlobalDimNodalMatrixType> const& ip_data,
+            Eigen::MatrixXd const& permeability, double const mu,
             double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
             unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
-            ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-            double const mu, double const rho_g,
-            int const gravitational_axis_id,
+            IntegrationPointData<NodalRowVectorType,
+                                 GlobalDimNodalMatrixType> const& ip_data,
+            Eigen::MatrixXd const& permeability, double const mu,
+            double const rho_g, int const gravitational_axis_id,
             MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips);
     };
 
