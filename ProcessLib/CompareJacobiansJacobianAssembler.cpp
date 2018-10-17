@@ -18,20 +18,20 @@
 namespace
 {
 //! Dumps a \c double value as a Python script snippet.
-void dump_py(std::ofstream& fh, std::string const& var, double const val)
+void dump_py(std::ostream& fh, std::string const& var, double const val)
 {
     fh << var << " = " << val << '\n';
 }
 
 //! Dumps a \c std::size_t value as a Python script snippet.
-void dump_py(std::ofstream& fh, std::string const& var, std::size_t const val)
+void dump_py(std::ostream& fh, std::string const& var, std::size_t const val)
 {
     fh << var << " = " << val << '\n';
 }
 
 //! Dumps an arbitrary vector as a Python script snippet.
 template <typename Vec>
-void dump_py_vec(std::ofstream& fh, std::string const& var, Vec const& val)
+void dump_py_vec(std::ostream& fh, std::string const& var, Vec const& val)
 {
     fh << var << " = np.array([";
     for (decltype(val.size()) i = 0; i < val.size(); ++i)
@@ -55,7 +55,7 @@ void dump_py_vec(std::ofstream& fh, std::string const& var, Vec const& val)
 }
 
 //! Dumps a \c std::vector<double> as a Python script snippet.
-void dump_py(std::ofstream& fh, std::string const& var,
+void dump_py(std::ostream& fh, std::string const& var,
              std::vector<double> const& val)
 {
     dump_py_vec(fh, var, val);
@@ -63,7 +63,7 @@ void dump_py(std::ofstream& fh, std::string const& var,
 
 //! Dumps an Eigen vector (array with 1 column) as a Python script snippet.
 template <typename Derived>
-void dump_py(std::ofstream& fh, std::string const& var,
+void dump_py(std::ostream& fh, std::string const& var,
              Eigen::ArrayBase<Derived> const& val,
              std::integral_constant<int, 1>)
 {
@@ -72,7 +72,7 @@ void dump_py(std::ofstream& fh, std::string const& var,
 
 //! Dumps an Eigen array as a Python script snippet.
 template <typename Derived, int ColsAtCompileTime>
-void dump_py(std::ofstream& fh, std::string const& var,
+void dump_py(std::ostream& fh, std::string const& var,
              Eigen::ArrayBase<Derived> const& val,
              std::integral_constant<int, ColsAtCompileTime>)
 {
@@ -99,7 +99,7 @@ void dump_py(std::ofstream& fh, std::string const& var,
 
 //! Dumps an Eigen array as a Python script snippet.
 template <typename Derived>
-void dump_py(std::ofstream& fh, std::string const& var,
+void dump_py(std::ostream& fh, std::string const& var,
              Eigen::ArrayBase<Derived> const& val)
 {
     dump_py(fh, var, val,
@@ -108,7 +108,7 @@ void dump_py(std::ofstream& fh, std::string const& var,
 
 //! Dumps an Eigen matrix as a Python script snippet.
 template <typename Derived>
-void dump_py(std::ofstream& fh, std::string const& var,
+void dump_py(std::ostream& fh, std::string const& var,
              Eigen::MatrixBase<Derived> const& val)
 {
     dump_py(fh, var, val.array());
