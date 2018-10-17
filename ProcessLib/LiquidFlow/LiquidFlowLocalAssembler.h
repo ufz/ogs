@@ -40,10 +40,12 @@ namespace LiquidFlow
 template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
-    IntegrationPointData(NodalRowVectorType const& N_,
-                         GlobalDimNodalMatrixType const& dNdx_,
-                         double const& integration_weight_)
-        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+    explicit IntegrationPointData(NodalRowVectorType const& N_,
+                                  GlobalDimNodalMatrixType const& dNdx_,
+                                  double const& integration_weight_)
+        : N(N_),
+          dNdx(dNdx_),
+          integration_weight(integration_weight_)
     {}
 
     NodalRowVectorType const N;
@@ -106,6 +108,25 @@ public:
           _reference_temperature(reference_temperature),
           _material_properties(material_propertries)
     {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        _ip_data.reserve(n_integration_points);
+
+        /*
+        auto const& shape_matrices =
+            initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                              IntegrationMethod, GlobalDim>(
+                element, is_axially_symmetric, _integration_method);
+        */
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data.emplace_back(
+                _shape_matrices[ip].N, _shape_matrices[ip].dNdx,
+                _integration_method.getWeightedPoint(ip).getWeight() *
+                    _shape_matrices[ip].integralMeasure *
+                    _shape_matrices[ip].detJ);
+        }
     }
 
     void assemble(double const t, std::vector<double> const& local_x,
