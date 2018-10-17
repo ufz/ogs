@@ -380,11 +380,13 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
     if (fatal_error)
     {
+        _log_file << std::flush;
         OGS_FATAL("%s", msg_fatal.c_str());
     }
 
     if (tol_exceeded && _fail_on_error)
     {
+        _log_file << std::flush;
         OGS_FATAL(
             "OGS failed, because the two Jacobian implementations returned "
             "different results.");
