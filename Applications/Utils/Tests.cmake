@@ -157,3 +157,14 @@ AddTest(
               2Dmesh_POINT5_partitioned_node_properties_cfg3.bin
               2Dmesh_POINT5_partitioned_node_properties_val3.bin
 )
+
+# Regression test for https://github.com/ufz/ogs/issues/1845 fixed in
+# https://github.com/ufz/ogs/pull/2237
+# checkMesh crashed when encountered Line3 element.
+AddTest(
+    NAME checkMesh_LIE_HM_TaskB
+    PATH LIE/HydroMechanics
+    EXECUTABLE checkMesh
+    EXECUTABLE_ARGS -p -v TaskB_mesh.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+)
