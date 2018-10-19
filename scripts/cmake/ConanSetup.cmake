@@ -62,7 +62,7 @@ if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         Shapelib/1.3.0@bilke/stable
         libgeotiff/1.4.2@bilke/stable
-        Qt/5.11.0@bilke/stable
+        Qt/5.11.2@bilke/stable
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         VTK:minimal=False

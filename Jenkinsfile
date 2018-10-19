@@ -14,7 +14,7 @@ pipeline {
   stages {
      // *************************** Git Check **********************************
     stage('Git Check') {
-      agent any
+      agent { label "master"}
       steps {
         sh "git config core.whitespace -blank-at-eof"
         sh "git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc'"
@@ -509,7 +509,7 @@ pipeline {
             beforeAgent true
             expression { return stage_required.data }
           }
-          agent any
+          agent { label "master"}
           steps {
             script {
               dir('ogs') { checkout scm }
