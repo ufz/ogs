@@ -12,6 +12,7 @@
 
 #include "AnalyticalJacobianAssembler.h"
 #include "CentralDifferencesJacobianAssembler.h"
+#include "CompareJacobiansJacobianAssembler.h"
 
 namespace ProcessLib
 {
@@ -31,6 +32,10 @@ std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
     if (type == "CentralDifferences")
     {
         return createCentralDifferencesJacobianAssembler(*config);
+    }
+    if (type == "CompareJacobians")
+    {
+        return createCompareJacobiansJacobianAssembler(*config);
     }
 
     OGS_FATAL("Unknown Jacobian assembler type: `%s'.", type.c_str());

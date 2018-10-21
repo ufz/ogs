@@ -10,6 +10,7 @@
 #pragma once
 
 #include <vector>
+#include "BaseLib/Error.h"
 
 namespace ProcessLib
 {
@@ -41,6 +42,8 @@ public:
         std::vector<double>& /*local_Jac_data*/,
         LocalCoupledSolutions const& /*coupled_solutions*/)
     {
+        // TODO make pure virtual.
+        OGS_FATAL("not implemented.");
     }
 
     virtual ~AbstractJacobianAssembler() = default;
