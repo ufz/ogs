@@ -33,6 +33,17 @@ AddTest(
     VIS disc_with_hole_pcs_0_ts_4_t_1.000000.vtu
 )
 AddTest(
+    NAME Mechanics_SDL_square_with_deactivated_hole
+    PATH Mechanics/Linear
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_with_deactivated_hole.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    square_with_deactivated_hole_pcs_0_ts_4_t_1.000000_expected.vtu  square_with_deactivated_hole_pcs_0_ts_4_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    VIS square_with_deactivated_hole_pcs_0_ts_4_t_1.000000.vtu
+)
+AddTest(
     NAME LARGE_Mechanics_SDL_square_1e5_tractionBC
     PATH Mechanics/Linear
     EXECUTABLE ogs
