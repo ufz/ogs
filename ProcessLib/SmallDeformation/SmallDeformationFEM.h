@@ -209,6 +209,9 @@ public:
         auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
             local_b_data, local_matrix_size);
 
+        if (_process_data.isElementDeactivated(_element.getID()))
+            return;
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
