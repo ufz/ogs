@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
-        <mesh>square_1x1_quad_1e2.vtu</mesh>
-        <mesh>square_1x1_quad_1e2_geometry_right.vtu</mesh>
-        <mesh>square_1x1_quad_1e2_geometry_left.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ll.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_lr.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ul.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ur.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -44,7 +46,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e2_volumetricsourceterm</prefix>
+            <prefix>square_1e3_volumetricsourcetermdataarray</prefix>
         </output>
     </time_loop>
     <nonlinear_solvers>
@@ -83,19 +85,14 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>p_Dirichlet_left</name>
+            <name>p_Dirichlet</name>
             <type>Constant</type>
             <value>1</value>
-        </parameter>
-        <parameter>
-            <name>p_Dirichlet_right</name>
-            <type>Constant</type>
-            <value>0</value>
         </parameter>
         <parameter>
             <name>volumetric_source_term_parameter</name>
-            <type>Constant</type>
-            <value>1</value>
+            <type>MeshElement</type>
+            <field_name>non-constant-source_term</field_name>
         </parameter>
     </parameters>
     <process_variables>
@@ -106,19 +103,29 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>square_1x1_quad_1e2_geometry_left</mesh>
+                    <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ll</mesh>
                     <type>Dirichlet</type>
-                    <parameter>p_Dirichlet_left</parameter>
+                    <parameter>p_Dirichlet</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>square_1x1_quad_1e2_geometry_right</mesh>
+                    <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_lr</mesh>
                     <type>Dirichlet</type>
-                    <parameter>p_Dirichlet_right</parameter>
+                    <parameter>p_Dirichlet</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ur</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>p_Dirichlet</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray_geometry_ul</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>p_Dirichlet</parameter>
                 </boundary_condition>
             </boundary_conditions>
             <source_terms>
                 <source_term>
-                    <mesh>square_1x1_quad_1e2</mesh>
+                    <mesh>square_1x1_quad_1e3_volumetricsourcetermdataarray</mesh>
                     <type>Volumetric</type>
                     <parameter>volumetric_source_term_parameter</parameter>
                 </source_term>
