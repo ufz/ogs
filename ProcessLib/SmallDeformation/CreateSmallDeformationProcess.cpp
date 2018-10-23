@@ -98,8 +98,26 @@ createSmallDeformationProcess(
         config.getConfigParameter<double>(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
+    const auto material_ids =  materialIDs(mesh);
+
+    std::vector<int> deactivated_subdomains;
+    if (material_ids)
+    {
+        auto deactivated_subdomains_optional =
+            //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__deactivated_subdomains}
+            config.getConfigParameterOptional<std::vector<int>>(
+                "deactivated_subdomains");
+        if (deactivated_subdomains_optional)
+        {
+            std::copy(deactivated_subdomains_optional->begin(),
+                      deactivated_subdomains_optional->end(),
+                      std::back_inserter(deactivated_subdomains));
+        }
+    }
+
     SmallDeformationProcessData<DisplacementDim> process_data{
-        materialIDs(mesh), std::move(solid_constitutive_relations),
+        material_ids, std::move(deactivated_subdomains),
+        std::move(solid_constitutive_relations),
         solid_density, specific_body_force, reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
