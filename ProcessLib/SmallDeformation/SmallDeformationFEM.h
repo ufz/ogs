@@ -113,7 +113,8 @@ public:
         : _process_data(process_data),
           _integration_method(integration_order),
           _element(e),
-          _is_axially_symmetric(is_axially_symmetric)
+          _is_axially_symmetric(is_axially_symmetric),
+          _is_deactivated(_process_data.isElementDeactivated(_element.getID()))
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -209,7 +210,7 @@ public:
         auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
             local_b_data, local_matrix_size);
 
-        if (_process_data.isElementDeactivated(_element.getID()))
+        if (_is_deactivated)
             return;
 
         unsigned const n_integration_points =
@@ -473,6 +474,9 @@ private:
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
     bool const _is_axially_symmetric;
+
+    /// Flag to indicate whether the local assembly is skipped or not.
+    bool const _is_deactivated;
 
     static const int displacement_size =
         ShapeFunction::NPOINTS * DisplacementDim;
