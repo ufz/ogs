@@ -112,6 +112,19 @@ createSmallDeformationProcess(
             std::copy(deactivated_subdomains_optional->begin(),
                       deactivated_subdomains_optional->end(),
                       std::back_inserter(deactivated_subdomains));
+            // TODO: Modify constructDofTable() to exclude the nodes in the
+            //       the deactivated subdomains from the mesh subset,
+            //       and consequently remove the following warning.
+            WARN(
+                "There are subdomains being deactivated."
+                "Please make sure that there is no boundary condition "
+                "at any node inside these subdomains, "
+                "and only the iterative linear solver is utilized.");
+            INFO("The indices of the deactivated subdomains are");
+            for (auto const mat_id : deactivated_subdomains)
+            {
+                INFO("\t%d", mat_id);
+            }
         }
     }
 
