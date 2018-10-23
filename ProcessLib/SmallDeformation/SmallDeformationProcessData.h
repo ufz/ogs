@@ -33,6 +33,7 @@ struct SmallDeformationProcessData
 {
     SmallDeformationProcessData(
         MeshLib::PropertyVector<int> const* const material_ids_,
+        std::vector<int>&& deactivated_material_subdomains_,
         std::map<int,
                  std::unique_ptr<
                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
@@ -42,6 +43,8 @@ struct SmallDeformationProcessData
             specific_body_force_,
         double const reference_temperature_)
         : material_ids(material_ids_),
+          deactivated_material_subdomains{
+              std::move(deactivated_material_subdomains_)},
           solid_materials{std::move(solid_materials_)},
           solid_density(solid_density_),
           specific_body_force(std::move(specific_body_force_)),
@@ -60,7 +63,24 @@ struct SmallDeformationProcessData
     //! Assignments are not needed.
     void operator=(SmallDeformationProcessData&&) = delete;
 
+    bool isElementDeactivated(const std::size_t element_id)
+    {
+        if (!material_ids)
+            return false;
+        if (deactivated_material_subdomains.empty())
+            return false;
+
+        return (std::find(deactivated_material_subdomains.begin(),
+                          deactivated_material_subdomains.end(),
+                          (*material_ids)[element_id]) !=
+                deactivated_material_subdomains.end())
+                   ? true
+                   : false;
+    }
+
     MeshLib::PropertyVector<int> const* const material_ids;
+
+    std::vector<int> deactivated_material_subdomains;
 
     std::map<
         int,
