@@ -80,20 +80,17 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     double storage_variable = 0.;
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& sm = _shape_matrices[ip];
-        auto const& wp = _integration_method.getWeightedPoint(ip);
+        auto const& ip_data = _ip_data[ip];
 
         double p = 0.;
-        NumLib::shapeFunctionInterpolate(local_x, sm.N, p);
-
-        const double integration_factor =
-            sm.integralMeasure * sm.detJ * wp.getWeight();
+        NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
 
         // Assemble mass matrix, M
         local_M.noalias() += _material_properties.getMassCoefficient(
                                  material_id, t, pos, porosity_variable,
                                  storage_variable, p, _reference_temperature) *
-                             sm.N.transpose() * sm.N * integration_factor;
+                             ip_data.N.transpose() * ip_data.N *
+                             ip_data.integration_weight;
 
         // Compute density:
         const double rho_g =
@@ -105,7 +102,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
-            local_K, local_b, sm, permeability, integration_factor, mu, rho_g,
+            local_K, local_b, ip_data, permeability, mu, rho_g,
             _gravitational_axis_id);
     }
 }
@@ -166,9 +163,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& sm = _shape_matrices[ip];
+        auto const& ip_data = _ip_data[ip];
         double p = 0.;
-        NumLib::shapeFunctionInterpolate(local_x, sm.N, p);
+        NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
 
         const double rho_g =
             _material_properties.getLiquidDensity(p, _reference_temperature) *
@@ -178,7 +175,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             _material_properties.getViscosity(p, _reference_temperature);
 
         LaplacianGravityVelocityCalculator::calculateVelocity(
-            ip, local_p_vec, sm, permeability, mu, rho_g,
+            ip, local_p_vec, ip_data, permeability, mu, rho_g,
             _gravitational_axis_id, darcy_velocity_at_ips);
     }
 }
@@ -188,13 +185,15 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     IsotropicCalculator::calculateLaplacianAndGravityTerm(
         Eigen::Map<NodalMatrixType>& local_K,
-        Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
-        Eigen::MatrixXd const& permeability, double const integration_factor,
-        double const mu, double const rho_g, int const gravitational_axis_id)
+        Eigen::Map<NodalVectorType>& local_b,
+        IntegrationPointData<NodalRowVectorType,
+                             GlobalDimNodalMatrixType> const& ip_data,
+        Eigen::MatrixXd const& permeability, double const mu,
+        double const rho_g, int const gravitational_axis_id)
 {
     const double K = permeability(0, 0) / mu;
-    const double fac = K * integration_factor;
-    local_K.noalias() += fac * sm.dNdx.transpose() * sm.dNdx;
+    const double fac = K * ip_data.integration_weight;
+    local_K.noalias() += fac * ip_data.dNdx.transpose() * ip_data.dNdx;
 
     if (gravitational_axis_id >= 0)
     {
@@ -203,7 +202,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         // the simplification of (grad N)*V is the gravitational_axis_id th
         // column of the transpose of (grad N) multiplied with rho_g.
         local_b.noalias() -=
-            fac * sm.dNdx.transpose().col(gravitational_axis_id) * rho_g;
+            fac * ip_data.dNdx.transpose().col(gravitational_axis_id) * rho_g;
     }
 }
 
@@ -212,13 +211,15 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     IsotropicCalculator::calculateVelocity(
         unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
-        ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-        double const mu, double const rho_g, int const gravitational_axis_id,
+        IntegrationPointData<NodalRowVectorType,
+                             GlobalDimNodalMatrixType> const& ip_data,
+        Eigen::MatrixXd const& permeability, double const mu,
+        double const rho_g, int const gravitational_axis_id,
         MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips)
 {
     const double K = permeability(0, 0) / mu;
     // Compute the velocity
-    darcy_velocity_at_ips.col(ip).noalias() = -K * sm.dNdx * local_p;
+    darcy_velocity_at_ips.col(ip).noalias() = -K * ip_data.dNdx * local_p;
     // gravity term
     if (gravitational_axis_id >= 0)
         darcy_velocity_at_ips.col(ip)[gravitational_axis_id] -= K * rho_g;
@@ -229,19 +230,22 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     AnisotropicCalculator::calculateLaplacianAndGravityTerm(
         Eigen::Map<NodalMatrixType>& local_K,
-        Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
-        Eigen::MatrixXd const& permeability, double const integration_factor,
-        double const mu, double const rho_g, int const gravitational_axis_id)
+        Eigen::Map<NodalVectorType>& local_b,
+        IntegrationPointData<NodalRowVectorType,
+                             GlobalDimNodalMatrixType> const& ip_data,
+        Eigen::MatrixXd const& permeability, double const mu,
+        double const rho_g, int const gravitational_axis_id)
 {
-    const double fac = integration_factor / mu;
-    local_K.noalias() += fac * sm.dNdx.transpose() * permeability * sm.dNdx;
+    const double fac = ip_data.integration_weight / mu;
+    local_K.noalias() +=
+        fac * ip_data.dNdx.transpose() * permeability * ip_data.dNdx;
     if (gravitational_axis_id >= 0)
     {
         // Note: permeability * gravity_vector = rho_g *
         // permeability.col(gravitational_axis_id)
         //       i.e the result is the gravitational_axis_id th column of
         //       permeability multiplied with rho_g.
-        local_b.noalias() -= fac * rho_g * sm.dNdx.transpose() *
+        local_b.noalias() -= fac * rho_g * ip_data.dNdx.transpose() *
                              permeability.col(gravitational_axis_id);
     }
 }
@@ -251,13 +255,15 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     AnisotropicCalculator::calculateVelocity(
         unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
-        ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-        double const mu, double const rho_g, int const gravitational_axis_id,
+        IntegrationPointData<NodalRowVectorType,
+                             GlobalDimNodalMatrixType> const& ip_data,
+        Eigen::MatrixXd const& permeability, double const mu,
+        double const rho_g, int const gravitational_axis_id,
         MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips)
 {
     // Compute the velocity
     darcy_velocity_at_ips.col(ip).noalias() =
-        -permeability * sm.dNdx * local_p / mu;
+        -permeability * ip_data.dNdx * local_p / mu;
     if (gravitational_axis_id >= 0)
     {
         darcy_velocity_at_ips.col(ip).noalias() -=

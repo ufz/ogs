@@ -33,9 +33,26 @@
 
 namespace ProcessLib
 {
-
 namespace LiquidFlow
 {
+template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
+struct IntegrationPointData final
+{
+    explicit IntegrationPointData(NodalRowVectorType const& N_,
+                                  GlobalDimNodalMatrixType const& dNdx_,
+                                  double const& integration_weight_)
+        : N(N_),
+          dNdx(dNdx_),
+          integration_weight(integration_weight_)
+    {}
+
+    NodalRowVectorType const N;
+    GlobalDimNodalMatrixType const dNdx;
+    double const integration_weight;
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+};
+
 const unsigned NUM_NODAL_DOF = 1;
 
 class LiquidFlowLocalAssemblerInterface
@@ -62,7 +79,9 @@ class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
 
     using NodalMatrixType = typename LocalAssemblerTraits::LocalMatrix;
     using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
-    using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
+    using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
+    using GlobalDimNodalMatrixType =
+        typename ShapeMatricesType::GlobalDimNodalMatrixType;
 
     using MatrixOfVelocityAtIntegrationPoints = Eigen::Map<
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>;
@@ -79,14 +98,28 @@ public:
         LiquidFlowMaterialProperties const& material_propertries)
         : _element(element),
           _integration_method(integration_order),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                            IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method)),
           _gravitational_axis_id(gravitational_axis_id),
           _gravitational_acceleration(gravitational_acceleration),
           _reference_temperature(reference_temperature),
           _material_properties(material_propertries)
     {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        _ip_data.reserve(n_integration_points);
+
+        auto const& shape_matrices =
+            initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                              IntegrationMethod, GlobalDim>(
+                element, is_axially_symmetric, _integration_method);
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data.emplace_back(
+                shape_matrices[ip].N, shape_matrices[ip].dNdx,
+                _integration_method.getWeightedPoint(ip).getWeight() *
+                    shape_matrices[ip].integralMeasure *
+                    shape_matrices[ip].detJ);
+        }
     }
 
     void assemble(double const t, std::vector<double> const& local_x,
@@ -94,10 +127,11 @@ public:
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
 
+
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _shape_matrices[integration_point].N;
+        auto const& N = _ip_data[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -113,8 +147,11 @@ private:
     MeshLib::Element const& _element;
 
     IntegrationMethod const _integration_method;
-    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
+    std::vector<
+        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
+        Eigen::aligned_allocator<
+            IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
+        _ip_data;
 
     /**
      *  Calculator of the Laplacian and the gravity term for anisotropic
@@ -124,16 +161,18 @@ private:
     {
         static void calculateLaplacianAndGravityTerm(
             Eigen::Map<NodalMatrixType>& local_K,
-            Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
-            Eigen::MatrixXd const& permeability,
-            double const integration_factor, double const mu,
+            Eigen::Map<NodalVectorType>& local_b,
+            IntegrationPointData<NodalRowVectorType,
+                                 GlobalDimNodalMatrixType> const& ip_data,
+            Eigen::MatrixXd const& permeability, double const mu,
             double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
             unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
-            ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-            double const mu, double const rho_g,
-            int const gravitational_axis_id,
+            IntegrationPointData<NodalRowVectorType,
+                                 GlobalDimNodalMatrixType> const& ip_data,
+            Eigen::MatrixXd const& permeability, double const mu,
+            double const rho_g, int const gravitational_axis_id,
             MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips);
     };
 
@@ -145,16 +184,18 @@ private:
     {
         static void calculateLaplacianAndGravityTerm(
             Eigen::Map<NodalMatrixType>& local_K,
-            Eigen::Map<NodalVectorType>& local_b, ShapeMatrices const& sm,
-            Eigen::MatrixXd const& permeability,
-            double const integration_factor, double const mu,
+            Eigen::Map<NodalVectorType>& local_b,
+            IntegrationPointData<NodalRowVectorType,
+                                 GlobalDimNodalMatrixType> const& ip_data,
+            Eigen::MatrixXd const& permeability, double const mu,
             double const rho_g, int const gravitational_axis_id);
 
         static void calculateVelocity(
             unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
-            ShapeMatrices const& sm, Eigen::MatrixXd const& permeability,
-            double const mu, double const rho_g,
-            int const gravitational_axis_id,
+            IntegrationPointData<NodalRowVectorType,
+                                 GlobalDimNodalMatrixType> const& ip_data,
+            Eigen::MatrixXd const& permeability, double const mu,
+            double const rho_g, int const gravitational_axis_id,
             MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips);
     };
 
