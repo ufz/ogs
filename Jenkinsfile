@@ -380,7 +380,7 @@ pipeline {
                 }
               }
               build { target = 'check-header' }
-              build { }
+              build { target = 'all' }
             }
           }
         }
