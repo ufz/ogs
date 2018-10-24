@@ -413,6 +413,9 @@ public:
             double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, kelvin_vector_size, num_intpts);
 
+        if (_is_deactivated)
+            return cache;
+
         for (unsigned ip = 0; ip < num_intpts; ++ip)
         {
             auto const& sigma = _ip_data[ip].sigma;
@@ -438,6 +441,9 @@ public:
         auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
             double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, kelvin_vector_size, num_intpts);
+
+        if (_is_deactivated)
+            return cache;
 
         for (unsigned ip = 0; ip < num_intpts; ++ip)
         {
