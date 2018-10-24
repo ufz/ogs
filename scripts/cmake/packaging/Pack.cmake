@@ -104,16 +104,14 @@ cpack_add_component(ogs_docs
 
 if(OGS_USE_CONAN)
     # Install shared libraries, copied to bin-dir
-    foreach(PATTERN "*.dll" "*.dylib*")
-        file(GLOB LIST_DIRECTORIES false MATCHED_FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PATTERN})
-        install(FILES ${MATCHED_FILES} DESTINATION bin)
-    endforeach()
+    file(GLOB MATCHED_FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.dll")
+    install(FILES ${MATCHED_FILES} DESTINATION bin)
+    file(GLOB LIST_DIRECTORIES false MATCHED_FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.dylib*")
+    install(FILES ${MATCHED_FILES} DESTINATION bin)
 
     # Install shared libraries, copied to lib-dir
-    foreach(PATTERN "*.so*")
-        file(GLOB MATCHED_FILES ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${PATTERN})
-        install(FILES ${MATCHED_FILES} DESTINATION lib)
-    endforeach()
+    file(GLOB MATCHED_FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/*.so*")
+    install(FILES ${MATCHED_FILES} DESTINATION lib)
 
     # macOS frameworks are directories, exclude header files
     file(GLOB MATCHED_DIRECTORIES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.framework")
