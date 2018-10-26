@@ -47,8 +47,9 @@ VolumetricSourceTerm::VolumetricSourceTerm(
         _volumetric_source_term);
 }
 
-void VolumetricSourceTerm::integrate(const double t,
-                                     GlobalVector& b) const
+void VolumetricSourceTerm::integrate(const double t, GlobalVector const& /*x*/,
+                                     GlobalVector& b,
+                                     GlobalMatrix* /*jac*/) const
 {
     DBUG("Assemble VolumetricSourceTerm.");
 

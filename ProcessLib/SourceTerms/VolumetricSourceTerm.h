@@ -27,7 +27,8 @@ public:
         int const variable_id, int const component_id,
         Parameter<double> const& volumetric_source_term);
 
-    void integrate(const double t, GlobalVector& b) const;
+    void integrate(const double t, GlobalVector const& x, GlobalVector& b,
+                   GlobalMatrix* jac) const;
 
 private:
     Parameter<double> const& _volumetric_source_term;

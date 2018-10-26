@@ -732,3 +732,26 @@ AddTest(
     python_laplace_eq_ref.vtu square_1e3_neumann_pcs_0_ts_1_t_1.000000.vtu pressure_expected pressure 4e-4 1e-16
 )
 
+AddTest(
+    NAME PythonSourceTermPoissonSinAXSinBYDirichlet_square_1e3
+    PATH Elliptic/square_1x1_GroundWaterFlow_Python
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e3_poisson_sin_x_sin_y.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_PYTHON AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    square_1x1_quad_1e3.vtu square_1e3_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 0.7e-2 1e-16
+)
+
+AddTest(
+    NAME PythonSourceTermPoissonSinAXSinBYDirichlet_square_1e5
+    PATH Elliptic/square_1x1_GroundWaterFlow_Python
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e5_poisson_sin_x_sin_y.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_PYTHON AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    square_1x1_quad_1e5.vtu square_1e5_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 0.75e-4 1e-16
+)
