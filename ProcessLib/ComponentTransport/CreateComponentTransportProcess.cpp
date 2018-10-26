@@ -9,6 +9,7 @@
 
 #include "CreateComponentTransportProcess.h"
 
+#include "MaterialLib/Component/CreateComponentProperties.h"
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
 
@@ -91,29 +92,22 @@ std::unique_ptr<Process> createComponentTransportProcess(
     DBUG("Use \'%s\' as fluid_reference_density parameter.",
          fluid_reference_density.name.c_str());
 
-    // Parameter for the longitudinal molecular diffusion coefficient.
-    auto const& molecular_diffusion_coefficient = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__molecular_diffusion_coefficient}
-        "molecular_diffusion_coefficient", parameters, 1);
-    DBUG("Use \'%s\' as molecular diffusion coefficient parameter.",
-         molecular_diffusion_coefficient.name.c_str());
+    auto component_properties =
+        MaterialLib::Component::createComponentProperties(config, parameters);
 
-    // Parameter for the longitudinal solute dispersivity.
-    auto const& solute_dispersivity_longitudinal = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__solute_dispersivity_longitudinal}
-        "solute_dispersivity_longitudinal", parameters, 1);
-    DBUG("Use \'%s\' as longitudinal solute dispersivity parameter.",
-         solute_dispersivity_longitudinal.name.c_str());
+    {
+        auto variable = std::find_if(variables.cbegin(), variables.cend(),
+                                     [](ProcessLib::ProcessVariable const& v) {
+                                         return v.getName() == "concentration";
+                                     });
 
-    // Parameter for the transverse solute dispersivity.
-    auto const& solute_dispersivity_transverse = findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__solute_dispersivity_transverse}
-        "solute_dispersivity_transverse", parameters, 1);
-    DBUG("Use \'%s\' as transverse solute dispersivity parameter.",
-         solute_dispersivity_transverse.name.c_str());
+        if ((unsigned) variable->getNumberOfComponents() != component_properties.size())
+            OGS_FATAL(
+                "'Concentration' has %d component(s), while %d types of "
+                "components are prescribed.",
+                variable->getNumberOfComponents(),
+                component_properties.size());
+    }
 
     // Parameter for the retardation factor.
     auto const& retardation_factor =
@@ -149,9 +143,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         std::move(porous_media_properties),
         fluid_reference_density,
         std::move(fluid_properties),
-        molecular_diffusion_coefficient,
-        solute_dispersivity_longitudinal,
-        solute_dispersivity_transverse,
+        std::move(component_properties),
         retardation_factor,
         decay_rate,
         specific_body_force,

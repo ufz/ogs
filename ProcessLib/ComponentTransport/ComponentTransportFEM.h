@@ -183,9 +183,11 @@ public:
                 _process_data.retardation_factor(t, pos)[0];
 
             auto const& solute_dispersivity_transverse =
-                _process_data.solute_dispersivity_transverse(t, pos)[0];
+                _process_data.component_properties[0]
+                    .getTransversalDispersivity(t, pos);
             auto const& solute_dispersivity_longitudinal =
-                _process_data.solute_dispersivity_longitudinal(t, pos)[0];
+                _process_data.component_properties[0]
+                    .getLongitudinalDispersivity(t, pos);
 
             // Use the fluid density model to compute the density
             vars[static_cast<int>(
@@ -196,7 +198,8 @@ public:
                 MaterialLib::Fluid::FluidPropertyType::Density, vars);
             auto const& decay_rate = _process_data.decay_rate(t, pos)[0];
             auto const& molecular_diffusion_coefficient =
-                _process_data.molecular_diffusion_coefficient(t, pos)[0];
+                _process_data.component_properties[0]
+                    .getMolecularDiffusion(t, pos);
 
             auto const& K =
                 _process_data.porous_media_properties.getIntrinsicPermeability(
