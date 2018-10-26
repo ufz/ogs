@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>goswami_input_xy_tri_kappa_ini_MatID.vtu</mesh>
-    <geometry>goswami_input.gml</geometry>
-    <search_length_algorithm>
-        <type>fixed</type>
-        <value>1e-3</value>
-    </search_length_algorithm>
+    <meshes>
+        <mesh>goswami_input.vtu</mesh>
+        <mesh>goswami_input_leftBoundary.vtu</mesh>
+        <mesh>goswami_input_rightBoundary.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>ComponentTransport</name>
@@ -20,7 +19,7 @@
                     <type>ConcentrationDependent</type>
                     <reference_density>1000</reference_density>
                     <reference_concentration>0</reference_concentration>
-                    <fluid_density_difference_ratio>0.026</fluid_density_difference_ratio>
+                    <fluid_density_difference_ratio>0.701</fluid_density_difference_ratio>
                 </density>
                 <viscosity>
                     <type>Constant</type>
@@ -42,24 +41,10 @@
                         <value>0</value>
                     </storage>
                 </porous_medium>
-                <porous_medium id="1">
-                    <permeability>
-                        <permeability_tensor_entries>kappa2</permeability_tensor_entries>
-                        <type>Constant</type>
-                    </permeability>
-                    <porosity>
-                        <type>Constant</type>
-                        <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                    </porosity>
-                    <storage>
-                        <type>Constant</type>
-                        <value>0</value>
-                    </storage>
-                </porous_medium>
             </porous_medium>
             <fluid_reference_density>rho_fluid</fluid_reference_density>
-            <solute_dispersivity_longitudinal>alpha_l</solute_dispersivity_longitudinal>
-            <solute_dispersivity_transverse>alpha_t</solute_dispersivity_transverse>
+            <solute_dispersivity_longitudinal>beta_l</solute_dispersivity_longitudinal>
+            <solute_dispersivity_transverse>beta_t</solute_dispersivity_transverse>
             <molecular_diffusion_coefficient>Dm</molecular_diffusion_coefficient>
             <retardation_factor>retardation</retardation_factor>
             <decay_rate>decay</decay_rate>
@@ -76,7 +61,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltols>5e-3 5e-3</reltols>
+                    <reltols>5e-6 5e-6</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -90,36 +75,24 @@
                 </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
-                    <t_initial> 0.0 </t_initial>
-                    <t_end> 3000 </t_end>
+                    <t_initial>0.0</t_initial>
+                    <t_end>4800</t_end>
                     <timesteps>
                         <pair>
                             <repeat>50</repeat>
-                            <delta_t>1</delta_t>
+                            <delta_t>0.01</delta_t>
                         </pair>
                         <pair>
-                            <repeat>50</repeat>
-                            <delta_t>2</delta_t>
+                            <repeat>595</repeat>
+                            <delta_t>0.1</delta_t>
                         </pair>
                         <pair>
-                            <repeat>50</repeat>
-                            <delta_t>4</delta_t>
+                            <repeat>1140</repeat>
+                            <delta_t>1.0</delta_t>
                         </pair>
                         <pair>
-                            <repeat>100</repeat>
-                            <delta_t>8</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>200</repeat>
-                            <delta_t>16</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>100</repeat>
-                            <delta_t>20</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>50</repeat>
-                            <delta_t>25</delta_t>
+                            <repeat>3600</repeat>
+                            <delta_t>1.0</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -127,11 +100,19 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>ComponentTransport</prefix>
+            <prefix>Goswami_Component_Transport</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
-                    <each_steps>50</each_steps>
+                    <each_steps>1185</each_steps>
+                </pair>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>600</each_steps>
+                </pair>
+                <pair>
+                    <repeat>6</repeat>
+                    <each_steps>600</each_steps>
                 </pair>
             </timesteps>
         </output>
@@ -145,7 +126,7 @@
         <parameter>
             <name>Dm</name>
             <type>Constant</type>
-            <value>1e-9</value>
+            <value>0</value>
         </parameter>
         <parameter>
             <name>retardation</name>
@@ -158,46 +139,24 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>alpha_l</name>
+            <name>beta_l</name>
             <type>Constant</type>
             <value>5e-3</value>
         </parameter>
         <parameter>
-            <name>alpha_t</name>
+            <name>beta_t</name>
             <type>Constant</type>
-            <value>5e-4</value>
+            <value>0.0005</value>
         </parameter>
         <parameter>
-            <name>c0</name>
+            <name>c_ini</name>
             <type>MeshNode</type>
-            <field_name>t_conc_ini</field_name>
+            <field_name>c_ini</field_name>
         </parameter>
         <parameter>
-            <name>p0</name>
+            <name>p_ini</name>
             <type>MeshNode</type>
-            <field_name>pressure</field_name>
-        </parameter>
-        <parameter>
-            <name>p_Dirichlet_topleft</name>
-            <type>Constant</type>
-            <value>-50.27625</value>
-            <!-- this equals h_s=0.255m-->
-        </parameter>
-        <parameter>
-            <name>p_Dirichlet_topright</name>
-            <type>Constant</type>
-            <value>68.67</value>
-            <!-- this equals h_f=0.267m-->
-        </parameter>
-        <parameter>
-            <name>c_Dirichlet_left</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>c_Dirichlet_right</name>
-            <type>Constant</type>
-            <value>0</value>
+            <field_name>p_ini</field_name>
         </parameter>
         <parameter>
             <name>constant_porosity_parameter</name>
@@ -207,12 +166,7 @@
         <parameter>
             <name>kappa1</name>
             <type>Constant</type>
-            <values>1.239e-9 0 0 1.239e-9</values>
-        </parameter>
-        <parameter>
-            <name>kappa2</name>
-            <type>Constant</type>
-            <values>1e-3 0 0 1e-3</values>
+            <values>1.2388e-9 0 0 1.2388e-9</values>
         </parameter>
     </parameters>
     <process_variables>
@@ -220,19 +174,17 @@
             <name>concentration</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>c0</initial_condition>
+            <initial_condition>c_ini</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>goswami_mesh</geometrical_set>
-                    <geometry>left</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>c_Dirichlet_left</parameter>
+                    <type>NonuniformDirichlet</type>
+                    <mesh>goswami_input_leftBoundary</mesh>
+                    <field_name>c_ini</field_name>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>goswami_mesh</geometrical_set>
-                    <geometry>right</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>c_Dirichlet_right</parameter>
+                    <type>NonuniformDirichlet</type>
+                    <mesh>goswami_input_rightBoundary</mesh>
+                    <field_name>c_ini</field_name>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -240,19 +192,17 @@
             <name>pressure</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>p0</initial_condition>
+            <initial_condition>p_ini</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>goswami_mesh</geometrical_set>
-                    <geometry>topleft</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>p_Dirichlet_topleft</parameter>
+                    <type>NonuniformDirichlet</type>
+                    <mesh>goswami_input_leftBoundary</mesh>
+                    <field_name>p_ini</field_name>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>goswami_mesh</geometrical_set>
-                    <geometry>topright</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>p_Dirichlet_topright</parameter>
+                    <type>NonuniformDirichlet</type>
+                    <mesh>goswami_input_rightBoundary</mesh>
+                    <field_name>p_ini</field_name>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -261,23 +211,23 @@
         <nonlinear_solver>
             <name>basic_picard</name>
             <type>Picard</type>
-            <max_iter>300</max_iter>
+            <max_iter>200</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
-    </nonlinear_solvers>
+        </nonlinear_solvers>
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i bicgstab -p jacobi -tol 1e-11 -maxiter 20000</lis>
+            <lis>-i bicgstab -p ilut -tol 1e-12 -maxiter 200000</lis>
             <eigen>
                 <solver_type>BiCGSTAB</solver_type>
                 <precon_type>DIAGONAL</precon_type>
-                <max_iteration_step>20000</max_iteration_step>
+                <max_iteration_step>10000</max_iteration_step>
                 <error_tolerance>1e-11</error_tolerance>
             </eigen>
             <petsc>
                 <prefix>hc</prefix>
-                <parameters>-hc_ksp_type bcgs -hc_pc_type bjacobi -hc_ksp_rtol 1e-11 -hc_ksp_max_it 20000</parameters>
+                <parameters>-hc_ksp_type bcgs -hc_pc_type bjacobi -hc_ksp_rtol 1e-10 -hc_ksp_max_it 20000</parameters>
             </petsc>
         </linear_solver>
     </linear_solvers>
