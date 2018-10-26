@@ -1,0 +1,1 @@
+It means the way of controlling flow and temperature in the BHE. In the BHE, the inflow temperature at this time step will be calculated by the heat load on the BHE, flow rate of circulating fluid and previous outflow temperature. Thus, There is a need to specify the way of getting the heat load and flow rate values.

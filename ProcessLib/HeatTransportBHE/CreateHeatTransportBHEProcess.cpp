@@ -88,8 +88,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // solid phase thermal conductivity parameter.
     auto& thermal_conductivity_solid = findParameter<double>(
         config,
-        //! \ogs_file_param_special
-        //! prj__processes__process__HEAT_TRANSPORT_BHE__thermal_conductivity_solid}
+        //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__thermal_conductivity_solid}
         "thermal_conductivity_solid", parameters, 1);
 
     DBUG("Use \'%s\' as solid phase thermal conductivity parameter.",
@@ -175,12 +174,12 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     for (
         auto const& bhe_config :
-        //! \ogs_file_param{prj__processes__process___HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger}
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger}
         bhe_configs.getConfigSubtreeList("borehole_heat_exchanger"))
     {
         // read in the parameters
         const std::string bhe_type =
-            //! \ogs_file_param{prj__processes__process___HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__bhe_type}
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__type}
             bhe_config.getConfigParameter<std::string>("type");
 
         if (bhe_type == "1U")
