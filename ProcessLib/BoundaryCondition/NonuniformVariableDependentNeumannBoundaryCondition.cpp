@@ -7,7 +7,7 @@
  *
  */
 
-#include "NonuniformVariableDependantNeumannBoundaryCondition.h"
+#include "NonuniformVariableDependentNeumannBoundaryCondition.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -41,49 +41,52 @@ MeshLib::PropertyVector<double> const* getAndCheckPropertyVector(
 
 namespace ProcessLib
 {
-std::unique_ptr<NonuniformVariableDependantNeumannBoundaryCondition>
-createNonuniformVariableDependantNeumannBoundaryCondition(
+std::unique_ptr<NonuniformVariableDependentNeumannBoundaryCondition>
+createNonuniformVariableDependentNeumannBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, MeshLib::Mesh const& bulk_mesh)
 {
-    DBUG("Constructing NonuniformVariableDependantNeumann BC from config.");
+    DBUG("Constructing NonuniformVariableDependentNeumann BC from config.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
-    config.checkConfigParameter("type", "NonuniformVariableDependantNeumann");
+    config.checkConfigParameter("type", "NonuniformVariableDependentNeumann");
     if (dof_table.getNumberOfVariables() != 2)
     {
         OGS_FATAL(
-            "NonuniformVariableDependantNeumann BC only implemented for 2 "
+            "NonuniformVariableDependentNeumann BC only implemented for 2 "
             "variable processes.");
     }
     assert(variable_id == 0 || variable_id == 1);
 
     // TODO finally use ProcessLib::Parameter here
     auto const constant_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependantNeumann__constant_name}
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__constant_name}
         config.getConfigParameter<std::string>("constant_name");
     //    auto const* const constant = xxx(constant_name);
     auto const* const constant =
         getAndCheckPropertyVector(constant_name, boundary_mesh);
 
-    auto const prefac_current_variable_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependantNeumann__prefac_current_variable_name}
-        config.getConfigParameter<std::string>("prefac_current_variable_name");
-    auto const* const prefac_current_variable =
-        getAndCheckPropertyVector(prefac_current_variable_name, boundary_mesh);
+    auto const coefficient_current_variable_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__coefficient_current_variable_name}
+        config.getConfigParameter<std::string>(
+            "coefficient_current_variable_name");
+    auto const* const coefficient_current_variable = getAndCheckPropertyVector(
+        coefficient_current_variable_name, boundary_mesh);
 
-    auto const prefac_other_variable_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependantNeumann__prefac_other_variable_name}
-        config.getConfigParameter<std::string>("prefac_other_variable_name");
-    auto const* const prefac_other_variable =
-        getAndCheckPropertyVector(prefac_other_variable_name, boundary_mesh);
+    auto const coefficient_other_variable_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__coefficient_other_variable_name}
+        config.getConfigParameter<std::string>(
+            "coefficient_other_variable_name");
+    auto const* const coefficient_other_variable = getAndCheckPropertyVector(
+        coefficient_other_variable_name, boundary_mesh);
 
-    auto const prefac_mixed_variables_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependantNeumann__prefac_mixed_variables_name}
-        config.getConfigParameter<std::string>("prefac_mixed_variables_name");
-    auto const* const prefac_mixed_variables =
-        getAndCheckPropertyVector(prefac_mixed_variables_name, boundary_mesh);
+    auto const coefficient_mixed_variables_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__coefficient_mixed_variables_name}
+        config.getConfigParameter<std::string>(
+            "coefficient_mixed_variables_name");
+    auto const* const coefficient_mixed_variables = getAndCheckPropertyVector(
+        coefficient_mixed_variables_name, boundary_mesh);
 
     std::string const mapping_to_bulk_nodes_property = "bulk_node_ids";
     auto const* const mapping_to_bulk_nodes =
@@ -120,12 +123,13 @@ createNonuniformVariableDependantNeumannBoundaryCondition(
 #endif  // USE_PETSC
 
     return std::make_unique<
-        NonuniformVariableDependantNeumannBoundaryCondition>(
+        NonuniformVariableDependentNeumannBoundaryCondition>(
         integration_order, shapefunction_order, dof_table, variable_id,
         component_id, bulk_mesh.getDimension(), boundary_mesh,
-        NonuniformVariableDependantNeumannBoundaryConditionData{
-            *constant, *prefac_current_variable, *prefac_other_variable,
-            *prefac_mixed_variables, *dof_table_boundary_other_variable});
+        NonuniformVariableDependentNeumannBoundaryConditionData{
+            *constant, *coefficient_current_variable,
+            *coefficient_other_variable, *coefficient_mixed_variables,
+            *dof_table_boundary_other_variable});
 }
 
 }  // namespace ProcessLib

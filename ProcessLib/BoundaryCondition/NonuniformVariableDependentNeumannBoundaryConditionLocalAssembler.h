@@ -18,20 +18,20 @@
 
 namespace ProcessLib
 {
-struct NonuniformVariableDependantNeumannBoundaryConditionData
+struct NonuniformVariableDependentNeumannBoundaryConditionData
 {
     /* TODO use Parameter */
     MeshLib::PropertyVector<double> const& constant;
-    MeshLib::PropertyVector<double> const& prefac_current_variable;
-    MeshLib::PropertyVector<double> const& prefac_other_variable;
-    MeshLib::PropertyVector<double> const& prefac_mixed_variables;
+    MeshLib::PropertyVector<double> const& coefficient_current_variable;
+    MeshLib::PropertyVector<double> const& coefficient_other_variable;
+    MeshLib::PropertyVector<double> const& coefficient_mixed_variables;
     // Used for mapping boundary nodes to bulk nodes.
     NumLib::LocalToGlobalIndexMap const& dof_table_boundary_other_variable;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-class NonuniformVariableDependantNeumannBoundaryConditionLocalAssembler final
+class NonuniformVariableDependentNeumannBoundaryConditionLocalAssembler final
     : public GenericNonuniformNaturalBoundaryConditionLocalAssembler<
           ShapeFunction, IntegrationMethod, GlobalDim>
 {
@@ -43,15 +43,15 @@ class NonuniformVariableDependantNeumannBoundaryConditionLocalAssembler final
 public:
     /// The neumann_bc_term factor is directly integrated into the local
     /// element matrix.
-    NonuniformVariableDependantNeumannBoundaryConditionLocalAssembler(
+    NonuniformVariableDependentNeumannBoundaryConditionLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
         bool const is_axially_symmetric,
         unsigned const integration_order,
-        NonuniformVariableDependantNeumannBoundaryConditionData const& data)
+        NonuniformVariableDependentNeumannBoundaryConditionData const& data)
         : Base(e, is_axially_symmetric, integration_order),
           _data(data),
-          _local_rhs(local_matrix_size)
+          _local_matrix_size(local_matrix_size)
     {
     }
 
@@ -60,31 +60,31 @@ public:
                   double const t, const GlobalVector& x, GlobalMatrix& /*K*/,
                   GlobalVector& b, GlobalMatrix* /*Jac*/) override
     {
+        NodalVectorType _local_rhs(_local_matrix_size);
         _local_rhs.setZero();
-
         MeshNodeParameter<double> constant_values{"ConstantValues",
                                                   _data.constant};
-        MeshNodeParameter<double> prefac_current_variable_values{
-            "CurrentVariableValues", _data.prefac_current_variable};
-        MeshNodeParameter<double> prefac_other_variable_values{
-            "OtherVariableValues", _data.prefac_other_variable};
-        MeshNodeParameter<double> prefac_mixed_variables_values{
-            "MixedVariablesValues", _data.prefac_mixed_variables};
+        MeshNodeParameter<double> coefficient_current_variable_values{
+            "CurrentVariableValues", _data.coefficient_current_variable};
+        MeshNodeParameter<double> coefficient_other_variable_values{
+            "OtherVariableValues", _data.coefficient_other_variable};
+        MeshNodeParameter<double> coefficient_mixed_variables_values{
+            "MixedVariablesValues", _data.coefficient_mixed_variables};
         // Get element nodes for the interpolation from nodes to
         // integration point.
         NodalVectorType const constant_node_values =
             constant_values.getNodalValuesOnElement(Base::_element, t);
-        NodalVectorType const prefac_current_variable_node_values =
-            prefac_current_variable_values.getNodalValuesOnElement(
+        NodalVectorType const coefficient_current_variable_node_values =
+            coefficient_current_variable_values.getNodalValuesOnElement(
                 Base::_element, t);
-        NodalVectorType const prefac_other_variable_node_values =
-            prefac_other_variable_values.getNodalValuesOnElement(Base::_element,
-                                                                 t);
-        NodalVectorType const prefac_mixed_variables_node_values =
-            prefac_mixed_variables_values.getNodalValuesOnElement(
+        NodalVectorType const coefficient_other_variable_node_values =
+            coefficient_other_variable_values.getNodalValuesOnElement(
                 Base::_element, t);
-        unsigned const n_integration_points =
-            Base::_integration_method.getNumberOfPoints();
+        NodalVectorType const coefficient_mixed_variables_node_values =
+            coefficient_mixed_variables_values.getNodalValuesOnElement(
+                Base::_element, t);
+        unsigned const n_integration_points = _local_matrix_size;
+
         auto const indices_current_variable =
             NumLib::getIndices(mesh_item_id, dof_table_boundary);
         auto const indices_other_variable = NumLib::getIndices(
@@ -109,11 +109,11 @@ public:
                                              other_variable_int_pt);
             NodalVectorType const neumann_node_values =
                 constant_node_values +
-                prefac_current_variable_node_values * current_variable_int_pt +
-                prefac_other_variable_node_values * other_variable_int_pt +
-                prefac_mixed_variables_node_values * current_variable_int_pt *
-                    other_variable_int_pt;
-
+                coefficient_current_variable_node_values *
+                    current_variable_int_pt +
+                coefficient_other_variable_node_values * other_variable_int_pt +
+                coefficient_mixed_variables_node_values *
+                    current_variable_int_pt * other_variable_int_pt;
             _local_rhs.noalias() += N * neumann_node_values.dot(N) * w;
         }
 
@@ -121,8 +121,8 @@ public:
     }
 
 private:
-    NonuniformVariableDependantNeumannBoundaryConditionData const& _data;
-    NodalVectorType _local_rhs;
+    NonuniformVariableDependentNeumannBoundaryConditionData const& _data;
+    std::size_t const _local_matrix_size;
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;

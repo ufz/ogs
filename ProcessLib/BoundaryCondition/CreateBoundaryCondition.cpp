@@ -16,7 +16,7 @@
 #include "NeumannBoundaryCondition.h"
 #include "NonuniformDirichletBoundaryCondition.h"
 #include "NonuniformNeumannBoundaryCondition.h"
-#include "NonuniformVariableDependantNeumannBoundaryCondition.h"
+#include "NonuniformVariableDependentNeumannBoundaryCondition.h"
 #include "NormalTractionBoundaryCondition.h"
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
@@ -82,10 +82,10 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
             bulk_mesh);
     }
 
-    if (type == "NonuniformVariableDependantNeumann")
+    if (type == "NonuniformVariableDependentNeumann")
     {
         return ProcessLib::
-            createNonuniformVariableDependantNeumannBoundaryCondition(
+            createNonuniformVariableDependentNeumannBoundaryCondition(
                 config.config, config.boundary_mesh, dof_table, variable_id,
                 *config.component_id, integration_order, shapefunction_order,
                 bulk_mesh);

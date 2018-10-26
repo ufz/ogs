@@ -398,7 +398,7 @@ AddTest(
 
 
 AddTest(
-    NAME 1D_ComponentTransport_VariableDependantBoundary
+    NAME 1D_ComponentTransport_VariableDependentBoundary
     PATH Parabolic/ComponentTransport/VariableNeumannBoundary
     EXECUTABLE ogs
     EXECUTABLE_ARGS vdbc_input.prj

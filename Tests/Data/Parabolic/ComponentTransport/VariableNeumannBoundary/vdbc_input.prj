@@ -175,12 +175,12 @@
             <initial_condition>c_ini</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <type>NonuniformVariableDependantNeumann</type>
+                    <type>NonuniformVariableDependentNeumann</type>
                     <mesh>vdbc_input_rightBoundary</mesh>
                     <constant_name>Cconstant</constant_name>
-                    <prefac_current_variable_name>Cprefac1</prefac_current_variable_name>
-                    <prefac_other_variable_name>Cprefac2</prefac_other_variable_name>
-                    <prefac_mixed_variables_name>Cprefac3</prefac_mixed_variables_name>
+                    <coefficient_current_variable_name>Cprefac1</coefficient_current_variable_name>
+                    <coefficient_other_variable_name>Cprefac2</coefficient_other_variable_name>
+                    <coefficient_mixed_variables_name>Cprefac3</coefficient_mixed_variables_name>
                 </boundary_condition>
                 <boundary_condition>
                     <type>NonuniformDirichlet</type>
@@ -196,12 +196,12 @@
             <initial_condition>p_ini</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <type>NonuniformVariableDependantNeumann</type>
+                    <type>NonuniformVariableDependentNeumann</type>
                     <mesh>vdbc_input_rightBoundary</mesh>
                     <constant_name>Pconstant</constant_name>
-                    <prefac_current_variable_name>Pprefac1</prefac_current_variable_name>
-                    <prefac_other_variable_name>Pprefac2</prefac_other_variable_name>
-                    <prefac_mixed_variables_name>Pprefac3</prefac_mixed_variables_name>
+                    <coefficient_current_variable_name>Pprefac1</coefficient_current_variable_name>
+                    <coefficient_other_variable_name>Pprefac2</coefficient_other_variable_name>
+                    <coefficient_mixed_variables_name>Pprefac3</coefficient_mixed_variables_name>
                 </boundary_condition>
                 <boundary_condition>
                     <type>NonuniformDirichlet</type>

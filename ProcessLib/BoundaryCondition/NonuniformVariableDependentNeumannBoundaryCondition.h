@@ -11,17 +11,17 @@
 
 #include "GenericNonuniformNaturalBoundaryCondition.h"
 #include "MeshLib/PropertyVector.h"
-#include "NonuniformVariableDependantNeumannBoundaryConditionLocalAssembler.h"
+#include "NonuniformVariableDependentNeumannBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
-using NonuniformVariableDependantNeumannBoundaryCondition =
+using NonuniformVariableDependentNeumannBoundaryCondition =
     GenericNonuniformNaturalBoundaryCondition<
-        NonuniformVariableDependantNeumannBoundaryConditionData,
-        NonuniformVariableDependantNeumannBoundaryConditionLocalAssembler>;
+        NonuniformVariableDependentNeumannBoundaryConditionData,
+        NonuniformVariableDependentNeumannBoundaryConditionLocalAssembler>;
 
-std::unique_ptr<NonuniformVariableDependantNeumannBoundaryCondition>
-createNonuniformVariableDependantNeumannBoundaryCondition(
+std::unique_ptr<NonuniformVariableDependentNeumannBoundaryCondition>
+createNonuniformVariableDependentNeumannBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
