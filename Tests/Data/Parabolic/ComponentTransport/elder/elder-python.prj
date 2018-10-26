@@ -42,12 +42,16 @@
           </storage>
         </porous_medium>
       </porous_medium>
+      <components>
+        <component name="Si">
+          <solute_dispersivity_longitudinal>alpha_l</solute_dispersivity_longitudinal>
+          <solute_dispersivity_transverse>alpha_t</solute_dispersivity_transverse>
+          <molecular_diffusion>Dm</molecular_diffusion>
+        </component>
+      </components>
       <decay_rate>decay_rate</decay_rate>
       <fluid_reference_density>rho_fluid</fluid_reference_density>
       <retardation_factor>retardation_factor</retardation_factor>
-      <solute_dispersivity_longitudinal>alpha_l</solute_dispersivity_longitudinal>
-      <solute_dispersivity_transverse>alpha_t</solute_dispersivity_transverse>
-      <molecular_diffusion_coefficient>Dm</molecular_diffusion_coefficient>
       <specific_body_force>0 0 -9.81</specific_body_force>
       <secondary_variables>
         <secondary_variable type="static" internal_name="darcy_velocity" output_name="darcy_velocity"/>

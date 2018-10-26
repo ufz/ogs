@@ -53,10 +53,14 @@
                     </storage>
                 </porous_medium>
             </porous_medium>
+            <components>
+                <component name="Si">
+                    <solute_dispersivity_longitudinal>beta_l</solute_dispersivity_longitudinal>
+                    <solute_dispersivity_transverse>beta_t</solute_dispersivity_transverse>
+                    <molecular_diffusion>Dm</molecular_diffusion>
+                </component>
+            </components>
             <fluid_reference_density>rho_fluid</fluid_reference_density>
-            <solute_dispersivity_longitudinal>beta_l</solute_dispersivity_longitudinal>
-            <solute_dispersivity_transverse>beta_t</solute_dispersivity_transverse>
-            <molecular_diffusion_coefficient>Dm</molecular_diffusion_coefficient>
             <retardation_factor>retardation</retardation_factor>
             <decay_rate>decay</decay_rate>
             <specific_body_force>0 0</specific_body_force>
