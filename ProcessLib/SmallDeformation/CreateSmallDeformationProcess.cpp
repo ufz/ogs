@@ -119,7 +119,10 @@ createSmallDeformationProcess(
                 "There are subdomains being deactivated."
                 "Please make sure that there is no boundary condition "
                 "at any node inside these subdomains, "
-                "and only the iterative linear solver is utilized.");
+                "and only the iterative linear solver is utilized.\n"
+                "If  there are boundary conditions  at the nodes inside these "
+                "subdomains, the program will exit by the failure of the "
+                "iterative linear.");
             INFO("The indices of the deactivated subdomains are");
             for (auto const mat_id : deactivated_subdomains)
             {
