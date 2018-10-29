@@ -78,7 +78,7 @@ pipeline {
               filename 'Dockerfile.gcc.full'
               dir 'scripts/docker'
               label 'docker'
-              args '-v /datadrive/cache:/home/jenkins/cache'
+              args '-v /home/jenkins/cache:/home/jenkins/cache'
               additionalBuildArgs '--pull'
             }
           }
@@ -143,7 +143,7 @@ pipeline {
               filename 'Dockerfile.gcc.minimal'
               dir 'scripts/docker'
               label 'docker'
-              args '-v /datadrive/cache:/home/jenkins/cache'
+              args '-v /home/jenkins/cache:/home/jenkins/cache'
               additionalBuildArgs '--pull'
             }
           }
