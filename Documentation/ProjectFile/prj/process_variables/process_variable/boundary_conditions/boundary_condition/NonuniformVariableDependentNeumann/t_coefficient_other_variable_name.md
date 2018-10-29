@@ -1,3 +1,3 @@
 This specifies a nodal field defined on the surface mesh.
 
-From the nodal field the coefficient values, which are multiplied by the other variable to calculate the other variable dependant flux, which is applied via this Neumann BC, are read.
+From the nodal field the coefficient values, which are multiplied by the other variable to calculate the other variable dependent flux, which is applied via this Neumann BC, are read.

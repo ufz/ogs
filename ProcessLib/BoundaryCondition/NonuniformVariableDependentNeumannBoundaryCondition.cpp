@@ -12,33 +12,6 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
-namespace
-{
-MeshLib::PropertyVector<double> const* getAndCheckPropertyVector(
-    std::string const& name, MeshLib::Mesh const& mesh)
-{
-    auto const* const property_vector =
-        mesh.getProperties().getPropertyVector<double>(name);
-    if (property_vector == nullptr)
-    {
-        OGS_FATAL("A property with name `%s' does not exist in `%s'.",
-                  name.c_str(), mesh.getName().c_str());
-    }
-    if (property_vector->getMeshItemType() != MeshLib::MeshItemType::Node)
-    {
-        OGS_FATAL(
-            "Only nodal fields are supported for non-uniform fields. Field "
-            "`%s' is not nodal.",
-            name.c_str());
-    }
-    if (property_vector->getNumberOfComponents() != 1)
-    {
-        OGS_FATAL("`%s' is not a one-component field.", name.c_str());
-    }
-    return property_vector;
-};
-}  // namespace
-
 namespace ProcessLib
 {
 std::unique_ptr<NonuniformVariableDependentNeumannBoundaryCondition>
@@ -63,30 +36,33 @@ createNonuniformVariableDependentNeumannBoundaryCondition(
     auto const constant_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__constant_name}
         config.getConfigParameter<std::string>("constant_name");
-    //    auto const* const constant = xxx(constant_name);
     auto const* const constant =
-        getAndCheckPropertyVector(constant_name, boundary_mesh);
+        boundary_mesh.getProperties().getNodalNComponentPropertyVector<double>(
+            constant_name, 1);
 
     auto const coefficient_current_variable_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__coefficient_current_variable_name}
         config.getConfigParameter<std::string>(
             "coefficient_current_variable_name");
-    auto const* const coefficient_current_variable = getAndCheckPropertyVector(
-        coefficient_current_variable_name, boundary_mesh);
+    auto const* const coefficient_current_variable =
+        boundary_mesh.getProperties().getNodalNComponentPropertyVector<double>(
+            coefficient_current_variable_name, 1);
 
     auto const coefficient_other_variable_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__coefficient_other_variable_name}
         config.getConfigParameter<std::string>(
             "coefficient_other_variable_name");
-    auto const* const coefficient_other_variable = getAndCheckPropertyVector(
-        coefficient_other_variable_name, boundary_mesh);
+    auto const* const coefficient_other_variable =
+        boundary_mesh.getProperties().getNodalNComponentPropertyVector<double>(
+            coefficient_other_variable_name, 1);
 
     auto const coefficient_mixed_variables_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__coefficient_mixed_variables_name}
         config.getConfigParameter<std::string>(
             "coefficient_mixed_variables_name");
-    auto const* const coefficient_mixed_variables = getAndCheckPropertyVector(
-        coefficient_mixed_variables_name, boundary_mesh);
+    auto const* const coefficient_mixed_variables =
+        boundary_mesh.getProperties().getNodalNComponentPropertyVector<double>(
+            coefficient_mixed_variables_name, 1);
 
     std::string const mapping_to_bulk_nodes_property = "bulk_node_ids";
     auto const* const mapping_to_bulk_nodes =
