@@ -38,12 +38,12 @@ The creep strain rate is then expressed as
 $$\begin{gathered}
 \dot { \mathbf \epsilon}^c ({ \sigma})=  {\dfrac{\partial g^c}{\partial {\bar\sigma}}}
 {\dfrac{\partial { \bar\sigma}}{\partial { \mathbf \sigma}}}
-=\sqrt{{\frac{2}{3}}}{\dfrac{\partial g^c}{\partial {\bar \sigma}}}\dfrac{{\mathbf s}}{{\left\Vert{\mathbf s}\right\Vert}}
+=\sqrt{{\frac{3}{2}}}{\dfrac{\partial g^c}{\partial {\bar \sigma}}}\dfrac{{\mathbf s}}{{\left\Vert{\mathbf s}\right\Vert}}
 \end{gathered}$$
  The above creep strain rate expression
 must be valid for problems independent from the Euclidean dimension. Applying
 the creep rate equation to a uniaxial stress state ${\mathbf \sigma} = \mathrm{diag}[\sigma_1, 0, 0]$,
- which gives ${\mathbf s} = \mathrm{diag}[\frac{2}{3}\sigma_1, -\frac{2}{3}\sigma_1, -\frac{2}{3}\sigma_1]$,
+ which gives ${\mathbf s} = \mathrm{diag}[\frac{2}{3}\sigma_1, -\frac{1}{3}\sigma_1, -\frac{1}{3}\sigma_1]$,
  we have
  $$\begin{gathered}
 \dot { \epsilon_1}^c = {\dfrac{\partial g^c}{\partial { \bar\sigma}}}=Ae^{-Q/R_uT}\left(\dfrac{{ \sigma_1}}{{ \sigma}_f}\right)^m
@@ -55,7 +55,7 @@ $$\begin{gathered}
 
 Therefore, the creep strain rate for multi-dimensional problems can be
 derived as $$\begin{gathered}
- \dot { \mathbf \epsilon}^c ({ \sigma})={\color{red} {\sqrt{\frac{3}{2}}}}Ae^{-Q/R_uT}\left(\dfrac{{ \sigma}}{{ \sigma}_f}\right)^m\dfrac{{\mathbf s}}{{\left\Vert{\mathbf s}\right\Vert}}
+ \dot { \mathbf \epsilon}^c ({ \sigma})={\color{red} {\sqrt{\frac{3}{2}}}}Ae^{-Q/R_uT}\left(\dfrac{{\bar \sigma}}{{ \sigma}_f}\right)^m\dfrac{{\mathbf s}}{{\left\Vert{\mathbf s}\right\Vert}}
 \end{gathered}$$
 
 Stress integration
@@ -78,8 +78,8 @@ $$\begin{gathered}
  (\dot { \mathbf \epsilon}- \dot { \mathbf \epsilon}^T- \dot { \mathbf \epsilon}^c)
 \end{gathered}$$
 where
-$\mathbf{C} = \lambda  \mathcal{J} + 2G \mathbf I \otimes \mathbf I$
-with $\mathcal{J}$ the forth order identity, $\mathbf I$ the second order identity,
+$\mathbf{C} = \lambda  \mathcal{I} + 2G \mathbf I \otimes \mathbf I$
+with $\mathcal{I}$ the fourth order identity, $\mathbf I$ the second order identity,
 $\lambda$ the Lamé constant,  $G$ the shear modulus, and $\otimes$  the tensor
 product notation.
 
