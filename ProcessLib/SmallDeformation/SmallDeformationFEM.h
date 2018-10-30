@@ -210,6 +210,8 @@ public:
         auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
             local_b_data, local_matrix_size);
 
+        // return after local_Jacobian and local_b have been resized and zeroed
+        // in order to avoid complaints from the VectorMatrixAssembler.
         if (_is_deactivated)
             return;
 
@@ -413,6 +415,7 @@ public:
             double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, kelvin_vector_size, num_intpts);
 
+        // return after zeroed cache if the element is deactivated.
         if (_is_deactivated)
             return cache;
 
@@ -442,6 +445,7 @@ public:
             double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, kelvin_vector_size, num_intpts);
 
+        // return after zeroed cache if the element is deactivated.
         if (_is_deactivated)
             return cache;
 

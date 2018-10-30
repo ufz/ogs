@@ -103,15 +103,12 @@ createSmallDeformationProcess(
     std::vector<int> deactivated_subdomains;
     if (material_ids)
     {
-        auto deactivated_subdomains_optional =
+        deactivated_subdomains =
             //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__deactivated_subdomains}
-            config.getConfigParameterOptional<std::vector<int>>(
-                "deactivated_subdomains");
-        if (deactivated_subdomains_optional)
+            config.getConfigParameter<std::vector<int>>(
+                "deactivated_subdomains", std::vector<int>{});
+        if (!deactivated_subdomains.empty())
         {
-            std::copy(deactivated_subdomains_optional->begin(),
-                      deactivated_subdomains_optional->end(),
-                      std::back_inserter(deactivated_subdomains));
             // TODO: Modify constructDofTable() to exclude the nodes in the
             //       the deactivated subdomains from the mesh subset,
             //       and consequently remove the following warning.
@@ -121,8 +118,8 @@ createSmallDeformationProcess(
                 "at any node inside these subdomains, "
                 "and only the iterative linear solver is utilized.\n"
                 "If  there are boundary conditions  at the nodes inside these "
-                "subdomains, the program will exit by the failure of the "
-                "iterative linear.");
+                "subdomains, the program will terminate with linear solver "
+                "failure.");
             INFO("The indices of the deactivated subdomains are");
             for (auto const mat_id : deactivated_subdomains)
             {

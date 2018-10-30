@@ -63,7 +63,7 @@ struct SmallDeformationProcessData
     //! Assignments are not needed.
     void operator=(SmallDeformationProcessData&&) = delete;
 
-    bool isElementDeactivated(const std::size_t element_id)
+    bool isElementDeactivated(const std::size_t element_id) const
     {
         if (!material_ids)
             return false;
