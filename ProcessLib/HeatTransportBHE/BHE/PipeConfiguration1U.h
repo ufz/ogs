@@ -1,4 +1,6 @@
 /**
+ * \file
+ *
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -9,23 +11,27 @@
 
 #pragma once
 
-#include "BHE_1U.h"
+#include <boost/math/constants/constants.hpp>
 
-namespace BaseLib
-{
-class ConfigTree;
-}
+#include "BaseLib/ConfigTree.h"
+#include "Pipe.h"
+
 namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
 namespace BHE
 {
-BHE::BHE_1U createBHE1U(
-    BaseLib::ConfigTree const& bhe_conf,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+struct PipeConfiguration1U
+{
+    Pipe const inlet;
+    Pipe const outlet;
+
+    /// Distance between pipes.
+    double const distance;
+
+    double const longitudinal_despersion_length;
+};
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

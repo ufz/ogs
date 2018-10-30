@@ -9,21 +9,14 @@
 
 #pragma once
 
-#include "HeatTransportBHELocalAssemblerSoil.h"
-
 #include <valarray>
 #include <vector>
 
-#include <Eigen/Eigen>
-
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
-#include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
-
-// #include "IntegrationPointDataMatrix.h"
 #include "HeatTransportBHEProcessAssemblerInterface.h"
 #include "SecondaryData.h"
 
@@ -31,22 +24,16 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-HeatTransportBHELocalAssemblerSoil<ShapeFunction,
-                                   IntegrationMethod,
-                                   GlobalDim>::
+template <typename ShapeFunction, typename IntegrationMethod>
+HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     HeatTransportBHELocalAssemblerSoil(
         MeshLib::Element const& e,
-        std::vector<unsigned> const& dofIndex_to_localIndex,
         bool const is_axially_symmetric,
         unsigned const integration_order,
         HeatTransportBHEProcessData& process_data)
-    : HeatTransportBHELocalAssemblerInterface(
-          ShapeFunction::NPOINTS * GlobalDim, dofIndex_to_localIndex),
-      _process_data(process_data),
+    : _process_data(process_data),
       _integration_method(integration_order),
-      element_id(e.getID()),
-      _is_axially_symmetric(is_axially_symmetric)
+      element_id(e.getID())
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -57,7 +44,7 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction,
     _shape_matrices = initShapeMatrices<ShapeFunction,
                                         ShapeMatricesType,
                                         IntegrationMethod,
-                                        GlobalDim>(
+                                        3 /* GlobalDim */>(
         e, is_axially_symmetric, _integration_method);
 
     SpatialPosition x_position;
@@ -69,27 +56,23 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction,
         x_position.setIntegrationPoint(ip);
 
         // create the class IntegrationPointDataBHE in place
-        _ip_data.emplace_back();
         auto const& sm = _shape_matrices[ip];
-        auto& ip_data = _ip_data[ip];
         double const w = _integration_method.getWeightedPoint(ip).getWeight() *
                          sm.integralMeasure * sm.detJ;
-        ip_data.NTN_product_times_w = sm.N.transpose() * sm.N * w;
-        ip_data.dNdxTdNdx_product_times_w = sm.dNdx.transpose() * sm.dNdx * w;
+        _ip_data.push_back(
+            {sm.N.transpose() * sm.N * w, sm.dNdx.transpose() * sm.dNdx * w});
 
         _secondary_data.N[ip] = sm.N;
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void HeatTransportBHELocalAssemblerSoil<
-    ShapeFunction,
-    IntegrationMethod,
-    GlobalDim>::assemble(double const t,
-                         std::vector<double> const& local_x,
-                         std::vector<double>& local_M_data,
-                         std::vector<double>& local_K_data,
-                         std::vector<double>& /*local_b_data*/)
+template <typename ShapeFunction, typename IntegrationMethod>
+void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
+    assemble(double const t,
+             std::vector<double> const& local_x,
+             std::vector<double>& local_M_data,
+             std::vector<double>& local_K_data,
+             std::vector<double>& /*local_b_data*/)
 {
     assert(local_x.size() == ShapeFunction::NPOINTS);
     (void)local_x;  // Avoid unused arg warning.

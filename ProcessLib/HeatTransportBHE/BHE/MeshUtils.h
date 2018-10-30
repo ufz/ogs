@@ -21,13 +21,22 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
+/* TODO (naumov) Just an idea
+struct BheMeshSubset
+{
+    int material_id;
+    std::vector<MeshLib::Element*> elements;
+    std::vector<MeshLib::Node*> nodes;
+};
+*/
+
 struct BHEMeshData
 {
-    std::vector<MeshLib::Element*> soil_elements;
     std::vector<int> BHE_mat_IDs;
     std::vector<std::vector<MeshLib::Element*>> BHE_elements;
-    std::vector<MeshLib::Node*> soil_nodes;
     std::vector<std::vector<MeshLib::Node*>> BHE_nodes;
+
+    // TODO (naumov) Just an idea: std::vector<BheMeshSubset> mesh_subsets;
 };
 
 /**

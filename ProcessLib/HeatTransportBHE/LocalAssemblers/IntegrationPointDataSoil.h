@@ -9,9 +9,6 @@
 
 #pragma once
 
-#include <memory>
-#include <vector>
-
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -19,8 +16,8 @@ namespace HeatTransportBHE
 template <typename NodalMatrixType>
 struct IntegrationPointDataSoil final
 {
-    NodalMatrixType NTN_product_times_w;
-    NodalMatrixType dNdxTdNdx_product_times_w;
+    NodalMatrixType const NTN_product_times_w;
+    NodalMatrixType const dNdxTdNdx_product_times_w;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <boost/math/constants/constants.hpp>
+
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -30,6 +32,12 @@ struct BoreholeGeometry
      * unit is m
      */
     double const diameter;
+
+    double area() const
+    {
+        constexpr double pi = boost::math::constants::pi<double>();
+        return pi * diameter * diameter / 4;
+    }
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

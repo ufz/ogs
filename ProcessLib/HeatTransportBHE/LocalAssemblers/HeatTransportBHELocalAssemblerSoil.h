@@ -26,12 +26,13 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod>
 class HeatTransportBHELocalAssemblerSoil
     : public HeatTransportBHELocalAssemblerInterface
 {
 public:
-    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
+    using ShapeMatricesType =
+        ShapeMatrixPolicyType<ShapeFunction, 3 /* GlobalDim */>;
     using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -43,7 +44,6 @@ public:
 
     HeatTransportBHELocalAssemblerSoil(
         MeshLib::Element const& e,
-        std::vector<unsigned> const& dofIndex_to_localIndex,
         bool is_axially_symmetric,
         unsigned const integration_order,
         HeatTransportBHEProcessData& process_data);
@@ -77,11 +77,9 @@ private:
 
     std::size_t const element_id;
 
-    bool const _is_axially_symmetric;
-
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
 
-#include "HeatTransportBHELocalAssemblerSoil_impl.h"
+#include "HeatTransportBHELocalAssemblerSoil-impl.h"

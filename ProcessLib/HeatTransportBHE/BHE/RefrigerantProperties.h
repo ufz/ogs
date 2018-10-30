@@ -17,37 +17,29 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-struct RefrigerantParameters
+struct RefrigerantProperties
 {
     /**
-     * dynamics viscosity of the refrigerant
      * unit is kg m-1 sec-1
      */
-    double const mu_r;
+    double const dynamic_viscosity;
 
     /**
-     * density of the refrigerant
      * unit is kg m-3
      */
-    double const rho_r;
+    double const density;
 
     /**
-     * thermal conductivity of the refrigerant
      * unit is kg m sec^-3 K^-1
      */
-    double const lambda_r;
+    double const thermal_conductivity;
 
     /**
-     * specific heat capacity of the refrigerant
      * unit is m^2 sec^-2 K^-1
      */
-    double const heat_cap_r;
+    double const specific_heat_capacity;
 
-    /**
-     * longitudinal dispersivity of the
-     * referigerant flow in the pipeline
-     */
-    double const alpha_L;
+    double const reference_temperature;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

@@ -9,8 +9,10 @@
 
 #pragma once
 
+#include <unordered_map>
+
 #include "MeshLib/PropertyVector.h"
-#include "ProcessLib/HeatTransportBHE/BHE/BHEAbstract.h"
+#include "ProcessLib/HeatTransportBHE/BHE/BHETypes.h"
 
 namespace MeshLib
 {
@@ -24,8 +26,6 @@ struct Parameter;
 
 namespace HeatTransportBHE
 {
-using namespace BHE;
-
 struct HeatTransportBHEProcessData
 {
     HeatTransportBHEProcessData(
@@ -38,7 +38,7 @@ struct HeatTransportBHEProcessData
         Parameter<double> const& density_solid_,
         Parameter<double> const& density_fluid_,
         Parameter<double> const& density_gas_,
-        std::vector<std::unique_ptr<BHE::BHEAbstract>>&& vec_BHEs_)
+        std::vector<BHE::BHETypes>&& vec_BHEs_)
         : thermal_conductivity_solid(thermal_conductivity_solid_),
           thermal_conductivity_fluid(thermal_conductivity_fluid_),
           thermal_conductivity_gas(thermal_conductivity_gas_),
@@ -79,12 +79,9 @@ struct HeatTransportBHEProcessData
     Parameter<double> const& density_gas;
 
     MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
-    std::vector<std::size_t> _map_materialID_to_BHE_ID;
+    std::unordered_map<int, int> _map_materialID_to_BHE_ID;
 
-    std::vector<std::unique_ptr<BHE::BHEAbstract>> _vec_BHE_property;
-
-    // a table of connected BHE IDs for each element
-    std::vector<std::vector<std::size_t>> _vec_ele_connected_BHE_IDs;
+    std::vector<BHE::BHETypes> _vec_BHE_property;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

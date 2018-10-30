@@ -19,7 +19,7 @@
 #include "MeshLib/Elements/Elements.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
-#include "ProcessLib/HeatTransportBHE/BHE/BHEAbstract.h"
+#include "ProcessLib/HeatTransportBHE/BHE/BHETypes.h"
 
 #ifndef OGS_MAX_ELEMENT_DIM
 static_assert(false, "The macro OGS_MAX_ELEMENT_DIM is undefined.");
@@ -57,15 +57,6 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
 #endif
 
 // Dependent element types.
-// Faces of tets, pyramids and prisms are triangles
-#define ENABLED_ELEMENT_TYPE_TRI                                       \
-    ((ENABLED_ELEMENT_TYPE_SIMPLEX) | (ENABLED_ELEMENT_TYPE_PYRAMID) | \
-     (ENABLED_ELEMENT_TYPE_PRISM))
-// Faces of hexes, pyramids and prisms are quads
-#define ENABLED_ELEMENT_TYPE_QUAD                                     \
-    ((ENABLED_ELEMENT_TYPE_CUBOID) | (ENABLED_ELEMENT_TYPE_PYRAMID) | \
-     (ENABLED_ELEMENT_TYPE_PRISM))
-
 // All enabled element types
 #define OGS_ENABLED_ELEMENTS                                          \
     ((ENABLED_ELEMENT_TYPE_SIMPLEX) | (ENABLED_ELEMENT_TYPE_CUBOID) | \
@@ -82,20 +73,9 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
 #include "NumLib/Fem/ShapeFunction/ShapeTet4.h"
 #endif
 
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0
-#include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
-#include "NumLib/Fem/ShapeFunction/ShapeTri6.h"
-#endif
-
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0
 #include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
 #include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
-#endif
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0
-#include "NumLib/Fem/ShapeFunction/ShapeQuad4.h"
-#include "NumLib/Fem/ShapeFunction/ShapeQuad8.h"
-#include "NumLib/Fem/ShapeFunction/ShapeQuad9.h"
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0
@@ -118,9 +98,11 @@ namespace HeatTransportBHE
 /// For example for MeshLib::Quad a local assembler data with template argument
 /// NumLib::ShapeQuad4 is created.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, int> class LocalAssemblerDataSoil,
-          template <typename, typename, int> class LocalAssemblerDataBHE,
-          int GlobalDim, typename... ConstructorArgs>
+          template <typename, typename>
+          class LocalAssemblerDataSoil,
+          template <typename, typename, typename>
+          class LocalAssemblerDataBHE,
+          typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:
@@ -132,25 +114,10 @@ public:
     {
         // REMARKS: At the moment, only a 3D mesh (soil) with 1D elements (BHE)
         // are supported.
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Quad))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeQuad4>();
-#endif
-
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Hex))] =
             makeLocalAssemblerBuilder<NumLib::ShapeHex8>();
-#endif
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Quad8))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeQuad8>();
-        _builder[std::type_index(typeid(MeshLib::Quad9))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeQuad9>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 && \
@@ -160,23 +127,10 @@ public:
 #endif
 
         // /// Simplices ////////////////////////////////////////////////
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Tri))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeTri3>();
-#endif
-
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Tet))] =
             makeLocalAssemblerBuilder<NumLib::ShapeTet4>();
-#endif
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Tri6))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeTri6>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0 && \
@@ -216,12 +170,12 @@ public:
 
 #if OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Line))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeLine2>();
+            makeLocalAssemblerBuilderBHE<NumLib::ShapeLine2>();
 #endif
 
 #if OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Line3))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeLine3>();
+            makeLocalAssemblerBuilderBHE<NumLib::ShapeLine3>();
 #endif
     }
 
@@ -230,15 +184,12 @@ public:
     /// \attention
     /// The index \c id is not necessarily the mesh item's id. Especially when
     /// having multiple meshes it will differ from the latter.
-    void operator()(
-        std::size_t const id,
-        MeshLib::Element const& mesh_item,
-        LADataIntfPtr& data_ptr,
-        const std::vector<
-            std::vector<std::size_t>>& /*vec_ele_connected_BHE_IDs*/,
-        const std::vector<
-            std::unique_ptr<BHE::BHEAbstract>>& /*vec_BHE_property*/,
-        ConstructorArgs&&... args) const
+    void operator()(std::size_t const /*id*/,
+                    MeshLib::Element const& mesh_item,
+                    LADataIntfPtr& data_ptr,
+                    std::unordered_map<std::size_t, BHE::BHETypes*> const&
+                        element_to_bhe_map,
+                    ConstructorArgs&&... args) const
     {
         auto const type_idx = std::type_index(typeid(mesh_item));
         auto const it = _builder.find(type_idx);
@@ -253,49 +204,16 @@ public:
                 type_idx.name());
         }
 
-        std::vector<unsigned> dofIndex_to_localIndex;
-
-        // Create customed dof table when it is a BHE element.
-        if (mesh_item.getDimension() == 1)
-        {
-            // this is a BHE element
-            auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
-            dofIndex_to_localIndex.resize(n_local_dof);
-            unsigned dof_id = 0;
-            unsigned local_id = 0;
-            for (auto const i : _dof_table.getElementVariableIDs(id))
-            {
-                auto const n_global_components =
-                    _dof_table.getNumberOfElementComponents(i);
-                for (unsigned j = 0; j < n_global_components; j++)
-                {
-                    auto const& ms = _dof_table.getMeshSubset(i, j);
-                    auto const mesh_id = ms.getMeshID();
-                    for (unsigned k = 0; k < mesh_item.getNumberOfNodes(); k++)
-                    {
-                        MeshLib::Location l(mesh_id,
-                                            MeshLib::MeshItemType::Node,
-                                            mesh_item.getNodeIndex(k));
-                        auto const global_index =
-                            _dof_table.getGlobalIndex(l, i, j);
-                        if (global_index != NumLib::MeshComponentMap::nop)
-                        {
-                            dofIndex_to_localIndex[dof_id++] = local_id;
-                        }
-                        local_id++;
-                    }
-                }
-            }
-        }
-
-        data_ptr = it->second(mesh_item, dofIndex_to_localIndex,
+        data_ptr = it->second(mesh_item,
+                              element_to_bhe_map,
                               std::forward<ConstructorArgs>(args)...);
     }
 
 private:
     using LADataBuilder = std::function<LADataIntfPtr(
         MeshLib::Element const& e,
-        std::vector<unsigned> const& dofIndex_to_localIndex,
+        std::unordered_map<std::size_t, BHE::BHETypes*> const&
+            element_to_bhe_map,
         ConstructorArgs&&...)>;
 
     template <typename ShapeFunction>
@@ -305,87 +223,53 @@ private:
     // local assembler builder implementations.
     template <typename ShapeFunction>
     using LADataSoil =
-        LocalAssemblerDataSoil<ShapeFunction, IntegrationMethod<ShapeFunction>,
-                               GlobalDim>;
+        LocalAssemblerDataSoil<ShapeFunction, IntegrationMethod<ShapeFunction>>;
 
-    template <typename ShapeFunction>
-    using LADataBHE =
-        LocalAssemblerDataBHE<ShapeFunction, IntegrationMethod<ShapeFunction>,
-                              GlobalDim>;
-    /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
-    /// depending whether the global dimension is less than the shape function's
-    /// dimension or not.
     template <typename ShapeFunction>
     static LADataBuilder makeLocalAssemblerBuilder()
     {
-        return makeLocalAssemblerBuilder<ShapeFunction>(
-            static_cast<std::integral_constant<
-                bool, (GlobalDim >= ShapeFunction::DIM)>*>(nullptr));
-    }
-
-    /// Mapping of element types to local assembler constructors.
-    std::unordered_map<std::type_index, LADataBuilder> _builder;
-
-    NumLib::LocalToGlobalIndexMap const& _dof_table;
-
-private:
-    /// Generates a function that creates a new LocalAssembler of type
-    /// LAData<ShapeFunction>. Only functions with shape function's dimension
-    /// less or equal to the global dimension are instantiated, e.g.  following
-    /// combinations of shape functions and global dimensions: (Line2, 1),
-    /// (Line2, 2), (Line2, 3), (Hex20, 3) but not (Hex20, 2) or (Hex20, 1).
-    template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder(std::true_type*)
-    {
         return [](MeshLib::Element const& e,
-                  std::vector<unsigned> const& dofIndex_to_localIndex,
+                  std::unordered_map<std::size_t, BHE::BHETypes*> const&
+                  /* unused */,
                   ConstructorArgs&&... args) -> LADataIntfPtr {
-            if (e.getDimension() == GlobalDim)  // soil elements
+            if (e.getDimension() == 3)  // soil elements
             {
                 return LADataIntfPtr{new LADataSoil<ShapeFunction>{
-                    e, dofIndex_to_localIndex,
-                    std::forward<ConstructorArgs>(args)...}};
+                    e, std::forward<ConstructorArgs>(args)...}};
             }
 
             return nullptr;
         };
     }
 
-    template <>
-    static LADataBuilder makeLocalAssemblerBuilder<NumLib::ShapeLine2>(
-        std::true_type*)
-    {
-        return [](MeshLib::Element const& e,
-                  std::vector<unsigned> const& dofIndex_to_localIndex,
-                  ConstructorArgs&&... args) -> LADataIntfPtr {
-            return LADataIntfPtr{new LADataBHE<NumLib::ShapeLine2>{
-                // BHE elements
-                e, dofIndex_to_localIndex,
-                std::forward<ConstructorArgs>(args)...}};
-        };
-    }
-
-    template <>
-    static LADataBuilder makeLocalAssemblerBuilder<NumLib::ShapeLine3>(
-        std::true_type*)
-    {
-        return [](MeshLib::Element const& e,
-                  std::vector<unsigned> const& dofIndex_to_localIndex,
-                  ConstructorArgs&&... args) -> LADataIntfPtr {
-            return LADataIntfPtr{new LADataBHE<NumLib::ShapeLine3>{
-                // BHE elements
-                e, dofIndex_to_localIndex,
-                std::forward<ConstructorArgs>(args)...}};
-        };
-    }
-
-    /// Returns nullptr for shape functions whose dimensions are less than the
-    /// global dimension.
+    template <typename ShapeFunction, typename BHEType>
+    using LADataBHE = LocalAssemblerDataBHE<ShapeFunction,
+                                            IntegrationMethod<ShapeFunction>,
+                                            BHEType>;
     template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder(std::false_type*)
+    static LADataBuilder makeLocalAssemblerBuilderBHE()
     {
-        return nullptr;
+        return [](MeshLib::Element const& e,
+                  std::unordered_map<std::size_t, BHE::BHETypes*> const&
+                      element_to_bhe_map,
+                  ConstructorArgs&&... args) -> LADataIntfPtr {
+            auto& bhe = *element_to_bhe_map.at(e.getID());
+
+            if (bhe.type() == typeid(BHE::BHE_1U))
+            {
+                return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_1U>{
+                    e, boost::get<BHE::BHE_1U>(bhe),
+                    std::forward<ConstructorArgs>(args)...}};
+            }
+            OGS_FATAL(
+                "Trying to create local assembler for an unknown BHE type.");
+        };
     }
+
+    /// Mapping of element types to local assembler constructors.
+    std::unordered_map<std::type_index, LADataBuilder> _builder;
+
+    NumLib::LocalToGlobalIndexMap const& _dof_table;
 };  // namespace HeatTransportBHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
@@ -394,6 +278,4 @@ private:
 #undef ENABLED_ELEMENT_TYPE_CUBOID
 #undef ENABLED_ELEMENT_TYPE_PYRAMID
 #undef ENABLED_ELEMENT_TYPE_PRISM
-#undef ENABLED_ELEMENT_TYPE_TRI
-#undef ENABLED_ELEMENT_TYPE_QUAD
 #undef OGS_ENABLED_ELEMENTS

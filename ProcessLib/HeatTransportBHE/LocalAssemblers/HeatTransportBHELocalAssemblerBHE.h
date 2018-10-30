@@ -23,18 +23,29 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-template <typename ShapeFunction, typename IntegrationMethod, int BHE_Dim>
+template <typename ShapeFunction, typename IntegrationMethod, typename BHEType>
 class HeatTransportBHELocalAssemblerBHE
     : public HeatTransportBHELocalAssemblerInterface
 {
+    static constexpr int bhe_unknowns = BHEType::number_of_unknowns;
+    static constexpr int single_bhe_unknowns_size = ShapeFunction::NPOINTS;
+    static constexpr int temperature_size = ShapeFunction::NPOINTS;
+    static constexpr int temperature_index = 0;
+    static constexpr int bhe_unknowns_size =
+        single_bhe_unknowns_size * bhe_unknowns;
+    static constexpr int bhe_unknowns_index = ShapeFunction::NPOINTS;
+    static constexpr int local_matrix_size =
+        temperature_size + bhe_unknowns_size;
+
 public:
-    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, BHE_Dim>;
+    using ShapeMatricesType =
+        ShapeMatrixPolicyType<ShapeFunction, 3 /* GlobalDim */>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
     // Using dynamic size, because the number of unknowns in the BHE is runtime
     // value.
     using BheLocalMatrixType =
-        typename ShapeMatricesType::template MatrixType<Eigen::Dynamic,
-                                                        Eigen::Dynamic>;
+        typename ShapeMatricesType::template MatrixType<local_matrix_size,
+                                                        local_matrix_size>;
     HeatTransportBHELocalAssemblerBHE(
         HeatTransportBHELocalAssemblerBHE const&) = delete;
     HeatTransportBHELocalAssemblerBHE(HeatTransportBHELocalAssemblerBHE&&) =
@@ -42,7 +53,7 @@ public:
 
     HeatTransportBHELocalAssemblerBHE(
         MeshLib::Element const& e,
-        std::vector<unsigned> const& dofIndex_to_localIndex,
+        BHEType const& bhe,
         bool const is_axially_symmetric,
         unsigned const integration_order,
         HeatTransportBHEProcessData& process_data);
@@ -51,14 +62,6 @@ public:
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_b_data*/) override;
-
-    void preTimestepConcrete(std::vector<double> const& /*local_x*/,
-                             double const /*t*/,
-                             double const /*delta_t*/) override
-    {
-    }
-
-    void postTimestepConcrete(std::vector<double> const& /*local_x*/) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
@@ -79,17 +82,25 @@ private:
 
     IntegrationMethod _integration_method;
 
+    BHEType const& _bhe;
+
     std::size_t const element_id;
 
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 
-    BheLocalMatrixType _R_matrix;
+    typename ShapeMatricesType::template MatrixType<bhe_unknowns_size,
+                                                    bhe_unknowns_size>
+        _R_matrix;
 
-    BheLocalMatrixType _R_s_matrix;
+    typename ShapeMatricesType::template MatrixType<temperature_size,
+                                                    temperature_size>
+        _R_s_matrix;
 
-    BheLocalMatrixType _R_pi_s_matrix;
+    typename ShapeMatricesType::template MatrixType<bhe_unknowns_size,
+                                                    temperature_size>
+        _R_pi_s_matrix;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
 
-#include "HeatTransportBHELocalAssemblerBHE_impl.h"
+#include "HeatTransportBHELocalAssemblerBHE-impl.h"
