@@ -92,19 +92,19 @@ std::vector<std::size_t> findElementsInMesh(
     return element_ids;
 }
 
-/// Tries to find unique elements' ids in the bulk mesh.
+/// Tries to find all elements' ids in the bulk mesh.
 /// The subdomain elements' nodes are mapped to the bulk mesh and are then used
 /// to identify the bulk mesh elements.
-std::vector<std::size_t> identifySubdomainMeshElements(
+std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
     MeshLib::Mesh const& subdomain_mesh, MeshLib::Mesh const& bulk_mesh)
 {
     auto& properties = subdomain_mesh.getProperties();
     auto const& bulk_node_ids =
         *properties.getPropertyVector<std::size_t>("bulk_node_ids");
 
-    // Initialize with very large value
-    std::vector<std::size_t> bulk_element_ids_map(
-        subdomain_mesh.getNumberOfElements(), -1);
+    // Allocate space for all elements for random insertion.
+    std::vector<std::vector<std::size_t>> bulk_element_ids_map(
+        subdomain_mesh.getNumberOfElements());
 
     for (auto* const e : subdomain_mesh.getElements())
     {
@@ -120,7 +120,7 @@ std::vector<std::size_t> identifySubdomainMeshElements(
                        [&bulk_node_ids](std::size_t const id) {
                            return bulk_node_ids[id];
                        });
-        auto const& bulk_element_ids =
+        std::vector<std::size_t> bulk_element_ids =
             findElementsInMesh(bulk_mesh, element_node_ids_bulk);
 
         if (bulk_element_ids.empty())
@@ -131,23 +131,10 @@ std::vector<std::size_t> identifySubdomainMeshElements(
             for (auto const i : element_node_ids_bulk)
                 ERR("\t%d", i);
             OGS_FATAL(
-                "Expect exactly one element to be found in the bulk mesh.");
-        }
-        if (bulk_element_ids.size() != 1)
-        {
-            ERR("%d elements found for the subdomain element %d. "
-                "Corresponding bulk mesh node ids are:",
-                bulk_element_ids.size(), e->getID());
-            for (auto const i : element_node_ids_bulk)
-                ERR("\t%d", i);
-            ERR("The found bulk mesh element ids are:");
-            for (auto const i : bulk_element_ids)
-                ERR("\t%d", i);
-            OGS_FATAL(
-                "Expect exactly one element to be found in the bulk mesh.");
+                "Expect at least one element to be found in the bulk mesh.");
         }
 
-        bulk_element_ids_map[e->getID()] = bulk_element_ids.front();
+        bulk_element_ids_map[e->getID()] = std::move(bulk_element_ids);
     }
 
     return bulk_element_ids_map;
@@ -156,8 +143,8 @@ std::vector<std::size_t> identifySubdomainMeshElements(
 /// Updates or checks the existing mesh's property with the given values.
 void updateOrCheckExistingSubdomainProperty(
     MeshLib::Mesh& mesh, std::string const& property_name,
-    std::vector<std::size_t> values, MeshLib::MeshItemType const mesh_item_type,
-    bool const force_overwrite)
+    std::vector<std::size_t> const& values,
+    MeshLib::MeshItemType const mesh_item_type, bool const force_overwrite)
 {
     auto& properties = mesh.getProperties();
     if (!properties.existsPropertyVector<std::size_t>(property_name))
@@ -218,8 +205,49 @@ void identifySubdomainMesh(MeshLib::Mesh& subdomain_mesh,
     auto const& bulk_element_ids =
         identifySubdomainMeshElements(subdomain_mesh, bulk_mesh);
 
-    updateOrCheckExistingSubdomainProperty(
-        subdomain_mesh, "bulk_element_ids", bulk_element_ids,
-        MeshLib::MeshItemType::Cell, force_overwrite);
+    // The bulk_element_ids could be of two types: one element per entry---this
+    // is the expected case for the boundary meshes; multiple elements per
+    // entry---this happens if the subdomain mesh lies inside the bulk mesh and
+    // has lower dimension.
+    // First find out the type, then add/check the CellData or FieldData.
+    if (all_of(begin(bulk_element_ids), end(bulk_element_ids),
+               [](std::vector<std::size_t> const& v) { return v.size() == 1; }))
+    {
+        // All vectors are of size 1, so the data can be flattened and
+        // stored in CellData or compared to existing CellData.
+        std::vector<std::size_t> unique_bulk_element_ids;
+        unique_bulk_element_ids.reserve(bulk_element_ids.size());
+        transform(begin(bulk_element_ids), end(bulk_element_ids),
+                  back_inserter(unique_bulk_element_ids),
+                  [](std::vector<std::size_t> const& v) { return v[0]; });
+
+        updateOrCheckExistingSubdomainProperty(
+            subdomain_mesh, "bulk_element_ids", unique_bulk_element_ids,
+            MeshLib::MeshItemType::Cell, force_overwrite);
+    }
+    else
+    {
+        // Some of the boundary elements are connected to multiple bulk
+        // elements; Store the array in FieldData with additional CellData array
+        // for the number of elements, which also provides the offsets.
+        std::vector<std::size_t> flat_bulk_element_ids;
+        flat_bulk_element_ids.reserve(2 * bulk_element_ids.size());  // Guess.
+        std::vector<std::size_t> number_of_bulk_element_ids;
+        number_of_bulk_element_ids.reserve(bulk_element_ids.size());
+
+        for (std::vector<std::size_t> const& v : bulk_element_ids)
+        {
+            number_of_bulk_element_ids.push_back(v.size());
+            flat_bulk_element_ids.insert(end(flat_bulk_element_ids), begin(v),
+                                         end(v));
+        }
+
+        updateOrCheckExistingSubdomainProperty(
+            subdomain_mesh, "number_bulk_elements", number_of_bulk_element_ids,
+            MeshLib::MeshItemType::Cell, force_overwrite);
+        updateOrCheckExistingSubdomainProperty(
+            subdomain_mesh, "bulk_element_ids", flat_bulk_element_ids,
+            MeshLib::MeshItemType::IntegrationPoint, force_overwrite);
+    }
 }
 }  // namespace MeshGeoToolsLib
