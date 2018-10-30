@@ -109,6 +109,9 @@ createSmallDeformationProcess(
                 "deactivated_subdomains", std::vector<int>{});
         if (!deactivated_subdomains.empty())
         {
+            std::sort(deactivated_subdomains.begin(),
+                      deactivated_subdomains.end());
+
             // TODO: Modify constructDofTable() to exclude the nodes in the
             //       the deactivated subdomains from the mesh subset,
             //       and consequently remove the following warning.

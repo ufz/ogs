@@ -68,10 +68,9 @@ struct SmallDeformationProcessData
         if (!material_ids)
             return false;
 
-        return (std::find(deactivated_material_subdomains.begin(),
+        return (std::binary_search(deactivated_material_subdomains.begin(),
                           deactivated_material_subdomains.end(),
-                          (*material_ids)[element_id]) !=
-                deactivated_material_subdomains.end());
+                          (*material_ids)[element_id]));
     }
 
     MeshLib::PropertyVector<int> const* const material_ids;
