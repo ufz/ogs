@@ -43,8 +43,13 @@ struct IntegrationPointData final
     {
     }
 
+    // total stress
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
-    typename BMatricesType::KelvinVectorType eps;
+
+    // total strain
+    typename BMatricesType::KelvinVectorType eps, eps_prev;
+
+    // mechanical strain
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
@@ -60,6 +65,7 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
+        eps_prev = eps;
         eps_m_prev = eps_m;
         sigma_prev = sigma;
         solid_density_prev = solid_density;
@@ -144,6 +150,7 @@ public:
             ip_data.sigma.setZero(kelvin_vector_size);
             ip_data.sigma_prev.setZero(kelvin_vector_size);
             ip_data.eps.setZero(kelvin_vector_size);
+            ip_data.eps_prev.setZero(kelvin_vector_size);
             ip_data.eps_m.setZero(kelvin_vector_size);
             ip_data.eps_m_prev.setZero(kelvin_vector_size);
 
@@ -259,10 +266,13 @@ public:
 
             auto& sigma = _ip_data[ip].sigma;
             auto const& sigma_prev = _ip_data[ip].sigma_prev;
+
             auto& eps = _ip_data[ip].eps;
+            auto const& eps_prev = _ip_data[ip].eps_prev;
 
             auto& eps_m = _ip_data[ip].eps_m;
-            auto& eps_m_prev = _ip_data[ip].eps_m_prev;
+            auto const& eps_m_prev = _ip_data[ip].eps_m_prev;
+
             auto& state = _ip_data[ip].material_state_variables;
 
             double const dT = N.dot(T_dot) * dt;
@@ -285,10 +295,11 @@ public:
             // assume isotropic thermal expansion
             const double T_ip = N.dot(T);  // T at integration point
             eps_m.noalias() =
-                eps - linear_thermal_strain_increment * Invariants::identity2;
+                eps_m_prev + eps - eps_prev -
+                linear_thermal_strain_increment * Invariants::identity2;
+
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
                 t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
-            eps_m.noalias() = eps;
 
             if (!solution)
                 OGS_FATAL("Computation of local constitutive relation failed.");
