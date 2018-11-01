@@ -127,28 +127,33 @@ PropertyVector<T>* Properties::getPropertyVector(std::string const& name)
     }
     return dynamic_cast<PropertyVector<T>*>(it->second);
 }
+
 template <typename T>
 PropertyVector<T> const* Properties::getNodalNComponentPropertyVector(
-    std::string const& name, unsigned n_components) const
+    std::string const& name, int const n_components) const
 {
-    auto it(_properties.find(name));
+    auto const it = _properties.find(name);
     if (it == _properties.end())
     {
         OGS_FATAL("A property with name `%s' does not exist.", name.c_str());
     }
-    if (dynamic_cast<PropertyVector<T>*>(it->second)->getMeshItemType() !=
-        MeshItemType::Node)
+
+    auto property = dynamic_cast<PropertyVector<T>*>(it->second);
+    if (property == nullptr)
+    {
+        OGS_FATAL("Could not cast property '%s' to given type.", name.c_str());
+    }
+    if (property->getMeshItemType() != MeshItemType::Node)
     {
         OGS_FATAL(
             "Only nodal fields are supported for non-uniform fields. Field "
             "`%s' is not nodal.",
             name.c_str());
     }
-    if (dynamic_cast<PropertyVector<T>*>(it->second)->getNumberOfComponents() !=
-        n_components)
+    if (property->getNumberOfComponents() != n_components)
     {
         OGS_FATAL("`%s' does not have the right number of components.",
                   name.c_str());
     }
-    return dynamic_cast<PropertyVector<T> const*>(it->second);
+    return property;
 }

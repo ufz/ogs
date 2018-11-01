@@ -100,7 +100,7 @@ public:
     /// vector exists.
     template <typename T>
     PropertyVector<T> const* getNodalNComponentPropertyVector(
-        std::string const& name, unsigned n_components) const;
+        std::string const& name, int n_components) const;
 
     void removePropertyVector(std::string const& name);
 
