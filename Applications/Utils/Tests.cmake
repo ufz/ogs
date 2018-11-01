@@ -68,6 +68,32 @@ AddTest(
     2D_mesh_bottom.vtu check_2D_mesh_bottom.vtu bulk_element_ids bulk_element_ids 0 0
 )
 
+AddTest(
+    NAME identifySubdomains_riverTriangleMesh
+    PATH MeshGeoToolsLib/IdentifySubdomains
+    EXECUTABLE identifySubdomains
+    EXECUTABLE_ARGS -m river_domain_triangle.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/triangle_ -- river_bc.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    river_bc_triangle.vtu triangle_river_bc.vtu bulk_node_ids bulk_node_ids 0 0
+    #river_bc_triangle.vtu triangle_river_bc.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
+    river_bc_triangle.vtu triangle_river_bc.vtu number_bulk_elements number_bulk_elements 0 0
+)
+
+AddTest(
+    NAME identifySubdomains_riverPrismMesh
+    PATH MeshGeoToolsLib/IdentifySubdomains
+    EXECUTABLE identifySubdomains
+    EXECUTABLE_ARGS -s 1e-3 -m river_domain_prism.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/prism_ -- river_bc.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    river_bc_prism.vtu prism_river_bc.vtu bulk_node_ids bulk_node_ids 0 0
+    #river_bc_prism.vtu prism_river_bc.vtu bulk_element_ids bulk_element_ids 0 0 # TODO (naumov) Needs extension of vtkdiff to FieldData
+    river_bc_prism.vtu prism_river_bc.vtu number_bulk_elements number_bulk_elements 0 0
+)
+
 # Mac is producing slightly different partitioning, so the results are not
 # comparable.
 AddTest(
