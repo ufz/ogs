@@ -158,7 +158,7 @@
         <vtkdiff>
             <file>two_material_gravity_pcs_0_ts_1_t_1.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>5e-14</absolute_tolerance>
+            <absolute_tolerance>5e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
