@@ -123,9 +123,6 @@ public:
 private:
     NonuniformVariableDependentNeumannBoundaryConditionData const& _data;
     std::size_t const _local_matrix_size;
-
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 }  // namespace ProcessLib
