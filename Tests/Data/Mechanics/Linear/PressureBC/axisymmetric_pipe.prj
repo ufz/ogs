@@ -12,6 +12,8 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
+            <solid_density>rho_sr</solid_density>
+            <specific_body_force>0 0</specific_body_force>
             <process_variables>
                 <process_variable>displacement</process_variable>
             </process_variables>
@@ -72,6 +74,11 @@
             <name>nu</name>
             <type>Constant</type>
             <value>.3</value>
+        </parameter>
+        <parameter>
+            <name>rho_sr</name>
+            <type>Constant</type>
+            <value>1</value>
         </parameter>
         <parameter>
             <name>displacement0</name>
