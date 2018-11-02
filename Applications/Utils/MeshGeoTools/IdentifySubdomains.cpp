@@ -26,7 +26,12 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 
     for (auto const& filename : filenames)
     {
-        meshes.emplace_back(MeshLib::IO::readMeshFromFile(filename));
+        auto mesh = MeshLib::IO::readMeshFromFile(filename);
+        if (mesh == nullptr)
+        {
+            OGS_FATAL("Could not read mesh from '%s' file.", filename.c_str());
+        }
+        meshes.emplace_back(mesh);
     }
     if (meshes.empty())
     {
@@ -95,6 +100,11 @@ int main(int argc, char* argv[])
     //
     std::unique_ptr<MeshLib::Mesh> bulk_mesh{
         MeshLib::IO::readMeshFromFile(bulk_mesh_arg.getValue())};
+    if (bulk_mesh == nullptr)
+    {
+        OGS_FATAL("Could not read bulk mesh from '%s'",
+                  bulk_mesh_arg.getValue().c_str());
+    }
 
     //
     // Read the subdomain meshes.
