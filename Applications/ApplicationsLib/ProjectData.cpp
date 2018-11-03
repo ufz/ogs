@@ -200,6 +200,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     {
 #ifdef OGS_USE_PYTHON
         namespace py = pybind11;
+
+        // Append project's directory to python's module search path.
+        py::module::import("sys").attr("path").attr("append")(
+            project_directory);
+
         auto const script_path =
             BaseLib::copyPathToFileName(*python_script, project_directory);
 
