@@ -51,26 +51,6 @@
                     internal_name="epsilon_xy" output_name="epsilon_xy" />
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
-	  <!--  <fluid>
-		<density>
-	            <type>TemperatureDependent</type>
-		    <temperature0> 273.15 </temperature0>
-		    <beta> 2.07e-4 </beta>
-		    <rho0>1e-6</rho0>
-		</density>
-	        <viscosity>
-	            <type>Constant</type>
-		    <value> 1.278e-9 </value>
-		</viscosity>
-	        <specific_heat_capacity>
-		    <type>Constant</type>
-		    <value> 4186. </value>
-		</specific_heat_capacity>
-		<thermal_conductivity>
-		    <type>Constant</type>
-		    <value> 0.56e-3 </value>
-		</thermal_conductivity>
-	    </fluid> -->
         </process>
     </processes>
     <time_loop>

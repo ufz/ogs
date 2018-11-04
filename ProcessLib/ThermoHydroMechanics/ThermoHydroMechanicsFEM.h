@@ -65,7 +65,7 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        eps_prev = eps;
+        eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
         material_state_variables->pushBackState();
     }
@@ -79,7 +79,7 @@ struct IntegrationPointData final
         double const T)
     {
         auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev,
+            t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
             *material_state_variables, T);
 
         if (!solution)
@@ -105,9 +105,9 @@ struct IntegrationPointData final
                 DisplacementDim>::value>::identity2;
 
         // assume isotropic thermal expansion
-        eps.noalias() = eps - thermal_strain * identity2;
+        eps_m.noalias() = eps - thermal_strain * identity2;
         auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev,
+            t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
             *material_state_variables, T);
 
         if (!solution)

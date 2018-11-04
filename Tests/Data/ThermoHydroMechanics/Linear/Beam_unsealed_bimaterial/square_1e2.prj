@@ -18,10 +18,14 @@
             <biot_coefficient>alpha</biot_coefficient>
             <porosity>phi</porosity>
             <solid_density>rho_sr</solid_density>
+			<fluid_density>rho_fr</fluid_density>
+			<fluid_viscosity>mu</fluid_viscosity>
             <fluid_volumetric_thermal_expansion_coefficient>beta_f</fluid_volumetric_thermal_expansion_coefficient>
-            <solid_linear_thermal_expansion_coefficient>beta_s</solid_linear_thermal_expansion_coefficient>
+            <solid_linear_thermal_expansion_coefficient>alpha_s</solid_linear_thermal_expansion_coefficient>
             <solid_specific_heat_capacity>C_s</solid_specific_heat_capacity>
             <solid_thermal_conductivity>lambda_s</solid_thermal_conductivity>
+            <fluid_specific_heat_capacity>C_f</fluid_specific_heat_capacity>
+            <fluid_thermal_conductivity>lambda_f</fluid_thermal_conductivity>
             <reference_temperature>T0</reference_temperature>
             <process_variables>
                 <displacement>displacement</displacement>
@@ -45,32 +49,8 @@
                     internal_name="epsilon_zz" output_name="epsilon_zz" />
                 <secondary_variable type="static"
                     internal_name="epsilon_xy" output_name="epsilon_xy" />
-	        <secondary_variable type="static"
-	            internal_name="velocity_x" output_name="velocity_x" />
-		<secondary_variable type="static"
-		            internal_name="velocity_y" output_name="velocity_y" />
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
-	    <fluid>
-	        <density>
-		    <type>TemperatureDependent</type>
-	            <temperature0> 273.15 </temperature0>
-	            <beta> 2.07e-4 </beta>
-	            <rho0>1e-6</rho0>
-	        </density>
-		<viscosity>
-	            <type>Constant</type>
-	            <value> 1.278e-9 </value>
-	        </viscosity>
-	        <specific_heat_capacity>
-	            <type>Constant</type>
-	            <value> 4186. </value>
-	        </specific_heat_capacity>
-	        <thermal_conductivity>
-		    <type>Constant</type>
-	            <value> 0.56e-3 </value>
-	        </thermal_conductivity>
-	    </fluid>
         </process>
     </processes>
     <time_loop>
@@ -96,8 +76,6 @@
                         <variable>epsilon_yy</variable>
                         <variable>epsilon_xy</variable>
                         <variable>epsilon_zz</variable>
-		        <variable>velocity_x</variable>
-			<variable>velocity_y</variable>
                     </variables>
                 </output>
                 <time_stepping>
@@ -139,20 +117,20 @@
            </index_values>
         </parameter>
         <parameter>
-           <name>beta_s</name>
+           <name>alpha_s</name>
            <type>Group</type>
            <group_id_property>MaterialIDs</group_id_property>
            <index_values>
            <index>0</index>
-           <value>0.7e-5</value>
+           <value>0.2333333333e-5</value>
            </index_values>
            <index_values>
            <index>1</index>
-           <value>0.7e-5</value>
+           <value>0.2333333333e-5</value>
            </index_values>
            <index_values>
            <index>2</index>
-           <value>1.4e-5</value>
+           <value>0.4666666667e-5</value>
            </index_values>
         </parameter>
         <parameter>
@@ -270,6 +248,26 @@
             <name>temperature_bc_left</name>
             <type>Constant</type>
             <value>363.15</value>
+        </parameter>
+        <parameter>
+            <name>rho_fr</name>
+            <type>Constant</type>
+            <value>1e-6</value>
+        </parameter>
+        <parameter>
+            <name>mu</name>
+            <type>Constant</type>
+            <value>1.278e-9</value>
+        </parameter>
+        <parameter>
+            <name>C_f</name>
+            <type>Constant</type>
+            <value>4186</value>
+        </parameter>
+        <parameter>
+            <name>lambda_f</name>
+            <type>Constant</type>
+            <value>0.56</value>
         </parameter>
     </parameters>
     <process_variables>

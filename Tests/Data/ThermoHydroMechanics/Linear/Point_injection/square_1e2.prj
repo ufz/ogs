@@ -18,11 +18,15 @@
             <biot_coefficient>alpha</biot_coefficient>
             <porosity>phi</porosity>
             <solid_density>rho_sr</solid_density>
+			<fluid_density>rho_fr</fluid_density>
+			<fluid_viscosity>mu</fluid_viscosity>
             <fluid_volumetric_thermal_expansion_coefficient>beta_f</fluid_volumetric_thermal_expansion_coefficient>
             <solid_linear_thermal_expansion_coefficient>alpha_s</solid_linear_thermal_expansion_coefficient>
             <solid_specific_heat_capacity>C_s</solid_specific_heat_capacity>
             <solid_thermal_conductivity>lambda_s</solid_thermal_conductivity>
-            <reference_temperature>T0</reference_temperature> 
+            <fluid_specific_heat_capacity>C_f</fluid_specific_heat_capacity>
+            <fluid_thermal_conductivity>lambda_f</fluid_thermal_conductivity>
+            <reference_temperature>T0</reference_temperature>
             <process_variables>
                 <displacement>displacement</displacement>
                 <pressure>pressure</pressure>
@@ -47,26 +51,6 @@
                     internal_name="epsilon_xy" output_name="epsilon_xy" />
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
-	    <fluid>
-	        <density>
-	            <type>TemperatureDependent</type>
-	            <temperature0> 273.15 </temperature0>
-		    <beta> 4e-4 </beta>
-		    <rho0>999.1</rho0>
-	        </density>
-	        <viscosity>
-	            <type>Constant</type>
-		    <value> 1e-3 </value>
-                </viscosity>
-	        <specific_heat_capacity>
-	            <type>Constant</type>
-	            <value> 4280. </value>
-	        </specific_heat_capacity>
-	        <thermal_conductivity>
-		    <type>Constant</type>
-	            <value> 0.6 </value>
-		</thermal_conductivity>
-	    </fluid>
         </process>
     </processes>
 
@@ -218,6 +202,27 @@
             <type>Constant</type>
             <value>11500000</value>
         </parameter>
+        <parameter>
+            <name>rho_fr</name>
+            <type>Constant</type>
+            <value>999.1</value>
+        </parameter>
+        <parameter>
+            <name>mu</name>
+            <type>Constant</type>
+            <value>1e-3</value>
+        </parameter>
+        <parameter>
+            <name>C_f</name>
+            <type>Constant</type>
+            <value>4280</value>
+        </parameter>
+        <parameter>
+            <name>lambda_f</name>
+            <type>Constant</type>
+            <value>0.6</value>
+        </parameter>
+		
     </parameters>
 
     <process_variables>

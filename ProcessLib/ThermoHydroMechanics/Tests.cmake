@@ -8,11 +8,11 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu displacement displacement
-    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu pressure pressure
-    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu temperature temperature
-    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu epsilon_xx epsilon_xx
-    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu epsilon_yy epsilon_yy
+    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu displacement displacement 1e-8 1e-8
+    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu pressure pressure 1e-8 1e-8
+    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu temperature temperature 1e-8 1e-8
+    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu epsilon_xx epsilon_xx 1e-8 1e-8 
+    expected_square_1e0_pcs_0_ts_10_t_1000.000000.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu epsilon_yy epsilon_yy 1e-8 1e-8
 )
 
 AddTest(
@@ -24,9 +24,9 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu pressure_ana pressure
-    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu sigma_xx_ana sigma_xx
-    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu sigma_yy_ana sigma_yy
+    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu pressure_ana pressure 1e-4 1e-4
+    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu sigma_xx_ana sigma_xx 1e-4 1e-4
+    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu sigma_yy_ana sigma_yy 1e-4 1e-4
 )
 
 # ThermoHydroMechanics; Small deformation, linear poroelastic, sealed, bimaterial
@@ -39,11 +39,11 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu displacement displacement
-    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu pressure pressure
-    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu temperature temperature
-    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu sigma_xx sigma_xx
-    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu sigma_yy sigma_yy
+    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu displacement displacement 1e-8 1e-8
+    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu pressure pressure 1e-8 1e-8
+    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu temperature temperature 1e-8 1e-8
+    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu sigma_xx sigma_xx 1e-8 1e-8 
+    expected_square_1e2_pcs_0_ts_10_t_100.000000.vtu square_1e2_pcs_0_ts_10_t_100.000000.vtu sigma_yy sigma_yy 1e-8 1e-8
 )
 
 # ThermoHydroMechanics; Small deformation, linear poroelastic, unsealed, bimaterial
@@ -56,11 +56,11 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu displacement displacement
-    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu pressure pressure
-    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu temperature temperature
-    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu sigma_xx sigma_xx
-    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu sigma_yy sigma_yy
+    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu displacement displacement 1e-8 1e-8
+    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu pressure pressure 1e-8 1e-8
+    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu temperature temperature 1e-8 1e-8
+    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu sigma_xx sigma_xx 1e-8 1e-8
+    expected_square_1e2_pcs_0_ts_10_t_1000.000000.vtu square_1e2_pcs_0_ts_10_t_1000.000000.vtu sigma_yy sigma_yy 1e-8 1e-8
 )
 
 # ThermoHydroMechanics; Small deformation, linear poroelastic, point heat source consolidation
@@ -73,9 +73,9 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu displacement displacement
-    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu pressure pressure
-    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu temperature temperature
-    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu sigma_xx sigma_xx
-    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu sigma_yy sigma_yy
+    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu displacement displacement 1e-6 1e-6
+    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu pressure pressure 1e-6 1e-6
+    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu temperature temperature 1e-6 1e-6
+    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu sigma_xx sigma_xx 1e-6 1e-6
+    expected_square_1e0_pcs_0_ts_10_t_10000.000000.vtu square_1e0_pcs_0_ts_10_t_10000.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
 )

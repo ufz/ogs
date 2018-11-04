@@ -75,6 +75,8 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPress
                 DisplacementDim>::value;
         ip_data.sigma_eff.setZero(kelvin_vector_size);
         ip_data.eps.setZero(kelvin_vector_size);
+        ip_data.eps_m.setZero(kelvin_vector_size);
+        ip_data.eps_m_prev.resize(kelvin_vector_size);
 
         // Previous time step values are not initialized and are set later.
         ip_data.eps_prev.resize(kelvin_vector_size);
@@ -221,6 +223,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
         auto& eps = _ip_data[ip].eps;
+
+        //auto& eps_m = _ip_data[ip].eps_m;
+        //auto& eps_m_prev = _ip_data[ip].eps_m_prev;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
         double const S = _process_data.specific_storage(t, x_position)[0];
@@ -245,7 +250,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                             _process_data.reference_temperature(t, x_position)[0];
                         auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
                         auto const rho_sr = _process_data.solid_density(t, x_position)[0];
-                        auto const rho_f = _process_data.fluid_density(t, x_position)[0];
+                        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
                         auto const porosity = _process_data.porosity(t, x_position)[0];
                         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
@@ -258,8 +263,10 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             double const rho_s = rho_sr * (1 - 3 * thermal_strain);
 
             auto velocity = (-K_over_mu * dNdx_p * p).eval();
+            double const rho_f = rho_fr * (1 - beta_f * delta_T);
             velocity += K_over_mu * rho_f * b;
-            //std::cout << "thermal strain: " << thermal_strain << std::endl;
+
+            //std::cout << "rho_f: " << rho_f << std::endl;
 
 
                 //
@@ -267,6 +274,22 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 //
                 eps.noalias() = B * u;
                 auto C = _ip_data[ip].updateConstitutiveRelationThermal(t, x_position, dt, u, _process_data.reference_temperature(t, x_position)[0], thermal_strain);
+
+         /*       auto const& identity2 = MathLib::KelvinVector::Invariants<
+                    MathLib::KelvinVector::KelvinVectorDimensions<
+                        DisplacementDim>::value>::identity2;
+
+                // assume isotropic thermal expansion
+                eps_m.noalias() = eps - thermal_strain * identity2;
+                auto&& solution = solid_material.integrateStress(
+                    t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
+                    *material_state_variables, T);
+
+                 if (!solution)
+                 OGS_FATAL("Computation of local constitutive relation failed.");
+
+                 MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
+                           std::tie(sigma_eff, material_state_variables, C) = std::move(*solution); */
 
                 local_Jac
                     .template block<displacement_size, displacement_size>(
@@ -315,7 +338,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     w;
                 // coefficient matrix which is used for caculating the residual
                 auto const heat_capacity =
-                    porosity * C_f * rho_f + (1 - porosity) * C_s * rho_sr;
+                    porosity * C_f * rho_f + (1 - porosity) * C_s * rho_s;
                 MTT.noalias() += N_T.transpose() * heat_capacity * N_T * w;
 
                 //
@@ -598,6 +621,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
         auto& eps = _ip_data[ip].eps;
+        //auto& eps_m = _ip_data[ip].eps_m;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
         auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
@@ -675,7 +699,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             displacement_size> const>(local_x.data() + displacement_offset,
                                       displacement_size);
 
-    auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+   auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         temperature_size> const>(local_x.data() + temperature_index, temperature_size);
 
     double const& dt = _process_data.dt;
@@ -715,8 +739,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
 
-        _ip_data[ip].updateConstitutiveRelation(
-            t, x_position, dt, u, _process_data.reference_temperature(t, x_position)[0]);
+        _ip_data[ip].updateConstitutiveRelationThermal(
+            t, x_position, dt, u, _process_data.reference_temperature(t, x_position)[0], thermal_strain);
     }
 }
 
