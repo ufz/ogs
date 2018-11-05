@@ -7,6 +7,9 @@ author = "Lars Bilke"
 book_type = "Tutorial"
 book_cover = "geoenergy-modeling-i.png"
 
+aliases = [ "/tutorials/ces-i/e07", "/tutorials/ces-i/e08",
+            "/tutorials/ces-i/e09", "/tutorials/ces-i/e10" ]
+
 +++
 
 [<i class="fas fa-file-pdf"></i> Download this book as PDF](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-I/Basics-of-Heat-Transport-Processes-in-Geothermal-Systems-opt.pdf) 

@@ -4,7 +4,8 @@ title = "Introduction"
 author = "Lars Bilke"
 weight = 1
 
-aliases = [ "/docs/quickstart/" ]
+aliases = [ "/docs/quickstart/",
+            "/docs/quickstart/basics/quickstart" ] # Redirect for Hydrology III tutorial
 
 [menu]
   [menu.quickstart]

@@ -7,6 +7,8 @@ author = "Lars Bilke"
 book_type = "Tutorial"
 book_cover = "geoenergy-modeling-ii.png"
 
+aliases = [ "/books/shallow-geothermal-systems" ]
+
 +++
 
 [<i class="fas fa-file-pdf"></i> Download this book as PDF](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-II/ebook_Shao_etal_2016_Geoenergy_Modeling_II.pdf) 

@@ -1,5 +1,5 @@
 +++
 Title = "Releases"
 
-aliases = ["/downloads"]
+aliases = ["/downloads", "/download"] # Redirect for Hydrology II tutorial
 +++
