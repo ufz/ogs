@@ -44,7 +44,7 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
     {
         OGS_FATAL(
             "The number of the given BHE properties (%d) are not consistent "
-            "with the number of BHE groups in a mesh (%d).",
+            "with the number of BHE groups in the mesh (%d).",
             _process_data._vec_BHE_property.size(),
             _bheMeshData.BHE_mat_IDs.size());
     }
@@ -54,6 +54,9 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
     {
         OGS_FATAL("Not able to get material IDs! ");
     }
+
+    _process_data._mesh_prop_materialIDs = material_ids;
+
     // create a map from a material ID to a BHE ID
     for (int i = 0; i < static_cast<int>(_bheMeshData.BHE_mat_IDs.size()); i++)
     {
@@ -61,8 +64,6 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
         _process_data._map_materialID_to_BHE_ID[_bheMeshData.BHE_mat_IDs[i]] =
             i;
     }
-
-    _process_data._mesh_prop_materialIDs = material_ids;
 }
 
 void HeatTransportBHEProcess::constructDofTable()

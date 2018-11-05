@@ -13,10 +13,87 @@
 #include "FlowAndTemperatureControl.h"
 #include "Physics.h"
 
-using namespace ProcessLib::HeatTransportBHE::BHE;
-
-namespace
+namespace ProcessLib
 {
+namespace HeatTransportBHE
+{
+namespace BHE
+{
+BHE_1U::BHE_1U(BoreholeGeometry const& borehole,
+               RefrigerantProperties const& refrigerant,
+               GroutParameters const& grout,
+               FlowAndTemperatureControl const& flowAndTemperatureControl,
+               PipeConfiguration1U const& pipes)
+    : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
+      _pipes(pipes)
+{
+    // Initialize thermal resistances.
+    auto values = apply_visitor(
+        [&](auto const& control) {
+            return control(refrigerant.reference_temperature,
+                           0. /* initial time */);
+        },
+        flowAndTemperatureControl);
+    updateHeatTransferCoefficients(values.flow_rate);
+}
+
+std::array<double, BHE_1U::number_of_unknowns> BHE_1U::pipeHeatCapacities()
+    const
+{
+    double const& rho_r = refrigerant.density;
+    double const& specific_heat_capacity = refrigerant.specific_heat_capacity;
+    double const& rho_g = grout.rho_g;
+    double const& porosity_g = grout.porosity_g;
+    double const& heat_cap_g = grout.heat_cap_g;
+
+    return {{/*i1*/ rho_r * specific_heat_capacity,
+             /*o1*/ rho_r * specific_heat_capacity,
+             /*g1*/ (1.0 - porosity_g) * rho_g * heat_cap_g,
+             /*g2*/ (1.0 - porosity_g) * rho_g * heat_cap_g}};
+}
+
+std::array<double, BHE_1U::number_of_unknowns> BHE_1U::pipeHeatConductions()
+    const
+{
+    double const& lambda_r = refrigerant.thermal_conductivity;
+    double const& rho_r = refrigerant.density;
+    double const& Cp_r = refrigerant.specific_heat_capacity;
+    double const& alpha_L = _pipes.longitudinal_dispersion_length;
+    double const& porosity_g = grout.porosity_g;
+    double const& lambda_g = grout.lambda_g;
+
+    double const velocity_norm = std::abs(_flow_velocity) * std::sqrt(2);
+
+    // Here we calculate the laplace coefficients in the governing
+    // equations of BHE. These governing equations can be found in
+    // 1) Diersch (2013) FEFLOW book on page 952, M.120-122, or
+    // 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 19-22.
+    return {{// pipe i1, Eq. 19
+             (lambda_r + rho_r * Cp_r * alpha_L * velocity_norm),
+             // pipe o1, Eq. 20
+             (lambda_r + rho_r * Cp_r * alpha_L * velocity_norm),
+             // pipe g1, Eq. 21
+             (1.0 - porosity_g) * lambda_g,
+             // pipe g2, Eq. 22
+             (1.0 - porosity_g) * lambda_g}};
+}
+
+std::array<Eigen::Vector3d, BHE_1U::number_of_unknowns>
+BHE_1U::pipeAdvectionVectors() const
+{
+    double const& rho_r = refrigerant.density;
+    double const& Cp_r = refrigerant.specific_heat_capacity;
+
+    return {{// pipe i1, Eq. 19
+             {0, 0, -rho_r * Cp_r * _flow_velocity},
+             // pipe o1, Eq. 20
+             {0, 0, rho_r * Cp_r * _flow_velocity},
+             // grout g1, Eq. 21
+             {0, 0, 0},
+             // grout g2, Eq. 22
+             {0, 0, 0}}};
+}
+
 double compute_R_gs(double const chi, double const R_g)
 {
     return (1 - chi) * R_g;
@@ -84,7 +161,6 @@ std::pair<double, double> thermalResistancesGroutSoil(double chi,
     }
     return {R_gg, R_gs};
 }
-}  // namespace
 
 constexpr std::pair<int, int> BHE_1U::inflow_outflow_bc_component_ids[];
 
@@ -168,7 +244,8 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
     // -------------------------------------------------------------------------
 }
 
-double BHE_1U::getTinByTout(double const T_out, double const current_time)
+double BHE_1U::updateFlowRateAndTemperature(double const T_out,
+                                            double const current_time)
 {
     auto values = apply_visitor(
         [&](auto const& control) { return control(T_out, current_time); },
@@ -176,3 +253,6 @@ double BHE_1U::getTinByTout(double const T_out, double const current_time)
     updateHeatTransferCoefficients(values.flow_rate);
     return values.temperature;
 }
+}  // namespace BHE
+}  // namespace HeatTransportBHE
+}  // namespace ProcessLib

@@ -30,7 +30,7 @@ struct PipeConfiguration1U
     /// Distance between pipes.
     double const distance;
 
-    double const longitudinal_despersion_length;
+    double const longitudinal_dispersion_length;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

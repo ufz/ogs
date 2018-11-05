@@ -36,7 +36,7 @@ public:
         bc_values.ids[0] = _in_out_global_indices.first;
         // here call the corresponding BHE functions
         auto const T_out = x[_in_out_global_indices.second];
-        bc_values.values[0] = _bhe.getTinByTout(T_out, t);
+        bc_values.values[0] = _bhe.updateFlowRateAndTemperature(T_out, t);
     }
 
 private:

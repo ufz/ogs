@@ -28,7 +28,7 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     : _process_data(process_data),
       _integration_method(integration_order),
       _bhe(bhe),
-      element_id(e.getID())
+      _element_id(e.getID())
 {
     // need to make sure that the BHE elements are one-dimensional
     assert(e.getDimension() == 1);

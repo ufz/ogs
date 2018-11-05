@@ -33,7 +33,7 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         HeatTransportBHEProcessData& process_data)
     : _process_data(process_data),
       _integration_method(integration_order),
-      element_id(e.getID())
+      _element_id(e.getID())
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -48,7 +48,7 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         e, is_axially_symmetric, _integration_method);
 
     SpatialPosition x_position;
-    x_position.setElementID(element_id);
+    x_position.setElementID(_element_id);
 
     // ip data initialization
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -86,7 +86,7 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         _integration_method.getNumberOfPoints();
 
     SpatialPosition pos;
-    pos.setElementID(element_id);
+    pos.setElementID(_element_id);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {

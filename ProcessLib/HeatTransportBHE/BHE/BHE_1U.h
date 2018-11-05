@@ -23,6 +23,19 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
+/**
+ * The BHE_1U class is the realization of 1U type of Borehole Heate Exchanger.
+ * In this class, the pipe heat capacity, pipe heat conductiion, pie advection
+ * vectors are intialized according to the geometry of 1U type of BHE.
+ * For 1U type of BHE, 4 primary unknowns are assigned on the 1D BHE elements.
+ * They are the temperature in inflow pipe T_in, temperature in outflow pipe
+ * T_out temperature of the two grout zones sorrounding the inflow and outflow
+ * pipe T_g1 and T_g2. These primary varaibles are solved according to heat
+ * convection and conduction equations on the pipes and also in the grout zones.
+ * The interaction of the 1U type of BHE and the sorrounding soil is regulated
+ * through the thermal resistance values, which are calculated specifically
+ * during the initialization of the class.
+ */
 class BHE_1U final : public BHECommon
 {
 public:
@@ -30,76 +43,16 @@ public:
            RefrigerantProperties const& refrigerant,
            GroutParameters const& grout,
            FlowAndTemperatureControl const& flowAndTemperatureControl,
-           PipeConfiguration1U const& pipes)
-        : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl},
-          _pipes(pipes)
-    {
-        // Initialize thermal resistances.
-        auto values = apply_visitor(
-            [&](auto const& control) {
-                return control(refrigerant.reference_temperature,
-                               0. /* initial time */);
-            },
-            flowAndTemperatureControl);
-        updateHeatTransferCoefficients(values.flow_rate);
-    }
+           PipeConfiguration1U const& pipes);
 
     static constexpr int number_of_unknowns = 4;
 
-    std::array<double, number_of_unknowns> pipeHeatCapacities() const
-    {
-        double const& rho_r = refrigerant.density;
-        double const& specific_heat_capacity =
-            refrigerant.specific_heat_capacity;
-        double const& rho_g = grout.rho_g;
-        double const& porosity_g = grout.porosity_g;
-        double const& heat_cap_g = grout.heat_cap_g;
+    std::array<double, number_of_unknowns> pipeHeatCapacities() const;
 
-        return {{/*i1*/ rho_r * specific_heat_capacity,
-                 /*o1*/ rho_r * specific_heat_capacity,
-                 /*g1*/ (1.0 - porosity_g) * rho_g * heat_cap_g,
-                 /*g2*/ (1.0 - porosity_g) * rho_g * heat_cap_g}};
-    }
+    std::array<double, number_of_unknowns> pipeHeatConductions() const;
 
-    std::array<double, number_of_unknowns> pipeHeatConductions() const
-    {
-        double const& lambda_r = refrigerant.thermal_conductivity;
-        double const& rho_r = refrigerant.density;
-        double const& Cp_r = refrigerant.specific_heat_capacity;
-        double const& alpha_L = _pipes.longitudinal_despersion_length;
-        double const& porosity_g = grout.porosity_g;
-        double const& lambda_g = grout.lambda_g;
-
-        double const velocity_norm = std::abs(_flow_velocity) * std::sqrt(2);
-
-        // Here we calculate the laplace coefficients in the governing
-        // equations of BHE. These governing equations can be found in
-        // 1) Diersch (2013) FEFLOW book on page 952, M.120-122, or
-        // 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 19-22.
-        return {{// pipe i1, Eq. 19
-                 (lambda_r + rho_r * Cp_r * alpha_L * velocity_norm),
-                 // pipe o1, Eq. 20
-                 (lambda_r + rho_r * Cp_r * alpha_L * velocity_norm),
-                 // pipe g1, Eq. 21
-                 (1.0 - porosity_g) * lambda_g,
-                 // pipe g2, Eq. 22
-                 (1.0 - porosity_g) * lambda_g}};
-    }
-
-    std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors() const
-    {
-        double const& rho_r = refrigerant.density;
-        double const& Cp_r = refrigerant.specific_heat_capacity;
-
-        return {{// pipe i1, Eq. 19
-                 {0, 0, -rho_r * Cp_r * _flow_velocity},
-                 // pipe o1, Eq. 20
-                 {0, 0, rho_r * Cp_r * _flow_velocity},
-                 // grout g1, Eq. 21
-                 {0, 0, 0},
-                 // grout g2, Eq. 22
-                 {0, 0, 0}}};
-    }
+    std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors()
+        const;
 
     template <int NPoints,
               typename SingleUnknownMatrixType,
@@ -125,7 +78,7 @@ public:
                     1.0 * matBHE_loc_R;  // K_i1
                 R_matrix.block(2 * NPoints, 2 * NPoints, NPoints, NPoints) +=
                     1.0 * matBHE_loc_R;  // K_ig
-                break;
+                return;
             case 1:  // PHI_fog
                 R_matrix.block(NPoints, 3 * NPoints, NPoints, NPoints) +=
                     -1.0 * matBHE_loc_R;
@@ -136,7 +89,7 @@ public:
                     1.0 * matBHE_loc_R;  // K_o1
                 R_matrix.block(3 * NPoints, 3 * NPoints, NPoints, NPoints) +=
                     1.0 * matBHE_loc_R;  // K_og
-                break;
+                return;
             case 2:  // PHI_gg
                 R_matrix.block(2 * NPoints, 3 * NPoints, NPoints, NPoints) +=
                     -1.0 * matBHE_loc_R;
@@ -149,7 +102,7 @@ public:
                 R_matrix.block(3 * NPoints, 3 * NPoints, NPoints, NPoints) +=
                     1.0 * matBHE_loc_R;  // K_og  // see Diersch 2013 FEFLOW
                                          // book page 954 Table M.2
-                break;
+                return;
             case 3:  // PHI_gs
                 R_s_matrix.template block<NPoints, NPoints>(0, 0).noalias() +=
                     1.0 * matBHE_loc_R;
@@ -162,15 +115,16 @@ public:
                     1.0 * matBHE_loc_R;  // K_ig
                 R_matrix.block(3 * NPoints, 3 * NPoints, NPoints, NPoints) +=
                     1.0 * matBHE_loc_R;  // K_og
-                break;
+                return;
+            default:
+                OGS_FATAL(
+                    "Error!!! In the function BHE_1U::assembleRMatrices, "
+                    "the index of bhe unknowns is out of range! ");
         }
     }
 
-    /**
-     * return the inflow temperature based on outflow temperature and fixed
-     * power.
-     */
-    double getTinByTout(double T_out, double current_time);
+    /// Return the inflow temperature for the boundary condition.
+    double updateFlowRateAndTemperature(double T_out, double current_time);
 
     double thermalResistance(int const unknown_index) const
     {

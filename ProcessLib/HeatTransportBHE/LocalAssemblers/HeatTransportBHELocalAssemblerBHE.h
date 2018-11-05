@@ -84,7 +84,7 @@ private:
 
     BHEType const& _bhe;
 
-    std::size_t const element_id;
+    std::size_t const _element_id;
 
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 

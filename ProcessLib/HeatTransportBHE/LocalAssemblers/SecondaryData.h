@@ -19,7 +19,7 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-/// Used by for extrapolation of the integration point values. It is ordered
+/// Used for extrapolation of the integration point values. It is ordered
 /// (and stored) by integration points.
 template <typename ShapeMatrixType>
 struct SecondaryData
