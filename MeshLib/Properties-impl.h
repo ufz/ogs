@@ -129,8 +129,9 @@ PropertyVector<T>* Properties::getPropertyVector(std::string const& name)
 }
 
 template <typename T>
-PropertyVector<T> const* Properties::getNodalNComponentPropertyVector(
-    std::string const& name, int const n_components) const
+PropertyVector<T> const* Properties::getPropertyVector(
+    std::string const& name, MeshItemType const item_type,
+    int const n_components) const
 {
     auto const it = _properties.find(name);
     if (it == _properties.end())
@@ -143,12 +144,12 @@ PropertyVector<T> const* Properties::getNodalNComponentPropertyVector(
     {
         OGS_FATAL("Could not cast property '%s' to given type.", name.c_str());
     }
-    if (property->getMeshItemType() != MeshItemType::Node)
+    if (property->getMeshItemType() != item_type)
     {
         OGS_FATAL(
-            "Only nodal fields are supported for non-uniform fields. Field "
-            "`%s' is not nodal.",
-            name.c_str());
+            "The PropertyVector '%s' has a different type than requested. A "
+            "`%s' field is requested.",
+            name.c_str(), toString(item_type));
     }
     if (property->getNumberOfComponents() != n_components)
     {

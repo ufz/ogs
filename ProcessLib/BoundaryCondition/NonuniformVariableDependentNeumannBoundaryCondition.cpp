@@ -36,51 +36,42 @@ createNonuniformVariableDependentNeumannBoundaryCondition(
     auto const constant_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__constant_name}
         config.getConfigParameter<std::string>("constant_name");
-    auto const* const constant =
-        boundary_mesh.getProperties().getNodalNComponentPropertyVector<double>(
-            constant_name, 1);
+    auto const& constant =
+        *boundary_mesh.getProperties().getPropertyVector<double>(
+            constant_name, MeshLib::MeshItemType::Node, 1);
 
     auto const coefficient_current_variable_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__coefficient_current_variable_name}
         config.getConfigParameter<std::string>(
             "coefficient_current_variable_name");
-    auto const* const coefficient_current_variable =
-        boundary_mesh.getProperties().getNodalNComponentPropertyVector<double>(
-            coefficient_current_variable_name, 1);
+    auto const& coefficient_current_variable =
+        *boundary_mesh.getProperties().getPropertyVector<double>(
+            coefficient_current_variable_name, MeshLib::MeshItemType::Node, 1);
 
     auto const coefficient_other_variable_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__coefficient_other_variable_name}
         config.getConfigParameter<std::string>(
             "coefficient_other_variable_name");
-    auto const* const coefficient_other_variable =
-        boundary_mesh.getProperties().getNodalNComponentPropertyVector<double>(
-            coefficient_other_variable_name, 1);
+    auto const& coefficient_other_variable =
+        *boundary_mesh.getProperties().getPropertyVector<double>(
+            coefficient_other_variable_name, MeshLib::MeshItemType::Node, 1);
 
     auto const coefficient_mixed_variables_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NonuniformVariableDependentNeumann__coefficient_mixed_variables_name}
         config.getConfigParameter<std::string>(
             "coefficient_mixed_variables_name");
-    auto const* const coefficient_mixed_variables =
-        boundary_mesh.getProperties().getNodalNComponentPropertyVector<double>(
-            coefficient_mixed_variables_name, 1);
+    auto const& coefficient_mixed_variables =
+        *boundary_mesh.getProperties().getPropertyVector<double>(
+            coefficient_mixed_variables_name, MeshLib::MeshItemType::Node, 1);
 
     std::string const mapping_to_bulk_nodes_property = "bulk_node_ids";
-    auto const* const mapping_to_bulk_nodes =
-        boundary_mesh.getProperties().getPropertyVector<std::size_t>(
-            mapping_to_bulk_nodes_property);
-
-    if (!(mapping_to_bulk_nodes && mapping_to_bulk_nodes->getMeshItemType() ==
-                                       MeshLib::MeshItemType::Node) &&
-        mapping_to_bulk_nodes->getNumberOfComponents() == 1)
-    {
-        OGS_FATAL("Field `%s' is not set up properly.",
-                  mapping_to_bulk_nodes_property.c_str());
-    }
+    boundary_mesh.getProperties().getPropertyVector<std::size_t>(
+        mapping_to_bulk_nodes_property, MeshLib::MeshItemType::Node, 1);
 
     std::vector<MeshLib::Node*> const& bc_nodes = boundary_mesh.getNodes();
     MeshLib::MeshSubset bc_mesh_subset(boundary_mesh, bc_nodes);
-    auto const* const dof_table_boundary_other_variable =
-        dof_table.deriveBoundaryConstrainedMap(
+    auto const& dof_table_boundary_other_variable =
+        *dof_table.deriveBoundaryConstrainedMap(
             (variable_id + 1) % 2, {component_id}, std::move(bc_mesh_subset));
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no
@@ -103,9 +94,8 @@ createNonuniformVariableDependentNeumannBoundaryCondition(
         integration_order, shapefunction_order, dof_table, variable_id,
         component_id, bulk_mesh.getDimension(), boundary_mesh,
         NonuniformVariableDependentNeumannBoundaryConditionData{
-            *constant, *coefficient_current_variable,
-            *coefficient_other_variable, *coefficient_mixed_variables,
-            *dof_table_boundary_other_variable});
+            constant, coefficient_current_variable, coefficient_other_variable,
+            coefficient_mixed_variables, dof_table_boundary_other_variable});
 }
 
 }  // namespace ProcessLib
