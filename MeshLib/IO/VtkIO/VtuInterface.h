@@ -23,6 +23,11 @@ class Mesh;
 namespace IO
 {
 
+#ifdef USE_PETSC
+std::string getVtuFileNameForPetscOutputWithoutExtension(
+    std::string const& file_name);
+#endif
+
 /**
  * \brief Reads and writes VtkXMLUnstructuredGrid-files (vtu) to and from OGS data structures.
  * This class is currently not inherited from Writer because VTK will implement

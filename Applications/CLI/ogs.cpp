@@ -68,12 +68,12 @@ int main(int argc, char* argv[])
         "Path to the ogs6 project file.",
         true,
         "",
-        "PROJECT FILE");
+        "PROJECT_FILE");
     cmd.add(project_arg);
 
     TCLAP::ValueArg<std::string> outdir_arg("o", "output-directory",
                                             "the output directory to write to",
-                                            false, "", "output directory");
+                                            false, "", "PATH");
     cmd.add(outdir_arg);
 
     TCLAP::ValueArg<std::string> log_level_arg("l", "log-level",
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 #else
                                                "all",
 #endif
-                                               "log level");
+                                               "LOG_LEVEL");
     cmd.add(log_level_arg);
 
     TCLAP::SwitchArg nonfatal_arg("",

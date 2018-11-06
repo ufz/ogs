@@ -70,18 +70,34 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
     return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid, mesh_name);
 }
 
+#ifdef USE_PETSC
+std::string getVtuFileNameForPetscOutputWithoutExtension(
+    std::string const& file_name)
+{
+    auto const file_name_extension = BaseLib::getFileExtension(file_name);
+    if (file_name_extension != "vtu")
+    {
+        OGS_FATAL("Expected a .vtu file for petsc output.");
+    }
+
+    auto const file_name_base = boost::erase_last_copy(file_name, ".vtu");
+    auto basename = BaseLib::extractBaseName(file_name_base);
+
+    // Replace dots to underscores since the pvtu writing function drops all
+    // characters starting from a dot.
+    std::replace(basename.begin(), basename.end(), '.', '_');
+
+    // Restore the dirname if any.
+    auto const dirname = BaseLib::extractPath(file_name_base);
+    return BaseLib::joinPaths(dirname, basename);
+}
+#endif
+
 bool VtuInterface::writeToFile(std::string const &file_name)
 {
 #ifdef USE_PETSC
-    auto const file_name_base = boost::erase_last_copy(file_name, ".vtu");
-
-    auto const dirname = BaseLib::extractPath(file_name_base);
-    auto basename = BaseLib::extractBaseName(file_name_base);
-
-    // Since the pvtu writing function drops all letters from the letter of '.'.
-    std::replace(basename.begin(), basename.end(), '.', '_');
-
-    auto const vtu_file_name = BaseLib::joinPaths(dirname, basename);
+    auto const vtu_file_name =
+        getVtuFileNameForPetscOutputWithoutExtension(file_name);
     int rank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
     int mpi_size;

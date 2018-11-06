@@ -12,6 +12,8 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
+            <solid_density>rho_sr</solid_density>
+            <specific_body_force>0 0 0</specific_body_force>
             <process_variables>
                 <process_variable>displacement</process_variable>
             </process_variables>
@@ -27,7 +29,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-16</abstol>
+                    <abstol>1e-14</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -72,6 +74,11 @@
             <name>nu</name>
             <type>Constant</type>
             <value>.3</value>
+        </parameter>
+        <parameter>
+            <name>rho_sr</name>
+            <type>Constant</type>
+            <value>1</value>
         </parameter>
         <parameter>
             <name>displacement0</name>
@@ -165,7 +172,7 @@
         <nonlinear_solver>
             <name>basic_newton</name>
             <type>Newton</type>
-            <max_iter>5</max_iter>
+            <max_iter>10</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
@@ -174,7 +181,7 @@
             <name>general_linear_solver</name>
             <lis>-i bicgstab -p jacobi -tol 1e-16 -maxiter 100000</lis>
             <eigen>
-                <solver_type>BiCGSTAB</solver_type>
+                <solver_type>CG</solver_type>
                 <precon_type>DIAGONAL</precon_type>
                 <max_iteration_step>100000</max_iteration_step>
                 <error_tolerance>1e-6</error_tolerance>
