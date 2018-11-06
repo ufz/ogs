@@ -21,9 +21,9 @@ namespace ProcessLib
 {
 std::unique_ptr<SourceTerm> createSourceTerm(
     const SourceTermConfig& config,
-    const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
-    const int variable_id, const unsigned integration_order,
-    const unsigned shapefunction_order,
+    const NumLib::LocalToGlobalIndexMap& dof_table_bulk,
+    const MeshLib::Mesh& mesh, const int variable_id,
+    const unsigned integration_order, const unsigned shapefunction_order,
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
@@ -32,14 +32,14 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     if (type == "Nodal")
     {
         return ProcessLib::createNodalSourceTerm(
-            config.config, config.mesh, dof_table, mesh.getID(), variable_id,
-            *config.component_id, parameters);
+            config.config, config.mesh, dof_table_bulk, mesh.getID(),
+            variable_id, *config.component_id, parameters);
     }
 
     if (type == "Volumetric")
     {
         return ProcessLib::createVolumetricSourceTerm(
-            config.config, config.mesh, dof_table, parameters,
+            config.config, config.mesh, dof_table_bulk, parameters,
             integration_order, shapefunction_order, variable_id,
             *config.component_id);
     }
@@ -48,9 +48,9 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     {
 #ifdef OGS_USE_PYTHON
         return ProcessLib::createPythonSourceTerm(
-            config.config, config.mesh, dof_table, mesh.getID(), variable_id,
-            *config.component_id, integration_order, shapefunction_order,
-            mesh.getDimension());
+            config.config, config.mesh, dof_table_bulk, mesh.getID(),
+            variable_id, *config.component_id, integration_order,
+            shapefunction_order, mesh.getDimension());
 #else
         OGS_FATAL("OpenGeoSys has not been built with Python support.");
 #endif
