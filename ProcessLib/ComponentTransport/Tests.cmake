@@ -395,3 +395,29 @@ AddTest(
     3D1P-GWFlow_1_reference.vtu out_ogs5_H_pcs_0_ts_1_t_10000000.000000.vtu NODAL_VELOCITY1 darcy_velocity 1e-10 1.4e-2
     VIS out_ogs5_H_pcs_0_ts_1_t_10000000.000000.vtu
 )
+
+
+AddTest(
+    NAME 1D_ComponentTransport_VariableDependentBoundary
+    PATH Parabolic/ComponentTransport/VariableNeumannBoundary
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS vdbc_input.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    vdbc_pcs_0_ts_0_t_0.000000_expected.vtu vdbc_pcs_0_ts_0_t_0.000000.vtu pressure pressure 1e-5 1e-4
+    vdbc_pcs_0_ts_1590_t_6000.000000_expected.vtu vdbc_pcs_0_ts_1590_t_6000.000000.vtu pressure pressure 1e-5 1e-4
+    vdbc_pcs_0_ts_3990_t_30000.000000_expected.vtu vdbc_pcs_0_ts_3990_t_30000.000000.vtu pressure pressure 1e-5 1e-4
+    vdbc_pcs_0_ts_9990_t_90000.000000_expected.vtu vdbc_pcs_0_ts_9990_t_90000.000000.vtu pressure pressure 1e-5 1e-4
+    vdbc_pcs_0_ts_15990_t_150000.000000_expected.vtu vdbc_pcs_0_ts_15990_t_150000.000000.vtu pressure pressure 1e-5 1e-4
+    vdbc_pcs_0_ts_21990_t_210000.000000_expected.vtu vdbc_pcs_0_ts_21990_t_210000.000000.vtu pressure pressure 1e-5 1e-4
+    vdbc_pcs_0_ts_25990_t_250000.000000_expected.vtu vdbc_pcs_0_ts_25990_t_250000.000000.vtu pressure pressure 1e-5 1e-4
+    vdbc_pcs_0_ts_0_t_0.000000_expected.vtu vdbc_pcs_0_ts_0_t_0.000000.vtu pressure pressure 1e-5 1e-4
+    vdbc_pcs_0_ts_1590_t_6000.000000_expected.vtu vdbc_pcs_0_ts_1590_t_6000.000000.vtu concentration concentration 1e-5 1e-4
+    vdbc_pcs_0_ts_3990_t_30000.000000_expected.vtu vdbc_pcs_0_ts_3990_t_30000.000000.vtu concentration concentration 1e-5 1e-4
+    vdbc_pcs_0_ts_9990_t_90000.000000_expected.vtu vdbc_pcs_0_ts_9990_t_90000.000000.vtu concentration concentration 1e-5 1e-4
+    vdbc_pcs_0_ts_15990_t_150000.000000_expected.vtu vdbc_pcs_0_ts_15990_t_150000.000000.vtu concentration concentration 1e-5 1e-4
+    vdbc_pcs_0_ts_21990_t_210000.000000_expected.vtu vdbc_pcs_0_ts_21990_t_210000.000000.vtu concentration concentration 1e-5 1e-4
+    vdbc_pcs_0_ts_25990_t_250000.000000_expected.vtu vdbc_pcs_0_ts_25990_t_250000.000000.vtu concentration concentration 1e-5 1e-4
+)

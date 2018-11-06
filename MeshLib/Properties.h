@@ -95,6 +95,14 @@ public:
     template <typename T>
     PropertyVector<T>* getPropertyVector(std::string const& name);
 
+    /// Returns a property vector with given \c name, \c item_type and \c
+    /// number_of_components or aborts calling OGS_FATAL if no such property
+    /// vector exists.
+    template <typename T>
+    PropertyVector<T> const* getPropertyVector(std::string const& name,
+                                               MeshItemType const item_type,
+                                               int const n_components) const;
+
     void removePropertyVector(std::string const& name);
 
     /// Check if a PropertyVector accessible by the name is already
