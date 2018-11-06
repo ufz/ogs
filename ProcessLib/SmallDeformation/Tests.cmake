@@ -251,14 +251,14 @@ AddTest(
 # Pressure boundary condition: elastic pipe axisymmetric
 AddTest(
     NAME SmallDeformation_PressureBC_elastic_pipe_axisymmetric
-    PATH Mechanics/Linear
+    PATH Mechanics/Linear/PressureBC
     EXECUTABLE ogs
     EXECUTABLE_ARGS axisymmetric_pipe.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0
-    ref_axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmteric_pipe_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-11 0
+    axisymmetric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmetric_pipe_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0
+    axisymmetric_pipe_pcs_0_ts_1_t_1.000000.vtu axisymmetric_pipe_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-11 0
 )
 
 # Pressure boundary condition: elastic sphere axisymmetric
