@@ -20,7 +20,7 @@ PropertyVector<T>* Properties::createNewPropertyVector(
         _properties.find(name)
     );
     if (it != _properties.end()) {
-        ERR("A property of the name \"%s\" is already assigned to the mesh.",
+        ERR("A property of the name '%s' is already assigned to the mesh.",
             name.c_str());
         return nullptr;
     }
@@ -48,7 +48,7 @@ PropertyVector<T>* Properties::createNewPropertyVector(
         _properties.find(name)
     );
     if (it != _properties.end()) {
-        ERR("A property of the name \"%s\" already assigned to the mesh.",
+        ERR("A property of the name '%s' already assigned to the mesh.",
             name.c_str());
         return nullptr;
     }
@@ -136,7 +136,7 @@ PropertyVector<T> const* Properties::getPropertyVector(
     auto const it = _properties.find(name);
     if (it == _properties.end())
     {
-        OGS_FATAL("A property with name `%s' does not exist.", name.c_str());
+        OGS_FATAL("A property with name '%s' does not exist.", name.c_str());
     }
 
     auto property = dynamic_cast<PropertyVector<T>*>(it->second);
@@ -148,12 +148,12 @@ PropertyVector<T> const* Properties::getPropertyVector(
     {
         OGS_FATAL(
             "The PropertyVector '%s' has a different type than requested. A "
-            "`%s' field is requested.",
+            "'%s' field is requested.",
             name.c_str(), toString(item_type));
     }
     if (property->getNumberOfComponents() != n_components)
     {
-        OGS_FATAL("`%s' does not have the right number of components.",
+        OGS_FATAL("'%s' does not have the right number of components.",
                   name.c_str());
     }
     return property;
