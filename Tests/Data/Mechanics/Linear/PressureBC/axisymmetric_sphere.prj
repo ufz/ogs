@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true">axisymmetric_sphere.vtu</mesh>
+    <mesh  axially_symmetric="true">axisymmetric_sphere.vtu</mesh>
     <geometry>axisymmetric_sphere.gml</geometry>
     <processes>
         <process>
@@ -68,12 +68,12 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>2.1e5</value>
+            <value>125e9</value>
         </parameter>
         <parameter>
             <name>nu</name>
             <type>Constant</type>
-            <value>.3</value>
+            <value>.35</value>
         </parameter>
         <parameter>
             <name>rho_sr</name>
@@ -93,12 +93,12 @@
         <parameter>
             <name>pressure_inside</name>
             <type>Constant</type>
-            <value>52.2</value>
+            <value>1e3</value>
         </parameter>
         <parameter>
             <name>pressure_outside</name>
             <type>Constant</type>
-            <value>0.1</value>
+            <value>1e5</value>
         </parameter>
     </parameters>
     <process_variables>
