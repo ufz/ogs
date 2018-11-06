@@ -69,29 +69,41 @@ AddTest(
 )
 
 AddTest(
-    NAME identifySubdomains_riverTriangleMesh
+    NAME identifySubdomains_PntLineSFC_DomainTRIMesh
     PATH MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
-    EXECUTABLE_ARGS -m river_domain_triangle.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/triangle_ -- river_bc.vtu
+    EXECUTABLE_ARGS -m PntLineSFC_DomainTRIMesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/TRI_ -- PntLineSFC_BC_Point.vtu PntLineSFC_BC_Line.vtu PntLineSFC_BC_Surface.vtu
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
-    river_bc_triangle.vtu triangle_river_bc.vtu bulk_node_ids bulk_node_ids 0 0
-    #river_bc_triangle.vtu triangle_river_bc.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
-    river_bc_triangle.vtu triangle_river_bc.vtu number_bulk_elements number_bulk_elements 0 0
+    PntLineSFC_BC_Point_TRI_reference.vtu TRI_PntLineSFC_BC_Point.vtu bulk_node_ids bulk_node_ids 0 0
+    PntLineSFC_BC_Line_TRI_reference.vtu TRI_PntLineSFC_BC_Line.vtu bulk_node_ids bulk_node_ids 0 0
+    PntLineSFC_BC_Surface_TRI_reference.vtu TRI_PntLineSFC_BC_Surface.vtu bulk_node_ids bulk_node_ids 0 0  
+    # PntLineSFC_BC_Point_TRI_reference.vtu TRI_PntLineSFC_BC_Point.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
+    # PntLineSFC_BC_Line_TRI_reference.vtu TRI_PntLineSFC_BC_Line.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
+    # PntLineSFC_BC_Surface_TRI_reference.vtu TRI_PntLineSFC_BC_Surface.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
+    PntLineSFC_BC_Point_TRI_reference.vtu TRI_PntLineSFC_BC_Point.vtu number_bulk_elements number_bulk_elements 0 0
+    PntLineSFC_BC_Line_TRI_reference.vtu TRI_PntLineSFC_BC_Line.vtu number_bulk_elements number_bulk_elements 0 0
+    PntLineSFC_BC_Surface_TRI_reference.vtu TRI_PntLineSFC_BC_Surface.vtu number_bulk_elements number_bulk_elements 0 0
 )
 
 AddTest(
-    NAME identifySubdomains_riverPrismMesh
+    NAME identifySubdomains_PntLineSFC_DomainPRISMMesh
     PATH MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
-    EXECUTABLE_ARGS -s 1e-3 -m river_domain_prism.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/prism_ -- river_bc.vtu
+    EXECUTABLE_ARGS -m PntLineSFC_DomainPRISMMesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/TRI_ -- PntLineSFC_BC_Point.vtu PntLineSFC_BC_Line.vtu PntLineSFC_BC_Surface.vtu
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
-    river_bc_prism.vtu prism_river_bc.vtu bulk_node_ids bulk_node_ids 0 0
-    #river_bc_prism.vtu prism_river_bc.vtu bulk_element_ids bulk_element_ids 0 0 # TODO (naumov) Needs extension of vtkdiff to FieldData
-    river_bc_prism.vtu prism_river_bc.vtu number_bulk_elements number_bulk_elements 0 0
+    PntLineSFC_BC_Point_PRISM_reference.vtu PRISM_PntLineSFC_BC_Point.vtu bulk_node_ids bulk_node_ids 0 0
+    PntLineSFC_BC_Line_PRISM_reference.vtu PRISM_PntLineSFC_BC_Line.vtu bulk_node_ids bulk_node_ids 0 0
+    PntLineSFC_BC_Surface_PRISM_reference.vtu PRISM_PntLineSFC_BC_Surface.vtu bulk_node_ids bulk_node_ids 0 0  
+    # PntLineSFC_BC_Point_PRISM_reference.vtu PRISM_PntLineSFC_BC_Point.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
+    # PntLineSFC_BC_Line_PRISM_reference.vtu PRISM_PntLineSFC_BC_Line.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
+    # PntLineSFC_BC_Surface_PRISM_reference.vtu PRISM_PntLineSFC_BC_Surface.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
+    PntLineSFC_BC_Point_PRISM_reference.vtu PRISM_PntLineSFC_BC_Point.vtu number_bulk_elements number_bulk_elements 0 0
+    PntLineSFC_BC_Line_PRISM_reference.vtu PRISM_PntLineSFC_BC_Line.vtu number_bulk_elements number_bulk_elements 0 0
+    PntLineSFC_BC_Surface_PRISM_reference.vtu PRISM_PntLineSFC_BC_Surface.vtu number_bulk_elements number_bulk_elements 0 0
 )
 
 # Mac is producing slightly different partitioning, so the results are not
