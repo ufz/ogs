@@ -78,7 +78,7 @@ AddTest(
     DIFF_DATA
     PntLineSFC_BC_Point_TRI_reference.vtu TRI_PntLineSFC_BC_Point.vtu bulk_node_ids bulk_node_ids 0 0
     PntLineSFC_BC_Line_TRI_reference.vtu TRI_PntLineSFC_BC_Line.vtu bulk_node_ids bulk_node_ids 0 0
-    PntLineSFC_BC_Surface_TRI_reference.vtu TRI_PntLineSFC_BC_Surface.vtu bulk_node_ids bulk_node_ids 0 0  
+    PntLineSFC_BC_Surface_TRI_reference.vtu TRI_PntLineSFC_BC_Surface.vtu bulk_node_ids bulk_node_ids 0 0
     # PntLineSFC_BC_Point_TRI_reference.vtu TRI_PntLineSFC_BC_Point.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
     # PntLineSFC_BC_Line_TRI_reference.vtu TRI_PntLineSFC_BC_Line.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
     # PntLineSFC_BC_Surface_TRI_reference.vtu TRI_PntLineSFC_BC_Surface.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
@@ -97,7 +97,7 @@ AddTest(
     DIFF_DATA
     PntLineSFC_BC_Point_PRISM_reference.vtu PRISM_PntLineSFC_BC_Point.vtu bulk_node_ids bulk_node_ids 0 0
     PntLineSFC_BC_Line_PRISM_reference.vtu PRISM_PntLineSFC_BC_Line.vtu bulk_node_ids bulk_node_ids 0 0
-    PntLineSFC_BC_Surface_PRISM_reference.vtu PRISM_PntLineSFC_BC_Surface.vtu bulk_node_ids bulk_node_ids 0 0  
+    PntLineSFC_BC_Surface_PRISM_reference.vtu PRISM_PntLineSFC_BC_Surface.vtu bulk_node_ids bulk_node_ids 0 0
     # PntLineSFC_BC_Point_PRISM_reference.vtu PRISM_PntLineSFC_BC_Point.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
     # PntLineSFC_BC_Line_PRISM_reference.vtu PRISM_PntLineSFC_BC_Line.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
     # PntLineSFC_BC_Surface_PRISM_reference.vtu PRISM_PntLineSFC_BC_Surface.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
