@@ -35,7 +35,7 @@ class SourceTerm;
 std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& source_term_mesh,
-    NumLib::LocalToGlobalIndexMap const& source_term_dof_table,
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order, unsigned const shapefunction_order,
     int const variable_id, int const component_id);

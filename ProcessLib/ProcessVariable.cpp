@@ -222,7 +222,7 @@ ProcessVariable::createSourceTerms(
 
     for (auto& config : _source_term_configs)
         source_terms.emplace_back(createSourceTerm(
-            config, dof_table, _mesh, variable_id, integration_order,
+            config, dof_table, config.mesh, variable_id, integration_order,
             _shapefunction_order, parameters));
 
     return source_terms;
