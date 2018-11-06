@@ -229,10 +229,10 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS hollow_sphere.prj
     TESTER vtkdiff
-    REQUIREMENTS OGS_USE_LIS
+    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-15 0
-    expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
+    expected_hollow_sphere_pcs_0_ts_1_t_1.000000.vtu hollow_sphere_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-11 0
 )
 
 # Pressure boundary condition: elastic pipe plain strain
