@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <mesh>cube_1x1x1_hex_1e0.vtu</mesh>
+    <geometry>cube_1x1x1.gml</geometry>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>THERMO_MECHANICS</type>
+            <integration_order>2</integration_order>
+
+            <constitutive_relation>
+                <type>MFront</type>
+
+                <library>libBehaviour.so</library>
+                <behaviour>BDT</behaviour>
+
+                <material_properties>
+                    <material_property name="YoungModulus" parameter="E"  />
+                    <material_property name="PoissonRatio" parameter="nu" />
+
+                    <material_property name="ThermalExpansion" parameter="alpha" />
+                    <material_property name="f_c" parameter="f_c" />
+                    <material_property name="m_0" parameter="m_0" />
+                    <material_property name="alpha_p" parameter="alpha_p" />
+                    <material_property name="n_exp_T" parameter="n_exp_T" />
+                    <material_property name="q_h0" parameter="q_h0" />
+                    <material_property name="chi_h" parameter="chi_h" />
+                    <material_property name="alpha_d" parameter="alpha_d" />
+                    <material_property name="h_d" parameter="h_d" />
+                    <material_property name="Qact" parameter="Qact" />
+                    <material_property name="A_creep" parameter="A_creep" />
+                    <material_property name="n_creep" parameter="n_creep" />
+                    <material_property name="El_1" parameter="El_1" />
+                    <material_property name="El_2" parameter="El_2" />
+                    <material_property name="El_3" parameter="El_3" />
+                    <material_property name="at_1" parameter="at_1" />
+                    <material_property name="at_2" parameter="at_2" />
+                    <material_property name="at_3" parameter="at_3" />
+                </material_properties>
+            </constitutive_relation>
+
+            <reference_solid_density>rho_sr</reference_solid_density>
+            <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
+            <specific_heat_capacity>cs</specific_heat_capacity>
+            <thermal_conductivity>lambda</thermal_conductivity>
+            <process_variables>
+                <displacement>displacement</displacement>
+                <temperature>temperature</temperature>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
+                <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
+            </secondary_variables>
+            <specific_body_force>0 0 0</specific_body_force>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1e-14</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <output>
+                    <variables>
+                        <variable>displacement</variable>
+                        <variable>temperature</variable>
+                        <variable>sigma</variable>
+                        <variable>epsilon</variable>
+                    </variables>
+                </output>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>-6</t_initial>
+                    <t_end>6.774e3</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>6</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>cube_1e0_bdt</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name> E              </name>
+            <type>Constant</type>
+            <value>   4.4619e4             </value>
+        </parameter>
+        <parameter>
+            <name>  nu             </name>
+            <type>Constant</type>
+            <value>  3e-1              </value>
+        </parameter>
+        <!--
+        <parameter>
+            <name>  ThermalExpansion             </name>
+            <type>Constant</type>
+            <value> 1e-5               </value>
+        </parameter>
+        -->
+        <parameter>
+            <name> f_c              </name>
+            <type>Constant</type>
+            <value>  8.075e2              </value>
+        </parameter>
+        <parameter>
+            <name>m_0               </name>
+            <type>Constant</type>
+            <value>   4.31e0             </value>
+        </parameter>
+        <parameter>
+            <name>   alpha_p            </name>
+            <type>Constant</type>
+            <value>  1.42e-3              </value>
+        </parameter>
+        <parameter>
+            <name>     n_exp_T          </name>
+            <type>Constant</type>
+            <value>  4.72e0              </value>
+        </parameter>
+        <parameter>
+            <name>   q_h0            </name>
+            <type>Constant</type>
+            <value>   8.59e-1             </value>
+        </parameter>
+        <parameter>
+            <name>    chi_h           </name>
+            <type>Constant</type>
+            <value>   0.001             </value>
+        </parameter>
+        <parameter>
+            <name>     alpha_d          </name>
+            <type>Constant</type>
+            <value>  2e-2              </value>
+        </parameter>
+        <parameter>
+            <name>     h_d          </name>
+            <type>Constant</type>
+            <value> 1               </value>
+        </parameter>
+        <parameter>
+            <name>   Qact            </name>
+            <type>Constant</type>
+            <value>  5.54e5              </value>
+        </parameter>
+        <parameter>
+            <name>  A_creep             </name>
+            <type>Constant</type>
+            <value>  5.36e10              </value>
+        </parameter>
+        <parameter>
+            <name>   n_creep            </name>
+            <type>Constant</type>
+            <value>   6.8e0             </value>
+        </parameter>
+        <parameter>
+            <name>  El_1             </name>
+            <type>Constant</type>
+            <value>   -2.1693e-6             </value>
+        </parameter>
+        <parameter>
+            <name> El_2              </name>
+            <type>Constant</type>
+            <value>   1.571e-3             </value>
+        </parameter>
+        <parameter>
+            <name> El_3              </name>
+            <type>Constant</type>
+            <value>  6.868e-1              </value>
+        </parameter>
+        <parameter>
+            <name>    at_1           </name>
+            <type>Constant</type>
+            <value>  1.1522e-4              </value>
+        </parameter>
+        <parameter>
+            <name>    at_2           </name>
+            <type>Constant</type>
+            <value>  -9.4003e-5              </value>
+        </parameter>
+        <parameter>
+            <name>   at_3            </name>
+            <type>Constant</type>
+            <value>  -8.1075e-2              </value>
+        </parameter>
+
+
+        <parameter>
+            <name> rho_sr              </name>
+            <type>Constant</type>
+            <value>   0             </value>
+        </parameter>
+        <parameter>
+            <name> alpha              </name>
+            <type>Constant</type>
+            <value>   1.e-5             </value>
+        </parameter>
+        <parameter>
+            <name> cs              </name>
+            <type>Constant</type>
+            <value>   0             </value>
+        </parameter>
+        <parameter>
+            <name> lambda              </name>
+            <type>Constant</type>
+            <value>   0             </value>
+        </parameter>
+
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value> 0 </value>
+        </parameter>
+        <parameter>
+            <name>one</name>
+            <type>Constant</type>
+            <value> 1 </value>
+        </parameter>
+
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values> 0 0 0 </values>
+        </parameter>
+        <parameter>
+            <name>temperature0</name>
+            <type>Constant</type>
+            <values> 1173.15 </values>
+        </parameter>
+
+        <parameter>
+            <name>boundary_temperature</name>
+            <type>CurveScaled</type>
+            <parameter> one </parameter>
+            <curve> temperature </curve>
+        </parameter>
+
+
+        <parameter>
+            <name>Dirichlet_top</name>
+            <type>CurveScaled</type>
+            <curve>Dirichlet_top_temporal</curve>
+            <parameter>one</parameter>
+        </parameter>
+        <parameter>
+            <name>Neumann_force_right</name>
+            <type>CurveScaled</type>
+            <curve>Neumann_temporal_right</curve>
+            <parameter>one</parameter>
+        </parameter>
+        <parameter>
+            <name>Neumann_force_top</name>
+            <type>CurveScaled</type>
+            <curve>Neumann_temporal_top</curve>
+            <parameter>one</parameter>
+        </parameter>
+
+
+
+    </parameters>
+    <curves>
+        <curve>
+            <name>temperature</name>
+            <coords>-1e6     1e6    </coords>
+            <values>1173.15 1173.15</values>
+        </curve>
+
+        <curve>
+            <name>Dirichlet_top_temporal</name>
+            <coords>-6.0 0.0 750      6.15e3  6.526e3  6.774e3</coords>
+            <values>0.0  0.0 -0.0075 -6.15e-2 -8.03e-2 -1.051e-1</values>
+        </curve>
+        <curve>
+            <name>Neumann_temporal_right</name>
+            <coords>-6.0 0.0 750  6.774e3</coords>
+            <values>0.0  0.0 -300 -300</values>
+        </curve>
+        <curve>
+            <name>Neumann_temporal_top</name>
+            <coords>-6.0 0.0 750  6.774e3</coords>
+            <values>0.0  0.0 -300 -300</values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>3</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <!-- fixed boundaries -->
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>front</geometry>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Dirichlet</type>
+                    <component>2</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+
+                <!-- force -->
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Neumann</type>
+                    <component>0</component>
+                    <parameter>Neumann_force_right</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>back</geometry>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>Dirichlet_top</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>top</geometry>
+                    <type>Neumann</type>
+                    <component>2</component>
+                    <parameter>Neumann_force_top</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>temperature0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>boundary_temperature</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>boundary_temperature</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>top</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>boundary_temperature</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>boundary_temperature</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>front</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>boundary_temperature</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+                    <geometry>back</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>boundary_temperature</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>50</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i BiCGSTAB -p jacobi -tol 1e-16 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>BiCGSTAB</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-16</error_tolerance>
+            </eigen>
+            <petsc>
+                <prefix>sd</prefix>
+                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+</OpenGeoSysProject>
