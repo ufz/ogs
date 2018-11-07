@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>square_1x1_quad_1e6.vtu</mesh>
-    <geometry>square_1x1_midpoint.gml</geometry>
+    <meshes>
+        <mesh>square_1x1_quad_1e6.vtu</mesh>
+        <mesh>square_1x1_geometry_middle_point.vtu</mesh>
+        <mesh>square_1x1_geometry_left.vtu</mesh>
+        <mesh>square_1x1_geometry_right.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>GW23</name>
@@ -79,22 +83,19 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>square_1x1_geometry_left</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>square_1x1_geometry_right</mesh>
                     <type>Dirichlet</type>
                     <parameter>p_Dirichlet_right</parameter>
                 </boundary_condition>
             </boundary_conditions>
             <source_terms>
                 <source_term>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>middle_point</geometry>
+                    <mesh>square_1x1_geometry_middle_point</mesh>
                     <type>Nodal</type>
                     <parameter>pressure_source_term</parameter>
                 </source_term>
