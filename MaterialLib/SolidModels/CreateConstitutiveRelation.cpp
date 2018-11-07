@@ -15,6 +15,7 @@
 #include "CreateEhlers.h"
 #include "CreateLinearElasticIsotropic.h"
 #include "CreateLubby2.h"
+#include "MFront/CreateMFront.h"
 
 #include "MechanicsBase.h"
 
@@ -56,6 +57,11 @@ createConstitutiveRelation(
     if (type == "CreepBGRa")
     {
         return MaterialLib::Solids::Creep::createCreepBGRa<DisplacementDim>(
+            parameters, config);
+    }
+    if (type == "MFront")
+    {
+        return MaterialLib::Solids::MFront::createMFront<DisplacementDim>(
             parameters, config);
     }
     OGS_FATAL("Cannot construct constitutive relation of given type \'%s\'.",

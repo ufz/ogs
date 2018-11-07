@@ -21,6 +21,8 @@ append_source_files(SOURCES PorousMedium/UnsaturatedProperty/CapillaryPressure)
 append_source_files(SOURCES PorousMedium/UnsaturatedProperty/RelativePermeability)
 append_source_files(SOURCES TwoPhaseModels)
 
+add_subdirectory(SolidModels/MFront)
+
 add_library(MaterialLib ${SOURCES})
 if(BUILD_SHARED_LIBS)
     install(TARGETS MaterialLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -28,10 +30,12 @@ endif()
 
 include(GenerateExportHeader)
 generate_export_header(MaterialLib)
-target_include_directories(MaterialLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(MaterialLib
+    PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 target_link_libraries(MaterialLib
-    PUBLIC BaseLib NumLib logog # ProcessLib
+    PUBLIC MaterialLib_SolidModels_MFront # ProcessLib
     PRIVATE MathLib MeshLib
 )
 
