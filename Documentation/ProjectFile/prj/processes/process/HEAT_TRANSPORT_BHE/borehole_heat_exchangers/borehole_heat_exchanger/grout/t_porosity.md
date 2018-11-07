@@ -1,0 +1,1 @@
+Porosity of the grout. We always would like to have a kind of grout with low porosity because the efficiency of the heat conduction will be higher. In grout, there is an assume that no heat advection exists.
