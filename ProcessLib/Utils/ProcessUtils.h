@@ -42,6 +42,11 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     std::initializer_list<std::string>
         tag_names);
 
+std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
+    std::vector<ProcessVariable> const& variables,
+    BaseLib::ConfigTree const& pv_config,
+    std::string const& tag_name);
+
 /// Find a parameter of specific type for a given name.
 ///
 /// \tparam ParameterDataType the data type of the parameter

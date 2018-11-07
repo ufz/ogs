@@ -49,6 +49,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
 
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
+
     if (use_monolithic_scheme)  // monolithic scheme.
     {
         auto per_process_variables = findProcessVariables(
@@ -69,7 +70,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
         for (int i = 0; i < 2; i++)
         {
             auto per_process_variables =
-                findProcessVariables(variables, pv_config, {variable_names[i]});
+                findProcessVariables(variables, pv_config, variable_names[i]);
+
             process_variables.push_back(std::move(per_process_variables));
         }
     }
