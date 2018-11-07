@@ -161,4 +161,10 @@ std::string appendPathSeparator(std::string const& path);
  */
 std::string joinPaths(std::string const& pathA, std::string const& pathB);
 
+/// Returns the directory where the prj file resides.
+std::string const& getProjectDirectory();
+
+/// Sets the project directory.
+void setProjectDirectory(std::string const& dir);
+
 } // end namespace BaseLib
