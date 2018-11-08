@@ -32,11 +32,3 @@
     yarn --ignore-engines --ignore-optional --non-interactive
     pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
     hugo -b $DEPLOY_PRIME_URL"""
-
-[[redirects]]
-  from = "/help/documentation"
-  to = "https://ogs5-keywords.netlify.com"
-
-[[redirects]]
-  from = "/project/license"
-  to = "https://github.com/ufz/ogs/blob/master/LICENSE.txt"
