@@ -124,8 +124,8 @@ public:
                                   ProcessLib::SpatialPosition const& x,
                                   double const T) const;
 
+    MaterialProperties getMaterialProperties() const { return _mp; }
 
-    MaterialProperties getMaterialProperties() { return _mp; }
 protected:
     MaterialProperties _mp;
 };
