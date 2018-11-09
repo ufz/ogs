@@ -12,7 +12,9 @@
 #include <memory>
 #include <vector>
 
-#include "MaterialLib/SolidModels/PhaseFieldExtension.h"
+#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
+#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -126,6 +128,19 @@ public:
         _ip_data.reserve(n_integration_points);
         _secondary_data.N.resize(n_integration_points);
 
+        auto& solid_material =
+            MaterialLib::Solids::selectSolidConstitutiveRelation(
+                _process_data.solid_materials,
+                _process_data.material_ids,
+                e.getID());
+        if (!dynamic_cast<MaterialLib::Solids::LinearElasticIsotropic<
+                DisplacementDim> const*>(&solid_material))
+        {
+            OGS_FATAL(
+                "For phasefield process only linear elastic solid material "
+                "support is implemented.");
+        }
+
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, DisplacementDim>(
@@ -136,8 +151,7 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            // displacement (subscript u)
-            _ip_data.emplace_back(*_process_data.material);
+            _ip_data.emplace_back(solid_material);
             auto& ip_data = _ip_data[ip];
             ip_data.integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *
