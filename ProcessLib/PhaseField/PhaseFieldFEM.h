@@ -70,20 +70,28 @@ struct IntegrationPointData final
 
     template <typename DisplacementVectorType>
     void updateConstitutiveRelation(double const t,
-                                    SpatialPosition const& x_position,
+                                    SpatialPosition const& x,
                                     double const /*dt*/,
                                     DisplacementVectorType const& /*u*/,
                                     double const degradation)
     {
-        static_cast<
-            MaterialLib::Solids::PhaseFieldExtension<DisplacementDim> const&>(
-            solid_material)
-            .calculateDegradedStress(t, x_position, eps, strain_energy_tensile,
-                                     sigma_tensile, sigma_compressive,
-                                     C_tensile, C_compressive, sigma,
-                                     degradation, elastic_energy);
+        auto linear_elastic_mp =
+            static_cast<MaterialLib::Solids::LinearElasticIsotropic<
+                DisplacementDim> const&>(solid_material)
+                .getMaterialProperties();
+
+        auto const bulk_modulus = linear_elastic_mp.bulk_modulus(t, x);
+        auto const mu = linear_elastic_mp.mu(t, x);
+
+        std::tie(sigma, sigma_tensile, C_tensile, C_compressive,
+                 strain_energy_tensile, elastic_energy) =
+            MaterialLib::Solids::Phasefield::calculateDegradedStress<
+                DisplacementDim>(degradation, bulk_modulus, mu, eps);
     }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+
+    static constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
 };
 
 /// Used by for extrapolation of the integration point values. It is ordered
