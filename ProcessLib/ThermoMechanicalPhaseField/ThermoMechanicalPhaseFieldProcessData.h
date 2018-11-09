@@ -33,8 +33,11 @@ template <int DisplacementDim>
 struct ThermoMechanicalPhaseFieldProcessData
 {
     ThermoMechanicalPhaseFieldProcessData(
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&&
-            material_,
+        MeshLib::PropertyVector<int> const* const material_ids_,
+        std::map<int,
+                 std::unique_ptr<
+                     MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
+            solid_materials_,
         Parameter<double> const& residual_stiffness_,
         Parameter<double> const& crack_resistance_,
         Parameter<double> const& crack_length_scale_,
@@ -46,7 +49,8 @@ struct ThermoMechanicalPhaseFieldProcessData
         Parameter<double> const& residual_thermal_conductivity_,
         double const reference_temperature_,
         Eigen::Matrix<double, DisplacementDim, 1> const& specific_body_force_)
-        : material{std::move(material_)},
+        : material_ids(material_ids_),
+          solid_materials{std::move(solid_materials_)},
           residual_stiffness(residual_stiffness_),
           crack_resistance(crack_resistance_),
           crack_length_scale(crack_length_scale_),
@@ -63,24 +67,7 @@ struct ThermoMechanicalPhaseFieldProcessData
     }
 
     ThermoMechanicalPhaseFieldProcessData(
-        ThermoMechanicalPhaseFieldProcessData&& other)
-        : material{std::move(other.material)},
-          residual_stiffness(other.residual_stiffness),
-          crack_resistance(other.crack_resistance),
-          crack_length_scale(other.crack_length_scale),
-          kinetic_coefficient(other.kinetic_coefficient),
-          solid_density(other.solid_density),
-          linear_thermal_expansion_coefficient(
-              other.linear_thermal_expansion_coefficient),
-          specific_heat_capacity(other.specific_heat_capacity),
-          thermal_conductivity(other.thermal_conductivity),
-          residual_thermal_conductivity(other.residual_thermal_conductivity),
-          reference_temperature(other.reference_temperature),
-          specific_body_force(other.specific_body_force),
-          dt(other.dt),
-          t(other.t)
-    {
-    }
+        ThermoMechanicalPhaseFieldProcessData&& other) = default;
 
     //! Copies are forbidden.
     ThermoMechanicalPhaseFieldProcessData(
@@ -92,8 +79,11 @@ struct ThermoMechanicalPhaseFieldProcessData
     //! Assignments are not needed.
     void operator=(ThermoMechanicalPhaseFieldProcessData&&) = delete;
 
-    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
-        material;
+    MeshLib::PropertyVector<int> const* const material_ids;
+
+    std::map<int, std::unique_ptr<
+                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+        solid_materials;
     Parameter<double> const& residual_stiffness;
     Parameter<double> const& crack_resistance;
     Parameter<double> const& crack_length_scale;
