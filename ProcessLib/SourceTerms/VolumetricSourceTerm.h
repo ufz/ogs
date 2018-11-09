@@ -24,7 +24,6 @@ public:
         MeshLib::Mesh const& source_term_mesh,
         std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
         unsigned const integration_order, unsigned const shapefunction_order,
-        int const variable_id, int const component_id,
         Parameter<double> const& volumetric_source_term);
 
     void integrate(const double t, GlobalVector const& x, GlobalVector& b,

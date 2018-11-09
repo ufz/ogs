@@ -83,8 +83,7 @@ std::unique_ptr<SourceTerm> createSourceTerm(
                 std::move(source_term_mesh_subset)));
         return ProcessLib::createVolumetricSourceTerm(
             config.config, config.mesh, std::move(dof_table_source_term),
-            parameters, integration_order, shapefunction_order, variable_id,
-            *config.component_id);
+            parameters, integration_order, shapefunction_order);
     }
 
     if (type == "Python")
