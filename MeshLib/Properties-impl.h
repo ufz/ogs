@@ -163,3 +163,39 @@ PropertyVector<T> const* Properties::getPropertyVector(
     }
     return property;
 }
+
+template <typename T>
+PropertyVector<T>* Properties::getPropertyVector(std::string const& name,
+                                                 MeshItemType const item_type,
+                                                 int const n_components)
+{
+    auto const it = _properties.find(name);
+    if (it == _properties.end())
+    {
+        OGS_FATAL("A PropertyVector with name '%s' does not exist in the mesh.",
+                  name.c_str());
+    }
+
+    auto property = dynamic_cast<PropertyVector<T>*>(it->second);
+    if (property == nullptr)
+    {
+        OGS_FATAL(
+            "Could not cast the data type of the PropertyVector '%s' to "
+            "requested data type.",
+            name.c_str());
+    }
+    if (property->getMeshItemType() != item_type)
+    {
+        OGS_FATAL(
+            "The PropertyVector '%s' has type '%s'. A '%s' field is requested.",
+            name.c_str(), toString(property->getMeshItemType()),
+            toString(item_type));
+    }
+    if (property->getNumberOfComponents() != n_components)
+    {
+        OGS_FATAL(
+            "PropertyVector '%s' has %d components, %d components are needed.",
+            name.c_str(), property->getNumberOfComponents(), n_components);
+    }
+    return property;
+}

@@ -103,6 +103,14 @@ public:
                                                MeshItemType const item_type,
                                                int const n_components) const;
 
+    /// Non-const version of getPropertyVector returns a property vector with
+    /// given \c name, \c item_type and \c number_of_components or calls
+    /// OGS_FATAL if no such property vector exists.
+    template <typename T>
+    PropertyVector<T>* getPropertyVector(std::string const& name,
+                                         MeshItemType const item_type,
+                                         int const number_of_components);
+
     void removePropertyVector(std::string const& name);
 
     /// Check if a PropertyVector accessible by the name is already
