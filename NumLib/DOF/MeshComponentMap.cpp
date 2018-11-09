@@ -148,7 +148,7 @@ MeshComponentMap MeshComponentMap::getSubset(
     }
     auto const& bulk_node_ids_map =
         *new_mesh_properties.template getPropertyVector<std::size_t>(
-            "bulk_node_ids");
+            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
     // New dictionary for the subset.
     ComponentGlobalIndexDict subset_dict;
