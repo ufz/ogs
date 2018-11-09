@@ -29,6 +29,35 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
 
+    // check basic data consistency
+    if (variable_id >=
+            static_cast<int>(dof_table_bulk.getNumberOfVariables()) ||
+        *config.component_id >=
+            dof_table_bulk.getNumberOfVariableComponents(variable_id))
+    {
+        OGS_FATAL(
+            "Variable id or component id too high. Actual values: (%d, "
+            "%d), maximum values: (%d, %d).",
+            variable_id, *config.component_id,
+            dof_table_bulk.getNumberOfVariables(),
+            dof_table_bulk.getNumberOfVariableComponents(variable_id));
+    }
+
+    if (!source_term_mesh.getProperties()
+             .template existsPropertyVector<std::size_t>("bulk_node_ids"))
+    {
+        OGS_FATAL(
+            "The required bulk node ids map does not exist in the "
+            "source term mesh '%s'.",
+            source_term_mesh.getName().c_str());
+    }
+    std::vector<MeshLib::Node*> const& source_term_nodes =
+        source_term_mesh.getNodes();
+    DBUG(
+        "Found %d nodes for source term at mesh '%s' for the variable %d and "
+        "component %d",
+        source_term_nodes.size(), source_term_mesh.getName().c_str(),
+        variable_id, *config.component_id);
 
     MeshLib::MeshSubset source_term_mesh_subset(source_term_mesh,
                                                 source_term_nodes);

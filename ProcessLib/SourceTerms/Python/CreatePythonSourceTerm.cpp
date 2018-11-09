@@ -50,16 +50,6 @@ std::unique_ptr<SourceTerm> createPythonSourceTerm(
                             .cast<ProcessLib::SourceTerms::Python::
                                       PythonSourceTermPythonSideInterface*>();
 
-    if (variable_id >= static_cast<int>(dof_table.getNumberOfVariables()) ||
-        component_id >= dof_table.getNumberOfVariableComponents(variable_id))
-    {
-        OGS_FATAL(
-            "Variable id or component id too high. Actual values: (%d, %d), "
-            "maximum values: (%d, %d).",
-            variable_id, component_id, dof_table.getNumberOfVariables(),
-            dof_table.getNumberOfVariableComponents(variable_id));
-    }
-
     // In case of partitioned mesh the source_term could be empty, i.e. there is
     // no source_term condition.
 #ifdef USE_PETSC

@@ -28,13 +28,6 @@ NodalSourceTerm::NodalSourceTerm(
       _parameter(parameter)
 {
     DBUG("Create NodalSourceTerm.");
-    if (!_st_mesh.getProperties().template existsPropertyVector<std::size_t>(
-            "bulk_node_ids"))
-    {
-        OGS_FATAL(
-            "Required mesh property \"bulk_node_ids\" does not exists on the "
-            "source term mesh '%s'.", _st_mesh.getName().c_str());
-    }
 }
 
 void NodalSourceTerm::integrate(const double t, GlobalVector const& /*x*/,
