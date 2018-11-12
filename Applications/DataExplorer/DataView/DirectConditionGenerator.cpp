@@ -97,22 +97,23 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
     const std::size_t nNodes(surface_mesh->getNumberOfNodes());
     const double no_data(raster->getHeader().no_data);
 
-    auto const* const node_id_pv =
-        surface_mesh->getProperties().getPropertyVector<int>(prop_name);
-    if (!node_id_pv)
+    MeshLib::PropertyVector<int> const* node_id_pv = nullptr;
+    try
     {
-        ERR(
-            "Need subsurface node ids, but the property \"%s\" is not "
-            "available.",
-            prop_name.c_str());
+        node_id_pv = surface_mesh->getProperties().getPropertyVector<int>(
+            prop_name, MeshLib::MeshItemType::Node, 1);
+    }
+    catch (std::runtime_error const& e)
+    {
+        WARN("%s", e.what());
         return _direct_values;
     }
 
     _direct_values.reserve(nNodes);
-    for (std::size_t i=0; i<nNodes; ++i)
+    for (std::size_t i = 0; i < nNodes; ++i)
     {
         double val(raster->getValueAtPoint(*surface_nodes[i]));
-        val = (val == no_data) ? 0 : ((val*node_area_vec[i])/scaling);
+        val = (val == no_data) ? 0 : ((val * node_area_vec[i]) / scaling);
         _direct_values.emplace_back((*node_id_pv)[i], val);
     }
 
