@@ -88,6 +88,33 @@ bool Properties::existsPropertyVector(std::string const& name) const
 }
 
 template <typename T>
+bool Properties::existsPropertyVector(std::string const& name,
+                                      MeshItemType const item_type,
+                                      int const number_of_components) const
+{
+    auto const it = _properties.find(name);
+    if (it == _properties.end())
+    {
+        return false;
+    }
+
+    auto property = dynamic_cast<PropertyVector<T>*>(it->second);
+    if (property == nullptr)
+    {
+        return false;
+    }
+    if (property->getMeshItemType() != item_type)
+    {
+        return false;
+    }
+    if (property->getNumberOfComponents() != number_of_components)
+    {
+        return false;
+    }
+    return true;
+}
+
+template <typename T>
 PropertyVector<T> const* Properties::getPropertyVector(
     std::string const& name) const
 {

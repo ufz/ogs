@@ -85,6 +85,14 @@ public:
     template <typename T>
     bool existsPropertyVector(std::string const& name) const;
 
+    /// Checks if a property vector with given type \c T, \c name, \c item_type
+    /// and \c number_of_components exists.
+    /// @param name name of the requested property vector
+    template <typename T>
+    bool existsPropertyVector(std::string const& name,
+                              MeshItemType const item_type,
+                              int const number_of_components) const;
+
     /// Returns a property vector with given \c name or aborts calling OGS_FATAL
     /// if no such property vector exists.
     template <typename T>
