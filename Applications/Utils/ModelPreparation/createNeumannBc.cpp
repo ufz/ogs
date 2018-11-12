@@ -45,8 +45,8 @@ std::vector<double> getSurfaceIntegratedValuesForNodes(
             prop_name.c_str());
         return std::vector<double>();
     }
-    auto const* const elem_pv =
-        mesh.getProperties().getPropertyVector<double>(prop_name);
+    auto const* const elem_pv = mesh.getProperties().getPropertyVector<double>(
+        prop_name, MeshLib::MeshItemType::Cell, 1);
 
     std::vector<double> integrated_node_area_vec;
     double total_area(0);
@@ -133,17 +133,21 @@ int main(int argc, char* argv[])
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::IO::readMeshFromFile(in_mesh.getValue()));
 
-    std::string const prop_name("bulk_node_ids");
     auto const* const node_id_pv =
-        surface_mesh->getProperties().getPropertyVector<std::size_t>(prop_name);
+        [&]() -> MeshLib::PropertyVector<std::size_t>* {
+        try
+        {
+            return surface_mesh->getProperties().getPropertyVector<std::size_t>(
+                "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+        }
+        catch (std::runtime_error const& e)
+        {
+            WARN("%s", e.what());
+            return nullptr;
+        }
+    }();
     if (!node_id_pv)
-    {
-        ERR(
-            "Need subsurface node ids, but the property \"%s\" is not "
-            "available.",
-            prop_name.c_str());
         return EXIT_FAILURE;
-    }
 
     std::vector<double> integrated_values = getSurfaceIntegratedValuesForNodes(
         *surface_mesh, property_in_arg.getValue());
@@ -162,13 +166,14 @@ int main(int argc, char* argv[])
         surface_mesh->getProperties().createNewPropertyVector<double>(
             property_out_arg.getValue(), MeshLib::MeshItemType::Node, 1);
     pv->resize(surface_mesh->getNodes().size());
-    for (std::size_t k(0); k<surface_mesh->getNodes().size(); ++k) {
+    for (std::size_t k(0); k < surface_mesh->getNodes().size(); ++k)
+    {
         (*pv)[k] = direct_values[k].second;
     }
 
     MeshLib::IO::writeMeshToFile(*surface_mesh, result_file.getValue());
 
-    std::ofstream result_out(result_file.getValue()+".txt");
+    std::ofstream result_out(result_file.getValue() + ".txt");
     result_out.precision(std::numeric_limits<double>::digits10);
     for (auto const& p : direct_values)
         result_out << p.first << " " << p.second << "\n";
