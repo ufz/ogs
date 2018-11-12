@@ -33,14 +33,16 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
     std::vector<MeshLib::Element*> vec_new_eles = MeshLib::copyElementVector(mesh.getElements(), vec_new_nodes);
 
     std::vector<int> new_mat_ids;
+    try
     {
-        if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs")) {
-            auto ids =
-                mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-            new_mat_ids.reserve(ids->size());
-            std::copy(ids->cbegin(), ids->cend(),
-                      std::back_inserter(new_mat_ids));
-        }
+        auto ids = mesh.getProperties().getPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+        new_mat_ids.reserve(ids->size());
+        std::copy(ids->cbegin(), ids->cend(), std::back_inserter(new_mat_ids));
+    }
+    catch (std::runtime_error const& e)
+    {
+        WARN("%s", e.what());
     }
     int max_matID(0);
     if (!new_mat_ids.empty())
