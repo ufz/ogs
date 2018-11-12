@@ -1,0 +1,222 @@
+/**
+ * \copyright
+ * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#include "CreateMFront.h"
+
+#ifdef OGS_USE_MFRONT
+
+#include "MFront.h"
+
+#include "BaseLib/FileTools.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
+
+namespace
+{
+/// Prints info about MFront variables.
+void varInfo(std::string const& msg,
+             std::vector<mgis::behaviour::Variable> const& vars,
+             mgis::behaviour::Hypothesis hypothesis)
+{
+    INFO("#%s: %lu (array size %lu).",
+         msg.c_str(),
+         vars.size(),
+         mgis::behaviour::getArraySize(vars, hypothesis));
+    for (auto& var : vars)
+    {
+        INFO("  --> type `%s' with name `%s', size %lu, offset %lu.",
+             MaterialLib::Solids::MFront::varTypeToString(var.type),
+             var.name.c_str(),
+             mgis::behaviour::getVariableSize(var, hypothesis),
+             mgis::behaviour::getVariableOffset(vars, var.name, hypothesis));
+    }
+}
+}  // anonymous namespace
+
+namespace MaterialLib
+{
+namespace Solids
+{
+namespace MFront
+{
+template <int DisplacementDim>
+std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    BaseLib::ConfigTree const& config)
+{
+    INFO("### MFRONT ########################################################");
+
+    //! \ogs_file_param{material__solid__constitutive_relation__type}
+    config.checkConfigParameter("type", "MFront");
+
+    auto const lib_path = BaseLib::joinPaths(
+        BaseLib::getProjectDirectory(),
+        //! \ogs_file_param{material__solid__constitutive_relation__MFront__library}
+        config.getConfigParameter<std::string>("library"));
+    auto const behaviour_name =
+        //! \ogs_file_param{material__solid__constitutive_relation__MFront__behaviour}
+        config.getConfigParameter<std::string>("behaviour");
+
+    static_assert(DisplacementDim == 2 || DisplacementDim == 3,
+                  "Given DisplacementDim not supported.");
+
+    mgis::behaviour::Hypothesis hypothesis;
+    if (DisplacementDim == 2)
+    {
+        // TODO support the axial symmetry modelling hypothesis.
+        WARN(
+            "The model is defined in 2D. On the material level currently a "
+            "plane strain setting is used. In particular it is not checked if "
+            "axial symmetry or plane stress are assumed. Special material "
+            "behaviour for these settings is currently not supported.");
+        hypothesis = mgis::behaviour::Hypothesis::PLANESTRAIN;
+    }
+    else if (DisplacementDim == 3)
+    {
+        hypothesis = mgis::behaviour::Hypothesis::TRIDIMENSIONAL;
+    }
+
+    auto behaviour =
+        mgis::behaviour::load(lib_path, behaviour_name, hypothesis);
+
+    INFO("Behaviour:      `%s'.", behaviour.behaviour.c_str());
+    INFO("Hypothesis:     `%s'.", mgis::behaviour::toString(hypothesis));
+    INFO("Source:         `%s'.", behaviour.source.c_str());
+    INFO("TFEL version:   `%s'.", behaviour.tfel_version.c_str());
+    INFO("Behaviour type: `%s'.", btypeToString(behaviour.btype));
+    INFO("Kinematic:      `%s'.", toString(behaviour.kinematic));
+    INFO("Symmetry:       `%s'.", toString(behaviour.symmetry));
+
+    varInfo("Mat. props.", behaviour.mps, hypothesis);
+    varInfo("Gradients", behaviour.gradients, hypothesis);
+    varInfo("Thdyn. forces", behaviour.thermodynamic_forces, hypothesis);
+    varInfo("Int. StVars.", behaviour.isvs, hypothesis);
+    varInfo("Ext. StVars.", behaviour.esvs, hypothesis);
+
+    // TODO read parameters from prj file, not yet (2018-11-05) supported by
+    // MGIS library.
+    varInfo("Parameters", behaviour.parameters, hypothesis);
+
+    std::vector<ProcessLib::Parameter<double> const*> material_properties;
+
+    if (!behaviour.mps.empty())
+    {
+        std::map<std::string, std::string> map_name_to_param;
+
+        // gather material properties from the prj file
+        //! \ogs_file_param{material__solid__constitutive_relation__MFront__material_properties}
+        auto const mps_config = config.getConfigSubtree("material_properties");
+        for (
+            auto const mp_config :
+            //! \ogs_file_param{material__solid__constitutive_relation__MFront__material_properties__material_property}
+            mps_config.getConfigParameterList("material_property"))
+        {
+            //! \ogs_file_attr{material__solid__constitutive_relation__MFront__material_properties__material_property__name}
+            auto name = mp_config.getConfigAttribute<std::string>("name");
+            auto const param_name =
+                //! \ogs_file_attr{material__solid__constitutive_relation__MFront__material_properties__material_property__parameter}
+                mp_config.getConfigAttribute<std::string>("parameter");
+
+            map_name_to_param.emplace(std::move(name), std::move(param_name));
+        }
+
+        for (auto& mp : behaviour.mps)
+        {
+            auto const it = map_name_to_param.find(mp.name);
+            if (it == map_name_to_param.end())
+                OGS_FATAL(
+                    "Material Property `%s' has not been configured in the "
+                    "project file.",
+                    mp.name.c_str());
+
+            auto const param_name = it->second;
+            auto const num_comp =
+                mgis::behaviour::getVariableSize(mp, hypothesis);
+            auto const* param = &ProcessLib::findParameter<double>(
+                param_name, parameters, num_comp);
+
+            INFO("Using OGS parameter `%s' for material property `%s'.",
+                 param_name.c_str(), mp.name.c_str());
+
+            using V = mgis::behaviour::Variable;
+            if (mp.type == V::STENSOR || mp.type == V::TENSOR)
+            {
+                WARN(
+                    "Material property `%s' is a tensorial quantity. You, the "
+                    "user, have to make sure that the component order of "
+                    "parameter `%s' matches the one required by MFront!",
+                    mp.name.c_str(), param_name.c_str());
+            }
+
+            material_properties.push_back(param);
+            map_name_to_param.erase(it);
+        }
+
+        if (!map_name_to_param.empty())
+        {
+            ERR("Some material parameters that were configured are not used by "
+                "the material model.");
+            ERR("These parameters are:");
+
+            for (auto& e : map_name_to_param)
+            {
+                ERR("  name: `%s', parameter: `%s'.", e.first.c_str(),
+                    e.second.c_str());
+            }
+
+            OGS_FATAL(
+                "Configuration errors occured. Please fix the project file.");
+        }
+    }
+
+    INFO("### MFRONT END ####################################################");
+
+    return std::make_unique<MFront<DisplacementDim>>(
+        std::move(behaviour), std::move(material_properties));
+}
+}  // namespace MFront
+}  // namespace Solids
+}  // namespace MaterialLib
+
+#else  // OGS_USE_MFRONT
+
+namespace MaterialLib
+{
+namespace Solids
+{
+namespace MFront
+{
+template <int DisplacementDim>
+std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
+    std::vector<
+        std::unique_ptr<ProcessLib::ParameterBase>> const& /*parameters*/,
+    BaseLib::ConfigTree const& /*config*/)
+{
+    OGS_FATAL("OpenGeoSys has not been build with MFront support.");
+}
+}  // namespace MFront
+}  // namespace Solids
+}  // namespace MaterialLib
+
+#endif  // OGS_USE_MFRONT
+
+namespace MaterialLib
+{
+namespace Solids
+{
+namespace MFront
+{
+template std::unique_ptr<MechanicsBase<2>> createMFront<2>(
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    BaseLib::ConfigTree const& config);
+template std::unique_ptr<MechanicsBase<3>> createMFront<3>(
+    std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const& parameters,
+    BaseLib::ConfigTree const& config);
+}  // namespace MFront
+}  // namespace Solids
+}  // namespace MaterialLib

@@ -1,0 +1,72 @@
+@Parser Implicit;
+@Behaviour DruckerPrager;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Theta 1.;
+
+@MaterialProperty real young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real kappa;
+@MaterialProperty real beta;
+
+@StateVariable real pla_mult;
+@StateVariable real a;
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+@LocalVariable stress Fel;
+@LocalVariable StressStensor s0;
+
+@InitLocalVariables {
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
+  StressStensor sigel(lambda * trace(eel + deto) * Stensor::Id() +
+                      2 * mu * (eel + deto));
+  const auto s_dev = deviator(sigel);
+  const stress J2 = (s_dev|s_dev)/2.;
+  const stress I1 = trace(sigel);
+
+  Fel = sqrt(J2) + beta * I1 - kappa;
+}
+
+@ComputeStress {
+  sig = (lambda * trace(eel) * Stensor::Id() + 2 * mu * eel);
+}
+
+@Integrator {
+  Stensor s_dev = deviator(sig);
+
+  if (Fel > 0) {
+    Stensor nq = sqrt(3.)/2./sigmaeq(sig)*s_dev;
+    Stensor np = 1.0 * Stensor::Id();
+
+    const auto yield = sqrt((s_dev|s_dev)/2.) + beta * trace(sig) - kappa;
+
+    const auto dev_flow = 1.0;
+    const auto iso_flow = beta;
+
+    feel =
+        deel - deto + dpla_mult * (nq * dev_flow + np * iso_flow);
+    fpla_mult = yield / young;
+    fa = da - sqrt(2. / 3. * (dpla_mult * (nq * dev_flow + np * iso_flow)) |
+                   (dpla_mult * (nq * dev_flow + np * iso_flow)));
+
+  } else {
+    feel = deel - deto ;
+  }
+}
+
+@TangentOperator {
+  if ((smt == ELASTIC) || (smt == SECANTOPERATOR)) {
+    computeElasticStiffness<N, Type>::exe(Dt, lambda, mu);
+  } else if (smt == CONSISTENTTANGENTOPERATOR) {
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N, Type>::exe(De, lambda, mu);
+    getPartialJacobianInvert(Je);
+    Dt = De * Je;
+  } else {
+    return false;
+  }
+}

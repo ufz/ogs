@@ -172,3 +172,7 @@ find_package(CVODE)
 if(CVODE_FOUND)
     add_definitions(-DCVODE_FOUND)
 endif() # CVODE_FOUND
+
+if(OGS_USE_MFRONT)
+    find_package(MGIS REQUIRED)
+endif()

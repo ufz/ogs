@@ -204,8 +204,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement 6e-4 0
-    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma 6e-4 0
+    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
+    ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
 )
 
 #With PETSc
@@ -344,4 +344,48 @@ AddTest(
     ref_hertz_contact_ts_10.vtu hertz_pcs_0_ts_10_t_10.000000.vtu displacement displacement 1e-16 0
     ref_hertz_contact_ts_10.vtu hertz_pcs_0_ts_10_t_10.000000.vtu epsilon epsilon 1e-16 0
     ref_hertz_contact_ts_10.vtu hertz_pcs_0_ts_10_t_10.000000.vtu sigma sigma 1e-16 0
+)
+
+# Basic test that MFront works at all.
+# Linear elastic, no internal state variables, no external state variables.
+AddTest(
+    NAME Mechanics_SDL_disc_with_hole_mfront
+    PATH Mechanics/Linear/MFront/disc_with_hole
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS disc_with_hole.prj
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MFRONT AND NOT OGS_USE_MPI
+    DIFF_DATA
+    disc_with_hole_expected_pcs_0_ts_4_t_1.000000.vtu disc_with_hole_pcs_0_ts_4_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    VIS disc_with_hole_pcs_0_ts_4_t_1.000000.vtu
+)
+
+# Tests that internal state variables work correcly.
+AddTest(
+    NAME Mechanics_DruckerPrager_mfront
+    PATH Mechanics/Ehlers/MFront
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e0_dp.prj
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MFRONT AND NOT OGS_USE_MPI
+    # The reference solution has been computed by OGS's Ehlers model.
+    # See also the prj file.
+    DIFF_DATA
+    cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu displacement displacement 1e-14 0
+    cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu sigma sigma 1e-13 0
+    cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu epsilon epsilon 1e-14 0
+)
+
+# Tests that axial symmetry works correctly.
+# NB: Currently (2018-11-06) the plane strain hypothesis is used within MFront!
+AddTest(
+    NAME SmallDeformation_ring_plane_strain_axi_mfront
+    PATH Mechanics/Linear/MFront/axisymm_ring
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS ring_plane_strain.prj
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MFRONT AND NOT OGS_USE_MPI
+    DIFF_DATA
+    ../../ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
+    ../../ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
 )

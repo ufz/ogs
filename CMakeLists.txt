@@ -231,6 +231,8 @@ option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation." O
 
 option(OGS_USE_PYTHON "Interface with Python" OFF)
 
+option(OGS_USE_MFRONT "Enable solid material models by MFront (https://tfel.sourceforge.net)" OFF)
+
 ###################
 ### Definitions ###
 ###################

@@ -166,8 +166,11 @@ int main(int argc, char* argv[])
                 project_arg.getValue(), !nonfatal_arg.getValue(),
                 "OpenGeoSysProject");
 
+            BaseLib::setProjectDirectory(
+                BaseLib::extractPath(project_arg.getValue()));
+
             ProjectData project(*project_config,
-                                BaseLib::extractPath(project_arg.getValue()),
+                                BaseLib::getProjectDirectory(),
                                 outdir_arg.getValue());
 
 #ifdef USE_INSITU
