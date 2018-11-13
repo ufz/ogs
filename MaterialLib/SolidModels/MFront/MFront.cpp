@@ -311,7 +311,7 @@ MFront<DisplacementDim>::integrateStress(
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
         state_upcast(state_copy.release());
 
-    return {{std::move(sigma), std::move(state_upcast), std::move(C)}};
+    return {std::make_tuple(std::move(sigma), std::move(state_upcast), std::move(C))};
 }
 
 template <int DisplacementDim>
