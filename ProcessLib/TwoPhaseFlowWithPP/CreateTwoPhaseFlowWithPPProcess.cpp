@@ -79,11 +79,12 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     auto const& mat_config = config.getConfigSubtree("material_property");
 
     boost::optional<MeshLib::PropertyVector<int> const&> material_ids;
-    if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
+    if (mesh.getProperties().existsPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1))
     {
         INFO("The twophase flow is in heterogeneous porous media.");
-        material_ids =
-            *mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+        material_ids = *mesh.getProperties().getPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
     }
     else
     {

@@ -84,8 +84,8 @@ void getFractureMatrixDataInMesh(
          vec_matrix_elements.size(), all_fracture_elements.size());
 
     // get fracture material IDs
-    auto opt_material_ids(
-        mesh.getProperties().getPropertyVector<int>("MaterialIDs"));
+    auto opt_material_ids(mesh.getProperties().getPropertyVector<int>(
+        "MaterialIDs", MeshLib::MeshItemType::Cell, 1));
     for (MeshLib::Element* e : all_fracture_elements)
         vec_fracture_mat_IDs.push_back((*opt_material_ids)[e->getID()]);
     BaseLib::makeVectorUnique(vec_fracture_mat_IDs);
