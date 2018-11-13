@@ -342,8 +342,10 @@ void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
 PropertyVector<int> const* materialIDs(Mesh const& mesh)
 {
     auto const& properties = mesh.getProperties();
-    return properties.existsPropertyVector<int>("MaterialIDs")
-               ? properties.getPropertyVector<int>("MaterialIDs")
+    return properties.existsPropertyVector<int>("MaterialIDs",
+                                                MeshLib::MeshItemType::Cell, 1)
+               ? properties.getPropertyVector<int>(
+                     "MaterialIDs", MeshLib::MeshItemType::Cell, 1)
                : nullptr;
 }
 
