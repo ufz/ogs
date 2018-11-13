@@ -11,9 +11,10 @@
 
 #include <cassert>
 
-#include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
+#include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "PhaseFieldProcess.h"
 #include "PhaseFieldProcessData.h"
@@ -99,39 +100,13 @@ std::unique_ptr<Process> createPhaseFieldProcess(
             variable_ph->getNumberOfComponents());
     }
 
-    // Constitutive relation.
-    // read type;
-    auto const constitutive_relation_config =
-        //! \ogs_file_param{prj__processes__process__PHASE_FIELD__constitutive_relation}
-        config.getConfigSubtree("constitutive_relation");
+    auto solid_constitutive_relations =
+        MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
+            parameters, config);
 
     auto const phasefield_parameters_config =
         //! \ogs_file_param{prj__processes__process__PHASE_FIELD__phasefield_parameters}
         config.getConfigSubtree("phasefield_parameters");
-
-    auto const type =
-        //! \ogs_file_param{prj__processes__process__PHASE_FIELD__constitutive_relation__type}
-        constitutive_relation_config.peekConfigParameter<std::string>("type");
-
-    std::unique_ptr<MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>>
-        material = nullptr;
-    if (type == "LinearElasticIsotropic")
-    {
-        const bool skip_type_checking = false;
-        auto elastic_model =
-            MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
-                parameters, constitutive_relation_config, skip_type_checking);
-        material = std::make_unique<
-            MaterialLib::Solids::LinearElasticIsotropicPhaseField<
-                DisplacementDim>>(
-            std::move(elastic_model->getMaterialProperties()));
-    }
-    else
-    {
-        OGS_FATAL(
-            "Cannot construct constitutive relation of given type \'%s\'.",
-            type.c_str());
-    }
 
     // Residual stiffness
     auto& residual_stiffness = findParameter<double>(
@@ -212,9 +187,11 @@ std::unique_ptr<Process> createPhaseFieldProcess(
          ((*crack_scheme == "propagating") || (*crack_scheme == "static")));
 
     PhaseFieldProcessData<DisplacementDim> process_data{
-        std::move(material), residual_stiffness,  crack_resistance,
-        crack_length_scale,  kinetic_coefficient, solid_density,
-        history_field,       specific_body_force, propagating_crack,
+        materialIDs(mesh),   std::move(solid_constitutive_relations),
+        residual_stiffness,  crack_resistance,
+        crack_length_scale,  kinetic_coefficient,
+        solid_density,       history_field,
+        specific_body_force, propagating_crack,
         crack_pressure};
 
     SecondaryVariableCollection secondary_variables;

@@ -12,7 +12,9 @@
 #include <memory>
 #include <vector>
 
-#include "MaterialLib/SolidModels/PhaseFieldExtension.h"
+#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
+#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -68,20 +70,28 @@ struct IntegrationPointData final
 
     template <typename DisplacementVectorType>
     void updateConstitutiveRelation(double const t,
-                                    SpatialPosition const& x_position,
+                                    SpatialPosition const& x,
                                     double const /*dt*/,
                                     DisplacementVectorType const& /*u*/,
                                     double const degradation)
     {
-        static_cast<
-            MaterialLib::Solids::PhaseFieldExtension<DisplacementDim> const&>(
-            solid_material)
-            .calculateDegradedStress(t, x_position, eps, strain_energy_tensile,
-                                     sigma_tensile, sigma_compressive,
-                                     C_tensile, C_compressive, sigma,
-                                     degradation, elastic_energy);
+        auto linear_elastic_mp =
+            static_cast<MaterialLib::Solids::LinearElasticIsotropic<
+                DisplacementDim> const&>(solid_material)
+                .getMaterialProperties();
+
+        auto const bulk_modulus = linear_elastic_mp.bulk_modulus(t, x);
+        auto const mu = linear_elastic_mp.mu(t, x);
+
+        std::tie(sigma, sigma_tensile, C_tensile, C_compressive,
+                 strain_energy_tensile, elastic_energy) =
+            MaterialLib::Solids::Phasefield::calculateDegradedStress<
+                DisplacementDim>(degradation, bulk_modulus, mu, eps);
     }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+
+    static constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
 };
 
 /// Used by for extrapolation of the integration point values. It is ordered
@@ -126,6 +136,19 @@ public:
         _ip_data.reserve(n_integration_points);
         _secondary_data.N.resize(n_integration_points);
 
+        auto& solid_material =
+            MaterialLib::Solids::selectSolidConstitutiveRelation(
+                _process_data.solid_materials,
+                _process_data.material_ids,
+                e.getID());
+        if (!dynamic_cast<MaterialLib::Solids::LinearElasticIsotropic<
+                DisplacementDim> const*>(&solid_material))
+        {
+            OGS_FATAL(
+                "For phasefield process only linear elastic solid material "
+                "support is implemented.");
+        }
+
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, DisplacementDim>(
@@ -136,8 +159,7 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            // displacement (subscript u)
-            _ip_data.emplace_back(*_process_data.material);
+            _ip_data.emplace_back(solid_material);
             auto& ip_data = _ip_data[ip];
             ip_data.integration_weight =
                 _integration_method.getWeightedPoint(ip).getWeight() *

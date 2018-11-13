@@ -9,9 +9,12 @@
 
 #include "CreateThermoMechanicalPhaseFieldProcess.h"
 
-#include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
+#include <cassert>
+
+#include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 #include "ThermoMechanicalPhaseFieldProcess.h"
 #include "ThermoMechanicalPhaseFieldProcessData.h"
@@ -88,8 +91,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     if (variable_ph->getNumberOfComponents() != 1)
     {
         OGS_FATAL(
-            "Phase field process variable '%s' is not a scalar variable but "
-            "has "
+            "Phasefield process variable '%s' is not a scalar variable but has "
             "%d components.",
             variable_ph->getName().c_str(),
             variable_ph->getNumberOfComponents());
@@ -107,11 +109,9 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
             variable_T->getNumberOfComponents());
     }
 
-    // Constitutive relation.
-    // read type;
-    auto const constitutive_relation_config =
-        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__constitutive_relation}
-        config.getConfigSubtree("constitutive_relation");
+    auto solid_constitutive_relations =
+        MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
+            parameters, config);
 
     auto const phasefield_parameters_config =
         //! \ogs_file_param{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters}
@@ -120,30 +120,6 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     auto const thermal_parameters_config =
         //! \ogs_file_param{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters}
         config.getConfigSubtree("thermal_parameters");
-
-    auto const type =
-        //! \ogs_file_param{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__constitutive_relation__type}
-        constitutive_relation_config.peekConfigParameter<std::string>("type");
-
-    std::unique_ptr<MaterialLib::Solids::PhaseFieldExtension<DisplacementDim>>
-        material = nullptr;
-    if (type == "LinearElasticIsotropic")
-    {
-        const bool skip_type_checking = false;
-        auto elastic_model =
-            MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
-                parameters, constitutive_relation_config, skip_type_checking);
-        material = std::make_unique<
-            MaterialLib::Solids::LinearElasticIsotropicPhaseField<
-                DisplacementDim>>(
-            std::move(elastic_model->getMaterialProperties()));
-    }
-    else
-    {
-        OGS_FATAL(
-            "Cannot construct constitutive relation of given type \'%s\'.",
-            type.c_str());
-    }
 
     // Residual stiffness
     auto& residual_stiffness = findParameter<double>(
@@ -234,7 +210,8 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     }
 
     ThermoMechanicalPhaseFieldProcessData<DisplacementDim> process_data{
-        std::move(material),
+        materialIDs(mesh),
+        std::move(solid_constitutive_relations),
         residual_stiffness,
         crack_resistance,
         crack_length_scale,
