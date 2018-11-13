@@ -68,7 +68,8 @@ public:
 
         auto const& bulk_node_ids_map =
             *_data.boundary_mesh.getProperties()
-                 .template getPropertyVector<std::size_t>("bulk_node_ids");
+                 .template getPropertyVector<std::size_t>(
+                     "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
         // gather primary variables
         Eigen::MatrixXd primary_variables_mat(num_nodes, num_comp_total);
