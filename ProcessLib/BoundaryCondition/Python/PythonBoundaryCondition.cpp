@@ -87,7 +87,7 @@ void PythonBoundaryCondition::getEssentialBCValues(
 
     auto const& bulk_node_ids_map =
         *_bc_data.boundary_mesh.getProperties().getPropertyVector<std::size_t>(
-            "bulk_node_ids");
+            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
     bc_values.ids.clear();
     bc_values.values.clear();
