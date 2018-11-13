@@ -140,11 +140,13 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
     std::string const vtkdiff = findVtkdiff();
 
     // Construct command lines for each entry.
+    //! \ogs_file_param{prj__test_definition__vtkdiff}
     auto const& vtkdiff_configs = config_tree.getConfigSubtreeList("vtkdiff");
     _command_lines.reserve(vtkdiff_configs.size());
     for (auto const& vtkdiff_config : vtkdiff_configs)
     {
         std::string const& field_name =
+            //! \ogs_file_param{prj__test_definition__vtkdiff__field}
             vtkdiff_config.getConfigParameter<std::string>("field");
         DBUG("vtkdiff will compare field '%s'.", field_name.c_str());
 
@@ -155,10 +157,12 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
         std::string const& filename =
             MeshLib::IO::getVtuFileNameForPetscOutputWithoutExtension(
+                //! \ogs_file_param{prj__test_definition__vtkdiff__file}
                 vtkdiff_config.getConfigParameter<std::string>("file")) +
             "_" + std::to_string(rank) + ".vtu";
 #else
         std::string const& filename =
+            //! \ogs_file_param{prj__test_definition__vtkdiff__file}
             vtkdiff_config.getConfigParameter<std::string>("file");
 #endif  // OGS_USE_PETSC
         std::string const& output_filename =
@@ -169,6 +173,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             BaseLib::joinPaths(reference_path, filename);
 
         auto const& absolute_tolerance =
+            //! \ogs_file_param{prj__test_definition__vtkdiff__absolute_tolerance}
             vtkdiff_config.getConfigParameterOptional<double>(
                 "absolute_tolerance");
         std::string const absolute_tolerance_parameter =
@@ -177,6 +182,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
                 : "--abs " + convert_to_string(*absolute_tolerance);
 
         auto const& relative_tolerance =
+            //! \ogs_file_param{prj__test_definition__vtkdiff__relative_tolerance}
             vtkdiff_config.getConfigParameterOptional<double>(
                 "relative_tolerance");
         std::string const relative_tolerance_parameter =

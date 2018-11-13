@@ -190,6 +190,7 @@ int main(int argc, char* argv[])
             {
                 test_definition =
                     std::make_unique<ApplicationsLib::TestDefinition>(
+                        //! \ogs_file_param{prj__test_definition}
                         project_config->getConfigSubtree("test_definition"),
                         reference_path_arg.getValue(),
                         outdir_arg.getValue());
