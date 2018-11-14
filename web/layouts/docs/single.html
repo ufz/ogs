@@ -35,6 +35,11 @@
     {{ end }}
 
     <div class="section-docs">
+      {{ if eq .Params.toc true }}
+        <h2>Table of contents</h2>
+        {{.TableOfContents}}
+        <hr>
+      {{ end }}
       {{ .Content }}
     </div>
 

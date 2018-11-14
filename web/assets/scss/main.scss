@@ -113,6 +113,18 @@ p, ul, pre {
   }
 }
 
+/* -- Table of contents -- */
+#TableOfContents {
+  @apply .text-sm;
+  ul:first-child {
+    @apply .list-reset;
+  }
+}
+#TableOfContents>ul:first-child>li>ul>li>a {
+  @apply .font-bold;
+  @apply .tracking-wide;
+}
+
 /* -- OS selector -- */
 .os-div {
   @apply .-ml-4;
