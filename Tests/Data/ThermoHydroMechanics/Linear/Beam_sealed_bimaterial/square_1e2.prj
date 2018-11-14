@@ -83,7 +83,7 @@
                     <t_initial>0</t_initial>
                     <t_end>100</t_end>
                     <timesteps>
-                        <pair><repeat>10</repeat>
+                        <pair><repeat>100</repeat>
                         <delta_t>10</delta_t></pair>
                     </timesteps>
                 </time_stepping>
@@ -105,15 +105,15 @@
            <group_id_property>MaterialIDs</group_id_property>
            <index_values>
            <index>0</index>
-           <value>21</value>
+           <value>19</value>
            </index_values>
            <index_values>
            <index>1</index>
-           <value>0.105</value>
+           <value>0.95</value>
            </index_values>
            <index_values>
            <index>2</index>
-           <value>10.5</value>
+           <value>9.5</value>
            </index_values>
         </parameter>
         <parameter>

@@ -25,8 +25,8 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu pressure_ana pressure 1e-4 1e-4
-    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu sigma_xx_ana sigma_xx 1e-4 1e-4
-    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu sigma_yy_ana sigma_yy 1e-4 1e-4
+    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu sigma_xx_ana sigma_xx 1e-2 1e-2
+    analytical.vtu square_1e0_pcs_0_ts_10_t_1000.000000.vtu sigma_yy_ana sigma_yy 1e-2 1e-2
 )
 
 # ThermoHydroMechanics; Small deformation, linear poroelastic, sealed, bimaterial

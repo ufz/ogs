@@ -134,7 +134,7 @@ public:
                 "The given shape function order %d is not supported.\nOnly "
                 "shape functions of order 2 are supported.",
                 shapefunction_order);
-// /// Quads and Hexahedra ///////////////////////////////////
+            // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -150,7 +150,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeHex20>();
 #endif
 
-// /// Simplices ////////////////////////////////////////////////
+        // /// Simplices ////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -164,7 +164,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeTet10>();
 #endif
 
-// /// Prisms ////////////////////////////////////////////////////
+        // /// Prisms ////////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -172,7 +172,7 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapePrism15>();
 #endif
 
-// /// Pyramids //////////////////////////////////////////////////
+        // /// Pyramids //////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2

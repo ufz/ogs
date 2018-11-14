@@ -55,7 +55,7 @@ public:
      *                               process_id = 0. For the staggered scheme,
      *                               process_id = 0 represents the
      *                               hydraulic (H) process, while process_id = 1
-     *                               represents the mechanical (M) process.                         
+     *                               represents the mechanical (M) process.
      * @return Matrix specifications including size and sparse pattern.
      */
     MathLib::MatrixSpecifications getMatrixSpecifications(
@@ -88,8 +88,9 @@ private:
                                      const double delta_t,
                                      int const process_id) override;
 
-    void postNonLinearSolverConcreteProcess(GlobalVector const& x, const double t,
-                                     int const process_id) override;
+    void postNonLinearSolverConcreteProcess(GlobalVector const& x,
+                                            const double t,
+                                            int const process_id) override;
 
     NumLib::LocalToGlobalIndexMap const& getDOFTable(
         const int process_id) const override;
@@ -122,7 +123,7 @@ private:
      * @copydoc ProcessLib::Process::getDOFTableForExtrapolatorData()
      */
     std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
-        getDOFTableForExtrapolatorData() const override;
+    getDOFTableForExtrapolatorData() const override;
 
     /// Check whether the process represented by \c process_id is/has
     /// mechanical process. In the present implementation, the mechanical

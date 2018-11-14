@@ -26,7 +26,7 @@ class AbstractJacobianAssembler;
 struct ParameterBase;
 class Process;
 class ProcessVariable;
-}
+}  // namespace ProcessLib
 
 namespace ProcessLib
 {

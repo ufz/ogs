@@ -146,8 +146,10 @@ public:
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
-    ThermoHydroMechanicsLocalAssembler(ThermoHydroMechanicsLocalAssembler const&) = delete;
-    ThermoHydroMechanicsLocalAssembler(ThermoHydroMechanicsLocalAssembler&&) = delete;
+    ThermoHydroMechanicsLocalAssembler(
+        ThermoHydroMechanicsLocalAssembler const&) = delete;
+    ThermoHydroMechanicsLocalAssembler(ThermoHydroMechanicsLocalAssembler&&) =
+        delete;
 
     ThermoHydroMechanicsLocalAssembler(
         MeshLib::Element const& e,
@@ -162,7 +164,8 @@ public:
                   std::vector<double>& /*local_rhs_data*/) override
     {
         OGS_FATAL(
-            "ThermoHydroMechanicsLocalAssembler: assembly without jacobian is not "
+            "ThermoHydroMechanicsLocalAssembler: assembly without jacobian is "
+            "not "
             "implemented.");
     }
 
@@ -446,12 +449,12 @@ private:
         _secondary_data;
 
     static const int temperature_index = 0;
-     static const int temperature_size = ShapeFunctionPressure::NPOINTS;
-     static const int pressure_index = ShapeFunctionPressure::NPOINTS;
-     static const int pressure_size = ShapeFunctionPressure::NPOINTS;
-     static const int displacement_index = ShapeFunctionPressure::NPOINTS*2;
-     static const int displacement_size =
-         ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
+    static const int temperature_size = ShapeFunctionPressure::NPOINTS;
+    static const int pressure_index = ShapeFunctionPressure::NPOINTS;
+    static const int pressure_size = ShapeFunctionPressure::NPOINTS;
+    static const int displacement_index = ShapeFunctionPressure::NPOINTS * 2;
+    static const int displacement_size =
+        ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
 };
 
 }  // namespace ThermoHydroMechanics

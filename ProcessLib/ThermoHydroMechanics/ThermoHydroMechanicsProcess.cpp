@@ -98,13 +98,14 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::constructDofTable()
     if (_use_monolithic_scheme)
     {
         // For temperature, which is the first
-        std::vector<MeshLib::MeshSubset> all_mesh_subsets{*_mesh_subset_base_nodes};
+        std::vector<MeshLib::MeshSubset> all_mesh_subsets{
+            *_mesh_subset_base_nodes};
 
         // For pressure, which is the second
         all_mesh_subsets.push_back(*_mesh_subset_base_nodes);
 
-      // For displacement.
-      const int monolithic_process_id = 0;
+        // For displacement.
+        const int monolithic_process_id = 0;
         std::generate_n(std::back_inserter(all_mesh_subsets),
                         getProcessVariables(monolithic_process_id)[2]
                             .get()
@@ -236,7 +237,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void ThermoHydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
+void ThermoHydroMechanicsProcess<
+    DisplacementDim>::initializeBoundaryConditions()
 {
     if (_use_monolithic_scheme)
     {
@@ -372,8 +374,10 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 }
 
 template <int DisplacementDim>
-void ThermoHydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
-    GlobalVector const& x, const double t, const int process_id)
+void ThermoHydroMechanicsProcess<
+    DisplacementDim>::postNonLinearSolverConcreteProcess(GlobalVector const& x,
+                                                         const double t,
+                                                         const int process_id)
 {
     if (!hasMechanicalProcess(process_id))
     {
@@ -388,8 +392,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcretePr
 }
 
 template <int DisplacementDim>
-void ThermoHydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
-    const double t, GlobalVector const& x)
+void ThermoHydroMechanicsProcess<
+    DisplacementDim>::computeSecondaryVariableConcrete(const double t,
+                                                       GlobalVector const& x)
 {
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
@@ -398,8 +403,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcr
 }
 
 template <int DisplacementDim>
-std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
-ThermoHydroMechanicsProcess<DisplacementDim>::getDOFTableForExtrapolatorData() const
+std::tuple<NumLib::LocalToGlobalIndexMap*, bool> ThermoHydroMechanicsProcess<
+    DisplacementDim>::getDOFTableForExtrapolatorData() const
 {
     const bool manage_storage = false;
     return std::make_tuple(_local_to_global_index_map_single_component.get(),
@@ -408,7 +413,8 @@ ThermoHydroMechanicsProcess<DisplacementDim>::getDOFTableForExtrapolatorData() c
 
 template <int DisplacementDim>
 NumLib::LocalToGlobalIndexMap const&
-ThermoHydroMechanicsProcess<DisplacementDim>::getDOFTable(const int process_id) const
+ThermoHydroMechanicsProcess<DisplacementDim>::getDOFTable(
+    const int process_id) const
 {
     if (hasMechanicalProcess(process_id))
     {
