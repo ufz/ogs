@@ -45,7 +45,7 @@ function (OgsTest)
     #    COMMAND ogs -r ${OgsTest_SOURCE_DIR} ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}")
 
     set_tests_properties(${TEST_NAME} PROPERTIES ENVIRONMENT
-        VTKDIFF_EXE=${CMAKE_BINARY_DIR}/bin/vtkdiff)
+        VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>)
 
     if(TARGET ${OgsTest_EXECUTABLE})
         add_dependencies(ctest ${OgsTest_EXECUTABLE})
