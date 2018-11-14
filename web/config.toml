@@ -103,10 +103,18 @@ staticDir = ["dist", "static"]
   weight = 9
 
 # Quickstart sidebar top-level categories
-[[menu.quickstart]]
+[[menu.userguide]]
   name = "Basics"
   identifier = "basics"
   weight = 1
+[[menu.userguide]]
+  name = "Post Processing"
+  identifier = "post-processing"
+  weight = 2
+[[menu.userguide]]
+  name = "Troubleshooting"
+  identifier = "troubleshooting"
+  weight = 99
 
 # Tools sidebar top-level categories
 [[menu.tools]]
