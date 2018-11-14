@@ -23,21 +23,32 @@
 
 namespace
 {
-/// Safe conversion of a double to a string using decimal or decimal exponent
-/// notation. See std::snprintf() for details for "%g" conversion specifier.
-/// \note std::to_string uses "%f" conversion specifier which is not sufficient
-/// for small numbers like 1e-15.
-std::string convert_to_string(double const& value)
+/// Test if the given string is convertible to a valid double value, not a NaN.
+bool isConvertibleToDouble(std::string const& s)
 {
-    // TODO (naumov) Replace this with fmt library.
-    char buffer[32];
-    int const chars_written =
-        std::snprintf(buffer, sizeof(buffer), "%g", value);
-    if (chars_written < 0 || chars_written >= static_cast<int>(sizeof(buffer)))
+    std::size_t pos = 0;
+    double value;
+    try
     {
-        OGS_FATAL("Could not convert a value to string.");
+        value = std::stod(s, &pos);
     }
-    return std::string{buffer};
+    catch (...)
+    {
+        OGS_FATAL("The given string '%s' is not convertible to double.",
+                  s.c_str());
+    }
+    if (pos != s.size())
+    {
+        OGS_FATAL(
+            "Only %d characters were used for double conversion of string '%s'",
+            pos, s.c_str());
+    }
+
+    if (std::isnan(value))
+    {
+        OGS_FATAL("The given string '%s' results in a NaN value.", s.c_str());
+    }
+    return true;
 }
 
 /// Wraps a string into double ticks.
@@ -172,23 +183,35 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         std::string const& reference_filename =
             BaseLib::joinPaths(reference_path, filename);
 
-        auto const& absolute_tolerance =
+        auto const absolute_tolerance =
             //! \ogs_file_param{prj__test_definition__vtkdiff__absolute_tolerance}
-            vtkdiff_config.getConfigParameterOptional<double>(
-                "absolute_tolerance");
+            vtkdiff_config.getConfigParameter<std::string>("absolute_tolerance",
+                                                           "");
+        if (!absolute_tolerance.empty() &&
+            !isConvertibleToDouble(absolute_tolerance))
+        {
+            OGS_FATAL(
+                "The absolute tolerance value '%s' is not convertible to "
+                "double.",
+                absolute_tolerance.c_str());
+        }
         std::string const absolute_tolerance_parameter =
-            absolute_tolerance == boost::none
-                ? ""
-                : "--abs " + convert_to_string(*absolute_tolerance);
+            "--abs " + absolute_tolerance;
 
-        auto const& relative_tolerance =
+        auto const relative_tolerance =
             //! \ogs_file_param{prj__test_definition__vtkdiff__relative_tolerance}
-            vtkdiff_config.getConfigParameterOptional<double>(
-                "relative_tolerance");
+            vtkdiff_config.getConfigParameter<std::string>("relative_tolerance",
+                                                           "");
+        if (!relative_tolerance.empty() &&
+            !isConvertibleToDouble(relative_tolerance))
+        {
+            OGS_FATAL(
+                "The relative tolerance value '%s' is not convertible to "
+                "double.",
+                relative_tolerance.c_str());
+        }
         std::string const relative_tolerance_parameter =
-            relative_tolerance == boost::none
-                ? ""
-                : "--rel " + convert_to_string(*relative_tolerance);
+            "--rel " + relative_tolerance;
 
         //
         // Construct command line.
