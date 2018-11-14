@@ -107,6 +107,10 @@ staticDir = ["dist", "static"]
   name = "Basics"
   identifier = "basics"
   weight = 1
+[[menu.userguide]]
+  name = "Troubleshooting"
+  identifier = "troubleshooting"
+  weight = 99
 
 # Tools sidebar top-level categories
 [[menu.tools]]
