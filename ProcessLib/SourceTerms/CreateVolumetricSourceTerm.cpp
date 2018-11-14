@@ -21,10 +21,9 @@ namespace ProcessLib
 std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& source_term_mesh,
-    NumLib::LocalToGlobalIndexMap const& source_term_dof_table,
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    unsigned const integration_order, unsigned const shapefunction_order,
-    int const variable_id, int const component_id)
+    unsigned const integration_order, unsigned const shapefunction_order)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
     config.checkConfigParameter("type", "Volumetric");
@@ -42,9 +41,8 @@ std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
          volumetric_source_term.name.c_str());
 
     return std::make_unique<VolumetricSourceTerm>(
-        source_term_mesh, source_term_dof_table, integration_order,
-        shapefunction_order, variable_id, component_id,
-        volumetric_source_term);
+        source_term_mesh, std::move(source_term_dof_table), integration_order,
+        shapefunction_order, volumetric_source_term);
 }
 
 }  // namespace ProcessLib

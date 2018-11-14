@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Parameter/Parameter.h"
 
@@ -18,8 +20,8 @@ class SourceTerm
 {
 public:
     explicit SourceTerm(
-        const NumLib::LocalToGlobalIndexMap& source_term_dof_table)
-        : _source_term_dof_table(source_term_dof_table)
+        std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table)
+        : _source_term_dof_table{std::move(source_term_dof_table)}
     {
     }
 
@@ -29,7 +31,7 @@ public:
     virtual ~SourceTerm() = default;
 
 protected:
-    NumLib::LocalToGlobalIndexMap const& _source_term_dof_table;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> const _source_term_dof_table;
 };
 
 }  // namespace ProcessLib

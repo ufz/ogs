@@ -99,10 +99,10 @@ public:
 
         unsigned const num_integration_points =
             _integration_method.getNumberOfPoints();
-        auto const num_var = _data.dof_table_bulk.getNumberOfVariables();
+        auto const num_var = dof_table_source_term.getNumberOfVariables();
         auto const num_nodes = ShapeFunction::NPOINTS;
         auto const num_comp_total =
-            _data.dof_table_bulk.getNumberOfComponents();
+            dof_table_source_term.getNumberOfComponents();
 
         auto const& bulk_node_ids_map =
             *_data.source_term_mesh.getProperties()
@@ -115,7 +115,7 @@ public:
         for (int var = 0; var < num_var; ++var)
         {
             auto const num_comp =
-                _data.dof_table_bulk.getNumberOfVariableComponents(var);
+                dof_table_source_term.getNumberOfVariableComponents(var);
             for (int comp = 0; comp < num_comp; ++comp)
             {
                 auto const global_component =
@@ -132,7 +132,7 @@ public:
                                           MeshLib::MeshItemType::Node,
                                           bulk_node_id};
                     auto const dof_idx =
-                        _data.dof_table_bulk.getGlobalIndex(loc, var, comp);
+                        dof_table_source_term.getGlobalIndex(loc, var, comp);
                     if (dof_idx == NumLib::MeshComponentMap::nop)
                     {
                         // TODO extend Python BC to mixed FEM ansatz functions

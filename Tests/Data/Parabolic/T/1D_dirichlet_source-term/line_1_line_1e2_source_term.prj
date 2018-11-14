@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
-        <mesh>square_1x1_quad_1e6.vtu</mesh>
-        <mesh>square_1x1_geometry_middle_point.vtu</mesh>
-        <mesh>square_1x1_geometry_left.vtu</mesh>
-        <mesh>square_1x1_geometry_right.vtu</mesh>
+        <mesh>line_1_lines_1e2.vtu</mesh>
+        <mesh>SourceTermDomain.vtu</mesh>
+        <mesh>line_1_geometry_left.vtu</mesh>
+        <mesh>line_1_geometry_right.vtu</mesh>
     </meshes>
     <processes>
         <process>
-            <name>GW23</name>
-            <type>GROUNDWATER_FLOW</type>
+            <name>HeatConduction</name>
+            <type>HEAT_CONDUCTION</type>
             <integration_order>2</integration_order>
-            <hydraulic_conductivity>K</hydraulic_conductivity>
+            <thermal_conductivity>K</thermal_conductivity>
+            <heat_capacity>Cp</heat_capacity>
+            <density>rho</density>
             <process_variables>
-                <process_variable>pressure</process_variable>
+                <process_variable>temperature</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable type="static" internal_name="darcy_velocity" output_name="v"/>
+                <secondary_variable type="static" internal_name="heat_flux_x" output_name="heat_flux_x"/>
             </secondary_variables>
         </process>
     </processes>
     <time_loop>
         <processes>
-            <process ref="GW23">
+            <process ref="HeatConduction">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
@@ -34,70 +36,89 @@
                 </time_discretization>
                 <output>
                     <variables>
-                        <variable> pressure </variable>
-                        <variable> v      </variable>
+                        <variable> temperature </variable>
+                        <variable> heat_flux_x </variable>
                     </variables>
                 </output>
                 <time_stepping>
-                    <type>SingleStep</type>
+                    <type>FixedTimeStepping</type>
+                    <t_initial> 0.0 </t_initial>
+                    <t_end> 39062500 </t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>500</repeat>
+                            <delta_t>78125</delta_t>
+                        </pair>
+                    </timesteps>
                 </time_stepping>
             </process>
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e6_with_nodal_sources</prefix>
+            <prefix>line_1_line_1e2</prefix>
+            <timesteps>
+                <pair>
+                    <repeat> 1 </repeat>
+                    <each_steps> 500 </each_steps>
+                </pair>
+            </timesteps>
         </output>
     </time_loop>
     <parameters>
         <parameter>
             <name>K</name>
             <type>Constant</type>
-            <value>1</value>
+            <value>5</value>
         </parameter>
         <parameter>
-            <name>p0</name>
+            <name>Cp</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>1000</value>
         </parameter>
         <parameter>
-            <name>p_Dirichlet_left</name>
+            <name>rho</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>2500</value>
         </parameter>
         <parameter>
-            <name>p_Dirichlet_right</name>
+            <name>T0</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>273.15</value>
         </parameter>
         <parameter>
-            <name>pressure_source_term</name>
+            <name>T1</name>
             <type>Constant</type>
-            <value>1</value>
+            <value>274.15</value>
+        </parameter>
+        <parameter>
+            <name>st_param</name>
+            <type>Constant</type>
+            <value>5</value>
         </parameter>
     </parameters>
     <process_variables>
         <process_variable>
-            <name>pressure</name>
+            <name>temperature</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>p0</initial_condition>
+            <initial_condition>T0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>square_1x1_geometry_left</mesh>
+                    <mesh>line_1_geometry_left</mesh>
                     <type>Dirichlet</type>
-                    <parameter>p_Dirichlet_left</parameter>
+                    <parameter>T1</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>square_1x1_geometry_right</mesh>
+                    <mesh>line_1_geometry_right</mesh>
                     <type>Dirichlet</type>
-                    <parameter>p_Dirichlet_right</parameter>
+                    <parameter>T1</parameter>
                 </boundary_condition>
             </boundary_conditions>
             <source_terms>
                 <source_term>
-                    <mesh>square_1x1_geometry_middle_point</mesh>
-                    <type>Nodal</type>
-                    <parameter>pressure_source_term</parameter>
+                    <mesh>SourceTermDomain</mesh>
+                    <type>Volumetric</type>
+                    <parameter>st_param</parameter>
                 </source_term>
             </source_terms>
         </process_variable>

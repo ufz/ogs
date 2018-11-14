@@ -30,9 +30,6 @@ struct PythonSourceTermData final
     //! Python object computing source term values.
     PythonSourceTermPythonSideInterface* source_term_object;
 
-    //! DOF table of the entire domain.
-    NumLib::LocalToGlobalIndexMap const& dof_table_bulk;
-
     //! Mesh ID of the entire domain.
     std::size_t const bulk_mesh_id;
 
@@ -49,7 +46,7 @@ class PythonSourceTerm final : public ProcessLib::SourceTerm
 {
 public:
     explicit PythonSourceTerm(
-        NumLib::LocalToGlobalIndexMap const& source_term_dof_table,
+        std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
         PythonSourceTermData&& source_term_data,
         unsigned const integration_order, unsigned const shapefunction_order,
         unsigned const global_dim, bool const flush_stdout);
@@ -60,9 +57,6 @@ public:
 private:
     //! Auxiliary data.
     PythonSourceTermData _source_term_data;
-
-    //! Local dof table for the boundary mesh.
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_source_term;
 
     //! Local assemblers for all elements of the source term mesh.
     std::vector<std::unique_ptr<PythonSourceTermLocalAssemblerInterface>>

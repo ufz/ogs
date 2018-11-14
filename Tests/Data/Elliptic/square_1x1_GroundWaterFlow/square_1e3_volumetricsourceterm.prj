@@ -2,6 +2,7 @@
 <OpenGeoSysProject>
     <meshes>
         <mesh>square_1x1_quad_1e3.vtu</mesh>
+        <mesh>square_1x1_quad_1e3_volumetric_source_term.vtu</mesh>
         <mesh>square_1x1_quad_1e3_geometry_right.vtu</mesh>
         <mesh>square_1x1_quad_1e3_geometry_left.vtu</mesh>
     </meshes>
@@ -118,7 +119,7 @@
             </boundary_conditions>
             <source_terms>
                 <source_term>
-                    <mesh>square_1x1_quad_1e3</mesh>
+                    <mesh>square_1x1_quad_1e3_volumetric_source_term</mesh>
                     <type>Volumetric</type>
                     <parameter>volumetric_source_term_parameter</parameter>
                 </source_term>
