@@ -2,8 +2,8 @@
 title = "Documentation"
 
 [[sections]]
-name = "Quickstart"
-url = "/docs/quickstart"
+name = "User Guide"
+url = "/docs/userguide"
 text = "Download, install and run an OGS benchmark in 5 minutes! No development setup required."
 
 [[sections]]

@@ -7,7 +7,7 @@
       <a href="/docs/">Docs</a> / <span class="text-orange">
       {{ if eq $subsection "devguide"}}Developer Guide{{ end }}
       {{ if eq $subsection "benchmarks"}}Benchmarks{{ end }}
-      {{ if eq $subsection "quickstart"}}Quickstart{{ end }}
+      {{ if eq $subsection "userguide"}}User Guide{{ end }}
       {{ if eq $subsection "tools"}}Tools{{ end }}
       </span>
     </div>
@@ -26,7 +26,7 @@
   </nav>
   <div class="w-3/4 ml-4">
     <h1>{{ .Title }}</h1>
-    {{ if or (eq $subsection "devguide") (eq $subsection "quickstart") }}
+    {{ if or (eq $subsection "devguide") (eq $subsection "userguide") }}
     <div class="invisible mb-4" id="os-selector">Select OS:
       <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i> Windows</a>
       <a class="btn mx-1" id="btn-linux"><i class="fab fa-linux"></i> Linux</a>
