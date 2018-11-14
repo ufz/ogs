@@ -151,4 +151,18 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>2e-14</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>2e-14</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

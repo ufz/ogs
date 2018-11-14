@@ -237,4 +237,18 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>cube_1e0_pcs_0_ts_1_t_0.000100.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>cube_1e0_pcs_0_ts_101_t_1.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
