@@ -11,6 +11,7 @@
 
 #include "TestDefinition.h"
 
+#include <cmath>
 #include <cstdlib>
 
 #include "BaseLib/ConfigTree.h"
