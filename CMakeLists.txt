@@ -61,7 +61,6 @@ include(test/Test)
 if(OGS_COVERAGE AND NOT IS_SUBPROJECT)
     include(Coverage)
 endif()
-include(Web)
 
 ####################
 ### More Options ###
