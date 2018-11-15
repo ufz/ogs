@@ -68,7 +68,7 @@ ThermoHydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
                 &l.getGhostIndices(), &this->_sparsity_pattern};
     }
 
-    // For staggered scheme and H process (pressure).
+    // For staggered scheme and T or H process (pressure).
     auto const& l = *_local_to_global_index_map_with_base_nodes;
     return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
             &l.getGhostIndices(), &_sparsity_pattern_with_linear_element};
@@ -122,7 +122,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::constructDofTable()
     else
     {
         // For displacement equation.
-        const int process_id = 1;
+        const int process_id = 2;
         std::vector<MeshLib::MeshSubset> all_mesh_subsets;
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
@@ -135,7 +135,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::constructDofTable()
                 std::move(all_mesh_subsets), vec_n_components,
                 NumLib::ComponentOrder::BY_LOCATION);
 
-        // For pressure equation.
+        // For pressure equation or temperature equation.
         // Collect the mesh subsets with base nodes in a vector.
         std::vector<MeshLib::MeshSubset> all_mesh_subsets_base_nodes{
             *_mesh_subset_base_nodes};
@@ -159,7 +159,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    const int mechanical_process_id = _use_monolithic_scheme ? 0 : 1;
+    const int mechanical_process_id = _use_monolithic_scheme ? 0 : 2;
     const int deformation_variable_id = _use_monolithic_scheme ? 2 : 0;
     ProcessLib::ThermoHydroMechanics::createLocalAssemblers<
         DisplacementDim, ThermoHydroMechanicsLocalAssembler>(
@@ -249,13 +249,18 @@ void ThermoHydroMechanicsProcess<
     }
 
     // Staggered scheme:
-    // for the equations of pressure
-    const int hydraulic_process_id = 0;
+    // for the equations of heat transport
+    const int thermal_process_id = 0;
+    initializeProcessBoundaryConditionsAndSourceTerms(
+        *_local_to_global_index_map_with_base_nodes, thermal_process_id);
+
+    // for the equations of mass balance
+    const int hydraulic_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
         *_local_to_global_index_map_with_base_nodes, hydraulic_process_id);
 
     // for the equations of deformation.
-    const int mechanical_process_id = 1;
+    const int mechanical_process_id = 2;
     initializeProcessBoundaryConditionsAndSourceTerms(
         *_local_to_global_index_map, mechanical_process_id);
 }
@@ -304,6 +309,12 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
         if (_coupled_solutions->process_id == 0)
         {
             DBUG(
+                "Assemble the Jacobian equations of heat transport process in "
+                "ThermoHydroMechanics for the staggered scheme.");
+        }
+        else if (_coupled_solutions->process_id == 1)
+        {
+            DBUG(
                 "Assemble the Jacobian equations of liquid fluid process in "
                 "ThermoHydroMechanics for the staggered scheme.");
         }
@@ -313,6 +324,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
                 "Assemble the Jacobian equations of mechanical process in "
                 "ThermoHydroMechanics for the staggered scheme.");
         }
+        dof_tables.emplace_back(*_local_to_global_index_map_with_base_nodes);
         dof_tables.emplace_back(*_local_to_global_index_map_with_base_nodes);
         dof_tables.emplace_back(*_local_to_global_index_map);
     }
