@@ -3,8 +3,8 @@ function (OgsTest)
         return()
     endif()
     set(options LARGE)
-    set(oneValueArgs PROJECTFILE WRAPPER)
-    set(multiValueArgs XXX)
+    set(oneValueArgs PROJECTFILE)
+    set(multiValueArgs WRAPPER)
     cmake_parse_arguments(OgsTest "${options}" "${oneValueArgs}"
         "${multiValueArgs}" ${ARGN})
 
@@ -37,12 +37,12 @@ function (OgsTest)
     add_test(
         NAME ${TEST_NAME}
         WORKING_DIRECTORY "${OgsTest_BINARY_DIR}"
-        COMMAND ogs -r "${OgsTest_SOURCE_DIR}" "${OgsTest_SOURCE_DIR}/${OgsTest_NAME}")
+        COMMAND ${OgsTest_WRAPPER} $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR} ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
     # For debugging:
     #message("Adding test with
     #    NAME ${TEST_NAME}
     #    WORKING_DIRECTORY ${OgsTest_BINARY_DIR}
-    #    COMMAND ogs -r ${OgsTest_SOURCE_DIR} ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}")
+    #    COMMAND ${OgsTest_WRAPPER} $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR} ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
 
     set_tests_properties(${TEST_NAME} PROPERTIES ENVIRONMENT
         VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>)

@@ -30,7 +30,7 @@ if (OGS_USE_PYTHON)
 endif()
 
 if (OGS_USE_MPI)
-    OgsTest(WRAPPER "mpirun -np 4" PROJECTFILE "Mechanics/Linear/disc_with_hole.prj")
+    OgsTest(WRAPPER mpirun -np 4 PROJECTFILE Mechanics/Linear/disc_with_hole.prj)
 endif()
 
 # Basic test that MFront works at all.
