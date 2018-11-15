@@ -14,6 +14,8 @@ toc = true
 
 ### XSDError: Loaded schema file is invalid
 
+You may encountering the following error (or similar) on opening `.gml`, `.cnd`, `std` or `.prj` files in the Data Explorer or file conversion tools (e.g. `OGSFileConverter`):
+
 <i class="fas fa-exclamation-triangle"></i> Error message:
 
 ```bash
@@ -23,17 +25,17 @@ XMLInterface::isValid() - XML File is invalid (in reference to schema ./OpenGeoS
 Error XSDError in http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd, at line 1, column 1: Start tag expected.
 ```
 
-This error may also apply to file conversion tools (e.g. `OGSFileConverter`).
-
 <i class="fas fa-arrow-right"></i> Solution:
 
-Open the affected file (e.g. `well.cnd` in this case) and remove the following parameter of the XML root element:
+Open the affected file (e.g. `well.cnd` in this case) in a text editor and remove the following parameter of the XML root element (the first element in `< >`-brackets in the element, e.g. `<OpenGeoSysCND>`):
 
 ```xml
 xsi:noNamespaceSchemaLocation="http://www.opengeosys.org/images/xsd/OpenGeoSysXXX.xsd"
 ```
 
 where `XXX` can be `CND`, `GLI`, `PRJ` or `STN` depending on the file type.
+
+Now the save the modified file and try to load it again.
 
 <details>
     <summary>Background info:</summary>
