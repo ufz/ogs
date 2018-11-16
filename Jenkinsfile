@@ -367,20 +367,21 @@ pipeline {
           }
           steps {
             script {
-              lock(resource: "conanCache-${env.NODE_NAME}") {
-                sh 'conan user'
-                sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
-                configure {
-                  cmakeOptions =
-                    '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use;-Xiwyu;--mapping_file=../scripts/jenkins/iwyu-mappings.imp" ' +
-                    '-DCMAKE_LINK_WHAT_YOU_USE=ON ' +
-                    '"-DCMAKE_CXX_CPPCHECK=cppcheck;--std=c++11;--language=c++;--suppress=syntaxError;--suppress=preprocessorErrorDirective:*/ThirdParty/*;--suppress=preprocessorErrorDirective:*conan*/package/*" ' +
-                    '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-3.9 '
-                  config = 'Release'
-                }
+              sh 'conan user'
+              sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
+              configure {
+                cmakeOptions =
+                  '"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use;-Xiwyu;--mapping_file=../scripts/jenkins/iwyu-mappings.imp" ' +
+                  '-DCMAKE_LINK_WHAT_YOU_USE=ON ' +
+                  '"-DCMAKE_CXX_CPPCHECK=cppcheck;--std=c++11;--language=c++;--suppress=syntaxError;--suppress=preprocessorErrorDirective:*/ThirdParty/*;--suppress=preprocessorErrorDirective:*conan*/package/*" ' +
+                  '-DCMAKE_CXX_CLANG_TIDY=clang-tidy-3.9 '
+                config = 'Release'
               }
-              build { target = 'check-header' }
-              build { target = 'all' }
+              try {
+                build { target = 'check-header' }
+                build { target = 'all' }
+              }
+              catch (Exception e) { }
             }
           }
         }
