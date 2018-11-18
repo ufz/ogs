@@ -118,7 +118,7 @@ private:
     std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
 
     void computeSecondaryVariableConcrete(const double t,
-                                          GlobalVector const& x) override;
+                                          GlobalVector const& x, const int process_id) override;
     /**
      * @copydoc ProcessLib::Process::getDOFTableForExtrapolatorData()
      */

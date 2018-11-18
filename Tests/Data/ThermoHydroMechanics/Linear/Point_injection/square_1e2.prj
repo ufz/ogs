@@ -6,7 +6,7 @@
         <process>
             <name>THERMO_HYDRO_MECHANICS</name>
             <type>THERMO_HYDRO_MECHANICS</type>
-            <integration_order>3</integration_order>
+            <integration_order>4</integration_order>
             <dimension>2</dimension>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
@@ -53,7 +53,6 @@
             <specific_body_force>0 0</specific_body_force>
         </process>
     </processes>
-
     <time_loop>
         <processes>
             <process ref="THERMO_HYDRO_MECHANICS">
@@ -64,21 +63,6 @@
                     <abstols>1e-5 1e-5 1e-5 1e-5</abstols>
                 </convergence_criterion>
                 <time_discretization><type>BackwardEuler</type></time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>pressure</variable>
-                        <variable>temperature</variable>
-                        <variable>sigma_xx</variable>
-                        <variable>sigma_yy</variable>
-                        <variable>sigma_xy</variable>
-                        <variable>sigma_zz</variable>
-                        <variable>epsilon_xx</variable>
-                        <variable>epsilon_yy</variable>
-                        <variable>epsilon_xy</variable>
-                        <variable>epsilon_zz</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -97,9 +81,21 @@
                 <pair><repeat>1</repeat>
                 <each_steps>10</each_steps></pair>
             </timesteps>
+                <variables>
+                    <variable>displacement</variable>
+                    <variable>pressure</variable>
+                    <variable>temperature</variable>
+                    <variable>sigma_xx</variable>
+                    <variable>sigma_yy</variable>
+                    <variable>sigma_xy</variable>
+                    <variable>sigma_zz</variable>
+                    <variable>epsilon_xx</variable>
+                    <variable>epsilon_yy</variable>
+                    <variable>epsilon_xy</variable>
+                    <variable>epsilon_zz</variable>
+                </variables>
         </output>
     </time_loop>
-
     <parameters>
         <parameter>
             <name>E</name>
@@ -191,7 +187,7 @@
             <name>pressure_bc_left</name>
             <type>Constant</type>
             <value>0</value>
-        </parameter>		
+        </parameter>
         <parameter>
             <name>temperature_bc_left</name>
             <type>Constant</type>
@@ -222,9 +218,7 @@
             <type>Constant</type>
             <value>0.6</value>
         </parameter>
-		
     </parameters>
-
     <process_variables>
         <process_variable>
             <name>displacement</name>
@@ -245,19 +239,20 @@
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
-                </boundary_condition>   
-            </boundary_conditions> 
+                </boundary_condition>
+            </boundary_conditions>
         </process_variable>
         <process_variable>
             <name>pressure</name>
             <components>1</components>
-            <order>1</order>      
+            <order>1</order>
             <initial_condition>pressure_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
                    <geometrical_set>square_1x1_geometry</geometrical_set>
                    <geometry>out</geometry>
                    <type>Dirichlet</type>
+				   <component>0</component>
                    <parameter>pressure_bc_left</parameter>
                 </boundary_condition>
             </boundary_conditions>
@@ -265,19 +260,21 @@
         <process_variable>
             <name>temperature</name>
             <components>1</components>
-            <order>1</order>      
+            <order>1</order>
             <initial_condition>temperature_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>flux_bc</geometry>
                     <type>Neumann</type>
+					<component>0</component>
                     <parameter>temperature_bc_center</parameter>
-                </boundary_condition>     
+                </boundary_condition>
                 <boundary_condition>
                    <geometrical_set>square_1x1_geometry</geometrical_set>
                    <geometry>out</geometry>
                    <type>Dirichlet</type>
+				   <component>0</component>
                    <parameter>temperature_bc_left</parameter>
                 </boundary_condition>
             </boundary_conditions>

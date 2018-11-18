@@ -771,7 +771,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
             }
         }
         else
-#endif			
+#endif
 #ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
             if (type == "THERMO_MECHANICAL_PHASE_FIELD")
         {

@@ -63,21 +63,6 @@
                     <abstol>1e-5</abstol>
                 </convergence_criterion>
                 <time_discretization><type>BackwardEuler</type></time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>pressure</variable>
-                        <variable>temperature</variable>
-                        <variable>sigma_xx</variable>
-                        <variable>sigma_yy</variable>
-                        <variable>sigma_xy</variable>
-                        <variable>sigma_zz</variable>
-                        <variable>epsilon_xx</variable>
-                        <variable>epsilon_yy</variable>
-                        <variable>epsilon_xy</variable>
-                        <variable>epsilon_zz</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -96,93 +81,106 @@
                 <pair><repeat>1</repeat>
                 <each_steps>10</each_steps></pair>
             </timesteps>
+                <variables>
+                    <variable>displacement</variable>
+                    <variable>pressure</variable>
+                    <variable>temperature</variable>
+                    <variable>sigma_xx</variable>
+                    <variable>sigma_yy</variable>
+                    <variable>sigma_xy</variable>
+                    <variable>sigma_zz</variable>
+                    <variable>epsilon_xx</variable>
+                    <variable>epsilon_yy</variable>
+                    <variable>epsilon_xy</variable>
+                    <variable>epsilon_zz</variable>
+                </variables>
         </output>
     </time_loop>
     <parameters>
         <parameter>
-           <name>E</name>
-           <type>Group</type>
-           <group_id_property>MaterialIDs</group_id_property>
-           <index_values>
-           <index>0</index>
-           <value>19</value>
-           </index_values>
-           <index_values>
-           <index>1</index>
-           <value>0.95</value>
-           </index_values>
-           <index_values>
-           <index>2</index>
-           <value>9.5</value>
-           </index_values>
+            <name>E</name>
+            <type>Group</type>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+            <index>0</index>
+            <value>19</value>
+            </index_values>
+            <index_values>
+            <index>1</index>
+            <value>0.95</value>
+            </index_values>
+            <index_values>
+            <index>2</index>
+            <value>9.5</value>
+            </index_values>
         </parameter>
         <parameter>
-           <name>alpha_s</name>
-           <type>Group</type>
-           <group_id_property>MaterialIDs</group_id_property>
-           <index_values>
-           <index>0</index>
-           <value>0.23333e-5</value>
-           </index_values>
-           <index_values>
-           <index>1</index>
-           <value>0.23333e-5</value>
-           </index_values>
-           <index_values>
-           <index>2</index>
-           <value>0.46667e-5</value>
-           </index_values>
+            <name>alpha_s</name>
+            <type>Group</type>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+            <index>0</index>
+            <value>0.23333e-5</value>
+            </index_values>
+            <index_values>
+            <index>1</index>
+            <value>0.23333e-5</value>
+            </index_values>
+            <index_values>
+            <index>2</index>
+            <value>0.46667e-5</value>
+            </index_values>
         </parameter>
         <parameter>
-           <name>phi</name>
-           <type>Group</type>
-           <group_id_property>MaterialIDs</group_id_property>
-           <index_values>
-           <index>0</index>
-           <value>0.1</value>
-           </index_values>
-           <index_values>
-           <index>1</index>
-           <value>0</value>
-           </index_values>
-           <index_values>
-           <index>2</index>
-           <value>0.1</value>
-           </index_values>
+            <name>phi</name>
+            <type>Group</type>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+            <index>0</index>
+            <value>0.1</value>
+            </index_values>
+            <index_values>
+            <index>1</index>
+            <value>0</value>
+            </index_values>
+            <index_values>
+            <index>2</index>
+            <value>0.1</value>
+            </index_values>
         </parameter>
         <parameter>
-           <name>k</name>
-           <type>Group</type>
-           <group_id_property>MaterialIDs</group_id_property>
-           <index_values>
-           <index>0</index>
-           <value>1e-6</value>
-           </index_values>
-           <index_values>
-           <index>1</index>
-           <value>1e-16</value>
-           </index_values>
-           <index_values>
-           <index>2</index>
-           <value>1e-6</value>
-           </index_values>
+            <name>k</name>
+            <type>Group</type>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+            <index>0</index>
+            <value>1e-6</value>
+            </index_values>
+            <index_values>
+            <index>1</index>
+            <value>1e-16</value>
+            </index_values>
+            <index_values>
+            <index>2</index>
+            <value>1e-6</value>
+            </index_values>
         </parameter>
         <parameter>
-           <name>alpha</name>
-           <type>Group</type>
-           <group_id_property>MaterialIDs</group_id_property>
-           <index_values>
-           <index>0</index>
-           <value>1</value>
-           </index_values>
-           <index_values>
-           <index>1</index>
-           <value>0</value>
-           </index_values>
-           <index_values>
-           <index>2</index>
-           <value>1</value>
-           </index_values>
+            <name>alpha</name>
+            <type>Group</type>
+            <group_id_property>MaterialIDs</group_id_property>
+            <index_values>
+            <index>0</index>
+            <value>1</value>
+            </index_values>
+            <index_values>
+            <index>1</index>
+            <value>0</value>
+            </index_values>
+            <index_values>
+            <index>2</index>
+            <value>1</value>
+            </index_values>
         </parameter>
         <parameter>
             <name>nu</name>
@@ -285,21 +283,21 @@
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
-                </boundary_condition> 
-            </boundary_conditions> 
+                </boundary_condition>
+            </boundary_conditions>
         </process_variable>
         <process_variable>
             <name>pressure</name>
             <components>1</components>
-            <order>1</order>      
+            <order>1</order>
             <initial_condition>pressure_ic</initial_condition>
-            <boundary_conditions>    
+            <boundary_conditions>
             </boundary_conditions>
         </process_variable>
-       <process_variable>
+        <process_variable>
             <name>temperature</name>
             <components>1</components>
-            <order>1</order>      
+            <order>1</order>
             <initial_condition>temperature_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
@@ -308,7 +306,7 @@
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>temperature_bc_left</parameter>
-                </boundary_condition>    
+                </boundary_condition>
             </boundary_conditions>
         </process_variable>
     </process_variables>

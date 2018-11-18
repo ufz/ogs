@@ -406,12 +406,12 @@ void ThermoHydroMechanicsProcess<
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<
     DisplacementDim>::computeSecondaryVariableConcrete(const double t,
-                                                       GlobalVector const& x)
+                                                       GlobalVector const& x, const int process_id)
 {
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
-        *_local_to_global_index_map, t, x, _coupled_solutions);
+        getDOFTable(process_id), t, x, _coupled_solutions);
 }
 
 template <int DisplacementDim>

@@ -26,11 +26,11 @@
             <solid_thermal_conductivity>lambda_s</solid_thermal_conductivity>
             <fluid_specific_heat_capacity>C_f</fluid_specific_heat_capacity>
             <fluid_thermal_conductivity>lambda_f</fluid_thermal_conductivity>
-            <reference_temperature>T0</reference_temperature> 
+            <reference_temperature>T0</reference_temperature>
             <process_variables>
 			    <temperature>temperature</temperature>
 			    <pressure>pressure</pressure>
-                <displacement>displacement</displacement>           
+                <displacement>displacement</displacement>
             </process_variables>
             <secondary_variables>
                 <secondary_variable type="static"
@@ -63,21 +63,6 @@
                     <abstols>1e-7 1e-5 1e-5 1e-5</abstols>
                 </convergence_criterion>
                 <time_discretization><type>BackwardEuler</type></time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>pressure</variable>
-                        <variable>temperature</variable>
-                        <variable>sigma_xx</variable>
-                        <variable>sigma_yy</variable>
-                        <variable>sigma_xy</variable>
-                        <variable>sigma_zz</variable>
-                        <variable>epsilon_xx</variable>
-                        <variable>epsilon_yy</variable>
-                        <variable>epsilon_xy</variable>
-                        <variable>epsilon_zz</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -96,6 +81,19 @@
                 <pair><repeat>1</repeat>
                 <each_steps>10</each_steps></pair>
             </timesteps>
+                <variables>
+                    <variable>displacement</variable>
+                    <variable>pressure</variable>
+                    <variable>temperature</variable>
+                    <variable>sigma_xx</variable>
+                    <variable>sigma_yy</variable>
+                    <variable>sigma_xy</variable>
+                    <variable>sigma_zz</variable>
+                    <variable>epsilon_xx</variable>
+                    <variable>epsilon_yy</variable>
+                    <variable>epsilon_xy</variable>
+                    <variable>epsilon_zz</variable>
+                </variables>
         </output>
     </time_loop>
     <parameters>
@@ -143,7 +141,7 @@
             <name>beta_f</name>
             <type>Constant</type>
             <value>2.07e-4</value>
-        </parameter> 
+        </parameter>
         <parameter>
             <name>lambda_s</name>
             <type>Constant</type>
@@ -225,13 +223,13 @@
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
-                </boundary_condition>   
-            </boundary_conditions> 
+                </boundary_condition>
+            </boundary_conditions>
         </process_variable>
         <process_variable>
             <name>pressure</name>
             <components>1</components>
-            <order>1</order>      
+            <order>1</order>
             <initial_condition>pressure_ic</initial_condition>
             <boundary_conditions>
             </boundary_conditions>
@@ -239,7 +237,7 @@
         <process_variable>
             <name>temperature</name>
             <components>1</components>
-            <order>1</order>      
+            <order>1</order>
             <initial_condition>temperature_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
@@ -248,7 +246,7 @@
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>temperature_bc_left</parameter>
-                </boundary_condition>     
+                </boundary_condition>
             </boundary_conditions>
         </process_variable>
     </process_variables>
