@@ -401,12 +401,12 @@ createCompareJacobiansJacobianAssembler(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{prj__processes__process__jacobian_assembler__type}
     config.checkConfigParameter("type", "CompareJacobians");
 
-    //! \ogs_file_param{prj__processes__process__jacobian_assembler__CompareJacobians__jacobian_assembler}
     auto asm1 =
+        //! \ogs_file_param{prj__processes__process__jacobian_assembler__CompareJacobians__jacobian_assembler}
         createJacobianAssembler(config.getConfigSubtree("jacobian_assembler"));
 
-    //! \ogs_file_param{prj__processes__process__jacobian_assembler__CompareJacobians__reference_jacobian_assembler}
     auto asm2 = createJacobianAssembler(
+        //! \ogs_file_param{prj__processes__process__jacobian_assembler__CompareJacobians__reference_jacobian_assembler}
         config.getConfigSubtree("reference_jacobian_assembler"));
 
     //! \ogs_file_param{prj__processes__process__jacobian_assembler__CompareJacobians__abs_tol}
