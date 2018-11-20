@@ -231,7 +231,7 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
     double R_gg, R_gs;
     std::tie(R_gg, R_gs) = thermalResistancesGroutSoil(chi, R_ar, R_g);
 
-    return {R_fig, R_fog, R_gg, R_gs};
+    return {{R_fig, R_fog, R_gg, R_gs}};
 
     // keep the following lines------------------------------------------------
     // when debugging the code, printing the R and phi values are needed--------
