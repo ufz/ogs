@@ -72,7 +72,7 @@ AddTest(
     NAME identifySubdomains_Point_Line_Surface_in_TriangleMesh
     PATH MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
-    EXECUTABLE_ARGS -m PntLineSFC_DomainTRIMesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/TRI_ -- PntLineSFC_BC_Point.vtu PntLineSFC_BC_Line.vtu PntLineSFC_BC_Surface.vtu
+    EXECUTABLE_ARGS -m PntLineSFC_DomainTRIMesh.vtu -s 1e-06 -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/TRI_ -- PntLineSFC_BC_Point.vtu PntLineSFC_BC_Line.vtu PntLineSFC_BC_Surface.vtu
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
@@ -91,7 +91,7 @@ AddTest(
     NAME identifySubdomains_Point_Line_Surface_in_PrismMesh
     PATH MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
-    EXECUTABLE_ARGS -m PntLineSFC_DomainPRISMMesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/PRISM_  -- PntLineSFC_BC_Point.vtu PntLineSFC_BC_Line.vtu PntLineSFC_BC_Surface.vtu
+    EXECUTABLE_ARGS -m PntLineSFC_DomainPRISMMesh.vtu -s 1e-06 -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/PRISM_  -- PntLineSFC_BC_Point.vtu PntLineSFC_BC_Line.vtu PntLineSFC_BC_Surface.vtu
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
