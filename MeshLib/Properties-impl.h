@@ -89,7 +89,7 @@ bool Properties::existsPropertyVector(std::string const& name) const
 
 template <typename T>
 bool Properties::existsPropertyVector(std::string const& name,
-                                      MeshItemType const item_type,
+                                      MeshItemType const mesh_item_type,
                                       int const number_of_components) const
 {
     auto const it = _properties.find(name);
@@ -103,7 +103,7 @@ bool Properties::existsPropertyVector(std::string const& name,
     {
         return false;
     }
-    if (property->getMeshItemType() != item_type)
+    if (property->getMeshItemType() != mesh_item_type)
     {
         return false;
     }
