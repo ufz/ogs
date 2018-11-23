@@ -22,6 +22,7 @@
 #include <vtkBitArray.h>
 #include <vtkCharArray.h>
 #include <vtkDoubleArray.h>
+#include <vtkFloatArray.h>
 #include <vtkImageData.h>
 #include <vtkIntArray.h>
 #include <vtkPointData.h>
@@ -269,6 +270,12 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
     if (vtkDoubleArray::SafeDownCast(&array))
     {
         VtkMeshConverter::convertTypedArray<double>(array, properties, type);
+        return;
+    }
+
+    if (vtkFloatArray::SafeDownCast(&array))
+    {
+        VtkMeshConverter::convertTypedArray<float>(array, properties, type);
         return;
     }
 
