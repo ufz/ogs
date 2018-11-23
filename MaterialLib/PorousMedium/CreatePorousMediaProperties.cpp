@@ -76,19 +76,11 @@ PorousMediaProperties createPorousMediaProperties(
     BaseLib::reorderVector(porosity_models, mat_ids);
     BaseLib::reorderVector(storage_models, mat_ids);
 
-    std::vector<int> material_ids(mesh.getNumberOfElements());
-    if (mesh.getProperties().existsPropertyVector<int>(
-            "MaterialIDs", MeshLib::MeshItemType::Cell, 1))
-    {
-        auto const& mesh_material_ids =
-            mesh.getProperties().getPropertyVector<int>(
-                "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-        material_ids.reserve(mesh_material_ids->size());
-        std::copy(mesh_material_ids->cbegin(), mesh_material_ids->cend(),
-                  material_ids.begin());
-    }
+    auto const material_ids = materialIDs(mesh);
     int const max_material_id =
-        *std::max_element(material_ids.cbegin(), material_ids.cend());
+        !material_ids
+            ? 0
+            : *std::max_element(begin(*material_ids), end(*material_ids));
 
     if (max_material_id > static_cast<int>(mat_ids.size() - 1))
         OGS_FATAL(
@@ -112,8 +104,7 @@ PorousMediaProperties createPorousMediaProperties(
 
     return PorousMediaProperties{std::move(porosity_models),
                                  std::move(intrinsic_permeability_models),
-                                 std::move(storage_models),
-                                 std::move(material_ids)};
+                                 std::move(storage_models), material_ids};
 }
 
 }  // namespace ComponentTransport

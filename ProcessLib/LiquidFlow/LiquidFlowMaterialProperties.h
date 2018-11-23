@@ -56,10 +56,8 @@ public:
             porosity_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
             storage_models,
-        bool const has_material_ids,
-        MeshLib::PropertyVector<int> const& material_ids)
-        : _has_material_ids(has_material_ids),
-          _material_ids(material_ids),
+        MeshLib::PropertyVector<int> const* const material_ids)
+        : _material_ids(material_ids),
           _fluid_properties(std::move(fluid_properties)),
           _intrinsic_permeability_models(
               std::move(intrinsic_permeability_models)),
@@ -106,13 +104,10 @@ public:
                        const double porosity_variable, const double T) const;
 
 private:
-    /// A flag to indicate whether the reference member, _material_ids,
-    /// is not assigned.
-    const bool _has_material_ids;
     /** Use porous medium models for different material zones.
      *  Material IDs must be given as mesh element properties.
      */
-    MeshLib::PropertyVector<int> const& _material_ids;
+    MeshLib::PropertyVector<int> const* const _material_ids;
 
     const std::unique_ptr<MaterialLib::Fluid::FluidProperties>
         _fluid_properties;

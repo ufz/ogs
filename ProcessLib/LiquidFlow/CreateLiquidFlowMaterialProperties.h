@@ -45,8 +45,7 @@ std::unique_ptr<LiquidFlowMaterialProperties>
 createLiquidFlowMaterialProperties(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    bool const has_material_ids,
-    MeshLib::PropertyVector<int> const& material_ids);
+    MeshLib::PropertyVector<int> const* const material_ids);
 
 }  // end of namespace
 }  // end of namespace
