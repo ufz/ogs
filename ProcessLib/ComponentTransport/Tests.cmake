@@ -194,6 +194,18 @@ AddTest(
 )
 
 AddTest(
+    NAME 3D_ComponentTransport_surfaceflux
+    PATH Parabolic/ComponentTransport/SimpleSynthetics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS surfaceflux_component-transport_cube_1e3.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    cube_1x1x1_hex_1e3_complete_surface.vtu flux_1e3_t_1.000000.vtu flux flux 1e-10 1e-16
+)
+
+AddTest(
     NAME LARGE_2D_ComponentTransport_Goswami
     PATH Parabolic/ComponentTransport/goswami
     EXECUTABLE ogs

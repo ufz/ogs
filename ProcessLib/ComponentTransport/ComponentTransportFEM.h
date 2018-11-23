@@ -336,6 +336,70 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
+    Eigen::Vector3d getFlux(MathLib::Point3d const& pnt_local_coords,
+                            double const t,
+                            std::vector<double> const& local_x) const override
+    {
+        // eval shape matrices at given point
+        auto const shape_matrices = [&]() {
+            using FemType =
+                NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
+
+            FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(
+                &_element));
+
+            typename ShapeMatricesType::ShapeMatrices shape_matrices(
+                ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
+
+            // Note: Axial symmetry is set to false here, because we only need
+            // dNdx here, which is not affected by axial symmetry.
+            fe.template computeShapeFunctions<NumLib::ShapeMatrixType::DNDX>(
+                pnt_local_coords.getCoords(), shape_matrices, GlobalDim, false);
+
+            return shape_matrices;
+        }();
+
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        MaterialLib::Fluid::FluidProperty::ArrayType vars;
+
+        // local_x contains the local concentration and pressure values
+        NumLib::shapeFunctionInterpolate(
+            local_x, shape_matrices.N,
+            vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::C)],
+            vars[static_cast<int>(
+                MaterialLib::Fluid::PropertyVariableType::p)]);
+
+        auto const K =
+            _process_data.porous_media_properties
+                .getIntrinsicPermeability(t, pos)
+                .getValue(t, pos, 0.0,
+                          vars[static_cast<int>(
+                              MaterialLib::Fluid::PropertyVariableType::C)]);
+
+        auto const mu = _process_data.fluid_properties->getValue(
+            MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
+        GlobalDimMatrixType const K_over_mu = K / mu;
+
+        auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
+            &local_x[local_x.size()/2], ShapeFunction::NPOINTS);
+        GlobalDimVectorType q =
+            -K_over_mu * shape_matrices.dNdx * p_nodal_values;
+
+        if (_process_data.has_gravity)
+        {
+            auto const rho_w =
+                _process_data.fluid_properties->getValue(
+                    MaterialLib::Fluid::FluidPropertyType::Density, vars);
+            auto const b = _process_data.specific_body_force;
+            q += K_over_mu * rho_w * b;
+        }
+        Eigen::Vector3d flux(0.0, 0.0, 0.0);
+        flux.head<GlobalDim>() = q;
+        return flux;
+    }
+
 private:
     MeshLib::Element const& _element;
     ComponentTransportProcessData const& _process_data;

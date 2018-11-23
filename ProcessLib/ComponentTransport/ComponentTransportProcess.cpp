@@ -11,6 +11,8 @@
 
 #include <cassert>
 
+#include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
+#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib
@@ -27,12 +29,14 @@ ComponentTransportProcess::ComponentTransportProcess(
     ComponentTransportProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme,
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), std::move(named_function_caller),
               use_monolithic_scheme),
-      _process_data(std::move(process_data))
+      _process_data(std::move(process_data)),
+      _surfaceflux(std::move(surfaceflux))
 {
 }
 
@@ -86,6 +90,46 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
         dx_dx, M, K, b, Jac, _coupled_solutions);
+}
+
+Eigen::Vector3d ComponentTransportProcess::getFlux(std::size_t const element_id,
+                                                   MathLib::Point3d const& p,
+                                                   double const t,
+                                                   GlobalVector const& x) const
+{
+    std::vector<GlobalIndexType> indices_cache;
+    auto const r_c_indices = NumLib::getRowColumnIndices(
+        element_id, *_local_to_global_index_map, indices_cache);
+    std::vector<double> local_x(x.get(r_c_indices.rows));
+    return _local_assemblers[element_id]->getFlux(p, t, local_x);
+}
+
+void ComponentTransportProcess::postTimestepConcreteProcess(
+    GlobalVector const& x,
+    const double t,
+    const double /*delta_t*/,
+    int const process_id)
+{
+    // For the monolithic scheme, process_id is always zero.
+    if (_use_monolithic_scheme && process_id != 0)
+    {
+        OGS_FATAL(
+            "The condition of process_id = 0 must be satisfied for "
+            "monolithic ComponentTransportProcess, which is a single process.");
+    }
+    if (!_use_monolithic_scheme && process_id != 1)
+    {
+        DBUG(
+            "This is the transport part of the staggered "
+            "ComponentTransportProcess.");
+        return;
+    }
+    if (!_surfaceflux)  // computing the surfaceflux is optional
+    {
+        return;
+    }
+    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh);
+    _surfaceflux->save(t);
 }
 
 }  // namespace ComponentTransport

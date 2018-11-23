@@ -12,6 +12,9 @@
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/PorousMedium/CreatePorousMediaProperties.h"
 
+#include "MeshLib/IO/readMeshFromFile.h"
+
+#include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -29,7 +32,9 @@ std::unique_ptr<Process> createComponentTransportProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::string const& output_directory)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "ComponentTransport");
@@ -165,11 +170,21 @@ std::unique_ptr<Process> createComponentTransportProcess(
     ProcessLib::createSecondaryVariables(config, secondary_variables,
                                          named_function_caller);
 
+    std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
+    auto surfaceflux_config =
+        //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}
+        config.getConfigSubtreeOptional("calculatesurfaceflux");
+    if (surfaceflux_config)
+    {
+        surfaceflux = ProcessLib::SurfaceFluxData::createSurfaceFluxData(
+            *surfaceflux_config, meshes, output_directory);
+    }
+
     return std::make_unique<ComponentTransportProcess>(
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
-        use_monolithic_scheme);
+        use_monolithic_scheme, std::move(surfaceflux));
 }
 
 }  // namespace ComponentTransport

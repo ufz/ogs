@@ -16,6 +16,8 @@
 
 namespace ProcessLib
 {
+struct SurfaceFluxData;
+
 namespace ComponentTransport
 {
 /**
@@ -97,13 +99,23 @@ public:
         ComponentTransportProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
-        bool const use_monolithic_scheme);
+        bool const use_monolithic_scheme,
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
 
     //! \name ODESystem interface
     //! @{
 
     bool isLinear() const override { return false; }
     //! @}
+
+    Eigen::Vector3d getFlux(std::size_t const element_id,
+                            MathLib::Point3d const& p, double const t,
+                            GlobalVector const& x) const override;
+
+    void postTimestepConcreteProcess(GlobalVector const& x,
+                                     const double t,
+                                     const double delta_t,
+                                     int const process_id) override;
 
 private:
     void initializeConcreteProcess(
@@ -124,6 +136,8 @@ private:
 
     std::vector<std::unique_ptr<ComponentTransportLocalAssemblerInterface>>
         _local_assemblers;
+
+    std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 };
 
 }  // namespace ComponentTransport
