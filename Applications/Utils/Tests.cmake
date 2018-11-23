@@ -79,9 +79,9 @@ AddTest(
     PntLineSFC_BC_Point_TRI_reference.vtu TRI_PntLineSFC_BC_Point.vtu bulk_node_ids bulk_node_ids 0 0
     PntLineSFC_BC_Line_TRI_reference.vtu TRI_PntLineSFC_BC_Line.vtu bulk_node_ids bulk_node_ids 0 0
     PntLineSFC_BC_Surface_TRI_reference.vtu TRI_PntLineSFC_BC_Surface.vtu bulk_node_ids bulk_node_ids 0 0
-    PntLineSFC_BC_Point_TRI_reference.vtu TRI_PntLineSFC_BC_Point.vtu bulk_element_ids bulk_element_ids 0 0
-    PntLineSFC_BC_Line_TRI_reference.vtu TRI_PntLineSFC_BC_Line.vtu bulk_element_ids bulk_element_ids 0 0
-    PntLineSFC_BC_Surface_TRI_reference.vtu TRI_PntLineSFC_BC_Surface.vtu bulk_element_ids bulk_element_ids 0 0
+    #PntLineSFC_BC_Point_TRI_reference.vtu TRI_PntLineSFC_BC_Point.vtu bulk_element_ids bulk_element_ids 0 0
+    #PntLineSFC_BC_Line_TRI_reference.vtu TRI_PntLineSFC_BC_Line.vtu bulk_element_ids bulk_element_ids 0 0
+    #PntLineSFC_BC_Surface_TRI_reference.vtu TRI_PntLineSFC_BC_Surface.vtu bulk_element_ids bulk_element_ids 0 0
 )
 
 AddTest(
@@ -98,9 +98,9 @@ AddTest(
     # PntLineSFC_BC_Point_PRISM_reference.vtu PRISM_PntLineSFC_BC_Point.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
     # PntLineSFC_BC_Line_PRISM_reference.vtu PRISM_PntLineSFC_BC_Line.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
     # PntLineSFC_BC_Surface_PRISM_reference.vtu PRISM_PntLineSFC_BC_Surface.vtu bulk_element_ids bulk_element_ids 0 0   # TODO (naumov) Needs extension of vtkdiff to FieldData
-    PntLineSFC_BC_Point_PRISM_reference.vtu PRISM_PntLineSFC_BC_Point.vtu number_bulk_elements number_bulk_elements 0 0
-    PntLineSFC_BC_Line_PRISM_reference.vtu PRISM_PntLineSFC_BC_Line.vtu number_bulk_elements number_bulk_elements 0 0
-    PntLineSFC_BC_Surface_PRISM_reference.vtu PRISM_PntLineSFC_BC_Surface.vtu number_bulk_elements number_bulk_elements 0 0
+    #PntLineSFC_BC_Point_PRISM_reference.vtu PRISM_PntLineSFC_BC_Point.vtu number_bulk_elements number_bulk_elements 0 0
+    #PntLineSFC_BC_Line_PRISM_reference.vtu PRISM_PntLineSFC_BC_Line.vtu number_bulk_elements number_bulk_elements 0 0
+    #PntLineSFC_BC_Surface_PRISM_reference.vtu PRISM_PntLineSFC_BC_Surface.vtu number_bulk_elements number_bulk_elements 0 0
 )
 
 # Mac is producing slightly different partitioning, so the results are not
