@@ -99,8 +99,8 @@ std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
     MeshLib::Mesh const& subdomain_mesh, MeshLib::Mesh const& bulk_mesh)
 {
     auto& properties = subdomain_mesh.getProperties();
-    auto const& bulk_node_ids =
-        *properties.getPropertyVector<std::size_t>("bulk_node_ids");
+    auto const& bulk_node_ids = *properties.getPropertyVector<std::size_t>(
+        "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
     // Allocate space for all elements for random insertion.
     std::vector<std::vector<std::size_t>> bulk_element_ids_map(

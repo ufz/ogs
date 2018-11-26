@@ -70,24 +70,10 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
     // create _bulk_ids vector
     auto const* bulk_element_ids =
         _bc_mesh.getProperties().getPropertyVector<std::size_t>(
-            "bulk_element_ids");
-    if (!bulk_element_ids)
-    {
-        OGS_FATAL(
-            "The boundary mesh '%s' doesn't contain the needed property "
-            "'bulk_element_ids'.",
-            _bc_mesh.getName().c_str());
-    }
+            "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
     auto const* bulk_node_ids =
         _bc_mesh.getProperties().getPropertyVector<std::size_t>(
-            "bulk_node_ids");
-    if (!bulk_node_ids)
-    {
-        OGS_FATAL(
-            "The boundary mesh '%s' doesn't contain the needed property "
-            "'bulk_node_ids'.",
-            _bc_mesh.getName().c_str());
-    }
+            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
     auto const& bulk_nodes = bulk_mesh.getNodes();
 
     auto get_bulk_element_face_id =

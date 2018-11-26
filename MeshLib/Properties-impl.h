@@ -88,6 +88,33 @@ bool Properties::existsPropertyVector(std::string const& name) const
 }
 
 template <typename T>
+bool Properties::existsPropertyVector(std::string const& name,
+                                      MeshItemType const mesh_item_type,
+                                      int const number_of_components) const
+{
+    auto const it = _properties.find(name);
+    if (it == _properties.end())
+    {
+        return false;
+    }
+
+    auto property = dynamic_cast<PropertyVector<T>*>(it->second);
+    if (property == nullptr)
+    {
+        return false;
+    }
+    if (property->getMeshItemType() != mesh_item_type)
+    {
+        return false;
+    }
+    if (property->getNumberOfComponents() != number_of_components)
+    {
+        return false;
+    }
+    return true;
+}
+
+template <typename T>
 PropertyVector<T> const* Properties::getPropertyVector(
     std::string const& name) const
 {
@@ -136,25 +163,66 @@ PropertyVector<T> const* Properties::getPropertyVector(
     auto const it = _properties.find(name);
     if (it == _properties.end())
     {
-        OGS_FATAL("A property with name '%s' does not exist.", name.c_str());
+        OGS_FATAL("A PropertyVector with name '%s' does not exist in the mesh.",
+                  name.c_str());
     }
 
     auto property = dynamic_cast<PropertyVector<T>*>(it->second);
     if (property == nullptr)
     {
-        OGS_FATAL("Could not cast property '%s' to given type.", name.c_str());
+        OGS_FATAL(
+            "Could not cast the data type of the PropertyVector '%s' to "
+            "requested data type.",
+            name.c_str());
     }
     if (property->getMeshItemType() != item_type)
     {
         OGS_FATAL(
-            "The PropertyVector '%s' has a different type than requested. A "
-            "'%s' field is requested.",
-            name.c_str(), toString(item_type));
+            "The PropertyVector '%s' has type '%s'. A '%s' field is requested.",
+            name.c_str(), toString(property->getMeshItemType()),
+            toString(item_type));
     }
     if (property->getNumberOfComponents() != n_components)
     {
-        OGS_FATAL("'%s' does not have the right number of components.",
+        OGS_FATAL(
+            "PropertyVector '%s' has %d components, %d components are needed.",
+            name.c_str(), property->getNumberOfComponents(), n_components);
+    }
+    return property;
+}
+
+template <typename T>
+PropertyVector<T>* Properties::getPropertyVector(std::string const& name,
+                                                 MeshItemType const item_type,
+                                                 int const n_components)
+{
+    auto const it = _properties.find(name);
+    if (it == _properties.end())
+    {
+        OGS_FATAL("A PropertyVector with name '%s' does not exist in the mesh.",
                   name.c_str());
+    }
+
+    auto property = dynamic_cast<PropertyVector<T>*>(it->second);
+    if (property == nullptr)
+    {
+        OGS_FATAL(
+            "Could not cast the data type of the PropertyVector '%s' to "
+            "requested data type.",
+            name.c_str());
+    }
+    if (property->getMeshItemType() != item_type)
+    {
+        OGS_FATAL(
+            "The PropertyVector '%s' has type '%s'. A '%s' field is requested.",
+            name.c_str(), toString(property->getMeshItemType()),
+            toString(item_type));
+    }
+    if (property->getNumberOfComponents() != n_components)
+    {
+        OGS_FATAL(
+            "PropertyVector '%s' has %d components, %d components are needed.",
+            name.c_str(), property->getNumberOfComponents(), n_components);
     }
     return property;
 }

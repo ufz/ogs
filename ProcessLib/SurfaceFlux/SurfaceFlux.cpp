@@ -40,10 +40,10 @@ SurfaceFlux::SurfaceFlux(
 
     auto const bulk_element_ids =
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "bulk_element_ids");
+            "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
     auto const bulk_face_ids =
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "bulk_face_ids");
+            "bulk_face_ids", MeshLib::MeshItemType::Cell, 1);
 
     ProcessLib::createLocalAssemblers<SurfaceFluxLocalAssembler>(
         boundary_mesh.getDimension() + 1,  // or bulk_mesh.getDimension()?

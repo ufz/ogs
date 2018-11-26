@@ -52,31 +52,38 @@ int main (int argc, char* argv[])
     cmd.parse( argc, argv );
 
     // read mesh
-    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
-    if (!mesh) {
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
+
+    if (!mesh)
+    {
         INFO("Could not read mesh from file \"%s\".", mesh_arg.getValue().c_str());
         return EXIT_FAILURE;
     }
-    if (!mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
+
+    MeshLib::PropertyVector<int>* materialIds = nullptr;
+    try
     {
-        ERR("Mesh contains no int-property vector named \"MaterialIds\".");
+        materialIds = mesh->getProperties().getPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+    }
+    catch (std::runtime_error const& e)
+    {
+        WARN("%s", e.what());
         return EXIT_FAILURE;
     }
-    auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 
     std::size_t const n_properties(materialIds->size());
-    if (n_properties != mesh->getNumberOfElements()) {
-        ERR("Size mismatch: number of elements (%u) != number of material "
-            "properties (%u).", mesh->getNumberOfElements(), n_properties);
-        return EXIT_FAILURE;
-    }
-    std::string const name = BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());
+    assert(n_properties != mesh->getNumberOfElements());
+
+    std::string const name =
+        BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());
     // create file
     std::string const new_matname(name + "_prop");
-    std::ofstream out_prop( new_matname.c_str(), std::ios::out );
+    std::ofstream out_prop(new_matname.c_str(), std::ios::out);
     if (out_prop.is_open())
     {
-        for (std::size_t i=0; i<n_properties; ++i)
+        for (std::size_t i = 0; i < n_properties; ++i)
             out_prop << i << "\t" << (*materialIds)[i] << "\n";
         out_prop.close();
     }
@@ -92,7 +99,8 @@ int main (int argc, char* argv[])
     INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
     MeshLib::IO::writeMeshToFile(*mesh, new_mshname);
 
-    INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(), new_matname.c_str());
+    INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(),
+         new_matname.c_str());
 
     return EXIT_SUCCESS;
 }

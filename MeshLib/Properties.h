@@ -85,6 +85,13 @@ public:
     template <typename T>
     bool existsPropertyVector(std::string const& name) const;
 
+    /// Checks if a property vector with given type \c T, \c name, \c
+    /// mesh_item_type, and \c number_of_components exists.
+    template <typename T>
+    bool existsPropertyVector(std::string const& property_name,
+                              MeshItemType const mesh_item_type,
+                              int const number_of_components) const;
+
     /// Returns a property vector with given \c name or aborts calling OGS_FATAL
     /// if no such property vector exists.
     template <typename T>
@@ -102,6 +109,14 @@ public:
     PropertyVector<T> const* getPropertyVector(std::string const& name,
                                                MeshItemType const item_type,
                                                int const n_components) const;
+
+    /// Non-const version of getPropertyVector returns a property vector with
+    /// given \c name, \c item_type and \c number_of_components or calls
+    /// OGS_FATAL if no such property vector exists.
+    template <typename T>
+    PropertyVector<T>* getPropertyVector(std::string const& name,
+                                         MeshItemType const item_type,
+                                         int const number_of_components);
 
     void removePropertyVector(std::string const& name);
 

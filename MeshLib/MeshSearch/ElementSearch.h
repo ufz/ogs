@@ -72,24 +72,18 @@ public:
         PROPERTY_TYPE const max_property_value,
         bool outside_of)
     {
-        if (!_mesh.getProperties().existsPropertyVector<PROPERTY_TYPE>(property_name))
+        MeshLib::PropertyVector<PROPERTY_TYPE> const* pv = nullptr;
+        try
         {
-            WARN("Property \"%s\" not found in mesh.", property_name.c_str());
-            return 0;
+            pv = _mesh.getProperties().getPropertyVector<PROPERTY_TYPE>(
+                property_name, MeshLib::MeshItemType::Cell, 1);
         }
-        auto const* const pv =
-            _mesh.getProperties().getPropertyVector<PROPERTY_TYPE>(property_name);
-
-        if (pv->getMeshItemType() != MeshLib::MeshItemType::Cell)
+        catch (std::runtime_error const& e)
         {
-            WARN("The property \"%s\" is not assigned to mesh elements.",
-                 property_name.c_str());
-            return 0;
-        }
-
-        if (pv->getNumberOfComponents() != 1)
-        {
-            WARN("Value-based element removal currently only works for scalars.");
+            ERR("%s", e.what());
+            WARN(
+                "Value-based element removal currently only works for "
+                "scalars.");
             return 0;
         }
 
@@ -99,7 +93,8 @@ public:
         {
             for (std::size_t i(0); i < pv->getNumberOfTuples(); ++i)
             {
-                if ((*pv)[i] < min_property_value || (*pv)[i] > max_property_value)
+                if ((*pv)[i] < min_property_value ||
+                    (*pv)[i] > max_property_value)
                     matchedIDs.push_back(i);
             }
         }
@@ -107,7 +102,8 @@ public:
         {
             for (std::size_t i(0); i < pv->getNumberOfTuples(); ++i)
             {
-                if ((*pv)[i] >= min_property_value && (*pv)[i] <= max_property_value)
+                if ((*pv)[i] >= min_property_value &&
+                    (*pv)[i] <= max_property_value)
                     matchedIDs.push_back(i);
             }
         }

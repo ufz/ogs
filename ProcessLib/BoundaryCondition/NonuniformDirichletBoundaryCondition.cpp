@@ -32,25 +32,13 @@ createNonuniformDirichletBoundaryCondition(
         config.getConfigParameter<std::string>("field_name");
 
     auto const* const property =
-        boundary_mesh.getProperties().getPropertyVector<double>(field_name);
+        boundary_mesh.getProperties().getPropertyVector<double>(
+            field_name, MeshLib::MeshItemType::Node, 1);
 
     if (!property)
     {
         OGS_FATAL("A property with name `%s' does not exist in `%s'.",
                   field_name.c_str(), boundary_mesh.getName().c_str());
-    }
-
-    if (property->getMeshItemType() != MeshLib::MeshItemType::Node)
-    {
-        OGS_FATAL(
-            "Only nodal fields are supported for non-uniform fields. Field "
-            "`%s' is not nodal.",
-            field_name.c_str());
-    }
-
-    if (property->getNumberOfComponents() != 1)
-    {
-        OGS_FATAL("`%s' is not a one-component field.", field_name.c_str());
     }
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no

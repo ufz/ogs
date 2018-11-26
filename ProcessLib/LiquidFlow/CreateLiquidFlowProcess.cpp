@@ -91,12 +91,13 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
-    if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
+    if (mesh.getProperties().existsPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1))
     {
         INFO("The liquid flow is in heterogeneous porous media.");
         const bool has_material_ids = true;
-        auto const& mat_ids =
-            mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+        auto const& mat_ids = mesh.getProperties().getPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
         return std::unique_ptr<Process>{new LiquidFlowProcess{
             mesh, std::move(jacobian_assembler), parameters, integration_order,
             std::move(process_variables), std::move(secondary_variables),

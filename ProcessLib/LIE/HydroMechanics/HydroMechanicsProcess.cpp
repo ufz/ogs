@@ -318,8 +318,8 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             const_cast<MeshLib::Mesh&>(mesh), "aperture",
             MeshLib::MeshItemType::Cell, 1);
         mesh_prop_b->resize(mesh.getNumberOfElements());
-        auto mesh_prop_matid =
-            mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+        auto mesh_prop_matid = mesh.getProperties().getPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
         auto frac = _process_data.fracture_property.get();
         for (MeshLib::Element const* e : _mesh.getElements())
         {
