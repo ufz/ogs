@@ -140,8 +140,8 @@ private:
 
 public:
     std::array<double, number_of_unknowns> const cross_section_areas = {
-        {_pipes.inlet.area(), _pipes.inlet.area(),
-         borehole_geometry.area() / 2 - _pipes.outlet.area(),
+        {_pipes.inlet.area(), _pipes.outlet.area(),
+         borehole_geometry.area() / 2 - _pipes.inlet.area(),
          borehole_geometry.area() / 2 - _pipes.outlet.area()}};
 
 private:
