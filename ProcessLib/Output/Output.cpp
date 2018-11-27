@@ -86,7 +86,8 @@ Output::Output(std::string output_directory, std::string prefix,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
                std::vector<double>&& fixed_output_times,
-               ProcessOutput&& process_output)
+               ProcessOutput&& process_output,
+               std::vector<std::string>&& mesh_names_for_output)
     : _output_directory(std::move(output_directory)),
       _output_file_prefix(std::move(prefix)),
       _output_file_compression(compress_output),
@@ -94,7 +95,8 @@ Output::Output(std::string output_directory, std::string prefix,
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _repeats_each_steps(std::move(repeats_each_steps)),
       _fixed_output_times(std::move(fixed_output_times)),
-      _process_output(std::move(process_output))
+      _process_output(std::move(process_output)),
+      _mesh_names_for_output(mesh_names_for_output)
 {
 }
 
