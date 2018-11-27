@@ -18,8 +18,7 @@ namespace PorousMedium
 int PorousMediaProperties::getMaterialID(
     ProcessLib::SpatialPosition const& pos) const
 {
-    int const element_id = pos.getElementID().get();
-    return _material_ids[element_id];
+    return _material_ids ? (*_material_ids)[pos.getElementID().get()] : 0;
 }
 
 MaterialLib::PorousMedium::Porosity const& PorousMediaProperties::getPorosity(

@@ -1,4 +1,3 @@
-
 /**
  * @copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
@@ -32,22 +31,13 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
     std::vector<MeshLib::Node*> vec_new_nodes = MeshLib::copyNodeVector(mesh.getNodes());
     std::vector<MeshLib::Element*> vec_new_eles = MeshLib::copyElementVector(mesh.getElements(), vec_new_nodes);
 
-    std::vector<int> new_mat_ids;
-    try
-    {
-        auto ids = mesh.getProperties().getPropertyVector<int>(
-            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-        new_mat_ids.reserve(ids->size());
-        std::copy(ids->cbegin(), ids->cend(), std::back_inserter(new_mat_ids));
-    }
-    catch (std::runtime_error const& e)
-    {
-        WARN("%s", e.what());
-    }
-    int max_matID(0);
-    if (!new_mat_ids.empty())
-        max_matID = *(std::max_element(new_mat_ids.cbegin(), new_mat_ids.cend()));
+    auto const material_ids = materialIDs(mesh);
+    int const max_matID =
+        material_ids
+            ? *(std::max_element(begin(*material_ids), end(*material_ids)))
+            : 0;
 
+    std::vector<int> new_mat_ids;
     const std::size_t n_ply (ply_vec.size());
     // for each polyline
     for (std::size_t k(0); k < n_ply; k++)
@@ -81,14 +71,25 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
     const std::string name = mesh.getName() + "_with_lines";
     auto new_mesh =
         std::make_unique<MeshLib::Mesh>(name, vec_new_nodes, vec_new_eles);
-    auto opt_mat_pv = new_mesh->getProperties().createNewPropertyVector<int>(
-        "MaterialIDs", MeshLib::MeshItemType::Cell);
-    if (opt_mat_pv) {
-        auto & mat_pv = *opt_mat_pv;
-        mat_pv.reserve(new_mat_ids.size());
-        std::copy(new_mat_ids.cbegin(), new_mat_ids.cend(),
-            std::back_inserter(mat_pv));
+    auto new_material_ids =
+        new_mesh->getProperties().createNewPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell);
+    if (!new_material_ids)
+    {
+        OGS_FATAL("Could not create MaterialIDs cell vector in new mesh.");
     }
+    new_material_ids->reserve(new_mesh->getNumberOfElements());
+    if (material_ids != nullptr)
+    {
+        std::copy(begin(*material_ids), end(*material_ids),
+                  std::back_inserter(*new_material_ids));
+    }
+    else
+    {
+        new_material_ids->resize(mesh.getNumberOfElements());
+    }
+    std::copy(begin(new_mat_ids), end(new_mat_ids),
+              std::back_inserter(*new_material_ids));
     return new_mesh;
 }
 

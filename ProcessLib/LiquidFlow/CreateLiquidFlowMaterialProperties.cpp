@@ -40,8 +40,7 @@ std::unique_ptr<LiquidFlowMaterialProperties>
 createLiquidFlowMaterialProperties(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    bool const has_material_ids,
-    MeshLib::PropertyVector<int> const& material_ids)
+    MeshLib::PropertyVector<int> const* const material_ids)
 {
     DBUG("Reading material properties of liquid flow process.");
 
@@ -99,8 +98,7 @@ createLiquidFlowMaterialProperties(
 
     return std::make_unique<LiquidFlowMaterialProperties>(
         std::move(fluid_properties), std::move(intrinsic_permeability_models),
-        std::move(porosity_models), std::move(storage_models), has_material_ids,
-        material_ids);
+        std::move(porosity_models), std::move(storage_models), material_ids);
 }
 
 }  // end of namespace

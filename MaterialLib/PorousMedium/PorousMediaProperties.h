@@ -36,23 +36,16 @@ public:
             intrinsic_permeability_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
             specific_storage_models,
-        std::vector<int>&& material_ids)
+        MeshLib::PropertyVector<int> const* const material_ids)
         : _porosity_models(std::move(porosity_models)),
           _intrinsic_permeability_models(
               std::move(intrinsic_permeability_models)),
           _specific_storage_models(std::move(specific_storage_models)),
-          _material_ids(std::move(material_ids))
+          _material_ids(material_ids)
     {
     }
 
-    PorousMediaProperties(PorousMediaProperties&& other)
-        : _porosity_models(std::move(other._porosity_models)),
-          _intrinsic_permeability_models(
-              std::move(other._intrinsic_permeability_models)),
-          _specific_storage_models(std::move(other._specific_storage_models)),
-          _material_ids(other._material_ids)
-    {
-    }
+    PorousMediaProperties(PorousMediaProperties&& other) = default;
 
     MaterialLib::PorousMedium::Porosity const& getPorosity(
         double t, ProcessLib::SpatialPosition const& pos) const;
@@ -72,7 +65,7 @@ private:
         _intrinsic_permeability_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
         _specific_storage_models;
-    std::vector<int> _material_ids;
+    MeshLib::PropertyVector<int> const* const _material_ids;
 };
 
 }

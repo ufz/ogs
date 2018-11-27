@@ -33,13 +33,13 @@ namespace LiquidFlow
 int LiquidFlowMaterialProperties::getMaterialID(
     const SpatialPosition& pos) const
 {
-    if (!_has_material_ids)
+    if (!_material_ids)
     {
         return 0;
     }
 
-    assert(pos.getElementID().get() < _material_ids.size());
-    return _material_ids[pos.getElementID().get()];
+    assert(pos.getElementID().get() < _material_ids->size());
+    return (*_material_ids)[pos.getElementID().get()];
 }
 
 double LiquidFlowMaterialProperties::getLiquidDensity(const double p,

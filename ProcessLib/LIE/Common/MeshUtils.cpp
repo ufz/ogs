@@ -84,10 +84,13 @@ void getFractureMatrixDataInMesh(
          vec_matrix_elements.size(), all_fracture_elements.size());
 
     // get fracture material IDs
-    auto opt_material_ids(mesh.getProperties().getPropertyVector<int>(
-        "MaterialIDs", MeshLib::MeshItemType::Cell, 1));
+    auto const material_ids = materialIDs(mesh);
+    if (!material_ids)
+    {
+        OGS_FATAL("Could not access MaterialIDs property from mesh.");
+    }
     for (MeshLib::Element* e : all_fracture_elements)
-        vec_fracture_mat_IDs.push_back((*opt_material_ids)[e->getID()]);
+        vec_fracture_mat_IDs.push_back((*material_ids)[e->getID()]);
     BaseLib::makeVectorUnique(vec_fracture_mat_IDs);
     DBUG("-> found %d fracture material groups", vec_fracture_mat_IDs.size());
 
@@ -101,7 +104,7 @@ void getFractureMatrixDataInMesh(
         std::copy_if(all_fracture_elements.begin(), all_fracture_elements.end(),
                      std::back_inserter(vec_elements),
                      [&](MeshLib::Element* e) {
-                         return (*opt_material_ids)[e->getID()] == frac_mat_id;
+                         return (*material_ids)[e->getID()] == frac_mat_id;
                      });
         DBUG("-> found %d elements on the fracture %d", vec_elements.size(),
              frac_id);

@@ -39,8 +39,7 @@ LiquidFlowProcess::LiquidFlowProcess(
         process_variables,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
-    MeshLib::PropertyVector<int> const& material_ids,
-    bool const has_material_ids,
+    MeshLib::PropertyVector<int> const* const material_ids,
     int const gravitational_axis_id,
     double const gravitational_acceleration,
     double const reference_temperature,
@@ -51,8 +50,8 @@ LiquidFlowProcess::LiquidFlowProcess(
       _gravitational_axis_id(gravitational_axis_id),
       _gravitational_acceleration(gravitational_acceleration),
       _reference_temperature(reference_temperature),
-      _material_properties(createLiquidFlowMaterialProperties(
-          config, parameters, has_material_ids, material_ids))
+      _material_properties(
+          createLiquidFlowMaterialProperties(config, parameters, material_ids))
 {
     DBUG("Create Liquid flow process.");
 }

@@ -61,16 +61,10 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    MeshLib::PropertyVector<int>* materialIds = nullptr;
-    try
+    auto const materialIds = materialIDs(*mesh);
+    if (!materialIds)
     {
-        materialIds = mesh->getProperties().getPropertyVector<int>(
-            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-    }
-    catch (std::runtime_error const& e)
-    {
-        WARN("%s", e.what());
-        return EXIT_FAILURE;
+        OGS_FATAL("Mesh contains no int-property vector named 'MaterialIDs'.");
     }
 
     std::size_t const n_properties(materialIds->size());

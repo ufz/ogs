@@ -91,39 +91,21 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
-    if (mesh.getProperties().existsPropertyVector<int>(
-            "MaterialIDs", MeshLib::MeshItemType::Cell, 1))
+    auto const material_ids = materialIDs(mesh);
+    if (material_ids)
     {
         INFO("The liquid flow is in heterogeneous porous media.");
-        const bool has_material_ids = true;
-        auto const& mat_ids = mesh.getProperties().getPropertyVector<int>(
-            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-        return std::unique_ptr<Process>{new LiquidFlowProcess{
-            mesh, std::move(jacobian_assembler), parameters, integration_order,
-            std::move(process_variables), std::move(secondary_variables),
-            std::move(named_function_caller), *mat_ids, has_material_ids,
-            gravity_axis_id, g, reference_temperature, mat_config}};
     }
-
-    INFO("The liquid flow is in homogeneous porous media.");
-
-    MeshLib::Properties dummy_property;
-    // For a reference argument of LiquidFlowProcess(...).
-    auto const& dummy_property_vector =
-        dummy_property.createNewPropertyVector<int>(
-            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-
-    // Since dummy_property_vector is only visible in this function,
-    // the following constant, has_material_ids, is employed to indicate
-    // that material_ids does not exist.
-    const bool has_material_ids = false;
+    else
+    {
+        INFO("The liquid flow is in homogeneous porous media.");
+    }
 
     return std::unique_ptr<Process>{new LiquidFlowProcess{
         mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(secondary_variables),
-        std::move(named_function_caller), *dummy_property_vector,
-        has_material_ids, gravity_axis_id, g, reference_temperature,
-        mat_config}};
+        std::move(named_function_caller), material_ids, gravity_axis_id, g,
+        reference_temperature, mat_config}};
 }
 
 }  // end of namespace
