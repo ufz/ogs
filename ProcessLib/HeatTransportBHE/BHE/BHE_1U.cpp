@@ -12,6 +12,7 @@
 #include <boost/math/constants/constants.hpp>
 #include "FlowAndTemperatureControl.h"
 #include "Physics.h"
+#include "ThermoMechanicalFlowProperties.h"
 
 namespace ProcessLib
 {
@@ -167,20 +168,12 @@ constexpr std::pair<int, int> BHE_1U::inflow_outflow_bc_component_ids[];
 void BHE_1U::updateHeatTransferCoefficients(double const flow_rate)
 
 {
-    _flow_velocity = flow_rate / _pipes.inlet.area();
+    auto const tm_flow_properties = calculateThermoMechanicalFlowPropertiesPipe(
+        _pipes.inlet, borehole_geometry.length, refrigerant, flow_rate);
 
-    double const Re = reynoldsNumber(std::abs(_flow_velocity),
-                                     _pipes.inlet.diameter,
-                                     refrigerant.dynamic_viscosity,
-                                     refrigerant.density);
-    double const Pr = prandtlNumber(refrigerant.dynamic_viscosity,
-                                    refrigerant.specific_heat_capacity,
-                                    refrigerant.thermal_conductivity);
-
-    double const Nu =
-        nusseltNumber(Re, Pr, _pipes.inlet.diameter, borehole_geometry.length);
-
-    _thermal_resistances = calcThermalResistances(Nu);
+    _flow_velocity = tm_flow_properties.velocity;
+    _thermal_resistances =
+        calcThermalResistances(tm_flow_properties.nusselt_number);
 }
 
 /// Nu is the Nusselt number.

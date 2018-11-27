@@ -12,7 +12,7 @@
 #pragma once
 
 #include "Physics.h"
-#include "PipeParameters.h"
+#include "Pipe.h"
 #include "RefrigerantProperties.h"
 
 namespace ProcessLib
@@ -28,19 +28,19 @@ struct ThermoMechanicalFlowProperties
 };
 
 inline ThermoMechanicalFlowProperties
-calculateThermoMechanicalFlowPropertiesPipe(PipeParameters const& pipe,
+calculateThermoMechanicalFlowPropertiesPipe(Pipe const& pipe,
                                             double const length,
                                             RefrigerantProperties const& fluid,
                                             double const flow_rate)
 {
     double const Pr =
-        prandtlNumber(fluid.mu_r, fluid.specific_heat_capacity, fluid.lambda_r);
+        prandtlNumber(fluid.dynamic_viscosity, fluid.specific_heat_capacity,
+                      fluid.thermal_conductivity);
 
-    double const velocity = pipeFlowVelocity(flow_rate, pipe.r_inner);
-    double const Re =
-        reynoldsNumber(velocity, 2.0 * pipe.r_inner, fluid.mu_r, fluid.density);
-    double const nusselt_number =
-        nusseltNumber(Re, Pr, 2 * pipe.r_inner, length);
+    double const velocity = flow_rate / pipe.area();
+    double const Re = reynoldsNumber(velocity, pipe.diameter,
+                                     fluid.dynamic_viscosity, fluid.density);
+    double const nusselt_number = nusseltNumber(Re, Pr, pipe.diameter, length);
     return {velocity, nusselt_number};
 }
 
