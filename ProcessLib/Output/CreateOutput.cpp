@@ -74,6 +74,30 @@ std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
         repeats_each_steps.emplace_back(1, 1);
     }
 
+    //! \ogs_file_param{prj__time_loop__output__variables}
+    auto const out_vars = config.getConfigSubtree("variables");
+
+    std::set<std::string> output_variables;
+    for (auto out_var :
+         //! \ogs_file_param{prj__time_loop__output__variables__variable}
+         out_vars.getConfigParameterList<std::string>("variable"))
+    {
+        if (output_variables.find(out_var) != output_variables.cend())
+        {
+            OGS_FATAL("output variable `%s' specified more than once.",
+                      out_var.c_str());
+        }
+
+        DBUG("adding output variable `%s'", out_var.c_str());
+        output_variables.insert(out_var);
+    }
+
+    bool const output_residuals = config.getConfigParameter<bool>(
+        //! \ogs_file_param{prj__time_loop__output__output_extrapolation_residuals}
+        "output_extrapolation_residuals", false);
+
+    ProcessOutput process_output{output_variables, output_residuals};
+
     auto fixed_output_times_ptr =
         //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
         config.getConfigParameterOptional<std::vector<double>>(
