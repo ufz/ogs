@@ -70,7 +70,7 @@ void DirichletBoundaryCondition::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    return getEssentialBCValuesLocal(t, x, bc_values);
+    getEssentialBCValuesLocal(t, x, bc_values);
 }
 
 void DirichletBoundaryCondition::getEssentialBCValuesLocal(

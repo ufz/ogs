@@ -18,7 +18,7 @@ namespace NumLib
  * Class for a time interval, which has a member to check whether the given time
  * is in this time interval.
  */
-class TimeInterval
+class TimeInterval final
 {
 public:
     TimeInterval(const double start_time, const double end_time)
@@ -26,11 +26,9 @@ public:
     {
     }
 
-    bool isInThisTimeInterval(const double current_time) const
+    bool contains(const double current_time) const
     {
-        return (current_time >= _start_time && current_time <= _end_time)
-                   ? true
-                   : false;
+        return (current_time >= _start_time && current_time <= _end_time);
     }
 
 private:

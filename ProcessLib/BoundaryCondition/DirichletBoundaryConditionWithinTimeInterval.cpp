@@ -40,9 +40,10 @@ void DirichletBoundaryConditionWithinTimeInterval::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    if (_time_interval->isInThisTimeInterval(t))
+    if (_time_interval->contains(t))
     {
-        return getEssentialBCValuesLocal(t, x, bc_values);
+        getEssentialBCValuesLocal(t, x, bc_values);
+        return;
     }
 
     bc_values.ids.clear();
