@@ -29,10 +29,19 @@ struct Pipe
     double const wall_thickness;
     double const wall_thermal_conductivity;
 
+    /// Area of the pipe's inside without the wall.
     double area() const
     {
         constexpr double pi = boost::math::constants::pi<double>();
         return pi * diameter * diameter / 4;
+    }
+
+    /// Area of the pipe's outside including the wall thickness.
+    double outsideArea() const
+    {
+        constexpr double pi = boost::math::constants::pi<double>();
+        double const d = diameter + 2 * wall_thickness;
+        return pi * d * d / 4;
     }
 };
 

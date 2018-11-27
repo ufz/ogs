@@ -46,22 +46,28 @@ calculateThermoMechanicalFlowPropertiesPipe(Pipe const& pipe,
 
 inline ThermoMechanicalFlowProperties
 calculateThermoMechanicalFlowPropertiesAnnulus(
-    PipeParameters const& pipe, double const length,
+    Pipe const& inner_pipe, Pipe const& outer_pipe, double const length,
     RefrigerantProperties const& fluid, double const flow_rate)
 {
     double const Pr =
-        prandtlNumber(fluid.mu_r, fluid.specific_heat_capacity, fluid.lambda_r);
+        prandtlNumber(fluid.dynamic_viscosity, fluid.specific_heat_capacity,
+                      fluid.thermal_conductivity);
 
+    double const inner_pipe_outside_diameter =
+        inner_pipe.diameter + 2. * inner_pipe.wall_thickness;
+
+    // Velocity between the outer pipe and inner pipe.
     double const velocity =
-        annulusFlowVelocity(flow_rate, pipe.r_outer, pipe.r_inner + pipe.b_in);
+        flow_rate / (outer_pipe.area() - inner_pipe.outsideArea());
 
     double const Re = reynoldsNumber(
-        velocity, 2.0 * (pipe.r_outer - (pipe.r_inner + pipe.b_in)), fluid.mu_r,
-        fluid.density);
+        velocity, outer_pipe.diameter - inner_pipe_outside_diameter,
+        fluid.dynamic_viscosity, fluid.density);
 
-    double const diameter_ratio = (pipe.r_inner + pipe.b_in) / pipe.r_outer;
+    double const diameter_ratio =
+        inner_pipe_outside_diameter / outer_pipe.diameter;
     double const pipe_aspect_ratio =
-        (2 * pipe.r_outer - 2 * (pipe.r_inner + pipe.b_in)) / length;
+        (outer_pipe.diameter - inner_pipe_outside_diameter) / length;
     double const nusselt_number =
         nusseltNumberAnnulus(Re, Pr, diameter_ratio, pipe_aspect_ratio);
     return {velocity, nusselt_number};
