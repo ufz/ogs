@@ -13,6 +13,7 @@
 #include "BoundaryConditionConfig.h"
 #include "ConstraintDirichletBoundaryCondition.h"
 #include "DirichletBoundaryCondition.h"
+#include "DirichletBoundaryConditionWithinTimeInterval.h"
 #include "NeumannBoundaryCondition.h"
 #include "NonuniformDirichletBoundaryCondition.h"
 #include "NonuniformNeumannBoundaryCondition.h"
@@ -51,6 +52,12 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     if (type == "Dirichlet")
     {
         return ProcessLib::createDirichletBoundaryCondition(
+            config.config, config.boundary_mesh, dof_table, variable_id,
+            *config.component_id, parameters);
+    }
+    if (type == "DirichletWithinTimeInterval")
+    {
+        return ProcessLib::createDirichletBoundaryConditionWithinTimeInterval(
             config.config, config.boundary_mesh, dof_table, variable_id,
             *config.component_id, parameters);
     }
