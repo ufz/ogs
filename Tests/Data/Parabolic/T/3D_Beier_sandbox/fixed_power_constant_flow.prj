@@ -45,12 +45,12 @@
                     </grout>
                     <pipes>
                         <inlet>
-                            <radius> 0.013665</radius>
+                            <diameter> 0.013665</diameter>
                             <wall_thickness>0.003035</wall_thickness>
                             <wall_thermal_conductivity>0.39</wall_thermal_conductivity>
                         </inlet>
                         <outlet>
-                            <radius>0.013665</radius>
+                            <diameter>0.013665</diameter>
                             <wall_thickness>0.003035</wall_thickness>
                             <wall_thermal_conductivity>0.39</wall_thermal_conductivity>
                         </outlet>
