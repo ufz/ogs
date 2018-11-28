@@ -12,6 +12,11 @@
  */
 #pragma once
 
+namespace BaseLib
+{
+class ConfigTree;
+}
+
 namespace NumLib
 {
 /*!
@@ -35,5 +40,8 @@ private:
     const double _start_time;
     const double _end_time;
 };
+
+std::unique_ptr<TimeInterval> createTimeInterval(
+    BaseLib::ConfigTree const& config);
 
 }  // end of namespace

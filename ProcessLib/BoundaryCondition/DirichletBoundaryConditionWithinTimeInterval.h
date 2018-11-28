@@ -28,7 +28,7 @@ class DirichletBoundaryConditionWithinTimeInterval final
 {
 public:
     DirichletBoundaryConditionWithinTimeInterval(
-        double const start_time, double const end_time,
+        std::unique_ptr<NumLib::TimeInterval> time_interval,
         Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id);

@@ -25,14 +25,13 @@ namespace ProcessLib
 {
 DirichletBoundaryConditionWithinTimeInterval::
     DirichletBoundaryConditionWithinTimeInterval(
-        double const start_time, double const end_time,
+        std::unique_ptr<NumLib::TimeInterval> time_interval,
         Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id)
     : DirichletBoundaryCondition(parameter, bc_mesh, dof_table_bulk,
                                  variable_id, component_id),
-      _time_interval(
-          std::make_unique<NumLib::TimeInterval>(start_time, end_time))
+      _time_interval(std::move(time_interval))
 {
 }
 
@@ -48,8 +47,6 @@ void DirichletBoundaryConditionWithinTimeInterval::getEssentialBCValues(
 
     bc_values.ids.clear();
     bc_values.values.clear();
-
-    return;
 }
 
 std::unique_ptr<DirichletBoundaryCondition>
@@ -86,17 +83,12 @@ createDirichletBoundaryConditionWithinTimeInterval(
     }
 #endif  // USE_PETSC
 
-    const double start_time =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__DirichletWithinTimeInterval__start_time}
-        config.getConfigParameter<double>("start_time");
-
-    const double end_time =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__DirichletWithinTimeInterval__end_time}
-        config.getConfigParameter<double>("end_time");
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__DirichletWithinTimeInterval__time_interval}
+    config.peekConfigParameter<std::string>("time_interval");
 
     return std::make_unique<DirichletBoundaryConditionWithinTimeInterval>(
-        start_time, end_time, param, bc_mesh, dof_table_bulk, variable_id,
-        component_id);
+        NumLib::createTimeInterval(config), param, bc_mesh,
+        dof_table_bulk, variable_id, component_id);
 }
 
 }  // namespace ProcessLib

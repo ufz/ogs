@@ -136,8 +136,10 @@
                     <geometry>bottom</geometry>
                     <type>DirichletWithinTimeInterval</type>
                     <parameter>bc_bottom</parameter>
-                    <start_time> 0.0 </start_time>
-                    <end_time> 10.0 </end_time>
+                    <time_interval>
+                        <start_time> 0.0 </start_time>
+                        <end_time> 10.0 </end_time>
+                    </time_interval>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
