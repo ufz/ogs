@@ -13,6 +13,8 @@
 #include <logog/include/logog.hpp>
 #include <vector>
 
+#include "DirichletBoundaryConditionAuxiliaryFunctions.h"
+
 #include "BaseLib/ConfigTree.h"
 #include "NumLib/IndexValueVector.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -30,34 +32,10 @@ DirichletBoundaryCondition::DirichletBoundaryCondition(
       _variable_id(variable_id),
       _component_id(component_id)
 {
-    if (variable_id >=
-            static_cast<int>(dof_table_bulk.getNumberOfVariables()) ||
-        component_id >=
-            dof_table_bulk.getNumberOfVariableComponents(variable_id))
-    {
-        OGS_FATAL(
-            "Variable id or component id too high. Actual values: (%d, "
-            "%d), maximum values: (%d, %d).",
-            variable_id, component_id, dof_table_bulk.getNumberOfVariables(),
-            dof_table_bulk.getNumberOfVariableComponents(variable_id));
-    }
+    checkParametersOfDirichletBoundaryCondition(_bc_mesh, dof_table_bulk,
+                                                _variable_id, _component_id);
 
-    if (!_bc_mesh.getProperties().existsPropertyVector<std::size_t>(
-            "bulk_node_ids"))
-    {
-        OGS_FATAL(
-            "The required bulk node ids map does not exist in the boundary "
-            "mesh '%s'.",
-            _bc_mesh.getName().c_str());
-    }
-
-    std::vector<MeshLib::Node*> const& bc_nodes = _bc_mesh.getNodes();
-    DBUG(
-        "Found %d nodes for Dirichlet BCs for the variable %d and "
-        "component "
-        "%d",
-        bc_nodes.size(), variable_id, component_id);
-
+    std::vector<MeshLib::Node*> const& bc_nodes = bc_mesh.getNodes();
     MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
 
     // Create local DOF table from the BC mesh subset for the given variable
@@ -70,45 +48,8 @@ void DirichletBoundaryCondition::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    getEssentialBCValuesLocal(t, x, bc_values);
-}
-
-void DirichletBoundaryCondition::getEssentialBCValuesLocal(
-    const double t, GlobalVector const& /*x*/,
-    NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
-{
-    SpatialPosition pos;
-
-    bc_values.ids.clear();
-    bc_values.values.clear();
-
-    // convert mesh node ids to global index for the given component
-    bc_values.ids.reserve(bc_values.ids.size() + _bc_mesh.getNumberOfNodes());
-    bc_values.values.reserve(bc_values.values.size() +
-                             _bc_mesh.getNumberOfNodes());
-    for (auto const* const node : _bc_mesh.getNodes())
-    {
-        auto const id = node->getID();
-        pos.setNodeID(node->getID());
-        // TODO: that might be slow, but only done once
-        auto const global_index = _dof_table_boundary->getGlobalIndex(
-            {_bc_mesh.getID(), MeshLib::MeshItemType::Node, id}, _variable_id,
-            _component_id);
-        if (global_index == NumLib::MeshComponentMap::nop)
-            continue;
-        // For the DDC approach (e.g. with PETSc option), the negative
-        // index of global_index means that the entry by that index is a ghost
-        // one, which should be dropped. Especially for PETSc routines
-        // MatZeroRows and MatZeroRowsColumns, which are called to apply the
-        // Dirichlet BC, the negative index is not accepted like other matrix or
-        // vector PETSc routines. Therefore, the following if-condition is
-        // applied.
-        if (global_index >= 0)
-        {
-            bc_values.ids.emplace_back(global_index);
-            bc_values.values.emplace_back(_parameter(t, pos).front());
-        }
-    }
+    getEssentialBCValuesLocal(_parameter, _bc_mesh, *_dof_table_boundary,
+                              _variable_id, _component_id, t, x, bc_values);
 }
 
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
@@ -127,8 +68,8 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
 
     auto& param = findParameter<double>(param_name, parameters, 1);
 
-    // In case of partitioned mesh the boundary could be empty, i.e. there is no
-    // boundary condition.
+// In case of partitioned mesh the boundary could be empty, i.e. there is no
+// boundary condition.
 #ifdef USE_PETSC
     // This can be extracted to createBoundaryCondition() but then the config
     // parameters are not read and will cause an error.

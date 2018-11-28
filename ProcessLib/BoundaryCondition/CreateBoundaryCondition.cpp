@@ -21,6 +21,9 @@
 #include "NormalTractionBoundaryCondition.h"
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
+
+#include "NumLib/TimeStepping/TimeInterval.h"
+
 #ifdef OGS_USE_PYTHON
 #include "Python/PythonBoundaryCondition.h"
 #endif

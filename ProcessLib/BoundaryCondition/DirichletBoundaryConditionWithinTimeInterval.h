@@ -14,7 +14,12 @@
 
 #include <memory>
 
-#include "DirichletBoundaryCondition.h"
+#include "BoundaryCondition.h"
+
+namespace BaseLib
+{
+class ConfigTree;
+}
 
 namespace NumLib
 {
@@ -23,8 +28,11 @@ class TimeInterval;
 
 namespace ProcessLib
 {
+template <typename T>
+struct Parameter;
+
 class DirichletBoundaryConditionWithinTimeInterval final
-    : public DirichletBoundaryCondition
+    : public BoundaryCondition
 {
 public:
     DirichletBoundaryConditionWithinTimeInterval(
@@ -38,10 +46,17 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
 private:
+    Parameter<double> const& _parameter;
+
+    MeshLib::Mesh const& _bc_mesh;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap const> _dof_table_boundary;
+    int const _variable_id;
+    int const _component_id;
+
     std::unique_ptr<NumLib::TimeInterval> _time_interval;
 };
 
-std::unique_ptr<DirichletBoundaryCondition>
+std::unique_ptr<DirichletBoundaryConditionWithinTimeInterval>
 createDirichletBoundaryConditionWithinTimeInterval(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
