@@ -116,7 +116,8 @@ std::unique_ptr<Output> createOutput(const BaseLib::ConfigTree& config,
     return std::make_unique<Output>(output_directory, prefix, compress_output,
                                     data_mode, output_iteration_results,
                                     std::move(repeats_each_steps),
-                                    std::move(fixed_output_times));
+                                    std::move(fixed_output_times),
+                                    std::move(process_output));
 }
 
 }  // namespace ProcessLib

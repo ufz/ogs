@@ -14,8 +14,6 @@
 #include "NumLib/ODESolver/Types.h"
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
 
-#include "ProcessLib/Output/ProcessOutput.h"
-
 #include "CoupledSolutionsForStaggeredScheme.h"
 
 namespace ProcessLib
@@ -32,16 +30,14 @@ struct ProcessData
                 NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
                 std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
                 std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
-                Process& process_,
-                ProcessOutput&& process_output_)
+                Process& process_)
         : timestepper(std::move(timestepper_)),
           nonlinear_solver_tag(NLTag),
           nonlinear_solver(nonlinear_solver),
           nonlinear_solver_converged(true),
           conv_crit(std::move(conv_crit_)),
           time_disc(std::move(time_disc_)),
-          process(process_),
-          process_output(std::move(process_output_))
+          process(process_)
     {
     }
 
@@ -54,8 +50,7 @@ struct ProcessData
           time_disc(std::move(pd.time_disc)),
           tdisc_ode_sys(std::move(pd.tdisc_ode_sys)),
           mat_strg(pd.mat_strg),
-          process(pd.process),
-          process_output(std::move(pd.process_output))
+          process(pd.process)
     {
         pd.mat_strg = nullptr;
     }
@@ -85,6 +80,5 @@ struct ProcessData
     int process_id = 0;
 
     Process& process;
-    ProcessOutput process_output;
 };
 }  // namespace ProcessLib
