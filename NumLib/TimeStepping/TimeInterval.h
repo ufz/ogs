@@ -12,6 +12,8 @@
  */
 #pragma once
 
+#include <memory>
+
 namespace BaseLib
 {
 class ConfigTree;
