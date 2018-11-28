@@ -1,36 +1,42 @@
 /**
+ *
  * \copyright
  * Copyright (c) 2012-2018, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
+ * File:   DirichletBoundaryConditionWithinTimeInterval.cpp
+ *
+ * Created on November 26, 2018, 4:59 PM
  */
+#include "DirichletBoundaryConditionWithinTimeInterval.h"
 
 #include "DirichletBoundaryCondition.h"
-
-#include <algorithm>
-#include <logog/include/logog.hpp>
-#include <vector>
-
 #include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 
 #include "BaseLib/ConfigTree.h"
-#include "NumLib/IndexValueVector.h"
+#include "BaseLib/TimeInterval.h"
+
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/IndexValueVector.h"
+
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
 {
-DirichletBoundaryCondition::DirichletBoundaryCondition(
-    Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
-    int const component_id)
+DirichletBoundaryConditionWithinTimeInterval::
+    DirichletBoundaryConditionWithinTimeInterval(
+        std::unique_ptr<BaseLib::TimeInterval> time_interval,
+        Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+        NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
+        int const variable_id, int const component_id)
     : _parameter(parameter),
       _bc_mesh(bc_mesh),
       _variable_id(variable_id),
-      _component_id(component_id)
+      _component_id(component_id),
+      _time_interval(std::move(time_interval))
 {
     checkParametersOfDirichletBoundaryCondition(_bc_mesh, dof_table_bulk,
                                                 _variable_id, _component_id);
@@ -44,25 +50,36 @@ DirichletBoundaryCondition::DirichletBoundaryCondition(
         variable_id, {component_id}, std::move(bc_mesh_subset)));
 }
 
-void DirichletBoundaryCondition::getEssentialBCValues(
+void DirichletBoundaryConditionWithinTimeInterval::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    getEssentialBCValuesLocal(_parameter, _bc_mesh, *_dof_table_boundary,
-                              _variable_id, _component_id, t, x, bc_values);
+    if (_time_interval->contains(t))
+    {
+        getEssentialBCValuesLocal(_parameter, _bc_mesh, *_dof_table_boundary,
+                                  _variable_id, _component_id, t, x, bc_values);
+        return;
+    }
+
+    bc_values.ids.clear();
+    bc_values.values.clear();
 }
 
-std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
+std::unique_ptr<DirichletBoundaryConditionWithinTimeInterval>
+createDirichletBoundaryConditionWithinTimeInterval(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
     const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
-    DBUG("Constructing DirichletBoundaryCondition from config.");
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
-    config.checkConfigParameter("type", "Dirichlet");
+    DBUG(
+        "Constructing DirichletBoundaryConditionWithinTimeInterval from "
+        "config.");
 
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Dirichlet__parameter}
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
+    config.checkConfigParameter("type", "DirichletWithinTimeInterval");
+
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__DirichletWithinTimeInterval__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", param_name.c_str());
 
@@ -82,8 +99,12 @@ std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
     }
 #endif  // USE_PETSC
 
-    return std::make_unique<DirichletBoundaryCondition>(
-        param, bc_mesh, dof_table_bulk, variable_id, component_id);
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__DirichletWithinTimeInterval__time_interval}
+    config.peekConfigParameter<std::string>("time_interval");
+
+    return std::make_unique<DirichletBoundaryConditionWithinTimeInterval>(
+        BaseLib::createTimeInterval(config), param, bc_mesh, dof_table_bulk,
+        variable_id, component_id);
 }
 
 }  // namespace ProcessLib

@@ -13,6 +13,7 @@
 #include "BoundaryConditionConfig.h"
 #include "ConstraintDirichletBoundaryCondition.h"
 #include "DirichletBoundaryCondition.h"
+#include "DirichletBoundaryConditionWithinTimeInterval.h"
 #include "NeumannBoundaryCondition.h"
 #include "NonuniformDirichletBoundaryCondition.h"
 #include "NonuniformNeumannBoundaryCondition.h"
@@ -20,6 +21,9 @@
 #include "NormalTractionBoundaryCondition.h"
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
+
+#include "BaseLib/TimeInterval.h"
+
 #ifdef OGS_USE_PYTHON
 #include "Python/PythonBoundaryCondition.h"
 #endif
@@ -51,6 +55,12 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     if (type == "Dirichlet")
     {
         return ProcessLib::createDirichletBoundaryCondition(
+            config.config, config.boundary_mesh, dof_table, variable_id,
+            *config.component_id, parameters);
+    }
+    if (type == "DirichletWithinTimeInterval")
+    {
+        return ProcessLib::createDirichletBoundaryConditionWithinTimeInterval(
             config.config, config.boundary_mesh, dof_table, variable_id,
             *config.component_id, parameters);
     }

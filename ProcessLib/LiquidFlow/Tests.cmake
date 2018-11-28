@@ -82,6 +82,20 @@ AddTest(
     hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1.000000.vtu analytic_pressure pressure 1e-6 1e-6
 )
 
+AddTest(
+    NAME LiquidFlowDirichletBCWithinTimeInterval
+    PATH Parabolic/LiquidFlow/TimeIntervalDirichletBC
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS TimeIntervalDirichletBC.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    mesh2D.vtu dirichlet_bc_wihin_interval_pcs_0_ts_2_t_10.000000.vtu analytical_solution_t_lt_10 pressure 1e-6 1e-12
+    mesh2D.vtu dirichlet_bc_wihin_interval_pcs_0_ts_4_t_20.000000.vtu analytical_solution_t_gt_10 pressure 1e-6 1e-12
+)
+
+
 #===============================================================================
 # PETSc/MPI
 AddTest(
@@ -152,4 +166,17 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
     hex.vtu isotropic_gravity_driven3D_pcs_0_ts_1_t_1_000000_0.vtu analytic_pressure pressure 1e-6 1e-6
+)
+
+AddTest(
+    NAME LiquidFlowDirichletBCWithinTimeInterval
+    PATH Parabolic/LiquidFlow/TimeIntervalDirichletBC
+    EXECUTABLE_ARGS TimeIntervalDirichletBC.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    mesh2D.vtu dirichlet_bc_wihin_interval_pcs_0_ts_2_t_10_000000_0.vtu analytical_solution_t_lt_10 pressure 1e-6 1e-12
+    mesh2D.vtu dirichlet_bc_wihin_interval_pcs_0_ts_4_t_20_000000_0.vtu analytical_solution_t_gt_10 pressure 1e-6 1e-12
 )
