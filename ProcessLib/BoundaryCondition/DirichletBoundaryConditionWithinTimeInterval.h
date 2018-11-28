@@ -19,10 +19,6 @@
 namespace BaseLib
 {
 class ConfigTree;
-}
-
-namespace NumLib
-{
 class TimeInterval;
 }
 
@@ -36,7 +32,7 @@ class DirichletBoundaryConditionWithinTimeInterval final
 {
 public:
     DirichletBoundaryConditionWithinTimeInterval(
-        std::unique_ptr<NumLib::TimeInterval> time_interval,
+        std::unique_ptr<BaseLib::TimeInterval> time_interval,
         Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id);
@@ -53,7 +49,7 @@ private:
     int const _variable_id;
     int const _component_id;
 
-    std::unique_ptr<NumLib::TimeInterval> _time_interval;
+    std::unique_ptr<BaseLib::TimeInterval> _time_interval;
 };
 
 std::unique_ptr<DirichletBoundaryConditionWithinTimeInterval>

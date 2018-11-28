@@ -17,10 +17,7 @@
 namespace BaseLib
 {
 class ConfigTree;
-}
 
-namespace NumLib
-{
 /*!
  * Class for a time interval, which has a member to check whether the given time
  * is in this time interval.

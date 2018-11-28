@@ -16,10 +16,10 @@
 #include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/TimeInterval.h"
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/IndexValueVector.h"
-#include "NumLib/TimeStepping/TimeInterval.h"
 
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -28,7 +28,7 @@ namespace ProcessLib
 {
 DirichletBoundaryConditionWithinTimeInterval::
     DirichletBoundaryConditionWithinTimeInterval(
-        std::unique_ptr<NumLib::TimeInterval> time_interval,
+        std::unique_ptr<BaseLib::TimeInterval> time_interval,
         Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id)
@@ -103,7 +103,7 @@ createDirichletBoundaryConditionWithinTimeInterval(
     config.peekConfigParameter<std::string>("time_interval");
 
     return std::make_unique<DirichletBoundaryConditionWithinTimeInterval>(
-        NumLib::createTimeInterval(config), param, bc_mesh, dof_table_bulk,
+        BaseLib::createTimeInterval(config), param, bc_mesh, dof_table_bulk,
         variable_id, component_id);
 }
 
