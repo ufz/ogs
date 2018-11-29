@@ -49,7 +49,7 @@ private:
     int const _variable_id;
     int const _component_id;
 
-    std::unique_ptr<BaseLib::TimeInterval> _time_interval;
+    std::unique_ptr<BaseLib::TimeInterval const> _time_interval;
 };
 
 std::unique_ptr<DirichletBoundaryConditionWithinTimeInterval>

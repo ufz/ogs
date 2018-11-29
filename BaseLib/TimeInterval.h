@@ -30,6 +30,12 @@ public:
     {
     }
 
+    explicit TimeInterval(const TimeInterval& time_inverval)
+        : _start_time(time_inverval._start_time),
+          _end_time(time_inverval._end_time)
+    {
+    }
+
     bool contains(const double current_time) const
     {
         return (current_time >= _start_time && current_time <= _end_time);
