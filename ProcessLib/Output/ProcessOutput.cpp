@@ -211,23 +211,22 @@ void processOutputData(
     }
 
     // Secondary variables output
-    for (auto const& external_variable_name : output_variables)
+    for (auto const& external_variable_name : secondary_variables)
     {
-        if (!already_output.insert(external_variable_name).second)
+        auto const& name = external_variable_name.first;
+        if (!already_output.insert(name).second)
         {
             // no insertion took place, output already done
             continue;
         }
 
-        addSecondaryVariableNodes(
-            t, x, dof_table, secondary_variables.get(external_variable_name),
-            external_variable_name, mesh);
+        addSecondaryVariableNodes(t, x, dof_table,
+                                  secondary_variables.get(name), name, mesh);
+
         if (process_output.output_residuals)
         {
             addSecondaryVariableResiduals(
-                t, x, dof_table,
-                secondary_variables.get(external_variable_name),
-                external_variable_name, mesh);
+                t, x, dof_table, secondary_variables.get(name), name, mesh);
         }
     }
 
