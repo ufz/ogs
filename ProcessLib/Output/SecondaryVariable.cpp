@@ -38,6 +38,18 @@ void SecondaryVariableCollection::addSecondaryVariable(
     }
 }
 
+std::map<std::string, std::string>::const_iterator
+SecondaryVariableCollection::begin()
+{
+    return _map_external_to_internal.cbegin();
+}
+
+std::map<std::string, std::string>::const_iterator
+SecondaryVariableCollection::end()
+{
+    return _map_external_to_internal.cend();
+}
+
 SecondaryVariable const& SecondaryVariableCollection::get(
     std::string const& external_name)
 {
@@ -46,7 +58,7 @@ SecondaryVariable const& SecondaryVariableCollection::get(
     if (it == _map_external_to_internal.cend())
     {
         OGS_FATAL(
-            "A secondary variable with external name `%s' has not been set up.",
+            "A secondary variable with external name '%s' has not been set up.",
             external_name.c_str());
     }
 
@@ -56,7 +68,7 @@ SecondaryVariable const& SecondaryVariableCollection::get(
     if (it2 == _configured_secondary_variables.end())
     {
         OGS_FATAL(
-            "A secondary variable with internal name `%s' has not been set up.",
+            "A secondary variable with internal name '%s' has not been set up.",
             internal_name.c_str());
     }
 
