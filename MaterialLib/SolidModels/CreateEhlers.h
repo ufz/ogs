@@ -148,6 +148,10 @@ std::unique_ptr<SolidEhlers<DisplacementDim>> createEhlers(
 
     DBUG("Use \'%s\' as gammap.", gammap.name.c_str());
 
+    //! \ogs_file_param_special{material__solid__constitutive_relation__Ehlers__tangent_type}
+    auto tangent_type =
+        makeTangentType(config.getConfigParameter<std::string>("tangent_type"));
+
     MaterialPropertiesParameters mp{
         shear_modulus, bulk_modulus, alpha,  beta,
         gamma,         delta,        eps,    m,
@@ -170,7 +174,10 @@ std::unique_ptr<SolidEhlers<DisplacementDim>> createEhlers(
         createNewtonRaphsonSolverParameters(config);
 
     return std::make_unique<SolidEhlers<DisplacementDim>>(
-        nonlinear_solver_parameters, mp, std::move(ehlers_damage_properties));
+        nonlinear_solver_parameters,
+        mp,
+        std::move(ehlers_damage_properties),
+        tangent_type);
 }
 
 }  // namespace Ehlers

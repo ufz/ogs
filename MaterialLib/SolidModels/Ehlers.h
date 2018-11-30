@@ -35,6 +35,24 @@ namespace Solids
 {
 namespace Ehlers
 {
+enum class TangentType
+{
+    Elastic,
+    PlasticDamageSecant,
+    Plastic
+};
+inline TangentType makeTangentType(std::string const& s)
+{
+    if (s == "Elastic")
+        return TangentType::Elastic;
+    if (s == "PlasticDamageSecant")
+        return TangentType::PlasticDamageSecant;
+    if (s == "Plastic")
+        return TangentType::Plastic;
+    OGS_FATAL("Not valid string '%s' to create a tangent type from.",
+              s.c_str());
+}
+
 /// material parameters in relation to Ehler's single-surface model see Ehler's
 /// paper "A single-surface yield function for geomaterials" for more details
 /// \cite Ehlers1995.
@@ -282,10 +300,12 @@ public:
     explicit SolidEhlers(
         NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters,
         MaterialPropertiesParameters material_properties,
-        std::unique_ptr<DamagePropertiesParameters>&& damage_properties)
+        std::unique_ptr<DamagePropertiesParameters>&& damage_properties,
+        TangentType tangent_type)
         : _nonlinear_solver_parameters(std::move(nonlinear_solver_parameters)),
           _mp(std::move(material_properties)),
-          _damage_properties(std::move(damage_properties))
+          _damage_properties(std::move(damage_properties)),
+          _tangent_type(tangent_type)
     {
     }
 
@@ -341,6 +361,7 @@ private:
 
     MaterialPropertiesParameters _mp;
     std::unique_ptr<DamagePropertiesParameters> _damage_properties;
+    TangentType const _tangent_type;
 };
 
 extern template class SolidEhlers<2>;
