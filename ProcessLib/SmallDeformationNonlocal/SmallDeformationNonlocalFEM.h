@@ -362,7 +362,9 @@ public:
             // Compute sigma_eff from damage total stress sigma
             using KelvinVectorType = typename BMatricesType::KelvinVectorType;
             KelvinVectorType const sigma_eff_prev =
-                sigma_prev / (1. - damage_prev);
+                sigma_prev /
+                (1. - damage_prev);  // damage_prev is in [0,1) range. See
+                                     // calculateDamage() function.
 
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
                 t, x_position, _process_data.dt, eps_prev, eps, sigma_eff_prev,
