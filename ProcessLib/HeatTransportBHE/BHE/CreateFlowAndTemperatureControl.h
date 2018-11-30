@@ -11,10 +11,21 @@
 
 #pragma once
 
-#include "BaseLib/ConfigTree.h"
-#include "BaseLib/Error.h"
+#include <map>
+#include <memory>
+#include <string>
+
 #include "FlowAndTemperatureControl.h"
-#include "RefrigerantProperties.h"
+
+namespace BaseLib
+{
+class ConfigTree;
+}
+
+namespace MathLib
+{
+class PiecewiseLinearInterpolation;
+}
 
 namespace ProcessLib
 {
@@ -22,6 +33,8 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
+class RefrigerantProperties;
+
 FlowAndTemperatureControl createFlowAndTemperatureControl(
     BaseLib::ConfigTree const& config,
     std::map<std::string,

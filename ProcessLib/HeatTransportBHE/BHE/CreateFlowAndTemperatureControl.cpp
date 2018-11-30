@@ -9,7 +9,11 @@
  *
  */
 
+#include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
+
 #include "CreateFlowAndTemperatureControl.h"
+#include "RefrigerantProperties.h"
 
 namespace ProcessLib
 {
