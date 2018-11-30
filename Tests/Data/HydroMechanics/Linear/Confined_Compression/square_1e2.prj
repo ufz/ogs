@@ -159,24 +159,9 @@
             <values>0 0</values>
         </parameter>
         <parameter>
-            <name>pressure_ic</name>
-            <type>Constant</type>
-            <values>0</values>
-        </parameter>
-        <parameter>
-            <name>p_neumann</name>
-            <type>Constant</type>
-            <values>1</values>
-        </parameter>
-        <parameter>
-            <name>dirichlet0</name>
+            <name>zero</name>
             <type>Constant</type>
             <value>0</value>
-        </parameter>
-        <parameter>
-            <name>dirichlet1</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>displacementTop</name>
@@ -209,21 +194,21 @@
                     <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>dirichlet0</parameter>
+                    <parameter>zero</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>right</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>dirichlet0</parameter>
+                    <parameter>zero</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>bottom</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
-                    <parameter>dirichlet0</parameter>
+                    <parameter>zero</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
@@ -238,14 +223,23 @@
             <name>pressure</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>pressure_ic</initial_condition>
+            <initial_condition>zero</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>top</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>dirichlet0</parameter>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <!-- This is for testing the Neumann bc for lower order process variable.
+                     The test's result is not influenced by zero Neumann bc. -->
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Neumann</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
