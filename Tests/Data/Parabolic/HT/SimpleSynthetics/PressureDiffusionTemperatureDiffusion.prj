@@ -67,13 +67,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>T</variable>
-                        <variable>p</variable>
-                        <variable>darcy_velocity</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
@@ -96,6 +89,11 @@
                     <each_steps> 1 </each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>T</variable>
+                <variable>p</variable>
+                <variable>darcy_velocity</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

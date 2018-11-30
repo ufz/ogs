@@ -7,21 +7,17 @@
             <name>SD</name>
             <type>SMALL_DEFORMATION</type>
             <integration_order>2</integration_order>
-
             <constitutive_relation>
                 <type>MFront</type>
-
                 <library>DruckerPrager.so</library>
                 <behaviour>DruckerPrager</behaviour>
-
                 <material_properties>
-                    <material_property name="YoungModulus" parameter="E"  />
-                    <material_property name="PoissonRatio" parameter="nu" />
-                    <material_property name="beta" parameter="beta" />
-                    <material_property name="kappa" parameter="kappa" />
+                    <material_property name="YoungModulus" parameter="E"/>
+                    <material_property name="PoissonRatio" parameter="nu"/>
+                    <material_property name="beta" parameter="beta"/>
+                    <material_property name="kappa" parameter="kappa"/>
                 </material_properties>
             </constitutive_relation>
-
             <!-- Configuration of the Ehlers model used to compute the reference solution.
             <constitutive_relation>
                 <type>Ehlers</type>
@@ -47,7 +43,6 @@
                 </nonlinear_solver>
             </constitutive_relation>
             -->
-
             <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0 0</specific_body_force>
             <process_variables>
@@ -71,13 +66,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>sigma</variable>
-                        <variable>epsilon</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -104,6 +92,11 @@
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
@@ -117,19 +110,16 @@
             <type>Constant</type>
             <value>0.2 <!-- (3 K - 2 G) / 2 / (3 K + G) --></value>
         </parameter>
-
         <parameter>
             <name>kappa</name>
             <type>Constant</type>
             <value>0.0866</value>
         </parameter>
-
         <parameter>
             <name>beta</name>
             <type>Constant</type>
             <value>0.1667</value>
         </parameter>
-
         <!-- Parameter values of the Ehlers model used to compute the reference solution.
         <parameter>
             <name>G</name>
@@ -202,19 +192,16 @@
             <value>1.</value>
         </parameter>
         -->
-
         <parameter>
             <name>rho_sr</name>
             <type>Constant</type>
             <value>1</value>
         </parameter>
-
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0 0</values>
         </parameter>
-
         <parameter>
             <name>Dirichlet_left</name>
             <type>Constant</type>

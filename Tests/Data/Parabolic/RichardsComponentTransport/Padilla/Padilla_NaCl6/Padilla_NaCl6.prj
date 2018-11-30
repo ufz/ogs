@@ -78,14 +78,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>concentration</variable>
-                        <variable>pressure</variable>
-                        <variable>saturation</variable>
-                        <variable>darcy_velocity</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
@@ -120,6 +112,12 @@
                     <each_steps>1000</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>concentration</variable>
+                <variable>pressure</variable>
+                <variable>saturation</variable>
+                <variable>darcy_velocity</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

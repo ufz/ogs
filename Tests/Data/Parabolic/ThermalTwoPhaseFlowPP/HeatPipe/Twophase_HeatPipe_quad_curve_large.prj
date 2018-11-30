@@ -204,15 +204,6 @@
                     <type>CrankNicolson</type>
                     <theta>0.5</theta>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> capillary_pressure </variable>
-                        <variable> gas_pressure </variable>
-                        <variable> saturation </variable>
-                        <variable> pressure_wetting </variable>
-                        <variable> temperature </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -241,6 +232,13 @@
                 </pair>
             </timesteps>
             <output_iteration_results>false</output_iteration_results>
+            <variables>
+                <variable> capillary_pressure </variable>
+                <variable> gas_pressure </variable>
+                <variable> saturation </variable>
+                <variable> pressure_wetting </variable>
+                <variable> temperature </variable>
+            </variables>
         </output>
     </time_loop>
     <process_variables>

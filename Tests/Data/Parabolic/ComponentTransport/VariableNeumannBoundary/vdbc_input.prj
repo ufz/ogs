@@ -26,18 +26,18 @@
             </fluid>
             <porous_medium>
                 <porous_medium id="0">
-                <permeability>
-                    <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                    <type>Constant</type>
-                </permeability>
-                <porosity>
-                    <type>Constant</type>
-                    <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                </porosity>
-                <storage>
-                    <type>Constant</type>
-                    <value>0</value>
-                </storage>
+                    <permeability>
+                        <permeability_tensor_entries>kappa1</permeability_tensor_entries>
+                        <type>Constant</type>
+                    </permeability>
+                    <porosity>
+                        <type>Constant</type>
+                        <porosity_parameter>constant_porosity_parameter</porosity_parameter>
+                    </porosity>
+                    <storage>
+                        <type>Constant</type>
+                        <value>0</value>
+                    </storage>
                 </porous_medium>
             </porous_medium>
             <fluid_reference_density>rho_fluid</fluid_reference_density>
@@ -64,13 +64,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>concentration</variable>
-                        <variable>pressure</variable>
-                        <variable>darcy_velocity</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
@@ -113,6 +106,11 @@
                     <each_steps>6000</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>concentration</variable>
+                <variable>pressure</variable>
+                <variable>darcy_velocity</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
@@ -218,7 +216,7 @@
             <max_iter>200</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
-        </nonlinear_solvers>
+    </nonlinear_solvers>
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>

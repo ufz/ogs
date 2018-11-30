@@ -81,12 +81,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>pressure</variable>
-                        <variable>saturation</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>EvolutionaryPIDcontroller</type>
                     <t_initial> 0.0 </t_initial>
@@ -111,6 +105,10 @@
             </timesteps>
             <fixed_output_times> 50.0 100.0 500.</fixed_output_times>
             <output_iteration_results>false</output_iteration_results>
+            <variables>
+                <variable>pressure</variable>
+                <variable>saturation</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

@@ -57,7 +57,6 @@
                 </convergence_criterion>
             </convergence_criteria>
         </global_process_coupling>
-
         <processes>
             <!--For the equations of pressure-->
             <process ref="InjectionProduction1D">
@@ -70,12 +69,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>pressure</variable>
-                        <variable>velocity</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -99,19 +92,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>sigma_xx</variable>
-                        <variable>sigma_yy</variable>
-                        <variable>sigma_zz</variable>
-                        <variable>sigma_xy</variable>
-                        <variable>epsilon_xx</variable>
-                        <variable>epsilon_yy</variable>
-                        <variable>epsilon_zz</variable>
-                        <variable>epsilon_xy</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -123,7 +103,7 @@
                         </pair>
                     </timesteps>
                 </time_stepping>
-            </process>            
+            </process>
         </processes>
         <output>
             <type>VTK</type>
@@ -142,6 +122,19 @@
                     <each_steps>100</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>pressure</variable>
+                <variable>velocity</variable>
+                <variable>displacement</variable>
+                <variable>sigma_xx</variable>
+                <variable>sigma_yy</variable>
+                <variable>sigma_zz</variable>
+                <variable>sigma_xy</variable>
+                <variable>epsilon_xx</variable>
+                <variable>epsilon_yy</variable>
+                <variable>epsilon_zz</variable>
+                <variable>epsilon_xy</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

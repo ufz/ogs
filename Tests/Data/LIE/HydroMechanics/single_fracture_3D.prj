@@ -57,13 +57,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>pressure</variable>
-                        <variable>displacement</variable>
-                        <variable>displacement_jump1</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -86,6 +79,11 @@
                     <each_steps>10</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>pressure</variable>
+                <variable>displacement</variable>
+                <variable>displacement_jump1</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

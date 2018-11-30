@@ -81,13 +81,6 @@
                         </pair>
                     </timesteps>
                 </time_stepping>
-                <output>
-                    <variables>
-                        <variable>conc</variable>
-                        <variable>pressure</variable>
-                        <variable>darcy_velocity</variable>
-                    </variables>
-                </output>
             </process>
         </processes>
         <output>
@@ -99,6 +92,11 @@
                     <each_steps>20</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>conc</variable>
+                <variable>pressure</variable>
+                <variable>darcy_velocity</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

@@ -7,38 +7,33 @@
             <name>SD</name>
             <type>THERMO_MECHANICS</type>
             <integration_order>2</integration_order>
-
             <constitutive_relation>
                 <type>MFront</type>
-
                 <library>libBehaviour.so</library>
                 <behaviour>BDT</behaviour>
-
                 <material_properties>
-                    <material_property name="YoungModulus" parameter="E"  />
-                    <material_property name="PoissonRatio" parameter="nu" />
-
-                    <material_property name="ThermalExpansion" parameter="alpha" />
-                    <material_property name="f_c" parameter="f_c" />
-                    <material_property name="m_0" parameter="m_0" />
-                    <material_property name="alpha_p" parameter="alpha_p" />
-                    <material_property name="n_exp_T" parameter="n_exp_T" />
-                    <material_property name="q_h0" parameter="q_h0" />
-                    <material_property name="chi_h" parameter="chi_h" />
-                    <material_property name="alpha_d" parameter="alpha_d" />
-                    <material_property name="h_d" parameter="h_d" />
-                    <material_property name="Qact" parameter="Qact" />
-                    <material_property name="A_creep" parameter="A_creep" />
-                    <material_property name="n_creep" parameter="n_creep" />
-                    <material_property name="El_1" parameter="El_1" />
-                    <material_property name="El_2" parameter="El_2" />
-                    <material_property name="El_3" parameter="El_3" />
-                    <material_property name="at_1" parameter="at_1" />
-                    <material_property name="at_2" parameter="at_2" />
-                    <material_property name="at_3" parameter="at_3" />
+                    <material_property name="YoungModulus" parameter="E"/>
+                    <material_property name="PoissonRatio" parameter="nu"/>
+                    <material_property name="ThermalExpansion" parameter="alpha"/>
+                    <material_property name="f_c" parameter="f_c"/>
+                    <material_property name="m_0" parameter="m_0"/>
+                    <material_property name="alpha_p" parameter="alpha_p"/>
+                    <material_property name="n_exp_T" parameter="n_exp_T"/>
+                    <material_property name="q_h0" parameter="q_h0"/>
+                    <material_property name="chi_h" parameter="chi_h"/>
+                    <material_property name="alpha_d" parameter="alpha_d"/>
+                    <material_property name="h_d" parameter="h_d"/>
+                    <material_property name="Qact" parameter="Qact"/>
+                    <material_property name="A_creep" parameter="A_creep"/>
+                    <material_property name="n_creep" parameter="n_creep"/>
+                    <material_property name="El_1" parameter="El_1"/>
+                    <material_property name="El_2" parameter="El_2"/>
+                    <material_property name="El_3" parameter="El_3"/>
+                    <material_property name="at_1" parameter="at_1"/>
+                    <material_property name="at_2" parameter="at_2"/>
+                    <material_property name="at_3" parameter="at_3"/>
                 </material_properties>
             </constitutive_relation>
-
             <reference_solid_density>rho_sr</reference_solid_density>
             <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
             <specific_heat_capacity>cs</specific_heat_capacity>
@@ -66,14 +61,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>temperature</variable>
-                        <variable>sigma</variable>
-                        <variable>epsilon</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>-6</t_initial>
@@ -96,6 +83,12 @@
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>temperature</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
@@ -201,8 +194,6 @@
             <type>Constant</type>
             <value>  -8.1075e-2              </value>
         </parameter>
-
-
         <parameter>
             <name> rho_sr              </name>
             <type>Constant</type>
@@ -223,7 +214,6 @@
             <type>Constant</type>
             <value>   0             </value>
         </parameter>
-
         <parameter>
             <name>zero</name>
             <type>Constant</type>
@@ -234,7 +224,6 @@
             <type>Constant</type>
             <value> 1 </value>
         </parameter>
-
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
@@ -245,15 +234,12 @@
             <type>Constant</type>
             <values> 1173.15 </values>
         </parameter>
-
         <parameter>
             <name>boundary_temperature</name>
             <type>CurveScaled</type>
             <parameter> one </parameter>
             <curve> temperature </curve>
         </parameter>
-
-
         <parameter>
             <name>Dirichlet_top</name>
             <type>CurveScaled</type>
@@ -272,9 +258,6 @@
             <curve>Neumann_temporal_top</curve>
             <parameter>one</parameter>
         </parameter>
-
-
-
     </parameters>
     <curves>
         <curve>
@@ -282,7 +265,6 @@
             <coords>-1e6     1e6    </coords>
             <values>1173.15 1173.15</values>
         </curve>
-
         <curve>
             <name>Dirichlet_top_temporal</name>
             <coords>-6.0 0.0 750      6.15e3  6.526e3  6.774e3</coords>
@@ -328,7 +310,6 @@
                     <component>2</component>
                     <parameter>zero</parameter>
                 </boundary_condition>
-
                 <!-- force -->
                 <boundary_condition>
                     <geometrical_set>cube_1x1x1_geometry</geometrical_set>
@@ -353,7 +334,6 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-
         <process_variable>
             <name>temperature</name>
             <components>1</components>

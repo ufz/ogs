@@ -47,21 +47,21 @@
                             <type>Constant</type>
                             <value> 0.0 </value>
                         </storage>
-                    <capillary_pressure>
-                        <type>vanGenuchten</type>
-                        <m>0.789029535864979</m>
-                        <pc_max>36333.30</pc_max>
-                        <pd>3633.33</pd>
-                        <smax>0.95</smax>
-                        <sr>0.1689</sr>
-                    </capillary_pressure>
-                    <relative_permeability>
-                        <type>WettingPhaseVanGenuchten</type>
-                        <krel_min>1e-12</krel_min>
-                        <m>0.789029535864979</m>
-                        <smax>0.95</smax>
-                        <sr>0.1689</sr>
-                    </relative_permeability>
+                        <capillary_pressure>
+                            <type>vanGenuchten</type>
+                            <m>0.789029535864979</m>
+                            <pc_max>36333.30</pc_max>
+                            <pd>3633.33</pd>
+                            <smax>0.95</smax>
+                            <sr>0.1689</sr>
+                        </capillary_pressure>
+                        <relative_permeability>
+                            <type>WettingPhaseVanGenuchten</type>
+                            <krel_min>1e-12</krel_min>
+                            <m>0.789029535864979</m>
+                            <smax>0.95</smax>
+                            <sr>0.1689</sr>
+                        </relative_permeability>
                     </porous_medium>
                 </porous_medium>
             </material_property>
@@ -87,16 +87,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>pressure</variable>
-                        <variable>sigma</variable>
-                        <variable>epsilon</variable>
-                        <variable>velocity</variable>
-                        <variable>saturation</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -140,6 +130,14 @@
                 </pair>
             </timesteps>
             <output_iteration_results>false</output_iteration_results>
+            <variables>
+                <variable>displacement</variable>
+                <variable>pressure</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>velocity</variable>
+                <variable>saturation</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

@@ -28,12 +28,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> temperature </variable>
-                        <variable> v      </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>SingleStep</type>
                 </time_stepping>
@@ -42,6 +36,10 @@
         <output>
             <type>VTK</type>
             <prefix>wedge_1e2_ang_0.02</prefix>
+            <variables>
+                <variable> temperature </variable>
+                <variable> v      </variable>
+            </variables>
         </output>
     </time_loop>
     <nonlinear_solvers>

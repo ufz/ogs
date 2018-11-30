@@ -72,7 +72,6 @@
                 </convergence_criterion>
             </convergence_criteria>
         </global_process_coupling>
-
         <processes>
             <process ref="ConstViscosityThermalConvection">
                 <nonlinear_solver>picard_T</nonlinear_solver>
@@ -84,12 +83,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>T</variable>
-                        <variable>darcy_velocity</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>EvolutionaryPIDcontroller</type>
                     <t_initial> 0.0 </t_initial>
@@ -113,11 +106,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>p</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>EvolutionaryPIDcontroller</type>
                     <t_initial> 0.0 </t_initial>
@@ -141,6 +129,11 @@
                     <each_steps> 149 </each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>T</variable>
+                <variable>darcy_velocity</variable>
+                <variable>p</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
@@ -265,7 +258,6 @@
             <linear_solver>linear_solver_H</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
-
     <linear_solvers>
         <linear_solver>
             <name>linear_solver_T</name>

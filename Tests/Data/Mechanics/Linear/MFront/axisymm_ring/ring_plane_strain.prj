@@ -9,13 +9,11 @@
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
-
                 <library>../disc_with_hole/libBehaviour.so</library>
                 <behaviour>Elasticity</behaviour>
-
                 <material_properties>
-                    <material_property name="YoungModulus" parameter="E"  />
-                    <material_property name="PoissonRatio" parameter="nu" />
+                    <material_property name="YoungModulus" parameter="E"/>
+                    <material_property name="PoissonRatio" parameter="nu"/>
                 </material_properties>
             </constitutive_relation>
             <solid_density>rho_sr</solid_density>
@@ -40,12 +38,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>sigma</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>SingleStep</type>
                 </time_stepping>
@@ -60,6 +52,10 @@
                     <each_steps>10000000</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

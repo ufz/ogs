@@ -38,12 +38,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> pressure </variable>
-                        <variable> v      </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>SingleStep</type>
                 </time_stepping>
@@ -52,6 +46,10 @@
         <output>
             <type>VTK</type>
             <prefix>cube_1e3_neumann_balance</prefix>
+            <variables>
+                <variable> pressure </variable>
+                <variable> v      </variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
