@@ -12,6 +12,9 @@
  */
 #include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+
 #include "NumLib/IndexValueVector.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Parameter/Parameter.h"
@@ -54,6 +57,7 @@ void checkParametersOfDirichletBoundaryCondition(
 
 void getEssentialBCValuesLocal(
     Parameter<double> const& parameter, MeshLib::Mesh const& bc_mesh,
+    std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
     int const variable_id, int const component_id, const double t,
     GlobalVector const& /*x*/,
@@ -65,10 +69,9 @@ void getEssentialBCValuesLocal(
     bc_values.values.clear();
 
     // convert mesh node ids to global index for the given component
-    bc_values.ids.reserve(bc_values.ids.size() + bc_mesh.getNumberOfNodes());
-    bc_values.values.reserve(bc_values.values.size() +
-                             bc_mesh.getNumberOfNodes());
-    for (auto const* const node : bc_mesh.getNodes())
+    bc_values.ids.reserve(bc_values.ids.size() + nodes_in_bc_mesh.size());
+    bc_values.values.reserve(bc_values.values.size() + nodes_in_bc_mesh.size());
+    for (auto const* const node : nodes_in_bc_mesh)
     {
         auto const id = node->getID();
         pos.setNodeID(node->getID());
@@ -92,4 +95,4 @@ void getEssentialBCValuesLocal(
         }
     }
 }
-} // end of name space
+}  // end of name space
