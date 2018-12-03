@@ -33,7 +33,7 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-class RefrigerantProperties;
+struct RefrigerantProperties;
 
 FlowAndTemperatureControl createFlowAndTemperatureControl(
     BaseLib::ConfigTree const& config,
