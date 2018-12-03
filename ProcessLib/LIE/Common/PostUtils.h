@@ -31,9 +31,12 @@ class PostProcessTool final
 public:
     PostProcessTool(
         MeshLib::Mesh const& org_mesh,
+        std::vector<int> const& vec_fracture_mat_IDs,
         std::vector<std::vector<MeshLib::Node*>> const& vec_vec_fracture_nodes,
         std::vector<std::vector<MeshLib::Element*>> const&
-            vec_vec_fracutre_matrix_elements,
+            vec_vec_fracture_matrix_elements,
+        std::vector<std::pair<std::size_t,std::vector<int>>> const&
+            vec_branch_nodeID_matIDs,
         std::vector<std::pair<std::size_t, std::vector<int>>> const&
             vec_junction_nodeID_matIDs);
 
