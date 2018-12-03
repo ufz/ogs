@@ -94,7 +94,13 @@ void LocalToGlobalIndexMap::findGlobalIndices(
                 continue;
             MeshLib::Location l(
                 mesh_id, MeshLib::MeshItemType::Node, (*n)->getID());
-            indices.push_back(_mesh_component_map.getGlobalIndex(l, comp_id));
+            auto const global_index =
+                _mesh_component_map.getGlobalIndex(l, comp_id);
+            if (global_index == std::numeric_limits<GlobalIndexType>::max())
+            {
+                continue;
+            }
+            indices.push_back(global_index);
         }
 
         indices.shrink_to_fit();
