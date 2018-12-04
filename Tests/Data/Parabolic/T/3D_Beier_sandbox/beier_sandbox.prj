@@ -61,11 +61,6 @@
                     </refrigerant>
                 </borehole_heat_exchanger>
             </borehole_heat_exchangers>
-            <secondary_variables>
-                <secondary_variable type="static" internal_name="heat_flux_x" output_name="heat_flux_x"/>
-                <secondary_variable type="static" internal_name="heat_flux_y" output_name="heat_flux_y"/>
-                <secondary_variable type="static" internal_name="heat_flux_z" output_name="heat_flux_z"/>
-            </secondary_variables>
         </process>
     </processes>
     <time_loop>
