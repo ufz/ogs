@@ -21,13 +21,13 @@ namespace BaseLib
 {
 class ConfigTree;
 class TimeInterval;
-}
+}  // namespace BaseLib
 
 namespace MeshLib
 {
 class Mesh;
 class Node;
-}
+}  // namespace MeshLib
 
 namespace ProcessLib
 {
@@ -49,6 +49,8 @@ struct DeactivatedSubdomain
         std::vector<std::unique_ptr<DeactivetedSubdomainMesh>>&&
             deactivated_sudomain_meshes_);
 
+    bool includesTimeOf(double const t) const;
+
     std::unique_ptr<BaseLib::TimeInterval const> time_interval;
 
     /// The material IDs of the deactivated the subdomains
@@ -64,4 +66,4 @@ std::vector<std::unique_ptr<DeactivatedSubdomain const>>
 createDeactivatedSubdomains(BaseLib::ConfigTree const& config,
                             MeshLib::Mesh const& mesh);
 
-}  // end of namespace
+}  // namespace ProcessLib

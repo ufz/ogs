@@ -9,6 +9,8 @@
 
 #include "ProcessVariable.h"
 
+#include <iostream>
+
 #include <algorithm>
 #include <utility>
 
@@ -55,8 +57,6 @@ MeshLib::Mesh const& findMeshInConfig(
     }
     else
     {
-        // Looking for the mesh created before for the given geometry.
-
 #ifdef DOXYGEN_DOCU_ONLY
         //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__geometrical_set}
         config.getConfigParameterOptional<std::string>("geometrical_set");
@@ -64,6 +64,7 @@ MeshLib::Mesh const& findMeshInConfig(
         config.getConfigParameter<std::string>("geometry");
 #endif  // DOXYGEN_DOCU_ONLY
 
+        // Looking for the mesh created before for the given geometry.
         auto const geometrical_set_name =
             //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__geometrical_set}
             config.getConfigParameter<std::string>("geometrical_set");
@@ -237,11 +238,6 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
 
     for (auto const& deactivated_subdomain : _deactivated_subdomains)
     {
-        // Copy the time interval.
-        std::unique_ptr<BaseLib::TimeInterval> time_interval =
-            std::make_unique<BaseLib::TimeInterval>(
-                (*(*deactivated_subdomain).time_interval));
-
         auto const& deactivated_sudomain_meshes =
             (*deactivated_subdomain).deactivated_sudomain_meshes;
         for (auto const& deactivated_sudomain_mesh :
@@ -251,6 +247,11 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
                  component_id < dof_table.getNumberOfComponents();
                  component_id++)
             {
+                // Copy the time interval.
+                std::unique_ptr<BaseLib::TimeInterval> time_interval =
+                    std::make_unique<BaseLib::TimeInterval>(
+                        (*(*deactivated_subdomain).time_interval));
+
                 auto bc = std::make_unique<
                     DirichletBoundaryConditionWithinTimeInterval>(
                     std::move(time_interval), parameter,
@@ -267,6 +268,46 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
                 bcs.push_back(std::move(bc));
             }
         }
+    }
+}
+
+void ProcessVariable::checkElementDeactivation(double const time)
+{
+    if (_deactivated_subdomains.empty())
+    {
+        _element_deactivation_flags.clear();
+        return;
+    }
+
+    auto found_a_set =
+        std::find_if(_deactivated_subdomains.begin(),
+                     _deactivated_subdomains.end(),
+                     [&](auto& _deactivated_subdomain) {
+                         return _deactivated_subdomain->includesTimeOf(time);
+                     });
+
+    if (found_a_set == _deactivated_subdomains.end())
+    {
+        _element_deactivation_flags.clear();
+        return;
+    }
+
+    // Already initialized.
+    if (!_element_deactivation_flags.empty())
+        return;
+
+    auto const& deactivated_materialIDs = (*found_a_set)->materialIDs;
+
+    auto const* const material_ids = MeshLib::materialIDs(_mesh);
+    _element_deactivation_flags.resize(_mesh.getNumberOfElements());
+    auto const number_of_elements = _mesh.getNumberOfElements();
+
+    for (std::size_t i = 0; i < number_of_elements; i++)
+    {
+        _element_deactivation_flags[i] =
+            std::binary_search(deactivated_materialIDs.begin(),
+                               deactivated_materialIDs.end(),
+                               (*material_ids)[i]);
     }
 }
 

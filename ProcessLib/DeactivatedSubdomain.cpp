@@ -47,6 +47,11 @@ DeactivatedSubdomain::DeactivatedSubdomain(
 {
 }
 
+bool DeactivatedSubdomain::includesTimeOf(double const t) const
+{
+    return time_interval->contains(t);
+}
+
 std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
