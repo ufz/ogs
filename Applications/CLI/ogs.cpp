@@ -33,12 +33,16 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
+ // include due to the forward declaration in ProcessVariable.h
+#include "BaseLib/TimeInterval.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "Applications/InSituLib/Adaptor.h"
+ // include due to the forward declaration in ProcessVariable.h
+#include "ProcessLib/DeactivatedSubdomain.h"
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
 #include "NumLib/NumericsConfig.h"

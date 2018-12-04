@@ -24,6 +24,8 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/FileTools.h"
+// include due to the forward declaration in ProcessVariable.h
+#include "BaseLib/TimeInterval.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
@@ -34,11 +36,13 @@
 
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
 #include "ProcessLib/CreateJacobianAssembler.h"
+#include "ProcessLib/DeactivatedSubdomain.h"
 
 // FileIO
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 
+#include "ProcessLib/Parameter/ConstantParameter.h"
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
@@ -299,6 +303,10 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
         _parameters.push_back(std::move(p));
     }
 
+    _parameters.push_back(
+        std::make_unique<ProcessLib::ConstantParameter<double>>(
+            ProcessLib::DeactivatedSubdomain::name_of_paramater_of_zero, 0.0));
+
     for (auto& parameter : _parameters)
         parameter->initialize(_parameters);
 }
@@ -307,8 +315,8 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                                  std::string const& project_directory,
                                  std::string const& output_directory)
 {
-    (void)project_directory; // to avoid compilation warning
-    (void)output_directory; // to avoid compilation warning
+    (void)project_directory;  // to avoid compilation warning
+    (void)output_directory;   // to avoid compilation warning
 
     DBUG("Reading processes:");
     //! \ogs_file_param{prj__processes__process}
