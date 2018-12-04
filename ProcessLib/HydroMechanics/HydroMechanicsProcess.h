@@ -55,7 +55,7 @@ public:
      *                               process_id = 0. For the staggered scheme,
      *                               process_id = 0 represents the
      *                               hydraulic (H) process, while process_id = 1
-     *                               represents the mechanical (M) process.                         
+     *                               represents the mechanical (M) process.
      * @return Matrix specifications including size and sparse pattern.
      */
     MathLib::MatrixSpecifications getMatrixSpecifications(
@@ -116,8 +116,8 @@ private:
     /// Solutions of the previous time step
     std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
 
-    void computeSecondaryVariableConcrete(const double t,
-                                          GlobalVector const& x) override;
+    void computeSecondaryVariableConcrete(const double t, GlobalVector const& x,
+                                          const int process_id) override;
     /**
      * @copydoc ProcessLib::Process::getDOFTableForExtrapolatorData()
      */
