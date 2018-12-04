@@ -14,8 +14,6 @@ namespace ProcessLib
 void SecondaryVariableCollection::addNameMapping(
     std::string const& internal_name, std::string const& external_name)
 {
-    _all_secondary_variables.insert(internal_name);
-
     // TODO check for missing secondary vars.
     // TODO check primary vars, too
     BaseLib::insertIfKeyUniqueElseError(
