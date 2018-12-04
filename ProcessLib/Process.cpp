@@ -59,6 +59,23 @@ Process::Process(
           return pcs_sts;
       }(_process_variables.size()))
 {
+    // If there are deactivated subdomains, check whether MaterialIDs exist in
+    // mesh data.
+    for (auto const& per_process_process_variables : _process_variables)
+    {
+        for (auto const& process_variable : per_process_process_variables)
+        {
+            if ((!process_variable.get()
+                      .getDeactivatedSubdomains()
+                      .empty()) &&
+                (!materialIDs(mesh)))
+            {
+                OGS_FATAL(
+                    "The mesh does not contain matertialIDs for the "
+                    "deactivation of subdomains. The program terminates now.");
+            }
+        }
+    }
 }
 
 void Process::initializeProcessBoundaryConditionsAndSourceTerms(
