@@ -1,10 +1,8 @@
-FROM ubuntu:16.04
+FROM ubuntu:17.10
 
-RUN apt-get update && apt-get install -y software-properties-common curl \
-  && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+RUN apt-get update && apt-get install -y curl \
   && curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
-  && apt-get update \
-  && apt-get -y install \
+  && apt-get update && apt-get -y install \
     ccache \
     g++-6 \
     git git-lfs \
@@ -48,13 +46,14 @@ RUN apt-get update && apt-get install -y \
     cppcheck \
     doxygen \
     graphviz \
-    libxml2-utils
+    libxml2-utils \
+    python-dev
 
 # Include-what-you-use
 RUN curl https://include-what-you-use.org/downloads/include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -O \
   && tar xf include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -C /usr/ --strip-components=1 \
   && rm include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz
 
-RUN apt-get install -y mesa-common-dev wget
+RUN apt-get install -y mesa-common-dev libgl1-mesa-dev libxt-dev wget
 
 USER jenkins
