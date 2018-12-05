@@ -118,7 +118,8 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
     BaseLib::ConfigTree const& config, std::string const& output_directory,
     const std::map<std::string, std::unique_ptr<Process>>& processes,
     const std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>&
-        nonlinear_solvers)
+        nonlinear_solvers,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
 {
     auto const& coupling_config
         //! \ogs_file_param{prj__time_loop__global_process_coupling}
@@ -151,7 +152,8 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
 
     auto output =
         //! \ogs_file_param{prj__time_loop__output}
-        createOutput(config.getConfigSubtree("output"), output_directory);
+        createOutput(config.getConfigSubtree("output"), output_directory,
+                     meshes);
 
     auto per_process_data = createPerProcessData(
         //! \ogs_file_param{prj__time_loop__processes}

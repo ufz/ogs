@@ -87,7 +87,8 @@ Output::Output(std::string output_directory, std::string prefix,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
                std::vector<double>&& fixed_output_times,
                ProcessOutput&& process_output,
-               std::vector<std::string>&& mesh_names_for_output)
+               std::vector<std::string>&& mesh_names_for_output,
+               std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     : _output_directory(std::move(output_directory)),
       _output_file_prefix(std::move(prefix)),
       _output_file_compression(compress_output),
@@ -96,7 +97,8 @@ Output::Output(std::string output_directory, std::string prefix,
       _repeats_each_steps(std::move(repeats_each_steps)),
       _fixed_output_times(std::move(fixed_output_times)),
       _process_output(std::move(process_output)),
-      _mesh_names_for_output(mesh_names_for_output)
+      _mesh_names_for_output(mesh_names_for_output),
+      _meshes(meshes)
 {
 }
 
