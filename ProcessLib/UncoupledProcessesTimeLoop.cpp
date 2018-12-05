@@ -542,6 +542,14 @@ bool UncoupledProcessesTimeLoop::loop()
         INFO("=== Time stepping at step #%u and time %g with step size %g",
              timesteps, t, dt);
 
+        // Check element deactivation:
+        int process_id = 0;
+        for (auto& process_data : _per_process_data)
+        {
+            process_data->process.checkElementDeactivation(t, process_id);
+            ++process_id;
+        }
+
         if (is_staggered_coupling)
         {
             nonlinear_solver_succeeded =
@@ -803,7 +811,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             timestep_id, t);
     }
 
-    unsigned process_id = 0;
+    int process_id = 0;
     for (auto& process_data : _per_process_data)
     {
         if (process_data->skip_time_stepping)
