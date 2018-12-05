@@ -116,10 +116,14 @@ void HTProcess::assembleConcreteProcess(const double t,
         dof_tables.emplace_back(*_local_to_global_index_map);
     }
 
+    const int process_id =
+        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_tables, t, x, M, K, b, _coupled_solutions);
+        pv.getElementDeactivationFlags(), dof_tables, t, x, M, K, b,
+        _coupled_solutions);
 }
 
 void HTProcess::assembleWithJacobianConcreteProcess(
@@ -143,10 +147,13 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     }
 
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    const int process_id =
+        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_tables, t, x, xdot, dxdot_dx, dx_dx, M, K, b,
-        Jac, _coupled_solutions);
+        _local_assemblers, pv.getElementDeactivationFlags(), dof_tables, t, x,
+        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
 void HTProcess::preTimestepConcreteProcess(GlobalVector const& x,
@@ -180,9 +187,13 @@ void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers()
 {
     DBUG("Set the coupled term for the staggered scheme to local assembers.");
 
-    GlobalExecutor::executeMemberOnDereferenced(
+    const int process_id =
+        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HTLocalAssemblerInterface::setStaggeredCoupledSolutions,
-        _local_assemblers, _coupled_solutions);
+        _local_assemblers, pv.getElementDeactivationFlags(),
+        _coupled_solutions);
 }
 
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
@@ -270,7 +281,11 @@ void HTProcess::postTimestepConcreteProcess(GlobalVector const& x,
     {
         return;
     }
-    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh);
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
+                            pv.getElementDeactivationFlags());
     _surfaceflux->save(t);
 }
 
