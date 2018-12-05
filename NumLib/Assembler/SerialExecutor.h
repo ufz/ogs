@@ -12,8 +12,10 @@
 
 #pragma once
 
+#include <cassert>
 #include <cstddef>
 #include <utility>
+#include <vector>
 
 namespace NumLib
 {
@@ -78,6 +80,48 @@ struct SerialExecutor
         }
     }
 
+    /// Executes the given \c method of the given \c object for the selected
+    /// elements from the input \c container.
+    ///
+    /// This method is very similar to executeDereferenced().
+    ///
+    /// \param object             the object whose method will be called.
+    /// \param method             the method being called, i.e., a member
+    ///                           function pointer to a member function of the
+    ///                           class \c Object.
+    /// \param container          collection of objects having pointer
+    ///                           semantics.
+    /// \param container_selector A boolean vector, each element of it
+    ///                           indicates whether its associated element
+    ///                           of \c container is skipped or not.
+    /// \param args               further arguments passed on to the method
+    ///
+    /// \see executeDereferenced()
+    template <typename Container, typename Object, typename Method, typename... Args>
+    static void
+    executeSelectedMemberDereferenced(
+            Object& object, Method method, Container const& container,
+            std::vector<bool> const& container_selector, Args&&... args)
+    {
+        if (container_selector.empty())
+        {
+            for (std::size_t i = 0; i < container.size(); i++)
+            {
+                (object.*method)(i, *container[i], std::forward<Args>(args)...);
+            }
+            return;
+        }
+
+        assert(container.size() == container_selector.size());
+        for (std::size_t i = 0; i < container.size(); i++)
+        {
+            if(container_selector[i])
+                continue;
+
+            (object.*method)(i, *container[i], std::forward<Args>(args)...);
+        }
+    }
+
     /// Executes the given \c method on each element of the input \c container.
     ///
     /// This method is very similar to executeMemberDereferenced().
@@ -94,6 +138,46 @@ struct SerialExecutor
                                             Args&&... args)
     {
         for (std::size_t i = 0; i < container.size(); i++) {
+            ((*container[i]).*method)(i, std::forward<Args>(args)...);
+        }
+    }
+
+    /// Executes the given \c method on the selected elements of the input \c
+    /// container.
+    ///
+    /// This method is very similar to executeSelectedMemberDereferenced().
+    ///
+    /// \param method             the method being called, i.e., a member
+    ///                           function pointer to a member function of the
+    ///                           \c container's elements.
+    /// \param container          collection of objects having pointer
+    ///                           semantics.
+    /// \param container_selector A boolean vector, each element of it
+    ///                           indicates whether its associated element is
+    ///                           skppied or not.
+    /// \param args               further arguments passed on to the method.
+    ///
+    /// \see executeDereferenced()
+    template <typename Container, typename Method, typename... Args>
+    static void executeSelectedMemberOnDereferenced(
+        Method method, Container const& container,
+        std::vector<bool> const& container_selector, Args&&... args)
+    {
+        if(container_selector.empty())
+        {
+            for (std::size_t i = 0; i < container.size(); i++)
+            {
+                ((*container[i]).*method)(i, std::forward<Args>(args)...);
+            }
+            return;
+        }
+
+        assert(container.size() == container_selector.size());
+        for (std::size_t i = 0; i < container.size(); i++)
+        {
+            if(container_selector[i])
+                continue;
+
             ((*container[i]).*method)(i, std::forward<Args>(args)...);
         }
     }
