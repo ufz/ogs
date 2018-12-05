@@ -45,7 +45,8 @@ public:
     //! @}
 
     void computeSecondaryVariableConcrete(double const t,
-                                          GlobalVector const& x) override;
+                                          GlobalVector const& x,
+                                          int const process_id) override;
 
 private:
     using LocalAssemblerInterface = SmallDeformationLocalAssemblerInterface;

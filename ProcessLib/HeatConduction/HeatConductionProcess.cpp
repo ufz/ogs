@@ -103,12 +103,12 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
 }
 
 void HeatConductionProcess::computeSecondaryVariableConcrete(
-    const double t, GlobalVector const& x)
+    const double t, GlobalVector const& x, int const process_id)
 {
     DBUG("Compute heat flux for HeatConductionProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
             &HeatConductionLocalAssemblerInterface::computeSecondaryVariable,
-            _local_assemblers, *_local_to_global_index_map, t, x,
+            _local_assemblers, getDOFTable(process_id), t, x,
             _coupled_solutions);
 }
 

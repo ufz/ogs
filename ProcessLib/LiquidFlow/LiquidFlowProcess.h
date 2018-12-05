@@ -73,7 +73,8 @@ public:
         BaseLib::ConfigTree const& config);
 
     void computeSecondaryVariableConcrete(double const t,
-                                          GlobalVector const& x) override;
+                                          GlobalVector const& x,
+                                          int const process_id) override;
 
     bool isLinear() const override { return true; }
     int getGravitationalAxisID() const { return _gravitational_axis_id; }
