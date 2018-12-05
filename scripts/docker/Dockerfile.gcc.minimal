@@ -6,17 +6,17 @@ RUN apt-get update && apt-get install -y software-properties-common curl \
   && apt-get update \
   && apt-get -y install \
     ccache \
-    gcc-4.9 g++-4.9 gcc-4.9-base \
+    g++-6 \
     git git-lfs \
-    python-pip \
+    python3-pip \
     sudo \
     unzip
 
-ENV CC=gcc-4.9
-ENV CXX=g++-4.9
+ENV CC=gcc-6
+ENV CXX=g++-6
 
-RUN python -m pip install --upgrade pip \
-  && python -m pip install cmake conan>=1.10.0
+RUN python3 -m pip install --upgrade pip \
+  && python3 -m pip install cmake conan>=1.10.0
 
 # Ninja
 RUN curl -L -o ninja-linux.zip https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip \
@@ -36,6 +36,5 @@ ENV CCACHE_DIR=/home/jenkins/cache/ccache
 RUN mkdir -p $CCACHE_DIR
 ENV CCACHE_MAXSIZE=15G
 ENV CCACHE_SLOPPINESS=pch_defines,time_macros
-ENV CONAN_USER_HOME=/home/jenkins/cache/conan
 WORKDIR /home/jenkins
 RUN conan user
