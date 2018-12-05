@@ -172,11 +172,56 @@ void Output::doOutputAlways(Process const& process,
 
     ProcessData* process_data = findProcessData(process, process_id);
     process_data->pvd_file.addVTUFile(output_file_name, t);
-    INFO("[time] Output of timestep %d took %g s.", timestep,
-         time_output.elapsed());
 
     makeOutput(output_file_path, process.getMesh(), _output_file_compression,
                _output_file_data_mode);
+
+    for (auto const& mesh_output_name : _mesh_names_for_output)
+    {
+        if (process.getMesh().getName() == mesh_output_name)
+            continue;
+        auto& mesh = *BaseLib::findElementOrError(
+            begin(_meshes), end(_meshes),
+            [&mesh_output_name](auto const& m) {
+                return m->getName() == mesh_output_name;
+            },
+            "Need mesh '" + mesh_output_name + "' for the output.");
+
+        std::vector<MeshLib::Node*> const& nodes = mesh.getNodes();
+        DBUG(
+            "Found %d nodes for output at mesh '%s'.",
+            nodes.size(), mesh.getName().c_str());
+
+        MeshLib::MeshSubset mesh_subset(mesh, nodes);
+        std::unique_ptr<NumLib::LocalToGlobalIndexMap> mesh_dof_table(
+            process.getDOFTable(process_id)
+                .deriveBoundaryConstrainedMap(std::move(mesh_subset)));
+
+        processPrimaryVariableOutputData(
+            t, x, mesh, *mesh_dof_table,
+            process.getProcessVariables(process_id),
+            process.getSecondaryVariables(),
+            process.getIntegrationPointWriter(), _process_output);
+
+
+        std::string const mesh_output_file_name =
+            mesh.getName() + "_pcs_" + std::to_string(process_id) +
+            "_ts_" + std::to_string(timestep) + "_t_" + std::to_string(t) +
+            ".vtu";
+        std::string const mesh_output_file_path =
+            BaseLib::joinPaths(_output_directory, mesh_output_file_name);
+
+        DBUG("output to %s", mesh_output_file_path.c_str());
+
+        // TODO (TomFischer): add pvd support here. This can be done if the
+        // output is mesh related instead of process related. This would also
+        // allow for merging bulk mesh output and arbitrary mesh output.
+
+        makeOutput(mesh_output_file_path, mesh, _output_file_compression,
+                   _output_file_data_mode);
+    }
+    INFO("[time] Output of timestep %d took %g s.", timestep,
+         time_output.elapsed());
 }
 
 void Output::doOutput(Process const& process,
@@ -225,12 +270,12 @@ void Output::doOutputNonlinearIteration(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    processOutputData(t, x, process.getMesh(),
-                      process.getDOFTable(process_id),
+    bool const output_secondary_variable = true;
+    processOutputData(t, x, process.getMesh(), process.getDOFTable(process_id),
                       process.getProcessVariables(process_id),
                       process.getSecondaryVariables(),
-                      process.getIntegrationPointWriter(),
-                      _process_output);
+                      output_secondary_variable,
+                      process.getIntegrationPointWriter(), _process_output);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
