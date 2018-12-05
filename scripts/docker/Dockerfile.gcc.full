@@ -6,14 +6,14 @@ RUN apt-get update && apt-get install -y software-properties-common curl \
   && apt-get update \
   && apt-get -y install \
     ccache \
-    gcc-4.9 g++-4.9 gcc-4.9-base \
+    g++-6 \
     git git-lfs \
     python3-pip \
     sudo \
     unzip
 
-ENV CC=gcc-4.9
-ENV CXX=g++-4.9
+ENV CC=gcc-6
+ENV CXX=g++-6
 
 RUN python3 -m pip install --upgrade pip \
   && python3 -m pip install cmake conan>=1.10.0
