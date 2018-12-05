@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "ProcessLib/Process.h"
 #include "SurfaceFluxLocalAssembler.h"
 
@@ -39,6 +41,7 @@ public:
                    MeshLib::PropertyVector<double>& balance,
                    double const t,
                    MeshLib::Mesh const& bulk_mesh,
+                   std::vector<bool> const& element_selector,
                    std::function<Eigen::Vector3d(
                        std::size_t const, MathLib::Point3d const&, double const,
                        GlobalVector const&)> const& getFlux);
