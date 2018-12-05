@@ -190,6 +190,15 @@ MathLib::MatrixSpecifications Process::getMatrixSpecifications(
             &l.getGhostIndices(), &_sparsity_pattern};
 }
 
+void Process::checkElementDeactivation(double const time, const int process_id)
+{
+    auto const& variables_per_process = getProcessVariables(process_id);
+    for (auto const& variable : variables_per_process)
+    {
+       variable.get().checkElementDeactivation(time);
+    }
+}
+
 void Process::preAssemble(const double t, GlobalVector const& x)
 {
     preAssembleConcreteProcess(t, x);
