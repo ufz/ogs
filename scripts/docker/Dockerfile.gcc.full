@@ -42,34 +42,13 @@ RUN conan user
 ### END gcc.minimal ###
 USER root
 
-RUN apt-get update \
-  && apt-get -y install apt-transport-https curl \
-  && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo "deb https://dl.yarnpkg.com/debian/ stable main" \
-     | tee /etc/apt/sources.list.d/yarn.list \
-  && curl -s https://deb.nodesource.com/setup_8.x | bash \
-  && apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     biber \
     clang-tidy \
     cppcheck \
     doxygen \
     graphviz \
     libxml2-utils \
-    nodejs \
-    yarn
-
-RUN update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
-
-# Hugo
-RUN curl -L -o hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v0.36.1/hugo_0.36.1_Linux-64bit.tar.gz \
-  && tar xf hugo.tar.gz \
-  && mv hugo /usr/local/bin/hugo \
-  && rm -rf hugo.tar.gz LICENSE.md README.md
-
-# Pandoc
-RUN curl -L -o pandoc.deb https://github.com/jgm/pandoc/releases/download/2.1.1/pandoc-2.1.1-1-amd64.deb \
-  && sudo dpkg -i pandoc.deb \
-  && rm pandoc.deb
 
 # Include-what-you-use
 RUN curl https://include-what-you-use.org/downloads/include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -O \
