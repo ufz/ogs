@@ -148,12 +148,13 @@ void Output::doOutputAlways(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
+    bool output_secondary_variable = true;
     // Need to add variables of process to vtu even no output takes place.
     processOutputData(t, x, process.getMesh(), process.getDOFTable(process_id),
                       process.getProcessVariables(process_id),
                       process.getSecondaryVariables(),
-                      process.getIntegrationPointWriter(),
-                      _process_output);
+                      output_secondary_variable,
+                      process.getIntegrationPointWriter(), _process_output);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
@@ -197,12 +198,12 @@ void Output::doOutputAlways(Process const& process,
             process.getDOFTable(process_id)
                 .deriveBoundaryConstrainedMap(std::move(mesh_subset)));
 
-        processPrimaryVariableOutputData(
-            t, x, mesh, *mesh_dof_table,
-            process.getProcessVariables(process_id),
-            process.getSecondaryVariables(),
-            process.getIntegrationPointWriter(), _process_output);
-
+        output_secondary_variable = false;
+        processOutputData(t, x, mesh, *mesh_dof_table,
+                          process.getProcessVariables(process_id),
+                          process.getSecondaryVariables(),
+                          output_secondary_variable,
+                          process.getIntegrationPointWriter(), _process_output);
 
         std::string const mesh_output_file_name =
             mesh.getName() + "_pcs_" + std::to_string(process_id) +

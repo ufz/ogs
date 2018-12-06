@@ -131,7 +131,8 @@ void processOutputData(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
-    SecondaryVariableCollection secondary_variables,
+    SecondaryVariableCollection const& secondary_variables,
+    bool const output_secondary_variable,
     std::vector<std::unique_ptr<IntegrationPointWriter>> const&
         integration_point_writer,
     ProcessOutput const& process_output)
@@ -211,23 +212,25 @@ void processOutputData(
         }
     }
 
-    // Secondary variables output
-    for (auto const& external_variable_name : secondary_variables)
+    if (output_secondary_variable)
     {
-        auto const& name = external_variable_name.first;
-        if (!already_output.insert(name).second)
+        for (auto const& external_variable_name : secondary_variables)
         {
-            // no insertion took place, output already done
-            continue;
-        }
+            auto const& name = external_variable_name.first;
+            if (!already_output.insert(name).second)
+            {
+                // no insertion took place, output already done
+                continue;
+            }
 
-        addSecondaryVariableNodes(t, x, dof_table,
-                                  secondary_variables.get(name), name, mesh);
-
-        if (process_output.output_residuals)
-        {
-            addSecondaryVariableResiduals(
+            addSecondaryVariableNodes(
                 t, x, dof_table, secondary_variables.get(name), name, mesh);
+
+            if (process_output.output_residuals)
+            {
+                addSecondaryVariableResiduals(
+                    t, x, dof_table, secondary_variables.get(name), name, mesh);
+            }
         }
     }
 

@@ -35,7 +35,8 @@ void processOutputData(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
-    SecondaryVariableCollection secondary_variables,
+    SecondaryVariableCollection const& secondary_variables,
+    bool const output_secondary_variable,
     std::vector<std::unique_ptr<IntegrationPointWriter>> const&
         integration_point_writer,
     ProcessOutput const& process_output);
