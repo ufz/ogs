@@ -53,8 +53,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     auto& hydraulic_conductivity = findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__GROUNDWATER_FLOW__hydraulic_conductivity}
-        "hydraulic_conductivity",
-        parameters, 1);
+        "hydraulic_conductivity", parameters, 1);
 
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
          hydraulic_conductivity.name.c_str());
@@ -63,8 +62,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
 
     SecondaryVariableCollection secondary_variables;
 
-    NumLib::NamedFunctionCaller named_function_caller(
-        {"GWFlow_pressure"});
+    NumLib::NamedFunctionCaller named_function_caller({"GWFlow_pressure"});
 
     ProcessLib::createSecondaryVariables(config, secondary_variables,
                                          named_function_caller);
@@ -75,9 +73,8 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
         config.getConfigSubtreeOptional("calculatesurfaceflux");
     if (calculatesurfaceflux_config)
     {
-        surfaceflux = ProcessLib::SurfaceFluxData::
-            createSurfaceFluxData(*calculatesurfaceflux_config, meshes,
-                                           output_directory);
+        surfaceflux = ProcessLib::SurfaceFluxData::createSurfaceFluxData(
+            *calculatesurfaceflux_config, meshes, output_directory);
     }
 
     return std::make_unique<GroundwaterFlowProcess>(
