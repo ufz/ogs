@@ -13,6 +13,8 @@
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
@@ -59,9 +61,19 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(MeshLib::Mesh const& org_mesh
             vec_new_eles.push_back(createLinearElement<MeshLib::Quad>(
                 e, vec_new_nodes));
         }
+        else if (e->getCellType() == MeshLib::CellType::TRI6)
+        {
+            vec_new_eles.push_back(createLinearElement<MeshLib::Tri>(
+                e, vec_new_nodes));
+        }
         else if (e->getCellType() == MeshLib::CellType::HEX20)
         {
             vec_new_eles.push_back(createLinearElement<MeshLib::Hex>(
+                e, vec_new_nodes));
+        }
+        else if (e->getCellType() == MeshLib::CellType::TET10)
+        {
+            vec_new_eles.push_back(createLinearElement<MeshLib::Tet>(
                 e, vec_new_nodes));
         }
         else
