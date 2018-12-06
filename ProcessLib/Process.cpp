@@ -356,11 +356,12 @@ void Process::postNonLinearSolver(GlobalVector const& x, const double t,
     postNonLinearSolverConcreteProcess(x, t, process_id);
 }
 
-void Process::computeSecondaryVariable(const double t, GlobalVector const& x)
+void Process::computeSecondaryVariable(const double t, GlobalVector const& x,
+                                       int const process_id)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
 
-    computeSecondaryVariableConcrete(t, x);
+    computeSecondaryVariableConcrete(t, x, process_id);
 }
 
 void Process::preIteration(const unsigned iter, const GlobalVector& x)

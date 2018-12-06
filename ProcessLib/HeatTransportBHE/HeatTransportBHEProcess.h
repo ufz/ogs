@@ -40,7 +40,8 @@ public:
     bool isLinear() const override { return false; }
 
     void computeSecondaryVariableConcrete(double const t,
-                                          GlobalVector const& x) override;
+                                          GlobalVector const& x,
+                                          int const process_id) override;
 
 private:
     void constructDofTable() override;

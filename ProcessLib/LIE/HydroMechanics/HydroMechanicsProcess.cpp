@@ -427,12 +427,13 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
-    const double t, GlobalVector const& x)
+    const double t, GlobalVector const& x, int const process_id)
 {
+    const auto& dof_table = getDOFTable(process_id);
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &HydroMechanicsLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, *_local_to_global_index_map, t, x,
+        _local_assemblers, dof_table, t, x,
         _coupled_solutions);
 
     // Copy displacement jumps in a solution vector to mesh property
@@ -465,7 +466,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     auto const num_comp = pv_g.getNumberOfComponents();
     for (int component_id = 0; component_id < num_comp; ++component_id)
     {
-        auto const& mesh_subset = _local_to_global_index_map->getMeshSubset(
+        auto const& mesh_subset = dof_table.getMeshSubset(
             g_variable_id, component_id);
         auto const mesh_id = mesh_subset.getMeshID();
         for (auto const* node : mesh_subset.getNodes())
@@ -474,8 +475,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
                                       node->getID());
 
             auto const global_index =
-                _local_to_global_index_map->getGlobalIndex(l, g_variable_id,
-                                                           component_id);
+                dof_table.getGlobalIndex(l, g_variable_id, component_id);
             mesh_prop_g[node->getID() * num_comp + component_id] =
                 x[global_index];
         }

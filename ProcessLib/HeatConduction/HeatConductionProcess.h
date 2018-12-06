@@ -39,7 +39,7 @@ public:
     bool isLinear() const override { return true; }
 
     void computeSecondaryVariableConcrete(
-        double const t, GlobalVector const& x) override;
+        double const t, GlobalVector const& x, int const process_id) override;
 
 private:
     void initializeConcreteProcess(

@@ -648,7 +648,7 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
             process_id, x, timestep_id, t, dt, *process_data, *_output);
         process_data->nonlinear_solver_converged = nonlinear_solver_succeeded;
         pcs.postTimestep(x, t, dt, process_id);
-        pcs.computeSecondaryVariable(t, x);
+        pcs.computeSecondaryVariable(t, x, process_id);
 
         INFO("[time] Solving process #%u took %g s in time step #%u ",
              process_id, time_timestep_process.elapsed(), timestep_id);
@@ -822,7 +822,7 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         auto& pcs = process_data->process;
         auto& x = *_process_solutions[process_id];
         pcs.postTimestep(x, t, dt, process_id);
-        pcs.computeSecondaryVariable(t, x);
+        pcs.computeSecondaryVariable(t, x, process_id);
 
         ++process_id;
     }
@@ -858,7 +858,7 @@ void UncoupledProcessesTimeLoop::outputSolutions(
                             process_id);
             // Update secondary variables, which might be uninitialized, before
             // output.
-            pcs.computeSecondaryVariable(_start_time, x);
+            pcs.computeSecondaryVariable(_start_time, x, process_id);
         }
         if (is_staggered_coupling)
         {

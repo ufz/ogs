@@ -348,12 +348,13 @@ void RichardsMechanicsProcess<
 template <int DisplacementDim>
 void RichardsMechanicsProcess<
     DisplacementDim>::computeSecondaryVariableConcrete(const double t,
-                                                       GlobalVector const& x)
+                                                       GlobalVector const& x,
+                                                       int const process_id)
 {
     DBUG("Compute the secondary variables for RichardsMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
-        *_local_to_global_index_map, t, x, _coupled_solutions);
+        getDOFTable(process_id), t, x, _coupled_solutions);
 }
 
 template <int DisplacementDim>
