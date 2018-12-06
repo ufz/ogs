@@ -176,12 +176,6 @@ MeshLib::Mesh const& ProcessVariable::getMesh() const
     return _mesh;
 }
 
-MeshLib::PropertyVector<double>& ProcessVariable::getOrCreateMeshProperty()
-{
-    return *MeshLib::getOrCreateMeshProperty<double>(
-        _mesh, _name, MeshLib::MeshItemType::Node, _n_components);
-}
-
 std::vector<std::unique_ptr<BoundaryCondition>>
 ProcessVariable::createBoundaryConditions(
     const NumLib::LocalToGlobalIndexMap& dof_table,

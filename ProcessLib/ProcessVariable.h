@@ -69,11 +69,6 @@ public:
         return _initial_condition;
     }
 
-    // Get or create a property vector for results.
-    // The returned mesh property size is number of mesh nodes times number of
-    // components.
-    MeshLib::PropertyVector<double>& getOrCreateMeshProperty();
-
     unsigned getShapeFunctionOrder() const { return _shapefunction_order; }
 
 private:
