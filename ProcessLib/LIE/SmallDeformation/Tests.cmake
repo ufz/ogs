@@ -134,3 +134,21 @@ AddTest(
     expected_two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu sigma_xy sigma_xy 1e-6 1e-6
     expected_two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu two_cracks_junction_pull_pcs_0_ts_1_t_1.000000.vtu f_stress_n f_stress_n 1e-6 5e-6
 )
+
+AddTest(
+    NAME LIE_M_sfrac_q
+    PATH LIE/Mechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS sfrac.q.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
+    expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu displacement_jump2 displacement_jump2 1e-16 1e-16
+    expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu displacement_jump3 displacement_jump3 1e-16 1e-16
+    expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu displacement_jump4 displacement_jump4 1e-16 1e-16
+    expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu displacement_jump4 displacement_jump4 1e-16 1e-16
+    expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu f_stress_n f_stress_n 1e-6 5e-6
+)
