@@ -185,9 +185,10 @@ void processOutputData(
 
         DBUG("  process variable %s", pv.getName().c_str());
 
-        auto& output_data = pv.getOrCreateMeshProperty();
-
         auto const num_comp = pv.getNumberOfComponents();
+        auto& output_data = *MeshLib::getOrCreateMeshProperty<double>(
+            mesh, pv.getName(), MeshLib::MeshItemType::Node, num_comp);
+
 
         for (int component_id = 0; component_id < num_comp; ++component_id)
         {
