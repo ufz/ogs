@@ -31,8 +31,7 @@ namespace SmallDeformation
 template <int DisplacementDim>
 SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     MeshLib::Mesh& mesh,
-    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
-        jacobian_assembler,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     unsigned const integration_order,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
@@ -41,21 +40,19 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller)
     : Process(mesh, std::move(jacobian_assembler), parameters,
-              integration_order,
-              std::move(process_variables),
-              std::move(secondary_variables),
-              std::move(named_function_caller)),
+              integration_order, std::move(process_variables),
+              std::move(secondary_variables), std::move(named_function_caller)),
       _process_data(std::move(process_data))
 {
-    std::vector<std::pair<std::size_t,std::vector<int>>> vec_branch_nodeID_matIDs;
-    std::vector<std::pair<std::size_t,std::vector<int>>> vec_junction_nodeID_matIDs;
-    getFractureMatrixDataInMesh(mesh,
-                                _vec_matrix_elements,
-                                _vec_fracture_mat_IDs,
-                                _vec_fracture_elements,
+    std::vector<std::pair<std::size_t, std::vector<int>>>
+        vec_branch_nodeID_matIDs;
+    std::vector<std::pair<std::size_t, std::vector<int>>>
+        vec_junction_nodeID_matIDs;
+    getFractureMatrixDataInMesh(mesh, _vec_matrix_elements,
+                                _vec_fracture_mat_IDs, _vec_fracture_elements,
                                 _vec_fracture_matrix_elements,
-                                _vec_fracture_nodes,
-                                vec_branch_nodeID_matIDs, vec_junction_nodeID_matIDs);
+                                _vec_fracture_nodes, vec_branch_nodeID_matIDs,
+                                vec_junction_nodeID_matIDs);
 
     if (_vec_fracture_mat_IDs.size() !=
         _process_data._vec_fracture_property.size())
@@ -101,7 +98,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     }
 
     // set branches
-    for (std::size_t i=0; i<vec_branch_nodeID_matIDs.size(); i++)
+    for (std::size_t i = 0; i < vec_branch_nodeID_matIDs.size(); i++)
     {
         auto master_matId = vec_branch_nodeID_matIDs[i].second[0];
         auto slave_matId = vec_branch_nodeID_matIDs[i].second[1];
@@ -127,17 +124,19 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     // set junctions
     for (std::size_t i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
-        _vec_junction_nodes.push_back(
-            const_cast<MeshLib::Node*>(_mesh.getNode(vec_junction_nodeID_matIDs[i].first)));
+        _vec_junction_nodes.push_back(const_cast<MeshLib::Node*>(
+            _mesh.getNode(vec_junction_nodeID_matIDs[i].first)));
     }
     for (std::size_t i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
         JunctionProperty* junction = new JunctionProperty();
         std::vector<int> fracIDs;
         for (auto matid : vec_junction_nodeID_matIDs[i].second)
-            fracIDs.push_back(_process_data._map_materialID_to_fractureID[matid]);
-        setJunctionProperty(i, *mesh.getNode(vec_junction_nodeID_matIDs[i].first), fracIDs,
-                            *junction);
+            fracIDs.push_back(
+                _process_data._map_materialID_to_fractureID[matid]);
+        setJunctionProperty(i,
+                            *mesh.getNode(vec_junction_nodeID_matIDs[i].first),
+                            fracIDs, *junction);
 
         _process_data._vec_junction_property.emplace_back(junction);
     }
@@ -216,8 +215,9 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
                     DisplacementDim,
                     [&]() { return *_mesh_subset_junction_nodes; });
 
-    std::vector<int> const vec_n_components(1 + _vec_fracture_mat_IDs.size() + _vec_junction_nodes.size(),
-                                            DisplacementDim);
+    std::vector<int> const vec_n_components(
+        1 + _vec_fracture_mat_IDs.size() + _vec_junction_nodes.size(),
+        DisplacementDim);
 
     std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
     vec_var_elements.push_back(&_vec_matrix_elements);
@@ -424,26 +424,27 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 
         Eigen::Vector3d const pt(e->getCenterOfGravity().getCoords());
         std::vector<FractureProperty*> e_fracture_props;
-        std::unordered_map<int,int> e_fracID_to_local;
+        std::unordered_map<int, int> e_fracID_to_local;
         unsigned tmpi = 0;
-        for (auto fid : _process_data._vec_ele_connected_fractureIDs[e->getID()])
+        for (auto fid :
+             _process_data._vec_ele_connected_fractureIDs[e->getID()])
         {
-            e_fracture_props.push_back(_process_data
-                    ._vec_fracture_property[fid].get());
+            e_fracture_props.push_back(
+                _process_data._vec_fracture_property[fid].get());
             e_fracID_to_local.insert({fid, tmpi++});
         }
         std::vector<JunctionProperty*> e_junction_props;
-        std::unordered_map<int,int> e_juncID_to_local;
+        std::unordered_map<int, int> e_juncID_to_local;
         tmpi = 0;
-        for (auto fid : _process_data._vec_ele_connected_junctionIDs[e->getID()])
+        for (auto fid :
+             _process_data._vec_ele_connected_junctionIDs[e->getID()])
         {
             e_junction_props.push_back(
                 _process_data._vec_junction_property[fid].get());
             e_juncID_to_local.insert({fid, tmpi++});
         }
-        std::vector<double> const levelsets(
-            u_global_enrichments(e_fracture_props, e_junction_props,
-                                 e_fracID_to_local, pt));
+        std::vector<double> const levelsets(u_global_enrichments(
+            e_fracture_props, e_junction_props, e_fracID_to_local, pt));
 
         for (unsigned i = 0; i < e_fracture_props.size(); i++)
         {
@@ -468,7 +469,6 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                 levelsets[i + e_fracture_props.size()];
         }
     }
-
 
     auto mesh_prop_w_n = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "w_n", MeshLib::MeshItemType::Cell,
@@ -531,8 +531,7 @@ void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeMemberOnDereferenced(
         &SmallDeformationLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, getDOFTable(process_id), t, x,
-        _coupled_solutions);
+        _local_assemblers, getDOFTable(process_id), t, x, _coupled_solutions);
 }
 
 template <int DisplacementDim>
@@ -568,11 +567,11 @@ void SmallDeformationProcess<DisplacementDim>::
 
     // Call global assembler for each local assembly item.
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
+        dof_table = {std::ref(*_local_to_global_index_map)};
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, dof_table, t, x, xdot, dxdot_dx, dx_dx, M, K, b, Jac,
+        _coupled_solutions);
 }
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(

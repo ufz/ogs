@@ -17,16 +17,15 @@ namespace LIE
 {
 struct BranchProperty
 {
-	int node_id;
-	Eigen::Vector3d coords;
-	int master_fracture_ID;
-	int slave_fracture_ID;
-	// unit vector normal to the master fracture in a direction to the slave
-	Eigen::Vector3d normal_vector_branch;
+    int node_id;
+    Eigen::Vector3d coords;
+    int master_fracture_ID;
+    int slave_fracture_ID;
+    // unit vector normal to the master fracture in a direction to the slave
+    Eigen::Vector3d normal_vector_branch;
 
     virtual ~BranchProperty() = default;
 };
-
 
 }  // namespace LIE
 }  // namespace ProcessLib

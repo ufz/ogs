@@ -16,11 +16,10 @@ namespace ProcessLib
 {
 namespace LIE
 {
-
 namespace
 {
 bool includesNodeID(std::vector<MeshLib::Node*> const& vec_nodes,
-                       std::size_t node_id)
+                    std::size_t node_id)
 {
     auto itr2 = std::find_if(
         vec_nodes.begin(), vec_nodes.end(),
@@ -29,12 +28,12 @@ bool includesNodeID(std::vector<MeshLib::Node*> const& vec_nodes,
 }
 
 std::vector<int> const& getmatids(
-    std::vector<std::pair<std::size_t,std::vector<int>>>const& vec,
+    std::vector<std::pair<std::size_t, std::vector<int>>> const& vec,
     std::size_t node_id)
 {
     auto itr = std::find_if(
         vec.begin(), vec.end(),
-        [&](std::pair<std::size_t,std::vector<int>> const& entry) {
+        [&](std::pair<std::size_t, std::vector<int>> const& entry) {
             return entry.first == node_id;
         });
     assert(itr != vec.end());
@@ -43,20 +42,18 @@ std::vector<int> const& getmatids(
 
 int getfrac2matid(std::vector<int> const& fracmatids, int frac1matid)
 {
-    auto itr_mat2 = std::find_if(
-        fracmatids.begin(), fracmatids.end(),
-        [&](int matid) {
-            return matid != frac1matid;
-        });
+    auto itr_mat2 =
+        std::find_if(fracmatids.begin(), fracmatids.end(),
+                     [&](int matid) { return matid != frac1matid; });
     assert(itr_mat2 != fracmatids.end());
     return *itr_mat2;
 };
 
-int matid2fracid(std::vector<int> const&vec, int matid)
+int matid2fracid(std::vector<int> const& vec, int matid)
 {
     auto itr = std::find(vec.begin(), vec.end(), matid);
-    assert(itr!=vec.end());
-    return itr-vec.begin();
+    assert(itr != vec.end());
+    return itr - vec.begin();
 };
 
 unsigned getpos_in_ids(std::vector<int> const& ids, int id)
@@ -66,7 +63,7 @@ unsigned getpos_in_ids(std::vector<int> const& ids, int id)
     auto const pos = itr - ids.begin();
     return pos;
 }
-} // namespace
+}  // namespace
 
 PostProcessTool::PostProcessTool(
     MeshLib::Mesh const& org_mesh,
@@ -74,7 +71,7 @@ PostProcessTool::PostProcessTool(
     std::vector<std::vector<MeshLib::Node*>> const& vec_vec_fracture_nodes,
     std::vector<std::vector<MeshLib::Element*>> const&
         vec_vec_fracture_matrix_elements,
-    std::vector<std::pair<std::size_t,std::vector<int>>> const&
+    std::vector<std::pair<std::size_t, std::vector<int>>> const&
         vec_branch_nodeID_matIDs,
     std::vector<std::pair<std::size_t, std::vector<int>>> const&
         vec_junction_nodeID_matIDs)
@@ -101,7 +98,8 @@ PostProcessTool::PostProcessTool(
             auto duplicated_node =
                 new MeshLib::Node(org_node->getCoords(), new_nodes.size());
             new_nodes.push_back(duplicated_node);
-            _map_dup_newNodeIDs[org_node->getID()].push_back(duplicated_node->getID());
+            _map_dup_newNodeIDs[org_node->getID()].push_back(
+                duplicated_node->getID());
         }
     }
     // at a junction, generate one more duplicated node (total 4 nodes)
@@ -111,7 +109,8 @@ PostProcessTool::PostProcessTool(
         auto duplicated_node =
             new MeshLib::Node(org_node->getCoords(), new_nodes.size());
         new_nodes.push_back(duplicated_node);
-        _map_dup_newNodeIDs[org_node->getID()].push_back(duplicated_node->getID());
+        _map_dup_newNodeIDs[org_node->getID()].push_back(
+            duplicated_node->getID());
     }
 
     // split elements using the new duplicated nodes
@@ -152,39 +151,56 @@ PostProcessTool::PostProcessTool(
 
                 // choose new node id
                 unsigned new_node_id = 0;
-                if (dup_newNodeIDs.size()==1) {
+                if (dup_newNodeIDs.size() == 1)
+                {
                     // non-intersected nodes
                     new_node_id = dup_newNodeIDs[0];
-                } else if (dup_newNodeIDs.size()==2) {
+                }
+                else if (dup_newNodeIDs.size() == 2)
+                {
                     // branch nodes
-                    const auto& br_matids = getmatids(vec_branch_nodeID_matIDs, node_id);
+                    const auto& br_matids =
+                        getmatids(vec_branch_nodeID_matIDs, node_id);
                     auto frac2_matid = getfrac2matid(br_matids, frac_matid);
-                    auto const frac2_id = matid2fracid(vec_fracture_mat_IDs, frac2_matid);
-                    auto prop_levelset2 = org_mesh.getProperties().getPropertyVector<double>(
-                        "levelset" + std::to_string(frac2_id + 1));
+                    auto const frac2_id =
+                        matid2fracid(vec_fracture_mat_IDs, frac2_matid);
+                    auto prop_levelset2 =
+                        org_mesh.getProperties().getPropertyVector<double>(
+                            "levelset" + std::to_string(frac2_id + 1));
                     unsigned pos = 0;
-                    if ((*prop_levelset2)[eid] == 0) {
+                    if ((*prop_levelset2)[eid] == 0)
+                    {
                         // index of this frac
                         pos = getpos_in_ids(br_matids, frac_matid);
-                    } else if ((*prop_levelset2)[eid] == 1) {
+                    }
+                    else if ((*prop_levelset2)[eid] == 1)
+                    {
                         // index of the other frac
                         pos = getpos_in_ids(br_matids, frac2_matid);
                     }
                     new_node_id = dup_newNodeIDs[pos];
-                } else {
+                }
+                else
+                {
                     // junction nodes
-                    const auto& jct_matids = getmatids(vec_junction_nodeID_matIDs, node_id);
+                    const auto& jct_matids =
+                        getmatids(vec_junction_nodeID_matIDs, node_id);
                     auto frac2_matid = getfrac2matid(jct_matids, frac_matid);
-                    auto const frac2_id = matid2fracid(vec_fracture_mat_IDs, frac2_matid);
-                    auto prop_levelset2 = org_mesh.getProperties().getPropertyVector<double>(
-                        "levelset" + std::to_string(frac2_id + 1));
+                    auto const frac2_id =
+                        matid2fracid(vec_fracture_mat_IDs, frac2_matid);
+                    auto prop_levelset2 =
+                        org_mesh.getProperties().getPropertyVector<double>(
+                            "levelset" + std::to_string(frac2_id + 1));
 
                     //
-                    if ((*prop_levelset2)[eid] == 0) {
+                    if ((*prop_levelset2)[eid] == 0)
+                    {
                         // index of this frac
                         auto const pos = getpos_in_ids(jct_matids, frac_matid);
                         new_node_id = dup_newNodeIDs[pos];
-                    } else if ((*prop_levelset2)[eid] == 1) {
+                    }
+                    else if ((*prop_levelset2)[eid] == 1)
+                    {
                         // set the last duplicated node
                         new_node_id = dup_newNodeIDs.back();
                     }
@@ -295,7 +311,8 @@ void PostProcessTool::copyProperties()
     }
 }
 
-void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures, unsigned const n_junctions)
+void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
+                                                 unsigned const n_junctions)
 {
     auto const& u = *_output_mesh->getProperties().getPropertyVector<double>(
         "displacement");

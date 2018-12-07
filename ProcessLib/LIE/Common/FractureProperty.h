@@ -65,21 +65,20 @@ inline void setFractureProperty(unsigned dim, MeshLib::Element const& e,
     computeRotationMatrix(e, frac_prop.normal_vector, dim, frac_prop.R);
 }
 
-
-inline void setBranchProperty(
-	MeshLib::Node const& branchNode,
-	FractureProperty const& master_frac,
-	FractureProperty const& slave_frac,
-	BranchProperty& branch)
+inline void setBranchProperty(MeshLib::Node const& branchNode,
+                              FractureProperty const& master_frac,
+                              FractureProperty const& slave_frac,
+                              BranchProperty& branch)
 {
-	branch.node_id = branchNode.getID();
-	branch.coords = Eigen::Vector3d(branchNode.getCoords());
-	branch.master_fracture_ID = master_frac.fracture_id;
-	branch.slave_fracture_ID = slave_frac.fracture_id;
-	// set a normal vector from the master to the slave fracture
-	Eigen::Vector3d branch_vector = slave_frac.point_on_fracture - branch.coords;
-	double sign = (branch_vector.dot(master_frac.normal_vector) < 0) ? -1 : 1;
-	branch.normal_vector_branch = sign * master_frac.normal_vector;
+    branch.node_id = branchNode.getID();
+    branch.coords = Eigen::Vector3d(branchNode.getCoords());
+    branch.master_fracture_ID = master_frac.fracture_id;
+    branch.slave_fracture_ID = slave_frac.fracture_id;
+    // set a normal vector from the master to the slave fracture
+    Eigen::Vector3d branch_vector =
+        slave_frac.point_on_fracture - branch.coords;
+    double sign = (branch_vector.dot(master_frac.normal_vector) < 0) ? -1 : 1;
+    branch.normal_vector_branch = sign * master_frac.normal_vector;
 }
 
 }  // namespace LIE

@@ -56,7 +56,8 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         {
             OGS_FATAL(
                 "Found a process variable name '%s'. It should be "
-                "'displacement' or 'displacement_jumpN' or 'displacement_junctionN'");
+                "'displacement' or 'displacement_jumpN' or "
+                "'displacement_junctionN'");
         }
         if (pv_name.find("displacement_jump") == 0)
             n_var_du++;
@@ -77,7 +78,8 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         DBUG("Found process variable \'%s\' for config tag <%s>.",
              variable->getName().c_str(), "process_variable");
 
-        per_process_variables.emplace_back(const_cast<ProcessVariable&>(*variable));
+        per_process_variables.emplace_back(
+            const_cast<ProcessVariable&>(*variable));
     }
 
     if (n_var_du < 1)

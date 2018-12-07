@@ -15,23 +15,21 @@ namespace ProcessLib
 {
 namespace LIE
 {
-
 struct JunctionProperty
 {
-	int junction_id;
-	int node_id;
-	Eigen::Vector3d coords;
-	std::array<int, 2> fracture_IDs;
+    int junction_id;
+    int node_id;
+    Eigen::Vector3d coords;
+    std::array<int, 2> fracture_IDs;
 
     virtual ~JunctionProperty() = default;
 };
 
-
-inline void setJunctionProperty(
-	int junction_id,
-	MeshLib::Node const& junctionNode,
-	std::vector<int> frac_ids,
-	JunctionProperty& junction)
+inline void setJunctionProperty(int junction_id,
+                                MeshLib::Node const& junctionNode,
+                                std::vector<int>
+                                    frac_ids,
+                                JunctionProperty& junction)
 {
     junction.junction_id = junction_id;
     junction.node_id = junctionNode.getID();
