@@ -89,7 +89,8 @@ pipeline {
                 cmakeOptions =
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DDOCS_GENERATE_LOGFILE=ON ' + // redirects to build/DoxygenWarnings.log
-                  '-DOGS_USE_PYTHON=ON '
+                  '-DOGS_USE_PYTHON=ON ',
+                  '-DOGS_BUILD_UTILS=ON '
               }
               build { }
               archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
@@ -115,6 +116,7 @@ pipeline {
                   '-DOGS_BUILD_TESTS=OFF '
               }
               build { log="build.log" }
+              archiveArtifacts 'build/*.tar.gz'
               build { target="doc" }
             }
           }
