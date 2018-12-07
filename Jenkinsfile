@@ -89,7 +89,7 @@ pipeline {
                 cmakeOptions =
                   '-DOGS_CPU_ARCHITECTURE=generic ' +
                   '-DDOCS_GENERATE_LOGFILE=ON ' + // redirects to build/DoxygenWarnings.log
-                  '-DOGS_USE_PYTHON=ON ',
+                  '-DOGS_USE_PYTHON=ON ' +
                   '-DOGS_BUILD_UTILS=ON '
               }
               build { }
