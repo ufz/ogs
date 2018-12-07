@@ -106,6 +106,10 @@ std::vector<double> du_global_enrichments(
             if (branch->master_fracture_ID != this_frac.fracture_id)
                 continue;
 
+            if (fracID_to_local.find(branch->slave_fracture_ID) ==
+                fracID_to_local.end())
+                continue;
+
             double singned = boost::math::sign(
                 this_frac.normal_vector.dot(branch->normal_vector_branch));
             auto slave_fid = fracID_to_local.at(branch->slave_fracture_ID);
