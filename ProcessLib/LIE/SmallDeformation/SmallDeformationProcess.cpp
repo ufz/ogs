@@ -109,15 +109,15 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
             *_process_data._vec_fracture_property
                  [_process_data._map_materialID_to_fractureID[slave_matId]];
 
-        BranchProperty* branch = new BranchProperty();
-        setBranchProperty(*mesh.getNode(vec_branch_nodeID_matIDs[i].first),
-                          master_frac, slave_frac, *branch);
+        auto* branch = createBranchProperty(
+            *mesh.getNode(vec_branch_nodeID_matIDs[i].first), master_frac,
+            slave_frac);
 
         master_frac.branches_master.emplace_back(branch);
 
-        BranchProperty* branch2 = new BranchProperty();
-        setBranchProperty(*mesh.getNode(vec_branch_nodeID_matIDs[i].first),
-                          master_frac, slave_frac, *branch2);
+        auto* branch2 = createBranchProperty(
+            *mesh.getNode(vec_branch_nodeID_matIDs[i].first), master_frac,
+            slave_frac);
         slave_frac.branches_slave.emplace_back(branch2);
     }
 
@@ -129,14 +129,12 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     }
     for (std::size_t i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
-        JunctionProperty* junction = new JunctionProperty();
         std::vector<int> fracIDs;
         for (auto matid : vec_junction_nodeID_matIDs[i].second)
             fracIDs.push_back(
                 _process_data._map_materialID_to_fractureID[matid]);
-        setJunctionProperty(i,
-                            *mesh.getNode(vec_junction_nodeID_matIDs[i].first),
-                            fracIDs, *junction);
+        auto* junction = createJunctionProperty(
+            i, *mesh.getNode(vec_junction_nodeID_matIDs[i].first), fracIDs);
 
         _process_data._vec_junction_property.emplace_back(junction);
     }

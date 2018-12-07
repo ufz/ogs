@@ -15,16 +15,16 @@ namespace ProcessLib
 {
 namespace LIE
 {
-struct BranchProperty
+struct BranchProperty final
 {
-    int node_id;
     Eigen::Vector3d coords;
-    int master_fracture_ID;
-    int slave_fracture_ID;
     // unit vector normal to the master fracture in a direction to the slave
     Eigen::Vector3d normal_vector_branch;
+    int node_id;
+    int master_fracture_ID;
+    int slave_fracture_ID;
 
-    virtual ~BranchProperty() = default;
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 }  // namespace LIE

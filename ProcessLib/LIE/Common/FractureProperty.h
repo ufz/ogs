@@ -14,6 +14,7 @@
 #include <Eigen/Eigen>
 
 #include "BranchProperty.h"
+#include "JunctionProperty.h"
 #include "Utils.h"
 
 namespace MeshLib
@@ -65,20 +66,36 @@ inline void setFractureProperty(unsigned dim, MeshLib::Element const& e,
     computeRotationMatrix(e, frac_prop.normal_vector, dim, frac_prop.R);
 }
 
-inline void setBranchProperty(MeshLib::Node const& branchNode,
-                              FractureProperty const& master_frac,
-                              FractureProperty const& slave_frac,
-                              BranchProperty& branch)
+inline BranchProperty* createBranchProperty(MeshLib::Node const& branchNode,
+                                            FractureProperty const& master_frac,
+                                            FractureProperty const& slave_frac)
 {
-    branch.node_id = branchNode.getID();
-    branch.coords = Eigen::Vector3d(branchNode.getCoords());
-    branch.master_fracture_ID = master_frac.fracture_id;
-    branch.slave_fracture_ID = slave_frac.fracture_id;
+    BranchProperty* branch = new BranchProperty();
+    branch->node_id = branchNode.getID();
+    branch->coords = Eigen::Vector3d(branchNode.getCoords());
+    branch->master_fracture_ID = master_frac.fracture_id;
+    branch->slave_fracture_ID = slave_frac.fracture_id;
     // set a normal vector from the master to the slave fracture
     Eigen::Vector3d branch_vector =
-        slave_frac.point_on_fracture - branch.coords;
+        slave_frac.point_on_fracture - branch->coords;
     double sign = (branch_vector.dot(master_frac.normal_vector) < 0) ? -1 : 1;
-    branch.normal_vector_branch = sign * master_frac.normal_vector;
+    branch->normal_vector_branch = sign * master_frac.normal_vector;
+    return branch;
+}
+
+inline JunctionProperty* createJunctionProperty(
+    int junction_id,
+    MeshLib::Node const& junctionNode,
+    std::vector<int>
+        frac_ids)
+{
+    JunctionProperty* junction = new JunctionProperty();
+    junction->junction_id = junction_id;
+    junction->node_id = junctionNode.getID();
+    junction->coords = Eigen::Vector3d(junctionNode.getCoords());
+    for (int j = 0; j < 2; j++)
+        junction->fracture_IDs[j] = frac_ids[j];
+    return junction;
 }
 
 }  // namespace LIE
