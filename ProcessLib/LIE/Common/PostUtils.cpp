@@ -27,16 +27,17 @@ bool includesNodeID(std::vector<MeshLib::Node*> const& vec_nodes,
     return (itr2 != vec_nodes.end());
 }
 
-std::vector<int> const& getmatids(
-    std::vector<std::pair<std::size_t, std::vector<int>>> const& vec,
-    std::size_t node_id)
+std::vector<int> const& getMaterialIdsForNode(
+    std::vector<std::pair<std::size_t, std::vector<int>>> const&
+        vec_nodeID_matIDs,
+    std::size_t nodeID)
 {
     auto itr = std::find_if(
-        vec.begin(), vec.end(),
+        vec_nodeID_matIDs.begin(), vec_nodeID_matIDs.end(),
         [&](std::pair<std::size_t, std::vector<int>> const& entry) {
-            return entry.first == node_id;
+            return entry.first == nodeID;
         });
-    assert(itr != vec.end());
+    assert(itr != vec_nodeID_matIDs.end());
     return itr->second;
 };
 
@@ -159,8 +160,8 @@ PostProcessTool::PostProcessTool(
                 else if (dup_newNodeIDs.size() == 2)
                 {
                     // branch nodes
-                    const auto& br_matids =
-                        getmatids(vec_branch_nodeID_matIDs, node_id);
+                    const auto& br_matids = getMaterialIdsForNode(
+                        vec_branch_nodeID_matIDs, node_id);
                     auto frac2_matid = getfrac2matid(br_matids, frac_matid);
                     auto const frac2_id =
                         matid2fracid(vec_fracture_mat_IDs, frac2_matid);
@@ -183,8 +184,8 @@ PostProcessTool::PostProcessTool(
                 else
                 {
                     // junction nodes
-                    const auto& jct_matids =
-                        getmatids(vec_junction_nodeID_matIDs, node_id);
+                    const auto& jct_matids = getMaterialIdsForNode(
+                        vec_junction_nodeID_matIDs, node_id);
                     auto frac2_matid = getfrac2matid(jct_matids, frac_matid);
                     auto const frac2_id =
                         matid2fracid(vec_fracture_mat_IDs, frac2_matid);
