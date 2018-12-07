@@ -10,6 +10,8 @@
 
 #include <boost/math/special_functions/sign.hpp>
 
+#include "BaseLib/Algorithm.h"
+
 #include "BranchProperty.h"
 #include "FractureProperty.h"
 #include "JunctionProperty.h"
@@ -20,12 +22,6 @@ namespace
 inline double Heaviside(double v)
 {
     return (v < 0.0) ? 0.0 : 1.0;
-}
-
-template <class T_VEC, class T_V>
-inline bool inList(T_VEC const& vec, T_V const& v)
-{
-    return (std::find(vec.begin(), vec.end(), v) != vec.end());
 }
 
 }  // namespace
@@ -122,7 +118,7 @@ std::vector<double> du_global_enrichments(
     for (unsigned i = 0; i < junction_props.size(); i++)
     {
         auto const* junction = junction_props[i];
-        if (!inList(junction->fracture_IDs, this_frac.fracture_id))
+        if (!BaseLib::contains(junction->fracture_IDs, this_frac.fracture_id))
             continue;
 
         auto another_frac_id =
