@@ -1,22 +1,20 @@
-FROM ubuntu:16.04
+FROM ubuntu:17.10
 
-RUN apt-get update && apt-get install -y software-properties-common curl \
-  && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+RUN apt-get update && apt-get install -y curl \
   && curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
-  && apt-get update \
-  && apt-get -y install \
+  && apt-get update && apt-get -y install \
     ccache \
-    gcc-4.9 g++-4.9 gcc-4.9-base \
+    g++-6 \
     git git-lfs \
-    python-pip \
+    python3-pip \
     sudo \
     unzip
 
-ENV CC=gcc-4.9
-ENV CXX=g++-4.9
+ENV CC=gcc-6
+ENV CXX=g++-6
 
-RUN python -m pip install --upgrade pip \
-  && python -m pip install cmake conan>=1.5.1
+RUN python3 -m pip install --upgrade pip \
+  && python3 -m pip install cmake conan>=1.10.0
 
 # Ninja
 RUN curl -L -o ninja-linux.zip https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip \
@@ -42,40 +40,20 @@ RUN conan user
 ### END gcc.minimal ###
 USER root
 
-RUN apt-get update \
-  && apt-get -y install apt-transport-https curl \
-  && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo "deb https://dl.yarnpkg.com/debian/ stable main" \
-     | tee /etc/apt/sources.list.d/yarn.list \
-  && curl -s https://deb.nodesource.com/setup_8.x | bash \
-  && apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     biber \
     clang-tidy \
     cppcheck \
     doxygen \
     graphviz \
     libxml2-utils \
-    nodejs \
-    yarn
-
-RUN update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
-
-# Hugo
-RUN curl -L -o hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v0.36.1/hugo_0.36.1_Linux-64bit.tar.gz \
-  && tar xf hugo.tar.gz \
-  && mv hugo /usr/local/bin/hugo \
-  && rm -rf hugo.tar.gz LICENSE.md README.md
-
-# Pandoc
-RUN curl -L -o pandoc.deb https://github.com/jgm/pandoc/releases/download/2.1.1/pandoc-2.1.1-1-amd64.deb \
-  && sudo dpkg -i pandoc.deb \
-  && rm pandoc.deb
+    python-dev
 
 # Include-what-you-use
 RUN curl https://include-what-you-use.org/downloads/include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -O \
   && tar xf include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz -C /usr/ --strip-components=1 \
   && rm include-what-you-use-0.8-x86_64-linux-gnu-ubuntu-16.04.tar.gz
 
-RUN apt-get install -y mesa-common-dev wget
+RUN apt-get install -y mesa-common-dev libgl1-mesa-dev libxt-dev wget
 
 USER jenkins

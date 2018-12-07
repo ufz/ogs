@@ -31,11 +31,11 @@ As we use lots of features of the C++11-standard we support **Visual Studio 2015
 :::
 
 ::: {.linux}
-If you have a recent linux distribution you should also have a recent gcc. Please check that you have at least **gcc 4.9**:
+If you have a recent linux distribution you should also have a recent gcc. Please check that you have at least **gcc 6.2**:
 
 ```bash
 $ gcc --version
-gcc (GCC) 4.9.1
+gcc (GCC) 6.2.0
 ```
 :::
 
