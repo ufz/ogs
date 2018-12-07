@@ -86,8 +86,7 @@ void findFracutreIntersections(
             frac_nodeID_to_matIDs[node->getID()].push_back(
                 vec_fracture_mat_IDs[i]);
 
-    auto opt_material_ids(
-        mesh.getProperties().getPropertyVector<int>("MaterialIDs"));
+    auto const* const opt_material_ids = MeshLib::materialIDs(mesh);
 
     // find branch/junction nodes which connect to multiple fractures
     intersected_fracture_elements.resize(n_fractures);
