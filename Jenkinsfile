@@ -92,6 +92,7 @@ pipeline {
                   '-DOGS_USE_PYTHON=ON '
               }
               build { }
+              archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
               build { target="tests" }
               build { target="ctest" }
               build { target="doc" }
@@ -128,7 +129,6 @@ pipeline {
             }
             success {
               dir('build/docs') { stash(name: 'doxygen') }
-              archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt'
             }
           }
         }
