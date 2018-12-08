@@ -61,18 +61,12 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> pressure </variable>
-                        <variable> v </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-					<t_end> 720000 </t_end>
+                    <t_end> 720000 </t_end>
                     <timesteps>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>0.432</delta_t>
                         </pair>
@@ -80,7 +74,7 @@
                             <repeat>10</repeat>
                             <delta_t>0.864</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>4.32</delta_t>
                         </pair>
@@ -88,7 +82,7 @@
                             <repeat>10</repeat>
                             <delta_t>8.64</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>43.2</delta_t>
                         </pair>
@@ -96,7 +90,7 @@
                             <repeat>10</repeat>
                             <delta_t>86.4</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>432.0</delta_t>
                         </pair>
@@ -104,7 +98,7 @@
                             <repeat>10</repeat>
                             <delta_t>864.0</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>4320.</delta_t>
                         </pair>
@@ -116,11 +110,11 @@
                             <repeat>6</repeat>
                             <delta_t>43200.</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>1</repeat>
                             <delta_t>21601.44</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>0.432</delta_t>
                         </pair>
@@ -128,7 +122,7 @@
                             <repeat>10</repeat>
                             <delta_t>0.864</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>4.32</delta_t>
                         </pair>
@@ -136,7 +130,7 @@
                             <repeat>10</repeat>
                             <delta_t>8.64</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>43.2</delta_t>
                         </pair>
@@ -144,7 +138,7 @@
                             <repeat>10</repeat>
                             <delta_t>86.4</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>432.0</delta_t>
                         </pair>
@@ -152,11 +146,11 @@
                             <repeat>10</repeat>
                             <delta_t>864.0</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>4320.</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>8640.</delta_t>
                         </pair>
@@ -177,6 +171,10 @@
                     <each_steps> 107 </each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable> pressure </variable>
+                <variable> v </variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
@@ -200,7 +198,7 @@
             <type>Constant</type>
             <values>9.2e-12</values>
         </parameter>
-		<parameter>
+        <parameter>
             <name>p_spatial</name>
             <type>Constant</type>
             <value>1</value>
@@ -212,13 +210,13 @@
             <parameter>p_spatial</parameter>
         </parameter>
     </parameters>
-	<curves>
+    <curves>
         <curve>
             <name>pressure_source_term_temporal</name>
-			<coords> 0 424800 424800.001 849600</coords>
-			<values> -0.2754 -0.2754 0 0</values>
-		</curve>
-	</curves>
+            <coords> 0 424800 424800.001 849600</coords>
+            <values> -0.2754 -0.2754 0 0</values>
+        </curve>
+    </curves>
     <process_variables>
         <process_variable>
             <name>pressure</name>
@@ -233,7 +231,7 @@
                     <parameter>p_dbc</parameter>
                 </boundary_condition>
             </boundary_conditions>
-			<source_terms>
+            <source_terms>
                 <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>inner</geometry>

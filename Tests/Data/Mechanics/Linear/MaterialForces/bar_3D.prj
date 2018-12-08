@@ -36,14 +36,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>free_energy_density</variable>
-                        <variable>sigma</variable>
-                        <variable>epsilon</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -66,6 +58,12 @@
                     <each_steps>10000</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>free_energy_density</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

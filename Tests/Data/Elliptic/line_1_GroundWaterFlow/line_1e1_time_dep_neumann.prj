@@ -28,12 +28,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>pressure</variable>
-                        <variable>v</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
@@ -50,6 +44,10 @@
         <output>
             <type>VTK</type>
             <prefix>line_1e1_time_dep_neumann</prefix>
+            <variables>
+                <variable>pressure</variable>
+                <variable>v</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

@@ -77,12 +77,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>temperature</variable>
-                        <variable>heat_flux</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -105,13 +99,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>sigma</variable>
-                        <variable>epsilon</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -134,11 +121,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>phasefield</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -169,6 +151,18 @@
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>temperature</variable>
+                <variable>heat_flux</variable>
+            </variables>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+            </variables>
+            <variables>
+                <variable>phasefield</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

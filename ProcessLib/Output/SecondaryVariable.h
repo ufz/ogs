@@ -132,6 +132,9 @@ public:
     //! Returns the secondary variable with the given external name.
     SecondaryVariable const& get(std::string const& external_name);
 
+    std::map<std::string, std::string>::const_iterator begin();
+    std::map<std::string, std::string>::const_iterator end();
+
 private:
     //! Maps external variable names to internal ones.
     //! The external variable names are used, e.g., for output.
@@ -141,9 +144,6 @@ private:
     //! Maps the internal variable name to the corresponding SecondaryVariable
     //! instance.
     std::map<std::string, SecondaryVariable> _configured_secondary_variables;
-
-    //! Set of all internal variable names known to this instance.
-    std::set<std::string> _all_secondary_variables;
 };
 
 /*! Creates an object that computes a secondary variable via extrapolation of

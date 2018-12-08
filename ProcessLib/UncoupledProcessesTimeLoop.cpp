@@ -258,7 +258,6 @@ bool solveOneTimeStepOneProcess(int const process_id, GlobalVector& x,
     auto const post_iteration_callback = [&](unsigned iteration,
                                              GlobalVector const& x) {
         output_control.doOutputNonlinearIteration(process, process_id,
-                                                  process_data.process_output,
                                                   timestep, t, x, iteration);
     };
 
@@ -662,9 +661,7 @@ bool UncoupledProcessesTimeLoop::solveUncoupledEquationSystems(
             if (!process_data->timestepper->isSolutionErrorComputationNeeded())
             {
                 // save unsuccessful solution
-                _output->doOutputAlways(pcs, process_id,
-                                        process_data->process_output,
-                                        timestep_id, t, x);
+                _output->doOutputAlways(pcs, process_id, timestep_id, t, x);
                 OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
             }
 
@@ -757,7 +754,6 @@ bool UncoupledProcessesTimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 {
                     // save unsuccessful solution
                     _output->doOutputAlways(process_data->process, process_id,
-                                            process_data->process_output,
                                             timestep_id, t, x);
                     OGS_FATAL(nonlinear_fixed_dt_fails_info.data());
                 }
@@ -870,12 +866,12 @@ void UncoupledProcessesTimeLoop::outputSolutions(
             process_data->process
                 .setCoupledTermForTheStaggeredSchemeToLocalAssemblers();
             (output_object.*output_class_member)(
-                pcs, process_id, process_data->process_output, timestep, t, x);
+                pcs, process_id, timestep, t, x);
         }
         else
         {
             (output_object.*output_class_member)(
-                pcs, process_id, process_data->process_output, timestep, t, x);
+                pcs, process_id, timestep, t, x);
         }
 
         ++process_id;

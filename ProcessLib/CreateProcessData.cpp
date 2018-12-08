@@ -7,9 +7,10 @@
  *
  */
 
+#include "BaseLib/Algorithm.h"
+
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 #include "NumLib/TimeStepping/CreateTimeStepper.h"
-#include "ProcessLib/Output/CreateProcessOutput.h"
 
 #include "CreateProcessData.h"
 
@@ -20,8 +21,7 @@ static std::unique_ptr<ProcessData> makeProcessData(
     NumLib::NonlinearSolverBase& nonlinear_solver,
     Process& process,
     std::unique_ptr<NumLib::TimeDiscretization>&& time_disc,
-    std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit,
-    ProcessOutput&& process_output)
+    std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit)
 {
     using Tag = NumLib::NonlinearSolverTag;
 
@@ -31,8 +31,7 @@ static std::unique_ptr<ProcessData> makeProcessData(
     {
         return std::make_unique<ProcessData>(
             std::move(timestepper), *nonlinear_solver_picard,
-            std::move(conv_crit), std::move(time_disc), process,
-            std::move(process_output));
+            std::move(conv_crit), std::move(time_disc), process);
     }
     if (auto* nonlinear_solver_newton =
             dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
@@ -40,8 +39,7 @@ static std::unique_ptr<ProcessData> makeProcessData(
     {
         return std::make_unique<ProcessData>(
             std::move(timestepper), *nonlinear_solver_newton,
-            std::move(conv_crit), std::move(time_disc), process,
-            std::move(process_output));
+            std::move(conv_crit), std::move(time_disc), process);
     }
 
     OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
@@ -83,13 +81,22 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
             //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion}
             pcs_config.getConfigSubtree("convergence_criterion"));
 
-        ProcessOutput process_output =
-            //! \ogs_file_param{prj__time_loop__processes__process__output}
-            createProcessOutput(pcs_config.getConfigSubtree("output"));
+        auto output = pcs_config.getConfigSubtreeOptional("output");
+        if (output)
+        {
+            OGS_FATAL(
+                "In order to make the specification of output in the project "
+                "file consistent, the variables output tags were moved from "
+                "xpath "
+                "'//OpenGeoSysProject/time_loop/processes/process/output' "
+                "to the global output section, i.e., to the xpath "
+                "'//OpenGeoSysProject/time_loop/output'. This has to be done "
+                "in the current project file!");
+        }
 
         per_process_data.emplace_back(makeProcessData(
             std::move(timestepper), nl_slv, pcs, std::move(time_disc),
-            std::move(conv_crit), std::move(process_output)));
+            std::move(conv_crit)));
     }
 
     if (per_process_data.size() != processes.size())

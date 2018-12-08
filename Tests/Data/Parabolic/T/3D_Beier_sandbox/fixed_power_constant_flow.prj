@@ -2,7 +2,6 @@
 <OpenGeoSysProject>
     <mesh>beier_sandbox.vtu</mesh>
     <geometry>beier_sandbox.gml</geometry>
-
     <processes>
         <process>
             <name>HeatTransportBHE</name>
@@ -12,19 +11,15 @@
                 <process_variable>temperature_soil</process_variable>
                 <process_variable>temperature_BHE1</process_variable>
             </process_variables>
-
             <thermal_conductivity_solid>K_s</thermal_conductivity_solid>
             <heat_capacity_solid>Cp_s</heat_capacity_solid>
             <density_solid>rho_s</density_solid>
-
             <thermal_conductivity_fluid>K_f</thermal_conductivity_fluid>
             <heat_capacity_fluid>Cp_f</heat_capacity_fluid>
             <density_fluid>rho_f</density_fluid>
-
             <thermal_conductivity_gas>K_g</thermal_conductivity_gas>
             <heat_capacity_gas>Cp_g</heat_capacity_gas>
             <density_gas>rho_g</density_gas>
-
             <borehole_heat_exchangers>
                 <borehole_heat_exchanger>
                     <type>1U</type>
@@ -66,15 +61,8 @@
                     </refrigerant>
                 </borehole_heat_exchanger>
             </borehole_heat_exchangers>
-
-            <secondary_variables>
-               <secondary_variable type="static" internal_name="heat_flux_x" output_name="heat_flux_x" />
-               <secondary_variable type="static" internal_name="heat_flux_y" output_name="heat_flux_y" />
-               <secondary_variable type="static" internal_name="heat_flux_z" output_name="heat_flux_z" />
-            </secondary_variables>
         </process>
     </processes>
-
     <time_loop>
         <processes>
             <process ref="HeatTransportBHE">
@@ -84,13 +72,9 @@
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-10</reltol>
                 </convergence_criterion>
-                <time_discretization><type>BackwardEuler</type></time_discretization>
-                <output>
-                    <variables>
-                        <variable>temperature_soil</variable>
-                        <variable>temperature_BHE1</variable>
-                    </variables>
-                </output>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
@@ -102,20 +86,29 @@
                         <!-- use the following for full simulation
                         <pair><repeat>3107</repeat><delta_t>60</delta_t></pair>
                         -->
-                        <pair><repeat>10</repeat><delta_t>60</delta_t></pair>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>60</delta_t>
+                        </pair>
                     </timesteps>
                 </time_stepping>
             </process>
         </processes>
-       <output>
+        <output>
             <type>VTK</type>
             <prefix>fixed_power_constant_flow</prefix>
             <timesteps>
-                <pair><repeat> 1</repeat><each_steps> 10 </each_steps></pair>
+                <pair>
+                    <repeat> 1</repeat>
+                    <each_steps> 10 </each_steps>
+                </pair>
             </timesteps>
+            <variables>
+                <variable>temperature_soil</variable>
+                <variable>temperature_BHE1</variable>
+            </variables>
         </output>
     </time_loop>
-
     <parameters>
         <parameter>
             <name>K_s</name>
@@ -132,7 +125,7 @@
             <type>Constant</type>
             <value>1800</value>
         </parameter>
-                <parameter>
+        <parameter>
             <name>K_f</name>
             <type>Constant</type>
             <value>0.1</value>
@@ -147,7 +140,7 @@
             <type>Constant</type>
             <value>992.92</value>
         </parameter>
-                <parameter>
+        <parameter>
             <name>K_g</name>
             <type>Constant</type>
             <value>3.2</value>
@@ -173,7 +166,6 @@
             <values>295.36 295.13 295.23 295.115</values>
         </parameter>
     </parameters>
-
     <process_variables>
         <process_variable>
             <name>temperature_soil</name>
@@ -190,7 +182,6 @@
             <initial_condition>T0_BHE1</initial_condition>
         </process_variable>
     </process_variables>
-
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_picard</name>
@@ -199,7 +190,6 @@
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
-
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>

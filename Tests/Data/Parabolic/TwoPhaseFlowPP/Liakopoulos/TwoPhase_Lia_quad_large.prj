@@ -81,7 +81,6 @@
             </material_property>
             <secondary_variables>
                 <secondary_variable type="static" internal_name="saturation" output_name="saturation"/>
-                <secondary_variable type="static" internal_name="pressure_wetting" output_name="pressure_wetting"/>
             </secondary_variables>
             <specific_body_force>0 -9.81</specific_body_force>
             <mass_lumping> true </mass_lumping>
@@ -143,13 +142,6 @@
                     <type>CrankNicolson</type>
                     <theta>0.5</theta>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> capillary_pressure </variable>
-                        <variable> gas_pressure </variable>
-                        <variable> saturation </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -186,6 +178,11 @@
                 </pair>
             </timesteps>
             <output_iteration_results>false</output_iteration_results>
+            <variables>
+                <variable> capillary_pressure </variable>
+                <variable> gas_pressure </variable>
+                <variable> saturation </variable>
+            </variables>
         </output>
     </time_loop>
     <process_variables>

@@ -6,7 +6,6 @@
         <type>fixed</type>
         <value>1e-8</value>
     </search_length_algorithm>
-
     <processes>
         <process>
             <name>SD</name>
@@ -61,24 +60,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>displacement_jump1</variable>
-                        <variable>sigma_xx</variable>
-                        <variable>sigma_yy</variable>
-                        <variable>sigma_zz</variable>
-                        <variable>sigma_xy</variable>
-                        <variable>sigma_xz</variable>
-                        <variable>sigma_yz</variable>
-                        <variable>epsilon_xx</variable>
-                        <variable>epsilon_yy</variable>
-                        <variable>epsilon_zz</variable>
-                        <variable>epsilon_xy</variable>
-                        <variable>epsilon_xz</variable>
-                        <variable>epsilon_yz</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -101,6 +82,22 @@
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>displacement_jump1</variable>
+                <variable>sigma_xx</variable>
+                <variable>sigma_yy</variable>
+                <variable>sigma_zz</variable>
+                <variable>sigma_xy</variable>
+                <variable>sigma_xz</variable>
+                <variable>sigma_yz</variable>
+                <variable>epsilon_xx</variable>
+                <variable>epsilon_yy</variable>
+                <variable>epsilon_zz</variable>
+                <variable>epsilon_xy</variable>
+                <variable>epsilon_xz</variable>
+                <variable>epsilon_yz</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

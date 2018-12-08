@@ -163,14 +163,6 @@
                     <type>CrankNicolson</type>
                     <theta>0.5</theta>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> overall_mass_density </variable>
-                        <variable> liquid_pressure </variable>
-                        <variable> saturation </variable>
-                        <variable> pressure_nonwetting </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>EvolutionaryPIDcontroller</type>
                     <t_initial> 0.0 </t_initial>
@@ -194,6 +186,12 @@
                 </pair>
             </timesteps>
             <output_iteration_results>false</output_iteration_results>
+            <variables>
+                <variable> overall_mass_density </variable>
+                <variable> liquid_pressure </variable>
+                <variable> saturation </variable>
+                <variable> pressure_nonwetting </variable>
+            </variables>
         </output>
     </time_loop>
     <process_variables>

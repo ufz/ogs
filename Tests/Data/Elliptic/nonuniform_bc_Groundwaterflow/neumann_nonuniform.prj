@@ -31,12 +31,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> pressure </variable>
-                        <variable> darcy_velocity </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>SingleStep</type>
                 </time_stepping>
@@ -45,6 +39,10 @@
         <output>
             <type>VTK</type>
             <prefix>neumann_nonuniform</prefix>
+            <variables>
+                <variable> pressure </variable>
+                <variable> darcy_velocity </variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

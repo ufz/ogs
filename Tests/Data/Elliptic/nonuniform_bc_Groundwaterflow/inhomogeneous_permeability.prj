@@ -31,12 +31,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> pressure  </variable>
-                        <variable> mass_flux </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>SingleStep</type>
                 </time_stepping>
@@ -45,6 +39,10 @@
         <output>
             <type>VTK</type>
             <prefix>inhomogeneous_permeability</prefix>
+            <variables>
+                <variable> pressure  </variable>
+                <variable> mass_flux </variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

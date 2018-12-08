@@ -35,12 +35,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> pressure </variable>
-                        <variable> v      </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>SingleStep</type>
                 </time_stepping>
@@ -49,6 +43,10 @@
         <output>
             <type>VTK</type>
             <prefix>square_1e5_volumetricsourceterm</prefix>
+            <variables>
+                <variable> pressure </variable>
+                <variable> v      </variable>
+            </variables>
         </output>
     </time_loop>
     <nonlinear_solvers>

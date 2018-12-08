@@ -7,19 +7,15 @@
             <name>SD</name>
             <type>THERMO_MECHANICS</type>
             <integration_order>2</integration_order>
-
             <constitutive_relation>
                 <type>MFront</type>
-
                 <library>libBehaviour.so</library>
                 <behaviour>Elasticity</behaviour>
-
                 <material_properties>
-                    <material_property name="YoungModulus" parameter="E"  />
-                    <material_property name="PoissonRatio" parameter="nu" />
+                    <material_property name="YoungModulus" parameter="E"/>
+                    <material_property name="PoissonRatio" parameter="nu"/>
                 </material_properties>
             </constitutive_relation>
-
             <reference_solid_density>rho_sr</reference_solid_density>
             <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
             <specific_heat_capacity>cs</specific_heat_capacity>
@@ -47,14 +43,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>temperature</variable>
-                        <variable>sigma</variable>
-                        <variable>epsilon</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -77,6 +65,12 @@
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>temperature</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
@@ -90,7 +84,6 @@
             <type>Constant</type>
             <value>  2e-1              </value>
         </parameter>
-
         <parameter>
             <name>rho_sr</name>
             <type>Constant</type>
@@ -111,7 +104,6 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
-
         <parameter>
             <name>zero</name>
             <type>Constant</type>
@@ -122,7 +114,6 @@
             <type>Constant</type>
             <value> 1 </value>
         </parameter>
-
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
@@ -133,7 +124,6 @@
             <type>Constant</type>
             <values> 273.15 </values>
         </parameter>
-
         <parameter>
             <name>boundary_temperature</name>
             <type>CurveScaled</type>
@@ -169,7 +159,6 @@
                     <component>0</component>
                     <parameter>zero</parameter>
                 </boundary_condition>
-
                 <boundary_condition>
                     <geometrical_set>cube_1x1x1_geometry</geometrical_set>
                     <geometry>front</geometry>
@@ -184,7 +173,6 @@
                     <component>1</component>
                     <parameter>zero</parameter>
                 </boundary_condition>
-
                 <boundary_condition>
                     <geometrical_set>cube_1x1x1_geometry</geometrical_set>
                     <geometry>bottom</geometry>
@@ -201,7 +189,6 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-
         <process_variable>
             <name>temperature</name>
             <components>1</components>

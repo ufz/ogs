@@ -133,13 +133,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> capillary_pressure </variable>
-                        <variable> gas_pressure </variable>
-                        <variable> saturation </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -184,6 +177,11 @@
                 </pair>
             </timesteps>
             <output_iteration_results>false</output_iteration_results>
+            <variables>
+                <variable> capillary_pressure </variable>
+                <variable> gas_pressure </variable>
+                <variable> saturation </variable>
+            </variables>
         </output>
     </time_loop>
     <process_variables>

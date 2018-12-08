@@ -85,14 +85,16 @@ Output::Output(std::string output_directory, std::string prefix,
                bool const compress_output, std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
-               std::vector<double>&& fixed_output_times)
+               std::vector<double>&& fixed_output_times,
+               ProcessOutput&& process_output)
     : _output_directory(std::move(output_directory)),
       _output_file_prefix(std::move(prefix)),
       _output_file_compression(compress_output),
       _output_file_data_mode(convertVtkDataMode(data_mode)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _repeats_each_steps(std::move(repeats_each_steps)),
-      _fixed_output_times(std::move(fixed_output_times))
+      _fixed_output_times(std::move(fixed_output_times)),
+      _process_output(std::move(process_output))
 {
 }
 
@@ -135,7 +137,6 @@ Output::ProcessData* Output::findProcessData(Process const& process,
 
 void Output::doOutputAlways(Process const& process,
                             const int process_id,
-                            ProcessOutput const& process_output,
                             unsigned timestep,
                             const double t,
                             GlobalVector const& x)
@@ -148,7 +149,7 @@ void Output::doOutputAlways(Process const& process,
                       process.getProcessVariables(process_id),
                       process.getSecondaryVariables(),
                       process.getIntegrationPointWriter(),
-                      process_output);
+                      _process_output);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
@@ -176,14 +177,13 @@ void Output::doOutputAlways(Process const& process,
 
 void Output::doOutput(Process const& process,
                       const int process_id,
-                      ProcessOutput const& process_output,
                       unsigned timestep,
                       const double t,
                       GlobalVector const& x)
 {
     if (shallDoOutput(timestep, t))
     {
-        doOutputAlways(process, process_id, process_output, timestep, t, x);
+        doOutputAlways(process, process_id, timestep, t, x);
     }
 #ifdef USE_INSITU
     // Note: last time step may be output twice: here and in
@@ -194,14 +194,13 @@ void Output::doOutput(Process const& process,
 
 void Output::doOutputLastTimestep(Process const& process,
                                   const int process_id,
-                                  ProcessOutput const& process_output,
                                   unsigned timestep,
                                   const double t,
                                   GlobalVector const& x)
 {
     if (!shallDoOutput(timestep, t))
     {
-        doOutputAlways(process, process_id, process_output, timestep, t, x);
+        doOutputAlways(process, process_id, timestep, t, x);
     }
 #ifdef USE_INSITU
     InSituLib::CoProcess(process.getMesh(), t, timestep, true);
@@ -210,7 +209,6 @@ void Output::doOutputLastTimestep(Process const& process,
 
 void Output::doOutputNonlinearIteration(Process const& process,
                                         const int process_id,
-                                        ProcessOutput const& process_output,
                                         const unsigned timestep, const double t,
                                         GlobalVector const& x,
                                         const unsigned iteration)
@@ -228,7 +226,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
                       process.getProcessVariables(process_id),
                       process.getSecondaryVariables(),
                       process.getIntegrationPointWriter(),
-                      process_output);
+                      _process_output);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make

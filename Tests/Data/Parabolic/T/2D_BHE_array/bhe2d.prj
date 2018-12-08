@@ -30,12 +30,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> temperature </variable>
-                        <variable> heat_flux_x </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
@@ -58,6 +52,10 @@
                     <each_steps> 120 </each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable> temperature </variable>
+                <variable> heat_flux_x </variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
@@ -98,14 +96,14 @@
             <value>10</value>
         </parameter>
     </parameters>
-	<curves>
+    <curves>
         <curve>
             <name>point_Neumann</name>
-			<coords>0	10368000	10368000.01	31104000	31104000.01	41472000	41472000.01	62208000	62208000.01	72576000	72576000.01	93312000</coords>
-			<values>
+            <coords>0	10368000	10368000.01	31104000	31104000.01	41472000	41472000.01	62208000	62208000.01	72576000	72576000.01	93312000</coords>
+            <values>
 			-35	-35	0	0	-35	-35	0	0	-35	-35	0	0
 			</values>
-		</curve>
+        </curve>
     </curves>
     <process_variables>
         <process_variable>
@@ -121,152 +119,152 @@
                     <parameter>ambient_temperature</parameter>
                 </boundary_condition>
             </boundary_conditions>
-			<source_terms>
-				<source_term>
+            <source_terms>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po0</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po1</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po2</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po3</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po4</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po5</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po6</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po7</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po8</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po9</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po10</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po11</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po12</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po13</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po14</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po15</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po16</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po17</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po18</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po19</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po20</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po21</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po22</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po23</geometry>
                     <type>Nodal</type>
                     <parameter>sourceterm_heat_transfer_coefficient</parameter>
                 </source_term>
-				<source_term>
+                <source_term>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>po24</geometry>
                     <type>Nodal</type>

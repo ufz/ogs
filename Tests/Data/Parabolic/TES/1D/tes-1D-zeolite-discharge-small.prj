@@ -78,22 +78,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> pressure                </variable>
-                        <variable> temperature             </variable>
-                        <variable> v_mass_frac             </variable>
-                        <variable> solid_density           </variable>
-                        <variable> reaction_rate           </variable>
-                        <variable> darcy_velocity              </variable>
-                        <variable> loading                 </variable>
-                        <variable> equilibrium_loading     </variable>
-                        <variable> vapour_partial_pressure </variable>
-                        <variable> relative_humidity       </variable>
-                        <variable> reaction_damping_factor </variable>
-                    </variables>
-                    <output_extrapolation_residuals>true</output_extrapolation_residuals>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
@@ -124,6 +108,19 @@
                     <each_steps>  9 </each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable> pressure                </variable>
+                <variable> temperature             </variable>
+                <variable> v_mass_frac             </variable>
+                <variable> solid_density           </variable>
+                <variable> reaction_rate           </variable>
+                <variable> darcy_velocity              </variable>
+                <variable> loading                 </variable>
+                <variable> equilibrium_loading     </variable>
+                <variable> vapour_partial_pressure </variable>
+                <variable> relative_humidity       </variable>
+                <variable> reaction_damping_factor </variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>

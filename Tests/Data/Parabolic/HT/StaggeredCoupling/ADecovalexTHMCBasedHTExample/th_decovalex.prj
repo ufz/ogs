@@ -12,7 +12,6 @@
                 <temperature>T</temperature>
                 <pressure>p</pressure>
             </process_variables>
-
             <fluid>
                 <density>
                     <type>TemperatureDependent</type>
@@ -29,7 +28,6 @@
                     <value> 4000. </value>
                 </specific_heat_capacity>
             </fluid>
-
             <porous_medium>
                 <porous_medium id="0">
                     <permeability>
@@ -70,7 +68,6 @@
             </secondary_variables>
         </process>
     </processes>
-
     <time_loop>
         <global_process_coupling>
             <max_iter> 6 </max_iter>
@@ -100,11 +97,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> T </variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
@@ -175,12 +167,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable> p </variable>
-                        <variable>darcy_velocity</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
@@ -251,6 +237,11 @@
                     <each_steps> 10 </each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable> T </variable>
+                <variable> p </variable>
+                <variable>darcy_velocity</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
@@ -272,24 +263,24 @@
         <parameter>
             <name>lambda</name>
             <type>MeshElement</type>
-             <field_name>scaled_solid_thermal_conductivity</field_name>
-	    <!--3.0 * 86400 * 365. Scaled with the time unit of year-->
+            <field_name>scaled_solid_thermal_conductivity</field_name>
+            <!--3.0 * 86400 * 365. Scaled with the time unit of year-->
         </parameter>
         <parameter>
             <name>lambda_fluid</name>
             <type>Constant</type>
-	    <!--0.6 * 86400 * 365 with the time unit of year-->
+            <!--0.6 * 86400 * 365 with the time unit of year-->
             <value>18921600.0</value>
         </parameter>
         <parameter>
             <name>c_p</name>
             <type>MeshElement</type>
-             <field_name>solid_heat_capacity</field_name>
+            <field_name>solid_heat_capacity</field_name>
         </parameter>
         <parameter>
             <name>rho_solid</name>
             <type>MeshElement</type>
-             <field_name>solid_density</field_name>
+            <field_name>solid_density</field_name>
         </parameter>
         <parameter>
             <name>n0</name>
@@ -319,13 +310,13 @@
         <parameter>
             <name>mu0</name>
             <type>Constant</type>
-	    <!--2.e-21 * 86400 * 365 with the time unit of year-->
+            <!--2.e-21 * 86400 * 365 with the time unit of year-->
             <values>6.3072e-14 0. 0. 6.3072e-14</values>
         </parameter>
         <parameter>
             <name>mu1</name>
             <type>Constant</type>
-	    <!--1.e-17 * 86400 * 365 with the time unit of year-->
+            <!--1.e-17 * 86400 * 365 with the time unit of year-->
             <values>3.1536e-10 0. 0. 3.1536e-10</values>
         </parameter>
         <parameter>
@@ -345,7 +336,6 @@
             <value>2477507279.46192</value>
         </parameter>
     </parameters>
-
     <curves>
         <curve>
             <name>time_heat_power</name>
@@ -427,8 +417,8 @@
                 1000000
                 1.00E+10
              </coords>
-              <!-- 86400 * 365 * original heat power data -->
-             <values>
+            <!-- 86400 * 365 * original heat power data -->
+            <values>
                   2477507279.46192
                   2477459529.54288
                   2477411689.43088
@@ -506,9 +496,8 @@
                   1197405.142848
                   1197405.142848
              </values>
-
-             <!-- Original heat power data -->
-             <!--values>
+            <!-- Original heat power data -->
+            <!--values>
                  78.561240470
                  78.559726330
                  78.558209330
@@ -588,7 +577,6 @@
             </values-->
         </curve>
     </curves>
-
     <process_variables>
         <process_variable>
             <name>T</name>
