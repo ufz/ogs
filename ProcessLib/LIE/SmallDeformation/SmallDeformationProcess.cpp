@@ -109,16 +109,13 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
             _process_data._vec_fracture_property
                  [_process_data._map_materialID_to_fractureID[slave_matId]];
 
-        auto* branch = createBranchProperty(
+        master_frac.branches_master.push_back(createBranchProperty(
             *mesh.getNode(vec_branch_nodeID_matIDs[i].first), master_frac,
-            slave_frac);
+            slave_frac));
 
-        master_frac.branches_master.emplace_back(branch);
-
-        auto* branch2 = createBranchProperty(
+        slave_frac.branches_slave.push_back(createBranchProperty(
             *mesh.getNode(vec_branch_nodeID_matIDs[i].first), master_frac,
-            slave_frac);
-        slave_frac.branches_slave.emplace_back(branch2);
+            slave_frac));
     }
 
     // set junctions

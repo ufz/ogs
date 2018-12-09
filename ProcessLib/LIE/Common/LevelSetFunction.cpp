@@ -60,7 +60,7 @@ std::vector<double> uGlobalEnrichments(
         auto const* frac = frac_props[i];
         double enrich = levelsets[i];
         for (std::size_t j = 0; j < frac->branches_slave.size(); j++)
-            enrich *= Heaviside(levelsetBranch(*frac->branches_slave[j], x));
+            enrich *= Heaviside(levelsetBranch(frac->branches_slave[j], x));
         enrichments[i] = enrich;
     }
 
@@ -99,16 +99,16 @@ std::vector<double> duGlobalEnrichments(
     {
         for (auto const& branch : this_frac.branches_master)
         {
-            if (branch->master_fracture_ID != this_frac.fracture_id)
+            if (branch.master_fracture_id != this_frac.fracture_id)
                 continue;
 
-            if (fracID_to_local.find(branch->slave_fracture_ID) ==
+            if (fracID_to_local.find(branch.slave_fracture_id) ==
                 fracID_to_local.end())
                 continue;
 
             double singned = boost::math::sign(
-                this_frac.normal_vector.dot(branch->normal_vector_branch));
-            auto slave_fid = fracID_to_local.at(branch->slave_fracture_ID);
+                this_frac.normal_vector.dot(branch.normal_vector_branch));
+            auto slave_fid = fracID_to_local.at(branch.slave_fracture_id);
             double enrich = singned * levelsets[slave_fid];
             enrichments[slave_fid] = enrich;
         }
