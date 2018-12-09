@@ -55,13 +55,13 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
                                 vec_junction_nodeID_matIDs);
 
     if (_vec_fracture_mat_IDs.size() !=
-        _process_data._vec_fracture_property.size())
+        _process_data.fracture_properties.size())
     {
         OGS_FATAL(
             "The number of the given fracture properties (%d) are not "
             "consistent"
             " with the number of fracture groups in a mesh (%d).",
-            _process_data._vec_fracture_property.size(),
+            _process_data.fracture_properties.size(),
             _vec_fracture_mat_IDs.size());
     }
 
@@ -88,7 +88,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     }
 
     // set fracture property
-    for (auto& fracture_prop : _process_data._vec_fracture_property)
+    for (auto& fracture_prop : _process_data.fracture_properties)
     {
         // based on the 1st element assuming a fracture forms a straight line
         setFractureProperty(
@@ -103,11 +103,11 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
         auto master_matId = vec_branch_nodeID_matIDs[i].second[0];
         auto slave_matId = vec_branch_nodeID_matIDs[i].second[1];
         auto& master_frac =
-            _process_data._vec_fracture_property
-                 [_process_data._map_materialID_to_fractureID[master_matId]];
+            _process_data.fracture_properties
+                [_process_data._map_materialID_to_fractureID[master_matId]];
         auto& slave_frac =
-            _process_data._vec_fracture_property
-                 [_process_data._map_materialID_to_fractureID[slave_matId]];
+            _process_data.fracture_properties
+                [_process_data._map_materialID_to_fractureID[slave_matId]];
 
         master_frac.branches_master.push_back(createBranchProperty(
             *mesh.getNode(vec_branch_nodeID_matIDs[i].first), master_frac,
@@ -132,7 +132,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
             _process_data._map_materialID_to_fractureID[material_ids[0]],
             _process_data._map_materialID_to_fractureID[material_ids[1]]};
 
-        _process_data._vec_junction_property.emplace_back(
+        _process_data.junction_properties.emplace_back(
             i, *mesh.getNode(vec_junction_nodeID_matIDs[i].first),
             fracture_ids);
     }
@@ -425,8 +425,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         for (auto fid :
              _process_data._vec_ele_connected_fractureIDs[e->getID()])
         {
-            e_fracture_props.push_back(
-                &_process_data._vec_fracture_property[fid]);
+            e_fracture_props.push_back(&_process_data.fracture_properties[fid]);
             e_fracID_to_local.insert({fid, tmpi++});
         }
         std::vector<JunctionProperty*> e_junction_props;
@@ -435,8 +434,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         for (auto fid :
              _process_data._vec_ele_connected_junctionIDs[e->getID()])
         {
-            e_junction_props.push_back(
-                &_process_data._vec_junction_property[fid]);
+            e_junction_props.push_back(&_process_data.junction_properties[fid]);
             e_juncID_to_local.insert({fid, tmpi++});
         }
         std::vector<double> const levelsets(uGlobalEnrichments(
@@ -458,7 +456,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                 const_cast<MeshLib::Mesh&>(mesh),
                 "levelset" +
                     std::to_string(e_junction_props[i]->junction_id + 1 +
-                                   _process_data._vec_fracture_property.size()),
+                                   _process_data.fracture_properties.size()),
                 MeshLib::MeshItemType::Cell, 1);
             mesh_prop_levelset->resize(mesh.getNumberOfElements());
             (*mesh_prop_levelset)[e->getID()] =
@@ -483,7 +481,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         MeshLib::MeshItemType::Cell, 1);
     mesh_prop_b->resize(mesh.getNumberOfElements());
     auto const& mesh_prop_matid = *_process_data._mesh_prop_materialIDs;
-    for (auto const& fracture_prop : _process_data._vec_fracture_property)
+    for (auto const& fracture_prop : _process_data.fracture_properties)
     {
         for (MeshLib::Element const* e : _mesh.getElements())
         {

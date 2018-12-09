@@ -146,14 +146,14 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     }
 
     // Fracture properties
-    std::vector<FractureProperty> vec_fracture_property;
+    std::vector<FractureProperty> fracture_properties;
     for (
         auto fracture_properties_config :
         //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties}
         config.getConfigSubtreeList("fracture_properties"))
     {
-        vec_fracture_property.emplace_back(
-            vec_fracture_property.size(),
+        fracture_properties.emplace_back(
+            fracture_properties.size(),
             //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__material_id}
             fracture_properties_config.getConfigParameter<int>("material_id"),
             ProcessLib::findParameter<double>(
@@ -161,7 +161,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
                 fracture_properties_config, "initial_aperture", parameters, 1));
     }
 
-    if (n_var_du < vec_fracture_property.size())
+    if (n_var_du < fracture_properties.size())
     {
         OGS_FATAL(
             "The number of displacement jumps and the number of "
@@ -177,7 +177,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
 
     SmallDeformationProcessData<DisplacementDim> process_data(
         materialIDs(mesh), std::move(solid_constitutive_relations),
-        std::move(fracture_model), std::move(vec_fracture_property),
+        std::move(fracture_model), std::move(fracture_properties),
         reference_temperature);
 
     SecondaryVariableCollection secondary_variables;

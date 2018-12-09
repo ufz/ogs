@@ -114,12 +114,12 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
     for (auto fid : process_data._vec_ele_connected_fractureIDs[e.getID()])
     {
         _fracID_to_local.insert({fid, _fracture_props.size()});
-        _fracture_props.push_back(&_process_data._vec_fracture_property[fid]);
+        _fracture_props.push_back(&_process_data.fracture_properties[fid]);
     }
 
     for (auto jid : process_data._vec_ele_connected_junctionIDs[e.getID()])
     {
-        _junction_props.push_back(&_process_data._vec_junction_property[jid]);
+        _junction_props.push_back(&_process_data.junction_properties[jid]);
     }
 }
 
