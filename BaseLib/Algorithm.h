@@ -225,4 +225,21 @@ bool contains(Container const& container,
            container.end();
 }
 
+
+/// Returns the index of first element in container or, if the element is not
+/// found a std::size_t maximum value.
+///
+/// The maximum value of std::size_t is chosen, because such an index cannot
+/// exist in a container; the maximum index is std::size_t::max-1.
+template <typename Container>
+std::size_t findIndex(Container const& container,
+                      typename Container::value_type const& element)
+{
+    auto const it = std::find(container.begin(), container.end(), element);
+    if (it == container.end())
+    {
+        return std::numeric_limits<std::size_t>::max();
+    }
+    return std::distance(container.begin(), it);
+}
 }  // namespace BaseLib
