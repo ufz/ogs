@@ -312,10 +312,12 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         // aperture
         b_m = ip_data._aperture0 + w[index_normal];
         if (b_m < 0.0)
+        {
             OGS_FATAL(
                 "Element %d, gp %d: Fracture aperture is %g, but it must be "
                 "non-negative.",
                 _element.getID(), ip, b_m);
+        }
 
         // local C, local stress
         mat.computeConstitutiveRelation(

@@ -137,7 +137,9 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
     auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
                                                            pressure_size);
     if (_process_data.deactivate_matrix_in_flow)
+    {
         Base::setPressureOfInactiveNodes(t, p);
+    }
     auto u = local_x.segment(displacement_index, displacement_size);
 
     // levelset value of the element

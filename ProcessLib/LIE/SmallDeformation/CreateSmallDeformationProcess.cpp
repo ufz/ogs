@@ -60,7 +60,9 @@ std::unique_ptr<Process> createSmallDeformationProcess(
                 "'displacement_junctionN'");
         }
         if (pv_name.find("displacement_jump") == 0)
+        {
             n_var_du++;
+        }
 
         auto variable = std::find_if(variables.cbegin(), variables.cend(),
                                      [&pv_name](ProcessVariable const& v) {

@@ -141,10 +141,12 @@ public:
         : _dof_table(dof_table)
     {
         if (shapefunction_order != 2)
+        {
             OGS_FATAL(
                 "The given shape function order %d is not supported.\nOnly "
                 "shape functions of order 2 are supported.",
                 shapefunction_order);
+        }
             // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
@@ -205,7 +207,9 @@ public:
         std::vector<int> involved_varIDs;  // including deactived elements
         involved_varIDs.reserve(varIDs.size() + 1);
         if (isPressureDeactivated)
+        {
             involved_varIDs.push_back(0);  // always pressure come in
+        }
         involved_varIDs.insert(involved_varIDs.end(), varIDs.begin(),
                                varIDs.end());
 
@@ -219,8 +223,10 @@ public:
             mesh_item.getNumberOfBaseNodes());  // pressure
         auto const max_varID = *std::max_element(varIDs.begin(), varIDs.end());
         for (int i = 1; i < max_varID + 1; i++)
+        {
             vec_n_element_nodes.push_back(
                 mesh_item.getNumberOfNodes());  // displacements
+        }
 
         unsigned local_id = 0;
         unsigned dof_id = 0;
@@ -242,7 +248,9 @@ public:
                     auto global_index =
                         _dof_table.getGlobalIndex(l, var_id, var_comp_id);
                     if (global_index != NumLib::MeshComponentMap::nop)
+                    {
                         dofIndex_to_localIndex[dof_id++] = local_id;
+                    }
                     local_id++;
                 }
             }

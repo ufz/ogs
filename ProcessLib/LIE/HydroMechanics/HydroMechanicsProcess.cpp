@@ -108,7 +108,9 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
             if (std::find(vec_fracture_mat_IDs.begin(),
                           vec_fracture_mat_IDs.end(),
                           matID) == vec_fracture_mat_IDs.end())
+            {
                 vec_p_inactive_matIDs.push_back(matID);
+            }
         }
         _process_data.p_element_status =
             std::make_unique<MeshLib::ElementStatus>(&mesh,
@@ -300,7 +302,9 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         for (MeshLib::Element const* e : _mesh.getElements())
         {
             if (e->getDimension() < GlobalDim)
+            {
                 continue;
+            }
 
             std::vector<FractureProperty*> fracture_props(
                 {_process_data.fracture_property.get()});
@@ -336,9 +340,13 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         for (MeshLib::Element const* e : _mesh.getElements())
         {
             if (e->getDimension() == GlobalDim)
+            {
                 continue;
+            }
             if ((*mesh_prop_matid)[e->getID()] != frac->mat_id)
+            {
                 continue;
+            }
             ProcessLib::SpatialPosition x;
             x.setElementID(e->getID());
             (*mesh_prop_b)[e->getID()] = frac->aperture0(0, x)[0];
@@ -501,7 +509,9 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
         // skip aperture computation for element-wise defined b0 because there
         // are jumps on the nodes between the element's values.
         if (dynamic_cast<MeshElementParameter<double> const*>(&b0))
+        {
             return std::numeric_limits<double>::quiet_NaN();
+        }
 
         ProcessLib::SpatialPosition x;
         x.setNodeID(node_id);
@@ -514,11 +524,15 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
         auto const node_id = node->getID();
         g.setZero();
         for (int k = 0; k < GlobalDim; k++)
+        {
             g[k] = mesh_prop_g[node_id * GlobalDim + k];
+        }
 
         w.noalias() = R * g;
         for (int k = 0; k < GlobalDim; k++)
+        {
             vec_w[node_id * GlobalDim + k] = w[k];
+        }
 
         vec_b[node_id] = compute_nodal_aperture(node_id, w[GlobalDim - 1]);
     }

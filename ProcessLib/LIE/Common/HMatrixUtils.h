@@ -58,7 +58,9 @@ void computeHMatrix(N_Type const& N, HMatrixType& H)
     H.setZero();
 
     for (unsigned j = 0; j < DisplacementDim; j++)
+    {
         H.block(j, j * NPOINTS, 1, NPOINTS) = N;
+    }
 }
 
 }  // namespace ProcessLib

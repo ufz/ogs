@@ -52,7 +52,9 @@ public:
                              double const /*delta_t*/) override
     {
         for (auto& data : _ip_data)
+        {
             data.pushBackState();
+        }
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(

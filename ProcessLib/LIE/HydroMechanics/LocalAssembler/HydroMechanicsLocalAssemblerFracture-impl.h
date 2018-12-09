@@ -224,10 +224,12 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         // aperture
         b_m = ip_data.aperture0 + w[index_normal];
         if (b_m < 0.0)
+        {
             OGS_FATAL(
                 "Element %d, gp %d: Fracture aperture is %g, but it must be "
                 "non-negative.",
                 _element.getID(), ip, b_m);
+        }
 
         auto const initial_effective_stress =
             _process_data.initial_fracture_effective_stress(0, x_position);
@@ -352,10 +354,12 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         // aperture
         b_m = ip_data.aperture0 + w[index_normal];
         if (b_m < 0.0)
+        {
             OGS_FATAL(
                 "Element %d, gp %d: Fracture aperture is %g, but it must be "
                 "non-negative.",
                 _element.getID(), ip, b_m);
+        }
 
         auto const initial_effective_stress =
             _process_data.initial_fracture_effective_stress(0, x_position);
@@ -411,8 +415,10 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     }
 
     for (unsigned i = 0; i < 3; i++)
+    {
         (*_process_data.mesh_prop_velocity)[element_id * 3 + i] =
             ele_velocity[i];
+    }
 }
 
 }  // namespace HydroMechanics

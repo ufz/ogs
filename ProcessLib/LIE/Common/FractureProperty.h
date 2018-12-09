@@ -77,7 +77,9 @@ inline void setFractureProperty(int const dim, MeshLib::Element const& e,
     // 1st node is used but using other node is also possible, because
     // a fracture is not curving
     for (int j = 0; j < 3; j++)
+    {
         frac_prop.point_on_fracture[j] = e.getCenterOfGravity().getCoords()[j];
+    }
     computeNormalVector(e, dim, frac_prop.normal_vector);
     frac_prop.R.resize(dim, dim);
     computeRotationMatrix(e, frac_prop.normal_vector, dim, frac_prop.R);

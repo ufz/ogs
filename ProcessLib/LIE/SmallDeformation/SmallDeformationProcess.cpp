@@ -416,7 +416,9 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     for (MeshLib::Element const* e : _mesh.getElements())
     {
         if (e->getDimension() < DisplacementDim)
+        {
             continue;
+        }
 
         Eigen::Vector3d const pt(e->getCenterOfGravity().getCoords());
         std::vector<FractureProperty*> e_fracture_props;

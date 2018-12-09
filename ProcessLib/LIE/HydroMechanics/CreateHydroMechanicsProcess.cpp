@@ -97,8 +97,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         if (!use_monolithic_scheme)
         {
             if (pv_name == "pressure")
+            {
                 p_process_variables.emplace_back(
                     const_cast<ProcessVariable&>(*variable));
+            }
             else
             {
                 u_process_variables.emplace_back(
@@ -113,7 +115,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     }
 
     if (p_u_process_variables.size() > 3 || u_process_variables.size() > 2)
+    {
         OGS_FATAL("Currently only one displacement jump is supported");
+    }
 
     if (!use_monolithic_scheme)
     {
@@ -121,7 +125,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         process_variables.push_back(std::move(u_process_variables));
     }
     else
+    {
         process_variables.push_back(std::move(p_u_process_variables));
+    }
 
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<GlobalDim>(parameters,
