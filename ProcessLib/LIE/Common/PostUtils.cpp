@@ -41,11 +41,11 @@ std::vector<int> const& getMaterialIdsForNode(
     return itr->second;
 };
 
-int getfrac2matid(std::vector<int> const& fracmatids, int frac1matid)
+int findFirstNotEqualElement(std::vector<int> const& fracmatids, int frac1matid)
 {
     auto itr_mat2 =
-        std::find_if(fracmatids.begin(), fracmatids.end(),
-                     [&](int matid) { return matid != frac1matid; });
+        std::find_if_not(fracmatids.begin(), fracmatids.end(),
+                         [&](int matid) { return matid == frac1matid; });
     assert(itr_mat2 != fracmatids.end());
     return *itr_mat2;
 };
@@ -162,7 +162,8 @@ PostProcessTool::PostProcessTool(
                     // branch nodes
                     const auto& br_matids = getMaterialIdsForNode(
                         vec_branch_nodeID_matIDs, node_id);
-                    auto frac2_matid = getfrac2matid(br_matids, frac_matid);
+                    auto frac2_matid =
+                        findFirstNotEqualElement(br_matids, frac_matid);
                     auto const frac2_id =
                         matid2fracid(vec_fracture_mat_IDs, frac2_matid);
                     auto prop_levelset2 =
@@ -186,7 +187,8 @@ PostProcessTool::PostProcessTool(
                     // junction nodes
                     const auto& jct_matids = getMaterialIdsForNode(
                         vec_junction_nodeID_matIDs, node_id);
-                    auto frac2_matid = getfrac2matid(jct_matids, frac_matid);
+                    auto frac2_matid =
+                        findFirstNotEqualElement(jct_matids, frac_matid);
                     auto const frac2_id =
                         matid2fracid(vec_fracture_mat_IDs, frac2_matid);
                     auto prop_levelset2 =
