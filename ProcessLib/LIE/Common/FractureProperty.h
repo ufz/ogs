@@ -71,7 +71,7 @@ struct FracturePropertyHM : public FractureProperty
 
 /// configure fracture property based on a fracture element assuming
 /// a fracture is a straight line/flat plane
-inline void setFractureProperty(unsigned dim, MeshLib::Element const& e,
+inline void setFractureProperty(int const dim, MeshLib::Element const& e,
                                 FractureProperty& frac_prop)
 {
     // 1st node is used but using other node is also possible, because
