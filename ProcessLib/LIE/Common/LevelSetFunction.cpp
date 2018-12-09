@@ -30,19 +30,19 @@ namespace ProcessLib
 {
 namespace LIE
 {
-double levelset_fracture(FractureProperty const& frac, Eigen::Vector3d const& x)
+double levelsetFracture(FractureProperty const& frac, Eigen::Vector3d const& x)
 {
     return boost::math::sign(
         frac.normal_vector.dot(x - frac.point_on_fracture));
 }
 
-double levelset_branch(BranchProperty const& branch, Eigen::Vector3d const& x)
+double levelsetBranch(BranchProperty const& branch, Eigen::Vector3d const& x)
 {
     return boost::math::sign(
         branch.normal_vector_branch.dot(x - branch.coords));
 }
 
-std::vector<double> u_global_enrichments(
+std::vector<double> uGlobalEnrichments(
     std::vector<FractureProperty*> const& frac_props,
     std::vector<JunctionProperty*> const& junction_props,
     std::unordered_map<int, int> const& fracID_to_local,
@@ -51,7 +51,7 @@ std::vector<double> u_global_enrichments(
     // pre-calculate levelsets for all fractures
     std::vector<double> levelsets(frac_props.size());
     for (std::size_t i = 0; i < frac_props.size(); i++)
-        levelsets[i] = Heaviside(levelset_fracture(*frac_props[i], x));
+        levelsets[i] = Heaviside(levelsetFracture(*frac_props[i], x));
 
     std::vector<double> enrichments(frac_props.size() + junction_props.size());
     // fractures possibly with branches
@@ -60,7 +60,7 @@ std::vector<double> u_global_enrichments(
         auto const* frac = frac_props[i];
         double enrich = levelsets[i];
         for (std::size_t j = 0; j < frac->branches_slave.size(); j++)
-            enrich *= Heaviside(levelset_branch(*frac->branches_slave[j], x));
+            enrich *= Heaviside(levelsetBranch(*frac->branches_slave[j], x));
         enrichments[i] = enrich;
     }
 
@@ -77,7 +77,7 @@ std::vector<double> u_global_enrichments(
     return enrichments;
 }
 
-std::vector<double> du_global_enrichments(
+std::vector<double> duGlobalEnrichments(
     std::size_t this_frac_id,
     std::vector<FractureProperty*> const& frac_props,
     std::vector<JunctionProperty*> const& junction_props,
@@ -89,7 +89,7 @@ std::vector<double> du_global_enrichments(
     // pre-calculate levelsets for all fractures
     std::vector<double> levelsets(frac_props.size());
     for (std::size_t i = 0; i < frac_props.size(); i++)
-        levelsets[i] = Heaviside(levelset_fracture(*frac_props[i], x));
+        levelsets[i] = Heaviside(levelsetFracture(*frac_props[i], x));
 
     std::vector<double> enrichments(frac_props.size() + junction_props.size());
     enrichments[this_frac_local_index] = 1.0;

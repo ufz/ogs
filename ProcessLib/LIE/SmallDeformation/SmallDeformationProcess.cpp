@@ -441,7 +441,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                 _process_data._vec_junction_property[fid].get());
             e_juncID_to_local.insert({fid, tmpi++});
         }
-        std::vector<double> const levelsets(u_global_enrichments(
+        std::vector<double> const levelsets(uGlobalEnrichments(
             e_fracture_props, e_junction_props, e_fracID_to_local, pt));
 
         for (unsigned i = 0; i < e_fracture_props.size(); i++)

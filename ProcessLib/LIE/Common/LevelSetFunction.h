@@ -30,7 +30,7 @@ struct JunctionProperty;
 /// in frac_props
 /// @param x evaluating point coordiates
 /// @return a vector of enrichment values for displacements
-std::vector<double> u_global_enrichments(
+std::vector<double> uGlobalEnrichments(
     std::vector<FractureProperty*> const& frac_props,
     std::vector<JunctionProperty*> const& junction_props,
     std::unordered_map<int, int> const& fracID_to_local,
@@ -47,7 +47,7 @@ std::vector<double> u_global_enrichments(
 /// in frac_props
 /// @param x evaluating point coordiates
 /// @return a vector of enrichment values for fracture relative displacements
-std::vector<double> du_global_enrichments(
+std::vector<double> duGlobalEnrichments(
     std::size_t this_fracID,
     std::vector<FractureProperty*> const& frac_props,
     std::vector<JunctionProperty*> const& junction_props,
