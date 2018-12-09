@@ -177,12 +177,6 @@ void SmallDeformationLocalAssemblerFracture<
     SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
-    std::size_t this_frac_local_index = 0;
-    for (; this_frac_local_index < _fracture_props.size();
-         this_frac_local_index++)
-        if (_fracture_props[this_frac_local_index] == _fracture_property)
-            break;
-
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -282,12 +276,6 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
             N_DOF_PER_VAR * i);
         vec_nodal_g.push_back(sub);
     }
-
-    std::size_t this_frac_local_index = 0;
-    for (; this_frac_local_index < _fracture_props.size();
-         this_frac_local_index++)
-        if (_fracture_props[this_frac_local_index] == _fracture_property)
-            break;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
