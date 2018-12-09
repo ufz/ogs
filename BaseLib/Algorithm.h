@@ -12,6 +12,7 @@
 #pragma once
 
 #include <algorithm>
+#include <boost/optional.hpp>
 #include <cassert>
 #include <typeindex>
 #include <typeinfo>
@@ -225,6 +226,17 @@ bool contains(Container const& container,
            container.end();
 }
 
+template <typename Container>
+boost::optional<typename Container::value_type> findFirstNotEqualElement(
+    Container const& container, typename Container::value_type const& element)
+{
+    auto const it =
+        std::find_if_not(container.begin(), container.end(),
+                         [&element](typename Container::value_type const& e) {
+                             return e == element;
+                         });
+    return it == container.end() ? boost::none : boost::make_optional(*it);
+}
 
 /// Returns the index of first element in container or, if the element is not
 /// found a std::size_t maximum value.
