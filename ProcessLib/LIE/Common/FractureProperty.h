@@ -97,21 +97,5 @@ inline BranchProperty createBranchProperty(MeshLib::Node const& branchNode,
     branch.normal_vector_branch = sign * master_frac.normal_vector;
     return branch;
 }
-
-inline JunctionProperty* createJunctionProperty(
-    int junction_id,
-    MeshLib::Node const& junctionNode,
-    std::vector<int>
-        frac_ids)
-{
-    JunctionProperty* junction = new JunctionProperty();
-    junction->junction_id = junction_id;
-    junction->node_id = junctionNode.getID();
-    junction->coords = Eigen::Vector3d(junctionNode.getCoords());
-    for (int j = 0; j < 2; j++)
-        junction->fracture_IDs[j] = frac_ids[j];
-    return junction;
-}
-
 }  // namespace LIE
 }  // namespace ProcessLib

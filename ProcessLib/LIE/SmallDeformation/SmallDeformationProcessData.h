@@ -74,7 +74,7 @@ struct SmallDeformationProcessData
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>
         _fracture_model;
     std::vector<FractureProperty> _vec_fracture_property;
-    std::vector<std::unique_ptr<JunctionProperty>> _vec_junction_property;
+    std::vector<JunctionProperty> _vec_junction_property;
 
     MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
     std::vector<int> _map_materialID_to_fractureID;

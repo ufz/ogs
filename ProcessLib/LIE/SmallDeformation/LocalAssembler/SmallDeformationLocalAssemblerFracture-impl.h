@@ -66,8 +66,7 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
 
     for (auto jid : process_data._vec_ele_connected_junctionIDs[e.getID()])
     {
-        _junction_props.push_back(
-            _process_data._vec_junction_property[jid].get());
+        _junction_props.push_back(&_process_data._vec_junction_property[jid]);
     }
 
     SpatialPosition x_position;

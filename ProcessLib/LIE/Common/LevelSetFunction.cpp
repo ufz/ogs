@@ -68,8 +68,8 @@ std::vector<double> uGlobalEnrichments(
     for (std::size_t i = 0; i < junction_props.size(); i++)
     {
         auto const* junction = junction_props[i];
-        auto fid1 = fracID_to_local.at(junction->fracture_IDs[0]);
-        auto fid2 = fracID_to_local.at(junction->fracture_IDs[1]);
+        auto fid1 = fracID_to_local.at(junction->fracture_ids[0]);
+        auto fid2 = fracID_to_local.at(junction->fracture_ids[1]);
         double enrich = levelsets[fid1] * levelsets[fid2];
         enrichments[i + frac_props.size()] = enrich;
     }
@@ -118,13 +118,13 @@ std::vector<double> duGlobalEnrichments(
     for (unsigned i = 0; i < junction_props.size(); i++)
     {
         auto const* junction = junction_props[i];
-        if (!BaseLib::contains(junction->fracture_IDs, this_frac.fracture_id))
+        if (!BaseLib::contains(junction->fracture_ids, this_frac.fracture_id))
             continue;
 
         auto another_frac_id =
-            (junction->fracture_IDs[0] == this_frac.fracture_id)
-                ? junction->fracture_IDs[1]
-                : junction->fracture_IDs[0];
+            (junction->fracture_ids[0] == this_frac.fracture_id)
+                ? junction->fracture_ids[1]
+                : junction->fracture_ids[0];
         auto fid = fracID_to_local.at(another_frac_id);
         double enrich = levelsets[fid];
         enrichments[i + frac_props.size()] = enrich;

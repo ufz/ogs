@@ -126,14 +126,15 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     }
     for (std::size_t i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
-        std::vector<int> fracIDs;
-        for (auto matid : vec_junction_nodeID_matIDs[i].second)
-            fracIDs.push_back(
-                _process_data._map_materialID_to_fractureID[matid]);
-        auto* junction = createJunctionProperty(
-            i, *mesh.getNode(vec_junction_nodeID_matIDs[i].first), fracIDs);
+        auto const& material_ids = vec_junction_nodeID_matIDs[i].second;
+        assert(material_ids.size() == 2);
+        std::array<int, 2> fracture_ids{
+            _process_data._map_materialID_to_fractureID[material_ids[0]],
+            _process_data._map_materialID_to_fractureID[material_ids[1]]};
 
-        _process_data._vec_junction_property.emplace_back(junction);
+        _process_data._vec_junction_property.emplace_back(
+            i, *mesh.getNode(vec_junction_nodeID_matIDs[i].first),
+            fracture_ids);
     }
 
     // create a table of connected junction IDs for each element
@@ -435,7 +436,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
              _process_data._vec_ele_connected_junctionIDs[e->getID()])
         {
             e_junction_props.push_back(
-                _process_data._vec_junction_property[fid].get());
+                &_process_data._vec_junction_property[fid]);
             e_juncID_to_local.insert({fid, tmpi++});
         }
         std::vector<double> const levelsets(uGlobalEnrichments(
