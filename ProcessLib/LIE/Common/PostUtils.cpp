@@ -40,21 +40,6 @@ std::vector<int> const& getMaterialIdsForNode(
     assert(itr != vec_nodeID_matIDs.end());
     return itr->second;
 };
-
-int matid2fracid(std::vector<int> const& vec, int matid)
-{
-    auto itr = std::find(vec.begin(), vec.end(), matid);
-    assert(itr != vec.end());
-    return itr - vec.begin();
-};
-
-unsigned getpos_in_ids(std::vector<int> const& ids, int id)
-{
-    auto itr = std::find(ids.begin(), ids.end(), id);
-    assert(itr != ids.end());
-    auto const pos = itr - ids.begin();
-    return pos;
-}
 }  // namespace
 
 PostProcessTool::PostProcessTool(
@@ -157,21 +142,23 @@ PostProcessTool::PostProcessTool(
                         br_matids, frac_matid);
                     assert(frac2_matid);
                     auto const frac2_id =
-                        matid2fracid(vec_fracture_mat_IDs, frac2_matid);
+                        BaseLib::findIndex(vec_fracture_mat_IDs, *frac2_matid);
+                    assert(frac2_id != std::numeric_limits<std::size_t>::max());
                     auto prop_levelset2 =
                         org_mesh.getProperties().getPropertyVector<double>(
                             "levelset" + std::to_string(frac2_id + 1));
-                    unsigned pos = 0;
+                    std::size_t pos = 0;
                     if ((*prop_levelset2)[eid] == 0)
                     {
-                        // index of this frac
-                        pos = getpos_in_ids(br_matids, frac_matid);
+                        // index of this fracture
+                        pos = BaseLib::findIndex(br_matids, frac_matid);
                     }
                     else if ((*prop_levelset2)[eid] == 1)
                     {
-                        // index of the other frac
-                        pos = getpos_in_ids(br_matids, frac2_matid);
+                        // index of the other fracture
+                        pos = BaseLib::findIndex(br_matids, *frac2_matid);
                     }
+                    assert(pos != std::numeric_limits<std::size_t>::max());
                     new_node_id = dup_newNodeIDs[pos];
                 }
                 else
@@ -183,7 +170,8 @@ PostProcessTool::PostProcessTool(
                         jct_matids, frac_matid);
                     assert(frac2_matid);
                     auto const frac2_id =
-                        matid2fracid(vec_fracture_mat_IDs, frac2_matid);
+                        BaseLib::findIndex(vec_fracture_mat_IDs, *frac2_matid);
+                    assert(frac2_id != std::numeric_limits<std::size_t>::max());
                     auto prop_levelset2 =
                         org_mesh.getProperties().getPropertyVector<double>(
                             "levelset" + std::to_string(frac2_id + 1));
@@ -192,7 +180,9 @@ PostProcessTool::PostProcessTool(
                     if ((*prop_levelset2)[eid] == 0)
                     {
                         // index of this frac
-                        auto const pos = getpos_in_ids(jct_matids, frac_matid);
+                        auto const pos =
+                            BaseLib::findIndex(jct_matids, frac_matid);
+                        assert(pos != std::numeric_limits<std::size_t>::max());
                         new_node_id = dup_newNodeIDs[pos];
                     }
                     else if ((*prop_levelset2)[eid] == 1)
