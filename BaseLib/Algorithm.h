@@ -217,11 +217,12 @@ void uniquePushBack(Container& container,
         container.push_back(element);
 }
 
-template <typename Container, typename ValueType>
-inline bool contains(Container const& container, ValueType const& element)
+template <typename Container>
+bool contains(Container const& container,
+              typename Container::value_type const& element)
 {
-    return (std::find(container.begin(), container.end(), element) !=
-            container.end());
+    return std::find(container.begin(), container.end(), element) !=
+           container.end();
 }
 
 }  // namespace BaseLib
