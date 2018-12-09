@@ -39,17 +39,34 @@ struct FractureProperty
     /// Rotation matrix from global to local coordinates
     Eigen::MatrixXd R;
     /// Initial aperture
-    ProcessLib::Parameter<double> const* aperture0 = nullptr;
+    ProcessLib::Parameter<double> const& aperture0;
     std::vector<std::unique_ptr<BranchProperty>> branches_master;
     std::vector<std::unique_ptr<BranchProperty>> branches_slave;
+
+    FractureProperty(int const fracture_id_, int const material_id,
+                     ProcessLib::Parameter<double> const& initial_aperture)
+        : fracture_id(fracture_id_),
+          mat_id(material_id),
+          aperture0(initial_aperture)
+    {
+    }
 
     virtual ~FractureProperty() = default;
 };
 
 struct FracturePropertyHM : public FractureProperty
 {
-    ProcessLib::Parameter<double> const* specific_storage = nullptr;
-    ProcessLib::Parameter<double> const* biot_coefficient = nullptr;
+    FracturePropertyHM(int const fracture_id_, int const material_id,
+                       ProcessLib::Parameter<double> const& initial_aperture,
+                       ProcessLib::Parameter<double> const& specific_storage_,
+                       ProcessLib::Parameter<double> const& biot_coefficient_)
+        : FractureProperty(fracture_id_, material_id, initial_aperture),
+          specific_storage(specific_storage_),
+          biot_coefficient(biot_coefficient_)
+    {
+    }
+    ProcessLib::Parameter<double> const& specific_storage;
+    ProcessLib::Parameter<double> const& biot_coefficient;
 };
 
 /// configure fracture property based on a fracture element assuming

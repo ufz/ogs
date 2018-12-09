@@ -146,22 +146,19 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     }
 
     // Fracture properties
-    std::vector<std::unique_ptr<FractureProperty>> vec_fracture_property;
+    std::vector<FractureProperty> vec_fracture_property;
     for (
         auto fracture_properties_config :
         //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties}
         config.getConfigSubtreeList("fracture_properties"))
     {
-        auto& para_b0 = ProcessLib::findParameter<double>(
-            //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__initial_aperture}
-            fracture_properties_config, "initial_aperture", parameters, 1);
-        auto frac_prop(new FractureProperty());
-        frac_prop->fracture_id = vec_fracture_property.size();
-        frac_prop->mat_id =
+        vec_fracture_property.emplace_back(
+            vec_fracture_property.size(),
             //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__material_id}
-            fracture_properties_config.getConfigParameter<int>("material_id");
-        frac_prop->aperture0 = &para_b0;
-        vec_fracture_property.emplace_back(frac_prop);
+            fracture_properties_config.getConfigParameter<int>("material_id"),
+            ProcessLib::findParameter<double>(
+                //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__fracture_properties__initial_aperture}
+                fracture_properties_config, "initial_aperture", parameters, 1));
     }
 
     if (n_var_du < vec_fracture_property.size())

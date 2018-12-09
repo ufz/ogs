@@ -251,26 +251,26 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     {
         auto& fracture_properties_config = *opt_fracture_properties_config;
 
-        frac_prop = std::make_unique<ProcessLib::LIE::FracturePropertyHM>();
-        frac_prop->mat_id =
+        frac_prop = std::make_unique<ProcessLib::LIE::FracturePropertyHM>(
+            0 /*fracture_id*/,
             //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__material_id}
-            fracture_properties_config.getConfigParameter<int>("material_id");
-        frac_prop->aperture0 = &ProcessLib::findParameter<double>(
-            //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__initial_aperture}
-            fracture_properties_config, "initial_aperture", parameters, 1);
-        if (frac_prop->aperture0->isTimeDependent())
+            fracture_properties_config.getConfigParameter<int>("material_id"),
+            ProcessLib::findParameter<double>(
+                //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__initial_aperture}
+                fracture_properties_config, "initial_aperture", parameters, 1),
+            ProcessLib::findParameter<double>(
+                //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__specific_storage}
+                fracture_properties_config, "specific_storage", parameters, 1),
+            ProcessLib::findParameter<double>(
+                //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__biot_coefficient}
+                fracture_properties_config, "biot_coefficient", parameters, 1));
+        if (frac_prop->aperture0.isTimeDependent())
         {
             OGS_FATAL(
                 "The initial aperture parameter '%s' must not be "
                 "time-dependent.",
-                frac_prop->aperture0->name.c_str());
+                frac_prop->aperture0.name.c_str());
         }
-        frac_prop->specific_storage = &ProcessLib::findParameter<double>(
-            //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__specific_storage}
-            fracture_properties_config, "specific_storage", parameters, 1);
-        frac_prop->biot_coefficient = &ProcessLib::findParameter<double>(
-            //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__biot_coefficient}
-            fracture_properties_config, "biot_coefficient", parameters, 1);
     }
 
     // initial effective stress in matrix

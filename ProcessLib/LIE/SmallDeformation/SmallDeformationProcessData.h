@@ -42,7 +42,7 @@ struct SmallDeformationProcessData
         std::unique_ptr<
             MaterialLib::Fracture::FractureModelBase<DisplacementDim>>&&
             fracture_model,
-        std::vector<std::unique_ptr<FractureProperty>>&& vec_fracture_prop,
+        std::vector<FractureProperty>&& vec_fracture_prop,
         double const reference_temperature)
         : material_ids(material_ids_),
           solid_materials{std::move(solid_materials_)},
@@ -73,7 +73,7 @@ struct SmallDeformationProcessData
 
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>
         _fracture_model;
-    std::vector<std::unique_ptr<FractureProperty>> _vec_fracture_property;
+    std::vector<FractureProperty> _vec_fracture_property;
     std::vector<std::unique_ptr<JunctionProperty>> _vec_junction_property;
 
     MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;

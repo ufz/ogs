@@ -83,7 +83,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
         // set fracture property assuming a fracture forms a straight line
         setFractureProperty(GlobalDim,
                             *_vec_fracture_elements[0],
-                            *_process_data.fracture_property.get());
+                            *_process_data.fracture_property);
     }
 
     //
@@ -332,7 +332,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         {
             OGS_FATAL("Could not access MaterialIDs property from mesh.");
         }
-        auto frac = _process_data.fracture_property.get();
+        auto const& frac = _process_data.fracture_property;
         for (MeshLib::Element const* e : _mesh.getElements())
         {
             if (e->getDimension() == GlobalDim)
@@ -341,7 +341,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
                 continue;
             ProcessLib::SpatialPosition x;
             x.setElementID(e->getID());
-            (*mesh_prop_b)[e->getID()] = (*frac->aperture0)(0, x)[0];
+            (*mesh_prop_b)[e->getID()] = frac->aperture0(0, x)[0];
         }
         _process_data.mesh_prop_b = mesh_prop_b;
 
@@ -492,7 +492,7 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
 
     // compute nodal w and aperture
     auto const& R = _process_data.fracture_property->R;
-    auto* const b0 = _process_data.fracture_property->aperture0;
+    auto const& b0 = _process_data.fracture_property->aperture0;
     MeshLib::PropertyVector<double>& vec_w = *_process_data.mesh_prop_nodal_w;
     MeshLib::PropertyVector<double>& vec_b = *_process_data.mesh_prop_nodal_b;
 
@@ -500,12 +500,12 @@ void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
                                       double const w_n) {
         // skip aperture computation for element-wise defined b0 because there
         // are jumps on the nodes between the element's values.
-        if (dynamic_cast<MeshElementParameter<double> const*>(b0))
+        if (dynamic_cast<MeshElementParameter<double> const*>(&b0))
             return std::numeric_limits<double>::quiet_NaN();
 
         ProcessLib::SpatialPosition x;
         x.setNodeID(node_id);
-        return w_n + (*b0)(/*time independent*/ 0, x)[0];
+        return w_n + b0(/*time independent*/ 0, x)[0];
     };
 
     Eigen::VectorXd g(GlobalDim), w(GlobalDim);

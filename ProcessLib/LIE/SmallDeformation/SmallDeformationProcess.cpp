@@ -93,8 +93,8 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
         // based on the 1st element assuming a fracture forms a straight line
         setFractureProperty(
             DisplacementDim,
-            *_vec_fracture_elements[fracture_prop->fracture_id][0],
-            *fracture_prop.get());
+            *_vec_fracture_elements[fracture_prop.fracture_id][0],
+            fracture_prop);
     }
 
     // set branches
@@ -103,10 +103,10 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
         auto master_matId = vec_branch_nodeID_matIDs[i].second[0];
         auto slave_matId = vec_branch_nodeID_matIDs[i].second[1];
         auto& master_frac =
-            *_process_data._vec_fracture_property
+            _process_data._vec_fracture_property
                  [_process_data._map_materialID_to_fractureID[master_matId]];
         auto& slave_frac =
-            *_process_data._vec_fracture_property
+            _process_data._vec_fracture_property
                  [_process_data._map_materialID_to_fractureID[slave_matId]];
 
         auto* branch = createBranchProperty(
@@ -428,7 +428,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
              _process_data._vec_ele_connected_fractureIDs[e->getID()])
         {
             e_fracture_props.push_back(
-                _process_data._vec_fracture_property[fid].get());
+                &_process_data._vec_fracture_property[fid]);
             e_fracID_to_local.insert({fid, tmpi++});
         }
         std::vector<JunctionProperty*> e_junction_props;
@@ -493,13 +493,13 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             {
                 continue;
             }
-            if (mesh_prop_matid[e->getID()] != fracture_prop->mat_id)
+            if (mesh_prop_matid[e->getID()] != fracture_prop.mat_id)
             {
                 continue;
             }
             ProcessLib::SpatialPosition x;
             x.setElementID(e->getID());
-            (*mesh_prop_b)[e->getID()] = (*fracture_prop->aperture0)(0, x)[0];
+            (*mesh_prop_b)[e->getID()] = fracture_prop.aperture0(0, x)[0];
         }
     }
     _process_data._mesh_prop_b = mesh_prop_b;
