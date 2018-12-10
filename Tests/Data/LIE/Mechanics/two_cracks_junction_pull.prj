@@ -53,17 +53,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>displacement_jump1</variable>
-                        <variable>displacement_jump2</variable>
-                        <variable>displacement_jump3</variable>
-                        <variable>sigma_xx</variable>
-                        <variable>sigma_yy</variable>
-                        <variable>sigma_xy</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -86,6 +75,15 @@
                     <each_steps>10000000</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>displacement_jump1</variable>
+                <variable>displacement_jump2</variable>
+                <variable>displacement_jump3</variable>
+                <variable>sigma_xx</variable>
+                <variable>sigma_yy</variable>
+                <variable>sigma_xy</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
