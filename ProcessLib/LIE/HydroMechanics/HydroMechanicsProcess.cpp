@@ -446,12 +446,18 @@ template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::computeSecondaryVariableConcrete(
     const double t, GlobalVector const& x, int const process_id)
 {
-    const auto& dof_table = getDOFTable(process_id);
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
-    GlobalExecutor::executeMemberOnDereferenced(
-        &HydroMechanicsLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, dof_table, t, x,
-        _coupled_solutions);
+    const auto& dof_table = getDOFTable(process_id);
+
+    {
+        ProcessLib::ProcessVariable const& pv =
+            getProcessVariables(process_id)[0];
+
+        GlobalExecutor::executeSelectedMemberOnDereferenced(
+            &HydroMechanicsLocalAssemblerInterface::computeSecondaryVariable,
+            _local_assemblers, pv.getElementDeactivationFlags(),
+            dof_table, t, x, _coupled_solutions);
+    }
 
     // Copy displacement jumps in a solution vector to mesh property
     // Remark: the copy is required because mesh properties for primary
@@ -568,13 +574,17 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HydroMechanicsProcess.");
 
+    const int process_id =
+        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     // Call global assembler for each local assembly item.
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
        dof_table = {std::ref(*_local_to_global_index_map)};
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, pv.getElementDeactivationFlags(), dof_table, t, x,
+        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
         transformVariableFromGlobalVector(b, variable_id,
@@ -589,16 +599,19 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
     GlobalVector const& x, double const t, double const dt,
-    const int /*process_id*/)
+    const int process_id)
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 
     _process_data.dt = dt;
     _process_data.t = t;
 
-    GlobalExecutor::executeMemberOnDereferenced(
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HydroMechanicsLocalAssemblerInterface::preTimestep, _local_assemblers,
-        *_local_to_global_index_map, x, t, dt);
+        pv.getElementDeactivationFlags(), *_local_to_global_index_map,
+        x, t, dt);
 }
 
 // ------------------------------------------------------------------------------------
