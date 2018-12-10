@@ -80,10 +80,14 @@ void TwoPhaseFlowWithPrhoProcess::assembleConcreteProcess(const double t,
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
        dof_table = {std::ref(*_local_to_global_index_map)};
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, x, M, K, b, _coupled_solutions);
+        pv.getElementDeactivationFlags(), dof_table, t, x, M, K, b,
+        _coupled_solutions);
 }
 
 void TwoPhaseFlowWithPrhoProcess::assembleWithJacobianConcreteProcess(
@@ -95,21 +99,27 @@ void TwoPhaseFlowWithPrhoProcess::assembleWithJacobianConcreteProcess(
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
        dof_table = {std::ref(*_local_to_global_index_map)};
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, pv.getElementDeactivationFlags(), dof_table, t, x,
+        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 void TwoPhaseFlowWithPrhoProcess::preTimestepConcreteProcess(
     GlobalVector const& x, double const t, double const dt,
-    const int /*process_id*/)
+    const int process_id)
 {
     DBUG("PreTimestep TwoPhaseFlowWithPrhoProcess.");
 
-    GlobalExecutor::executeMemberOnDereferenced(
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        *_local_to_global_index_map, x, t, dt);
+        pv.getElementDeactivationFlags(), *_local_to_global_index_map, x, t,
+        dt);
 }
 
 }  // end of namespace
