@@ -161,10 +161,15 @@ void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
        dof_table = {std::ref(*_local_to_global_index_map)};
+    const int process_id =
+        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, x, M, K, b, _coupled_solutions);
+        pv.getElementDeactivationFlags(), dof_table, t, x, M, K, b,
+        _coupled_solutions);
 }
 
 template <int DisplacementDim>
@@ -180,38 +185,48 @@ void ThermoMechanicsProcess<DisplacementDim>::
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
        dof_table = {std::ref(*_local_to_global_index_map)};
+     const int process_id =
+        _use_monolithic_scheme ? 0 : _coupled_solutions->process_id;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_table, t, x, xdot, dxdot_dx,
-        dx_dx, M, K, b, Jac, _coupled_solutions);
+        _local_assemblers, pv.getElementDeactivationFlags(), dof_table, t, x,
+        xdot, dxdot_dx, dx_dx, M, K, b, Jac, _coupled_solutions);
 }
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     GlobalVector const& x, double const t, double const dt,
-    const int /*process_id*/)
+    const int process_id)
 {
     DBUG("PreTimestep ThermoMechanicsProcess.");
 
     _process_data.dt = dt;
     _process_data.t = t;
 
-    GlobalExecutor::executeMemberOnDereferenced(
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicsLocalAssemblerInterface::preTimestep, _local_assemblers,
-        *_local_to_global_index_map, x, t, dt);
+        pv.getElementDeactivationFlags(), *_local_to_global_index_map, x, t,
+        dt);
 }
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     GlobalVector const& x, const double /*t*/, const double /*delta_t*/,
-    int const /*process_id*/)
+    int const process_id)
 {
     DBUG("PostTimestep ThermoMechanicsProcess.");
 
-    GlobalExecutor::executeMemberOnDereferenced(
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicsLocalAssemblerInterface::postTimestep,
-        _local_assemblers, *_local_to_global_index_map, x);
+        _local_assemblers, pv.getElementDeactivationFlags(),
+        *_local_to_global_index_map, x);
 }
 
 template class ThermoMechanicsProcess<2>;
