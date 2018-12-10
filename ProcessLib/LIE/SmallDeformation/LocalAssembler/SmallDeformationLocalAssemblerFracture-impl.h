@@ -163,7 +163,6 @@ void SmallDeformationLocalAssemblerFracture<
         vec_nodal_g.push_back(sub);
     }
 
-
     //------------------------------------------------
     // integration
     //------------------------------------------------
@@ -179,7 +178,8 @@ void SmallDeformationLocalAssemblerFracture<
     x_position.setElementID(_element.getID());
 
     std::size_t this_frac_local_index = 0;
-    for (; this_frac_local_index<_fracture_props.size(); this_frac_local_index++)
+    for (; this_frac_local_index < _fracture_props.size();
+         this_frac_local_index++)
         if (_fracture_props[this_frac_local_index] == _fracture_property)
             break;
 
@@ -205,7 +205,8 @@ void SmallDeformationLocalAssemblerFracture<
             _fracture_property->fracture_id, _fracture_props, _junction_props,
             _fracID_to_local, ip_physical_coords));
 
-        // du = du^hat + sum_i(enrich^br_i(x) * [u]_i) + sum_i(enrich^junc_i(x) * [u]_i)
+        // du = du^hat + sum_i(enrich^br_i(x) * [u]_i) + sum_i(enrich^junc_i(x)
+        // * [u]_i)
         Eigen::VectorXd nodal_gap(N_DOF_PER_VAR);
         nodal_gap.setZero();
         for (unsigned i = 0; i < n_enrich_var; i++)
@@ -231,8 +232,9 @@ void SmallDeformationLocalAssemblerFracture<
         // r_[u] += H^T*Stress
         for (unsigned i = 0; i < n_enrich_var; i++)
         {
-            vec_local_b_g[i].noalias() -=
-                levelsets[i] * H.transpose() * R.transpose() * sigma * integration_weight;
+            vec_local_b_g[i].noalias() -= levelsets[i] * H.transpose() *
+                                          R.transpose() * sigma *
+                                          integration_weight;
         }
 
         // J_[u][u] += H^T*C*H
@@ -242,7 +244,8 @@ void SmallDeformationLocalAssemblerFracture<
             {
                 // J_[u][u] += (levelset * B)^T * C * (levelset * B)
                 vec_local_J_gg[i][j].noalias() +=
-                    (levelsets[i] * H.transpose() * R.transpose()) * C * (levelsets[j] * R * H) * integration_weight;
+                    (levelsets[i] * H.transpose() * R.transpose()) * C *
+                    (levelsets[j] * R * H) * integration_weight;
             }
         }
     }
@@ -281,10 +284,10 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
     }
 
     std::size_t this_frac_local_index = 0;
-    for (; this_frac_local_index<_fracture_props.size(); this_frac_local_index++)
+    for (; this_frac_local_index < _fracture_props.size();
+         this_frac_local_index++)
         if (_fracture_props[this_frac_local_index] == _fracture_property)
             break;
-
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -308,7 +311,8 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
             _fracture_property->fracture_id, _fracture_props, _junction_props,
             _fracID_to_local, ip_physical_coords));
 
-        // du = du^hat + sum_i(enrich^br_i(x) * [u]_i) + sum_i(enrich^junc_i(x) * [u]_i)
+        // du = du^hat + sum_i(enrich^br_i(x) * [u]_i) + sum_i(enrich^junc_i(x)
+        // * [u]_i)
         Eigen::VectorXd nodal_gap(N_DOF_PER_VAR);
         nodal_gap.setZero();
         for (unsigned i = 0; i < n_enrich_var; i++)

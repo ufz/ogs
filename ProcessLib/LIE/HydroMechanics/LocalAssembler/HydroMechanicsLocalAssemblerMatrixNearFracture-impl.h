@@ -35,11 +35,11 @@ HydroMechanicsLocalAssemblerMatrixNearFracture<ShapeFunctionDisplacement,
                                          IntegrationMethod, GlobalDim>(
           e, n_variables, local_matrix_size, dofIndex_to_localIndex,
           is_axially_symmetric, integration_order, process_data),
-          _e_center_coords(e.getCenterOfGravity().getCoords())
+      _e_center_coords(e.getCenterOfGravity().getCoords())
 {
     // currently not supporting multiple fractures
     _fracture_props.push_back(process_data.fracture_property.get());
-    _fracID_to_local.insert({0,0});
+    _fracID_to_local.insert({0, 0});
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

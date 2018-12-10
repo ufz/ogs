@@ -222,10 +222,14 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         auto const& dNdx = ip_data.dNdx;
 
         // levelset functions
-        Eigen::Vector3d const ip_physical_coords(computePhysicalCoordinates(_element, N).getCoords());
-        std::vector<double> const levelsets(u_global_enrichments(_fracture_props, _junction_props, _fracID_to_local, ip_physical_coords));
+        Eigen::Vector3d const ip_physical_coords(
+            computePhysicalCoordinates(_element, N).getCoords());
+        std::vector<double> const levelsets(
+            u_global_enrichments(_fracture_props, _junction_props,
+                                 _fracID_to_local, ip_physical_coords));
 
-        // u = u^hat + sum_i(enrich^br_i(x) * [u]_i) + sum_i(enrich^junc_i(x) * [u]_i)
+        // u = u^hat + sum_i(enrich^br_i(x) * [u]_i) + sum_i(enrich^junc_i(x) *
+        // [u]_i)
         NodalDisplacementVectorType nodal_total_u = nodal_u;
         for (unsigned i = 0; i < n_enrich_var; i++)
         {
