@@ -130,10 +130,10 @@ public:
                               SecondaryVariableFunctions&& fcts);
 
     //! Returns the secondary variable with the given external name.
-    SecondaryVariable const& get(std::string const& external_name);
+    SecondaryVariable const& get(std::string const& external_name) const;
 
-    std::map<std::string, std::string>::const_iterator begin();
-    std::map<std::string, std::string>::const_iterator end();
+    std::map<std::string, std::string>::const_iterator begin() const;
+    std::map<std::string, std::string>::const_iterator end() const;
 
 private:
     //! Maps external variable names to internal ones.

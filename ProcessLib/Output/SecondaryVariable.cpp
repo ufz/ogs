@@ -39,19 +39,19 @@ void SecondaryVariableCollection::addSecondaryVariable(
 }
 
 std::map<std::string, std::string>::const_iterator
-SecondaryVariableCollection::begin()
+SecondaryVariableCollection::begin() const
 {
     return _map_external_to_internal.cbegin();
 }
 
 std::map<std::string, std::string>::const_iterator
-SecondaryVariableCollection::end()
+SecondaryVariableCollection::end() const
 {
     return _map_external_to_internal.cend();
 }
 
 SecondaryVariable const& SecondaryVariableCollection::get(
-    std::string const& external_name)
+    std::string const& external_name) const
 {
     auto const it = _map_external_to_internal.find(external_name);
 
