@@ -39,12 +39,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                <output>
-                    <variables>
-                        <variable>displacement</variable>
-                        <variable>sigma</variable>
-                    </variables>
-                </output>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -67,6 +61,11 @@
                     <each_steps>10000000</each_steps>
                 </pair>
             </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+            </variables>
         </output>
     </time_loop>
     <parameters>
@@ -170,4 +169,19 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+
+    <test_definition>
+        <vtkdiff>
+            <file>square_with_deactivated_hole_pcs_0_ts_4_t_1.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>square_with_deactivated_hole_pcs_0_ts_4_t_1.000000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

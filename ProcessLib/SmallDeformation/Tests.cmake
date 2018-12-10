@@ -21,20 +21,9 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/PressureBC/axisymmetric_pipe.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/PressureBC/hollow_sphere.prj LARGE)
     OgsTest(PROJECTFILE Mechanics/Linear/PressureBC/axisymmetric_sphere.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/square_with_deactivated_hole.prj)
     OgsTest(PROJECTFILE Mechanics/Ehlers/axisymmetric_sphere_pl.prj LARGE)
 endif()
-
-AddTest(
-    NAME Mechanics_SDL_square_with_deactivated_hole
-    PATH Mechanics/Linear
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_with_deactivated_hole.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    square_with_deactivated_hole_pcs_0_ts_4_t_1.000000_expected.vtu  square_with_deactivated_hole_pcs_0_ts_4_t_1.000000.vtu displacement displacement 1e-16 1e-16
-    VIS square_with_deactivated_hole_pcs_0_ts_4_t_1.000000.vtu
-)
 
 if (OGS_USE_PYTHON)
     OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
